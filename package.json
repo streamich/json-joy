@@ -13,8 +13,11 @@
     "node": ">=10"
   },
   "main": "lib/index.js",
+  "module": "esm/index.js",
   "files": [
-    "lib/"
+    "lib/",
+    "es6/",
+    "esm/"
   ],
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore --write 'src/**/*.{ts,tsx,js,jsx}'",
@@ -23,15 +26,19 @@
     "precommit": "pretty-quick --staged && yarn tslint",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
     "commitmsg": "commitlint -E GIT_PARAMS",
-    "clean": "rimraf lib",
-    "build": "tsc",
+    "clean": "rimraf lib es6 esm",
+    "build:cjs": "tsc",
+    "build:es6": "tsc -m es6 --outDir es6",
+    "build:esm": "tsc -m esNext --outDir esm",
+    "build": "yarn build:cjs && yarn build:es6 && yarn build:esm",
     "test": "jest --no-cache --config='jest.config.js'",
     "release": "semantic-release"
   },
   "keywords": [],
   "dependencies": {},
   "peerDependencies": {
-    "rxjs": "^6.6.2"
+    "rxjs": "^6.6.2",
+    "tslib": "^2.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.2",
@@ -51,7 +58,8 @@
     "ts-node": "^9.0.0",
     "tslint": "^6.1.3",
     "tslint-config-common": "^1.6.0",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "tslib": "^2.0.1"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",

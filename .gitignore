@@ -117,3 +117,5 @@ dist
 
 # Build folder
 lib/
+es6/
+esm/
