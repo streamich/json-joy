@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "removeComments": true,
+    "noImplicitAny": false,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "pretty": true,
+    "sourceMap": false,
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "noErrorTruncation": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "declaration": true,
+    "lib": ["es2018", "es2017", "esnext", "dom", "esnext.asynciterable"],
+    "outDir": "./lib"
+  },
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "src/__tests__",
+    "src/**/__tests__/**/*.*",
+    "src/**/__mocks__/**/*.*",
+    "*.test.ts",
+    "*.spec.ts"
+  ]
+}
