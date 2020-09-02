@@ -1,6 +1,6 @@
 # json-joy
 
-New project...
+JSON utilities.
 
 
 
