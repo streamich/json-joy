@@ -10,7 +10,7 @@
   "repository": "streamich/json-joy",
   "license": "Unlicense",
   "engines": {
-    "node": ">=10"
+    "node": ">=10.18"
   },
   "main": "lib/index.js",
   "module": "esm/index.js",
@@ -22,10 +22,7 @@
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore --write 'src/**/*.{ts,tsx,js,jsx}'",
     "prettier:diff": "prettier -l 'src/**/*.{ts,tsx,js,jsx}'",
-    "prepush": "yarn prettier:diff",
-    "precommit": "pretty-quick --staged && yarn tslint",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
-    "commitmsg": "commitlint -E GIT_PARAMS",
     "clean": "rimraf lib es6 esm",
     "build:cjs": "tsc",
     "build:es6": "tsc -m es6 --outDir es6",
@@ -41,8 +38,6 @@
     "tslib": "^2.0.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "^9.1.2",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.5",
@@ -74,10 +69,5 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "git-cz"
-    }
   }
 }
