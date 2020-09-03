@@ -5,7 +5,7 @@ JSON utilities. In ths package:
 - Implements utility for locating data using [__JSON Pointer__][json-pointer]. {[Docs ☕️](./docs/json-pointer.md)}
 - Implements [__JSON Patch__][json-patch] operations. {[Docs 🍪](./docs/json-patch.md)}
 - Implements [__JSON Predicate__][json-predicate] operations.
-- Implements additional additional JSON Patch operations.
+- Implements additional JSON Patch operations.
 - Implements *operational transformations* for JSON Patch operations.
 - Implements server and client classes for [__JSON-Rx__][json-rx] protocol. {[Docs 🚬](./docs/json-rx.md)}
 - Implements server class for [JSON-RPC 2.0][json-rpc] protocol.
