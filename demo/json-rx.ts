@@ -11,9 +11,8 @@ import {from} from 'rxjs';
 
 let client: JsonRxClient;
 
-// On your server, connect JsonRxServer to the WebSocket.
 const server = new JsonRxServer({
-  send: msg => client.onMessage(msg as any),
+  send: msg => client.onMessage(msg as any), // On your server, connect to WebSocket.
   call: (method, payload) => {
     if (method === 'count-to-three') return from([1, 2, 3]);
     else if (method === 'echo') return Promise.resolve(payload);
@@ -22,8 +21,9 @@ const server = new JsonRxServer({
   notify: () => {},
 });
 
-// On the browser end, connect JsonRxClient to the WebSocket.
 client = new JsonRxClient({
+  // On the browser end, connect JsonRxClient to the WebSocket.
+  // send: msg => websocket.send(msg)
   send: msg => setTimeout(() => server.onMessage(msg), 0),
 });
 
