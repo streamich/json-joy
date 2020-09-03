@@ -1,57 +1,102 @@
-import {
-  Message,
-  MessageSubscribe,
-  MessageError,
-  MessageNotification,
-  MessageComplete,
-} from './types';
-import {assertId, assertName, isArray} from './util';
+import {JsonRpcRxServer, JsonRpcRxServerParams} from './JsonRpcRxServer';
+import { isArray } from './util';
 
-type Call<Context> = (name: string, ctx: Context, payload?: unknown) => Promise<unknown>;
-type Notify<Context> = (name: string, ctx: Context, payload?: unknown) => void;
-
-export interface JsonRxRpcServerParams<Context> {
-  call: Call<Context>;
-  notify: Notify<Context>;
+export interface RpcMessageRequest {
+  jsonrpc?: "2.0";
+  id: number | string | null;
+  method: string;
+  params: unknown;
 }
 
-export class JsonRxRpcServer<Context = unknown> {
-  private call: Call<Context>;
-  private notify: Notify<Context>;
+export interface RpcMessageResponse {
+  jsonrpc?: "2.0";
+  id: number | string | null;
+  result: unknown;
+}
 
-  constructor({call, notify}: JsonRxRpcServerParams<Context>) {
-    this.call = call;
-    this.notify = notify;
+export interface RpcMessageError {
+  jsonrpc?: "2.0";
+  id: number | string | null;
+  error: RpcError;
+}
+
+export interface RpcError {
+  code: number;
+  message: string;
+  data?: unknown;
+}
+
+export interface RpcMessageNotification {
+  jsonrpc?: "2.0";
+  method: string;
+  params: unknown;
+}
+
+export interface JsonRpcServerParams<Context> extends JsonRpcRxServerParams<Context> {
+  strict?: boolean;
+}
+
+export class JsonRpcServer<Context = unknown> {
+  private readonly rx: JsonRpcRxServer<Context>;
+  private readonly strict: boolean;
+
+  constructor(params: JsonRpcServerParams<Context>) {
+    this.rx = new JsonRpcRxServer<Context>(params);
+    this.strict = params.strict || false;
   }
 
-  private async onSubscribe(ctx: Context, message: MessageSubscribe): Promise<MessageComplete> {
-    const [id, name, payload] = message;
-    assertId(id);
-    assertName(name);
-    const result = await this.call(name, ctx, payload);
-    return [0, id, result];
+  private formatError (error: RpcError, id: null | string | number = null): RpcMessageError {
+    const message: RpcMessageError = {
+      id,
+      error,
+    };
+    if (this.strict) message.jsonrpc = '2.0';
+    return message;
   }
 
-  private onNotification(ctx: Context, message: MessageNotification): void {
-    const [name, payload] = message;
-    assertName(name);
-    this.notify(name, ctx, payload);
-  }
-
-  public async onMessage(ctx: Context, message: Message): Promise<MessageComplete | MessageError | null> {
+  public async onMessage(ctx: Context, message: RpcMessageRequest | RpcMessageNotification): Promise<null | RpcMessageResponse | RpcMessageError> {
+    let id: null | string | number = null;
     try {
-      if (!isArray(message)) throw new Error('Invalid message');
-      const [one] = message;
-      if (typeof one === 'string') {
-        this.onNotification(ctx, message as MessageNotification);
+      if (!message || (typeof message !== 'object') || isArray(message))
+        return this.formatError({message: 'Invalid message.', code: 0}, id);
+
+      const isNotification = (typeof (message as RpcMessageRequest).id !== 'number') && (typeof (message as RpcMessageRequest).id !== 'string');
+      if (!isNotification) id = (message as RpcMessageRequest).id;
+
+      if (message.method === undefined)
+        return this.formatError({message: 'Method not specified.', code: 0}, id);
+      if (typeof message.method !== 'string')
+        return this.formatError({message: 'Invalid method.', code: 0}, id);
+      if (this.strict && message.jsonrpc !== '2.0')
+        return this.formatError({message: 'Only JSON-RPC version 2.0 is supported.', code: 0}, id);
+      if (isNotification) {
+        this.rx.onMessage(ctx, [message.method, message.params]);
         return null;
       }
-      if (one > 0) return await this.onSubscribe(ctx, message as MessageSubscribe);
-      throw new Error('Invalid message');
+      const result = await this.rx.onMessage(ctx, [1, message.method, message.params]);
+      if (!result) return null;
+      const [type] = result;
+      if (type === -1) throw result[2];
+      const responseMessage: RpcMessageResponse = {
+        id,
+        result: result[2],
+      };
+      if (this.strict) responseMessage.jsonrpc = '2.0';
+      return responseMessage;
     } catch (error) {
-      const id = isArray(message) && (typeof message[0] === 'number') && (message[0] > 0) && (Math.round(message[0]) === message[0])
-        ? message[0] : -1;
-      return [-1, id, {message: error instanceof Error ? error.message : String(error)}];
+      const rpcError: RpcError = {
+        code: (!!error && (typeof error === 'object') && (typeof error.code === 'number'))
+          ? error.code
+          : 0,
+        message: error instanceof Error
+          ? error.message
+          : (!!error && (typeof error === 'object'))
+            ? String(error.message)
+            : String(error),
+      };
+      if (!!error && (typeof error === 'object') && (error.data !== undefined))
+        rpcError.data = error.data;
+      return this.formatError(rpcError, id);
     }
   }
 }
