@@ -7,7 +7,7 @@ JSON utilities. In ths package:
 - Implements [__JSON Predicate__][json-predicate] operations.
 - Implements additional additional JSON Patch operations.
 - Implements *operational transformations* for JSON Patch operations.
-- Implements server and client classes for [__JSON-Rx__][json-rx] protocol.
+- Implements server and client classes for [__JSON-Rx__][json-rx] protocol. {[Docs 🚬](./docs/json-rx.md)}
 - Implements server class for [JSON-RPC 2.0][json-rpc] protocol.
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
