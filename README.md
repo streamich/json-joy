@@ -2,7 +2,7 @@
 
 JSON utilities. In ths package:
 
-- Implements utility for locating data using [__JSON Pointer__][json-pointer].
+- Implements utility for locating data using [__JSON Pointer__][json-pointer]. {[Docs ☕️](./docs/json-pointer.md)}
 - Implements [__JSON Patch__][json-patch] operations.
 - Implements [__JSON Predicate__][json-predicate] operations.
 - Implements additional additional JSON Patch operations.
