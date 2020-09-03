@@ -1,5 +1,5 @@
-import {JsonRpcRxServer, JsonRpcRxServerParams} from './JsonRpcRxServer';
-import { isArray } from './util';
+import {JsonRpcRxServer, JsonRpcRxServerParams} from '../json-rx/JsonRpcRxServer';
+import { isArray } from '../json-rx/util';
 
 export interface RpcMessageRequest {
   jsonrpc?: "2.0";
