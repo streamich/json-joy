@@ -1,6 +1,6 @@
 # json-joy
 
-JSON utilities. In ths package:
+JSON utilities. In this package:
 
 - Implements utility for locating data using [__JSON Pointer__][json-pointer]. {[Docs ☕️](./docs/json-pointer.md)}
 - Implements [__JSON Patch__][json-patch] operations. {[Docs 🍪](./docs/json-patch.md)}
@@ -8,7 +8,7 @@ JSON utilities. In ths package:
 - Implements additional JSON Patch operations.
 - Implements *operational transformations* for JSON Patch operations.
 - Implements server and client classes for [__JSON-Rx__][json-rx] protocol. {[Docs 🚬](./docs/json-rx.md)}
-- Implements server class for [JSON-RPC 2.0][json-rpc] protocol.
+- Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902
