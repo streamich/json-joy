@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/streamich/json-joy/compare/v1.1.0...v1.1.1) (2020-09-04)
+
+
+### Bug Fixes
+
+* 🐛 use commonjs modules for es6 build ([6523118](https://github.com/streamich/json-joy/commit/652311804c97ca20838a8ce7d5ce24dd8d72251b))
+
 # [1.1.0](https://github.com/streamich/json-joy/compare/v1.0.0...v1.1.0) (2020-09-03)
 
 
