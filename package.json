@@ -25,8 +25,8 @@
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
     "clean": "rimraf lib es6 esm",
     "build:cjs": "tsc",
-    "build:es6": "tsc -m es6 --outDir es6",
-    "build:esm": "tsc -m esNext --outDir esm",
+    "build:es6": "tsc --module commonjs --target es6 --outDir es6",
+    "build:esm": "tsc --module ESNext --target ESNEXT --outDir esm",
     "build": "yarn build:cjs && yarn build:es6 && yarn build:esm",
     "test": "jest --no-cache --config='jest.config.js'",
     "release": "semantic-release"
