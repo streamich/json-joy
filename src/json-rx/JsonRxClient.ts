@@ -42,8 +42,8 @@ export class JsonRxClient {
     assertId(id);
     const observer = this.observers.get(id);
     if (!observer) return;
-    if (payload !== undefined) observer.observer.next(payload);
     observer.completed = true;
+    if (payload !== undefined) observer.observer.next(payload);
     observer.observer.complete();
   }
 
