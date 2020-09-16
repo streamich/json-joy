@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/streamich/json-joy/compare/v1.1.2...v1.1.3) (2020-09-16)
+
+
+### Bug Fixes
+
+* 🐛 better unsubscribe message skipping ([e0fdf95](https://github.com/streamich/json-joy/commit/e0fdf95feb4742dac8e1063be3c70a0db8a9f688))
+
 ## [1.1.2](https://github.com/streamich/json-joy/compare/v1.1.1...v1.1.2) (2020-09-16)
 
 
