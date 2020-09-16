@@ -1,4 +1,5 @@
 import {JsonRxClient} from '../JsonRxClient';
+import {take} from 'rxjs/operators';
 
 test('can create client', async () => {
   const send = jest.fn();
@@ -223,4 +224,19 @@ test('does not send unsubscribe when complete has been received', async () => {
   await new Promise((r) => setTimeout(r, 1));
   expect(next).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledTimes(1);
+});
+
+test('does not send unsubscribe when complete has been received - 2', async () => {
+  const send = jest.fn();
+  const client = new JsonRxClient({send});
+  expect(send).toHaveBeenCalledTimes(0);
+  const observable = client.call('test', {foo: 'bar'});
+  expect(send).toHaveBeenCalledTimes(1);
+  const promise = observable.pipe(take(1)).toPromise();
+  expect(send).toHaveBeenCalledTimes(1);
+  client.onMessage([0, send.mock.calls[0][0][0], 25]);
+  expect(send).toHaveBeenCalledTimes(1);
+  const result = await promise;
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(result).toBe(25);
 });
