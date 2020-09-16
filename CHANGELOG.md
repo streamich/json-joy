@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/streamich/json-joy/compare/v1.1.1...v1.1.2) (2020-09-16)
+
+
+### Bug Fixes
+
+* 🐛 don't send unsubscribe message if observable completed ([c256e53](https://github.com/streamich/json-joy/commit/c256e535bfd4e6508b0d6e56fb5eeb63741a76f6))
+
 ## [1.1.1](https://github.com/streamich/json-joy/compare/v1.1.0...v1.1.1) (2020-09-04)
 
 
