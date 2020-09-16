@@ -6,11 +6,16 @@ export interface JsonRxClientParams {
   send: (message: Message) => void;
 }
 
+interface ObserverEntry {
+  observer: Observer<unknown>;
+  completed?: boolean;
+}
+
 export class JsonRxClient {
   private readonly send: (message: Message) => void;
   private cnt: number = 1;
 
-  private readonly observers = new Map<number, Observer<unknown>>();
+  private readonly observers = new Map<number, ObserverEntry>();
 
   constructor({send}: JsonRxClientParams) {
     this.send = send;
@@ -29,7 +34,7 @@ export class JsonRxClient {
     assertId(id);
     const observer = this.observers.get(id);
     if (!observer) return;
-    observer.next(payload);
+    observer.observer.next(payload);
   }
 
   private onComplete(message: MessageComplete): void {
@@ -37,8 +42,9 @@ export class JsonRxClient {
     assertId(id);
     const observer = this.observers.get(id);
     if (!observer) return;
-    if (payload !== undefined) observer.next(payload);
-    observer.complete();
+    if (payload !== undefined) observer.observer.next(payload);
+    observer.completed = true;
+    observer.observer.complete();
   }
 
   private onError(message: MessageError): void {
@@ -46,7 +52,7 @@ export class JsonRxClient {
     assertId(id);
     const observer = this.observers.get(id);
     if (!observer) return;
-    observer.error(error);
+    observer.observer.error(error);
   }
 
   public onMessage(message: MessageData | MessageComplete | MessageError): void {
@@ -61,10 +67,11 @@ export class JsonRxClient {
   public call(method: string, payload: unknown): Observable<unknown> {
     const id = this.cnt++;
     const observable = new Observable<unknown>((observer: Observer<unknown>) => {
-      this.observers.set(id, observer);
+      const entry: ObserverEntry = {observer};
+      this.observers.set(id, entry);
       return () => {
         this.observers.delete(id);
-        this.sendUnsubscribe(id);
+        if (!entry.completed) this.sendUnsubscribe(id);
       };
     });
     this.sendSubscribe([id, method, payload]);
