@@ -207,3 +207,20 @@ test('can respond with error', async () => {
   expect(complete).toHaveBeenCalledTimes(0);
   expect(error).toHaveBeenCalledWith(1);
 });
+
+test('does not send unsubscribe when complete has been received', async () => {
+  const send = jest.fn();
+  const client = new JsonRxClient({send});
+  const result = client.call('test', {foo: 'bar'});
+  const next = jest.fn();
+  const error = jest.fn();
+  const complete = jest.fn();
+  const subscription = result.subscribe(next, error, complete);
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(next).toHaveBeenCalledTimes(0);
+  client.onMessage([0, send.mock.calls[0][0][0], 1]);
+  await new Promise((r) => setTimeout(r, 1));
+  expect(next).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledTimes(1);
+});
