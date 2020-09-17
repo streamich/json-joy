@@ -345,3 +345,19 @@ test('can add authentication on as higher level API', async () => {
   expect(send).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledWith([0, 3, 2]);
 });
+
+test('subscription can return observable in a promise', async () => {
+  const send = jest.fn();
+  const subject = new Subject<unknown>();
+  const ctx = {password: ''};
+  const call = jest.fn(async (method, payload) => from([1, 2, 3]));
+  const notify = (method: any, payload: any) => {};
+  const server = new JsonRxServer({send, call, notify});
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessage([1, 'something']);
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(3);
+  expect(send).toHaveBeenCalledWith([-2, 1, 1]);
+  expect(send).toHaveBeenCalledWith([-2, 1, 2]);
+  expect(send).toHaveBeenCalledWith([0, 1, 3]);
+});

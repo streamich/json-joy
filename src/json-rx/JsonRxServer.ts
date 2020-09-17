@@ -7,7 +7,8 @@ import {
   MessageUnsubscribe,
   MessageComplete,
 } from './types';
-import {Subscription, Observable, from} from 'rxjs';
+import {Subscription, Observable, from, isObservable, of} from 'rxjs';
+import {flatMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 
 export interface JsonRxServerParams {
@@ -43,7 +44,13 @@ export class JsonRxServer {
     try {
       if (this.active.size >= this.maxActiveSubscriptions)
         return this.sendError(id, {message: 'Too many subscriptions.'});
-      const observable = from(this.call(name, payload));
+      let observable = this.call(name, payload);
+      if (!isObservable(observable)) {
+        observable = from(observable)
+          .pipe(
+            flatMap(value => isObservable(value) ? value : of(value)),
+          );
+      }
       const ref: {buffer: unknown[]} = {buffer: []};
       const subscription = observable.subscribe(
         (data: unknown) => {
