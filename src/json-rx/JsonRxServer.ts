@@ -13,7 +13,7 @@ import {assertId, assertName, isArray, microtask} from './util';
 
 export interface JsonRxServerParams {
   send: (message: Message) => void;
-  call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown>;
+  call: (name: string, payload?: unknown) => unknown | Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
   notify: (name: string, payload?: unknown) => void;
   maxActiveSubscriptions?: number;
 }
