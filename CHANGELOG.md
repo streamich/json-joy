@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/streamich/json-joy/compare/v1.1.3...v1.2.0) (2020-09-17)
+
+
+### Features
+
+* 🎸 allow subscription observable to be wrapped in promise ([9a67900](https://github.com/streamich/json-joy/commit/9a679006430ad89208a4a350aadd6e7c30e05d87))
+
 ## [1.1.3](https://github.com/streamich/json-joy/compare/v1.1.2...v1.1.3) (2020-09-16)
 
 
