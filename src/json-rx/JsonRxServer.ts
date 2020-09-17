@@ -42,6 +42,14 @@ export class JsonRxServer {
     assertId(id);
     assertName(name);
     try {
+      const active = this.active.get(id);
+      if (active) {
+        this.active.delete(id);
+        active.unsubscribe();
+        const message: MessageError = [-1, id, {message: 'ID already active.'}];
+        this.send(message);
+        return;
+      }
       if (this.active.size >= this.maxActiveSubscriptions)
         return this.sendError(id, {message: 'Too many subscriptions.'});
       const callResult = this.call(name, payload);

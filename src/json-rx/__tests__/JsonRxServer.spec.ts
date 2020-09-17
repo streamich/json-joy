@@ -441,4 +441,17 @@ test('resets subscription count when subscriptions complete', async () => {
   expect(send).toHaveBeenCalledWith([0, 4, null]);
 });
 
-xit('send error on subscription on same ID', async () => {});
+test('sends error on subscription with already active ID', async () => {
+  const send = jest.fn();
+  const call = jest.fn(() => new Promise(r => setTimeout(() => r(1), 10)));
+  const server = new JsonRxServer({send, call, notify: () => {}});
+  server.onMessage([1, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessage([1, 'bar']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledWith([-1, 1, {message: 'ID already active.'}]);
+  await new Promise(r => setTimeout(r, 20));
+  expect(send).toHaveBeenCalledTimes(1);
+});
