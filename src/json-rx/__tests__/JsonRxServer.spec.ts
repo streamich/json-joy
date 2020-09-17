@@ -1,5 +1,6 @@
 import {JsonRxServer} from '../JsonRxServer';
 import {of, from, Subject} from 'rxjs';
+import { Defer } from './util';
 
 test('can create server', async () => {
   const send = jest.fn();
@@ -360,4 +361,97 @@ test('subscription can return observable in a promise', async () => {
   expect(send).toHaveBeenCalledWith([-2, 1, 1]);
   expect(send).toHaveBeenCalledWith([-2, 1, 2]);
   expect(send).toHaveBeenCalledWith([0, 1, 3]);
+});
+
+test('enforces maximum number of active subscriptions', async () => {
+  const send = jest.fn();
+  const subject = new Subject<unknown>();
+  const ctx = {password: ''};
+  const call = jest.fn(() => new Promise(r => setTimeout(() => r(0), 20)));
+  const notify = (method: any, payload: any) => {};
+  const server = new JsonRxServer({send, call, notify, maxActiveSubscriptions: 3});
+  server.onMessage([1, "test"]);
+  server.onMessage([2, "test"]);
+  server.onMessage([3, "test"]);
+  await new Promise(r => setTimeout(r, 5));
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessage([4, "test"]);
+  await new Promise(r => setTimeout(r, 5));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledWith([-1, 4, {message: 'Too many subscriptions.'}]);
+  await new Promise(r => setTimeout(r, 30));
+  expect(send).toHaveBeenCalledTimes(4);
+  expect(send).toHaveBeenCalledWith([0, 1, 0]);
+  expect(send).toHaveBeenCalledWith([0, 2, 0]);
+  expect(send).toHaveBeenCalledWith([0, 3, 0]);
+});
+
+test('enforces maximum number of active subscriptions', async () => {
+  const send = jest.fn();
+  const call = jest.fn(() => new Promise(r => setTimeout(() => r(0), 20)));
+  const notify = (method: any, payload: any) => {};
+  const server = new JsonRxServer({send, call, notify, maxActiveSubscriptions: 3});
+  server.onMessage([1, "test"]);
+  server.onMessage([2, "test"]);
+  server.onMessage([3, "test"]);
+  await new Promise(r => setTimeout(r, 5));
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessage([4, "test"]);
+  await new Promise(r => setTimeout(r, 5));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledWith([-1, 4, {message: 'Too many subscriptions.'}]);
+  await new Promise(r => setTimeout(r, 30));
+  expect(send).toHaveBeenCalledTimes(4);
+  expect(send).toHaveBeenCalledWith([0, 1, 0]);
+  expect(send).toHaveBeenCalledWith([0, 2, 0]);
+  expect(send).toHaveBeenCalledWith([0, 3, 0]);
+});
+
+test('resets subscription count when subscriptions complete', async () => {
+  const send = jest.fn();
+  const d1 = new Defer<null>();
+  const d2 = new Defer<null>();
+  const d3 = new Defer<null>();
+  const d = [d1, d2, d3];
+  const call = jest.fn(() => d.shift()!.promise);
+  const server = new JsonRxServer({send, call, notify: () => {}, maxActiveSubscriptions: 1});
+  server.onMessage([1, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(0);
+  d1.resolve(null);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledWith([0, 1, null]);
+  server.onMessage([2, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  server.onMessage([3, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(2);
+  expect(send).toHaveBeenCalledWith([-1, 3, {message: 'Too many subscriptions.'}]);
+  d2.reject(123);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(3);
+  expect(send).toHaveBeenCalledWith([-1, 2, 123]);
+  server.onMessage([4, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  d3.resolve(null);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(4);
+  expect(send).toHaveBeenCalledWith([0, 4, null]);
+});
+
+test('sends error on subscription with already active ID', async () => {
+  const send = jest.fn();
+  const call = jest.fn(() => new Promise(r => setTimeout(() => r(1), 10)));
+  const server = new JsonRxServer({send, call, notify: () => {}});
+  server.onMessage([1, 'foo']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessage([1, 'bar']);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledWith([-1, 1, {message: 'ID already active.'}]);
+  await new Promise(r => setTimeout(r, 20));
+  expect(send).toHaveBeenCalledTimes(1);
 });

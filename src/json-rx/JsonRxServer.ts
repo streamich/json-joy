@@ -8,7 +8,7 @@ import {
   MessageComplete,
 } from './types';
 import {Subscription, Observable, from, isObservable, of} from 'rxjs';
-import {flatMap} from 'rxjs/operators';
+import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 
 export interface JsonRxServerParams {
@@ -42,16 +42,24 @@ export class JsonRxServer {
     assertId(id);
     assertName(name);
     try {
+      const active = this.active.get(id);
+      if (active) {
+        this.active.delete(id);
+        active.unsubscribe();
+        const message: MessageError = [-1, id, {message: 'ID already active.'}];
+        this.send(message);
+        return;
+      }
       if (this.active.size >= this.maxActiveSubscriptions)
         return this.sendError(id, {message: 'Too many subscriptions.'});
-      let observable = this.call(name, payload);
-      if (!isObservable(observable)) {
-        observable = from(observable)
-          .pipe(
-            flatMap(value => isObservable(value) ? value : of(value)),
-          );
-      }
+      const callResult = this.call(name, payload);
+      const observable = isObservable(callResult)
+        ? callResult
+        : from(callResult).pipe(
+          mergeMap(value => isObservable(value) ? value : of(value)),
+        );
       const ref: {buffer: unknown[]} = {buffer: []};
+      let done = false;
       const subscription = observable.subscribe(
         (data: unknown) => {
           if (data === undefined) return;
@@ -66,11 +74,15 @@ export class JsonRxServer {
           });
         },
         (error: unknown) => {
+          done = true;
+          this.active.delete(id);
           const data = error instanceof Error ? {message: error.message} : error;
           const message: MessageError = [-1, id, data];
           this.send(message);
         },
         () => {
+          done = true;
+          this.active.delete(id);
           try {
             if (!ref.buffer.length) return this.send(([0, id] as unknown) as Message);
             const last = ref.buffer.length - 1;
@@ -84,7 +96,7 @@ export class JsonRxServer {
           }
         },
       );
-      this.active.set(id, subscription);
+      if (!done) this.active.set(id, subscription);
     } catch (error) {
       this.sendError(id, error instanceof Error ? {message: error.message} : error);
     }
