@@ -13,14 +13,14 @@ import {assertId, assertName, isArray, microtask} from './util';
 
 export interface JsonRxServerParams {
   send: (message: Message) => void;
-  call: (name: string, payload?: unknown) => unknown | Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
+  call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
   notify: (name: string, payload?: unknown) => void;
   maxActiveSubscriptions?: number;
 }
 
 export class JsonRxServer {
   private readonly send: (message: Message) => void;
-  private call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown>;
+  private call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
   private notify: (name: string, payload?: unknown) => void;
   private readonly active = new Map<number, Subscription>();
   private readonly maxActiveSubscriptions: number;
