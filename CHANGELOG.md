@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/streamich/json-joy/compare/v1.3.0...v1.3.1) (2020-09-17)
+
+
+### Bug Fixes
+
+* 🐛 improve Rx server typing ([d25a165](https://github.com/streamich/json-joy/commit/d25a165ac0d736b830e6d9bb69d19a9cc0006ac9))
+* 🐛 improve rx sever call type ([40eaf07](https://github.com/streamich/json-joy/commit/40eaf07f096fd2812d5517d1d6cf867f29e5dd12))
+
 # [1.3.0](https://github.com/streamich/json-joy/compare/v1.2.0...v1.3.0) (2020-09-17)
 
 
