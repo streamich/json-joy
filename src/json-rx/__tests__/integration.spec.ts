@@ -65,7 +65,7 @@ test('server returns "too many subscriptions" error on many parallel requests', 
         ref.client!.onMessage(message as any);
       }, 1),
     call: (method, payload) => {
-      if (method === 'tripple') return Promise.resolve(3 * (payload as number));
+      if (method === 'tripple') return new Promise(r => setTimeout(() => r(3 * (payload as number)), 5));
       else throw new Error('Unknown method');
     },
     notify: () => {},
