@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/streamich/json-joy/compare/v1.2.0...v1.3.0) (2020-09-17)
+
+
+### Bug Fixes
+
+* 🐛 remove complete subscption records ([c0fb1e4](https://github.com/streamich/json-joy/commit/c0fb1e4f9be3588efad186056e731ab8ea4be754))
+
+
+### Features
+
+* 🎸 prevent client from using same ID ([bf5f9d0](https://github.com/streamich/json-joy/commit/bf5f9d07457d3c45e2838f04b44ea99f5f1aad51))
+
 # [1.2.0](https://github.com/streamich/json-joy/compare/v1.1.3...v1.2.0) (2020-09-17)
 
 
