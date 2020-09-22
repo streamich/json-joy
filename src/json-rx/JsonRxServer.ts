@@ -11,21 +11,21 @@ import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 
-export interface JsonRxServerParams {
+export interface JsonRxServerParams<Ctx = unknown> {
   send: (message: Message) => void;
-  call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
-  notify: (name: string, payload?: unknown) => void;
+  call: (name: string, payload: unknown, ctx: Ctx) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
+  notify: (name: string, payload: unknown, ctx: Ctx) => void;
   maxActiveSubscriptions?: number;
 }
 
-export class JsonRxServer {
+export class JsonRxServer<Ctx = unknown> {
   private readonly send: (message: Message) => void;
-  private call: (name: string, payload?: unknown) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
-  private notify: (name: string, payload?: unknown) => void;
+  private call: JsonRxServerParams<Ctx>['call'];
+  private notify: JsonRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
   private readonly maxActiveSubscriptions: number;
 
-  constructor({send, call, notify, maxActiveSubscriptions = 30}: JsonRxServerParams) {
+  constructor({send, call, notify, maxActiveSubscriptions = 30}: JsonRxServerParams<Ctx>) {
     this.send = send;
     this.call = call;
     this.notify = notify;
@@ -37,7 +37,7 @@ export class JsonRxServer {
     this.send(message);
   }
 
-  private onSubscribe(message: MessageSubscribe): void {
+  private onSubscribe(message: MessageSubscribe, ctx: Ctx): void {
     const [id, name, payload] = message;
     assertId(id);
     assertName(name);
@@ -52,7 +52,7 @@ export class JsonRxServer {
       }
       if (this.active.size >= this.maxActiveSubscriptions)
         return this.sendError(id, {message: 'Too many subscriptions.'});
-      const callResult = this.call(name, payload);
+      const callResult = this.call(name, payload, ctx);
       const observable = isObservable(callResult)
         ? callResult
         : from(callResult).pipe(
@@ -111,17 +111,17 @@ export class JsonRxServer {
     subscription.unsubscribe();
   }
 
-  private onNotification(message: MessageNotification): void {
+  private onNotification(message: MessageNotification, ctx: Ctx): void {
     const [name, payload] = message;
     assertName(name);
-    this.notify(name, payload);
+    this.notify(name, payload, ctx);
   }
 
-  public onMessage(message: Message): void {
+  public onMessage(message: Message, ctx: Ctx): void {
     if (!isArray(message)) throw new Error('Invalid message');
     const [one] = message;
-    if (typeof one === 'string') return this.onNotification(message as MessageNotification);
-    if (one > 0) return this.onSubscribe(message as MessageSubscribe);
+    if (typeof one === 'string') return this.onNotification(message as MessageNotification, ctx);
+    if (one > 0) return this.onSubscribe(message as MessageSubscribe, ctx);
     if (one === -3) return this.onUnsubscribe(message as MessageUnsubscribe);
     throw new Error('Invalid message');
   }

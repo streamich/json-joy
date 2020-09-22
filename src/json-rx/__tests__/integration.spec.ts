@@ -18,7 +18,7 @@ test('client can talk with server', async () => {
   const client = new JsonRxClient({
     send: (message) =>
       setTimeout(() => {
-        server.onMessage(message);
+        server.onMessage(message, undefined);
       }, 1),
   });
   ref.client = client;
@@ -44,7 +44,7 @@ test('client can talk with server, parallel requests', async () => {
   const client = new JsonRxClient({
     send: (message) =>
       setTimeout(() => {
-        server.onMessage(message);
+        server.onMessage(message, undefined);
       }, 1),
   });
   ref.client = client;
@@ -73,7 +73,7 @@ test('server returns "too many subscriptions" error on many parallel requests', 
   const client = new JsonRxClient({
     send: (message) =>
       setTimeout(() => {
-        server.onMessage(message);
+        server.onMessage(message, undefined);
       }, 1),
   });
   ref.client = client;
