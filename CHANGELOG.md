@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/streamich/json-joy/compare/v1.3.1...v1.4.0) (2020-09-22)
+
+
+### Features
+
+* 🎸 allow to pass through context with every message ([a5871b2](https://github.com/streamich/json-joy/commit/a5871b23c59ff063956df1ba2a5586ca50984dd0))
+
 ## [1.3.1](https://github.com/streamich/json-joy/compare/v1.3.0...v1.3.1) (2020-09-17)
 
 
