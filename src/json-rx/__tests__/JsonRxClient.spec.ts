@@ -240,3 +240,21 @@ test('does not send unsubscribe when complete has been received - 2', async () =
   expect(send).toHaveBeenCalledTimes(1);
   expect(result).toBe(25);
 });
+
+test('after .stop() completes subscriptions', async () => {
+  const send = jest.fn();
+  const client = new JsonRxClient({send});
+  expect(send).toHaveBeenCalledTimes(0);
+  const observable = client.call('test', {});
+  const data = jest.fn();
+  observable.subscribe(data);
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(data).toHaveBeenCalledTimes(0);
+  client.onMessage([-2, 1, 1]);
+  expect(data).toHaveBeenCalledTimes(1);
+  client.onMessage([-2, 1, 2]);
+  expect(data).toHaveBeenCalledTimes(2);
+  client.stop();
+  client.onMessage([-2, 1, 3]);
+  expect(data).toHaveBeenCalledTimes(2);
+});
