@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/streamich/json-joy/compare/v1.4.0...v1.5.0) (2020-09-23)
+
+
+### Features
+
+* 🎸 add server .stop() method ([11c41dd](https://github.com/streamich/json-joy/commit/11c41ddc641d3c6b009e0d1414a89f8513dd5369))
+
 # [1.4.0](https://github.com/streamich/json-joy/compare/v1.3.1...v1.4.0) (2020-09-22)
 
 
