@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/streamich/json-joy/compare/v1.5.0...v1.6.0) (2020-09-23)
+
+
+### Features
+
+* 🎸 add ability to stop client ([3f34a93](https://github.com/streamich/json-joy/commit/3f34a93ed4878807777b09a32517a22a366c48bd))
+
 # [1.5.0](https://github.com/streamich/json-joy/compare/v1.4.0...v1.5.0) (2020-09-23)
 
 
