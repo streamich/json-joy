@@ -12,7 +12,7 @@ interface ObserverEntry {
 }
 
 export class JsonRxClient {
-  private readonly send: (message: Message) => void;
+  private send: (message: Message) => void;
   private cnt: number = 1;
 
   private readonly observers = new Map<number, ObserverEntry>();
@@ -81,5 +81,11 @@ export class JsonRxClient {
   public notify(name: string, payload?: unknown): void {
     const message: MessageNotification = payload !== undefined ? [name, payload] : [name];
     this.send(message);
+  }
+
+  public stop(): void {
+    this.send = (message: Message) => {};
+    for (const {observer} of this.observers.values())
+      observer.complete();
   }
 }
