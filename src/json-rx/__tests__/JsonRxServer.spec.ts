@@ -1,5 +1,5 @@
 import {JsonRxServer} from '../JsonRxServer';
-import {of, from, Subject} from 'rxjs';
+import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import { Defer } from './util';
 
 test('can create server', async () => {
@@ -476,4 +476,29 @@ test('can pass through context object to notification', async () => {
   expect(call).toHaveBeenCalledTimes(0);
   expect(notify).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledWith('foo', undefined, {foo: 'bar'});
+});
+
+test('stops sending messages after server stop()', async () => {
+  const send = jest.fn();
+  let sub: Subscriber<any>;
+  const call = jest.fn(() => new Observable(subscriber => {
+    sub = subscriber;
+  }));
+  const notify = jest.fn();
+  const server = new JsonRxServer({send, call, notify});
+  expect(!!sub!).toBe(false);
+  server.onMessage([1, 'foo'], undefined);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(0);
+  expect(!!sub!).toBe(true);
+  sub!.next(1);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  server.stop();
+  sub!.next(2);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  server.onMessage([1, 'foo'], undefined);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
 });

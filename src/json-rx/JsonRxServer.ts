@@ -19,7 +19,7 @@ export interface JsonRxServerParams<Ctx = unknown> {
 }
 
 export class JsonRxServer<Ctx = unknown> {
-  private readonly send: (message: Message) => void;
+  private send: (message: Message) => void;
   private call: JsonRxServerParams<Ctx>['call'];
   private notify: JsonRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
@@ -124,5 +124,12 @@ export class JsonRxServer<Ctx = unknown> {
     if (one > 0) return this.onSubscribe(message as MessageSubscribe, ctx);
     if (one === -3) return this.onUnsubscribe(message as MessageUnsubscribe);
     throw new Error('Invalid message');
+  }
+
+  public stop() {
+    this.send = (message: Message) => {};
+    for (const sub of this.active.values()) {
+      sub.unsubscribe();
+    }
   }
 }
