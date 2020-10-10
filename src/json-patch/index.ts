@@ -1,3 +1,4 @@
 export * from './types';
-export * from './patch';
+export * from './applyPatch';
 export * from './validate';
+export {operationToOp} from './op';
