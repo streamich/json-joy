@@ -1,3 +1,15 @@
+# [1.7.0](https://github.com/streamich/json-joy/compare/v1.6.2...v1.7.0) (2020-10-11)
+
+
+### Features
+
+* 🎸 add flat with switch statement applyPatch implementatio ([5ca0d86](https://github.com/streamich/json-joy/commit/5ca0d86ad186dfec271af6ba10e4461c49fcea3d))
+
+
+### Performance Improvements
+
+* ⚡️ speed up applyPatch ([67ee7e2](https://github.com/streamich/json-joy/commit/67ee7e2ce6ad53f9e0506c399bc9997536030d7d))
+
 ## [1.6.2](https://github.com/streamich/json-joy/compare/v1.6.1...v1.6.2) (2020-10-11)
 
 
