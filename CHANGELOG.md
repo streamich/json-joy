@@ -1,3 +1,13 @@
+## [1.6.1](https://github.com/streamich/json-joy/compare/v1.6.0...v1.6.1) (2020-10-11)
+
+
+### Performance Improvements
+
+* ⚡️ improve perf ([beaf18b](https://github.com/streamich/json-joy/commit/beaf18b8db293ea8a4e827553151f4371a2a4128))
+* ⚡️ improve performance ([f4894de](https://github.com/streamich/json-joy/commit/f4894de648ceede7f8ecabfd61cc9c34346b4a3d))
+* ⚡️ set up benchmarking ([bda1a8e](https://github.com/streamich/json-joy/commit/bda1a8e4479908ebf739307ba350b1d3d7c93a46))
+* ⚡️ speed up deep cloning ([2c7e1e1](https://github.com/streamich/json-joy/commit/2c7e1e1e243760f7f4b270bc256a1ca93652f140))
+
 # [1.6.0](https://github.com/streamich/json-joy/compare/v1.5.0...v1.6.0) (2020-09-23)
 
 
