@@ -19,9 +19,12 @@ export const findByPointer = (pointer: string, val: unknown): Reference => {
     indexAfterSlash = indexOfSlash + 1;
     obj = val;
     if (isArray(obj)) {
-      if (key === '-') key = obj.length;
+      const length = obj.length;
+      if (key === '-') key = length;
       else {
-        key = ~~key;
+        const key2 = ~~key;
+          if (('' + (key2)) !== key) throw new Error('INVALID_INDEX');
+        key = key2;
         if (key < 0) throw 'INVALID_INDEX';
       }
       val = obj[key];
