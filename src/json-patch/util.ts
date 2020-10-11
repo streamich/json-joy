@@ -1,17 +1,26 @@
 import {SlateTextNode, SlateElementNode} from './types';
 
-export function deepClone(obj: unknown) {
-  switch (typeof obj) {
-    case 'object':
-      return JSON.parse(JSON.stringify(obj));
-    case 'undefined':
-      return null;
-    default:
-      return obj;
-  }
-}
-
 const {isArray} = Array;
+
+export function deepClone(obj: unknown): unknown {
+  if (!obj) return obj;
+  if (isArray(obj)) {
+    const arr: unknown[] = [];
+    const length = obj.length;
+    for (let i = 0; i < length; i++) arr.push(deepClone(obj[i]))
+    return arr;
+  } else if (typeof obj === 'object') {
+    const keys = Object.keys(obj!);
+    const length = keys.length;
+    const newObject: any = {};
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      newObject[key] = deepClone((obj as any)[key]);
+    }
+    return newObject;
+  }
+  return obj;
+}
 
 export const isTextNode = (node: unknown): node is SlateTextNode =>
   !!node && typeof node === 'object' && typeof (node as SlateTextNode).text === 'string';

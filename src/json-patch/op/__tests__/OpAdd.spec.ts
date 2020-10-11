@@ -33,7 +33,7 @@ describe('apply()', () => {
 
   test('when adding element past array boundary, throws', () => {
     const op = new OpAdd(toPath('/100'), 1);
-    expect(() => op.apply([0])).toThrowErrorMatchingInlineSnapshot(`"OUT_OF_BOUNDS"`);
+    expect(() => op.apply([0])).toThrow();
   });
 
   describe('RFC 6902, Section 4.1.', () => {

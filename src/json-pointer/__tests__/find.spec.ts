@@ -72,14 +72,6 @@ test('throws when pointing past array boundary', () => {
   expect(() => find(doc, path)).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
 });
 
-/*
-test('throws when pointing past array boundary - 2', () => {
-  const doc = {a: {b: [1, 2, 3]}};
-  const path = parseJsonPointer('/a/b/99');
-  expect(() => find(doc, path)).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
-});
-*/
-
 test('can point one element past array boundary', () => {
   const doc = {a: {b: [1, 2, 3]}};
   const path = parseJsonPointer('/a/b/3');
@@ -114,16 +106,3 @@ test('can reference missing array key withing bounds', () => {
     key: 3,
   });
 });
-
-/*
-test('can reference missing array index only within size of the actual array', () => {
-  const doc = {foo: 123, bar: [1, 2, 3]};
-  find(doc, parseJsonPointer('/bar/0'));
-  find(doc, parseJsonPointer('/bar/1'));
-  find(doc, parseJsonPointer('/bar/2'));
-  find(doc, parseJsonPointer('/bar/3'));
-  find(doc, parseJsonPointer('/bar/-'));
-  expect(() => find(doc, parseJsonPointer('/bar/5'))).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
-  expect(() => find(doc, parseJsonPointer('/bar/6'))).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
-});
-*/

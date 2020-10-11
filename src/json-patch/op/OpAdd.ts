@@ -1,6 +1,8 @@
+/* tslint:disable no-string-throw */
+
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
-import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
 export type PackedAddOp = [OPCODE.add, string | Path, {v: unknown}];
@@ -11,14 +13,17 @@ export class OpAdd extends AbstractOp<'add'> {
   }
 
   public apply(doc: unknown) {
-    const ref = find(doc, this.path);
-    if (isObjectReference(ref)) ref.obj[ref.key] = this.value;
-    else if (isArrayReference(ref)) {
-      if (ref.key > ref.obj.length) throw new Error('OUT_OF_BOUNDS');
-      if (ref.key === ref.obj.length) ref.obj.push(this.value);
-      else ref.obj.splice(ref.key, 0, this.value);
-    } else doc = this.value;
-    return {doc, old: ref.val};
+    const {val, key, obj} = find(doc, this.path) as any;
+    const value = this.value;
+    if (!obj) doc = value;
+    else if (typeof key === 'string') obj[key] = value;
+    else {
+      const length = obj.length;
+      if (key < length) obj.splice(key, 0, this.value);
+      else if (key > length) throw new Error('OUT_OF_BOUNDS');
+      else obj.push(this.value);
+    }
+    return {doc, old: val}
   }
 
   public toJson(): OperationAdd {
