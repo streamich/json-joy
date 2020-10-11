@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/streamich/json-joy/compare/v1.6.1...v1.6.2) (2020-10-11)
+
+
+### Performance Improvements
+
+* ⚡️ add no-clone benchmark ([15f0f9d](https://github.com/streamich/json-joy/commit/15f0f9da15044b56d2c0c578228ef69c4402d3d2))
+
 ## [1.6.1](https://github.com/streamich/json-joy/compare/v1.6.0...v1.6.1) (2020-10-11)
 
 
