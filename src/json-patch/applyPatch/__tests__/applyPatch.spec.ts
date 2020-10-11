@@ -1992,8 +1992,8 @@ for (const name in versions) {
         this.foo = 'bar';
       }
 
-      let doc = new (SomeClass as any)();
-      let otherDoc = new (SomeClass as any)();
+      const doc = new (SomeClass as any)();
+      const otherDoc = new (SomeClass as any)();
 
       const patch: any = [{op: 'replace', path: `/__proto__/x`, value: 'polluted'}];
 
@@ -2002,7 +2002,7 @@ for (const name in versions) {
       expect(otherDoc.x).toEqual(undefined);
       expect(doc.x).toEqual(undefined);
 
-      let arr: any = [];
+      const arr: any = [];
       expect(() => applyPatch(arr, patch, true)).toThrow();
       expect(arr.x).toEqual(undefined);
     });
