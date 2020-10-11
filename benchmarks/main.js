@@ -3,6 +3,7 @@ const {operationToOp} = require('../es6/json-patch');
 const {applyPatch, applyOps} = require('../es6/json-patch/applyPatch/v1');
 const {applyPatch: v2} = require('../es6/json-patch/applyPatch/v2');
 const {applyPatch: v3} = require('../es6/json-patch/applyPatch/v3');
+const {applyPatch: v4} = require('../es6/json-patch/applyPatch/v4');
 const {applyPatch: applyPatchFastJsonPatch} = require('fast-json-patch');
 
 const doc = { foo: { bar: 123 }, arr: [1, {}] };
@@ -31,6 +32,9 @@ suite
   // .add(`json-joy (applyPatch v3)`, function() {
   //   v3(doc, patch, false);
   // })
+  .add(`json-joy (applyPatch v4)`, function() {
+    v4(doc, patch, false);
+  })
   .add(`json-joy (applyOps)`, function() {
     applyOps(doc, ops, false);
   })
