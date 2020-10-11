@@ -1,6 +1,7 @@
 import {SlateTextNode, SlateElementNode} from './types';
 
 const {isArray} = Array;
+const objectKeys = Object.keys;
 
 export function deepClone(obj: unknown): unknown {
   if (!obj) return obj;
@@ -10,7 +11,7 @@ export function deepClone(obj: unknown): unknown {
     for (let i = 0; i < length; i++) arr.push(deepClone(obj[i]))
     return arr;
   } else if (typeof obj === 'object') {
-    const keys = Object.keys(obj!);
+    const keys = objectKeys(obj!);
     const length = keys.length;
     const newObject: any = {};
     for (let i = 0; i < length; i++) {
