@@ -10,7 +10,8 @@ const patch = [
   {op: 'add', path: '/foo/baz', value: 666},
   {op: 'add', path: '/foo/bx', value: 666},
   {op: 'add', path: '/asdf', value: 'asdfadf asdf'},
-  {op: 'move', path: '/arr/0', from: '/arr/1'}
+  {op: 'move', path: '/arr/0', from: '/arr/1'},
+  {op: 'replace', path: '/foo/baz', value: 'lorem ipsum'},
 ];
 const ops = patch.map(operationToOp);
 
@@ -24,12 +25,12 @@ suite
   .add(`json-joy (applyPatch)`, function() {
     applyPatch(doc, patch, false);
   })
-  .add(`json-joy (applyPatch v2)`, function() {
-    v2(doc, patch, false);
-  })
-  .add(`json-joy (applyPatch v3)`, function() {
-    v3(doc, patch, false);
-  })
+  // .add(`json-joy (applyPatch v2)`, function() {
+  //   v2(doc, patch, false);
+  // })
+  // .add(`json-joy (applyPatch v3)`, function() {
+  //   v3(doc, patch, false);
+  // })
   .add(`json-joy (applyOps)`, function() {
     applyOps(doc, ops, false);
   })

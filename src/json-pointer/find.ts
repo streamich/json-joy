@@ -1,4 +1,6 @@
-import {isRoot, isValidIndex, hasOwnProperty, Path, unescapeComponent} from './util';
+/* tslint:disable no-string-throw */
+
+import {isRoot, hasOwnProperty, Path, isValidIndex} from './util';
 
 export interface Reference {
   /** Target value where pointer is pointing. */
@@ -35,23 +37,24 @@ const {isArray} = Array;
  * @param skipLast Number of steps to skip at the end. Useful to find reference of
  *   parent step, without constructing a new `Path` array.
  */
-export const find = (val: unknown, path: Path, skipLast: number = 0): Reference => {
-  if (isRoot(path)) return {val};
+export const find = (val: unknown, path: Path): Reference => {
+  const pathLength = path.length;
+  if (!pathLength) return {val};
   let obj: Reference['obj'];
   let key: Reference['key'];
-  const last = path.length - 1 - skipLast;
-  for (let i = 0; i <= last; i++) {
-    const component = path[i];
+  for (let i = 0; i < pathLength; i++) {
     obj = val;
-    key = component;
+    key = path[i];
     if (isArray(obj)) {
-      if (key === '-' && i === path.length - 1) key = obj.length;
+      const length = obj.length;
+      if (key === '-') key = length;
       else {
-        if (!isValidIndex(key)) throw new Error('INVALID_INDEX');
-        key = ~~key;
+        const key2 = ~~key;
+        if (('' + (key2)) !== key) throw new Error('INVALID_INDEX');
+        key = key2;
         if (key < 0) throw new Error('INVALID_INDEX');
       }
-      val = hasOwnProperty(obj, key as any) ? obj[key] : undefined;
+      val = obj[key];
     } else if (typeof obj === 'object' && !!obj) {
       val = hasOwnProperty(obj, key as string) ? (obj as any)[key] : undefined;
     } else throw new Error('NOT_FOUND');

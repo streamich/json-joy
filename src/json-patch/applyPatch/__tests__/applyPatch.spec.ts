@@ -1997,13 +1997,13 @@ for (const name in versions) {
 
       const patch: any = [{op: 'replace', path: `/__proto__/x`, value: 'polluted'}];
 
-      expect(() => applyPatch(doc, patch, true)).toThrowErrorMatchingInlineSnapshot(`"NOT_FOUND"`);
+      expect(() => applyPatch(doc, patch, true)).toThrow();
 
       expect(otherDoc.x).toEqual(undefined);
       expect(doc.x).toEqual(undefined);
 
       let arr: any = [];
-      expect(() => applyPatch(arr, patch, true)).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
+      expect(() => applyPatch(arr, patch, true)).toThrow();
       expect(arr.x).toEqual(undefined);
     });
   });
