@@ -2,13 +2,15 @@ const Benchmark = require('benchmark');
 const {operationToOp} = require('../es6/json-patch');
 const {applyPatch, applyOps} = require('../es6/json-patch/applyPatch/v1');
 const {applyPatch: v2} = require('../es6/json-patch/applyPatch/v2');
+const {applyPatch: v3} = require('../es6/json-patch/applyPatch/v3');
 const {applyPatch: applyPatchFastJsonPatch} = require('fast-json-patch');
 
-const doc = { foo: { bar: 123 } };
+const doc = { foo: { bar: 123 }, arr: [1, {}] };
 const patch = [
   {op: 'add', path: '/foo/baz', value: 666},
   {op: 'add', path: '/foo/bx', value: 666},
   {op: 'add', path: '/asdf', value: 'asdfadf asdf'},
+  {op: 'move', path: '/arr/0', from: '/arr/1'}
 ];
 const ops = patch.map(operationToOp);
 
@@ -24,6 +26,9 @@ suite
   })
   .add(`json-joy (applyPatch v2)`, function() {
     v2(doc, patch, false);
+  })
+  .add(`json-joy (applyPatch v3)`, function() {
+    v3(doc, patch, false);
   })
   .add(`json-joy (applyOps)`, function() {
     applyOps(doc, ops, false);

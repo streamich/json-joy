@@ -1,12 +1,13 @@
+import { Operation } from '../../types';
 import {applyPatch as v1} from '../v1';
 import {applyPatch as v2} from '../v2';
+import {applyPatch as v3} from '../v3';
 
-// const versions = [v1, v2];
-const versions = [v1];
+const versions = {v1};
 
-for (let i = 0; i < versions.length; i++) {
-  const applyPatch = versions[i];
-  describe(`applyPatch v${i + 1}`, () => {
+for (const name in versions) {
+  const applyPatch = (versions as any)[name];
+  describe(`applyPatch ${name}`, () => {
     describe('root replacement', () => {
       describe('add', () => {
         it('should `add` an object (on a json document of type object) - in place', () => {
@@ -1192,6 +1193,24 @@ for (let i = 0; i < versions.length; i++) {
               qux: 'hello',
             },
           ],
+        });
+      });
+
+      it('example from benchmark', () => {
+        const patch: Operation[] = [
+          {op: 'add', path: '/foo/baz', value: 666},
+          {op: 'add', path: '/foo/bx', value: 666},
+          {op: 'add', path: '/asdf', value: 'asdfadf asdf'},
+        ];
+        const obj: any = { foo: { bar: 123 } };
+        const newObj = applyPatch(
+          obj,
+          patch,
+          true,
+        ).doc;
+        expect(newObj).toEqual({
+          foo: {bar: 123, baz: 666, bx: 666},
+          asdf: 'asdfadf asdf',
         });
       });
 

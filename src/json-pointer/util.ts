@@ -1,10 +1,16 @@
 export type Path = readonly (string | number)[];
 
+const r1 = /~1/g;
+const r2 = /~0/g;
+const r3 = /~/g;
+const r4 = /\//g;
+
 /**
  * Un-escapes a JSON pointer path component.
  */
 export function unescapeComponent(component: string): string {
-  return component.replace(/~1/g, '/').replace(/~0/g, '~');
+  if (component.indexOf('~') === -1) return component;
+  return component.replace(r1, '/').replace(r2, '~');
 }
 
 /**
@@ -12,7 +18,7 @@ export function unescapeComponent(component: string): string {
  */
 export function escapeComponent(component: string): string {
   if (component.indexOf('/') === -1 && component.indexOf('~') === -1) return component;
-  return component.replace(/~/g, '~0').replace(/\//g, '~1');
+  return component.replace(r3, '~0').replace(r4, '~1');
 }
 
 /**
@@ -86,3 +92,18 @@ const Object$prototype$hasOwnProperty = Object.prototype.hasOwnProperty;
 export function hasOwnProperty(obj: object, key: string) {
   return Object$prototype$hasOwnProperty.call(obj, key);
 }
+
+export const isInteger = (str: string): boolean => {
+  const len = str.length;
+  let i = 0;
+  let charCode;
+  while (i < len) {
+      charCode = str.charCodeAt(i);
+      if (charCode >= 48 && charCode <= 57) {
+          i++;
+          continue;
+      }
+      return false;
+  }
+  return true;
+};

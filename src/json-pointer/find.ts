@@ -1,4 +1,4 @@
-import {isRoot, isValidIndex, hasOwnProperty, Path} from './util';
+import {isRoot, isValidIndex, hasOwnProperty, Path, unescapeComponent} from './util';
 
 export interface Reference {
   /** Target value where pointer is pointing. */
@@ -48,12 +48,12 @@ export const find = (val: unknown, path: Path, skipLast: number = 0): Reference 
       if (key === '-' && i === path.length - 1) key = obj.length;
       else {
         if (!isValidIndex(key)) throw new Error('INVALID_INDEX');
-        key = Number(key);
+        key = ~~key;
         if (key < 0) throw new Error('INVALID_INDEX');
       }
-      val = hasOwnProperty(obj, String(key)) ? obj[key] : undefined;
+      val = hasOwnProperty(obj, key as any) ? obj[key] : undefined;
     } else if (typeof obj === 'object' && !!obj) {
-      val = hasOwnProperty(obj, String(key)) ? (obj as any)[key] : undefined;
+      val = hasOwnProperty(obj, key as string) ? (obj as any)[key] : undefined;
     } else throw new Error('NOT_FOUND');
   }
   const ref: Reference = {val, obj, key};
