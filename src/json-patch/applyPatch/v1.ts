@@ -18,11 +18,11 @@ export function applyOp(doc: unknown, op: Op, mutate: boolean): OpResult {
 }
 
 export function applyOps(doc: unknown, ops: readonly Op[], mutate: boolean): PatchResult {
-  if (!Array.isArray(ops)) throw new Error('SEQUENCE_NOT_AN_ARRAY');
   if (!mutate) doc = deepClone(doc);
   const res: OpResult[] = [];
-  for (const op of ops) {
-    const opResult = op.apply(doc);
+  const length = ops.length;
+  for (let i = 0; i < length; i++) {
+    const opResult = ops[i].apply(doc);
     doc = opResult.doc;
     res.push(opResult);
   }
