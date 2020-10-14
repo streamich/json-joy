@@ -1,25 +1,28 @@
 import {
-  Message,
   MessageSubscribe,
   MessageError,
   MessageData,
   MessageNotification,
   MessageUnsubscribe,
   MessageComplete,
+  MessageOrMessageBatch,
 } from './types';
 import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 
+type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
+type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;
+
 export interface JsonRxServerParams<Ctx = unknown> {
-  send: (message: Message) => void;
+  send: (message: OutgoingMessage) => void;
   call: (name: string, payload: unknown, ctx: Ctx) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
   notify: (name: string, payload: unknown, ctx: Ctx) => void;
   maxActiveSubscriptions?: number;
 }
 
 export class JsonRxServer<Ctx = unknown> {
-  private send: (message: Message) => void;
+  private send: (message: OutgoingMessage) => void;
   private call: JsonRxServerParams<Ctx>['call'];
   private notify: JsonRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
@@ -84,12 +87,12 @@ export class JsonRxServer<Ctx = unknown> {
           done = true;
           this.active.delete(id);
           try {
-            if (!ref.buffer.length) return this.send(([0, id] as unknown) as Message);
+            if (!ref.buffer.length) return this.send(([0, id] as unknown) as OutgoingMessage);
             const last = ref.buffer.length - 1;
             for (let i = 0; i <= last; i++) {
               const isLast = i === last;
               const message: MessageComplete | MessageData = isLast ? [0, id, ref.buffer[i]] : [-2, id, ref.buffer[i]];
-              this.send(message as Message);
+              this.send(message as OutgoingMessage);
             }
           } finally {
             ref.buffer = [];
@@ -117,9 +120,13 @@ export class JsonRxServer<Ctx = unknown> {
     this.notify(name, payload, ctx);
   }
 
-  public onMessage(message: Message, ctx: Ctx): void {
+  public onMessage(message: IncomingMessage, ctx: Ctx): void {
     if (!isArray(message)) throw new Error('Invalid message');
     const [one] = message;
+    if (isArray(one)) {
+      for (let i = 0; i < message.length; i++) this.onMessage(message[i] as IncomingMessage, ctx);
+      return;
+    }
     if (typeof one === 'string') return this.onNotification(message as MessageNotification, ctx);
     if (one > 0) return this.onSubscribe(message as MessageSubscribe, ctx);
     if (one === -3) return this.onUnsubscribe(message as MessageUnsubscribe);
@@ -127,7 +134,7 @@ export class JsonRxServer<Ctx = unknown> {
   }
 
   public stop() {
-    this.send = (message: Message) => {};
+    this.send = (message: OutgoingMessage) => {};
     for (const sub of this.active.values()) {
       sub.unsubscribe();
     }

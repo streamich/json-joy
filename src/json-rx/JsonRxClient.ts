@@ -49,12 +49,10 @@ export class JsonRxClient {
   }
 
   private sendSubscribe(message: MessageSubscribe): void {
-    // this.send(message);
     this.buffer.push(message);
   }
 
   private sendUnsubscribe(id: number): void {
-    // this.send([-3, id]);
     this.buffer.push([-3, id]);
   }
 
@@ -88,6 +86,10 @@ export class JsonRxClient {
   public onMessage(message: IncomingMessage): void {
     if (!isArray(message)) throw new Error('Invalid message');
     const [type] = message;
+    if (isArray(type)) {
+      for (let i = 0; i < message.length; i++) this.onMessage(message[i] as IncomingMessage);
+      return;
+    }
     if (type === 0) return this.onComplete(message as MessageComplete);
     if (type === -1) return this.onError(message as MessageError);
     if (type === -2) return this.onData(message as MessageData);
@@ -110,12 +112,10 @@ export class JsonRxClient {
 
   public notify(name: string, payload?: unknown): void {
     const message: MessageNotification = payload !== undefined ? [name, payload] : [name];
-    // this.send(message);
     this.buffer.push(message);
   }
 
   public stop(): void {
-    // this.send = (message: OutgoingMessage) => {};
     this.buffer.onFlush = (message) => {};
     for (const {observer} of this.observers.values())
       observer.complete();

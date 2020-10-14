@@ -314,3 +314,38 @@ test('combines multiple messages in a batch', async () => {
     ['test3', {gg: 'bet'}],
   ]);
 });
+
+test('can receive and process a batch from server', async () => {
+  const send = jest.fn();
+  const client = new JsonRxClient({send, bufferTime: 1});
+  await new Promise((r) => setTimeout(r, 2));
+  expect(send).toHaveBeenCalledTimes(0);
+  const observable1 = client.call('test', {});
+  const observable2 = client.call('test2', {foo: 'bar'});
+  const data1 = jest.fn();
+  const data2 = jest.fn();
+  const error1 = jest.fn();
+  const error2 = jest.fn();
+  const complete1 = jest.fn();
+  const complete2 = jest.fn();
+  observable1.subscribe(data1, error1, complete1);
+  observable2.subscribe(data2, error2, complete2);
+  client.notify('test3', {gg: 'bet'});
+  await new Promise((r) => setTimeout(r, 2));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(data1).toHaveBeenCalledTimes(0);
+  expect(data2).toHaveBeenCalledTimes(0);
+  client.onMessage([
+    [0, 1, {foo: 'bar'}],
+    [0, 2, {foo: 'baz'}],
+  ]);
+  await new Promise((r) => setTimeout(r, 2));
+  expect(data1).toHaveBeenCalledTimes(1);
+  expect(data2).toHaveBeenCalledTimes(1);
+  expect(data1).toHaveBeenCalledWith({foo: 'bar'});
+  expect(data2).toHaveBeenCalledWith({foo: 'baz'});
+  expect(error1).toHaveBeenCalledTimes(0);
+  expect(error2).toHaveBeenCalledTimes(0);
+  expect(complete1).toHaveBeenCalledTimes(1);
+  expect(complete2).toHaveBeenCalledTimes(1);
+});
