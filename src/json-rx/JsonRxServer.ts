@@ -10,15 +10,47 @@ import {
 import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
+import { TimedQueue } from './TimedQueue';
 
 type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
 type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;
 
 export interface JsonRxServerParams<Ctx = unknown> {
+  /**
+   * Method to be called by server when it wants to send a message to the client.
+   * This is usually your WebSocket "send" method.
+   */
   send: (message: OutgoingMessage) => void;
+
+  /**
+   * Callback called on the server when user sends a subscription message.
+   */
   call: (name: string, payload: unknown, ctx: Ctx) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
+
+  /**
+   * Callback called on the server when user sends a notification message.
+   */
   notify: (name: string, payload: unknown, ctx: Ctx) => void;
+
+  /**
+   * Maximum number of active subscription in flight. This also includes
+   * in-flight request/response subscriptions.
+   */
   maxActiveSubscriptions?: number;
+
+  /**
+   * Number of messages to keep in buffer before sending them out.
+   * The buffer is flushed when the message reaches this limit or when the
+   * buffering time has reached the time specified in `bufferTime` parameter.
+   * Defaults to 10 messages.
+   */
+  bufferSize?: number;
+
+  /**
+   * Time in milliseconds for how long to buffer messages before sending them
+   * out. Defaults to 1 milliseconds. Set it to zero to disable buffering.
+   */
+  bufferTime?: number;
 }
 
 export class JsonRxServer<Ctx = unknown> {
@@ -27,12 +59,23 @@ export class JsonRxServer<Ctx = unknown> {
   private notify: JsonRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
   private readonly maxActiveSubscriptions: number;
+  private readonly buffer?: TimedQueue<OutgoingMessage>;
 
-  constructor({send, call, notify, maxActiveSubscriptions = 30}: JsonRxServerParams<Ctx>) {
-    this.send = send;
+  constructor({send, call, notify, maxActiveSubscriptions = 30, bufferSize = 10, bufferTime = 1}: JsonRxServerParams<Ctx>) {
     this.call = call;
     this.notify = notify;
     this.maxActiveSubscriptions = maxActiveSubscriptions;
+    if (bufferTime) {
+      const buffer = this.buffer = new TimedQueue();
+      buffer.itemLimit = bufferSize;
+      buffer.timeLimit = bufferTime;
+      buffer.onFlush = (messages) => {
+        send(messages.length === 1 ? messages[0] : messages as OutgoingMessage);
+      };
+      this.send = message => buffer.push(message);
+    } else {
+      this.send = send;
+    }
   }
 
   private sendError(id: number, error: unknown): void {
