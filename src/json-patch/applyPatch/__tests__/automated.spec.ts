@@ -6,7 +6,7 @@ import {applyPatch as v2} from '../v2';
 import {applyPatch as v3} from '../v3';
 import {applyPatch as v4} from '../v4';
 import {validateOperation} from '../../validate';
-import { deepClone } from '../../../../es6/json-patch/util';
+import { deepClone } from '../../util';
 
 const testSuites = [
   {

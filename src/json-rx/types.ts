@@ -31,3 +31,6 @@ export type Message =
   | MessageUnsubscribe
   | MessageError
   | MessageNotification;
+
+export type MessageBatch<M = Message> = M[];
+export type MessageOrMessageBatch<M = Message> = M | MessageBatch<M>;
