@@ -52,6 +52,7 @@ export class JsonRxClient {
     assertId(id);
     const observer = this.observers.get(id);
     if (!observer) return;
+    observer.completed = true;
     observer.observer.error(error);
   }
 

@@ -241,6 +241,26 @@ test('does not send unsubscribe when complete has been received - 2', async () =
   expect(result).toBe(25);
 });
 
+test('does not send unsubscribe when error has been received', async () => {
+  const send = jest.fn();
+  const client = new JsonRxClient({send});
+  expect(send).toHaveBeenCalledTimes(0);
+  const observable = client.call('test', {foo: 'bar'});
+  expect(send).toHaveBeenCalledTimes(1);
+  const promise = observable.pipe(take(1)).toPromise();
+  expect(send).toHaveBeenCalledTimes(1);
+  client.onMessage([-1, send.mock.calls[0][0][0], 25]);
+  expect(send).toHaveBeenCalledTimes(1);
+  let error;
+  try {
+    await promise;
+  } catch (err) {
+    error = err;
+  }
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(error).toBe(25);
+});
+
 test('after .stop() completes subscriptions', async () => {
   const send = jest.fn();
   const client = new JsonRxClient({send});
