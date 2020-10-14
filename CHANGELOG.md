@@ -1,3 +1,18 @@
+# [1.8.0](https://github.com/streamich/json-joy/compare/v1.7.0...v1.8.0) (2020-10-14)
+
+
+### Bug Fixes
+
+* 🐛 don't send unsubscribe message, when error received ([18cc84a](https://github.com/streamich/json-joy/commit/18cc84a9f9ef6f68c7ead6038b6d9875c76ad7b2))
+
+
+### Features
+
+* 🎸 add batching to JsonRxClient ([6d6e13d](https://github.com/streamich/json-joy/commit/6d6e13d8a4ece05adeec4d812d0a1fe783d4e42a))
+* 🎸 add batching to RX server ([7f5a78c](https://github.com/streamich/json-joy/commit/7f5a78c3c86164df25c7f0dc721f1976074a4088))
+* 🎸 add TimeQueue implementation ([0f837ff](https://github.com/streamich/json-joy/commit/0f837ff76b3c614ca20315fa0cac7c1ca2ce8b3d))
+* 🎸 allow JsonRx{Client,Server} to receive batches ([de8ee45](https://github.com/streamich/json-joy/commit/de8ee45dbb1483cf606782d0faa743621a77ad56))
+
 # [1.7.0](https://github.com/streamich/json-joy/compare/v1.6.2...v1.7.0) (2020-10-11)
 
 
