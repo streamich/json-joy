@@ -1,9 +1,10 @@
 import {
-  Message,
   MessageSubscribe,
   MessageError,
   MessageNotification,
   MessageComplete,
+  MessageOrMessageBatch,
+  MessageBatch,
 } from './types';
 import {assertId, assertName, isArray} from './util';
 
@@ -38,9 +39,12 @@ export class JsonRpcRxServer<Context = unknown> {
     this.notify(name, ctx, payload);
   }
 
-  public async onMessage(ctx: Context, message: Message): Promise<MessageComplete | MessageError | null> {
+  public async onMessage(ctx: Context, message: MessageOrMessageBatch): Promise<MessageOrMessageBatch<MessageComplete | MessageError> | null> {
     try {
       if (!isArray(message)) throw new Error('Invalid message');
+      if (!message.length) return null;
+      if (isArray(message[0]))
+        return await Promise.all((message as MessageBatch).map(msg => this.onMessage(ctx, msg))) as MessageOrMessageBatch<MessageComplete | MessageError> | null;
       const [one] = message;
       if (typeof one === 'string') {
         this.onNotification(ctx, message as MessageNotification);
