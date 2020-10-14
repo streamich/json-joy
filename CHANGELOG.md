@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/streamich/json-joy/compare/v1.8.0...v1.9.0) (2020-10-14)
+
+
+### Features
+
+* 🎸 add buffering to JsonRxServer ([18bc4d1](https://github.com/streamich/json-joy/commit/18bc4d15d74214cb1b00914128d227bd162eb1e1))
+
 # [1.8.0](https://github.com/streamich/json-joy/compare/v1.7.0...v1.8.0) (2020-10-14)
 
 
