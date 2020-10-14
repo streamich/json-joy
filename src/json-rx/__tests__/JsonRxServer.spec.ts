@@ -540,9 +540,8 @@ describe('buffering', () => {
     const notify = jest.fn();
     const server = new JsonRxServer({send, call, notify, bufferTime: 1});
     server.onMessage([1, 'a', 'a'], {ctx: 1});
-    await new Promise(r => setTimeout(r, 2));
+    await new Promise(r => setTimeout(r, 10));
     server.onMessage([2, 'b', 'b'], {ctx: 2});
-    expect(send).toHaveBeenCalledTimes(1);
     await new Promise(r => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(2);
     expect(send.mock.calls[0][0]).toEqual([0, 1, ['a', 'a', {ctx: 1}]]);
