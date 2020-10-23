@@ -573,6 +573,25 @@ describe('buffering', () => {
     ]);
   });
 
+  test('batches errors received within buffering window', async () => {
+    const send = jest.fn();
+    const call: any = jest.fn(async (name, payload, ctx) => {
+      // tslint:disable-next-line
+      throw 'foo';
+    });
+    const notify = jest.fn();
+    const server = new JsonRxServer({send, call, notify, bufferTime: 1});
+    server.onMessage([1, 'a', 'a'], {ctx: 1});
+    server.onMessage([2, 'b', 'b'], {ctx: 2});
+    expect(send).toHaveBeenCalledTimes(0);
+    await new Promise(r => setTimeout(r, 10));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(send.mock.calls[0][0])).toEqual([
+      [-1, 1, 'foo'],
+      [-1, 2, 'foo'],
+    ]);
+  });
+
   test('does not batch consecutive messages when buffering is disabled', async () => {
     const send = jest.fn();
     const call: any = jest.fn(async (name, payload, ctx) => JSON.stringify([name, payload, ctx]));
