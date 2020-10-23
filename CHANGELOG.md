@@ -1,3 +1,17 @@
+# [2.0.0](https://github.com/streamich/json-joy/compare/v1.9.0...v2.0.0) (2020-10-23)
+
+
+### Features
+
+* 🎸 allow metadata on error object ([cb58bc3](https://github.com/streamich/json-joy/commit/cb58bc3fee2a7a9cf88d81a79f8919eccc43a9b6))
+* 🎸 use strings for returned messages from server ([48fc97c](https://github.com/streamich/json-joy/commit/48fc97c093c435af756dc0a4fde10986eb7e2943))
+
+
+### BREAKING CHANGES
+
+* 🧨 JSON-Rx server now returns JSON serialized strings instead of POJO
+messages
+
 # [1.9.0](https://github.com/streamich/json-joy/compare/v1.8.0...v1.9.0) (2020-10-14)
 
 
