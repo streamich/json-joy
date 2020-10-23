@@ -34,7 +34,9 @@
   "keywords": [],
   "dependencies": {
     "benchmark": "^2.1.4",
-    "fast-json-patch": "^3.0.0-1"
+    "fast-json-patch": "^3.0.0-1",
+    "json-schema-serializer": "^1.0.0",
+    "ts-brand-json": "^0.1.1"
   },
   "peerDependencies": {
     "rxjs": "^6.6.2",

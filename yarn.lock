@@ -3908,6 +3908,14 @@ json-parse-even-better-errors@^2.3.0:
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
   integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
+json-schema-serializer@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-schema-serializer/-/json-schema-serializer-1.0.0.tgz#1f4fd3321c2c15bb03339eb9dfc803320863a1f2"
+  integrity sha512-U+ipVxTD7HoLuiuEMzKlLOEYvQm8wzkaybT7oPvN8o2ZjvnLtec4VxWBm/9q8X27+IqpxGcD9wTmk6AQqDR3LA==
+  dependencies:
+    benchmark "^2.1.4"
+    ts-node "^9.0.0"
+
 json-schema-traverse@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
@@ -6754,6 +6762,18 @@ trim-off-newlines@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-off-newlines/-/trim-off-newlines-1.0.1.tgz#9f9ba9d9efa8764c387698bcbfeb2c848f11adb3"
   integrity sha1-n5up2e+odkw4dpi8v+sshI8RrbM=
+
+ts-brand-json@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/ts-brand-json/-/ts-brand-json-0.1.1.tgz#3b34bf9aaff5dd8794222973f6b0ea95a7be82c7"
+  integrity sha512-2Lb/g531rUtKBLlXnJDmWbEE+Mzv4SuxNDSVqWB2HHS5AJZ9Yh4bl6wFaNsAqWnhDg0zD3zi/oGhS//cDINQpw==
+  dependencies:
+    ts-brand "^0.0.2"
+
+ts-brand@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/ts-brand/-/ts-brand-0.0.2.tgz#b6cbca6ac94df1050a05844e23944eaeda1738a0"
+  integrity sha512-UhSzWY4On9ZHIj6DKkRYVN/8OaprbLAZ3b/Y2AJwdl6oozSABsQ0PvwDh4vOVdkvOtWQOkIrjctZ1kj8YfF3jA==
 
 ts-jest@^26.4.1:
   version "26.4.1"
