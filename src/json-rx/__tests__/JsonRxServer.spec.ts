@@ -494,6 +494,68 @@ test('stops sending messages after server stop()', async () => {
   expect(send).toHaveBeenCalledTimes(1);
 });
 
+test('can set metadata on error object', async () => {
+  const send = jest.fn();
+  const call: any = jest.fn(() => new Observable(subscriber => {
+    const error = new Error('foo');
+    (error as any).status = 123;
+    (error as any).code = 'bar';
+    (error as any).errno = 456;
+    (error as any).errorId = 'baz';
+    throw error;
+  }));
+  const notify = jest.fn();
+  const server = new JsonRxServer({send, call, notify, bufferTime: 0});
+  server.onMessage([1, 'foo'], undefined);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
+    message: 'foo',
+    status: 123,
+    code: 'bar',
+    errno: 456,
+    errorId: 'baz',
+  });
+});
+
+test('can set metadata on error object partially', async () => {
+  const send = jest.fn();
+  const call: any = jest.fn(() => new Observable(subscriber => {
+    const error = new Error('foo');
+    (error as any).status = 123;
+    (error as any).errorId = 'baz';
+    throw error;
+  }));
+  const notify = jest.fn();
+  const server = new JsonRxServer({send, call, notify, bufferTime: 0});
+  server.onMessage([1, 'foo'], undefined);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
+    message: 'foo',
+    status: 123,
+    errorId: 'baz',
+  });
+});
+
+test('can set metadata on error object partially (2)', async () => {
+  const send = jest.fn();
+  const call: any = jest.fn(() => new Observable(subscriber => {
+    const error = new Error('foo');
+    (error as any).status = 123;
+    throw error;
+  }));
+  const notify = jest.fn();
+  const server = new JsonRxServer({send, call, notify, bufferTime: 0});
+  server.onMessage([1, 'foo'], undefined);
+  await new Promise(r => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
+    message: 'foo',
+    status: 123,
+  });
+});
+
 describe('buffering', () => {
   test('batches messages received within buffering window', async () => {
     const send = jest.fn();

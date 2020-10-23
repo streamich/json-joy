@@ -17,6 +17,23 @@ import {TimedQueue} from './TimedQueue';
 type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
 type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;
 
+interface ErrorLike {
+  message: string;
+  status?: number;
+  code?: string;
+  errno?: number;
+  errorId?: number;
+}
+
+const formatError = (error: ErrorLike): json_string<ErrorLike> => {
+  let json = '{"message":' + asString(error.message);
+  if (typeof error.status === 'number') json += ',"status":' + error.status;
+  if (typeof error.code === 'string') json += ',"code":' + asString(error.code);
+  if (typeof error.errno === 'number') json += ',"errno":' + error.errno;
+  if (typeof error.errorId === 'string') json += ',"errorId":' + asString(error.errorId);
+  return json + '}' as json_string<ErrorLike>;
+};
+
 export interface JsonRxServerParams<Ctx = unknown> {
   /**
    * Method to be called by server when it wants to send a message to the client.
@@ -125,7 +142,7 @@ export class JsonRxServer<Ctx = unknown> {
           this.active.delete(id);
           let message: json_string<MessageError>;
           if (error instanceof Error) {
-            message = '[-1,' + id + ',{"message":' + asString(error.message) + '}]' as json_string<MessageError>;
+            message = '[-1,' + id + ',' + formatError(error) + ']' as json_string<MessageError>;
           } else {
             message = '[-1,' + id + ',' + JSON.stringify(error) + ']' as json_string<MessageError>;
           }
