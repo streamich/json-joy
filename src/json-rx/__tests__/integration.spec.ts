@@ -7,12 +7,12 @@ test('client can talk with server', async () => {
   const server = new JsonRxServer({
     send: (message) =>
       setTimeout(() => {
-        ref.client!.onMessage(message as any);
+        ref.client!.onMessage(JSON.parse(message as any));
       }, 1),
-    call: (method, payload) => {
-      if (method === 'tripple') return Promise.resolve(3 * (payload as number));
+    call: ((method: any, payload: any) => {
+      if (method === 'tripple') return Promise.resolve(JSON.stringify(3 * (payload as number)));
       else throw new Error('Unknown method');
-    },
+    }) as any,
     notify: () => {},
   });
   const client = new JsonRxClient({
@@ -33,12 +33,12 @@ test('client can talk with server, parallel requests', async () => {
   const server = new JsonRxServer({
     send: (message) =>
       setTimeout(() => {
-        ref.client!.onMessage(message as any);
+        ref.client!.onMessage(JSON.parse(message as any));
       }, 1),
-    call: (method, payload) => {
+    call: ((method: any, payload: any) => {
       if (method === 'tripple') return Promise.resolve(3 * (payload as number));
       else throw new Error('Unknown method');
-    },
+    }) as any,
     notify: () => {},
   });
   const client = new JsonRxClient({
@@ -62,12 +62,12 @@ test('server returns "too many subscriptions" error on many parallel requests', 
     maxActiveSubscriptions: 4,
     send: (message) =>
       setTimeout(() => {
-        ref.client!.onMessage(message as any);
+        ref.client!.onMessage(JSON.parse(message as any));
       }, 1),
-    call: (method, payload) => {
+    call: ((method: any, payload: any) => {
       if (method === 'tripple') return new Promise(r => setTimeout(() => r(3 * (payload as number)), 5));
       else throw new Error('Unknown method');
-    },
+    }) as any,
     notify: () => {},
   });
   const client = new JsonRxClient({
