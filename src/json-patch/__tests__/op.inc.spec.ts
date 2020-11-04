@@ -2,6 +2,55 @@ import {applyPatch} from '../patch';
 import {OperationInc} from '../types';
 
 describe('inc', () => {
+  test('casts values and them increments them', () => {
+    const doc = {
+      val1: true,
+      val2: false,
+      val3: 1,
+      val4: 0,
+    };
+    const operations: OperationInc[] = [
+      {op: 'inc', path: '/val1', inc: 1},
+      {op: 'inc', path: '/val2', inc: 1},
+      {op: 'inc', path: '/val3', inc: 1},
+      {op: 'inc', path: '/val4', inc: 1},
+    ];
+    const result = applyPatch(doc, operations, true).doc;
+    expect(result).toEqual({
+      val1: 2,
+      val2: 1,
+      val3: 2,
+      val4: 1,
+    });
+  });
+
+  test('can use arbitrary increment value, and can decrement', () => {
+    const doc = {
+      foo: 1,
+    };
+    const operations: OperationInc[] = [
+      {op: 'inc', path: '/foo', inc: 10},
+      {op: 'inc', path: '/foo', inc: -3},
+    ];
+    const result = applyPatch(doc, operations, true).doc;
+    expect(result).toEqual({
+      foo: 8
+    });
+  });
+
+  test('increment can be a floating point number', () => {
+    const doc = {
+      foo: 1,
+    };
+    const operations: OperationInc[] = [
+      {op: 'inc', path: '/foo', inc: .1},
+    ];
+    const result = applyPatch(doc, operations, true).doc;
+    expect(result).toEqual({
+      foo: 1.1
+    });
+  });
+
   describe('root', () => {
     test('increments from 0 to 5', () => {
       const operation: OperationInc = {

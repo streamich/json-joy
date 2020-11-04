@@ -2,6 +2,28 @@ import {applyPatch} from '../patch';
 import {OperationFlip} from '../types';
 
 describe('flip', () => {
+  test('casts values and them flips them', () => {
+    const doc = {
+      val1: true,
+      val2: false,
+      val3: 1,
+      val4: 0,
+    };
+    const operations: OperationFlip[] = [
+      {op: 'flip', path: '/val1'},
+      {op: 'flip', path: '/val2'},
+      {op: 'flip', path: '/val3'},
+      {op: 'flip', path: '/val4'},
+    ];
+    const result = applyPatch(doc, operations, true).doc;
+    expect(result).toEqual({
+      val1: false,
+      val2: true,
+      val3: false,
+      val4: true,
+    });
+  });
+
   describe('root', () => {
     test('flips true to false', () => {
       const operation: OperationFlip = {
