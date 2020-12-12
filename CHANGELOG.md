@@ -1,3 +1,11 @@
+# [2.1.0](https://github.com/streamich/json-joy/compare/v2.0.1...v2.1.0) (2020-12-12)
+
+
+### Features
+
+* 🎸 add JSON Patch CLI script ([dabd4d8](https://github.com/streamich/json-joy/commit/dabd4d84760be52373178a2630486a6dd4341aa9))
+* 🎸 add JSON Patch CLI target ([db058cc](https://github.com/streamich/json-joy/commit/db058cc1a0d9e0ec0bd8933cad08ae688afa4cae))
+
 ## [2.0.1](https://github.com/streamich/json-joy/compare/v2.0.0...v2.0.1) (2020-12-12)
 
 
