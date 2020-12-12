@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/streamich/json-joy/compare/v2.0.0...v2.0.1) (2020-12-12)
+
+
+### Performance Improvements
+
+* ⚡️ update deps ([18d9b4e](https://github.com/streamich/json-joy/commit/18d9b4e8fd621d1bc74097dfea97058799c7b1f1))
+
 # [2.0.0](https://github.com/streamich/json-joy/compare/v1.9.0...v2.0.0) (2020-10-23)
 
 
