@@ -14,6 +14,9 @@
   },
   "main": "lib/index.js",
   "module": "esm/index.js",
+  "bin": {
+    "json-patch": "./es6/json-cli/patch"
+  },
   "files": [
     "lib/",
     "es6/",
