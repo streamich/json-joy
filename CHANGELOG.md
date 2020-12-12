@@ -1,3 +1,11 @@
+# [2.2.0](https://github.com/streamich/json-joy/compare/v2.1.0...v2.2.0) (2020-12-12)
+
+
+### Features
+
+* 🎸 add test CLI tool docs ([0ea059c](https://github.com/streamich/json-joy/commit/0ea059c3b09defa25e69779e190c44abadaa26db))
+* 🎸 add testing script ([3b68ea6](https://github.com/streamich/json-joy/commit/3b68ea686e12c234ec896f9b2899e2d3fc5c6766))
+
 # [2.1.0](https://github.com/streamich/json-joy/compare/v2.0.1...v2.1.0) (2020-12-12)
 
 
