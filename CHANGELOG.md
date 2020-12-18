@@ -1,3 +1,10 @@
+## [2.3.3](https://github.com/streamich/json-joy/compare/v2.3.2...v2.3.3) (2020-12-18)
+
+
+### Bug Fixes
+
+* 🐛 use binary paths in /bin folder ([0bfcf8f](https://github.com/streamich/json-joy/commit/0bfcf8f86647d2289fdffd1b199677fc353985a7))
+
 ## [2.3.2](https://github.com/streamich/json-joy/compare/v2.3.1...v2.3.2) (2020-12-18)
 
 
