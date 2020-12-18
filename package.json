@@ -16,8 +16,9 @@
   "module": "esm/index.js",
   "bin": {
     "json-pointer": "./es6/json-cli/json-pointer",
-    "json-patch": "./es6/json-cli/patch",
-    "json-patch-test": "./es6/json-cli/test"
+    "json-pointer-test": "./es6/json-cli/json-pointer-test",
+    "json-patch": "./es6/json-cli/json-patch",
+    "json-patch-test": "./es6/json-cli/json-patch-test"
   },
   "files": [
     "lib/",
@@ -36,6 +37,7 @@
     "test:all": "yarn test && yarn test:pointer",
     "test": "jest --no-cache --config='jest.config.js'",
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
+    "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "release": "semantic-release"
   },
   "keywords": [],

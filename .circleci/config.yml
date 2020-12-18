@@ -24,8 +24,12 @@ refs:
         command: yarn test --maxWorkers 2
     - &TestJsonPointer
       run:
-        name: Test JSON Pointer
+        name: Test JSON Pointer CLI
         command: yarn test:pointer
+    - &TestJsonPatch
+      run:
+        name: Test JSON Patch CLI
+        command: yarn test:patch
     - &Post_to_dev_null
       run:
         name: 'Post to Slack #dev-null'
@@ -41,6 +45,7 @@ jobs:
       - *Build
       - *Test
       - *TestJsonPointer
+      - *TestJsonPatch
       - *Post_to_dev_null
 
   master:
@@ -52,6 +57,7 @@ jobs:
       - *Build
       - *Test
       - *TestJsonPointer
+      - *TestJsonPatch
       - *Post_to_dev_null
       - run:
           name: Release
@@ -67,6 +73,7 @@ jobs:
       - *Build
       - *Test
       - *TestJsonPointer
+      - *TestJsonPatch
       - *Post_to_dev_null
       - run:
           name: Post to Slack on FAILURE
