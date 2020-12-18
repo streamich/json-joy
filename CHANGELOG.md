@@ -1,3 +1,10 @@
+## [2.3.2](https://github.com/streamich/json-joy/compare/v2.3.1...v2.3.2) (2020-12-18)
+
+
+### Bug Fixes
+
+* 🐛 used extensions in binary references ([39dea15](https://github.com/streamich/json-joy/commit/39dea155d46ade64a4cfee316324a07484fbdec4))
+
 ## [2.3.1](https://github.com/streamich/json-joy/compare/v2.3.0...v2.3.1) (2020-12-18)
 
 
