@@ -9,7 +9,7 @@ JSON utilities. In this package:
 - Implements *operational transformations* for JSON Patch operations.
 - Implements server and client classes for [__JSON-Rx__][json-rx] protocol. {[Docs 🚬](./docs/json-rx.md)}
 - Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
-- Exposes JSON Patch CLI utility. {[Docs ⛑](./docs/json-cli.md)}
+- CLI utilities. {[Docs ⛑](./docs/json-cli.md)}
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902

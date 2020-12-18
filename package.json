@@ -15,8 +15,10 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "bin": {
-    "json-patch": "./es6/json-cli/patch",
-    "json-patch-test": "./es6/json-cli/test"
+    "json-pointer": "./es6/json-cli/json-pointer",
+    "json-pointer-test": "./es6/json-cli/json-pointer-test",
+    "json-patch": "./es6/json-cli/json-patch",
+    "json-patch-test": "./es6/json-cli/json-patch-test"
   },
   "files": [
     "lib/",
@@ -32,7 +34,10 @@
     "build:es6": "tsc --module commonjs --target es6 --outDir es6",
     "build:esm": "tsc --module ESNext --target ESNEXT --outDir esm",
     "build": "yarn build:cjs && yarn build:es6 && yarn build:esm",
+    "test:all": "yarn test && yarn test:pointer",
     "test": "jest --no-cache --config='jest.config.js'",
+    "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
+    "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "release": "semantic-release"
   },
   "keywords": [],
