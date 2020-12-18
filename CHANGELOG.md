@@ -1,3 +1,10 @@
+## [2.3.5](https://github.com/streamich/json-joy/compare/v2.3.4...v2.3.5) (2020-12-18)
+
+
+### Bug Fixes
+
+* 🐛 move fast-deep-equal to dependencies ([59a8459](https://github.com/streamich/json-joy/commit/59a84594df79984a0c3cd59a7b42d04cf90fb285))
+
 ## [2.3.4](https://github.com/streamich/json-joy/compare/v2.3.3...v2.3.4) (2020-12-18)
 
 
