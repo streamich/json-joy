@@ -23,7 +23,7 @@ Use
 Example
 
 ```
-'{"foo": "bar"}' | json-pointer /foo
+echo '{"foo": "bar"}' | json-pointer /foo
 "bar"
 
 ```
@@ -33,13 +33,13 @@ Example
 Use
 
 ```
-json-patch <doc> <patch>
+<json> | json-patch <patch>
 ```
 
 Example
 
 ```
-json-patch '{"foo":"bar"}' '[{"op":"add","path":"/foo","value":"baz"}]'
+echo '[{"op":"add","path":"/foo","value":"baz"}]' | json-patch '{"foo":"bar"}'
 {
     "foo": "baz"
 }
@@ -48,7 +48,9 @@ json-patch '{"foo":"bar"}' '[{"op":"add","path":"/foo","value":"baz"}]'
 
 ## JSON Pointer CLI tests
 
-Tests `json-pointer` CLI. Useful for testing `json-joy` implementation in different languages.
+Tests `json-pointer` CLI. Useful for testing `json-joy` implementation in
+different languages. It expects a single argument, which is a path to
+`json-pointer` executable. It will run a test suite through that executable.
 
 Use
 
@@ -68,6 +70,14 @@ json-pointer-test json-pointer
 A command line tool for testing JSON Patch implementations. It expects a single
 argument, which is a path to `json-patch` executable. It will run a test suite
 through that executable.
+
+Use
+
+```
+json-patch-test <path_to_json_patch_cli>
+```
+
+Example
 
 ```
 json-patch-test json-patch
