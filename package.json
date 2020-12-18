@@ -15,10 +15,10 @@
   "main": "lib/index.js",
   "module": "esm/index.js",
   "bin": {
-    "json-pointer": "./es6/json-cli/json-pointer.js",
-    "json-pointer-test": "./es6/json-cli/json-pointer-test.js",
-    "json-patch": "./es6/json-cli/json-patch.js",
-    "json-patch-test": "./es6/json-cli/json-patch-test.js"
+    "json-pointer": "./bin/json-pointer.js",
+    "json-pointer-test": "./bin/json-pointer-test.js",
+    "json-patch": "./bin/json-patch.js",
+    "json-patch-test": "./bin/json-patch-test.js"
   },
   "files": [
     "lib/",
