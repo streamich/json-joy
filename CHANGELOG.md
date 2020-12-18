@@ -1,3 +1,10 @@
+## [2.3.4](https://github.com/streamich/json-joy/compare/v2.3.3...v2.3.4) (2020-12-18)
+
+
+### Bug Fixes
+
+* 🐛 remove peer dependencies ([e8725aa](https://github.com/streamich/json-joy/commit/e8725aaa57fb74dfb322f3bde8b4951b79febc3e))
+
 ## [2.3.3](https://github.com/streamich/json-joy/compare/v2.3.2...v2.3.3) (2020-12-18)
 
 
