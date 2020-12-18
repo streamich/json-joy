@@ -34,6 +34,7 @@
     "build:esm": "tsc --module ESNext --target ESNEXT --outDir esm",
     "build": "yarn build:cjs && yarn build:es6 && yarn build:esm",
     "test": "jest --no-cache --config='jest.config.js'",
+    "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "release": "semantic-release"
   },
   "keywords": [],
