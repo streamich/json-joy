@@ -1,3 +1,15 @@
+# [2.3.0](https://github.com/streamich/json-joy/compare/v2.2.0...v2.3.0) (2020-12-18)
+
+
+### Features
+
+* 🎸 add json-pointer binary to package ([a9c77f9](https://github.com/streamich/json-joy/commit/a9c77f94de4852a729dc5b12c5f22b4547a1c916))
+* 🎸 add json-pointer CLI ([239da00](https://github.com/streamich/json-joy/commit/239da0034bc5638225790add19c30f1df4e5d0c8))
+* 🎸 improve JSON Patch CLI testing ([942cf1b](https://github.com/streamich/json-joy/commit/942cf1bd509320338c8df2e62277c595987626e5))
+* 🎸 improve json-pointer testing CLI ([498b0a8](https://github.com/streamich/json-joy/commit/498b0a8de63617d672a3e981b83fc9c45b489e6c))
+* 🎸 improve json-pointer tests ([89bc2f6](https://github.com/streamich/json-joy/commit/89bc2f68907ccc96cb9a53798a8e65f27a868299))
+* 🎸 normalize CLI tool names ([97a27eb](https://github.com/streamich/json-joy/commit/97a27eb46c102cc022859b9c50cc5dd9d2e81954))
+
 # [2.2.0](https://github.com/streamich/json-joy/compare/v2.1.0...v2.2.0) (2020-12-12)
 
 
