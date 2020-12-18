@@ -42,8 +42,8 @@
   },
   "keywords": [],
   "dependencies": {
-    "json-schema-serializer": "^1.0.0",
-    "ts-brand-json": "^0.1.1"
+    "json-schema-serializer": "1.0.1",
+    "ts-brand-json": "0.1.1"
   },
   "peerDependencies": {
     "rxjs": "^6.6.3",
