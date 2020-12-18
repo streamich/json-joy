@@ -43,11 +43,9 @@
   "keywords": [],
   "dependencies": {
     "json-schema-serializer": "1.0.1",
-    "ts-brand-json": "0.1.1"
-  },
-  "peerDependencies": {
-    "rxjs": "^6.6.3",
-    "tslib": "^2.0.3"
+    "ts-brand-json": "0.1.1",
+    "rxjs": "6",
+    "tslib": "2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^5.0.1",
