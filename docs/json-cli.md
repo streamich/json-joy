@@ -39,7 +39,7 @@ Use
 Example
 
 ```
-echo '[{"op":"add","path":"/foo","value":"baz"}]' | json-patch '{"foo":"bar"}'
+echo '{"foo":"bar"}' | json-patch '[{"op":"add","path":"/foo","value":"baz"}]'
 {
     "foo": "baz"
 }
