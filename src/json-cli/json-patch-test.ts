@@ -37,9 +37,14 @@ testSuites.forEach((suite) => {
     const testName = test.comment || test.error || JSON.stringify(test.patch);
     if (test.expected) {
       test.patch.forEach(validateOperation);
-      const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input: JSON.stringify(test.doc)});
-      const result = JSON.parse(stdout.toString());
-      const isCorrect = equal(result, test.expected);
+      let isCorrect = false;
+      try {
+        const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input: JSON.stringify(test.doc)});
+        const result = JSON.parse(stdout.toString());
+        isCorrect = equal(result, test.expected);
+      } catch {
+        isCorrect = false;
+      }
       if (isCorrect) {
         cntCorrect++
         console.log('✅ ' + testName);
