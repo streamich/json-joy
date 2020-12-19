@@ -1,3 +1,10 @@
+## [2.3.6](https://github.com/streamich/json-joy/compare/v2.3.5...v2.3.6) (2020-12-19)
+
+
+### Bug Fixes
+
+* 🐛 don't fail test suite on invalid output ([f91576b](https://github.com/streamich/json-joy/commit/f91576bba0bd8281fbace09828d580c215f2c204))
+
 ## [2.3.5](https://github.com/streamich/json-joy/compare/v2.3.4...v2.3.5) (2020-12-18)
 
 
