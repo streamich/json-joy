@@ -27,7 +27,8 @@ testSuites.forEach((suite) => {
       test.patch.forEach(validateOperation);
       let isCorrect = false;
       try {
-        const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input: JSON.stringify(test.doc)});
+        const input = JSON.stringify(test.doc);
+        const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
         const result = JSON.parse(stdout.toString());
         isCorrect = equal(result, test.expected);
       } catch {
@@ -41,7 +42,8 @@ testSuites.forEach((suite) => {
         console.error('🛑 ' + testName);
       }
     } else if (test.error) {
-      const {status, stdout, stderr} = spawnSync(bin, [JSON.stringify(test.doc), JSON.stringify(test.patch)]);
+      const input = JSON.stringify(test.doc);
+      const {status, stdout, stderr} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
       let isCorrect = true;
       if (status === 0) isCorrect = false;
       const output = stderr.toString().trim() || stdout.toString().trim();
@@ -60,6 +62,8 @@ testSuites.forEach((suite) => {
     } else {
       throw new Error('invalid test case');
     }
+
+    if (cntFailed) process.exit(1);
   });
 });
 
