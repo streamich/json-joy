@@ -9,12 +9,12 @@ describe('automated', () => {
         if (test.disabled) return;
         const testName = test.comment || test.error || JSON.stringify(test.patch);
         if (test.expected !== undefined) {
-          it('should succeed: ' + testName, () => {
+          it(testName, () => {
             const {doc} = applyPatch(test.doc, test.patch, true);
             expect(doc).toEqual(test.expected);
           });
         } else if (test.error) {
-          it('should throw an error: ' + testName, () => {
+          it(testName, () => {
             try {
               test.patch.forEach(validateOperation);
               applyPatch(test.doc, test.patch, true);
