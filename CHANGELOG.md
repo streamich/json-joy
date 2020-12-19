@@ -1,3 +1,16 @@
+# [2.4.0](https://github.com/streamich/json-joy/compare/v2.3.6...v2.4.0) (2020-12-19)
+
+
+### Bug Fixes
+
+* 🐛 fix json-patch-tests tests ([0c7591c](https://github.com/streamich/json-joy/commit/0c7591c339102148f0aa2a56b0b91be7b81916d4))
+
+
+### Features
+
+* 🎸 improve CLI JSON patch tests ([19b2af7](https://github.com/streamich/json-joy/commit/19b2af7eb8a76f9b79e19b7016fd12ed8a90bec6))
+* 🎸 improve JSON Patch tests ([b86a0ea](https://github.com/streamich/json-joy/commit/b86a0eaa9fee89fbe603e0a27c63408277891fcd))
+
 ## [2.3.6](https://github.com/streamich/json-joy/compare/v2.3.5...v2.3.6) (2020-12-19)
 
 
