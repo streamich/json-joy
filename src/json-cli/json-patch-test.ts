@@ -1,9 +1,8 @@
 /* tslint:disable */
 
 import {spawnSync} from 'child_process';
-import tests_json from './test/tests.json';
-import spec_json from './test/spec.json';
 import {validateOperation} from '../json-patch';
+import { testSuites } from './test/suites';
 const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
@@ -13,25 +12,14 @@ if (!bin) {
   process.exit(1);
 }
 
-const testSuites = [
-  {
-    name: 'tests.json',
-    tests: tests_json,
-  },
-  {
-    name: 'spec.json',
-    tests: spec_json,
-  },
-];
-
-console.log('');
-console.log(`Running JSON Patch tests.`);
-console.log('');
-
 let cntCorrect = 0;
 let cntFailed = 0;
 
 testSuites.forEach((suite) => {
+  console.log('');
+  console.log(suite.name);
+  console.log('');
+
   suite.tests.forEach((test: any) => {
     if (test.disabled) return;
     const testName = test.comment || test.error || JSON.stringify(test.patch);
@@ -56,10 +44,10 @@ testSuites.forEach((suite) => {
       const {status} = spawnSync(bin, [JSON.stringify(test.doc), JSON.stringify(test.patch)]);
       if (status === 0) {
         cntFailed++;
-        console.error('🛑 should fail: ' + testName);
+        console.error('🛑 ' + testName);
       } else {
         cntCorrect++;
-        console.log('✅ should fail: ' + testName);
+        console.log('✅ ' + testName);
       }
     } else {
       throw new Error('invalid test case');
