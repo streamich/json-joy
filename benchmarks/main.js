@@ -47,7 +47,7 @@ suite
     applyPatchFastJsonPatch(doc2, patch, false, true);
   })
   .on('cycle', function(event) {
-    console.log(String(event.target));
+    console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
   })
   .on('complete', function() {
     console.log('Fastest is ' + this.filter('fastest').map('name'));
