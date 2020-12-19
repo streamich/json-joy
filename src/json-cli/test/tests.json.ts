@@ -161,14 +161,14 @@ const testCases: TestCase[] = [
     comment: 'Test with bad number should fail',
     doc: ['foo', 'bar'],
     patch: [{op: 'test', path: '/1e0', value: 'bar'}],
-    error: "test op shouldn't get array element 1",
+    error: "INVALID_INDEX",
   },
 
   {
     comment: 'First level array, inserting using string index',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/bar', value: 42}],
-    error: 'OPERATION_INCOMPATIBLE'
+    error: 'INVALID_INDEX'
   },
 
   {
@@ -329,7 +329,7 @@ const testCases: TestCase[] = [
     comment: 'Test operation shoul not match object for array',
     doc: {foo: {bar: [1, 2, 5, 4]}},
     patch: [{op: 'test', path: '/foo', value: [1, 2]}],
-    error: 'test op should fail'
+    error: 'TEST'
   },
 
   {comment: 'Whole document', doc: {foo: 1}, patch: [{op: 'test', path: '', value: {foo: 1}}], disabled: true},
@@ -430,7 +430,7 @@ const testCases: TestCase[] = [
     comment: 'Test remove with bad number should fail',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'remove', path: '/baz/1e0/qux'}],
-    error: "remove op shouldn't remove from array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
@@ -441,7 +441,7 @@ const testCases: TestCase[] = [
   },
 
   {
-    comment: 'Test repeated removes',
+    comment: 'Repeated removes',
     doc: [1, 2, 3, 4],
     patch: [
       {op: 'remove', path: '/1'},
@@ -451,66 +451,66 @@ const testCases: TestCase[] = [
   },
 
   {
-    comment: 'Test remove with bad index should fail',
+    comment: 'Remove with bad index should fail',
     doc: [1, 2, 3, 4],
     patch: [{op: 'remove', path: '/1e0'}],
-    error: "remove op shouldn't remove from array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: 'Test replace with bad number should fail',
+    comment: 'Replace with bad number should fail',
     doc: [''],
     patch: [{op: 'replace', path: '/1e0', value: false}],
-    error: "replace op shouldn't replace in array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
     comment: 'Test copy with bad number should fail',
     doc: {baz: [1, 2, 3], bar: 1},
     patch: [{op: 'copy', from: '/baz/1e0', path: '/boo'}],
-    error: "copy op shouldn't work with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
     comment: 'Test move with bad number should fail',
     doc: {foo: 1, baz: [1, 2, 3, 4]},
     patch: [{op: 'move', from: '/baz/1e0', path: '/foo'}],
-    error: "move op shouldn't work with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
     comment: 'Test add with bad number should fail',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/1e0', value: 'bar'}],
-    error: "add op shouldn't add to array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
     comment: "Missing 'value' parameter to test",
     doc: [null],
     patch: [{op: 'test', path: '/0'} as any],
-    error: "missing 'value' parameter",
+    error: "OP_VALUE_MISSING",
   },
 
   {
     comment: 'Missing value parameter to test - where undef is falsy',
     doc: [false],
     patch: [{op: 'test', path: '/0'} as any],
-    error: "missing 'value' parameter",
+    error: "OP_VALUE_MISSING",
   },
 
   {
     comment: 'Missing from parameter to copy',
     doc: [1],
     patch: [{op: 'copy', path: '/-'} as any],
-    error: "missing 'from' parameter",
+    error: "OP_FROM_INVALID",
   },
 
   {
     comment: 'Unrecognized op should fail',
     doc: {foo: 1},
     patch: [{op: 'spam', path: '/foo', value: 1} as any],
-    error: "Unrecognized op 'spam'",
+    error: "OP_UNKNOWN",
   },
 ];
 

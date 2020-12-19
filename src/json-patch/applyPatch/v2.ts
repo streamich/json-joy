@@ -18,7 +18,7 @@ function applyOp(doc: unknown, operation: Operation): OpResult {
       const [obj, key] = findByPointer(operation.path as string, doc);
       switch (typeof key) {
         case 'number': {
-          if (key > (obj as any).length) throw new Error('OUT_OF_BOUNDS');
+          if (key > (obj as any).length) throw new Error('INVALID_INDEX');
           if (key === (obj as any).length) (obj as any).push(operation.value);
           else (obj as any).splice(key, 0, operation.value);
           break;

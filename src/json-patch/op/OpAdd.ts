@@ -20,7 +20,7 @@ export class OpAdd extends AbstractOp<'add'> {
     else {
       const length = obj.length;
       if (key < length) obj.splice(key, 0, this.value);
-      else if (key > length) throw new Error('OUT_OF_BOUNDS');
+      else if (key > length) throw new Error('INVALID_INDEX');
       else obj.push(this.value);
     }
     return {doc, old: val}

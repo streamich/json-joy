@@ -5,7 +5,7 @@ const testCases: TestCase[] = [
     comment: '4.1. Add with missing object',
     doc: {q: {bar: 2}},
     patch: [{op: 'add', path: '/a/b', value: 1}],
-    error: 'path /a does not exist -- missing objects are not created recursively',
+    error: 'NOT_FOUND',
   },
 
   {
@@ -123,7 +123,7 @@ const testCases: TestCase[] = [
       baz: 'qux',
     },
     patch: [{op: 'test', path: '/baz', value: 'bar'}],
-    error: 'string not equivalent',
+    error: 'TEST',
   },
 
   {
@@ -158,7 +158,7 @@ const testCases: TestCase[] = [
       foo: 'bar',
     },
     patch: [{op: 'add', path: '/baz/bat', value: 'qux'}],
-    error: 'add to a non-existent target',
+    error: 'NOT_FOUND',
   },
 
   {
@@ -194,7 +194,7 @@ const testCases: TestCase[] = [
       '~1': 10,
     },
     patch: [{op: 'test', path: '/~01', value: '10'}],
-    error: 'number is not equal to string',
+    error: 'TEST',
   },
 
   {

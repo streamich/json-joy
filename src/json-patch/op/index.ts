@@ -175,6 +175,6 @@ export const operationToPredicateOp = (op: Operation): PredicateOp => {
         op.apply.map((x) => operationToPredicateOp({...x, path: [...op.path, ...toPath(x.path)]})),
       );
     default:
-      throw new Error('UNKNOWN_OP');
+      throw new Error('OP_UNKNOWN');
   }
 };

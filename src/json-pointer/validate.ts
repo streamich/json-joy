@@ -3,8 +3,8 @@ import {Path} from './util';
 export const validateJsonPointer = (pointer: string | Path) => {
   if (typeof pointer === 'string') {
     if (pointer) {
-      if (pointer[0] !== '/') throw new Error('JSON pointer must start with forward slash.');
-      if (pointer.length > 1024) throw new Error('Pointer too long.');
+      if (pointer[0] !== '/') throw new Error('POINTER_INVALID');
+      if (pointer.length > 1024) throw new Error('POINTER_TOO_LONG');
     }
   } else validatePath(pointer);
 };

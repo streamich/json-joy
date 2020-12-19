@@ -40,8 +40,10 @@ export const validateOperations = (ops: Operation[], allowMatchesOp: boolean = f
 };
 
 export const validateOperation = (op: Operation, allowMatchesOp: boolean) => {
-  if (!op || typeof op !== 'object') throw new Error('Operation must be an object.');
-  validateJsonPointer(op.path);
+  if (!op || typeof op !== 'object') throw new Error('OP_INVALID');
+  const path = op.path;
+  if (typeof path !== 'string') throw new Error('OP_PATH_INVALID');
+  validateJsonPointer(path);
   switch (op.op) {
     case 'add':
       validateOperationAdd(op);
@@ -84,7 +86,7 @@ export const validateOperation = (op: Operation, allowMatchesOp: boolean) => {
 };
 
 export const validatePredicateOperation = (op: PredicateOperation, allowMatchesOp: boolean) => {
-  if (!op || typeof op !== 'object') throw new Error('Operation must be an object.');
+  if (!op || typeof op !== 'object') throw new Error('OP_INVALID');
   validateJsonPointer(op.path);
   switch (op.op) {
     case 'test':
@@ -130,7 +132,7 @@ export const validatePredicateOperation = (op: PredicateOperation, allowMatchesO
       for (const predicate of op.apply) validatePredicateOperation(predicate, allowMatchesOp);
       break;
     default:
-      throw new Error('Invalid operation code.');
+      throw new Error('OP_UNKNOWN');
   }
 };
 
@@ -147,12 +149,16 @@ const validateOperationReplace = (op: OperationReplace) => {
 };
 
 const validateOperationCopy = (op: OperationCopy) => {
-  validateJsonPointer(op.from);
+  const from = op.from;
+  if (typeof from !== 'string') throw new Error('OP_FROM_INVALID');
+  validateJsonPointer(from);
 };
 
 const validateOperationMove = (op: OperationMove) => {
-  validateJsonPointer(op.from);
-  const {path, from} = op;
+  const from = op.from;
+  if (typeof from !== 'string') throw new Error('OP_FROM_INVALID');
+  validateJsonPointer(from);
+  const {path} = op;
   if (path.indexOf(from + '/') === 0) throw new Error('Cannot move into own children.');
 };
 
@@ -229,7 +235,7 @@ const validateOperationPredicateWithValueAndCase = (
 };
 
 const validateValue = (value: unknown) => {
-  if (value === undefined) throw new Error('Invalid operation "value".');
+  if (value === undefined) throw new Error('OP_VALUE_MISSING');
 };
 
 const validateValueString = (value: string) => {

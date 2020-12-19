@@ -33,7 +33,7 @@ describe('apply()', () => {
 
   test('when adding element past array boundary, throws', () => {
     const op = new OpCopy(toPath('/a/100'), toPath('/source'));
-    expect(() => op.apply({a: [0], source: 123})).toThrowErrorMatchingInlineSnapshot(`"OUT_OF_BOUNDS"`);
+    expect(() => op.apply({a: [0], source: 123})).toThrowErrorMatchingInlineSnapshot(`"INVALID_INDEX"`);
   });
 
   test('can copy parent into child (deal with recursive reference)', () => {

@@ -23,7 +23,7 @@ testSuites.forEach((suite) => {
   suite.tests.forEach((test: any) => {
     if (test.disabled) return;
     const testName = test.comment || test.error || JSON.stringify(test.patch);
-    if (test.expected) {
+    if (test.expected !== undefined) {
       test.patch.forEach(validateOperation);
       let isCorrect = false;
       try {
@@ -40,11 +40,19 @@ testSuites.forEach((suite) => {
         cntFailed++;
         console.error('🛑 ' + testName);
       }
-    } else if (test.error || test.patch[0].op === 'test') {
-      const {status} = spawnSync(bin, [JSON.stringify(test.doc), JSON.stringify(test.patch)]);
-      if (status === 0) {
+    } else if (test.error) {
+      const {status, stdout, stderr} = spawnSync(bin, [JSON.stringify(test.doc), JSON.stringify(test.patch)]);
+      let isCorrect = true;
+      if (status === 0) isCorrect = false;
+      const output = stderr.toString().trim() || stdout.toString().trim();
+      if (output !== test.error) isCorrect = false;
+      if (!isCorrect) {
         cntFailed++;
         console.error('🛑 ' + testName);
+        if (output !== test.error) {
+          console.error('Expected: ', test.error);
+          console.error('Received: ', output);
+        }
       } else {
         cntCorrect++;
         console.log('✅ ' + testName);
