@@ -1,19 +1,6 @@
 import {applyPatch} from '../patch';
-
-import tests_json from './tests.json';
-import spec_json from './spec.json';
-import {validateOperation} from '../validate';
-
-const testSuites = [
-  {
-    name: 'tests.json',
-    tests: tests_json,
-  },
-  {
-    name: 'spec.json',
-    tests: spec_json,
-  },
-];
+import {testSuites} from '../../json-cli/test/suites'
+import { validateOperation } from '../validate';
 
 describe('automated', () => {
   testSuites.forEach((suite) => {
@@ -21,18 +8,21 @@ describe('automated', () => {
       suite.tests.forEach((test: any) => {
         if (test.disabled) return;
         const testName = test.comment || test.error || JSON.stringify(test.patch);
-        if (test.expected) {
-          it('should succeed: ' + testName, () => {
-            test.patch.forEach(validateOperation);
+        if (test.expected !== undefined) {
+          it(testName, () => {
             const {doc} = applyPatch(test.doc, test.patch, true);
             expect(doc).toEqual(test.expected);
           });
-        } else if (test.error || test.patch[0].op === 'test') {
-          it('should throw an error: ' + testName, () => {
-            expect(() => {
+        } else if (test.error) {
+          it(testName, () => {
+            try {
               test.patch.forEach(validateOperation);
               applyPatch(test.doc, test.patch, true);
-            }).toThrow();
+            } catch (error) {
+              const output = typeof error === 'string' ? error : (error instanceof Error ? error.message : String(error));
+              expect(output).toBe(test.error);
+            }
+            
           });
         } else throw new Error('invalid test case');
       });

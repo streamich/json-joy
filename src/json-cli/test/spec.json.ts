@@ -1,13 +1,15 @@
-export default [
+import { TestCase } from "./types";
+
+const testCases: TestCase[] = [
   {
-    comment: '4.1. add with missing object',
+    comment: '4.1. Add with missing object',
     doc: {q: {bar: 2}},
     patch: [{op: 'add', path: '/a/b', value: 1}],
-    error: 'path /a does not exist -- missing objects are not created recursively',
+    error: 'NOT_FOUND',
   },
 
   {
-    comment: 'A.1.  Adding an Object Member',
+    comment: 'A.1. Adding an object member',
     doc: {
       foo: 'bar',
     },
@@ -19,7 +21,7 @@ export default [
   },
 
   {
-    comment: 'A.2.  Adding an Array Element',
+    comment: 'A.2. Adding an array element',
     doc: {
       foo: ['bar', 'baz'],
     },
@@ -30,7 +32,7 @@ export default [
   },
 
   {
-    comment: 'A.3.  Removing an Object Member',
+    comment: 'A.3. Removing an object member',
     doc: {
       baz: 'qux',
       foo: 'bar',
@@ -42,7 +44,7 @@ export default [
   },
 
   {
-    comment: 'A.4.  Removing an Array Element',
+    comment: 'A.4. Removing an array element',
     doc: {
       foo: ['bar', 'qux', 'baz'],
     },
@@ -53,7 +55,7 @@ export default [
   },
 
   {
-    comment: 'A.5.  Replacing a Value',
+    comment: 'A.5. Replacing a value',
     doc: {
       baz: 'qux',
       foo: 'bar',
@@ -66,7 +68,7 @@ export default [
   },
 
   {
-    comment: 'A.6.  Moving a Value',
+    comment: 'A.6. Moving a value',
     doc: {
       foo: {
         bar: 'baz',
@@ -89,7 +91,7 @@ export default [
   },
 
   {
-    comment: 'A.7.  Moving an Array Element',
+    comment: 'A.7. Moving an array element',
     doc: {
       foo: ['all', 'grass', 'cows', 'eat'],
     },
@@ -100,7 +102,7 @@ export default [
   },
 
   {
-    comment: 'A.8.  Testing a Value: Success',
+    comment: 'A.8. Testing a value: success',
     doc: {
       baz: 'qux',
       foo: ['a', 2, 'c'],
@@ -116,16 +118,16 @@ export default [
   },
 
   {
-    comment: 'A.9.  Testing a Value: Error',
+    comment: 'A.9. Testing a value: error',
     doc: {
       baz: 'qux',
     },
     patch: [{op: 'test', path: '/baz', value: 'bar'}],
-    error: 'string not equivalent',
+    error: 'TEST',
   },
 
   {
-    comment: 'A.10.  Adding a nested Member Object',
+    comment: 'A.10. Adding a nested member object',
     doc: {
       foo: 'bar',
     },
@@ -139,11 +141,11 @@ export default [
   },
 
   {
-    comment: 'A.11.  Ignoring Unrecognized Elements',
+    comment: 'A.11. Ignoring unrecognized elements',
     doc: {
       foo: 'bar',
     },
-    patch: [{op: 'add', path: '/baz', value: 'qux', xyz: 123}],
+    patch: [{op: 'add', path: '/baz', value: 'qux', xyz: 123} as any],
     expected: {
       foo: 'bar',
       baz: 'qux',
@@ -151,16 +153,16 @@ export default [
   },
 
   {
-    comment: 'A.12.  Adding to a Non-existent Target',
+    comment: 'A.12. Adding to a non-existent target',
     doc: {
       foo: 'bar',
     },
     patch: [{op: 'add', path: '/baz/bat', value: 'qux'}],
-    error: 'add to a non-existent target',
+    error: 'NOT_FOUND',
   },
 
   {
-    comment: 'A.13 Invalid JSON Patch Document',
+    comment: 'A.13 Invalid JSON Patch document',
     doc: {
       foo: 'bar',
     },
@@ -173,7 +175,7 @@ export default [
   },
 
   {
-    comment: 'A.14. ~ Escape Ordering',
+    comment: 'A.14. Escape ordering',
     doc: {
       '/': 9,
       '~1': 10,
@@ -186,17 +188,17 @@ export default [
   },
 
   {
-    comment: 'A.15. Comparing Strings and Numbers',
+    comment: 'A.15. Comparing strings and numbers',
     doc: {
       '/': 9,
       '~1': 10,
     },
     patch: [{op: 'test', path: '/~01', value: '10'}],
-    error: 'number is not equal to string',
+    error: 'TEST',
   },
 
   {
-    comment: 'A.16. Adding an Array Value',
+    comment: 'A.16. Adding an array value',
     doc: {
       foo: ['bar'],
     },
@@ -206,3 +208,5 @@ export default [
     },
   },
 ];
+
+export default testCases;

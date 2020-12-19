@@ -1,46 +1,63 @@
-export default [
-  {comment: 'empty list, empty docs', doc: {}, patch: [], expected: {}},
+import { TestCase } from "./types";
 
-  {comment: 'empty patch list', doc: {foo: 1}, patch: [], expected: {foo: 1}},
-
-  {comment: 'rearrangements OK?', doc: {foo: 1, bar: 2}, patch: [], expected: {bar: 2, foo: 1}},
+const testCases: TestCase[] = [
+  {
+    comment: 'Empty dock, empty patch',
+    doc: {},
+    patch: [],
+    expected: {}
+  },
 
   {
-    comment: 'rearrangements OK?  How about one level down ... array',
+    comment: 'Empty patch',
+    doc: {foo: 1},
+    patch: [],
+    expected: {foo: 1}
+  },
+
+  {
+    comment: 'Rearrange object keys',
+    doc: {foo: 1, bar: 2},
+    patch: [],
+    expected: {bar: 2, foo: 1}
+  },
+
+  {
+    comment: 'Rearrange object keys in array',
     doc: [{foo: 1, bar: 2}],
     patch: [],
     expected: [{bar: 2, foo: 1}],
   },
 
   {
-    comment: 'rearrangements OK?  How about one level down...',
+    comment: 'Rearrange object keys in object',
     doc: {foo: {foo: 1, bar: 2}},
     patch: [],
     expected: {foo: {bar: 2, foo: 1}},
   },
 
   {
-    comment: 'add replaces any existing field',
+    comment: 'Add replaces any existing field',
     doc: {foo: null},
     patch: [{op: 'add', path: '/foo', value: 1}],
     expected: {foo: 1},
   },
 
-  {comment: 'toplevel array', doc: [], patch: [{op: 'add', path: '/0', value: 'foo'}], expected: ['foo']},
+  {comment: 'Top level array', doc: [], patch: [{op: 'add', path: '/0', value: 'foo'}], expected: ['foo']},
 
-  {comment: 'toplevel array, no change', doc: ['foo'], patch: [], expected: ['foo']},
+  {comment: 'Top level array, no change', doc: ['foo'], patch: [], expected: ['foo']},
 
   {
-    comment: 'toplevel object, numeric string',
+    comment: 'Top level object, numeric string',
     doc: {},
     patch: [{op: 'add', path: '/foo', value: '1'}],
     expected: {foo: '1'},
   },
 
-  {comment: 'toplevel object, integer', doc: {}, patch: [{op: 'add', path: '/foo', value: 1}], expected: {foo: 1}},
+  {comment: 'Top level object, integer', doc: {}, patch: [{op: 'add', path: '/foo', value: 1}], expected: {foo: 1}},
 
   {
-    comment: 'Toplevel scalar values OK?',
+    comment: 'Top level scalar values OK?',
     doc: 'foo',
     patch: [{op: 'replace', path: '', value: 'bar'}],
     expected: 'bar',
@@ -63,15 +80,40 @@ export default [
     expected: {foo: 1, baz: [{qux: 'hello', foo: 'world'}]},
   },
 
-  {doc: {bar: [1, 2]}, patch: [{op: 'add', path: '/bar/8', value: '5'}], error: 'Out of bounds (upper)'},
+  {
+    comment: 'Array location out of bounds, inside object',
+    doc: {bar: [1, 2]},
+    patch: [{op: 'add', path: '/bar/8', value: '5'}],
+    error: 'INVALID_INDEX'
+  },
 
-  {doc: {bar: [1, 2]}, patch: [{op: 'add', path: '/bar/-1', value: '5'}], error: 'Out of bounds (lower)'},
+  {
+    comment: 'Array location negative, inside object',
+    doc: {bar: [1, 2]},
+    patch: [{op: 'add', path: '/bar/-1', value: '5'}],
+    error: 'INVALID_INDEX'
+  },
 
-  {doc: {foo: 1}, patch: [{op: 'add', path: '/bar', value: true}], expected: {foo: 1, bar: true}},
+  {
+    comment: 'Add object key equal to "true", first level object',
+    doc: {foo: 1},
+    patch: [{op: 'add', path: '/bar', value: true}],
+    expected: {foo: 1, bar: true}
+  },
 
-  {doc: {foo: 1}, patch: [{op: 'add', path: '/bar', value: false}], expected: {foo: 1, bar: false}},
+  {
+    comment: 'Add object key equal to "false", first level object',
+    doc: {foo: 1},
+    patch: [{op: 'add', path: '/bar', value: false}],
+    expected: {foo: 1, bar: false}
+  },
 
-  {doc: {foo: 1}, patch: [{op: 'add', path: '/bar', value: null}], expected: {foo: 1, bar: null}},
+  {
+    comment: 'Add object key equal to "null", first level object',
+    doc: {foo: 1},
+    patch: [{op: 'add', path: '/bar', value: null}],
+    expected: {foo: 1, bar: null}
+  },
 
   {
     comment: '0 can be an array index or object element name',
@@ -80,154 +122,222 @@ export default [
     expected: {foo: 1, '0': 'bar'},
   },
 
-  {doc: ['foo'], patch: [{op: 'add', path: '/1', value: 'bar'}], expected: ['foo', 'bar']},
-
-  {doc: ['foo', 'sil'], patch: [{op: 'add', path: '/1', value: 'bar'}], expected: ['foo', 'bar', 'sil']},
-
-  {doc: ['foo', 'sil'], patch: [{op: 'add', path: '/0', value: 'bar'}], expected: ['bar', 'foo', 'sil']},
-
-  {doc: ['foo', 'sil'], patch: [{op: 'add', path: '/2', value: 'bar'}], expected: ['foo', 'sil', 'bar']},
+  {
+    comment: 'First level array, insert at second position in array with one element',
+    doc: ['foo'],
+    patch: [{op: 'add', path: '/1', value: 'bar'}],
+    expected: ['foo', 'bar']
+  },
 
   {
-    comment: 'test against implementation-specific numeric parsing',
+    comment: 'First level array, insert at second position in the middle of two element array',
+    doc: ['foo', 'sil'],
+    patch: [{op: 'add', path: '/1', value: 'bar'}],
+    expected: ['foo', 'bar', 'sil']
+  },
+
+  {
+    comment: 'First level array, insert at first position in array with two elements',
+    doc: ['foo', 'sil'],
+    patch: [{op: 'add', path: '/0', value: 'bar'}],
+    expected: ['bar', 'foo', 'sil']
+  },
+
+  {
+    comment: 'First level array, insert at third position in array with two element',
+    doc: ['foo', 'sil'],
+    patch: [{op: 'add', path: '/2', value: 'bar'}],
+    expected: ['foo', 'sil', 'bar']
+  },
+
+  {
+    comment: 'Test against implementation-specific numeric parsing',
     doc: {'1e0': 'foo'},
     patch: [{op: 'test', path: '/1e0', value: 'foo'}],
     expected: {'1e0': 'foo'},
   },
 
   {
-    comment: 'test with bad number should fail',
+    comment: 'Test with bad number should fail',
     doc: ['foo', 'bar'],
     patch: [{op: 'test', path: '/1e0', value: 'bar'}],
-    error: "test op shouldn't get array element 1",
+    error: "INVALID_INDEX",
   },
 
-  {doc: ['foo', 'sil'], patch: [{op: 'add', path: '/bar', value: 42}], error: 'Object operation on array target'},
+  {
+    comment: 'First level array, inserting using string index',
+    doc: ['foo', 'sil'],
+    patch: [{op: 'add', path: '/bar', value: 42}],
+    error: 'INVALID_INDEX'
+  },
 
   {
+    comment: 'First level object, remove key containing array',
+    doc: {foo: 1, bar: [1, 2, 3, 4]},
+    patch: [{op: 'remove', path: '/bar'}],
+    expected: {foo: 1}
+  },
+
+  {
+    comment: 'Value in array add not flattened',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/1', value: ['bar', 'baz']}],
     expected: ['foo', ['bar', 'baz'], 'sil'],
-    comment: 'value in array add not flattened',
   },
 
-  {doc: {foo: 1, bar: [1, 2, 3, 4]}, patch: [{op: 'remove', path: '/bar'}], expected: {foo: 1}},
-
-  {doc: {foo: 1, baz: [{qux: 'hello'}]}, patch: [{op: 'remove', path: '/baz/0/qux'}], expected: {foo: 1, baz: [{}]}},
+  {
+    comment: 'Remove string key from object, three levels deep, in array and object',
+    doc: {foo: 1, baz: [{qux: 'hello'}]},
+    patch: [{op: 'remove', path: '/baz/0/qux'}],
+    expected: {foo: 1, baz: [{}]}
+  },
 
   {
+    comment: 'Insert array into object at first level.',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'replace', path: '/foo', value: [1, 2, 3, 4]}],
     expected: {foo: [1, 2, 3, 4], baz: [{qux: 'hello'}]},
   },
 
   {
+    comment: 'Replace object key at three levels deep',
     doc: {foo: [1, 2, 3, 4], baz: [{qux: 'hello'}]},
     patch: [{op: 'replace', path: '/baz/0/qux', value: 'world'}],
     expected: {foo: [1, 2, 3, 4], baz: [{qux: 'world'}]},
   },
 
-  {doc: ['foo'], patch: [{op: 'replace', path: '/0', value: 'bar'}], expected: ['bar']},
-
-  {doc: [''], patch: [{op: 'replace', path: '/0', value: 0}], expected: [0]},
-
-  {doc: [''], patch: [{op: 'replace', path: '/0', value: true}], expected: [true]},
-
-  {doc: [''], patch: [{op: 'replace', path: '/0', value: false}], expected: [false]},
-
-  {doc: [''], patch: [{op: 'replace', path: '/0', value: null}], expected: [null]},
-
   {
-    doc: ['foo', 'sil'],
-    patch: [{op: 'replace', path: '/1', value: ['bar', 'baz']}],
-    expected: ['foo', ['bar', 'baz']],
-    comment: 'value in array replace not flattened',
+    comment: 'First level array with one element, replace that element with string',
+    doc: ['foo'],
+    patch: [{op: 'replace', path: '/0', value: 'bar'}],
+    expected: ['bar']
   },
 
   {
-    comment: 'replace whole document',
+    comment: 'First level array with one element, replace that element with 0',
+    doc: [''],
+    patch: [{op: 'replace', path: '/0', value: 0}],
+    expected: [0]
+  },
+
+  {
+    comment: 'First level array with one element, replace that element with true',
+    doc: [''],
+    patch: [{op: 'replace', path: '/0', value: true}],
+    expected: [true]
+  },
+
+  {
+    comment: 'First level array with one element, replace that element with false',
+    doc: [''],
+    patch: [{op: 'replace', path: '/0', value: false}],
+    expected: [false]
+  },
+
+  {
+    comment: 'First level array with one element, replace that element with null',
+    doc: [''],
+    patch: [{op: 'replace', path: '/0', value: null}],
+    expected: [null]
+  },
+
+  {
+    comment: 'Value in array replace not flattened',
+    doc: ['foo', 'sil'],
+    patch: [{op: 'replace', path: '/1', value: ['bar', 'baz']}],
+    expected: ['foo', ['bar', 'baz']],
+  },
+
+  {
+    comment: 'Replace whole document',
     doc: {foo: 'bar'},
     patch: [{op: 'replace', path: '', value: {baz: 'qux'}}],
     expected: {baz: 'qux'},
   },
 
   {
-    comment: 'spurious patch properties',
+    comment: 'Allow spurious patch properties',
     doc: {foo: 1},
-    patch: [{op: 'test', path: '/foo', value: 1, spurious: 1}],
+    patch: [{op: 'test', path: '/foo', value: 1, spurious: 1} as any],
     expected: {foo: 1},
   },
 
   {
+    comment: 'null value should be valid obj property',
     doc: {foo: null},
     patch: [{op: 'test', path: '/foo', value: null}],
-    comment: 'null value should be valid obj property',
     expected: {foo: null},
   },
 
   {
+    comment: 'null value should be valid obj property to be replaced with something truthy',
     doc: {foo: null},
     patch: [{op: 'replace', path: '/foo', value: 'truthy'}],
     expected: {foo: 'truthy'},
-    comment: 'null value should be valid obj property to be replaced with something truthy',
   },
 
   {
+    comment: 'null value should be valid obj property to be moved',
     doc: {foo: null},
     patch: [{op: 'move', from: '/foo', path: '/bar'}],
     expected: {bar: null},
-    comment: 'null value should be valid obj property to be moved',
   },
 
   {
+    comment: 'null value should be valid obj property to be copied',
     doc: {foo: null},
     patch: [{op: 'copy', from: '/foo', path: '/bar'}],
     expected: {foo: null, bar: null},
-    comment: 'null value should be valid obj property to be copied',
   },
 
   {
+    comment: 'null value should be valid obj property to be removed',
     doc: {foo: null},
     patch: [{op: 'remove', path: '/foo'}],
     expected: {},
-    comment: 'null value should be valid obj property to be removed',
   },
 
   {
+    comment: 'null value should still be valid obj property replace other value',
     doc: {foo: 'bar'},
     patch: [{op: 'replace', path: '/foo', value: null}],
     expected: {foo: null},
-    comment: 'null value should still be valid obj property replace other value',
   },
 
   {
+    comment: 'Test should pass despite rearrangement',
     doc: {foo: {foo: 1, bar: 2}},
     patch: [{op: 'test', path: '/foo', value: {bar: 2, foo: 1}}],
-    comment: 'test should pass despite rearrangement',
     expected: {foo: {foo: 1, bar: 2}},
   },
 
   {
+    comment: 'Test should pass despite (nested) rearrangement',
     doc: {foo: [{foo: 1, bar: 2}]},
     patch: [{op: 'test', path: '/foo', value: [{bar: 2, foo: 1}]}],
-    comment: 'test should pass despite (nested) rearrangement',
     expected: {foo: [{foo: 1, bar: 2}]},
   },
 
   {
+    comment: 'Test should pass - no error',
     doc: {foo: {bar: [1, 2, 5, 4]}},
     patch: [{op: 'test', path: '/foo', value: {bar: [1, 2, 5, 4]}}],
-    comment: 'test should pass - no error',
     expected: {foo: {bar: [1, 2, 5, 4]}},
   },
 
-  {doc: {foo: {bar: [1, 2, 5, 4]}}, patch: [{op: 'test', path: '/foo', value: [1, 2]}], error: 'test op should fail'},
+  {
+    comment: 'Test operation shoul not match object for array',
+    doc: {foo: {bar: [1, 2, 5, 4]}},
+    patch: [{op: 'test', path: '/foo', value: [1, 2]}],
+    error: 'TEST'
+  },
 
   {comment: 'Whole document', doc: {foo: 1}, patch: [{op: 'test', path: '', value: {foo: 1}}], disabled: true},
 
   {comment: 'Empty-string element', doc: {'': 1}, expected: {'': 1}, patch: [{op: 'test', path: '/', value: 1}]},
 
   {
+    comment: 'JSON Pointer spec tests',
     doc: {
       foo: ['bar', 'baz'],
       '': 0,
@@ -275,25 +385,28 @@ export default [
   },
 
   {
+    comment: 'Insert key into first level object',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'move', from: '/foo', path: '/bar'}],
     expected: {baz: [{qux: 'hello'}], bar: 1},
   },
 
   {
+    comment: 'Insert key into third level object',
     doc: {baz: [{qux: 'hello'}], bar: 1},
     patch: [{op: 'move', from: '/baz/0/qux', path: '/baz/1'}],
     expected: {baz: [{}, 'hello'], bar: 1},
   },
 
   {
+    comment: 'Insert element into array at second level into first position',
     doc: {baz: [{qux: 'hello'}], bar: 1},
     patch: [{op: 'copy', from: '/baz/0', path: '/boo'}],
     expected: {baz: [{qux: 'hello'}], bar: 1, boo: {qux: 'hello'}},
   },
 
   {
-    comment: 'replacing the root of the document is possible with add',
+    comment: 'Replacing the root of the document is possible with add',
     doc: {foo: 'bar'},
     patch: [{op: 'add', path: '', value: {baz: 'qux'}}],
     expected: {baz: 'qux'},
@@ -314,16 +427,21 @@ export default [
   },
 
   {
-    comment: 'test remove with bad number should fail',
+    comment: 'Test remove with bad number should fail',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'remove', path: '/baz/1e0/qux'}],
-    error: "remove op shouldn't remove from array with bad number",
+    error: "INVALID_INDEX",
   },
 
-  {comment: 'test remove on array', doc: [1, 2, 3, 4], patch: [{op: 'remove', path: '/0'}], expected: [2, 3, 4]},
+  {
+    comment: 'Test remove on array',
+    doc: [1, 2, 3, 4],
+    patch: [{op: 'remove', path: '/0'}],
+    expected: [2, 3, 4]
+  },
 
   {
-    comment: 'test repeated removes',
+    comment: 'Repeated removes',
     doc: [1, 2, 3, 4],
     patch: [
       {op: 'remove', path: '/1'},
@@ -333,65 +451,67 @@ export default [
   },
 
   {
-    comment: 'test remove with bad index should fail',
+    comment: 'Remove with bad index should fail',
     doc: [1, 2, 3, 4],
     patch: [{op: 'remove', path: '/1e0'}],
-    error: "remove op shouldn't remove from array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: 'test replace with bad number should fail',
+    comment: 'Replace with bad number should fail',
     doc: [''],
     patch: [{op: 'replace', path: '/1e0', value: false}],
-    error: "replace op shouldn't replace in array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: 'test copy with bad number should fail',
+    comment: 'Test copy with bad number should fail',
     doc: {baz: [1, 2, 3], bar: 1},
     patch: [{op: 'copy', from: '/baz/1e0', path: '/boo'}],
-    error: "copy op shouldn't work with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: 'test move with bad number should fail',
+    comment: 'Test move with bad number should fail',
     doc: {foo: 1, baz: [1, 2, 3, 4]},
     patch: [{op: 'move', from: '/baz/1e0', path: '/foo'}],
-    error: "move op shouldn't work with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: 'test add with bad number should fail',
+    comment: 'Test add with bad number should fail',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/1e0', value: 'bar'}],
-    error: "add op shouldn't add to array with bad number",
+    error: "INVALID_INDEX",
   },
 
   {
-    comment: "missing 'value' parameter to test",
+    comment: "Missing 'value' parameter to test",
     doc: [null],
-    patch: [{op: 'test', path: '/0'}],
-    error: "missing 'value' parameter",
+    patch: [{op: 'test', path: '/0'} as any],
+    error: "OP_VALUE_MISSING",
   },
 
   {
-    comment: 'missing value parameter to test - where undef is falsy',
+    comment: 'Missing value parameter to test - where undef is falsy',
     doc: [false],
-    patch: [{op: 'test', path: '/0'}],
-    error: "missing 'value' parameter",
+    patch: [{op: 'test', path: '/0'} as any],
+    error: "OP_VALUE_MISSING",
   },
 
   {
-    comment: 'missing from parameter to copy',
+    comment: 'Missing from parameter to copy',
     doc: [1],
-    patch: [{op: 'copy', path: '/-'}],
-    error: "missing 'from' parameter",
+    patch: [{op: 'copy', path: '/-'} as any],
+    error: "OP_FROM_INVALID",
   },
 
   {
-    comment: 'unrecognized op should fail',
+    comment: 'Unrecognized op should fail',
     doc: {foo: 1},
-    patch: [{op: 'spam', path: '/foo', value: 1}],
-    error: "Unrecognized op 'spam'",
+    patch: [{op: 'spam', path: '/foo', value: 1} as any],
+    error: "OP_UNKNOWN",
   },
 ];
+
+export default testCases;

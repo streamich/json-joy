@@ -1,9 +1,8 @@
 /* tslint:disable */
 
 import {spawnSync} from 'child_process';
-import tests_json from './test/tests.json';
-import spec_json from './test/spec.json';
 import {validateOperation} from '../json-patch';
+import { testSuites } from './test/suites';
 const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
@@ -13,33 +12,23 @@ if (!bin) {
   process.exit(1);
 }
 
-const testSuites = [
-  {
-    name: 'tests.json',
-    tests: tests_json,
-  },
-  {
-    name: 'spec.json',
-    tests: spec_json,
-  },
-];
-
-console.log('');
-console.log(`Running JSON Patch tests.`);
-console.log('');
-
 let cntCorrect = 0;
 let cntFailed = 0;
 
 testSuites.forEach((suite) => {
+  console.log('');
+  console.log(suite.name);
+  console.log('');
+
   suite.tests.forEach((test: any) => {
     if (test.disabled) return;
     const testName = test.comment || test.error || JSON.stringify(test.patch);
-    if (test.expected) {
+    if (test.expected !== undefined) {
       test.patch.forEach(validateOperation);
       let isCorrect = false;
       try {
-        const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input: JSON.stringify(test.doc)});
+        const input = JSON.stringify(test.doc);
+        const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
         const result = JSON.parse(stdout.toString());
         isCorrect = equal(result, test.expected);
       } catch {
@@ -52,18 +41,29 @@ testSuites.forEach((suite) => {
         cntFailed++;
         console.error('🛑 ' + testName);
       }
-    } else if (test.error || test.patch[0].op === 'test') {
-      const {status} = spawnSync(bin, [JSON.stringify(test.doc), JSON.stringify(test.patch)]);
-      if (status === 0) {
+    } else if (test.error) {
+      const input = JSON.stringify(test.doc);
+      const {status, stdout, stderr} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
+      let isCorrect = true;
+      if (status === 0) isCorrect = false;
+      const output = stderr.toString().trim() || stdout.toString().trim();
+      if (output !== test.error) isCorrect = false;
+      if (!isCorrect) {
         cntFailed++;
-        console.error('🛑 should fail: ' + testName);
+        console.error('🛑 ' + testName);
+        if (output !== test.error) {
+          console.error('Expected: ', test.error);
+          console.error('Received: ', output);
+        }
       } else {
         cntCorrect++;
-        console.log('✅ should fail: ' + testName);
+        console.log('✅ ' + testName);
       }
     } else {
       throw new Error('invalid test case');
     }
+
+    if (cntFailed) process.exit(1);
   });
 });
 
