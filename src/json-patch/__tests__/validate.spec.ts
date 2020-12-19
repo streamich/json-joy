@@ -11,25 +11,25 @@ describe('operations', () => {
 
   test('throws on invalid operation type', () => {
     expect(() => validateOperations([123 as any])).toThrowErrorMatchingInlineSnapshot(
-      `"Error in operation [index = 0] (Operation must be an object.)."`,
+      `"Error in operation [index = 0] (OP_INVALID)."`,
     );
   });
 
   test('throws on no operation path', () => {
     expect(() => validateOperations([{} as any])).toThrowErrorMatchingInlineSnapshot(
-      `"Error in operation [index = 0] (Invalid path.)."`,
+      `"Error in operation [index = 0] (OP_PATH_INVALID)."`,
     );
   });
 
   test('throws on no operation code', () => {
     expect(() => validateOperations([{path: ''} as any])).toThrowErrorMatchingInlineSnapshot(
-      `"Error in operation [index = 0] (Invalid operation code.)."`,
+      `"Error in operation [index = 0] (OP_UNKNOWN)."`,
     );
   });
 
   test('throws on invalid operation code', () => {
     expect(() => validateOperations([{path: '', op: '123'} as any])).toThrowErrorMatchingInlineSnapshot(
-      `"Error in operation [index = 0] (Invalid operation code.)."`,
+      `"Error in operation [index = 0] (OP_UNKNOWN)."`,
     );
   });
 
@@ -40,7 +40,7 @@ describe('operations', () => {
   test('throws on second invalid operation', () => {
     expect(() =>
       validateOperations([{op: 'add', path: '/adsf', value: 123}, {op: 'test', path: '/adsf'} as any]),
-    ).toThrowErrorMatchingInlineSnapshot(`"Error in operation [index = 1] (Invalid operation \\"value\\".)."`);
+    ).toThrowErrorMatchingInlineSnapshot(`"Error in operation [index = 1] (OP_VALUE_MISSING)."`);
   });
 
   test('throws if JSON pointer does not start with forward slash', () => {
@@ -49,27 +49,25 @@ describe('operations', () => {
         {op: 'add', path: '/adsf', value: 123},
         {op: 'test', path: 'adsf', value: 1},
       ]),
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Error in operation [index = 1] (JSON pointer must start with forward slash.)."`,
-    );
+    ).toThrowErrorMatchingInlineSnapshot(`"Error in operation [index = 1] (POINTER_INVALID)."`);
   });
 });
 
 describe('add', () => {
   test('throws with no path', () => {
-    expect(() => validateOperation({op: 'add'} as any, false)).toThrowErrorMatchingInlineSnapshot(`"Invalid path."`);
+    expect(() => validateOperation({op: 'add'} as any, false)).toThrowErrorMatchingInlineSnapshot(`"OP_PATH_INVALID"`);
   });
 
   test('throws with invalid path', () => {
     expect(() => validateOperation({op: 'add', path: 123} as any, false)).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid path."`,
+      `"OP_PATH_INVALID"`,
     );
   });
 
   test('throws with invalid value', () => {
     expect(() =>
       validateOperation({op: 'add', path: '', value: undefined} as any, false),
-    ).toThrowErrorMatchingInlineSnapshot(`"Invalid operation \\"value\\"."`);
+    ).toThrowErrorMatchingInlineSnapshot(`"OP_VALUE_MISSING"`);
   });
 
   test('succeeds on valid operation', () => {
@@ -84,13 +82,13 @@ describe('remove', () => {
 
   test('throws on invalid path', () => {
     expect(() => validateOperation({op: 'remove', path: 'asdf'}, false)).toThrowErrorMatchingInlineSnapshot(
-      `"JSON pointer must start with forward slash."`,
+      `"POINTER_INVALID"`,
     );
   });
 
   test('throws on invalid path - 2', () => {
     expect(() => validateOperation({op: 'remove', path: 123} as any, false)).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid path."`,
+      `"OP_PATH_INVALID"`,
     );
   });
 });
