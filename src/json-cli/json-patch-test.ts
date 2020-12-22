@@ -26,10 +26,11 @@ testSuites.forEach((suite) => {
     if (test.expected !== undefined) {
       test.patch.forEach(validateOperation);
       let isCorrect = false;
+      let result;
       try {
         const input = JSON.stringify(test.doc);
         const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
-        const result = JSON.parse(stdout.toString());
+        result = JSON.parse(stdout.toString());
         isCorrect = equal(result, test.expected);
       } catch {
         isCorrect = false;
@@ -40,6 +41,10 @@ testSuites.forEach((suite) => {
       } else {
         cntFailed++;
         console.error('🛑 ' + testName);
+        console.log('Expected:');
+        console.log(test.expected);
+        console.log('Received:');
+        console.log(result);
       }
     } else if (test.error) {
       const input = JSON.stringify(test.doc);
