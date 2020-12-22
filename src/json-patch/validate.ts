@@ -223,7 +223,7 @@ const validateOperationMerge = (op: OperationMerge) => {
 };
 
 const validateOperationSplit = (op: OperationSplit) => {
-  validateNonNegativeInteger(op.pos);
+  validateInteger(op.pos);
   if (op.props) if (typeof op.props !== 'object') throw new Error('Invalid "props" field.');
 };
 
