@@ -13,7 +13,7 @@ describe('less', () => {
       });
     });
 
-    test('succeeds when value is lower than requested', () => {
+    test('fails when value is not lower than requested', () => {
       expect(() =>
         applyOperation(123, {
           op: 'less',
