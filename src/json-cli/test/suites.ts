@@ -9,6 +9,7 @@ import op_str_ins_tests_json from './op.str_ins.tests.json';
 import op_str_del_tests_json from './op.str_del.tests.json';
 import op_flip_tests_json from './op.flip.tests.json';
 import op_inc_tests_json from './op.inc.tests.json';
+import op_split_tests_json from './op.split.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
@@ -60,5 +61,9 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Patch "inc" operation',
     tests: op_inc_tests_json,
+  },
+  {
+    name: 'JSON Patch "split" operation',
+    tests: op_split_tests_json,
   },
 ];
