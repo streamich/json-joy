@@ -11,6 +11,7 @@ import op_flip_tests_json from './op.flip.tests.json';
 import op_inc_tests_json from './op.inc.tests.json';
 import op_split_tests_json from './op.split.tests.json';
 import op_merge_tests_json from './op.merge.tests.json';
+import op_extend_tests_json from './op.extend.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
@@ -70,5 +71,9 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Patch "merge" operation',
     tests: op_merge_tests_json,
+  },
+  {
+    name: 'JSON Patch "extend" operation',
+    tests: op_extend_tests_json,
   },
 ];
