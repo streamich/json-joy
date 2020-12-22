@@ -13,6 +13,7 @@ import op_split_tests_json from './op.split.tests.json';
 import op_merge_tests_json from './op.merge.tests.json';
 import op_extend_tests_json from './op.extend.tests.json';
 import op_contains_tests_json from './op.contains.tests.json';
+import op_defined_tests_json from './op.defined.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
@@ -87,5 +88,9 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Predicate "contains" operation',
     tests: op_contains_tests_json,
+  },
+  {
+    name: 'JSON Predicate "defined" operation',
+    tests: op_defined_tests_json,
   },
 ];
