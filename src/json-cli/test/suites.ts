@@ -8,6 +8,7 @@ import op_test_tests_json from './op.test.tests.json';
 import op_str_ins_tests_json from './op.str_ins.tests.json';
 import op_str_del_tests_json from './op.str_del.tests.json';
 import op_flip_tests_json from './op.flip.tests.json';
+import op_inc_tests_json from './op.inc.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
@@ -55,5 +56,9 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Patch "flip" operation',
     tests: op_flip_tests_json,
+  },
+  {
+    name: 'JSON Patch "inc" operation',
+    tests: op_inc_tests_json,
   },
 ];
