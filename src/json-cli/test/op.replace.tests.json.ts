@@ -3,18 +3,18 @@ import { TestCase } from "./types";
 
 const values: [string, unknown][] = [
   ['"null"', null],
-  ['"true"', true],
+  // ['"true"', true],
   ['"false"', false],
   ['integer', 123],
-  ['float', -1.2],
-  ['empty string', ''],
+  // ['float', -1.2],
+  // ['empty string', ''],
   ['string', 'asdf'],
-  ['empty object', {}],
+  // ['empty object', {}],
   ['simple object', {foo: 'bar'}],
-  ['nested object', {foo: {bar: 'baz'}}],
-  ['empty array', []],
+  // ['nested object', {foo: {bar: 'baz'}}],
+  // ['empty array', []],
   ['simple array', [1, 'a', false]],
-  ['nested array', [[{foo: [1, 2, null]}]]],
+  // ['nested array', [[{foo: [1, 2, null]}]]],
 ];
 
 const testCases: TestCase[] = [
