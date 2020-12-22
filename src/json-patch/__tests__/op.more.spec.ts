@@ -5,7 +5,7 @@ const applyOperation = (doc: unknown, op: Operation) => applyPatch(doc, [op], tr
 
 describe('more', () => {
   describe('root', () => {
-    test('succeeds when value is lower than requested', () => {
+    test('succeeds when value is higher than requested', () => {
       applyOperation(123, {
         op: 'more',
         path: '',
@@ -13,7 +13,7 @@ describe('more', () => {
       });
     });
 
-    test('succeeds when value is lower than requested', () => {
+    test('fails when value is not higher than requested', () => {
       expect(() =>
         applyOperation(123, {
           op: 'more',
