@@ -13,11 +13,12 @@ describe('automated', () => {
             const {doc} = applyPatch(test.doc, test.patch, true);
             expect(doc).toEqual(test.expected);
           });
-        } else if (test.error) {
+        } else if (typeof test.error === 'string') {
           it(testName, () => {
             try {
               test.patch.forEach(validateOperation);
               applyPatch(test.doc, test.patch, true);
+              throw new Error('Patch should have failed.');
             } catch (error) {
               const output = typeof error === 'string' ? error : (error instanceof Error ? error.message : String(error));
               expect(output).toBe(test.error);

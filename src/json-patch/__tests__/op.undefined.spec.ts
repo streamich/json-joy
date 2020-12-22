@@ -3,7 +3,7 @@ import {applyPatch} from '../patch';
 describe('undefined', () => {
   describe('root', () => {
     describe('positive', () => {
-      test('succeeds when target exists', () => {
+      test('fails when target exists', () => {
         expect(() =>
           applyPatch(
             null,
@@ -18,7 +18,7 @@ describe('undefined', () => {
         ).toThrow();
       });
 
-      test('throws when target does not exist', () => {
+      test('succeeds when target does not exist', () => {
         applyPatch(
           undefined,
           [
@@ -93,7 +93,7 @@ describe('undefined', () => {
         ).toThrow();
       });
 
-      test('throws when target does not exist', () => {
+      test('succeeds when target does not exist', () => {
         applyPatch(
           {hello: [1]},
           [
