@@ -12,10 +12,12 @@ import op_inc_tests_json from './op.inc.tests.json';
 import op_split_tests_json from './op.split.tests.json';
 import op_merge_tests_json from './op.merge.tests.json';
 import op_extend_tests_json from './op.extend.tests.json';
+import op_contains_tests_json from './op.contains.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
 export const testSuites: TestSuite[] = [
+  // JSON Patch
   {
     name: 'JSON Patch spec',
     tests: spec_json,
@@ -48,32 +50,42 @@ export const testSuites: TestSuite[] = [
     name: 'JSON Patch "test" operation',
     tests: op_test_tests_json,
   },
+
+  // JSON Patch Extended.
   {
-    name: 'JSON Patch "str_ins" operation',
+    name: 'JSON Patch Extended "str_ins" operation',
     tests: op_str_ins_tests_json,
   },
   {
-    name: 'JSON Patch "str_del" operation',
+    name: 'JSON Patch Extended "str_del" operation',
     tests: op_str_del_tests_json,
   },
   {
-    name: 'JSON Patch "flip" operation',
+    name: 'JSON Patch Extended "flip" operation',
     tests: op_flip_tests_json,
   },
   {
-    name: 'JSON Patch "inc" operation',
+    name: 'JSON Patch Extended "inc" operation',
     tests: op_inc_tests_json,
   },
+
+  // JSON Patch for Slate.js
   {
-    name: 'JSON Patch "split" operation',
+    name: 'JSON Patch for Slate.js "split" operation',
     tests: op_split_tests_json,
   },
   {
-    name: 'JSON Patch "merge" operation',
+    name: 'JSON Patch for Slate.js "merge" operation',
     tests: op_merge_tests_json,
   },
   {
-    name: 'JSON Patch "extend" operation',
+    name: 'JSON Patch for Slate.js "extend" operation',
     tests: op_extend_tests_json,
+  },
+
+  // JSON Predicate
+  {
+    name: 'JSON Predicate "contains" operation',
+    tests: op_contains_tests_json,
   },
 ];
