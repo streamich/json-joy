@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/streamich/json-joy/compare/v2.5.0...v2.5.1) (2020-12-22)
+
+
+### Bug Fixes
+
+* 🐛 show expected and received test results ([ef1b382](https://github.com/streamich/json-joy/commit/ef1b3820e7f80b9f011c23628d21a808c6fd5869))
+
 # [2.5.0](https://github.com/streamich/json-joy/compare/v2.4.0...v2.5.0) (2020-12-22)
 
 
