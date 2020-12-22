@@ -1,3 +1,20 @@
+# [2.5.0](https://github.com/streamich/json-joy/compare/v2.4.0...v2.5.0) (2020-12-22)
+
+
+### Bug Fixes
+
+* 🐛 make json-joy pass json-patch-test CLI tests ([c796dd8](https://github.com/streamich/json-joy/commit/c796dd8f74099887f356500bb9517a161167c90c))
+
+
+### Features
+
+* 🎸 add JSON Predicate "contains" operation tests ([52f6214](https://github.com/streamich/json-joy/commit/52f621412081b5b4d114edc8beeb39d0bbf64f31))
+
+
+### Performance Improvements
+
+* ⚡️ report ns/op in main benchmark ([8a81531](https://github.com/streamich/json-joy/commit/8a81531891b9427bea91ab7cb683aecd52675d0b))
+
 # [2.4.0](https://github.com/streamich/json-joy/compare/v2.3.6...v2.4.0) (2020-12-19)
 
 
