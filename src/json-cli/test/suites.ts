@@ -18,6 +18,7 @@ import op_ends_tests_json from './op.ends.tests.json';
 import op_in_tests_json from './op.in.tests.json';
 import op_less_tests_json from './op.less.tests.json';
 import op_more_tests_json from './op.more.tests.json';
+import op_starts_tests_json from './op.starts.tests.json';
 import spec_json from './spec.json';
 import {TestSuite} from './types';
 
@@ -112,5 +113,9 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Predicate "more" operation',
     tests: op_more_tests_json,
+  },
+  {
+    name: 'JSON Predicate "starts" operation',
+    tests: op_starts_tests_json,
   },
 ];
