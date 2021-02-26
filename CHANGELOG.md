@@ -1,3 +1,10 @@
+## [2.5.3](https://github.com/streamich/json-joy/compare/v2.5.2...v2.5.3) (2021-02-26)
+
+
+### Bug Fixes
+
+* 🐛 bump json-schema-serializer ([c413bc4](https://github.com/streamich/json-joy/commit/c413bc421410dbca311e944ba15a92f55111f8e7))
+
 ## [2.5.2](https://github.com/streamich/json-joy/compare/v2.5.1...v2.5.2) (2021-02-26)
 
 
