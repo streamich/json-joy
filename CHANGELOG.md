@@ -1,3 +1,10 @@
+## [2.5.2](https://github.com/streamich/json-joy/compare/v2.5.1...v2.5.2) (2021-02-26)
+
+
+### Bug Fixes
+
+* relax node version requirement ([98b9f2a](https://github.com/streamich/json-joy/commit/98b9f2a92af00e18cb2d9009935aa0dbeb1b4b6a))
+
 ## [2.5.1](https://github.com/streamich/json-joy/compare/v2.5.0...v2.5.1) (2020-12-22)
 
 
