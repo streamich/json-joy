@@ -10,7 +10,7 @@
   "repository": "streamich/json-joy",
   "license": "Unlicense",
   "engines": {
-    "node": ">=10.18"
+    "node": ">=10.0"
   },
   "main": "lib/index.js",
   "module": "esm/index.js",
