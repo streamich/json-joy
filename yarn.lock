@@ -3913,10 +3913,10 @@ json-parse-even-better-errors@^2.3.0:
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
   integrity sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==
 
-json-schema-serializer@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/json-schema-serializer/-/json-schema-serializer-1.0.1.tgz#b7c0dc64ec0a759a10f0d39ff0347a291ea0bffb"
-  integrity sha512-96r02xFM6zmPcCdKfoTbtN5rV83qn6mSN+0UAA59v+4PJpKvL1KST6TzdqziUzRpLpm3Y6JHIFiDsT2TRYeUng==
+json-schema-serializer@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json-schema-serializer/-/json-schema-serializer-1.0.2.tgz#d2b3f5eb4d892cfd376f1c8fd722b757d6460219"
+  integrity sha512-3GJiadhiQQHe/I6OTR2FKABjYyb7KNiPZGo6q6HLGeTHGvP2y6m6IEPRr9Wt00FCNqjYC6UlgWilkHWlVSpz+A==
 
 json-schema-traverse@^0.4.1:
   version "0.4.1"

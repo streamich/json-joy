@@ -42,7 +42,7 @@
   },
   "keywords": [],
   "dependencies": {
-    "json-schema-serializer": "1.0.1",
+    "json-schema-serializer": "1.0.2",
     "ts-brand-json": "0.1.1",
     "rxjs": "6",
     "fast-deep-equal": "3.1.3",
