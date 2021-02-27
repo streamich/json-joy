@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/streamich/json-joy/compare/v2.5.3...v2.6.0) (2021-02-27)
+
+
+### Features
+
+* 🎸 move dependencies to peerDependencies ([d215b0b](https://github.com/streamich/json-joy/commit/d215b0ba4fc27c71eecdcaf99b3d03a0534bd435))
+
 ## [2.5.3](https://github.com/streamich/json-joy/compare/v2.5.2...v2.5.3) (2021-02-26)
 
 
