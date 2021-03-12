@@ -9,19 +9,20 @@ export const enum JsonCrdtNodeTypes {
   String = 2,
 }
 
-/** A node representing string as a linked list. */
-export interface JsonCrdtStringNode {
-  /** Identifier for string node. */
-  t: JsonCrdtNodeTypes.String;
+/** A node representing "complex" types: string, array, map. */
+export interface JsonCrdtComplexNode<Chunk> {
+  /** Identifier of the node type. */
+  t: JsonCrdtNodeTypes;
   /** Linked list first chunk. */
   l: string;
   /** Linked list last chunk. */
   r: string;
   /** Chunk ID to chunk mapping. */
-  chunks: Record<string, undefined | JsonCrdtStringNodeChunk>;
+  c: Record<string, undefined | Chunk>;
 }
 
-export interface JsonCrdtStringNodeChunk {
+/** A linked list entry, which represents a part of a complex node. */
+export interface JsonCrdtChunk<Content> {
   /** Original item to the left when this chunk was inserted. */
   l0?: string;
   /** Current item to the left. */
@@ -30,39 +31,23 @@ export interface JsonCrdtStringNodeChunk {
   r0?: string;
   /** Current item to the right. */
   r1?: string;
-  /** Chunk string value. */
-  val?: string;
+  /** Chunk's content value. */
+  c?: Content;
 }
 
-export interface JsonCrdtArrayNode {
+export type JsonCrdtStringNodeChunk = JsonCrdtChunk<string>;
+export interface JsonCrdtStringNode extends JsonCrdtComplexNode<JsonCrdtStringNodeChunk> {
+  t: JsonCrdtNodeTypes.String;
+}
+
+export type JsonCrdtArrayNodeChunk = JsonCrdtChunk<JsonCrdtNode>;
+export interface JsonCrdtArrayNode extends JsonCrdtComplexNode<JsonCrdtArrayNodeChunk> {
   t: JsonCrdtNodeTypes.Array;
-  l: string;
-  r: string;
-  chunks: Record<string, undefined | JsonCrdtArrayNodeChunk>;
 }
 
-export interface JsonCrdtArrayNodeChunk {
-  l0?: string;
-  l1?: string;
-  r0?: string;
-  r1?: string;
-  val?: JsonCrdtNode;
-}
-
-export interface JsonCrdtObjectNode {
+export type JsonCrdtObjectNodeChunk = JsonCrdtChunk<[key: string, value: JsonCrdtNode]>;
+export interface JsonCrdtObjectNode extends JsonCrdtComplexNode<JsonCrdtObjectNodeChunk> {
   t: JsonCrdtNodeTypes.Object;
-  l: string;
-  r: string;
-  chunks: Record<string, undefined | JsonCrdtObjectNodeChunk>;
-}
-
-export interface JsonCrdtObjectNodeChunk {
-  l0?: string;
-  l1?: string;
-  r0?: string;
-  r1?: string;
-  key: string;
-  val?: JsonCrdtNode;
 }
 
 export type JsonCrdtNode = 

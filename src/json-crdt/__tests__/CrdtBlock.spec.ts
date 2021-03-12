@@ -9,20 +9,19 @@ describe('.toJson()', () => {
         t: JsonCrdtNodeTypes.Object,
         l: 'id1',
         r: 'id1',
-        chunks: {
+        c: {
           'id1': {
-            key: 'foo',
-            val: {
+            c: ['foo', {
               t: JsonCrdtNodeTypes.String,
               l: 'id2',
               r: 'id2',
-              chunks: {
+              c: {
                 'id2': {
-                  val: 'bar',
-                },
-              },
-            },
-          },
+                  c: 'bar',
+                }
+              }
+            }]
+          }
         },
       },
     };

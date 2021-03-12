@@ -19,8 +19,8 @@ export class CrdtBlock {
         const arr: unknown[] = [];
         let id: string | undefined = node.l;
         let chunk: JsonCrdtArrayNodeChunk | undefined;
-        while (id && (chunk = node.chunks[id])) {
-          arr.push(this.toJson(chunk.val));
+        while (id && (chunk = node.c[id])) {
+          arr.push(this.toJson(chunk.c));
           id = chunk.r1;
         }
         return arr;
@@ -29,8 +29,10 @@ export class CrdtBlock {
         const obj: Record<string, unknown> = {};
         let id: string | undefined = node.l;
         let chunk: JsonCrdtObjectNodeChunk | undefined;
-        while (id && (chunk = node.chunks[id])) {
-          obj[chunk.key] = this.toJson(chunk.val);
+        while (id && (chunk = node.c[id])) {
+          const tuple = chunk.c;
+          if (tuple)
+            obj[tuple[0]] = this.toJson(tuple[1]);
           id = chunk.r1;
         }
         return obj;
@@ -39,8 +41,8 @@ export class CrdtBlock {
         let str: string = '';
         let id: string | undefined = node.l;
         let chunk: JsonCrdtStringNodeChunk | undefined;
-        while (id && (chunk = node.chunks[id])) {
-          str += chunk.val;
+        while (id && (chunk = node.c[id])) {
+          str += chunk.c || '';
           id = chunk.r1;
         }
         return str;
