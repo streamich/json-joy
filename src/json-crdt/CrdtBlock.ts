@@ -13,7 +13,7 @@ import {
   JsonCrdtValue
 } from "./types";
 import {JsonCrdtRef} from "./types";
-import {generateId} from "./util";
+import {clockToString, generateId} from "./util";
 
 export const toJson = (refs: Record<string, undefined | JsonCrdtRefEntry>, ref: string): unknown => {
   const node = refs[ref] as JsonCrdtNode;
@@ -78,7 +78,7 @@ export class CrdtBlock {
   }) {}
 
   private nextRef(ticks: number = 1): JsonCrdtRef {
-    const id = this.clientId + this.clock;
+    const id = this.clientId + clockToString(this.clock);
     this.clock += ticks;
     return id;
   }

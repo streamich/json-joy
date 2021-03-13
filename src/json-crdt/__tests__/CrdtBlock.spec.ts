@@ -1,5 +1,4 @@
 import {CrdtBlock} from '../CrdtBlock';
-import {JsonCrdtNode, JsonCrdtNodeTypes} from '../types';
 
 describe('CrdtBlock', () => {
   test('can start a new block', () => {
