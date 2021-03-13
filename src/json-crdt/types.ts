@@ -1,54 +1,29 @@
+/** Types of complex nodes. */
+export const enum JsonCrdtNodeTypes {
+  String = 0,
+  Array = 1,
+  Object = 2,
+}
+
 export type JsonCrdtNullNode = null;
 export type JsonCrdtBooleanNode = boolean;
 export type JsonCrdtNumberNode = number;
 
-/** Types of nodes represented by a non-null object. */
-export const enum JsonCrdtNodeTypes {
-  Array = 0,
-  Object = 1,
-  String = 2,
-}
+export type JsonCrdtAtom =
+  | JsonCrdtNullNode
+  | JsonCrdtBooleanNode
+  | JsonCrdtNumberNode;
 
-/** A node representing "complex" types: string, array, map. */
-export interface JsonCrdtComplexNode<Chunk> {
-  /** Identifier of the node type. */
-  t: JsonCrdtNodeTypes;
-  /** Linked list first chunk. */
-  l: string;
-  /** Linked list last chunk. */
-  r: string;
-  /** Chunk ID to chunk mapping. */
-  c: Record<string, undefined | Chunk>;
-}
+export type JsonCrdtRef = string;
+export type JsonCrdtValue = JsonCrdtAtom | JsonCrdtRef;
 
-/** A linked list entry, which represents a part of a complex node. */
-export interface JsonCrdtChunk<Content> {
-  /** Original item to the left when this chunk was inserted. */
-  l0?: string;
-  /** Current item to the left. */
-  l1?: string;
-  /** Original item to the right when this chunk was inserted. */
-  r0?: string;
-  /** Current item to the right. */
-  r1?: string;
-  /** Chunk's content value. */
-  c?: Content;
-}
+export type JsonCrdtStringNode = [type: JsonCrdtNodeTypes.String, firstChunkRef: JsonCrdtRef];
+export type JsonCrdtArrayNode = [type: JsonCrdtNodeTypes.Array, firstChunkRef: JsonCrdtRef];
+export type JsonCrdtObjectNode = [type: JsonCrdtNodeTypes.Object, firstChunkRef: JsonCrdtRef];
 
-export type JsonCrdtStringNodeChunk = JsonCrdtChunk<string>;
-export interface JsonCrdtStringNode extends JsonCrdtComplexNode<JsonCrdtStringNodeChunk> {
-  t: JsonCrdtNodeTypes.String;
-}
-
-export type JsonCrdtArrayNodeChunk = JsonCrdtChunk<JsonCrdtNode>;
-export interface JsonCrdtArrayNode extends JsonCrdtComplexNode<JsonCrdtArrayNodeChunk> {
-  t: JsonCrdtNodeTypes.Array;
-}
-
-export type JsonCrdtObjectNodeChunk = JsonCrdtChunk<[key: string, value: JsonCrdtNode]>;
-export interface JsonCrdtObjectNode extends JsonCrdtComplexNode<JsonCrdtObjectNodeChunk> {
-  t: JsonCrdtNodeTypes.Object;
-}
+export type JsonCrdtStringNodeChunk = [next: string, value: string];
+export type JsonCrdtArrayNodeChunk = [leftChunkRef: string, rightChunkRef: string, value: JsonCrdtValue];
+export type JsonCrdtObjectNodeChunk = [rightChunkRef: string, key: string, value: JsonCrdtValue];
 
 export type JsonCrdtNode = 
   | JsonCrdtNullNode
@@ -58,6 +33,14 @@ export type JsonCrdtNode =
   | JsonCrdtArrayNode
   | JsonCrdtObjectNode;
 
+export type JsonCrdtChunk =
+  | JsonCrdtStringNodeChunk
+  | JsonCrdtArrayNodeChunk
+  | JsonCrdtObjectNodeChunk;
+
+export type JsonCrdtRefEntry = JsonCrdtNode | JsonCrdtChunk
+
 export interface JsonCrdtBlock {
-  node: JsonCrdtNode;
+  startRef: string;
+  refs: Record<string, JsonCrdtRefEntry>;
 }
