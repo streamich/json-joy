@@ -5,7 +5,7 @@ export interface CrdtCreateObjectOperation {
   path?: string;
 }
 
-export type CrdtSetObjectFieldOperationCompact = [op: 1, key: string, path?: string];
+export type CrdtSetObjectFieldOperationCompact = [op: 1, depSessionId: number, depTime: number, key: string];
 export interface CrdtSetObjectFieldOperation {
   op: 'obj_ins';
   path?: string;

@@ -8,6 +8,18 @@
 export class LogicalTimestamp {
   constructor (public readonly sessionId: number, public time: number) {}
 
+  public isEqual(ts: LogicalTimestamp) {
+    return (this.sessionId === ts.sessionId) && (this.time === ts.time);
+  }
+
+  public compare(ts: LogicalTimestamp): -1 | 0 | 1 {
+    if (this.time > ts.time) return 1;
+    if (this.time < ts.time) return -1;
+    if (this.sessionId > ts.sessionId) return 1;
+    if (this.sessionId < ts.sessionId) return -1;
+    return 0;
+  }
+
   public toString() {
     // "!" is used as separator as it has the lowest ASCII value.
     return this.sessionId + '!' + this.time;

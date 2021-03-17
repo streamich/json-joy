@@ -1,8 +1,8 @@
-import {CrdtPatchCompact, CrdtCreateObjectOperationCompactFull} from '../json-crdt-patch/types';
+import {CrdtPatchCompact, CrdtCreateObjectOperationCompactFull, CrdtSetObjectFieldOperationCompact} from '../json-crdt-patch/types';
 import {LogicalClock, LogicalTimestamp, SINGULARITY} from './clock';
 import {CrdtOperation, CrdtType} from './types';
 import {LWWRegisterType} from './lww-register';
-import {ObjectType} from './object';
+import {InsertObjectKeyOperation, ObjectType} from './object';
 
 export class Document {
   /**
@@ -63,7 +63,14 @@ export class Document {
           const [, depSessionId, depTime] = op as CrdtCreateObjectOperationCompactFull;
           const dep = new LogicalTimestamp(depSessionId, depTime);
           this.applyNewObjectOperation(id, dep);
-          return;
+          continue;
+        }
+        case 1: {
+          const id = clock.tick(1);
+          const [, depSessionId, depTime, key] = op as CrdtSetObjectFieldOperationCompact;
+          const dep = new LogicalTimestamp(depSessionId, depTime);
+          this.applyObjectInsertKeyOperation(id, dep, key);
+          continue;
         }
       }
     }
@@ -73,6 +80,13 @@ export class Document {
     const parent = this.operation(dep) as CrdtType;
     const operation = new ObjectType(this, id, dep);
     parent.update(operation);
+    this.indexOperation(operation);
+  }
+
+  private applyObjectInsertKeyOperation(id: LogicalTimestamp, dep: LogicalTimestamp, key: string) {
+    const dependency = this.operation(dep) as InsertObjectKeyOperation;
+    const operation = new InsertObjectKeyOperation(this, id, dep, key);
+    dependency.type!.update(operation);
     this.indexOperation(operation);
   }
 
