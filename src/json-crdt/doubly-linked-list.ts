@@ -1,4 +1,7 @@
+import {CrdtType} from "./types";
+
 export interface DoublyLinkedListEntry<T> {
+  type?: CrdtType;
   left: DoublyLinkedListEntry<T> | null;
   right: DoublyLinkedListEntry<T> | null;
 }
@@ -18,5 +21,25 @@ export class DoublyLinkedList<T> {
       last.right = entry;
       entry.left = last;
     }
+  }
+
+  public length(): number {
+    let len: number = 0;
+    let cur: any = this.start;
+    while (cur) {
+      len++;
+      cur = cur.right;
+    }
+    return len;
+  }
+
+  public toString() {
+    let str = '';
+    let cur: any = this.start;
+    while (cur) {
+      str += cur.id.toString() + '\n';
+      cur = cur.right;
+    }
+    return str;
   }
 }

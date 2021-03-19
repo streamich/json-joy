@@ -35,4 +35,11 @@
  * integer. This random integer is used as session ID for tagging JSON CRDT Patch
  * patches.
  */
-export const random48BitInt = () => Math.floor(281474976710656 /* 2**48 */ * Math.random());
+// export const random48BitInt = () => Math.floor(281474976710656 /* 2**48 */ * Math.random());
+
+/**
+ * Generate a random 40-bit integer. We use 40-bit integer (5 bytes) for session ID, because
+ * the logical clock counter is represented by 24-bit integer, and together they
+ * combine into 64-bit integer (8 bytes).
+ */
+export const random40BitInt = () => Math.floor(0xFF_FF_FF_FF_FF * Math.random());

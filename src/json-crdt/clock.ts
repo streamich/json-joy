@@ -27,11 +27,6 @@ export class LogicalTimestamp {
 }
 
 /**
- * Document root operation ID.
- */
-export const SINGULARITY = new LogicalTimestamp(0, 0);
-
-/**
  * A single logical clock. Session ID is a random identifier randomly assigned
  * to each new editing session. (It could be called "actorId" or "clientId", but
  * the same user can have multiple editing sessions, hence "sessionId" is better.)
@@ -45,7 +40,7 @@ export const SINGULARITY = new LogicalTimestamp(0, 0);
  * but it is possible find the exact operation for each distinct implicit logical timestamp.
  */
 export class LogicalClock extends LogicalTimestamp {
-  public readonly sessionId: number;
+  public sessionId: number;
   public time: number;
 
   constructor (sessionId: number, time: number) {

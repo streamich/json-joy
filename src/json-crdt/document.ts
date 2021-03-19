@@ -1,8 +1,11 @@
-import {CrdtPatchCompact, CrdtCreateObjectOperationCompactFull, CrdtSetObjectFieldOperationCompact} from '../json-crdt-patch/types';
-import {LogicalClock, LogicalTimestamp, SINGULARITY} from './clock';
-import {CrdtOperation, CrdtType} from './types';
-import {LWWRegisterType} from './lww-register';
-import {InsertObjectKeyOperation, ObjectType} from './object';
+import {LogicalClock, LogicalTimestamp} from './clock';
+import {ObjectType} from './object';
+import {FALSE, NULL, SINGULARITY, TRUE} from './constants';
+import {OperationIndex} from './OperationIndex';
+import {random40BitInt} from './util';
+import {CrdtLWWRegisterType} from './lww-register/CrdtLWWRegisterType';
+import {ICrdtOperation} from './operations/types';
+import {CrdtLWWRegisterWriteOperation} from './lww-register/CrdtLWWRegisterWriteOperation';
 
 export class Document {
   /**
@@ -10,87 +13,104 @@ export class Document {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root = new LWWRegisterType(this, SINGULARITY, SINGULARITY);
+  public root = new CrdtLWWRegisterType(this, SINGULARITY);
 
   /**
-   * An index of all operations in this document accessible by operation ID.
-   * 
-   *     (sessionId, time) -> operation
+   * Clock that keeps track of logical timestamps of the current editing session.
    */
-  public operations: Map<number, Map<number, CrdtOperation | CrdtType>> = new Map([
-    [this.root.id.sessionId, new Map([
-      [this.root.id.time, this.root],
-    ])],
-  ]);
-
-  constructor() {}
+  public clock: LogicalClock;
 
   /**
-   * Retrieve any known operation in this document by its ID.
+   * Index of all known operations in this document.
    */
-  public operation(id: LogicalTimestamp): undefined | CrdtOperation | CrdtType {
-    const map1 = this.operations;
-    const map2 = map1.get(id.sessionId);
-    if (!map2) return undefined;
-    return map2.get(id.time);
+  public ops = new OperationIndex();
+
+  constructor(sessionId: number = random40BitInt()) {
+    this.clock = new LogicalClock(sessionId, 0);
+    this.ops.index(this.root);
+    this.ops.index(NULL);
+    this.ops.index(TRUE);
+    this.ops.index(FALSE);
   }
 
-  /**
-   * Index an operation in the global operation index.
-   */
-  public indexOperation(operation: CrdtOperation) {
-    const {sessionId, time} = operation.id;
-    let map = this.operations.get(operation.id.sessionId);
-    if (!map) {
-      map = new Map<number, CrdtOperation | CrdtType>();
-      this.operations.set(sessionId, map);
-    }
-    map.set(time, operation);
-  }
-
-  public applyPatch(patch: CrdtPatchCompact) {
-    const [sessionId, time, ops] = patch;
-    const clock = new LogicalClock(sessionId, time);
-    for (const op of ops) {
-      if (typeof op === 'number') {
+  // public applyPatch(patch: CrdtPatchCompact) {
+  //   const [sessionId, time, ops] = patch;
+  //   const clock = new LogicalClock(sessionId, time);
+  //   for (const op of ops) {
+  //     if (typeof op === 'number') {
         
-        return;
-      }
-      const opcode = op[0];
-      switch(opcode) {
-        case 0: {
-          const id = clock.tick(1);
-          const [, depSessionId, depTime] = op as CrdtCreateObjectOperationCompactFull;
-          const dep = new LogicalTimestamp(depSessionId, depTime);
-          this.applyNewObjectOperation(id, dep);
-          continue;
-        }
-        case 1: {
-          const id = clock.tick(1);
-          const [, depSessionId, depTime, key] = op as CrdtSetObjectFieldOperationCompact;
-          const dep = new LogicalTimestamp(depSessionId, depTime);
-          this.applyObjectInsertKeyOperation(id, dep, key);
-          continue;
-        }
-      }
-    }
-  }
+  //       return;
+  //     }
+  //     const opcode = op[0];
+  //     switch(opcode) {
+  //       case 0: {
+  //         const id = clock.tick(1);
+  //         const [, depSessionId, depTime] = op as CrdtCreateObjectOperationCompactFull;
+  //         const dep = new LogicalTimestamp(depSessionId, depTime);
+  //         this.insertObject(id, dep);
+  //         continue;
+  //       }
+  //       case 1: {
+  //         const id = clock.tick(1);
+  //         const [, depSessionId, depTime, key] = op as CrdtSetObjectFieldOperationCompact;
+  //         const dep = new LogicalTimestamp(depSessionId, depTime);
+  //         this.applyObjectInsertKeyOperation(id, dep, key);
+  //         continue;
+  //       }
+  //     }
+  //   }
+  // }
 
-  private applyNewObjectOperation(id: LogicalTimestamp, dep: LogicalTimestamp) {
-    const parent = this.operation(dep) as CrdtType;
-    const operation = new ObjectType(this, id, dep);
-    parent.update(operation);
-    this.indexOperation(operation);
-  }
-
-  private applyObjectInsertKeyOperation(id: LogicalTimestamp, dep: LogicalTimestamp, key: string) {
-    const dependency = this.operation(dep) as InsertObjectKeyOperation;
-    const operation = new InsertObjectKeyOperation(this, id, dep, key);
-    dependency.type!.update(operation);
-    this.indexOperation(operation);
+  public patch(): PatchBuilder {
+    return new PatchBuilder(this);    
   }
 
   public toJson() {
     return this.root.toJson();
+  }
+
+  public insertOperation(op: ICrdtOperation) {
+    // Do nothing if operation is already known, this is idempotency property.
+    if (!!this.ops.get(op.id)) return;
+    
+    this.ops.index(op);
+    if (op instanceof CrdtLWWRegisterWriteOperation) {
+      const {after} = op;
+      const afterOp = this.ops.get(after);
+      if (afterOp instanceof CrdtLWWRegisterWriteOperation) afterOp.type!.insert(op, afterOp);
+      else if (afterOp instanceof CrdtLWWRegisterType) afterOp.insert(op);
+      else throw new Error('Expected dependency to by LWW-Register.');
+    }
+  }
+
+  public makeLWWRegister(): CrdtLWWRegisterType {
+    const id = this.clock.tick(1);
+    const type = new CrdtLWWRegisterType(this, id);
+    this.ops.index(type);
+    return type;
+  }
+}
+
+export class PatchBuilder {
+  public readonly ops: ICrdtOperation[] = [];
+
+  constructor(public readonly doc: Document) {}
+
+  public makeObject(): ObjectType {
+    const {doc} = this;
+    const id = doc.clock.tick(1);
+    const operation = new ObjectType(doc, id, undefined);
+    this.ops.push(operation);
+    doc.ops.index(operation);
+    return operation;
+  }
+
+  public insertRoot(value: LogicalTimestamp) {
+    const {doc} = this;
+    const {root} = doc;
+    const id = doc.clock.tick(1);
+    const after = root.end ? root.end.id : root.id;
+    const op = new CrdtLWWRegisterWriteOperation(id, after, value);
+    root.insert(op);
   }
 }
