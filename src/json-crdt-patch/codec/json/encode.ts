@@ -7,6 +7,7 @@ import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
@@ -51,9 +52,17 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     }
     if (op instanceof SetObjectKeysOperation) {
       ops.push({
-        op: 'obj_ins',
+        op: 'obj_set',
         after: encodeTimestamp(op.after),
         tuples: op.tuples.map(([key, value]) => [key, encodeTimestamp(value)]),
+      });
+      continue;
+    }
+    if (op instanceof SetNumberOperation) {
+      ops.push({
+        op: 'num_set',
+        after: encodeTimestamp(op.after),
+        value: op.value,
       });
       continue;
     }
@@ -61,7 +70,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
       ops.push({
         op: 'str_ins',
         after: encodeTimestamp(op.after),
-        str: op.substring,
+        value: op.substring,
       });
       continue;
     }

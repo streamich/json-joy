@@ -8,7 +8,9 @@ import {MakeObjectOperation} from "./operations/MakeObjectOperation";
 import {MakeStringOperation} from "./operations/MakeStringOperation";
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
+import {SetNumberOperation} from "./operations/SetNumberOperation";
 import {Patch} from "./Patch";
+import {DeleteArrayElementsOperation} from "./operations/DeleteArrayElementsOperation";
 
 export class PatchBuilder {
   public readonly patch: Patch;
@@ -76,11 +78,24 @@ export class PatchBuilder {
    * Set field of an object.
    * @returns ID of the new operation.
    */
-  public setKeys(object: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
+  public setKeys(after: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
     if (!tuples.length) 
       throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
-    const op = new SetObjectKeysOperation(id, object, tuples);
+    const op = new SetObjectKeysOperation(id, after, tuples);
+    const span = op.getSpan();
+    if (span > 1) this.clock.tick(span - 1);
+    this.patch.ops.push(op);
+    return id;
+  }
+  
+  /**
+   * Set number value.
+   * @returns ID of the new operation.
+   */
+  public setNum(after: LogicalTimestamp, value: number): LogicalTimestamp {
+    const id = this.clock.tick(1);
+    const op = new SetNumberOperation(id, after, value);
     this.patch.ops.push(op);
     return id;
   }
@@ -104,7 +119,7 @@ export class PatchBuilder {
    * Insert elements into an array.
    * @returns ID of the new operation.
    */
-  public insArr(array: LogicalTimestamp, after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
+  public insArr(after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
     const id = this.clock.tick(1);
     const op = new InsertArrayElementsOperation(id, after, elements);
     const span = op.getSpan();
@@ -128,9 +143,9 @@ export class PatchBuilder {
    * Delete elements of an array.
    * @returns ID of the new operation.
    */
-  public delArr(firstCharacter: LogicalTimestamp, span: number): LogicalTimestamp {
+  public delArr(elementId: LogicalTimestamp, span: number): LogicalTimestamp {
     const id = this.clock.tick(span);
-    const op = new DeleteStringSubstringOperation(id, firstCharacter, span);
+    const op = new DeleteArrayElementsOperation(id, elementId, span);
     this.patch.ops.push(op);
     return id;
   }

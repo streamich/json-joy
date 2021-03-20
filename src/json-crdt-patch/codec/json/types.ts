@@ -19,6 +19,7 @@ export type JsonCodecOperation =
   | JsonCodecMakeNumberOperation
   | JsonCodecSetRootOperation
   | JsonCodecSetObjectKeysOperation
+  | JsonCodecSetNumberOperation
   | JsonCodecInsertStringSubstringOperation
   | JsonCodecInsertArrayElementsOperation
   | JsonCodecDeleteStringSubstringOperation
@@ -47,15 +48,21 @@ export interface JsonCodecSetRootOperation {
 }
 
 export interface JsonCodecSetObjectKeysOperation {
-  op: 'obj_ins';
+  op: 'obj_set';
   after: JsonCodecTimestamp;
   tuples: [key: string, value: JsonCodecTimestamp][];
+}
+
+export interface JsonCodecSetNumberOperation {
+  op: 'num_set';
+  after: JsonCodecTimestamp;
+  value: number;
 }
 
 export interface JsonCodecInsertStringSubstringOperation {
   op: 'str_ins';
   after: JsonCodecTimestamp;
-  str: string;
+  value: string;
 }
 
 export interface JsonCodecInsertArrayElementsOperation {
