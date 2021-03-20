@@ -6,40 +6,40 @@ export interface DoublyLinkedListEntry<T> {
   right: DoublyLinkedListEntry<T> | null;
 }
 
-export class DoublyLinkedList<T> {
-  public start: (DoublyLinkedListEntry<T> & T) | null = null;
-  public end: (DoublyLinkedListEntry<T> & T) | null = null;
-
-  public append(entry: DoublyLinkedListEntry<T> & T) {
-    const last = this.end;
-    entry.right = null;
-    this.end = entry;
-    if (!last) {
-      entry.left = null;
-      this.start = entry;
-    } else {
-      last.right = entry;
-      entry.left = last;
-    }
-  }
-
-  public length(): number {
-    let len: number = 0;
-    let cur: any = this.start;
-    while (cur) {
-      len++;
-      cur = cur.right;
-    }
-    return len;
-  }
-
-  public toString() {
-    let str = '';
-    let cur: any = this.start;
-    while (cur) {
-      str += cur.id.toString() + '\n';
-      cur = cur.right;
-    }
-    return str;
-  }
+export interface DoublyLinkedList<T> {
+  start: (T & DoublyLinkedListEntry<T>) | null;
+  end: (T & DoublyLinkedListEntry<T>) | null;
 }
+
+export const append = <T>(list: DoublyLinkedList<T>, entry: DoublyLinkedListEntry<T> & T) => {
+  const last = list.end;
+  entry.right = null;
+  list.end = entry;
+  if (!last) {
+    entry.left = null;
+    list.start = entry;
+  } else {
+    last.right = entry;
+    entry.left = last;
+  }
+};
+
+export const length = <T>(list: DoublyLinkedList<T>): number => {
+  let len: number = 0;
+  let cur: any = list.start;
+  while (cur) {
+    len++;
+    cur = cur.right;
+  }
+  return len;
+};
+
+export const toString = <T>(list: DoublyLinkedList<T>): string => {
+  let str = '';
+  let cur: any = list.start;
+  while (cur) {
+    str += cur.id.toString() + '\n';
+    cur = cur.right;
+  }
+  return str;
+};

@@ -1,21 +1,21 @@
-import type {CrdtType, JsonNode} from '../types';
-import type {Document} from '../document';
+import type {CrdtType} from '../types';
 import {LogicalTimestamp} from '../clock';
 import {DoublyLinkedList} from '../doubly-linked-list';
 import {UNDEFINED_ID} from '../constants';
 import {CrdtLWWRegisterWriteOperation} from './CrdtLWWRegisterWriteOperation';
-import {ICrdtOperation} from '../operations/types';
 
-export class CrdtLWWRegisterType extends DoublyLinkedList<CrdtLWWRegisterWriteOperation> implements JsonNode, CrdtType {
+export class CrdtLWWRegisterType implements DoublyLinkedList<CrdtLWWRegisterWriteOperation> {
   /**
    * The current value of the of the register. When undefined, means the value
    * has not been set yet, or was already deleted.
    */
   public value: LogicalTimestamp = UNDEFINED_ID;
 
-  constructor(private readonly doc: Document, public readonly id: LogicalTimestamp) {
-    super();
-  }
+
+  private start: null | CrdtLWWRegisterWriteOperation = null;
+  private end: null | CrdtLWWRegisterWriteOperation = null;
+
+  constructor(public readonly id: LogicalTimestamp) {}
 
   public insert(op: CrdtLWWRegisterWriteOperation, afterOp?: CrdtLWWRegisterWriteOperation): void {
     op.type = this;
@@ -42,15 +42,14 @@ export class CrdtLWWRegisterType extends DoublyLinkedList<CrdtLWWRegisterWriteOp
 
   public merge(type: CrdtLWWRegisterType): void {}
 
-  public makeWriteOperation(value: LogicalTimestamp): CrdtLWWRegisterWriteOperation {
-    const {doc, end} = this;
-    const id = doc.clock.tick(1);
+  public makeWriteOperation(id: LogicalTimestamp, value: LogicalTimestamp): CrdtLWWRegisterWriteOperation {
+    const {end} = this;
     const after = end ? end.id : this.id;
     const op = new CrdtLWWRegisterWriteOperation(id, after, value);
     return op;
   }
 
-  public toJson(): unknown {
+  public toValue(): LogicalTimestamp {
     const {value, doc} = this;
     if (value === UNDEFINED_ID) return undefined;
     const operation = doc.ops.get(value) as CrdtType;
