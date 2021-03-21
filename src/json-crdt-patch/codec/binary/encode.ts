@@ -101,7 +101,13 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
-      
+      buffers.push(new Uint8Array([7]));
+      buffers.push(new Uint32Array(ts(op.after)).buffer);
+      const stringBuffer = encodeString(op.substring);
+      const stringLengthBuffer = new Uint8Array(encodeVarUInt(stringBuffer.byteLength));
+      buffers.push(stringLengthBuffer.buffer);
+      buffers.push(stringBuffer);
+      size += 1 + 8 + stringLengthBuffer.byteLength + stringBuffer.byteLength;
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {

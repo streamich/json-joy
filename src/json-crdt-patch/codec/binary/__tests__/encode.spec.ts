@@ -111,6 +111,32 @@ test('encodes a .setNum() operation', () => {
   ]);
 });
 
+test('encodes a .insStr() operation', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.insStr(new LogicalTimestamp(3, 3), 'haha');
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
+    7, // str_ins
+    3, 0, 0, 0, 3, 0, 0, 0, // After = 3!3
+    4, // String length
+    104, 97, 104, 97, // "haha"
+  ]);
+});
+
+test('encodes a .setNum() operation', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.setNum(new LogicalTimestamp(1, 2), 123.456);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    6, // num_set
+    119, 190, 159, 26, 47, 221, 94,  64 // Double value
+  ]);
+});
+
 // test('encodes a simple patch', () => {`
 //   const clock = new LogicalClock(3, 5);
 //   const builder = new PatchBuilder(clock);
