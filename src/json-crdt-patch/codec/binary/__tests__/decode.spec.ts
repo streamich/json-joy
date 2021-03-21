@@ -1,4 +1,3 @@
-import {LogicalClock, LogicalTimestamp} from '../../../../json-crdt/clock';
 import {MakeArrayOperation} from '../../../operations/MakeArrayOperation';
 import {MakeNumberOperation} from '../../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../../operations/MakeObjectOperation';
@@ -6,9 +5,8 @@ import {MakeStringOperation} from '../../../operations/MakeStringOperation';
 import {SetNumberOperation} from '../../../operations/SetNumberOperation';
 import {SetObjectKeysOperation} from '../../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../../operations/SetRootOperation';
-import {PatchBuilder} from '../../../PatchBuilder';
+import {InsertStringSubstringOperation} from '../../../operations/InsertStringSubstringOperation';
 import {decode} from '../decode';
-import {encode} from '../encode';
 
 test('decodes a .obj() operation', () => {
   const buf = new Uint8Array([
@@ -137,19 +135,22 @@ test('decodes a .setNum() operation', () => {
   expect((patch.ops[0] as SetNumberOperation).value).toBe(123.456);
 });
 
-// test('encodes a .insStr() operation', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.insStr(new LogicalTimestamp(3, 3), 'haha');
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
-//     7, // str_ins
-//     3, 0, 0, 0, 3, 0, 0, 0, // After = 3!3
-//     4, // String length
-//     104, 97, 104, 97, // "haha"
-//   ]);
-// });
+test('decodes a .insStr() operation', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
+    7, // str_ins
+    3, 0, 0, 0, 3, 0, 0, 0, // After = 3!3
+    4, // String length
+    104, 97, 104, 97, // "haha"
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(InsertStringSubstringOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as InsertStringSubstringOperation).after.toString()).toBe('3!3');
+  expect((patch.ops[0] as InsertStringSubstringOperation).substring.toString()).toBe('haha');
+});
 
 // test('encodes a .insArr() operation', () => {
 //   const clock = new LogicalClock(1, 1);
