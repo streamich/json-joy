@@ -3,6 +3,7 @@ import {MakeArrayOperation} from '../../../operations/MakeArrayOperation';
 import {MakeNumberOperation} from '../../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../../operations/MakeObjectOperation';
 import {MakeStringOperation} from '../../../operations/MakeStringOperation';
+import {SetNumberOperation} from '../../../operations/SetNumberOperation';
 import {SetObjectKeysOperation} from '../../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../../operations/SetRootOperation';
 import {PatchBuilder} from '../../../PatchBuilder';
@@ -120,31 +121,21 @@ test('decodes a two key string using .setKeys() operation', () => {
   expect((patch.ops[0] as SetObjectKeysOperation).tuples[1][1].toString()).toBe('5!5');
 });
 
-// test('encodes a .setNum() operation', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.setNum(new LogicalTimestamp(1, 2), 123.456);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
-//     6, // num_set
-//     1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
-//     119, 190, 159, 26, 47, 221, 94,  64 // Double value
-//   ]);
-// });
-
-// test('encodes a .setNum() operation', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.setNum(new LogicalTimestamp(1, 2), 123.456);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
-//     6, // num_set
-//     1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
-//     119, 190, 159, 26, 47, 221, 94,  64 // Double value
-//   ]);
-// });
+test('decodes a .setNum() operation', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
+    6, // num_set
+    1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
+    119, 190, 159, 26, 47, 221, 94, 64 // Double value
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(SetNumberOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as SetNumberOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as SetNumberOperation).value).toBe(123.456);
+});
 
 // test('encodes a .insStr() operation', () => {
 //   const clock = new LogicalClock(1, 1);

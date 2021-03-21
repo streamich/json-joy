@@ -105,6 +105,14 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.setKeys(after, tuples);
         continue;
       }
+      case 6: {
+        const after = decodeTimestamp(buf, offset);
+        offset += 8;
+        const value = new Float64Array(buf.slice(offset, offset + 8).buffer)[0];
+        offset += 8;
+        builder.setNum(after, value);
+        continue;
+      }
     }
   }
 
