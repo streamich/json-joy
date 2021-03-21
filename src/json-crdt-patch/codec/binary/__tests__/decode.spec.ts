@@ -9,6 +9,7 @@ import {InsertStringSubstringOperation} from '../../../operations/InsertStringSu
 import {decode} from '../decode';
 import {InsertArrayElementsOperation} from '../../../operations/InsertArrayElementsOperation';
 import {DeleteOperation} from '../../../operations/DeleteOperation';
+import {encode} from '../encode';
 
 test('decodes a .obj() operation', () => {
   const buf = new Uint8Array([
@@ -223,100 +224,96 @@ test('decodes a .del() operation with span = 1', () => {
   expect((patch.ops[0] as DeleteOperation).span).toBe(1);
 });
 
-// test('encodes a simple patch', () => {
-//   const clock = new LogicalClock(3, 5);
-//   const builder = new PatchBuilder(clock);
-//   builder.root(new LogicalTimestamp(0, 0), new LogicalTimestamp(0, 3));
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
-//     4, // root
-//     0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
-//     0, 0, 0, 0, 3, 0, 0, 0, // Value = 0!3
-//   ]);
-// });
+test('decodes a simple patch', () => {
+  const buf = new Uint8Array([
+    3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
+    4, // root
+    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
+    0, 0, 0, 0, 3, 0, 0, 0, // Value = 0!3
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('3!5');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(SetRootOperation);
+  expect(patch.ops[0].id.toString()).toBe('3!5');
+  expect((patch.ops[0] as SetRootOperation).after.toString()).toBe('0!0');
+  expect((patch.ops[0] as SetRootOperation).value.toString()).toBe('0!3');
+});
 
-// test('create {foo: "bar"} object', () => {
-//   const clock = new LogicalClock(5, 25);
-//   const builder = new PatchBuilder(clock);
-  
-//   const strId = builder.str();
-//   builder.insStr(strId, 'bar');
-//   const objId = builder.obj();
-//   builder.setKeys(objId, [['foo', strId]]);
-//   builder.root(new LogicalTimestamp(0, 0), objId);
+test('create {foo: "bar"} object', () => {
+  const buf = new Uint8Array([
+    5, 0, 0, 0, 25, 0, 0, 0, // Patch ID = 5!25
+    2, // str
+    7, // str_ins
+    5, 0, 0, 0, 25, 0, 0, 0, // Sting ID = 5!25
+    3, // String length
+    98, 97, 114, // "bar"
+    0, // obj
+    5, // obj_set
+    5, 0, 0, 0, 29, 0, 0, 0, // Object ID = 5!29
+    1, // Number of fields
+    5, 0, 0, 0, 25, 0, 0, 0, // First field value = 5!25
+    3, // Field key length
+    102, 111, 111, // "foo"
+    4, // root
+    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
+    5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
+  ]);
+  const patch = decode(buf)
+  expect(patch.ops.length).toBe(5);
+  expect(patch.getSpan()).toBe(7);
+  expect(patch.getId()!.toString()).toBe('5!25');
+  expect(patch.ops[0]).toBeInstanceOf(MakeStringOperation);
+  expect(patch.ops[1]).toBeInstanceOf(InsertStringSubstringOperation);
+  expect(patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
+  expect(patch.ops[3]).toBeInstanceOf(SetObjectKeysOperation);
+  expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
+  expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
+  expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
+  expect((patch.ops[3] as SetObjectKeysOperation).after.toString()).toBe('5!29');
+  expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
+  expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('5!25');
+  expect((patch.ops[4] as SetRootOperation).after.toString()).toBe('0!0');
+  expect((patch.ops[4] as SetRootOperation).value.toString()).toBe('5!29');
+});
 
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     5, 0, 0, 0, 25, 0, 0, 0, // Patch ID = 5!25
-//     2, // str
-//     7, // str_ins
-//     5, 0, 0, 0, 25, 0, 0, 0, // Sting ID = 5!25
-//     3, // String length
-//     98, 97, 114, // "bar"
-//     0, // obj
-//     5, // obj_set
-//     5, 0, 0, 0, 29, 0, 0, 0, // Object ID = 5!29
-//     1, // Number of fields
-//     5, 0, 0, 0, 25, 0, 0, 0, // First field value = 5!25
-//     3, // Field key length
-//     102, 111, 111, // "foo"
-//     4, // root
-//     0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
-//     5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
-//   ]);
-// });
-
-// test('test all operations', () => {
-//   const clock = new LogicalClock(3, 100);
-//   const builder = new PatchBuilder(clock);
-
-//   const strId = builder.str();
-//   const strInsertId = builder.insStr(strId, 'qq');
-//   const arrId = builder.arr();
-//   const objId = builder.obj();
-//   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
-//   const numId = builder.num();
-//   builder.setNum(numId, 123.4);
-//   const numInsertionId = builder.insArr(arrId, [numId])
-//   builder.root(new LogicalTimestamp(0, 0), objId);
-//   builder.del(numInsertionId, 1);
-//   builder.del(strInsertId, 2);
-
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     3,0,0,0,100,0,0,0, // Patch ID = 3!100
-//     2, // str
-//     7, // str_ins
-//     3,0,0,0,100,0,0,0, // After = 3!100
-//     2, // String length
-//     113,113, // "qq"
-//     1, // arr
-//     0, // obj
-//     5, // obj_set
-//     3,0,0,0,104,0,0,0, // After = 3!104
-//     2, // Number of fields
-//     3,0,0,0,100,0,0,0, // Field one value = 3!100
-//     3, // Field one key length
-//     102,111,111, // "foo"
-//     3,0,0,0,103,0,0,0, // Field two value = 3!103
-//     3, // Field two key length
-//     104,109,109, // "hmm"
-//     3, // num
-//     6, // num_set
-//     3,0,0,0,107,0,0,0, // After = 3!107
-//     154,153,153,153,153,217,94,64, // Value = 123.4
-//     8, // arr_ins
-//     3,0,0,0,103,0,0,0, // After = 3!103
-//     1, // Number of elements
-//     3,0,0,0,107,0,0,0, // First element = 3!107
-//     4, // root
-//     0,0,0,0,0,0,0,0, // After = 0!0
-//     3,0,0,0,104,0,0,0, // Value = 3!104
-//     10, // del_one
-//     3,0,0,0,109,0,0,0, // After = 3!109
-//     9, // del
-//     3,0,0,0,101,0,0,0, // After = 3!101
-//     2, // Deletion length
-//   ]);
-// });
+test('test all operations', () => {
+  const buf = new Uint8Array([
+    3,0,0,0,100,0,0,0, // Patch ID = 3!100
+    2, // str
+    7, // str_ins
+    3,0,0,0,100,0,0,0, // After = 3!100
+    2, // String length
+    113,113, // "qq"
+    1, // arr
+    0, // obj
+    5, // obj_set
+    3,0,0,0,104,0,0,0, // After = 3!104
+    2, // Number of fields
+    3,0,0,0,100,0,0,0, // Field one value = 3!100
+    3, // Field one key length
+    102,111,111, // "foo"
+    3,0,0,0,103,0,0,0, // Field two value = 3!103
+    3, // Field two key length
+    104,109,109, // "hmm"
+    3, // num
+    6, // num_set
+    3,0,0,0,107,0,0,0, // After = 3!107
+    154,153,153,153,153,217,94,64, // Value = 123.4
+    8, // arr_ins
+    3,0,0,0,103,0,0,0, // After = 3!103
+    1, // Number of elements
+    3,0,0,0,107,0,0,0, // First element = 3!107
+    4, // root
+    0,0,0,0,0,0,0,0, // After = 0!0
+    3,0,0,0,104,0,0,0, // Value = 3!104
+    10, // del_one
+    3,0,0,0,109,0,0,0, // After = 3!109
+    9, // del
+    3,0,0,0,101,0,0,0, // After = 3!101
+    2, // Deletion length
+  ]);
+  const patch = decode(buf);
+  const encoded = encode(patch);
+  expect([...buf]).toEqual([...encoded]);
+});
