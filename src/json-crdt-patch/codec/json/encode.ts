@@ -44,7 +44,6 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof SetRootOperation) {
       ops.push({
         op: 'root',
-        after: encodeTimestamp(op.after),
         value: encodeTimestamp(op.value),
       });
       continue;
@@ -52,7 +51,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof SetObjectKeysOperation) {
       ops.push({
         op: 'obj_set',
-        after: encodeTimestamp(op.after),
+        obj: encodeTimestamp(op.object),
         tuples: op.tuples.map(([key, value]) => [key, encodeTimestamp(value)]),
       });
       continue;

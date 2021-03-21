@@ -29,11 +29,11 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'root': {
-        builder.root(ts(op.after), ts(op.value));
+        builder.root(ts(op.value));
         break;
       }
       case 'obj_set': {
-        builder.setKeys(ts(op.after), (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]));
+        builder.setKeys(ts(op.obj), (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]));
         break;
       }
       case 'num_set': {

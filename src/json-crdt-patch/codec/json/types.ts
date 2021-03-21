@@ -42,13 +42,12 @@ export interface JsonCodecMakeNumberOperation {
 
 export interface JsonCodecSetRootOperation {
   op: 'root';
-  after: JsonCodecTimestamp;
   value: JsonCodecTimestamp;
 }
 
 export interface JsonCodecSetObjectKeysOperation {
   op: 'obj_set';
-  after: JsonCodecTimestamp;
+  obj: JsonCodecTimestamp;
   tuples: [key: string, value: JsonCodecTimestamp][];
 }
 

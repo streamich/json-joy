@@ -66,9 +66,9 @@ export class PatchBuilder {
    * Set value of document's root.
    * @returns ID of the new operation.
    */
-  public root(after: LogicalTimestamp, value: LogicalTimestamp): LogicalTimestamp {
+  public root(value: LogicalTimestamp): LogicalTimestamp {
     const id = this.clock.tick(1);
-    const op = new SetRootOperation(id, after, value);
+    const op = new SetRootOperation(id, value);
     this.patch.ops.push(op);
     return id;
   }
@@ -77,11 +77,11 @@ export class PatchBuilder {
    * Set field of an object.
    * @returns ID of the new operation.
    */
-  public setKeys(after: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
+  public setKeys(obj: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
     if (!tuples.length) 
       throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
-    const op = new SetObjectKeysOperation(id, after, tuples);
+    const op = new SetObjectKeysOperation(id, obj, tuples);
     const span = op.getSpan();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
