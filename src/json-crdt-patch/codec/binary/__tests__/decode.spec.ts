@@ -157,7 +157,8 @@ test('decodes a .insArr() operation', () => {
   const buf = new Uint8Array([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     8, // arr_ins
-    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    1, 0, 0, 0, 2, 0, 0, 0, // Arr = 1!2
+    1, 0, 0, 0, 3, 0, 0, 0, // After = 1!3
     3, // Length
     3, 0, 0, 0, 3, 0, 0, 0, // After 3!3
     4, 0, 0, 0, 4, 0, 0, 0, // After 4!4
@@ -168,7 +169,8 @@ test('decodes a .insArr() operation', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(InsertArrayElementsOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
-  expect((patch.ops[0] as InsertArrayElementsOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as InsertArrayElementsOperation).arr.toString()).toBe('1!2');
+  expect((patch.ops[0] as InsertArrayElementsOperation).after.toString()).toBe('1!3');
   expect((patch.ops[0] as InsertArrayElementsOperation).elements.length).toBe(3);
   expect((patch.ops[0] as InsertArrayElementsOperation).elements[0].toString()).toBe('3!3');
   expect((patch.ops[0] as InsertArrayElementsOperation).elements[1].toString()).toBe('4!4');
@@ -295,6 +297,7 @@ test('test all operations', () => {
     3,0,0,0,107,0,0,0, // After = 3!107
     154,153,153,153,153,217,94,64, // Value = 123.4
     8, // arr_ins
+    3,0,0,0,103,0,0,0, // Arr = 3!103
     3,0,0,0,103,0,0,0, // After = 3!103
     1, // Number of elements
     3,0,0,0,107,0,0,0, // First element = 3!107

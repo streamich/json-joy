@@ -128,7 +128,7 @@ test('encodes a .insStr() operation', () => {
 test('encodes a .insArr() operation', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.insArr(new LogicalTimestamp(1, 2), [
+  builder.insArr(new LogicalTimestamp(1, 1), new LogicalTimestamp(1, 2), [
     new LogicalTimestamp(3, 3),
     new LogicalTimestamp(4, 4),
     new LogicalTimestamp(5, 5),
@@ -137,7 +137,8 @@ test('encodes a .insArr() operation', () => {
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     8, // arr_ins
-    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    1, 0, 0, 0, 1, 0, 0, 0, // Arr = 1!2
+    1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
     3, // Length
     3, 0, 0, 0, 3, 0, 0, 0, // After 3!3
     4, 0, 0, 0, 4, 0, 0, 0, // After 4!4
@@ -236,7 +237,7 @@ test('test all operations', () => {
   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
   const numId = builder.num();
   builder.setNum(numId, 123.4);
-  const numInsertionId = builder.insArr(arrId, [numId])
+  const numInsertionId = builder.insArr(arrId, arrId, [numId])
   builder.root(objId);
   builder.del(numInsertionId, 1);
   builder.del(strInsertId, 2);
@@ -265,6 +266,7 @@ test('test all operations', () => {
     3,0,0,0,107,0,0,0, // After = 3!107
     154,153,153,153,153,217,94,64, // Value = 123.4
     8, // arr_ins
+    3,0,0,0,103,0,0,0, // Arr = 3!103
     3,0,0,0,103,0,0,0, // After = 3!103
     1, // Number of elements
     3,0,0,0,107,0,0,0, // First element = 3!107

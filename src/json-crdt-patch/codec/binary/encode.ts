@@ -118,17 +118,18 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {
-      const {after, elements} = op;
+      const {arr, after, elements} = op;
       const length = elements.length;
       const elementLengthBuffer = new Uint8Array(encodeVarUInt(length));
       buffers.push(
         new Uint8Array([8]),
+        new Uint32Array(encodeTimestamp(arr)).buffer,
         new Uint32Array(encodeTimestamp(after)).buffer,
         elementLengthBuffer.buffer,
       );
       for (const element of elements)
         buffers.push( new Uint32Array(encodeTimestamp(element)).buffer);
-      size += 1 + 8 + elementLengthBuffer.byteLength + (8 * length);
+      size += 1 + 8 + 8 + elementLengthBuffer.byteLength + (8 * length);
       continue;
     }
     if (op instanceof DeleteOperation) {

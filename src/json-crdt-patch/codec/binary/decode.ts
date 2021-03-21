@@ -126,6 +126,8 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 8: {
+        const arr = decodeTimestamp(buf, offset);
+        offset += 8;
         const after = decodeTimestamp(buf, offset);
         offset += 8;
         const length = decodeVarUint(buf, offset);
@@ -140,7 +142,7 @@ export const decode = (buf: Uint8Array): Patch => {
           offset += 8;
           elements.push(value);
         }
-        builder.insArr(after, elements);
+        builder.insArr(arr, after, elements);
         continue;
       }
       case 9: {
