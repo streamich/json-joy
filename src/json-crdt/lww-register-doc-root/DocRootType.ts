@@ -1,13 +1,13 @@
 import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
+import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
 import {UNDEFINED_ID} from '../constants';
-import {LWWRegisterWriteOp} from './LWWRegisterWriteOp';
 
-export class LWWRegisterType {
-  private last: LWWRegisterWriteOp | null = null;
+export class DocRootType {
+  private last: SetRootOperation | null = null;
 
   constructor(public readonly id: LogicalTimestamp) {}
 
-  public insert(op: LWWRegisterWriteOp) {
+  public insert(op: SetRootOperation) {
     if (!this.last) {
       this.last = op;
       return;

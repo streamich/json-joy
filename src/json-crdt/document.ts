@@ -2,11 +2,11 @@ import type {JsonNode} from './types';
 import {FALSE, NULL, ORIGIN, TRUE} from './constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
-import {LWWRegisterType} from './lww-register/LWWRegisterType';
 import {Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {LWWRegisterWriteOp} from './lww-register/LWWRegisterWriteOp';
 import {LogicalClock} from '../json-crdt-patch/clock';
+import {DocRootType} from './lww-register-doc-root/DocRootType';
 
 export class Document {
   /**
@@ -14,7 +14,7 @@ export class Document {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root = new LWWRegisterType(ORIGIN);
+  public root = new DocRootType(ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session.
@@ -36,8 +36,7 @@ export class Document {
   public applyPatch(patch: Patch) {
     for (const op of patch.ops) {
       if (op instanceof SetRootOperation) {
-        const rootOp = new LWWRegisterWriteOp(op.id, op.value);
-        this.root.insert(rootOp);
+        this.root.insert(op);
         continue;
       }
     }

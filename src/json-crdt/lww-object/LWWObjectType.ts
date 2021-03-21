@@ -2,7 +2,7 @@ import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
 import {UNDEFINED_ID} from '../constants';
 import {LWWRegisterWriteOp} from './LWWRegisterWriteOp';
 
-export class LWWRegisterType {
+export class LWWObjectType {
   private last: LWWRegisterWriteOp | null = null;
 
   constructor(public readonly id: LogicalTimestamp) {}

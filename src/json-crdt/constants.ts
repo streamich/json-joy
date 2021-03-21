@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from './clock';
+import {LogicalTimestamp} from '../json-crdt-patch/clock';
 import {JsonNode} from './types';
 
 export class ConstantType implements JsonNode {
