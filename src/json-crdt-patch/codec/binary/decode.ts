@@ -127,6 +127,24 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.insStr(after, str);
         continue;
       }
+      case 8: {
+        const after = decodeTimestamp(buf, offset);
+        offset += 8;
+        const length = decodeVarUint(buf, offset);
+        offset += length <= 0b01111111
+          ? 1
+          : length <= 0b01111111_11111111
+            ? 2
+            : length <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const elements: LogicalTimestamp[] = [];
+        for (let i = 0; i < length; i++) {
+          const value = decodeTimestamp(buf, offset);
+          offset += 8;
+          elements.push(value);
+        }
+        builder.insArr(after, elements);
+        continue;
+      }
     }
   }
 

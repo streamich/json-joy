@@ -7,6 +7,7 @@ import {SetObjectKeysOperation} from '../../../operations/SetObjectKeysOperation
 import {SetRootOperation} from '../../../operations/SetRootOperation';
 import {InsertStringSubstringOperation} from '../../../operations/InsertStringSubstringOperation';
 import {decode} from '../decode';
+import {InsertArrayElementsOperation} from '../../../operations/InsertArrayElementsOperation';
 
 test('decodes a .obj() operation', () => {
   const buf = new Uint8Array([
@@ -152,25 +153,27 @@ test('decodes a .insStr() operation', () => {
   expect((patch.ops[0] as InsertStringSubstringOperation).substring.toString()).toBe('haha');
 });
 
-// test('encodes a .insArr() operation', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.insArr(new LogicalTimestamp(1, 2), [
-//     new LogicalTimestamp(3, 3),
-//     new LogicalTimestamp(4, 4),
-//     new LogicalTimestamp(5, 5),
-//   ]);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-//     8, // arr_ins
-//     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
-//     3, // Length
-//     3, 0, 0, 0, 3, 0, 0, 0, // After 3!3
-//     4, 0, 0, 0, 4, 0, 0, 0, // After 4!4
-//     5, 0, 0, 0, 5, 0, 0, 0, // After 5!5
-//   ]);
-// });
+test('decodes a .insArr() operation', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    8, // arr_ins
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    3, // Length
+    3, 0, 0, 0, 3, 0, 0, 0, // After 3!3
+    4, 0, 0, 0, 4, 0, 0, 0, // After 4!4
+    5, 0, 0, 0, 5, 0, 0, 0, // After 5!5
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(InsertArrayElementsOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as InsertArrayElementsOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as InsertArrayElementsOperation).elements.length).toBe(3);
+  expect((patch.ops[0] as InsertArrayElementsOperation).elements[0].toString()).toBe('3!3');
+  expect((patch.ops[0] as InsertArrayElementsOperation).elements[1].toString()).toBe('4!4');
+  expect((patch.ops[0] as InsertArrayElementsOperation).elements[2].toString()).toBe('5!5');
+});
 
 // test('encodes a .del() operation with span > 1', () => {
 //   const clock = new LogicalClock(1, 1);
