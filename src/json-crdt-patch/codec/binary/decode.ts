@@ -2,19 +2,88 @@ import {LogicalClock, LogicalTimestamp} from "../../../json-crdt/clock";
 import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
 
-export const decodeTimestamp = (buf: Uint32Array): LogicalTimestamp => {
-  const low = buf[0];
-  const high = buf[1];
-  const sessionId = ((high >>> 24) * 0x01_00_00_00_00) + low;
-  const time = high & 0xFFFFFF;
+export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimestamp => {
+  const o1 = buf[offset];
+  const o2 = buf[offset + 1];
+  const o3 = buf[offset + 2];
+  const o4 = buf[offset + 3];
+  const o5 = buf[offset + 4];
+  const o6 = buf[offset + 5];
+  const o7 = buf[offset + 6];
+  const o8 = buf[offset + 7];
+  let sessionId = o8;
+  sessionId *= 0x100;
+  sessionId += o4;
+  sessionId *= 0x100;
+  sessionId += o3;
+  sessionId *= 0x100;
+  sessionId += o2;
+  sessionId *= 0x100;
+  sessionId += o1;
+  let time = o7;
+  time *= 0x100;
+  time += o6;
+  time *= 0x100;
+  time += o5;
   return new LogicalTimestamp(sessionId, time);
 };
 
-// export const decode = (buf: Uint8Array): Patch => {
-//   const id = decodeTimeStamp(buf, 0);
-//   let offset = 8;
-//   const clock = new LogicalClock(id.sessionId, id.time);
-//   const builder = new PatchBuilder(clock);
+export const decodeVarUint = (buf: Uint8Array, offset: number): number => {
+  const o1 = buf[offset];
+  if (o1 <= 0b0111_1111) return o1;
+  const o2 = buf[offset + 1];
+  if (o2 <= 0b0111_1111) return (o2 << 7) + (o1 & 0b0111_1111);
+  const o3 = buf[offset + 2];
+  if (o3 <= 0b0111_1111) return (o3 << 14) + ((o2 & 0b0111_1111) << 7) + (o1 & 0b0111_1111);
+  const o4 = buf[offset + 3];
+  return (o4 << 21) + ((o3 & 0b0111_1111) << 14) + ((o2 & 0b0111_1111) << 7) + (o1 & 0b0111_1111);
+};
 
-//   return builder.patch;
-// };
+export const decode = (buf: Uint8Array): Patch => {
+  const id = decodeTimestamp(buf, 0);
+  let offset = 8;
+  const clock = new LogicalClock(id.sessionId, id.time);
+  const builder = new PatchBuilder(clock);
+  const length = buf.byteLength;
+
+  while (offset < length) {
+    const opcode = buf[offset];
+    offset++;
+    switch (opcode) {
+      case 0: {
+        builder.obj();
+        continue;
+      }
+      case 1: {
+        builder.arr();
+        continue;
+      }
+      case 2: {
+        builder.str();
+        continue;
+      }
+      case 3: {
+        builder.num();
+        continue;
+      }
+      case 4: {
+        const after = decodeTimestamp(buf, offset);
+        offset += 8;
+        const value = decodeTimestamp(buf, offset);
+        offset += 8;
+        builder.root(after, value);
+        continue;
+      }
+      // case 5: {
+      //   const after = decodeTimestamp(buf, offset);
+      //   offset += 8;
+      //   const value = decodeTimestamp(buf, offset);
+      //   offset += 8;
+      //   builder.root(after, value);
+      //   continue;
+      // }
+    }
+  }
+
+  return builder.patch;
+};
