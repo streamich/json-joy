@@ -1,7 +1,7 @@
 import {LogicalClock, LogicalTimestamp} from "../../../json-crdt/clock";
 import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
-import {JsonCodecPatch, JsonCodecTimestamp} from "./types";
+import {JsonCodecPatch, JsonCodecSetObjectKeysOperation, JsonCodecTimestamp} from "./types";
 
 const ts = (time: JsonCodecTimestamp): LogicalTimestamp => new LogicalTimestamp(time[0], time[1]);
 
@@ -33,7 +33,7 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'obj_set': {
-        builder.setKeys(ts(op.after), op.tuples.map(([key, id]) => [key, ts(id)]));
+        builder.setKeys(ts(op.after), (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]));
         break;
       }
       case 'num_set': {
@@ -48,12 +48,8 @@ export const decode = (data: JsonCodecPatch): Patch => {
         builder.insArr(ts(op.after), op.values.map(ts));
         break;
       }
-      case 'str_del': {
-        builder.delStr(ts(op.after), op.len || 1);
-        break;
-      }
-      case 'arr_del': {
-        builder.delArr(ts(op.after), op.len || 1);
+      case 'del': {
+        builder.del(ts(op.after), op.len || 1);
         break;
       }
     }

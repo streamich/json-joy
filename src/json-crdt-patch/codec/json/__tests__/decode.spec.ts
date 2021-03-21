@@ -64,8 +64,8 @@ test('test all operations', () => {
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
       { op: 'arr_ins', after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', after: [0, 0], value: [3, 104]}, // 110
-      { op: 'arr_del', after: [3, 109]}, // 111
-      { op: 'str_del', after: [3, 101]}, // 112
+      { op: 'del', after: [3, 109]}, // 111
+      { op: 'del', after: [3, 101], len: 2}, // 112
     ]
   };
   const patch = decode(json);

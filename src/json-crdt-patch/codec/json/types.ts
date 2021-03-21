@@ -71,15 +71,8 @@ export interface JsonCodecInsertArrayElementsOperation {
   values: JsonCodecTimestamp[];
 }
 
-export interface JsonCodecDeleteStringSubstringOperation {
-  op: 'str_del';
-  after: JsonCodecTimestamp;
-  /** Defaults to 1 if omitted. */
-  len?: number;
-}
-
-export interface JsonCodecDeleteArrayElementsOperation {
-  op: 'arr_del';
+export interface JsonCodecDeleteOperation {
+  op: 'del';
   after: JsonCodecTimestamp;
   /** Defaults to 1 if omitted. */
   len?: number;

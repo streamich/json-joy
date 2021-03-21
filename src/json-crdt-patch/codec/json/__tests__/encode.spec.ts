@@ -51,8 +51,8 @@ test('test all operations', () => {
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, [numId])
   builder.root(new LogicalTimestamp(0, 0), objId);
-  builder.delArr(numInsertionId, 1);
-  builder.delStr(strInsertId, 1);
+  builder.del(numInsertionId, 1);
+  builder.del(strInsertId, 2);
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual({
@@ -70,8 +70,8 @@ test('test all operations', () => {
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
       { op: 'arr_ins', after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', after: [0, 0], value: [3, 104]}, // 110
-      { op: 'arr_del', after: [3, 109]}, // 111
-      { op: 'str_del', after: [3, 101]}, // 112
+      { op: 'del', after: [3, 109]}, // 111
+      { op: 'del', after: [3, 101], len: 2}, // 112
     ]
   });
 });

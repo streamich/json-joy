@@ -1,6 +1,5 @@
 import type {LogicalTimestamp} from "../../../json-crdt/clock";
-import {DeleteArrayElementsOperation} from "../../operations/DeleteArrayElementsOperation";
-import {DeleteStringSubstringOperation} from "../../operations/DeleteStringSubstringOperation";
+import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
@@ -11,7 +10,7 @@ import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
-import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteStringSubstringOperation, JsonCodecDeleteArrayElementsOperation} from "./types";
+import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation} from "./types";
 
 const encodeTimestamp = (ts: LogicalTimestamp): JsonCodecTimestamp => [ts.sessionId, ts.time];
 
@@ -82,19 +81,9 @@ export const encode = (patch: Patch): JsonCodecPatch => {
       });
       continue;
     }
-    if (op instanceof DeleteStringSubstringOperation) {
-      const encoded: JsonCodecDeleteStringSubstringOperation = {
-        op: 'str_del',
-        after: encodeTimestamp(op.after),
-      };
-      const span = op.getSpan();
-      if (span > 1) encoded.len = span;
-      ops.push(encoded);
-      continue;
-    }
-    if (op instanceof DeleteArrayElementsOperation) {
-      const encoded: JsonCodecDeleteArrayElementsOperation = {
-        op: 'arr_del',
+    if (op instanceof DeleteOperation) {
+      const encoded: JsonCodecDeleteOperation = {
+        op: 'del',
         after: encodeTimestamp(op.after),
       };
       const span = op.getSpan();
