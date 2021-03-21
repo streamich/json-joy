@@ -59,6 +59,46 @@ test('encodes a .root() operation', () => {
   ]);
 });
 
+test('encodes a single key string using .setKeys() operation', () => {
+  const clock = new LogicalClock(6, 7);
+  const builder = new PatchBuilder(clock);
+  builder.setKeys(new LogicalTimestamp(123, 333), [
+    ['foo', new LogicalTimestamp(33, 44)],
+  ]);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    6, 0, 0, 0, 7, 0, 0, 0, // Patch ID = 6!7
+    5, // obj_set
+    123, 0, 0, 0, 77, 1, 0, 0, // after = 123!333
+    1, // One key
+    33, 0, 0, 0, 44, 0, 0, 0, // Key value = 33!44
+    3, // Key length
+    102, 111, 111 // Key = "foo"
+  ]);
+});
+
+test('encodes a two key string using .setKeys() operation', () => {
+  const clock = new LogicalClock(6, 7);
+  const builder = new PatchBuilder(clock);
+  builder.setKeys(new LogicalTimestamp(123, 333), [
+    ['foo', new LogicalTimestamp(33, 44)],
+    ['quzz', new LogicalTimestamp(5, 5)],
+  ]);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    6, 0, 0, 0, 7, 0, 0, 0, // Patch ID = 6!7
+    5, // obj_set
+    123, 0, 0, 0, 77, 1, 0, 0, // after = 123!333
+    2, // Two keys
+    33, 0, 0, 0, 44, 0, 0, 0, // Key value = 33!44
+    3, // Key length
+    102, 111, 111, // Key = "foo"
+    5, 0, 0, 0, 5, 0, 0, 0, // Key value = 5!5
+    4, // Key length
+    113, 117, 122, 122, // Key = "foo"
+  ]);
+});
+
 // test('encodes a simple patch', () => {`
 //   const clock = new LogicalClock(3, 5);
 //   const builder = new PatchBuilder(clock);

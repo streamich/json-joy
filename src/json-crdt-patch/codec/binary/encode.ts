@@ -38,11 +38,12 @@ export const encodeVarUInt = (uint: number) => {
   ];
 };
 
-let encoder: TextEncoder;
+const encoder: TextEncoder | null = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+export const encodeString = encoder
+  ? (str: string): ArrayBuffer => encoder.encode(str)
+  : (str: string): ArrayBuffer => Buffer.from(str);
 
 export const encode = (patch: Patch): Uint8Array => {
-  if (!encoder) encoder = new TextEncoder();
-
   const {ops} = patch;
   const buffers: ArrayBuffer[] = [
     new Uint32Array(ts(patch.getId()!)).buffer,
@@ -81,11 +82,15 @@ export const encode = (patch: Patch): Uint8Array => {
       buffers.push(new Uint8Array([5]).buffer);
       buffers.push(new Uint32Array(ts(op.after)).buffer);
       size += 1 + 8;
+      const keyNumberBuffer = new Uint8Array(encodeVarUInt(op.tuples.length));
+      buffers.push(keyNumberBuffer);
+      size += keyNumberBuffer.byteLength;
       for (const [key, value] of op.tuples) {
-        const keyBuf = encoder.encode(key);
-        // TODO: use variable length number for string length....
-        buffers.push(new Uint8Array([4]).buffer);
-
+        const valueBuffer = new Uint32Array(ts(value)).buffer;
+        const keyBuffer = encodeString(key);
+        const keyLengthBuffer = new Uint8Array(encodeVarUInt(keyBuffer.byteLength));
+        buffers.push(valueBuffer, keyLengthBuffer, keyBuffer);
+        size += valueBuffer.byteLength + keyLengthBuffer.byteLength + keyBuffer.byteLength;
       }
       continue;
     }
