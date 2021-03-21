@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from '../../../../json-crdt/clock';
+import {LogicalClock, LogicalTimestamp} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
 import {encode} from '../encode';
 

@@ -1,10 +1,14 @@
 import type {IJsonCrdtPatchOperation} from "./types";
-import type {LogicalTimestamp} from '../../json-crdt/clock';
+import type {LogicalTimestamp} from '../clock';
 
 export class MakeObjectOperation implements IJsonCrdtPatchOperation {
   constructor(public readonly id: LogicalTimestamp) {}
 
   public getSpan(): number {
     return 1;
+  }
+
+  public getMnemonic(): string {
+    return 'obj';
   }
 }

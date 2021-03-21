@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from "../../../json-crdt/clock";
+import type {LogicalTimestamp} from "../../clock";
 import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";

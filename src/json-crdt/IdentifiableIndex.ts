@@ -1,5 +1,5 @@
-import type {LogicalTimestamp} from './clock';
-import type {Identifiable} from './types';
+import type {Identifiable} from "../json-crdt-patch/types";
+import {LogicalTimestamp} from "../json-crdt-patch/clock";
 
 export class IdentifiableIndex<T extends Identifiable> {
   /**

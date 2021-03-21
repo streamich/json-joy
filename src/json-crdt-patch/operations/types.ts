@@ -1,6 +1,7 @@
-import type {LogicalTimestamp} from '../../json-crdt/clock';
+import {LogicalTimestamp} from "../clock";
+import {Identifiable} from "../types";
 
-export interface IJsonCrdtPatchOperation {
+export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
    * Unique ID of that operation within the document, Lamport timestamp.
    */
@@ -14,4 +15,9 @@ export interface IJsonCrdtPatchOperation {
    * This method returns the effective number of operations.
    */
   getSpan(): number;
+
+  /**
+   * User friendly name of the operation.
+   */
+  getMnemonic(): string;
 }

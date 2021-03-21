@@ -1,5 +1,5 @@
+import {LogicalTimestamp} from "../clock";
 import type {IJsonCrdtPatchOperation} from "./types";
-import type {LogicalTimestamp} from '../../json-crdt/clock';
 
 export class DeleteOperation implements IJsonCrdtPatchOperation {
   /**
@@ -11,5 +11,9 @@ export class DeleteOperation implements IJsonCrdtPatchOperation {
 
   public getSpan(): number {
     return this.span;
+  }
+
+  public getMnemonic(): string {
+    return 'del';
   }
 }

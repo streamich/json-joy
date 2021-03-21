@@ -1,10 +1,14 @@
 import type {IJsonCrdtPatchOperation} from "./types";
-import type {LogicalTimestamp} from '../../json-crdt/clock';
+import type {LogicalTimestamp} from '../clock';
 
 export class InsertStringSubstringOperation implements IJsonCrdtPatchOperation {
   constructor(public readonly id: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly substring: string) {}
 
   public getSpan(): number {
     return this.substring.length;
+  }
+
+  public getMnemonic(): string {
+    return 'str_ins';
   }
 }

@@ -22,8 +22,7 @@ export type JsonCodecOperation =
   | JsonCodecSetNumberOperation
   | JsonCodecInsertStringSubstringOperation
   | JsonCodecInsertArrayElementsOperation
-  | JsonCodecDeleteStringSubstringOperation
-  | JsonCodecDeleteArrayElementsOperation;
+  | JsonCodecDeleteOperation;
 
 export interface JsonCodecMakeObjectOperation {
   op: 'obj';
