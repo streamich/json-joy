@@ -81,16 +81,15 @@ export const decode = (data: unknown[]): Patch => {
       case 9: {
         const afterSession = data[i + 1] as number;
         const afterTime = data[i + 2] as number;
-        const span = data[i + 3] as number;
-        builder.delStr(new LogicalTimestamp(afterSession, afterTime), span);
-        i += 4;
+        builder.del(new LogicalTimestamp(afterSession, afterTime), 1);
+        i += 3;
         break;
       }
       case 10: {
         const afterSession = data[i + 1] as number;
         const afterTime = data[i + 2] as number;
         const span = data[i + 3] as number;
-        builder.delArr(new LogicalTimestamp(afterSession, afterTime), span);
+        builder.del(new LogicalTimestamp(afterSession, afterTime), span);
         i += 4;
         break;
       }

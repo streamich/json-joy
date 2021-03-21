@@ -1,5 +1,4 @@
-import {DeleteArrayElementsOperation} from "../../operations/DeleteArrayElementsOperation";
-import {DeleteStringSubstringOperation} from "../../operations/DeleteStringSubstringOperation";
+import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
@@ -63,14 +62,10 @@ export const encode = (patch: Patch): unknown[] => {
       res.push(8, after.sessionId, after.time, elementList);
       continue;
     }
-    if (op instanceof DeleteStringSubstringOperation) {
+    if (op instanceof DeleteOperation) {
       const {after, span} = op;
-      res.push(9, after.sessionId, after.time, span);
-      continue;
-    }
-    if (op instanceof DeleteArrayElementsOperation) {
-      const {after, span} = op;
-      res.push(10, after.sessionId, after.time, span);
+      if (span === 1) res.push(9, after.sessionId, after.time);
+      else res.push(10, after.sessionId, after.time, span);
       continue;
     }
   }

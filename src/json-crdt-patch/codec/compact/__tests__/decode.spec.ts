@@ -57,8 +57,8 @@ test('test all operations', () => {
     6, 3, 107, 123.4, // num_set 3!108
     8, 3, 103, [3, 107], // arr_ins 3!109
     4, 0, 0, 3, 104, // root 3!110
-    10, 3, 109, 1, // arr_del
-    9, 3, 101, 1 // str_del
+    9, 3, 109, // del_one
+    10, 3, 101, 2 // del
   ];
   const patch = decode(json);
   const encoded = encode(patch);

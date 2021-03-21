@@ -10,9 +10,9 @@ test('encodes a simple patch', () => {
   expect(encoded).toEqual([
     3, 5, // Patch ID
     4, // root
-      0, 0, // root.after
-      0, 3, // root.value
-    ]);
+    0, 0, // root.after
+    0, 3, // root.value
+  ]);
 });
 
 test('create {foo: "bar"} object', () => {
@@ -49,8 +49,8 @@ test('test all operations', () => {
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, [numId])
   builder.root(new LogicalTimestamp(0, 0), objId);
-  builder.delArr(numInsertionId, 1);
-  builder.delStr(strInsertId, 1);
+  builder.del(numInsertionId, 1);
+  builder.del(strInsertId, 2);
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
@@ -64,7 +64,7 @@ test('test all operations', () => {
     6, 3, 107, 123.4, // num_set 3!108
     8, 3, 103, [3, 107], // arr_ins 3!109
     4, 0, 0, 3, 104, // root 3!110
-    10, 3, 109, 1, // arr_del
-    9, 3, 101, 1 // str_del
+    9, 3, 109, // del_one
+    10, 3, 101, 2 // del
   ]);
 });
