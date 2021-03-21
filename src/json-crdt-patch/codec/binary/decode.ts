@@ -39,6 +39,11 @@ export const decodeVarUint = (buf: Uint8Array, offset: number): number => {
   return (o4 << 21) + ((o3 & 0b0111_1111) << 14) + ((o2 & 0b0111_1111) << 7) + (o1 & 0b0111_1111);
 };
 
+const textDecoder: TextDecoder | null = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
+export const decodeString = textDecoder
+  ? (buf: ArrayBuffer, offset: number, length: number): string => textDecoder.decode(buf.slice(offset, offset + length))
+  : (buf: ArrayBuffer, offset: number, length: number): string => Buffer.from(buf).slice(offset, offset + length).toString();
+
 export const decode = (buf: Uint8Array): Patch => {
   const id = decodeTimestamp(buf, 0);
   let offset = 8;
@@ -74,14 +79,32 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.root(after, value);
         continue;
       }
-      // case 5: {
-      //   const after = decodeTimestamp(buf, offset);
-      //   offset += 8;
-      //   const value = decodeTimestamp(buf, offset);
-      //   offset += 8;
-      //   builder.root(after, value);
-      //   continue;
-      // }
+      case 5: {
+        const after = decodeTimestamp(buf, offset);
+        offset += 8;
+        const fields = decodeVarUint(buf, offset);
+        offset += fields <= 0b01111111
+          ? 1
+          : fields <= 0b01111111_11111111
+            ? 2
+            : fields <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const tuples: [key: string, value: LogicalTimestamp][] = [];
+        for (let i = 0; i < fields; i++) {
+          const value = decodeTimestamp(buf, offset);
+          offset += 8;
+          const strLength = decodeVarUint(buf, offset);
+          offset += strLength <= 0b01111111
+            ? 1
+            : strLength <= 0b01111111_11111111
+              ? 2
+              : strLength <= 0b01111111_11111111_11111111 ? 3 : 4;
+          const key = decodeString(buf, offset, strLength);
+          offset += strLength;
+          tuples.push([key, value]);
+        }
+        builder.setKeys(after, tuples);
+        continue;
+      }
     }
   }
 
