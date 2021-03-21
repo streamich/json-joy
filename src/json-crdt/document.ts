@@ -12,6 +12,8 @@ import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKey
 import {MakeNumberOperation} from '../json-crdt-patch/operations/MakeNumberOperation';
 import {LWWNumberType} from './lww-number/LWWNumberType';
 import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
+import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
+import {ArrayType} from './array/ArrayType';
 
 export class Document {
   /**
@@ -42,6 +44,11 @@ export class Document {
     for (const op of patch.ops) {
       if (op instanceof MakeObjectOperation) {
         const obj = new LWWObjectType(this, op.id);
+        this.nodes.index(obj);
+        continue;
+      }
+      if (op instanceof MakeArrayOperation) {
+        const obj = new ArrayType(this, op.id);
         this.nodes.index(obj);
         continue;
       }

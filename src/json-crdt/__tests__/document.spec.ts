@@ -3,6 +3,7 @@ import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../constants';
 import {Document} from '../document';
 import {LWWNumberType} from '../lww-number/LWWNumberType';
 import {LWWObjectType} from '../lww-object/LWWObjectType';
+import {ArrayType} from '../array/ArrayType';
 
 describe('Document', () => {
   describe('root', () => {
@@ -178,6 +179,26 @@ describe('Document', () => {
       builder.root(objId);
       doc.applyPatch(builder.patch);
       expect(doc.toJson()).toEqual({gg: 99});
+    });
+  });
+
+  describe('array', () => {
+    test('can crate an array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      doc.applyPatch(builder.patch);
+      const obj = doc.nodes.get(arrId);
+      expect(obj).toBeInstanceOf(ArrayType);
+    });
+
+    test('can set array as document root', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([]);
     });
   });
 });
