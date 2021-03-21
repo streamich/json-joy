@@ -1,6 +1,6 @@
 import {LogicalClock, LogicalTimestamp} from './clock';
 import {ObjectType} from './object';
-import {FALSE, NULL, SINGULARITY, TRUE} from './constants';
+import {FALSE, NULL, ORIGIN, TRUE} from './constants';
 import {OperationIndex} from './OperationIndex';
 import {random40BitInt} from './util';
 import {CrdtLWWRegisterType} from './lww-register/CrdtLWWRegisterType';
@@ -13,7 +13,7 @@ export class Document {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root = new CrdtLWWRegisterType(this, SINGULARITY);
+  public root = new CrdtLWWRegisterType(ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session.
@@ -83,7 +83,7 @@ export class Document {
     }
   }
 
-  public makeLWWRegister(): CrdtLWWRegisterType {
+  public makeLWWRegister(): LWWRegisterType {
     const id = this.clock.tick(1);
     const type = new CrdtLWWRegisterType(this, id);
     this.ops.index(type);

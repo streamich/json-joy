@@ -18,7 +18,7 @@ export class ConstantType implements CrdtType, JsonNode {
  * Represents some sort of root element or is simply the bottom value of a
  * logical timestamp.
  */
-export const SINGULARITY = new LogicalTimestamp(0, 0);
+export const ORIGIN = new LogicalTimestamp(0, 0);
 export const NULL_ID = new LogicalTimestamp(0, 1);
 export const TRUE_ID = new LogicalTimestamp(0, 2);
 export const FALSE_ID = new LogicalTimestamp(0, 3);
