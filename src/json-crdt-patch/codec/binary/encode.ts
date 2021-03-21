@@ -11,8 +11,11 @@ import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
 
-const ts = ({sessionId, time}: LogicalTimestamp): [number, number] => {
-  return [sessionId & 0xFF_FF_FF_FF, ((sessionId & 0xFF_00_00_00_00) >> 8) | time];
+export const encodeTimestamp = ({sessionId, time}: LogicalTimestamp): [number, number] => {
+  let low32 = sessionId | 0;
+  if (low32 < 0) low32 += 4294967296;
+  const high8 = (sessionId - low32) / 4294967296;
+  return [low32, ((high8 << 24) | time) >>> 0];
 };
 
 /**
@@ -37,15 +40,15 @@ export const encodeVarUInt = (uint: number) => {
   ];
 };
 
-const encoder: TextEncoder | null = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
-export const encodeString = encoder
-  ? (str: string): ArrayBuffer => encoder.encode(str)
+const textEncoder: TextEncoder | null = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
+export const encodeString = textEncoder
+  ? (str: string): ArrayBuffer => textEncoder.encode(str)
   : (str: string): ArrayBuffer => Buffer.from(str);
 
 export const encode = (patch: Patch): Uint8Array => {
   const {ops} = patch;
   const buffers: ArrayBuffer[] = [
-    new Uint32Array(ts(patch.getId()!)).buffer,
+    new Uint32Array(encodeTimestamp(patch.getId()!)).buffer,
   ];
 
   let size = 8;
@@ -73,19 +76,19 @@ export const encode = (patch: Patch): Uint8Array => {
     }
     if (op instanceof SetRootOperation) {
       buffers.push(new Uint8Array([4]));
-      buffers.push(new Uint32Array([...ts(op.after), ...ts(op.value)]).buffer);
+      buffers.push(new Uint32Array([...encodeTimestamp(op.after), ...encodeTimestamp(op.value)]).buffer);
       size += 1 + 8 + 8;
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
       buffers.push(new Uint8Array([5]));
-      buffers.push(new Uint32Array(ts(op.after)).buffer);
+      buffers.push(new Uint32Array(encodeTimestamp(op.after)).buffer);
       size += 1 + 8;
       const keyNumberBuffer = new Uint8Array(encodeVarUInt(op.tuples.length));
       buffers.push(keyNumberBuffer);
       size += keyNumberBuffer.byteLength;
       for (const [key, value] of op.tuples) {
-        const valueBuffer = new Uint32Array(ts(value)).buffer;
+        const valueBuffer = new Uint32Array(encodeTimestamp(value)).buffer;
         const keyBuffer = encodeString(key);
         const keyLengthBuffer = new Uint8Array(encodeVarUInt(keyBuffer.byteLength));
         buffers.push(valueBuffer, keyLengthBuffer, keyBuffer);
@@ -96,7 +99,7 @@ export const encode = (patch: Patch): Uint8Array => {
     if (op instanceof SetNumberOperation) {
       buffers.push(
         new Uint8Array([6]),
-        new Uint32Array(ts(op.after)).buffer,
+        new Uint32Array(encodeTimestamp(op.after)).buffer,
         new Float64Array([op.value]).buffer,
       );
       size += 1 + 8 + 8;
@@ -107,7 +110,7 @@ export const encode = (patch: Patch): Uint8Array => {
       const stringLengthBuffer = new Uint8Array(encodeVarUInt(stringBuffer.byteLength));
       buffers.push(
         new Uint8Array([7]),
-        new Uint32Array(ts(op.after)).buffer,
+        new Uint32Array(encodeTimestamp(op.after)).buffer,
         stringLengthBuffer.buffer,
         stringBuffer,
       );
@@ -120,11 +123,11 @@ export const encode = (patch: Patch): Uint8Array => {
       const elementLengthBuffer = new Uint8Array(encodeVarUInt(length));
       buffers.push(
         new Uint8Array([8]),
-        new Uint32Array(ts(after)).buffer,
+        new Uint32Array(encodeTimestamp(after)).buffer,
         elementLengthBuffer.buffer,
       );
       for (const element of elements)
-        buffers.push( new Uint32Array(ts(element)).buffer);
+        buffers.push( new Uint32Array(encodeTimestamp(element)).buffer);
       size += 1 + 8 + elementLengthBuffer.byteLength + (8 * length);
       continue;
     }
@@ -134,7 +137,7 @@ export const encode = (patch: Patch): Uint8Array => {
         const spanBuffer = new Uint8Array(encodeVarUInt(span));
         buffers.push(
           new Uint8Array([9]),
-          new Uint32Array(ts(after)).buffer,
+          new Uint32Array(encodeTimestamp(after)).buffer,
           spanBuffer.buffer,
         );
         size += 1 + 8 + spanBuffer.byteLength;
@@ -142,7 +145,7 @@ export const encode = (patch: Patch): Uint8Array => {
       }
       buffers.push(
         new Uint8Array([10]),
-        new Uint32Array(ts(after)).buffer,
+        new Uint32Array(encodeTimestamp(after)).buffer,
       );
       size += 1 + 8;
       continue;
