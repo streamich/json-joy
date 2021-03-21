@@ -45,7 +45,7 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'arr_ins': {
-        builder.insArr(ts(op.after), op.values.map(ts));
+        builder.insArr(ts(op.arr), ts(op.after || op.arr), op.values.map(ts));
         break;
       }
       case 'del': {

@@ -118,9 +118,9 @@ export class PatchBuilder {
    * Insert elements into an array.
    * @returns ID of the new operation.
    */
-  public insArr(after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
+  public insArr(arr: LogicalTimestamp, after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
     const id = this.clock.tick(1);
-    const op = new InsertArrayElementsOperation(id, after, elements);
+    const op = new InsertArrayElementsOperation(id, arr, after, elements);
     const span = op.getSpan();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);

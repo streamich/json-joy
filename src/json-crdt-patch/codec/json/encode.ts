@@ -75,6 +75,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof InsertArrayElementsOperation) {
       ops.push({
         op: 'arr_ins',
+        arr: encodeTimestamp(op.arr),
         after: encodeTimestamp(op.after),
         values: op.elements.map(encodeTimestamp),
       });

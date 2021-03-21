@@ -49,7 +49,7 @@ test('test all operations', () => {
   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
   const numId = builder.num();
   builder.setNum(numId, 123.4);
-  const numInsertionId = builder.insArr(arrId, [numId])
+  const numInsertionId = builder.insArr(arrId, arrId, [numId])
   builder.root(objId);
   builder.del(numInsertionId, 1);
   builder.del(strInsertId, 2);
@@ -68,7 +68,7 @@ test('test all operations', () => {
       ] }, // 105, 106
       { op: 'num' }, // 107
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
-      { op: 'arr_ins', after: [3, 103], values: [[3, 107]]}, // 109
+      { op: 'arr_ins', arr: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', value: [3, 104]}, // 110
       { op: 'del', after: [3, 109]}, // 111
       { op: 'del', after: [3, 101], len: 2}, // 112

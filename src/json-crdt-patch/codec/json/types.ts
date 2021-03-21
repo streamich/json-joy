@@ -64,8 +64,13 @@ export interface JsonCodecInsertStringSubstringOperation {
 }
 
 export interface JsonCodecInsertArrayElementsOperation {
+  /** Mnemonic. */
   op: 'arr_ins';
-  after: JsonCodecTimestamp;
+  /** Array into which to insert the elements. */
+  arr: JsonCodecTimestamp;
+  /** If `after` is omitted, it means the insertion is at the start of the array. */
+  after?: JsonCodecTimestamp;
+  /** Values to insert in the array. */
   values: JsonCodecTimestamp[];
 }
 
