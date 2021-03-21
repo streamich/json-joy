@@ -153,7 +153,7 @@ test('encodes a .del() operation with span > 1', () => {
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-    9, // arr_ins
+    9, // del
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     0b10000001, 0b110, // Span length
   ]);
@@ -166,7 +166,7 @@ test('encodes a .del() operation with span = 3', () => {
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-    9, // arr_ins
+    9, // del
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     3, // Span length
   ]);
@@ -179,7 +179,7 @@ test('encodes a .del() operation with span = 1', () => {
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-    10, // arr_ins
+    10, // del
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
   ]);
 });

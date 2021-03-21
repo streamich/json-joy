@@ -8,6 +8,7 @@ import {SetRootOperation} from '../../../operations/SetRootOperation';
 import {InsertStringSubstringOperation} from '../../../operations/InsertStringSubstringOperation';
 import {decode} from '../decode';
 import {InsertArrayElementsOperation} from '../../../operations/InsertArrayElementsOperation';
+import {DeleteOperation} from '../../../operations/DeleteOperation';
 
 test('decodes a .obj() operation', () => {
   const buf = new Uint8Array([
@@ -175,43 +176,52 @@ test('decodes a .insArr() operation', () => {
   expect((patch.ops[0] as InsertArrayElementsOperation).elements[2].toString()).toBe('5!5');
 });
 
-// test('encodes a .del() operation with span > 1', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.del(new LogicalTimestamp(1, 2), 0b11_00000001);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-//     9, // arr_ins
-//     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
-//     0b10000001, 0b110, // Span length
-//   ]);
-// });
+test('decodes a .del() operation with span > 1', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    9, // del
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    0b10000001, 0b110, // Span length
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as DeleteOperation).span).toBe(0b11_00000001);
+});
 
-// test('encodes a .del() operation with span = 3', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.del(new LogicalTimestamp(1, 2), 3);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-//     9, // arr_ins
-//     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
-//     3, // Span length
-//   ]);
-// });
+test('decodes a .del() operation with span = 3', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    9, // del
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    3, // Span length
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as DeleteOperation).span).toBe(3);
+});
 
-// test('encodes a .del() operation with span = 1', () => {
-//   const clock = new LogicalClock(1, 1);
-//   const builder = new PatchBuilder(clock);
-//   builder.del(new LogicalTimestamp(1, 2), 1);
-//   const encoded = encode(builder.patch);
-//   expect([...encoded]).toEqual([
-//     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-//     10, // arr_ins
-//     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
-//   ]);
-// });
+test('decodes a .del() operation with span = 1', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    10, // del
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as DeleteOperation).span).toBe(1);
+});
 
 // test('encodes a simple patch', () => {
 //   const clock = new LogicalClock(3, 5);
