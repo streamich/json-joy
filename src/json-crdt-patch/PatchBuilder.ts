@@ -92,9 +92,9 @@ export class PatchBuilder {
    * Set number value.
    * @returns ID of the new operation.
    */
-  public setNum(after: LogicalTimestamp, value: number): LogicalTimestamp {
+  public setNum(obj: LogicalTimestamp, value: number): LogicalTimestamp {
     const id = this.clock.tick(1);
-    const op = new SetNumberOperation(id, after, value);
+    const op = new SetNumberOperation(id, obj, value);
     this.patch.ops.push(op);
     return id;
   }

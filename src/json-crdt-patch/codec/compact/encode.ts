@@ -46,8 +46,8 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof SetNumberOperation) {
-      const {after, value} = op;
-      res.push(6, after.sessionId, after.time, value);
+      const {num, value} = op;
+      res.push(6, num.sessionId, num.time, value);
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {

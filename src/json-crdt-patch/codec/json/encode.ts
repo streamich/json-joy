@@ -59,7 +59,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof SetNumberOperation) {
       ops.push({
         op: 'num_set',
-        after: encodeTimestamp(op.after),
+        after: encodeTimestamp(op.num),
         value: op.value,
       });
       continue;

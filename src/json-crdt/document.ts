@@ -9,6 +9,9 @@ import {DocRootType} from './lww-register-doc-root/DocRootType';
 import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
 import {LWWObjectType} from './lww-object/LWWObjectType';
 import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKeysOperation';
+import {MakeNumberOperation} from '../json-crdt-patch/operations/MakeNumberOperation';
+import {LWWNumberType} from './lww-number/LWWNumberType';
+import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
 
 export class Document {
   /**
@@ -42,6 +45,11 @@ export class Document {
         this.nodes.index(obj);
         continue;
       }
+      if (op instanceof MakeNumberOperation) {
+        const num = new LWWNumberType(op.id, 0);
+        this.nodes.index(num);
+        continue;
+      }
       if (op instanceof SetRootOperation) {
         this.root.insert(op);
         continue;
@@ -50,6 +58,12 @@ export class Document {
         const obj = this.nodes.get(op.object);
         if (!(obj instanceof LWWObjectType)) continue;
         obj.insert(op);
+        continue;
+      }
+      if (op instanceof SetNumberOperation) {
+        const num = this.nodes.get(op.num);
+        if (!(num instanceof LWWNumberType)) continue;
+        num.insert(op);
         continue;
       }
     }

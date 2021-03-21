@@ -99,7 +99,7 @@ export const encode = (patch: Patch): Uint8Array => {
     if (op instanceof SetNumberOperation) {
       buffers.push(
         new Uint8Array([6]),
-        new Uint32Array(encodeTimestamp(op.after)).buffer,
+        new Uint32Array(encodeTimestamp(op.num)).buffer,
         new Float64Array([op.value]).buffer,
       );
       size += 1 + 8 + 8;
