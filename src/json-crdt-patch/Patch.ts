@@ -1,6 +1,5 @@
 import type {LogicalTimestamp} from '../json-crdt/clock';
-import {DeleteArrayElementsOperation} from './operations/DeleteArrayElementsOperation';
-import {DeleteStringSubstringOperation} from './operations/DeleteStringSubstringOperation';
+import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from "./operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "./operations/MakeArrayOperation";
@@ -12,8 +11,7 @@ import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
 
 export type JsonCrdtPatchOperation =
-  | DeleteArrayElementsOperation
-  | DeleteStringSubstringOperation
+  | DeleteOperation
   | InsertArrayElementsOperation
   | InsertStringSubstringOperation
   | MakeArrayOperation

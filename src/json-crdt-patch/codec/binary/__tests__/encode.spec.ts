@@ -157,6 +157,44 @@ test('encodes a .insArr() operation', () => {
   ]);
 });
 
+test('encodes a .del() operation with span > 1', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.del(new LogicalTimestamp(1, 2), 0b11_00000001);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    9, // arr_ins
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    0b10000001, 0b110, // Span length
+  ]);
+});
+
+test('encodes a .del() operation with span = 3', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.del(new LogicalTimestamp(1, 2), 3);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    9, // arr_ins
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    3, // Span length
+  ]);
+});
+
+test('encodes a .del() operation with span = 1', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.del(new LogicalTimestamp(1, 2), 1);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    10, // arr_ins
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+  ]);
+});
+
 // test('encodes a simple patch', () => {`
 //   const clock = new LogicalClock(3, 5);
 //   const builder = new PatchBuilder(clock);

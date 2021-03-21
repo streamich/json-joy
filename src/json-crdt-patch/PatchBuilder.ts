@@ -1,5 +1,5 @@
 import type {LogicalClock, LogicalTimestamp} from "../json-crdt/clock";
-import {DeleteStringSubstringOperation} from "./operations/DeleteStringSubstringOperation";
+import {DeleteOperation} from "./operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "./operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "./operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "./operations/MakeArrayOperation";
@@ -10,7 +10,6 @@ import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
 import {SetNumberOperation} from "./operations/SetNumberOperation";
 import {Patch} from "./Patch";
-import {DeleteArrayElementsOperation} from "./operations/DeleteArrayElementsOperation";
 
 export class PatchBuilder {
   public readonly patch: Patch;
@@ -129,23 +128,14 @@ export class PatchBuilder {
   }
 
   /**
-   * Delete a substring of a string.
+   * Delete a span of operations.
+   * @param start First operation to delete.
+   * @param span Number of subsequent (by incrementing logical clock) operations to delete.
    * @returns ID of the new operation.
    */
-  public delStr(firstCharacter: LogicalTimestamp, span: number): LogicalTimestamp {
+  public del(start: LogicalTimestamp, span: number): LogicalTimestamp {
     const id = this.clock.tick(span);
-    const op = new DeleteStringSubstringOperation(id, firstCharacter, span);
-    this.patch.ops.push(op);
-    return id;
-  }
-
-  /**
-   * Delete elements of an array.
-   * @returns ID of the new operation.
-   */
-  public delArr(elementId: LogicalTimestamp, span: number): LogicalTimestamp {
-    const id = this.clock.tick(span);
-    const op = new DeleteArrayElementsOperation(id, elementId, span);
+    const op = new DeleteOperation(id, start, span);
     this.patch.ops.push(op);
     return id;
   }

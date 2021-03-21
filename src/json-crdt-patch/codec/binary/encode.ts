@@ -1,6 +1,5 @@
 import {LogicalTimestamp} from "../../../json-crdt/clock";
-import {DeleteArrayElementsOperation} from "../../operations/DeleteArrayElementsOperation";
-import {DeleteStringSubstringOperation} from "../../operations/DeleteStringSubstringOperation";
+import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
@@ -126,12 +125,23 @@ export const encode = (patch: Patch): Uint8Array => {
       size += 1 + 8 + elementLengthBuffer.byteLength + (8 * length);
       continue;
     }
-    if (op instanceof DeleteStringSubstringOperation) {
-      
-      continue;
-    }
-    if (op instanceof DeleteArrayElementsOperation) {
-      
+    if (op instanceof DeleteOperation) {
+      const {after, span} = op;
+      if (span > 1) {
+        const spanBuffer = new Uint8Array(encodeVarUInt(span));
+        buffers.push(
+          new Uint8Array([9]),
+          new Uint32Array(ts(after)).buffer,
+          spanBuffer.buffer,
+        );
+        size += 1 + 8 + spanBuffer.byteLength;
+        continue;
+      }
+      buffers.push(
+        new Uint8Array([10]),
+        new Uint32Array(ts(after)).buffer,
+      );
+      size += 1 + 8;
       continue;
     }
   }
