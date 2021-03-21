@@ -111,6 +111,18 @@ test('encodes a .setNum() operation', () => {
   ]);
 });
 
+test('encodes a .setNum() operation', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.setNum(new LogicalTimestamp(1, 2), 123.456);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    6, // num_set
+    119, 190, 159, 26, 47, 221, 94,  64 // Double value
+  ]);
+});
+
 test('encodes a .insStr() operation', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
@@ -125,15 +137,23 @@ test('encodes a .insStr() operation', () => {
   ]);
 });
 
-test('encodes a .setNum() operation', () => {
+test('encodes a .insArr() operation', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.setNum(new LogicalTimestamp(1, 2), 123.456);
+  builder.insArr(new LogicalTimestamp(1, 2), [
+    new LogicalTimestamp(3, 3),
+    new LogicalTimestamp(4, 4),
+    new LogicalTimestamp(5, 5),
+  ]);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
-    6, // num_set
-    119, 190, 159, 26, 47, 221, 94,  64 // Double value
+    8, // arr_ins
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
+    3, // Length
+    3, 0, 0, 0, 3, 0, 0, 0, // After 3!3
+    4, 0, 0, 0, 4, 0, 0, 0, // After 4!4
+    5, 0, 0, 0, 5, 0, 0, 0, // After 5!5
   ]);
 });
 

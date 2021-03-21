@@ -101,17 +101,29 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
-      buffers.push(new Uint8Array([7]));
-      buffers.push(new Uint32Array(ts(op.after)).buffer);
       const stringBuffer = encodeString(op.substring);
       const stringLengthBuffer = new Uint8Array(encodeVarUInt(stringBuffer.byteLength));
-      buffers.push(stringLengthBuffer.buffer);
-      buffers.push(stringBuffer);
+      buffers.push(
+        new Uint8Array([7]),
+        new Uint32Array(ts(op.after)).buffer,
+        stringLengthBuffer.buffer,
+        stringBuffer,
+      );
       size += 1 + 8 + stringLengthBuffer.byteLength + stringBuffer.byteLength;
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {
-      
+      const {after, elements} = op;
+      const length = elements.length;
+      const elementLengthBuffer = new Uint8Array(encodeVarUInt(length));
+      buffers.push(
+        new Uint8Array([8]),
+        new Uint32Array(ts(after)).buffer,
+        elementLengthBuffer.buffer,
+      );
+      for (const element of elements)
+        buffers.push( new Uint32Array(ts(element)).buffer);
+      size += 1 + 8 + elementLengthBuffer.byteLength + (8 * length);
       continue;
     }
     if (op instanceof DeleteStringSubstringOperation) {
