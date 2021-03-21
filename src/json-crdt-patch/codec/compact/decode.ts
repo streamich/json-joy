@@ -31,23 +31,21 @@ export const decode = (data: unknown[]): Patch => {
         break;
       }
       case 4: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        const valueSession = data[i + 3] as number;
-        const valueTime = data[i + 4] as number;
-        builder.root(new LogicalTimestamp(afterSession, afterTime), new LogicalTimestamp(valueSession, valueTime));
-        i += 5;
+        const valueSession = data[i + 1] as number;
+        const valueTime = data[i + 2] as number;
+        builder.root(new LogicalTimestamp(valueSession, valueTime));
+        i += 3;
         break;
       }
       case 5: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
+        const objSession = data[i + 1] as number;
+        const objTime = data[i + 2] as number;
         const triplets = data[i + 3] as (string | number)[];
         const tuples: [key: string, value: LogicalTimestamp][] = [];
         for (let i = 0; i < triplets.length; i += 3) {
           tuples.push([triplets[i] as string, new LogicalTimestamp(triplets[i + 1] as number, triplets[i + 2] as number)])
         }
-        builder.setKeys(new LogicalTimestamp(afterSession, afterTime), tuples);
+        builder.setKeys(new LogicalTimestamp(objSession, objTime), tuples);
         i += 4;
         break;
       }

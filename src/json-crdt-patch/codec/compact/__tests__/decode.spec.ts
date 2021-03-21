@@ -10,12 +10,10 @@ test('decodes a simple patch', () => {
   const patch = decode([
     3, 5, // Patch ID
     4, // root
-      0, 0, // root.after
-      0, 3, // root.value
-    ]);
+    0, 3, // root.value
+  ]);
   expect(patch.ops.length).toBe(1);
   expect(patch.ops[0]).toBeInstanceOf(SetRootOperation);
-  expect((patch.ops[0] as SetRootOperation).after.toString()).toBe('0!0');
   expect((patch.ops[0] as SetRootOperation).value.toString()).toBe('0!3');
 });
 
@@ -26,7 +24,7 @@ test('decodes {foo: "bar"} object', () => {
     7, 5, 25, "bar", // str_ins
     0, // obj
     5, 5, 29, ["foo", 5, 25], // obj_set
-    4, 0, 0, 5, 29 // root
+    4, 5, 29 // root
   ]);
   expect(patch.ops.length).toBe(5);
   expect(patch.getSpan()).toBe(7);
@@ -38,10 +36,9 @@ test('decodes {foo: "bar"} object', () => {
   expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
-  expect((patch.ops[3] as SetObjectKeysOperation).after.toString()).toBe('5!29');
+  expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
   expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
   expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('5!25');
-  expect((patch.ops[4] as SetRootOperation).after.toString()).toBe('0!0');
   expect((patch.ops[4] as SetRootOperation).value.toString()).toBe('5!29');
 });
 
@@ -56,7 +53,7 @@ test('test all operations', () => {
     3, // num 3!107
     6, 3, 107, 123.4, // num_set 3!108
     8, 3, 103, [3, 107], // arr_ins 3!109
-    4, 0, 0, 3, 104, // root 3!110
+    4, 3, 104, // root 3!110
     9, 3, 109, // del_one
     10, 3, 101, 2 // del
   ];

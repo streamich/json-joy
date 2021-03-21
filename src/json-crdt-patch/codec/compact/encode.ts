@@ -34,15 +34,15 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof SetRootOperation) {
-      const {after, value} = op;
-      res.push(4, after.sessionId, after.time, value.sessionId, value.time);
+      const {value} = op;
+      res.push(4, value.sessionId, value.time);
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
-      const {after, tuples} = op;
+      const {object, tuples} = op;
       const triplets: (string | number)[] = [];
       for (const [key, value] of tuples) triplets.push(key, value.sessionId, value.time);
-      res.push(5, after.sessionId, after.time, triplets);
+      res.push(5, object.sessionId, object.time, triplets);
       continue;
     }
     if (op instanceof SetNumberOperation) {
