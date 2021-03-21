@@ -132,7 +132,7 @@ test('decodes a .setNum() operation', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(SetNumberOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
-  expect((patch.ops[0] as SetNumberOperation).after.toString()).toBe('1!2');
+  expect((patch.ops[0] as SetNumberOperation).num.toString()).toBe('1!2');
   expect((patch.ops[0] as SetNumberOperation).value).toBe(123.456);
 });
 
