@@ -1,20 +1,20 @@
-import {LogicalTimestamp} from './clock';
-import {ICrdtOperation} from './operations/types';
+import type {LogicalTimestamp} from './clock';
+import type {Identifiable} from './types';
 
-export class OperationIndex {
+export class IdentifiableIndex<T extends Identifiable> {
   /**
    * An index of all operations in this document accessible by operation ID.
    * 
    *     (sessionId, time) -> operation
    */
-   public operations: Map<number, Map<number, ICrdtOperation>> = new Map();
+   public operations: Map<number, Map<number, T>> = new Map();
 
   /**
    * Retrieve any known operation in this document by its ID. Or, if operation,
    * is composed of multiple operations (op.span > 1), still retrieve that operation
    * if the actual ID is inside the operation.
    */
-  public get(id: LogicalTimestamp): undefined | ICrdtOperation {
+  public get(id: LogicalTimestamp): undefined | T {
     const {sessionId, time} = id;
     const map1 = this.operations;
     const map2 = map1.get(sessionId);
@@ -32,11 +32,11 @@ export class OperationIndex {
   /**
    * Index an operation in the global operation index of this document.
    */
-  public index(operation: ICrdtOperation) {
+  public index(operation: T) {
     const {sessionId, time} = operation.id;
     let map = this.operations.get(operation.id.sessionId);
     if (!map) {
-      map = new Map<number, ICrdtOperation>();
+      map = new Map<number, T>();
       this.operations.set(sessionId, map);
     }
     map.set(time, operation);

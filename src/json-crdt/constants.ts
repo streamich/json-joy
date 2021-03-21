@@ -1,13 +1,10 @@
 import {LogicalTimestamp} from './clock';
-import {CrdtType, JsonNode} from './types';
+import {JsonNode} from './types';
 
-export class ConstantType implements CrdtType, JsonNode {
+export class ConstantType implements JsonNode {
   public readonly span = 1;
 
   constructor (public readonly id: LogicalTimestamp, public readonly value: unknown) {}
-
-  insert() {}
-  merge() {}
 
   public toJson() {
     return this.value;
