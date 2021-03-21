@@ -66,14 +66,16 @@ export const decode = (data: unknown[]): Patch => {
         break;
       }
       case 8: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        const elements = data[i + 3] as number[];
+        const arrSession = data[i + 1] as number;
+        const arrTime = data[i + 2] as number;
+        const afterSession = data[i + 3] as number;
+        const afterTime = data[i + 4] as number;
+        const elements = data[i + 5] as number[];
         const values: LogicalTimestamp[] = [];
         for (let i = 0; i < elements.length; i += 2)
           values.push(new LogicalTimestamp(elements[i], elements[i + 1]));
-        builder.insArr(new LogicalTimestamp(afterSession, afterTime), values);
-        i += 4;
+        builder.insArr(new LogicalTimestamp(arrSession, arrTime), new LogicalTimestamp(afterSession, afterTime), values);
+        i += 6;
         break;
       }
       case 9: {

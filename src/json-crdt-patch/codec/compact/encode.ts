@@ -56,10 +56,10 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {
-      const {after, elements} = op;
+      const {arr, after, elements} = op;
       const elementList: number[] = [];
       for (const element of elements) elementList.push(element.sessionId, element.time);
-      res.push(8, after.sessionId, after.time, elementList);
+      res.push(8, arr.sessionId, arr.time, after.sessionId, after.time, elementList);
       continue;
     }
     if (op instanceof DeleteOperation) {
