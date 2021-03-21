@@ -53,33 +53,33 @@ export const encode = (patch: Patch): Uint8Array => {
 
   for (const op of ops) {
     if (op instanceof MakeObjectOperation) {
-      buffers.push(new Uint8Array([0]).buffer);
+      buffers.push(new Uint8Array([0]));
       size += 1;
       continue;
     }
     if (op instanceof MakeArrayOperation) {
-      buffers.push(new Uint8Array([1]).buffer);
+      buffers.push(new Uint8Array([1]));
       size += 1;
       continue;
     }
     if (op instanceof MakeStringOperation) {
-      buffers.push(new Uint8Array([2]).buffer);
+      buffers.push(new Uint8Array([2]));
       size += 1;
       continue;
     }
     if (op instanceof MakeNumberOperation) {
-      buffers.push(new Uint8Array([3]).buffer);
+      buffers.push(new Uint8Array([3]));
       size += 1;
       continue;
     }
     if (op instanceof SetRootOperation) {
-      buffers.push(new Uint8Array([4]).buffer);
+      buffers.push(new Uint8Array([4]));
       buffers.push(new Uint32Array([...ts(op.after), ...ts(op.value)]).buffer);
       size += 1 + 8 + 8;
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
-      buffers.push(new Uint8Array([5]).buffer);
+      buffers.push(new Uint8Array([5]));
       buffers.push(new Uint32Array(ts(op.after)).buffer);
       size += 1 + 8;
       const keyNumberBuffer = new Uint8Array(encodeVarUInt(op.tuples.length));
@@ -95,7 +95,9 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof SetNumberOperation) {
-      
+      buffers.push(new Uint8Array([6]));
+      buffers.push(new Float64Array([op.value]).buffer);
+      size += 1 + 8;
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
