@@ -24,6 +24,13 @@ export class LogicalTimestamp {
     // "!" is used as separator as it has the lowest ASCII value.
     return this.sessionId + '!' + this.time;
   }
+
+  /**
+   * @returns Returns logical clock which starts from this timestamp.
+   */
+  public clock(): LogicalClock {
+    return new LogicalClock(this.sessionId, this.time);
+  }
 }
 
 /**

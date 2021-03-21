@@ -4,9 +4,11 @@ import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
-import {LWWRegisterWriteOp} from './lww-register/LWWRegisterWriteOp';
 import {LogicalClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './lww-register-doc-root/DocRootType';
+import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
+import {LWWObjectType} from './lww-object/LWWObjectType';
+import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKeysOperation';
 
 export class Document {
   /**
@@ -35,8 +37,19 @@ export class Document {
 
   public applyPatch(patch: Patch) {
     for (const op of patch.ops) {
+      if (op instanceof MakeObjectOperation) {
+        const obj = new LWWObjectType(this, op.id);
+        this.nodes.index(obj);
+        continue;
+      }
       if (op instanceof SetRootOperation) {
         this.root.insert(op);
+        continue;
+      }
+      if (op instanceof SetObjectKeysOperation) {
+        const obj = this.nodes.get(op.object);
+        if (!(obj instanceof LWWObjectType)) continue;
+        obj.insert(op);
         continue;
       }
     }
