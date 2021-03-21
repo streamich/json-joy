@@ -76,13 +76,13 @@ export const encode = (patch: Patch): Uint8Array => {
     }
     if (op instanceof SetRootOperation) {
       buffers.push(new Uint8Array([4]));
-      buffers.push(new Uint32Array([...encodeTimestamp(op.after), ...encodeTimestamp(op.value)]).buffer);
-      size += 1 + 8 + 8;
+      buffers.push(new Uint32Array(encodeTimestamp(op.value)).buffer);
+      size += 1 + 8;
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
       buffers.push(new Uint8Array([5]));
-      buffers.push(new Uint32Array(encodeTimestamp(op.after)).buffer);
+      buffers.push(new Uint32Array(encodeTimestamp(op.object)).buffer);
       size += 1 + 8;
       const keyNumberBuffer = new Uint8Array(encodeVarUInt(op.tuples.length));
       buffers.push(keyNumberBuffer);

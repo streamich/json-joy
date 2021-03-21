@@ -72,15 +72,13 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 4: {
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
         const value = decodeTimestamp(buf, offset);
         offset += 8;
-        builder.root(after, value);
+        builder.root(value);
         continue;
       }
       case 5: {
-        const after = decodeTimestamp(buf, offset);
+        const object = decodeTimestamp(buf, offset);
         offset += 8;
         const fields = decodeVarUint(buf, offset);
         offset += fields <= 0b01111111
@@ -102,7 +100,7 @@ export const decode = (buf: Uint8Array): Patch => {
           offset += strLength;
           tuples.push([key, value]);
         }
-        builder.setKeys(after, tuples);
+        builder.setKeys(object, tuples);
         continue;
       }
       case 6: {

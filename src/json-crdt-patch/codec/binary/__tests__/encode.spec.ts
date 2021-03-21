@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from '../../../../json-crdt/clock';
+import {LogicalClock, LogicalTimestamp} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
 import {encode} from '../encode';
 
@@ -49,12 +49,11 @@ test('encodes a .num() operation', () => {
 test('encodes a .root() operation', () => {
   const clock = new LogicalClock(6, 7);
   const builder = new PatchBuilder(clock);
-  builder.root(new LogicalTimestamp(1, 2), new LogicalTimestamp(3, 4));
+  builder.root(new LogicalTimestamp(3, 4));
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     6, 0, 0, 0, 7, 0, 0, 0,
     4,
-    1, 0, 0, 0, 2, 0, 0, 0,
     3, 0, 0, 0, 4, 0, 0, 0,
   ]);
 });
@@ -88,7 +87,7 @@ test('encodes a two key string using .setKeys() operation', () => {
   expect([...encoded]).toEqual([
     6, 0, 0, 0, 7, 0, 0, 0, // Patch ID = 6!7
     5, // obj_set
-    123, 0, 0, 0, 77, 1, 0, 0, // after = 123!333
+    123, 0, 0, 0, 77, 1, 0, 0, // Object = 123!333
     2, // Two keys
     33, 0, 0, 0, 44, 0, 0, 0, // Key value = 33!44
     3, // Key length
@@ -187,12 +186,11 @@ test('encodes a .del() operation with span = 1', () => {
 test('encodes a simple patch', () => {
   const clock = new LogicalClock(3, 5);
   const builder = new PatchBuilder(clock);
-  builder.root(new LogicalTimestamp(0, 0), new LogicalTimestamp(0, 3));
+  builder.root(new LogicalTimestamp(0, 3));
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
     4, // root
-    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
     0, 0, 0, 0, 3, 0, 0, 0, // Value = 0!3
   ]);
 });
@@ -205,7 +203,7 @@ test('create {foo: "bar"} object', () => {
   builder.insStr(strId, 'bar');
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId]]);
-  builder.root(new LogicalTimestamp(0, 0), objId);
+  builder.root(objId);
 
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
@@ -223,7 +221,6 @@ test('create {foo: "bar"} object', () => {
     3, // Field key length
     102, 111, 111, // "foo"
     4, // root
-    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
     5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
   ]);
 });
@@ -240,7 +237,7 @@ test('test all operations', () => {
   const numId = builder.num();
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, [numId])
-  builder.root(new LogicalTimestamp(0, 0), objId);
+  builder.root(objId);
   builder.del(numInsertionId, 1);
   builder.del(strInsertId, 2);
 
@@ -255,7 +252,7 @@ test('test all operations', () => {
     1, // arr
     0, // obj
     5, // obj_set
-    3,0,0,0,104,0,0,0, // After = 3!104
+    3,0,0,0,104,0,0,0, // Object = 3!104
     2, // Number of fields
     3,0,0,0,100,0,0,0, // Field one value = 3!100
     3, // Field one key length
@@ -272,7 +269,6 @@ test('test all operations', () => {
     1, // Number of elements
     3,0,0,0,107,0,0,0, // First element = 3!107
     4, // root
-    0,0,0,0,0,0,0,0, // After = 0!0
     3,0,0,0,104,0,0,0, // Value = 3!104
     10, // del_one
     3,0,0,0,109,0,0,0, // After = 3!109

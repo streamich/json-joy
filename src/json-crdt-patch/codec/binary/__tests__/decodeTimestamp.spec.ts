@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../../../json-crdt/clock';
+import {LogicalTimestamp} from '../../../clock';
 import {encodeTimestamp} from '../encode';
 import {decodeTimestamp} from '../decode';
 

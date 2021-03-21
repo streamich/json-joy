@@ -63,7 +63,6 @@ test('decodes a .root() operation', () => {
   const buf = new Uint8Array([
     6, 0, 0, 0, 7, 0, 0, 0,
     4,
-    1, 0, 0, 0, 2, 0, 0, 0,
     3, 0, 0, 0, 4, 0, 0, 0,
   ]);
   const patch = decode(buf)
@@ -71,7 +70,6 @@ test('decodes a .root() operation', () => {
   expect(patch.ops.length).toBe(1);
   expect(patch.ops[0]).toBeInstanceOf(SetRootOperation);
   expect(patch.ops[0].id.toString()).toBe('6!7');
-  expect((patch.ops[0] as SetRootOperation).after.toString()).toBe('1!2');
   expect((patch.ops[0] as SetRootOperation).value.toString()).toBe('3!4');
 });
 
@@ -79,7 +77,7 @@ test('decodes a single key string using .setKeys() operation', () => {
   const buf = new Uint8Array([
     6, 0, 0, 0, 7, 0, 0, 0, // Patch ID = 6!7
     5, // obj_set
-    123, 0, 0, 0, 77, 1, 0, 0, // after = 123!333
+    123, 0, 0, 0, 77, 1, 0, 0, // Object = 123!333
     1, // One key
     33, 0, 0, 0, 44, 0, 0, 0, // Key value = 33!44
     3, // Key length
@@ -90,7 +88,7 @@ test('decodes a single key string using .setKeys() operation', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(SetObjectKeysOperation);
   expect(patch.ops[0].id.toString()).toBe('6!7');
-  expect((patch.ops[0] as SetObjectKeysOperation).after.toString()).toBe('123!333');
+  expect((patch.ops[0] as SetObjectKeysOperation).object.toString()).toBe('123!333');
   expect((patch.ops[0] as SetObjectKeysOperation).tuples.length).toBe(1);
   expect((patch.ops[0] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
   expect((patch.ops[0] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('33!44');
@@ -100,7 +98,7 @@ test('decodes a two key string using .setKeys() operation', () => {
   const buf = new Uint8Array([
     6, 0, 0, 0, 7, 0, 0, 0, // Patch ID = 6!7
     5, // obj_set
-    123, 0, 0, 0, 77, 1, 0, 0, // after = 123!333
+    123, 0, 0, 0, 77, 1, 0, 0, // Object = 123!333
     2, // Two keys
     33, 0, 0, 0, 44, 0, 0, 0, // Key value = 33!44
     3, // Key length
@@ -114,7 +112,7 @@ test('decodes a two key string using .setKeys() operation', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(SetObjectKeysOperation);
   expect(patch.ops[0].id.toString()).toBe('6!7');
-  expect((patch.ops[0] as SetObjectKeysOperation).after.toString()).toBe('123!333');
+  expect((patch.ops[0] as SetObjectKeysOperation).object.toString()).toBe('123!333');
   expect((patch.ops[0] as SetObjectKeysOperation).tuples.length).toBe(2);
   expect((patch.ops[0] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
   expect((patch.ops[0] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('33!44');
@@ -228,7 +226,6 @@ test('decodes a simple patch', () => {
   const buf = new Uint8Array([
     3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
     4, // root
-    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
     0, 0, 0, 0, 3, 0, 0, 0, // Value = 0!3
   ]);
   const patch = decode(buf)
@@ -236,7 +233,6 @@ test('decodes a simple patch', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(SetRootOperation);
   expect(patch.ops[0].id.toString()).toBe('3!5');
-  expect((patch.ops[0] as SetRootOperation).after.toString()).toBe('0!0');
   expect((patch.ops[0] as SetRootOperation).value.toString()).toBe('0!3');
 });
 
@@ -256,7 +252,6 @@ test('create {foo: "bar"} object', () => {
     3, // Field key length
     102, 111, 111, // "foo"
     4, // root
-    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
     5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
   ]);
   const patch = decode(buf)
@@ -270,10 +265,9 @@ test('create {foo: "bar"} object', () => {
   expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
-  expect((patch.ops[3] as SetObjectKeysOperation).after.toString()).toBe('5!29');
+  expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
   expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
   expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('5!25');
-  expect((patch.ops[4] as SetRootOperation).after.toString()).toBe('0!0');
   expect((patch.ops[4] as SetRootOperation).value.toString()).toBe('5!29');
 });
 
@@ -288,7 +282,7 @@ test('test all operations', () => {
     1, // arr
     0, // obj
     5, // obj_set
-    3,0,0,0,104,0,0,0, // After = 3!104
+    3,0,0,0,104,0,0,0, // Object = 3!104
     2, // Number of fields
     3,0,0,0,100,0,0,0, // Field one value = 3!100
     3, // Field one key length
@@ -305,7 +299,6 @@ test('test all operations', () => {
     1, // Number of elements
     3,0,0,0,107,0,0,0, // First element = 3!107
     4, // root
-    0,0,0,0,0,0,0,0, // After = 0!0
     3,0,0,0,104,0,0,0, // Value = 3!104
     10, // del_one
     3,0,0,0,109,0,0,0, // After = 3!109
