@@ -1,5 +1,4 @@
 import type {JsonNode} from './types';
-import {LogicalClock} from './clock';
 import {FALSE, NULL, ORIGIN, TRUE} from './constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
@@ -7,6 +6,7 @@ import {LWWRegisterType} from './lww-register/LWWRegisterType';
 import {Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {LWWRegisterWriteOp} from './lww-register/LWWRegisterWriteOp';
+import {LogicalClock} from '../json-crdt-patch/clock';
 
 export class Document {
   /**
