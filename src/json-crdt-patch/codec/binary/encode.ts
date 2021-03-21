@@ -94,9 +94,12 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof SetNumberOperation) {
-      buffers.push(new Uint8Array([6]));
-      buffers.push(new Float64Array([op.value]).buffer);
-      size += 1 + 8;
+      buffers.push(
+        new Uint8Array([6]),
+        new Uint32Array(ts(op.after)).buffer,
+        new Float64Array([op.value]).buffer,
+      );
+      size += 1 + 8 + 8;
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {

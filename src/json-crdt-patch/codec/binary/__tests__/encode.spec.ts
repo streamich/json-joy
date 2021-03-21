@@ -105,8 +105,9 @@ test('encodes a .setNum() operation', () => {
   builder.setNum(new LogicalTimestamp(1, 2), 123.456);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
-    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
     6, // num_set
+    1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
     119, 190, 159, 26, 47, 221, 94,  64 // Double value
   ]);
 });
@@ -117,8 +118,9 @@ test('encodes a .setNum() operation', () => {
   builder.setNum(new LogicalTimestamp(1, 2), 123.456);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
-    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
     6, // num_set
+    1, 0, 0, 0, 2, 0, 0, 0, // After = 1!2
     119, 190, 159, 26, 47, 221, 94,  64 // Double value
   ]);
 });
@@ -195,69 +197,100 @@ test('encodes a .del() operation with span = 1', () => {
   ]);
 });
 
-// test('encodes a simple patch', () => {`
-//   const clock = new LogicalClock(3, 5);
-//   const builder = new PatchBuilder(clock);
-//   builder.root(new LogicalTimestamp(0, 0), new LogicalTimestamp(0, 3));
-//   const encoded = encode(builder.patch);
-//   expect(encoded).toEqual([
-//     3, 5, // Patch ID
-//     4, // root
-//       0, 0, // root.after
-//       0, 3, // root.value
-//     ]);
-// });
+test('encodes a simple patch', () => {
+  const clock = new LogicalClock(3, 5);
+  const builder = new PatchBuilder(clock);
+  builder.root(new LogicalTimestamp(0, 0), new LogicalTimestamp(0, 3));
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
+    4, // root
+    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
+    0, 0, 0, 0, 3, 0, 0, 0, // Value = 0!3
+  ]);
+});
 
-// test('create {foo: "bar"} object', () => {
-//   const clock = new LogicalClock(5, 25);
-//   const builder = new PatchBuilder(clock);
+test('create {foo: "bar"} object', () => {
+  const clock = new LogicalClock(5, 25);
+  const builder = new PatchBuilder(clock);
   
-//   const strId = builder.str();
-//   builder.insStr(strId, 'bar');
-//   const objId = builder.obj();
-//   builder.setKeys(objId, [['foo', strId]]);
-//   builder.root(new LogicalTimestamp(0, 0), objId);
+  const strId = builder.str();
+  builder.insStr(strId, 'bar');
+  const objId = builder.obj();
+  builder.setKeys(objId, [['foo', strId]]);
+  builder.root(new LogicalTimestamp(0, 0), objId);
 
-//   const encoded = encode(builder.patch);
-//   expect(encoded).toEqual([
-//     5, 25, // Patch ID
-//     2, // str
-//     7, 5, 25, "bar", // str_ins
-//     0, // obj
-//     5, 5, 29, ["foo", 5, 25], // obj_set
-//     4, 0, 0, 5, 29 // root
-//   ]);
-// });
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    5, 0, 0, 0, 25, 0, 0, 0, // Patch ID = 5!25
+    2, // str
+    7, // str_ins
+    5, 0, 0, 0, 25, 0, 0, 0, // Sting ID = 5!25
+    3, // String length
+    98, 97, 114, // "bar"
+    0, // obj
+    5, // obj_set
+    5, 0, 0, 0, 29, 0, 0, 0, // Object ID = 5!29
+    1, // Number of fields
+    5, 0, 0, 0, 25, 0, 0, 0, // First field value = 5!25
+    3, // Field key length
+    102, 111, 111, // "foo"
+    4, // root
+    0, 0, 0, 0, 0, 0, 0, 0, // After = 0!0
+    5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
+  ]);
+});
 
-// test('test all operations', () => {
-//   const clock = new LogicalClock(3, 100);
-//   const builder = new PatchBuilder(clock);
+test('test all operations', () => {
+  const clock = new LogicalClock(3, 100);
+  const builder = new PatchBuilder(clock);
 
-//   const strId = builder.str();
-//   const strInsertId = builder.insStr(strId, 'qq');
-//   const arrId = builder.arr();
-//   const objId = builder.obj();
-//   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
-//   const numId = builder.num();
-//   builder.setNum(numId, 123.4);
-//   const numInsertionId = builder.insArr(arrId, [numId])
-//   builder.root(new LogicalTimestamp(0, 0), objId);
-//   builder.delArr(numInsertionId, 1);
-//   builder.delStr(strInsertId, 1);
+  const strId = builder.str();
+  const strInsertId = builder.insStr(strId, 'qq');
+  const arrId = builder.arr();
+  const objId = builder.obj();
+  builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
+  const numId = builder.num();
+  builder.setNum(numId, 123.4);
+  const numInsertionId = builder.insArr(arrId, [numId])
+  builder.root(new LogicalTimestamp(0, 0), objId);
+  builder.del(numInsertionId, 1);
+  builder.del(strInsertId, 2);
 
-//   const encoded = encode(builder.patch);
-//   expect(encoded).toEqual([
-//     3, 100, // Patch ID
-//     2, // str 3!100
-//     7, 3, 100, "qq", // str_ins 3!101,3!102
-//     1, // arr 3!103
-//     0, // obj 3!104
-//     5, 3, 104, ["foo", 3, 100, "hmm", 3, 103], // obj_set 3!105,3!106
-//     3, // num 3!107
-//     6, 3, 107, 123.4, // num_set 3!108
-//     8, 3, 103, [3, 107], // arr_ins 3!109
-//     4, 0, 0, 3, 104, // root 3!110
-//     10, 3, 109, 1, // arr_del
-//     9, 3, 101, 1 // str_del
-//   ]);
-// });
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    3,0,0,0,100,0,0,0, // Patch ID = 3!100
+    2, // str
+    7, // str_ins
+    3,0,0,0,100,0,0,0, // After = 3!100
+    2, // String length
+    113,113, // "qq"
+    1, // arr
+    0, // obj
+    5, // obj_set
+    3,0,0,0,104,0,0,0, // After = 3!104
+    2, // Number of fields
+    3,0,0,0,100,0,0,0, // Field one value = 3!100
+    3, // Field one key length
+    102,111,111, // "foo"
+    3,0,0,0,103,0,0,0, // Field two value = 3!103
+    3, // Field two key length
+    104,109,109, // "hmm"
+    3, // num
+    6, // num_set
+    3,0,0,0,107,0,0,0, // After = 3!107
+    154,153,153,153,153,217,94,64, // Value = 123.4
+    8, // arr_ins
+    3,0,0,0,103,0,0,0, // After = 3!103
+    1, // Number of elements
+    3,0,0,0,107,0,0,0, // First element = 3!107
+    4, // root
+    0,0,0,0,0,0,0,0, // After = 0!0
+    3,0,0,0,104,0,0,0, // Value = 3!104
+    10, // del_one
+    3,0,0,0,109,0,0,0, // After = 3!109
+    9, // del
+    3,0,0,0,101,0,0,0, // After = 3!101
+    2, // Deletion length
+  ]);
+});
