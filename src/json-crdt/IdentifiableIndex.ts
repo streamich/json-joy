@@ -21,11 +21,12 @@ export class IdentifiableIndex<T extends Identifiable> {
     if (!map2) return undefined;
     const operation = map2.get(time);
     if (operation) return operation;
-    for (const operation of map2.values()) {
-      const operationTime = operation.id.time;
-      if ((operationTime < time) && (operationTime + (operation.span ? operation.span() : 1) - 1 >= time))
-        return operation;
-    }
+    // TODO: This block is necessary only if entries span more than one timestamp.
+    // for (const operation of map2.values()) {
+    //   const operationTime = operation.id.time;
+    //   if ((operationTime < time) && (operationTime + (operation.span ? operation.span() : 1) - 1 >= time))
+    //     return operation;
+    // }
     return undefined;
   }
 

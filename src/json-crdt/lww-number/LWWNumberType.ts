@@ -1,6 +1,5 @@
 import {LogicalTimestamp} from '../../json-crdt-patch/clock';
 import {SetNumberOperation} from '../../json-crdt-patch/operations/SetNumberOperation';
-import {Document} from '../document';
 import {JsonNode} from '../types';
 
 export class LWWNumberType implements JsonNode {

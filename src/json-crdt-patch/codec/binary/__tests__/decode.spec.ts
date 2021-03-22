@@ -258,7 +258,7 @@ test('create {foo: "bar"} object', () => {
   ]);
   const patch = decode(buf)
   expect(patch.ops.length).toBe(5);
-  expect(patch.getSpan()).toBe(7);
+  expect(patch.span()).toBe(7);
   expect(patch.getId()!.toString()).toBe('5!25');
   expect(patch.ops[0]).toBeInstanceOf(MakeStringOperation);
   expect(patch.ops[1]).toBeInstanceOf(InsertStringSubstringOperation);

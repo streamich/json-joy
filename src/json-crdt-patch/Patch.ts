@@ -33,7 +33,7 @@ export class Patch {
     return op.id;
   }
 
-  public getSpan(): number {
+  public span(): number {
     let span = 0;
     for (const op of this.ops) span += op.span();
     return span;

@@ -25,7 +25,7 @@ test('computes the total span of the patch', () => {
   builder.root(new LogicalTimestamp(0, 2));
   builder.obj();
   expect(builder.patch.ops.length).toBe(2);
-  expect(builder.patch.getSpan()).toBe(2);
+  expect(builder.patch.span()).toBe(2);
 });
 
 test('uses injected clock to set operations IDs', () => {

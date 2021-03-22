@@ -9,7 +9,7 @@ export class ArrayChunk implements JsonChunk {
    * If this chunk is deleted, this `deleted` property contains the number of
    * elements this chunk used to contain.
    */
-  public deleted: number = 0;
+  public deleted?: number;
 
   /**
    * @param id Unique ID of the first element in this chunk
@@ -49,6 +49,10 @@ export class ArrayChunk implements JsonChunk {
     }
   }
 
+  /**
+   * @param tab Whitespace to print before any other output.
+   * @returns Human readable representation of the array chunk.
+   */
   public toString(tab: string = ''): string {
     let str = `${tab}ArrayChunk(${this.id.toDisplayString()}) { ${this.deleted ? `[${this.deleted}]` : this.values!.map(val => val.toString()).join(', ')} }`;
     return str;

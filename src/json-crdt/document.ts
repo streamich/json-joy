@@ -31,7 +31,7 @@ export class Document {
   public clock: LogicalClock;
 
   /**
-   * Index of all known operations in this document.
+   * Index of all known JSON nodes (objects, array, strings, numbers) in this document.
    */
   public nodes = new IdentifiableIndex<JsonNode>();
 
@@ -90,59 +90,10 @@ export class Document {
     }
   }
 
-  // public patch(): PatchBuilder {
-  //   return new PatchBuilder(this);    
-  // }
-
   public toJson(): unknown {
     const value = this.root.toValue();
     const op = this.nodes.get(value);
     if (!op) return undefined;
     return op.toJson();
   }
-
-  // public insertOperation(op: ICrdtOperation) {
-  //   // Do nothing if operation is already known, this is idempotency property.
-  //   if (!!this.ops.get(op.id)) return;
-    
-  //   this.ops.index(op);
-  //   if (op instanceof CrdtLWWRegisterWriteOperation) {
-  //     const {after} = op;
-  //     const afterOp = this.ops.get(after);
-  //     if (afterOp instanceof CrdtLWWRegisterWriteOperation) afterOp.type!.insert(op, afterOp);
-  //     else if (afterOp instanceof CrdtLWWRegisterType) afterOp.insert(op);
-  //     else throw new Error('Expected dependency to by LWW-Register.');
-  //   }
-  // }
-
-  // public makeLWWRegister(): LWWRegisterType {
-  //   const id = this.clock.tick(1);
-  //   const type = new CrdtLWWRegisterType(this, id);
-  //   this.ops.index(type);
-  //   return type;
-  // }
 }
-
-// export class PatchBuilder {
-//   public readonly ops: ICrdtOperation[] = [];
-
-//   constructor(public readonly doc: Document) {}
-
-//   public makeObject(): ObjectType {
-//     const {doc} = this;
-//     const id = doc.clock.tick(1);
-//     const operation = new ObjectType(doc, id, undefined);
-//     this.ops.push(operation);
-//     doc.ops.index(operation);
-//     return operation;
-//   }
-
-//   public insertRoot(value: LogicalTimestamp) {
-//     const {doc} = this;
-//     const {root} = doc;
-//     const id = doc.clock.tick(1);
-//     const after = root.end ? root.end.id : root.id;
-//     const op = new CrdtLWWRegisterWriteOperation(id, after, value);
-//     root.insert(op);
-//   }
-// }

@@ -12,6 +12,9 @@ import {SetNumberOperation} from "./operations/SetNumberOperation";
 import {Patch} from "./Patch";
 import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
 
+/**
+ * Utility class that helps in Patch construction.
+ */
 export class PatchBuilder {
   public readonly patch: Patch;
 
