@@ -10,6 +10,7 @@ import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
 import {SetNumberOperation} from "./operations/SetNumberOperation";
 import {Patch} from "./Patch";
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
 
 export class PatchBuilder {
   public readonly patch: Patch;
@@ -140,7 +141,64 @@ export class PatchBuilder {
     return id;
   }
 
-  // public json(json: unknown): LogicalTimestamp {
+  /**
+   * Run the necessary builder commands to create an arbitrary JSON object.
+   */
+  public jsonObj(json: object): LogicalTimestamp {
+    const obj = this.obj();
+    const keys = Object.keys(json);
+    if (keys.length) {
+      const tuples: [key: string, value: LogicalTimestamp][] = [];
+      for (const k of keys) tuples.push([k, this.json((json as any)[k])]);
+      this.setKeys(obj, tuples);
+    }
+    return obj;
+  }
 
-  // }
+  /**
+   * Run the necessary builder commands to create an arbitrary JSON array.
+   */
+  public jsonArr(json: unknown[]): LogicalTimestamp {
+    const arr = this.arr();
+    const values: LogicalTimestamp[] = [];
+    for (const el of json) values.push(this.json(el));
+    this.insArr(arr, arr, values);
+    return arr;
+  }
+
+  /**
+   * Run builder commands to create a JSON string.
+   */
+  public jsonStr(json: string): LogicalTimestamp {
+    const str = this.str();
+    this.insStr(str, json);
+    return str;
+  }
+
+  /**
+   * Run builder commands to create a JSON number.
+   */
+  public jsonNum(json: number): LogicalTimestamp {
+    const num = this.num();
+    this.setNum(num, json);
+    return num;
+  }
+
+  /**
+   * Run the necessary builder commands to create any arbitrary JSON value.
+   */
+  public json(json: unknown): LogicalTimestamp {
+    switch (json) {
+      case null: return NULL_ID;
+      case true: return TRUE_ID;
+      case false: return FALSE_ID;
+    }
+    if (Array.isArray(json)) return this.jsonArr(json);
+    switch (typeof json) {
+      case 'object': return this.jsonObj(json!);
+      case 'string': return this.jsonStr(json);
+      case 'number': return this.jsonNum(json);
+    }
+    return UNDEFINED_ID;
+  }
 }
