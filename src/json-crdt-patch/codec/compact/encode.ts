@@ -63,9 +63,9 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof DeleteOperation) {
-      const {after, span} = op;
-      if (span === 1) res.push(9, after.sessionId, after.time);
-      else res.push(10, after.sessionId, after.time, span);
+      const {after, length} = op;
+      if (length === 1) res.push(9, after.sessionId, after.time);
+      else res.push(10, after.sessionId, after.time, length);
       continue;
     }
   }

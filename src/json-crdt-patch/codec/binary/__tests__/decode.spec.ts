@@ -190,7 +190,7 @@ test('decodes a .del() operation with span > 1', () => {
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
-  expect((patch.ops[0] as DeleteOperation).span).toBe(0b11_00000001);
+  expect((patch.ops[0] as DeleteOperation).length).toBe(0b11_00000001);
 });
 
 test('decodes a .del() operation with span = 3', () => {
@@ -206,7 +206,7 @@ test('decodes a .del() operation with span = 3', () => {
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
-  expect((patch.ops[0] as DeleteOperation).span).toBe(3);
+  expect((patch.ops[0] as DeleteOperation).length).toBe(3);
 });
 
 test('decodes a .del() operation with span = 1', () => {
@@ -221,7 +221,7 @@ test('decodes a .del() operation with span = 1', () => {
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
-  expect((patch.ops[0] as DeleteOperation).span).toBe(1);
+  expect((patch.ops[0] as DeleteOperation).length).toBe(1);
 });
 
 test('decodes a simple patch', () => {
