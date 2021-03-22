@@ -5,8 +5,6 @@ import {JsonNode} from '../types';
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
 
-export type ArrayLinkedListItem = ArrayType | ArrayChunk;
-
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
   public end: ArrayChunk;
@@ -16,7 +14,6 @@ export class ArrayType implements JsonNode {
   }
 
   public insert(op: InsertArrayElementsOperation) {
-    // First we right-to-left find the chunk after which we want to insert.
     let after: ArrayChunk | null = this.end;
     while (after) {
       if (after.id.isEqual(op.id)) return;
