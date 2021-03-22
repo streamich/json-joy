@@ -200,5 +200,122 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       expect(doc.toJson()).toEqual([]);
     });
+
+    test('can add one element to array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      builder.insArr(arrId, arrId, [TRUE_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true]);
+    });
+
+    test('can add two elements to array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      builder.insArr(arrId, arrId, [TRUE_ID, NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, null]);
+    });
+
+    test('can have array-in-array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr1 = builder.arr();
+      const arr2 = builder.arr();
+      builder.insArr(arr1, arr1, [arr2]);
+      builder.root(arr1);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([[]]);
+    });
+
+    test('can add two elements with two operations', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      builder.insArr(arrId, ins1, [NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, null]);
+    });
+
+    test('can add three elements sequentially with three operations', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [NULL_ID]);
+      const ins3 = builder.insArr(arrId, ins2, [FALSE_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, null, false]);
+    });
+
+    test('can add three elements with in-the-middle insertion', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [NULL_ID]);
+      const ins3 = builder.insArr(arrId, ins1, [FALSE_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, null]);
+    });
+
+    test('can add three elements with two operations', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins3 = builder.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, null]);
+    });
+
+    test('can insert after last element in the chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const lastElementId = ins1.tick(1);
+      const ins2 = builder.insArr(arrId, lastElementId, [FALSE_ID, NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true, false, null]);
+    });
+
+    test('can insert after last element in the chunk twice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const lastElementId1 = ins1.tick(1);
+      const ins2 = builder.insArr(arrId, lastElementId1, [FALSE_ID, NULL_ID]);
+      const lastElementId2 = ins2.tick(1);
+      const ins3 = builder.insArr(arrId, lastElementId2, [NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true, false, null, null]);
+    });
+
+    test('can insert after last element twice for the same chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const lastElementId1 = ins1.tick(1);
+      const ins2 = builder.insArr(arrId, lastElementId1, [FALSE_ID, NULL_ID]);
+      const ins3 = builder.insArr(arrId, lastElementId1, [NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(arrId)!.toString())
+      expect(doc.toJson()).toEqual([true, true, null, false, null]);
+    });
   });
 });

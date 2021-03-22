@@ -14,6 +14,7 @@ import {LWWNumberType} from './lww-number/LWWNumberType';
 import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
 import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
 import {ArrayType} from './array/ArrayType';
+import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 
 export class Document {
   /**
@@ -71,6 +72,12 @@ export class Document {
         const num = this.nodes.get(op.num);
         if (!(num instanceof LWWNumberType)) continue;
         num.insert(op);
+        continue;
+      }
+      if (op instanceof InsertArrayElementsOperation) {
+        const arr = this.nodes.get(op.arr);
+        if (!(arr instanceof ArrayType)) continue;
+        arr.insert(op);
         continue;
       }
     }

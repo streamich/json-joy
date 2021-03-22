@@ -20,9 +20,38 @@ export class LogicalTimestamp {
     return 0;
   }
 
+  /**
+   * Checks if `ts` is contained in a time span starting from this timestamp
+   * up until `span` ticks in the future.
+   * 
+   * @param span Time span clock ticks.
+   * @param ts Timestamp which to check if it fits in the time span.
+   * @returns True if timestamp is contained within the time span.
+   */
+  public inSpan(span: number, ts: LogicalTimestamp): boolean {
+    if (this.sessionId !== ts.sessionId) return false;
+    if (this.time > ts.time) return false;
+    if ((this.time + span - 1) < ts.time) return false;
+    return true;
+  }
+
+  /**
+   * @returns Returns a new timestamps with the same session ID and time advanced
+   *          by the number of specified clock cycles.
+   */
+  public tick(cycles: number): LogicalTimestamp {
+    return new LogicalTimestamp(this.sessionId, this.time + cycles);
+  }
+
   public toString() {
     // "!" is used as separator as it has the lowest ASCII value.
     return this.sessionId + '!' + this.time;
+  }
+
+  public toDisplayString() {
+    let session = String(this.sessionId);
+    if (session.length > 4) session = '..' + session.substr(session.length - 4);
+    return session + '!' + this.time;
   }
 
   /**
