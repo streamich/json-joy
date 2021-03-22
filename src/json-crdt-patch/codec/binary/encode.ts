@@ -112,22 +112,24 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof DeleteOperation) {
-      const {after, length} = op;
+      const {obj, after, length} = op;
       if (length > 1) {
         const spanBuffer = new Uint8Array(encodeVarUInt(length));
         buffers.push(
           new Uint8Array([9]),
+          new Uint32Array(encodeTimestamp(obj)).buffer,
           new Uint32Array(encodeTimestamp(after)).buffer,
           spanBuffer.buffer,
         );
-        size += 1 + 8 + spanBuffer.byteLength;
+        size += 1 + 8 + 8 + spanBuffer.byteLength;
         continue;
       }
       buffers.push(
         new Uint8Array([10]),
+        new Uint32Array(encodeTimestamp(obj)).buffer,
         new Uint32Array(encodeTimestamp(after)).buffer,
       );
-      size += 1 + 8;
+      size += 1 + 8 + 8;
       continue;
     }
   }

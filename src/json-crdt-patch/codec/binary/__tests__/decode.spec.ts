@@ -181,6 +181,7 @@ test('decodes a .del() operation with span > 1', () => {
   const buf = new Uint8Array([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     9, // del
+    5, 0, 0, 0, 5, 0, 0, 0, // Obj 5!5
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     0b10000001, 0b110, // Span length
   ]);
@@ -189,6 +190,7 @@ test('decodes a .del() operation with span > 1', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).obj.toString()).toBe('5!5');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
   expect((patch.ops[0] as DeleteOperation).length).toBe(0b11_00000001);
 });
@@ -197,6 +199,7 @@ test('decodes a .del() operation with span = 3', () => {
   const buf = new Uint8Array([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     9, // del
+    7, 0, 0, 0, 7, 0, 0, 0, // After 7!7
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     3, // Span length
   ]);
@@ -205,6 +208,7 @@ test('decodes a .del() operation with span = 3', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).obj.toString()).toBe('7!7');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
   expect((patch.ops[0] as DeleteOperation).length).toBe(3);
 });
@@ -213,6 +217,7 @@ test('decodes a .del() operation with span = 1', () => {
   const buf = new Uint8Array([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     10, // del
+    8, 0, 0, 0, 8, 0, 0, 0, // After 8!8
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
   ]);
   const patch = decode(buf)
@@ -220,6 +225,7 @@ test('decodes a .del() operation with span = 1', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(DeleteOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as DeleteOperation).obj.toString()).toBe('8!8');
   expect((patch.ops[0] as DeleteOperation).after.toString()).toBe('1!2');
   expect((patch.ops[0] as DeleteOperation).length).toBe(1);
 });
@@ -304,8 +310,10 @@ test('test all operations', () => {
     4, // root
     3,0,0,0,104,0,0,0, // Value = 3!104
     10, // del_one
+    3,0,0,0,107,0,0,0, // Obj = 3!109
     3,0,0,0,109,0,0,0, // After = 3!109
     9, // del
+    3,0,0,0,100,0,0,0, // Obj = 3!101
     3,0,0,0,101,0,0,0, // After = 3!101
     2, // Deletion length
   ]);

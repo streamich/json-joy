@@ -149,11 +149,12 @@ test('encodes a .insArr() operation', () => {
 test('encodes a .del() operation with span > 1', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.del(new LogicalTimestamp(1, 2), 0b11_00000001);
+  builder.del(new LogicalTimestamp(1, 2), new LogicalTimestamp(1, 2), 0b11_00000001);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     9, // del
+    1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     0b10000001, 0b110, // Span length
   ]);
@@ -162,11 +163,12 @@ test('encodes a .del() operation with span > 1', () => {
 test('encodes a .del() operation with span = 3', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.del(new LogicalTimestamp(1, 2), 3);
+  builder.del(new LogicalTimestamp(4, 4), new LogicalTimestamp(1, 2), 3);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     9, // del
+    4, 0, 0, 0, 4, 0, 0, 0, // Obj 4!4
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
     3, // Span length
   ]);
@@ -175,11 +177,12 @@ test('encodes a .del() operation with span = 3', () => {
 test('encodes a .del() operation with span = 1', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.del(new LogicalTimestamp(1, 2), 1);
+  builder.del(new LogicalTimestamp(6, 6), new LogicalTimestamp(1, 2), 1);
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
     10, // del
+    6, 0, 0, 0, 6, 0, 0, 0, // Obj 6!6
     1, 0, 0, 0, 2, 0, 0, 0, // After 1!2
   ]);
 });
@@ -239,8 +242,8 @@ test('test all operations', () => {
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, arrId, [numId])
   builder.root(objId);
-  builder.del(numInsertionId, 1);
-  builder.del(strInsertId, 2);
+  builder.del(numId, numInsertionId, 1);
+  builder.del(strId, strInsertId, 2);
 
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
@@ -273,8 +276,10 @@ test('test all operations', () => {
     4, // root
     3,0,0,0,104,0,0,0, // Value = 3!104
     10, // del_one
+    3,0,0,0,107,0,0,0, // Obj = 3!109
     3,0,0,0,109,0,0,0, // After = 3!109
     9, // del
+    3,0,0,0,100,0,0,0, // Obj = 3!101
     3,0,0,0,101,0,0,0, // After = 3!101
     2, // Deletion length
   ]);
