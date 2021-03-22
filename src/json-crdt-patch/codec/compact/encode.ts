@@ -77,12 +77,14 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof DeleteOperation) {
-      const {after, length} = op;
+      const {obj, after, length} = op;
       if (length === 1) {
         res.push(9);
+        pushTimestamp(obj);
         pushTimestamp(after);
       } else {
         res.push(10, length);
+        pushTimestamp(obj);
         pushTimestamp(after);
       }
       continue;

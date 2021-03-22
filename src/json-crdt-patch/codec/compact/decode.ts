@@ -69,12 +69,16 @@ export const decode = (data: unknown[]): Patch => {
         break;
       }
       case 9: {
-        builder.del(decodeTimestamp(), 1);
+        const obj = decodeTimestamp();
+        const after = decodeTimestamp();
+        builder.del(obj, after, 1);
         break;
       }
       case 10: {
         const span = data[i++] as number;
-        builder.del(decodeTimestamp(), span);
+        const obj = decodeTimestamp();
+        const after = decodeTimestamp();
+        builder.del(obj, after, span);
         break;
       }
     }

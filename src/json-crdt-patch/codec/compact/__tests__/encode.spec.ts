@@ -35,7 +35,7 @@ test('create {foo: "bar"} object', () => {
   ]);
 });
 
-test.only('test all operations', () => {
+test('test all operations', () => {
   const clock = new LogicalClock(3, 100);
   const builder = new PatchBuilder(clock);
 
@@ -48,8 +48,8 @@ test.only('test all operations', () => {
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, arrId, [numId])
   builder.root(objId);
-  builder.del(numInsertionId, 1);
-  builder.del(strInsertId, 2);
+  builder.del(numId, numInsertionId, 1);
+  builder.del(strId, strInsertId, 2);
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
@@ -63,7 +63,7 @@ test.only('test all operations', () => {
     6, 123.4, -8, // num_set 3!108
     8, 1, -4, -4, -8, // arr_ins 3!109
     4, -5, // root 3!110
-    9, -10, // del_one
-    10, 2, -2 // del
+    9, -8, -10, // del_one
+    10, 2, -1, -2 // del
   ]);
 });
