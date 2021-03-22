@@ -67,7 +67,7 @@ export interface JsonCodecInsertArrayElementsOperation {
   /** Mnemonic. */
   op: 'arr_ins';
   /** Array into which to insert the elements. */
-  arr: JsonCodecTimestamp;
+  obj: JsonCodecTimestamp;
   /** If `after` is omitted, it means the insertion is at the start of the array. */
   after?: JsonCodecTimestamp;
   /** Values to insert in the array. */
@@ -76,6 +76,9 @@ export interface JsonCodecInsertArrayElementsOperation {
 
 export interface JsonCodecDeleteOperation {
   op: 'del';
+  /** Object in which to delete something. */
+  obj: JsonCodecTimestamp;
+  /** First operation to delete. */
   after: JsonCodecTimestamp;
   /** Defaults to 1 if omitted. */
   len?: number;

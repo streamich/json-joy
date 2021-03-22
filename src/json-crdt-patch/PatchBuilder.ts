@@ -137,9 +137,9 @@ export class PatchBuilder {
    * @param span Number of subsequent (by incrementing logical clock) operations to delete.
    * @returns ID of the new operation.
    */
-  public del(start: LogicalTimestamp, span: number): LogicalTimestamp {
+  public del(obj: LogicalTimestamp, start: LogicalTimestamp, span: number): LogicalTimestamp {
     const id = this.clock.tick(span);
-    const op = new DeleteOperation(id, start, span);
+    const op = new DeleteOperation(id, obj, start, span);
     this.patch.ops.push(op);
     return id;
   }

@@ -75,7 +75,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof InsertArrayElementsOperation) {
       ops.push({
         op: 'arr_ins',
-        arr: encodeTimestamp(op.arr),
+        obj: encodeTimestamp(op.arr),
         after: encodeTimestamp(op.after),
         values: op.elements.map(encodeTimestamp),
       });
@@ -84,6 +84,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof DeleteOperation) {
       const encoded: JsonCodecDeleteOperation = {
         op: 'del',
+        obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.after),
       };
       const span = op.span();

@@ -45,11 +45,11 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'arr_ins': {
-        builder.insArr(ts(op.arr), ts(op.after || op.arr), op.values.map(ts));
+        builder.insArr(ts(op.obj), ts(op.after || op.obj), op.values.map(ts));
         break;
       }
       case 'del': {
-        builder.del(ts(op.after), op.len || 1);
+        builder.del(ts(op.obj), ts(op.after), op.len || 1);
         break;
       }
     }
