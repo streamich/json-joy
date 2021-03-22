@@ -3,7 +3,7 @@ import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../constants';
 import {Document} from '../document';
 import {LWWNumberType} from '../lww-number/LWWNumberType';
 import {LWWObjectType} from '../lww-object/LWWObjectType';
-import {ArrayType} from '../array/ArrayType';
+import {ArrayType} from '../rga-array/ArrayType';
 
 describe('Document', () => {
   describe('root', () => {
@@ -314,8 +314,59 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, lastElementId1, [NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(arrId)!.toString())
       expect(doc.toJson()).toEqual([true, true, null, false, null]);
+    });
+
+    test('can apply same patch trice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const lastElementId1 = ins1.tick(1);
+      const ins2 = builder.insArr(arrId, lastElementId1, [FALSE_ID, NULL_ID]);
+      const ins3 = builder.insArr(arrId, lastElementId1, [NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true, null, false, null]);
+    });
+
+    test('insert at the beginning of a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, null, true]);
+    });
+
+    test('insert at the beginning of a chunk using two patches', () => {
+      const doc = new Document();
+      const builder1 = new PatchBuilder(doc.clock);
+      const arrId = builder1.arr();
+      const ins1 = builder1.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      builder1.root(arrId);
+      const builder2 = new PatchBuilder(doc.clock);
+      const ins2 = builder2.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
+      doc.applyPatch(builder1.patch);
+      doc.applyPatch(builder2.patch);
+      expect(doc.toJson()).toEqual([true, false, null, true]);
+    });
+
+    test('insert at the beginning of a chunk trice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, null, true]);
     });
   });
 });

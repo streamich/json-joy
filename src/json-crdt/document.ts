@@ -13,7 +13,7 @@ import {MakeNumberOperation} from '../json-crdt-patch/operations/MakeNumberOpera
 import {LWWNumberType} from './lww-number/LWWNumberType';
 import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
 import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
-import {ArrayType} from './array/ArrayType';
+import {ArrayType} from './rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 
 export class Document {
@@ -44,16 +44,22 @@ export class Document {
   public applyPatch(patch: Patch) {
     for (const op of patch.ops) {
       if (op instanceof MakeObjectOperation) {
+        const exists = !!this.nodes.get(op.id);
+        if (exists) return; // We can return, because all remaining ops in the patch will already exist, too.
         const obj = new LWWObjectType(this, op.id);
         this.nodes.index(obj);
         continue;
       }
       if (op instanceof MakeArrayOperation) {
+        const exists = !!this.nodes.get(op.id);
+        if (exists) return;
         const obj = new ArrayType(this, op.id);
         this.nodes.index(obj);
         continue;
       }
       if (op instanceof MakeNumberOperation) {
+        const exists = !!this.nodes.get(op.id);
+        if (exists) return;
         const num = new LWWNumberType(op.id, 0);
         this.nodes.index(num);
         continue;
