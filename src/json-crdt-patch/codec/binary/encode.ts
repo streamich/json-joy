@@ -10,34 +10,13 @@ import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
+import {encodeVarUInt} from "./util/varuint";
 
 export const encodeTimestamp = ({sessionId, time}: LogicalTimestamp): [number, number] => {
   let low32 = sessionId | 0;
   if (low32 < 0) low32 += 4294967296;
   const high8 = (sessionId - low32) / 4294967296;
   return [low32, ((high8 << 24) | time) >>> 0];
-};
-
-/**
- * Encodes up to 29-bits unsigned integer. In the first three bytes 7 bits are
- * encoded, the fourth byte contains 8 bits of data.
- */
-export const encodeVarUInt = (uint: number) => {
-  if (uint <= 0b01111111) return [uint];
-  if (uint <= 0b01111111_11111111)
-    return [0b10000000 | (uint & 0b1111111), (uint & 0b1111111_0000000) >> 7];
-  if (uint <= 0b01111111_11111111_11111111)
-    return [
-      0b10000000 | (uint & 0b1111111),
-      0b10000000 | ((uint & 0b1111111_0000000) >> 7),
-      (uint & 0b1111111_0000000_0000000) >> 14,
-    ];
-  return [
-    0b10000000 | (uint & 0b1111111),
-    0b10000000 | ((uint & 0b1111111_0000000) >> 7),
-    0b10000000 | ((uint & 0b1111111_0000000_0000000) >> 14),
-    (uint & 0b11111111_0000000_0000000_0000000) >> 21,
-  ];
 };
 
 const textEncoder: TextEncoder | null = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;

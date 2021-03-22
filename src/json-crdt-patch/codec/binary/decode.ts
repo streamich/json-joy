@@ -1,6 +1,7 @@
 import {LogicalClock, LogicalTimestamp} from "../../clock";
 import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
+import {decodeVarUint} from "./util/varuint";
 
 export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimestamp => {
   const o1 = buf[offset];
@@ -26,17 +27,6 @@ export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimesta
   time *= 0x100;
   time += o5;
   return new LogicalTimestamp(sessionId, time);
-};
-
-export const decodeVarUint = (buf: Uint8Array, offset: number): number => {
-  const o1 = buf[offset];
-  if (o1 <= 0b0111_1111) return o1;
-  const o2 = buf[offset + 1];
-  if (o2 <= 0b0111_1111) return (o2 << 7) + (o1 & 0b0111_1111);
-  const o3 = buf[offset + 2];
-  if (o3 <= 0b0111_1111) return (o3 << 14) + ((o2 & 0b0111_1111) << 7) + (o1 & 0b0111_1111);
-  const o4 = buf[offset + 3];
-  return (o4 << 21) + ((o3 & 0b0111_1111) << 14) + ((o2 & 0b0111_1111) << 7) + (o1 & 0b0111_1111);
 };
 
 const textDecoder: TextDecoder | null = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
