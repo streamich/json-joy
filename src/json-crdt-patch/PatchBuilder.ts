@@ -83,7 +83,7 @@ export class PatchBuilder {
       throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
     const op = new SetObjectKeysOperation(id, obj, tuples);
-    const span = op.getSpan();
+    const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
     return id;
@@ -109,7 +109,7 @@ export class PatchBuilder {
       throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
     const op = new InsertStringSubstringOperation(id, after, substringToInsert);
-    const span = op.getSpan();
+    const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
     return id;
@@ -122,7 +122,7 @@ export class PatchBuilder {
   public insArr(arr: LogicalTimestamp, after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
     const id = this.clock.tick(1);
     const op = new InsertArrayElementsOperation(id, arr, after, elements);
-    const span = op.getSpan();
+    const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
     return id;

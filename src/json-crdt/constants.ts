@@ -3,8 +3,6 @@ import {FALSE_ID, NULL_ID, TRUE_ID} from '../json-crdt-patch/constants';
 import {JsonNode} from './types';
 
 export class ConstantType implements JsonNode {
-  public readonly span = 1;
-
   constructor (public readonly id: LogicalTimestamp, public readonly value: unknown) {}
 
   public toJson() {

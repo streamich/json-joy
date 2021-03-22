@@ -15,7 +15,7 @@ export interface Identifiable {
    * entries with sequentially growing timestamps. In this case `span` represents
    * the number of entries.
    */
-  getSpan?(): number;
+  span?(): number;
 
   /**
    * Used for debugging.

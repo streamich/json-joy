@@ -4,7 +4,7 @@ import type {LogicalTimestamp} from '../clock';
 export class SetNumberOperation implements IJsonCrdtPatchOperation {
   constructor(public readonly id: LogicalTimestamp, public readonly num: LogicalTimestamp, public readonly value: number) {}
 
-  public getSpan(): number {
+  public span(): number {
     return 1;
   }
 

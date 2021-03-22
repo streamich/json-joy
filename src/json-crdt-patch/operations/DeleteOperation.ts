@@ -7,10 +7,10 @@ export class DeleteOperation implements IJsonCrdtPatchOperation {
    * @param after ID of the first operation to be deleted.
    * @param span Number of operations to delete sequentially increasing IDs.
    */
-  constructor(public readonly id: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly span: number) {}
+  constructor(public readonly id: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly length: number) {}
 
-  public getSpan(): number {
-    return this.span;
+  public span(): number {
+    return this.length;
   }
 
   public getMnemonic(): string {

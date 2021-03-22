@@ -35,7 +35,7 @@ export class Patch {
 
   public getSpan(): number {
     let span = 0;
-    for (const op of this.ops) span += op.getSpan();
+    for (const op of this.ops) span += op.span();
     return span;
   }
 }

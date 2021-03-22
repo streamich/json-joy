@@ -14,7 +14,7 @@ export interface IJsonCrdtPatchOperation extends Identifiable {
    * 
    * This method returns the effective number of operations.
    */
-  getSpan(): number;
+  span(): number;
 
   /**
    * User friendly name of the operation.

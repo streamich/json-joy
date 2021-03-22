@@ -17,14 +17,14 @@ export class ArrayType implements JsonNode {
     let after: ArrayChunk | null = this.end;
     while (after) {
       if (after.id.isEqual(op.id)) return;
-      if (after.id.inSpan(after.getSpan(), op.after)) break;
+      if (after.id.inSpan(after.span(), op.after)) break;
       after = after.left;
     }
     if (!after) return; // Should never happen.
 
     const chunk = new ArrayChunk(op.id, op.elements);
 
-    const targetsLastElementInChunk = op.after.time === (after.id.time + after.getSpan() - 1);
+    const targetsLastElementInChunk = op.after.time === (after.id.time + after.span() - 1);
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
       while (after.right && (after.right.id.compare(op.id)) > 0) after = after!.right!;
@@ -32,7 +32,8 @@ export class ArrayType implements JsonNode {
       return;
     }
 
-    this.splitChunk(after, op.after);
+    const newChunk = after.split(op.after);
+    this.insertChunk(newChunk, after);
     this.insertChunk(chunk, after);
   }
 
@@ -44,20 +45,13 @@ export class ArrayType implements JsonNode {
     after.right = chunk;
   }
 
-  private splitChunk(chunkToSplit: ArrayChunk, splitId: LogicalTimestamp) {
-    const span1 = 1 + splitId.time - chunkToSplit.id.time;
-    const newChunkValues = chunkToSplit.values.splice(span1);
-    const newChunk = new ArrayChunk(splitId.tick(1), newChunkValues);
-    this.insertChunk(newChunk, chunkToSplit);
-  }
-
   public toJson(): unknown[] {
     const arr: unknown[] = [];
     const nodes = this.doc.nodes;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
       if (!curr.deleted)
-        arr.push(...curr.values.map(value => nodes.get(value)?.toJson()));
+        arr.push(...curr.values!.map(value => nodes.get(value)?.toJson()));
       curr = curr.right;
     }
     return arr;

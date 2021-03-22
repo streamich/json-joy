@@ -22,5 +22,5 @@ export interface JsonNode extends Identifiable {
  * entry in this linked list is a JSON *Chunk*.
  */
 export interface JsonChunk extends Identifiable {
-  getSpan(): number;
+  span(): number;
 }

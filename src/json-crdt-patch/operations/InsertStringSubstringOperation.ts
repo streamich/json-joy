@@ -4,7 +4,7 @@ import type {LogicalTimestamp} from '../clock';
 export class InsertStringSubstringOperation implements IJsonCrdtPatchOperation {
   constructor(public readonly id: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly substring: string) {}
 
-  public getSpan(): number {
+  public span(): number {
     return this.substring.length;
   }
 

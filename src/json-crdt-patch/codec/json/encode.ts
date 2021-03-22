@@ -86,7 +86,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
         op: 'del',
         after: encodeTimestamp(op.after),
       };
-      const span = op.getSpan();
+      const span = op.span();
       if (span > 1) encoded.len = span;
       ops.push(encoded);
       continue;

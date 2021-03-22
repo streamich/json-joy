@@ -11,7 +11,7 @@ export class ArrayOriginChunk extends ArrayChunk {
     super(id, []);
   }
 
-  public getSpan(): number {
+  public span(): number {
     return 1;
   }
 }

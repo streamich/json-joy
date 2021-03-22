@@ -16,7 +16,7 @@ export class InsertArrayElementsOperation implements IJsonCrdtPatchOperation {
    */
   constructor(public readonly id: LogicalTimestamp, public readonly arr: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly elements: LogicalTimestamp[]) {}
 
-  public getSpan(): number {
+  public span(): number {
     return this.elements.length;
   }
 
