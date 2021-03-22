@@ -28,14 +28,14 @@ test('create {foo: "bar"} object', () => {
   expect(encoded).toEqual([
     5, 25, // Patch ID
     2, // str
-    7, 5, 25, "bar", // str_ins
+    7, "bar", -1, // str_ins
     0, // obj
-    5, 5, 29, ["foo", 5, 25], // obj_set
-    4, 5, 29 // root
+    5, 1, -5, "foo", -1, // obj_set
+    4, -5 // root
   ]);
 });
 
-test('test all operations', () => {
+test.only('test all operations', () => {
   const clock = new LogicalClock(3, 100);
   const builder = new PatchBuilder(clock);
 
@@ -55,15 +55,15 @@ test('test all operations', () => {
   expect(encoded).toEqual([
     3, 100, // Patch ID
     2, // str 3!100
-    7, 3, 100, "qq", // str_ins 3!101,3!102
+    7, "qq", -1, // str_ins 3!101,3!102
     1, // arr 3!103
     0, // obj 3!104
-    5, 3, 104, ["foo", 3, 100, "hmm", 3, 103], // obj_set 3!105,3!106
+    5, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
     3, // num 3!107
-    6, 3, 107, 123.4, // num_set 3!108
-    8, 3, 103, 3, 103, [3, 107], // arr_ins 3!109
-    4, 3, 104, // root 3!110
-    9, 3, 109, // del_one
-    10, 3, 101, 2 // del
+    6, 123.4, -8, // num_set 3!108
+    8, 1, -4, -4, -8, // arr_ins 3!109
+    4, -5, // root 3!110
+    9, -10, // del_one
+    10, 2, -2 // del
   ]);
 });

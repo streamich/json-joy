@@ -1,3 +1,4 @@
+import {LogicalTimestamp} from "../../clock";
 import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
@@ -14,7 +15,13 @@ export const encode = (patch: Patch): unknown[] => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');
 
-  const res: unknown[] = [id.sessionId, id.time];
+  const {sessionId, time} = id;
+  const res: unknown[] = [sessionId, time];
+
+  const pushTimestamp = (ts: LogicalTimestamp) => {
+    if (ts.sessionId === sessionId) res.push(time - ts.time - 1);
+    else res.push(ts.sessionId, ts.time);
+  };
 
   for (const op of patch.ops) {
     if (op instanceof MakeObjectOperation) {
@@ -35,37 +42,49 @@ export const encode = (patch: Patch): unknown[] => {
     }
     if (op instanceof SetRootOperation) {
       const {value} = op;
-      res.push(4, value.sessionId, value.time);
+      res.push(4);
+      pushTimestamp(value);
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
       const {object, tuples} = op;
-      const triplets: (string | number)[] = [];
-      for (const [key, value] of tuples) triplets.push(key, value.sessionId, value.time);
-      res.push(5, object.sessionId, object.time, triplets);
+      res.push(5, tuples.length);
+      pushTimestamp(object);
+      for (const [key, value] of tuples) {
+        res.push(key);
+        pushTimestamp(value);
+      }
       continue;
     }
     if (op instanceof SetNumberOperation) {
       const {num, value} = op;
-      res.push(6, num.sessionId, num.time, value);
+      res.push(6, value);
+      pushTimestamp(num);
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
       const {after, substring} = op;
-      res.push(7, after.sessionId, after.time, substring);
+      res.push(7, substring);
+      pushTimestamp(after);
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {
       const {arr, after, elements} = op;
-      const elementList: number[] = [];
-      for (const element of elements) elementList.push(element.sessionId, element.time);
-      res.push(8, arr.sessionId, arr.time, after.sessionId, after.time, elementList);
+      res.push(8, elements.length);
+      pushTimestamp(arr);
+      pushTimestamp(after);
+      for (const element of elements) pushTimestamp(element);
       continue;
     }
     if (op instanceof DeleteOperation) {
       const {after, length} = op;
-      if (length === 1) res.push(9, after.sessionId, after.time);
-      else res.push(10, after.sessionId, after.time, length);
+      if (length === 1) {
+        res.push(9);
+        pushTimestamp(after);
+      } else {
+        res.push(10, length);
+        pushTimestamp(after);
+      }
       continue;
     }
   }

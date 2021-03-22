@@ -3,94 +3,78 @@ import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
 
 export const decode = (data: unknown[]): Patch => {
-  const clock = new LogicalClock(data[0] as number, data[1] as number);
+  const sessionId = data[0] as number;
+  const time = data[1] as number;
+  const clock = new LogicalClock(sessionId, time);
   const builder = new PatchBuilder(clock);
   const length = data.length;
   let i = 2;
 
+  const decodeTimestamp = (): LogicalTimestamp => {
+    const x = data[i++] as number;
+    if (x < 0) return new LogicalTimestamp(sessionId, time - x - 1);
+    else return new LogicalTimestamp(x, data[i++] as number);
+  };
+
   while (i < length) {
-    switch (data[i]) {
+    switch (data[i++]) {
       case 0: {
         builder.obj();
-        i++;
         break;
       }
       case 1: {
         builder.arr();
-        i++;
         break;
       }
       case 2: {
         builder.str();
-        i++;
         break;
       }
       case 3: {
         builder.num();
-        i++;
         break;
       }
       case 4: {
-        const valueSession = data[i + 1] as number;
-        const valueTime = data[i + 2] as number;
-        builder.root(new LogicalTimestamp(valueSession, valueTime));
-        i += 3;
+        builder.root(decodeTimestamp());
         break;
       }
       case 5: {
-        const objSession = data[i + 1] as number;
-        const objTime = data[i + 2] as number;
-        const triplets = data[i + 3] as (string | number)[];
+        const length = data[i++] as number; 
+        const obj = decodeTimestamp();
         const tuples: [key: string, value: LogicalTimestamp][] = [];
-        for (let i = 0; i < triplets.length; i += 3) {
-          tuples.push([triplets[i] as string, new LogicalTimestamp(triplets[i + 1] as number, triplets[i + 2] as number)])
+        for (let j = 0; j < length; j++) {
+          const key = data[i++] as string;
+          tuples.push([key, decodeTimestamp()]);
         }
-        builder.setKeys(new LogicalTimestamp(objSession, objTime), tuples);
-        i += 4;
+        builder.setKeys(obj, tuples);
         break;
       }
       case 6: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        const value = data[i + 3] as number;
-        builder.setNum(new LogicalTimestamp(afterSession, afterTime), value);
-        i += 4;
+        const value = data[i++] as number;
+        builder.setNum(decodeTimestamp(), value);
         break;
       }
       case 7: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        const value = data[i + 3] as string;
-        builder.insStr(new LogicalTimestamp(afterSession, afterTime), value);
-        i += 4;
+        const value = data[i++] as string;
+        builder.insStr(decodeTimestamp(), value);
         break;
       }
       case 8: {
-        const arrSession = data[i + 1] as number;
-        const arrTime = data[i + 2] as number;
-        const afterSession = data[i + 3] as number;
-        const afterTime = data[i + 4] as number;
-        const elements = data[i + 5] as number[];
+        const length = data[i++] as number;
+        const arr = decodeTimestamp();
+        const after = decodeTimestamp();
         const values: LogicalTimestamp[] = [];
-        for (let i = 0; i < elements.length; i += 2)
-          values.push(new LogicalTimestamp(elements[i], elements[i + 1]));
-        builder.insArr(new LogicalTimestamp(arrSession, arrTime), new LogicalTimestamp(afterSession, afterTime), values);
-        i += 6;
+        for (let j = 0; j < length; j++) values.push(decodeTimestamp());
+        builder.insArr(arr, after, values);
         break;
       }
       case 9: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        builder.del(new LogicalTimestamp(afterSession, afterTime), 1);
-        i += 3;
+        builder.del(decodeTimestamp(), 1);
         break;
       }
       case 10: {
-        const afterSession = data[i + 1] as number;
-        const afterTime = data[i + 2] as number;
-        const span = data[i + 3] as number;
-        builder.del(new LogicalTimestamp(afterSession, afterTime), span);
-        i += 4;
+        const span = data[i++] as number;
+        builder.del(decodeTimestamp(), span);
         break;
       }
     }
