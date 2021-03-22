@@ -1,5 +1,5 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../constants';
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {Document} from '../document';
 import {LWWNumberType} from '../lww-number/LWWNumberType';
 import {LWWObjectType} from '../lww-object/LWWObjectType';

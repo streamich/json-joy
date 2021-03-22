@@ -139,4 +139,8 @@ export class PatchBuilder {
     this.patch.ops.push(op);
     return id;
   }
+
+  // public json(json: unknown): LogicalTimestamp {
+
+  // }
 }

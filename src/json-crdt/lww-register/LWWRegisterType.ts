@@ -1,5 +1,5 @@
 import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
-import {UNDEFINED_ID} from '../constants';
+import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {LWWRegisterWriteOp} from './LWWRegisterWriteOp';
 
 export class LWWRegisterType {

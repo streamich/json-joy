@@ -1,6 +1,6 @@
 import {LogicalTimestamp} from '../../json-crdt-patch/clock';
 import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {UNDEFINED_ID} from '../constants';
+import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {Document} from '../document';
 import {JsonNode} from '../types';
 import {LWWObjectEntry} from './LWWObjectEntry';

@@ -1,5 +1,5 @@
 import type {JsonNode} from './types';
-import {FALSE, NULL, ORIGIN, TRUE} from './constants';
+import {FALSE, NULL, TRUE} from './constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {Patch} from '../json-crdt-patch/Patch';
@@ -15,6 +15,7 @@ import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperati
 import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
 import {ArrayType} from './rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {ORIGIN} from '../json-crdt-patch/constants';
 
 export class Document {
   /**
