@@ -2,7 +2,7 @@ import {json_string} from "ts-brand-json";
 import {Document} from "../../document";
 import {LWWObjectType} from "../../lww-object/LWWObjectType";
 
-export const encode = (doc: Document): json_string<Array<number | string>> => {
+export const encode = (doc: Document): json_string<unknown[]> => {
   let nodes = '';
 
   for (const m of doc.nodes.entries.values()) {

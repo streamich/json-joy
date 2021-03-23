@@ -80,6 +80,22 @@ export class StringType implements JsonNode {
     }
   }
 
+  public findId(index: number): LogicalTimestamp {
+    let chunk: null | StringChunk = this.start;
+    let cnt: number = 0;
+    const next = index + 1;
+    while (chunk) {
+      if (chunk.str) {
+        cnt += chunk.str.length;
+        if (cnt >= next) {
+          return chunk.id.tick(chunk.str.length - (cnt - index));
+        }
+      }
+      chunk = chunk.right;
+    }
+    throw new Error('OUT_OF_BOUNDS');
+  }
+
   public toJson(): string {
     let str: string = '';
     let curr: StringChunk | null = this.start;

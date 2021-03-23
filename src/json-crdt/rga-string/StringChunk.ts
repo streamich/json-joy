@@ -51,6 +51,9 @@ export class StringChunk implements JsonChunk {
     }
   }
 
+  /**
+   * Mark this chunk as deleted and dispose of the contents.
+   */
   public delete() {
     this.deleted = this.span();
     delete this.str;
