@@ -47,6 +47,16 @@ export const decode = (buf: Uint8Array): Patch => {
     return value;
   };
 
+  const varuint = () => {
+    const value = decodeVarUint(buf, offset);
+    offset += value <= 0b01111111
+      ? 1
+      : value <= 0b01111111_11111111
+        ? 2
+        : value <= 0b01111111_11111111_11111111 ? 3 : 4;
+    return value;
+  };
+
   while (offset < length) {
     const opcode = buf[offset];
     offset++;
@@ -73,21 +83,11 @@ export const decode = (buf: Uint8Array): Patch => {
       }
       case 5: {
         const object = ts();
-        const fields = decodeVarUint(buf, offset);
-        offset += fields <= 0b01111111
-          ? 1
-          : fields <= 0b01111111_11111111
-            ? 2
-            : fields <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const fields = varuint();
         const tuples: [key: string, value: LogicalTimestamp][] = [];
         for (let i = 0; i < fields; i++) {
           const value = ts();
-          const strLength = decodeVarUint(buf, offset);
-          offset += strLength <= 0b01111111
-            ? 1
-            : strLength <= 0b01111111_11111111
-              ? 2
-              : strLength <= 0b01111111_11111111_11111111 ? 3 : 4;
+          const strLength = varuint();
           const key = decodeString(buf, offset, strLength);
           offset += strLength;
           tuples.push([key, value]);
@@ -105,12 +105,7 @@ export const decode = (buf: Uint8Array): Patch => {
       case 7: {
         const obj = ts();
         const after = ts();
-        const length = decodeVarUint(buf, offset);
-        offset += length <= 0b01111111
-          ? 1
-          : length <= 0b01111111_11111111
-            ? 2
-            : length <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const length = varuint();
         const str = decodeString(buf, offset, length);
         offset += length;
         builder.insStr(obj, after, str);
@@ -119,12 +114,7 @@ export const decode = (buf: Uint8Array): Patch => {
       case 8: {
         const arr = ts();
         const after = ts();
-        const length = decodeVarUint(buf, offset);
-        offset += length <= 0b01111111
-          ? 1
-          : length <= 0b01111111_11111111
-            ? 2
-            : length <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const length = varuint();
         const elements: LogicalTimestamp[] = [];
         for (let i = 0; i < length; i++) {
           const value = ts();
@@ -136,12 +126,7 @@ export const decode = (buf: Uint8Array): Patch => {
       case 9: {
         const obj = ts();
         const after = ts();
-        const length = decodeVarUint(buf, offset);
-        offset += length <= 0b01111111
-          ? 1
-          : length <= 0b01111111_11111111
-            ? 2
-            : length <= 0b01111111_11111111_11111111 ? 3 : 4;
+        const length = varuint();
         builder.del(obj, after, length);
         continue;
       }
