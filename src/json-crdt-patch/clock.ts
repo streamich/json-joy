@@ -8,10 +8,17 @@
 export class LogicalTimestamp {
   constructor (public readonly sessionId: number, public time: number) {}
 
-  public isEqual(ts: LogicalTimestamp) {
+  /**
+   * @returns True if timestamps are equal.
+   */
+  public isEqual(ts: LogicalTimestamp): boolean {
     return (this.sessionId === ts.sessionId) && (this.time === ts.time);
   }
 
+  /**
+   * @param ts The other timestamp.
+   * @returns 1 if current timestamp is larger, -1 if smaller, and 0 otherwise.
+   */
   public compare(ts: LogicalTimestamp): -1 | 0 | 1 {
     if (this.time > ts.time) return 1;
     if (this.time < ts.time) return -1;
@@ -35,6 +42,14 @@ export class LogicalTimestamp {
     return true;
   }
 
+  /**
+   * Check if two time intervals have any part overlapping.
+   * 
+   * @param span Span of the current timestamp.
+   * @param ts The other timestamp.
+   * @param tsSpan Span of the other timestamp.
+   * @returns True if there is any overlapping part.
+   */
   public overlap(span: number, ts: LogicalTimestamp, tsSpan: number): boolean {
     if (this.sessionId !== ts.sessionId) return false;
     const x1 = this.time;
@@ -60,6 +75,9 @@ export class LogicalTimestamp {
     return this.sessionId + '!' + this.time;
   }
 
+  /**
+   * Similar to `toString()` but shortens the `sessionId`.
+   */
   public toDisplayString() {
     let session = String(this.sessionId);
     if (session.length > 4) session = '..' + session.substr(session.length - 4);
@@ -97,6 +115,9 @@ export class LogicalClock extends LogicalTimestamp {
     this.time = time;
   }
 
+  /**
+   * Returns the current clock timestamp and advances the clock given number of ticks.
+   */
   public tick(cycles: number): LogicalTimestamp {
     const timestamp = new LogicalTimestamp(this.sessionId, this.time);
     this.time += cycles;
@@ -104,9 +125,25 @@ export class LogicalClock extends LogicalTimestamp {
   }
 }
 
-export class VectorClock {
+export class VectorClock extends LogicalClock {
   /**
    * Mapping of session IDs to logical timestamps.
    */
   public readonly clocks = new Map<number, LogicalTimestamp>();
+
+  constructor (sessionId: number, time: number) {
+    super(sessionId, time);
+    this.clocks.set(sessionId, this);
+  }
+
+  /**
+   * Advances clocks when we observe higher time values.
+   * 
+   * @param ts Operation timestamp that was observed.
+   */
+  public observe(ts: LogicalTimestamp) {
+    const clock = this.clocks.get(ts.sessionId);
+    if (!clock) this.clocks.set(ts.sessionId, ts.tick(0));
+    else if (ts.time > clock.time) clock.time = ts.time;
+  }
 }
