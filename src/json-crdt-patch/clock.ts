@@ -28,11 +28,23 @@ export class LogicalTimestamp {
    * @param ts Timestamp which to check if it fits in the time span.
    * @returns True if timestamp is contained within the time span.
    */
-  public inSpan(span: number, ts: LogicalTimestamp): boolean {
+  public inSpan(span: number, ts: LogicalTimestamp, tsSpan: number): boolean {
     if (this.sessionId !== ts.sessionId) return false;
     if (this.time > ts.time) return false;
-    if ((this.time + span - 1) < ts.time) return false;
+    if ((this.time + span) < (ts.time + tsSpan)) return false;
     return true;
+  }
+
+  public overlap(span: number, ts: LogicalTimestamp, tsSpan: number): boolean {
+    if (this.sessionId !== ts.sessionId) return false;
+    const x1 = this.time;
+    const x2 = x1 + span - 1;
+    const y1 = ts.time;
+    const y2 = y1 + tsSpan - 1;
+    if (x1 === y1) return true;
+    if (x2 >= y1 && x1 <= y2) return true;
+    if (y2 >= x1 && y1 <= x2) return true;
+    return false;
   }
 
   /**

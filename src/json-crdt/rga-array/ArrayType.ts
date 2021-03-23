@@ -1,4 +1,5 @@
 import {LogicalTimestamp} from '../../json-crdt-patch/clock';
+import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {Document} from '../document';
 import {JsonNode} from '../types';
@@ -17,7 +18,7 @@ export class ArrayType implements JsonNode {
     let after: ArrayChunk | null = this.end;
     while (after) {
       if (after.id.isEqual(op.id)) return;
-      if (after.id.inSpan(after.span(), op.after)) break;
+      if (after.id.inSpan(after.span(), op.after, 1)) break;
       after = after.left;
     }
     if (!after) return; // Should never happen.
@@ -32,8 +33,7 @@ export class ArrayType implements JsonNode {
       return;
     }
 
-    const newChunk = after.split(op.after);
-    this.insertChunk(newChunk, after);
+    this.splitChunk(after, op.after.time);
     this.insertChunk(chunk, after);
   }
 
@@ -43,6 +43,42 @@ export class ArrayType implements JsonNode {
     if (after.right) after.right.left = chunk;
     else this.end = chunk;
     after.right = chunk;
+  }
+
+  private splitChunk(chunk: ArrayChunk, time: number): ArrayChunk {
+    const newChunk = chunk.split(time);
+    this.insertChunk(newChunk, chunk);
+    return newChunk;
+  }
+
+  public delete(op: DeleteOperation) {
+    const {after, length} = op;
+    let chunk: ArrayChunk | null = this.end;
+    const chunks: ArrayChunk[] = [];
+    while (chunk) {
+      if (chunk.id.overlap(chunk.span(), after, length)) chunks.push(chunk);
+      if (chunk.id.inSpan(chunk.span(), after, 1)) break;
+      chunk = chunk.left;
+    };
+    for (const c of chunks) this.deleteInChunk(c, after.time, after.time + length - 1);
+  }
+
+  private deleteInChunk(chunk: ArrayChunk, t1: number, t2: number) {
+    const c1 = chunk.id.time;
+    const c2 = c1 + chunk.span() - 1;
+    if (t1 <= c1) {
+      if (t2 >= c2) chunk.delete();
+      else {
+        this.splitChunk(chunk, t2);
+        chunk.delete();
+      }
+    } else {
+      if (t2 >= c2) this.splitChunk(chunk, t1 - 1).delete();
+      else {
+        this.splitChunk(chunk, t2);
+        this.splitChunk(chunk, t1 - 1).delete();
+      }
+    }
   }
 
   public toJson(): unknown[] {

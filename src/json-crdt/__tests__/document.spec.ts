@@ -368,5 +368,142 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       expect(doc.toJson()).toEqual([true, false, null, true]);
     });
+
+    test('can delete a single element from single-element chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [FALSE_ID]);
+      builder.del(arrId, ins2, 1);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true]);
+    });
+
+    test('can delete a single element from single-element chunk in the middle of array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [FALSE_ID]);
+      const ins3 = builder.insArr(arrId, ins2, [NULL_ID]);
+      builder.del(arrId, ins2, 1);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, null]);
+    });
+
+    test('delete last element in a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID]);
+      builder.del(arrId, ins1.tick(1), 1);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true]);
+    });
+
+    test('delete first two elements in chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID, NULL_ID]);
+      builder.del(arrId, ins1, 2);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([null]);
+    });
+
+    test('delete a section in the middle of a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID, NULL_ID, TRUE_ID]);
+      builder.del(arrId, ins1.tick(1), 2);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true]);
+    });
+
+    test('delete two chunks using one delete operation', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1, [FALSE_ID]);
+      const ins3 = builder.insArr(arrId, ins2, [NULL_ID]);
+      const ins4 = builder.insArr(arrId, ins3, [TRUE_ID]);
+      builder.del(arrId, ins2, 2);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true]);
+    });
+
+    test('can delete across chunks', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1.tick(2), [FALSE_ID, FALSE_ID]);
+      const ins3 = builder.insArr(arrId, ins2.tick(1), [NULL_ID]);
+      const ins4 = builder.insArr(arrId, ins3, [FALSE_ID, FALSE_ID]);
+      builder.del(arrId, ins1.tick(1), 6);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false]);
+    });
+
+    test('can delete across chunk when chunk were split due to insertion', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1.tick(1), [FALSE_ID, FALSE_ID]);
+      builder.del(arrId, ins1.tick(1), 2);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, false]);
+    });
+
+    test('can delete across chunk when chunk were split due to insertion - 2', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1.tick(1), [FALSE_ID, FALSE_ID]);
+      builder.del(arrId, ins1.tick(2), 1);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, true, false, false]);
+    });
+
+    test('can delete across chunk when chunk were split due to insertion - 3', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1.tick(1), [FALSE_ID, FALSE_ID]);
+      builder.del(arrId, ins1.tick(1), 1);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([true, false, false, true]);
+    });
+
+    test('can delete across chunk when chunk were split due to insertion - 4', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arrId = builder.arr();
+      const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arrId, ins1.tick(1), [FALSE_ID, FALSE_ID]);
+      builder.del(arrId, ins1, 3);
+      builder.root(arrId);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual([false, false]);
+    });
   });
 });

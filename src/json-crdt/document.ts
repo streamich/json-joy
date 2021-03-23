@@ -16,6 +16,7 @@ import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperati
 import {ArrayType} from './rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ORIGIN} from '../json-crdt-patch/constants';
+import {DeleteOperation} from '../json-crdt-patch/operations/DeleteOperation';
 
 export class Document {
   /**
@@ -85,6 +86,13 @@ export class Document {
         const arr = this.nodes.get(op.arr);
         if (!(arr instanceof ArrayType)) continue;
         arr.insert(op);
+        continue;
+      }
+      if (op instanceof DeleteOperation) {
+        const node = this.nodes.get(op.obj);
+        if (node instanceof ArrayType) {
+          node.delete(op);
+        }
         continue;
       }
     }

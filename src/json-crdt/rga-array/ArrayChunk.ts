@@ -1,5 +1,5 @@
 import type {JsonChunk} from '../types';
-import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
+import {LogicalTimestamp} from '../../json-crdt-patch/clock';
 
 export class ArrayChunk implements JsonChunk {
   public left: ArrayChunk | null = null;
@@ -16,7 +16,7 @@ export class ArrayChunk implements JsonChunk {
    * @param values Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: LogicalTimestamp, public readonly values: undefined | LogicalTimestamp[]) {}
+  constructor(public readonly id: LogicalTimestamp, public values: undefined | LogicalTimestamp[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of
@@ -33,20 +33,26 @@ export class ArrayChunk implements JsonChunk {
    * Splits this chunk into two, such that elements up to and including `splitId`
    * remain in this chunk and a new chunk is returns with all the remaining elements.
    * 
-   * @param splitId Last element ID which to keep in this chunk.
+   * @param time Last element ID which to keep in this chunk.
    * @returns New chunk which contains all the remaining elements.
    */
-  public split(splitId: LogicalTimestamp): ArrayChunk {
-    const newSpan = 1 + splitId.time - this.id.time;
+  public split(time: number): ArrayChunk {
+    const newSpan = 1 + time - this.id.time;
+    const newId = new LogicalTimestamp(this.id.sessionId, time + 1);
     if (this.values) {
       const newChunkValues = this.values.splice(newSpan);
-      return new ArrayChunk(splitId.tick(1), newChunkValues);
+      return new ArrayChunk(newId, newChunkValues);
     } else {
-      const chunk = new ArrayChunk(splitId.tick(1), undefined);
+      const chunk = new ArrayChunk(newId, undefined);
       chunk.deleted = this.span() - newSpan;
       this.deleted = newSpan;
       return chunk;
     }
+  }
+
+  public delete() {
+    this.deleted = this.span();
+    delete this.values;
   }
 
   /**
