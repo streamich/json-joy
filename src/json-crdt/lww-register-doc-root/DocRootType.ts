@@ -3,7 +3,7 @@ import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperatio
 import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 
 export class DocRootType {
-  private last: SetRootOperation | null = null;
+  public last: SetRootOperation | null = null;
 
   constructor(public readonly id: LogicalTimestamp) {}
 

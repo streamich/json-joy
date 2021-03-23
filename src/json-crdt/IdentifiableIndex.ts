@@ -7,7 +7,7 @@ export class IdentifiableIndex<T extends Identifiable> {
    * 
    *     (sessionId, time) -> operation
    */
-   public operations: Map<number, Map<number, T>> = new Map();
+   public entries: Map<number, Map<number, T>> = new Map();
 
   /**
    * Retrieve any known operation in this document by its ID. Or, if operation,
@@ -16,7 +16,7 @@ export class IdentifiableIndex<T extends Identifiable> {
    */
   public get(id: LogicalTimestamp): undefined | T {
     const {sessionId, time} = id;
-    const map1 = this.operations;
+    const map1 = this.entries;
     const map2 = map1.get(sessionId);
     if (!map2) return undefined;
     const operation = map2.get(time);
@@ -35,10 +35,10 @@ export class IdentifiableIndex<T extends Identifiable> {
    */
   public index(operation: T) {
     const {sessionId, time} = operation.id;
-    let map = this.operations.get(operation.id.sessionId);
+    let map = this.entries.get(operation.id.sessionId);
     if (!map) {
       map = new Map<number, T>();
-      this.operations.set(sessionId, map);
+      this.entries.set(sessionId, map);
     }
     map.set(time, operation);
   }

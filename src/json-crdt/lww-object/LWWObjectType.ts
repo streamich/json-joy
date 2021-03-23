@@ -4,6 +4,8 @@ import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {Document} from '../document';
 import {JsonNode} from '../types';
 import {LWWObjectEntry} from './LWWObjectEntry';
+import {asString} from 'json-schema-serializer';
+import {json_string} from 'ts-brand-json';
 
 export class LWWObjectType implements JsonNode {
   private readonly latest: Map<string, LWWObjectEntry> = new Map();
@@ -21,7 +23,7 @@ export class LWWObjectType implements JsonNode {
     }
   }
 
-  private put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
+  public put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
     const entry = new LWWObjectEntry(id, value);
     this.latest.set(key, entry);
   }
@@ -40,5 +42,27 @@ export class LWWObjectType implements JsonNode {
 
   public toString(tab: string = ''): string {
     return `${tab}obj(${this.id.toString()})`;
+  }
+
+  public serialize(): json_string<Array<number | string>> {
+    const {id} = this;
+    let str: string = '[0,' + id.sessionId + ',' + id.time + ',' + this.latest.size;
+    for (const [key, value] of this.latest.entries()) {
+      str += ',' + asString(key) + ',' + value.id.sessionId + ',' + value.id.time + ',' + value.value.sessionId + ',' + value.value.time;
+    }
+    return str + ']' as json_string<Array<number | string>>;
+  }
+
+  public static deserialize(doc: Document, data: Array<number | string>): LWWObjectType {
+    const [, sessionId, time, length] = data;
+    const obj = new LWWObjectType(doc, new LogicalTimestamp(sessionId as number, time as number));
+    let i = 4;
+    for (let j = 0; j < length; j++) {
+      const key = data[i++] as string;
+      const id = new LogicalTimestamp(data[i++] as number, data[i++] as number);
+      const value = new LogicalTimestamp(data[i++] as number, data[i++] as number);
+      obj.put(key, id, value);
+    }
+    return obj;
   }
 }
