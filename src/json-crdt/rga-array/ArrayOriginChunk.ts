@@ -8,7 +8,7 @@ import {ArrayChunk} from './ArrayChunk';
  */
 export class ArrayOriginChunk extends ArrayChunk {
   constructor(public readonly id: LogicalTimestamp) {
-    super(id, []);
+    super(id);
   }
 
   public span(): number {

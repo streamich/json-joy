@@ -129,7 +129,7 @@ describe('Document', () => {
   });
 
   describe('number', () => {
-    test('can crate a number', () => {
+    test('can create a number', () => {
       const doc = new Document();
       const builder = new PatchBuilder(doc.clock);
       const numId = builder.num();
@@ -183,7 +183,7 @@ describe('Document', () => {
   });
 
   describe('array', () => {
-    test('can crate an array', () => {
+    test('can create an array', () => {
       const doc = new Document();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();

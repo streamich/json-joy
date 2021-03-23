@@ -86,7 +86,7 @@ export class ArrayType implements JsonNode {
     const nodes = this.doc.nodes;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
-      if (!curr.deleted)
+      if (curr.values)
         arr.push(...curr.values!.map(value => nodes.get(value)?.toJson()));
       curr = curr.right;
     }

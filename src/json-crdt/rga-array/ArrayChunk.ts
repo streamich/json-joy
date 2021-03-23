@@ -16,7 +16,7 @@ export class ArrayChunk implements JsonChunk {
    * @param values Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: LogicalTimestamp, public values: undefined | LogicalTimestamp[]) {}
+  constructor(public readonly id: LogicalTimestamp, public values?: LogicalTimestamp[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of
@@ -30,7 +30,7 @@ export class ArrayChunk implements JsonChunk {
   }
 
   /**
-   * Splits this chunk into two, such that elements up to and including `splitId`
+   * Splits this chunk into two, such that elements up to and including `time`
    * remain in this chunk and a new chunk is returns with all the remaining elements.
    * 
    * @param time Last element ID which to keep in this chunk.
