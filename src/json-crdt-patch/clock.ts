@@ -149,6 +149,13 @@ export class VectorClock extends LogicalClock {
     else if (ts.time > clock.time) clock.time = ts.time;
   }
 
+  /**
+   * Serializes the vector clock into a JSON string.
+   * 
+   * - Output is a plain array with just number entries.
+   * - Each two subsequent numbers represent a (session ID, time) tuple.
+   * - The first tuple is the local clock.
+   */
   public serialize(): json_string<number[]> {
     let str: string = '[' + this.sessionId + ',' + this.time;
     for (const clock of this.clocks.values())
