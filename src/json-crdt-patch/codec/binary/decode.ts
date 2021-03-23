@@ -41,6 +41,12 @@ export const decode = (buf: Uint8Array): Patch => {
   const builder = new PatchBuilder(clock);
   const length = buf.byteLength;
 
+  const ts = () => {
+    const value = decodeTimestamp(buf, offset);
+    offset += 8;
+    return value;
+  };
+
   while (offset < length) {
     const opcode = buf[offset];
     offset++;
@@ -62,14 +68,11 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 4: {
-        const value = decodeTimestamp(buf, offset);
-        offset += 8;
-        builder.root(value);
+        builder.root(ts());
         continue;
       }
       case 5: {
-        const object = decodeTimestamp(buf, offset);
-        offset += 8;
+        const object = ts();
         const fields = decodeVarUint(buf, offset);
         offset += fields <= 0b01111111
           ? 1
@@ -78,8 +81,7 @@ export const decode = (buf: Uint8Array): Patch => {
             : fields <= 0b01111111_11111111_11111111 ? 3 : 4;
         const tuples: [key: string, value: LogicalTimestamp][] = [];
         for (let i = 0; i < fields; i++) {
-          const value = decodeTimestamp(buf, offset);
-          offset += 8;
+          const value = ts();
           const strLength = decodeVarUint(buf, offset);
           offset += strLength <= 0b01111111
             ? 1
@@ -94,18 +96,15 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 6: {
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
+        const after = ts();
         const value = new Float64Array(buf.slice(offset, offset + 8).buffer)[0];
         offset += 8;
         builder.setNum(after, value);
         continue;
       }
       case 7: {
-        const obj = decodeTimestamp(buf, offset);
-        offset += 8;
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
+        const obj = ts();
+        const after = ts();
         const length = decodeVarUint(buf, offset);
         offset += length <= 0b01111111
           ? 1
@@ -118,10 +117,8 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 8: {
-        const arr = decodeTimestamp(buf, offset);
-        offset += 8;
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
+        const arr = ts();
+        const after = ts();
         const length = decodeVarUint(buf, offset);
         offset += length <= 0b01111111
           ? 1
@@ -130,18 +127,15 @@ export const decode = (buf: Uint8Array): Patch => {
             : length <= 0b01111111_11111111_11111111 ? 3 : 4;
         const elements: LogicalTimestamp[] = [];
         for (let i = 0; i < length; i++) {
-          const value = decodeTimestamp(buf, offset);
-          offset += 8;
+          const value = ts();
           elements.push(value);
         }
         builder.insArr(arr, after, elements);
         continue;
       }
       case 9: {
-        const obj = decodeTimestamp(buf, offset);
-        offset += 8;
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
+        const obj = ts();
+        const after = ts();
         const length = decodeVarUint(buf, offset);
         offset += length <= 0b01111111
           ? 1
@@ -152,10 +146,8 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 10: {
-        const obj = decodeTimestamp(buf, offset);
-        offset += 8;
-        const after = decodeTimestamp(buf, offset);
-        offset += 8;
+        const obj = ts();
+        const after = ts();
         builder.del(obj, after, 1);
         continue;
       }
