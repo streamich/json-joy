@@ -58,8 +58,13 @@ export interface JsonCodecSetNumberOperation {
 }
 
 export interface JsonCodecInsertStringSubstringOperation {
+  /** Mnemonic. */
   op: 'str_ins';
-  after: JsonCodecTimestamp;
+  /** String into which to insert the substring. */
+  obj: JsonCodecTimestamp;
+  /** If `after` is omitted, it means the insertion is at the start of the string. */
+  after?: JsonCodecTimestamp;
+  /** The substring to insert in the string. */
   value: string;
 }
 

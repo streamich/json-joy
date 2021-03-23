@@ -20,7 +20,7 @@ test('create {foo: "bar"} object', () => {
   const builder = new PatchBuilder(clock);
   
   const strId = builder.str();
-  builder.insStr(strId, 'bar');
+  builder.insStr(strId, strId, 'bar');
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId]]);
   builder.root(objId);
@@ -30,7 +30,7 @@ test('create {foo: "bar"} object', () => {
     id: [ 5, 25 ],
     ops: [
       { op: 'str' }, // 25
-      { op: 'str_ins', after: [5, 25], value: 'bar' }, // 26-28
+      { op: 'str_ins', obj: [5, 25], after: [5, 25], value: 'bar' }, // 26-28
       { op: 'obj' }, // 29
       { op: 'obj_set', obj: [5, 29], tuples: [['foo', [5, 25]]] }, // 30
       { op: 'root', value: [5, 29] } // 31
@@ -43,7 +43,7 @@ test('test all operations', () => {
   const builder = new PatchBuilder(clock);
 
   const strId = builder.str();
-  const strInsertId = builder.insStr(strId, 'qq');
+  const strInsertId = builder.insStr(strId, strId, 'qq');
   const arrId = builder.arr();
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
@@ -59,7 +59,7 @@ test('test all operations', () => {
     id: [ 3, 100 ],
     ops: [
       { op: 'str' }, // 100
-      { op: 'str_ins', after: [3, 100], value: 'qq' }, // 101, 102
+      { op: 'str_ins', obj: [3, 100], after: [3, 100], value: 'qq' }, // 101, 102
       { op: 'arr' }, // 103
       { op: 'obj' }, // 104
       { op: 'obj_set', obj: [3, 104], tuples: [

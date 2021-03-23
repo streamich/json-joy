@@ -41,7 +41,7 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'str_ins': {
-        builder.insStr(ts(op.after), op.value);
+        builder.insStr(ts(op.obj), ts(op.after || op.obj), op.value);
         break;
       }
       case 'arr_ins': {

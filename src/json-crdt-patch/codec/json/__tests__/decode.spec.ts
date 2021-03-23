@@ -24,7 +24,7 @@ test('decodes {foo: "bar"} object', () => {
     id: [ 5, 25 ],
     ops: [
       { op: 'str' }, // 25
-      { op: 'str_ins', after: [5, 25], value: 'bar' }, // 26-28
+      { op: 'str_ins', obj: [5, 123], after: [5, 25], value: 'bar' }, // 26-28
       { op: 'obj' }, // 29
       { op: 'obj_set', obj: [5, 29], tuples: [['foo', [5, 25]]] }, // 30
       { op: 'root', value: [5, 29] } // 31
@@ -38,6 +38,7 @@ test('decodes {foo: "bar"} object', () => {
   expect(patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
   expect(patch.ops[3]).toBeInstanceOf(SetObjectKeysOperation);
   expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
+  expect((patch.ops[1] as InsertStringSubstringOperation).obj.toString()).toBe('5!123');
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
   expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
@@ -51,7 +52,7 @@ test('test all operations', () => {
     id: [ 3, 100 ],
     ops: [
       { op: 'str' }, // 100
-      { op: 'str_ins', after: [3, 100], value: 'qq' }, // 101, 102
+      { op: 'str_ins', obj: [3, 100], after: [3, 100], value: 'qq' }, // 101, 102
       { op: 'arr' }, // 103
       { op: 'obj' }, // 104
       { op: 'obj_set', obj: [3, 104], tuples: [

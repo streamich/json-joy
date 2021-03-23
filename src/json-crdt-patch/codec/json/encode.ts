@@ -67,6 +67,7 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     if (op instanceof InsertStringSubstringOperation) {
       ops.push({
         op: 'str_ins',
+        obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.after),
         value: op.substring,
       });
