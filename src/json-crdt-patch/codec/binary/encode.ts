@@ -89,11 +89,12 @@ export const encode = (patch: Patch): Uint8Array => {
       const stringLengthBuffer = new Uint8Array(encodeVarUInt(stringBuffer.byteLength));
       buffers.push(
         new Uint8Array([7]),
+        new Uint32Array(encodeTimestamp(op.obj)).buffer,
         new Uint32Array(encodeTimestamp(op.after)).buffer,
         stringLengthBuffer.buffer,
         stringBuffer,
       );
-      size += 1 + 8 + stringLengthBuffer.byteLength + stringBuffer.byteLength;
+      size += 1 + 8 + 8 + stringLengthBuffer.byteLength + stringBuffer.byteLength;
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {

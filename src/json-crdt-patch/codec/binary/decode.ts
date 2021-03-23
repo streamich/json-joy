@@ -102,6 +102,8 @@ export const decode = (buf: Uint8Array): Patch => {
         continue;
       }
       case 7: {
+        const obj = decodeTimestamp(buf, offset);
+        offset += 8;
         const after = decodeTimestamp(buf, offset);
         offset += 8;
         const length = decodeVarUint(buf, offset);
@@ -112,7 +114,7 @@ export const decode = (buf: Uint8Array): Patch => {
             : length <= 0b01111111_11111111_11111111 ? 3 : 4;
         const str = decodeString(buf, offset, length);
         offset += length;
-        builder.insStr(after, str);
+        builder.insStr(obj, after, str);
         continue;
       }
       case 8: {

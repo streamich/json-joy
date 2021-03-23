@@ -114,11 +114,12 @@ test('encodes a .setNum() operation', () => {
 test('encodes a .insStr() operation', () => {
   const clock = new LogicalClock(1, 1);
   const builder = new PatchBuilder(clock);
-  builder.insStr(new LogicalTimestamp(3, 3), 'haha');
+  builder.insStr(new LogicalTimestamp(2, 2), new LogicalTimestamp(3, 3), 'haha');
   const encoded = encode(builder.patch);
   expect([...encoded]).toEqual([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
     7, // str_ins
+    2, 0, 0, 0, 2, 0, 0, 0, // After = 2!2
     3, 0, 0, 0, 3, 0, 0, 0, // After = 3!3
     4, // String length
     104, 97, 104, 97, // "haha"
@@ -204,7 +205,7 @@ test('create {foo: "bar"} object', () => {
   const builder = new PatchBuilder(clock);
   
   const strId = builder.str();
-  builder.insStr(strId, 'bar');
+  builder.insStr(strId, strId, 'bar');
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId]]);
   builder.root(objId);
@@ -214,7 +215,8 @@ test('create {foo: "bar"} object', () => {
     5, 0, 0, 0, 25, 0, 0, 0, // Patch ID = 5!25
     2, // str
     7, // str_ins
-    5, 0, 0, 0, 25, 0, 0, 0, // Sting ID = 5!25
+    5, 0, 0, 0, 25, 0, 0, 0, // Obj = 5!25
+    5, 0, 0, 0, 25, 0, 0, 0, // After = 5!25
     3, // String length
     98, 97, 114, // "bar"
     0, // obj
@@ -234,7 +236,7 @@ test('test all operations', () => {
   const builder = new PatchBuilder(clock);
 
   const strId = builder.str();
-  const strInsertId = builder.insStr(strId, 'qq');
+  const strInsertId = builder.insStr(strId, strId, 'qq');
   const arrId = builder.arr();
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
@@ -250,6 +252,7 @@ test('test all operations', () => {
     3,0,0,0,100,0,0,0, // Patch ID = 3!100
     2, // str
     7, // str_ins
+    3,0,0,0,100,0,0,0, // Obj = 3!100
     3,0,0,0,100,0,0,0, // After = 3!100
     2, // String length
     113,113, // "qq"

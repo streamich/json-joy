@@ -140,6 +140,7 @@ test('decodes a .insStr() operation', () => {
   const buf = new Uint8Array([
     1, 0, 0, 0, 1, 0, 0, 0, // Patch ID = 1!1
     7, // str_ins
+    2, 0, 0, 0, 2, 0, 0, 0, // After = 2!2
     3, 0, 0, 0, 3, 0, 0, 0, // After = 3!3
     4, // String length
     104, 97, 104, 97, // "haha"
@@ -149,6 +150,7 @@ test('decodes a .insStr() operation', () => {
   expect(patch.ops.length).toBe(1); 
   expect(patch.ops[0]).toBeInstanceOf(InsertStringSubstringOperation);
   expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as InsertStringSubstringOperation).obj.toString()).toBe('2!2');
   expect((patch.ops[0] as InsertStringSubstringOperation).after.toString()).toBe('3!3');
   expect((patch.ops[0] as InsertStringSubstringOperation).substring.toString()).toBe('haha');
 });
@@ -249,7 +251,8 @@ test('create {foo: "bar"} object', () => {
     5, 0, 0, 0, 25, 0, 0, 0, // Patch ID = 5!25
     2, // str
     7, // str_ins
-    5, 0, 0, 0, 25, 0, 0, 0, // Sting ID = 5!25
+    5, 0, 0, 0, 25, 0, 0, 0, // Obj = 5!25
+    5, 0, 0, 0, 25, 0, 0, 0, // After = 5!25
     3, // String length
     98, 97, 114, // "bar"
     0, // obj
@@ -271,6 +274,7 @@ test('create {foo: "bar"} object', () => {
   expect(patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
   expect(patch.ops[3]).toBeInstanceOf(SetObjectKeysOperation);
   expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
+  expect((patch.ops[1] as InsertStringSubstringOperation).obj.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
   expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
@@ -284,6 +288,7 @@ test('test all operations', () => {
     3,0,0,0,100,0,0,0, // Patch ID = 3!100
     2, // str
     7, // str_ins
+    3,0,0,0,100,0,0,0, // Obj = 3!100
     3,0,0,0,100,0,0,0, // After = 3!100
     2, // String length
     113,113, // "qq"
