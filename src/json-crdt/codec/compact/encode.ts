@@ -19,8 +19,7 @@ export const encode = (doc: Document): json_string<Array<number | string>> => {
   const root = doc.root.last;
 
   return '[' +
-    clock.sessionId + ',' +
-    clock.time + ',' +
+    clock.serialize() + ',' +
     (root
       ? root.id.sessionId + ',' + root.id.time + ',' + root.value.sessionId + ',' + root.value.time
       : '0') +

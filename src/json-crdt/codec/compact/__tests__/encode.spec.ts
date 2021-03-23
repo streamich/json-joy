@@ -12,8 +12,10 @@ test('encodes a simple document', () => {
   doc.applyPatch(builder.patch);
   const encoded = encode(doc);
   expect(JSON.parse(encoded)).toEqual([
-    doc.clock.sessionId,
-    doc.clock.time,
+    [
+      doc.clock.sessionId,
+      doc.clock.time,
+    ],
     root.sessionId,
     root.time,
     obj.sessionId,

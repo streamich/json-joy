@@ -1,5 +1,5 @@
 import {json_string, JSON} from "ts-brand-json";
-import {LogicalTimestamp} from "../../../json-crdt-patch/clock";
+import {LogicalTimestamp, VectorClock} from "../../../json-crdt-patch/clock";
 import {ORIGIN} from "../../../json-crdt-patch/constants";
 import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOperation";
 import {Document} from "../../document";
@@ -9,11 +9,10 @@ export const decode = (packed: json_string<Array<unknown>>): Document => {
   const data = JSON.parse(packed);
   const length = data.length;
 
-  const doc = new Document();
-  doc.clock.sessionId = data[0] as number;
-  doc.clock.time = data[1] as number;
+  const clock = VectorClock.deserialize(data[0] as number[]);
+  const doc = new Document(clock);
 
-  let i: number = 2;
+  let i: number = 1;
 
   const decodeTimestamp = (): LogicalTimestamp => new LogicalTimestamp(data[i++] as number, data[i++] as number);
 

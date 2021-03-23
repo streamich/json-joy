@@ -4,7 +4,7 @@ import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
-import {LogicalClock} from '../json-crdt-patch/clock';
+import {VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './lww-register-doc-root/DocRootType';
 import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
 import {LWWObjectType} from './lww-object/LWWObjectType';
@@ -29,15 +29,15 @@ export class Document {
   /**
    * Clock that keeps track of logical timestamps of the current editing session.
    */
-  public clock: LogicalClock;
+  public clock: VectorClock;
 
   /**
    * Index of all known JSON nodes (objects, array, strings, numbers) in this document.
    */
   public nodes = new IdentifiableIndex<JsonNode>();
 
-  constructor(sessionId: number = random40BitInt()) {
-    this.clock = new LogicalClock(sessionId, 0);
+  constructor(clock: VectorClock = new VectorClock(random40BitInt(), 0)) {
+    this.clock = clock;
     this.nodes.index(NULL);
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);

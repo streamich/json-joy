@@ -1,3 +1,5 @@
+import {json_string} from "ts-brand-json";
+
 /**
  * Immutable timestamp, represents a single point int time of a LogicalClock.
  * Logical timestamps are used to identify every CRDT operation.
@@ -145,5 +147,25 @@ export class VectorClock extends LogicalClock {
     const clock = this.clocks.get(ts.sessionId);
     if (!clock) this.clocks.set(ts.sessionId, ts.tick(0));
     else if (ts.time > clock.time) clock.time = ts.time;
+  }
+
+  public serialize(): json_string<number[]> {
+    let str: string = '[' + this.sessionId + ',' + this.time;
+    for (const clock of this.clocks.values())
+      if (clock.sessionId !== this.sessionId) str += ',' + clock.sessionId + ',' + clock.time;
+    return str + ']' as json_string<number[]>;
+  }
+
+  public static deserialize(data: number[]): VectorClock {
+    const [sessionId, time] = data;
+    const clock = new VectorClock(sessionId, time);
+    const length = data.length;
+    let i = 2;
+    while (i < length) {
+      const sessionId = data[i++];
+      const time = data[i++];
+      clock.observe(new LogicalTimestamp(sessionId, time));
+    }
+    return clock;
   }
 }
