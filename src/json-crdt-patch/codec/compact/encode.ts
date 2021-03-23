@@ -63,8 +63,9 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
-      const {after, substring} = op;
+      const {obj, after, substring} = op;
       res.push(7, substring);
+      pushTimestamp(obj);
       pushTimestamp(after);
       continue;
     }

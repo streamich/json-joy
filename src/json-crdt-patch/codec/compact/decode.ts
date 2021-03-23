@@ -56,7 +56,7 @@ export const decode = (data: unknown[]): Patch => {
       }
       case 7: {
         const value = data[i++] as string;
-        builder.insStr(decodeTimestamp(), value);
+        builder.insStr(decodeTimestamp(), decodeTimestamp(), value);
         break;
       }
       case 8: {

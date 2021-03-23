@@ -19,7 +19,7 @@ test('create {foo: "bar"} object', () => {
   const builder = new PatchBuilder(clock);
   
   const strId = builder.str();
-  builder.insStr(strId, 'bar');
+  builder.insStr(strId, strId, 'bar');
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId]]);
   builder.root(objId);
@@ -28,7 +28,7 @@ test('create {foo: "bar"} object', () => {
   expect(encoded).toEqual([
     5, 25, // Patch ID
     2, // str
-    7, "bar", -1, // str_ins
+    7, "bar", -1, -1, // str_ins
     0, // obj
     5, 1, -5, "foo", -1, // obj_set
     4, -5 // root
@@ -40,7 +40,7 @@ test('test all operations', () => {
   const builder = new PatchBuilder(clock);
 
   const strId = builder.str();
-  const strInsertId = builder.insStr(strId, 'qq');
+  const strInsertId = builder.insStr(strId, strId, 'qq');
   const arrId = builder.arr();
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId], ['hmm', arrId]]);
@@ -55,7 +55,7 @@ test('test all operations', () => {
   expect(encoded).toEqual([
     3, 100, // Patch ID
     2, // str 3!100
-    7, "qq", -1, // str_ins 3!101,3!102
+    7, "qq", -1, -1, // str_ins 3!101,3!102
     1, // arr 3!103
     0, // obj 3!104
     5, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106

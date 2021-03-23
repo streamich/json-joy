@@ -21,7 +21,7 @@ test('decodes {foo: "bar"} object', () => {
   const patch = decode([
     5, 25, // Patch ID
     2, // str
-    7, "bar", -1, // str_ins
+    7, "bar", -1, -1, // str_ins
     0, // obj
     5, 1, -5, "foo", -1, // obj_set
     4, -5 // root
@@ -34,6 +34,7 @@ test('decodes {foo: "bar"} object', () => {
   expect(patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
   expect(patch.ops[3]).toBeInstanceOf(SetObjectKeysOperation);
   expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
+  expect((patch.ops[1] as InsertStringSubstringOperation).obj.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
   expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
@@ -46,7 +47,7 @@ test('test all operations', () => {
   const json: unknown[] = [
     3, 100, // Patch ID
     2, // str 3!100
-    7, "qq", -1, // str_ins 3!101,3!102
+    7, "qq", -1, -1, // str_ins 3!101,3!102
     1, // arr 3!103
     0, // obj 3!104
     5, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
