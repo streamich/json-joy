@@ -17,6 +17,9 @@ import {ArrayType} from './rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ORIGIN} from '../json-crdt-patch/constants';
 import {DeleteOperation} from '../json-crdt-patch/operations/DeleteOperation';
+import {MakeStringOperation} from '../json-crdt-patch/operations/MakeStringOperation';
+import {StringType} from './rga-string/StringType';
+import {InsertStringSubstringOperation} from '../json-crdt-patch/operations/InsertStringSubstringOperation';
 
 export class Document {
   /**
@@ -59,11 +62,18 @@ export class Document {
         this.nodes.index(obj);
         continue;
       }
+      if (op instanceof MakeStringOperation) {
+        const exists = !!this.nodes.get(op.id);
+        if (exists) return;
+        const obj = new StringType(this, op.id);
+        this.nodes.index(obj);
+        continue;
+      }
       if (op instanceof MakeNumberOperation) {
         const exists = !!this.nodes.get(op.id);
         if (exists) return;
-        const num = new LWWNumberType(op.id, 0);
-        this.nodes.index(num);
+        const obj = new LWWNumberType(op.id, 0);
+        this.nodes.index(obj);
         continue;
       }
       if (op instanceof SetRootOperation) {
@@ -88,11 +98,16 @@ export class Document {
         arr.insert(op);
         continue;
       }
+      if (op instanceof InsertStringSubstringOperation) {
+        const arr = this.nodes.get(op.obj);
+        if (!(arr instanceof StringType)) continue;
+        arr.insert(op);
+        continue;
+      }
       if (op instanceof DeleteOperation) {
         const node = this.nodes.get(op.obj);
-        if (node instanceof ArrayType) {
-          node.delete(op);
-        }
+        if (node instanceof ArrayType) node.delete(op);
+        else if (node instanceof StringType) node.delete(op);
         continue;
       }
     }

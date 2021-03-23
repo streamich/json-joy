@@ -4,6 +4,7 @@ import {Document} from '../document';
 import {LWWNumberType} from '../lww-number/LWWNumberType';
 import {LWWObjectType} from '../lww-object/LWWObjectType';
 import {ArrayType} from '../rga-array/ArrayType';
+import {StringType} from '../rga-string/StringType';
 
 describe('Document', () => {
   describe('root', () => {
@@ -504,6 +505,257 @@ describe('Document', () => {
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       expect(doc.toJson()).toEqual([false, false]);
+    });
+  });
+
+  describe('string', () => {
+    test('can create an string', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      doc.applyPatch(builder.patch);
+      const obj = doc.nodes.get(str);
+      expect(obj).toBeInstanceOf(StringType);
+    });
+
+    test('can set string as document root', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('');
+    });
+
+    test('can add one char to a string', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      builder.insStr(str, str, 'a');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('a');
+    });
+
+    test('can add long string in one operation', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      builder.insStr(str, str, 'asdf');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('asdf');
+    });
+
+    test('can insert three characters sequentially using three operations', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '1');
+      const ins2 = builder.insStr(str, ins1, '2');
+      const ins3 = builder.insStr(str, ins2, '3');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('123');
+    });
+
+    test('can insert three characters with two operations', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '1');
+      const ins2 = builder.insStr(str, ins1, '23');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('123');
+    });
+
+    test('can insert at the end of two-char string', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '12');
+      const ins2 = builder.insStr(str, ins1.tick(1), '34');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('1234');
+    });
+
+    test('can insert at the end of two-char string twice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '12');
+      const ins2 = builder.insStr(str, ins1.tick(1), '34');
+      const ins3 = builder.insStr(str, ins2.tick(1), '5');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('12345');
+    });
+
+    test('can insert at the end of the same two-char string twice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '12');
+      const ins2 = builder.insStr(str, ins1.tick(1), '34');
+      const ins3 = builder.insStr(str, ins1.tick(1), '5');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('12534');
+    });
+
+    test('can apply the same patch trice', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '12');
+      const ins2 = builder.insStr(str, ins1.tick(1), '34');
+      const ins3 = builder.insStr(str, ins1.tick(1), '5');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      expect(doc.toJson()).toEqual('12534');
+    });
+
+    test('can insert at the beginning of two-char string', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, '12');
+      const ins2 = builder.insStr(str, ins1, '34');
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('1342');
+    });
+
+    test('can delete a single char from one-char chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'x');
+      const ins2 = builder.insStr(str, ins1, 'y');
+      builder.del(str, ins1, 1);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('y');
+    });
+
+    test('can delete a single char from one-char chunk in the middle of string', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'x');
+      const ins2 = builder.insStr(str, ins1, 'y');
+      const ins3 = builder.insStr(str, ins2, 'z');
+      builder.del(str, ins2, 1);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('xz');
+    });
+
+    test('can delete last char in two-char chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'xy');
+      builder.del(str, ins1.tick(1), 1);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('x');
+    });
+
+    test('can delete first two chars in three-char chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'abc');
+      builder.del(str, ins1, 2);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('c');
+    });
+
+    test('can delete a substring in the middle of a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'abcdefg');
+      builder.del(str, ins1.tick(2), 2);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('abefg');
+    });
+
+    test('can delete two chunks using one delete operation', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'm');
+      const ins2 = builder.insStr(str, ins1, 'n');
+      const ins3 = builder.insStr(str, ins2, 'o');
+      const ins4 = builder.insStr(str, ins3, 'p');
+      builder.del(str, ins2, 2);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      expect(doc.toJson()).toEqual('mp');
+    });
+
+    test('can delete across chunks', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'Hello');
+      const ins2 = builder.insStr(str, ins1.tick(4), ' ');
+      const ins3 = builder.insStr(str, ins2, 'world!');
+      const ins4 = builder.insStr(str, ins3.tick(5), ' How are you?');
+      builder.del(str, ins1.tick(3), 11);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.nodes.get(str)!.toJson());
+      expect(doc.toJson()).toEqual('Helow are you?');
+    });
+
+    test('can delete across chunk when chunk were split due to insertion', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const str = builder.str();
+      const ins1 = builder.insStr(str, str, 'Hello');
+      const ins2 = builder.insStr(str, ins1, 'a');
+      const ins3 = builder.insStr(str, ins1.tick(4), '!');
+      builder.del(str, ins1, 3);
+      builder.root(str);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      doc.applyPatch(builder.patch);
+      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.nodes.get(str)!.toJson());
+      expect(doc.toJson()).toEqual('alo!');
     });
   });
 });
