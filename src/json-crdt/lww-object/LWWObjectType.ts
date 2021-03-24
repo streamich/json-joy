@@ -12,6 +12,11 @@ export class LWWObjectType implements JsonNode {
 
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
 
+  public get(key: string): undefined | LogicalTimestamp {
+    const entry = this.latest.get(key);
+    return entry ? entry.value : undefined;
+  }
+
   public insert(op: SetObjectKeysOperation) {
     const {latest: last} = this;
     const clock = op.id.clock();

@@ -1,5 +1,5 @@
 import type {JsonNode} from './types';
-import {FALSE, NULL, TRUE} from './constants';
+import {FALSE, NULL, TRUE, UNDEFINED} from './constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {Patch} from '../json-crdt-patch/Patch';
@@ -44,6 +44,7 @@ export class Document {
     this.nodes.index(NULL);
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);
+    this.nodes.index(UNDEFINED);
   }
 
   public applyPatch(patch: Patch) {
@@ -118,5 +119,32 @@ export class Document {
     const op = this.nodes.get(value);
     if (!op) return undefined;
     return op.toJson();
+  }
+
+  public find(steps: (string | number)[]): JsonNode {
+    const id = this.root.toValue();
+    let node: JsonNode = this.nodes.get(id) || NULL;
+    const length = steps.length;
+    if (!length) return node;
+    let i = 0;
+    while (i < length) {
+      const step = steps[i++];
+      if (node instanceof LWWObjectType) {
+        const id = node.get(String(step));
+        if (!id) return UNDEFINED;
+        const nextNode = this.nodes.get(id);
+        if (!nextNode) return UNDEFINED;
+        node = nextNode;
+        continue;
+      }
+      if (node instanceof ArrayType) {
+        const id = node.findValue(Number(step));
+        const nextNode = this.nodes.get(id);
+        if (!nextNode) return UNDEFINED;
+        node = nextNode;
+        continue;
+      }
+    }
+    return node;
   }
 }
