@@ -21,6 +21,7 @@ import {MakeStringOperation} from '../json-crdt-patch/operations/MakeStringOpera
 import {StringType} from './rga-string/StringType';
 import {InsertStringSubstringOperation} from '../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {JsonPatch} from './JsonPatch';
+import {Operation, operationToOp} from '../json-patch';
 
 export class Document {
   /**
@@ -156,7 +157,12 @@ export class Document {
     return node;
   }
 
-  public jsonPatch(): JsonPatch {
-    return new JsonPatch(this);
+  public applyJsonPatch(operations: Operation[]) {
+    const ops = operations.map(operationToOp);
+    const jsonPatch = new JsonPatch(this);
+    const draft = jsonPatch.fromOps(ops);
+    const patch = draft.patch(this.clock);
+    this.clock.tick(patch.span());
+    this.applyPatch(patch);
   }
 }

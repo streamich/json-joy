@@ -1,8 +1,7 @@
 import type {Document} from "./document";
 import {Draft} from "../json-crdt-patch/Draft";
-import {Patch} from "../json-crdt-patch/Patch";
-import {PatchBuilder} from "../json-crdt-patch/PatchBuilder";
 import {Op, OpAdd} from "../json-patch/op";
+import {LWWObjectType} from "./lww-object/LWWObjectType";
 
 export class JsonPatch {
   public readonly draft = new Draft();
@@ -15,8 +14,18 @@ export class JsonPatch {
     for (const op of ops) {
       if (op instanceof OpAdd) {
         const steps = op.path;
-        if (!steps.length) builder.root(builder.json(op.value));
-        // const id = this.doc.find(op)
+        if (!steps.length) {
+          builder.root(builder.json(op.value));
+          continue;
+        }
+        const objSteps = steps.slice(0, steps.length - 1);
+        const node = this.doc.find(objSteps);
+        if (node instanceof LWWObjectType) {
+          const key = String(steps[steps.length - 1]);
+          const value = builder.json(op.value);
+          builder.setKeys(node.id, [[key, value]]);
+          continue;
+        }
       }
     }
     return draft;
