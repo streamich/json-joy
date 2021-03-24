@@ -9,14 +9,14 @@ export class ConstantType implements JsonNode {
     return this.value;
   }
 
-  public toString(): string {
+  public toString(tab: string = ''): string {
     switch (this.value) {
-      case null: return 'NULL';
-      case true: return 'TRUE';
-      case false: return 'FALSE';
-      case undefined: return 'UNDEFINED';
+      case null: return tab + 'NULL';
+      case true: return tab + 'TRUE';
+      case false: return tab + 'FALSE';
+      case undefined: return tab + 'UNDEFINED';
     }
-    return 'UNKNOWN';
+    return tab + 'UNKNOWN';
   }
 }
 

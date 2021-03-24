@@ -6,6 +6,7 @@ import {JsonNode} from '../types';
 import {LWWObjectEntry} from './LWWObjectEntry';
 import {asString} from 'json-schema-serializer';
 import {json_string} from 'ts-brand-json';
+import {UNDEFINED} from '../constants';
 
 export class LWWObjectType implements JsonNode {
   private readonly latest: Map<string, LWWObjectEntry> = new Map();
@@ -46,7 +47,12 @@ export class LWWObjectType implements JsonNode {
   }
 
   public toString(tab: string = ''): string {
-    return `${tab}obj(${this.id.toString()})`;
+    let str = `${tab}ObjectType(${this.id.toDisplayString()})`;
+    for (const [key, value] of this.latest.entries()) {
+      const node = this.doc.nodes.get(value.value) || UNDEFINED;
+      str += `\n${tab}  "${key}" :\n${node.toString(tab + '    ')}`
+    }
+    return str;
   }
 
   public serialize(): json_string<Array<number | string>> {

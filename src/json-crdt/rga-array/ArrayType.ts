@@ -22,9 +22,7 @@ export class ArrayType implements JsonNode {
       after = after.left;
     }
     if (!after) return; // Should never happen.
-
     const chunk = new ArrayChunk(op.id, op.elements);
-
     const targetsLastElementInChunk = op.after.time === (after.id.time + after.span() - 1);
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
@@ -32,7 +30,6 @@ export class ArrayType implements JsonNode {
       this.insertChunk(chunk, after);
       return;
     }
-
     this.splitChunk(after, op.after.time);
     this.insertChunk(chunk, after);
   }

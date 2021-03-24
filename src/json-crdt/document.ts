@@ -121,6 +121,13 @@ export class Document {
     return op.toJson();
   }
 
+  public toString(): string {
+    const value = this.root.toValue();
+    const op = this.nodes.get(value);
+    if (!op) return 'undefined';
+    return op.toString('');
+  }
+
   public find(steps: (string | number)[]): JsonNode {
     const id = this.root.toValue();
     let node: JsonNode = this.nodes.get(id) || NULL;
