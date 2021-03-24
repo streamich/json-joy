@@ -374,5 +374,27 @@ describe('Document', () => {
       expect(node.findId(8).toString()).toBe(ins3.tick(2).toString());
       expect(() => node.findId(9)).toThrowError(new Error('OUT_OF_BOUNDS'));
     });
+
+    test('can find value in multi-chunk array', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID]);
+      const ins2 = builder.insArr(arr, ins1.tick(2), [FALSE_ID, TRUE_ID, TRUE_ID]);
+      const ins3 = builder.insArr(arr, ins2.tick(2), [FALSE_ID, TRUE_ID, TRUE_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      expect(node.findValue(0).toString()).toBe(FALSE_ID.toString());
+      expect(node.findValue(1).toString()).toBe(TRUE_ID.toString());
+      expect(node.findValue(2).toString()).toBe(TRUE_ID.toString());
+      expect(node.findValue(3).toString()).toBe(FALSE_ID.toString());
+      expect(node.findValue(4).toString()).toBe(TRUE_ID.toString());
+      expect(node.findValue(5).toString()).toBe(TRUE_ID.toString());
+      expect(node.findValue(6).toString()).toBe(FALSE_ID.toString());
+      expect(node.findValue(7).toString()).toBe(TRUE_ID.toString());
+      expect(node.findValue(8).toString()).toBe(TRUE_ID.toString());
+      expect(() => node.findId(9)).toThrowError(new Error('OUT_OF_BOUNDS'));
+    });
   });
 });
