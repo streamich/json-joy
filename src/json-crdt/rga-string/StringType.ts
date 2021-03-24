@@ -87,9 +87,8 @@ export class StringType implements JsonNode {
     while (chunk) {
       if (chunk.str) {
         cnt += chunk.str.length;
-        if (cnt >= next) {
+        if (cnt >= next)
           return chunk.id.tick(chunk.str.length - (cnt - index));
-        }
       }
       chunk = chunk.right;
     }
