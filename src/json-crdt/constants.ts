@@ -23,4 +23,4 @@ export class ConstantType implements JsonNode {
 export const NULL = new ConstantType(NULL_ID, null);
 export const TRUE = new ConstantType(TRUE_ID, true);
 export const FALSE = new ConstantType(FALSE_ID, false);
-export const UNDEFINED = new ConstantType(UNDEFINED_ID, false);
+export const UNDEFINED = new ConstantType(UNDEFINED_ID, undefined);
