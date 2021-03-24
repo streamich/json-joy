@@ -175,4 +175,10 @@ export class VectorClock extends LogicalClock {
     }
     return clock;
   }
+
+  public fork(sessionId: number): VectorClock {
+    const clock = new VectorClock(sessionId, this.time);
+    for (const ts of this.clocks.values()) clock.observe(ts.tick(0));
+    return clock;
+  }
 }
