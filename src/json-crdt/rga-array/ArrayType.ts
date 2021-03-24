@@ -80,6 +80,21 @@ export class ArrayType implements JsonNode {
     }
   }
 
+  public findId(index: number): LogicalTimestamp {
+    let chunk: null | ArrayChunk = this.start;
+    let cnt: number = 0;
+    const next = index + 1;
+    while (chunk) {
+      if (chunk.values) {
+        cnt += chunk.values.length;
+        if (cnt >= next)
+          return chunk.id.tick(chunk.values.length - (cnt - index));
+      }
+      chunk = chunk.right;
+    }
+    throw new Error('OUT_OF_BOUNDS');
+  }
+
   public toJson(): unknown[] {
     const arr: unknown[] = [];
     const nodes = this.doc.nodes;
