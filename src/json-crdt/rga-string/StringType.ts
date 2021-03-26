@@ -23,7 +23,7 @@ export class StringType implements JsonNode {
     }
     if (!after) return; // Should never happen.
     const isOriginChunk = after instanceof StringOriginChunk;
-    if (!isOriginChunk) {
+    if (!after.deleted && !isOriginChunk) {
       const isSameSession = after.id.sessionId === op.id.sessionId;
       const isIdIncreasingWithoutAGap = after.id.time + after.span() === op.id.time;
       if (isSameSession && isIdIncreasingWithoutAGap) {
