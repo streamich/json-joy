@@ -45,23 +45,24 @@ export class LogicalTimestamp {
   }
 
   /**
-   * Check if two time intervals have any part overlapping.
+   * Check if two time intervals have any part overlapping. Returns the length
+   * of the overlapping span.
    * 
    * @param span Span of the current timestamp.
    * @param ts The other timestamp.
    * @param tsSpan Span of the other timestamp.
-   * @returns True if there is any overlapping part.
+   * @returns Size of the overlapping time span.
    */
-  public overlap(span: number, ts: LogicalTimestamp, tsSpan: number): boolean {
-    if (this.sessionId !== ts.sessionId) return false;
+  public overlap(span: number, ts: LogicalTimestamp, tsSpan: number): number {
+    if (this.sessionId !== ts.sessionId) return 0;
     const x1 = this.time;
-    const x2 = x1 + span - 1;
+    const x2 = x1 + span;
     const y1 = ts.time;
-    const y2 = y1 + tsSpan - 1;
-    if (x1 === y1) return true;
-    if (x2 >= y1 && x1 <= y2) return true;
-    if (y2 >= x1 && y1 <= x2) return true;
-    return false;
+    const y2 = y1 + tsSpan;
+    const min = Math.max(x1, y1);
+    const max = Math.min(x2, y2);
+    const diff = max - min;
+    return diff <= 0 ? 0 : diff;
   }
 
   /**
