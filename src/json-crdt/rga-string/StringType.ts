@@ -14,7 +14,7 @@ export class StringType implements JsonNode {
     this.start = this.end = new StringOriginChunk(id);
   }
 
-  public insert(op: InsertStringSubstringOperation) {
+  public onInsert(op: InsertStringSubstringOperation) {
     let after: StringChunk | null = this.end;
     while (after) {
       if (after.id.isEqual(op.id)) return;
@@ -37,6 +37,18 @@ export class StringType implements JsonNode {
     this.insertChunk(chunk, after);
   }
 
+  public onDelete(op: DeleteOperation) {
+    const {after, length} = op;
+    let chunk: StringChunk | null = this.end;
+    const chunks: StringChunk[] = [];
+    while (chunk) {
+      if (chunk.id.overlap(chunk.span(), after, length)) chunks.push(chunk);
+      if (chunk.id.inSpan(chunk.span(), after, 1)) break;
+      chunk = chunk.left;
+    };
+    for (const c of chunks) this.deleteInChunk(c, after.time, after.time + length - 1);
+  }
+
   private insertChunk(chunk: StringChunk, after: StringChunk) {
     chunk.left = after;
     chunk.right = after.right;
@@ -48,18 +60,6 @@ export class StringType implements JsonNode {
     const newChunk = chunk.split(time);
     this.insertChunk(newChunk, chunk);
     return newChunk;
-  }
-
-  public delete(op: DeleteOperation) {
-    const {after, length} = op;
-    let chunk: StringChunk | null = this.end;
-    const chunks: StringChunk[] = [];
-    while (chunk) {
-      if (chunk.id.overlap(chunk.span(), after, length)) chunks.push(chunk);
-      if (chunk.id.inSpan(chunk.span(), after, 1)) break;
-      chunk = chunk.left;
-    };
-    for (const c of chunks) this.deleteInChunk(c, after.time, after.time + length - 1);
   }
 
   private deleteInChunk(chunk: StringChunk, t1: number, t2: number) {

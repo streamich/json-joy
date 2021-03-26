@@ -104,13 +104,13 @@ export class Document {
       if (op instanceof InsertStringSubstringOperation) {
         const arr = this.nodes.get(op.obj);
         if (!(arr instanceof StringType)) continue;
-        arr.insert(op);
+        arr.onInsert(op);
         continue;
       }
       if (op instanceof DeleteOperation) {
         const node = this.nodes.get(op.obj);
         if (node instanceof ArrayType) node.delete(op);
-        else if (node instanceof StringType) node.delete(op);
+        else if (node instanceof StringType) node.onDelete(op);
         continue;
       }
     }
