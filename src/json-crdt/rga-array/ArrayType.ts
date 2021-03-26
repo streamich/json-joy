@@ -22,6 +22,15 @@ export class ArrayType implements JsonNode {
       after = after.left;
     }
     if (!after) return; // Should never happen.
+    const isOriginChunk = after instanceof ArrayOriginChunk;
+    if (!after.deleted && !isOriginChunk) {
+      const isSameSession = after.id.sessionId === op.id.sessionId;
+      const isIdIncreasingWithoutAGap = after.id.time + after.span() === op.id.time;
+      if (isSameSession && isIdIncreasingWithoutAGap) {
+        after.merge(op.elements);
+        return;
+      }
+    }
     const chunk = new ArrayChunk(op.id, op.elements);
     const targetsLastElementInChunk = op.after.time === (after.id.time + after.span() - 1);
     if (targetsLastElementInChunk) {

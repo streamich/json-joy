@@ -56,6 +56,13 @@ export class ArrayChunk implements JsonChunk {
   }
 
   /**
+   * Merge into this chunk a subsequent chunk, which has IDs increasing without gaps.
+   */
+  public merge(values: LogicalTimestamp[]) {
+    this.values!.push(...values);
+  }
+
+  /**
    * @param tab Whitespace to print before any other output.
    * @returns Human readable representation of the array chunk.
    */
