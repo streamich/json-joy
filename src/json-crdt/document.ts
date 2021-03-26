@@ -2,7 +2,7 @@ import type {JsonNode} from './types';
 import {FALSE, NULL, TRUE, UNDEFINED} from './constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
-import {Patch} from '../json-crdt-patch/Patch';
+import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './lww-register-doc-root/DocRootType';
@@ -50,69 +50,54 @@ export class Document {
   }
 
   public applyPatch(patch: Patch) {
-    for (const op of patch.ops) {
-      if (op instanceof MakeObjectOperation) {
-        const exists = !!this.nodes.get(op.id);
-        if (exists) return; // We can return, because all remaining ops in the patch will already exist, too.
-        const obj = new LWWObjectType(this, op.id);
-        this.nodes.index(obj);
-        continue;
-      }
-      if (op instanceof MakeArrayOperation) {
-        const exists = !!this.nodes.get(op.id);
-        if (exists) return;
-        const obj = new ArrayType(this, op.id);
-        this.nodes.index(obj);
-        continue;
-      }
-      if (op instanceof MakeStringOperation) {
-        const exists = !!this.nodes.get(op.id);
-        if (exists) return;
-        const obj = new StringType(this, op.id);
-        this.nodes.index(obj);
-        continue;
-      }
-      if (op instanceof MakeNumberOperation) {
-        const exists = !!this.nodes.get(op.id);
-        if (exists) return;
-        const obj = new LWWNumberType(op.id, 0);
-        this.nodes.index(obj);
-        continue;
-      }
-      if (op instanceof SetRootOperation) {
-        this.root.insert(op);
-        continue;
-      }
-      if (op instanceof SetObjectKeysOperation) {
-        const obj = this.nodes.get(op.object);
-        if (!(obj instanceof LWWObjectType)) continue;
-        obj.insert(op);
-        continue;
-      }
-      if (op instanceof SetNumberOperation) {
-        const num = this.nodes.get(op.num);
-        if (!(num instanceof LWWNumberType)) continue;
-        num.insert(op);
-        continue;
-      }
-      if (op instanceof InsertArrayElementsOperation) {
-        const arr = this.nodes.get(op.arr);
-        if (!(arr instanceof ArrayType)) continue;
-        arr.insert(op);
-        continue;
-      }
-      if (op instanceof InsertStringSubstringOperation) {
-        const arr = this.nodes.get(op.obj);
-        if (!(arr instanceof StringType)) continue;
-        arr.onInsert(op);
-        continue;
-      }
-      if (op instanceof DeleteOperation) {
-        const node = this.nodes.get(op.obj);
-        if (node instanceof ArrayType) node.delete(op);
-        else if (node instanceof StringType) node.onDelete(op);
-        continue;
-      }
+    const ops = patch.ops;
+    const {length} = ops;
+    for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
+  }
+
+  public applyOperation(op: JsonCrdtPatchOperation) {
+    if (op instanceof MakeObjectOperation) {
+      const exists = !!this.nodes.get(op.id);
+      if (exists) return; // We can return, because all remaining ops in the patch will already exist, too.
+      const obj = new LWWObjectType(this, op.id);
+      this.nodes.index(obj);
+    } else if (op instanceof MakeArrayOperation) {
+      const exists = !!this.nodes.get(op.id);
+      if (exists) return;
+      const obj = new ArrayType(this, op.id);
+      this.nodes.index(obj);
+    } else if (op instanceof MakeStringOperation) {
+      const exists = !!this.nodes.get(op.id);
+      if (exists) return;
+      const obj = new StringType(this, op.id);
+      this.nodes.index(obj);
+    } else if (op instanceof MakeNumberOperation) {
+      const exists = !!this.nodes.get(op.id);
+      if (exists) return;
+      const obj = new LWWNumberType(op.id, 0);
+      this.nodes.index(obj);
+    } else if (op instanceof SetRootOperation) {
+      this.root.insert(op);
+    } else if (op instanceof SetObjectKeysOperation) {
+      const obj = this.nodes.get(op.object);
+      if (!(obj instanceof LWWObjectType)) return;
+      obj.insert(op);
+    } else if (op instanceof SetNumberOperation) {
+      const num = this.nodes.get(op.num);
+      if (!(num instanceof LWWNumberType)) return;
+      num.insert(op);
+    } else if (op instanceof InsertArrayElementsOperation) {
+      const arr = this.nodes.get(op.arr);
+      if (!(arr instanceof ArrayType)) return;
+      arr.insert(op);
+    } else if (op instanceof InsertStringSubstringOperation) {
+      const arr = this.nodes.get(op.obj);
+      if (!(arr instanceof StringType)) return;
+      arr.onInsert(op);
+    } else if (op instanceof DeleteOperation) {
+      const node = this.nodes.get(op.obj);
+      if (node instanceof ArrayType) node.delete(op);
+      else if (node instanceof StringType) node.onDelete(op);
     }
   }
 
