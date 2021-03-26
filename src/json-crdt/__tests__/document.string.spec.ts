@@ -231,8 +231,6 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
-      // console.log(doc.nodes.get(str)!.toJson());
       expect(doc.toJson()).toEqual('Helow are you?');
     });
 

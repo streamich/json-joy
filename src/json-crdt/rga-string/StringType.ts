@@ -15,32 +15,33 @@ export class StringType implements JsonNode {
   }
 
   public onInsert(op: InsertStringSubstringOperation) {
-    let after: StringChunk | null = this.end;
-    while (after) {
-      if (after.id.isEqual(op.id)) return;
-      if (after.id.inSpan(after.span(), op.after, 1)) break;
-      after = after.left;
+    let curr: StringChunk | null = this.end;
+    while (curr) {
+      if (curr.id.overlap(curr.span(), op.id, op.span())) return;
+      if (curr.id.inSpan(curr.span(), op.after, 1)) break;
+      curr = curr.left;
     }
-    if (!after) return; // Should never happen.
-    const isOriginChunk = after instanceof StringOriginChunk;
-    if (!after.deleted && !isOriginChunk) {
-      const isSameSession = after.id.sessionId === op.id.sessionId;
-      const isIdIncreasingWithoutAGap = after.id.time + after.span() === op.id.time;
-      if (isSameSession && isIdIncreasingWithoutAGap) {
-        after.merge(op.substring);
+    if (!curr) return; // Should never happen.
+    const isOriginChunk = curr instanceof StringOriginChunk;
+    if (!curr.deleted && !isOriginChunk) {
+      const doesAfterMatch = (curr.id.sessionId === op.after.sessionId) && (curr.id.time + curr.span() - 1 === op.after.time);
+      const isIdSameSession = curr.id.sessionId === op.id.sessionId;
+      const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
+      if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
+        curr.merge(op.substring);
         return;
       }
     }
     const chunk = new StringChunk(op.id, op.substring);
-    const targetsLastElementInChunk = op.after.time === (after.id.time + after.span() - 1);
+    const targetsLastElementInChunk = op.after.time === (curr.id.time + curr.span() - 1);
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
-      while (after.right && (after.right.id.compare(op.id)) > 0) after = after!.right!;
-      this.insertChunk(chunk, after);
+      while (curr.right && (curr.right.id.compare(op.id)) > 0) curr = curr!.right!;
+      this.insertChunk(chunk, curr);
       return;
     }
-    this.splitChunk(after, op.after.time);
-    this.insertChunk(chunk, after);
+    this.splitChunk(curr, op.after.time);
+    this.insertChunk(chunk, curr);
   }
 
   public onDelete(op: DeleteOperation) {
