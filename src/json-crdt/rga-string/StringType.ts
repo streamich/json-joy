@@ -22,9 +22,16 @@ export class StringType implements JsonNode {
       after = after.left;
     }
     if (!after) return; // Should never happen.
-
+    const isOriginChunk = after instanceof StringOriginChunk;
+    if (!isOriginChunk) {
+      const isSameSession = after.id.sessionId === op.id.sessionId;
+      const isIdIncreasingWithoutAGap = after.id.time + after.span() === op.id.time;
+      if (isSameSession && isIdIncreasingWithoutAGap) {
+        after.merge(op.substring);
+        return;
+      }
+    }
     const chunk = new StringChunk(op.id, op.substring);
-
     const targetsLastElementInChunk = op.after.time === (after.id.time + after.span() - 1);
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
@@ -32,7 +39,6 @@ export class StringType implements JsonNode {
       this.insertChunk(chunk, after);
       return;
     }
-
     this.splitChunk(after, op.after.time);
     this.insertChunk(chunk, after);
   }

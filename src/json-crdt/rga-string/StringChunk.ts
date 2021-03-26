@@ -60,6 +60,14 @@ export class StringChunk implements JsonChunk {
   }
 
   /**
+   * Merge into this chunk a subsequent chunk, which has IDs increasing without gaps.
+   */
+  public merge(substring: string) {
+    if (this.deleted) this.deleted += substring.length;
+    else this.str += substring;
+  }
+
+  /**
    * @param tab Whitespace to print before any other output.
    * @returns Human readable representation of the array chunk.
    */

@@ -107,11 +107,11 @@ export class PatchBuilder {
    * Insert substring into a string.
    * @returns ID of the new operation.
    */
-  public insStr(obj: LogicalTimestamp, after: LogicalTimestamp, substringToInsert: string): LogicalTimestamp {
-    if (!substringToInsert.length) 
+  public insStr(obj: LogicalTimestamp, after: LogicalTimestamp, substring: string): LogicalTimestamp {
+    if (!substring.length) 
       throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
-    const op = new InsertStringSubstringOperation(id, obj, after, substringToInsert);
+    const op = new InsertStringSubstringOperation(id, obj, after, substring);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
