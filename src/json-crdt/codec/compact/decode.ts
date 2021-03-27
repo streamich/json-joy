@@ -1,9 +1,8 @@
 import {json_string, JSON} from "ts-brand-json";
 import {LogicalTimestamp, VectorClock} from "../../../json-crdt-patch/clock";
-import {ORIGIN} from "../../../json-crdt-patch/constants";
 import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOperation";
 import {Document} from "../../document";
-import {LWWObjectType} from "../../lww-object/LWWObjectType";
+import {LWWObjectType} from "../../types/lww-object/LWWObjectType";
 
 export const decode = (packed: json_string<Array<unknown>>): Document => {
   const data = JSON.parse(packed);

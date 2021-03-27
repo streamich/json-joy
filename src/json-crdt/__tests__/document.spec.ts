@@ -1,10 +1,10 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {Document} from '../document';
-import {LWWNumberType} from '../lww-number/LWWNumberType';
-import {LWWObjectType} from '../lww-object/LWWObjectType';
-import {ArrayType} from '../rga-array/ArrayType';
-import {StringType} from '../rga-string/StringType';
+import {LWWNumberType} from '../types/lww-number/LWWNumberType';
+import {LWWObjectType} from '../types/lww-object/LWWObjectType';
+import {ArrayType} from '../types/rga-array/ArrayType';
+import {StringType} from '../types/rga-string/StringType';
 
 describe('Document', () => {
   describe('root', () => {

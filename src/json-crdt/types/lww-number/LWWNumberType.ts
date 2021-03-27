@@ -1,7 +1,7 @@
-import type {JsonNode} from '../types';
-import type {Document} from '../document';
-import {LogicalTimestamp} from '../../json-crdt-patch/clock';
-import {SetNumberOperation} from '../../json-crdt-patch/operations/SetNumberOperation';
+import type {JsonNode} from '../../types';
+import type {Document} from '../../document';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {SetNumberOperation} from '../../../json-crdt-patch/operations/SetNumberOperation';
 
 export class LWWNumberType implements JsonNode {
   private latestWriteId: LogicalTimestamp;

@@ -1,7 +1,7 @@
 import type {Document} from "./document";
 import {Draft} from "../json-crdt-patch/Draft";
 import {Op, OpAdd} from "../json-patch/op";
-import {LWWObjectType} from "./lww-object/LWWObjectType";
+import {LWWObjectType} from "./types/lww-object/LWWObjectType";
 
 export class JsonPatch {
   public readonly draft = new Draft();

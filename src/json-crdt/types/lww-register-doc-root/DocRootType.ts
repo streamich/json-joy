@@ -1,6 +1,6 @@
-import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
-import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
-import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
+import type {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {SetRootOperation} from '../../../json-crdt-patch/operations/SetRootOperation';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 
 export class DocRootType {
   public last: SetRootOperation | null = null;

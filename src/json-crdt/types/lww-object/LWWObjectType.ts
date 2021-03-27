@@ -1,12 +1,12 @@
-import {LogicalTimestamp} from '../../json-crdt-patch/clock';
-import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
-import {Document} from '../document';
-import {JsonNode} from '../types';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {Document} from '../../document';
+import {JsonNode} from '../../types';
 import {LWWObjectEntry} from './LWWObjectEntry';
 import {asString} from 'json-schema-serializer';
 import {json_string} from 'ts-brand-json';
-import {UNDEFINED} from '../constants';
+import {UNDEFINED} from '../../constants';
 
 export class LWWObjectType implements JsonNode {
   private readonly latest: Map<string, LWWObjectEntry> = new Map();

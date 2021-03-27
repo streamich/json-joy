@@ -1,8 +1,5 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {Document} from '../document';
-import {encode} from '../../json-crdt-patch/codec/json/encode';
-import {encode as encode2} from '../../json-crdt-patch/codec/compact/encode';
-import {encode as encode3} from '../../json-crdt-patch/codec/binary/encode';
 
 describe('Document', () => {
   describe('JSON builder', () => {

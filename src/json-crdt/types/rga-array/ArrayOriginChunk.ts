@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from '../../json-crdt-patch/clock';
+import type {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {ArrayChunk} from './ArrayChunk';
 
 /**

@@ -1,5 +1,5 @@
-import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {Document} from '../../document';
+import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
+import {Document} from '../../../document';
 import {StringType} from '../StringType';
 
 test('merges sequential chunks', () => {

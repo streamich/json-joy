@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from "../../json-crdt-patch/clock";
+import {LogicalTimestamp} from "../../../json-crdt-patch/clock";
 
 /**
  * Writes a value to LWW Register.

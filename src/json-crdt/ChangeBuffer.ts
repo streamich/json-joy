@@ -1,6 +1,6 @@
 import type {Document} from "./document";
 import type {Path} from "../json-pointer";
-import {StringType} from "./rga-string/StringType";
+import {StringType} from "./types/rga-string/StringType";
 import {PatchBuilder} from "../json-crdt-patch/PatchBuilder";
 
 export class ChangeBuffer {

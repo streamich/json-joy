@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {Document} from '../document';
-import {StringType} from '../rga-string/StringType';
+import {StringType} from '../types/rga-string/StringType';
 
 describe('Document', () => {
   describe('string', () => {

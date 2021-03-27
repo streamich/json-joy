@@ -1,8 +1,8 @@
-import type {JsonNode} from '../types';
-import type {Document} from '../document';
-import {LogicalTimestamp} from '../../json-crdt-patch/clock';
-import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
-import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
+import type {JsonNode} from '../../types';
+import type {Document} from '../../document';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
+import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
 import {StringOriginChunk} from './StringOriginChunk';
 

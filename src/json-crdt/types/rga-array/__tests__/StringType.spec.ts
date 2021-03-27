@@ -1,6 +1,6 @@
-import {FALSE_ID, TRUE_ID} from '../../../json-crdt-patch/constants';
-import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {Document} from '../../document';
+import {FALSE_ID, TRUE_ID} from '../../../../json-crdt-patch/constants';
+import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
+import {Document} from '../../../document';
 import {ArrayType} from '../ArrayType';
 
 test('merges sequential chunks', () => {

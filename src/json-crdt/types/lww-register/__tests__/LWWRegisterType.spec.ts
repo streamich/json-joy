@@ -1,5 +1,5 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {FALSE_ID, NULL_ID, ORIGIN, TRUE_ID, UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {LogicalTimestamp} from '../../../../json-crdt-patch/clock';
+import {FALSE_ID, NULL_ID, ORIGIN, TRUE_ID, UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {LWWRegisterType} from '../LWWRegisterType';
 import {LWWRegisterWriteOp} from '../LWWRegisterWriteOp';
 
