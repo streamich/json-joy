@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
@@ -96,6 +96,37 @@ export class StringType implements JsonNode {
         cnt += chunk.str.length;
         if (cnt >= next)
           return chunk.id.tick(chunk.str.length - (cnt - index));
+      }
+      chunk = chunk.right;
+    }
+    throw new Error('OUT_OF_BOUNDS');
+  }
+
+  public findIdSpan(index: number, length: number): LogicalTimespan[] {
+    let chunk: null | StringChunk = this.start;
+    let cnt: number = 0;
+    const next = index + 1;
+    while (chunk) {
+      if (chunk.str) {
+        cnt += chunk.str.length;
+        if (cnt >= next) {
+          const remaining = cnt - index;
+          if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
+          length -= remaining;
+          const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
+          while(chunk.right) {
+            chunk = chunk!.right;
+            if (chunk.deleted) continue;
+            const span = chunk.span();
+            if (span >= length) {
+              result.push(chunk.id.interval(0, length));
+              break;
+            }
+            result.push(chunk.id.interval(0, span));
+            length -= span;
+          }
+          return result
+        }
       }
       chunk = chunk.right;
     }

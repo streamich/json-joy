@@ -397,7 +397,7 @@ describe('Document', () => {
       expect(() => node.findId(9)).toThrowError(new Error('OUT_OF_BOUNDS'));
     });
 
-    test('can find span withing one chunk', () => {
+    test('can find span within one chunk', () => {
       const doc = new Document();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
