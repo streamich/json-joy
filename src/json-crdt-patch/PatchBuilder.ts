@@ -1,4 +1,4 @@
-import type {LogicalClock, LogicalTimestamp} from "./clock";
+import {LogicalClock, LogicalTimestamp} from "./clock";
 import {DeleteOperation} from "./operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "./operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "./operations/InsertStringSubstringOperation";
@@ -23,11 +23,14 @@ export class PatchBuilder {
     this.patch = new Patch();
   }
 
+  // Basic operations ----------------------------------------------------------
+
   /**
    * Create new object.
    * @returns ID of the new operation.
    */
   public obj(): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new MakeObjectOperation(id);
     this.patch.ops.push(op);
@@ -39,6 +42,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public arr(): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new MakeArrayOperation(id);
     this.patch.ops.push(op);
@@ -50,6 +54,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public str(): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new MakeStringOperation(id);
     this.patch.ops.push(op);
@@ -61,6 +66,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public num(): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new MakeNumberOperation(id);
     this.patch.ops.push(op);
@@ -72,6 +78,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public root(value: LogicalTimestamp): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new SetRootOperation(id, value);
     this.patch.ops.push(op);
@@ -83,6 +90,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public setKeys(obj: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
+    this.pad();
     if (!tuples.length) 
       throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
@@ -98,6 +106,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public setNum(obj: LogicalTimestamp, value: number): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new SetNumberOperation(id, obj, value);
     this.patch.ops.push(op);
@@ -109,6 +118,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insStr(obj: LogicalTimestamp, after: LogicalTimestamp, substring: string): LogicalTimestamp {
+    this.pad();
     if (!substring.length) 
       throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
@@ -124,6 +134,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public insArr(arr: LogicalTimestamp, after: LogicalTimestamp, elements: LogicalTimestamp[]): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(1);
     const op = new InsertArrayElementsOperation(id, arr, after, elements);
     const span = op.span();
@@ -139,6 +150,7 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public del(obj: LogicalTimestamp, start: LogicalTimestamp, span: number): LogicalTimestamp {
+    this.pad();
     const id = this.clock.tick(span);
     const op = new DeleteOperation(id, obj, start, span);
     this.patch.ops.push(op);
@@ -151,11 +163,14 @@ export class PatchBuilder {
    * @returns ID of the new operation.
    */
   public noop(span: number) {
+    this.pad();
     const id = this.clock.tick(span);
     const op = new NoopOperation(id, span);
     this.patch.ops.push(op);
     return id;
   }
+
+  // JSON value construction operations ----------------------------------------
 
   /**
    * Run the necessary builder commands to create an arbitrary JSON object.
@@ -216,5 +231,21 @@ export class PatchBuilder {
       case 'number': return this.jsonNum(json);
     }
     return UNDEFINED_ID;
+  }
+
+  // Private -------------------------------------------------------------------
+
+  /**
+   * Add padding "noop" operation if clock's time has jumped.
+   */
+  private pad() {
+    const nextTime = this.patch.nextTime();
+    if (!nextTime) return;
+    const drift = this.clock.time - nextTime;
+    if (drift > 0) {
+      const id = new LogicalTimestamp(this.clock.sessionId, nextTime);
+      const padding = new NoopOperation(id, drift);
+      this.patch.ops.push(padding);
+    }
   }
 }

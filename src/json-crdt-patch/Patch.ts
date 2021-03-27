@@ -41,8 +41,11 @@ export class Patch {
     return span;
   }
 
+  /**
+   * Returns the expected time of the next inserted operation.
+   */
   public nextTime(): number {
-    if (!this.ops.length) 0;
+    if (!this.ops.length) return 0;
     const lastOp = this.ops[this.ops.length - 1];
     return lastOp.id.time + lastOp.span();
   }
