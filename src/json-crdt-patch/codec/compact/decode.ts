@@ -81,6 +81,14 @@ export const decode = (data: unknown[]): Patch => {
         builder.del(obj, after, span);
         break;
       }
+      case 11: {
+        builder.noop(1);
+        break;
+      }
+      case 12: {
+        builder.noop(data[i++] as number);
+        break;
+      }
     }
   }
 

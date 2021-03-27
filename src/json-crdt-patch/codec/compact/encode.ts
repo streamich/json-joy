@@ -6,6 +6,7 @@ import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {NoopOperation} from "../../operations/NoopOperation";
 import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
@@ -88,6 +89,12 @@ export const encode = (patch: Patch): unknown[] => {
         pushTimestamp(obj);
         pushTimestamp(after);
       }
+      continue;
+    }
+    if (op instanceof NoopOperation) {
+      const {length} = op;
+      if (length === 1) res.push(11);
+      else res.push(12, length);
       continue;
     }
   }
