@@ -6,6 +6,7 @@ import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {NoopOperation} from "../../operations/NoopOperation";
 import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
@@ -131,6 +132,23 @@ export const encode = (patch: Patch): Uint8Array => {
         new Uint32Array(encodeTimestamp(after)).buffer,
       );
       size += 1 + 8 + 8;
+      continue;
+    }
+    if (op instanceof NoopOperation) {
+      const {length} = op;
+      if (length > 1) {
+        const spanBuffer = new Uint8Array(encodeVarUInt(length));
+        buffers.push(
+          new Uint8Array([12]),
+          spanBuffer.buffer,
+        );
+        size += 1 + spanBuffer.byteLength;
+        continue;
+      }
+      buffers.push(
+        new Uint8Array([11]),
+      );
+      size += 1;
       continue;
     }
   }

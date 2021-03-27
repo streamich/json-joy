@@ -188,6 +188,29 @@ test('encodes a .del() operation with span = 1', () => {
   ]);
 });
 
+test('encodes a .noop() operation with span = 1', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.noop(1);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    11, // noop
+  ]);
+});
+
+test('encodes a .noop() operation with span = 22', () => {
+  const clock = new LogicalClock(1, 1);
+  const builder = new PatchBuilder(clock);
+  builder.noop(22);
+  const encoded = encode(builder.patch);
+  expect([...encoded]).toEqual([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    12, // noop
+    22,
+  ]);
+});
+
 test('encodes a simple patch', () => {
   const clock = new LogicalClock(3, 5);
   const builder = new PatchBuilder(clock);
@@ -208,6 +231,8 @@ test('create {foo: "bar"} object', () => {
   builder.insStr(strId, strId, 'bar');
   const objId = builder.obj();
   builder.setKeys(objId, [['foo', strId]]);
+  builder.noop(3);
+  builder.noop(1);
   builder.root(objId);
 
   const encoded = encode(builder.patch);
@@ -226,6 +251,8 @@ test('create {foo: "bar"} object', () => {
     5, 0, 0, 0, 25, 0, 0, 0, // First field value = 5!25
     3, // Field key length
     102, 111, 111, // "foo"
+    12, 3, // noop (3)
+    11, // noop (1)
     4, // root
     5, 0, 0, 0, 29, 0, 0, 0, // Value = 5!29
   ]);
