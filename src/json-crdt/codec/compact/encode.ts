@@ -1,6 +1,6 @@
 import {json_string} from "ts-brand-json";
 import {Document} from "../../document";
-import {LWWObjectType} from "../../types/lww-object/LWWObjectType";
+import {ObjectType} from "../../types/lww-object/ObjectType";
 
 export const encode = (doc: Document): json_string<unknown[]> => {
   let nodes = '';
@@ -8,7 +8,7 @@ export const encode = (doc: Document): json_string<unknown[]> => {
   for (const m of doc.nodes.entries.values()) {
     for (const node of m.values()) {
       if (node.id.sessionId === 0) continue;
-      if (node instanceof LWWObjectType) {
+      if (node instanceof ObjectType) {
         nodes += ',' + node.serialize();
         continue;
       }

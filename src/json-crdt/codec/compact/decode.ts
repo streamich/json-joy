@@ -2,7 +2,7 @@ import {json_string, JSON} from "ts-brand-json";
 import {LogicalTimestamp, VectorClock} from "../../../json-crdt-patch/clock";
 import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOperation";
 import {Document} from "../../document";
-import {LWWObjectType} from "../../types/lww-object/LWWObjectType";
+import {ObjectType} from "../../types/lww-object/ObjectType";
 
 export const decode = (packed: json_string<Array<unknown>>): Document => {
   const data = JSON.parse(packed);
@@ -25,7 +25,7 @@ export const decode = (packed: json_string<Array<unknown>>): Document => {
     const packed = data[i++] as Array<number | string>;
     switch(packed[0]) {
       case 0: {
-        const node = LWWObjectType.deserialize(doc, packed);
+        const node = ObjectType.deserialize(doc, packed);
         doc.nodes.index(node);
         break;
       }

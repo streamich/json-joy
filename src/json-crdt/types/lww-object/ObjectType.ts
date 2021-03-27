@@ -3,13 +3,13 @@ import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObj
 import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
-import {LWWObjectEntry} from './LWWObjectEntry';
+import {ObjectEntry} from './ObjectEntry';
 import {asString} from 'json-schema-serializer';
 import {json_string} from 'ts-brand-json';
 import {UNDEFINED} from '../../constants';
 
-export class LWWObjectType implements JsonNode {
-  private readonly latest: Map<string, LWWObjectEntry> = new Map();
+export class ObjectType implements JsonNode {
+  private readonly latest: Map<string, ObjectEntry> = new Map();
 
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
 
@@ -30,7 +30,7 @@ export class LWWObjectType implements JsonNode {
   }
 
   public put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
-    const entry = new LWWObjectEntry(id, value);
+    const entry = new ObjectEntry(id, value);
     this.latest.set(key, entry);
   }
 
@@ -55,8 +55,8 @@ export class LWWObjectType implements JsonNode {
     return str;
   }
 
-  public clone(doc: Document): LWWObjectType {
-    const obj = new LWWObjectType(doc, this.id);
+  public clone(doc: Document): ObjectType {
+    const obj = new ObjectType(doc, this.id);
     for (const [key, {id, value}] of this.latest.entries()) obj.put(key, id, value);
     return obj;
   }
@@ -70,9 +70,9 @@ export class LWWObjectType implements JsonNode {
     return str + ']' as json_string<Array<number | string>>;
   }
 
-  public static deserialize(doc: Document, data: Array<number | string>): LWWObjectType {
+  public static deserialize(doc: Document, data: Array<number | string>): ObjectType {
     const [, sessionId, time, length] = data;
-    const obj = new LWWObjectType(doc, new LogicalTimestamp(sessionId as number, time as number));
+    const obj = new ObjectType(doc, new LogicalTimestamp(sessionId as number, time as number));
     let i = 4;
     for (let j = 0; j < length; j++) {
       const key = data[i++] as string;
