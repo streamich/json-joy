@@ -144,10 +144,12 @@ export class VectorClock extends LogicalClock {
    * 
    * @param ts Operation timestamp that was observed.
    */
-  public observe(ts: LogicalTimestamp) {
+  public observe(ts: LogicalTimestamp, span: number) {
+    const time = ts.time + span - 1;
     const clock = this.clocks.get(ts.sessionId);
-    if (!clock) this.clocks.set(ts.sessionId, ts.tick(0));
-    else if (ts.time > clock.time) clock.time = ts.time;
+    if (!clock) this.clocks.set(ts.sessionId, ts.tick(span - 1));
+    else if (time > clock.time) clock.time = ts.time;
+    if (time >= this.time) this.time = time + 1;
   }
 
   /**
@@ -172,14 +174,14 @@ export class VectorClock extends LogicalClock {
     while (i < length) {
       const sessionId = data[i++];
       const time = data[i++];
-      clock.observe(new LogicalTimestamp(sessionId, time));
+      clock.observe(new LogicalTimestamp(sessionId, time), 1);
     }
     return clock;
   }
   
   public fork(sessionId: number): VectorClock {
     const clock = new VectorClock(sessionId, this.time);
-    for (const ts of this.clocks.values()) clock.observe(ts.tick(0));
+    for (const ts of this.clocks.values()) clock.observe(ts.tick(0), 1);
     return clock;
   }
   

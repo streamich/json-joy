@@ -55,7 +55,14 @@ export class Document {
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
   }
 
-  public applyOperation(op: JsonCrdtPatchOperation) {
+  /**
+   * Applies a single operation to the document. All mutations to the document
+   * must go through this method.
+   * 
+   * @param op Any JSON CRDT Patch operation
+   */
+  public applyOperation(op: JsonCrdtPatchOperation): void {
+    this.clock.observe(op.id, op.span());
     if (op instanceof MakeObjectOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new LWWObjectType(this, op.id));
     } else if (op instanceof MakeArrayOperation) {
