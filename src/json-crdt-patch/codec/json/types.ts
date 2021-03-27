@@ -22,7 +22,8 @@ export type JsonCodecOperation =
   | JsonCodecSetNumberOperation
   | JsonCodecInsertStringSubstringOperation
   | JsonCodecInsertArrayElementsOperation
-  | JsonCodecDeleteOperation;
+  | JsonCodecDeleteOperation
+  | JsonCodecNoopOperation;
 
 export interface JsonCodecMakeObjectOperation {
   op: 'obj';
@@ -85,6 +86,12 @@ export interface JsonCodecDeleteOperation {
   obj: JsonCodecTimestamp;
   /** First operation to delete. */
   after: JsonCodecTimestamp;
-  /** Defaults to 1 if omitted. */
+  /** Defaults to 1, if omitted. */
+  len?: number;
+}
+
+export interface JsonCodecNoopOperation {
+  op: 'noop';
+  /** Defaults to 1, if omitted. */
   len?: number;
 }

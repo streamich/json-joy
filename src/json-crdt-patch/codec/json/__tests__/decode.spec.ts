@@ -6,6 +6,7 @@ import {MakeObjectOperation} from '../../../operations/MakeObjectOperation';
 import {SetObjectKeysOperation} from '../../../operations/SetObjectKeysOperation';
 import {JsonCodecPatch} from '../types';
 import {encode} from '../encode';
+import {NoopOperation} from '../../../operations/NoopOperation';
 
 test('decodes a simple patch', () => {
   const patch = decode({
@@ -25,26 +26,28 @@ test('decodes {foo: "bar"} object', () => {
     ops: [
       { op: 'str' }, // 25
       { op: 'str_ins', obj: [5, 123], after: [5, 25], value: 'bar' }, // 26-28
-      { op: 'obj' }, // 29
-      { op: 'obj_set', obj: [5, 29], tuples: [['foo', [5, 25]]] }, // 30
-      { op: 'root', value: [5, 29] } // 31
+      { op: 'noop', len: 2 },
+      { op: 'obj' }, // 31
+      { op: 'obj_set', obj: [5, 31], tuples: [['foo', [5, 25]]] }, // 32
+      { op: 'root', value: [5, 31] } // 33
     ]
   });
-  expect(patch.ops.length).toBe(5);
-  expect(patch.span()).toBe(7);
+  expect(patch.ops.length).toBe(6);
+  expect(patch.span()).toBe(9);
   expect(patch.getId()!.toString()).toBe('5!25');
   expect(patch.ops[0]).toBeInstanceOf(MakeStringOperation);
   expect(patch.ops[1]).toBeInstanceOf(InsertStringSubstringOperation);
-  expect(patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
-  expect(patch.ops[3]).toBeInstanceOf(SetObjectKeysOperation);
-  expect(patch.ops[4]).toBeInstanceOf(SetRootOperation);
+  expect(patch.ops[2]).toBeInstanceOf(NoopOperation);
+  expect(patch.ops[3]).toBeInstanceOf(MakeObjectOperation);
+  expect(patch.ops[4]).toBeInstanceOf(SetObjectKeysOperation);
+  expect(patch.ops[5]).toBeInstanceOf(SetRootOperation);
   expect((patch.ops[1] as InsertStringSubstringOperation).obj.toString()).toBe('5!123');
   expect((patch.ops[1] as InsertStringSubstringOperation).after.toString()).toBe('5!25');
   expect((patch.ops[1] as InsertStringSubstringOperation).substring).toBe('bar');
-  expect((patch.ops[3] as SetObjectKeysOperation).object.toString()).toBe('5!29');
-  expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
-  expect((patch.ops[3] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('5!25');
-  expect((patch.ops[4] as SetRootOperation).value.toString()).toBe('5!29');
+  expect((patch.ops[4] as SetObjectKeysOperation).object.toString()).toBe('5!31');
+  expect((patch.ops[4] as SetObjectKeysOperation).tuples[0][0]).toBe('foo');
+  expect((patch.ops[4] as SetObjectKeysOperation).tuples[0][1].toString()).toBe('5!25');
+  expect((patch.ops[5] as SetRootOperation).value.toString()).toBe('5!31');
 });
 
 test('test all operations', () => {
@@ -63,7 +66,9 @@ test('test all operations', () => {
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
       { op: 'arr_ins', obj: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', value: [3, 104]}, // 110
+      { op: 'noop' },
       { op: 'del', obj: [3, 107], after: [3, 109]}, // 111
+      { op: 'noop', len: 2 },
       { op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 112
     ]
   };

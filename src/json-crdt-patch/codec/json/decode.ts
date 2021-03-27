@@ -52,6 +52,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
         builder.del(ts(op.obj), ts(op.after), op.len || 1);
         break;
       }
+      case 'noop': {
+        builder.noop(op.len || 1);
+        break;
+      }
     }
   }
 

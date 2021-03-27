@@ -6,11 +6,12 @@ import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {NoopOperation} from "../../operations/NoopOperation";
 import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
-import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation} from "./types";
+import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation, JsonCodecNoopOperation} from "./types";
 
 const encodeTimestamp = (ts: LogicalTimestamp): JsonCodecTimestamp => [ts.sessionId, ts.time];
 
@@ -90,6 +91,15 @@ export const encode = (patch: Patch): JsonCodecPatch => {
       };
       const span = op.span();
       if (span > 1) encoded.len = span;
+      ops.push(encoded);
+      continue;
+    }
+    if (op instanceof NoopOperation) {
+      const encoded: JsonCodecNoopOperation = {
+        op: 'noop',
+      };
+      const length = op.length;
+      if (length > 1) encoded.len = length;
       ops.push(encoded);
       continue;
     }
