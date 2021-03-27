@@ -105,6 +105,12 @@ export class Document {
     return doc;
   }
 
+  public fork(): Document {
+    const doc = this.clone();
+    doc.clock.sessionId = random40BitInt();
+    return doc;
+  }
+
   public toString(): string {
     const value = this.root.toValue();
     const op = this.nodes.get(value);
