@@ -23,7 +23,7 @@ import {InsertStringSubstringOperation} from '../json-crdt-patch/operations/Inse
 import {JsonPatch} from './JsonPatch';
 import {Operation, operationToOp} from '../json-patch';
 import {Path} from '../json-pointer';
-import {ChangeBuffer} from './ChangeBuffer';
+import {DocumentApi} from './api/DocumentApi';
 
 export class Document {
   /**
@@ -46,7 +46,7 @@ export class Document {
   /**
    * API for applying changes to the current document.
    */
-  public changes: ChangeBuffer;
+  public api: DocumentApi;
 
   constructor(clock: VectorClock = new VectorClock(random40BitInt(), 0)) {
     this.clock = clock;
@@ -54,7 +54,7 @@ export class Document {
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);
     this.nodes.index(UNDEFINED);
-    this.changes = new ChangeBuffer(this)
+    this.api = new DocumentApi(this)
   }
 
   public applyPatch(patch: Patch) {
