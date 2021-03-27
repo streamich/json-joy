@@ -7,6 +7,7 @@ import {NoopOperation} from "../../json-crdt-patch/operations/NoopOperation";
 import {LogicalTimestamp} from "../../json-crdt-patch/clock";
 import {StringApi} from "./StringApi";
 import {NumberType} from "../types/lww-number/NumberType";
+import {ArrayType} from "../types/rga-array/ArrayType";
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -71,7 +72,7 @@ export class DocumentApi {
   private asString(path: Path): StringType {
     const obj = this.doc.find(path);
     if (obj instanceof StringType) return obj;
-    throw new Error('NOT_STRING');
+    throw new Error('NOT_STR');
   }
 
   public str(path: Path): StringApi {
@@ -79,29 +80,60 @@ export class DocumentApi {
     return new StringApi(this, obj);
   }
 
-  public strIns(path: Path, index: number, substr: string): this {
-    const obj = this.asString(path);
+  public strObjIns(obj: StringType, index: number, substr: string) {
     const after = !index ? obj.id : obj.findId(index - 1);
     this.builder.insStr(obj.id, after, substr);
+  }
+
+  public strIns(path: Path, index: number, substr: string): this {
+    const obj = this.asString(path);
+    this.strObjIns(obj, index, substr);
     return this;
+  }
+
+  public strObjDel(obj: StringType, index: number, length: number) {
+    const spans = obj.findIdSpan(index, length);
+    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
   }
 
   public strDel(path: Path, index: number, length: number): this {
     const obj = this.asString(path);
-    const after = obj.findId(index);
-    this.builder.del(obj.id, after, length);
+    this.strObjDel(obj, index, length);
     return this;
   }
 
   private asNumber(path: Path): NumberType {
     const obj = this.doc.find(path);
     if (obj instanceof NumberType) return obj;
-    throw new Error('NOT_NUMBER');
+    throw new Error('NOT_NUM');
   }
 
   public numSet(path: Path, value: number): this {
     const {id} = this.asNumber(path);
     this.builder.setNum(id, value);
+    return this;
+  }
+
+  private asArray(path: Path): ArrayType {
+    const obj = this.doc.find(path);
+    if (obj instanceof ArrayType) return obj;
+    throw new Error('NOT_ARR');
+  }
+
+  public arrIns(path: Path, index: number, values: unknown[]): this {
+    const {builder} = this;
+    const obj = this.asArray(path);
+    const after = !index ? obj.id : obj.findId(index - 1);
+    const valueIds: LogicalTimestamp[] = [];
+    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
+    builder.insArr(obj.id, after, valueIds);
+    return this;
+  }
+
+  public arrDel(path: Path, index: number, length: number): this {
+    const obj = this.asArray(path);
+    const spans = obj.findIdSpan(index, length);
+    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
     return this;
   }
 }

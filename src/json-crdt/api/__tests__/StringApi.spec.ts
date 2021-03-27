@@ -13,3 +13,15 @@ test('can edit a simple string', () => {
   expect(str.toString()).toEqual('0123-xxxxyyyyyyyy');
   expect(doc.toJson()).toEqual([ 0, '0123-xxxxyyyyyyyy', 2 ]);
 });
+
+test('can delete across two chunks', () => {
+  const doc = new Document();
+  const api = doc.api;
+  api.root('').commit();
+  const str = api.str([]);
+  str.ins(0, 'aaa');
+  str.ins(0, 'bbb');
+  str.ins(0, 'ccc');
+  str.del(1, 7);
+  expect(str.toJson()).toEqual('ca');
+});

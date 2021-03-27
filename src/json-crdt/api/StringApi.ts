@@ -5,19 +5,16 @@ export class StringApi {
   constructor(private readonly api: DocumentApi, private readonly obj: StringType) {}
 
   public ins(index: number, substr: string): void {
-    const {api, obj} = this;
-    const {id} = obj;
-    const after = !index ? id : obj.findId(index - 1);
+    const {api} = this;
     api.commit();
-    api.builder.insStr(id, after, substr);
+    api.strObjIns(this.obj, index, substr);
     api.commit();
   }
 
   public del(index: number, len: number): void {
-    const {api, obj} = this;
-    const after = obj.findId(index);
+    const {api} = this;
     api.commit();
-    api.builder.del(obj.id, after, len);
+    api.strObjDel(this.obj, index, len);
     api.commit();
   }
 
