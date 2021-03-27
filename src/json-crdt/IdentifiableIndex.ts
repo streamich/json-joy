@@ -42,4 +42,8 @@ export class IdentifiableIndex<T extends Identifiable> {
     }
     map.set(time, operation);
   }
+
+  public *iterate() {
+    for (const map of this.entries.values()) yield* map.values();
+  }
 }

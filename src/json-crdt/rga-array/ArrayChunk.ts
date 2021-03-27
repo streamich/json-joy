@@ -63,6 +63,18 @@ export class ArrayChunk implements JsonChunk {
   }
 
   /**
+   * Returns a deep independent copy of itself.
+   */
+  public clone(): ArrayChunk {
+    const chunk = new ArrayChunk(this.id, this.values);
+    if (this.deleted) {
+      chunk.deleted = this.deleted;
+      delete this.values;
+    }
+    return chunk;
+  }
+
+  /**
    * @param tab Whitespace to print before any other output.
    * @returns Human readable representation of the array chunk.
    */

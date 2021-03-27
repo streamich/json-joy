@@ -9,6 +9,10 @@ export class ConstantType implements JsonNode {
     return this.value;
   }
 
+  public clone(): ConstantType {
+    return this;
+  }
+
   public toString(tab: string = ''): string {
     switch (this.value) {
       case null: return tab + 'NULL';

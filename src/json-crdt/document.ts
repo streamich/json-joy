@@ -57,25 +57,13 @@ export class Document {
 
   public applyOperation(op: JsonCrdtPatchOperation) {
     if (op instanceof MakeObjectOperation) {
-      const exists = !!this.nodes.get(op.id);
-      if (exists) return; // We can return, because all remaining ops in the patch will already exist, too.
-      const obj = new LWWObjectType(this, op.id);
-      this.nodes.index(obj);
+      if (!this.nodes.get(op.id)) this.nodes.index(new LWWObjectType(this, op.id));
     } else if (op instanceof MakeArrayOperation) {
-      const exists = !!this.nodes.get(op.id);
-      if (exists) return;
-      const obj = new ArrayType(this, op.id);
-      this.nodes.index(obj);
+      if (!this.nodes.get(op.id)) this.nodes.index(new ArrayType(this, op.id));
     } else if (op instanceof MakeStringOperation) {
-      const exists = !!this.nodes.get(op.id);
-      if (exists) return;
-      const obj = new StringType(this, op.id);
-      this.nodes.index(obj);
+      if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
     } else if (op instanceof MakeNumberOperation) {
-      const exists = !!this.nodes.get(op.id);
-      if (exists) return;
-      const obj = new LWWNumberType(op.id, 0);
-      this.nodes.index(obj);
+      if (!this.nodes.get(op.id)) this.nodes.index(new LWWNumberType(op.id, 0));
     } else if (op instanceof SetRootOperation) {
       this.root.insert(op);
     } else if (op instanceof SetObjectKeysOperation) {
@@ -106,6 +94,15 @@ export class Document {
     const op = this.nodes.get(value);
     if (!op) return undefined;
     return op.toJson();
+  }
+
+  public clone(): Document {
+    const doc = new Document(this.clock.clone());
+    for (const node of this.nodes.iterate())
+      doc.nodes.index(node.clone(doc));
+    if (this.root.last)
+      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
+    return doc;
   }
 
   public toString(): string {

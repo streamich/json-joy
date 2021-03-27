@@ -55,6 +55,12 @@ export class LWWObjectType implements JsonNode {
     return str;
   }
 
+  public clone(doc: Document): LWWObjectType {
+    const obj = new LWWObjectType(doc, this.id);
+    for (const [key, {id, value}] of this.latest.entries()) obj.put(key, id, value);
+    return obj;
+  }
+
   public serialize(): json_string<Array<number | string>> {
     const {id} = this;
     let str: string = '[0,' + id.sessionId + ',' + id.time + ',' + this.latest.size;

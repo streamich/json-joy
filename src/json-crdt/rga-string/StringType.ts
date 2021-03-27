@@ -1,8 +1,8 @@
+import type {JsonNode} from '../types';
+import type {Document} from '../document';
 import {LogicalTimestamp} from '../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
-import {Document} from '../document';
-import {JsonNode} from '../types';
 import {StringChunk} from './StringChunk';
 import {StringOriginChunk} from './StringOriginChunk';
 
@@ -107,6 +107,21 @@ export class StringType implements JsonNode {
     let curr: StringChunk | null = this.start;
     while (curr = curr.right) if (curr.str) str += curr.str;
     return str;
+  }
+
+  public clone(doc: Document): StringType {
+    const copy = new StringType(this.doc, this.id);
+    let i: null | StringChunk = this.start;
+    let j: StringChunk = copy.start;
+    while (i.right) {
+      const cloned = i.right.clone();
+      j.right = cloned;
+      cloned.left = j;
+      j = cloned;
+      i = i.right;
+    }
+    copy.end = j;
+    return copy;
   }
 
   public toString(tab: string = ''): string {

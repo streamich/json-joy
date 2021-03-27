@@ -67,6 +67,18 @@ export class StringChunk implements JsonChunk {
   }
 
   /**
+   * Returns a deep independent copy of itself.
+   */
+  public clone(): StringChunk {
+    const chunk = new StringChunk(this.id, this.str);
+    if (this.deleted) {
+      chunk.deleted = this.deleted;
+      delete chunk.str;
+    }
+    return chunk;
+  }
+
+  /**
    * @param tab Whitespace to print before any other output.
    * @returns Human readable representation of the array chunk.
    */

@@ -1,4 +1,5 @@
-import {Identifiable} from "../json-crdt-patch/types";
+import type {Identifiable} from "../json-crdt-patch/types";
+import type {Document} from "./document";
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
@@ -14,6 +15,11 @@ export interface JsonNode extends Identifiable {
    * Returns plain JavaScript value which represents the value of this JSON node.
    */
   toJson(): unknown;
+
+  /**
+   * Returns a deep copy of itself.
+   */
+  clone(doc: Document): JsonNode;
 }
 
 /**

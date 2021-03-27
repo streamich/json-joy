@@ -1,8 +1,8 @@
+import type {JsonNode} from '../types';
+import type {Document} from '../document';
 import {LogicalTimestamp} from '../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
-import {Document} from '../document';
-import {JsonNode} from '../types';
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
 
@@ -127,6 +127,21 @@ export class ArrayType implements JsonNode {
       curr = curr.right;
     }
     return arr;
+  }
+
+  public clone(doc: Document): ArrayType {
+    const copy = new ArrayType(doc, this.id);
+    let i: null | ArrayChunk = this.start;
+    let j: ArrayChunk = copy.start;
+    while (i.right) {
+      const cloned = i.right.clone();
+      j.right = cloned;
+      cloned.left = j;
+      j = cloned;
+      i = i.right;
+    }
+    copy.end = j;
+    return copy;
   }
 
   public toString(tab: string = ''): string {
