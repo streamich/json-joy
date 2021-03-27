@@ -73,6 +73,10 @@ export class LogicalTimestamp {
     return new LogicalTimestamp(this.sessionId, this.time + cycles);
   }
 
+  public interval(cycles: number, span: number): LogicalTimespan {
+    return new LogicalTimespan(this.sessionId, this.time + cycles, span);
+  }
+
   public toString() {
     // "!" is used as separator as it has the lowest ASCII value.
     return this.sessionId + '!' + this.time;
@@ -92,6 +96,16 @@ export class LogicalTimestamp {
    */
   public clock(): LogicalClock {
     return new LogicalClock(this.sessionId, this.time);
+  }
+}
+
+/**
+ * Similar to LogicalTimestamp, but represents an interval, instead of just a
+ * single time point.
+ */
+export class LogicalTimespan extends LogicalTimestamp {
+  constructor (sessionId: number, time: number, public span: number) {
+    super(sessionId, time);
   }
 }
 
