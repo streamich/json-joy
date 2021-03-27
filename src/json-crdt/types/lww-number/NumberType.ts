@@ -3,7 +3,7 @@ import type {Document} from '../../document';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {SetNumberOperation} from '../../../json-crdt-patch/operations/SetNumberOperation';
 
-export class LWWNumberType implements JsonNode {
+export class NumberType implements JsonNode {
   private latestWriteId: LogicalTimestamp;
   private value: number;
 
@@ -26,8 +26,8 @@ export class LWWNumberType implements JsonNode {
     return `${tab}num(${this.id.toString()}) { ${this.toJson()} }`;
   }
 
-  public clone(doc: Document): LWWNumberType {
-    const num = new LWWNumberType(this.id, 0);
+  public clone(doc: Document): NumberType {
+    const num = new NumberType(this.id, 0);
     num.insert(new SetNumberOperation(this.latestWriteId, this.id, this.value));
     return num;
   }

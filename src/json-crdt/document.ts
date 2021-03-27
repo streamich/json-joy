@@ -7,7 +7,7 @@ import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './types/lww-register-doc-root/DocRootType';
 import {LWWObjectType} from './types/lww-object/LWWObjectType';
-import {LWWNumberType} from './types/lww-number/LWWNumberType';
+import {NumberType} from './types/lww-number/NumberType';
 import {ArrayType} from './types/rga-array/ArrayType';
 import {StringType} from './types/rga-string/StringType';
 import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
@@ -78,7 +78,7 @@ export class Document {
     } else if (op instanceof MakeStringOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
     } else if (op instanceof MakeNumberOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new LWWNumberType(op.id, 0));
+      if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, 0));
     } else if (op instanceof SetRootOperation) {
       this.root.insert(op);
     } else if (op instanceof SetObjectKeysOperation) {
@@ -87,7 +87,7 @@ export class Document {
       obj.insert(op);
     } else if (op instanceof SetNumberOperation) {
       const num = this.nodes.get(op.num);
-      if (!(num instanceof LWWNumberType)) return;
+      if (!(num instanceof NumberType)) return;
       num.insert(op);
     } else if (op instanceof InsertArrayElementsOperation) {
       const arr = this.nodes.get(op.arr);
