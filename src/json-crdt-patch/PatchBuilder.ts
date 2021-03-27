@@ -187,7 +187,7 @@ export class PatchBuilder {
    */
   public jsonStr(json: string): LogicalTimestamp {
     const str = this.str();
-    this.insStr(str, str, json);
+    if (json) this.insStr(str, str, json);
     return str;
   }
 

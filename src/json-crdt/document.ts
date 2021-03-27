@@ -22,6 +22,8 @@ import {StringType} from './rga-string/StringType';
 import {InsertStringSubstringOperation} from '../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {JsonPatch} from './JsonPatch';
 import {Operation, operationToOp} from '../json-patch';
+import {Path} from '../json-pointer';
+import {ChangeBuffer} from './ChangeBuffer';
 
 export class Document {
   /**
@@ -41,12 +43,18 @@ export class Document {
    */
   public nodes = new IdentifiableIndex<JsonNode>();
 
+  /**
+   * API for applying changes to the current document.
+   */
+  public changes: ChangeBuffer;
+
   constructor(clock: VectorClock = new VectorClock(random40BitInt(), 0)) {
     this.clock = clock;
     this.nodes.index(NULL);
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);
     this.nodes.index(UNDEFINED);
+    this.changes = new ChangeBuffer(this)
   }
 
   public applyPatch(patch: Patch) {
@@ -125,7 +133,7 @@ export class Document {
     return op.toString('');
   }
 
-  public find(steps: (string | number)[]): JsonNode {
+  public find(steps: Path): JsonNode {
     const id = this.root.toValue();
     let node: JsonNode = this.nodes.get(id) || NULL;
     const length = steps.length;

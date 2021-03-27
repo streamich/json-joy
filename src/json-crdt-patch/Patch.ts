@@ -40,4 +40,10 @@ export class Patch {
     for (const op of this.ops) span += op.span();
     return span;
   }
+
+  public nextTime(): number {
+    if (!this.ops.length) 0;
+    const lastOp = this.ops[this.ops.length - 1];
+    return lastOp.id.time + lastOp.span();
+  }
 }
