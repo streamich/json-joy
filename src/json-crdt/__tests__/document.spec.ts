@@ -1,7 +1,7 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {Document} from '../document';
-import {LWWNumberType} from '../types/lww-number/LWWNumberType';
+import {NumberType} from '../types/lww-number/NumberType';
 import {LWWObjectType} from '../types/lww-object/LWWObjectType';
 import {ArrayType} from '../types/rga-array/ArrayType';
 import {StringType} from '../types/rga-string/StringType';
@@ -136,7 +136,7 @@ describe('Document', () => {
       const numId = builder.num();
       doc.applyPatch(builder.patch);
       const obj = doc.nodes.get(numId);
-      expect(obj).toBeInstanceOf(LWWNumberType);
+      expect(obj).toBeInstanceOf(NumberType);
     });
 
     test('can set number as document root', () => {
