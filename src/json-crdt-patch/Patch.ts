@@ -6,6 +6,7 @@ import {MakeArrayOperation} from "./operations/MakeArrayOperation";
 import {MakeNumberOperation} from "./operations/MakeNumberOperation";
 import {MakeObjectOperation} from "./operations/MakeObjectOperation";
 import {MakeStringOperation} from "./operations/MakeStringOperation";
+import {NoopOperation} from './operations/NoopOperation';
 import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
@@ -20,7 +21,8 @@ export type JsonCrdtPatchOperation =
   | MakeStringOperation
   | SetObjectKeysOperation
   | SetRootOperation
-  | SetNumberOperation;
+  | SetNumberOperation
+  | NoopOperation;
 
 export class Patch {
   public readonly ops: JsonCrdtPatchOperation[] = [];

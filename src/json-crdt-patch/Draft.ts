@@ -11,6 +11,7 @@ import {MakeStringOperation} from './operations/MakeStringOperation';
 import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
+import {NoopOperation} from './operations/NoopOperation';
 
 /**
  * Draft class provides a way to build a patch for which it is not known the
@@ -65,6 +66,8 @@ export class Draft {
         patch.ops.push(new SetObjectKeysOperation(ts(op.id), ts(op.object), op.tuples.map(([key, value]) => [key, ts(value)])));
       else if (op instanceof SetRootOperation)
         patch.ops.push(new SetRootOperation(ts(op.id), ts(op.value)));
+      else if (op instanceof NoopOperation)
+        patch.ops.push(new NoopOperation(ts(op.id), op.length));
     }
     return patch;
   }

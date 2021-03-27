@@ -11,6 +11,7 @@ import {SetRootOperation} from "./operations/SetRootOperation";
 import {SetNumberOperation} from "./operations/SetNumberOperation";
 import {Patch} from "./Patch";
 import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
+import {NoopOperation} from "./operations/NoopOperation";
 
 /**
  * Utility class that helps in Patch construction.
@@ -140,6 +141,18 @@ export class PatchBuilder {
   public del(obj: LogicalTimestamp, start: LogicalTimestamp, span: number): LogicalTimestamp {
     const id = this.clock.tick(span);
     const op = new DeleteOperation(id, obj, start, span);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Operation that does nothing just skips IDs in the patch.
+   * @param span Length of the operation.
+   * @returns ID of the new operation.
+   */
+  public noop(span: number) {
+    const id = this.clock.tick(span);
+    const op = new NoopOperation(id, span);
     this.patch.ops.push(op);
     return id;
   }
