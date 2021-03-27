@@ -5,19 +5,17 @@ import {PatchBuilder} from "../../json-crdt-patch/PatchBuilder";
 import {Patch} from "../../json-crdt-patch/Patch";
 import {NoopOperation} from "../../json-crdt-patch/operations/NoopOperation";
 import {LogicalTimestamp} from "../../json-crdt-patch/clock";
+import {StringApi} from "./StringApi";
 
 export class DocumentApi {
+  /** Buffer of accumulated patches. */
   public patches: Patch[] = [];
-  private builder: PatchBuilder;
+
+  /** Currently active builder. */
+  public builder: PatchBuilder;
 
   constructor(private readonly doc: Document) {
     this.builder = new PatchBuilder(doc.clock);
-  }
-
-  private asString(path: Path): StringType {
-    const obj = this.doc.find(path);
-    if (obj instanceof StringType) return obj;
-    throw new Error('NOT_STRING');
   }
 
   public commit(): this {
@@ -67,6 +65,17 @@ export class DocumentApi {
     const value = this.builder.json(json);
     this.builder.root(value);
     return this;
+  }
+
+  private asString(path: Path): StringType {
+    const obj = this.doc.find(path);
+    if (obj instanceof StringType) return obj;
+    throw new Error('NOT_STRING');
+  }
+
+  public str(path: Path): StringApi {
+    const obj = this.asString(path);
+    return new StringApi(this, obj);
   }
 
   public strIns(path: Path, index: number, substr: string): this {

@@ -1,6 +1,5 @@
 import {Document} from '../../document';
 
-
 describe('string manipulation', () => {
   test('can edit strings', () => {
     const doc = new Document();
