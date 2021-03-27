@@ -396,5 +396,139 @@ describe('Document', () => {
       expect(node.findValue(8).toString()).toBe(TRUE_ID.toString());
       expect(() => node.findId(9)).toThrowError(new Error('OUT_OF_BOUNDS'));
     });
+
+    test('can find span withing one chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(1, 2);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 1);
+      expect(span[0].span).toBe(2);
+    });
+
+    test('can find span at the beginning of a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(0, 2);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time);
+      expect(span[0].span).toBe(2);
+    });
+
+    test('can find span at the end of a chunk', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(2, 2);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 2);
+      expect(span[0].span).toBe(2);
+    });
+
+    test('can find span across two chunks', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.noop(1);
+      const ins2 = builder.insArr(arr, ins1.tick(3), [TRUE_ID, TRUE_ID, TRUE_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(2, 3);
+      expect(span.length).toBe(2);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 2);
+      expect(span[0].span).toBe(2);
+      expect(span[1].sessionId).toBe(ins2.sessionId);
+      expect(span[1].time).toBe(ins2.time);
+      expect(span[1].span).toBe(1);
+    });
+
+    test('can find span across three chunks', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.noop(1);
+      const ins2 = builder.insArr(arr, ins1.tick(3), [TRUE_ID]);
+      builder.noop(1);
+      const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(2, 5);
+      expect(span.length).toBe(3);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 2);
+      expect(span[0].span).toBe(2);
+      expect(span[1].sessionId).toBe(ins2.sessionId);
+      expect(span[1].time).toBe(ins2.time);
+      expect(span[1].span).toBe(1);
+      expect(span[2].sessionId).toBe(ins3.sessionId);
+      expect(span[2].time).toBe(ins3.time);
+      expect(span[2].span).toBe(2);
+    });
+
+    test('can find span across three chunks - 2', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.noop(1);
+      const ins2 = builder.insArr(arr, ins1.tick(3), [TRUE_ID]);
+      builder.noop(1);
+      const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(2, 4);
+      expect(span.length).toBe(3);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 2);
+      expect(span[0].span).toBe(2);
+      expect(span[1].sessionId).toBe(ins2.sessionId);
+      expect(span[1].time).toBe(ins2.time);
+      expect(span[1].span).toBe(1);
+      expect(span[2].sessionId).toBe(ins3.sessionId);
+      expect(span[2].time).toBe(ins3.time);
+      expect(span[2].span).toBe(1);
+    });
+
+    test('can find span across two chunks, second with on element', () => {
+      const doc = new Document();
+      const builder = new PatchBuilder(doc.clock);
+      const arr = builder.arr();
+      const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
+      builder.noop(1);
+      const ins2 = builder.insArr(arr, ins1.tick(3), [TRUE_ID]);
+      builder.noop(1);
+      const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
+      builder.root(arr);
+      doc.applyPatch(builder.patch);
+      const node = doc.nodes.get(arr)! as ArrayType;
+      const span = node.findIdSpan(2, 3);
+      expect(span.length).toBe(2);
+      expect(span[0].sessionId).toBe(ins1.sessionId);
+      expect(span[0].time).toBe(ins1.time + 2);
+      expect(span[0].span).toBe(2);
+      expect(span[1].sessionId).toBe(ins2.sessionId);
+      expect(span[1].time).toBe(ins2.time);
+      expect(span[1].span).toBe(1);
+    });
   });
 });
