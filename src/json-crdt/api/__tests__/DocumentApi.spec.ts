@@ -40,6 +40,35 @@ describe('string manipulation', () => {
   });
 });
 
+describe('number manipulation', () => {
+  test('can edit strings', () => {
+    const doc = new Document();
+    const api = doc.api;
+    api.root({
+      a: [{
+        b: 123,
+      }]
+    }).commit();
+    expect(doc.toJson()).toEqual({
+      a: [{
+        b: 123,
+      }]
+    });
+    api.numSet(['a', 0, 'b'], .5);
+    expect(doc.toJson()).toEqual({
+      a: [{
+        b: 123,
+      }]
+    });
+    api.commit();
+    expect(doc.toJson()).toEqual({
+      a: [{
+        b: .5,
+      }]
+    });
+  });
+});
+
 describe('patch()', () => {
   test('can patch multiple operations into a single patch', () => {
     const doc = new Document();

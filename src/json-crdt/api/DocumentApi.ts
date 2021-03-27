@@ -6,6 +6,7 @@ import {Patch} from "../../json-crdt-patch/Patch";
 import {NoopOperation} from "../../json-crdt-patch/operations/NoopOperation";
 import {LogicalTimestamp} from "../../json-crdt-patch/clock";
 import {StringApi} from "./StringApi";
+import {LWWNumberType} from "../types/lww-number/LWWNumberType";
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -89,6 +90,18 @@ export class DocumentApi {
     const obj = this.asString(path);
     const after = obj.findId(index);
     this.builder.del(obj.id, after, length);
+    return this;
+  }
+
+  private asNumber(path: Path): LWWNumberType {
+    const obj = this.doc.find(path);
+    if (obj instanceof LWWNumberType) return obj;
+    throw new Error('NOT_NUMBER');
+  }
+
+  public numSet(path: Path, value: number): this {
+    const {id} = this.asNumber(path);
+    this.builder.setNum(id, value);
     return this;
   }
 }
