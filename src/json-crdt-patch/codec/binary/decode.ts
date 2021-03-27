@@ -136,6 +136,14 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.del(obj, after, 1);
         continue;
       }
+      case 11: {
+        builder.noop(1);
+        continue;
+      }
+      case 12: {
+        builder.noop(varuint());
+        continue;
+      }
     }
   }
 

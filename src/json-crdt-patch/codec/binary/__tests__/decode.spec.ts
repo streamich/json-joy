@@ -10,6 +10,7 @@ import {decode} from '../decode';
 import {InsertArrayElementsOperation} from '../../../operations/InsertArrayElementsOperation';
 import {DeleteOperation} from '../../../operations/DeleteOperation';
 import {encode} from '../encode';
+import {NoopOperation} from '../../../operations/NoopOperation';
 
 test('decodes a .obj() operation', () => {
   const buf = new Uint8Array([
@@ -232,6 +233,32 @@ test('decodes a .del() operation with span = 1', () => {
   expect((patch.ops[0] as DeleteOperation).length).toBe(1);
 });
 
+test('decodes a .noop() operation with span = 1', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    11, // noop
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(NoopOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as NoopOperation).length).toBe(1);
+});
+
+test('decodes a .noop() operation with span = 99', () => {
+  const buf = new Uint8Array([
+    1, 0, 0, 0, 1, 0, 0, 0, // Patch ID
+    12, 99, // noop
+  ]);
+  const patch = decode(buf)
+  expect(patch.getId()!.toString()).toBe('1!1');
+  expect(patch.ops.length).toBe(1); 
+  expect(patch.ops[0]).toBeInstanceOf(NoopOperation);
+  expect(patch.ops[0].id.toString()).toBe('1!1');
+  expect((patch.ops[0] as NoopOperation).length).toBe(99);
+});
+
 test('decodes a simple patch', () => {
   const buf = new Uint8Array([
     3, 0, 0, 0, 5, 0, 0, 0, // Patch ID = 3!5
@@ -317,6 +344,8 @@ test('test all operations', () => {
     10, // del_one
     3,0,0,0,107,0,0,0, // Obj = 3!109
     3,0,0,0,109,0,0,0, // After = 3!109
+    11, // noop
+    12, 4, // noop (4)
     9, // del
     3,0,0,0,100,0,0,0, // Obj = 3!101
     3,0,0,0,101,0,0,0, // After = 3!101
