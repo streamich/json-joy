@@ -17,7 +17,6 @@ test('can create a draft patch', () => {
       { op: 'num_set', after: [-1, 2], value: 1 },
       { op: 'obj' },
       { op: 'arr' },
-      { op: 'arr_ins', obj: [-1, 5], after: [-1, 5], values: [] },
       { op: 'arr_ins', obj: [-1, 1], after: [-1, 1], values: [
         [-1, 2],
         [0, 2],
@@ -47,7 +46,6 @@ test('can return final patch with correct timestamps', () => {
       { op: 'num_set', after: [100, 202], value: 1 },
       { op: 'obj' },
       { op: 'arr' },
-      { op: 'arr_ins', obj: [100, 205], after: [100, 205], values: [] },
       { op: 'arr_ins', obj: [100, 201], after: [100, 201], values: [
         [100, 202],
         [0, 2],

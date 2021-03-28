@@ -191,9 +191,11 @@ export class PatchBuilder {
    */
   public jsonArr(json: unknown[]): LogicalTimestamp {
     const arr = this.arr();
-    const values: LogicalTimestamp[] = [];
-    for (const el of json) values.push(this.json(el));
-    this.insArr(arr, arr, values);
+    if (json.length) {
+      const values: LogicalTimestamp[] = [];
+      for (const el of json) values.push(this.json(el));
+      this.insArr(arr, arr, values);
+    }
     return arr;
   }
 
