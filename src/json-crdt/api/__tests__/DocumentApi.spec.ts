@@ -88,6 +88,38 @@ describe('array manipulation', () => {
   });
 });
 
+describe('object manipulation', () => {
+  test('can create objects', () => {
+    const doc = new Document();
+    const api = doc.api;
+    api.root({a: {}}).commit();
+    expect(doc.toJson()).toEqual({a: {}});
+    api.objSet([], {gg: true}).commit();
+    expect(doc.toJson()).toEqual({a: {}, gg: true});
+    api.objSet(['a'], {1: 1, 2: 2}).commit();
+    expect(doc.toJson()).toEqual({a: {'1': 1, '2': 2}, gg: true});
+  });
+
+  test('can delete object keys', () => {
+    const doc = new Document();
+    const api = doc.api;
+    api.root({a: 'a'}).commit();
+    expect(doc.toJson()).toEqual({a: 'a'});
+    api.objSet([], {b: 'b', c: {c: 'c'}}).commit();
+    expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {c: 'c'}});
+    api.objSet(['c'], {c: undefined}).commit();
+    expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {}});
+    api.objSet([], {c: undefined}).commit();
+    expect(doc.toJson()).toEqual({a: 'a', b: 'b'});
+    api.objSet([], {b: undefined}).commit();
+    expect(doc.toJson()).toEqual({a: 'a'});
+    api.objSet([], {a: undefined}).commit();
+    expect(doc.toJson()).toEqual({});
+    api.root({gg: 'bet'}).commit();
+    expect(doc.toJson()).toEqual({gg: 'bet'});
+  });
+});
+
 describe('patch()', () => {
   test('can patch multiple operations into a single patch', () => {
     const doc = new Document();

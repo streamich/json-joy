@@ -8,6 +8,7 @@ import {LogicalTimestamp} from "../../json-crdt-patch/clock";
 import {StringApi} from "./StringApi";
 import {NumberType} from "../types/lww-number/NumberType";
 import {ArrayType} from "../types/rga-array/ArrayType";
+import {ObjectType} from "../types/lww-object/ObjectType";
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -69,14 +70,14 @@ export class DocumentApi {
     return this;
   }
 
-  private asString(path: Path): StringType {
+  private asStr(path: Path): StringType {
     const obj = this.doc.find(path);
     if (obj instanceof StringType) return obj;
     throw new Error('NOT_STR');
   }
 
   public str(path: Path): StringApi {
-    const obj = this.asString(path);
+    const obj = this.asStr(path);
     return new StringApi(this, obj);
   }
 
@@ -86,7 +87,7 @@ export class DocumentApi {
   }
 
   public strIns(path: Path, index: number, substr: string): this {
-    const obj = this.asString(path);
+    const obj = this.asStr(path);
     this.strObjIns(obj, index, substr);
     return this;
   }
@@ -97,24 +98,24 @@ export class DocumentApi {
   }
 
   public strDel(path: Path, index: number, length: number): this {
-    const obj = this.asString(path);
+    const obj = this.asStr(path);
     this.strObjDel(obj, index, length);
     return this;
   }
 
-  private asNumber(path: Path): NumberType {
+  private asNum(path: Path): NumberType {
     const obj = this.doc.find(path);
     if (obj instanceof NumberType) return obj;
     throw new Error('NOT_NUM');
   }
 
   public numSet(path: Path, value: number): this {
-    const {id} = this.asNumber(path);
+    const {id} = this.asNum(path);
     this.builder.setNum(id, value);
     return this;
   }
 
-  private asArray(path: Path): ArrayType {
+  private asArr(path: Path): ArrayType {
     const obj = this.doc.find(path);
     if (obj instanceof ArrayType) return obj;
     throw new Error('NOT_ARR');
@@ -122,7 +123,7 @@ export class DocumentApi {
 
   public arrIns(path: Path, index: number, values: unknown[]): this {
     const {builder} = this;
-    const obj = this.asArray(path);
+    const obj = this.asArr(path);
     const after = !index ? obj.id : obj.findId(index - 1);
     const valueIds: LogicalTimestamp[] = [];
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
@@ -131,9 +132,22 @@ export class DocumentApi {
   }
 
   public arrDel(path: Path, index: number, length: number): this {
-    const obj = this.asArray(path);
+    const obj = this.asArr(path);
     const spans = obj.findIdSpan(index, length);
     for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
+    return this;
+  }
+
+  private asObj(path: Path): ObjectType {
+    const obj = this.doc.find(path);
+    if (obj instanceof ObjectType) return obj;
+    throw new Error('NOT_OBJ');
+  }
+
+  public objSet(path: Path, entries: Record<string, unknown>): this {
+    const obj = this.asObj(path);
+    const {builder} = this;
+    builder.setKeys(obj.id, Object.entries(entries).map(([key, json]) => [key, builder.json(json)]));
     return this;
   }
 }
