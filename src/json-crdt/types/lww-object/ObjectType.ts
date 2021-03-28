@@ -80,15 +80,16 @@ export class ObjectType implements JsonNode {
     return str + ']' as json_string<Array<number | string>>;
   }
 
-  public static deserialize(doc: Document, data: Array<number | string>): ObjectType {
+  public static deserialize(doc: Document, codec: ClockCodec, data: Array<number | string>): ObjectType {
     const [, sessionId, time] = data;
     const length = data.length;
-    const obj = new ObjectType(doc, new LogicalTimestamp(sessionId as number, time as number));
+    const objId = codec.decodeTs(sessionId as number, time as number);
+    const obj = new ObjectType(doc, objId);
     let i = 3;
-    for (let j = 0; j < length;) {
+    for (; i < length; i++) {
       const key = data[i++] as string;
-      const id = new LogicalTimestamp(data[i++] as number, data[i++] as number);
-      const value = new LogicalTimestamp(data[i++] as number, data[i++] as number);
+      const id = codec.decodeTs(data[i++] as number, data[i++] as number);
+      const value = codec.decodeTs(data[i++] as number, data[i++] as number);
       obj.put(key, id, value);
     }
     return obj;

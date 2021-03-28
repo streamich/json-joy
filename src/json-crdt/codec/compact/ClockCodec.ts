@@ -24,7 +24,7 @@ export class ClockCodec {
    * - Each two subsequent numbers represent a (session ID, time) tuple.
    * - The first tuple is the local clock.
    */
-  public encodeVectorClock(): json_string<number[]> {
+  public encode(): json_string<number[]> {
     const {clock} = this;
     let str: string = '[' + clock.sessionId + ',' + clock.time;
     this.table2.set(clock.sessionId, 1);
@@ -41,7 +41,7 @@ export class ClockCodec {
   /**
    * Decodes serialized vector clock.
    */
-  public static decodeVectorClock(data: number[]): ClockCodec {
+  public static decode(data: number[]): ClockCodec {
     const table1: Map<number, LogicalTimestamp> = new Map();
     const [sessionId, time] = data;
     const clock = new VectorClock(sessionId, time);
@@ -71,5 +71,14 @@ export class ClockCodec {
     if (!clockId) return sessionId + ',' + time;
     const clock = this.clock.clocks.get(sessionId)!;
     return clockId + ',' + (clock.time - time);
+  }
+
+  /**
+   * Decodes encoded timestamp using clock table.
+   */
+  public decodeTs(clockId: number, time: number): LogicalTimestamp {
+    const clock = this.table1.get(clockId);
+    if (!clock) return new LogicalTimestamp(clockId, time);
+    return new LogicalTimestamp(clock.sessionId, clock.time - time);
   }
 }
