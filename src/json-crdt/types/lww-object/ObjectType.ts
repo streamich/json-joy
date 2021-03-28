@@ -73,7 +73,7 @@ export class ObjectType implements JsonNode {
 
   public serialize(codec: ClockCodec): json_string<Array<number | string>> {
     const {id} = this;
-    let str: string = '[0,' + codec.encodeTs(id) + ',' + this.latest.size;
+    let str: string = '[0,' + codec.encodeTs(id);
     for (const [key, value] of this.latest.entries()) {
       str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + codec.encodeTs(value.value);
     }
@@ -81,10 +81,11 @@ export class ObjectType implements JsonNode {
   }
 
   public static deserialize(doc: Document, data: Array<number | string>): ObjectType {
-    const [, sessionId, time, length] = data;
+    const [, sessionId, time] = data;
+    const length = data.length;
     const obj = new ObjectType(doc, new LogicalTimestamp(sessionId as number, time as number));
-    let i = 4;
-    for (let j = 0; j < length; j++) {
+    let i = 3;
+    for (let j = 0; j < length;) {
       const key = data[i++] as string;
       const id = new LogicalTimestamp(data[i++] as number, data[i++] as number);
       const value = new LogicalTimestamp(data[i++] as number, data[i++] as number);

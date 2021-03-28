@@ -21,7 +21,6 @@ describe('objects', () => {
       [
         0,
         1, doc.clock.time - obj.time,
-        1,
         'foo',
         1, doc.clock.time - insert.time,
         TRUE_ID.sessionId, TRUE_ID.time,
@@ -45,7 +44,6 @@ describe('objects', () => {
       [
         0,
         1, doc.clock.time - obj.id.time,
-        1,
         'gaga',
         1, 2,
         1, doc.clock.time - num.id.time,
