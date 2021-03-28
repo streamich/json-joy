@@ -43,6 +43,13 @@ export class IdentifiableIndex<T extends Identifiable> {
     map.set(time, operation);
   }
 
+  public delete(id: LogicalTimestamp) {
+    const {sessionId, time} = id;
+    const timeMap = this.entries.get(sessionId);
+    if (!timeMap) return;
+    timeMap.delete(time);
+  }
+
   public *iterate() {
     for (const map of this.entries.values()) yield* map.values();
   }

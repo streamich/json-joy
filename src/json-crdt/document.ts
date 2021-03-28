@@ -4,7 +4,7 @@ import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
-import {VectorClock} from '../json-crdt-patch/clock';
+import {LogicalTimestamp, VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './types/lww-register-doc-root/DocRootType';
 import {ObjectType} from './types/lww-object/ObjectType';
 import {NumberType} from './types/lww-number/NumberType';
@@ -80,7 +80,8 @@ export class Document {
     } else if (op instanceof MakeNumberOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, op.id, 0));
     } else if (op instanceof SetRootOperation) {
-      this.root.insert(op);
+      const oldValue = this.root.insert(op);
+      if (oldValue) this.deleteNodeTree(oldValue);
     } else if (op instanceof SetObjectKeysOperation) {
       const obj = this.nodes.get(op.object);
       if (!(obj instanceof ObjectType)) return;
@@ -102,6 +103,12 @@ export class Document {
       if (node instanceof ArrayType) node.delete(op);
       else if (node instanceof StringType) node.onDelete(op);
     }
+  }
+
+  private deleteNodeTree(value: LogicalTimestamp) {
+    const isSystemNode = value.sessionId < 1;
+    if (isSystemNode) return;
+    this.nodes.delete(value);
   }
 
   public toJson(): unknown {

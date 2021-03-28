@@ -7,13 +7,20 @@ export class DocRootType {
 
   constructor(public readonly id: LogicalTimestamp) {}
 
-  public insert(op: SetRootOperation) {
+  /**
+   * @returns Previous value, if any.
+   */
+  public insert(op: SetRootOperation): null | LogicalTimestamp {
     if (!this.last) {
       this.last = op;
-      return;
+      return null;
     }
-    if (op.id.compare(this.last.id) > 0)
+    if (op.id.compare(this.last.id) > 0) {
+      const lastValue = this.last.value;
       this.last = op;
+      return lastValue;
+    }
+    return null;
   }
 
   public toValue(): LogicalTimestamp {
