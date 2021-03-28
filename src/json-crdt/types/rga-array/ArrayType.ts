@@ -175,6 +175,11 @@ export class ArrayType implements JsonNode {
     return copy;
   }
 
+  public *children(): IterableIterator<LogicalTimestamp> {
+    let chunk: null | ArrayChunk = this.start;
+    while (chunk = chunk.right) if (chunk.values) for (const value of chunk.values) yield value;
+  }
+
   public toString(tab: string = ''): string {
     let str = `${tab}ArrayType(${this.id.toDisplayString()})`;
     let curr: ArrayChunk | null = this.start;

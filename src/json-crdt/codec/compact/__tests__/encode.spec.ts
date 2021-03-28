@@ -3,35 +3,75 @@ import {Document} from '../../../document';
 import {encode} from '../encode';
 import {TRUE_ID} from '../../../../json-crdt-patch/constants';
 
-test('encodes a simple document', () => {
-  const doc = new Document;
-  const builder = new PatchBuilder(doc.clock);
-  const obj = builder.obj();
-  const insert = builder.setKeys(obj, [['foo', TRUE_ID]]);
-  const root = builder.root(obj);
-  doc.applyPatch(builder.patch);
-  const encoded = encode(doc);
-  expect(JSON.parse(encoded)).toEqual([
-    [
-      doc.clock.sessionId,
-      doc.clock.time,
-    ],
-    root.sessionId,
-    root.time,
-    obj.sessionId,
-    obj.time,
-    [
-      0,
+describe('objects', () => {
+  test('encodes a simple document', () => {
+    const doc = new Document;
+    const builder = new PatchBuilder(doc.clock);
+    const obj = builder.obj();
+    const insert = builder.setKeys(obj, [['foo', TRUE_ID]]);
+    const root = builder.root(obj);
+    doc.applyPatch(builder.patch);
+    const encoded = encode(doc);
+    expect(JSON.parse(encoded)).toEqual([
+      [
+        doc.clock.sessionId,
+        doc.clock.time,
+      ],
+      root.sessionId,
+      root.time,
       obj.sessionId,
       obj.time,
-      1,
-      'foo',
-      insert.sessionId,
-      insert.time,
-      TRUE_ID.sessionId,
-      TRUE_ID.time,
-    ],
-  ]);
+      [
+        0,
+        obj.sessionId,
+        obj.time,
+        1,
+        'foo',
+        insert.sessionId,
+        insert.time,
+        TRUE_ID.sessionId,
+        TRUE_ID.time,
+      ],
+    ]);
+  });
+
+  test('deletes old root object nodes', () => {
+    const doc = new Document;
+    doc.api.root({foo: 123}).commit();
+    doc.api.root({gaga: 666}).commit();
+    const encoded = encode(doc);
+    const obj = doc.api.asObj([]);
+    const num = doc.api.asNum(['gaga']);
+    expect(JSON.parse(encoded)).toEqual([
+      [
+        doc.clock.sessionId,
+        doc.clock.time,
+      ],
+      doc.root.last!.id.sessionId,
+      doc.root.last!.id.time,
+      doc.root.last!.value.sessionId,
+      doc.root.last!.value.time,
+      [
+        0,
+        obj.id.sessionId,
+        obj.id.time,
+        1,
+        'gaga',
+        obj.id.sessionId,
+        obj.id.time + 3,
+        num.id.sessionId,
+        num.id.time,
+      ],
+      [
+        3,
+        num.id.sessionId,
+        num.id.time,
+        num.writeId.sessionId,
+        num.writeId.time,
+        num.value,
+      ],
+    ]);
+  });
 });
 
 describe('numbers', () => {

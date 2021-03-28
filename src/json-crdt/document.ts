@@ -108,6 +108,9 @@ export class Document {
   private deleteNodeTree(value: LogicalTimestamp) {
     const isSystemNode = value.sessionId < 1;
     if (isSystemNode) return;
+    const node = this.nodes.get(value);
+    if (!node) return;
+    for (const child of node.children()) this.deleteNodeTree(child);
     this.nodes.delete(value);
   }
 

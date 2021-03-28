@@ -26,6 +26,8 @@ export class NumberType implements JsonNode {
     return num;
   }
 
+  public *children(): IterableIterator<LogicalTimestamp> {}
+
   public serialize(): json_string<Array<number>> {
     const {id, writeId: latestWriteId} = this;
     return '[3,' + id.sessionId + ',' + id.time + ',' + latestWriteId.sessionId + ',' + latestWriteId.time + ',' + this.value + ']' as json_string<Array<number>>;

@@ -1,3 +1,4 @@
+import {LogicalTimestamp} from "../json-crdt-patch/clock";
 import type {Identifiable} from "../json-crdt-patch/types";
 import type {Document} from "./document";
 
@@ -20,6 +21,12 @@ export interface JsonNode extends Identifiable {
    * Returns a deep copy of itself.
    */
   clone(doc: Document): JsonNode;
+
+  /**
+   * Returns a list of child values of this type. Used in object and array
+   * nodes, where those nodes are composed of more nodes.
+   */
+  children(): IterableIterator<LogicalTimestamp>;
 }
 
 /**

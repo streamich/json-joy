@@ -66,6 +66,10 @@ export class ObjectType implements JsonNode {
     return obj;
   }
 
+  public *children(): IterableIterator<LogicalTimestamp> {
+    for (const {value} of this.latest.values()) yield value;
+  }
+
   public serialize(): json_string<Array<number | string>> {
     const {id} = this;
     let str: string = '[0,' + id.sessionId + ',' + id.time + ',' + this.latest.size;

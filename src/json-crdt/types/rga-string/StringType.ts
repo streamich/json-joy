@@ -155,6 +155,8 @@ export class StringType implements JsonNode {
     return copy;
   }
 
+  public *children(): IterableIterator<LogicalTimestamp> {}
+
   public toString(tab: string = ''): string {
     let str = `${tab}StringType(${this.id.toDisplayString()})`;
     let curr: StringChunk | null = this.start;

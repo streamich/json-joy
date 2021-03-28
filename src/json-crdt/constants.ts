@@ -13,6 +13,8 @@ export class ConstantType implements JsonNode {
     return this;
   }
 
+  public *children(): IterableIterator<LogicalTimestamp> {}
+
   public toString(tab: string = ''): string {
     switch (this.value) {
       case null: return tab + 'NULL';
