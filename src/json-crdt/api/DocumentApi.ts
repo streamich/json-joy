@@ -9,6 +9,7 @@ import {StringApi} from "./StringApi";
 import {NumberType} from "../types/lww-number/NumberType";
 import {ArrayType} from "../types/rga-array/ArrayType";
 import {ObjectType} from "../types/lww-object/ObjectType";
+import {UNDEFINED_ID} from "../../json-crdt-patch/constants";
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -148,6 +149,13 @@ export class DocumentApi {
     const obj = this.asObj(path);
     const {builder} = this;
     builder.setKeys(obj.id, Object.entries(entries).map(([key, json]) => [key, builder.json(json)]));
+    return this;
+  }
+
+  public objDel(path: Path, keys: string[]): this {
+    const obj = this.asObj(path);
+    const {builder} = this;
+    builder.setKeys(obj.id, keys.map(key => [key, UNDEFINED_ID]));
     return this;
   }
 }

@@ -18,6 +18,11 @@ export class ObjectType implements JsonNode {
     return entry ? entry.value : undefined;
   }
 
+  public getId(key: string): undefined | LogicalTimestamp {
+    const entry = this.latest.get(key);
+    return entry ? entry.id : undefined;
+  }
+
   public insert(op: SetObjectKeysOperation) {
     const {latest: last} = this;
     const clock = op.id.clock();
