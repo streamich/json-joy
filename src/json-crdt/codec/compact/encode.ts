@@ -5,30 +5,25 @@ import {ObjectType} from "../../types/lww-object/ObjectType";
 import {ClockCodec} from "./ClockCodec";
 
 export const encode = (doc: Document): json_string<unknown[]> => {
-  let nodes = '';
-
   const clockCodec = new ClockCodec(doc.clock, new Map());
-  const vectorClockData = clockCodec.encodeVectorClock();
+  const clockData = clockCodec.encode();
+  const root = doc.root.last;
+
+  let str = '[' + clockData + ',' +
+    (root
+      ? (clockCodec.encodeTs(root.id) + ',' + clockCodec.encodeTs(root.value))
+      : '0');
 
   for (const m of doc.nodes.entries.values()) {
     for (const node of m.values()) {
       if (node.id.sessionId === 0) continue;
       else if (node instanceof ObjectType) {
-        nodes += ',' + node.serialize(clockCodec);
-        continue;
+        str += ',' + node.serialize(clockCodec);
       } else if (node instanceof NumberType) {
-        nodes += ',' + node.serialize(clockCodec);
+        str += ',' + node.serialize(clockCodec);
       }
     }
   }
 
-  const root = doc.root.last;
-
-  return '[' +
-    vectorClockData + ',' +
-    (root
-      ? clockCodec.encodeTs(root.id) + ',' + clockCodec.encodeTs(root.value)
-      : '0') +
-    nodes +
-  ']' as json_string<Array<number | string>>;
+  return str + ']' as json_string<Array<number | string>>;
 };
