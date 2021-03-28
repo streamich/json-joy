@@ -78,7 +78,7 @@ export class Document {
     } else if (op instanceof MakeStringOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
     } else if (op instanceof MakeNumberOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, 0));
+      if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, op.id, 0));
     } else if (op instanceof SetRootOperation) {
       this.root.insert(op);
     } else if (op instanceof SetObjectKeysOperation) {

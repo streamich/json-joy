@@ -71,7 +71,7 @@ export class DocumentApi {
     return this;
   }
 
-  private asStr(path: Path): StringType {
+  public asStr(path: Path): StringType {
     const obj = this.doc.find(path);
     if (obj instanceof StringType) return obj;
     throw new Error('NOT_STR');
@@ -104,7 +104,7 @@ export class DocumentApi {
     return this;
   }
 
-  private asNum(path: Path): NumberType {
+  public asNum(path: Path): NumberType {
     const obj = this.doc.find(path);
     if (obj instanceof NumberType) return obj;
     throw new Error('NOT_NUM');
@@ -116,7 +116,7 @@ export class DocumentApi {
     return this;
   }
 
-  private asArr(path: Path): ArrayType {
+  public asArr(path: Path): ArrayType {
     const obj = this.doc.find(path);
     if (obj instanceof ArrayType) return obj;
     throw new Error('NOT_ARR');
@@ -139,7 +139,7 @@ export class DocumentApi {
     return this;
   }
 
-  private asObj(path: Path): ObjectType {
+  public asObj(path: Path): ObjectType {
     const obj = this.doc.find(path);
     if (obj instanceof ObjectType) return obj;
     throw new Error('NOT_OBJ');
