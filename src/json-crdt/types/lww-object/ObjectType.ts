@@ -1,3 +1,4 @@
+import type {ClockCodec} from '../../codec/compact/ClockCodec';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
@@ -70,11 +71,11 @@ export class ObjectType implements JsonNode {
     for (const {value} of this.latest.values()) yield value;
   }
 
-  public serialize(): json_string<Array<number | string>> {
+  public serialize(codec: ClockCodec): json_string<Array<number | string>> {
     const {id} = this;
-    let str: string = '[0,' + id.sessionId + ',' + id.time + ',' + this.latest.size;
+    let str: string = '[0,' + codec.encodeTs(id) + ',' + this.latest.size;
     for (const [key, value] of this.latest.entries()) {
-      str += ',' + asString(key) + ',' + value.id.sessionId + ',' + value.id.time + ',' + value.value.sessionId + ',' + value.value.time;
+      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + codec.encodeTs(value.value);
     }
     return str + ']' as json_string<Array<number | string>>;
   }

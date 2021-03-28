@@ -7,27 +7,27 @@ import {ClockCodec} from "./ClockCodec";
 export const encode = (doc: Document): json_string<unknown[]> => {
   let nodes = '';
 
-  const clockCodec = new ClockCodec(doc.clock);
+  const clockCodec = new ClockCodec(doc.clock, new Map());
+  const vectorClockData = clockCodec.encodeVectorClock();
 
   for (const m of doc.nodes.entries.values()) {
     for (const node of m.values()) {
       if (node.id.sessionId === 0) continue;
       else if (node instanceof ObjectType) {
-        nodes += ',' + node.serialize();
+        nodes += ',' + node.serialize(clockCodec);
         continue;
       } else if (node instanceof NumberType) {
-        nodes += ',' + node.serialize();
+        nodes += ',' + node.serialize(clockCodec);
       }
     }
   }
 
-  const clock = doc.clock;
   const root = doc.root.last;
 
   return '[' +
-    clockCodec.encodeClock() + ',' +
+    vectorClockData + ',' +
     (root
-      ? root.id.sessionId + ',' + root.id.time + ',' + root.value.sessionId + ',' + root.value.time
+      ? clockCodec.encodeTs(root.id) + ',' + clockCodec.encodeTs(root.value)
       : '0') +
     nodes +
   ']' as json_string<Array<number | string>>;

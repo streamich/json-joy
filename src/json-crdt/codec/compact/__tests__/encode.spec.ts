@@ -17,20 +17,14 @@ describe('objects', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      root.sessionId,
-      root.time,
-      obj.sessionId,
-      obj.time,
+      1, 1, 1, 3,
       [
         0,
-        obj.sessionId,
-        obj.time,
+        1, doc.clock.time - obj.time,
         1,
         'foo',
-        insert.sessionId,
-        insert.time,
-        TRUE_ID.sessionId,
-        TRUE_ID.time,
+        1, doc.clock.time - insert.time,
+        TRUE_ID.sessionId, TRUE_ID.time,
       ],
     ]);
   });
@@ -47,27 +41,19 @@ describe('objects', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      doc.root.last!.id.sessionId,
-      doc.root.last!.id.time,
-      doc.root.last!.value.sessionId,
-      doc.root.last!.value.time,
+      1, 1, 1, doc.clock.time - obj.id.time,
       [
         0,
-        obj.id.sessionId,
-        obj.id.time,
+        1, doc.clock.time - obj.id.time,
         1,
         'gaga',
-        obj.id.sessionId,
-        obj.id.time + 3,
-        num.id.sessionId,
-        num.id.time,
+        1, 2,
+        1, doc.clock.time - num.id.time,
       ],
       [
         3,
-        num.id.sessionId,
-        num.id.time,
-        num.writeId.sessionId,
-        num.writeId.time,
+        1, doc.clock.time - num.id.time,
+        1, doc.clock.time - num.writeId.time,
         num.value,
       ],
     ]);
@@ -86,16 +72,11 @@ describe('numbers', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      doc.root.last!.id.sessionId,
-      doc.root.last!.id.time,
-      doc.root.last!.value.sessionId,
-      doc.root.last!.value.time,
+      1, 1, 1, doc.clock.time - num.id.time,
       [
         3,
-        num.id.sessionId,
-        num.id.time,
-        num.writeId.sessionId,
-        num.writeId.time,
+        1, doc.clock.time - num.id.time,
+        1, doc.clock.time - num.writeId.time,
         num.value,
       ],
     ]);
@@ -104,6 +85,8 @@ describe('numbers', () => {
   test('state keeps only the latest number version', () => {
     const doc = new Document;
     const api = doc.api;
+    api.root(1).commit();
+    api.root(2).commit();
     api.root(123).commit();
     api.root(124).commit();
     const encoded = encode(doc);
@@ -113,16 +96,11 @@ describe('numbers', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      doc.root.last!.id.sessionId,
-      doc.root.last!.id.time,
-      doc.root.last!.value.sessionId,
-      doc.root.last!.value.time,
+      1, 1, 1, doc.clock.time - num.id.time,
       [
         3,
-        num.id.sessionId,
-        num.id.time,
-        num.writeId.sessionId,
-        num.writeId.time,
+        1, doc.clock.time - num.id.time,
+        1, doc.clock.time - num.writeId.time,
         num.value,
       ],
     ]);

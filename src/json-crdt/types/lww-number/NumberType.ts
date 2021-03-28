@@ -3,6 +3,7 @@ import type {Document} from '../../document';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {SetNumberOperation} from '../../../json-crdt-patch/operations/SetNumberOperation';
 import {json_string} from 'ts-brand-json';
+import {ClockCodec} from '../../codec/compact/ClockCodec';
 
 export class NumberType implements JsonNode {
   constructor(public readonly id: LogicalTimestamp, public writeId: LogicalTimestamp, public value: number) {}
@@ -28,9 +29,9 @@ export class NumberType implements JsonNode {
 
   public *children(): IterableIterator<LogicalTimestamp> {}
 
-  public serialize(): json_string<Array<number>> {
+  public serialize(codec: ClockCodec): json_string<Array<number>> {
     const {id, writeId: latestWriteId} = this;
-    return '[3,' + id.sessionId + ',' + id.time + ',' + latestWriteId.sessionId + ',' + latestWriteId.time + ',' + this.value + ']' as json_string<Array<number>>;
+    return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(latestWriteId) + ',' + this.value + ']' as json_string<Array<number>>;
   }
 
   public static deserialize(doc: Document, data: Array<number>): NumberType {
