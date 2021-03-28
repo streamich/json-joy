@@ -2,6 +2,7 @@ import {json_string, JSON} from "ts-brand-json";
 import {LogicalTimestamp} from "../../../json-crdt-patch/clock";
 import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOperation";
 import {Document} from "../../document";
+import {NumberType} from "../../types/lww-number/NumberType";
 import {ObjectType} from "../../types/lww-object/ObjectType";
 import {ClockCodec} from "./ClockCodec";
 
@@ -26,6 +27,11 @@ export const decode = (packed: json_string<Array<unknown>>): Document => {
     switch(packed[0]) {
       case 0: {
         const node = ObjectType.deserialize(doc, clockCodec, packed);
+        doc.nodes.index(node);
+        break;
+      }
+      case 3: {
+        const node = NumberType.deserialize(clockCodec, packed as number[]);
         doc.nodes.index(node);
         break;
       }

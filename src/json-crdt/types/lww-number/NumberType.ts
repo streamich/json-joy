@@ -34,10 +34,10 @@ export class NumberType implements JsonNode {
     return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(latestWriteId) + ',' + this.value + ']' as json_string<Array<number>>;
   }
 
-  public static deserialize(doc: Document, data: Array<number>): NumberType {
+  public static deserialize(codec: ClockCodec, data: Array<number>): NumberType {
     const [, sessionId, time, writeSessionId, writeTime, value] = data;
-    const id = new LogicalTimestamp(sessionId, time);
-    const writeId = new LogicalTimestamp(writeSessionId, writeTime);
+    const id = codec.decodeTs(sessionId, time);
+    const writeId = codec.decodeTs(writeSessionId, writeTime);
     const obj = new NumberType(id, writeId, value);
     return obj;
   }
