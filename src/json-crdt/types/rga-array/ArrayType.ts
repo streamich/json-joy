@@ -1,10 +1,12 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
+import type {json_string} from 'ts-brand-json';
 import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
+import {ClockCodec} from '../../codec/compact/ClockCodec';
 
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
@@ -189,4 +191,30 @@ export class ArrayType implements JsonNode {
     }
     return str;
   }
+
+  public serialize(codec: ClockCodec): json_string<Array<number | string>> {
+    let str: string = '[1,' + codec.encodeTs(this.id);
+    let chunk: null | ArrayChunk = this.start;
+    while (chunk = chunk.right) {
+      str += ',' + codec.encodeTs(chunk.id);
+      if (chunk.values) str += ',[' + chunk.values.map(value => codec.encodeTs(value)).join(',') + ']';
+      else str += ',' + chunk.deleted;
+    }
+    return str + ']' as json_string<Array<number | string>>;
+  }
+
+  // public static deserialize(doc: Document, codec: ClockCodec, data: Array<number | string>): ObjectType {
+  //   const [, sessionId, time] = data;
+  //   const length = data.length;
+  //   const objId = codec.decodeTs(sessionId as number, time as number);
+  //   const obj = new ObjectType(doc, objId);
+  //   let i = 3;
+  //   for (; i < length; i++) {
+  //     const key = data[i++] as string;
+  //     const id = codec.decodeTs(data[i++] as number, data[i++] as number);
+  //     const value = codec.decodeTs(data[i++] as number, data[i++] as number);
+  //     obj.put(key, id, value);
+  //   }
+  //   return obj;
+  // }
 }
