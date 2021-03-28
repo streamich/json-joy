@@ -2,9 +2,12 @@ import {json_string} from "ts-brand-json";
 import {Document} from "../../document";
 import {NumberType} from "../../types/lww-number/NumberType";
 import {ObjectType} from "../../types/lww-object/ObjectType";
+import {ClockCodec} from "./ClockCodec";
 
 export const encode = (doc: Document): json_string<unknown[]> => {
   let nodes = '';
+
+  const clockCodec = new ClockCodec(doc.clock);
 
   for (const m of doc.nodes.entries.values()) {
     for (const node of m.values()) {
@@ -22,7 +25,7 @@ export const encode = (doc: Document): json_string<unknown[]> => {
   const root = doc.root.last;
 
   return '[' +
-    clock.serialize() + ',' +
+    clockCodec.encodeClock() + ',' +
     (root
       ? root.id.sessionId + ',' + root.id.time + ',' + root.value.sessionId + ',' + root.value.time
       : '0') +

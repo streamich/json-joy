@@ -1,4 +1,4 @@
-import {json_string} from "ts-brand-json";
+import type {json_string} from "ts-brand-json";
 
 /**
  * Immutable timestamp, represents a single point int time of a LogicalClock.
