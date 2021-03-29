@@ -4,6 +4,7 @@ import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOpera
 import {Document} from "../../document";
 import {NumberType} from "../../types/lww-number/NumberType";
 import {ObjectType} from "../../types/lww-object/ObjectType";
+import {ArrayType} from "../../types/rga-array/ArrayType";
 import {ClockCodec} from "./ClockCodec";
 
 export const decode = (packed: json_string<Array<unknown>>): Document => {
@@ -27,6 +28,11 @@ export const decode = (packed: json_string<Array<unknown>>): Document => {
     switch(packed[0]) {
       case 0: {
         const node = ObjectType.deserialize(doc, clockCodec, packed);
+        doc.nodes.index(node);
+        break;
+      }
+      case 1: {
+        const node = ArrayType.deserialize(doc, clockCodec, packed);
         doc.nodes.index(node);
         break;
       }

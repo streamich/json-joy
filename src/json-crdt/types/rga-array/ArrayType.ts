@@ -203,18 +203,30 @@ export class ArrayType implements JsonNode {
     return str + ']' as json_string<Array<number | string>>;
   }
 
-  // public static deserialize(doc: Document, codec: ClockCodec, data: Array<number | string>): ObjectType {
-  //   const [, sessionId, time] = data;
-  //   const length = data.length;
-  //   const objId = codec.decodeTs(sessionId as number, time as number);
-  //   const obj = new ObjectType(doc, objId);
-  //   let i = 3;
-  //   for (; i < length; i++) {
-  //     const key = data[i++] as string;
-  //     const id = codec.decodeTs(data[i++] as number, data[i++] as number);
-  //     const value = codec.decodeTs(data[i++] as number, data[i++] as number);
-  //     obj.put(key, id, value);
-  //   }
-  //   return obj;
-  // }
+  public static deserialize(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
+    const [, sessionId, time] = data;
+    const id = codec.decodeTs(sessionId as number, time as number);
+    const arr = new ArrayType(doc, id);
+    const length = data.length;
+    let i = 3;
+    let curr = arr.start;
+    for (; i < length; i++) {
+      const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
+      const content = data[i++];
+      let chunk: ArrayChunk;
+      if (Array.isArray(content)) {
+        const values: LogicalTimestamp[] = [];
+        const len = content.length;
+        let j = 0; while (j < len) values.push(codec.decodeTs(content[j++], content[j++]));
+        chunk = new ArrayChunk(chunkId, values);
+      } else {
+        chunk = new ArrayChunk(chunkId, undefined);
+        chunk.deleted = Number(content);
+      }
+      chunk.left = curr;
+      curr.right = chunk;
+    }
+    arr.end = curr;
+    return arr;
+  }
 }

@@ -43,3 +43,22 @@ describe('number', () => {
     expect(doc2.toJson()).toEqual({foo: {bar: 1.2}});
   });
 });
+
+describe('array', () => {
+  test('can decode number as root', () => {
+    const doc = new Document;
+    doc.api.root([true]).commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual([true]);
+  });
+
+  test('can decode number as root', () => {
+    const doc = new Document;
+    const json: any = [1, 2, true, false, null, {}, [1], []];
+    doc.api.root(json).commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual(json);
+  });
+});
