@@ -13,12 +13,26 @@ describe('object', () => {
     const root = builder.root(obj);
     doc.applyPatch(builder.patch);
     const encoded = encode(doc);
-    const doc2 = decode(encoded);
-    expect(doc2.toJson()).toEqual({foo: true});
-    expect(doc2 !== doc).toBe(true);
-    expect(doc2.clock !== doc.clock).toBe(true);
-    expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
-    expect(doc2.clock.time).toBe(doc.clock.time);
+    console.log(encoded);
+    // const doc2 = decode(encoded);
+    // expect(doc2.toJson()).toEqual({foo: true});
+    // expect(doc2 !== doc).toBe(true);
+    // expect(doc2.clock !== doc.clock).toBe(true);
+    // expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
+    // expect(doc2.clock.time).toBe(doc.clock.time);
+  });
+
+  test.only('encodes object', () => {
+    const doc = new Document;
+    doc.api.root({foo: 123}).commit();
+    const encoded = encode(doc);
+    console.log(encoded);
+    // const doc2 = decode(encoded);
+    // expect(doc2.toJson()).toEqual({foo: true});
+    // expect(doc2 !== doc).toBe(true);
+    // expect(doc2.clock !== doc.clock).toBe(true);
+    // expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
+    // expect(doc2.clock.time).toBe(doc.clock.time);
   });
 });
 

@@ -30,8 +30,8 @@ export class NumberType implements JsonNode {
   public *children(): IterableIterator<LogicalTimestamp> {}
 
   public serialize(codec: ClockCodec): json_string<Array<number>> {
-    const {id, writeId: latestWriteId} = this;
-    return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(latestWriteId) + ',' + this.value + ']' as json_string<Array<number>>;
+    const {id, writeId} = this;
+    return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(writeId) + ',' + this.value + ']' as json_string<Array<number>>;
   }
 
   public static deserialize(codec: ClockCodec, data: Array<number>): NumberType {
@@ -40,5 +40,10 @@ export class NumberType implements JsonNode {
     const writeId = codec.decodeTs(writeSessionId, writeTime);
     const obj = new NumberType(id, writeId, value);
     return obj;
+  }
+
+  public compact(codec: ClockCodec): json_string<unknown[]> {
+    const {id, writeId} = this;
+    return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(writeId) + ',' + this.value + ']' as json_string<number[]>;
   }
 }

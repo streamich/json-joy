@@ -229,4 +229,17 @@ export class ArrayType implements JsonNode {
     arr.end = curr;
     return arr;
   }
+
+  public compact(codec: ClockCodec): json_string<unknown[]> {
+    const {id, doc} = this;
+    const {nodes} = doc;
+    let str: string = '[1,' + codec.encodeTs(id);
+    let chunk: null | ArrayChunk = this.start;
+    while (chunk = chunk.right) {
+      str += ',' + codec.encodeTs(chunk.id);
+      if (chunk.values) str += ',[' + chunk.values.map(value => nodes.get(value)!.compact(codec)).join(',') + ']';
+      else str += ',' + chunk.deleted;
+    }
+    return str + ']' as json_string<Array<number | string>>;
+  }
 }

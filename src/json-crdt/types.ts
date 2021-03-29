@@ -1,5 +1,7 @@
-import {LogicalTimestamp} from "../json-crdt-patch/clock";
+import type {json_string} from "ts-brand-json";
+import type {LogicalTimestamp} from "../json-crdt-patch/clock";
 import type {Identifiable} from "../json-crdt-patch/types";
+import type {ClockCodec} from "./codec/compact/ClockCodec";
 import type {Document} from "./document";
 
 /**
@@ -27,6 +29,11 @@ export interface JsonNode extends Identifiable {
    * nodes, where those nodes are composed of more nodes.
    */
   children(): IterableIterator<LogicalTimestamp>;
+
+  /**
+   * Return compact representation of this node.
+   */
+  compact(codec: ClockCodec): json_string<unknown[]>;
 }
 
 /**

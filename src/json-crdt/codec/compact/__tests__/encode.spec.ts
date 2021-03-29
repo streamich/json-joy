@@ -12,18 +12,19 @@ describe('object', () => {
     const root = builder.root(obj);
     doc.applyPatch(builder.patch);
     const encoded = encode(doc);
+    // console.log(encoded);
     expect(JSON.parse(encoded)).toEqual([
       [
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      1, 1, 1, 3,
+      1, 1,
       [
         0,
         1, doc.clock.time - obj.time,
         'foo',
         1, doc.clock.time - insert.time,
-        TRUE_ID.sessionId, TRUE_ID.time,
+        [5],
       ],
     ]);
   });
@@ -33,6 +34,7 @@ describe('object', () => {
     doc.api.root({foo: 123}).commit();
     doc.api.root({gaga: 666}).commit();
     const encoded = encode(doc);
+    // console.log(encoded);
     const obj = doc.api.asObj([]);
     const num = doc.api.asNum(['gaga']);
     expect(JSON.parse(encoded)).toEqual([
@@ -40,19 +42,18 @@ describe('object', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      1, 1, 1, doc.clock.time - obj.id.time,
+      1, 1,
       [
         0,
         1, doc.clock.time - obj.id.time,
         'gaga',
         1, 2,
-        1, doc.clock.time - num.id.time,
-      ],
-      [
-        3,
-        1, doc.clock.time - num.id.time,
-        1, doc.clock.time - num.writeId.time,
-        num.value,
+        [
+          3,
+          1, doc.clock.time - num.id.time,
+          1, doc.clock.time - num.writeId.time,
+          num.value,
+        ],
       ],
     ]);
   });
@@ -64,13 +65,14 @@ describe('number', () => {
     const api = doc.api;
     api.root(123).commit();
     const encoded = encode(doc);
+    // console.log(encoded);
     const num = api.asNum([]);
     expect(JSON.parse(encoded)).toEqual([
       [
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      1, 1, 1, doc.clock.time - num.id.time,
+      1, 1,
       [
         3,
         1, doc.clock.time - num.id.time,
@@ -88,13 +90,14 @@ describe('number', () => {
     api.root(123).commit();
     api.root(124).commit();
     const encoded = encode(doc);
+    // console.log(encoded);
     const num = api.asNum([]);
     expect(JSON.parse(encoded)).toEqual([
       [
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      1, 1, 1, doc.clock.time - num.id.time,
+      1, 1,
       [
         3,
         1, doc.clock.time - num.id.time,
@@ -111,6 +114,7 @@ describe('array', () => {
     // doc.api.root([1, 2, {}, false, true, null, [1], []]).commit();
     doc.api.root([1]).commit();
     const encoded = encode(doc);
+    // console.log(encoded);
     const arr = doc.api.asArr([]);
     const num = doc.api.asNum([0]);
     expect(JSON.parse(encoded)).toEqual([
@@ -118,20 +122,19 @@ describe('array', () => {
         doc.clock.sessionId,
         doc.clock.time,
       ],
-      1, 1, 1, doc.clock.time - arr.id.time,
+      1, 1,
       [
         1,
         1, doc.clock.time - arr.id.time,
         1, 2,
         [
-          1, doc.clock.time - num.id.time,
+          [
+            3,
+            1, doc.clock.time - num.id.time,
+            1, doc.clock.time - num.writeId.time,
+            num.value,
+          ],
         ],
-      ],
-      [
-        3,
-        1, doc.clock.time - num.id.time,
-        1, doc.clock.time - num.writeId.time,
-        num.value,
       ],
     ]);
   });

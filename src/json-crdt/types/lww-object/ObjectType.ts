@@ -94,4 +94,13 @@ export class ObjectType implements JsonNode {
     }
     return obj;
   }
+
+  public compact(codec: ClockCodec): json_string<unknown[]> {
+    let str: string = '[0,' + codec.encodeTs(this.id);
+    for (const [key, value] of this.latest.entries()) {
+      const node = this.doc.nodes.get(value.value)!;
+      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.compact(codec);
+    }
+    return str + ']' as json_string<Array<number | string>>;
+  }
 }

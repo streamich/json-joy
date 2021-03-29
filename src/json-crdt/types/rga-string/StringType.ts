@@ -1,5 +1,7 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
+import type {ClockCodec} from '../../codec/compact/ClockCodec';
+import type {json_string} from 'ts-brand-json';
 import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
@@ -165,5 +167,11 @@ export class StringType implements JsonNode {
       curr = curr.right;
     }
     return str;
+  }
+
+  public compact(codec: ClockCodec): json_string<unknown[]> {
+    const {id} = this;
+    let str: string = '[1,' + codec.encodeTs(id);
+    return str + ']' as json_string<Array<number | string>>;
   }
 }
