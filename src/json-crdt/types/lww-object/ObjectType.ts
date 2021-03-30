@@ -8,6 +8,7 @@ import {ObjectEntry} from './ObjectEntry';
 import {asString} from 'json-schema-serializer';
 import {json_string} from 'ts-brand-json';
 import {UNDEFINED} from '../../constants';
+import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ObjectType implements JsonNode {
   private readonly latest: Map<string, ObjectEntry> = new Map();
@@ -95,12 +96,26 @@ export class ObjectType implements JsonNode {
     return obj;
   }
 
-  public compact(codec: ClockCodec): json_string<unknown[]> {
+  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
     let str: string = '[0,' + codec.encodeTs(this.id);
     for (const [key, value] of this.latest.entries()) {
       const node = this.doc.nodes.get(value.value)!;
-      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.compact(codec);
+      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.encodeCompact(codec);
     }
     return str + ']' as json_string<Array<number | string>>;
+  }
+
+  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ObjectType {
+    const length = data.length;
+    const objId = codec.decodeTs(data[1] as number, data[2] as number);
+    const obj = new ObjectType(doc, objId);
+    let i = 3;
+    for (; i < length; i++) {
+      const key = data[i++] as string;
+      const id = codec.decodeTs(data[i++] as number, data[i++] as number);
+      const value = decodeNode(doc, codec, data[i++]);
+      obj.put(key, id, value.id);
+    }
+    return obj;
   }
 }

@@ -29,21 +29,15 @@ export class NumberType implements JsonNode {
 
   public *children(): IterableIterator<LogicalTimestamp> {}
 
-  public serialize(codec: ClockCodec): json_string<Array<number>> {
-    const {id, writeId} = this;
-    return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(writeId) + ',' + this.value + ']' as json_string<Array<number>>;
-  }
-
-  public static deserialize(codec: ClockCodec, data: Array<number>): NumberType {
-    const [, sessionId, time, writeSessionId, writeTime, value] = data;
-    const id = codec.decodeTs(sessionId, time);
-    const writeId = codec.decodeTs(writeSessionId, writeTime);
-    const obj = new NumberType(id, writeId, value);
-    return obj;
-  }
-
-  public compact(codec: ClockCodec): json_string<unknown[]> {
+  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
     const {id, writeId} = this;
     return '[3,' + codec.encodeTs(id) + ',' + codec.encodeTs(writeId) + ',' + this.value + ']' as json_string<number[]>;
+  }
+
+  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): NumberType {
+    const id = codec.decodeTs(data[1] as number, data[2] as number);
+    const writeId = codec.decodeTs(data[3] as number, data[4] as number);
+    const obj = new NumberType(id, writeId, data[5] as number);
+    return obj;
   }
 }

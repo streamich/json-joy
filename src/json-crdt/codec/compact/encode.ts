@@ -12,7 +12,7 @@ export const encode = (doc: Document): json_string<unknown[]> => {
   if (!root) str += ',0';
   else {
     const node = doc.nodes.get(root.value)!;
-    str += ',' + clockCodec.encodeTs(root.id) + ',' + node.compact(clockCodec);
+    str += ',' + clockCodec.encodeTs(root.id) + ',' + node.encodeCompact(clockCodec);
   }
 
   return str + ']' as json_string<Array<number | string>>;

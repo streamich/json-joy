@@ -7,6 +7,7 @@ import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
 import {ClockCodec} from '../../codec/compact/ClockCodec';
+import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
@@ -192,32 +193,33 @@ export class ArrayType implements JsonNode {
     return str;
   }
 
-  public serialize(codec: ClockCodec): json_string<Array<number | string>> {
-    let str: string = '[1,' + codec.encodeTs(this.id);
+  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
+    const {id, doc} = this;
+    const {nodes} = doc;
+    let str: string = '[1,' + codec.encodeTs(id);
     let chunk: null | ArrayChunk = this.start;
     while (chunk = chunk.right) {
       str += ',' + codec.encodeTs(chunk.id);
-      if (chunk.values) str += ',[' + chunk.values.map(value => codec.encodeTs(value)).join(',') + ']';
+      if (chunk.values) str += ',[' + chunk.values.map(value => nodes.get(value)!.encodeCompact(codec)).join(',') + ']';
       else str += ',' + chunk.deleted;
     }
-    return str + ']' as json_string<Array<number | string>>;
+    return str + ']' as json_string<unknown[]>;
   }
 
-  public static deserialize(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
-    const [, sessionId, time] = data;
-    const id = codec.decodeTs(sessionId as number, time as number);
+  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
+    const id = codec.decodeTs(data[1] as number, data[2] as number);
     const arr = new ArrayType(doc, id);
     const length = data.length;
     let i = 3;
     let curr = arr.start;
-    for (; i < length; i++) {
+    while (i < length) {
       const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
       const content = data[i++];
       let chunk: ArrayChunk;
       if (Array.isArray(content)) {
         const values: LogicalTimestamp[] = [];
         const len = content.length;
-        let j = 0; while (j < len) values.push(codec.decodeTs(content[j++], content[j++]));
+        let j = 0; while (j < len) values.push(decodeNode(doc, codec, content[j++]).id);
         chunk = new ArrayChunk(chunkId, values);
       } else {
         chunk = new ArrayChunk(chunkId, undefined);
@@ -228,18 +230,5 @@ export class ArrayType implements JsonNode {
     }
     arr.end = curr;
     return arr;
-  }
-
-  public compact(codec: ClockCodec): json_string<unknown[]> {
-    const {id, doc} = this;
-    const {nodes} = doc;
-    let str: string = '[1,' + codec.encodeTs(id);
-    let chunk: null | ArrayChunk = this.start;
-    while (chunk = chunk.right) {
-      str += ',' + codec.encodeTs(chunk.id);
-      if (chunk.values) str += ',[' + chunk.values.map(value => nodes.get(value)!.compact(codec)).join(',') + ']';
-      else str += ',' + chunk.deleted;
-    }
-    return str + ']' as json_string<Array<number | string>>;
   }
 }

@@ -33,7 +33,7 @@ export interface JsonNode extends Identifiable {
   /**
    * Return compact representation of this node.
    */
-  compact(codec: ClockCodec): json_string<unknown[]>;
+  encodeCompact(codec: ClockCodec): json_string<unknown>;
 }
 
 /**
