@@ -48,6 +48,7 @@ test('test all operations', () => {
   builder.setNum(numId, 123.4);
   const numInsertionId = builder.insArr(arrId, arrId, [numId])
   builder.root(objId);
+  builder.const([1, 2]);
   builder.noop(1);
   builder.del(numId, numInsertionId, 1);
   builder.noop(3);
@@ -65,6 +66,7 @@ test('test all operations', () => {
     6, 123.4, -8, // num_set 3!108
     8, 1, -4, -4, -8, // arr_ins 3!109
     4, -5, // root 3!110
+    13, [1, 2],
     11, // noop (1)
     9, -8, -10, // del_one
     12, 3, // noop (3)

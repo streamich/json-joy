@@ -62,6 +62,7 @@ test('test all operations', () => {
     6, 123.4, -8, // num_set 3!108
     8, 1, -4, -4, -8, // arr_ins 3!109
     4, -5, // root 3!110
+    13, {a: 'b'},
     11, // noop (1)
     9, -8, -10, // del_one
     12, 3, // noop (3)

@@ -89,6 +89,10 @@ export const decode = (data: unknown[]): Patch => {
         builder.noop(data[i++] as number);
         break;
       }
+      case 13: {
+        builder.const(data[i++]);
+        break;
+      }
     }
   }
 
