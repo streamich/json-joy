@@ -128,6 +128,7 @@ describe('string', () => {
 describe('complex cases', () => {
   test('can encode/decode multiple times modified user object', () => {
     const doc = new Document;
+    const check = () => expect(decode(encode(doc)).toJson()).toEqual(doc.toJson());  
     doc.api.root({
       name: 'Mike Brown',
       employer: 'Filecoin Inc',
@@ -136,23 +137,30 @@ describe('complex cases', () => {
       emailVerified: false,
       email: null,
     }).commit();
+    check();
     doc.api
       .strIns(['name'], 10, ' Jr.')
       .numSet(['age'], 2077)
       .arrIns(['tags'], 0, ['Cyberpunk', 'GTA 4'])
       .commit();
+    check();
     doc.api
       .strIns(['tags', 0], 9, ' 2077')
       .arrIns(['tags'], 2, ['GTA 5'])
       .arrDel(['tags'], 2, 2)
       .commit();
+    check();
     doc.api
       .objSet([], {
         email: 'cyber.mike@gpost.com',
         emailVerified: 'likely',
       })
       .commit();
+    check();
     const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual(doc.toJson());
+    expect(decode(encode(doc2)).toJson()).toEqual(doc.toJson());
     expect(doc.toJson()).toEqual({
       name: 'Mike Brown Jr.',
       employer: 'Filecoin Inc',
@@ -161,10 +169,6 @@ describe('complex cases', () => {
       emailVerified: 'likely',
       email: 'cyber.mike@gpost.com'
     });
-    // console.log(encoded);
-    const doc2 = decode(encoded);
-    expect(doc2.toJson()).toEqual(doc.toJson());
-    expect(decode(encode(doc2)).toJson()).toEqual(doc.toJson());
   });
 });
 
