@@ -24,7 +24,7 @@ describe('object', () => {
         1, doc.clock.time - obj.time,
         'foo',
         1, doc.clock.time - insert.time,
-        [5],
+        2,
       ],
     ]);
   });

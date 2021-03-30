@@ -27,12 +27,12 @@ export class ConstantType implements JsonNode {
     return tab + 'UNKNOWN';
   }
 
-  public compact(codec: ClockCodec): json_string<unknown[]> {
+  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
     return this.comp;
   }
 }
 
-export const NULL = new ConstantType(NULL_ID, null, '[4]' as json_string<unknown[]>);
-export const TRUE = new ConstantType(TRUE_ID, true, '[5]' as json_string<unknown[]>);
-export const FALSE = new ConstantType(FALSE_ID, false, '[6]' as json_string<unknown[]>);
-export const UNDEFINED = new ConstantType(UNDEFINED_ID, undefined, '[-1]' as json_string<unknown[]>);
+export const NULL = new ConstantType(NULL_ID, null, '1' as json_string<unknown[]>);
+export const TRUE = new ConstantType(TRUE_ID, true, '2' as json_string<unknown[]>);
+export const FALSE = new ConstantType(FALSE_ID, false, '3' as json_string<unknown[]>);
+export const UNDEFINED = new ConstantType(UNDEFINED_ID, undefined, '4' as json_string<unknown[]>);
