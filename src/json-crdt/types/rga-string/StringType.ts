@@ -196,6 +196,7 @@ export class StringType implements JsonNode {
       }
       chunk.left = curr;
       curr.right = chunk;
+      curr = chunk;
     }
     arr.end = curr;
     return arr;

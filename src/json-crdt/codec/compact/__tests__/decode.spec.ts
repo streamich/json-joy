@@ -5,7 +5,7 @@ import {decode} from '../decode';
 import {TRUE_ID} from '../../../../json-crdt-patch/constants';
 
 describe('object', () => {
-  test('encodes a simple document', () => {
+  test('decodes a simple document', () => {
     const doc = new Document;
     const builder = new PatchBuilder(doc.clock);
     const obj = builder.obj();
@@ -13,26 +13,26 @@ describe('object', () => {
     const root = builder.root(obj);
     doc.applyPatch(builder.patch);
     const encoded = encode(doc);
-    console.log(encoded);
-    // const doc2 = decode(encoded);
-    // expect(doc2.toJson()).toEqual({foo: true});
-    // expect(doc2 !== doc).toBe(true);
-    // expect(doc2.clock !== doc.clock).toBe(true);
-    // expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
-    // expect(doc2.clock.time).toBe(doc.clock.time);
+    // console.log(encoded);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual({foo: true});
+    expect(doc2 !== doc).toBe(true);
+    expect(doc2.clock !== doc.clock).toBe(true);
+    expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
+    expect(doc2.clock.time).toBe(doc.clock.time);
   });
 
-  test.only('encodes object', () => {
+  test('encodes object with inner object', () => {
     const doc = new Document;
-    doc.api.root({foo: 123}).commit();
+    doc.api.root({foo: {bar: {}}}).commit();
     const encoded = encode(doc);
-    console.log(encoded);
-    // const doc2 = decode(encoded);
-    // expect(doc2.toJson()).toEqual({foo: true});
-    // expect(doc2 !== doc).toBe(true);
-    // expect(doc2.clock !== doc.clock).toBe(true);
-    // expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
-    // expect(doc2.clock.time).toBe(doc.clock.time);
+    // console.log(encoded);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual({foo: {bar: {}}});
+    expect(doc2 !== doc).toBe(true);
+    expect(doc2.clock !== doc.clock).toBe(true);
+    expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
+    expect(doc2.clock.time).toBe(doc.clock.time);
   });
 });
 
@@ -49,7 +49,7 @@ describe('number', () => {
     expect(doc2.clock.time).toBe(doc.clock.time);
   });
 
-  test('can decode number as root', () => {
+  test('can decode number in an object', () => {
     const doc = new Document;
     doc.api.root({foo: {bar: 1.2}}).commit();
     const encoded = encode(doc);
@@ -75,4 +75,35 @@ describe('array', () => {
     const doc2 = decode(encoded);
     expect(doc2.toJson()).toEqual(json);
   });
+
+  test('can decode array with in-the-middle insertion', () => {
+    const doc = new Document;
+    doc.api.root({a: [1, 2]}).commit();
+    doc.api.arrIns(['a'], 1, [3]).commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual({a: [1, 3, 2]});
+  });
 });
+
+describe('string', () => {
+  test('can decode string as root', () => {
+    const doc = new Document;
+    doc.api.root('abc').commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual('abc');
+  });
+
+  test('can decode a string with insertion at depth 2', () => {
+    const doc = new Document;
+    doc.api.root([{code: 'function () {}'}]).commit();
+    doc.api.strIns([0, 'code'], 13, ' console.log("abc"); ').commit();
+    const encoded = encode(doc);
+    // console.log(encoded);
+    expect(doc.toJson()).toEqual([ { code: 'function () { console.log("abc"); }' } ]);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual([ { code: 'function () { console.log("abc"); }' } ]);
+  });
+});
+

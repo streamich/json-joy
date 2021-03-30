@@ -405,7 +405,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(1, 2);
+      const span = node.findIdSpans(1, 2);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 1);
       expect(span[0].span).toBe(2);
@@ -419,7 +419,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(0, 2);
+      const span = node.findIdSpans(0, 2);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time);
       expect(span[0].span).toBe(2);
@@ -433,7 +433,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(2, 2);
+      const span = node.findIdSpans(2, 2);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 2);
       expect(span[0].span).toBe(2);
@@ -449,7 +449,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(2, 3);
+      const span = node.findIdSpans(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 2);
@@ -471,7 +471,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(2, 5);
+      const span = node.findIdSpans(2, 5);
       expect(span.length).toBe(3);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 2);
@@ -496,7 +496,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(2, 4);
+      const span = node.findIdSpans(2, 4);
       expect(span.length).toBe(3);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 2);
@@ -521,7 +521,7 @@ describe('Document', () => {
       builder.root(arr);
       doc.applyPatch(builder.patch);
       const node = doc.nodes.get(arr)! as ArrayType;
-      const span = node.findIdSpan(2, 3);
+      const span = node.findIdSpans(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].sessionId).toBe(ins1.sessionId);
       expect(span[0].time).toBe(ins1.time + 2);
