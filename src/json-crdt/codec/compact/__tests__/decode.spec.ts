@@ -126,7 +126,7 @@ describe('string', () => {
 });
 
 describe('complex cases', () => {
-  test('can encode/decode multiple times modified user object', () => {
+  test('can encode/decode object modified multiple times by the same user', () => {
     const doc = new Document;
     const check = () => expect(decode(encode(doc)).toJson()).toEqual(doc.toJson());  
     doc.api.root({
@@ -170,5 +170,91 @@ describe('complex cases', () => {
       email: 'cyber.mike@gpost.com'
     });
   });
-});
 
+  test('can encode/decode object modified multiple times by different users', () => {
+    const doc1 = new Document;
+    doc1.api.root({
+      name: 'Mike Brown',
+      employer: 'Filecoin Inc',
+      age: 177,
+      tags: ['News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    }).commit();
+    const doc2 = doc1.fork();
+    expect(decode(encode(doc1)).toJson()).toEqual({
+      name: 'Mike Brown',
+      employer: 'Filecoin Inc',
+      age: 177,
+      tags: ['News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    });
+    expect(decode(encode(doc2)).toJson()).toEqual({
+      name: 'Mike Brown',
+      employer: 'Filecoin Inc',
+      age: 177,
+      tags: ['News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    });
+    doc2.api
+      .strIns(['name'], 10, ' Jr.')
+      .numSet(['age'], 2077)
+      .arrIns(['tags'], 0, ['Cyberpunk', 'GTA 4'])
+      .commit();
+    const doc3 = doc2.fork();
+    expect(decode(encode(doc2)).toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: ['Cyberpunk', 'GTA 4', 'News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    });
+    expect(decode(encode(doc3)).toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: ['Cyberpunk', 'GTA 4', 'News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    });
+    doc3.api
+      .strIns(['tags', 0], 9, ' 2077')
+      .arrIns(['tags'], 2, ['GTA 5'])
+      .arrDel(['tags'], 2, 2)
+      .commit();
+    const doc4 = doc3.fork();
+    expect(decode(encode(doc3)).toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+      emailVerified: false,
+      email: null,
+    });
+    expect(decode(encode(doc4)).toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+      emailVerified: false,
+      email: null,
+    });
+    doc4.api
+      .objSet([], {
+        email: 'cyber.mike@gpost.com',
+        emailVerified: 'likely',
+      })
+      .commit();
+    expect(decode(encode(doc4)).toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+      email: 'cyber.mike@gpost.com',
+      emailVerified: 'likely',
+    });
+  });
+});

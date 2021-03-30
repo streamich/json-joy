@@ -32,7 +32,7 @@ export class ClockCodec {
     for (const c of clock.clocks.values()) {
       if (c.sessionId !== clock.sessionId) {
         str += ',' + c.sessionId + ',' + c.time;
-        this.table2.set(clock.sessionId, i++);
+        this.table2.set(c.sessionId, i++);
       }
     }
     return str + ']' as json_string<number[]>;

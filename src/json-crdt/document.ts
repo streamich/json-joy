@@ -131,8 +131,11 @@ export class Document {
   }
 
   public fork(): Document {
-    const doc = this.clone();
-    doc.clock.sessionId = random40BitInt();
+    const sessionId = random40BitInt();
+    const doc = new Document(this.clock.fork(sessionId));
+    for (const node of this.nodes.iterate()) doc.nodes.index(node.clone(doc));
+    if (this.root.last)
+      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
     return doc;
   }
 
