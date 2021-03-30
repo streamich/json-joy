@@ -12,6 +12,7 @@ import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
 import {NoopOperation} from './operations/NoopOperation';
+import {MakeConstantOperation} from './operations/MakeConstantOperation';
 
 /**
  * Draft class provides a way to build a patch for which it is not known the
@@ -54,6 +55,8 @@ export class Draft {
         patch.ops.push(new InsertStringSubstringOperation(ts(op.id), ts(op.obj), ts(op.after), op.substring));
       else if (op instanceof MakeArrayOperation)
         patch.ops.push(new MakeArrayOperation(ts(op.id)));
+      else if (op instanceof MakeConstantOperation)
+        patch.ops.push(new MakeConstantOperation(ts(op.id), op.value));
       else if (op instanceof MakeNumberOperation)
         patch.ops.push(new MakeNumberOperation(ts(op.id)));
       else if (op instanceof MakeObjectOperation)
