@@ -120,7 +120,7 @@ export class ArrayType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findIdSpan(index: number, length: number): LogicalTimespan[] {
+  public findIdSpans(index: number, length: number): LogicalTimespan[] {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;

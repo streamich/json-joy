@@ -134,7 +134,7 @@ export class DocumentApi {
 
   public arrDel(path: Path, index: number, length: number): this {
     const obj = this.asArr(path);
-    const spans = obj.findIdSpan(index, length);
+    const spans = obj.findIdSpans(index, length);
     for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
     return this;
   }

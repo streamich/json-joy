@@ -72,30 +72,6 @@ export class ObjectType implements JsonNode {
     for (const {value} of this.latest.values()) yield value;
   }
 
-  public serialize(codec: ClockCodec): json_string<Array<number | string>> {
-    const {id} = this;
-    let str: string = '[0,' + codec.encodeTs(id);
-    for (const [key, value] of this.latest.entries()) {
-      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + codec.encodeTs(value.value);
-    }
-    return str + ']' as json_string<Array<number | string>>;
-  }
-
-  public static deserialize(doc: Document, codec: ClockCodec, data: Array<number | string>): ObjectType {
-    const [, sessionId, time] = data;
-    const length = data.length;
-    const objId = codec.decodeTs(sessionId as number, time as number);
-    const obj = new ObjectType(doc, objId);
-    let i = 3;
-    for (; i < length; i++) {
-      const key = data[i++] as string;
-      const id = codec.decodeTs(data[i++] as number, data[i++] as number);
-      const value = codec.decodeTs(data[i++] as number, data[i++] as number);
-      obj.put(key, id, value);
-    }
-    return obj;
-  }
-
   public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
     let str: string = '[0,' + codec.encodeTs(this.id);
     for (const [key, value] of this.latest.entries()) {
