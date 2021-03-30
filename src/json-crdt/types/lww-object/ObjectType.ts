@@ -85,8 +85,7 @@ export class ObjectType implements JsonNode {
     const length = data.length;
     const objId = codec.decodeTs(data[1] as number, data[2] as number);
     const obj = new ObjectType(doc, objId);
-    let i = 3;
-    for (; i < length; i++) {
+    for (let i = 3; i < length;) {
       const key = data[i++] as string;
       const id = codec.decodeTs(data[i++] as number, data[i++] as number);
       const value = decodeNode(doc, codec, data[i++]);

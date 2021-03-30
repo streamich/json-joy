@@ -22,7 +22,7 @@ describe('object', () => {
     expect(doc2.clock.time).toBe(doc.clock.time);
   });
 
-  test('encodes object with inner object', () => {
+  test('decodes object with inner object', () => {
     const doc = new Document;
     doc.api.root({foo: {bar: {}}}).commit();
     const encoded = encode(doc);
@@ -33,6 +33,24 @@ describe('object', () => {
     expect(doc2.clock !== doc.clock).toBe(true);
     expect(doc2.clock.sessionId).toBe(doc.clock.sessionId);
     expect(doc2.clock.time).toBe(doc.clock.time);
+  });
+
+  test('decodes object with three keys', () => {
+    const doc = new Document;
+    doc.api.root({foo: 1, bar: 2, baz: 3}).commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc.toJson()).toEqual({foo: 1, bar: 2, baz: 3});
+    expect(doc2.toJson()).toEqual({foo: 1, bar: 2, baz: 3});
+  });
+
+  test('decodes object with no keys', () => {
+    const doc = new Document;
+    doc.api.root({}).commit();
+    const encoded = encode(doc);
+    const doc2 = decode(encoded);
+    expect(doc.toJson()).toEqual({});
+    expect(doc2.toJson()).toEqual({});
   });
 });
 
@@ -104,6 +122,49 @@ describe('string', () => {
     expect(doc.toJson()).toEqual([ { code: 'function () { console.log("abc"); }' } ]);
     const doc2 = decode(encoded);
     expect(doc2.toJson()).toEqual([ { code: 'function () { console.log("abc"); }' } ]);
+  });
+});
+
+describe('complex cases', () => {
+  test('can encode/decode multiple times modified user object', () => {
+    const doc = new Document;
+    doc.api.root({
+      name: 'Mike Brown',
+      employer: 'Filecoin Inc',
+      age: 177,
+      tags: ['News', 'Sports'],
+      emailVerified: false,
+      email: null,
+    }).commit();
+    doc.api
+      .strIns(['name'], 10, ' Jr.')
+      .numSet(['age'], 2077)
+      .arrIns(['tags'], 0, ['Cyberpunk', 'GTA 4'])
+      .commit();
+    doc.api
+      .strIns(['tags', 0], 9, ' 2077')
+      .arrIns(['tags'], 2, ['GTA 5'])
+      .arrDel(['tags'], 2, 2)
+      .commit();
+    doc.api
+      .objSet([], {
+        email: 'cyber.mike@gpost.com',
+        emailVerified: 'likely',
+      })
+      .commit();
+    const encoded = encode(doc);
+    expect(doc.toJson()).toEqual({
+      name: 'Mike Brown Jr.',
+      employer: 'Filecoin Inc',
+      age: 2077,
+      tags: [ 'Cyberpunk 2077', 'GTA 4', 'GTA 5' ],
+      emailVerified: 'likely',
+      email: 'cyber.mike@gpost.com'
+    });
+    // console.log(encoded);
+    const doc2 = decode(encoded);
+    expect(doc2.toJson()).toEqual(doc.toJson());
+    expect(decode(encode(doc2)).toJson()).toEqual(doc.toJson());
   });
 });
 
