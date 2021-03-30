@@ -66,6 +66,7 @@ test('test all operations', () => {
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
       { op: 'arr_ins', obj: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', value: [3, 104]}, // 110
+      { op: 'const', value: [true] },
       { op: 'noop' },
       { op: 'del', obj: [3, 107], after: [3, 109]}, // 111
       { op: 'noop', len: 2 },

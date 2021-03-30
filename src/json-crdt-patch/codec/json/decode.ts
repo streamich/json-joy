@@ -28,6 +28,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
         builder.num();
         break;
       }
+      case 'const': {
+        builder.const(op.value);
+        break;
+      }
       case 'root': {
         builder.root(ts(op.value));
         break;

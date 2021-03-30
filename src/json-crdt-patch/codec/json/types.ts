@@ -17,6 +17,7 @@ export type JsonCodecOperation =
   | JsonCodecMakeArrayOperation
   | JsonCodecMakeStringOperation
   | JsonCodecMakeNumberOperation
+  | JsonCodecMakeConstantOperation
   | JsonCodecSetRootOperation
   | JsonCodecSetObjectKeysOperation
   | JsonCodecSetNumberOperation
@@ -39,6 +40,11 @@ export interface JsonCodecMakeStringOperation {
 
 export interface JsonCodecMakeNumberOperation {
   op: 'num';
+}
+
+export interface JsonCodecMakeConstantOperation {
+  op: 'const';
+  value: unknown;
 }
 
 export interface JsonCodecSetRootOperation {

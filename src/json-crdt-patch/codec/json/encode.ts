@@ -3,6 +3,7 @@ import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
 import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
 import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
+import {MakeConstantOperation} from "../../operations/MakeConstantOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
@@ -40,6 +41,10 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     }
     if (op instanceof MakeNumberOperation) {
       ops.push({op: 'num'});
+      continue;
+    }
+    if (op instanceof MakeConstantOperation) {
+      ops.push({op: 'const', value: op.value});
       continue;
     }
     if (op instanceof SetRootOperation) {
