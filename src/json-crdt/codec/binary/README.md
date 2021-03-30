@@ -17,15 +17,14 @@ The general structure of the document is composed of three sections:
 
 ### The header section
 
-The header consists of a single byte.
-
-The first byte is reserved for future extensibility and is set to 0.
+The header consists of a zero bytes.
 
 
 ### The vector clock section
 
-The vector clock section starts with a variable byte unsigned integer. The value
-of this integer specifies the number of entries in the vector clock section.
+The vector clock section starts with a bvaruint integer. The boolean bit is set
+to 0. The value of this integer specifies the number of entries in the vector
+clock section.
 
 The remaining part of the vector clock section is composed of a flat ordered
 list of vector clock entries.
