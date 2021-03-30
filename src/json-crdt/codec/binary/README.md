@@ -1,9 +1,9 @@
 # JSON CRDT document binary encoding
 
-The binary encoding of a JSON CRDT document encodes that structure of the latest
-state of a JSON CRDT document, which contains all the nodes and tombstones to
-be able to merge any subsequent patches, but does not contain information to
-reconstruct previous patches.
+The binary encoding of a JSON CRDT document encodes the structure of the latest
+state of a JSON CRDT document, which contains all the nodes and tombstones
+necessary to be able to merge any subsequent patches, but does not contain
+information to reconstruct previous patches.
 
 
 ## Document structure
@@ -31,13 +31,15 @@ list of vector clock entries.
 
 Each vector clock entry consists of: (1) a session ID; and (2) sequence time.
 
-In below diagrams session ID is encoded as "x" and sequence time is encoded as "z".
+In below diagrams session ID is encoded as "x" and sequence time is encoded as
+"z".
 
 Each vector clock entry is variable length. It is at least 8 bytes long or at
 most 12 bytes long.
 
 The session ID is always encoded as a 53-bit unsigned integer. The sequence time
-is encoded as an unsigned integer of at least 10-bits to at most 39-bits in size.
+is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
+size.
 
 The "y" bit specifies whether the next byte is part of the current vector clock
 entry. If "y" is set to 1, the next byte should be read. If "y" is set to 0, no
