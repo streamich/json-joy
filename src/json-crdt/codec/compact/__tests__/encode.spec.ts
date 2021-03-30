@@ -139,3 +139,51 @@ describe('array', () => {
     ]);
   });
 });
+
+describe('string', () => {
+  test('can encode a string', () => {
+    const doc = new Document();
+    doc.api.root('aha').commit();
+    const encoded = encode(doc);
+    // console.log(encoded);
+    const str = doc.api.asStr([]);
+    expect(JSON.parse(encoded)).toEqual([
+      [
+        doc.clock.sessionId,
+        doc.clock.time,
+      ],
+      1, 1,
+      [
+        2,
+        1, doc.clock.time - str.id.time,
+        1, 4,
+        'aha',
+      ],
+    ]);
+  });
+
+  test('can encode a string of two chunks', () => {
+    const doc = new Document();
+    doc.api.root('aha').commit();
+    doc.api.strIns([], 3, ';').commit();
+    const encoded = encode(doc);
+    // console.log(encoded);
+    const str = doc.api.asStr([]);
+    expect(JSON.parse(encoded)).toEqual([
+      [
+        doc.clock.sessionId,
+        doc.clock.time,
+      ],
+      1, expect.any(Number),
+      [
+        2,
+        1, doc.clock.time - str.id.time,
+        1, 5,
+        'aha',
+        1, 1,
+        ';',
+      ],
+    ]);
+  });
+});
+
