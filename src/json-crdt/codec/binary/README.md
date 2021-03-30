@@ -160,7 +160,7 @@ Each chunk contains the bellow parts in the following order.
 
 The number node is encoded differently depending on the value of the number.
 
-If number is a signed integer and can be encoded using one byte, then the
+If the number is a signed integer and can be encoded using one byte, then the
 following encoding is used:
 
 1. First byte is set to 10.
@@ -168,7 +168,7 @@ following encoding is used:
 3. ID of the write operation, encoded as a relative ID.
 4. The number value, encoded in 1 byte.
 
-If number is a signed integer and can be encoded using two bytes, then the
+If the number is a signed integer and can be encoded using two bytes, then the
 following encoding is used:
 
 1. First byte is set to 11.
@@ -176,13 +176,45 @@ following encoding is used:
 3. ID of the write operation, encoded as a relative ID.
 4. The number value, encoded in 2 bytes.
 
-If number is a signed integer and can be encoded using four bytes, then the
+If the number is a signed integer and can be encoded using three bytes, then the
 following encoding is used:
 
 1. First byte is set to 12.
 2. ID of the number, encoded as a relative ID.
 3. ID of the write operation, encoded as a relative ID.
+4. The number value, encoded in 3 bytes.
+
+If the number is a signed integer and can be encoded using four bytes, then the
+following encoding is used:
+
+1. First byte is set to 13.
+2. ID of the number, encoded as a relative ID.
+3. ID of the write operation, encoded as a relative ID.
 4. The number value, encoded in 4 bytes.
+
+If the number is a signed integer and can be encoded using five bytes, then the
+following encoding is used:
+
+1. First byte is set to 14.
+2. ID of the number, encoded as a relative ID.
+3. ID of the write operation, encoded as a relative ID.
+4. The number value, encoded in 5 bytes.
+
+If the number is a signed integer and can be encoded using six bytes, then the
+following encoding is used:
+
+1. First byte is set to 15.
+2. ID of the number, encoded as a relative ID.
+3. ID of the write operation, encoded as a relative ID.
+4. The number value, encoded in 6 bytes.
+
+If the number can be encoded as 32-bit IEEE 754 floating point number, then the
+following encoding is used:
+
+1. First byte is set to 16.
+2. ID of the number, encoded as a relative ID.
+3. ID of the write operation, encoded as a relative ID.
+4. The number value, encoded as 4 bytes IEEE 754 number.
 
 In all other cases the following encoding is used:
 
