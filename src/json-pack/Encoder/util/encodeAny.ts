@@ -16,11 +16,11 @@ export const encodeAny = (view: DataView, offset: number, json: unknown): number
     case false: return encodeFalse(view, offset);
     case true: return encodeTrue(view, offset);
   }
+  if (json instanceof Array) return encodeArray(view, offset, json);
   switch (typeof json) {
     case 'number': return encodeNumber(view, offset, json);
     case 'string': return encodeString(view, offset, json);
     case 'object': {
-      if (json instanceof Array) return encodeArray(view, offset, json);
       if (json instanceof JsonPackValue) return writeBuffer(view, json.buf, offset);
       if (json instanceof JsonPackExtension) return encodeExtension(view, offset, json);
       if (isArrayBuffer(json)) return encodeArrayBuffer(view, offset, json);

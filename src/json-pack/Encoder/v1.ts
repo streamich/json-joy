@@ -1,12 +1,29 @@
-import {computeMaxSize} from "./util/computeMaxSize";
 import {encodeAny} from "./util/encodeAny";
 
 export class Encoder {
+  private buf!: ArrayBuffer;
+  private view!: DataView;
+
+  constructor(size: number = 1024, private readonly maxBufferSize: number = 1024 * 1024) {
+    this.allocate(size);
+  }
+
+  private allocate(size: number) {
+    this.buf = new ArrayBuffer(size);
+    this.view = new DataView(this.buf);
+  }
+
   public encode(json: unknown): ArrayBuffer {
-    const maxSize = computeMaxSize(json);
-    const buffer = new ArrayBuffer(maxSize);
-    const view = new DataView(buffer);
-    const offset = encodeAny(view, 0, json);
-    return view.buffer.slice(0, offset);
+    try {
+      return this.buf.slice(0, encodeAny(this.view, 0, json));
+    } catch (error) {
+      if (error instanceof RangeError) {
+        const nextSize = this.buf.byteLength * 2;
+        if (nextSize > this.maxBufferSize) throw error;
+        this.allocate(nextSize);
+        return this.encode(json);
+      }
+      throw error;
+    }
   }
 }
