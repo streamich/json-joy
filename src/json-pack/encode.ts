@@ -1,5 +1,6 @@
 import {computeMaxSize} from "./util/computeMaxSize";
 import {encodeString as encodeStringRaw} from "../util/encodeString";
+import {isFloat32} from "../util/isFloat32";
 
 const encodeNull = (view: DataView, offset: number): number => {
   view.setUint8(offset++, 0xc0);
@@ -73,6 +74,11 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
         return offset + 4;
       }
     }
+  }
+  if (isFloat32(num)) {
+    view.setUint8(offset++, 0xca);
+    view.setFloat32(offset, num);
+    return offset + 4;  
   }
   view.setUint8(offset++, 0xcb);
   view.setFloat64(offset, num);

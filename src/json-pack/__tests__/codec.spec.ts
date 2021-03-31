@@ -58,6 +58,14 @@ const tests: Array<{name: string, json: unknown}> = [
     name: 'negative six byte word',
     json: -0xAABBCCDDEE,
   },
+  {
+    name: 'float32',
+    json: 1.5,
+  },
+  {
+    name: 'float64',
+    json: 1.1,
+  },
 ];
 
 for (const t of tests) { 
