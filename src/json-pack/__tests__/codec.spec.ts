@@ -30,6 +30,34 @@ const tests: Array<{name: string, json: unknown}> = [
     name: 'eight byte word',
     json: 0x74747474239,
   },
+  {
+    name: 'small negative integer',
+    json: -15,
+  },
+  {
+    name: 'small negative char',
+    json: -100,
+  },
+  {
+    name: 'small negative char at boundary',
+    json: -127,
+  },
+  {
+    name: 'small negative char at boundary - 2',
+    json: -128,
+  },
+  {
+    name: 'negative two byte word',
+    json: -0x0FCD,
+  },
+  {
+    name: 'negative four byte word',
+    json: -0x0FCDAA,
+  },
+  {
+    name: 'negative six byte word',
+    json: -0xAABBCCDDEE,
+  },
 ];
 
 for (const t of tests) { 

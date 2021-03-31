@@ -49,6 +49,29 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
         view.setUint32(offset, lo32);
         return offset + 4;
       }
+    } else {
+      if (num > -0x7F) {
+        view.setUint8(offset++, 0xd0);
+        view.setInt8(offset++, num);
+        return offset;
+      } else if (num > -0x7FFF) {
+        view.setUint8(offset++, 0xd1);
+        view.setInt16(offset, num);
+        return offset + 2;
+      } else if (num > -0x7FFFFFFF) {
+        view.setUint8(offset++, 0xd2);
+        view.setInt32(offset, num);
+        return offset + 4;
+      } else {
+        let lo32 = num | 0;
+        if (lo32 < 0) lo32 += 4294967296;
+        const hi32 = (num - lo32) / 4294967296;
+        view.setUint8(offset++, 0xd3);
+        view.setInt32(offset, hi32);
+        offset += 4;
+        view.setInt32(offset, lo32);
+        return offset + 4;
+      }
     }
   }
   view.setUint8(offset++, 0xcb);
