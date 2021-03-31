@@ -1,3 +1,4 @@
+import {decodeString} from "../../../util/decodeString";
 import {LogicalClock, LogicalTimestamp} from "../../clock";
 import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
@@ -28,11 +29,6 @@ export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimesta
   time += o5;
   return new LogicalTimestamp(sessionId, time);
 };
-
-const textDecoder: TextDecoder | null = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
-export const decodeString = textDecoder
-  ? (buf: ArrayBuffer, offset: number, length: number): string => textDecoder.decode(buf.slice(offset, offset + length))
-  : (buf: ArrayBuffer, offset: number, length: number): string => Buffer.from(buf).slice(offset, offset + length).toString();
 
 export const decode = (buf: Uint8Array): Patch => {
   const id = decodeTimestamp(buf, 0);

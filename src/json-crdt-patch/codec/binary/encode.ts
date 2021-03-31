@@ -1,4 +1,4 @@
-import {encodeString} from "../../../util/binary";
+import {encodeString} from "../../../util/encodeString";
 import {LogicalTimestamp} from "../../clock";
 import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";

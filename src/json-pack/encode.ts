@@ -1,5 +1,5 @@
 import {computeMaxSize} from "./util/computeMaxSize";
-import {encodeString as encodeStringRaw} from "../util/binary";
+import {encodeString as encodeStringRaw} from "../util/encodeString";
 
 const encodeNull = (view: DataView, offset: number): number => {
   view.setUint8(offset++, 0xc0);
