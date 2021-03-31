@@ -131,8 +131,8 @@ const encodeObject = (view: DataView, offset: number, obj: Record<string, unknow
 const encodeArrayBuffer = (view: DataView, offset: number, buf: ArrayBuffer): number => {
   const length = buf.byteLength
   if (length <= 0xFF) {
-    view.setUint8(offset++, 0xc4);
-    view.setUint8(offset++, length);
+    view.setUint16(offset, (0xc4 << 8) | length);
+    offset += 2;
     const dest = new Uint8Array(view.buffer);
     const src = new Uint8Array(buf);
     dest.set(src, offset);
