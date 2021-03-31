@@ -155,3 +155,75 @@ describe('array', () => {
     expect(res[0]).toEqual(arr);
   });
 });
+
+describe('object', () => {
+  test('can decode empty object', () => {
+    const obj = {};
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode simple object', () => {
+    const obj = {foo: 'bar'};
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 15 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 15; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 16 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 16; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 32 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 32; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 255 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 255; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 256 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 256; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 0xFFFF key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 0xFFFF; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+
+  test('can decode 0xFFFF + 1 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res[0]).toEqual(obj);
+  });
+});

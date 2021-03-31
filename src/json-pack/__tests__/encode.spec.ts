@@ -171,6 +171,33 @@ describe('object', () => {
     expect([...new Uint8Array(buf)]).toEqual([0b10000001, 0b10100001, 97, 1]);
   });
 
+  test('encodes simple object', () => {
+    const obj = { '0': 0, '1': 100, '2': 200, '3': 300 };
+    const buf = encode(obj);
+    const view = new DataView(buf);
+    expect(view.getUint8(0)).toBe(0b10000100);
+    
+    expect(view.getUint8(1)).toBe(0b10100001);
+    expect(view.getUint8(2)).toBe(48);
+    expect(view.getUint8(3)).toBe(0);
+
+    expect(view.getUint8(4)).toBe(0b10100001);
+    expect(view.getUint8(5)).toBe(49);
+    expect(view.getUint8(6)).toBe(100);
+
+    expect(view.getUint8(7)).toBe(0b10100001);
+    expect(view.getUint8(8)).toBe(50);
+    expect(view.getUint8(9)).toBe(0xcb);
+    expect(view.getFloat64(10)).toBe(200);
+
+    expect(view.getUint8(18)).toBe(0b10100001);
+    expect(view.getUint8(19)).toBe(51);
+    expect(view.getUint8(20)).toBe(0xcb);
+    expect(view.getFloat64(21)).toBe(300);
+
+    expect(buf.byteLength).toBe(29);
+  });
+
   test('encodes object with 15 keys', () => {
     const buf = encode({
       1: 1,
