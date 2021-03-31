@@ -187,15 +187,15 @@ describe('object', () => {
 
     expect(view.getUint8(7)).toBe(0b10100001);
     expect(view.getUint8(8)).toBe(50);
-    expect(view.getUint8(9)).toBe(0xcb);
-    expect(view.getFloat64(10)).toBe(200);
+    expect(view.getUint8(9)).toBe(0xcc);
+    expect(view.getUint8(10)).toBe(200);
 
-    expect(view.getUint8(18)).toBe(0b10100001);
-    expect(view.getUint8(19)).toBe(51);
-    expect(view.getUint8(20)).toBe(0xcb);
-    expect(view.getFloat64(21)).toBe(300);
+    expect(view.getUint8(11)).toBe(0b10100001);
+    expect(view.getUint8(12)).toBe(51);
+    expect(view.getUint8(13)).toBe(0xcd);
+    expect(view.getUint16(14)).toBe(300);
 
-    expect(buf.byteLength).toBe(29);
+    expect(buf.byteLength).toBe(16);
   });
 
   test('encodes object with 15 keys', () => {
