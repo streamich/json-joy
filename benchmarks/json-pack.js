@@ -14,11 +14,11 @@ const patch = [
     json: {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
       author: {
-        name: 'John',
+        name: 'John 💪',
         handle: '@johny',
       },
       lastSeen: -12345,
-      tags: [null, 'Sports', 'Personal', 'Travel'],
+      tags: [null, 'Sports 🏀', 'Personal', 'Travel'],
       pins: [{
         id: 1239494
       }],
@@ -32,7 +32,7 @@ const patch = [
       ],
       hasRetweets: false,
       approved: true,
-      likes: 33,
+      '👍': 33,
     },
   }},
 ];
