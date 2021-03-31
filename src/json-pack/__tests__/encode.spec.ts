@@ -95,3 +95,65 @@ describe('string', () => {
     expect(view.getUint32(1)).toBe(0xFFFF + 1);
   });
 });
+
+describe('array', () => {
+  test('encodes empty array', () => {
+    const buf = encode([]);
+    expect(buf.byteLength).toBe(1);
+    expect([...new Uint8Array(buf)]).toEqual([0b10010000]);
+  });
+
+  test('encodes one element array', () => {
+    const buf = encode([1]);
+    expect(buf.byteLength).toBe(2);
+    expect([...new Uint8Array(buf)]).toEqual([0b10010001, 1]);
+  });
+
+  test('encodes three element array', () => {
+    const buf = encode([1, 2, 3]);
+    expect(buf.byteLength).toBe(4);
+    expect([...new Uint8Array(buf)]).toEqual([0b10010011, 1, 2, 3]);
+  });
+
+  test('encodes 15 element array', () => {
+    const arr = '1'.repeat(15).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(16);
+    expect([...new Uint8Array(buf)]).toEqual([0b10011111, ...arr]);
+  });
+
+  test('encodes 16 element array', () => {
+    const arr = '2'.repeat(16).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(19);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 16,...arr]);
+  });
+
+  test('encodes 255 element array', () => {
+    const arr = '3'.repeat(255).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(1 + 2 + 255);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 255,...arr]);
+  });
+
+  test('encodes 256 element array', () => {
+    const arr = '3'.repeat(256).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(1 + 2 + 256);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 1, 0,...arr]);
+  });
+
+  test('encodes 0xFFFF element array', () => {
+    const arr = '3'.repeat(0xFFFF).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(1 + 2 + 0xFFFF);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0xFF, 0xFF,...arr]);
+  });
+
+  test('encodes 0xFFFF + 1 element array', () => {
+    const arr = '3'.repeat(0xFFFF + 1).split('').map(Number);
+    const buf = encode(arr);
+    expect(buf.byteLength).toBe(1 + 4 + 0xFFFF + 1);
+    expect([...new Uint8Array(buf)]).toEqual([0xdd, 0, 1, 0, 0,...arr]);
+  });
+});
