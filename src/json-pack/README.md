@@ -2,7 +2,7 @@
 
 Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack/blob/master/spec.md) codec.
 
-- Fast, fastest implementation of MsgPack in JavaScript.
+- Fast, fastest implementation of MessagePack in JavaScript.
 - Small footprint, small bundle size.
 - Works in Node.js and browser.
 - Supports binary fields.
@@ -11,14 +11,17 @@ Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack
 
 ## Benchmarks
 
-1.5x slower than `JSON.stringify`, but 3x faster than closest competition.
+Faster than `JSON.stringify`:
 
 ```
 node benchmarks/json-pack.js 
-JSON.stringify x 247,421 ops/sec ±1.12% (89 runs sampled), 4042 ns/op
-json-pack x 150,702 ops/sec ±1.06% (86 runs sampled), 6636 ns/op
-msgpack-lite x 55,116 ops/sec ±1.24% (88 runs sampled), 18144 ns/op
-msgpack5 x 13,023 ops/sec ±0.80% (91 runs sampled), 76789 ns/op
+json-joy/json-pack x 264,636 ops/sec ±0.83% (86 runs sampled), 3779 ns/op
+JSON.stringify x 231,641 ops/sec ±1.15% (93 runs sampled), 4317 ns/op
+@msgpack/msgpack x 163,779 ops/sec ±1.62% (90 runs sampled), 6106 ns/op
+msgpack-lite x 43,798 ops/sec ±1.75% (89 runs sampled), 22832 ns/op
+msgpack x 27,162 ops/sec ±0.80% (87 runs sampled), 36816 ns/op
+msgpack5 x 10,994 ops/sec ±0.70% (89 runs sampled), 90963 ns/op
+messagepack x 6,590 ops/sec ±2.89% (78 runs sampled), 151754 ns/op
 ```
 
 

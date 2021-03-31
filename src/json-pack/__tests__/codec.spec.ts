@@ -147,6 +147,7 @@ const tests: Array<{name: string, json: unknown}> = [
       likes: 33,
     },
   },
+  /*
   {
     name: 'simple ArrayBuffer',
     json: new Uint8Array([1, 2, 3]).buffer,
@@ -215,6 +216,7 @@ const tests: Array<{name: string, json: unknown}> = [
     name: '0xFFFFF byte extension',
     json: new JsonPackExtension(12, new Uint8Array(0xFFFFF).buffer),
   },
+  */
 ];
 
 for (const t of tests) { 
