@@ -1,4 +1,5 @@
 import {decodeString as decodeStringRaw} from "../util/decodeString";
+import {JsonPackExtension} from "./JsonPackExtension";
 
 const decodeString = (view: DataView, offset: number, size: number): [json: unknown, offset: number] => {
   return [decodeStringRaw(view.buffer, offset, size), offset + size];
@@ -30,6 +31,13 @@ const decodeArrayBuffer = (view: DataView, offset: number, size: number): [buf: 
   return [view.buffer.slice(offset, end), end];
 };
 
+const decodeExtension = (view: DataView, offset: number, size: number): [ext: JsonPackExtension, offset: number] => {
+  const type = view.getUint8(offset++);
+  const end = offset + size;
+  const buf = view.buffer.slice(offset, end);
+  return [new JsonPackExtension(type, buf), end];
+};
+
 export const decodeView = (view: DataView, offset: number): [json: unknown, offset: number] => {
   const byte = view.getUint8(offset++);
   switch (byte) {
@@ -53,9 +61,6 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
     case 0xdf: return decodeObject(view, offset + 4, view.getUint32(offset));
     case 0xdc: return decodeArray(view, offset + 2, view.getUint16(offset));
     case 0xdd: return decodeArray(view, offset + 4, view.getUint32(offset));
-    case 0xc4: return decodeArrayBuffer(view, offset + 1, view.getUint8(offset));
-    case 0xc5: return decodeArrayBuffer(view, offset + 2, view.getUint16(offset));
-    case 0xc6: return decodeArrayBuffer(view, offset + 4, view.getUint32(offset));
   }
   if (byte <= 0b1111111) return [byte, offset];
   switch (byte >>> 5) {
@@ -65,6 +70,19 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
   switch(byte >>> 4) {
     case 0b1000: return decodeObject(view, offset, byte & 0b1111);
     case 0b1001: return decodeArray(view, offset, byte & 0b1111);
+  }
+  switch (byte) {
+    case 0xc4: return decodeArrayBuffer(view, offset + 1, view.getUint8(offset));
+    case 0xc5: return decodeArrayBuffer(view, offset + 2, view.getUint16(offset));
+    case 0xc6: return decodeArrayBuffer(view, offset + 4, view.getUint32(offset));
+    case 0xd4: return decodeExtension(view, offset, 1);
+    case 0xd5: return decodeExtension(view, offset, 2);
+    case 0xd6: return decodeExtension(view, offset, 4);
+    case 0xd7: return decodeExtension(view, offset, 8);
+    case 0xd8: return decodeExtension(view, offset, 16);
+    case 0xc7: return decodeExtension(view, offset + 1, view.getUint8(offset));
+    case 0xc8: return decodeExtension(view, offset + 2, view.getUint16(offset));
+    case 0xc9: return decodeExtension(view, offset + 4, view.getUint32(offset));
   }
   return [undefined, offset];
 };
