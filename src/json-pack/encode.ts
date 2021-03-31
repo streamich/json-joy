@@ -1,8 +1,6 @@
 import {computeMaxSize} from "./util/computeMaxSize";
 import {encodeString as encodeStringRaw} from "../util/binary";
 
-const {isArray} = Array;
-
 const encodeNull = (view: DataView, offset: number): number => {
   view.setUint8(offset++, 0xc0);
   return offset;
@@ -96,20 +94,42 @@ const encodeArray = (view: DataView, offset: number, arr: unknown[]): number => 
   return offset;
 };
 
+const encodeObject = (view: DataView, offset: number, obj: Record<string, unknown>): number => {
+  const keys = Object.keys(obj);
+  const length = keys.length;
+  if (length <= 0b1111) {
+    view.setUint8(offset++, 0b10000000 | length);
+  } else if (length <= 0xFFFF) {
+    view.setUint8(offset++, 0xde);
+    view.setUint16(offset, length);
+    offset += 2;
+  } else if (length <= 0xFFFFFFFF) {
+    view.setUint8(offset++, 0xdf);
+    view.setUint32(offset, length);
+    offset += 4;
+  } else return offset;
+  for (let i = 0; i < length; i++) {
+    const key = keys[i];
+    offset = encodeString(view, offset, key);
+    offset = encodeAny(view, offset, obj[key]);
+  }
+  return offset;
+};
+
 const encodeAny = (view: DataView, offset: number, json: unknown): number => {
   switch (json) {
     case null: return encodeNull(view, offset);
     case false: return encodeFalse(view, offset);
     case true: return encodeTrue(view, offset);
   }
-  if (isArray(json)) return encodeArray(view, offset, json);
+  if (json instanceof Array) return encodeArray(view, offset, json);
   switch (typeof json) {
     case 'number': return encodeNumber(view, offset, json);
     case 'string': return encodeString(view, offset, json);
+    case 'object': return encodeObject(view, offset, json as Record<string, unknown>);
   }
   return offset;
 };
-
 
 export const encode = (json: unknown): ArrayBuffer => {
   const maxSize = computeMaxSize(json);
