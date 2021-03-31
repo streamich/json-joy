@@ -51,6 +51,7 @@
     "ts-brand-json": "0.1.1"
   },
   "devDependencies": {
+    "@msgpack/msgpack": "^2.5.1",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.5",
@@ -59,6 +60,8 @@
     "fast-json-patch": "^3.0.0-1",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
+    "messagepack": "^1.1.12",
+    "msgpack": "^1.0.3",
     "msgpack-lite": "^0.1.26",
     "msgpack5": "^5.3.2",
     "prettier": "^2.1.1",

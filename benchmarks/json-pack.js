@@ -2,6 +2,9 @@ const Benchmark = require('benchmark');
 const Encoder = require('../es6/json-pack').Encoder;
 const msgpack5 = require('msgpack5')().encode;
 const msgpackLite = require("msgpack-lite").encode;
+const msgpack = require('msgpack').pack;
+const messagepack = require('messagepack').encode;
+const atMsgpackMsgpack = require('@msgpack/msgpack').encode;
 
 const encoder = new Encoder();
 const jsonPack = encoder.encode.bind(encoder);
@@ -43,17 +46,26 @@ const patch = [
 const suite = new Benchmark.Suite;
 
 suite
+  .add(`json-joy/json-pack`, function() {
+    jsonPack(patch);
+  })
   .add(`JSON.stringify`, function() {
     JSON.stringify(patch);
   })
-  .add(`json-pack`, function() {
-    jsonPack(patch);
+  .add(`@msgpack/msgpack`, function() {
+    atMsgpackMsgpack(patch);
   })
   .add(`msgpack-lite`, function() {
     msgpackLite(patch);
   })
+  .add(`msgpack`, function() {
+    msgpack(patch);
+  })
   .add(`msgpack5`, function() {
     msgpack5(patch);
+  })
+  .add(`messagepack`, function() {
+    messagepack(patch);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
