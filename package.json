@@ -46,13 +46,11 @@
     "tslib": "2"
   },
   "dependencies": {
+    "fast-deep-equal": "3.1.3",
     "json-schema-serializer": "1.0.2",
-    "ts-brand-json": "0.1.1",
-    "fast-deep-equal": "3.1.3"
+    "ts-brand-json": "0.1.1"
   },
   "devDependencies": {
-    "rxjs": "6",
-    "tslib": "^2.1.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.5",
@@ -61,12 +59,16 @@
     "fast-json-patch": "^3.0.0-1",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
+    "msgpack-lite": "^0.1.26",
+    "msgpack5": "^5.3.2",
     "prettier": "^2.1.1",
     "pretty-quick": "^3.0.0",
     "rimraf": "^3.0.2",
+    "rxjs": "6",
     "semantic-release": "^17.1.1",
     "ts-jest": "^26.5.3",
     "ts-node": "^9.1.1",
+    "tslib": "^2.1.0",
     "tslint": "^6.1.3",
     "tslint-config-common": "^1.6.0",
     "typescript": "^4.2.3"
