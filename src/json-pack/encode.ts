@@ -1,6 +1,13 @@
 import {computeMaxSize} from "./util/computeMaxSize";
 import {encodeString as encodeStringRaw} from "../util/encodeString";
 import {isFloat32} from "../util/isFloat32";
+import {isArrayBuffer} from "../util/isArrayBuffer";
+
+const writeBuffer = (view: DataView, buf: ArrayBuffer, offset: number): void => {
+  const dest = new Uint8Array(view.buffer);
+  const src = new Uint8Array(buf);
+  dest.set(src, offset);
+};
 
 const encodeNull = (view: DataView, offset: number): number => {
   view.setUint8(offset++, 0xc0);
@@ -90,40 +97,28 @@ const encodeString = (view: DataView, offset: number, str: string): number => {
   const size = buf.byteLength;
   if (size <= 0b11111) {
     view.setUint8(offset++, 0b10100000 | size);
-    const dest = new Uint8Array(view.buffer);
-    const src = new Uint8Array(buf);
-    dest.set(src, offset);
-    offset += size;
-    return offset;
+    writeBuffer(view, buf, offset);
+    return offset + size;
   }
   if (size <= 0xFF) {
     view.setUint8(offset++, 0xd9);
     view.setUint8(offset++, size);
-    const dest = new Uint8Array(view.buffer);
-    const src = new Uint8Array(buf);
-    dest.set(src, offset);
-    offset += size;
-    return offset;
+    writeBuffer(view, buf, offset);
+    return offset + size;
   }
   if (size <= 0xFFFF) {
     view.setUint8(offset++, 0xda);
     view.setUint16(offset, size);
     offset += 2;
-    const dest = new Uint8Array(view.buffer);
-    const src = new Uint8Array(buf);
-    dest.set(src, offset);
-    offset += size;
-    return offset;
+    writeBuffer(view, buf, offset);
+    return offset + size;
   }
   if (size <= 0xFFFFFFFF) {
     view.setUint8(offset++, 0xdb);
     view.setUint32(offset, size);
     offset += 4;
-    const dest = new Uint8Array(view.buffer);
-    const src = new Uint8Array(buf);
-    dest.set(src, offset);
-    offset += size;
-    return offset;
+    writeBuffer(view, buf, offset);
+    return offset + size;
   }
   return offset;
 };
@@ -167,6 +162,31 @@ const encodeObject = (view: DataView, offset: number, obj: Record<string, unknow
   return offset;
 };
 
+const encodeArrayBuffer = (view: DataView, offset: number, buf: ArrayBuffer): number => {
+  const length = buf.byteLength
+  if (length <= 0xFF) {
+    view.setUint8(offset++, 0xc4);
+    view.setUint8(offset++, length);
+    const dest = new Uint8Array(view.buffer);
+    const src = new Uint8Array(buf);
+    dest.set(src, offset);
+    return offset + length;
+  } else if (length <= 0xFFFF) {
+    view.setUint8(offset++, 0xc5);
+    view.setUint16(offset, length);
+    offset += 2;
+    writeBuffer(view, buf, offset);
+    return offset + length;
+  } else if (length <= 0xFFFFFFFF) {
+    view.setUint8(offset++, 0xc6);
+    view.setUint32(offset, length);
+    offset += 4;
+    writeBuffer(view, buf, offset);
+    return offset + length;
+  }
+  return offset;
+};
+
 const encodeAny = (view: DataView, offset: number, json: unknown): number => {
   switch (json) {
     case null: return encodeNull(view, offset);
@@ -174,6 +194,7 @@ const encodeAny = (view: DataView, offset: number, json: unknown): number => {
     case true: return encodeTrue(view, offset);
   }
   if (json instanceof Array) return encodeArray(view, offset, json);
+  if (isArrayBuffer(json)) return encodeArrayBuffer(view, offset, json);
   switch (typeof json) {
     case 'number': return encodeNumber(view, offset, json);
     case 'string': return encodeString(view, offset, json);

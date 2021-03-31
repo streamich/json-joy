@@ -1,3 +1,5 @@
+import {isArrayBuffer} from "../../util/isArrayBuffer";
+
 /**
  * @param json Any JSON value
  * @returns The maximum buffer size that this JSON value could be encoded using Msgpack
@@ -14,6 +16,7 @@ export const computeMaxSize = (json: unknown): number => {
     for (let i = 0; i < len; i++) size += computeMaxSize(json[i]);
     return size;
   }
+  if (isArrayBuffer(json)) return 5 + json.byteLength;
   switch (typeof json) {
     case 'number': return 9;
     case 'string': return 5 + (json.length * 4);

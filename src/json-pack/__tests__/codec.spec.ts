@@ -123,6 +123,30 @@ const tests: Array<{name: string, json: unknown}> = [
       likes: 33,
     },
   },
+  {
+    name: 'simple ArrayBuffer',
+    json: new Uint8Array([1, 2, 3]).buffer,
+  },
+  {
+    name: 'empty ArrayBuffer',
+    json: new Uint8Array([]).buffer,
+  },
+  {
+    name: '255 byte ArrayBuffer',
+    json: new Uint8Array(255).buffer,
+  },
+  {
+    name: '256 byte ArrayBuffer',
+    json: new Uint8Array(256).buffer,
+  },
+  {
+    name: '0xFFFF byte ArrayBuffer',
+    json: new Uint8Array(0xFFFF).buffer,
+  },
+  {
+    name: '0xFFFF + 1 byte ArrayBuffer',
+    json: new Uint8Array(0xFFFF + 1).buffer,
+  },
 ];
 
 for (const t of tests) { 

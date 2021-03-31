@@ -25,6 +25,11 @@ const decodeArray = (view: DataView, offset: number, size: number): [json: unkno
   return [arr, offset];
 };
 
+const decodeArrayBuffer = (view: DataView, offset: number, size: number): [buf: ArrayBuffer, offset: number] => {
+  const end = offset + size;
+  return [view.buffer.slice(offset, end), end];
+};
+
 export const decodeView = (view: DataView, offset: number): [json: unknown, offset: number] => {
   const byte = view.getUint8(offset++);
   switch (byte) {
@@ -48,6 +53,9 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
     case 0xdf: return decodeObject(view, offset + 4, view.getUint32(offset));
     case 0xdc: return decodeArray(view, offset + 2, view.getUint16(offset));
     case 0xdd: return decodeArray(view, offset + 4, view.getUint32(offset));
+    case 0xc4: return decodeArrayBuffer(view, offset + 1, view.getUint8(offset));
+    case 0xc5: return decodeArrayBuffer(view, offset + 2, view.getUint16(offset));
+    case 0xc6: return decodeArrayBuffer(view, offset + 4, view.getUint32(offset));
   }
   if (byte <= 0b1111111) return [byte, offset];
   switch (byte >>> 5) {
