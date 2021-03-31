@@ -56,9 +56,8 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
       }
     } else {
       if (num > -0x7F) {
-        view.setUint8(offset++, 0xd0);
-        view.setInt8(offset++, num);
-        return offset;
+        view.setUint16(offset, (0xd0 << 8) | (num & 0xFF));
+        return offset + 2;
       } else if (num > -0x7FFF) {
         view.setUint8(offset++, 0xd1);
         view.setInt16(offset, num);

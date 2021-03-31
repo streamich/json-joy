@@ -36,8 +36,20 @@ const tests: Array<{name: string, json: unknown}> = [
     json: -15,
   },
   {
+    name: 'small negative integer - 2',
+    json: -1,
+  },
+  {
+    name: 'small negative integer - 3',
+    json: -2,
+  },
+  {
     name: 'small negative char',
     json: -100,
+  },
+  {
+    name: 'small negative char - 2',
+    json: -55,
   },
   {
     name: 'small negative char at boundary',
