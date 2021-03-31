@@ -27,11 +27,33 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
       view.setUint8(offset++, 0b11100000 | (-num - 1));
       return offset;
     }
+    if (num > 0) {
+      if (num <= 0xFF) {
+        view.setUint16(offset, (0xcc << 8) | num);
+        return offset + 2;
+      } else if (num <= 0xFFFF) {
+        view.setUint8(offset++, 0xcd);
+        view.setUint16(offset, num);
+        return offset + 2;
+      } else if (num <= 0xFFFFFFFF) {
+        view.setUint8(offset++, 0xce);
+        view.setUint32(offset, num);
+        return offset + 4;
+      } else {
+        let lo32 = num | 0;
+        if (lo32 < 0) lo32 += 4294967296;
+        const hi32 = (num - lo32) / 4294967296;
+        view.setUint8(offset++, 0xcf);
+        view.setUint32(offset, hi32);
+        offset += 4;
+        view.setUint32(offset, lo32);
+        return offset + 4;
+      }
+    }
   }
   view.setUint8(offset++, 0xcb);
   view.setFloat64(offset, num);
-  offset += 8;
-  return offset;
+  return offset + 8;
 };
 
 const encodeString = (view: DataView, offset: number, str: string): number => {

@@ -31,6 +31,10 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
     case 0xc0: return [null, offset];
     case 0xc2: return [false, offset];
     case 0xc3: return [true, offset];
+    case 0xcc: return [view.getUint8(offset), offset + 1];
+    case 0xcd: return [view.getUint16(offset), offset + 2];
+    case 0xce: return [view.getUint32(offset), offset + 4];
+    case 0xcf: return [view.getUint32(offset) * 4294967296 + view.getUint32(offset + 4), offset + 8];
     case 0xcb: return [view.getFloat64(offset), offset + 8];
     case 0xd9: return decodeString(view, offset + 1, view.getUint8(offset));
     case 0xda: return decodeString(view, offset + 2, view.getUint16(offset));
