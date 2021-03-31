@@ -37,7 +37,7 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
 const encodeString = (view: DataView, offset: number, str: string): number => {
   const buf = encodeStringRaw(str);
   const size = buf.byteLength;
-  if (size < 0b11111) {
+  if (size <= 0b11111) {
     view.setUint8(offset++, 0b10100000 | size);
     const dest = new Uint8Array(view.buffer);
     const src = new Uint8Array(buf);
@@ -57,6 +57,7 @@ const encodeAny = (view: DataView, offset: number, json: unknown): number => {
   }
   switch (typeof json) {
     case 'number': return encodeNumber(view, offset, json);
+    case 'string': return encodeString(view, offset, json);
   }
   return offset;
 };

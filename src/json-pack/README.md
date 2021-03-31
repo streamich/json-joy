@@ -1,6 +1,6 @@
 # JSON Pack
 
-Fast and lean implementation of [MsgPack](https://github.com/msgpack/msgpack/blob/master/spec.md) serialization.
+Fast and lean implementation of [MsgPack](https://github.com/msgpack/msgpack/blob/master/spec.md) codec.
 
 - Small footprint
 - Fast
