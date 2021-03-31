@@ -38,6 +38,14 @@ describe('number', () => {
     expect(view.getUint8(0)).toBe(0xcb);
     expect(view.getFloat64(1)).toBe(123.456789123123);
   });
+
+  test('encodes large negative integer', () => {
+    const buf = encode(-4807526976);
+    expect(buf.byteLength).toBe(9);
+    const view = new DataView(buf);
+    expect(view.getUint8(0)).toBe(0xd3);
+    expect([...(new Uint8Array(buf))]).toEqual([0xd3, 0xff, 0xff, 0xff, 0xfe, 0xe1, 0x72, 0xf5, 0xc0]);
+  });
 });
 
 describe('string', () => {

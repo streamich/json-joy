@@ -53,6 +53,12 @@ describe('number', () => {
     const res = decode(buf, 0);
     expect(res[0]).toBe(3456.12345678902234);
   });
+
+  test('can decode 8 byte negative int', () => {
+    const buf = encode(-4807526976);
+    const res = decode(buf, 0);
+    expect(res[0]).toBe(-4807526976);
+  });
 });
 
 describe('string', () => {

@@ -50,7 +50,7 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
         view.setUint8(offset++, 0xce);
         view.setUint32(offset, num);
         return offset + 4;
-      } else {
+      } else if (num <= 9007199254740991) {
         let lo32 = num | 0;
         if (lo32 < 0) lo32 += 4294967296;
         const hi32 = (num - lo32) / 4294967296;
@@ -73,12 +73,12 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
         view.setUint8(offset++, 0xd2);
         view.setInt32(offset, num);
         return offset + 4;
-      } else {
+      } else if (num >= -9007199254740991) {
+        view.setUint8(offset++, 0xd3);
         let lo32 = num | 0;
         if (lo32 < 0) lo32 += 4294967296;
         const hi32 = (num - lo32) / 4294967296;
-        view.setUint8(offset++, 0xd3);
-        view.setInt32(offset, hi32);
+        view.setUint32(offset, hi32);
         offset += 4;
         view.setInt32(offset, lo32);
         return offset + 4;
