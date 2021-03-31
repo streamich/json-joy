@@ -64,4 +64,34 @@ describe('string', () => {
     expect(buf.byteLength).toBe(32);
     expect([...new Uint8Array(buf)]).toEqual([0b10111111, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49]);
   });
+
+  test('encodes 255 char string', () => {
+    const buf = encode('a'.repeat(255));
+    expect(buf.byteLength).toBe(257);
+    expect([...new Uint8Array(buf)]).toEqual([0xd9, 255, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97]);
+  });
+
+  test('encodes 2000 char string', () => {
+    const buf = encode('ab'.repeat(1000));
+    expect(buf.byteLength).toBe(2003);
+    const view = new DataView(buf);
+    expect(view.getUint8(0)).toBe(0xda);
+    expect(view.getUint16(1)).toBe(2000);
+  });
+
+  test('encodes 0xFFFF char string', () => {
+    const buf = encode('b'.repeat(0xFFFF));
+    expect(buf.byteLength).toBe(0xFFFF + 3);
+    const view = new DataView(buf);
+    expect(view.getUint8(0)).toBe(0xda);
+    expect(view.getUint16(1)).toBe(0xFFFF);
+  });
+
+  test('encodes 0xFFFF + 1 char string', () => {
+    const buf = encode('d'.repeat(0xFFFF + 1));
+    expect(buf.byteLength).toBe(0xFFFF + 1 + 5);
+    const view = new DataView(buf);
+    expect(view.getUint8(0)).toBe(0xdb);
+    expect(view.getUint32(1)).toBe(0xFFFF + 1);
+  });
 });

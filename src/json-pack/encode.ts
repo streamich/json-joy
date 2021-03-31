@@ -45,7 +45,35 @@ const encodeString = (view: DataView, offset: number, str: string): number => {
     offset += size;
     return offset;
   }
-
+  if (size <= 0xFF) {
+    view.setUint8(offset++, 0xd9);
+    view.setUint8(offset++, size);
+    const dest = new Uint8Array(view.buffer);
+    const src = new Uint8Array(buf);
+    dest.set(src, offset);
+    offset += size;
+    return offset;
+  }
+  if (size <= 0xFFFF) {
+    view.setUint8(offset++, 0xda);
+    view.setUint16(offset, size);
+    offset += 2;
+    const dest = new Uint8Array(view.buffer);
+    const src = new Uint8Array(buf);
+    dest.set(src, offset);
+    offset += size;
+    return offset;
+  }
+  if (size <= 0xFFFFFFFF) {
+    view.setUint8(offset++, 0xdb);
+    view.setUint32(offset, size);
+    offset += 4;
+    const dest = new Uint8Array(view.buffer);
+    const src = new Uint8Array(buf);
+    dest.set(src, offset);
+    offset += size;
+    return offset;
+  }
   return offset;
 };
 
