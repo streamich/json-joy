@@ -21,6 +21,28 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
       offset += 4;
       return [decodeString(view.buffer, offset, size), offset + size];
     }
+    case 0xdc: {
+      const size = view.getUint16(offset);
+      offset += 2;
+      const arr = [];
+      for (let i = 0; i < size; i++) {
+        const [el, newOffset] = decodeView(view, offset);
+        arr.push(el);
+        offset = newOffset;
+      }
+      return [arr, offset];
+    }
+    case 0xdd: {
+      const size = view.getUint32(offset);
+      offset += 4;
+      const arr = [];
+      for (let i = 0; i < size; i++) {
+        const [el, newOffset] = decodeView(view, offset);
+        arr.push(el);
+        offset = newOffset;
+      }
+      return [arr, offset];
+    }
   }
   if (byte <= 0b1111111) return [byte, offset];
   const top3 = byte >>> 5;
@@ -36,7 +58,12 @@ export const decodeView = (view: DataView, offset: number): [json: unknown, offs
     case 0b1001: {
       const size = byte & 0b1111;
       const arr = [];
-      for (let i = 0; i < size; i++) arr.push(decodeView(view, offset))
+      for (let i = 0; i < size; i++) {
+        const [el, newOffset] = decodeView(view, offset);
+        arr.push(el);
+        offset = newOffset;
+      }
+      return [arr, offset];
     }
   }
   return [undefined, offset];
