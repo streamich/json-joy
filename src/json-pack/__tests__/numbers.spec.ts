@@ -1,5 +1,8 @@
-import {encode} from '../encode';
 import {decode} from '../decode';
+import {Encoder} from '..';
+
+const encoder = new Encoder();
+const encode = (x: unknown) => encoder.encode(x);
 
 test('unsigned integers', () => {
   let x1 = 0;

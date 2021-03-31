@@ -1,4 +1,7 @@
-import {encode} from '../encode';
+import {Encoder} from '..';
+
+const encoder = new Encoder();
+const encode = (x: unknown) => encoder.encode(x);
 
 describe('null', () => {
   test('encodes null', () => {

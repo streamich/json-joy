@@ -1,7 +1,10 @@
 const Benchmark = require('benchmark');
-const jsonPack = require('../es6/json-pack').encode;
+const Encoder = require('../es6/json-pack').Encoder;
 const msgpack5 = require('msgpack5')().encode;
 const msgpackLite = require("msgpack-lite").encode;
+
+const encoder = new Encoder();
+const jsonPack = encoder.encode.bind(encoder);
 
 const patch = [
   {op: 'add', path: '/foo/baz', value: 666},

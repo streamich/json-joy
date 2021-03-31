@@ -1,6 +1,9 @@
-import {encode} from '../encode';
 import {decode} from '../decode';
 import {JsonPackExtension} from '../JsonPackExtension';
+import {Encoder} from '..';
+
+const encoder = new Encoder();
+const encode = (x: unknown) => encoder.encode(x);
 
 const tests: Array<{name: string, json: unknown}> = [
   {

@@ -1,4 +1,4 @@
-import {encodeString as encodeStringRaw} from "../../../util/encodeString";
+import {encodeString as encodeStringRaw} from "../../../../util/encodeString";
 import {writeBuffer} from "../writeBuffer";
 
 export const encodeString = (view: DataView, offset: number, str: string): number => {

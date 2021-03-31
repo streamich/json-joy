@@ -1,4 +1,4 @@
-import {byteLength} from "../../../util/byteLength";
+import {byteLength} from "../../../../util/byteLength";
 
 export const encodeString = (view: DataView, offset: number, str: string): number => {
   const size = byteLength(str);
