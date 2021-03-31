@@ -66,6 +66,63 @@ const tests: Array<{name: string, json: unknown}> = [
     name: 'float64',
     json: 1.1,
   },
+  {
+    name: 'empty string',
+    json: '',
+  },
+  {
+    name: 'empty string in array',
+    json: [''],
+  },
+  {
+    name: 'empty string in object',
+    json: {foo: ''},
+  },
+  {
+    name: 'simple string',
+    json: 'hello world',
+  },
+  {
+    name: 'empty array',
+    json: [],
+  },
+  {
+    name: 'empty object',
+    json: {},
+  },
+  {
+    name: 'simple object',
+    json: {
+      foo: 'bar',
+      baz: ['qux'],
+    },
+  },
+  {
+    name: 'blog post',
+    json: {
+      id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+      author: {
+        name: 'John',
+        handle: '@johny',
+      },
+      lastSeen: -12345,
+      tags: [null, 'Sports', 'Personal', 'Travel'],
+      pins: [{
+        id: 1239494
+      }],
+      marks: [
+        {
+          x: 1,
+          y: 1.234545,
+          w: 0.23494,
+          h: 0,
+        }
+      ],
+      hasRetweets: false,
+      approved: true,
+      likes: 33,
+    },
+  },
 ];
 
 for (const t of tests) { 
