@@ -2,11 +2,13 @@ import {computeMaxSize} from "./util/computeMaxSize";
 import {encodeString as encodeStringRaw} from "../util/encodeString";
 import {isFloat32} from "../util/isFloat32";
 import {isArrayBuffer} from "../util/isArrayBuffer";
+import {JsonPackValue} from "./JsonPackValue";
 
-const writeBuffer = (view: DataView, buf: ArrayBuffer, offset: number): void => {
+const writeBuffer = (view: DataView, buf: ArrayBuffer, offset: number): number => {
   const dest = new Uint8Array(view.buffer);
   const src = new Uint8Array(buf);
   dest.set(src, offset);
+  return offset + buf.byteLength;
 };
 
 const encodeNull = (view: DataView, offset: number): number => {
@@ -195,6 +197,7 @@ const encodeAny = (view: DataView, offset: number, json: unknown): number => {
   }
   if (json instanceof Array) return encodeArray(view, offset, json);
   if (isArrayBuffer(json)) return encodeArrayBuffer(view, offset, json);
+  if (json instanceof JsonPackValue) return writeBuffer(view, json.buf, offset);
   switch (typeof json) {
     case 'number': return encodeNumber(view, offset, json);
     case 'string': return encodeString(view, offset, json);
