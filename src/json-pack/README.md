@@ -1,6 +1,6 @@
 # JSON Pack
 
-Fast and lean implementation of [MsgPack](https://github.com/msgpack/msgpack/blob/master/spec.md) codec.
+Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack/blob/master/spec.md) codec.
 
 - Fast, fastest implementation of MsgPack in JavaScript.
 - Small footprint, small bundle size.
@@ -10,6 +10,8 @@ Fast and lean implementation of [MsgPack](https://github.com/msgpack/msgpack/blo
 
 
 ## Benchmarks
+
+2x slower than `JSON.stringify`, but 2.5x faster than closest competition.
 
 ```
 node benchmarks/json-pack.js 
