@@ -1,3 +1,4 @@
+import {encodeString} from "../../../util/binary";
 import {LogicalTimestamp} from "../../clock";
 import {DeleteOperation} from "../../operations/DeleteOperation";
 import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
@@ -19,11 +20,6 @@ export const encodeTimestamp = ({sessionId, time}: LogicalTimestamp): [number, n
   const high8 = (sessionId - low32) / 4294967296;
   return [low32, ((high8 << 24) | time) >>> 0];
 };
-
-const textEncoder: TextEncoder | null = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null;
-export const encodeString = textEncoder
-  ? (str: string): ArrayBuffer => textEncoder.encode(str)
-  : (str: string): ArrayBuffer => Buffer.from(str);
 
 export const encode = (patch: Patch): Uint8Array => {
   const {ops} = patch;
