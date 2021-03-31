@@ -72,6 +72,14 @@ const tests: Array<{name: string, json: unknown}> = [
     json: '',
   },
   {
+    name: 'supports umlauts',
+    json: 'äbc',
+  },
+  {
+    name: 'supports emojis',
+    json: '👨‍👩‍👦‍👦',
+  },
+  {
     name: 'empty string in array',
     json: [''],
   },
