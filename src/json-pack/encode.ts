@@ -1,16 +1,10 @@
 import {computeMaxSize} from "./util/computeMaxSize";
-import {encodeString as encodeStringRaw} from "../util/encodeString";
 import {isFloat32} from "../util/isFloat32";
 import {isArrayBuffer} from "../util/isArrayBuffer";
 import {JsonPackValue} from "./JsonPackValue";
 import {JsonPackExtension} from "./JsonPackExtension";
-
-const writeBuffer = (view: DataView, buf: ArrayBuffer, offset: number): number => {
-  const dest = new Uint8Array(view.buffer);
-  const src = new Uint8Array(buf);
-  dest.set(src, offset);
-  return offset + buf.byteLength;
-};
+import {encodeString} from "./encode/encodeString";
+import {writeBuffer} from "./encode/writeBuffer";
 
 const encodeNull = (view: DataView, offset: number): number => {
   view.setUint8(offset++, 0xc0);
@@ -93,37 +87,6 @@ const encodeNumber = (view: DataView, offset: number, num: number): number => {
   view.setUint8(offset++, 0xcb);
   view.setFloat64(offset, num);
   return offset + 8;
-};
-
-const encodeString = (view: DataView, offset: number, str: string): number => {
-  const buf = encodeStringRaw(str);
-  const size = buf.byteLength;
-  if (size <= 0b11111) {
-    view.setUint8(offset++, 0b10100000 | size);
-    writeBuffer(view, buf, offset);
-    return offset + size;
-  }
-  if (size <= 0xFF) {
-    view.setUint8(offset++, 0xd9);
-    view.setUint8(offset++, size);
-    writeBuffer(view, buf, offset);
-    return offset + size;
-  }
-  if (size <= 0xFFFF) {
-    view.setUint8(offset++, 0xda);
-    view.setUint16(offset, size);
-    offset += 2;
-    writeBuffer(view, buf, offset);
-    return offset + size;
-  }
-  if (size <= 0xFFFFFFFF) {
-    view.setUint8(offset++, 0xdb);
-    view.setUint32(offset, size);
-    offset += 4;
-    writeBuffer(view, buf, offset);
-    return offset + size;
-  }
-  return offset;
 };
 
 const encodeArray = (view: DataView, offset: number, arr: unknown[]): number => {
