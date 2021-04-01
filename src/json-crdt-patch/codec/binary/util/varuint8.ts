@@ -77,6 +77,12 @@ export const encodeVarUint8 = (uint: number): number[] => {
 export const encodeVarUint8Buf = (uint: number): Uint8Array =>
   new Uint8Array(encodeVarUint8(uint));
 
+export const writeVarUint8 = (num: number, uint8: Uint8Array, offset: number): number => {
+  const octets = encodeVarUint8(num);
+  for (let i = 0; i < octets.length; i++) uint8[offset++] = octets[i];
+  return offset;
+};
+
 /**
  * @param buf Buffer from which to decode varuint8
  * @param offset Byte offset from where to start decoding
