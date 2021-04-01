@@ -5,7 +5,7 @@ import {NotificationMessage} from "./NotificationMessage";
 import {SubscribeMessage} from "./SubscribeMessage";
 import {UnsubscribeMessage} from "./UnsubscribeMessage";
 
-export type AtomicMessages =
+export type Messages =
   | CompleteMessage
   | DataMessage
   | ErrorMessage

@@ -1,10 +1,9 @@
 import {varUint8Size, writeVarUint8} from "../../json-crdt-patch/codec/binary/util/varuint8";
-import {BatchMessage} from "../messages/BatchMessage";
 import {CompleteMessage} from "../messages/CompleteMessage";
 import {DataMessage} from "../messages/DataMessage";
-import {AtomicMessages} from "../messages/types";
+import {Messages} from "../messages/types";
 
-export const encode = (message: AtomicMessages | BatchMessage): Uint8Array => {
+export const encode = (message: Messages): Uint8Array => {
   if (message instanceof CompleteMessage) {
     const payloadSize = message.payload ? message.payload.byteLength : 0;
     const bodySize = 2 + payloadSize;
