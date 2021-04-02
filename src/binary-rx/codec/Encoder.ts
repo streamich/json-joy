@@ -14,82 +14,82 @@ export class Encoder {
 
   public encode(messages: BinaryRxMessage[]): Uint8Array {
     let maxSize = 0;
-    const messageCount = messages.length;
-    for (let i = 0; i < messageCount; i++) maxSize = messages[i].maxLength();
+    const length = messages.length;
+    for (let i = 0; i < length; i++) maxSize += messages[i].maxLength();
     this.uint8 = new Uint8Array(maxSize);
     this.offset = 0;
-    for (let i = 0; i < messageCount; i++) {
+    for (let i = 0; i < length; i++) {
       const message = messages[i];
-      if (message instanceof NotificationMessage) this.writeNotifMsg(message);
-      else if (message instanceof SubscribeMessage) this.writeSubMsg(message);
-      else if (message instanceof DataMessage) this.writeDataMsg(message);
-      else if (message instanceof CompleteMessage) this.writeCompMsg(message);
-      else if (message instanceof ErrorMessage) this.writeErrMsg(message);
-      else if (message instanceof UnsubscribeMessage) this.writeUnsubMsg(message);
+      if (message instanceof NotificationMessage) this.notif(message);
+      else if (message instanceof SubscribeMessage) this.sub(message);
+      else if (message instanceof DataMessage) this.data(message);
+      else if (message instanceof CompleteMessage) this.comp(message);
+      else if (message instanceof ErrorMessage) this.err(message);
+      else if (message instanceof UnsubscribeMessage) this.unsub(message);
     }
     return this.uint8.subarray(0, this.offset);
   }
 
-  private writeNotifMsg(message: NotificationMessage) {
+  private notif(message: NotificationMessage) {
     const {method, data} = message;
     const length = data ? data.byteLength : 0;
-    this.writeHeader(MessageCode.Notification, length);
-    this.writeMethod(method);
+    this.header(MessageCode.Notification, length);
+    this.method(method);
     if (length) {
       this.uint8.set(data!, this.offset);
       this.offset += length;
     }
   }
 
-  private writeSubMsg(message: SubscribeMessage) {
+  private sub(message: SubscribeMessage) {
     const {id, method, data} = message;
     const length = data ? data.byteLength : 0;
-    this.writeHeader(MessageCode.Subscribe, length);
-    this.writeId(id);
-    this.writeMethod(method);
+    this.header(MessageCode.Subscribe, length);
+    this.id(id);
+    this.method(method);
     if (length) {
       this.uint8.set(data!, this.offset);
       this.offset += length;
     }
   }
 
-  private writeDataMsg(message: DataMessage) {
-    this.writeMsgWithId(MessageCode.Data, message.id, message.data);
+  private data(message: DataMessage) {
+    this.msgWithId(MessageCode.Data, message.id, message.data);
   }
 
-  private writeCompMsg(message: CompleteMessage) {
-    this.writeMsgWithId(MessageCode.Complete, message.id, message.data);
+  private comp(message: CompleteMessage) {
+    this.msgWithId(MessageCode.Complete, message.id, message.data);
   }
 
-  private writeErrMsg(message: ErrorMessage) {
-    this.writeMsgWithId(MessageCode.Error, message.id, message.data);
+  private err(message: ErrorMessage) {
+    this.msgWithId(MessageCode.Error, message.id, message.data);
   }
 
-  private writeUnsubMsg(message: UnsubscribeMessage) {
-    this.uint8[this.offset++] = 0b10000000;
-    this.writeId(message.id);
+  private unsub(message: UnsubscribeMessage) {
+    this.uint8[this.offset++] = MessageCode.Unsubscribe << 5;
+    this.id(message.id);
   }
 
-  private writeMsgWithId(code: MessageCode, id: number, data?: Uint8Array) {
+  private msgWithId(code: MessageCode, id: number, data?: Uint8Array) {
     const length = data ? data.byteLength : 0;
-    this.writeHeader(code, length);
-    this.writeId(id);
+    this.header(code, length);
+    this.id(id);
     if (length) {
       this.uint8.set(data!, this.offset);
       this.offset += length;
     }
   }
 
-  private writeHeader(code: MessageCode, length: number) {
+  private header(code: MessageCode, length: number) {
     this.offset = writeHeader(this.uint8, this.offset, code, length);
   }
 
-  private writeId(id: number) {
+  private id(id: number) {
     this.uint8[this.offset++] = id >>> 8;
     this.uint8[this.offset++] = id & 0xFF;
   }
 
-  private writeMethod(method: string) {
+  private method(method: string) {
     const uint8 = this.uint8;
     const length = method.length;
     let offset = this.offset;
