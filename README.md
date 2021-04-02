@@ -8,6 +8,7 @@ JSON utilities. In this package:
   - Implements additional JSON Patch operations.
 - `/json-patch-ot` &mdash; Implements *operational transformations* for JSON Patch operations.
 - `/json-rx` &mdash; Implements server and client classes for [__JSON-Rx__][json-rx] protocol. {[Docs 🚬](./docs/json-rx.md)}
+- `/binary-rx` &mdash; Implements binary version of JSON-Rx. {[Docs 🤖](./src/binary-rx/README.md)}
 - `/json-rpc` &mdash; Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
 - `/json-pack` &mdash; Fastest [__MessagePack__](https://msgpack.org/index.html) codec implementation.  {[Docs 🚀](./src/json-pack/README.md)}
 - `/json-cli` &mdash; CLI utilities. {[Docs ⛑](./docs/json-cli.md)}
