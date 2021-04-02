@@ -44,43 +44,39 @@ Variable number of bytes:
 
 Notification message consists of:
 
-1. Remote `method` name string, encoded as ASCII text.
+1. Remote `method` name string, encoded as ASCII text. Preceded with a method
+  `size` byte, encoded as unsigned integer.
 2. Optional binary payload `data`.
 
 ```
-+--------+........+--------+........+========+========+
-|000?xxxx|?xxxxxxx|?yyyyyyy|?yyyyyyy| method |  data  |
-+--------+........+--------+........+========+========+
++--------+........+--------+========+========+
+|000?xxxx|?xxxxxxx|  size  | method |  data  |
++--------+........+--------+========+========+
 ```
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes remaining length of the
-  message.
-- `y` is a variable length unsigned integer that encodes the length of the
-  `method` field.
+- `x` is a variable length unsigned integer that encodes `data` size.
 
 
 ### The subscribe message
 
 Subscribe message consists of:
 
-1. Subscription `id`, encoded as unsigned 16 bit integer.
+1. Subscription `id`, encoded as unsigned 16 bit integer. Preceded with a method
+  `size` byte, encoded as unsigned integer.
 2. Remote `method` name string, encoded as ASCII text.
 3. Optional binary payload `data`.
 
 ```
-+--------+........+--------+--------+--------+........+========+========+
-|001?xxxx|?xxxxxxx|        id       |?yyyyyyy|?yyyyyyy| method |  data  |
-+--------+........+--------+--------+--------+........+========+========+
++--------+........+--------+--------+--------+========+========+
+|001?xxxx|?xxxxxxx|        id       |  size  | method |  data  |
++--------+........+--------+--------+--------+========+========+
 ```
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes total length of the
-  message.
-- `y` is a variable length unsigned integer that encodes the length of the
-  `method` field.
+- `x` is a variable length unsigned integer that encodes `data` size.
 
 
 ### The data message
@@ -98,7 +94,7 @@ Data message consists of:
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes length of `data`.
+- `x` is a variable length unsigned integer that encodes `data` size.
 
 
 ### The complete message
@@ -116,7 +112,7 @@ Complete message consists of:
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes length of `data`.
+- `x` is a variable length unsigned integer that encodes `data` size.
 
 
 ### The un-subscribe message
@@ -147,7 +143,7 @@ Error message consists of:
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes length of `data`.
+- `x` is a variable length unsigned integer that encodes `data` size.
 
 
 ## Operational behavior
