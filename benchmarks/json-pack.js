@@ -1,13 +1,16 @@
 const Benchmark = require('benchmark');
-const Encoder = require('../es6/json-pack').Encoder;
+const Encoder2 = require('../es6/json-pack/Encoder/v2').Encoder;
+const Encoder3 = require('../es6/json-pack/Encoder/v3').Encoder;
 const msgpack5 = require('msgpack5')().encode;
 const msgpackLite = require("msgpack-lite").encode;
 const msgpack = require('msgpack').pack;
 const messagepack = require('messagepack').encode;
 const atMsgpackMsgpack = require('@msgpack/msgpack').encode;
 
-const encoder = new Encoder();
-const jsonPack = encoder.encode.bind(encoder);
+const encoder2 = new Encoder2();
+const jsonPack2 = encoder2.encode.bind(encoder2);
+const encoder3 = new Encoder3();
+const jsonPack3 = encoder3.encode.bind(encoder3);
 
 const patch = [
   {op: 'add', path: '/foo/baz', value: 666},
@@ -46,8 +49,11 @@ const patch = [
 const suite = new Benchmark.Suite;
 
 suite
-  .add(`json-joy/json-pack`, function() {
-    jsonPack(patch);
+  .add(`json-joy/json-pack (v2)`, function() {
+    jsonPack2(patch);
+  })
+  .add(`json-joy/json-pack (v3)`, function() {
+    jsonPack3(patch);
   })
   .add(`JSON.stringify`, function() {
     JSON.stringify(patch);
