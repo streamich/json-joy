@@ -31,10 +31,6 @@ describe('getHeaderSize()', () => {
   test('multiple bytes for long messages', () => {
     expect(getHeaderSize(0b1000000_1111111_0000)).toBe(3);
     expect(getHeaderSize(0b1_1000000_1111111_0000)).toBe(4);
-    expect(getHeaderSize(0b1_1111111_1000000_1111111_0000)).toBe(5);
-    expect(getHeaderSize(0b1_0000000_1111111_1000000_1111111_0000)).toBe(6);
-    expect(getHeaderSize(0b1_1010101_0000000_1111111_1000000_1111111_0000)).toBe(7);
-    expect(getHeaderSize(0b1_0101010_1010101_0000000_1111111_1000000_1111111_0000)).toBe(8);
   });
 });
 
@@ -118,22 +114,8 @@ describe('writeHeader()', () => {
     expect(uint8[6]).toBe(0);
   });
 
-  test('encodes header with length <= 0b1111111_1111111_1111111_1111111_1111 in four bytes', () => {
-    const uint8 = new Uint8Array(8);
-    const offset1 = writeHeader(uint8, 2, 0b100, 0b1_1000000_1000001_1000010_1000);
-    expect(uint8[2]).toBe(0b10011000);
-    expect(uint8[3]).toBe(0b11000010);
-    expect(uint8[4]).toBe(0b11000001);
-    expect(uint8[5]).toBe(0b11000000);
-    expect(uint8[6]).toBe(0b1);
-    expect(offset1).toBe(7);
-    expect(uint8[0]).toBe(0);
-    expect(uint8[1]).toBe(0);
-    expect(uint8[7]).toBe(0);
-  });
-
   test('throws when encoding length larger than 0b1111111_1111111_1111111_1111111_1111', () => {
     const uint8 = new Uint8Array(8);
-    expect(() => writeHeader(uint8, 2, 0b100, 0b1_1111111_1000000_1000001_1000010_1000)).toThrow();
+    expect(() => writeHeader(uint8, 2, 0b100, 0b1111111_1111111_1111111_1111111_1111)).toThrow();
   });
 });

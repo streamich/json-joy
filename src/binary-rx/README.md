@@ -148,6 +148,10 @@ Error message consists of:
 
 ## Operational behavior
 
+### Header length
+
+The maximum length of header size encoding `x` is 4 bytes.
+
 ### The `id` field
 
 The `id` field uniquely identifies an *active ID* (a request/response in-flight
