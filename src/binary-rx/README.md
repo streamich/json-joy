@@ -40,7 +40,7 @@ Variable number of bytes:
 ```
 
 
-## The notification message
+### The notification message
 
 Notification message consists of:
 
@@ -55,13 +55,13 @@ Notification message consists of:
 
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes total length of the
+- `x` is a variable length unsigned integer that encodes remaining length of the
   message.
 - `y` is a variable length unsigned integer that encodes the length of the
   `method` field.
 
 
-## The subscribe message
+### The subscribe message
 
 Subscribe message consists of:
 
@@ -83,7 +83,7 @@ Subscribe message consists of:
   `method` field.
 
 
-## The data message
+### The data message
 
 Data message consists of:
 
@@ -101,7 +101,7 @@ Data message consists of:
 - `x` is a variable length unsigned integer that encodes length of `data`.
 
 
-## The complete message
+### The complete message
 
 Complete message consists of:
 
@@ -119,7 +119,7 @@ Complete message consists of:
 - `x` is a variable length unsigned integer that encodes length of `data`.
 
 
-## The un-subscribe message
+### The un-subscribe message
 
 Un-subscribe message consists of:
 
@@ -132,7 +132,7 @@ Un-subscribe message consists of:
 ```
 
 
-## The error message
+### The error message
 
 Error message consists of:
 
@@ -148,3 +148,28 @@ Error message consists of:
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
 - `x` is a variable length unsigned integer that encodes length of `data`.
+
+
+## Operational behavior
+
+### The `id` field
+
+The `id` field uniquely identifies an *active ID* (a request/response in-flight
+or an active subscription). It is chosen to be encoded as 2 bytes as a compromise
+between: (1) it should consume as little bytes on the wire as possible; (2) it
+should be big enough to be able to support a reasonable number of active IDs for
+a typical server-client application.
+
+The `id` field typically starts from 0, and for each new subscribe message the
+client increments it by one. Once the `id` reaches 65535, it is reset back to
+zero.
+
+Both, client and server, know the set of active IDs.
+
+The client must check for all currently active IDs when generating a new ID, if
+the generated ID collides with an already active ID, the client must skip that
+ID and try the next one.
+
+If the server receives a new subscribe message with ID which collides with an
+active ID, it should stop processing and purge the existing subscription with
+that ID and then process the new subscribe message with that ID as usual.
