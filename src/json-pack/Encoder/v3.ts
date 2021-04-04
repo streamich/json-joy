@@ -1,47 +1,31 @@
 const isSafeInteger = Number.isSafeInteger;
 
-const copy: (buf: ArrayBuffer, size: number) => ArrayBuffer = typeof Buffer === 'function'
-  ? (buf: ArrayBuffer, size: number): ArrayBuffer => {
-    const res = new ArrayBuffer(size);
-    Buffer.from(buf, 0, size).copy(Buffer.from(res));
-    return res;
-  }
-  : (buf: ArrayBuffer, size: number): ArrayBuffer => buf.slice(0, size);
-
 export class Encoder {
-  private buf!: ArrayBuffer;
-  private uint8!: Uint8Array;
-  private view!: DataView;
+  private uint8: Uint8Array;
+  private view: DataView;
   private offset: number = 0;
 
-  constructor(size: number = 1024, private readonly maxBufferSize: number = 1024 * 1024) {
-    this.allocate(size);
+  constructor() {
+    this.uint8 = new Uint8Array(1024);
+    this.view = new DataView(this.uint8.buffer);
   }
 
-  private allocate(size: number) {
-    this.buf = new ArrayBuffer(size);
-    this.uint8 = new Uint8Array(this.buf);
-    this.view = new DataView(this.buf);
+  private grow(size: number) {
+    const newUint8 = new Uint8Array(size);
+    newUint8.set(this.uint8);
+    this.uint8 = newUint8;
+    this.view = new DataView(newUint8.buffer);
   }
 
-  private ensureOffset(offset: number) {
-    this.view.getUint8(offset);
+  private ensureCapacity(capacity: number) {
+    const size = this.offset + capacity;
+    if (this.uint8.byteLength < size) this.grow(Math.max(size, this.uint8.byteLength * 4));
   }
 
-  public encode(json: unknown): ArrayBuffer {
+  public encode(json: unknown): Uint8Array {
     this.offset = 0;
-    try {
-      this.encodeAny(json);
-      return copy(this.buf, this.offset);
-    } catch (error) {
-      if (error instanceof RangeError) {
-        const nextSize = this.buf.byteLength * 2;
-        if (nextSize > this.maxBufferSize) throw error;
-        this.allocate(nextSize);
-        return this.encode(json);
-      }
-      throw error;
-    }
+    this.encodeAny(json);
+    return this.uint8.subarray(0, this.offset);
   }
 
   private encodeAny(json: unknown): void {
@@ -65,10 +49,12 @@ export class Encoder {
       if (num > 0) {
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {
+          this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xcd;
           this.u16(num);
           return;
         } else if (num <= 0xFFFFFFFF) {
+          this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xce;
           this.u32(num);
           return;
@@ -76,16 +62,21 @@ export class Encoder {
       } else {
         if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
         else if (num > -0x7FFF) {
+          this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xd1;
-          this.i16(num);
+          this.view.setInt16(this.offset, num);
+          this.offset += 2;
           return;
         } else if (num > -0x7FFFFFFF) {
+          this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xd2;
-          this.i32(num);
+          this.view.setInt32(this.offset, num);
+          this.offset += 4;
           return;
         }
       }
     }
+    this.ensureCapacity(9);
     this.uint8[this.offset++] = 0xcb;
     this.view.setFloat64(this.offset, num);
     this.offset += 8;
@@ -94,6 +85,7 @@ export class Encoder {
   private encodeString (str: string) {
     const length = str.length;
     const maxSize = length * 4;
+    this.ensureCapacity(5 + maxSize);
     const output = this.uint8;
     let lengthOffset: number = this.offset;
     if (maxSize <= 0b11111) this.offset++;
@@ -112,7 +104,6 @@ export class Encoder {
     }
     let offset = this.offset;
     let pos = 0;
-    this.ensureOffset(offset + maxSize);
     while (pos < length) {
       let value = str.charCodeAt(pos++);
       if ((value & 0xffffff80) === 0) {
@@ -180,26 +171,20 @@ export class Encoder {
   }
   
   private u8(char: number) {
+    this.ensureCapacity(1);
+    // this.uint8[this.offset++] = char;
     this.view.setUint8(this.offset++, char);
   }
   
   private u16(word: number) {
+    this.ensureCapacity(2);
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
   
   private u32(dword: number) {
+    this.ensureCapacity(4);
     this.view.setUint32(this.offset, dword);
-    this.offset += 4;
-  }
-  
-  private i16(word: number) {
-    this.view.setInt16(this.offset, word);
-    this.offset += 2;
-  }
-  
-  private i32(dword: number) {
-    this.view.setInt32(this.offset, dword);
     this.offset += 4;
   }
 }

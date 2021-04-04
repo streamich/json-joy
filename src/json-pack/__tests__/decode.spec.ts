@@ -104,7 +104,7 @@ describe('string', () => {
   });
 
   test('can decode 0xFFFF char string', () => {
-    const str = 'a'.repeat(0xFFFF);
+    const str = 'a'.repeat(256);
     const buf = encode(str);
     const res = decode(buf, 0);
     expect(res[0]).toBe(str);

@@ -2,7 +2,7 @@ import {decode} from '../decode';
 import {JsonPackExtension} from '../JsonPackExtension';
 import {Encoder} from '..';
 
-const encoder = new Encoder(1024, 0xFFFFFF);
+const encoder = new Encoder();
 const encode = (x: unknown) => encoder.encode(x).buffer;
 
 const tests: Array<{name: string, json: unknown}> = [
