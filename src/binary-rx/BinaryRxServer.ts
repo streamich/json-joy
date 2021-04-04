@@ -4,9 +4,7 @@ import {mergeMap} from 'rxjs/operators';
 import {TimedQueue} from '../json-rx/TimedQueue';
 import {decodeCompleteMessages, Encoder} from './codec';
 import {assertName, microtask} from '../json-rx/util';
-
-const isUint8Array = (x: unknown): x is Uint8Array =>
-  x instanceof Uint8Array || Buffer.isBuffer(x);
+import {isUint8Array} from '../util/isUint8Array';
 
 type IncomingMessage = SubscribeMessage | UnsubscribeMessage | NotificationMessage;
 type OutgoingMessage = DataMessage | CompleteMessage | ErrorMessage;
