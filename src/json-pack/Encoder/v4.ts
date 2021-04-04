@@ -51,7 +51,8 @@ export class Encoder {
         else if (num <= 0xFFFF) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xcd;
-          this.u16(num);
+          this.uint8[this.offset++] = num >>> 8;
+          this.uint8[this.offset++] = num & 0xFF;
           return;
         } else if (num <= 0xFFFFFFFF) {
           this.ensureCapacity(5);
@@ -86,19 +87,19 @@ export class Encoder {
     const length = str.length;
     const maxSize = length * 4;
     this.ensureCapacity(5 + maxSize);
-    const output = this.uint8;
+    const uint8 = this.uint8;
     let lengthOffset: number = this.offset;
     if (maxSize <= 0b11111) this.offset++;
     else if (maxSize <= 0xFF) {
-      output[this.offset++] = 0xd9;
+      uint8[this.offset++] = 0xd9;
       lengthOffset = this.offset;
       this.offset++;
     } else if (maxSize <= 0xFFFF) {
-      output[this.offset++] = 0xda;
+      uint8[this.offset++] = 0xda;
       lengthOffset = this.offset;
       this.offset += 2;
     } else {
-      output[this.offset++] = 0xdb;
+      uint8[this.offset++] = 0xdb;
       lengthOffset = this.offset;
       this.offset += 4;
     }
@@ -107,10 +108,10 @@ export class Encoder {
     while (pos < length) {
       let value = str.charCodeAt(pos++);
       if ((value & 0xffffff80) === 0) {
-        output[offset++] = value;
+        uint8[offset++] = value;
         continue;
       } else if ((value & 0xfffff800) === 0) {
-        output[offset++] = ((value >> 6) & 0x1f) | 0xc0;
+        uint8[offset++] = ((value >> 6) & 0x1f) | 0xc0;
       } else {
         if (value >= 0xd800 && value <= 0xdbff) {
           if (pos < length) {
@@ -122,19 +123,19 @@ export class Encoder {
           }
         }
         if ((value & 0xffff0000) === 0) {
-          output[offset++] = ((value >> 12) & 0x0f) | 0xe0;
-          output[offset++] = ((value >> 6) & 0x3f) | 0x80;
+          uint8[offset++] = ((value >> 12) & 0x0f) | 0xe0;
+          uint8[offset++] = ((value >> 6) & 0x3f) | 0x80;
         } else {
-          output[offset++] = ((value >> 18) & 0x07) | 0xf0;
-          output[offset++] = ((value >> 12) & 0x3f) | 0x80;
-          output[offset++] = ((value >> 6) & 0x3f) | 0x80;
+          uint8[offset++] = ((value >> 18) & 0x07) | 0xf0;
+          uint8[offset++] = ((value >> 12) & 0x3f) | 0x80;
+          uint8[offset++] = ((value >> 6) & 0x3f) | 0x80;
         }
       }
-      output[offset++] = (value & 0x3f) | 0x80;
+      uint8[offset++] = (value & 0x3f) | 0x80;
     }
     this.offset = offset;
-    if (maxSize <= 0b11111) this.view.setUint8(lengthOffset, 0b10100000 | (offset - lengthOffset - 1));
-    else if (maxSize <= 0xFF) this.view.setUint8(lengthOffset, offset - lengthOffset - 1);
+    if (maxSize <= 0b11111) uint8[lengthOffset] = 0b10100000 | (offset - lengthOffset - 1);
+    else if (maxSize <= 0xFF) uint8[lengthOffset] = offset - lengthOffset - 1;
     else if (maxSize <= 0xFFFF) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
@@ -172,7 +173,7 @@ export class Encoder {
   
   private u8(char: number) {
     this.ensureCapacity(1);
-    this.view.setUint8(this.offset++, char);
+    this.uint8[this.offset++] = char;
   }
   
   private u16(word: number) {
