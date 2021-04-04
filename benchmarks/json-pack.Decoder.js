@@ -1,6 +1,7 @@
 const Benchmark = require('benchmark');
 const Encoder = require('../es6/json-pack/Encoder').Encoder;
-const Decoder = require('../es6/json-pack/Decoder').Decoder;
+const Decoder1 = require('../es6/json-pack/Decoder/v1').Decoder;
+const Decoder2 = require('../es6/json-pack/Decoder/v2').Decoder;
 const {decode} = require("@msgpack/msgpack");
 
 const json = [
@@ -40,8 +41,10 @@ const encoder = new Encoder();
 const uint8 = encoder.encode(json);
 const str = JSON.stringify(json);
 
-const decoder = new Decoder();
-const decode1 = decoder.decode.bind(decoder);
+const decoder1 = new Decoder1();
+const decode1 = decoder1.decode.bind(decoder1);
+const decoder2 = new Decoder2();
+const decode2 = decoder2.decode.bind(decoder2);
 
 const suite = new Benchmark.Suite;
 
@@ -50,10 +53,13 @@ suite
     JSON.parse(str);
   })
   .add(`@msgpack/msgpack`, function() {
-    decode(uint8, 0);
+    decode(uint8);
   })
-  .add(`json-joy/json-pack`, function() {
+  .add(`json-joy/json-pack (v1)`, function() {
     decode1(uint8, 0);
+  })
+  .add(`json-joy/json-pack (v2)`, function() {
+    decode2(uint8, 0);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);

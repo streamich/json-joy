@@ -4,13 +4,13 @@ import {Encoder} from '../..';
 const encoder = new Encoder();
 const decoder = new Decoder();
 const encode = (x: unknown) => encoder.encode(x);
-const decode = (x: Uint8Array, offset: number) => decoder.decode(x, offset);
+const decode = (x: Uint8Array, offset: number) => decoder.decode(x);
 
 describe('null', () => {
   test('can decode null', () => {
     const buf = encode(null);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(null);
+    expect(res).toBe(null);
   });
 });
 
@@ -18,13 +18,13 @@ describe('boolean', () => {
   test('can decode false', () => {
     const buf = encode(false);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(false);
+    expect(res).toBe(false);
   });
 
   test('can decode true', () => {
     const buf = encode(true);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(true);
+    expect(res).toBe(true);
   });
 });
 
@@ -32,37 +32,37 @@ describe('number', () => {
   test('can decode positive fixint', () => {
     const buf = encode(123);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(123);
+    expect(res).toBe(123);
   });
 
   test('can decode 0', () => {
     const buf = encode(0);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(0);
+    expect(res).toBe(0);
   });
 
   test('can decode negative fixint', () => {
     const buf = encode(-1);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(-1);
+    expect(res).toBe(-1);
   });
 
   test('can decode negative fixint - 2', () => {
     const buf = encode(-32);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(-32);
+    expect(res).toBe(-32);
   });
 
   test('can decode double', () => {
     const buf = encode(3456.12345678902234);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(3456.12345678902234);
+    expect(res).toBe(3456.12345678902234);
   });
 
   test('can decode 8 byte negative int', () => {
     const buf = encode(-4807526976);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(-4807526976);
+    expect(res).toBe(-4807526976);
   });
 });
 
@@ -70,53 +70,53 @@ describe('string', () => {
   test('can decode empty string', () => {
     const buf = encode('');
     const res = decode(buf, 0);
-    expect(res[0]).toBe('');
+    expect(res).toBe('');
   });
 
   test('can decode short string', () => {
     const buf = encode('abc');
     const res = decode(buf, 0);
-    expect(res[0]).toBe('abc');
+    expect(res).toBe('abc');
   });
 
   test('can decode 31 char string', () => {
     const buf = encode('1234567890123456789012345678901');
     const res = decode(buf, 0);
-    expect(res[0]).toBe('1234567890123456789012345678901');
+    expect(res).toBe('1234567890123456789012345678901');
   });
 
   test('can decode 32 char string', () => {
     const buf = encode('12345678901234567890123456789012');
     const res = decode(buf, 0);
-    expect(res[0]).toBe('12345678901234567890123456789012');
+    expect(res).toBe('12345678901234567890123456789012');
   });
 
   test('can decode 255 char string', () => {
     const str = 'a'.repeat(255);
     const buf = encode(str);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(str);
+    expect(res).toBe(str);
   });
 
   test('can decode 256 char string', () => {
     const str = 'a'.repeat(256);
     const buf = encode(str);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(str);
+    expect(res).toBe(str);
   });
 
   test('can decode 0xFFFF char string', () => {
     const str = 'a'.repeat(256);
     const buf = encode(str);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(str);
+    expect(res).toBe(str);
   });
 
   test('can decode 0xFFFF + 1 char string', () => {
     const str = 'a'.repeat(0xFFFF + 1);
     const buf = encode(str);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(str);
+    expect(res).toBe(str);
   });
 });
 
@@ -124,46 +124,46 @@ describe('array', () => {
   test('can decode empty array', () => {
     const buf = encode([]);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual([]);
+    expect(res).toEqual([]);
   });
 
   test('can decode one element array', () => {
     const buf = encode(['abc']);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(['abc']);
+    expect(res).toEqual(['abc']);
   });
 
   test('can decode 15 element array', () => {
     const buf = encode([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+    expect(res).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
   });
 
   test('can decode 16 element array', () => {
     const buf = encode([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    expect(res).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
   });
 
   test('can decode 255 element array', () => {
     const arr = '3'.repeat(256).split('').map(Number);
     const buf = encode(arr);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(arr);
+    expect(res).toEqual(arr);
   });
 
   test('can decode 0xFFFF element array', () => {
     const arr = '3'.repeat(0xFFFF).split('').map(Number);
     const buf = encode(arr);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(arr);
+    expect(res).toEqual(arr);
   });
 
   test('can decode 0xFFFF + 1 element array', () => {
     const arr = '3'.repeat(0xFFFF + 1).split('');
     const buf = encode(arr);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(arr);
+    expect(res).toEqual(arr);
   });
 });
 
@@ -172,14 +172,14 @@ describe('object', () => {
     const obj = {};
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode simple object', () => {
     const obj = {foo: 'bar'};
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 15 key object', () => {
@@ -187,7 +187,7 @@ describe('object', () => {
     for (let i = 0; i < 15; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 16 key object', () => {
@@ -195,7 +195,7 @@ describe('object', () => {
     for (let i = 0; i < 16; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 32 key object', () => {
@@ -203,7 +203,7 @@ describe('object', () => {
     for (let i = 0; i < 32; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 255 key object', () => {
@@ -211,7 +211,7 @@ describe('object', () => {
     for (let i = 0; i < 255; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 256 key object', () => {
@@ -219,7 +219,7 @@ describe('object', () => {
     for (let i = 0; i < 256; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 0xFFFF key object', () => {
@@ -227,7 +227,7 @@ describe('object', () => {
     for (let i = 0; i < 0xFFFF; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 
   test('can decode 0xFFFF + 1 key object', () => {
@@ -235,6 +235,6 @@ describe('object', () => {
     for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
-    expect(res[0]).toEqual(obj);
+    expect(res).toEqual(obj);
   });
 });
