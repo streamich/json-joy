@@ -5,12 +5,23 @@ import {TimedQueue} from '../json-rx/TimedQueue';
 import {decodeCompleteMessages, Encoder} from './codec';
 import {assertName, microtask} from '../json-rx/util';
 
+const isUint8Array = (x: unknown): x is Uint8Array =>
+  x instanceof Uint8Array || Buffer.isBuffer(x);
+
 type IncomingMessage = SubscribeMessage | UnsubscribeMessage | NotificationMessage;
 type OutgoingMessage = DataMessage | CompleteMessage | ErrorMessage;
 
-const ERR_UNKNOWN = new Uint8Array([0]);
-const ERR_ID_TAKEN = new Uint8Array([1]);
-const ERR_TOO_MANY_SUBSCRIPTIONS = new Uint8Array([2]);
+export const enum BinaryRxServerError {
+  Unknown = 0,
+  IdTaken = 1,
+  TooManySubscriptions = 2,
+  InvalidData = 3,
+}
+
+const ERR_UNKNOWN = new Uint8Array([BinaryRxServerError.Unknown]);
+const ERR_ID_TAKEN = new Uint8Array([BinaryRxServerError.IdTaken]);
+const ERR_TOO_MANY_SUBSCRIPTIONS = new Uint8Array([BinaryRxServerError.TooManySubscriptions]);
+const ERR_INVALID_DATA = new Uint8Array([BinaryRxServerError.InvalidData]);
 
 export interface BinaryRxServerParams<Ctx = unknown> {
   /**
@@ -22,7 +33,7 @@ export interface BinaryRxServerParams<Ctx = unknown> {
   /**
    * Callback called on the server when user sends a subscription message.
    */
-  call: (name: string, data: Uint8Array | undefined, ctx: Ctx) => Promise<Uint8Array | Observable<Uint8Array> | Promise<Observable<Uint8Array>>>;
+  call: (name: string, data: Uint8Array | undefined, ctx: Ctx) => Promise<Uint8Array> | Observable<Uint8Array> | Promise<Observable<Uint8Array>>;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -56,7 +67,7 @@ export class BinaryRxServer<Ctx = unknown> {
   private notify: BinaryRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
   private readonly maxActiveSubscriptions: number;
-  private encoder = new Encoder();
+  private readonly encoder = new Encoder();
 
   constructor({send, call, notify, maxActiveSubscriptions = 30, bufferSize = 10, bufferTime = 1}: BinaryRxServerParams<Ctx>) {
     this.call = call;
@@ -104,6 +115,7 @@ export class BinaryRxServer<Ctx = unknown> {
       let done = false;
       const subscription = observable.subscribe(
         (data: Uint8Array) => {
+          if (!isUint8Array(data)) return this.sendError(id, ERR_INVALID_DATA);
           if (data === undefined) return;
           ref.buffer.push(data);
           microtask(() => {
@@ -119,7 +131,7 @@ export class BinaryRxServer<Ctx = unknown> {
         (error: unknown) => {
           done = true;
           this.active.delete(id);
-          this.sendError(id, Buffer.isBuffer(error) ? error : ERR_UNKNOWN);
+          this.sendError(id, isUint8Array(error) ? error : ERR_UNKNOWN);
         },
         () => {
           done = true;
@@ -141,7 +153,7 @@ export class BinaryRxServer<Ctx = unknown> {
       );
       if (!done) this.active.set(id, subscription);
     } catch (error) {
-      this.sendError(id, error instanceof Error ? {message: error.message} : error);
+      this.sendError(id, Buffer.isBuffer(error) ? error : ERR_UNKNOWN);
     }
   }
 
