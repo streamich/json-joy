@@ -3,7 +3,7 @@ import {JsonPackExtension} from '../JsonPackExtension';
 import {Encoder} from '..';
 
 const encoder = new Encoder(1024, 0xFFFFFF);
-const encode = (x: unknown) => encoder.encode(x);
+const encode = (x: unknown) => encoder.encode(x).buffer;
 
 const tests: Array<{name: string, json: unknown}> = [
   {

@@ -2,7 +2,7 @@ import {decode} from '../decode';
 import {Encoder} from '..';
 
 const encoder = new Encoder();
-const encode = (x: unknown) => encoder.encode(x);
+const encode = (x: unknown) => encoder.encode(x).buffer;
 
 test('unsigned integers', () => {
   let x1 = 0;

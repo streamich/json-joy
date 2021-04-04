@@ -38,9 +38,9 @@ describe('number', () => {
   });
 
   test('encodes doubles', () => {
-    const buf = encode(123.456789123123);
-    expect(buf.byteLength).toBe(9);
-    const view = new DataView(buf);
+    const arr = encode(123.456789123123);
+    expect(arr.byteLength).toBe(9);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xcb);
     expect(view.getFloat64(1)).toBe(123.456789123123);
   });
@@ -188,8 +188,8 @@ describe('object', () => {
 
   test('encodes simple object', () => {
     const obj = { '0': 0, '1': 100, '2': 200, '3': 300 };
-    const buf = encode(obj);
-    const view = new DataView(buf);
+    const arr = encode(obj);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0b10000100);
     
     expect(view.getUint8(1)).toBe(0b10100001);
@@ -210,11 +210,11 @@ describe('object', () => {
     expect(view.getUint8(13)).toBe(0xcd);
     expect(view.getUint16(14)).toBe(300);
 
-    expect(buf.byteLength).toBe(16);
+    expect(arr.byteLength).toBe(16);
   });
 
   test('encodes object with 15 keys', () => {
-    const buf = encode({
+    const arr = encode({
       1: 1,
       2: 1,
       3: 1,
@@ -231,13 +231,13 @@ describe('object', () => {
       14: 1,
       15: 1,
     });
-    expect(buf.byteLength).toBe(1 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4);
-    const view = new DataView(buf);
+    expect(arr.byteLength).toBe(1 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0b10001111);
   });
 
   test('encodes object with 16 keys', () => {
-    const buf = encode({
+    const arr = encode({
       1: 1,
       2: 1,
       3: 1,
@@ -255,8 +255,8 @@ describe('object', () => {
       15: 1,
       16: 1,
     });
-    expect(buf.byteLength).toBe(1 + 2 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4 + 4);
-    const view = new DataView(buf);
+    expect(arr.byteLength).toBe(1 + 2 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4 + 4);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(16);
   });
@@ -264,8 +264,8 @@ describe('object', () => {
   test('encodes object with 255 keys', () => {
     const obj: any = {};
     for (let i = 0; i < 255; i++) obj[String(i)] = i;
-    const buf = encode(obj);
-    const view = new DataView(buf);
+    const arr = encode(obj);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(255);
     expect(view.getUint8(3)).toBe(0b10100001);
@@ -275,8 +275,8 @@ describe('object', () => {
   test('encodes object with 0xFFFF keys', () => {
     const obj: any = {};
     for (let i = 0; i < 0xFFFF; i++) obj[String(i)] = i;
-    const buf = encode(obj);
-    const view = new DataView(buf);
+    const arr = encode(obj);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(0xFFFF);
     expect(view.getUint8(3)).toBe(0b10100001);
@@ -286,8 +286,8 @@ describe('object', () => {
   test('encodes object with 0xFFFF + 1 keys', () => {
     const obj: any = {};
     for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
-    const buf = encode(obj);
-    const view = new DataView(buf);
+    const arr = encode(obj);
+    const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xdf);
     expect(view.getUint32(1)).toBe(0xFFFF + 1);
     expect(view.getUint8(5)).toBe(0b10100001);

@@ -20,11 +20,11 @@ export class Encoder {
     this.view.getUint8(offset);
   }
 
-  public encode(json: unknown): ArrayBuffer {
+  public encode(json: unknown): Uint8Array {
     this.offset = 0;
     try {
       this.encodeAny(json);
-      return this.buf.slice(0, this.offset);
+      return this.uint8.slice(0, this.offset);
     } catch (error) {
       if (error instanceof RangeError) {
         const nextSize = this.buf.byteLength * 2;

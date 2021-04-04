@@ -2,7 +2,7 @@ import {decode} from '../decode';
 import {Encoder} from '..';
 
 const encoder = new Encoder();
-const encode = (x: unknown) => encoder.encode(x);
+const encode = (x: unknown) => encoder.encode(x).buffer;
 
 describe('null', () => {
   test('can decode null', () => {

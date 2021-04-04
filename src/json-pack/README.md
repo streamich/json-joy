@@ -15,13 +15,13 @@ Faster than `JSON.stringify`:
 
 ```
 node benchmarks/json-pack.js 
-json-joy/json-pack x 292,094 ops/sec ±0.58% (91 runs sampled), 3424 ns/op
-JSON.stringify x 252,531 ops/sec ±0.88% (94 runs sampled), 3960 ns/op
-@msgpack/msgpack x 195,198 ops/sec ±0.82% (91 runs sampled), 5123 ns/op
-msgpack-lite x 56,574 ops/sec ±1.54% (89 runs sampled), 17676 ns/op
-msgpack x 37,120 ops/sec ±0.84% (92 runs sampled), 26940 ns/op
-msgpack5 x 14,664 ops/sec ±0.90% (90 runs sampled), 68195 ns/op
-messagepack x 7,872 ops/sec ±2.45% (81 runs sampled), 127038 ns/op
+json-joy/json-pack x 303,242 ops/sec ±1.05% (90 runs sampled), 3298 ns/op
+JSON.stringify x 249,785 ops/sec ±0.49% (87 runs sampled), 4003 ns/op
+@msgpack/msgpack x 196,933 ops/sec ±0.66% (92 runs sampled), 5078 ns/op
+msgpack-lite x 55,664 ops/sec ±1.46% (92 runs sampled), 17965 ns/op
+msgpack x 36,592 ops/sec ±0.91% (91 runs sampled), 27328 ns/op
+msgpack5 x 15,466 ops/sec ±0.55% (92 runs sampled), 64660 ns/op
+messagepack x 9,249 ops/sec ±2.33% (83 runs sampled), 108122 ns/op
 ```
 
 
