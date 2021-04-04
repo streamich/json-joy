@@ -19,7 +19,8 @@ export class Encoder {
 
   private ensureCapacity(capacity: number) {
     const size = this.offset + capacity;
-    if (this.uint8.byteLength < size) this.grow(Math.max(size, this.uint8.byteLength * 4));
+    const len = this.uint8.byteLength;
+    if (len < size) this.grow(Math.max(size, len * 4));
   }
 
   public encode(json: unknown): Uint8Array {
@@ -57,7 +58,8 @@ export class Encoder {
         } else if (num <= 0xFFFFFFFF) {
           this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xce;
-          this.u32(num);
+          this.view.setUint32(this.offset, num);
+          this.offset += 4;
           return;
         }
       } else {
