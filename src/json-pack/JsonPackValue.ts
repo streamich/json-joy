@@ -1,3 +1,3 @@
 export class JsonPackValue {
-  constructor(public readonly buf: ArrayBuffer) {}
+  constructor(public readonly buf: Uint8Array) {}
 }

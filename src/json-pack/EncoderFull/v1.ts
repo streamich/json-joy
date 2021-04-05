@@ -1,6 +1,7 @@
 import {isUint8Array} from "../../util/isUint8Array";
 import {Encoder} from "../Encoder/v4";
 import {JsonPackExtension} from "../JsonPackExtension";
+import {JsonPackValue} from "../JsonPackValue";
 
 export class EncoderFull extends Encoder {
   protected encodeAny(json: unknown): void {
@@ -14,7 +15,7 @@ export class EncoderFull extends Encoder {
       case 'number': return this.encodeNumber(json);
       case 'string': return this.encodeString(json);
       case 'object': {
-        // if (json instanceof JsonPackValue) return writeBuffer(view, json.buf, offset);
+        if (json instanceof JsonPackValue) return this.buf(json.buf, json.buf.byteLength);
         if (json instanceof JsonPackExtension) return this.ext(json);
         if (isUint8Array(json)) return this.bin(json);
         return this.encodeObject(json as Record<string, unknown>);
@@ -32,9 +33,7 @@ export class EncoderFull extends Encoder {
       this.u8(0xc6);
       this.u32(length);
     }
-    this.ensureCapacity(length);
-    this.uint8.set(buf, this.offset);
-    this.offset += length;
+    this.buf(buf, length);
   }
   
   protected ext(ext: JsonPackExtension): void {
@@ -59,13 +58,15 @@ export class EncoderFull extends Encoder {
       this.u32(length);
       this.u8(type);
     }
-    this.ensureCapacity(length);
-    this.uint8.set(buf, this.offset);
-    this.offset += length;
+    this.buf(buf, length);
   }
 
   protected ext0(buf: Uint8Array, firstTwo: number, length: number): void {
     this.u16(firstTwo);
+    this.buf(buf, length);
+  }
+
+  protected buf(buf: Uint8Array, length: number): void {
     this.ensureCapacity(length);
     this.uint8.set(buf, this.offset);
     this.offset += length;

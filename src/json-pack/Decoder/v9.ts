@@ -1,5 +1,5 @@
 import {JsonPackExtension} from "../JsonPackExtension";
-import {CachedKeyDecoder, utf8DecodeJs} from "./CachedKeyDecoder";
+import {CachedKeyDecoder} from "./CachedKeyDecoder";
 
 const sharedCachedKeyDecoder = new CachedKeyDecoder();
 

@@ -1,6 +1,7 @@
 import {JsonPackExtension} from '../../JsonPackExtension';
 import {EncoderFull} from '..';
 import {Decoder} from '../..';
+import {JsonPackValue} from '../../JsonPackValue';
 
 const encoder = new EncoderFull();
 const encode = (x: unknown) => encoder.encode(x);
@@ -49,5 +50,19 @@ describe('extensions', () => {
     expect((res as any).foo.type).toBe(32);
     expect((res as any).foo.buf).toEqual(new Uint8Array([5, 0]));
     expect((res as any).foo).toBeInstanceOf(JsonPackExtension);
+  });
+});
+
+describe('pre-computed value', () => {
+  test('can encode a pre-computed value in an object', () => {
+    const data = {foo: new JsonPackValue(encode(['gaga']))};
+    const arr = encode(data);
+    expect(arr).toEqual(encode({foo: ['gaga']}));
+  });
+
+  test('can encode a pre-computed value in an array', () => {
+    const data = {foo: [1, new JsonPackValue(encode(['gaga']))]};
+    const arr = encode(data);
+    expect(arr).toEqual(encode({foo: [1, ['gaga']]}));
   });
 });
