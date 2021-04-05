@@ -2,11 +2,12 @@
 
 Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack/blob/master/spec.md) codec.
 
-- Fast, fastest implementation of MessagePack in JavaScript.
+- Fastest implementation of MessagePack in JavaScript.
 - Small footprint, small bundle size.
 - Works in Node.js and browser.
 - Supports binary fields.
 - Supports extensions.
+- Supports precomputed MessagePack values.
 
 
 ## Benchmarks
@@ -42,52 +43,65 @@ messagepack x 2,740 ops/sec ±10.15% (49 runs sampled), 364983 ns/op
 
 ## Usage
 
-Basic usage:
+### Basic usage
+
+Use `Encoder` to encode plain JSON values.
 
 ```ts
-import {Encoder, decode} from 'json-joy/json-pack';
+import {Encoder, Decoder} from 'json-joy/json-pack';
 
 const encoder = new Encoder();
+const decoder = new Decoder();
 const buffer = encoder.encode({foo: 'bar'});
-const obj = decode(buffer);
+const obj = decoder.decode(buffer);
 
 console.log(obj); // { foo: 'bar' }
 ```
 
-Encode binary data using `ArrayBuffer`:
+Use `EncoderFull` to encode data that is more complex than plain JSON. For
+example, encode binary data using `ArrayBuffer`:
 
 ```ts
-import {Encoder, decode} from 'json-joy/json-pack';
+import {EncoderFull, Decoder} from 'json-joy/json-pack';
 
-const encoder = new Encoder();
+const encoder = new EncoderFull();
+const decoder = new Decoder();
 const buffer = encoder.encode({foo: new Uint8Array([1, 2, 3]).buffer});
-const obj = decode(buffer);
+const obj = decoder.decode(buffer);
 console.log(obj); // { foo: ArrayBuffer { [1, 2, 3] } }
 ```
 
-Encode Msgpack value as is:
+
+### Pre-computed values
+
+You might have already encoded MessagePack value, to insert it into a bigger
+MessagePack object as-is use `JsonPackValue` wrapper.
 
 ```ts
-import {Encoder, decode, JsonPackValue} from 'json-joy/json-pack';
+import {EncoderFull, Decoder, JsonPackValue} from 'json-joy/json-pack';
 
-const encoder = new Encoder();
+const encoder = new EncoderFull();
+const decoder = new Decoder();
 const buffer = encoder.encode({foo: 'bar'});
 const value = new JsonPackValue(buffer);
 const buffer2 = encode({baz: value});
 
-const obj = decode(buffer2);
+const obj = decoder.decode(buffer2);
 console.log(obj); // { baz: { foo: 'bar' } }
 ```
 
-Encode Msgpack extension:
+### Extensions
+
+Use `JsonPackExtension` wrapper to encode extensions.
 
 ```ts
-import {Encoder, decode, JsonPackExtension} from 'json-joy/json-pack';
+import {EncoderFull, Decoder, JsonPackExtension} from 'json-joy/json-pack';
 
 const ext = new JsonPackExtension(1, new Uint8Array(8));
-const encoder = new Encoder();
+const encoder = new EncoderFull();
+const decoder = new Decoder();
 const buffer = encoder.encode({foo: ext});
 
-const obj = decode(buffer2);
+const obj = decoder.decode(buffe2);
 console.log(obj); // { foo: JsonPackExtension } 
 ```
