@@ -26,7 +26,7 @@ const {isArray} = Array;
  * `isArrayEnd` to verify that:
  *
  * ```js
- * const ref = find({arr: [1, 2, 3], ['', 'arr', '-']});
+ * const ref = find({arr: [1, 2, 3], ['arr', '-']});
  * if (isArrayReference(ref)) {
  *   if (isArrayEnd(ref)) {
  *     // ...
