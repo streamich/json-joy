@@ -4,7 +4,19 @@ const Decoder1 = require('../es6/json-pack/Decoder/v1').Decoder;
 const Decoder2 = require('../es6/json-pack/Decoder/v2').Decoder;
 const Decoder3 = require('../es6/json-pack/Decoder/v3').Decoder;
 const Decoder4 = require('../es6/json-pack/Decoder/v4').Decoder;
-const {decode} = require("@msgpack/msgpack");
+const Decoder5 = require('../es6/json-pack/Decoder/v5').Decoder;
+const {Decoder} = require("@msgpack/msgpack");
+
+const decoderMsgpack = new Decoder(
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  null,
+);
+const decode = decoderMsgpack.decode.bind(decoderMsgpack);
 
 const json = [
   {op: 'add', path: '/foo/baz', value: 666},
@@ -51,6 +63,8 @@ const decoder3 = new Decoder3();
 const decode3 = decoder3.decode.bind(decoder3);
 const decoder4 = new Decoder4();
 const decode4 = decoder4.decode.bind(decoder4);
+const decoder5 = new Decoder5();
+const decode5 = decoder5.decode.bind(decoder5);
 
 const suite = new Benchmark.Suite;
 
@@ -61,17 +75,20 @@ suite
   .add(`@msgpack/msgpack`, function() {
     decode(uint8);
   })
-  .add(`json-joy/json-pack (v1)`, function() {
-    decode1(uint8, 0);
-  })
+  // .add(`json-joy/json-pack (v1)`, function() {
+  //   decode1(uint8, 0);
+  // })
   .add(`json-joy/json-pack (v2)`, function() {
-    decode2(uint8, 0);
+    decode2(uint8);
   })
   .add(`json-joy/json-pack (v3)`, function() {
-    decode3(uint8, 0);
+    decode3(uint8);
   })
   .add(`json-joy/json-pack (v4)`, function() {
-    decode4(uint8, 0);
+    decode4(uint8);
+  })
+  .add(`json-joy/json-pack (v5)`, function() {
+    decode5(uint8);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
