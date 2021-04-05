@@ -42,7 +42,7 @@ interface KeyCacheRecord {
   readonly value: string;
 }
 
-const DEFAULT_MAX_KEY_LENGTH = 16;
+const DEFAULT_MAX_KEY_LENGTH = 31;
 const DEFAULT_MAX_LENGTH_PER_KEY = 16;
 
 export interface KeyDecoder {
@@ -67,8 +67,11 @@ export class CachedKeyDecoder implements KeyDecoder {
 
   private get(bytes: Uint8Array, inputOffset: number, byteLength: number): string | null {
     const records = this.caches[byteLength - 1]!;
+    const len = records.length;
 
-    FIND_CHUNK: for (const record of records) {
+    // FIND_CHUNK: for (const record of records) {
+    FIND_CHUNK: for (let i = 0; i < len; i++) {
+      const record = records[i];
       const recordBytes = record.bytes;
 
       for (let j = 0; j < byteLength; j++) {
@@ -94,13 +97,13 @@ export class CachedKeyDecoder implements KeyDecoder {
     }
   }
 
-  public decode(bytes: Uint8Array, inputOffset: number, byteLength: number): string {
-    const cachedValue = this.get(bytes, inputOffset, byteLength);
+  public decode(bytes: Uint8Array, offset: number, size: number): string {
+    const cachedValue = this.get(bytes, offset, size);
     if (cachedValue != null) return cachedValue;
 
-    const value = utf8DecodeJs(bytes, inputOffset, byteLength);
+    const value = utf8DecodeJs(bytes, offset, size);
     // Ensure to copy a slice of bytes because the byte may be NodeJS Buffer and Buffer#slice() returns a reference to its internal ArrayBuffer.
-    const slicedCopyOfBytes = Uint8Array.prototype.slice.call(bytes, inputOffset, inputOffset + byteLength);
+    const slicedCopyOfBytes = Uint8Array.prototype.slice.call(bytes, offset, offset + size);
     this.store(slicedCopyOfBytes, value);
     return value;
   }

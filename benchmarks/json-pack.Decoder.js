@@ -8,6 +8,7 @@ const Decoder5 = require('../es6/json-pack/Decoder/v5').Decoder;
 const Decoder6 = require('../es6/json-pack/Decoder/v6').Decoder;
 const Decoder7 = require('../es6/json-pack/Decoder/v7').Decoder;
 const Decoder8 = require('../es6/json-pack/Decoder/v8').Decoder;
+const Decoder9 = require('../es6/json-pack/Decoder/v9').Decoder;
 const {Decoder} = require("@msgpack/msgpack");
 
 const decoderMsgpack = new Decoder(
@@ -74,6 +75,8 @@ const decoder7 = new Decoder7();
 const decode7 = decoder7.decode.bind(decoder7);
 const decoder8 = new Decoder8();
 const decode8 = decoder8.decode.bind(decoder8);
+const decoder9 = new Decoder9();
+const decode9 = decoder9.decode.bind(decoder9);
 
 const suite = new Benchmark.Suite;
 
@@ -107,6 +110,9 @@ suite
   })
   .add(`json-joy/json-pack (v8)`, function() {
     decode8(uint8);
+  })
+  .add(`json-joy/json-pack (v9)`, function() {
+    decode9(uint8);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
