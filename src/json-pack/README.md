@@ -48,7 +48,7 @@ messagepack x 2,740 ops/sec ±10.15% (49 runs sampled), 364983 ns/op
 Use `Encoder` to encode plain JSON values.
 
 ```ts
-import {Encoder, Decoder} from 'json-joy/json-pack';
+import {Encoder, Decoder} from 'json-joy/{lib,es6,esm}/json-pack';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -62,7 +62,7 @@ Use `EncoderFull` to encode data that is more complex than plain JSON. For
 example, encode binary data using `ArrayBuffer`:
 
 ```ts
-import {EncoderFull, Decoder} from 'json-joy/json-pack';
+import {EncoderFull, Decoder} from 'json-joy/{lib,es6,esm}/json-pack';
 
 const encoder = new EncoderFull();
 const decoder = new Decoder();
@@ -78,7 +78,7 @@ You might have already encoded MessagePack value, to insert it into a bigger
 MessagePack object as-is use `JsonPackValue` wrapper.
 
 ```ts
-import {EncoderFull, Decoder, JsonPackValue} from 'json-joy/json-pack';
+import {EncoderFull, Decoder, JsonPackValue} from 'json-joy/{lib,es6,esm}/json-pack';
 
 const encoder = new EncoderFull();
 const decoder = new Decoder();
@@ -95,7 +95,7 @@ console.log(obj); // { baz: { foo: 'bar' } }
 Use `JsonPackExtension` wrapper to encode extensions.
 
 ```ts
-import {EncoderFull, Decoder, JsonPackExtension} from 'json-joy/json-pack';
+import {EncoderFull, Decoder, JsonPackExtension} from 'json-joy/{lib,es6,esm}/json-pack';
 
 const ext = new JsonPackExtension(1, new Uint8Array(8));
 const encoder = new EncoderFull();
