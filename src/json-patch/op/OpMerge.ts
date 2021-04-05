@@ -4,8 +4,14 @@ import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointe
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedMergeOp = [OPCODE.merge, string | Path, {i: number; p?: object}];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpMerge extends AbstractOp<'merge'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
     super('merge', path);

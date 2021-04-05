@@ -36,5 +36,12 @@
     "src/**/__mocks__/**/*.*",
     "*.test.ts",
     "*.spec.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "entryPoints": [
+      "src/json-pointer/index.ts",
+      "src/json-patch/index.ts"
+    ],
+    "out": "typedocs"
+  }
 }

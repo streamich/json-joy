@@ -3,8 +3,14 @@ import {OperationStrIns} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedStrInsOp = [OPCODE.str_ins, string | Path, {i: number; s: string}];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpStrIns extends AbstractOp<'str_ins'> {
   constructor(path: Path, public readonly pos: number, public readonly str: string) {
     super('str_ins', path);

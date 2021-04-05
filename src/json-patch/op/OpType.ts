@@ -5,8 +5,14 @@ import {OPCODE} from './constants';
 
 const {isArray} = Array;
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedTypeOp = [OPCODE.type, string | Path, {v: JsonPatchTypes}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpType extends AbstractPredicateOp<'type'> {
   constructor(path: Path, public readonly value: JsonPatchTypes) {
     super('type', path);

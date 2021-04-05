@@ -7,6 +7,9 @@ import {Path, formatJsonPointer} from '../../json-pointer';
 
 export type PackedAndOp = [OPCODE.and, string | Path, {o: PackedOp[]}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
     super('and', path, ops);

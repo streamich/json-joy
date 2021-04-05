@@ -29,7 +29,7 @@
     "prettier": "prettier --ignore-path .gitignore --write 'src/**/*.{ts,tsx,js,jsx}'",
     "prettier:diff": "prettier -l 'src/**/*.{ts,tsx,js,jsx}'",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
-    "clean": "rimraf lib es6 esm",
+    "clean": "rimraf lib es6 esm typedocs",
     "build:cjs": "tsc",
     "build:es6": "tsc --module commonjs --target es6 --outDir es6",
     "build:esm": "tsc --module ESNext --target ESNEXT --outDir esm",
@@ -38,7 +38,8 @@
     "test": "jest --maxWorkers 2 --no-cache --config='jest.config.js'",
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "typedoc": "typedoc"
   },
   "keywords": [],
   "peerDependencies": {
@@ -74,6 +75,7 @@
     "tslib": "^2.1.0",
     "tslint": "^6.1.3",
     "tslint-config-common": "^1.6.0",
+    "typedoc": "^0.20.35",
     "typescript": "^4.2.3"
   },
   "types": "lib/index.d.ts",

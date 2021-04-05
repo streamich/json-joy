@@ -3,8 +3,14 @@ import {OperationStarts} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedStartsOp = [OPCODE.starts, string | Path, {v: string; i?: 1}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpStarts extends AbstractPredicateOp<'starts'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {

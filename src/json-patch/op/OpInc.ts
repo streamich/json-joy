@@ -3,8 +3,14 @@ import {OperationInc} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedIncOp = [OPCODE.inc, string | Path, {v: number}];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpInc extends AbstractOp<'inc'> {
   constructor(path: Path, public readonly inc: number) {
     super('inc', path);

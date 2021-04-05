@@ -5,6 +5,10 @@ import {OPCODE} from './constants';
 
 export type PackedRemoveOp = [OPCODE.remove, string | Path] | [OPCODE.remove, string | Path, {o: unknown}];
 
+
+/**
+ * @category JSON Patch
+ */
 export class OpRemove extends AbstractOp<'remove'> {
   constructor(path: Path, public readonly oldValue: unknown) {
     super('remove', path);

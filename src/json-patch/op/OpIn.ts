@@ -4,8 +4,14 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from './constants';
 const isEqual = require('fast-deep-equal');
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedInOp = [OPCODE.in, string | Path, {v: unknown[]}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpIn extends AbstractPredicateOp<'in'> {
   constructor(path: Path, public readonly value: unknown[]) {
     super('in', path);

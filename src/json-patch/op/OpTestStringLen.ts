@@ -3,8 +3,14 @@ import {OperationTestStringLen} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedTestStringLenOp = [OPCODE.test_string_len, string | Path, {l: number; n?: 1}];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   constructor(path: Path, public readonly len: number, public readonly not: boolean) {
     super('test_string_len', path);

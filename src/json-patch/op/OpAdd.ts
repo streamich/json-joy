@@ -7,6 +7,9 @@ import {OPCODE} from './constants';
 
 export type PackedAddOp = [OPCODE.add, string | Path, {v: unknown}];
 
+/**
+ * @category JSON Patch
+ */
 export class OpAdd extends AbstractOp<'add'> {
   constructor(path: Path, public readonly value: unknown) {
     super('add', path);

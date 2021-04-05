@@ -4,9 +4,16 @@ import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedSplitOp = [OPCODE.split, string | Path, {i: number; p?: object}];
+
 type Composable = string | number | SlateNode;
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpSplit extends AbstractOp<'split'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
     super('split', path);

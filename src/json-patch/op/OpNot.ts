@@ -5,8 +5,14 @@ import {OPCODE} from './constants';
 import {PackedOp} from './AbstractOp';
 import {Path, formatJsonPointer} from '../../json-pointer';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedNotOp = [OPCODE.not, string | Path, {o: PackedOp[]}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
     super('not', path, ops);

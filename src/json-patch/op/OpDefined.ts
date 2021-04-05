@@ -3,8 +3,14 @@ import {OperationDefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedDefinedOp = [OPCODE.defined, string | Path];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpDefined extends AbstractPredicateOp<'defined'> {
   constructor(path: Path) {
     super('defined', path);

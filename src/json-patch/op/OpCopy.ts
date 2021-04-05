@@ -7,6 +7,9 @@ import {OPCODE} from './constants';
 
 export type PackedCopyOp = [OPCODE.copy, string | Path, {f: string | Path}];
 
+/**
+ * @category JSON Patch
+ */
 export class OpCopy extends AbstractOp<'copy'> {
   constructor(path: Path, public readonly from: Path) {
     super('copy', path);

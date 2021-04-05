@@ -3,8 +3,14 @@ import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedFlipOp = [OPCODE.flip, string | Path];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpFlip extends AbstractOp<'flip'> {
   constructor(path: Path) {
     super('flip', path);

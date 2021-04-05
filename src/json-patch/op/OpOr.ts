@@ -5,8 +5,14 @@ import {OPCODE} from './constants';
 import {PackedOp} from './AbstractOp';
 import {Path, formatJsonPointer} from '../../json-pointer';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedOrOp = [OPCODE.or, string | Path, {o: PackedOp[]}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
     super('or', path, ops);
