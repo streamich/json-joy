@@ -11,7 +11,9 @@ Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack
 
 ## Benchmarks
 
-Faster than `JSON.stringify`:
+Faster than built-in `JSON.stringify` and `JSON.parse`, and any other library.
+
+Encoding:
 
 ```
 node benchmarks/json-pack.js 
@@ -22,6 +24,19 @@ msgpack-lite x 54,859 ops/sec ±1.55% (87 runs sampled), 18229 ns/op
 msgpack x 36,078 ops/sec ±0.79% (91 runs sampled), 27718 ns/op
 msgpack5 x 11,850 ops/sec ±0.78% (89 runs sampled), 84388 ns/op
 messagepack x 8,972 ops/sec ±2.34% (82 runs sampled), 111457 ns/op
+```
+
+Decoding:
+
+```
+node benchmarks/json-pack.Decoder.js 
+json-joy/json-pack x 258,215 ops/sec ±0.97% (90 runs sampled), 3873 ns/op
+JSON.parse x 224,616 ops/sec ±0.72% (91 runs sampled), 4452 ns/op
+@msgpack/msgpack x 196,799 ops/sec ±0.74% (93 runs sampled), 5081 ns/op
+msgpack x 62,323 ops/sec ±0.74% (92 runs sampled), 16045 ns/op
+msgpack-lite x 52,794 ops/sec ±0.75% (92 runs sampled), 18941 ns/op
+msgpack5 x 30,240 ops/sec ±0.76% (93 runs sampled), 33069 ns/op
+messagepack x 2,740 ops/sec ±10.15% (49 runs sampled), 364983 ns/op
 ```
 
 
