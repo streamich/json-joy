@@ -41,15 +41,15 @@ The session ID is always encoded as a 53-bit unsigned integer. The sequence time
 is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
 size.
 
-The "y" bit specifies whether the next byte is part of the current vector clock
-entry. If "y" is set to 1, the next byte should be read. If "y" is set to 0, no
-further bytes should be read after the byte containing the "y" set to 0.
+The "?" bit specifies whether the next byte is part of the current vector clock
+entry. If "?" is set to 1, the next byte should be read. If "?" is set to 0, no
+further bytes should be read after the byte containing the "?" set to 0.
 
 Encoding schema:
 
 ```
 byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11  byte 12
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxyzz zzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz zzzzzzzz
+xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx?zz zzzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
 33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
 21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
 |                                     |               |     |                       |
@@ -246,12 +246,12 @@ Value `null` is encoded as 1 byte, equal to 6.
 Variable length unsigned integer is encoded using up to 8 bytes. The maximum
 size of the decoded value is 57 bits of data.
 
-The high bit y of each byte indicates if the next byte should be consumed, up
+The high bit "?" of each byte indicates if the next byte should be consumed, up
 to 8 bytes.
 
 ```
 byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz zzzzzzzz
+?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
           11111    2211111  2222222  3333332  4443333  4444444 55555555
  7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
    |                        |                    |             |
@@ -285,7 +285,7 @@ a boolean value, the maximum data bvaruint8can hold is 56 bits.
 
 ```
 byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-xyzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz zzzzzzzz
+x?zzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
 |         11111    2111111  2222222  3333322  4433333  4444444 55555554
 | 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
 |  |                        |                    |             |
@@ -332,7 +332,7 @@ In the below encoding diagrams bits are annotated as follows:
 
 - "x" - vector table index, reference to the logical clock.
 - "z" - time difference.
-- "y" - whether the next byte is used for encoding.
+- "?" - whether the next byte is used for encoding.
 
 If x is less than 8 and z is less than 16, the relative ID is encoded as a
 single byte:
@@ -342,17 +342,17 @@ byte 1
 0xxxzzzz
 ```
 
-Otherwise the top bit of the first byte is set to 1. And subsequently x and y
+Otherwise the top bit of the first byte is set to 1. And subsequently x and "?"
 are encoded separately as variable length unsigned integers. Where x loses the
 ability to encode the highest bit of the first byte.
 
 x is encoded using up to 4 bytes. The maximum size of x is a 28-bit
-unsigned integer. x is encoded using variable length encoding, if y is set to 1
+unsigned integer. x is encoded using variable length encoding, if "?" is set to 1
 the next byte should be consumed to decode x.
 
 ```
 byte 1   byte 2   byte 3   byte 4
-1yxxxxxx yxxxxxxx yxxxxxxx xxxxxxxx
+1?xxxxxx ?xxxxxxx ?xxxxxxx xxxxxxxx
           1111     2111111 22222222
   654321  3210987  0987654 87654321
    |                       |
@@ -376,7 +376,7 @@ the next byte should be consumed to decode z.
 
 ```
 byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz ....zzzz
+?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ....zzzz
           11111    2211111  2222222  3333332     3333
  7654321  4321098  1098765  8765432  5432109     9876
    |                        |                    |
@@ -385,7 +385,7 @@ yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz yzzzzzzz ....zzzz
                                                  39th bit of z
 ```
 
-y encoding examples:
+"?" encoding examples:
 
 ```
 byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
