@@ -1,3 +1,5 @@
+// This cache class is taken from https://github.com/msgpack/msgpack-javascript
+// See license: https://github.com/msgpack/msgpack-javascript/blob/main/LICENSE
 export function utf8DecodeJs(bytes: Uint8Array, inputOffset: number, byteLength: number): string {
   let offset = inputOffset;
   const end = offset + byteLength;
@@ -42,27 +44,12 @@ interface KeyCacheRecord {
   readonly value: string;
 }
 
-const DEFAULT_MAX_KEY_LENGTH = 31;
-const DEFAULT_MAX_LENGTH_PER_KEY = 16;
-
-export interface KeyDecoder {
-  canBeCached(byteLength: number): boolean;
-  decode(bytes: Uint8Array, inputOffset: number, byteLength: number): string;
-}
-
-export class CachedKeyDecoder implements KeyDecoder {
+export class CachedKeyDecoder {
   private readonly caches: Array<Array<KeyCacheRecord>>;
 
-  constructor(readonly maxKeyLength = DEFAULT_MAX_KEY_LENGTH, readonly maxLengthPerKey = DEFAULT_MAX_LENGTH_PER_KEY) {
-    // avoid `new Array(N)` to create a non-sparse array for performance.
+  constructor() {
     this.caches = [];
-    for (let i = 0; i < this.maxKeyLength; i++) {
-      this.caches.push([]);
-    }
-  }
-
-  public canBeCached(byteLength: number) {
-    return byteLength > 0 && byteLength <= this.maxKeyLength;
+    for (let i = 0; i < 31; i++) this.caches.push([]);
   }
 
   private get(bytes: Uint8Array, inputOffset: number, byteLength: number): string | null {
@@ -88,7 +75,7 @@ export class CachedKeyDecoder implements KeyDecoder {
     const records = this.caches[bytes.length - 1]!;
     const record: KeyCacheRecord = { bytes, value };
 
-    if (records.length >= this.maxLengthPerKey) {
+    if (records.length >= 16) {
       // `records` are full!
       // Set `record` to a randomized position.
       records[(Math.random() * records.length) | 0] = record;

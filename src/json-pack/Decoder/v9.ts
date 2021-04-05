@@ -1,5 +1,5 @@
 import {JsonPackExtension} from "../JsonPackExtension";
-import {CachedKeyDecoder, KeyDecoder} from "./CachedKeyDecoder";
+import {CachedKeyDecoder, utf8DecodeJs} from "./CachedKeyDecoder";
 
 const sharedCachedKeyDecoder = new CachedKeyDecoder();
 
@@ -9,7 +9,7 @@ export class Decoder {
   protected x = 0;
 
   public constructor(
-    private readonly keyDecoder: KeyDecoder = sharedCachedKeyDecoder,
+    private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder,
   ) {}
 
   public decode(uint8: Uint8Array): unknown {
