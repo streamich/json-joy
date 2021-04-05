@@ -1,9 +1,16 @@
 import {JsonPackExtension} from "../JsonPackExtension";
+import {CachedKeyDecoder, KeyDecoder} from "./CachedKeyDecoder";
+
+const sharedCachedKeyDecoder = new CachedKeyDecoder();
 
 export class Decoder {
   protected uint8 = new Uint8Array([]);
   protected view = new DataView(this.uint8.buffer);
   protected x = 0;
+
+  public constructor(
+    private readonly keyDecoder: KeyDecoder = sharedCachedKeyDecoder,
+  ) {}
 
   public decode(uint8: Uint8Array): unknown {
     this.x = 0;
@@ -51,6 +58,7 @@ export class Decoder {
           ? byte === 0xd6 ? this.ext(4) : this.ext(2)
           : byte === 0xd8 ? this.ext(16) : this.ext(8);
     } else {
+
       switch (byte) {
         case 0xd9: return this.str(this.u8());
         case 0xda: return this.str(this.u16());
@@ -99,8 +107,21 @@ export class Decoder {
 
   protected obj(size: number): object {
     const obj: Record<string, unknown> = {};
-    for (let i = 0; i < size; i++) obj[this.val() as string] = this.val();
+    for (let i = 0; i < size; i++) {
+      const key = this.key();
+      obj[key] = this.val();
+    }
     return obj;
+  }
+
+  protected key(): string {
+    const byte = this.view.getUint8(this.x);
+    if ((byte >= 0b10100000) && (byte <= 0b10111111)) {
+      const size = byte & 0b11111;
+      const key = this.keyDecoder.decode(this.uint8, this.x + 1, size);
+      this.x += 1 + size;
+      return key;
+    } else return this.val() as string;
   }
 
   protected arr(size: number): unknown[] {

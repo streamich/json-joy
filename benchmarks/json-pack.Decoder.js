@@ -5,6 +5,9 @@ const Decoder2 = require('../es6/json-pack/Decoder/v2').Decoder;
 const Decoder3 = require('../es6/json-pack/Decoder/v3').Decoder;
 const Decoder4 = require('../es6/json-pack/Decoder/v4').Decoder;
 const Decoder5 = require('../es6/json-pack/Decoder/v5').Decoder;
+const Decoder6 = require('../es6/json-pack/Decoder/v6').Decoder;
+const Decoder7 = require('../es6/json-pack/Decoder/v7').Decoder;
+const Decoder8 = require('../es6/json-pack/Decoder/v8').Decoder;
 const {Decoder} = require("@msgpack/msgpack");
 
 const decoderMsgpack = new Decoder(
@@ -65,6 +68,12 @@ const decoder4 = new Decoder4();
 const decode4 = decoder4.decode.bind(decoder4);
 const decoder5 = new Decoder5();
 const decode5 = decoder5.decode.bind(decoder5);
+const decoder6 = new Decoder6();
+const decode6 = decoder6.decode.bind(decoder6);
+const decoder7 = new Decoder7();
+const decode7 = decoder7.decode.bind(decoder7);
+const decoder8 = new Decoder8();
+const decode8 = decoder8.decode.bind(decoder8);
 
 const suite = new Benchmark.Suite;
 
@@ -89,6 +98,15 @@ suite
   })
   .add(`json-joy/json-pack (v5)`, function() {
     decode5(uint8);
+  })
+  .add(`json-joy/json-pack (v6)`, function() {
+    decode6(uint8);
+  })
+  .add(`json-joy/json-pack (v7)`, function() {
+    decode7(uint8);
+  })
+  .add(`json-joy/json-pack (v8)`, function() {
+    decode8(uint8);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
