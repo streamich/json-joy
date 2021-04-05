@@ -8,4 +8,5 @@ module.exports = {
   },
   transformIgnorePatterns: [],
   testRegex: '.*/__tests__/.*\.(test|spec)\.(jsx?|tsx?)$',
+  testEnvironment: '<rootDir>/test/custom-test-env.js'
 };
