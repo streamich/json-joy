@@ -3,8 +3,14 @@ import {OperationUndefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedUndefinedOp = [OPCODE.undefined, string | Path];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpUndefined extends AbstractPredicateOp<'undefined'> {
   constructor(path: Path) {
     super('undefined', path);

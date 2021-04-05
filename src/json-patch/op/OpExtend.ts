@@ -3,10 +3,16 @@ import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedExtendOp = [OPCODE.extend, string | Path, {p: Record<string, unknown>; d?: 1}];
 
 const {isArray} = Array;
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpExtend extends AbstractOp<'extend'> {
   constructor(path: Path, public readonly props: Record<string, unknown>, public readonly deleteNull: boolean) {
     super('extend', path);

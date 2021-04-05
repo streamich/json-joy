@@ -3,8 +3,14 @@ import {OperationMore} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedMoreOp = [OPCODE.more, string | Path, {v: number}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpMore extends AbstractPredicateOp<'more'> {
   constructor(path: Path, public readonly value: number) {
     super('more', path);

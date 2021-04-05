@@ -3,8 +3,14 @@ import {OperationLess} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Predicate
+ */
 export type PackedLessOp = [OPCODE.less, string | Path, {v: number}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpLess extends AbstractPredicateOp<'less'> {
   constructor(path: Path, public readonly value: number) {
     super('less', path);

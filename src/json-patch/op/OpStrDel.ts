@@ -3,8 +3,14 @@ import {OperationStrDel} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from './constants';
 
+/**
+ * @category JSON Patch Extended
+ */
 export type PackedStrDelOp = [OPCODE.str_del, string | Path, {i: number; s?: string; l?: number}];
 
+/**
+ * @category JSON Patch Extended
+ */
 export class OpStrDel extends AbstractOp<'str_del'> {
   constructor(
     path: Path,

@@ -7,6 +7,9 @@ import {OPCODE} from './constants';
 
 export type PackedMoveOp = [OPCODE.move, string | Path, {f: string | Path}];
 
+/**
+ * @category JSON Patch
+ */
 export class OpMove extends AbstractOp<'move'> {
   constructor(path: Path, public readonly from: Path) {
     super('move', path);

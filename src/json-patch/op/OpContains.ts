@@ -5,6 +5,9 @@ import {OPCODE} from './constants';
 
 export type PackedContainsOp = [OPCODE.contains, string | Path, {v: string; i?: 1}];
 
+/**
+ * @category JSON Predicate
+ */
 export class OpContains extends AbstractPredicateOp<'contains'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {

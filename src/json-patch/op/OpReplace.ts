@@ -5,6 +5,9 @@ import {OPCODE} from './constants';
 
 export type PackedReplaceOp = [OPCODE.replace, Path | string, {v: unknown; o?: unknown}];
 
+/**
+ * @category JSON Patch
+ */
 export class OpReplace extends AbstractOp<'replace'> {
   constructor(path: Path, public readonly value: unknown, public readonly oldValue: unknown) {
     super('replace', path);
