@@ -1,9 +1,10 @@
-import {decode} from '../decode';
 import {JsonPackExtension} from '../JsonPackExtension';
-import {Encoder} from '..';
+import {Encoder, Decoder} from '..';
 
 const encoder = new Encoder();
-const encode = (x: unknown) => encoder.encode(x).buffer;
+const decoder = new Decoder();
+const encode = (x: unknown) => encoder.encode(x);
+const decode = (x: Uint8Array) => decoder.decode(x);
 
 const tests: Array<{name: string, json: unknown}> = [
   {
@@ -39,12 +40,28 @@ const tests: Array<{name: string, json: unknown}> = [
     json: -15,
   },
   {
-    name: 'small negative integer - 2',
+    name: 'small negative integer (-1)',
     json: -1,
   },
   {
-    name: 'small negative integer - 3',
+    name: 'small negative integer (-2)',
     json: -2,
+  },
+  {
+    name: 'small negative integer (-3)',
+    json: -3,
+  },
+  {
+    name: 'small negative integer (-4)',
+    json: -4,
+  },
+  {
+    name: 'small negative integer (-15)',
+    json: -15,
+  },
+  {
+    name: 'small negative integer (-16)',
+    json: -16,
   },
   {
     name: 'small negative char',
@@ -407,7 +424,7 @@ const tests: Array<{name: string, json: unknown}> = [
 for (const t of tests) { 
   test(t.name, () => {
     const buf = encode(t.json);
-    const res = decode(buf, 0);
-    expect(res[0]).toEqual(t.json);
+    const res = decode(buf);
+    expect(res).toEqual(t.json);
   });
 }

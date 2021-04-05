@@ -165,6 +165,20 @@ describe('array', () => {
     const res = decode(buf, 0);
     expect(res).toEqual(arr);
   });
+
+  test('can decode nested array', () => {
+    const arr = [1, [2], 3];
+    const buf = encode(arr);
+    const res = decode(buf, 0);
+    expect(res).toEqual(arr);
+  });
+
+  test('can decode nested array - 2', () => {
+    const arr = [1, [2], [3, 4, [5]]];
+    const buf = encode(arr);
+    const res = decode(buf, 0);
+    expect(res).toEqual(arr);
+  });
 });
 
 describe('object', () => {
@@ -177,6 +191,14 @@ describe('object', () => {
 
   test('can decode simple object', () => {
     const obj = {foo: 'bar'};
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res).toEqual(obj);
+  });
+
+  test('can decode 14 key object', () => {
+    const obj: any = {};
+    for (let i = 0; i < 15; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf, 0);
     expect(res).toEqual(obj);
@@ -233,6 +255,19 @@ describe('object', () => {
   test('can decode 0xFFFF + 1 key object', () => {
     const obj: any = {};
     for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
+    const buf = encode(obj);
+    const res = decode(buf, 0);
+    expect(res).toEqual(obj);
+  });
+
+  test('can decode nested objects', () => {
+    const obj: any = {
+      a: {},
+      b: {
+        c: {},
+        d: { g: 123 },
+      }
+    };
     const buf = encode(obj);
     const res = decode(buf, 0);
     expect(res).toEqual(obj);

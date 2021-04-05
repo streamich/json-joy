@@ -45,9 +45,8 @@ export class Encoder {
 
   protected encodeNumber(num: number) {
     if (isSafeInteger(num)) {
-      if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
-      if ((num < 0) && (num >= -0b100000)) return this.u8(0xe0 | (num + 0x20));
-      if (num > 0) {
+      if (num >= 0) {
+        if (num <= 0b1111111) return this.u8(num);
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {
           this.ensureCapacity(3);
@@ -63,7 +62,7 @@ export class Encoder {
           return;
         }
       } else {
-        if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
+        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
         else if (num > -0x7FFF) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xd1;
@@ -119,7 +118,7 @@ export class Encoder {
           if (pos < length) {
             const extra = str.charCodeAt(pos);
             if ((extra & 0xfc00) === 0xdc00) {
-              ++pos;
+              pos++;
               value = ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000;
             }
           }

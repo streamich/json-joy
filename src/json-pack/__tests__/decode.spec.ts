@@ -42,13 +42,13 @@ describe('number', () => {
   test('can decode negative fixint', () => {
     const buf = encode(-1);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(-1);
+    expect(res[0]).toBe(-1 - 0x100);
   });
 
   test('can decode negative fixint - 2', () => {
     const buf = encode(-32);
     const res = decode(buf, 0);
-    expect(res[0]).toBe(-32);
+    expect(res[0]).toBe(-32 - 0x100);
   });
 
   test('can decode double', () => {

@@ -44,23 +44,24 @@ export class Encoder {
 
   private encodeNumber(num: number) {
     if (isSafeInteger(num)) {
-      if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
-      if ((num < 0) && (num >= -0b100000)) return this.u8(0b11100000 | (-num - 1));
-      if (num > 0) {
+      if (num >= 0) {
+        if (num <= 0b1111111) return this.u8(num);
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xcd;
-          this.u16(num);
+          this.uint8[this.offset++] = num >>> 8;
+          this.uint8[this.offset++] = num & 0xFF;
           return;
         } else if (num <= 0xFFFFFFFF) {
           this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xce;
-          this.u32(num);
+          this.view.setUint32(this.offset, num);
+          this.offset += 4;
           return;
         }
       } else {
-        if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
+        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
         else if (num > -0x7FFF) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xd1;
