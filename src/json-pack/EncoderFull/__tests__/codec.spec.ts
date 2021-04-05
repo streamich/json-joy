@@ -1,9 +1,11 @@
-import {decode} from '../../decode';
 import {JsonPackExtension} from '../../JsonPackExtension';
 import {EncoderFull} from '..';
+import {Decoder} from '../..';
 
 const encoder = new EncoderFull();
-const encode = (x: unknown) => encoder.encode(x).buffer;
+const encode = (x: unknown) => encoder.encode(x);
+const decoder = new Decoder();
+const decode = (a: Uint8Array) => decoder.decode(a);
 
 const tests: Array<{name: string, json: unknown}> = [
   {
@@ -352,7 +354,7 @@ const tests: Array<{name: string, json: unknown}> = [
 for (const t of tests) { 
   test(t.name, () => {
     const buf = encode(t.json);
-    const res = decode(buf, 0);
-    expect(res[0]).toEqual(t.json);
+    const res = decode(buf);
+    expect(res).toEqual(t.json);
   });
 }
