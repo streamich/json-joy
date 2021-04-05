@@ -46,7 +46,7 @@ export class Encoder {
   protected encodeNumber(num: number) {
     if (isSafeInteger(num)) {
       if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
-      if ((num < 0) && (num >= -0b100000)) return this.u8(0b11100000 | (-num - 1));
+      if ((num < 0) && (num >= -0b100000)) return this.u8(0xe0 | (num + 0x20));
       if (num > 0) {
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {

@@ -32,8 +32,8 @@ describe('number', () => {
   });
 
   test('encodes negative fixint', () => {
-    const ints = [-1, -2, -3, -4, -0b11110, -0b11111, -0b100000];
-    const res = [0xe0, 0b11100001, 0b11100010, 0b11100011, 0b11111101, 0b11111110, 0b11111111];
+    const ints = [-1, -2, -3, -4, -0b11110, -0b11111];
+    const res = [0xe0 | (-1 + 0x20), 0xe0 | (-2 + 0x20), 0xe0 | (-3 + 0x20), 0xe0 | (-4 + 0x20), 0xe0 | (-0b11110 + 0x20), 0xe0 | (-0b11111 + 0x20)];
     for (let i = 0; i < ints.length; i++) expect([...new Uint8Array(encode(ints[i]))]).toEqual([res[i]]);
   });
 
