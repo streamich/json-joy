@@ -14,20 +14,32 @@ Fast and lean implementation of [MessagePack](https://github.com/msgpack/msgpack
 
 Faster than built-in `JSON.stringify` and `JSON.parse`, and any other library.
 
-Encoding:
+Encoding a 584 byte JSON object:
 
 ```
 node benchmarks/json-pack.js 
-json-joy/json-pack x 376,192 ops/sec ±0.49% (93 runs sampled), 2658 ns/op
-JSON.stringify x 242,030 ops/sec ±0.50% (93 runs sampled), 4132 ns/op
-@msgpack/msgpack x 188,164 ops/sec ±0.95% (89 runs sampled), 5315 ns/op
-msgpack-lite x 54,859 ops/sec ±1.55% (87 runs sampled), 18229 ns/op
-msgpack x 36,078 ops/sec ±0.79% (91 runs sampled), 27718 ns/op
-msgpack5 x 11,850 ops/sec ±0.78% (89 runs sampled), 84388 ns/op
-messagepack x 8,972 ops/sec ±2.34% (82 runs sampled), 111457 ns/op
+json-joy/json-pack x 400,345 ops/sec ±0.92% (95 runs sampled), 2498 ns/op
+JSON.stringify x 260,149 ops/sec ±0.44% (93 runs sampled), 3844 ns/op
+@msgpack/msgpack x 203,601 ops/sec ±0.82% (90 runs sampled), 4912 ns/op
+msgpack-lite x 58,392 ops/sec ±1.44% (90 runs sampled), 17126 ns/op
+msgpack x 37,912 ops/sec ±0.83% (93 runs sampled), 26377 ns/op
+msgpack5 x 16,283 ops/sec ±0.87% (91 runs sampled), 61413 ns/op
+messagepack x 9,829 ops/sec ±2.46% (83 runs sampled), 101737 ns/op
 ```
 
-Decoding:
+Encoding a small 75 byte JSON object:
+
+```
+json-joy/json-pack x 2,903,882 ops/sec ±0.87% (94 runs sampled), 344 ns/op
+JSON.stringify x 1,040,593 ops/sec ±0.58% (93 runs sampled), 961 ns/op
+@msgpack/msgpack x 568,147 ops/sec ±1.27% (88 runs sampled), 1760 ns/op
+msgpack-lite x 247,792 ops/sec ±0.85% (78 runs sampled), 4036 ns/op
+msgpack x 133,727 ops/sec ±3.44% (73 runs sampled), 7478 ns/op
+msgpack5 x 81,600 ops/sec ±0.83% (87 runs sampled), 12255 ns/op
+messagepack x 78,630 ops/sec ±2.91% (81 runs sampled), 12718 ns/op
+```
+
+Decoding a 584 byte JSON object:
 
 ```
 node benchmarks/json-pack.Decoder.js 

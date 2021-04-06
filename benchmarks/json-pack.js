@@ -15,7 +15,7 @@ const jsonPack3 = encoder3.encode.bind(encoder3);
 const encoder4 = new Encoder4();
 const jsonPack4 = encoder4.encode.bind(encoder4);
 
-const patch = [
+const json = [
   {op: 'add', path: '/foo/baz', value: 666},
   {op: 'add', path: '/foo/bx', value: 666},
   {op: 'add', path: '/asdf', value: 'asdfadf asdf'},
@@ -48,36 +48,37 @@ const patch = [
     },
   }},
 ];
+// const json = [9, 'service.method', {patch: [{op: 'add', path: '/foo/baz', value: 666}]}];
 
 const suite = new Benchmark.Suite;
 
 suite
   .add(`json-joy/json-pack (v2)`, function() {
-    jsonPack2(patch);
+    jsonPack2(json);
   })
   .add(`json-joy/json-pack (v3)`, function() {
-    jsonPack3(patch);
+    jsonPack3(json);
   })
   .add(`json-joy/json-pack (v4)`, function() {
-    jsonPack4(patch);
+    jsonPack4(json);
   })
   .add(`JSON.stringify`, function() {
-    JSON.stringify(patch);
+    JSON.stringify(json);
   })
   .add(`@msgpack/msgpack`, function() {
-    atMsgpackMsgpack(patch);
+    atMsgpackMsgpack(json);
   })
   .add(`msgpack-lite`, function() {
-    msgpackLite(patch);
+    msgpackLite(json);
   })
   .add(`msgpack`, function() {
-    msgpack(patch);
+    msgpack(json);
   })
   .add(`msgpack5`, function() {
-    msgpack5(patch);
+    msgpack5(json);
   })
   .add(`messagepack`, function() {
-    messagepack(patch);
+    messagepack(json);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
