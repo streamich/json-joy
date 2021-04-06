@@ -8,16 +8,21 @@ const msgPackEncoder = new MsgPackEncoder();
 
 const suite = new Benchmark.Suite;
 
+const str1 = 'hello world';
+const str2 = Buffer.from(str1);
+
 suite
   .add(`json-joy/binary-rx`, function() {
-    const msg = new SubscribeMessage(123, 'service.createResource', Buffer.from('hello world'))
-    encoder.encode(msg);
-  })
-  .add(`JSON-Rx with JSON.stringify`, function() {
-    JSON.stringify([123, 'service.createResource', 'hello world']);
+    const msg = new SubscribeMessage(123, 'service.createResource', str2)
+    encoder.encode([msg]);
   })
   .add(`JSON-Rx with json-pack`, function() {
-    msgPackEncoder.encode([123, 'service.createResource', 'hello world']);
+    const msg = [123, 'service.createResource', str1];
+    msgPackEncoder.encode([msg]);
+  })
+  .add(`JSON-Rx with JSON.stringify`, function() {
+    const msg = [123, 'service.createResource', str1];
+    JSON.stringify([msg]);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);

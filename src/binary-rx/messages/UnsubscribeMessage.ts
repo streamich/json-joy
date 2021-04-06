@@ -1,7 +1,7 @@
 export class UnsubscribeMessage {
   constructor (public readonly id: number) {}
 
-  public maxLength (): number {
+  public size (): number {
     return 3;
   }
 }
