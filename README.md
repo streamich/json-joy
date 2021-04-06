@@ -57,4 +57,4 @@ All libraries can be imported from one of the below folders:
 
 ## License
 
-[Unlicense](LICENSE) &mdash; Apache 2.0.
+[Apache 2.0](LICENSE)
