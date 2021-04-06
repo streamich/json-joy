@@ -9,10 +9,10 @@ This package consists of multiple self-contained libraries:
     - [JSON Predicate](./src/json-patch/docs/json-predicate.md)
     - [JSON Patch Extended](./src/json-patch/docs/json-patch-extended.md)
   - [Reference 🤖](https://streamich.github.io/json-joy/modules/json_patch.html)
-- `json-patch-ot` &mdash; Implementation *Operational Transformations* for JSON Patch+ operations.
+- `json-patch-ot` &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
 - `json-rx` &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
   - [Documentation 🚀](./src/json-rx/README.md)
-- `binary-rx` &mdash; Implementation of Binary-Rx protocol, a version of JSON-Rx.
+- `binary-rx` &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).
   - [Documentation 🚀](./src/binary-rx/README.md)
 - `json-rpc` &mdash; Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
 - `json-pack` &mdash; Fastest JavaScript __MessagePack__ codec implementation.
