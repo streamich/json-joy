@@ -39,7 +39,8 @@
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "release": "semantic-release",
-    "typedoc": "typedoc"
+    "typedoc": "typedoc",
+    "deploy:typedocs": "gh-pages -d typedocs"
   },
   "keywords": [],
   "peerDependencies": {
@@ -59,6 +60,7 @@
     "@types/jest": "^26.0.13",
     "benchmark": "^2.1.4",
     "fast-json-patch": "^3.0.0-1",
+    "gh-pages": "^3.1.0",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
     "messagepack": "^1.1.12",
