@@ -31,6 +31,8 @@
   "exclude": [
     "node_modules",
     "lib",
+    "docs",
+    "README.md",
     "src/__tests__",
     "src/**/__tests__/**/*.*",
     "src/**/__mocks__/**/*.*",

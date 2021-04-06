@@ -14,6 +14,8 @@ protocol for HTTP RPC communication.
 [json-rpc]: https://www.jsonrpc.org/specification
 
 
+## Examples
+
 ```js
 import {JsonRxServer, JsonRxClient} from 'json-joy';
 // or 
