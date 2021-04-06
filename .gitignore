@@ -115,7 +115,8 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Build folder
+# Build folders
 lib/
 es6/
 esm/
+typedocs/
