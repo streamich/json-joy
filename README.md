@@ -3,24 +3,24 @@
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
 
-- `json-patch` &mdash; Implementation __JSON Patch+__ operations.
+- __`json-patch`__ &mdash; Implementation __JSON Patch+__ operations.
   - [Documentation 🚀](./src/json-patch/README.md)
     - [JSON Patch](./src/json-patch/docs/json-patch.md)
     - [JSON Predicate](./src/json-patch/docs/json-predicate.md)
     - [JSON Patch Extended](./src/json-patch/docs/json-patch-extended.md)
   - [Reference 🤖](https://streamich.github.io/json-joy/modules/json_patch.html)
-- `json-patch-ot` &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
-- `json-rx` &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
+- __`json-patch-ot`__ &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
+- __`json-rx`__ &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
   - [Documentation 🚀](./src/json-rx/README.md)
-- `binary-rx` &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).
+- __`binary-rx`__ &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).
   - [Documentation 🚀](./src/binary-rx/README.md)
-- `json-rpc` &mdash; Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
-- `json-pack` &mdash; Fastest JavaScript __MessagePack__ codec implementation.
+- __`json-rpc`__ &mdash; Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
+- __`json-pack`__ &mdash; Fastest JavaScript __MessagePack__ codec implementation.
   - [Documentation 🚀](./src/json-pack/README.md)
-- `json-pointer` &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
+- __`json-pointer`__ &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
   - [Documentation 🚀](./src/json-pointer/README.md)
   - [Reference 🤖](https://streamich.github.io/json-joy/modules/json_pointer.html)
-- `json-cli` &mdash; CLI utilities and functional testing suites.
+- __`json-cli`__ &mdash; CLI utilities and functional testing suites.
   - [Documentation 🚀](./src/json-cli/README.md)
     - [`json-pointer` CLI](./src/json-cli/docs/json-pointer.md)
     - [`json-patch` CLI](./src/json-cli/docs/json-patch.md)
