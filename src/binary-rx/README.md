@@ -148,6 +148,7 @@ Error message consists of:
 
 ## Operational behavior
 
+
 ### Header length
 
 The maximum length of header size encoding `x` is 4 bytes.
@@ -162,6 +163,7 @@ For example, the maximum length of the notification message header is 4 bytes:
 
 Thi allows the maximum of 26 to represent `x`, which means the maximum `data`
 size of a single message is 67,108,864 bytes (or 64 MB).
+
 
 ### The `id` field
 

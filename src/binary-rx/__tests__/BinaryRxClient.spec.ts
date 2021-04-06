@@ -1,7 +1,7 @@
 import {BinaryRxClient} from '../BinaryRxClient';
 import {take} from 'rxjs/operators';
 import {CompleteMessage, DataMessage, ErrorMessage, NotificationMessage, SubscribeMessage, UnsubscribeMessage} from '../messages';
-import {decodeCompleteMessages, Encoder} from '../codec';
+import {decodeFullMessages, Encoder} from '../codec';
 
 const encoder = new Encoder();
 
@@ -318,7 +318,7 @@ test('combines multiple messages in a batch', async () => {
   client.notify('test3', Buffer.from("{gg: 'bet'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
-  const messages = decodeCompleteMessages(send.mock.calls[0][0], 0);
+  const messages = decodeFullMessages(send.mock.calls[0][0], 0);
 
   expect(messages[0]).toBeInstanceOf(SubscribeMessage);
   expect((messages[0] as any).id).toBe(1);

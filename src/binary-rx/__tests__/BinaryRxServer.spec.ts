@@ -1,6 +1,6 @@
 import {BinaryRxServer, BinaryRxServerError} from '../BinaryRxServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
-import {decodeCompleteMessage, decodeCompleteMessages, Encoder} from '../codec';
+import {decodeFullMessage, Encoder} from '../codec';
 import {CompleteMessage, DataMessage, ErrorMessage, NotificationMessage, SubscribeMessage, UnsubscribeMessage} from '../messages';
 import {Defer} from '../../json-rx/__tests__/util';
 
@@ -120,7 +120,7 @@ test('sends complete message if observable immediately completes after emitting 
   expect(call).toHaveBeenCalledWith('method', undefined, undefined);
   expect(send).toHaveBeenCalledTimes(1);
   const arr = send.mock.calls[0][0];
-  const msg = decodeCompleteMessage(arr, 0)[0] as CompleteMessage;
+  const msg = decodeFullMessage(arr, 0)[0] as CompleteMessage;
   expect(msg).toBeInstanceOf(CompleteMessage);
   expect(msg.id).toBe(25);
   expect(Buffer.from(msg.data!).toString()).toBe('"go go"');
@@ -140,12 +140,12 @@ test('when observable completes synchronously, sends payload in complete message
   expect(call).toHaveBeenCalledTimes(1);
   expect(call).toHaveBeenCalledWith('foo', new Uint8Array([0]), undefined);
   expect(send).toHaveBeenCalledTimes(3);
-  expect(decodeCompleteMessage(send.mock.calls[0][0], 0)[0]).toEqual(new DataMessage(123, new Uint8Array([1])));
-  expect(decodeCompleteMessage(send.mock.calls[0][0], 0)[0]).toBeInstanceOf(DataMessage);
-  expect(decodeCompleteMessage(send.mock.calls[1][0], 0)[0]).toEqual(new DataMessage(123, new Uint8Array([2])));
-  expect(decodeCompleteMessage(send.mock.calls[1][0], 0)[0]).toBeInstanceOf(DataMessage);
-  expect(decodeCompleteMessage(send.mock.calls[2][0], 0)[0]).toEqual(new CompleteMessage(123, new Uint8Array([3])));
-  expect(decodeCompleteMessage(send.mock.calls[2][0], 0)[0]).toBeInstanceOf(CompleteMessage);
+  expect(decodeFullMessage(send.mock.calls[0][0], 0)[0]).toEqual(new DataMessage(123, new Uint8Array([1])));
+  expect(decodeFullMessage(send.mock.calls[0][0], 0)[0]).toBeInstanceOf(DataMessage);
+  expect(decodeFullMessage(send.mock.calls[1][0], 0)[0]).toEqual(new DataMessage(123, new Uint8Array([2])));
+  expect(decodeFullMessage(send.mock.calls[1][0], 0)[0]).toBeInstanceOf(DataMessage);
+  expect(decodeFullMessage(send.mock.calls[2][0], 0)[0]).toEqual(new CompleteMessage(123, new Uint8Array([3])));
+  expect(decodeFullMessage(send.mock.calls[2][0], 0)[0]).toBeInstanceOf(CompleteMessage);
 });
 
 test('when observable completes asynchronously, sends empty complete message', async () => {

@@ -1,7 +1,7 @@
 import {NotificationMessage, SubscribeMessage, DataMessage, CompleteMessage, UnsubscribeMessage, ErrorMessage} from './messages';
 import {Observable, Observer} from 'rxjs';
 import {TimedQueue} from '../json-rx/TimedQueue';
-import {decodeCompleteMessages, Encoder} from './codec';
+import {decodeFullMessages, Encoder} from './codec';
 
 type IncomingMessage = DataMessage | CompleteMessage | ErrorMessage;
 type OutgoingMessage = SubscribeMessage | UnsubscribeMessage | NotificationMessage;
@@ -83,7 +83,7 @@ export class BinaryRxClient {
   }
 
   public onArray(arr: Uint8Array): void {
-    const messages = decodeCompleteMessages(arr, 0);
+    const messages = decodeFullMessages(arr, 0);
     this.onMessages(messages as IncomingMessage[]);
   }
 

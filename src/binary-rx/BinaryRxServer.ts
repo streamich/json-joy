@@ -2,7 +2,7 @@ import {NotificationMessage, SubscribeMessage, DataMessage, CompleteMessage, Uns
 import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {TimedQueue} from '../json-rx/TimedQueue';
-import {decodeCompleteMessages, Encoder} from './codec';
+import {decodeFullMessages, Encoder} from './codec';
 import {assertName, microtask} from '../json-rx/util';
 import {isUint8Array} from '../util/isUint8Array';
 
@@ -170,7 +170,7 @@ export class BinaryRxServer<Ctx = unknown> {
   }
 
   public onArray(arr: Uint8Array, ctx: Ctx): void {
-    const messages = decodeCompleteMessages(arr, 0);
+    const messages = decodeFullMessages(arr, 0);
     this.onMessages(messages as IncomingMessage[], ctx);
   }
 
