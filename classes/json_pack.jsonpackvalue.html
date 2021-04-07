@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>OperationFlip | json-joy</title>
+	<title>JsonPackValue | json-joy</title>
 	<meta name="description" content="Documentation for json-joy">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,13 +55,13 @@
 					<a href="../modules.html">json-joy</a>
 				</li>
 				<li>
-					<a href="../modules/json_patch.html">json-patch</a>
+					<a href="../modules/json_pack.html">json-pack</a>
 				</li>
 				<li>
-					<a href="json_patch.operationflip.html">OperationFlip</a>
+					<a href="json_pack.jsonpackvalue.html">JsonPackValue</a>
 				</li>
 			</ul>
-			<h1>Interface OperationFlip</h1>
+			<h1>Class JsonPackValue</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,9 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Flips boolean value to the opposite one.</p>
+						<p>Use this wrapper is you have a pre-encoded MessagePack value and you would
+							like to dump it into a MessagePack document as-is. The contents of <code>buf</code> will
+						be written as is to the MessagePack document.</p>
 					</div>
 				</div>
 			</section>
@@ -79,12 +81,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="json_patch.operationbase.html" class="tsd-signature-type" data-tsd-kind="Interface">OperationBase</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">OperationFlip</span>
-							</li>
-						</ul>
+						<span class="target">JsonPackValue</span>
 					</li>
 				</ul>
 			</section>
@@ -93,37 +90,53 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="json_pack.jsonpackvalue.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite"><a href="json_patch.operationflip.html#op" class="tsd-kind-icon">op</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="json_patch.operationflip.html#path" class="tsd-kind-icon">path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="json_pack.jsonpackvalue.html#buf" class="tsd-kind-icon">buf</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-					<a name="op" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> op</h3>
-					<div class="tsd-signature tsd-kind-icon">op<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;flip&quot;</span></div>
-					<aside class="tsd-sources">
-						<p>Overrides <a href="json_patch.operationbase.html">OperationBase</a>.<a href="json_patch.operationbase.html#op">op</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/5d04aa5/src/json-patch/types.ts#L225">json-patch/types.ts:225</a></li>
-						</ul>
-					</aside>
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Json<wbr>Pack<wbr>Value<span class="tsd-signature-symbol">(</span>buf<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_pack.jsonpackvalue.html" class="tsd-signature-type" data-tsd-kind="Class">JsonPackValue</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/streamich/json-joy/blob/5d04aa5/src/json-pack/JsonPackValue.ts#L8">json-pack/JsonPackValue.ts:8</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buf: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="json_pack.jsonpackvalue.html" class="tsd-signature-type" data-tsd-kind="Class">JsonPackValue</a></h4>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="path" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> path</h3>
-					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../modules/json_pointer.html#path" class="tsd-signature-type" data-tsd-kind="Type alias">Path</a></div>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="buf" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> buf</h3>
+					<div class="tsd-signature tsd-kind-icon">buf<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="json_patch.operationbase.html">OperationBase</a>.<a href="json_patch.operationbase.html#path">path</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/5d04aa5/src/json-patch/types.ts#L60">json-patch/types.ts:60</a></li>
-						</ul>
 					</aside>
 				</section>
 			</section>
@@ -134,10 +147,10 @@
 					<li class=" ">
 						<a href="../modules.html">Modules</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/json_pack.html">json-<wbr>pack</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/json_patch.html">json-<wbr>patch</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -147,16 +160,28 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="json_pack.decoder.html" class="tsd-kind-icon">Decoder</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="json_pack.encoder.html" class="tsd-kind-icon">Encoder</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="json_pack.encoderfull.html" class="tsd-kind-icon">Encoder<wbr>Full</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="json_pack.jsonpackextension.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Extension</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="json_patch.operationflip.html" class="tsd-kind-icon">Operation<wbr>Flip</a>
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="json_pack.jsonpackvalue.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Value</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite">
-								<a href="json_patch.operationflip.html#op" class="tsd-kind-icon">op</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="json_pack.jsonpackvalue.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="json_patch.operationflip.html#path" class="tsd-kind-icon">path</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="json_pack.jsonpackvalue.html#buf" class="tsd-kind-icon">buf</a>
 							</li>
 						</ul>
 					</li>
@@ -177,12 +202,13 @@
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 		</div>
 	</div>

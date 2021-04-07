@@ -58,28 +58,72 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#json-joy" id="json-joy" style="color: inherit; text-decoration: none;">
-					<h1>json-joy</h1>
+				<a href="#json-joy-🦄🌈" id="json-joy-🦄🌈" style="color: inherit; text-decoration: none;">
+					<h1>JSON Joy 🦄🌈</h1>
 				</a>
-				<p>JSON utilities. In this package:</p>
+				<p>JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
+				This package consists of multiple self-contained libraries:</p>
 				<ul>
-					<li><code>/json-pointer</code> &mdash; Implements utility for locating data using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>. {<a href="./docs/json-pointer.md">Docs ☕️</a>}</li>
-					<li><code>/json-patch</code> &mdash; Implements <a href="https://tools.ietf.org/html/rfc6902"><strong>JSON Patch</strong></a> operations. {<a href="./docs/json-patch.md">Docs 🍪</a>}<ul>
-							<li>Implements <a href="https://tools.ietf.org/id/draft-snell-json-test-01.html"><strong>JSON Predicate</strong></a> operations.</li>
-							<li>Implements additional JSON Patch operations.</li>
+					<li><strong><code>json-pack</code></strong> &mdash; Fastest <strong>MessagePack</strong> codec implementation in JavaScript.<ul>
+							<li><a href="./src/json-pack/README.md"><strong>Documentation</strong> 🚀</a></li>
+							<li><a href="https://streamich.github.io/json-joy/modules/json_pack.html"><strong>Reference</strong> 🤖</a></li>
 						</ul>
 					</li>
-					<li><code>/json-patch-ot</code> &mdash; Implements <em>operational transformations</em> for JSON Patch operations.</li>
-					<li><code>/json-rx</code> &mdash; Implements server and client classes for <a href="https://onp4.com/@vadim/p/gv9z33hjuo"><strong>JSON-Rx</strong></a> protocol. {<a href="./docs/json-rx.md">Docs 🚬</a>}</li>
-					<li><code>/binary-rx</code> &mdash; Implements binary version of JSON-Rx. {<a href="./src/binary-rx/README.md">Docs 🤖</a>}</li>
-					<li><code>/json-rpc</code> &mdash; Implements server class for <a href="https://www.jsonrpc.org/specification"><strong>JSON-RPC 2.0</strong></a> protocol.</li>
-					<li><code>/json-pack</code> &mdash; Fastest <a href="https://msgpack.org/index.html"><strong>MessagePack</strong></a> codec implementation.  {<a href="./src/json-pack/README.md">Docs 🚀</a>}</li>
-					<li><code>/json-cli</code> &mdash; CLI utilities. {<a href="./docs/json-cli.md">Docs ⛑</a>}</li>
+					<li><strong><code>json-patch</code></strong> &mdash; Implementation <strong>JSON Patch+</strong> operations.<ul>
+							<li><a href="./src/json-patch/README.md"><strong>Documentation</strong> 🚀</a><ul>
+									<li><a href="./src/json-patch/docs/json-patch.md">JSON Patch</a></li>
+									<li><a href="./src/json-patch/docs/json-predicate.md">JSON Predicate</a></li>
+									<li><a href="./src/json-patch/docs/json-patch-extended.md">JSON Patch Extended</a></li>
+								</ul>
+							</li>
+							<li><a href="https://streamich.github.io/json-joy/modules/json_patch.html"><strong>Reference</strong> 🤖</a></li>
+						</ul>
+					</li>
+					<li><strong><code>json-patch-ot</code></strong> &mdash; Implementation of <em>Operational Transformations</em> for JSON Patch+ operations.</li>
+					<li><strong><code>json-rx</code></strong> &mdash; Implementation of <a href="https://onp4.com/@vadim/p/gv9z33hjuo"><strong>JSON-Rx</strong></a> protocol for server and browser.<ul>
+							<li><a href="./src/json-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
+						</ul>
+					</li>
+					<li><strong><code>binary-rx</code></strong> &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).<ul>
+							<li><a href="./src/binary-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
+						</ul>
+					</li>
+					<li><strong><code>json-rpc</code></strong> &mdash; Implements server class for <a href="https://www.jsonrpc.org/specification"><strong>JSON-RPC 2.0</strong></a> protocol.</li>
+					<li><strong><code>json-pointer</code></strong> &mdash; utilities for locating data in a JSON document using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>.<ul>
+							<li><a href="./src/json-pointer/README.md"><strong>Documentation</strong> 🚀</a></li>
+							<li><a href="https://streamich.github.io/json-joy/modules/json_pointer.html"><strong>Reference</strong> 🤖</a></li>
+						</ul>
+					</li>
+					<li><strong><code>json-cli</code></strong> &mdash; CLI utilities and functional testing suites.<ul>
+							<li><a href="./src/json-cli/README.md"><strong>Documentation</strong> 🚀</a><ul>
+									<li><a href="./src/json-cli/docs/json-pointer.md"><code>json-pointer</code> CLI</a></li>
+									<li><a href="./src/json-cli/docs/json-patch.md"><code>json-patch</code> CLI</a></li>
+									<li><a href="./src/json-cli/docs/json-pointer-test.md"><code>json-pointer-test</code> CLI</a></li>
+									<li><a href="./src/json-cli/docs/json-patch-test.md"><code>json-patch-test</code> CLI</a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>To reduce your browser-side bundle size import directly from the library you use.</p>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/{lib,es6,esm}/&lt;library&gt;&#039;</span><span style="color: #000000">;</span>
+</code></pre>
+				<p>For example:</p>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">applyOperations</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/lib/json-patch`</span><span style="color: #CD3131">;</span>
+</code></pre>
+				<p>All libraries can be imported from one of the below folders:</p>
+				<ul>
+					<li><code>lib</code> &mdash; ES5 compiled CommonJS code.</li>
+					<li><code>es6</code> &mdash; ES6 compiled EcmaScript modules code.</li>
+					<li><code>esm</code> &mdash; latest TypeScript compiler supported EcmaScript modules code.</li>
 				</ul>
 				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
 					<h2>License</h2>
 				</a>
-				<p><a href="LICENSE">Unlicense</a> &mdash; Apache 2.0.</p>
+				<p><a href="LICENSE">Apache 2.0</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -87,6 +131,9 @@
 				<ul>
 					<li class=" ">
 						<a href="modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/json_pack.html">json-<wbr>pack</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/json_patch.html">json-<wbr>patch</a>
