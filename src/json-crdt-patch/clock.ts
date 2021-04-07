@@ -97,6 +97,10 @@ export class LogicalTimestamp {
   public clock(): LogicalClock {
     return new LogicalClock(this.sessionId, this.time);
   }
+
+  public compact(): string {
+    return this.sessionId + ',' + this.time;
+  }
 }
 
 /**

@@ -1,8 +1,9 @@
+import {json_string} from 'ts-brand-json';
 import {LogicalTimestamp, VectorClock} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
-  /** Clock session ID to clock index. */
+  /** Clock session ID to session index. */
   private readonly table: Map<number, number>;
   private index: number;
   
@@ -22,5 +23,22 @@ export class ClockEncoder {
     const timeDiff = clock.time - time;
     const relativeTimestamp = new RelativeTimestamp(sessionIndex, timeDiff);
     return relativeTimestamp;
+  }
+
+  /**
+   * Every two subsequent numbers represent a single clock. The first clock is
+   * the local user's clock.
+   * @returns A string of JSON encoded array of numbers representing all the clocks.
+   */
+  public compact(): json_string<number[]> {
+    let isFirst = true;
+    let str: string = '[';
+    for (const sessionId of this.table.keys()) {
+      const clock = this.clock.clocks.get(sessionId);
+      if (!clock) continue;
+      str += (isFirst ? '' : ',') + clock.compact();
+      isFirst = false;
+    }
+    return str + ']' as json_string<number[]>;
   }
 }
