@@ -41,6 +41,7 @@
   ],
   "typedocOptions": {
     "entryPoints": [
+      "src/json-pack/index.ts",
       "src/json-pointer/index.ts",
       "src/json-patch/index.ts"
     ],

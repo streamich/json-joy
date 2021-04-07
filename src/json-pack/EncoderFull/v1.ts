@@ -3,7 +3,11 @@ import {Encoder} from "../Encoder/v4";
 import {JsonPackExtension} from "../JsonPackExtension";
 import {JsonPackValue} from "../JsonPackValue";
 
+/**
+ * @category Encoder
+ */
 export class EncoderFull extends Encoder {
+  /** @ignore */
   protected encodeAny(json: unknown): void {
     switch (json) {
       case null: return this.u8(0xc0);
@@ -23,6 +27,7 @@ export class EncoderFull extends Encoder {
     }
   }
 
+  /** @ignore */
   protected bin(buf: Uint8Array): void {
     const length = buf.byteLength
     if (length <= 0xFF) this.u16((0xc4 << 8) | length);
@@ -36,6 +41,7 @@ export class EncoderFull extends Encoder {
     this.buf(buf, length);
   }
   
+  /** @ignore */
   protected ext(ext: JsonPackExtension): void {
     const {type, buf} = ext;
     const length = buf.byteLength;
@@ -61,11 +67,13 @@ export class EncoderFull extends Encoder {
     this.buf(buf, length);
   }
 
+  /** @ignore */
   protected ext0(buf: Uint8Array, firstTwo: number, length: number): void {
     this.u16(firstTwo);
     this.buf(buf, length);
   }
 
+  /** @ignore */
   protected buf(buf: Uint8Array, length: number): void {
     this.ensureCapacity(length);
     this.uint8.set(buf, this.offset);

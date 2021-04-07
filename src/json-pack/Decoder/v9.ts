@@ -3,9 +3,15 @@ import {CachedKeyDecoder} from "./CachedKeyDecoder";
 
 const sharedCachedKeyDecoder = new CachedKeyDecoder();
 
+/**
+ * @category Decoder
+ */
 export class Decoder {
+  /** @ignore */
   protected uint8 = new Uint8Array([]);
+  /** @ignore */
   protected view = new DataView(this.uint8.buffer);
+  /** @ignore */
   protected x = 0;
 
   public constructor(
@@ -19,6 +25,7 @@ export class Decoder {
     return this.val();
   }
 
+  /** @ignore */
   protected val(): unknown {
     const byte = this.u8();
     if (byte >= 0xe0) return byte - 0x100; // 0xe0
@@ -71,6 +78,7 @@ export class Decoder {
     return undefined;
   }
 
+  /** @ignore */
   protected str(size: number): string {
     const uint8 = this.uint8;
     const end = this.x + size;
@@ -104,6 +112,7 @@ export class Decoder {
     return str;
   }
 
+  /** @ignore */
   protected obj(size: number): object {
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < size; i++) {
@@ -113,6 +122,7 @@ export class Decoder {
     return obj;
   }
 
+  /** @ignore */
   protected key(): string {
     const byte = this.view.getUint8(this.x);
     if ((byte >= 0b10100000) && (byte <= 0b10111111)) {
@@ -130,12 +140,14 @@ export class Decoder {
     } else return this.val() as string;
   }
 
+  /** @ignore */
   protected arr(size: number): unknown[] {
     const arr = [];
     for (let i = 0; i < size; i++) arr.push(this.val());
     return arr;
   }
 
+  /** @ignore */
   protected bin(size: number): Uint8Array {
     const end = this.x + size;
     const bin = this.uint8.subarray(this.x, end);
@@ -143,6 +155,7 @@ export class Decoder {
     return bin;
   }
 
+  /** @ignore */
   protected ext(size: number): JsonPackExtension {
     const type = this.u8();
     const end = this.x + size;
@@ -151,44 +164,52 @@ export class Decoder {
     return new JsonPackExtension(type, buf);
   }
 
+  /** @ignore */
   protected u8(): number {
     return this.view.getUint8(this.x++);
   }
 
+  /** @ignore */
   protected u16(): number {
     const num = this.view.getUint16(this.x);
     this.x += 2;
     return num;
   }
 
+  /** @ignore */
   protected u32(): number {
     const num = this.view.getUint32(this.x);
     this.x += 4;
     return num;
   }
 
+  /** @ignore */
   protected i8(): number {
     return this.view.getInt8(this.x++);
   }
 
+  /** @ignore */
   protected i16(): number {
     const num = this.view.getInt16(this.x);
     this.x += 2;
     return num;
   }
 
+  /** @ignore */
   protected i32(): number {
     const num = this.view.getInt32(this.x);
     this.x += 4;
     return num;
   }
 
+  /** @ignore */
   protected f32(): number {
     const pos = this.x;
     this.x += 4;
     return this.view.getFloat32(pos);
   }
 
+  /** @ignore */
   protected f64(): number {
     const pos = this.x;
     this.x += 8;
