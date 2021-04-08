@@ -242,17 +242,21 @@ arr32
 +--------+--------+--------+--------+--------+========+========+
 ```
 
-TODO: IDs of insertion operations are missing.
-
 Each array chunk contains the bellow parts in the following order.
 
 1. Number of nodes in the chunk, encoded using b1vuint56.
-   1. If b1vuint56 boolean bit is 1, the chunk is considered deleted, there is no
-      no contents to follow.
+   1. If b1vuint56 boolean bit is 1, the chunk is considered deleted. It is
+      followed by the ID of the first chunk element, encode as a relative ID.
    2. If b1vuint56 boolean bit is 0, the following data contains and ordered flat
       list of nodes, encoded as nodes.
 
 ```
+Deleted chunk:
++===========+========+
+| b1vuint56 |   ID   |
++===========+========+
+
+Not deleted chunk:
 +===========+=========+
 | b1vuint56 |  nodes  |
 +===========+=========+
@@ -262,19 +266,19 @@ Assuming the node count is encoded using `t` bits.
 
 ```
 A deleted chunk:
-+--------+........+········+
-|1?tttttt|?ttttttt|tttttttt|
-+--------+........+········+
++--------+........+········+========+
+|1?tttttt|?ttttttt|tttttttt|   ID   |
++--------+........+········+========+
 
 A deleted chunk with three nodes:
-+--------+
-|10000011|
-+--------+
++--------+========+
+|10000011|   ID   |
++--------+========+
 
 A deleted chunk with 256 nodes:
-+--------+--------+
-|11000000|00000100|
-+--------+--------+
++--------+--------+========+
+|11000000|00000100|   ID   |
++--------+--------+========+
 
 A chunk with nodes which are not deleted:
 +--------+........+········+=========+
