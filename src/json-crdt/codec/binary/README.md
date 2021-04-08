@@ -202,15 +202,15 @@ obj32
 Each object chunk is encoded as follows:
 
 1. ID of the operation that set this field, encoded as relative ID.
-2. The length of field name, encoded as vuint8.
+2. The length of field name, encoded as vuint57.
 3. The field `name`, encoded in UTF-8.
 4. Value of the field, encoded as a node.
 
 ```
 One object chunk:
-+========+========+========+========+
-|   ID   | vuint8 |  name  |  node  |
-+========+========+========+========+
++========+=========+========+========+
+|   ID   | vuint57 |  name  |  node  |
++========+=========+========+========+
 ```
 
 
@@ -246,16 +246,16 @@ TODO: IDs of insertion operations are missing.
 
 Each array chunk contains the bellow parts in the following order.
 
-1. Number of nodes in the chunk, encoded using bvuint8.
-   1. If bvuint8 boolean bit is 1, the chunk is considered deleted, there is no
+1. Number of nodes in the chunk, encoded using b1vuint56.
+   1. If b1vuint56 boolean bit is 1, the chunk is considered deleted, there is no
       no contents to follow.
-   2. If bvuint8 boolean bit is 0, the following data contains and ordered flat
+   2. If b1vuint56 boolean bit is 0, the following data contains and ordered flat
       list of nodes, encoded as nodes.
 
 ```
-+=========+=========+
-| bvuint8 |  nodes  |
-+=========+=========+
++===========+=========+
+| b1vuint56 |  nodes  |
++===========+=========+
 ```
 
 Assuming the node count is encoded using `t` bits.
@@ -318,21 +318,21 @@ str32
 
 Each chunk contains the bellow parts in the following order.
 
-1. The text length in the chunk, encoded as bvuint8.
-   1. If bvuint8 boolean bit is 1, the text is considered deleted, there
+1. The text length in the chunk, encoded as b1vuint56.
+   1. If b1vuint56 boolean bit is 1, the text is considered deleted, there
       is no text contents to follow. The text length is used as the
       length of the UTF-8 text that was deleted.
-   2. If bvuint8 boolean bit is 0, the following `data` contains UTF-8 encoded
+   2. If b1vuint56 boolean bit is 0, the following `data` contains UTF-8 encoded
       text contents, where the length is the length in bytes of the UTF-8
       data.
 2. ID of the first UTF-8 character in the chunk, encoded as a relative ID.
-3. Chunk's UTF-8 text contents `text`, encoded as UTF-8 string, if bvuint8
+3. Chunk's UTF-8 text contents `text`, encoded as UTF-8 string, if b1vuint56
    boolean bit was set to 0, no data otherwise.
 
 ```
-+=========+========+========+
-| bvuint8 |   ID   |  text  |
-+=========+========+========+
++===========+========+========+
+| b1vuint56 |   ID   |  text  |
++===========+========+========+
 ```
 
 Assuming the node count is encoded using `t` bits.
@@ -430,14 +430,33 @@ In all other cases the following encoding is used:
 
 ##### Boolean node encoding
 
-Value `true` is encoded as 1 byte, equal to 4.
+Value `false` is encoded as 1 byte, equal to 0xC3.
 
-Value `false` is encoded as 1 byte, equal to 5.
+Value `true` is encoded as 1 byte, equal to 0xC2.
+
+```
+false
++--------+
+|11000010|
++--------+
+
+true
++--------+
+|11000011|
++--------+
+```
 
 
 ##### Null node encoding
 
-Value `null` is encoded as 1 byte, equal to 6.
+Value `null` is encoded as 1 byte, equal to 0xC0.
+
+```
+null
++--------+
+|11000000|
++--------+
+```
 
 
 ## Encoding components
