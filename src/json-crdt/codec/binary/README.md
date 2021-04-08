@@ -6,6 +6,33 @@ necessary to be able to merge any subsequent patches, but does not contain
 information to reconstruct previous patches.
 
 
+## Message encoding
+
+Notation in diagrams:
+
+```
+One byte:
++--------+
+|        |
++--------+
+
+Zero or more repeating bytes:
++........+
+|        |
++........+
+
+Zero or one byte which ends repeating byte sequence:
++········+
+|        |
++········+
+
+Variable number of bytes:
++========+
+|        |
++========+
+```
+
+
 ## Document structure
 
 The general structure of the document is composed of three sections:
@@ -48,35 +75,43 @@ further bytes should be read after the byte containing the "?" set to 0.
 Encoding schema:
 
 ```
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11  byte 12
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx?zz zzzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
-21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
-|                                     |               |     |                       |
-|                                     |               |     10th bit of z           |
-|                                     46th bit of x   |                             |
-|                                                     |                             22nd bit of z
-|                                                     53rd bit of x
-32nd bit of x
+byte 1                                                         byte 8                              byte 12
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+
+ 33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
+ 21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
+ |                                     |               |     |                       |
+ |                                     |               |     10th bit of z           |
+ |                                     46th bit of x   |                             |
+ |                                                     |                             22nd bit of z
+ |                                                     53rd bit of x
+ 32nd bit of x
 ```
 
 Encoding examples of all the different length possibilities.
 
 ```
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx0zz zzzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx0zz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11  byte 12
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
 ```
 
 
@@ -95,31 +130,31 @@ the node type and its size.
 
 | Node type         | Hexadecimal       | Binary                      | Description                                     |
 |-------------------|-------------------|-----------------------------|-------------------------------------------------|
-| uint7             | 0x00 - 0x7F       | 0b0.......                  | Unsigned 7 bit integer.                         |
-| obj4              | 0x80 - 0x8F       | 0b1000....                  | Object with up to 15 chunks.                    |
-| arr4              | 0x90 - 0x9F       | 0b1001....                  | Array with up to 15 chunks.                     |
-| str5              | 0xA0 - 0xBF       | 0b101.....                  | String with up to 31 chunks.                    |
-| null              | 0xC0              | 0b11000000                  | "null" value.                                   |
-| false             | 0xC2              | 0b11000010                  | "false" value.                                  |
-| true              | 0xC3              | 0b11000011                  | "true" value.                                   |
-| float32           | 0xCA              | 0b11001010                  | 32-bit floating point number.                   |
-| float64           | 0xCB              | 0b11001011                  | 64-bit floating point number.                   |
-| uint8             | 0xCC              | 0b11001100                  | Unsigned 8 bit integer.                         |
-| uint16            | 0xCD              | 0b11001101                  | Unsigned 16 bit integer.                        |
-| uint32            | 0xCE              | 0b11001110                  | Unsigned 32 bit integer.                        |
-| uint64            | 0xCF              | 0b11001111                  | Unsigned 64 bit integer (53 bit in JavaScript). |
-| int8              | 0xD0              | 0b11010000                  | Signed 8 bit integer.                           |
-| int16             | 0xD1              | 0b11010001                  | Signed 16 bit integer.                          |
-| int32             | 0xD2              | 0b11010010                  | Signed 32 bit integer.                          |
-| int64             | 0xD3              | 0b11010011                  | Signed 64 bit integer (53 bit in JavaScript).   |
-| str8              | 0xD9              | 0b11011001                  | String with up to 255 chunks.                   |
-| str16             | 0xDA              | 0b11011010                  | String with up to 65,535 chunks.                |
-| str32             | 0xDB              | 0b11011011                  | String with up to 4,294,967,295 chunks.         |
-| arr16             | 0xDC              | 0b11011100                  | Array with up to 65,535 chunks.                 |
-| arr32             | 0xDD              | 0b11011101                  | Array with up to 4,294,967,295 chunks.          |
-| obj16             | 0xDE              | 0b11011110                  | Object with up to 65,535 chunks.                |
-| obj32             | 0xDF              | 0b11011111                  | Object with up to 4,294,967,295 chunks.         |
-| int5              | 0xE0 - 0xFF       | 0b111.....                  | Negative 5 bit integer.                         |
+| uint7             | 0x00 - 0x7F       | `0b0.......`                | Unsigned 7 bit integer.                         |
+| obj4              | 0x80 - 0x8F       | `0b1000....`                | Object with up to 15 chunks.                    |
+| arr4              | 0x90 - 0x9F       | `0b1001....`                | Array with up to 15 chunks.                     |
+| str5              | 0xA0 - 0xBF       | `0b101.....`                | String with up to 31 chunks.                    |
+| null              | 0xC0              | `0b11000000`                | "null" value.                                   |
+| false             | 0xC2              | `0b11000010`                | "false" value.                                  |
+| true              | 0xC3              | `0b11000011`                | "true" value.                                   |
+| float32           | 0xCA              | `0b11001010`                | 32-bit floating point number.                   |
+| float64           | 0xCB              | `0b11001011`                | 64-bit floating point number.                   |
+| uint8             | 0xCC              | `0b11001100`                | Unsigned 8 bit integer.                         |
+| uint16            | 0xCD              | `0b11001101`                | Unsigned 16 bit integer.                        |
+| uint32            | 0xCE              | `0b11001110`                | Unsigned 32 bit integer.                        |
+| uint64            | 0xCF              | `0b11001111`                | Unsigned 64 bit integer (53 bit in JavaScript). |
+| int8              | 0xD0              | `0b11010000`                | Signed 8 bit integer.                           |
+| int16             | 0xD1              | `0b11010001`                | Signed 16 bit integer.                          |
+| int32             | 0xD2              | `0b11010010`                | Signed 32 bit integer.                          |
+| int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
+| str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
+| str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
+| str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |
+| arr16             | 0xDC              | `0b11011100`                | Array with up to 65,535 chunks.                 |
+| arr32             | 0xDD              | `0b11011101`                | Array with up to 4,294,967,295 chunks.          |
+| obj16             | 0xDE              | `0b11011110`                | Object with up to 65,535 chunks.                |
+| obj32             | 0xDF              | `0b11011111`                | Object with up to 4,294,967,295 chunks.         |
+| int5              | 0xE0 - 0xFF       | `0b111.....`                | Negative 5 bit integer.                         |
 
 (The above encoding table is adopted from [MessagePack encoding](https://github.com/msgpack/msgpack/blob/master/spec.md#overview) format.)
 
