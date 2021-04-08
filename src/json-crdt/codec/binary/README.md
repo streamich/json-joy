@@ -533,7 +533,7 @@ byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
 
 #### `vuint57` (variable length unsigned 57 bit integer)
 
-Variable length unsigned integer is encoded using up to 8 bytes. The maximum
+Variable length unsigned 57 bit integer is encoded using up to 8 bytes. The maximum
 size of the decoded value is 57 bits of data.
 
 The high bit "?" of each byte indicates if the next byte should be consumed, up
@@ -590,13 +590,56 @@ Encoding examples:
 ```
 
 
+#### `vuint29` (variable length unsigned 29 bit integer)
+
+Variable length unsigned 29 bit integer is encoded using up to 4 bytes. The maximum
+size of the decoded value is 29 bits of data.
+
+The high bit "?" of each byte indicates if the next byte should be consumed, up
+to 8 bytes.
+
+```
+byte 1                     byte 4
++--------+........+........+········+
+|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+········+
+
+           11111    2211111 22222222
+  7654321  4321098  1098765 98765432
+    |                       |
+    5th bit of z            |
+                           29th bit of z
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+
+```
+
+
 #### `b1vuint56` (variable length unsigned 56 bit integer with bit set 1 bit)
 
-Boolean variable length unsigned integer (bvuint8) is encoded in a similar way
-to vuint8, but the first bit x is used for storing a boolean value.
+Boolean variable length unsigned 56 bit integer with 1 bit bitfield is encoded
+in a similar way to vuint57, but the first bit x is used for storing a boolean
+value.
 
-bvuint8 is encoded using up to 8 bytes. Because the first bit is used to store
-a boolean value, the maximum data bvuint8 can hold is 56 bits.
+b1vuint56 is encoded using up to 8 bytes. Because the first bit is used to store
+a boolean value, the maximum integer data b1vuint56 can hold is 56 bits.
 
 ```
 byte 1                                                         byte 8
