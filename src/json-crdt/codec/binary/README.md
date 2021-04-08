@@ -242,6 +242,8 @@ arr32
 +--------+--------+--------+--------+--------+========+========+
 ```
 
+TODO: IDs of insertion operations are missing.
+
 Each array chunk contains the bellow parts in the following order.
 
 1. Number of nodes in the chunk, encoded using bvuint8.
@@ -256,7 +258,7 @@ Each array chunk contains the bellow parts in the following order.
 +=========+=========+
 ```
 
-Assuming the node count is encoding using `t` bits.
+Assuming the node count is encoded using `t` bits.
 
 ```
 A deleted chunk:
@@ -265,20 +267,18 @@ A deleted chunk:
 +--------+........+········+
 
 A deleted chunk with three nodes:
-
 +--------+
 |10000011|
 +--------+
 
 A deleted chunk with 256 nodes:
-
 +--------+--------+
 |11000000|00000100|
 +--------+--------+
 
 A chunk with nodes which are not deleted:
 +--------+........+········+=========+
-|1?tttttt|?ttttttt|tttttttt|  nodes  |
+|0?tttttt|?ttttttt|tttttttt|  nodes  |
 +--------+........+········+=========+
 ```
 
@@ -287,19 +287,77 @@ A chunk with nodes which are not deleted:
 
 The string node contains the below parts in the following order.
 
-1. First byte is set to 2.
+1. First byte encodes whether the string node is of type `str5`, `str8`, `arr16` or `arr32`.
+2. Followed by 0, 1, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the string, encoded as a relative ID.
-3. Number chunks in the string, encoded as vuint8.
-4. A flat list of chunks.
+4. A flat list of string chunks.
+
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+str5
++--------+========+========+
+|101sssss|   ID   | chunks |
++--------+========+========+
+
+str8
++--------+--------+========+========+
+|11011001|ssssssss|   ID   | chunks |
++--------+--------+========+========+
+
+str16
++--------+--------+--------+========+========+
+|11011010|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+str32
++--------+--------+--------+--------+--------+========+========+
+|11011011|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
 
 Each chunk contains the bellow parts in the following order.
 
-1. The substring length in the chunk, encoded as bvuint8.
-   1. If bvuint8 boolean bit is 1, the substring is considered deleted, there
-      is no contents to follow. The substring length is used as the length of
-      the UTF-8 string that was deleted.
-   2. If bvuint8 boolean bit is 0, the following data contains UTF-8 encoded
-      substring, where the length is the length in bytes of the UTF-8 data.
+1. The text length in the chunk, encoded as bvuint8.
+   1. If bvuint8 boolean bit is 1, the text is considered deleted, there
+      is no text contents to follow. The text length is used as the
+      length of the UTF-8 text that was deleted.
+   2. If bvuint8 boolean bit is 0, the following `data` contains UTF-8 encoded
+      text contents, where the length is the length in bytes of the UTF-8
+      data.
+2. ID of the first UTF-8 character in the chunk, encoded as a relative ID.
+3. Chunk's UTF-8 text contents `text`, encoded as UTF-8 string, if bvuint8
+   boolean bit was set to 0, no data otherwise.
+
+```
++=========+========+========+
+| bvuint8 |   ID   |  text  |
++=========+========+========+
+```
+
+Assuming the node count is encoded using `t` bits.
+
+```
+A deleted chunk:
++--------+........+········+========+
+|1?tttttt|?ttttttt|tttttttt|   ID   |
++--------+........+········+========+
+
+A deleted chunk with text of length 3:
++--------+========+
+|10000011|   ID   |
++--------+========+
+
+A deleted chunk with text of length 256:
++--------+--------+========+
+|11000000|00000100|   ID   |
++--------+--------+========+
+
+A chunk with text which is not deleted:
++--------+........+········+========+========+
+|0?tttttt|?ttttttt|tttttttt|   ID   |  text  |
++--------+........+········+========+========+
+```
 
 
 ##### Number node encoding
