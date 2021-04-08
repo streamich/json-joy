@@ -49,7 +49,7 @@ The header consists of a zero bytes.
 
 ### The vector clock section
 
-The vector clock section starts with a bvaruint8 integer. The boolean bit is set
+The vector clock section starts with a bvuint8 integer. The boolean bit is set
 to 0. The value of this integer specifies the number of entries in the vector
 clock section.
 
@@ -175,17 +175,43 @@ the data section.
 
 The object node contains the below parts in the following order.
 
-1. First byte is set to 0.
+1. First byte encodes whether the object node is of type `obj4`, `obj16` or `obj32`.
+2. Followed by 0, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the object, encoded as a relative ID.
-3. Number of keys in the object, encoded as varuint8.
-4. A flat list of object fields.
+4. A flat list of object chunks.
 
-Each object field is encoded as follows:
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+obj4
++--------+========+========+
+|101sssss|   ID   | chunks |
++--------+========+========+
+
+obj16
++--------+--------+--------+========+========+
+|11011100|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+obj32
++--------+--------+--------+--------+--------+========+========+
+|11011101|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
+
+Each object chunk is encoded as follows:
 
 1. ID of the operation that set this field, encoded as relative ID.
-2. The length of field key, encoded as varuint8.
-3. The field key, encoded in UTF-8.
+2. The length of field name, encoded as vuint8.
+3. The field `name`, encoded in UTF-8.
 4. Value of the field, encoded as a node.
+
+```
+One object chunk:
++========+========+========+========+
+|   ID   | vuint8 |  name  |  node  |
++========+========+========+========+
+```
 
 
 ##### Array node encoding
@@ -194,15 +220,15 @@ The array node contains the below parts in the following order.
 
 1. First byte is set to 1.
 2. ID of the array, encoded as a relative ID.
-3. Number chunks in the array, encoded as varuint8.
+3. Number chunks in the array, encoded as vuint8.
 4. A flat list of chunks.
 
 Each chunk contains the bellow parts in the following order.
 
-1. Number of nodes in the chunk, encoded using bvaruint8.
-   1. If bvaruint8 boolean bit is 1, the chunk is considered deleted, there is no
+1. Number of nodes in the chunk, encoded using bvuint8.
+   1. If bvuint8 boolean bit is 1, the chunk is considered deleted, there is no
       no contents to follow.
-   2. If bvaruint8 boolean bit is 0, the following data contains and ordered flat
+   2. If bvuint8 boolean bit is 0, the following data contains and ordered flat
       list of nodes, encoded as nodes.
 
 
@@ -212,16 +238,16 @@ The string node contains the below parts in the following order.
 
 1. First byte is set to 2.
 2. ID of the string, encoded as a relative ID.
-3. Number chunks in the string, encoded as varuint8.
+3. Number chunks in the string, encoded as vuint8.
 4. A flat list of chunks.
 
 Each chunk contains the bellow parts in the following order.
 
-1. The substring length in the chunk, encoded as bvaruint8.
-   1. If bvaruint8 boolean bit is 1, the substring is considered deleted, there
+1. The substring length in the chunk, encoded as bvuint8.
+   1. If bvuint8 boolean bit is 1, the substring is considered deleted, there
       is no contents to follow. The substring length is used as the length of
       the UTF-8 string that was deleted.
-   2. If bvaruint8 boolean bit is 0, the following data contains UTF-8 encoded
+   2. If bvuint8 boolean bit is 0, the following data contains UTF-8 encoded
       substring, where the length is the length in bytes of the UTF-8 data.
 
 
@@ -308,7 +334,7 @@ Value `null` is encoded as 1 byte, equal to 6.
 ## Encoding components
 
 
-### Variable length unsigned integer (varuint8)
+### Variable length unsigned integer (vuint8)
 
 Variable length unsigned integer is encoded using up to 8 bytes. The maximum
 size of the decoded value is 57 bits of data.
@@ -342,13 +368,13 @@ byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
 ```
 
 
-### Boolean variable length unsigned integer (bvaruint8)
+### Boolean variable length unsigned integer (bvuint8)
 
-Boolean variable length unsigned integer (bvaruint8) is encoded in a similar way
-to varuint8, but the first bit x is used for storing a boolean value.
+Boolean variable length unsigned integer (bvuint8) is encoded in a similar way
+to vuint8, but the first bit x is used for storing a boolean value.
 
-bvaruint8 is encoded using up to 8 bytes. Because the first bit is used to store
-a boolean value, the maximum data bvaruint8can hold is 56 bits.
+bvuint8 is encoded using up to 8 bytes. Because the first bit is used to store
+a boolean value, the maximum data bvuint8 can hold is 56 bits.
 
 ```
 byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
