@@ -185,7 +185,7 @@ The number of chunks is encoded with `s` bits as an unsigned integer.
 ```
 obj4
 +--------+========+========+
-|101sssss|   ID   | chunks |
+|1000ssss|   ID   | chunks |
 +--------+========+========+
 
 obj16
@@ -218,18 +218,69 @@ One object chunk:
 
 The array node contains the below parts in the following order.
 
-1. First byte is set to 1.
+1. First byte encodes whether the array node is of type `arr4`, `arr16` or `arr32`.
+2. Followed by 0, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the array, encoded as a relative ID.
-3. Number chunks in the array, encoded as vuint8.
-4. A flat list of chunks.
+4. A flat list of array chunks.
 
-Each chunk contains the bellow parts in the following order.
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+arr4
++--------+========+========+
+|1001ssss|   ID   | chunks |
++--------+========+========+
+
+arr16
++--------+--------+--------+========+========+
+|11011100|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+arr32
++--------+--------+--------+--------+--------+========+========+
+|11011101|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
+
+Each array chunk contains the bellow parts in the following order.
 
 1. Number of nodes in the chunk, encoded using bvuint8.
    1. If bvuint8 boolean bit is 1, the chunk is considered deleted, there is no
       no contents to follow.
    2. If bvuint8 boolean bit is 0, the following data contains and ordered flat
       list of nodes, encoded as nodes.
+
+```
++=========+=========+
+| bvuint8 |  nodes  |
++=========+=========+
+```
+
+Assuming the node count is encoding using `t` bits.
+
+```
+A deleted chunk:
++--------+........+········+
+|1?tttttt|?ttttttt|tttttttt|
++--------+........+········+
+
+A deleted chunk with three nodes:
+
++--------+
+|10000011|
++--------+
+
+A deleted chunk with 256 nodes:
+
++--------+--------+
+|11000000|00000100|
++--------+--------+
+
+A chunk with nodes which are not deleted:
++--------+........+········+=========+
+|1?tttttt|?ttttttt|tttttttt|  nodes  |
++--------+........+········+=========+
+```
 
 
 ##### String node encoding
