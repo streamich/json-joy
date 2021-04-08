@@ -442,93 +442,21 @@ Value `null` is encoded as 1 byte, equal to 6.
 
 ## Encoding components
 
-
-### Variable length unsigned integer (vuint8)
-
-Variable length unsigned integer is encoded using up to 8 bytes. The maximum
-size of the decoded value is 57 bits of data.
-
-The high bit "?" of each byte indicates if the next byte should be consumed, up
-to 8 bytes.
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-          11111    2211111  2222222  3333332  4443333  4444444 55555555
- 7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
-   |                        |                    |             |
-   5th bit of z             |                    |             |
-                            28th bit of z        |             57th bit of z
-                                                 39th bit of z
-```
-
-Encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-0zzzzzzz
-1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
-```
-
-
-### Boolean variable length unsigned integer (bvuint8)
-
-Boolean variable length unsigned integer (bvuint8) is encoded in a similar way
-to vuint8, but the first bit x is used for storing a boolean value.
-
-bvuint8 is encoded using up to 8 bytes. Because the first bit is used to store
-a boolean value, the maximum data bvuint8 can hold is 56 bits.
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-x?zzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-|         11111    2111111  2222222  3333322  4433333  4444444 55555554
-| 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
-|  |                        |                    |             |
-|  5th bit of z             |                    |             |
-|                           27th bit of z        |             56th bit of z
-|                                                38th bit of z
-x stores a boolean value
-```
-
-Encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-x0zzzzzz
-x1zzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
-```
-
-
 ### Relative ID
 
 Each *relative ID* encodes a way to decode an absolute ID using the vector clock
 table.
 
-Absolute ID is a specific value of a logical clock. And ID consists of a
-(1) session ID and (2) time sequence pair.
+Absolute ID is a specific value of a logical clock. An ID consists of a
+(1) session ID and a (2) time sequence pair.
 
 Each relative ID is a 2-tuple.
 
 1. The first element is the index in the vector
-   clock table. For example, 0 means "the first logic clock" in the vector clock
-   table, or 3 means "the fourth logical clock" in the vector clock table.
+   clock table. For example, 1 means "the first logic clock" in the vector clock
+   table, or 4 means "the fourth logical clock" in the vector clock table.
 2. The second element encodes the difference of the time value of the time of
-   the clock in the vector table and the absolute ID time. For example of the
-   time of the clock X in the clock table is 10, and the encoded time difference
-   is 2, the time of the absolute ID is 10 - 2 = 8.
+   the clock in the vector table and the absolute ID time.
 
 In the below encoding diagrams bits are annotated as follows:
 
@@ -540,13 +468,13 @@ If x is less than 8 and z is less than 16, the relative ID is encoded as a
 single byte:
 
 ```
-byte 1
-0xxxzzzz
++--------+
+|0xxxzzzz|
++--------+
 ```
 
-Otherwise the top bit of the first byte is set to 1. And subsequently x and "?"
-are encoded separately as variable length unsigned integers. Where x loses the
-ability to encode the highest bit of the first byte.
+Otherwise the top bit of the first byte is set to 1. And subsequently x and z
+are encoded separately as bvuint4 and vuint6, respectively.
 
 x is encoded using up to 4 bytes. The maximum size of x is a 28-bit
 unsigned integer. x is encoded using variable length encoding, if "?" is set to 1
@@ -597,4 +525,126 @@ byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0000zzzz
+```
+
+
+### Variable length integers
+
+
+#### `vuint57` (variable length unsigned 57 bit integer)
+
+Variable length unsigned integer is encoded using up to 8 bytes. The maximum
+size of the decoded value is 57 bits of data.
+
+The high bit "?" of each byte indicates if the next byte should be consumed, up
+to 8 bytes.
+
+```
+byte 1                                                         byte 8
++--------+........+........+........+........+........+........+········+
+|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+........+........+........+........+········+
+
+           11111    2211111  2222222  3333332  4443333  4444444 55555555
+  7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
+    |                        |                    |             |
+    5th bit of z             |                    |             |
+                             28th bit of z        |             57th bit of z
+                                                  39th bit of z
+```
+
+Encoding examples:
+
+```
++--------+
+|0zzzzzzz|
++--------+
+
++--------+--------+
+|1zzzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
+```
+
+
+#### `b1vuint56` (variable length unsigned 56 bit integer with bit set 1 bit)
+
+Boolean variable length unsigned integer (bvuint8) is encoded in a similar way
+to vuint8, but the first bit x is used for storing a boolean value.
+
+bvuint8 is encoded using up to 8 bytes. Because the first bit is used to store
+a boolean value, the maximum data bvuint8 can hold is 56 bits.
+
+```
+byte 1                                                         byte 8
++--------+........+........+........+........+........+........+········+
+|x?zzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+........+........+........+........+········+
+ |
+ |         11111    2111111  2222222  3333322  4433333  4444444 55555554
+ | 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
+ |  |                        |                    |             |
+ |  5th bit of z             |                    |             |
+ |                           27th bit of z        |             56th bit of z
+ |                                                38th bit of z
+ x stores a boolean value
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
 ```
