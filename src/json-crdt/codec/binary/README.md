@@ -21,7 +21,7 @@ Zero or more repeating bytes:
 |        |
 +........+
 
-Zero or one byte which ends repeating byte sequence:
+Zero or one byte which ends a repeating byte sequence:
 +········+
 |        |
 +········+
@@ -461,20 +461,31 @@ Each relative ID is a 2-tuple.
 In the below encoding diagrams bits are annotated as follows:
 
 - "x" - vector table index, reference to the logical clock.
-- "z" - time difference.
+- "y" - time difference.
 - "?" - whether the next byte is used for encoding.
 
-If x is less than 8 and z is less than 16, the relative ID is encoded as a
+If x is less than 8 and y is less than 16, the relative ID is encoded as a
 single byte:
 
 ```
 +--------+
-|0xxxzzzz|
+|0xxxyyyy|
 +--------+
 ```
 
-Otherwise the top bit of the first byte is set to 1. And subsequently x and z
-are encoded separately as bvuint4 and vuint6, respectively.
+Otherwise the top bit of the first byte is set to 1; and x and y are encoded
+separately using b1vuint28 and vuint39, respectively.
+
+```
+      x          y
++===========+=========+
+| b1vuint28 | vuint39 |
++===========+=========+
+```
+
+The boolean flag of x b1vuint28 value is always set to 1.
+
+---
 
 x is encoded using up to 4 bytes. The maximum size of x is a 28-bit
 unsigned integer. x is encoded using variable length encoding, if "?" is set to 1
@@ -590,25 +601,25 @@ Encoding examples:
 ```
 
 
-#### `vuint29` (variable length unsigned 29 bit integer)
+#### `vuint39` (variable length unsigned 39 bit integer)
 
-Variable length unsigned 29 bit integer is encoded using up to 4 bytes. The maximum
-size of the decoded value is 29 bits of data.
+Variable length unsigned 39 bit integer is encoded using up to 6 bytes. The maximum
+size of the decoded value is 39 bits of data.
 
 The high bit "?" of each byte indicates if the next byte should be consumed, up
-to 8 bytes.
+to 6 bytes.
 
 ```
-byte 1                     byte 4
-+--------+........+........+········+
-|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-+--------+........+........+········+
+byte 1                                       byte 6
++--------+........+........+........+........+········+
+|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|0000zzzz|
++--------+........+........+........+........+········+
 
-           11111    2211111 22222222
-  7654321  4321098  1098765 98765432
-    |                       |
-    5th bit of z            |
-                           29th bit of z
+           11111    2211111  2222222  3333332     3333
+  7654321  4321098  1098765  8765432  5432109     9876
+    |                        |                    |
+    5th bit of z             |                    39th bit of z
+                             28th bit of z
 ```
 
 Encoding examples:
@@ -627,12 +638,20 @@ Encoding examples:
 +--------+--------+--------+
 
 +--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
 +--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0000zzzz|
++--------+--------+--------+--------+--------+--------+
 ```
 
 
-#### `b1vuint56` (variable length unsigned 56 bit integer with bit set 1 bit)
+#### `b1vuint56` (variable length unsigned 56 bit integer with 1 bit bitfield)
 
 Boolean variable length unsigned 56 bit integer with 1 bit bitfield is encoded
 in a similar way to vuint57, but the first bit x is used for storing a boolean
@@ -690,4 +709,48 @@ Encoding examples:
 +--------+--------+--------+--------+--------+--------+--------+--------+
 |x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
 +--------+--------+--------+--------+--------+--------+--------+--------+
+```
+
+
+#### `b1vuint28` (variable length unsigned 28 bit integer with 1 bit bitfield)
+
+Boolean variable length unsigned 28 bit integer with 1 bit bitfield is encoded
+in a similar way to b1vuint56, but the numeric value expands only up to 4 bytes.
+
+b1vuint28 is encoded using up to 4 bytes. Because the first bit is used to store
+a boolean value, the maximum integer data b1vuint28 can hold is 28 bits.
+
+```
+byte 1                     byte 4
++--------+........+........+········+
+|x?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+········+
+ |
+ |         11111    2111111 22222222
+ | 654321  3210987  0987654 87654321
+ |  |                        |
+ |  5th bit of z             |
+ |                           27th bit of z
+ |
+ x stores a boolean value
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+
 ```
