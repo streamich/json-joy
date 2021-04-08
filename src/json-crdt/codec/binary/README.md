@@ -154,7 +154,7 @@ the node type and its size.
 | arr32             | 0xDD              | `0b11011101`                | Array with up to 4,294,967,295 chunks.          |
 | obj16             | 0xDE              | `0b11011110`                | Object with up to 65,535 chunks.                |
 | obj32             | 0xDF              | `0b11011111`                | Object with up to 4,294,967,295 chunks.         |
-| int5              | 0xE0 - 0xFF       | `0b111.....`                | Negative 5 bit integer.                         |
+| nint5             | 0xE0 - 0xFF       | `0b111.....`                | Negative 5 bit integer.                         |
 
 (The above encoding table is adopted from [MessagePack encoding](https://github.com/msgpack/msgpack/blob/master/spec.md#overview) format.)
 
@@ -363,69 +363,74 @@ A chunk with text which is not deleted:
 ##### Number node encoding
 
 The number node is encoded differently depending on the value of the number.
+Each number node has the following parts:
 
-If the number is a signed integer and can be encoded using one byte, then the
-following encoding is used:
+1. Node type byte.
+2. Zero or more bytes of the number value `x`.
+3. ID if the number node, encoded as a relative ID.
 
-1. First byte is set to 10.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 1 byte.
 
-If the number is a signed integer and can be encoded using two bytes, then the
-following encoding is used:
+```
+uint7
++--------+========+
+|0xxxxxxx|   ID   |
++--------+========+
 
-1. First byte is set to 11.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 2 bytes.
+float32
++--------+--------+--------+--------+--------+========+
+|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number is a signed integer and can be encoded using three bytes, then the
-following encoding is used:
+float64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 12.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 3 bytes.
+uint8
++--------+--------+========+
+|  0xCC  |xxxxxxxx|   ID   |
++--------+--------+========+
 
-If the number is a signed integer and can be encoded using four bytes, then the
-following encoding is used:
+uint16
++--------+--------+--------+========+
+|  0xCD  |xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+========+
 
-1. First byte is set to 13.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 4 bytes.
+uint32
++--------+--------+--------+--------+--------+========+
+|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number is a signed integer and can be encoded using five bytes, then the
-following encoding is used:
+uint64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 14.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 5 bytes.
+int8
++--------+--------+========+
+|  0xD0  |xxxxxxxx|   ID   |
++--------+--------+========+
 
-If the number is a signed integer and can be encoded using six bytes, then the
-following encoding is used:
+int16
++--------+--------+--------+========+
+|  0xD1  |xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+========+
 
-1. First byte is set to 15.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 6 bytes.
+int32
++--------+--------+--------+--------+--------+========+
+|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number can be encoded as 32-bit IEEE 754 floating point number, then the
-following encoding is used:
+int64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 16.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded as 4 bytes IEEE 754 number.
-
-In all other cases the following encoding is used:
-
-1. First byte is set to 3.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value stored using 64 bits, encoded as IEEE 754 number.
+nint5
++--------+========+
+|111xxxxx|   ID   |
++--------+========+
+```
 
 
 ##### Boolean node encoding
@@ -503,59 +508,6 @@ separately using b1vuint28 and vuint39, respectively.
 ```
 
 The boolean flag of x b1vuint28 value is always set to 1.
-
----
-
-x is encoded using up to 4 bytes. The maximum size of x is a 28-bit
-unsigned integer. x is encoded using variable length encoding, if "?" is set to 1
-the next byte should be consumed to decode x.
-
-```
-byte 1   byte 2   byte 3   byte 4
-1?xxxxxx ?xxxxxxx ?xxxxxxx xxxxxxxx
-          1111     2111111 22222222
-  654321  3210987  0987654 87654321
-   |                       |
-   5th bit of x            |
-                           28th bit of x
-```
-
-x encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4
-10xxxxxx
-11xxxxxx 0xxxxxxx
-11xxxxxx 1xxxxxxx 0xxxxxxx
-11xxxxxx 1xxxxxxx 1xxxxxxx xxxxxxxx
-```
-
-z is encoded using up to 6 bytes. The maximum size of z is a 39-bit
-unsigned integer. z is encoded using variable length encoding, if z is set to 1
-the next byte should be consumed to decode z.
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ....zzzz
-          11111    2211111  2222222  3333332     3333
- 7654321  4321098  1098765  8765432  5432109     9876
-   |                        |                    |
-   5th bit of z             |                    |
-                            28th bit of z        |
-                                                 39th bit of z
-```
-
-"?" encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-0zzzzzzz
-1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0000zzzz
-```
 
 
 ### Variable length integers
