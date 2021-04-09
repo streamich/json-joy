@@ -16,6 +16,7 @@
   "module": "esm/index.js",
   "bin": {
     "json-pack": "./bin/json-pack.js",
+    "json-unpack": "./bin/json-unpack.js",
     "json-pointer": "./bin/json-pointer.js",
     "json-pointer-test": "./bin/json-pointer-test.js",
     "json-patch": "./bin/json-patch.js",

@@ -40,6 +40,7 @@ This package consists of multiple self-contained libraries:
 - __`json-cli`__ &mdash; CLI utilities and functional testing suites.
   - [__Documentation__ 🚀](./src/json-cli/README.md)
     - [`json-pack` CLI](./src/json-cli/docs/json-pack.md)
+    - [`json-unpack` CLI](./src/json-cli/docs/json-unpack.md)
     - [`json-pointer` CLI](./src/json-cli/docs/json-pointer.md)
     - [`json-patch` CLI](./src/json-cli/docs/json-patch.md)
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
