@@ -28,6 +28,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
         builder.num();
         break;
       }
+      case 'val': {
+        builder.val(op.value);
+        break;
+      }
       case 'const': {
         builder.const(op.value);
         break;
@@ -38,6 +42,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
       }
       case 'obj_set': {
         builder.setKeys(ts(op.obj), (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]));
+        break;
+      }
+      case 'val_set': {
+        builder.setVal(ts(op.obj), op.value);
         break;
       }
       case 'num_set': {

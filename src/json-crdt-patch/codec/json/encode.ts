@@ -7,10 +7,12 @@ import {MakeConstantOperation} from "../../operations/MakeConstantOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {MakeValueOperation} from "../../operations/MakeValueOperation";
 import {NoopOperation} from "../../operations/NoopOperation";
 import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
+import {SetValueOperation} from "../../operations/SetValueOperation";
 import {Patch} from "../../Patch";
 import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation, JsonCodecNoopOperation} from "./types";
 
@@ -43,6 +45,10 @@ export const encode = (patch: Patch): JsonCodecPatch => {
       ops.push({op: 'num'});
       continue;
     }
+    if (op instanceof MakeValueOperation) {
+      ops.push({op: 'val', value: op.value});
+      continue;
+    }
     if (op instanceof MakeConstantOperation) {
       ops.push({op: 'const', value: op.value});
       continue;
@@ -66,6 +72,14 @@ export const encode = (patch: Patch): JsonCodecPatch => {
       ops.push({
         op: 'num_set',
         after: encodeTimestamp(op.num),
+        value: op.value,
+      });
+      continue;
+    }
+    if (op instanceof SetValueOperation) {
+      ops.push({
+        op: 'val_set',
+        obj: encodeTimestamp(op.obj),
         value: op.value,
       });
       continue;

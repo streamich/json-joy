@@ -71,6 +71,8 @@ test('test all operations', () => {
       { op: 'del', obj: [3, 107], after: [3, 109]}, // 111
       { op: 'noop', len: 2 },
       { op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 112
+      { op: 'val', value: {a: 'b'} }, // 117
+      { op: 'val_set', obj: [3, 118], value: 'lala' }, // 118
     ]
   };
   const patch = decode(json);

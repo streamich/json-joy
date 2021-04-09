@@ -56,6 +56,8 @@ test('test all operations', () => {
   builder.del(numId, numInsertionId, 1);
   builder.noop(2);
   builder.del(strId, strInsertId, 2);
+  const valId = builder.val({a: 'b'});
+  builder.setVal(valId, 'lala');
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual({
@@ -73,11 +75,13 @@ test('test all operations', () => {
       { op: 'num_set', after: [3, 107], value: 123.4}, // 108
       { op: 'arr_ins', obj: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
       { op: 'root', value: [3, 104]}, // 110
-      { op: 'const', value: {a: 999}},
-      { op: 'noop' },
-      { op: 'del', obj: [3, 107], after: [3, 109]}, // 111
-      { op: 'noop', len: 2 },
-      { op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 112
+      { op: 'const', value: {a: 999}}, // 111
+      { op: 'noop' }, // 112
+      { op: 'del', obj: [3, 107], after: [3, 109]}, // 113
+      { op: 'noop', len: 2 }, // 114, 115
+      { op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 116
+      { op: 'val', value: {a: 'b'} }, // 117
+      { op: 'val_set', obj: [3, 118], value: 'lala' }, // 118
     ]
   });
 });
