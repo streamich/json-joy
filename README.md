@@ -43,6 +43,7 @@ This package consists of multiple self-contained libraries:
     - [`json-unpack` CLI](./src/json-cli/docs/json-unpack.md)
     - [`json-pointer` CLI](./src/json-cli/docs/json-pointer.md)
     - [`json-patch` CLI](./src/json-cli/docs/json-patch.md)
+    - [`json-pack-test` CLI](./src/json-cli/docs/json-pack-test.md)
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
 
