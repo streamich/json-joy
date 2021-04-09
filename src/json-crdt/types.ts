@@ -1,6 +1,6 @@
 import type {json_string} from "ts-brand-json";
 import type {LogicalTimestamp} from "../json-crdt-patch/clock";
-import type {Identifiable} from "../json-crdt-patch/types";
+import type {Identifiable} from "../json-crdt-patch/Identifiable";
 import type {ClockCodec} from "./codec/compact/ClockCodec";
 import type {Document} from "./document";
 

@@ -1,5 +1,5 @@
 import {LogicalTimestamp} from "../clock";
-import {Identifiable} from "../types";
+import {Identifiable} from "../Identifiable";
 
 export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
