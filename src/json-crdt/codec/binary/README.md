@@ -1,9 +1,9 @@
 # JSON CRDT document binary encoding
 
 The binary encoding of a JSON CRDT document encodes the structure of the latest
-state of a JSON CRDT document, which contains all the nodes and tombstones
-necessary to be able to merge any subsequent patches, but does not contain
-information to reconstruct previous patches.
+state (snapshot) of a JSON CRDT document, which contains all the nodes and
+tombstones necessary to be able to merge any subsequent patches, but does not
+contain information to reconstruct previous patches.
 
 
 ## Message encoding

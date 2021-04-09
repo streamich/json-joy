@@ -16,11 +16,12 @@ This package consists of multiple self-contained libraries:
   - __Documentation__ 🚀
   - __Reference__ 🤖
 - __`json-crdt`__ &mdash; CRDT implementation for JSON type.
-  - __Documentation__ 🚀
+  - [__Documentation__ 🚀](./src/json-crdt/README.md)
   - __Reference__ 🤖
 - __`json-crdt-patch`__ &mdash; JSON type CRDT operation specification and implementation.
   - __Documentation__ 🚀
   - __Specification__ 🤔
+  - [Binary snapshot encoding 🧬](./src/json-crdt/codec/binary/README.md)
   - __Reference__ 🤖
 - __`json-rx`__ &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
   - [__Documentation__ 🚀](./src/json-rx/README.md)
