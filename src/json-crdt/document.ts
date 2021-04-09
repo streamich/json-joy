@@ -24,6 +24,9 @@ import {JsonPatch} from './JsonPatch';
 import {Operation, operationToOp} from '../json-patch';
 import {Path} from '../json-pointer';
 import {DocumentApi} from './api/DocumentApi';
+import {MakeValueOperation} from '../json-crdt-patch/operations/MakeValueOperation';
+import {ValueType} from './types/lww-value/ValueType';
+import {SetValueOperation} from '../json-crdt-patch/operations/SetValueOperation';
 
 export class Document {
   /**
@@ -79,6 +82,8 @@ export class Document {
       if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
     } else if (op instanceof MakeNumberOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, op.id, 0));
+    } else if (op instanceof MakeValueOperation) {
+      if (!this.nodes.get(op.id)) this.nodes.index(new ValueType(op.id, op.id, op.value));
     } else if (op instanceof SetRootOperation) {
       const oldValue = this.root.insert(op);
       if (oldValue) this.deleteNodeTree(oldValue);
@@ -89,6 +94,10 @@ export class Document {
     } else if (op instanceof SetNumberOperation) {
       const num = this.nodes.get(op.num);
       if (!(num instanceof NumberType)) return;
+      num.insert(op);
+    } else if (op instanceof SetValueOperation) {
+      const num = this.nodes.get(op.obj);
+      if (!(num instanceof ValueType)) return;
       num.insert(op);
     } else if (op instanceof InsertArrayElementsOperation) {
       const arr = this.nodes.get(op.arr);

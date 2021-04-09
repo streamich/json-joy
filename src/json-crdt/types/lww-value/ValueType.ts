@@ -1,7 +1,7 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {SetNumberOperation} from '../../../json-crdt-patch/operations/SetNumberOperation';
+import {SetValueOperation} from '../../../json-crdt-patch/operations/SetValueOperation';
 import {json_string} from 'ts-brand-json';
 import {ClockCodec} from '../../codec/compact/ClockCodec';
 
@@ -11,7 +11,7 @@ import {ClockCodec} from '../../codec/compact/ClockCodec';
 export class ValueType implements JsonNode {
   constructor(public readonly id: LogicalTimestamp, public writeId: LogicalTimestamp, public value: unknown) {}
 
-  public insert(op: SetNumberOperation) {
+  public insert(op: SetValueOperation) {
     if (op.id.compare(this.writeId) <= 0) return;
     this.writeId = op.id;
     this.value = op.value;
