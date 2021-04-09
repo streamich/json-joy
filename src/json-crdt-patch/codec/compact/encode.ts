@@ -12,6 +12,7 @@ import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
 import {Patch} from "../../Patch";
+import {Code} from "./constants";
 
 export const encode = (patch: Patch): unknown[] => {
   const id = patch.getId();
@@ -27,30 +28,30 @@ export const encode = (patch: Patch): unknown[] => {
 
   for (const op of patch.ops) {
     if (op instanceof MakeObjectOperation) {
-      res.push(0);
+      res.push(Code.MakeObject);
       continue;
     }
     if (op instanceof MakeArrayOperation) {
-      res.push(1);
+      res.push(Code.MakeArray);
       continue;
     }
     if (op instanceof MakeStringOperation) {
-      res.push(2);
+      res.push(Code.MakeString);
       continue;
     }
     if (op instanceof MakeNumberOperation) {
-      res.push(3);
+      res.push(Code.MakeNumber);
       continue;
     }
     if (op instanceof SetRootOperation) {
       const {value} = op;
-      res.push(4);
+      res.push(Code.SetRoot);
       pushTimestamp(value);
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
       const {object, tuples} = op;
-      res.push(5, tuples.length);
+      res.push(Code.SetObjectKeys, tuples.length);
       pushTimestamp(object);
       for (const [key, value] of tuples) {
         res.push(key);
@@ -60,20 +61,20 @@ export const encode = (patch: Patch): unknown[] => {
     }
     if (op instanceof SetNumberOperation) {
       const {num, value} = op;
-      res.push(6, value);
+      res.push(Code.SetNumber, value);
       pushTimestamp(num);
       continue;
     }
     if (op instanceof InsertStringSubstringOperation) {
       const {obj, after, substring} = op;
-      res.push(7, substring);
+      res.push(Code.InsertStringSubstring, substring);
       pushTimestamp(obj);
       pushTimestamp(after);
       continue;
     }
     if (op instanceof InsertArrayElementsOperation) {
       const {arr, after, elements} = op;
-      res.push(8, elements.length);
+      res.push(Code.InsertArrayElements, elements.length);
       pushTimestamp(arr);
       pushTimestamp(after);
       for (const element of elements) pushTimestamp(element);
@@ -82,11 +83,11 @@ export const encode = (patch: Patch): unknown[] => {
     if (op instanceof DeleteOperation) {
       const {obj, after, length} = op;
       if (length === 1) {
-        res.push(9);
+        res.push(Code.DeleteOne);
         pushTimestamp(obj);
         pushTimestamp(after);
       } else {
-        res.push(10, length);
+        res.push(Code.Delete, length);
         pushTimestamp(obj);
         pushTimestamp(after);
       }
@@ -94,12 +95,12 @@ export const encode = (patch: Patch): unknown[] => {
     }
     if (op instanceof NoopOperation) {
       const {length} = op;
-      if (length === 1) res.push(11);
-      else res.push(12, length);
+      if (length === 1) res.push(Code.NoopOne);
+      else res.push(Code.Noop, length);
       continue;
     }
     if (op instanceof MakeConstantOperation) {
-      res.push(13);
+      res.push(Code.MakeConstant);
       res.push(op.value);
       continue;
     }

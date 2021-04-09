@@ -1,5 +1,6 @@
 import {LogicalClock, LogicalTimestamp} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
+import {Code} from '../constants';
 import {encode} from '../encode';
 
 test('encodes a simple patch', () => {
@@ -9,7 +10,7 @@ test('encodes a simple patch', () => {
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
     3, 5, // Patch ID
-    4, // root
+    Code.SetRoot, // root
     0, 3, // root.value
   ]);
 });
@@ -27,11 +28,11 @@ test('create {foo: "bar"} object', () => {
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
     5, 25, // Patch ID
-    2, // str
-    7, "bar", -1, -1, // str_ins
-    0, // obj
-    5, 1, -5, "foo", -1, // obj_set
-    4, -5 // root
+    Code.MakeString, // str
+    Code.InsertStringSubstring, "bar", -1, -1, // str_ins
+    Code.MakeObject, // obj
+    Code.SetObjectKeys, 1, -5, "foo", -1, // obj_set
+    Code.SetRoot, -5 // root
   ]);
 });
 
@@ -57,19 +58,19 @@ test('test all operations', () => {
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
     3, 100, // Patch ID
-    2, // str 3!100
-    7, "qq", -1, -1, // str_ins 3!101,3!102
-    1, // arr 3!103
-    0, // obj 3!104
-    5, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
-    3, // num 3!107
-    6, 123.4, -8, // num_set 3!108
-    8, 1, -4, -4, -8, // arr_ins 3!109
-    4, -5, // root 3!110
-    13, [1, 2],
-    11, // noop (1)
-    9, -8, -10, // del_one
-    12, 3, // noop (3)
-    10, 2, -1, -2 // del
+    Code.MakeString, // str 3!100
+    Code.InsertStringSubstring, "qq", -1, -1, // str_ins 3!101,3!102
+    Code.MakeArray, // arr 3!103
+    Code.MakeObject, // obj 3!104
+    Code.SetObjectKeys, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
+    Code.MakeNumber, // num 3!107
+    Code.SetNumber, 123.4, -8, // num_set 3!108
+    Code.InsertArrayElements, 1, -4, -4, -8, // arr_ins 3!109
+    Code.SetRoot, -5, // root 3!110
+    Code.MakeConstant, [1, 2],
+    Code.NoopOne, // noop (1)
+    Code.DeleteOne, -8, -10, // del_one
+    Code.Noop, 3, // noop (3)
+    Code.Delete, 2, -1, -2 // del
   ]);
 });

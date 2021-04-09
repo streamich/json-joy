@@ -1,6 +1,7 @@
 import {LogicalClock, LogicalTimestamp} from "../../clock";
 import {Patch} from "../../Patch";
 import {PatchBuilder} from "../../PatchBuilder";
+import {Code} from "./constants";
 
 export const decode = (data: unknown[]): Patch => {
   const sessionId = data[0] as number;
@@ -18,27 +19,27 @@ export const decode = (data: unknown[]): Patch => {
 
   while (i < length) {
     switch (data[i++]) {
-      case 0: {
+      case Code.MakeObject: {
         builder.obj();
         break;
       }
-      case 1: {
+      case Code.MakeArray: {
         builder.arr();
         break;
       }
-      case 2: {
+      case Code.MakeString: {
         builder.str();
         break;
       }
-      case 3: {
+      case Code.MakeNumber: {
         builder.num();
         break;
       }
-      case 4: {
+      case Code.SetRoot: {
         builder.root(decodeTimestamp());
         break;
       }
-      case 5: {
+      case Code.SetObjectKeys: {
         const length = data[i++] as number; 
         const obj = decodeTimestamp();
         const tuples: [key: string, value: LogicalTimestamp][] = [];
@@ -49,17 +50,17 @@ export const decode = (data: unknown[]): Patch => {
         builder.setKeys(obj, tuples);
         break;
       }
-      case 6: {
+      case Code.SetNumber: {
         const value = data[i++] as number;
         builder.setNum(decodeTimestamp(), value);
         break;
       }
-      case 7: {
+      case Code.InsertStringSubstring: {
         const value = data[i++] as string;
         builder.insStr(decodeTimestamp(), decodeTimestamp(), value);
         break;
       }
-      case 8: {
+      case Code.InsertArrayElements: {
         const length = data[i++] as number;
         const arr = decodeTimestamp();
         const after = decodeTimestamp();
@@ -68,28 +69,28 @@ export const decode = (data: unknown[]): Patch => {
         builder.insArr(arr, after, values);
         break;
       }
-      case 9: {
+      case Code.DeleteOne: {
         const obj = decodeTimestamp();
         const after = decodeTimestamp();
         builder.del(obj, after, 1);
         break;
       }
-      case 10: {
+      case Code.Delete: {
         const span = data[i++] as number;
         const obj = decodeTimestamp();
         const after = decodeTimestamp();
         builder.del(obj, after, span);
         break;
       }
-      case 11: {
+      case Code.NoopOne: {
         builder.noop(1);
         break;
       }
-      case 12: {
+      case Code.Noop: {
         builder.noop(data[i++] as number);
         break;
       }
-      case 13: {
+      case Code.MakeConstant: {
         builder.const(data[i++]);
         break;
       }
