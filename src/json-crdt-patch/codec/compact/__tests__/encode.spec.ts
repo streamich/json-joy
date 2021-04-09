@@ -54,6 +54,8 @@ test('test all operations', () => {
   builder.del(numId, numInsertionId, 1);
   builder.noop(3);
   builder.del(strId, strInsertId, 2);
+  const valId = builder.val({'1': 2});
+  builder.setVal(valId, null);
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
@@ -71,6 +73,8 @@ test('test all operations', () => {
     Code.NoopOne, // noop (1)
     Code.DeleteOne, -8, -10, // del_one
     Code.Noop, 3, // noop (3)
-    Code.Delete, 2, -1, -2 // del
+    Code.Delete, 2, -1, -2, // del
+    Code.MakeValue, {'1': 2}, // val
+    Code.SetValue, -20, null, // val_set
   ]);
 });

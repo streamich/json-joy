@@ -13,4 +13,6 @@ export const enum Code {
   NoopOne = 11,
   Noop = 12,
   MakeConstant = 13,
+  MakeValue = 14,
+  SetValue = 15,
 }

@@ -7,10 +7,12 @@ import {MakeConstantOperation} from "../../operations/MakeConstantOperation";
 import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
 import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
 import {MakeStringOperation} from "../../operations/MakeStringOperation";
+import {MakeValueOperation} from "../../operations/MakeValueOperation";
 import {NoopOperation} from "../../operations/NoopOperation";
 import {SetNumberOperation} from "../../operations/SetNumberOperation";
 import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
 import {SetRootOperation} from "../../operations/SetRootOperation";
+import {SetValueOperation} from "../../operations/SetValueOperation";
 import {Patch} from "../../Patch";
 import {Code} from "./constants";
 
@@ -101,6 +103,17 @@ export const encode = (patch: Patch): unknown[] => {
     }
     if (op instanceof MakeConstantOperation) {
       res.push(Code.MakeConstant);
+      res.push(op.value);
+      continue;
+    }
+    if (op instanceof MakeValueOperation) {
+      res.push(Code.MakeValue);
+      res.push(op.value);
+      continue;
+    }
+    if (op instanceof SetValueOperation) {
+      res.push(Code.SetValue);
+      pushTimestamp(op.obj);
       res.push(op.value);
       continue;
     }

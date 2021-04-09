@@ -67,7 +67,9 @@ test('test all operations', () => {
     Code.NoopOne, // noop (1)
     Code.DeleteOne, -8, -10, // del_one
     Code.Noop, 3, // noop (3)
-    Code.Delete, 2, -1, -2 // del
+    Code.Delete, 2, -1, -2, // del
+    Code.MakeValue, {'1': 2}, // val
+    Code.SetValue, -20, null, // val_set
   ];
   const patch = decode(json);
   const encoded = encode(patch);

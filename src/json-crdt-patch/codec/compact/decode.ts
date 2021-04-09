@@ -94,6 +94,16 @@ export const decode = (data: unknown[]): Patch => {
         builder.const(data[i++]);
         break;
       }
+      case Code.MakeValue: {
+        builder.val(data[i++]);
+        break;
+      }
+      case Code.SetValue: {
+        const obj = decodeTimestamp();
+        const value = data[i++];
+        builder.setVal(obj, value);
+        break;
+      }
     }
   }
 
