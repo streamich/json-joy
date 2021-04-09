@@ -12,6 +12,7 @@ import {NoopOperation} from './operations/NoopOperation';
 import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
+import {SetValueOperation} from './operations/SetValueOperation';
 
 export type JsonCrdtPatchOperation =
   | DeleteOperation
@@ -25,6 +26,7 @@ export type JsonCrdtPatchOperation =
   | MakeValueOperation
   | NoopOperation
   | SetNumberOperation
+  | SetValueOperation
   | SetObjectKeysOperation
   | SetRootOperation
   ;

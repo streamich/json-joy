@@ -9,11 +9,12 @@ import {MakeStringOperation} from "./operations/MakeStringOperation";
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
 import {SetNumberOperation} from "./operations/SetNumberOperation";
-import {Patch} from "./Patch";
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
 import {NoopOperation} from "./operations/NoopOperation";
 import {MakeConstantOperation} from "./operations/MakeConstantOperation";
 import {MakeValueOperation} from "./operations/MakeValueOperation";
+import {SetValueOperation} from "./operations/SetValueOperation";
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
+import {Patch} from "./Patch";
 
 /**
  * Utility class that helps in Patch construction.
@@ -141,6 +142,18 @@ export class PatchBuilder {
     this.pad();
     const id = this.clock.tick(1);
     const op = new SetNumberOperation(id, obj, value);
+    this.patch.ops.push(op);
+    return id;
+  }
+  
+  /**
+   * Set new new value of a JSON value LWW register.
+   * @returns ID of the new operation.
+   */
+  public setVal(obj: LogicalTimestamp, value: unknown): LogicalTimestamp {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new SetValueOperation(id, obj, value);
     this.patch.ops.push(op);
     return id;
   }
