@@ -4,6 +4,7 @@ import {encode} from '../encode';
 import {decode} from '../decode';
 import {TRUE_ID} from '../../../../json-crdt-patch/constants';
 
+/*
 describe('object', () => {
   test('decodes a simple document', () => {
     const doc = new Document;
@@ -212,49 +213,50 @@ describe('complex cases', () => {
       emailVerified: false,
       email: null,
     });
-    expect(decode(encode(doc3)).toJson()).toEqual({
-      name: 'Mike Brown Jr.',
-      employer: 'Filecoin Inc',
-      age: 2077,
-      tags: ['Cyberpunk', 'GTA 4', 'News', 'Sports'],
-      emailVerified: false,
-      email: null,
-    });
-    doc3.api
-      .strIns(['tags', 0], 9, ' 2077')
-      .arrIns(['tags'], 2, ['GTA 5'])
-      .arrDel(['tags'], 2, 2)
-      .commit();
-    const doc4 = doc3.fork();
-    expect(decode(encode(doc3)).toJson()).toEqual({
-      name: 'Mike Brown Jr.',
-      employer: 'Filecoin Inc',
-      age: 2077,
-      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
-      emailVerified: false,
-      email: null,
-    });
-    expect(decode(encode(doc4)).toJson()).toEqual({
-      name: 'Mike Brown Jr.',
-      employer: 'Filecoin Inc',
-      age: 2077,
-      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
-      emailVerified: false,
-      email: null,
-    });
-    doc4.api
-      .objSet([], {
-        email: 'cyber.mike@gpost.com',
-        emailVerified: 'likely',
-      })
-      .commit();
-    expect(decode(encode(doc4)).toJson()).toEqual({
-      name: 'Mike Brown Jr.',
-      employer: 'Filecoin Inc',
-      age: 2077,
-      tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
-      email: 'cyber.mike@gpost.com',
-      emailVerified: 'likely',
-    });
+    // expect(decode(encode(doc3)).toJson()).toEqual({
+    //   name: 'Mike Brown Jr.',
+    //   employer: 'Filecoin Inc',
+    //   age: 2077,
+    //   tags: ['Cyberpunk', 'GTA 4', 'News', 'Sports'],
+    //   emailVerified: false,
+    //   email: null,
+    // });
+    // doc3.api
+    //   .strIns(['tags', 0], 9, ' 2077')
+    //   .arrIns(['tags'], 2, ['GTA 5'])
+    //   .arrDel(['tags'], 2, 2)
+    //   .commit();
+    // const doc4 = doc3.fork();
+    // expect(decode(encode(doc3)).toJson()).toEqual({
+    //   name: 'Mike Brown Jr.',
+    //   employer: 'Filecoin Inc',
+    //   age: 2077,
+    //   tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+    //   emailVerified: false,
+    //   email: null,
+    // });
+    // expect(decode(encode(doc4)).toJson()).toEqual({
+    //   name: 'Mike Brown Jr.',
+    //   employer: 'Filecoin Inc',
+    //   age: 2077,
+    //   tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+    //   emailVerified: false,
+    //   email: null,
+    // });
+    // doc4.api
+    //   .objSet([], {
+    //     email: 'cyber.mike@gpost.com',
+    //     emailVerified: 'likely',
+    //   })
+    //   .commit();
+    // expect(decode(encode(doc4)).toJson()).toEqual({
+    //   name: 'Mike Brown Jr.',
+    //   employer: 'Filecoin Inc',
+    //   age: 2077,
+    //   tags: ['Cyberpunk 2077', 'GTA 4', 'GTA 5'],
+    //   email: 'cyber.mike@gpost.com',
+    //   emailVerified: 'likely',
+    // });
   });
 });
+*/

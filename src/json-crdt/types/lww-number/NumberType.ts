@@ -24,6 +24,7 @@ export class NumberType implements JsonNode {
 
   public clone(doc: Document): NumberType {
     const num = new NumberType(this.id, this.writeId, this.value);
+    doc.nodes.index(num);
     return num;
   }
 

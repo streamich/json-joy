@@ -25,17 +25,23 @@ export class ArrayType implements JsonNode {
       curr = curr.left;
     }
     if (!curr) return; // Should never happen.
+    const nodes: JsonNode[] = [];
+    for (const el of op.elements) {
+      const node = this.doc.nodes.get(el);
+      if (node) nodes.push(node);
+    }
+    if (!nodes.length) return;
     const isOriginChunk = curr instanceof ArrayOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
       const doesAfterMatch = (curr.id.sessionId === op.after.sessionId) && (curr.id.time + curr.span() - 1 === op.after.time);
       const isIdSameSession = curr.id.sessionId === op.id.sessionId;
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
-        curr.merge(op.elements);
+        curr.merge(nodes);
         return;
       }
     }
-    const chunk = new ArrayChunk(op.id, op.elements);
+    const chunk = new ArrayChunk(op.id, nodes);
     const targetsLastElementInChunk = op.after.time === (curr.id.time + curr.span() - 1);
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
@@ -95,10 +101,10 @@ export class ArrayType implements JsonNode {
     let cnt: number = 0;
     const next = index + 1;
     while (chunk) {
-      if (chunk.values) {
-        cnt += chunk.values.length;
+      if (chunk.nodes) {
+        cnt += chunk.nodes.length;
         if (cnt >= next)
-          return chunk.id.tick(chunk.values.length - (cnt - index));
+          return chunk.id.tick(chunk.nodes.length - (cnt - index));
       }
       chunk = chunk.right;
     }
@@ -110,10 +116,10 @@ export class ArrayType implements JsonNode {
     let cnt: number = 0;
     const next = index + 1;
     while (chunk) {
-      if (chunk.values) {
-        cnt += chunk.values.length;
+      if (chunk.nodes) {
+        cnt += chunk.nodes.length;
         if (cnt >= next)
-          return chunk.values[chunk.values.length - (cnt - index)];
+          return chunk.nodes[chunk.nodes.length - (cnt - index)].id;
       }
       chunk = chunk.right;
     }
@@ -125,8 +131,8 @@ export class ArrayType implements JsonNode {
     let cnt: number = 0;
     const next = index + 1;
     while (chunk) {
-      if (chunk.values) {
-        cnt += chunk.values.length;
+      if (chunk.nodes) {
+        cnt += chunk.nodes.length;
         if (cnt >= next) {
           const remaining = cnt - index;
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
@@ -156,8 +162,8 @@ export class ArrayType implements JsonNode {
     const nodes = this.doc.nodes;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
-      if (curr.values)
-        arr.push(...curr.values!.map(value => nodes.get(value)?.toJson()));
+      if (curr.nodes)
+        arr.push(...curr.nodes!.map(node => node.toJson()));
       curr = curr.right;
     }
     return arr;
@@ -175,12 +181,13 @@ export class ArrayType implements JsonNode {
       i = i.right;
     }
     copy.end = j;
+    doc.nodes.index(copy);
     return copy;
   }
 
   public *children(): IterableIterator<LogicalTimestamp> {
     let chunk: null | ArrayChunk = this.start;
-    while (chunk = chunk.right) if (chunk.values) for (const value of chunk.values) yield value;
+    while (chunk = chunk.right) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
   }
 
   public toString(tab: string = ''): string {
@@ -200,36 +207,36 @@ export class ArrayType implements JsonNode {
     let chunk: null | ArrayChunk = this.start;
     while (chunk = chunk.right) {
       str += ',' + codec.encodeTs(chunk.id);
-      if (chunk.values) str += ',[' + chunk.values.map(value => nodes.get(value)!.encodeCompact(codec)).join(',') + ']';
+      if (chunk.nodes) str += ',[' + chunk.nodes.map(node => node.encodeCompact(codec)).join(',') + ']';
       else str += ',' + chunk.deleted;
     }
     return str + ']' as json_string<unknown[]>;
   }
 
-  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
-    const id = codec.decodeTs(data[1] as number, data[2] as number);
-    const arr = new ArrayType(doc, id);
-    const length = data.length;
-    let i = 3;
-    let curr = arr.start;
-    while (i < length) {
-      const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
-      const content = data[i++];
-      let chunk: ArrayChunk;
-      if (Array.isArray(content)) {
-        const values: LogicalTimestamp[] = [];
-        const len = content.length;
-        let j = 0; while (j < len) values.push(decodeNode(doc, codec, content[j++]).id);
-        chunk = new ArrayChunk(chunkId, values);
-      } else {
-        chunk = new ArrayChunk(chunkId, undefined);
-        chunk.deleted = Number(content);
-      }
-      chunk.left = curr;
-      curr.right = chunk;
-      curr = chunk;
-    }
-    arr.end = curr;
-    return arr;
-  }
+  // public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
+  //   const id = codec.decodeTs(data[1] as number, data[2] as number);
+  //   const arr = new ArrayType(doc, id);
+  //   const length = data.length;
+  //   let i = 3;
+  //   let curr = arr.start;
+  //   while (i < length) {
+  //     const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
+  //     const content = data[i++];
+  //     let chunk: ArrayChunk;
+  //     if (Array.isArray(content)) {
+  //       const values: LogicalTimestamp[] = [];
+  //       const len = content.length;
+  //       let j = 0; while (j < len) values.push(decodeNode(doc, codec, content[j++]).id);
+  //       chunk = new ArrayChunk(chunkId, values);
+  //     } else {
+  //       chunk = new ArrayChunk(chunkId, undefined);
+  //       chunk.deleted = Number(content);
+  //     }
+  //     chunk.left = curr;
+  //     curr.right = chunk;
+  //     curr = chunk;
+  //   }
+  //   arr.end = curr;
+  //   return arr;
+  // }
 }

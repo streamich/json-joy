@@ -21,11 +21,11 @@ export const decodeNode = (doc: Document, codec: ClockCodec, data: unknown): Jso
         doc.nodes.index(node);
         return node;
       }
-      case 1: {
-        const node = ArrayType.decodeCompact(doc, codec, data);
-        doc.nodes.index(node);
-        return node;
-      }
+      // case 1: {
+        // const node = ArrayType.decodeCompact(doc, codec, data);
+        // doc.nodes.index(node);
+        // return node;
+      // }
       case 2: {
         const node = StringType.decodeCompact(doc, codec, data);
         doc.nodes.index(node);

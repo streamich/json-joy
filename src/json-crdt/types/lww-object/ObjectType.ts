@@ -1,23 +1,21 @@
 import type {ClockCodec} from '../../codec/compact/ClockCodec';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
-import {Document} from '../../document';
-import {JsonNode} from '../../types';
-import {ObjectEntry} from './ObjectEntry';
 import {asString} from 'json-schema-serializer';
 import {json_string} from 'ts-brand-json';
-import {UNDEFINED} from '../../constants';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {Document} from '../../document';
+import {JsonNode} from '../../types';
+import {ObjectChunk} from './ObjectChunk';
 import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ObjectType implements JsonNode {
-  private readonly latest: Map<string, ObjectEntry> = new Map();
+  private readonly latest: Map<string, ObjectChunk> = new Map();
 
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
 
   public get(key: string): undefined | LogicalTimestamp {
     const entry = this.latest.get(key);
-    return entry ? entry.value : undefined;
+    return entry ? entry.node.id : undefined;
   }
 
   public getId(key: string): undefined | LogicalTimestamp {
@@ -37,26 +35,26 @@ export class ObjectType implements JsonNode {
   }
 
   public put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
-    const entry = new ObjectEntry(id, value);
-    this.latest.set(key, entry);
+    const node = this.doc.nodes.get(value);
+    if (!node) return;
+    this.putChunk(key, new ObjectChunk(id, node));
+  }
+
+  public putChunk(key: string, chunk: ObjectChunk) {
+    this.latest.set(key, chunk);
   }
 
   public toJson(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
-    for (const [key, entry] of this.latest.entries()) {
-      const {value} = entry;
-      if (value.compare(UNDEFINED_ID) === 0) continue;
-      const node = this.doc.nodes.get(value);
-      if (!node) continue;
-      obj[key] = node.toJson();
-    }
+    for (const [key, entry] of this.latest.entries())
+      obj[key] = entry.node.toJson();
     return obj;
   }
 
   public toString(tab: string = ''): string {
     let str = `${tab}ObjectType(${this.id.toDisplayString()})`;
-    for (const [key, value] of this.latest.entries()) {
-      const node = this.doc.nodes.get(value.value) || UNDEFINED;
+    for (const [key, entry] of this.latest.entries()) {
+      const node = entry.node;
       str += `\n${tab}  "${key}" :\n${node.toString(tab + '    ')}`
     }
     return str;
@@ -64,18 +62,22 @@ export class ObjectType implements JsonNode {
 
   public clone(doc: Document): ObjectType {
     const obj = new ObjectType(doc, this.id);
-    for (const [key, {id, value}] of this.latest.entries()) obj.put(key, id, value);
+    for (const [key, {id, node}] of this.latest.entries()) {
+      const nodeClone = node.clone(doc);
+      obj.putChunk(key, new ObjectChunk(id, nodeClone));
+    }
+    doc.nodes.index(obj);
     return obj;
   }
 
   public *children(): IterableIterator<LogicalTimestamp> {
-    for (const {value} of this.latest.values()) yield value;
+    for (const {node} of this.latest.values()) yield node.id;
   }
 
   public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
     let str: string = '[0,' + codec.encodeTs(this.id);
     for (const [key, value] of this.latest.entries()) {
-      const node = this.doc.nodes.get(value.value)!;
+      const node = value.node;
       str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.encodeCompact(codec);
     }
     return str + ']' as json_string<Array<number | string>>;

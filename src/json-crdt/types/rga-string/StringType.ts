@@ -155,6 +155,7 @@ export class StringType implements JsonNode {
       i = i.right;
     }
     copy.end = j;
+    doc.nodes.index(copy);
     return copy;
   }
 

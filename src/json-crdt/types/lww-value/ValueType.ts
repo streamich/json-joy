@@ -26,8 +26,9 @@ export class ValueType implements JsonNode {
   }
 
   public clone(doc: Document): ValueType {
-    const num = new ValueType(this.id, this.writeId, this.value);
-    return num;
+    const copy = new ValueType(this.id, this.writeId, this.value);
+    doc.nodes.index(copy);
+    return copy;
   }
 
   public *children(): IterableIterator<LogicalTimestamp> {}

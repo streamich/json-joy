@@ -3,6 +3,7 @@ import {Document} from '../../../document';
 import {encode} from '../encode';
 import {TRUE_ID} from '../../../../json-crdt-patch/constants';
 
+/*
 describe('object', () => {
   test('encodes a simple document', () => {
     const doc = new Document;
@@ -186,4 +187,4 @@ describe('string', () => {
     ]);
   });
 });
-
+*/

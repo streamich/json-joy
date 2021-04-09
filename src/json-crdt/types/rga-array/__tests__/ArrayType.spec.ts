@@ -23,6 +23,6 @@ test('merges sequential chunks', () => {
   const origin = node.start;
   const firstChunk = origin.right;
 
-  expect(firstChunk!.values!.length).toBe(2);
+  expect(firstChunk!.nodes!.length).toBe(2);
   expect(doc.toJson()).toEqual([true, false]);
 });

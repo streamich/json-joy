@@ -34,7 +34,7 @@ export class Document {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root = new DocRootType(ORIGIN);
+  public root: DocRootType = new DocRootType(this, ORIGIN, null);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session.
@@ -124,35 +124,26 @@ export class Document {
   }
 
   public toJson(): unknown {
-    const value = this.root.toValue();
-    const op = this.nodes.get(value);
-    if (!op) return undefined;
-    return op.toJson();
+    return this.root.toJson();
   }
 
   public clone(): Document {
     const doc = new Document(this.clock.clone());
-    for (const node of this.nodes.iterate())
-      doc.nodes.index(node.clone(doc));
-    if (this.root.last)
-      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
+    doc.root = this.root.clone(doc);
     return doc;
   }
 
   public fork(): Document {
     const sessionId = random40BitInt();
     const doc = new Document(this.clock.fork(sessionId));
-    for (const node of this.nodes.iterate()) doc.nodes.index(node.clone(doc));
-    if (this.root.last)
-      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
+    doc.root = this.root.clone(doc);
     return doc;
   }
 
   public toString(): string {
     const value = this.root.toValue();
     const op = this.nodes.get(value);
-    if (!op) return 'undefined';
-    return op.toString('');
+    return op ? op.toString('') : 'undefined';
   }
 
   public find(steps: Path): JsonNode {
@@ -169,9 +160,7 @@ export class Document {
         const nextNode = this.nodes.get(id);
         if (!nextNode) return UNDEFINED;
         node = nextNode;
-        continue;
-      }
-      if (node instanceof ArrayType) {
+      } else if (node instanceof ArrayType) {
         const id = node.findValue(Number(step));
         const nextNode = this.nodes.get(id);
         if (!nextNode) return UNDEFINED;
