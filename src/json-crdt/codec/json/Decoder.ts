@@ -71,6 +71,7 @@ export class Decoder {
   protected decodeArr(doc: Document, node: ArrayJsonCrdtNode): ArrayType {
     const obj = new ArrayType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeArrChunk(doc, c));
+    doc.nodes.index(obj);
     return obj;
   }
 
@@ -86,6 +87,7 @@ export class Decoder {
   protected decodeStr(doc: Document, node: StringJsonCrdtNode): StringType {
     const obj = new StringType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeStrChunk(doc, c));
+    doc.nodes.index(obj);
     return obj;
   }
 
@@ -100,6 +102,7 @@ export class Decoder {
 
   protected decodeVal(doc: Document, node: ValueJsonCrdtNode): ValueType {
     const obj = new ValueType(this.decodeTimestamp(node.id), this.decodeTimestamp(node.writeId), node.value);
+    doc.nodes.index(obj);
     return obj;
   }
 
