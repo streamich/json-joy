@@ -13,16 +13,15 @@ test('can create a draft patch', () => {
     ops: [
       { op: 'obj' },
       { op: 'arr' },
-      { op: 'num' },
-      { op: 'num_set', after: [-1, 2], value: 1 },
+      { op: 'val', value: 1 },
       { op: 'obj' },
       { op: 'arr' },
       { op: 'arr_ins', obj: [-1, 1], after: [-1, 1], values: [
         [-1, 2],
         [0, 2],
         [0, 1],
-        [-1, 4],
-        [-1, 5]
+        [-1, 3],
+        [-1, 4]
       ] },
       { op: 'obj_set', obj: [-1, 0], tuples: [['a', [-1, 1]]] },
       { op: 'root', value: [-1, 0] }
@@ -42,16 +41,15 @@ test('can return final patch with correct timestamps', () => {
     ops: [
       { op: 'obj' },
       { op: 'arr' },
-      { op: 'num' },
-      { op: 'num_set', after: [100, 202], value: 1 },
+      { op: 'val', value: 1 },
       { op: 'obj' },
       { op: 'arr' },
       { op: 'arr_ins', obj: [100, 201], after: [100, 201], values: [
         [100, 202],
         [0, 2],
         [0, 1],
-        [100, 204],
-        [100, 205]
+        [100, 203],
+        [100, 204]
       ] },
       { op: 'obj_set', obj: [100, 200], tuples: [['a', [100, 201]]] },
       { op: 'root', value: [100, 200] }
