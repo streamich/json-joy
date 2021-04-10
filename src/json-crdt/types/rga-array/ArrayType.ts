@@ -190,6 +190,11 @@ export class ArrayType implements JsonNode {
     while (chunk = chunk.right) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
   }
 
+  public *chunks(): IterableIterator<ArrayChunk> {
+    let curr: ArrayChunk | null = this.start;
+    while (curr = curr.right) yield curr;
+  }
+
   public toString(tab: string = ''): string {
     let str = `${tab}ArrayType(${this.id.toDisplayString()})`;
     let curr: ArrayChunk | null = this.start;

@@ -9,7 +9,7 @@ import {ObjectChunk} from './ObjectChunk';
 import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ObjectType implements JsonNode {
-  private readonly latest: Map<string, ObjectChunk> = new Map();
+  public readonly latest: Map<string, ObjectChunk> = new Map();
 
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
 

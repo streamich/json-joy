@@ -26,7 +26,7 @@ export type JsonCrdtTimestamp = [sessionId: number, time: number];
 export interface RootJsonCrdtNode {
   type: 'root';
   id: JsonCrdtTimestamp;
-  node: JsonCrdtNode;
+  node: JsonCrdtNode | null;
 }
 
 /**
