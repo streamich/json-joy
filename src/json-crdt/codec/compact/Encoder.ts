@@ -17,29 +17,29 @@ export class Encoder {
 
   public encode(doc: Document): unknown[] {
     this.clock = new ClockEncoder(doc.clock);
-    const snapshot: unknown[] = [[]];
+    const snapshot: unknown[] = [null];
     this.encodeRoot(snapshot, doc.root);
     snapshot[0] = this.clock.toJson();
     return snapshot;
   }
 
-  public encodeClock(clock: VectorClock): number[] {
+  protected encodeClock(clock: VectorClock): number[] {
     const data: number[] = [];
     for (const c of clock.clocks.values()) data.push(c.sessionId, c.time);
     return data;
   }
 
-  public ts(arr: unknown[], ts: LogicalTimestamp) {
+  protected ts(arr: unknown[], ts: LogicalTimestamp) {
     this.clock.append(ts).push(arr);
   }
 
-  public encodeRoot(arr: unknown[], root: DocRootType): void {
+  protected encodeRoot(arr: unknown[], root: DocRootType): void {
     this.ts(arr, root.id);
     if (!root.node) arr.push(0);
     else this.encodeNode(arr, root.node);
   }
 
-  public encodeNode(arr: unknown[], node: JsonNode): void {
+  protected encodeNode(arr: unknown[], node: JsonNode): void {
     if (node instanceof ObjectType) return this.encodeObj(arr, node);
     else if (node instanceof ArrayType) return this.encodeArr(arr, node);
     else if (node instanceof StringType) return this.encodeStr(arr, node);
@@ -48,7 +48,7 @@ export class Encoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public encodeObj(arr: unknown[], obj: ObjectType): void {
+  protected encodeObj(arr: unknown[], obj: ObjectType): void {
     const res: unknown[] = [TypeCode.obj];
     arr.push(res);
     this.ts(res, obj.id);
@@ -59,33 +59,37 @@ export class Encoder {
     }
   }
 
-  public encodeArr(arr: unknown[], obj: ArrayType): void {
+  protected encodeArr(arr: unknown[], obj: ArrayType): void {
     const res: unknown[] = [TypeCode.arr];
     arr.push(res);
     this.ts(res, obj.id);
     for (const chunk of obj.chunks()) this.encodeArrChunk(res, chunk);
   }
 
-  public encodeArrChunk(arr: unknown[], chunk: ArrayChunk): void {
+  protected encodeArrChunk(arr: unknown[], chunk: ArrayChunk): void {
     this.ts(arr, chunk.id);
     if (chunk.deleted) arr.push(chunk.deleted);
-    else for (const node of chunk.nodes!) this.encodeNode(arr, node);
+    else {
+      const nodes: unknown[] = [];
+      for (const n of chunk.nodes!) this.encodeNode(nodes, n);
+      arr.push(nodes);
+    }
   }
 
-  public encodeStr(arr: unknown[], obj: StringType): void {
+  protected encodeStr(arr: unknown[], obj: StringType): void {
     const res: unknown[] = [TypeCode.str];
     arr.push(res);
     this.ts(res, obj.id);
     for (const chunk of obj.chunks()) this.encodeStrChunk(res, chunk);
   }
 
-  public encodeStrChunk(arr: unknown[], chunk: StringChunk): void {
+  protected encodeStrChunk(arr: unknown[], chunk: StringChunk): void {
     this.ts(arr, chunk.id);
     if (chunk.deleted) arr.push(chunk.deleted);
     else arr.push(chunk.str!);
   }
 
-  public encodeVal(arr: unknown[], obj: ValueType): void {
+  protected encodeVal(arr: unknown[], obj: ValueType): void {
     const res: unknown[] = [TypeCode.val];
     arr.push(res);
     this.ts(res, obj.id);
@@ -93,7 +97,7 @@ export class Encoder {
     res.push(obj.value);
   }
 
-  public encodeConst(arr: unknown[], obj: ConstantType): void {
+  protected encodeConst(arr: unknown[], obj: ConstantType): void {
     switch (obj.value) {
       case null: {
         arr.push(ValueCode.null);
