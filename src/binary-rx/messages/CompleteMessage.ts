@@ -1,5 +1,8 @@
 import {getHeaderSize} from "../codec/header";
 
+/**
+ * @category Message
+ */
 export class CompleteMessage {
   constructor (public readonly id: number, public readonly data: undefined | Uint8Array) {}
 

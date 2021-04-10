@@ -8,8 +8,9 @@ import {CompleteMessage} from "../messages/CompleteMessage";
 import {ErrorMessage} from "../messages/ErrorMessage";
 import {UnsubscribeMessage} from "../messages/UnsubscribeMessage";
 
-const buf = new Uint8Array([1]);
-
+/**
+ * @category Codec
+ */
 export class Encoder {
   private uint8: Uint8Array = new Uint8Array(0);
   private offset: number = 0;

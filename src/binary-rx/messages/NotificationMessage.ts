@@ -1,5 +1,8 @@
 import {getHeaderSize} from "../codec/header";
 
+/**
+ * @category Message
+ */
 export class NotificationMessage {
   constructor (public readonly method: string, public readonly data: undefined | Uint8Array) {}
 

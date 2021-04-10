@@ -1,5 +1,8 @@
 import {getHeaderSize} from "../codec/header";
 
+/**
+ * @category Message
+ */
 export class ErrorMessage {
   constructor (public readonly id: number, public readonly data: Uint8Array) {}
 
