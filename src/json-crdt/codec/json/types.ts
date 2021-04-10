@@ -85,6 +85,7 @@ export interface JsonCrdtRgaTombstone {
 export interface ValueJsonCrdtNode {
   type: 'val';
   id: JsonCrdtTimestamp;
+  writeId: JsonCrdtTimestamp;
   value: unknown;
 }
 

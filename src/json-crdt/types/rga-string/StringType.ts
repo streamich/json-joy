@@ -136,6 +136,13 @@ export class StringType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
+  public append(chunk: StringChunk): void {
+    const last = this.end;
+    last.right = chunk;
+    chunk.left = last;
+    this.end = chunk;
+  }
+
   public toJson(): string {
     let str: string = '';
     let curr: StringChunk | null = this.start;

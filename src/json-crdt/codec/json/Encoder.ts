@@ -115,6 +115,7 @@ export class Encoder {
     return {
       type: 'val',
       id: this.encodeTimestamp(obj.id),
+      writeId: this.encodeTimestamp(obj.writeId),
       value: obj.value,
     };
   }

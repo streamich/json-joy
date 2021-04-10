@@ -7,7 +7,6 @@ import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
 import {ClockCodec} from '../../codec/compact/ClockCodec';
-import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
@@ -155,6 +154,13 @@ export class ArrayType implements JsonNode {
       chunk = chunk.right;
     }
     throw new Error('OUT_OF_BOUNDS');
+  }
+
+  public append(chunk: ArrayChunk): void {
+    const last = this.end;
+    last.right = chunk;
+    chunk.left = last;
+    this.end = chunk;
   }
 
   public toJson(): unknown[] {
