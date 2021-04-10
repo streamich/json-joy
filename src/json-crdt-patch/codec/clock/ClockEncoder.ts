@@ -25,6 +25,16 @@ export class ClockEncoder {
     return relativeTimestamp;
   }
 
+  public toJson(): number[] {
+    const out: number[] = [];
+    for (const sessionId of this.table.keys()) {
+      const clock = this.clock.clocks.get(sessionId);
+      if (!clock) continue;
+      out.push(clock.sessionId, clock.time);
+    }
+    return out;
+  }
+
   /**
    * Every two subsequent numbers represent a single clock. The first clock is
    * the local user's clock.

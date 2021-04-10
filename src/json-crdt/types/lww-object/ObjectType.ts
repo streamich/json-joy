@@ -6,7 +6,6 @@ import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObj
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
 import {ObjectChunk} from './ObjectChunk';
-import {decodeNode} from '../../codec/compact/decodeNode';
 
 export class ObjectType implements JsonNode {
   public readonly latest: Map<string, ObjectChunk> = new Map();
@@ -81,18 +80,5 @@ export class ObjectType implements JsonNode {
       str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.encodeCompact(codec);
     }
     return str + ']' as json_string<Array<number | string>>;
-  }
-
-  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ObjectType {
-    const length = data.length;
-    const objId = codec.decodeTs(data[1] as number, data[2] as number);
-    const obj = new ObjectType(doc, objId);
-    for (let i = 3; i < length;) {
-      const key = data[i++] as string;
-      const id = codec.decodeTs(data[i++] as number, data[i++] as number);
-      const value = decodeNode(doc, codec, data[i++]);
-      obj.put(key, id, value.id);
-    }
-    return obj;
   }
 }
