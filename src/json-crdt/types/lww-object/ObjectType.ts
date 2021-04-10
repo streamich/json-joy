@@ -1,6 +1,3 @@
-import type {ClockCodec} from '../../codec/compact/ClockCodec';
-import {asString} from 'json-schema-serializer';
-import {json_string} from 'ts-brand-json';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {Document} from '../../document';
@@ -71,14 +68,5 @@ export class ObjectType implements JsonNode {
 
   public *children(): IterableIterator<LogicalTimestamp> {
     for (const {node} of this.latest.values()) yield node.id;
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
-    let str: string = '[0,' + codec.encodeTs(this.id);
-    for (const [key, value] of this.latest.entries()) {
-      const node = value.node;
-      str += ',' + asString(key) + ',' + codec.encodeTs(value.id) + ',' + node.encodeCompact(codec);
-    }
-    return str + ']' as json_string<Array<number | string>>;
   }
 }

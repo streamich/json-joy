@@ -1,12 +1,10 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import type {json_string} from 'ts-brand-json';
 import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ArrayChunk} from './ArrayChunk';
 import {ArrayOriginChunk} from './ArrayOriginChunk';
-import {ClockCodec} from '../../codec/compact/ClockCodec';
 
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
@@ -210,44 +208,4 @@ export class ArrayType implements JsonNode {
     }
     return str;
   }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
-    const {id, doc} = this;
-    const {nodes} = doc;
-    let str: string = '[1,' + codec.encodeTs(id);
-    let chunk: null | ArrayChunk = this.start;
-    while (chunk = chunk.right) {
-      str += ',' + codec.encodeTs(chunk.id);
-      if (chunk.nodes) str += ',[' + chunk.nodes.map(node => node.encodeCompact(codec)).join(',') + ']';
-      else str += ',' + chunk.deleted;
-    }
-    return str + ']' as json_string<unknown[]>;
-  }
-
-  // public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): ArrayType {
-  //   const id = codec.decodeTs(data[1] as number, data[2] as number);
-  //   const arr = new ArrayType(doc, id);
-  //   const length = data.length;
-  //   let i = 3;
-  //   let curr = arr.start;
-  //   while (i < length) {
-  //     const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
-  //     const content = data[i++];
-  //     let chunk: ArrayChunk;
-  //     if (Array.isArray(content)) {
-  //       const values: LogicalTimestamp[] = [];
-  //       const len = content.length;
-  //       let j = 0; while (j < len) values.push(decodeNode(doc, codec, content[j++]).id);
-  //       chunk = new ArrayChunk(chunkId, values);
-  //     } else {
-  //       chunk = new ArrayChunk(chunkId, undefined);
-  //       chunk.deleted = Number(content);
-  //     }
-  //     chunk.left = curr;
-  //     curr.right = chunk;
-  //     curr = chunk;
-  //   }
-  //   arr.end = curr;
-  //   return arr;
-  // }
 }

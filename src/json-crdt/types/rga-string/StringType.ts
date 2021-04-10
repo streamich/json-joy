@@ -1,13 +1,10 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import type {ClockCodec} from '../../codec/compact/ClockCodec';
-import type {json_string} from 'ts-brand-json';
 import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
 import {StringOriginChunk} from './StringOriginChunk';
-import {asString} from 'json-schema-serializer';
 
 export class StringType implements JsonNode {
   public start: StringChunk;
@@ -181,37 +178,5 @@ export class StringType implements JsonNode {
       curr = curr.right;
     }
     return str;
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
-    let str: string = '[2,' + codec.encodeTs(this.id);
-    let chunk: null | StringChunk = this.start;
-    while (chunk = chunk.right) {
-      str += ',' + codec.encodeTs(chunk.id) + ',' +
-        (chunk.str ? asString(chunk.str) : chunk.deleted);
-    }
-    return str + ']' as json_string<Array<number | string>>;
-  }
-
-  public static decodeCompact(doc: Document, codec: ClockCodec, data: unknown[]): StringType {
-    const id = codec.decodeTs(data[1] as number, data[2] as number);
-    const arr = new StringType(doc, id);
-    const length = data.length;
-    let i = 3;
-    let curr = arr.start;
-    while (i < length) {
-      const chunkId = codec.decodeTs(data[i++] as number, data[i++] as number);
-      const chunkValue = data[i++] as string | number;
-      const chunk = new StringChunk(chunkId, typeof chunkValue === 'string' ? chunkValue : undefined);
-      if (typeof chunkValue !== 'string') {
-        chunk.deleted = Number(chunkValue);
-        delete chunk.str;
-      }
-      chunk.left = curr;
-      curr.right = chunk;
-      curr = chunk;
-    }
-    arr.end = curr;
-    return arr;
   }
 }

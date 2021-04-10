@@ -76,6 +76,7 @@ test('encodes all JSON node types object', () => {
                             123,
                             5
                         ],
+                        "writeId": [123, 5],
                         "value": 123
                     }
                 },

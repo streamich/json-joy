@@ -2,8 +2,6 @@ import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {SetValueOperation} from '../../../json-crdt-patch/operations/SetValueOperation';
-import {json_string} from 'ts-brand-json';
-import {ClockCodec} from '../../codec/compact/ClockCodec';
 
 /**
  * LWW register for any JSON value.
@@ -32,8 +30,4 @@ export class ValueType implements JsonNode {
   }
 
   public *children(): IterableIterator<LogicalTimestamp> {}
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown[]> {
-    throw new Error('Not implemented');
-  }
 }

@@ -1,6 +1,5 @@
 import {json_string} from 'ts-brand-json';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {ClockCodec} from '../../codec/compact/ClockCodec';
 import {ConstantType} from './ConstantType';
 
 export class ConstantBuiltin extends ConstantType {
@@ -26,9 +25,5 @@ export class ConstantBuiltin extends ConstantType {
       case undefined: return tab + 'UNDEFINED';
     }
     return tab + 'UNKNOWN';
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown> {
-    return this.comp;
   }
 }

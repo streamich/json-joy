@@ -1,5 +1,3 @@
-import type {json_string} from 'ts-brand-json';
-import type {ClockCodec} from '../../codec/compact/ClockCodec';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 
@@ -23,9 +21,5 @@ export class ConstantType implements JsonNode {
 
   public toString(tab: string = ''): string {
     return `${tab}ConstantType(${this.id.toDisplayString()})`;
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown> {
-    throw new Error('Not implemented');
   }
 }

@@ -3,8 +3,6 @@ import {SetRootOperation} from '../../../json-crdt-patch/operations/SetRootOpera
 import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {JsonNode} from '../../types';
 import {Document} from '../../document';
-import {ClockCodec} from '../../codec/compact/ClockCodec';
-import {json_string} from 'ts-brand-json';
 
 export class DocRootType implements JsonNode {
   /**
@@ -50,9 +48,5 @@ export class DocRootType implements JsonNode {
   
   public *children(): IterableIterator<LogicalTimestamp> {
     if (this.node) yield this.node.id;
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown> {
-    throw new Error('Not implemented');
   }
 }
