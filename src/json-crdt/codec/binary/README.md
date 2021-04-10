@@ -49,7 +49,7 @@ The header consists of a zero bytes.
 
 ### The vector clock section
 
-The vector clock section starts with a bvuint8 integer. The boolean bit is set
+The vector clock section starts with a b1vuint56 integer. The boolean bit is set
 to 0. The value of this integer specifies the number of entries in the vector
 clock section.
 
