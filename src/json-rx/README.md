@@ -17,8 +17,6 @@ protocol for HTTP RPC communication.
 ## Examples
 
 ```js
-import {JsonRxServer, JsonRxClient} from 'json-joy';
-// or 
 import {JsonRxServer, JsonRxClient} from 'json-joy/{lib,es6,esm}/json-rx';
 
 import {from} from 'rxjs';

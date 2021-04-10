@@ -11,8 +11,6 @@ specification.
 Find the value in a JSON document at some specific location.
 
 ```js
-import {find, parseJsonPointer} from 'json-joy';
-// or 
 import {find, parseJsonPointer} from 'json-joy/{lib,es6,esm}/json-pointer';
 
 const doc = {
