@@ -1,2 +1,0 @@
-- [ ] MessagePack CLI
-  - [ ] MessagePack CLI tests

@@ -38,7 +38,7 @@
     "build:esm": "tsc --module ESNext --target ESNEXT --outDir esm",
     "build": "yarn build:cjs && yarn build:es6 && yarn build:esm",
     "test:all": "yarn test && yarn test:pointer && yarn test:patch",
-    "test": "jest --maxWorkers 2 --no-cache --config='jest.config.js'",
+    "test": "jest --maxWorkers 2 --no-cache",
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "release": "semantic-release",
@@ -96,5 +96,28 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ]
+  },
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/",
+    "setupFiles": ["<rootDir>/src/__tests__/setup.js"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [],
+    "testRegex": ".*/__tests__/.*\\.(test|spec)\\.(jsx?|tsx?)$",
+    "testEnvironment": "<rootDir>/test/custom-test-env.js"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "printWidth": 120,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": false,
+    "jsxBracketSameLine": false
   }
 }

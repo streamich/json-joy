@@ -27,7 +27,7 @@ This package consists of multiple self-contained libraries:
   - [__Documentation__ 🚀](./src/json-rx/README.md)
   - __Specification__ 🤔
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_rx.html)
-- __`binary-rx`__ &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).
+- __`binary-rx`__ &mdash; Implementation of Binary-Rx protocol (a binary version of JSON-Rx).
   - [__Documentation__ 🚀](./src/binary-rx/README.md)
   - __Specification__ 🤔
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/binary_rx.html)
