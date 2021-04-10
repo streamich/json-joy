@@ -5,7 +5,7 @@ import {random40BitInt} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {LogicalTimestamp, VectorClock} from '../json-crdt-patch/clock';
-import {DocRootType} from './types/lww-register-doc-root/DocRootType';
+import {DocRootType} from './types/lww-doc-root/DocRootType';
 import {ObjectType} from './types/lww-object/ObjectType';
 import {ArrayType} from './types/rga-array/ArrayType';
 import {StringType} from './types/rga-string/StringType';
