@@ -6,10 +6,10 @@ import {Patch} from "../../json-crdt-patch/Patch";
 import {NoopOperation} from "../../json-crdt-patch/operations/NoopOperation";
 import {LogicalTimestamp} from "../../json-crdt-patch/clock";
 import {StringApi} from "./StringApi";
-import {NumberType} from "../types/lww-number/NumberType";
 import {ArrayType} from "../types/rga-array/ArrayType";
 import {ObjectType} from "../types/lww-object/ObjectType";
 import {UNDEFINED_ID} from "../../json-crdt-patch/constants";
+import {ValueType} from "../types/lww-value/ValueType";
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -104,15 +104,15 @@ export class DocumentApi {
     return this;
   }
 
-  public asNum(path: Path): NumberType {
+  public asVal(path: Path): ValueType {
     const obj = this.doc.find(path);
-    if (obj instanceof NumberType) return obj;
-    throw new Error('NOT_NUM');
+    if (obj instanceof ValueType) return obj;
+    throw new Error('NOT_VAL');
   }
 
-  public numSet(path: Path, value: number): this {
-    const {id} = this.asNum(path);
-    this.builder.setNum(id, value);
+  public valSet(path: Path, value: unknown): this {
+    const {id} = this.asVal(path);
+    this.builder.setVal(id, value);
     return this;
   }
 

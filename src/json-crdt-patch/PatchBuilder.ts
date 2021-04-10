@@ -254,12 +254,10 @@ export class PatchBuilder {
   }
 
   /**
-   * Run builder commands to create a JSON number.
+   * Run builder commands to create a JSON value.
    */
-  public jsonNum(json: number): LogicalTimestamp {
-    const num = this.num();
-    this.setNum(num, json);
-    return num;
+  public jsonVal(json: unknown): LogicalTimestamp {
+    return this.val(json);
   }
 
   /**
@@ -275,7 +273,7 @@ export class PatchBuilder {
     switch (typeof json) {
       case 'object': return this.jsonObj(json!);
       case 'string': return this.jsonStr(json);
-      case 'number': return this.jsonNum(json);
+      case 'number': return this.jsonVal(json);
     }
     return UNDEFINED_ID;
   }

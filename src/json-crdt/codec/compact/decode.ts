@@ -1,9 +1,5 @@
 import {json_string, JSON} from "ts-brand-json";
-import {LogicalTimestamp} from "../../../json-crdt-patch/clock";
-import {SetRootOperation} from "../../../json-crdt-patch/operations/SetRootOperation";
 import {Document} from "../../document";
-import {ClockCodec} from "./ClockCodec";
-import {decodeNode} from "./decodeNode";
 
 export const decode = (packed: json_string<Array<unknown>>): Document => {
   throw new Error('Not implemented');

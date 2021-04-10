@@ -7,13 +7,10 @@ import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {LogicalTimestamp, VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './types/lww-register-doc-root/DocRootType';
 import {ObjectType} from './types/lww-object/ObjectType';
-import {NumberType} from './types/lww-number/NumberType';
 import {ArrayType} from './types/rga-array/ArrayType';
 import {StringType} from './types/rga-string/StringType';
 import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
 import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKeysOperation';
-import {MakeNumberOperation} from '../json-crdt-patch/operations/MakeNumberOperation';
-import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
 import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ORIGIN} from '../json-crdt-patch/constants';
@@ -80,8 +77,6 @@ export class Document {
       if (!this.nodes.get(op.id)) this.nodes.index(new ArrayType(this, op.id));
     } else if (op instanceof MakeStringOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
-    } else if (op instanceof MakeNumberOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, op.id, 0));
     } else if (op instanceof MakeValueOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new ValueType(op.id, op.id, op.value));
     } else if (op instanceof SetRootOperation) {
@@ -91,14 +86,10 @@ export class Document {
       const obj = this.nodes.get(op.object);
       if (!(obj instanceof ObjectType)) return;
       obj.insert(op);
-    } else if (op instanceof SetNumberOperation) {
-      const num = this.nodes.get(op.num);
-      if (!(num instanceof NumberType)) return;
-      num.insert(op);
     } else if (op instanceof SetValueOperation) {
-      const num = this.nodes.get(op.obj);
-      if (!(num instanceof ValueType)) return;
-      num.insert(op);
+      const obj = this.nodes.get(op.obj);
+      if (!(obj instanceof ValueType)) return;
+      obj.insert(op);
     } else if (op instanceof InsertArrayElementsOperation) {
       const arr = this.nodes.get(op.arr);
       if (!(arr instanceof ArrayType)) return;

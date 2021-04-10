@@ -1,7 +1,6 @@
 import {NULL, TRUE, FALSE, UNDEFINED} from "../../constants";
 import type {Document} from "../../document";
 import type {JsonNode} from "../../types";
-import {NumberType} from "../../types/lww-number/NumberType";
 import {ObjectType} from "../../types/lww-object/ObjectType";
 import {ArrayType} from "../../types/rga-array/ArrayType";
 import {StringType} from "../../types/rga-string/StringType";
@@ -28,11 +27,6 @@ export const decodeNode = (doc: Document, codec: ClockCodec, data: unknown): Jso
       // }
       case 2: {
         const node = StringType.decodeCompact(doc, codec, data);
-        doc.nodes.index(node);
-        return node;
-      }
-      case 3: {
-        const node = NumberType.decodeCompact(doc, codec, data);
         doc.nodes.index(node);
         return node;
       }
