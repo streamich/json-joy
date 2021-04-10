@@ -69,7 +69,7 @@
 							<li><a href="https://streamich.github.io/json-joy/modules/json_pack.html"><strong>Reference</strong> 🤖</a></li>
 						</ul>
 					</li>
-					<li><strong><code>json-patch</code></strong> &mdash; Implementation <strong>JSON Patch+</strong> operations.<ul>
+					<li><strong><code>json-patch</code></strong> &mdash; Implementation of <strong>JSON Patch+</strong> mutation operations.<ul>
 							<li><a href="./src/json-patch/README.md"><strong>Documentation</strong> 🚀</a><ul>
 									<li><a href="./src/json-patch/docs/json-patch.md">JSON Patch</a></li>
 									<li><a href="./src/json-patch/docs/json-predicate.md">JSON Predicate</a></li>
@@ -79,16 +79,40 @@
 							<li><a href="https://streamich.github.io/json-joy/modules/json_patch.html"><strong>Reference</strong> 🤖</a></li>
 						</ul>
 					</li>
-					<li><strong><code>json-patch-ot</code></strong> &mdash; Implementation of <em>Operational Transformations</em> for JSON Patch+ operations.</li>
+					<li><strong><code>json-patch-ot</code></strong> &mdash; Implementation of <em>Operational Transformations</em> for JSON Patch+ operations.<ul>
+							<li><strong>Documentation</strong> 🚀</li>
+							<li><strong>Reference</strong> 🤖</li>
+						</ul>
+					</li>
+					<li><strong><code>json-crdt</code></strong> &mdash; CRDT implementation for JSON type.<ul>
+							<li><a href="./src/json-crdt/README.md"><strong>Documentation</strong> 🚀</a></li>
+							<li><strong>Reference</strong> 🤖</li>
+						</ul>
+					</li>
+					<li><strong><code>json-crdt-patch</code></strong> &mdash; JSON type CRDT operation specification and implementation.<ul>
+							<li><strong>Documentation</strong> 🚀</li>
+							<li><strong>Specification</strong> 🤔</li>
+							<li><a href="./src/json-crdt/codec/binary/README.md">Binary snapshot encoding 🧬</a></li>
+							<li><strong>Reference</strong> 🤖</li>
+						</ul>
+					</li>
 					<li><strong><code>json-rx</code></strong> &mdash; Implementation of <a href="https://onp4.com/@vadim/p/gv9z33hjuo"><strong>JSON-Rx</strong></a> protocol for server and browser.<ul>
 							<li><a href="./src/json-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
+							<li><strong>Specification</strong> 🤔</li>
+							<li><strong>Reference</strong> 🤖</li>
 						</ul>
 					</li>
 					<li><strong><code>binary-rx</code></strong> &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).<ul>
 							<li><a href="./src/binary-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
+							<li><strong>Specification</strong> 🤔</li>
+							<li><strong>Reference</strong> 🤖</li>
 						</ul>
 					</li>
-					<li><strong><code>json-rpc</code></strong> &mdash; Implements server class for <a href="https://www.jsonrpc.org/specification"><strong>JSON-RPC 2.0</strong></a> protocol.</li>
+					<li><strong><code>json-rpc</code></strong> &mdash; Server implementation of <a href="https://www.jsonrpc.org/specification"><strong>JSON-RPC 2.0</strong></a> protocol.<ul>
+							<li><strong>Documentation</strong> 🚀</li>
+							<li><strong>Reference</strong> 🤖</li>
+						</ul>
+					</li>
 					<li><strong><code>json-pointer</code></strong> &mdash; utilities for locating data in a JSON document using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>.<ul>
 							<li><a href="./src/json-pointer/README.md"><strong>Documentation</strong> 🚀</a></li>
 							<li><a href="https://streamich.github.io/json-joy/modules/json_pointer.html"><strong>Reference</strong> 🤖</a></li>
@@ -96,8 +120,11 @@
 					</li>
 					<li><strong><code>json-cli</code></strong> &mdash; CLI utilities and functional testing suites.<ul>
 							<li><a href="./src/json-cli/README.md"><strong>Documentation</strong> 🚀</a><ul>
+									<li><a href="./src/json-cli/docs/json-pack.md"><code>json-pack</code> CLI</a></li>
+									<li><a href="./src/json-cli/docs/json-unpack.md"><code>json-unpack</code> CLI</a></li>
 									<li><a href="./src/json-cli/docs/json-pointer.md"><code>json-pointer</code> CLI</a></li>
 									<li><a href="./src/json-cli/docs/json-patch.md"><code>json-patch</code> CLI</a></li>
+									<li><a href="./src/json-cli/docs/json-pack-test.md"><code>json-pack-test</code> CLI</a></li>
 									<li><a href="./src/json-cli/docs/json-pointer-test.md"><code>json-pointer-test</code> CLI</a></li>
 									<li><a href="./src/json-cli/docs/json-patch-test.md"><code>json-patch-test</code> CLI</a></li>
 								</ul>
@@ -133,13 +160,25 @@
 						<a href="modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/binary_rx.html">binary-<wbr>rx</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/json_pack.html">json-<wbr>pack</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/json_patch.html">json-<wbr>patch</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/json_patch_ot.html">json-<wbr>patch-<wbr>ot</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/json_pointer.html">json-<wbr>pointer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/json_rpc.html">json-<wbr>rpc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/json_rx.html">json-<wbr>rx</a>
 					</li>
 				</ul>
 			</nav>
@@ -165,6 +204,7 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 			</ul>
 		</div>
 	</div>
