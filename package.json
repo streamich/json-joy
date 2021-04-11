@@ -60,12 +60,12 @@
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.5",
-    "@types/jest": "^26.0.13",
+    "@types/jest": "^26.0.22",
     "benchmark": "^2.1.4",
     "fast-json-patch": "^3.0.0-1",
     "gh-pages": "^3.1.0",
     "husky": "^4.2.5",
-    "jest": "^26.4.2",
+    "jest": "^26.6.3",
     "messagepack": "^1.1.12",
     "msgpack": "^1.0.3",
     "msgpack-lite": "^0.1.26",
@@ -75,7 +75,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "6",
     "semantic-release": "^17.1.1",
-    "ts-jest": "^26.5.3",
+    "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
     "tslib": "^2.1.0",
     "tslint": "^6.1.3",
@@ -105,15 +105,13 @@
     ],
     "moduleFileExtensions": [
       "ts",
-      "tsx",
-      "js",
-      "jsx"
+      "js"
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.ts$": "ts-jest"
     },
     "transformIgnorePatterns": [],
-    "testRegex": ".*/__tests__/.*\\.(test|spec)\\.(jsx?|tsx?)$"
+    "testRegex": ".*/__tests__/.*\\.(test|spec)\\.ts$"
   },
   "prettier": {
     "arrowParens": "always",
