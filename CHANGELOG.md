@@ -1,3 +1,44 @@
+# [2.8.0](https://github.com/streamich/json-joy/compare/v2.7.0...v2.8.0) (2021-04-11)
+
+
+### Bug Fixes
+
+* 🐛 correctly encode negative fixint in v2 encoder ([43ad76f](https://github.com/streamich/json-joy/commit/43ad76f16488a48a967fc93c994e2a46b288f3bd))
+* 🐛 do not overwrite previous buffer ([86b4a1d](https://github.com/streamich/json-joy/commit/86b4a1d1d73187ccb88982787d6376ef07491362))
+* 🐛 fixes for v2 encoder ([cb5cae0](https://github.com/streamich/json-joy/commit/cb5cae0151233b032914e857c0d653cd04ff4c9a))
+* 🐛 index decoded nodes from nominal JSON encoding ([2b63792](https://github.com/streamich/json-joy/commit/2b637928f72dfadf8a4160d05ecd6eba9dd8bc15))
+
+
+### Features
+
+* 🎸 add "val_set" operatin ([037484b](https://github.com/streamich/json-joy/commit/037484b3a3e34da40769785ddfbbc51ea7dce43d))
+* 🎸 add constants to binary encoding ([14108f3](https://github.com/streamich/json-joy/commit/14108f3a07462a77b560762257d21c9d6e0307b9))
+* 🎸 add JSON Compact to MessagePack encoding ([354d904](https://github.com/streamich/json-joy/commit/354d9042a4b616836b537b01feb4254d31cfe94d))
+* 🎸 add json-pack CLI ([f0e4fd4](https://github.com/streamich/json-joy/commit/f0e4fd4f99a98cfb5b3e60defb2e7f618a535166))
+* 🎸 add json-pack-test CLI utility ([029923e](https://github.com/streamich/json-joy/commit/029923ec063a1f5c7547ae0a954dffbacc9694b6))
+* 🎸 add json-unpack CLI ([149b278](https://github.com/streamich/json-joy/commit/149b2787fbf3c455c7fa31c1db1e42dbb935a534))
+* 🎸 add nominal json encoder ([f17efff](https://github.com/streamich/json-joy/commit/f17efff675632bac5ede4d7bb47e144d1ac2f93a))
+* 🎸 add nominal structural JSON encoding types ([3c55ef0](https://github.com/streamich/json-joy/commit/3c55ef0655c6bc4da11baf68261dadbc641d30e9))
+* 🎸 add number encodings ([6f0ab7a](https://github.com/streamich/json-joy/commit/6f0ab7adcb0546d87662f9bd35f4f78a09ceee40))
+* 🎸 add structural JSON encoder ([0f53fbe](https://github.com/streamich/json-joy/commit/0f53fbe106f35d7cda8dfc73fc63370008cd70fa))
+* 🎸 add value "val" type ([2c0ca2f](https://github.com/streamich/json-joy/commit/2c0ca2f46c70167bc2525a35d915a68c7a3f6ab7))
+* 🎸 add value operation encoding to compact encoding ([810481a](https://github.com/streamich/json-joy/commit/810481acb8be4f6471e78356e40b6656e65126d5))
+* 🎸 add value type operations to nominal JSON encoding ([88ff979](https://github.com/streamich/json-joy/commit/88ff979a6c78c3416d60f8a25c2c67ad4c9826d8))
+* 🎸 add value type support to document ([badaf65](https://github.com/streamich/json-joy/commit/badaf65a8689d91d8f562861d7977bf744130890))
+* 🎸 add variable length integer encoding methods ([a3ee324](https://github.com/streamich/json-joy/commit/a3ee324477e158b2a37488dccf357b25a9b64055))
+* 🎸 implement nominal JSON decoder ([0d9bd73](https://github.com/streamich/json-joy/commit/0d9bd73335bb0598a8e5b1d2113e828faa23c22a))
+* 🎸 implemet compact JSON CRDT decoder ([267de02](https://github.com/streamich/json-joy/commit/267de02f0d48fa04a8390523dbff526fba711563))
+* 🎸 improve clock encoding ([1287c53](https://github.com/streamich/json-joy/commit/1287c53cad1304685c2e3090f262caa8c4b465e3))
+* 🎸 modularize v4 encoder and create msgpack encoder interf ([02da6a8](https://github.com/streamich/json-joy/commit/02da6a830c0c4ad1d4def4c9504efbbc1b9380ae))
+
+
+### Performance Improvements
+
+* ⚡️ add Binary-Rx benchmarks ([c8ea340](https://github.com/streamich/json-joy/commit/c8ea34014863d9fa2440f79d269421665c293870))
+* ⚡️ improve performace of Binary-Rx encoder ([5d04aa5](https://github.com/streamich/json-joy/commit/5d04aa56ae09dcc59f142c045f3719822f6d03f0))
+* ⚡️ keep references directly to nodes ([56c94cd](https://github.com/streamich/json-joy/commit/56c94cdf6324a0b54843fa49e5bcbd7ac0e467e2))
+* ⚡️ update json-pack benchmarks ([4a9baf8](https://github.com/streamich/json-joy/commit/4a9baf8d69a08c85586a98c72b8af6470acd6fa1))
+
 # [2.7.0](https://github.com/streamich/json-joy/compare/v2.6.0...v2.7.0) (2021-04-05)
 
 

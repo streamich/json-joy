@@ -1,6 +1,6 @@
 {
   "name": "json-joy",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "",
   "author": {
     "name": "streamich",
@@ -100,8 +100,15 @@
   "jest": {
     "verbose": true,
     "testURL": "http://localhost/",
-    "setupFiles": ["<rootDir>/src/__tests__/setup.js"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
+    "setupFiles": [
+      "<rootDir>/src/__tests__/setup.js"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
