@@ -18,7 +18,7 @@ Encoding a 584 byte JSON object:
 
 ```
 node benchmarks/json-pack.js 
-json-joy/json-pack x 400,345 ops/sec ±0.92% (95 runs sampled), 2498 ns/op
+json-joy/json-pack x 319,993 ops/sec ±0.94% (90 runs sampled), 3125 ns/op
 JSON.stringify x 260,149 ops/sec ±0.44% (93 runs sampled), 3844 ns/op
 @msgpack/msgpack x 203,601 ops/sec ±0.82% (90 runs sampled), 4912 ns/op
 msgpack-lite x 58,392 ops/sec ±1.44% (90 runs sampled), 17126 ns/op

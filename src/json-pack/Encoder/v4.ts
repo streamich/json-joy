@@ -1,20 +1,18 @@
 const isSafeInteger = Number.isSafeInteger;
 
+const EMPTY_UINT8 = new Uint8Array([]);
+const EMPTY_VIEW = new DataView(EMPTY_UINT8.buffer);
+
 /**
  * @category Encoder
  */
 export class Encoder {
   /** @ignore */
-  protected uint8: Uint8Array;
+  protected uint8: Uint8Array = EMPTY_UINT8;
   /** @ignore */
-  protected view: DataView;
+  protected view: DataView = EMPTY_VIEW;
   /** @ignore */
   protected offset: number = 0;
-
-  constructor() {
-    this.uint8 = new Uint8Array(1024);
-    this.view = new DataView(this.uint8.buffer);
-  }
 
   /** @ignore */
   protected grow(size: number) {
@@ -31,10 +29,33 @@ export class Encoder {
     if (len < size) this.grow(Math.max(size, len * 4));
   }
 
-  public encode(json: unknown): Uint8Array {
+  /**
+   * Resets the internal memory buffer and offset for new encoding round. All
+   * encodings should happen synchronously.
+   */
+  public reset() {
+    this.uint8 = new Uint8Array(1024);
+    this.view = new DataView(this.uint8.buffer);
     this.offset = 0;
-    this.encodeAny(json);
+  }
+
+  /**
+   * @returns Encoded memory buffer contents.
+   */
+  public flush(): Uint8Array {
     return this.uint8.subarray(0, this.offset);
+  }
+
+  /**
+   * Use this method to encode a JavaScript document into MessagePack format.
+   * 
+   * @param json JSON value to encode.
+   * @returns Encoded memory buffer with MessagePack contents.
+   */
+  public encode(json: unknown): Uint8Array {
+    this.reset();
+    this.encodeAny(json);
+    return this.flush();
   }
 
   /** @ignore */
