@@ -8,7 +8,7 @@ const decode = (a: Uint8Array) => decoder.decode(a);
 test('unsigned integers', () => {
   let x1 = 0;
   let x2 = 1;
-  for (let i = 0; i < 10000000000000000000;) {
+  for (let i = 0; i < 10000000000000000000; ) {
     i = x1 + x2;
     const buf = encode(i);
     const res = decode(buf);
@@ -27,11 +27,10 @@ test('unsigned integers - 2', () => {
   }
 });
 
-
 test('negative integers', () => {
   let x1 = 0;
   let x2 = -1;
-  for (let i = 0; i > -1000000000000000000;) {
+  for (let i = 0; i > -1000000000000000000; ) {
     i = x1 + x2;
     const buf = encode(i);
     const res = decode(buf);
@@ -61,7 +60,7 @@ test('floats - 2', () => {
 });
 
 test('floats - 3', () => {
-  let x = 0.1
+  let x = 0.1;
   for (let i = 0; i < 10000; i++) {
     const buf = encode(x);
     const res = decode(buf);

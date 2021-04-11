@@ -9,7 +9,21 @@ import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
-import {JsonCrdtSnapshot, JsonCrdtTimestamp, RootJsonCrdtNode, JsonCrdtNode, ObjectJsonCrdtNode, ObjectJsonCrdtChunk, ArrayJsonCrdtNode, ArrayJsonCrdtChunk, JsonCrdtRgaTombstone, ValueJsonCrdtNode, StringJsonCrdtNode, StringJsonCrdtChunk, ConstantJsonCrdtNode} from './types';
+import {
+  JsonCrdtSnapshot,
+  JsonCrdtTimestamp,
+  RootJsonCrdtNode,
+  JsonCrdtNode,
+  ObjectJsonCrdtNode,
+  ObjectJsonCrdtChunk,
+  ArrayJsonCrdtNode,
+  ArrayJsonCrdtChunk,
+  JsonCrdtRgaTombstone,
+  ValueJsonCrdtNode,
+  StringJsonCrdtNode,
+  StringJsonCrdtChunk,
+  ConstantJsonCrdtNode,
+} from './types';
 
 export class Encoder {
   public encode(doc: Document): JsonCrdtSnapshot {
@@ -81,7 +95,7 @@ export class Encoder {
     }
     const res: ArrayJsonCrdtChunk = {
       id: this.encodeTimestamp(chunk.id),
-      nodes: chunk.nodes!.map(n => this.encodeNode(n)),
+      nodes: chunk.nodes!.map((n) => this.encodeNode(n)),
     };
     return res;
   }

@@ -1,7 +1,7 @@
-import {LogicalClock, LogicalTimestamp} from "../../clock";
-import {Patch} from "../../Patch";
-import {PatchBuilder} from "../../PatchBuilder";
-import {JsonCodecPatch, JsonCodecSetObjectKeysOperation, JsonCodecTimestamp} from "./types";
+import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {Patch} from '../../Patch';
+import {PatchBuilder} from '../../PatchBuilder';
+import {JsonCodecPatch, JsonCodecSetObjectKeysOperation, JsonCodecTimestamp} from './types';
 
 const ts = (time: JsonCodecTimestamp): LogicalTimestamp => new LogicalTimestamp(time[0], time[1]);
 
@@ -41,7 +41,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'obj_set': {
-        builder.setKeys(ts(op.obj), (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]));
+        builder.setKeys(
+          ts(op.obj),
+          (op as JsonCodecSetObjectKeysOperation).tuples.map(([key, id]) => [key, ts(id)]),
+        );
         break;
       }
       case 'val_set': {

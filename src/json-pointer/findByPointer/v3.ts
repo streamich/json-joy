@@ -13,7 +13,7 @@ export const findByPointer = (pointer: string, val: unknown): Reference => {
     indexOfSlash = pointer.indexOf('/');
     let component: string;
     if (indexOfSlash > -1) {
-      component = pointer.substring(0, indexOfSlash)
+      component = pointer.substring(0, indexOfSlash);
       pointer = pointer.substring(indexOfSlash + 1);
     } else {
       component = pointer;

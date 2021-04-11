@@ -5,7 +5,6 @@ import {OPCODE} from './constants';
 
 export type PackedRemoveOp = [OPCODE.remove, string | Path] | [OPCODE.remove, string | Path, {o: unknown}];
 
-
 /**
  * @category JSON Patch
  */

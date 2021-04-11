@@ -8,7 +8,7 @@ export function deepClone(obj: unknown): unknown {
   if (isArray(obj)) {
     const arr: unknown[] = [];
     const length = obj.length;
-    for (let i = 0; i < length; i++) arr.push(deepClone(obj[i]))
+    for (let i = 0; i < length; i++) arr.push(deepClone(obj[i]));
     return arr;
   } else if (typeof obj === 'object') {
     const keys = objectKeys(obj!);

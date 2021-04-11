@@ -13,9 +13,7 @@ export const findByPointer = (pointer: string, val: unknown): [Reference['obj'],
   let indexAfterSlash: number = 1;
   while (indexOfSlash > -1) {
     indexOfSlash = pointer.indexOf('/', indexAfterSlash);
-    key = indexOfSlash > -1
-      ? pointer.substring(indexAfterSlash, indexOfSlash)
-      : pointer.substring(indexAfterSlash);
+    key = indexOfSlash > -1 ? pointer.substring(indexAfterSlash, indexOfSlash) : pointer.substring(indexAfterSlash);
     indexAfterSlash = indexOfSlash + 1;
     obj = val;
     if (isArray(obj)) {

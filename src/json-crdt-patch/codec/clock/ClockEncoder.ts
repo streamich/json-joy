@@ -6,8 +6,8 @@ export class ClockEncoder {
   /** Clock session ID to session index. */
   private readonly table: Map<number, number>;
   private index: number;
-  
-  public constructor (public readonly clock: VectorClock) {
+
+  public constructor(public readonly clock: VectorClock) {
     this.index = 1;
     this.table = new Map();
     this.table.set(clock.sessionId, this.index++);
@@ -49,6 +49,6 @@ export class ClockEncoder {
       str += (isFirst ? '' : ',') + clock.compact();
       isFirst = false;
     }
-    return str + ']' as json_string<number[]>;
+    return (str + ']') as json_string<number[]>;
   }
 }

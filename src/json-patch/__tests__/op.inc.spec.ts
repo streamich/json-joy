@@ -34,7 +34,7 @@ describe('inc', () => {
     ];
     const result = applyPatch(doc, operations, true).doc;
     expect(result).toEqual({
-      foo: 8
+      foo: 8,
     });
   });
 
@@ -42,12 +42,10 @@ describe('inc', () => {
     const doc = {
       foo: 1,
     };
-    const operations: OperationInc[] = [
-      {op: 'inc', path: '/foo', inc: .1},
-    ];
+    const operations: OperationInc[] = [{op: 'inc', path: '/foo', inc: 0.1}];
     const result = applyPatch(doc, operations, true).doc;
     expect(result).toEqual({
-      foo: 1.1
+      foo: 1.1,
     });
   });
 

@@ -1,13 +1,13 @@
-import type {Identifiable} from "../json-crdt-patch/Identifiable";
-import {LogicalTimestamp} from "../json-crdt-patch/clock";
+import type {Identifiable} from '../json-crdt-patch/Identifiable';
+import {LogicalTimestamp} from '../json-crdt-patch/clock';
 
 export class IdentifiableIndex<T extends Identifiable> {
   /**
    * An index of all operations in this document accessible by operation ID.
-   * 
+   *
    *     (sessionId, time) -> operation
    */
-   public entries: Map<number, Map<number, T>> = new Map();
+  public entries: Map<number, Map<number, T>> = new Map();
 
   /**
    * Retrieve any known operation in this document by its ID. Or, if operation,

@@ -8,7 +8,7 @@ describe('encodeVarUint8', () => {
     expect(encodeVarUint8(126)).toEqual([126]);
     expect(encodeVarUint8(127)).toEqual([127]);
   });
-  
+
   test('encodes 2 byte numbers', () => {
     expect(encodeVarUint8(128)).toEqual([128, 1]);
     expect(encodeVarUint8(0b01_1111111)).toEqual([0b1111_1111, 1]);
@@ -18,41 +18,132 @@ describe('encodeVarUint8', () => {
     expect(encodeVarUint8(0b1000_0000000)).toEqual([0b10000000, 0b1000]);
     expect(encodeVarUint8(0b1001000_0000000)).toEqual([0b10000000, 0b1001000]);
   });
-  
+
   test('encodes 3 byte numbers', () => {
     expect(encodeVarUint8(0b1000000_0000000_0000000)).toEqual([0b1000_0000, 0b1000_0000, 0b1000000]);
     expect(encodeVarUint8(0b101_0010010_1001001)).toEqual([0b11001001, 0b10010010, 0b101]);
     expect(encodeVarUint8(0b1000001_0010010_1001001)).toEqual([0b11001001, 0b10010010, 0b1000001]);
   });
-  
+
   test('encodes 4 byte numbers', () => {
     expect(encodeVarUint8(0b1_0001011_0010010_1100001)).toEqual([0b1110_0001, 0b1001_0010, 0b1000_1011, 1]);
     expect(encodeVarUint8(0b10110_0001011_0010010_1100001)).toEqual([0b1110_0001, 0b1001_0010, 0b1000_1011, 0b10110]);
-    expect(encodeVarUint8(0b1111111_0001011_0010010_1100001)).toEqual([0b1110_0001, 0b1001_0010, 0b1000_1011, 0b1111111]);
+    expect(encodeVarUint8(0b1111111_0001011_0010010_1100001)).toEqual([
+      0b1110_0001,
+      0b1001_0010,
+      0b1000_1011,
+      0b1111111,
+    ]);
   });
-  
+
   test('encodes 5 byte numbers', () => {
-    expect(encodeVarUint8(0b1_1000000_0001011_0010010_1100001)).toEqual([0b11100001, 0b10010010, 0b10001011, 0b11000000, 1]);
-    expect(encodeVarUint8(0b10_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b10]);
-    expect(encodeVarUint8(0b1011_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b1011]);
-    expect(encodeVarUint8(0b1011101_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b1011101]);
+    expect(encodeVarUint8(0b1_1000000_0001011_0010010_1100001)).toEqual([
+      0b11100001,
+      0b10010010,
+      0b10001011,
+      0b11000000,
+      1,
+    ]);
+    expect(encodeVarUint8(0b10_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b10,
+    ]);
+    expect(encodeVarUint8(0b1011_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b1011,
+    ]);
+    expect(encodeVarUint8(0b1011101_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b1011101,
+    ]);
   });
 
   test('encodes 6 byte numbers', () => {
-    expect(encodeVarUint8(0b1_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 1]);
-    expect(encodeVarUint8(0b11_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b11]);
-    expect(encodeVarUint8(0b10_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b10]);
-    expect(encodeVarUint8(0b1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b1010101]);
+    expect(encodeVarUint8(0b1_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      1,
+    ]);
+    expect(encodeVarUint8(0b11_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b11,
+    ]);
+    expect(encodeVarUint8(0b10_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b10,
+    ]);
+    expect(encodeVarUint8(0b1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b1010101,
+    ]);
   });
 
   test('encodes 7 byte numbers', () => {
-    expect(encodeVarUint8(0b1_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b11010101, 0b1]);
-    expect(encodeVarUint8(0b1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b11010101, 0b1111000]);
+    expect(encodeVarUint8(0b1_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b11010101,
+      0b1,
+    ]);
+    expect(encodeVarUint8(0b1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b11010101,
+      0b1111000,
+    ]);
   });
 
   test('encodes 8 byte numbers', () => {
-    expect(encodeVarUint8(0b1_1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b11010101, 0b11111000, 0b1]);
-    expect(encodeVarUint8(0b1111111_1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([0b11111000, 0b10000111, 0b10000000, 0b11111111, 0b11111111, 0b11010101, 0b11111000, 0b1111111]);
+    expect(encodeVarUint8(0b1_1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b11010101,
+      0b11111000,
+      0b1,
+    ]);
+    expect(encodeVarUint8(0b1111111_1111000_1010101_1111111_1111111_0000000_0000111_1111000)).toEqual([
+      0b11111000,
+      0b10000111,
+      0b10000000,
+      0b11111111,
+      0b11111111,
+      0b11010101,
+      0b11111000,
+      0b1111111,
+    ]);
   });
 });
 
@@ -61,33 +152,27 @@ describe('decodeVarUint8', () => {
     const nums = [0, 1, 126, 127];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 2 byte numbers', () => {
     const nums = [128, 0b1111_1111, 0b1_1111_1111, 0b11_1011_1100, 0b1000_0000000];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 3 byte numbers', () => {
     const nums = [0b1000000_0000000_0000000, 0b101_0010010_1001001];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 4 byte numbers', () => {
-    const nums: number[] = [
-      0b10110_0001011_0010010_1100001,
-      0b1111111_0001011_0010010_1100001
-    ];
+    const nums: number[] = [0b10110_0001011_0010010_1100001, 0b1111111_0001011_0010010_1100001];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 5 byte numbers', () => {
-    const nums: number[] = [
-      0b1010001_1111111_0001011_0010010_1100001,
-      0b1111111_0000000_1111111_0000000_1111111,
-    ];
+    const nums: number[] = [0b1010001_1111111_0001011_0010010_1100001, 0b1111111_0000000_1111111_0000000_1111111];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 6 byte numbers', () => {
     const nums: number[] = [
       0b1_1010001_1111111_0001011_0010010_1100001,
@@ -96,7 +181,7 @@ describe('decodeVarUint8', () => {
     ];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 7 byte numbers', () => {
     const nums: number[] = [
       0b1_1011011_1010001_1111111_0001011_0010010_1100001,
@@ -105,7 +190,7 @@ describe('decodeVarUint8', () => {
     ];
     for (const num of nums) expect(decodeVarUint8(encodeVarUint8Buf(num), 0)[0]).toBe(num);
   });
-  
+
   test('decodes 8 byte numbers', () => {
     const nums: number[] = [
       0b1_1111111_1011011_1010001_1111111_0001011_0010010_1100001,

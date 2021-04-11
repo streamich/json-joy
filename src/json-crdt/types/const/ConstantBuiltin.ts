@@ -3,7 +3,7 @@ import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {ConstantType} from './ConstantType';
 
 export class ConstantBuiltin extends ConstantType {
-  constructor (id: LogicalTimestamp, value: unknown, private readonly comp: json_string<unknown>) {
+  constructor(id: LogicalTimestamp, value: unknown, private readonly comp: json_string<unknown>) {
     super(id, value);
   }
 
@@ -19,10 +19,14 @@ export class ConstantBuiltin extends ConstantType {
 
   public toString(tab: string = ''): string {
     switch (this.value) {
-      case null: return tab + 'NULL';
-      case true: return tab + 'TRUE';
-      case false: return tab + 'FALSE';
-      case undefined: return tab + 'UNDEFINED';
+      case null:
+        return tab + 'NULL';
+      case true:
+        return tab + 'TRUE';
+      case false:
+        return tab + 'FALSE';
+      case undefined:
+        return tab + 'UNDEFINED';
     }
     return tab + 'UNKNOWN';
   }

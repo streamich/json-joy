@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -18,7 +18,7 @@ const testCases: TestCase[] = [
       foo: 'bar',
       a: 'b',
       c: 3,
-    }
+    },
   },
 
   {
@@ -33,7 +33,7 @@ const testCases: TestCase[] = [
         },
       },
     ],
-    expected: {foo: [{lol: {a: 1, b: 123}}]}
+    expected: {foo: [{lol: {a: 1, b: 123}}]},
   },
   {
     comment: 'In array, can set null',
@@ -47,9 +47,9 @@ const testCases: TestCase[] = [
           c: null,
           a: null,
         },
-      }
+      },
     ],
-    expected: {foo: [{lol: {a: null, b: 123, c: null}}]}
+    expected: {foo: [{lol: {a: null, b: 123, c: null}}]},
   },
   {
     comment: 'In array, can use null to delete a key',
@@ -66,7 +66,7 @@ const testCases: TestCase[] = [
         deleteNull: true,
       },
     ],
-    expected: {foo: [{lol: {b: 123}}]}
+    expected: {foo: [{lol: {b: 123}}]},
   },
 
   {
@@ -81,7 +81,7 @@ const testCases: TestCase[] = [
         },
       },
     ],
-    expected: {foo: {lol: {a: 1, b: 123}}}
+    expected: {foo: {lol: {a: 1, b: 123}}},
   },
   {
     comment: 'In object, can set null',
@@ -97,7 +97,7 @@ const testCases: TestCase[] = [
         },
       },
     ],
-    expected: {foo: {lol: {a: null, b: 123, c: null}}}
+    expected: {foo: {lol: {a: null, b: 123, c: null}}},
   },
   {
     comment: 'In object, can use null to delete a key',
@@ -114,7 +114,7 @@ const testCases: TestCase[] = [
         deleteNull: true,
       },
     ],
-    expected: {foo: {lol: {b: 123}}}
+    expected: {foo: {lol: {b: 123}}},
   },
 ];
 

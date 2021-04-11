@@ -11,9 +11,8 @@ export const findByPointer = (pointer: string, val: unknown): Reference => {
   let indexAfterSlash: number = 1;
   while (indexOfSlash > -1) {
     indexOfSlash = pointer.indexOf('/', indexAfterSlash);
-    const component: string = indexOfSlash > -1
-      ? pointer.substring(indexAfterSlash, indexOfSlash)
-      : pointer.substring(indexAfterSlash);
+    const component: string =
+      indexOfSlash > -1 ? pointer.substring(indexAfterSlash, indexOfSlash) : pointer.substring(indexAfterSlash);
     indexAfterSlash = indexOfSlash + 1;
     key = unescapeComponent(component);
     obj = val;

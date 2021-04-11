@@ -22,7 +22,7 @@ export class StringChunk implements JsonChunk {
    * Returns "length" of this chunk, number of elements. Effectively the ID of
    * the chunk is the ID of the first element, each subsequent element in the
    * chunk has a monotonically increasing ID by one tick.
-   * 
+   *
    * @returns Number of elements in this chunk.
    */
   public span(): number {
@@ -32,7 +32,7 @@ export class StringChunk implements JsonChunk {
   /**
    * Splits this chunk into two, such that elements up to and including `time`
    * remain in this chunk and a new chunk is returns with all the remaining elements.
-   * 
+   *
    * @param time Last element ID which to keep in this chunk.
    * @returns New chunk which contains all the remaining elements.
    */
@@ -83,7 +83,9 @@ export class StringChunk implements JsonChunk {
    * @returns Human readable representation of the array chunk.
    */
   public toString(tab: string = ''): string {
-    let str = `${tab}StringChunk(${this.id.toDisplayString()}) { ${!this.str ? `[${this.deleted || this.span()}]` : (this.str.length > 10 ? this.str.substr(0, 10) + '…' : this.str)} }`;
+    let str = `${tab}StringChunk(${this.id.toDisplayString()}) { ${
+      !this.str ? `[${this.deleted || this.span()}]` : this.str.length > 10 ? this.str.substr(0, 10) + '…' : this.str
+    } }`;
     return str;
   }
 }

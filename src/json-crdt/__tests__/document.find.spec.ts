@@ -7,7 +7,7 @@ describe('find', () => {
     const doc = new Document();
     const builder1 = new PatchBuilder(doc.clock);
     const obj1 = builder1.obj();
-    builder1.setKeys(obj1, [['foo', FALSE_ID]])
+    builder1.setKeys(obj1, [['foo', FALSE_ID]]);
     builder1.root(obj1);
     doc.applyPatch(builder1.patch);
     expect(doc.find(['foo']).toJson()).toBe(false);
@@ -40,11 +40,7 @@ describe('find', () => {
       name: 'Vadim',
       tags: ['News', 'Sports'],
       address: {
-        lines: [
-          '1st Ave',
-          'Top floor',
-          'New York',
-        ],
+        lines: ['1st Ave', 'Top floor', 'New York'],
       },
       emailVerified: true,
       favoriteCar: null,

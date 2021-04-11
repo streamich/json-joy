@@ -1,7 +1,7 @@
-import {LogicalClock, LogicalTimestamp} from "../../clock";
-import {Patch} from "../../Patch";
-import {PatchBuilder} from "../../PatchBuilder";
-import {Code} from "./constants";
+import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {Patch} from '../../Patch';
+import {PatchBuilder} from '../../PatchBuilder';
+import {Code} from './constants';
 
 export const decode = (data: unknown[]): Patch => {
   const sessionId = data[0] as number;
@@ -40,7 +40,7 @@ export const decode = (data: unknown[]): Patch => {
         break;
       }
       case Code.SetObjectKeys: {
-        const length = data[i++] as number; 
+        const length = data[i++] as number;
         const obj = decodeTimestamp();
         const tuples: [key: string, value: LogicalTimestamp][] = [];
         for (let j = 0; j < length; j++) {

@@ -5,7 +5,7 @@ import {findByPointer} from '../json-pointer';
 
 try {
   const buf = readFileSync(0);
-  const doc = JSON.parse(buf.toString())
+  const doc = JSON.parse(buf.toString());
   const result = findByPointer(process.argv[2], doc);
   const value = result.val;
   if (value === undefined) {

@@ -13,8 +13,8 @@ export class ClockDecoder {
     for (let i = 2; i < length; i += 2) decoder.pushTuple(arr[i], arr[i + 1]);
     return decoder;
   }
-  
-  public constructor (sessionId: number, time: number) {
+
+  public constructor(sessionId: number, time: number) {
     this.index = 1;
     this.clock = new VectorClock(sessionId, time);
     this.table.set(this.index++, this.clock);

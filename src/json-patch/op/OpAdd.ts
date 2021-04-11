@@ -26,7 +26,7 @@ export class OpAdd extends AbstractOp<'add'> {
       else if (key > length) throw new Error('INVALID_INDEX');
       else obj.push(this.value);
     }
-    return {doc, old: val}
+    return {doc, old: val};
   }
 
   public toJson(): OperationAdd {

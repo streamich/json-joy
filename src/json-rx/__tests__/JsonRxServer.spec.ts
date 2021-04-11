@@ -358,19 +358,19 @@ test('enforces maximum number of active subscriptions', async () => {
   const send = jest.fn();
   const subject = new Subject<unknown>();
   const ctx = {password: ''};
-  const call: any = jest.fn(() => new Promise(r => setTimeout(() => r(0), 20)));
+  const call: any = jest.fn(() => new Promise((r) => setTimeout(() => r(0), 20)));
   const notify = (method: any, payload: any) => {};
   const server = new JsonRxServer({send, call, notify, maxActiveSubscriptions: 3, bufferTime: 0});
-  server.onMessage([1, "test"], undefined);
-  server.onMessage([2, "test"], undefined);
-  server.onMessage([3, "test"], undefined);
-  await new Promise(r => setTimeout(r, 5));
+  server.onMessage([1, 'test'], undefined);
+  server.onMessage([2, 'test'], undefined);
+  server.onMessage([3, 'test'], undefined);
+  await new Promise((r) => setTimeout(r, 5));
   expect(send).toHaveBeenCalledTimes(0);
-  server.onMessage([4, "test"], undefined);
-  await new Promise(r => setTimeout(r, 5));
+  server.onMessage([4, 'test'], undefined);
+  await new Promise((r) => setTimeout(r, 5));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith('[-1,4,{"message":"Too many subscriptions."}]');
-  await new Promise(r => setTimeout(r, 30));
+  await new Promise((r) => setTimeout(r, 30));
   expect(send).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledWith(JSON.stringify([0, 1, 0]));
   expect(send).toHaveBeenCalledWith(JSON.stringify([0, 2, 0]));
@@ -386,43 +386,43 @@ test('resets subscription count when subscriptions complete', async () => {
   const call: any = jest.fn(() => d.shift()!.promise);
   const server = new JsonRxServer({send, call, notify: () => {}, maxActiveSubscriptions: 1, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(0);
   d1.resolve(null);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith(JSON.stringify([0, 1, null]));
   server.onMessage([2, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   server.onMessage([3, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledWith(JSON.stringify([-1, 3, {message: 'Too many subscriptions.'}]));
   d2.reject(123);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(3);
   expect(send).toHaveBeenCalledWith(JSON.stringify([-1, 2, 123]));
   server.onMessage([4, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   d3.resolve(null);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledWith(JSON.stringify([0, 4, null]));
 });
 
 test('sends error on subscription with already active ID', async () => {
   const send = jest.fn();
-  const call: any = jest.fn(() => new Promise(r => setTimeout(() => r(1), 10)));
+  const call: any = jest.fn(() => new Promise((r) => setTimeout(() => r(1), 10)));
   const server = new JsonRxServer({send, call, notify: () => {}, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessage([1, 'bar'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith(JSON.stringify([-1, 1, {message: 'ID already active.'}]));
-  await new Promise(r => setTimeout(r, 20));
+  await new Promise((r) => setTimeout(r, 20));
   expect(send).toHaveBeenCalledTimes(1);
 });
 
@@ -431,7 +431,7 @@ test('can pass through context object to subscription', async () => {
   const call = jest.fn();
   const server = new JsonRxServer({send, call, notify: () => {}, bufferTime: 0});
   server.onMessage([1, 'foo'], {foo: 'bar'});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(call).toHaveBeenCalledTimes(1);
   expect(call).toHaveBeenCalledWith('foo', undefined, {foo: 'bar'});
 });
@@ -442,7 +442,7 @@ test('can pass through context object to notification', async () => {
   const notify = jest.fn();
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage(['foo'], {foo: 'bar'});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(call).toHaveBeenCalledTimes(0);
   expect(notify).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledWith('foo', undefined, {foo: 'bar'});
@@ -451,42 +451,48 @@ test('can pass through context object to notification', async () => {
 test('stops sending messages after server stop()', async () => {
   const send = jest.fn();
   let sub: Subscriber<any>;
-  const call: any = jest.fn(() => new Observable(subscriber => {
-    sub = subscriber;
-  }));
+  const call: any = jest.fn(
+    () =>
+      new Observable((subscriber) => {
+        sub = subscriber;
+      }),
+  );
   const notify = jest.fn();
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   expect(!!sub!).toBe(false);
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(0);
   expect(!!sub!).toBe(true);
   sub!.next(1);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   server.stop();
   sub!.next(2);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
 });
 
 test('can set metadata on error object', async () => {
   const send = jest.fn();
-  const call: any = jest.fn(() => new Observable(subscriber => {
-    const error = new Error('foo');
-    (error as any).status = 123;
-    (error as any).code = 'bar';
-    (error as any).errno = 456;
-    (error as any).errorId = 'baz';
-    throw error;
-  }));
+  const call: any = jest.fn(
+    () =>
+      new Observable((subscriber) => {
+        const error = new Error('foo');
+        (error as any).status = 123;
+        (error as any).code = 'bar';
+        (error as any).errno = 456;
+        (error as any).errorId = 'baz';
+        throw error;
+      }),
+  );
   const notify = jest.fn();
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
     message: 'foo',
@@ -499,16 +505,19 @@ test('can set metadata on error object', async () => {
 
 test('can set metadata on error object partially', async () => {
   const send = jest.fn();
-  const call: any = jest.fn(() => new Observable(subscriber => {
-    const error = new Error('foo');
-    (error as any).status = 123;
-    (error as any).errorId = 'baz';
-    throw error;
-  }));
+  const call: any = jest.fn(
+    () =>
+      new Observable((subscriber) => {
+        const error = new Error('foo');
+        (error as any).status = 123;
+        (error as any).errorId = 'baz';
+        throw error;
+      }),
+  );
   const notify = jest.fn();
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
     message: 'foo',
@@ -519,15 +528,18 @@ test('can set metadata on error object partially', async () => {
 
 test('can set metadata on error object partially (2)', async () => {
   const send = jest.fn();
-  const call: any = jest.fn(() => new Observable(subscriber => {
-    const error = new Error('foo');
-    (error as any).status = 123;
-    throw error;
-  }));
+  const call: any = jest.fn(
+    () =>
+      new Observable((subscriber) => {
+        const error = new Error('foo');
+        (error as any).status = 123;
+        throw error;
+      }),
+  );
   const notify = jest.fn();
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(JSON.parse(send.mock.calls[0][0])[2]).toEqual({
     message: 'foo',
@@ -544,7 +556,7 @@ describe('buffering', () => {
     server.onMessage([1, 'a', 'a'], {ctx: 1});
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
     expect(JSON.parse(send.mock.calls[0][0])).toEqual([
       [0, 1, ['a', 'a', {ctx: 1}]],
@@ -563,7 +575,7 @@ describe('buffering', () => {
     server.onMessage([1, 'a', 'a'], {ctx: 1});
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
     expect(JSON.parse(send.mock.calls[0][0])).toEqual([
       [-1, 1, 'foo'],
@@ -579,7 +591,7 @@ describe('buffering', () => {
     server.onMessage([1, 'a', 'a'], {ctx: 1});
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(2);
     expect(JSON.parse(send.mock.calls[0][0])).toEqual([0, 1, ['a', 'a', {ctx: 1}]]);
     expect(JSON.parse(send.mock.calls[1][0])).toEqual([0, 2, ['b', 'b', {ctx: 2}]]);
@@ -591,9 +603,9 @@ describe('buffering', () => {
     const notify = jest.fn();
     const server = new JsonRxServer({send, call, notify, bufferTime: 1});
     server.onMessage([1, 'a', 'a'], {ctx: 1});
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     server.onMessage([2, 'b', 'b'], {ctx: 2});
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(2);
     expect(JSON.parse(send.mock.calls[0][0])).toEqual([0, 1, ['a', 'a', {ctx: 1}]]);
     expect(JSON.parse(send.mock.calls[1][0])).toEqual([0, 2, ['b', 'b', {ctx: 2}]]);
@@ -606,7 +618,7 @@ describe('buffering', () => {
     const server = new JsonRxServer({send, call, notify, bufferTime: 1, bufferSize: 2});
     server.onMessage([1, 'a', 'a'], {ctx: 1});
     server.onMessage([2, 'b', 'b'], {ctx: 2});
-    await new Promise(r => setImmediate(r));
+    await new Promise((r) => setImmediate(r));
     expect(send).toHaveBeenCalledTimes(1);
     expect(JSON.parse(send.mock.calls[0][0])).toEqual([
       [0, 1, ['a', 'a', {ctx: 1}]],

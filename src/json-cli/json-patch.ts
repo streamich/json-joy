@@ -4,7 +4,7 @@ import {applyPatch} from '../json-patch/patch';
 
 try {
   const buf = readFileSync(0);
-  const doc = JSON.parse(buf.toString())
+  const doc = JSON.parse(buf.toString());
   const patch = JSON.parse(process.argv[2]);
   patch.forEach(validateOperation);
   const res = applyPatch(doc, patch, true);

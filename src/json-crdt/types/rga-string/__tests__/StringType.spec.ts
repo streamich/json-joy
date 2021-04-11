@@ -9,7 +9,7 @@ test('merges sequential chunks', () => {
   const str = builder1.str();
   builder1.root(str);
   doc.applyPatch(builder1.patch);
-  
+
   const builder2 = new PatchBuilder(doc.clock);
   const ins1 = builder2.insStr(str, str, '12');
   doc.applyPatch(builder2.patch);

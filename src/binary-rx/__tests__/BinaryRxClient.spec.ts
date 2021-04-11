@@ -1,6 +1,13 @@
 import {BinaryRxClient} from '../BinaryRxClient';
 import {take} from 'rxjs/operators';
-import {CompleteMessage, DataMessage, ErrorMessage, NotificationMessage, SubscribeMessage, UnsubscribeMessage} from '../messages';
+import {
+  CompleteMessage,
+  DataMessage,
+  ErrorMessage,
+  NotificationMessage,
+  SubscribeMessage,
+  UnsubscribeMessage,
+} from '../messages';
 import {decodeFullMessages, Encoder} from '../codec';
 
 const encoder = new Encoder();
@@ -293,7 +300,7 @@ test('after .stop() completes subscriptions', async () => {
   const client = new BinaryRxClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable = client.call('test', Buffer.from("{}"));
+  const observable = client.call('test', Buffer.from('{}'));
   const data = jest.fn();
   observable.subscribe(data);
   await new Promise((r) => setTimeout(r, 2));
@@ -313,7 +320,7 @@ test('combines multiple messages in a batch', async () => {
   const client = new BinaryRxClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable1 = client.call('test', Buffer.from("{}"));
+  const observable1 = client.call('test', Buffer.from('{}'));
   const observable2 = client.call('test2', Buffer.from("{foo: 'bar'}"));
   client.notify('test3', Buffer.from("{gg: 'bet'}"));
   await new Promise((r) => setTimeout(r, 2));
@@ -323,7 +330,7 @@ test('combines multiple messages in a batch', async () => {
   expect(messages[0]).toBeInstanceOf(SubscribeMessage);
   expect((messages[0] as any).id).toBe(1);
   expect((messages[0] as any).method).toBe('test');
-  expect(Buffer.from((messages[0] as any).data).toString()).toBe(Buffer.from("{}").toString());
+  expect(Buffer.from((messages[0] as any).data).toString()).toBe(Buffer.from('{}').toString());
 
   expect(messages[1]).toBeInstanceOf(SubscribeMessage);
   expect((messages[1] as any).id).toBe(2);
@@ -355,10 +362,12 @@ test('can receive and process a batch from server', async () => {
   expect(send).toHaveBeenCalledTimes(1);
   expect(data1).toHaveBeenCalledTimes(0);
   expect(data2).toHaveBeenCalledTimes(0);
-  client.onArray(encoder.encode([
-    new CompleteMessage(1, Buffer.from("{foo: 'bar'}")),
-    new CompleteMessage(2, Buffer.from("{foo: 'baz'}")),
-  ]));
+  client.onArray(
+    encoder.encode([
+      new CompleteMessage(1, Buffer.from("{foo: 'bar'}")),
+      new CompleteMessage(2, Buffer.from("{foo: 'baz'}")),
+    ]),
+  );
   await new Promise((r) => setTimeout(r, 2));
   expect(data1).toHaveBeenCalledTimes(1);
   expect(data2).toHaveBeenCalledTimes(1);

@@ -10,7 +10,7 @@ test('does not call callback on boot', async () => {
   const call = jest.fn();
   const notify = jest.fn();
   const server = new JsonRpcServer<{userId?: string}>({call, notify});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(call).toHaveBeenCalledTimes(0);
   expect(notify).toHaveBeenCalledTimes(0);
 });
@@ -19,7 +19,7 @@ test('executes notify callback on notification message and passes context', asyn
   const call = jest.fn();
   const notify = jest.fn();
   const server = new JsonRpcServer<{userId?: string}>({call, notify});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   server.onMessage({}, {method: 'test', params: 123});
   expect(call).toHaveBeenCalledTimes(0);
   expect(notify).toHaveBeenCalledTimes(1);

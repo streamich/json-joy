@@ -9,7 +9,7 @@ import {ArrayOriginChunk} from './ArrayOriginChunk';
 export class ArrayType implements JsonNode {
   public start: ArrayChunk;
   public end: ArrayChunk;
-  
+
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {
     this.start = this.end = new ArrayOriginChunk(id);
   }
@@ -30,7 +30,8 @@ export class ArrayType implements JsonNode {
     if (!nodes.length) return;
     const isOriginChunk = curr instanceof ArrayOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
-      const doesAfterMatch = (curr.id.sessionId === op.after.sessionId) && (curr.id.time + curr.span() - 1 === op.after.time);
+      const doesAfterMatch =
+        curr.id.sessionId === op.after.sessionId && curr.id.time + curr.span() - 1 === op.after.time;
       const isIdSameSession = curr.id.sessionId === op.id.sessionId;
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
@@ -39,10 +40,10 @@ export class ArrayType implements JsonNode {
       }
     }
     const chunk = new ArrayChunk(op.id, nodes);
-    const targetsLastElementInChunk = op.after.time === (curr.id.time + curr.span() - 1);
+    const targetsLastElementInChunk = op.after.time === curr.id.time + curr.span() - 1;
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
-      while (curr.right && (curr.right.id.compare(op.id)) > 0) curr = curr!.right!;
+      while (curr.right && curr.right.id.compare(op.id) > 0) curr = curr!.right!;
       this.insertChunk(chunk, curr);
       return;
     }
@@ -53,7 +54,8 @@ export class ArrayType implements JsonNode {
   private insertChunk(chunk: ArrayChunk, after: ArrayChunk) {
     chunk.left = after;
     chunk.right = after.right;
-    if (after.right) after.right.left = chunk; else this.end = chunk;
+    if (after.right) after.right.left = chunk;
+    else this.end = chunk;
     after.right = chunk;
   }
 
@@ -71,7 +73,7 @@ export class ArrayType implements JsonNode {
       if (chunk.id.overlap(chunk.span(), after, length)) chunks.push(chunk);
       if (chunk.id.inSpan(chunk.span(), after, 1)) break;
       chunk = chunk.left;
-    };
+    }
     for (const c of chunks) this.deleteInChunk(c, after.time, after.time + length - 1);
   }
 
@@ -100,8 +102,7 @@ export class ArrayType implements JsonNode {
     while (chunk) {
       if (chunk.nodes) {
         cnt += chunk.nodes.length;
-        if (cnt >= next)
-          return chunk.id.tick(chunk.nodes.length - (cnt - index));
+        if (cnt >= next) return chunk.id.tick(chunk.nodes.length - (cnt - index));
       }
       chunk = chunk.right;
     }
@@ -115,8 +116,7 @@ export class ArrayType implements JsonNode {
     while (chunk) {
       if (chunk.nodes) {
         cnt += chunk.nodes.length;
-        if (cnt >= next)
-          return chunk.nodes[chunk.nodes.length - (cnt - index)].id;
+        if (cnt >= next) return chunk.nodes[chunk.nodes.length - (cnt - index)].id;
       }
       chunk = chunk.right;
     }
@@ -135,7 +135,7 @@ export class ArrayType implements JsonNode {
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
           length -= remaining;
           const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
-          while(chunk.right) {
+          while (chunk.right) {
             chunk = chunk!.right;
             if (chunk.deleted) continue;
             const span = chunk.span();
@@ -146,7 +146,7 @@ export class ArrayType implements JsonNode {
             result.push(chunk.id.interval(0, span));
             length -= span;
           }
-          return result
+          return result;
         }
       }
       chunk = chunk.right;
@@ -166,8 +166,7 @@ export class ArrayType implements JsonNode {
     const nodes = this.doc.nodes;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
-      if (curr.nodes)
-        arr.push(...curr.nodes!.map(node => node.toJson()));
+      if (curr.nodes) arr.push(...curr.nodes!.map((node) => node.toJson()));
       curr = curr.right;
     }
     return arr;
@@ -191,19 +190,19 @@ export class ArrayType implements JsonNode {
 
   public *children(): IterableIterator<LogicalTimestamp> {
     let chunk: null | ArrayChunk = this.start;
-    while (chunk = chunk.right) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
+    while ((chunk = chunk.right)) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
   }
 
   public *chunks(): IterableIterator<ArrayChunk> {
     let curr: ArrayChunk | null = this.start;
-    while (curr = curr.right) yield curr;
+    while ((curr = curr.right)) yield curr;
   }
 
   public toString(tab: string = ''): string {
     let str = `${tab}ArrayType(${this.id.toDisplayString()})`;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
-      str += `\n${curr.toString(tab + '  ')}`
+      str += `\n${curr.toString(tab + '  ')}`;
       curr = curr.right;
     }
     return str;

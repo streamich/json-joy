@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -11,7 +11,7 @@ const testCases: TestCase[] = [
         value: 'foo',
       },
     ],
-    expected: 'foo bar'
+    expected: 'foo bar',
   },
   {
     comment: 'At root, can ignore case',
@@ -24,7 +24,7 @@ const testCases: TestCase[] = [
         ignore_case: true,
       },
     ],
-    expected: 'foo bar'
+    expected: 'foo bar',
   },
   {
     comment: 'At root, can ignore case - 2',

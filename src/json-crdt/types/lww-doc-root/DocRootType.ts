@@ -45,7 +45,7 @@ export class DocRootType implements JsonNode {
   public clone(doc: Document): DocRootType {
     return new DocRootType(doc, this.id, this.node ? this.node.clone(doc) : null);
   }
-  
+
   public *children(): IterableIterator<LogicalTimestamp> {
     if (this.node) yield this.node.id;
   }

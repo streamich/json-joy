@@ -24,10 +24,10 @@ test('decodes a basic timestamp - 2', () => {
 });
 
 test('large time', () => {
-  const buf = new Uint32Array(encodeTimestamp(new LogicalTimestamp(0x55, 0xBC_DE_F0)));
+  const buf = new Uint32Array(encodeTimestamp(new LogicalTimestamp(0x55, 0xbc_de_f0)));
   const ts = decodeTimestamp(new Uint8Array(buf.buffer), 0);
   expect(ts.sessionId).toBe(0x55);
-  expect(ts.time).toBe(0xBC_DE_F0);
+  expect(ts.time).toBe(0xbc_de_f0);
 });
 
 test('large session ID', () => {
@@ -38,8 +38,8 @@ test('large session ID', () => {
 });
 
 test('large timestamp', () => {
-  const buf = new Uint32Array(encodeTimestamp(new LogicalTimestamp(0x12_34_56_78_9A, 0xBC_DE_F0)));
+  const buf = new Uint32Array(encodeTimestamp(new LogicalTimestamp(0x12_34_56_78_9a, 0xbc_de_f0)));
   const ts = decodeTimestamp(new Uint8Array(buf.buffer), 0);
-  expect(ts.time).toBe(0xBC_DE_F0);
-  expect(ts.sessionId).toBe(0x12_34_56_78_9A);
+  expect(ts.time).toBe(0xbc_de_f0);
+  expect(ts.sessionId).toBe(0x12_34_56_78_9a);
 });

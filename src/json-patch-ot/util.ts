@@ -8,5 +8,5 @@ export function replaceIndices(path: string, arrayPath: string, index: string, i
   const rest = remainder.substr(slashIndex);
   const isOldBigger = incUp ? oldIndex >= index : oldIndex > index;
   const shouldChangeIndex = isValidIndex(oldIndex) && isOldBigger;
-  return shouldChangeIndex ? `${arrayPath}${(~~oldIndex) + (incUp ? 1 : -1)}${rest}` : path;
+  return shouldChangeIndex ? `${arrayPath}${~~oldIndex + (incUp ? 1 : -1)}${rest}` : path;
 }

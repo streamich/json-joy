@@ -62,9 +62,9 @@ export interface OperationBase {
 
 /**
  * JSON Patch add (or replace) operation.
- * 
+ *
  * Below example sets __"foo"__ key of an object to `"bar"` value:
- * 
+ *
  * ```ts
  * const operation: OperationAdd = {
  *   op: 'add',
@@ -72,7 +72,7 @@ export interface OperationBase {
  *   value: 'bar',
  * };
  * ```
- * 
+ *
  * @category JSON Patch
  */
 export interface OperationAdd<T = unknown> extends OperationBase {
@@ -117,7 +117,7 @@ export interface OperationMove extends OperationBase {
 /**
  * Tests that value at `path` strictly equals `value`. If `not` is set to `true`
  * inverts the condition to test for value not being strictly equal.
- * 
+ *
  * @category JSON Patch
  */
 export interface OperationTest<T = unknown> extends OperationBase {
@@ -128,7 +128,7 @@ export interface OperationTest<T = unknown> extends OperationBase {
 
 /**
  * Tests is the target value exists in the document, fails otherwise.
- * 
+ *
  * @category JSON Predicate
  */
 export interface OperationDefined extends OperationBase {
@@ -137,7 +137,7 @@ export interface OperationDefined extends OperationBase {
 
 /**
  * Opposite of "defined" operation.
- * 
+ *
  * @category JSON Predicate
  */
 export interface OperationUndefined extends OperationBase {
@@ -146,7 +146,7 @@ export interface OperationUndefined extends OperationBase {
 
 /**
  * Tests is the target is of any of the given types.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationTestType extends OperationBase {
@@ -166,7 +166,7 @@ export interface OperationTestString extends OperationBase {
 
 /**
  * Fails if string is shorter than `len` characters.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationTestStringLen extends OperationBase {
@@ -177,7 +177,7 @@ export interface OperationTestStringLen extends OperationBase {
 
 /**
  * Inserts a `value` string into a string at position `pos`.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationStrIns extends OperationBase {
@@ -188,7 +188,7 @@ export interface OperationStrIns extends OperationBase {
 
 /**
  * Removes `len` number of characters from a string starting at position `pos`.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationStrDel1 extends OperationBase {
@@ -218,7 +218,7 @@ export interface OperationStrDel extends OperationBase {
 
 /**
  * Flips boolean value to the opposite one.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationFlip extends OperationBase {
@@ -227,7 +227,7 @@ export interface OperationFlip extends OperationBase {
 
 /**
  * Increments a number by a specified value `inc`.
- * 
+ *
  * @category JSON Patch Extended
  */
 export interface OperationInc extends OperationBase {
@@ -279,7 +279,6 @@ export interface OperationMatches extends OperationBase {
   readonly value: string;
   readonly ignore_case?: boolean;
 }
-
 
 /**
  * @category JSON Predicate
@@ -391,7 +390,7 @@ export type SecondOrderPredicateOperation = OperationAnd | OperationNot | Operat
 
 /**
  * Slate.js nodes
- * 
+ *
  * @ignore
  */
 export interface SlateTextNode {

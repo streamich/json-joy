@@ -15,7 +15,6 @@ test('decodes clock', () => {
   expect(doc2.clock.clocks.size).toBe(1);
 });
 
-
 const encoder = new Encoder();
 
 test('decodes all types', () => {

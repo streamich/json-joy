@@ -1,12 +1,12 @@
-import {MessageCode} from "./constants";
-import {writeHeader} from "./header";
-import {DataMessage} from "../messages/DataMessage";
-import {NotificationMessage} from "../messages/NotificationMessage";
-import {SubscribeMessage} from "../messages/SubscribeMessage";
+import {MessageCode} from './constants';
+import {writeHeader} from './header';
+import {DataMessage} from '../messages/DataMessage';
+import {NotificationMessage} from '../messages/NotificationMessage';
+import {SubscribeMessage} from '../messages/SubscribeMessage';
 import {BinaryRxMessage} from '../messages/types';
-import {CompleteMessage} from "../messages/CompleteMessage";
-import {ErrorMessage} from "../messages/ErrorMessage";
-import {UnsubscribeMessage} from "../messages/UnsubscribeMessage";
+import {CompleteMessage} from '../messages/CompleteMessage';
+import {ErrorMessage} from '../messages/ErrorMessage';
+import {UnsubscribeMessage} from '../messages/UnsubscribeMessage';
 
 /**
  * @category Codec
@@ -89,7 +89,7 @@ export class Encoder {
 
   private id(id: number) {
     this.uint8[this.offset++] = id >>> 8;
-    this.uint8[this.offset++] = id & 0xFF;
+    this.uint8[this.offset++] = id & 0xff;
   }
 
   private method(method: string) {

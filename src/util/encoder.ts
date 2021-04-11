@@ -42,7 +42,7 @@ export class Encoder implements IEncoderWriter {
   /**
    * Make sure the internal buffer has enough space to write the specified number
    * of bytes, otherwise resize the internal buffer to accommodate for more size.
-   * 
+   *
    * @param capacity Number of bytes.
    */
   protected ensureCapacity(capacity: number) {

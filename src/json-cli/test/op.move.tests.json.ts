@@ -1,35 +1,35 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
     comment: 'Can copy value to key of the same object',
     doc: {foo: 'bar'},
     patch: [{op: 'copy', path: '/fooo', from: '/foo'}],
-    expected: {foo: 'bar', fooo: 'bar'}
+    expected: {foo: 'bar', fooo: 'bar'},
   },
   {
     comment: 'Can overwrite object key of the same object',
     doc: {foo: 'bar', a: 123},
     patch: [{op: 'copy', path: '/foo', from: '/a'}],
-    expected: {foo: 123, a: 123}
+    expected: {foo: 123, a: 123},
   },
   {
     comment: 'Can copy value from parent object to child array',
     doc: {foo: 'bar', arr: [1]},
     patch: [{op: 'copy', path: '/arr/1', from: '/foo'}],
-    expected: {foo: 'bar', arr: [1, 'bar']}
+    expected: {foo: 'bar', arr: [1, 'bar']},
   },
   {
     comment: 'Can copy value from child object to adjacent child array',
     doc: {foo: {a: null}, arr: [1]},
     patch: [{op: 'copy', path: '/arr/-', from: '/foo/a'}],
-    expected: {foo: {a: null}, arr: [1, null]}
+    expected: {foo: {a: null}, arr: [1, null]},
   },
   {
     comment: 'Can copy value from deep object to adjacent child array',
     doc: {foo: {a: {b: {c: {d: 123.4}}}}, arr: [1]},
     patch: [{op: 'copy', path: '/arr/0', from: '/foo/a/b/c/d'}],
-    expected: {foo: {a: {b: {c: {d: 123.4}}}}, arr: [123.4, 1]}
+    expected: {foo: {a: {b: {c: {d: 123.4}}}}, arr: [123.4, 1]},
   },
   {
     comment: 'Can copy value from array into object',
@@ -47,7 +47,7 @@ const testCases: TestCase[] = [
         '1': 1,
       },
       test: 3,
-    }
+    },
   },
   {
     comment: 'Can copy values between two arrays',
@@ -63,7 +63,7 @@ const testCases: TestCase[] = [
     expected: {
       a: [3, 2, 1, 'a', 'b', 'c'],
       b: ['c', 'a', 'b'],
-    }
+    },
   },
   {
     comment: 'Can copy value and return it back',

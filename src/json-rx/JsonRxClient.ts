@@ -1,4 +1,12 @@
-import {MessageSubscribe, MessageError, MessageData, MessageComplete, MessageNotification, MessageUnsubscribe, MessageOrMessageBatch} from './types';
+import {
+  MessageSubscribe,
+  MessageError,
+  MessageData,
+  MessageComplete,
+  MessageNotification,
+  MessageUnsubscribe,
+  MessageOrMessageBatch,
+} from './types';
 import {Observable, Observer} from 'rxjs';
 import {assertId, isArray} from './util';
 import {TimedQueue} from './TimedQueue';
@@ -44,7 +52,7 @@ export class JsonRxClient {
     this.buffer.itemLimit = bufferSize;
     this.buffer.timeLimit = bufferTime;
     this.buffer.onFlush = (messages) => {
-      send(messages.length === 1 ? messages[0] : messages as OutgoingMessage);
+      send(messages.length === 1 ? messages[0] : (messages as OutgoingMessage));
     };
   }
 
@@ -117,7 +125,6 @@ export class JsonRxClient {
 
   public stop(): void {
     this.buffer.onFlush = (message) => {};
-    for (const {observer} of this.observers.values())
-      observer.complete();
+    for (const {observer} of this.observers.values()) observer.complete();
   }
 }

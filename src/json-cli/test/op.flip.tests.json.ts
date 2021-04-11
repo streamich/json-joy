@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -20,63 +20,75 @@ const testCases: TestCase[] = [
       val2: true,
       val3: false,
       val4: true,
-    }
+    },
   },
 
   {
     comment: 'At root, flips true to false',
     doc: true,
-    patch: [{
-      op: 'flip',
-      path: '',
-    }],
-    expected: false
+    patch: [
+      {
+        op: 'flip',
+        path: '',
+      },
+    ],
+    expected: false,
   },
   {
     comment: 'At root, flips false to true',
     doc: false,
-    patch: [{
-      op: 'flip',
-      path: '',
-    }],
-    expected: true
+    patch: [
+      {
+        op: 'flip',
+        path: '',
+      },
+    ],
+    expected: true,
   },
   {
     comment: 'At root, flips truthy number to false',
     doc: 123,
-    patch: [{
-      op: 'flip',
-      path: '',
-    }],
-    expected: false
+    patch: [
+      {
+        op: 'flip',
+        path: '',
+      },
+    ],
+    expected: false,
   },
   {
     comment: 'At root, flips zero to true',
     doc: 0,
-    patch: [{
-      op: 'flip',
-      path: '',
-    }],
-    expected: true
+    patch: [
+      {
+        op: 'flip',
+        path: '',
+      },
+    ],
+    expected: true,
   },
 
   {
     comment: 'In object, flips true to false',
     doc: {foo: true},
-    patch: [{
-      op: 'flip',
-      path: '/foo',
-    }],
-    expected: {foo: false}
+    patch: [
+      {
+        op: 'flip',
+        path: '/foo',
+      },
+    ],
+    expected: {foo: false},
   },
   {
     comment: 'In object, flips false to true',
     doc: {foo: false},
-    patch: [{
-      op: 'flip',
-      path: '/foo',
-    }],
-    expected: {foo: true}
+    patch: [
+      {
+        op: 'flip',
+        path: '/foo',
+      },
+    ],
+    expected: {foo: true},
   },
 
   {
@@ -92,7 +104,7 @@ const testCases: TestCase[] = [
         path: '/1',
       },
     ],
-    expected: [false, true]
+    expected: [false, true],
   },
 ];
 

@@ -9,7 +9,7 @@ import {StringOriginChunk} from './StringOriginChunk';
 export class StringType implements JsonNode {
   public start: StringChunk;
   public end: StringChunk;
-  
+
   constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {
     this.start = this.end = new StringOriginChunk(id);
   }
@@ -24,7 +24,8 @@ export class StringType implements JsonNode {
     if (!curr) return; // Should never happen.
     const isOriginChunk = curr instanceof StringOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
-      const doesAfterMatch = (curr.id.sessionId === op.after.sessionId) && (curr.id.time + curr.span() - 1 === op.after.time);
+      const doesAfterMatch =
+        curr.id.sessionId === op.after.sessionId && curr.id.time + curr.span() - 1 === op.after.time;
       const isIdSameSession = curr.id.sessionId === op.id.sessionId;
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
@@ -33,10 +34,10 @@ export class StringType implements JsonNode {
       }
     }
     const chunk = new StringChunk(op.id, op.substring);
-    const targetsLastElementInChunk = op.after.time === (curr.id.time + curr.span() - 1);
+    const targetsLastElementInChunk = op.after.time === curr.id.time + curr.span() - 1;
     if (targetsLastElementInChunk) {
       // Walk back skipping all chunks that have higher timestamps.
-      while (curr.right && (curr.right.id.compare(op.id)) > 0) curr = curr!.right!;
+      while (curr.right && curr.right.id.compare(op.id) > 0) curr = curr!.right!;
       this.insertChunk(chunk, curr);
       return;
     }
@@ -52,14 +53,15 @@ export class StringType implements JsonNode {
       if (chunk.id.overlap(chunk.span(), after, length)) chunks.push(chunk);
       if (chunk.id.inSpan(chunk.span(), after, 1)) break;
       chunk = chunk.left;
-    };
+    }
     for (const c of chunks) this.deleteInChunk(c, after.time, after.time + length - 1);
   }
 
   private insertChunk(chunk: StringChunk, after: StringChunk) {
     chunk.left = after;
     chunk.right = after.right;
-    if (after.right) after.right.left = chunk; else this.end = chunk;
+    if (after.right) after.right.left = chunk;
+    else this.end = chunk;
     after.right = chunk;
   }
 
@@ -94,8 +96,7 @@ export class StringType implements JsonNode {
     while (chunk) {
       if (chunk.str) {
         cnt += chunk.str.length;
-        if (cnt >= next)
-          return chunk.id.tick(chunk.str.length - (cnt - index));
+        if (cnt >= next) return chunk.id.tick(chunk.str.length - (cnt - index));
       }
       chunk = chunk.right;
     }
@@ -114,7 +115,7 @@ export class StringType implements JsonNode {
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
           length -= remaining;
           const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
-          while(chunk.right) {
+          while (chunk.right) {
             chunk = chunk!.right;
             if (chunk.deleted) continue;
             const span = chunk.span();
@@ -125,7 +126,7 @@ export class StringType implements JsonNode {
             result.push(chunk.id.interval(0, span));
             length -= span;
           }
-          return result
+          return result;
         }
       }
       chunk = chunk.right;
@@ -143,7 +144,7 @@ export class StringType implements JsonNode {
   public toJson(): string {
     let str: string = '';
     let curr: StringChunk | null = this.start;
-    while (curr = curr.right) if (curr.str) str += curr.str;
+    while ((curr = curr.right)) if (curr.str) str += curr.str;
     return str;
   }
 
@@ -167,14 +168,14 @@ export class StringType implements JsonNode {
 
   public *chunks(): IterableIterator<StringChunk> {
     let curr: StringChunk | null = this.start;
-    while (curr = curr.right) yield curr;
+    while ((curr = curr.right)) yield curr;
   }
 
   public toString(tab: string = ''): string {
     let str = `${tab}StringType(${this.id.toDisplayString()})`;
     let curr: StringChunk | null = this.start;
     while (curr) {
-      str += `\n${curr.toString(tab + '  ')}`
+      str += `\n${curr.toString(tab + '  ')}`;
       curr = curr.right;
     }
     return str;

@@ -10,7 +10,7 @@ test('merges sequential chunks', () => {
   const arr = builder1.arr();
   builder1.root(arr);
   doc.applyPatch(builder1.patch);
-  
+
   const builder2 = new PatchBuilder(doc.clock);
   const ins1 = builder2.insArr(arr, arr, [TRUE_ID]);
   doc.applyPatch(builder2.patch);

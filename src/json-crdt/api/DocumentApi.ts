@@ -1,15 +1,15 @@
-import type {Document} from "../document";
-import type {Path} from "../../json-pointer";
-import {StringType} from "../types/rga-string/StringType";
-import {PatchBuilder} from "../../json-crdt-patch/PatchBuilder";
-import {Patch} from "../../json-crdt-patch/Patch";
-import {NoopOperation} from "../../json-crdt-patch/operations/NoopOperation";
-import {LogicalTimestamp} from "../../json-crdt-patch/clock";
-import {StringApi} from "./StringApi";
-import {ArrayType} from "../types/rga-array/ArrayType";
-import {ObjectType} from "../types/lww-object/ObjectType";
-import {UNDEFINED_ID} from "../../json-crdt-patch/constants";
-import {ValueType} from "../types/lww-value/ValueType";
+import type {Document} from '../document';
+import type {Path} from '../../json-pointer';
+import {StringType} from '../types/rga-string/StringType';
+import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
+import {Patch} from '../../json-crdt-patch/Patch';
+import {NoopOperation} from '../../json-crdt-patch/operations/NoopOperation';
+import {LogicalTimestamp} from '../../json-crdt-patch/clock';
+import {StringApi} from './StringApi';
+import {ArrayType} from '../types/rga-array/ArrayType';
+import {ObjectType} from '../types/lww-object/ObjectType';
+import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
+import {ValueType} from '../types/lww-value/ValueType';
 
 export class DocumentApi {
   /** Buffer of accumulated patches. */
@@ -39,7 +39,7 @@ export class DocumentApi {
   }
 
   public flushPatch(): Patch {
-    const patches = this.flush()
+    const patches = this.flush();
     const length = patches.length;
     const result = new Patch();
     let prev: null | Patch = null;
@@ -148,14 +148,20 @@ export class DocumentApi {
   public objSet(path: Path, entries: Record<string, unknown>): this {
     const obj = this.asObj(path);
     const {builder} = this;
-    builder.setKeys(obj.id, Object.entries(entries).map(([key, json]) => [key, builder.json(json)]));
+    builder.setKeys(
+      obj.id,
+      Object.entries(entries).map(([key, json]) => [key, builder.json(json)]),
+    );
     return this;
   }
 
   public objDel(path: Path, keys: string[]): this {
     const obj = this.asObj(path);
     const {builder} = this;
-    builder.setKeys(obj.id, keys.map(key => [key, UNDEFINED_ID]));
+    builder.setKeys(
+      obj.id,
+      keys.map((key) => [key, UNDEFINED_ID]),
+    );
     return this;
   }
 }

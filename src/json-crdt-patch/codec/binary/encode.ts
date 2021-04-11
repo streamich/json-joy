@@ -1,18 +1,18 @@
-import {encodeString} from "../../../util/encodeString";
-import {LogicalTimestamp} from "../../clock";
-import {DeleteOperation} from "../../operations/DeleteOperation";
-import {InsertArrayElementsOperation} from "../../operations/InsertArrayElementsOperation";
-import {InsertStringSubstringOperation} from "../../operations/InsertStringSubstringOperation";
-import {MakeArrayOperation} from "../../operations/MakeArrayOperation";
-import {MakeNumberOperation} from "../../operations/MakeNumberOperation";
-import {MakeObjectOperation} from "../../operations/MakeObjectOperation";
-import {MakeStringOperation} from "../../operations/MakeStringOperation";
-import {NoopOperation} from "../../operations/NoopOperation";
-import {SetNumberOperation} from "../../operations/SetNumberOperation";
-import {SetObjectKeysOperation} from "../../operations/SetObjectKeysOperation";
-import {SetRootOperation} from "../../operations/SetRootOperation";
-import {Patch} from "../../Patch";
-import {encodeVarUInt} from "./util/varuint";
+import {encodeString} from '../../../util/encodeString';
+import {LogicalTimestamp} from '../../clock';
+import {DeleteOperation} from '../../operations/DeleteOperation';
+import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
+import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
+import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
+import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
+import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
+import {MakeStringOperation} from '../../operations/MakeStringOperation';
+import {NoopOperation} from '../../operations/NoopOperation';
+import {SetNumberOperation} from '../../operations/SetNumberOperation';
+import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
+import {SetRootOperation} from '../../operations/SetRootOperation';
+import {Patch} from '../../Patch';
+import {encodeVarUInt} from './util/varuint';
 
 export const encodeTimestamp = ({sessionId, time}: LogicalTimestamp): [number, number] => {
   let low32 = sessionId | 0;
@@ -23,9 +23,7 @@ export const encodeTimestamp = ({sessionId, time}: LogicalTimestamp): [number, n
 
 export const encode = (patch: Patch): Uint8Array => {
   const {ops} = patch;
-  const buffers: ArrayBuffer[] = [
-    new Uint32Array(encodeTimestamp(patch.getId()!)).buffer,
-  ];
+  const buffers: ArrayBuffer[] = [new Uint32Array(encodeTimestamp(patch.getId()!)).buffer];
 
   let size = 8;
 
@@ -104,9 +102,8 @@ export const encode = (patch: Patch): Uint8Array => {
         new Uint32Array(encodeTimestamp(after)).buffer,
         elementLengthBuffer.buffer,
       );
-      for (const element of elements)
-        buffers.push( new Uint32Array(encodeTimestamp(element)).buffer);
-      size += 1 + 8 + 8 + elementLengthBuffer.byteLength + (8 * length);
+      for (const element of elements) buffers.push(new Uint32Array(encodeTimestamp(element)).buffer);
+      size += 1 + 8 + 8 + elementLengthBuffer.byteLength + 8 * length;
       continue;
     }
     if (op instanceof DeleteOperation) {
@@ -134,16 +131,11 @@ export const encode = (patch: Patch): Uint8Array => {
       const {length} = op;
       if (length > 1) {
         const spanBuffer = new Uint8Array(encodeVarUInt(length));
-        buffers.push(
-          new Uint8Array([12]),
-          spanBuffer.buffer,
-        );
+        buffers.push(new Uint8Array([12]), spanBuffer.buffer);
         size += 1 + spanBuffer.byteLength;
         continue;
       }
-      buffers.push(
-        new Uint8Array([11]),
-      );
+      buffers.push(new Uint8Array([11]));
       size += 1;
       continue;
     }

@@ -18,7 +18,7 @@ import {TypeCode, ValueCode} from './constants';
 export class Decoder {
   protected clockDecoder!: ClockDecoder;
 
-  public decode(data: unknown[]): Document  {
+  public decode(data: unknown[]): Document {
     this.clockDecoder = ClockDecoder.fromArr(data[0] as number[]);
     const doc = new Document(this.clockDecoder.clock);
     const rootId = this.ts(data, 1);
@@ -35,18 +35,27 @@ export class Decoder {
 
   protected decodeNode(doc: Document, data: unknown): JsonNode {
     switch (data) {
-      case ValueCode.null: return NULL;
-      case ValueCode.false: return FALSE;
-      case ValueCode.true: return TRUE;
-      case ValueCode.undefined: return UNDEFINED;
+      case ValueCode.null:
+        return NULL;
+      case ValueCode.false:
+        return FALSE;
+      case ValueCode.true:
+        return TRUE;
+      case ValueCode.undefined:
+        return UNDEFINED;
     }
     if (data instanceof Array) {
       switch (data[0]) {
-        case TypeCode.obj: return this.decodeObj(doc, data);
-        case TypeCode.arr: return this.decodeArr(doc, data);
-        case TypeCode.str: return this.decodeStr(doc, data);
-        case TypeCode.val: return this.decodeVal(doc, data);
-        case TypeCode.const: return this.decodeConst(doc, data);
+        case TypeCode.obj:
+          return this.decodeObj(doc, data);
+        case TypeCode.arr:
+          return this.decodeArr(doc, data);
+        case TypeCode.str:
+          return this.decodeStr(doc, data);
+        case TypeCode.val:
+          return this.decodeVal(doc, data);
+        case TypeCode.const:
+          return this.decodeConst(doc, data);
       }
     }
     throw new Error('UNKNOWN_NODE');
@@ -79,7 +88,7 @@ export class Decoder {
         chunk = new ArrayChunk(chunkId, undefined);
         chunk.deleted = content;
       } else {
-        const nodes = (content as unknown[]).map(c => this.decodeNode(doc, c));
+        const nodes = (content as unknown[]).map((c) => this.decodeNode(doc, c));
         chunk = new ArrayChunk(chunkId, nodes);
       }
       obj.append(chunk);

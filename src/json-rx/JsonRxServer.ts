@@ -31,7 +31,7 @@ const formatError = (error: ErrorLike): json_string<ErrorLike> => {
   if (typeof error.code === 'string') json += ',"code":' + asString(error.code);
   if (typeof error.errno === 'number') json += ',"errno":' + error.errno;
   if (typeof error.errorId === 'string') json += ',"errorId":' + asString(error.errorId);
-  return json + '}' as json_string<ErrorLike>;
+  return (json + '}') as json_string<ErrorLike>;
 };
 
 export interface JsonRxServerParams<Ctx = unknown> {
@@ -44,7 +44,11 @@ export interface JsonRxServerParams<Ctx = unknown> {
   /**
    * Callback called on the server when user sends a subscription message.
    */
-  call: (name: string, payload: unknown, ctx: Ctx) => Promise<json_string<unknown>> | Observable<json_string<unknown>> | Promise<Observable<json_string<unknown>>>;
+  call: (
+    name: string,
+    payload: unknown,
+    ctx: Ctx,
+  ) => Promise<json_string<unknown>> | Observable<json_string<unknown>> | Promise<Observable<json_string<unknown>>>;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -79,7 +83,14 @@ export class JsonRxServer<Ctx = unknown> {
   private readonly active = new Map<number, Subscription>();
   private readonly maxActiveSubscriptions: number;
 
-  constructor({send, call, notify, maxActiveSubscriptions = 30, bufferSize = 10, bufferTime = 1}: JsonRxServerParams<Ctx>) {
+  constructor({
+    send,
+    call,
+    notify,
+    maxActiveSubscriptions = 30,
+    bufferSize = 10,
+    bufferTime = 1,
+  }: JsonRxServerParams<Ctx>) {
     this.call = call;
     this.notify = notify;
     this.maxActiveSubscriptions = maxActiveSubscriptions;
@@ -88,16 +99,16 @@ export class JsonRxServer<Ctx = unknown> {
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
       buffer.onFlush = (messages) => {
-        send(messages.length === 1 ? messages[0] : ('[' + messages.join(',') + ']' as json_string<OutgoingMessage>));
+        send(messages.length === 1 ? messages[0] : (('[' + messages.join(',') + ']') as json_string<OutgoingMessage>));
       };
-      this.send = message => buffer.push(message);
+      this.send = (message) => buffer.push(message);
     } else {
       this.send = send;
     }
   }
 
   private sendError(id: number, error: unknown): void {
-    const message = '[-1,' + id + ',' + JSON.stringify(error) + ']' as json_string<MessageError>;
+    const message = ('[-1,' + id + ',' + JSON.stringify(error) + ']') as json_string<MessageError>;
     this.send(message);
   }
 
@@ -110,7 +121,7 @@ export class JsonRxServer<Ctx = unknown> {
       if (active) {
         this.active.delete(id);
         active.unsubscribe();
-        this.send('[-1,' + id + ',{"message":"ID already active."}]' as json_string<MessageError>);
+        this.send(('[-1,' + id + ',{"message":"ID already active."}]') as json_string<MessageError>);
         return;
       }
       if (this.active.size >= this.maxActiveSubscriptions)
@@ -118,9 +129,7 @@ export class JsonRxServer<Ctx = unknown> {
       const callResult = this.call(name, payload, ctx);
       const observable = isObservable(callResult)
         ? callResult
-        : from(callResult).pipe(
-          mergeMap(value => isObservable(value) ? value : of(value)),
-        );
+        : from(callResult).pipe(mergeMap((value) => (isObservable(value) ? value : of(value))));
       const ref: {buffer: json_string<unknown>[]} = {buffer: []};
       let done = false;
       const subscription = observable.subscribe(
@@ -131,7 +140,7 @@ export class JsonRxServer<Ctx = unknown> {
             if (!ref.buffer.length) return;
             try {
               for (const payload of ref.buffer)
-                this.send('[-2,' + id + ',' + payload + ']' as json_string<MessageData>);
+                this.send(('[-2,' + id + ',' + payload + ']') as json_string<MessageData>);
             } finally {
               ref.buffer = [];
             }
@@ -142,9 +151,9 @@ export class JsonRxServer<Ctx = unknown> {
           this.active.delete(id);
           let message: json_string<MessageError>;
           if (error instanceof Error) {
-            message = '[-1,' + id + ',' + formatError(error) + ']' as json_string<MessageError>;
+            message = ('[-1,' + id + ',' + formatError(error) + ']') as json_string<MessageError>;
           } else {
-            message = '[-1,' + id + ',' + JSON.stringify(error) + ']' as json_string<MessageError>;
+            message = ('[-1,' + id + ',' + JSON.stringify(error) + ']') as json_string<MessageError>;
           }
           this.send(message);
         },
@@ -158,9 +167,9 @@ export class JsonRxServer<Ctx = unknown> {
               const isLast = i === last;
               let message: json_string<MessageComplete | MessageData>;
               if (isLast) {
-                message = '[0,' + id + ',' + ref.buffer[i] + ']' as json_string<MessageComplete>;
+                message = ('[0,' + id + ',' + ref.buffer[i] + ']') as json_string<MessageComplete>;
               } else {
-                message = '[-2,' + id + ',' + ref.buffer[i] + ']' as json_string<MessageData>;
+                message = ('[-2,' + id + ',' + ref.buffer[i] + ']') as json_string<MessageData>;
               }
               this.send(message);
             }

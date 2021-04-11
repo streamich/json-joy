@@ -1,6 +1,6 @@
 import {Encoder} from '..';
 
-const { TextEncoder } = require('util');
+const {TextEncoder} = require('util');
 global.TextEncoder = TextEncoder;
 
 const encoder = new Encoder();
@@ -33,7 +33,14 @@ describe('number', () => {
 
   test('encodes negative fixint', () => {
     const ints = [-1, -2, -3, -4, -0b11110, -0b11111];
-    const res = [0xe0 | (-1 + 0x20), 0xe0 | (-2 + 0x20), 0xe0 | (-3 + 0x20), 0xe0 | (-4 + 0x20), 0xe0 | (-0b11110 + 0x20), 0xe0 | (-0b11111 + 0x20)];
+    const res = [
+      0xe0 | (-1 + 0x20),
+      0xe0 | (-2 + 0x20),
+      0xe0 | (-3 + 0x20),
+      0xe0 | (-4 + 0x20),
+      0xe0 | (-0b11110 + 0x20),
+      0xe0 | (-0b11111 + 0x20),
+    ];
     for (let i = 0; i < ints.length; i++) expect([...new Uint8Array(encode(ints[i]))]).toEqual([res[i]]);
   });
 
@@ -51,7 +58,7 @@ describe('number', () => {
     expect(buf.byteLength).toBe(9);
     const view = new DataView(buf);
     expect(view.getUint8(0)).toBe(0xd3);
-    expect([...(new Uint8Array(buf))]).toEqual([0xd3, 0xff, 0xff, 0xff, 0xfe, 0xe1, 0x72, 0xf5, 0xc0]);
+    expect([...new Uint8Array(buf)]).toEqual([0xd3, 0xff, 0xff, 0xff, 0xfe, 0xe1, 0x72, 0xf5, 0xc0]);
   });
 });
 
@@ -78,19 +85,310 @@ describe('string', () => {
   test.skip('encodes 31 char string', () => {
     const buf = encode('1234567890123456789012345678901');
     expect(buf.byteLength).toBe(32);
-    expect([...new Uint8Array(buf)]).toEqual([0b10111111, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49]);
+    expect([...new Uint8Array(buf)]).toEqual([
+      0b10111111,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      48,
+      49,
+    ]);
   });
   test.skip('encodes 255 char string', () => {
     const buf = encode('a'.repeat(255));
     expect(buf.byteLength).toBe(257);
-    expect([...new Uint8Array(buf)]).toEqual([0xd9, 255, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97]);
+    expect([...new Uint8Array(buf)]).toEqual([
+      0xd9,
+      255,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+      97,
+    ]);
   });
   test.skip('encodes 0xFFFF char string', () => {
-    const buf = encode('b'.repeat(0xFFFF));
-    expect(buf.byteLength).toBe(0xFFFF + 3);
+    const buf = encode('b'.repeat(0xffff));
+    expect(buf.byteLength).toBe(0xffff + 3);
     const view = new DataView(buf);
     expect(view.getUint8(0)).toBe(0xda);
-    expect(view.getUint16(1)).toBe(0xFFFF);
+    expect(view.getUint16(1)).toBe(0xffff);
   });
 
   // Skipping this test as due to optimizations, optimal encoding size is not used.
@@ -103,8 +401,8 @@ describe('string', () => {
   });
 
   test('encodes 0xFFFF + 1 char string', () => {
-    const buf = encode('d'.repeat(0xFFFF + 1));
-    expect(buf.byteLength).toBe(0xFFFF + 1 + 5);
+    const buf = encode('d'.repeat(0xffff + 1));
+    expect(buf.byteLength).toBe(0xffff + 1 + 5);
     // const view = new DataView(buf);
     // expect(view.getUint8(0)).toBe(0xdb);
     // expect(view.getUint32(1)).toBe(0xFFFF + 1);
@@ -141,35 +439,38 @@ describe('array', () => {
     const arr = '2'.repeat(16).split('').map(Number);
     const buf = encode(arr);
     expect(buf.byteLength).toBe(19);
-    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 16,...arr]);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 16, ...arr]);
   });
 
   test('encodes 255 element array', () => {
     const arr = '3'.repeat(255).split('').map(Number);
     const buf = encode(arr);
     expect(buf.byteLength).toBe(1 + 2 + 255);
-    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 255,...arr]);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0, 255, ...arr]);
   });
 
   test('encodes 256 element array', () => {
     const arr = '3'.repeat(256).split('').map(Number);
     const buf = encode(arr);
     expect(buf.byteLength).toBe(1 + 2 + 256);
-    expect([...new Uint8Array(buf)]).toEqual([0xdc, 1, 0,...arr]);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 1, 0, ...arr]);
   });
 
   test('encodes 0xFFFF element array', () => {
-    const arr = '3'.repeat(0xFFFF).split('').map(Number);
+    const arr = '3'.repeat(0xffff).split('').map(Number);
     const buf = encode(arr);
-    expect(buf.byteLength).toBe(1 + 2 + 0xFFFF);
-    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0xFF, 0xFF,...arr]);
+    expect(buf.byteLength).toBe(1 + 2 + 0xffff);
+    expect([...new Uint8Array(buf)]).toEqual([0xdc, 0xff, 0xff, ...arr]);
   });
 
   test('encodes 0xFFFF + 1 element array', () => {
-    const arr = '3'.repeat(0xFFFF + 1).split('').map(Number);
+    const arr = '3'
+      .repeat(0xffff + 1)
+      .split('')
+      .map(Number);
     const buf = encode(arr);
-    expect(buf.byteLength).toBe(1 + 4 + 0xFFFF + 1);
-    expect([...new Uint8Array(buf)]).toEqual([0xdd, 0, 1, 0, 0,...arr]);
+    expect(buf.byteLength).toBe(1 + 4 + 0xffff + 1);
+    expect([...new Uint8Array(buf)]).toEqual([0xdd, 0, 1, 0, 0, ...arr]);
   });
 });
 
@@ -187,11 +488,11 @@ describe('object', () => {
   });
 
   test('encodes simple object', () => {
-    const obj = { '0': 0, '1': 100, '2': 200, '3': 300 };
+    const obj = {'0': 0, '1': 100, '2': 200, '3': 300};
     const arr = encode(obj);
     const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0b10000100);
-    
+
     expect(view.getUint8(1)).toBe(0b10100001);
     expect(view.getUint8(2)).toBe(48);
     expect(view.getUint8(3)).toBe(0);
@@ -274,22 +575,22 @@ describe('object', () => {
 
   test('encodes object with 0xFFFF keys', () => {
     const obj: any = {};
-    for (let i = 0; i < 0xFFFF; i++) obj[String(i)] = i;
+    for (let i = 0; i < 0xffff; i++) obj[String(i)] = i;
     const arr = encode(obj);
     const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xde);
-    expect(view.getUint16(1)).toBe(0xFFFF);
+    expect(view.getUint16(1)).toBe(0xffff);
     expect(view.getUint8(3)).toBe(0b10100001);
     expect(view.getUint8(4)).toBe(48);
   });
 
   test('encodes object with 0xFFFF + 1 keys', () => {
     const obj: any = {};
-    for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
+    for (let i = 0; i < 0xffff + 1; i++) obj[String(i)] = i;
     const arr = encode(obj);
     const view = new DataView(arr.buffer);
     expect(view.getUint8(0)).toBe(0xdf);
-    expect(view.getUint32(1)).toBe(0xFFFF + 1);
+    expect(view.getUint32(1)).toBe(0xffff + 1);
     expect(view.getUint8(5)).toBe(0b10100001);
     expect(view.getUint8(6)).toBe(48);
   });

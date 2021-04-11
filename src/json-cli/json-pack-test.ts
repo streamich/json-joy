@@ -2,7 +2,16 @@
 
 import {spawnSync} from 'child_process';
 import {JsonPackExtension} from '../json-pack';
-import {testSuites, TestCaseNil, TestCaseBool, TestCaseString, TestCaseNumber, TestCaseArray, TestCaseMap, TestCaseExt} from './test/msgpack-test-suite';
+import {
+  testSuites,
+  TestCaseNil,
+  TestCaseBool,
+  TestCaseString,
+  TestCaseNumber,
+  TestCaseArray,
+  TestCaseMap,
+  TestCaseExt,
+} from './test/msgpack-test-suite';
 const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
@@ -48,10 +57,9 @@ for (const name in testSuites) {
     const result = new Uint8Array(stdout.byteLength);
     for (let i = 0; i < result.byteLength; i++) result[i] = stdout[i];
     EXPECTED: for (const exp of testCase.msgpack) {
-      const expected = new Uint8Array(exp.split('-').map(a => parseInt(a, 16)));
+      const expected = new Uint8Array(exp.split('-').map((a) => parseInt(a, 16)));
       if (expected.byteLength !== result.byteLength) continue;
-      for (let i = 0; i < expected.byteLength; i++)
-        if (expected[i] !== result[i]) continue EXPECTED;
+      for (let i = 0; i < expected.byteLength; i++) if (expected[i] !== result[i]) continue EXPECTED;
       isCorrect = true;
       break EXPECTED;
     }

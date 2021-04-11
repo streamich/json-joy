@@ -1,4 +1,11 @@
-import {NotificationMessage, SubscribeMessage, DataMessage, CompleteMessage, UnsubscribeMessage, ErrorMessage} from './messages';
+import {
+  NotificationMessage,
+  SubscribeMessage,
+  DataMessage,
+  CompleteMessage,
+  UnsubscribeMessage,
+  ErrorMessage,
+} from './messages';
 import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {TimedQueue} from '../json-rx/TimedQueue';
@@ -31,7 +38,11 @@ export interface BinaryRxServerParams<Ctx = unknown> {
   /**
    * Callback called on the server when user sends a subscription message.
    */
-  call: (name: string, data: Uint8Array | undefined, ctx: Ctx) => Promise<Uint8Array> | Observable<Uint8Array> | Promise<Observable<Uint8Array>>;
+  call: (
+    name: string,
+    data: Uint8Array | undefined,
+    ctx: Ctx,
+  ) => Promise<Uint8Array> | Observable<Uint8Array> | Promise<Observable<Uint8Array>>;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -67,7 +78,14 @@ export class BinaryRxServer<Ctx = unknown> {
   private readonly maxActiveSubscriptions: number;
   private readonly encoder = new Encoder();
 
-  constructor({send, call, notify, maxActiveSubscriptions = 30, bufferSize = 10, bufferTime = 1}: BinaryRxServerParams<Ctx>) {
+  constructor({
+    send,
+    call,
+    notify,
+    maxActiveSubscriptions = 30,
+    bufferSize = 10,
+    bufferTime = 1,
+  }: BinaryRxServerParams<Ctx>) {
     this.call = call;
     this.notify = notify;
     this.maxActiveSubscriptions = maxActiveSubscriptions;
@@ -78,7 +96,7 @@ export class BinaryRxServer<Ctx = unknown> {
       buffer.onFlush = (messages) => {
         send(this.encoder.encode(messages));
       };
-      this.send = message => buffer.push(message);
+      this.send = (message) => buffer.push(message);
     } else {
       this.send = (message) => {
         send(this.encoder.encode([message]));
@@ -101,14 +119,13 @@ export class BinaryRxServer<Ctx = unknown> {
         this.sendError(id, ERR_ID_TAKEN);
         return;
       }
-      if (this.active.size >= this.maxActiveSubscriptions)
-        return this.sendError(id, ERR_TOO_MANY_SUBSCRIPTIONS);
+      if (this.active.size >= this.maxActiveSubscriptions) return this.sendError(id, ERR_TOO_MANY_SUBSCRIPTIONS);
       const callResult = this.call(method, data, ctx);
       const observable: Observable<Uint8Array> = (isObservable(callResult)
         ? callResult
-        : from(callResult).pipe(
-          mergeMap(value => isObservable(value) ? value : of(value)),
-        )) as Observable<Uint8Array>;
+        : from(callResult).pipe(mergeMap((value) => (isObservable(value) ? value : of(value))))) as Observable<
+        Uint8Array
+      >;
       const ref: {buffer: Uint8Array[]} = {buffer: []};
       let done = false;
       const subscription = observable.subscribe(
@@ -119,8 +136,7 @@ export class BinaryRxServer<Ctx = unknown> {
           microtask(() => {
             if (!ref.buffer.length) return;
             try {
-              for (const payload of ref.buffer)
-                this.send(new DataMessage(id, payload));
+              for (const payload of ref.buffer) this.send(new DataMessage(id, payload));
             } finally {
               ref.buffer = [];
             }

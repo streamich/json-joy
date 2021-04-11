@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -11,7 +11,7 @@ const testCases: TestCase[] = [
         value: 99,
       },
     ],
-    expected: 123
+    expected: 123,
   },
   {
     comment: 'At root, fails when value is not higher than requested',

@@ -65,7 +65,7 @@ test('server returns "too many subscriptions" error on many parallel requests', 
         ref.client!.onMessage(JSON.parse(message as any));
       }, 1),
     call: ((method: any, payload: any) => {
-      if (method === 'tripple') return new Promise(r => setTimeout(() => r(3 * (payload as number)), 5));
+      if (method === 'tripple') return new Promise((r) => setTimeout(() => r(3 * (payload as number)), 5));
       else throw new Error('Unknown method');
     }) as any,
     notify: () => {},
@@ -93,7 +93,7 @@ test('server returns "too many subscriptions" error on many parallel requests', 
       client.call('tripple', 3).pipe(take(1)).toPromise(),
     ]);
   } catch (error) {
-    err = error
+    err = error;
   }
   expect(err).toMatchInlineSnapshot(`
     Object {

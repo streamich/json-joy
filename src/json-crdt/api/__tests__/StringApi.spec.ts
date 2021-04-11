@@ -11,7 +11,7 @@ test('can edit a simple string', () => {
   str.del(9, 1);
   expect(str.toJson()).toEqual('0123-xxxxyyyyyyyy');
   expect(str.toString()).toEqual('0123-xxxxyyyyyyyy');
-  expect(doc.toJson()).toEqual([ 0, '0123-xxxxyyyyyyyy', 2 ]);
+  expect(doc.toJson()).toEqual([0, '0123-xxxxyyyyyyyy', 2]);
 });
 
 test('can delete across two chunks', () => {

@@ -19,7 +19,7 @@ export class TimedQueue<T> {
   public onFlush: (list: T[]) => void = (list: T[]) => {};
 
   private list: T[] = [];
-  private timer: null | number |  NodeJS.Timeout = null;
+  private timer: null | number | NodeJS.Timeout = null;
 
   public push(item: T) {
     this.list.push(item);

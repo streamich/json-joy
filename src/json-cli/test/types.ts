@@ -1,4 +1,4 @@
-import {Operation} from "../../json-patch";
+import {Operation} from '../../json-patch';
 
 export interface TestCase {
   comment: string;

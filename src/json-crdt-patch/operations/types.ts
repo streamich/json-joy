@@ -1,5 +1,5 @@
-import {LogicalTimestamp} from "../clock";
-import {Identifiable} from "../Identifiable";
+import {LogicalTimestamp} from '../clock';
+import {Identifiable} from '../Identifiable';
 
 export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
@@ -11,7 +11,7 @@ export interface IJsonCrdtPatchOperation extends Identifiable {
    * Some operations, such as array and string insert/delete operations are
    * compound a single operation instance effectively represents multiple
    * operations (one per character or array element).
-   * 
+   *
    * This method returns the effective number of operations.
    */
   span(): number;

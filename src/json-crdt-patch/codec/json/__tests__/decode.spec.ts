@@ -10,10 +10,8 @@ import {NoopOperation} from '../../../operations/NoopOperation';
 
 test('decodes a simple patch', () => {
   const patch = decode({
-    id: [ 3, 5 ],
-    ops: [
-      { op: 'root', value: [0, 3] }
-    ]
+    id: [3, 5],
+    ops: [{op: 'root', value: [0, 3]}],
   });
   expect(patch.ops.length).toBe(1);
   expect(patch.ops[0]).toBeInstanceOf(SetRootOperation);
@@ -22,15 +20,15 @@ test('decodes a simple patch', () => {
 
 test('decodes {foo: "bar"} object', () => {
   const patch = decode({
-    id: [ 5, 25 ],
+    id: [5, 25],
     ops: [
-      { op: 'str' }, // 25
-      { op: 'str_ins', obj: [5, 123], after: [5, 25], value: 'bar' }, // 26-28
-      { op: 'noop', len: 2 },
-      { op: 'obj' }, // 31
-      { op: 'obj_set', obj: [5, 31], tuples: [['foo', [5, 25]]] }, // 32
-      { op: 'root', value: [5, 31] } // 33
-    ]
+      {op: 'str'}, // 25
+      {op: 'str_ins', obj: [5, 123], after: [5, 25], value: 'bar'}, // 26-28
+      {op: 'noop', len: 2},
+      {op: 'obj'}, // 31
+      {op: 'obj_set', obj: [5, 31], tuples: [['foo', [5, 25]]]}, // 32
+      {op: 'root', value: [5, 31]}, // 33
+    ],
   });
   expect(patch.ops.length).toBe(6);
   expect(patch.span()).toBe(9);
@@ -52,28 +50,32 @@ test('decodes {foo: "bar"} object', () => {
 
 test('test all operations', () => {
   const json: JsonCodecPatch = {
-    id: [ 3, 100 ],
+    id: [3, 100],
     ops: [
-      { op: 'str' }, // 100
-      { op: 'str_ins', obj: [3, 100], after: [3, 100], value: 'qq' }, // 101, 102
-      { op: 'arr' }, // 103
-      { op: 'obj' }, // 104
-      { op: 'obj_set', obj: [3, 104], tuples: [
-        ['foo', [3, 100]],
-        ['hmm', [3, 103]]
-      ] }, // 105, 106
-      { op: 'num' }, // 107
-      { op: 'num_set', after: [3, 107], value: 123.4}, // 108
-      { op: 'arr_ins', obj: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
-      { op: 'root', value: [3, 104]}, // 110
-      { op: 'const', value: [true] },
-      { op: 'noop' },
-      { op: 'del', obj: [3, 107], after: [3, 109]}, // 111
-      { op: 'noop', len: 2 },
-      { op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 112
-      { op: 'val', value: {a: 'b'} }, // 117
-      { op: 'val_set', obj: [3, 118], value: 'lala' }, // 118
-    ]
+      {op: 'str'}, // 100
+      {op: 'str_ins', obj: [3, 100], after: [3, 100], value: 'qq'}, // 101, 102
+      {op: 'arr'}, // 103
+      {op: 'obj'}, // 104
+      {
+        op: 'obj_set',
+        obj: [3, 104],
+        tuples: [
+          ['foo', [3, 100]],
+          ['hmm', [3, 103]],
+        ],
+      }, // 105, 106
+      {op: 'num'}, // 107
+      {op: 'num_set', after: [3, 107], value: 123.4}, // 108
+      {op: 'arr_ins', obj: [3, 103], after: [3, 103], values: [[3, 107]]}, // 109
+      {op: 'root', value: [3, 104]}, // 110
+      {op: 'const', value: [true]},
+      {op: 'noop'},
+      {op: 'del', obj: [3, 107], after: [3, 109]}, // 111
+      {op: 'noop', len: 2},
+      {op: 'del', obj: [3, 100], after: [3, 101], len: 2}, // 112
+      {op: 'val', value: {a: 'b'}}, // 117
+      {op: 'val_set', obj: [3, 118], value: 'lala'}, // 118
+    ],
   };
   const patch = decode(json);
   const encoded = encode(patch);

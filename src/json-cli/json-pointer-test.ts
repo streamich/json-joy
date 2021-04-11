@@ -24,7 +24,6 @@ for (const {name, doc, pointer, result, error} of testCases) {
   if (error === undefined) {
     isCorrect = equal(result, JSON.parse(stdout.toString()));
   } else {
-    
     const errorMessage = stderr.toString().trim();
     isCorrect = errorMessage === error;
   }
