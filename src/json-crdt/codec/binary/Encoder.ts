@@ -143,7 +143,7 @@ export class Encoder extends JsonPackEncoder {
     const uint8 = this.uint8;
     let offset = this.offset;
     let pos = 0;
-    while (pos < length) {
+    while (pos < byteLength) {
       let value = str.charCodeAt(pos++);
       if ((value & 0xffffff80) === 0) {
         uint8[offset++] = value;
@@ -152,7 +152,7 @@ export class Encoder extends JsonPackEncoder {
         uint8[offset++] = ((value >> 6) & 0x1f) | 0xc0;
       } else {
         if (value >= 0xd800 && value <= 0xdbff) {
-          if (pos < length) {
+          if (pos < byteLength) {
             const extra = str.charCodeAt(pos);
             if ((extra & 0xfc00) === 0xdc00) {
               pos++;

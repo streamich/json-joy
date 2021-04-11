@@ -1,26 +1,75 @@
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
+import {NULL} from '../../constants';
 import {Document} from '../../document';
+import {JsonNode} from '../../types';``
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
 
 export class Decoder extends MessagePackDecoder {
   protected clockDecoder!: ClockDecoder;
+  protected doc!: Document;
 
   public decode(data: Uint8Array): Document {
     this.reset(data);
-    this.decodeClockTable();
-    const doc = new Document(this.clockDecoder.clock);
+    const [, clockTableLength] = this.b1vuint56();
+    this.decodeClockTable(clockTableLength);
+    const doc = this.doc = new Document(this.clockDecoder.clock);
     this.decodeRoot(doc);
-    // const rootId = this.ts(data, 1);
-    // const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
-    // doc.root = new DocRootType(doc, rootId, rootNode);
     return doc;
   }
 
-  protected decodeClockTable(): void {
-    // this.clockDecoder = ClockDecoder.fromArr(data[0] as number[]);
+  protected decodeClockTable(length: number): void {
+    const firstTimestamp = this.clock();
+    this.clockDecoder = new ClockDecoder(firstTimestamp[0], firstTimestamp[1]);
+    for (let i = 1; i < length; i++) {
+      const ts = this.clock();
+      this.clockDecoder.pushTuple(ts[0], ts[1]);
+    }
   }
 
-  protected decodeRoot(doc: Document): void {}
+  protected ts(): LogicalTimestamp {
+    const id = this.id();
+    return this.clockDecoder.decodeId(id[0], id[1]);
+  }
+
+  protected decodeRoot(doc: Document): void {
+    const id = this.ts();
+    const node = this.x >= this.uint8.byteLength ? null : this.decodeNode(doc);
+    doc.root = new DocRootType(doc, id, node);
+  }
+
+  public decodeNode(doc: Document): JsonNode {
+    const byte = this.u8();
+    if (byte < 0b10000000) return NULL;
+    else if (byte <= 0b10001111) return this.decodeObj(byte & 0b1111);
+    else {
+      switch (byte) {
+        case 0xDE: return this.decodeObj(this.u16());
+        case 0xDF: return this.decodeObj(this.u32());
+      }
+    }
+    return NULL;
+  }
+
+  public decodeObj(length: number): ObjectType {
+    const id = this.ts();
+    const obj = new ObjectType(this.doc, id);
+    for (let i = 0; i < length; i++) this.decodeObjChunk(obj);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeObjChunk(obj: ObjectType): void {
+    const id = this.ts();
+    const length = this.vuint57();
+    const key = this.str(length);
+    const node = this.decodeNode(this.doc);
+    const chunk = new ObjectChunk(id, node);
+    obj.putChunk(key, chunk);
+  }
 
   public clock(): [x: number, z: number] {
     const x32 = this.u32();
