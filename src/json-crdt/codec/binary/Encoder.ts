@@ -4,6 +4,7 @@ import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
 import {utf8Count} from '../../../util/utf8';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
+import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
@@ -13,6 +14,7 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 
 export class Encoder extends JsonPackEncoder {
+  protected pack: JsonPackEncoder = new JsonPackEncoder();
   protected clockEncoder!: ClockEncoder;
 
   public encode(doc: Document): Uint8Array {
@@ -37,7 +39,7 @@ export class Encoder extends JsonPackEncoder {
     else if (node instanceof ArrayType) return this.encodeArr(node);
     else if (node instanceof StringType) return this.encodeStr(node);
     // else if (node instanceof ValueType) return this.encodeVal(arr, node);
-    // else if (node instanceof ConstantType) return this.encodeConst(arr, node);
+    else if (node instanceof ConstantType) return this.encodeConst(node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -94,6 +96,28 @@ export class Encoder extends JsonPackEncoder {
       this.b1vuint56(false, length);
       this.ts(chunk.id);
       this.encodeUtf8(text, length);
+    }
+  }
+
+  protected encodeConst(obj: ConstantType): void {
+    const {value} = obj;
+    switch (value) {
+      case null:
+      case undefined:
+      case false:
+      case true:
+        this.encodeAny(value);
+        break;
+      default: {
+        if (typeof value === 'number') this.encodeNumber(value);
+        else {
+          this.u8(0xD4);
+          const buf = this.pack.encode(value);
+          const length = buf.byteLength;
+          this.vuint57(length);
+          this.buf(buf, length);
+        }
+      }
     }
   }
 

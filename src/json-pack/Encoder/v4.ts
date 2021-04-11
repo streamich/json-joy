@@ -1,4 +1,5 @@
 import {Encoder as BaseEncoder} from '../../util/encoder';
+import {JsonPackExtension} from '../JsonPackExtension';
 import {IMessagePackEncoder} from './types';
 
 const isSafeInteger = Number.isSafeInteger;
@@ -202,5 +203,51 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
       this.encodeString(key);
       this.encodeAny(obj[key]);
     }
+  }
+
+  public buf(buf: Uint8Array, length: number): void {
+    this.ensureCapacity(length);
+    this.uint8.set(buf, this.offset);
+    this.offset += length;
+  }
+
+  public encodeExtHeader(type: number, length: number) {
+    switch (length) {
+      case 1:
+        this.u16((0xd4 << 8) | type);
+        break;
+      case 2:
+        this.u16((0xd5 << 8) | type);
+        break;
+      case 4:
+        this.u16((0xd6 << 8) | type);
+        break;
+      case 8:
+        this.u16((0xd7 << 8) | type);
+        break;
+      case 16:
+        this.u16((0xd8 << 8) | type);
+        break;
+      default:
+        if (length <= 0xff) {
+          this.u16((0xc7 << 8) | length);
+          this.u8(type);
+        } else if (length <= 0xffff) {
+          this.u8(0xc8);
+          this.u16(length);
+          this.u8(type);
+        } else if (length <= 0xffffffff) {
+          this.u8(0xc9);
+          this.u32(length);
+          this.u8(type);
+        }
+    }
+  }
+
+  public encodeExt(ext: JsonPackExtension): void {
+    const {type, buf} = ext;
+    const length = buf.byteLength;
+    this.encodeExtHeader(type, length);
+    this.buf(buf, length);
   }
 }

@@ -135,6 +135,7 @@ the node type and its size.
 | arr4              | 0x90 - 0x9F       | `0b1001....`                | Array with up to 15 chunks.                     |
 | str5              | 0xA0 - 0xBF       | `0b101.....`                | String with up to 31 chunks.                    |
 | null              | 0xC0              | `0b11000000`                | "null" value.                                   |
+| undefined         | 0xC1              | `0b11000001`                | "undefined" value.                              |
 | false             | 0xC2              | `0b11000010`                | "false" value.                                  |
 | true              | 0xC3              | `0b11000011`                | "true" value.                                   |
 | float32           | 0xCA              | `0b11001010`                | 32-bit floating point number.                   |
@@ -147,6 +148,7 @@ the node type and its size.
 | int16             | 0xD1              | `0b11010001`                | Signed 16 bit integer.                          |
 | int32             | 0xD2              | `0b11010010`                | Signed 32 bit integer.                          |
 | int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
+| const             | 0xD4              | `0b11010100`                | Immutable JSON value.                           |
 | str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
 | str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
 | str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |
@@ -370,86 +372,25 @@ A chunk with text which is not deleted:
 ```
 
 
-##### Number node encoding
+##### Constant node encoding
 
-The number node is encoded differently depending on the value of the number.
-Each number node has the following parts:
+Constant nodes are ones which contain a immutable JSON value, without any other
+meta information.
 
-1. Node type byte.
-2. Zero or more bytes of the number value `x`.
-3. ID if the number node, encoded as a relative ID.
-
+If the value of the constant node is `null`, `undefined`, `false`, `true` or a number, the
+node is encoded as MessagePack value.
 
 ```
-uint7
-+-|-------+========+
-|0|xxxxxxx|   ID   |
-+-^-------+========+
+null
++--------+
+|11000000|
++--------+
 
-float32
-+--------+--------+--------+--------+--------+========+
-|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
+undefined
++--------+
+|11000001|
++--------+
 
-float64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-uint8
-+--------+--------+========+
-|  0xCC  |xxxxxxxx|   ID   |
-+--------+--------+========+
-
-uint16
-+--------+--------+--------+========+
-|  0xCD  |xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+========+
-
-uint32
-+--------+--------+--------+--------+--------+========+
-|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
-
-uint64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-int8
-+--------+--------+========+
-|  0xD0  |xxxxxxxx|   ID   |
-+--------+--------+========+
-
-int16
-+--------+--------+--------+========+
-|  0xD1  |xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+========+
-
-int32
-+--------+--------+--------+--------+--------+========+
-|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
-
-int64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-nint5
-+---|-----+========+
-|111|xxxxx|   ID   |
-+---^-----+========+
-```
-
-
-##### Boolean node encoding
-
-Value `false` is encoded as 1 byte, equal to 0xC3.
-
-Value `true` is encoded as 1 byte, equal to 0xC2.
-
-```
 false
 +--------+
 |11000010|
@@ -459,6 +400,80 @@ true
 +--------+
 |11000011|
 +--------+
+
+uint7
++-|-------+
+|0|xxxxxxx|
++-^-------+
+
+float32
++--------+--------+--------+--------+--------+
+|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+float64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+uint8
++--------+--------+
+|  0xCC  |xxxxxxxx|
++--------+--------+
+
+uint16
++--------+--------+--------+
+|  0xCD  |xxxxxxxx|xxxxxxxx|
++--------+--------+--------+
+
+uint32
++--------+--------+--------+--------+--------+
+|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+uint64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+int8
++--------+--------+
+|  0xD0  |xxxxxxxx|
++--------+--------+
+
+int16
++--------+--------+--------+
+|  0xD1  |xxxxxxxx|xxxxxxxx|
++--------+--------+--------+
+
+int32
++--------+--------+--------+--------+--------+
+|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+int64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+nint5
++---|-----+
+|111|xxxxx|
++---^-----+
+```
+
+If the value of the constant node is string, array or object, it is encoded
+as a `const` node, which consists of:
+
+1. Leading 0xD4 byte.
+2. The length of the JSON payload in bytes, encoded as vuint57.
+3. JSON value `data`, encoded in MessagePack format.
+
+```
+const
++--------+=========+========+
+|  0xD4  | vuint57 |  data  |
++--------+=========+========+
 ```
 
 
@@ -467,10 +482,7 @@ true
 Value `null` is encoded as 1 byte, equal to 0xC0.
 
 ```
-null
-+--------+
-|11000000|
-+--------+
+
 ```
 
 
