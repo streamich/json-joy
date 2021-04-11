@@ -16,10 +16,14 @@ export class Decoder {
 
   public constructor(private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder) {}
 
-  public decode(uint8: Uint8Array): unknown {
+  public reset(uint8: Uint8Array): void {
     this.x = 0;
     this.uint8 = uint8;
     this.view = new DataView(this.uint8.buffer);
+  }
+
+  public decode(uint8: Uint8Array): unknown {
+    this.reset(uint8);
     return this.val();
   }
 
