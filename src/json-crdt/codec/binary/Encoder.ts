@@ -30,7 +30,7 @@ export class Encoder extends JsonPackEncoder {
     const {clockEncoder} = this;
     const length = clockEncoder.table.size;
     const dataSize = data.byteLength;
-    this.uint8 = new Uint8Array(8 + (12 * length) + dataSize);
+    this.uint8 = new Uint8Array(8 + 12 * length + dataSize);
     this.view = new DataView(this.uint8.buffer);
     this.offset = 0;
     this.b1vuint56(false, length);
@@ -61,8 +61,7 @@ export class Encoder extends JsonPackEncoder {
     const length = obj.latest.size;
     this.encodeObjectHeader(length);
     this.ts(obj.id);
-    for (const [key, chunk] of obj.latest.entries())
-      this.encodeObjChunk(key, chunk);
+    for (const [key, chunk] of obj.latest.entries()) this.encodeObjChunk(key, chunk);
   }
 
   protected encodeObjChunk(key: string, chunk: ObjectChunk): void {
@@ -125,7 +124,7 @@ export class Encoder extends JsonPackEncoder {
       default: {
         if (typeof value === 'number') this.encodeNumber(value);
         else {
-          this.u8(0xD4);
+          this.u8(0xd4);
           this.encodeAny(value);
         }
       }
@@ -133,7 +132,7 @@ export class Encoder extends JsonPackEncoder {
   }
 
   protected encodeVal(obj: ValueType): void {
-    this.u8(0xD5);
+    this.u8(0xd5);
     this.ts(obj.id);
     this.ts(obj.writeId);
     this.encodeAny(obj.value);
@@ -177,13 +176,13 @@ export class Encoder extends JsonPackEncoder {
 
   /**
    * Encoding schema:
-   * 
+   *
    * ```
    * byte 1                                                         byte 8                              byte 12
    * +--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
    * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
    * +--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
-   * 
+   *
    *  33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
    *  21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
    *  |                                     |               |      |                       |
@@ -199,12 +198,12 @@ export class Encoder extends JsonPackEncoder {
     if (x1 < 0) x1 += 4294967296;
     const x2 = (x - x1) / 4294967296;
     this.u32(x1);
-    this.u16(x2 & 0xFFFF);
+    this.u16(x2 & 0xffff);
     const fiveXBits = (x2 >>> 16) << 3;
     const twoZBits = (z >>> 8) & 0b11;
     const zFitsIn10Bits = z <= 0b11_11111111;
     this.u8(fiveXBits | (zFitsIn10Bits ? 0b000 : 0b100) | twoZBits);
-    this.u8(z & 0xFF);
+    this.u8(z & 0xff);
     if (zFitsIn10Bits) return;
     if (z <= 0b1111111_11_11111111) {
       this.u8(z >>> 10);
@@ -228,34 +227,34 @@ export class Encoder extends JsonPackEncoder {
 
   /**
    * In the below encoding diagrams bits are annotated as follows:
-   * 
+   *
    * - "x" - vector table index, reference to the logical clock.
    * - "y" - time difference.
    * - "?" - whether the next byte is used for encoding.
-   * 
+   *
    * If x is less than 8 and y is less than 16, the relative ID is encoded as a
    * single byte:
-   * 
+   *
    * ```
    * +--------+
    * |0xxxyyyy|
    * +--------+
    * ```
-   * 
+   *
    * Otherwise the top bit of the first byte is set to 1; and x and y are encoded
    * separately using b1vuint28 and vuint39, respectively.
-   * 
+   *
    * ```
    *       x          y
    * +===========+=========+
    * | b1vuint28 | vuint39 |
    * +===========+=========+
    * ```
-   * 
+   *
    * The boolean flag of x b1vuint28 value is always set to 1.
    */
   public id(x: number, y: number): void {
-    if ((x <= 0b111) && (y <= 0b1111)) {
+    if (x <= 0b111 && y <= 0b1111) {
       this.u8((x << 4) | y);
     } else {
       this.b1vuint28(true, x);
@@ -265,19 +264,19 @@ export class Encoder extends JsonPackEncoder {
 
   /**
    * #### `vuint57` (variable length unsigned 57 bit integer)
-   * 
+   *
    * Variable length unsigned 57 bit integer is encoded using up to 8 bytes. The maximum
    * size of the decoded value is 57 bits of data.
-   * 
+   *
    * The high bit "?" of each byte indicates if the next byte should be consumed, up
    * to 8 bytes.
-   * 
+   *
    * ```
    * byte 1                                                         byte 8
    * +--------+........+........+........+........+........+........+········+
    * |?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
    * +--------+........+........+........+........+........+........+········+
-   * 
+   *
    *            11111    2211111  2222222  3333332  4443333  4444444 55555555
    *   7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
    *     |                        |                    |             |
@@ -285,7 +284,7 @@ export class Encoder extends JsonPackEncoder {
    *                              28th bit of z        |             57th bit of z
    *                                                   39th bit of z
    * ```
-   * 
+   *
    * @param num Number to encode as vuint57
    */
   public vuint57(num: number) {

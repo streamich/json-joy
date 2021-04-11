@@ -83,14 +83,14 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
 
   public encodeStringHeader(length: number): void {
     if (length <= 0b11111) this.u8(0b10100000 | length);
-    else if (length <= 0xFF) {
-      this.u8(0xD9);
+    else if (length <= 0xff) {
+      this.u8(0xd9);
       this.u8(length);
-    } else if (length <= 0xFFFF) {
-      this.u8(0xDA);
+    } else if (length <= 0xffff) {
+      this.u8(0xda);
       this.u16(length);
-    } else if (length <= 0xFFFFFFFF) {
-      this.u8(0xDB);
+    } else if (length <= 0xffffffff) {
+      this.u8(0xdb);
       this.u32(length);
     }
   }

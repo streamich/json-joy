@@ -39,12 +39,28 @@ test('encodes three byte integers', () => {
 });
 
 test('encodes four byte integers', () => {
-  expect(encode(false, 0b1_1111111_1111111_111111)).toEqual(new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b1]));
-  expect(encode(true, 0b1_1111111_1111111_111111)).toEqual(new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b1]));
-  expect(encode(false, 0b1111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]));
-  expect(encode(true, 0b1111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]));
-  expect(encode(false, 0b10111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b10111111]));
-  expect(encode(true, 0b10111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b10111111]));
-  expect(encode(false, 0b11111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b11111111]));
-  expect(encode(true, 0b11111111_1111111_1111111_111111)).toEqual(new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b11111111]));
+  expect(encode(false, 0b1_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b1]),
+  );
+  expect(encode(true, 0b1_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b1]),
+  );
+  expect(encode(false, 0b1111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]),
+  );
+  expect(encode(true, 0b1111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]),
+  );
+  expect(encode(false, 0b10111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b10111111]),
+  );
+  expect(encode(true, 0b10111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b10111111]),
+  );
+  expect(encode(false, 0b11111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b0_1_111111, 0b1_1111111, 0b1_1111111, 0b11111111]),
+  );
+  expect(encode(true, 0b11111111_1111111_1111111_111111)).toEqual(
+    new Uint8Array([0b1_1_111111, 0b1_1111111, 0b1_1111111, 0b11111111]),
+  );
 });
