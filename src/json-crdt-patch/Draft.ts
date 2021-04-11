@@ -13,6 +13,7 @@ import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
 import {NoopOperation} from './operations/NoopOperation';
 import {MakeConstantOperation} from './operations/MakeConstantOperation';
+import {MakeValueOperation} from './operations/MakeValueOperation';
 
 /**
  * Draft class provides a way to build a patch for which it is not known the
@@ -57,6 +58,8 @@ export class Draft {
         patch.ops.push(new MakeArrayOperation(ts(op.id)));
       else if (op instanceof MakeConstantOperation)
         patch.ops.push(new MakeConstantOperation(ts(op.id), op.value));
+      else if (op instanceof MakeValueOperation)
+        patch.ops.push(new MakeValueOperation(ts(op.id), op.value));
       else if (op instanceof MakeNumberOperation)
         patch.ops.push(new MakeNumberOperation(ts(op.id)));
       else if (op instanceof MakeObjectOperation)

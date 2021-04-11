@@ -24,8 +24,10 @@ const readMethod = (arr: Uint8Array, offset: number): [method: string, offset: n
  * 
  * @param arr Array buffer from which to decode a message
  * @param offset Starting position from where to start decoding
+ * 
+ * @category Codec
  */
-export const decodeCompleteMessage = (arr: Uint8Array, offset: number): [message: BinaryRxMessage, offset: number] => {
+export const decodeFullMessage = (arr: Uint8Array, offset: number): [message: BinaryRxMessage, offset: number] => {
   const byte1 = arr[offset++];
   const code = byte1 >>> 5;
   switch(code) {
@@ -70,11 +72,20 @@ export const decodeCompleteMessage = (arr: Uint8Array, offset: number): [message
   throw new Error('UNKNOWN_MESSAGE');
 };
 
-export const decodeCompleteMessages = (arr: Uint8Array, offset: number): BinaryRxMessage[]=> {
+/**
+ * Decodes multiple Binary-Rx messages.
+ * 
+ * @param arr Uint8Array containing multiple Binary-Rx messages.
+ * @param offset Byte offset from which to start decoding.
+ * @returns An array of decoded Binary-Rx messages.
+ * 
+ * @category Codec
+ */
+export const decodeFullMessages = (arr: Uint8Array, offset: number): BinaryRxMessage[]=> {
   const messages: BinaryRxMessage[] = [];
   const length = arr.length;
   while (offset < length) {
-    const [message, off] = decodeCompleteMessage(arr, offset)
+    const [message, off] = decodeFullMessage(arr, offset)
     offset = off;
     messages.push(message);
   }

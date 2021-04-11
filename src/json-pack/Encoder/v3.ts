@@ -1,34 +1,60 @@
 const isSafeInteger = Number.isSafeInteger;
 
+const EMPTY_UINT8 = new Uint8Array([]);
+const EMPTY_VIEW = new DataView(EMPTY_UINT8.buffer);
+
 export class Encoder {
-  private uint8: Uint8Array;
-  private view: DataView;
-  private offset: number = 0;
+  /** @ignore */
+  protected uint8: Uint8Array = EMPTY_UINT8;
+  /** @ignore */
+  protected view: DataView = EMPTY_VIEW;
+  /** @ignore */
+  protected offset: number = 0;
 
-  constructor() {
-    this.uint8 = new Uint8Array(1024);
-    this.view = new DataView(this.uint8.buffer);
-  }
-
-  private grow(size: number) {
+  /** @ignore */
+  protected grow(size: number) {
     const newUint8 = new Uint8Array(size);
     newUint8.set(this.uint8);
     this.uint8 = newUint8;
     this.view = new DataView(newUint8.buffer);
   }
 
-  private ensureCapacity(capacity: number) {
+  /** @ignore */
+  protected ensureCapacity(capacity: number) {
     const size = this.offset + capacity;
     if (this.uint8.byteLength < size) this.grow(Math.max(size, this.uint8.byteLength * 4));
   }
 
-  public encode(json: unknown): Uint8Array {
+  /**
+   * Resets the internal memory buffer and offset for new encoding round. All
+   * encodings should happen synchronously.
+   */
+  public reset() {
+    this.uint8 = new Uint8Array(1024);
+    this.view = new DataView(this.uint8.buffer);
     this.offset = 0;
-    this.encodeAny(json);
+  }
+
+  /**
+   * @returns Encoded memory buffer contents.
+   */
+  public flush(): Uint8Array {
     return this.uint8.subarray(0, this.offset);
   }
 
-  private encodeAny(json: unknown): void {
+  /**
+   * Use this method to encode a JavaScript document into MessagePack format.
+   * 
+   * @param json JSON value to encode.
+   * @returns Encoded memory buffer with MessagePack contents.
+   */
+  public encode(json: unknown): Uint8Array {
+    this.reset();
+    this.encodeAny(json);
+    return this.flush();
+  }
+
+  protected encodeAny(json: unknown): void {
     switch (json) {
       case null: return this.u8(0xc0);
       case false: return this.u8(0xc2);
@@ -42,7 +68,7 @@ export class Encoder {
     }
   }
 
-  private encodeNumber(num: number) {
+  protected encodeNumber(num: number) {
     if (isSafeInteger(num)) {
       if (num >= 0) {
         if (num <= 0b1111111) return this.u8(num);
@@ -83,7 +109,7 @@ export class Encoder {
     this.offset += 8;
   }
 
-  private encodeString (str: string) {
+  protected encodeString (str: string) {
     const length = str.length;
     const maxSize = length * 4;
     this.ensureCapacity(5 + maxSize);
@@ -140,7 +166,7 @@ export class Encoder {
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
-  private encodeArray (arr: unknown[]): void {
+  protected encodeArray (arr: unknown[]): void {
     const length = arr.length;
     if (length <= 0b1111) this.u8(0b10010000 | length);
     else if (length <= 0xFFFF) {
@@ -153,7 +179,7 @@ export class Encoder {
     for (let i = 0; i < length; i++) this.encodeAny(arr[i]);
   }
 
-  private encodeObject (obj: Record<string, unknown>): void {
+  protected encodeObject (obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
     if (length <= 0b1111) this.u8(0b10000000 | length);
@@ -171,18 +197,18 @@ export class Encoder {
     }
   }
   
-  private u8(char: number) {
+  protected u8(char: number) {
     this.ensureCapacity(1);
     this.view.setUint8(this.offset++, char);
   }
   
-  private u16(word: number) {
+  protected u16(word: number) {
     this.ensureCapacity(2);
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
   
-  private u32(dword: number) {
+  protected u32(dword: number) {
     this.ensureCapacity(4);
     this.view.setUint32(this.offset, dword);
     this.offset += 4;

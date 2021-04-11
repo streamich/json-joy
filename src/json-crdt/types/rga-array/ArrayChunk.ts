@@ -1,4 +1,4 @@
-import type {JsonChunk} from '../../types';
+import type {JsonChunk, JsonNode} from '../../types';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 
 export class ArrayChunk implements JsonChunk {
@@ -13,10 +13,10 @@ export class ArrayChunk implements JsonChunk {
 
   /**
    * @param id Unique ID of the first element in this chunk
-   * @param values Elements contained by this chunk. If `undefined`, means that
+   * @param nodes Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: LogicalTimestamp, public values?: LogicalTimestamp[]) {}
+  constructor(public readonly id: LogicalTimestamp, public nodes?: JsonNode[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of
@@ -26,7 +26,7 @@ export class ArrayChunk implements JsonChunk {
    * @returns Number of elements in this chunk.
    */
   public span(): number {
-    return this.deleted || this.values!.length;
+    return this.deleted || this.nodes!.length;
   }
 
   /**
@@ -39,8 +39,8 @@ export class ArrayChunk implements JsonChunk {
   public split(time: number): ArrayChunk {
     const newSpan = 1 + time - this.id.time;
     const newId = new LogicalTimestamp(this.id.sessionId, time + 1);
-    if (this.values) {
-      const newChunkValues = this.values.splice(newSpan);
+    if (this.nodes) {
+      const newChunkValues = this.nodes.splice(newSpan);
       return new ArrayChunk(newId, newChunkValues);
     } else {
       const chunk = new ArrayChunk(newId, undefined);
@@ -52,24 +52,24 @@ export class ArrayChunk implements JsonChunk {
 
   public delete() {
     this.deleted = this.span();
-    delete this.values;
+    delete this.nodes;
   }
 
   /**
    * Merge into this chunk a subsequent chunk, which has IDs increasing without gaps.
    */
-  public merge(values: LogicalTimestamp[]) {
-    this.values!.push(...values);
+  public merge(values: JsonNode[]) {
+    this.nodes!.push(...values);
   }
 
   /**
    * Returns a deep independent copy of itself.
    */
   public clone(): ArrayChunk {
-    const chunk = new ArrayChunk(this.id, this.values);
+    const chunk = new ArrayChunk(this.id, this.nodes);
     if (this.deleted) {
       chunk.deleted = this.deleted;
-      delete this.values;
+      delete this.nodes;
     }
     return chunk;
   }
@@ -79,7 +79,7 @@ export class ArrayChunk implements JsonChunk {
    * @returns Human readable representation of the array chunk.
    */
   public toString(tab: string = ''): string {
-    let str = `${tab}ArrayChunk(${this.id.toDisplayString()}) { ${!this.values ? `[${this.deleted || 0}]` : this.values!.map(val => val.toString()).join(', ')} }`;
+    let str = `${tab}ArrayChunk(${this.id.toDisplayString()}) { ${!this.nodes ? `[${this.deleted || 0}]` : this.nodes!.map(val => val.toString()).join(', ')} }`;
     return str;
   }
 }

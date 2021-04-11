@@ -41,7 +41,7 @@ describe('string manipulation', () => {
 });
 
 describe('number manipulation', () => {
-  test('can edit strings', () => {
+  test('can edit numbers in object', () => {
     const doc = new Document();
     const api = doc.api;
     api.root({
@@ -54,7 +54,7 @@ describe('number manipulation', () => {
         b: 123,
       }]
     });
-    api.numSet(['a', 0, 'b'], .5);
+    api.valSet(['a', 0, 'b'], .5);
     expect(doc.toJson()).toEqual({
       a: [{
         b: 123,
@@ -65,6 +65,25 @@ describe('number manipulation', () => {
       a: [{
         b: .5,
       }]
+    });
+  });
+
+  test('can edit numbers in arrays', () => {
+    const doc = new Document();
+    const api = doc.api;
+    api.root({
+      a: [123]
+    }).commit();
+    expect(doc.toJson()).toEqual({
+      a: [123]
+    });
+    api.valSet(['a', 0], .5);
+    expect(doc.toJson()).toEqual({
+      a: [123]
+    });
+    api.commit();
+    expect(doc.toJson()).toEqual({
+      a: [.5]
     });
   });
 });

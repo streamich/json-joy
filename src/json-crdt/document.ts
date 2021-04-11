@@ -5,15 +5,12 @@ import {random40BitInt} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
 import {LogicalTimestamp, VectorClock} from '../json-crdt-patch/clock';
-import {DocRootType} from './types/lww-register-doc-root/DocRootType';
+import {DocRootType} from './types/lww-doc-root/DocRootType';
 import {ObjectType} from './types/lww-object/ObjectType';
-import {NumberType} from './types/lww-number/NumberType';
 import {ArrayType} from './types/rga-array/ArrayType';
 import {StringType} from './types/rga-string/StringType';
 import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
 import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKeysOperation';
-import {MakeNumberOperation} from '../json-crdt-patch/operations/MakeNumberOperation';
-import {SetNumberOperation} from '../json-crdt-patch/operations/SetNumberOperation';
 import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
 import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ORIGIN} from '../json-crdt-patch/constants';
@@ -24,6 +21,9 @@ import {JsonPatch} from './JsonPatch';
 import {Operation, operationToOp} from '../json-patch';
 import {Path} from '../json-pointer';
 import {DocumentApi} from './api/DocumentApi';
+import {MakeValueOperation} from '../json-crdt-patch/operations/MakeValueOperation';
+import {ValueType} from './types/lww-value/ValueType';
+import {SetValueOperation} from '../json-crdt-patch/operations/SetValueOperation';
 
 export class Document {
   /**
@@ -31,7 +31,7 @@ export class Document {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root = new DocRootType(ORIGIN);
+  public root: DocRootType = new DocRootType(this, ORIGIN, null);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session.
@@ -77,8 +77,8 @@ export class Document {
       if (!this.nodes.get(op.id)) this.nodes.index(new ArrayType(this, op.id));
     } else if (op instanceof MakeStringOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
-    } else if (op instanceof MakeNumberOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new NumberType(op.id, op.id, 0));
+    } else if (op instanceof MakeValueOperation) {
+      if (!this.nodes.get(op.id)) this.nodes.index(new ValueType(op.id, op.id, op.value));
     } else if (op instanceof SetRootOperation) {
       const oldValue = this.root.insert(op);
       if (oldValue) this.deleteNodeTree(oldValue);
@@ -86,10 +86,10 @@ export class Document {
       const obj = this.nodes.get(op.object);
       if (!(obj instanceof ObjectType)) return;
       obj.insert(op);
-    } else if (op instanceof SetNumberOperation) {
-      const num = this.nodes.get(op.num);
-      if (!(num instanceof NumberType)) return;
-      num.insert(op);
+    } else if (op instanceof SetValueOperation) {
+      const obj = this.nodes.get(op.obj);
+      if (!(obj instanceof ValueType)) return;
+      obj.insert(op);
     } else if (op instanceof InsertArrayElementsOperation) {
       const arr = this.nodes.get(op.arr);
       if (!(arr instanceof ArrayType)) return;
@@ -115,35 +115,26 @@ export class Document {
   }
 
   public toJson(): unknown {
-    const value = this.root.toValue();
-    const op = this.nodes.get(value);
-    if (!op) return undefined;
-    return op.toJson();
+    return this.root.toJson();
   }
 
   public clone(): Document {
     const doc = new Document(this.clock.clone());
-    for (const node of this.nodes.iterate())
-      doc.nodes.index(node.clone(doc));
-    if (this.root.last)
-      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
+    doc.root = this.root.clone(doc);
     return doc;
   }
 
   public fork(): Document {
     const sessionId = random40BitInt();
     const doc = new Document(this.clock.fork(sessionId));
-    for (const node of this.nodes.iterate()) doc.nodes.index(node.clone(doc));
-    if (this.root.last)
-      doc.root.insert(new SetRootOperation(this.root.last.id, this.root.last.value));
+    doc.root = this.root.clone(doc);
     return doc;
   }
 
   public toString(): string {
     const value = this.root.toValue();
     const op = this.nodes.get(value);
-    if (!op) return 'undefined';
-    return op.toString('');
+    return op ? op.toString('') : 'undefined';
   }
 
   public find(steps: Path): JsonNode {
@@ -160,9 +151,7 @@ export class Document {
         const nextNode = this.nodes.get(id);
         if (!nextNode) return UNDEFINED;
         node = nextNode;
-        continue;
-      }
-      if (node instanceof ArrayType) {
+      } else if (node instanceof ArrayType) {
         const id = node.findValue(Number(step));
         const nextNode = this.nodes.get(id);
         if (!nextNode) return UNDEFINED;

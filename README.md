@@ -3,27 +3,47 @@
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
 
-- `json-patch` &mdash; Implementation __JSON Patch+__ operations.
-  - [Documentation 🚀](./src/json-patch/README.md)
+- __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
+  - [__Documentation__ 🚀](./src/json-pack/README.md)
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pack.html)
+- __`json-patch`__ &mdash; Implementation of __JSON Patch+__ mutation operations.
+  - [__Documentation__ 🚀](./src/json-patch/README.md)
     - [JSON Patch](./src/json-patch/docs/json-patch.md)
     - [JSON Predicate](./src/json-patch/docs/json-predicate.md)
     - [JSON Patch Extended](./src/json-patch/docs/json-patch-extended.md)
-  - [Reference 🤖](https://streamich.github.io/json-joy/modules/json_patch.html)
-- `json-patch-ot` &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
-- `json-rx` &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
-  - [Documentation 🚀](./src/json-rx/README.md)
-- `binary-rx` &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).
-  - [Documentation 🚀](./src/binary-rx/README.md)
-- `json-rpc` &mdash; Implements server class for [__JSON-RPC 2.0__][json-rpc] protocol.
-- `json-pack` &mdash; Fastest JavaScript __MessagePack__ codec implementation.
-  - [Documentation 🚀](./src/json-pack/README.md)
-- `json-pointer` &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
-  - [Documentation 🚀](./src/json-pointer/README.md)
-  - [Reference 🤖](https://streamich.github.io/json-joy/modules/json_pointer.html)
-- `json-cli` &mdash; CLI utilities and functional testing suites.
-  - [Documentation 🚀](./src/json-cli/README.md)
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_patch.html)
+- __`json-patch-ot`__ &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
+  - __Documentation__ 🚀
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_patch_ot.html)
+- __`json-crdt`__ &mdash; CRDT implementation for JSON type.
+  - [__Documentation__ 🚀](./src/json-crdt/README.md)
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_crdt.html)
+- __`json-crdt-patch`__ &mdash; JSON type CRDT operation specification and implementation.
+  - __Documentation__ 🚀
+  - __Specification__ 🤔
+  - [Binary snapshot encoding 🧬](./src/json-crdt/codec/binary/README.md)
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_crdt_patch.html)
+- __`json-rx`__ &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
+  - [__Documentation__ 🚀](./src/json-rx/README.md)
+  - __Specification__ 🤔
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_rx.html)
+- __`binary-rx`__ &mdash; Implementation of Binary-Rx protocol (a binary version of JSON-Rx).
+  - [__Documentation__ 🚀](./src/binary-rx/README.md)
+  - __Specification__ 🤔
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/binary_rx.html)
+- __`json-rpc`__ &mdash; Server implementation of [__JSON-RPC 2.0__][json-rpc] protocol.
+  - __Documentation__ 🚀
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_rpc.html)
+- __`json-pointer`__ &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
+  - [__Documentation__ 🚀](./src/json-pointer/README.md)
+  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pointer.html)
+- __`json-cli`__ &mdash; CLI utilities and functional testing suites.
+  - [__Documentation__ 🚀](./src/json-cli/README.md)
+    - [`json-pack` CLI](./src/json-cli/docs/json-pack.md)
+    - [`json-unpack` CLI](./src/json-cli/docs/json-unpack.md)
     - [`json-pointer` CLI](./src/json-cli/docs/json-pointer.md)
     - [`json-patch` CLI](./src/json-cli/docs/json-patch.md)
+    - [`json-pack-test` CLI](./src/json-cli/docs/json-pack-test.md)
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
 
@@ -57,4 +77,4 @@ All libraries can be imported from one of the below folders:
 
 ## License
 
-[Unlicense](LICENSE) &mdash; Apache 2.0.
+[Apache 2.0](LICENSE)

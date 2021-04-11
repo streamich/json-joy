@@ -8,15 +8,18 @@ import {CompleteMessage} from "../messages/CompleteMessage";
 import {ErrorMessage} from "../messages/ErrorMessage";
 import {UnsubscribeMessage} from "../messages/UnsubscribeMessage";
 
+/**
+ * @category Codec
+ */
 export class Encoder {
   private uint8: Uint8Array = new Uint8Array(0);
   private offset: number = 0;
 
   public encode(messages: BinaryRxMessage[]): Uint8Array {
-    let maxSize = 0;
+    let size = 0;
     const length = messages.length;
-    for (let i = 0; i < length; i++) maxSize += messages[i].maxLength();
-    this.uint8 = new Uint8Array(maxSize);
+    for (let i = 0; i < length; i++) size += messages[i].size();
+    this.uint8 = new Uint8Array(size);
     this.offset = 0;
     for (let i = 0; i < length; i++) {
       const message = messages[i];
@@ -27,7 +30,7 @@ export class Encoder {
       else if (message instanceof ErrorMessage) this.err(message);
       else if (message instanceof UnsubscribeMessage) this.unsub(message);
     }
-    return this.uint8.subarray(0, this.offset);
+    return this.uint8;
   }
 
   private notif(message: NotificationMessage) {

@@ -14,8 +14,6 @@ This library implements three sets of operations:
 Apply a JSON Patch.
 
 ```js
-import {applyPatch} from 'json-joy';
-// or 
 import {applyPatch} from 'json-joy/{lib,es6,esm}/json-patch';
 
 const doc = { foo: { bar: 123 } };
@@ -34,7 +32,7 @@ console.log(result.doc);
 Validate operations.
 
 ```js
-import {validateOperations} from 'json-joy';
+import {validateOperations} from 'json-joy/{lib,es6,esm}/json-patch';
 
 validateOperations(patch);
 ```

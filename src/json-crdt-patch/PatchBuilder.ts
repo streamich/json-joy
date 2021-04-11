@@ -9,10 +9,12 @@ import {MakeStringOperation} from "./operations/MakeStringOperation";
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
 import {SetNumberOperation} from "./operations/SetNumberOperation";
-import {Patch} from "./Patch";
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
 import {NoopOperation} from "./operations/NoopOperation";
 import {MakeConstantOperation} from "./operations/MakeConstantOperation";
+import {MakeValueOperation} from "./operations/MakeValueOperation";
+import {SetValueOperation} from "./operations/SetValueOperation";
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
+import {Patch} from "./Patch";
 
 /**
  * Utility class that helps in Patch construction.
@@ -90,6 +92,21 @@ export class PatchBuilder {
   }
 
   /**
+   * Create a new LWW register JSON value. Can be anything, including
+   * nested arrays and objects.
+   * 
+   * @param value JSON value
+   * @returns ID of the new operation.
+   */
+  public val(value: unknown): LogicalTimestamp {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new MakeValueOperation(id, value);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
    * Set value of document's root.
    * @returns ID of the new operation.
    */
@@ -125,6 +142,18 @@ export class PatchBuilder {
     this.pad();
     const id = this.clock.tick(1);
     const op = new SetNumberOperation(id, obj, value);
+    this.patch.ops.push(op);
+    return id;
+  }
+  
+  /**
+   * Set new new value of a JSON value LWW register.
+   * @returns ID of the new operation.
+   */
+  public setVal(obj: LogicalTimestamp, value: unknown): LogicalTimestamp {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new SetValueOperation(id, obj, value);
     this.patch.ops.push(op);
     return id;
   }
@@ -225,12 +254,10 @@ export class PatchBuilder {
   }
 
   /**
-   * Run builder commands to create a JSON number.
+   * Run builder commands to create a JSON value.
    */
-  public jsonNum(json: number): LogicalTimestamp {
-    const num = this.num();
-    this.setNum(num, json);
-    return num;
+  public jsonVal(json: unknown): LogicalTimestamp {
+    return this.val(json);
   }
 
   /**
@@ -246,7 +273,7 @@ export class PatchBuilder {
     switch (typeof json) {
       case 'object': return this.jsonObj(json!);
       case 'string': return this.jsonStr(json);
-      case 'number': return this.jsonNum(json);
+      case 'number': return this.jsonVal(json);
     }
     return UNDEFINED_ID;
   }

@@ -16,11 +16,13 @@ export type JsonCodecOperation =
   | JsonCodecMakeObjectOperation
   | JsonCodecMakeArrayOperation
   | JsonCodecMakeStringOperation
+  | JsonCodecMakeValueOperation
   | JsonCodecMakeNumberOperation
   | JsonCodecMakeConstantOperation
   | JsonCodecSetRootOperation
   | JsonCodecSetObjectKeysOperation
   | JsonCodecSetNumberOperation
+  | JsonCodecSetValueOperation
   | JsonCodecInsertStringSubstringOperation
   | JsonCodecInsertArrayElementsOperation
   | JsonCodecDeleteOperation
@@ -40,6 +42,11 @@ export interface JsonCodecMakeStringOperation {
 
 export interface JsonCodecMakeNumberOperation {
   op: 'num';
+}
+
+export interface JsonCodecMakeValueOperation {
+  op: 'val';
+  value: unknown;
 }
 
 export interface JsonCodecMakeConstantOperation {
@@ -62,6 +69,12 @@ export interface JsonCodecSetNumberOperation {
   op: 'num_set';
   after: JsonCodecTimestamp;
   value: number;
+}
+
+export interface JsonCodecSetValueOperation {
+  op: 'val_set';
+  obj: JsonCodecTimestamp;
+  value: unknown;
 }
 
 export interface JsonCodecInsertStringSubstringOperation {

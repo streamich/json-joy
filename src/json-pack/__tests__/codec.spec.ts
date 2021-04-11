@@ -1,4 +1,3 @@
-import {JsonPackExtension} from '../JsonPackExtension';
 import {Encoder, Decoder} from '..';
 
 const encoder = new Encoder();
@@ -349,76 +348,10 @@ const tests: Array<{name: string, json: unknown}> = [
     name: 'JSON-RPC request',
     json: {"version": "1.1", "method": "confirmFruitPurchase", "params": [["apple", "orange", "mangoes"], 1.123], "id": "194521489"},
   },
-  /*
   {
-    name: 'simple ArrayBuffer',
-    json: new Uint8Array([1, 2, 3]).buffer,
+    name: 'object with a long key',
+    json: {"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890": "that key was long indeed"},
   },
-  {
-    name: 'empty ArrayBuffer',
-    json: new Uint8Array([]).buffer,
-  },
-  {
-    name: '255 byte ArrayBuffer',
-    json: new Uint8Array(255).buffer,
-  },
-  {
-    name: '256 byte ArrayBuffer',
-    json: new Uint8Array(256).buffer,
-  },
-  {
-    name: '0xFFFF byte ArrayBuffer',
-    json: new Uint8Array(0xFFFF).buffer,
-  },
-  {
-    name: '0xFFFF + 1 byte ArrayBuffer',
-    json: new Uint8Array(0xFFFF + 1).buffer,
-  },
-  {
-    name: '1 byte extension',
-    json: new JsonPackExtension(1, new Uint8Array([1]).buffer),
-  },
-  {
-    name: '2 byte extension',
-    json: new JsonPackExtension(1, new Uint8Array([1, 1]).buffer),
-  },
-  {
-    name: '4 byte extension',
-    json: new JsonPackExtension(6, new Uint8Array([1, 1, 2, 5]).buffer),
-  },
-  {
-    name: '8 byte extension',
-    json: new JsonPackExtension(213, new Uint8Array([1, 1, 2, 5, 0, 0, 3, 3]).buffer),
-  },
-  {
-    name: '16 byte extension',
-    json: new JsonPackExtension(0, new Uint8Array([1, 1, 2, 5, 0, 0, 3, 3, 1, 1, 1, 1, 2, 2, 2, 2]).buffer),
-  },
-  {
-    name: '10 byte extension',
-    json: new JsonPackExtension(10, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).buffer),
-  },
-  {
-    name: '255 byte extension',
-    json: new JsonPackExtension(10, new Uint8Array(255).buffer),
-  },
-  {
-    name: '256 byte extension',
-    json: new JsonPackExtension(11, new Uint8Array(256).buffer),
-  },
-  {
-    name: '0xFFFF byte extension',
-    json: new JsonPackExtension(12, new Uint8Array(0xFFFF).buffer),
-  },
-  {
-    name: '0xFFFF + 1 byte extension',
-    json: new JsonPackExtension(12, new Uint8Array(0xFFFF + 1).buffer),
-  },
-  {
-    name: '0xFFFFF byte extension',
-    json: new JsonPackExtension(12, new Uint8Array(0xFFFFF).buffer),
-  },
-  */
 ];
 
 for (const t of tests) { 

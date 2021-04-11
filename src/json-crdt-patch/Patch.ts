@@ -7,24 +7,29 @@ import {MakeConstantOperation} from './operations/MakeConstantOperation';
 import {MakeNumberOperation} from "./operations/MakeNumberOperation";
 import {MakeObjectOperation} from "./operations/MakeObjectOperation";
 import {MakeStringOperation} from "./operations/MakeStringOperation";
+import {MakeValueOperation} from './operations/MakeValueOperation';
 import {NoopOperation} from './operations/NoopOperation';
 import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
 import {SetRootOperation} from "./operations/SetRootOperation";
+import {SetValueOperation} from './operations/SetValueOperation';
 
 export type JsonCrdtPatchOperation =
   | DeleteOperation
   | InsertArrayElementsOperation
   | InsertStringSubstringOperation
   | MakeArrayOperation
+  | MakeConstantOperation
   | MakeNumberOperation
   | MakeObjectOperation
   | MakeStringOperation
-  | MakeConstantOperation
+  | MakeValueOperation
+  | NoopOperation
+  | SetNumberOperation
+  | SetValueOperation
   | SetObjectKeysOperation
   | SetRootOperation
-  | SetNumberOperation
-  | NoopOperation;
+  ;
 
 export class Patch {
   public readonly ops: JsonCrdtPatchOperation[] = [];

@@ -12,4 +12,8 @@ export class RelativeTimestamp {
   public encode(buf: Uint8Array, offset: number): number {
     return 0;
   }
+
+  public push(arr: unknown[]) {
+    arr.push(this.sessionIndex, this.timeDiff);
+  }
 }

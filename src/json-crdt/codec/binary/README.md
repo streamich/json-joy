@@ -1,9 +1,36 @@
 # JSON CRDT document binary encoding
 
 The binary encoding of a JSON CRDT document encodes the structure of the latest
-state of a JSON CRDT document, which contains all the nodes and tombstones
-necessary to be able to merge any subsequent patches, but does not contain
-information to reconstruct previous patches.
+state (snapshot) of a JSON CRDT document, which contains all the nodes and
+tombstones necessary to be able to merge any subsequent patches, but does not
+contain information to reconstruct previous patches.
+
+
+## Message encoding
+
+Notation in diagrams:
+
+```
+One byte:
++--------+
+|        |
++--------+
+
+Zero or more repeating bytes:
++........+
+|        |
++........+
+
+Zero or one byte which ends a repeating byte sequence:
++········+
+|        |
++········+
+
+Variable number of bytes:
++========+
+|        |
++========+
+```
 
 
 ## Document structure
@@ -22,7 +49,7 @@ The header consists of a zero bytes.
 
 ### The vector clock section
 
-The vector clock section starts with a bvaruint8 integer. The boolean bit is set
+The vector clock section starts with a b1vuint56 integer. The boolean bit is set
 to 0. The value of this integer specifies the number of entries in the vector
 clock section.
 
@@ -48,41 +75,49 @@ further bytes should be read after the byte containing the "?" set to 0.
 Encoding schema:
 
 ```
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11  byte 12
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx?zz zzzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
-21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
-|                                     |               |     |                       |
-|                                     |               |     10th bit of z           |
-|                                     46th bit of x   |                             |
-|                                                     |                             22nd bit of z
-|                                                     53rd bit of x
-32nd bit of x
+byte 1                                                         byte 8                              byte 12
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+
+ 33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
+ 21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
+ |                                     |               |     |                       |
+ |                                     |               |     10th bit of z           |
+ |                                     46th bit of x   |                             |
+ |                                                     |                             22nd bit of z
+ |                                                     53rd bit of x
+ 32nd bit of x
 ```
 
 Encoding examples of all the different length possibilities.
 
 ```
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx0zz zzzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx0zz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
 
-byte 1   byte 2   byte 2   byte 4   byte 5   byte 6   byte 7   byte 8   byte 9   byte 10  byte 11  byte 12
-xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxx1zz zzzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
 ```
 
 
 ### The data section
 
-The data section consists the encoded root node.
+The data section consists of the encoded root node.
 
 
 #### Node encodings
@@ -90,6 +125,38 @@ The data section consists the encoded root node.
 The JSON document consists of the following seven node types: (1) root;
 (2) object; (3) array; (4) string; (5) number; (6) boolean; (7) null.
 
+Each node type, except the root node, starts with a leading byte, which identifies
+the node type and its size.
+
+| Node type         | Hexadecimal       | Binary                      | Description                                     |
+|-------------------|-------------------|-----------------------------|-------------------------------------------------|
+| uint7             | 0x00 - 0x7F       | `0b0.......`                | Unsigned 7 bit integer.                         |
+| obj4              | 0x80 - 0x8F       | `0b1000....`                | Object with up to 15 chunks.                    |
+| arr4              | 0x90 - 0x9F       | `0b1001....`                | Array with up to 15 chunks.                     |
+| str5              | 0xA0 - 0xBF       | `0b101.....`                | String with up to 31 chunks.                    |
+| null              | 0xC0              | `0b11000000`                | "null" value.                                   |
+| false             | 0xC2              | `0b11000010`                | "false" value.                                  |
+| true              | 0xC3              | `0b11000011`                | "true" value.                                   |
+| float32           | 0xCA              | `0b11001010`                | 32-bit floating point number.                   |
+| float64           | 0xCB              | `0b11001011`                | 64-bit floating point number.                   |
+| uint8             | 0xCC              | `0b11001100`                | Unsigned 8 bit integer.                         |
+| uint16            | 0xCD              | `0b11001101`                | Unsigned 16 bit integer.                        |
+| uint32            | 0xCE              | `0b11001110`                | Unsigned 32 bit integer.                        |
+| uint64            | 0xCF              | `0b11001111`                | Unsigned 64 bit integer (53 bit in JavaScript). |
+| int8              | 0xD0              | `0b11010000`                | Signed 8 bit integer.                           |
+| int16             | 0xD1              | `0b11010001`                | Signed 16 bit integer.                          |
+| int32             | 0xD2              | `0b11010010`                | Signed 32 bit integer.                          |
+| int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
+| str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
+| str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
+| str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |
+| arr16             | 0xDC              | `0b11011100`                | Array with up to 65,535 chunks.                 |
+| arr32             | 0xDD              | `0b11011101`                | Array with up to 4,294,967,295 chunks.          |
+| obj16             | 0xDE              | `0b11011110`                | Object with up to 65,535 chunks.                |
+| obj32             | 0xDF              | `0b11011111`                | Object with up to 4,294,967,295 chunks.         |
+| nint5             | 0xE0 - 0xFF       | `0b111.....`                | Negative 5 bit integer.                         |
+
+(The above encoding table is adopted from [MessagePack encoding](https://github.com/msgpack/msgpack/blob/master/spec.md#overview) format.)
 
 ##### Root node encoding
 
@@ -108,291 +175,562 @@ the data section.
 
 The object node contains the below parts in the following order.
 
-1. First byte is set to 0.
+1. First byte encodes whether the object node is of type `obj4`, `obj16` or `obj32`.
+2. Followed by 0, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the object, encoded as a relative ID.
-3. Number of keys in the object, encoded as varuint8.
-4. A flat list of object fields.
+4. A flat list of object chunks.
 
-Each object field is encoded as follows:
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+obj4
++--------+========+========+
+|1000ssss|   ID   | chunks |
++--------+========+========+
+
+obj16
++--------+--------+--------+========+========+
+|11011100|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+obj32
++--------+--------+--------+--------+--------+========+========+
+|11011101|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
+
+Each object chunk is encoded as follows:
 
 1. ID of the operation that set this field, encoded as relative ID.
-2. The length of field key, encoded as varuint8.
-3. The field key, encoded in UTF-8.
+2. The length of field name, encoded as vuint57.
+3. The field `name`, encoded in UTF-8.
 4. Value of the field, encoded as a node.
+
+```
+One object chunk:
++========+=========+========+========+
+|   ID   | vuint57 |  name  |  node  |
++========+=========+========+========+
+```
 
 
 ##### Array node encoding
 
 The array node contains the below parts in the following order.
 
-1. First byte is set to 1.
+1. First byte encodes whether the array node is of type `arr4`, `arr16` or `arr32`.
+2. Followed by 0, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the array, encoded as a relative ID.
-3. Number chunks in the array, encoded as varuint8.
-4. A flat list of chunks.
+4. A flat list of array chunks.
 
-Each chunk contains the bellow parts in the following order.
+The number of chunks is encoded with `s` bits as an unsigned integer.
 
-1. Number of nodes in the chunk, encoded using bvaruint8.
-   1. If bvaruint8 boolean bit is 1, the chunk is considered deleted, there is no
-      no contents to follow.
-   2. If bvaruint8 boolean bit is 0, the following data contains and ordered flat
+```
+arr4
++--------+========+========+
+|1001ssss|   ID   | chunks |
++--------+========+========+
+
+arr16
++--------+--------+--------+========+========+
+|11011100|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+arr32
++--------+--------+--------+--------+--------+========+========+
+|11011101|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
+
+Each array chunk contains the bellow parts in the following order.
+
+1. Number of nodes in the chunk, encoded using b1vuint56.
+   1. If b1vuint56 boolean bit is 1, the chunk is considered deleted. It is
+      followed by the ID of the first chunk element, encode as a relative ID.
+   2. If b1vuint56 boolean bit is 0, the following data contains and ordered flat
       list of nodes, encoded as nodes.
+
+```
+Deleted chunk:
++===========+========+
+| b1vuint56 |   ID   |
++===========+========+
+
+Not deleted chunk:
++===========+=========+
+| b1vuint56 |  nodes  |
++===========+=========+
+```
+
+Assuming the node count is encoded using `t` bits.
+
+```
+A deleted chunk:
++--------+........+········+========+
+|1?tttttt|?ttttttt|tttttttt|   ID   |
++--------+........+········+========+
+
+A deleted chunk with three nodes:
++--------+========+
+|10000011|   ID   |
++--------+========+
+
+A deleted chunk with 256 nodes:
++--------+--------+========+
+|11000000|00000100|   ID   |
++--------+--------+========+
+
+A chunk with nodes which are not deleted:
++--------+........+········+=========+
+|0?tttttt|?ttttttt|tttttttt|  nodes  |
++--------+........+········+=========+
+
+A chunk with 3 nodes:
++--------+========+========+========+
+|00000011| node 1 | node 2 | node 3 |
++--------+========+========+========+
+```
 
 
 ##### String node encoding
 
 The string node contains the below parts in the following order.
 
-1. First byte is set to 2.
+1. First byte encodes whether the string node is of type `str5`, `str8`, `arr16` or `arr32`.
+2. Followed by 0, 1, 2, or 4 bytes of unsigned integer encoding of number of chunks.
 2. ID of the string, encoded as a relative ID.
-3. Number chunks in the string, encoded as varuint8.
-4. A flat list of chunks.
+4. A flat list of string chunks.
+
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+str5
++--------+========+========+
+|101sssss|   ID   | chunks |
++--------+========+========+
+
+str8
++--------+--------+========+========+
+|11011001|ssssssss|   ID   | chunks |
++--------+--------+========+========+
+
+str16
++--------+--------+--------+========+========+
+|11011010|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+str32
++--------+--------+--------+--------+--------+========+========+
+|11011011|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
 
 Each chunk contains the bellow parts in the following order.
 
-1. The substring length in the chunk, encoded as bvaruint8.
-   1. If bvaruint8 boolean bit is 1, the substring is considered deleted, there
-      is no contents to follow. The substring length is used as the length of
-      the UTF-8 string that was deleted.
-   2. If bvaruint8 boolean bit is 0, the following data contains UTF-8 encoded
-      substring, where the length is the length in bytes of the UTF-8 data.
+1. The text length in the chunk, encoded as b1vuint56.
+   1. If b1vuint56 boolean bit is 1, the text is considered deleted, there
+      is no text contents to follow. The text length is used as the
+      length of the UTF-8 text that was deleted.
+   2. If b1vuint56 boolean bit is 0, the following `data` contains UTF-8 encoded
+      text contents, where the length is the length in bytes of the UTF-8
+      data.
+2. ID of the first UTF-8 character in the chunk, encoded as a relative ID.
+3. Chunk's UTF-8 text contents `text`, encoded as UTF-8 string, if b1vuint56
+   boolean bit was set to 0, no data otherwise.
+
+```
++===========+========+========+
+| b1vuint56 |   ID   |  text  |
++===========+========+========+
+```
+
+Assuming the node count is encoded using `t` bits.
+
+```
+A deleted chunk:
++--------+........+········+========+
+|1?tttttt|?ttttttt|tttttttt|   ID   |
++--------+........+········+========+
+
+A deleted chunk with text of length 3:
++--------+========+
+|10000011|   ID   |
++--------+========+
+
+A deleted chunk with text of length 256:
++--------+--------+========+
+|11000000|00000100|   ID   |
++--------+--------+========+
+
+A chunk with text which is not deleted:
++--------+........+········+========+========+
+|0?tttttt|?ttttttt|tttttttt|   ID   |  text  |
++--------+........+········+========+========+
+```
 
 
 ##### Number node encoding
 
 The number node is encoded differently depending on the value of the number.
+Each number node has the following parts:
 
-If the number is a signed integer and can be encoded using one byte, then the
-following encoding is used:
+1. Node type byte.
+2. Zero or more bytes of the number value `x`.
+3. ID if the number node, encoded as a relative ID.
 
-1. First byte is set to 10.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 1 byte.
 
-If the number is a signed integer and can be encoded using two bytes, then the
-following encoding is used:
+```
+uint7
++--------+========+
+|0xxxxxxx|   ID   |
++--------+========+
 
-1. First byte is set to 11.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 2 bytes.
+float32
++--------+--------+--------+--------+--------+========+
+|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number is a signed integer and can be encoded using three bytes, then the
-following encoding is used:
+float64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 12.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 3 bytes.
+uint8
++--------+--------+========+
+|  0xCC  |xxxxxxxx|   ID   |
++--------+--------+========+
 
-If the number is a signed integer and can be encoded using four bytes, then the
-following encoding is used:
+uint16
++--------+--------+--------+========+
+|  0xCD  |xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+========+
 
-1. First byte is set to 13.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 4 bytes.
+uint32
++--------+--------+--------+--------+--------+========+
+|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number is a signed integer and can be encoded using five bytes, then the
-following encoding is used:
+uint64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 14.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 5 bytes.
+int8
++--------+--------+========+
+|  0xD0  |xxxxxxxx|   ID   |
++--------+--------+========+
 
-If the number is a signed integer and can be encoded using six bytes, then the
-following encoding is used:
+int16
++--------+--------+--------+========+
+|  0xD1  |xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+========+
 
-1. First byte is set to 15.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded in 6 bytes.
+int32
++--------+--------+--------+--------+--------+========+
+|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+========+
 
-If the number can be encoded as 32-bit IEEE 754 floating point number, then the
-following encoding is used:
+int64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
+|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
++--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
 
-1. First byte is set to 16.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value, encoded as 4 bytes IEEE 754 number.
-
-In all other cases the following encoding is used:
-
-1. First byte is set to 3.
-2. ID of the number, encoded as a relative ID.
-3. ID of the write operation, encoded as a relative ID.
-4. The number value stored using 64 bits, encoded as IEEE 754 number.
+nint5
++--------+========+
+|111xxxxx|   ID   |
++--------+========+
+```
 
 
 ##### Boolean node encoding
 
-Value `true` is encoded as 1 byte, equal to 4.
+Value `false` is encoded as 1 byte, equal to 0xC3.
 
-Value `false` is encoded as 1 byte, equal to 5.
+Value `true` is encoded as 1 byte, equal to 0xC2.
+
+```
+false
++--------+
+|11000010|
++--------+
+
+true
++--------+
+|11000011|
++--------+
+```
 
 
 ##### Null node encoding
 
-Value `null` is encoded as 1 byte, equal to 6.
+Value `null` is encoded as 1 byte, equal to 0xC0.
+
+```
+null
++--------+
+|11000000|
++--------+
+```
 
 
 ## Encoding components
-
-
-### Variable length unsigned integer (varuint8)
-
-Variable length unsigned integer is encoded using up to 8 bytes. The maximum
-size of the decoded value is 57 bits of data.
-
-The high bit "?" of each byte indicates if the next byte should be consumed, up
-to 8 bytes.
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-          11111    2211111  2222222  3333332  4443333  4444444 55555555
- 7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
-   |                        |                    |             |
-   5th bit of z             |                    |             |
-                            28th bit of z        |             57th bit of z
-                                                 39th bit of z
-```
-
-Encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-0zzzzzzz
-1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
-```
-
-
-### Boolean variable length unsigned integer (bvaruint8)
-
-Boolean variable length unsigned integer (bvaruint8) is encoded in a similar way
-to varuint8, but the first bit x is used for storing a boolean value.
-
-bvaruint8 is encoded using up to 8 bytes. Because the first bit is used to store
-a boolean value, the maximum data bvaruint8can hold is 56 bits.
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-x?zzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz zzzzzzzz
-|         11111    2111111  2222222  3333322  4433333  4444444 55555554
-| 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
-|  |                        |                    |             |
-|  5th bit of z             |                    |             |
-|                           27th bit of z        |             56th bit of z
-|                                                38th bit of z
-x stores a boolean value
-```
-
-Encoding examples:
-
-```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
-x0zzzzzz
-x1zzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-x1zzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz zzzzzzzz
-```
-
 
 ### Relative ID
 
 Each *relative ID* encodes a way to decode an absolute ID using the vector clock
 table.
 
-Absolute ID is a specific value of a logical clock. And ID consists of a
-(1) session ID and (2) time sequence pair.
+Absolute ID is a specific value of a logical clock. An ID consists of a
+(1) session ID and a (2) time sequence pair.
 
 Each relative ID is a 2-tuple.
 
 1. The first element is the index in the vector
-   clock table. For example, 0 means "the first logic clock" in the vector clock
-   table, or 3 means "the fourth logical clock" in the vector clock table.
+   clock table. For example, 1 means "the first logic clock" in the vector clock
+   table, or 4 means "the fourth logical clock" in the vector clock table.
 2. The second element encodes the difference of the time value of the time of
-   the clock in the vector table and the absolute ID time. For example of the
-   time of the clock X in the clock table is 10, and the encoded time difference
-   is 2, the time of the absolute ID is 10 - 2 = 8.
+   the clock in the vector table and the absolute ID time.
 
 In the below encoding diagrams bits are annotated as follows:
 
 - "x" - vector table index, reference to the logical clock.
-- "z" - time difference.
+- "y" - time difference.
 - "?" - whether the next byte is used for encoding.
 
-If x is less than 8 and z is less than 16, the relative ID is encoded as a
+If x is less than 8 and y is less than 16, the relative ID is encoded as a
 single byte:
 
 ```
-byte 1
-0xxxzzzz
++--------+
+|0xxxyyyy|
++--------+
 ```
 
-Otherwise the top bit of the first byte is set to 1. And subsequently x and "?"
-are encoded separately as variable length unsigned integers. Where x loses the
-ability to encode the highest bit of the first byte.
-
-x is encoded using up to 4 bytes. The maximum size of x is a 28-bit
-unsigned integer. x is encoded using variable length encoding, if "?" is set to 1
-the next byte should be consumed to decode x.
+Otherwise the top bit of the first byte is set to 1; and x and y are encoded
+separately using b1vuint28 and vuint39, respectively.
 
 ```
-byte 1   byte 2   byte 3   byte 4
-1?xxxxxx ?xxxxxxx ?xxxxxxx xxxxxxxx
-          1111     2111111 22222222
-  654321  3210987  0987654 87654321
-   |                       |
-   5th bit of x            |
-                           28th bit of x
+      x          y
++===========+=========+
+| b1vuint28 | vuint39 |
++===========+=========+
 ```
 
-x encoding examples:
+The boolean flag of x b1vuint28 value is always set to 1.
+
+
+### Variable length integers
+
+
+#### `vuint57` (variable length unsigned 57 bit integer)
+
+Variable length unsigned 57 bit integer is encoded using up to 8 bytes. The maximum
+size of the decoded value is 57 bits of data.
+
+The high bit "?" of each byte indicates if the next byte should be consumed, up
+to 8 bytes.
 
 ```
-byte 1   byte 2   byte 3   byte 4
-10xxxxxx
-11xxxxxx 0xxxxxxx
-11xxxxxx 1xxxxxxx 0xxxxxxx
-11xxxxxx 1xxxxxxx 1xxxxxxx xxxxxxxx
+byte 1                                                         byte 8
++--------+........+........+........+........+........+........+········+
+|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+........+........+........+........+········+
+
+           11111    2211111  2222222  3333332  4443333  4444444 55555555
+  7654321  4321098  1098765  8765432  5432109  2109876  9876543 76543210
+    |                        |                    |             |
+    5th bit of z             |                    |             |
+                             28th bit of z        |             57th bit of z
+                                                  39th bit of z
 ```
 
-z is encoded using up to 6 bytes. The maximum size of z is a 39-bit
-unsigned integer. z is encoded using variable length encoding, if z is set to 1
-the next byte should be consumed to decode z.
+Encoding examples:
 
 ```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ?zzzzzzz ....zzzz
-          11111    2211111  2222222  3333332     3333
- 7654321  4321098  1098765  8765432  5432109     9876
-   |                        |                    |
-   5th bit of z             |                    |
-                            28th bit of z        |
-                                                 39th bit of z
++--------+
+|0zzzzzzz|
++--------+
+
++--------+--------+
+|1zzzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+--------+
+|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
 ```
 
-"?" encoding examples:
+
+#### `vuint39` (variable length unsigned 39 bit integer)
+
+Variable length unsigned 39 bit integer is encoded using up to 6 bytes. The maximum
+size of the decoded value is 39 bits of data.
+
+The high bit "?" of each byte indicates if the next byte should be consumed, up
+to 6 bytes.
 
 ```
-byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-0zzzzzzz
-1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0zzzzzzz
-1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 1zzzzzzz 0000zzzz
+byte 1                                       byte 6
++--------+........+........+........+........+········+
+|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|0000zzzz|
++--------+........+........+........+........+········+
+
+           11111    2211111  2222222  3333332     3333
+  7654321  4321098  1098765  8765432  5432109     9876
+    |                        |                    |
+    5th bit of z             |                    39th bit of z
+                             28th bit of z
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0000zzzz|
++--------+--------+--------+--------+--------+--------+
+```
+
+
+#### `b1vuint56` (variable length unsigned 56 bit integer with 1 bit bitfield)
+
+Boolean variable length unsigned 56 bit integer with 1 bit bitfield is encoded
+in a similar way to vuint57, but the first bit x is used for storing a boolean
+value.
+
+b1vuint56 is encoded using up to 8 bytes. Because the first bit is used to store
+a boolean value, the maximum integer data b1vuint56 can hold is 56 bits.
+
+```
+byte 1                                                         byte 8
++--------+........+........+........+........+........+........+········+
+|x?zzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+........+........+........+........+········+
+ |
+ |         11111    2111111  2222222  3333322  4433333  4444444 55555554
+ | 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
+ |  |                        |                    |             |
+ |  5th bit of z             |                    |             |
+ |                           27th bit of z        |             56th bit of z
+ |                                                38th bit of z
+ x stores a boolean value
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+
+
++--------+--------+--------+--------+--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+--------+--------+
+```
+
+
+#### `b1vuint28` (variable length unsigned 28 bit integer with 1 bit bitfield)
+
+Boolean variable length unsigned 28 bit integer with 1 bit bitfield is encoded
+in a similar way to b1vuint56, but the numeric value expands only up to 4 bytes.
+
+b1vuint28 is encoded using up to 4 bytes. Because the first bit is used to store
+a boolean value, the maximum integer data b1vuint28 can hold is 28 bits.
+
+```
+byte 1                     byte 4
++--------+........+........+········+
+|x?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+........+........+········+
+ |
+ |         11111    2111111 22222222
+ | 654321  3210987  0987654 87654321
+ |  |                        |
+ |  5th bit of z             |
+ |                           27th bit of z
+ |
+ x stores a boolean value
+```
+
+Encoding examples:
+
+```
++--------+
+|x0zzzzzz|
++--------+
+
++--------+--------+
+|x1zzzzzz|0zzzzzzz|
++--------+--------+
+
++--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+
+
++--------+--------+--------+--------+
+|x1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+
 ```

@@ -1,8 +1,11 @@
-import type {json_string} from 'ts-brand-json';
-import type {ClockCodec} from '../../codec/compact/ClockCodec';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 
+/**
+ * Constant type represents an immutable JSON value. It can be any JSON value
+ * including deeply nested objects and arrays. The constant value cannot be
+ * edited.
+ */
 export class ConstantType implements JsonNode {
   constructor (public readonly id: LogicalTimestamp, public readonly value: unknown) {}
 
@@ -18,9 +21,5 @@ export class ConstantType implements JsonNode {
 
   public toString(tab: string = ''): string {
     return `${tab}ConstantType(${this.id.toDisplayString()})`;
-  }
-
-  public encodeCompact(codec: ClockCodec): json_string<unknown> {
-    return '[4,' + codec.encodeTs(this.id) + ',' + JSON.stringify(this.value) + ']' as json_string<unknown[]>;
   }
 }

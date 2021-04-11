@@ -6,11 +6,12 @@ import {MakeObjectOperation} from '../../../operations/MakeObjectOperation';
 import {SetObjectKeysOperation} from '../../../operations/SetObjectKeysOperation';
 import {encode} from '../encode';
 import {NoopOperation} from '../../../operations/NoopOperation';
+import {Code} from '../constants';
 
 test('decodes a simple patch', () => {
   const patch = decode([
     3, 5, // Patch ID
-    4, // root
+    Code.SetRoot, // root
     0, 3, // root.value
   ]);
   expect(patch.ops.length).toBe(1);
@@ -21,13 +22,13 @@ test('decodes a simple patch', () => {
 test('decodes {foo: "bar"} object', () => {
   const patch = decode([
     5, 25, // Patch ID
-    2, // str
-    7, "bar", -1, -1, // str_ins
-    11,
-    0, // obj
-    5, 1, -6, "foo", -1, // obj_set
-    4, -6, // root
-    12, 5,
+    Code.MakeString, // str
+    Code.InsertStringSubstring, "bar", -1, -1, // str_ins
+    Code.NoopOne,
+    Code.MakeObject, // obj
+    Code.SetObjectKeys, 1, -6, "foo", -1, // obj_set
+    Code.SetRoot, -6, // root
+    Code.Noop, 5,
   ]);
   expect(patch.ops.length).toBe(7);
   expect(patch.span()).toBe(13);
@@ -53,20 +54,22 @@ test('decodes {foo: "bar"} object', () => {
 test('test all operations', () => {
   const json: unknown[] = [
     3, 100, // Patch ID
-    2, // str 3!100
-    7, "qq", -1, -1, // str_ins 3!101,3!102
-    1, // arr 3!103
-    0, // obj 3!104
-    5, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
-    3, // num 3!107
-    6, 123.4, -8, // num_set 3!108
-    8, 1, -4, -4, -8, // arr_ins 3!109
-    4, -5, // root 3!110
-    13, {a: 'b'},
-    11, // noop (1)
-    9, -8, -10, // del_one
-    12, 3, // noop (3)
-    10, 2, -1, -2 // del
+    Code.MakeString, // str 3!100
+    Code.InsertStringSubstring, "qq", -1, -1, // str_ins 3!101,3!102
+    Code.MakeArray, // arr 3!103
+    Code.MakeObject, // obj 3!104
+    Code.SetObjectKeys, 2, -5, "foo", -1, "hmm", -4, // obj_set 3!105,3!106
+    Code.MakeNumber, // num 3!107
+    Code.SetNumber, 123.4, -8, // num_set 3!108
+    Code.InsertArrayElements, 1, -4, -4, -8, // arr_ins 3!109
+    Code.SetRoot, -5, // root 3!110
+    Code.MakeConstant, {a: 'b'},
+    Code.NoopOne, // noop (1)
+    Code.DeleteOne, -8, -10, // del_one
+    Code.Noop, 3, // noop (3)
+    Code.Delete, 2, -1, -2, // del
+    Code.MakeValue, {'1': 2}, // val
+    Code.SetValue, -20, null, // val_set
   ];
   const patch = decode(json);
   const encoded = encode(patch);
