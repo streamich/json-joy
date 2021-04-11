@@ -149,6 +149,7 @@ the node type and its size.
 | int32             | 0xD2              | `0b11010010`                | Signed 32 bit integer.                          |
 | int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
 | const             | 0xD4              | `0b11010100`                | Immutable JSON value.                           |
+| val               | 0xD5              | `0b11010101`                | LWW JSON value register.                        |
 | str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
 | str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
 | str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |
@@ -466,23 +467,32 @@ If the value of the constant node is string, array or object, it is encoded
 as a `const` node, which consists of:
 
 1. Leading 0xD4 byte.
-2. The length of the JSON payload in bytes, encoded as vuint57.
-3. JSON value `data`, encoded in MessagePack format.
+2. JSON value `data`, encoded in MessagePack format.
 
 ```
 const
-+--------+=========+========+
-|  0xD4  | vuint57 |  data  |
-+--------+=========+========+
++--------+========+
+|  0xD4  |  data  |
++--------+========+
 ```
 
 
-##### Null node encoding
+##### Value node encoding
 
-Value `null` is encoded as 1 byte, equal to 0xC0.
+Value nodes are LWW registers which contain immutable JSON value.
+
+A value node is encoded as a `val` node, which consists of:
+
+1. Leading 0xD5 byte.
+2. ID of the node `id`, encoded as a relative ID.
+3. ID of the last write operation `writeId`, encoded as a relative ID.
+4. JSON value `data`, encoded in MessagePack format.
 
 ```
-
+val
++--------+========+=========+========+
+|  0xD5  |   id   | writeId |  data  |
++--------+========+=========+========+
 ```
 
 
