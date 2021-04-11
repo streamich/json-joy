@@ -1,12 +1,14 @@
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
-import {NULL} from '../../constants';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {Document} from '../../document';
-import {JsonNode} from '../../types';``
+import {JsonNode} from '../../types';import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
@@ -47,12 +49,28 @@ export class Decoder extends MessagePackDecoder {
 
   public decodeNode(): JsonNode {
     const byte = this.u8();
-    if (byte < 0b10000000) return NULL;
+    if (byte < 0b10000000) return this.createConst(byte);
     else if (byte <= 0b10001111) return this.decodeObj(byte & 0b1111);
     else if (byte <= 0b10011111) return this.decodeArr(byte & 0b1111);
     else if (byte <= 0b10111111) return this.decodeStr(byte & 0b11111);
+    else if (byte >= 0b11100000) return this.createConst(byte - 0x100);
     else {
       switch (byte) {
+        case 0xC0: return NULL;
+        case 0xC1: return UNDEFINED;
+        case 0xC2: return FALSE;
+        case 0xC3: return TRUE;
+        case 0xCA: return this.createConst(this.f32());
+        case 0xCB: return this.createConst(this.f64());
+        case 0xCC: return this.createConst(this.u8());
+        case 0xCD: return this.createConst(this.u16());
+        case 0xCE: return this.createConst(this.u32());
+        case 0xCF: return this.createConst(this.u32() * 4294967296 + this.u32());
+        case 0xD0: return this.createConst(this.i8());
+        case 0xD1: return this.createConst(this.i16());
+        case 0xD2: return this.createConst(this.i32());
+        case 0xD3: return this.createConst(this.i32() * 4294967296 + this.i32());
+        case 0xD5: return this.decodeVal();
         case 0xDE: return this.decodeObj(this.u16());
         case 0xDF: return this.decodeObj(this.u32());
         case 0xDC: return this.decodeArr(this.u16());
@@ -63,6 +81,10 @@ export class Decoder extends MessagePackDecoder {
       }
     }
     return NULL;
+  }
+
+  private createConst(value: unknown) {
+    return new ConstantType(ORIGIN, value);
   }
 
   public decodeObj(length: number): ObjectType {
@@ -125,6 +147,15 @@ export class Decoder extends MessagePackDecoder {
       const chunk = new StringChunk(id, text);
       obj.append(chunk);
     }
+  }
+
+  private decodeVal(): ValueType {
+    const id = this.ts();
+    const writeId = this.ts();
+    const value = this.val();
+    const obj = new ValueType(id, writeId, value);
+    this.doc.nodes.index(obj);
+    return obj;
   }
 
   public clock(): [x: number, z: number] {
