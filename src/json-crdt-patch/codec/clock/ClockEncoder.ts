@@ -4,8 +4,8 @@ import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
   /** Clock session ID to session index. */
-  private readonly table: Map<number, number>;
-  private index: number;
+  public readonly table: Map<number, number>;
+  public index: number;
 
   public constructor(public readonly clock: VectorClock) {
     this.index = 1;
@@ -50,5 +50,9 @@ export class ClockEncoder {
       isFirst = false;
     }
     return (str + ']') as json_string<number[]>;
+  }
+
+  public *clocks(): IterableIterator<LogicalTimestamp> {
+    for (const sessionId of this.table.keys()) yield this.clock.clocks.get(sessionId)!;
   }
 }

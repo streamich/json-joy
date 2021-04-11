@@ -21,7 +21,21 @@ export class Encoder extends JsonPackEncoder {
     this.reset();
     this.clockEncoder = new ClockEncoder(doc.clock);
     this.encodeRoot(doc.root);
+    const data = this.flush();
+    this.encodeClockTable(data);
     return this.flush();
+  }
+
+  protected encodeClockTable(data: Uint8Array) {
+    const {clockEncoder} = this;
+    const length = clockEncoder.table.size;
+    const dataSize = data.byteLength;
+    this.uint8 = new Uint8Array(8 + (12 * length) + dataSize);
+    this.view = new DataView(this.uint8.buffer);
+    this.offset = 0;
+    this.b1vuint56(false, length);
+    for (const {sessionId, time} of clockEncoder.clocks()) this.clock(sessionId, time);
+    this.buf(data, dataSize);
   }
 
   protected ts(ts: LogicalTimestamp) {
