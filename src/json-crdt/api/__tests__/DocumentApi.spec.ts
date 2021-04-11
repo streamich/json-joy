@@ -4,7 +4,8 @@ describe('string manipulation', () => {
   test('can edit strings', () => {
     const doc = new Document();
     const api = doc.api;
-    api.root('')
+    api
+      .root('')
       .commit()
       .strIns([], 0, 'var foo = bar')
       .commit()
@@ -18,11 +19,12 @@ describe('string manipulation', () => {
       .commit();
     expect(doc.toJson()).toBe('const foo = "bar";');
   });
-  
+
   test('can edit strings - 2', () => {
     const doc = new Document();
     const api = doc.api;
-    api.root({foo: [123, '', 5]})
+    api
+      .root({foo: [123, '', 5]})
       .commit()
       .strIns(['foo', 1], 0, 'var foo = bar')
       .commit()
@@ -44,46 +46,58 @@ describe('number manipulation', () => {
   test('can edit numbers in object', () => {
     const doc = new Document();
     const api = doc.api;
-    api.root({
-      a: [{
-        b: 123,
-      }]
-    }).commit();
+    api
+      .root({
+        a: [
+          {
+            b: 123,
+          },
+        ],
+      })
+      .commit();
     expect(doc.toJson()).toEqual({
-      a: [{
-        b: 123,
-      }]
+      a: [
+        {
+          b: 123,
+        },
+      ],
     });
-    api.valSet(['a', 0, 'b'], .5);
+    api.valSet(['a', 0, 'b'], 0.5);
     expect(doc.toJson()).toEqual({
-      a: [{
-        b: 123,
-      }]
+      a: [
+        {
+          b: 123,
+        },
+      ],
     });
     api.commit();
     expect(doc.toJson()).toEqual({
-      a: [{
-        b: .5,
-      }]
+      a: [
+        {
+          b: 0.5,
+        },
+      ],
     });
   });
 
   test('can edit numbers in arrays', () => {
     const doc = new Document();
     const api = doc.api;
-    api.root({
-      a: [123]
-    }).commit();
+    api
+      .root({
+        a: [123],
+      })
+      .commit();
     expect(doc.toJson()).toEqual({
-      a: [123]
+      a: [123],
     });
-    api.valSet(['a', 0], .5);
+    api.valSet(['a', 0], 0.5);
     expect(doc.toJson()).toEqual({
-      a: [123]
+      a: [123],
     });
     api.commit();
     expect(doc.toJson()).toEqual({
-      a: [.5]
+      a: [0.5],
     });
   });
 });
@@ -95,7 +109,7 @@ describe('array manipulation', () => {
     api.root([]).commit();
     expect(doc.toJson()).toEqual([]);
     api.patch(() => {
-      api.arrIns([], 0, [1, 2, true, null, false, 'asdf'])
+      api.arrIns([], 0, [1, 2, true, null, false, 'asdf']);
     });
     expect(doc.toJson()).toEqual([1, 2, true, null, false, 'asdf']);
     api.arrIns([], 0, [0]).commit();

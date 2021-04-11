@@ -1,25 +1,25 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
     comment: 'Empty dock, empty patch',
     doc: {},
     patch: [],
-    expected: {}
+    expected: {},
   },
 
   {
     comment: 'Empty patch',
     doc: {foo: 1},
     patch: [],
-    expected: {foo: 1}
+    expected: {foo: 1},
   },
 
   {
     comment: 'Rearrange object keys',
     doc: {foo: 1, bar: 2},
     patch: [],
-    expected: {bar: 2, foo: 1}
+    expected: {bar: 2, foo: 1},
   },
 
   {
@@ -84,35 +84,35 @@ const testCases: TestCase[] = [
     comment: 'Array location out of bounds, inside object',
     doc: {bar: [1, 2]},
     patch: [{op: 'add', path: '/bar/8', value: '5'}],
-    error: 'INVALID_INDEX'
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Array location negative, inside object',
     doc: {bar: [1, 2]},
     patch: [{op: 'add', path: '/bar/-1', value: '5'}],
-    error: 'INVALID_INDEX'
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Add object key equal to "true", first level object',
     doc: {foo: 1},
     patch: [{op: 'add', path: '/bar', value: true}],
-    expected: {foo: 1, bar: true}
+    expected: {foo: 1, bar: true},
   },
 
   {
     comment: 'Add object key equal to "false", first level object',
     doc: {foo: 1},
     patch: [{op: 'add', path: '/bar', value: false}],
-    expected: {foo: 1, bar: false}
+    expected: {foo: 1, bar: false},
   },
 
   {
     comment: 'Add object key equal to "null", first level object',
     doc: {foo: 1},
     patch: [{op: 'add', path: '/bar', value: null}],
-    expected: {foo: 1, bar: null}
+    expected: {foo: 1, bar: null},
   },
 
   {
@@ -126,28 +126,28 @@ const testCases: TestCase[] = [
     comment: 'First level array, insert at second position in array with one element',
     doc: ['foo'],
     patch: [{op: 'add', path: '/1', value: 'bar'}],
-    expected: ['foo', 'bar']
+    expected: ['foo', 'bar'],
   },
 
   {
     comment: 'First level array, insert at second position in the middle of two element array',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/1', value: 'bar'}],
-    expected: ['foo', 'bar', 'sil']
+    expected: ['foo', 'bar', 'sil'],
   },
 
   {
     comment: 'First level array, insert at first position in array with two elements',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/0', value: 'bar'}],
-    expected: ['bar', 'foo', 'sil']
+    expected: ['bar', 'foo', 'sil'],
   },
 
   {
     comment: 'First level array, insert at third position in array with two element',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/2', value: 'bar'}],
-    expected: ['foo', 'sil', 'bar']
+    expected: ['foo', 'sil', 'bar'],
   },
 
   {
@@ -161,21 +161,21 @@ const testCases: TestCase[] = [
     comment: 'Test with bad number should fail',
     doc: ['foo', 'bar'],
     patch: [{op: 'test', path: '/1e0', value: 'bar'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'First level array, inserting using string index',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/bar', value: 42}],
-    error: 'INVALID_INDEX'
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'First level object, remove key containing array',
     doc: {foo: 1, bar: [1, 2, 3, 4]},
     patch: [{op: 'remove', path: '/bar'}],
-    expected: {foo: 1}
+    expected: {foo: 1},
   },
 
   {
@@ -189,7 +189,7 @@ const testCases: TestCase[] = [
     comment: 'Remove string key from object, three levels deep, in array and object',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'remove', path: '/baz/0/qux'}],
-    expected: {foo: 1, baz: [{}]}
+    expected: {foo: 1, baz: [{}]},
   },
 
   {
@@ -210,35 +210,35 @@ const testCases: TestCase[] = [
     comment: 'First level array with one element, replace that element with string',
     doc: ['foo'],
     patch: [{op: 'replace', path: '/0', value: 'bar'}],
-    expected: ['bar']
+    expected: ['bar'],
   },
 
   {
     comment: 'First level array with one element, replace that element with 0',
     doc: [''],
     patch: [{op: 'replace', path: '/0', value: 0}],
-    expected: [0]
+    expected: [0],
   },
 
   {
     comment: 'First level array with one element, replace that element with true',
     doc: [''],
     patch: [{op: 'replace', path: '/0', value: true}],
-    expected: [true]
+    expected: [true],
   },
 
   {
     comment: 'First level array with one element, replace that element with false',
     doc: [''],
     patch: [{op: 'replace', path: '/0', value: false}],
-    expected: [false]
+    expected: [false],
   },
 
   {
     comment: 'First level array with one element, replace that element with null',
     doc: [''],
     patch: [{op: 'replace', path: '/0', value: null}],
-    expected: [null]
+    expected: [null],
   },
 
   {
@@ -329,7 +329,7 @@ const testCases: TestCase[] = [
     comment: 'Test operation shoul not match object for array',
     doc: {foo: {bar: [1, 2, 5, 4]}},
     patch: [{op: 'test', path: '/foo', value: [1, 2]}],
-    error: 'TEST'
+    error: 'TEST',
   },
 
   {comment: 'Whole document', doc: {foo: 1}, patch: [{op: 'test', path: '', value: {foo: 1}}], disabled: true},
@@ -430,14 +430,14 @@ const testCases: TestCase[] = [
     comment: 'Test remove with bad number should fail',
     doc: {foo: 1, baz: [{qux: 'hello'}]},
     patch: [{op: 'remove', path: '/baz/1e0/qux'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Test remove on array',
     doc: [1, 2, 3, 4],
     patch: [{op: 'remove', path: '/0'}],
-    expected: [2, 3, 4]
+    expected: [2, 3, 4],
   },
 
   {
@@ -454,63 +454,63 @@ const testCases: TestCase[] = [
     comment: 'Remove with bad index should fail',
     doc: [1, 2, 3, 4],
     patch: [{op: 'remove', path: '/1e0'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Replace with bad number should fail',
     doc: [''],
     patch: [{op: 'replace', path: '/1e0', value: false}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Test copy with bad number should fail',
     doc: {baz: [1, 2, 3], bar: 1},
     patch: [{op: 'copy', from: '/baz/1e0', path: '/boo'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Test move with bad number should fail',
     doc: {foo: 1, baz: [1, 2, 3, 4]},
     patch: [{op: 'move', from: '/baz/1e0', path: '/foo'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: 'Test add with bad number should fail',
     doc: ['foo', 'sil'],
     patch: [{op: 'add', path: '/1e0', value: 'bar'}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
 
   {
     comment: "Missing 'value' parameter to test",
     doc: [null],
     patch: [{op: 'test', path: '/0'} as any],
-    error: "OP_VALUE_MISSING",
+    error: 'OP_VALUE_MISSING',
   },
 
   {
     comment: 'Missing value parameter to test - where undef is falsy',
     doc: [false],
     patch: [{op: 'test', path: '/0'} as any],
-    error: "OP_VALUE_MISSING",
+    error: 'OP_VALUE_MISSING',
   },
 
   {
     comment: 'Missing from parameter to copy',
     doc: [1],
     patch: [{op: 'copy', path: '/-'} as any],
-    error: "OP_FROM_INVALID",
+    error: 'OP_FROM_INVALID',
   },
 
   {
     comment: 'Unrecognized op should fail',
     doc: {foo: 1},
     patch: [{op: 'spam', path: '/foo', value: 1} as any],
-    error: "OP_UNKNOWN",
+    error: 'OP_UNKNOWN',
   },
 ];
 

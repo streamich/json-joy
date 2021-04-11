@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -10,7 +10,7 @@ const testCases: TestCase[] = [
         path: '',
       },
     ],
-    expected: null
+    expected: null,
   },
 
   {
@@ -22,7 +22,7 @@ const testCases: TestCase[] = [
         path: '/hello',
       },
     ],
-    expected: {hello: 'mars'}
+    expected: {hello: 'mars'},
   },
   {
     comment: 'In object, throws when target does not exist',

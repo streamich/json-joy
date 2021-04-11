@@ -7,7 +7,7 @@ import {JsonNode} from '../../types';
  * edited.
  */
 export class ConstantType implements JsonNode {
-  constructor (public readonly id: LogicalTimestamp, public readonly value: unknown) {}
+  constructor(public readonly id: LogicalTimestamp, public readonly value: unknown) {}
 
   public toJson() {
     return this.value;

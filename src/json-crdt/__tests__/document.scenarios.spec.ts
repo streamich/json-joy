@@ -57,7 +57,7 @@ describe('Scenarios', () => {
 
     const builder2 = new PatchBuilder(doc.clock.fork(200));
     builder2.insStr(str, ins1, 'xy');
-    
+
     const builder3 = new PatchBuilder(doc.clock);
     builder3.insStr(str, ins1, 'pq');
 
@@ -79,7 +79,7 @@ describe('Scenarios', () => {
 
     const builder2 = new PatchBuilder(doc.clock.fork(200));
     builder2.insStr(str, ins1, 'xy');
-    
+
     const builder3 = new PatchBuilder(doc.clock);
     builder3.insStr(str, ins1, 'pq');
 

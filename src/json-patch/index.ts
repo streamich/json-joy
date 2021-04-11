@@ -1,13 +1,13 @@
 /**
  * # json-patch
- * 
+ *
  * JSON Joy json-patch library implements various JSON mutation operations. In
  * particular it implements:
- * 
+ *
  * - [JSON Patch](https://tools.ietf.org/html/rfc6902)
  * - [JSON Predicate](https://tools.ietf.org/id/draft-snell-json-test-01.html)
  * - JSON Patch Extended
- * 
+ *
  * @module
  */
 

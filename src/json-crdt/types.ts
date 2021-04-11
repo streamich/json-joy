@@ -1,12 +1,12 @@
-import type {LogicalTimestamp} from "../json-crdt-patch/clock";
-import type {Identifiable} from "../json-crdt-patch/Identifiable";
-import type {Document} from "./document";
+import type {LogicalTimestamp} from '../json-crdt-patch/clock';
+import type {Identifiable} from '../json-crdt-patch/Identifiable';
+import type {Document} from './document';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
  * AST node, where each node has one of the following types: "object",
  * "array", "string", "number", "boolean", and "null".
- * 
+ *
  * "make" operations result into JSON nodes, for example, "make object" operation
  * create a new "object" JSON node, "make number" operation creates a number
  * JSON node, etc.

@@ -1,5 +1,5 @@
-import {StringType} from "../types/rga-string/StringType";
-import {DocumentApi} from "./DocumentApi";
+import {StringType} from '../types/rga-string/StringType';
+import {DocumentApi} from './DocumentApi';
 
 export class StringApi {
   constructor(private readonly api: DocumentApi, private readonly obj: StringType) {}

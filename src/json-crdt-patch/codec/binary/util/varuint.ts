@@ -1,11 +1,11 @@
 /**
  * Encodes up to 29-bits unsigned integer. In the first three bytes 7 bits are
  * encoded, the fourth byte contains 8 bits of data.
- * 
+ *
  * Encoding follows the following pattern,
- * 
+ *
  *     |      29-bit unsigned integer      |    |         Network encoding          |
- *     |-----------------------------------|    |-----------------------------------| 
+ *     |-----------------------------------|    |-----------------------------------|
  *     | byte 4 | byte 3 | byte 2 | byte 1 |    | byte 1 | byte 3 | byte 2 | byte 1 |
  *     |--------|--------|--------|--------|    |--------|--------|--------|--------|
  *     |00000000|00000000|00000000|0xxxxxxx| -> |0xxxxxxx|
@@ -13,10 +13,9 @@
  *     |00000000|000zzzzz|zzyyyyyy|yxxxxxxx| -> |1xxxxxxx|1yyyyyyy|0zzzzzzz|
  *     |000wwwww|wwwzzzzz|zzyyyyyy|yxxxxxxx| -> |1xxxxxxx|1yyyyyyy|1zzzzzzz|wwwwwwww|
  */
- export const encodeVarUInt = (uint: number) => {
+export const encodeVarUInt = (uint: number) => {
   if (uint <= 0b01111111) return [uint];
-  if (uint <= 0b01111111_11111111)
-    return [0b10000000 | (uint & 0b1111111), (uint & 0b1111111_0000000) >> 7];
+  if (uint <= 0b01111111_11111111) return [0b10000000 | (uint & 0b1111111), (uint & 0b1111111_0000000) >> 7];
   if (uint <= 0b01111111_11111111_11111111)
     return [
       0b10000000 | (uint & 0b1111111),

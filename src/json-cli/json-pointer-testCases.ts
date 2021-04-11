@@ -7,31 +7,31 @@ export interface TestCase {
 }
 
 const docRfc6901Section5 = {
-  "foo": ["bar", "baz"],
-  "": 0,
-  "a/b": 1,
-  "c%d": 2,
-  "e^f": 3,
-  "g|h": 4,
-  "i\\j": 5,
-  "k\"l": 6,
-  " ": 7,
-  "m~n": 8
+  foo: ['bar', 'baz'],
+  '': 0,
+  'a/b': 1,
+  'c%d': 2,
+  'e^f': 3,
+  'g|h': 4,
+  'i\\j': 5,
+  'k"l': 6,
+  ' ': 7,
+  'm~n': 8,
 };
 
 const pointersRfc6901Section5: [string, unknown][] = [
-  ["", docRfc6901Section5],
-  ["/foo", ["bar", "baz"]],
-  ["/foo/0", "bar"],
-  ["/", 0],
-  ["/a~1b", 1],
-  ["/c%d", 2],
-  ["/e^f", 3],
-  ["/g|h", 4],
-  ["/i\\j", 5],
-  ["/k\"l", 6],
-  ["/ ", 7],
-  ["/m~0n", 8],
+  ['', docRfc6901Section5],
+  ['/foo', ['bar', 'baz']],
+  ['/foo/0', 'bar'],
+  ['/', 0],
+  ['/a~1b', 1],
+  ['/c%d', 2],
+  ['/e^f', 3],
+  ['/g|h', 4],
+  ['/i\\j', 5],
+  ['/k"l', 6],
+  ['/ ', 7],
+  ['/m~0n', 8],
 ];
 
 export const testCases: TestCase[] = [
@@ -82,7 +82,7 @@ export const testCases: TestCase[] = [
     doc: {a: {b: [1, 2, 3]}},
     pointer: '/a/b/-1',
     error: 'INVALID_INDEX',
-  },  
+  },
 ];
 
 for (const [pointer, result] of pointersRfc6901Section5) {

@@ -98,12 +98,12 @@ export const isInteger = (str: string): boolean => {
   let i = 0;
   let charCode;
   while (i < len) {
-      charCode = str.charCodeAt(i);
-      if (charCode >= 48 && charCode <= 57) {
-          i++;
-          continue;
-      }
-      return false;
+    charCode = str.charCodeAt(i);
+    if (charCode >= 48 && charCode <= 57) {
+      i++;
+      continue;
+    }
+    return false;
   }
   return true;
 };

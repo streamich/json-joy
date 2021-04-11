@@ -1,8 +1,8 @@
-import {decodeString} from "../../../util/decodeString";
-import {LogicalClock, LogicalTimestamp} from "../../clock";
-import {Patch} from "../../Patch";
-import {PatchBuilder} from "../../PatchBuilder";
-import {decodeVarUint} from "./util/varuint";
+import {decodeString} from '../../../util/decodeString';
+import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {Patch} from '../../Patch';
+import {PatchBuilder} from '../../PatchBuilder';
+import {decodeVarUint} from './util/varuint';
 
 export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimestamp => {
   const o1 = buf[offset];
@@ -45,11 +45,8 @@ export const decode = (buf: Uint8Array): Patch => {
 
   const varuint = () => {
     const value = decodeVarUint(buf, offset);
-    offset += value <= 0b01111111
-      ? 1
-      : value <= 0b01111111_11111111
-        ? 2
-        : value <= 0b01111111_11111111_11111111 ? 3 : 4;
+    offset +=
+      value <= 0b01111111 ? 1 : value <= 0b01111111_11111111 ? 2 : value <= 0b01111111_11111111_11111111 ? 3 : 4;
     return value;
   };
 

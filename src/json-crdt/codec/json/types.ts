@@ -102,5 +102,4 @@ export type JsonCrdtNode =
   | ArrayJsonCrdtNode
   | StringJsonCrdtNode
   | ValueJsonCrdtNode
-  | ConstantJsonCrdtNode
-  ;
+  | ConstantJsonCrdtNode;

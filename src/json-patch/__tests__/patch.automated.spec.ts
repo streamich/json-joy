@@ -1,6 +1,6 @@
 import {applyPatch} from '../patch';
-import {testSuites} from '../../json-cli/test/suites'
-import { validateOperation } from '../validate';
+import {testSuites} from '../../json-cli/test/suites';
+import {validateOperation} from '../validate';
 
 describe('automated', () => {
   testSuites.forEach((suite) => {
@@ -20,10 +20,9 @@ describe('automated', () => {
               applyPatch(test.doc, test.patch, true);
               throw new Error('Patch should have failed.');
             } catch (error) {
-              const output = typeof error === 'string' ? error : (error instanceof Error ? error.message : String(error));
+              const output = typeof error === 'string' ? error : error instanceof Error ? error.message : String(error);
               expect(output).toBe(test.error);
             }
-            
           });
         } else throw new Error('invalid test case');
       });

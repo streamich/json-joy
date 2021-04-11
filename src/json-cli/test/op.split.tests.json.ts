@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -30,7 +30,7 @@ const testCases: TestCase[] = [
           },
         ],
       },
-    ]
+    ],
   },
   {
     comment: 'Slate.js, split two element blocks into one',
@@ -68,7 +68,7 @@ const testCases: TestCase[] = [
           },
         ],
       },
-    ]
+    ],
   },
   {
     comment: 'Slate.js, can split paragraph in two and insert a character',
@@ -114,7 +114,7 @@ const testCases: TestCase[] = [
           },
         ],
       },
-    ]
+    ],
   },
 
   {
@@ -127,7 +127,7 @@ const testCases: TestCase[] = [
         pos: 2,
       },
     ],
-    expected: ['12', '34']
+    expected: ['12', '34'],
   },
   {
     comment: 'At root, string, can split string in two at pos=1',
@@ -139,7 +139,7 @@ const testCases: TestCase[] = [
         pos: 1,
       },
     ],
-    expected: ['1', '234']
+    expected: ['1', '234'],
   },
   {
     comment: 'At root, string, can split string in two from beginning',
@@ -151,7 +151,7 @@ const testCases: TestCase[] = [
         pos: 0,
       },
     ],
-    expected: ['', '1234']
+    expected: ['', '1234'],
   },
   {
     comment: 'At root, string, can split string in two from end',
@@ -163,7 +163,7 @@ const testCases: TestCase[] = [
         pos: 4,
       },
     ],
-    expected: ['1234', '']
+    expected: ['1234', ''],
   },
   {
     comment: 'At root, string, can split string in two when pos is greater than string length',
@@ -175,7 +175,7 @@ const testCases: TestCase[] = [
         pos: 99999,
       },
     ],
-    expected: ['12345', '']
+    expected: ['12345', ''],
   },
   {
     comment: 'At root, string, takes characters from end if pos is negative',
@@ -187,7 +187,7 @@ const testCases: TestCase[] = [
         pos: -1,
       },
     ],
-    expected: ['1234', '5']
+    expected: ['1234', '5'],
   },
   {
     comment: 'At root, string, takes characters from end if pos is negative - 2',
@@ -199,7 +199,7 @@ const testCases: TestCase[] = [
         pos: -2,
       },
     ],
-    expected: ['123', '45']
+    expected: ['123', '45'],
   },
   {
     comment: 'At root, string, when negative pos overflows, first element is empty',
@@ -211,7 +211,7 @@ const testCases: TestCase[] = [
         pos: -7,
       },
     ],
-    expected: ['', '12345']
+    expected: ['', '12345'],
   },
 
   {
@@ -219,10 +219,8 @@ const testCases: TestCase[] = [
     doc: {
       text: 'foo bar',
     },
-    patch: [
-      {op: 'split', path: '', pos: 3}
-    ],
-    expected: [{text: 'foo'}, {text: ' bar'}]
+    patch: [{op: 'split', path: '', pos: 3}],
+    expected: [{text: 'foo'}, {text: ' bar'}],
   },
   {
     comment: 'At root, SlateTextNode, preserves text node attributes',
@@ -230,13 +228,11 @@ const testCases: TestCase[] = [
       text: 'foo bar',
       foo: 'bar',
     },
-    patch: [
-      {op: 'split', path: '', pos: 3}
-    ],
+    patch: [{op: 'split', path: '', pos: 3}],
     expected: [
       {text: 'foo', foo: 'bar'},
       {text: ' bar', foo: 'bar'},
-    ]
+    ],
   },
   {
     comment: 'At root, SlateTextNode, can add custom attributes',
@@ -248,7 +244,7 @@ const testCases: TestCase[] = [
     expected: [
       {text: 'foo', foo: 'bar', baz: 'qux'},
       {text: ' bar', foo: 'bar', baz: 'qux'},
-    ]
+    ],
   },
   {
     comment: 'At root, SlateTextNode, custom attributes can overwrite node attributes',
@@ -260,7 +256,7 @@ const testCases: TestCase[] = [
     expected: [
       {text: 'foo', foo: '1'},
       {text: ' bar', foo: '1'},
-    ]
+    ],
   },
   {
     comment: 'At root, SlateElementNode, splits simple node',
@@ -275,7 +271,7 @@ const testCases: TestCase[] = [
       {
         children: [{text: 'bar'}, {text: 'baz'}],
       },
-    ]
+    ],
   },
   {
     comment: 'At root, SlateElementNode, can provide custom attributes',
@@ -292,7 +288,7 @@ const testCases: TestCase[] = [
         f: 1,
         children: [{text: 'baz'}],
       },
-    ]
+    ],
   },
   {
     comment: 'At root, SlateElementNode, carries over node attributes',
@@ -312,7 +308,7 @@ const testCases: TestCase[] = [
         a: 1,
         children: [{text: 'baz'}],
       },
-    ]
+    ],
   },
   {
     comment: 'At root, SlateElementNode, can overwrite node attributes',
@@ -335,7 +331,7 @@ const testCases: TestCase[] = [
         c: 3,
         children: [{text: 'baz'}],
       },
-    ]
+    ],
   },
 
   {
@@ -348,7 +344,7 @@ const testCases: TestCase[] = [
         pos: 1,
       },
     ],
-    expected: {foo: ['a', 'b']}
+    expected: {foo: ['a', 'b']},
   },
   {
     comment: 'In object, if attribute are specified, wraps strings into nodes',
@@ -366,7 +362,7 @@ const testCases: TestCase[] = [
         {text: 'a', z: 'x'},
         {text: 'b', z: 'x'},
       ],
-    }
+    },
   },
   {
     comment: 'In object, splits SlateTextNode',
@@ -384,7 +380,7 @@ const testCases: TestCase[] = [
         {text: '7', z: 'x'},
         {text: '77', z: 'x'},
       ],
-    }
+    },
   },
   {
     comment: 'In object, crates a tuple if target is a boolean value',
@@ -396,7 +392,7 @@ const testCases: TestCase[] = [
         pos: 1,
       },
     ],
-    expected: {foo: [true, true]}
+    expected: {foo: [true, true]},
   },
   {
     comment: 'In object, divides number into two haves if target is a number',
@@ -408,7 +404,7 @@ const testCases: TestCase[] = [
         pos: 9,
       },
     ],
-    expected: {foo: [9, 1]}
+    expected: {foo: [9, 1]},
   },
 
   {
@@ -421,7 +417,7 @@ const testCases: TestCase[] = [
         pos: 0,
       },
     ],
-    expected: [1, {children: []}, {children: [{text: 'a'}, {text: 'b'}]}, 2]
+    expected: [1, {children: []}, {children: [{text: 'a'}, {text: 'b'}]}, 2],
   },
   {
     comment: 'In array, adds custom props and preserves node props',
@@ -434,12 +430,7 @@ const testCases: TestCase[] = [
         props: {a: 'b'},
       },
     ],
-    expected: [
-      1,
-      {foo: 'bar', a: 'b', children: []},
-      {foo: 'bar', a: 'b', children: [{text: 'a'}, {text: 'b'}]},
-      2,
-    ]
+    expected: [1, {foo: 'bar', a: 'b', children: []}, {foo: 'bar', a: 'b', children: [{text: 'a'}, {text: 'b'}]}, 2],
   },
 ];
 

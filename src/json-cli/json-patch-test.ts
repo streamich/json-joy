@@ -2,7 +2,7 @@
 
 import {spawnSync} from 'child_process';
 import {validateOperation} from '../json-patch';
-import { testSuites } from './test/suites';
+import {testSuites} from './test/suites';
 const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
@@ -36,7 +36,7 @@ testSuites.forEach((suite) => {
         isCorrect = false;
       }
       if (isCorrect) {
-        cntCorrect++
+        cntCorrect++;
         console.log('✅ ' + testName);
       } else {
         cntFailed++;
@@ -77,4 +77,3 @@ console.log(`Successful = ${cntCorrect}, Failed = ${cntFailed}, Total = ${cntCor
 console.log('');
 
 if (cntFailed > 0) process.exit(1);
-

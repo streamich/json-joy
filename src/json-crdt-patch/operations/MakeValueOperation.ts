@@ -1,4 +1,4 @@
-import type {IJsonCrdtPatchOperation} from "./types";
+import type {IJsonCrdtPatchOperation} from './types';
 import type {LogicalTimestamp} from '../clock';
 
 export class MakeValueOperation implements IJsonCrdtPatchOperation {

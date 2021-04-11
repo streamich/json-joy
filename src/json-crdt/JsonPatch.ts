@@ -1,12 +1,12 @@
-import type {Document} from "./document";
-import {Draft} from "../json-crdt-patch/Draft";
-import {Op, OpAdd} from "../json-patch/op";
-import {ObjectType} from "./types/lww-object/ObjectType";
+import type {Document} from './document';
+import {Draft} from '../json-crdt-patch/Draft';
+import {Op, OpAdd} from '../json-patch/op';
+import {ObjectType} from './types/lww-object/ObjectType';
 
 export class JsonPatch {
   public readonly draft = new Draft();
 
-  constructor (public readonly doc: Document) {}
+  constructor(public readonly doc: Document) {}
 
   fromOps(ops: Op[]): Draft {
     const draft = new Draft();

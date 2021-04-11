@@ -1,17 +1,17 @@
 import type {LogicalTimestamp} from './clock';
 import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
-import {InsertStringSubstringOperation} from "./operations/InsertStringSubstringOperation";
-import {MakeArrayOperation} from "./operations/MakeArrayOperation";
+import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
+import {MakeArrayOperation} from './operations/MakeArrayOperation';
 import {MakeConstantOperation} from './operations/MakeConstantOperation';
-import {MakeNumberOperation} from "./operations/MakeNumberOperation";
-import {MakeObjectOperation} from "./operations/MakeObjectOperation";
-import {MakeStringOperation} from "./operations/MakeStringOperation";
+import {MakeNumberOperation} from './operations/MakeNumberOperation';
+import {MakeObjectOperation} from './operations/MakeObjectOperation';
+import {MakeStringOperation} from './operations/MakeStringOperation';
 import {MakeValueOperation} from './operations/MakeValueOperation';
 import {NoopOperation} from './operations/NoopOperation';
 import {SetNumberOperation} from './operations/SetNumberOperation';
-import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
-import {SetRootOperation} from "./operations/SetRootOperation";
+import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
+import {SetRootOperation} from './operations/SetRootOperation';
 import {SetValueOperation} from './operations/SetValueOperation';
 
 export type JsonCrdtPatchOperation =
@@ -28,8 +28,7 @@ export type JsonCrdtPatchOperation =
   | SetNumberOperation
   | SetValueOperation
   | SetObjectKeysOperation
-  | SetRootOperation
-  ;
+  | SetRootOperation;
 
 export class Patch {
   public readonly ops: JsonCrdtPatchOperation[] = [];

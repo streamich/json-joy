@@ -4,7 +4,7 @@ export function utf8DecodeJs(bytes: Uint8Array, inputOffset: number, byteLength:
   let offset = inputOffset;
   const end = offset + byteLength;
   const units: Array<number> = [];
-  let result = "";
+  let result = '';
   while (offset < end) {
     const byte1 = bytes[offset++]!;
     if ((byte1 & 0x80) === 0) {
@@ -73,7 +73,7 @@ export class CachedKeyDecoder {
 
   private store(bytes: Uint8Array, value: string) {
     const records = this.caches[bytes.length - 1]!;
-    const record: KeyCacheRecord = { bytes, value };
+    const record: KeyCacheRecord = {bytes, value};
 
     if (records.length >= 16) {
       // `records` are full!

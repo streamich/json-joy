@@ -1,4 +1,4 @@
-import type {IJsonCrdtPatchOperation} from "./types";
+import type {IJsonCrdtPatchOperation} from './types';
 import type {LogicalTimestamp} from '../clock';
 
 export class InsertArrayElementsOperation implements IJsonCrdtPatchOperation {
@@ -14,7 +14,12 @@ export class InsertArrayElementsOperation implements IJsonCrdtPatchOperation {
    * @param after ID of the element after which to insert elements.
    * @param elements The elements to insert.
    */
-  constructor(public readonly id: LogicalTimestamp, public readonly arr: LogicalTimestamp, public readonly after: LogicalTimestamp, public readonly elements: LogicalTimestamp[]) {}
+  constructor(
+    public readonly id: LogicalTimestamp,
+    public readonly arr: LogicalTimestamp,
+    public readonly after: LogicalTimestamp,
+    public readonly elements: LogicalTimestamp[],
+  ) {}
 
   public span(): number {
     return this.elements.length;

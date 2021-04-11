@@ -50,7 +50,7 @@ export const find = (val: unknown, path: Path): Reference => {
       if (key === '-') key = length;
       else {
         const key2 = ~~key;
-        if (('' + (key2)) !== key) throw new Error('INVALID_INDEX');
+        if ('' + key2 !== key) throw new Error('INVALID_INDEX');
         key = key2;
         if (key < 0) throw new Error('INVALID_INDEX');
       }

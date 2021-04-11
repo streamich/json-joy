@@ -44,7 +44,7 @@ export class Encoder {
 
   /**
    * Use this method to encode a JavaScript document into MessagePack format.
-   * 
+   *
    * @param json JSON value to encode.
    * @returns Encoded memory buffer with MessagePack contents.
    */
@@ -56,15 +56,21 @@ export class Encoder {
 
   protected encodeAny(json: unknown): void {
     switch (json) {
-      case null: return this.u8(0xc0);
-      case false: return this.u8(0xc2);
-      case true: return this.u8(0xc3);
+      case null:
+        return this.u8(0xc0);
+      case false:
+        return this.u8(0xc2);
+      case true:
+        return this.u8(0xc3);
     }
     if (json instanceof Array) return this.encodeArray(json);
     switch (typeof json) {
-      case 'number': return this.encodeNumber(json);
-      case 'string': return this.encodeString(json);
-      case 'object': return this.encodeObject(json as Record<string, unknown>);
+      case 'number':
+        return this.encodeNumber(json);
+      case 'string':
+        return this.encodeString(json);
+      case 'object':
+        return this.encodeObject(json as Record<string, unknown>);
     }
   }
 
@@ -72,14 +78,14 @@ export class Encoder {
     if (isSafeInteger(num)) {
       if (num >= 0) {
         if (num <= 0b1111111) return this.u8(num);
-        if (num <= 0xFF) return this.u16((0xcc << 8) | num);
-        else if (num <= 0xFFFF) {
+        if (num <= 0xff) return this.u16((0xcc << 8) | num);
+        else if (num <= 0xffff) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xcd;
           this.uint8[this.offset++] = num >>> 8;
-          this.uint8[this.offset++] = num & 0xFF;
+          this.uint8[this.offset++] = num & 0xff;
           return;
-        } else if (num <= 0xFFFFFFFF) {
+        } else if (num <= 0xffffffff) {
           this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xce;
           this.view.setUint32(this.offset, num);
@@ -88,13 +94,13 @@ export class Encoder {
         }
       } else {
         if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
-        else if (num > -0x7FFF) {
+        else if (num > -0x7fff) {
           this.ensureCapacity(3);
           this.uint8[this.offset++] = 0xd1;
           this.view.setInt16(this.offset, num);
           this.offset += 2;
           return;
-        } else if (num > -0x7FFFFFFF) {
+        } else if (num > -0x7fffffff) {
           this.ensureCapacity(5);
           this.uint8[this.offset++] = 0xd2;
           this.view.setInt32(this.offset, num);
@@ -109,18 +115,18 @@ export class Encoder {
     this.offset += 8;
   }
 
-  protected encodeString (str: string) {
+  protected encodeString(str: string) {
     const length = str.length;
     const maxSize = length * 4;
     this.ensureCapacity(5 + maxSize);
     const output = this.uint8;
     let lengthOffset: number = this.offset;
     if (maxSize <= 0b11111) this.offset++;
-    else if (maxSize <= 0xFF) {
+    else if (maxSize <= 0xff) {
       output[this.offset++] = 0xd9;
       lengthOffset = this.offset;
       this.offset++;
-    } else if (maxSize <= 0xFFFF) {
+    } else if (maxSize <= 0xffff) {
       output[this.offset++] = 0xda;
       lengthOffset = this.offset;
       this.offset += 2;
@@ -161,32 +167,32 @@ export class Encoder {
     }
     this.offset = offset;
     if (maxSize <= 0b11111) this.view.setUint8(lengthOffset, 0b10100000 | (offset - lengthOffset - 1));
-    else if (maxSize <= 0xFF) this.view.setUint8(lengthOffset, offset - lengthOffset - 1);
-    else if (maxSize <= 0xFFFF) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
+    else if (maxSize <= 0xff) this.view.setUint8(lengthOffset, offset - lengthOffset - 1);
+    else if (maxSize <= 0xffff) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
-  protected encodeArray (arr: unknown[]): void {
+  protected encodeArray(arr: unknown[]): void {
     const length = arr.length;
     if (length <= 0b1111) this.u8(0b10010000 | length);
-    else if (length <= 0xFFFF) {
+    else if (length <= 0xffff) {
       this.u8(0xdc);
       this.u16(length);
-    } else if (length <= 0xFFFFFFFF) {
+    } else if (length <= 0xffffffff) {
       this.u8(0xdd);
       this.u32(length);
     } else return;
     for (let i = 0; i < length; i++) this.encodeAny(arr[i]);
   }
 
-  protected encodeObject (obj: Record<string, unknown>): void {
+  protected encodeObject(obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
     if (length <= 0b1111) this.u8(0b10000000 | length);
-    else if (length <= 0xFFFF) {
+    else if (length <= 0xffff) {
       this.u8(0xde);
       this.u16(length);
-    } else if (length <= 0xFFFFFFFF) {
+    } else if (length <= 0xffffffff) {
       this.u8(0xdf);
       this.u32(length);
     } else return;
@@ -196,18 +202,18 @@ export class Encoder {
       this.encodeAny(obj[key]);
     }
   }
-  
+
   protected u8(char: number) {
     this.ensureCapacity(1);
     this.view.setUint8(this.offset++, char);
   }
-  
+
   protected u16(word: number) {
     this.ensureCapacity(2);
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
-  
+
   protected u32(dword: number) {
     this.ensureCapacity(4);
     this.view.setUint32(this.offset, dword);

@@ -1,24 +1,28 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
     comment: 'Can merge two nodes in an array',
     doc: [{text: 'foo'}, {text: 'bar'}],
-    patch: [{
-      op: 'merge',
-      path: '/1',
-      pos: 1,
-    }],
-    expected: [{text: 'foobar'}]
+    patch: [
+      {
+        op: 'merge',
+        path: '/1',
+        pos: 1,
+      },
+    ],
+    expected: [{text: 'foobar'}],
   },
   {
     comment: 'Cannot target first array element when merging',
     doc: [{text: 'foo'}, {text: 'bar'}],
-    patch: [{
-      op: 'merge',
-      path: '/0',
-      pos: 1,
-    }],
+    patch: [
+      {
+        op: 'merge',
+        path: '/0',
+        pos: 1,
+      },
+    ],
     error: 'INVALID_KEY',
   },
   {
@@ -30,23 +34,27 @@ const testCases: TestCase[] = [
         {children: [{text: '3'}, {text: '4'}]},
       ],
     },
-    patch: [{
-      op: 'merge',
-      path: '/foo/2',
-      pos: 1,
-    }],
+    patch: [
+      {
+        op: 'merge',
+        path: '/foo/2',
+        pos: 1,
+      },
+    ],
     expected: {
       foo: [{children: [{text: '1'}, {text: '2'}]}, {children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}]}],
-    }
+    },
   },
   {
     comment: 'Cannot merge root',
     doc: 123,
-    patch: [{
-      op: 'merge',
-      path: '',
-      pos: 1,
-    }],
+    patch: [
+      {
+        op: 'merge',
+        path: '',
+        pos: 1,
+      },
+    ],
     error: 'INVALID_TARGET',
   },
   {
@@ -102,7 +110,7 @@ const testCases: TestCase[] = [
           },
         ],
       },
-    ]
+    ],
   },
 ];
 

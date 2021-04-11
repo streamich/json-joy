@@ -112,7 +112,7 @@ describe('string', () => {
   });
 
   test('can decode 0xFFFF + 1 char string', () => {
-    const str = 'a'.repeat(0xFFFF + 1);
+    const str = 'a'.repeat(0xffff + 1);
     const buf = encode(str);
     const res = decode(buf);
     expect(res).toBe(str);
@@ -152,14 +152,14 @@ describe('array', () => {
   });
 
   test('can decode 0xFFFF element array', () => {
-    const arr = '3'.repeat(0xFFFF).split('').map(Number);
+    const arr = '3'.repeat(0xffff).split('').map(Number);
     const buf = encode(arr);
     const res = decode(buf);
     expect(res).toEqual(arr);
   });
 
   test('can decode 0xFFFF + 1 element array', () => {
-    const arr = '3'.repeat(0xFFFF + 1).split('');
+    const arr = '3'.repeat(0xffff + 1).split('');
     const buf = encode(arr);
     const res = decode(buf);
     expect(res).toEqual(arr);
@@ -223,7 +223,7 @@ describe('object', () => {
 
   test('can decode 0xFFFF key object', () => {
     const obj: any = {};
-    for (let i = 0; i < 0xFFFF; i++) obj[String(i)] = i;
+    for (let i = 0; i < 0xffff; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf);
     expect(res).toEqual(obj);
@@ -231,7 +231,7 @@ describe('object', () => {
 
   test('can decode 0xFFFF + 1 key object', () => {
     const obj: any = {};
-    for (let i = 0; i < 0xFFFF + 1; i++) obj[String(i)] = i;
+    for (let i = 0; i < 0xffff + 1; i++) obj[String(i)] = i;
     const buf = encode(obj);
     const res = decode(buf);
     expect(res).toEqual(obj);

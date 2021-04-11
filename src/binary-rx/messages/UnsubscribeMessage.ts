@@ -2,9 +2,9 @@
  * @category Message
  */
 export class UnsubscribeMessage {
-  constructor (public readonly id: number) {}
+  constructor(public readonly id: number) {}
 
-  public size (): number {
+  public size(): number {
     return 3;
   }
 }

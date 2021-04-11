@@ -42,8 +42,7 @@ export class ObjectType implements JsonNode {
 
   public toJson(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
-    for (const [key, entry] of this.latest.entries())
-      obj[key] = entry.node.toJson();
+    for (const [key, entry] of this.latest.entries()) obj[key] = entry.node.toJson();
     return obj;
   }
 
@@ -51,7 +50,7 @@ export class ObjectType implements JsonNode {
     let str = `${tab}ObjectType(${this.id.toDisplayString()})`;
     for (const [key, entry] of this.latest.entries()) {
       const node = entry.node;
-      str += `\n${tab}  "${key}" :\n${node.toString(tab + '    ')}`
+      str += `\n${tab}  "${key}" :\n${node.toString(tab + '    ')}`;
     }
     return str;
   }

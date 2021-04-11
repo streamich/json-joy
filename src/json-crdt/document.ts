@@ -54,7 +54,7 @@ export class Document {
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);
     this.nodes.index(UNDEFINED);
-    this.api = new DocumentApi(this)
+    this.api = new DocumentApi(this);
   }
 
   public applyPatch(patch: Patch) {
@@ -66,7 +66,7 @@ export class Document {
   /**
    * Applies a single operation to the document. All mutations to the document
    * must go through this method.
-   * 
+   *
    * @param op Any JSON CRDT Patch operation
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {

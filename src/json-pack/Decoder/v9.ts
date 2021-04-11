@@ -1,5 +1,5 @@
-import {JsonPackExtension} from "../JsonPackExtension";
-import {CachedKeyDecoder} from "./CachedKeyDecoder";
+import {JsonPackExtension} from '../JsonPackExtension';
+import {CachedKeyDecoder} from './CachedKeyDecoder';
 
 const sharedCachedKeyDecoder = new CachedKeyDecoder();
 
@@ -14,9 +14,7 @@ export class Decoder {
   /** @ignore */
   protected x = 0;
 
-  public constructor(
-    private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder,
-  ) {}
+  public constructor(private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder) {}
 
   public decode(uint8: Uint8Array): unknown {
     this.x = 0;
@@ -34,7 +32,8 @@ export class Decoder {
         if (byte <= 0b1111111) return byte; // 0x7f
         return this.obj(byte & 0b1111); // 0x80
       } else {
-        if (byte < 0xa0) return this.arr(byte & 0b1111); // 0x90
+        if (byte < 0xa0) return this.arr(byte & 0b1111);
+        // 0x90
         else return this.str(byte & 0b11111); // 0xa0
       }
     }
@@ -50,29 +49,52 @@ export class Decoder {
       } else {
         return byte <= 0xcc
           ? byte <= 0xca
-            ? byte === 0xca ? this.f32() : this.ext(this.u32())
-            : byte === 0xcc ? this.u8() : this.f64()
+            ? byte === 0xca
+              ? this.f32()
+              : this.ext(this.u32())
+            : byte === 0xcc
+            ? this.u8()
+            : this.f64()
           : byte <= 0xce
-            ? byte === 0xce ? this.u32() : this.u16()
-            : byte === 0xd0 ? this.i8() : this.u32() * 4294967296 + this.u32();
+          ? byte === 0xce
+            ? this.u32()
+            : this.u16()
+          : byte === 0xd0
+          ? this.i8()
+          : this.u32() * 4294967296 + this.u32();
       }
     } else if (byte <= 0xd8) {
       return byte <= 0xd4
         ? byte <= 0xd2
-          ? byte === 0xd2 ? this.i32() : this.i16()
-          : byte === 0xd4 ? this.ext(1) : this.i32() * 4294967296 + this.i32()
+          ? byte === 0xd2
+            ? this.i32()
+            : this.i16()
+          : byte === 0xd4
+          ? this.ext(1)
+          : this.i32() * 4294967296 + this.i32()
         : byte <= 0xd6
-          ? byte === 0xd6 ? this.ext(4) : this.ext(2)
-          : byte === 0xd8 ? this.ext(16) : this.ext(8);
+        ? byte === 0xd6
+          ? this.ext(4)
+          : this.ext(2)
+        : byte === 0xd8
+        ? this.ext(16)
+        : this.ext(8);
     } else {
       switch (byte) {
-        case 0xd9: return this.str(this.u8());
-        case 0xda: return this.str(this.u16());
-        case 0xdb: return this.str(this.u32());
-        case 0xdc: return this.arr(this.u16());
-        case 0xdd: return this.arr(this.u32());
-        case 0xde: return this.obj(this.u16());
-        case 0xdf: return this.obj(this.u32());
+        case 0xd9:
+          return this.str(this.u8());
+        case 0xda:
+          return this.str(this.u16());
+        case 0xdb:
+          return this.str(this.u32());
+        case 0xdc:
+          return this.arr(this.u16());
+        case 0xdd:
+          return this.arr(this.u32());
+        case 0xde:
+          return this.obj(this.u16());
+        case 0xdf:
+          return this.obj(this.u32());
       }
     }
     return undefined;
@@ -90,7 +112,7 @@ export class Decoder {
         str += String.fromCharCode(b1);
         continue;
       } else if ((b1 & 0xe0) === 0xc0) {
-        str += String.fromCharCode(((b1 & 0x1f) << 6) | uint8[offset++]! & 0x3f);
+        str += String.fromCharCode(((b1 & 0x1f) << 6) | (uint8[offset++]! & 0x3f));
       } else if ((b1 & 0xf0) === 0xe0) {
         str += String.fromCharCode(((b1 & 0x1f) << 12) | ((uint8[offset++]! & 0x3f) << 6) | (uint8[offset++]! & 0x3f));
       } else if ((b1 & 0xf8) === 0xf0) {
@@ -125,7 +147,7 @@ export class Decoder {
   /** @ignore */
   protected key(): string {
     const byte = this.view.getUint8(this.x);
-    if ((byte >= 0b10100000) && (byte <= 0b10111111)) {
+    if (byte >= 0b10100000 && byte <= 0b10111111) {
       const size = byte & 0b11111;
       const key = this.keyDecoder.decode(this.uint8, this.x + 1, size);
       this.x += 1 + size;

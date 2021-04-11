@@ -1,4 +1,11 @@
-import {NotificationMessage, SubscribeMessage, DataMessage, CompleteMessage, UnsubscribeMessage, ErrorMessage} from './messages';
+import {
+  NotificationMessage,
+  SubscribeMessage,
+  DataMessage,
+  CompleteMessage,
+  UnsubscribeMessage,
+  ErrorMessage,
+} from './messages';
 import {Observable, Observer} from 'rxjs';
 import {TimedQueue} from '../json-rx/TimedQueue';
 import {decodeFullMessages, Encoder} from './codec';
@@ -99,7 +106,7 @@ export class BinaryRxClient {
 
   public call(method: string, data: Uint8Array): Observable<unknown> {
     const id = this.id++;
-    if (this.id >= 0xFFFF) this.id = 0;
+    if (this.id >= 0xffff) this.id = 0;
     if (this.observers.has(id)) return this.call(method, data);
     const observable = new Observable<unknown>((observer: Observer<unknown>) => {
       const entry: ObserverEntry = {observer};
@@ -120,7 +127,6 @@ export class BinaryRxClient {
 
   public stop(): void {
     this.buffer.onFlush = (message) => {};
-    for (const {observer} of this.observers.values())
-      observer.complete();
+    for (const {observer} of this.observers.values()) observer.complete();
   }
 }

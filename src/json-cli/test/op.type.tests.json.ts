@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -11,7 +11,7 @@ const testCases: TestCase[] = [
         value: 'object',
       },
     ],
-    expected: {}
+    expected: {},
   },
   {
     comment: 'Fails when type does not match',

@@ -1,20 +1,20 @@
-import {LogicalClock, LogicalTimestamp} from "./clock";
-import {DeleteOperation} from "./operations/DeleteOperation";
-import {InsertArrayElementsOperation} from "./operations/InsertArrayElementsOperation";
-import {InsertStringSubstringOperation} from "./operations/InsertStringSubstringOperation";
-import {MakeArrayOperation} from "./operations/MakeArrayOperation";
-import {MakeNumberOperation} from "./operations/MakeNumberOperation";
-import {MakeObjectOperation} from "./operations/MakeObjectOperation";
-import {MakeStringOperation} from "./operations/MakeStringOperation";
-import {SetObjectKeysOperation} from "./operations/SetObjectKeysOperation";
-import {SetRootOperation} from "./operations/SetRootOperation";
-import {SetNumberOperation} from "./operations/SetNumberOperation";
-import {NoopOperation} from "./operations/NoopOperation";
-import {MakeConstantOperation} from "./operations/MakeConstantOperation";
-import {MakeValueOperation} from "./operations/MakeValueOperation";
-import {SetValueOperation} from "./operations/SetValueOperation";
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from "./constants";
-import {Patch} from "./Patch";
+import {LogicalClock, LogicalTimestamp} from './clock';
+import {DeleteOperation} from './operations/DeleteOperation';
+import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
+import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
+import {MakeArrayOperation} from './operations/MakeArrayOperation';
+import {MakeNumberOperation} from './operations/MakeNumberOperation';
+import {MakeObjectOperation} from './operations/MakeObjectOperation';
+import {MakeStringOperation} from './operations/MakeStringOperation';
+import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
+import {SetRootOperation} from './operations/SetRootOperation';
+import {SetNumberOperation} from './operations/SetNumberOperation';
+import {NoopOperation} from './operations/NoopOperation';
+import {MakeConstantOperation} from './operations/MakeConstantOperation';
+import {MakeValueOperation} from './operations/MakeValueOperation';
+import {SetValueOperation} from './operations/SetValueOperation';
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from './constants';
+import {Patch} from './Patch';
 
 /**
  * Utility class that helps in Patch construction.
@@ -79,7 +79,7 @@ export class PatchBuilder {
   /**
    * Create a new immutable constant JSON value. Can be anything, including
    * nested arrays and objects.
-   * 
+   *
    * @param value JSON value
    * @returns ID of the new operation.
    */
@@ -94,7 +94,7 @@ export class PatchBuilder {
   /**
    * Create a new LWW register JSON value. Can be anything, including
    * nested arrays and objects.
-   * 
+   *
    * @param value JSON value
    * @returns ID of the new operation.
    */
@@ -117,15 +117,14 @@ export class PatchBuilder {
     this.patch.ops.push(op);
     return id;
   }
-  
+
   /**
    * Set field of an object.
    * @returns ID of the new operation.
    */
   public setKeys(obj: LogicalTimestamp, tuples: [key: string, value: LogicalTimestamp][]): LogicalTimestamp {
     this.pad();
-    if (!tuples.length) 
-      throw new Error('EMPTY_TUPLES');
+    if (!tuples.length) throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
     const op = new SetObjectKeysOperation(id, obj, tuples);
     const span = op.span();
@@ -133,7 +132,7 @@ export class PatchBuilder {
     this.patch.ops.push(op);
     return id;
   }
-  
+
   /**
    * Set number value.
    * @returns ID of the new operation.
@@ -145,7 +144,7 @@ export class PatchBuilder {
     this.patch.ops.push(op);
     return id;
   }
-  
+
   /**
    * Set new new value of a JSON value LWW register.
    * @returns ID of the new operation.
@@ -164,8 +163,7 @@ export class PatchBuilder {
    */
   public insStr(obj: LogicalTimestamp, after: LogicalTimestamp, substring: string): LogicalTimestamp {
     this.pad();
-    if (!substring.length) 
-      throw new Error('EMPTY_STRING');
+    if (!substring.length) throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
     const op = new InsertStringSubstringOperation(id, obj, after, substring);
     const span = op.span();
@@ -265,15 +263,21 @@ export class PatchBuilder {
    */
   public json(json: unknown): LogicalTimestamp {
     switch (json) {
-      case null: return NULL_ID;
-      case true: return TRUE_ID;
-      case false: return FALSE_ID;
+      case null:
+        return NULL_ID;
+      case true:
+        return TRUE_ID;
+      case false:
+        return FALSE_ID;
     }
     if (Array.isArray(json)) return this.jsonArr(json);
     switch (typeof json) {
-      case 'object': return this.jsonObj(json!);
-      case 'string': return this.jsonStr(json);
-      case 'number': return this.jsonVal(json);
+      case 'object':
+        return this.jsonObj(json!);
+      case 'string':
+        return this.jsonStr(json);
+      case 'number':
+        return this.jsonVal(json);
     }
     return UNDEFINED_ID;
   }

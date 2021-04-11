@@ -38,40 +38,46 @@ export class Encoder {
 
   private encodeAny(json: unknown): void {
     switch (json) {
-      case null: return this.u8(0xc0);
-      case false: return this.u8(0xc2);
-      case true: return this.u8(0xc3);
+      case null:
+        return this.u8(0xc0);
+      case false:
+        return this.u8(0xc2);
+      case true:
+        return this.u8(0xc3);
     }
     if (json instanceof Array) return this.encodeArray(json);
     switch (typeof json) {
-      case 'number': return this.encodeNumber(json);
-      case 'string': return this.encodeString(json);
-      case 'object': return this.encodeObject(json as Record<string, unknown>);
+      case 'number':
+        return this.encodeNumber(json);
+      case 'string':
+        return this.encodeString(json);
+      case 'object':
+        return this.encodeObject(json as Record<string, unknown>);
     }
   }
 
   private encodeNumber(num: number) {
     if (isSafeInteger(num)) {
-      if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
-      if ((num < 0) && (num >= -0b100000)) return this.u8(0b11100000 | (-num - 1));
+      if (num >= 0 && num <= 0b1111111) return this.u8(num);
+      if (num < 0 && num >= -0b100000) return this.u8(0b11100000 | (-num - 1));
       if (num > 0) {
-        if (num <= 0xFF) return this.u16((0xcc << 8) | num);
-        else if (num <= 0xFFFF) {
+        if (num <= 0xff) return this.u16((0xcc << 8) | num);
+        else if (num <= 0xffff) {
           this.uint8[this.offset++] = 0xcd;
           this.u16(num);
           return;
-        } else if (num <= 0xFFFFFFFF) {
+        } else if (num <= 0xffffffff) {
           this.uint8[this.offset++] = 0xce;
           this.u32(num);
           return;
         }
       } else {
-        if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
-        else if (num > -0x7FFF) {
+        if (num > -0x7f) return this.u16((0xd0 << 8) | (num & 0xff));
+        else if (num > -0x7fff) {
           this.uint8[this.offset++] = 0xd1;
           this.i16(num);
           return;
-        } else if (num > -0x7FFFFFFF) {
+        } else if (num > -0x7fffffff) {
           this.uint8[this.offset++] = 0xd2;
           this.i32(num);
           return;
@@ -83,17 +89,17 @@ export class Encoder {
     this.offset += 8;
   }
 
-  private encodeString (str: string) {
+  private encodeString(str: string) {
     const length = str.length;
     const maxSize = length * 4;
     const output = this.uint8;
     let lengthOffset: number = this.offset;
     if (maxSize <= 0b11111) this.offset++;
-    else if (maxSize <= 0xFF) {
+    else if (maxSize <= 0xff) {
       output[this.offset++] = 0xd9;
       lengthOffset = this.offset;
       this.offset++;
-    } else if (maxSize <= 0xFFFF) {
+    } else if (maxSize <= 0xffff) {
       output[this.offset++] = 0xda;
       lengthOffset = this.offset;
       this.offset += 2;
@@ -135,32 +141,32 @@ export class Encoder {
     }
     this.offset = offset;
     if (maxSize <= 0b11111) this.view.setUint8(lengthOffset, 0b10100000 | (offset - lengthOffset - 1));
-    else if (maxSize <= 0xFF) this.view.setUint8(lengthOffset, offset - lengthOffset - 1);
-    else if (maxSize <= 0xFFFF) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
+    else if (maxSize <= 0xff) this.view.setUint8(lengthOffset, offset - lengthOffset - 1);
+    else if (maxSize <= 0xffff) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
-  private encodeArray (arr: unknown[]): void {
+  private encodeArray(arr: unknown[]): void {
     const length = arr.length;
     if (length <= 0b1111) this.u8(0b10010000 | length);
-    else if (length <= 0xFFFF) {
+    else if (length <= 0xffff) {
       this.u8(0xdc);
       this.u16(length);
-    } else if (length <= 0xFFFFFFFF) {
+    } else if (length <= 0xffffffff) {
       this.u8(0xdd);
       this.u32(length);
     } else return;
     for (let i = 0; i < length; i++) this.encodeAny(arr[i]);
   }
 
-  private encodeObject (obj: Record<string, unknown>): void {
+  private encodeObject(obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
     if (length <= 0b1111) this.u8(0b10000000 | length);
-    else if (length <= 0xFFFF) {
+    else if (length <= 0xffff) {
       this.u8(0xde);
       this.u16(length);
-    } else if (length <= 0xFFFFFFFF) {
+    } else if (length <= 0xffffffff) {
       this.u8(0xdf);
       this.u32(length);
     } else return;
@@ -170,26 +176,26 @@ export class Encoder {
       this.encodeAny(obj[key]);
     }
   }
-  
+
   private u8(char: number) {
     this.view.setUint8(this.offset++, char);
   }
-  
+
   private u16(word: number) {
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
-  
+
   private u32(dword: number) {
     this.view.setUint32(this.offset, dword);
     this.offset += 4;
   }
-  
+
   private i16(word: number) {
     this.view.setInt16(this.offset, word);
     this.offset += 2;
   }
-  
+
   private i32(dword: number) {
     this.view.setInt32(this.offset, dword);
     this.offset += 4;

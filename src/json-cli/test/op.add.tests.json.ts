@@ -1,29 +1,29 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
     comment: 'Can set root document',
     doc: null,
-    patch: [{op: 'add', path: '', value:  {a: 'b'}}],
-    expected: {a: 'b'}
+    patch: [{op: 'add', path: '', value: {a: 'b'}}],
+    expected: {a: 'b'},
   },
   {
     comment: 'Can set empty object key to string',
     doc: {},
     patch: [{op: 'add', path: '/a', value: 'b'}],
-    expected: {a: 'b'}
+    expected: {a: 'b'},
   },
   {
     comment: 'Can set empty object key to object',
     doc: {},
     patch: [{op: 'add', path: '/aga', value: {foo: 'bar'}}],
-    expected: {aga: {foo: 'bar'}}
+    expected: {aga: {foo: 'bar'}},
   },
   {
     comment: 'Can update existing key',
     doc: {z: 1},
     patch: [{op: 'add', path: '/z', value: 2}],
-    expected: {z: 2}
+    expected: {z: 2},
   },
   {
     comment: 'Can insert into first level empty array using index "0"',
@@ -41,7 +41,7 @@ const testCases: TestCase[] = [
     comment: 'Throws error when inserting into empty first level array at index "1"',
     doc: [],
     patch: [{op: 'add', path: '/1', value: null}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
   {
     comment: 'Can insert into second level empty array using index "0"',
@@ -59,7 +59,7 @@ const testCases: TestCase[] = [
     comment: 'Throws error when inserting into empty first level array at index "1"',
     doc: {'1': []},
     patch: [{op: 'add', path: '/1/1', value: null}],
-    error: "INVALID_INDEX",
+    error: 'INVALID_INDEX',
   },
   {
     comment: 'Can execute multiple updates in a row',
@@ -92,7 +92,7 @@ const testCases: TestCase[] = [
         street: 'Facebook Boulevard 53',
         zip: '101',
       },
-    }
+    },
   },
 ];
 

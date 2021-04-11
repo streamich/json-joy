@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -20,7 +20,7 @@ const testCases: TestCase[] = [
     ],
     expected: {
       hello: 'world',
-    }
+    },
   },
   {
     comment: 'At root, returns error when object list not match',

@@ -200,8 +200,7 @@ const validateOperationInsertText = (op: OperationStrIns) => {
 
 const validateOperationRemoveText = (op: OperationStrDel) => {
   validateNonNegativeInteger(op.pos);
-  if (op.str === undefined && op.len === undefined)
-    throw new Error('Either "text" or "pos" need to be set.');
+  if (op.str === undefined && op.len === undefined) throw new Error('Either "text" or "pos" need to be set.');
   if (op.str !== undefined) {
     if (typeof op.str !== 'string') throw new Error('Expected a string "text" field.');
   } else {
@@ -212,8 +211,7 @@ const validateOperationRemoveText = (op: OperationStrDel) => {
 const validateOperationExtend = (op: OperationExtend) => {
   if (!op.props || typeof op.props !== 'object') throw new Error('Invalid "props" field.');
   if (op.deleteNull !== undefined)
-    if (typeof op.deleteNull !== 'boolean')
-      throw new Error('Expected "deleteNull" field to be boolean.');
+    if (typeof op.deleteNull !== 'boolean') throw new Error('Expected "deleteNull" field to be boolean.');
 };
 
 const validateOperationMerge = (op: OperationMerge) => {

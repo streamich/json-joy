@@ -12,7 +12,20 @@ import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
-import {JsonCrdtSnapshot, JsonCrdtTimestamp, RootJsonCrdtNode, JsonCrdtNode, ObjectJsonCrdtNode, ArrayJsonCrdtNode, ArrayJsonCrdtChunk, JsonCrdtRgaTombstone, ValueJsonCrdtNode, StringJsonCrdtNode, StringJsonCrdtChunk, ConstantJsonCrdtNode} from './types';
+import {
+  JsonCrdtSnapshot,
+  JsonCrdtTimestamp,
+  RootJsonCrdtNode,
+  JsonCrdtNode,
+  ObjectJsonCrdtNode,
+  ArrayJsonCrdtNode,
+  ArrayJsonCrdtChunk,
+  JsonCrdtRgaTombstone,
+  ValueJsonCrdtNode,
+  StringJsonCrdtNode,
+  StringJsonCrdtChunk,
+  ConstantJsonCrdtNode,
+} from './types';
 
 export class Decoder {
   public decode({clock, root}: JsonCrdtSnapshot): Document {
@@ -47,11 +60,16 @@ export class Decoder {
 
   protected decodeNode(doc: Document, node: JsonCrdtNode): JsonNode {
     switch (node.type) {
-      case 'obj': return this.decodeObj(doc, node);
-      case 'arr': return this.decodeArr(doc, node);
-      case 'str': return this.decodeStr(doc, node);
-      case 'val': return this.decodeVal(doc, node);
-      case 'const': return this.decodeConst(doc, node);
+      case 'obj':
+        return this.decodeObj(doc, node);
+      case 'arr':
+        return this.decodeArr(doc, node);
+      case 'str':
+        return this.decodeStr(doc, node);
+      case 'val':
+        return this.decodeVal(doc, node);
+      case 'const':
+        return this.decodeConst(doc, node);
     }
     throw new Error('UNKNOWN_NODE');
   }
@@ -81,7 +99,11 @@ export class Decoder {
       const chunk = new ArrayChunk(id, undefined);
       chunk.deleted = (c as JsonCrdtRgaTombstone).span;
       return chunk;
-    } else return new ArrayChunk(id, (c as ArrayJsonCrdtChunk).nodes.map(n => this.decodeNode(doc, n)));
+    } else
+      return new ArrayChunk(
+        id,
+        (c as ArrayJsonCrdtChunk).nodes.map((n) => this.decodeNode(doc, n)),
+      );
   }
 
   protected decodeStr(doc: Document, node: StringJsonCrdtNode): StringType {
@@ -108,10 +130,14 @@ export class Decoder {
 
   protected decodeConst(doc: Document, node: ConstantJsonCrdtNode): ConstantType {
     switch (node.value) {
-      case null: return NULL;
-      case true: return TRUE;
-      case false: return FALSE;
-      case undefined: return UNDEFINED;
+      case null:
+        return NULL;
+      case true:
+        return TRUE;
+      case false:
+        return FALSE;
+      case undefined:
+        return UNDEFINED;
     }
     return new ConstantType(ORIGIN, node.value);
   }

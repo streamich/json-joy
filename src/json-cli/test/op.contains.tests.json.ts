@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -11,7 +11,7 @@ const testCases: TestCase[] = [
         value: 'oo b',
       },
     ],
-    expected: 'foo bar'
+    expected: 'foo bar',
   },
   {
     comment: 'At root, succeeds when matches start of the string',
@@ -23,7 +23,7 @@ const testCases: TestCase[] = [
         value: 'foo',
       },
     ],
-    expected: 'foo bar'
+    expected: 'foo bar',
   },
   {
     comment: 'At root, throws when matches substring incorrectly',

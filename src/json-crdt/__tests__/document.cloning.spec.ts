@@ -27,8 +27,8 @@ describe('clone()', () => {
     const builder3 = new PatchBuilder(doc1.clock);
     builder3.setKeys(obj, [['hmmm', builder3.json('aha')]]);
     doc1.applyPatch(builder3.patch);
-    expect(doc1.toJson()).toEqual({ foo: 'bar', hh: true, hmmm: 'aha' });
-    expect(doc2.toJson()).toEqual({ foo: 'bar', hh: true, lala: { gaga: 'land' } });
+    expect(doc1.toJson()).toEqual({foo: 'bar', hh: true, hmmm: 'aha'});
+    expect(doc2.toJson()).toEqual({foo: 'bar', hh: true, lala: {gaga: 'land'}});
   });
 });
 
@@ -67,7 +67,7 @@ describe('fork()', () => {
     const builder3 = new PatchBuilder(doc1.clock);
     builder3.insArr(arr, arr, [builder3.json(false)]);
     doc1.applyPatch(builder3.patch);
-    expect(doc1.toJson()).toEqual([ false, 1, 2, 'lol' ]);
-    expect(doc2.toJson()).toEqual([ true, 1, 2, 'lol' ]);
+    expect(doc1.toJson()).toEqual([false, 1, 2, 'lol']);
+    expect(doc2.toJson()).toEqual([true, 1, 2, 'lol']);
   });
 });

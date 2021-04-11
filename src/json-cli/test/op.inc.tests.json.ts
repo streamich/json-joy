@@ -1,4 +1,4 @@
-import { TestCase } from "./types";
+import {TestCase} from './types';
 
 const testCases: TestCase[] = [
   {
@@ -20,7 +20,7 @@ const testCases: TestCase[] = [
       val2: 1,
       val3: 2,
       val4: 1,
-    }
+    },
   },
   {
     comment: 'Can use arbitrary increment value, and can decrement',
@@ -32,20 +32,18 @@ const testCases: TestCase[] = [
       {op: 'inc', path: '/foo', inc: -3},
     ],
     expected: {
-      foo: 8
-    }
+      foo: 8,
+    },
   },
   {
     comment: 'Increment can be a floating point number',
     doc: {
       foo: 1,
     },
-    patch: [
-      {op: 'inc', path: '/foo', inc: .1},
-    ],
+    patch: [{op: 'inc', path: '/foo', inc: 0.1}],
     expected: {
-      foo: 1.1
-    }
+      foo: 1.1,
+    },
   },
 
   {
@@ -58,7 +56,7 @@ const testCases: TestCase[] = [
         inc: 5,
       },
     ],
-    expected: 5
+    expected: 5,
   },
   {
     comment: 'At root, increments from -0 to 5',
@@ -70,7 +68,7 @@ const testCases: TestCase[] = [
         inc: 5,
       },
     ],
-    expected: 5
+    expected: 5,
   },
 
   {
@@ -83,7 +81,7 @@ const testCases: TestCase[] = [
         inc: 5,
       },
     ],
-    expected: {lala: 5}
+    expected: {lala: 5},
   },
   {
     comment: 'In object, casts string to number',
@@ -95,7 +93,7 @@ const testCases: TestCase[] = [
         inc: 5,
       },
     ],
-    expected: {lala: 9}
+    expected: {lala: 9},
   },
   {
     comment: 'In object, can increment twice',
@@ -112,7 +110,7 @@ const testCases: TestCase[] = [
         inc: 2,
       },
     ],
-    expected: {lala: 3}
+    expected: {lala: 3},
   },
 
   {
@@ -125,7 +123,7 @@ const testCases: TestCase[] = [
         inc: -3,
       },
     ],
-    expected: [-3]
+    expected: [-3],
   },
 ];
 

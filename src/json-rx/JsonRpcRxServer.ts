@@ -39,12 +39,17 @@ export class JsonRpcRxServer<Context = unknown> {
     this.notify(name, ctx, payload);
   }
 
-  public async onMessage(ctx: Context, message: MessageOrMessageBatch): Promise<MessageOrMessageBatch<MessageComplete | MessageError> | null> {
+  public async onMessage(
+    ctx: Context,
+    message: MessageOrMessageBatch,
+  ): Promise<MessageOrMessageBatch<MessageComplete | MessageError> | null> {
     try {
       if (!isArray(message)) throw new Error('Invalid message');
       if (!message.length) return null;
       if (isArray(message[0]))
-        return await Promise.all((message as MessageBatch).map(msg => this.onMessage(ctx, msg))) as MessageOrMessageBatch<MessageComplete | MessageError> | null;
+        return (await Promise.all(
+          (message as MessageBatch).map((msg) => this.onMessage(ctx, msg)),
+        )) as MessageOrMessageBatch<MessageComplete | MessageError> | null;
       const [one] = message;
       if (typeof one === 'string') {
         this.onNotification(ctx, message as MessageNotification);
@@ -53,8 +58,10 @@ export class JsonRpcRxServer<Context = unknown> {
       if (one > 0) return await this.onSubscribe(ctx, message as MessageSubscribe);
       throw new Error('Invalid message');
     } catch (error) {
-      const id = isArray(message) && (typeof message[0] === 'number') && (message[0] > 0) && (Math.round(message[0]) === message[0])
-        ? message[0] : -1;
+      const id =
+        isArray(message) && typeof message[0] === 'number' && message[0] > 0 && Math.round(message[0]) === message[0]
+          ? message[0]
+          : -1;
       return [-1, id, {message: error instanceof Error ? error.message : String(error)}];
     }
   }

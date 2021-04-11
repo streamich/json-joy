@@ -1,5 +1,5 @@
-import { deepClone } from "../../json-patch/util";
-import { TestCase } from "./types";
+import {deepClone} from '../../json-patch/util';
+import {TestCase} from './types';
 
 const values: [string, unknown][] = [
   ['"null"', null],
@@ -21,7 +21,7 @@ const testCases: TestCase[] = [
   {
     comment: 'Replacing non-existing object key, first level',
     doc: {},
-    patch: [{op: 'replace', path: '/foo', value:  'bar'}],
+    patch: [{op: 'replace', path: '/foo', value: 'bar'}],
     error: 'NOT_FOUND',
   },
 ];
@@ -70,8 +70,8 @@ for (const [name, doc] of values) {
         test: {
           '1': 1234,
           '2': {
-            'gg': deepClone(doc)
-          }
+            gg: deepClone(doc),
+          },
         },
         gg: true,
         aha: null,
@@ -83,8 +83,8 @@ for (const [name, doc] of values) {
         test: {
           '1': 1234,
           '2': {
-            'gg': deepClone(doc2)
-          }
+            gg: deepClone(doc2),
+          },
         },
         gg: true,
         aha: null,
@@ -97,27 +97,9 @@ for (const [name, doc] of values) {
   for (const [name2, doc2] of values) {
     testCases.push({
       comment: `Replace first level array ${name} by ${name2}, in the middle of array`,
-      doc: [
-        'bar',
-        123,
-        false,
-        {},
-        [],
-        deepClone(doc),
-        true,
-        null,
-      ],
+      doc: ['bar', 123, false, {}, [], deepClone(doc), true, null],
       patch: [{op: 'replace', path: '/5', value: deepClone(doc2)}],
-      expected: [
-        'bar',
-        123,
-        false,
-        {},
-        [],
-        deepClone(doc2),
-        true,
-        null,
-      ],
+      expected: ['bar', 123, false, {}, [], deepClone(doc2), true, null],
     });
   }
 }
@@ -128,20 +110,22 @@ for (const [name, doc] of values) {
       comment: `Replace deeply nested array ${name} by ${name2}, at the first position`,
       doc: [
         'bar',
-        [123,
+        [
+          123,
           {
             hmm: [deepClone(doc), 1, 2, 3, 4],
           },
-        ]
+        ],
       ],
       patch: [{op: 'replace', path: '/1/1/hmm/0', value: deepClone(doc2)}],
       expected: [
         'bar',
-        [123,
+        [
+          123,
           {
             hmm: [deepClone(doc2), 1, 2, 3, 4],
           },
-        ]
+        ],
       ],
     });
   }

@@ -1,5 +1,5 @@
 export class RelativeTimestamp {
-  public constructor (public readonly sessionIndex: number, public readonly timeDiff: number) {}
+  public constructor(public readonly sessionIndex: number, public readonly timeDiff: number) {}
 
   public toJson() {
     return [this.sessionIndex, this.timeDiff];
