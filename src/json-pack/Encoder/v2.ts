@@ -1,20 +1,22 @@
 const isSafeInteger = Number.isSafeInteger;
 
 export class Encoder {
-  protected uint8!: Uint8Array;
-  protected view!: DataView;
-  protected offset: number = 0;
+  private buf!: ArrayBuffer;
+  private uint8!: Uint8Array;
+  private view!: DataView;
+  private offset: number = 0;
 
   constructor(size: number = 1024, private readonly maxBufferSize: number = 1024 * 1024) {
     this.allocate(size);
   }
 
   private allocate(size: number) {
-    this.uint8 = new Uint8Array(size);
-    this.view = new DataView(this.uint8.buffer);
+    this.buf = new ArrayBuffer(size);
+    this.uint8 = new Uint8Array(this.buf);
+    this.view = new DataView(this.buf);
   }
 
-  protected ensureOffset(offset: number) {
+  private ensureOffset(offset: number) {
     this.view.getUint8(offset);
   }
 
@@ -25,7 +27,7 @@ export class Encoder {
       return this.uint8.slice(0, this.offset);
     } catch (error) {
       if (error instanceof RangeError) {
-        const nextSize = this.uint8.byteLength * 2;
+        const nextSize = this.buf.byteLength * 2;
         if (nextSize > this.maxBufferSize) throw error;
         this.allocate(nextSize);
         return this.encode(json);
@@ -34,7 +36,7 @@ export class Encoder {
     }
   }
 
-  protected encodeAny(json: unknown): void {
+  private encodeAny(json: unknown): void {
     switch (json) {
       case null: return this.u8(0xc0);
       case false: return this.u8(0xc2);
@@ -48,9 +50,10 @@ export class Encoder {
     }
   }
 
-  protected encodeNumber(num: number) {
+  private encodeNumber(num: number) {
     if (isSafeInteger(num)) {
       if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
+      if ((num < 0) && (num >= -0b100000)) return this.u8(0b11100000 | (-num - 1));
       if (num > 0) {
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {
@@ -63,7 +66,7 @@ export class Encoder {
           return;
         }
       } else {
-        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
+        if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
         else if (num > -0x7FFF) {
           this.uint8[this.offset++] = 0xd1;
           this.i16(num);
@@ -80,7 +83,7 @@ export class Encoder {
     this.offset += 8;
   }
 
-  protected encodeString (str: string) {
+  private encodeString (str: string) {
     const length = str.length;
     const maxSize = length * 4;
     const output = this.uint8;
@@ -137,7 +140,7 @@ export class Encoder {
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
-  protected encodeArray (arr: unknown[]): void {
+  private encodeArray (arr: unknown[]): void {
     const length = arr.length;
     if (length <= 0b1111) this.u8(0b10010000 | length);
     else if (length <= 0xFFFF) {
@@ -150,7 +153,7 @@ export class Encoder {
     for (let i = 0; i < length; i++) this.encodeAny(arr[i]);
   }
 
-  protected encodeObject (obj: Record<string, unknown>): void {
+  private encodeObject (obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
     if (length <= 0b1111) this.u8(0b10000000 | length);
@@ -168,26 +171,26 @@ export class Encoder {
     }
   }
   
-  protected u8(char: number) {
+  private u8(char: number) {
     this.view.setUint8(this.offset++, char);
   }
   
-  protected u16(word: number) {
+  private u16(word: number) {
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
   
-  protected u32(dword: number) {
+  private u32(dword: number) {
     this.view.setUint32(this.offset, dword);
     this.offset += 4;
   }
   
-  protected i16(word: number) {
+  private i16(word: number) {
     this.view.setInt16(this.offset, word);
     this.offset += 2;
   }
   
-  protected i32(dword: number) {
+  private i32(dword: number) {
     this.view.setInt32(this.offset, dword);
     this.offset += 4;
   }
