@@ -7,6 +7,8 @@ import {JsonNode} from '../../types';``
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
+import {ArrayType} from '../../types/rga-array/ArrayType';
 
 export class Decoder extends MessagePackDecoder {
   protected clockDecoder!: ClockDecoder;
@@ -37,18 +39,21 @@ export class Decoder extends MessagePackDecoder {
 
   protected decodeRoot(doc: Document): void {
     const id = this.ts();
-    const node = this.x >= this.uint8.byteLength ? null : this.decodeNode(doc);
+    const node = this.x >= this.uint8.byteLength ? null : this.decodeNode();
     doc.root = new DocRootType(doc, id, node);
   }
 
-  public decodeNode(doc: Document): JsonNode {
+  public decodeNode(): JsonNode {
     const byte = this.u8();
     if (byte < 0b10000000) return NULL;
     else if (byte <= 0b10001111) return this.decodeObj(byte & 0b1111);
+    else if (byte <= 0b10011111) return this.decodeArr(byte & 0b1111);
     else {
       switch (byte) {
         case 0xDE: return this.decodeObj(this.u16());
         case 0xDF: return this.decodeObj(this.u32());
+        case 0xDC: return this.decodeArr(this.u16());
+        case 0xDD: return this.decodeArr(this.u32());
       }
     }
     return NULL;
@@ -66,9 +71,32 @@ export class Decoder extends MessagePackDecoder {
     const id = this.ts();
     const length = this.vuint57();
     const key = this.str(length);
-    const node = this.decodeNode(this.doc);
+    const node = this.decodeNode();
     const chunk = new ObjectChunk(id, node);
     obj.putChunk(key, chunk);
+  }
+
+  public decodeArr(length: number): ArrayType {
+    const id = this.ts();
+    const obj = new ArrayType(this.doc, id);
+    for (let i = 0; i < length; i++) this.decodeArrChunk(obj);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeArrChunk(obj: ArrayType): void {
+    const [deleted, length] = this.b1vuint56();
+    const id = this.ts();
+    if (deleted) {
+      const chunk = new ArrayChunk(id, undefined);
+      chunk.deleted = length;
+      obj.append(chunk);
+    } else {
+      const nodes: JsonNode[] = [];
+      for (let i = 0; i < length; i++) nodes.push(this.decodeNode());
+      const chunk = new ArrayChunk(id, nodes);
+      obj.append(chunk);
+    }
   }
 
   public clock(): [x: number, z: number] {

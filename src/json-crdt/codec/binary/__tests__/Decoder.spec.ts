@@ -68,6 +68,30 @@ test('decodes an object with more than 15 keys', () => {
   expect(doc2.toJson()).toEqual(json);
 });
 
+test('decodes an array with single entry', () => {
+  const doc1 = new Document(new VectorClock(222, 0));
+  const json = [{}];
+  doc1.api.root(json).commit();
+  const decoder = new Decoder();
+  const encoder = new Encoder();
+  const encoded = encoder.encode(doc1);
+  const doc2 = decoder.decode(encoded);
+  expect(doc1.toJson()).toEqual(json);
+  expect(doc2.toJson()).toEqual(json);
+});
+
+test('decodes nested array with two nodes', () => {
+  const doc1 = new Document(new VectorClock(222, 0));
+  const json = [{}, []];
+  doc1.api.root(json).commit();
+  const decoder = new Decoder();
+  const encoder = new Encoder();
+  const encoded = encoder.encode(doc1);
+  const doc2 = decoder.decode(encoded);
+  expect(doc1.toJson()).toEqual(json);
+  expect(doc2.toJson()).toEqual(json);
+});
+
 // const encoder = new Encoder();
 
 // test('decodes all types', () => {
