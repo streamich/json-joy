@@ -22,6 +22,13 @@ export class Decoder extends MessagePackDecoder {
 
   protected decodeRoot(doc: Document): void {}
 
+  public id(): [x: number, y: number] {
+    const byte = this.u8();
+    if (byte <= 0b0_111_1111) return [byte >>> 4, byte & 0b1111];
+    this.back(1);
+    return [this.b1vuint28()[1], this.vuint39()];
+  }
+
   public vuint57(): number {
     const o1 = this.u8();
     if (o1 <= 0b01111111) return o1;

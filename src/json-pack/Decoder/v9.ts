@@ -190,6 +190,10 @@ export class Decoder {
     return new JsonPackExtension(type, buf);
   }
 
+  protected back(bytes: number) {
+    this.x -= bytes;
+  }
+
   /** @ignore */
   protected u8(): number {
     return this.view.getUint8(this.x++);
