@@ -137,4 +137,17 @@ export class Decoder extends MessagePackDecoder {
                 (o1 & 0b0_0_111111))))),
     ];
   }
+
+  public b1vuint28(): [flag: boolean, value56: number] {
+    const byte = this.u8();
+    const flag: boolean = !!(byte & 0b10000000);
+    const o1 = 0b0_1_111111 & byte;
+    if (o1 <= 0b0_0_111111) return [flag, o1];
+    const o2 = this.u8();
+    if (o2 <= 0b01111111) return [flag, (o2 << 6) | (o1 & 0b0_0_111111)];
+    const o3 = this.u8();
+    if (o3 <= 0b01111111) return [flag, (o3 << 13) | ((o2 & 0b01111111) << 6) | (o1 & 0b0_0_111111)];
+    const o4 = this.u8();
+    return [flag, (o4 << 20) | ((o3 & 0b01111111) << 13) | ((o2 & 0b01111111) << 6) | (o1 & 0b0_0_111111)];
+  }
 }
