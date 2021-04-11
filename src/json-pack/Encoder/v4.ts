@@ -80,6 +80,20 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     this.offset += 8;
   }
 
+  public encodeStringHeader(length: number): void {
+    if (length <= 0b11111) this.u8(0b10100000 | length);
+    else if (length <= 0xFF) {
+      this.u8(0xD9);
+      this.u8(length);
+    } else if (length <= 0xFFFF) {
+      this.u8(0xDA);
+      this.u16(length);
+    } else if (length <= 0xFFFFFFFF) {
+      this.u8(0xDB);
+      this.u32(length);
+    }
+  }
+
   public encodeString(str: string) {
     const length = str.length;
     const maxSize = length * 4;

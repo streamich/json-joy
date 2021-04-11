@@ -198,6 +198,13 @@ export class ArrayType implements JsonNode {
     while ((curr = curr.right)) yield curr;
   }
 
+  public size(): number {
+    let curr: ArrayChunk | null = this.start;
+    let size: number = 0;
+    while ((curr = curr.right)) size++;
+    return size;
+  }
+
   public toString(tab: string = ''): string {
     let str = `${tab}ArrayType(${this.id.toDisplayString()})`;
     let curr: ArrayChunk | null = this.start;

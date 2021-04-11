@@ -1,6 +1,138 @@
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
+import {utf8Count} from '../../../util/utf8';
+import {Document} from '../../document';
+import {JsonNode} from '../../types';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
+import {ArrayType} from '../../types/rga-array/ArrayType';
+import {StringChunk} from '../../types/rga-string/StringChunk';
+import {StringType} from '../../types/rga-string/StringType';
 
 export class Encoder extends JsonPackEncoder {
+  protected clockEncoder!: ClockEncoder;
+
+  public encode(doc: Document): Uint8Array {
+    this.reset();
+    this.clockEncoder = new ClockEncoder(doc.clock);
+    this.encodeRoot(doc.root);
+    return this.flush();
+  }
+
+  protected ts(ts: LogicalTimestamp) {
+    const id = this.clockEncoder.append(ts);
+    this.id(id.sessionIndex, id.timeDiff);
+  }
+
+  protected encodeRoot(root: DocRootType): void {
+    this.ts(root.id);
+    if (root.node) this.encodeNode(root.node);
+  }
+
+  protected encodeNode(node: JsonNode): void {
+    if (node instanceof ObjectType) return this.encodeObj(node);
+    else if (node instanceof ArrayType) return this.encodeArr(node);
+    else if (node instanceof StringType) return this.encodeStr(node);
+    // else if (node instanceof ValueType) return this.encodeVal(arr, node);
+    // else if (node instanceof ConstantType) return this.encodeConst(arr, node);
+    throw new Error('UNKNOWN_NODE');
+  }
+
+  protected encodeObj(obj: ObjectType): void {
+    const length = obj.latest.size;
+    this.encodeObjectHeader(length);
+    this.ts(obj.id);
+    for (const [key, chunk] of obj.latest.entries())
+      this.encodeObjChunk(key, chunk);
+  }
+
+  protected encodeObjChunk(key: string, chunk: ObjectChunk): void {
+    this.ts(chunk.id);
+    const length = utf8Count(key);
+    this.vuint57(length);
+    this.encodeUtf8(key, length);
+    this.encodeNode(chunk.node);
+  }
+
+  protected encodeArr(obj: ArrayType): void {
+    const length = obj.size();
+    this.encodeArrayHeader(length);
+    this.ts(obj.id);
+    for (const chunk of obj.chunks()) this.encodeArrChunk(chunk);
+  }
+
+  protected encodeArrChunk(chunk: ArrayChunk): void {
+    if (chunk.deleted) {
+      this.b1vuint56(true, chunk.deleted);
+      this.ts(chunk.id);
+    } else {
+      const nodes = chunk.nodes!;
+      const length = nodes.length;
+      this.b1vuint56(false, length);
+      this.ts(chunk.id);
+      for (let i = 0; i < length; i++) this.encodeNode(nodes[i]);
+    }
+  }
+
+  protected encodeStr(obj: StringType): void {
+    const length = obj.size();
+    this.encodeStringHeader(length);
+    this.ts(obj.id);
+    for (const chunk of obj.chunks()) this.encodeStrChunk(chunk);
+  }
+
+  protected encodeStrChunk(chunk: StringChunk): void {
+    if (chunk.deleted) {
+      this.b1vuint56(true, chunk.deleted);
+      this.ts(chunk.id);
+    } else {
+      const text = chunk.str!;
+      const length = utf8Count(text);
+      this.b1vuint56(false, length);
+      this.ts(chunk.id);
+      this.encodeUtf8(text, length);
+    }
+  }
+
+  private encodeUtf8(str: string, byteLength: number): void {
+    this.ensureCapacity(byteLength);
+    const uint8 = this.uint8;
+    let offset = this.offset;
+    let pos = 0;
+    while (pos < length) {
+      let value = str.charCodeAt(pos++);
+      if ((value & 0xffffff80) === 0) {
+        uint8[offset++] = value;
+        continue;
+      } else if ((value & 0xfffff800) === 0) {
+        uint8[offset++] = ((value >> 6) & 0x1f) | 0xc0;
+      } else {
+        if (value >= 0xd800 && value <= 0xdbff) {
+          if (pos < length) {
+            const extra = str.charCodeAt(pos);
+            if ((extra & 0xfc00) === 0xdc00) {
+              pos++;
+              value = ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000;
+            }
+          }
+        }
+        if ((value & 0xffff0000) === 0) {
+          uint8[offset++] = ((value >> 12) & 0x0f) | 0xe0;
+          uint8[offset++] = ((value >> 6) & 0x3f) | 0x80;
+        } else {
+          uint8[offset++] = ((value >> 18) & 0x07) | 0xf0;
+          uint8[offset++] = ((value >> 12) & 0x3f) | 0x80;
+          uint8[offset++] = ((value >> 6) & 0x3f) | 0x80;
+        }
+      }
+      uint8[offset++] = (value & 0x3f) | 0x80;
+    }
+    this.offset = offset;
+  }
+
   /**
    * Encoding schema:
    * 

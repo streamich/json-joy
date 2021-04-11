@@ -247,8 +247,9 @@ Each array chunk contains the bellow parts in the following order.
 1. Number of nodes in the chunk, encoded using b1vuint56.
    1. If b1vuint56 boolean bit is 1, the chunk is considered deleted. It is
       followed by the ID of the first chunk element, encode as a relative ID.
-   2. If b1vuint56 boolean bit is 0, the following data contains and ordered flat
-      list of nodes, encoded as nodes.
+   2. If b1vuint56 boolean bit is 0, the following data contains the first chunk
+      element ID, encoded as relative ID, followed a flat ordered list of nodes,
+      encoded as nodes.
 
 ```
 Deleted chunk:
@@ -257,9 +258,9 @@ Deleted chunk:
 +===========+========+
 
 Not deleted chunk:
-+===========+=========+
-| b1vuint56 |  nodes  |
-+===========+=========+
++===========+========+=========+
+| b1vuint56 |   ID   |  nodes  |
++===========+========+=========+
 ```
 
 Assuming the node count is encoded using `t` bits.
@@ -281,14 +282,14 @@ A deleted chunk with 256 nodes:
 +--------+--------+========+
 
 A chunk with nodes which are not deleted:
-+--------+........+········+=========+
-|0?tttttt|?ttttttt|tttttttt|  nodes  |
-+--------+........+········+=========+
++--------+........+········+========+=========+
+|0?tttttt|?ttttttt|tttttttt|   ID   |  nodes  |
++--------+........+········+========+=========+
 
 A chunk with 3 nodes:
-+--------+========+========+========+
-|00000011| node 1 | node 2 | node 3 |
-+--------+========+========+========+
++--------+========+========+========+========+
+|00000011|   ID   | node 1 | node 2 | node 3 |
++--------+========+========+========+========+
 ```
 
 

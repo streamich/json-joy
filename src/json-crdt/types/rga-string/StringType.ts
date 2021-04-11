@@ -171,6 +171,13 @@ export class StringType implements JsonNode {
     while ((curr = curr.right)) yield curr;
   }
 
+  public size(): number {
+    let curr: StringChunk | null = this.start;
+    let size: number = 0;
+    while ((curr = curr.right)) size++;
+    return size;
+  }
+
   public toString(tab: string = ''): string {
     let str = `${tab}StringType(${this.id.toDisplayString()})`;
     let curr: StringChunk | null = this.start;

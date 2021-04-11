@@ -23,12 +23,6 @@ export class Encoder {
     return snapshot;
   }
 
-  protected encodeClock(clock: VectorClock): number[] {
-    const data: number[] = [];
-    for (const c of clock.clocks.values()) data.push(c.sessionId, c.time);
-    return data;
-  }
-
   protected ts(arr: unknown[], ts: LogicalTimestamp) {
     this.clock.append(ts).push(arr);
   }
