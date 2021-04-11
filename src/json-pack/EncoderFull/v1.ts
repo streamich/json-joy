@@ -7,8 +7,7 @@ import {JsonPackValue} from "../JsonPackValue";
  * @category Encoder
  */
 export class EncoderFull extends Encoder {
-  /** @ignore */
-  protected encodeAny(json: unknown): void {
+  public encodeAny(json: unknown): void {
     switch (json) {
       case null: return this.u8(0xc0);
       case false: return this.u8(0xc2);

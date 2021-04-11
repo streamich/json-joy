@@ -17,26 +17,14 @@ Faster than built-in `JSON.stringify` and `JSON.parse`, and any other library.
 Encoding a 584 byte JSON object:
 
 ```
-node benchmarks/json-pack.js 
-json-joy/json-pack x 319,993 ops/sec ±0.94% (90 runs sampled), 3125 ns/op
-JSON.stringify x 260,149 ops/sec ±0.44% (93 runs sampled), 3844 ns/op
-@msgpack/msgpack x 203,601 ops/sec ±0.82% (90 runs sampled), 4912 ns/op
-msgpack-lite x 58,392 ops/sec ±1.44% (90 runs sampled), 17126 ns/op
-msgpack x 37,912 ops/sec ±0.83% (93 runs sampled), 26377 ns/op
-msgpack5 x 16,283 ops/sec ±0.87% (91 runs sampled), 61413 ns/op
-messagepack x 9,829 ops/sec ±2.46% (83 runs sampled), 101737 ns/op
-```
-
-Encoding a small 75 byte JSON object:
-
-```
-json-joy/json-pack x 2,903,882 ops/sec ±0.87% (94 runs sampled), 344 ns/op
-JSON.stringify x 1,040,593 ops/sec ±0.58% (93 runs sampled), 961 ns/op
-@msgpack/msgpack x 568,147 ops/sec ±1.27% (88 runs sampled), 1760 ns/op
-msgpack-lite x 247,792 ops/sec ±0.85% (78 runs sampled), 4036 ns/op
-msgpack x 133,727 ops/sec ±3.44% (73 runs sampled), 7478 ns/op
-msgpack5 x 81,600 ops/sec ±0.83% (87 runs sampled), 12255 ns/op
-messagepack x 78,630 ops/sec ±2.91% (81 runs sampled), 12718 ns/op
+node benchmarks/json-pack.js
+json-joy/json-pack 298,448 ops/sec ±0.82% (91 runs sampled), 3351 ns/op
+JSON.stringify x 245,893 ops/sec ±0.66% (90 runs sampled), 4067 ns/op
+@msgpack/msgpack x 193,003 ops/sec ±0.98% (90 runs sampled), 5181 ns/op
+msgpack-lite x 55,477 ops/sec ±1.40% (88 runs sampled), 18025 ns/op
+msgpack x 36,258 ops/sec ±0.78% (89 runs sampled), 27580 ns/op
+msgpack5 x 13,168 ops/sec ±0.78% (88 runs sampled), 75944 ns/op
+messagepack x 9,023 ops/sec ±4.97% (79 runs sampled), 110833 ns/op
 ```
 
 Decoding a 584 byte JSON object:
