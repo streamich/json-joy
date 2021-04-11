@@ -9,6 +9,8 @@ import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {StringChunk} from '../../types/rga-string/StringChunk';
+import {StringType} from '../../types/rga-string/StringType';
 
 export class Decoder extends MessagePackDecoder {
   protected clockDecoder!: ClockDecoder;
@@ -48,12 +50,16 @@ export class Decoder extends MessagePackDecoder {
     if (byte < 0b10000000) return NULL;
     else if (byte <= 0b10001111) return this.decodeObj(byte & 0b1111);
     else if (byte <= 0b10011111) return this.decodeArr(byte & 0b1111);
+    else if (byte <= 0b10111111) return this.decodeStr(byte & 0b11111);
     else {
       switch (byte) {
         case 0xDE: return this.decodeObj(this.u16());
         case 0xDF: return this.decodeObj(this.u32());
         case 0xDC: return this.decodeArr(this.u16());
         case 0xDD: return this.decodeArr(this.u32());
+        case 0xD9: return this.decodeStr(this.u8());
+        case 0xDA: return this.decodeStr(this.u16());
+        case 0xDB: return this.decodeStr(this.u32());
       }
     }
     return NULL;
@@ -95,6 +101,28 @@ export class Decoder extends MessagePackDecoder {
       const nodes: JsonNode[] = [];
       for (let i = 0; i < length; i++) nodes.push(this.decodeNode());
       const chunk = new ArrayChunk(id, nodes);
+      obj.append(chunk);
+    }
+  }
+
+  public decodeStr(length: number): StringType {
+    const id = this.ts();
+    const obj = new StringType(this.doc, id);
+    for (let i = 0; i < length; i++) this.decodeStrChunk(obj);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeStrChunk(obj: StringType): void {
+    const [deleted, length] = this.b1vuint56();
+    const id = this.ts();
+    if (deleted) {
+      const chunk = new StringChunk(id, undefined);
+      chunk.deleted = length;
+      obj.append(chunk);
+    } else {
+      const text = this.str(length);
+      const chunk = new StringChunk(id, text);
       obj.append(chunk);
     }
   }
