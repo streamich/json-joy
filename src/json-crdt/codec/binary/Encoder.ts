@@ -53,6 +53,43 @@ export class Encoder extends JsonPackEncoder {
   }
 
   /**
+   * In the below encoding diagrams bits are annotated as follows:
+   * 
+   * - "x" - vector table index, reference to the logical clock.
+   * - "y" - time difference.
+   * - "?" - whether the next byte is used for encoding.
+   * 
+   * If x is less than 8 and y is less than 16, the relative ID is encoded as a
+   * single byte:
+   * 
+   * ```
+   * +--------+
+   * |0xxxyyyy|
+   * +--------+
+   * ```
+   * 
+   * Otherwise the top bit of the first byte is set to 1; and x and y are encoded
+   * separately using b1vuint28 and vuint39, respectively.
+   * 
+   * ```
+   *       x          y
+   * +===========+=========+
+   * | b1vuint28 | vuint39 |
+   * +===========+=========+
+   * ```
+   * 
+   * The boolean flag of x b1vuint28 value is always set to 1.
+   */
+  public id(x: number, y: number): void {
+    if ((x <= 0b111) && (y <= 0b1111)) {
+      this.u8((x << 4) | y);
+    } else {
+      this.b1vuint28(true, x);
+      this.vuint39(y);
+    }
+  }
+
+  /**
    * #### `vuint57` (variable length unsigned 57 bit integer)
    * 
    * Variable length unsigned 57 bit integer is encoded using up to 8 bytes. The maximum
