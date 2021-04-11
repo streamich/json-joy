@@ -1,7 +1,6 @@
 const isSafeInteger = Number.isSafeInteger;
 
 export class Encoder {
-  private buf!: ArrayBuffer;
   private uint8!: Uint8Array;
   private view!: DataView;
   private offset: number = 0;
@@ -11,9 +10,8 @@ export class Encoder {
   }
 
   private allocate(size: number) {
-    this.buf = new ArrayBuffer(size);
-    this.uint8 = new Uint8Array(this.buf);
-    this.view = new DataView(this.buf);
+    this.uint8 = new Uint8Array(size);
+    this.view = new DataView(this.uint8.buffer);
   }
 
   private ensureOffset(offset: number) {
@@ -27,7 +25,7 @@ export class Encoder {
       return this.uint8.slice(0, this.offset);
     } catch (error) {
       if (error instanceof RangeError) {
-        const nextSize = this.buf.byteLength * 2;
+        const nextSize = this.uint8.byteLength * 2;
         if (nextSize > this.maxBufferSize) throw error;
         this.allocate(nextSize);
         return this.encode(json);
@@ -53,7 +51,6 @@ export class Encoder {
   private encodeNumber(num: number) {
     if (isSafeInteger(num)) {
       if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
-      if ((num < 0) && (num >= -0b100000)) return this.u8(0b11100000 | (-num - 1));
       if (num > 0) {
         if (num <= 0xFF) return this.u16((0xcc << 8) | num);
         else if (num <= 0xFFFF) {
@@ -66,7 +63,7 @@ export class Encoder {
           return;
         }
       } else {
-        if (num > -0x7F) return this.u16((0xd0 << 8) | (num & 0xFF));
+        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
         else if (num > -0x7FFF) {
           this.uint8[this.offset++] = 0xd1;
           this.i16(num);
