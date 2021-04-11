@@ -1,9 +1,9 @@
 const isSafeInteger = Number.isSafeInteger;
 
 export class Encoder {
-  private uint8!: Uint8Array;
-  private view!: DataView;
-  private offset: number = 0;
+  protected uint8!: Uint8Array;
+  protected view!: DataView;
+  protected offset: number = 0;
 
   constructor(size: number = 1024, private readonly maxBufferSize: number = 1024 * 1024) {
     this.allocate(size);
@@ -14,7 +14,7 @@ export class Encoder {
     this.view = new DataView(this.uint8.buffer);
   }
 
-  private ensureOffset(offset: number) {
+  protected ensureOffset(offset: number) {
     this.view.getUint8(offset);
   }
 
@@ -34,7 +34,7 @@ export class Encoder {
     }
   }
 
-  private encodeAny(json: unknown): void {
+  protected encodeAny(json: unknown): void {
     switch (json) {
       case null: return this.u8(0xc0);
       case false: return this.u8(0xc2);
@@ -48,7 +48,7 @@ export class Encoder {
     }
   }
 
-  private encodeNumber(num: number) {
+  protected encodeNumber(num: number) {
     if (isSafeInteger(num)) {
       if ((num >= 0) && (num <= 0b1111111)) return this.u8(num);
       if (num > 0) {
@@ -80,7 +80,7 @@ export class Encoder {
     this.offset += 8;
   }
 
-  private encodeString (str: string) {
+  protected encodeString (str: string) {
     const length = str.length;
     const maxSize = length * 4;
     const output = this.uint8;
@@ -137,7 +137,7 @@ export class Encoder {
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
-  private encodeArray (arr: unknown[]): void {
+  protected encodeArray (arr: unknown[]): void {
     const length = arr.length;
     if (length <= 0b1111) this.u8(0b10010000 | length);
     else if (length <= 0xFFFF) {
@@ -150,7 +150,7 @@ export class Encoder {
     for (let i = 0; i < length; i++) this.encodeAny(arr[i]);
   }
 
-  private encodeObject (obj: Record<string, unknown>): void {
+  protected encodeObject (obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
     if (length <= 0b1111) this.u8(0b10000000 | length);
@@ -168,26 +168,26 @@ export class Encoder {
     }
   }
   
-  private u8(char: number) {
+  protected u8(char: number) {
     this.view.setUint8(this.offset++, char);
   }
   
-  private u16(word: number) {
+  protected u16(word: number) {
     this.view.setUint16(this.offset, word);
     this.offset += 2;
   }
   
-  private u32(dword: number) {
+  protected u32(dword: number) {
     this.view.setUint32(this.offset, dword);
     this.offset += 4;
   }
   
-  private i16(word: number) {
+  protected i16(word: number) {
     this.view.setInt16(this.offset, word);
     this.offset += 2;
   }
   
-  private i32(dword: number) {
+  protected i32(dword: number) {
     this.view.setInt32(this.offset, dword);
     this.offset += 4;
   }
