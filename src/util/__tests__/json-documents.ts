@@ -3,6 +3,9 @@ export interface JsonDocument {
   json: unknown;
 }
 
+/**
+ * A list of various JSON documents used for testing.
+ */
 export const documents: JsonDocument[] = [
   {
     name: 'null',
@@ -43,10 +46,6 @@ export const documents: JsonDocument[] = [
   {
     name: 'eight byte word',
     json: 0x74747474239,
-  },
-  {
-    name: 'small negative integer',
-    json: -15,
   },
   {
     name: 'small negative integer (-1)',
