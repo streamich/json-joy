@@ -160,6 +160,19 @@ export const documents: JsonDocument[] = [
     },
   },
   {
+    name: 'umlaut in object key',
+    json: {
+      'ö': 1,
+    },
+  },
+  {
+    name: 'data in object after key with umlaut',
+    json: {
+      a: 'ö',
+      b: 1,
+    },
+  },
+  {
     name: 'blog post',
     json: {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
