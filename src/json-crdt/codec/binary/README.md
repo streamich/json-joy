@@ -5,6 +5,10 @@ state (snapshot) of a JSON CRDT document, which contains all the nodes and
 tombstones necessary to be able to merge any subsequent patches, but does not
 contain information to reconstruct previous patches.
 
+This document specifies two types of encoding: (1) where logical clocks are used
+as unique IDs; (2) where monotonically growing sequence number is used as unique
+IDs.
+
 
 ## Message encoding
 
@@ -38,81 +42,52 @@ Variable number of bytes:
 The general structure of the document is composed of three sections:
 
 1. Header section.
-2. Vector clock table section.
+2. Optional, Vector clock table section.
 3. Data section.
 
 
 ### The header section
 
-The header consists of a zero bytes.
+When document uses logical timestamps as IDs, the header consists of a single
+zero byte.
+
+```
++--------+
+|  0x00  |
++--------+
+```
+
+When document uses monotonically growing sequence numbers as Ids, the header
+consists of:
+
+1. a single byte set to 0x01
+2. The latest sequence number of the whole document, encoded as vuint57.
+
+```
++--------+=========+
+|  0x01  | vuint57 |
++--------+=========+
+```
+
+In both cases, if the type of the ID is known from the context, the first byte
+can be skipped.
 
 
 ### The vector clock table section
 
-The vector clock table section starts with a b1vuint56 integer. The boolean bit is set
-to 0. The value of this integer specifies the number of entries in the vector
-clock section.
+The vector clock section is present only if the document uses logical timestamps
+as IDs. If document uses increasing sequence numbers as Ids, this section is
+empty.
+
+The vector clock table section starts with a vuint57 integer. The value of this
+integer specifies the number of entries in the vector clock section.
 
 The remaining part of the vector clock section is composed of a flat ordered
-list of vector clock entries.
+list of logical clock entries.
 
-Each vector clock entry consists of: (1) a session ID; and (2) sequence time.
+Each logical clock entry consists of: (1) a session ID; and (2) sequence time.
 
-In below diagrams session ID is encoded as "x" and sequence time is encoded as
-"z".
-
-Each vector clock entry is variable length. It is at least 8 bytes long or at
-most 12 bytes long.
-
-The session ID is always encoded as a 53-bit unsigned integer. The sequence time
-is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
-size.
-
-The "?" bit specifies whether the next byte is part of the current vector clock
-entry. If "?" is set to 1, the next byte should be read. If "?" is set to 0, no
-further bytes should be read after the byte containing the "?" set to 0.
-
-Encoding schema:
-
-```
-byte 1                                                          byte 8                              byte 12
-+--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
-
- 33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
- 21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
- |                                     |               |      |                       |
- |                                     |               |      10th bit of z           |
- |                                     46th bit of x   |                              |
- |                                                     |                              22nd bit of z
- |                                                     53rd bit of x
- 32nd bit of x
-```
-
-Encoding examples of all the different length possibilities.
-
-```
-+--------+--------+--------+--------+--------+--------+-----|---+--------+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|0zz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+
-
-+--------+--------+--------+--------+--------+--------+-----|---+--------+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+········+
-
-+--------+--------+--------+--------+--------+--------+-----|---+--------+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+........+········+
-
-+--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+········+
-
-+--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
-```
+Each logical clock is encoded as uint53vuint39.
 
 
 ### The data section
@@ -500,19 +475,27 @@ val
 
 ### Relative ID
 
-Each *relative ID* encodes a way to decode an absolute ID using the vector clock
-table.
+*Absolute IDs* (or simply IDs) are unique totally ordered identifiers, used to
+identify everything that needs identification in the document such as its
+structural parts and/or operations.
 
-Absolute ID is a specific value of a logical clock. An ID consists of a
-(1) session ID and a (2) time sequence pair.
+A *relative ID* is a compact way to encode an absolute ID, however, to decode
+back the relative ID to an absolute ID, the vector clock table of the document
+is used or the latest sequence number of the document is used.
+
+Each relative ID is encoded differently, depending if the document uses logical
+clocks or sequence numbers for absolute IDs.
+
+#### When document uses logical clocks
 
 Each relative ID is a 2-tuple.
 
 1. The first element is the index in the vector
    clock table. For example, 1 means "the first logic clock" in the vector clock
    table, or 4 means "the fourth logical clock" in the vector clock table.
-2. The second element encodes the difference of the time value of the time of
-   the clock in the vector table and the absolute ID time.
+2. The second element encodes the difference of the time between the time of 
+   the logical clock in the vector clock table and the time component of the
+   absolute ID.
 
 In the below encoding diagrams bits are annotated as follows:
 
@@ -540,6 +523,18 @@ separately using b1vuint28 and vuint39, respectively.
 ```
 
 The boolean flag of x b1vuint28 value is always set to 1.
+
+
+#### When document uses sequence numbers
+
+Each relative ID is the difference between documents sequence number and the
+absolute ID and is encoded as vuint57.
+
+```
++=========+
+| vuint57 |
++=========+
+```
 
 
 ### Variable length integers
@@ -756,4 +751,65 @@ Encoding examples:
 +-|-------+--------+--------+--------+
 |x|1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
 +-^-------+--------+--------+--------+
+```
+
+
+#### `uint53vuint39` (unsigned 53 bit integer and variable length unsigned 39 bit integer)
+
+uint53vuint39 specifies encoding of a 2-tuple, which consists of
+
+1. Unsigned 53 bit integer, in below diagrams represented by "x"..
+2. Variable length unsigned 39 bit integer, in below diagrams represented by "z".
+
+Each uint53vuint39 entry is variable length. It is at least 8 bytes long and at
+most 12 bytes long.
+
+The "x" is always encoded as a 53-bit unsigned integer. The "z"
+is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
+size.
+
+The "?" bit specifies whether the next byte should be used for "z" decoding. If
+"?" is set to 1, the next byte should be read. If "?" is set to 0, no
+further bytes should be read after the byte containing the "?" set to 0.
+
+Encoding schema:
+
+```
+byte 1                                                          byte 8                              byte 12
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
+
+ 33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
+ 21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
+ |                                     |               |      |                       |
+ |                                     |               |      10th bit of z           |
+ |                                     46th bit of x   |                              |
+ |                                                     |                              22nd bit of z
+ |                                                     53rd bit of x
+ 32nd bit of x
+```
+
+Encoding examples of all the different length possibilities.
+
+```
++--------+--------+--------+--------+--------+--------+-----|---+--------+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|0zz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
 ```
