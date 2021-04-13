@@ -10,7 +10,7 @@ test('decodes clock', () => {
   const decoder = new Decoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc2.clock.sessionId).toBe(222);
+  expect(doc2.clock.getSessionId()).toBe(222);
   expect(doc2.clock.time).toBe(doc1.clock.time);
   expect(doc2.clock.clocks.size).toBe(1);
 });

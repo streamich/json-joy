@@ -1,5 +1,5 @@
 import type {Identifiable} from '../json-crdt-patch/Identifiable';
-import {LogicalTimestamp} from '../json-crdt-patch/clock';
+import {Timestamp} from '../json-crdt-patch/clock';
 
 export class IdentifiableIndex<T extends Identifiable> {
   /**
@@ -14,8 +14,9 @@ export class IdentifiableIndex<T extends Identifiable> {
    * is composed of multiple operations (op.span > 1), still retrieve that operation
    * if the actual ID is inside the operation.
    */
-  public get(id: LogicalTimestamp): undefined | T {
-    const {sessionId, time} = id;
+  public get(id: Timestamp): undefined | T {
+    const {time} = id;
+    const sessionId = id.getSessionId();
     const map1 = this.entries;
     const map2 = map1.get(sessionId);
     if (!map2) return undefined;
@@ -34,8 +35,10 @@ export class IdentifiableIndex<T extends Identifiable> {
    * Index an operation in the global operation index of this document.
    */
   public index(operation: T) {
-    const {sessionId, time} = operation.id;
-    let map = this.entries.get(operation.id.sessionId);
+    const {id} = operation;
+    const sessionId = id.getSessionId();
+    const {time} = id;
+    let map = this.entries.get(sessionId);
     if (!map) {
       map = new Map<number, T>();
       this.entries.set(sessionId, map);
@@ -43,9 +46,9 @@ export class IdentifiableIndex<T extends Identifiable> {
     map.set(time, operation);
   }
 
-  public delete(id: LogicalTimestamp) {
-    const {sessionId, time} = id;
-    const timeMap = this.entries.get(sessionId);
+  public delete(id: Timestamp) {
+    const {time} = id;
+    const timeMap = this.entries.get(id.getSessionId());
     if (!timeMap) return;
     timeMap.delete(time);
   }

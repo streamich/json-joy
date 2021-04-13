@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from './clock';
+import type {Timestamp} from './clock';
 
 /**
  * Something in the document that can be identified by ID. All operations have
@@ -8,7 +8,7 @@ export interface Identifiable {
   /**
    * Unique ID within a document.
    */
-  id: LogicalTimestamp;
+  id: Timestamp;
 
   /**
    * Sometimes an Identifiable can be a compound entity, which holds multiple

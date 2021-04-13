@@ -1,9 +1,9 @@
 import {json_string} from 'ts-brand-json';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {ConstantType} from './ConstantType';
 
 export class ConstantBuiltin extends ConstantType {
-  constructor(id: LogicalTimestamp, value: unknown, private readonly comp: json_string<unknown>) {
+  constructor(id: Timestamp, value: unknown, private readonly comp: json_string<unknown>) {
     super(id, value);
   }
 
@@ -14,8 +14,6 @@ export class ConstantBuiltin extends ConstantType {
   public clone(): ConstantType {
     return this;
   }
-
-  public *children(): IterableIterator<LogicalTimestamp> {}
 
   public toString(tab: string = ''): string {
     switch (this.value) {

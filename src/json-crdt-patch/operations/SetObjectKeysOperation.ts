@@ -1,11 +1,11 @@
 import type {IJsonCrdtPatchOperation} from './types';
-import type {LogicalTimestamp} from '../clock';
+import type {Timestamp} from '../clock';
 
 export class SetObjectKeysOperation implements IJsonCrdtPatchOperation {
   constructor(
-    public readonly id: LogicalTimestamp,
-    public readonly object: LogicalTimestamp,
-    public readonly tuples: [key: string, value: LogicalTimestamp][],
+    public readonly id: Timestamp,
+    public readonly object: Timestamp,
+    public readonly tuples: [key: string, value: Timestamp][],
   ) {}
 
   public span(): number {

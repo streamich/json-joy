@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
 import {utf8Count} from '../../../util/utf8';
@@ -34,11 +34,11 @@ export class Encoder extends JsonPackEncoder {
     this.view = new DataView(this.uint8.buffer);
     this.offset = 0;
     this.b1vuint56(false, length);
-    for (const {sessionId, time} of clockEncoder.clocks()) this.clock(sessionId, time);
+    for (const ts of clockEncoder.clocks()) this.clock(ts.getSessionId(), ts.time);
     this.buf(data, dataSize);
   }
 
-  protected ts(ts: LogicalTimestamp) {
+  protected ts(ts: Timestamp) {
     const id = this.clockEncoder.append(ts);
     this.id(id.sessionIndex, id.timeDiff);
   }

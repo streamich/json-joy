@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
@@ -7,14 +7,14 @@ import {ObjectChunk} from './ObjectChunk';
 export class ObjectType implements JsonNode {
   public readonly latest: Map<string, ObjectChunk> = new Map();
 
-  constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
+  constructor(public readonly doc: Document, public readonly id: Timestamp) {}
 
-  public get(key: string): undefined | LogicalTimestamp {
+  public get(key: string): undefined | Timestamp {
     const entry = this.latest.get(key);
     return entry ? entry.node.id : undefined;
   }
 
-  public getId(key: string): undefined | LogicalTimestamp {
+  public getId(key: string): undefined | Timestamp {
     const entry = this.latest.get(key);
     return entry ? entry.id : undefined;
   }
@@ -30,7 +30,7 @@ export class ObjectType implements JsonNode {
     }
   }
 
-  public put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
+  public put(key: string, id: Timestamp, value: Timestamp) {
     const node = this.doc.nodes.get(value);
     if (!node) return;
     this.putChunk(key, new ObjectChunk(id, node));
@@ -65,7 +65,7 @@ export class ObjectType implements JsonNode {
     return obj;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {
+  public *children(): IterableIterator<Timestamp> {
     for (const {node} of this.latest.values()) yield node.id;
   }
 }

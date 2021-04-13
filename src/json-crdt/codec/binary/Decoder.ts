@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
@@ -36,7 +36,7 @@ export class Decoder extends MessagePackDecoder {
     }
   }
 
-  protected ts(): LogicalTimestamp {
+  protected ts(): Timestamp {
     const id = this.id();
     return this.clockDecoder.decodeId(id[0], id[1]);
   }

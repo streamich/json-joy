@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {LogicalTimespan, Timestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ArrayChunk} from './ArrayChunk';
@@ -10,7 +10,7 @@ export class ArrayType implements JsonNode {
   public start: ArrayChunk;
   public end: ArrayChunk;
 
-  constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {
+  constructor(public readonly doc: Document, public readonly id: Timestamp) {
     this.start = this.end = new ArrayOriginChunk(id);
   }
 
@@ -31,8 +31,8 @@ export class ArrayType implements JsonNode {
     const isOriginChunk = curr instanceof ArrayOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
       const doesAfterMatch =
-        curr.id.sessionId === op.after.sessionId && curr.id.time + curr.span() - 1 === op.after.time;
-      const isIdSameSession = curr.id.sessionId === op.id.sessionId;
+        curr.id.getSessionId() === op.after.getSessionId() && curr.id.time + curr.span() - 1 === op.after.time;
+      const isIdSameSession = curr.id.getSessionId() === op.id.getSessionId();
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
         curr.merge(nodes);
@@ -95,7 +95,7 @@ export class ArrayType implements JsonNode {
     }
   }
 
-  public findId(index: number): LogicalTimestamp {
+  public findId(index: number): Timestamp {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -109,7 +109,7 @@ export class ArrayType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findValue(index: number): LogicalTimestamp {
+  public findValue(index: number): Timestamp {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -188,7 +188,7 @@ export class ArrayType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {
+  public *children(): IterableIterator<Timestamp> {
     let chunk: null | ArrayChunk = this.start;
     while ((chunk = chunk.right)) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
   }

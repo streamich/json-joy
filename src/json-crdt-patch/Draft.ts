@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from './clock';
+import {LogicalClock, Timestamp, LogicalTimestamp} from './clock';
 import {PatchBuilder} from './PatchBuilder';
 import {Patch} from './Patch';
 import {DeleteOperation} from './operations/DeleteOperation';
@@ -45,8 +45,8 @@ export class Draft {
   public patch(clock: LogicalClock): Patch {
     const patch = new Patch();
     const ops = this.builder.patch.ops;
-    const ts = (id: LogicalTimestamp) =>
-      id.sessionId !== -1 ? id : new LogicalTimestamp(clock.sessionId, clock.time + id.time);
+    const ts = (id: Timestamp) =>
+      id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time);
     for (const op of ops) {
       if (op instanceof DeleteOperation)
         patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), ts(op.after), op.length));

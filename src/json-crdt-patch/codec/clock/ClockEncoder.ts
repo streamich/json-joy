@@ -1,5 +1,5 @@
 import {json_string} from 'ts-brand-json';
-import {LogicalTimestamp, VectorClock} from '../../clock';
+import {Timestamp, VectorClock} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
@@ -10,11 +10,12 @@ export class ClockEncoder {
   public constructor(public readonly clock: VectorClock) {
     this.index = 1;
     this.table = new Map();
-    this.table.set(clock.sessionId, this.index++);
+    this.table.set(clock.getSessionId(), this.index++);
   }
 
-  public append(ts: LogicalTimestamp): RelativeTimestamp {
-    const {sessionId, time} = ts;
+  public append(ts: Timestamp): RelativeTimestamp {
+    const {time} = ts;
+    const sessionId = ts.getSessionId();
     if (sessionId === 0) return new RelativeTimestamp(0, ts.time);
     const clock = this.clock.clocks.get(sessionId);
     if (!clock) throw new Error(`Clock not found (${sessionId}, ${time}).`);
@@ -30,7 +31,7 @@ export class ClockEncoder {
     for (const sessionId of this.table.keys()) {
       const clock = this.clock.clocks.get(sessionId);
       if (!clock) continue;
-      out.push(clock.sessionId, clock.time);
+      out.push(clock.getSessionId(), clock.time);
     }
     return out;
   }
@@ -52,7 +53,7 @@ export class ClockEncoder {
     return (str + ']') as json_string<number[]>;
   }
 
-  public *clocks(): IterableIterator<LogicalTimestamp> {
+  public *clocks(): IterableIterator<Timestamp> {
     for (const sessionId of this.table.keys()) yield this.clock.clocks.get(sessionId)!;
   }
 }

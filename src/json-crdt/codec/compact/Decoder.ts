@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
@@ -27,7 +27,7 @@ export class Decoder {
     return doc;
   }
 
-  protected ts(arr: unknown[], index: number): LogicalTimestamp {
+  protected ts(arr: unknown[], index: number): Timestamp {
     const sessionIndex = arr[index] as number;
     const timeDiff = arr[index + 1] as number;
     return this.clockDecoder.decodeId(sessionIndex, timeDiff);

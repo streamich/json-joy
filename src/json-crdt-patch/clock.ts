@@ -1,31 +1,39 @@
 import type {json_string} from 'ts-brand-json';
 
 /**
- * Immutable timestamp, represents a single point int time of a LogicalClock.
- * Logical timestamps are used to identify every CRDT operation.
- *
- * `time` component is left mutable, so VectorClock can mutate it without needing
- * to create a new object.
+ * Timestamp is like logical LogicalTimestamp but the session ID is always 0.
+ * Timestamps are used in CRDT version where total order is ensured by the
+ * server, this way we don't need the session ID part of the LogicalTimestamp.
+ * 
+ * LogicalTimestamp extends Timestamp, no the other way around for lower memory
+ * consumption. It is structured this way so that session ID can be accessed
+ * through `.getSessionId()` getter instead of through `.sessionId` property.
+ * This way in Timestamp `.getSessionId()` is hard-coded to always return 0 and
+ * consumes zero bytes for each new 
  */
-export class LogicalTimestamp {
-  constructor(public readonly sessionId: number, public time: number) {}
+export class Timestamp {
+  constructor(public time: number) {}
+
+  public getSessionId(): number {
+    return 0;
+  }
 
   /**
    * @returns True if timestamps are equal.
    */
-  public isEqual(ts: LogicalTimestamp): boolean {
-    return this.sessionId === ts.sessionId && this.time === ts.time;
+  public isEqual(ts: Timestamp): boolean {
+    return this.getSessionId() === ts.getSessionId() && this.time === ts.time;
   }
 
   /**
    * @param ts The other timestamp.
    * @returns 1 if current timestamp is larger, -1 if smaller, and 0 otherwise.
    */
-  public compare(ts: LogicalTimestamp): -1 | 0 | 1 {
+  public compare(ts: Timestamp): -1 | 0 | 1 {
     if (this.time > ts.time) return 1;
     if (this.time < ts.time) return -1;
-    if (this.sessionId > ts.sessionId) return 1;
-    if (this.sessionId < ts.sessionId) return -1;
+    if (this.getSessionId() > ts.getSessionId()) return 1;
+    if (this.getSessionId() < ts.getSessionId()) return -1;
     return 0;
   }
 
@@ -37,8 +45,8 @@ export class LogicalTimestamp {
    * @param ts Timestamp which to check if it fits in the time span.
    * @returns True if timestamp is contained within the time span.
    */
-  public inSpan(span: number, ts: LogicalTimestamp, tsSpan: number): boolean {
-    if (this.sessionId !== ts.sessionId) return false;
+  public inSpan(span: number, ts: Timestamp, tsSpan: number): boolean {
+    if (this.getSessionId() !== ts.getSessionId()) return false;
     if (this.time > ts.time) return false;
     if (this.time + span < ts.time + tsSpan) return false;
     return true;
@@ -53,8 +61,8 @@ export class LogicalTimestamp {
    * @param tsSpan Span of the other timestamp.
    * @returns Size of the overlapping time span.
    */
-  public overlap(span: number, ts: LogicalTimestamp, tsSpan: number): number {
-    if (this.sessionId !== ts.sessionId) return 0;
+  public overlap(span: number, ts: Timestamp, tsSpan: number): number {
+    if (this.getSessionId() !== ts.getSessionId()) return 0;
     const x1 = this.time;
     const x2 = x1 + span;
     const y1 = ts.time;
@@ -69,24 +77,26 @@ export class LogicalTimestamp {
    * @returns Returns a new timestamps with the same session ID and time advanced
    *          by the number of specified clock cycles.
    */
-  public tick(cycles: number): LogicalTimestamp {
-    return new LogicalTimestamp(this.sessionId, this.time + cycles);
+  public tick(cycles: number): Timestamp {
+    return this instanceof LogicalTimestamp
+      ? new LogicalTimestamp(this.getSessionId(), this.time + cycles)
+      : new Timestamp(this.time + cycles);
   }
 
   public interval(cycles: number, span: number): LogicalTimespan {
-    return new LogicalTimespan(this.sessionId, this.time + cycles, span);
+    return new LogicalTimespan(this.getSessionId(), this.time + cycles, span);
   }
 
   public toString() {
     // "!" is used as separator as it has the lowest ASCII value.
-    return this.sessionId + '!' + this.time;
+    return this.getSessionId() + '!' + this.time;
   }
 
   /**
    * Similar to `toString()` but shortens the `sessionId`.
    */
   public toDisplayString() {
-    let session = String(this.sessionId);
+    let session = String(this.getSessionId());
     if (session.length > 4) session = '..' + session.substr(session.length - 4);
     return session + '!' + this.time;
   }
@@ -95,11 +105,28 @@ export class LogicalTimestamp {
    * @returns Returns logical clock which starts from this timestamp.
    */
   public clock(): LogicalClock {
-    return new LogicalClock(this.sessionId, this.time);
+    return new LogicalClock(this.getSessionId(), this.time);
   }
 
   public compact(): string {
-    return this.sessionId + ',' + this.time;
+    return this.getSessionId() + ',' + this.time;
+  }
+}
+
+/**
+ * Immutable timestamp, represents a single point int time of a LogicalClock.
+ * Logical timestamps are used to identify every CRDT operation.
+ *
+ * `time` component is left mutable, so VectorClock can mutate it without needing
+ * to create a new object.
+ */
+export class LogicalTimestamp extends Timestamp {
+  constructor(public sessionId: number, public time: number) {
+    super(time);
+  }
+
+  public getSessionId(): number {
+    return this.sessionId;
   }
 }
 
@@ -127,15 +154,6 @@ export class LogicalTimespan extends LogicalTimestamp {
  * but it is possible find the exact operation for each distinct implicit logical timestamp.
  */
 export class LogicalClock extends LogicalTimestamp {
-  public sessionId: number;
-  public time: number;
-
-  constructor(sessionId: number, time: number) {
-    super(sessionId, 0);
-    this.sessionId = sessionId;
-    this.time = time;
-  }
-
   /**
    * Returns the current clock timestamp and advances the clock given number of ticks.
    */
@@ -150,7 +168,7 @@ export class VectorClock extends LogicalClock {
   /**
    * Mapping of session IDs to logical timestamps.
    */
-  public readonly clocks = new Map<number, LogicalTimestamp>();
+  public readonly clocks = new Map<number, Timestamp>();
 
   constructor(sessionId: number, time: number) {
     super(sessionId, time);
@@ -162,10 +180,10 @@ export class VectorClock extends LogicalClock {
    *
    * @param ts Operation timestamp that was observed.
    */
-  public observe(ts: LogicalTimestamp, span: number) {
+  public observe(ts: Timestamp, span: number) {
     const time = ts.time + span - 1;
-    const clock = this.clocks.get(ts.sessionId);
-    if (!clock) this.clocks.set(ts.sessionId, ts.tick(span - 1));
+    const clock = this.clocks.get(ts.getSessionId());
+    if (!clock) this.clocks.set(ts.getSessionId(), ts.tick(span - 1));
     else if (time > clock.time) clock.time = ts.time;
     if (time >= this.time) this.time = time + 1;
   }
@@ -178,9 +196,9 @@ export class VectorClock extends LogicalClock {
    * - The first tuple is the local clock.
    */
   public serialize(): json_string<number[]> {
-    let str: string = '[' + this.sessionId + ',' + this.time;
+    let str: string = '[' + this.getSessionId() + ',' + this.time;
     for (const clock of this.clocks.values())
-      if (clock.sessionId !== this.sessionId) str += ',' + clock.sessionId + ',' + clock.time;
+      if (clock.getSessionId() !== this.getSessionId()) str += ',' + clock.getSessionId() + ',' + clock.time;
     return (str + ']') as json_string<number[]>;
   }
 
@@ -204,6 +222,6 @@ export class VectorClock extends LogicalClock {
   }
 
   public clone(): VectorClock {
-    return this.fork(this.sessionId);
+    return this.fork(this.getSessionId());
   }
 }

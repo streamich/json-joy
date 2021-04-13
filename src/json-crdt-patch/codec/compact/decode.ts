@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {Timestamp, LogicalTimestamp, LogicalClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {Code} from './constants';
@@ -11,7 +11,7 @@ export const decode = (data: unknown[]): Patch => {
   const length = data.length;
   let i = 2;
 
-  const decodeTimestamp = (): LogicalTimestamp => {
+  const decodeTimestamp = (): Timestamp => {
     const x = data[i++] as number;
     if (x < 0) return new LogicalTimestamp(sessionId, time - x - 1);
     else return new LogicalTimestamp(x, data[i++] as number);
@@ -42,7 +42,7 @@ export const decode = (data: unknown[]): Patch => {
       case Code.SetObjectKeys: {
         const length = data[i++] as number;
         const obj = decodeTimestamp();
-        const tuples: [key: string, value: LogicalTimestamp][] = [];
+        const tuples: [key: string, value: Timestamp][] = [];
         for (let j = 0; j < length; j++) {
           const key = data[i++] as string;
           tuples.push([key, decodeTimestamp()]);
@@ -64,7 +64,7 @@ export const decode = (data: unknown[]): Patch => {
         const length = data[i++] as number;
         const arr = decodeTimestamp();
         const after = decodeTimestamp();
-        const values: LogicalTimestamp[] = [];
+        const values: Timestamp[] = [];
         for (let j = 0; j < length; j++) values.push(decodeTimestamp());
         builder.insArr(arr, after, values);
         break;

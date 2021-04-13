@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import type {Timestamp} from '../../../json-crdt-patch/clock';
 import {StringChunk} from './StringChunk';
 
 /**
@@ -7,7 +7,7 @@ import {StringChunk} from './StringChunk';
  * linked list operations in the string type.
  */
 export class StringOriginChunk extends StringChunk {
-  constructor(public readonly id: LogicalTimestamp) {
+  constructor(public readonly id: Timestamp) {
     super(id);
   }
 

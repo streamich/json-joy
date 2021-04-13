@@ -1,10 +1,10 @@
 import {decodeString} from '../../../util/decodeString';
-import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {Timestamp, LogicalTimestamp, LogicalClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {decodeVarUint} from './util/varuint';
 
-export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimestamp => {
+export const decodeTimestamp = (buf: Uint8Array, offset: number): Timestamp => {
   const o1 = buf[offset];
   const o2 = buf[offset + 1];
   const o3 = buf[offset + 2];
@@ -33,11 +33,11 @@ export const decodeTimestamp = (buf: Uint8Array, offset: number): LogicalTimesta
 export const decode = (buf: Uint8Array): Patch => {
   const id = decodeTimestamp(buf, 0);
   let offset = 8;
-  const clock = new LogicalClock(id.sessionId, id.time);
+  const clock = new LogicalClock(id.getSessionId(), id.time);
   const builder = new PatchBuilder(clock);
   const length = buf.byteLength;
 
-  const ts = () => {
+  const ts = (): Timestamp => {
     const value = decodeTimestamp(buf, offset);
     offset += 8;
     return value;
@@ -77,7 +77,7 @@ export const decode = (buf: Uint8Array): Patch => {
       case 5: {
         const object = ts();
         const fields = varuint();
-        const tuples: [key: string, value: LogicalTimestamp][] = [];
+        const tuples: [key: string, value: Timestamp][] = [];
         for (let i = 0; i < fields; i++) {
           const value = ts();
           const strLength = varuint();
@@ -108,7 +108,7 @@ export const decode = (buf: Uint8Array): Patch => {
         const arr = ts();
         const after = ts();
         const length = varuint();
-        const elements: LogicalTimestamp[] = [];
+        const elements: Timestamp[] = [];
         for (let i = 0; i < length; i++) {
           const value = ts();
           elements.push(value);

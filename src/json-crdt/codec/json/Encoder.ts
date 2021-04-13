@@ -1,4 +1,4 @@
-import {LogicalTimestamp, VectorClock} from '../../../json-crdt-patch/clock';
+import {Timestamp, VectorClock} from '../../../json-crdt-patch/clock';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
@@ -36,12 +36,12 @@ export class Encoder {
 
   public encodeClock(clock: VectorClock): JsonCrdtTimestamp[] {
     const data: JsonCrdtTimestamp[] = [];
-    for (const c of clock.clocks.values()) data.push([c.sessionId, c.time]);
+    for (const c of clock.clocks.values()) data.push([c.getSessionId(), c.time]);
     return data;
   }
 
-  public encodeTimestamp(ts: LogicalTimestamp): JsonCrdtTimestamp {
-    return [ts.sessionId, ts.time];
+  public encodeTimestamp(ts: Timestamp): JsonCrdtTimestamp {
+    return [ts.getSessionId(), ts.time];
   }
 
   public encodeRoot(root: DocRootType): RootJsonCrdtNode {

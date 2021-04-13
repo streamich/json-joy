@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp, LogicalTimespan} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
@@ -10,7 +10,7 @@ export class StringType implements JsonNode {
   public start: StringChunk;
   public end: StringChunk;
 
-  constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {
+  constructor(public readonly doc: Document, public readonly id: Timestamp) {
     this.start = this.end = new StringOriginChunk(id);
   }
 
@@ -25,8 +25,8 @@ export class StringType implements JsonNode {
     const isOriginChunk = curr instanceof StringOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
       const doesAfterMatch =
-        curr.id.sessionId === op.after.sessionId && curr.id.time + curr.span() - 1 === op.after.time;
-      const isIdSameSession = curr.id.sessionId === op.id.sessionId;
+        curr.id.getSessionId() === op.after.getSessionId() && curr.id.time + curr.span() - 1 === op.after.time;
+      const isIdSameSession = curr.id.getSessionId() === op.id.getSessionId();
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
         curr.merge(op.substring);
@@ -89,7 +89,7 @@ export class StringType implements JsonNode {
     }
   }
 
-  public findId(index: number): LogicalTimestamp {
+  public findId(index: number): Timestamp {
     let chunk: null | StringChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -164,7 +164,7 @@ export class StringType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {}
+  public *children(): IterableIterator<Timestamp> {}
 
   public *chunks(): IterableIterator<StringChunk> {
     let curr: StringChunk | null = this.start;

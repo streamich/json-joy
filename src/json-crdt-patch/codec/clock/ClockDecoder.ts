@@ -1,4 +1,4 @@
-import {LogicalTimestamp, VectorClock} from '../../clock';
+import {Timestamp, LogicalTimestamp, VectorClock} from '../../clock';
 
 export class ClockDecoder {
   /** Clock session index to logical clock. */
@@ -26,10 +26,10 @@ export class ClockDecoder {
     this.table.set(this.index++, ts);
   }
 
-  public decodeId(sessionIndex: number, timeDiff: number): LogicalTimestamp {
+  public decodeId(sessionIndex: number, timeDiff: number): Timestamp {
     if (!sessionIndex) return new LogicalTimestamp(0, timeDiff);
     const ts = this.table.get(sessionIndex);
     if (!ts) throw new Error('INVALID_CLOCK_TABLE');
-    return new LogicalTimestamp(ts.sessionId, ts.time - timeDiff);
+    return new LogicalTimestamp(ts.getSessionId(), ts.time - timeDiff);
   }
 }

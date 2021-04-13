@@ -11,7 +11,7 @@ describe('clone()', () => {
     const doc2 = doc1.clone();
     expect(doc1.toJson()).toEqual({foo: 'bar', gg: [123]});
     expect(doc2.toJson()).toEqual({foo: 'bar', gg: [123]});
-    expect(doc2.clock.sessionId).toBe(doc1.clock.sessionId);
+    expect(doc2.clock.getSessionId()).toBe(doc1.clock.getSessionId());
   });
 
   test('can modify the cloned copy independently', () => {
@@ -51,7 +51,7 @@ describe('fork()', () => {
     builder1.root(obj);
     doc1.applyPatch(builder1.patch);
     const doc2 = doc1.fork();
-    expect(doc2.clock.sessionId).not.toBe(doc1.clock.sessionId);
+    expect(doc2.clock.getSessionId()).not.toBe(doc1.clock.getSessionId());
   });
 
   test('can modify the cloned copy independently', () => {

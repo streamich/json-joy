@@ -1,5 +1,5 @@
 import type {JsonChunk, JsonNode} from '../../types';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {LogicalTimestamp, Timestamp} from '../../../json-crdt-patch/clock';
 
 export class ArrayChunk implements JsonChunk {
   public left: ArrayChunk | null = null;
@@ -16,7 +16,7 @@ export class ArrayChunk implements JsonChunk {
    * @param nodes Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: LogicalTimestamp, public nodes?: JsonNode[]) {}
+  constructor(public readonly id: Timestamp, public nodes?: JsonNode[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of
@@ -38,7 +38,7 @@ export class ArrayChunk implements JsonChunk {
    */
   public split(time: number): ArrayChunk {
     const newSpan = 1 + time - this.id.time;
-    const newId = new LogicalTimestamp(this.id.sessionId, time + 1);
+    const newId = new LogicalTimestamp(this.id.getSessionId(), time + 1);
     if (this.nodes) {
       const newChunkValues = this.nodes.splice(newSpan);
       return new ArrayChunk(newId, newChunkValues);

@@ -1,13 +1,13 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {SetValueOperation} from '../../../json-crdt-patch/operations/SetValueOperation';
 
 /**
  * LWW register for any JSON value.
  */
 export class ValueType implements JsonNode {
-  constructor(public readonly id: LogicalTimestamp, public writeId: LogicalTimestamp, public value: unknown) {}
+  constructor(public readonly id: Timestamp, public writeId: Timestamp, public value: unknown) {}
 
   public insert(op: SetValueOperation) {
     if (op.id.compare(this.writeId) <= 0) return;
@@ -29,5 +29,5 @@ export class ValueType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {}
+  public *children(): IterableIterator<Timestamp> {}
 }
