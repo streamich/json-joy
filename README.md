@@ -75,6 +75,11 @@ All libraries can be imported from one of the below folders:
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.
 
 
+## Tasks
+
+- [ ] Compact and binary encoding for JSON Patch operations.
+- [ ] DDS approach for JSON CRDT.
+
 ## License
 
 [Apache 2.0](LICENSE)
