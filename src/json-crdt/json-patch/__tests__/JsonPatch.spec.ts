@@ -1,5 +1,5 @@
 import {OpAdd} from '../../../json-patch/op';
-import {Model} from '../Model';
+import {Model} from '../../model/Model';
 import {JsonPatch} from '../JsonPatch';
 
 describe('add', () => {

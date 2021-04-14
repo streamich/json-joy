@@ -1,4 +1,4 @@
-import type {Model} from './Model';
+import type {Model} from '../model/Model';
 import type {Patch} from '../../json-crdt-patch/Patch';
 import type {Operation as JsonPatchOperation} from '../../json-patch';
 import {Draft} from '../../json-crdt-patch/Draft';
