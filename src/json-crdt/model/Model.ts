@@ -2,7 +2,7 @@ import type {JsonNode} from '../types';
 import type {Path} from '../../json-pointer';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
-import {random40BitInt} from '../util';
+import {randomSessionId} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
 import {ITimestamp, VectorClock} from '../../json-crdt-patch/clock';
@@ -48,7 +48,7 @@ export class Model {
    */
   public api: ModelApi;
 
-  constructor(clock: VectorClock = new VectorClock(random40BitInt(), 0)) {
+  constructor(clock: VectorClock = new VectorClock(randomSessionId(), 0)) {
     this.clock = clock;
     this.nodes.index(NULL);
     this.nodes.index(TRUE);
@@ -125,7 +125,7 @@ export class Model {
   }
 
   public fork(): Model {
-    const sessionId = random40BitInt();
+    const sessionId = randomSessionId();
     const doc = new Model(this.clock.fork(sessionId));
     doc.root = this.root.clone(doc);
     return doc;
