@@ -2,34 +2,15 @@ import type {Model} from '../model/Model';
 import type {Patch} from '../../json-crdt-patch/Patch';
 import type {Operation as JsonPatchOperation} from '../../json-patch';
 import {Draft} from '../../json-crdt-patch/Draft';
-import {Op, OpAdd, operationToOp} from '../../json-patch/op';
-import {ObjectType} from '../types/lww-object/ObjectType';
+import {Op, operationToOp} from '../../json-patch/op';
+import {JsonPatchDraft} from './JsonPatchDraft';
 
 export class JsonPatch {
-  public readonly draft = new Draft();
-
   constructor(public readonly model: Model) {}
 
   public createDraft(ops: Op[]): Draft {
-    const draft = new Draft();
-    const {builder} = draft;
-    for (const op of ops) {
-      if (op instanceof OpAdd) {
-        const steps = op.path;
-        if (!steps.length) {
-          builder.root(builder.json(op.value));
-          continue;
-        }
-        const objSteps = steps.slice(0, steps.length - 1);
-        const node = this.model.find(objSteps);
-        if (node instanceof ObjectType) {
-          const key = String(steps[steps.length - 1]);
-          const value = builder.json(op.value);
-          builder.setKeys(node.id, [[key, value]]);
-          continue;
-        }
-      }
-    }
+    const draft = new JsonPatchDraft(this.model);
+    draft.applyOps(ops);
     return draft;
   }
 
