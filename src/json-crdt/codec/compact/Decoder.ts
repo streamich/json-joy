@@ -2,7 +2,7 @@ import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -18,9 +18,9 @@ import {TypeCode, ValueCode} from './constants';
 export class Decoder {
   protected clockDecoder!: ClockDecoder;
 
-  public decode(data: unknown[]): Document {
+  public decode(data: unknown[]): Model {
     this.clockDecoder = ClockDecoder.fromArr(data[0] as number[]);
-    const doc = new Document(this.clockDecoder.clock);
+    const doc = new Model(this.clockDecoder.clock);
     const rootId = this.ts(data, 1);
     const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
     doc.root = new DocRootType(doc, rootId, rootNode);
@@ -33,7 +33,7 @@ export class Decoder {
     return this.clockDecoder.decodeId(sessionIndex, timeDiff);
   }
 
-  protected decodeNode(doc: Document, data: unknown): JsonNode {
+  protected decodeNode(doc: Model, data: unknown): JsonNode {
     switch (data) {
       case ValueCode.null:
         return NULL;
@@ -61,7 +61,7 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Document, data: unknown[]): ObjectType {
+  protected decodeObj(doc: Model, data: unknown[]): ObjectType {
     const id = this.ts(data, 1);
     const obj = new ObjectType(doc, id);
     const length = data.length;
@@ -76,7 +76,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeArr(doc: Document, data: unknown[]): ArrayType {
+  protected decodeArr(doc: Model, data: unknown[]): ArrayType {
     const id = this.ts(data, 1);
     const obj = new ArrayType(doc, id);
     const length = data.length;
@@ -97,7 +97,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeStr(doc: Document, data: unknown[]): StringType {
+  protected decodeStr(doc: Model, data: unknown[]): StringType {
     const id = this.ts(data, 1);
     const obj = new StringType(doc, id);
     const length = data.length;
@@ -117,7 +117,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeVal(doc: Document, data: unknown[]): ValueType {
+  protected decodeVal(doc: Model, data: unknown[]): ValueType {
     const id = this.ts(data, 1);
     const writeId = this.ts(data, 3);
     const value = data[5];
@@ -126,7 +126,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeConst(doc: Document, data: unknown[]): ConstantType {
+  protected decodeConst(doc: Model, data: unknown[]): ConstantType {
     const value = data[1];
     const obj = new ConstantType(ORIGIN, value);
     return obj;

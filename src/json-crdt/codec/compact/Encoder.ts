@@ -1,6 +1,6 @@
 import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -15,7 +15,7 @@ import {TypeCode, ValueCode} from './constants';
 export class Encoder {
   protected clock!: ClockEncoder;
 
-  public encode(doc: Document): unknown[] {
+  public encode(doc: Model): unknown[] {
     this.clock = new ClockEncoder(doc.clock);
     const snapshot: unknown[] = [null];
     this.encodeRoot(snapshot, doc.root);

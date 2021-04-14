@@ -1,5 +1,5 @@
 import {ITimestamp, VectorClock} from '../../../json-crdt-patch/clock';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -26,7 +26,7 @@ import {
 } from './types';
 
 export class Encoder {
-  public encode(doc: Document): JsonCrdtSnapshot {
+  public encode(doc: Model): JsonCrdtSnapshot {
     const snapshot: JsonCrdtSnapshot = {
       clock: this.encodeClock(doc.clock),
       root: this.encodeRoot(doc.root),

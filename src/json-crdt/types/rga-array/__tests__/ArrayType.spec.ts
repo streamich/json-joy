@@ -1,10 +1,10 @@
 import {FALSE_ID, TRUE_ID} from '../../../../json-crdt-patch/constants';
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
-import {Document} from '../../../document';
+import {Model} from '../../../model';
 import {ArrayType} from '../ArrayType';
 
 test('merges sequential chunks', () => {
-  const doc = new Document();
+  const doc = new Model();
   const builder1 = new PatchBuilder(doc.clock);
 
   const arr = builder1.arr();

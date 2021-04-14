@@ -1,9 +1,9 @@
 import {VectorClock} from '../../../../json-crdt-patch/clock';
-import {Document} from '../../../document';
+import {Model} from '../../../model';
 import {Encoder} from '../Encoder';
 
 test('encodes an empty document', () => {
-  const doc = new Document(new VectorClock(123, 0));
+  const doc = new Model(new VectorClock(123, 0));
   const encoder = new Encoder();
   const res = encoder.encode(doc);
   expect(res).toEqual({
@@ -13,7 +13,7 @@ test('encodes an empty document', () => {
 });
 
 test('encodes all JSON node types object', () => {
-  const doc = new Document(new VectorClock(123, 0));
+  const doc = new Model(new VectorClock(123, 0));
   const encoder = new Encoder();
   doc.api
     .root({
@@ -95,7 +95,7 @@ test('encodes all JSON node types object', () => {
 });
 
 test('encodes deleted string chunks', () => {
-  const doc = new Document(new VectorClock(123, 0));
+  const doc = new Model(new VectorClock(123, 0));
   const encoder = new Encoder();
   doc.api.root('abc').commit();
   doc.api.strDel([], 1, 1).commit();

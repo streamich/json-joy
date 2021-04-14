@@ -1,5 +1,5 @@
 import type {JsonNode} from '../../types';
-import type {Document} from '../../document';
+import type {Model} from '../../model';
 import {ITimestamp, ITimespan} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
@@ -10,7 +10,7 @@ export class StringType implements JsonNode {
   public start: StringChunk;
   public end: StringChunk;
 
-  constructor(public readonly doc: Document, public readonly id: ITimestamp) {
+  constructor(public readonly doc: Model, public readonly id: ITimestamp) {
     this.start = this.end = new StringOriginChunk(id);
   }
 
@@ -148,7 +148,7 @@ export class StringType implements JsonNode {
     return str;
   }
 
-  public clone(doc: Document): StringType {
+  public clone(doc: Model): StringType {
     const copy = new StringType(this.doc, this.id);
     let i: null | StringChunk = this.start;
     let j: StringChunk = copy.start;

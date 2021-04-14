@@ -1,12 +1,12 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {FALSE_ID, NULL_ID, TRUE_ID} from '../../json-crdt-patch/constants';
-import {Document} from '../document';
+import {Model} from '../model';
 import {ArrayType} from '../types/rga-array/ArrayType';
 
 describe('Document', () => {
   describe('array', () => {
     test('can create an array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       doc.applyPatch(builder.patch);
@@ -15,7 +15,7 @@ describe('Document', () => {
     });
 
     test('can set array as document root', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       builder.root(arrId);
@@ -24,7 +24,7 @@ describe('Document', () => {
     });
 
     test('can add one element to array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -34,7 +34,7 @@ describe('Document', () => {
     });
 
     test('can add two elements to array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       builder.insArr(arrId, arrId, [TRUE_ID, NULL_ID]);
@@ -44,7 +44,7 @@ describe('Document', () => {
     });
 
     test('can have array-in-array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr1 = builder.arr();
       const arr2 = builder.arr();
@@ -55,7 +55,7 @@ describe('Document', () => {
     });
 
     test('can add two elements with two operations', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -66,7 +66,7 @@ describe('Document', () => {
     });
 
     test('can add three elements sequentially with three operations', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -78,7 +78,7 @@ describe('Document', () => {
     });
 
     test('can add three elements with in-the-middle insertion', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -90,7 +90,7 @@ describe('Document', () => {
     });
 
     test('can add three elements with two operations', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -101,7 +101,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element in the chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -113,7 +113,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element in the chunk twice', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -127,7 +127,7 @@ describe('Document', () => {
     });
 
     test('can insert after last element twice for the same chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -140,7 +140,7 @@ describe('Document', () => {
     });
 
     test('can apply same patch trice', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -155,7 +155,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -166,7 +166,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk using two patches', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder1 = new PatchBuilder(doc.clock);
       const arrId = builder1.arr();
       const ins1 = builder1.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -179,7 +179,7 @@ describe('Document', () => {
     });
 
     test('insert at the beginning of a chunk trice', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID]);
@@ -192,7 +192,7 @@ describe('Document', () => {
     });
 
     test('can delete a single element from single-element chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -206,7 +206,7 @@ describe('Document', () => {
     });
 
     test('can delete a single element from single-element chunk in the middle of array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -220,7 +220,7 @@ describe('Document', () => {
     });
 
     test('delete last element in a chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID]);
@@ -231,7 +231,7 @@ describe('Document', () => {
     });
 
     test('delete first two elements in chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID, NULL_ID]);
@@ -242,7 +242,7 @@ describe('Document', () => {
     });
 
     test('delete a section in the middle of a chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, FALSE_ID, NULL_ID, TRUE_ID]);
@@ -253,7 +253,7 @@ describe('Document', () => {
     });
 
     test('delete two chunks using one delete operation', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID]);
@@ -267,7 +267,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunks', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
@@ -281,7 +281,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
@@ -293,7 +293,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 2', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
@@ -305,7 +305,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 3', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
@@ -317,7 +317,7 @@ describe('Document', () => {
     });
 
     test('can delete across chunk when chunk were split due to insertion - 4', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       const ins1 = builder.insArr(arrId, arrId, [TRUE_ID, TRUE_ID, TRUE_ID]);
@@ -329,7 +329,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-element one-chunk array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID]);
@@ -340,7 +340,7 @@ describe('Document', () => {
     });
 
     test('can find ID in one one-chunk array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID]);
@@ -354,7 +354,7 @@ describe('Document', () => {
     });
 
     test('can find ID in multi-chunk array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID]);
@@ -376,7 +376,7 @@ describe('Document', () => {
     });
 
     test('can find value in multi-chunk array', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID]);
@@ -398,7 +398,7 @@ describe('Document', () => {
     });
 
     test('can find span within one chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -412,7 +412,7 @@ describe('Document', () => {
     });
 
     test('can find span at the beginning of a chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -426,7 +426,7 @@ describe('Document', () => {
     });
 
     test('can find span at the end of a chunk', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -440,7 +440,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -460,7 +460,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -485,7 +485,7 @@ describe('Document', () => {
     });
 
     test('can find span across three chunks - 2', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
@@ -510,7 +510,7 @@ describe('Document', () => {
     });
 
     test('can find span across two chunks, second with on element', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const arr = builder.arr();
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);

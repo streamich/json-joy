@@ -1,5 +1,5 @@
 import type {JsonNode} from '../../types';
-import type {Document} from '../../document';
+import type {Model} from '../../model';
 import {ITimespan, ITimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/InsertArrayElementsOperation';
@@ -10,7 +10,7 @@ export class ArrayType implements JsonNode {
   public start: ArrayChunk;
   public end: ArrayChunk;
 
-  constructor(public readonly doc: Document, public readonly id: ITimestamp) {
+  constructor(public readonly doc: Model, public readonly id: ITimestamp) {
     this.start = this.end = new ArrayOriginChunk(id);
   }
 
@@ -172,7 +172,7 @@ export class ArrayType implements JsonNode {
     return arr;
   }
 
-  public clone(doc: Document): ArrayType {
+  public clone(doc: Model): ArrayType {
     const copy = new ArrayType(doc, this.id);
     let i: null | ArrayChunk = this.start;
     let j: ArrayChunk = copy.start;

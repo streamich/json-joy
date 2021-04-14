@@ -1,7 +1,7 @@
 import {ITimestamp, LogicalTimestamp, VectorClock} from '../../../json-crdt-patch/clock';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -28,9 +28,9 @@ import {
 } from './types';
 
 export class Decoder {
-  public decode({clock, root}: JsonCrdtSnapshot): Document {
+  public decode({clock, root}: JsonCrdtSnapshot): Model {
     const vectorClock = this.decodeClock(clock);
-    const doc = new Document(vectorClock);
+    const doc = new Model(vectorClock);
     this.decodeRoot(doc, root);
     return doc;
   }
@@ -51,14 +51,14 @@ export class Decoder {
     return new LogicalTimestamp(sessionId, time);
   }
 
-  protected decodeRoot(doc: Document, {id, node}: RootJsonCrdtNode): void {
+  protected decodeRoot(doc: Model, {id, node}: RootJsonCrdtNode): void {
     const ts = this.decodeTimestamp(id);
     const jsonNode = node ? this.decodeNode(doc, node) : null;
     const root = new DocRootType(doc, ts, jsonNode);
     doc.root = root;
   }
 
-  protected decodeNode(doc: Document, node: JsonCrdtNode): JsonNode {
+  protected decodeNode(doc: Model, node: JsonCrdtNode): JsonNode {
     switch (node.type) {
       case 'obj':
         return this.decodeObj(doc, node);
@@ -74,7 +74,7 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Document, node: ObjectJsonCrdtNode): ObjectType {
+  protected decodeObj(doc: Model, node: ObjectJsonCrdtNode): ObjectType {
     const id = this.decodeTimestamp(node.id);
     const obj = new ObjectType(doc, id);
     const keys = Object.keys(node.chunks);
@@ -86,14 +86,14 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeArr(doc: Document, node: ArrayJsonCrdtNode): ArrayType {
+  protected decodeArr(doc: Model, node: ArrayJsonCrdtNode): ArrayType {
     const obj = new ArrayType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeArrChunk(doc, c));
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeArrChunk(doc: Document, c: ArrayJsonCrdtChunk | JsonCrdtRgaTombstone): ArrayChunk {
+  protected decodeArrChunk(doc: Model, c: ArrayJsonCrdtChunk | JsonCrdtRgaTombstone): ArrayChunk {
     const id = this.decodeTimestamp(c.id);
     if (typeof (c as JsonCrdtRgaTombstone).span === 'number') {
       const chunk = new ArrayChunk(id, undefined);
@@ -106,14 +106,14 @@ export class Decoder {
       );
   }
 
-  protected decodeStr(doc: Document, node: StringJsonCrdtNode): StringType {
+  protected decodeStr(doc: Model, node: StringJsonCrdtNode): StringType {
     const obj = new StringType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeStrChunk(doc, c));
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeStrChunk(doc: Document, c: StringJsonCrdtChunk | JsonCrdtRgaTombstone): StringChunk {
+  protected decodeStrChunk(doc: Model, c: StringJsonCrdtChunk | JsonCrdtRgaTombstone): StringChunk {
     const id = this.decodeTimestamp(c.id);
     if (typeof (c as JsonCrdtRgaTombstone).span === 'number') {
       const chunk = new StringChunk(id, undefined);
@@ -122,13 +122,13 @@ export class Decoder {
     } else return new StringChunk(id, (c as StringJsonCrdtChunk).value);
   }
 
-  protected decodeVal(doc: Document, node: ValueJsonCrdtNode): ValueType {
+  protected decodeVal(doc: Model, node: ValueJsonCrdtNode): ValueType {
     const obj = new ValueType(this.decodeTimestamp(node.id), this.decodeTimestamp(node.writeId), node.value);
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeConst(doc: Document, node: ConstantJsonCrdtNode): ConstantType {
+  protected decodeConst(doc: Model, node: ConstantJsonCrdtNode): ConstantType {
     switch (node.value) {
       case null:
         return NULL;

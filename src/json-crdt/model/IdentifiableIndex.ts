@@ -1,5 +1,5 @@
-import type {Identifiable} from '../json-crdt-patch/Identifiable';
-import {ITimestamp} from '../json-crdt-patch/clock';
+import type {Identifiable} from '../../json-crdt-patch/Identifiable';
+import type {ITimestamp} from '../../json-crdt-patch/clock';
 
 export class IdentifiableIndex<T extends Identifiable> {
   /**

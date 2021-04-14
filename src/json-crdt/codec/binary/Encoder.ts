@@ -2,7 +2,7 @@ import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
 import {utf8Count} from '../../../util/utf8';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -17,7 +17,7 @@ import {StringType} from '../../types/rga-string/StringType';
 export class Encoder extends JsonPackEncoder {
   protected clockEncoder!: ClockEncoder;
 
-  public encode(doc: Document): Uint8Array {
+  public encode(doc: Model): Uint8Array {
     this.reset();
     this.clockEncoder = new ClockEncoder(doc.clock);
     this.encodeRoot(doc.root);

@@ -1,13 +1,13 @@
 import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ObjectChunk} from './ObjectChunk';
 
 export class ObjectType implements JsonNode {
   public readonly latest: Map<string, ObjectChunk> = new Map();
 
-  constructor(public readonly doc: Document, public readonly id: ITimestamp) {}
+  constructor(public readonly doc: Model, public readonly id: ITimestamp) {}
 
   public get(key: string): undefined | ITimestamp {
     const entry = this.latest.get(key);
@@ -55,7 +55,7 @@ export class ObjectType implements JsonNode {
     return str;
   }
 
-  public clone(doc: Document): ObjectType {
+  public clone(doc: Model): ObjectType {
     const obj = new ObjectType(doc, this.id);
     for (const [key, {id, node}] of this.latest.entries()) {
       const nodeClone = node.clone(doc);

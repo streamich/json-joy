@@ -1,31 +1,31 @@
-import type {JsonNode} from './types';
-import {FALSE, NULL, TRUE, UNDEFINED} from './constants';
+import type {JsonNode} from '../types';
+import type {Path} from '../../json-pointer';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
-import {random40BitInt} from './util';
-import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
-import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
-import {ITimestamp, VectorClock} from '../json-crdt-patch/clock';
-import {DocRootType} from './types/lww-doc-root/DocRootType';
-import {ObjectType} from './types/lww-object/ObjectType';
-import {ArrayType} from './types/rga-array/ArrayType';
-import {StringType} from './types/rga-string/StringType';
-import {MakeObjectOperation} from '../json-crdt-patch/operations/MakeObjectOperation';
-import {SetObjectKeysOperation} from '../json-crdt-patch/operations/SetObjectKeysOperation';
-import {MakeArrayOperation} from '../json-crdt-patch/operations/MakeArrayOperation';
-import {InsertArrayElementsOperation} from '../json-crdt-patch/operations/InsertArrayElementsOperation';
-import {ORIGIN} from '../json-crdt-patch/constants';
-import {DeleteOperation} from '../json-crdt-patch/operations/DeleteOperation';
-import {MakeStringOperation} from '../json-crdt-patch/operations/MakeStringOperation';
-import {InsertStringSubstringOperation} from '../json-crdt-patch/operations/InsertStringSubstringOperation';
-import {JsonPatch} from './JsonPatch';
-import {Operation, operationToOp} from '../json-patch';
-import {Path} from '../json-pointer';
-import {DocumentApi} from './api/DocumentApi';
-import {MakeValueOperation} from '../json-crdt-patch/operations/MakeValueOperation';
-import {ValueType} from './types/lww-value/ValueType';
-import {SetValueOperation} from '../json-crdt-patch/operations/SetValueOperation';
+import {random40BitInt} from '../util';
+import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
+import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
+import {ITimestamp, VectorClock} from '../../json-crdt-patch/clock';
+import {DocRootType} from '../types/lww-doc-root/DocRootType';
+import {ObjectType} from '../types/lww-object/ObjectType';
+import {ArrayType} from '../types/rga-array/ArrayType';
+import {StringType} from '../types/rga-string/StringType';
+import {MakeObjectOperation} from '../../json-crdt-patch/operations/MakeObjectOperation';
+import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {MakeArrayOperation} from '../../json-crdt-patch/operations/MakeArrayOperation';
+import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {ORIGIN} from '../../json-crdt-patch/constants';
+import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
+import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOperation';
+import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
+import {JsonPatch} from '../JsonPatch';
+import {Operation, operationToOp} from '../../json-patch';
+import {DocumentApi} from '../api/DocumentApi';
+import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
+import {ValueType} from '../types/lww-value/ValueType';
+import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperation';
 
-export class Document {
+export class Model {
   /**
    * Root of the JSON document is implemented as Last Write Wins Register,
    * so that the JSON document does not necessarily need to be an object. The
@@ -118,15 +118,15 @@ export class Document {
     return this.root.toJson();
   }
 
-  public clone(): Document {
-    const doc = new Document(this.clock.clone());
+  public clone(): Model {
+    const doc = new Model(this.clock.clone());
     doc.root = this.root.clone(doc);
     return doc;
   }
 
-  public fork(): Document {
+  public fork(): Model {
     const sessionId = random40BitInt();
-    const doc = new Document(this.clock.fork(sessionId));
+    const doc = new Model(this.clock.fork(sessionId));
     doc.root = this.root.clone(doc);
     return doc;
   }

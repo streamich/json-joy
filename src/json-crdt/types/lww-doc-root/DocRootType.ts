@@ -2,7 +2,7 @@ import type {ITimestamp} from '../../../json-crdt-patch/clock';
 import {SetRootOperation} from '../../../json-crdt-patch/operations/SetRootOperation';
 import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {JsonNode} from '../../types';
-import {Document} from '../../document';
+import {Model} from '../../model';
 
 export class DocRootType implements JsonNode {
   /**
@@ -10,7 +10,7 @@ export class DocRootType implements JsonNode {
    * @param id ID of the last write operation, if any.
    * @param node Latest value of the document root.
    */
-  constructor(public readonly doc: Document, public id: ITimestamp, public node: null | JsonNode) {}
+  constructor(public readonly doc: Model, public id: ITimestamp, public node: null | JsonNode) {}
 
   /**
    * @returns ID of the previous root node, if any.
@@ -42,7 +42,7 @@ export class DocRootType implements JsonNode {
     return !this.node ? undefined : this.node.toJson();
   }
 
-  public clone(doc: Document): DocRootType {
+  public clone(doc: Model): DocRootType {
     return new DocRootType(doc, this.id, this.node ? this.node.clone(doc) : null);
   }
 

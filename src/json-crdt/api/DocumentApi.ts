@@ -1,4 +1,4 @@
-import type {Document} from '../document';
+import type {Model} from '../model';
 import type {Path} from '../../json-pointer';
 import {StringType} from '../types/rga-string/StringType';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
@@ -18,7 +18,7 @@ export class DocumentApi {
   /** Currently active builder. */
   public builder: PatchBuilder;
 
-  constructor(private readonly doc: Document) {
+  constructor(private readonly doc: Model) {
     this.builder = new PatchBuilder(doc.clock);
   }
 

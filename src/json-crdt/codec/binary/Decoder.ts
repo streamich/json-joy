@@ -3,7 +3,7 @@ import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -16,13 +16,13 @@ import {StringType} from '../../types/rga-string/StringType';
 
 export class Decoder extends MessagePackDecoder {
   protected clockDecoder!: ClockDecoder;
-  protected doc!: Document;
+  protected doc!: Model;
 
-  public decode(data: Uint8Array): Document {
+  public decode(data: Uint8Array): Model {
     this.reset(data);
     const [, clockTableLength] = this.b1vuint56();
     this.decodeClockTable(clockTableLength);
-    const doc = this.doc = new Document(this.clockDecoder.clock);
+    const doc = this.doc = new Model(this.clockDecoder.clock);
     this.decodeRoot(doc);
     return doc;
   }
@@ -41,7 +41,7 @@ export class Decoder extends MessagePackDecoder {
     return this.clockDecoder.decodeId(id[0], id[1]);
   }
 
-  protected decodeRoot(doc: Document): void {
+  protected decodeRoot(doc: Model): void {
     const id = this.ts();
     const node = this.x >= this.uint8.byteLength ? null : this.decodeNode();
     doc.root = new DocRootType(doc, id, node);

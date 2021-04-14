@@ -1,16 +1,16 @@
 import {VectorClock} from '../../../../json-crdt-patch/clock';
-import {Document} from '../../../document';
+import {Model} from '../../../model';
 import {Encoder} from '../Encoder';
 
 test('encodes an empty document', () => {
-  const doc = new Document(new VectorClock(123, 0));
+  const doc = new Model(new VectorClock(123, 0));
   const encoder = new Encoder();
   const res = encoder.encode(doc);
   expect(res).toEqual(new Uint8Array([1, 0, 0, 0, 123, 0, 0, 0, 0, 0]));
 });
 
 test('can encode object and array', () => {
-  const doc = new Document(new VectorClock(123, 0));
+  const doc = new Model(new VectorClock(123, 0));
   const encoder = new Encoder();
   doc.api
     .root({

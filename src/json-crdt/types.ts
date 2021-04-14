@@ -1,6 +1,6 @@
 import type {ITimestamp} from '../json-crdt-patch/clock';
 import type {Identifiable} from '../json-crdt-patch/Identifiable';
-import type {Document} from './document';
+import type {Model} from './model';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
@@ -20,7 +20,7 @@ export interface JsonNode extends Identifiable {
   /**
    * Returns a deep copy of itself.
    */
-  clone(doc: Document): JsonNode;
+  clone(doc: Model): JsonNode;
 
   /**
    * Returns a list of child values of this type. Used in object and array

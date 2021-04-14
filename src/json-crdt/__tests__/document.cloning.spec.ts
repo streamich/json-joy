@@ -1,9 +1,9 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Document} from '../document';
+import {Model} from '../model';
 
 describe('clone()', () => {
   test('can clone a simple document', () => {
-    const doc1 = new Document();
+    const doc1 = new Model();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json({foo: 'bar', gg: [123]});
     builder1.root(obj);
@@ -15,7 +15,7 @@ describe('clone()', () => {
   });
 
   test('can modify the cloned copy independently', () => {
-    const doc1 = new Document();
+    const doc1 = new Model();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json({foo: 'bar', hh: true});
     builder1.root(obj);
@@ -34,7 +34,7 @@ describe('clone()', () => {
 
 describe('fork()', () => {
   test('can fork a simple document', () => {
-    const doc1 = new Document();
+    const doc1 = new Model();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json([1, 2, 'lol']);
     builder1.root(obj);
@@ -45,7 +45,7 @@ describe('fork()', () => {
   });
 
   test('forked document has a different session ID', () => {
-    const doc1 = new Document();
+    const doc1 = new Model();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json([1, 2, 'lol']);
     builder1.root(obj);
@@ -55,7 +55,7 @@ describe('fork()', () => {
   });
 
   test('can modify the cloned copy independently', () => {
-    const doc1 = new Document();
+    const doc1 = new Model();
     const builder1 = new PatchBuilder(doc1.clock);
     const arr = builder1.json([1, 2, 'lol']);
     builder1.root(arr);

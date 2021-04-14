@@ -1,5 +1,5 @@
 import type {JsonNode} from '../../types';
-import type {Document} from '../../document';
+import type {Model} from '../../model';
 import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {SetValueOperation} from '../../../json-crdt-patch/operations/SetValueOperation';
 
@@ -23,7 +23,7 @@ export class ValueType implements JsonNode {
     return `${tab}num(${this.id.toString()}) { ${this.toJson()} }`;
   }
 
-  public clone(doc: Document): ValueType {
+  public clone(doc: Model): ValueType {
     const copy = new ValueType(this.id, this.writeId, this.value);
     doc.nodes.index(copy);
     return copy;

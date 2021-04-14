@@ -1,10 +1,10 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Document} from '../document';
+import {Model} from '../model';
 
 describe('Document', () => {
   describe('JSON builder', () => {
     test('can create object using JSON builder', () => {
-      const doc = new Document();
+      const doc = new Model();
       const builder = new PatchBuilder(doc.clock);
       const obj = builder.json({});
       builder.root(obj);
@@ -13,7 +13,7 @@ describe('Document', () => {
     });
 
     test('can create complex object', () => {
-      const doc = new Document();
+      const doc = new Model();
       doc.clock.sessionId = 1;
       // doc.clock.time = 10000;
       const builder = new PatchBuilder(doc.clock);
