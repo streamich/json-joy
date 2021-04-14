@@ -198,10 +198,19 @@ export class ArrayType implements JsonNode {
     while ((curr = curr.right)) yield curr;
   }
 
+  /** Chunk count. */
   public size(): number {
     let curr: ArrayChunk | null = this.start;
     let size: number = 0;
     while ((curr = curr.right)) size++;
+    return size;
+  }
+
+  /** String length. */
+  public length(): number {
+    let curr: ArrayChunk | null = this.start;
+    let size: number = 0;
+    while ((curr = curr.right)) if (curr.nodes) size += curr.nodes.length;
     return size;
   }
 
