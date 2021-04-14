@@ -18,8 +18,6 @@ import {ORIGIN} from '../../json-crdt-patch/constants';
 import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
 import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOperation';
 import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
-import {JsonPatch} from '../JsonPatch';
-import {Operation, operationToOp} from '../../json-patch';
 import {ModelApi} from './api/ModelApi';
 import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
 import {ValueType} from '../types/lww-value/ValueType';
@@ -39,7 +37,7 @@ export class Model {
   public clock: VectorClock;
 
   /**
-   * Index of all known JSON nodes (objects, array, strings, numbers) in this document.
+   * Index of all known node objects (objects, array, strings, values) in this document.
    */
   public nodes = new IdentifiableIndex<JsonNode>();
 
@@ -114,21 +112,22 @@ export class Model {
     this.nodes.delete(value);
   }
 
-  public toJson(): unknown {
-    return this.root.toJson();
-  }
-
+  /** Creates a copy of this model with the same session ID. */
   public clone(): Model {
     const doc = new Model(this.clock.clone());
     doc.root = this.root.clone(doc);
     return doc;
   }
 
-  public fork(): Model {
-    const sessionId = randomSessionId();
+  /** Creates a copy of this model with a new session ID. */
+  public fork(sessionId: number = randomSessionId()): Model {
     const doc = new Model(this.clock.fork(sessionId));
     doc.root = this.root.clone(doc);
     return doc;
+  }
+
+  public toJson(): unknown {
+    return this.root.toJson();
   }
 
   public toString(): string {
@@ -160,14 +159,5 @@ export class Model {
       }
     }
     return node;
-  }
-
-  public applyJsonPatch(operations: Operation[]) {
-    const ops = operations.map(operationToOp);
-    const jsonPatch = new JsonPatch(this);
-    const draft = jsonPatch.fromOps(ops);
-    const patch = draft.patch(this.clock);
-    this.clock.tick(patch.span());
-    this.applyPatch(patch);
   }
 }
