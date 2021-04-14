@@ -4,7 +4,7 @@ import {Op, OpAdd, OpCopy, OpMove, OpRemove, OpReplace, OpTest} from '../../json
 import {ObjectType} from "../types/lww-object/ObjectType";
 import {ArrayType} from "../types/rga-array/ArrayType";
 import {UNDEFINED_ID} from "../../json-crdt-patch/constants";
-import {Path} from "../../json-pointer";
+import {isChild, Path} from "../../json-pointer";
 const isEqual = require('fast-deep-equal');
 
 export class JsonPatchDraft extends Draft {
@@ -44,8 +44,11 @@ export class JsonPatchDraft extends Draft {
         } else {
           const index = ~~key;
           if ('' + index !== key) throw new Error('INVALID_INDEX');
-          const after = node.findId(index);
-          builder.insArr(node.id, after, [value]);
+          if (!index) builder.insArr(node.id, node.id, [value]);
+          else {
+            const after = node.findId(index - 1);
+            builder.insArr(node.id, after, [value]);
+          }
         }
       } else throw new Error('NOT_FOUND');
     }
@@ -60,7 +63,9 @@ export class JsonPatchDraft extends Draft {
       const node = this.model.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectType) {
-        builder.setKeys(node.id, [[String(key), UNDEFINED_ID]]);
+        const stringKey = String(key);
+        if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
+        builder.setKeys(node.id, [[stringKey, UNDEFINED_ID]]);
       } else if (node instanceof ArrayType) {
         const key = steps[steps.length - 1];
         const index = ~~key;
@@ -79,6 +84,7 @@ export class JsonPatchDraft extends Draft {
 
   public applyOpMove(op: OpMove): void {
     const {path, from} = op;
+    if (isChild(from, path)) throw new Error('INVALID_CHILD');
     const json = this.json(from);
     this.applyOpRemove(new OpRemove(from, undefined));
     this.applyOpAdd(new OpAdd(path, json));
@@ -97,13 +103,13 @@ export class JsonPatchDraft extends Draft {
   }
 
   private get(steps: Path): unknown {
-    if (!steps.length) this.model.toJson();
+    if (!steps.length) return this.model.toJson();
     else {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectType) {
-        return node.get(String(key));
+        return node.getNode(String(key))?.toJson();
       } else if (node instanceof ArrayType) {
         const index = ~~key;
         if ('' + index !== key) throw new Error('INVALID_INDEX');
