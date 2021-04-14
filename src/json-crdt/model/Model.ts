@@ -90,20 +90,16 @@ export class Model {
       if (oldValue) this.deleteNodeTree(oldValue);
     } else if (op instanceof SetObjectKeysOperation) {
       const obj = this.nodes.get(op.object);
-      if (!(obj instanceof ObjectType)) return;
-      obj.insert(op);
+      if (obj instanceof ObjectType) obj.insert(op);
     } else if (op instanceof SetValueOperation) {
       const obj = this.nodes.get(op.obj);
-      if (!(obj instanceof ValueType)) return;
-      obj.insert(op);
+      if (obj instanceof ValueType) obj.insert(op);
     } else if (op instanceof InsertArrayElementsOperation) {
       const arr = this.nodes.get(op.arr);
-      if (!(arr instanceof ArrayType)) return;
-      arr.insert(op);
+      if (arr instanceof ArrayType) arr.insert(op);
     } else if (op instanceof InsertStringSubstringOperation) {
       const arr = this.nodes.get(op.obj);
-      if (!(arr instanceof StringType)) return;
-      arr.onInsert(op);
+      if (arr instanceof StringType)  arr.onInsert(op);
     } else if (op instanceof DeleteOperation) {
       const node = this.nodes.get(op.obj);
       if (node instanceof ArrayType) node.delete(op);
