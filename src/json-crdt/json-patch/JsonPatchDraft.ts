@@ -31,7 +31,7 @@ export class JsonPatchDraft extends Draft {
     if (!steps.length) this.setRoot(op.value);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
-      const node = this.model.find(objSteps);
+      const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectType) {
         builder.setKeys(node.id, [[String(key), builder.json(op.value)]]);
@@ -60,7 +60,7 @@ export class JsonPatchDraft extends Draft {
     if (!steps.length) this.setRoot(null);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
-      const node = this.model.find(objSteps);
+      const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectType) {
         const stringKey = String(key);
@@ -106,7 +106,7 @@ export class JsonPatchDraft extends Draft {
     if (!steps.length) return this.model.toJson();
     else {
       const objSteps = steps.slice(0, steps.length - 1);
-      const node = this.model.find(objSteps);
+      const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectType) {
         return node.getNode(String(key))?.toJson();

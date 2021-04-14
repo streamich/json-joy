@@ -135,29 +135,4 @@ export class Model {
     const op = this.nodes.get(value);
     return op ? op.toString('') : 'undefined';
   }
-
-  public find(steps: Path): JsonNode {
-    const id = this.root.toValue();
-    let node: JsonNode = this.nodes.get(id) || NULL;
-    const length = steps.length;
-    if (!length) return node;
-    let i = 0;
-    while (i < length) {
-      const step = steps[i++];
-      if (node instanceof ObjectType) {
-        const id = node.get(String(step));
-        if (!id) return UNDEFINED;
-        const nextNode = this.nodes.get(id);
-        if (!nextNode) return UNDEFINED;
-        node = nextNode;
-      } else if (node instanceof ArrayType) {
-        const id = node.findValue(Number(step));
-        const nextNode = this.nodes.get(id);
-        if (!nextNode) return UNDEFINED;
-        node = nextNode;
-        continue;
-      }
-    }
-    return node;
-  }
 }
