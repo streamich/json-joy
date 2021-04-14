@@ -1,5 +1,5 @@
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Model} from '../model';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Model} from '../Model';
 
 describe('clone()', () => {
   test('can clone a simple document', () => {

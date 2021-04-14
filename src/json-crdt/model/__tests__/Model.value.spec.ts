@@ -1,6 +1,6 @@
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Model} from '../model';
-import {ValueType} from '../types/lww-value/ValueType';
+import {Model} from '../Model';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {ValueType} from '../../types/lww-value/ValueType';
 
 describe('Document', () => {
   describe('value', () => {

@@ -1,7 +1,7 @@
-import {LogicalClock} from '../../json-crdt-patch/clock';
-import {TRUE_ID} from '../../json-crdt-patch/constants';
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Model} from '../model';
+import {LogicalClock} from '../../../json-crdt-patch/clock';
+import {TRUE_ID} from '../../../json-crdt-patch/constants';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Model} from '../Model';
 
 test('new document time starts from zero', () => {
   const doc = new Model();

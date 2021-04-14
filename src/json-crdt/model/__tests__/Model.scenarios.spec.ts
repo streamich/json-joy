@@ -1,6 +1,6 @@
-import {Model} from '../model';
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {VectorClock} from '../../json-crdt-patch/clock';
+import {Model} from '../Model';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {VectorClock} from '../../../json-crdt-patch/clock';
 
 describe('Scenarios', () => {
   // https://youtu.be/GXJ0D2tfZCM?t=2359

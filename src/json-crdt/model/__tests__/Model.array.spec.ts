@@ -1,7 +1,7 @@
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {FALSE_ID, NULL_ID, TRUE_ID} from '../../json-crdt-patch/constants';
-import {Model} from '../model';
-import {ArrayType} from '../types/rga-array/ArrayType';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {FALSE_ID, NULL_ID, TRUE_ID} from '../../../json-crdt-patch/constants';
+import {Model} from '../Model';
+import {ArrayType} from '../../types/rga-array/ArrayType';
 
 describe('Document', () => {
   describe('array', () => {
