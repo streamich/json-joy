@@ -20,7 +20,7 @@ import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOp
 import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {JsonPatch} from '../JsonPatch';
 import {Operation, operationToOp} from '../../json-patch';
-import {DocumentApi} from '../api/DocumentApi';
+import {ModelApi} from './api/ModelApi';
 import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
 import {ValueType} from '../types/lww-value/ValueType';
 import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperation';
@@ -46,7 +46,7 @@ export class Model {
   /**
    * API for applying changes to the current document.
    */
-  public api: DocumentApi;
+  public api: ModelApi;
 
   constructor(clock: VectorClock = new VectorClock(random40BitInt(), 0)) {
     this.clock = clock;
@@ -54,7 +54,7 @@ export class Model {
     this.nodes.index(TRUE);
     this.nodes.index(FALSE);
     this.nodes.index(UNDEFINED);
-    this.api = new DocumentApi(this);
+    this.api = new ModelApi(this);
   }
 
   public applyPatch(patch: Patch) {

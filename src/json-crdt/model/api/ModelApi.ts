@@ -1,17 +1,17 @@
-import type {Model} from '../model';
-import type {Path} from '../../json-pointer';
-import {StringType} from '../types/rga-string/StringType';
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {Patch} from '../../json-crdt-patch/Patch';
-import {NoopOperation} from '../../json-crdt-patch/operations/NoopOperation';
-import {LogicalTimestamp, ITimestamp} from '../../json-crdt-patch/clock';
+import type {Model} from '../Model';
+import type {Path} from '../../../json-pointer';
+import {StringType} from '../../types/rga-string/StringType';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Patch} from '../../../json-crdt-patch/Patch';
+import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
+import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
 import {StringApi} from './StringApi';
-import {ArrayType} from '../types/rga-array/ArrayType';
-import {ObjectType} from '../types/lww-object/ObjectType';
-import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
-import {ValueType} from '../types/lww-value/ValueType';
+import {ArrayType} from '../../types/rga-array/ArrayType';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {ValueType} from '../../types/lww-value/ValueType';
 
-export class DocumentApi {
+export class ModelApi {
   /** Buffer of accumulated patches. */
   public patches: Patch[] = [];
 

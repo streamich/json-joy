@@ -1,8 +1,8 @@
-import {StringType} from '../types/rga-string/StringType';
-import {DocumentApi} from './DocumentApi';
+import {StringType} from '../../types/rga-string/StringType';
+import {ModelApi} from './ModelApi';
 
 export class StringApi {
-  constructor(private readonly api: DocumentApi, private readonly obj: StringType) {}
+  constructor(private readonly api: ModelApi, private readonly obj: StringType) {}
 
   public ins(index: number, substr: string): void {
     const {api} = this;

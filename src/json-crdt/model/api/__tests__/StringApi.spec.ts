@@ -1,4 +1,4 @@
-import {Model} from '../../model';
+import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
   const doc = new Model();
