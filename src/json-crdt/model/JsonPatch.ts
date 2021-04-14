@@ -1,6 +1,6 @@
 import type {Model} from './Model';
 import type {Patch} from '../../json-crdt-patch/Patch';
-import type {Operation} from '../../json-patch';
+import type {Operation as JsonPatchOperation} from '../../json-patch';
 import {Draft} from '../../json-crdt-patch/Draft';
 import {Op, OpAdd, operationToOp} from '../../json-patch/op';
 import {ObjectType} from '../types/lww-object/ObjectType';
@@ -33,14 +33,14 @@ export class JsonPatch {
     return draft;
   }
 
-  public createCrdtPatch(jsonPatch: Operation[]): Patch {
+  public createCrdtPatch(jsonPatch: JsonPatchOperation[]): Patch {
     const ops = jsonPatch.map(operationToOp);
     const draft = this.fromOps(ops);
     const patch = draft.patch(this.model.clock);
     return patch;
   }
 
-  public applyPatch(jsonPatch: Operation[]) {
+  public applyPatch(jsonPatch: JsonPatchOperation[]) {
     const patch = this.createCrdtPatch(jsonPatch);
     this.model.clock.tick(patch.span());
     this.model.applyPatch(patch);

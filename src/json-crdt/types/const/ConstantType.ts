@@ -1,5 +1,5 @@
 import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {JsonNode} from '../../types';
+import {JsonNode} from '../types';
 
 /**
  * Constant type represents an immutable JSON value. It can be any JSON value

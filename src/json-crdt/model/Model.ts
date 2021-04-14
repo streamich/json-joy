@@ -1,4 +1,4 @@
-import type {JsonNode} from '../types';
+import type {JsonNode} from '../types/types';
 import type {Path} from '../../json-pointer';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
 import {IdentifiableIndex} from './IdentifiableIndex';

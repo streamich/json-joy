@@ -1,6 +1,6 @@
-import type {ITimestamp} from '../json-crdt-patch/clock';
-import type {Identifiable} from '../json-crdt-patch/Identifiable';
-import type {Model} from './model';
+import type {ITimestamp} from '../../json-crdt-patch/clock';
+import type {Identifiable} from '../../json-crdt-patch/Identifiable';
+import type {Model} from '../model/Model';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an
