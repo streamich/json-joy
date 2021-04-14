@@ -3,7 +3,7 @@ import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ConstantType} from './ConstantType';
 
 export class ConstantBuiltin extends ConstantType {
-  constructor(id: ITimestamp, value: unknown, private readonly comp: json_string<unknown>) {
+  constructor(id: ITimestamp, value: unknown) {
     super(id, value);
   }
 
