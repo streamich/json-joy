@@ -1,5 +1,5 @@
 import {encodeString} from '../../../util/encodeString';
-import {Timestamp} from '../../clock';
+import {ITimestamp} from '../../clock';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
@@ -14,7 +14,7 @@ import {SetRootOperation} from '../../operations/SetRootOperation';
 import {Patch} from '../../Patch';
 import {encodeVarUInt} from './util/varuint';
 
-export const encodeTimestamp = (ts: Timestamp): [number, number] => {
+export const encodeTimestamp = (ts: ITimestamp): [number, number] => {
   const sessionId = ts.getSessionId();
   let low32 = sessionId | 0;
   if (low32 < 0) low32 += 4294967296;

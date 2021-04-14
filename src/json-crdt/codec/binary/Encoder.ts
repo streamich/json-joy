@@ -1,4 +1,4 @@
-import {Timestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
 import {utf8Count} from '../../../util/utf8';
@@ -38,7 +38,7 @@ export class Encoder extends JsonPackEncoder {
     this.buf(data, dataSize);
   }
 
-  protected ts(ts: Timestamp) {
+  protected ts(ts: ITimestamp) {
     const id = this.clockEncoder.append(ts);
     this.id(id.sessionIndex, id.timeDiff);
   }

@@ -1,11 +1,11 @@
 import type {IJsonCrdtPatchOperation} from './types';
-import type {Timestamp} from '../clock';
+import type {ITimestamp} from '../clock';
 
 export class InsertStringSubstringOperation implements IJsonCrdtPatchOperation {
   constructor(
-    public readonly id: Timestamp,
-    public readonly obj: Timestamp,
-    public readonly after: Timestamp,
+    public readonly id: ITimestamp,
+    public readonly obj: ITimestamp,
+    public readonly after: ITimestamp,
     public readonly substring: string,
   ) {}
 

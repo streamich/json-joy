@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {Timestamp, LogicalTimespan} from '../../../json-crdt-patch/clock';
+import {ITimestamp, ITimespan} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
@@ -10,7 +10,7 @@ export class StringType implements JsonNode {
   public start: StringChunk;
   public end: StringChunk;
 
-  constructor(public readonly doc: Document, public readonly id: Timestamp) {
+  constructor(public readonly doc: Document, public readonly id: ITimestamp) {
     this.start = this.end = new StringOriginChunk(id);
   }
 
@@ -89,7 +89,7 @@ export class StringType implements JsonNode {
     }
   }
 
-  public findId(index: number): Timestamp {
+  public findId(index: number): ITimestamp {
     let chunk: null | StringChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -103,7 +103,7 @@ export class StringType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findIdSpan(index: number, length: number): LogicalTimespan[] {
+  public findIdSpan(index: number, length: number): ITimespan[] {
     let chunk: null | StringChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -114,7 +114,7 @@ export class StringType implements JsonNode {
           const remaining = cnt - index;
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
           length -= remaining;
-          const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
+          const result: ITimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
           while (chunk.right) {
             chunk = chunk!.right;
             if (chunk.deleted) continue;
@@ -164,7 +164,7 @@ export class StringType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<Timestamp> {}
+  public *children(): IterableIterator<ITimestamp> {}
 
   public *chunks(): IterableIterator<StringChunk> {
     let curr: StringChunk | null = this.start;

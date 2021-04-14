@@ -1,4 +1,4 @@
-import {Timestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
@@ -23,7 +23,7 @@ export class Encoder {
     return snapshot;
   }
 
-  protected ts(arr: unknown[], ts: Timestamp) {
+  protected ts(arr: unknown[], ts: ITimestamp) {
     this.clock.append(ts).push(arr);
   }
 

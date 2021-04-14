@@ -1,5 +1,5 @@
 import {json_string} from 'ts-brand-json';
-import {Timestamp, VectorClock} from '../../clock';
+import {ITimestamp, VectorClock} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
@@ -13,7 +13,7 @@ export class ClockEncoder {
     this.table.set(clock.getSessionId(), this.index++);
   }
 
-  public append(ts: Timestamp): RelativeTimestamp {
+  public append(ts: ITimestamp): RelativeTimestamp {
     const {time} = ts;
     const sessionId = ts.getSessionId();
     if (sessionId === 0) return new RelativeTimestamp(0, ts.time);
@@ -53,7 +53,7 @@ export class ClockEncoder {
     return (str + ']') as json_string<number[]>;
   }
 
-  public *clocks(): IterableIterator<Timestamp> {
+  public *clocks(): IterableIterator<ITimestamp> {
     for (const sessionId of this.table.keys()) yield this.clock.clocks.get(sessionId)!;
   }
 }

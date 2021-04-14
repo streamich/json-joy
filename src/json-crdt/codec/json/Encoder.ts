@@ -1,4 +1,4 @@
-import {Timestamp, VectorClock} from '../../../json-crdt-patch/clock';
+import {ITimestamp, VectorClock} from '../../../json-crdt-patch/clock';
 import {Document} from '../../document';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
@@ -40,7 +40,7 @@ export class Encoder {
     return data;
   }
 
-  public encodeTimestamp(ts: Timestamp): JsonCrdtTimestamp {
+  public encodeTimestamp(ts: ITimestamp): JsonCrdtTimestamp {
     return [ts.getSessionId(), ts.time];
   }
 

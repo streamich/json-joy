@@ -1,11 +1,11 @@
 import {LogicalClock} from "./logical";
-import {Timestamp} from "./types";
+import {ITimestamp} from "./types";
 
 export class VectorClock extends LogicalClock {
   /**
    * Mapping of session IDs to logical timestamps.
    */
-  public readonly clocks = new Map<number, Timestamp>();
+  public readonly clocks = new Map<number, ITimestamp>();
 
   constructor(sessionId: number, time: number) {
     super(sessionId, time);
@@ -17,7 +17,7 @@ export class VectorClock extends LogicalClock {
    *
    * @param ts Operation timestamp that was observed.
    */
-  public observe(ts: Timestamp, span: number) {
+  public observe(ts: ITimestamp, span: number) {
     const time = ts.time + span - 1;
     const clock = this.clocks.get(ts.getSessionId());
     if (!clock) this.clocks.set(ts.getSessionId(), ts.tick(span - 1));

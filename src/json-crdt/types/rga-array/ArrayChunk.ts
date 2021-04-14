@@ -1,5 +1,5 @@
 import type {JsonChunk, JsonNode} from '../../types';
-import {LogicalTimestamp, Timestamp} from '../../../json-crdt-patch/clock';
+import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
 
 export class ArrayChunk implements JsonChunk {
   public left: ArrayChunk | null = null;
@@ -16,7 +16,7 @@ export class ArrayChunk implements JsonChunk {
    * @param nodes Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: Timestamp, public nodes?: JsonNode[]) {}
+  constructor(public readonly id: ITimestamp, public nodes?: JsonNode[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of

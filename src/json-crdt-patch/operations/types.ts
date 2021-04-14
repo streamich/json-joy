@@ -1,11 +1,11 @@
-import {Timestamp} from '../clock';
+import {ITimestamp} from '../clock';
 import {Identifiable} from '../Identifiable';
 
 export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
    * Unique ID of that operation within the document, Lamport timestamp.
    */
-  id: Timestamp;
+  id: ITimestamp;
 
   /**
    * Some operations, such as array and string insert/delete operations are

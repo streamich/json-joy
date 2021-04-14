@@ -1,21 +1,21 @@
-import {IClock, ITimespan, Timestamp} from './types';
+import {IClock, ITimespan, ITimestamp} from './types';
 
 /**
  * Immutable timestamp, represents a single point int time of a LogicalClock.
  * Logical timestamps are used to identify every CRDT operation.
  */
- export class LogicalTimestamp implements Timestamp {
+ export class LogicalTimestamp implements ITimestamp {
   constructor(public sessionId: number, public time: number) {}
 
   public getSessionId(): number {
     return this.sessionId;
   }
 
-  public isEqual(ts: Timestamp): boolean {
+  public isEqual(ts: ITimestamp): boolean {
     return this.getSessionId() === ts.getSessionId() && this.time === ts.time;
   }
 
-  public compare(ts: Timestamp): -1 | 0 | 1 {
+  public compare(ts: ITimestamp): -1 | 0 | 1 {
     if (this.time > ts.time) return 1;
     if (this.time < ts.time) return -1;
     if (this.getSessionId() > ts.getSessionId()) return 1;
@@ -23,14 +23,14 @@ import {IClock, ITimespan, Timestamp} from './types';
     return 0;
   }
 
-  public inSpan(span: number, ts: Timestamp, tsSpan: number): boolean {
+  public inSpan(span: number, ts: ITimestamp, tsSpan: number): boolean {
     if (this.getSessionId() !== ts.getSessionId()) return false;
     if (this.time > ts.time) return false;
     if (this.time + span < ts.time + tsSpan) return false;
     return true;
   }
 
-  public overlap(span: number, ts: Timestamp, tsSpan: number): number {
+  public overlap(span: number, ts: ITimestamp, tsSpan: number): number {
     if (this.getSessionId() !== ts.getSessionId()) return 0;
     const x1 = this.time;
     const x2 = x1 + span;
@@ -42,7 +42,7 @@ import {IClock, ITimespan, Timestamp} from './types';
     return diff <= 0 ? 0 : diff;
   }
 
-  public tick(cycles: number): Timestamp {
+  public tick(cycles: number): ITimestamp {
     return new LogicalTimestamp(this.getSessionId(), this.time + cycles);
   }
 

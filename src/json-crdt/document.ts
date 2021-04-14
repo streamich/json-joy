@@ -4,7 +4,7 @@ import {IdentifiableIndex} from './IdentifiableIndex';
 import {random40BitInt} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../json-crdt-patch/Patch';
 import {SetRootOperation} from '../json-crdt-patch/operations/SetRootOperation';
-import {Timestamp, VectorClock} from '../json-crdt-patch/clock';
+import {ITimestamp, VectorClock} from '../json-crdt-patch/clock';
 import {DocRootType} from './types/lww-doc-root/DocRootType';
 import {ObjectType} from './types/lww-object/ObjectType';
 import {ArrayType} from './types/rga-array/ArrayType';
@@ -105,7 +105,7 @@ export class Document {
     }
   }
 
-  private deleteNodeTree(value: Timestamp) {
+  private deleteNodeTree(value: ITimestamp) {
     const isSystemNode = value.getSessionId() < 1;
     if (isSystemNode) return;
     const node = this.nodes.get(value);

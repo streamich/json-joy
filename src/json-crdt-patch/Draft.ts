@@ -1,4 +1,4 @@
-import {LogicalClock, Timestamp, LogicalTimestamp} from './clock';
+import {LogicalClock, ITimestamp, LogicalTimestamp} from './clock';
 import {PatchBuilder} from './PatchBuilder';
 import {Patch} from './Patch';
 import {DeleteOperation} from './operations/DeleteOperation';
@@ -45,7 +45,7 @@ export class Draft {
   public patch(clock: LogicalClock): Patch {
     const patch = new Patch();
     const ops = this.builder.patch.ops;
-    const ts = (id: Timestamp) =>
+    const ts = (id: ITimestamp) =>
       id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time);
     for (const op of ops) {
       if (op instanceof DeleteOperation)

@@ -1,10 +1,10 @@
 import type {IJsonCrdtPatchOperation} from './types';
-import type {Timestamp} from '../clock';
+import type {ITimestamp} from '../clock';
 
 export class SetValueOperation implements IJsonCrdtPatchOperation {
   constructor(
-    public readonly id: Timestamp,
-    public readonly obj: Timestamp,
+    public readonly id: ITimestamp,
+    public readonly obj: ITimestamp,
     public readonly value: unknown,
   ) {}
 

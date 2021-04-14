@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
 import type {Document} from '../../document';
-import {LogicalTimespan, Timestamp} from '../../../json-crdt-patch/clock';
+import {ITimespan, ITimestamp} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ArrayChunk} from './ArrayChunk';
@@ -10,7 +10,7 @@ export class ArrayType implements JsonNode {
   public start: ArrayChunk;
   public end: ArrayChunk;
 
-  constructor(public readonly doc: Document, public readonly id: Timestamp) {
+  constructor(public readonly doc: Document, public readonly id: ITimestamp) {
     this.start = this.end = new ArrayOriginChunk(id);
   }
 
@@ -95,7 +95,7 @@ export class ArrayType implements JsonNode {
     }
   }
 
-  public findId(index: number): Timestamp {
+  public findId(index: number): ITimestamp {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -109,7 +109,7 @@ export class ArrayType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findValue(index: number): Timestamp {
+  public findValue(index: number): ITimestamp {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -123,7 +123,7 @@ export class ArrayType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findIdSpans(index: number, length: number): LogicalTimespan[] {
+  public findIdSpans(index: number, length: number): ITimespan[] {
     let chunk: null | ArrayChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -134,7 +134,7 @@ export class ArrayType implements JsonNode {
           const remaining = cnt - index;
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
           length -= remaining;
-          const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
+          const result: ITimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
           while (chunk.right) {
             chunk = chunk!.right;
             if (chunk.deleted) continue;
@@ -188,7 +188,7 @@ export class ArrayType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<Timestamp> {
+  public *children(): IterableIterator<ITimestamp> {
     let chunk: null | ArrayChunk = this.start;
     while ((chunk = chunk.right)) if (chunk.nodes) for (const node of chunk.nodes) yield node.id;
   }

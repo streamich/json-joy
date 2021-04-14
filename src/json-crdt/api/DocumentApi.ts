@@ -4,7 +4,7 @@ import {StringType} from '../types/rga-string/StringType';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {Patch} from '../../json-crdt-patch/Patch';
 import {NoopOperation} from '../../json-crdt-patch/operations/NoopOperation';
-import {LogicalTimestamp, Timestamp} from '../../json-crdt-patch/clock';
+import {LogicalTimestamp, ITimestamp} from '../../json-crdt-patch/clock';
 import {StringApi} from './StringApi';
 import {ArrayType} from '../types/rga-array/ArrayType';
 import {ObjectType} from '../types/lww-object/ObjectType';
@@ -126,7 +126,7 @@ export class DocumentApi {
     const {builder} = this;
     const obj = this.asArr(path);
     const after = !index ? obj.id : obj.findId(index - 1);
-    const valueIds: Timestamp[] = [];
+    const valueIds: ITimestamp[] = [];
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
     builder.insArr(obj.id, after, valueIds);
     return this;

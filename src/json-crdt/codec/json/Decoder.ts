@@ -1,4 +1,4 @@
-import {Timestamp, LogicalTimestamp, VectorClock} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp, VectorClock} from '../../../json-crdt-patch/clock';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {Document} from '../../document';
@@ -47,7 +47,7 @@ export class Decoder {
     return vectorClock;
   }
 
-  protected decodeTimestamp([sessionId, time]: JsonCrdtTimestamp): Timestamp {
+  protected decodeTimestamp([sessionId, time]: JsonCrdtTimestamp): ITimestamp {
     return new LogicalTimestamp(sessionId, time);
   }
 

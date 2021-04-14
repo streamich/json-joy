@@ -8,32 +8,32 @@
  * @module
  */
 
-import {IClock, ITimespan, Timestamp} from './types';
+import {IClock, ITimespan, ITimestamp} from './types';
 
-export class ServerTimestamp implements Timestamp {
+export class ServerTimestamp implements ITimestamp {
   constructor(public time: number) {}
 
   public getSessionId(): number {
     return 0;
   }
 
-  public isEqual(ts: Timestamp): boolean {
+  public isEqual(ts: ITimestamp): boolean {
     return this.time === ts.time;
   }
 
-  public compare(ts: Timestamp): -1 | 0 | 1 {
+  public compare(ts: ITimestamp): -1 | 0 | 1 {
     if (this.time > ts.time) return 1;
     if (this.time < ts.time) return -1;
     return 0;
   }
 
-  public inSpan(span: number, ts: Timestamp, tsSpan: number): boolean {
+  public inSpan(span: number, ts: ITimestamp, tsSpan: number): boolean {
     if (this.time > ts.time) return false;
     if (this.time + span < ts.time + tsSpan) return false;
     return true;
   }
 
-  public overlap(span: number, ts: Timestamp, tsSpan: number): number {
+  public overlap(span: number, ts: ITimestamp, tsSpan: number): number {
     const x1 = this.time;
     const x2 = x1 + span;
     const y1 = ts.time;
@@ -44,7 +44,7 @@ export class ServerTimestamp implements Timestamp {
     return diff <= 0 ? 0 : diff;
   }
 
-  public tick(cycles: number): Timestamp {
+  public tick(cycles: number): ITimestamp {
     return new ServerTimestamp(this.time + cycles);
   }
 
@@ -79,7 +79,7 @@ export class ServerTimespan extends ServerTimestamp implements ITimespan {
 }
 
 export class ServerClock extends ServerTimestamp implements IClock {
-  public tick(cycles: number): Timestamp {
+  public tick(cycles: number): ITimestamp {
     const timestamp = new ServerTimestamp(this.time);
     this.time += cycles;
     return timestamp;

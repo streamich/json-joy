@@ -2,7 +2,7 @@
  * Represents a unique logical timestamp used to identify things such as
  * objects, chunks and operations in a document.
  */
-export interface Timestamp {
+export interface ITimestamp {
   time: number;
 
   getSessionId(): number;
@@ -10,13 +10,13 @@ export interface Timestamp {
   /**
    * @returns True if timestamps are equal.
    */
-  isEqual(ts: Timestamp): boolean;
+  isEqual(ts: ITimestamp): boolean;
 
   /**
    * @param ts The other timestamp.
    * @returns 1 if current timestamp is larger, -1 if smaller, and 0 otherwise.
    */
-  compare(ts: Timestamp): -1 | 0 | 1;
+  compare(ts: ITimestamp): -1 | 0 | 1;
 
   /**
    * Checks if `ts` is contained in a time span starting from this timestamp
@@ -26,7 +26,7 @@ export interface Timestamp {
    * @param ts Timestamp which to check if it fits in the time span.
    * @returns True if timestamp is contained within the time span.
    */
-  inSpan(span: number, ts: Timestamp, tsSpan: number): boolean;
+  inSpan(span: number, ts: ITimestamp, tsSpan: number): boolean;
 
   /**
    * Check if two time intervals have any part overlapping. Returns the length
@@ -37,13 +37,13 @@ export interface Timestamp {
    * @param tsSpan Span of the other timestamp.
    * @returns Size of the overlapping time span.
    */
-  overlap(span: number, ts: Timestamp, tsSpan: number): number;
+  overlap(span: number, ts: ITimestamp, tsSpan: number): number;
 
   /**
    * @returns Returns a new timestamps with the same session ID and time advanced
    *          by the number of specified clock cycles.
    */
-  tick(cycles: number): Timestamp;
+  tick(cycles: number): ITimestamp;
 
   interval(cycles: number, span: number): ITimespan;
 
@@ -66,7 +66,7 @@ export interface Timestamp {
  * Similar to ITimestamp, but represents an interval, instead of just a
  * single time point.
  */
-export interface ITimespan extends Timestamp {
+export interface ITimespan extends ITimestamp {
   /**
    * Length of the time interval.
    */
@@ -86,10 +86,10 @@ export interface ITimespan extends Timestamp {
  * which they wish to identify by a single LogicalTimestamp for space saving purposes,
  * but it is possible find the exact operation for each distinct implicit logical timestamp.
  */
-export interface IClock extends Timestamp {
+export interface IClock extends ITimestamp {
   /**
    * Returns the current clock timestamp and advances the clock given number of
    * ticks.
    */
-  tick(cycles: number): Timestamp;
+  tick(cycles: number): ITimestamp;
 }

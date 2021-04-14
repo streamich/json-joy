@@ -1,4 +1,4 @@
-import type {Timestamp} from '../json-crdt-patch/clock';
+import type {ITimestamp} from '../json-crdt-patch/clock';
 import type {Identifiable} from '../json-crdt-patch/Identifiable';
 import type {Document} from './document';
 
@@ -26,7 +26,7 @@ export interface JsonNode extends Identifiable {
    * Returns a list of child values of this type. Used in object and array
    * nodes, where those nodes are composed of more nodes.
    */
-  children(): IterableIterator<Timestamp>;
+  children(): IterableIterator<ITimestamp>;
 }
 
 /**

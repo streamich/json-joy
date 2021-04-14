@@ -1,9 +1,9 @@
 import {json_string} from 'ts-brand-json';
-import {Timestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ConstantType} from './ConstantType';
 
 export class ConstantBuiltin extends ConstantType {
-  constructor(id: Timestamp, value: unknown, private readonly comp: json_string<unknown>) {
+  constructor(id: ITimestamp, value: unknown, private readonly comp: json_string<unknown>) {
     super(id, value);
   }
 
