@@ -10,7 +10,7 @@ export class JsonPatch {
 
   constructor(public readonly model: Model) {}
 
-  fromOps(ops: Op[]): Draft {
+  public createDraft(ops: Op[]): Draft {
     const draft = new Draft();
     const {builder} = draft;
     for (const op of ops) {
@@ -33,15 +33,13 @@ export class JsonPatch {
     return draft;
   }
 
-  public createCrdtPatch(jsonPatch: JsonPatchOperation[]): Patch {
-    const ops = jsonPatch.map(operationToOp);
-    const draft = this.fromOps(ops);
-    const patch = draft.patch(this.model.clock);
-    return patch;
+  public createCrdtPatch(ops: Op[]): Patch {
+    return this.createDraft(ops).patch(this.model.clock);
   }
 
   public applyPatch(jsonPatch: JsonPatchOperation[]) {
-    const patch = this.createCrdtPatch(jsonPatch);
+    const ops = jsonPatch.map(operationToOp);
+    const patch = this.createCrdtPatch(ops);
     this.model.clock.tick(patch.span());
     this.model.applyPatch(patch);
   }

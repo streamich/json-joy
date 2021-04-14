@@ -6,7 +6,7 @@ describe('add', () => {
   test('can set the root value', () => {
     const model = new Model();
     const jsonPatch = new JsonPatch(model);
-    const draft = jsonPatch.fromOps([new OpAdd([], true)]);
+    const draft = jsonPatch.createDraft([new OpAdd([], true)]);
     const patch = draft.patch(model.clock);
     model.applyPatch(patch);
     model.applyPatch(patch);
@@ -16,7 +16,7 @@ describe('add', () => {
   test('can set the string as root value', () => {
     const model = new Model();
     const jsonPatch = new JsonPatch(model);
-    const draft = jsonPatch.fromOps([new OpAdd([], 'hello world')]);
+    const draft = jsonPatch.createDraft([new OpAdd([], 'hello world')]);
     const patch = draft.patch(model.clock);
     model.applyPatch(patch);
     model.applyPatch(patch);
@@ -26,7 +26,7 @@ describe('add', () => {
   test('can set object as root value', () => {
     const model = new Model();
     const jsonPatch = new JsonPatch(model);
-    const draft = jsonPatch.fromOps([new OpAdd([], {a: [1, null]})]);
+    const draft = jsonPatch.createDraft([new OpAdd([], {a: [1, null]})]);
     const patch = draft.patch(model.clock);
     model.applyPatch(patch);
     model.applyPatch(patch);
