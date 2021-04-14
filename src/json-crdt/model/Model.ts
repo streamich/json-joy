@@ -1,5 +1,4 @@
 import type {JsonNode} from '../types/types';
-import type {Path} from '../../json-pointer';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
 import {IdentifiableIndex} from './IdentifiableIndex';
 import {randomSessionId} from './util';
@@ -23,6 +22,11 @@ import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOper
 import {ValueType} from '../types/lww-value/ValueType';
 import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperation';
 
+/**
+ * In instance of Model class represents the underlying data structure,
+ * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
+ * compute the "view" of the model.
+ */
 export class Model {
   /**
    * Root of the JSON document is implemented as Last Write Wins Register,
@@ -55,6 +59,10 @@ export class Model {
     this.api = new ModelApi(this);
   }
 
+  /**
+   * Applies a single patch to the document. All mutations to the model must go
+   * through this method.
+   */
   public applyPatch(patch: Patch) {
     const ops = patch.ops;
     const {length} = ops;
@@ -62,8 +70,8 @@ export class Model {
   }
 
   /**
-   * Applies a single operation to the document. All mutations to the document
-   * must go through this method.
+   * Applies a single operation to the model. All mutations to the model must go
+   * through this method.
    *
    * @param op Any JSON CRDT Patch operation
    */
@@ -103,6 +111,10 @@ export class Model {
     }
   }
 
+  /**
+   * Recursively deletes a tree of nodes. Used when root node is overwritten or
+   * when object contents of container node (object or array) is removed.
+   */
   private deleteNodeTree(value: ITimestamp) {
     const isSystemNode = value.getSessionId() < 1;
     if (isSystemNode) return;
@@ -126,10 +138,12 @@ export class Model {
     return doc;
   }
 
+  /** @returns Returns JSON view of the model. */
   public toJson(): unknown {
     return this.root.toJson();
   }
 
+  /** @returns Returns human-readable text for debugging. */
   public toString(): string {
     const value = this.root.toValue();
     const op = this.nodes.get(value);
