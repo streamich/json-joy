@@ -132,7 +132,7 @@ export class Encoder extends JsonPackEncoder {
   }
 
   protected encodeVal(obj: ValueType): void {
-    this.u8(0xD5);
+    this.u8(0xd5);
     this.ts(obj.id);
     this.ts(obj.writeId);
     this.encodeAny(obj.value);

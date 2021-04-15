@@ -4,7 +4,7 @@
  * total order of operations. In this case session ID is not used, it is always
  * set to zero. The time is sequentially monotonically incrementing integer, it
  * is incremented by the server.
- * 
+ *
  * @module
  */
 

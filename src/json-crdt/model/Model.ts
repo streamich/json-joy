@@ -99,7 +99,7 @@ export class Model {
       if (arr instanceof ArrayType) arr.insert(op);
     } else if (op instanceof InsertStringSubstringOperation) {
       const arr = this.nodes.get(op.obj);
-      if (arr instanceof StringType)  arr.onInsert(op);
+      if (arr instanceof StringType) arr.onInsert(op);
     } else if (op instanceof DeleteOperation) {
       const node = this.nodes.get(op.obj);
       if (node instanceof ArrayType) node.delete(op);

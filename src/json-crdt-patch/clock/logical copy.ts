@@ -4,7 +4,7 @@ import {IClock, ITimespan, ITimestamp} from './types';
  * Immutable timestamp, represents a single point int time of a LogicalClock.
  * Logical timestamps are used to identify every CRDT operation.
  */
- export class LogicalTimestamp implements ITimestamp {
+export class LogicalTimestamp implements ITimestamp {
   constructor(public sessionId: number, public time: number) {}
 
   public getSessionId(): number {

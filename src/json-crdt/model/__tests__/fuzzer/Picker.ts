@@ -9,9 +9,9 @@ import {StringType} from '../../../types/rga-string/StringType';
 import {Model} from '../../Model';
 import {FuzzerOptions} from './types';
 
-type StringOp = (typeof InsertStringSubstringOperation) | (typeof DeleteOperation);
-type ArrayOp = (typeof InsertArrayElementsOperation) | (typeof DeleteOperation);
-type ObjectOp = (typeof SetObjectKeysOperation) | (typeof DeleteOperation);
+type StringOp = typeof InsertStringSubstringOperation | typeof DeleteOperation;
+type ArrayOp = typeof InsertArrayElementsOperation | typeof DeleteOperation;
+type ObjectOp = typeof SetObjectKeysOperation | typeof DeleteOperation;
 
 export class Picker {
   constructor(public opts: FuzzerOptions) {}
@@ -41,8 +41,8 @@ export class Picker {
 
   public pickObjectOperation(node: ObjectType): [key: string, opcode: ObjectOp] {
     if (!node.latest.size) return [this.generateObjectKey(), SetObjectKeysOperation];
-    if (Math.random() > .5) return [this.generateObjectKey(), SetObjectKeysOperation];
-    const keys = [...node.latest.keys()].filter(key => !node.latest.get(key)!.node.id.isEqual(UNDEFINED_ID));
+    if (Math.random() > 0.5) return [this.generateObjectKey(), SetObjectKeysOperation];
+    const keys = [...node.latest.keys()].filter((key) => !node.latest.get(key)!.node.id.isEqual(UNDEFINED_ID));
     if (!keys.length) return [this.generateObjectKey(), SetObjectKeysOperation];
     const key = keys[Math.floor(Math.random() * keys.length)];
     return [key, DeleteOperation];

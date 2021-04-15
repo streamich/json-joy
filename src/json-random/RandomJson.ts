@@ -1,12 +1,12 @@
 export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'array' | 'object';
 
 export interface NodeOdds {
-  'null': number;
-  'boolean': number;
-  'number': number;
-  'string': number;
-  'array': number;
-  'object': number;
+  null: number;
+  boolean: number;
+  number: number;
+  string: number;
+  array: number;
+  object: number;
 }
 
 export interface RandomJsonOptions {
@@ -44,7 +44,8 @@ export class RandomJson {
     this.oddTotals.string = this.oddTotals.number + this.opts.odds.string;
     this.oddTotals.array = this.oddTotals.string + this.opts.odds.array;
     this.oddTotals.object = this.oddTotals.array + this.opts.odds.object;
-    this.totalOdds = this.opts.odds.null +
+    this.totalOdds =
+      this.opts.odds.null +
       this.opts.odds.boolean +
       this.opts.odds.number +
       this.opts.odds.string +
@@ -63,7 +64,7 @@ export class RandomJson {
     const container = this.pickContainer();
     const newNodeType = this.pickNodeType();
     const node = this.generate(newNodeType);
-    if (node && (typeof node === 'object')) this.containers.push(node as any);
+    if (node && typeof node === 'object') this.containers.push(node as any);
     if (Array.isArray(container)) {
       const index = Math.floor(Math.random() * (container.length + 1));
       container.splice(index, 0, node);
@@ -75,18 +76,24 @@ export class RandomJson {
 
   protected generate(type: NodeType): unknown {
     switch (type) {
-      case 'null': return null;
-      case 'boolean': return Math.random() > .5;
-      case 'number': return Math.random() > .2
-        ? Math.random() * 1e9
-        : Math.random() < .2
-          ? Math.round(0xFF * (2 * Math.random() - 1))
-          : Math.random() < .2
-            ? Math.round(0xFFFF * (2 * Math.random() - 1))
-            : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
-      case 'string': return this.str();
-      case 'array': return [];
-      case 'object': return {};
+      case 'null':
+        return null;
+      case 'boolean':
+        return Math.random() > 0.5;
+      case 'number':
+        return Math.random() > 0.2
+          ? Math.random() * 1e9
+          : Math.random() < 0.2
+          ? Math.round(0xff * (2 * Math.random() - 1))
+          : Math.random() < 0.2
+          ? Math.round(0xffff * (2 * Math.random() - 1))
+          : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
+      case 'string':
+        return this.str();
+      case 'array':
+        return [];
+      case 'object':
+        return {};
     }
   }
 
@@ -102,7 +109,7 @@ export class RandomJson {
 
   protected pickContainerType(): 'array' | 'object' {
     const sum = this.opts.odds.array + this.opts.odds.object;
-    if (Math.random() < (this.opts.odds.array / sum)) return 'array';
+    if (Math.random() < this.opts.odds.array / sum) return 'array';
     return 'object';
   }
 
@@ -120,7 +127,7 @@ export class RandomJson {
 
   protected str(length = Math.ceil(Math.random() * 16)): string {
     let str: string = '';
-    if (Math.random() < .1) for (let i = 0; i < length; i++) str += this.utf8();
+    if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += this.utf8();
     else for (let i = 0; i < length; i++) str += this.ascii();
     return str;
   }

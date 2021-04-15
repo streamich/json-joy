@@ -1,18 +1,18 @@
-import {Model} from "../..";
-import {InsertStringSubstringOperation} from "../../../../json-crdt-patch/operations/InsertStringSubstringOperation";
-import {Patch} from "../../../../json-crdt-patch/Patch";
-import {PatchBuilder} from "../../../../json-crdt-patch/PatchBuilder";
-import {StringType} from "../../../types/rga-string/StringType";
-import type {ModelFuzzer} from "./ModelFuzzer";
-import {ObjectType} from "../../../types/lww-object/ObjectType";
-import {SetObjectKeysOperation} from "../../../../json-crdt-patch/operations/SetObjectKeysOperation";
-import {UNDEFINED_ID} from "../../../../json-crdt-patch/constants";
+import {Model} from '../..';
+import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operations/InsertStringSubstringOperation';
+import {Patch} from '../../../../json-crdt-patch/Patch';
+import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
+import {StringType} from '../../../types/rga-string/StringType';
+import type {ModelFuzzer} from './ModelFuzzer';
+import {ObjectType} from '../../../types/lww-object/ObjectType';
+import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 
 export class ModelSession {
   public models: Model[] = [];
   public patches: Patch[][] = [];
 
-  public constructor (public fuzzer: ModelFuzzer, public concurrency: number) {
+  public constructor(public fuzzer: ModelFuzzer, public concurrency: number) {
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);
@@ -69,7 +69,7 @@ export class ModelSession {
     const builder = new PatchBuilder(model.clock);
     if (opcode === SetObjectKeysOperation) {
       const valueId = builder.json({asdf: 'asdf'});
-      builder.setKeys(node.id, [[key, valueId]])
+      builder.setKeys(node.id, [[key, valueId]]);
     } else {
       builder.setKeys(node.id, [[key, UNDEFINED_ID]]);
     }

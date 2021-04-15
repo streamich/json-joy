@@ -15,74 +15,55 @@ const testCases: TestCase[] = [
   {
     name: 'can set boolean as document root',
     doc1: undefined,
-    patches: [
-      [{op: 'add', path: '', value: true}],
-    ],
+    patches: [[{op: 'add', path: '', value: true}]],
     doc2: true,
   },
   {
     name: 'can set string as root value',
     doc1: undefined,
-    patches: [
-      [{op: 'add', path: '', value: 'hello world'}],
-    ],
+    patches: [[{op: 'add', path: '', value: 'hello world'}]],
     doc2: 'hello world',
   },
   {
     name: 'can set object as root',
     doc1: undefined,
-    patches: [
-      [{op: 'add', path: '', value: {a: [1, null]}}],
-    ],
+    patches: [[{op: 'add', path: '', value: {a: [1, null]}}]],
     doc2: {a: [1, null]},
   },
   {
     name: 'can set object as document root and update it',
     doc1: undefined,
-    patches: [
-      [{op: 'add', path: '', value: {foo: {}}}],
-      [{op: 'add', path: '/foo/bar', value: 123}]
-    ],
+    patches: [[{op: 'add', path: '', value: {foo: {}}}], [{op: 'add', path: '/foo/bar', value: 123}]],
     doc2: {foo: {bar: 123}},
   },
   {
     name: 'can add element to empty array',
     doc1: [],
-    patches: [
-      [{op: 'add', path: '/0', value: 1}],
-    ],
+    patches: [[{op: 'add', path: '/0', value: 1}]],
     doc2: [1],
   },
   {
     name: 'can add element to end of array',
     doc1: [1],
-    patches: [
-      [{op: 'add', path: '/1', value: 2}],
-    ],
+    patches: [[{op: 'add', path: '/1', value: 2}]],
     doc2: [1, 2],
   },
   {
     name: 'can add element to beginning of array',
     doc1: [1],
-    patches: [
-      [{op: 'add', path: '/0', value: 2}],
-    ],
+    patches: [[{op: 'add', path: '/0', value: 2}]],
     doc2: [2, 1],
   },
   {
     name: 'can add element to middle of array',
     doc1: [1, 2],
-    patches: [
-      [{op: 'add', path: '/1', value: 3}],
-    ],
+    patches: [[{op: 'add', path: '/1', value: 3}]],
     doc2: [1, 3, 2],
   },
   {
     name: 'can push to end of array',
     doc1: [1, 2],
-    patches: [
-      [{op: 'add', path: '/-', value: 3}],
-    ],
+    patches: [[{op: 'add', path: '/-', value: 3}]],
     doc2: [1, 2, 3],
   },
   {
@@ -110,49 +91,37 @@ const testCases: TestCase[] = [
   {
     name: 'can remove document root value',
     doc1: 'hello',
-    patches: [
-      [{op: 'remove', path: ''}],
-    ],
+    patches: [[{op: 'remove', path: ''}]],
     doc2: null,
   },
   {
     name: 'can remove object key',
     doc1: {foo: 'bar'},
-    patches: [
-      [{op: 'remove', path: '/foo'}],
-    ],
+    patches: [[{op: 'remove', path: '/foo'}]],
     doc2: {},
   },
   {
     name: 'can remove deep object key',
-    doc1: {foo: {}, a: { b: 1, c: 2}},
-    patches: [
-      [{op: 'remove', path: '/a/b'}],
-    ],
+    doc1: {foo: {}, a: {b: 1, c: 2}},
+    patches: [[{op: 'remove', path: '/a/b'}]],
     doc2: {foo: {}, a: {c: 2}},
   },
   {
     name: 'can remove at the beginning of array',
     doc1: {foo: [1, 2, 3]},
-    patches: [
-      [{op: 'remove', path: '/foo/0'}],
-    ],
+    patches: [[{op: 'remove', path: '/foo/0'}]],
     doc2: {foo: [2, 3]},
   },
   {
     name: 'can remove at the end of array',
     doc1: {foo: [1, 2, 3]},
-    patches: [
-      [{op: 'remove', path: '/foo/2'}],
-    ],
+    patches: [[{op: 'remove', path: '/foo/2'}]],
     doc2: {foo: [1, 2]},
   },
   {
     name: 'can remove in the middle of array',
     doc1: {foo: [1, 2, 3]},
-    patches: [
-      [{op: 'remove', path: '/foo/1'}],
-    ],
+    patches: [[{op: 'remove', path: '/foo/1'}]],
     doc2: {foo: [1, 3]},
   },
   {
@@ -162,9 +131,7 @@ const testCases: TestCase[] = [
       b: 'b',
       c: 'c',
     },
-    patches: [
-      [{op: 'replace', path: '/b', value: 'gg'}],
-    ],
+    patches: [[{op: 'replace', path: '/b', value: 'gg'}]],
     doc2: {
       a: 'a',
       b: 'gg',
@@ -178,9 +145,7 @@ const testCases: TestCase[] = [
       b: 'b',
       c: 'c',
     },
-    patches: [
-      [{op: 'add', path: '/b', value: 'gg'}],
-    ],
+    patches: [[{op: 'add', path: '/b', value: 'gg'}]],
     doc2: {
       a: 'a',
       b: 'gg',
@@ -192,9 +157,7 @@ const testCases: TestCase[] = [
     doc1: {
       a: 'a',
     },
-    patches: [
-      [{op: 'replace', path: '/b', value: 'gg'}],
-    ],
+    patches: [[{op: 'replace', path: '/b', value: 'gg'}]],
     throws: 'NOT_FOUND',
   },
   {
@@ -202,9 +165,7 @@ const testCases: TestCase[] = [
     doc1: {
       a: 'a',
     },
-    patches: [
-      [{op: 'replace', path: '', value: 'b'}],
-    ],
+    patches: [[{op: 'replace', path: '', value: 'b'}]],
     doc2: 'b',
   },
   {
@@ -212,9 +173,7 @@ const testCases: TestCase[] = [
     doc1: {
       foo: [1, 2, 3],
     },
-    patches: [
-      [{op: 'replace', path: '/foo/1', value: 'b'}],
-    ],
+    patches: [[{op: 'replace', path: '/foo/1', value: 'b'}]],
     doc2: {
       foo: [1, 'b', 3],
     },
@@ -225,9 +184,7 @@ const testCases: TestCase[] = [
       a: 1,
       b: 2,
     },
-    patches: [
-      [{op: 'move', from: '/a', path: '/b'}],
-    ],
+    patches: [[{op: 'move', from: '/a', path: '/b'}]],
     doc2: {
       b: 1,
     },
@@ -238,9 +195,7 @@ const testCases: TestCase[] = [
       a: ['a', 'b'],
       b: 2,
     },
-    patches: [
-      [{op: 'move', from: '/b', path: '/a/1'}],
-    ],
+    patches: [[{op: 'move', from: '/b', path: '/a/1'}]],
     doc2: {
       a: ['a', 2, 'b'],
     },
@@ -251,9 +206,7 @@ const testCases: TestCase[] = [
       a: ['a', 'b'],
       b: 2,
     },
-    patches: [
-      [{op: 'move', from: '/a', path: ''}],
-    ],
+    patches: [[{op: 'move', from: '/a', path: ''}]],
     doc2: ['a', 'b'],
   },
   {
@@ -263,9 +216,7 @@ const testCases: TestCase[] = [
         bar: 123,
       },
     },
-    patches: [
-      [{op: 'move', from: '/foo', path: '/foo/bar'}],
-    ],
+    patches: [[{op: 'move', from: '/foo', path: '/foo/bar'}]],
     throws: 'INVALID_CHILD',
   },
   {
@@ -273,9 +224,7 @@ const testCases: TestCase[] = [
     doc1: {
       a: ['a', 'b'],
     },
-    patches: [
-      [{op: 'copy', from: '/a', path: '/b'}],
-    ],
+    patches: [[{op: 'copy', from: '/a', path: '/b'}]],
     doc2: {
       a: ['a', 'b'],
       b: ['a', 'b'],
@@ -287,9 +236,7 @@ const testCases: TestCase[] = [
       a: ['a', 'b'],
       b: {aha: 123},
     },
-    patches: [
-      [{op: 'copy', from: '/b/aha', path: '/a/1'}],
-    ],
+    patches: [[{op: 'copy', from: '/b/aha', path: '/a/1'}]],
     doc2: {
       a: ['a', 123, 'b'],
       b: {aha: 123},
@@ -301,9 +248,7 @@ const testCases: TestCase[] = [
       a: ['a', 'b'],
       b: {aha: 123},
     },
-    patches: [
-      [{op: 'copy', from: '/b', path: '/a/1'}],
-    ],
+    patches: [[{op: 'copy', from: '/b', path: '/a/1'}]],
     doc2: {
       a: ['a', {aha: 123}, 'b'],
       b: {aha: 123},
@@ -312,33 +257,25 @@ const testCases: TestCase[] = [
   {
     name: 'can positively test object root',
     doc1: 123,
-    patches: [
-      [{op: 'test', path: '', value: 123}],
-    ],
+    patches: [[{op: 'test', path: '', value: 123}]],
     doc2: 123,
   },
   {
     name: 'can negatively test object root',
     doc1: 123,
-    patches: [
-      [{op: 'test', path: '', value: 1234}],
-    ],
+    patches: [[{op: 'test', path: '', value: 1234}]],
     throws: 'TEST',
   },
   {
     name: 'can negatively test object root - 2',
     doc1: 123,
-    patches: [
-      [{op: 'test', path: '', value: '123'}],
-    ],
+    patches: [[{op: 'test', path: '', value: '123'}]],
     throws: 'TEST',
   },
   {
     name: 'can negatively test object root - 2',
     doc1: 123,
-    patches: [
-      [{op: 'test', path: '', value: '123'}],
-    ],
+    patches: [[{op: 'test', path: '', value: '123'}]],
     throws: 'TEST',
   },
   {
@@ -352,13 +289,17 @@ const testCases: TestCase[] = [
     },
     patches: [
       [
-        {op: 'test', path: '', value: {
-          a: 123,
-          b: 'asdf',
-          c: [1, 'a', true],
-          d: false,
-          e: null,
-        }},
+        {
+          op: 'test',
+          path: '',
+          value: {
+            a: 123,
+            b: 'asdf',
+            c: [1, 'a', true],
+            d: false,
+            e: null,
+          },
+        },
         {op: 'test', path: '/a', value: 123},
         {op: 'test', path: '/b', value: 'asdf'},
         {op: 'test', path: '/c', value: [1, 'a', true]},
@@ -388,13 +329,17 @@ const testCases: TestCase[] = [
     },
     patches: [
       [
-        {op: 'test', path: '', value: {
-          a: '123',
-          b: 'asdf',
-          c: [1, 'a', true],
-          d: false,
-          e: null,
-        }},
+        {
+          op: 'test',
+          path: '',
+          value: {
+            a: '123',
+            b: 'asdf',
+            c: [1, 'a', true],
+            d: false,
+            e: null,
+          },
+        },
       ],
     ],
     throws: 'TEST',

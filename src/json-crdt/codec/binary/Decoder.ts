@@ -23,7 +23,7 @@ export class Decoder extends MessagePackDecoder {
     this.reset(data);
     const [, clockTableLength] = this.b1vuint56();
     this.decodeClockTable(clockTableLength);
-    const doc = this.doc = new Model(this.clockDecoder.clock);
+    const doc = (this.doc = new Model(this.clockDecoder.clock));
     this.decodeRoot(doc);
     return doc;
   }
@@ -57,28 +57,50 @@ export class Decoder extends MessagePackDecoder {
     else if (byte >= 0b11100000) return this.createConst(byte - 0x100);
     else {
       switch (byte) {
-        case 0xC0: return NULL;
-        case 0xC1: return UNDEFINED;
-        case 0xC2: return FALSE;
-        case 0xC3: return TRUE;
-        case 0xCA: return this.createConst(this.f32());
-        case 0xCB: return this.createConst(this.f64());
-        case 0xCC: return this.createConst(this.u8());
-        case 0xCD: return this.createConst(this.u16());
-        case 0xCE: return this.createConst(this.u32());
-        case 0xCF: return this.createConst(this.u32() * 4294967296 + this.u32());
-        case 0xD0: return this.createConst(this.i8());
-        case 0xD1: return this.createConst(this.i16());
-        case 0xD2: return this.createConst(this.i32());
-        case 0xD3: return this.createConst(this.i32() * 4294967296 + this.i32());
-        case 0xD5: return this.decodeVal();
-        case 0xDE: return this.decodeObj(this.u16());
-        case 0xDF: return this.decodeObj(this.u32());
-        case 0xDC: return this.decodeArr(this.u16());
-        case 0xDD: return this.decodeArr(this.u32());
-        case 0xD9: return this.decodeStr(this.u8());
-        case 0xDA: return this.decodeStr(this.u16());
-        case 0xDB: return this.decodeStr(this.u32());
+        case 0xc0:
+          return NULL;
+        case 0xc1:
+          return UNDEFINED;
+        case 0xc2:
+          return FALSE;
+        case 0xc3:
+          return TRUE;
+        case 0xca:
+          return this.createConst(this.f32());
+        case 0xcb:
+          return this.createConst(this.f64());
+        case 0xcc:
+          return this.createConst(this.u8());
+        case 0xcd:
+          return this.createConst(this.u16());
+        case 0xce:
+          return this.createConst(this.u32());
+        case 0xcf:
+          return this.createConst(this.u32() * 4294967296 + this.u32());
+        case 0xd0:
+          return this.createConst(this.i8());
+        case 0xd1:
+          return this.createConst(this.i16());
+        case 0xd2:
+          return this.createConst(this.i32());
+        case 0xd3:
+          return this.createConst(this.i32() * 4294967296 + this.i32());
+        case 0xd5:
+          return this.decodeVal();
+        case 0xde:
+          return this.decodeObj(this.u16());
+        case 0xdf:
+          return this.decodeObj(this.u32());
+        case 0xdc:
+          return this.decodeArr(this.u16());
+        case 0xdd:
+          return this.decodeArr(this.u32());
+        case 0xd9:
+          return this.decodeStr(this.u8());
+        case 0xda:
+          return this.decodeStr(this.u16());
+        case 0xdb:
+          return this.decodeStr(this.u32());
       }
     }
     return NULL;
@@ -164,7 +186,7 @@ export class Decoder extends MessagePackDecoder {
     const x16 = this.u16();
     const y = this.u8();
     const z8 = this.u8();
-    const x = ((((y >>> 3) << 16) | x16) * 0x100000000) + x32;
+    const x = (((y >>> 3) << 16) | x16) * 0x100000000 + x32;
     let z = ((y & 0b11) << 8) | z8;
     if (!(y & 0b100)) return [x, z];
     const o1 = this.u8();
@@ -174,7 +196,11 @@ export class Decoder extends MessagePackDecoder {
     const o3 = this.u8();
     if (o3 <= 0b0_1111111) return [x, (o3 << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)];
     const o4 = this.u8();
-    return [x, (o4 * 0b10000000000000000000000000000000) + (((o3 & 0b0_1111111) << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z))];
+    return [
+      x,
+      o4 * 0b10000000000000000000000000000000 +
+        (((o3 & 0b0_1111111) << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)),
+    ];
   }
 
   public id(): [x: number, y: number] {

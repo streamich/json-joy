@@ -1,17 +1,17 @@
-import {Model} from "../..";
-import {InsertStringSubstringOperation} from "../../../../json-crdt-patch/operations/InsertStringSubstringOperation";
-import {Patch} from "../../../../json-crdt-patch/Patch";
-import {PatchBuilder} from "../../../../json-crdt-patch/PatchBuilder";
-import {StringType} from "../../../types/rga-string/StringType";
-import {Picker} from "./Picker";
-import type {StringFuzzer} from "./StringFuzzer";
+import {Model} from '../..';
+import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operations/InsertStringSubstringOperation';
+import {Patch} from '../../../../json-crdt-patch/Patch';
+import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
+import {StringType} from '../../../types/rga-string/StringType';
+import {Picker} from './Picker';
+import type {StringFuzzer} from './StringFuzzer';
 
 export class StringSession {
   public picker = new Picker(this.fuzzer.opts);
   public models: Model[] = [];
   public patches: Patch[][] = [];
 
-  public constructor (public fuzzer: StringFuzzer, public concurrency: number) {
+  public constructor(public fuzzer: StringFuzzer, public concurrency: number) {
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);

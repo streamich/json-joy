@@ -2,7 +2,7 @@ import {VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
-import {documents} from '../../../../util/__tests__/json-documents'
+import {documents} from '../../../../util/__tests__/json-documents';
 
 for (const {name, json} of documents) {
   test(name, () => {

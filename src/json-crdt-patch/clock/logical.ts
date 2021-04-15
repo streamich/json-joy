@@ -4,13 +4,13 @@
  * different device or even the same device but from a different browser tab) is
  * a randomly generated 53-bit integer (as 53 bits is the maximum integer value
  * in JavaScript) and time is a monotonically incrementing integer.
- * 
+ *
  * @module
  */
 
 import {IClock, ITimespan, ITimestamp} from './types';
 
- export class LogicalTimestamp implements ITimestamp {
+export class LogicalTimestamp implements ITimestamp {
   constructor(public sessionId: number, public time: number) {}
 
   public getSessionId(): number {

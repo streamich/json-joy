@@ -1,5 +1,5 @@
-import {LogicalClock} from "./logical";
-import {ITimestamp} from "./types";
+import {LogicalClock} from './logical';
+import {ITimestamp} from './types';
 
 export class VectorClock extends LogicalClock {
   /**

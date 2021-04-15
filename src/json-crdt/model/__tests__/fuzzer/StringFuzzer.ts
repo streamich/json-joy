@@ -3,7 +3,7 @@ import {StringSession} from './StringSession';
 import {FuzzerOptions} from './types';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
-  stringDeleteProbability: .2,
+  stringDeleteProbability: 0.2,
   maxStringDeleteLength: 64,
   maxSubstringLength: 16,
   maxStringLength: 512,

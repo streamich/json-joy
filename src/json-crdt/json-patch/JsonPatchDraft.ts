@@ -1,10 +1,10 @@
-import type {Model} from "../model";
-import {Draft} from "../../json-crdt-patch/Draft";
+import type {Model} from '../model';
+import {Draft} from '../../json-crdt-patch/Draft';
 import {Op, OpAdd, OpCopy, OpMove, OpRemove, OpReplace, OpTest} from '../../json-patch/op';
-import {ObjectType} from "../types/lww-object/ObjectType";
-import {ArrayType} from "../types/rga-array/ArrayType";
-import {UNDEFINED_ID} from "../../json-crdt-patch/constants";
-import {isChild, Path} from "../../json-pointer";
+import {ObjectType} from '../types/lww-object/ObjectType';
+import {ArrayType} from '../types/rga-array/ArrayType';
+import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
+import {isChild, Path} from '../../json-pointer';
 const isEqual = require('fast-deep-equal');
 
 export class JsonPatchDraft extends Draft {

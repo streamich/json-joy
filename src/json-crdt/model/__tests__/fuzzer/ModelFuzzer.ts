@@ -4,7 +4,7 @@ import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
-  stringDeleteProbability: .2,
+  stringDeleteProbability: 0.2,
   maxStringDeleteLength: 64,
   maxSubstringLength: 16,
   maxStringLength: 512,
@@ -16,7 +16,7 @@ export class ModelFuzzer {
   public opts: FuzzerOptions;
   public model = new Model();
   public picker: Picker;
-  
+
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
     this.picker = new Picker(this.opts);
