@@ -10,11 +10,13 @@ export interface NodeOdds {
 }
 
 export interface RandomJsonOptions {
+  rootNode: 'object' | 'array' | undefined;
   nodeCount: number;
   odds: NodeOdds;
 }
 
 const defaultOpts: RandomJsonOptions = {
+  rootNode: 'object',
   nodeCount: 32,
   odds: {
     null: 1,
@@ -29,6 +31,11 @@ const defaultOpts: RandomJsonOptions = {
 type ContainerNode = unknown[] | object;
 
 export class RandomJson {
+  public static generate(opts: Partial<RandomJsonOptions>): unknown {
+    const rnd = new RandomJson(opts);
+    return rnd.create();
+  }
+
   public opts: RandomJsonOptions;
   private totalOdds: number;
   private oddTotals: NodeOdds;
@@ -51,7 +58,7 @@ export class RandomJson {
       this.opts.odds.string +
       this.opts.odds.array +
       this.opts.odds.object;
-    this.root = this.pickContainerType() === 'object' ? {} : [];
+    this.root = this.opts.rootNode === 'object' ? {} : this.opts.rootNode === 'array' ? [] : this.pickContainerType() === 'object' ? {} : [];
     this.containers.push(this.root);
   }
 
