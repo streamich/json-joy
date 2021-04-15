@@ -1,4 +1,5 @@
 import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {Model} from '../../model';
 import {JsonNode} from '../../types';
@@ -47,7 +48,9 @@ export class ObjectType implements JsonNode {
 
   public toJson(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
-    for (const [key, entry] of this.latest.entries()) obj[key] = entry.node.toJson();
+    for (const [key, entry] of this.latest.entries())
+      if (!entry.node.id.isEqual(UNDEFINED_ID))
+        obj[key] = entry.node.toJson();
     return obj;
   }
 

@@ -31,7 +31,7 @@ const defaultOpts: RandomJsonOptions = {
 type ContainerNode = unknown[] | object;
 
 export class RandomJson {
-  public static generate(opts: Partial<RandomJsonOptions>): unknown {
+  public static generate(opts?: Partial<RandomJsonOptions>): unknown {
     const rnd = new RandomJson(opts);
     return rnd.create();
   }
