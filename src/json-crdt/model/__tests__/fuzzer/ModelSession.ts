@@ -10,6 +10,7 @@ import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {RandomJson} from '../../../../json-random/RandomJson';
 import {ArrayType} from '../../../types/rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {ValueType} from '../../../types/lww-value/ValueType';
 
 export class ModelSession {
   public models: Model[] = [];
@@ -43,6 +44,7 @@ export class ModelSession {
     if (node instanceof StringType) patch = this.generateStringPatch(model, node);
     else if (node instanceof ObjectType) patch = this.generateObjectPatch(model, node);
     else if (node instanceof ArrayType) patch = this.generateArrayPatch(model, node);
+    else if (node instanceof ValueType) patch = this.generateValuePatch(model, node);
     else return;
     if (!patch) return;
     this.patches[peer].push(patch);
@@ -105,6 +107,12 @@ export class ModelSession {
       const valueId = node.findId(pos);
       builder.del(node.id, valueId, 1);
     }
+    return builder.patch;
+  }
+
+  private generateValuePatch(model: Model, node: ValueType): Patch {
+    const builder = new PatchBuilder(model.clock);
+    builder.setVal(node.id, Math.random());
     return builder.patch;
   }
 
