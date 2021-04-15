@@ -5,6 +5,7 @@ import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operat
 import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {JsonNode} from '../../../types';
 import {ObjectType} from '../../../types/lww-object/ObjectType';
+import {ArrayType} from '../../../types/rga-array/ArrayType';
 import {StringType} from '../../../types/rga-string/StringType';
 import {Model} from '../../Model';
 import {FuzzerOptions} from './types';
@@ -46,6 +47,12 @@ export class Picker {
     if (!keys.length) return [this.generateObjectKey(), SetObjectKeysOperation];
     const key = keys[Math.floor(Math.random() * keys.length)];
     return [key, DeleteOperation];
+  }
+
+  public pickArrayOperation(node: ArrayType): ArrayOp {
+    if (!node.length()) return InsertArrayElementsOperation;
+    if (Math.random() > 0.45) return InsertArrayElementsOperation;
+    else return DeleteOperation;
   }
 
   public generateCharacter(): string {

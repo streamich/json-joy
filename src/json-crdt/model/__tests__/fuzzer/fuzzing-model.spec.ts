@@ -1,6 +1,6 @@
 import {ModelFuzzer} from './ModelFuzzer';
 
-const runs = 50;
+const runs = 10;
 const sessionNum = 50;
 
 test('model fuzz testing', () => {

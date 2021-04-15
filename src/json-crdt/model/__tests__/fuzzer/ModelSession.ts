@@ -8,6 +8,8 @@ import {ObjectType} from '../../../types/lww-object/ObjectType';
 import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {RandomJson} from '../../../../json-random/RandomJson';
+import {ArrayType} from '../../../types/rga-array/ArrayType';
+import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 
 export class ModelSession {
   public models: Model[] = [];
@@ -40,6 +42,7 @@ export class ModelSession {
     let patch: Patch | null = null;
     if (node instanceof StringType) patch = this.generateStringPatch(model, node);
     else if (node instanceof ObjectType) patch = this.generateObjectPatch(model, node);
+    else if (node instanceof ArrayType) patch = this.generateArrayPatch(model, node);
     else return;
     if (!patch) return;
     this.patches[peer].push(patch);
@@ -76,6 +79,31 @@ export class ModelSession {
     } else {
       // console.log('DELETING KEY', JSON.stringify(key))
       builder.setKeys(node.id, [[key, UNDEFINED_ID]]);
+    }
+    return builder.patch;
+  }
+
+  private generateArrayPatch(model: Model, node: ArrayType): Patch {
+    const opcode = this.fuzzer.picker.pickArrayOperation(node);
+    const builder = new PatchBuilder(model.clock);
+    const length = node.length();
+    if (opcode === InsertArrayElementsOperation) {
+      const json = RandomJson.generate({nodeCount: Math.ceil(Math.random() * 5)});
+      const valueId = builder.json(json);
+      if (!length) builder.insArr(node.id, node.id, [valueId]);
+      else {
+        const pos = Math.ceil(Math.random() * length);
+        if (!pos) builder.insArr(node.id, node.id, [valueId]);
+        else {
+          const afterId = node.findId(pos - 1);
+          builder.insArr(node.id, afterId, [valueId]);
+        }
+      }
+    } else {
+      if (!length) return builder.patch;
+      const pos = Math.floor(Math.random() * length);
+      const valueId = node.findId(pos);
+      builder.del(node.id, valueId, 1);
     }
     return builder.patch;
   }
