@@ -1,5 +1,6 @@
 import type {JsonChunk, JsonNode} from '../../types';
 import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
+import {Model} from '../../model';
 
 export class ArrayChunk implements JsonChunk {
   public left: ArrayChunk | null = null;
@@ -65,13 +66,17 @@ export class ArrayChunk implements JsonChunk {
   /**
    * Returns a deep independent copy of itself.
    */
-  public clone(): ArrayChunk {
-    const chunk = new ArrayChunk(this.id, this.nodes);
-    if (this.deleted) {
+  public clone(model: Model): ArrayChunk {
+    if (this.nodes) {
+      const nodes: JsonNode[] = [];
+      for (const node of this.nodes) nodes.push(node.clone(model));
+      return new ArrayChunk(this.id, nodes);
+    } else {
+      const chunk = new ArrayChunk(this.id, undefined);
       chunk.deleted = this.deleted;
       delete this.nodes;
+      return chunk;  
     }
-    return chunk;
   }
 
   /**

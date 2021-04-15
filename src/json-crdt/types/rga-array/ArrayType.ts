@@ -172,19 +172,19 @@ export class ArrayType implements JsonNode {
     return arr;
   }
 
-  public clone(doc: Model): ArrayType {
-    const copy = new ArrayType(doc, this.id);
+  public clone(model: Model): ArrayType {
+    const copy = new ArrayType(model, this.id);
     let i: null | ArrayChunk = this.start;
     let j: ArrayChunk = copy.start;
     while (i.right) {
-      const cloned = i.right.clone();
+      const cloned = i.right.clone(model);
       j.right = cloned;
       cloned.left = j;
       j = cloned;
       i = i.right;
     }
     copy.end = j;
-    doc.nodes.index(copy);
+    model.nodes.index(copy);
     return copy;
   }
 

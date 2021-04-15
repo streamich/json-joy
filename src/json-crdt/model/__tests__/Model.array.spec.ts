@@ -530,5 +530,16 @@ describe('Document', () => {
       expect(span[1].time).toBe(ins2.time);
       expect(span[1].span).toBe(1);
     });
+
+    test('array in forked document is independent', () => {
+      const model1 = new Model();
+      model1.api.root([1, 2]).commit();
+      const model2 = model1.fork();
+      expect(model1.toJson()).toEqual([1, 2]);
+      expect(model2.toJson()).toEqual([1, 2]);
+      model2.api.arrIns([], 1, [3]).commit();
+      expect(model1.toJson()).toEqual([1, 2]);
+      expect(model2.toJson()).toEqual([1, 3, 2]);
+    });
   });
 });
