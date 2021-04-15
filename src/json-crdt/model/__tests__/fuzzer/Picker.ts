@@ -41,7 +41,7 @@ export class Picker {
 
   public pickObjectOperation(node: ObjectType): [key: string, opcode: ObjectOp] {
     if (!node.latest.size) return [this.generateObjectKey(), SetObjectKeysOperation];
-    if (Math.random() > 0.5) return [this.generateObjectKey(), SetObjectKeysOperation];
+    if (Math.random() > 0.45) return [this.generateObjectKey(), SetObjectKeysOperation];
     const keys = [...node.latest.keys()].filter((key) => !node.latest.get(key)!.node.id.isEqual(UNDEFINED_ID));
     if (!keys.length) return [this.generateObjectKey(), SetObjectKeysOperation];
     const key = keys[Math.floor(Math.random() * keys.length)];

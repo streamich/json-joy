@@ -7,6 +7,7 @@ import type {ModelFuzzer} from './ModelFuzzer';
 import {ObjectType} from '../../../types/lww-object/ObjectType';
 import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
+import {RandomJson} from '../../../../json-random/RandomJson';
 
 export class ModelSession {
   public models: Model[] = [];
@@ -38,24 +39,24 @@ export class ModelSession {
     const node = this.fuzzer.picker.pickNode(model);
     let patch: Patch | null = null;
     if (node instanceof StringType) patch = this.generateStringPatch(model, node);
-    if (node instanceof ObjectType) patch = this.generateObjectPatch(model, node);
+    else if (node instanceof ObjectType) patch = this.generateObjectPatch(model, node);
     else return;
+    if (!patch) return;
     this.patches[peer].push(patch);
     model.applyPatch(patch);
   }
 
-  private generateStringPatch(model: Model, node: StringType): Patch {
+  private generateStringPatch(model: Model, node: StringType): Patch | null {
     const opcode = this.fuzzer.picker.pickStringOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
     if (opcode === InsertStringSubstringOperation) {
       const substring = this.fuzzer.picker.generateSubstring();
       const pos = !size ? 0 : Math.min(size - 1, Math.floor(Math.random() * (size + 1)));
-      // console.log('pos', pos, size, node.toJson(), node.toJson().length);
       const posId = !size ? node.id : node.findId(pos);
       builder.insStr(node.id, posId, substring);
     } else {
-      if (!size) return;
+      if (!size) return null;
       const pos = Math.floor(Math.random() & size);
       let length = Math.min(size - pos, Math.ceil(Math.random() * this.fuzzer.opts.maxStringDeleteLength));
       const posId = node.findId(pos);
@@ -68,9 +69,12 @@ export class ModelSession {
     const [key, opcode] = this.fuzzer.picker.pickObjectOperation(node);
     const builder = new PatchBuilder(model.clock);
     if (opcode === SetObjectKeysOperation) {
-      const valueId = builder.json({asdf: 'asdf'});
+      const json = RandomJson.generate({nodeCount: 3});
+      // console.log('ADDING KEY', key, json);
+      const valueId = builder.json(json);
       builder.setKeys(node.id, [[key, valueId]]);
     } else {
+      // console.log('DELETING KEY', JSON.stringify(key))
       builder.setKeys(node.id, [[key, UNDEFINED_ID]]);
     }
     return builder.patch;
@@ -83,6 +87,11 @@ export class ModelSession {
         const patches = this.patches[j];
         for (const patch of patches) model.applyPatch(patch);
       }
+    }
+
+    for (let j = 0; j < this.concurrency; j++) {
+      const patches = this.patches[j];
+      for (const patch of patches) this.fuzzer.model.applyPatch(patch);
     }
   }
 }

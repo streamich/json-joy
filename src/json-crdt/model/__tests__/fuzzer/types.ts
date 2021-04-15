@@ -1,4 +1,7 @@
 export interface FuzzerOptions {
+  /** JSON value which to set as root at the very beginning. */
+  startingValue: unknown | undefined;
+
   /** Probability that delete operation is selected. */
   stringDeleteProbability: number;
 
