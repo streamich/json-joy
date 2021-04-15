@@ -1,5 +1,6 @@
 import {Model} from '../../Model';
-import {StringSession} from './StringSession';
+import {ModelSession} from './ModelSession';
+import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
@@ -11,32 +12,26 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   maxPatchesPerPeer: 10,
 };
 
-export class StringFuzzer {
+export class ModelFuzzer {
   public opts: FuzzerOptions;
   public model = new Model();
-
+  public picker: Picker;
+  
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
+    this.picker = new Picker(this.opts);
   }
 
   public setupModel() {
-    this.model.api.root({}).commit();
+    const str = this.picker.generateSubstring();
+    this.model.api.root(str).commit();
   }
 
-  public executeConcurrentSession(): StringSession {
+  public executeConcurrentSession(): ModelSession {
     const concurrency = Math.max(2, Math.ceil(Math.random() * this.opts.maxConcurrentPeers));
-    const session = new StringSession(this, concurrency);
+    const session = new ModelSession(this, concurrency);
     session.generateEdits();
     session.synchronize();
     return session;
-  }
-
-  public generateCharacter(): string {
-    return String.fromCharCode(Math.floor(Math.random() * 65535));
-  }
-
-  public generateSubstring(): string {
-    const length = Math.floor(Math.random() * this.opts.maxSubstringLength) + 1;
-    return this.generateCharacter().repeat(length);
   }
 }

@@ -6,7 +6,7 @@ import {StringType} from "../../../types/rga-string/StringType";
 import {Picker} from "./Picker";
 import type {StringFuzzer} from "./StringFuzzer";
 
-export class ConcurrentSession {
+export class StringSession {
   public picker = new Picker(this.fuzzer.opts);
   public models: Model[] = [];
   public patches: Patch[][] = [];
