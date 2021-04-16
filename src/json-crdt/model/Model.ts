@@ -1,6 +1,6 @@
 import type {JsonNode} from '../types/types';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
-import {IdentifiableIndex} from './IdentifiableIndex';
+import {LogicalNodeIndex} from './nodes';
 import {randomSessionId} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
@@ -44,7 +44,7 @@ export class Model {
   /**
    * Index of all known node objects (objects, array, strings, values) in this document.
    */
-  public nodes = new IdentifiableIndex<JsonNode>();
+  public nodes = new LogicalNodeIndex<JsonNode>();
 
   /**
    * API for applying changes to the current document.
