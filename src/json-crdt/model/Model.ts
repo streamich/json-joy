@@ -36,7 +36,8 @@ export class Model {
   public root: DocRootType = new DocRootType(this, ORIGIN, null);
 
   /**
-   * Clock that keeps track of logical timestamps of the current editing session.
+   * Clock that keeps track of logical timestamps of the current editing session
+   * and logical clocks of all known peers.
    */
   public clock: VectorClock;
 
@@ -131,16 +132,16 @@ export class Model {
 
   /** Creates a copy of this model with the same session ID. */
   public clone(): Model {
-    const doc = new Model(this.clock.clone());
-    doc.root = this.root.clone(doc);
-    return doc;
+    const model = new Model(this.clock.clone());
+    model.root = this.root.clone(model);
+    return model;
   }
 
   /** Creates a copy of this model with a new session ID. */
   public fork(sessionId: number = randomSessionId()): Model {
-    const doc = new Model(this.clock.fork(sessionId));
-    doc.root = this.root.clone(doc);
-    return doc;
+    const model = new Model(this.clock.fork(sessionId));
+    model.root = this.root.clone(model);
+    return model;
   }
 
   /** @returns Returns JSON view of the model. */
@@ -149,9 +150,7 @@ export class Model {
   }
 
   /** @returns Returns human-readable text for debugging. */
-  public toString(): string {
-    const value = this.root.toValue();
-    const op = this.node(value);
-    return op ? op.toString('') : 'undefined';
+  public toString(tab?: string): string {
+    return this.root.toString(tab);
   }
 }

@@ -42,6 +42,10 @@ export class DocRootType implements JsonNode {
     return !this.node ? undefined : this.node.toJson();
   }
 
+  public toString(tab: string = ''): string {
+    return this.node ? this.node.toString(tab) : 'undefined';
+  }
+
   public clone(doc: Model): DocRootType {
     return new DocRootType(doc, this.id, this.node ? this.node.clone(doc) : null);
   }
