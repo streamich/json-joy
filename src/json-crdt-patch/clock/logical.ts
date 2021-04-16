@@ -99,7 +99,7 @@ export class LogicalVectorClock extends LogicalClock implements IVectorClock {
   }
 
   public observe(ts: ITimestamp, span: number) {
-    if (this.time + 1 < ts.time) throw new Error('TIME_TRAVEL');
+    if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span - 1;
     const clock = this.clocks.get(ts.getSessionId());
     if (!clock) this.clocks.set(ts.getSessionId(), ts.tick(span - 1));

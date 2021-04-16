@@ -97,7 +97,7 @@ export class ServerVectorClock extends ServerClock implements IVectorClock {
 
   public observe(ts: ITimestamp, span: number) {
     if (ts.getSessionId() !== SERVER_SESSION_ID) throw new Error('INVALID_SERVER_SESSION');
-    if (this.time + 1 < ts.time) throw new Error('TIME_TRAVEL');
+    if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span;
     if (time > this.time) this.time = time;
   }

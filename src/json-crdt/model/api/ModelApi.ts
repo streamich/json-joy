@@ -24,14 +24,14 @@ export class ModelApi {
     this.builder = new PatchBuilder(doc.clock);
   }
 
-  public commit(): this {
+  public commit(): Patch {
     const patch = this.builder.patch;
     this.builder = new PatchBuilder(this.doc.clock);
     if (patch.ops.length) {
       this.patches.push(patch);
       this.doc.applyPatch(patch);
     }
-    return this;
+    return patch;
   }
 
   public flush(): Patch[] {
