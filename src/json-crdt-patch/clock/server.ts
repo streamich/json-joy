@@ -88,6 +88,10 @@ export class ServerClock extends ServerTimestamp implements IClock {
   }
 }
 
+/**
+ * This is not a vector clock. It implements the IVectorClock interface, but
+ * under the hood it is just a single incrementing sequence integer.
+ */
 export class ServerVectorClock extends ServerClock implements IVectorClock {
   public readonly clocks = new Map<number, ITimestamp>();
 

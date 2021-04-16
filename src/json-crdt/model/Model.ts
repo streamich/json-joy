@@ -28,12 +28,31 @@ import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperat
  * compute the "view" of the model.
  */
 export class Model {
+  /**
+   * Create a CRDT model which uses logical clock. Logical clock assigns a
+   * logical timestamp to every node and operation. Logical timestamp consists
+   * of a session ID and sequence number 2-tuple. Logical clock allows to
+   * sync peer-to-peer.
+   * 
+   * @param clock Logical clock to use.
+   * @returns CRDT model.
+   */
   public static withLogicalClock(clock?: LogicalVectorClock): Model {
     clock = clock || new LogicalVectorClock(randomSessionId(), 0);
     const nodes = new LogicalNodeIndex<JsonNode>();
     return new Model(clock, nodes);
   }
 
+  /**
+   * Create a CRDT model which uses server clock. In this model a central server
+   * timestamps each operation with a sequence number. Each timestamp consists
+   * simply of a sequence number, which was assigned by a server. In this model
+   * all operations are approved, persisted and re-distributed to all clients by
+   * a central server.
+   * 
+   * @param time Latest known server sequence number.
+   * @returns CRDT model.
+   */
   public static withServerClock(time?: number): Model {
     const clock = new ServerVectorClock(time || 0);
     const nodes = new ServerNodeIndex<JsonNode>();
