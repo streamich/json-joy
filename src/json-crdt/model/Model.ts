@@ -55,6 +55,7 @@ export class Model {
     this.api = new ModelApi(this);
   }
 
+  /** Returns an indexed node, if any. */
   public node(id: ITimestamp): JsonNode | undefined {
     if (id.getSessionId() === 0) {
       switch(id.time) {

@@ -51,7 +51,7 @@ export class IdentifiableIndex<T extends Identifiable> {
   /**
    * Loops through all operations in the index.
    */
-  public *iterate() {
+  public *iterate(): IterableIterator<T> {
     for (const map of this.entries.values()) yield* map.values();
   }
 }
