@@ -1,11 +1,11 @@
-import {ITimestamp, LogicalTimestamp, VectorClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 
 export class ClockDecoder {
   /** Clock session index to logical clock. */
   private readonly table: Map<number, LogicalTimestamp> = new Map();
 
   private index: number;
-  public readonly clock: VectorClock;
+  public readonly clock: LogicalVectorClock;
 
   public static fromArr(arr: number[]): ClockDecoder {
     const decoder = new ClockDecoder(arr[0], arr[1]);
@@ -16,7 +16,7 @@ export class ClockDecoder {
 
   public constructor(sessionId: number, time: number) {
     this.index = 1;
-    this.clock = new VectorClock(sessionId, time);
+    this.clock = new LogicalVectorClock(sessionId, time);
     this.table.set(this.index++, this.clock);
   }
 

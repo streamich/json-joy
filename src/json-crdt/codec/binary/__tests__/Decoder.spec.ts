@@ -1,10 +1,10 @@
-import {VectorClock} from '../../../../json-crdt-patch/clock';
+import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 
 test('decodes clock', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   doc1.api.root(123).commit();
   const encoder = new Encoder();
   const decoder = new Decoder();
@@ -16,7 +16,7 @@ test('decodes clock', () => {
 });
 
 test('decodes an empty object', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = {};
   doc1.api.root(json).commit();
   const decoder = new Decoder();
@@ -28,7 +28,7 @@ test('decodes an empty object', () => {
 });
 
 test('decodes an object with a key', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = {foo: {}};
   doc1.api.root(json).commit();
   const decoder = new Decoder();
@@ -40,7 +40,7 @@ test('decodes an object with a key', () => {
 });
 
 test('decodes an object with more than 15 keys', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = {
     '0': {},
     '1': {},
@@ -69,7 +69,7 @@ test('decodes an object with more than 15 keys', () => {
 });
 
 test('decodes an array with single entry', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = [{}];
   doc1.api.root(json).commit();
   const decoder = new Decoder();
@@ -81,7 +81,7 @@ test('decodes an array with single entry', () => {
 });
 
 test('decodes nested array with two nodes', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = [{}, []];
   doc1.api.root(json).commit();
   const decoder = new Decoder();
@@ -93,7 +93,7 @@ test('decodes nested array with two nodes', () => {
 });
 
 test('decodes a string', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = 'lala';
   doc1.api.root(json).commit();
   const decoder = new Decoder();
@@ -107,7 +107,7 @@ test('decodes a string', () => {
 const encoder = new Encoder();
 
 test('decodes all types', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],
@@ -125,7 +125,7 @@ test('decodes all types', () => {
 });
 
 test('can edit documents after decoding', () => {
-  const doc1 = new Model(new VectorClock(222, 0));
+  const doc1 = new Model(new LogicalVectorClock(222, 0));
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],

@@ -1,4 +1,4 @@
-import {ITimestamp, LogicalTimestamp, LogicalClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {Code} from './constants';
@@ -6,7 +6,7 @@ import {Code} from './constants';
 export const decode = (data: unknown[]): Patch => {
   const sessionId = data[0] as number;
   const time = data[1] as number;
-  const clock = new LogicalClock(sessionId, time);
+  const clock = new LogicalVectorClock(sessionId, time);
   const builder = new PatchBuilder(clock);
   const length = data.length;
   let i = 2;

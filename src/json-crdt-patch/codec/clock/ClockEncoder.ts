@@ -1,5 +1,5 @@
-import {json_string} from 'ts-brand-json';
-import {ITimestamp, VectorClock} from '../../clock';
+import type {ITimestamp, IVectorClock} from '../../clock';
+import type {json_string} from 'ts-brand-json';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
@@ -7,7 +7,7 @@ export class ClockEncoder {
   public readonly table: Map<number, number>;
   public index: number;
 
-  public constructor(public readonly clock: VectorClock) {
+  public constructor(public readonly clock: IVectorClock) {
     this.index = 1;
     this.table = new Map();
     this.table.set(clock.getSessionId(), this.index++);

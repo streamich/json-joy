@@ -1,4 +1,4 @@
-import {ITimestamp, LogicalTimestamp, VectorClock} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp, IVectorClock, LogicalVectorClock} from '../../../json-crdt-patch/clock';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {Model} from '../../model';
@@ -35,9 +35,9 @@ export class Decoder {
     return doc;
   }
 
-  protected decodeClock(timestamps: JsonCrdtTimestamp[]): VectorClock {
+  protected decodeClock(timestamps: JsonCrdtTimestamp[]): IVectorClock {
     const [ts] = timestamps;
-    const vectorClock = new VectorClock(ts[0], ts[1]);
+    const vectorClock = new LogicalVectorClock(ts[0], ts[1]);
     const length = timestamps.length;
     for (let i = 1; i < length; i++) {
       const ts = timestamps[i];

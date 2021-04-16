@@ -1,4 +1,4 @@
-import {ITimestamp, VectorClock} from '../../../json-crdt-patch/clock';
+import type {ITimestamp, IVectorClock} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
@@ -34,7 +34,7 @@ export class Encoder {
     return snapshot;
   }
 
-  public encodeClock(clock: VectorClock): JsonCrdtTimestamp[] {
+  public encodeClock(clock: IVectorClock): JsonCrdtTimestamp[] {
     const data: JsonCrdtTimestamp[] = [];
     for (const c of clock.clocks.values()) data.push([c.getSessionId(), c.time]);
     return data;

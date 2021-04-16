@@ -1,4 +1,4 @@
-import {ITimestamp, LogicalTimestamp, LogicalClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {JsonCodecPatch, JsonCodecSetObjectKeysOperation, JsonCodecTimestamp} from './types';
@@ -7,7 +7,7 @@ const ts = (time: JsonCodecTimestamp): ITimestamp => new LogicalTimestamp(time[0
 
 export const decode = (data: JsonCodecPatch): Patch => {
   const {id, ops} = data;
-  const clock = new LogicalClock(id[0], id[1]);
+  const clock = new LogicalVectorClock(id[0], id[1]);
   const builder = new PatchBuilder(clock);
 
   for (const op of ops) {

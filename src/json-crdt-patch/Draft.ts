@@ -1,4 +1,4 @@
-import {LogicalClock, ITimestamp, LogicalTimestamp} from './clock';
+import {LogicalVectorClock, ITimestamp, IClock, LogicalTimestamp} from './clock';
 import {PatchBuilder} from './PatchBuilder';
 import {Patch} from './Patch';
 import {DeleteOperation} from './operations/DeleteOperation';
@@ -36,13 +36,13 @@ import {MakeValueOperation} from './operations/MakeValueOperation';
  * ````
  */
 export class Draft {
-  public readonly builder = new PatchBuilder(new LogicalClock(-1, 0));
+  public readonly builder = new PatchBuilder(new LogicalVectorClock(-1, 0));
 
   /**
    * Creates a new patch where all timestamps with (sessionId == -1) are replaced
    * with correct timestamps.
    */
-  public patch(clock: LogicalClock): Patch {
+  public patch(clock: IClock): Patch {
     const patch = new Patch();
     const ops = this.builder.patch.ops;
     const ts = (id: ITimestamp) =>

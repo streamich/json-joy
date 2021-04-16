@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp, ITimestamp} from './clock';
+import {LogicalTimestamp, ITimestamp, IClock} from './clock';
 import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
@@ -22,7 +22,7 @@ import {Patch} from './Patch';
 export class PatchBuilder {
   public readonly patch: Patch;
 
-  constructor(public readonly clock: LogicalClock) {
+  constructor(public readonly clock: IClock) {
     this.patch = new Patch();
   }
 

@@ -8,7 +8,7 @@
  * @module
  */
 
-import {IClock, ITimespan, ITimestamp} from './types';
+import {IClock, IVectorClock, ITimespan, ITimestamp} from './types';
 
 export class LogicalTimestamp implements ITimestamp {
   constructor(public sessionId: number, public time: number) {}
@@ -87,5 +87,33 @@ export class LogicalClock extends LogicalTimestamp implements IClock {
     const timestamp = new LogicalTimestamp(this.sessionId, this.time);
     this.time += cycles;
     return timestamp;
+  }
+}
+
+export class LogicalVectorClock extends LogicalClock implements IVectorClock {
+  public readonly clocks = new Map<number, ITimestamp>();
+
+  constructor(sessionId: number, time: number) {
+    super(sessionId, time);
+    this.clocks.set(sessionId, this);
+  }
+
+  public observe(ts: ITimestamp, span: number) {
+    if (this.time + 1 < ts.time) throw new Error('TIME_TRAVEL');
+    const time = ts.time + span - 1;
+    const clock = this.clocks.get(ts.getSessionId());
+    if (!clock) this.clocks.set(ts.getSessionId(), ts.tick(span - 1));
+    else if (time > clock.time) clock.time = ts.time;
+    if (time >= this.time) this.time = time + 1;
+  }
+
+  public clone(): LogicalVectorClock {
+    return this.fork(this.getSessionId());
+  }
+
+  public fork(sessionId: number): LogicalVectorClock {
+    const clock = new LogicalVectorClock(sessionId, this.time);
+    for (const ts of this.clocks.values()) clock.observe(ts.tick(0), 1);
+    return clock;
   }
 }

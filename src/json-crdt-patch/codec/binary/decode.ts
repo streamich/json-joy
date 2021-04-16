@@ -1,5 +1,5 @@
 import {decodeString} from '../../../util/decodeString';
-import {ITimestamp, LogicalTimestamp, LogicalClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {decodeVarUint} from './util/varuint';
@@ -33,7 +33,7 @@ export const decodeTimestamp = (buf: Uint8Array, offset: number): ITimestamp => 
 export const decode = (buf: Uint8Array): Patch => {
   const id = decodeTimestamp(buf, 0);
   let offset = 8;
-  const clock = new LogicalClock(id.getSessionId(), id.time);
+  const clock = new LogicalVectorClock(id.getSessionId(), id.time);
   const builder = new PatchBuilder(clock);
   const length = buf.byteLength;
 

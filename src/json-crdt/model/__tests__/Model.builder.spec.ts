@@ -1,3 +1,4 @@
+import {LogicalVectorClock} from '../../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
@@ -14,7 +15,7 @@ describe('Document', () => {
 
     test('can create complex object', () => {
       const doc = new Model();
-      doc.clock.sessionId = 1;
+      (doc.clock as LogicalVectorClock).sessionId = 1;
       // doc.clock.time = 10000;
       const builder = new PatchBuilder(doc.clock);
       const json = {

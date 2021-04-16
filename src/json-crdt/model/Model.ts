@@ -4,7 +4,7 @@ import {IdentifiableIndex} from './IdentifiableIndex';
 import {randomSessionId} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
-import {ITimestamp, VectorClock} from '../../json-crdt-patch/clock';
+import {ITimestamp, IVectorClock, LogicalVectorClock} from '../../json-crdt-patch/clock';
 import {DocRootType} from '../types/lww-doc-root/DocRootType';
 import {ObjectType} from '../types/lww-object/ObjectType';
 import {ArrayType} from '../types/rga-array/ArrayType';
@@ -39,7 +39,7 @@ export class Model {
    * Clock that keeps track of logical timestamps of the current editing session
    * and logical clocks of all known peers.
    */
-  public clock: VectorClock;
+  public clock: IVectorClock;
 
   /**
    * Index of all known node objects (objects, array, strings, values) in this document.
@@ -51,7 +51,7 @@ export class Model {
    */
   public api: ModelApi;
 
-  constructor(clock: VectorClock = new VectorClock(randomSessionId(), 0)) {
+  constructor(clock: IVectorClock = new LogicalVectorClock(randomSessionId(), 0)) {
     this.clock = clock;
     this.api = new ModelApi(this);
   }
