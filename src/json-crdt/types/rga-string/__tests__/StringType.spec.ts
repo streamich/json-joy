@@ -3,7 +3,7 @@ import {Model} from '../../../model';
 import {StringType} from '../StringType';
 
 test('merges sequential chunks', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(doc.clock);
 
   const str = builder1.str();

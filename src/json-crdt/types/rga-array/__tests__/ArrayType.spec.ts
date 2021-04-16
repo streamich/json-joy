@@ -4,7 +4,7 @@ import {Model} from '../../../model';
 import {ArrayType} from '../ArrayType';
 
 test('merges sequential chunks', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(doc.clock);
 
   const arr = builder1.arr();

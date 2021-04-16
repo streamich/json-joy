@@ -3,14 +3,14 @@ import {Model} from '../../../model';
 import {Encoder} from '../Encoder';
 
 test('encodes an empty document', () => {
-  const doc = new Model(new LogicalVectorClock(123, 0));
+  const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
   const encoder = new Encoder();
   const res = encoder.encode(doc);
   expect(res).toEqual([[123, 0], 0, 0, 0]);
 });
 
 test('can encode object and array', () => {
-  const doc = new Model(new LogicalVectorClock(123, 0));
+  const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
   const encoder = new Encoder();
   doc.api
     .root({

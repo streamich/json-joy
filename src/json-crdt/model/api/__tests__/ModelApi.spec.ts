@@ -2,7 +2,7 @@ import {Model} from '../../Model';
 
 describe('string manipulation', () => {
   test('can edit strings', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api
       .root('')
@@ -21,7 +21,7 @@ describe('string manipulation', () => {
   });
 
   test('can edit strings - 2', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api
       .root({foo: [123, '', 5]})
@@ -44,7 +44,7 @@ describe('string manipulation', () => {
 
 describe('number manipulation', () => {
   test('can edit numbers in object', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api
       .root({
@@ -81,7 +81,7 @@ describe('number manipulation', () => {
   });
 
   test('can edit numbers in arrays', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api
       .root({
@@ -104,7 +104,7 @@ describe('number manipulation', () => {
 
 describe('array manipulation', () => {
   test('can edit arrays', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root([]).commit();
     expect(doc.toJson()).toEqual([]);
@@ -123,7 +123,7 @@ describe('array manipulation', () => {
 
 describe('object manipulation', () => {
   test('can create objects', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({a: {}}).commit();
     expect(doc.toJson()).toEqual({a: {}});
@@ -134,7 +134,7 @@ describe('object manipulation', () => {
   });
 
   test('can delete object keys', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({a: 'a'}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
@@ -155,7 +155,7 @@ describe('object manipulation', () => {
 
 describe('patch()', () => {
   test('can patch multiple operations into a single patch', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({foo: 'abc'}).commit();
     expect(api.patches.length).toBe(1);

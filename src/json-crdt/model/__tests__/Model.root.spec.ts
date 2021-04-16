@@ -5,12 +5,12 @@ import {Model} from '../Model';
 describe('Document', () => {
   describe('root', () => {
     test('default root value is undefined', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       expect(doc.toJson()).toBe(undefined);
     });
 
     test('can set root value to "true"', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       builder.root(TRUE_ID);
       doc.applyPatch(builder.patch);
@@ -18,7 +18,7 @@ describe('Document', () => {
     });
 
     test('can set root value to "false"', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       builder.root(TRUE_ID);
       builder.root(FALSE_ID);
@@ -27,7 +27,7 @@ describe('Document', () => {
     });
 
     test('can set root value to "null"', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       builder.root(TRUE_ID);
       builder.root(FALSE_ID);

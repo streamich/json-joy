@@ -5,7 +5,7 @@ import {ValueType} from '../../types/lww-value/ValueType';
 describe('Document', () => {
   describe('value', () => {
     test('can create a value', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const numId = builder.val([1, 2, 3]);
       doc.applyPatch(builder.patch);
@@ -14,7 +14,7 @@ describe('Document', () => {
     });
 
     test('can set value as document root', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const numId = builder.val(10_000);
       builder.root(numId);
@@ -23,7 +23,7 @@ describe('Document', () => {
     });
 
     test('can update value to a number', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.val(1);
       builder.setVal(objId, 2);
@@ -33,7 +33,7 @@ describe('Document', () => {
     });
 
     test('can update value to a string', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.val(1);
       builder.setVal(objId, 'boom');
@@ -43,7 +43,7 @@ describe('Document', () => {
     });
 
     test('can overwrite number value', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const valId = builder.val(-1);
       builder.setVal(valId, 123);
@@ -54,7 +54,7 @@ describe('Document', () => {
     });
 
     test('can set object field value as number', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.obj();
       const valId = builder.val(25);
@@ -67,7 +67,7 @@ describe('Document', () => {
     });
 
     test('can update object field value to boolean', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.obj();
       const valId = builder.val(25);
@@ -80,7 +80,7 @@ describe('Document', () => {
     });
 
     test('can update array value to boolean', () => {
-      const doc = new Model();
+      const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.arr();
       const valId = builder.val(25);

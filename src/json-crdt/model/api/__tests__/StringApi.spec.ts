@@ -1,7 +1,7 @@
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const api = doc.api;
   api.root([0, '123', 2]).commit();
   const str = api.str([1]);
@@ -15,7 +15,7 @@ test('can edit a simple string', () => {
 });
 
 test('can delete across two chunks', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const api = doc.api;
   api.root('').commit();
   const str = api.str([]);

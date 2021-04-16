@@ -23,7 +23,7 @@ export class Decoder extends MessagePackDecoder {
     this.reset(data);
     const [, clockTableLength] = this.b1vuint56();
     this.decodeClockTable(clockTableLength);
-    const doc = (this.doc = new Model(this.clockDecoder.clock));
+    const doc = (this.doc = Model.withLogicalClock(this.clockDecoder.clock));
     this.decodeRoot(doc);
     return doc;
   }

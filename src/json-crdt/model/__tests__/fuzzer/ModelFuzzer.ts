@@ -16,7 +16,7 @@ export const defaultFuzzerOptions: FuzzerOptions = {
 
 export class ModelFuzzer {
   public opts: FuzzerOptions;
-  public model = new Model();
+  public model = Model.withLogicalClock();
   public picker: Picker;
 
   constructor(opts: Partial<FuzzerOptions> = {}) {

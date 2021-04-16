@@ -21,6 +21,11 @@ export interface NodeIndex<T extends Identifiable> {
    * Loops through all operations in the index.
    */
   iterate(): IterableIterator<T>;
+
+  /**
+   * Returns a randomly picket entry. Or none, if there are not entries.
+   */
+  random(): T | null;
 }
 
 /**
@@ -67,6 +72,21 @@ export class LogicalNodeIndex<T extends Identifiable> implements NodeIndex<T> {
   public *iterate(): IterableIterator<T> {
     for (const map of this.entries.values()) yield* map.values();
   }
+
+  public random(): T | null {
+    const sessions = [...this.entries.keys()];
+    if (!sessions.length) return null;
+    const sessionId = sessions[Math.floor(Math.random() * sessions.length)];
+    const map = this.entries.get(sessionId)!;
+    const nodeCount = map.size;
+    const index = Math.floor(Math.random() * nodeCount);
+    let pos = 0;
+    for (const node of map.values()) {
+      if (pos === index) return node;
+      pos++;
+    }
+    return null;
+  }
 }
 
 /**
@@ -95,5 +115,16 @@ export class ServerNodeIndex<T extends Identifiable> implements NodeIndex<T> {
 
   public *iterate(): IterableIterator<T> {
     yield* this.entries.values();
+  }
+
+  public random(): T | null {
+    const nodeCount = this.entries.size;
+    const index = Math.floor(Math.random() * nodeCount);
+    let pos = 0;
+    for (const node of this.entries.values()) {
+      if (pos === index) return node;
+      pos++;
+    }
+    return null;
   }
 }

@@ -4,12 +4,12 @@ import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
 test('new document time starts from zero', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   expect(doc.clock.time).toBe(0);
 });
 
 test('local time is incremented on local operation application', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(doc.clock);
   builder1.root(TRUE_ID);
   doc.applyPatch(builder1.patch);
@@ -18,7 +18,7 @@ test('local time is incremented on local operation application', () => {
 });
 
 test('local time is incremented on remote operation application', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(new LogicalClock(123, 0));
   builder1.root(TRUE_ID);
   doc.applyPatch(builder1.patch);
@@ -27,7 +27,7 @@ test('local time is incremented on remote operation application', () => {
 });
 
 test('local time is incremented on remote operation application - 2', () => {
-  const doc = new Model();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(new LogicalClock(123, 0));
   builder1.root(builder1.json({a: 'b'}));
   doc.applyPatch(builder1.patch);

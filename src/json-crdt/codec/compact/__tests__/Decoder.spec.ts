@@ -4,7 +4,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 
 test('decodes clock', () => {
-  const doc1 = new Model(new LogicalVectorClock(222, 0));
+  const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   doc1.api.root(123).commit();
   const encoder = new Encoder();
   const decoder = new Decoder();
@@ -18,7 +18,7 @@ test('decodes clock', () => {
 const encoder = new Encoder();
 
 test('decodes all types', () => {
-  const doc1 = new Model(new LogicalVectorClock(222, 0));
+  const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],
@@ -36,7 +36,7 @@ test('decodes all types', () => {
 });
 
 test('can edit documents after decoding', () => {
-  const doc1 = new Model(new LogicalVectorClock(222, 0));
+  const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = {
     str: 'asdf',
     arr: [1, 2, 3],

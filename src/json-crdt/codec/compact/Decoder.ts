@@ -20,7 +20,7 @@ export class Decoder {
 
   public decode(data: unknown[]): Model {
     this.clockDecoder = ClockDecoder.fromArr(data[0] as number[]);
-    const doc = new Model(this.clockDecoder.clock);
+    const doc = Model.withLogicalClock(this.clockDecoder.clock);
     const rootId = this.ts(data, 1);
     const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
     doc.root = new DocRootType(doc, rootId, rootNode);

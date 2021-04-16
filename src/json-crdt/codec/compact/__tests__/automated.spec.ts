@@ -6,7 +6,7 @@ import {documents} from '../../../../util/__tests__/json-documents';
 
 for (const {name, json} of documents) {
   test(name, () => {
-    const doc1 = new Model(new LogicalVectorClock(222, 0));
+    const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
     doc1.api.root(json).commit();
     const encoder = new Encoder();
     const decoder = new Decoder();

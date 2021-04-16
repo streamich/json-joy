@@ -30,7 +30,7 @@ import {
 export class Decoder {
   public decode({clock, root}: JsonCrdtSnapshot): Model {
     const vectorClock = this.decodeClock(clock);
-    const doc = new Model(vectorClock);
+    const doc = Model.withLogicalClock(vectorClock as LogicalVectorClock);
     this.decodeRoot(doc, root);
     return doc;
   }

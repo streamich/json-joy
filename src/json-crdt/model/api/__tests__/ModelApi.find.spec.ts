@@ -4,7 +4,7 @@ import {FALSE_ID, TRUE_ID} from '../../../../json-crdt-patch/constants';
 
 describe('find', () => {
   test('can find a key in root object', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const builder1 = new PatchBuilder(doc.clock);
     const obj1 = builder1.obj();
     builder1.setKeys(obj1, [['foo', FALSE_ID]]);
@@ -14,7 +14,7 @@ describe('find', () => {
   });
 
   test('can find the root value', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const builder1 = new PatchBuilder(doc.clock);
     builder1.root(TRUE_ID);
     doc.applyPatch(builder1.patch);
@@ -22,7 +22,7 @@ describe('find', () => {
   });
 
   test('can find elements in an array', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const builder1 = new PatchBuilder(doc.clock);
     const obj = builder1.json([1, 'f', true]);
     builder1.root(obj);
@@ -33,7 +33,7 @@ describe('find', () => {
   });
 
   test('can find values in complex object', () => {
-    const doc = new Model();
+    const doc = Model.withLogicalClock();
     const builder1 = new PatchBuilder(doc.clock);
     const json = {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',

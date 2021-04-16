@@ -1,10 +1,10 @@
 import type {JsonNode} from '../types/types';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
-import {LogicalNodeIndex} from './nodes';
+import {LogicalNodeIndex, NodeIndex, ServerNodeIndex} from './nodes';
 import {randomSessionId} from './util';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
-import {ITimestamp, IVectorClock, LogicalVectorClock} from '../../json-crdt-patch/clock';
+import {ITimestamp, IVectorClock, LogicalVectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
 import {DocRootType} from '../types/lww-doc-root/DocRootType';
 import {ObjectType} from '../types/lww-object/ObjectType';
 import {ArrayType} from '../types/rga-array/ArrayType';
@@ -28,6 +28,18 @@ import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperat
  * compute the "view" of the model.
  */
 export class Model {
+  public static withLogicalClock(clock?: LogicalVectorClock): Model {
+    clock = clock || new LogicalVectorClock(randomSessionId(), 0);
+    const nodes = new LogicalNodeIndex<JsonNode>();
+    return new Model(clock, nodes);
+  }
+
+  public static withServerClock(time?: number): Model {
+    const clock = new ServerVectorClock(time || 0);
+    const nodes = new ServerNodeIndex<JsonNode>();
+    return new Model(clock, nodes);
+  }
+
   /**
    * Root of the JSON document is implemented as Last Write Wins Register,
    * so that the JSON document does not necessarily need to be an object. The
@@ -44,15 +56,16 @@ export class Model {
   /**
    * Index of all known node objects (objects, array, strings, values) in this document.
    */
-  public nodes = new LogicalNodeIndex<JsonNode>();
+  public nodes: NodeIndex<JsonNode>;
 
   /**
    * API for applying changes to the current document.
    */
   public api: ModelApi;
 
-  constructor(clock: IVectorClock = new LogicalVectorClock(randomSessionId(), 0)) {
+  public constructor(clock: IVectorClock, nodes: NodeIndex<JsonNode>) {
     this.clock = clock;
+    this.nodes = nodes;
     this.api = new ModelApi(this);
   }
 
@@ -132,14 +145,18 @@ export class Model {
 
   /** Creates a copy of this model with the same session ID. */
   public clone(): Model {
-    const model = new Model(this.clock.clone());
+    const model = this.clock instanceof LogicalVectorClock
+      ? Model.withLogicalClock(this.clock.clone())
+      : Model.withServerClock(this.clock.time);
     model.root = this.root.clone(model);
     return model;
   }
 
   /** Creates a copy of this model with a new session ID. */
   public fork(sessionId: number = randomSessionId()): Model {
-    const model = new Model(this.clock.fork(sessionId));
+    const model = this.clock instanceof LogicalVectorClock
+      ? Model.withLogicalClock(this.clock.fork(sessionId))
+      : Model.withServerClock(this.clock.time);
     model.root = this.root.clone(model);
     return model;
   }
