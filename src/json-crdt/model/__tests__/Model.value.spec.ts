@@ -9,7 +9,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const numId = builder.val([1, 2, 3]);
       doc.applyPatch(builder.patch);
-      const obj = doc.nodes.get(numId);
+      const obj = doc.node(numId);
       expect(obj).toBeInstanceOf(ValueType);
     });
 

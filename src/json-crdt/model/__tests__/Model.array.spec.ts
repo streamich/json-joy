@@ -10,7 +10,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const arrId = builder.arr();
       doc.applyPatch(builder.patch);
-      const obj = doc.nodes.get(arrId);
+      const obj = doc.node(arrId);
       expect(obj).toBeInstanceOf(ArrayType);
     });
 
@@ -335,7 +335,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [FALSE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       expect(node.findId(0).toString()).toBe(ins1.toString());
     });
 
@@ -346,7 +346,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       expect(node.findId(0).toString()).toBe(ins1.toString());
       expect(node.findId(1).toString()).toBe(ins1.tick(1).toString());
       expect(node.findId(2).toString()).toBe(ins1.tick(2).toString());
@@ -362,7 +362,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2.tick(2), [FALSE_ID, TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       expect(node.findId(0).toString()).toBe(ins1.toString());
       expect(node.findId(1).toString()).toBe(ins1.tick(1).toString());
       expect(node.findId(2).toString()).toBe(ins1.tick(2).toString());
@@ -384,7 +384,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2.tick(2), [FALSE_ID, TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       expect(node.findValue(0).toString()).toBe(FALSE_ID.toString());
       expect(node.findValue(1).toString()).toBe(TRUE_ID.toString());
       expect(node.findValue(2).toString()).toBe(TRUE_ID.toString());
@@ -404,7 +404,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(1, 2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
       expect(span[0].time).toBe(ins1.time + 1);
@@ -418,7 +418,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(0, 2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
       expect(span[0].time).toBe(ins1.time);
@@ -432,7 +432,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [FALSE_ID, TRUE_ID, TRUE_ID, NULL_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(2, 2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
       expect(span[0].time).toBe(ins1.time + 2);
@@ -448,7 +448,7 @@ describe('Document', () => {
       const ins2 = builder.insArr(arr, ins1.tick(3), [TRUE_ID, TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -470,7 +470,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(2, 5);
       expect(span.length).toBe(3);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -495,7 +495,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(2, 4);
       expect(span.length).toBe(3);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -520,7 +520,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [TRUE_ID, TRUE_ID]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(arr)! as ArrayType;
+      const node = doc.node(arr)! as ArrayType;
       const span = node.findIdSpans(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());

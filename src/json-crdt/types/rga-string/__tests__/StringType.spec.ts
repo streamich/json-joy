@@ -18,7 +18,7 @@ test('merges sequential chunks', () => {
   const ins2 = builder3.insStr(str, ins1.tick(1), '34');
   doc.applyPatch(builder3.patch);
 
-  const node = doc.nodes.get(str) as StringType;
+  const node = doc.node(str) as StringType;
   const origin = node.start;
   const firstChunk = origin.right;
 

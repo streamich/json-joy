@@ -37,7 +37,7 @@ export class ObjectType implements JsonNode {
   }
 
   public put(key: string, id: ITimestamp, value: ITimestamp) {
-    const node = this.doc.nodes.get(value);
+    const node = this.doc.node(value);
     if (!node) return;
     this.putChunk(key, new ObjectChunk(id, node));
   }

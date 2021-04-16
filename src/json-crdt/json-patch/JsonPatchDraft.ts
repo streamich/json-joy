@@ -114,7 +114,7 @@ export class JsonPatchDraft extends Draft {
         const index = ~~key;
         if ('' + index !== key) throw new Error('INVALID_INDEX');
         const nodeId = node.findValue(index);
-        return this.model.nodes.get(nodeId)?.toJson();
+        return this.model.node(nodeId)?.toJson();
       }
     }
     return undefined;

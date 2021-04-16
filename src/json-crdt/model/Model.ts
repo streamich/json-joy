@@ -52,11 +52,19 @@ export class Model {
 
   constructor(clock: VectorClock = new VectorClock(randomSessionId(), 0)) {
     this.clock = clock;
-    this.nodes.index(NULL);
-    this.nodes.index(TRUE);
-    this.nodes.index(FALSE);
-    this.nodes.index(UNDEFINED);
     this.api = new ModelApi(this);
+  }
+
+  public node(id: ITimestamp): JsonNode | undefined {
+    if (id.getSessionId() === 0) {
+      switch(id.time) {
+        case 1: return NULL;
+        case 2: return TRUE;
+        case 3: return FALSE;
+        case 4: return UNDEFINED;
+      }
+    }
+    return this.nodes.get(id);
   }
 
   /**
@@ -142,7 +150,7 @@ export class Model {
   /** @returns Returns human-readable text for debugging. */
   public toString(): string {
     const value = this.root.toValue();
-    const op = this.nodes.get(value);
+    const op = this.node(value);
     return op ? op.toString('') : 'undefined';
   }
 }

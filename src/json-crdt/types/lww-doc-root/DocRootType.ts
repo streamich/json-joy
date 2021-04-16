@@ -28,7 +28,7 @@ export class DocRootType implements JsonNode {
   }
 
   public set(id: ITimestamp, value: ITimestamp): void {
-    const node = this.doc.nodes.get(value);
+    const node = this.doc.node(value);
     if (!node) return;
     this.id = id;
     this.node = node;

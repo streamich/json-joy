@@ -9,7 +9,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       doc.applyPatch(builder.patch);
-      const obj = doc.nodes.get(str);
+      const obj = doc.node(str);
       expect(obj).toBeInstanceOf(StringType);
     });
 
@@ -124,7 +124,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('1342');
     });
 
@@ -139,7 +139,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('y');
     });
 
@@ -155,7 +155,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('xz');
     });
 
@@ -169,7 +169,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('x');
     });
 
@@ -183,7 +183,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('c');
     });
 
@@ -197,7 +197,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('abefg');
     });
 
@@ -214,7 +214,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
+      // console.log(doc.node(str)!.toString());
       expect(doc.toJson()).toEqual('mp');
     });
 
@@ -246,8 +246,8 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      // console.log(doc.nodes.get(str)!.toString());
-      // console.log(doc.nodes.get(str)!.toJson());
+      // console.log(doc.node(str)!.toString());
+      // console.log(doc.node(str)!.toJson());
       expect(doc.toJson()).toEqual('alo!');
     });
 
@@ -258,7 +258,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'H');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       expect(node.findId(0).toString()).toBe(ins1.toString());
     });
 
@@ -269,7 +269,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'Hello');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       expect(node.findId(2).toString()).toBe(ins1.tick(2).toString());
     });
 
@@ -281,7 +281,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, ins1.tick(4), ' world');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       // console.log(doc.toJson());
       expect(node.findId(2).toString()).toBe(ins1.tick(2).toString());
       expect(node.findId(6).toString()).toBe(ins2.tick(1).toString());
@@ -296,7 +296,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abc');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(1, 1);
       expect(span.length).toBe(1);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -311,7 +311,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(2, 2);
       expect(span.length).toBe(1);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -326,7 +326,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(0, 3);
       expect(span.length).toBe(1);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -341,7 +341,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(2, 3);
       expect(span.length).toBe(1);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -358,7 +358,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, ins1.tick(2), 'def');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(2, 2);
       expect(span.length).toBe(2);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -380,7 +380,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins2.tick(2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(0, 9);
       expect(span.length).toBe(3);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -405,7 +405,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins2.tick(2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(1, 7);
       expect(span.length).toBe(3);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());
@@ -430,7 +430,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins2.tick(2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.nodes.get(str)! as StringType;
+      const node = doc.node(str)! as StringType;
       const span = node.findIdSpan(2, 5);
       expect(span.length).toBe(3);
       expect(span[0].getSessionId()).toBe(ins1.getSessionId());

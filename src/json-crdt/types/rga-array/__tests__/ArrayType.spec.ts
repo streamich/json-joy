@@ -19,7 +19,7 @@ test('merges sequential chunks', () => {
   const ins2 = builder3.insArr(arr, ins1, [FALSE_ID]);
   doc.applyPatch(builder3.patch);
 
-  const node = doc.nodes.get(arr) as ArrayType;
+  const node = doc.node(arr) as ArrayType;
   const origin = node.start;
   const firstChunk = origin.right;
 

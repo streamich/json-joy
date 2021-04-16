@@ -64,7 +64,7 @@ export class ModelApi {
   public find(steps: Path): JsonNode {
     const doc = this.doc;
     const id = doc.root.toValue();
-    let node: JsonNode = doc.nodes.get(id) || NULL;
+    let node: JsonNode = doc.node(id) || NULL;
     const length = steps.length;
     if (!length) return node;
     let i = 0;
@@ -73,12 +73,12 @@ export class ModelApi {
       if (node instanceof ObjectType) {
         const id = node.get(String(step));
         if (!id) return UNDEFINED;
-        const nextNode = doc.nodes.get(id);
+        const nextNode = doc.node(id);
         if (!nextNode) return UNDEFINED;
         node = nextNode;
       } else if (node instanceof ArrayType) {
         const id = node.findValue(Number(step));
-        const nextNode = doc.nodes.get(id);
+        const nextNode = doc.node(id);
         if (!nextNode) return UNDEFINED;
         node = nextNode;
         continue;

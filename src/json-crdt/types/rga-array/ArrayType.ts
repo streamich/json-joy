@@ -24,7 +24,7 @@ export class ArrayType implements JsonNode {
     if (!curr) return; // Should never happen.
     const nodes: JsonNode[] = [];
     for (const el of op.elements) {
-      const node = this.doc.nodes.get(el);
+      const node = this.doc.node(el);
       if (node) nodes.push(node);
     }
     if (!nodes.length) return;
