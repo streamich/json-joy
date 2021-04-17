@@ -1,13 +1,13 @@
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
-import {Encoder} from '../Encoder';
-import {Decoder} from '../Decoder';
+import {LogicalEncoder} from '../LogicalEncoder';
+import {LogicalDecoder} from '../LogicalDecoder';
 
 test('decodes clock', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   doc1.api.root(123).commit();
-  const encoder = new Encoder();
-  const decoder = new Decoder();
+  const encoder = new LogicalEncoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc2.clock.getSessionId()).toBe(222);
@@ -19,8 +19,8 @@ test('decodes an empty object', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = {};
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -31,8 +31,8 @@ test('decodes an object with a key', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = {foo: {}};
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -60,8 +60,8 @@ test('decodes an object with more than 15 keys', () => {
     '15': {},
   };
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -72,8 +72,8 @@ test('decodes an array with single entry', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = [{}];
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -84,8 +84,8 @@ test('decodes nested array with two nodes', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = [{}, []];
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -96,15 +96,15 @@ test('decodes a string', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
   const json = 'lala';
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
-  const encoder = new Encoder();
+  const decoder = new LogicalDecoder();
+  const encoder = new LogicalEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
   expect(doc2.toJson()).toEqual(json);
 });
 
-const encoder = new Encoder();
+const encoder = new LogicalEncoder();
 
 test('decodes all types', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
@@ -117,7 +117,7 @@ test('decodes all types', () => {
     bool: [true, false],
   };
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -135,7 +135,7 @@ test('can edit documents after decoding', () => {
     bool: [true, false],
   };
   doc1.api.root(json).commit();
-  const decoder = new Decoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);

@@ -3,7 +3,7 @@ import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {Model} from '../../model';
 import {AbstractDecoder} from './AbstractDecoder';
 
-export class Decoder extends AbstractDecoder {
+export class LogicalDecoder extends AbstractDecoder {
   protected clockDecoder!: ClockDecoder;
 
   public decode(data: Uint8Array): Model {

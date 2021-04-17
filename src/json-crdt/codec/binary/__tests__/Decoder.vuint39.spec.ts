@@ -1,8 +1,8 @@
-import {Encoder} from '../Encoder';
-import {Decoder} from '../Decoder';
+import {LogicalEncoder} from '../LogicalEncoder';
+import {LogicalDecoder} from '../LogicalDecoder';
 
-const encoder = new Encoder();
-const decoder = new Decoder();
+const encoder = new LogicalEncoder();
+const decoder = new LogicalDecoder();
 const encode = (num: number): Uint8Array => {
   encoder.reset();
   encoder.vuint39(num);

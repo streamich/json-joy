@@ -1,15 +1,15 @@
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
-import {Encoder} from '../Encoder';
-import {Decoder} from '../Decoder';
+import {LogicalEncoder} from '../LogicalEncoder';
+import {LogicalDecoder} from '../LogicalDecoder';
 import {documents} from '../../../../util/__tests__/json-documents';
 
 for (const {name, json} of documents) {
   test(name, () => {
     const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
     doc1.api.root(json).commit();
-    const encoder = new Encoder();
-    const decoder = new Decoder();
+    const encoder = new LogicalEncoder();
+    const decoder = new LogicalDecoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
     expect(doc1.toJson()).toEqual(json);

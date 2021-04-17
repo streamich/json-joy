@@ -1,6 +1,6 @@
-import {Encoder} from '../Encoder';
+import {LogicalEncoder} from '../LogicalEncoder';
 
-const encoder = new Encoder();
+const encoder = new LogicalEncoder();
 const encode = (flag: boolean, num: number): Uint8Array => {
   encoder.reset();
   encoder.b1vuint56(flag, num);
