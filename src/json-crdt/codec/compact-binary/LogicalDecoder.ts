@@ -1,8 +1,8 @@
-import {Decoder as CompactDecoder} from '../compact/Decoder';
+import {LogicalDecoder as CompactDecoder} from '../compact/LogicalDecoder';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
 import {Model} from '../../model';
 
-export class Decoder {
+export class LogicalDecoder {
   protected decoder = new CompactDecoder();
   protected msgPack = new MessagePackDecoder();
 
