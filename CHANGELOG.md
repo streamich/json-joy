@@ -1,3 +1,58 @@
+# [2.9.0](https://github.com/streamich/json-joy/compare/v2.8.0...v2.9.0) (2021-04-17)
+
+
+### Bug Fixes
+
+* 🐛 clone array chunk nodes ([efe4cdf](https://github.com/streamich/json-joy/commit/efe4cdf24a85a042d8203ab33e490bb20a0800d2))
+* 🐛 correctly check server timestmap equality ([f38a53c](https://github.com/streamich/json-joy/commit/f38a53c91c4ee73e52bfc8132c6951c9a4f95849))
+* 🐛 correctly encode 8 byte b1vuint56 numbers ([e01acdc](https://github.com/streamich/json-joy/commit/e01acdcd05ec7336eaad56512c990ec8b67ecd18))
+* 🐛 correctly encode UTF-8 strings ([0ac0a1d](https://github.com/streamich/json-joy/commit/0ac0a1d61b60fcb213945f861dd9ea7a545f33eb))
+* 🐛 correctly execute JSON Patch "move" ([04f168c](https://github.com/streamich/json-joy/commit/04f168c757efd42fe697858f3e6ab491cd0eb744))
+* 🐛 do not return undefined keys in view ([efb8f32](https://github.com/streamich/json-joy/commit/efb8f3219c38f6c1c210515cdd1ac0fa8a1293d7))
+* 🐛 handle empty strings in cached key decoder ([66008b2](https://github.com/streamich/json-joy/commit/66008b2154f39f5a35180d3bfcd298c33a74d550))
+* 🐛 throw correctly when time is skipped ([f965bf9](https://github.com/streamich/json-joy/commit/f965bf9406b2f77a06a2bb0909e54210df696574))
+
+
+### Features
+
+* 🎸 add array decoding ([226c3ec](https://github.com/streamich/json-joy/commit/226c3ecb36a73ebc8d6ce831c7ac87b3afe7f15c))
+* 🎸 add array fuzzing ([531882e](https://github.com/streamich/json-joy/commit/531882eba40339bf645a2a4b8aeb68ea96e1bad3))
+* 🎸 add b1vuint28 decoder ([61c05ca](https://github.com/streamich/json-joy/commit/61c05ca35d63ed27cdff4022c90c244a8e83e0b1))
+* 🎸 add b1vuint56 decoder ([9a69c4a](https://github.com/streamich/json-joy/commit/9a69c4a6b38c5821f63893976f1f704d793dd14e))
+* 🎸 add binary encoding for compound objects ([c04bed6](https://github.com/streamich/json-joy/commit/c04bed627d07b59a3364563c32cd6671ed2d5e82))
+* 🎸 add clock decoder ([ba25f35](https://github.com/streamich/json-joy/commit/ba25f35d382ee8378a012ddb6b7cd49b5b58307d))
+* 🎸 add clock encoding ([0c6085a](https://github.com/streamich/json-joy/commit/0c6085a0579ad535c63820299517d1627ccd0176))
+* 🎸 add clock table encoding ([15b7e40](https://github.com/streamich/json-joy/commit/15b7e40651e1fb14f0f3910f54c8bf0393bf0375))
+* 🎸 add encoding for constant type ([3aab177](https://github.com/streamich/json-joy/commit/3aab1778c12d8e019ded2802f304637ab24a4792))
+* 🎸 add encoding for relative IDs ([d9980a5](https://github.com/streamich/json-joy/commit/d9980a58f525d10383359f0074eb6c568c958a88))
+* 🎸 add id decoder ([a920d8b](https://github.com/streamich/json-joy/commit/a920d8b243079f62801bf9e93df642fa3712b015))
+* 🎸 add json nominal encoding for server time ([7476077](https://github.com/streamich/json-joy/commit/7476077ec059f3130483466e6331c2103e7150f3))
+* 🎸 add length() method ([b63fd9a](https://github.com/streamich/json-joy/commit/b63fd9a6e3d7f22c7f2ce066d95459486ad42ba4))
+* 🎸 add node index implementation for server clock ([df90865](https://github.com/streamich/json-joy/commit/df90865dac357af8968ceac81549453a373b367e))
+* 🎸 add object decoding ([3264b34](https://github.com/streamich/json-joy/commit/3264b34a1602af71a6041a3667e040e4c35fd5b3))
+* 🎸 add random JSON generator ([1e07efc](https://github.com/streamich/json-joy/commit/1e07efccb43127e940a1c622c2b15da2b874c45f))
+* 🎸 add server time codec for binary compact encoding ([c0fc622](https://github.com/streamich/json-joy/commit/c0fc62260f9ff68913a0e74ae516c109a58156e8))
+* 🎸 add server time codec to snapshot compact codec ([93d1079](https://github.com/streamich/json-joy/commit/93d1079a95745f04e7a5dcbf173ffa5bbe521e02))
+* 🎸 add string decoding ([e1204e4](https://github.com/streamich/json-joy/commit/e1204e4eee48b49dd5646273730c3f9a770756a0))
+* 🎸 add value node encoding ([63dcbd0](https://github.com/streamich/json-joy/commit/63dcbd060b23da06cc36111b7344c5edacc4ced6))
+* 🎸 add value node fuzzing ([26c7a9d](https://github.com/streamich/json-joy/commit/26c7a9db60cd4383392eb406060c11fa76a58632))
+* 🎸 add vuint39 decoder ([0982366](https://github.com/streamich/json-joy/commit/0982366959ffad3765dcb6307cec6daab4f52556))
+* 🎸 add vuint57 decoder ([2a16681](https://github.com/streamich/json-joy/commit/2a16681afa5c953f0752851ff1915f7e1aaf9e0b))
+* 🎸 create models through static methods ([fecef74](https://github.com/streamich/json-joy/commit/fecef74972f1dca7a2347e22b865aaed88ab68a3))
+* 🎸 do not allow time travel ([5c2e1ec](https://github.com/streamich/json-joy/commit/5c2e1ec34bafc058fe80b898cb39978a6719ec53))
+* 🎸 generate 53 bit session IDs ([d3e3241](https://github.com/streamich/json-joy/commit/d3e32413386bc8523e3bf78954942c8eec4fc365))
+* 🎸 implement binary codec for model with server time ([f0ba189](https://github.com/streamich/json-joy/commit/f0ba1891a09ebc786effc2d2c30db5d96ca24d95))
+* 🎸 implement binary decoder ([e246f1a](https://github.com/streamich/json-joy/commit/e246f1abfb8141fb03a2cc79b2d70dafc16a4dbb))
+* 🎸 implement JSON Patch translator to CRDT operations ([82d3219](https://github.com/streamich/json-joy/commit/82d3219f568c25abdeb41dff914873a602a7694a))
+* 🎸 improve logical vector clock ([ba50714](https://github.com/streamich/json-joy/commit/ba507144462379f3c220abb6f2ca9b5f39366f03))
+* 🎸 improve random generator ([e3621de](https://github.com/streamich/json-joy/commit/e3621de8f7ddd0ca5b893a5f5e5d632a8cac3075))
+* 🎸 improve vector clock encoding ([42ad785](https://github.com/streamich/json-joy/commit/42ad785ae14590ec98d15ba44acf465d3efac2b4))
+
+
+### Performance Improvements
+
+* ⚡️ dont index constant type symbols ([25a379c](https://github.com/streamich/json-joy/commit/25a379cca7435e235604b8e67ae82ede9b2bb11d))
+
 # [2.8.0](https://github.com/streamich/json-joy/compare/v2.7.0...v2.8.0) (2021-04-11)
 
 
