@@ -1,7 +1,8 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp, ServerTimestamp} from '../../../json-crdt-patch/clock';
+import {Model} from '../../model';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -13,8 +14,22 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {TypeCode, ValueCode} from './constants';
 
-export abstract class AbstractDecoder {
-  protected abstract ts(arr: unknown[], index: number): ITimestamp;
+export class ServerDecoder {
+  protected time!: number;
+
+  public decode(data: unknown[]): Model {
+    this.time = data[0] as number;
+    const doc = Model.withServerClock(this.time);
+    const rootId = this.ts(data, 1);
+    const rootNode = data[2] ? this.decodeNode(doc, data[2]) : null;
+    doc.root = new DocRootType(doc, rootId, rootNode);
+    return doc;
+  }
+
+  protected ts(arr: unknown[], index: number): ITimestamp {
+    const timeDiff = arr[index] as number;
+    return new ServerTimestamp(this.time - timeDiff);
+  }
 
   protected decodeNode(doc: Model, data: unknown): JsonNode {
     switch (data) {
@@ -48,10 +63,10 @@ export abstract class AbstractDecoder {
     const id = this.ts(data, 1);
     const obj = new ObjectType(doc, id);
     const length = data.length;
-    for (let i = 3; i < length; i += 4) {
+    for (let i = 2; i < length; i += 3) {
       const key = data[i] as string;
       const keyId = this.ts(data, i + 1);
-      const node = this.decodeNode(doc, data[i + 3]);
+      const node = this.decodeNode(doc, data[i + 2]);
       const chunk = new ObjectChunk(keyId, node);
       obj.putChunk(key, chunk);
     }
@@ -63,9 +78,9 @@ export abstract class AbstractDecoder {
     const id = this.ts(data, 1);
     const obj = new ArrayType(doc, id);
     const length = data.length;
-    for (let i = 3; i < length; i += 3) {
+    for (let i = 2; i < length; i += 2) {
       const chunkId = this.ts(data, i);
-      const content = data[i + 2];
+      const content = data[i + 1];
       let chunk: ArrayChunk;
       if (typeof content === 'number') {
         chunk = new ArrayChunk(chunkId, undefined);
@@ -84,9 +99,9 @@ export abstract class AbstractDecoder {
     const id = this.ts(data, 1);
     const obj = new StringType(doc, id);
     const length = data.length;
-    for (let i = 3; i < length; i += 3) {
+    for (let i = 2; i < length; i += 2) {
       const chunkId = this.ts(data, i);
-      const content = data[i + 2];
+      const content = data[i + 1];
       let chunk: StringChunk;
       if (typeof content === 'number') {
         chunk = new StringChunk(chunkId, undefined);
@@ -102,8 +117,8 @@ export abstract class AbstractDecoder {
 
   protected decodeVal(doc: Model, data: unknown[]): ValueType {
     const id = this.ts(data, 1);
-    const writeId = this.ts(data, 3);
-    const value = data[5];
+    const writeId = this.ts(data, 2);
+    const value = data[3];
     const obj = new ValueType(id, writeId, value);
     doc.nodes.index(obj);
     return obj;
