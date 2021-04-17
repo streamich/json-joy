@@ -39,10 +39,10 @@ export class Decoder {
     const [ts] = timestamps;
     const vectorClock = new LogicalVectorClock(ts[0], ts[1]);
     const length = timestamps.length;
-    for (let i = 1; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       const ts = timestamps[i];
       const [sessionId, time] = ts;
-      vectorClock.clocks.set(sessionId, new LogicalTimestamp(sessionId, time));
+      vectorClock.observe(new LogicalTimestamp(sessionId, time), 1);
     }
     return vectorClock;
   }

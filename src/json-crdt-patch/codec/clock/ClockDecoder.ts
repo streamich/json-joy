@@ -17,6 +17,7 @@ export class ClockDecoder {
   public constructor(sessionId: number, time: number) {
     this.index = 1;
     this.clock = new LogicalVectorClock(sessionId, time);
+    if (time) this.clock.observe(new LogicalTimestamp(sessionId, time), 1);
     this.table.set(this.index++, this.clock);
   }
 

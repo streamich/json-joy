@@ -82,12 +82,16 @@ empty.
 The vector clock table section starts with a vuint57 integer. The value of this
 integer specifies the number of entries in the vector clock section.
 
-The remaining part of the vector clock section is composed of a flat ordered
-list of logical clock entries.
+The remaining part of the vector clock section is composed of a flat list of
+logical clock entries.
 
 Each logical clock entry consists of: (1) a session ID; and (2) sequence time.
 
 Each logical clock is encoded as uint53vuint39.
+
+The first clock entry contains the session ID of the CRDT document. If the
+sequence time part of the first entry is zero, it means no ID with that session
+ID has been generated yet.
 
 
 ### The data section

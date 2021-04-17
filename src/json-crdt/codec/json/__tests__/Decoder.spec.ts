@@ -4,7 +4,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 
 test('decodes clock', () => {
-  const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
+  const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 1));
   doc1.api.root(123).commit();
   const encoder = new Encoder();
   const decoder = new Decoder();

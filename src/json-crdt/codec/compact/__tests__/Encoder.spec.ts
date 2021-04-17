@@ -18,5 +18,5 @@ test('can encode object and array', () => {
     })
     .commit();
   const res = encoder.encode(doc);
-  expect(res).toEqual([[123, 5], 1, 1, [0, 1, 5, 'arr', 1, 2, [1, 1, 4, 1, 3, [2]]]]);
+  expect(res).toEqual([[123, 4], 1, 0, [0, 1, 4, 'arr', 1, 1, [1, 1, 3, 1, 2, [2]]]]);
 });

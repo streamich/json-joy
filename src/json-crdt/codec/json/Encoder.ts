@@ -36,6 +36,9 @@ export class Encoder {
 
   public encodeClock(clock: IVectorClock): JsonCrdtTimestamp[] {
     const data: JsonCrdtTimestamp[] = [];
+    const sessionId = clock.getSessionId();
+    const localTs = clock.clocks.get(sessionId);
+    if (!localTs) data.push([sessionId, clock.time]);
     for (const c of clock.clocks.values()) data.push([c.getSessionId(), c.time]);
     return data;
   }

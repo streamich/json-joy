@@ -33,8 +33,15 @@ export class Encoder extends JsonPackEncoder {
     this.uint8 = new Uint8Array(8 + 12 * length + dataSize);
     this.view = new DataView(this.uint8.buffer);
     this.offset = 0;
-    this.b1vuint56(false, length);
-    for (const ts of clockEncoder.clocks()) this.clock(ts.getSessionId(), ts.time);
+    this.vuint57(length);
+    for (const sid of clockEncoder.table.keys()) {
+      const ts = clockEncoder.clock.clocks.get(sid);
+      if (ts) this.clock(sid, ts.time);
+      else if (sid === clockEncoder.clock.getSessionId()) this.clock(sid, 0);
+      else {
+        // Should never happen.
+      }
+    }
     this.buf(data, dataSize);
   }
 

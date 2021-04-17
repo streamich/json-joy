@@ -19,6 +19,6 @@ test('can encode object and array', () => {
     .commit();
   const res = encoder.encode(doc);
   expect(res).toEqual(
-    new Uint8Array([1, 0, 0, 0, 123, 0, 0, 0, 5, 17, 129, 21, 18, 3, 97, 114, 114, 145, 20, 1, 19, 194]),
+    new Uint8Array([1, 0, 0, 0, 123, 0, 0, 0, 4, 16, 129, 20, 17, 3, 97, 114, 114, 145, 19, 1, 18, 194]),
   );
 });

@@ -26,7 +26,7 @@ test('encodes all JSON node types object', () => {
     .commit();
   const res = encoder.encode(doc);
   expect(res).toEqual({
-    clock: [[123, 14]],
+    clock: [[123, 13]],
     root: {
       type: 'root',
       id: [123, 13],
@@ -101,7 +101,7 @@ test('encodes deleted string chunks', () => {
   doc.api.strDel([], 1, 1).commit();
   const res = encoder.encode(doc);
   expect(res).toEqual({
-    clock: [[123, 6]],
+    clock: [[123, 5]],
     root: {
       type: 'root',
       id: [123, 4],
