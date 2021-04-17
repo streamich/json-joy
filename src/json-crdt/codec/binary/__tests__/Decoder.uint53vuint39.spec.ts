@@ -5,12 +5,12 @@ const encoder = new Encoder();
 const decoder = new Decoder();
 const encode = (x: number, z: number): Uint8Array => {
   encoder.reset();
-  encoder.clock(x, z);
+  encoder.uint53vuint39(x, z);
   return encoder.flush();
 };
 const decode = (uint8: Uint8Array): [number, number] => {
   decoder.reset(uint8);
-  return decoder.clock();
+  return decoder.uint53vuint39();
 };
 
 const ids: [number, number][] = [

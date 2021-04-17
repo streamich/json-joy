@@ -36,8 +36,8 @@ export class Encoder extends JsonPackEncoder {
     this.vuint57(length);
     for (const sid of clockEncoder.table.keys()) {
       const ts = clockEncoder.clock.clocks.get(sid);
-      if (ts) this.clock(sid, ts.time);
-      else if (sid === clockEncoder.clock.getSessionId()) this.clock(sid, 0);
+      if (ts) this.uint53vuint39(sid, ts.time);
+      else if (sid === clockEncoder.clock.getSessionId()) this.uint53vuint39(sid, 0);
       else {
         // Should never happen.
       }
@@ -180,57 +180,6 @@ export class Encoder extends JsonPackEncoder {
       uint8[offset++] = (value & 0x3f) | 0x80;
     }
     this.offset = offset;
-  }
-
-  /**
-   * Encoding schema:
-   *
-   * ```
-   * byte 1                                                         byte 8                              byte 12
-   * +--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
-   * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-   * +--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
-   *
-   *  33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
-   *  21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
-   *  |                                     |               |      |                       |
-   *  |                                     |               |      10th bit of z           |
-   *  |                                     46th bit of x   |                              |
-   *  |                                                     |                              22nd bit of z
-   *  |                                                     53rd bit of x
-   *  32nd bit of x
-   * ```
-   */
-  public clock(x: number, z: number): void {
-    let x1 = x | 0;
-    if (x1 < 0) x1 += 4294967296;
-    const x2 = (x - x1) / 4294967296;
-    this.u32(x1);
-    this.u16(x2 & 0xffff);
-    const fiveXBits = (x2 >>> 16) << 3;
-    const twoZBits = (z >>> 8) & 0b11;
-    const zFitsIn10Bits = z <= 0b11_11111111;
-    this.u8(fiveXBits | (zFitsIn10Bits ? 0b000 : 0b100) | twoZBits);
-    this.u8(z & 0xff);
-    if (zFitsIn10Bits) return;
-    if (z <= 0b1111111_11_11111111) {
-      this.u8(z >>> 10);
-    } else if (z <= 0b1111111_1111111_11_11111111) {
-      this.u8(0b1_0000000 | ((z >>> 10) & 0b0_1111111));
-      this.u8(z >>> 17);
-    } else if (z <= 0b1111111_1111111_1111111_11_11111111) {
-      this.u8(0b1_0000000 | ((z >>> 10) & 0b0_1111111));
-      this.u8(0b1_0000000 | ((z >>> 17) & 0b0_1111111));
-      this.u8(z >>> 24);
-    } else {
-      let z1 = z | 0;
-      if (z1 < 0) z1 += 4294967296;
-      const z2 = (z - z1) / 4294967296;
-      this.u8(0b1_0000000 | ((z1 >>> 10) & 0b0_1111111));
-      this.u8(0b1_0000000 | ((z1 >>> 17) & 0b0_1111111));
-      this.u8(0b1_0000000 | ((z1 >>> 24) & 0b0_1111111));
-      this.u8((z1 >>> 31) | (z2 << 1));
-    }
   }
 
   /**
@@ -458,6 +407,57 @@ export class Encoder extends JsonPackEncoder {
         this.u8(0b10000000 | ((num >>> 13) & 0b01111111));
         this.u8(num >>> 20);
       }
+    }
+  }
+
+  /**
+   * Encoding schema:
+   *
+   * ```
+   * byte 1                                                         byte 8                              byte 12
+   * +--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
+   * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
+   * +--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
+   *
+   *  33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
+   *  21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
+   *  |                                     |               |      |                       |
+   *  |                                     |               |      10th bit of z           |
+   *  |                                     46th bit of x   |                              |
+   *  |                                                     |                              22nd bit of z
+   *  |                                                     53rd bit of x
+   *  32nd bit of x
+   * ```
+   */
+  public uint53vuint39(x: number, z: number): void {
+    let x1 = x | 0;
+    if (x1 < 0) x1 += 4294967296;
+    const x2 = (x - x1) / 4294967296;
+    this.u32(x1);
+    this.u16(x2 & 0xffff);
+    const fiveXBits = (x2 >>> 16) << 3;
+    const twoZBits = (z >>> 8) & 0b11;
+    const zFitsIn10Bits = z <= 0b11_11111111;
+    this.u8(fiveXBits | (zFitsIn10Bits ? 0b000 : 0b100) | twoZBits);
+    this.u8(z & 0xff);
+    if (zFitsIn10Bits) return;
+    if (z <= 0b1111111_11_11111111) {
+      this.u8(z >>> 10);
+    } else if (z <= 0b1111111_1111111_11_11111111) {
+      this.u8(0b1_0000000 | ((z >>> 10) & 0b0_1111111));
+      this.u8(z >>> 17);
+    } else if (z <= 0b1111111_1111111_1111111_11_11111111) {
+      this.u8(0b1_0000000 | ((z >>> 10) & 0b0_1111111));
+      this.u8(0b1_0000000 | ((z >>> 17) & 0b0_1111111));
+      this.u8(z >>> 24);
+    } else {
+      let z1 = z | 0;
+      if (z1 < 0) z1 += 4294967296;
+      const z2 = (z - z1) / 4294967296;
+      this.u8(0b1_0000000 | ((z1 >>> 10) & 0b0_1111111));
+      this.u8(0b1_0000000 | ((z1 >>> 17) & 0b0_1111111));
+      this.u8(0b1_0000000 | ((z1 >>> 24) & 0b0_1111111));
+      this.u8((z1 >>> 31) | (z2 << 1));
     }
   }
 }

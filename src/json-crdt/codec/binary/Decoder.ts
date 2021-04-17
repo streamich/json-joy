@@ -29,10 +29,10 @@ export class Decoder extends MessagePackDecoder {
   }
 
   protected decodeClockTable(length: number): void {
-    const firstTimestamp = this.clock();
+    const firstTimestamp = this.uint53vuint39();
     this.clockDecoder = new ClockDecoder(firstTimestamp[0], firstTimestamp[1]);
     for (let i = 1; i < length; i++) {
-      const ts = this.clock();
+      const ts = this.uint53vuint39();
       this.clockDecoder.pushTuple(ts[0], ts[1]);
     }
   }
@@ -181,28 +181,6 @@ export class Decoder extends MessagePackDecoder {
     return obj;
   }
 
-  public clock(): [x: number, z: number] {
-    const x32 = this.u32();
-    const x16 = this.u16();
-    const y = this.u8();
-    const z8 = this.u8();
-    const x = (((y >>> 3) << 16) | x16) * 0x100000000 + x32;
-    let z = ((y & 0b11) << 8) | z8;
-    if (!(y & 0b100)) return [x, z];
-    const o1 = this.u8();
-    if (o1 <= 0b0_1111111) return [x, (o1 << 10) | z];
-    const o2 = this.u8();
-    if (o2 <= 0b0_1111111) return [x, (o2 << 17) | ((o1 & 0b0_1111111) << 10) | z];
-    const o3 = this.u8();
-    if (o3 <= 0b0_1111111) return [x, (o3 << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)];
-    const o4 = this.u8();
-    return [
-      x,
-      o4 * 0b10000000000000000000000000000000 +
-        (((o3 & 0b0_1111111) << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)),
-    ];
-  }
-
   public id(): [x: number, y: number] {
     const byte = this.u8();
     if (byte <= 0b0_111_1111) return [byte >>> 4, byte & 0b1111];
@@ -337,5 +315,27 @@ export class Decoder extends MessagePackDecoder {
     if (o3 <= 0b01111111) return [flag, (o3 << 13) | ((o2 & 0b01111111) << 6) | (o1 & 0b0_0_111111)];
     const o4 = this.u8();
     return [flag, (o4 << 20) | ((o3 & 0b01111111) << 13) | ((o2 & 0b01111111) << 6) | (o1 & 0b0_0_111111)];
+  }
+
+  public uint53vuint39(): [x: number, z: number] {
+    const x32 = this.u32();
+    const x16 = this.u16();
+    const y = this.u8();
+    const z8 = this.u8();
+    const x = (((y >>> 3) << 16) | x16) * 0x100000000 + x32;
+    let z = ((y & 0b11) << 8) | z8;
+    if (!(y & 0b100)) return [x, z];
+    const o1 = this.u8();
+    if (o1 <= 0b0_1111111) return [x, (o1 << 10) | z];
+    const o2 = this.u8();
+    if (o2 <= 0b0_1111111) return [x, (o2 << 17) | ((o1 & 0b0_1111111) << 10) | z];
+    const o3 = this.u8();
+    if (o3 <= 0b0_1111111) return [x, (o3 << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)];
+    const o4 = this.u8();
+    return [
+      x,
+      o4 * 0b10000000000000000000000000000000 +
+        (((o3 & 0b0_1111111) << 24) | (((o2 & 0b0_1111111) << 17) | ((o1 & 0b0_1111111) << 10) | z)),
+    ];
   }
 }

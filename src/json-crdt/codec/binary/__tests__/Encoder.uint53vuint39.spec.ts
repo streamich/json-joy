@@ -3,7 +3,7 @@ import {Encoder} from '../Encoder';
 const encoder = new Encoder();
 const encode = (x: number, z: number): Uint8Array => {
   encoder.reset();
-  encoder.clock(x, z);
+  encoder.uint53vuint39(x, z);
   return encoder.flush();
 };
 
