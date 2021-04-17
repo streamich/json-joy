@@ -1,13 +1,13 @@
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
-import {Encoder} from '../Encoder';
-import {Decoder} from '../Decoder';
+import {LogicalEncoder} from '../LogicalEncoder';
+import {LogicalDecoder} from '../LogicalDecoder';
 
 test('decodes clock', () => {
   const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 1));
   doc1.api.root(123).commit();
-  const encoder = new Encoder();
-  const decoder = new Decoder();
+  const encoder = new LogicalEncoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc2.clock.getSessionId()).toBe(222);
@@ -26,8 +26,8 @@ test('decodes all types', () => {
     bool: [true, false],
   };
   doc1.api.root(json).commit();
-  const encoder = new Encoder();
-  const decoder = new Decoder();
+  const encoder = new LogicalEncoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
@@ -45,8 +45,8 @@ test('can edit documents after decoding', () => {
     bool: [true, false],
   };
   doc1.api.root(json).commit();
-  const encoder = new Encoder();
-  const decoder = new Decoder();
+  const encoder = new LogicalEncoder();
+  const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);

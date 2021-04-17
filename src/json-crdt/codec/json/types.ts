@@ -1,91 +1,111 @@
 /**
- * A structural snapshot of JSON CRDT document.
+ * A structural snapshot of JSON CRDT model with logical time.
  */
-export interface JsonCrdtSnapshot {
+export interface JsonCrdtLogicalSnapshot {
   /**
    * Vector clock which contains the latest values of all known logical clocks.
    * The first clock is the local clock of this document.
    */
-  clock: JsonCrdtTimestamp[];
+  clock: JsonCrdtLogicalTimestamp[];
 
   /**
    * Root node of the document data model.
    */
-  root: RootJsonCrdtNode;
+  root: RootJsonCrdtNode<JsonCrdtLogicalTimestamp>;
 }
 
 /**
  * A serialized logical clock timestamp.
  */
-export type JsonCrdtTimestamp = [sessionId: number, time: number];
+export type JsonCrdtLogicalTimestamp = [sessionId: number, time: number];
+
+/**
+ * A structural snapshot of JSON CRDT model with server time.
+ */
+export interface JsonCrdtServerSnapshot {
+  /**
+   * Latest known time sequence number in this model.
+   */
+  time: JsonCrdtServerTimestamp;
+
+  /**
+   * Root node of the document data model.
+   */
+  root: RootJsonCrdtNode<JsonCrdtServerTimestamp>;
+}
+
+/**
+ * A serialized server clock timestamp.
+ */
+export type JsonCrdtServerTimestamp = number;
 
 /**
  * The root node of the document, implemented as LWW. Only one root node per
  * document is allowed.
  */
-export interface RootJsonCrdtNode {
+export interface RootJsonCrdtNode<Id> {
   type: 'root';
-  id: JsonCrdtTimestamp;
-  node: JsonCrdtNode | null;
+  id: Id;
+  node: JsonCrdtNode<Id> | null;
 }
 
 /**
  * LWW JSON object node.
  */
-export interface ObjectJsonCrdtNode {
+export interface ObjectJsonCrdtNode<Id> {
   type: 'obj';
-  id: JsonCrdtTimestamp;
-  chunks: Record<string, ObjectJsonCrdtChunk>;
+  id: Id;
+  chunks: Record<string, ObjectJsonCrdtChunk<Id>>;
 }
 
-export interface ObjectJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
-  node: JsonCrdtNode;
+export interface ObjectJsonCrdtChunk<Id> {
+  id: Id;
+  node: JsonCrdtNode<Id>;
 }
 
 /**
  * RGA JSON array node.
  */
-export interface ArrayJsonCrdtNode {
+export interface ArrayJsonCrdtNode<Id> {
   type: 'arr';
-  id: JsonCrdtTimestamp;
-  chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+  id: Id;
+  chunks: (ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
 }
 
-export interface ArrayJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
-  nodes: JsonCrdtNode[];
+export interface ArrayJsonCrdtChunk<Id> {
+  id: Id;
+  nodes: JsonCrdtNode<Id>[];
 }
 
 /**
  * RGA JSON string node.
  */
-export interface StringJsonCrdtNode {
+export interface StringJsonCrdtNode<Id> {
   type: 'str';
-  id: JsonCrdtTimestamp;
-  chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+  id: Id;
+  chunks: (StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
 }
 
-export interface StringJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
+export interface StringJsonCrdtChunk<Id> {
+  id: Id;
   value: string;
 }
 
 /**
  * A tombstone used in RGA nodes.
  */
-export interface JsonCrdtRgaTombstone {
-  id: JsonCrdtTimestamp;
+export interface JsonCrdtRgaTombstone<Id> {
+  id: Id;
   span: number;
 }
 
 /**
  * LWW register for any JSON value.
  */
-export interface ValueJsonCrdtNode {
+export interface ValueJsonCrdtNode<Id> {
   type: 'val';
-  id: JsonCrdtTimestamp;
-  writeId: JsonCrdtTimestamp;
+  id: Id;
+  writeId: Id;
   value: unknown;
 }
 
@@ -97,9 +117,9 @@ export interface ConstantJsonCrdtNode {
   value: unknown;
 }
 
-export type JsonCrdtNode =
-  | ObjectJsonCrdtNode
-  | ArrayJsonCrdtNode
-  | StringJsonCrdtNode
-  | ValueJsonCrdtNode
+export type JsonCrdtNode<Id> =
+  | ObjectJsonCrdtNode<Id>
+  | ArrayJsonCrdtNode<Id>
+  | StringJsonCrdtNode<Id>
+  | ValueJsonCrdtNode<Id>
   | ConstantJsonCrdtNode;

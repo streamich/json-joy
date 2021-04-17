@@ -1,5 +1,4 @@
-import type {ITimestamp, IVectorClock} from '../../../json-crdt-patch/clock';
-import {Model} from '../../model';
+import type {ITimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -10,8 +9,6 @@ import {ArrayType} from '../../types/rga-array/ArrayType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {
-  JsonCrdtSnapshot,
-  JsonCrdtTimestamp,
   RootJsonCrdtNode,
   JsonCrdtNode,
   ObjectJsonCrdtNode,
@@ -25,29 +22,10 @@ import {
   ConstantJsonCrdtNode,
 } from './types';
 
-export class Encoder {
-  public encode(doc: Model): JsonCrdtSnapshot {
-    const snapshot: JsonCrdtSnapshot = {
-      clock: this.encodeClock(doc.clock),
-      root: this.encodeRoot(doc.root),
-    };
-    return snapshot;
-  }
+export abstract class AbstractEncoder<Id> {
+  abstract encodeTimestamp(ts: ITimestamp): Id;
 
-  public encodeClock(clock: IVectorClock): JsonCrdtTimestamp[] {
-    const data: JsonCrdtTimestamp[] = [];
-    const sessionId = clock.getSessionId();
-    const localTs = clock.clocks.get(sessionId);
-    if (!localTs) data.push([sessionId, clock.time]);
-    for (const c of clock.clocks.values()) data.push([c.getSessionId(), c.time]);
-    return data;
-  }
-
-  public encodeTimestamp(ts: ITimestamp): JsonCrdtTimestamp {
-    return [ts.getSessionId(), ts.time];
-  }
-
-  public encodeRoot(root: DocRootType): RootJsonCrdtNode {
+  public encodeRoot(root: DocRootType): RootJsonCrdtNode<Id> {
     return {
       type: 'root',
       id: this.encodeTimestamp(root.id),
@@ -55,7 +33,7 @@ export class Encoder {
     };
   }
 
-  public encodeNode(node: JsonNode): JsonCrdtNode {
+  public encodeNode(node: JsonNode): JsonCrdtNode<Id> {
     if (node instanceof ObjectType) return this.encodeObj(node);
     else if (node instanceof ArrayType) return this.encodeArr(node);
     else if (node instanceof StringType) return this.encodeStr(node);
@@ -64,8 +42,8 @@ export class Encoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public encodeObj(obj: ObjectType): ObjectJsonCrdtNode {
-    const chunks: Record<string, ObjectJsonCrdtChunk> = {};
+  public encodeObj(obj: ObjectType): ObjectJsonCrdtNode<Id> {
+    const chunks: Record<string, ObjectJsonCrdtChunk<Id>> = {};
     for (const [key, entry] of obj.latest.entries())
       chunks[key] = {
         id: this.encodeTimestamp(entry.id),
@@ -78,8 +56,8 @@ export class Encoder {
     };
   }
 
-  public encodeArr(obj: ArrayType): ArrayJsonCrdtNode {
-    const chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
+  public encodeArr(obj: ArrayType): ArrayJsonCrdtNode<Id> {
+    const chunks: (ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
     for (const chunk of obj.chunks()) chunks.push(this.encodeArrChunk(chunk));
     return {
       type: 'arr',
@@ -88,23 +66,23 @@ export class Encoder {
     };
   }
 
-  public encodeArrChunk(chunk: ArrayChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public encodeArrChunk(chunk: ArrayChunk): ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
     if (chunk.deleted) {
-      const tombstone: JsonCrdtRgaTombstone = {
+      const tombstone: JsonCrdtRgaTombstone<Id> = {
         id: this.encodeTimestamp(chunk.id),
         span: chunk.deleted,
       };
       return tombstone;
     }
-    const res: ArrayJsonCrdtChunk = {
+    const res: ArrayJsonCrdtChunk<Id> = {
       id: this.encodeTimestamp(chunk.id),
       nodes: chunk.nodes!.map((n) => this.encodeNode(n)),
     };
     return res;
   }
 
-  public encodeStr(obj: StringType): StringJsonCrdtNode {
-    const chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
+  public encodeStr(obj: StringType): StringJsonCrdtNode<Id> {
+    const chunks: (StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
     for (const chunk of obj.chunks()) chunks.push(this.encodeStrChunk(chunk));
     return {
       type: 'str',
@@ -113,22 +91,22 @@ export class Encoder {
     };
   }
 
-  public encodeStrChunk(chunk: StringChunk): StringJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public encodeStrChunk(chunk: StringChunk): StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
     if (chunk.deleted) {
-      const tombstone: JsonCrdtRgaTombstone = {
+      const tombstone: JsonCrdtRgaTombstone<Id> = {
         id: this.encodeTimestamp(chunk.id),
         span: chunk.deleted,
       };
       return tombstone;
     }
-    const res: StringJsonCrdtChunk = {
+    const res: StringJsonCrdtChunk<Id> = {
       id: this.encodeTimestamp(chunk.id),
       value: chunk.str!,
     };
     return res;
   }
 
-  public encodeVal(obj: ValueType): ValueJsonCrdtNode {
+  public encodeVal(obj: ValueType): ValueJsonCrdtNode<Id> {
     return {
       type: 'val',
       id: this.encodeTimestamp(obj.id),

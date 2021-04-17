@@ -1,10 +1,10 @@
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
-import {Encoder} from '../Encoder';
+import {LogicalEncoder} from '../LogicalEncoder';
 
 test('encodes an empty document', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
-  const encoder = new Encoder();
+  const encoder = new LogicalEncoder();
   const res = encoder.encode(doc);
   expect(res).toEqual({
     clock: [[123, 0]],
@@ -14,7 +14,7 @@ test('encodes an empty document', () => {
 
 test('encodes all JSON node types object', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
-  const encoder = new Encoder();
+  const encoder = new LogicalEncoder();
   doc.api
     .root({
       str: 'bar',
@@ -96,7 +96,7 @@ test('encodes all JSON node types object', () => {
 
 test('encodes deleted string chunks', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
-  const encoder = new Encoder();
+  const encoder = new LogicalEncoder();
   doc.api.root('abc').commit();
   doc.api.strDel([], 1, 1).commit();
   const res = encoder.encode(doc);
