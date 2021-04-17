@@ -4,6 +4,8 @@ import {Model} from '../../model';
 import {AbstractEncoder} from './AbstractEncoder';
 
 export class Encoder extends AbstractEncoder {
+  protected clockEncoder!: ClockEncoder;
+
   public encode(doc: Model): Uint8Array {
     this.reset();
     this.clockEncoder = new ClockEncoder(doc.clock);

@@ -14,8 +14,6 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 
 export abstract class AbstractEncoder extends JsonPackEncoder {
-  protected clockEncoder!: ClockEncoder;
-
   protected abstract ts(ts: ITimestamp): void;
 
   protected encodeRoot(root: DocRootType): void {

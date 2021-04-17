@@ -16,7 +16,6 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 
 export abstract class AbstractDecoder extends MessagePackDecoder {
-  protected clockDecoder!: ClockDecoder;
   protected doc!: Model;
 
   protected abstract ts(): ITimestamp;

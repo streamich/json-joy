@@ -4,6 +4,8 @@ import {Model} from '../../model';
 import {AbstractDecoder} from './AbstractDecoder';
 
 export class Decoder extends AbstractDecoder {
+  protected clockDecoder!: ClockDecoder;
+
   public decode(data: Uint8Array): Model {
     this.reset(data);
     const [, clockTableLength] = this.b1vuint56();
