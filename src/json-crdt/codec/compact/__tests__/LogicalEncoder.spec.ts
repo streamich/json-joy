@@ -1,17 +1,17 @@
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
-import {Encoder} from '../Encoder';
+import {LogicalEncoder} from '../LogicalEncoder';
 
 test('encodes an empty document', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
-  const encoder = new Encoder();
+  const encoder = new LogicalEncoder();
   const res = encoder.encode(doc);
   expect(res).toEqual([[123, 0], 0, 0, 0]);
 });
 
 test('can encode object and array', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
-  const encoder = new Encoder();
+  const encoder = new LogicalEncoder();
   doc.api
     .root({
       arr: [false],

@@ -1,11 +1,9 @@
 import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
 import {ValueType} from '../../types/lww-value/ValueType';
@@ -15,23 +13,8 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {TypeCode, ValueCode} from './constants';
 
-export class Decoder {
-  protected clockDecoder!: ClockDecoder;
-
-  public decode(data: unknown[]): Model {
-    this.clockDecoder = ClockDecoder.fromArr(data[0] as number[]);
-    const doc = Model.withLogicalClock(this.clockDecoder.clock);
-    const rootId = this.ts(data, 1);
-    const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
-    doc.root = new DocRootType(doc, rootId, rootNode);
-    return doc;
-  }
-
-  protected ts(arr: unknown[], index: number): ITimestamp {
-    const sessionIndex = arr[index] as number;
-    const timeDiff = arr[index + 1] as number;
-    return this.clockDecoder.decodeId(sessionIndex, timeDiff);
-  }
+export abstract class AbstractDecoder {
+  protected abstract ts(arr: unknown[], index: number): ITimestamp;
 
   protected decodeNode(doc: Model, data: unknown): JsonNode {
     switch (data) {
