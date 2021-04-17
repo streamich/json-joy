@@ -1,6 +1,7 @@
 export interface JsonDocument {
   name: string;
   json: unknown;
+  only?: true;
 }
 
 /**
@@ -363,6 +364,17 @@ export const documents: JsonDocument[] = [
           '@type': 'Person',
           name: 'Gregg Kellogg',
           knows: 'http://manu.sporny.org/about#manu',
+        },
+      },
+    },
+  },
+  {
+    name: 'three objects nested with a key "c" as time = 4 (undefined)',
+    json: {
+      a: {
+        a: 1,
+        b: {
+          c: 2,
         },
       },
     },

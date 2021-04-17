@@ -20,22 +20,26 @@ export class ServerTimestamp implements ITimestamp {
   }
 
   public isEqual(ts: ITimestamp): boolean {
-    return this.time === ts.time;
+    return this.getSessionId() === ts.getSessionId() && this.time === ts.time;
   }
 
   public compare(ts: ITimestamp): -1 | 0 | 1 {
     if (this.time > ts.time) return 1;
     if (this.time < ts.time) return -1;
+    if (this.getSessionId() > ts.getSessionId()) return 1;
+    if (this.getSessionId() < ts.getSessionId()) return -1;
     return 0;
   }
 
   public inSpan(span: number, ts: ITimestamp, tsSpan: number): boolean {
+    if (this.getSessionId() !== ts.getSessionId()) return false;
     if (this.time > ts.time) return false;
     if (this.time + span < ts.time + tsSpan) return false;
     return true;
   }
 
   public overlap(span: number, ts: ITimestamp, tsSpan: number): number {
+    if (this.getSessionId() !== ts.getSessionId()) return 0;
     const x1 = this.time;
     const x2 = x1 + span;
     const y1 = ts.time;
