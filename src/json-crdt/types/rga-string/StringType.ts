@@ -1,6 +1,6 @@
 import type {JsonNode} from '../../types';
-import type {Document} from '../../document';
-import {LogicalTimespan, LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import type {Model} from '../../model';
+import {ITimestamp, ITimespan} from '../../../json-crdt-patch/clock';
 import {DeleteOperation} from '../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertStringSubstringOperation} from '../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {StringChunk} from './StringChunk';
@@ -10,7 +10,7 @@ export class StringType implements JsonNode {
   public start: StringChunk;
   public end: StringChunk;
 
-  constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {
+  constructor(public readonly doc: Model, public readonly id: ITimestamp) {
     this.start = this.end = new StringOriginChunk(id);
   }
 
@@ -25,8 +25,8 @@ export class StringType implements JsonNode {
     const isOriginChunk = curr instanceof StringOriginChunk;
     if (!curr.deleted && !isOriginChunk) {
       const doesAfterMatch =
-        curr.id.sessionId === op.after.sessionId && curr.id.time + curr.span() - 1 === op.after.time;
-      const isIdSameSession = curr.id.sessionId === op.id.sessionId;
+        curr.id.getSessionId() === op.after.getSessionId() && curr.id.time + curr.span() - 1 === op.after.time;
+      const isIdSameSession = curr.id.getSessionId() === op.id.getSessionId();
       const isIdIncreasingWithoutAGap = curr.id.time + curr.span() === op.id.time;
       if (doesAfterMatch && isIdSameSession && isIdIncreasingWithoutAGap) {
         curr.merge(op.substring);
@@ -89,7 +89,7 @@ export class StringType implements JsonNode {
     }
   }
 
-  public findId(index: number): LogicalTimestamp {
+  public findId(index: number): ITimestamp {
     let chunk: null | StringChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -103,7 +103,7 @@ export class StringType implements JsonNode {
     throw new Error('OUT_OF_BOUNDS');
   }
 
-  public findIdSpan(index: number, length: number): LogicalTimespan[] {
+  public findIdSpan(index: number, length: number): ITimespan[] {
     let chunk: null | StringChunk = this.start;
     let cnt: number = 0;
     const next = index + 1;
@@ -114,7 +114,7 @@ export class StringType implements JsonNode {
           const remaining = cnt - index;
           if (remaining >= length) return [chunk.id.interval(chunk.span() - remaining, length)];
           length -= remaining;
-          const result: LogicalTimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
+          const result: ITimespan[] = [chunk.id.interval(chunk.span() - remaining, remaining)];
           while (chunk.right) {
             chunk = chunk!.right;
             if (chunk.deleted) continue;
@@ -148,7 +148,7 @@ export class StringType implements JsonNode {
     return str;
   }
 
-  public clone(doc: Document): StringType {
+  public clone(doc: Model): StringType {
     const copy = new StringType(this.doc, this.id);
     let i: null | StringChunk = this.start;
     let j: StringChunk = copy.start;
@@ -164,11 +164,27 @@ export class StringType implements JsonNode {
     return copy;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {}
+  public *children(): IterableIterator<ITimestamp> {}
 
   public *chunks(): IterableIterator<StringChunk> {
     let curr: StringChunk | null = this.start;
     while ((curr = curr.right)) yield curr;
+  }
+
+  /** Chunk count. */
+  public size(): number {
+    let curr: StringChunk | null = this.start;
+    let size: number = 0;
+    while ((curr = curr.right)) size++;
+    return size;
+  }
+
+  /** String length. */
+  public length(): number {
+    let curr: StringChunk | null = this.start;
+    let size: number = 0;
+    while ((curr = curr.right)) if (curr.str) size += curr.str.length;
+    return size;
   }
 
   public toString(tab: string = ''): string {

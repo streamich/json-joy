@@ -1,5 +1,5 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {JsonNode} from '../../types';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../types';
 
 /**
  * Constant type represents an immutable JSON value. It can be any JSON value
@@ -7,7 +7,7 @@ import {JsonNode} from '../../types';
  * edited.
  */
 export class ConstantType implements JsonNode {
-  constructor(public readonly id: LogicalTimestamp, public readonly value: unknown) {}
+  constructor(public readonly id: ITimestamp, public readonly value: unknown) {}
 
   public toJson() {
     return this.value;
@@ -17,7 +17,7 @@ export class ConstantType implements JsonNode {
     return new ConstantType(this.id, this.value);
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {}
+  public *children(): IterableIterator<ITimestamp> {}
 
   public toString(tab: string = ''): string {
     return `${tab}ConstantType(${this.id.toDisplayString()})`;

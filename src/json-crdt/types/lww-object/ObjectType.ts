@@ -1,22 +1,28 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {SetObjectKeysOperation} from '../../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {Document} from '../../document';
+import {Model} from '../../model';
 import {JsonNode} from '../../types';
 import {ObjectChunk} from './ObjectChunk';
 
 export class ObjectType implements JsonNode {
   public readonly latest: Map<string, ObjectChunk> = new Map();
 
-  constructor(public readonly doc: Document, public readonly id: LogicalTimestamp) {}
+  constructor(public readonly doc: Model, public readonly id: ITimestamp) {}
 
-  public get(key: string): undefined | LogicalTimestamp {
+  public get(key: string): undefined | ITimestamp {
     const entry = this.latest.get(key);
     return entry ? entry.node.id : undefined;
   }
 
-  public getId(key: string): undefined | LogicalTimestamp {
+  public getId(key: string): undefined | ITimestamp {
     const entry = this.latest.get(key);
     return entry ? entry.id : undefined;
+  }
+
+  public getNode(key: string): undefined | JsonNode {
+    const entry = this.latest.get(key);
+    return entry ? entry.node : undefined;
   }
 
   public insert(op: SetObjectKeysOperation) {
@@ -30,8 +36,8 @@ export class ObjectType implements JsonNode {
     }
   }
 
-  public put(key: string, id: LogicalTimestamp, value: LogicalTimestamp) {
-    const node = this.doc.nodes.get(value);
+  public put(key: string, id: ITimestamp, value: ITimestamp) {
+    const node = this.doc.node(value);
     if (!node) return;
     this.putChunk(key, new ObjectChunk(id, node));
   }
@@ -42,7 +48,9 @@ export class ObjectType implements JsonNode {
 
   public toJson(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
-    for (const [key, entry] of this.latest.entries()) obj[key] = entry.node.toJson();
+    for (const [key, entry] of this.latest.entries())
+      if (!entry.node.id.isEqual(UNDEFINED_ID))
+        obj[key] = entry.node.toJson();
     return obj;
   }
 
@@ -55,7 +63,7 @@ export class ObjectType implements JsonNode {
     return str;
   }
 
-  public clone(doc: Document): ObjectType {
+  public clone(doc: Model): ObjectType {
     const obj = new ObjectType(doc, this.id);
     for (const [key, {id, node}] of this.latest.entries()) {
       const nodeClone = node.clone(doc);
@@ -65,7 +73,7 @@ export class ObjectType implements JsonNode {
     return obj;
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {
+  public *children(): IterableIterator<ITimestamp> {
     for (const {node} of this.latest.values()) yield node.id;
   }
 }

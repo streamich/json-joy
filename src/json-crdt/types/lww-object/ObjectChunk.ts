@@ -1,6 +1,6 @@
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {JsonNode} from '../../types';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../types';
 
 export class ObjectChunk {
-  constructor(public readonly id: LogicalTimestamp, public readonly node: JsonNode) {}
+  constructor(public readonly id: ITimestamp, public readonly node: JsonNode) {}
 }

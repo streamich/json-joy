@@ -1,5 +1,6 @@
 import type {JsonChunk, JsonNode} from '../../types';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
+import {Model} from '../../model';
 
 export class ArrayChunk implements JsonChunk {
   public left: ArrayChunk | null = null;
@@ -16,7 +17,7 @@ export class ArrayChunk implements JsonChunk {
    * @param nodes Elements contained by this chunk. If `undefined`, means that
    *        this chunk was deleted by a subsequent operation.
    */
-  constructor(public readonly id: LogicalTimestamp, public nodes?: JsonNode[]) {}
+  constructor(public readonly id: ITimestamp, public nodes?: JsonNode[]) {}
 
   /**
    * Returns "length" of this chunk, number of elements. Effectively the ID of
@@ -38,7 +39,7 @@ export class ArrayChunk implements JsonChunk {
    */
   public split(time: number): ArrayChunk {
     const newSpan = 1 + time - this.id.time;
-    const newId = new LogicalTimestamp(this.id.sessionId, time + 1);
+    const newId = new LogicalTimestamp(this.id.getSessionId(), time + 1);
     if (this.nodes) {
       const newChunkValues = this.nodes.splice(newSpan);
       return new ArrayChunk(newId, newChunkValues);
@@ -65,13 +66,17 @@ export class ArrayChunk implements JsonChunk {
   /**
    * Returns a deep independent copy of itself.
    */
-  public clone(): ArrayChunk {
-    const chunk = new ArrayChunk(this.id, this.nodes);
-    if (this.deleted) {
+  public clone(model: Model): ArrayChunk {
+    if (this.nodes) {
+      const nodes: JsonNode[] = [];
+      for (const node of this.nodes) nodes.push(node.clone(model));
+      return new ArrayChunk(this.id, nodes);
+    } else {
+      const chunk = new ArrayChunk(this.id, undefined);
       chunk.deleted = this.deleted;
       delete this.nodes;
+      return chunk;  
     }
-    return chunk;
   }
 
   /**

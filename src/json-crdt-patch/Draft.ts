@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from './clock';
+import {LogicalVectorClock, ITimestamp, IClock, LogicalTimestamp} from './clock';
 import {PatchBuilder} from './PatchBuilder';
 import {Patch} from './Patch';
 import {DeleteOperation} from './operations/DeleteOperation';
@@ -36,17 +36,17 @@ import {MakeValueOperation} from './operations/MakeValueOperation';
  * ````
  */
 export class Draft {
-  public readonly builder = new PatchBuilder(new LogicalClock(-1, 0));
+  public readonly builder = new PatchBuilder(new LogicalVectorClock(-1, 0));
 
   /**
    * Creates a new patch where all timestamps with (sessionId == -1) are replaced
    * with correct timestamps.
    */
-  public patch(clock: LogicalClock): Patch {
+  public patch(clock: IClock): Patch {
     const patch = new Patch();
     const ops = this.builder.patch.ops;
-    const ts = (id: LogicalTimestamp) =>
-      id.sessionId !== -1 ? id : new LogicalTimestamp(clock.sessionId, clock.time + id.time);
+    const ts = (id: ITimestamp) =>
+      id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time);
     for (const op of ops) {
       if (op instanceof DeleteOperation)
         patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), ts(op.after), op.length));

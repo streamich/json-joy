@@ -44,9 +44,9 @@ test('uses injected clock to set operations IDs', () => {
   const builder = new PatchBuilder(clock);
   builder.root(new LogicalTimestamp(0, 2));
   builder.obj();
-  expect(builder.patch.ops[0].id.sessionId).toBe(1);
+  expect(builder.patch.ops[0].id.getSessionId()).toBe(1);
   expect(builder.patch.ops[0].id.time).toBe(5);
-  expect(builder.patch.ops[1].id.sessionId).toBe(1);
+  expect(builder.patch.ops[1].id.getSessionId()).toBe(1);
   expect(builder.patch.ops[1].id.time).toBe(6);
 });
 

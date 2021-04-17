@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from './clock';
+import type {ITimestamp} from './clock';
 import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
@@ -35,7 +35,7 @@ export class Patch {
 
   constructor() {}
 
-  public getId(): LogicalTimestamp | undefined {
+  public getId(): ITimestamp | undefined {
     const op = this.ops[0];
     if (!op) return undefined;
     return op.id;

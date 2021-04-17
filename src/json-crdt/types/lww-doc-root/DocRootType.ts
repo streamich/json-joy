@@ -1,8 +1,8 @@
-import type {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import type {ITimestamp} from '../../../json-crdt-patch/clock';
 import {SetRootOperation} from '../../../json-crdt-patch/operations/SetRootOperation';
 import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {JsonNode} from '../../types';
-import {Document} from '../../document';
+import {Model} from '../../model';
 
 export class DocRootType implements JsonNode {
   /**
@@ -10,12 +10,12 @@ export class DocRootType implements JsonNode {
    * @param id ID of the last write operation, if any.
    * @param node Latest value of the document root.
    */
-  constructor(public readonly doc: Document, public id: LogicalTimestamp, public node: null | JsonNode) {}
+  constructor(public readonly doc: Model, public id: ITimestamp, public node: null | JsonNode) {}
 
   /**
    * @returns ID of the previous root node, if any.
    */
-  public insert(op: SetRootOperation): null | LogicalTimestamp {
+  public insert(op: SetRootOperation): null | ITimestamp {
     if (!this.node) {
       this.set(op.id, op.value);
       return null;
@@ -27,14 +27,14 @@ export class DocRootType implements JsonNode {
     return null;
   }
 
-  public set(id: LogicalTimestamp, value: LogicalTimestamp): void {
-    const node = this.doc.nodes.get(value);
+  public set(id: ITimestamp, value: ITimestamp): void {
+    const node = this.doc.node(value);
     if (!node) return;
     this.id = id;
     this.node = node;
   }
 
-  public toValue(): LogicalTimestamp {
+  public toValue(): ITimestamp {
     return this.node ? this.node.id : UNDEFINED_ID;
   }
 
@@ -42,11 +42,15 @@ export class DocRootType implements JsonNode {
     return !this.node ? undefined : this.node.toJson();
   }
 
-  public clone(doc: Document): DocRootType {
+  public toString(tab: string = ''): string {
+    return this.node ? this.node.toString(tab) : 'undefined';
+  }
+
+  public clone(doc: Model): DocRootType {
     return new DocRootType(doc, this.id, this.node ? this.node.clone(doc) : null);
   }
 
-  public *children(): IterableIterator<LogicalTimestamp> {
+  public *children(): IterableIterator<ITimestamp> {
     if (this.node) yield this.node.id;
   }
 }

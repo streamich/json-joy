@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../clock';
+import {ITimestamp} from '../clock';
 import type {IJsonCrdtPatchOperation} from './types';
 
 export class DeleteOperation implements IJsonCrdtPatchOperation {
@@ -9,9 +9,9 @@ export class DeleteOperation implements IJsonCrdtPatchOperation {
    * @param span Number of operations to delete sequentially increasing IDs.
    */
   constructor(
-    public readonly id: LogicalTimestamp,
-    public readonly obj: LogicalTimestamp,
-    public readonly after: LogicalTimestamp,
+    public readonly id: ITimestamp,
+    public readonly obj: ITimestamp,
+    public readonly after: ITimestamp,
     public readonly length: number,
   ) {}
 

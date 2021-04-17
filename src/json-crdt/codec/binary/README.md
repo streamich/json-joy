@@ -5,6 +5,10 @@ state (snapshot) of a JSON CRDT document, which contains all the nodes and
 tombstones necessary to be able to merge any subsequent patches, but does not
 contain information to reconstruct previous patches.
 
+This document specifies two types of encoding: (1) where logical clocks are used
+as unique IDs; (2) where monotonically growing sequence number is used as unique
+IDs.
+
 
 ## Message encoding
 
@@ -38,81 +42,56 @@ Variable number of bytes:
 The general structure of the document is composed of three sections:
 
 1. Header section.
-2. Vector clock section.
+2. Optional, Vector clock table section.
 3. Data section.
 
 
 ### The header section
 
-The header consists of a zero bytes.
-
-
-### The vector clock section
-
-The vector clock section starts with a b1vuint56 integer. The boolean bit is set
-to 0. The value of this integer specifies the number of entries in the vector
-clock section.
-
-The remaining part of the vector clock section is composed of a flat ordered
-list of vector clock entries.
-
-Each vector clock entry consists of: (1) a session ID; and (2) sequence time.
-
-In below diagrams session ID is encoded as "x" and sequence time is encoded as
-"z".
-
-Each vector clock entry is variable length. It is at least 8 bytes long or at
-most 12 bytes long.
-
-The session ID is always encoded as a 53-bit unsigned integer. The sequence time
-is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
-size.
-
-The "?" bit specifies whether the next byte is part of the current vector clock
-entry. If "?" is set to 1, the next byte should be read. If "?" is set to 0, no
-further bytes should be read after the byte containing the "?" set to 0.
-
-Encoding schema:
+When document uses logical timestamps as IDs, the header consists of a single
+zero byte.
 
 ```
-byte 1                                                         byte 8                              byte 12
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
-
- 33322222 22222111 1111111           44444444 43333333 55554.1           .1111111 .2222211 .3322222 33333333
- 21098765 43210987 65432109 87654321 87654321 09876543 32109.09 87654321 .7654321 .4321098 .1098765 98765432
- |                                     |               |     |                       |
- |                                     |               |     10th bit of z           |
- |                                     46th bit of x   |                             |
- |                                                     |                             22nd bit of z
- |                                                     53rd bit of x
- 32nd bit of x
++--------+
+|  0x00  |
++--------+
 ```
 
-Encoding examples of all the different length possibilities.
+When document uses monotonically growing sequence numbers as Ids, the header
+consists of:
+
+1. a single byte set to 0x01
+2. The latest sequence number of the whole document, encoded as vuint57.
 
 ```
-+--------+--------+--------+--------+--------+--------+--------+--------+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx0zz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+
-
-+--------+--------+--------+--------+--------+--------+--------+--------+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+········+
-
-+--------+--------+--------+--------+--------+--------+--------+--------+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+........+········+
-
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+········+
-
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
-|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+........+........+........+········+
++--------+=========+
+|  0x01  | vuint57 |
++--------+=========+
 ```
+
+In both cases, if the type of the ID is known from the context, the first byte
+can be skipped.
+
+
+### The vector clock table section
+
+The vector clock section is present only if the document uses logical timestamps
+as IDs. If document uses increasing sequence numbers as Ids, this section is
+empty.
+
+The vector clock table section starts with a vuint57 integer. The value of this
+integer specifies the number of entries in the vector clock section.
+
+The remaining part of the vector clock section is composed of a flat list of
+logical clock entries.
+
+Each logical clock entry consists of: (1) a session ID; and (2) sequence time.
+
+Each logical clock is encoded as uint53vuint39.
+
+The first clock entry contains the session ID of the CRDT document. If the
+sequence time part of the first entry is zero, it means no ID with that session
+ID has been generated yet.
 
 
 ### The data section
@@ -135,6 +114,7 @@ the node type and its size.
 | arr4              | 0x90 - 0x9F       | `0b1001....`                | Array with up to 15 chunks.                     |
 | str5              | 0xA0 - 0xBF       | `0b101.....`                | String with up to 31 chunks.                    |
 | null              | 0xC0              | `0b11000000`                | "null" value.                                   |
+| undefined         | 0xC1              | `0b11000001`                | "undefined" value.                              |
 | false             | 0xC2              | `0b11000010`                | "false" value.                                  |
 | true              | 0xC3              | `0b11000011`                | "true" value.                                   |
 | float32           | 0xCA              | `0b11001010`                | 32-bit floating point number.                   |
@@ -147,6 +127,8 @@ the node type and its size.
 | int16             | 0xD1              | `0b11010001`                | Signed 16 bit integer.                          |
 | int32             | 0xD2              | `0b11010010`                | Signed 32 bit integer.                          |
 | int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
+| const             | 0xD4              | `0b11010100`                | Immutable JSON value.                           |
+| val               | 0xD5              | `0b11010101`                | LWW JSON value register.                        |
 | str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
 | str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
 | str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |
@@ -227,9 +209,9 @@ The number of chunks is encoded with `s` bits as an unsigned integer.
 
 ```
 arr4
-+--------+========+========+
-|1001ssss|   ID   | chunks |
-+--------+========+========+
++----|----+========+========+
+|1001|ssss|   ID   | chunks |
++----^----+========+========+
 
 arr16
 +--------+--------+--------+========+========+
@@ -247,8 +229,9 @@ Each array chunk contains the bellow parts in the following order.
 1. Number of nodes in the chunk, encoded using b1vuint56.
    1. If b1vuint56 boolean bit is 1, the chunk is considered deleted. It is
       followed by the ID of the first chunk element, encode as a relative ID.
-   2. If b1vuint56 boolean bit is 0, the following data contains and ordered flat
-      list of nodes, encoded as nodes.
+   2. If b1vuint56 boolean bit is 0, the following data contains the first chunk
+      element ID, encoded as relative ID, followed a flat ordered list of nodes,
+      encoded as nodes.
 
 ```
 Deleted chunk:
@@ -257,38 +240,38 @@ Deleted chunk:
 +===========+========+
 
 Not deleted chunk:
-+===========+=========+
-| b1vuint56 |  nodes  |
-+===========+=========+
++===========+========+=========+
+| b1vuint56 |   ID   |  nodes  |
++===========+========+=========+
 ```
 
 Assuming the node count is encoded using `t` bits.
 
 ```
 A deleted chunk:
-+--------+........+········+========+
-|1?tttttt|?ttttttt|tttttttt|   ID   |
-+--------+........+········+========+
++-|-------+........+········+========+
+|1|?tttttt|?ttttttt|tttttttt|   ID   |
++-^-------+........+········+========+
 
 A deleted chunk with three nodes:
-+--------+========+
-|10000011|   ID   |
-+--------+========+
++-|-------+========+
+|1|0000011|   ID   |
++-^-------+========+
 
 A deleted chunk with 256 nodes:
-+--------+--------+========+
-|11000000|00000100|   ID   |
-+--------+--------+========+
++-|-------+--------+========+
+|1|1000000|00000100|   ID   |
++-^-------+--------+========+
 
 A chunk with nodes which are not deleted:
-+--------+........+········+=========+
-|0?tttttt|?ttttttt|tttttttt|  nodes  |
-+--------+........+········+=========+
++-|-------+........+········+========+=========+
+|0|?tttttt|?ttttttt|tttttttt|   ID   |  nodes  |
++-^-------+........+········+========+=========+
 
 A chunk with 3 nodes:
-+--------+========+========+========+
-|00000011| node 1 | node 2 | node 3 |
-+--------+========+========+========+
++-|-------+========+========+========+========+
+|0|0000011|   ID   | node 1 | node 2 | node 3 |
++-^-------+========+========+========+========+
 ```
 
 
@@ -305,9 +288,9 @@ The number of chunks is encoded with `s` bits as an unsigned integer.
 
 ```
 str5
-+--------+========+========+
-|101sssss|   ID   | chunks |
-+--------+========+========+
++---|-----+========+========+
+|101|sssss|   ID   | chunks |
++---^-----+========+========+
 
 str8
 +--------+--------+========+========+
@@ -348,128 +331,147 @@ Assuming the node count is encoded using `t` bits.
 
 ```
 A deleted chunk:
-+--------+........+········+========+
-|1?tttttt|?ttttttt|tttttttt|   ID   |
-+--------+........+········+========+
++-|-------+........+········+========+
+|1|?tttttt|?ttttttt|tttttttt|   ID   |
++-^-------+........+········+========+
 
 A deleted chunk with text of length 3:
-+--------+========+
-|10000011|   ID   |
-+--------+========+
++-|-------+========+
+|1|0000011|   ID   |
++-^-------+========+
 
 A deleted chunk with text of length 256:
-+--------+--------+========+
-|11000000|00000100|   ID   |
-+--------+--------+========+
++-|-------+--------+========+
+|1|1000000|00000100|   ID   |
++-^-------+--------+========+
 
 A chunk with text which is not deleted:
-+--------+........+········+========+========+
-|0?tttttt|?ttttttt|tttttttt|   ID   |  text  |
-+--------+........+········+========+========+
++-|-------+........+········+========+========+
+|0|?tttttt|?ttttttt|tttttttt|   ID   |  text  |
++-^-------+........+········+========+========+
 ```
 
 
-##### Number node encoding
+##### Constant node encoding
 
-The number node is encoded differently depending on the value of the number.
-Each number node has the following parts:
+Constant nodes are ones which contain a immutable JSON value, without any other
+meta information.
 
-1. Node type byte.
-2. Zero or more bytes of the number value `x`.
-3. ID if the number node, encoded as a relative ID.
-
-
-```
-uint7
-+--------+========+
-|0xxxxxxx|   ID   |
-+--------+========+
-
-float32
-+--------+--------+--------+--------+--------+========+
-|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
-
-float64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-uint8
-+--------+--------+========+
-|  0xCC  |xxxxxxxx|   ID   |
-+--------+--------+========+
-
-uint16
-+--------+--------+--------+========+
-|  0xCD  |xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+========+
-
-uint32
-+--------+--------+--------+--------+--------+========+
-|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
-
-uint64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-int8
-+--------+--------+========+
-|  0xD0  |xxxxxxxx|   ID   |
-+--------+--------+========+
-
-int16
-+--------+--------+--------+========+
-|  0xD1  |xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+========+
-
-int32
-+--------+--------+--------+--------+--------+========+
-|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+========+
-
-int64
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|   ID   |
-+--------+--------+--------+--------+--------+--------+--------+--------+--------+========+
-
-nint5
-+--------+========+
-|111xxxxx|   ID   |
-+--------+========+
-```
-
-
-##### Boolean node encoding
-
-Value `false` is encoded as 1 byte, equal to 0xC3.
-
-Value `true` is encoded as 1 byte, equal to 0xC2.
-
-```
-false
-+--------+
-|11000010|
-+--------+
-
-true
-+--------+
-|11000011|
-+--------+
-```
-
-
-##### Null node encoding
-
-Value `null` is encoded as 1 byte, equal to 0xC0.
+If the value of the constant node is `null`, `undefined`, `false`, `true` or a number, the
+node is encoded as MessagePack value.
 
 ```
 null
 +--------+
-|11000000|
+|  0xC0  |
 +--------+
+
+undefined
++--------+
+|  0xC1  |
++--------+
+
+false
++--------+
+|  0xC2  |
++--------+
+
+true
++--------+
+|  0xC3  |
++--------+
+
+uint7
++-|-------+
+|0|xxxxxxx|
++-^-------+
+
+float32
++--------+--------+--------+--------+--------+
+|  0xCA  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+float64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xCB  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+uint8
++--------+--------+
+|  0xCC  |xxxxxxxx|
++--------+--------+
+
+uint16
++--------+--------+--------+
+|  0xCD  |xxxxxxxx|xxxxxxxx|
++--------+--------+--------+
+
+uint32
++--------+--------+--------+--------+--------+
+|  0xCE  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+uint64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xCF  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+int8
++--------+--------+
+|  0xD0  |xxxxxxxx|
++--------+--------+
+
+int16
++--------+--------+--------+
+|  0xD1  |xxxxxxxx|xxxxxxxx|
++--------+--------+--------+
+
+int32
++--------+--------+--------+--------+--------+
+|  0xD2  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+
+
+int64
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+|  0xD3  |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|
++--------+--------+--------+--------+--------+--------+--------+--------+--------+
+
+nint5
++---|-----+
+|111|xxxxx|
++---^-----+
+```
+
+If the value of the constant node is string, array or object, it is encoded
+as a `const` node, which consists of:
+
+1. Leading 0xD4 byte.
+2. JSON value `data`, encoded in MessagePack format.
+
+```
+const
++--------+========+
+|  0xD4  |  data  |
++--------+========+
+```
+
+
+##### Value node encoding
+
+Value nodes are LWW registers which contain immutable JSON value.
+
+A value node is encoded as a `val` node, which consists of:
+
+1. Leading 0xD5 byte.
+2. ID of the node `id`, encoded as a relative ID.
+3. ID of the last write operation `writeId`, encoded as a relative ID.
+4. JSON value `data`, encoded in MessagePack format.
+
+```
+val
++--------+========+=========+========+
+|  0xD5  |   id   | writeId |  data  |
++--------+========+=========+========+
 ```
 
 
@@ -477,19 +479,27 @@ null
 
 ### Relative ID
 
-Each *relative ID* encodes a way to decode an absolute ID using the vector clock
-table.
+*Absolute IDs* (or simply IDs) are unique totally ordered identifiers, used to
+identify everything that needs identification in the document such as its
+structural parts and/or operations.
 
-Absolute ID is a specific value of a logical clock. An ID consists of a
-(1) session ID and a (2) time sequence pair.
+A *relative ID* is a compact way to encode an absolute ID, however, to decode
+back the relative ID to an absolute ID, the vector clock table of the document
+is used or the latest sequence number of the document is used.
+
+Each relative ID is encoded differently, depending if the document uses logical
+clocks or sequence numbers for absolute IDs.
+
+#### When document uses logical clocks
 
 Each relative ID is a 2-tuple.
 
 1. The first element is the index in the vector
    clock table. For example, 1 means "the first logic clock" in the vector clock
    table, or 4 means "the fourth logical clock" in the vector clock table.
-2. The second element encodes the difference of the time value of the time of
-   the clock in the vector table and the absolute ID time.
+2. The second element encodes the difference of the time between the time of 
+   the logical clock in the vector clock table and the time component of the
+   absolute ID.
 
 In the below encoding diagrams bits are annotated as follows:
 
@@ -501,9 +511,9 @@ If x is less than 8 and y is less than 16, the relative ID is encoded as a
 single byte:
 
 ```
-+--------+
-|0xxxyyyy|
-+--------+
++-|---|----+
+|0|xxx|yyyy|
++-^---^----+
 ```
 
 Otherwise the top bit of the first byte is set to 1; and x and y are encoded
@@ -517,6 +527,18 @@ separately using b1vuint28 and vuint39, respectively.
 ```
 
 The boolean flag of x b1vuint28 value is always set to 1.
+
+
+#### When document uses sequence numbers
+
+Each relative ID is the difference between documents sequence number and the
+absolute ID and is encoded as vuint57.
+
+```
++=========+
+| vuint57 |
++=========+
+```
 
 
 ### Variable length integers
@@ -641,54 +663,54 @@ b1vuint56 is encoded using up to 8 bytes. Because the first bit is used to store
 a boolean value, the maximum integer data b1vuint56 can hold is 56 bits.
 
 ```
-byte 1                                                         byte 8
-+--------+........+........+........+........+........+........+········+
-|x?zzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-+--------+........+........+........+........+........+........+········+
+byte 1                                                          byte 8
++-|-------+........+........+........+........+........+........+········+
+|x|?zzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++-^-------+........+........+........+........+........+........+········+
  |
- |         11111    2111111  2222222  3333322  4433333  4444444 55555554
- | 654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
- |  |                        |                    |             |
- |  5th bit of z             |                    |             |
- |                           27th bit of z        |             56th bit of z
- |                                                38th bit of z
+ |          11111    2111111  2222222  3333322  4433333  4444444 55555554
+ |  654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
+ |   |                        |                    |             |
+ |   5th bit of z             |                    |             |
+ |                            27th bit of z        |             56th bit of z
+ |                                                 38th bit of z
  x stores a boolean value
 ```
 
 Encoding examples:
 
 ```
-+--------+
-|x0zzzzzz|
-+--------+
++-|-------+
+|x|0zzzzzz|
++-^-------+
 
-+--------+--------+
-|x1zzzzzz|0zzzzzzz|
-+--------+--------+
++-|-------+--------+
+|x|1zzzzzz|0zzzzzzz|
++-^-------+--------+
 
-+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+
++-|-------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+
 
-+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+
++-|-------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+--------+
 
-+--------+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+
++-|-------+--------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+--------+--------+
 
-+--------+--------+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+
++-|-------+--------+--------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+--------+--------+--------+
 
-+--------+--------+--------+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+
++-|-------+--------+--------+--------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+--------+--------+--------+--------+
 
-+--------+--------+--------+--------+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+--------+--------+--------+--------+
++-|-------+--------+--------+--------+--------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++-^-------+--------+--------+--------+--------+--------+--------+--------+
 ```
 
 
@@ -701,16 +723,16 @@ b1vuint28 is encoded using up to 4 bytes. Because the first bit is used to store
 a boolean value, the maximum integer data b1vuint28 can hold is 28 bits.
 
 ```
-byte 1                     byte 4
-+--------+........+........+········+
-|x?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-+--------+........+........+········+
+byte 1                      byte 4
++-|-------+........+........+········+
+|x|?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++-^-------+........+........+········+
  |
- |         11111    2111111 22222222
- | 654321  3210987  0987654 87654321
- |  |                        |
- |  5th bit of z             |
- |                           27th bit of z
+ |          11111    2111111 22222222
+ |  654321  3210987  0987654 87654321
+ |   |                        |
+ |   5th bit of z             |
+ |                            27th bit of z
  |
  x stores a boolean value
 ```
@@ -718,19 +740,80 @@ byte 1                     byte 4
 Encoding examples:
 
 ```
-+--------+
-|x0zzzzzz|
-+--------+
++-|-------+
+|x|0zzzzzz|
++-^-------+
 
-+--------+--------+
-|x1zzzzzz|0zzzzzzz|
-+--------+--------+
++-|-------+--------+
+|x|1zzzzzz|0zzzzzzz|
++-^-------+--------+
 
-+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|0zzzzzzz|
-+--------+--------+--------+
++-|-------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|0zzzzzzz|
++-^-------+--------+--------+
 
-+--------+--------+--------+--------+
-|x1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
-+--------+--------+--------+--------+
++-|-------+--------+--------+--------+
+|x|1zzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++-^-------+--------+--------+--------+
+```
+
+
+#### `uint53vuint39` (unsigned 53 bit integer and variable length unsigned 39 bit integer)
+
+uint53vuint39 specifies encoding of a 2-tuple, which consists of
+
+1. Unsigned 53 bit integer, in below diagrams represented by "x"..
+2. Variable length unsigned 39 bit integer, in below diagrams represented by "z".
+
+Each uint53vuint39 entry is variable length. It is at least 8 bytes long and at
+most 12 bytes long.
+
+The "x" is always encoded as a 53-bit unsigned integer. The "z"
+is encoded as an unsigned integer of at least 10-bits to at most 39-bits in
+size.
+
+The "?" bit specifies whether the next byte should be used for "z" decoding. If
+"?" is set to 1, the next byte should be read. If "?" is set to 0, no
+further bytes should be read after the byte containing the "?" set to 0.
+
+Encoding schema:
+
+```
+byte 1                                                          byte 8                              byte 12
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
+
+ 33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
+ 21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
+ |                                     |               |      |                       |
+ |                                     |               |      10th bit of z           |
+ |                                     46th bit of x   |                              |
+ |                                                     |                              22nd bit of z
+ |                                                     53rd bit of x
+ 32nd bit of x
+```
+
+Encoding examples of all the different length possibilities.
+
+```
++--------+--------+--------+--------+--------+--------+-----|---+--------+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|0zz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|0zzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+········+
+
++--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
+|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|1zz|zzzzzzzz|1zzzzzzz|1zzzzzzz|1zzzzzzz|zzzzzzzz|
++--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
 ```

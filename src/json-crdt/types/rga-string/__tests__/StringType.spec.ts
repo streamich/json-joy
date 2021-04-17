@@ -1,9 +1,9 @@
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
-import {Document} from '../../../document';
+import {Model} from '../../../model';
 import {StringType} from '../StringType';
 
 test('merges sequential chunks', () => {
-  const doc = new Document();
+  const doc = Model.withLogicalClock();
   const builder1 = new PatchBuilder(doc.clock);
 
   const str = builder1.str();
@@ -18,7 +18,7 @@ test('merges sequential chunks', () => {
   const ins2 = builder3.insStr(str, ins1.tick(1), '34');
   doc.applyPatch(builder3.patch);
 
-  const node = doc.nodes.get(str) as StringType;
+  const node = doc.node(str) as StringType;
   const origin = node.start;
   const firstChunk = origin.right;
 

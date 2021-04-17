@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from '../../clock';
+import {ITimestamp} from '../../clock';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
@@ -20,12 +20,14 @@ export const encode = (patch: Patch): unknown[] => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');
 
-  const {sessionId, time} = id;
+  const sessionId = id.getSessionId();
+  const {time} = id;
   const res: unknown[] = [sessionId, time];
 
-  const pushTimestamp = (ts: LogicalTimestamp) => {
-    if (ts.sessionId === sessionId) res.push(time - ts.time - 1);
-    else res.push(ts.sessionId, ts.time);
+  const pushTimestamp = (ts: ITimestamp) => {
+    const tsSessionId = ts.getSessionId();
+    if (tsSessionId === sessionId) res.push(time - ts.time - 1);
+    else res.push(tsSessionId, ts.time);
   };
 
   for (const op of patch.ops) {

@@ -1,4 +1,4 @@
-import {LogicalClock, LogicalTimestamp} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {Code} from './constants';
@@ -6,12 +6,12 @@ import {Code} from './constants';
 export const decode = (data: unknown[]): Patch => {
   const sessionId = data[0] as number;
   const time = data[1] as number;
-  const clock = new LogicalClock(sessionId, time);
+  const clock = new LogicalVectorClock(sessionId, time);
   const builder = new PatchBuilder(clock);
   const length = data.length;
   let i = 2;
 
-  const decodeTimestamp = (): LogicalTimestamp => {
+  const decodeTimestamp = (): ITimestamp => {
     const x = data[i++] as number;
     if (x < 0) return new LogicalTimestamp(sessionId, time - x - 1);
     else return new LogicalTimestamp(x, data[i++] as number);
@@ -42,7 +42,7 @@ export const decode = (data: unknown[]): Patch => {
       case Code.SetObjectKeys: {
         const length = data[i++] as number;
         const obj = decodeTimestamp();
-        const tuples: [key: string, value: LogicalTimestamp][] = [];
+        const tuples: [key: string, value: ITimestamp][] = [];
         for (let j = 0; j < length; j++) {
           const key = data[i++] as string;
           tuples.push([key, decodeTimestamp()]);
@@ -64,7 +64,7 @@ export const decode = (data: unknown[]): Patch => {
         const length = data[i++] as number;
         const arr = decodeTimestamp();
         const after = decodeTimestamp();
-        const values: LogicalTimestamp[] = [];
+        const values: ITimestamp[] = [];
         for (let j = 0; j < length; j++) values.push(decodeTimestamp());
         builder.insArr(arr, after, values);
         break;

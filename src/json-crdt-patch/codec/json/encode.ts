@@ -1,4 +1,4 @@
-import type {LogicalTimestamp} from '../../clock';
+import type {ITimestamp} from '../../clock';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
@@ -16,7 +16,7 @@ import {SetValueOperation} from '../../operations/SetValueOperation';
 import {Patch} from '../../Patch';
 import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation, JsonCodecNoopOperation} from './types';
 
-const encodeTimestamp = (ts: LogicalTimestamp): JsonCodecTimestamp => [ts.sessionId, ts.time];
+const encodeTimestamp = (ts: ITimestamp): JsonCodecTimestamp => [ts.getSessionId(), ts.time];
 
 export const encode = (patch: Patch): JsonCodecPatch => {
   const id = patch.getId();

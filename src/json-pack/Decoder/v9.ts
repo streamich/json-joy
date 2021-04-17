@@ -16,10 +16,14 @@ export class Decoder {
 
   public constructor(private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder) {}
 
-  public decode(uint8: Uint8Array): unknown {
+  public reset(uint8: Uint8Array): void {
     this.x = 0;
     this.uint8 = uint8;
     this.view = new DataView(this.uint8.buffer);
+  }
+
+  public decode(uint8: Uint8Array): unknown {
+    this.reset(uint8);
     return this.val();
   }
 
@@ -104,21 +108,21 @@ export class Decoder {
   protected str(size: number): string {
     const uint8 = this.uint8;
     const end = this.x + size;
-    let offset = this.x;
+    let x = this.x;
     let str = '';
-    while (offset < end) {
-      const b1 = uint8[offset++]!;
+    while (x < end) {
+      const b1 = uint8[x++]!;
       if ((b1 & 0x80) === 0) {
         str += String.fromCharCode(b1);
         continue;
       } else if ((b1 & 0xe0) === 0xc0) {
-        str += String.fromCharCode(((b1 & 0x1f) << 6) | (uint8[offset++]! & 0x3f));
+        str += String.fromCharCode(((b1 & 0x1f) << 6) | (uint8[x++]! & 0x3f));
       } else if ((b1 & 0xf0) === 0xe0) {
-        str += String.fromCharCode(((b1 & 0x1f) << 12) | ((uint8[offset++]! & 0x3f) << 6) | (uint8[offset++]! & 0x3f));
+        str += String.fromCharCode(((b1 & 0x1f) << 12) | ((uint8[x++]! & 0x3f) << 6) | (uint8[x++]! & 0x3f));
       } else if ((b1 & 0xf8) === 0xf0) {
-        const b2 = uint8[offset++]! & 0x3f;
-        const b3 = uint8[offset++]! & 0x3f;
-        const b4 = uint8[offset++]! & 0x3f;
+        const b2 = uint8[x++]! & 0x3f;
+        const b3 = uint8[x++]! & 0x3f;
+        const b4 = uint8[x++]! & 0x3f;
         let code = ((b1 & 0x07) << 0x12) | (b2 << 0x0c) | (b3 << 0x06) | b4;
         if (code > 0xffff) {
           code -= 0x10000;
@@ -184,6 +188,10 @@ export class Decoder {
     const buf = this.uint8.subarray(this.x, end);
     this.x = end;
     return new JsonPackExtension(type, buf);
+  }
+
+  protected back(bytes: number) {
+    this.x -= bytes;
   }
 
   /** @ignore */
