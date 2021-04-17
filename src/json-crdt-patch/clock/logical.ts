@@ -93,17 +93,14 @@ export class LogicalClock extends LogicalTimestamp implements IClock {
 export class LogicalVectorClock extends LogicalClock implements IVectorClock {
   public readonly clocks = new Map<number, ITimestamp>();
 
-  constructor(sessionId: number, time: number) {
-    super(sessionId, time);
-    this.clocks.set(sessionId, this);
-  }
-
   public observe(ts: ITimestamp, span: number) {
     if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span - 1;
     const clock = this.clocks.get(ts.getSessionId());
     if (!clock) this.clocks.set(ts.getSessionId(), ts.tick(span - 1));
     else if (time > clock.time) clock.time = ts.time;
+
+    // Advance local time every time we see any timestamp with higher time value.
     if (time >= this.time) this.time = time + 1;
   }
 
