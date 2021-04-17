@@ -6,16 +6,16 @@ describe('string manipulation', () => {
     const api = doc.api;
     api
       .root('')
-      .commit()
-      .strIns([], 0, 'var foo = bar')
-      .commit()
-      .strIns([], 10, '"')
-      .commit()
-      .strIns([], 14, '";')
-      .commit()
-      .strDel([], 0, 3)
-      .commit()
-      .strIns([], 0, 'const')
+      .commit();
+    api.strIns([], 0, 'var foo = bar')
+      .commit();
+    api.strIns([], 10, '"')
+      .commit();
+    api.strIns([], 14, '";')
+      .commit();
+    api.strDel([], 0, 3)
+      .commit();
+    api.strIns([], 0, 'const')
       .commit();
     expect(doc.toJson()).toBe('const foo = "bar";');
   });
@@ -25,16 +25,17 @@ describe('string manipulation', () => {
     const api = doc.api;
     api
       .root({foo: [123, '', 5]})
-      .commit()
+      .commit();
+    api
       .strIns(['foo', 1], 0, 'var foo = bar')
+      .commit();
+    api.strIns(['foo', 1], 10, '"')
       .commit()
-      .strIns(['foo', 1], 10, '"')
+    api.strIns(['foo', 1], 14, '";')
+      .commit();
+    api.strDel(['foo', 1], 0, 3)
       .commit()
-      .strIns(['foo', 1], 14, '";')
-      .commit()
-      .strDel(['foo', 1], 0, 3)
-      .commit()
-      .strIns(['foo', 1], 0, 'const')
+    api.strIns(['foo', 1], 0, 'const')
       .commit();
     expect(doc.toJson()).toEqual({
       foo: [123, 'const foo = "bar";', 5],
