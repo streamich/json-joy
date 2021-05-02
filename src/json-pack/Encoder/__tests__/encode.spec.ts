@@ -47,18 +47,18 @@ describe('number', () => {
   test('encodes doubles', () => {
     const arr = encode(123.456789123123);
     expect(arr.byteLength).toBe(9);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xcb);
     expect(view.getFloat64(1)).toBe(123.456789123123);
   });
 
   // Skipped as due to optimization encoding this as float64
   test.skip('encodes large negative integer', () => {
-    const buf = encode(-4807526976);
-    expect(buf.byteLength).toBe(9);
-    const view = new DataView(buf);
+    const arr = encode(-4807526976);
+    expect(arr.byteLength).toBe(9);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xd3);
-    expect([...new Uint8Array(buf)]).toEqual([0xd3, 0xff, 0xff, 0xff, 0xfe, 0xe1, 0x72, 0xf5, 0xc0]);
+    expect([...new Uint8Array(arr.buffer)]).toEqual([0xd3, 0xff, 0xff, 0xff, 0xfe, 0xe1, 0x72, 0xf5, 0xc0]);
   });
 });
 
@@ -490,7 +490,7 @@ describe('object', () => {
   test('encodes simple object', () => {
     const obj = {'0': 0, '1': 100, '2': 200, '3': 300};
     const arr = encode(obj);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0b10000100);
 
     expect(view.getUint8(1)).toBe(0b10100001);
@@ -533,7 +533,7 @@ describe('object', () => {
       15: 1,
     });
     expect(arr.byteLength).toBe(1 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0b10001111);
   });
 
@@ -557,7 +557,7 @@ describe('object', () => {
       16: 1,
     });
     expect(arr.byteLength).toBe(1 + 2 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 3 + 4 + 4 + 4 + 4 + 4 + 4 + 4);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(16);
   });
@@ -566,7 +566,7 @@ describe('object', () => {
     const obj: any = {};
     for (let i = 0; i < 255; i++) obj[String(i)] = i;
     const arr = encode(obj);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(255);
     expect(view.getUint8(3)).toBe(0b10100001);
@@ -577,7 +577,7 @@ describe('object', () => {
     const obj: any = {};
     for (let i = 0; i < 0xffff; i++) obj[String(i)] = i;
     const arr = encode(obj);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xde);
     expect(view.getUint16(1)).toBe(0xffff);
     expect(view.getUint8(3)).toBe(0b10100001);
@@ -588,7 +588,7 @@ describe('object', () => {
     const obj: any = {};
     for (let i = 0; i < 0xffff + 1; i++) obj[String(i)] = i;
     const arr = encode(obj);
-    const view = new DataView(arr.buffer);
+    const view = new DataView(arr.buffer, arr.byteOffset, arr.byteLength);
     expect(view.getUint8(0)).toBe(0xdf);
     expect(view.getUint32(1)).toBe(0xffff + 1);
     expect(view.getUint8(5)).toBe(0b10100001);
