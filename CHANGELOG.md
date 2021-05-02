@@ -1,3 +1,11 @@
+## [2.9.1](https://github.com/streamich/json-joy/compare/v2.9.0...v2.9.1) (2021-05-02)
+
+
+### Bug Fixes
+
+* 🐛 create data view at offset in MessagePack decoder ([2887f26](https://github.com/streamich/json-joy/commit/2887f265cd68c47977264fb9d574715a85dbce77))
+* 🐛 use byteOffset when creating DataView ([518001d](https://github.com/streamich/json-joy/commit/518001d2d08786cd10aa435540446e7a3a7b36c1))
+
 # [2.9.0](https://github.com/streamich/json-joy/compare/v2.8.0...v2.9.0) (2021-04-17)
 
 
