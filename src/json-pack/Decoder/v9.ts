@@ -19,7 +19,7 @@ export class Decoder {
   public reset(uint8: Uint8Array): void {
     this.x = 0;
     this.uint8 = uint8;
-    this.view = new DataView(this.uint8.buffer);
+    this.view = new DataView(uint8.buffer, uint8.byteOffset, uint8.byteLength);
   }
 
   public decode(uint8: Uint8Array): unknown {
