@@ -20,7 +20,7 @@ export class LogicalEncoder extends AbstractEncoder {
     const length = clockEncoder.table.size;
     const dataSize = data.byteLength;
     this.uint8 = new Uint8Array(8 + 12 * length + dataSize);
-    this.view = new DataView(this.uint8.buffer);
+    this.view = new DataView(this.uint8.buffer, this.uint8.byteOffset, this.uint8.byteLength);
     this.offset = 0;
     this.vuint57(length);
     for (const sid of clockEncoder.table.keys()) {
