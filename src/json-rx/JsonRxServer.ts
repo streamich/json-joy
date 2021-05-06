@@ -1,5 +1,5 @@
-import {json_string} from 'ts-brand-json';
-import {asString} from 'json-schema-serializer';
+import {Subscription, Observable, from, isObservable, of} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import {
   MessageSubscribe,
   MessageError,
@@ -9,13 +9,8 @@ import {
   MessageComplete,
   MessageOrMessageBatch,
 } from './types';
-import {Subscription, Observable, from, isObservable, of} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 import {TimedQueue} from './TimedQueue';
-
-type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
-type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;
 
 interface ErrorLike {
   message: string;
@@ -25,21 +20,24 @@ interface ErrorLike {
   errorId?: number;
 }
 
-const formatError = (error: ErrorLike): json_string<ErrorLike> => {
-  let json = '{"message":' + asString(error.message);
-  if (typeof error.status === 'number') json += ',"status":' + error.status;
-  if (typeof error.code === 'string') json += ',"code":' + asString(error.code);
-  if (typeof error.errno === 'number') json += ',"errno":' + error.errno;
-  if (typeof error.errorId === 'string') json += ',"errorId":' + asString(error.errorId);
-  return (json + '}') as json_string<ErrorLike>;
+const formatError = (error: ErrorLike): ErrorLike => {
+  let obj: ErrorLike = {message: error.message};
+  if (typeof error.status === 'number') obj.status = error.status;
+  if (typeof error.code === 'string') obj.code = error.code;
+  if (typeof error.errno === 'number') obj.errno = error.errno;
+  if (typeof error.errorId === 'string') obj.errorId = error.errorId;
+  return obj;
 };
+
+type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
+type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;
 
 export interface JsonRxServerParams<Ctx = unknown> {
   /**
    * Method to be called by server when it wants to send a message to the client.
    * This is usually your WebSocket "send" method.
    */
-  send: (message: json_string<OutgoingMessage>) => void;
+  send: (message: OutgoingMessage) => void;
 
   /**
    * Callback called on the server when user sends a subscription message.
@@ -48,7 +46,7 @@ export interface JsonRxServerParams<Ctx = unknown> {
     name: string,
     payload: unknown,
     ctx: Ctx,
-  ) => Promise<json_string<unknown>> | Observable<json_string<unknown>> | Promise<Observable<json_string<unknown>>>;
+  ) => Promise<unknown> | Observable<unknown> | Promise<Observable<unknown>>;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -77,7 +75,7 @@ export interface JsonRxServerParams<Ctx = unknown> {
 }
 
 export class JsonRxServer<Ctx = unknown> {
-  private send: (message: json_string<OutgoingMessage>) => void;
+  private send: (message: OutgoingMessage) => void;
   private call: JsonRxServerParams<Ctx>['call'];
   private notify: JsonRxServerParams<Ctx>['notify'];
   private readonly active = new Map<number, Subscription>();
@@ -95,11 +93,11 @@ export class JsonRxServer<Ctx = unknown> {
     this.notify = notify;
     this.maxActiveSubscriptions = maxActiveSubscriptions;
     if (bufferTime) {
-      const buffer = new TimedQueue<json_string<OutgoingMessage>>();
+      const buffer = new TimedQueue<OutgoingMessage>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
       buffer.onFlush = (messages) => {
-        send(messages.length === 1 ? messages[0] : (('[' + messages.join(',') + ']') as json_string<OutgoingMessage>));
+        send(messages.length === 1 ? messages[0] : messages as OutgoingMessage);
       };
       this.send = (message) => buffer.push(message);
     } else {
@@ -108,7 +106,7 @@ export class JsonRxServer<Ctx = unknown> {
   }
 
   private sendError(id: number, error: unknown): void {
-    const message = ('[-1,' + id + ',' + JSON.stringify(error) + ']') as json_string<MessageError>;
+    const message = ([-1, id, error]) as MessageError;
     this.send(message);
   }
 
@@ -121,7 +119,7 @@ export class JsonRxServer<Ctx = unknown> {
       if (active) {
         this.active.delete(id);
         active.unsubscribe();
-        this.send(('[-1,' + id + ',{"message":"ID already active."}]') as json_string<MessageError>);
+        this.send(([-1, id, {message: "ID already active."}]) as MessageError);
         return;
       }
       if (this.active.size >= this.maxActiveSubscriptions)
@@ -130,17 +128,17 @@ export class JsonRxServer<Ctx = unknown> {
       const observable = isObservable(callResult)
         ? callResult
         : from(callResult).pipe(mergeMap((value) => (isObservable(value) ? value : of(value))));
-      const ref: {buffer: json_string<unknown>[]} = {buffer: []};
+      const ref: {buffer: unknown[]} = {buffer: []};
       let done = false;
       const subscription = observable.subscribe(
-        (data: json_string<unknown>) => {
+        (data: unknown) => {
           if (data === undefined) return;
           ref.buffer.push(data);
           microtask(() => {
             if (!ref.buffer.length) return;
             try {
               for (const payload of ref.buffer)
-                this.send(('[-2,' + id + ',' + payload + ']') as json_string<MessageData>);
+                this.send(([-2, id, payload]) as MessageData);
             } finally {
               ref.buffer = [];
             }
@@ -149,11 +147,11 @@ export class JsonRxServer<Ctx = unknown> {
         (error: unknown) => {
           done = true;
           this.active.delete(id);
-          let message: json_string<MessageError>;
+          let message: MessageError;
           if (error instanceof Error) {
-            message = ('[-1,' + id + ',' + formatError(error) + ']') as json_string<MessageError>;
+            message = ([-1, id, formatError(error)]) as MessageError;
           } else {
-            message = ('[-1,' + id + ',' + JSON.stringify(error) + ']') as json_string<MessageError>;
+            message = ([-1, id, error]) as MessageError;
           }
           this.send(message);
         },
@@ -161,15 +159,15 @@ export class JsonRxServer<Ctx = unknown> {
           done = true;
           this.active.delete(id);
           try {
-            if (!ref.buffer.length) return this.send(`[0,${id}]` as json_string<MessageComplete>);
+            if (!ref.buffer.length) return this.send([0, id] as MessageComplete);
             const last = ref.buffer.length - 1;
             for (let i = 0; i <= last; i++) {
               const isLast = i === last;
-              let message: json_string<MessageComplete | MessageData>;
+              let message: MessageComplete | MessageData;
               if (isLast) {
-                message = ('[0,' + id + ',' + ref.buffer[i] + ']') as json_string<MessageComplete>;
+                message = ([0, id, ref.buffer[i]]) as MessageComplete;
               } else {
-                message = ('[-2,' + id + ',' + ref.buffer[i] + ']') as json_string<MessageData>;
+                message = ([-2, id, ref.buffer[i]]) as MessageData;
               }
               this.send(message);
             }
@@ -213,7 +211,7 @@ export class JsonRxServer<Ctx = unknown> {
   }
 
   public stop() {
-    this.send = (message: json_string<OutgoingMessage>) => {};
+    this.send = (message: OutgoingMessage) => {};
     for (const sub of this.active.values()) {
       sub.unsubscribe();
     }
