@@ -1,6 +1,6 @@
 import {take} from 'rxjs/operators';
 import {JsonRxClient} from '../JsonRxClient';
-import {JsonRxServer} from '../JsonRxServer';
+import {JsonRxServerJson as JsonRxServer} from '../JsonRxServerJson';
 
 test('client can talk with server', async () => {
   const ref: {client: null | JsonRxClient} = {client: null};
