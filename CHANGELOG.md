@@ -1,3 +1,10 @@
+# [2.10.0](https://github.com/streamich/json-joy/compare/v2.9.1...v2.10.0) (2021-05-06)
+
+
+### Features
+
+* 🎸 implement JSON-Rx server part with plain JS objects ([c765d95](https://github.com/streamich/json-joy/commit/c765d95f101fcb34547df3518b357f53be6e74b8))
+
 ## [2.9.1](https://github.com/streamich/json-joy/compare/v2.9.0...v2.9.1) (2021-05-02)
 
 
