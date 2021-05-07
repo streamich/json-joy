@@ -3,6 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationInc} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
@@ -35,5 +36,12 @@ export class OpInc extends AbstractOp<'inc'> {
 
   public toCompact(parent?: AbstractOp): CompactIncOp {
     return [OPCODE.inc, this.path, this.inc];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.inc);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.inc);
   }
 }

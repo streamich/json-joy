@@ -4,6 +4,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
@@ -38,8 +39,17 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactContainsOp {
-    const compact: CompactContainsOp = [OPCODE.contains, parent ? this.path.slice(parent.path.length) : this.path, this.value];
-    if (this.ignore_case) compact.push(1);
-    return compact;
+    return this.ignore_case
+      ? [OPCODE.contains, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
+      : [OPCODE.contains, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const ignoreCase = this.ignore_case;
+    encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
+    encoder.u8(OPCODE.contains);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeString(this.value);
+    if (ignoreCase) encoder.u8(1);
   }
 }

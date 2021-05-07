@@ -4,6 +4,7 @@ import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 const isEqual = require('fast-deep-equal');
 
 /**
@@ -41,5 +42,13 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return this.not
       ? [OPCODE.test, path, this.value, 1]
       : [OPCODE.test, path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.not ? 4 : 3);
+    encoder.u8(OPCODE.test);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeAny(this.value);
+    if (this.not) encoder.u8(1);
   }
 }

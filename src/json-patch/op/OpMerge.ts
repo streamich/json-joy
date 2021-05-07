@@ -4,6 +4,7 @@ import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
@@ -51,8 +52,16 @@ export class OpMerge extends AbstractOp<'merge'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactMergeOp {
-    const packed: CompactMergeOp = [OPCODE.merge, this.path, this.pos];
-    if (this.props) packed.push(this.props as any);
-    return packed;
+    return this.props
+      ? [OPCODE.merge, this.path, this.pos, this.props]
+      : [OPCODE.merge, this.path, this.pos];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.props ? 4 : 3);
+    encoder.u8(OPCODE.merge);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    if (this.props) encoder.encodeAny(this.props);
   }
 }

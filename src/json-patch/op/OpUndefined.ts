@@ -4,6 +4,7 @@ import {OperationUndefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
@@ -38,5 +39,11 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
 
   public toCompact(parent?: AbstractOp): CompactUndefinedOp {
     return [OPCODE.undefined, parent ? this.path.slice(parent.path.length) : this.path];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(2);
+    encoder.u8(OPCODE.undefined);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
   }
 }

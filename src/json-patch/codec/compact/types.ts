@@ -210,8 +210,8 @@ export type CompactSplitOp =
  * @category JSON Patch Extended
  */
 export type CompactStrDelOp =
-  | [opcode: OPCODE.str_del, path: string | Path, pos: number, str: string | undefined]
-  | [opcode: OPCODE.str_del, path: string | Path, pos: number, str: string | undefined, len?: number | undefined];
+  | [opcode: OPCODE.str_del, path: string | Path, pos: number, str: string]
+  | [opcode: OPCODE.str_del, path: string | Path, pos: number, str: 0, len: number];
 
 /**
  * @category JSON Patch Extended

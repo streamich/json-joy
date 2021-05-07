@@ -4,6 +4,7 @@ import {OperationTestType, JsTypes, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 const {isArray} = Array;
 
@@ -39,5 +40,12 @@ export class OpTestType extends AbstractPredicateOp<'test_type'> {
 
   public toCompact(parent?: AbstractOp): CompactTestTypeOp {
     return [OPCODE.test_type, parent ? this.path.slice(parent.path.length) : this.path, this.type];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.test_type);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(this.type);
   }
 }

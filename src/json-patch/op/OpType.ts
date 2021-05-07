@@ -4,6 +4,7 @@ import {OperationType, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 const {isArray} = Array;
 
@@ -39,5 +40,12 @@ export class OpType extends AbstractPredicateOp<'type'> {
 
   public toCompact(parent?: AbstractOp): CompactTypeOp {
     return [OPCODE.type, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.type);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeString(this.value);
   }
 }

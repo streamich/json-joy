@@ -4,6 +4,7 @@ import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 const isEqual = require('fast-deep-equal');
 
 /**
@@ -35,5 +36,12 @@ export class OpIn extends AbstractPredicateOp<'in'> {
 
   public toCompact(parent?: AbstractOp): CompactInOp {
     return [OPCODE.in, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.in);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(this.value);
   }
 }
