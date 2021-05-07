@@ -2,10 +2,15 @@ import type {OPCODE} from '../../constants';
 import type {Path} from '../../../json-pointer/util';
 import type {JsonPatchTypes} from '../json/types';
 
+export type CompactOp =
+  | CompactJsonPatchOp
+  | CompactJsonPredicateOp
+  | CompactJsonPatchExtendedOp;
+
 /**
  *     [opcode, path, ...extraOptions]
  */
-export type PackedOp =
+export type CompactOpBase =
   | [opcode: OPCODE, path: string | Path]
   | [opcode: OPCODE, path: string | Path, arg1?: unknown]
   | [opcode: OPCODE, path: string | Path, arg1?: unknown, arg2?: unknown]
@@ -13,6 +18,14 @@ export type PackedOp =
 
 
 // JSON Patch ------------------------------------------------------------------
+
+export type CompactJsonPatchOp =
+  | CompactAddOp
+  | CompactCopyOp
+  | CompactMoveOp
+  | CompactRemoveOp
+  | CompactReplaceOp
+  | CompactTestOp;
 
 /**
  * @category JSON Patch
@@ -53,10 +66,27 @@ export type CompactTestOp =
 
 // JSON Predicate --------------------------------------------------------------
 
+export type CompactJsonPredicateOp =
+  | CompactAndOp
+  | CompactContainsOp
+  | CompactDefinedOp
+  | CompactEndsOp
+  | CompactInOp
+  | CompactLessOp
+  | CompactMatchesOp
+  | CompactMoreOp
+  | CompactNotOp
+  | CompactOrOp
+  | CompactStartsOp
+  | CompactTestTypeOp
+  | CompactTypeOp
+  | CompactStartsOp
+  | CompactUndefinedOp;
+
 /**
  * @category JSON Predicate
  */
-export type CompactAndOp = [opcode: OPCODE.and, path: string | Path, ops: PackedOp[]];
+export type CompactAndOp = [opcode: OPCODE.and, path: string | Path, ops: CompactOpBase[]];
 
 /**
  * @category JSON Predicate
@@ -102,12 +132,12 @@ export type CompactMoreOp = [opcode: OPCODE.more, path: string | Path, value: nu
 /**
  * @category JSON Predicate
  */
-export type CompactNotOp = [opcode: OPCODE.not, path: string | Path, ops: PackedOp[]];
+export type CompactNotOp = [opcode: OPCODE.not, path: string | Path, ops: CompactOpBase[]];
 
 /**
  * @category JSON Predicate
  */
-export type CompactOrOp = [opcode: OPCODE.or, path: string | Path, ops: PackedOp[]];
+export type CompactOrOp = [opcode: OPCODE.or, path: string | Path, ops: CompactOpBase[]];
 
 /**
  * @category JSON Predicate
@@ -133,6 +163,17 @@ export type CompactUndefinedOp = [opcode: OPCODE.undefined, path: string | Path]
 
 
 // JSON Patch Extended ---------------------------------------------------------
+
+export type CompactJsonPatchExtendedOp =
+  | CompactExtendOp
+  | CompactFlipOp
+  | CompactIncOp
+  | CompactMergeOp
+  | CompactSplitOp
+  | CompactStrDelOp
+  | CompactStrInsOp
+  | CompactTestStringOp
+  | CompactTestStringLenOp;
 
 /**
  * @category JSON Patch Extended

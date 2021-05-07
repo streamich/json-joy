@@ -34,6 +34,6 @@ export class OpIn extends AbstractPredicateOp<'in'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactInOp {
-    return [OPCODE.in, this.path, this.value];
+    return [OPCODE.in, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 }

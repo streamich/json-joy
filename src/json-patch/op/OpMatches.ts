@@ -37,7 +37,7 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactMatchesOp {
-    const packed: CompactMatchesOp = [OPCODE.matches, this.path, this.value];
+    const packed: CompactMatchesOp = [OPCODE.matches, parent ? this.path.slice(parent.path.length) : this.path, this.value];
     if (this.ignore_case) packed.push(1);
     return packed;
   }

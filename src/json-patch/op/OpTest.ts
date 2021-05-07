@@ -37,8 +37,9 @@ export class OpTest extends AbstractPredicateOp<'test'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactTestOp {
+    const path = parent ? this.path.slice(parent.path.length) : this.path;
     return this.not
-      ? [OPCODE.test, this.path, this.value, 1]
-      : [OPCODE.test, this.path, this.value];
+      ? [OPCODE.test, path, this.value, 1]
+      : [OPCODE.test, path, this.value];
   }
 }

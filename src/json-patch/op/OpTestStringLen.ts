@@ -36,8 +36,9 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactTestStringLenOp {
+    const path = parent ? this.path.slice(parent.path.length) : this.path;
     return this.not
-      ? [OPCODE.test_string_len, this.path, this.len, 1]
-      : [OPCODE.test_string_len, this.path, this.len];
+      ? [OPCODE.test_string_len, path, this.len, 1]
+      : [OPCODE.test_string_len, path, this.len];
   }
 }

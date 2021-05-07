@@ -36,7 +36,7 @@ export class OpRemove extends AbstractOp<'remove'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactRemoveOp {
-    return this.oldValue !== undefined
+    return this.oldValue === undefined
       ? [OPCODE.remove, this.path] as CompactRemoveOp
       : [OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp;
   }

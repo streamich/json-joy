@@ -33,6 +33,6 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactAndOp {
-    return [OPCODE.and, this.path, this.ops.map((op) => op.toCompact())];
+    return [OPCODE.and, parent ? this.path.slice(parent.path.length) : this.path, this.ops.map((op) => op.toCompact(this))];
   }
 }

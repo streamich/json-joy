@@ -38,7 +38,7 @@ export class OpEnds extends AbstractPredicateOp<'ends'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactEndsOp {
-    const packed: CompactEndsOp = [OPCODE.ends, this.path, this.value];
+    const packed: CompactEndsOp = [OPCODE.ends, parent ? this.path.slice(parent.path.length) : this.path, this.value];
     if (this.ignore_case) packed.push(1);
     return packed;
   }

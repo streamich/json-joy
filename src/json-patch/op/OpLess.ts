@@ -34,6 +34,6 @@ export class OpLess extends AbstractPredicateOp<'less'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactLessOp {
-    return [OPCODE.less, this.path, this.value];
+    return [OPCODE.less, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 }

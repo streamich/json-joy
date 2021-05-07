@@ -34,6 +34,6 @@ export class OpMore extends AbstractPredicateOp<'more'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactMoreOp {
-    return [OPCODE.more, this.path, this.value];
+    return [OPCODE.more, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 }

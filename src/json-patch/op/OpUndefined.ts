@@ -37,6 +37,6 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactUndefinedOp {
-    return [OPCODE.undefined, this.path];
+    return [OPCODE.undefined, parent ? this.path.slice(parent.path.length) : this.path];
   }
 }

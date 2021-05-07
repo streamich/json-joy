@@ -33,6 +33,6 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactNotOp {
-    return [OPCODE.not, this.path, this.ops.map((op) => op.toCompact())];
+    return [OPCODE.not, parent ? this.path.slice(parent.path.length) : this.path, this.ops.map((op) => op.toCompact(this))];
   }
 }

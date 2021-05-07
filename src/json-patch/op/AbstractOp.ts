@@ -1,4 +1,4 @@
-import type {PackedOp} from '../codec/compact/types';
+import type {CompactOpBase} from '../codec/compact/types';
 import type {Path} from '../../json-pointer';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
@@ -11,5 +11,5 @@ export abstract class AbstractOp<O extends OpType = OpType> {
   abstract op(): O;
   abstract apply(doc: unknown): {doc: unknown; old?: unknown};
   abstract toJson(parent?: AbstractOp): Operation;
-  abstract toCompact(parent?: AbstractOp): PackedOp;
+  abstract toCompact(parent?: AbstractOp): CompactOpBase;
 }
