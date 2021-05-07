@@ -26,7 +26,7 @@ export class OpRemove extends AbstractOp<'remove'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationRemove {
+  public toJson(parent?: AbstractOp): OperationRemove {
     const json: OperationRemove = {
       op: 'remove',
       path: formatJsonPointer(this.path),

@@ -3,6 +3,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationType, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
 
 const {isArray} = Array;
 
@@ -27,10 +28,10 @@ export class OpType extends AbstractPredicateOp<'type'> {
     return false;
   }
 
-  public toJson(): OperationType {
+  public toJson(parent?: AbstractOp): OperationType {
     const op: OperationType = {
       op: 'type',
-      path: formatJsonPointer(this.path),
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     return op;

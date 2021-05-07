@@ -92,21 +92,27 @@ export const operationToPredicateOp = (op: Operation): PredicateOp => {
       return new OpLess(toPath(op.path), op.value);
     case 'more':
       return new OpMore(toPath(op.path), op.value);
-    case 'and':
+    case 'and': {
+      const path = toPath(op.path);
       return new OpAnd(
-        toPath(op.path),
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...op.path, ...toPath(x.path)]})),
+        path,
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
       );
-    case 'or':
+    }
+    case 'or': {
+      const path = toPath(op.path);
       return new OpOr(
-        toPath(op.path),
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...op.path, ...toPath(x.path)]})),
+        path,
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
       );
-    case 'not':
+    }
+    case 'not': {
+      const path = toPath(op.path);
       return new OpNot(
-        toPath(op.path),
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...op.path, ...toPath(x.path)]})),
+        path,
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
       );
+    }
     default:
       throw new Error('OP_UNKNOWN');
   }

@@ -23,7 +23,7 @@ export class OpFlip extends AbstractOp<'flip'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationFlip {
+  public toJson(parent?: AbstractOp): OperationFlip {
     const op: OperationFlip = {
       op: 'flip',
       path: formatJsonPointer(this.path),

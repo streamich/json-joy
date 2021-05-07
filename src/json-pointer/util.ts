@@ -27,6 +27,7 @@ export function escapeComponent(component: string): string {
  */
 export function parseJsonPointer(pointer: string): Path {
   if (!pointer) return [];
+  // TODO: Performance of this line can be improved: (1) don't use .split(); (2) don't use .map().
   return pointer.slice(1).split('/').map(unescapeComponent);
 }
 

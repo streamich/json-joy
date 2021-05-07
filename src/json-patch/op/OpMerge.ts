@@ -40,7 +40,7 @@ export class OpMerge extends AbstractOp<'merge'> {
     return [one, two];
   }
 
-  public toJson(): OperationMerge {
+  public toJson(parent?: AbstractOp): OperationMerge {
     const op: OperationMerge = {
       op: 'merge',
       path: formatJsonPointer(this.path),

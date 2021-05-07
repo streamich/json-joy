@@ -4,6 +4,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
+import {AbstractOp} from './AbstractOp';
 
 /**
  * @category JSON Predicate
@@ -22,11 +23,11 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
     return true;
   }
 
-  public toJson(): OperationAnd {
+  public toJson(parent?: AbstractOp): OperationAnd {
     const op: OperationAnd = {
       op: 'and',
-      path: formatJsonPointer(this.path),
-      apply: this.ops.map((op) => op.toJson()) as PredicateOperation[],
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
+      apply: this.ops.map((op) => op.toJson(this)) as PredicateOperation[],
     };
     return op;
   }

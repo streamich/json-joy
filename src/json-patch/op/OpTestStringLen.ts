@@ -3,6 +3,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestStringLen} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
 
 /**
  * @category JSON Patch Extended
@@ -24,10 +25,10 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     return this.not ? !test : test;
   }
 
-  public toJson(): OperationTestStringLen {
+  public toJson(parent?: AbstractOp): OperationTestStringLen {
     const op: OperationTestStringLen = {
       op: 'test_string_len',
-      path: formatJsonPointer(this.path),
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       len: this.len,
     };
     if (this.not) (op as any).not = this.not;

@@ -24,7 +24,7 @@ export class OpMove extends AbstractOp<'move'> {
     return add;
   }
 
-  public toJson(): OperationMove {
+  public toJson(parent?: AbstractOp): OperationMove {
     return {
       op: 'move',
       path: formatJsonPointer(this.path),

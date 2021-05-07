@@ -32,7 +32,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationStrIns {
+  public toJson(parent?: AbstractOp): OperationStrIns {
     const op: OperationStrIns = {
       op: 'str_ins',
       path: formatJsonPointer(this.path),

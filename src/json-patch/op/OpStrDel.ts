@@ -41,7 +41,7 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationStrDel {
+  public toJson(parent?: AbstractOp): OperationStrDel {
     if (typeof this.str === 'string') {
       return {
         op: 'str_del',

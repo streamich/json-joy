@@ -88,7 +88,7 @@ export class OpSplit extends AbstractOp<'split'> {
     } else return [node, node];
   }
 
-  public toJson(): OperationSplit {
+  public toJson(parent?: AbstractOp): OperationSplit {
     const op: OperationSplit = {
       op: 'split',
       path: formatJsonPointer(this.path),

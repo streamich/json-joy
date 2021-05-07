@@ -25,7 +25,7 @@ export class OpCopy extends AbstractOp<'copy'> {
     return add;
   }
 
-  public toJson(): OperationCopy {
+  public toJson(parent?: AbstractOp): OperationCopy {
     return {
       op: 'copy',
       path: formatJsonPointer(this.path),

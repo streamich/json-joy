@@ -25,7 +25,7 @@ export class OpReplace extends AbstractOp<'replace'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationReplace {
+  public toJson(parent?: AbstractOp): OperationReplace {
     const json: OperationReplace = {
       op: 'replace',
       path: formatJsonPointer(this.path),

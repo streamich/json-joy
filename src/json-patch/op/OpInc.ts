@@ -24,7 +24,7 @@ export class OpInc extends AbstractOp<'inc'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationInc {
+  public toJson(parent?: AbstractOp): OperationInc {
     const op: OperationInc = {
       op: 'inc',
       path: formatJsonPointer(this.path),

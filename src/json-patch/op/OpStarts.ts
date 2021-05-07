@@ -3,6 +3,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationStarts} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
 
 /**
  * @category JSON Predicate
@@ -26,10 +27,10 @@ export class OpStarts extends AbstractPredicateOp<'starts'> {
     return test;
   }
 
-  public toJson(): OperationStarts {
+  public toJson(parent?: AbstractOp): OperationStarts {
     const op: OperationStarts = {
       op: 'starts',
-      path: formatJsonPointer(this.path),
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     if (this.ignore_case) (op as any).ignore_case = this.ignore_case;

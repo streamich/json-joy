@@ -47,7 +47,7 @@ export class OpExtend extends AbstractOp<'extend'> {
     return value;
   }
 
-  public toJson(): OperationExtend {
+  public toJson(parent?: AbstractOp): OperationExtend {
     const op: OperationExtend = {
       op: 'extend',
       path: formatJsonPointer(this.path),

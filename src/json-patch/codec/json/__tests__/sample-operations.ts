@@ -235,7 +235,6 @@ const test_string1: OperationTestString = {
   pos: 0,
   str: 'asdf',
 };
-};
 
 const test_string2: OperationTestString = {
   op: 'test_string',
@@ -393,6 +392,14 @@ const more2: OperationMore = {
 
 const and1: OperationAnd = {
   op: 'and',
+  path: '/a',
+  apply: [
+    {op: 'test', path: '/b', value: 123},
+  ],
+};
+
+const and2: OperationAnd = {
+  op: 'and',
   path: '/',
   apply: [
     less2,
@@ -401,13 +408,30 @@ const and1: OperationAnd = {
   ],
 };
 
-const and2: OperationAnd = {
+const and3: OperationAnd = {
   op: 'and',
   path: '/a/1/.',
   apply: [
     test1,
     test2,
     test3,
+  ],
+};
+
+const and4: OperationAnd = {
+  op: 'and',
+  path: '/a/1/.',
+  apply: [
+    test1,
+    {
+      op: 'and',
+      path: '/gg/bet',
+      apply: [
+        test1,
+        test2,
+      ],
+    },
+    test2,
   ],
 };
 
@@ -502,6 +526,8 @@ export const jsonPredicateOperations = {
 
   and1,
   and2,
+  and3,
+  and4,
 
   not1,
   not2,

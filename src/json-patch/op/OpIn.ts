@@ -3,6 +3,7 @@ import {OperationIn} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
 const isEqual = require('fast-deep-equal');
 
 /**
@@ -23,10 +24,10 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return false;
   }
 
-  public toJson(): OperationIn {
+  public toJson(parent?: AbstractOp): OperationIn {
     const op: OperationIn = {
       op: 'in',
-      path: formatJsonPointer(this.path),
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     return op;

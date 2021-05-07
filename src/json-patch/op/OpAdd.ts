@@ -30,7 +30,7 @@ export class OpAdd extends AbstractOp<'add'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationAdd {
+  public toJson(parent?: AbstractOp): OperationAdd {
     return {
       op: 'add',
       path: formatJsonPointer(this.path),

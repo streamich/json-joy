@@ -3,6 +3,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationUndefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
 
 /**
  * @category JSON Predicate
@@ -27,10 +28,10 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
     }
   }
 
-  public toJson(): OperationUndefined {
+  public toJson(parent?: AbstractOp): OperationUndefined {
     const op: OperationUndefined = {
       op: 'undefined',
-      path: formatJsonPointer(this.path),
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
     };
     return op;
   }
