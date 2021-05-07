@@ -16,7 +16,6 @@ export * from './types';
 export * from './applyPatch';
 export * from './validate';
 export {
-  operationToOp,
   OpTest,
   OpDefined,
   OpUndefined,

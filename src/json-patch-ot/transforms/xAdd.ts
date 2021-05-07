@@ -1,7 +1,8 @@
-import {OpAdd, Op, operationToOp} from '../../json-patch/op';
+import {OpAdd, Op} from '../../json-patch/op';
 import {isRoot, isValidIndex, isChild, formatJsonPointer} from '../../json-pointer';
 import {Operation} from '../../json-patch/types';
 import {bumpArrayPath} from './util';
+import {operationToOp} from '../../json-patch/codec/json';
 
 export const xAdd = (add: OpAdd, op: Op): null | Op => {
   if (isRoot(add.path)) return null;
