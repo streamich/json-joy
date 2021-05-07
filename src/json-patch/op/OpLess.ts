@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationLess} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedLessOp = [OPCODE.less, string | Path, {v: number}];
+import {OPCODE} from '../constants';
+import {CompactLessOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -32,8 +28,7 @@ export class OpLess extends AbstractPredicateOp<'less'> {
     return op;
   }
 
-  public toPacked(): PackedLessOp {
-    const packed: PackedLessOp = [OPCODE.less, this.path, {v: this.value}];
-    return packed;
+  public toPacked(): CompactLessOp {
+    return [OPCODE.less, this.path, this.value];
   }
 }

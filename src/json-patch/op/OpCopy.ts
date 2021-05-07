@@ -3,9 +3,8 @@ import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '../../json-pointer';
 import {OpAdd} from './OpAdd';
 import {deepClone} from '../util';
-import {OPCODE} from './constants';
-
-export type PackedCopyOp = [OPCODE.copy, string | Path, {f: string | Path}];
+import {OPCODE} from '../constants';
+import {CompactCopyOp} from '../compact';
 
 /**
  * @category JSON Patch
@@ -30,8 +29,7 @@ export class OpCopy extends AbstractOp<'copy'> {
     };
   }
 
-  public toPacked(): PackedCopyOp {
-    const packed: PackedCopyOp = [OPCODE.copy, this.path, {f: this.from}];
-    return packed;
+  public toPacked(): CompactCopyOp {
+    return [OPCODE.copy, this.path, this.from];
   }
 }

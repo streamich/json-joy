@@ -1,12 +1,8 @@
 import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedExtendOp = [OPCODE.extend, string | Path, {p: Record<string, unknown>; d?: 1}];
+import {OPCODE} from '../constants';
+import {CompactExtendOp} from '../compact';
 
 const {isArray} = Array;
 
@@ -57,9 +53,9 @@ export class OpExtend extends AbstractOp<'extend'> {
     return op;
   }
 
-  public toPacked(): PackedExtendOp {
-    const packed: PackedExtendOp = [OPCODE.extend, this.path, {p: this.props}];
-    if (this.deleteNull) packed[2].d = 1;
+  public toPacked(): CompactExtendOp {
+    const packed: CompactExtendOp = [OPCODE.extend, this.path, this.props];
+    if (this.deleteNull) packed.push(1);
     return packed;
   }
 }

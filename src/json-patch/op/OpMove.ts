@@ -3,9 +3,8 @@ import {OperationMove} from '../types';
 import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
 import {Path, toPath, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedMoveOp = [OPCODE.move, string | Path, {f: string | Path}];
+import {OPCODE} from '../constants';
+import {CompactMoveOp} from '../compact';
 
 /**
  * @category JSON Patch
@@ -29,8 +28,7 @@ export class OpMove extends AbstractOp<'move'> {
     };
   }
 
-  public toPacked(): PackedMoveOp {
-    const packed: PackedMoveOp = [OPCODE.move, this.path, {f: this.from}];
-    return packed;
+  public toPacked(): CompactMoveOp {
+    return [OPCODE.move, this.path, this.from];
   }
 }

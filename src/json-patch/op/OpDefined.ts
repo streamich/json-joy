@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationDefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedDefinedOp = [OPCODE.defined, string | Path];
+import {OPCODE} from '../constants';
+import {CompactDefinedOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -30,8 +26,8 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
     return op;
   }
 
-  public toPacked(): PackedDefinedOp {
-    const packed: PackedDefinedOp = [OPCODE.defined, this.path];
+  public toPacked(): CompactDefinedOp {
+    const packed: CompactDefinedOp = [OPCODE.defined, this.path];
     return packed;
   }
 }

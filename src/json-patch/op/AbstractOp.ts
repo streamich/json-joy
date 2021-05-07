@@ -1,9 +1,6 @@
-import {Path} from '../../json-pointer';
-import {Operation, OpType} from '../types';
-import {OPCODE} from './constants';
-
-// [opcode, path, extra options]
-export type PackedOp = [OPCODE, string | Path] | [OPCODE, string | Path, object];
+import type {Path} from '../../json-pointer';
+import type {PackedOp} from '../compact';
+import type {Operation, OpType} from '../types';
 
 export abstract class AbstractOp<O extends OpType = OpType> {
   public readonly from?: Path;

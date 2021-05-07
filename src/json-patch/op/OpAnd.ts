@@ -1,11 +1,9 @@
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {PackedOp} from './AbstractOp';
 import {OperationAnd, PredicateOperation} from '../types';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
-
-export type PackedAndOp = [OPCODE.and, string | Path, {o: PackedOp[]}];
+import {CompactAndOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -29,7 +27,7 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
     return op;
   }
 
-  public toPacked(): PackedAndOp {
-    return [OPCODE.and, this.path, {o: this.ops.map((op) => op.toPacked())}];
+  public toPacked(): CompactAndOp {
+    return [OPCODE.and, this.path, this.ops.map((op) => op.toPacked())];
   }
 }

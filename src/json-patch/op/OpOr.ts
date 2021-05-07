@@ -1,14 +1,9 @@
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationOr, PredicateOperation} from '../types';
-import {OPCODE} from './constants';
-import {PackedOp} from './AbstractOp';
+import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
-
-/**
- * @category JSON Predicate
- */
-export type PackedOrOp = [OPCODE.or, string | Path, {o: PackedOp[]}];
+import {CompactOrOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -32,8 +27,7 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
     return op;
   }
 
-  public toPacked(): PackedOrOp {
-    const packed: PackedOrOp = [OPCODE.or, this.path, {o: this.ops.map((op) => op.toPacked())}];
-    return packed;
+  public toPacked(): CompactOrOp {
+    return [OPCODE.or, this.path, this.ops.map((op) => op.toPacked())];
   }
 }

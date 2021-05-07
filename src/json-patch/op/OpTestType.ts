@@ -1,14 +1,10 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestType, JsTypes, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {CompactTestTypeOp} from '../compact';
 
 const {isArray} = Array;
-
-/**
- * @category JSON Predicate
- */
-export type PackedTestTypeOp = [OPCODE.test_type, string | Path, {t: JsonPatchTypes[]}];
 
 /**
  * @category JSON Predicate
@@ -36,8 +32,7 @@ export class OpTestType extends AbstractPredicateOp<'test_type'> {
     return op;
   }
 
-  public toPacked(): PackedTestTypeOp {
-    const packed: PackedTestTypeOp = [OPCODE.test_type, this.path, {t: this.type}];
-    return packed;
+  public toPacked(): CompactTestTypeOp {
+    return [OPCODE.test_type, this.path, this.type];
   }
 }

@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestString} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedTestStringOp = [OPCODE.test_string, string | Path, {i: number; s: string; n?: 1}];
+import {OPCODE} from '../constants';
+import {CompactTestStringOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -37,9 +33,9 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     return op;
   }
 
-  public toPacked(): PackedTestStringOp {
-    const packed: PackedTestStringOp = [OPCODE.test_string, this.path, {i: this.pos, s: this.str}];
-    if (this.not) packed[2].n = 1;
-    return packed;
+  public toPacked(): CompactTestStringOp {
+    return this.not
+      ? [OPCODE.test_string, this.path, this.pos, this.str, 1]
+      : [OPCODE.test_string, this.path, this.pos, this.str];
   }
 }

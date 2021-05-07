@@ -2,12 +2,8 @@ import {AbstractOp} from './AbstractOp';
 import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedSplitOp = [OPCODE.split, string | Path, {i: number; p?: object}];
+import {OPCODE} from '../constants';
+import {CompactSplitOp} from '../compact';
 
 type Composable = string | number | SlateNode;
 
@@ -98,9 +94,9 @@ export class OpSplit extends AbstractOp<'split'> {
     return op;
   }
 
-  public toPacked(): PackedSplitOp {
-    const packed: PackedSplitOp = [OPCODE.split, this.path, {i: this.pos}];
-    if (this.props) packed[2].p = this.props;
+  public toPacked(): CompactSplitOp {
+    const packed: CompactSplitOp = [OPCODE.split, this.path, this.pos];
+    if (this.props) packed.push(this.props as any);
     return packed;
   }
 }

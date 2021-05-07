@@ -1,9 +1,8 @@
 import {AbstractOp} from './AbstractOp';
 import {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedReplaceOp = [OPCODE.replace, Path | string, {v: unknown; o?: unknown}];
+import {OPCODE} from '../constants';
+import {CompactReplaceOp} from '../compact';
 
 /**
  * @category JSON Patch
@@ -32,9 +31,9 @@ export class OpReplace extends AbstractOp<'replace'> {
     return json;
   }
 
-  public toPacked(): PackedReplaceOp {
-    const packed: PackedReplaceOp = [OPCODE.replace, this.path, {v: this.value}];
-    if (this.oldValue !== undefined) packed[2].o = this.oldValue;
-    return packed;
+  public toPacked(): CompactReplaceOp {
+    return this.oldValue == undefined
+      ? [OPCODE.replace, this.path, this.value]
+      : [OPCODE.replace, this.path, this.value, this.oldValue];
   }
 }

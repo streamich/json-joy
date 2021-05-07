@@ -1,12 +1,8 @@
 import {AbstractOp} from './AbstractOp';
 import {OperationStrIns} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedStrInsOp = [OPCODE.str_ins, string | Path, {i: number; s: string}];
+import {OPCODE} from '../constants';
+import {CompactStrInsOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -42,8 +38,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return op;
   }
 
-  public toPacked(): PackedStrInsOp {
-    const packed: PackedStrInsOp = [OPCODE.str_ins, this.path, {i: this.pos, s: this.str}];
-    return packed;
+  public toPacked(): CompactStrInsOp {
+    return [OPCODE.str_ins, this.path, this.pos, this.str];
   }
 }

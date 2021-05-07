@@ -1,13 +1,9 @@
 import {OperationIn} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {CompactInOp} from '../compact';
 const isEqual = require('fast-deep-equal');
-
-/**
- * @category JSON Predicate
- */
-export type PackedInOp = [OPCODE.in, string | Path, {v: unknown[]}];
 
 /**
  * @category JSON Predicate
@@ -32,8 +28,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return op;
   }
 
-  public toPacked(): PackedInOp {
-    const packed: PackedInOp = [OPCODE.in, this.path, {v: this.value}];
-    return packed;
+  public toPacked(): CompactInOp {
+    return [OPCODE.in, this.path, this.value];
   }
 }

@@ -1,10 +1,9 @@
 import {OperationTest} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {CompactTestOp} from '../compact';
 const isEqual = require('fast-deep-equal');
-
-export type PackedTestOp = [OPCODE.test, string | Path, {v: unknown; n?: 1}];
 
 /**
  * @category JSON Patch
@@ -32,9 +31,9 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return op;
   }
 
-  public toPacked(): PackedTestOp {
-    const packed: PackedTestOp = [OPCODE.test, this.path, {v: this.value}];
-    if (this.not) packed[2].n = 1;
-    return packed;
+  public toPacked(): CompactTestOp {
+    return this.not
+      ? [OPCODE.test, this.path, this.value, 1]
+      : [OPCODE.test, this.path, this.value];
   }
 }

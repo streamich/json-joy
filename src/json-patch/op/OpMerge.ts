@@ -2,12 +2,8 @@ import {AbstractOp} from './AbstractOp';
 import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedMergeOp = [OPCODE.merge, string | Path, {i: number; p?: object}];
+import {OPCODE} from '../constants';
+import {CompactMergeOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -50,9 +46,9 @@ export class OpMerge extends AbstractOp<'merge'> {
     return op;
   }
 
-  public toPacked(): PackedMergeOp {
-    const packed: PackedMergeOp = [OPCODE.merge, this.path, {i: this.pos}];
-    if (this.props) packed[2].p = this.props;
+  public toPacked(): CompactMergeOp {
+    const packed: CompactMergeOp = [OPCODE.merge, this.path, this.pos];
+    if (this.props) packed.push(this.props as any);
     return packed;
   }
 }

@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationMatches} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedMatchesOp = [OPCODE.matches, string | Path, {v: string; i?: 1}];
+import {OPCODE} from '../constants';
+import {CompactMatchesOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -35,9 +31,9 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
     return op;
   }
 
-  public toPacked(): PackedMatchesOp {
-    const packed: PackedMatchesOp = [OPCODE.matches, this.path, {v: this.value}];
-    if (this.ignore_case) packed[2].i = 1;
+  public toPacked(): CompactMatchesOp {
+    const packed: CompactMatchesOp = [OPCODE.matches, this.path, this.value];
+    if (this.ignore_case) packed.push(1);
     return packed;
   }
 }

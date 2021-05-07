@@ -1,9 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationContains} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedContainsOp = [OPCODE.contains, string | Path, {v: string; i?: 1}];
+import {OPCODE} from '../constants';
+import type {CompactContainsOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -33,9 +32,9 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
     return op;
   }
 
-  public toPacked(): PackedContainsOp {
-    const packed: PackedContainsOp = [OPCODE.contains, this.path, {v: this.value}];
-    if (this.ignore_case) packed[2].i = 1;
-    return packed;
+  public toPacked(): CompactContainsOp {
+    const compact: CompactContainsOp = [OPCODE.contains, this.path, this.value];
+    if (this.ignore_case) compact.push(1);
+    return compact;
   }
 }

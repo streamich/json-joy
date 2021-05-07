@@ -1,11 +1,8 @@
-/* tslint:disable no-string-throw */
-
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedAddOp = [OPCODE.add, string | Path, {v: unknown}];
+import {OPCODE} from '../constants';
+import {CompactAddOp} from '../compact';
 
 /**
  * @category JSON Patch
@@ -37,7 +34,7 @@ export class OpAdd extends AbstractOp<'add'> {
     };
   }
 
-  public toPacked(): PackedAddOp {
-    return [OPCODE.add, this.path, {v: this.value}];
+  public toPacked(): CompactAddOp {
+    return [OPCODE.add, this.path, this.value];
   }
 }

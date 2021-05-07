@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestStringLen} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedTestStringLenOp = [OPCODE.test_string_len, string | Path, {l: number; n?: 1}];
+import {OPCODE} from '../constants';
+import {CompactTestStringLenOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -20,7 +16,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;
     const length = (val as string).length;
-    const test = val.length >= this.len;
+    const test = length >= this.len;
     return this.not ? !test : test;
   }
 
@@ -34,9 +30,9 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     return op;
   }
 
-  public toPacked(): PackedTestStringLenOp {
-    const packed: PackedTestStringLenOp = [OPCODE.test_string_len, this.path, {l: this.len}];
-    if (this.not) packed[2].n = 1;
-    return packed;
+  public toPacked(): CompactTestStringLenOp {
+    return this.not
+      ? [OPCODE.test_string_len, this.path, this.len, 1]
+      : [OPCODE.test_string_len, this.path, this.len];
   }
 }

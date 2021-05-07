@@ -1,9 +1,8 @@
 import {AbstractOp} from './AbstractOp';
 import {OperationRemove} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedRemoveOp = [OPCODE.remove, string | Path] | [OPCODE.remove, string | Path, {o: unknown}];
+import {OPCODE} from '../constants';
+import {CompactRemoveOp} from '../compact';
 
 /**
  * @category JSON Patch
@@ -32,9 +31,9 @@ export class OpRemove extends AbstractOp<'remove'> {
     return json;
   }
 
-  public toPacked(): PackedRemoveOp {
-    const packed: PackedRemoveOp =
-      this.oldValue !== undefined ? [OPCODE.remove, this.path] : [OPCODE.remove, this.path, {o: this.oldValue}];
-    return packed;
+  public toPacked(): CompactRemoveOp {
+    return this.oldValue !== undefined
+      ? [OPCODE.remove, this.path] as CompactRemoveOp
+      : [OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp;
   }
 }

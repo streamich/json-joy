@@ -1,12 +1,8 @@
 import {AbstractOp} from './AbstractOp';
 import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedFlipOp = [OPCODE.flip, string | Path];
+import {OPCODE} from '../constants';
+import {CompactFlipOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -31,8 +27,7 @@ export class OpFlip extends AbstractOp<'flip'> {
     return op;
   }
 
-  public toPacked(): PackedFlipOp {
-    const packed: PackedFlipOp = [OPCODE.flip, this.path];
-    return packed;
+  public toPacked(): CompactFlipOp {
+    return [OPCODE.flip, this.path];
   }
 }

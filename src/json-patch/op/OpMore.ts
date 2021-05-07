@@ -1,12 +1,8 @@
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationMore} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedMoreOp = [OPCODE.more, string | Path, {v: number}];
+import {OPCODE} from '../constants';
+import {CompactMoreOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -32,8 +28,7 @@ export class OpMore extends AbstractPredicateOp<'more'> {
     return op;
   }
 
-  public toPacked(): PackedMoreOp {
-    const packed: PackedMoreOp = [OPCODE.more, this.path, {v: this.value}];
-    return packed;
+  public toPacked(): CompactMoreOp {
+    return [OPCODE.more, this.path, this.value];
   }
 }
