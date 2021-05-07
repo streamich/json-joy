@@ -1,8 +1,8 @@
+import type {CompactMatchesOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationMatches} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactMatchesOp} from '../compact';
 
 /**
  * @category JSON Predicate

@@ -1,8 +1,8 @@
+import type {CompactAddOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactAddOp} from '../compact';
 
 /**
  * @category JSON Patch

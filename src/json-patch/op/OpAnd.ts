@@ -1,9 +1,9 @@
+import type {CompactAndOp} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
-import {CompactAndOp} from '../compact';
 
 /**
  * @category JSON Predicate

@@ -1,4 +1,4 @@
-import type {CompactCopyOp} from '../compact';
+import type {CompactCopyOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '../../json-pointer';

@@ -1,6 +1,6 @@
-import type {OPCODE} from './constants';
-import type {Path} from '../json-pointer/util';
-import type {JsonPatchTypes} from './types';
+import type {OPCODE} from '../../constants';
+import type {Path} from '../../../json-pointer/util';
+import type {JsonPatchTypes} from '../json/types';
 
 /**
  *     [opcode, path, ...extraOptions]

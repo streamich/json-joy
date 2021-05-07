@@ -1,8 +1,8 @@
+import type {CompactReplaceOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactReplaceOp} from '../compact';
 
 /**
  * @category JSON Patch

@@ -1,8 +1,8 @@
+import type {CompactMoreOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationMore} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactMoreOp} from '../compact';
 
 /**
  * @category JSON Predicate

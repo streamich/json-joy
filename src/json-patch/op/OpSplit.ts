@@ -1,9 +1,9 @@
+import type {CompactSplitOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import {CompactSplitOp} from '../compact';
 
 type Composable = string | number | SlateNode;
 

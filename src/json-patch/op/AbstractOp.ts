@@ -1,5 +1,5 @@
+import type {PackedOp} from '../codec/compact/types';
 import type {Path} from '../../json-pointer';
-import type {PackedOp} from '../compact';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
 

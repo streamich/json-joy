@@ -1,9 +1,9 @@
+import type {CompactMergeOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import {CompactMergeOp} from '../compact';
 
 /**
  * @category JSON Patch Extended

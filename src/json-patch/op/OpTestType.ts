@@ -1,8 +1,8 @@
+import type {CompactTestTypeOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestType, JsTypes, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactTestTypeOp} from '../compact';
 
 const {isArray} = Array;
 

@@ -1,10 +1,10 @@
+import type {CompactMoveOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationMove} from '../types';
 import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
 import {Path, toPath, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactMoveOp} from '../compact';
 
 /**
  * @category JSON Patch

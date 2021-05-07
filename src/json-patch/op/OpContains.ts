@@ -1,4 +1,4 @@
-import type {CompactContainsOp} from '../compact';
+import type {CompactContainsOp} from '../codec/compact/types';
 import type {OperationContains} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {find, Path, formatJsonPointer} from '../../json-pointer';

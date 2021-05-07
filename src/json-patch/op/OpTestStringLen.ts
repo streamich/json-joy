@@ -1,8 +1,8 @@
+import type {CompactTestStringLenOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestStringLen} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactTestStringLenOp} from '../compact';
 
 /**
  * @category JSON Patch Extended

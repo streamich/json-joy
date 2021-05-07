@@ -1,8 +1,8 @@
+import type {CompactInOp} from '../codec/compact/types';
 import {OperationIn} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
-import {CompactInOp} from '../compact';
 const isEqual = require('fast-deep-equal');
 
 /**

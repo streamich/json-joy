@@ -1,8 +1,8 @@
+import type {CompactStrDelOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrDel} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactStrDelOp} from '../compact';
 
 /**
  * @category JSON Patch Extended
@@ -59,10 +59,8 @@ export class OpStrDel extends AbstractOp<'str_del'> {
   }
 
   public toPacked(): CompactStrDelOp {
-    const packed: CompactStrDelOp =
-      typeof this.str === 'string'
-        ? [OPCODE.str_del, this.path, this.pos, this.str]
-        : [OPCODE.str_del, this.path, this.pos, undefined, this.len];
-    return packed;
+    return typeof this.str === 'string'
+      ? [OPCODE.str_del, this.path, this.pos, this.str]
+      : [OPCODE.str_del, this.path, this.pos, undefined, this.len];
   }
 }

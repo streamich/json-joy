@@ -1,8 +1,8 @@
+import type {CompactFlipOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactFlipOp} from '../compact';
 
 /**
  * @category JSON Patch Extended

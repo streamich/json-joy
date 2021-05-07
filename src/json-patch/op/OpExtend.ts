@@ -1,8 +1,8 @@
+import type {CompactExtendOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {CompactExtendOp} from '../compact';
 
 const {isArray} = Array;
 
