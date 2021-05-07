@@ -9,7 +9,11 @@ import {CompactTestStringLenOp} from '../compact';
  */
 export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   constructor(path: Path, public readonly len: number, public readonly not: boolean) {
-    super('test_string_len', path);
+    super(path);
+  }
+
+  public op() {
+    return 'test_string_len' as 'test_string_len';
   }
 
   public test(doc: unknown): boolean {
@@ -22,7 +26,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
 
   public toJson(): OperationTestStringLen {
     const op: OperationTestStringLen = {
-      op: this.op,
+      op: 'test_string_len',
       path: formatJsonPointer(this.path),
       len: this.len,
     };

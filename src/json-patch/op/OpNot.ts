@@ -10,7 +10,11 @@ import {CompactNotOp} from '../compact';
  */
 export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
-    super('not', path, ops);
+    super(path, ops);
+  }
+
+  public op() {
+    return 'not' as 'not';
   }
 
   public test(doc: unknown): boolean {
@@ -20,7 +24,7 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
 
   public toJson(): OperationNot {
     const op: OperationNot = {
-      op: this.op,
+      op: 'not',
       path: formatJsonPointer(this.path),
       apply: this.ops.map((op) => op.toJson()) as PredicateOperation[],
     };

@@ -11,7 +11,7 @@ export const xRemove = (add: OpRemove, op: Op): null | Op => {
   const lastStep = add.path[lastIndex];
   const isLastStepNumberLike = isValidIndex(lastStep);
 
-  if (op.op === 'remove' && isPathEqual(add.path, op.path) && isLastStepNumberLike) return null;
+  if (op instanceof OpRemove && isPathEqual(add.path, op.path) && isLastStepNumberLike) return null;
 
   if (isLastStepNumberLike) {
     const newPath = lowerArrayPath(add.path, op.path);

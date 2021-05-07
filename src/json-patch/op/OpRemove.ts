@@ -9,7 +9,11 @@ import {CompactRemoveOp} from '../compact';
  */
 export class OpRemove extends AbstractOp<'remove'> {
   constructor(path: Path, public readonly oldValue: unknown) {
-    super('remove', path);
+    super(path);
+  }
+
+  public op() {
+    return 'remove' as 'remove';
   }
 
   public apply(doc: unknown) {
@@ -24,7 +28,7 @@ export class OpRemove extends AbstractOp<'remove'> {
 
   public toJson(): OperationRemove {
     const json: OperationRemove = {
-      op: this.op,
+      op: 'remove',
       path: formatJsonPointer(this.path),
     };
     if (this.oldValue !== undefined) (json as any).oldValue = this.oldValue;

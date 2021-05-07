@@ -9,7 +9,11 @@ import {CompactIncOp} from '../compact';
  */
 export class OpInc extends AbstractOp<'inc'> {
   constructor(path: Path, public readonly inc: number) {
-    super('inc', path);
+    super(path);
+  }
+
+  public op() {
+    return 'inc' as 'inc';
   }
 
   public apply(doc: unknown) {
@@ -22,7 +26,7 @@ export class OpInc extends AbstractOp<'inc'> {
 
   public toJson(): OperationInc {
     const op: OperationInc = {
-      op: this.op,
+      op: 'inc',
       path: formatJsonPointer(this.path),
       inc: this.inc,
     };

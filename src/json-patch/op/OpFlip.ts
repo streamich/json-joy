@@ -9,7 +9,11 @@ import {CompactFlipOp} from '../compact';
  */
 export class OpFlip extends AbstractOp<'flip'> {
   constructor(path: Path) {
-    super('flip', path);
+    super(path);
+  }
+
+  public op() {
+    return 'flip' as 'flip';
   }
 
   public apply(doc: unknown) {
@@ -21,7 +25,7 @@ export class OpFlip extends AbstractOp<'flip'> {
 
   public toJson(): OperationFlip {
     const op: OperationFlip = {
-      op: this.op,
+      op: 'flip',
       path: formatJsonPointer(this.path),
     };
     return op;

@@ -9,7 +9,11 @@ import {CompactStrInsOp} from '../compact';
  */
 export class OpStrIns extends AbstractOp<'str_ins'> {
   constructor(path: Path, public readonly pos: number, public readonly str: string) {
-    super('str_ins', path);
+    super(path);
+  }
+
+  public op() {
+    return 'str_ins' as 'str_ins';
   }
 
   public apply(doc: unknown) {
@@ -30,7 +34,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
 
   public toJson(): OperationStrIns {
     const op: OperationStrIns = {
-      op: this.op,
+      op: 'str_ins',
       path: formatJsonPointer(this.path),
       pos: this.pos,
       str: this.str,

@@ -9,7 +9,11 @@ import {CompactLessOp} from '../compact';
  */
 export class OpLess extends AbstractPredicateOp<'less'> {
   constructor(path: Path, public readonly value: number) {
-    super('less', path);
+    super(path);
+  }
+
+  public op() {
+    return 'less' as 'less';
   }
 
   public test(doc: unknown): boolean {
@@ -21,7 +25,7 @@ export class OpLess extends AbstractPredicateOp<'less'> {
 
   public toJson(): OperationLess {
     const op: OperationLess = {
-      op: this.op,
+      op: 'less',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

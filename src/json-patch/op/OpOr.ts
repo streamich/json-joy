@@ -10,7 +10,11 @@ import {CompactOrOp} from '../compact';
  */
 export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
-    super('or', path, ops);
+    super(path, ops);
+  }
+
+  public op() {
+    return 'or' as 'or';
   }
 
   public test(doc: unknown): boolean {
@@ -20,7 +24,7 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
 
   public toJson(): OperationOr {
     const op: OperationOr = {
-      op: this.op,
+      op: 'or',
       path: formatJsonPointer(this.path),
       apply: this.ops.map((op) => op.toJson()) as PredicateOperation[],
     };

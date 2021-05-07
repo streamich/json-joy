@@ -12,7 +12,11 @@ type Composable = string | number | SlateNode;
  */
 export class OpSplit extends AbstractOp<'split'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
-    super('split', path);
+    super(path);
+  }
+
+  public op() {
+    return 'split' as 'split';
   }
 
   public apply(doc: unknown) {
@@ -86,7 +90,7 @@ export class OpSplit extends AbstractOp<'split'> {
 
   public toJson(): OperationSplit {
     const op: OperationSplit = {
-      op: this.op,
+      op: 'split',
       path: formatJsonPointer(this.path),
       pos: this.pos,
     };

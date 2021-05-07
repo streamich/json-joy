@@ -11,7 +11,11 @@ const {isArray} = Array;
  */
 export class OpExtend extends AbstractOp<'extend'> {
   constructor(path: Path, public readonly props: Record<string, unknown>, public readonly deleteNull: boolean) {
-    super('extend', path);
+    super(path);
+  }
+
+  public op() {
+    return 'extend' as 'extend';
   }
 
   public apply(doc: unknown) {
@@ -45,7 +49,7 @@ export class OpExtend extends AbstractOp<'extend'> {
 
   public toJson(): OperationExtend {
     const op: OperationExtend = {
-      op: this.op,
+      op: 'extend',
       path: formatJsonPointer(this.path),
       props: this.props,
     };

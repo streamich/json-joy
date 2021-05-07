@@ -9,7 +9,11 @@ import {CompactReplaceOp} from '../compact';
  */
 export class OpReplace extends AbstractOp<'replace'> {
   constructor(path: Path, public readonly value: unknown, public readonly oldValue: unknown) {
-    super('replace', path);
+    super(path);
+  }
+
+  public op() {
+    return 'replace' as 'replace';
   }
 
   public apply(doc: unknown) {
@@ -23,7 +27,7 @@ export class OpReplace extends AbstractOp<'replace'> {
 
   public toJson(): OperationReplace {
     const json: OperationReplace = {
-      op: this.op,
+      op: 'replace',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

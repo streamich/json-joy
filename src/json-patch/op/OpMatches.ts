@@ -10,7 +10,11 @@ import {CompactMatchesOp} from '../compact';
 export class OpMatches extends AbstractPredicateOp<'matches'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
-    super('matches', path);
+    super(path);
+  }
+
+  public op() {
+    return 'matches' as 'matches';
   }
 
   public test(doc: unknown): boolean {
@@ -23,7 +27,7 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
 
   public toJson(): OperationMatches {
     const op: OperationMatches = {
-      op: this.op,
+      op: 'matches',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

@@ -14,7 +14,11 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     public readonly str: string | undefined,
     public readonly len: number | undefined,
   ) {
-    super('str_del', path);
+    super(path);
+  }
+
+  public op() {
+    return 'str_del' as 'str_del';
   }
 
   public deleteLength(): number {
@@ -40,14 +44,14 @@ export class OpStrDel extends AbstractOp<'str_del'> {
   public toJson(): OperationStrDel {
     if (typeof this.str === 'string') {
       return {
-        op: this.op,
+        op: 'str_del',
         path: formatJsonPointer(this.path),
         pos: this.pos,
         str: this.str,
       };
     }
     return {
-      op: this.op,
+      op: 'str_del',
       path: formatJsonPointer(this.path),
       pos: this.pos,
       len: this.len,

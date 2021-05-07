@@ -9,7 +9,11 @@ import {CompactUndefinedOp} from '../compact';
  */
 export class OpUndefined extends AbstractPredicateOp<'undefined'> {
   constructor(path: Path) {
-    super('undefined', path);
+    super(path);
+  }
+
+  public op() {
+    return 'undefined' as 'undefined';
   }
 
   public test(doc: unknown) {
@@ -25,7 +29,7 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
 
   public toJson(): OperationUndefined {
     const op: OperationUndefined = {
-      op: this.op,
+      op: 'undefined',
       path: formatJsonPointer(this.path),
     };
     return op;

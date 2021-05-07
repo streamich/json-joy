@@ -9,7 +9,11 @@ import {CompactTestStringOp} from '../compact';
  */
 export class OpTestString extends AbstractPredicateOp<'test_string'> {
   constructor(path: Path, public readonly pos: number, public readonly str: string, public readonly not: boolean) {
-    super('test_string', path);
+    super(path);
+  }
+
+  public op() {
+    return 'test_string' as 'test_string';
   }
 
   public test(doc: unknown): boolean {
@@ -24,7 +28,7 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
 
   public toJson(): OperationTestString {
     const op: OperationTestString = {
-      op: this.op,
+      op: 'test_string',
       path: formatJsonPointer(this.path),
       pos: this.pos,
       str: this.str,

@@ -11,7 +11,11 @@ import {CompactMoveOp} from '../compact';
  */
 export class OpMove extends AbstractOp<'move'> {
   constructor(path: Path, public readonly from: Path) {
-    super('move', path);
+    super(path);
+  }
+
+  public op() {
+    return 'move' as 'move';
   }
 
   public apply(doc: unknown) {
@@ -22,7 +26,7 @@ export class OpMove extends AbstractOp<'move'> {
 
   public toJson(): OperationMove {
     return {
-      op: this.op,
+      op: 'move',
       path: formatJsonPointer(this.path),
       from: formatJsonPointer(this.from),
     };

@@ -9,7 +9,11 @@ import {CompactDefinedOp} from '../compact';
  */
 export class OpDefined extends AbstractPredicateOp<'defined'> {
   constructor(path: Path) {
-    super('defined', path);
+    super(path);
+  }
+
+  public op() {
+    return 'defined' as 'defined';
   }
 
   public test(doc: unknown) {
@@ -20,7 +24,7 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
 
   public toJson(): OperationDefined {
     const op: OperationDefined = {
-      op: this.op,
+      op: 'defined',
       path: formatJsonPointer(this.path),
     };
     return op;

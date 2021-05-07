@@ -9,7 +9,11 @@ import {CompactAddOp} from '../compact';
  */
 export class OpAdd extends AbstractOp<'add'> {
   constructor(path: Path, public readonly value: unknown) {
-    super('add', path);
+    super(path);
+  }
+
+  public op() {
+    return 'add' as 'add';
   }
 
   public apply(doc: unknown) {
@@ -28,7 +32,7 @@ export class OpAdd extends AbstractOp<'add'> {
 
   public toJson(): OperationAdd {
     return {
-      op: this.op,
+      op: 'add',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

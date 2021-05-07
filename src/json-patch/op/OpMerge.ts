@@ -10,7 +10,11 @@ import {CompactMergeOp} from '../compact';
  */
 export class OpMerge extends AbstractOp<'merge'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
-    super('merge', path);
+    super(path);
+  }
+
+  public op() {
+    return 'merge' as 'merge';
   }
 
   public apply(doc: unknown) {
@@ -38,7 +42,7 @@ export class OpMerge extends AbstractOp<'merge'> {
 
   public toJson(): OperationMerge {
     const op: OperationMerge = {
-      op: this.op,
+      op: 'merge',
       path: formatJsonPointer(this.path),
       pos: this.pos,
     };

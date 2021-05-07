@@ -10,7 +10,11 @@ const isEqual = require('fast-deep-equal');
  */
 export class OpIn extends AbstractPredicateOp<'in'> {
   constructor(path: Path, public readonly value: unknown[]) {
-    super('in', path);
+    super(path);
+  }
+
+  public op() {
+    return 'in' as 'in';
   }
 
   public test(doc: unknown) {
@@ -21,7 +25,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
 
   public toJson(): OperationIn {
     const op: OperationIn = {
-      op: this.op,
+      op: 'in',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

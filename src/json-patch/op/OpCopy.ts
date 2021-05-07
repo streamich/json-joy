@@ -1,17 +1,21 @@
+import type {CompactCopyOp} from '../compact';
 import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '../../json-pointer';
 import {OpAdd} from './OpAdd';
 import {deepClone} from '../util';
 import {OPCODE} from '../constants';
-import {CompactCopyOp} from '../compact';
 
 /**
  * @category JSON Patch
  */
 export class OpCopy extends AbstractOp<'copy'> {
   constructor(path: Path, public readonly from: Path) {
-    super('copy', path);
+    super(path);
+  }
+
+  public op() {
+    return 'copy' as 'copy';
   }
 
   public apply(doc: unknown) {
@@ -23,7 +27,7 @@ export class OpCopy extends AbstractOp<'copy'> {
 
   public toJson(): OperationCopy {
     return {
-      op: this.op,
+      op: 'copy',
       path: formatJsonPointer(this.path),
       from: formatJsonPointer(this.from),
     };

@@ -1,8 +1,8 @@
+import type {CompactContainsOp} from '../compact';
+import type {OperationContains} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationContains} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import type {CompactContainsOp} from '../compact';
 
 /**
  * @category JSON Predicate
@@ -10,7 +10,11 @@ import type {CompactContainsOp} from '../compact';
 export class OpContains extends AbstractPredicateOp<'contains'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
-    super('contains', path);
+    super(path);
+  }
+
+  public op() {
+    return 'contains' as 'contains';
   }
 
   public test(doc: unknown): boolean {
@@ -24,7 +28,7 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
 
   public toJson(): OperationContains {
     const op: OperationContains = {
-      op: this.op,
+      op: 'contains',
       path: formatJsonPointer(this.path),
       value: this.value,
     };

@@ -10,7 +10,11 @@ import {CompactAndOp} from '../compact';
  */
 export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
-    super('and', path, ops);
+    super(path, ops);
+  }
+
+  public op() {
+    return 'and' as 'and';
   }
 
   public test(doc: unknown): boolean {
@@ -20,7 +24,7 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
 
   public toJson(): OperationAnd {
     const op: OperationAnd = {
-      op: this.op,
+      op: 'and',
       path: formatJsonPointer(this.path),
       apply: this.ops.map((op) => op.toJson()) as PredicateOperation[],
     };

@@ -11,7 +11,11 @@ const {isArray} = Array;
  */
 export class OpTestType extends AbstractPredicateOp<'test_type'> {
   constructor(path: Path, public readonly type: JsonPatchTypes[]) {
-    super('test_type', path);
+    super(path);
+  }
+
+  public op() {
+    return 'test_type' as 'test_type';
   }
 
   public test(doc: unknown): boolean {
@@ -25,7 +29,7 @@ export class OpTestType extends AbstractPredicateOp<'test_type'> {
 
   public toJson(): OperationTestType {
     const op: OperationTestType = {
-      op: this.op,
+      op: 'test_type',
       path: formatJsonPointer(this.path),
       type: this.type,
     };
