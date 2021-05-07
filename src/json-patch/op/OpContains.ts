@@ -37,7 +37,7 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
     return op;
   }
 
-  public toPacked(): CompactContainsOp {
+  public toCompact(parent?: AbstractOp): CompactContainsOp {
     const compact: CompactContainsOp = [OPCODE.contains, this.path, this.value];
     if (this.ignore_case) compact.push(1);
     return compact;

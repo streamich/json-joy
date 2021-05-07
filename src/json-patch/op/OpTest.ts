@@ -36,7 +36,7 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return op;
   }
 
-  public toPacked(): CompactTestOp {
+  public toCompact(parent?: AbstractOp): CompactTestOp {
     return this.not
       ? [OPCODE.test, this.path, this.value, 1]
       : [OPCODE.test, this.path, this.value];

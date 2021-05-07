@@ -36,7 +36,7 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
     return op;
   }
 
-  public toPacked(): CompactUndefinedOp {
+  public toCompact(parent?: AbstractOp): CompactUndefinedOp {
     return [OPCODE.undefined, this.path];
   }
 }

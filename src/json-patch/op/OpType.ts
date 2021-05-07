@@ -37,7 +37,7 @@ export class OpType extends AbstractPredicateOp<'type'> {
     return op;
   }
 
-  public toPacked(): CompactTypeOp {
+  public toCompact(parent?: AbstractOp): CompactTypeOp {
     return [OPCODE.type, this.path, this.value];
   }
 }

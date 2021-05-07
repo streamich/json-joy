@@ -32,7 +32,7 @@ export class OpMove extends AbstractOp<'move'> {
     };
   }
 
-  public toPacked(): CompactMoveOp {
+  public toCompact(parent?: AbstractOp): CompactMoveOp {
     return [OPCODE.move, this.path, this.from];
   }
 }

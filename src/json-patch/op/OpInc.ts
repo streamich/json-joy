@@ -33,7 +33,7 @@ export class OpInc extends AbstractOp<'inc'> {
     return op;
   }
 
-  public toPacked(): CompactIncOp {
+  public toCompact(parent?: AbstractOp): CompactIncOp {
     return [OPCODE.inc, this.path, this.inc];
   }
 }

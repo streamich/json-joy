@@ -98,7 +98,7 @@ export class OpSplit extends AbstractOp<'split'> {
     return op;
   }
 
-  public toPacked(): CompactSplitOp {
+  public toCompact(parent?: AbstractOp): CompactSplitOp {
     const packed: CompactSplitOp = [OPCODE.split, this.path, this.pos];
     if (this.props) packed.push(this.props as any);
     return packed;

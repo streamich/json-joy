@@ -35,7 +35,7 @@ export class OpRemove extends AbstractOp<'remove'> {
     return json;
   }
 
-  public toPacked(): CompactRemoveOp {
+  public toCompact(parent?: AbstractOp): CompactRemoveOp {
     return this.oldValue !== undefined
       ? [OPCODE.remove, this.path] as CompactRemoveOp
       : [OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp;

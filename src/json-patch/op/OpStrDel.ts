@@ -58,7 +58,7 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     };
   }
 
-  public toPacked(): CompactStrDelOp {
+  public toCompact(parent?: AbstractOp): CompactStrDelOp {
     return typeof this.str === 'string'
       ? [OPCODE.str_del, this.path, this.pos, this.str]
       : [OPCODE.str_del, this.path, this.pos, undefined, this.len];

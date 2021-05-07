@@ -32,7 +32,7 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
     return op;
   }
 
-  public toPacked(): CompactOrOp {
-    return [OPCODE.or, this.path, this.ops.map((op) => op.toPacked())];
+  public toCompact(parent?: AbstractOp): CompactOrOp {
+    return [OPCODE.or, this.path, this.ops.map((op) => op.toCompact())];
   }
 }

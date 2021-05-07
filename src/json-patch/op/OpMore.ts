@@ -33,7 +33,7 @@ export class OpMore extends AbstractPredicateOp<'more'> {
     return op;
   }
 
-  public toPacked(): CompactMoreOp {
+  public toCompact(parent?: AbstractOp): CompactMoreOp {
     return [OPCODE.more, this.path, this.value];
   }
 }

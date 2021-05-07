@@ -42,7 +42,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return op;
   }
 
-  public toPacked(): CompactStrInsOp {
+  public toCompact(parent?: AbstractOp): CompactStrInsOp {
     return [OPCODE.str_ins, this.path, this.pos, this.str];
   }
 }

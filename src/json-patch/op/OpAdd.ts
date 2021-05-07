@@ -38,7 +38,7 @@ export class OpAdd extends AbstractOp<'add'> {
     };
   }
 
-  public toPacked(): CompactAddOp {
+  public toCompact(parent?: AbstractOp): CompactAddOp {
     return [OPCODE.add, this.path, this.value];
   }
 }

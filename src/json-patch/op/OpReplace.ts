@@ -35,7 +35,7 @@ export class OpReplace extends AbstractOp<'replace'> {
     return json;
   }
 
-  public toPacked(): CompactReplaceOp {
+  public toCompact(parent?: AbstractOp): CompactReplaceOp {
     return this.oldValue == undefined
       ? [OPCODE.replace, this.path, this.value]
       : [OPCODE.replace, this.path, this.value, this.oldValue];

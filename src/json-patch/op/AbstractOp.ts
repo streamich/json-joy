@@ -11,5 +11,5 @@ export abstract class AbstractOp<O extends OpType = OpType> {
   abstract op(): O;
   abstract apply(doc: unknown): {doc: unknown; old?: unknown};
   abstract toJson(parent?: AbstractOp): Operation;
-  abstract toPacked(): PackedOp;
+  abstract toCompact(parent?: AbstractOp): PackedOp;
 }

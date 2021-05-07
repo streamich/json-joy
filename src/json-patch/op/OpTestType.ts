@@ -37,7 +37,7 @@ export class OpTestType extends AbstractPredicateOp<'test_type'> {
     return op;
   }
 
-  public toPacked(): CompactTestTypeOp {
+  public toCompact(parent?: AbstractOp): CompactTestTypeOp {
     return [OPCODE.test_type, this.path, this.type];
   }
 }

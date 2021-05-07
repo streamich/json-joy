@@ -31,7 +31,7 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
     return op;
   }
 
-  public toPacked(): CompactDefinedOp {
+  public toCompact(parent?: AbstractOp): CompactDefinedOp {
     const packed: CompactDefinedOp = [OPCODE.defined, this.path];
     return packed;
   }

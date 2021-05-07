@@ -31,7 +31,7 @@ export class OpFlip extends AbstractOp<'flip'> {
     return op;
   }
 
-  public toPacked(): CompactFlipOp {
+  public toCompact(parent?: AbstractOp): CompactFlipOp {
     return [OPCODE.flip, this.path];
   }
 }

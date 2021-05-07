@@ -33,7 +33,7 @@ export class OpCopy extends AbstractOp<'copy'> {
     };
   }
 
-  public toPacked(): CompactCopyOp {
+  public toCompact(parent?: AbstractOp): CompactCopyOp {
     return [OPCODE.copy, this.path, this.from];
   }
 }

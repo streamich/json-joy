@@ -57,7 +57,7 @@ export class OpExtend extends AbstractOp<'extend'> {
     return op;
   }
 
-  public toPacked(): CompactExtendOp {
+  public toCompact(parent?: AbstractOp): CompactExtendOp {
     const packed: CompactExtendOp = [OPCODE.extend, this.path, this.props];
     if (this.deleteNull) packed.push(1);
     return packed;

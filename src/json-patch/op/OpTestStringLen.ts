@@ -35,7 +35,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     return op;
   }
 
-  public toPacked(): CompactTestStringLenOp {
+  public toCompact(parent?: AbstractOp): CompactTestStringLenOp {
     return this.not
       ? [OPCODE.test_string_len, this.path, this.len, 1]
       : [OPCODE.test_string_len, this.path, this.len];

@@ -50,7 +50,7 @@ export class OpMerge extends AbstractOp<'merge'> {
     return op;
   }
 
-  public toPacked(): CompactMergeOp {
+  public toCompact(parent?: AbstractOp): CompactMergeOp {
     const packed: CompactMergeOp = [OPCODE.merge, this.path, this.pos];
     if (this.props) packed.push(this.props as any);
     return packed;

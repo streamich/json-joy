@@ -33,7 +33,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return op;
   }
 
-  public toPacked(): CompactInOp {
+  public toCompact(parent?: AbstractOp): CompactInOp {
     return [OPCODE.in, this.path, this.value];
   }
 }
