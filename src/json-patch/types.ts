@@ -1,56 +1,5 @@
 import {Path} from '../json-pointer';
-
-export type OpType =
-  // JSON Patch, RFC 6902 operations.
-  // See: https://tools.ietf.org/html/rfc6902
-  | 'add'
-  | 'remove'
-  | 'replace'
-  | 'copy'
-  | 'move'
-  // Extended operations.
-  | 'flip'
-  | 'inc'
-  // Operations needed for text collaboration.
-  | 'str_ins'
-  | 'str_del'
-  // Operations needed for Slate.js.
-  | 'split'
-  | 'merge'
-  | 'extend'
-  | PredicateOpType;
-
-/**
- * This operation could "box" a value into and array container, e.g. x -> [x].
- * Or box into an object container, e.g. x -> {value: x, ...props}.
- * This operation could also be called "wrap".
- */
-// | 'box'
-
-export type PredicateOpType =
-  // JSON Patch, RFC 6902 operations.
-  // See: https://tools.ietf.org/html/rfc6902
-  | 'test'
-  // JSON Predicate, draft-snell-json-test-01 operations.
-  // See: https://tools.ietf.org/id/draft-snell-json-test-01.html
-  | 'contains'
-  | 'defined'
-  | 'ends'
-  | 'in'
-  | 'less'
-  | 'matches'
-  | 'more'
-  | 'starts'
-  | 'test'
-  | 'type'
-  | 'undefined'
-  | SecondOrderPredicateOpType
-  // Extended "test" operations.
-  | 'test_type'
-  | 'test_string'
-  | 'test_string_len';
-
-export type SecondOrderPredicateOpType = 'and' | 'not' | 'or';
+import {OpType} from './opcodes';
 
 export type JsTypes = 'string' | 'number' | 'boolean' | 'object';
 export type JsonPatchTypes = JsTypes | 'integer' | 'array' | 'null';

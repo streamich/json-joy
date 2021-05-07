@@ -1,4 +1,4 @@
-import {OpType} from '../types';
+import type {OpType} from '../opcodes';
 import {AbstractOp} from './AbstractOp';
 
 export abstract class AbstractPredicateOp<O extends OpType = OpType> extends AbstractOp<O> {

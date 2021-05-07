@@ -11,6 +11,7 @@
  * @module
  */
 
+export * from './opcodes';
 export * from './types';
 export * from './applyPatch';
 export * from './validate';
