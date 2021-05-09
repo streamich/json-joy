@@ -1,9 +1,10 @@
+import type {CompactContainsOp} from '../codec/compact/types';
+import type {OperationContains} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationContains} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedContainsOp = [OPCODE.contains, string | Path, {v: string; i?: 1}];
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
@@ -11,7 +12,11 @@ export type PackedContainsOp = [OPCODE.contains, string | Path, {v: string; i?: 
 export class OpContains extends AbstractPredicateOp<'contains'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
-    super('contains', path);
+    super(path);
+  }
+
+  public op() {
+    return 'contains' as 'contains';
   }
 
   public test(doc: unknown): boolean {
@@ -23,19 +28,28 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
     return test;
   }
 
-  public toJson(): OperationContains {
+  public toJson(parent?: AbstractOp): OperationContains {
     const op: OperationContains = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'contains',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     if (this.ignore_case) (op as any).ignore_case = this.ignore_case;
     return op;
   }
 
-  public toPacked(): PackedContainsOp {
-    const packed: PackedContainsOp = [OPCODE.contains, this.path, {v: this.value}];
-    if (this.ignore_case) packed[2].i = 1;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactContainsOp {
+    return this.ignore_case
+      ? [OPCODE.contains, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
+      : [OPCODE.contains, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const ignoreCase = this.ignore_case;
+    encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
+    encoder.u8(OPCODE.contains);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeString(this.value);
+    if (ignoreCase) encoder.u8(1);
   }
 }

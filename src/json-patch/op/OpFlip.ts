@@ -1,19 +1,20 @@
+import type {CompactFlipOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedFlipOp = [OPCODE.flip, string | Path];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
  */
 export class OpFlip extends AbstractOp<'flip'> {
   constructor(path: Path) {
-    super('flip', path);
+    super(path);
+  }
+
+  public op() {
+    return 'flip' as 'flip';
   }
 
   public apply(doc: unknown) {
@@ -23,16 +24,21 @@ export class OpFlip extends AbstractOp<'flip'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationFlip {
+  public toJson(parent?: AbstractOp): OperationFlip {
     const op: OperationFlip = {
-      op: this.op,
+      op: 'flip',
       path: formatJsonPointer(this.path),
     };
     return op;
   }
 
-  public toPacked(): PackedFlipOp {
-    const packed: PackedFlipOp = [OPCODE.flip, this.path];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactFlipOp {
+    return [OPCODE.flip, this.path];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(2);
+    encoder.u8(OPCODE.flip);
+    encoder.encodeArray(this.path as unknown[]);
   }
 }

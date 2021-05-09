@@ -1,19 +1,20 @@
+import type {CompactStrInsOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrIns} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedStrInsOp = [OPCODE.str_ins, string | Path, {i: number; s: string}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
  */
 export class OpStrIns extends AbstractOp<'str_ins'> {
   constructor(path: Path, public readonly pos: number, public readonly str: string) {
-    super('str_ins', path);
+    super(path);
+  }
+
+  public op() {
+    return 'str_ins' as 'str_ins';
   }
 
   public apply(doc: unknown) {
@@ -32,9 +33,9 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationStrIns {
+  public toJson(parent?: AbstractOp): OperationStrIns {
     const op: OperationStrIns = {
-      op: this.op,
+      op: 'str_ins',
       path: formatJsonPointer(this.path),
       pos: this.pos,
       str: this.str,
@@ -42,8 +43,15 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return op;
   }
 
-  public toPacked(): PackedStrInsOp {
-    const packed: PackedStrInsOp = [OPCODE.str_ins, this.path, {i: this.pos, s: this.str}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactStrInsOp {
+    return [OPCODE.str_ins, this.path, this.pos, this.str];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(4);
+    encoder.u8(OPCODE.str_ins);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    encoder.encodeString(this.str);
   }
 }

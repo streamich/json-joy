@@ -1,19 +1,21 @@
+import type {CompactUndefinedOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationUndefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedUndefinedOp = [OPCODE.undefined, string | Path];
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
  */
 export class OpUndefined extends AbstractPredicateOp<'undefined'> {
   constructor(path: Path) {
-    super('undefined', path);
+    super(path);
+  }
+
+  public op() {
+    return 'undefined' as 'undefined';
   }
 
   public test(doc: unknown) {
@@ -27,16 +29,21 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
     }
   }
 
-  public toJson(): OperationUndefined {
+  public toJson(parent?: AbstractOp): OperationUndefined {
     const op: OperationUndefined = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'undefined',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
     };
     return op;
   }
 
-  public toPacked(): PackedUndefinedOp {
-    const packed: PackedUndefinedOp = [OPCODE.undefined, this.path];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactUndefinedOp {
+    return [OPCODE.undefined, parent ? this.path.slice(parent.path.length) : this.path];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(2);
+    encoder.u8(OPCODE.undefined);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
   }
 }

@@ -1,16 +1,20 @@
+import type {CompactRemoveOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationRemove} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedRemoveOp = [OPCODE.remove, string | Path] | [OPCODE.remove, string | Path, {o: unknown}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch
  */
 export class OpRemove extends AbstractOp<'remove'> {
   constructor(path: Path, public readonly oldValue: unknown) {
-    super('remove', path);
+    super(path);
+  }
+
+  public op() {
+    return 'remove' as 'remove';
   }
 
   public apply(doc: unknown) {
@@ -23,18 +27,26 @@ export class OpRemove extends AbstractOp<'remove'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationRemove {
+  public toJson(parent?: AbstractOp): OperationRemove {
     const json: OperationRemove = {
-      op: this.op,
+      op: 'remove',
       path: formatJsonPointer(this.path),
     };
     if (this.oldValue !== undefined) (json as any).oldValue = this.oldValue;
     return json;
   }
 
-  public toPacked(): PackedRemoveOp {
-    const packed: PackedRemoveOp =
-      this.oldValue !== undefined ? [OPCODE.remove, this.path] : [OPCODE.remove, this.path, {o: this.oldValue}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactRemoveOp {
+    return this.oldValue === undefined
+      ? [OPCODE.remove, this.path] as CompactRemoveOp
+      : [OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp;
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const hasOldValue = this.oldValue !== undefined
+    encoder.encodeArrayHeader(hasOldValue ? 3 : 2);
+    encoder.u8(OPCODE.remove);
+    encoder.encodeArray(this.path as unknown[]);
+    if (hasOldValue) encoder.encodeAny(this.oldValue);
   }
 }

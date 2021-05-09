@@ -15,7 +15,7 @@ export const transform = (accepted: readonly Op[], proposed: readonly Op[]): rea
   const length = accepted.length;
   for (let i = 0; i < length; i++) {
     const against = accepted[i];
-    const transformFunction = (xforms as any)[against.op];
+    const transformFunction = (xforms as any)[against.op()];
     if (transformFunction) {
       const transformed: Op[] = [];
       for (const op of proposed) {

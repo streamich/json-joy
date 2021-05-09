@@ -1,12 +1,9 @@
+import type {CompactStrDelOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrDel} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedStrDelOp = [OPCODE.str_del, string | Path, {i: number; s?: string; l?: number}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
@@ -18,7 +15,11 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     public readonly str: string | undefined,
     public readonly len: number | undefined,
   ) {
-    super('str_del', path);
+    super(path);
+  }
+
+  public op() {
+    return 'str_del' as 'str_del';
   }
 
   public deleteLength(): number {
@@ -41,28 +42,40 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationStrDel {
+  public toJson(parent?: AbstractOp): OperationStrDel {
     if (typeof this.str === 'string') {
       return {
-        op: this.op,
+        op: 'str_del',
         path: formatJsonPointer(this.path),
         pos: this.pos,
         str: this.str,
       };
     }
     return {
-      op: this.op,
+      op: 'str_del',
       path: formatJsonPointer(this.path),
       pos: this.pos,
       len: this.len,
     };
   }
 
-  public toPacked(): PackedStrDelOp {
-    const packed: PackedStrDelOp =
-      typeof this.str === 'string'
-        ? [OPCODE.str_del, this.path, {i: this.pos, s: this.str}]
-        : [OPCODE.str_del, this.path, {i: this.pos, l: this.len}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactStrDelOp {
+    return typeof this.str === 'string'
+      ? [OPCODE.str_del, this.path, this.pos, this.str]
+      : [OPCODE.str_del, this.path, this.pos, 0, this.len] as CompactStrDelOp;
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const hasStr = typeof this.str === 'string';
+    encoder.encodeArrayHeader(hasStr ? 4 : 5);
+    encoder.u8(OPCODE.str_del);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    if (hasStr) {
+      encoder.encodeString(this.str as string);
+    } else {
+      encoder.u8(0);
+      encoder.encodeNumber(this.len!);
+    }
   }
 }

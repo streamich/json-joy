@@ -1,21 +1,22 @@
+import type {CompactOrOp} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationOr, PredicateOperation} from '../types';
-import {OPCODE} from './constants';
-import {PackedOp} from './AbstractOp';
+import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
-
-/**
- * @category JSON Predicate
- */
-export type PackedOrOp = [OPCODE.or, string | Path, {o: PackedOp[]}];
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
  */
 export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
   constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
-    super('or', path, ops);
+    super(path, ops);
+  }
+
+  public op() {
+    return 'or' as 'or';
   }
 
   public test(doc: unknown): boolean {
@@ -23,17 +24,25 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
     return false;
   }
 
-  public toJson(): OperationOr {
+  public toJson(parent?: AbstractOp): OperationOr {
     const op: OperationOr = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
-      apply: this.ops.map((op) => op.toJson()) as PredicateOperation[],
+      op: 'or',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
+      apply: this.ops.map((op) => op.toJson(this)) as PredicateOperation[],
     };
     return op;
   }
 
-  public toPacked(): PackedOrOp {
-    const packed: PackedOrOp = [OPCODE.or, this.path, {o: this.ops.map((op) => op.toPacked())}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactOrOp {
+    return [OPCODE.or, parent ? this.path.slice(parent.path.length) : this.path, this.ops.map((op) => op.toCompact(this))];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.or);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    const length = this.ops.length;
+    encoder.encodeArrayHeader(length);
+    for (let i = 0; i < length; i++) this.ops[i].encode(encoder, this);
   }
 }

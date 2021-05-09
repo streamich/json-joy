@@ -1,6 +1,7 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
-import {Op, operationToOp} from '../op';
+import {Op} from '../op';
+import {operationToOp} from '../codec/json';
 
 export interface OpResult {
   doc: unknown;

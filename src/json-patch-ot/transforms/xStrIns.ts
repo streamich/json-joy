@@ -1,10 +1,11 @@
-import {Op, operationToOp, OpStrIns} from '../../json-patch/op';
+import {operationToOp} from '../../json-patch/codec/json';
+import {Op, OpStrDel, OpStrIns} from '../../json-patch/op';
 
 export const xStrIns = (ins: OpStrIns, op: Op): null | Op | Op[] => {
-  if (op.op === 'str_ins') {
+  if (op instanceof OpStrIns) {
     if (ins.pos > op.pos) return op;
     return operationToOp({...op.toJson(), pos: op.pos + ins.str.length});
-  } else if (op.op === 'str_del') {
+  } else if (op instanceof OpStrDel) {
     const del = op;
     if (del.pos < ins.pos) {
       const deleteLength: number = typeof del.str === 'string' ? del.str.length : del.len!;

@@ -1,12 +1,10 @@
+import type {CompactEndsOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationEnds} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedEndsdOp = [OPCODE.ends, string | Path, {v: string; i?: 1}];
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
@@ -14,7 +12,11 @@ export type PackedEndsdOp = [OPCODE.ends, string | Path, {v: string; i?: 1}];
 export class OpEnds extends AbstractPredicateOp<'ends'> {
   // tslint:disable-next-line variable-name
   constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
-    super('ends', path);
+    super(path);
+  }
+
+  public op() {
+    return 'ends' as 'ends';
   }
 
   public test(doc: unknown): boolean {
@@ -26,19 +28,28 @@ export class OpEnds extends AbstractPredicateOp<'ends'> {
     return test;
   }
 
-  public toJson(): OperationEnds {
+  public toJson(parent?: AbstractOp): OperationEnds {
     const op: OperationEnds = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'ends',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     if (this.ignore_case) (op as any).ignore_case = this.ignore_case;
     return op;
   }
 
-  public toPacked(): PackedEndsdOp {
-    const packed: PackedEndsdOp = [OPCODE.ends, this.path, {v: this.value}];
-    if (this.ignore_case) packed[2].i = 1;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactEndsOp {
+    return this.ignore_case
+      ? [OPCODE.ends, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
+      : [OPCODE.ends, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const ignoreCase = this.ignore_case;
+    encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
+    encoder.u8(OPCODE.ends);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeString(this.value);
+    if (ignoreCase) encoder.u8(1);
   }
 }

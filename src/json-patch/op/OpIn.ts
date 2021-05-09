@@ -1,20 +1,22 @@
+import type {CompactInOp} from '../codec/compact/types';
 import {OperationIn} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 const isEqual = require('fast-deep-equal');
-
-/**
- * @category JSON Predicate
- */
-export type PackedInOp = [OPCODE.in, string | Path, {v: unknown[]}];
 
 /**
  * @category JSON Predicate
  */
 export class OpIn extends AbstractPredicateOp<'in'> {
   constructor(path: Path, public readonly value: unknown[]) {
-    super('in', path);
+    super(path);
+  }
+
+  public op() {
+    return 'in' as 'in';
   }
 
   public test(doc: unknown) {
@@ -23,17 +25,23 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return false;
   }
 
-  public toJson(): OperationIn {
+  public toJson(parent?: AbstractOp): OperationIn {
     const op: OperationIn = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'in',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     return op;
   }
 
-  public toPacked(): PackedInOp {
-    const packed: PackedInOp = [OPCODE.in, this.path, {v: this.value}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactInOp {
+    return [OPCODE.in, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.in);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(this.value);
   }
 }

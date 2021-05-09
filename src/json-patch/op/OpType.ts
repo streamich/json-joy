@@ -1,21 +1,23 @@
+import type {CompactTypeOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationType, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 const {isArray} = Array;
 
 /**
  * @category JSON Predicate
  */
-export type PackedTypeOp = [OPCODE.type, string | Path, {v: JsonPatchTypes}];
-
-/**
- * @category JSON Predicate
- */
 export class OpType extends AbstractPredicateOp<'type'> {
   constructor(path: Path, public readonly value: JsonPatchTypes) {
-    super('type', path);
+    super(path);
+  }
+
+  public op() {
+    return 'type' as 'type';
   }
 
   public test(doc: unknown): boolean {
@@ -27,17 +29,23 @@ export class OpType extends AbstractPredicateOp<'type'> {
     return false;
   }
 
-  public toJson(): OperationType {
+  public toJson(parent?: AbstractOp): OperationType {
     const op: OperationType = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'type',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     return op;
   }
 
-  public toPacked(): PackedTypeOp {
-    const packed: PackedTypeOp = [OPCODE.type, this.path, {v: this.value}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactTypeOp {
+    return [OPCODE.type, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.type);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeString(this.value);
   }
 }

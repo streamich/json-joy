@@ -1,18 +1,20 @@
-/* tslint:disable no-string-throw */
-
+import type {CompactAddOp} from '../codec/compact/types';
+import type {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedAddOp = [OPCODE.add, string | Path, {v: unknown}];
+import {OPCODE} from '../constants';
 
 /**
  * @category JSON Patch
  */
 export class OpAdd extends AbstractOp<'add'> {
   constructor(path: Path, public readonly value: unknown) {
-    super('add', path);
+    super(path);
+  }
+
+  public op() {
+    return 'add' as 'add';
   }
 
   public apply(doc: unknown) {
@@ -29,15 +31,22 @@ export class OpAdd extends AbstractOp<'add'> {
     return {doc, old: val};
   }
 
-  public toJson(): OperationAdd {
+  public toJson(parent?: AbstractOp): OperationAdd {
     return {
-      op: this.op,
+      op: 'add',
       path: formatJsonPointer(this.path),
       value: this.value,
     };
   }
 
-  public toPacked(): PackedAddOp {
-    return [OPCODE.add, this.path, {v: this.value}];
+  public toCompact(parent?: AbstractOp): CompactAddOp {
+    return [OPCODE.add, this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.add);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeAny(this.value);
   }
 }

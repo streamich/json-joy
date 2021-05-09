@@ -1,19 +1,21 @@
+import type {CompactTestStringOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestString} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedTestStringOp = [OPCODE.test_string, string | Path, {i: number; s: string; n?: 1}];
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
  */
 export class OpTestString extends AbstractPredicateOp<'test_string'> {
   constructor(path: Path, public readonly pos: number, public readonly str: string, public readonly not: boolean) {
-    super('test_string', path);
+    super(path);
+  }
+
+  public op() {
+    return 'test_string' as 'test_string';
   }
 
   public test(doc: unknown): boolean {
@@ -26,10 +28,10 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     return this.not ? !test : test;
   }
 
-  public toJson(): OperationTestString {
+  public toJson(parent?: AbstractOp): OperationTestString {
     const op: OperationTestString = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'test_string',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       pos: this.pos,
       str: this.str,
     };
@@ -37,9 +39,19 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     return op;
   }
 
-  public toPacked(): PackedTestStringOp {
-    const packed: PackedTestStringOp = [OPCODE.test_string, this.path, {i: this.pos, s: this.str}];
-    if (this.not) packed[2].n = 1;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactTestStringOp {
+    const path = parent ? this.path.slice(parent.path.length) : this.path;
+    return this.not
+      ? [OPCODE.test_string, path, this.pos, this.str, 1]
+      : [OPCODE.test_string, path, this.pos, this.str];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.not ? 5 : 4);
+    encoder.u8(OPCODE.test_string);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    encoder.encodeString(this.str);
+    if (this.not) encoder.u8(1);
   }
 }

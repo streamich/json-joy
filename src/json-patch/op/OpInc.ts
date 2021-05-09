@@ -1,19 +1,20 @@
+import type {CompactIncOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationInc} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedIncOp = [OPCODE.inc, string | Path, {v: number}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
  */
 export class OpInc extends AbstractOp<'inc'> {
   constructor(path: Path, public readonly inc: number) {
-    super('inc', path);
+    super(path);
+  }
+
+  public op() {
+    return 'inc' as 'inc';
   }
 
   public apply(doc: unknown) {
@@ -24,17 +25,23 @@ export class OpInc extends AbstractOp<'inc'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationInc {
+  public toJson(parent?: AbstractOp): OperationInc {
     const op: OperationInc = {
-      op: this.op,
+      op: 'inc',
       path: formatJsonPointer(this.path),
       inc: this.inc,
     };
     return op;
   }
 
-  public toPacked(): PackedIncOp {
-    const packed: PackedIncOp = [OPCODE.inc, this.path, {v: this.inc}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactIncOp {
+    return [OPCODE.inc, this.path, this.inc];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.inc);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.inc);
   }
 }

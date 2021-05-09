@@ -1,7 +1,7 @@
 import {Op, OpStrDel, OpStrIns} from '../../json-patch/op';
 
 export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
-  if (op.op === 'str_ins') {
+  if (op instanceof OpStrIns) {
     const ins = op;
     if (ins.pos > del.pos) {
       const deleteLength = del.deleteLength();
@@ -10,7 +10,7 @@ export const xStrDel = (del: OpStrDel, op: Op): null | Op | Op[] => {
     return op;
   }
 
-  if (op.op === 'str_del') {
+  if (op instanceof OpStrDel) {
     const opLen = op.deleteLength();
     const delLen = del.deleteLength();
     const overlapLen1 = del.pos + delLen - op.pos;

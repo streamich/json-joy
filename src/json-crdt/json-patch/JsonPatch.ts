@@ -2,8 +2,9 @@ import type {Model} from '../model/Model';
 import type {Patch} from '../../json-crdt-patch/Patch';
 import type {Operation as JsonPatchOperation} from '../../json-patch';
 import {Draft} from '../../json-crdt-patch/Draft';
-import {Op, operationToOp} from '../../json-patch/op';
+import {Op} from '../../json-patch/op';
 import {JsonPatchDraft} from './JsonPatchDraft';
+import {decode} from '../../json-patch/codec/json';
 
 export class JsonPatch {
   constructor(public readonly model: Model) {}
@@ -19,7 +20,7 @@ export class JsonPatch {
   }
 
   public applyPatch(jsonPatch: JsonPatchOperation[]) {
-    const ops = jsonPatch.map(operationToOp);
+    const ops = decode(jsonPatch);
     const patch = this.createCrdtPatch(ops);
     this.model.clock.tick(patch.span());
     this.model.applyPatch(patch);

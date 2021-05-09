@@ -1,16 +1,17 @@
-import {Path} from '../../json-pointer';
-import {Operation, OpType} from '../types';
-import {OPCODE} from './constants';
-
-// [opcode, path, extra options]
-export type PackedOp = [OPCODE, string | Path] | [OPCODE, string | Path, object];
+import type {CompactOpBase} from '../codec/compact/types';
+import type {Path} from '../../json-pointer';
+import type {OpType} from '../opcodes';
+import type {Operation} from '../types';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 export abstract class AbstractOp<O extends OpType = OpType> {
   public readonly from?: Path;
 
-  constructor(public readonly op: O, public readonly path: Path) {}
+  constructor(public readonly path: Path) {}
 
+  abstract op(): O;
   abstract apply(doc: unknown): {doc: unknown; old?: unknown};
-  abstract toJson(): Operation;
-  abstract toPacked(): PackedOp;
+  abstract toJson(parent?: AbstractOp): Operation;
+  abstract toCompact(parent?: AbstractOp): CompactOpBase;
+  abstract encode(encoder: IMessagePackEncoder, parent?: AbstractOp): void;
 }

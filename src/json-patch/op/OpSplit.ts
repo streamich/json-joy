@@ -1,13 +1,10 @@
+import type {CompactSplitOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedSplitOp = [OPCODE.split, string | Path, {i: number; p?: object}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 type Composable = string | number | SlateNode;
 
@@ -16,7 +13,11 @@ type Composable = string | number | SlateNode;
  */
 export class OpSplit extends AbstractOp<'split'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
-    super('split', path);
+    super(path);
+  }
+
+  public op() {
+    return 'split' as 'split';
   }
 
   public apply(doc: unknown) {
@@ -88,9 +89,9 @@ export class OpSplit extends AbstractOp<'split'> {
     } else return [node, node];
   }
 
-  public toJson(): OperationSplit {
+  public toJson(parent?: AbstractOp): OperationSplit {
     const op: OperationSplit = {
-      op: this.op,
+      op: 'split',
       path: formatJsonPointer(this.path),
       pos: this.pos,
     };
@@ -98,9 +99,17 @@ export class OpSplit extends AbstractOp<'split'> {
     return op;
   }
 
-  public toPacked(): PackedSplitOp {
-    const packed: PackedSplitOp = [OPCODE.split, this.path, {i: this.pos}];
-    if (this.props) packed[2].p = this.props;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactSplitOp {
+    return this.props
+      ? [OPCODE.split, this.path, this.pos, this.props]
+      : [OPCODE.split, this.path, this.pos];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.props ? 4 : 3);
+    encoder.u8(OPCODE.split);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    if (this.props) encoder.encodeObject(this.props as Record<string, unknown>);
   }
 }

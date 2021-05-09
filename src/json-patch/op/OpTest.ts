@@ -1,10 +1,11 @@
+import type {CompactTestOp} from '../codec/compact/types';
 import {OperationTest} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OPCODE} from './constants';
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 const isEqual = require('fast-deep-equal');
-
-export type PackedTestOp = [OPCODE.test, string | Path, {v: unknown; n?: 1}];
 
 /**
  * @category JSON Patch
@@ -12,7 +13,11 @@ export type PackedTestOp = [OPCODE.test, string | Path, {v: unknown; n?: 1}];
  */
 export class OpTest extends AbstractPredicateOp<'test'> {
   constructor(path: Path, public readonly value: unknown, public readonly not: boolean) {
-    super('test', path);
+    super(path);
+  }
+
+  public op() {
+    return 'test' as 'test';
   }
 
   public test(doc: unknown) {
@@ -22,19 +27,28 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return this.not ? !test : test;
   }
 
-  public toJson(): OperationTest {
+  public toJson(parent?: AbstractOp): OperationTest {
     const op: OperationTest = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'test',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     if (this.not) (op as any).not = this.not;
     return op;
   }
 
-  public toPacked(): PackedTestOp {
-    const packed: PackedTestOp = [OPCODE.test, this.path, {v: this.value}];
-    if (this.not) packed[2].n = 1;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactTestOp {
+    const path = parent ? this.path.slice(parent.path.length) : this.path;
+    return this.not
+      ? [OPCODE.test, path, this.value, 1]
+      : [OPCODE.test, path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.not ? 4 : 3);
+    encoder.u8(OPCODE.test);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeAny(this.value);
+    if (this.not) encoder.u8(1);
   }
 }

@@ -1,19 +1,21 @@
+import type {CompactLessOp} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationLess} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Predicate
- */
-export type PackedLessOp = [OPCODE.less, string | Path, {v: number}];
+import {OPCODE} from '../constants';
+import {AbstractOp} from './AbstractOp';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Predicate
  */
 export class OpLess extends AbstractPredicateOp<'less'> {
   constructor(path: Path, public readonly value: number) {
-    super('less', path);
+    super(path);
+  }
+
+  public op() {
+    return 'less' as 'less';
   }
 
   public test(doc: unknown): boolean {
@@ -23,17 +25,23 @@ export class OpLess extends AbstractPredicateOp<'less'> {
     return test;
   }
 
-  public toJson(): OperationLess {
+  public toJson(parent?: AbstractOp): OperationLess {
     const op: OperationLess = {
-      op: this.op,
-      path: formatJsonPointer(this.path),
+      op: 'less',
+      path: formatJsonPointer(parent ? this.path.slice(parent.path.length) : this.path),
       value: this.value,
     };
     return op;
   }
 
-  public toPacked(): PackedLessOp {
-    const packed: PackedLessOp = [OPCODE.less, this.path, {v: this.value}];
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactLessOp {
+    return [OPCODE.less, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(3);
+    encoder.u8(OPCODE.less);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeNumber(this.value);
   }
 }

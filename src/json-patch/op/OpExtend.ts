@@ -1,12 +1,9 @@
+import type {CompactExtendOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedExtendOp = [OPCODE.extend, string | Path, {p: Record<string, unknown>; d?: 1}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 const {isArray} = Array;
 
@@ -15,7 +12,11 @@ const {isArray} = Array;
  */
 export class OpExtend extends AbstractOp<'extend'> {
   constructor(path: Path, public readonly props: Record<string, unknown>, public readonly deleteNull: boolean) {
-    super('extend', path);
+    super(path);
+  }
+
+  public op() {
+    return 'extend' as 'extend';
   }
 
   public apply(doc: unknown) {
@@ -47,9 +48,9 @@ export class OpExtend extends AbstractOp<'extend'> {
     return value;
   }
 
-  public toJson(): OperationExtend {
+  public toJson(parent?: AbstractOp): OperationExtend {
     const op: OperationExtend = {
-      op: this.op,
+      op: 'extend',
       path: formatJsonPointer(this.path),
       props: this.props,
     };
@@ -57,9 +58,18 @@ export class OpExtend extends AbstractOp<'extend'> {
     return op;
   }
 
-  public toPacked(): PackedExtendOp {
-    const packed: PackedExtendOp = [OPCODE.extend, this.path, {p: this.props}];
-    if (this.deleteNull) packed[2].d = 1;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactExtendOp {
+    return this.deleteNull
+      ? [OPCODE.extend, this.path, this.props, 1]
+      : [OPCODE.extend, this.path, this.props];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const {deleteNull} = this;
+    encoder.encodeArrayHeader(deleteNull ? 4 : 3);
+    encoder.u8(OPCODE.extend);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeObject(this.props);
+    if (deleteNull) encoder.u8(1);
   }
 }

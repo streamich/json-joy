@@ -1,16 +1,20 @@
+import type {CompactReplaceOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
-import {OPCODE} from './constants';
-
-export type PackedReplaceOp = [OPCODE.replace, Path | string, {v: unknown; o?: unknown}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch
  */
 export class OpReplace extends AbstractOp<'replace'> {
   constructor(path: Path, public readonly value: unknown, public readonly oldValue: unknown) {
-    super('replace', path);
+    super(path);
+  }
+
+  public op() {
+    return 'replace' as 'replace';
   }
 
   public apply(doc: unknown) {
@@ -22,9 +26,9 @@ export class OpReplace extends AbstractOp<'replace'> {
     return {doc, old: ref.val};
   }
 
-  public toJson(): OperationReplace {
+  public toJson(parent?: AbstractOp): OperationReplace {
     const json: OperationReplace = {
-      op: this.op,
+      op: 'replace',
       path: formatJsonPointer(this.path),
       value: this.value,
     };
@@ -32,9 +36,18 @@ export class OpReplace extends AbstractOp<'replace'> {
     return json;
   }
 
-  public toPacked(): PackedReplaceOp {
-    const packed: PackedReplaceOp = [OPCODE.replace, this.path, {v: this.value}];
-    if (this.oldValue !== undefined) packed[2].o = this.oldValue;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactReplaceOp {
+    return this.oldValue == undefined
+      ? [OPCODE.replace, this.path, this.value]
+      : [OPCODE.replace, this.path, this.value, this.oldValue];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    const hasOldValue = this.oldValue !== undefined
+    encoder.encodeArrayHeader(hasOldValue ? 4 : 3);
+    encoder.u8(OPCODE.replace);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeAny(this.value);
+    if (hasOldValue) encoder.encodeAny(this.oldValue);
   }
 }

@@ -1,20 +1,21 @@
+import type {CompactMergeOp} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
-import {OPCODE} from './constants';
-
-/**
- * @category JSON Patch Extended
- */
-export type PackedMergeOp = [OPCODE.merge, string | Path, {i: number; p?: object}];
+import {OPCODE} from '../constants';
+import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
 /**
  * @category JSON Patch Extended
  */
 export class OpMerge extends AbstractOp<'merge'> {
   constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
-    super('merge', path);
+    super(path);
+  }
+
+  public op() {
+    return 'merge' as 'merge';
   }
 
   public apply(doc: unknown) {
@@ -40,9 +41,9 @@ export class OpMerge extends AbstractOp<'merge'> {
     return [one, two];
   }
 
-  public toJson(): OperationMerge {
+  public toJson(parent?: AbstractOp): OperationMerge {
     const op: OperationMerge = {
-      op: this.op,
+      op: 'merge',
       path: formatJsonPointer(this.path),
       pos: this.pos,
     };
@@ -50,9 +51,17 @@ export class OpMerge extends AbstractOp<'merge'> {
     return op;
   }
 
-  public toPacked(): PackedMergeOp {
-    const packed: PackedMergeOp = [OPCODE.merge, this.path, {i: this.pos}];
-    if (this.props) packed[2].p = this.props;
-    return packed;
+  public toCompact(parent?: AbstractOp): CompactMergeOp {
+    return this.props
+      ? [OPCODE.merge, this.path, this.pos, this.props]
+      : [OPCODE.merge, this.path, this.pos];
+  }
+
+  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+    encoder.encodeArrayHeader(this.props ? 4 : 3);
+    encoder.u8(OPCODE.merge);
+    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeNumber(this.pos);
+    if (this.props) encoder.encodeAny(this.props);
   }
 }
