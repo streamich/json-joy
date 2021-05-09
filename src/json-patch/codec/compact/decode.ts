@@ -42,7 +42,7 @@ export const compactToOp = (op: CompactOp): Op => {
     case OPCODE.flip: return new OpFlip(toPath(op[1]));
     case OPCODE.inc: return new OpInc(toPath(op[1]), op[2]);
     case OPCODE.str_ins: return new OpStrIns(toPath(op[1]), op[2], op[3]);
-    case OPCODE.str_del: return new OpStrDel(toPath(op[1]), op[2], op[3], op[4]);
+    case OPCODE.str_del: return new OpStrDel(toPath(op[1]), op[2], op[3] || undefined, op[4]);
     case OPCODE.split: return new OpSplit(toPath(op[1]), op[2], op[3] || null);
     case OPCODE.merge: return new OpMerge(toPath(op[1]), op[2], op[3] || null);
     case OPCODE.extend: return new OpExtend(toPath(op[1]), op[2], !!op[3]);
