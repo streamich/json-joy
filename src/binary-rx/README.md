@@ -1,21 +1,25 @@
 # Binary-Rx
 
-Binary-Rx specifies a binary encoding format for JSON-Rx protocol. Semantically
-Binary-Rx is exactly the same as JSON-Rx, so it supports: (1) notifications,
+Binary-Rx specifies a binary encoding format for Reactive-RPC protocol. Semantically
+Binary-Rx is exactly the same as Reactive-RPC, so it supports: (1) notifications,
 (2) request/response; (3) subscriptions. Syntactically this documents specifies
-a binary encoding format for every JSON-Rx message type.
+a binary encoding format for every Reactive-RPC message type.
 
-| First byte | Message |
-|-|-|
-| `000?xxxx` | Notification message |
-| `001?xxxx` | Subscribe message |
-| `010?xxxx` | Data message |
-| `011?xxxx` | Complete message |
-| `10000000` | Un-subscribe message |
-| `101?xxxx` | Error message |
-| `11000000` to `11111111` | Reserved |
-| `10000001` to `10011111` | Reserved |
+| First byte (in binary)        | Message                                      | Has payload       |
+|-------------------------------|----------------------------------------------|-------------------|
+| `000?xxxx`                    | Request Data Message                         | Yes               |
+| `001?xxxx`                    | Request Complete Message                     | Maybe             |
+| `010?xxxx`                    | Request Error Message                        | Yes               |
+| `011?xxxx`                    | Notification Message                         | Maybe             |
+| `100?xxxx`                    | Response Data Message                        | Yes               |
+| `101?xxxx`                    | Response Complete Message                    | Maybe             |
+| `110?xxxx`                    | Response Error Message                       | Yes               |
+| `11100001` to `11111101`      | Reserved                                     |                   |
+| `11111110`                    | Request Un-subscribe Message                 | No                |
+| `11111111`                    | Response Un-subscribe Message                | No                |
 
+Where `?` is a bit flat which determines if the next byte should be read to
+determine the message length. And `x` are first 4 bits of the payload length.
 
 
 ## Message encoding
@@ -40,7 +44,7 @@ Variable number of bytes:
 ```
 
 
-### The notification message
+### Notification Message
 
 Notification message consists of:
 
@@ -50,7 +54,7 @@ Notification message consists of:
 
 ```
 +--------+........+--------+========+========+
-|000?xxxx|?xxxxxxx|  size  | method |  data  |
+|011?xxxx|?xxxxxxx|  size  | method |  data  |
 +--------+........+--------+========+========+
 ```
 
@@ -59,14 +63,35 @@ Notification message consists of:
 - `x` is a variable length unsigned integer that encodes `data` size.
 
 
-### The subscribe message
+### Request Data Message
 
-Subscribe message consists of:
+*Request Data Message* consists of:
 
-1. Subscription `id`, encoded as unsigned 16 bit integer. Preceded with a method
-  `size` byte, encoded as unsigned integer.
-2. Remote `method` name string, encoded as ASCII text.
-3. Optional binary payload `data`.
+1. Subscription `id`, encoded as unsigned 16 bit integer.
+2. Method name `size` byte, encoded as unsigned integer.
+3. Remote `method` name string, encoded as ASCII text.
+4. Optional binary payload `data`.
+
+```
++--------+........+--------+--------+--------+========+========+
+|000?xxxx|?xxxxxxx|        id       |  size  | method |  data  |
++--------+........+--------+--------+--------+========+========+
+```
+
+- `?` is a bit flag which determines if the following byte should be used for
+  decoding a variable length integer.
+- `x` is a variable length unsigned integer that encodes `data` size.
+- When `method` is known from subscription `id`, `size` is set to 0.
+
+
+### Request Complete Message
+
+*Request Complete Message* consists of:
+
+1. Subscription `id`, encoded as unsigned 16 bit integer.
+2. Method name `size` byte, encoded as unsigned integer.
+3. Remote `method` name string, encoded as ASCII text.
+4. Optional binary payload `data`.
 
 ```
 +--------+........+--------+--------+--------+========+========+
@@ -77,11 +102,12 @@ Subscribe message consists of:
 - `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
 - `x` is a variable length unsigned integer that encodes `data` size.
+- When `method` is known from subscription `id`, `size` is set to 0.
 
 
-### The data message
+### Request Error Message
 
-Data message consists of:
+*Request Error Message* consists of:
 
 1. Subscription `id`, encoded as unsigned 16 bit integer.
 2. Required binary payload `data`.
@@ -97,16 +123,29 @@ Data message consists of:
 - `x` is a variable length unsigned integer that encodes `data` size.
 
 
-### The complete message
+### Request Un-subscribe Message
 
-Complete message consists of:
+*Request Un-subscribe Message* message consists of:
 
 1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Optional binary payload `data`.
+
+```
++--------+--------+--------+
+|11111110|        id       |
++--------+--------+--------+
+```
+
+
+### Response Data Message
+
+*Response Data Message* consists of:
+
+1. Subscription `id`, encoded as unsigned 16 bit integer.
+2. Required binary payload `data`.
 
 ```
 +--------+........+--------+--------+========+
-|011?xxxx|?xxxxxxx|        id       |  data  |
+|100?xxxx|?xxxxxxx|        id       |  data  |
 +--------+........+--------+--------+========+
 ```
 
@@ -115,25 +154,12 @@ Complete message consists of:
 - `x` is a variable length unsigned integer that encodes `data` size.
 
 
-### The un-subscribe message
+### Response Complete Message
 
-Un-subscribe message consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-
-```
-+--------+--------+--------+
-|10000000|        id       |
-+--------+--------+--------+
-```
-
-
-### The error message
-
-Error message consists of:
+*Response Complete Message* consists of:
 
 1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Required binary payload `data`.
+2. Optional binary payload `data`.
 
 ```
 +--------+........+--------+--------+========+
@@ -146,7 +172,40 @@ Error message consists of:
 - `x` is a variable length unsigned integer that encodes `data` size.
 
 
+### Response Error Message
+
+*Response Error Message* consists of:
+
+1. Subscription `id`, encoded as unsigned 16 bit integer.
+2. Required binary payload `data`.
+
+```
++--------+........+--------+--------+========+
+|110?xxxx|?xxxxxxx|        id       |  data  |
++--------+........+--------+--------+========+
+```
+
+- `?` is a bit flag which determines if the following byte should be used for
+  decoding a variable length integer.
+- `x` is a variable length unsigned integer that encodes `data` size.
+
+
+### Response Un-subscribe Message
+
+*Response Un-subscribe Message* consists of:
+
+1. Subscription `id`, encoded as unsigned 16 bit integer.
+
+```
++--------+--------+--------+
+|11111111|        id       |
++--------+--------+--------+
+```
+
+
 ## Operational behavior
+
+...
 
 
 ### Header length
