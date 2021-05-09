@@ -1,4 +1,4 @@
-import {AbstractPredicateOp, Op, OpAdd, OpAnd, OpContains, OpCopy, OpDefined, OpEnds, OpExtend, OpFlip, OpIn, OpInc, OpLess, OpMatches, OpMerge, OpMore, OpMove, OpNot, OpOr, OpRemove, OpReplace, OpSplit, OpStarts, OpStrDel, OpStrIns, OpTest, OpTestString, OpTestStringLen, OpType, OpUndefined} from "../../op";
+import {AbstractPredicateOp, Op, OpAdd, OpAnd, OpContains, OpCopy, OpDefined, OpEnds, OpExtend, OpFlip, OpIn, OpInc, OpLess, OpMatches, OpMerge, OpMore, OpMove, OpNot, OpOr, OpRemove, OpReplace, OpSplit, OpStarts, OpStrDel, OpStrIns, OpTest, OpTestString, OpTestStringLen, OpTestType, OpType, OpUndefined} from "../../op";
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
 import {OPCODE} from "../../constants";
 import {Path} from "../../../json-pointer";
@@ -96,7 +96,7 @@ export class Decoder extends MessagePackDecoder {
       case OPCODE.more: {
         const path = this.decodePath(parent);
         const value = this.val() as number;
-        return new OpMore(path, value):
+        return new OpMore(path, value);
       }
       case OPCODE.move: {
         const path = this.decodeArray() as Path;
@@ -183,6 +183,11 @@ export class Decoder extends MessagePackDecoder {
         const len = this.val() as number;
         return new OpTestStringLen(path, len, not);
       }
+      case OPCODE.test_type: {
+        const path = this.decodePath(parent);
+        const type = this.decodeArray() as JsonPatchTypes[];
+        return new OpTestType(path, type);
+      }
       case OPCODE.type: {
         const path = this.decodePath(parent);
         const value = this.decodeString() as JsonPatchTypes;
@@ -193,6 +198,7 @@ export class Decoder extends MessagePackDecoder {
         return new OpUndefined(path);
       }
     }
+    throw new Error('OP_UNKNOWN');
   }
 
   protected decodePath(parent: Op | undefined): Path {

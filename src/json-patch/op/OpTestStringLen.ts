@@ -46,7 +46,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.not ? 4 : 3);
     encoder.u8(OPCODE.test_string_len);
-    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
     encoder.encodeNumber(this.len);
     if (this.not) encoder.u8(1);
   }

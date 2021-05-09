@@ -49,7 +49,7 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.not ? 5 : 4);
     encoder.u8(OPCODE.test_string);
-    encoder.encodeArray(this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
     encoder.encodeNumber(this.pos);
     encoder.encodeString(this.str);
     if (this.not) encoder.u8(1);
