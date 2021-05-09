@@ -1,12 +1,14 @@
-# JSON Patch
+# JSON Patch+
 
 Utilities which apply and validate JSON Patches.
 
-This library implements three sets of operations:
+This library implements three sets of operations (together known as JSON Patch+):
 
 - [JSON Patch](./docs/json-patch.md)
 - [JSON Predicate](./docs/json-predicate.md)
 - [JSON Patch Extended](./docs/json-patch-extended.md)
+
+JSON Patch+ patches can be serialized in a number of ways, see [codecs](./codec/README.md).
 
 
 ## Examples
