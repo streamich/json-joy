@@ -1,3 +1,24 @@
+# [2.11.0](https://github.com/streamich/json-joy/compare/v2.10.0...v2.11.0) (2021-05-09)
+
+
+### Bug Fixes
+
+* 🐛 correctly encode nested nominal JSON Patch ops ([f1a788e](https://github.com/streamich/json-joy/commit/f1a788e0e264b611d4c1ac4c161fa608febd9df0))
+* 🐛 make JSON Patch binary encoding pass main test suite ([42fa98b](https://github.com/streamich/json-joy/commit/42fa98b37258fb8a355810e9d700646132d50b66))
+
+
+### Features
+
+* 🎸 implement binary encoding for JSON Patch ([7d10b84](https://github.com/streamich/json-joy/commit/7d10b842c3a1bc27709462e7dab65d76a99c9a7d))
+* 🎸 implement JSON Patch binary codec decoding ([0530ab6](https://github.com/streamich/json-joy/commit/0530ab6c3844349aa2bf4b3642fb7e39b055441a))
+* 🎸 implement JSON Patch compact codec ([7914a37](https://github.com/streamich/json-joy/commit/7914a37cc0d2bb1d1e5d909a7ccd9bc903d99f13))
+* 🎸 implement JSON Patch nominal JSON codec ([de5c8c3](https://github.com/streamich/json-joy/commit/de5c8c3594159a67bcd4b5239e287f3ddc7e1bfe))
+
+
+### Performance Improvements
+
+* ⚡️ do not dynamically allocate op mnemonics ([0362c63](https://github.com/streamich/json-joy/commit/0362c63826e0cc5e2b30d52aa02836d3517c895a))
+
 # [2.10.0](https://github.com/streamich/json-joy/compare/v2.9.1...v2.10.0) (2021-05-06)
 
 
