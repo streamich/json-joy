@@ -110,6 +110,6 @@ export class OpSplit extends AbstractOp<'split'> {
     encoder.u8(OPCODE.split);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeNumber(this.pos);
-    if (this.props) encoder.encodeAny(this.props);
+    if (this.props) encoder.encodeObject(this.props as Record<string, unknown>);
   }
 }
