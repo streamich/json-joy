@@ -2,10 +2,6 @@ export const getHeaderSize = (length: number): number => {
   if (length <= 0b1111) return 1;
   if (length <= 0b1111111_1111) return 2;
   if (length <= 0b1111111_1111111_1111) return 3;
-  // if (length <= 0b1111111_1111111_1111111_1111) return 4;
-  // if (length <= 0b1111111_1111111_1111111_1111111_1111) return 5;
-  // if (length <= 0b1111111_1111111_1111111_1111111_1111111_1111) return 6;
-  // if (length <= 0b1111111_1111111_1111111_1111111_1111111_1111111_1111) return 7;
   return 4;
 };
 
