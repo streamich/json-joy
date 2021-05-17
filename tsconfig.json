@@ -31,13 +31,10 @@
   "exclude": [
     "node_modules",
     "lib",
+    "es6",
+    "esm",
     "docs",
-    "README.md",
-    "src/__tests__",
-    "src/**/__tests__/**/*.*",
-    "src/**/__mocks__/**/*.*",
-    "*.test.ts",
-    "*.spec.ts"
+    "README.md"
   ],
   "typedocOptions": {
     "entryPoints": [
