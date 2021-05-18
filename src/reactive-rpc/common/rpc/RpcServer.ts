@@ -25,12 +25,12 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   /**
    * Callback called on the server when user sends a subscription message.
    */
-  getRpcMethod: (name: string) => RpcMethod<Ctx, T, T> | undefined;
+  onCall: (name: string) => RpcMethod<Ctx, T, T> | undefined;
 
   /**
    * Callback called on the server when user sends a notification message.
    */
-  notify: (name: string, data: T | undefined, ctx: Ctx) => void;
+  onNotification: (name: string, data: T | undefined, ctx: Ctx) => void;
 
   /**
    * Method to format any error thrown by application to correct format.
@@ -63,7 +63,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   bufferTime?: number;
 }
 
-export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'getRpcMethod'> {
+export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
   api: RpcApi<Ctx, T>;
 }
 
@@ -79,7 +79,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const {api, ...rest} = params;
     const server = new RpcServer({
       ...rest,
-      getRpcMethod: (method: string) => {
+      onCall: (method: string) => {
         if (!api.hasOwnProperty(method)) return undefined;
         return api[method];
       },
@@ -89,8 +89,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
-  private getRpcMethod: RpcServerParams<Ctx, T>['getRpcMethod'];
-  private notify: RpcServerParams<Ctx, T>['notify'];
+  private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
+  private notify: RpcServerParams<Ctx, T>['onNotification'];
   private readonly formatError: (error: Error | unknown) => T;
   private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
@@ -98,8 +98,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   constructor({
     send,
-    getRpcMethod: call,
-    notify,
+    onCall: call,
+    onNotification: notify,
     formatErrorCode,
     formatError,
     maxActiveCalls = 30,

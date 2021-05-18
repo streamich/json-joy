@@ -20,7 +20,7 @@ const setup = () => {
           client.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
-      notify: () => {},
+      onNotification: () => {},
       api: sampleApi,
       bufferSize: 2,
       bufferTime: 1,
@@ -53,7 +53,7 @@ const setup = () => {
           server.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
-      notify: () => {},
+      onNotification: () => {},
       api: sampleApi,
       bufferSize: 2,
       bufferTime: 1,

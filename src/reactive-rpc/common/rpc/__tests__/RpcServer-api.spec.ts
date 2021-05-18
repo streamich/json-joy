@@ -18,7 +18,7 @@ const setup = (params: Partial<RpcServerFromApiParams> = {}) => {
   const ctx = {ip: '127.0.0.1'};
   const server = RpcServer.fromApi<any, any>({
     send,
-    notify,
+    onNotification: notify,
     api: sampleApi,
     bufferTime: 0,
     formatError: (error: unknown) => JSON.stringify({error}),

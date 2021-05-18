@@ -24,7 +24,7 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
           client.onMessages(decoded);
         }, 1);
       },
-      notify: () => {},
+      onNotification: () => {},
       api: sampleApi,
       bufferSize: 2,
       bufferTime: 1,

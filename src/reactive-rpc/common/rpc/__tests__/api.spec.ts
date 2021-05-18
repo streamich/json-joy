@@ -10,7 +10,7 @@ const setup = () => {
         client.onMessages(messages);
       }, 1);
     },
-    notify: () => {},
+    onNotification: () => {},
     api: sampleApi,
     bufferSize: 2,
     bufferTime: 1,

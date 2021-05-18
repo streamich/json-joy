@@ -110,7 +110,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       }
     }
     return undefined;
-  }) as RpcServerParams<any, any>['getRpcMethod']);
+  }) as RpcServerParams<any, any>['onCall']);
   const notify = jest.fn((method: string, request: unknown) => {
     switch (method) {
       case 'setToken': {
@@ -122,8 +122,8 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
   const ctx = {ip: '127.0.0.1'};
   const server = new RpcServer<any, any>({
     send,
-    notify,
-    getRpcMethod,
+    onNotification: notify,
+    onCall: getRpcMethod,
     bufferTime: 0,
     formatError: (error: unknown) => JSON.stringify({error}),
     formatErrorCode: (code: RpcServerError) => JSON.stringify({code}),
@@ -188,7 +188,7 @@ test('can receive multiple notifications', async () => {
 
 test('throws when "notify" callback throws', async () => {
   const {server} = setup({
-    notify: jest.fn(() => {
+    onNotification: jest.fn(() => {
       throw new Error('test');
     }),
   });
@@ -422,7 +422,7 @@ test('can add authentication on as higher level API', async () => {
 test('stops sending messages after server stop()', async () => {
   let sub: Subscriber<any>;
   const {server, send, getRpcMethod} = setup({
-    getRpcMethod: () => ({
+    onCall: () => ({
       isStreaming: true,
       call: () => new Observable((subscriber) => {
         sub = subscriber;
@@ -480,7 +480,7 @@ describe('buffering', () => {
   test('batches messages received within buffering window', async () => {
     const {server, send, getRpcMethod, notify, ctx, subject} = setup({
       bufferTime: 1,
-      getRpcMethod: () => ({
+      onCall: () => ({
         isStreaming: false,
         call: async () => 123,
       })
@@ -520,7 +520,7 @@ describe('buffering', () => {
   test('does not batch consecutive messages when buffering is disabled', async () => {
     const {server, send, getRpcMethod, notify, ctx, subject} = setup({
       bufferTime: 0,
-      getRpcMethod: () => ({
+      onCall: () => ({
         isStreaming: false,
         call: async () => 123,
       })
@@ -547,7 +547,7 @@ describe('buffering', () => {
   test('does not batch messages when they are far apart', async () => {
     const {server, send, getRpcMethod, notify, ctx, subject} = setup({
       bufferTime: 1,
-      getRpcMethod: () => ({
+      onCall: () => ({
         isStreaming: false,
         call: async () => 123,
       })
@@ -575,7 +575,7 @@ describe('buffering', () => {
     const {server, send, getRpcMethod, notify, ctx, subject} = setup({
       bufferTime: 100,
       bufferSize: 2,
-      getRpcMethod: () => ({
+      onCall: () => ({
         isStreaming: false,
         call: async () => 123,
       })
