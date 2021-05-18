@@ -1,4 +1,4 @@
-import {TemplatedApp} from 'uWebSockets.js';
+import type {TemplatedApp} from 'uWebSockets.js';
 
 export const enableCors = (uws: TemplatedApp) => {
   const AccessControlAllowOrigin = Buffer.from('Access-Control-Allow-Origin');
