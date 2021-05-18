@@ -7,8 +7,8 @@ import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../commo
 export interface CreateWsBinaryReactiveRpcApiParams<Ctx> {
   uws: TemplatedApp;
   onCall: (name: string) => RpcMethod<Ctx> | undefined;
-  onNotification: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined) => void;
   createContext: (req: HttpRequest, res: HttpResponse) => Ctx;
+  onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined) => void;
   route?: string;
   idleTimeout?: number;
   compression?: number;
@@ -55,10 +55,10 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: CreateWsBinaryReactive
         maxActiveCalls,
         formatError: () => {},
         onCall,
-        onNotification: (name: string, data: unknown | undefined, ctx: Ctx) => {
+        onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
           if (data instanceof Uint8Array) data = decoder.decode(data, data.byteOffset, data.byteLength);
           onNotification(ws as RpcWebSocket<Ctx>, name, data);
-        },
+        } : () => {},
         send: (messages: ReactiveRpcResponseMessage[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const uint8 = encoder.encode(messages);
@@ -77,7 +77,7 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: CreateWsBinaryReactive
       }
     },
     close: (ws: WebSocket, code: number, message: ArrayBuffer) => {
-      (ws as RpcWebSocket<Ctx>).stop();
+      (ws as RpcWebSocket<Ctx>).rpc.stop();
     },
   });
 };
