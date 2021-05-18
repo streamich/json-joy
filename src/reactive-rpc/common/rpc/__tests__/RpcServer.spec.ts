@@ -29,6 +29,15 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
           },
         };
       }
+      case 'promiseDelay': {
+        return {
+          isStreaming: false,
+          call: async () => {
+            await new Promise(r => setTimeout(r, 5));
+            return {};
+          },
+        };
+      }
       case 'error': {
         return {
           isStreaming: false,
@@ -88,6 +97,15 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
         return {
           isStreaming: false,
           call: async () => token,
+        };
+      }
+      case 'streamDelay': {
+        return {
+          isStreaming: true,
+          call: () => from((async () => {
+            await new Promise(r => setTimeout(r, 5));
+            return {};
+          })()),
         };
       }
     }
@@ -426,6 +444,36 @@ test('stops sending messages after server stop()', async () => {
   server.onMessage(new RequestCompleteMessage(1, 'foo', undefined), undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
+});
+
+describe('when server stops', () => {
+  test('does not emit messages from static calls', async () => {
+    const {server, send} = setup();
+    expect(send).toHaveBeenCalledTimes(0);
+    server.onMessage(new RequestCompleteMessage(1, 'promiseDelay', {}), {});
+    expect(send).toHaveBeenCalledTimes(0);
+    await new Promise(r => setTimeout(r, 10));
+    expect(send).toHaveBeenCalledTimes(1);
+    server.onMessage(new RequestCompleteMessage(2, 'promiseDelay', {}), {});
+    expect(send).toHaveBeenCalledTimes(1);
+    server.stop();
+    await new Promise(r => setTimeout(r, 10));
+    expect(send).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not emit messages from streaming calls', async () => {
+    const {server, send} = setup();
+    expect(send).toHaveBeenCalledTimes(0);
+    server.onMessage(new RequestCompleteMessage(1, 'streamDelay', {}), {});
+    expect(send).toHaveBeenCalledTimes(0);
+    await new Promise(r => setTimeout(r, 10));
+    expect(send).toHaveBeenCalledTimes(1);
+    server.onMessage(new RequestCompleteMessage(2, 'streamDelay', {}), {});
+    expect(send).toHaveBeenCalledTimes(1);
+    server.stop();
+    await new Promise(r => setTimeout(r, 10));
+    expect(send).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('buffering', () => {
