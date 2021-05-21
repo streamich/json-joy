@@ -11,8 +11,8 @@ describe('Encoder/Decoder', () => {
     test(name, () => {
       const messages = decode([message]);
       const encoded = encoder.encode(messages);
-      const decoded = decoder.decode(encoded);
-      expect(decoded).toEqual(messages);
+      const decoded = decoder.decode(encoded as any);
+      expect(decoded).toEqual(messages[0]);
     });
   }
 });

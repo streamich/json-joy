@@ -12,7 +12,7 @@ describe('Encoder/Decoder', () => {
       const messages = decode([message]);
       const encoded = encoder.encode(messages);
       const decoded = decoder.decode(encoded);
-      expect(decoded).toEqual(messages);
+      expect(decoded).toEqual(messages[0]);
     });
   }
 });

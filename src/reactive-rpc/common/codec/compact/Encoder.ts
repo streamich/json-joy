@@ -3,7 +3,7 @@ import {CompactMessage} from "./types";
 import {encode} from './encode';
 
 export class Encoder {
-  public encode(messages: ReactiveRpcMessage[]): CompactMessage[] {
+  public encode(messages: ReactiveRpcMessage[]): CompactMessage | CompactMessage[] {
     return encode(messages);
   }
 }

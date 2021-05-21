@@ -8,7 +8,7 @@ describe('encode()/decode()', () => {
   for (const [name, message] of Object.entries(compactMessages)) {
     test(name, () => {
       const [decoded] = decode([message]);
-      const encoded = encode([decoded])[0];
+      const encoded = encode([decoded]);
       expect(encoded).toEqual(message);
     });
   }
@@ -18,7 +18,7 @@ describe('Encoder/Decoder', () => {
   for (const [name, message] of Object.entries(compactMessages)) {
     test(name, () => {
       const [decoded] = decoder.decode([message]);
-      const encoded = encoder.encode([decoded])[0];
+      const encoded = encoder.encode([decoded]);
       expect(encoded).toEqual(message);
     });
   }

@@ -20,8 +20,9 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
       send: (messages) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
-          const decoded = decoder.decode(encoded) as ReactiveRpcResponseMessage[];
-          client.onMessages(decoded);
+          const decoded = decoder.decode(encoded) as ReactiveRpcResponseMessage | ReactiveRpcResponseMessage[];
+          if (decoded instanceof Array) client.onMessages(decoded);
+          else client.onMessage(decoded);
         }, 1);
       },
       onNotification: () => {},
@@ -44,8 +45,9 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
       send: (messages) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
-          const decoded = decoder.decode(encoded) as ReactiveRpcRequestMessage[];
-          server.onMessages(decoded, ctx);
+          const decoded = decoder.decode(encoded) as ReactiveRpcRequestMessage | ReactiveRpcRequestMessage[];
+          if (decoded instanceof Array) server.onMessages(decoded, ctx);
+          else server.onMessage(decoded, ctx);
         }, 1);
       },
       bufferSize: 2,
