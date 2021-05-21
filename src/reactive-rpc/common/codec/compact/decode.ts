@@ -28,16 +28,16 @@ export function decodeMsg<T = unknown>(message: CompactMessage): ReactiveRpcMess
   if (typeof first === 'number') {
     switch (first) {
       case 0: {
-        const [, id, data] = message as CompactResponseDataMessage<T>;
-        return new ResponseDataMessage(id, data);
-      }
-      case -1: {
         const [, id, data] = message as CompactResponseCompleteMessage<T>;
         return new ResponseCompleteMessage(id, data);
       }
-      case -2: {
+      case -1: {
         const [, id, data] = message as CompactResponseErrorMessage<T>;
         return new ResponseErrorMessage(id, data);
+      }
+      case -2: {
+        const [, id, data] = message as CompactResponseDataMessage<T>;
+        return new ResponseDataMessage(id, data);
       }
       case -3: {
         const [, id] = message as CompactResponseUnsubscribeMessage;
@@ -55,15 +55,15 @@ export function decodeMsg<T = unknown>(message: CompactMessage): ReactiveRpcMess
             return new RequestDataMessage(first, name, data);
           }
           case 1: {
-            const [, , name, data] = message as CompactRequestCompleteMessage<T>;
-            return new RequestCompleteMessage(first, name, data);
-          }
-          case 2: {
             const [, , method, data] = message as CompactRequestErrorMessage<T>;
             return new RequestErrorMessage(first, method, data);
           }
-          case 3: {
+          case 2: {
             return new RequestUnsubscribeMessage(first);
+          }
+          default: {
+            const [, name, data] = message as CompactRequestCompleteMessage<T>;
+            return new RequestCompleteMessage(first, name, data);
           }
         }
       }

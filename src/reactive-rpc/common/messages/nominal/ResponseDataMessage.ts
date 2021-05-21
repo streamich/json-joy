@@ -8,6 +8,6 @@ export class ResponseDataMessage<D = unknown> implements Message {
   constructor(public readonly id: number, public readonly data: D) {}
 
   public toCompact(): CompactResponseDataMessage {
-    return [0, this.id, this.data];
+    return [-2, this.id, this.data];
   }
 }

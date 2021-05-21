@@ -8,6 +8,6 @@ export class RequestUnsubscribeMessage implements Message {
   constructor(public readonly id: number) {}
 
   public toCompact(): CompactRequestUnsubscribeMessage {
-    return [this.id, 3];
+    return [this.id, 2];
   }
 }

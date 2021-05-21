@@ -76,7 +76,7 @@ export type ApiTestSetup = () => {
 };
 
 export const runApiTests = (setup: ApiTestSetup) => {
-  test.only('can execute static RPC method', async () => {
+  test('can execute static RPC method', async () => {
     const {client} = setup();
     const result = await firstValueFrom(client.call('ping', {}));
     expect(result).toBe('pong');
