@@ -5,8 +5,14 @@ import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../common/codec
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../common/codec/compact-msgpack';
 import {RpcServer} from '../../common/rpc/RpcServer';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../common';
-import {json_string} from 'ts-brand-json';
-import {CompactMessage} from '../../common/codec/compact';
+import {NotificationMessage} from '../../common/messages/nominal/NotificationMessage';
+
+const enum DEFAULTS {
+  IDLE_TIMEOUT = 0,
+  MAX_ACTIVE_CLIENTS = 50,
+  MAX_BACKPRESSURE = 3 * 1024 * 1024,
+  MAX_PAYLOAD_LENGTH = 1024 * 1024,
+}
 
 export interface RpcWebSocket<Ctx = unknown> extends WebSocket {
   ctx: Ctx;
@@ -39,10 +45,10 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     onNotification,
     createContext,
     compression,
-    idleTimeout = 0,
-    maxActiveCalls = 50,
-    maxBackpressure = 3 * 1024 * 1024,
-    maxPayloadLength = 1024 * 1024,
+    idleTimeout = DEFAULTS.IDLE_TIMEOUT,
+    maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
+    maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
+    maxPayloadLength = DEFAULTS.MAX_PAYLOAD_LENGTH,
   } = params;
   uws.ws(route, {
     idleTimeout,
@@ -100,6 +106,11 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
   const decoderJson = new DecoderJson();
   const encoderMsgPack = new EncoderMsgPack();
   const decoderMsgPack = new DecoderMsgPack();
+  const invalidPayloadNotification = new NotificationMessage('.err', {
+    message: 'INVALID_PAYLOAD',
+  });
+  const invalidPayloadJson = encoderJson.encode([invalidPayloadNotification]);
+  const invalidPayloadMsgPack = encoderMsgPack.encode([invalidPayloadNotification]);
   const {
     route = '/rpc/compact',
     uws,
@@ -107,10 +118,10 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     onNotification,
     createContext,
     compression,
-    idleTimeout = 0,
-    maxActiveCalls = 50,
-    maxBackpressure = 3 * 1024 * 1024,
-    maxPayloadLength = 1024 * 1024,
+    idleTimeout = DEFAULTS.IDLE_TIMEOUT,
+    maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
+    maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
+    maxPayloadLength = DEFAULTS.MAX_PAYLOAD_LENGTH,
   } = params;
   uws.ws(route, {
     idleTimeout,
@@ -122,7 +133,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
       const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
       const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
       const ctx = createContext(req, res);
-      const isBinary = secWebSocketProtocol.indexOf('MessagePack') > -1;
+      const isBinary = secWebSocketProtocol.indexOf('MsgPack') > -1;
       /* This immediately calls open handler, you must not use res after this call */
       res.upgrade({ctx, isBinary}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
     },
@@ -137,21 +148,26 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
         send: (messages: ReactiveRpcResponseMessage[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const {isBinary} = (ws as CompactRpcWebSocket<Ctx>);
-          const encoded = isBinary
-            ? encoderMsgPack.encode(messages)
-            : encoderJson.encode(messages);
+          const encoded = isBinary ? encoderMsgPack.encode(messages) : encoderJson.encode(messages);
           ws.send(encoded, isBinary);
         },
       });
       ws.rpc = rpc;
     },
     message: (ws: WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
-      const {ctx, rpc} = ws as CompactRpcWebSocket<Ctx>;
-      const messages = isBinary
-        ? decoderMsgPack.decode(new Uint8Array(buf))
-        : decoderJson.decode(Buffer.from(buf).toString('utf8') as any);
-      if (messages instanceof Array) rpc.onMessages(messages as ReactiveRpcRequestMessage[], ctx);
-      else rpc.onMessage(messages as ReactiveRpcRequestMessage, ctx);
+      try {
+        const {ctx, rpc} = ws as CompactRpcWebSocket<Ctx>;
+        const messages = isBinary
+          ? decoderMsgPack.decode(new Uint8Array(buf))
+          : decoderJson.decode(Buffer.from(buf).toString('utf8') as any);
+        if (messages instanceof Array) rpc.onMessages(messages as ReactiveRpcRequestMessage[], ctx);
+        else rpc.onMessage(messages as ReactiveRpcRequestMessage, ctx);
+      } catch (error) {
+        // We don't log `error` here as client can intentionally spam many
+        // invalid messages an to flood our log.
+        if (ws.getBufferedAmount() > maxBackpressure) return;
+        ws.send(isBinary ? invalidPayloadMsgPack : invalidPayloadJson, isBinary);
+      }
     },
     close: (ws: WebSocket, code: number, message: ArrayBuffer) => {
       (ws as CompactRpcWebSocket<Ctx>).rpc.stop();
