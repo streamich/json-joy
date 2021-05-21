@@ -1,11 +1,22 @@
 import {App} from 'uWebSockets.js';
 
-import {enableWsBinaryReactiveRpcApi, enableCors, createConnectionContext, ConnectionContext} from '../../src/reactive-rpc/server/uws';
+import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryReactiveRpcApi, enableWsCompactReactiveRpcApi} from '../../src/reactive-rpc/server/uws';
 
 const uws = App({});
 
 enableCors(uws);
 enableWsBinaryReactiveRpcApi<ConnectionContext>({
+  uws,
+  createContext: createConnectionContext,
+  onCall: (name: string) => {
+    return {
+      isStreaming: false,
+      call: async () => 'pong',
+    };
+  },
+  onNotification: () => {},
+});
+enableWsCompactReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
   onCall: (name: string) => {

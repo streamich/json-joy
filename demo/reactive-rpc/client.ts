@@ -4,7 +4,7 @@ import {Encoder, Decoder} from '../../src/reactive-rpc/common/codec/binary-msgpa
 import {toUint8Array} from '../../src/util/toUint8Array';
 import {ReactiveRpcResponseMessage} from '../../src/reactive-rpc/common';
 
-const ws: WebSocket = new WS('ws://localhost:9999/binary-rx');
+const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
 const encoder = new Encoder();
 const decoder = new Decoder();
 const client = new RpcClient({
