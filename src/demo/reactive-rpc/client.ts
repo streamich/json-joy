@@ -1,8 +1,8 @@
 import WS from 'isomorphic-ws';
-import {RpcClient} from '../../src/reactive-rpc/common/rpc/RpcClient';
-import {Encoder, Decoder} from '../../src/reactive-rpc/common/codec/binary-msgpack';
-import {toUint8Array} from '../../src/util/toUint8Array';
-import {ReactiveRpcResponseMessage} from '../../src/reactive-rpc/common';
+import {RpcClient} from '../../reactive-rpc/common/rpc/RpcClient';
+import {Encoder, Decoder} from '../../reactive-rpc/common/codec/binary-msgpack';
+import {toUint8Array} from '../../util/toUint8Array';
+import {ReactiveRpcResponseMessage} from '../../reactive-rpc/common';
 
 const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
 const encoder = new Encoder();

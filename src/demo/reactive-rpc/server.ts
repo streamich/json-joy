@@ -1,6 +1,5 @@
 import {App} from 'uWebSockets.js';
-
-import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryReactiveRpcApi, enableWsCompactReactiveRpcApi} from '../../src/reactive-rpc/server/uws';
+import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryReactiveRpcApi, enableWsCompactReactiveRpcApi} from '../../reactive-rpc/server/uws';
 
 const uws = App({});
 
