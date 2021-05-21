@@ -8,6 +8,6 @@ export class Decoder {
 
   public decode(arr: Uint8Array): ReactiveRpcMessage | ReactiveRpcMessage[] {
     const messages = this.msgpack.decode(arr) as CompactMessage | CompactMessage[];
-    return decode(messages);
+    return decode(messages as any);
   }
 }

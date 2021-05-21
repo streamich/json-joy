@@ -73,6 +73,8 @@ export function decodeMsg<T = unknown>(message: CompactMessage): ReactiveRpcMess
   return new NotificationMessage(method, data);
 }
 
+export function decode<T = unknown>(messages: CompactMessage): ReactiveRpcMessage<T>;
+export function decode<T = unknown>(messages: CompactMessage[]): ReactiveRpcMessage<T>[];
 export function decode<T = unknown>(messages: CompactMessage | CompactMessage[]): ReactiveRpcMessage<T> | ReactiveRpcMessage<T>[] {
   if (messages[0] instanceof Array) {
     const length = messages.length;
