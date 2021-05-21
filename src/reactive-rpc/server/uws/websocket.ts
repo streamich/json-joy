@@ -149,7 +149,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
       const {ctx, rpc} = ws as CompactRpcWebSocket<Ctx>;
       const messages = isBinary
         ? decoderMsgPack.decode(new Uint8Array(buf))
-        : decoderJson.decode(Buffer.from(buf).toString('utf8') as json_string<CompactMessage | CompactMessage[]>);
+        : decoderJson.decode(Buffer.from(buf).toString('utf8') as any);
       if (messages instanceof Array) rpc.onMessages(messages as ReactiveRpcRequestMessage[], ctx);
       else rpc.onMessage(messages as ReactiveRpcRequestMessage, ctx);
     },
