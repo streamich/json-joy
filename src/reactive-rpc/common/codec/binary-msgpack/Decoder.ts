@@ -2,13 +2,14 @@ import {decodeFullMessages} from "../binary/decode";
 import {Decoder as MessagePackDecoder} from '../../../../json-pack/Decoder';
 import {ReactiveRpcBinaryMessage} from "../../messages/binary";
 import {Message, ReactiveRpcMessage} from "../../messages/nominal";
+import {isUint8Array} from '../../../../util/isUint8Array';
 
 export class Decoder {
   protected msgpack = new MessagePackDecoder();
 
   protected convertMessage(message: ReactiveRpcBinaryMessage): ReactiveRpcMessage {
     const data = (message as Message).data;
-    if (data instanceof Uint8Array) {
+    if (isUint8Array(data)) {
       if (!data.byteLength) (message as Message).data = undefined;
       else (message as Message).data = this.msgpack.decode(data);
     }

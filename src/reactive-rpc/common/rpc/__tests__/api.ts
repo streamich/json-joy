@@ -71,37 +71,39 @@ export const sampleApi = {
   'util.timer': utilTimer,
 };
 
-export type ApiTestSetup = () => {
+export interface ApiTestSetupResult {
   client: Pick<RpcClient, 'call'>;
 };
 
+export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
+
 export const runApiTests = (setup: ApiTestSetup) => {
   test('can execute static RPC method', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const result = await firstValueFrom(client.call('ping', {}));
-    // expect(result).toBe('pong');
+    expect(result).toBe('pong');
   });
   
   test('can execute simple "double" method', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const result = await firstValueFrom(client.call('double', {num: 1.2}));
     expect(result).toEqual({num: 2.4});
   });
   
   test('throws error on static RPC error', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const [, error] = await of(firstValueFrom(client.call('error', {})));
     expect(error).toBe('this promise can throw');
   });
   
   test('throws error on streaming RPC error', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const [, error] = await of(lastValueFrom(client.call('streamError', {})));
     expect(error).toEqual({"message": "Stream always errors"});
   });
   
   test('can receive one value of stream that ends after emitting one value', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const result = await firstValueFrom(client.call('util.info', {}));
     expect(result).toEqual({
       commit: 'AAAAAAAAAAAAAAAAAAA',
@@ -110,7 +112,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
   });
   
   test('can execute two request in parallel', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const promise1 = of(firstValueFrom(client.call('double', {num: 1})));
     const promise2 = of(firstValueFrom(client.call('double', {num: 2})));
     const [res1, res2] = await Promise.all([promise1, promise2]);
@@ -119,7 +121,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
   });
   
   test('enforces max in-flight calls', async () => {
-    const {client} = setup();
+    const {client} = await setup();
     const promise1 = of(firstValueFrom(client.call('delay', {})));
     const promise2 = of(firstValueFrom(client.call('delay', {})));
     const promise3 = of(firstValueFrom(client.call('delay', {})));
@@ -130,7 +132,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
     expect(res3[0]).toBe('done');
     expect(res4[1]).toEqual({
       message: 'PROTOCOL',
-      code: RpcServerError.TooManyActiveCalls,
+      errno: RpcServerError.TooManyActiveCalls,
     });
   });  
 };

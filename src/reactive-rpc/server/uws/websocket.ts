@@ -3,9 +3,45 @@ import type {RpcMethod} from '../../common/rpc/types';
 import {Encoder, Decoder} from '../../common/codec/binary-msgpack';
 import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../common/codec/compact-json';
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../common/codec/compact-msgpack';
-import {RpcServer} from '../../common/rpc/RpcServer';
+import {RpcServer, RpcServerParams} from '../../common/rpc/RpcServer';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../common';
 import {NotificationMessage} from '../../common/messages/nominal/NotificationMessage';
+
+interface ErrorLike {
+  message: string;
+  status?: number;
+  code?: string;
+  errno?: number;
+  errorId?: number;
+}
+
+const formatErrorLike = (error: ErrorLike): ErrorLike => {
+  const out: ErrorLike = {message: error.message};
+  if (typeof error.status === 'number') out.status = error.status;
+  if (typeof error.code === 'string') out.code = error.code;
+  if (typeof error.errno === 'number') out.errno = error.errno;
+  if (typeof error.errorId === 'number') out.errorId = error.errorId;
+  return out;
+};
+
+const isErrorLike = (error: unknown): error is ErrorLike => {
+  if (error instanceof Error) return true;
+  if (typeof error === 'object')
+    if (typeof (error as Record<string, unknown>).message === 'string') return true;
+  return false;
+};
+
+const defaultFormatError = (error: unknown): unknown => {
+  if (isErrorLike(error)) return formatErrorLike(error);
+  return error;
+};
+
+const defaultFormatErrorCode = (errno: number): ErrorLike => {
+  return {
+    message: 'PROTOCOL',
+    errno,
+  };
+};
 
 const enum DEFAULTS {
   IDLE_TIMEOUT = 0,
@@ -21,9 +57,11 @@ export interface RpcWebSocket<Ctx = unknown> extends WebSocket {
 
 export interface EnableWsReactiveRpcApiParams<Ctx> {
   uws: TemplatedApp;
-  onCall: (name: string) => RpcMethod<Ctx> | undefined;
   createContext: (req: HttpRequest, res: HttpResponse) => Ctx;
+  onCall: RpcServerParams<Ctx>['onCall'];
   onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined) => void;
+  formatError?: RpcServerParams<Ctx>['formatError'];
+  formatErrorCode?: RpcServerParams<Ctx>['formatErrorCode'];
   route?: string;
   idleTimeout?: number;
   compression?: number;
@@ -45,6 +83,8 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     onNotification,
     createContext,
     compression,
+    formatError = defaultFormatError,
+    formatErrorCode = defaultFormatErrorCode,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
     maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
@@ -66,7 +106,8 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     open: (ws: WebSocket) => {
       const rpc = new RpcServer<Ctx>({
         maxActiveCalls,
-        formatError: () => {},
+        formatError,
+        formatErrorCode,
         onCall,
         onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
           onNotification(ws as RpcWebSocket<Ctx>, name, data);
@@ -118,6 +159,8 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     onNotification,
     createContext,
     compression,
+    formatError = defaultFormatError,
+    formatErrorCode = defaultFormatErrorCode,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
     maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
@@ -140,7 +183,8 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     open: (ws: WebSocket) => {
       const rpc = new RpcServer<Ctx>({
         maxActiveCalls,
-        formatError: () => {},
+        formatError,
+        formatErrorCode,
         onCall,
         onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
           onNotification(ws as CompactRpcWebSocket<Ctx>, name, data);

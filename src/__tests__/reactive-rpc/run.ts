@@ -4,7 +4,7 @@ import {Defer} from '../../util/Defer';
 const startServer = async () => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
-  const cp = spawn('yarn', ['demo:reactive-rpc'], {});
+  const cp = spawn('yarn', ['demo:reactive-rpc:server'], {});
   process.on('exit', (code) => {
     cp.kill();
   });
