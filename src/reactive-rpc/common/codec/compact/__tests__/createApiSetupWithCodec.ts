@@ -34,10 +34,10 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
         if (error instanceof Error) return {message: error.message};
         return error;
       },
-      formatErrorCode: (code: RpcServerError) => {
+      formatErrorCode: (errno: RpcServerError) => {
         return {
           message: 'PROTOCOL',
-          code,
+          errno,
         };
       },
     });
