@@ -1,11 +1,14 @@
+import type {RxWebSocketBase, CloseEventBase} from './types';
 import {Subject, ReplaySubject} from 'rxjs';
 import {WebSocketState} from './constants';
-import {RxWebSocketBase} from './types';
 
 export interface RxWebSocketParams {
   newSocket: () => RxWebSocketBase;
 }
 
+/**
+ * A single WebSocket with Rx interface.
+ */
 export class RxWebSocket {
   /**
    * Native websocket reference, or `undefined` if construction of websocket
@@ -22,7 +25,7 @@ export class RxWebSocket {
    * Emits once when WebSocket is closed or when construction of Websocket
    * throws.
    */
-  public readonly close$ = new ReplaySubject<RxWebSocket>(1);
+  public readonly close$ = new ReplaySubject<[self: RxWebSocket, event: CloseEventBase]>(1);
 
   /**
    * Emits WebSocket errors.
@@ -41,8 +44,8 @@ export class RxWebSocket {
         this.open$.next(this);
         this.open$.complete();
       };
-      this.ws.onclose = () => {
-        this.close$.next(this);
+      this.ws.onclose = (event) => {
+        this.close$.next([this, event]);
         this.close$.complete();
         this.message$.complete();
       };
@@ -50,7 +53,7 @@ export class RxWebSocket {
       this.ws.onmessage = (event) => this.message$.next(event.data);
     } catch (error) {
       this.error$.next(error);
-      this.close$.next(this);
+      this.close$.next([this, {code: 0, wasClean: true, reason: 'CONSTRUCTOR'}]);
       this.close$.complete();
     }
   }
