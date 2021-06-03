@@ -16,9 +16,28 @@ const client = new RpcClient({
 
 ws.onopen = function open() {
   console.log('connected');
-  client.call('ping', {})
+
+  console.log('ping', '->', {});
+  client.call$('ping', {})
     .subscribe(res => {
-      console.log('res', res);
+      console.log('ping', '<-', res);
+    });
+
+  console.log('auth.users.get', '->', {id: '123'});
+  client.call$('auth.users.get', {id: '123'})
+    .subscribe(res => {
+      console.log('auth.users.get', '<-', res);
+    });
+
+  console.log('UNKNOWN_METHOD', '->', {});
+  client.call$('UNKNOWN_METHOD', {id: '123'})
+    .subscribe({
+      next: res => {
+        console.log('UNKNOWN_METHOD', '<-', res);
+      },
+      error: error => {
+        console.error('ERROR:', 'UNKNOWN_METHOD', '<-', error);
+      },
     });
 };
 
