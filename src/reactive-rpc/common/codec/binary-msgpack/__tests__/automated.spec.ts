@@ -10,7 +10,7 @@ for (const [name, message] of Object.entries(compactMessages)) {
   test(name, () => {
     const [nominal] = decode([message]);
     const encoded = encoder.encode([nominal]);
-    const decoded = decoder.decode(encoded, encoded.byteOffset, encoded.byteOffset + encoded.byteLength)
+    const decoded = decoder.decode(encoded);
     expect(decoded[0]).toEqual(nominal);
   });
 }

@@ -34,10 +34,10 @@ export class RpcDuplex<Ctx = unknown, T = unknown> {
     else if (message instanceof RequestUnsubscribeMessage) return this.client.onRequestUnsubscribe(message);
   }
 
-  public call(method: string, data: T): Observable<T>;
-  public call(method: string, data: Observable<T>): Observable<T>;
-  public call(method: string, data: T | Observable<T>): Observable<T> {
-    return this.client.call(method, data as any);
+  public call$(method: string, data: T): Observable<T>;
+  public call$(method: string, data: Observable<T>): Observable<T>;
+  public call$(method: string, data: T | Observable<T>): Observable<T> {
+    return this.client.call$(method, data as any);
   }
 
   public notify(method: string, data: undefined | T): void {
@@ -47,5 +47,10 @@ export class RpcDuplex<Ctx = unknown, T = unknown> {
   public stop() {
     this.client.stop();
     this.server.stop();
+  }
+
+  public disconnect() {
+    this.client.disconnect();
+    this.server.disconnect();
   }
 }

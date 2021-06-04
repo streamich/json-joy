@@ -1,47 +1,11 @@
 import type {TemplatedApp, HttpRequest, HttpResponse, WebSocket} from 'uWebSockets.js';
-import type {RpcMethod} from '../../common/rpc/types';
 import {Encoder, Decoder} from '../../common/codec/binary-msgpack';
 import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../common/codec/compact-json';
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../common/codec/compact-msgpack';
 import {RpcServer, RpcServerParams} from '../../common/rpc/RpcServer';
+import {formatError as defaultFormatError, formatErrorCode as defaultFormatErrorCode} from '../../common/rpc/error';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../common';
 import {NotificationMessage} from '../../common/messages/nominal/NotificationMessage';
-
-interface ErrorLike {
-  message: string;
-  status?: number;
-  code?: string;
-  errno?: number;
-  errorId?: number;
-}
-
-const formatErrorLike = (error: ErrorLike): ErrorLike => {
-  const out: ErrorLike = {message: error.message};
-  if (typeof error.status === 'number') out.status = error.status;
-  if (typeof error.code === 'string') out.code = error.code;
-  if (typeof error.errno === 'number') out.errno = error.errno;
-  if (typeof error.errorId === 'number') out.errorId = error.errorId;
-  return out;
-};
-
-const isErrorLike = (error: unknown): error is ErrorLike => {
-  if (error instanceof Error) return true;
-  if (typeof error === 'object')
-    if (typeof (error as Record<string, unknown>).message === 'string') return true;
-  return false;
-};
-
-const defaultFormatError = (error: unknown): unknown => {
-  if (isErrorLike(error)) return formatErrorLike(error);
-  return error;
-};
-
-const defaultFormatErrorCode = (errno: number): ErrorLike => {
-  return {
-    message: 'PROTOCOL',
-    errno,
-  };
-};
 
 const enum DEFAULTS {
   IDLE_TIMEOUT = 0,
@@ -122,7 +86,8 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     },
     message: (ws: WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
       const {ctx, rpc} = ws as RpcWebSocket<Ctx>;
-      const messages = decoder.decode(new Uint8Array(buf), 0, buf.byteLength);
+      const uint8 = new Uint8Array(buf);
+      const messages = decoder.decode(uint8);
       const length = messages.length;
       for (let i = 0; i < length; i++) {
         const message = messages[i] as ReactiveRpcRequestMessage;

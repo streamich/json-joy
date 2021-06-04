@@ -50,7 +50,9 @@ export class RxWebSocket {
         this.message$.complete();
       };
       this.ws.onerror = (event: Event) => this.error$.next(event);
-      this.ws.onmessage = (event) => this.message$.next(event.data);
+      this.ws.onmessage = (event) => {
+        this.message$.next(event.data);
+      };
     } catch (error) {
       this.error$.next(error);
       this.close$.next([this, {code: 0, wasClean: true, reason: 'CONSTRUCTOR'}]);

@@ -64,6 +64,6 @@ ws.onclose = function close() {
 
 ws.onmessage = function incoming(event: any) {
   const uint8 = toUint8Array(event.data);
-  const messages = decoder.decode(uint8, 0, uint8.byteLength);
+  const messages = decoder.decode(uint8);
   duplex.onMessages(messages as ReactiveRpcResponseMessage[], {});
 };

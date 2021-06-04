@@ -94,6 +94,16 @@ export class RpcClient<T = unknown> {
   }
 
   /**
+   * Processes a batch of messages received from the server.
+   * 
+   * @param messages List of messages from server.
+   */
+  public onMessages(messages: ReactiveRpcResponseMessage<T>[]): void {
+    const length = messages.length;
+    for (let i = 0; i < length; i++) this.onMessage(messages[i]);
+  }
+
+  /**
    * Processes a message received from the server.
    * 
    * @param messages A message from the server.
@@ -138,16 +148,6 @@ export class RpcClient<T = unknown> {
   }
 
   /**
-   * Processes a batch of messages received from the server.
-   * 
-   * @param messages List of messages from server.
-   */
-  public onMessages(messages: ReactiveRpcResponseMessage<T>[]): void {
-    const length = messages.length;
-    for (let i = 0; i < length; i++) this.onMessage(messages[i]);
-  }
-
-  /**
    * Execute remote RPC method. We use in-between `req$` and `res$` observables.
    * 
    * ```
@@ -163,12 +163,12 @@ export class RpcClient<T = unknown> {
    * @param method RPC method name.
    * @param data RPC method static payload or stream of data.
    */
-  public call(method: string, data: T): Observable<T>;
-  public call(method: string, data: Observable<T>): Observable<T>;
-  public call(method: string, data: T | Observable<T>): Observable<T> {
+  public call$(method: string, data: T): Observable<T>;
+  public call$(method: string, data: Observable<T>): Observable<T>;
+  public call$(method: string, data: T | Observable<T>): Observable<T> {
     const id = this.id++;
     if (this.id >= 0xffff) this.id = 1;
-    if (this.calls.has(id)) return this.call(method, data as any);
+    if (this.calls.has(id)) return this.call$(method, data as any);
     const req$ = new Subject<T>();
     const res$ = new Subject<T>();
     let finalizedStreams = 0;
@@ -228,15 +228,19 @@ export class RpcClient<T = unknown> {
   }
 
   /**
-   * Stop all in-flight RPC callas and disable buffer. This operation is not
+   * Stop all in-flight RPC calls and disable buffer. This operation is not
    * reversible, you cannot use the RPC client after this call.
    */
-  public stop(): void {
+  public stop(reason: string = 'STOP'): void {
     this.buffer.onFlush = (message) => {};
     for (const call of this.calls.values()) {
-      call.req$.error(new Error('STOP'));
-      call.req$.error(new Error('STOP'));
+      call.req$.error(new Error(reason));
+      call.req$.error(new Error(reason));
     }
     this.calls.clear();
+  }
+
+  public disconnect() {
+    this.stop('DISCONNECT');
   }
 }

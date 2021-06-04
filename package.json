@@ -49,6 +49,7 @@
     "demo:reactive-rpc:server": "ts-node src/demo/reactive-rpc/server.ts",
     "demo:reactive-rpc:client": "ts-node src/demo/reactive-rpc/client.ts",
     "demo:reactive-rpc:client-duplex": "ts-node src/demo/reactive-rpc/client-duplex.ts",
+    "demo:reactive-rpc:client-persistent": "ts-node src/demo/reactive-rpc/client-persistent.ts",
     "release": "semantic-release",
     "typedoc": "typedoc",
     "deploy:typedocs": "gh-pages -d typedocs"

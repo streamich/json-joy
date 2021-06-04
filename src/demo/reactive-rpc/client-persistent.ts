@@ -1,20 +1,32 @@
 import WS from 'isomorphic-ws';
-import {RpcClient} from '../../reactive-rpc/common/rpc/RpcClient';
+import {formatError} from '../../reactive-rpc/common/rpc';
+import {RxPersistentClient} from '../../reactive-rpc/common/websocket';
 import {Encoder, Decoder} from '../../reactive-rpc/common/codec/binary-msgpack';
-import {toUint8Array} from '../../util/toUint8Array';
-import {ReactiveRpcResponseMessage} from '../../reactive-rpc/common';
 
-const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
-const encoder = new Encoder();
-const decoder = new Decoder();
-const client = new RpcClient({
-  send: (messages) => {
-    const uint8 = encoder.encode(messages);
-    ws.send(uint8);
+const client = new RxPersistentClient({
+  ws: {
+    newSocket: () => {
+      const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
+      ws.binaryType = 'arraybuffer';
+      return ws;
+    },
+  },
+  client: {},
+  server: {
+    formatError,
+    onCall: () => ({
+      isStreaming: false,
+      call: async () => null,
+    }),
+    onNotification: () => {},
+  },
+  codec: {
+    encoder: new Encoder(),
+    decoder: new Decoder(),
   },
 });
 
-ws.onopen = function open() {
+client.rpc$.subscribe(rpc => {
   console.log('connected');
 
   console.log('ping', '->', {});
@@ -39,14 +51,4 @@ ws.onopen = function open() {
         console.error('ERROR:', 'UNKNOWN_METHOD', '<-', error);
       },
     });
-};
-
-ws.onclose = function close() {
-  console.log('disconnected');
-};
-
-ws.onmessage = function incoming(event: any) {
-  let uint8 = toUint8Array(event.data);
-  const messages = decoder.decode(uint8);
-  client.onMessages(messages as ReactiveRpcResponseMessage[]);
-};
+});

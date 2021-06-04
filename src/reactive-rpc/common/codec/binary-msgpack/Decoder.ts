@@ -16,8 +16,8 @@ export class Decoder {
     return message;
   }
 
-  public decode(arr: Uint8Array, offset: number, end: number): ReactiveRpcMessage[] {
-    const binaryMessages = decodeFullMessages(arr, offset, end);
+  public decode(arr: Uint8Array): ReactiveRpcMessage[] {
+    const binaryMessages = decodeFullMessages(arr, 0, arr.byteLength);
     const messages: ReactiveRpcMessage[] = [];
     const length = binaryMessages.length;
     for (let i = 0; i < length; i++) messages.push(this.convertMessage(binaryMessages[i]));

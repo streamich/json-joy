@@ -29,7 +29,7 @@ if (process.env.TEST_E2E) {
     await connected;
     return {
       client: {
-        call: (method: string, data: any) => clientJson.call(method, data),
+        call$: (method: string, data: any) => clientJson.call$(method, data),
       },
     };
   };

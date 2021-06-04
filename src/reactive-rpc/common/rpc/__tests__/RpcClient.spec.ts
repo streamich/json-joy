@@ -35,7 +35,7 @@ test('sends notification with no payload', async () => {
 test('returns Observable on new execution', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
   expect(typeof result.subscribe).toBe('function');
@@ -44,7 +44,7 @@ test('returns Observable on new execution', async () => {
 test('observable does not emit before it receives messages from server', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const sub = jest.fn();
   result.subscribe(sub);
   await new Promise((r) => setTimeout(r, 2));
@@ -54,7 +54,7 @@ test('observable does not emit before it receives messages from server', async (
 test('sends Request Complete Message to the server', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith([new RequestCompleteMessage(1, 'test', Buffer.from("{foo: 'bar'}"))]);
@@ -63,7 +63,7 @@ test('sends Request Complete Message to the server', async () => {
 test('sends Request Un-subscribe Message to the server on unsubscribe', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const sub = jest.fn();
   const subscription = result.subscribe(sub);
   await new Promise((r) => setTimeout(r, 2));
@@ -76,7 +76,7 @@ test('sends Request Un-subscribe Message to the server on unsubscribe', async ()
 test('server can immediately complete the subscription', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -93,7 +93,7 @@ test('server can immediately complete the subscription', async () => {
 test('server can immediately complete the subscription with payload', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -110,7 +110,7 @@ test('server can immediately complete the subscription with payload', async () =
 test('server can send multiple values before completing', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -133,7 +133,7 @@ test('server can send multiple values before completing', async () => {
 test('values are not emitted after observable is unsubscribed', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -157,7 +157,7 @@ test('can subscribe to multiple methods', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
 
-  const result1 = client.call('foo', Buffer.from([1]));
+  const result1 = client.call$('foo', Buffer.from([1]));
   const next1 = jest.fn();
   const error1 = jest.fn();
   const complete1 = jest.fn();
@@ -165,7 +165,7 @@ test('can subscribe to multiple methods', async () => {
 
   await new Promise((r) => setTimeout(r, 2));
 
-  const result2 = client.call('bar', Buffer.from([2]));
+  const result2 = client.call$('bar', Buffer.from([2]));
   const next2 = jest.fn();
   const error2 = jest.fn();
   const complete2 = jest.fn();
@@ -206,7 +206,7 @@ test('can subscribe to multiple methods', async () => {
 test('can respond with error', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -223,7 +223,7 @@ test('can respond with error', async () => {
 test('response can complete without sending any data', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -239,7 +239,7 @@ test('response can complete without sending any data', async () => {
 test('does not send unsubscribe when complete has been received', async () => {
   const send = jest.fn();
   const client = new RpcClient({send, bufferTime: 1});
-  const result = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const result = client.call$('test', Buffer.from("{foo: 'bar'}"));
   const next = jest.fn();
   const error = jest.fn();
   const complete = jest.fn();
@@ -258,7 +258,7 @@ test('does not send unsubscribe when complete has been received - 2', async () =
   const client = new RpcClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const observable = client.call$('test', Buffer.from("{foo: 'bar'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
   const promise = firstValueFrom(observable);
@@ -278,7 +278,7 @@ test('does not send unsubscribe when error has been received', async () => {
   const client = new RpcClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable = client.call('test', Buffer.from("{foo: 'bar'}"));
+  const observable = client.call$('test', Buffer.from("{foo: 'bar'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
   const promise = firstValueFrom(observable);
@@ -302,7 +302,7 @@ test('after .stop() completes subscriptions', async () => {
   const client = new RpcClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable = client.call('test', Buffer.from('{}'));
+  const observable = client.call$('test', Buffer.from('{}'));
   const data = jest.fn();
   observable.subscribe(data);
   await new Promise((r) => setTimeout(r, 2));
@@ -322,8 +322,8 @@ test('combines multiple messages in a batch', async () => {
   const client = new RpcClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable1 = client.call('test', Buffer.from('{}'));
-  const observable2 = client.call('test2', Buffer.from("{foo: 'bar'}"));
+  const observable1 = client.call$('test', Buffer.from('{}'));
+  const observable2 = client.call$('test2', Buffer.from("{foo: 'bar'}"));
   client.notify('test3', Buffer.from("{gg: 'bet'}"));
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(1);
@@ -349,8 +349,8 @@ test('can receive and process a batch from server', async () => {
   const client = new RpcClient({send, bufferTime: 1});
   await new Promise((r) => setTimeout(r, 2));
   expect(send).toHaveBeenCalledTimes(0);
-  const observable1 = client.call('test', Buffer.from('{}'));
-  const observable2 = client.call('test2', Buffer.from("{foo: 'bar'}"));
+  const observable1 = client.call$('test', Buffer.from('{}'));
+  const observable2 = client.call$('test2', Buffer.from("{foo: 'bar'}"));
   const data1 = jest.fn();
   const data2 = jest.fn();
   const error1 = jest.fn();
@@ -389,7 +389,7 @@ describe('streaming request', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     await new Promise((r) => setTimeout(r, 1));
     expect(send).toHaveBeenCalledTimes(0);
     data$.next('1');
@@ -416,7 +416,7 @@ describe('streaming request', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     await new Promise((r) => setTimeout(r, 1));
     expect(send).toHaveBeenCalledTimes(0);
     data$.next('1');
@@ -442,7 +442,7 @@ describe('streaming request', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     await new Promise((r) => setTimeout(r, 1));
     expect(send).toHaveBeenCalledTimes(0);
     data$.next('1');
@@ -468,7 +468,7 @@ describe('streaming request', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     await new Promise((r) => setTimeout(r, 1));
     expect(send).toHaveBeenCalledTimes(0);
     data$.error({foo: 'bar'});
@@ -491,7 +491,7 @@ describe('streaming request', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     await new Promise((r) => setTimeout(r, 1));
     expect(send).toHaveBeenCalledTimes(0);
     data$.complete();
@@ -518,7 +518,7 @@ describe('memory leaks', () => {
     const next = jest.fn();
     const error = jest.fn();
     const complete = jest.fn();
-    client.call('a.b', data$).subscribe({next, error, complete});
+    client.call$('a.b', data$).subscribe({next, error, complete});
     expect(client.getInflightCallCount()).toBe(1);
     data$.complete();
     expect(next).toHaveBeenCalledTimes(0);

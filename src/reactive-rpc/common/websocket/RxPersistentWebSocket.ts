@@ -1,4 +1,4 @@
-import {Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {from, Observable, of, ReplaySubject, Subject} from 'rxjs';
 import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {RxWebSocket, RxWebSocketParams} from './RxWebSocket';
 
@@ -31,16 +31,21 @@ export interface RxPersistentWebSocketParams extends RxWebSocketParams {
   minUptime?: number,
 
   /**
-   * Start the reconnecting websocket.
+   * Start the persistent WebSocket, when this observable emits. If not provided,
+   * will start the socket immediately.
    */
   start$?: Observable<unknown>;
 
   /**
-   * Stop the current connection and all reconnection attempts.
+   * Stop the current connection and all reconnection attempts, when this
+   * observable emits. If not provided, will never stop the socket.
    */
   stop$?: Observable<unknown>;
 }
 
+/**
+ * WebSocket which automatically reconnects if disconnected.
+ */
 export class RxPersistentWebSocket {
   /** Currently used RxWebSocket or last active RxWebSocket. */
   public readonly ws$ = new ReplaySubject<RxWebSocket>(1);
@@ -50,16 +55,11 @@ export class RxPersistentWebSocket {
   /** Emits incoming messages. */
   public readonly message$ = this.ws$.pipe(switchMap(ws => ws.message$));
 
-  // public readonly connected$: Observable<boolean>
-
-  /** Number of times we attempted to reconnect. */
+  /** Number of times we have attempted to reconnect. */
   protected retries = 0;
 
-  /** Messages accrued while socket is disconnected. */
-  protected queue: Data[] = [];
-
   constructor(public readonly params: RxPersistentWebSocketParams) {
-    const start$ = params.start$ || of();
+    const start$ = params.start$ || from((async () => undefined)());
     const stop$ = params.stop$ || new Subject();
 
     // Create new WebSocket when service starts.

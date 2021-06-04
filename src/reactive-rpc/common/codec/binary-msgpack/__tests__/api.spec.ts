@@ -4,7 +4,7 @@ import {createApiSetupWithCodec} from '../../compact/__tests__/createApiSetupWit
 
 const decoder = new Decoder();
 const setup = createApiSetupWithCodec({encoder: new Encoder(), decoder: {
-  decode: (arr: Uint8Array) => decoder.decode(arr, arr.byteOffset, arr.byteLength),
+  decode: (arr: Uint8Array) => decoder.decode(arr),
 }});
 
 runApiTests(setup);

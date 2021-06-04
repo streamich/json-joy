@@ -13,6 +13,7 @@ export const enum RpcServerError {
   MethodNotFound = 5,
   ErrorForStaticMethod = 6,
   Stop = 7,
+  Disconnect = 8,
 }
 
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
@@ -35,7 +36,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   /**
    * Method to format any error thrown by application to correct format.
    */
-  formatError: (error: Error | unknown) => T;
+  formatError: (error: T | Error | unknown) => T;
 
   /**
    * Method to format error into the correct format.
@@ -91,7 +92,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
   private notify: RpcServerParams<Ctx, T>['onNotification'];
-  private readonly formatError: (error: Error | unknown) => T;
+  private readonly formatError: (error: T | Error | unknown) => T;
   private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private readonly maxActiveCalls: number;
@@ -147,14 +148,18 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     for (let i = 0; i < length; i++) this.onMessage(messages[i], ctx);
   }
 
-  public stop() {
+  public stop(reason: RpcServerError = RpcServerError.Stop) {
     this.send = (message: ReactiveRpcResponseMessage<T>) => {};
     this.notify = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
-      call.req$.error(this.formatErrorCode(RpcServerError.Stop));
-      call.res$.error(this.formatErrorCode(RpcServerError.Stop));
+      call.req$.error(this.formatErrorCode(reason));
+      call.res$.error(this.formatErrorCode(reason));
     }
     this.activeStreamCalls.clear();
+  }
+
+  public disconnect() {
+    this.stop(RpcServerError.Disconnect);
   }
 
   private sendError(id: number, code: RpcServerError): void {

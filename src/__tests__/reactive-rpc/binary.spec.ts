@@ -25,7 +25,7 @@ if (process.env.TEST_E2E) {
 
   ws.onmessage = function incoming(event: any) {
     const uint8 = toUint8Array(event.data);
-    const messages = decoder.decode(uint8, 0, uint8.byteLength);
+    const messages = decoder.decode(uint8);
     client.onMessages(messages as ReactiveRpcResponseMessage[]);
   };
 
@@ -33,7 +33,7 @@ if (process.env.TEST_E2E) {
     await connected;
     return {
       client: {
-        call: (method: string, data: any) => client.call(method, data),
+        call$: (method: string, data: any) => client.call$(method, data),
       },
     };
   };
