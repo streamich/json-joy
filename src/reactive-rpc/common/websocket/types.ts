@@ -1,4 +1,4 @@
-export type RxWebSocketBase = Pick<WebSocket, 'readyState' | 'bufferedAmount' | 'onopen' | 'onclose' | 'onerror' | 'onmessage' | 'close' | 'send'>;
+export type WebSocketBase = Pick<WebSocket, 'binaryType' | 'readyState' | 'bufferedAmount' | 'onopen' | 'onclose' | 'onerror' | 'onmessage' | 'close' | 'send'>;
 
 export interface CloseEventBase {
   readonly code: number;
