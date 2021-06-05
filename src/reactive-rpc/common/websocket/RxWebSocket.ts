@@ -1,9 +1,9 @@
-import type {RxWebSocketBase, CloseEventBase} from './types';
-import {Subject, ReplaySubject} from 'rxjs';
+import type {WebSocketBase, CloseEventBase} from './types';
+import {Subject, ReplaySubject, BehaviorSubject} from 'rxjs';
 import {WebSocketState} from './constants';
 
 export interface RxWebSocketParams {
-  newSocket: () => RxWebSocketBase;
+  newSocket: () => WebSocketBase;
 }
 
 /**
@@ -14,7 +14,7 @@ export class RxWebSocket {
    * Native websocket reference, or `undefined` if construction of websocket
    * failed.
    */
-  public readonly ws: RxWebSocketBase | undefined;
+  public readonly ws: WebSocketBase | undefined;
 
   /**
    * Emits once when WebSocket transitions into "OPEN" state.
@@ -49,7 +49,9 @@ export class RxWebSocket {
         this.close$.complete();
         this.message$.complete();
       };
-      this.ws.onerror = (event: Event) => this.error$.next(event);
+      this.ws.onerror = (event: Event) => {
+        this.error$.next(event);
+      };
       this.ws.onmessage = (event) => {
         this.message$.next(event.data);
       };

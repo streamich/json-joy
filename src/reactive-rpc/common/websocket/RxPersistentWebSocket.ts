@@ -1,4 +1,4 @@
-import {from, Observable, of, ReplaySubject, Subject} from 'rxjs';
+import {BehaviorSubject, from, Observable, ReplaySubject, Subject, merge} from 'rxjs';
 import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {RxWebSocket, RxWebSocketParams} from './RxWebSocket';
 
@@ -49,11 +49,13 @@ export interface RxPersistentWebSocketParams extends RxWebSocketParams {
 export class RxPersistentWebSocket {
   /** Currently used RxWebSocket or last active RxWebSocket. */
   public readonly ws$ = new ReplaySubject<RxWebSocket>(1);
+  
+  /** Emits incoming messages. */
+  public readonly message$ = this.ws$.pipe(switchMap(ws => ws.message$));
 
   // public readonly error$ = this.ws$.pipe(switchMap(ws => ws.error$));
 
-  /** Emits incoming messages. */
-  public readonly message$ = this.ws$.pipe(switchMap(ws => ws.message$));
+  public readonly connected$ = new BehaviorSubject<boolean>(false);
 
   /** Number of times we have attempted to reconnect. */
   protected retries = 0;
@@ -80,6 +82,16 @@ export class RxPersistentWebSocket {
         tap(() => this.retries = 0),
       )
       .subscribe();
+
+    // Track if socket is connected.
+    start$
+      .pipe(
+        switchMap(() => this.ws$),
+        switchMap(ws => merge([ws.open$, ws.close$, ws.error$])),
+        switchMap(() => this.ws$),
+        map(ws => ws.isOpen()),
+      )
+      .subscribe(this.connected$);
 
     // Reset re-try counter when service stops.
     stop$.subscribe(() => {
