@@ -96,10 +96,12 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
       const ws = this.ws = newSocket();
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
+        this.state$.next(ChannelState.OPEN);
         this.open$.next(this);
         this.open$.complete();
       };
       ws.onclose = (event) => {
+        this.state$.next(ChannelState.CLOSED);
         this.close$.next([this, event]);
         this.close$.complete();
         this.message$.complete();

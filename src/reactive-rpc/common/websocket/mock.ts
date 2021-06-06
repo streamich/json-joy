@@ -14,7 +14,7 @@ export interface MockWebSocket extends WebSocket {
   _open(): void;
   _close(code: number, reason: string, wasClean: boolean): void;
   _error(): void;
-  _message(message: string | ArrayBuffer): void;
+  _message(message: string | ArrayBuffer | ArrayBufferView): void;
 }
 
 export const createWebSocketMock = (params: Partial<CreateWebSocketMockParams>) => {
@@ -120,7 +120,7 @@ export const createWebSocketMock = (params: Partial<CreateWebSocketMockParams>) 
       (this.onerror as any).call(this, new Event('error'));
     }
 
-    public _message(message: string | ArrayBuffer): void {
+    public _message(message: string | ArrayBuffer | ArrayBufferView): void {
       if (!this.onmessage) return;
       const event = {data: message};
       (this.onmessage as any).call(this, event);
