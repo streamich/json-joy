@@ -1,7 +1,7 @@
 import type {WebSocketBase, CloseEventBase} from './types';
-import {Subject, ReplaySubject, BehaviorSubject, Observable} from 'rxjs';
+import {Subject, ReplaySubject, BehaviorSubject, Observable, from, merge} from 'rxjs';
 import {toUint8Array} from '../../../util/toUint8Array';
-import {map} from 'rxjs/operators';
+import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 export const enum ChannelState {
   CONNECTING = 0,
@@ -35,6 +35,11 @@ export interface Channel<T extends string | Uint8Array = string | Uint8Array> {
    * Emits once when channel transitions into "close" state.
    */
   close$: Observable<[self: Channel, event: CloseEventBase]>;
+
+  /**
+   * Whether the channel currently is open.
+   */
+  isOpen(): boolean;
 
   /**
    * Sends an outgoing message to the channel immediately.
@@ -152,6 +157,137 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
           if (!this.isOpen()) throw new Error('CLOSED');
           return this.send(data);
         }),
+      );
+  }
+}
+
+export interface PersistentChannelParams<T extends string | Uint8Array = string | Uint8Array> {
+  /**
+   * New `Channel` factory.
+   */
+  newChannel: () => Channel<T>;
+
+  /**
+   * Minimum amount of time in ms to wait before attempting to reconnect.
+   * Defaults to 1,500 +/- 500 milliseconds.
+   */
+  minReconnectionDelay?: number,
+
+  /**
+   * Maximum amount of time in ms to wait before attempting to reconnect.
+   * Defaults to 10,000 milliseconds.
+   */
+  maxReconnectionDelay?: number,
+
+  /**
+   * Factor which is raised to the power of number of retry attempts and
+   * subsequently multiplied the `minReconnectionDelay` to get to current
+   * reconnection delay.
+   */
+  reconnectionDelayGrowFactor?: number;
+
+  /**
+   * Minimum time the WebSocket should be open to reset retry counter.
+   * Defaults to 5,000 milliseconds.
+   */
+  minUptime?: number,
+
+  /**
+   * Start the persistent WebSocket, when this observable emits. If not provided,
+   * will start the socket immediately.
+   */
+  start$?: Observable<unknown>;
+
+  /**
+   * Stop the current connection and all reconnection attempts, when this
+   * observable emits. If not provided, will never stop the socket.
+   */
+  stop$?: Observable<unknown>;
+}
+
+/**
+ * Channel which automatically reconnects if disconnected.
+ */
+export class PersistentChannel<T extends string | Uint8Array = string | Uint8Array> {
+  /** Currently used channel. */
+  public readonly channel$ = new ReplaySubject<Channel<T>>(1);
+  
+  /** Emits incoming messages. */
+  public readonly message$ = this.channel$.pipe(switchMap(ws => ws.message$));
+
+  // public readonly error$ = this.ws$.pipe(switchMap(ws => ws.error$));
+
+  public readonly open$ = new BehaviorSubject<boolean>(false);
+
+  /** Number of times we have attempted to reconnect. */
+  protected retries = 0;
+
+  constructor(public readonly params: PersistentChannelParams<T>) {
+    const start$ = params.start$ || from((async () => undefined)());
+    const stop$ = params.stop$ || new Subject();
+
+    // Create new Channel when service starts.
+    start$
+      .subscribe(() => this.channel$.next(params.newChannel()));
+
+    // Re-connect, when Channel closes.
+    start$
+      .pipe(
+        switchMap(() => this.channel$),
+        switchMap(channel => channel.close$),
+        takeUntil(stop$),
+        delay(this.reconnectDelay()),
+        takeUntil(stop$),
+        tap(() => this.channel$.next(params.newChannel())),
+        delay(params.minUptime || 5_000),
+        takeUntil(stop$),
+        tap(() => this.retries = 0),
+      )
+      .subscribe();
+
+    // Track if Channel is connected.
+    start$
+      .pipe(
+        switchMap(() => this.channel$),
+        switchMap(channel => channel.state$),
+        map(state => state === ChannelState.OPEN),
+      )
+      .subscribe(open => {
+        if (open !== this.open$.getValue()) this.open$.next(open);
+      });
+
+    // start$
+    //   .pipe(
+    //     switchMap(() => stop$),
+    //     switchMap(() => this.channel$),
+    //   )
+    //   .subscribe(channel => {
+    //     console.log('STOPPING')
+    //     if (channel && channel.isOpen()) channel.close();
+    //   });
+
+    // Reset re-try counter when service stops.
+    stop$.subscribe(() => {
+      this.retries = 0;
+    });
+  }
+
+  public reconnectDelay(): number {
+    if (this.retries <= 0) return 0;
+    const minReconnectionDelay = this.params.minReconnectionDelay || Math.round(1_000 + Math.random() * 1_000);
+    const maxReconnectionDelay = this.params.maxReconnectionDelay || 10_000;
+    const reconnectionDelayGrowFactor = this.params.reconnectionDelayGrowFactor || 1.3;
+    const delay = Math.min(maxReconnectionDelay, minReconnectionDelay * (reconnectionDelayGrowFactor ** (this.retries - 1)))
+    return delay;
+  }
+
+  public send$(data: T): Observable<number> {
+    return this.channel$
+      .pipe(
+        switchMap(channel => channel.open$),
+        filter(channel => channel.isOpen()),
+        take(1),
+        map(channel => channel.send(data)),
       );
   }
 }
