@@ -191,24 +191,14 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
    * Defaults to 5,000 milliseconds.
    */
   minUptime?: number,
-
-  /**
-   * Start the persistent WebSocket, when this observable emits. If not provided,
-   * will start the socket immediately.
-   */
-  start$?: Observable<unknown>;
-
-  /**
-   * Stop the current connection and all reconnection attempts, when this
-   * observable emits. If not provided, will never stop the socket.
-   */
-  stop$?: Observable<unknown>;
 }
 
 /**
  * Channel which automatically reconnects if disconnected.
  */
 export class PersistentChannel<T extends string | Uint8Array = string | Uint8Array> {
+  public readonly active$ = new BehaviorSubject(false);
+
   /** Currently used channel. */
   public readonly channel$ = new ReplaySubject<Channel<T>>(1);
   
@@ -223,8 +213,8 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
   protected retries = 0;
 
   constructor(public readonly params: PersistentChannelParams<T>) {
-    const start$ = params.start$ || from((async () => undefined)());
-    const stop$ = params.stop$ || new Subject();
+    const start$ = this.active$.pipe(filter(active => active));
+    const stop$ = this.active$.pipe(filter(active => !active));
 
     // Create new Channel when service starts.
     start$
@@ -270,6 +260,16 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     stop$.subscribe(() => {
       this.retries = 0;
     });
+  }
+
+  public start(): void {
+    if (this.active$.getValue()) return;
+    this.active$.next(true);
+  }
+
+  public stop(): void {
+    if (!this.active$.getValue()) return;
+    this.active$.next(false);
   }
 
   public reconnectDelay(): number {

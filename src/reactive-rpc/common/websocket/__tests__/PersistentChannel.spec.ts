@@ -1,6 +1,6 @@
 import {createWebSocketMock, MockWebSocket} from '../mock';
 import {WebSocketChannel, PersistentChannel, Channel, PersistentChannelParams} from '../channel';
-import {BehaviorSubject, firstValueFrom, Subject} from 'rxjs';
+import {firstValueFrom, Subject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {of} from '../../util/of';
 
@@ -37,7 +37,7 @@ test('when WebSocket connects open$ state is set to "true"', async () => {
   });
   expect(channel).toBe(undefined);
   expect(persistent.open$.getValue()).toBe(false);
-  await new Promise(r => setTimeout(r, 1));
+  persistent.start();
   ws()._open();
   await new Promise(r => setTimeout(r, 1));
   expect(channel).toBeInstanceOf(WebSocketChannel);
@@ -53,16 +53,14 @@ describe('.start$ life-cycle', () => {
     });
     expect(channel).toBe(undefined);
     expect(persistent.open$.getValue()).toBe(false);
+    persistent.start();
     await new Promise(r => setTimeout(r, 1));
     expect(channel).toBeInstanceOf(WebSocketChannel);
     expect(persistent.open$.getValue()).toBe(false);
   });
 
   test('start life-cycle can be started using .start$ observable', async () => {
-    const start$ = new Subject();
-    const {ws, persistent} = setup({
-      start$,
-    });
+    const {ws, persistent} = setup();
     let channel: Channel<string | Uint8Array> | undefined;
     persistent.channel$.subscribe(ch => {
       channel = ch;
@@ -72,7 +70,7 @@ describe('.start$ life-cycle', () => {
     await new Promise(r => setTimeout(r, 1));
     expect(channel).toBe(undefined);
     expect(persistent.open$.getValue()).toBe(false);
-    start$.next(undefined);
+    persistent.start();
     expect(channel).toBeInstanceOf(WebSocketChannel);
     expect(persistent.open$.getValue()).toBe(false);
     ws()._open();
@@ -85,6 +83,7 @@ describe('.start$ life-cycle', () => {
 describe('.send$() method', () => {
   test('sends out message to the channel when channel is connected', async () => {
     const {ws, onSend, persistent} = setup();
+    persistent.start();
     let channel: Channel<string | Uint8Array> | undefined;
     persistent.channel$.subscribe(ch => {
       channel = ch;
@@ -104,6 +103,7 @@ describe('.send$() method', () => {
 
   test('buffers and sends message out once channel is connected', async () => {
     const {ws, onSend, persistent} = setup();
+    persistent.start();
     let channel: Channel<string | Uint8Array> | undefined;
     persistent.channel$.subscribe(ch => {
       channel = ch;
@@ -120,8 +120,8 @@ describe('.send$() method', () => {
   });
 
   test.skip('does not send messages once .stop$ life-cycle executes', async () => {
-    const stop$ = new Subject();
-    const {ws, onSend, persistent} = setup({stop$});
+    const {ws, onSend, persistent} = setup();
+    persistent.start();
     let channel: Channel<string | Uint8Array> | undefined;
     persistent.channel$.subscribe(ch => {
       channel = ch;
@@ -133,7 +133,7 @@ describe('.send$() method', () => {
     expect(onSend).toHaveBeenCalledTimes(1);
     await firstValueFrom(persistent.send$('foo').pipe(take(1)));
     expect(onSend).toHaveBeenCalledTimes(2);
-    stop$.next(undefined);
+    persistent.stop();
     await firstValueFrom(persistent.send$('bar').pipe(take(1)));
     expect(onSend).toHaveBeenCalledTimes(2);
   });
