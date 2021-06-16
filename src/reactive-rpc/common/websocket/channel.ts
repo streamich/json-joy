@@ -1,7 +1,7 @@
 import type {WebSocketBase, CloseEventBase} from './types';
 import {Subject, ReplaySubject, BehaviorSubject, Observable, from, merge} from 'rxjs';
 import {toUint8Array} from '../../../util/toUint8Array';
-import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 export const enum ChannelState {
   CONNECTING = 0,
@@ -197,34 +197,58 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
  * Channel which automatically reconnects if disconnected.
  */
 export class PersistentChannel<T extends string | Uint8Array = string | Uint8Array> {
+  /**
+   * Whether the service is "active". The service becomes active when it is
+   * started using the ".start()" method. When service is "active" it will
+   * attempt to always keep an open channel connected.
+   */
   public readonly active$ = new BehaviorSubject(false);
-
-  /** Currently used channel. */
-  public readonly channel$ = new ReplaySubject<Channel<T>>(1);
   
-  /** Emits incoming messages. */
-  public readonly message$ = this.channel$.pipe(switchMap(ws => ws.message$));
-
-  // public readonly error$ = this.ws$.pipe(switchMap(ws => ws.error$));
-
+  /**
+   * Currently used channel, if any. When service is "active" it attempts to
+   * create and open a channel.
+   */
+  public readonly channel$ = new BehaviorSubject<undefined | Channel<T>>(undefined);
+  
+  /**
+   * Whether the currently active channel (if any) is "open". An open channel
+   * is one where communication can happen, where a message can be sent to the
+   * other side.
+   */
   public readonly open$ = new BehaviorSubject<boolean>(false);
+
+  /** Emits incoming messages. */
+  public readonly message$ = this.channel$.pipe(
+    filter(channel => !!channel),
+    switchMap(channel => channel!.message$),
+  );
 
   /** Number of times we have attempted to reconnect. */
   protected retries = 0;
 
   constructor(public readonly params: PersistentChannelParams<T>) {
-    const start$ = this.active$.pipe(filter(active => active));
-    const stop$ = this.active$.pipe(filter(active => !active));
+    const start$ = new Subject();
+    const stop$ = new Subject();
 
-    // Create new Channel when service starts.
+    this.active$.pipe(skip(1), filter(active => active)).subscribe(() => {
+      start$.next(undefined);
+    });
+
+    this.active$.pipe(skip(1), filter(active => !active)).subscribe(() => {
+      stop$.next(undefined);
+    });
+
+    // Create new channel when service starts.
     start$
       .subscribe(() => this.channel$.next(params.newChannel()));
 
-    // Re-connect, when Channel closes.
+    // Re-connect, when channel closes.
     start$
       .pipe(
         switchMap(() => this.channel$),
-        switchMap(channel => channel.close$),
+        filter(channel => !!channel),
+        takeUntil(stop$),
+        switchMap(channel => channel!.close$),
         takeUntil(stop$),
         delay(this.reconnectDelay()),
         takeUntil(stop$),
@@ -235,31 +259,23 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
       )
       .subscribe();
 
-    // Track if Channel is connected.
+    // Track if channel is connected.
     start$
       .pipe(
         switchMap(() => this.channel$),
-        switchMap(channel => channel.state$),
+        filter(channel => !!channel),
+        switchMap(channel => channel!.state$),
         map(state => state === ChannelState.OPEN),
       )
       .subscribe(open => {
         if (open !== this.open$.getValue()) this.open$.next(open);
       });
 
-    // start$
-    //   .pipe(
-    //     switchMap(() => stop$),
-    //     switchMap(() => this.channel$),
-    //   )
-    //   .subscribe(channel => {
-    //     console.log('STOPPING')
-    //     if (channel && channel.isOpen()) channel.close();
-    //   });
-
     // Reset re-try counter when service stops.
-    stop$.subscribe(() => {
-      this.retries = 0;
-    });
+    stop$
+      .subscribe(() => {
+        this.retries = 0;
+      });
   }
 
   public start(): void {
@@ -270,6 +286,11 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
   public stop(): void {
     if (!this.active$.getValue()) return;
     this.active$.next(false);
+    const channel = this.channel$.getValue();
+    if (channel) {
+      channel.close();
+      this.channel$.next(undefined);
+    }
   }
 
   public reconnectDelay(): number {
@@ -284,10 +305,14 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
   public send$(data: T): Observable<number> {
     return this.channel$
       .pipe(
-        switchMap(channel => channel.open$),
+        filter(channel => !!channel),
+        switchMap(channel => channel!.open$),
         filter(channel => channel.isOpen()),
         take(1),
-        map(channel => channel.send(data)),
+        map(channel => {
+          const canSend = this.active$.getValue() && this.open$.getValue();
+          return canSend ? channel.send(data) : -1
+        }),
       );
   }
 }

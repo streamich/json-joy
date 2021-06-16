@@ -44,7 +44,7 @@ test('when WebSocket connects open$ state is set to "true"', async () => {
   expect(persistent.open$.getValue()).toBe(true);
 });
 
-describe('.start$ life-cycle', () => {
+describe('.start()', () => {
   test('initially persistent channel is not open, then automatically connects and sets the channel', async () => {
     const {persistent} = setup();
     let channel: Channel<string | Uint8Array> | undefined;
@@ -77,6 +77,30 @@ describe('.start$ life-cycle', () => {
     await new Promise(r => setTimeout(r, 1));
     expect(channel).toBeInstanceOf(WebSocketChannel);
     expect(persistent.open$.getValue()).toBe(true);
+  });
+});
+
+describe('.stop()', () => {
+  test('closes channel when .stop() is executed', async () => {
+    const {ws, onSend, onClose, persistent} = setup();
+    persistent.start();
+    let channel: Channel<string | Uint8Array> | undefined;
+    persistent.channel$.subscribe(ch => {
+      channel = ch;
+    });
+    await new Promise(r => setTimeout(r, 1));
+    ws()._open();
+    await new Promise(r => setTimeout(r, 1));
+    await firstValueFrom(persistent.send$('asdf').pipe(take(1)));
+    expect(onSend).toHaveBeenCalledTimes(1);
+    expect(persistent.open$.getValue()).toBe(true);
+    await firstValueFrom(persistent.send$('foo').pipe(take(1)));
+    expect(onSend).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(0);
+    persistent.stop();
+    await new Promise(r => setTimeout(r, 1));
+    expect(onSend).toHaveBeenCalledTimes(2);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -119,7 +143,7 @@ describe('.send$() method', () => {
     expect(onSend).toHaveBeenCalledWith(new Uint8Array([1, 2, 3]));
   });
 
-  test.skip('does not send messages once .stop$ life-cycle executes', async () => {
+  test('does not send messages once .stop() is executed', async () => {
     const {ws, onSend, persistent} = setup();
     persistent.start();
     let channel: Channel<string | Uint8Array> | undefined;
@@ -134,7 +158,10 @@ describe('.send$() method', () => {
     await firstValueFrom(persistent.send$('foo').pipe(take(1)));
     expect(onSend).toHaveBeenCalledTimes(2);
     persistent.stop();
-    await firstValueFrom(persistent.send$('bar').pipe(take(1)));
+    const a = of(firstValueFrom(persistent.send$('bar').pipe(take(1))));
+    await new Promise(r => setTimeout(r, 1));
+    ws()._open();
+    await new Promise(r => setTimeout(r, 1));
     expect(onSend).toHaveBeenCalledTimes(2);
   });
 });
