@@ -1,15 +1,14 @@
 import WS from 'isomorphic-ws';
 import {formatError} from '../../reactive-rpc/common/rpc';
-import {RxPersistentClient} from '../../reactive-rpc/common/websocket';
+import {RpcPersistentChannel} from '../../reactive-rpc/common/rpc/RpcPersistentChannel';
 import {Encoder, Decoder} from '../../reactive-rpc/common/codec/binary-msgpack';
+import {WebSocketChannel} from '../../reactive-rpc/common/channel/channel';
 
-const client = new RxPersistentClient({
-  ws: {
-    newSocket: () => {
-      const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
-      ws.binaryType = 'arraybuffer';
-      return ws;
-    },
+const client = new RpcPersistentChannel({
+  channel: {
+    newChannel: () => new WebSocketChannel({
+      newSocket: () => new WS('ws://localhost:9999/rpc/binary'),
+    }),
   },
   client: {},
   server: {
@@ -25,6 +24,8 @@ const client = new RxPersistentClient({
     decoder: new Decoder(),
   },
 });
+
+client.start();
 
 client.rpc$.subscribe(rpc => {
   console.log('connected');
