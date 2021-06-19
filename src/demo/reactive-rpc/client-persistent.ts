@@ -25,8 +25,6 @@ const client = new RpcPersistentChannel({
   },
 });
 
-client.start();
-
 client.rpc$.subscribe(rpc => {
   console.log('connected');
 
@@ -53,3 +51,5 @@ client.rpc$.subscribe(rpc => {
       },
     });
 });
+
+client.start();
