@@ -1,7 +1,7 @@
 import {RpcServer, RpcServerParams, RpcServerError} from '../RpcServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
-import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
-import {share, switchMap, take, tap} from 'rxjs/operators';
+import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage} from '../../messages/nominal';
+import {switchMap, take} from 'rxjs/operators';
 
 const setup = (params: Partial<RpcServerParams> = {}) => {
   const send = jest.fn();
@@ -49,7 +49,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       case 'emitOnceSync': {
         return {
           isStreaming: true,
-          call: (ctx, request$) => {
+          call$: (ctx, request$) => {
             const obs = request$.pipe(
               take(1),
               switchMap((request) => of(JSON.stringify({request, ctx})))
@@ -61,7 +61,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       case 'emitThreeSync': {
         return {
           isStreaming: true,
-          call: (ctx, request$) => {
+          call$: (ctx, request$) => {
             const obs = request$.pipe(
               take(1),
               switchMap((request) => from([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])]))
@@ -73,7 +73,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       case 'subject': {
         return {
           isStreaming: true,
-          call: (ctx, request$) => {
+          call$: (ctx, request$) => {
             return subject;
           },
         };
@@ -87,7 +87,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       case 'double': {
         return {
           isStreaming: true,
-          call: (ctx, request$) => request$.pipe(
+          call$: (ctx, request$) => request$.pipe(
             take(1),
             switchMap(value => of(2 * value)),
           ),
@@ -102,7 +102,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
       case 'streamDelay': {
         return {
           isStreaming: true,
-          call: () => from((async () => {
+          call$: () => from((async () => {
             await new Promise(r => setTimeout(r, 5));
             return {};
           })()),
@@ -424,7 +424,7 @@ test('stops sending messages after server stop()', async () => {
   const {server, send, getRpcMethod} = setup({
     onCall: () => ({
       isStreaming: true,
-      call: () => new Observable((subscriber) => {
+      call$: () => new Observable((subscriber) => {
         sub = subscriber;
       }),
     }),
@@ -445,6 +445,8 @@ test('stops sending messages after server stop()', async () => {
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
 });
+
+test.todo('can subscribe to streaming request twice');
 
 describe('when server stops', () => {
   test('does not emit messages from static calls', async () => {

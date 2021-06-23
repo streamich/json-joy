@@ -220,7 +220,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseCompleteMessage<T>(id, value));
       },
     });
-    rpcMethodStreaming.call(ctx, request$).subscribe(streamCall.res$);
+    rpcMethodStreaming.call$(ctx, request$).subscribe(streamCall.res$);
     return streamCall;
   }
 

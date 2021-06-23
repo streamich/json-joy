@@ -42,19 +42,19 @@ const getUser: RpcMethodStatic<object, {id: string}, {id: string, name: string, 
 
 const streamError: RpcMethodStreaming<object, void, void> = {
   isStreaming: true,
-  call: () => from((async () => {
+  call$: () => from((async () => {
     throw new Error('Stream always errors');
   })()),
 };
 
 const utilTimer: RpcMethodStreaming<object, void, number> = {
   isStreaming: true,
-  call: (ctx, request$) => timer(10, 10),
+  call$: (ctx, request$) => timer(10, 10),
 };
 
 const buildinfo: RpcMethodStreaming<object, void, {commit: string, sha1: string}> = {
   isStreaming: true,
-  call: (ctx, request$) => from([{
+  call$: (ctx, request$) => from([{
     commit: 'AAAAAAAAAAAAAAAAAAA',
     sha1: 'BBBBBBBBBBBBBBBBBBB',
   }]),
