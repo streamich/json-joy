@@ -168,13 +168,13 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send(message);
   }
 
-  private execStaticCall(id: number, call: RpcMethodStatic<Ctx, T, T>['call'], request: T, ctx: Ctx) {
+  private execStaticCall(id: number, method: RpcMethodStatic<Ctx, T, T>, request: T, ctx: Ctx) {
     if (this.getInflightCallCount() >= this.maxActiveCalls) {
       this.sendError(id, RpcServerError.TooManyActiveCalls);
       return;
     }
     this.activeStaticCalls++;
-    call(ctx, request)
+    method.call(ctx, request)
       .then(response => {
         this.activeStaticCalls--;
         this.send(new ResponseCompleteMessage<T>(id, response));
@@ -231,7 +231,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
     const rpcMethod = this.getRpcMethod(method);
     if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod.call, data as T, ctx);
+    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
     const streamCall = this.createStreamCall(id, rpcMethod, ctx);
     if (!streamCall) return;
     if (data !== undefined) streamCall.req$.next(data);
@@ -249,7 +249,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
     const rpcMethod = this.getRpcMethod(method);
     if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod.call, data as T, ctx);
+    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
     const streamCall = this.createStreamCall(id, rpcMethod, ctx);
     if (!streamCall) return;
     streamCall.reqFinalized = true;
