@@ -446,7 +446,7 @@ test('stops sending messages after server stop()', async () => {
   expect(send).toHaveBeenCalledTimes(1);
 });
 
-test('does not subscription complete message from server when client cancels subscription', async () => {
+test('does not send subscription complete message from server when client cancels subscription', async () => {
   const subject = new Subject();
   const {server, send} = setup({
     onCall: () => ({
