@@ -126,9 +126,9 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   /**
-   * Returns the number of active in-flight calls. Useful for reporting and 
+   * Returns the number of active in-flight calls. Useful for reporting and
    * testing for memory leaks in unit tests.
-   * 
+   *
    * @returns Number of in-flight RPC calls.
    */
    public getInflightCallCount(): number {
@@ -210,14 +210,14 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
+        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.formatError(error)));
         if (streamCall.reqFinalized) this.activeStreamCalls.delete(id);
         else streamCall.resFinalized = true;
-        this.send(new ResponseErrorMessage<T>(id, this.formatError(error)));
       },
       complete: (value: T | undefined) => {
+        if (!streamCall.resFinalized) this.send(new ResponseCompleteMessage<T>(id, value));
         if (streamCall.reqFinalized) this.activeStreamCalls.delete(id);
         else streamCall.resFinalized = true;
-        this.send(new ResponseCompleteMessage<T>(id, value));
       },
     });
     rpcMethodStreaming.call$(ctx, request$).subscribe(streamCall.res$);
@@ -278,6 +278,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const {id} = message;
     const call = this.activeStreamCalls.get(id);
     if (!call) return;
+    call.resFinalized = true;
+    this.activeStreamCalls.delete(id);
     call.res$.complete();
   }
 

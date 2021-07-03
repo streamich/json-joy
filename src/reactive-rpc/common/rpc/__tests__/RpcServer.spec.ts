@@ -1,6 +1,6 @@
 import {RpcServer, RpcServerParams, RpcServerError} from '../RpcServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
-import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage} from '../../messages/nominal';
+import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
 import {switchMap, take} from 'rxjs/operators';
 
 const setup = (params: Partial<RpcServerParams> = {}) => {
@@ -444,6 +444,27 @@ test('stops sending messages after server stop()', async () => {
   server.onMessage(new RequestCompleteMessage(1, 'foo', undefined), undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
+});
+
+test('does not subscription complete message from server when client cancels subscription', async () => {
+  const subject = new Subject();
+  const {server, send} = setup({
+    onCall: () => ({
+      isStreaming: true,
+      call$: () => subject,
+    }),
+  });
+  server.onMessage(new RequestDataMessage(1, 'test', {}), {});
+  expect(send).toHaveBeenCalledTimes(0);
+  subject.next(1);
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+  subject.next(2);
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(2);
+  server.onMessage(new ResponseUnsubscribeMessage(1), {});
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(2);
 });
 
 test.todo('can subscribe to streaming request twice');
