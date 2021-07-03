@@ -125,7 +125,7 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
     onNotification: notify,
     onCall: getRpcMethod,
     bufferTime: 0,
-    formatError: (error: unknown) => JSON.stringify({error}),
+    formatError: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
     formatErrorCode: (code: RpcServerError) => JSON.stringify({code}),
     ...params,
   });
@@ -468,6 +468,52 @@ test('does not send subscription complete message from server when client cancel
 });
 
 test.todo('can subscribe to streaming request twice');
+
+describe('validation', () => {
+  test('successfully validates a static call', async () => {
+    const {server, send} = setup({
+      onCall: () => ({
+        isStreaming: false,
+        validate: (req: unknown) => {
+          if (typeof req !== 'object') throw new Error('Invalid request.');
+          if (!req) throw new Error('Invalid request.');
+          if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+        },
+        call: async (ctx, req) => (req as {num: number}).num * 2,
+      }),
+    });
+    expect(send).toHaveBeenCalledTimes(0);
+    server.onMessage(new RequestCompleteMessage(1, 'test', {num: 3}), {});
+    await new Promise((r) => setTimeout(r, 1));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
+    expect(send).toHaveBeenCalledWith([new ResponseCompleteMessage(1, 6)]);
+  });
+
+  test('returns error on invalid input', async () => {
+    const {server, send} = setup({
+      onCall: () => ({
+        isStreaming: false,
+        validate: (req: unknown) => {
+          if (typeof req !== 'object') throw new Error('Invalid request.');
+          if (!req) throw new Error('Invalid request.');
+          if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+        },
+        call: async (ctx, req) => (req as {num: number}).num * 2,
+      }),
+    });
+    expect(send).toHaveBeenCalledTimes(0);
+    server.onMessage(new RequestCompleteMessage(1, 'test', {gg: 3}), {});
+    await new Promise((r) => setTimeout(r, 1));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+    expect(send).toHaveBeenCalledWith([new ResponseErrorMessage(1, {
+      error: {
+        message: 'Invalid request.',
+      },
+    })]);
+  });
+});
 
 describe('when server stops', () => {
   test('does not emit messages from static calls', async () => {

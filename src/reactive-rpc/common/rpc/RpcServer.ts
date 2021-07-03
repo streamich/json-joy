@@ -173,6 +173,15 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       this.sendError(id, RpcServerError.TooManyActiveCalls);
       return;
     }
+    if (method.validate) {
+      try {
+        method.validate(request);
+      } catch (error) {
+        const formattedError = this.formatError(error);
+        this.send(new ResponseErrorMessage<T>(id, formattedError));
+        return;
+      }
+    }
     this.activeStaticCalls++;
     method.call(ctx, request)
       .then(response => {
