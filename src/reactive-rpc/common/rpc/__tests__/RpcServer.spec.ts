@@ -421,16 +421,19 @@ test('can add authentication on as higher level API', async () => {
 
 test('stops sending messages after server stop()', async () => {
   let sub: Subscriber<any>;
-  const {server, send, getRpcMethod} = setup({
+  const {server, send} = setup({
     onCall: () => ({
       isStreaming: true,
-      call$: () => new Observable((subscriber) => {
-        sub = subscriber;
-      }),
+      call$: () => {
+        console.log('CALL')
+        return new Observable((subscriber) => {
+          sub = subscriber;
+        });
+      },
     }),
   });
   expect(!!sub!).toBe(false);
-  server.onMessage(new RequestCompleteMessage(1, 'foo', undefined), undefined);
+  server.onMessage(new RequestCompleteMessage(1, 'foo', {}), undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(0);
   expect(!!sub!).toBe(true);
@@ -786,6 +789,32 @@ describe('pre-call checks', () => {
 
       expect(onPreCall).toHaveBeenCalledTimes(1);
       expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
+    });
+  });
+
+  describe('streaming method', () => {
+    test('proceeds with call when pre-call checks pass', async () => {
+      const onPreCall = jest.fn(async (method, ctx, request) => {});
+      const {server, send} = setup({
+        onPreCall,
+        onCall: () => ({
+          isStreaming: true,
+          call$: (ctx, req$) => from([1, 2]),
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      expect(onPreCall).toHaveBeenCalledTimes(0);
+      server.onMessage(new RequestDataMessage(1, 'test', {a: 'b'}), {foo: 'bar'});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(2);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
+      expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseCompleteMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseDataMessage(1, 1));
+      expect(send.mock.calls[1][0][0]).toEqual(new ResponseCompleteMessage(1, 2));
+
+      expect(onPreCall).toHaveBeenCalledTimes(1);
+      // expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
     });
   });
 });
