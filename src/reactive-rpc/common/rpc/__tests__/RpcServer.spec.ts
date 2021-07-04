@@ -782,10 +782,10 @@ describe('pre-call checks', () => {
       await new Promise((r) => setTimeout(r, 1));
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      // expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, ));
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {error: {message: 'fail...'}}));
 
-      // expect(onPreCall).toHaveBeenCalledTimes(1);
-      // expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
+      expect(onPreCall).toHaveBeenCalledTimes(1);
+      expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
     });
   });
 });

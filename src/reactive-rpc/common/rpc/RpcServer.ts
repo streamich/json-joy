@@ -29,6 +29,20 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   onCall: (name: string) => RpcMethod<Ctx, T, T> | undefined;
 
   /**
+   * Method which is executed before an actual call to an RPC method. Pre-call
+   * checks should execute all necessary checks (such as authentication,
+   * authorization, throttling, etc.) before allowing the real method to
+   * proceed. Pre-call checks should throw, if for any reason the call should
+   * not proceed. Return void to allow execution of the actual call.
+   *
+   * @param name Name of the API method.
+   * @param ctx Request context object.
+   * @param request Request payload, the first emitted value in case of
+   *                streaming request.
+   */
+  onPreCall?: (name: string, ctx: Ctx, request: T) => Promise<void>;
+
+  /**
    * Callback called on the server when user sends a notification message.
    */
   onNotification: (name: string, data: T | undefined, ctx: Ctx) => void;
@@ -62,19 +76,6 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * out. Defaults to 1 milliseconds. Set it to zero to disable buffering.
    */
   bufferTime?: number;
-
-  /**
-   * Method which is executed before an actual call to an RPC method. Pre-call
-   * checks should execute all necessary checks (such as authentication,
-   * authorization, throttling, etc.) before allowing the real method to
-   * proceed. Pre-call checks should throw, if for any reason the call should
-   * not proceed, return void otherwise.
-   *
-   * @param ctx Request context object.
-   * @param request Request payload, the first emitted value in case of
-   *                streaming request.
-   */
-  preCall?: (ctx: Ctx, request: T) => Promise<void>;
 }
 
 export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
@@ -104,6 +105,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
+  private onPreCall: RpcServerParams<Ctx, T>['onPreCall'];
   private notify: RpcServerParams<Ctx, T>['onNotification'];
   private readonly formatError: (error: T | Error | unknown) => T;
   private readonly formatErrorCode: (code: RpcServerError) => T;
@@ -113,6 +115,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   constructor({
     send,
     onCall: call,
+    onPreCall,
     onNotification: notify,
     formatErrorCode,
     formatError,
@@ -121,6 +124,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     bufferTime = 1,
   }: RpcServerParams<Ctx, T>) {
     this.getRpcMethod = call;
+    this.onPreCall = onPreCall;
     this.notify = notify;
     this.formatError = formatError;
     this.formatErrorCode = formatErrorCode || formatError;
@@ -181,7 +185,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send(message);
   }
 
-  private execStaticCall(id: number, method: RpcMethodStatic<Ctx, T, T>, request: T, ctx: Ctx) {
+  private execStaticCall(id: number, name: string, method: RpcMethodStatic<Ctx, T, T>, request: T, ctx: Ctx) {
     if (this.getInflightCallCount() >= this.maxActiveCalls) {
       this.sendError(id, RpcServerError.TooManyActiveCalls);
       return;
@@ -196,7 +200,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       }
     }
     this.activeStaticCalls++;
-    method.call(ctx, request)
+    (this.onPreCall ? this.onPreCall(name, ctx, request) : Promise.resolve())
+      .then(() => method.call(ctx, request))
       .then(response => {
         this.activeStaticCalls--;
         this.send(new ResponseCompleteMessage<T>(id, response));
@@ -254,7 +259,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const rpcMethod = this.getRpcMethod(method)!;
     if (call) return this.receiveRequestData(rpcMethod, call, data);
     if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
+    if (!rpcMethod.isStreaming) return this.execStaticCall(id, method, rpcMethod, data as T, ctx);
     const streamCall = this.createStreamCall(id, rpcMethod, ctx);
     if (!streamCall) return;
     this.receiveRequestData(rpcMethod, streamCall, data);
@@ -272,7 +277,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
     const rpcMethod = this.getRpcMethod(method);
     if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
+    if (!rpcMethod.isStreaming) return this.execStaticCall(id, method, rpcMethod, data as T, ctx);
     const streamCall = this.createStreamCall(id, rpcMethod, ctx);
     if (!streamCall) return;
     streamCall.reqFinalized = true;
