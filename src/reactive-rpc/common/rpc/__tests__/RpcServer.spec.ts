@@ -205,7 +205,7 @@ test('if rpc method throws, sends back error message', async () => {
   server.onMessages([message], undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0]).toEqual([new ResponseErrorMessage(1, {message: 'always throws'})]);
+  expect(send.mock.calls[0][0]).toEqual([new ResponseErrorMessage(1, JSON.stringify({error: {message: 'always throws'}}))]);
   expect(getRpcMethod).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledTimes(0);
 });
@@ -387,7 +387,7 @@ test('sends error message if promise throws', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0]).toEqual([new ResponseErrorMessage(3, 'this promise can throw')]);
+  expect(send.mock.calls[0][0]).toEqual([new ResponseErrorMessage(3, JSON.stringify({error: 'this promise can throw'}))]);
 });
 
 test('can create custom API from promises and observables', async () => {
@@ -736,6 +736,56 @@ describe('validation', () => {
           message: 'Invalid request.',
         },
       }));
+    });
+  });
+});
+
+describe('pre-call checks', () => {
+  describe('static method', () => {
+    test('proceeds with call when pre-call checks pass', async () => {
+      const onPreCall = jest.fn(async (method, ctx, request) => {});
+      const {server, send} = setup({
+        onPreCall,
+        onCall: () => ({
+          isStreaming: false,
+          call: async (ctx, req) => (req as {num: number}).num * 2,
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      expect(onPreCall).toHaveBeenCalledTimes(0);
+      server.onMessage(new RequestCompleteMessage(1, 'test', {num: 6}), {foo: 'bar'});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseCompleteMessage(1, 12));
+
+      expect(onPreCall).toHaveBeenCalledTimes(1);
+      expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
+    });
+
+    test('fails call when pre-call checks fail', async () => {
+      const onPreCall = jest.fn(async (method, ctx, request) => {
+        throw new Error('fail...');
+      });
+      const {server, send} = setup({
+        onPreCall,
+        onCall: () => ({
+          isStreaming: false,
+          call: async (ctx, req) => (req as {num: number}).num * 2,
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      expect(onPreCall).toHaveBeenCalledTimes(0);
+      server.onMessage(new RequestCompleteMessage(1, 'test', {num: 6}), {foo: 'bar'});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      // expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, ));
+
+      // expect(onPreCall).toHaveBeenCalledTimes(1);
+      // expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
     });
   });
 });

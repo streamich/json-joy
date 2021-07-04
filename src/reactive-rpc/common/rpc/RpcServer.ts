@@ -203,10 +203,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       })
       .catch(error => {
         this.activeStaticCalls--;
-        // TODO: Format error...
-        // const formattedError = this.formatError(error);
-        // this.send(new ResponseErrorMessage<T>(id, formattedError));
-        this.send(new ResponseErrorMessage<T>(id, error));
+        const formattedError = this.formatError(error);
+        this.send(new ResponseErrorMessage<T>(id, formattedError));
       });
   }
 
