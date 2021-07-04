@@ -62,6 +62,19 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * out. Defaults to 1 milliseconds. Set it to zero to disable buffering.
    */
   bufferTime?: number;
+
+  /**
+   * Method which is executed before an actual call to an RPC method. Pre-call
+   * checks should execute all necessary checks (such as authentication,
+   * authorization, throttling, etc.) before allowing the real method to
+   * proceed. Pre-call checks should throw, if for any reason the call should
+   * not proceed, return void otherwise.
+   * 
+   * @param ctx Request context object.
+   * @param request Request payload, the first emitted value in case of
+   *                streaming request.
+   */
+  preCall?: (ctx: Ctx, request: T) => Promise<void>;
 }
 
 export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
@@ -190,6 +203,9 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       })
       .catch(error => {
         this.activeStaticCalls--;
+        // TODO: Format error...
+        // const formattedError = this.formatError(error);
+        // this.send(new ResponseErrorMessage<T>(id, formattedError));
         this.send(new ResponseErrorMessage<T>(id, error));
       });
   }
