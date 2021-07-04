@@ -1,7 +1,7 @@
 import {RpcServer, RpcServerParams, RpcServerError} from '../RpcServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
-import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
-import {switchMap, take} from 'rxjs/operators';
+import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
+import {map, switchMap, take} from 'rxjs/operators';
 
 const setup = (params: Partial<RpcServerParams> = {}) => {
   const send = jest.fn();
@@ -512,6 +512,231 @@ describe('validation', () => {
         message: 'Invalid request.',
       },
     })]);
+  });
+
+  describe('for streaming method', () => {
+    test('successfully validates a streaming call', async () => {
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => req$.pipe(map(req => (req as {num: number}).num * 2)),
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseDataMessage(1, 10));
+
+      server.onMessage(new RequestDataMessage(1, 'test', {num: 25}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(2);
+      expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseDataMessage);
+      expect(send.mock.calls[1][0][0]).toEqual(new ResponseDataMessage(1, 50));
+    });
+
+    test('errors stream on first data message invalid', async () => {
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => req$.pipe(map(req => (req as {num: number}).num * 2)),
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {GG: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
+
+    test('errors stream on first data message invalid and is a complete message', async () => {
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => req$.pipe(map(req => (req as {num: number}).num * 2)),
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestCompleteMessage(1, 'test', {GG: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
+
+    test('errors stream on second data message invalid', async () => {
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => req$.pipe(map(req => (req as {num: number}).num * 2)),
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseDataMessage(1, 10));
+
+      server.onMessage(new RequestDataMessage(1, 'test', {GG: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(send).toHaveBeenCalledTimes(2);
+      expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[1][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
+
+    test('when second data message validation fails errors request$ observable', async () => {
+      const next = jest.fn();
+      const error = jest.fn();
+      const complete = jest.fn();
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => {
+            req$.subscribe({next, error, complete});
+            const subject = new Subject();
+            return subject;
+          },
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledTimes(0);
+      expect(complete).toHaveBeenCalledTimes(0);
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {INVALID: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(complete).toHaveBeenCalledTimes(0);
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'))
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
+
+    test('when first data message validation fails errors request$ observable', async () => {
+      const next = jest.fn();
+      const error = jest.fn();
+      const complete = jest.fn();
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => {
+            req$.subscribe({next, error, complete});
+            const subject = new Subject();
+            return subject;
+          },
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestDataMessage(1, 'test', {INVALID: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(complete).toHaveBeenCalledTimes(0);
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'))
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
+
+    test('when first RequestCompleteMessage validation fails errors request$ observable', async () => {
+      const next = jest.fn();
+      const error = jest.fn();
+      const complete = jest.fn();
+      const {server, send} = setup({
+        onCall: () => ({
+          isStreaming: true,
+          validate: (req: unknown) => {
+            if (typeof req !== 'object') throw new Error('Invalid request.');
+            if (!req) throw new Error('Invalid request.');
+            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+          },
+          call$: (ctx, req$) => {
+            req$.subscribe({next, error, complete});
+            const subject = new Subject();
+            return subject;
+          },
+        }),
+      });
+      expect(send).toHaveBeenCalledTimes(0);
+
+      server.onMessage(new RequestCompleteMessage(1, 'test', {INVALID: 5}), {});
+      await new Promise((r) => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(complete).toHaveBeenCalledTimes(0);
+      expect(send).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'))
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        error: {
+          message: 'Invalid request.',
+        },
+      }));
+    });
   });
 });
 

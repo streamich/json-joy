@@ -69,7 +69,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * authorization, throttling, etc.) before allowing the real method to
    * proceed. Pre-call checks should throw, if for any reason the call should
    * not proceed, return void otherwise.
-   * 
+   *
    * @param ctx Request context object.
    * @param request Request payload, the first emitted value in case of
    *                streaming request.
@@ -252,14 +252,14 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   public onRequestData(message: RequestDataMessage<T>, ctx: Ctx): void {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
-    if (call) return call.req$.next(data as T);
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
-    const rpcMethod = this.getRpcMethod(method);
+    const rpcMethod = this.getRpcMethod(method)!;
+    if (call) return this.receiveRequestData(rpcMethod, call, data);
     if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
     if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
     const streamCall = this.createStreamCall(id, rpcMethod, ctx);
     if (!streamCall) return;
-    if (data !== undefined) streamCall.req$.next(data);
+    this.receiveRequestData(rpcMethod, streamCall, data);
   }
 
   public onRequestComplete(message: RequestCompleteMessage<T>, ctx: Ctx): void {
@@ -279,8 +279,22 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     if (!streamCall) return;
     streamCall.reqFinalized = true;
     const {req$} = streamCall;
-    if (data !== undefined) req$.next(data);
+    this.receiveRequestData(rpcMethod, streamCall, data);
     req$.complete();
+  }
+
+  protected receiveRequestData(method: RpcMethod<Ctx, T, T>, call: StreamCall<T>, data: undefined | T): void {
+    if (data === undefined) return;
+    if (method.validate) {
+      try {
+        method.validate(data);
+      } catch (error) {
+        call.req$.error(error);
+        call.res$.error(error);
+        return;
+      }
+    }
+    call.req$.next(data);
   }
 
   public onRequestError(message: RequestErrorMessage, ctx: Ctx): void {
