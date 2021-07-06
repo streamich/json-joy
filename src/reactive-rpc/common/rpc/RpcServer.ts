@@ -1,5 +1,5 @@
-import {from, Observable, Subject} from 'rxjs';
-import {switchMap, take, tap} from 'rxjs/operators';
+import {EMPTY, from, Observable, Subject} from 'rxjs';
+import {catchError, switchMap, take} from 'rxjs/operators';
 import {BufferSubject} from '../../../util/BufferSubject';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
@@ -252,6 +252,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     });
     streamCall.req$
       .pipe(
+        catchError(() => EMPTY),
         take(1),
         switchMap(request => this.onPreCall ? from(this.onPreCall(name, ctx, request)) : from([0])),
       ).subscribe(() => {

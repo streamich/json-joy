@@ -669,7 +669,7 @@ describe('validation', () => {
       }));
     });
 
-    test('when first data message validation fails errors request$ observable', async () => {
+    test('when first data message validation fails errors response observable and does not start request observable', async () => {
       const next = jest.fn();
       const error = jest.fn();
       const complete = jest.fn();
@@ -693,10 +693,9 @@ describe('validation', () => {
       server.onMessage(new RequestDataMessage(1, 'test', {INVALID: 5}), {});
       await new Promise((r) => setTimeout(r, 1));
       expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledTimes(0);
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
-      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'))
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
         error: {
@@ -705,7 +704,7 @@ describe('validation', () => {
       }));
     });
 
-    test('when first RequestCompleteMessage validation fails errors request$ observable', async () => {
+    test('when first RequestCompleteMessage validation fails errors response observable and does not start request observable', async () => {
       const next = jest.fn();
       const error = jest.fn();
       const complete = jest.fn();
@@ -729,10 +728,9 @@ describe('validation', () => {
       server.onMessage(new RequestCompleteMessage(1, 'test', {INVALID: 5}), {});
       await new Promise((r) => setTimeout(r, 1));
       expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledTimes(0);
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
-      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'))
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
         error: {
