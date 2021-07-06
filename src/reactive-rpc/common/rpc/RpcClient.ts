@@ -1,4 +1,4 @@
-import {isObservable, Observable, Observer, Subject} from 'rxjs';
+import {firstValueFrom, isObservable, Observable, Observer, Subject} from 'rxjs';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
@@ -215,6 +215,10 @@ export class RpcClient<T = unknown> {
         res$.complete();
       };
     });
+  }
+
+  public async call(method: string, request: T): Promise<T> {
+    return await firstValueFrom(this.call$(method, request));
   }
 
   /**
