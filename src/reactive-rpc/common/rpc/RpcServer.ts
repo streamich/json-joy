@@ -118,7 +118,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
-  private onsend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
+  public onsend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
   private onPreCall: RpcServerParams<Ctx, T>['onPreCall'];
   private notify: RpcServerParams<Ctx, T>['onNotification'];
