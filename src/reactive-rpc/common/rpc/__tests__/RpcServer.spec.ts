@@ -426,7 +426,6 @@ test('stops sending messages after server stop()', async () => {
     onCall: () => ({
       isStreaming: true,
       call$: () => {
-        console.log('CALL')
         return new Observable((subscriber) => {
           sub = subscriber;
         });
@@ -913,18 +912,19 @@ describe('pre-call checks', () => {
         expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {error: {message: 'BufferSubjectOverflow'}}));
       });
 
-      test.only('when pre-call checks finish just before buffer is full, can receive more request data', async () => {
+      test('when pre-call checks finish just before buffer is full, can receive more request data', async () => {
         const preCallFuture = new Defer();
         const response$ = new Subject();
         const onPreCall = jest.fn(async (method, ctx, request) => {
           await preCallFuture.promise;
         });
+        const next = jest.fn();
         const {server, send} = setup({
           onPreCall,
           onCall: () => ({
             isStreaming: true,
             call$: (ctx, req$) => {
-              console.log('CALL')
+              req$.subscribe({next});
               return response$;
             },
             validate: () => {},
@@ -941,17 +941,21 @@ describe('pre-call checks', () => {
         server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
         await new Promise(r => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
+        expect(next).toHaveBeenCalledTimes(0);
         preCallFuture.resolve(undefined);
         await new Promise(r => setTimeout(r, 1));
+        expect(next).toHaveBeenCalledTimes(5);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
         await new Promise(r => setTimeout(r, 1));
         server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
-        // await new Promise(r => setTimeout(r, 1));
-        // server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
-        // await new Promise(r => setTimeout(r, 1));
-        // expect(send).toHaveBeenCalledTimes(2);
-        // expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
-        // expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseCompleteMessage);
+        await new Promise(r => setTimeout(r, 1));
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        response$.next(1);
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(next).toHaveBeenCalledTimes(8);
       });
     });
   });

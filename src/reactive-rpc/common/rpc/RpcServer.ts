@@ -254,7 +254,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     });
     const onReqFinalize = () => {
       if (streamCall.resFinalized) {
-        console.log('delete 2');
         this.activeStreamCalls.delete(id);
       }
       else streamCall.reqFinalized = true;
@@ -265,23 +264,18 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
-        console.log('error', error)
         if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.formatError(error)));
         if (streamCall.reqFinalized) {
-          console.log('delete 3');
           this.activeStreamCalls.delete(id);
         } else {
-          console.log('res finalized 1');
           streamCall.resFinalized = true;
         }
       },
       complete: (value: T | undefined) => {
         if (!streamCall.resFinalized) this.send(new ResponseCompleteMessage<T>(id, value));
         if (streamCall.reqFinalized) {
-          console.log('delete 4');
           this.activeStreamCalls.delete(id);
         } else {
-          console.log('res finalized 2');
           streamCall.resFinalized = true;
         }
       },
@@ -290,17 +284,13 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       .pipe(
         take(1),
         catchError(() => {
-          console.log('ERROR')
           return EMPTY;
         }),
         switchMap(request => this.onPreCall ? from(this.onPreCall(name, ctx, request)) : from([0])),
       ).subscribe(() => {
-        console.log('HERE...')
         rpcMethodStreaming.call$(ctx, requestThatTracksUnsubscribe$)
           .subscribe(streamCall.res$);
-        setTimeout(() => {
-          streamCall.req$.flush();
-        }, 1);
+        streamCall.req$.flush();
       });
     return streamCall;
   }
@@ -373,7 +363,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const call = this.activeStreamCalls.get(id);
     if (!call) return;
     call.resFinalized = true;
-    console.log('delete 1');
     this.activeStreamCalls.delete(id);
     call.res$.complete();
   }
