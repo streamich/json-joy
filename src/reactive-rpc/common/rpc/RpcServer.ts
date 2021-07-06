@@ -78,6 +78,14 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * out. Defaults to 1 milliseconds. Set it to zero to disable buffering.
    */
   bufferTime?: number;
+
+  /**
+   * When call `request$` is a multi-value observable and request data is coming
+   * in while pre-call check is still being executed, this property determines
+   * how many `request$` values to buffer in memory before raising an error
+   * and stopping the streaming call. Defaults to 10.
+   */
+  preCallBufferSize?: number;
 }
 
 export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
@@ -87,8 +95,12 @@ export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit
 class StreamCall<T = unknown> {
   public reqFinalized: boolean = false;
   public resFinalized: boolean = false;
-  public readonly req$: BufferSubject<T> = new BufferSubject(10);
+  public readonly req$: BufferSubject<T>;
   public readonly res$: Subject<T> = new Subject();
+
+  constructor (preCallBufferSize: number) {
+    this.req$ = new BufferSubject(preCallBufferSize);
+  }
 }
 
 export class RpcServer<Ctx = unknown, T = unknown> {
@@ -113,6 +125,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private readonly maxActiveCalls: number;
+  private readonly preCallBufferSize: number;
 
   constructor({
     send,
@@ -124,6 +137,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     maxActiveCalls = 30,
     bufferSize = 10,
     bufferTime = 1,
+    preCallBufferSize = 10,
   }: RpcServerParams<Ctx, T>) {
     this.getRpcMethod = call;
     this.onPreCall = onPreCall;
@@ -131,6 +145,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.formatError = formatError;
     this.formatErrorCode = formatErrorCode || formatError;
     this.maxActiveCalls = maxActiveCalls;
+    this.preCallBufferSize = preCallBufferSize;
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage>();
       buffer.itemLimit = bufferSize;
@@ -220,8 +235,15 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       this.sendError(id, RpcServerError.TooManyActiveCalls);
       return;
     }
-    const streamCall = new StreamCall<T>();
+    const streamCall = new StreamCall<T>(rpcMethodStreaming.preCallBufferSize || this.preCallBufferSize);
     this.activeStreamCalls.set(id, streamCall);
+    streamCall.req$.subscribe({
+      error: error => {
+        if (error instanceof Error && error.message === 'BufferSubjectOverflow') {
+          streamCall.res$.error(error);
+        }
+      },
+    });
     const requestThatTracksUnsubscribe$ = new Observable<T>((observer) => {
       streamCall.req$.subscribe(observer);
       return () => {
@@ -231,7 +253,10 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       };
     });
     const onReqFinalize = () => {
-      if (streamCall.resFinalized) this.activeStreamCalls.delete(id);
+      if (streamCall.resFinalized) {
+        console.log('delete 2');
+        this.activeStreamCalls.delete(id);
+      }
       else streamCall.reqFinalized = true;
     };
     streamCall.req$.subscribe({error: onReqFinalize, complete: onReqFinalize});
@@ -240,22 +265,37 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
+        console.log('error', error)
         if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.formatError(error)));
-        if (streamCall.reqFinalized) this.activeStreamCalls.delete(id);
-        else streamCall.resFinalized = true;
+        if (streamCall.reqFinalized) {
+          console.log('delete 3');
+          this.activeStreamCalls.delete(id);
+        } else {
+          console.log('res finalized 1');
+          streamCall.resFinalized = true;
+        }
       },
       complete: (value: T | undefined) => {
         if (!streamCall.resFinalized) this.send(new ResponseCompleteMessage<T>(id, value));
-        if (streamCall.reqFinalized) this.activeStreamCalls.delete(id);
-        else streamCall.resFinalized = true;
+        if (streamCall.reqFinalized) {
+          console.log('delete 4');
+          this.activeStreamCalls.delete(id);
+        } else {
+          console.log('res finalized 2');
+          streamCall.resFinalized = true;
+        }
       },
     });
     streamCall.req$
       .pipe(
-        catchError(() => EMPTY),
         take(1),
+        catchError(() => {
+          console.log('ERROR')
+          return EMPTY;
+        }),
         switchMap(request => this.onPreCall ? from(this.onPreCall(name, ctx, request)) : from([0])),
       ).subscribe(() => {
+        console.log('HERE...')
         rpcMethodStreaming.call$(ctx, requestThatTracksUnsubscribe$)
           .subscribe(streamCall.res$);
         setTimeout(() => {
@@ -333,6 +373,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const call = this.activeStreamCalls.get(id);
     if (!call) return;
     call.resFinalized = true;
+    console.log('delete 1');
     this.activeStreamCalls.delete(id);
     call.res$.complete();
   }

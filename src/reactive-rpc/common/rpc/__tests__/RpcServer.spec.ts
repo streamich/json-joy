@@ -2,6 +2,7 @@ import {RpcServer, RpcServerParams, RpcServerError} from '../RpcServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
 import {map, switchMap, take} from 'rxjs/operators';
+import {Defer} from '../../../../util/Defer';
 
 const setup = (params: Partial<RpcServerParams> = {}) => {
   const send = jest.fn();
@@ -812,7 +813,146 @@ describe('pre-call checks', () => {
       expect(send.mock.calls[1][0][0]).toEqual(new ResponseCompleteMessage(1, 2));
 
       expect(onPreCall).toHaveBeenCalledTimes(1);
-      // expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {num: 6});
+      expect(onPreCall).toHaveBeenCalledWith('test', {foo: 'bar'}, {a: 'b'});
+    });
+
+    describe('request buffer', () => {
+      test('buffer size is 10 by default', async () => {
+        const preCallFuture = new Defer();
+        const onPreCall = jest.fn(async (method, ctx, request) => {
+          await preCallFuture.promise;
+        });
+        const {server, send} = setup({
+          onPreCall,
+          onCall: () => ({
+            isStreaming: true,
+            call$: (ctx, req$) => from([1, 2]),
+            validate: () => {},
+          }),
+        });
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '9'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '10'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '11'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {error: {message: 'BufferSubjectOverflow'}}));
+      });
+
+      test('buffer size can be set to 5 for the whole server', async () => {
+        const preCallFuture = new Defer();
+        const onPreCall = jest.fn(async (method, ctx, request) => {
+          await preCallFuture.promise;
+        });
+        const {server, send} = setup({
+          onPreCall,
+          preCallBufferSize: 5,
+          onCall: () => ({
+            isStreaming: true,
+            call$: (ctx, req$) => from([1, 2]),
+            validate: () => {},
+          }),
+        });
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {error: {message: 'BufferSubjectOverflow'}}));
+      });
+
+      test('buffer size can be set to 5 per method', async () => {
+        const preCallFuture = new Defer();
+        const onPreCall = jest.fn(async (method, ctx, request) => {
+          await preCallFuture.promise;
+        });
+        const {server, send} = setup({
+          onPreCall,
+          onCall: () => ({
+            isStreaming: true,
+            call$: (ctx, req$) => from([1, 2]),
+            validate: () => {},
+            preCallBufferSize: 5,
+          }),
+        });
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {error: {message: 'BufferSubjectOverflow'}}));
+      });
+
+      test.only('when pre-call checks finish just before buffer is full, can receive more request data', async () => {
+        const preCallFuture = new Defer();
+        const response$ = new Subject();
+        const onPreCall = jest.fn(async (method, ctx, request) => {
+          await preCallFuture.promise;
+        });
+        const {server, send} = setup({
+          onPreCall,
+          onCall: () => ({
+            isStreaming: true,
+            call$: (ctx, req$) => {
+              console.log('CALL')
+              return response$;
+            },
+            validate: () => {},
+            preCallBufferSize: 5,
+          }),
+        });
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        preCallFuture.resolve(undefined);
+        await new Promise(r => setTimeout(r, 1));
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
+        // await new Promise(r => setTimeout(r, 1));
+        // server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
+        // await new Promise(r => setTimeout(r, 1));
+        // expect(send).toHaveBeenCalledTimes(2);
+        // expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
+        // expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseCompleteMessage);
+      });
     });
   });
 });
