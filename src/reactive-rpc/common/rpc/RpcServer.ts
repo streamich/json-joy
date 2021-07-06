@@ -23,7 +23,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * Method to be called by server when it wants to send messages to the client.
    * This is usually your WebSocket "send" method.
    */
-  send: (messages: ReactiveRpcResponseMessage[]) => void;
+  send: (messages: ReactiveRpcResponseMessage<T>[]) => void;
 
   /**
    * Callback called on the server when user sends a subscription message.
@@ -118,6 +118,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
+  private onsend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
   private onPreCall: RpcServerParams<Ctx, T>['onPreCall'];
   private notify: RpcServerParams<Ctx, T>['onNotification'];
@@ -146,16 +147,17 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.formatErrorCode = formatErrorCode || formatError;
     this.maxActiveCalls = maxActiveCalls;
     this.preCallBufferSize = preCallBufferSize;
+    this.onsend = send;
     if (bufferTime) {
-      const buffer = new TimedQueue<ReactiveRpcResponseMessage>();
+      const buffer = new TimedQueue<ReactiveRpcResponseMessage<T>>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
-      buffer.onFlush = send;
+      buffer.onFlush = messages => this.onsend(messages);
       this.send = (message) => {
         buffer.push(message);
       };
     } else {
-      this.send = message => send([message]);
+      this.send = message => this.onsend([message]);
     }
   }
 
