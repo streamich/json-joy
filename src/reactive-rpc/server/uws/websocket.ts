@@ -3,7 +3,6 @@ import {Encoder, Decoder} from '../../common/codec/binary-msgpack';
 import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../common/codec/compact-json';
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../common/codec/compact-msgpack';
 import {RpcServer, RpcServerParams} from '../../common/rpc/RpcServer';
-import {formatError as defaultFormatError, formatErrorCode as defaultFormatErrorCode} from '../../common/rpc/error';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../common';
 import {NotificationMessage} from '../../common/messages/nominal/NotificationMessage';
 
@@ -22,11 +21,8 @@ export interface RpcWebSocket<Ctx = unknown> extends WebSocket {
 export interface EnableWsReactiveRpcApiParams<Ctx> {
   uws: TemplatedApp;
   createContext: (req: HttpRequest, res: HttpResponse) => Ctx;
-  onCall: RpcServerParams<Ctx>['onCall'];
-  preCallBufferSize?: RpcServerParams<Ctx>['preCallBufferSize'];
-  onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined) => void;
-  formatError?: RpcServerParams<Ctx>['formatError'];
-  formatErrorCode?: RpcServerParams<Ctx>['formatErrorCode'];
+  createRpcServer: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServer<Ctx>;
+  onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined, ctx: Ctx) => void;
   route?: string;
   idleTimeout?: number;
   compression?: number;
@@ -44,15 +40,11 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
   const {
     route = '/rpc/binary',
     uws,
-    onCall,
-    preCallBufferSize,
+    createRpcServer,
     onNotification,
     createContext,
     compression,
-    formatError = defaultFormatError,
-    formatErrorCode = defaultFormatErrorCode,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
-    maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
     maxPayloadLength = DEFAULTS.MAX_PAYLOAD_LENGTH,
   } = params;
@@ -70,21 +62,18 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
       res.upgrade({ctx}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
     },
     open: (ws: WebSocket) => {
-      const rpc = new RpcServer<Ctx>({
-        maxActiveCalls,
-        formatError,
-        formatErrorCode,
-        onCall,
-        preCallBufferSize,
-        onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
-          onNotification(ws as RpcWebSocket<Ctx>, name, data);
-        } : () => {},
+      const rpc = createRpcServer({
         send: (messages: ReactiveRpcResponseMessage[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const uint8 = encoder.encode(messages);
           ws.send(uint8, true);
         },
       });
+      if (onNotification) {
+        rpc.onNotification = (name: string, data: unknown | undefined, ctx: Ctx) => {
+          onNotification(ws as RpcWebSocket<Ctx>, name, data, ctx);
+        };
+      }
       ws.rpc = rpc;
     },
     message: (ws: WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
@@ -123,15 +112,11 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
   const {
     route = '/rpc/compact',
     uws,
-    onCall,
-    preCallBufferSize,
+    createRpcServer,
     onNotification,
     createContext,
     compression,
-    formatError = defaultFormatError,
-    formatErrorCode = defaultFormatErrorCode,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
-    maxActiveCalls = DEFAULTS.MAX_ACTIVE_CLIENTS,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
     maxPayloadLength = DEFAULTS.MAX_PAYLOAD_LENGTH,
   } = params;
@@ -150,15 +135,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
       res.upgrade({ctx, isBinary}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
     },
     open: (ws: WebSocket) => {
-      const rpc = new RpcServer<Ctx>({
-        maxActiveCalls,
-        formatError,
-        formatErrorCode,
-        onCall,
-        preCallBufferSize,
-        onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
-          onNotification(ws as CompactRpcWebSocket<Ctx>, name, data);
-        } : () => {},
+      const rpc = createRpcServer({
         send: (messages: ReactiveRpcResponseMessage[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const {isBinary} = (ws as CompactRpcWebSocket<Ctx>);
@@ -166,6 +143,11 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
           ws.send(encoded, isBinary);
         },
       });
+      if (onNotification) {
+        rpc.onNotification = (name: string, data: unknown | undefined, ctx: Ctx) => {
+          onNotification(ws as CompactRpcWebSocket<Ctx>, name, data, ctx);
+        };
+      }
       ws.rpc = rpc;
     },
     message: (ws: WebSocket, buf: ArrayBuffer, isBinary: boolean) => {

@@ -23,11 +23,11 @@ export class RpcDuplex<Ctx = unknown, T = unknown> {
   }
 
   public onMessage(message: ReactiveRpcMessage<T>, ctx: Ctx): void {
-    if (message instanceof RequestDataMessage) this.server.onRequestData(message, ctx);
-    else if (message instanceof RequestCompleteMessage) this.server.onRequestComplete(message, ctx);
-    else if (message instanceof RequestErrorMessage) this.server.onRequestError(message, ctx);
-    else if (message instanceof ResponseUnsubscribeMessage) this.server.onUnsubscribe(message);
-    else if (message instanceof NotificationMessage) this.server.onNotification(message, ctx);
+    if (message instanceof RequestDataMessage) this.server.onRequestDataMessage(message, ctx);
+    else if (message instanceof RequestCompleteMessage) this.server.onRequestCompleteMessage(message, ctx);
+    else if (message instanceof RequestErrorMessage) this.server.onRequestErrorMessage(message, ctx);
+    else if (message instanceof ResponseUnsubscribeMessage) this.server.onUnsubscribeMessage(message);
+    else if (message instanceof NotificationMessage) this.server.onNotificationMessage(message, ctx);
     else if (message instanceof ResponseCompleteMessage) return this.client.onResponseComplete(message);
     else if (message instanceof ResponseDataMessage) return this.client.onResponseData(message);
     else if (message instanceof ResponseErrorMessage) return this.client.onResponseError(message);

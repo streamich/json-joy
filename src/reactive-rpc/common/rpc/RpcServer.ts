@@ -110,15 +110,19 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
-  public onsend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
-  private notify: RpcServerParams<Ctx, T>['onNotification'];
   private readonly formatError: (error: T | Error | unknown) => T;
   private readonly formatValidationError: (error: T | Error | unknown) => T;
   private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private readonly maxActiveCalls: number;
   private readonly preCallBufferSize: number;
+
+  /** Callback which sends message out of the server. */
+  public onSend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
+
+  /** Callback called when server receives a notification. */
+  public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
   constructor({
     send,
@@ -133,23 +137,23 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     preCallBufferSize = 10,
   }: RpcServerParams<Ctx, T>) {
     this.getRpcMethod = call;
-    this.notify = notify;
+    this.onNotification = notify;
     this.formatError = formatError;
     this.formatValidationError = formatValidationError || formatError;
     this.formatErrorCode = formatErrorCode || formatError;
     this.maxActiveCalls = maxActiveCalls;
     this.preCallBufferSize = preCallBufferSize;
-    this.onsend = send;
+    this.onSend = send;
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T>>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
-      buffer.onFlush = messages => this.onsend(messages);
+      buffer.onFlush = messages => this.onSend(messages);
       this.send = (message) => {
         buffer.push(message);
       };
     } else {
-      this.send = message => this.onsend([message]);
+      this.send = message => this.onSend([message]);
     }
   }
 
@@ -164,11 +168,11 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   public onMessage(message: ReactiveRpcRequestMessage<T>, ctx: Ctx): void {
-    if (message instanceof RequestDataMessage) this.onRequestData(message, ctx);
-    else if (message instanceof RequestCompleteMessage) this.onRequestComplete(message, ctx);
-    else if (message instanceof RequestErrorMessage) this.onRequestError(message, ctx);
-    else if (message instanceof NotificationMessage) this.onNotification(message, ctx);
-    else if (message instanceof ResponseUnsubscribeMessage) this.onUnsubscribe(message);
+    if (message instanceof RequestDataMessage) this.onRequestDataMessage(message, ctx);
+    else if (message instanceof RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
+    else if (message instanceof RequestErrorMessage) this.onRequestErrorMessage(message, ctx);
+    else if (message instanceof NotificationMessage) this.onNotificationMessage(message, ctx);
+    else if (message instanceof ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
   }
 
   public onMessages(messages: ReactiveRpcRequestMessage<T>[], ctx: Ctx): void {
@@ -178,7 +182,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   public stop(reason: RpcServerError = RpcServerError.Stop) {
     this.send = (message: ReactiveRpcResponseMessage<T>) => {};
-    this.notify = (name: string, data: T | undefined, ctx: Ctx) => {};
+    this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
       call.req$.error(this.formatErrorCode(reason));
       call.res$.error(this.formatErrorCode(reason));
@@ -289,7 +293,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     return streamCall;
   }
 
-  public onRequestData(message: RequestDataMessage<T>, ctx: Ctx): void {
+  public onRequestDataMessage(message: RequestDataMessage<T>, ctx: Ctx): void {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
@@ -302,7 +306,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.receiveRequestData(rpcMethod, streamCall, data);
   }
 
-  public onRequestComplete(message: RequestCompleteMessage<T>, ctx: Ctx): void {
+  public onRequestCompleteMessage(message: RequestCompleteMessage<T>, ctx: Ctx): void {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
     if (call) {
@@ -336,7 +340,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     call.req$.next(data);
   }
 
-  public onRequestError(message: RequestErrorMessage, ctx: Ctx): void {
+  public onRequestErrorMessage(message: RequestErrorMessage, ctx: Ctx): void {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
     if (call) {
@@ -352,7 +356,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     streamCall.req$.error(data);
   }
 
-  public onUnsubscribe(message: ResponseUnsubscribeMessage): void {
+  public onUnsubscribeMessage(message: ResponseUnsubscribeMessage): void {
     const {id} = message;
     const call = this.activeStreamCalls.get(id);
     if (!call) return;
@@ -361,8 +365,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     call.res$.complete();
   }
 
-  public onNotification(message: NotificationMessage<T>, ctx: Ctx): void {
+  public onNotificationMessage(message: NotificationMessage<T>, ctx: Ctx): void {
     const {method, data} = message;
-    this.notify(method, data, ctx);
+    this.onNotification(method, data, ctx);
   }
 }
