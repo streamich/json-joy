@@ -1,4 +1,4 @@
-import {runApiTests, sampleApi} from './api';
+import {sampleApi} from './api';
 import {RpcServer} from '../RpcServer';
 import {RpcServerLocalClient} from '../RpcServerLocalClient';
 import {formatError, formatErrorCode} from '../error';
