@@ -23,7 +23,6 @@ export interface EnableWsReactiveRpcApiParams<Ctx> {
   uws: TemplatedApp;
   createContext: (req: HttpRequest, res: HttpResponse) => Ctx;
   onCall: RpcServerParams<Ctx>['onCall'];
-  onPreCall?: RpcServerParams<Ctx>['onPreCall'];
   preCallBufferSize?: RpcServerParams<Ctx>['preCallBufferSize'];
   onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined) => void;
   formatError?: RpcServerParams<Ctx>['formatError'];
@@ -46,7 +45,6 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     route = '/rpc/binary',
     uws,
     onCall,
-    onPreCall,
     preCallBufferSize,
     onNotification,
     createContext,
@@ -77,7 +75,6 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
         formatError,
         formatErrorCode,
         onCall,
-        onPreCall,
         preCallBufferSize,
         onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
           onNotification(ws as RpcWebSocket<Ctx>, name, data);
@@ -127,7 +124,6 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     route = '/rpc/compact',
     uws,
     onCall,
-    onPreCall,
     preCallBufferSize,
     onNotification,
     createContext,
@@ -159,7 +155,6 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
         formatError,
         formatErrorCode,
         onCall,
-        onPreCall,
         preCallBufferSize,
         onNotification: onNotification ? (name: string, data: unknown | undefined, ctx: Ctx) => {
           onNotification(ws as CompactRpcWebSocket<Ctx>, name, data);
