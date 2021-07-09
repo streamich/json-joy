@@ -55,6 +55,12 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   formatError: (error: T | Error | unknown) => T;
 
   /**
+   * Method to format validation error thrown by .validate() function of a
+   * method. If this property not provided, defaults to `.formatError`.
+   */
+  formatValidationError?: (error: T | Error | unknown) => T;
+
+  /**
    * Method to format error into the correct format.
    */
   formatErrorCode?: (code: RpcServerError) => T;
@@ -123,6 +129,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private onPreCall: RpcServerParams<Ctx, T>['onPreCall'];
   private notify: RpcServerParams<Ctx, T>['onNotification'];
   private readonly formatError: (error: T | Error | unknown) => T;
+  private readonly formatValidationError: (error: T | Error | unknown) => T;
   private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private readonly maxActiveCalls: number;
@@ -135,6 +142,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     onNotification: notify,
     formatErrorCode,
     formatError,
+    formatValidationError,
     maxActiveCalls = 30,
     bufferSize = 10,
     bufferTime = 1,
@@ -144,6 +152,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.onPreCall = onPreCall;
     this.notify = notify;
     this.formatError = formatError;
+    this.formatValidationError = formatValidationError || formatError;
     this.formatErrorCode = formatErrorCode || formatError;
     this.maxActiveCalls = maxActiveCalls;
     this.preCallBufferSize = preCallBufferSize;
@@ -213,7 +222,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       try {
         method.validate(request);
       } catch (error) {
-        const formattedError = this.formatError(error);
+        const formattedError = this.formatValidationError(error);
         this.send(new ResponseErrorMessage<T>(id, formattedError));
         return;
       }
