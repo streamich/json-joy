@@ -15,7 +15,7 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
    * In case request is a stream, validation method is executed for every
    * emitted value.
    */
-  validate?: (request: Request) => void;
+  validate?(request: Request): void;
 
   /**
    * Method which is executed before an actual call to an RPC method. Pre-call
@@ -40,7 +40,7 @@ export interface RpcMethodStatic<Context = unknown, Request = unknown, Response 
   /**
    * Execute the static method.
    */
-  call: (ctx: Context, request: Request) => Promise<Response>;
+  call(ctx: Context, request: Request): Promise<Response>;
 }
 
 export interface RpcMethodStreaming<Context = unknown, Request = unknown, Response = unknown> extends RpcMethodBase<Context, Request> {
@@ -51,11 +51,6 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
   isStreaming: true;
 
   /**
-   * Execute the streaming method.
-   */
-  call$: (ctx: Context, request$: Observable<Request>) => Observable<Response>;
-
-  /**
    * When call `request$` is a multi-value observable and request data is coming
    * in while pre-call check is still being executed, this property determines
    * how many `request$` values to buffer in memory before raising an error
@@ -63,6 +58,11 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
    * set on the `RpcServer`.
    */
   preCallBufferSize?: number;
+
+  /**
+   * Execute the streaming method.
+   */
+  call$(ctx: Context, request$: Observable<Request>): Observable<Response>;
 }
 
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
