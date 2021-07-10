@@ -180,7 +180,6 @@ export class RpcClient<T = unknown> {
     const entry: ObserverEntry<T> = {req$, res$};
     this.calls.set(id, entry);
     if (isObservable(data)) {
-      data.subscribe(req$);
       let firstMessageSent = false;
       subscribeCompleteObserver<T>(req$, {
         next: (value) => {
@@ -202,6 +201,7 @@ export class RpcClient<T = unknown> {
           this.buffer.push(message);
         },
       });
+      data.subscribe(req$);
     } else {
       this.buffer.push(new RequestCompleteMessage<T>(id, method, data));
       req$.complete();
