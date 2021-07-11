@@ -1,7 +1,6 @@
 import {sampleApi} from './api';
 import {RpcServer} from '../RpcServer';
 import {RpcServerLocalClient} from '../RpcServerLocalClient';
-import {formatError, formatErrorCode} from '../error';
 import {of} from '../../util/of';
 
 const setup = () => {
@@ -12,8 +11,6 @@ const setup = () => {
     bufferSize: 2,
     bufferTime: 1,
     maxActiveCalls: 3,
-    formatError,
-    formatErrorCode,
   });
   const client = new RpcServerLocalClient({
     ctx: {},
@@ -42,7 +39,7 @@ describe('.call() method', () => {
   test('can return back an error', async () => {
     const {client} = setup();
     const [, error1] = await of(client.call('error', {}));
-    expect(error1).toBe('this promise can throw');
+    expect(error1).toEqual({message: 'this promise can throw'});
     const [, error2] = await of(client.call('streamError', {}));
     expect(error2).toEqual({message: 'Stream always errors'});
   });

@@ -1,7 +1,6 @@
 import {runApiTests, sampleApi} from './api';
 import {RpcServer} from '../RpcServer';
-import {RpcServerLocalClient} from '../RpcServerLocalClient';
-import {formatError, formatErrorCode} from '../error';
+import {RpcServerLocalClient} from '../RpcServerLocalClient'
 
 const setup = () => {
   const server = RpcServer.fromApi<any, any>({
@@ -11,8 +10,6 @@ const setup = () => {
     bufferSize: 2,
     bufferTime: 1,
     maxActiveCalls: 3,
-    formatError,
-    formatErrorCode,
   });
   const client = new RpcServerLocalClient({
     ctx: {},

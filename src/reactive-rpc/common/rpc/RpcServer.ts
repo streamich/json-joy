@@ -6,6 +6,9 @@ import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
 import {RpcApi, RpcMethod, RpcMethodStatic, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
+import {ErrorFormatter, ErrorLikeErrorFormatter} from './error';
+
+export {RpcServerError};
 
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
   /**
@@ -24,21 +27,8 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    */
   onNotification: (name: string, data: T | undefined, ctx: Ctx) => void;
 
-  /**
-   * Method to format any error thrown by application to correct format.
-   */
-  formatError: (error: T | Error | unknown) => T;
 
-  /**
-   * Method to format validation error thrown by .validate() function of a
-   * method. If this property not provided, defaults to `.formatError`.
-   */
-  formatValidationError?: (error: T | Error | unknown) => T;
-
-  /**
-   * Method to format error into the correct format.
-   */
-  formatErrorCode?: (code: RpcServerError) => T;
+  error?: ErrorFormatter<T>;
 
   /**
    * Maximum number of active subscription in flight. This also includes
@@ -100,12 +90,10 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private activeStaticCalls: number = 0;
   private send: (message: ReactiveRpcResponseMessage<T>) => void;
   private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
-  private readonly formatError: (error: T | Error | unknown) => T;
-  private readonly formatValidationError: (error: T | Error | unknown) => T;
-  private readonly formatErrorCode: (code: RpcServerError) => T;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private readonly maxActiveCalls: number;
   private readonly preCallBufferSize: number;
+  protected readonly error: ErrorFormatter<T>;
 
   /** Callback which sends message out of the server. */
   public onSend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
@@ -117,22 +105,18 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     send,
     onCall: call,
     onNotification: notify,
-    formatErrorCode,
-    formatError,
-    formatValidationError,
     maxActiveCalls = 30,
     bufferSize = 10,
     bufferTime = 1,
     preCallBufferSize = 10,
+    error,
   }: RpcServerParams<Ctx, T>) {
     this.getRpcMethod = call;
     this.onNotification = notify;
-    this.formatError = formatError;
-    this.formatValidationError = formatValidationError || formatError;
-    this.formatErrorCode = formatErrorCode || formatError;
     this.maxActiveCalls = maxActiveCalls;
     this.preCallBufferSize = preCallBufferSize;
     this.onSend = send;
+    this.error = error || new ErrorLikeErrorFormatter() as any;
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T>>();
       buffer.itemLimit = bufferSize;
@@ -173,8 +157,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send = (message: ReactiveRpcResponseMessage<T>) => {};
     this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
-      call.req$.error(this.formatErrorCode(reason));
-      call.res$.error(this.formatErrorCode(reason));
+      call.req$.error(this.error.formatCode(reason));
+      call.res$.error(this.error.formatCode(reason));
     }
     this.activeStreamCalls.clear();
   }
@@ -184,7 +168,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   private sendError(id: number, code: RpcServerError): void {
-    const data = this.formatErrorCode(code);
+    const data = this.error.formatCode(code);
     const message = new ResponseErrorMessage<T>(id, data);
     this.send(message);
   }
@@ -198,7 +182,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       try {
         method.validate(request);
       } catch (error) {
-        const formattedError = this.formatValidationError(error);
+        const formattedError = this.error.formatValidation(error);
         this.send(new ResponseErrorMessage<T>(id, formattedError));
         return;
       }
@@ -212,7 +196,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       })
       .catch(error => {
         this.activeStaticCalls--;
-        const formattedError = this.formatError(error);
+        const formattedError = this.error.format(error);
         this.send(new ResponseErrorMessage<T>(id, formattedError));
       });
   }
@@ -251,7 +235,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
-        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.formatError(error)));
+        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
         if (streamCall.reqFinalized) {
           this.activeStreamCalls.delete(id);
         } else {

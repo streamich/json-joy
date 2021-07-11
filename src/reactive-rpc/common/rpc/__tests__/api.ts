@@ -152,7 +152,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
     test('throws error on static RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('error', {})));
-      expect(error).toBe('this promise can throw');
+      expect(error).toEqual({message: 'this promise can throw'});
     });
   });
 

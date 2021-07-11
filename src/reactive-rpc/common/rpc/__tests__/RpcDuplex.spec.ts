@@ -25,16 +25,6 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
       maxActiveCalls: 3,
-      formatError: (error: unknown) => {
-        if (error instanceof Error) return {message: error.message};
-        return error;
-      },
-      formatErrorCode: (errno: RpcServerError) => {
-        return {
-          message: 'PROTOCOL',
-          errno,
-        };
-      },
     }),
   });
   const client = new RpcDuplex({
@@ -58,16 +48,6 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
       maxActiveCalls: 3,
-      formatError: (error: unknown) => {
-        if (error instanceof Error) return {message: error.message};
-        return error;
-      },
-      formatErrorCode: (errno: RpcServerError) => {
-        return {
-          message: 'PROTOCOL',
-          errno,
-        };
-      },
     }),
   });
   return {server, client};

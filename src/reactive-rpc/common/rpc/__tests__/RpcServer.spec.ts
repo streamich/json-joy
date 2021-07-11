@@ -1,6 +1,7 @@
-import {RpcServer, RpcServerParams, RpcServerError} from '../RpcServer';
+import {RpcServer, RpcServerParams} from '../RpcServer';
+import {RpcServerError} from '../constants';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
-import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
+import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages/nominal';
 import {map, switchMap, take} from 'rxjs/operators';
 import {Defer} from '../../../../util/Defer';
 
@@ -126,8 +127,11 @@ const setup = (params: Partial<RpcServerParams> = {}) => {
     onNotification: notify,
     onCall: getRpcMethod,
     bufferTime: 0,
-    formatError: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
-    formatErrorCode: (code: RpcServerError) => JSON.stringify({code}),
+    error: {
+      format: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
+      formatValidation: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
+      formatCode: (code: RpcServerError) => JSON.stringify({code}),
+    },
     ...params,
   });
   return {server, send, getRpcMethod, notify, ctx, subject};

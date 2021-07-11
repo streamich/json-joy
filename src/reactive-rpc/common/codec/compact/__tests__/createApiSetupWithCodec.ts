@@ -1,5 +1,5 @@
 import {sampleApi, ApiTestSetup} from '../../../rpc/__tests__/api';
-import {RpcServer, RpcServerError} from '../../../rpc/RpcServer';
+import {RpcServer} from '../../../rpc/RpcServer';
 import {RpcClient} from '../../../rpc/RpcClient';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../messages/nominal';
 
@@ -30,16 +30,6 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
       bufferSize: 2,
       bufferTime: 1,
       maxActiveCalls: 3,
-      formatError: (error: unknown) => {
-        if (error instanceof Error) return {message: error.message};
-        return error;
-      },
-      formatErrorCode: (errno: RpcServerError) => {
-        return {
-          message: 'PROTOCOL',
-          errno,
-        };
-      },
     });
     const client = new RpcClient({
       send: (messages) => {

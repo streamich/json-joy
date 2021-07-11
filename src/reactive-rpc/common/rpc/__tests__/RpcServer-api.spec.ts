@@ -21,8 +21,11 @@ const setup = (params: Partial<RpcServerFromApiParams> = {}) => {
     onNotification: notify,
     api: sampleApi,
     bufferTime: 0,
-    formatError: (error: unknown) => JSON.stringify({error}),
-    formatErrorCode: (code: RpcServerError) => JSON.stringify({code}),
+    error: {
+      format: (error: unknown) => JSON.stringify({error}),
+      formatValidation: (error: unknown) => JSON.stringify({error}),
+      formatCode: (code: RpcServerError) => JSON.stringify({code}),
+    },
     ...params,
   });
   return {server, send, notify, ctx, subject};
