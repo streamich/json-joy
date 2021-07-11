@@ -1,28 +1,13 @@
+import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
-import {map, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, take, tap} from 'rxjs/operators';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStatic, RpcMethodStreaming} from './types';
-import {formatError as defaultFormatError, formatErrorCode as defaultFormatErrorCode} from './error';
+import {ErrorFormatter, ErrorLikeErrorFormatter} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
-
-  /**
-   * Method to format any error thrown by application to correct format.
-   */
-  formatError?: (error: E | Error | unknown) => E;
-
-  /**
-   * Method to format validation error thrown by .validate() function of a
-   * method. If this property not provided, defaults to `.formatError`.
-   */
-  formatValidationError?: (error: E | Error | unknown) => E;
-
-  /**
-   * Method to format error into the correct format.
-   */
-  formatErrorCode?: (code: RpcServerError) => E;
+  error?: ErrorFormatter<E>;
 
   /**
    * When call `request$` is a multi-value observable and request data is coming
@@ -38,34 +23,28 @@ export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, an
  */
 export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> implements IRpcApiCaller<Api, Ctx> {
   public readonly api: Api;
-  protected readonly formatError: (error: E | Error | unknown) => E;
-  protected readonly formatValidationError: (error: E | Error | unknown) => E;
-  protected readonly formatErrorCode: (code: RpcServerError) => E;
+  protected readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
 
   constructor({
     api,
-    formatError = defaultFormatError as any,
-    formatErrorCode = defaultFormatErrorCode as any,
-    formatValidationError,
+    error,
     preCallBufferSize = 10,
   }: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = api;
-    this.formatError = formatError;
-    this.formatValidationError = formatValidationError || formatError;
-    this.formatErrorCode = formatErrorCode || formatError;
+    this.error = error || new ErrorLikeErrorFormatter() as any;
     this.preCallBufferSize = preCallBufferSize;
   }
 
   public async call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>> {
     if (!this.api.hasOwnProperty(name))
-      throw this.formatErrorCode(RpcServerError.NoMethodSpecified);
+      throw this.error.formatCode(RpcServerError.NoMethodSpecified);
     const method = this.api[name];
     if (method.validate) {
       try {
         method.validate(request);
       } catch (error) {
-        throw this.formatValidationError(error);
+        throw this.error.formatValidation(error);
       }
     }
     return (method.onPreCall ? method.onPreCall(ctx, request) : Promise.resolve())
@@ -74,7 +53,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         : firstValueFrom((method as any).call$(ctx, of(request)))
       )
       .catch(error => {
-        throw this.formatError(error);
+        throw this.error.format(error);
       });
   }
 
@@ -88,7 +67,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    */
   public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
     if (!this.api.hasOwnProperty(name))
-      return throwError(() => this.formatErrorCode(RpcServerError.NoMethodSpecified));
+      return throwError(() => this.error.formatCode(RpcServerError.NoMethodSpecified));
     const method = this.api[name]!;
     if (!method.isStreaming) {
       return request$.pipe(
@@ -99,7 +78,11 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     const methodStreaming = method as RpcMethodStreaming<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
     if (methodStreaming.validate) {
       request$ = request$.pipe(map(request => {
-        methodStreaming.validate!(request);
+        try {
+          methodStreaming.validate!(request);
+        } catch (error) {
+          throw this.error.formatValidation(error);
+        }
         return request;
       }));
     }
@@ -112,6 +95,10 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         switchMap(() => methodStreaming.call$(ctx, requestBuffer$)),
         tap(() => {
           requestBuffer$.flush();
+        }),
+        // TODO: add tests for streaming error formatting
+        catchError(error => {
+          throw this.error.format(error);
         }),
       );
   }

@@ -1,3 +1,23 @@
+import {RpcServerError} from "./constants";
+
+export interface ErrorFormatter<E = unknown> {
+  /**
+   * Method to format any error thrown by application to correct format.
+   */
+  format(error: E | Error | unknown): E;
+
+   /**
+    * Method to format validation error thrown by .validate() function of a
+    * method. If this property not provided, defaults to `.formatError`.
+    */
+  formatValidation(error: E | Error | unknown): E;
+
+   /**
+    * Method to format error into the correct format.
+    */
+  formatCode(code: RpcServerError): E;
+}
+
 export interface ErrorLike {
   message: string;
   status?: number;
@@ -22,9 +42,11 @@ const isErrorLike = (error: unknown): error is ErrorLike => {
   return false;
 };
 
-export const formatError = (error: unknown): unknown => {
+export const formatError = (error: unknown): ErrorLike => {
   if (isErrorLike(error)) return formatErrorLike(error);
-  return error;
+  return {
+    message: String(error),
+  };
 };
 
 export const formatErrorCode = (errno: number): ErrorLike => {
@@ -33,3 +55,17 @@ export const formatErrorCode = (errno: number): ErrorLike => {
     errno,
   };
 };
+
+export class ErrorLikeErrorFormatter implements ErrorFormatter<ErrorLike> {
+  public format(error: ErrorLike | Error | unknown): ErrorLike {
+    return formatError(error);
+  }
+
+  public formatValidation(error: ErrorLike | Error | unknown): ErrorLike {
+    return this.format(error);
+  }
+
+  public formatCode(code: RpcServerError): ErrorLike {
+    return formatErrorCode(code);
+  }
+}
