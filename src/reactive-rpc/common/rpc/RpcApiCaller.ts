@@ -2,7 +2,8 @@ import {RpcServerError} from './constants';
 import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
 import {map, switchMap, take, tap} from 'rxjs/operators';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse} from './types';
+import {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStatic, RpcMethodStreaming} from './types';
+import {formatError as defaultFormatError, formatErrorCode as defaultFormatErrorCode} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
@@ -10,7 +11,7 @@ export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, an
   /**
    * Method to format any error thrown by application to correct format.
    */
-  formatError: (error: E | Error | unknown) => E;
+  formatError?: (error: E | Error | unknown) => E;
 
   /**
    * Method to format validation error thrown by .validate() function of a
@@ -44,8 +45,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
   constructor({
     api,
-    formatErrorCode,
-    formatError,
+    formatError = defaultFormatError as any,
+    formatErrorCode = defaultFormatErrorCode as any,
     formatValidationError,
     preCallBufferSize = 10,
   }: RpcApiCallerParams<Api, Ctx, E>) {
@@ -69,8 +70,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     }
     return (method.onPreCall ? method.onPreCall(ctx, request) : Promise.resolve())
       .then(() => !method.isStreaming
-        ? method.call(ctx, request)
-        : firstValueFrom(method.call$(ctx, of(request)))
+        ? (method as any).call(ctx, request)
+        : firstValueFrom((method as any).call$(ctx, of(request)))
       )
       .catch(error => {
         throw this.formatError(error);
@@ -95,18 +96,20 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         switchMap(request => from(this.call(name, request, ctx))),
       );
     }
-    if (method.validate) {
+    const methodStreaming = method as RpcMethodStreaming<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
+    if (methodStreaming.validate) {
       request$ = request$.pipe(map(request => {
-        method.validate!(request);
+        methodStreaming.validate!(request);
         return request;
       }));
     }
-    const requestBuffer$ = new BufferSubject<RpcMethodRequest<Api[K]>>(method.preCallBufferSize || this.preCallBufferSize);
+    const requestBuffer$ = new BufferSubject<RpcMethodRequest<Api[K]>>(methodStreaming.preCallBufferSize || this.preCallBufferSize);
+    request$.subscribe(requestBuffer$);
     return requestBuffer$
       .pipe(
         take(1),
-        switchMap(request => method.onPreCall ? from(method.onPreCall(ctx, request)) : from([0])),
-        switchMap(() => method.call$(ctx, requestBuffer$)),
+        switchMap(request => methodStreaming.onPreCall ? from(methodStreaming.onPreCall(ctx, request)) : from([0])),
+        switchMap(() => methodStreaming.call$(ctx, requestBuffer$)),
         tap(() => {
           requestBuffer$.flush();
         }),

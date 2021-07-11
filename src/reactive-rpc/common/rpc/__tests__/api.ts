@@ -2,7 +2,7 @@ import {timer, from, firstValueFrom, lastValueFrom} from 'rxjs';
 import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
-import {RpcServerError} from '../RpcServer';
+import {RpcServerError} from '../constants';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
