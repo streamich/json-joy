@@ -1,11 +1,12 @@
 import * as Rx from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {RpcApiCaller} from '../RpcApiCaller';
-import {sampleApi, runApiTests, ApiTestSetup} from '../__tests__/api';
+import {sampleApi, runApiTests} from '../__tests__/api';
 
 const setup = () => {
   const caller = new RpcApiCaller({
     api: sampleApi,
+    maxActiveCalls: 3,
   });
   return { caller };
 };

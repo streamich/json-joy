@@ -1,7 +1,7 @@
+import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
+import {catchError, finalize, map, switchMap, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
-import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
-import {catchError, map, switchMap, take, tap} from 'rxjs/operators';
 import {BufferSubject} from '../../../util/BufferSubject';
 import {ErrorFormatter, ErrorLikeErrorFormatter} from './error';
 
@@ -16,6 +16,12 @@ export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, an
    * and stopping the streaming call. Defaults to 10.
    */
   preCallBufferSize?: number;
+
+  /**
+   * Maximum number of active subscription in flight. This also includes
+   * in-flight request/response subscriptions.
+   */
+  maxActiveCalls?: number;
 }
 
 /**
@@ -25,18 +31,29 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
   public readonly api: Api;
   protected readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
+  protected readonly maxActiveCalls: number;
+
+  protected _calls: number = 0;
 
   constructor({
     api,
     error,
     preCallBufferSize = 10,
+    maxActiveCalls = 50,
   }: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = api;
     this.error = error || new ErrorLikeErrorFormatter() as any;
     this.preCallBufferSize = preCallBufferSize;
+    this.maxActiveCalls = maxActiveCalls;
+  }
+
+  public get activeCalls(): number {
+    return this._calls;
   }
 
   public async call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>> {
+    if (this._calls >= this.maxActiveCalls)
+      throw this.error.formatCode(RpcServerError.TooManyActiveCalls);
     if (!this.api.hasOwnProperty(name))
       throw this.error.formatCode(RpcServerError.NoMethodSpecified);
     const method = this.api[name];
@@ -47,6 +64,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         throw this.error.formatValidation(error);
       }
     }
+    this._calls++;
     return (method.onPreCall ? method.onPreCall(ctx, request) : Promise.resolve())
       .then(() => !method.isStreaming
         ? (method as any).call(ctx, request)
@@ -54,6 +72,9 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       )
       .catch(error => {
         throw this.error.format(error);
+      })
+      .finally(() => {
+        this._calls--;
       });
   }
 
@@ -66,6 +87,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * 4. Too many values may accumulate in `request$` buffer during pre-call check.
    */
   public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
+    if (this._calls >= this.maxActiveCalls)
+      return throwError(() => this.error.formatCode(RpcServerError.TooManyActiveCalls));
     if (!this.api.hasOwnProperty(name))
       return throwError(() => this.error.formatCode(RpcServerError.NoMethodSpecified));
     const method = this.api[name]!;
@@ -91,6 +114,9 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     return requestBuffer$
       .pipe(
         take(1),
+        tap(() => {
+          this._calls++;
+        }),
         switchMap(request => methodStreaming.onPreCall ? from(methodStreaming.onPreCall(ctx, request)) : from([0])),
         switchMap(() => methodStreaming.call$(ctx, requestBuffer$)),
         tap(() => {
@@ -99,6 +125,9 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         // TODO: add tests for streaming error formatting
         catchError(error => {
           throw this.error.format(error);
+        }),
+        finalize(() => {
+          this._calls--;
         }),
       );
   }
