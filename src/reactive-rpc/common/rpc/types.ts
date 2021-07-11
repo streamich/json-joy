@@ -4,6 +4,9 @@ export type RpcMethod<Context = unknown, Request = unknown, Response = unknown> 
   | RpcMethodStatic<Context, Request, Response>
   | RpcMethodStreaming<Context, Request, Response>;
 
+export type RpcMethodRequest<T> = T extends RpcMethod<any, infer U, any> ? U : never;
+export type RpcMethodResponse<T> = T extends RpcMethod<any, any, infer U> ? U : never;
+
 export interface RpcMethodBase<Context = unknown, Request = unknown> {
   /**
    * Non-streaming method receives
@@ -66,3 +69,8 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
 }
 
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
+
+export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown> {
+  call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
+  call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>>;
+}
