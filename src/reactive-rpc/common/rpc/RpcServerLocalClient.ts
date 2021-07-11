@@ -1,4 +1,3 @@
-import {firstValueFrom, Observable} from 'rxjs';
 import {ReactiveRpcRequestMessage} from "../messages";
 import {RpcClient} from "./RpcClient";
 import {RpcServer} from "./RpcServer";
