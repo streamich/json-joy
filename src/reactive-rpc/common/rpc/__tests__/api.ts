@@ -6,7 +6,9 @@ import {RpcServerError} from '../RpcServer';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
-  call: async () => 'pong',
+  call: async () => {
+    return 'pong';
+  },
 };
 
 const delay: RpcMethodStatic<object, void, 'done'> = {

@@ -28,5 +28,4 @@ export interface EnableWsReactiveRpcApiParams<Ctx> {
   compression?: number;
   maxPayloadLength?: number;
   maxBackpressure?: number;
-  maxActiveCalls?: number;
 }
