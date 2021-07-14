@@ -4,13 +4,14 @@ import {BufferSubject} from '../../../util/BufferSubject';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
-import {RpcApi, RpcMethod, RpcMethodStatic, RpcMethodStreaming} from './types';
+import {IRpcApiCaller, RpcApi, RpcMethod, RpcMethodStatic, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
-import {ErrorFormatter, ErrorLikeErrorFormatter} from './error';
 
 export {RpcServerError};
 
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
+  caller: IRpcApiCaller<any, Ctx>;
+
   /**
    * Method to be called by server when it wants to send messages to the client.
    * This is usually your WebSocket "send" method.
@@ -18,23 +19,9 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
   send: (messages: ReactiveRpcResponseMessage<T>[]) => void;
 
   /**
-   * Callback called on the server when user sends a subscription message.
-   */
-  onCall: (name: string) => RpcMethod<Ctx, T, T> | undefined;
-
-  /**
    * Callback called on the server when user sends a notification message.
    */
   onNotification: (name: string, data: T | undefined, ctx: Ctx) => void;
-
-
-  error?: ErrorFormatter<T>;
-
-  /**
-   * Maximum number of active subscription in flight. This also includes
-   * in-flight request/response subscriptions.
-   */
-  maxActiveCalls?: number;
 
   /**
    * Number of messages to keep in buffer before sending them out.
@@ -49,14 +36,6 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * out. Defaults to 1 milliseconds. Set it to zero to disable buffering.
    */
   bufferTime?: number;
-
-  /**
-   * When call `request$` is a multi-value observable and request data is coming
-   * in while pre-call check is still being executed, this property determines
-   * how many `request$` values to buffer in memory before raising an error
-   * and stopping the streaming call. Defaults to 10.
-   */
-  preCallBufferSize?: number;
 }
 
 export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
@@ -75,25 +54,9 @@ class StreamCall<T = unknown> {
 }
 
 export class RpcServer<Ctx = unknown, T = unknown> {
-  public static fromApi<Ctx = unknown, T = unknown>(params: RpcServerFromApiParams<Ctx, T>): RpcServer<Ctx, T> {
-    const {api, ...rest} = params;
-    const server = new RpcServer({
-      ...rest,
-      onCall: (method: string) => {
-        if (!api.hasOwnProperty(method)) return undefined;
-        return api[method];
-      },
-    });
-    return server;
-  }
-
-  private activeStaticCalls: number = 0;
-  private send: (message: ReactiveRpcResponseMessage<T>) => void;
-  private getRpcMethod: RpcServerParams<Ctx, T>['onCall'];
+  private readonly caller: IRpcApiCaller<any, Ctx>;
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
-  private readonly maxActiveCalls: number;
-  private readonly preCallBufferSize: number;
-  protected readonly error: ErrorFormatter<T>;
+  private send: (message: ReactiveRpcResponseMessage<T>) => void;
 
   /** Callback which sends message out of the server. */
   public onSend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
@@ -102,21 +65,15 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
   constructor({
+    caller,
     send,
-    onCall: call,
     onNotification: notify,
-    maxActiveCalls = 30,
     bufferSize = 10,
     bufferTime = 1,
-    preCallBufferSize = 10,
-    error,
   }: RpcServerParams<Ctx, T>) {
-    this.getRpcMethod = call;
+    this.caller = caller;
     this.onNotification = notify;
-    this.maxActiveCalls = maxActiveCalls;
-    this.preCallBufferSize = preCallBufferSize;
     this.onSend = send;
-    this.error = error || new ErrorLikeErrorFormatter() as any;
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T>>();
       buffer.itemLimit = bufferSize;
@@ -128,16 +85,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     } else {
       this.send = message => this.onSend([message]);
     }
-  }
-
-  /**
-   * Returns the number of active in-flight calls. Useful for reporting and
-   * testing for memory leaks in unit tests.
-   *
-   * @returns Number of in-flight RPC calls.
-   */
-   public getInflightCallCount(): number {
-    return this.activeStaticCalls + this.activeStreamCalls.size;
   }
 
   public onMessage(message: ReactiveRpcRequestMessage<T>, ctx: Ctx): void {
@@ -157,8 +104,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send = (message: ReactiveRpcResponseMessage<T>) => {};
     this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
-      call.req$.error(this.error.formatCode(reason));
-      call.res$.error(this.error.formatCode(reason));
+      // call.req$.error(this.error.formatCode(reason));
+      // call.res$.error(this.error.formatCode(reason));
     }
     this.activeStreamCalls.clear();
   }
@@ -173,40 +120,20 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send(message);
   }
 
-  private execStaticCall(id: number, method: RpcMethodStatic<Ctx, T, T>, request: T, ctx: Ctx) {
-    if (this.getInflightCallCount() >= this.maxActiveCalls) {
-      this.sendError(id, RpcServerError.TooManyActiveCalls);
-      return;
-    }
-    if (method.validate) {
-      try {
-        method.validate(request);
-      } catch (error) {
-        const formattedError = this.error.formatValidation(error);
-        this.send(new ResponseErrorMessage<T>(id, formattedError));
-        return;
-      }
-    }
-    this.activeStaticCalls++;
-    (method.onPreCall ? method.onPreCall(ctx, request) : Promise.resolve())
-      .then(() => method.call(ctx, request))
+  private execStaticCall(id: number, name: string, request: T, ctx: Ctx) {
+    this.caller.call(name, request, ctx)
       .then(response => {
-        this.activeStaticCalls--;
-        this.send(new ResponseCompleteMessage<T>(id, response));
+        this.send(new ResponseCompleteMessage<T>(id, response as T));
       })
       .catch(error => {
-        this.activeStaticCalls--;
-        const formattedError = this.error.format(error);
-        this.send(new ResponseErrorMessage<T>(id, formattedError));
+        // const formattedError = this.error.format(error);
+        // this.send(new ResponseErrorMessage<T>(id, formattedError));
+        this.send(new ResponseErrorMessage<T>(id, error));
       });
   }
 
-  private createStreamCall(id: number, rpcMethodStreaming: RpcMethodStreaming<Ctx, T, T>, ctx: Ctx): StreamCall<T> | undefined {
-    if (this.getInflightCallCount() >= this.maxActiveCalls) {
-      this.sendError(id, RpcServerError.TooManyActiveCalls);
-      return;
-    }
-    const streamCall = new StreamCall<T>(rpcMethodStreaming.preCallBufferSize || this.preCallBufferSize);
+  private createStreamCall(id: number, name: string, ctx: Ctx): StreamCall<T> | undefined {
+    const streamCall = new StreamCall<T>(1);
     this.activeStreamCalls.set(id, streamCall);
     streamCall.req$.subscribe({
       error: error => {
@@ -214,14 +141,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
           streamCall.res$.error(error);
         }
       },
-    });
-    const requestThatTracksUnsubscribe$ = new Observable<T>((observer) => {
-      streamCall.req$.subscribe(observer);
-      return () => {
-        if (!streamCall.reqFinalized)
-          this.send(new RequestUnsubscribeMessage(id));
-        streamCall.req$.complete();
-      };
     });
     const onReqFinalize = () => {
       if (streamCall.resFinalized) {
@@ -235,7 +154,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
-        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
+        // if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
+        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, error as T));
         if (streamCall.reqFinalized) {
           this.activeStreamCalls.delete(id);
         } else {
@@ -251,32 +171,33 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         }
       },
     });
-    streamCall.req$
-      .pipe(
-        take(1),
-        catchError(() => {
-          return EMPTY;
-        }),
-        switchMap(request => rpcMethodStreaming.onPreCall ? from(rpcMethodStreaming.onPreCall(ctx, request)) : from([0])),
-      ).subscribe(() => {
-        rpcMethodStreaming.call$(ctx, requestThatTracksUnsubscribe$)
-          .subscribe(streamCall.res$);
-        streamCall.req$.flush();
-      });
+    const observable = this.caller.call$(name, new Observable<T>((observer) => {
+      streamCall.req$.subscribe(observer);
+      return () => {
+        if (!streamCall.reqFinalized)
+          this.send(new RequestUnsubscribeMessage(id));
+        streamCall.req$.complete();
+      };
+    }), ctx) as Observable<T>;
+    observable.subscribe(streamCall.res$);
     return streamCall;
   }
 
   public onRequestDataMessage(message: RequestDataMessage<T>, ctx: Ctx): void {
     const {id, method, data} = message;
-    const call = this.activeStreamCalls.get(id);
-    if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
-    const rpcMethod = this.getRpcMethod(method)!;
-    if (call) return this.receiveRequestData(rpcMethod, call, data);
-    if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
-    const streamCall = this.createStreamCall(id, rpcMethod, ctx);
-    if (!streamCall) return;
-    this.receiveRequestData(rpcMethod, streamCall, data);
+    let call = this.activeStreamCalls.get(id);
+    if (!call) {
+      if (!method) {
+        this.sendError(id, RpcServerError.NoMethodSpecified);
+        return;
+      }
+      call = this.createStreamCall(id, method, ctx);
+    }
+    if (call) {
+      if (data !== undefined) {
+        call.req$.next(data!);
+      }
+    }
   }
 
   public onRequestCompleteMessage(message: RequestCompleteMessage<T>, ctx: Ctx): void {
@@ -286,17 +207,14 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       call.reqFinalized = true;
       const {req$} = call;
       if (data !== undefined) req$.next(data as T);
-      return req$.complete();
+      req$.complete();
+      return;
     }
-    if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
-    const rpcMethod = this.getRpcMethod(method);
-    if (!rpcMethod) return this.sendError(id, RpcServerError.MethodNotFound);
-    if (!rpcMethod.isStreaming) return this.execStaticCall(id, rpcMethod, data as T, ctx);
-    const streamCall = this.createStreamCall(id, rpcMethod, ctx);
-    if (!streamCall) return;
-    streamCall.reqFinalized = true;
-    this.receiveRequestData(rpcMethod, streamCall, data);
-    streamCall.req$.complete();
+    if (!method) {
+      this.sendError(id, RpcServerError.NoMethodSpecified);
+      return;
+    }
+    this.execStaticCall(id, method, data as T, ctx);
   }
 
   protected receiveRequestData(method: RpcMethod<Ctx, T, T>, call: StreamCall<T>, data: undefined | T): void {
