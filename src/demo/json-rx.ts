@@ -6,7 +6,7 @@
  *     npx ts-node demo/json-rx.ts
  */
 
-import {JsonRxServer, JsonRxClient} from '../src/json-rx';
+import {JsonRxServer, JsonRxClient} from '../json-rx';
 import {from} from 'rxjs';
 
 let client: JsonRxClient;
@@ -24,7 +24,7 @@ const server = new JsonRxServer({
 client = new JsonRxClient({
   // On the browser end, connect JsonRxClient to the WebSocket.
   // send: msg => websocket.send(msg)
-  send: msg => setTimeout(() => server.onMessage(msg), 0),
+  send: msg => setTimeout(() => server.onMessage(msg, {}), 0),
 });
 
 // Create a long-lived subscription to your server.

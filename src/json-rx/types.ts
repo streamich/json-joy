@@ -12,7 +12,14 @@ export type Id = number;
 /** Must be non-empty string, no longer than 128 characters. */
 export type Name = string;
 
+export type MessageSubscribeData = [Id, 2, unknown];
+
 export type MessageSubscribe = [Id, Name, unknown] | [Id, Name];
+export type MessageSubscribeComplete = [Id, Name, unknown] | [Id, Name];
+
+export type MessageSubscribeError = [Id, -1, unknown];
+
+export type MessageSubscribeUnsubscribe = [Id, -3];
 
 export type MessageComplete = [0, Id, unknown] | [0, Id];
 
