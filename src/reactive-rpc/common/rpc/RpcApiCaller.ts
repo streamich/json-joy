@@ -1,13 +1,12 @@
 import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
-import {catchError, finalize, map, switchMap, take, tap} from 'rxjs/operators';
+import {finalize, map, switchMap, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {ErrorFormatter, ErrorLikeErrorFormatter} from './error';
+import {RpcError} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
-  error?: ErrorFormatter<E>;
 
   /**
    * When call `request$` is a multi-value observable and request data is coming
@@ -29,7 +28,6 @@ export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, an
  */
 export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> implements IRpcApiCaller<Api, Ctx> {
   public readonly api: Api;
-  protected readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
   protected readonly maxActiveCalls: number;
 
@@ -37,12 +35,10 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
   constructor({
     api,
-    error,
     preCallBufferSize = 10,
     maxActiveCalls = 50,
   }: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = api;
-    this.error = error || new ErrorLikeErrorFormatter() as any;
     this.preCallBufferSize = preCallBufferSize;
     this.maxActiveCalls = maxActiveCalls;
   }
@@ -51,17 +47,37 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     return this._calls;
   }
 
+  public exists<K extends keyof Api>(name: K): boolean {
+    return this.api.hasOwnProperty(name);
+  }
+
+  /**
+   * Do not use this method to execute the RPC methods directly. To execute the
+   * RPC methods use `.call()` or `.call$()` instead. You can use this method to
+   * check if an RPC method exists and to check if the RPC method is a
+   * "streaming" method or not.
+   * 
+   * This function throws `RpcServerError.NoMethodSpecified` error if the RPC
+   * method is not found.
+   * 
+   * @param name Name of the RPC method.
+   * @returns RpcMethod
+   */
+  public get<K extends keyof Api>(name: K): Api[K] {
+    if (!this.exists(name))
+      throw new RpcError(RpcServerError.NoMethodSpecified);
+    return this.api[name]!;
+  }
+
   public async call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>> {
     if (this._calls >= this.maxActiveCalls)
-      throw this.error.formatCode(RpcServerError.TooManyActiveCalls);
-    if (!this.api.hasOwnProperty(name))
-      throw this.error.formatCode(RpcServerError.NoMethodSpecified);
-    const method = this.api[name];
+      throw new RpcError(RpcServerError.TooManyActiveCalls);
+    const method = this.get(name);
     if (method.validate) {
       try {
         method.validate(request);
       } catch (error) {
-        throw this.error.formatValidation(error);
+        throw new RpcError(RpcServerError.InvalidData);
       }
     }
     this._calls++;
@@ -70,9 +86,6 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         ? (method as any).call(ctx, request)
         : firstValueFrom((method as any).call$(ctx, of(request)))
       )
-      .catch(error => {
-        throw this.error.format(error);
-      })
       .finally(() => {
         this._calls--;
       });
@@ -88,10 +101,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    */
   public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
     if (this._calls >= this.maxActiveCalls)
-      return throwError(() => this.error.formatCode(RpcServerError.TooManyActiveCalls));
-    if (!this.api.hasOwnProperty(name))
-      return throwError(() => this.error.formatCode(RpcServerError.NoMethodSpecified));
-    const method = this.api[name]!;
+      return throwError(() => new RpcError(RpcServerError.TooManyActiveCalls));
+    const method = this.get(name);
     if (!method.isStreaming) {
       return request$.pipe(
         take(1),
@@ -104,7 +115,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         try {
           methodStreaming.validate!(request);
         } catch (error) {
-          throw this.error.formatValidation(error);
+          throw new RpcError(RpcServerError.InvalidData);
         }
         return request;
       }));
@@ -121,10 +132,6 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         switchMap(() => methodStreaming.call$(ctx, requestBuffer$)),
         tap(() => {
           requestBuffer$.flush();
-        }),
-        // TODO: add tests for streaming error formatting
-        catchError(error => {
-          throw this.error.format(error);
         }),
         finalize(() => {
           this._calls--;

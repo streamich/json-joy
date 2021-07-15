@@ -71,6 +71,8 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
 
 export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown> {
+  exists<K extends keyof Api>(name: K): boolean;
+  get<K extends keyof Api>(name: K): Api[K];
   call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
   call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>>;
 }
