@@ -56,10 +56,10 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * RPC methods use `.call()` or `.call$()` instead. You can use this method to
    * check if an RPC method exists and to check if the RPC method is a
    * "streaming" method or not.
-   * 
+   *
    * This function throws `RpcServerError.NoMethodSpecified` error if the RPC
    * method is not found.
-   * 
+   *
    * @param name Name of the RPC method.
    * @returns RpcMethod
    */

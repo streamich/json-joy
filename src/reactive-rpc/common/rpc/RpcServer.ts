@@ -5,7 +5,6 @@ import {TimedQueue} from '../util/TimedQueue';
 import {IRpcApiCaller, RpcApi, RpcMethod} from './types';
 import {RpcServerError} from './constants';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
-import {finalize} from 'rxjs/operators';
 
 export {RpcServerError};
 
@@ -163,12 +162,19 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       };
     }), ctx) as Observable<T>;
     observable
-      .pipe(
-        finalize(() => {
+      .subscribe({
+        next: (value) => {
+          streamCall.res$.next(value);
+        },
+        error: (error) => {
+          streamCall.res$.error(error);
           this.activeStreamCalls.delete(id);
-        })
-      )
-      .subscribe(streamCall.res$);
+        },
+        complete: () => {
+          streamCall.res$.complete();
+          this.activeStreamCalls.delete(id);
+        },
+      });
     return streamCall;
   }
 

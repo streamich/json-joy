@@ -55,7 +55,7 @@ export const formatErrorCode = (errno: number): ErrorLike => {
   return {
     message: 'PROTOCOL',
     errno,
-    code: RpcServerError[errno],
+    code: RpcServerError[errno as unknown as RpcServerError],
   };
 };
 
