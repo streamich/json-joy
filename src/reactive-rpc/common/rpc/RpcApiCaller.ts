@@ -1,5 +1,5 @@
-import {firstValueFrom, from, Observable, of, throwError} from 'rxjs';
-import {finalize, map, switchMap, take, tap} from 'rxjs/operators';
+import {EMPTY, firstValueFrom, from, Observable, of, Subject, throwError} from 'rxjs';
+import {finalize, map, mergeWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
@@ -120,21 +120,41 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         return request;
       }));
     }
-    const requestBuffer$ = new BufferSubject<RpcMethodRequest<Api[K]>>(methodStreaming.preCallBufferSize || this.preCallBufferSize);
+    const bufferSize = methodStreaming.preCallBufferSize || this.preCallBufferSize;
+    const requestBuffer$ = new BufferSubject<RpcMethodRequest<Api[K]>>(bufferSize);
+    requestBuffer$.subscribe({error: () => {}});
+    const requestBufferError$ = new Subject<never>();
+    requestBuffer$.subscribe({
+      error: error => {
+        requestBufferError$.error(error);
+      },
+      complete: () => {
+        requestBufferError$.complete();
+      },
+    });
     request$.subscribe(requestBuffer$);
     return requestBuffer$
       .pipe(
         take(1),
         tap(() => {
           this._calls++;
+          console.log('before pre-call');
         }),
-        switchMap(request => methodStreaming.onPreCall ? from(methodStreaming.onPreCall(ctx, request)) : from([0])),
-        switchMap(() => methodStreaming.call$(ctx, requestBuffer$)),
+        switchMap(request => methodStreaming.onPreCall
+          ? from(methodStreaming.onPreCall(ctx, request))
+          : from([0])),
+        switchMap(() => {
+          return methodStreaming.call$(ctx, requestBuffer$)
+            .pipe(
+              finalize(() => {
+                this._calls--;
+              }),
+            );
+        }),
+        mergeWith(requestBufferError$),
         tap(() => {
+          requestBufferError$.complete();
           requestBuffer$.flush();
-        }),
-        finalize(() => {
-          this._calls--;
         }),
       );
   }

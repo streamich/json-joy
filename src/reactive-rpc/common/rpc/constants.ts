@@ -1,4 +1,4 @@
-export const enum RpcServerError {
+export enum RpcServerError {
   Unknown = 0,
   IdTaken = 1,
   TooManyActiveCalls = 2,

@@ -6,15 +6,17 @@ export interface ErrorFormatter<E = unknown> {
    */
   format(error: E | Error | unknown): E;
 
-   /**
-    * Method to format validation error thrown by .validate() function of a
-    * method. If this property not provided, defaults to `.formatError`.
-    */
+  /**
+   * Method to format validation error thrown by .validate() function of a
+   * method. If this property not provided, defaults to `.formatError`.
+   */
   formatValidation(error: E | Error | unknown): E;
 
-   /**
-    * Method to format error into the correct format.
-    */
+  /**
+   * Method to format error into the correct format.
+   * @todo Remove this method.
+   * @deprecated
+   */
   formatCode(code: RpcServerError): E;
 }
 
@@ -53,6 +55,7 @@ export const formatErrorCode = (errno: number): ErrorLike => {
   return {
     message: 'PROTOCOL',
     errno,
+    code: RpcServerError[errno],
   };
 };
 
@@ -65,7 +68,20 @@ export class ErrorLikeErrorFormatter implements ErrorFormatter<ErrorLike> {
     return this.format(error);
   }
 
+  /**
+   * @todo Remove this method.
+   * @deprecated
+   */
   public formatCode(code: RpcServerError): ErrorLike {
     return formatErrorCode(code);
+  }
+}
+
+export class RpcError extends Error implements ErrorLike {
+  public readonly code: string;
+
+  constructor(public readonly errno: RpcServerError, message: string = 'PROTOCOL') {
+    super(message);
+    this.code = RpcServerError[errno];
   }
 }
