@@ -3,6 +3,7 @@ import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
+import {map} from 'rxjs/operators';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
@@ -67,6 +68,28 @@ const buildinfo: RpcMethodStreaming<object, void, {commit: string, sha1: string}
   }]),
 };
 
+const doubleStringWithValidation: RpcMethodStatic<object, {foo: string}, {bar: string}> = {
+  isStreaming: false,
+  validate: (request) => {
+    if (!request || typeof request !== 'object') throw new Error('Request must be object.');
+    if (typeof request.foo !== 'string') throw new Error('"foo" property missing.');
+  },
+  call: async (ctx, {foo}) => {
+    return {bar: foo + foo};
+  },
+};
+
+const doubleStringWithValidation2: RpcMethodStreaming<object, {foo: string}, {bar: string}> = {
+  isStreaming: true,
+  validate: (request) => {
+    if (!request || typeof request !== 'object') throw new Error('Request must be object.');
+    if (typeof request.foo !== 'string') throw new Error('"foo" property missing.');
+  },
+  call$: (ctx, req$) => {
+    return req$.pipe(map(({foo}) => ({bar: foo + foo})));
+  },
+};
+
 export const sampleApi = {
   ping,
   delay,
@@ -76,6 +99,8 @@ export const sampleApi = {
   'auth.users.get': getUser,
   'util.info': buildinfo,
   'util.timer': utilTimer,
+  doubleStringWithValidation,
+  doubleStringWithValidation2,
 };
 
 export interface ApiTestSetupResult {
@@ -172,6 +197,48 @@ export const runApiTests = (setup: ApiTestSetup) => {
       expect(result).toEqual({
         commit: 'AAAAAAAAAAAAAAAAAAA',
         sha1: 'BBBBBBBBBBBBBBBBBBB',
+      });
+    });
+  });
+
+  describe('doubleStringWithValidation', () => {
+    test('can execute successfully', async () => {
+      const {client} = await setup();
+      const result = await firstValueFrom(client.call$('doubleStringWithValidation', {foo: 'a'}));
+      expect(result).toEqual({
+        bar: 'aa',
+      });
+    });
+
+    test('throws on invalid data', async () => {
+      const {client} = await setup();
+      const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation', {foo: 123})));
+      expect(error).toEqual({
+        code: 'InvalidData',
+        errno: 3,
+        message: '"foo" property missing.',
+        status: 0,
+      });
+    });
+  });
+
+  describe('doubleStringWithValidation2', () => {
+    test('can execute successfully', async () => {
+      const {client} = await setup();
+      const result = await firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 'a'}));
+      expect(result).toEqual({
+        bar: 'aa',
+      });
+    });
+
+    test('throws on invalid data', async () => {
+      const {client} = await setup();
+      const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 123})));
+      expect(error).toEqual({
+        code: 'InvalidData',
+        errno: 3,
+        message: '"foo" property missing.',
+        status: 0,
       });
     });
   });
