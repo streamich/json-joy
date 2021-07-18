@@ -4,7 +4,7 @@ import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {RpcApiCaller, RpcApiCallerParams} from '../RpcApiCaller';
 import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages';
-import {RpcError} from '../error';
+import {RpcValidationError} from '../error';
 import {Defer} from '../../../../util/Defer';
 
 const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcApiCallerParams<any, any>> = {}) => {
@@ -54,7 +54,9 @@ const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcA
         call$: (ctx: any, request$: any) => {
           const obs = request$.pipe(
             take(1),
-            switchMap((request) => of(JSON.stringify({request, ctx})))
+            switchMap((request) => {
+              return of(JSON.stringify({request, ctx}));
+            })
           );
           return obs;
         },
@@ -501,9 +503,10 @@ describe('validation', () => {
     expect(send).toHaveBeenCalledTimes(1);
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
     expect(send).toHaveBeenCalledWith([new ResponseErrorMessage(1, {
-      message: 'PROTOCOL',
+      message: 'Invalid request.',
       errno: 3,
       code: 'InvalidData',
+      status: 0,
     })]);
   });
 
@@ -559,9 +562,10 @@ describe('validation', () => {
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'PROTOCOL',
+        message: 'Invalid request.',
         errno: RpcServerError.InvalidData,
         code: 'InvalidData',
+        status: 0,
       }));
     });
 
@@ -586,9 +590,10 @@ describe('validation', () => {
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'PROTOCOL',
+        message: 'Invalid request.',
         errno: RpcServerError.InvalidData,
         code: 'InvalidData',
+        status: 0,
       }));
     });
 
@@ -619,9 +624,10 @@ describe('validation', () => {
       expect(send).toHaveBeenCalledTimes(2);
       expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[1][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'PROTOCOL',
+        message: 'Invalid request.',
         errno: RpcServerError.InvalidData,
         code: 'InvalidData',
+        status: 0,
       }));
     });
 
@@ -661,14 +667,14 @@ describe('validation', () => {
       expect(error).toHaveBeenCalledTimes(1);
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
-      expect(error).toHaveBeenCalledWith(new RpcError(RpcServerError.InvalidData))
-      // console.log(send.mock.calls)
-      // expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      // expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-      //   error: {
-      //     message: 'Invalid request.',
-      //   },
-      // }));
+      expect(error).toHaveBeenCalledWith(new RpcValidationError({message: 'Invalid request.'}))
+      expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
+        message: 'Invalid request.',
+        errno: RpcServerError.InvalidData,
+        code: 'InvalidData',
+        status: 0,
+      }));
     });
 
     test('when first data message validation fails errors response observable and does not start request observable', async () => {
@@ -702,9 +708,10 @@ describe('validation', () => {
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'PROTOCOL',
+        message: 'Invalid request.',
         errno: RpcServerError.InvalidData,
         code: 'InvalidData',
+        status: 0,
       }));
     });
 
@@ -739,9 +746,10 @@ describe('validation', () => {
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'PROTOCOL',
+        message: 'Invalid request.',
         errno: RpcServerError.InvalidData,
         code: 'InvalidData',
+        status: 0,
       }));
     });
   });
@@ -930,7 +938,7 @@ describe('pre-call checks', () => {
         expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {message: 'BufferSubjectOverflow'}));
       });
 
-      test.only('when pre-call checks finish just before buffer is full, can receive more request data', async () => {
+      test('when pre-call checks finish just before buffer is full, can receive more request data', async () => {
         const preCallFuture = new Defer();
         const response$ = new Subject();
         const onPreCall = jest.fn(async (ctx, request) => {
@@ -969,14 +977,13 @@ describe('pre-call checks', () => {
         await new Promise(r => setTimeout(r, 1));
         server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
         await new Promise(r => setTimeout(r, 1));
-        // server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
-        // await new Promise(r => setTimeout(r, 1));
-        // console.log(send.mock.calls[0][0][0])
-        // expect(send).toHaveBeenCalledTimes(0);
-        // response$.next(1);
-        // await new Promise(r => setTimeout(r, 1));
-        // expect(send).toHaveBeenCalledTimes(1);
-        // expect(next).toHaveBeenCalledTimes(8);
+        server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(0);
+        response$.next(1);
+        await new Promise(r => setTimeout(r, 1));
+        expect(send).toHaveBeenCalledTimes(1);
+        expect(next).toHaveBeenCalledTimes(8);
       });
     });
   });
