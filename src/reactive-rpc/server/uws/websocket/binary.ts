@@ -1,4 +1,4 @@
-import type {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
+import type {NotificationMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
 import type {EnableWsReactiveRpcApiParams, RpcWebSocket, UwsWebSocket} from './types';
 import {Encoder, Decoder} from '../../../common/codec/binary-msgpack';
 import {DEFAULTS} from './constants';
@@ -35,7 +35,7 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     },
     open: (ws: UwsWebSocket) => {
       const rpc = createRpcServer({
-        send: (messages: ReactiveRpcResponseMessage[]) => {
+        send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const uint8 = encoder.encode(messages);
           ws.send(uint8, true);

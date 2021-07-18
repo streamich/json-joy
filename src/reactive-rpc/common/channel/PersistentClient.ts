@@ -1,7 +1,7 @@
 import {Observable, ReplaySubject} from 'rxjs';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
-import {ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
+import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
 import {RpcClient, RpcClientParams} from '../rpc';
 import {RpcDuplex} from '../rpc/RpcDuplex';
 import {RpcServer, RpcServerParams} from '../rpc/RpcServer';
@@ -36,7 +36,7 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
         }),
         server: new RpcServer<Ctx, T>({
           ...params.server,
-          send: (messages: ReactiveRpcResponseMessage[]): void => {
+          send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]): void => {
             const encoded = params.codec.encoder.encode(messages);
             this.channel.send$(encoded).subscribe();
           },

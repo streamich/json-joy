@@ -49,7 +49,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     },
     open: (ws: UwsWebSocket) => {
       const rpc = createRpcServer({
-        send: (messages: ReactiveRpcResponseMessage[]) => {
+        send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
           const {isBinary} = (ws as CompactRpcWebSocket<Ctx>);
           const encoded = isBinary ? encoderMsgPack.encode(messages) : encoderJson.encode(messages);
