@@ -1,7 +1,8 @@
 import {sampleApi} from './api';
-import {RpcServer, RpcServerError, RpcServerFromApiParams} from '../RpcServer';
+import {RpcServer, RpcServerFromApiParams} from '../RpcServer';
 import {Subject} from 'rxjs';
 import {RequestCompleteMessage, ResponseCompleteMessage} from '../../messages/nominal';
+import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = (params: Partial<RpcServerFromApiParams> = {}) => {
   const send = jest.fn();
@@ -16,16 +17,13 @@ const setup = (params: Partial<RpcServerFromApiParams> = {}) => {
     }
   });
   const ctx = {ip: '127.0.0.1'};
-  const server = RpcServer.fromApi<any, any>({
+  const server = new RpcServer<any, any>({
     send,
     onNotification: notify,
-    api: sampleApi,
     bufferTime: 0,
-    error: {
-      format: (error: unknown) => JSON.stringify({error}),
-      formatValidation: (error: unknown) => JSON.stringify({error}),
-      formatCode: (code: RpcServerError) => JSON.stringify({code}),
-    },
+    caller: new RpcApiCaller<any, any>({
+      api: sampleApi,
+    }),
     ...params,
   });
   return {server, send, notify, ctx, subject};

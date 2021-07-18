@@ -1,7 +1,8 @@
 import {ApiTestSetup, runApiTests, sampleApi} from './api';
-import {RpcServer, RpcServerError} from '../RpcServer';
+import {RpcServer} from '../RpcServer';
 import {RpcClient} from '../RpcClient';
 import {RpcDuplex} from '../RpcDuplex';
+import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {
   const server = new RpcDuplex({
@@ -14,17 +15,19 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: RpcServer.fromApi<any, any>({
+    server: new RpcServer<any, any>({
       send: (messages) => {
         setTimeout(() => {
           client.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
       onNotification: () => {},
-      api: sampleApi,
+      caller: new RpcApiCaller<any, any>({
+        api: sampleApi,
+        maxActiveCalls: 3,
+      }),
       bufferSize: 2,
       bufferTime: 1,
-      maxActiveCalls: 3,
     }),
   });
   const client = new RpcDuplex({
@@ -37,17 +40,19 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: RpcServer.fromApi<any, any>({
-      send: (messages) => {
+    server: new RpcServer<any, any>({
+      send: (messages: any) => {
         setTimeout(() => {
           server.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
       onNotification: () => {},
-      api: sampleApi,
+      caller: new RpcApiCaller<any, any>({
+        api: sampleApi,
+        maxActiveCalls: 3,
+      }),
       bufferSize: 2,
       bufferTime: 1,
-      maxActiveCalls: 3,
     }),
   });
   return {server, client};

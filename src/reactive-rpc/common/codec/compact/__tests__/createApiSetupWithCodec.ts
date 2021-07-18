@@ -2,6 +2,7 @@ import {sampleApi, ApiTestSetup} from '../../../rpc/__tests__/api';
 import {RpcServer} from '../../../rpc/RpcServer';
 import {RpcClient} from '../../../rpc/RpcClient';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../messages/nominal';
+import {RpcApiCaller} from '../../../rpc/RpcApiCaller';
 
 interface ApiSetupTestCodec {
   encoder: {
@@ -16,7 +17,7 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
   const {encoder, decoder} = codec;
   const setup: ApiTestSetup = () => {
     const ctx = {ip: '127.0.0.1'};
-    const server = RpcServer.fromApi<any, any>({
+    const server = new RpcServer<any, any>({
       send: (messages) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
@@ -26,10 +27,12 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
         }, 1);
       },
       onNotification: () => {},
-      api: sampleApi,
+      caller: new RpcApiCaller<any, any>({
+        api: sampleApi,
+        maxActiveCalls: 3,
+      }),
       bufferSize: 2,
       bufferTime: 1,
-      maxActiveCalls: 3,
     });
     const client = new RpcClient({
       send: (messages) => {

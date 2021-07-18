@@ -1,4 +1,4 @@
-import {ReactiveRpcRequestMessage} from "../messages";
+import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from "../messages";
 import {RpcClient} from "./RpcClient";
 import {RpcServer} from "./RpcServer";
 
@@ -24,9 +24,9 @@ export class RpcServerLocalClient<Ctx = unknown, T = unknown> extends RpcClient<
       bufferTime: 0,
     });
 
-    this.params.server.onSend = messages => {
+    this.params.server.onSend = (messages) => {
       Promise.resolve().then(() => {
-        this.onMessages(messages);
+        this.onMessages(messages as ReactiveRpcResponseMessage<T>[]);
       });
     };
   }

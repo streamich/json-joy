@@ -2,15 +2,18 @@ import {sampleApi} from './api';
 import {RpcServer} from '../RpcServer';
 import {RpcServerLocalClient} from '../RpcServerLocalClient';
 import {of} from '../../util/of';
+import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {
-  const server = RpcServer.fromApi<any, any>({
-    send: (messages) => {},
+  const server = new RpcServer<any, any>({
+    send: (messages: any) => {},
     onNotification: () => {},
-    api: sampleApi,
+    caller: new RpcApiCaller<any, any>({
+      api: sampleApi,
+      maxActiveCalls: 3,
+    }),
     bufferSize: 2,
     bufferTime: 1,
-    maxActiveCalls: 3,
   });
   const client = new RpcServerLocalClient({
     ctx: {},
