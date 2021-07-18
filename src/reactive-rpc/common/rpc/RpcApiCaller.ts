@@ -135,29 +135,32 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       },
     });
     request$.subscribe(requestBuffer$);
-    return requestBuffer$
+    const observable = requestBuffer$
       .pipe(
         take(1),
         tap(() => {
           this._calls++;
-          console.log('before pre-call');
         }),
         switchMap(request => methodStreaming.onPreCall
           ? from(methodStreaming.onPreCall(ctx, request))
           : from([0])),
         switchMap(() => {
-          return methodStreaming.call$(ctx, requestBuffer$)
+          const response$ = methodStreaming.call$(ctx, requestBuffer$)
             .pipe(
               finalize(() => {
                 this._calls--;
               }),
             );
+          Promise.resolve().then(() => {
+            requestBuffer$.flush();
+          });
+          return response$;
         }),
         mergeWith(requestBufferError$),
         tap(() => {
           requestBufferError$.complete();
-          requestBuffer$.flush();
         }),
       );
+    return observable;
   }
 }
