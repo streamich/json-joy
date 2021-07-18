@@ -16,7 +16,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * Method to be called by server when it wants to send messages to the client.
    * This is usually your WebSocket "send" method.
    */
-  send: (messages: ReactiveRpcResponseMessage<T>[]) => void;
+  send: (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T>)[]) => void;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -54,10 +54,10 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private readonly error: ErrorFormatter<T>;
 
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
-  private send: (message: ReactiveRpcResponseMessage<T>) => void;
+  private send: (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => void;
 
   /** Callback which sends message out of the server. */
-  public onSend: (messages: ReactiveRpcResponseMessage<T>[]) => void;
+  public onSend: (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T>)[]) => void;
 
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
@@ -75,7 +75,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.onNotification = notify;
     this.onSend = send;
     if (bufferTime) {
-      const buffer = new TimedQueue<ReactiveRpcResponseMessage<T>>();
+      const buffer = new TimedQueue<ReactiveRpcResponseMessage<T> | NotificationMessage<T>>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
       buffer.onFlush = messages => this.onSend(messages);
@@ -87,6 +87,14 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     }
   }
 
+  /**
+   * Processes a single incoming Reactive-RPC message.
+   *
+   * This method can throw.
+   *
+   * @param message A single Reactive-RPC message.
+   * @param ctx Server context.
+   */
   public onMessage(message: ReactiveRpcRequestMessage<T>, ctx: Ctx): void {
     if (message instanceof RequestDataMessage) this.onRequestDataMessage(message, ctx);
     else if (message instanceof RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
@@ -95,13 +103,21 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     else if (message instanceof ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
   }
 
+  /**
+   * Receives a list of all incoming messages from the client to process.
+   *
+   * This method can throw.
+   *
+   * @param messages A list of received messages.
+   * @param ctx Server context.
+   */
   public onMessages(messages: ReactiveRpcRequestMessage<T>[], ctx: Ctx): void {
     const length = messages.length;
     for (let i = 0; i < length; i++) this.onMessage(messages[i], ctx);
   }
 
   public stop(reason: RpcServerError = RpcServerError.Stop) {
-    this.send = (message: ReactiveRpcResponseMessage<T>) => {};
+    this.send = (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => {};
     this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
       call.req$.error(new RpcError(reason));
@@ -266,6 +282,8 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   public onNotificationMessage(message: NotificationMessage<T>, ctx: Ctx): void {
     const {method, data} = message;
+    if (!method || (method.length > 128))
+      throw new RpcError(RpcServerError.InvalidNotificationName);
     this.onNotification(method, data, ctx);
   }
 }

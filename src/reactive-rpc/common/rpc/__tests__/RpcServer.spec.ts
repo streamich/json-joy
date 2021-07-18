@@ -3,7 +3,15 @@ import {RpcServerError} from '../constants';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {RpcApiCaller, RpcApiCallerParams} from '../RpcApiCaller';
-import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../messages';
+import {
+  NotificationMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+  ResponseUnsubscribeMessage,
+} from '../../messages';
 import {RpcValidationError} from '../error';
 import {Defer} from '../../../../util/Defer';
 
@@ -22,83 +30,87 @@ const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcA
   const ctx = {ip: '127.0.0.1'};
   const caller = new RpcApiCaller<any, any>({
     api: {
-      'ping': {
+      ping: {
         isStreaming: false,
         call: async () => 'pong',
       },
-      'promise': {
+      promise: {
         isStreaming: false,
         call: async () => 'this is promise result',
       },
-      'promiseError': {
+      promiseError: {
         isStreaming: false,
         call: async () => {
           throw 'this promise can throw';
         },
       },
-      'promiseDelay': {
+      promiseDelay: {
         isStreaming: false,
         call: async () => {
-          await new Promise(r => setTimeout(r, 5));
+          await new Promise((r) => setTimeout(r, 5));
           return {};
         },
       },
-      'error': {
+      error: {
         isStreaming: false,
         call: async () => {
           throw {message: 'always throws'};
         },
       },
-      'emitOnceSync': {
+      emitOnceSync: {
         isStreaming: true,
         call$: (ctx: any, request$: any) => {
           const obs = request$.pipe(
             take(1),
             switchMap((request) => {
               return of(JSON.stringify({request, ctx}));
-            })
+            }),
           );
           return obs;
         },
       },
-      'emitThreeSync': {
+      emitThreeSync: {
         isStreaming: true,
         call$: (ctx: any, request$: any) => {
           const obs = request$.pipe(
             take(1),
-            switchMap((request) => from([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])]))
+            switchMap((request) => from([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])])),
           );
           return obs;
         },
       },
-      'subject': {
+      subject: {
         isStreaming: true,
         call$: (ctx: any, request$: any) => {
           return subject;
         },
       },
-      'echo': {
+      echo: {
         isStreaming: false,
         call: (ctx: any, payload: any) => Promise.resolve(payload),
       },
-      'double': {
+      double: {
         isStreaming: true,
-        call$: (ctx: any, request$: any) => request$.pipe(
-          take(1),
-          switchMap((value: any) => of(2 * value)),
-        ),
+        call$: (ctx: any, request$: any) =>
+          request$.pipe(
+            take(1),
+            switchMap((value: any) => of(2 * value)),
+          ),
       },
-      'getToken': {
+      getToken: {
         isStreaming: false,
         call: async () => token,
       },
-      'streamDelay': {
+      streamDelay: {
         isStreaming: true,
-        call$: () => from((async () => {
-          await new Promise(r => setTimeout(r, 5));
-          return {};
-        })()),
-      }
+        call$: () =>
+          from(
+            (async () => {
+              await new Promise((r) => setTimeout(r, 5));
+              return {};
+            })(),
+          ),
+      },
     },
     ...callerParams,
   });
@@ -107,11 +119,6 @@ const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcA
     onNotification: notify,
     caller,
     bufferTime: 0,
-    // error: {
-    //   format: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
-    //   formatValidation: (error: unknown) => error instanceof Error ? {error: {message: error.message}} : JSON.stringify({error}),
-    //   formatCode: (code: RpcServerError) => JSON.stringify({code}),
-    // },
     ...params,
   });
   return {server, send, caller, notify, ctx, subject};
@@ -155,24 +162,29 @@ test('can receive multiple notifications', async () => {
   expect(notify).toHaveBeenCalledWith('3', new Uint8Array([3]), undefined);
 });
 
-// test('throws on empty notification name', async () => {
-//   const {server, send, call, notify, ctx} = setup();
-//   expect(() =>
-//     server.onMessages([new NotificationMessage('', new Uint8Array([1]))], undefined),
-//   ).toThrowErrorMatchingInlineSnapshot(`"Invalid method."`);
-// });
+test('throws on empty notification name', async () => {
+  const {server} = setup();
+  try {
+    server.onMessages([new NotificationMessage('', new Uint8Array([1]))], undefined);
+    throw 'this should not execute';
+  } catch (error) {
+    expect(error.message).toBe('PROTOCOL');
+    expect(error.code).toBe('InvalidNotificationName');
+    expect(error.errno).toBe(RpcServerError.InvalidNotificationName);
+  }
+});
 
-// test('throws when notification name longer than 128 chars', async () => {
-//   const send = jest.fn();
-//   const call = jest.fn();
-//   const notify = jest.fn();
-//   const server = new BinaryRxServer({send, call, notify, bufferTime: 0});
-//   const name =
-//     '012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678';
-//   expect(() =>
-//     server.onMessages([new NotificationMessage(name, new Uint8Array([1]))], undefined),
-//   ).toThrowErrorMatchingInlineSnapshot(`"Invalid method."`);
-// });
+test('throws when notification name longer than 128 chars', async () => {
+  const {server} = setup();
+  try {
+    server.onMessages([new NotificationMessage('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678', new Uint8Array([1]))], undefined);
+    throw 'this should not execute';
+  } catch (error) {
+    expect(error.message).toBe('PROTOCOL');
+    expect(error.code).toBe('InvalidNotificationName');
+    expect(error.errno).toBe(RpcServerError.InvalidNotificationName);
+  }
+});
 
 test('throws when "notify" callback throws', async () => {
   const {server} = setup({
@@ -210,10 +222,12 @@ test('sends complete message if observable immediately completes after emitting 
   const msg = send.mock.calls[0][0][0];
   expect(msg).toBeInstanceOf(ResponseCompleteMessage);
   expect(msg.id).toBe(25);
-  expect(msg.data).toEqual(JSON.stringify({
-    request: {foo: 'bar'},
-    ctx: {ip: '127.0.0.1'},
-  }));
+  expect(msg.data).toEqual(
+    JSON.stringify({
+      request: {foo: 'bar'},
+      ctx: {ip: '127.0.0.1'},
+    }),
+  );
 });
 
 test('observable emits three values synchronously', async () => {
@@ -299,7 +313,7 @@ test('sends error when subscription limit is exceeded', async () => {
   server.onMessages([new RequestCompleteMessage(6, 'subject', new Uint8Array([6]))], undefined);
   expect(caller.call$).toHaveBeenCalledTimes(6);
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0][0].data).toEqual({"code": "TooManyActiveCalls", "errno": 2, "message": "PROTOCOL"});
+  expect(send.mock.calls[0][0][0].data).toEqual({code: 'TooManyActiveCalls', errno: 2, message: 'PROTOCOL'});
 });
 
 test('sends error when subscription limit is exceeded including static calls', async () => {
@@ -326,7 +340,7 @@ test('sends error when subscription limit is exceeded including static calls', a
   server.onMessages([new RequestCompleteMessage(6, 'subject', new Uint8Array([6]))], undefined);
   expect(caller.call$).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0][0].data).toEqual({"code": "TooManyActiveCalls", "errno": 2, "message": "PROTOCOL"});
+  expect(send.mock.calls[0][0][0].data).toEqual({code: 'TooManyActiveCalls', errno: 2, message: 'PROTOCOL'});
 });
 
 test('subscription counter goes down on unsubscribe', async () => {
@@ -392,7 +406,11 @@ test('can create custom API from promises and observables', async () => {
   expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, Buffer.from('hello'))]);
   expect(send.mock.calls[1][0]).toEqual([new ResponseCompleteMessage(2, 2)]);
   expect(send.mock.calls[2][0]).toEqual([new ResponseCompleteMessage(3, 20)]);
-  expect(send.mock.calls[3][0][0].data).toEqual({"code": "MethodNotFound", "errno": RpcServerError.MethodNotFound, "message": "PROTOCOL"});
+  expect(send.mock.calls[3][0][0].data).toEqual({
+    code: 'MethodNotFound',
+    errno: RpcServerError.MethodNotFound,
+    message: 'PROTOCOL',
+  });
 });
 
 test('can add authentication on as higher level API', async () => {
@@ -406,18 +424,21 @@ test('can add authentication on as higher level API', async () => {
 
 test('stops sending messages after server stop()', async () => {
   let sub: Subscriber<any>;
-  const {server, send} = setup({}, {
-    api: {
-      foo: {
-        isStreaming: true,
-        call$: () => {
-          return new Observable((subscriber) => {
-            sub = subscriber;
-          });
+  const {server, send} = setup(
+    {},
+    {
+      api: {
+        foo: {
+          isStreaming: true,
+          call$: () => {
+            return new Observable((subscriber) => {
+              sub = subscriber;
+            });
+          },
         },
       },
     },
-  });
+  );
   expect(!!sub!).toBe(false);
   server.onMessage(new RequestCompleteMessage(1, 'foo', {}), undefined);
   await new Promise((r) => setTimeout(r, 1));
@@ -437,14 +458,17 @@ test('stops sending messages after server stop()', async () => {
 
 test('does not send subscription complete message from server when client cancels subscription', async () => {
   const subject = new Subject();
-  const {server, send} = setup({}, {
-    api: {
-      foo: {
-        isStreaming: true,
-        call$: () => subject,
+  const {server, send} = setup(
+    {},
+    {
+      api: {
+        foo: {
+          isStreaming: true,
+          call$: () => subject,
+        },
       },
     },
-  });
+  );
   server.onMessage(new RequestDataMessage(1, 'foo', {}), {});
   expect(send).toHaveBeenCalledTimes(0);
   subject.next(1);
@@ -462,19 +486,22 @@ test.todo('can subscribe to streaming request twice');
 
 describe('validation', () => {
   test('successfully validates a static call', async () => {
-    const {server, send} = setup({}, {
-      api: {
-        test: {
-          isStreaming: false,
-          validate: (req: unknown) => {
-            if (typeof req !== 'object') throw new Error('Invalid request.');
-            if (!req) throw new Error('Invalid request.');
-            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+    const {server, send} = setup(
+      {},
+      {
+        api: {
+          test: {
+            isStreaming: false,
+            validate: (req: unknown) => {
+              if (typeof req !== 'object') throw new Error('Invalid request.');
+              if (!req) throw new Error('Invalid request.');
+              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+            },
+            call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
           },
-          call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
-        }
+        },
       },
-    });
+    );
     expect(send).toHaveBeenCalledTimes(0);
     server.onMessage(new RequestCompleteMessage(1, 'test', {num: 3}), {});
     await new Promise((r) => setTimeout(r, 1));
@@ -484,47 +511,55 @@ describe('validation', () => {
   });
 
   test('returns error on invalid input', async () => {
-    const {server, send} = setup({}, {
-      api: {
-        test: {
-          isStreaming: false,
-          validate: (req: unknown) => {
-            if (typeof req !== 'object') throw new Error('Invalid request.');
-            if (!req) throw new Error('Invalid request.');
-            if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
-          },
-          call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
-        }
-      }
-    });
-    expect(send).toHaveBeenCalledTimes(0);
-    server.onMessage(new RequestCompleteMessage(1, 'test', {gg: 3}), {});
-    await new Promise((r) => setTimeout(r, 1));
-    expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-    expect(send).toHaveBeenCalledWith([new ResponseErrorMessage(1, {
-      message: 'Invalid request.',
-      errno: 3,
-      code: 'InvalidData',
-      status: 0,
-    })]);
-  });
-
-  describe('for streaming method', () => {
-    test('successfully validates a streaming call', async () => {
-      const {server, send} = setup({}, {
+    const {server, send} = setup(
+      {},
+      {
         api: {
           test: {
-            isStreaming: true,
+            isStreaming: false,
             validate: (req: unknown) => {
               if (typeof req !== 'object') throw new Error('Invalid request.');
               if (!req) throw new Error('Invalid request.');
               if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
             },
-            call$: (ctx: any, req$: any) => req$.pipe(map(req => (req as {num: number}).num * 2)),
+            call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
           },
-        }
-      });
+        },
+      },
+    );
+    expect(send).toHaveBeenCalledTimes(0);
+    server.onMessage(new RequestCompleteMessage(1, 'test', {gg: 3}), {});
+    await new Promise((r) => setTimeout(r, 1));
+    expect(send).toHaveBeenCalledTimes(1);
+    expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
+    expect(send).toHaveBeenCalledWith([
+      new ResponseErrorMessage(1, {
+        message: 'Invalid request.',
+        errno: 3,
+        code: 'InvalidData',
+        status: 0,
+      }),
+    ]);
+  });
+
+  describe('for streaming method', () => {
+    test('successfully validates a streaming call', async () => {
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => req$.pipe(map((req) => (req as {num: number}).num * 2)),
+            },
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
@@ -541,19 +576,22 @@ describe('validation', () => {
     });
 
     test('errors stream on first data message invalid', async () => {
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => req$.pipe(map((req) => (req as {num: number}).num * 2)),
             },
-            call$: (ctx: any, req$: any) => req$.pipe(map(req => (req as {num: number}).num * 2)),
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestDataMessage(1, 'test', {GG: 5}), {});
@@ -561,56 +599,66 @@ describe('validation', () => {
 
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[0][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
 
     test('errors stream on first data message invalid and is a complete message', async () => {
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => req$.pipe(map((req) => (req as {num: number}).num * 2)),
             },
-            call$: (ctx: any, req$: any) => req$.pipe(map(req => (req as {num: number}).num * 2)),
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestCompleteMessage(1, 'test', {GG: 5}), {});
       await new Promise((r) => setTimeout(r, 1));
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[0][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
 
     test('errors stream on second data message invalid', async () => {
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => req$.pipe(map((req) => (req as {num: number}).num * 2)),
             },
-            call$: (ctx: any, req$: any) => req$.pipe(map(req => (req as {num: number}).num * 2)),
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
@@ -623,35 +671,40 @@ describe('validation', () => {
       await new Promise((r) => setTimeout(r, 1));
       expect(send).toHaveBeenCalledTimes(2);
       expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[1][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[1][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
 
     test('when second data message validation fails errors request$ observable', async () => {
       const next = jest.fn();
       const error = jest.fn();
       const complete = jest.fn();
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => {
+                req$.subscribe({next, error, complete});
+                const subject = new Subject();
+                return subject;
+              },
             },
-            call$: (ctx: any, req$: any) => {
-              req$.subscribe({next, error, complete});
-              const subject = new Subject();
-              return subject;
-            },
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestDataMessage(1, 'test', {num: 5}), {});
@@ -667,37 +720,42 @@ describe('validation', () => {
       expect(error).toHaveBeenCalledTimes(1);
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
-      expect(error).toHaveBeenCalledWith(new RpcValidationError({message: 'Invalid request.'}))
+      expect(error).toHaveBeenCalledWith(new RpcValidationError({message: 'Invalid request.'}));
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[0][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
 
     test('when first data message validation fails errors response observable and does not start request observable', async () => {
       const next = jest.fn();
       const error = jest.fn();
       const complete = jest.fn();
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => {
+                req$.subscribe({next, error, complete});
+                const subject = new Subject();
+                return subject;
+              },
             },
-            call$: (ctx: any, req$: any) => {
-              req$.subscribe({next, error, complete});
-              const subject = new Subject();
-              return subject;
-            },
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestDataMessage(1, 'test', {INVALID: 5}), {});
@@ -707,35 +765,40 @@ describe('validation', () => {
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[0][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
 
     test('when first RequestCompleteMessage validation fails errors response observable and does not start request observable', async () => {
       const next = jest.fn();
       const error = jest.fn();
       const complete = jest.fn();
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            validate: (req: unknown) => {
-              if (typeof req !== 'object') throw new Error('Invalid request.');
-              if (!req) throw new Error('Invalid request.');
-              if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              validate: (req: unknown) => {
+                if (typeof req !== 'object') throw new Error('Invalid request.');
+                if (!req) throw new Error('Invalid request.');
+                if (typeof (req as {num: number}).num !== 'number') throw new Error('Invalid request.');
+              },
+              call$: (ctx: any, req$: any) => {
+                req$.subscribe({next, error, complete});
+                const subject = new Subject();
+                return subject;
+              },
             },
-            call$: (ctx: any, req$: any) => {
-              req$.subscribe({next, error, complete});
-              const subject = new Subject();
-              return subject;
-            },
-          }
-        }
-      });
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       server.onMessage(new RequestCompleteMessage(1, 'test', {INVALID: 5}), {});
@@ -745,12 +808,14 @@ describe('validation', () => {
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
-      expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {
-        message: 'Invalid request.',
-        errno: RpcServerError.InvalidData,
-        code: 'InvalidData',
-        status: 0,
-      }));
+      expect(send.mock.calls[0][0][0]).toEqual(
+        new ResponseErrorMessage(1, {
+          message: 'Invalid request.',
+          errno: RpcServerError.InvalidData,
+          code: 'InvalidData',
+          status: 0,
+        }),
+      );
     });
   });
 });
@@ -759,15 +824,18 @@ describe('pre-call checks', () => {
   describe('static method', () => {
     test('proceeds with call when pre-call checks pass', async () => {
       const onPreCall = jest.fn(async (ctx, request) => {});
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: false,
-            onPreCall,
-            call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
-          }
-        }
-      });
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: false,
+              onPreCall,
+              call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
+            },
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       expect(onPreCall).toHaveBeenCalledTimes(0);
@@ -785,15 +853,18 @@ describe('pre-call checks', () => {
       const onPreCall = jest.fn(async (ctx, request) => {
         throw new Error('fail...');
       });
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: false,
-            onPreCall,
-            call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
-          }
-        }
-      });
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: false,
+              onPreCall,
+              call: async (ctx: any, req: any) => (req as {num: number}).num * 2,
+            },
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       expect(onPreCall).toHaveBeenCalledTimes(0);
@@ -811,15 +882,18 @@ describe('pre-call checks', () => {
   describe('streaming method', () => {
     test('proceeds with call when pre-call checks pass', async () => {
       const onPreCall = jest.fn(async (ctx, request) => {});
-      const {server, send} = setup({}, {
-        api: {
-          test: {
-            isStreaming: true,
-            onPreCall,
-            call$: (ctx: any, req$: any) => from([1, 2]),
-          }
-        }
-      });
+      const {server, send} = setup(
+        {},
+        {
+          api: {
+            test: {
+              isStreaming: true,
+              onPreCall,
+              call$: (ctx: any, req$: any) => from([1, 2]),
+            },
+          },
+        },
+      );
       expect(send).toHaveBeenCalledTimes(0);
 
       expect(onPreCall).toHaveBeenCalledTimes(0);
@@ -841,35 +915,38 @@ describe('pre-call checks', () => {
         const onPreCall = jest.fn(async (ctx, request) => {
           await preCallFuture.promise;
         });
-        const {server, send} = setup({}, {
-          api: {
-            test: {
-              isStreaming: true,
-              onPreCall,
-              call$: (ctx: any, req$: any) => from([1, 2]),
-              validate: () => {},
-            }
-          }
-        });
+        const {server, send} = setup(
+          {},
+          {
+            api: {
+              test: {
+                isStreaming: true,
+                onPreCall,
+                call$: (ctx: any, req$: any) => from([1, 2]),
+                validate: () => {},
+              },
+            },
+          },
+        );
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '9'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '10'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '11'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(1);
         expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {message: 'BufferSubjectOverflow'}));
       });
@@ -879,29 +956,32 @@ describe('pre-call checks', () => {
         const onPreCall = jest.fn(async (ctx, request) => {
           await preCallFuture.promise;
         });
-        const {server, send} = setup({}, {
-          preCallBufferSize: 5,
-          api: {
-            test: {
-              onPreCall,
-              isStreaming: true,
-              call$: (ctx: any, req$: any) => from([1, 2]),
-              validate: () => {},
+        const {server, send} = setup(
+          {},
+          {
+            preCallBufferSize: 5,
+            api: {
+              test: {
+                onPreCall,
+                isStreaming: true,
+                call$: (ctx: any, req$: any) => from([1, 2]),
+                validate: () => {},
+              },
             },
-          }
-        });
+          },
+        );
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(1);
         expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {message: 'BufferSubjectOverflow'}));
       });
@@ -911,29 +991,32 @@ describe('pre-call checks', () => {
         const onPreCall = jest.fn(async (ctx, request) => {
           await preCallFuture.promise;
         });
-        const {server, send} = setup({}, {
-          api: {
-            test: {
-              isStreaming: true,
-              onPreCall,
-              call$: (ctx: any, req$: any) => from([1, 2]),
-              validate: () => {},
-              preCallBufferSize: 5,
+        const {server, send} = setup(
+          {},
+          {
+            api: {
+              test: {
+                isStreaming: true,
+                onPreCall,
+                call$: (ctx: any, req$: any) => from([1, 2]),
+                validate: () => {},
+                preCallBufferSize: 5,
+              },
             },
-          }
-        });
+          },
+        );
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(1);
         expect(send.mock.calls[0][0][0]).toEqual(new ResponseErrorMessage(1, {message: 'BufferSubjectOverflow'}));
       });
@@ -945,43 +1028,46 @@ describe('pre-call checks', () => {
           await preCallFuture.promise;
         });
         const next = jest.fn();
-        const {server, send} = setup({}, {
-          api: {
-            test: {
-              isStreaming: true,
-              onPreCall,
-              call$: (ctx: any, req$: any) => {
-                req$.subscribe({next, error: () => {}});
-                return response$;
+        const {server, send} = setup(
+          {},
+          {
+            api: {
+              test: {
+                isStreaming: true,
+                onPreCall,
+                call$: (ctx: any, req$: any) => {
+                  req$.subscribe({next, error: () => {}});
+                  return response$;
+                },
+                validate: () => {},
+                preCallBufferSize: 5,
               },
-              validate: () => {},
-              preCallBufferSize: 5,
             },
-          }
-        });
+          },
+        );
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '1'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '2'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '3'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '4'}), {foo: 'bar'});
         server.onMessage(new RequestDataMessage(1, 'test', {a: '5'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         expect(next).toHaveBeenCalledTimes(0);
         preCallFuture.resolve(undefined);
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(next).toHaveBeenCalledTimes(5);
         server.onMessage(new RequestDataMessage(1, 'test', {a: '6'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         server.onMessage(new RequestDataMessage(1, 'test', {a: '7'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         server.onMessage(new RequestDataMessage(1, 'test', {a: '8'}), {foo: 'bar'});
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(0);
         response$.next(1);
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(send).toHaveBeenCalledTimes(1);
         expect(next).toHaveBeenCalledTimes(8);
       });
@@ -989,19 +1075,18 @@ describe('pre-call checks', () => {
   });
 });
 
-/*
 describe('when server stops', () => {
   test('does not emit messages from static calls', async () => {
     const {server, send} = setup();
     expect(send).toHaveBeenCalledTimes(0);
     server.onMessage(new RequestCompleteMessage(1, 'promiseDelay', {}), {});
     expect(send).toHaveBeenCalledTimes(0);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
     server.onMessage(new RequestCompleteMessage(2, 'promiseDelay', {}), {});
     expect(send).toHaveBeenCalledTimes(1);
     server.stop();
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
   });
 
@@ -1010,133 +1095,154 @@ describe('when server stops', () => {
     expect(send).toHaveBeenCalledTimes(0);
     server.onMessage(new RequestCompleteMessage(1, 'streamDelay', {}), {});
     expect(send).toHaveBeenCalledTimes(0);
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
     server.onMessage(new RequestCompleteMessage(2, 'streamDelay', {}), {});
     expect(send).toHaveBeenCalledTimes(1);
     server.stop();
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('buffering', () => {
   test('batches messages received within buffering window', async () => {
-    const {server, send, getRpcMethod, notify, ctx, subject} = setup({
-      bufferTime: 1,
-      onCall: () => ({
-        isStreaming: false,
-        call: async () => 123,
-      })
-    });
+    const {server, send} = setup(
+      {
+        bufferTime: 1,
+      },
+      {
+        api: {
+          method1: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+          method2: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+        },
+      },
+    );
     server.onMessage(new RequestCompleteMessage(1, 'method1', Buffer.from('a')), {ctx: 1});
     server.onMessage(new RequestCompleteMessage(2, 'method2', Buffer.from('b')), {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0]).toEqual(
-      [
-        new ResponseCompleteMessage(1, 123),
-        new ResponseCompleteMessage(2, 123),
-      ],
-    );
+    expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, 123), new ResponseCompleteMessage(2, 123)]);
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
     expect(send.mock.calls[0][0][1]).toBeInstanceOf(ResponseCompleteMessage);
   });
 
   test('batches errors received within buffering window', async () => {
-    const {server, send, getRpcMethod, notify, ctx, subject} = setup({bufferTime: 1});
+    const {server, send} = setup({bufferTime: 1});
     server.onMessage(new RequestCompleteMessage(1, 'not_exist_1', Buffer.from('a')), {ctx: 1});
     server.onMessage(new RequestCompleteMessage(2, 'not_exist_2', Buffer.from('b')), {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0]).toEqual(
-      [
-        new ResponseErrorMessage(1, JSON.stringify({code: RpcServerError.MethodNotFound})),
-        new ResponseErrorMessage(2, JSON.stringify({code: RpcServerError.MethodNotFound})),
-      ],
+    expect(send.mock.calls[0][0][0]).toEqual(
+      new ResponseErrorMessage(1, {
+        code: 'MethodNotFound',
+        errno: RpcServerError.MethodNotFound,
+        message: 'PROTOCOL',
+      }),
+    );
+    expect(send.mock.calls[0][0][1]).toEqual(
+      new ResponseErrorMessage(2, {
+        code: 'MethodNotFound',
+        errno: RpcServerError.MethodNotFound,
+        message: 'PROTOCOL',
+      }),
     );
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
     expect(send.mock.calls[0][0][1]).toBeInstanceOf(ResponseErrorMessage);
   });
 
   test('does not batch consecutive messages when buffering is disabled', async () => {
-    const {server, send, getRpcMethod, notify, ctx, subject} = setup({
-      bufferTime: 0,
-      onCall: () => ({
-        isStreaming: false,
-        call: async () => 123,
-      })
-    });
-    server.onMessage(new RequestCompleteMessage(1, 'not_exist_1', Buffer.from('a')), {ctx: 1});
-    server.onMessage(new RequestCompleteMessage(2, 'not_exist_2', Buffer.from('b')), {ctx: 2});
+    const {server, send} = setup(
+      {
+        bufferTime: 0,
+      },
+      {
+        api: {
+          method1: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+          method2: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+        },
+      },
+    );
+    server.onMessage(new RequestCompleteMessage(1, 'method1', Buffer.from('a')), {ctx: 1});
+    server.onMessage(new RequestCompleteMessage(2, 'method2', Buffer.from('b')), {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(2);
-    expect(send.mock.calls[0][0]).toEqual(
-      [
-        new ResponseCompleteMessage(1, 123),
-      ],
-    );
-    expect(send.mock.calls[1][0]).toEqual(
-      [
-        new ResponseCompleteMessage(2, 123),
-      ],
-    );
+    expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, 123)]);
+    expect(send.mock.calls[1][0]).toEqual([new ResponseCompleteMessage(2, 123)]);
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
     expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseCompleteMessage);
   });
 
   test('does not batch messages when they are far apart', async () => {
-    const {server, send, getRpcMethod, notify, ctx, subject} = setup({
-      bufferTime: 1,
-      onCall: () => ({
-        isStreaming: false,
-        call: async () => 123,
-      })
-    });
-    server.onMessage(new RequestCompleteMessage(1, 'not_exist_1', Buffer.from('a')), {ctx: 1});
+    const {server, send} = setup(
+      {
+        bufferTime: 1,
+      },
+      {
+        api: {
+          method1: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+          method2: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+        },
+      },
+    );
+    server.onMessage(new RequestCompleteMessage(1, 'method1', Buffer.from('a')), {ctx: 1});
     await new Promise((r) => setTimeout(r, 10));
-    server.onMessage(new RequestCompleteMessage(2, 'not_exist_2', Buffer.from('b')), {ctx: 2});
+    server.onMessage(new RequestCompleteMessage(2, 'method2', Buffer.from('b')), {ctx: 2});
     await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(2);
-    expect(send.mock.calls[0][0]).toEqual(
-      [
-        new ResponseCompleteMessage(1, 123),
-      ],
-    );
-    expect(send.mock.calls[1][0]).toEqual(
-      [
-        new ResponseCompleteMessage(2, 123),
-      ],
-    );
+    expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, 123)]);
+    expect(send.mock.calls[1][0]).toEqual([new ResponseCompleteMessage(2, 123)]);
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
     expect(send.mock.calls[1][0][0]).toBeInstanceOf(ResponseCompleteMessage);
   });
 
   test('batches and sends out messages when buffer is filled up', async () => {
-    const {server, send, getRpcMethod, notify, ctx, subject} = setup({
-      bufferTime: 100,
-      bufferSize: 2,
-      onCall: () => ({
-        isStreaming: false,
-        call: async () => 123,
-      })
-    });
+    const {server, send} = setup(
+      {
+        bufferTime: 100,
+        bufferSize: 2,
+      },
+      {
+        api: {
+          method1: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+          method2: {
+            isStreaming: false,
+            call: async () => 123,
+          },
+        },
+      },
+    );
     server.onMessage(new RequestCompleteMessage(1, 'method1', Buffer.from('a')), {ctx: 1});
     server.onMessage(new RequestCompleteMessage(2, 'method2', Buffer.from('b')), {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
     expect(send).toHaveBeenCalledTimes(1);
-    expect(send.mock.calls[0][0]).toEqual(
-      [
-        new ResponseCompleteMessage(1, 123),
-        new ResponseCompleteMessage(2, 123),
-      ],
-    );
+    expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, 123), new ResponseCompleteMessage(2, 123)]);
     expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
     expect(send.mock.calls[0][0][1]).toBeInstanceOf(ResponseCompleteMessage);
   });
 });
-*/
