@@ -3,7 +3,7 @@ import {finalize, map, mergeWith, switchMap, switchMapTo, take, tap} from 'rxjs/
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {RpcError, isErrorLike} from './error';
+import {RpcError, isErrorLike, RpcValidationError} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
@@ -77,8 +77,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       try {
         method.validate(request);
       } catch (error) {
-        if (isErrorLike(error)) throw error;
-        throw new RpcError(RpcServerError.InvalidData);
+        throw new RpcValidationError(error);
       }
     }
     this._calls++;
@@ -116,8 +115,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         try {
           methodStreaming.validate!(request);
         } catch (error) {
-          if (isErrorLike(error)) throw error;
-          throw new RpcError(RpcServerError.InvalidData);
+          throw new RpcValidationError(error);
         }
         return request;
       }));

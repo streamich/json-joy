@@ -1,6 +1,6 @@
 import {RpcServerError} from "./constants";
 
-export interface ErrorFormatter<E = unknown> {
+export   interface ErrorFormatter<E = unknown> {
   /**
    * Method to format any error thrown by application to correct format.
    */
@@ -83,5 +83,20 @@ export class RpcError extends Error implements ErrorLike {
   constructor(public readonly errno: RpcServerError, message: string = 'PROTOCOL') {
     super(message);
     this.code = RpcServerError[errno];
+  }
+}
+
+export class RpcValidationError extends Error implements ErrorLike {
+  public readonly status: number;
+  public readonly code: string;
+  public readonly errno: number;
+  public errorId?: number;
+
+  constructor(err: unknown) {
+    super(isErrorLike(err) ? err.message : String(err));
+    const error = isErrorLike(err) ? err : {} as Omit<ErrorLike, 'message'>;
+    this.code = error.code || 'InvalidData';
+    this.errno = error.errno ?? RpcServerError.InvalidData;
+    this.status = 0;
   }
 }
