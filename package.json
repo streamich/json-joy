@@ -42,7 +42,7 @@
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "test:reactive-rpc": "node -r ts-node/register/transpile-only src/__tests__/reactive-rpc/run.ts",
-    "test:reactive-rpc:jest": "TEST_E2E=1 jest --maxWorkers 2 --no-cache src/__tests__/reactive-rpc/",
+    "test:reactive-rpc:jest": "TEST_E2E=1 jest --maxWorkers 1 --no-cache src/__tests__/reactive-rpc/",
     "demo:json-patch": "ts-node src/demo/json-patch.ts",
     "demo:json-pointer": "ts-node src/demo/json-pointer.ts",
     "demo:json-rx": "ts-node src/demo/json-rx.ts",

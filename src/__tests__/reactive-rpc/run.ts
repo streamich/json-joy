@@ -14,6 +14,8 @@ const startServer = async () => {
     process.stderr.write('[server] ' + line);
   });
   cp.stderr.on('data', (data) => {
+    console.error('Could not start server');
+    started.reject(data);
     process.stderr.write('ERROR: [server] ' + String(data));
   });
   cp.on('close', (code) => {
@@ -59,8 +61,12 @@ const runTests = async () => {
   try {
     const server = await startServer();
     await server.started;
-    const jest = await runTests();
-    const exitCode = await jest.exitCode;
+    let exitCode = 0;
+    for (let i = 0; i < 3; i++) {
+      const jest = await runTests();
+      exitCode = await jest.exitCode;
+      if (exitCode !== 0) throw exitCode;
+    }
     process.exit(exitCode);
   } catch (error) {
     console.error(error);

@@ -1,25 +1,24 @@
 import {App} from 'uWebSockets.js';
 import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryReactiveRpcApi, enableWsCompactReactiveRpcApi} from '../../reactive-rpc/server/uws';
 import {sampleApi} from '../../reactive-rpc/common/rpc/__tests__/api';
-import {formatError, formatErrorCode} from '../../reactive-rpc/common/rpc/error';
 import {RpcServer} from '../../reactive-rpc/common/rpc';
+import {RpcApiCaller} from '../../reactive-rpc/common/rpc/RpcApiCaller';
 
 const uws = App({});
 
 enableCors(uws);
 
+const caller = new RpcApiCaller<any, any>({
+  api: sampleApi,
+  maxActiveCalls: 3,
+  preCallBufferSize: 10,
+});
+
 enableWsBinaryReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
   createRpcServer: ({send}) => new RpcServer({
-    preCallBufferSize: 10,
-    maxActiveCalls: 3,
-    formatError,
-    formatErrorCode,
-    onCall: (name: string) => {
-      if (!sampleApi.hasOwnProperty(name)) return undefined;
-      return (sampleApi as any)[name];
-    },
+    caller,
     onNotification: () => {},
     send,
   }),
@@ -29,14 +28,7 @@ enableWsCompactReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
   createRpcServer: ({send}) => new RpcServer({
-    preCallBufferSize: 10,
-    maxActiveCalls: 3,
-    formatError,
-    formatErrorCode,
-    onCall: (name: string) => {
-      if (!sampleApi.hasOwnProperty(name)) return undefined;
-      return (sampleApi as any)[name];
-    },
+    caller,
     onNotification: () => {},
     send,
   }),
