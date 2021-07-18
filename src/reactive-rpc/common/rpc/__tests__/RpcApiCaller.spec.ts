@@ -1,7 +1,8 @@
 import * as Rx from 'rxjs';
-import {skip} from 'rxjs/operators';
+import {catchError, map, skip} from 'rxjs/operators';
 import {RpcApiCaller} from '../RpcApiCaller';
 import {sampleApi, runApiTests} from '../__tests__/api';
+import {ErrorLikeErrorFormatter} from '../error';
 
 const setup = () => {
   const caller = new RpcApiCaller({
@@ -54,9 +55,16 @@ describe('streaming calls', () => {
 describe('smoke tests', () => {
   runApiTests(() => {
     const {caller} = setup();
+    const errorFormatter = new ErrorLikeErrorFormatter();
     return {
       client: {
-        call$: (name: any, request: any) => caller.call$(name, Rx.isObservable(request) ? request : Rx.of(request), {}),
+        call$: (name: any, request: any) =>
+          caller.call$(name, Rx.isObservable(request) ? request : Rx.of(request), {})
+            .pipe(
+              catchError(error => {
+                throw errorFormatter.format(error);
+              })
+            ),
       }
     };
   });

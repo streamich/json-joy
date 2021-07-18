@@ -116,9 +116,10 @@ export const runApiTests = (setup: ApiTestSetup) => {
       expect(res1[0]).toBe('done');
       expect(res2[0]).toBe('done');
       expect(res3[0]).toBe('done');
-      expect(res4[1]).toEqual({
+      expect(res4[1]).toMatchObject({
         message: 'PROTOCOL',
         errno: RpcServerError.TooManyActiveCalls,
+        code: 'TooManyActiveCalls',
       });
     });
   });

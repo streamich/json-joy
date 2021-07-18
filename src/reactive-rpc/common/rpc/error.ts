@@ -37,7 +37,7 @@ export const formatErrorLike = (error: ErrorLike): ErrorLike => {
   return out;
 };
 
-const isErrorLike = (error: unknown): error is ErrorLike => {
+export const isErrorLike = (error: unknown): error is ErrorLike => {
   if (error instanceof Error) return true;
   if (typeof error === 'object')
     if (typeof (error as Record<string, unknown>).message === 'string') return true;

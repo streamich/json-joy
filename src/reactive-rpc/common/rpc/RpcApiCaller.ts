@@ -1,9 +1,9 @@
-import {EMPTY, firstValueFrom, from, Observable, of, Subject, throwError} from 'rxjs';
+import {firstValueFrom, from, Observable, of, Subject, throwError} from 'rxjs';
 import {finalize, map, mergeWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {RpcError} from './error';
+import {RpcError, isErrorLike} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
@@ -77,6 +77,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       try {
         method.validate(request);
       } catch (error) {
+        if (isErrorLike(error)) throw error;
         throw new RpcError(RpcServerError.InvalidData);
       }
     }
@@ -115,6 +116,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         try {
           methodStreaming.validate!(request);
         } catch (error) {
+          if (isErrorLike(error)) throw error;
           throw new RpcError(RpcServerError.InvalidData);
         }
         return request;
