@@ -3,7 +3,7 @@ import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
-import {map} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
@@ -12,11 +12,35 @@ const ping: RpcMethodStatic<object, void, 'pong'> = {
   },
 };
 
-const delay: RpcMethodStatic<object, void, 'done'> = {
+const delay: RpcMethodStatic<object, {timeout?: number}, {done: true, timeout: number}> = {
   isStreaming: false,
-  call: async () => {
-    await new Promise(r => setTimeout(r, 10));
-    return 'done';
+  call: async (ctx, {timeout = 10}: {timeout?: number} = {}) => {
+    await new Promise(r => setTimeout(r, timeout));
+    return {
+      done: true,
+      timeout,
+    };
+  },
+};
+
+const delayStreaming: RpcMethodStreaming<object, {timeout?: number}, {done: true, timeout: number}> = {
+  isStreaming: true,
+  call$: (ctx, req$) => {
+    return req$
+      .pipe(
+        take(1),
+        switchMap(({timeout = 10}: {timeout?: number} = {}) => {
+          return from(new Promise<number>(r => {
+            setTimeout(() => {
+              r(timeout);
+            }, timeout);
+          }));
+        }),
+        map((timeout: number) => ({
+          done: true,
+          timeout,
+        })),
+      );
   },
 };
 
@@ -93,6 +117,7 @@ const doubleStringWithValidation2: RpcMethodStreaming<object, {foo: string}, {ba
 export const sampleApi = {
   ping,
   delay,
+  delayStreaming,
   double,
   error,
   streamError,

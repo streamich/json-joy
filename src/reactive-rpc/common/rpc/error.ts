@@ -86,17 +86,8 @@ export class RpcError extends Error implements ErrorLike {
   }
 }
 
-export class RpcValidationError extends Error implements ErrorLike {
-  public readonly status: number;
-  public readonly code: string;
-  public readonly errno: number;
-  public errorId?: number;
-
+export class RpcValidationError extends RpcError implements ErrorLike {
   constructor(err: unknown) {
-    super(isErrorLike(err) ? err.message : String(err));
-    const error = isErrorLike(err) ? err : {} as Omit<ErrorLike, 'message'>;
-    this.code = error.code || 'InvalidData';
-    this.errno = error.errno ?? RpcServerError.InvalidData;
-    this.status = 0;
+    super(isErrorLike(err) ? err.errno ?? RpcServerError.InvalidData : RpcServerError.Unknown, isErrorLike(err) ? err.message : String(err));
   }
 }

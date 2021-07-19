@@ -24,6 +24,13 @@ import type {
 } from './types';
 
 export function decodeMsg<T = unknown>(message: CompactMessage): ReactiveRpcMessage<T> {
+  if (!(message instanceof Array)) {
+    throw new Error('Invalid message');
+  }
+  const length = message.length;
+  if (length < 1 || length > 3) {
+    throw new Error('Invalid message');
+  }
   const first = message[0];
   if (typeof first === 'number') {
     switch (first) {

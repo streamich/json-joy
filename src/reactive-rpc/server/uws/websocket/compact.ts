@@ -1,5 +1,5 @@
 import type {EnableWsReactiveRpcApiParams, RpcWebSocket, UwsWebSocket} from './types';
-import type {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
+import type {ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
 import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../../common/codec/compact-json';
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../../common/codec/compact-msgpack';
 import {NotificationMessage} from '../../../common/messages/nominal/NotificationMessage';
@@ -17,9 +17,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
   const decoderJson = new DecoderJson();
   const encoderMsgPack = new EncoderMsgPack();
   const decoderMsgPack = new DecoderMsgPack();
-  const invalidPayloadNotification = new NotificationMessage('.err', {
-    message: 'INVALID_PAYLOAD',
-  });
+  const invalidPayloadNotification = new NotificationMessage('.err', 'CODING');
   const invalidPayloadJson = encoderJson.encode([invalidPayloadNotification]);
   const invalidPayloadMsgPack = encoderMsgPack.encode([invalidPayloadNotification]);
   const {
@@ -64,19 +62,21 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
       ws.rpc = rpc;
     },
     message: (ws: UwsWebSocket, buf: ArrayBuffer, isBinary: boolean) => {
+      const {ctx, rpc} = ws as CompactRpcWebSocket<Ctx>;
+      let messages: ReactiveRpcMessage | ReactiveRpcMessage[];
       try {
-        const {ctx, rpc} = ws as CompactRpcWebSocket<Ctx>;
-        const messages = isBinary
+        messages = isBinary
           ? decoderMsgPack.decode(new Uint8Array(buf))
           : decoderJson.decode(Buffer.from(buf).toString('utf8') as any);
-        if (messages instanceof Array) rpc.onMessages(messages as ReactiveRpcRequestMessage[], ctx);
-        else rpc.onMessage(messages as ReactiveRpcRequestMessage, ctx);
       } catch (error) {
         // We don't log `error` here as client can intentionally spam many
         // invalid messages an to flood our log.
         if (ws.getBufferedAmount() > maxBackpressure) return;
         ws.send(isBinary ? invalidPayloadMsgPack : invalidPayloadJson, isBinary);
+        return;
       }
+      if (messages instanceof Array) rpc.onMessages(messages as ReactiveRpcRequestMessage[], ctx);
+      else rpc.onMessage(messages as ReactiveRpcRequestMessage, ctx);
     },
     close: (ws: UwsWebSocket, code: number, message: ArrayBuffer) => {
       (ws as CompactRpcWebSocket<Ctx>).rpc.stop();

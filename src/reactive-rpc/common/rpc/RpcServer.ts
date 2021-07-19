@@ -51,7 +51,7 @@ class StreamCall<T = unknown> {
 
 export class RpcServer<Ctx = unknown, T = unknown> {
   private readonly caller: IRpcApiCaller<any, Ctx>;
-  private readonly error: ErrorFormatter<T>;
+  public readonly error: ErrorFormatter<T>;
 
   private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
   private send: (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => void;
@@ -90,28 +90,35 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   /**
    * Processes a single incoming Reactive-RPC message.
    *
-   * This method can throw.
+   * This method will not throw.
    *
    * @param message A single Reactive-RPC message.
    * @param ctx Server context.
    */
   public onMessage(message: ReactiveRpcRequestMessage<T>, ctx: Ctx): void {
-    if (message instanceof RequestDataMessage) this.onRequestDataMessage(message, ctx);
-    else if (message instanceof RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
-    else if (message instanceof RequestErrorMessage) this.onRequestErrorMessage(message, ctx);
-    else if (message instanceof NotificationMessage) this.onNotificationMessage(message, ctx);
-    else if (message instanceof ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
+    try {
+      if (message instanceof RequestDataMessage) this.onRequestDataMessage(message, ctx);
+      else if (message instanceof RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
+      else if (message instanceof RequestErrorMessage) this.onRequestErrorMessage(message, ctx);
+      else if (message instanceof NotificationMessage) this.onNotificationMessage(message, ctx);
+      else if (message instanceof ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
+    } catch (error) {
+      const formattedError = this.error.format(error);
+      const message = new NotificationMessage('.err', formattedError);
+      this.send(message);
+    }
   }
 
   /**
    * Receives a list of all incoming messages from the client to process.
    *
-   * This method can throw.
+   * This method will not throw.
    *
    * @param messages A list of received messages.
    * @param ctx Server context.
    */
   public onMessages(messages: ReactiveRpcRequestMessage<T>[], ctx: Ctx): void {
+    // This method should not throw.
     const length = messages.length;
     for (let i = 0; i < length; i++) this.onMessage(messages[i], ctx);
   }
