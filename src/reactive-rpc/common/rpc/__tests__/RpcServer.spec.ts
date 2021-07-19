@@ -162,40 +162,46 @@ test('can receive multiple notifications', async () => {
   expect(notify).toHaveBeenCalledWith('3', new Uint8Array([3]), undefined);
 });
 
-test('throws on empty notification name', async () => {
-  const {server} = setup();
-  try {
-    server.onMessages([new NotificationMessage('', new Uint8Array([1]))], undefined);
-    throw 'this should not execute';
-  } catch (error) {
-    expect(error.message).toBe('PROTOCOL');
-    expect(error.code).toBe('InvalidNotificationName');
-    expect(error.errno).toBe(RpcServerError.InvalidNotificationName);
-  }
+test('sends error notification on empty notification name', async () => {
+  const {server, send} = setup();
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessages([new NotificationMessage('', new Uint8Array([1]))], undefined);
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
+  expect(send.mock.calls[0][0][0].data).toEqual({
+    code: 'InvalidNotificationName',
+    errno: RpcServerError.InvalidNotificationName,
+    message: 'PROTOCOL',
+  });
 });
 
-test('throws when notification name longer than 128 chars', async () => {
-  const {server} = setup();
-  try {
-    server.onMessages([new NotificationMessage('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678', new Uint8Array([1]))], undefined);
-    throw 'this should not execute';
-  } catch (error) {
-    expect(error.message).toBe('PROTOCOL');
-    expect(error.code).toBe('InvalidNotificationName');
-    expect(error.errno).toBe(RpcServerError.InvalidNotificationName);
-  }
+test('sends error notification when notification name longer than 128 chars', async () => {
+  const {server, send} = setup();
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessages([new NotificationMessage('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678', new Uint8Array([1]))], undefined);
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
+  expect(send.mock.calls[0][0][0].data).toEqual({
+    code: 'InvalidNotificationName',
+    errno: RpcServerError.InvalidNotificationName,
+    message: 'PROTOCOL',
+  });
 });
 
-test('throws when "notify" callback throws', async () => {
-  const {server} = setup({
+test('sends error notification when "notify" callback throws', async () => {
+  const {server, send} = setup({
     onNotification: jest.fn(() => {
       throw new Error('test');
     }),
   });
   const name = 'aga';
-  expect(() =>
-    server.onMessages([new NotificationMessage(name, new Uint8Array([1]))], undefined),
-  ).toThrowErrorMatchingInlineSnapshot(`"test"`);
+  expect(send).toHaveBeenCalledTimes(0);
+  server.onMessages([new NotificationMessage(name, new Uint8Array([1]))], undefined),
+  expect(send).toHaveBeenCalledTimes(1);
+  expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
+  expect(send.mock.calls[0][0][0].data).toEqual({
+    message: 'test',
+  });
 });
 
 test('if rpc method throws, sends back error message', async () => {
@@ -537,7 +543,6 @@ describe('validation', () => {
         message: 'Invalid request.',
         errno: 3,
         code: 'InvalidData',
-        status: 0,
       }),
     ]);
   });
@@ -604,7 +609,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });
@@ -637,7 +641,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });
@@ -676,7 +679,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });
@@ -727,7 +729,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });
@@ -770,7 +771,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });
@@ -813,7 +813,6 @@ describe('validation', () => {
           message: 'Invalid request.',
           errno: RpcServerError.InvalidData,
           code: 'InvalidData',
-          status: 0,
         }),
       );
     });

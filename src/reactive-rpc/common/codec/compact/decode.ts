@@ -28,7 +28,7 @@ export function decodeMsg<T = unknown>(message: CompactMessage): ReactiveRpcMess
     throw new Error('Invalid message');
   }
   const length = message.length;
-  if (length < 1 || length > 3) {
+  if (length < 1 || length > 4) {
     throw new Error('Invalid message');
   }
   const first = message[0];

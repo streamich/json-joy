@@ -163,9 +163,9 @@ export const runApiTests = (setup: ApiTestSetup) => {
       const promise3 = of(firstValueFrom(client.call$('delay', {})));
       const promise4 = of(firstValueFrom(client.call$('delay', {})));
       const [res1, res2, res3, res4] = await Promise.all([promise1, promise2, promise3, promise4]);
-      expect(res1[0]).toBe('done');
-      expect(res2[0]).toBe('done');
-      expect(res3[0]).toBe('done');
+      expect(res1[0]).toEqual({"done": true, "timeout": 10});
+      expect(res2[0]).toEqual({"done": true, "timeout": 10});
+      expect(res3[0]).toEqual({"done": true, "timeout": 10});
       expect(res4[1]).toMatchObject({
         message: 'PROTOCOL',
         errno: RpcServerError.TooManyActiveCalls,
@@ -242,7 +242,6 @@ export const runApiTests = (setup: ApiTestSetup) => {
         code: 'InvalidData',
         errno: 3,
         message: '"foo" property missing.',
-        status: 0,
       });
     });
   });
@@ -263,7 +262,6 @@ export const runApiTests = (setup: ApiTestSetup) => {
         code: 'InvalidData',
         errno: 3,
         message: '"foo" property missing.',
-        status: 0,
       });
     });
   });
