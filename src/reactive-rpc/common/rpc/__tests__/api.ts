@@ -246,23 +246,27 @@ export const runApiTests = (setup: ApiTestSetup) => {
     });
   });
 
-  describe('doubleStringWithValidation2', () => {
-    test('can execute successfully', async () => {
-      const {client} = await setup();
-      const result = await firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 'a'}));
-      expect(result).toEqual({
-        bar: 'aa',
+  // We loop here to check for memory leaks.
+  for (let i = 0; i < 3; i++) {
+    describe.only(`doubleStringWithValidation2, iteration ${i + 1}`, () => {
+      test.only('can execute successfully', async () => {
+        const {client} = await setup();
+        const result = await firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 'a'}));
+        await new Promise(r => setTimeout(r, 1));
+        expect(result).toEqual({
+          bar: 'aa',
+        });
       });
-    });
 
-    test('throws on invalid data', async () => {
-      const {client} = await setup();
-      const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 123})));
-      expect(error).toEqual({
-        code: 'InvalidData',
-        errno: 3,
-        message: '"foo" property missing.',
+      test('throws on invalid data', async () => {
+        const {client} = await setup();
+        const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 123})));
+        expect(error).toEqual({
+          code: 'InvalidData',
+          errno: 3,
+          message: '"foo" property missing.',
+        });
       });
     });
-  });
+  }
 };

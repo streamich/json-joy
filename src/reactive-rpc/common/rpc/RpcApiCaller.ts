@@ -1,9 +1,9 @@
 import {firstValueFrom, from, Observable, of, Subject, throwError} from 'rxjs';
-import {finalize, map, mergeWith, switchMap, switchMapTo, take, tap} from 'rxjs/operators';
+import {finalize, map, mergeWith, switchMap, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {RpcError, isErrorLike, RpcValidationError} from './error';
+import {RpcError, RpcValidationError} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
@@ -98,8 +98,10 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * 2. Any of emitted values can fail validation.
    * 3. Pre-call check may fail.
    * 4. Too many values may accumulate in `request$` buffer during pre-call check.
+   * 5. Due to inactivity timeout.
    */
   public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
+    console.log('this._calls', this._calls);
     if (this._calls >= this.maxActiveCalls)
       return throwError(() => new RpcError(RpcServerError.TooManyActiveCalls));
     const method = this.get(name);
@@ -133,32 +135,32 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       },
     });
     request$.subscribe(requestBuffer$);
-    const observable = requestBuffer$
+
+    const result$ = requestBuffer$
       .pipe(
         take(1),
-        tap(() => {
-          this._calls++;
-        }),
         switchMap(request => methodStreaming.onPreCall
           ? from(methodStreaming.onPreCall(ctx, request))
           : from([0])),
         switchMap(() => {
-          const response$ = methodStreaming.call$(ctx, requestBuffer$)
-            .pipe(
-              finalize(() => {
-                this._calls--;
-              }),
-            );
           Promise.resolve().then(() => {
             requestBuffer$.flush();
+            requestBufferError$.complete();
           });
-          return response$;
+          return methodStreaming.call$(ctx, requestBuffer$);
         }),
         mergeWith(requestBufferError$),
-        tap(() => {
-          requestBufferError$.complete();
-        }),
       );
-    return observable;
+
+    console.log('INC');
+    this._calls++;
+    const resultWithActiveCallTracking$ = result$.pipe(
+      finalize(() => {
+        console.log('DEC');
+        this._calls--;
+      }),
+    );
+
+    return resultWithActiveCallTracking$;
   }
 }

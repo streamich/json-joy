@@ -80,6 +80,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       buffer.timeLimit = bufferTime;
       buffer.onFlush = messages => this.onSend(messages);
       this.send = (message) => {
+        console.log('out', message);
         buffer.push(message);
       };
     } else {
@@ -96,6 +97,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
    * @param ctx Server context.
    */
   public onMessage(message: ReactiveRpcRequestMessage<T>, ctx: Ctx): void {
+    console.log('in', message);
     try {
       if (message instanceof RequestDataMessage) this.onRequestDataMessage(message, ctx);
       else if (message instanceof RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);

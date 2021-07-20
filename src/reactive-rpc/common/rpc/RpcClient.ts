@@ -39,11 +39,11 @@ interface ObserverEntry<T = unknown> {
 
 /**
  * Implements client-side part of Reactive-RPC protocol.
- * 
+ *
  * ## Usage
- * 
+ *
  * Connect RPC client to WebSocket:
- * 
+ *
  * ```ts
  * const client = new RpcClient({
  *   send: (messages) => ws.send(serialize(messages)),
@@ -52,15 +52,15 @@ interface ObserverEntry<T = unknown> {
  *   client.onMessages(deserialize(event.data));
  * });
  * ```
- * 
+ *
  * Send notifications to the server:
- * 
+ *
  * ```ts
  * client.notify(method, payload);
  * ```
- * 
+ *
  * Execute RPC methods with streaming support:
- * 
+ *
  * ```ts
  * client.call(method, data$).subscribe((value) => {
  *   // ...
@@ -69,7 +69,7 @@ interface ObserverEntry<T = unknown> {
  */
 export class RpcClient<T = unknown> {
   private id: number = 1;
-  private readonly buffer: TimedQueue<ReactiveRpcRequestMessage<T>>;
+  public readonly buffer: TimedQueue<ReactiveRpcRequestMessage<T>>;
 
   /**
    * In-flight RPC calls.
@@ -84,9 +84,9 @@ export class RpcClient<T = unknown> {
   }
 
   /**
-   * Returns the number of active in-flight calls. Useful for reporting and 
+   * Returns the number of active in-flight calls. Useful for reporting and
    * testing for memory leaks in unit tests.
-   * 
+   *
    * @returns Number of in-flight RPC calls.
    */
   public getInflightCallCount(): number {
@@ -95,7 +95,7 @@ export class RpcClient<T = unknown> {
 
   /**
    * Processes a batch of messages received from the server.
-   * 
+   *
    * @param messages List of messages from server.
    */
   public onMessages(messages: ReactiveRpcResponseMessage<T>[]): void {
@@ -105,7 +105,7 @@ export class RpcClient<T = unknown> {
 
   /**
    * Processes a message received from the server.
-   * 
+   *
    * @param messages A message from the server.
    */
   public onMessage(message: ReactiveRpcResponseMessage<T>): void {
@@ -149,17 +149,17 @@ export class RpcClient<T = unknown> {
 
   /**
    * Execute remote RPC method. We use in-between `req$` and `res$` observables.
-   * 
+   *
    * ```
    * +--------+      +--------+
    * |  data  |  ->  |  req$  |  ->  Server messages
    * +--------+      +--------+
-   * 
+   *
    *                      +--------+      +-------------------+
    * Server messages  ->  |  res$  |  ->  |  user observable  |
    *                      +--------+      +-------------------+
    * ```
-   * 
+   *
    * @param method RPC method name.
    * @param data RPC method static payload or stream of data.
    */
@@ -210,6 +210,7 @@ export class RpcClient<T = unknown> {
     return new Observable<T>((observer: Observer<T>) => {
       res$.subscribe(observer);
       return () => {
+        console.log('HERE', entry.resFinalized)
         if (!entry.resFinalized)
           this.buffer.push(new ResponseUnsubscribeMessage(id));
         res$.complete();
@@ -223,7 +224,7 @@ export class RpcClient<T = unknown> {
 
   /**
    * Send a one-way notification message without expecting any response.
-   * 
+   *
    * @param method Remote method name.
    * @param data Static payload data.
    */
