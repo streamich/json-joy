@@ -370,7 +370,7 @@ test('subscription counter goes down on unsubscribe', async () => {
   subject.complete();
   await new Promise((r) => setTimeout(r, 1));
   expect(caller.activeCalls).toBe(0);
-  expect(send).toHaveBeenCalledTimes(0);
+  expect(send).toHaveBeenCalledTimes(5);
 });
 
 test('call can return a promise', async () => {

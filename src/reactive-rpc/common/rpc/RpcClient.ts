@@ -210,7 +210,6 @@ export class RpcClient<T = unknown> {
     return new Observable<T>((observer: Observer<T>) => {
       res$.subscribe(observer);
       return () => {
-        console.log('HERE', entry.resFinalized)
         if (!entry.resFinalized)
           this.buffer.push(new ResponseUnsubscribeMessage(id));
         res$.complete();
