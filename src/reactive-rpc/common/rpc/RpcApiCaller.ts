@@ -101,6 +101,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * 5. Due to inactivity timeout.
    */
   public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
+    console.log('CALL', name, request$, ctx);
     if (this._calls >= this.maxActiveCalls)
       return throwError(() => new RpcError(RpcServerError.TooManyActiveCalls));
     const method = this.get(name);
@@ -157,14 +158,24 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         mergeWith(requestBufferError$),
       );
 
+    console.log('INC');
     this._calls++;
     const resultWithActiveCallTracking$ = result$.pipe(
       finalize(() => {
+        console.log('DEC');
         requestBufferError$.complete();
         this._calls--;
       }),
     );
 
-    return resultWithActiveCallTracking$;
+    return resultWithActiveCallTracking$.pipe(
+      tap(val => {
+        console.log('val', val);
+      }),
+      finalize(() => {
+
+        console.log('FINALIZE');
+      }),
+    );
   }
 }

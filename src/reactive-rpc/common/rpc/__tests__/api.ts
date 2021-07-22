@@ -247,7 +247,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
   });
 
   // We loop here to check for memory leaks.
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     describe.only(`doubleStringWithValidation2, iteration ${i + 1}`, () => {
       test.only('can execute successfully', async () => {
         const {client} = await setup();
