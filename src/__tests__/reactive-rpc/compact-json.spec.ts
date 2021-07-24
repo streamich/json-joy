@@ -15,6 +15,7 @@ if (process.env.TEST_E2E) {
       const encoded = encoderJson.encode(messages);
       ws.send(encoded);
     },
+    bufferTime: 5,
   });
   ws.onopen = function open() {
     // console.log('onopen');

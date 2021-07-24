@@ -252,7 +252,7 @@ export const runApiTests = (setup: ApiTestSetup) => {
       test.only('can execute successfully', async () => {
         const {client} = await setup();
         const result = await firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 'a'}));
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise(r => setTimeout(r, 15));
         expect(result).toEqual({
           bar: 'aa',
         });
