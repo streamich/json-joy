@@ -152,7 +152,7 @@ export interface ApiTestSetupResult {
 
 export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
 
-export const runApiTests = (setup: ApiTestSetup) => {
+export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} = {}) => {
   describe('ping', () => {
     test('can execute static RPC method', async () => {
       const {client} = await setup();
@@ -173,24 +173,26 @@ export const runApiTests = (setup: ApiTestSetup) => {
     });
   });
 
-  describe('delay', () => {
-    test('enforces max in-flight calls', async () => {
-      const {client} = await setup();
-      const promise1 = of(firstValueFrom(client.call$('delay', {})));
-      const promise2 = of(firstValueFrom(client.call$('delay', {})));
-      const promise3 = of(firstValueFrom(client.call$('delay', {})));
-      const promise4 = of(firstValueFrom(client.call$('delay', {})));
-      const [res1, res2, res3, res4] = await Promise.all([promise1, promise2, promise3, promise4]);
-      expect(res1[0]).toEqual({"done": true, "timeout": 10});
-      expect(res2[0]).toEqual({"done": true, "timeout": 10});
-      expect(res3[0]).toEqual({"done": true, "timeout": 10});
-      expect(res4[1]).toMatchObject({
-        message: 'PROTOCOL',
-        errno: RpcServerError.TooManyActiveCalls,
-        code: 'TooManyActiveCalls',
+  if (!params.staticOnly) {
+    describe('delay', () => {
+      test('enforces max in-flight calls', async () => {
+        const {client} = await setup();
+        const promise1 = of(firstValueFrom(client.call$('delay', {})));
+        const promise2 = of(firstValueFrom(client.call$('delay', {})));
+        const promise3 = of(firstValueFrom(client.call$('delay', {})));
+        const promise4 = of(firstValueFrom(client.call$('delay', {})));
+        const [res1, res2, res3, res4] = await Promise.all([promise1, promise2, promise3, promise4]);
+        expect(res1[0]).toEqual({"done": true, "timeout": 10});
+        expect(res2[0]).toEqual({"done": true, "timeout": 10});
+        expect(res3[0]).toEqual({"done": true, "timeout": 10});
+        expect(res4[1]).toMatchObject({
+          message: 'PROTOCOL',
+          errno: RpcServerError.TooManyActiveCalls,
+          code: 'TooManyActiveCalls',
+        });
       });
     });
-  });
+  }
 
   describe('double', () => {
     test('can execute simple "double" method', async () => {
@@ -289,60 +291,62 @@ export const runApiTests = (setup: ApiTestSetup) => {
     });
   }
 
-  describe('timeout100', () => {
-    test('throws timeout error after 100ms of inactivity', async () => {
-      const {client} = await setup();
-      const subject = new Subject<any>();
-      const response = client.call$('timeout100', subject);
-      const next = jest.fn();
-      const error = jest.fn();
-      response.subscribe({next, error});
-      subject.next(null);
-      await new Promise(r => setTimeout(r, 1));
-      expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(0);
-      await new Promise(r => setTimeout(r, 120));
-      expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(1);
-      expect(error.mock.calls[0][0]).toEqual({
-        message: 'PROTOCOL',
-        code: 'Timeout',
-        errno: RpcServerError.Timeout,
+  if (!params.staticOnly) {
+    describe('timeout100', () => {
+      test('throws timeout error after 100ms of inactivity', async () => {
+        const {client} = await setup();
+        const subject = new Subject<any>();
+        const response = client.call$('timeout100', subject);
+        const next = jest.fn();
+        const error = jest.fn();
+        response.subscribe({next, error});
+        subject.next(null);
+        await new Promise(r => setTimeout(r, 1));
+        expect(next).toHaveBeenCalledTimes(0);
+        expect(error).toHaveBeenCalledTimes(0);
+        await new Promise(r => setTimeout(r, 120));
+        expect(next).toHaveBeenCalledTimes(0);
+        expect(error).toHaveBeenCalledTimes(1);
+        expect(error.mock.calls[0][0]).toEqual({
+          message: 'PROTOCOL',
+          code: 'Timeout',
+          errno: RpcServerError.Timeout,
+        });
+      });
+
+      test('does not throw error if request was active', async () => {
+        const {client} = await setup();
+        const subject = new Subject<any>();
+        const response = client.call$('timeout100', subject);
+        const next = jest.fn();
+        const error = jest.fn();
+        response.subscribe({next, error});
+        subject.next(null);
+        await new Promise(r => setTimeout(r, 1));
+        expect(next).toHaveBeenCalledTimes(0);
+        expect(error).toHaveBeenCalledTimes(0);
+        await new Promise(r => setTimeout(r, 40));
+        subject.next(null);
+        await new Promise(r => setTimeout(r, 80));
+        expect(next).toHaveBeenCalledTimes(0);
+        expect(error).toHaveBeenCalledTimes(0);
+      });
+
+      test('does not throw error if response was active', async () => {
+        const {client} = await setup();
+        const subject = new Subject<any>();
+        const response = client.call$('timeout100', subject);
+        const next = jest.fn();
+        const error = jest.fn();
+        response.subscribe({next, error});
+        subject.next(40);
+        await new Promise(r => setTimeout(r, 1));
+        expect(next).toHaveBeenCalledTimes(0);
+        expect(error).toHaveBeenCalledTimes(0);
+        await new Promise(r => setTimeout(r, 120));
+        expect(error).toHaveBeenCalledTimes(0);
+        expect(next).toHaveBeenCalledTimes(1);
       });
     });
-
-    test('does not throw error if request was active', async () => {
-      const {client} = await setup();
-      const subject = new Subject<any>();
-      const response = client.call$('timeout100', subject);
-      const next = jest.fn();
-      const error = jest.fn();
-      response.subscribe({next, error});
-      subject.next(null);
-      await new Promise(r => setTimeout(r, 1));
-      expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(0);
-      await new Promise(r => setTimeout(r, 40));
-      subject.next(null);
-      await new Promise(r => setTimeout(r, 80));
-      expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(0);
-    });
-
-    test('does not throw error if response was active', async () => {
-      const {client} = await setup();
-      const subject = new Subject<any>();
-      const response = client.call$('timeout100', subject);
-      const next = jest.fn();
-      const error = jest.fn();
-      response.subscribe({next, error});
-      subject.next(40);
-      await new Promise(r => setTimeout(r, 1));
-      expect(next).toHaveBeenCalledTimes(0);
-      expect(error).toHaveBeenCalledTimes(0);
-      await new Promise(r => setTimeout(r, 120));
-      expect(error).toHaveBeenCalledTimes(0);
-      expect(next).toHaveBeenCalledTimes(1);
-    });
-  });
+  }
 };

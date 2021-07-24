@@ -70,6 +70,7 @@
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.5",
     "@types/jest": "^26.0.22",
+    "axios": "^0.21.1",
     "benchmark": "^2.1.4",
     "fast-json-patch": "^3.0.0-1",
     "gh-pages": "^3.1.0",
