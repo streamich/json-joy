@@ -28,15 +28,14 @@ if (process.env.TEST_E2E) {
   };
   const setup: ApiTestSetup = async () => {
     await connected;
+    await new Promise(r => setTimeout(r, 1));
     return {
       client: {
         call$: (method: string, data: any) => clientJson.call$(method, data),
       },
     };
   };
-
   runApiTests(setup);
-
   afterAll(() => {
     ws.close();
   });
