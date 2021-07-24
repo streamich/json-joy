@@ -1,15 +1,16 @@
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
-import {IRpcApiCaller, RpcApi, RpcMethod} from './types';
+import {RpcApi, RpcMethod} from './types';
 import {RpcServerError} from './constants';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
+import {Call, RpcApiCaller} from './RpcApiCaller';
 
 export {RpcServerError};
 
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
-  caller: IRpcApiCaller<any, Ctx>;
+  caller: RpcApiCaller<any, Ctx>;
   error?: ErrorFormatter<T>;
 
   /**
@@ -50,10 +51,10 @@ class StreamCall<T = unknown> {
 }
 
 export class RpcServer<Ctx = unknown, T = unknown> {
-  private readonly caller: IRpcApiCaller<any, Ctx>;
+  private readonly caller: RpcApiCaller<any, Ctx>;
   public readonly error: ErrorFormatter<T>;
 
-  private readonly activeStreamCalls: Map<number, StreamCall<T>> = new Map();
+  private readonly activeStreamCalls: Map<number, Call<T, T>> = new Map();
   private send: (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => void;
 
   /** Callback which sends message out of the server. */
@@ -130,7 +131,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
     for (const call of this.activeStreamCalls.values()) {
       call.req$.error(new RpcError(reason));
-      call.res$.error(new RpcError(reason));
     }
     this.activeStreamCalls.clear();
   }
@@ -156,51 +156,27 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       });
   }
 
-  private createStreamCall(id: number, name: string, ctx: Ctx): StreamCall<T> | undefined {
-    const streamCall = new StreamCall<T>();
-    this.activeStreamCalls.set(id, streamCall);
-    streamCall.req$.subscribe({
-      error: error => {
-        if (error instanceof Error && error.message === 'BufferSubjectOverflow') {
-          streamCall.res$.error(error);
-        }
-      },
-    });
-    subscribeCompleteObserver<T>(streamCall.res$, {
+  private createStreamCall(id: number, name: string, ctx: Ctx): Call<T, T> {
+    const call = this.caller.createCall(name, ctx) as Call<T, T>;
+    this.activeStreamCalls.set(id, call);
+    subscribeCompleteObserver<T>(call.res$, {
       next: (value: T) => {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
-        if (!streamCall.resFinalized) this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
-        if (streamCall.reqFinalized) this.activeStreamCalls.delete(id);
+        this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
+        this.activeStreamCalls.delete(id);
       },
       complete: (value: T | undefined) => {
-        if (!streamCall.resFinalized) this.send(new ResponseCompleteMessage<T>(id, value));
+        this.send(new ResponseCompleteMessage<T>(id, value));
+        this.activeStreamCalls.delete(id);
       },
     });
-    const observable = this.caller.call$(name, new Observable<T>((observer) => {
-      streamCall.req$.subscribe(observer);
-      return () => {
-        if (this.activeStreamCalls.has(id))
-          this.send(new RequestUnsubscribeMessage(id));
-        streamCall.req$.complete();
-      };
-    }), ctx) as Observable<T>;
-    observable
-      .subscribe({
-        next: (value) => {
-          streamCall.res$.next(value);
-        },
-        error: (error) => {
-          streamCall.res$.error(error);
-          this.activeStreamCalls.delete(id);
-        },
-        complete: () => {
-          streamCall.res$.complete();
-          this.activeStreamCalls.delete(id);
-        },
-      });
-    return streamCall;
+    call.reqUnsubscribe$.subscribe(() => {
+      if (this.activeStreamCalls.has(id))
+        this.send(new RequestUnsubscribeMessage(id));
+    });
+    return call;
   }
 
   public onRequestDataMessage(message: RequestDataMessage<T>, ctx: Ctx): void {
@@ -224,7 +200,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
     if (call) {
-      call.reqFinalized = true;
       const {req$} = call;
       if (data !== undefined) req$.next(data as T);
       req$.complete();
@@ -268,7 +243,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const {id, method, data} = message;
     const call = this.activeStreamCalls.get(id);
     if (call) {
-      call.reqFinalized = true;
       return call.req$.error(data);
     }
     if (!method) return this.sendError(id, RpcServerError.NoMethodSpecified);
@@ -284,9 +258,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     const {id} = message;
     const call = this.activeStreamCalls.get(id);
     if (!call) return;
-    call.resFinalized = true;
     this.activeStreamCalls.delete(id);
-    call.res$.complete();
     call.req$.complete();
   }
 

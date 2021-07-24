@@ -26,8 +26,9 @@ export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, an
 /**
  * Represents an in-flight call.
  */
-interface Call<Request = unknown, Response = unknown> {
+export interface Call<Request = unknown, Response = unknown> {
   req$: Observer<Request>;
+  reqUnsubscribe$: Observable<null>;
   res$: Observable<Response>;
 }
 
@@ -123,6 +124,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    */
   public createCall<K extends keyof Api>(name: K, ctx: Ctx): Call<RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>> {
     const req$ = new Subject<RpcMethodRequest<Api[K]>>();
+    const reqUnsubscribe$ = new Subject<null>();
     try {
       // When there are too many in-flight calls.
       if (this._calls >= this.maxActiveCalls)
@@ -140,7 +142,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         })());
         const res$ = new Subject<RpcMethodResponse<Api[K]>>();
         response$.subscribe(res$);
-        return {req$, res$};
+        return {req$, reqUnsubscribe$, res$};
       }
 
       // Here we are sure the call will be streaming.
@@ -213,6 +215,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       
       return {
         req$,
+        reqUnsubscribe$,
         res$: new Observable(observer => {
           const subscription = resultWithActiveCallTracking$.subscribe(observer);
           return () => {
@@ -224,7 +227,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       req$.error(error);
       const res$ = new Subject<RpcMethodResponse<Api[K]>>();
       res$.error(error);
-      return {req$, res$};
+      return {req$, reqUnsubscribe$, res$};
     }
   }
 

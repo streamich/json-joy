@@ -219,11 +219,11 @@ test('if rpc method throws, sends back error message', async () => {
 
 test('sends complete message if observable immediately completes after emitting one value', async () => {
   const {server, send, caller, ctx} = setup();
-  jest.spyOn(caller, 'call$');
+  jest.spyOn(caller, 'createCall');
   server.onMessages([new RequestCompleteMessage(25, 'emitOnceSync', {foo: 'bar'})], ctx);
   await new Promise((r) => setTimeout(r, 1));
-  expect(caller.call$).toHaveBeenCalledTimes(1);
-  expect(caller.call$).toHaveBeenCalledWith('emitOnceSync', expect.any(Observable), ctx);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledWith('emitOnceSync', ctx);
   expect(send).toHaveBeenCalledTimes(1);
   const msg = send.mock.calls[0][0][0];
   expect(msg).toBeInstanceOf(ResponseCompleteMessage);
@@ -238,11 +238,11 @@ test('sends complete message if observable immediately completes after emitting 
 
 test('observable emits three values synchronously', async () => {
   const {server, send, caller} = setup();
-  jest.spyOn(caller, 'call$');
+  jest.spyOn(caller, 'createCall');
   server.onMessages([new RequestCompleteMessage(123, 'emitThreeSync', new Uint8Array([0]))], undefined);
   await new Promise((r) => setTimeout(r, 1));
-  expect(caller.call$).toHaveBeenCalledTimes(1);
-  expect(caller.call$).toHaveBeenCalledWith('emitThreeSync', expect.any(Object), undefined);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledWith('emitThreeSync', undefined);
   expect(send).toHaveBeenCalledTimes(3);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
@@ -254,7 +254,7 @@ test('observable emits three values synchronously', async () => {
 
 test('when observable completes asynchronously, sends empty complete message', async () => {
   const {server, send, caller, notify, ctx, subject} = setup();
-  jest.spyOn(caller, 'call$');
+  jest.spyOn(caller, 'createCall');
   server.onMessages([new RequestCompleteMessage(123, 'subject', new Uint8Array([0]))], undefined);
   subject.next(new Uint8Array([1]));
   subject.next(new Uint8Array([2]));
@@ -262,8 +262,8 @@ test('when observable completes asynchronously, sends empty complete message', a
   await new Promise((r) => setTimeout(r, 1));
   subject.complete();
   await new Promise((r) => setTimeout(r, 1));
-  expect(caller.call$).toHaveBeenCalledTimes(1);
-  expect(caller.call$).toHaveBeenCalledWith('subject', expect.any(Observable), undefined);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[1][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([2]))]);
@@ -273,7 +273,7 @@ test('when observable completes asynchronously, sends empty complete message', a
 
 test('when observable completes asynchronously and emits asynchronously, sends empty complete message', async () => {
   const {server, send, caller, notify, ctx, subject} = setup();
-  jest.spyOn(caller, 'call$');
+  jest.spyOn(caller, 'createCall');
   server.onMessages([new RequestCompleteMessage(123, 'subject', new Uint8Array([0]))], undefined);
   subject.next(new Uint8Array([1]));
   expect(send).toHaveBeenCalledTimes(0);
@@ -287,8 +287,8 @@ test('when observable completes asynchronously and emits asynchronously, sends e
   expect(send).toHaveBeenCalledTimes(3);
   subject.complete();
   await new Promise((r) => setTimeout(r, 1));
-  expect(caller.call$).toHaveBeenCalledTimes(1);
-  expect(caller.call$).toHaveBeenCalledWith('subject', expect.any(Observable), undefined);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[1][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([2]))]);
@@ -298,26 +298,26 @@ test('when observable completes asynchronously and emits asynchronously, sends e
 
 test('sends error when subscription limit is exceeded', async () => {
   const {server, send, caller, notify, ctx, subject} = setup({bufferTime: 0}, {maxActiveCalls: 5});
-  jest.spyOn(caller, 'call$');
-  expect(caller.call$).toHaveBeenCalledTimes(0);
+  jest.spyOn(caller, 'createCall');
+  expect(caller.createCall).toHaveBeenCalledTimes(0);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(1, 'subject', new Uint8Array([1]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(2, 'subject', new Uint8Array([2]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(2);
+  expect(caller.createCall).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(3, 'subject', new Uint8Array([3]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(3);
+  expect(caller.createCall).toHaveBeenCalledTimes(3);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(4, 'subject', new Uint8Array([4]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(4);
+  expect(caller.createCall).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(5, 'subject', new Uint8Array([5]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(5);
+  expect(caller.createCall).toHaveBeenCalledTimes(5);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(6, 'subject', new Uint8Array([6]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(6);
+  expect(caller.createCall).toHaveBeenCalledTimes(6);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0].data).toEqual({code: 'TooManyActiveCalls', errno: 2, message: 'PROTOCOL'});
 });
@@ -326,6 +326,7 @@ test('sends error when subscription limit is exceeded including static calls', a
   const {server, send, caller} = setup({bufferTime: 0}, {maxActiveCalls: 5});
   jest.spyOn(caller, 'call');
   jest.spyOn(caller, 'call$');
+  jest.spyOn(caller, 'createCall');
   expect(caller.call).toHaveBeenCalledTimes(0);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(1, 'ping', new Uint8Array([1]))], undefined);
@@ -335,16 +336,16 @@ test('sends error when subscription limit is exceeded including static calls', a
   expect(caller.call).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(3, 'subject', new Uint8Array([3]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(1);
+  expect(caller.createCall).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(4, 'subject', new Uint8Array([4]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(2);
+  expect(caller.createCall).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(5, 'subject', new Uint8Array([5]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(3);
+  expect(caller.createCall).toHaveBeenCalledTimes(3);
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new RequestCompleteMessage(6, 'subject', new Uint8Array([6]))], undefined);
-  expect(caller.call$).toHaveBeenCalledTimes(4);
+  expect(caller.createCall).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0].data).toEqual({code: 'TooManyActiveCalls', errno: 2, message: 'PROTOCOL'});
 });
