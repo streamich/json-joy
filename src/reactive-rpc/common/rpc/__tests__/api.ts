@@ -218,7 +218,8 @@ export const runApiTests = (setup: ApiTestSetup) => {
   describe('util.info', () => {
     test('can receive one value of stream that ends after emitting one value', async () => {
       const {client} = await setup();
-      const result = await firstValueFrom(client.call$('util.info', {}));
+      const observable = client.call$('util.info', {});
+      const result = await firstValueFrom(observable);
       expect(result).toEqual({
         commit: 'AAAAAAAAAAAAAAAAAAA',
         sha1: 'BBBBBBBBBBBBBBBBBBB',
