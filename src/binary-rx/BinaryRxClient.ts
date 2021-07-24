@@ -106,7 +106,7 @@ export class BinaryRxClient {
 
   public call(method: string, data: Uint8Array): Observable<unknown> {
     const id = this.id++;
-    if (this.id >= 0xffff) this.id = 0;
+    if (this.id >= 0xffff) this.id = 1;
     if (this.observers.has(id)) return this.call(method, data);
     const observable = new Observable<unknown>((observer: Observer<unknown>) => {
       const entry: ObserverEntry = {observer};
