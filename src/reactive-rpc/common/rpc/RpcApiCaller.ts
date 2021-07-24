@@ -1,5 +1,5 @@
-import {firstValueFrom, from, Observable, Observer, of, Subject, throwError} from 'rxjs';
-import {finalize, first, map, mergeWith, switchMap, take, tap} from 'rxjs/operators';
+import {EMPTY, firstValueFrom, from, interval, Observable, Observer, of, Subject} from 'rxjs';
+import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap, take} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
@@ -120,7 +120,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * - [x] Any of the request stream values fails validation.
    * - [x] Pre-call checks fail.
    * - [x] Pre-call request buffer is overflown.
-   * - [ ] Due to inactivity timeout.
+   * - [x] Due to inactivity timeout.
    */
   public createCall<K extends keyof Api>(name: K, ctx: Ctx): Call<RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>> {
     const req$ = new Subject<RpcMethodRequest<Api[K]>>();
@@ -166,15 +166,14 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       const requestBuffered$ = new BufferSubject<RpcMethodRequest<Api[K]>>(bufferSize);
       requestBuffered$.subscribe({error: () => {}});
 
+      // Error signal (only emits errors), merged with response stream.
+      // Used for pre-call buffer overflow and timeout errors.
+      const error$ = new Subject<never>();
+
       // Keep track of buffering errors, such as buffer overflow.
-      const requestBufferError$ = new Subject<never>();
       requestBuffered$.subscribe({
-        error: error => {
-          requestBufferError$.error(error);
-        },
-        complete: () => {
-          requestBufferError$.complete();
-        },
+        error: error => { error$.error(error); },
+        // complete: () => { error$.complete(); },
       });
       requestValidated$.subscribe(requestBuffered$);
 
@@ -196,33 +195,49 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
             return methodStreaming.call$(ctx, requestBuffered$)
               .pipe(
                 finalize(() => {
-                  requestBufferError$.complete();
+                  error$.complete();
                 }),
               );
           }),
-          // Make sure request buffer errors are captured.
-          mergeWith(requestBufferError$),
+          // Make sure we don't call method implementation more than once.
+          share(),
+          // Make sure external errors are captured.
+          mergeWith(error$),
         );
 
       // Track number of in-flight calls.
       this._calls++;
       const resultWithActiveCallTracking$ = result$.pipe(
         finalize(() => {
-          requestBufferError$.complete();
+          error$.complete();
           this._calls--;
         }),
       );
+
+      // Observable to which user will subscribe.
+      const res$ = new Observable<RpcMethodResponse<Api[K]>>(observer => {
+        const subscription = resultWithActiveCallTracking$.subscribe(observer);
+
+        // Throw error on inactivity timeout.
+        const timeout = methodStreaming.timeout ?? 15_000;
+        const timeoutSubscription = requestBuffered$
+          .pipe(
+            catchError(() => EMPTY),
+            mergeWith(result$.pipe(catchError(() => EMPTY))),
+            debounce(() => interval(timeout)),
+          )
+          .subscribe(() => {
+            const error = new RpcError(RpcServerError.Timeout);
+            error$.error(error);
+          });
+
+        return () => {
+          timeoutSubscription.unsubscribe();
+          subscription.unsubscribe();
+        };
+      });
       
-      return {
-        req$,
-        reqUnsubscribe$,
-        res$: new Observable(observer => {
-          const subscription = resultWithActiveCallTracking$.subscribe(observer);
-          return () => {
-            subscription.unsubscribe();
-          };
-        }),
-      };
+      return {req$, reqUnsubscribe$, res$};
     } catch (error) {
       req$.error(error);
       const res$ = new Subject<RpcMethodResponse<Api[K]>>();

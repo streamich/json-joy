@@ -1,9 +1,9 @@
-import {timer, from, firstValueFrom, lastValueFrom} from 'rxjs';
+import {timer, from, firstValueFrom, lastValueFrom, Subject, EMPTY} from 'rxjs';
+import {map, mapTo, switchMap, take, delay as rxDelay} from 'rxjs/operators';
 import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
-import {map, switchMap, take} from 'rxjs/operators';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
@@ -114,6 +114,22 @@ const doubleStringWithValidation2: RpcMethodStreaming<object, {foo: string}, {ba
   },
 };
 
+const timeout100: RpcMethodStreaming<object, null | number, null> = {
+  isStreaming: true,
+  timeout: 100,
+  call$: (ctx, req$) => {
+    return req$.pipe(
+      switchMap(req => typeof req === 'number' ? from([1]).pipe(rxDelay(req)) : EMPTY),
+      mapTo(null),
+    );
+  },
+};
+
+const passthroughStream: RpcMethodStreaming<object, unknown, unknown> = {
+  isStreaming: true,
+  call$: (ctx, req$) => req$,
+};
+
 export const sampleApi = {
   ping,
   delay,
@@ -126,6 +142,8 @@ export const sampleApi = {
   'util.timer': utilTimer,
   doubleStringWithValidation,
   doubleStringWithValidation2,
+  timeout100,
+  passthroughStream,
 };
 
 export interface ApiTestSetupResult {
@@ -270,4 +288,61 @@ export const runApiTests = (setup: ApiTestSetup) => {
       });
     });
   }
+
+  describe('timeout100', () => {
+    test('throws timeout error after 100ms of inactivity', async () => {
+      const {client} = await setup();
+      const subject = new Subject<any>();
+      const response = client.call$('timeout100', subject);
+      const next = jest.fn();
+      const error = jest.fn();
+      response.subscribe({next, error});
+      subject.next(null);
+      await new Promise(r => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(0);
+      await new Promise(r => setTimeout(r, 120));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toEqual({
+        message: 'PROTOCOL',
+        code: 'Timeout',
+        errno: RpcServerError.Timeout,
+      });
+    });
+
+    test('does not throw error if request was active', async () => {
+      const {client} = await setup();
+      const subject = new Subject<any>();
+      const response = client.call$('timeout100', subject);
+      const next = jest.fn();
+      const error = jest.fn();
+      response.subscribe({next, error});
+      subject.next(null);
+      await new Promise(r => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(0);
+      await new Promise(r => setTimeout(r, 40));
+      subject.next(null);
+      await new Promise(r => setTimeout(r, 80));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(0);
+    });
+
+    test('does not throw error if response was active', async () => {
+      const {client} = await setup();
+      const subject = new Subject<any>();
+      const response = client.call$('timeout100', subject);
+      const next = jest.fn();
+      const error = jest.fn();
+      response.subscribe({next, error});
+      subject.next(40);
+      await new Promise(r => setTimeout(r, 1));
+      expect(next).toHaveBeenCalledTimes(0);
+      expect(error).toHaveBeenCalledTimes(0);
+      await new Promise(r => setTimeout(r, 120));
+      expect(error).toHaveBeenCalledTimes(0);
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
 };

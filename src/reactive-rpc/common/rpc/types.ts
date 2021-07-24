@@ -63,6 +63,12 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
   preCallBufferSize?: number;
 
   /**
+   * Time in milliseconds after which to timeout the call if there is no activity
+   * in request or response observables. Usually defaults to 15,000 milliseconds.
+   */
+  timeout?: number;
+
+  /**
    * Execute the streaming method.
    */
   call$(ctx: Context, request$: Observable<Request>): Observable<Response>;
