@@ -40,10 +40,10 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
     let json: unknown;
     if (typeof body === 'string') {
       ctx.payloadSize = body.length;
-      json = JSON.parse(body);
+      json = JSON.parse(body || 'null');
     } else {
       ctx.payloadSize = body.byteLength;
-      const str = body.toString('utf8');
+      const str = body.toString('utf8') || 'null';
       json = JSON.parse(str);
     }
     caller.call(name, json, ctx)
@@ -58,7 +58,8 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
       .catch((error) => {
         sendError(res, error, caller.get(name).pretty);
       });
-  } catch (error) {
+  } catch {
+    const error = new Error('Could not parse payload'); 
     sendError(res, error, false);
   }
 };
