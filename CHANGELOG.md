@@ -1,3 +1,12 @@
+# [2.13.0](https://github.com/streamich/json-joy/compare/v2.12.0...v2.13.0) (2021-07-24)
+
+
+### Features
+
+* 🎸 expose Reactive-RPC over HTTP POST ([a1be947](https://github.com/streamich/json-joy/commit/a1be9471548c74b4f3043c14ee4bdf4ad56d88dc))
+* 🎸 expose Reactive-RPC throught GET HTTP ([f523089](https://github.com/streamich/json-joy/commit/f52308956e64f5b2695c0116245b5cfa86dacc12))
+* 🎸 improve POST RPC ([e208a9a](https://github.com/streamich/json-joy/commit/e208a9afb0bd3f9373e72cdaa507f8e4a48b4877))
+
 # [2.12.0](https://github.com/streamich/json-joy/compare/v2.11.0...v2.12.0) (2021-07-24)
 
 
