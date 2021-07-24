@@ -42,17 +42,21 @@ export const createConnectionContext = (req: HttpRequest, res: HttpResponse): Co
     token = params.get('access_token') || '';
     if (!token) params.get('token') || '';
   }
+  
+  // Try to retrieve authentication token from Sec-WebSocket-Protocol header.
   if (!token) {
     const secWebSocketProtocol = String(req.getHeader('sec-websocket-protocol')) || '';
-    const protocols = secWebSocketProtocol.split(',');
-    const length = protocols.length;
-    for (let i = 0; i < length; i++) {
-      let protocol = protocols[i].trim();
-      if (protocol.indexOf('X-Authorization=') === 0) {
-        protocol = protocol.substr('X-Authorization='.length);
-        if (protocol) {
-          token = Buffer.from(protocol).toString('base64');
-          break;
+    if (secWebSocketProtocol) {
+      const protocols = secWebSocketProtocol.split(',');
+      const length = protocols.length;
+      for (let i = 0; i < length; i++) {
+        let protocol = protocols[i].trim();
+        if (protocol.indexOf('X-Authorization=') === 0) {
+          protocol = protocol.substr('X-Authorization='.length);
+          if (protocol) {
+            token = Buffer.from(protocol).toString('base64');
+            break;
+          }
         }
       }
     }
