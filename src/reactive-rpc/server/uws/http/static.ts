@@ -25,6 +25,21 @@ export const enableHttpPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Ena
   });
 };
 
+export const enableHttpGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+  const {uws, route = '/rpc/*', createContext, caller} = params;
+  uws.get(route, (res, req) => {
+    const url = req.getUrl();
+    const query = req.getQuery();
+    const params = new URLSearchParams(query);
+    const body = String(params.get('a') || 'null');
+    const ctx = createContext(req, res);
+    res.onAborted(() => {
+      res.aborted = true;
+    });
+    processHttpRpcRequest(res, ctx, url, body, caller);
+  });
+};
+
 const sendError = (res: UwsHttpResponse, error: unknown, pretty: boolean) => {
   if (res.aborted) return;
   res.cork(() => {

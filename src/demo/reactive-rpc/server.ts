@@ -3,7 +3,7 @@ import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryRe
 import {sampleApi} from '../../reactive-rpc/common/rpc/__tests__/api';
 import {RpcServer} from '../../reactive-rpc/common/rpc';
 import {RpcApiCaller} from '../../reactive-rpc/common/rpc/RpcApiCaller';
-import {enableHttpPostRpcApi, UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/static';
+import {enableHttpGetRpcApi, enableHttpPostRpcApi, UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/static';
 
 const uws = App({});
 
@@ -36,6 +36,12 @@ enableWsCompactReactiveRpcApi<ConnectionContext>({
 });
 
 enableHttpPostRpcApi<ConnectionContext & UwsHttpBaseContext>({
+  uws,
+  caller,
+  createContext: createConnectionContext,
+});
+
+enableHttpGetRpcApi<ConnectionContext & UwsHttpBaseContext>({
   uws,
   caller,
   createContext: createConnectionContext,
