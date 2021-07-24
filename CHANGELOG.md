@@ -1,3 +1,74 @@
+# [2.12.0](https://github.com/streamich/json-joy/compare/v2.11.0...v2.12.0) (2021-07-24)
+
+
+### Bug Fixes
+
+* 🐛 detect uint8 correctly ([82e3562](https://github.com/streamich/json-joy/commit/82e356255efbaa8d8ddfb54299eecdaf5a145ea6))
+* 🐛 do not execute pre-call checks with invalid payload ([39b2db1](https://github.com/streamich/json-joy/commit/39b2db14f179106257862bbe673f8b855a1dbd31))
+* 🐛 exec .call() method as member property ([10fb22b](https://github.com/streamich/json-joy/commit/10fb22b2056a7d31d245697d89ad789192f78d02))
+* 🐛 flush pre-call buffer on next micro tick ([f29073e](https://github.com/streamich/json-joy/commit/f29073eefbdf277397d4f0b780b80cfedfde9b8b))
+* 🐛 format static method errors ([4e061f6](https://github.com/streamich/json-joy/commit/4e061f61396751780c83af4d32989ecdbe97912f))
+* 🐛 start binary-rx sub ID from 1 ([8d77b74](https://github.com/streamich/json-joy/commit/8d77b74a9d566542a82e733597e452891d60f99d))
+* 🐛 subscribe to call$ data after the pipeline is created ([843f645](https://github.com/streamich/json-joy/commit/843f645f3b135b3c69350584fa344d2e1d24df14))
+
+
+### Features
+
+* 🎸 add .call() method to client ([ce7ec10](https://github.com/streamich/json-joy/commit/ce7ec1046475b043527f120e1610f9753815b614))
+* 🎸 add BufferSubject ([35497d2](https://github.com/streamich/json-joy/commit/35497d2283b360b0531ad14622d492a191919816))
+* 🎸 add Channel interface and implement WebSocketChannel ([1ed5963](https://github.com/streamich/json-joy/commit/1ed59639ec3bb83ffa5d00ca00b55d62129c7a4f))
+* 🎸 add compact codec implementation for uWebSocket.js ([a967a91](https://github.com/streamich/json-joy/commit/a967a91e93b0509c48ed4dac24f862bcdb4e0006))
+* 🎸 add context creation utility ([c9f293a](https://github.com/streamich/json-joy/commit/c9f293a85e7da427dd3a613827b2b7710e2cddb3))
+* 🎸 add CORS helper for uws ([f7f3e7a](https://github.com/streamich/json-joy/commit/f7f3e7af59dec521530d3bf7c0c0e11005fb6223))
+* 🎸 add demo for binary-rx ([7d6f731](https://github.com/streamich/json-joy/commit/7d6f73168384cea33e09530dc9e7661b6e779d5a))
+* 🎸 add error formatter class ([151378e](https://github.com/streamich/json-joy/commit/151378eecde721d0e17daaa84a945ab5624ea128))
+* 🎸 add reactive websocket wrappers ([904ce04](https://github.com/streamich/json-joy/commit/904ce0422bef7e0971b40a550f4d6ad5b179f5a3))
+* 🎸 add reactive-rpc ([9a2f9e2](https://github.com/streamich/json-joy/commit/9a2f9e2faaf5734f70e444383a3b0988916787d3))
+* 🎸 add Reactive-RPC messages to JSON-Rx encoding ([0192b47](https://github.com/streamich/json-joy/commit/0192b473c6c10b40eb05c93e29aa38c4b9053738))
+* 🎸 add request validation for streaming methods ([2c487b8](https://github.com/streamich/json-joy/commit/2c487b84ddce71a7d44b60d7c40043d01df4a892))
+* 🎸 add RpcServerLocalClient ([34a032d](https://github.com/streamich/json-joy/commit/34a032df0cd4ee7c800c7c78c542ebb0adb516b2))
+* 🎸 add RpcValidationError ([c7d0c56](https://github.com/streamich/json-joy/commit/c7d0c56bc282742fbd5067f5f93dadc3b16ff1c6))
+* 🎸 add server onsend level 0 listener ([0e1c40d](https://github.com/streamich/json-joy/commit/0e1c40d4b7c221f6ee43c868c1c6770e71f17f6c))
+* 🎸 allow single message per WebSocket frame ([e8146a0](https://github.com/streamich/json-joy/commit/e8146a0a5f55737c27a7038faf5e2ae1b5895ad4))
+* 🎸 connect RpcServer to uWebSocket.js ([3344940](https://github.com/streamich/json-joy/commit/3344940ba7deb0cc703ffd71ce0c8da6a75a8008))
+* 🎸 do not send server complete when client unsubscribes ([c6876a1](https://github.com/streamich/json-joy/commit/c6876a18058f0c571438a0fc330b88a65b214505))
+* 🎸 enforce max number of in-flight calls ([6982f2f](https://github.com/streamich/json-joy/commit/6982f2f65634bc1fab1ba307f0ff8917de14490d))
+* 🎸 execute pre-call checks before static methods ([fb06ca5](https://github.com/streamich/json-joy/commit/fb06ca5981a150d2a52a0949d6f03553ee269d1e))
+* 🎸 expose error formatter for validation errors ([7def828](https://github.com/streamich/json-joy/commit/7def828e2e75368eede3c18344c78fa3be2e7c6b))
+* 🎸 expose onPreCall prop ([cf65a2a](https://github.com/streamich/json-joy/commit/cf65a2a3e8252be9394322347da28d2465153a52))
+* 🎸 implement persistent RPC client ([61aacfd](https://github.com/streamich/json-joy/commit/61aacfd64bcdb96142dcc4cb3260896ecde467d8))
+* 🎸 implement persistent websocket ([8e763d1](https://github.com/streamich/json-joy/commit/8e763d1e410b49ca56827d54e9a255f5d92aedfe))
+* 🎸 implement RpcApiCaller ([ddcba99](https://github.com/streamich/json-joy/commit/ddcba99a154b773614c4d28cf90fb273d23f4eec))
+* 🎸 improve channel implementation ([c713a7d](https://github.com/streamich/json-joy/commit/c713a7dc197d6d8cb5cc44ed28d22104efb26dc4))
+* 🎸 improve context creation ([3d5d3cb](https://github.com/streamich/json-joy/commit/3d5d3cb91cc748aae4f44ff2aa403e8798cb0c6e))
+* 🎸 improve enableCors() method ([8170d77](https://github.com/streamich/json-joy/commit/8170d77dbb260e34f858da0e8c61cf5b14d76d12))
+* 🎸 improve error formatting ([78daa54](https://github.com/streamich/json-joy/commit/78daa549199cb2dbccb21113ee0104c37845c689))
+* 🎸 improve error handling in RpcApiCaller ([5edca45](https://github.com/streamich/json-joy/commit/5edca456f1be2f0eb0f76b8577f5fba7e2c3cd57))
+* 🎸 improve interface of ApiCaller and remove error formatt ([b44fefc](https://github.com/streamich/json-joy/commit/b44fefc2d46b3f5657c3e094ac7d081575592fe8))
+* 🎸 improve message validation ([2b56785](https://github.com/streamich/json-joy/commit/2b567855c2a0bbca81664238da7a25777b039c3f))
+* 🎸 improve persistent channel ([d10e9e8](https://github.com/streamich/json-joy/commit/d10e9e830259c23d8348fd8e6cb402c74ad39e17))
+* 🎸 improve Reactive-RPC interfaces ([e0ef3fc](https://github.com/streamich/json-joy/commit/e0ef3fc4dd4522e44750127a79d6d24d8fb5f192))
+* 🎸 improve reactive-rpc method types ([16b4c15](https://github.com/streamich/json-joy/commit/16b4c15fabfb5869f72ff445f1c414b4127387b7))
+* 🎸 improve RpcApiCaller ([0d59e81](https://github.com/streamich/json-joy/commit/0d59e81f42bfa2899493bc6f1cee133b565c4bb0))
+* 🎸 improve RxWebSocket ([6af6c90](https://github.com/streamich/json-joy/commit/6af6c90b2726bf7c569ae4b325932e6108707c5c))
+* 🎸 make ApiCaller create a "call" object for each request ([e334f95](https://github.com/streamich/json-joy/commit/e334f9596c5240a292e8420eb106102e1406e374))
+* 🎸 normalize default constants and send .err notification ([73e4910](https://github.com/streamich/json-joy/commit/73e4910a60ec29e69126197692b4880f978b99fe))
+* 🎸 progress on pre-call buffer size ([7176658](https://github.com/streamich/json-joy/commit/71766588770bbe4f469fb991a2a0688f4c848906))
+* 🎸 progress on pre-call check for streaming method ([2a6ce83](https://github.com/streamich/json-joy/commit/2a6ce83ca0a13e593c4898eb429e5d29164f62de))
+* 🎸 progress towards making RpcServer using RpcApiCaller ([bb2ae34](https://github.com/streamich/json-joy/commit/bb2ae3421b369676cb5484e4838a3a4f8b0a6691))
+* 🎸 shortend response complete message and norm messages ([fd92734](https://github.com/streamich/json-joy/commit/fd92734338b2aae9dcdb67616f2fffafc93972e3))
+* 🎸 small improvements ([f6a079b](https://github.com/streamich/json-joy/commit/f6a079b169def6fbed375725e398b999dc272eab))
+* 🎸 start on refactoring RpcServer ([ec955fc](https://github.com/streamich/json-joy/commit/ec955fc9166f8ba8a2c64a00611a30470bf5d1f8))
+* 🎸 synchronously flush request buffer ([748278f](https://github.com/streamich/json-joy/commit/748278f7b0d38f4765a7afe7b965984bffa1d1ea))
+* 🎸 timeout streaming RPC calls on long inactivity ([7dce942](https://github.com/streamich/json-joy/commit/7dce942e41a8df38d3f4d5eb6fd9cbcf3361c9ea))
+* 🎸 track when websocket is closed ([72c294a](https://github.com/streamich/json-joy/commit/72c294ac9371bfa2f3c1ef0ada76ec1a861c8d81))
+* 🎸 validate static method requests ([d0f76f6](https://github.com/streamich/json-joy/commit/d0f76f6637b9678c8df8912d23ff8572118044f5))
+
+
+### Performance Improvements
+
+* ⚡️ encode a single message if there is only one in a batch ([447939b](https://github.com/streamich/json-joy/commit/447939b9758c9c5890b1cbcbc6062599dea242f8))
+
 # [2.11.0](https://github.com/streamich/json-joy/compare/v2.10.0...v2.11.0) (2021-05-09)
 
 
