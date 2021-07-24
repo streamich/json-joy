@@ -32,6 +32,11 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
    *                streaming request.
    */
   onPreCall?(ctx: Context, request: Request): Promise<void>;
+
+  /**
+   * Whether to pretty print the response.
+   */
+  pretty?: boolean;
 }
 
 export interface RpcMethodStatic<Context = unknown, Request = unknown, Response = unknown> extends RpcMethodBase<Context, Request> {

@@ -1,10 +1,5 @@
-import type {
-  TemplatedApp as UwsTemplatedApp,
-  HttpRequest as UwsHttpRequest,
-  HttpResponse as UwsHttpResponse,
-  WebSocket as UwsWebSocket
-} from 'uWebSockets.js';
 import type {RpcServer, RpcServerParams} from '../../../common/rpc/RpcServer';
+import type {EnableReactiveRpcApiParams, UwsHttpRequest, UwsHttpResponse, UwsTemplatedApp, UwsWebSocket} from '../types';
 
 export type {
   UwsTemplatedApp,
@@ -18,12 +13,9 @@ export interface RpcWebSocket<Ctx = unknown> extends UwsWebSocket {
   rpc: RpcServer<Ctx>;
 }
 
-export interface EnableWsReactiveRpcApiParams<Ctx> {
-  uws: UwsTemplatedApp;
-  createContext: (req: UwsHttpRequest, res: UwsHttpResponse) => Ctx;
+export interface EnableWsReactiveRpcApiParams<Ctx> extends EnableReactiveRpcApiParams<Ctx> {
   createRpcServer: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServer<Ctx>;
   onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined, ctx: Ctx) => void;
-  route?: string;
   idleTimeout?: number;
   compression?: number;
   maxPayloadLength?: number;
