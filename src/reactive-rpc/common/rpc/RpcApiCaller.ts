@@ -106,15 +106,16 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
           throw new RpcValidationError(error);
         }
       }
-      this._calls++;
-      if (method.onPreCall) await method.onPreCall(ctx, request);
-      const result = await (!method.isStreaming
-          ? (method as any).call(ctx, request)
-          : firstValueFrom((method as any).call$(ctx, of(request))));
-      this._calls--;
-      return result;
+      try {
+        this._calls++;
+        if (method.onPreCall) await method.onPreCall(ctx, request);
+        return !method.isStreaming
+          ? await (method as any).call(ctx, request)
+          : await firstValueFrom((method as any).call$(ctx, of(request)));
+      } finally {
+        this._calls--;
+      }
     } catch (error) {
-      this._calls--;
       throw this.error.format(error);
     }
   }
