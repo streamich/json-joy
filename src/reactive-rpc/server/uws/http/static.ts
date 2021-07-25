@@ -2,10 +2,8 @@ import {formatError} from "../../../common/rpc";
 import {RpcApiCaller} from "../../../common/rpc/RpcApiCaller";
 import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../types";
 import {readBody} from "../util";
-
-export interface UwsHttpBaseContext {
-  payloadSize?: number;
-}
+import {UwsHttpBaseContext} from "./types";
+import { parsePayload } from "./util";
 
 export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   caller: RpcApiCaller<any, Ctx, unknown>;
@@ -52,15 +50,7 @@ const sendError = (res: UwsHttpResponse, error: unknown, pretty: boolean) => {
 function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpResponse, ctx: Ctx, url: string, body: Buffer | string, caller: RpcApiCaller<any, Ctx, unknown>) {
   try {
     const name = url.substr(5);
-    let json: unknown;
-    if (typeof body === 'string') {
-      ctx.payloadSize = body.length;
-      json = JSON.parse(body || 'null');
-    } else {
-      ctx.payloadSize = body.byteLength;
-      const str = body.toString('utf8') || 'null';
-      json = JSON.parse(str);
-    }
+    const json = parsePayload(ctx, body);
     caller.call(name, json, ctx)
       .then((result) => {
         if (res.aborted) return;

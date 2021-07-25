@@ -4,10 +4,8 @@ import {formatError} from "../../../common/rpc";
 import {RpcApiCaller} from "../../../common/rpc/RpcApiCaller";
 import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../types";
 import {readBody} from "../util";
-
-export interface UwsHttpBaseContext {
-  payloadSize?: number;
-}
+import {UwsHttpBaseContext} from "./types";
+import {parsePayload, writeSseAndNdjsonHeaders} from "./util";
 
 export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   caller: RpcApiCaller<any, Ctx, unknown>;
@@ -38,31 +36,6 @@ const sendSseError = (res: UwsHttpResponse, error: unknown) => {
   res.end('event: error\ndata: ' + JSON.stringify(errorFormatted) + '\n\n');
 };
 
-const AccessControlAllowOrigin = Buffer.from('Access-Control-Allow-Origin');
-const AccessControlAllowOriginAllowAll = Buffer.from('*');
-
-const AccessControlAllowCredentials = Buffer.from('Access-Control-Allow-Credentials');
-const AccessControlAllowCredentialsTrue = Buffer.from('true');
-
-const ContentType = Buffer.from('Content-Type');
-const ContentTypeTextEventStream = Buffer.from('text/event-stream');
-
-const CacheControl = Buffer.from('Cache-Control');
-const CacheControlNoCache = Buffer.from('no-cache');
-
-const Connection = Buffer.from('Connection');
-const ConnectionKeepAlive = Buffer.from('keep-alive');
-
-const writeSseAndNdjsonHeaders = (res: UwsHttpResponse, origin?: string) => {
-  if (origin) {
-    res.writeHeader(AccessControlAllowOrigin, AccessControlAllowOriginAllowAll);
-    res.writeHeader(AccessControlAllowCredentials, AccessControlAllowCredentialsTrue);
-  }
-  res.writeHeader(ContentType, ContentTypeTextEventStream);
-  res.writeHeader(CacheControl, CacheControlNoCache);
-  res.writeHeader(Connection, ConnectionKeepAlive);
-};
-
 function processSseRequest<Ctx extends UwsHttpBaseContext>(
   res: UwsHttpResponse,
   ctx: Ctx,
@@ -74,15 +47,7 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
 ) {
   try {
     const name = url.substr(5);
-    let json: unknown;
-    if (typeof body === 'string') {
-      ctx.payloadSize = body.length;
-      json = JSON.parse(body || 'null');
-    } else {
-      ctx.payloadSize = body.byteLength;
-      const str = body.toString('utf8') || 'null';
-      json = JSON.parse(str);
-    }
+    const json = parsePayload(ctx, body);
     res.cork(() => {
       writeSseAndNdjsonHeaders(res, origin);
     });
