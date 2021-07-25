@@ -8,6 +8,13 @@ CLI executable to decodes JSON document from [MessagePack](https://msgpack.org/i
 - Returns JSON document through STDOUT.
 
 
+## Installation
+
+```
+npm install -g json-joy
+```
+
+
 ## Usage
 
 ```

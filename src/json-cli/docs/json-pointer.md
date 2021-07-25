@@ -9,6 +9,13 @@ JSON Pointer as a CLI.
 - Returns resolved value through STDOUT.
 
 
+## Installation
+
+```
+npm install -g json-joy
+```
+
+
 ## Usage
 
 ```

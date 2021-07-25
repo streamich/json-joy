@@ -9,6 +9,13 @@ CLI executable to apply JSON Patch to a JSON document.
 - Returns patch application result through STDOUT.
 
 
+## Installation
+
+```
+npm install -g json-joy
+```
+
+
 ## Usage
 
 ```

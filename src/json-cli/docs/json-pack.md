@@ -8,6 +8,13 @@ CLI executable to encode JSON document in [MessagePack](https://msgpack.org/inde
 - Returns MessagePack encoded binary data through STDOUT.
 
 
+## Installation
+
+```
+npm install -g json-joy
+```
+
+
 ## Usage
 
 ```
