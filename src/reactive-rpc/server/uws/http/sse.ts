@@ -51,7 +51,7 @@ const sendSseError = (res: UwsHttpResponse, error: unknown) => {
   // So that we don't call res.end() again when observable subscription ends.
   res.aborted = true;
   const errorFormatted = formatError(error);
-  res.end('event: error\ndata: ' + JSON.stringify(errorFormatted) + '\n\n');
+  res.end('event: err\ndata: ' + JSON.stringify(errorFormatted) + '\n\n');
 };
 
 function processSseRequest<Ctx extends UwsHttpBaseContext>(
@@ -63,31 +63,35 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
   origin: string,
   caller: RpcApiCaller<any, Ctx, unknown>
 ) {
+  let closed = false;
   try {
     const name = url.substr(5);
     const json = parsePayload(ctx, body);
     res.cork(() => {
       writeSseAndNdjsonHeaders(res, origin);
     });
-    const subscription = caller.call$(name, of(json), ctx)
+    caller.call$(name, of(json), ctx)
       .pipe(takeUntil(aborted$))
       .subscribe({
         next: data => {
+          if (closed) return;
           if (res.aborted) return;
           res.write('data: ' + JSON.stringify(data) + '\n\n');
         },
         error: error => {
+          if (closed) return;
+          closed = true;
           sendSseError(res, error);
         },
         complete: () => {
+          if (closed) return;
+          closed = true;
           if (!res.aborted) res.end();
         },
       });
-      res.onAborted(() => {
-        res.aborted = true;
-        if (subscription) subscription.unsubscribe();
-      });
   } catch {
+    if (closed) return;
+    closed = true;
     const error = new Error('Could not parse payload');
     sendSseError(res, error);
   }
