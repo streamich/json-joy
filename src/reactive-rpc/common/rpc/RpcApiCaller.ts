@@ -1,5 +1,5 @@
 import {EMPTY, firstValueFrom, from, interval, Observable, Observer, of, Subject} from 'rxjs';
-import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap, take} from 'rxjs/operators';
+import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
@@ -221,8 +221,11 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         );
 
       // Track number of in-flight calls.
-      this._calls++;
-      const resultWithActiveCallTracking$ = result$.pipe(
+      const resultWithActiveCallTracking$ = of(null).pipe(
+        tap(() => {
+          this._calls++;
+        }),
+        switchMap(() => result$),
         finalize(() => {
           error$.complete();
           this._calls--;
