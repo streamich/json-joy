@@ -1,3 +1,15 @@
+# [2.15.0](https://github.com/streamich/json-joy/compare/v2.14.0...v2.15.0) (2021-07-25)
+
+
+### Bug Fixes
+
+* 🐛 correctly extract method name from URL ([4fb19e2](https://github.com/streamich/json-joy/commit/4fb19e279bab7686785abf463dc28e7ca4bc2818))
+
+
+### Features
+
+* 🎸 expose Reactive-RPC over NDJSON ([a2f14d8](https://github.com/streamich/json-joy/commit/a2f14d8cb0aa1e05430a3711414143aa01281523))
+
 # [2.14.0](https://github.com/streamich/json-joy/compare/v2.13.0...v2.14.0) (2021-07-25)
 
 
