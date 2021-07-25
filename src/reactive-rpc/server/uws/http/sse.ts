@@ -28,6 +28,24 @@ export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enab
   });
 };
 
+export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+  const {uws, route = '/sse/*', createContext, caller} = params;
+  uws.get(route, (res, req) => {
+    const url = req.getUrl();
+    const origin = req.getHeader('origin');
+    const ctx = createContext(req, res);
+    const aborted$ = new Subject<true>();
+    const query = req.getQuery();
+    const params = new URLSearchParams(query);
+    const body = String(params.get('a') || 'null');
+    res.onAborted(() => {
+      res.aborted = true;
+      aborted$.next(true);
+    });
+    processSseRequest(res, ctx, url, body, aborted$, origin, caller);
+  });
+};
+
 const sendSseError = (res: UwsHttpResponse, error: unknown) => {
   if (res.aborted) return;
   // So that we don't call res.end() again when observable subscription ends.
@@ -70,7 +88,7 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
         if (subscription) subscription.unsubscribe();
       });
   } catch {
-    const error = new Error('Could not parse payload'); 
+    const error = new Error('Could not parse payload');
     sendSseError(res, error);
   }
 }
