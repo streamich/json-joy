@@ -2,6 +2,7 @@ import {Observable, Subject, of} from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import {formatError} from "../../../common/rpc";
 import {RpcApiCaller} from "../../../common/rpc/RpcApiCaller";
+import {createConnectionContext} from "../context";
 import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../types";
 import {readBody} from "../util";
 import {UwsHttpBaseContext} from "./types";
@@ -12,7 +13,7 @@ export interface EnableSsePostRpcApiParams<Ctx extends UwsHttpBaseContext> exten
 }
 
 export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableSsePostRpcApiParams<Ctx>) => {
-  const {uws, route = '/sse/*', createContext, caller} = params;
+  const {uws, route = '/sse/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');
@@ -34,7 +35,7 @@ export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enab
 };
 
 export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableSsePostRpcApiParams<Ctx>) => {
-  const {uws, route = '/sse/*', createContext, caller} = params;
+  const {uws, route = '/sse/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');

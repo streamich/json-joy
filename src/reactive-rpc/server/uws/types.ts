@@ -14,6 +14,6 @@ export type {
 
 export interface EnableReactiveRpcApiParams<Ctx> {
   uws: UwsTemplatedApp;
-  createContext: (req: UwsHttpRequest, res: UwsHttpResponse) => Ctx;
+  createContext?: (req: UwsHttpRequest, res: UwsHttpResponse) => Ctx;
   route?: string;
 }
