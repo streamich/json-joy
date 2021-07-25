@@ -11,8 +11,8 @@ export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> exte
   caller: RpcApiCaller<any, Ctx, unknown>;
 }
 
-export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/sse/*', createContext, caller} = params;
+export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+  const {uws, route = '/ndjson/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');
@@ -28,13 +28,13 @@ export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enab
       aborted$.next(true);
     });
     readBody(res, (buffer) => {
-      processSseRequest(res, ctx, name, buffer, aborted$, origin, caller);
+      processNdjsonRequest(res, ctx, name, buffer, aborted$, origin, caller);
     });
   });
 };
 
-export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/sse/*', createContext, caller} = params;
+export const enableNdjsonGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+  const {uws, route = '/ndjson/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');
@@ -52,19 +52,19 @@ export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enabl
       res.aborted = true;
       aborted$.next(true);
     });
-    processSseRequest(res, ctx, name, body, aborted$, origin, caller);
+    processNdjsonRequest(res, ctx, name, body, aborted$, origin, caller);
   });
 };
 
-const sendSseError = (res: UwsHttpResponse, error: unknown) => {
+const sendNdjsonError = (res: UwsHttpResponse, error: unknown) => {
   if (res.aborted) return;
   // So that we don't call res.end() again when observable subscription ends.
   res.aborted = true;
   const errorFormatted = formatError(error);
-  res.end('event: err\ndata: ' + JSON.stringify(errorFormatted) + '\n\n');
+  res.end('[2,' + JSON.stringify(errorFormatted) + ']\n');
 };
 
-function processSseRequest<Ctx extends UwsHttpBaseContext>(
+function processNdjsonRequest<Ctx extends UwsHttpBaseContext>(
   res: UwsHttpResponse,
   ctx: Ctx,
   name: string,
@@ -85,12 +85,12 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
         next: data => {
           if (closed) return;
           if (res.aborted) return;
-          res.write('data: ' + JSON.stringify(data) + '\n\n');
+          res.write('[1,' + JSON.stringify(data) + ']\n');
         },
         error: error => {
           if (closed) return;
           closed = true;
-          sendSseError(res, error);
+          sendNdjsonError(res, error);
         },
         complete: () => {
           if (closed) return;
@@ -102,6 +102,6 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
     if (closed) return;
     closed = true;
     const error = new Error('Could not parse payload');
-    sendSseError(res, error);
+    sendNdjsonError(res, error);
   }
 }
