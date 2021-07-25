@@ -13,8 +13,13 @@ export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> exte
 
 export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/sse/*', createContext, caller} = params;
+
+  if (!route.endsWith('/*'))
+    throw new Error('"route" must end with "/*".');
+
   uws.post(route, (res, req) => {
     const url = req.getUrl();
+    const name = url.substr(route.length - 1);
     const origin = req.getHeader('origin');
     const ctx = createContext(req, res);
     const aborted$ = new Subject<true>();
@@ -23,15 +28,20 @@ export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enab
       aborted$.next(true);
     });
     readBody(res, (buffer) => {
-      processSseRequest(res, ctx, url, buffer, aborted$, origin, caller);
+      processSseRequest(res, ctx, name, buffer, aborted$, origin, caller);
     });
   });
 };
 
 export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/sse/*', createContext, caller} = params;
+
+  if (!route.endsWith('/*'))
+    throw new Error('"route" must end with "/*".');
+
   uws.get(route, (res, req) => {
     const url = req.getUrl();
+    const name = url.substr(route.length - 1);
     const origin = req.getHeader('origin');
     const ctx = createContext(req, res);
     const aborted$ = new Subject<true>();
@@ -42,7 +52,7 @@ export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enabl
       res.aborted = true;
       aborted$.next(true);
     });
-    processSseRequest(res, ctx, url, body, aborted$, origin, caller);
+    processSseRequest(res, ctx, name, body, aborted$, origin, caller);
   });
 };
 
@@ -57,7 +67,7 @@ const sendSseError = (res: UwsHttpResponse, error: unknown) => {
 function processSseRequest<Ctx extends UwsHttpBaseContext>(
   res: UwsHttpResponse,
   ctx: Ctx,
-  url: string,
+  name: string,
   body: Buffer | string,
   aborted$: Observable<true>,
   origin: string,
@@ -65,7 +75,6 @@ function processSseRequest<Ctx extends UwsHttpBaseContext>(
 ) {
   let closed = false;
   try {
-    const name = url.substr(5);
     const json = parsePayload(ctx, body);
     res.cork(() => {
       writeSseAndNdjsonHeaders(res, origin);
