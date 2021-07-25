@@ -20,23 +20,23 @@ refs:
         command: yarn build
     - &Test_Unit
       run:
-        name: Test (Jest unit tests)
+        name: Test - Unit tests
         command: yarn test
     - &Test_CLI_Pointer
       run:
-        name: "Test (CLI: Json Pointer)"
+        name: "Test - CLI: JSON Pointer"
         command: yarn test:pointer
     - &Test_CLI_Patch
       run:
-        name: "Test (CLI: Json Patch)"
+        name: "Test - CLI: JSON Patch"
         command: yarn test:patch
     - &Test_E2E_Reactive_RPC
       run:
-        name: "Test (E2E: Reactive-RPC)"
+        name: "Test - E2E: Reactive-RPC"
         command: yarn test:reactive-rpc
     - &Test_Demos
       run:
-        name: "Test (Demos can execute)"
+        name: "Test - Demos can execute"
         command: yarn demo:json-patch && yarn demo:json-pointer && yarn demo:json-rx
     - &Post_to_dev_null
       run:
