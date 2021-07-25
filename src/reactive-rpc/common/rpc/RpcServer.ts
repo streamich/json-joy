@@ -151,8 +151,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseCompleteMessage<T>(id, response as T));
       })
       .catch(error => {
-        const formattedError = this.error.format(error);
-        this.send(new ResponseErrorMessage<T>(id, formattedError));
+        this.send(new ResponseErrorMessage<T>(id, error));
       });
   }
 
@@ -164,7 +163,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
         this.send(new ResponseDataMessage<T>(id, value));
       },
       error: (error: unknown) => {
-        this.send(new ResponseErrorMessage<T>(id, this.error.format(error)));
+        this.send(new ResponseErrorMessage<T>(id, error as T));
         this.activeStreamCalls.delete(id);
       },
       complete: (value: T | undefined) => {

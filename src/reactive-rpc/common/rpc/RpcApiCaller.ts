@@ -3,10 +3,11 @@ import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap,
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {RpcError, RpcValidationError} from './error';
+import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError, RpcValidationError} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
+  error?: ErrorFormatter<E>;
 
   /**
    * When call `request$` is a multi-value observable and request data is coming
@@ -37,6 +38,7 @@ export interface Call<Request = unknown, Response = unknown> {
  */
 export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> implements IRpcApiCaller<Api, Ctx> {
   public readonly api: Api;
+  public readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
   protected readonly maxActiveCalls: number;
 
@@ -44,10 +46,12 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
   constructor({
     api,
+    error,
     preCallBufferSize = 10,
     maxActiveCalls = 50,
   }: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = api;
+    this.error = error || new ErrorLikeErrorFormatter() as any;
     this.preCallBufferSize = preCallBufferSize;
     this.maxActiveCalls = maxActiveCalls;
   }
@@ -81,10 +85,10 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
   /**
    * "call" executes degenerate version of RPC where both request and response data
    * are simple single value.
-   * 
+   *
    * It is a separate implementation from "call$" for performance and complexity
    * reasons.
-   * 
+   *
    * @param name Method name.
    * @param request Request data.
    * @param ctx Server context object.
@@ -107,6 +111,9 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         ? (method as any).call(ctx, request)
         : firstValueFrom((method as any).call$(ctx, of(request)))
       )
+      .catch(error => {
+        throw this.error.format(error);
+      })
       .finally(() => {
         this._calls--;
       });
@@ -236,8 +243,15 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
           subscription.unsubscribe();
         };
       });
-      
-      return {req$, reqUnsubscribe$, res$};
+
+      // Format errors using custom error formatter.
+      const $resWithErrorsFormatted = res$.pipe(
+        catchError(error => {
+          throw this.error.format(error);
+        }),
+      );
+
+      return {req$, reqUnsubscribe$, res$: $resWithErrorsFormatted};
     } catch (error) {
       req$.error(error);
       const res$ = new Subject<RpcMethodResponse<Api[K]>>();
