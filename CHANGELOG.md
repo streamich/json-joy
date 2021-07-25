@@ -1,3 +1,19 @@
+# [2.16.0](https://github.com/streamich/json-joy/compare/v2.15.0...v2.16.0) (2021-07-25)
+
+
+### Bug Fixes
+
+* 🐛 capture and format all call and call$ api caller errors ([7d7e365](https://github.com/streamich/json-joy/commit/7d7e365d7d74419b814c255a7d25092d414a996c))
+* 🐛 do not decrement in-flight call count without increment ([d772e82](https://github.com/streamich/json-joy/commit/d772e821312a4f2c2adb075437613247fd460ee8))
+* 🐛 errorId must be a string ([ce6a0f9](https://github.com/streamich/json-joy/commit/ce6a0f98989b5fc86d88314b2d29bafb7c91be9e))
+* 🐛 improve how in-flight call count tracked in streams ([5065161](https://github.com/streamich/json-joy/commit/5065161eb929d37cd9a066c09a71b8ff262a74b9))
+
+
+### Features
+
+* 🎸 export public APIs ([5b60166](https://github.com/streamich/json-joy/commit/5b60166de34a04bb9175cb7d91cc8d121d757dc8))
+* 🎸 make connection creation function optional ([3573d2a](https://github.com/streamich/json-joy/commit/3573d2a01b9b77bb489cb31319290ad281a3d230))
+
 # [2.15.0](https://github.com/streamich/json-joy/compare/v2.14.0...v2.15.0) (2021-07-25)
 
 
