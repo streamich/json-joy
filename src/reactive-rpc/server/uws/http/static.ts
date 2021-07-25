@@ -1,5 +1,6 @@
 import {formatError} from "../../../common/rpc";
 import {RpcApiCaller} from "../../../common/rpc/RpcApiCaller";
+import {createConnectionContext} from "../context";
 import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../types";
 import {readBody} from "../util";
 import {UwsHttpBaseContext} from "./types";
@@ -10,7 +11,7 @@ export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> exte
 }
 
 export const enableHttpPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/rpc/*', createContext, caller} = params;
+  const {uws, route = '/rpc/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');
@@ -29,7 +30,7 @@ export const enableHttpPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Ena
 };
 
 export const enableHttpGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/rpc/*', createContext, caller} = params;
+  const {uws, route = '/rpc/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');

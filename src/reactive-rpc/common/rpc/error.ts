@@ -25,7 +25,7 @@ export interface ErrorLike {
   status?: number;
   code?: string;
   errno?: number;
-  errorId?: number;
+  errorId?: string;
 }
 
 export const formatErrorLike = (error: ErrorLike): ErrorLike => {

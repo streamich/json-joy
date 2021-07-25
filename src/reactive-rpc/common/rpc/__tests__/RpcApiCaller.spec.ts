@@ -1,8 +1,9 @@
 import * as Rx from 'rxjs';
-import {catchError, map, skip} from 'rxjs/operators';
+import {catchError, skip} from 'rxjs/operators';
 import {RpcApiCaller} from '../RpcApiCaller';
 import {sampleApi, runApiTests} from '../__tests__/api';
 import {ErrorLikeErrorFormatter} from '../error';
+import {of} from '../../util/of';
 
 const setup = () => {
   const caller = new RpcApiCaller({
@@ -30,6 +31,23 @@ describe('static calls', () => {
     const res = await caller.call('double', {num: 5}, {});
     expect(res.num).toBe(10);
   });
+
+  test('formats error using formatter', async () => {
+    const caller = new RpcApiCaller({
+      api: {
+        test: {
+          isStreaming: false,
+          call: async () => {
+            throw 'lol';
+          },
+        },
+      },
+    });
+    const [, error] = await of(caller.call('test', {}, {}));
+    expect(error).toEqual({
+      message: 'lol',
+    });
+  });
 });
 
 describe('streaming calls', () => {
@@ -49,6 +67,31 @@ describe('streaming calls', () => {
     const {caller} = setup();
     const res = await Rx.firstValueFrom(caller.call$('util.timer', Rx.of(undefined), {}).pipe(skip(2)));
     expect(res).toBe(2);
+  });
+
+  test('formats error using formatter', async () => {
+    const caller = new RpcApiCaller({
+      api: {
+        test: {
+          isStreaming: true,
+          call$: () => {
+            const subject = new Rx.Subject();
+            subject.error('lol');
+            return subject;
+          },
+        },
+      },
+    });
+
+    const [, error1] = await of(caller.call('test', {}, {}));
+    expect(error1).toEqual({
+      message: 'lol',
+    });
+
+    const [, error2] = await of(Rx.firstValueFrom(caller.call$('test', Rx.of(undefined), {})));
+    expect(error2).toEqual({
+      message: 'lol',
+    });
   });
 });
 

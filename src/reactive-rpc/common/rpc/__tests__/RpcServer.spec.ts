@@ -297,7 +297,7 @@ test('when observable completes asynchronously and emits asynchronously, sends e
 });
 
 test('sends error when subscription limit is exceeded', async () => {
-  const {server, send, caller, notify, ctx, subject} = setup({bufferTime: 0}, {maxActiveCalls: 5});
+  const {server, send, caller} = setup({bufferTime: 0}, {maxActiveCalls: 5});
   jest.spyOn(caller, 'createCall');
   expect(caller.createCall).toHaveBeenCalledTimes(0);
   expect(send).toHaveBeenCalledTimes(0);

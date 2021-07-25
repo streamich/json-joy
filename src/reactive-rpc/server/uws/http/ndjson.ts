@@ -2,17 +2,18 @@ import {Observable, Subject, of} from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import {formatError} from "../../../common/rpc";
 import {RpcApiCaller} from "../../../common/rpc/RpcApiCaller";
+import {createConnectionContext} from "../context";
 import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../types";
 import {readBody} from "../util";
 import {UwsHttpBaseContext} from "./types";
 import {parsePayload, writeSseAndNdjsonHeaders} from "./util";
 
-export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
+export interface EnableNdjsonPostRpcApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   caller: RpcApiCaller<any, Ctx, unknown>;
 }
 
-export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/ndjson/*', createContext, caller} = params;
+export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableNdjsonPostRpcApiParams<Ctx>) => {
+  const {uws, route = '/ndjson/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');
@@ -33,8 +34,8 @@ export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: E
   });
 };
 
-export const enableNdjsonGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/ndjson/*', createContext, caller} = params;
+export const enableNdjsonGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableNdjsonPostRpcApiParams<Ctx>) => {
+  const {uws, route = '/ndjson/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
     throw new Error('"route" must end with "/*".');

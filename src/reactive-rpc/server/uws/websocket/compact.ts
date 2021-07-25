@@ -4,6 +4,7 @@ import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../../common/co
 import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../../common/codec/compact-msgpack';
 import {NotificationMessage} from '../../../common/messages/nominal/NotificationMessage';
 import {DEFAULTS} from './constants';
+import {createConnectionContext} from '../context';
 
 export interface EnableWsCompactReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {
 }
@@ -25,7 +26,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
     uws,
     createRpcServer,
     onNotification,
-    createContext,
+    createContext = createConnectionContext as any,
     compression,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,

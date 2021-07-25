@@ -2,6 +2,7 @@ import type {NotificationMessage, ReactiveRpcRequestMessage, ReactiveRpcResponse
 import type {EnableWsReactiveRpcApiParams, RpcWebSocket, UwsWebSocket} from './types';
 import {Encoder, Decoder} from '../../../common/codec/binary-msgpack';
 import {DEFAULTS} from './constants';
+import {createConnectionContext} from '../context';
 
 export interface EnableWsBinaryReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {
 }
@@ -14,7 +15,7 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactive
     uws,
     createRpcServer,
     onNotification,
-    createContext,
+    createContext = createConnectionContext as any,
     compression,
     idleTimeout = DEFAULTS.IDLE_TIMEOUT,
     maxBackpressure = DEFAULTS.MAX_BACKPRESSURE,
