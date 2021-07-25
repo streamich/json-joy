@@ -1,4 +1,4 @@
-import {timer, from, firstValueFrom, lastValueFrom, Subject, EMPTY} from 'rxjs';
+import {timer, from, firstValueFrom, lastValueFrom, Subject, EMPTY, Observable} from 'rxjs';
 import {map, mapTo, switchMap, take, delay as rxDelay} from 'rxjs/operators';
 import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
@@ -92,6 +92,27 @@ const buildinfo: RpcMethodStreaming<object, void, {commit: string, sha1: string}
   }]),
 };
 
+const count: RpcMethodStreaming<object, {count: number}, number> = {
+  isStreaming: true,
+  call$: (ctx, request$) => {
+    return request$.pipe(
+      switchMap(({count}) => new Observable<number>(observer => {
+        let cnt = 0;
+        const timer = setInterval(() => {
+          observer.next(cnt++);
+          if (cnt >= count) {
+            observer.complete();
+            clearInterval(timer);
+          }
+        }, 10);
+        return () => {
+          clearInterval(timer);
+        };
+      })),
+    );
+  },
+};
+
 const doubleStringWithValidation: RpcMethodStatic<object, {foo: string}, {bar: string}> = {
   isStreaming: false,
   validate: (request) => {
@@ -135,6 +156,7 @@ export const sampleApi = {
   delay,
   delayStreaming,
   double,
+  count,
   error,
   streamError,
   'auth.users.get': getUser,
