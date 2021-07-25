@@ -18,10 +18,26 @@ refs:
       run:
         name: Build
         command: yarn build
-    - &Test
+    - &Test_Unit
       run:
-        name: Test
-        command: yarn test:all
+        name: Test (Jest unit tests)
+        command: yarn test
+    - &Test_CLI_Pointer
+      run:
+        name: "Test (CLI: Json Pointer)"
+        command: yarn test:pointer
+    - &Test_CLI_Patch
+      run:
+        name: "Test (CLI: Json Patch)"
+        command: yarn test:patch
+    - &Test_E2E_Reactive_RPC
+      run:
+        name: "Test (E2E: Reactive-RPC)"
+        command: yarn test:reactive-rpc
+    - &Test_Demos
+      run:
+        name: "Test (Demos can execute)"
+        command: yarn demo:json-patch && yarn demo:json-pointer && yarn demo:json-rx
     - &Post_to_dev_null
       run:
         name: 'Post to Slack #dev-null'
@@ -35,7 +51,11 @@ jobs:
       - *Versions
       - *Install
       - *Build
-      - *Test
+      - *Test_Unit
+      - *Test_CLI_Pointer
+      - *Test_CLI_Patch
+      - *Test_E2E_Reactive_RPC
+      - *Test_Demos
       - *Post_to_dev_null
 
   master:
@@ -45,7 +65,11 @@ jobs:
       - *Versions
       - *Install
       - *Build
-      - *Test
+      - *Test_Unit
+      - *Test_CLI_Pointer
+      - *Test_CLI_Patch
+      - *Test_E2E_Reactive_RPC
+      - *Test_Demos
       - *Post_to_dev_null
       - run:
           name: Release
@@ -59,7 +83,11 @@ jobs:
       - *Versions
       - *Install
       - *Build
-      - *Test
+      - *Test_Unit
+      - *Test_CLI_Pointer
+      - *Test_CLI_Patch
+      - *Test_E2E_Reactive_RPC
+      - *Test_Demos
       - *Post_to_dev_null
       - run:
           name: Post to Slack on FAILURE
