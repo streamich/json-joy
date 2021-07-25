@@ -7,11 +7,11 @@ import {readBody} from "../util";
 import {UwsHttpBaseContext} from "./types";
 import {parsePayload, writeSseAndNdjsonHeaders} from "./util";
 
-export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
+export interface EnableNdjsonPostRpcApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   caller: RpcApiCaller<any, Ctx, unknown>;
 }
 
-export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableNdjsonPostRpcApiParams<Ctx>) => {
   const {uws, route = '/ndjson/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))
@@ -33,7 +33,7 @@ export const enableNdjsonPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: E
   });
 };
 
-export const enableNdjsonGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableNdjsonGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableNdjsonPostRpcApiParams<Ctx>) => {
   const {uws, route = '/ndjson/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))

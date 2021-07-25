@@ -7,11 +7,11 @@ import {readBody} from "../util";
 import {UwsHttpBaseContext} from "./types";
 import {parsePayload, writeSseAndNdjsonHeaders} from "./util";
 
-export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
+export interface EnableSsePostRpcApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   caller: RpcApiCaller<any, Ctx, unknown>;
 }
 
-export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableSsePostRpcApiParams<Ctx>) => {
   const {uws, route = '/sse/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))
@@ -33,7 +33,7 @@ export const enableSsePostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Enab
   });
 };
 
-export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableSseGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableSsePostRpcApiParams<Ctx>) => {
   const {uws, route = '/sse/*', createContext, caller} = params;
 
   if (!route.endsWith('/*'))
