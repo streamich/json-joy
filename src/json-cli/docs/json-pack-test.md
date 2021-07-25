@@ -8,6 +8,13 @@ It expects a single argument, which is a path to [`json-pack` executable](./json
 will run a test suite through that executable.
 
 
+## Installation
+
+```
+npm install -g json-joy
+```
+
+
 ## Usage
 
 ```
