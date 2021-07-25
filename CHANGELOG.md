@@ -1,3 +1,12 @@
+# [2.14.0](https://github.com/streamich/json-joy/compare/v2.13.0...v2.14.0) (2021-07-25)
+
+
+### Features
+
+* 🎸 add uWebSocket.js SSE integration over GET ([b96fbcc](https://github.com/streamich/json-joy/commit/b96fbcc557fc0ad8f7c115a03aae6405d15b0868))
+* 🎸 expose Reactive-RPC over uWebsocket.js SSE ([f610509](https://github.com/streamich/json-joy/commit/f61050908b06c204aa86bd6f988bb40e86dbbc58))
+* 🎸 improve GET SSE implementation ([edb4bf0](https://github.com/streamich/json-joy/commit/edb4bf07ba9dfaefda99e591378992d0a44902ef))
+
 # [2.13.0](https://github.com/streamich/json-joy/compare/v2.12.0...v2.13.0) (2021-07-24)
 
 
