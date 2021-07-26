@@ -85,9 +85,3 @@ export class RpcError extends Error implements ErrorLike {
     this.code = RpcServerError[errno];
   }
 }
-
-export class RpcValidationError extends RpcError implements ErrorLike {
-  constructor(err: unknown) {
-    super(isErrorLike(err) ? err.errno ?? RpcServerError.InvalidData : RpcServerError.Unknown, isErrorLike(err) ? err.message : String(err));
-  }
-}

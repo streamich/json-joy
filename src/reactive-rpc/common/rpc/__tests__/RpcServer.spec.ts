@@ -12,7 +12,6 @@ import {
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
 } from '../../messages';
-import {RpcValidationError} from '../error';
 import {Defer} from '../../../../util/Defer';
 
 const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcApiCallerParams<any, any>> = {}) => {
@@ -723,7 +722,7 @@ describe('validation', () => {
       expect(error).toHaveBeenCalledTimes(1);
       expect(complete).toHaveBeenCalledTimes(0);
       expect(send).toHaveBeenCalledTimes(1);
-      expect(error).toHaveBeenCalledWith(new RpcValidationError({message: 'Invalid request.'}));
+      expect(error).toHaveBeenCalledWith(new Error('Invalid request.'));
       expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseErrorMessage);
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
