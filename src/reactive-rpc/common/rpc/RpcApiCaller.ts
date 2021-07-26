@@ -3,7 +3,7 @@ import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap,
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
-import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError, RpcValidationError} from './error';
+import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
@@ -99,13 +99,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       if (this._calls >= this.maxActiveCalls)
         throw new RpcError(RpcServerError.TooManyActiveCalls);
       const method = this.get(name);
-      if (method.validate) {
-        try {
-          method.validate(request);
-        } catch (error) {
-          throw new RpcValidationError(error);
-        }
-      }
+      if (method.validate) method.validate(request);
       try {
         this._calls++;
         if (method.onPreCall) await method.onPreCall(ctx, request);
@@ -167,12 +161,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       const requestValidated$ = req$
         .pipe(
           map(request => {
-            try {
-              if (methodStreaming.validate) methodStreaming.validate(request);
-              return request;
-            } catch (error) {
-              throw new RpcValidationError(error);
-            }
+            if (methodStreaming.validate) methodStreaming.validate(request);
+            return request;
           })
         );
 
