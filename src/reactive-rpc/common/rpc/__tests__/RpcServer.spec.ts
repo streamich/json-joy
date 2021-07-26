@@ -541,8 +541,6 @@ describe('validation', () => {
     expect(send).toHaveBeenCalledWith([
       new ResponseErrorMessage(1, {
         message: 'Invalid request.',
-        errno: 3,
-        code: 'InvalidData',
       }),
     ]);
   });
@@ -607,8 +605,6 @@ describe('validation', () => {
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });
@@ -639,8 +635,6 @@ describe('validation', () => {
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });
@@ -677,8 +671,6 @@ describe('validation', () => {
       expect(send.mock.calls[1][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });
@@ -727,8 +719,6 @@ describe('validation', () => {
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });
@@ -769,8 +759,6 @@ describe('validation', () => {
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });
@@ -811,8 +799,6 @@ describe('validation', () => {
       expect(send.mock.calls[0][0][0]).toEqual(
         new ResponseErrorMessage(1, {
           message: 'Invalid request.',
-          errno: RpcServerError.InvalidData,
-          code: 'InvalidData',
         }),
       );
     });

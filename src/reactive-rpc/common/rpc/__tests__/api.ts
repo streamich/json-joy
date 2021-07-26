@@ -281,10 +281,8 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws on invalid data', async () => {
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation', {foo: 123})));
-      expect(error).toEqual({
-        code: 'InvalidData',
-        errno: 3,
-        message: '"foo" property missing.',
+      expect(error).toMatchObject({
+        message: '"foo" property missing.'
       });
     });
   });
@@ -304,10 +302,8 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       test('throws on invalid data', async () => {
         const {client} = await setup();
         const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 123})));
-        expect(error).toEqual({
-          code: 'InvalidData',
-          errno: 3,
-          message: '"foo" property missing.',
+        expect(error).toMatchObject({
+          message: '"foo" property missing.'
         });
       });
     });
