@@ -1,3 +1,10 @@
+## [2.16.1](https://github.com/streamich/json-joy/compare/v2.16.0...v2.16.1) (2021-07-26)
+
+
+### Bug Fixes
+
+* 🐛 do not wrap validation errors ([1feac4b](https://github.com/streamich/json-joy/commit/1feac4b90022792c706af2c5f1e6540f731a74f8))
+
 # [2.16.0](https://github.com/streamich/json-joy/compare/v2.15.0...v2.16.0) (2021-07-25)
 
 
