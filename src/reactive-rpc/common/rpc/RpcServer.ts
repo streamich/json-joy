@@ -1,8 +1,7 @@
-import {Subject} from 'rxjs';
 import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
-import {RpcApi, RpcMethod} from './types';
+import {RpcApi} from './types';
 import {RpcServerError} from './constants';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
 import {Call, RpcApiCaller} from './RpcApiCaller';
@@ -41,13 +40,6 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
 
 export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit<RpcServerParams<Ctx, T>, 'onCall'> {
   api: RpcApi<Ctx, T>;
-}
-
-class StreamCall<T = unknown> {
-  public reqFinalized: boolean = false;
-  public resFinalized: boolean = false;
-  public readonly req$: Subject<T> = new Subject();
-  public readonly res$: Subject<T> = new Subject();
 }
 
 export class RpcServer<Ctx = unknown, T = unknown> {
@@ -222,20 +214,6 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       }
     }
     else this.execStaticCall(id, method, data as T, ctx);
-  }
-
-  protected receiveRequestData(method: RpcMethod<Ctx, T, T>, call: StreamCall<T>, data: undefined | T): void {
-    if (data === undefined) return;
-    if (method.validate) {
-      try {
-        method.validate(data);
-      } catch (error) {
-        call.req$.error(error);
-        call.res$.error(error);
-        return;
-      }
-    }
-    call.req$.next(data);
   }
 
   public onRequestErrorMessage(message: RequestErrorMessage, ctx: Ctx): void {
