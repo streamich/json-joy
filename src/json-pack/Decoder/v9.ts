@@ -168,7 +168,7 @@ export class Decoder {
 
   /** @ignore */
   protected arr(size: number): unknown[] {
-    const arr = [];
+    const arr: unknown[] = [];
     for (let i = 0; i < size; i++) arr.push(this.val());
     return arr;
   }
