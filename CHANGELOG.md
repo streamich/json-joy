@@ -1,3 +1,18 @@
+# [2.17.0](https://github.com/streamich/json-joy/compare/v2.16.4...v2.17.0) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 on persisten client call wait for for first rpc duplex ([bdedd9b](https://github.com/streamich/json-joy/commit/bdedd9b6b4d6d02b63e89d2afbb45dc8dd5d57f3))
+
+
+### Features
+
+* 🎸 expose .call() methods which return a Promise ([1c05336](https://github.com/streamich/json-joy/commit/1c05336feaff9c52d5758b30d2ec5e26e61d8f94))
+* 🎸 improve persistent client ([fb55b16](https://github.com/streamich/json-joy/commit/fb55b168a20e371576cbaa440afc6882d531ff6a))
+* 🎸 improve start() and stop() of persistent client ([259f0c3](https://github.com/streamich/json-joy/commit/259f0c30eb17712d611b87d5507fdcd4efb59632))
+* 🎸 send periodic ".ping" keep-alive messages ([944b23f](https://github.com/streamich/json-joy/commit/944b23ff492be07bb6356e8ddc0bc6ef436f4db4))
+
 ## [2.16.4](https://github.com/streamich/json-joy/compare/v2.16.3...v2.16.4) (2021-08-01)
 
 
