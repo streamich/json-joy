@@ -66,6 +66,7 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
   public call$(method: string, data: T | Observable<T>): Observable<T> {
     return this.rpc$
       .pipe(
+        first(),
         switchMap(rpc => rpc.call$(method, data as any)),
       );
   }
