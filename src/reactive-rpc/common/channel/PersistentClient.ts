@@ -1,4 +1,4 @@
-import {firstValueFrom, Observable, ReplaySubject} from 'rxjs';
+import {firstValueFrom, Observable, ReplaySubject, timer} from 'rxjs';
 import {filter, first, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
 import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
@@ -13,6 +13,13 @@ export interface PersistentClientParams<Ctx = unknown, T = unknown> {
   codec: Codec<string | Uint8Array>;
   client?: Omit<RpcClientParams<T>, 'send'>;
   server?: Omit<RpcServerParams<Ctx, T>, 'send'>;
+
+  /**
+   * Number of milliseconds to periodically send keep-alive ".ping" notification
+   * messages. If not specified, will default to 15,000 (15 seconds). If 0, will
+   * not send ping messages.
+   */
+  ping?: number;
 }
 
 export class PersistentClient<Ctx = unknown, T = unknown> {
@@ -21,6 +28,7 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
   public readonly rpc$ = new ReplaySubject<RpcDuplex<Ctx, T>>(1);
 
   constructor (params: PersistentClientParams<Ctx, T>) {
+    const ping = params.ping ?? 15000;
     this.channel = new PersistentChannel(params.channel);
     this.channel.open$.pipe(filter(open => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(
@@ -56,6 +64,15 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
           const messages = params.codec.decoder.decode(encoded);
           duplex.onMessages((messages instanceof Array ? messages : [messages]) as ReactiveRpcMessage<T>[], {} as Ctx);
         });
+
+      // Send ping notifications to keep the connection alive.
+      if (ping) {
+        timer(ping, ping)
+          .pipe(takeUntil(close$))
+          .subscribe(() => {
+            duplex.notify('.ping', undefined);
+          });
+      }
 
       if (this.rpc) this.rpc.disconnect();
       this.rpc = duplex;
