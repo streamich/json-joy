@@ -14,7 +14,7 @@ export interface Channel<T extends string | Uint8Array = string | Uint8Array> {
    * Emits on every new incoming message.
    */
   message$: Observable<T>;
-  
+
   /**
    * Emits an error in channel is raised.
    */
@@ -43,7 +43,7 @@ export interface Channel<T extends string | Uint8Array = string | Uint8Array> {
 
   /**
    * Sends an outgoing message to the channel immediately.
-   * 
+   *
    * @param data A message payload.
    * @returns Number of bytes buffered or -1 if channel is not ready.
    */
@@ -52,7 +52,7 @@ export interface Channel<T extends string | Uint8Array = string | Uint8Array> {
   /**
    * Waits for the channel to connect and only then sends out the message. If
    * channel is closed, emits an error.
-   * 
+   *
    * @param data A message payload.
    * @returns Number of bytes buffered.
    */
@@ -60,7 +60,7 @@ export interface Channel<T extends string | Uint8Array = string | Uint8Array> {
 
   /**
    * Closes the channel.
-   * 
+   *
    * @param code Closure code.
    * @param reason Closure reason.
    */
@@ -142,14 +142,14 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
   public isOpen(): boolean {
     return this.state$.getValue() === ChannelState.OPEN;
   }
-  
+
   public send(data: T): number {
     if (!this.ws) return -1;
     const buffered = this.ws.bufferedAmount;
     this.ws.send(data);
     return this.ws.bufferedAmount - buffered;
   }
-  
+
   public send$(data: T): Observable<number> {
     return this.open$
       .pipe(
@@ -203,13 +203,13 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
    * attempt to always keep an open channel connected.
    */
   public readonly active$ = new BehaviorSubject(false);
-  
+
   /**
    * Currently used channel, if any. When service is "active" it attempts to
    * create and open a channel.
    */
   public readonly channel$ = new BehaviorSubject<undefined | Channel<T>>(undefined);
-  
+
   /**
    * Whether the currently active channel (if any) is "open". An open channel
    * is one where communication can happen, where a message can be sent to the
@@ -246,7 +246,7 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     start$
       .pipe(
         switchMap(() => this.channel$),
-        filter(channel => !!channel),
+        filter(channel => !channel),
         takeUntil(stop$),
         switchMap(channel => channel!.close$),
         takeUntil(stop$),
