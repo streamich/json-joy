@@ -1,3 +1,10 @@
+## [2.16.3](https://github.com/streamich/json-joy/compare/v2.16.2...v2.16.3) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 revert back channel predicate ([923baf5](https://github.com/streamich/json-joy/commit/923baf50d7c5c7c7eecf3089bc0f6aae536e305a))
+
 ## [2.16.2](https://github.com/streamich/json-joy/compare/v2.16.1...v2.16.2) (2021-08-01)
 
 
