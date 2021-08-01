@@ -250,12 +250,21 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
         takeUntil(stop$),
         switchMap(channel => channel!.close$),
         takeUntil(stop$),
-        delay(this.reconnectDelay()),
+        switchMap(() => from((async () => {
+          const timeout = this.reconnectDelay();
+          this.retries++;
+          await new Promise(resolve => setTimeout(resolve, timeout));
+        })())),
         takeUntil(stop$),
         tap(() => this.channel$.next(params.newChannel())),
         delay(params.minUptime || 5_000),
         takeUntil(stop$),
-        tap(() => this.retries = 0),
+        tap(() => {
+          const isOpen = this.channel$.getValue()?.isOpen();
+          if (isOpen) {
+            this.retries = 0
+          }
+        }),
       )
       .subscribe();
 
