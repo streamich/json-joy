@@ -246,7 +246,7 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     start$
       .pipe(
         switchMap(() => this.channel$),
-        filter(channel => !channel),
+        filter(channel => !!channel),
         takeUntil(stop$),
         switchMap(channel => channel!.close$),
         takeUntil(stop$),
