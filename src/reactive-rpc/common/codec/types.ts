@@ -5,6 +5,6 @@ export interface Codec<T = unknown> {
     encode(messages: ReactiveRpcMessage[]): T;
   };
   decoder: {
-    decode(data: T): ReactiveRpcMessage[];
+    decode(data: T): ReactiveRpcMessage | ReactiveRpcMessage[];
   };
 }

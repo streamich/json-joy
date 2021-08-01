@@ -24,9 +24,9 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
     this.channel.open$.pipe(filter(open => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(
         filter(open => !open),
-
       );
-      const rpc = new RpcDuplex<Ctx, T>({
+
+      const duplex = new RpcDuplex<Ctx, T>({
         client: new RpcClient<T>({
           ...params.client,
           send: (messages: ReactiveRpcRequestMessage[]): void => {
@@ -42,16 +42,18 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
           },
         }),
       });
+
       this.channel.message$
         .pipe(takeUntil(close$))
         .subscribe(data => {
           const encoded = typeof data === 'string' ? data : new Uint8Array(data);
-          const messages = params.codec.decoder.decode(encoded) as ReactiveRpcMessage<T>[];
-          rpc.onMessages(messages, {} as Ctx);
+          const messages = params.codec.decoder.decode(encoded);
+          duplex.onMessages((messages instanceof Array ? messages : [messages]) as ReactiveRpcMessage<T>[], {} as Ctx);
         });
+
       if (this.rpc) this.rpc.disconnect();
-      this.rpc = rpc;
-      this.rpc$.next(rpc);
+      this.rpc = duplex;
+      this.rpc$.next(duplex);
     });
   }
 
