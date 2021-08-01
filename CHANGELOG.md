@@ -1,3 +1,11 @@
+## [2.16.2](https://github.com/streamich/json-joy/compare/v2.16.1...v2.16.2) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 make array type explicit ([a7f223f](https://github.com/streamich/json-joy/commit/a7f223f0b3c80f396f11257ecc497ec773805321))
+* 🐛 try reconnecting only when channel is empty ([498fc32](https://github.com/streamich/json-joy/commit/498fc328d340caa10f092926122d45ce51c3789c))
+
 ## [2.16.1](https://github.com/streamich/json-joy/compare/v2.16.0...v2.16.1) (2021-07-26)
 
 
