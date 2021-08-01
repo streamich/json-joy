@@ -3,6 +3,7 @@ import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
 import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
 import {RpcClient, RpcClientParams} from '../rpc';
+import {RpcApiCaller} from '../rpc/RpcApiCaller';
 import {RpcDuplex} from '../rpc/RpcDuplex';
 import {RpcServer, RpcServerParams} from '../rpc/RpcServer';
 import {PersistentChannel, PersistentChannelParams} from './channel';
@@ -10,8 +11,8 @@ import {PersistentChannel, PersistentChannelParams} from './channel';
 export interface PersistentClientParams<Ctx = unknown, T = unknown> {
   channel: PersistentChannelParams;
   codec: Codec<string | Uint8Array>;
-  client: Omit<RpcClientParams<T>, 'send'>;
-  server: Omit<RpcServerParams<Ctx, T>, 'send'>;
+  client?: Omit<RpcClientParams<T>, 'send'>;
+  server?: Omit<RpcServerParams<Ctx, T>, 'send'>;
 }
 
 export class PersistentClient<Ctx = unknown, T = unknown> {
@@ -28,14 +29,19 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
 
       const duplex = new RpcDuplex<Ctx, T>({
         client: new RpcClient<T>({
-          ...params.client,
+          ...(params.client || {}),
           send: (messages: ReactiveRpcRequestMessage[]): void => {
             const encoded = params.codec.encoder.encode(messages);
             this.channel.send$(encoded).subscribe();
           },
         }),
         server: new RpcServer<Ctx, T>({
-          ...params.server,
+          ...(params.server || {
+            caller: new RpcApiCaller({
+              api: {},
+            }),
+            onNotification: () => {},
+          }),
           send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]): void => {
             const encoded = params.codec.encoder.encode(messages);
             this.channel.send$(encoded).subscribe();
