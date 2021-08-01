@@ -1,3 +1,10 @@
+## [2.16.4](https://github.com/streamich/json-joy/compare/v2.16.3...v2.16.4) (2021-08-01)
+
+
+### Bug Fixes
+
+* 🐛 reset reconnect retry country only on successful open ([85f92cb](https://github.com/streamich/json-joy/commit/85f92cb1caa16cde7a0d3a07a8effff4687930a6))
+
 ## [2.16.3](https://github.com/streamich/json-joy/compare/v2.16.2...v2.16.3) (2021-08-01)
 
 
