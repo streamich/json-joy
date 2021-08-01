@@ -40,6 +40,10 @@ export class RpcDuplex<Ctx = unknown, T = unknown> {
     return this.client.call$(method, data as any);
   }
 
+  public call(method: string, data: T): Promise<T> {
+    return this.client.call(method, data);
+  }
+
   public notify(method: string, data: undefined | T): void {
     this.client.notify(method, data);
   }
