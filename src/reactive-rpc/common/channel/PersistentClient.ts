@@ -1,4 +1,4 @@
-import {Observable, ReplaySubject} from 'rxjs';
+import {firstValueFrom, Observable, ReplaySubject} from 'rxjs';
 import {filter, first, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
 import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
@@ -69,6 +69,10 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
         first(),
         switchMap(rpc => rpc.call$(method, data as any)),
       );
+  }
+
+  public call(method: string, data: T): Promise<T> {
+    return firstValueFrom(this.call$(method, data));
   }
 
   public notify(method: string, data: T): void {
