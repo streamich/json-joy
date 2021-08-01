@@ -1,5 +1,5 @@
 import {Observable, ReplaySubject} from 'rxjs';
-import {filter, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, first, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
 import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
 import {RpcClient, RpcClientParams} from '../rpc';
@@ -76,7 +76,12 @@ export class PersistentClient<Ctx = unknown, T = unknown> {
       .subscribe(rpc => rpc.notify(method, data));
   }
 
+  public start() {
+    this.channel.start();
+  }
+
   public stop() {
+    this.channel.stop();
     if (this.rpc) this.rpc.stop();
   }
 }
