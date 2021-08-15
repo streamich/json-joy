@@ -7,7 +7,7 @@ in UTF-8 encoding.
 ## Usage
 
 ```ts
-import {jsonSize} from 'json-joy/{lib,es5}/json-size';
+import {jsonSize} from 'json-joy/{lib,es6}/json-size';
 
 jsonSize({1: 2, foo: 'bar'}) // 19
 ```
