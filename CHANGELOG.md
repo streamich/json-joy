@@ -1,3 +1,11 @@
+## [2.18.1](https://github.com/streamich/json-joy/compare/v2.18.0...v2.18.1) (2021-08-15)
+
+
+### Bug Fixes
+
+* 🐛 add es2020 build target ([e3f6bec](https://github.com/streamich/json-joy/commit/e3f6becd7a6485723278e957b782c49f8f80d365))
+* 🐛 publish es2020 target to NPM ([bcd0648](https://github.com/streamich/json-joy/commit/bcd06488398318e0639b1a79c61b1fb74a82b7a2))
+
 # [2.18.0](https://github.com/streamich/json-joy/compare/v2.17.0...v2.18.0) (2021-08-15)
 
 
