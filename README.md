@@ -46,6 +46,12 @@ This package consists of multiple self-contained libraries:
     - [`json-pack-test` CLI](./src/json-cli/docs/json-pack-test.md)
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
+- __`json-size`__ &mdash; calculate the size of serialized JSON object.
+  - [__Documentation__ 🚀](./src/json-size/README.md)
+  - __Reference__ 🤖
+- __`json-random`__ &mdash; generate random JSON value.
+  - __Documentation__ 🚀
+  - __Reference__ 🤖
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902
