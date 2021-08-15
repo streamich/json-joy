@@ -118,5 +118,6 @@ dist
 # Build folders
 lib/
 es6/
+es2020/
 esm/
 typedocs/
