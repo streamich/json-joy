@@ -26,6 +26,7 @@
   "files": [
     "lib/",
     "es6/",
+    "es2020/",
     "esm/"
   ],
   "scripts": {
