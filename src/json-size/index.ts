@@ -2,47 +2,30 @@ import {utf8Count} from "../util/utf8";
 
 export const numberSize = (num: number) => JSON.stringify(num).length;
 
-// export const stringSize2 = (str: string) => {
-//   const strLength = str.length;
-//   let byteLength = 0;
-//   let pos = 0;
-//   while (pos < strLength) {
-//     let value = str.charCodeAt(pos++);
-//     if ((value & 0xffffff80) === 0) {
-//       switch (value) {
-//         case 8:  // \b
-//         case 9:  // \t
-//         case 10: // \n
-//         case 12: // \f
-//         case 13: // \r
-//         case 34: // \"
-//         case 92: // \\
-//           byteLength += 2;
-//           break;
-//         default:
-//           byteLength += 1;
-//       }
-//       continue;
-//     } else if ((value & 0xfffff800) === 0) byteLength += 2;
-//     else {
-//       if (value >= 0xd800 && value <= 0xdbff) {
-//         if (pos < strLength) {
-//           const extra = str.charCodeAt(pos);
-//           if ((extra & 0xfc00) === 0xdc00) {
-//             ++pos;
-//             value = ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000;
-//           }
-//         }
-//       }
-//       if ((value & 0xffff0000) === 0) byteLength += 3;
-//       else byteLength += 4;
-//     }
-//   }
-//   return byteLength + 2;
-// };
-
 export const stringSize = (str: string) => {
-  return utf8Count(JSON.stringify(str));
+  const strLength = str.length;
+  let byteLength = 0;
+  let pos = 0;
+  while (pos < strLength) {
+    let value = str.charCodeAt(pos++);
+    if (value < 128) {
+      switch (value) {
+        case 8:  // \b
+        case 9:  // \t
+        case 10: // \n
+        case 12: // \f
+        case 13: // \r
+        case 34: // \"
+        case 92: // \\
+          byteLength += 2;
+          break;
+        default:
+          byteLength += 1;
+      }
+      continue;
+    } else return utf8Count(JSON.stringify(str));
+  }
+  return byteLength + 2;
 };
 
 export const booleanSize = (bool: boolean) => bool ? 4 : 5;
