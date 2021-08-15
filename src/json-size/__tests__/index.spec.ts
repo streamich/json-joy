@@ -1,4 +1,5 @@
 import {jsonSize} from '..';
+import {utf8Count} from '../../util/utf8';
 
 test('calculates null size', () => {
   expect(jsonSize(null)).toBe(4);
@@ -26,6 +27,16 @@ test('calculates string sizes', () => {
   expect(jsonSize('office')).toBe(8);
 });
 
+test('calculates string sizes with escaped characters', () => {
+  expect(jsonSize('\\')).toBe(4);
+  expect(jsonSize('"')).toBe(4);
+  expect(jsonSize('\b')).toBe(4);
+  expect(jsonSize('\f')).toBe(4);
+  expect(jsonSize('\n')).toBe(4);
+  expect(jsonSize('\r')).toBe(4);
+  expect(jsonSize('\t')).toBe(4);
+});
+
 test('calculates array sizes', () => {
   expect(jsonSize([])).toBe(2);
   expect(jsonSize([1])).toBe(3);
@@ -37,4 +48,11 @@ test('calculates object sizes', () => {
   expect(jsonSize({})).toBe(2);
   expect(jsonSize({a: 1})).toBe(2 + 3 + 1 + 1);
   expect(jsonSize({1: 2, foo: 'bar'})).toBe(2 + 3 + 1 + 1 + 1 + 5 + 1 + 5);
+});
+
+test('calculates size of array of length 2 that begins with empty string', () => {
+  const json = ['', -1];
+  const size1 = jsonSize(json);
+  const size2 = utf8Count(JSON.stringify(json));
+  expect(size1).toBe(size2);
 });
