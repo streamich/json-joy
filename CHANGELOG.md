@@ -1,3 +1,20 @@
+# [2.18.0](https://github.com/streamich/json-joy/compare/v2.17.0...v2.18.0) (2021-08-15)
+
+
+### Bug Fixes
+
+* 🐛 support quotes and special characters in stirngs ([05599c5](https://github.com/streamich/json-joy/commit/05599c5c1e4cb0b098e43ebddb70f49c5ddcab77))
+
+
+### Features
+
+* 🎸 implement json-size ([0d67ae7](https://github.com/streamich/json-joy/commit/0d67ae72b95950ce4e0bf0881baf21becce87694))
+
+
+### Performance Improvements
+
+* ⚡️ add benchmarks ([9d08da4](https://github.com/streamich/json-joy/commit/9d08da40aeb765277e7ab6995df35328407cf08d))
+
 # [2.17.0](https://github.com/streamich/json-joy/compare/v2.16.4...v2.17.0) (2021-08-01)
 
 
