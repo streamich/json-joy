@@ -6,9 +6,9 @@ import {RpcClient, RpcClientParams} from '../rpc';
 import {RpcApiCaller} from '../rpc/RpcApiCaller';
 import {RpcDuplex} from '../rpc/RpcDuplex';
 import {RpcServer, RpcServerParams} from '../rpc/RpcServer';
-import {PersistentChannel, PersistentChannelParams} from './channel';
+import {PersistentChannel, PersistentChannelParams} from '../channel';
 
-export interface PersistentClientParams<Ctx = unknown, T = unknown> {
+export interface RpcPersistentClientParams<Ctx = unknown, T = unknown> {
   channel: PersistentChannelParams;
   codec: Codec<string | Uint8Array>;
   client?: Omit<RpcClientParams<T>, 'send'>;
@@ -22,12 +22,12 @@ export interface PersistentClientParams<Ctx = unknown, T = unknown> {
   ping?: number;
 }
 
-export class PersistentClient<Ctx = unknown, T = unknown> {
+export class RpcPersistentClient<Ctx = unknown, T = unknown> {
   public channel: PersistentChannel;
   public rpc?: RpcDuplex<Ctx, T>;
   public readonly rpc$ = new ReplaySubject<RpcDuplex<Ctx, T>>(1);
 
-  constructor (params: PersistentClientParams<Ctx, T>) {
+  constructor (params: RpcPersistentClientParams<Ctx, T>) {
     const ping = params.ping ?? 15000;
     this.channel = new PersistentChannel(params.channel);
     this.channel.open$.pipe(filter(open => open)).subscribe(() => {
