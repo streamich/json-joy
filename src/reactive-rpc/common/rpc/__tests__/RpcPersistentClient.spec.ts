@@ -22,7 +22,9 @@ test('on remote method execution, sends message over WebSocket only once', async
   setTimeout(() => {
     ws._open();
   }, 1);
-  client.call$('foo.bar', {foo: 'bar'}).subscribe(() => {});
-  await new Promise(r => setTimeout(r, 25));
+  const observable = client.call$('foo.bar', {foo: 'bar'});
+  observable.subscribe(() => {});
+  observable.subscribe(() => {});
+  await new Promise(r => setTimeout(r, 225));
   expect(onSend).toHaveBeenCalledTimes(1);
 });
