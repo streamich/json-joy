@@ -1,3 +1,11 @@
+# [2.19.0](https://github.com/streamich/json-joy/compare/v2.18.2...v2.19.0) (2021-10-17)
+
+
+### Features
+
+* 🎸 add MsgPack Uint8Array branded type ([d6b1fc5](https://github.com/streamich/json-joy/commit/d6b1fc529558c516cb27741cabb3d0ff0234c951))
+* 🎸 export MsgPack branded type ([bba1cf3](https://github.com/streamich/json-joy/commit/bba1cf3622548801625166d7e2301a4750db81a7))
+
 ## [2.18.2](https://github.com/streamich/json-joy/compare/v2.18.1...v2.18.2) (2021-10-17)
 
 
