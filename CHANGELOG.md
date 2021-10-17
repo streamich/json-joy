@@ -1,3 +1,11 @@
+## [2.18.2](https://github.com/streamich/json-joy/compare/v2.18.1...v2.18.2) (2021-10-17)
+
+
+### Bug Fixes
+
+* 🐛 export RpcPersistentClient ([9ccb441](https://github.com/streamich/json-joy/commit/9ccb441f0c95db03279f526ef036dc72dc1898c4))
+* 🐛 on call subscribe execute call only once ([fdf850a](https://github.com/streamich/json-joy/commit/fdf850a7c0fd4a1521a0397be3e11e44ca9a9ffd))
+
 ## [2.18.1](https://github.com/streamich/json-joy/compare/v2.18.0...v2.18.1) (2021-08-15)
 
 
