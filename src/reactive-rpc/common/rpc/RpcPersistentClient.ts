@@ -1,5 +1,5 @@
 import {firstValueFrom, Observable, ReplaySubject, timer} from 'rxjs';
-import {filter, first, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
 import {Codec} from '../codec/types';
 import {NotificationMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
 import {RpcClient, RpcClientParams} from '../rpc';
@@ -85,6 +85,7 @@ export class RpcPersistentClient<Ctx = unknown, T = unknown> {
       .pipe(
         first(),
         switchMap(rpc => rpc.call$(method, data as any)),
+        share(),
       );
   }
 
