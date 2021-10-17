@@ -8,11 +8,11 @@ import {Defer} from '../../json-rx/__tests__/util';
 if (process.env.TEST_E2E) {
   const connected = new Defer<void>();
   const ws: WebSocket = new WS('ws://localhost:9999/rpc/compact', 'MsgPack');
-  const encoderJson = new Encoder();
-  const decoderJson = new Decoder();
+  const encoder = new Encoder();
+  const decoder = new Decoder();
   const clientJson = new RpcClient({
     send: (messages) => {
-      const encoded = encoderJson.encode(messages);
+      const encoded = encoder.encode(messages);
       ws.send(encoded);
     },
   });
@@ -21,7 +21,7 @@ if (process.env.TEST_E2E) {
     connected.resolve();
   };
   ws.onmessage = function incoming(event: any) {
-    const messages = decoderJson.decode(event.data);
+    const messages = decoder.decode(event.data);
     if (messages instanceof Array) clientJson.onMessages(messages as ReactiveRpcResponseMessage[]);
     else clientJson.onMessage(messages as ReactiveRpcResponseMessage);
   };
@@ -29,7 +29,7 @@ if (process.env.TEST_E2E) {
     await connected;
     return {
       client: {
-        call$: (method: string, data: any) => clientJson.call$(method, data),
+        call$: (name: string, data: any) => clientJson.call$(name, data),
       },
     };
   };
