@@ -379,6 +379,16 @@ test('can receive and process a batch from server', async () => {
   expect(complete2).toHaveBeenCalledTimes(1);
 });
 
+test('subscribing twice to call$ does not execute request twice', async () => {
+  const send = jest.fn();
+  const client = new RpcClient({send, bufferTime: 1});
+  const observable = client.call$('test', {});
+  observable.subscribe(() => {});
+  observable.subscribe(() => {});
+  await new Promise((r) => setTimeout(r, 1));
+  expect(send).toHaveBeenCalledTimes(1);
+});
+
 describe('streaming request', () => {
   test('request payload can be streamed', async () => {
     const send = jest.fn();
