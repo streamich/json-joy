@@ -10,12 +10,16 @@ export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> exte
   caller: RpcApiCaller<any, Ctx, unknown>;
 }
 
+const STATUS_400 = Buffer.from('400 Bad Request');
+const HDR_KEY_CONTENT_TYPE = Buffer.from('Content-Type');
+const HDR_VALUE_APPLICATION_JSON = Buffer.from('application/json');
+
 const sendError = (res: UwsHttpResponse, error: unknown, pretty: boolean) => {
   if (res.aborted) return;
   res.cork(() => {
     const errorFormatted = formatError(error);
     const body = JSON.stringify(errorFormatted, null, pretty ? 4 : 0);
-    res.writeStatus('400 Bad Request').writeHeader('Content-Type', 'application/json').end(body);
+    res.writeStatus(STATUS_400).writeHeader(HDR_KEY_CONTENT_TYPE, HDR_VALUE_APPLICATION_JSON).end(body);
   });
 };
 
@@ -28,7 +32,7 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
         res.cork(() => {
           const method = caller.get(name);
           const formatted = JSON.stringify(result, null, method.pretty ? 4 : 0);
-          res.writeHeader('Content-Type', 'application/json').end(formatted);
+          res.writeHeader(HDR_KEY_CONTENT_TYPE, HDR_VALUE_APPLICATION_JSON).end(formatted);
         });
       })
       .catch((error) => {
