@@ -8,6 +8,7 @@ import {UwsHttpBaseContext} from "../types";
 import {STATUS_400} from "./constants";
 import {bufferToUint8Array} from "../../../../../util/bufferToUint8Array";
 import type {EnableHttpPostRcpApiParams} from "./types";
+import {parsePayload} from "../util";
 
 const DEFAULT_ROUTE = '/rpc/msgpack/*';
 
@@ -49,8 +50,8 @@ export const enableHttpRpcMsgPackPostApi = <Ctx extends UwsHttpBaseContext>(para
     });
     readBody(res, (buffer) => {
       try {
-        const uit8 = bufferToUint8Array(buffer) as MsgPack<unknown>;
-        const json = decode(uit8);
+        const length = ctx.payloadSize = buffer.length;
+        const json = length ? decode(bufferToUint8Array(buffer) as MsgPack<unknown>) : null;
         processRequest(res, ctx, name, json, caller);
       } catch {
         const error = new Error('Could not parse payload');
@@ -74,7 +75,7 @@ export const enableHttpRpcMsgPackGetApi = <Ctx extends UwsHttpBaseContext>(param
       res.aborted = true;
     });
     try {
-      const json = JSON.parse(body);
+      const json = parsePayload(ctx, body);
       processRequest(res, ctx, name, json, caller);
     } catch {
       const error = new Error('Could not parse payload');
