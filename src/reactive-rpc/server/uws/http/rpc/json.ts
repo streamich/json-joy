@@ -1,16 +1,13 @@
 import {formatError} from "../../../../common/rpc";
 import {RpcApiCaller} from "../../../../common/rpc/RpcApiCaller";
 import {createConnectionContext} from "../../context";
-import {EnableReactiveRpcApiParams, UwsHttpResponse} from "../../types";
+import {UwsHttpResponse} from "../../types";
 import {readBody} from "../../util";
 import {UwsHttpBaseContext} from "../types";
 import {parsePayload} from "../util";
+import {STATUS_400} from "./constants";
+import type {EnableHttpPostRcpApiParams} from "./types";
 
-export interface EnableHttpPostRcpApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
-  caller: RpcApiCaller<any, Ctx, unknown>;
-}
-
-const STATUS_400 = Buffer.from('400 Bad Request');
 const HDR_KEY_CONTENT_TYPE = Buffer.from('Content-Type');
 const HDR_VALUE_APPLICATION_JSON = Buffer.from('application/json');
 
@@ -44,7 +41,7 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
   }
 };
 
-export const enableHttpPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableHttpRpcJsonPostApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/rpc/json/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
@@ -63,7 +60,7 @@ export const enableHttpPostRpcApi = <Ctx extends UwsHttpBaseContext>(params: Ena
   });
 };
 
-export const enableHttpGetRpcApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableHttpRpcJsonGetApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/rpc/json/*', createContext = createConnectionContext as any, caller} = params;
 
   if (!route.endsWith('/*'))
