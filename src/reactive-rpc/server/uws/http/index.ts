@@ -1,4 +1,4 @@
 export * from './types';
-export * from './static';
+export * from './rpc';
 export * from './sse';
 export * from './ndjson';

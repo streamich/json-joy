@@ -3,8 +3,7 @@ import {enableCors, createConnectionContext, ConnectionContext, enableWsBinaryRe
 import {sampleApi} from '../../reactive-rpc/common/rpc/__tests__/api';
 import {RpcServer} from '../../reactive-rpc/common/rpc';
 import {RpcApiCaller} from '../../reactive-rpc/common/rpc/RpcApiCaller';
-import {enableHttpGetRpcApi, enableHttpPostRpcApi} from '../../reactive-rpc/server/uws/http/static';
-import {enableSseGetRpcApi, enableSsePostRpcApi} from '../../reactive-rpc/server/uws/http/sse';
+import {enableHttpRpcJsonGetApi, enableHttpRpcJsonPostApi, enableHttpRpcMsgPackGetApi, enableHttpRpcMsgPackPostApi, enableSseGetRpcApi, enableSsePostRpcApi} from '../../reactive-rpc/server/uws/http';
 import {UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/types';
 import {enableNdjsonGetRpcApi, enableNdjsonPostRpcApi} from '../../reactive-rpc/server/uws/http/ndjson';
 
@@ -38,41 +37,20 @@ enableWsCompactReactiveRpcApi<ConnectionContext>({
   }),
 });
 
-enableHttpPostRpcApi<ConnectionContext & UwsHttpBaseContext>({
+const options = {
   uws,
   caller,
   createContext: createConnectionContext,
-});
+};
 
-enableHttpGetRpcApi<ConnectionContext & UwsHttpBaseContext>({
-  uws,
-  caller,
-  createContext: createConnectionContext,
-});
-
-enableSsePostRpcApi<ConnectionContext & UwsHttpBaseContext>({
-  uws,
-  caller,
-  createContext: createConnectionContext,
-});
-
-enableSseGetRpcApi<ConnectionContext & UwsHttpBaseContext>({
-  uws,
-  caller,
-  createContext: createConnectionContext,
-});
-
-enableNdjsonPostRpcApi<ConnectionContext & UwsHttpBaseContext>({
-  uws,
-  caller,
-  createContext: createConnectionContext,
-});
-
-enableNdjsonGetRpcApi<ConnectionContext & UwsHttpBaseContext>({
-  uws,
-  caller,
-  createContext: createConnectionContext,
-});
+enableHttpRpcJsonGetApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableHttpRpcJsonPostApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableHttpRpcMsgPackGetApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableHttpRpcMsgPackPostApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableSsePostRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableSseGetRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableNdjsonPostRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableNdjsonGetRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
 
 const port = 9999;
 

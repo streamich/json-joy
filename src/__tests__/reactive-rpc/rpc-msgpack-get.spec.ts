@@ -5,6 +5,7 @@
 import {ApiTestSetup, runApiTests} from '../../reactive-rpc/common/rpc/__tests__/api';
 import {from} from 'rxjs';
 import axios from 'axios';
+import {decode} from '../../json-pack/util';
 
 if (process.env.TEST_E2E) {
   const setup: ApiTestSetup = async () => {
@@ -12,16 +13,15 @@ if (process.env.TEST_E2E) {
       client: {
         call$: (method: string, data: any) => {
           return from((async () => {
-            const url = `http://localhost:9999/rpc/${method}`;
+            const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
+            const url = `http://localhost:9999/rpc/msgpack/${method}${search}`;
             try {
-              const response = await axios.post(url, data === undefined ? '' : JSON.stringify(data), {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
+              const response = await axios.get(url, {
+                responseType: 'arraybuffer',
               });
-              return response.data;
+              return decode(response.data);
             } catch (error) {
-              throw error.response.data;
+              throw decode((error as any).response.data);
             }
           })());
         },
