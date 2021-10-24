@@ -1,3 +1,22 @@
+# [3.0.0](https://github.com/streamich/json-joy/compare/v2.19.0...v3.0.0) (2021-10-24)
+
+
+### Features
+
+* 🎸 add RPC implementation with MessagePack responses ([c7e1692](https://github.com/streamich/json-joy/commit/c7e1692999cd59ae1154fbd52cb868e9cd60a07e))
+* 🎸 move RPC with JSON under /rpc/json route ([d2a50ad](https://github.com/streamich/json-joy/commit/d2a50ad1e7f1a843cfc336218a908275f6abc356))
+
+
+### Performance Improvements
+
+* ⚡️ remove optional success code ([7fdd244](https://github.com/streamich/json-joy/commit/7fdd244ef2bebe58cb2441a35efb963948d4662b))
+* ⚡️ use precomputed buffers for HTTP header data ([c7252d5](https://github.com/streamich/json-joy/commit/c7252d5e42b910c13b495cd14eed78ed434a6783))
+
+
+### BREAKING CHANGES
+
+* 🧨 Now default JSON RPC route is /rpc/json
+
 # [2.19.0](https://github.com/streamich/json-joy/compare/v2.18.2...v2.19.0) (2021-10-17)
 
 
