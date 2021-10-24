@@ -55,12 +55,9 @@ export class CachedKeyDecoder {
   private get(bytes: Uint8Array, inputOffset: number, byteLength: number): string | null {
     const records = this.caches[byteLength - 1]!;
     const len = records.length;
-
-    // FIND_CHUNK: for (const record of records) {
     FIND_CHUNK: for (let i = 0; i < len; i++) {
       const record = records[i];
       const recordBytes = record.bytes;
-
       for (let j = 0; j < byteLength; j++) {
         if (recordBytes[j] !== bytes[inputOffset + j]) {
           continue FIND_CHUNK;
@@ -74,10 +71,9 @@ export class CachedKeyDecoder {
   private store(bytes: Uint8Array, value: string) {
     const records = this.caches[bytes.length - 1]!;
     const record: KeyCacheRecord = {bytes, value};
-
     if (records.length >= 16) {
-      // `records` are full!
-      // Set `record` to a randomized position.
+      // `records` are full, set `record` to a randomized position.
+      // TODO: use function faster than Math.random()
       records[(Math.random() * records.length) | 0] = record;
     } else {
       records.push(record);
@@ -88,7 +84,6 @@ export class CachedKeyDecoder {
     if (!size) return '';
     const cachedValue = this.get(bytes, offset, size);
     if (cachedValue != null) return cachedValue;
-
     const value = utf8DecodeJs(bytes, offset, size);
     // Ensure to copy a slice of bytes because the byte may be NodeJS Buffer and Buffer#slice() returns a reference to its internal ArrayBuffer.
     const slicedCopyOfBytes = Uint8Array.prototype.slice.call(bytes, offset, offset + size);
