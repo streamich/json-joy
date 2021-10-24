@@ -12,13 +12,16 @@ if (process.env.TEST_E2E) {
       client: {
         call$: (method: string, data: any) => {
           return from((async () => {
-            const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
-            const url = `http://localhost:9999/rpc/${method}${search}`;
+            const url = `http://localhost:9999/rpc/json/${method}`;
             try {
-              const response = await axios.get(url);
+              const response = await axios.post(url, data === undefined ? '' : JSON.stringify(data), {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
               return response.data;
             } catch (error) {
-              throw error.response.data;
+              throw (error as any).response.data;
             }
           })());
         },
