@@ -28,7 +28,7 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
         res.cork(() => {
           const method = caller.get(name);
           const formatted = JSON.stringify(result, null, method.pretty ? 4 : 0);
-          res.writeStatus('200 OK').writeHeader('Content-Type', 'application/json').end(formatted);
+          res.writeHeader('Content-Type', 'application/json').end(formatted);
         });
       })
       .catch((error) => {
