@@ -1,4 +1,4 @@
-import type {IEncoderWriter} from "../../util/encoder";
+import type {IEncoderWriter} from '../../util/encoder';
 
 export interface IMessagePackEncoder extends IEncoderWriter {
   encodeAny(value: unknown): void;

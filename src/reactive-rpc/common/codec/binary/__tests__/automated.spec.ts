@@ -1,7 +1,29 @@
 import {compactMessages} from '../../compact/__tests__/compact-messages';
 import {decode} from '../../compact/decode';
-import {Message, ReactiveRpcMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../../../messages/nominal';
-import {BinaryNotificationMessage, BinaryRequestCompleteMessage, BinaryRequestDataMessage, BinaryRequestErrorMessage, BinaryRequestUnsubscribeMessage, BinaryResponseCompleteMessage, BinaryResponseDataMessage, BinaryResponseErrorMessage, BinaryResponseUnsubscribeMessage, ReactiveRpcBinaryMessage} from '../../../messages/binary';
+import {
+  Message,
+  ReactiveRpcMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  RequestErrorMessage,
+  RequestUnsubscribeMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+  ResponseUnsubscribeMessage,
+} from '../../../messages/nominal';
+import {
+  BinaryNotificationMessage,
+  BinaryRequestCompleteMessage,
+  BinaryRequestDataMessage,
+  BinaryRequestErrorMessage,
+  BinaryRequestUnsubscribeMessage,
+  BinaryResponseCompleteMessage,
+  BinaryResponseDataMessage,
+  BinaryResponseErrorMessage,
+  BinaryResponseUnsubscribeMessage,
+  ReactiveRpcBinaryMessage,
+} from '../../../messages/binary';
 import {Encoder, decodeFullMessages} from '..';
 
 const encoder = new Encoder();
@@ -16,13 +38,19 @@ const encodeData = (data: unknown): Uint8Array => {
 };
 
 const convertMessage = (message: ReactiveRpcMessage): ReactiveRpcBinaryMessage => {
-  if (message instanceof ResponseDataMessage) return new BinaryResponseDataMessage(message.id, encodeData(message.data));
-  else if (message instanceof ResponseCompleteMessage) return new BinaryResponseCompleteMessage(message.id, encodeData(message.data));
-  else if (message instanceof ResponseErrorMessage) return new BinaryResponseErrorMessage(message.id, encodeData(message.data));
+  if (message instanceof ResponseDataMessage)
+    return new BinaryResponseDataMessage(message.id, encodeData(message.data));
+  else if (message instanceof ResponseCompleteMessage)
+    return new BinaryResponseCompleteMessage(message.id, encodeData(message.data));
+  else if (message instanceof ResponseErrorMessage)
+    return new BinaryResponseErrorMessage(message.id, encodeData(message.data));
   else if (message instanceof ResponseUnsubscribeMessage) return new BinaryResponseUnsubscribeMessage(message.id);
-  else if (message instanceof RequestDataMessage) return new BinaryRequestDataMessage(message.id, message.method, encodeData(message.data));
-  else if (message instanceof RequestCompleteMessage) return new BinaryRequestCompleteMessage(message.id, message.method, encodeData(message.data));
-  else if (message instanceof RequestErrorMessage) return new BinaryRequestErrorMessage(message.id, message.method, encodeData(message.data));
+  else if (message instanceof RequestDataMessage)
+    return new BinaryRequestDataMessage(message.id, message.method, encodeData(message.data));
+  else if (message instanceof RequestCompleteMessage)
+    return new BinaryRequestCompleteMessage(message.id, message.method, encodeData(message.data));
+  else if (message instanceof RequestErrorMessage)
+    return new BinaryRequestErrorMessage(message.id, message.method, encodeData(message.data));
   else if (message instanceof RequestUnsubscribeMessage) return new BinaryRequestUnsubscribeMessage(message.id);
   return new BinaryNotificationMessage(message.method, encodeData(message.data));
 };

@@ -1,5 +1,5 @@
-import { UwsHttpResponse } from "../types";
-import { UwsHttpBaseContext } from "./types";
+import {UwsHttpResponse} from '../types';
+import {UwsHttpBaseContext} from './types';
 
 export const parsePayload = <Ctx extends UwsHttpBaseContext>(ctx: Ctx, payload: Buffer | string) => {
   if (typeof payload === 'string') {

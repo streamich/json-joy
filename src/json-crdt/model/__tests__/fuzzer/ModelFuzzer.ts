@@ -25,7 +25,10 @@ export class ModelFuzzer {
   }
 
   public setupModel() {
-    const json = this.opts.startingValue === undefined ? RandomJson.generate({nodeCount: 8, rootNode: Math.random() > .5 ? 'object' : 'array'}) : this.opts.startingValue;
+    const json =
+      this.opts.startingValue === undefined
+        ? RandomJson.generate({nodeCount: 8, rootNode: Math.random() > 0.5 ? 'object' : 'array'})
+        : this.opts.startingValue;
     this.model.api.root(json).commit();
   }
 

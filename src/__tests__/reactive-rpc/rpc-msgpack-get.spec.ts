@@ -12,18 +12,20 @@ if (process.env.TEST_E2E) {
     return {
       client: {
         call$: (method: string, data: any) => {
-          return from((async () => {
-            const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
-            const url = `http://localhost:9999/rpc/msgpack/${method}${search}`;
-            try {
-              const response = await axios.get(url, {
-                responseType: 'arraybuffer',
-              });
-              return decode(response.data);
-            } catch (error) {
-              throw decode((error as any).response.data);
-            }
-          })());
+          return from(
+            (async () => {
+              const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
+              const url = `http://localhost:9999/rpc/msgpack/${method}${search}`;
+              try {
+                const response = await axios.get(url, {
+                  responseType: 'arraybuffer',
+                });
+                return decode(response.data);
+              } catch (error) {
+                throw decode((error as any).response.data);
+              }
+            })(),
+          );
         },
       },
     };

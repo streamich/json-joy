@@ -1,8 +1,40 @@
-import {AbstractPredicateOp, Op, OpAdd, OpAnd, OpContains, OpCopy, OpDefined, OpEnds, OpExtend, OpFlip, OpIn, OpInc, OpLess, OpMatches, OpMerge, OpMore, OpMove, OpNot, OpOr, OpRemove, OpReplace, OpSplit, OpStarts, OpStrDel, OpStrIns, OpTest, OpTestString, OpTestStringLen, OpTestType, OpType, OpUndefined} from "../../op";
+import {
+  AbstractPredicateOp,
+  Op,
+  OpAdd,
+  OpAnd,
+  OpContains,
+  OpCopy,
+  OpDefined,
+  OpEnds,
+  OpExtend,
+  OpFlip,
+  OpIn,
+  OpInc,
+  OpLess,
+  OpMatches,
+  OpMerge,
+  OpMore,
+  OpMove,
+  OpNot,
+  OpOr,
+  OpRemove,
+  OpReplace,
+  OpSplit,
+  OpStarts,
+  OpStrDel,
+  OpStrIns,
+  OpTest,
+  OpTestString,
+  OpTestStringLen,
+  OpTestType,
+  OpType,
+  OpUndefined,
+} from '../../op';
 import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
-import {OPCODE} from "../../constants";
-import {Path} from "../../../json-pointer";
-import {JsonPatchTypes} from "../json/types";
+import {OPCODE} from '../../constants';
+import {Path} from '../../../json-pointer';
+import {JsonPatchTypes} from '../json/types';
 
 export class Decoder extends MessagePackDecoder {
   public decode(uint8: Uint8Array): Op[] {
@@ -211,7 +243,7 @@ export class Decoder extends MessagePackDecoder {
     const byte = this.u8();
     if (byte <= 0xbf) return this.obj(byte & 0b1111);
     else if (byte === 0xde) return this.obj(this.u16());
-    else /* 0xdf */ return this.obj(this.u32());
+    /* 0xdf */ else return this.obj(this.u32());
   }
 
   protected decodeArray(): unknown[] {
@@ -224,15 +256,15 @@ export class Decoder extends MessagePackDecoder {
   protected decodeArrayHeader(): number {
     const byte = this.u8();
     if (byte < 0b10011111) return byte & 0b1111;
-    else if (byte === 0xDC) return this.u16();
+    else if (byte === 0xdc) return this.u16();
     else return this.u32();
   }
 
   protected decodeString(): string {
     const byte = this.u8();
     if (byte <= 0xbf) return this.str(byte & 0b11111);
-    else if (byte === 0xD9) return this.str(this.u8());
-    else if (byte === 0xDA) return this.str(this.u16());
-    else /* 0xDB */ return this.str(this.u32());
+    else if (byte === 0xd9) return this.str(this.u8());
+    else if (byte === 0xda) return this.str(this.u16());
+    /* 0xDB */ else return this.str(this.u32());
   }
 }

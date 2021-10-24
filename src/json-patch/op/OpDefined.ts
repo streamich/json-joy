@@ -39,6 +39,6 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(2);
     encoder.u8(OPCODE.defined);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
   }
 }

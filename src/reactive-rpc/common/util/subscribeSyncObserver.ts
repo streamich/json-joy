@@ -1,5 +1,5 @@
-import {Observable} from "rxjs";
-import {microtask} from "./microtask";
+import {Observable} from 'rxjs';
+import {microtask} from './microtask';
 
 export interface SyncObserver<T> {
   next: (values: T[], completed: boolean) => void;
@@ -10,7 +10,7 @@ export interface SyncObserver<T> {
 /**
  * Subscribes `SyncObserver` to observable. `SyncObserver` a list of all values
  * that were synchronously emitted within one micro-tick cycle.
- * 
+ *
  * @param observable Observable to which to subscribe.
  * @param observer Observer which to subscribe to observable.
  * @returns Subscription

@@ -100,9 +100,7 @@ export class OpSplit extends AbstractOp<'split'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactSplitOp {
-    return this.props
-      ? [OPCODE.split, this.path, this.pos, this.props]
-      : [OPCODE.split, this.path, this.pos];
+    return this.props ? [OPCODE.split, this.path, this.pos, this.props] : [OPCODE.split, this.path, this.pos];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

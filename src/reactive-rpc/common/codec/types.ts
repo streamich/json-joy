@@ -1,4 +1,4 @@
-import {ReactiveRpcMessage} from "../messages";
+import {ReactiveRpcMessage} from '../messages';
 
 export interface Codec<T = unknown> {
   encoder: {

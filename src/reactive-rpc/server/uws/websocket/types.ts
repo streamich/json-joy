@@ -1,12 +1,13 @@
 import type {RpcServer, RpcServerParams} from '../../../common/rpc/RpcServer';
-import type {EnableReactiveRpcApiParams, UwsHttpRequest, UwsHttpResponse, UwsTemplatedApp, UwsWebSocket} from '../types';
-
-export type {
-  UwsTemplatedApp,
+import type {
+  EnableReactiveRpcApiParams,
   UwsHttpRequest,
   UwsHttpResponse,
+  UwsTemplatedApp,
   UwsWebSocket,
-};
+} from '../types';
+
+export type {UwsTemplatedApp, UwsHttpRequest, UwsHttpResponse, UwsWebSocket};
 
 export interface RpcWebSocket<Ctx = unknown> extends UwsWebSocket {
   ctx: Ctx;

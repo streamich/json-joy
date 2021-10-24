@@ -98,7 +98,7 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
 
   constructor({newSocket}: WebSocketChannelParams) {
     try {
-      const ws = this.ws = newSocket();
+      const ws = (this.ws = newSocket());
       ws.binaryType = 'arraybuffer';
       ws.onopen = () => {
         this.state$.next(ChannelState.OPEN);
@@ -112,13 +112,14 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
         this.message$.complete();
       };
       ws.onerror = (event: Event) => {
-        const errorEvent: Partial<ErrorEvent> = event as unknown as Partial<ErrorEvent>;
-        const error: Error = errorEvent.error instanceof Error ? errorEvent.error : new Error(String(errorEvent.message) || 'ERROR');
+        const errorEvent: Partial<ErrorEvent> = (event as unknown) as Partial<ErrorEvent>;
+        const error: Error =
+          errorEvent.error instanceof Error ? errorEvent.error : new Error(String(errorEvent.message) || 'ERROR');
         this.error$.next(error);
       };
       ws.onmessage = (event) => {
         const data = event.data;
-        const message: T = (typeof data === 'string' ? data : toUint8Array(data)) as unknown as T;
+        const message: T = ((typeof data === 'string' ? data : toUint8Array(data)) as unknown) as T;
         this.message$.next(message);
       };
     } catch (error) {
@@ -151,13 +152,12 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
   }
 
   public send$(data: T): Observable<number> {
-    return this.open$
-      .pipe(
-        map(() => {
-          if (!this.isOpen()) throw new Error('CLOSED');
-          return this.send(data);
-        }),
-      );
+    return this.open$.pipe(
+      map(() => {
+        if (!this.isOpen()) throw new Error('CLOSED');
+        return this.send(data);
+      }),
+    );
   }
 }
 
@@ -171,13 +171,13 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
    * Minimum amount of time in ms to wait before attempting to reconnect.
    * Defaults to 1,500 +/- 500 milliseconds.
    */
-  minReconnectionDelay?: number,
+  minReconnectionDelay?: number;
 
   /**
    * Maximum amount of time in ms to wait before attempting to reconnect.
    * Defaults to 10,000 milliseconds.
    */
-  maxReconnectionDelay?: number,
+  maxReconnectionDelay?: number;
 
   /**
    * Factor which is raised to the power of number of retry attempts and
@@ -190,7 +190,7 @@ export interface PersistentChannelParams<T extends string | Uint8Array = string 
    * Minimum time the WebSocket should be open to reset retry counter.
    * Defaults to 5,000 milliseconds.
    */
-  minUptime?: number,
+  minUptime?: number;
 }
 
 /**
@@ -219,8 +219,8 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
 
   /** Emits incoming messages. */
   public readonly message$ = this.channel$.pipe(
-    filter(channel => !!channel),
-    switchMap(channel => channel!.message$),
+    filter((channel) => !!channel),
+    switchMap((channel) => channel!.message$),
   );
 
   /** Number of times we have attempted to reconnect. */
@@ -230,31 +230,44 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     const start$ = new Subject();
     const stop$ = new Subject();
 
-    this.active$.pipe(skip(1), filter(active => active)).subscribe(() => {
-      start$.next(undefined);
-    });
+    this.active$
+      .pipe(
+        skip(1),
+        filter((active) => active),
+      )
+      .subscribe(() => {
+        start$.next(undefined);
+      });
 
-    this.active$.pipe(skip(1), filter(active => !active)).subscribe(() => {
-      stop$.next(undefined);
-    });
+    this.active$
+      .pipe(
+        skip(1),
+        filter((active) => !active),
+      )
+      .subscribe(() => {
+        stop$.next(undefined);
+      });
 
     // Create new channel when service starts.
-    start$
-      .subscribe(() => this.channel$.next(params.newChannel()));
+    start$.subscribe(() => this.channel$.next(params.newChannel()));
 
     // Re-connect, when channel closes.
     start$
       .pipe(
         switchMap(() => this.channel$),
-        filter(channel => !!channel),
+        filter((channel) => !!channel),
         takeUntil(stop$),
-        switchMap(channel => channel!.close$),
+        switchMap((channel) => channel!.close$),
         takeUntil(stop$),
-        switchMap(() => from((async () => {
-          const timeout = this.reconnectDelay();
-          this.retries++;
-          await new Promise(resolve => setTimeout(resolve, timeout));
-        })())),
+        switchMap(() =>
+          from(
+            (async () => {
+              const timeout = this.reconnectDelay();
+              this.retries++;
+              await new Promise((resolve) => setTimeout(resolve, timeout));
+            })(),
+          ),
+        ),
         takeUntil(stop$),
         tap(() => this.channel$.next(params.newChannel())),
         delay(params.minUptime || 5_000),
@@ -262,7 +275,7 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
         tap(() => {
           const isOpen = this.channel$.getValue()?.isOpen();
           if (isOpen) {
-            this.retries = 0
+            this.retries = 0;
           }
         }),
       )
@@ -272,19 +285,18 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     start$
       .pipe(
         switchMap(() => this.channel$),
-        filter(channel => !!channel),
-        switchMap(channel => channel!.state$),
-        map(state => state === ChannelState.OPEN),
+        filter((channel) => !!channel),
+        switchMap((channel) => channel!.state$),
+        map((state) => state === ChannelState.OPEN),
       )
-      .subscribe(open => {
+      .subscribe((open) => {
         if (open !== this.open$.getValue()) this.open$.next(open);
       });
 
     // Reset re-try counter when service stops.
-    stop$
-      .subscribe(() => {
-        this.retries = 0;
-      });
+    stop$.subscribe(() => {
+      this.retries = 0;
+    });
   }
 
   public start(): void {
@@ -307,21 +319,23 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
     const minReconnectionDelay = this.params.minReconnectionDelay || Math.round(1_000 + Math.random() * 1_000);
     const maxReconnectionDelay = this.params.maxReconnectionDelay || 10_000;
     const reconnectionDelayGrowFactor = this.params.reconnectionDelayGrowFactor || 1.3;
-    const delay = Math.min(maxReconnectionDelay, minReconnectionDelay * (reconnectionDelayGrowFactor ** (this.retries - 1)))
+    const delay = Math.min(
+      maxReconnectionDelay,
+      minReconnectionDelay * reconnectionDelayGrowFactor ** (this.retries - 1),
+    );
     return delay;
   }
 
   public send$(data: T): Observable<number> {
-    return this.channel$
-      .pipe(
-        filter(channel => !!channel),
-        switchMap(channel => channel!.open$),
-        filter(channel => channel.isOpen()),
-        take(1),
-        map(channel => {
-          const canSend = this.active$.getValue() && this.open$.getValue();
-          return canSend ? channel.send(data) : -1
-        }),
-      );
+    return this.channel$.pipe(
+      filter((channel) => !!channel),
+      switchMap((channel) => channel!.open$),
+      filter((channel) => channel.isOpen()),
+      take(1),
+      map((channel) => {
+        const canSend = this.active$.getValue() && this.open$.getValue();
+        return canSend ? channel.send(data) : -1;
+      }),
+    );
   }
 }

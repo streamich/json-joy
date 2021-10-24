@@ -15,16 +15,16 @@ if (process.env.TEST_E2E) {
           const url = `http://localhost:9999/sse/${method}${search}`;
           const es: EventSource = new ES(url, {});
           const subject = new Subject();
-          const onMessage = function(e: any) {
+          const onMessage = function (e: any) {
             const json = JSON.parse(e.data);
             subject.next(json);
           };
-          const onError = function(e: any) {
+          const onError = function (e: any) {
             es.close();
             const json = JSON.parse(e.data);
             subject.error(json);
           };
-          const onSystemError = function(e: any) {
+          const onSystemError = function (e: any) {
             es.close();
             es.removeEventListener('message', onMessage);
             es.removeEventListener('err', onError);

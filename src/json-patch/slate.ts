@@ -3,7 +3,7 @@
  *
  * @ignore
  */
- export interface SlateTextNode {
+export interface SlateTextNode {
   text: string;
   [key: string]: unknown;
 }

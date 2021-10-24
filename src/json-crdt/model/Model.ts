@@ -33,7 +33,7 @@ export class Model {
    * logical timestamp to every node and operation. Logical timestamp consists
    * of a session ID and sequence number 2-tuple. Logical clock allows to
    * sync peer-to-peer.
-   * 
+   *
    * @param clock Logical clock to use.
    * @returns CRDT model.
    */
@@ -49,7 +49,7 @@ export class Model {
    * simply of a sequence number, which was assigned by a server. In this model
    * all operations are approved, persisted and re-distributed to all clients by
    * a central server.
-   * 
+   *
    * @param time Latest known server sequence number.
    * @returns CRDT model.
    */
@@ -91,11 +91,15 @@ export class Model {
   /** Returns an indexed node, if any. */
   public node(id: ITimestamp): JsonNode | undefined {
     if (id.getSessionId() === 0) {
-      switch(id.time) {
-        case 1: return NULL;
-        case 2: return TRUE;
-        case 3: return FALSE;
-        case 4: return UNDEFINED;
+      switch (id.time) {
+        case 1:
+          return NULL;
+        case 2:
+          return TRUE;
+        case 3:
+          return FALSE;
+        case 4:
+          return UNDEFINED;
       }
     }
     return this.nodes.get(id);
@@ -164,18 +168,20 @@ export class Model {
 
   /** Creates a copy of this model with the same session ID. */
   public clone(): Model {
-    const model = this.clock instanceof LogicalVectorClock
-      ? Model.withLogicalClock(this.clock.clone())
-      : Model.withServerClock(this.clock.time);
+    const model =
+      this.clock instanceof LogicalVectorClock
+        ? Model.withLogicalClock(this.clock.clone())
+        : Model.withServerClock(this.clock.time);
     model.root = this.root.clone(model);
     return model;
   }
 
   /** Creates a copy of this model with a new session ID. */
   public fork(sessionId: number = randomSessionId()): Model {
-    const model = this.clock instanceof LogicalVectorClock
-      ? Model.withLogicalClock(this.clock.fork(sessionId))
-      : Model.withServerClock(this.clock.time);
+    const model =
+      this.clock instanceof LogicalVectorClock
+        ? Model.withLogicalClock(this.clock.fork(sessionId))
+        : Model.withServerClock(this.clock.time);
     model.root = this.root.clone(model);
     return model;
   }

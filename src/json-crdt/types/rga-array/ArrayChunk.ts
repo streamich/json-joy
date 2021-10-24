@@ -75,7 +75,7 @@ export class ArrayChunk implements JsonChunk {
       const chunk = new ArrayChunk(this.id, undefined);
       chunk.deleted = this.deleted;
       delete this.nodes;
-      return chunk;  
+      return chunk;
     }
   }
 

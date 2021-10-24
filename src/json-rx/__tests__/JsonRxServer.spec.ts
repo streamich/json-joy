@@ -108,7 +108,7 @@ test('sends complete message if observable immediately completes after emitting 
   expect(call).toHaveBeenCalledTimes(1);
   expect(call).toHaveBeenCalledWith('method', undefined, undefined);
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0]).toEqual([0, 25, "go go"]);
+  expect(send.mock.calls[0][0]).toEqual([0, 25, 'go go']);
 });
 
 test('when observable completes synchronously, sends payload in complete message', async () => {
@@ -202,7 +202,7 @@ test('sends error when subscription limit is exceeded', async () => {
   server.onMessage([6, '6', 6], undefined);
   expect(call).toHaveBeenCalledTimes(5);
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0]).toEqual([-1, 6, {"message": "Too many subscriptions."}]);
+  expect(send.mock.calls[0][0]).toEqual([-1, 6, {message: 'Too many subscriptions.'}]);
 });
 
 test('subscription counter goes down on unsubscribe', async () => {
@@ -304,10 +304,10 @@ test('can create custom API from promises and observables', async () => {
   server.onMessage([4, 'drop_table', {}], undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(4);
-  expect(send).toHaveBeenCalledWith([0, 1, "hello"]);
+  expect(send).toHaveBeenCalledWith([0, 1, 'hello']);
   expect(send).toHaveBeenCalledWith([0, 2, 2]);
   expect(send).toHaveBeenCalledWith([0, 3, -10]);
-  expect(send).toHaveBeenCalledWith([-1, 4, {"message":"Unknown method [drop_table]."}]);
+  expect(send).toHaveBeenCalledWith([-1, 4, {message: 'Unknown method [drop_table].'}]);
 });
 
 test('can add authentication on as higher level API', async () => {
@@ -326,7 +326,7 @@ test('can add authentication on as higher level API', async () => {
   server.onMessage([2, 'double', 1], undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send).toHaveBeenCalledWith([-1, 2, {"message":"UNAUTHENTICATED"}]);
+  expect(send).toHaveBeenCalledWith([-1, 2, {message: 'UNAUTHENTICATED'}]);
   server.onMessage(['auth', 'hello hello'], undefined);
   server.onMessage([3, 'double', 1], undefined);
   await new Promise((r) => setTimeout(r, 1));
@@ -365,7 +365,7 @@ test('enforces maximum number of active subscriptions', async () => {
   server.onMessage([4, 'test'], undefined);
   await new Promise((r) => setTimeout(r, 5));
   expect(send).toHaveBeenCalledTimes(1);
-  expect(send).toHaveBeenCalledWith([-1, 4, {"message": "Too many subscriptions."}]);
+  expect(send).toHaveBeenCalledWith([-1, 4, {message: 'Too many subscriptions.'}]);
   await new Promise((r) => setTimeout(r, 30));
   expect(send).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledWith([0, 1, 0]);

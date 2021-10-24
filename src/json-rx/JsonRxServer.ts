@@ -97,7 +97,7 @@ export class JsonRxServer<Ctx = unknown> {
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
       buffer.onFlush = (messages) => {
-        send(messages.length === 1 ? messages[0] : messages as OutgoingMessage);
+        send(messages.length === 1 ? messages[0] : (messages as OutgoingMessage));
       };
       this.send = (message) => buffer.push(message);
     } else {
@@ -106,7 +106,7 @@ export class JsonRxServer<Ctx = unknown> {
   }
 
   private sendError(id: number, error: unknown): void {
-    const message = ([-1, id, error]) as MessageError;
+    const message = [-1, id, error] as MessageError;
     this.send(message);
   }
 
@@ -119,7 +119,7 @@ export class JsonRxServer<Ctx = unknown> {
       if (active) {
         this.active.delete(id);
         active.unsubscribe();
-        this.send(([-1, id, {message: "ID already active."}]) as MessageError);
+        this.send([-1, id, {message: 'ID already active.'}] as MessageError);
         return;
       }
       if (this.active.size >= this.maxActiveSubscriptions)
@@ -137,8 +137,7 @@ export class JsonRxServer<Ctx = unknown> {
           microtask(() => {
             if (!ref.buffer.length) return;
             try {
-              for (const payload of ref.buffer)
-                this.send(([-2, id, payload]) as MessageData);
+              for (const payload of ref.buffer) this.send([-2, id, payload] as MessageData);
             } finally {
               ref.buffer = [];
             }
@@ -149,9 +148,9 @@ export class JsonRxServer<Ctx = unknown> {
           this.active.delete(id);
           let message: MessageError;
           if (error instanceof Error) {
-            message = ([-1, id, formatError(error)]) as MessageError;
+            message = [-1, id, formatError(error)] as MessageError;
           } else {
-            message = ([-1, id, error]) as MessageError;
+            message = [-1, id, error] as MessageError;
           }
           this.send(message);
         },
@@ -165,9 +164,9 @@ export class JsonRxServer<Ctx = unknown> {
               const isLast = i === last;
               let message: MessageComplete | MessageData;
               if (isLast) {
-                message = ([0, id, ref.buffer[i]]) as MessageComplete;
+                message = [0, id, ref.buffer[i]] as MessageComplete;
               } else {
-                message = ([-2, id, ref.buffer[i]]) as MessageData;
+                message = [-2, id, ref.buffer[i]] as MessageData;
               }
               this.send(message);
             }

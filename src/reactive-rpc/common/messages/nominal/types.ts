@@ -31,9 +31,7 @@ export type ReactiveRpcResponseMessage<D = unknown> =
 /**
  * All Reactive RPC messages.
  */
-export type ReactiveRpcMessage<D = unknown> =
-  | ReactiveRpcRequestMessage<D>
-  | ReactiveRpcResponseMessage<D>;
+export type ReactiveRpcMessage<D = unknown> = ReactiveRpcRequestMessage<D> | ReactiveRpcResponseMessage<D>;
 
 export interface Message {
   data?: undefined | unknown;

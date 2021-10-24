@@ -11,19 +11,21 @@ if (process.env.TEST_E2E) {
     return {
       client: {
         call$: (method: string, data: any) => {
-          return from((async () => {
-            const url = `http://localhost:9999/rpc/json/${method}`;
-            try {
-              const response = await axios.post(url, data === undefined ? '' : JSON.stringify(data), {
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              });
-              return response.data;
-            } catch (error) {
-              throw (error as any).response.data;
-            }
-          })());
+          return from(
+            (async () => {
+              const url = `http://localhost:9999/rpc/json/${method}`;
+              try {
+                const response = await axios.post(url, data === undefined ? '' : JSON.stringify(data), {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+                return response.data;
+              } catch (error) {
+                throw (error as any).response.data;
+              }
+            })(),
+          );
         },
       },
     };

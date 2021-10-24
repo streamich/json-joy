@@ -1,7 +1,7 @@
-import {decodeFullMessages} from "../binary/decode";
+import {decodeFullMessages} from '../binary/decode';
 import {Decoder as MessagePackDecoder} from '../../../../json-pack/Decoder';
-import {ReactiveRpcBinaryMessage} from "../../messages/binary";
-import {Message, ReactiveRpcMessage} from "../../messages/nominal";
+import {ReactiveRpcBinaryMessage} from '../../messages/binary';
+import {Message, ReactiveRpcMessage} from '../../messages/nominal';
 import {isUint8Array} from '../../../../util/isUint8Array';
 
 export class Decoder {

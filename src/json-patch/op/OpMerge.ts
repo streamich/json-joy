@@ -52,9 +52,7 @@ export class OpMerge extends AbstractOp<'merge'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactMergeOp {
-    return this.props
-      ? [OPCODE.merge, this.path, this.pos, this.props]
-      : [OPCODE.merge, this.path, this.pos];
+    return this.props ? [OPCODE.merge, this.path, this.pos, this.props] : [OPCODE.merge, this.path, this.pos];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

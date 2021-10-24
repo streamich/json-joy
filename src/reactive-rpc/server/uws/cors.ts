@@ -1,12 +1,15 @@
 export interface UwsApp {
-  options(route: string, handler: (
-    res: {
-      writeHeader(key: string | Buffer, value: string | Buffer): void;
-      cork(cb: () => void): void;
-      end(): void;
-    },
-    req: {},
-  ) => void): void;
+  options(
+    route: string,
+    handler: (
+      res: {
+        writeHeader(key: string | Buffer, value: string | Buffer): void;
+        cork(cb: () => void): void;
+        end(): void;
+      },
+      req: {},
+    ) => void,
+  ): void;
 }
 
 export const enableCors = (uws: UwsApp) => {

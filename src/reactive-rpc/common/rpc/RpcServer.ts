@@ -1,4 +1,16 @@
-import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage, NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage, ResponseUnsubscribeMessage} from '../messages/nominal';
+import {
+  ReactiveRpcRequestMessage,
+  ReactiveRpcResponseMessage,
+  NotificationMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  RequestErrorMessage,
+  RequestUnsubscribeMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+  ResponseUnsubscribeMessage,
+} from '../messages/nominal';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
 import {RpcApi} from './types';
@@ -55,28 +67,21 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
-  constructor({
-    caller,
-    error,
-    send,
-    onNotification: notify,
-    bufferSize = 10,
-    bufferTime = 1,
-  }: RpcServerParams<Ctx, T>) {
+  constructor({caller, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
     this.caller = caller;
-    this.error = error || new ErrorLikeErrorFormatter() as any;
+    this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.onNotification = notify;
     this.onSend = send;
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T> | NotificationMessage<T>>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
-      buffer.onFlush = messages => this.onSend(messages);
+      buffer.onFlush = (messages) => this.onSend(messages);
       this.send = (message) => {
         buffer.push(message);
       };
     } else {
-      this.send = message => {
+      this.send = (message) => {
         this.onSend([message]);
       };
     }
@@ -138,11 +143,12 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   private execStaticCall(id: number, name: string, request: T, ctx: Ctx) {
-    this.caller.call(name, request, ctx)
-      .then(response => {
+    this.caller
+      .call(name, request, ctx)
+      .then((response) => {
         this.send(new ResponseCompleteMessage<T>(id, response as T));
       })
-      .catch(error => {
+      .catch((error) => {
         this.send(new ResponseErrorMessage<T>(id, error));
       });
   }
@@ -164,8 +170,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       },
     });
     call.reqUnsubscribe$.subscribe(() => {
-      if (this.activeStreamCalls.has(id))
-        this.send(new RequestUnsubscribeMessage(id));
+      if (this.activeStreamCalls.has(id)) this.send(new RequestUnsubscribeMessage(id));
     });
     return call;
   }
@@ -212,8 +217,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
           newCall.req$.next(data!);
         }
       }
-    }
-    else this.execStaticCall(id, method, data as T, ctx);
+    } else this.execStaticCall(id, method, data as T, ctx);
   }
 
   public onRequestErrorMessage(message: RequestErrorMessage, ctx: Ctx): void {
@@ -241,8 +245,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
 
   public onNotificationMessage(message: NotificationMessage<T>, ctx: Ctx): void {
     const {method, data} = message;
-    if (!method || (method.length > 128))
-      throw new RpcError(RpcServerError.InvalidNotificationName);
+    if (!method || method.length > 128) throw new RpcError(RpcServerError.InvalidNotificationName);
     this.onNotification(method, data, ctx);
   }
 }

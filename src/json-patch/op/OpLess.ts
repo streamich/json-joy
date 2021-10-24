@@ -41,7 +41,7 @@ export class OpLess extends AbstractPredicateOp<'less'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
     encoder.u8(OPCODE.less);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeNumber(this.value);
   }
 }

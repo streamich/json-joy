@@ -6,8 +6,7 @@ import {NotificationMessage} from '../../../common/messages/nominal/Notification
 import {DEFAULTS} from './constants';
 import {createConnectionContext} from '../context';
 
-export interface EnableWsCompactReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {
-}
+export interface EnableWsCompactReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {}
 
 export interface CompactRpcWebSocket<Ctx = unknown> extends RpcWebSocket<Ctx> {
   isBinary: boolean;
@@ -50,7 +49,7 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
       const rpc = createRpcServer({
         send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]) => {
           if (ws.getBufferedAmount() > maxBackpressure) return;
-          const {isBinary} = (ws as CompactRpcWebSocket<Ctx>);
+          const {isBinary} = ws as CompactRpcWebSocket<Ctx>;
           const encoded = isBinary ? encoderMsgPack.encode(messages) : encoderJson.encode(messages);
           ws.send(encoded, isBinary);
         },

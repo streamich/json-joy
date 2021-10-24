@@ -36,7 +36,8 @@ export interface Call<Request = unknown, Response = unknown> {
 /**
  * Implements methods to call Reactive-RPC methods on the server.
  */
-export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> implements IRpcApiCaller<Api, Ctx> {
+export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown>
+  implements IRpcApiCaller<Api, Ctx> {
   public readonly api: Api;
   public readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
@@ -44,14 +45,9 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
   protected _calls: number = 0;
 
-  constructor({
-    api,
-    error,
-    preCallBufferSize = 10,
-    maxActiveCalls = 50,
-  }: RpcApiCallerParams<Api, Ctx, E>) {
+  constructor({api, error, preCallBufferSize = 10, maxActiveCalls = 50}: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = api;
-    this.error = error || new ErrorLikeErrorFormatter() as any;
+    this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.preCallBufferSize = preCallBufferSize;
     this.maxActiveCalls = maxActiveCalls;
   }
@@ -77,8 +73,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * @returns RpcMethod
    */
   public get<K extends keyof Api>(name: K): Api[K] {
-    if (!this.exists(name))
-      throw new RpcError(RpcServerError.NoMethodSpecified);
+    if (!this.exists(name)) throw new RpcError(RpcServerError.NoMethodSpecified);
     return this.api[name]!;
   }
 
@@ -94,10 +89,13 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * @param ctx Server context object.
    * @returns Response data.
    */
-  public async call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>> {
+  public async call<K extends keyof Api>(
+    name: K,
+    request: RpcMethodRequest<Api[K]>,
+    ctx: Ctx,
+  ): Promise<RpcMethodResponse<Api[K]>> {
     try {
-      if (this._calls >= this.maxActiveCalls)
-        throw new RpcError(RpcServerError.TooManyActiveCalls);
+      if (this._calls >= this.maxActiveCalls) throw new RpcError(RpcServerError.TooManyActiveCalls);
       const method = this.get(name);
       if (method.validate) method.validate(request);
       try {
@@ -128,25 +126,26 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     const reqUnsubscribe$ = new Subject<null>();
     try {
       // When there are too many in-flight calls.
-      if (this._calls >= this.maxActiveCalls)
-        throw new RpcError(RpcServerError.TooManyActiveCalls);
+      if (this._calls >= this.maxActiveCalls) throw new RpcError(RpcServerError.TooManyActiveCalls);
 
       // This throws when Reactive-RPC method does not exist.
       const method = this.get(name);
 
       // When Reactive-RPC method is "static".
       if (!method.isStreaming) {
-        const response$: Observable<RpcMethodResponse<Api[K]>> = from((async () => {
-          const request = await firstValueFrom(req$.pipe(first()));
-          const response = await this.call(name, request, ctx);
-          return response;
-        })());
+        const response$: Observable<RpcMethodResponse<Api[K]>> = from(
+          (async () => {
+            const request = await firstValueFrom(req$.pipe(first()));
+            const response = await this.call(name, request, ctx);
+            return response;
+          })(),
+        );
         const res$ = new Subject<RpcMethodResponse<Api[K]>>();
         response$.subscribe(res$);
 
         // Format errors using custom error formatter.
         const $resWithErrorsFormatted = res$.pipe(
-          catchError(error => {
+          catchError((error) => {
             throw this.error.format(error);
           }),
         );
@@ -158,13 +157,12 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       const methodStreaming = method as RpcMethodStreaming<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
 
       // Validate all incoming stream requests.
-      const requestValidated$ = req$
-        .pipe(
-          map(request => {
-            if (methodStreaming.validate) methodStreaming.validate(request);
-            return request;
-          })
-        );
+      const requestValidated$ = req$.pipe(
+        map((request) => {
+          if (methodStreaming.validate) methodStreaming.validate(request);
+          return request;
+        }),
+      );
 
       // Buffer incoming requests while pre-call checks are executed.
       const bufferSize = methodStreaming.preCallBufferSize || this.preCallBufferSize;
@@ -177,38 +175,36 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
       // Keep track of buffering errors, such as buffer overflow.
       requestBuffered$.subscribe({
-        error: error => { error$.error(error); },
+        error: (error) => {
+          error$.error(error);
+        },
         // complete: () => { error$.complete(); },
       });
       requestValidated$.subscribe(requestBuffered$);
 
       // Main call execution.
-      const result$ = requestBuffered$
-        .pipe(
-          // First, execute pre-call checks with only the first request.
-          take(1),
-          switchMap(request => {
-            return methodStreaming.onPreCall
-              ? from(methodStreaming.onPreCall(ctx, request))
-              : from([0]);
-          }),
-          // Execute the actual RPC call and flush request buffer.
-          switchMap(() => {
-            Promise.resolve().then(() => {
-              requestBuffered$.flush();
-            });
-            return methodStreaming.call$(ctx, requestBuffered$)
-              .pipe(
-                finalize(() => {
-                  error$.complete();
-                }),
-              );
-          }),
-          // Make sure we don't call method implementation more than once.
-          share(),
-          // Make sure external errors are captured.
-          mergeWith(error$),
-        );
+      const result$ = requestBuffered$.pipe(
+        // First, execute pre-call checks with only the first request.
+        take(1),
+        switchMap((request) => {
+          return methodStreaming.onPreCall ? from(methodStreaming.onPreCall(ctx, request)) : from([0]);
+        }),
+        // Execute the actual RPC call and flush request buffer.
+        switchMap(() => {
+          Promise.resolve().then(() => {
+            requestBuffered$.flush();
+          });
+          return methodStreaming.call$(ctx, requestBuffered$).pipe(
+            finalize(() => {
+              error$.complete();
+            }),
+          );
+        }),
+        // Make sure we don't call method implementation more than once.
+        share(),
+        // Make sure external errors are captured.
+        mergeWith(error$),
+      );
 
       // Track number of in-flight calls.
       const resultWithActiveCallTracking$ = of(null).pipe(
@@ -223,7 +219,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       );
 
       // Observable to which user will subscribe.
-      const res$ = new Observable<RpcMethodResponse<Api[K]>>(observer => {
+      const res$ = new Observable<RpcMethodResponse<Api[K]>>((observer) => {
         const subscription = resultWithActiveCallTracking$.subscribe(observer);
 
         // Throw error on inactivity timeout.
@@ -247,7 +243,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
       // Format errors using custom error formatter.
       const $resWithErrorsFormatted = res$.pipe(
-        catchError(error => {
+        catchError((error) => {
           throw this.error.format(error);
         }),
       );
@@ -262,7 +258,11 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     }
   }
 
-  public call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>> {
+  public call$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<RpcMethodResponse<Api[K]>> {
     const call = this.createCall(name, ctx);
     request$.subscribe(call.req$);
     return call.res$;

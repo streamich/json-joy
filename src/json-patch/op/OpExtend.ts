@@ -59,9 +59,7 @@ export class OpExtend extends AbstractOp<'extend'> {
   }
 
   public toCompact(parent?: AbstractOp): CompactExtendOp {
-    return this.deleteNull
-      ? [OPCODE.extend, this.path, this.props, 1]
-      : [OPCODE.extend, this.path, this.props];
+    return this.deleteNull ? [OPCODE.extend, this.path, this.props, 1] : [OPCODE.extend, this.path, this.props];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

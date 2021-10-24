@@ -11,9 +11,10 @@ test('on remote method execution, sends message over WebSocket only once', async
   const decoder = new Decoder();
   const client = new RpcPersistentClient({
     channel: {
-      newChannel: () => new WebSocketChannel({
-        newSocket: () => ws,
-      }),
+      newChannel: () =>
+        new WebSocketChannel({
+          newSocket: () => ws,
+        }),
     },
     codec: {
       encoder: new Encoder(),
@@ -28,7 +29,7 @@ test('on remote method execution, sends message over WebSocket only once', async
   observable.subscribe(() => {});
   observable.subscribe(() => {});
   observable.subscribe(() => {});
-  await new Promise(r => setTimeout(r, 25));
+  await new Promise((r) => setTimeout(r, 25));
 
   expect(onSend).toHaveBeenCalledTimes(1);
 

@@ -49,8 +49,7 @@ export class ObjectType implements JsonNode {
   public toJson(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
     for (const [key, entry] of this.latest.entries())
-      if (!entry.node.id.isEqual(UNDEFINED_ID))
-        obj[key] = entry.node.toJson();
+      if (!entry.node.id.isEqual(UNDEFINED_ID)) obj[key] = entry.node.toJson();
     return obj;
   }
 

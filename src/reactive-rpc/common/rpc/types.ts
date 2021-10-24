@@ -1,4 +1,4 @@
-import type {Observable} from "rxjs";
+import type {Observable} from 'rxjs';
 
 export type RpcMethod<Context = unknown, Request = unknown, Response = unknown> =
   | RpcMethodStatic<Context, Request, Response>
@@ -39,7 +39,8 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
   pretty?: boolean;
 }
 
-export interface RpcMethodStatic<Context = unknown, Request = unknown, Response = unknown> extends RpcMethodBase<Context, Request> {
+export interface RpcMethodStatic<Context = unknown, Request = unknown, Response = unknown>
+  extends RpcMethodBase<Context, Request> {
   /**
    * Identifies a special cases of non-streaming method.
    */
@@ -51,7 +52,8 @@ export interface RpcMethodStatic<Context = unknown, Request = unknown, Response 
   call(ctx: Context, request: Request): Promise<Response>;
 }
 
-export interface RpcMethodStreaming<Context = unknown, Request = unknown, Response = unknown> extends RpcMethodBase<Context, Request> {
+export interface RpcMethodStreaming<Context = unknown, Request = unknown, Response = unknown>
+  extends RpcMethodBase<Context, Request> {
   /**
    * Identifies a streaming method, where, both, request and response are Rx
    * observables.
@@ -85,5 +87,9 @@ export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, an
   exists<K extends keyof Api>(name: K): boolean;
   get<K extends keyof Api>(name: K): Api[K];
   call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
-  call$<K extends keyof Api>(name: K, request$: Observable<RpcMethodRequest<Api[K]>>, ctx: Ctx): Observable<RpcMethodResponse<Api[K]>>;
+  call$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<RpcMethodResponse<Api[K]>>;
 }

@@ -38,15 +38,21 @@ export class Encoder {
     if (data === undefined) return EMPTY;
     return this.msgpack.encode(data);
   }
-  
+
   protected convertMessage(message: ReactiveRpcMessage): ReactiveRpcBinaryMessage {
-    if (message instanceof ResponseDataMessage) return new BinaryResponseDataMessage(message.id, this.encodeData(message.data));
-    else if (message instanceof ResponseCompleteMessage) return new BinaryResponseCompleteMessage(message.id, this.encodeData(message.data));
-    else if (message instanceof ResponseErrorMessage) return new BinaryResponseErrorMessage(message.id, this.encodeData(message.data));
+    if (message instanceof ResponseDataMessage)
+      return new BinaryResponseDataMessage(message.id, this.encodeData(message.data));
+    else if (message instanceof ResponseCompleteMessage)
+      return new BinaryResponseCompleteMessage(message.id, this.encodeData(message.data));
+    else if (message instanceof ResponseErrorMessage)
+      return new BinaryResponseErrorMessage(message.id, this.encodeData(message.data));
     else if (message instanceof ResponseUnsubscribeMessage) return new BinaryResponseUnsubscribeMessage(message.id);
-    else if (message instanceof RequestDataMessage) return new BinaryRequestDataMessage(message.id, message.method, this.encodeData(message.data));
-    else if (message instanceof RequestCompleteMessage) return new BinaryRequestCompleteMessage(message.id, message.method, this.encodeData(message.data));
-    else if (message instanceof RequestErrorMessage) return new BinaryRequestErrorMessage(message.id, message.method, this.encodeData(message.data));
+    else if (message instanceof RequestDataMessage)
+      return new BinaryRequestDataMessage(message.id, message.method, this.encodeData(message.data));
+    else if (message instanceof RequestCompleteMessage)
+      return new BinaryRequestCompleteMessage(message.id, message.method, this.encodeData(message.data));
+    else if (message instanceof RequestErrorMessage)
+      return new BinaryRequestErrorMessage(message.id, message.method, this.encodeData(message.data));
     else if (message instanceof RequestUnsubscribeMessage) return new BinaryRequestUnsubscribeMessage(message.id);
     // else if (message instanceof NotificationMessage) return new BinaryNotificationMessage(message.method, this.encodeData(message.data));
     return new BinaryNotificationMessage(message.method, this.encodeData(message.data));

@@ -1,10 +1,7 @@
 import type {ITimestamp} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {AbstractEncoder} from './AbstractEncoder';
-import {
-  JsonCrdtServerTimestamp,
-  JsonCrdtServerSnapshot,
-} from './types';
+import {JsonCrdtServerTimestamp, JsonCrdtServerSnapshot} from './types';
 
 export class ServerEncoder extends AbstractEncoder<JsonCrdtServerTimestamp> {
   public encode(model: Model): JsonCrdtServerSnapshot {

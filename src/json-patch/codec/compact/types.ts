@@ -2,10 +2,7 @@ import type {OPCODE} from '../../constants';
 import type {Path} from '../../../json-pointer/util';
 import type {JsonPatchTypes} from '../json/types';
 
-export type CompactOp =
-  | CompactJsonPatchOp
-  | CompactJsonPredicateOp
-  | CompactJsonPatchExtendedOp;
+export type CompactOp = CompactJsonPatchOp | CompactJsonPredicateOp | CompactJsonPatchExtendedOp;
 
 /**
  *     [opcode, path, ...extraOptions]
@@ -15,7 +12,6 @@ export type CompactOpBase =
   | [opcode: OPCODE, path: string | Path, arg1?: unknown]
   | [opcode: OPCODE, path: string | Path, arg1?: unknown, arg2?: unknown]
   | [opcode: OPCODE, path: string | Path, arg1?: unknown, arg2?: unknown, arg3?: unknown];
-
 
 // JSON Patch ------------------------------------------------------------------
 
@@ -62,7 +58,6 @@ export type CompactReplaceOp =
 export type CompactTestOp =
   | [opcode: OPCODE.test, path: string | Path, value: unknown]
   | [opcode: OPCODE.test, path: string | Path, value: unknown, not?: 1];
-
 
 // JSON Predicate --------------------------------------------------------------
 
@@ -115,7 +110,7 @@ export type CompactInOp = [opcode: OPCODE.in, path: string | Path, value: unknow
 /**
  * @category JSON Predicate
  */
- export type CompactLessOp = [opcode: OPCODE.less, path: string | Path, value: number];
+export type CompactLessOp = [opcode: OPCODE.less, path: string | Path, value: number];
 
 /**
  * @category JSON Predicate
@@ -160,7 +155,6 @@ export type CompactTypeOp = [opcode: OPCODE.type, path: string | Path, value: Js
  * @category JSON Predicate
  */
 export type CompactUndefinedOp = [opcode: OPCODE.undefined, path: string | Path];
-
 
 // JSON Patch Extended ---------------------------------------------------------
 

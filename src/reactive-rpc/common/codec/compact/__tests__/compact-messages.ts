@@ -19,7 +19,7 @@ const reqData1: CompactRequestDataMessage = [1, 0, ''];
 const reqData2: CompactRequestDataMessage = [2, 0, 'test'];
 const reqData3: CompactRequestDataMessage = [3, 0, 'hello.world'];
 const reqData4: CompactRequestDataMessage = [3, 0, 'ga.hello.world', {}];
-const reqData5: CompactRequestDataMessage = [3, 0, 'ga.hello.world', { id: '123lasdjflaksjdf' }];
+const reqData5: CompactRequestDataMessage = [3, 0, 'ga.hello.world', {id: '123lasdjflaksjdf'}];
 
 const reqComplete1: CompactRequestCompleteMessage = [1, ''];
 const reqComplete2: CompactRequestCompleteMessage = [1, 'asdf'];
@@ -30,12 +30,17 @@ const reqComplete6: CompactRequestCompleteMessage = [12345, 'a.b.c.c.d.a', {foo:
 
 const reqError1: CompactRequestErrorMessage = [1, 1, '', {}];
 const reqError2: CompactRequestErrorMessage = [5, 1, '', {a: 'b'}];
-const reqError3: CompactRequestErrorMessage = [15, 1, 'hmm', {a: [1,2,3]}];
-const reqError4: CompactRequestErrorMessage = [55555, 1, '', {
-  message: 'Some error happened',
-  code: 'SOME_ERROR',
-  errno: 94849,
-}];
+const reqError3: CompactRequestErrorMessage = [15, 1, 'hmm', {a: [1, 2, 3]}];
+const reqError4: CompactRequestErrorMessage = [
+  55555,
+  1,
+  '',
+  {
+    message: 'Some error happened',
+    code: 'SOME_ERROR',
+    errno: 94849,
+  },
+];
 
 const reqUnsubscribe1: CompactRequestUnsubscribeMessage = [1, 2];
 const reqUnsubscribe2: CompactRequestUnsubscribeMessage = [23423, 2];

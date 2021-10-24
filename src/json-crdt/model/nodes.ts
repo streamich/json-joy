@@ -5,7 +5,7 @@ export interface NodeIndex<T extends Identifiable> {
   /**
    * Retrieve any known operation in this document by its ID.
    */
-   get(id: ITimestamp): undefined | T;
+  get(id: ITimestamp): undefined | T;
 
   /**
    * Store an operation in the global operation index.

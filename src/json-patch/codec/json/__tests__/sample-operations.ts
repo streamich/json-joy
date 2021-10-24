@@ -1,4 +1,34 @@
-import {OperationAdd, OperationAnd, OperationContains, OperationCopy, OperationDefined, OperationEnds, OperationExtend, OperationFlip, OperationIn, OperationInc, OperationLess, OperationMatches, OperationMerge, OperationMore, OperationMove, OperationNot, OperationOr, OperationRemove, OperationReplace, OperationSplit, OperationStarts, OperationStrDel, OperationStrIns, OperationTest, OperationTestString, OperationTestStringLen, OperationTestType, OperationType, OperationUndefined} from '../types';
+import {
+  OperationAdd,
+  OperationAnd,
+  OperationContains,
+  OperationCopy,
+  OperationDefined,
+  OperationEnds,
+  OperationExtend,
+  OperationFlip,
+  OperationIn,
+  OperationInc,
+  OperationLess,
+  OperationMatches,
+  OperationMerge,
+  OperationMore,
+  OperationMove,
+  OperationNot,
+  OperationOr,
+  OperationRemove,
+  OperationReplace,
+  OperationSplit,
+  OperationStarts,
+  OperationStrDel,
+  OperationStrIns,
+  OperationTest,
+  OperationTestString,
+  OperationTestStringLen,
+  OperationTestType,
+  OperationType,
+  OperationUndefined,
+} from '../types';
 
 const add1: OperationAdd = {
   op: 'add',
@@ -271,7 +301,7 @@ const contains2: OperationContains = {
 const matches1: OperationMatches = {
   op: 'matches',
   path: '/gg',
-  value: 'a'
+  value: 'a',
 };
 
 const ends1: OperationEnds = {
@@ -393,29 +423,19 @@ const more2: OperationMore = {
 const and1: OperationAnd = {
   op: 'and',
   path: '/a',
-  apply: [
-    {op: 'test', path: '/b', value: 123},
-  ],
+  apply: [{op: 'test', path: '/b', value: 123}],
 };
 
 const and2: OperationAnd = {
   op: 'and',
   path: '/',
-  apply: [
-    less2,
-    more1,
-    in1,
-  ],
+  apply: [less2, more1, in1],
 };
 
 const and3: OperationAnd = {
   op: 'and',
   path: '/a/1/.',
-  apply: [
-    test1,
-    test2,
-    test3,
-  ],
+  apply: [test1, test2, test3],
 };
 
 const and4: OperationAnd = {
@@ -426,10 +446,7 @@ const and4: OperationAnd = {
     {
       op: 'and',
       path: '/gg/bet',
-      apply: [
-        test1,
-        test2,
-      ],
+      apply: [test1, test2],
     },
     test2,
   ],
@@ -438,41 +455,25 @@ const and4: OperationAnd = {
 const not1: OperationNot = {
   op: 'not',
   path: '/',
-  apply: [
-    less2,
-    more1,
-    in1,
-  ],
+  apply: [less2, more1, in1],
 };
 
 const not2: OperationNot = {
   op: 'not',
   path: '/a/1/.',
-  apply: [
-    test1,
-    test2,
-    test3,
-  ],
+  apply: [test1, test2, test3],
 };
 
 const or1: OperationOr = {
   op: 'or',
   path: '/',
-  apply: [
-    less2,
-    more1,
-    in1,
-  ],
+  apply: [less2, more1, in1],
 };
 
 const or2: OperationOr = {
   op: 'or',
   path: '/a/1/.',
-  apply: [
-    test1,
-    test2,
-    test3,
-  ],
+  apply: [test1, test2, test3],
 };
 
 export const jsonPredicateOperations = {
@@ -631,7 +632,7 @@ const merge2: OperationMerge = {
     baz: 'asdf',
     quz: true,
     qux: [1, '2', 3, true, false, null],
-  }
+  },
 };
 
 const extend1: OperationExtend = {

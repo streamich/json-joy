@@ -1,10 +1,7 @@
 import type {ITimestamp, IVectorClock} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {AbstractEncoder} from './AbstractEncoder';
-import {
-  JsonCrdtLogicalSnapshot,
-  JsonCrdtLogicalTimestamp,
-} from './types';
+import {JsonCrdtLogicalSnapshot, JsonCrdtLogicalTimestamp} from './types';
 
 export class LogicalEncoder extends AbstractEncoder<JsonCrdtLogicalTimestamp> {
   public encode(model: Model): JsonCrdtLogicalSnapshot {

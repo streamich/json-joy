@@ -45,7 +45,7 @@ export class OpType extends AbstractPredicateOp<'type'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
     encoder.u8(OPCODE.type);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeString(this.value);
   }
 }

@@ -43,7 +43,7 @@ export class OpReplace extends AbstractOp<'replace'> {
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const hasOldValue = this.oldValue !== undefined
+    const hasOldValue = this.oldValue !== undefined;
     encoder.encodeArrayHeader(hasOldValue ? 4 : 3);
     encoder.u8(OPCODE.replace);
     encoder.encodeArray(this.path as unknown[]);

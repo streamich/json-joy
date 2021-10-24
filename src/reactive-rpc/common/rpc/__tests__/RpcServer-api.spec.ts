@@ -38,7 +38,7 @@ test('can execute static RPC method', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessage(new RequestCompleteMessage(4, 'ping', {}), {});
   expect(send).toHaveBeenCalledTimes(0);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith([new ResponseCompleteMessage(4, 'pong')]);
 });

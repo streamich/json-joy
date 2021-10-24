@@ -11,16 +11,18 @@ if (process.env.TEST_E2E) {
     return {
       client: {
         call$: (method: string, data: any) => {
-          return from((async () => {
-            const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
-            const url = `http://localhost:9999/rpc/json/${method}${search}`;
-            try {
-              const response = await axios.get(url);
-              return response.data;
-            } catch (error) {
-              throw (error as any).response.data;
-            }
-          })());
+          return from(
+            (async () => {
+              const search = data !== undefined ? `?a=${encodeURIComponent(JSON.stringify(data))}` : '';
+              const url = `http://localhost:9999/rpc/json/${method}${search}`;
+              try {
+                const response = await axios.get(url);
+                return response.data;
+              } catch (error) {
+                throw (error as any).response.data;
+              }
+            })(),
+          );
         },
       },
     };

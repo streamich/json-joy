@@ -7,22 +7,22 @@ export interface ConnectionContext {
 
 /**
  * Retrieves useful request information.
- * 
+ *
  * Tries to retrieve IP address using the following methods in the that order:
- * 
+ *
  * 1. Using `X-Forwarded-For` header.
  * 2. Using `X-Real-Ip` header.
  * 3. Using server IP address of the remote end.
- * 
+ *
  * Tries to retrieve authentication token in multiple ways in the following
  * order:
- * 
+ *
  * 1. Using `Authorization` header.
  * 2. Using `access_token` URL search param.
  * 3. Using `token` URL search param.
  * 4. Using `Sec-WebSocket-Protocol` header, as `X-Authorization=<base64 token>`
  *    sub-protocol.
- * 
+ *
  * @param req uWebSockets.js request object
  * @param res uWebSockets.js response object
  * @returns Returns a processed context information.
@@ -42,7 +42,7 @@ export const createConnectionContext = (req: HttpRequest, res: HttpResponse): Co
     token = params.get('access_token') || '';
     if (!token) params.get('token') || '';
   }
-  
+
   // Try to retrieve authentication token from Sec-WebSocket-Protocol header.
   if (!token) {
     const secWebSocketProtocol = String(req.getHeader('sec-websocket-protocol')) || '';

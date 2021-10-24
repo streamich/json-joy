@@ -4,8 +4,7 @@ import {Encoder, Decoder} from '../../../common/codec/binary-msgpack';
 import {DEFAULTS} from './constants';
 import {createConnectionContext} from '../context';
 
-export interface EnableWsBinaryReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {
-}
+export interface EnableWsBinaryReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {}
 
 export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsBinaryReactiveRpcApiParams<Ctx>) => {
   const encoder = new Encoder();

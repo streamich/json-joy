@@ -1,12 +1,12 @@
-import {formatError} from "../../../../common/rpc";
-import {RpcApiCaller} from "../../../../common/rpc/RpcApiCaller";
-import {createConnectionContext} from "../../context";
-import {UwsHttpResponse} from "../../types";
-import {readBody} from "../../util";
-import {UwsHttpBaseContext} from "../types";
-import {parsePayload} from "../util";
-import {STATUS_400} from "./constants";
-import type {EnableHttpPostRcpApiParams} from "./types";
+import {formatError} from '../../../../common/rpc';
+import {RpcApiCaller} from '../../../../common/rpc/RpcApiCaller';
+import {createConnectionContext} from '../../context';
+import {UwsHttpResponse} from '../../types';
+import {readBody} from '../../util';
+import {UwsHttpBaseContext} from '../types';
+import {parsePayload} from '../util';
+import {STATUS_400} from './constants';
+import type {EnableHttpPostRcpApiParams} from './types';
 
 const HDR_KEY_CONTENT_TYPE = Buffer.from('Content-Type');
 const HDR_VALUE_APPLICATION_JSON = Buffer.from('application/json');
@@ -20,10 +20,17 @@ const sendError = (res: UwsHttpResponse, error: unknown, pretty: boolean) => {
   });
 };
 
-function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpResponse, ctx: Ctx, name: string, body: Buffer | string, caller: RpcApiCaller<any, Ctx, unknown>) {
+function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(
+  res: UwsHttpResponse,
+  ctx: Ctx,
+  name: string,
+  body: Buffer | string,
+  caller: RpcApiCaller<any, Ctx, unknown>,
+) {
   try {
     const json = parsePayload(ctx, body);
-    caller.call(name, json, ctx)
+    caller
+      .call(name, json, ctx)
       .then((result) => {
         if (res.aborted) return;
         res.cork(() => {
@@ -39,13 +46,12 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpRespo
     const error = new Error('Could not parse payload');
     sendError(res, error, false);
   }
-};
+}
 
 export const enableHttpRpcJsonPostApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/rpc/json/*', createContext = createConnectionContext as any, caller} = params;
 
-  if (!route.endsWith('/*'))
-    throw new Error('"route" must end with "/*".');
+  if (!route.endsWith('/*')) throw new Error('"route" must end with "/*".');
 
   uws.post(route, (res, req) => {
     const url = req.getUrl();
@@ -63,8 +69,7 @@ export const enableHttpRpcJsonPostApi = <Ctx extends UwsHttpBaseContext>(params:
 export const enableHttpRpcJsonGetApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
   const {uws, route = '/rpc/json/*', createContext = createConnectionContext as any, caller} = params;
 
-  if (!route.endsWith('/*'))
-    throw new Error('"route" must end with "/*".');
+  if (!route.endsWith('/*')) throw new Error('"route" must end with "/*".');
 
   uws.get(route, (res, req) => {
     const url = req.getUrl();

@@ -41,7 +41,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
     encoder.u8(OPCODE.in);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeArray(this.value);
   }
 }

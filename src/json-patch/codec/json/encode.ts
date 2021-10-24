@@ -1,5 +1,5 @@
-import {Op} from "../../op";
-import {Operation} from "./types";
+import {Op} from '../../op';
+import {Operation} from './types';
 
 export function encode(ops: Op[]): Operation[] {
   const operations: Operation[] = [];

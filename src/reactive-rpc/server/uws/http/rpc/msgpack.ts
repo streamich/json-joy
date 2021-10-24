@@ -1,14 +1,14 @@
-import {formatError} from "../../../../common/rpc";
-import {RpcApiCaller} from "../../../../common/rpc/RpcApiCaller";
-import {encode, decode, MsgPack} from "../../../../../json-pack/util";
-import {createConnectionContext} from "../../context";
-import {UwsHttpResponse} from "../../types";
-import {readBody} from "../../util";
-import {UwsHttpBaseContext} from "../types";
-import {STATUS_400} from "./constants";
-import {bufferToUint8Array} from "../../../../../util/bufferToUint8Array";
-import type {EnableHttpPostRcpApiParams} from "./types";
-import {parsePayload} from "../util";
+import {formatError} from '../../../../common/rpc';
+import {RpcApiCaller} from '../../../../common/rpc/RpcApiCaller';
+import {encode, decode, MsgPack} from '../../../../../json-pack/util';
+import {createConnectionContext} from '../../context';
+import {UwsHttpResponse} from '../../types';
+import {readBody} from '../../util';
+import {UwsHttpBaseContext} from '../types';
+import {STATUS_400} from './constants';
+import {bufferToUint8Array} from '../../../../../util/bufferToUint8Array';
+import type {EnableHttpPostRcpApiParams} from './types';
+import {parsePayload} from '../util';
 
 const DEFAULT_ROUTE = '/rpc/msgpack/*';
 
@@ -18,11 +18,18 @@ function sendError(res: UwsHttpResponse, error: unknown) {
     const body = encode(formatError(error));
     res.writeStatus(STATUS_400).end(body);
   });
-};
+}
 
-function processRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpResponse, ctx: Ctx, name: string, json: unknown, caller: RpcApiCaller<any, Ctx, unknown>) {
+function processRequest<Ctx extends UwsHttpBaseContext>(
+  res: UwsHttpResponse,
+  ctx: Ctx,
+  name: string,
+  json: unknown,
+  caller: RpcApiCaller<any, Ctx, unknown>,
+) {
   try {
-    caller.call(name, json, ctx)
+    caller
+      .call(name, json, ctx)
       .then((result) => {
         if (res.aborted) return;
         res.cork(() => {
@@ -38,7 +45,9 @@ function processRequest<Ctx extends UwsHttpBaseContext>(res: UwsHttpResponse, ct
   }
 }
 
-export const enableHttpRpcMsgPackPostApi = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
+export const enableHttpRpcMsgPackPostApi = <Ctx extends UwsHttpBaseContext>(
+  params: EnableHttpPostRcpApiParams<Ctx>,
+) => {
   const {uws, route = DEFAULT_ROUTE, createContext = createConnectionContext as any, caller} = params;
   if (!route.endsWith('/*')) throw new Error('"route" must end with "/*".');
   uws.post(route, (res, req) => {
@@ -50,7 +59,7 @@ export const enableHttpRpcMsgPackPostApi = <Ctx extends UwsHttpBaseContext>(para
     });
     readBody(res, (buffer) => {
       try {
-        const length = ctx.payloadSize = buffer.length;
+        const length = (ctx.payloadSize = buffer.length);
         const json = length ? decode(bufferToUint8Array(buffer) as MsgPack<unknown>) : null;
         processRequest(res, ctx, name, json, caller);
       } catch {

@@ -62,7 +62,7 @@ export class OpStrDel extends AbstractOp<'str_del'> {
   public toCompact(parent?: AbstractOp): CompactStrDelOp {
     return typeof this.str === 'string'
       ? [OPCODE.str_del, this.path, this.pos, this.str]
-      : [OPCODE.str_del, this.path, this.pos, 0, this.len] as CompactStrDelOp;
+      : ([OPCODE.str_del, this.path, this.pos, 0, this.len] as CompactStrDelOp);
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

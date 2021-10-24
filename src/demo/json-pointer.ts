@@ -2,7 +2,7 @@
 
 /**
  * Run this demo with:
- * 
+ *
  *     npx ts-node demo/json-pointer.ts
  */
 
@@ -11,7 +11,7 @@ import {find, unescapeComponent, escapeComponent, parseJsonPointer, formatJsonPo
 const doc = {
   foo: {
     bar: 123,
-  }
+  },
 };
 
 const path = parseJsonPointer('/foo/bar');

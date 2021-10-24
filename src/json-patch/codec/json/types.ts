@@ -1,16 +1,12 @@
 import type {Path} from '../../../json-pointer';
 import {OpType} from '../../opcodes';
 
-export type Operation =
-  | JsonPatchOperation
-  | PredicateOperation
-  | JsonPatchExtendedOperation;
+export type Operation = JsonPatchOperation | PredicateOperation | JsonPatchExtendedOperation;
 
 export interface OperationBase {
   readonly op: OpType;
   readonly path: string | Path;
 }
-
 
 // JSON Patch ------------------------------------------------------------------
 
@@ -88,14 +84,11 @@ export interface OperationTest<T = unknown> extends OperationBase {
   readonly not?: boolean;
 }
 
-
 // JSON Predicate --------------------------------------------------------------
 
-export type PredicateOperation =
-  | FirstOrderPredicateOperation
-  | SecondOrderPredicateOperation;
+export type PredicateOperation = FirstOrderPredicateOperation | SecondOrderPredicateOperation;
 
-export type FirstOrderPredicateOperation = 
+export type FirstOrderPredicateOperation =
   | OperationTest
   | OperationDefined
   | OperationUndefined
@@ -109,7 +102,7 @@ export type FirstOrderPredicateOperation =
   | OperationLess
   | OperationMore
   | OperationMatches
-  | OperationType
+  | OperationType;
 
 export type SecondOrderPredicateOperation = OperationAnd | OperationNot | OperationOr;
 
@@ -257,7 +250,6 @@ export interface OperationOr extends OperationBase {
   readonly apply: PredicateOperation[];
 }
 
-
 // JSON Patch Extended ---------------------------------------------------------
 
 export type JsonPatchExtendedOperation =
@@ -274,7 +266,7 @@ export type JsonPatchExtendedOperation =
  *
  * @category JSON Patch Extended
  */
- export interface OperationStrIns extends OperationBase {
+export interface OperationStrIns extends OperationBase {
   readonly op: 'str_ins';
   readonly pos: number;
   readonly str: string;

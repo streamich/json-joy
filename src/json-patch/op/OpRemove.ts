@@ -38,12 +38,12 @@ export class OpRemove extends AbstractOp<'remove'> {
 
   public toCompact(parent?: AbstractOp): CompactRemoveOp {
     return this.oldValue === undefined
-      ? [OPCODE.remove, this.path] as CompactRemoveOp
-      : [OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp;
+      ? ([OPCODE.remove, this.path] as CompactRemoveOp)
+      : ([OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp);
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
-    const hasOldValue = this.oldValue !== undefined
+    const hasOldValue = this.oldValue !== undefined;
     encoder.encodeArrayHeader(hasOldValue ? 3 : 2);
     encoder.u8(OPCODE.remove);
     encoder.encodeArray(this.path as unknown[]);

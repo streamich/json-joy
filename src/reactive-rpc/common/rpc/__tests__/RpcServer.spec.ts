@@ -177,7 +177,15 @@ test('sends error notification on empty notification name', async () => {
 test('sends error notification when notification name longer than 128 chars', async () => {
   const {server, send} = setup();
   expect(send).toHaveBeenCalledTimes(0);
-  server.onMessages([new NotificationMessage('012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678', new Uint8Array([1]))], undefined);
+  server.onMessages(
+    [
+      new NotificationMessage(
+        '012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678',
+        new Uint8Array([1]),
+      ),
+    ],
+    undefined,
+  );
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
   expect(send.mock.calls[0][0][0].data).toEqual({
@@ -196,7 +204,7 @@ test('sends error notification when "notify" callback throws', async () => {
   const name = 'aga';
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessages([new NotificationMessage(name, new Uint8Array([1]))], undefined),
-  expect(send).toHaveBeenCalledTimes(1);
+    expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
   expect(send.mock.calls[0][0][0].data).toEqual({
     message: 'test',

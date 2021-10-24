@@ -1,6 +1,6 @@
 import {runApiTests, sampleApi} from './api';
 import {RpcServer} from '../RpcServer';
-import {RpcServerLocalClient} from '../RpcServerLocalClient'
+import {RpcServerLocalClient} from '../RpcServerLocalClient';
 import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {

@@ -1,6 +1,6 @@
-import {RpcServerError} from "./constants";
+import {RpcServerError} from './constants';
 
-export   interface ErrorFormatter<E = unknown> {
+export interface ErrorFormatter<E = unknown> {
   /**
    * Method to format any error thrown by application to correct format.
    */
@@ -39,8 +39,7 @@ export const formatErrorLike = (error: ErrorLike): ErrorLike => {
 
 export const isErrorLike = (error: unknown): error is ErrorLike => {
   if (error instanceof Error) return true;
-  if (typeof error === 'object')
-    if (typeof (error as Record<string, unknown>).message === 'string') return true;
+  if (typeof error === 'object') if (typeof (error as Record<string, unknown>).message === 'string') return true;
   return false;
 };
 
@@ -55,7 +54,7 @@ export const formatErrorCode = (errno: number): ErrorLike => {
   return {
     message: 'PROTOCOL',
     errno,
-    code: RpcServerError[errno as unknown as RpcServerError],
+    code: RpcServerError[(errno as unknown) as RpcServerError],
   };
 };
 

@@ -12,10 +12,10 @@ const ping: RpcMethodStatic<object, void, 'pong'> = {
   },
 };
 
-const delay: RpcMethodStatic<object, {timeout?: number}, {done: true, timeout: number}> = {
+const delay: RpcMethodStatic<object, {timeout?: number}, {done: true; timeout: number}> = {
   isStreaming: false,
   call: async (ctx, {timeout = 10}: {timeout?: number} = {}) => {
-    await new Promise(r => setTimeout(r, timeout));
+    await new Promise((r) => setTimeout(r, timeout));
     return {
       done: true,
       timeout,
@@ -23,24 +23,25 @@ const delay: RpcMethodStatic<object, {timeout?: number}, {done: true, timeout: n
   },
 };
 
-const delayStreaming: RpcMethodStreaming<object, {timeout?: number}, {done: true, timeout: number}> = {
+const delayStreaming: RpcMethodStreaming<object, {timeout?: number}, {done: true; timeout: number}> = {
   isStreaming: true,
   call$: (ctx, req$) => {
-    return req$
-      .pipe(
-        take(1),
-        switchMap(({timeout = 10}: {timeout?: number} = {}) => {
-          return from(new Promise<number>(r => {
+    return req$.pipe(
+      take(1),
+      switchMap(({timeout = 10}: {timeout?: number} = {}) => {
+        return from(
+          new Promise<number>((r) => {
             setTimeout(() => {
               r(timeout);
             }, timeout);
-          }));
-        }),
-        map((timeout: number) => ({
-          done: true,
-          timeout,
-        })),
-      );
+          }),
+        );
+      }),
+      map((timeout: number) => ({
+        done: true,
+        timeout,
+      })),
+    );
   },
 };
 
@@ -61,22 +62,25 @@ const error: RpcMethodStatic<object, void, void> = {
   },
 };
 
-const getUser: RpcMethodStatic<object, {id: string}, {id: string, name: string, tags: string[]}> = {
+const getUser: RpcMethodStatic<object, {id: string}, {id: string; name: string; tags: string[]}> = {
   isStreaming: false,
   call: async (ctx, request) => {
     return {
       id: request.id,
       name: 'Mario Dragi',
-      tags: ['news', 'cola', 'bcaa']
+      tags: ['news', 'cola', 'bcaa'],
     };
   },
 };
 
 const streamError: RpcMethodStreaming<object, void, void> = {
   isStreaming: true,
-  call$: () => from((async () => {
-    throw new Error('Stream always errors');
-  })()),
+  call$: () =>
+    from(
+      (async () => {
+        throw new Error('Stream always errors');
+      })(),
+    ),
 };
 
 const utilTimer: RpcMethodStreaming<object, void, number> = {
@@ -84,31 +88,37 @@ const utilTimer: RpcMethodStreaming<object, void, number> = {
   call$: (ctx, request$) => timer(10, 10),
 };
 
-const buildinfo: RpcMethodStreaming<object, void, {commit: string, sha1: string}> = {
+const buildinfo: RpcMethodStreaming<object, void, {commit: string; sha1: string}> = {
   isStreaming: true,
-  call$: (ctx, request$) => from([{
-    commit: 'AAAAAAAAAAAAAAAAAAA',
-    sha1: 'BBBBBBBBBBBBBBBBBBB',
-  }]),
+  call$: (ctx, request$) =>
+    from([
+      {
+        commit: 'AAAAAAAAAAAAAAAAAAA',
+        sha1: 'BBBBBBBBBBBBBBBBBBB',
+      },
+    ]),
 };
 
 const count: RpcMethodStreaming<object, {count: number}, number> = {
   isStreaming: true,
   call$: (ctx, request$) => {
     return request$.pipe(
-      switchMap(({count}) => new Observable<number>(observer => {
-        let cnt = 0;
-        const timer = setInterval(() => {
-          observer.next(cnt++);
-          if (cnt >= count) {
-            observer.complete();
-            clearInterval(timer);
-          }
-        }, 10);
-        return () => {
-          clearInterval(timer);
-        };
-      })),
+      switchMap(
+        ({count}) =>
+          new Observable<number>((observer) => {
+            let cnt = 0;
+            const timer = setInterval(() => {
+              observer.next(cnt++);
+              if (cnt >= count) {
+                observer.complete();
+                clearInterval(timer);
+              }
+            }, 10);
+            return () => {
+              clearInterval(timer);
+            };
+          }),
+      ),
     );
   },
 };
@@ -140,7 +150,7 @@ const timeout100: RpcMethodStreaming<object, null | number, null> = {
   timeout: 100,
   call$: (ctx, req$) => {
     return req$.pipe(
-      switchMap(req => typeof req === 'number' ? from([1]).pipe(rxDelay(req)) : EMPTY),
+      switchMap((req) => (typeof req === 'number' ? from([1]).pipe(rxDelay(req)) : EMPTY)),
       mapTo(null),
     );
   },
@@ -170,7 +180,7 @@ export const sampleApi = {
 
 export interface ApiTestSetupResult {
   client: Pick<RpcClient, 'call$'>;
-};
+}
 
 export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
 
@@ -204,9 +214,9 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         const promise3 = of(firstValueFrom(client.call$('delay', {})));
         const promise4 = of(firstValueFrom(client.call$('delay', {})));
         const [res1, res2, res3, res4] = await Promise.all([promise1, promise2, promise3, promise4]);
-        expect(res1[0]).toEqual({"done": true, "timeout": 10});
-        expect(res2[0]).toEqual({"done": true, "timeout": 10});
-        expect(res3[0]).toEqual({"done": true, "timeout": 10});
+        expect(res1[0]).toEqual({done: true, timeout: 10});
+        expect(res2[0]).toEqual({done: true, timeout: 10});
+        expect(res3[0]).toEqual({done: true, timeout: 10});
         expect(res4[1]).toMatchObject({
           message: 'PROTOCOL',
           errno: RpcServerError.TooManyActiveCalls,
@@ -236,7 +246,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('double', {num: {}})));
       expect(error).toMatchObject({
-        message: 'Payload .num field missing.'
+        message: 'Payload .num field missing.',
       });
     });
   });
@@ -253,7 +263,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws error on streaming RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(lastValueFrom(client.call$('streamError', {})));
-      expect(error).toEqual({"message": "Stream always errors"});
+      expect(error).toEqual({message: 'Stream always errors'});
     });
   });
 
@@ -282,7 +292,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation', {foo: 123})));
       expect(error).toMatchObject({
-        message: '"foo" property missing.'
+        message: '"foo" property missing.',
       });
     });
   });
@@ -293,7 +303,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       test('can execute successfully', async () => {
         const {client} = await setup();
         const result = await firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 'a'}));
-        await new Promise(r => setTimeout(r, 15));
+        await new Promise((r) => setTimeout(r, 15));
         expect(result).toEqual({
           bar: 'aa',
         });
@@ -303,7 +313,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         const {client} = await setup();
         const [, error] = await of(firstValueFrom(client.call$('doubleStringWithValidation2', {foo: 123})));
         expect(error).toMatchObject({
-          message: '"foo" property missing.'
+          message: '"foo" property missing.',
         });
       });
     });
@@ -319,10 +329,10 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         const error = jest.fn();
         response.subscribe({next, error});
         subject.next(null);
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
-        await new Promise(r => setTimeout(r, 120));
+        await new Promise((r) => setTimeout(r, 120));
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(1);
         expect(error.mock.calls[0][0]).toEqual({
@@ -340,12 +350,12 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         const error = jest.fn();
         response.subscribe({next, error});
         subject.next(null);
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
-        await new Promise(r => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 40));
         subject.next(null);
-        await new Promise(r => setTimeout(r, 80));
+        await new Promise((r) => setTimeout(r, 80));
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
       });
@@ -358,10 +368,10 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         const error = jest.fn();
         response.subscribe({next, error});
         subject.next(40);
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise((r) => setTimeout(r, 1));
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
-        await new Promise(r => setTimeout(r, 120));
+        await new Promise((r) => setTimeout(r, 120));
         expect(error).toHaveBeenCalledTimes(0);
         expect(next).toHaveBeenCalledTimes(1);
       });

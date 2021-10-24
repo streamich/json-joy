@@ -53,9 +53,9 @@ test('passes through websocket ready state', () => {
   expect(ws.readyState).toBe(WebSocketState.CONNECTING);
   expect(rx.state$.getValue()).toBe(ChannelState.CONNECTING);
   expect(rx.isOpen()).toBe(false);
-  
+
   ws!._open();
-  
+
   expect(ws.readyState).toBe(WebSocketState.OPEN);
   expect(rx.state$.getValue()).toBe(ChannelState.OPEN);
   expect(rx.isOpen()).toBe(true);
@@ -189,11 +189,14 @@ describe('.close$', () => {
     rx.close$.subscribe(close);
     ws._close(123, 'test', true);
     expect(close).toHaveBeenCalledTimes(1);
-    expect(close).toHaveBeenCalledWith([rx, {
-      code: 123,
-      reason: 'test',
-      wasClean: true,
-    }]);
+    expect(close).toHaveBeenCalledWith([
+      rx,
+      {
+        code: 123,
+        reason: 'test',
+        wasClean: true,
+      },
+    ]);
   });
 
   test('when constructor fails closes with "CONSTRUCTOR" reason', async () => {
@@ -206,11 +209,14 @@ describe('.close$', () => {
     const close = jest.fn();
     rx.close$.subscribe(close);
     expect(close).toHaveBeenCalledTimes(1);
-    expect(close).toHaveBeenCalledWith([rx, {
-      code: 0,
-      reason: 'CONSTRUCTOR',
-      wasClean: true,
-    }]);
+    expect(close).toHaveBeenCalledWith([
+      rx,
+      {
+        code: 0,
+        reason: 'CONSTRUCTOR',
+        wasClean: true,
+      },
+    ]);
   });
 
   test('emits close event when subscription was late', async () => {

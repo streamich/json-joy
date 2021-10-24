@@ -14,37 +14,38 @@ if (process.env.TEST_E2E) {
   });
 
   const send = async (payload: string): Promise<string> => {
-    const res = await firstValueFrom(channel.send$(payload)
-      .pipe(
+    const res = await firstValueFrom(
+      channel.send$(payload).pipe(
         take(1),
         switchMap(() => channel.message$),
-      ));
+      ),
+    );
     return String(res);
   };
 
   test('can execute ping', async () => {
     const res = await send('[1,    "ping"]');
-    expect(JSON.parse(res)).toEqual([0, 1, "pong"]);
+    expect(JSON.parse(res)).toEqual([0, 1, 'pong']);
   });
 
   test('can execute ping in a batch', async () => {
     const res = await send('[[1,    "ping"]]');
-    expect(JSON.parse(res)).toEqual([0, 1, "pong"]);
+    expect(JSON.parse(res)).toEqual([0, 1, 'pong']);
   });
 
   test('can execute two pings in a batch', async () => {
     const res = await send('[[1,"ping",{}], [3, "ping"]]');
     expect(JSON.parse(res)).toEqual([
-      [0, 1, "pong"],
-      [0, 3, "pong"],
+      [0, 1, 'pong'],
+      [0, 3, 'pong'],
     ]);
   });
 
   test('can execute two pings in a batch', async () => {
     const res = await send('[[1,"ping",{}], [3, "ping"]]');
     expect(JSON.parse(res)).toEqual([
-      [0, 1, "pong"],
-      [0, 3, "pong"],
+      [0, 1, 'pong'],
+      [0, 3, 'pong'],
     ]);
   });
 
@@ -86,7 +87,11 @@ if (process.env.TEST_E2E) {
     });
 
     test('sends back async .err message when notification message method name is longer than 128 chars', async () => {
-      const res = JSON.parse(await send('["012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678", {}]'));
+      const res = JSON.parse(
+        await send(
+          '["012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678", {}]',
+        ),
+      );
       expect(res[0]).toBe('.err');
       expect(res[1]).toEqual({
         message: 'PROTOCOL',

@@ -1,5 +1,14 @@
 import {RpcClient} from '../RpcClient';
-import {NotificationMessage, RequestCompleteMessage, RequestDataMessage, RequestErrorMessage, RequestUnsubscribeMessage, ResponseCompleteMessage, ResponseDataMessage, ResponseErrorMessage} from '../../messages/nominal';
+import {
+  NotificationMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  RequestErrorMessage,
+  RequestUnsubscribeMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+} from '../../messages/nominal';
 import {firstValueFrom, Subject} from 'rxjs';
 
 test('can create client', async () => {

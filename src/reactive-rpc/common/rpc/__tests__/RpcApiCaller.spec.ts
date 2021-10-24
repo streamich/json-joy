@@ -10,7 +10,7 @@ const setup = () => {
     api: sampleApi,
     maxActiveCalls: 3,
   });
-  return { caller };
+  return {caller};
 };
 
 test('can instantiate', () => {
@@ -102,13 +102,12 @@ describe('smoke tests', () => {
     return {
       client: {
         call$: (name: any, request: any) =>
-          caller.call$(name, Rx.isObservable(request) ? request : Rx.of(request), {})
-            .pipe(
-              catchError(error => {
-                throw errorFormatter.format(error);
-              })
-            ),
-      }
+          caller.call$(name, Rx.isObservable(request) ? request : Rx.of(request), {}).pipe(
+            catchError((error) => {
+              throw errorFormatter.format(error);
+            }),
+          ),
+      },
     };
   });
 });

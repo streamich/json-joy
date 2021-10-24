@@ -22,7 +22,7 @@ test('receives one emitted value', async () => {
   expect(error).toHaveBeenCalledTimes(0);
   expect(complete).toHaveBeenCalledTimes(0);
   subject.next(1);
-  await new Promise(r => process.nextTick(r));
+  await new Promise((r) => process.nextTick(r));
   expect(next).toHaveBeenCalledTimes(1);
   expect(next).toHaveBeenCalledWith([1], false);
   expect(error).toHaveBeenCalledTimes(0);
@@ -37,7 +37,7 @@ test('receives one emitted value and complete message', async () => {
   subscribeSyncObserver(subject, {next, error, complete});
   subject.next(1);
   subject.complete();
-  await new Promise(r => process.nextTick(r));
+  await new Promise((r) => process.nextTick(r));
   expect(next).toHaveBeenCalledTimes(1);
   expect(next).toHaveBeenCalledWith([1], true);
   expect(error).toHaveBeenCalledTimes(0);
@@ -64,17 +64,17 @@ test('can emit async multiple times, multiple sync emission per time', async () 
   subscribeSyncObserver(subject, {next, error, complete});
   subject.next(1);
   subject.next(2);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   subject.next(3);
   subject.next(4);
   subject.next(5);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   subject.next(6);
   subject.next(7);
   subject.next(8);
   subject.next(9);
   subject.complete();
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   expect(next).toHaveBeenCalledTimes(3);
   expect(next).toHaveBeenCalledWith([1, 2], false);
   expect(next).toHaveBeenCalledWith([3, 4, 5], false);

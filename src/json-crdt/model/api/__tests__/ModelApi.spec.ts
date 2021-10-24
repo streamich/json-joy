@@ -4,39 +4,24 @@ describe('string manipulation', () => {
   test('can edit strings', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api
-      .root('')
-      .commit();
-    api.strIns([], 0, 'var foo = bar')
-      .commit();
-    api.strIns([], 10, '"')
-      .commit();
-    api.strIns([], 14, '";')
-      .commit();
-    api.strDel([], 0, 3)
-      .commit();
-    api.strIns([], 0, 'const')
-      .commit();
+    api.root('').commit();
+    api.strIns([], 0, 'var foo = bar').commit();
+    api.strIns([], 10, '"').commit();
+    api.strIns([], 14, '";').commit();
+    api.strDel([], 0, 3).commit();
+    api.strIns([], 0, 'const').commit();
     expect(doc.toJson()).toBe('const foo = "bar";');
   });
 
   test('can edit strings - 2', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api
-      .root({foo: [123, '', 5]})
-      .commit();
-    api
-      .strIns(['foo', 1], 0, 'var foo = bar')
-      .commit();
-    api.strIns(['foo', 1], 10, '"')
-      .commit()
-    api.strIns(['foo', 1], 14, '";')
-      .commit();
-    api.strDel(['foo', 1], 0, 3)
-      .commit()
-    api.strIns(['foo', 1], 0, 'const')
-      .commit();
+    api.root({foo: [123, '', 5]}).commit();
+    api.strIns(['foo', 1], 0, 'var foo = bar').commit();
+    api.strIns(['foo', 1], 10, '"').commit();
+    api.strIns(['foo', 1], 14, '";').commit();
+    api.strDel(['foo', 1], 0, 3).commit();
+    api.strIns(['foo', 1], 0, 'const').commit();
     expect(doc.toJson()).toEqual({
       foo: [123, 'const foo = "bar";', 5],
     });

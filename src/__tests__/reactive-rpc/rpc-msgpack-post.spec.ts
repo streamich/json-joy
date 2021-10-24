@@ -12,17 +12,19 @@ if (process.env.TEST_E2E) {
     return {
       client: {
         call$: (method: string, data: any) => {
-          return from((async () => {
-            const url = `http://localhost:9999/rpc/msgpack/${method}`;
-            try {
-              const response = await axios.post(url, data === undefined ? undefined : encode(data), {
-                responseType: 'arraybuffer',
-              });
-              return decode(response.data);
-            } catch (error) {
-              throw decode((error as any).response.data);
-            }
-          })());
+          return from(
+            (async () => {
+              const url = `http://localhost:9999/rpc/msgpack/${method}`;
+              try {
+                const response = await axios.post(url, data === undefined ? undefined : encode(data), {
+                  responseType: 'arraybuffer',
+                });
+                return decode(response.data);
+              } catch (error) {
+                throw decode((error as any).response.data);
+              }
+            })(),
+          );
         },
       },
     };

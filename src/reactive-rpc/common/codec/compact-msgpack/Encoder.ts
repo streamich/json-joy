@@ -1,5 +1,5 @@
-import {ReactiveRpcMessage} from "../../messages/nominal";
-import {encode} from "../compact/encode";
+import {ReactiveRpcMessage} from '../../messages/nominal';
+import {encode} from '../compact/encode';
 import {Encoder as MessagePackEncoder} from '../../../../json-pack/Encoder';
 
 export class Encoder {

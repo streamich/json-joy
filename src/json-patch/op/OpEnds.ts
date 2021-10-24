@@ -48,7 +48,7 @@ export class OpEnds extends AbstractPredicateOp<'ends'> {
     const ignoreCase = this.ignore_case;
     encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
     encoder.u8(OPCODE.ends);
-    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : this.path as unknown[]);
+    encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeString(this.value);
     if (ignoreCase) encoder.u8(1);
   }

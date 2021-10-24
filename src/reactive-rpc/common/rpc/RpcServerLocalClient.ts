@@ -1,6 +1,6 @@
-import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from "../messages";
-import {RpcClient} from "./RpcClient";
-import {RpcServer} from "./RpcServer";
+import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages';
+import {RpcClient} from './RpcClient';
+import {RpcServer} from './RpcServer';
 
 export interface RpcServerLocalClientParams<Ctx = unknown, T = unknown> {
   ctx: Ctx;

@@ -58,7 +58,14 @@ export class RandomJson {
       this.opts.odds.string +
       this.opts.odds.array +
       this.opts.odds.object;
-    this.root = this.opts.rootNode === 'object' ? {} : this.opts.rootNode === 'array' ? [] : this.pickContainerType() === 'object' ? {} : [];
+    this.root =
+      this.opts.rootNode === 'object'
+        ? {}
+        : this.opts.rootNode === 'array'
+        ? []
+        : this.pickContainerType() === 'object'
+        ? {}
+        : [];
     this.containers.push(this.root);
   }
 
