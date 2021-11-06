@@ -1,6 +1,7 @@
 /* tslint:disable no-string-throw */
 
-import {hasOwnProperty, Path} from './util';
+import type {Path} from './types';
+import {hasOwnProperty} from './util';
 
 export interface Reference {
   /** Target value where pointer is pointing. */

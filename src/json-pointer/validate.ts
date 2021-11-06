@@ -1,4 +1,4 @@
-import {Path} from './util';
+import type {Path} from './types';
 
 export const validateJsonPointer = (pointer: string | Path) => {
   if (typeof pointer === 'string') {
