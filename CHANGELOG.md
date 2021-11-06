@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/streamich/json-joy/compare/v3.0.0...v3.1.0) (2021-11-06)
+
+
+### Bug Fixes
+
+* 🐛 correct type import ([e47205d](https://github.com/streamich/json-joy/commit/e47205dbcd8b38d80ae1d94dbb5761f9b0d9486d))
+* 🐛 fix imports after refactor ([f0f6905](https://github.com/streamich/json-joy/commit/f0f69055b4ee647434408d8573ddc88f9122f367))
+
+
+### Features
+
+* 🎸 add JSON Pointer codegen ([180fb66](https://github.com/streamich/json-joy/commit/180fb66c74ddef3ffdc3627276bbc2e2891b919d)), closes [#82](https://github.com/streamich/json-joy/issues/82)
+
 # [3.0.0](https://github.com/streamich/json-joy/compare/v2.19.0...v3.0.0) (2021-10-24)
 
 
