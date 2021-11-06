@@ -1,5 +1,5 @@
 import type {OPCODE} from '../../constants';
-import type {Path} from '../../../json-pointer/util';
+import type {Path} from '../../../json-pointer/types';
 import type {JsonPatchTypes} from '../json/types';
 
 export type CompactOp = CompactJsonPatchOp | CompactJsonPredicateOp | CompactJsonPatchExtendedOp;

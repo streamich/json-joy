@@ -1,4 +1,4 @@
-export type Path = readonly (string | number)[];
+import type {Path} from './types';
 
 const r1 = /~1/g;
 const r2 = /~0/g;
