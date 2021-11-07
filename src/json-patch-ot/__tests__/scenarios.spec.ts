@@ -925,8 +925,8 @@ for (const group of groups) {
   (group.only ? describe.only : describe)(group.name, () => {
     for (const {only, name, docStart, docEnd, user1, user2, t} of group.scenarios) {
       (only ? test.only : test)(name, () => {
-        const ops1 = decode(user1);
-        const ops2 = decode(user2);
+        const ops1 = decode(user1, {});
+        const ops2 = decode(user2, {});
         const doc1 = applyOps(docStart, ops1, false).doc;
         const transformed = transform(ops1, ops2);
         // tslint:disable-next-line

@@ -2,6 +2,7 @@ import {deepClone} from '../util';
 import {Operation} from '../types';
 import {Op} from '../op';
 import {decode} from '../codec/json';
+import type {JsonPatchOptions} from '../types';
 
 export interface OpResult {
   doc: unknown;
@@ -30,7 +31,7 @@ export function applyOps(doc: unknown, ops: readonly Op[], mutate: boolean): Pat
   return {doc, res};
 }
 
-export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean): PatchResult {
-  const result = applyOps(doc, decode(patch), mutate);
+export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean, options: JsonPatchOptions): PatchResult {
+  const result = applyOps(doc, decode(patch, options), mutate);
   return result;
 }

@@ -23,7 +23,7 @@ export const xRemove = (add: OpRemove, op: Op): null | Op => {
         path: newPath ? formatJsonPointer(newPath) : op.path,
       };
       if (newFrom) (operation as any).from = newFrom;
-      return operationToOp(operation);
+      return operationToOp(operation, {});
     }
   }
 

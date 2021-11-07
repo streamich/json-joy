@@ -2,7 +2,7 @@ import {applyPatch} from '../patch';
 import {Operation} from '../types';
 
 const exec = (doc: unknown, op: Operation) => {
-  return applyPatch(doc, [op], true);
+  return applyPatch(doc, [op], true, {});
 };
 
 describe('type', () => {

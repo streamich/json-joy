@@ -35,8 +35,14 @@ import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
 import {OPCODE} from '../../constants';
 import {Path} from '../../../json-pointer';
 import {JsonPatchTypes} from '../json/types';
+import type {JsonPatchOptions} from '../../types';
+import {createMatcherDefault} from '../../util';
 
 export class Decoder extends MessagePackDecoder {
+  constructor(private readonly options: JsonPatchOptions) {
+    super();
+  }
+
   public decode(uint8: Uint8Array): Op[] {
     this.reset(uint8);
     return this.decodePatch();
@@ -116,7 +122,7 @@ export class Decoder extends MessagePackDecoder {
         const path = this.decodePath(parent);
         const value = this.decodeString();
         const ignoreCase = length > 3;
-        return new OpMatches(path, value, ignoreCase);
+        return new OpMatches(path, value, ignoreCase, this.options.createMatcher || createMatcherDefault);
       }
       case OPCODE.merge: {
         const hasProps = length > 3;

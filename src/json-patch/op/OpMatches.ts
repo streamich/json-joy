@@ -1,6 +1,6 @@
 import type {CompactMatchesOp} from '../codec/compact/types';
+import type {OperationMatches, CreateRegexMatcher, RegexMatcher} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {OperationMatches} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
@@ -10,9 +10,12 @@ import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
  * @category JSON Predicate
  */
 export class OpMatches extends AbstractPredicateOp<'matches'> {
+  public readonly matcher: RegexMatcher;
+
   // tslint:disable-next-line variable-name
-  constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
+  constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean, createMatcher: CreateRegexMatcher) {
     super(path);
+    this.matcher = createMatcher(value, ignore_case);
   }
 
   public op() {
@@ -22,8 +25,7 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;
-    const reg = new RegExp(this.value, this.ignore_case ? 'i' : undefined);
-    const test = reg.test(val);
+    const test = this.matcher(val);
     return test;
   }
 

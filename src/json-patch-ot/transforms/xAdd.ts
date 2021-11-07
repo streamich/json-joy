@@ -23,7 +23,8 @@ export const xAdd = (add: OpAdd, op: Op): null | Op => {
         path: newPath ? formatJsonPointer(newPath) : op.path,
       };
       if (newFrom) (operation as any).from = formatJsonPointer(newFrom);
-      return operationToOp(operation);
+      // TODO: The second argument should not be {}
+      return operationToOp(operation, {});
     }
   }
 

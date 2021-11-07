@@ -10,7 +10,7 @@ describe('str_del', () => {
         pos: 5,
         len: 6,
       };
-      const result = applyPatch('hello world!', [operation], true).doc;
+      const result = applyPatch('hello world!', [operation], true, {}).doc;
       expect(result).toEqual('hello!');
     });
 
@@ -21,7 +21,7 @@ describe('str_del', () => {
         pos: 0,
         str: 'hello ',
       };
-      const result = applyPatch('hello world!', [operation], true).doc;
+      const result = applyPatch('hello world!', [operation], true, {}).doc;
       expect(result).toEqual('world!');
     });
 
@@ -32,7 +32,7 @@ describe('str_del', () => {
         pos: 3,
         len: 999999,
       };
-      const result = applyPatch('1234567890', [operation], true).doc;
+      const result = applyPatch('1234567890', [operation], true, {}).doc;
       expect(result).toEqual('123');
     });
 
@@ -43,7 +43,7 @@ describe('str_del', () => {
         pos: 1,
         len: 999999,
       };
-      const result = applyPatch('1', [operation], true).doc;
+      const result = applyPatch('1', [operation], true, {}).doc;
       expect(result).toEqual('1');
     });
   });
@@ -56,7 +56,7 @@ describe('str_del', () => {
         pos: 2,
         len: 1,
       };
-      const result = applyPatch({foo: 'abc'}, [operation], true).doc;
+      const result = applyPatch({foo: 'abc'}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'ab'});
     });
 
@@ -67,7 +67,7 @@ describe('str_del', () => {
         pos: 1,
         len: 1,
       };
-      const result = applyPatch({foo: 'abc'}, [operation], true).doc;
+      const result = applyPatch({foo: 'abc'}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'ac'});
     });
 
@@ -78,7 +78,7 @@ describe('str_del', () => {
         pos: 1,
         str: 'b',
       };
-      const result = applyPatch({foo: 'abc'}, [operation], true).doc;
+      const result = applyPatch({foo: 'abc'}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'ac'});
     });
 
@@ -89,7 +89,7 @@ describe('str_del', () => {
         pos: 0,
         len: 1,
       };
-      const result = applyPatch({foo: 'abc'}, [operation], true).doc;
+      const result = applyPatch({foo: 'abc'}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'bc'});
     });
   });
@@ -102,7 +102,7 @@ describe('str_del', () => {
         pos: 2,
         len: 1,
       };
-      const result = applyPatch(['abc'], [operation], true).doc;
+      const result = applyPatch(['abc'], [operation], true, {}).doc;
       expect(result).toEqual(['ab']);
     });
 
@@ -113,7 +113,7 @@ describe('str_del', () => {
         pos: 1,
         len: 1,
       };
-      const result = applyPatch([1, 'abc'], [operation], true).doc;
+      const result = applyPatch([1, 'abc'], [operation], true, {}).doc;
       expect(result).toEqual([1, 'ac']);
     });
 
@@ -124,7 +124,7 @@ describe('str_del', () => {
         pos: 0,
         len: 1,
       };
-      const result = applyPatch(['abc', true], [operation], true).doc;
+      const result = applyPatch(['abc', true], [operation], true, {}).doc;
       expect(result).toEqual(['bc', true]);
     });
   });

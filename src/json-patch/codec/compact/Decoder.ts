@@ -1,9 +1,12 @@
+import type  {JsonPatchOptions} from '../../types';
+import type {CompactOp} from './types';
 import {Op} from '../../op';
 import {decode} from './decode';
-import {CompactOp} from './types';
 
 export class Decoder {
+  constructor(private readonly options: JsonPatchOptions) {}
+
   public decode(patch: CompactOp[]): Op[] {
-    return decode(patch);
+    return decode(patch, this.options);
   }
 }

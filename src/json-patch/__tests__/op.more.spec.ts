@@ -1,7 +1,7 @@
 import {applyPatch} from '../patch';
 import {Operation} from '../types';
 
-const applyOperation = (doc: unknown, op: Operation) => applyPatch(doc, [op], true);
+const applyOperation = (doc: unknown, op: Operation) => applyPatch(doc, [op], true, {});
 
 describe('more', () => {
   describe('root', () => {

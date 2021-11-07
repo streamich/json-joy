@@ -30,8 +30,10 @@ import {OpNot} from '../../op/OpNot';
 import {OpMatches} from '../../op/OpMatches';
 import {OpType} from '../../op/OpType';
 import {toPath} from '../../../json-pointer';
+import type {JsonPatchOptions} from '../../types';
+import {createMatcherDefault} from '../../util';
 
-export const operationToOp = (op: Operation): Op => {
+export const operationToOp = (op: Operation, options: JsonPatchOptions): Op => {
   switch (op.op) {
     case 'add':
       return new OpAdd(toPath(op.path), op.value);
@@ -58,11 +60,11 @@ export const operationToOp = (op: Operation): Op => {
     case 'extend':
       return new OpExtend(toPath(op.path), op.props, !!op.deleteNull);
     default:
-      return operationToPredicateOp(op);
+      return operationToPredicateOp(op, options);
   }
 };
 
-export const operationToPredicateOp = (op: Operation): PredicateOp => {
+export const operationToPredicateOp = (op: Operation, options: JsonPatchOptions): PredicateOp => {
   switch (op.op) {
     case 'test':
       return new OpTest(toPath(op.path), op.value, !!op.not);
@@ -85,7 +87,7 @@ export const operationToPredicateOp = (op: Operation): PredicateOp => {
     case 'starts':
       return new OpStarts(toPath(op.path), op.value, !!op.ignore_case);
     case 'matches':
-      return new OpMatches(toPath(op.path), op.value, !!op.ignore_case);
+      return new OpMatches(toPath(op.path), op.value, !!op.ignore_case, options.createMatcher || createMatcherDefault);
     case 'in':
       return new OpIn(toPath(op.path), op.value);
     case 'less':
@@ -96,21 +98,21 @@ export const operationToPredicateOp = (op: Operation): PredicateOp => {
       const path = toPath(op.path);
       return new OpAnd(
         path,
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]}, options)),
       );
     }
     case 'or': {
       const path = toPath(op.path);
       return new OpOr(
         path,
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]}, options)),
       );
     }
     case 'not': {
       const path = toPath(op.path);
       return new OpNot(
         path,
-        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]})),
+        op.apply.map((x) => operationToPredicateOp({...x, path: [...path, ...toPath(x.path)]}, options)),
       );
     }
     default:
@@ -118,11 +120,11 @@ export const operationToPredicateOp = (op: Operation): PredicateOp => {
   }
 };
 
-export function decode(patch: readonly Operation[]): Op[] {
+export function decode(patch: readonly Operation[], options: JsonPatchOptions): Op[] {
   const ops: Op[] = [];
   const length = patch.length;
   for (let i = 0; i < length; i++) {
-    const op = operationToOp(patch[i]);
+    const op = operationToOp(patch[i], options);
     ops.push(op);
   }
   return ops;

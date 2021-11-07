@@ -15,7 +15,7 @@ describe('flip', () => {
       {op: 'flip', path: '/val3'},
       {op: 'flip', path: '/val4'},
     ];
-    const result = applyPatch(doc, operations, true).doc;
+    const result = applyPatch(doc, operations, true, {}).doc;
     expect(result).toEqual({
       val1: false,
       val2: true,
@@ -30,7 +30,7 @@ describe('flip', () => {
         op: 'flip',
         path: '',
       };
-      const result = applyPatch(true, [operation], true).doc;
+      const result = applyPatch(true, [operation], true, {}).doc;
       expect(result).toEqual(false);
     });
 
@@ -39,7 +39,7 @@ describe('flip', () => {
         op: 'flip',
         path: '',
       };
-      const result = applyPatch(false, [operation], true).doc;
+      const result = applyPatch(false, [operation], true, {}).doc;
       expect(result).toEqual(true);
     });
 
@@ -48,7 +48,7 @@ describe('flip', () => {
         op: 'flip',
         path: '',
       };
-      const result = applyPatch(123, [operation], true).doc;
+      const result = applyPatch(123, [operation], true, {}).doc;
       expect(result).toEqual(false);
     });
 
@@ -57,7 +57,7 @@ describe('flip', () => {
         op: 'flip',
         path: '',
       };
-      const result = applyPatch(0, [operation], true).doc;
+      const result = applyPatch(0, [operation], true, {}).doc;
       expect(result).toEqual(true);
     });
   });
@@ -68,7 +68,7 @@ describe('flip', () => {
         op: 'flip',
         path: '/foo',
       };
-      const result = applyPatch({foo: true}, [operation], true).doc;
+      const result = applyPatch({foo: true}, [operation], true, {}).doc;
       expect(result).toEqual({foo: false});
     });
 
@@ -77,7 +77,7 @@ describe('flip', () => {
         op: 'flip',
         path: '/foo',
       };
-      const result = applyPatch({foo: false}, [operation], true).doc;
+      const result = applyPatch({foo: false}, [operation], true, {}).doc;
       expect(result).toEqual({foo: true});
     });
   });
@@ -94,7 +94,7 @@ describe('flip', () => {
           path: '/1',
         },
       ];
-      const result = applyPatch([true, false], operations, true).doc;
+      const result = applyPatch([true, false], operations, true, {}).doc;
       expect(result).toEqual([false, true]);
     });
   });

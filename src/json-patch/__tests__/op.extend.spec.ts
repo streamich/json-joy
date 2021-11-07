@@ -14,7 +14,7 @@ describe('extend', () => {
           },
         },
       ];
-      const result = applyPatch({foo: 'bar'}, operations, true).doc;
+      const result = applyPatch({foo: 'bar'}, operations, true, {}).doc;
 
       expect(result).toEqual({
         foo: 'bar',
@@ -35,7 +35,7 @@ describe('extend', () => {
           },
         },
       ];
-      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true).doc;
+      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: [{lol: {a: 1, b: 123}}]});
     });
@@ -52,7 +52,7 @@ describe('extend', () => {
           },
         },
       ];
-      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true).doc;
+      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: [{lol: {a: null, b: 123, c: null}}]});
     });
@@ -70,7 +70,7 @@ describe('extend', () => {
           deleteNull: true,
         },
       ];
-      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true).doc;
+      const result = applyPatch({foo: [{lol: {a: 1}}]}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: [{lol: {b: 123}}]});
     });
@@ -87,7 +87,7 @@ describe('extend', () => {
           },
         },
       ];
-      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true).doc;
+      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: {lol: {a: 1, b: 123}}});
     });
@@ -104,7 +104,7 @@ describe('extend', () => {
           },
         },
       ];
-      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true).doc;
+      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: {lol: {a: null, b: 123, c: null}}});
     });
@@ -122,7 +122,7 @@ describe('extend', () => {
           deleteNull: true,
         },
       ];
-      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true).doc;
+      const result = applyPatch({foo: {lol: {a: 1}}}, operations, true, {}).doc;
 
       expect(result).toEqual({foo: {lol: {b: 123}}});
     });

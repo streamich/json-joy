@@ -9,7 +9,7 @@ export const xMove = (move: OpMove, op: Op): null | Op | Op[] => {
     const pointer = [...move.path, ...op.path.slice(move.path.length)];
     const operation = op.toJson();
     (operation as any).path = pointer;
-    return operationToOp(operation);
+    return operationToOp(operation, {});
   }
 
   return op;

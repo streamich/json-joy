@@ -14,6 +14,7 @@ describe('undefined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });
@@ -28,6 +29,7 @@ describe('undefined', () => {
             },
           ],
           true,
+          {},
         );
       });
     });
@@ -46,6 +48,7 @@ describe('undefined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });
@@ -60,6 +63,7 @@ describe('undefined', () => {
             },
           ],
           true,
+          {},
         );
 
         applyPatch(
@@ -71,6 +75,7 @@ describe('undefined', () => {
             },
           ],
           true,
+          {},
         );
       });
     });
@@ -89,6 +94,7 @@ describe('undefined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });
@@ -103,6 +109,7 @@ describe('undefined', () => {
             },
           ],
           true,
+          {},
         );
       });
     });
