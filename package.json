@@ -62,7 +62,6 @@
     "tslib": "2"
   },
   "dependencies": {
-    "fast-deep-equal": "3.1.3",
     "json-schema-serializer": "1.0.2",
     "ts-brand-json": "0.1.1"
   },

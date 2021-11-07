@@ -5,7 +5,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
 import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
-const isEqual = require('fast-deep-equal');
+import {deepEqual} from '../../json-equal/deepEqual';
 
 /**
  * @category JSON Predicate
@@ -21,7 +21,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
 
   public test(doc: unknown) {
     const {val} = find(doc, this.path);
-    for (const x of this.value) if (isEqual(val, x)) return true;
+    for (const x of this.value) if (deepEqual(val, x)) return true;
     return false;
   }
 
