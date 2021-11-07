@@ -2,7 +2,9 @@ const Benchmark = require('benchmark');
 const deepEqualV1 = require('../../es6/json-equal/deepEqual/v1').deepEqual;
 const deepEqualV2 = require('../../es6/json-equal/deepEqual/v2').deepEqual;
 const deepEqualV3 = require('../../es6/json-equal/deepEqual/v3').deepEqual;
-var fastDeepEqual = require('fast-deep-equal/es6');
+const fastDeepEqual = require('fast-deep-equal/es6');
+const fastEquals = require('fast-equals').deepEqual;
+const lodashIsEqual = require('lodash').isEqual;
 
 const json1 = require('../fixtures/json-patch').json;
 const json2 = JSON.parse(JSON.stringify(json1));
@@ -35,6 +37,14 @@ suite
   .add(`fast-deep-equal`, function() {
     fastDeepEqual(json1, json2);
     fastDeepEqual(json3, json4);
+  })
+  .add(`fast-equals`, function() {
+    fastEquals(json1, json2);
+    fastEquals(json3, json4);
+  })
+  .add(`lodash.isEqual`, function() {
+    lodashIsEqual(json1, json2);
+    lodashIsEqual(json3, json4);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
