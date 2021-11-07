@@ -10,6 +10,7 @@ import {
   UnsubscribeMessage,
 } from '../messages';
 import {Defer} from '../../json-rx/__tests__/util';
+import {until} from '../../__tests__/util';
 
 const encoder = new Encoder();
 
@@ -398,11 +399,13 @@ test('enforces maximum number of active subscriptions', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   server.onArray(encoder.encode([new SubscribeMessage(4, 'test', undefined)]), undefined);
   await new Promise((r) => setTimeout(r, 5));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0]).toEqual(
     encoder.encode([new ErrorMessage(4, Buffer.from([BinaryRxServerError.TooManySubscriptions]))]),
   );
   await new Promise((r) => setTimeout(r, 30));
+  await until(() => send.mock.calls.length === 4);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[1][0]).toEqual(encoder.encode([new CompleteMessage(1, Buffer.from([0]))]));
   expect(send.mock.calls[2][0]).toEqual(encoder.encode([new CompleteMessage(2, Buffer.from([0]))]));
@@ -422,6 +425,7 @@ test('resets subscription count when subscriptions complete', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   d1.resolve(Buffer.from('null'));
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0]).toEqual(encoder.encode([new CompleteMessage(1, Buffer.from('null'))]));
   server.onArray(encoder.encode([new SubscribeMessage(2, 'foo', undefined)]), undefined);
@@ -429,18 +433,21 @@ test('resets subscription count when subscriptions complete', async () => {
   expect(send).toHaveBeenCalledTimes(1);
   server.onArray(encoder.encode([new SubscribeMessage(3, 'foo', undefined)]), undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 2);
   expect(send).toHaveBeenCalledTimes(2);
   expect(send.mock.calls[1][0]).toEqual(
     encoder.encode([new ErrorMessage(3, new Uint8Array([BinaryRxServerError.TooManySubscriptions]))]),
   );
   d2.reject(new Uint8Array([123]));
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 3);
   expect(send).toHaveBeenCalledTimes(3);
   expect(send.mock.calls[2][0]).toEqual(encoder.encode([new ErrorMessage(2, new Uint8Array([123]))]));
   server.onArray(encoder.encode([new SubscribeMessage(4, 'foo', undefined)]), undefined);
   await new Promise((r) => setTimeout(r, 1));
   d3.resolve(Buffer.from('null'));
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 4);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[3][0]).toEqual(encoder.encode([new CompleteMessage(4, Buffer.from('null'))]));
 });
@@ -454,6 +461,7 @@ test('sends error on subscription with already active ID', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   server.onArray(encoder.encode([new SubscribeMessage(1, 'bar', undefined)]), undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0]).toEqual(
     encoder.encode([new ErrorMessage(1, new Uint8Array([BinaryRxServerError.IdTaken]))]),
@@ -468,6 +476,7 @@ test('can pass through context object to subscription', async () => {
   const server = new BinaryRxServer({send, call, notify: () => {}, bufferTime: 0});
   server.onArray(encoder.encode([new SubscribeMessage(1, 'foo', undefined)]), {foo: 'bar'});
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(call).toHaveBeenCalledTimes(1);
   expect(call.mock.calls[0][0]).toBe('foo');
   expect(Buffer.from(call.mock.calls[0][1]).toString()).toBe('');
