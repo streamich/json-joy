@@ -6,6 +6,9 @@ This package consists of multiple self-contained libraries:
 - __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
   - [__Documentation__ 🚀](./src/json-pack/README.md)
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pack.html)
+- __`json-equal`__ &mdash; Fastest JSON deep equal implementations in JavaScript.
+  - [__Documentation__ 🚀](./src/json-equal/README.md)
+  - __Reference__ 🤖
 - __`json-patch`__ &mdash; Implementation of __JSON Patch+__ mutation operations.
   - [__Documentation__ 🚀](./src/json-patch/README.md)
     - [JSON Patch](./src/json-patch/docs/json-patch.md)
@@ -77,7 +80,8 @@ import {applyOperations} from 'json-joy/lib/json-patch`;
 All libraries can be imported from one of the below folders:
 
 - `lib` &mdash; ES5 compiled CommonJS code.
-- `es6` &mdash; ES6 compiled EcmaScript modules code.
+- `es6` &mdash; ES6 compiled CommonJS code.
+- `es2020` &mdash; ES2020 compiled CommonJS code.
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.
 
 

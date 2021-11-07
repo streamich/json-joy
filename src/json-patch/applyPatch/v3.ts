@@ -1,7 +1,7 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
 import {findByPointer, hasOwnProperty, unescapeComponent} from '../../json-pointer';
-const isEqual = require('fast-deep-equal');
+import {deepEqual} from '../../json-equal/deepEqual';
 
 export interface OpResult {
   doc: unknown;
@@ -35,7 +35,7 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
         return {doc: val, old: doc};
       }
       case 'test': {
-        if (!isEqual(operation.value, doc)) throw new Error('TEST');
+        if (!deepEqual(operation.value, doc)) throw new Error('TEST');
         return {doc};
       }
     }
@@ -89,7 +89,7 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
             return {doc, old};
           }
           case 'test': {
-            if (!isEqual(operation.value, obj[key])) throw new Error('TEST');
+            if (!deepEqual(operation.value, obj[key])) throw new Error('TEST');
             return {doc};
           }
         }
@@ -128,7 +128,7 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
             return {doc, old};
           }
           case 'test': {
-            if (!isEqual(operation.value, (obj as any)[key])) throw new Error('TEST');
+            if (!deepEqual(operation.value, (obj as any)[key])) throw new Error('TEST');
             return {doc};
           }
         }
