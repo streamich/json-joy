@@ -2,6 +2,7 @@ import {JsonRxServer} from '../JsonRxServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {Defer} from './util';
 import {json_string} from 'ts-brand-json';
+import {until} from '../../__tests__/util';
 
 test('can create server', async () => {
   const send = jest.fn();
@@ -364,9 +365,11 @@ test('enforces maximum number of active subscriptions', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessage([4, 'test'], undefined);
   await new Promise((r) => setTimeout(r, 5));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith([-1, 4, {message: 'Too many subscriptions.'}]);
   await new Promise((r) => setTimeout(r, 30));
+  await until(() => send.mock.calls.length === 4);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledWith([0, 1, 0]);
   expect(send).toHaveBeenCalledWith([0, 2, 0]);
@@ -386,6 +389,7 @@ test('resets subscription count when subscriptions complete', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   d1.resolve(null);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith([0, 1, null]);
   server.onMessage([2, 'foo'], undefined);
@@ -393,16 +397,19 @@ test('resets subscription count when subscriptions complete', async () => {
   expect(send).toHaveBeenCalledTimes(1);
   server.onMessage([3, 'foo'], undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 2);
   expect(send).toHaveBeenCalledTimes(2);
   expect(send).toHaveBeenCalledWith([-1, 3, {message: 'Too many subscriptions.'}]);
   d2.reject(123);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 3);
   expect(send).toHaveBeenCalledTimes(3);
   expect(send).toHaveBeenCalledWith([-1, 2, 123]);
   server.onMessage([4, 'foo'], undefined);
   await new Promise((r) => setTimeout(r, 1));
   d3.resolve(null);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 4);
   expect(send).toHaveBeenCalledTimes(4);
   expect(send).toHaveBeenCalledWith([0, 4, null]);
 });
@@ -416,6 +423,7 @@ test('sends error on subscription with already active ID', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   server.onMessage([1, 'bar'], undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send).toHaveBeenCalledWith([-1, 1, {message: 'ID already active.'}]);
   await new Promise((r) => setTimeout(r, 20));
@@ -462,6 +470,7 @@ test('stops sending messages after server stop()', async () => {
   expect(!!sub!).toBe(true);
   sub!.next(1);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   server.stop();
   sub!.next(2);
@@ -489,6 +498,7 @@ test('can set metadata on error object', async () => {
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][2]).toEqual({
     message: 'foo',
@@ -514,6 +524,7 @@ test('can set metadata on error object partially', async () => {
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][2]).toEqual({
     message: 'foo',
@@ -536,6 +547,7 @@ test('can set metadata on error object partially (2)', async () => {
   const server = new JsonRxServer({send, call, notify, bufferTime: 0});
   server.onMessage([1, 'foo'], undefined);
   await new Promise((r) => setTimeout(r, 1));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][2]).toEqual({
     message: 'foo',
@@ -553,6 +565,7 @@ describe('buffering', () => {
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
+    await until(() => send.mock.calls.length === 1);
     expect(send).toHaveBeenCalledTimes(1);
     expect(send.mock.calls[0][0]).toEqual([
       [0, 1, ['a', 'a', {ctx: 1}]],
@@ -572,6 +585,7 @@ describe('buffering', () => {
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
+    await until(() => send.mock.calls.length === 1);
     expect(send).toHaveBeenCalledTimes(1);
     expect(send.mock.calls[0][0]).toEqual([
       [-1, 1, 'foo'],
@@ -588,6 +602,7 @@ describe('buffering', () => {
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     expect(send).toHaveBeenCalledTimes(0);
     await new Promise((r) => setTimeout(r, 10));
+    await until(() => send.mock.calls.length === 2);
     expect(send).toHaveBeenCalledTimes(2);
     expect(send.mock.calls[0][0]).toEqual([0, 1, ['a', 'a', {ctx: 1}]]);
     expect(send.mock.calls[1][0]).toEqual([0, 2, ['b', 'b', {ctx: 2}]]);
@@ -602,6 +617,7 @@ describe('buffering', () => {
     await new Promise((r) => setTimeout(r, 10));
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     await new Promise((r) => setTimeout(r, 10));
+    await until(() => send.mock.calls.length === 2);
     expect(send).toHaveBeenCalledTimes(2);
     expect(send.mock.calls[0][0]).toEqual([0, 1, ['a', 'a', {ctx: 1}]]);
     expect(send.mock.calls[1][0]).toEqual([0, 2, ['b', 'b', {ctx: 2}]]);
@@ -615,6 +631,7 @@ describe('buffering', () => {
     server.onMessage([1, 'a', 'a'], {ctx: 1});
     server.onMessage([2, 'b', 'b'], {ctx: 2});
     await new Promise((r) => setImmediate(r));
+    await until(() => send.mock.calls.length === 1);
     expect(send).toHaveBeenCalledTimes(1);
     expect(send.mock.calls[0][0]).toEqual([
       [0, 1, ['a', 'a', {ctx: 1}]],
