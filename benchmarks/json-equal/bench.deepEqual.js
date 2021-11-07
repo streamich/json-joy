@@ -2,6 +2,7 @@ const Benchmark = require('benchmark');
 const deepEqualV1 = require('../../es6/json-equal/deepEqual/v1').deepEqual;
 const deepEqualV2 = require('../../es6/json-equal/deepEqual/v2').deepEqual;
 const deepEqualV3 = require('../../es6/json-equal/deepEqual/v3').deepEqual;
+const deepEqualCodegen = require('../../es6/json-equal/deepEqualCodegen').deepEqualCodegen;
 const fastDeepEqual = require('fast-deep-equal/es6');
 const fastEquals = require('fast-equals').deepEqual;
 const lodashIsEqual = require('lodash').isEqual;
@@ -18,6 +19,9 @@ const json4 = {
   ff: 123,
   gg: [4, 3, 'f.']
 };
+
+const equalGenerated1 = eval(deepEqualCodegen(json1));
+const equalGenerated2 = eval(deepEqualCodegen(json3));
 
 const suite = new Benchmark.Suite;
 
@@ -45,6 +49,16 @@ suite
   .add(`lodash.isEqual`, function() {
     lodashIsEqual(json1, json2);
     lodashIsEqual(json3, json4);
+  })
+  .add(`json-joy/json-equal/deepEqualCodegen`, function() {
+    equalGenerated1(json2);
+    equalGenerated2(json4);
+  })
+  .add(`json-joy/json-equal/deepEqualCodegen (with codegen)`, function() {
+    const equalGenerated1 = eval(deepEqualCodegen(json1));
+    const equalGenerated2 = eval(deepEqualCodegen(json3));
+    equalGenerated1(json2);
+    equalGenerated2(json4);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
