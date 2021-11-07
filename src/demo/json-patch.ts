@@ -16,7 +16,7 @@ const doc = {
 
 const patch: readonly Operation[] = [{op: 'add', path: '/foo/baz', value: 666}];
 
-const result = applyPatch(doc, patch, false);
+const result = applyPatch(doc, patch, false, {});
 
 console.log(result.doc);
 // { foo: { bar: 123, baz: 666 } }
