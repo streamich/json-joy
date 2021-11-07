@@ -44,3 +44,10 @@ test('generates a deep equal comparator for primitives', () => {
   expect(equal6(4.4)).toBe(true);
   expect(equal6(4)).toBe(false);
 });
+
+test('undefined is not an empty object', () => {
+  const js = deepEqualCodegen(undefined);
+  const deepEqual = eval(js);
+  const res = deepEqual({});
+  expect(res).toBe(false);
+});

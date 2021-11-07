@@ -1,5 +1,11 @@
-import {deepEqual} from '../deepEqual';
-import {RandomJson} from '../../json-random/RandomJson';
+import {deepEqualCodegen} from '..';
+import {RandomJson} from '../../../json-random/RandomJson';
+
+const deepEqual = (a: unknown, b: unknown) => {
+  const js = deepEqualCodegen(a);
+  const fn = eval(js);
+  return fn(b);
+};
 
 for (let i = 0; i < 100; i++) {
   const json1 = RandomJson.generate();

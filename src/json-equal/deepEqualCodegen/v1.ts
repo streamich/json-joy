@@ -7,7 +7,13 @@ const codegenValue = (doc: unknown, code: string[], r: number): number => {
 
   // Primitives
   if (isPrimitive) {
-    code.push(`if(r${r} !== ${JSON.stringify(doc)})return false;`);
+    if (doc === Infinity) {
+      code.push(`if(r${r} !== Infinity)return false;`);
+    } else if (doc === -Infinity) {
+      code.push(`if(r${r} !== -Infinity)return false;`);
+    } else {
+      code.push(`if(r${r} !== ${JSON.stringify(doc)})return false;`);
+    }
     return rr;
   }
 
@@ -26,12 +32,18 @@ const codegenValue = (doc: unknown, code: string[], r: number): number => {
   if (type === 'object' && doc) {
     const obj = doc as Record<string, unknown>;
     const keys = Object.keys(obj);
-    code.push(`if(!r${r} || typeof r${r} !== "object" || Object.keys(r${r}).length !== ${keys.length})return false;`);
+    code.push(`if(!r${r} || typeof r${r} !== "object" || Array.isArray(r${r}) || Object.keys(r${r}).length !== ${keys.length})return false;`);
     for (const key of keys) {
       rr++;
       code.push(`var r${rr}=r${r}[${JSON.stringify(key)}];`);
       rr = codegenValue(obj[key], code, rr);
     }
+  }
+
+  // Undefined
+  if (doc === undefined) {
+    code.push(`if(r${r} !== undefined)return false;`);
+    return rr;
   }
 
   return rr;
