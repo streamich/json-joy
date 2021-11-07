@@ -1,3 +1,23 @@
+# [3.2.0](https://github.com/streamich/json-joy/compare/v3.1.0...v3.2.0) (2021-11-07)
+
+
+### Bug Fixes
+
+* 🐛 handle special cases in deepEqualCodegen ([d093ec7](https://github.com/streamich/json-joy/commit/d093ec74e8fab9c33cd4253b8e34eb28690e3ba5))
+* 🐛 pass in options argument ([c525996](https://github.com/streamich/json-joy/commit/c5259965ac3ea9559f8896b7b7914c6c8c4aeca0))
+
+
+### Features
+
+* 🎸 add deepEqual implementation ([5c1b4ab](https://github.com/streamich/json-joy/commit/5c1b4ab788659ccb2506862c86843294212fbbee))
+* 🎸 implement deep equal code generator ([2656dc8](https://github.com/streamich/json-joy/commit/2656dc83ae4becfdb248077cde617bbd57c25896))
+* 🎸 wire through json patch options everywhere ([1b24b0e](https://github.com/streamich/json-joy/commit/1b24b0e0065e028cf4dc6d250d72685a34eded4b))
+
+
+### Performance Improvements
+
+* ⚡️ add benchmarking for deepEqual ([5f0eb2b](https://github.com/streamich/json-joy/commit/5f0eb2b9e9ce6b25ac288c18c11738d333496e56))
+
 # [3.1.0](https://github.com/streamich/json-joy/compare/v3.0.0...v3.1.0) (2021-11-06)
 
 
