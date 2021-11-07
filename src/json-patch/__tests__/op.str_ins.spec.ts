@@ -10,7 +10,7 @@ describe('str_ins', () => {
         pos: 0,
         str: 'bar',
       };
-      const result = applyPatch('', [operation], true).doc;
+      const result = applyPatch('', [operation], true, {}).doc;
       expect(result).toEqual('bar');
     });
   });
@@ -23,7 +23,7 @@ describe('str_ins', () => {
         pos: 0,
         str: 'bar',
       };
-      const result = applyPatch({foo: ''}, [operation], true).doc;
+      const result = applyPatch({foo: ''}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'bar'});
     });
 
@@ -34,11 +34,11 @@ describe('str_ins', () => {
         pos: 0,
         str: 'bar',
       };
-      expect(() => applyPatch({foo: 123}, [operation], true)).toThrow();
-      expect(() => applyPatch({foo: true}, [operation], true)).toThrow();
-      expect(() => applyPatch({foo: {}}, [operation], true)).toThrow();
-      expect(() => applyPatch({foo: []}, [operation], true)).toThrow();
-      expect(() => applyPatch({foo: null}, [operation], true)).toThrow();
+      expect(() => applyPatch({foo: 123}, [operation], true, {})).toThrow();
+      expect(() => applyPatch({foo: true}, [operation], true, {})).toThrow();
+      expect(() => applyPatch({foo: {}}, [operation], true, {})).toThrow();
+      expect(() => applyPatch({foo: []}, [operation], true, {})).toThrow();
+      expect(() => applyPatch({foo: null}, [operation], true, {})).toThrow();
     });
 
     test('can add text to empty string at position greater than host string length', () => {
@@ -48,7 +48,7 @@ describe('str_ins', () => {
         pos: 25,
         str: 'bar',
       };
-      const result = applyPatch({foo: ''}, [operation], true).doc;
+      const result = applyPatch({foo: ''}, [operation], true, {}).doc;
       expect(result).toEqual({foo: 'bar'});
     });
 
@@ -59,7 +59,7 @@ describe('str_ins', () => {
         pos: 1,
         str: 'b',
       };
-      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true).doc;
+      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true, {}).doc;
       expect(result).toEqual({foo: {bar: 'abc'}});
     });
 
@@ -70,7 +70,7 @@ describe('str_ins', () => {
         pos: 2,
         str: 'haha',
       };
-      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true).doc;
+      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true, {}).doc;
       expect(result).toEqual({foo: {bar: 'achaha'}});
     });
 
@@ -81,7 +81,7 @@ describe('str_ins', () => {
         pos: 123,
         str: 'b',
       };
-      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true).doc;
+      const result = applyPatch({foo: {bar: 'ac'}}, [operation], true, {}).doc;
       expect(result).toEqual({foo: {bar: 'acb'}});
     });
   });
@@ -94,7 +94,7 @@ describe('str_ins', () => {
         pos: 0,
         str: 'bar',
       };
-      const result = applyPatch([''], [operation], true).doc;
+      const result = applyPatch([''], [operation], true, {}).doc;
       expect(result).toEqual(['bar']);
     });
 
@@ -105,7 +105,7 @@ describe('str_ins', () => {
         pos: 25,
         str: 'bar',
       };
-      const result = applyPatch([''], [operation], true).doc;
+      const result = applyPatch([''], [operation], true, {}).doc;
       expect(result).toEqual(['bar']);
     });
 
@@ -116,7 +116,7 @@ describe('str_ins', () => {
         pos: 1,
         str: 'b',
       };
-      const result = applyPatch({foo: [0, 'ac']}, [operation], true).doc;
+      const result = applyPatch({foo: [0, 'ac']}, [operation], true, {}).doc;
       expect(result).toEqual({foo: [0, 'abc']});
     });
 
@@ -127,7 +127,7 @@ describe('str_ins', () => {
         pos: 2,
         str: 'haha',
       };
-      const result = applyPatch({foo: [1, 2, 'ac']}, [operation], true).doc;
+      const result = applyPatch({foo: [1, 2, 'ac']}, [operation], true, {}).doc;
       expect(result).toEqual({foo: [1, 2, 'achaha']});
     });
 
@@ -138,7 +138,7 @@ describe('str_ins', () => {
         pos: 123,
         str: 'b',
       };
-      const result = applyPatch([true, 'ac'], [operation], true).doc;
+      const result = applyPatch([true, 'ac'], [operation], true, {}).doc;
       expect(result).toEqual([true, 'acb']);
     });
   });
@@ -159,7 +159,7 @@ describe('str_ins', () => {
           str: 'ello',
         },
       ];
-      const result = applyPatch({foo: '123'}, operations, true).doc;
+      const result = applyPatch({foo: '123'}, operations, true, {}).doc;
       expect(result).toEqual({foo: '123', baz: 'Hello'});
     });
 
@@ -178,7 +178,7 @@ describe('str_ins', () => {
           str: 'ello',
         },
       ];
-      expect(() => applyPatch({foo: '123'}, operations, true)).toThrow();
+      expect(() => applyPatch({foo: '123'}, operations, true, {})).toThrow();
     });
   });
 });

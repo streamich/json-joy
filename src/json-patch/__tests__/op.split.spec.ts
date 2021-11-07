@@ -20,7 +20,7 @@ describe('split', () => {
           pos: 1,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
 
       expect(result).toEqual([
         {
@@ -56,7 +56,7 @@ describe('split', () => {
           pos: 1,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
 
       expect(result).toEqual([
         {
@@ -104,7 +104,7 @@ describe('split', () => {
           str: 'c',
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
 
       expect(result).toEqual([
         {
@@ -136,7 +136,7 @@ describe('split', () => {
             pos: 2,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['12', '34']);
       });
 
@@ -149,7 +149,7 @@ describe('split', () => {
             pos: 1,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['1', '234']);
       });
 
@@ -162,7 +162,7 @@ describe('split', () => {
             pos: 0,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['', '1234']);
       });
 
@@ -175,7 +175,7 @@ describe('split', () => {
             pos: 4,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['1234', '']);
       });
 
@@ -188,7 +188,7 @@ describe('split', () => {
             pos: 99999,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['12345', '']);
       });
 
@@ -201,7 +201,7 @@ describe('split', () => {
             pos: -1,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['1234', '5']);
       });
 
@@ -214,7 +214,7 @@ describe('split', () => {
             pos: -2,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['123', '45']);
       });
 
@@ -227,7 +227,7 @@ describe('split', () => {
             pos: -7,
           },
         ];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
         expect(result).toEqual(['', '12345']);
       });
     });
@@ -238,7 +238,7 @@ describe('split', () => {
           text: 'foo bar',
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 3}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([{text: 'foo'}, {text: ' bar'}]);
       });
@@ -249,7 +249,7 @@ describe('split', () => {
           foo: 'bar',
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 3}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {text: 'foo', foo: 'bar'},
@@ -263,7 +263,7 @@ describe('split', () => {
           foo: 'bar',
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 3, props: {baz: 'qux'}}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {text: 'foo', foo: 'bar', baz: 'qux'},
@@ -277,7 +277,7 @@ describe('split', () => {
           foo: 'bar',
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 3, props: {foo: '1'}}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {text: 'foo', foo: '1'},
@@ -292,7 +292,7 @@ describe('split', () => {
           children: [{text: 'foo'}, {text: 'bar'}, {text: 'baz'}],
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 1}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {
@@ -309,7 +309,7 @@ describe('split', () => {
           children: [{text: 'foo'}, {text: 'bar'}, {text: 'baz'}],
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 2, props: {f: 1}}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {
@@ -329,7 +329,7 @@ describe('split', () => {
           children: [{text: 'foo'}, {text: 'bar'}, {text: 'baz'}],
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 2, props: {f: 2}}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {
@@ -352,7 +352,7 @@ describe('split', () => {
           children: [{text: 'foo'}, {text: 'bar'}, {text: 'baz'}],
         };
         const operations: Operation[] = [{op: 'split', path: '', pos: 2, props: {f: 2, a: 2}}];
-        const result = applyPatch(state, operations, true).doc;
+        const result = applyPatch(state, operations, true, {}).doc;
 
         expect(result).toEqual([
           {
@@ -382,7 +382,7 @@ describe('split', () => {
           pos: 1,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual({foo: ['a', 'b']});
     });
 
@@ -396,7 +396,7 @@ describe('split', () => {
           props: {z: 'x'},
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual({
         foo: [
           {text: 'a', z: 'x'},
@@ -415,7 +415,7 @@ describe('split', () => {
           props: {z: 'x'},
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual({
         foo: [
           {text: '7', z: 'x'},
@@ -433,7 +433,7 @@ describe('split', () => {
           pos: 1,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual({foo: [true, true]});
     });
 
@@ -446,7 +446,7 @@ describe('split', () => {
           pos: 9,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual({foo: [9, 1]});
     });
   });
@@ -461,7 +461,7 @@ describe('split', () => {
           pos: 0,
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual([1, {children: []}, {children: [{text: 'a'}, {text: 'b'}]}, 2]);
     });
 
@@ -475,7 +475,7 @@ describe('split', () => {
           props: {a: 'b'},
         },
       ];
-      const result = applyPatch(state, operations, true).doc;
+      const result = applyPatch(state, operations, true, {}).doc;
       expect(result).toEqual([
         1,
         {foo: 'bar', a: 'b', children: []},

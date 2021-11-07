@@ -11,7 +11,7 @@ describe('merge', () => {
         pos: 1,
       },
     ];
-    const result = applyPatch(state, operations, true).doc;
+    const result = applyPatch(state, operations, true, {}).doc;
 
     expect(result).toEqual([{text: 'foobar'}]);
   });
@@ -25,7 +25,7 @@ describe('merge', () => {
         pos: 1,
       },
     ];
-    expect(() => applyPatch(state, operations, true)).toThrow();
+    expect(() => applyPatch(state, operations, true, {})).toThrow();
   });
 
   test('can merge slate element nodes', () => {
@@ -43,7 +43,7 @@ describe('merge', () => {
         pos: 1,
       },
     ];
-    const result = applyPatch(state, operations, true).doc;
+    const result = applyPatch(state, operations, true, {}).doc;
 
     expect(result).toEqual({
       foo: [{children: [{text: '1'}, {text: '2'}]}, {children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}]}],
@@ -62,6 +62,7 @@ describe('merge', () => {
           },
         ],
         true,
+        {},
       ),
     ).toThrow();
   });
@@ -78,6 +79,7 @@ describe('merge', () => {
           },
         ],
         true,
+        {},
       ),
     ).toThrow();
   });
@@ -113,7 +115,7 @@ describe('merge', () => {
         pos: 1,
       },
     ];
-    const result = applyPatch(state, operations, true).doc;
+    const result = applyPatch(state, operations, true, {}).doc;
 
     expect(result).toEqual([
       {

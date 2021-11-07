@@ -18,6 +18,7 @@ describe('Second order predicates', () => {
         },
       ],
       true,
+      {},
     );
   });
 
@@ -39,6 +40,7 @@ describe('Second order predicates', () => {
           },
         ],
         true,
+        {},
       ),
     ).toThrow();
   });
@@ -60,6 +62,7 @@ describe('Second order predicates', () => {
         },
       ],
       true,
+      {},
     );
   });
 
@@ -81,6 +84,7 @@ describe('Second order predicates', () => {
           },
         ],
         true,
+        {},
       ),
     ).toThrow();
   });
@@ -102,6 +106,7 @@ describe('Second order predicates', () => {
         },
       ],
       true,
+      {},
     );
   });
 });

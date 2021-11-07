@@ -3,6 +3,7 @@ import {RpcPersistentClient} from '../RpcPersistentClient';
 import {Encoder, Decoder} from '../../codec/compact-json';
 import {createWebSocketMock} from '../../channel/mock';
 import {RequestCompleteMessage} from '../..';
+import {until} from '../../../../__tests__/util';
 
 test('on remote method execution, sends message over WebSocket only once', async () => {
   const onSend = jest.fn();
@@ -29,7 +30,9 @@ test('on remote method execution, sends message over WebSocket only once', async
   observable.subscribe(() => {});
   observable.subscribe(() => {});
   observable.subscribe(() => {});
+
   await new Promise((r) => setTimeout(r, 25));
+  await until(() => onSend.mock.calls.length === 1);
 
   expect(onSend).toHaveBeenCalledTimes(1);
 

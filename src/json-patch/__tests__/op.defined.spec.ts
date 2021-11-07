@@ -13,6 +13,7 @@ describe('defined', () => {
             },
           ],
           true,
+          {},
         );
       });
 
@@ -27,6 +28,7 @@ describe('defined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });
@@ -45,6 +47,7 @@ describe('defined', () => {
             },
           ],
           true,
+          {},
         ).doc;
         expect(result).toEqual({hello: 'mars'});
       });
@@ -60,6 +63,7 @@ describe('defined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
 
@@ -73,6 +77,7 @@ describe('defined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });
@@ -91,6 +96,7 @@ describe('defined', () => {
             },
           ],
           true,
+          {},
         ).doc;
         expect(result).toEqual({hello: [0, false, null]});
       });
@@ -106,6 +112,7 @@ describe('defined', () => {
               },
             ],
             true,
+            {},
           ),
         ).toThrow();
       });

@@ -31,8 +31,10 @@ import {OpMatches} from '../../op/OpMatches';
 import {OpType} from '../../op/OpType';
 import {toPath} from '../../../json-pointer';
 import {OPCODE} from '../../constants';
+import type {JsonPatchOptions} from '../../types';
+import {createMatcherDefault} from '../../util';
 
-export const compactToOp = (op: CompactOp): Op => {
+export const compactToOp = (op: CompactOp, options: JsonPatchOptions): Op => {
   switch (op[0]) {
     case OPCODE.add:
       return new OpAdd(toPath(op[1]), op[2]);
@@ -59,11 +61,11 @@ export const compactToOp = (op: CompactOp): Op => {
     case OPCODE.extend:
       return new OpExtend(toPath(op[1]), op[2], !!op[3]);
     default:
-      return compactToPredicateOp(op);
+      return compactToPredicateOp(op, options);
   }
 };
 
-export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
+export const compactToPredicateOp = (op: CompactOp, options: JsonPatchOptions): PredicateOp => {
   switch (op[0]) {
     case OPCODE.test:
       return new OpTest(toPath(op[1]), op[2], !!op[3]);
@@ -86,7 +88,7 @@ export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
     case OPCODE.starts:
       return new OpStarts(toPath(op[1]), op[2], !!op[3]);
     case OPCODE.matches:
-      return new OpMatches(toPath(op[1]), op[2], !!op[3]);
+      return new OpMatches(toPath(op[1]), op[2], !!op[3], options.createMatcher || createMatcherDefault);
     case OPCODE.in:
       return new OpIn(toPath(op[1]), op[2]);
     case OPCODE.less:
@@ -100,7 +102,7 @@ export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
         op[2].map((x) => {
           const copy = [...x];
           copy[1] = [...path, ...toPath(x[1])];
-          return compactToPredicateOp(copy as CompactOp);
+          return compactToPredicateOp(copy as CompactOp, options);
         }),
       );
     }
@@ -111,7 +113,7 @@ export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
         op[2].map((x) => {
           const copy = [...x];
           copy[1] = [...path, ...toPath(x[1])];
-          return compactToPredicateOp(copy as CompactOp);
+          return compactToPredicateOp(copy as CompactOp, options);
         }),
       );
     }
@@ -122,7 +124,7 @@ export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
         op[2].map((x) => {
           const copy = [...x];
           copy[1] = [...path, ...toPath(x[1])];
-          return compactToPredicateOp(copy as CompactOp);
+          return compactToPredicateOp(copy as CompactOp, options);
         }),
       );
     }
@@ -131,11 +133,11 @@ export const compactToPredicateOp = (op: CompactOp): PredicateOp => {
   }
 };
 
-export function decode(patch: readonly CompactOp[]): Op[] {
+export function decode(patch: readonly CompactOp[], options: JsonPatchOptions): Op[] {
   const ops: Op[] = [];
   const length = patch.length;
   for (let i = 0; i < length; i++) {
-    const op = compactToOp(patch[i]);
+    const op = compactToOp(patch[i], options);
     ops.push(op);
   }
   return ops;

@@ -2,6 +2,7 @@ import {deepClone} from '../util';
 import {Operation} from '../types';
 import {Op} from '../op';
 import {operationToOp} from '../codec/json';
+import type {JsonPatchOptions} from '../types';
 
 export interface OpResult {
   doc: unknown;
@@ -30,12 +31,12 @@ export function applyOps(doc: unknown, ops: readonly Op[], mutate: boolean): Pat
   return {doc, res};
 }
 
-export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean): PatchResult {
+export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean, options: JsonPatchOptions): PatchResult {
   if (!mutate) doc = deepClone(doc);
   const res: OpResult[] = [];
   const length = patch.length;
   for (let i = 0; i < length; i++) {
-    const op = operationToOp(patch[i]);
+    const op = operationToOp(patch[i], options);
     const opResult = op.apply(doc);
     doc = opResult.doc;
     res.push(opResult);

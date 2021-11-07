@@ -15,7 +15,7 @@ describe('inc', () => {
       {op: 'inc', path: '/val3', inc: 1},
       {op: 'inc', path: '/val4', inc: 1},
     ];
-    const result = applyPatch(doc, operations, true).doc;
+    const result = applyPatch(doc, operations, true, {}).doc;
     expect(result).toEqual({
       val1: 2,
       val2: 1,
@@ -32,7 +32,7 @@ describe('inc', () => {
       {op: 'inc', path: '/foo', inc: 10},
       {op: 'inc', path: '/foo', inc: -3},
     ];
-    const result = applyPatch(doc, operations, true).doc;
+    const result = applyPatch(doc, operations, true, {}).doc;
     expect(result).toEqual({
       foo: 8,
     });
@@ -43,7 +43,7 @@ describe('inc', () => {
       foo: 1,
     };
     const operations: OperationInc[] = [{op: 'inc', path: '/foo', inc: 0.1}];
-    const result = applyPatch(doc, operations, true).doc;
+    const result = applyPatch(doc, operations, true, {}).doc;
     expect(result).toEqual({
       foo: 1.1,
     });
@@ -56,7 +56,7 @@ describe('inc', () => {
         path: '',
         inc: 5,
       };
-      const result = applyPatch(0, [operation], true).doc;
+      const result = applyPatch(0, [operation], true, {}).doc;
       expect(result).toEqual(5);
     });
 
@@ -66,7 +66,7 @@ describe('inc', () => {
         path: '',
         inc: 5,
       };
-      const result = applyPatch(-0, [operation], true).doc;
+      const result = applyPatch(-0, [operation], true, {}).doc;
       expect(result).toEqual(5);
     });
   });
@@ -78,7 +78,7 @@ describe('inc', () => {
         path: '/lala',
         inc: 5,
       };
-      const result = applyPatch({lala: 0}, [operation], true).doc;
+      const result = applyPatch({lala: 0}, [operation], true, {}).doc;
       expect(result).toEqual({lala: 5});
     });
 
@@ -88,7 +88,7 @@ describe('inc', () => {
         path: '/lala',
         inc: 5,
       };
-      const result = applyPatch({lala: -0}, [operation], true).doc;
+      const result = applyPatch({lala: -0}, [operation], true, {}).doc;
       expect(result).toEqual({lala: 5});
     });
 
@@ -98,7 +98,7 @@ describe('inc', () => {
         path: '/lala',
         inc: 5,
       };
-      const result = applyPatch({lala: '4'}, [operation], true).doc;
+      const result = applyPatch({lala: '4'}, [operation], true, {}).doc;
       expect(result).toEqual({lala: 9});
     });
 
@@ -115,7 +115,7 @@ describe('inc', () => {
           inc: 2,
         },
       ];
-      const result = applyPatch({lala: 0}, operations, true).doc;
+      const result = applyPatch({lala: 0}, operations, true, {}).doc;
       expect(result).toEqual({lala: 3});
     });
   });
@@ -127,7 +127,7 @@ describe('inc', () => {
         path: '/0',
         inc: -3,
       };
-      const result = applyPatch([0], [operation], true).doc;
+      const result = applyPatch([0], [operation], true, {}).doc;
       expect(result).toEqual([-3]);
     });
 
@@ -137,7 +137,7 @@ describe('inc', () => {
         path: '/0',
         inc: -3,
       };
-      const result = applyPatch([-0], [operation], true).doc;
+      const result = applyPatch([-0], [operation], true, {}).doc;
       expect(result).toEqual([-3]);
     });
   });
