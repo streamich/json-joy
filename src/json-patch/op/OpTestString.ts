@@ -18,6 +18,10 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     return 'test_string' as 'test_string';
   }
 
+  public code() {
+    return OPCODE.test_string;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;

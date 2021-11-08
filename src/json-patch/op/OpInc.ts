@@ -17,6 +17,10 @@ export class OpInc extends AbstractOp<'inc'> {
     return 'inc' as 'inc';
   }
 
+  public code() {
+    return OPCODE.inc;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     const result = this.inc + Number(ref.val);

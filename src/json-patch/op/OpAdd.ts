@@ -17,6 +17,10 @@ export class OpAdd extends AbstractOp<'add'> {
     return 'add' as 'add';
   }
 
+  public code() {
+    return OPCODE.add;
+  }
+
   public apply(doc: unknown) {
     const {val, key, obj} = find(doc, this.path) as any;
     const value = this.value;

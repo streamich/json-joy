@@ -19,6 +19,10 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
     return 'contains' as 'contains';
   }
 
+  public code() {
+    return OPCODE.contains;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;

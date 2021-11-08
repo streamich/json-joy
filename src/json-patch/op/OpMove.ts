@@ -19,6 +19,10 @@ export class OpMove extends AbstractOp<'move'> {
     return 'move' as 'move';
   }
 
+  public code() {
+    return OPCODE.move;
+  }
+
   public apply(doc: unknown) {
     const remove = new OpRemove(toPath(this.from), undefined).apply(doc);
     const add = new OpAdd(this.path, remove.old).apply(remove.doc);

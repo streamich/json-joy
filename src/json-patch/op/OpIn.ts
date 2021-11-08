@@ -19,6 +19,10 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return 'in' as 'in';
   }
 
+  public code() {
+    return OPCODE.in;
+  }
+
   public test(doc: unknown) {
     const {val} = find(doc, this.path);
     for (const x of this.value) if (deepEqual(val, x)) return true;

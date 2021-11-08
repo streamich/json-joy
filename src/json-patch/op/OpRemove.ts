@@ -17,6 +17,10 @@ export class OpRemove extends AbstractOp<'remove'> {
     return 'remove' as 'remove';
   }
 
+  public code() {
+    return OPCODE.remove;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (ref.val === undefined) throw new Error('NOT_FOUND');

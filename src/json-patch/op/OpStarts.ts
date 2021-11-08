@@ -19,6 +19,10 @@ export class OpStarts extends AbstractPredicateOp<'starts'> {
     return 'starts' as 'starts';
   }
 
+  public code() {
+    return OPCODE.starts;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;

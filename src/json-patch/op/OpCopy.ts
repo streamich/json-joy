@@ -19,6 +19,10 @@ export class OpCopy extends AbstractOp<'copy'> {
     return 'copy' as 'copy';
   }
 
+  public code() {
+    return OPCODE.copy;
+  }
+
   public apply(doc: unknown) {
     const {val} = find(doc, this.from);
     if (val === undefined) throw new Error('NOT_FOUND');

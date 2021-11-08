@@ -18,6 +18,10 @@ export class OpMerge extends AbstractOp<'merge'> {
     return 'merge' as 'merge';
   }
 
+  public code() {
+    return OPCODE.merge;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (!isArrayReference(ref)) throw new Error('INVALID_TARGET');

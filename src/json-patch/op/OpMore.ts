@@ -18,6 +18,10 @@ export class OpMore extends AbstractPredicateOp<'more'> {
     return 'more' as 'more';
   }
 
+  public code() {
+    return OPCODE.more;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'number') return false;
