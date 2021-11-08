@@ -18,6 +18,10 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     return 'test_string_len' as 'test_string_len';
   }
 
+  public code() {
+    return OPCODE.test_string_len;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;

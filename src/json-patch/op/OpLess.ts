@@ -18,6 +18,10 @@ export class OpLess extends AbstractPredicateOp<'less'> {
     return 'less' as 'less';
   }
 
+  public code() {
+    return OPCODE.less;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'number') return false;

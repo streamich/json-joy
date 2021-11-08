@@ -19,6 +19,10 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
     return 'not' as 'not';
   }
 
+  public code() {
+    return OPCODE.not;
+  }
+
   public test(doc: unknown): boolean {
     for (const op of this.ops) if (op.test(doc)) return false;
     return true;

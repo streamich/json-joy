@@ -19,6 +19,10 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
     return 'and' as 'and';
   }
 
+  public code() {
+    return OPCODE.and;
+  }
+
   public test(doc: unknown): boolean {
     for (const op of this.ops) if (!op.test(doc)) return false;
     return true;

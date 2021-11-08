@@ -17,6 +17,10 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return 'str_ins' as 'str_ins';
   }
 
+  public code() {
+    return OPCODE.str_ins;
+  }
+
   public apply(doc: unknown) {
     const {val, key, obj} = find(doc, this.path);
     if (typeof val !== 'string') {

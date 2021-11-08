@@ -20,6 +20,10 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return 'test' as 'test';
   }
 
+  public code() {
+    return OPCODE.test;
+  }
+
   public test(doc: unknown) {
     const {val} = find(doc, this.path);
     if (val === undefined) return !!this.not;

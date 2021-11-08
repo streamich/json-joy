@@ -19,6 +19,10 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
     return 'or' as 'or';
   }
 
+  public code() {
+    return OPCODE.or;
+  }
+
   public test(doc: unknown): boolean {
     for (const op of this.ops) if (op.test(doc)) return true;
     return false;

@@ -17,6 +17,10 @@ export class OpFlip extends AbstractOp<'flip'> {
     return 'flip' as 'flip';
   }
 
+  public code() {
+    return OPCODE.flip;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (ref.obj) (ref as any).obj[(ref as any).key] = !ref.val;

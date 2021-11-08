@@ -19,6 +19,10 @@ export class OpExtend extends AbstractOp<'extend'> {
     return 'extend' as 'extend';
   }
 
+  public code() {
+    return OPCODE.extend;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (isArrayReference(ref)) {

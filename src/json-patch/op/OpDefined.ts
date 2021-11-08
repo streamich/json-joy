@@ -18,6 +18,10 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
     return 'defined' as 'defined';
   }
 
+  public code() {
+    return OPCODE.defined;
+  }
+
   public test(doc: unknown) {
     const {val} = find(doc, this.path);
     const test = val !== undefined;

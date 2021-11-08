@@ -20,6 +20,10 @@ export class OpType extends AbstractPredicateOp<'type'> {
     return 'type' as 'type';
   }
 
+  public code() {
+    return OPCODE.type;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (val === null) return this.value === 'null';

@@ -1,7 +1,7 @@
 import {codegenSelector} from '../codegenSelector';
 
 test('can generate two levels deep selector', () => {
-  const selector = codegenSelector(['foo', 'bar']);
+  const selector = eval(codegenSelector(['foo', 'bar']));
 
   expect(selector({foo: {bar: 123}})).toBe(123);
   expect(selector({foo: {bar: {a: 'b'}}})).toEqual({a: 'b'});
@@ -14,7 +14,7 @@ test('can generate two levels deep selector', () => {
 });
 
 test('can generate root selector', () => {
-  const selector = codegenSelector([]);
+  const selector = eval(codegenSelector([]));
 
   expect(selector({foo: {bar: {a: 'b'}}})).toEqual({foo: {bar: {a: 'b'}}});
   expect(selector(123)).toEqual(123);
@@ -22,8 +22,8 @@ test('can generate root selector', () => {
 });
 
 test('can select from an array', () => {
-  const selector = codegenSelector(['a', 0, 'b', 1]);
-  
+  const selector = eval(codegenSelector(['a', 0, 'b', 1]));
+
   expect(selector({a: [{b: [1, 2, 3]}]})).toEqual(2);
   expect(selector({a: [{b: {1: 'asdf'}}]})).toEqual('asdf');
 
@@ -32,8 +32,8 @@ test('can select from an array', () => {
 });
 
 test('can select from an root array or object', () => {
-  const selector = codegenSelector(['0']);
-  
+  const selector = eval(codegenSelector(['0']));
+
   expect(selector([5])).toEqual(5);
   expect(selector([5, 55])).toEqual(5);
   expect(selector({0: 5})).toEqual(5);

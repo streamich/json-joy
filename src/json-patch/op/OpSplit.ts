@@ -20,6 +20,10 @@ export class OpSplit extends AbstractOp<'split'> {
     return 'split' as 'split';
   }
 
+  public code() {
+    return OPCODE.split;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (ref.val === undefined) throw new Error('NOT_FOUND');

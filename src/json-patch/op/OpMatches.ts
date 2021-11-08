@@ -22,6 +22,10 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
     return 'matches' as 'matches';
   }
 
+  public code() {
+    return OPCODE.matches;
+  }
+
   public test(doc: unknown): boolean {
     const {val} = find(doc, this.path);
     if (typeof val !== 'string') return false;

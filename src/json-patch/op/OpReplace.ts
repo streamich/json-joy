@@ -17,6 +17,10 @@ export class OpReplace extends AbstractOp<'replace'> {
     return 'replace' as 'replace';
   }
 
+  public code() {
+    return OPCODE.replace;
+  }
+
   public apply(doc: unknown) {
     const ref = find(doc, this.path);
     if (ref.val === undefined) throw new Error('NOT_FOUND');

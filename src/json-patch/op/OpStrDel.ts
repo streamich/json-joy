@@ -22,6 +22,10 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     return 'str_del' as 'str_del';
   }
 
+  public code() {
+    return OPCODE.str_del;
+  }
+
   public deleteLength(): number {
     return typeof this.str === 'string' ? this.str.length : this.len!;
   }
