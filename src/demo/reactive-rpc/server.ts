@@ -16,6 +16,7 @@ import {
   enableHttpRpcMsgPackPostApi,
   enableSseGetRpcApi,
   enableSsePostRpcApi,
+  enableHttpJsonRPC2Api,
 } from '../../reactive-rpc/server/uws/http';
 import {UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/types';
 import {enableNdjsonGetRpcApi, enableNdjsonPostRpcApi} from '../../reactive-rpc/server/uws/http/ndjson';
@@ -66,6 +67,7 @@ enableSsePostRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
 enableSseGetRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
 enableNdjsonPostRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
 enableNdjsonGetRpcApi<ConnectionContext & UwsHttpBaseContext>(options);
+enableHttpJsonRPC2Api<ConnectionContext & UwsHttpBaseContext>(options);
 
 const port = 9999;
 
