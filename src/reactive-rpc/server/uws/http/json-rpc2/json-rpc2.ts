@@ -45,11 +45,11 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(
 }
 
 export const enableHttpJsonRPC2Api = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/json-rpc', createContext = createConnectionContext as any, caller} = params;
+  const {uws, route = '/json-rpc', createContext = createConnectionContext as any, caller, onNotification = () => {}} = params;
   const server = new JsonRpc2Server<any, Ctx>({
     caller,
     codec: new JsonRpc2CodecJsonString(),
-    onNotification: () => {},
+    onNotification,
     strict: false,
   });
 
