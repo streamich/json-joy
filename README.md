@@ -34,9 +34,6 @@ This package consists of multiple self-contained libraries:
   - [__Documentation__ 🚀](./src/binary-rx/README.md)
   - __Specification__ 🤔
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/binary_rx.html)
-- __`json-rpc`__ &mdash; Server implementation of [__JSON-RPC 2.0__][json-rpc] protocol.
-  - __Documentation__ 🚀
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_rpc.html)
 - __`json-pointer`__ &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
   - [__Documentation__ 🚀](./src/json-pointer/README.md)
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pointer.html)
@@ -60,7 +57,6 @@ This package consists of multiple self-contained libraries:
 [json-patch]: https://tools.ietf.org/html/rfc6902
 [json-predicate]: https://tools.ietf.org/id/draft-snell-json-test-01.html
 [json-rx]: https://onp4.com/@vadim/p/gv9z33hjuo
-[json-rpc]: https://www.jsonrpc.org/specification
 
 
 ## Usage
