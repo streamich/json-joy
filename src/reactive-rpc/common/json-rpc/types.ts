@@ -1,19 +1,19 @@
 export interface JsonRpc2RequestMessage {
   jsonrpc?: '2.0';
-  id: number | string | null;
+  id: JsonRpc2Id;
   method: string;
   params: unknown;
 }
 
 export interface JsonRpc2ResponseMessage {
   jsonrpc?: '2.0';
-  id: number | string | null;
+  id: JsonRpc2Id;
   result: unknown;
 }
 
 export interface JsonRpc2ErrorMessage {
   jsonrpc?: '2.0';
-  id: number | string | null;
+  id: JsonRpc2Id;
   error: JsonRpc2Error;
 }
 
@@ -29,8 +29,11 @@ export interface JsonRpc2NotificationMessage {
   params: unknown;
 }
 
+export type JsonRpc2Id = number | string | null;
+
+export type JsonRpc2IncomingMessage = JsonRpc2RequestMessage | JsonRpc2NotificationMessage;
+export type JsonRpc2OutgoingMessage = JsonRpc2ResponseMessage | JsonRpc2ErrorMessage;
+
 export type JsonRpc2Message =
-  | JsonRpc2RequestMessage
-  | JsonRpc2ResponseMessage
-  | JsonRpc2ErrorMessage
-  | JsonRpc2NotificationMessage;
+  | JsonRpc2IncomingMessage
+  | JsonRpc2OutgoingMessage;
