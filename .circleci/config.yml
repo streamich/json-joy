@@ -21,7 +21,7 @@ refs:
     - &Test_Unit
       run:
         name: Test - Unit tests
-        command: yarn test
+        command: yarn test:ci
     - &Test_CLI_Pointer
       run:
         name: "Test - CLI: JSON Pointer"
