@@ -4,6 +4,7 @@ import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
+import { until } from '../../../../__tests__/util';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
@@ -333,6 +334,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
         await new Promise((r) => setTimeout(r, 120));
+        await until(() => error.mock.calls.length === 1);
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(1);
         expect(error.mock.calls[0][0]).toEqual({
