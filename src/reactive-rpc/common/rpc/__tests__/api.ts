@@ -255,7 +255,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws error on static RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('error', {})));
-      expect(error).toEqual({message: 'this promise can throw'});
+      expect(error).toMatchObject({message: 'this promise can throw'});
     });
   });
 
@@ -263,7 +263,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws error on streaming RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(lastValueFrom(client.call$('streamError', {})));
-      expect(error).toEqual({message: 'Stream always errors'});
+      expect(error).toMatchObject({message: 'Stream always errors'});
     });
   });
 

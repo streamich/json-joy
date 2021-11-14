@@ -1,6 +1,6 @@
 import type {IRpcApiCaller, RpcMethod} from "../rpc";
 import type {JsonRpc2Codec} from "./codec/types";
-import type {JsonRpc2Error, JsonRpc2RequestMessage, JsonRpc2NotificationMessage, JsonRpc2Id} from "./types";
+import type {JsonRpc2Error, JsonRpc2RequestMessage, JsonRpc2NotificationMessage} from "./types";
 
 const isArray = Array.isArray;
 
@@ -15,7 +15,7 @@ export class JsonRpc2Server<Api extends Record<string, RpcMethod<Ctx, any, any>>
   private readonly caller: IRpcApiCaller<Api, Ctx>;
   private readonly strict: boolean;
   private readonly onNotification: (name: string, data: unknown, ctx: Ctx) => void;
-  codec: JsonRpc2Codec;
+  private readonly codec: JsonRpc2Codec;
 
   constructor(params: JsonRpc2ServerParams<Api, Ctx>) {
     this.caller = params.caller;
@@ -38,8 +38,8 @@ export class JsonRpc2Server<Api extends Record<string, RpcMethod<Ctx, any, any>>
       const method = (message as JsonRpc2RequestMessage).method;
       if (typeof method !== 'string') return this.codec.encodeMethodNotFoundError(id);
       if (this.strict && message.jsonrpc !== '2.0') return this.codec.encodeInvalidRequestError(id);
-      if (!this.caller.exists(method)) return this.codec.encodeMethodNotFoundError(id);
       if (isNotification) return this.onNotification(method, message.params, ctx);
+      if (!this.caller.exists(method)) return this.codec.encodeMethodNotFoundError(id);
       const result = await this.caller.call(method, message.params as any, ctx);
       if (result === undefined) return undefined;
       return this.codec.encodeResponse(id, result);

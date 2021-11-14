@@ -2,7 +2,7 @@ export interface JsonRpc2RequestMessage {
   jsonrpc?: '2.0';
   id: JsonRpc2Id;
   method: string;
-  params: unknown;
+  params?: unknown;
 }
 
 export interface JsonRpc2ResponseMessage {
@@ -26,7 +26,7 @@ export interface JsonRpc2Error {
 export interface JsonRpc2NotificationMessage {
   jsonrpc?: '2.0';
   method: string;
-  params: unknown;
+  params?: unknown;
 }
 
 export type JsonRpc2Id = number | string | null;
