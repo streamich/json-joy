@@ -4,6 +4,7 @@ import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
+import { until } from '../../../../__tests__/util';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,
@@ -255,7 +256,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws error on static RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('error', {})));
-      expect(error).toEqual({message: 'this promise can throw'});
+      expect(error).toMatchObject({message: 'this promise can throw'});
     });
   });
 
@@ -263,7 +264,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
     test('throws error on streaming RPC error', async () => {
       const {client} = await setup();
       const [, error] = await of(lastValueFrom(client.call$('streamError', {})));
-      expect(error).toEqual({message: 'Stream always errors'});
+      expect(error).toMatchObject({message: 'Stream always errors'});
     });
   });
 
@@ -333,6 +334,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(0);
         await new Promise((r) => setTimeout(r, 120));
+        await until(() => error.mock.calls.length === 1);
         expect(next).toHaveBeenCalledTimes(0);
         expect(error).toHaveBeenCalledTimes(1);
         expect(error.mock.calls[0][0]).toEqual({
