@@ -7,7 +7,7 @@ import {
   enableWsCompactReactiveRpcApi,
 } from '../../reactive-rpc/server/uws';
 import {sampleApi} from '../../reactive-rpc/common/rpc/__tests__/api';
-import {RpcServer} from '../../reactive-rpc/common/rpc';
+import {RpcMethodStatic, RpcServer} from '../../reactive-rpc/common/rpc';
 import {RpcApiCaller} from '../../reactive-rpc/common/rpc/RpcApiCaller';
 import {
   enableHttpRpcJsonGetApi,
@@ -25,11 +25,30 @@ const uws = App({});
 
 enableCors(uws);
 
+let theInt = 0;
+
+const getInt: RpcMethodStatic<object, any, number> = {
+  isStreaming: false,
+  call: async () => {
+    return theInt;
+  },
+};
+
 const caller = new RpcApiCaller<any, any>({
-  api: sampleApi,
+  api: {...sampleApi, getInt},
   maxActiveCalls: 3,
   preCallBufferSize: 10,
 });
+
+
+const onNotification = (name: string, data: unknown, ctx: ConnectionContext & UwsHttpBaseContext): void => {
+  switch (name) {
+    case 'set-int': {
+      theInt = Number(data as any);
+      return;
+    }
+  }
+};
 
 enableWsBinaryReactiveRpcApi<ConnectionContext>({
   uws,
@@ -37,7 +56,7 @@ enableWsBinaryReactiveRpcApi<ConnectionContext>({
   createRpcServer: ({send}) =>
     new RpcServer({
       caller,
-      onNotification: () => {},
+      onNotification,
       send,
     }),
 });
@@ -48,7 +67,7 @@ enableWsCompactReactiveRpcApi<ConnectionContext>({
   createRpcServer: ({send}) =>
     new RpcServer({
       caller,
-      onNotification: () => {},
+      onNotification,
       send,
     }),
 });
@@ -57,6 +76,7 @@ const options = {
   uws,
   caller,
   createContext: createConnectionContext,
+  onNotification,
 };
 
 enableHttpRpcJsonGetApi<ConnectionContext & UwsHttpBaseContext>(options);
