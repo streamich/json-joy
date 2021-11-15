@@ -1,4 +1,4 @@
-import {JavaScript} from "./types";
+import {JavaScript} from "../../util/codegen";
 
 const codegenValue = (doc: unknown, code: string[], r: number): number => {
   let rr = r;

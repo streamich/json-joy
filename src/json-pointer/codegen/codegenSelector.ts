@@ -1,4 +1,4 @@
-import {JavaScript} from '../../json-equal/deepEqualCodegen/types';
+import {JavaScript} from '../../util/codegen';
 import {Path} from '../types';
 
 export const codegenSelector = (path: Path): JavaScript<(doc: unknown) => unknown> => {
