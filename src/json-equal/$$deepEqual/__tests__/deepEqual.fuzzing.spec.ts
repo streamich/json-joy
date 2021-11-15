@@ -1,8 +1,8 @@
-import {deepEqualCodegen} from '..';
+import {$$deepEqual} from '..';
 import {RandomJson} from '../../../json-random/RandomJson';
 
 const deepEqual = (a: unknown, b: unknown) => {
-  const js = deepEqualCodegen(a);
+  const js = $$deepEqual(a);
   const fn = eval(js);
   return fn(b);
 };

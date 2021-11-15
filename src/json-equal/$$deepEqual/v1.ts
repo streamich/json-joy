@@ -49,7 +49,7 @@ const codegenValue = (doc: unknown, code: string[], r: number): number => {
   return rr;
 };
 
-export const deepEqualCodegen = (a: unknown): JavaScript<(b: unknown) => boolean> => {
+export const $$deepEqual = (a: unknown): JavaScript<(b: unknown) => boolean> => {
   const code: string[] = [];
   codegenValue(a, code, 0);
 
