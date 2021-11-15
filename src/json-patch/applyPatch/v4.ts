@@ -2,17 +2,7 @@ import {deepClone} from '../util';
 import {Operation} from '../types';
 import {Op} from '../op';
 import {operationToOp} from '../codec/json';
-import type {ApplyPatchOptions} from '../types';
-
-export interface OpResult {
-  doc: unknown;
-  old?: unknown;
-}
-
-export interface PatchResult {
-  doc: unknown;
-  res: readonly OpResult[];
-}
+import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
 
 export function applyOp(doc: unknown, op: Op, mutate: boolean): OpResult {
   if (!mutate) doc = deepClone(doc);
@@ -43,5 +33,3 @@ export function applyPatch(doc: unknown, patch: readonly Operation[], options: A
   }
   return {doc, res};
 }
-
-export type ApplyPatch = typeof applyPatch;

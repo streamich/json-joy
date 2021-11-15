@@ -1,17 +1,7 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
 import {findByPointer} from '../../json-pointer/findByPointer/v6';
-import { ApplyPatchOptions } from '..';
-
-export interface OpResult {
-  doc: unknown;
-  old?: unknown;
-}
-
-export interface PatchResult {
-  doc: unknown;
-  res: readonly OpResult[];
-}
+import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
 
 function applyOp(doc: unknown, operation: Operation): OpResult {
   switch (operation.op) {

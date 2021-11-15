@@ -1,4 +1,4 @@
-import { ApplyPatch } from "..";
+import { ApplyPatch } from "../types";
 import { Operation } from "../..";
 
 export const testApplyPatch = (applyPatch: ApplyPatch) => {
