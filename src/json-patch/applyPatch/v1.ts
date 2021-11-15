@@ -3,6 +3,7 @@ import {Operation} from '../types';
 import {Op} from '../op';
 import {decode} from '../codec/json';
 import type {JsonPatchOptions} from '../types';
+import { ApplyPatchOptions } from '..';
 
 export interface OpResult {
   doc: unknown;
@@ -31,7 +32,7 @@ export function applyOps(doc: unknown, ops: readonly Op[], mutate: boolean): Pat
   return {doc, res};
 }
 
-export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean, options: JsonPatchOptions): PatchResult {
-  const result = applyOps(doc, decode(patch, options), mutate);
+export function applyPatch(doc: unknown, patch: readonly Operation[], options: ApplyPatchOptions): PatchResult {
+  const result = applyOps(doc, decode(patch, options), options.mutate);
   return result;
 }

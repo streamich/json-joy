@@ -12,3 +12,10 @@ export interface JsonPatchOptions {
    */
   createMatcher?: CreateRegexMatcher;
 }
+
+export interface ApplyPatchOptions extends JsonPatchOptions {
+  /**
+   * Whether mutation of the source document is allowed.
+   */
+  mutate: boolean;
+}

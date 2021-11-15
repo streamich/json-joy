@@ -1,6 +1,7 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
 import {findByPointer} from '../../json-pointer/findByPointer/v6';
+import { ApplyPatchOptions } from '..';
 
 export interface OpResult {
   doc: unknown;
@@ -37,8 +38,8 @@ function applyOp(doc: unknown, operation: Operation): OpResult {
   return {doc};
 }
 
-export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean): PatchResult {
-  if (!mutate) doc = deepClone(doc);
+export function applyPatch(doc: unknown, patch: readonly Operation[], options: ApplyPatchOptions): PatchResult {
+  if (!options.mutate) doc = deepClone(doc);
   const res: OpResult[] = [];
   for (let i = 0; i < patch.length; i++) {
     const operation = patch[i];
