@@ -79,8 +79,3 @@ All libraries can be imported from one of the below folders:
 - `es6` &mdash; ES6 compiled CommonJS code.
 - `es2020` &mdash; ES2020 compiled CommonJS code.
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.
-
-
-## License
-
-[Apache 2.0](LICENSE)
