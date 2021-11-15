@@ -1,3 +1,18 @@
+# [4.0.0](https://github.com/streamich/json-joy/compare/v3.3.0...v4.0.0) (2021-11-15)
+
+
+### Features
+
+* 🎸 implement JSON and fast JSON string codecs for JSON RPC ([610a148](https://github.com/streamich/json-joy/commit/610a148147065bc5c3004102c4f2c246159c413c))
+* 🎸 implement JSON-RPC 2.0 middleware for uWebSocket.js ([e23b95f](https://github.com/streamich/json-joy/commit/e23b95fa4102fbbdbfe6f56cd931533975ff062a))
+* 🎸 implement JSON-RPC 2.0 server as Reactive-RPC caller ([f9de285](https://github.com/streamich/json-joy/commit/f9de2858e962af49c831a210b1ead3e785b30501))
+* 🎸 wire int notifications into JSON-RPC 2.0 ([599b0d1](https://github.com/streamich/json-joy/commit/599b0d1afbf655c421265a74d75cd8e921356cc2))
+
+
+### BREAKING CHANGES
+
+* 🧨 JSON-RPC 2.0 does not exist as json-rpc top level library anymore.
+
 # [3.3.0](https://github.com/streamich/json-joy/compare/v3.2.0...v3.3.0) (2021-11-08)
 
 
