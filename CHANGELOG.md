@@ -1,3 +1,40 @@
+# [5.0.0](https://github.com/streamich/json-joy/compare/v4.0.0...v5.0.0) (2021-11-16)
+
+
+### Bug Fixes
+
+* 🐛 create deep copy of "add" operation value ([43c7348](https://github.com/streamich/json-joy/commit/43c73480d682b09478b0f0c95c2b9c9670e77674))
+
+
+### Code Refactoring
+
+* 💡 use common syntax for codegeneration ([8674031](https://github.com/streamich/json-joy/commit/8674031af58f427968bb1bb31c1ecca79b907703))
+
+
+### Features
+
+* 🎸 add apply and $apply functions ([1697f3d](https://github.com/streamich/json-joy/commit/1697f3de4c637e56dd673525b530e8f9cb537ef8))
+* 🎸 add compileFn() helper ([7d0c551](https://github.com/streamich/json-joy/commit/7d0c5513af595bb793f61b1584cb6959bcf91269))
+* 🎸 implement codegen for "add" operation ([777c607](https://github.com/streamich/json-joy/commit/777c60781c6bef5de311222c06140d3e7fa82c40))
+* 🎸 rewrite $apply as codege $apply function ([71a1d56](https://github.com/streamich/json-joy/commit/71a1d567d0ce2a7d5e1bdf0234a9c590c4f37169))
+* 🎸 start findRef codegen implementation ([f3269e2](https://github.com/streamich/json-joy/commit/f3269e2b2d5b2db421108b5052c4f14fd988137d))
+* 🎸 start patch creator ([08a3e57](https://github.com/streamich/json-joy/commit/08a3e57fbbca32f7f2300c390f3fb3a36cad2f81))
+* 🎸 use codegen for test operation ([5e61cb0](https://github.com/streamich/json-joy/commit/5e61cb040859653671ae2f4226c07b47469f7381))
+
+
+### Performance Improvements
+
+* ⚡️ do not pass in deepClone dep if not needed ([fffc5e0](https://github.com/streamich/json-joy/commit/fffc5e037eb8f414c37b0de4def654d3861f9ed9))
+* ⚡️ implement "starts" operation on codegen way ([4e734f0](https://github.com/streamich/json-joy/commit/4e734f059aa50534887ab9aa7ab6bb0a19714a32))
+* ⚡️ replace operation loop with single expression ([35a8941](https://github.com/streamich/json-joy/commit/35a89412ba3d4196ddb450893814ca16c10600fd))
+* ⚡️ unwrap $findRef loop ([70aef07](https://github.com/streamich/json-joy/commit/70aef07b85f739f1a20f0cba0fe07f2534ae6a9f))
+* ⚡️ use codegenerated find in $add ([6210221](https://github.com/streamich/json-joy/commit/62102210c9af6e9c2c29e30a048edb0f0c84e012))
+
+
+### BREAKING CHANGES
+
+* 🧨 Public api of deep equal code generator has changed.
+
 # [4.0.0](https://github.com/streamich/json-joy/compare/v3.3.0...v4.0.0) (2021-11-15)
 
 
