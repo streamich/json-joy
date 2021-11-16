@@ -5,7 +5,8 @@ import {AbstractPredicateOp, OpTest} from '../op';
 import {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
 import {$test} from './ops/test';
-import type { ApplyFn } from './types';
+import type {ApplyFn} from './types';
+import {CompiledFunction} from '../../util/codegen';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {
   const {mutate, createMatcher} = applyOptions;
@@ -19,6 +20,41 @@ export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptio
   }
   return doc;
 }
+
+export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPatchOptions): CompiledFunction<ApplyFn> => {
+  const {mutate, createMatcher} = applyOptions;
+  const operationOptions: JsonPatchOptions = {createMatcher};
+  const fns: ApplyFn[] = [];
+  const length = operations.length;
+
+  let hasNonPredicateOperations = false;
+
+  for (let i = 0; i < length; i++) {
+    const op = operationToOp(operations[i], operationOptions);
+    const isPredicateOp = op instanceof AbstractPredicateOp;
+    if (!isPredicateOp) hasNonPredicateOperations = true;
+    if (op.op() === 'test') {
+      fns.push($test(op as OpTest));
+    } else {
+      fns.push(doc => op.apply(doc).doc);
+    }
+  }
+
+  const js = /* js */ `
+(function(deepClone) {
+  return function(doc){
+    ${!mutate && hasNonPredicateOperations ? /* js */ `doc = deepClone(doc);` : ''};
+    for (let i = 0; i < length; i++) doc = ops[i](doc);
+    return doc;
+  };
+})`;
+
+  return (doc: unknown): unknown => {
+    if (!mutate && hasNonPredicateOperations) doc = deepClone(doc);
+    for (let i = 0; i < length; i++) doc = fns[i](doc);
+    return doc;
+  };
+};
 
 export const $apply = (operations: readonly Operation[], applyOptions: ApplyPatchOptions): ApplyFn => {
   const {mutate, createMatcher} = applyOptions;
