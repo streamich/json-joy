@@ -40,10 +40,20 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
     }
   }
 
+  const deps: unknown[] = [fns];
+  const depNames: string[] = ['fns'];
+
+  const needsToClone = !mutate && hasNonPredicateOperations;
+
+  if (needsToClone) {
+    deps.push(deepClone);
+    depNames.push('deepClone');
+  }
+
   const js = /* js */ `
-(function(deepClone, fns) {
+(function(${depNames.join(',')}) {
   return function(doc){
-    ${!mutate && hasNonPredicateOperations ? /* js */ `doc = deepClone(doc);` : ''};
+    ${needsToClone ? /* js */ `doc = deepClone(doc);` : ''};
     for (var i = 0; i < ${length}; i++) {
       doc = fns[i](doc);
     }
@@ -52,7 +62,7 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
 })`;
 
   return {
-    deps: [deepClone, fns],
+    deps,
     js: js as JavaScript<(...deps: unknown[]) => ApplyFn>,
   };
 };
