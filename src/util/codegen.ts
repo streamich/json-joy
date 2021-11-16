@@ -1,4 +1,4 @@
-export type JavaScript<T> = string & {__JS_BRAND__: T}
+export type JavaScript<T> = string & {__JS_BRAND__: T};
 
 export interface CompiledFunction<Js, Dependencies extends unknown[] = unknown[]> {
   deps: Dependencies;

@@ -1,5 +1,5 @@
-import type {ApplyPatch} from "../types";
-import type {Operation} from "../..";
+import type {ApplyPatch} from '../types';
+import type {Operation} from '../..';
 
 interface Options {
   dontTestResultHistory?: boolean;

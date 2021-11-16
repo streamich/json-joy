@@ -4,7 +4,7 @@ import {RpcClient} from '../RpcClient';
 import {RpcMethodStatic, RpcMethodStreaming} from '../types';
 import {of} from '../../util/of';
 import {RpcServerError} from '../constants';
-import { until } from '../../../../__tests__/util';
+import {until} from '../../../../__tests__/util';
 
 const ping: RpcMethodStatic<object, void, 'pong'> = {
   isStreaming: false,

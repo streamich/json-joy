@@ -1,6 +1,6 @@
-import {from, Observable} from "rxjs";
-import {ApiTestSetup, ApiTestSetupResult, runApiTests} from "../../rpc/__tests__/api";
-import {JsonRpc2RequestMessage} from "../types";
+import {from, Observable} from 'rxjs';
+import {ApiTestSetup, ApiTestSetupResult, runApiTests} from '../../rpc/__tests__/api';
+import {JsonRpc2RequestMessage} from '../types';
 import {setup} from './setup';
 
 const apiSetup: ApiTestSetup = (): ApiTestSetupResult => {
@@ -15,11 +15,13 @@ const apiSetup: ApiTestSetup = (): ApiTestSetupResult => {
           method,
           params: data,
         };
-        return from((async () => {
-          const resp = await server.onMessages({}, [message]);
-          if ((resp as any).error) throw (resp as any).error;
-          return (resp as any).result;
-        })());
+        return from(
+          (async () => {
+            const resp = await server.onMessages({}, [message]);
+            if ((resp as any).error) throw (resp as any).error;
+            return (resp as any).result;
+          })(),
+        );
       },
     },
   };

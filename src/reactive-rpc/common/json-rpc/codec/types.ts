@@ -1,4 +1,4 @@
-import type {JsonRpc2Error, JsonRpc2Id, JsonRpc2IncomingMessage} from "../types";
+import type {JsonRpc2Error, JsonRpc2Id, JsonRpc2IncomingMessage} from '../types';
 
 export interface JsonRpc2Codec {
   decode(data: unknown): JsonRpc2IncomingMessage[];

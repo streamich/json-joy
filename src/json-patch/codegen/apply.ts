@@ -19,9 +19,12 @@ export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptio
     doc = opResult.doc;
   }
   return doc;
-}
+};
 
-export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPatchOptions): CompiledFunction<ApplyFn> => {
+export const $$apply = (
+  operations: readonly Operation[],
+  applyOptions: ApplyPatchOptions,
+): CompiledFunction<ApplyFn> => {
   const {mutate, createMatcher} = applyOptions;
   const operationOptions: JsonPatchOptions = {createMatcher};
   const fns: ApplyFn[] = [];

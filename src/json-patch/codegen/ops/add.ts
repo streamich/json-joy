@@ -1,7 +1,7 @@
 import {OpAdd} from '../../op';
-import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
+import {CompiledFunction, compileFn, JavaScript} from '../../../util/codegen';
 import type {ApplyFn} from '../types';
-import {$findRef} from "../../../json-pointer/codegen/findRef";
+import {$findRef} from '../../../json-pointer/codegen/findRef';
 
 export const $$add = (op: OpAdd): CompiledFunction<ApplyFn> => {
   const find = $findRef(op.path);

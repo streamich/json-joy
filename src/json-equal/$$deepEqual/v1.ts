@@ -1,9 +1,9 @@
-import {JavaScript} from "../../util/codegen";
+import {JavaScript} from '../../util/codegen';
 
 const codegenValue = (doc: unknown, code: string[], r: number): number => {
   let rr = r;
   const type = typeof doc;
-  const isPrimitive = doc === null || type === "boolean" || type === "string" || type === "number";
+  const isPrimitive = doc === null || type === 'boolean' || type === 'string' || type === 'number';
 
   // Primitives
   if (isPrimitive) {
@@ -32,7 +32,9 @@ const codegenValue = (doc: unknown, code: string[], r: number): number => {
   if (type === 'object' && doc) {
     const obj = doc as Record<string, unknown>;
     const keys = Object.keys(obj);
-    code.push(`if(!r${r} || typeof r${r} !== "object" || Array.isArray(r${r}) || Object.keys(r${r}).length !== ${keys.length})return false;`);
+    code.push(
+      `if(!r${r} || typeof r${r} !== "object" || Array.isArray(r${r}) || Object.keys(r${r}).length !== ${keys.length})return false;`,
+    );
     for (const key of keys) {
       rr++;
       code.push(`var r${rr}=r${r}[${JSON.stringify(key)}];`);
@@ -53,12 +55,7 @@ export const $$deepEqual = (a: unknown): JavaScript<(b: unknown) => boolean> => 
   const code: string[] = [];
   codegenValue(a, code, 0);
 
-  const fn = [
-    '(function(r0){',
-    ...code,
-    'return true;',
-    '})'
-  ];
+  const fn = ['(function(r0){', ...code, 'return true;', '})'];
 
   // return fn.join('\n') as JavaScript<(b: unknown) => boolean>;
   return fn.join('') as JavaScript<(b: unknown) => boolean>;

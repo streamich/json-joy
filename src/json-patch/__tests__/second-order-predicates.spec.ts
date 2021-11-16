@@ -17,7 +17,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      {mutate: true}
+      {mutate: true},
     );
   });
 
@@ -38,7 +38,7 @@ describe('Second order predicates', () => {
             ],
           },
         ],
-        {mutate: true}
+        {mutate: true},
       ),
     ).toThrow();
   });
@@ -59,7 +59,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      {mutate: true}
+      {mutate: true},
     );
   });
 
@@ -80,7 +80,7 @@ describe('Second order predicates', () => {
             ],
           },
         ],
-        {mutate: true}
+        {mutate: true},
       ),
     ).toThrow();
   });
@@ -101,7 +101,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      {mutate: true}
+      {mutate: true},
     );
   });
 });

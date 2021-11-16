@@ -1,7 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
 
-
 export const testTypeOp = (applyPatch: ApplyPatch) => {
   const exec = (doc: unknown, op: Operation) => {
     return applyPatch(doc, [op], {mutate: true});

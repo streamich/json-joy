@@ -6,4 +6,4 @@ export const predicateOpWrapper = (fn: PredicateOperationFn): ApplyFn => {
     if (!test) throw new Error('TEST');
     return doc;
   };
-}
+};

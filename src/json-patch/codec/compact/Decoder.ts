@@ -1,4 +1,4 @@
-import type  {JsonPatchOptions} from '../../types';
+import type {JsonPatchOptions} from '../../types';
 import type {CompactOp} from './types';
 import {Op} from '../../op';
 import {decode} from './decode';

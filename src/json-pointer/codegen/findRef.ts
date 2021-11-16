@@ -1,7 +1,7 @@
-import type {Reference} from "../find";
-import type {Path} from "../types";
-import {CompiledFunction, compileFn} from "../../util/codegen";
-import {hasOwnProperty} from "..";
+import type {Reference} from '../find';
+import type {Path} from '../types';
+import {CompiledFunction, compileFn} from '../../util/codegen';
+import {hasOwnProperty} from '..';
 
 type Fn = (val: unknown) => Reference;
 
@@ -10,7 +10,7 @@ export const $$findRef = (path: Path): CompiledFunction<Fn> => {
     return {
       deps: [] as unknown[],
       js: /* js */ `(function(){return function(val){return {val:val}}})`,
-    } as CompiledFunction<Fn>;  
+    } as CompiledFunction<Fn>;
   }
 
   let loop = '';
@@ -24,7 +24,7 @@ export const $$findRef = (path: Path): CompiledFunction<Fn> => {
         if (key === '-') key = length;
         else {
           var key2 = ${~~path[i]};
-          ${(String(~~path[i]) !== String(path[i])) ? `if ('' + key2 !== key) throw new Error('INVALID_INDEX');` : ''}
+          ${String(~~path[i]) !== String(path[i]) ? `if ('' + key2 !== key) throw new Error('INVALID_INDEX');` : ''}
           ${~~path[i] < 0 ? `throw new Error('INVALID_INDEX');` : ''}
           key = key2;
         }
@@ -46,7 +46,7 @@ export const $$findRef = (path: Path): CompiledFunction<Fn> => {
   return {
     deps: [hasOwnProperty, path] as unknown[],
     js,
-  } as CompiledFunction<Fn>
+  } as CompiledFunction<Fn>;
 };
 
 export const $findRef = (path: Path): Fn => compileFn($$findRef(path));

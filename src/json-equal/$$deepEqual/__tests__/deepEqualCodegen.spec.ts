@@ -1,13 +1,13 @@
 import {$$deepEqual} from '..';
 
 test('generates a deep equal comparator', () => {
-  const js = $$deepEqual([1, true, false, "sdf", {foo: 123, null: null}, [null, true, "asdf"], 3, {}]);
+  const js = $$deepEqual([1, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
   const deepEqual = eval(js);
 
-  const res1 = deepEqual([1, true, false, "sdf", {foo: 123, null: null}, [null, true, "asdf"], 3, {}]);
-  const res2 = deepEqual([2, true, false, "sdf", {foo: 123, null: null}, [null, true, "asdf"], 3, {}]);
-  const res3 = deepEqual([1, true, false, "sdf", {foox: 123, null: null}, [null, true, "asdf"], 3, {}]);
-  const res4 = deepEqual([1, true, false, "sdf", {foo: 123, null: null}, [null, true, "asdf"], 3, {a: 1}]);
+  const res1 = deepEqual([1, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
+  const res2 = deepEqual([2, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
+  const res3 = deepEqual([1, true, false, 'sdf', {foox: 123, null: null}, [null, true, 'asdf'], 3, {}]);
+  const res4 = deepEqual([1, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {a: 1}]);
 
   expect(res1).toBe(true);
   expect(res2).toBe(false);

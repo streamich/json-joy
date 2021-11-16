@@ -18,99 +18,99 @@ export const tests: Suite[] = [
         description: 'equal numbers',
         value1: 1,
         value2: 1,
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal numbers',
         value1: 1,
         value2: 2,
-        equal: false
+        equal: false,
       },
       {
         description: 'number and array are not equal',
         value1: 1,
         value2: [],
-        equal: false
+        equal: false,
       },
       {
         description: '0 and null are not equal',
         value1: 0,
         value2: null,
-        equal: false
+        equal: false,
       },
       {
         description: 'equal strings',
         value1: 'a',
         value2: 'a',
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal strings',
         value1: 'a',
         value2: 'b',
-        equal: false
+        equal: false,
       },
       {
         description: 'empty string and null are not equal',
         value1: '',
         value2: null,
-        equal: false
+        equal: false,
       },
       {
         description: 'null is equal to null',
         value1: null,
         value2: null,
-        equal: true
+        equal: true,
       },
       {
         description: 'equal booleans (true)',
         value1: true,
         value2: true,
-        equal: true
+        equal: true,
       },
       {
         description: 'equal booleans (false)',
         value1: false,
         value2: false,
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal booleans',
         value1: true,
         value2: false,
-        equal: false
+        equal: false,
       },
       {
         description: '1 and true are not equal',
         value1: 1,
         value2: true,
-        equal: false
+        equal: false,
       },
       {
         description: '0 and false are not equal',
         value1: 0,
         value2: false,
-        equal: false
+        equal: false,
       },
       {
         description: '0 and -0 are equal',
         value1: 0,
         value2: -0,
-        equal: true
+        equal: true,
       },
       {
         description: 'Infinity and Infinity are equal',
         value1: Infinity,
         value2: Infinity,
-        equal: true
+        equal: true,
       },
       {
         description: 'Infinity and -Infinity are not equal',
         value1: Infinity,
         value2: -Infinity,
-        equal: false
-      }
-    ]
+        equal: false,
+      },
+    ],
   },
 
   {
@@ -120,87 +120,87 @@ export const tests: Suite[] = [
         description: 'empty objects are equal',
         value1: {},
         value2: {},
-        equal: true
+        equal: true,
       },
       {
         description: 'equal objects (same properties "order")',
         value1: {a: 1, b: '2'},
         value2: {a: 1, b: '2'},
-        equal: true
+        equal: true,
       },
       {
         description: 'equal objects (different properties "order")',
         value1: {a: 1, b: '2'},
         value2: {b: '2', a: 1},
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal objects (extra property)',
         value1: {a: 1, b: '2'},
         value2: {a: 1, b: '2', c: []},
-        equal: false
+        equal: false,
       },
       {
         description: 'not equal objects (different property values)',
         value1: {a: 1, b: '2', c: 3},
         value2: {a: 1, b: '2', c: 4},
-        equal: false
+        equal: false,
       },
       {
         description: 'not equal objects (different properties)',
         value1: {a: 1, b: '2', c: 3},
         value2: {a: 1, b: '2', d: 3},
-        equal: false
+        equal: false,
       },
       {
         description: 'equal objects (same sub-properties)',
-        value1: { a: [ { b: 'c' } ] },
-        value2: { a: [ { b: 'c' } ] },
-        equal: true
+        value1: {a: [{b: 'c'}]},
+        value2: {a: [{b: 'c'}]},
+        equal: true,
       },
       {
         description: 'not equal objects (different sub-property value)',
-        value1: { a: [ { b: 'c' } ] },
-        value2: { a: [ { b: 'd' } ] },
-        equal: false
+        value1: {a: [{b: 'c'}]},
+        value2: {a: [{b: 'd'}]},
+        equal: false,
       },
       {
         description: 'not equal objects (different sub-property)',
-        value1: { a: [ { b: 'c' } ] },
-        value2: { a: [ { c: 'c' } ] },
-        equal: false
+        value1: {a: [{b: 'c'}]},
+        value2: {a: [{c: 'c'}]},
+        equal: false,
       },
       {
         description: 'empty array and empty object are not equal',
         value1: {},
         value2: [],
-        equal: false
+        equal: false,
       },
       {
         description: 'nulls are equal',
         value1: null,
         value2: null,
-        equal: true
+        equal: true,
       },
       {
         description: 'null and undefined are not equal',
         value1: null,
         value2: undefined,
-        equal: false
+        equal: false,
       },
       {
         description: 'null and empty object are not equal',
         value1: null,
         value2: {},
-        equal: false
+        equal: false,
       },
       {
         description: 'undefined and empty object are not equal',
         value1: undefined,
         value2: {},
-        equal: false
+        equal: false,
       },
-    ]
+    ],
   },
 
   {
@@ -210,45 +210,45 @@ export const tests: Suite[] = [
         description: 'two empty arrays are equal',
         value1: [],
         value2: [],
-        equal: true
+        equal: true,
       },
       {
         description: 'equal arrays',
         value1: [1, 2, 3],
         value2: [1, 2, 3],
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal arrays (different item)',
         value1: [1, 2, 3],
         value2: [1, 2, 4],
-        equal: false
+        equal: false,
       },
       {
         description: 'not equal arrays (different length)',
         value1: [1, 2, 3],
         value2: [1, 2],
-        equal: false
+        equal: false,
       },
       {
         description: 'equal arrays of objects',
         value1: [{a: 'a'}, {b: 'b'}],
         value2: [{a: 'a'}, {b: 'b'}],
-        equal: true
+        equal: true,
       },
       {
         description: 'not equal arrays of objects',
         value1: [{a: 'a'}, {b: 'b'}],
         value2: [{a: 'a'}, {b: 'c'}],
-        equal: false
+        equal: false,
       },
       {
         description: 'pseudo array and equivalent array are not equal',
         value1: {'0': 0, '1': 1, length: 2},
         value2: [0, 1],
-        equal: false
-      }
-    ]
+        equal: false,
+      },
+    ],
   },
 
   {
@@ -264,8 +264,8 @@ export const tests: Suite[] = [
             subProp1: 'sub value1',
             subProp2: {
               subSubProp1: 'sub sub value1',
-              subSubProp2: [1, 2, {prop2: 1, prop: 2}, 4, 5]
-            }
+              subSubProp2: [1, 2, {prop2: 1, prop: 2}, 4, 5],
+            },
           },
           prop5: 1000,
         },
@@ -277,13 +277,13 @@ export const tests: Suite[] = [
           prop4: {
             subProp2: {
               subSubProp1: 'sub sub value1',
-              subSubProp2: [1, 2, {prop2: 1, prop: 2}, 4, 5]
+              subSubProp2: [1, 2, {prop2: 1, prop: 2}, 4, 5],
             },
-            subProp1: 'sub value1'
-          }
+            subProp1: 'sub value1',
+          },
         },
-        equal: true
-      }
-    ]
-  }
+        equal: true,
+      },
+    ],
+  },
 ];

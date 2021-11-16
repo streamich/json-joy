@@ -1,5 +1,5 @@
-import { deepEqual } from "../../json-equal/deepEqual";
-import { find, Path } from "../../json-pointer";
+import {deepEqual} from '../../json-equal/deepEqual';
+import {find, Path} from '../../json-pointer';
 
 export const execTest = (path: Path, value: unknown, not: boolean, doc: unknown) => {
   const {val} = find(doc, path);

@@ -2,7 +2,6 @@ import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
 import {SlateElementNode, SlateNode, SlateTextNode} from '../../..';
 
-
 export const testSplitOp = (applyPatch: ApplyPatch) => {
   describe('split', () => {
     describe('Slate.js examples', () => {

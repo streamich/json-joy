@@ -1,7 +1,13 @@
-import {asString} from "json-schema-serializer";
-import {json_string, JSON} from "ts-brand-json";
-import type {JsonRpc2Error, JsonRpc2ErrorMessage, JsonRpc2Id, JsonRpc2IncomingMessage, JsonRpc2ResponseMessage} from "../../types";
-import type {JsonRpc2Codec} from "../types";
+import {asString} from 'json-schema-serializer';
+import {json_string, JSON} from 'ts-brand-json';
+import type {
+  JsonRpc2Error,
+  JsonRpc2ErrorMessage,
+  JsonRpc2Id,
+  JsonRpc2IncomingMessage,
+  JsonRpc2ResponseMessage,
+} from '../../types';
+import type {JsonRpc2Codec} from '../types';
 
 const KEY_ID = '{"jsonrpc":"2.0","id":';
 const KEY_RESULT = ',"result":';
@@ -26,8 +32,15 @@ export class JsonRpc2CodecJsonString implements JsonRpc2Codec {
   }
 
   public encodeError(error: JsonRpc2Error, id: JsonRpc2Id): json_string<JsonRpc2ErrorMessage> {
-    const errorJson = KEY_CODE + (error.code || 0) + KEY_MESSAGE + asString(String(error.message)) + (error.data !== undefined ? KEY_DATA + JSON.stringify(error.data) : '');
-    return KEY_ID + JSON.stringify(id) + KEY_ERROR + errorJson + BRACKET1_CLOSE_TWICE as json_string<JsonRpc2ErrorMessage>;
+    const errorJson =
+      KEY_CODE +
+      (error.code || 0) +
+      KEY_MESSAGE +
+      asString(String(error.message)) +
+      (error.data !== undefined ? KEY_DATA + JSON.stringify(error.data) : '');
+    return (KEY_ID + JSON.stringify(id) + KEY_ERROR + errorJson + BRACKET1_CLOSE_TWICE) as json_string<
+      JsonRpc2ErrorMessage
+    >;
   }
 
   public encodeParseError(): json_string<JsonRpc2ErrorMessage> {
@@ -35,26 +48,28 @@ export class JsonRpc2CodecJsonString implements JsonRpc2Codec {
   }
 
   public encodeInvalidRequestError(id: JsonRpc2Id): unknown {
-    return KEY_ID + JSON.stringify(id) + ERROR_INVALID_REQUEST as json_string<JsonRpc2ErrorMessage>;
+    return (KEY_ID + JSON.stringify(id) + ERROR_INVALID_REQUEST) as json_string<JsonRpc2ErrorMessage>;
   }
 
   public encodeMethodNotFoundError(id: JsonRpc2Id): unknown {
-    return KEY_ID + JSON.stringify(id) + ERROR_METHOD_NOT_FOUND as json_string<JsonRpc2ErrorMessage>;
+    return (KEY_ID + JSON.stringify(id) + ERROR_METHOD_NOT_FOUND) as json_string<JsonRpc2ErrorMessage>;
   }
 
   public encodeInvalidParamsError(id: JsonRpc2Id): unknown {
-    return KEY_ID + JSON.stringify(id) + ERROR_INVALID_PARAMS as json_string<JsonRpc2ErrorMessage>;
+    return (KEY_ID + JSON.stringify(id) + ERROR_INVALID_PARAMS) as json_string<JsonRpc2ErrorMessage>;
   }
 
   public encodeInternalError(id: JsonRpc2Id): unknown {
-    return KEY_ID + JSON.stringify(id) + ERROR_INTERNAL as json_string<JsonRpc2ErrorMessage>;
+    return (KEY_ID + JSON.stringify(id) + ERROR_INTERNAL) as json_string<JsonRpc2ErrorMessage>;
   }
 
   public encodeResponse(id: JsonRpc2Id, result: unknown): json_string<JsonRpc2ResponseMessage> {
-    return KEY_ID + JSON.stringify(id) + KEY_RESULT + JSON.stringify(result) + BRACKET1_CLOSE as json_string<JsonRpc2ResponseMessage>;
+    return (KEY_ID + JSON.stringify(id) + KEY_RESULT + JSON.stringify(result) + BRACKET1_CLOSE) as json_string<
+      JsonRpc2ResponseMessage
+    >;
   }
 
   public encodeBatch(messages: json_string<JsonRpc2ResponseMessage>[]): json_string<JsonRpc2ResponseMessage[]> {
-    return BRACKET2_OPEN + messages.join(',') + BRACKET2_CLOSE as json_string<JsonRpc2ResponseMessage[]>;
+    return (BRACKET2_OPEN + messages.join(',') + BRACKET2_CLOSE) as json_string<JsonRpc2ResponseMessage[]>;
   }
 }

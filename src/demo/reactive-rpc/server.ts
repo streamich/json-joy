@@ -40,7 +40,6 @@ const caller = new RpcApiCaller<any, any>({
   preCallBufferSize: 10,
 });
 
-
 const onNotification = (name: string, data: unknown, ctx: ConnectionContext & UwsHttpBaseContext): void => {
   switch (name) {
     case 'set-int': {

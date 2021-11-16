@@ -13,7 +13,12 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   public readonly matcher: RegexMatcher;
 
   // tslint:disable-next-line variable-name
-  constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean, createMatcher: CreateRegexMatcher) {
+  constructor(
+    path: Path,
+    public readonly value: string,
+    public readonly ignore_case: boolean,
+    createMatcher: CreateRegexMatcher,
+  ) {
     super(path);
     this.matcher = createMatcher(value, ignore_case);
   }

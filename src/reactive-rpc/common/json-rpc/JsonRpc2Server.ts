@@ -1,6 +1,6 @@
-import type {IRpcApiCaller, RpcMethod} from "../rpc";
-import type {JsonRpc2Codec} from "./codec/types";
-import type {JsonRpc2Error, JsonRpc2RequestMessage, JsonRpc2NotificationMessage} from "./types";
+import type {IRpcApiCaller, RpcMethod} from '../rpc';
+import type {JsonRpc2Codec} from './codec/types';
+import type {JsonRpc2Error, JsonRpc2RequestMessage, JsonRpc2NotificationMessage} from './types';
 
 const isArray = Array.isArray;
 
@@ -32,7 +32,8 @@ export class JsonRpc2Server<Api extends Record<string, RpcMethod<Ctx, any, any>>
     try {
       if (!message || typeof message !== 'object' || isArray(message)) return this.codec.encodeInvalidRequestError(id);
       const isNotification =
-        typeof (message as JsonRpc2RequestMessage).id !== 'number' && typeof (message as JsonRpc2RequestMessage).id !== 'string';
+        typeof (message as JsonRpc2RequestMessage).id !== 'number' &&
+        typeof (message as JsonRpc2RequestMessage).id !== 'string';
       if (!isNotification) id = (message as JsonRpc2RequestMessage).id;
       if (message.method === undefined) return this.codec.encodeMethodNotFoundError(id);
       const method = (message as JsonRpc2RequestMessage).method;
@@ -61,8 +62,8 @@ export class JsonRpc2Server<Api extends Record<string, RpcMethod<Ctx, any, any>>
   public async onMessages(ctx: Ctx, data: unknown): Promise<unknown> {
     try {
       const messages = this.codec.decode(data);
-      const results = await Promise.all(messages.map(async message => this.onMessage(ctx, message)));
-      const resultsFiltered = results.filter(res => res !== undefined);
+      const results = await Promise.all(messages.map(async (message) => this.onMessage(ctx, message)));
+      const resultsFiltered = results.filter((res) => res !== undefined);
       if (resultsFiltered.length < 2) return resultsFiltered[0];
       return this.codec.encodeBatch(resultsFiltered);
     } catch (error) {

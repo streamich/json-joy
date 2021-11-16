@@ -1,7 +1,6 @@
 import type {ApplyPatch} from '../../types';
 import type {Operation} from '../../../types';
 
-
 export const testEndsOp = (applyPatch: ApplyPatch) => {
   const applyOperation = (doc: unknown, op: Operation) => applyPatch(doc, [op], {mutate: true});
 

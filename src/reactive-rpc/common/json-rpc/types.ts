@@ -34,6 +34,4 @@ export type JsonRpc2Id = number | string | null;
 export type JsonRpc2IncomingMessage = JsonRpc2RequestMessage | JsonRpc2NotificationMessage;
 export type JsonRpc2OutgoingMessage = JsonRpc2ResponseMessage | JsonRpc2ErrorMessage;
 
-export type JsonRpc2Message =
-  | JsonRpc2IncomingMessage
-  | JsonRpc2OutgoingMessage;
+export type JsonRpc2Message = JsonRpc2IncomingMessage | JsonRpc2OutgoingMessage;

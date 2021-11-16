@@ -1,11 +1,11 @@
 import {createConnectionContext} from '../../context';
 import {readBody} from '../../util';
-import{JsonRpc2Server} from '../../../../common/json-rpc/JsonRpc2Server';
+import {JsonRpc2Server} from '../../../../common/json-rpc/JsonRpc2Server';
 import type {EnableReactiveRpcApiParams, UwsHttpResponse} from '../../types';
-import type{UwsHttpBaseContext} from '../types';
+import type {UwsHttpBaseContext} from '../types';
 import {STATUS_400} from '../rpc/constants';
 import {EnableHttpPostRcpApiParams} from '..';
-import { JsonRpc2CodecJsonString } from '../../../../common/json-rpc/codec/json-string/JsonRpc2CodecJsonString';
+import {JsonRpc2CodecJsonString} from '../../../../common/json-rpc/codec/json-string/JsonRpc2CodecJsonString';
 
 export interface EnableHttpJsonRPC2ApiParams<Ctx extends UwsHttpBaseContext> extends EnableReactiveRpcApiParams<Ctx> {
   server: JsonRpc2Server<any, Ctx>;
@@ -28,7 +28,8 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(
       ctx.payloadSize = body.byteLength;
       body = body.toString('utf8') || 'null';
     }
-    server.onMessages(ctx, body)
+    server
+      .onMessages(ctx, body)
       .then((result) => {
         if (res.aborted) return;
         res.cork(() => {
@@ -45,7 +46,13 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(
 }
 
 export const enableHttpJsonRPC2Api = <Ctx extends UwsHttpBaseContext>(params: EnableHttpPostRcpApiParams<Ctx>) => {
-  const {uws, route = '/json-rpc', createContext = createConnectionContext as any, caller, onNotification = () => {}} = params;
+  const {
+    uws,
+    route = '/json-rpc',
+    createContext = createConnectionContext as any,
+    caller,
+    onNotification = () => {},
+  } = params;
   const server = new JsonRpc2Server<any, Ctx>({
     caller,
     codec: new JsonRpc2CodecJsonString(),

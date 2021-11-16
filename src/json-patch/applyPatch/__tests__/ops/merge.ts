@@ -63,7 +63,7 @@ export const testMergeOp = (applyPatch: ApplyPatch) => {
               pos: 1,
             },
           ],
-          {mutate: true}
+          {mutate: true},
         ),
       ).toThrow();
     });
@@ -79,7 +79,7 @@ export const testMergeOp = (applyPatch: ApplyPatch) => {
               pos: 1,
             },
           ],
-          {mutate: true}
+          {mutate: true},
         ),
       ).toThrow();
     });
