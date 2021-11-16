@@ -2,16 +2,7 @@ import {deepClone} from '../util';
 import {Operation} from '../types';
 import {findByPointer, hasOwnProperty, unescapeComponent} from '../../json-pointer';
 import {deepEqual} from '../../json-equal/deepEqual';
-
-export interface OpResult {
-  doc: unknown;
-  old?: unknown;
-}
-
-export interface PatchResult {
-  doc: unknown;
-  res: readonly OpResult[];
-}
+import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
 
 const {isArray} = Array;
 
@@ -140,8 +131,8 @@ export function applyOperation(doc: unknown, operation: Operation): OpResult {
   return {doc};
 }
 
-export function applyPatch(doc: unknown, patch: readonly Operation[], mutate: boolean): PatchResult {
-  if (!mutate) doc = deepClone(doc);
+export function applyPatch(doc: unknown, patch: readonly Operation[], options: ApplyPatchOptions): PatchResult {
+  if (!options.mutate) doc = deepClone(doc);
   const res: OpResult[] = [];
   for (let i = 0; i < patch.length; i++) {
     const operation = patch[i];

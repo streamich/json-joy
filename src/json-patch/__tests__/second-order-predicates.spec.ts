@@ -1,4 +1,4 @@
-import {applyPatch} from '../patch';
+import {applyPatch} from '../applyPatch';
 
 describe('Second order predicates', () => {
   test('succeeds when two AND predicates succeed', () => {
@@ -17,8 +17,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      true,
-      {},
+      {mutate: true}
     );
   });
 
@@ -39,8 +38,7 @@ describe('Second order predicates', () => {
             ],
           },
         ],
-        true,
-        {},
+        {mutate: true}
       ),
     ).toThrow();
   });
@@ -61,8 +59,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      true,
-      {},
+      {mutate: true}
     );
   });
 
@@ -83,8 +80,7 @@ describe('Second order predicates', () => {
             ],
           },
         ],
-        true,
-        {},
+        {mutate: true}
       ),
     ).toThrow();
   });
@@ -105,8 +101,7 @@ describe('Second order predicates', () => {
           ],
         },
       ],
-      true,
-      {},
+      {mutate: true}
     );
   });
 });

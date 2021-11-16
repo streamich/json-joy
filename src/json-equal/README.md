@@ -4,7 +4,7 @@ This library contains the fastest JSON deep comparison algorithms.
 
 - `deepEqual` &mdash; deep comparison of JSON objects. Faster than `fast-deep-equal` and
   `fast-equals` packages.
-- `deepEqualCodegen` &mdash; if the comparison JSON object is known in advance, this function
+- `$$deepEqual` &mdash; if the comparison JSON object is known in advance, this function
   can pre-compile a javascript function for comparison, which is about an order of magnitude
   faster than `deepEqual`.
 
@@ -21,12 +21,12 @@ deepEqual(a, b); // true/false
 ```
 
 
-### `deepEqualCodegen`
+### `$$deepEqual`
 
 ```ts
-import {deepEqualCodegen} from 'json-joy/{lib,es6,esm,es2020}/json-equal/deepEqualCodegen';
+import {$$deepEqual} from 'json-joy/{lib,es6,esm,es2020}/json-equal/$$deepEqual';
 
-const js = deepEqualCodegen(a);
+const js = $$deepEqual(a);
 const fn = eval(js);
 
 fn(b); // true/false
