@@ -1848,13 +1848,13 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
         });
       });
 
-      it('should use value object as a reference', () => {
+      it('should not use value object as a reference', () => {
         const obj1: any = {};
         const patch: any = [{op: 'add', path: '/foo', value: []}];
 
         applyPatch(obj1, patch, {mutate: true});
 
-        expect(obj1.foo).toBe(patch[0].value);
+        expect(obj1.foo).not.toBe(patch[0].value);
       });
 
       if (!dontTestResultHistory) {
