@@ -1,4 +1,6 @@
 const Benchmark = require('benchmark');
+const {applyOps} = require('../../es2020/json-patch');
+const {operationToOp} = require('../../es2020/json-patch/codec/json');
 const {apply, $apply} = require('../../es2020/json-patch/codegen/apply');
 
 const message = {
@@ -14,16 +16,21 @@ const patch = [
   {op: 'add', path: '/cloudEvent/foo', value: 'bar`'},
 ];
 
+const ops = patch.map(operationToOp);
+
 const suite = new Benchmark.Suite;
 
-const applyCompiled = $apply(patch, {});
+const applyCompiled = $apply(patch, {mutate: false});
 
 suite
   .add(`json-patch/apply(patch, {}, message)`, function() {
-    apply(patch, {}, message);
+    apply(patch, {mutate: false}, message);
   })
   .add(`json-patch/$apply(patch, {})(message)`, function() {
-    $apply(patch, {})(message);
+    $apply(patch, {mutate: false})(message);
+  })
+  .add(`json-patch/applyOps`, function() {
+    applyOps(message, ops, false);
   })
   .add(`json-patch/applyCompiled`, function() {
     applyCompiled(message);
