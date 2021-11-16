@@ -40,24 +40,31 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
     }
   }
 
-  const deps: unknown[] = [fns];
-  const depNames: string[] = ['fns'];
-
   const needsToClone = !mutate && hasNonPredicateOperations;
+
+  const deps: unknown[] = [];
+  const depNames: string[] = [];
 
   if (needsToClone) {
     deps.push(deepClone);
     depNames.push('deepClone');
   }
 
+  let resultExpression = 'doc';
+
+  for (let i = 0; i < fns.length; i++) {
+    const fn = fns[i];
+    const depName = `fn${i}`;
+    deps.push(fn);
+    depNames.push(depName);
+    resultExpression = `${depName}(${resultExpression})`;
+  }
+
   const js = /* js */ `
 (function(${depNames.join(',')}) {
   return function(doc){
-    ${needsToClone ? /* js */ `doc = deepClone(doc);` : ''};
-    for (var i = 0; i < ${length}; i++) {
-      doc = fns[i](doc);
-    }
-    return doc;
+    ${needsToClone ? /* js */ `doc = deepClone(doc);` : ''}
+    return ${resultExpression};
   };
 })`;
 
