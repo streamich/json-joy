@@ -1,5 +1,5 @@
 import {OpTest} from '../../op';
-import {$$find} from "../../../json-pointer/codegen/$$find";
+import {$$find} from "../../../json-pointer/codegen/find";
 import {$$deepEqual} from "../../../json-equal/$$deepEqual";
 import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
 import {predicateOpWrapper} from '../util';

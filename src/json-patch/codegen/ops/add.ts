@@ -1,14 +1,15 @@
 import {OpAdd} from '../../op';
 import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
 import type {ApplyFn} from '../types';
-import {find} from '../../../json-pointer';
+import {$findRef} from "../../../json-pointer/codegen/findRef";
 
 export const $$add = (op: OpAdd): CompiledFunction<ApplyFn> => {
+  const find = $findRef(op.path);
   const js = /* js */ `
 (function(find, path){
   return function(doc){
     var value = ${JSON.stringify(op.value)};
-    var f = find(doc, path);
+    var f = find(doc);
     var obj = f.obj, key = f.key, val = f.val;
     if (!obj) doc = value;
     else if (typeof key === 'string') obj[key] = value;

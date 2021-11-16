@@ -1,5 +1,5 @@
 import {OpStarts} from '../../op';
-import {$$find} from "../../../json-pointer/codegen/$$find";
+import {$$find} from "../../../json-pointer/codegen/find";
 import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
