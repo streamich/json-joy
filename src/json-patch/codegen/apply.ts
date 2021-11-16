@@ -1,9 +1,11 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
 import {operationToOp} from '../codec/json';
-import {AbstractPredicateOp, Op} from '../op';
+import {AbstractPredicateOp, OpTest} from '../op';
 import {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
+import {$test} from './ops/test';
+import type { ApplyFn } from './types';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {
   const {mutate, createMatcher} = applyOptions;
@@ -18,12 +20,10 @@ export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptio
   return doc;
 }
 
-export type ApplyPatch = (doc: unknown) => unknown;
-
-export const $apply = (operations: readonly Operation[], applyOptions: ApplyPatchOptions): ApplyPatch => {
+export const $apply = (operations: readonly Operation[], applyOptions: ApplyPatchOptions): ApplyFn => {
   const {mutate, createMatcher} = applyOptions;
   const operationOptions: JsonPatchOptions = {createMatcher};
-  const ops: Op[] = [];
+  const ops: ApplyFn[] = [];
   const length = operations.length;
 
   let hasNonPredicateOperations = false;
@@ -32,15 +32,16 @@ export const $apply = (operations: readonly Operation[], applyOptions: ApplyPatc
     const op = operationToOp(operations[i], operationOptions);
     const isPredicateOp = op instanceof AbstractPredicateOp;
     if (!isPredicateOp) hasNonPredicateOperations = true;
-    ops.push(op);
+    if (op.op() === 'test') {
+      ops.push($test(op as OpTest));
+    } else {
+      ops.push(doc => op.apply(doc).doc);
+    }
   }
 
   return (doc: unknown): unknown => {
     if (!mutate && hasNonPredicateOperations) doc = deepClone(doc);
-    for (let i = 0; i < length; i++) {
-      const op = ops[i];
-      doc = op.apply(doc).doc;
-    }
+    for (let i = 0; i < length; i++) doc = ops[i](doc);
     return doc;
   };
 };

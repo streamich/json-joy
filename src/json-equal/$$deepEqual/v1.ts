@@ -60,5 +60,6 @@ export const $$deepEqual = (a: unknown): JavaScript<(b: unknown) => boolean> => 
     '})'
   ];
 
-  return fn.join('\n') as JavaScript<(b: unknown) => boolean>;
+  // return fn.join('\n') as JavaScript<(b: unknown) => boolean>;
+  return fn.join('') as JavaScript<(b: unknown) => boolean>;
 };
