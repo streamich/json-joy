@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs';
 import {validateOperation} from '../json-patch';
-import {applyPatch} from '../json-patch/patch';
+import {applyPatch} from '../json-patch/applyPatch';
 import {createMatcherDefault} from '../json-patch/util';
 
 try {
