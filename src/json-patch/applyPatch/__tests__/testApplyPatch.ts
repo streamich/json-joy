@@ -1,7 +1,11 @@
 import { ApplyPatch } from "../types";
 import { Operation } from "../..";
 
-export const testApplyPatch = (applyPatch: ApplyPatch) => {
+interface Options {
+  dontTestResultHistory?: boolean;
+}
+
+export const testApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHistory = false}: Options = {}) => {
   describe(`applyPatch ${name}`, () => {
     describe('root replacement', () => {
       describe('add', () => {
@@ -1344,28 +1348,30 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
         });
       });
 
-      it('should apply add on root', () => {
-        const obj: any = {
-          hello: 'world',
-        };
-        const newObj = applyPatch(
-          obj,
-          [
-            {
-              op: 'add',
-              path: '',
-              value: {
-                hello: 'universe',
+      if (!dontTestResultHistory) {
+        it('should apply add on root', () => {
+          const obj: any = {
+            hello: 'world',
+          };
+          const newObj = applyPatch(
+            obj,
+            [
+              {
+                op: 'add',
+                path: '',
+                value: {
+                  hello: 'universe',
+                },
               },
-            },
-          ],
-          {mutate: true},
-        ).res[0].doc;
+            ],
+            {mutate: true},
+          ).res[0].doc;
 
-        expect(newObj).toEqual({
-          hello: 'universe',
+          expect(newObj).toEqual({
+            hello: 'universe',
+          });
         });
-      });
+      }
 
       it('should apply remove', () => {
         const obj: any = {
@@ -1465,28 +1471,30 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
         });
       });
 
-      it('should apply replace on root', () => {
-        const obj: any = {
-          hello: 'world',
-        };
-        const newObject = applyPatch(
-          obj,
-          [
-            {
-              op: 'replace',
-              path: '',
-              value: {
-                hello: 'universe',
+      if (!dontTestResultHistory) {
+        it('should apply replace on root', () => {
+          const obj: any = {
+            hello: 'world',
+          };
+          const newObject = applyPatch(
+            obj,
+            [
+              {
+                op: 'replace',
+                path: '',
+                value: {
+                  hello: 'universe',
+                },
               },
-            },
-          ],
-          {mutate: true},
-        ).res[0].doc;
+            ],
+            {mutate: true},
+          ).res[0].doc;
 
-        expect(newObject).toEqual({
-          hello: 'universe',
+          expect(newObject).toEqual({
+            hello: 'universe',
+          });
         });
-      });
+      }
 
       it('should apply test', () => {
         const obj: any = {
@@ -1722,7 +1730,6 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
       });
 
       it('should apply move on root', () => {
-        //investigate if this test is right (https://github.com/Starcounter-Jack/JSON-Patch/issues/40)
         const obj: any = {
           hello: 'world',
           location: {
@@ -1739,7 +1746,7 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
             },
           ],
           {mutate: true},
-        ).res[0].doc;
+        ).doc;
 
         expect(newObj).toEqual({
           city: 'Vancouver',
@@ -1817,7 +1824,7 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
             },
           ],
           {mutate: true},
-        ).res[0].doc;
+        ).doc;
 
         expect(newObj).toEqual({
           city: 'Vancouver',
@@ -1850,132 +1857,134 @@ export const testApplyPatch = (applyPatch: ApplyPatch) => {
         expect(obj1.foo).toBe(patch[0].value);
       });
 
-      describe('returning removed elements >', () => {
-        let obj: any;
-        beforeEach(() => {
-          obj = {
-            name: 'jack',
-            languages: ['c#', 'haskell', 'python'],
-            hobby: 'music',
-          };
-        });
-
-        it('return removed element when removing from object', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'remove',
-                path: '/name',
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual('jack');
-        });
-
-        it('return removed element when replacing in object', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'replace',
-                path: '/name',
-                value: 'john',
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual('jack');
-        });
-
-        it('return removed element when removing from array', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'remove',
-                path: '/languages/1',
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual('haskell');
-        });
-
-        it('return removed element when replacing in array', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'replace',
-                path: '/languages/1',
-                value: 'erlang',
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual('haskell');
-        });
-
-        it('return root when removing root', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'remove',
-                path: '',
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual({
-            name: 'jack',
-            languages: ['c#', 'haskell', 'python'],
-            hobby: 'music',
+      if (!dontTestResultHistory) {
+        describe('returning removed elements >', () => {
+          let obj: any;
+          beforeEach(() => {
+            obj = {
+              name: 'jack',
+              languages: ['c#', 'haskell', 'python'],
+              hobby: 'music',
+            };
           });
-        });
 
-        it('return root when replacing root', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'replace',
-                path: '',
-                value: {
-                  newRoot: 'yes',
+          it('return removed element when removing from object', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'remove',
+                  path: '/name',
                 },
-              },
-            ],
-            {mutate: false},
-          ).res;
-          expect(result[0].old).toEqual({
-            name: 'jack',
-            languages: ['c#', 'haskell', 'python'],
-            hobby: 'music',
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual('jack');
+          });
+
+          it('return removed element when replacing in object', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'replace',
+                  path: '/name',
+                  value: 'john',
+                },
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual('jack');
+          });
+
+          it('return removed element when removing from array', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'remove',
+                  path: '/languages/1',
+                },
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual('haskell');
+          });
+
+          it('return removed element when replacing in array', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'replace',
+                  path: '/languages/1',
+                  value: 'erlang',
+                },
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual('haskell');
+          });
+
+          it('return root when removing root', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'remove',
+                  path: '',
+                },
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual({
+              name: 'jack',
+              languages: ['c#', 'haskell', 'python'],
+              hobby: 'music',
+            });
+          });
+
+          it('return root when replacing root', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'replace',
+                  path: '',
+                  value: {
+                    newRoot: 'yes',
+                  },
+                },
+              ],
+              {mutate: false},
+            ).res;
+            expect(result[0].old).toEqual({
+              name: 'jack',
+              languages: ['c#', 'haskell', 'python'],
+              hobby: 'music',
+            });
+          });
+
+          it('return root when moving to root', () => {
+            const result = applyPatch(
+              obj,
+              [
+                {
+                  op: 'move',
+                  from: '/languages',
+                  path: '',
+                },
+              ],
+              {mutate: false},
+            ).res;
+
+            expect(result[0].old).toEqual({
+              name: 'jack',
+              hobby: 'music',
+            });
           });
         });
-
-        it('return root when moving to root', () => {
-          const result = applyPatch(
-            obj,
-            [
-              {
-                op: 'move',
-                from: '/languages',
-                path: '',
-              },
-            ],
-            {mutate: false},
-          ).res;
-
-          expect(result[0].old).toEqual({
-            name: 'jack',
-            hobby: 'music',
-          });
-        });
-      });
+      }
     });
 
     it(`should not allow __proto__ modifications`, () => {
