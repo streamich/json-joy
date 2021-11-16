@@ -1,7 +1,7 @@
 import {OpTest} from '../../op';
 import {$$find} from "../../../json-pointer/codegen/$$find";
 import {$$deepEqual} from "../../../json-equal/$$deepEqual";
-import {compile, CompiledFunction, JavaScript} from "../../../util/codegen";
+import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
 
@@ -23,8 +23,4 @@ export const $$test = (op: OpTest): CompiledFunction<ApplyFn> => {
   };
 };
 
-export const $test = (op: OpTest): ApplyFn => {
-  const fn = $$test(op);
-  const compiled = compile(fn.js)(...fn.deps);
-  return compiled;
-};
+export const $test = (op: OpTest): ApplyFn => compileFn($$test(op));

@@ -1,6 +1,6 @@
 import {OpStarts} from '../../op';
 import {$$find} from "../../../json-pointer/codegen/$$find";
-import {compile, CompiledFunction, JavaScript} from "../../../util/codegen";
+import {CompiledFunction, compileFn, JavaScript} from "../../../util/codegen";
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
 
@@ -23,8 +23,4 @@ export const $$starts = (op: OpStarts): CompiledFunction<ApplyFn> => {
   };
 };
 
-export const $starts = (op: OpStarts): ApplyFn => {
-  const fn = $$starts(op);
-  const compiled = compile(fn.js)(...fn.deps);
-  return compiled;
-};
+export const $starts = (op: OpStarts): ApplyFn => compileFn($$starts(op));
