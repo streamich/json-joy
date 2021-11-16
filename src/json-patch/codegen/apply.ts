@@ -47,7 +47,7 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
 
   if (needsToClone) {
     deps.push(deepClone);
-    depNames.push('deepClone');
+    depNames.push('clone');
   }
 
   let resultExpression = 'doc';
@@ -63,7 +63,7 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
   const js = /* js */ `
 (function(${depNames.join(',')}) {
   return function(doc){
-    ${needsToClone ? /* js */ `doc = deepClone(doc);` : ''}
+    ${needsToClone ? /* js */ `doc = clone(doc);` : ''}
     return ${resultExpression};
   };
 })`;
