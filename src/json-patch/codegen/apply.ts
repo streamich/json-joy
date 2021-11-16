@@ -1,12 +1,12 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
 import {operationToOp} from '../codec/json';
-import {AbstractPredicateOp, OpTest} from '../op';
+import {AbstractPredicateOp} from '../op';
 import {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
-import {$test} from './ops/test';
 import type {ApplyFn} from './types';
 import {compile, CompiledFunction, JavaScript} from '../../util/codegen';
+import {codegenOp} from './codegenOp';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {
   const {mutate, createMatcher} = applyOptions;
@@ -33,11 +33,7 @@ export const $$apply = (operations: readonly Operation[], applyOptions: ApplyPat
     const op = operationToOp(operations[i], operationOptions);
     const isPredicateOp = op instanceof AbstractPredicateOp;
     if (!isPredicateOp) hasNonPredicateOperations = true;
-    if (op.op() === 'test') {
-      fns.push($test(op as OpTest));
-    } else {
-      fns.push(doc => op.apply(doc).doc);
-    }
+    fns.push(codegenOp(op));
   }
 
   const needsToClone = !mutate && hasNonPredicateOperations;
