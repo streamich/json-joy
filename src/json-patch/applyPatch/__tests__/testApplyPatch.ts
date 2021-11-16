@@ -1,12 +1,20 @@
-import { ApplyPatch } from "../types";
-import { Operation } from "../..";
+import type {ApplyPatch} from "../types";
+import type {Operation} from "../..";
+import {testStartsOp} from "./ops/starts";
+import {testTestOp} from "./ops/test";
 
 interface Options {
   dontTestResultHistory?: boolean;
 }
 
-export const testApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHistory = false}: Options = {}) => {
-  describe(`applyPatch ${name}`, () => {
+export const testApplyPatch = (applyPatch: ApplyPatch, options: Options = {}) => {
+  smokeTestApplyPatch(applyPatch, options);
+  testTestOp(applyPatch);
+  testStartsOp(applyPatch);
+};
+
+export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHistory = false}: Options = {}) => {
+  describe(`applyPatch smoke tests`, () => {
     describe('root replacement', () => {
       describe('add', () => {
         it('should `add` an object (on a json document of type object) - in place', () => {
