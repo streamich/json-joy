@@ -1,4 +1,4 @@
-import {$$find} from '../$$find';
+import {$$find} from '../find';
 
 test('can generate two levels deep selector', () => {
   const selector = eval($$find(['foo', 'bar']));
