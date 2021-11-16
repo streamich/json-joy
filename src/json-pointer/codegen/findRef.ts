@@ -13,26 +13,32 @@ export const $$findRef = (path: Path): CompiledFunction<Fn> => {
     } as CompiledFunction<Fn>;  
   }
 
-  let js = /* js */ `(function(hasOwnProperty, path){
+  let loop = '';
+  for (let i = 0; i < path.length; i++) {
+    const key = JSON.stringify(path[i]);
+    loop += /* js */ `
+      obj = val;
+      key = ${key};
+      if (obj instanceof Array) {
+        var length = obj.length;
+        if (key === '-') key = length;
+        else {
+          var key2 = ${~~path[i]};
+          ${(String(~~path[i]) !== String(path[i])) ? `if ('' + key2 !== key) throw new Error('INVALID_INDEX');` : ''}
+          ${~~path[i] < 0 ? `throw new Error('INVALID_INDEX');` : ''}
+          key = key2;
+        }
+        val = obj[key];
+      } else if (typeof obj === 'object' && !!obj) {
+        val = hasOwnProperty(obj, key) ? obj[key] : undefined;
+      } else throw new Error('NOT_FOUND');
+    `;
+  }
+
+  const js = /* js */ `(function(hasOwnProperty, path){
     return function(val) {
-      var obj, key, i;
-      for (i = 0; i < ${path.length}; i++) {
-        obj = val;
-        key = path[i];
-        if (obj instanceof Array) {
-          var length = obj.length;
-          if (key === '-') key = length;
-          else {
-            var key2 = ~~key;
-            if ('' + key2 !== key) throw new Error('INVALID_INDEX');
-            key = key2;
-            if (key < 0) throw new Error('INVALID_INDEX');
-          }
-          val = obj[key];
-        } else if (typeof obj === 'object' && !!obj) {
-          val = hasOwnProperty(obj, key) ? obj[key] : undefined;
-        } else throw new Error('NOT_FOUND');
-      }
+      var obj, key;
+      ${loop}
       return {val:val, obj:obj, key:key};
     };
   })`;
