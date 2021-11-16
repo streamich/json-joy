@@ -1,5 +1,5 @@
 import {Operation} from '../../json-patch/types';
-import {applyOps} from '../../json-patch/patch';
+import {applyOps} from '../../json-patch/applyPatch';
 import {transform} from '../transform';
 import {decode} from '../../json-patch/codec/json';
 

@@ -4,6 +4,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
+import {deepClone} from '../util';
 
 /**
  * @category JSON Patch
@@ -23,14 +24,14 @@ export class OpAdd extends AbstractOp<'add'> {
 
   public apply(doc: unknown) {
     const {val, key, obj} = find(doc, this.path) as any;
-    const value = this.value;
+    const value = deepClone(this.value);
     if (!obj) doc = value;
     else if (typeof key === 'string') obj[key] = value;
     else {
       const length = obj.length;
-      if (key < length) obj.splice(key, 0, this.value);
+      if (key < length) obj.splice(key, 0, value);
       else if (key > length) throw new Error('INVALID_INDEX');
-      else obj.push(this.value);
+      else obj.push(value);
     }
     return {doc, old: val};
   }
