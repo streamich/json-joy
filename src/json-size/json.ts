@@ -1,6 +1,10 @@
 import {utf8Count} from '../util/utf8';
 
-const numberSize = (num: number) => JSON.stringify(num).length;
+const numberSize = (num: number) => {
+  const isInteger = num === Math.round(num);
+  if (isInteger) return Math.max(Math.floor(Math.log10(Math.abs(num))), 0) + 1 + (num < 0 ? 1 : 0);
+  return JSON.stringify(num).length;
+};
 
 const stringSize = (str: string) => {
   const strLength = str.length;
