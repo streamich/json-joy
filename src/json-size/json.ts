@@ -8,7 +8,7 @@ const numberSize = (num: number) => {
 
 const stringSize = (str: string) => {
   const strLength = str.length;
-  let byteLength = 0;
+  let byteLength = strLength;
   let pos = 0;
   while (pos < strLength) {
     let value = str.charCodeAt(pos++);
@@ -21,10 +21,8 @@ const stringSize = (str: string) => {
         case 13: // \r
         case 34: // \"
         case 92: // \\
-          byteLength += 2;
-          break;
-        default:
           byteLength += 1;
+          break;
       }
       continue;
     } else return utf8Count(JSON.stringify(str));
