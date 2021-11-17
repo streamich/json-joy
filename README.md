@@ -48,7 +48,6 @@ This package consists of multiple self-contained libraries:
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
 - __`json-size`__ &mdash; calculate the size of serialized JSON object.
   - [__Documentation__ 🚀](./src/json-size/README.md)
-  - __Reference__ 🤖
 - __`json-random`__ &mdash; generate random JSON value.
   - __Documentation__ 🚀
   - __Reference__ 🤖

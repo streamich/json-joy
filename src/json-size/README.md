@@ -27,8 +27,12 @@ jsonSize({1: 2, foo: 'bar'}) // 19
 In most cases `json-size` will be faster than `JSON.stringify`.
 
 ```
-node benchmarks/json-size
-json-joy/json-size x 450,036 ops/sec ±0.44% (98 runs sampled), 2222 ns/op
-JSON.stringify + utf8Count x 244,640 ops/sec ±0.44% (97 runs sampled), 4088 ns/op
-Fastest is json-joy/json-size
+node benchmarks/json-size.js
+json-joy/json-size jsonSize() x 377,980 ops/sec ±0.12% (100 runs sampled), 2646 ns/op
+json-joy/json-size jsonSizeApprox() x 377,841 ops/sec ±0.09% (98 runs sampled), 2647 ns/op
+json-joy/json-size jsonSizeFast() x 2,229,344 ops/sec ±0.30% (101 runs sampled), 449 ns/op
+json-joy/json-size msgpackSizeFast() x 1,260,284 ops/sec ±0.10% (96 runs sampled), 793 ns/op
+JSON.stringify x 349,696 ops/sec ±0.08% (100 runs sampled), 2860 ns/op
+JSON.stringify + utf8Count x 182,977 ops/sec ±0.10% (100 runs sampled), 5465 ns/op
+Fastest is json-joy/json-size jsonSizeFast()
 ```
