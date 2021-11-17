@@ -1,3 +1,16 @@
+# [5.1.0](https://github.com/streamich/json-joy/compare/v5.0.0...v5.1.0) (2021-11-17)
+
+
+### Features
+
+* 🎸 add jsonSizeApprox() utility ([f1a433a](https://github.com/streamich/json-joy/commit/f1a433ab9ee84466abb63d1a7366bd18d98f9e95))
+
+
+### Performance Improvements
+
+* ⚡️ improve string lenght computation ([cfc410e](https://github.com/streamich/json-joy/commit/cfc410ec55efe50064e98dd735e809ef517267d6))
+* ⚡️ optimize number length detection ([2407055](https://github.com/streamich/json-joy/commit/24070554908276510e5b83cf6c60f08bdd80cf50))
+
 # [5.0.0](https://github.com/streamich/json-joy/compare/v4.0.0...v5.0.0) (2021-11-16)
 
 
