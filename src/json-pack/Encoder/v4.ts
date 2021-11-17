@@ -190,14 +190,7 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
   public encodeObject(obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
     const length = keys.length;
-    if (length <= 0b1111) this.u8(0b10000000 | length);
-    else if (length <= 0xffff) {
-      this.u8(0xde);
-      this.u16(length);
-    } else if (length <= 0xffffffff) {
-      this.u8(0xdf);
-      this.u32(length);
-    } else return;
+    this.encodeObjectHeader(length);
     for (let i = 0; i < length; i++) {
       const key = keys[i];
       this.encodeString(key);
