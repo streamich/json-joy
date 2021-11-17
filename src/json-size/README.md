@@ -12,7 +12,15 @@ import {jsonSize} from 'json-joy/{lib,es6}/json-size';
 jsonSize({1: 2, foo: 'bar'}) // 19
 ```
 
-There is also a faster version `jsonSizeApprox`, which uses string nominal length for calculation.
+## Reference
+
+- `jsonSize` &mdash; calculates exact JSON size, as `JSON.stringify()` would return.
+- `jsonSizeApprox` &mdash; a faster version, which uses string nominal length for calculation.
+- `jsonSizeFast` &mdash; the fastest version, which uses nominal values for all JSON types. See
+  source code for description.
+- `msgpackSizeFast` &mdash; same as `jsonSizeFast`, but for MessagePack values. In addition
+  to regular JSON values it also supports binary data (by `Buffer` or `Uint8Array`),
+  `JsonPackExtension`, and `JsonPackValue`.
 
 ## Performance
 
