@@ -30,8 +30,6 @@ const stringSize = (str: string) => {
   return byteLength + 2;
 };
 
-const stringSizeApprox = (str: string) => str.length;
-
 const booleanSize = (bool: boolean) => (bool ? 4 : 5);
 
 const arraySize = (arr: unknown[]) => {
@@ -87,7 +85,7 @@ export const jsonSizeApprox = (value: unknown): number => {
     case 'number':
       return numberSize(value);
     case 'string':
-      return stringSizeApprox(value);
+      return value.length;
     case 'boolean':
       return booleanSize(value);
   }

@@ -24,9 +24,6 @@ const objectSize = (obj: Record<string, unknown>): number => {
  * @returns Approximate size of the value in bytes.
  */
 export const msgpackSizeFast = (value: unknown): number => {
-  if (isUint8Array(value)) return 5 + value.byteLength;
-  if (value instanceof JsonPackValue) return (value as JsonPackValue).buf.byteLength;
-  if (value instanceof JsonPackExtension) return 6 + (value as JsonPackExtension).buf.byteLength;
   if (value === null) return 1;
   switch (typeof value) {
     case 'number':
@@ -37,5 +34,8 @@ export const msgpackSizeFast = (value: unknown): number => {
       return 1;
   }
   if (value instanceof Array) return arraySize(value);
+  if (isUint8Array(value)) return 5 + value.byteLength;
+  if (value instanceof JsonPackValue) return (value as JsonPackValue).buf.byteLength;
+  if (value instanceof JsonPackExtension) return 6 + (value as JsonPackExtension).buf.byteLength;
   return objectSize(value as Record<string, unknown>);
 };

@@ -1,5 +1,8 @@
 const Benchmark = require('benchmark');
 const jsonSize = require('../es6/json-size').jsonSize;
+const jsonSizeApprox = require('../es6/json-size').jsonSizeApprox;
+const jsonSizeFast = require('../es6/json-size').jsonSizeFast;
+const msgpackSizeFast = require('../es6/json-size').msgpackSizeFast;
 const utf8Count = require('../es6/util/utf8').utf8Count;
 
 const json = [
@@ -12,6 +15,7 @@ const json = [
     name: 'blog post',
     json: {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+      longString: 'lorem ipsum dolorem, alamorem colomorem, ipsum pipsum, lorem ipsum dolorem, alamorem colomorem, ipsum pipsum, lorem ipsum dolorem, alamorem colomorem, ipsum pipsum, lorem ipsum dolorem, alamorem colomorem, ipsum pipsum, lorem ipsum dolorem, alamorem colomorem, ipsum pipsum',
       author: {
         name: 'John 💪',
         handle: '@johny',
@@ -39,8 +43,20 @@ const json = [
 const suite = new Benchmark.Suite;
 
 suite
-  .add(`json-joy/json-size`, function() {
+  .add(`json-joy/json-size jsonSize()`, function() {
     jsonSize(json);
+  })
+  .add(`json-joy/json-size jsonSizeApprox()`, function() {
+    jsonSizeApprox(json);
+  })
+  .add(`json-joy/json-size jsonSizeFast()`, function() {
+    jsonSizeFast(json);
+  })
+  .add(`json-joy/json-size msgpackSizeFast()`, function() {
+    msgpackSizeFast(json);
+  })
+  .add(`JSON.stringify`, function() {
+    JSON.stringify(json).length;
   })
   .add(`JSON.stringify + utf8Count`, function() {
     utf8Count(JSON.stringify(json));
