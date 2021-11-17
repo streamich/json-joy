@@ -1,6 +1,6 @@
 const arraySize = (arr: unknown[]): number => {
   let size = 2;
-  for (let i = arr.length - 1; i; i--) size += jsonSizeFast(arr[i]);
+  for (let i = arr.length - 1; i >= 0; i--) size += jsonSizeFast(arr[i]);
   return size;
 };
 
@@ -52,6 +52,6 @@ export const jsonSizeFast = (value: unknown): number => {
     case 'boolean':
       return 1;
   }
-  if (value instanceof Array) arraySize(value);
+  if (value instanceof Array) return arraySize(value);
   return objectSize(value as Record<string, unknown>);
 };
