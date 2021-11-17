@@ -1,3 +1,21 @@
+# [5.2.0](https://github.com/streamich/json-joy/compare/v5.1.0...v5.2.0) (2021-11-17)
+
+
+### Bug Fixes
+
+* 🐛 correctly compute array size ([d8a1792](https://github.com/streamich/json-joy/commit/d8a1792bf8d1075d609cf07b8a5feecb67642d7d))
+
+
+### Features
+
+* 🎸 add fast MessagePack size computer ([e9b1e03](https://github.com/streamich/json-joy/commit/e9b1e03f3f8347bd8c7daf9aab99ed5bfa858e96))
+* 🎸 implement fast JSON sizer ([ae7d28b](https://github.com/streamich/json-joy/commit/ae7d28be9233e7e48983f8aff13e44f3753522a5))
+
+
+### Performance Improvements
+
+* ⚡️ improve performance of msgpackSizeFast() ([07e5a87](https://github.com/streamich/json-joy/commit/07e5a873119d0751de54c36a48eaf5cf51529e62))
+
 # [5.1.0](https://github.com/streamich/json-joy/compare/v5.0.0...v5.1.0) (2021-11-17)
 
 
