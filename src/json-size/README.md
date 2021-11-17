@@ -12,6 +12,8 @@ import {jsonSize} from 'json-joy/{lib,es6}/json-size';
 jsonSize({1: 2, foo: 'bar'}) // 19
 ```
 
+There is also a faster version `jsonSizeApprox`, which uses string nominal length for calculation.
+
 ## Performance
 
 In most cases `json-size` will be faster than `JSON.stringify`.
