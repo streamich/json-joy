@@ -6,8 +6,7 @@ const arraySize = (arr: unknown[]): number => {
 
 const objectSize = (obj: Record<string, unknown>): number => {
   let size = 2;
-  for (const key in obj)
-    if (obj.hasOwnProperty(key)) size += 2 + key.length + jsonSizeFast(obj[key]);
+  for (const key in obj) if (obj.hasOwnProperty(key)) size += 2 + key.length + jsonSizeFast(obj[key]);
   return size;
 };
 
