@@ -1,10 +1,14 @@
 import type {Display} from "./common";
 
+export interface TType extends Display {
+  __t: string;
+}
+
 /**
  * Represents a JSON object type.
  */
-export interface TObject extends Display {
-  t: 'obj';
+export interface TObject extends TType {
+  __t: 'obj';
 
   /**
    * Sorted list of fields this object contains. Although object fields in JSON
@@ -17,28 +21,28 @@ export interface TObject extends Display {
 /**
  * Represents a single field of an object.
  */
-export interface TObjectField extends Display {
+export interface TObjectField {
   /** Key name of the field. */
   key: string;
   /** One or more "one-of" types of the field. */
-  types: TJson[];
+  type: TType | TType[];
   isOptional?: boolean;
 }
 
 /**
  * Represents a JSON array.
  */
-export interface TArray {
-  t: 'arr';
+export interface TArray extends TType {
+  __t: 'arr';
   /** One or more "one-of" types that array contains. */
-  types: TJson[];
+  type: TType | TType[];
 }
 
 /**
  * Represents a JSON number.
  */
-export interface TNumber {
-  t: 'num';
+export interface TNumber extends TType {
+  __t: 'num';
   const?: number;
   isInteger?: boolean;
 }
@@ -46,24 +50,24 @@ export interface TNumber {
 /**
  * Represents a JSON string.
  */
-export interface TString {
-  t: 'str';
+export interface TString extends TType {
+  __t: 'str';
   const?: string;
 }
 
 /**
  * Represents a JSON boolean.
  */
-export interface TBoolean {
-  t: 'bool';
+export interface TBoolean extends TType {
+  __t: 'bool';
   const?: boolean;
 }
 
 /**
  * Represents a JSON "null" value.
  */
-export interface TNull {
-  t: 'null';
+export interface TNull extends TType {
+  __t: 'null';
 }
 
 // export interface JsonResource {
@@ -71,4 +75,9 @@ export interface TNull {
 //   resource: DocResource;
 // }
 
+/**
+ * Any valid JSON type.
+ */
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
+
+export type NoT<T extends TType> = Omit<T, '__t'>;
