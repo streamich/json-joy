@@ -1,4 +1,4 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, TJson, NoT} from "./types/json";
+import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType} from "./types/json";
 
 export const t = {
   get str() {
@@ -25,6 +25,10 @@ export const t = {
     return this.Object({
       fields: [],
     });
+  },
+
+  get bin() {
+    return this.Binary();
   },
 
   Null: (options: NoT<TNull> = {}): TNull => {
@@ -55,7 +59,7 @@ export const t = {
     };
   },
 
-  Array: (type: TJson | TJson[], options: Omit<NoT<TArray>, 'type'> = {}): TArray => {
+  Array: (type: TType | TType[], options: Omit<NoT<TArray>, 'type'> = {}): TArray => {
     return {
       __t: 'arr',
       type,
@@ -70,10 +74,17 @@ export const t = {
     };
   },
 
-  Field: (key: string, type: TJson | TJson[], options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField => {
+  Field: (key: string, type: TType | TType[], options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField => {
     return {
       key,
       type,
+      ...options,
+    };
+  },
+
+  Binary: (options: NoT<TBinary> = {}): TBinary => {
+    return {
+      __t: 'bin',
       ...options,
     };
   },

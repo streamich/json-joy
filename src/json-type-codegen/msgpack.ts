@@ -174,7 +174,7 @@ export class EncodingPlan {
     }
   }
 
-  public createPlan(type: TType): void {
+  public createPlan(type: TType): string {
     const r = this.getRegister();
     const value = new JsExpression(() => r);
 
@@ -197,9 +197,11 @@ export class EncodingPlan {
     }
 
     const js = /* js */ `(function(e){return function(${r}){
+e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
+return e.flush();
 };})`
 
-    console.log(js);
+    return js;
   }
 }

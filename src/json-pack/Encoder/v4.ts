@@ -81,6 +81,25 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     this.offset += 8;
   }
 
+  public encodeNull(): void {
+    this.u8(0xc0);
+  }
+
+  public encodeTrue(): void {
+    this.u8(0xc3);
+  }
+
+  public encodeFalse(): void {
+    this.u8(0xc2);
+  }
+
+  public encodeBoolean(bool: boolean): void {
+    switch (bool) {
+      case false: return this.encodeFalse();
+      case true: return this.encodeTrue();
+    }
+  }
+
   public encodeStringHeader(length: number): void {
     if (length <= 0b11111) this.u8(0b10100000 | length);
     else if (length <= 0xff) {
@@ -241,6 +260,20 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     const {type, buf} = ext;
     const length = buf.byteLength;
     this.encodeExtHeader(type, length);
+    this.buf(buf, length);
+  }
+
+  /** @ignore */
+  protected encodeBinary(buf: Uint8Array): void {
+    const length = buf.byteLength;
+    if (length <= 0xff) this.u16((0xc4 << 8) | length);
+    else if (length <= 0xffff) {
+      this.u8(0xc5);
+      this.u16(length);
+    } else if (length <= 0xffffffff) {
+      this.u8(0xc6);
+      this.u32(length);
+    }
     this.buf(buf, length);
   }
 }
