@@ -1,5 +1,5 @@
 /**
- * JsExpressionMonad allows to write JS expression as strings which depend on each
+ * JsExpression monad allows to write JS expression as strings which depend on each
  * other and tracks whether an expression was used or not.
  *
  * ```ts

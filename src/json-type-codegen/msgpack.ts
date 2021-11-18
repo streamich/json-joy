@@ -1,7 +1,7 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
 import {TArray, TBinary, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
-import {JsExpression} from './util/JsExpressionMonad';
+import {JsExpression} from './util/JsExpression';
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
 
@@ -174,12 +174,13 @@ export class EncodingPlan {
     }
   }
 
-  public createPlan(type: TType): string {
+  public createPlan(type: TType): void {
     const r = this.getRegister();
     const value = new JsExpression(() => r);
-
     this.onType(type, value);
+  }
 
+  public codegen(): string {
     const execSteps: EncodingPlanStepExecJs[] = [];
 
     for (const step of this.steps) {
@@ -193,15 +194,14 @@ export class EncodingPlan {
         const js = arr.map(octet => `e.u8(${octet});`).join('\n');
         execSteps.push(new EncodingPlanStepExecJs(js));
       }
-
     }
 
-    const js = /* js */ `(function(e){return function(${r}){
+    const js = /* js */ `(function(e){return function(r0){
 e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return e.flush();
 };})`
-
+      
     return js;
   }
 }

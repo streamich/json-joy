@@ -9,7 +9,8 @@ const decoder = new Decoder();
 
 const exec = (type: TType, json: unknown) => {
   const plan = new EncodingPlan();
-  const js = plan.createPlan(type);
+  plan.createPlan(type);
+  const js = plan.codegen();
   const fn = eval(js)(encoder);
   const blob = fn(json);
   const decoded = decoder.decode(blob);
@@ -27,6 +28,7 @@ test('serializes according to schema a POJO object', () => {
       t.Field('arr', t.Array(t.Object({
         fields: [
           t.Field('foo', t.Array(t.num)),
+          t.Field('.!@#', t.str),
         ],
       }))),
       t.Field('bin', t.bin),
@@ -37,7 +39,7 @@ test('serializes according to schema a POJO object', () => {
     b: 'sdf',
     c: null,
     d: true,
-    arr: [{foo: [1]}, {foo: [4, 4, 4.4]}],
+    arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
     bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
   };
 
