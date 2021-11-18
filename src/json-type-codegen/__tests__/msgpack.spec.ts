@@ -7,7 +7,10 @@ test('...', () => {
       t.Field('aaa', t.Object({
         fields: [
           t.Field('bbb', t.str),
-          t.Field('ccc', t.str),
+          t.Field('ccc', t.num),
+          t.Field('ddd', [t.num, t.str]),
+          t.Field('eee', t.bool),
+          t.Field('fff', t.nil),
         ],
       })),
     ],

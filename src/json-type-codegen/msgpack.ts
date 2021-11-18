@@ -1,7 +1,7 @@
 // import type {Encoder} from '../../json-pack/Encoder';
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TNumber, TObject, TString, TType} from '../json-type/types/json';
+import {TBoolean, TNull, TNumber, TObject, TString, TType} from '../json-type/types/json';
 import {CompiledFunction, JavaScriptWithDependencies} from '../util/codegen';
 import {JsExpression} from './util/JsExpressionMonad';
 
@@ -54,35 +54,43 @@ export class EncodingPlan {
       this.writeBlob(uint8Array);
       return;
     }
-    this.execJs(/* js */ `
-      e.encodeString(${value.use()});
-    `);
+    this.execJs(/* js */ `e.encodeString(${value.use()});`);
   }
 
-  public onNumber(num: TNumber) {
+  public onNumber(num: TNumber, value: JsExpression) {
     if (num.const) {
       const uint8Array = encoder.encode(num.const);
       this.writeBlob(uint8Array);
       return;
     }
-    this.execJs(/* js */ `
-      e.encodeNumber(cur);
-    `);
+    this.execJs(/* js */ `e.encodeNumber(${value.use()});`);
+  }
+
+  public onBoolean(bool: TBoolean, value: JsExpression) {
+    if (bool.const) {
+      const uint8Array = encoder.encode(bool.const);
+      this.writeBlob(uint8Array);
+      return;
+    }
+    this.execJs(/* js */ `e.encodeBoolean(${value.use()});`);
+  }
+
+  public onNull() {
+    this.execJs(/* js */ `e.encodeNull();`);
   }
 
   public onObject(obj: TObject, value: JsExpression) {
-    // const keys = obj.fields.map((field) => field.key);
     const length = obj.fields.length;
 
+    // Write object header.
     const objHeaderBlob = this.getBlob(encoder => encoder.encodeObjectHeader(length));
     this.writeBlob(objHeaderBlob);
 
+    // Assign this object expression to register, conditional on it being used in future steps.
     const r = this.getRegister();
     value.addListener(expr => {
       this.execJs(/* js */ `var ${r} = ${expr};`);
     });
-
-
 
     for (let i = 0; i < length; i++) {
       const field = obj.fields[i];
@@ -92,7 +100,8 @@ export class EncodingPlan {
         const type = types[0];
         this.onType(type, value.chain(() => `${r}[${JSON.stringify(field.key)}]`));
       } else {
-        // Encode any...
+        const expr = value.chain(() => `${r}[${JSON.stringify(field.key)}]`).use();
+        this.execJs(/* js */ `e.encodeAny(${expr});`);
       }
     }
   }
@@ -101,6 +110,18 @@ export class EncodingPlan {
     switch (type.__t) {
       case 'str': {
         this.onString(type as TString, value);
+        break;
+      }
+      case 'num': {
+        this.onNumber(type as TNumber, value);
+        break;
+      }
+      case 'bool': {
+        this.onBoolean(type as TBoolean, value);
+        break;
+      }
+      case 'nil': {
+        this.onNull();
         break;
       }
       case 'obj': {
@@ -132,11 +153,9 @@ export class EncodingPlan {
 
     }
 
-    const js = /* js */ `(function(e){
-  return function(${r}){
-    ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
-  };
-})`
+    const js = /* js */ `(function(e){return function(${r}){
+${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
+};})`
 
     console.log(js);
   }

@@ -29,7 +29,7 @@ export const t = {
 
   Null: (options: NoT<TNull> = {}): TNull => {
     return {
-      __t: 'null',
+      __t: 'nil',
       ...options,
     };
   },

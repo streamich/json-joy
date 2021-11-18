@@ -72,7 +72,7 @@ export interface TBoolean extends TType {
  * Represents a JSON "null" value.
  */
 export interface TNull extends TType {
-  __t: 'null';
+  __t: 'nil';
 }
 
 // export interface JsonResource {
