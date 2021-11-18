@@ -1,6 +1,11 @@
 import type {Display} from "./common";
 
 export interface TType extends Display {
+  /**
+   * "t" is short for "type". Double underscore "__" is borrowed from GraphQL,
+   * where they use "__typeName". Values are short strings, such as "str", "num",
+   * and "bin", borrowed from MessagePack
+   */
   __t: string;
 }
 
