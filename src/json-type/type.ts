@@ -1,6 +1,32 @@
 import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, TJson, NoT} from "./types/json";
 
 export const t = {
+  get str() {
+    return this.String();
+  },
+
+  get num() {
+    return this.Number();
+  },
+
+  get bool() {
+    return this.Boolean();
+  },
+
+  get nil() {
+    return this.Null();
+  },
+
+  get arr() {
+    return this.Array([]);
+  },
+
+  get obj() {
+    return this.Object({
+      fields: [],
+    });
+  },
+
   Null: (options: NoT<TNull> = {}): TNull => {
     return {
       __t: 'null',
