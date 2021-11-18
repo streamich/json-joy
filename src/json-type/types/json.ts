@@ -41,6 +41,7 @@ export interface TArray extends TType {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
   type: TType | TType[];
+  const?: unknown[];
 }
 
 /**

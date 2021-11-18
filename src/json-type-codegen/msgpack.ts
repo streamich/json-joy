@@ -1,8 +1,6 @@
-// import type {Encoder} from '../../json-pack/Encoder';
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TBoolean, TNull, TNumber, TObject, TString, TType} from '../json-type/types/json';
-import {CompiledFunction, JavaScriptWithDependencies} from '../util/codegen';
+import {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
 import {JsExpression} from './util/JsExpressionMonad';
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
@@ -48,6 +46,14 @@ export class EncodingPlan {
     return Array.isArray(type) ? type : [type];
   }
 
+  protected normalizeAccessor(accessor: string): string {
+    if (/^[a-z_][a-z0-9_]*$/i.test(accessor)) {
+      return '.' + accessor;
+    } else {
+      return `[${JSON.stringify(accessor)}]`;
+    }
+  }
+
   public onString(str: TString, value: JsExpression) {
     if (str.const) {
       const uint8Array = encoder.encode(str.const);
@@ -79,12 +85,35 @@ export class EncodingPlan {
     this.execJs(/* js */ `e.encodeNull();`);
   }
 
+  public onArray(arr: TArray, value: JsExpression) {
+    if (arr.const) {
+      this.genAndWriteBlob(encoder => encoder.encodeArray(arr.const!));
+      return;
+    }
+    const types = this.normalizeTypes(arr.type);
+    if (types.length !== 1) {
+      this.execJs(/* js */ `e.encodeAny(${value.use()});`);
+      return;
+    }
+    
+    const r = this.getRegister(); // array
+    const rl = this.getRegister(); // array.length
+    const ri = this.getRegister(); // index
+    const rItem = this.getRegister(); // item
+
+    this.execJs(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
+    this.execJs(/* js */ `e.encodeArrayHeader(${rl});`);
+    this.execJs(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
+    this.execJs(/* js */ `${rItem} = ${r}[${ri}];`);
+    this.onType(types[0], new JsExpression(() => `${rItem}`));
+    this.execJs(`}`);
+  }
+
   public onObject(obj: TObject, value: JsExpression) {
     const length = obj.fields.length;
 
     // Write object header.
-    const objHeaderBlob = this.getBlob(encoder => encoder.encodeObjectHeader(length));
-    this.writeBlob(objHeaderBlob);
+    this.genAndWriteBlob(encoder => encoder.encodeObjectHeader(length));
 
     // Assign this object expression to register, conditional on it being used in future steps.
     const r = this.getRegister();
@@ -98,15 +127,17 @@ export class EncodingPlan {
       const types = this.normalizeTypes(field.type);
       if (types.length === 1) {
         const type = types[0];
-        this.onType(type, value.chain(() => `${r}[${JSON.stringify(field.key)}]`));
+        const accessor = this.normalizeAccessor(field.key);
+        this.onType(type, value.chain(() => `${r}${accessor}`));
       } else {
-        const expr = value.chain(() => `${r}[${JSON.stringify(field.key)}]`).use();
+        const accessor = this.normalizeAccessor(field.key);
+        const expr = value.chain(() => `${r}${accessor}`).use();
         this.execJs(/* js */ `e.encodeAny(${expr});`);
       }
     }
   }
 
-  public onType(type: TType, value: JsExpression) {
+  public onType(type: TType, value: JsExpression): void {
     switch (type.__t) {
       case 'str': {
         this.onString(type as TString, value);
@@ -122,6 +153,10 @@ export class EncodingPlan {
       }
       case 'nil': {
         this.onNull();
+        break;
+      }
+      case 'arr': {
+        this.onArray(type as TArray, value);
         break;
       }
       case 'obj': {
