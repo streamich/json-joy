@@ -76,6 +76,13 @@ export interface TNull extends TType {
   __t: 'nil';
 }
 
+/**
+ * Represents a MessagePack binary type.
+ */
+export interface TBinary extends TType {
+  __t: 'bin';
+}
+
 // export interface JsonResource {
 //   type: 'resource';
 //   resource: DocResource;
@@ -85,5 +92,6 @@ export interface TNull extends TType {
  * Any valid JSON type.
  */
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
+export type TMessagePack = TJson | TBinary;
 
 export type NoT<T extends TType> = Omit<T, '__t'>;

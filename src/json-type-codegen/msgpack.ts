@@ -1,6 +1,6 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
+import {TArray, TBinary, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
 import {JsExpression} from './util/JsExpressionMonad';
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
@@ -137,6 +137,10 @@ export class EncodingPlan {
     }
   }
 
+  public onBinary(value: JsExpression) {
+    this.execJs(/* js */ `e.encodeBinary(${value.use()});`);
+  }
+
   public onType(type: TType, value: JsExpression): void {
     switch (type.__t) {
       case 'str': {
@@ -161,6 +165,10 @@ export class EncodingPlan {
       }
       case 'obj': {
         this.onObject(type as TObject, value);
+        break;
+      }
+      case 'bin': {
+        this.onBinary(value);
         break;
       }
     }
