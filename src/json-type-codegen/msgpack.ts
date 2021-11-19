@@ -3,10 +3,17 @@ import {encoder} from '../json-pack/util';
 import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types/json';
 import {JsExpression} from './util/JsExpression';
 
+const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
+  const res = new Uint8Array(a.length + b.length);
+  res.set(a);
+  res.set(b, a.length);
+  return res;
+};
+
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
 
 class EncodingPlanStepWriteBlob {
-  constructor(public readonly arr: Uint8Array) {}
+  constructor(public arr: Uint8Array) {}
 }
 
 class EncodingPlanStepExecJs {
@@ -221,19 +228,49 @@ export class EncodingPlan {
     this.onType(type, value);
   }
 
+  private codegenBlob(step: EncodingPlanStepWriteBlob) {
+    const lines: string[] = [];
+    for (let i = 0; i < step.arr.length;) {
+      const octets = step.arr.length - i;
+      if (octets >= 4) {
+        const value = (step.arr[i] * 0x1000000) +  (step.arr[i + 1] * 0x10000) + (step.arr[i + 2] * 0x100) + step.arr[i + 3];
+        lines.push(`e.u32(${value});`);
+        i += 4;
+      } else if (octets >= 2) {
+        const value = (step.arr[i] * 0x100) + step.arr[i + 1];
+        lines.push(`e.u16(${value});`);
+        i += 2;
+      } else {
+        lines.push(`e.u8(${step.arr[i]});`);
+        i++;
+      }
+    }
+    const js = lines.join('\n');
+    return new EncodingPlanStepExecJs(js);
+  }
+
   public codegen(): string {
+    const stepsJoined: EncodingPlanStep[] = [];
+    for (let i = 0; i < this.steps.length; i++) {
+      const step = this.steps[i];
+      if (step instanceof EncodingPlanStepExecJs) stepsJoined.push(step);
+      else if (step instanceof EncodingPlanStepWriteBlob) {
+        const last = stepsJoined[stepsJoined.length - 1];
+        if (last instanceof EncodingPlanStepWriteBlob) {
+          last.arr = join(last.arr, step.arr);
+        } else {
+          stepsJoined.push(step);
+        }
+      }
+    }
+
     const execSteps: EncodingPlanStepExecJs[] = [];
 
-    for (const step of this.steps) {
+    for (const step of stepsJoined) {
       if (step instanceof EncodingPlanStepExecJs) {
         execSteps.push(step);
       } else if (step instanceof EncodingPlanStepWriteBlob) {
-        const arr: number[] = [];
-        for (let i = 0; i < step.arr.length; i++) {
-          arr.push(step.arr[i]);
-        }
-        const js = arr.map(octet => `e.u8(${octet});`).join('\n');
-        execSteps.push(new EncodingPlanStepExecJs(js));
+        execSteps.push(this.codegenBlob(step));
       }
     }
 
