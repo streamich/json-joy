@@ -24,9 +24,7 @@ export class JsExpression {
   }
 
   public use(): string {
-    if (this._wasUsed) {
-      return this._expression!;
-    }
+    if (this._wasUsed) return this._expression!;
     this._wasUsed = true;
     const expression = this._expression = this.expression();
     for (const listener of this._listeners) listener(expression);

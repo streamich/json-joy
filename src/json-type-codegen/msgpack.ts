@@ -99,7 +99,7 @@ export class EncodingPlan {
       this.execJs(/* js */ `e.encodeAny(${value.use()});`);
       return;
     }
-    
+
     const r = this.getRegister(); // array
     const rl = this.getRegister(); // array.length
     const ri = this.getRegister(); // index
@@ -258,9 +258,8 @@ export class EncodingPlan {
     lines.push(/* js */ `var ${ro} = e.offset, ${ru} = e.uint8;`);
     lines.push(/* js */ `e.ensureCapacity(${step.arr.length});`);
     lines.push(/* js */ `e.offset += ${step.arr.length};`);
-    for (let i = 0; i < step.arr.length; i++) {
+    for (let i = 0; i < step.arr.length; i++)
       lines.push(/* js */ `${ru}[${ro} + ${i}] = ${step.arr[i]};`);
-    }
     const js = lines.join('\n');
     return new EncodingPlanStepExecJs(js);
   }
@@ -272,11 +271,8 @@ export class EncodingPlan {
       if (step instanceof EncodingPlanStepExecJs) stepsJoined.push(step);
       else if (step instanceof EncodingPlanStepWriteBlob) {
         const last = stepsJoined[stepsJoined.length - 1];
-        if (last instanceof EncodingPlanStepWriteBlob) {
-          last.arr = join(last.arr, step.arr);
-        } else {
-          stepsJoined.push(step);
-        }
+        if (last instanceof EncodingPlanStepWriteBlob) last.arr = join(last.arr, step.arr);
+        else stepsJoined.push(step);
       }
     }
 
