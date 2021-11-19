@@ -39,12 +39,13 @@ const json = {
   },
 };
 
-const validate = ajv.compile(schema);
+const ajvValidator = ajv.compile(schema);
+
 const suite = new Benchmark.Suite;
 
 suite
   .add(`ajv`, function() {
-    validate(json)
+    ajvValidator(json)
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
