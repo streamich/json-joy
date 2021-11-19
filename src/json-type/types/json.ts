@@ -10,7 +10,8 @@ export interface TType extends Display {
 }
 
 /**
- * Represents a JSON object type.
+ * Represents a JSON object type, the "object" type excluding "null" in JavaScript,
+ * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
 export interface TObject extends TType {
   __t: 'obj';
@@ -21,6 +22,23 @@ export interface TObject extends TType {
    * that the order of fields is consistent when generating documentation or code.
    */
   fields: TObjectField[];
+
+  /**
+   * Whether the object may have fields that are not explicitly defined in the
+   * "fields" list. This setting is similar to "additionalProperties" in JSON Schema.
+   * Defaults to false.
+   *
+   * To define an object with of unknown shape use the following annotation:
+   *
+   * ```json
+   * {
+   *   "__t": "obj",
+   *   "fields": [],
+   *   "unknownFields": true
+   * }
+   * ```
+   */
+  unknownFields?: boolean;
 }
 
 /**
