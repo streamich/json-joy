@@ -9,6 +9,17 @@ class EncodingPlanStepExecJs {
   constructor(public readonly js: string) {}
 }
 
+const isPrimitiveType = (type: string): boolean => {
+  switch (type) {
+    case 'bool':
+    case 'num':
+    case 'str':
+    case 'nil':
+      return true;
+    default: return false;
+  }
+};
+
 export class JsonTypeValidatorCodegen {
   public steps: EncodingPlanStepExecJs[] = [];
 
@@ -89,7 +100,7 @@ export class JsonTypeValidatorCodegen {
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (!${r} || typeof ${r} !== 'object') return '${this.err('OBJ', path)}';`);
+    this.js(/* js */ `if (!${r} || typeof ${r} !== 'object' || Array.isArray(${r})) return '${this.err('OBJ', path)}';`);
     if (!obj.unknownFields) {
       const rk = this.getRegister();
       const keys = obj.fields.map(field => field.key);
@@ -111,8 +122,12 @@ export class JsonTypeValidatorCodegen {
         this.js(`}`);
       } else {
         this.js(/* js */ `var ${rv} = ${r}${accessor};`);
-        this.js(/* js */ `if (${rv} === undefined) return '${this.err('KEY', keyPath)}';`);
-        this.onTypes(keyPath, types, rv);
+        if (types.length === 1 && isPrimitiveType(types[0].__t)) {
+          this.onTypes(keyPath, types, rv);
+        } else {
+          this.js(/* js */ `if (${rv} === undefined) return '${this.err('KEY', keyPath)}';`);
+          this.onTypes(keyPath, types, rv);
+        }
       }
     }
   }
