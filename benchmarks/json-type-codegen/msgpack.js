@@ -18,6 +18,14 @@ const type = t.Object({
         t.Field('authz', t.str, {isOptional: true}),
       ],
     })),
+    t.Field('block', t.Object({
+      fields: [
+        t.Field('id', t.str),
+        t.Field('ts', t.num),
+        t.Field('cid', t.str),
+        t.Field('slug', t.str),
+      ],
+    })),
   ],
 });
 
@@ -31,6 +39,12 @@ const json = {
     name: 'Super collection',
     src: '{"foo": "bar"}',
     authz: 'export const (ctx) => ctx.userId === "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";',
+  },
+  block: {
+    id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    ts: Date.now(),
+    cid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+    slug: 'slug-name',
   },
 };
 
