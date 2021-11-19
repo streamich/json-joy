@@ -143,7 +143,7 @@ export class EncodingPlan {
       const field = optionalFields[i];
       const accessor = this.normalizeAccessor(field.key);
       const fieldSerialized = JSON.stringify(field.key);
-      this.execJs(`if (${r}.hasOwnProperty(${fieldSerialized})) {`);
+      this.execJs(`if (${r}${accessor} !== undefined) {`);
       const type = this.normalizeTypes(field.type);
       const expr = `${r}${accessor}`;
       if (type.length === 1) {
@@ -279,7 +279,7 @@ e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return e.flush();
 };})`
-console.log(js);
+// console.log(js);
     return js;
   }
 }
