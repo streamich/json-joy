@@ -135,6 +135,7 @@ export class EncodingPlan {
     }
     const r = this.getRegister();
     const rk = this.getRegister();
+    const rv = this.getRegister();
     this.execJs(/* js */ `var ${r} = ${value.use()};`);
     this.execJs(/* js */ `var ${rk} = Object.keys(${r});`);
     this.execJs(/* js */ `e.encodeObjectHeader(${rk}.length);`);
@@ -143,14 +144,14 @@ export class EncodingPlan {
       const field = optionalFields[i];
       const accessor = this.normalizeAccessor(field.key);
       const fieldSerialized = JSON.stringify(field.key);
-      this.execJs(`if (${r}${accessor} !== undefined) {`);
+      this.execJs(/* js */ `var ${rv} = ${r}${accessor};`);
+      this.execJs(`if (${rv} !== undefined) {`);
       const type = this.normalizeTypes(field.type);
-      const expr = `${r}${accessor}`;
       if (type.length === 1) {
         this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
-        this.onType(type[0], new JsExpression(() => expr));
+        this.onType(type[0], new JsExpression(() => rv));
       } else {
-        this.execJs(/* js */ `e.encodeAny(${expr});`);
+        this.execJs(/* js */ `e.encodeAny(${rv});`);
       }
       this.execJs('}');
     }
@@ -228,22 +229,36 @@ export class EncodingPlan {
     this.onType(type, value);
   }
 
+  // private codegenBlob(step: EncodingPlanStepWriteBlob) {
+  //   const lines: string[] = [];
+  //   for (let i = 0; i < step.arr.length;) {
+  //     const octets = step.arr.length - i;
+  //     if (octets >= 4) {
+  //       const value = (step.arr[i] * 0x1000000) +  (step.arr[i + 1] * 0x10000) + (step.arr[i + 2] * 0x100) + step.arr[i + 3];
+  //       lines.push(`e.u32(${value});`);
+  //       i += 4;
+  //     } else if (octets >= 2) {
+  //       const value = (step.arr[i] * 0x100) + step.arr[i + 1];
+  //       lines.push(`e.u16(${value});`);
+  //       i += 2;
+  //     } else {
+  //       lines.push(`e.u8(${step.arr[i]});`);
+  //       i++;
+  //     }
+  //   }
+  //   const js = lines.join('\n');
+  //   return new EncodingPlanStepExecJs(js);
+  // }
+
   private codegenBlob(step: EncodingPlanStepWriteBlob) {
     const lines: string[] = [];
-    for (let i = 0; i < step.arr.length;) {
-      const octets = step.arr.length - i;
-      if (octets >= 4) {
-        const value = (step.arr[i] * 0x1000000) +  (step.arr[i + 1] * 0x10000) + (step.arr[i + 2] * 0x100) + step.arr[i + 3];
-        lines.push(`e.u32(${value});`);
-        i += 4;
-      } else if (octets >= 2) {
-        const value = (step.arr[i] * 0x100) + step.arr[i + 1];
-        lines.push(`e.u16(${value});`);
-        i += 2;
-      } else {
-        lines.push(`e.u8(${step.arr[i]});`);
-        i++;
-      }
+    const ro = this.getRegister();
+    const ru = this.getRegister();
+    lines.push(/* js */ `var ${ro} = e.offset, ${ru} = e.uint8;`);
+    lines.push(/* js */ `e.ensureCapacity(${step.arr.length});`);
+    lines.push(/* js */ `e.offset += ${step.arr.length};`);
+    for (let i = 0; i < step.arr.length; i++) {
+      lines.push(/* js */ `${ru}[${ro} + ${i}] = ${step.arr[i]};`);
     }
     const js = lines.join('\n');
     return new EncodingPlanStepExecJs(js);
@@ -279,7 +294,7 @@ e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return e.flush();
 };})`
-// console.log(js);
+
     return js;
   }
 }
