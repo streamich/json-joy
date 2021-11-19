@@ -62,7 +62,7 @@ export class EncodingPlan {
   }
 
   public onString(str: TString, value: JsExpression) {
-    if (str.const) {
+    if (str.const !== undefined) {
       this.writeBlob(encoder.encode(str.const));
       return;
     }
@@ -70,7 +70,7 @@ export class EncodingPlan {
   }
 
   public onNumber(num: TNumber, value: JsExpression) {
-    if (num.const) {
+    if (num.const !== undefined) {
       this.writeBlob(encoder.encode(num.const));
       return;
     }
@@ -78,7 +78,7 @@ export class EncodingPlan {
   }
 
   public onBoolean(bool: TBoolean, value: JsExpression) {
-    if (bool.const) {
+    if (bool.const !== undefined) {
       this.writeBlob(encoder.encode(bool.const));
       return;
     }
@@ -90,7 +90,7 @@ export class EncodingPlan {
   }
 
   public onArray(arr: TArray, value: JsExpression) {
-    if (arr.const) {
+    if (arr.const !== undefined) {
       this.genAndWriteBlob(encoder => encoder.encodeArray(arr.const!));
       return;
     }
