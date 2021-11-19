@@ -1,9 +1,9 @@
-import type {Path} from '../json-pointer';
-import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types/json';
+import {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
 import {JavaScript} from '../util/codegen';
-import {JsExpression} from './util/JsExpression';
 
 export type JsonTypeValidator = (value: unknown) => string;
+
+type Path = Array<string | number | {js: string}>;
 
 class EncodingPlanStepExecJs {
   constructor(public readonly js: string) {}
@@ -35,11 +35,18 @@ export class JsonTypeValidatorCodegen {
   }
 
   protected err(type: string, path: Path) {
-    return JSON.stringify([type, ...path]);
+    let json = '[' + JSON.stringify(type);
+    for (const step of path) {
+      if (typeof step === 'object') {
+        json += step.js;
+      } else {
+        json += ',' + JSON.stringify(step);
+      }
+    }
+    return json + ']';
   }
 
   protected onString(path: Path, str: TString, r: string) {
-    this.js(/* js */ `var ${r} = ${r};`);
     if (str.const) {
       this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return '${this.err('STR_CONST', path)}';`);
     } else {
@@ -67,42 +74,46 @@ export class JsonTypeValidatorCodegen {
     this.js(/* js */ `if(typeof ${r} !== null) return '${this.err('NULL', path)}';`);
   }
 
-  protected onArray(arr: TArray, r: string) {
-
+  protected onArray(path: Path, arr: TArray, expr: string) {
+    const r = this.getRegister();
+    const ri = this.getRegister();
+    const rv = this.getRegister();
+    this.js(/* js */ `var ${r} = ${expr};`);
+    this.js(/* js */ `if (!(${r} instanceof Array)) return '${this.err('ARR', path)}';`);
+    this.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
+    this.js(`${rv} = ${r}[${ri}];`);
+    this.onTypes([...path, {js: `,' + ${ri} + '`}], this.normalizeTypes(arr.type), rv);
+    this.js(`}`);
   }
 
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
     this.js(/* js */ `if (!${r} || typeof ${r} !== 'object') return '${this.err('OBJ', path)}';`);
-
-    const requiredFields: TObjectField[] = [];
-    const optionalFields: TObjectField[] = [];
+    if (!obj.unknownFields) {
+      const rk = this.getRegister();
+      const keys = obj.fields.map(field => field.key);
+      this.js(`for (var ${rk} in ${r}) {`);
+      const errStr = this.err('EXTRA_KEY', path);
+      this.js(`if (${keys.map(key => `(${rk} !== ${JSON.stringify(key)})`).join('&&')}) return '${errStr.substr(0, errStr.length - 1)},' + JSON.stringify(${rk}) + ']';`);
+      this.js(`}`);
+    }
     for (let i = 0; i < obj.fields.length; i++) {
       const field = obj.fields[i];
-      if (field.isOptional) optionalFields.push(field);
-      else requiredFields.push(field);
-    }
-    
-    for (const requiredField of requiredFields) {
       const rv = this.getRegister();
-      const accessor = this.normalizeAccessor(requiredField.key);
-      const keyPath = [...path, requiredField.key];
-      const types = this.normalizeTypes(requiredField.type);
-      this.js(/* js */ `var ${rv} = ${r}${accessor};`);
-      this.js(/* js */ `if (${rv} === undefined) return '${this.err('KEY', keyPath)}';`);
-      this.onTypes(keyPath, types, rv);
-    }
-
-    for (const optionalField of optionalFields) {
-      const rv = this.getRegister();
-      const accessor = this.normalizeAccessor(optionalField.key);
-      const keyPath = [...path, optionalField.key];
-      const types = this.normalizeTypes(optionalField.type);
-      this.js(/* js */ `var ${rv} = ${r}${accessor};`);
-      this.js(`if (${rv} !== undefined) {`);
-      this.onTypes(keyPath, types, rv);
-      this.js(`}`);
+      const accessor = this.normalizeAccessor(field.key);
+      const keyPath = [...path, field.key];
+      const types = this.normalizeTypes(field.type);
+      if (field.isOptional) {
+        this.js(/* js */ `var ${rv} = ${r}${accessor};`);
+        this.js(`if (${rv} !== undefined) {`);
+        this.onTypes(keyPath, types, rv);
+        this.js(`}`);
+      } else {
+        this.js(/* js */ `var ${rv} = ${r}${accessor};`);
+        this.js(/* js */ `if (${rv} === undefined) return '${this.err('KEY', keyPath)}';`);
+        this.onTypes(keyPath, types, rv);
+      }
     }
   }
 
@@ -149,7 +160,7 @@ export class JsonTypeValidatorCodegen {
         break;
       }
       case 'arr': {
-        this.onArray(type as TArray, expr);
+        this.onArray(path, type as TArray, expr);
         break;
       }
       // TODO: Ability to have unknown props. `object` TypeScript type...
