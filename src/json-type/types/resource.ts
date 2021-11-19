@@ -4,7 +4,7 @@ export interface DocResource {
   identifier: string;
   intro?: string;
   description?: string;
-  type: Json;
+  // type: Json;
   examples?: DocResourceExample[];
   children?: DocResource[];
   parent?: string;

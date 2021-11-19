@@ -15,6 +15,6 @@ export interface DocService {
   intro?: string;
   description: string;
   slug: string;
-  methods: DocMethod[];
-  resources: DocResource[];
+  // methods: DocMethod[];
+  // resources: DocResource[];
 }

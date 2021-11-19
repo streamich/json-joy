@@ -24,18 +24,18 @@ export interface DocMethodExample {
 
 export interface DocPayload {
   title?: string;
-  type: JsonObject;
+  // type: JsonObject;
 }
 
 export interface DocReturn {
   title?: string;
   description?: string;
   // type: Json;
-  type: JsonObject;
+  // type: JsonObject;
 }
 
 export interface DocError {
   title?: string;
   description?: string;
-  types: Json[];
+  // types: Json[];
 }
