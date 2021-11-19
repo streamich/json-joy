@@ -1,0 +1,20 @@
+{
+  "scopes": [
+    "",
+    "demo",
+    "json-cli",
+    "json-crdt",
+    "json-crdt-patch",
+    "json-equal",
+    "json-pack",
+    "json-patch",
+    "json-patch-ot",
+    "json-pointer",
+    "json-random",
+    "json-size",
+    "json-type",
+    "json-type-codegen",
+    "reactive-rpc",
+    "util"
+  ]
+}
