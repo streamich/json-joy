@@ -212,6 +212,7 @@ export class EncodingPlan {
         this.onArray(type as TArray, value);
         break;
       }
+      // TODO: Ability to have unknown props. `object` TypeScript type...
       case 'obj': {
         this.onObject(type as TObject, value);
         break;
