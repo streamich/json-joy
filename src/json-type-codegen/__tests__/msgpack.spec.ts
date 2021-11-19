@@ -46,6 +46,69 @@ test('serializes according to schema a POJO object', () => {
   exec(type, json);
 });
 
+test('can encode object with optional fields', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('a', t.num),
+      t.Field('b', t.num, {isOptional: true}),
+      t.Field('c', t.bool),
+      t.Field('d', t.nil, {isOptional: true}),
+    ],
+  });
+  const json1 = {
+    a: 1.1,
+    b: 3,
+    c: true,
+    d: null,
+  };
+  const json2 = {
+    a: 1.1,
+    c: true,
+  };
+  const json3 = {
+    a: 1.1,
+    c: true,
+    b: 0,
+  };
+
+  exec(type, json1);
+  exec(type, json2);
+  exec(type, json3);
+});
+
+test('example object', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('collection', t.Object({
+        fields: [
+          t.Field('id', t.str),
+          t.Field('ts', t.num),
+          t.Field('cid', t.str),
+          t.Field('prid', t.str),
+          t.Field('slug', t.str),
+          t.Field('name', t.str, {isOptional: true}),
+          t.Field('src', t.str, {isOptional: true}),
+          t.Field('doc', t.str, {isOptional: true}),
+          t.Field('authz', t.str, {isOptional: true}),
+        ],
+      })),
+    ],
+  });
+  const json = {
+    collection: {
+      id: '123',
+      ts: 123,
+      cid: '123',
+      prid: '123',
+      slug: 'slug',
+      name: 'name',
+      src: 'src',
+      authz: 'authz',
+    },
+  };
+  exec(type, json);
+});
+
 describe('single value', () => {
   test('null', () => {
     const type = t.nil;

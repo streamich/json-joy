@@ -1,6 +1,6 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TArray, TBinary, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
+import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types/json';
 import {JsExpression} from './util/JsExpression';
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
@@ -47,7 +47,7 @@ export class EncodingPlan {
   }
 
   protected normalizeAccessor(accessor: string): string {
-    if (/^[a-z_][a-z0-9_]*$/i.test(accessor)) {
+    if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
       return '.' + accessor;
     } else {
       return `[${JSON.stringify(accessor)}]`;
@@ -56,8 +56,7 @@ export class EncodingPlan {
 
   public onString(str: TString, value: JsExpression) {
     if (str.const) {
-      const uint8Array = encoder.encode(str.const);
-      this.writeBlob(uint8Array);
+      this.writeBlob(encoder.encode(str.const));
       return;
     }
     this.execJs(/* js */ `e.encodeString(${value.use()});`);
@@ -65,8 +64,7 @@ export class EncodingPlan {
 
   public onNumber(num: TNumber, value: JsExpression) {
     if (num.const) {
-      const uint8Array = encoder.encode(num.const);
-      this.writeBlob(uint8Array);
+      this.writeBlob(encoder.encode(num.const));
       return;
     }
     this.execJs(/* js */ `e.encodeNumber(${value.use()});`);
@@ -74,8 +72,7 @@ export class EncodingPlan {
 
   public onBoolean(bool: TBoolean, value: JsExpression) {
     if (bool.const) {
-      const uint8Array = encoder.encode(bool.const);
-      this.writeBlob(uint8Array);
+      this.writeBlob(encoder.encode(bool.const));
       return;
     }
     this.execJs(/* js */ `e.encodeBoolean(${value.use()});`);
@@ -110,19 +107,63 @@ export class EncodingPlan {
   }
 
   public onObject(obj: TObject, value: JsExpression) {
-    const length = obj.fields.length;
+    let hasOptionalFields = false;
+    for (let i = 0; i < obj.fields.length; i++) {
+      if (obj.fields[i].isOptional) {
+        hasOptionalFields = true;
+        break;
+      }
+    }
+    if (hasOptionalFields) this.onObjectVariableLength(obj, value);
+    else this.onObjectFixedLength(obj, value);
+  }
 
-    // Write object header.
-    this.genAndWriteBlob(encoder => encoder.encodeObjectHeader(length));
-
-    // Assign this object expression to register, conditional on it being used in future steps.
+  public onObjectVariableLength(obj: TObject, value: JsExpression) {
+    const requiredFields: TObjectField[] = [];
+    const optionalFields: TObjectField[] = [];
+    for (let i = 0; i < obj.fields.length; i++) {
+      const field = obj.fields[i];
+      if (field.isOptional) optionalFields.push(field);
+      else requiredFields.push(field);
+    }
     const r = this.getRegister();
+    const rk = this.getRegister();
+    this.execJs(/* js */ `var ${r} = ${value.use()};`);
+    this.execJs(/* js */ `var ${rk} = Object.keys(${r});`);
+    this.execJs(/* js */ `e.encodeObjectHeader(${rk}.length);`);
+    this.onRequiredFields(requiredFields, value, r);
+    for (let i = 0; i < optionalFields.length; i++) {
+      const field = optionalFields[i];
+      const accessor = this.normalizeAccessor(field.key);
+      const fieldSerialized = JSON.stringify(field.key);
+      this.execJs(`if (${r}.hasOwnProperty(${fieldSerialized})) {`);
+      const type = this.normalizeTypes(field.type);
+      const expr = `${r}${accessor}`;
+      if (type.length === 1) {
+        this.execJs(/* js */ `e.encodeString(${fieldSerialized});`);
+        this.onType(type[0], new JsExpression(() => expr));
+      } else {
+        this.execJs(/* js */ `e.encodeAny(${expr});`);
+      }
+      this.execJs('}');
+    }
+  }
+
+  public onObjectFixedLength(obj: TObject, value: JsExpression) {
+    const length = obj.fields.length;
+    this.genAndWriteBlob(encoder => encoder.encodeObjectHeader(length));
+    const r = this.getRegister();
+    // Assign this object expression to register, conditional on it being used in future steps.
     value.addListener(expr => {
       this.execJs(/* js */ `var ${r} = ${expr};`);
     });
+    this.onRequiredFields(obj.fields, value, r);
+  }
 
+  protected onRequiredFields(requiredFields: TObjectField[], value: JsExpression, r: string) {
+    const length = requiredFields.length;
     for (let i = 0; i < length; i++) {
-      const field = obj.fields[i];
+      const field = requiredFields[i];
       this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
       const types = this.normalizeTypes(field.type);
       if (types.length === 1) {
@@ -201,7 +242,7 @@ e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return e.flush();
 };})`
-      
+
     return js;
   }
 }
