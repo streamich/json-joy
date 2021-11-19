@@ -30,10 +30,55 @@ const defaultOpts: RandomJsonOptions = {
 
 type ContainerNode = unknown[] | object;
 
+const ascii = (): string => {
+  return String.fromCharCode(Math.floor(32 + Math.random() * (126 - 32)));
+};
+
+const utf8 = (): string => {
+  return String.fromCharCode(Math.floor(Math.random() * 65535));
+};
+
 export class RandomJson {
   public static generate(opts?: Partial<RandomJsonOptions>): unknown {
     const rnd = new RandomJson(opts);
     return rnd.create();
+  }
+
+  public static genBoolean(): boolean {
+    return Math.random() > 0.5;
+  }
+
+  public static genNumber(): number {
+    return Math.random() > 0.2
+      ? Math.random() * 1e9
+      : Math.random() < 0.2
+      ? Math.round(0xff * (2 * Math.random() - 1))
+      : Math.random() < 0.2
+      ? Math.round(0xffff * (2 * Math.random() - 1))
+      : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
+  }
+
+  public static genString(length = Math.ceil(Math.random() * 16)): string {
+    let str: string = '';
+    if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += utf8();
+    else for (let i = 0; i < length; i++) str += ascii();
+    return str;
+  }
+
+  public static genArray(options: Partial<Omit<RandomJsonOptions, 'rootNode'>> = {odds: defaultOpts.odds}): unknown[] {
+    return RandomJson.generate({
+      nodeCount: 6,
+      ...options,
+      rootNode: 'array',
+    }) as unknown[];
+  }
+
+  public static genObject(options: Partial<Omit<RandomJsonOptions, 'rootNode'>> = {odds: defaultOpts.odds}): object {
+    return RandomJson.generate({
+      nodeCount: 6,
+      ...options,
+      rootNode: 'object',
+    }) as object;
   }
 
   public opts: RandomJsonOptions;
@@ -83,31 +128,19 @@ export class RandomJson {
       const index = Math.floor(Math.random() * (container.length + 1));
       container.splice(index, 0, node);
     } else {
-      const key = this.str();
+      const key = RandomJson.genString();
       (container as any)[key] = node;
     }
   }
 
   protected generate(type: NodeType): unknown {
     switch (type) {
-      case 'null':
-        return null;
-      case 'boolean':
-        return Math.random() > 0.5;
-      case 'number':
-        return Math.random() > 0.2
-          ? Math.random() * 1e9
-          : Math.random() < 0.2
-          ? Math.round(0xff * (2 * Math.random() - 1))
-          : Math.random() < 0.2
-          ? Math.round(0xffff * (2 * Math.random() - 1))
-          : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
-      case 'string':
-        return this.str();
-      case 'array':
-        return [];
-      case 'object':
-        return {};
+      case 'null': return null;
+      case 'boolean': return RandomJson.genBoolean();
+      case 'number': return RandomJson.genNumber();
+      case 'string': return RandomJson.genString();
+      case 'array': return [];
+      case 'object': return {};
     }
   }
 
@@ -129,20 +162,5 @@ export class RandomJson {
 
   protected pickContainer(): ContainerNode {
     return this.containers[Math.floor(Math.random() * this.containers.length)];
-  }
-
-  protected ascii(): string {
-    return String.fromCharCode(Math.floor(32 + Math.random() * (126 - 32)));
-  }
-
-  protected utf8(): string {
-    return String.fromCharCode(Math.floor(Math.random() * 65535));
-  }
-
-  protected str(length = Math.ceil(Math.random() * 16)): string {
-    let str: string = '';
-    if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += this.utf8();
-    else for (let i = 0; i < length; i++) str += this.ascii();
-    return str;
   }
 }

@@ -67,3 +67,41 @@ test('can enforce root node to be array', () => {
   const json = RandomJson.generate({rootNode: 'array'});
   expect(Array.isArray(json)).toBe(true);
 });
+
+describe('exact root type', () => {
+  describe('.genString()', () => {
+    test('can generate a string', () => {
+      const json = RandomJson.genString();
+      expect(typeof json).toBe('string');
+    });
+  });
+
+  describe('.genNumber()', () => {
+    test('can generate a number', () => {
+      const json = RandomJson.genNumber();
+      expect(typeof json).toBe('number');
+    });
+  });
+
+  describe('.genBoolean()', () => {
+    test('can generate a boolean', () => {
+      const json = RandomJson.genBoolean();
+      expect(typeof json).toBe('boolean');
+    });
+  });
+
+  describe('.genArray()', () => {
+    test('can generate a array', () => {
+      const json = RandomJson.genArray();
+      expect(json instanceof Array).toBe(true);
+    });
+  });
+
+  describe('.genObject()', () => {
+    test('can generate a object', () => {
+      const json = RandomJson.genObject();
+      expect(typeof json).toBe('object');
+      expect(!!json).toBe(true);
+    });
+  });
+});
