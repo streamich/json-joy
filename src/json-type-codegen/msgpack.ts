@@ -147,7 +147,7 @@ export class EncodingPlan {
       const type = this.normalizeTypes(field.type);
       const expr = `${r}${accessor}`;
       if (type.length === 1) {
-        this.execJs(/* js */ `e.encodeString(${fieldSerialized});`);
+        this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
         this.onType(type[0], new JsExpression(() => expr));
       } else {
         this.execJs(/* js */ `e.encodeAny(${expr});`);
@@ -279,7 +279,7 @@ e.reset();
 ${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return e.flush();
 };})`
-
+console.log(js);
     return js;
   }
 }
