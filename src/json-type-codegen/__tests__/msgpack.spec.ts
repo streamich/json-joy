@@ -46,6 +46,24 @@ test('serializes according to schema a POJO object', () => {
   exec(type, json);
 });
 
+test('supports "unknownFields" property', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('a', t.Object({
+        fields: [],
+        unknownFields: true,
+      })),
+    ],
+  });
+  const json = {
+    a: {
+      foo: 123,
+    },
+  };
+
+  exec(type, json);
+});
+
 test('can encode object with optional fields', () => {
   const type = t.Object({
     fields: [

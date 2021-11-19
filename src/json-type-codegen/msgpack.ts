@@ -114,6 +114,10 @@ export class EncodingPlan {
   }
 
   public onObject(obj: TObject, value: JsExpression) {
+    if (obj.unknownFields) {
+      this.execJs(/* js */ `e.encodeObject(${value.use()});`);
+      return;
+    }
     let hasOptionalFields = false;
     for (let i = 0; i < obj.fields.length; i++) {
       if (obj.fields[i].isOptional) {
