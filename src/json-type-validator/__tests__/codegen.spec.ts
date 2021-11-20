@@ -1,31 +1,23 @@
 import {t} from '../../json-type/type';
-import {JsonTypeValidatorCodegen} from '../codegen';
+import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess} from '..';
 import {TType} from '../../json-type/types/json';
 
-const exec = (type: TType, json: unknown, expected: string) => {
-  const codegen1 = new JsonTypeValidatorCodegen({errorReporting: 'object'});
-  const codegen2 = new JsonTypeValidatorCodegen({errorReporting: 'boolean'});
-  const codegen3 = new JsonTypeValidatorCodegen({errorReporting: 'boolean', skipObjectExtraFieldsCheck: true});
-
-  const js1 = codegen1.codegen(type);
-  const js2 = codegen2.codegen(type);
-  const js3 = codegen3.codegen(type);
-
-  const fn1 = eval(js1);
-  const fn2 = eval(js2);
-  const fn3 = eval(js3);
+const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError) => {
+  const fn1 = createBoolValidator(type, {});
+  const fn2 = createStrValidator(type, {});
+  const fn3 = createObjValidator(type, {skipObjectExtraFieldsCheck: true});
 
   const result1 = fn1(json);
   const result2 = fn2(json);
   const result3 = fn3(json);
 
-  console.log(fn1.toString());
+  // console.log(fn1.toString());
   // console.log(fn2.toString());
   // console.log(fn3.toString());
 
-  expect(result1).toBe(expected);
-  expect(result2).toBe(!!expected);
-  expect(result3).toBe(!!expected);
+  expect(result1).toBe(!!error);
+  expect(result2).toBe(!error ? '' : JSON.stringify([error.code, ...error.path]));
+  expect(result3).toBe(error);
 };
 
 test('serializes according to schema a POJO object', () => {
@@ -66,5 +58,5 @@ test('serializes according to schema a POJO object', () => {
     'bin.': new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
   };
 
-  exec(type, json, '');
+  exec(type, json, null);
 });

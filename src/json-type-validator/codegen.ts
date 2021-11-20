@@ -1,7 +1,7 @@
-import {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
-import {JavaScript} from '../util/codegen';
-
-export type JsonTypeValidator = (value: unknown) => string;
+import type {JsonTypeValidator} from './types';
+import type {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
+import {CompiledFunction, compileFn} from '../util/codegen';
+import {BooleanValidator, ObjectValidator, StringValidator} from '.';
 
 type Path = Array<string | number | {r: string}>;
 
@@ -294,7 +294,8 @@ export class JsonTypeValidatorCodegen {
       return;
     }
     const type = types[0];
-    const fn = new JsonTypeValidatorCodegen().codegen(type);
+    const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
+    const fn = codegen.generate(type);
     this.js(`if (${fn}(${expr})) {`);
     this.onTypesRecursive(path, types.slice(1), expr);
     this.js(`}`);
@@ -334,7 +335,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
-  public codegen(type: TType): JavaScript<JsonTypeValidator> {
+  public generate(type: TType): CompiledFunction<JsonTypeValidator> {
     this.onType([], type, 'r0');
     const successResult = this.options.errorReporting === 'boolean'
       ? 'false'
@@ -342,11 +343,77 @@ export class JsonTypeValidatorCodegen {
         ? "''"
         : 'null';
 
-    const js = /* js */ `(function(r0){
+    const js = /* js */ `(function(){return function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
-})`
+}})`
 
-    return js as JavaScript<JsonTypeValidator>;
+    return {
+      deps: [] as unknown[],
+      js,
+    } as CompiledFunction<JsonTypeValidator>;
   }
 }
+
+/**
+ * Given json-type schema and options creates an optimized JavaScript function
+ * for JSON value validation according to the schema.
+ *
+ * @param type json-type for which to compile a validator function.
+ * @param options Code-generator options.
+ * @returns Compiled validator function.
+ */
+ export const createValidator = (type: TType, options: JsonTypeValidatorCodegenOptions = {}): JsonTypeValidator => {
+  const codegen = new JsonTypeValidatorCodegen(options);
+  const fn = codegen.generate(type);
+  return compileFn(fn);
+};
+
+/**
+ * Given json-type schema and options creates an optimized
+ * {@link BooleanValidator} function for JSON value validation according to the
+ * schema.
+ *
+ * Validator returns `true` if error was found, and `false` if no error was
+ * found.
+ */
+export const createBoolValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): BooleanValidator => {
+  return createValidator(type, {
+    ...options,
+    errorReporting: 'boolean',
+  }) as BooleanValidator;
+};
+
+/**
+ * Given json-type schema and options creates an optimized
+ * {@link StringValidator} function for JSON value validation according to the
+ * schema.
+ *
+ * Validator returns JSON array encoded in string, such as
+ * `'["STR","foo","bar"]'`, if error was found, and empty string `""` if no
+ * error was not found.
+ *
+ * The error string contains error code and path where error happened. First,
+ * element in the encoded JSON array represents the error type, see
+ * {@link JsonTypeValidatorError} and {@link JsonTypeValidatorErrorMessage} for
+ * more info. The remaining elements in the array represent the path where error
+ * happened.
+ */
+export const createStrValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): StringValidator => {
+  return createValidator(type, {
+    ...options,
+    errorReporting: 'string',
+  }) as StringValidator;
+};
+
+/**
+ * Same as {@link createStrValidator}, but creates {@link ObjectValidator},
+ * which returns errors as objects of type {@link ObjectValidatorError}; or
+ * `null` on no error.
+ */
+export const createObjValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): ObjectValidator => {
+  return createValidator(type, {
+    ...options,
+    errorReporting: 'object',
+  }) as ObjectValidator;
+};
