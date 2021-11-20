@@ -1,5 +1,5 @@
 import {t} from '../../json-type/type';
-import {JsonTypeValidatorCodegen} from '../validator';
+import {JsonTypeValidatorCodegen} from '../codegen';
 import {TType} from '../../json-type/types/json';
 
 const exec = (type: TType, json: unknown, expected: string) => {
@@ -46,7 +46,7 @@ test('serializes according to schema a POJO object', () => {
           t.Field('tags', t.Array(t.str)),
         ],
       })),
-      t.Field('bin', t.bin),
+      t.Field('bin.', t.bin),
     ],
   });
 
@@ -59,11 +59,11 @@ test('serializes according to schema a POJO object', () => {
       slug: 'slug-name',
       name: 'Super collection',
       src: '{"foo": "bar"}',
+      // src2: '{"foo": "bar"}',
       authz: 'export const (ctx) => ctx.userId === "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";',
+      tags: ['foo', 'bar'],
     },
-    bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-    // bin: Buffer.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-    // bin: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    'bin.': new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
   };
 
   exec(type, json, '');

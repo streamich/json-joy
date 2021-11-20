@@ -1,7 +1,7 @@
 const Benchmark = require('benchmark');
 const Ajv = require("ajv")
 const Schemasafe = require('@exodus/schemasafe');
-const JsonTypeValidatorCodegen = require('../../es2020/json-type-codegen/validator').JsonTypeValidatorCodegen;
+const JsonTypeValidatorCodegen = require('../../es2020/json-type-validator/codegen').JsonTypeValidatorCodegen;
 const t = require('../../es2020/json-type/type').t;
 
 const schema = {
