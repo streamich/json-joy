@@ -35,6 +35,13 @@ export interface JsonTypeValidatorCodegenOptions {
    * micro-benchmark, this setting improves performance 5x. See json-type/validator.js benchmark.
    */
   skipObjectExtraFieldsCheck?: boolean;
+
+  /**
+   * In unsafe mode the validator will skip some checks which may result in
+   * error being thrown. When running validators in unsafe mode, it is assumed
+   * that the code is wrapped in a try-catch block.
+   */
+  unsafeMode?: boolean;
 }
 
 export class JsonTypeValidatorCodegen {
@@ -120,7 +127,9 @@ export class JsonTypeValidatorCodegen {
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${this.err('OBJ', path)};`);
+    const canSkipObjectTypeCheck = this.options.unsafeMode && (obj.fields.length > 0);
+    if (!canSkipObjectTypeCheck)
+      this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${this.err('OBJ', path)};`);
     if (!obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       const rc = this.getRegister();
