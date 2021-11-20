@@ -212,7 +212,7 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected onNull(path: Path, r: string) {
     const err = this.err(JsonTypeValidatorError.NIL, path);
-    this.js(/* js */ `if(typeof ${r} !== null) return ${err};`);
+    this.js(/* js */ `if(${r} !== null) return ${err};`);
   }
 
   /** @ignore */

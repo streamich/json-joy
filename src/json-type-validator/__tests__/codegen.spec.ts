@@ -3,24 +3,28 @@ import {createBoolValidator, createStrValidator, createObjValidator, ObjectValid
 import {TType} from '../../json-type/types/json';
 
 const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError) => {
-  const fn1 = createBoolValidator(type, {});
-  const fn2 = createStrValidator(type, {});
-  const fn3 = createObjValidator(type, {skipObjectExtraFieldsCheck: true});
-
-  const result1 = fn1(json);
-  const result2 = fn2(json);
-  const result3 = fn3(json);
+  const fn1 = createBoolValidator(type);
+  const fn2 = createStrValidator(type);
+  const fn3 = createObjValidator(type);
 
   // console.log(fn1.toString());
   // console.log(fn2.toString());
   // console.log(fn3.toString());
 
+  const result1 = fn1(json);
+  const result2 = fn2(json);
+  const result3 = fn3(json);
+
+  // console.log('result1', result1);
+  // console.log('result2', result2);
+  // console.log('result3', result3);
+
   expect(result1).toBe(!!error);
-  expect(result2).toBe(!error ? '' : JSON.stringify([error.code, ...error.path]));
-  expect(result3).toBe(error);
+  expect(result2).toStrictEqual(!error ? '' : JSON.stringify([error.code, ...error.path]));
+  expect(result3).toStrictEqual(error);
 };
 
-test('serializes according to schema a POJO object', () => {
+test('validates according to schema a POJO object', () => {
   const type = t.Object({
     unknownFields: false,
     fields: [
@@ -51,7 +55,6 @@ test('serializes according to schema a POJO object', () => {
       slug: 'slug-name',
       name: 'Super collection',
       src: '{"foo": "bar"}',
-      // src2: '{"foo": "bar"}',
       authz: 'export const (ctx) => ctx.userId === "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";',
       tags: ['foo', 'bar'],
     },
@@ -59,4 +62,13 @@ test('serializes according to schema a POJO object', () => {
   };
 
   exec(type, json, null);
+});
+
+describe('single root element', () => {
+  test('serializes according to schema a POJO object', () => {
+    const type = t.nil;
+
+    exec(type, null, null);
+    exec(type, '123', {code: 'NIL', errno: 6, message: 'Not null.', path: []});
+  });
 });
