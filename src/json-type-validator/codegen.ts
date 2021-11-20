@@ -200,9 +200,9 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected onBoolean(path: Path, bool: TBoolean, r: string) {
-    if (bool.const) {
+    if (bool.const !== undefined) {
       const err = this.err(JsonTypeValidatorError.BOOL_CONST, path);
-      this.js(/* js */ `if(${r} !== ${JSON.stringify(bool.const)}) return ${err};`);
+      this.js(/* js */ `if(${r} !== ${bool.const ? 'true' : 'false'}) return ${err};`);
     } else {
       const err = this.err(JsonTypeValidatorError.BOOL, path);
       this.js(/* js */ `if(typeof ${r} !== "boolean") return ${err};`);

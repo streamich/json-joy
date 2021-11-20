@@ -1,5 +1,5 @@
 import {t} from '../../json-type/type';
-import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess} from '..';
+import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError} from '..';
 import {TType} from '../../json-type/types/json';
 
 const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError) => {
@@ -7,7 +7,7 @@ const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | Object
   const fn2 = createStrValidator(type);
   const fn3 = createObjValidator(type);
 
-  // console.log(fn1.toString());
+  console.log(fn1.toString());
   // console.log(fn2.toString());
   // console.log(fn3.toString());
 
@@ -68,7 +68,7 @@ describe('single root element', () => {
   test('null', () => {
     const type = t.nil;
     exec(type, null, null);
-    exec(type, '123', {code: 'NIL', errno: 6, message: 'Not null.', path: []});
+    exec(type, '123', {code: 'NIL', errno: JsonTypeValidatorError.NIL, message: 'Not null.', path: []});
   });
 
   test('number', () => {
@@ -77,13 +77,13 @@ describe('single root element', () => {
     exec(type, 1.123, null);
     exec(type, -123, null);
     exec(type, -5.5, null);
-    exec(type, '123', {code: 'NUM', errno: 2, message: 'Not a number.', path: []});
+    exec(type, '123', {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
   });
 
   test('const number', () => {
     const type = t.Number({const: 66});
     exec(type, 66, null);
-    exec(type, 67, {code: 'NUM_CONST', errno: 3, message: 'Invalid number constant.', path: []});
+    exec(type, 67, {code: 'NUM_CONST', errno: JsonTypeValidatorError.NUM_CONST, message: 'Invalid number constant.', path: []});
   });
 
   test('string', () => {
@@ -91,13 +91,33 @@ describe('single root element', () => {
     exec(type, '', null);
     exec(type, 'a', null);
     exec(type, 'asdf', null);
-    exec(type, 123, {code: 'STR', errno: 0, message: 'Not a string.', path: []});
+    exec(type, 123, {code: 'STR', errno: JsonTypeValidatorError.STR, message: 'Not a string.', path: []});
   });
 
   test('const string', () => {
     const type = t.String({const: 'asdf'});
     exec(type, 'asdf', null);
-    exec(type, '', {code: 'STR_CONST', errno: 1, message: 'Invalid string constant.', path: []});
-    exec(type, 123, {code: 'STR_CONST', errno: 1, message: 'Invalid string constant.', path: []});
+    exec(type, '', {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+    exec(type, 123, {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+  });
+
+  test('boolean', () => {
+    const type = t.bool;
+    exec(type, true, null);
+    exec(type, false, null);
+    exec(type, 123, {code: 'BOOL', errno: JsonTypeValidatorError.BOOL, message: 'Not a boolean.', path: []});
+  });
+
+  test('const boolean', () => {
+    const type1 = t.Boolean({const: true});
+    const type2 = t.Boolean({const: false});
+    exec(type1, true, null);
+    exec(type1, false, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type1, '123', {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type1, 123, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type2, false, null);
+    exec(type2, true, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type2, '123', {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type2, 123, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
   });
 });
