@@ -62,6 +62,9 @@ const json = {
 const jsonType = new JsonTypeValidatorCodegen();
 const jsonTypeValidator = eval(jsonType.codegen(type));
 
+const jsonType2 = new JsonTypeValidatorCodegen({skipObjectExtraFieldsCheck: true});
+const jsonTypeValidator2 = eval(jsonType2.codegen(type));
+
 const fastestHandcraftedValidator = (function(r0) {
   var r1 = r0;
   if (typeof r1 !== 'object' || !r1) return true;
@@ -109,6 +112,9 @@ suite
   })
   .add(`json-joy/json-type-codegen`, function() {
     jsonTypeValidator(json);
+  })
+  .add(`json-joy/json-type-codegen (extra fields check skipped)`, function() {
+    jsonTypeValidator2(json);
   })
   .add(`ajv`, function() {
     ajvValidator(json);

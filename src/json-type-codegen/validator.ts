@@ -24,6 +24,17 @@ const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
 
 export interface JsonTypeValidatorCodegenOptions {
   detailedErrors?: boolean;
+
+  /**
+   * When an object type does not have "extraFields" set to true, the validator
+   * will check that there are not excess fields besides those explicitly
+   * defined. This settings removes this check.
+   * 
+   * It may be useful when validating incoming data in RPC request as extra fields
+   * would not hurt, but removing this check may improve performance. In one
+   * micro-benchmark, this setting improves performance 5x. See json-type/validator.js benchmark.
+   */
+  skipObjectExtraFieldsCheck?: boolean;
 }
 
 export class JsonTypeValidatorCodegen {
@@ -110,7 +121,7 @@ export class JsonTypeValidatorCodegen {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
     this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${this.err('OBJ', path)};`);
-    if (!obj.unknownFields) {
+    if (!obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       const rc = this.getRegister();
       this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${this.err('EXTRA_KEY', path)};`);
