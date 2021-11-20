@@ -59,7 +59,7 @@ const json = {
   },
 };
 
-const jsonType = new JsonTypeValidatorCodegen();
+const jsonType = new JsonTypeValidatorCodegen({detailedErrors: true});
 const jsonTypeValidator = eval(jsonType.codegen(type));
 
 const jsonType2 = new JsonTypeValidatorCodegen({skipObjectExtraFieldsCheck: true});

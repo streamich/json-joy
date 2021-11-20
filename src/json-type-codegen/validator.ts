@@ -3,7 +3,7 @@ import {JavaScript} from '../util/codegen';
 
 export type JsonTypeValidator = (value: unknown) => string;
 
-type Path = Array<string | number | {js: string}>;
+type Path = Array<string | number | {r: string}>;
 
 class EncodingPlanStepExecJs {
   constructor(public readonly js: string) {}
@@ -23,13 +23,13 @@ const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
 };
 
 export interface JsonTypeValidatorCodegenOptions {
-  detailedErrors?: boolean;
+  errorReporting?: 'boolean' | 'string' | 'object';
 
   /**
    * When an object type does not have "extraFields" set to true, the validator
    * will check that there are not excess fields besides those explicitly
    * defined. This settings removes this check.
-   * 
+   *
    * It may be useful when validating incoming data in RPC request as extra fields
    * would not hurt, but removing this check may improve performance. In one
    * micro-benchmark, this setting improves performance 5x. See json-type/validator.js benchmark.
@@ -39,7 +39,8 @@ export interface JsonTypeValidatorCodegenOptions {
   /**
    * In unsafe mode the validator will skip some checks which may result in
    * error being thrown. When running validators in unsafe mode, it is assumed
-   * that the code is wrapped in a try-catch block.
+   * that the code is wrapped in a try-catch block. Micro-benchmarks DO NOT show
+   * that this setting improves performance much.
    */
   unsafeMode?: boolean;
 }
@@ -71,17 +72,36 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
-  protected err(type: string, path: Path) {
-    if (!this.options.detailedErrors) return 'true';
-    let json = '[' + JSON.stringify(type);
-    for (const step of path) {
-      if (typeof step === 'object') {
-        json += step.js;
-      } else {
-        json += ',' + JSON.stringify(step);
+  protected err(code: string, path: Path): string {
+    switch (this.options.errorReporting) {
+      case 'boolean': return 'true';
+      case 'string': {
+        let out = "'[" + JSON.stringify(code);
+        for (const step of path) {
+          if (typeof step === 'object') {
+            out += ",' + JSON.stringify(" + step.r + ") + '";
+          } else {
+            out += ',' + JSON.stringify(step);
+          }
+        }
+        return out + "]'";
+      }
+      case 'object':
+      default: {
+        let out = '{code: ' + JSON.stringify(code) + ', path: [';
+        let i = 0;
+        for (const step of path) {
+          if (i) out += ', ';
+          if (typeof step === 'object') {
+            out += step.r;
+          } else {
+            out += JSON.stringify(step);
+          }
+          i++;
+        }
+        return out + ']}';
       }
     }
-    return "'" + json + "]'";
   }
 
   protected onString(path: Path, str: TString, r: string) {
@@ -120,7 +140,7 @@ export class JsonTypeValidatorCodegen {
     this.js(/* js */ `if (!(${r} instanceof Array)) return ${this.err('ARR', path)};`);
     this.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
     this.js(`${rv} = ${r}[${ri}];`);
-    this.onTypes([...path, {js: `,' + ${ri} + '`}], this.normalizeTypes(arr.type), rv);
+    this.onTypes([...path, {r: ri}], this.normalizeTypes(arr.type), rv);
     this.js(`}`);
   }
 
@@ -133,7 +153,7 @@ export class JsonTypeValidatorCodegen {
     if (!obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       const rc = this.getRegister();
-      this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${this.err('EXTRA_KEY', path)};`);
+      this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${this.err('KEYS', path)};`);
     }
     for (let i = 0; i < obj.fields.length; i++) {
       const field = obj.fields[i];
@@ -158,8 +178,9 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
-  protected onBinary(expr: string) {
-    
+  protected onBinary(path: Path, r: string) {
+    const hasBuffer = typeof Buffer === 'function';
+    this.js(/* js */ `if(!(${r} instanceof Uint8Array)${hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''}) return ${this.err('BIN', path)};`);
   }
 
   protected onTypes(path: Path, types: TType[], expr: string) {
@@ -204,13 +225,12 @@ export class JsonTypeValidatorCodegen {
         this.onArray(path, type as TArray, expr);
         break;
       }
-      // TODO: Ability to have unknown props. `object` TypeScript type...
       case 'obj': {
         this.onObject(path, type as TObject, expr);
         break;
       }
       case 'bin': {
-        this.onBinary(expr);
+        this.onBinary(path, expr);
         break;
       }
     }
@@ -218,12 +238,17 @@ export class JsonTypeValidatorCodegen {
 
   public codegen(type: TType): JavaScript<JsonTypeValidator> {
     this.onType([], type, 'r0');
+    const successResult = this.options.errorReporting === 'boolean'
+      ? 'false'
+      : this.options.errorReporting === 'string'
+        ? "''"
+        : 'null';
 
     const js = /* js */ `(function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
-return ${this.options.detailedErrors ? '""' : 'false'};
+return ${successResult};
 })`
-      
+
     return js as JavaScript<JsonTypeValidator>;
   }
 }
