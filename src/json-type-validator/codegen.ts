@@ -180,7 +180,7 @@ export class JsonTypeValidatorCodegen {
   protected onString(path: Path, str: TString, r: string) {
     if (str.const) {
       const error = this.err(JsonTypeValidatorError.STR_CONST, path);
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return ${error};`);
+      this.js(/* js */ `if(${r} !== ${JSON.stringify(str.const)}) return ${error};`);
     } else {
       const error = this.err(JsonTypeValidatorError.STR, path);
       this.js(/* js */ `if(typeof ${r} !== "string") return ${error};`);

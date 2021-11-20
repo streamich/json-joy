@@ -85,4 +85,19 @@ describe('single root element', () => {
     exec(type, 66, null);
     exec(type, 67, {code: 'NUM_CONST', errno: 3, message: 'Invalid number constant.', path: []});
   });
+
+  test('string', () => {
+    const type = t.str;
+    exec(type, '', null);
+    exec(type, 'a', null);
+    exec(type, 'asdf', null);
+    exec(type, 123, {code: 'STR', errno: 0, message: 'Not a string.', path: []});
+  });
+
+  test('const string', () => {
+    const type = t.String({const: 'asdf'});
+    exec(type, 'asdf', null);
+    exec(type, '', {code: 'STR_CONST', errno: 1, message: 'Invalid string constant.', path: []});
+    exec(type, 123, {code: 'STR_CONST', errno: 1, message: 'Invalid string constant.', path: []});
+  });
 });
