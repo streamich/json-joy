@@ -106,7 +106,15 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected steps: EncodingPlanStepExecJs[] = [];
 
-  constructor(protected readonly options: JsonTypeValidatorCodegenOptions = {}) {}
+  /** @ignore */
+  protected options: JsonTypeValidatorCodegenOptions;
+
+  constructor(options: JsonTypeValidatorCodegenOptions = {}) {
+    this.options = {
+      errorReporting: 'boolean',
+      ...options,
+    };
+  }
 
   /** @ignore */
   protected js(js: string) {
