@@ -17,12 +17,31 @@ const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
     case 'nil':
     case 'obj':
     case 'arr':
+    case 'bin':
       return true;
     default: return false;
   }
 };
 
+/**
+ * {@link JsonTypeValidatorCodegen} configuration options.
+ */
 export interface JsonTypeValidatorCodegenOptions {
+  /**
+   * Specifies how errors should be reported. The validator always returns a truthy
+   * value on error, and falsy value on success. Depending on the value of this
+   * option, the validator will either return boolean, string, or object on error.
+   *
+   * - `"boolean"`: The validator will return `true` on error, and `false` on success.
+   * - `"string"`: The validator will return a string on error, and empty string `""`
+   *   on success. The error string contains error code and path where error happened
+   *   serialized as JSON.
+   * - `"object"`: The validator will return an object on error, and `null` on success. The
+   *   error object contains error code and path where error happened as well as human readable
+   *   description of the error.
+   *
+   * Use `"boolean"` for best performance.
+   */
   errorReporting?: 'boolean' | 'string' | 'object';
 
   /**
@@ -46,24 +65,30 @@ export interface JsonTypeValidatorCodegenOptions {
 }
 
 export class JsonTypeValidatorCodegen {
-  public steps: EncodingPlanStepExecJs[] = [];
+  /** @ignore */
+  protected steps: EncodingPlanStepExecJs[] = [];
 
   constructor(protected readonly options: JsonTypeValidatorCodegenOptions = {}) {}
 
+  /** @ignore */
   protected js(js: string) {
     this.steps.push(new EncodingPlanStepExecJs(js));
   }
 
+  /** @ignore */
   protected registerCounter = 0;
 
+  /** @ignore */
   protected getRegister(): string {
     return `r${++this.registerCounter}`;
   }
 
+  /** @ignore */
   protected normalizeTypes(type: TType | TType[]): TType[] {
     return Array.isArray(type) ? type : [type];
   }
 
+  /** @ignore */
   protected normalizeAccessor(accessor: string): string {
     if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
       return '.' + accessor;
@@ -72,6 +97,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
+  /** @ignore */
   protected err(code: string, path: Path): string {
     switch (this.options.errorReporting) {
       case 'boolean': return 'true';
@@ -104,6 +130,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
+  /** @ignore */
   protected onString(path: Path, str: TString, r: string) {
     if (str.const) {
       this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return ${this.err('STR_CONST', path)};`);
@@ -112,6 +139,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
+  /** @ignore */
   protected onNumber(path: Path, num: TNumber, r: string) {
     if (num.const) {
       this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return ${this.err('NUM_CONST', path)};`);
@@ -120,6 +148,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
+  /** @ignore */
   protected onBoolean(path: Path, bool: TBoolean, r: string) {
     if (bool.const) {
       this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return ${this.err('BOOL_CONST', path)};`);
@@ -128,10 +157,12 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
+  /** @ignore */
   protected onNull(path: Path, r: string) {
     this.js(/* js */ `if(typeof ${r} !== null) return ${this.err('NULL', path)};`);
   }
 
+  /** @ignore */
   protected onArray(path: Path, arr: TArray, expr: string) {
     const r = this.getRegister();
     const ri = this.getRegister();
@@ -144,6 +175,7 @@ export class JsonTypeValidatorCodegen {
     this.js(`}`);
   }
 
+  /** @ignore */
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
@@ -178,11 +210,15 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
-  protected onBinary(path: Path, r: string) {
+  /** @ignore */
+  protected onBinary(path: Path, expr: string) {
     const hasBuffer = typeof Buffer === 'function';
+    const r = this.getRegister();
+    this.js(/* js */ `var ${r} = ${expr};`);
     this.js(/* js */ `if(!(${r} instanceof Uint8Array)${hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''}) return ${this.err('BIN', path)};`);
   }
 
+  /** @ignore */
   protected onTypes(path: Path, types: TType[], expr: string) {
     if (types.length === 1) {
       this.onType(path, types[0], expr);
@@ -191,6 +227,7 @@ export class JsonTypeValidatorCodegen {
     this.onTypesRecursive(path, types, expr);
   }
 
+  /** @ignore */
   protected onTypesRecursive(path: Path, types: TType[], expr: string) {
     if (!types.length) {
       this.js(/* js */ `return ${this.err('OR', path)};`);
@@ -203,6 +240,7 @@ export class JsonTypeValidatorCodegen {
     this.js(`}`);
   }
 
+  /** @ignore */
   protected onType(path: Path, type: TType, expr: string): void {
     switch (type.__t) {
       case 'str': {
