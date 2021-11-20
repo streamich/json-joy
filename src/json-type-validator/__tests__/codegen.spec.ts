@@ -1,11 +1,11 @@
 import {t} from '../../json-type/type';
-import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError} from '..';
+import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError, JsonTypeValidatorCodegenOptions} from '..';
 import {TType} from '../../json-type/types/json';
 
-const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError) => {
-  const fn1 = createBoolValidator(type);
-  const fn2 = createStrValidator(type);
-  const fn3 = createObjValidator(type);
+const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}) => {
+  const fn1 = createBoolValidator(type, options);
+  const fn2 = createStrValidator(type, options);
+  const fn3 = createObjValidator(type, options);
 
   // console.log(fn1.toString());
   // console.log(fn2.toString());
@@ -87,6 +87,31 @@ test('object can have a field of any type', () => {
   exec(type, {foo: null}, null);
   exec(type, {foo: 'asdf'}, null);
   exec(type, {}, {code: 'KEY', errno: JsonTypeValidatorError.KEY, message: 'Missing key.', path: ['foo']});
+});
+
+test('can detect extra properties in object', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('foo', t.any),
+      t.Field('zup', t.any, {isOptional: true}),
+    ],
+  });
+  exec(type, {foo: 123}, null);
+  exec(type, {foo: 123, zup: 'asdf'}, null);
+  exec(type, {foo: 123, bar: 'asdf'}, {"code": "KEYS", "errno": 10, "message": "Too many or missing object keys.", "path": ["bar"]});
+});
+
+test('can disable extra property check', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('foo', t.any),
+      t.Field('zup', t.any, {isOptional: true}),
+    ],
+  });
+  exec(type, {foo: 123}, null, {skipObjectExtraFieldsCheck: true});
+  exec(type, {foo: 123, zup: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
+  exec(type, {foo: 123, bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
+  exec(type, {foo: 123, zup: '1', bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
 });
 
 describe('OR type', () => {
