@@ -77,6 +77,18 @@ test('can have array of unknown elements', () => {
   exec(type, 'asdf', {code: 'ARR', errno: JsonTypeValidatorError.ARR, message: 'Not an array.', path: []});
 });
 
+test('object can have a field of any type', () => {
+  const type = t.Object({
+    fields: [
+      t.Field('foo', t.any),
+    ],
+  });
+  exec(type, {foo: 123}, null);
+  exec(type, {foo: null}, null);
+  exec(type, {foo: 'asdf'}, null);
+  exec(type, {}, {code: 'KEY', errno: JsonTypeValidatorError.KEY, message: 'Missing key.', path: ['foo']});
+});
+
 describe('single root element', () => {
   test('null', () => {
     const type = t.nil;

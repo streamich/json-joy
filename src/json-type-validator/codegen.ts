@@ -260,7 +260,7 @@ export class JsonTypeValidatorCodegen {
           this.onTypes(keyPath, types, `${r}${accessor}`);
         } else {
           this.js(/* js */ `var ${rv} = ${r}${accessor};`);
-          const err = this.err(JsonTypeValidatorError.KEY, path);
+          const err = this.err(JsonTypeValidatorError.KEY, [...path, field.key]);
           this.js(/* js */ `if (${rv} === undefined) return ${err};`);
           this.onTypes(keyPath, types, rv);
         }
