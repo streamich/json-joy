@@ -65,10 +65,24 @@ test('validates according to schema a POJO object', () => {
 });
 
 describe('single root element', () => {
-  test('serializes according to schema a POJO object', () => {
+  test('null', () => {
     const type = t.nil;
-
     exec(type, null, null);
     exec(type, '123', {code: 'NIL', errno: 6, message: 'Not null.', path: []});
+  });
+
+  test('number', () => {
+    const type = t.num;
+    exec(type, 123, null);
+    exec(type, 1.123, null);
+    exec(type, -123, null);
+    exec(type, -5.5, null);
+    exec(type, '123', {code: 'NUM', errno: 2, message: 'Not a number.', path: []});
+  });
+
+  test('const number', () => {
+    const type = t.Number({const: 66});
+    exec(type, 66, null);
+    exec(type, 67, {code: 'NUM_CONST', errno: 3, message: 'Invalid number constant.', path: []});
   });
 });

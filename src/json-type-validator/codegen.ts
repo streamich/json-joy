@@ -191,7 +191,7 @@ export class JsonTypeValidatorCodegen {
   protected onNumber(path: Path, num: TNumber, r: string) {
     if (num.const) {
       const err = this.err(JsonTypeValidatorError.NUM_CONST, path);
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return ${err};`);
+      this.js(/* js */ `if(${r} !== ${JSON.stringify(num.const)}) return ${err};`);
     } else {
       const err = this.err(JsonTypeValidatorError.NUM, path);
       this.js(/* js */ `if(typeof ${r} !== "number") return ${err};`);
@@ -202,7 +202,7 @@ export class JsonTypeValidatorCodegen {
   protected onBoolean(path: Path, bool: TBoolean, r: string) {
     if (bool.const) {
       const err = this.err(JsonTypeValidatorError.BOOL_CONST, path);
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return ${err};`);
+      this.js(/* js */ `if(${r} !== ${JSON.stringify(bool.const)}) return ${err};`);
     } else {
       const err = this.err(JsonTypeValidatorError.BOOL, path);
       this.js(/* js */ `if(typeof ${r} !== "boolean") return ${err};`);
