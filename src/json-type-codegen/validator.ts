@@ -9,12 +9,14 @@ class EncodingPlanStepExecJs {
   constructor(public readonly js: string) {}
 }
 
-const isPrimitiveType = (type: string): boolean => {
+const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
   switch (type) {
     case 'bool':
     case 'num':
     case 'str':
     case 'nil':
+    case 'obj':
+    case 'arr':
       return true;
     default: return false;
   }
@@ -107,13 +109,11 @@ export class JsonTypeValidatorCodegen {
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (!${r} || typeof ${r} !== 'object' || Array.isArray(${r})) return ${this.err('OBJ', path)};`);
+    this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${this.err('OBJ', path)};`);
     if (!obj.unknownFields) {
       const rk = this.getRegister();
-      const keys = obj.fields.map(field => field.key);
-      this.js(`for (var ${rk} in ${r}) {`);
-      this.js(`if (${keys.map(key => `(${rk} !== ${JSON.stringify(key)})`).join('&&')}) return ${this.err('EXTRA_KEY', [...path, {js: `,' + ${rk} + '`}])};`);
-      this.js(`}`);
+      const rc = this.getRegister();
+      this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${this.err('EXTRA_KEY', path)};`);
     }
     for (let i = 0; i < obj.fields.length; i++) {
       const field = obj.fields[i];
@@ -127,7 +127,7 @@ export class JsonTypeValidatorCodegen {
         this.onTypes(keyPath, types, rv);
         this.js(`}`);
       } else {
-        if (types.length === 1 && isPrimitiveType(types[0].__t)) {
+        if (types.length === 1 && canSkipObjectKeyUndefinedCheck(types[0].__t)) {
           this.onTypes(keyPath, types, `${r}${accessor}`);
         } else {
           this.js(/* js */ `var ${rv} = ${r}${accessor};`);
