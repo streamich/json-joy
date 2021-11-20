@@ -64,6 +64,19 @@ test('validates according to schema a POJO object', () => {
   exec(type, json, null);
 });
 
+test('can have array of unknown elements', () => {
+  const type = t.Array(t.any);
+  exec(type, [], null);
+  exec(type, [1], null);
+  exec(type, [1, 2, 3], null);
+  exec(type, [1, 'adsf'], null);
+  exec(type, [1, {}], null);
+  exec(type, {}, {code: 'ARR', errno: JsonTypeValidatorError.ARR, message: 'Not an array.', path: []});
+  exec(type, null, {code: 'ARR', errno: JsonTypeValidatorError.ARR, message: 'Not an array.', path: []});
+  exec(type, 123, {code: 'ARR', errno: JsonTypeValidatorError.ARR, message: 'Not an array.', path: []});
+  exec(type, 'asdf', {code: 'ARR', errno: JsonTypeValidatorError.ARR, message: 'Not an array.', path: []});
+});
+
 describe('single root element', () => {
   test('null', () => {
     const type = t.nil;

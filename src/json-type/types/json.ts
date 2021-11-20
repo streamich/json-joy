@@ -101,10 +101,12 @@ export interface TBinary extends TType {
   __t: 'bin';
 }
 
-// export interface JsonResource {
-//   type: 'resource';
-//   resource: DocResource;
-// }
+/**
+ * Represents something of which type is not known.
+ */
+export interface TAny extends TType {
+  __t: 'any';
+}
 
 /**
  * Any valid JSON type.

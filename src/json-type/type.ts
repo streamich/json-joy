@@ -1,4 +1,4 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType} from "./types/json";
+import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny} from "./types/json";
 
 export const t = {
   get str() {
@@ -29,6 +29,10 @@ export const t = {
 
   get bin() {
     return this.Binary();
+  },
+
+  get any() {
+    return this.Any();
   },
 
   Null: (options: NoT<TNull> = {}): TNull => {
@@ -85,6 +89,13 @@ export const t = {
   Binary: (options: NoT<TBinary> = {}): TBinary => {
     return {
       __t: 'bin',
+      ...options,
+    };
+  },
+
+  Any: (options: NoT<TAny> = {}): TAny => {
+    return {
+      __t: 'any',
       ...options,
     };
   },
