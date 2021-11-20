@@ -67,6 +67,7 @@
     "ts-brand-json": "0.1.1"
   },
   "devDependencies": {
+    "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^2.5.1",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
