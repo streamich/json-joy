@@ -7,7 +7,7 @@ const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | Object
   const fn2 = createStrValidator(type);
   const fn3 = createObjValidator(type);
 
-  console.log(fn1.toString());
+  // console.log(fn1.toString());
   // console.log(fn2.toString());
   // console.log(fn3.toString());
 
@@ -86,6 +86,12 @@ describe('single root element', () => {
     exec(type, 67, {code: 'NUM_CONST', errno: JsonTypeValidatorError.NUM_CONST, message: 'Invalid number constant.', path: []});
   });
 
+  test('falsy const number', () => {
+    const type = t.Number({const: 0});
+    exec(type, 0, null);
+    exec(type, 1, {code: 'NUM_CONST', errno: JsonTypeValidatorError.NUM_CONST, message: 'Invalid number constant.', path: []});
+  });
+
   test('string', () => {
     const type = t.str;
     exec(type, '', null);
@@ -98,6 +104,13 @@ describe('single root element', () => {
     const type = t.String({const: 'asdf'});
     exec(type, 'asdf', null);
     exec(type, '', {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+    exec(type, 123, {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+  });
+
+  test('falsy const string', () => {
+    const type = t.String({const: ''});
+    exec(type, '', null);
+    exec(type, 'asdf', {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
     exec(type, 123, {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
   });
 

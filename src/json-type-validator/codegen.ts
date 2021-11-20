@@ -178,7 +178,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected onString(path: Path, str: TString, r: string) {
-    if (str.const) {
+    if (str.const !== undefined) {
       const error = this.err(JsonTypeValidatorError.STR_CONST, path);
       this.js(/* js */ `if(${r} !== ${JSON.stringify(str.const)}) return ${error};`);
     } else {
@@ -189,7 +189,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected onNumber(path: Path, num: TNumber, r: string) {
-    if (num.const) {
+    if (num.const !== undefined) {
       const err = this.err(JsonTypeValidatorError.NUM_CONST, path);
       this.js(/* js */ `if(${r} !== ${JSON.stringify(num.const)}) return ${err};`);
     } else {
