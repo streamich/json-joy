@@ -3,6 +3,7 @@
   "scopes": [
     "",
     "demo",
+    "json-brand",
     "json-cli",
     "json-crdt",
     "json-crdt-patch",
