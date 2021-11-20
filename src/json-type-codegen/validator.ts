@@ -24,6 +24,44 @@ const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
 };
 
 /**
+ * List of validation error codes.
+ */
+export enum JsonTypeValidatorError {
+  STR = 0,
+  STR_CONST,
+  NUM,
+  NUM_CONST,
+  BOOL,
+  BOOL_CONST,
+  NIL,
+  ARR,
+  OBJ,
+  KEY,
+  KEYS,
+  BIN,
+  OR,
+}
+
+/**
+ * List of human-readable error messages by error code.
+ */
+export const JsonTypeValidatorErrorMessage = {
+  [JsonTypeValidatorError.STR]: 'Not a string.',
+  [JsonTypeValidatorError.STR_CONST]: 'Invalid string constant.',
+  [JsonTypeValidatorError.NUM]: 'Not a number.',
+  [JsonTypeValidatorError.NUM_CONST]: 'Invalid number constant.',
+  [JsonTypeValidatorError.BOOL]: 'Not a boolean.',
+  [JsonTypeValidatorError.BOOL_CONST]: 'Invalid boolean constant.',
+  [JsonTypeValidatorError.NIL]: 'Not null.',
+  [JsonTypeValidatorError.ARR]: 'Not an array.',
+  [JsonTypeValidatorError.OBJ]: 'Not an object.',
+  [JsonTypeValidatorError.KEY]: 'Missing key.',
+  [JsonTypeValidatorError.KEYS]: 'Too many or missing object keys.',
+  [JsonTypeValidatorError.BIN]: 'Not a binary.',
+  [JsonTypeValidatorError.OR]: 'None of types matched.',
+}
+
+/**
  * {@link JsonTypeValidatorCodegen} configuration options.
  */
 export interface JsonTypeValidatorCodegenOptions {
@@ -98,11 +136,11 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
-  protected err(code: string, path: Path): string {
+  protected err(code: JsonTypeValidatorError, path: Path): string {
     switch (this.options.errorReporting) {
       case 'boolean': return 'true';
       case 'string': {
-        let out = "'[" + JSON.stringify(code);
+        let out = "'[" + JSON.stringify(JsonTypeValidatorError[code]);
         for (const step of path) {
           if (typeof step === 'object') {
             out += ",' + JSON.stringify(" + step.r + ") + '";
@@ -114,7 +152,7 @@ export class JsonTypeValidatorCodegen {
       }
       case 'object':
       default: {
-        let out = '{code: ' + JSON.stringify(code) + ', path: [';
+        let out = '{code: ' + JSON.stringify(JsonTypeValidatorError[code]) + ', errno: ' + JSON.stringify(code) + ', message: ' + JSON.stringify(JsonTypeValidatorErrorMessage[code]) + ', path: [';
         let i = 0;
         for (const step of path) {
           if (i) out += ', ';
@@ -133,33 +171,40 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected onString(path: Path, str: TString, r: string) {
     if (str.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return ${this.err('STR_CONST', path)};`);
+      const error = this.err(JsonTypeValidatorError.STR_CONST, path);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return ${error};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "string") return ${this.err('STR', path)};`);
+      const error = this.err(JsonTypeValidatorError.STR, path);
+      this.js(/* js */ `if(typeof ${r} !== "string") return ${error};`);
     }
   }
 
   /** @ignore */
   protected onNumber(path: Path, num: TNumber, r: string) {
     if (num.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return ${this.err('NUM_CONST', path)};`);
+      const err = this.err(JsonTypeValidatorError.NUM_CONST, path);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return ${err};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "number") return ${this.err('NUM', path)};`);
+      const err = this.err(JsonTypeValidatorError.NUM, path);
+      this.js(/* js */ `if(typeof ${r} !== "number") return ${err};`);
     }
   }
 
   /** @ignore */
   protected onBoolean(path: Path, bool: TBoolean, r: string) {
     if (bool.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return ${this.err('BOOL_CONST', path)};`);
+      const err = this.err(JsonTypeValidatorError.BOOL_CONST, path);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return ${err};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "boolean") return ${this.err('BOOL', path)};`);
+      const err = this.err(JsonTypeValidatorError.BOOL, path);
+      this.js(/* js */ `if(typeof ${r} !== "boolean") return ${err};`);
     }
   }
 
   /** @ignore */
   protected onNull(path: Path, r: string) {
-    this.js(/* js */ `if(typeof ${r} !== null) return ${this.err('NULL', path)};`);
+    const err = this.err(JsonTypeValidatorError.NIL, path);
+    this.js(/* js */ `if(typeof ${r} !== null) return ${err};`);
   }
 
   /** @ignore */
@@ -168,7 +213,8 @@ export class JsonTypeValidatorCodegen {
     const ri = this.getRegister();
     const rv = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (!(${r} instanceof Array)) return ${this.err('ARR', path)};`);
+    const err = this.err(JsonTypeValidatorError.ARR, path);
+    this.js(/* js */ `if (!(${r} instanceof Array)) return ${err};`);
     this.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
     this.js(`${rv} = ${r}[${ri}];`);
     this.onTypes([...path, {r: ri}], this.normalizeTypes(arr.type), rv);
@@ -180,12 +226,15 @@ export class JsonTypeValidatorCodegen {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
     const canSkipObjectTypeCheck = this.options.unsafeMode && (obj.fields.length > 0);
-    if (!canSkipObjectTypeCheck)
-      this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${this.err('OBJ', path)};`);
+    if (!canSkipObjectTypeCheck) {
+      const err = this.err(JsonTypeValidatorError.OBJ, path);
+      this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${err};`);
+    }
     if (!obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       const rc = this.getRegister();
-      this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${this.err('KEYS', path)};`);
+      const err = this.err(JsonTypeValidatorError.KEYS, path);
+      this.js(`var ${rc} = 0; for (var ${rk} in ${r}) ${rc}++; if(${rc} !== ${obj.fields.length}) return ${err};`);
     }
     for (let i = 0; i < obj.fields.length; i++) {
       const field = obj.fields[i];
@@ -203,7 +252,8 @@ export class JsonTypeValidatorCodegen {
           this.onTypes(keyPath, types, `${r}${accessor}`);
         } else {
           this.js(/* js */ `var ${rv} = ${r}${accessor};`);
-          this.js(/* js */ `if (${rv} === undefined) return ${this.err('KEY', keyPath)};`);
+          const err = this.err(JsonTypeValidatorError.KEY, path);
+          this.js(/* js */ `if (${rv} === undefined) return ${err};`);
           this.onTypes(keyPath, types, rv);
         }
       }
@@ -215,7 +265,8 @@ export class JsonTypeValidatorCodegen {
     const hasBuffer = typeof Buffer === 'function';
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if(!(${r} instanceof Uint8Array)${hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''}) return ${this.err('BIN', path)};`);
+    const err = this.err(JsonTypeValidatorError.BIN, path);
+    this.js(/* js */ `if(!(${r} instanceof Uint8Array)${hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''}) return ${err};`);
   }
 
   /** @ignore */
@@ -230,7 +281,8 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected onTypesRecursive(path: Path, types: TType[], expr: string) {
     if (!types.length) {
-      this.js(/* js */ `return ${this.err('OR', path)};`);
+      const err = this.err(JsonTypeValidatorError.OR, path);
+      this.js(/* js */ `return ${err};`);
       return;
     }
     const type = types[0];
