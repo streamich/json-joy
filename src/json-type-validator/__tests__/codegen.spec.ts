@@ -11,17 +11,17 @@ const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | Object
   // console.log(fn2.toString());
   // console.log(fn3.toString());
 
-  const result1 = fn1(json);
-  const result2 = fn2(json);
   const result3 = fn3(json);
+  const result2 = fn2(json);
+  const result1 = fn1(json);
 
   // console.log('result1', result1);
   // console.log('result2', result2);
   // console.log('result3', result3);
 
-  expect(result1).toBe(!!error);
-  expect(result2).toStrictEqual(!error ? '' : JSON.stringify([error.code, ...error.path]));
   expect(result3).toStrictEqual(error);
+  expect(result2).toStrictEqual(!error ? '' : JSON.stringify([error.code, ...error.path]));
+  expect(result1).toBe(!!error);
 };
 
 test('validates according to schema a POJO object', () => {
@@ -87,6 +87,32 @@ test('object can have a field of any type', () => {
   exec(type, {foo: null}, null);
   exec(type, {foo: 'asdf'}, null);
   exec(type, {}, {code: 'KEY', errno: JsonTypeValidatorError.KEY, message: 'Missing key.', path: ['foo']});
+});
+
+describe('OR type', () => {
+  test('object key can be of multiple types', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('foo', [t.num, t.str]),
+      ],
+    });
+    exec(type, {foo: 123}, null);
+    exec(type, {foo: '123'}, null);
+    exec(type, {foo: false}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['foo']});
+  });
+
+  test('array can be of multiple types', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('gg', t.Array([t.num, t.str])),
+      ],
+    });
+    exec(type, {gg: []}, null);
+    exec(type, {gg: [1]}, null);
+    exec(type, {gg: [1, 2]}, null);
+    exec(type, {gg: [1, '3', '']}, null);
+    exec(type, {gg: [1, '3', false]}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]});
+  });
 });
 
 describe('single root element', () => {

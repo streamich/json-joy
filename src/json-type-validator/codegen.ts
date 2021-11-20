@@ -134,6 +134,17 @@ export class JsonTypeValidatorCodegen {
     return Array.isArray(type) ? type : [type];
   }
 
+  protected dependencies: unknown[] = [];
+
+  protected addDependencies(deps: unknown[]): string[] {
+    let symbols: string [] = [];
+    for (const dep of deps) {
+      this.dependencies.push(dep);
+      symbols.push(`d${this.dependencies.length - 1}`);
+    }
+    return symbols;
+  }
+
   /** @ignore */
   protected normalizeAccessor(accessor: string): string {
     if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
@@ -296,7 +307,8 @@ export class JsonTypeValidatorCodegen {
     const type = types[0];
     const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
     const fn = codegen.generate(type);
-    this.js(`if (${fn}(${expr})) {`);
+    const symbols = this.addDependencies(fn.deps);
+    this.js(`if ((${fn.js}(${symbols.join(',')}))(${expr})) {`);
     this.onTypesRecursive(path, types.slice(1), expr);
     this.js(`}`);
   }
@@ -343,13 +355,15 @@ export class JsonTypeValidatorCodegen {
         ? "''"
         : 'null';
 
-    const js = /* js */ `(function(){return function(r0){
+    const dependencyArgs = this.dependencies.map((_, index) => `d${index}`).join(', ');
+
+    const js = /* js */ `(function(${dependencyArgs}){return function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
 }})`
 
     return {
-      deps: [] as unknown[],
+      deps: this.dependencies as unknown[],
       js,
     } as CompiledFunction<JsonTypeValidator>;
   }
