@@ -1,41 +1,21 @@
-export interface DocMethod {
-  title: string;
-  intro?: string;
-  description?: string;
-  function: string;
-  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' | 'HEAD';
-  urlStructure?: string;
-  format?: 'rest' | 'rpc';
+import type {Display} from "./common";
+import {TResource} from "./resource";
+
+export interface TFunctionExample extends Display {
+  req?: unknown;
+  res?: unknown;
+  err?: unknown;
+}
+
+export interface TFunctionDefinition {
+  req?: TResource[];
+  res?: TResource[];
+  err?: TResource[];
+}
+
+export interface TFunction extends TFunctionDefinition, Display {
+  id: string;
+  examples?: TFunctionExample[];
   authentication?: string;
   authorization?: string;
-  examples?: DocMethodExample[];
-  payload?: DocPayload[];
-  returns?: DocReturn[];
-  errors?: DocError[];
-}
-
-export interface DocMethodExample {
-  title?: string;
-  description?: string;
-  payload?: unknown;
-  result?: unknown;
-  error?: unknown;
-}
-
-export interface DocPayload {
-  title?: string;
-  // type: JsonObject;
-}
-
-export interface DocReturn {
-  title?: string;
-  description?: string;
-  // type: Json;
-  // type: JsonObject;
-}
-
-export interface DocError {
-  title?: string;
-  description?: string;
-  // types: Json[];
 }
