@@ -20,8 +20,14 @@ const isPrimitiveType = (type: string): boolean => {
   }
 };
 
+export interface JsonTypeValidatorCodegenOptions {
+  detailedErrors?: boolean;
+}
+
 export class JsonTypeValidatorCodegen {
   public steps: EncodingPlanStepExecJs[] = [];
+
+  constructor(protected readonly options: JsonTypeValidatorCodegenOptions = {}) {}
 
   protected js(js: string) {
     this.steps.push(new EncodingPlanStepExecJs(js));
@@ -46,6 +52,7 @@ export class JsonTypeValidatorCodegen {
   }
 
   protected err(type: string, path: Path) {
+    if (!this.options.detailedErrors) return 'true';
     let json = '[' + JSON.stringify(type);
     for (const step of path) {
       if (typeof step === 'object') {
@@ -54,35 +61,35 @@ export class JsonTypeValidatorCodegen {
         json += ',' + JSON.stringify(step);
       }
     }
-    return json + ']';
+    return "'" + json + "]'";
   }
 
   protected onString(path: Path, str: TString, r: string) {
     if (str.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return '${this.err('STR_CONST', path)}';`);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(str.const)}") return ${this.err('STR_CONST', path)};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "string") return '${this.err('STR', path)}';`);
+      this.js(/* js */ `if(typeof ${r} !== "string") return ${this.err('STR', path)};`);
     }
   }
 
   protected onNumber(path: Path, num: TNumber, r: string) {
     if (num.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return '${this.err('NUM_CONST', path)}';`);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(num.const)}") return ${this.err('NUM_CONST', path)};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "number") return '${this.err('NUM', path)}';`);
+      this.js(/* js */ `if(typeof ${r} !== "number") return ${this.err('NUM', path)};`);
     }
   }
 
   protected onBoolean(path: Path, bool: TBoolean, r: string) {
     if (bool.const) {
-      this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return '${this.err('BOOL_CONST', path)}';`);
+      this.js(/* js */ `if(${r} !== "${JSON.stringify(bool.const)}") return ${this.err('BOOL_CONST', path)};`);
     } else {
-      this.js(/* js */ `if(typeof ${r} !== "boolean") return '${this.err('BOOL', path)}';`);
+      this.js(/* js */ `if(typeof ${r} !== "boolean") return ${this.err('BOOL', path)};`);
     }
   }
 
   protected onNull(path: Path, r: string) {
-    this.js(/* js */ `if(typeof ${r} !== null) return '${this.err('NULL', path)}';`);
+    this.js(/* js */ `if(typeof ${r} !== null) return ${this.err('NULL', path)};`);
   }
 
   protected onArray(path: Path, arr: TArray, expr: string) {
@@ -90,7 +97,7 @@ export class JsonTypeValidatorCodegen {
     const ri = this.getRegister();
     const rv = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (!(${r} instanceof Array)) return '${this.err('ARR', path)}';`);
+    this.js(/* js */ `if (!(${r} instanceof Array)) return ${this.err('ARR', path)};`);
     this.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
     this.js(`${rv} = ${r}[${ri}];`);
     this.onTypes([...path, {js: `,' + ${ri} + '`}], this.normalizeTypes(arr.type), rv);
@@ -100,13 +107,12 @@ export class JsonTypeValidatorCodegen {
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    this.js(/* js */ `if (!${r} || typeof ${r} !== 'object' || Array.isArray(${r})) return '${this.err('OBJ', path)}';`);
+    this.js(/* js */ `if (!${r} || typeof ${r} !== 'object' || Array.isArray(${r})) return ${this.err('OBJ', path)};`);
     if (!obj.unknownFields) {
       const rk = this.getRegister();
       const keys = obj.fields.map(field => field.key);
       this.js(`for (var ${rk} in ${r}) {`);
-      const errStr = this.err('EXTRA_KEY', path);
-      this.js(`if (${keys.map(key => `(${rk} !== ${JSON.stringify(key)})`).join('&&')}) return '${errStr.substr(0, errStr.length - 1)},' + JSON.stringify(${rk}) + ']';`);
+      this.js(`if (${keys.map(key => `(${rk} !== ${JSON.stringify(key)})`).join('&&')}) return ${this.err('EXTRA_KEY', [...path, {js: `,' + ${rk} + '`}])};`);
       this.js(`}`);
     }
     for (let i = 0; i < obj.fields.length; i++) {
@@ -121,11 +127,11 @@ export class JsonTypeValidatorCodegen {
         this.onTypes(keyPath, types, rv);
         this.js(`}`);
       } else {
-        this.js(/* js */ `var ${rv} = ${r}${accessor};`);
         if (types.length === 1 && isPrimitiveType(types[0].__t)) {
-          this.onTypes(keyPath, types, rv);
+          this.onTypes(keyPath, types, `${r}${accessor}`);
         } else {
-          this.js(/* js */ `if (${rv} === undefined) return '${this.err('KEY', keyPath)}';`);
+          this.js(/* js */ `var ${rv} = ${r}${accessor};`);
+          this.js(/* js */ `if (${rv} === undefined) return ${this.err('KEY', keyPath)};`);
           this.onTypes(keyPath, types, rv);
         }
       }
@@ -195,7 +201,7 @@ export class JsonTypeValidatorCodegen {
 
     const js = /* js */ `(function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
-return '';
+return ${this.options.detailedErrors ? '""' : 'false'};
 })`
       
     return js as JavaScript<JsonTypeValidator>;
