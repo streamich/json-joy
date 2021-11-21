@@ -120,7 +120,15 @@ export interface TAny extends TType, Partial<Identifiable> {
   __t: 'any';
 }
 
-export interface TRef extends TType {}
+/**
+ * Reference to another type.
+ */
+export interface TRef extends TType {
+  __t: 'ref';
+
+  /** ID of the type it references. */
+  ref: string;
+}
 
 /**
  * Any valid JSON type.

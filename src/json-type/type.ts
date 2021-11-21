@@ -1,4 +1,4 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny} from "./types/json";
+import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef} from "./types/json";
 
 export const t = {
   get str() {
@@ -97,6 +97,13 @@ export const t = {
     return {
       __t: 'any',
       ...options,
+    };
+  },
+
+  Ref: (ref: string): TRef => {
+    return {
+      __t: 'ref',
+      ref,
     };
   },
 };
