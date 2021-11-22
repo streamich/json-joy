@@ -1,6 +1,6 @@
 const Benchmark = require('benchmark');
 const encoder = require('../../es2020/json-pack/util').encoder;
-const EncodingPlan = require('../../es2020/json-type-serializer').EncodingPlan;
+const MsgPackSerializerCodegen = require('../../es2020/json-type-serializer').MsgPackSerializerCodegen;
 const t = require('../../es2020/json-type').t;
 
 const type = t.Object({
@@ -48,7 +48,7 @@ const json = {
   },
 };
 
-const plan = new EncodingPlan();
+const plan = new MsgPackSerializerCodegen();
 plan.createPlan(type);
 const js = plan.codegen();
 const fn = eval(js)(encoder);

@@ -1,6 +1,6 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types';
+import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType, TRef} from '../json-type/types';
 import {JsExpression} from './util/JsExpression';
 
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
@@ -22,8 +22,22 @@ class EncodingPlanStepExecJs {
 
 type EncodingPlanStep = EncodingPlanStepWriteBlob | EncodingPlanStepExecJs;
 
-export class EncodingPlan {
+export interface MsgPackSerializerCodegenOptions {
+  ref?: (id: string) => TType | undefined;
+}
+
+export class MsgPackSerializerCodegen {
   public steps: EncodingPlanStep[] = [];
+
+  /** @ignore */
+  protected options: Required<MsgPackSerializerCodegenOptions>;
+
+  constructor(opts: MsgPackSerializerCodegenOptions = {}) {
+    this.options = {
+      ref: (id: string) => undefined,
+      ...opts,
+    };
+  }
 
   protected execJs(js: string) {
     this.steps.push(new EncodingPlanStepExecJs(js));
@@ -170,6 +184,14 @@ export class EncodingPlan {
     this.execJs(/* js */ `e.encodeBinary(${value.use()});`);
   }
 
+  public onRef(ref: TRef, value: JsExpression): void {
+    const type = this.options.ref(ref.ref);
+    if (type === undefined) {
+      throw new Error(`Unknown [ref = ${ref.ref}].`);
+    }
+    this.onType(type, value);
+  }
+
   public onAny(value: JsExpression) {
     this.execJs(/* js */ `e.encodeAny(${value.use()});`);
   }
@@ -206,7 +228,7 @@ export class EncodingPlan {
         break;
       }
       case 'ref': {
-        throw new Error('not implemented');
+        this.onRef(type as TRef, value);
         break;
       }
       // case 'or':

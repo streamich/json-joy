@@ -1,14 +1,14 @@
 import {t} from '../../json-type';
 import {EncoderFull} from '../../json-pack/EncoderFull';
 import {Decoder} from '../../json-pack/Decoder';
-import {EncodingPlan} from '../msgpack';
+import {MsgPackSerializerCodegen} from '../msgpack';
 import {TType} from '../../json-type/types';
 
 const encoder = new EncoderFull();
 const decoder = new Decoder();
 
 const exec = (type: TType, json: unknown) => {
-  const plan = new EncodingPlan();
+  const plan = new MsgPackSerializerCodegen();
   plan.createPlan(type);
   const js = plan.codegen();
   const fn = eval(js)(encoder);
@@ -194,5 +194,39 @@ describe('"or" type', () => {
     const type = t.Or(t.num, t.str);
     exec(type, 123);
     exec(type, 'asdf');
+  });
+});
+
+describe('"ref" type', () => {
+  test('simple example', () => {
+    const typeUser = t.Object('User', [
+      t.Field('id', t.str),
+    ]);
+    const typeResponse = t.Object('Response', [
+      t.Field('user', t.Ref('User')),
+    ]);
+    const plan = new MsgPackSerializerCodegen({
+      ref: () => typeUser,
+    });
+    plan.createPlan(typeResponse);
+    const js = plan.codegen();
+    const fn = eval(js)(encoder);
+    const json = {
+      user: {
+        id: '123',
+      },
+    };
+    const blob = fn(json);
+    const decoded = decoder.decode(blob);
+    expect(decoded).toStrictEqual(json);
+  });
+
+  test('throws when ref cannot be resolved', () => {
+    const typeResponse = t.Object('Response', [
+      t.Field('user', t.Ref('User')),
+    ]);
+    const plan = new MsgPackSerializerCodegen({});
+    const callback = () => plan.createPlan(typeResponse);
+    expect(callback).toThrow(new Error('Unknown [ref = User].'));
   });
 });
