@@ -1,6 +1,6 @@
 const Benchmark = require('benchmark');
 const encoder = require('../../es2020/json-pack/util').encoder;
-const EncodingPlan = require('../../es2020/json-type-codegen/msgpack').EncodingPlan;
+const EncodingPlan = require('../../es2020/json-type-serializer').EncodingPlan;
 const t = require('../../es2020/json-type').t;
 
 const type = t.Object({
@@ -56,7 +56,7 @@ const fn = eval(js)(encoder);
 const suite = new Benchmark.Suite;
 
 suite
-  .add(`json-joy/json-type-codegen`, function() {
+  .add(`json-joy/json-type-serializer`, function() {
     fn(json);
   })
   .add(`json-joy/json-pack`, function() {
