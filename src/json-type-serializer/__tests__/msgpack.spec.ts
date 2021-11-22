@@ -174,3 +174,17 @@ describe('single value', () => {
     }), {a: 'b'});
   });
 });
+
+describe('"enum" type', () => {
+  test('string enum', () => {
+    const type = t.Enum(['add', 'replace']);
+    const json = 'add';
+    exec(type, json);
+  });
+
+  test('complex enum', () => {
+    const type = t.Enum([{foo: 'bar'}, 'replace']);
+    exec(type, 'replace');
+    exec(type, {foo: 'bar'});
+  });
+});

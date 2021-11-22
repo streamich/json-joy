@@ -205,7 +205,17 @@ export class EncodingPlan {
         this.onBinary(value);
         break;
       }
-      case 'any': {
+      case 'ref': {
+        throw new Error('not implemented');
+        break;
+      }
+      case 'or': {
+        throw new Error('not implemented');
+        break;
+      }
+      // case 'enum':
+      // case 'any':
+      default: {
         this.onAny(value);
         break;
       }
