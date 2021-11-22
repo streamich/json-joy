@@ -188,3 +188,11 @@ describe('"enum" type', () => {
     exec(type, {foo: 'bar'});
   });
 });
+
+describe('"or" type', () => {
+  test('simple example', () => {
+    const type = t.Or(t.num, t.str);
+    exec(type, 123);
+    exec(type, 'asdf');
+  });
+});

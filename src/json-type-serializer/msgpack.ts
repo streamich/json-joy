@@ -209,10 +209,7 @@ export class EncodingPlan {
         throw new Error('not implemented');
         break;
       }
-      case 'or': {
-        throw new Error('not implemented');
-        break;
-      }
+      // case 'or':
       // case 'enum':
       // case 'any':
       default: {
