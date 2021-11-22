@@ -203,7 +203,7 @@ describe('"or" type', () => {
     exec(type, {gg: [1, '3', false]}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]});
   });
 
-  test.only('root value can be of multiple types', () => {
+  test('root value can be of multiple types', () => {
     const type = t.Or(t.str, t.num, t.obj);
     exec(type, 123, null);
     exec(type, 'asdf', null);
@@ -224,6 +224,45 @@ describe('"obj" type', () => {
   test('"null" is not of type "obj"', () => {
     const type = t.obj;
     exec(type, null, {"code": "OBJ", "errno": 8, "message": "Not an object.", "path": []});
+  });
+});
+
+describe('"enum" type', () => {
+  test('can create a basic enum type', () => {
+    const type = t.Enum(['a', 'b', 'c']);
+    exec(type, 'a', null);
+    exec(type, 'b', null);
+    exec(type, 'c', null);
+    exec(type, 'd', {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+  });
+
+  test('enum can be a complex object', () => {
+    const type = t.Enum([{foo: 'bar'}, [5]]);
+    exec(type, 'd', {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, {}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, {foo: 'baz'}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, {foo: 'bar'}, null);
+    exec(type, [], {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, [5.5], {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, [5], null);
+  });
+
+  test('throws on empty "enum"', () => {
+    const type = {__t: 'enum', values: []};
+    const callback = () => exec(type, 1, null);
+    expect(callback).toThrow(new Error('Enum values are not specified.'));
+  });
+
+  test('"enum" can be part of an object', () => {
+    const type = t.Object([
+      t.Field('op', t.Enum('OperationType', ['add', 'replace', 'test'])),
+      t.Field('path', t.str),
+      t.Field('value', t.any),
+    ]);
+    exec(type, {op: 'add', path: '/foo/bar', value: 123}, null);
+    exec(type, {op: 'replace', path: '/foo/bar', value: 123}, null);
+    exec(type, {op: 'test', path: '/foo/bar', value: 123}, null);
+    exec(type, {op: 'delete', path: '/foo/bar', value: 123}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": ["op"]});
   });
 });
 

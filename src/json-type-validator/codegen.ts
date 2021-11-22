@@ -1,7 +1,8 @@
 import type {JsonTypeValidator} from './types';
-import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr} from '../json-type/types';
+import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr, TEnum} from '../json-type/types';
 import {CompiledFunction, compileFn} from '../util/codegen';
 import {BooleanValidator, ObjectValidator, StringValidator} from '.';
+import {$$deepEqual} from '../json-equal/$$deepEqual';
 
 type Path = Array<string | number | {r: string}>;
 
@@ -41,6 +42,7 @@ export enum JsonTypeValidatorError {
   BIN,
   OR,
   REF,
+  ENUM,
 }
 
 /**
@@ -61,6 +63,7 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.BIN]: 'Not a binary.',
   [JsonTypeValidatorError.OR]: 'None of types matched.',
   [JsonTypeValidatorError.REF]: 'Validation error in referenced type.',
+  [JsonTypeValidatorError.ENUM]: 'Not an enum value.',
 }
 
 /**
@@ -362,6 +365,14 @@ export class JsonTypeValidatorCodegen {
     this.js(`if (${consts.join(' && ')}) return ${err}`);
   }
 
+  protected onEnum(path: Path, type: TEnum, r: string) {
+    if (!type.values.length) throw new Error('Enum values are not specified.');
+    const equals = type.values.map(value => $$deepEqual(value));
+    const consts = this.addConsts(equals);
+    const exprs = consts.map(c => `!${c}(${r})`);
+    this.js(`if (${exprs.join(' && ')}) return ${this.err(JsonTypeValidatorError.ENUM, path)}`);
+  }
+
   /** @ignore */
   protected onType(path: Path, type: TType, expr: string): void {
     switch (type.__t) {
@@ -403,6 +414,10 @@ export class JsonTypeValidatorCodegen {
       }
       case 'or': {
         this.onOr(path, type as TOr, expr);
+        break;
+      }
+      case 'enum': {
+        this.onEnum(path, type as TEnum, expr);
         break;
       }
       default: {

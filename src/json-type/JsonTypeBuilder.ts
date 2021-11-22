@@ -122,10 +122,17 @@ export class JsonTypeBuilder {
     };
   }
 
-  public Enum(values: unknown[]): TEnum {
+  public Enum(id: string, values: unknown[], options?: Omit<NoT<TObject>, 'id'>): TEnum;
+  public Enum(values: unknown[], options?: NoT<TObject>): TEnum;
+  public Enum(a: string | unknown[], b?: unknown[] | NoT<TObject>, c?: Omit<NoT<TObject>, 'id'>) {
+    if (typeof a === 'string') return this.Enum(b as unknown[], {id: a, ...(c as Omit<NoT<TObject>, 'id'> || {})});
+    const values = a as unknown[];
+    const options = b as NoT<TObject>;
+    if (!values.length) throw new Error('Enum must have at least one value.');
     return {
       __t: 'enum',
       values,
+      ...options,
     };
   }
 };
