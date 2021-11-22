@@ -1,4 +1,4 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef, TOr} from "./types/type";
+import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef, TOr, TEnum} from "./types/type";
 
 export class JsonTypeBuilder {
   get str() {
@@ -119,6 +119,13 @@ export class JsonTypeBuilder {
     return {
       __t: 'or',
       types: a[0] instanceof Array ? a[0] : a,
+    };
+  }
+
+  public Enum(values: unknown[]): TEnum {
+    return {
+      __t: 'enum',
+      values,
     };
   }
 };

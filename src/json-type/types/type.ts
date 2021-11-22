@@ -141,6 +141,16 @@ export interface TOr extends TType {
 }
 
 /**
+ * Represents an enum type.
+ */
+export interface TEnum extends TType {
+  __t: 'enum';
+
+  /** List of possible values. */
+  values: unknown[];
+}
+
+/**
  * Any valid JSON type.
  */
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
