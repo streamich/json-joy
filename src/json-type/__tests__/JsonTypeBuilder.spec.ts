@@ -60,3 +60,16 @@ describe('object', () => {
     });
   });
 });
+
+describe('or', () => {
+  test('can create an "or" type', () => {
+    const type = t.Or([t.str, t.num]);
+    expect(type).toEqual({
+      __t: 'or',
+      types: [
+        {__t: 'str'},
+        {__t: 'num'},
+      ],
+    });
+  });
+});

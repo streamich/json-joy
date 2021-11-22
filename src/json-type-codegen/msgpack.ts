@@ -1,6 +1,6 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
-import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types/json';
+import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType} from '../json-type/types';
 import {JsExpression} from './util/JsExpression';
 
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {

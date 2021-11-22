@@ -1,5 +1,5 @@
 import type {JsonTypeValidator} from './types';
-import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef} from '../json-type/types/json';
+import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef} from '../json-type/types';
 import {CompiledFunction, compileFn} from '../util/codegen';
 import {BooleanValidator, ObjectValidator, StringValidator} from '.';
 

@@ -1,4 +1,4 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef} from "./types/json";
+import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef, TOr} from "./types/type";
 
 export class JsonTypeBuilder {
   get str() {
@@ -110,6 +110,13 @@ export class JsonTypeBuilder {
     return {
       __t: 'ref',
       ref,
+    };
+  }
+
+  public Or(types: TType[]): TOr {
+    return {
+      __t: 'or',
+      types,
     };
   }
 };

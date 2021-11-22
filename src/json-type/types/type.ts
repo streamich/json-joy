@@ -131,6 +131,16 @@ export interface TRef extends TType {
 }
 
 /**
+ * Represents a type that is one of a set of types.
+ */
+export interface TOr extends TType {
+  __t: 'or';
+
+  /** One or more "one-of" types. */
+  types: TType[];
+}
+
+/**
  * Any valid JSON type.
  */
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
