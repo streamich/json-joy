@@ -42,40 +42,39 @@ export class JsonTypeBuilder {
     };
   }
 
-  public Boolean(options: NoT<TBoolean> = {}): TBoolean {
-    return {
-      __t: 'bool',
-      ...options,
-    };
+  public Boolean(id: string, options?: Omit<NoT<TBoolean>, 'id'>): TBoolean;
+  public Boolean(options?: NoT<TBoolean>): TBoolean;
+  public Boolean(a?: string | NoT<TBoolean>, b?: NoT<TBoolean> | void): TBoolean {
+    if (typeof a === 'string') return this.Boolean({id: a, ...(b || {})});
+    return {__t: 'bool', ...a};
   }
 
-  public Number(options: NoT<TNumber> = {}): TNumber {
-    return {
-      __t: 'num',
-      ...options,
-    };
+  public Number(id: string, options?: Omit<NoT<TNumber>, 'id'>): TNumber;
+  public Number(options?: NoT<TNumber>): TNumber;
+  public Number(a?: string | NoT<TNumber>, b?: NoT<TNumber>): TNumber {
+    if (typeof a === 'string') return this.Number({id: a, ...(b || {})});
+    return {__t: 'num', ...a};
   }
 
-  public String(options: NoT<TString> = {}): TString {
-    return {
-      __t: 'str',
-      ...options,
-    };
+  public String(id: string, options?: NoT<TString>): TString;
+  public String(options?: NoT<TString>): TString;
+  public String(a?: string | NoT<TString>, b?: NoT<TString>): TString {
+    if (typeof a === 'string') return this.String({id: a, ...(b || {})});
+    return {__t: 'str', ...a};
   }
 
-  public Array(type: TType | TType[], options: Omit<NoT<TArray>, 'type'> = {}): TArray {
-    return {
-      __t: 'arr',
-      type,
-      ...options,
-    };
+  public Array(id: string, type: TType | TType[], options?: Omit<NoT<TArray>, 'id' | 'type'>): TArray;
+  public Array(type: TType | TType[], options?: Omit<NoT<TArray>, 'type'>): TArray;
+  public Array(a: string | TType | TType[], b?: TType | TType[] | Omit<NoT<TArray>, 'type'>, c?: Omit<NoT<TArray>, 'id' | 'type'>): TArray {
+    if (typeof a === 'string') return this.Array(b as TType | TType[], {id: a, ...(c || {})});
+    return {__t: 'arr', ...(b as Omit<NoT<TArray>, 'id' | 'type'>), type: a};
   }
 
-  public Object(options: NoT<TObject>): TObject {
-    return {
-      __t: 'obj',
-      ...options,
-    };
+  public Object(id: string, options: Omit<NoT<TObject>, 'id'>): TObject;
+  public Object(options: NoT<TObject>): TObject;
+  public Object(a: string | NoT<TObject>, b?: Omit<NoT<TObject>, 'id'>): TObject {
+    if (typeof a === 'string') return this.Object({id: a, ...(b || {} as Omit<NoT<TObject>, 'id'>)});
+    return {__t: 'obj', ...a};
   }
 
   public Field(key: string, type: TType | TType[], options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField {
