@@ -1,7 +1,7 @@
 import type {JsonTypeValidator} from './types';
 import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr, TEnum} from '../json-type/types';
 import {CompiledFunction, compileFn} from '../util/codegen';
-import {BooleanValidator, ObjectValidator, StringValidator} from '.';
+import {BooleanValidator, CustomValidator, CustomValidatorType, ObjectValidator, StringValidator} from '.';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 
 type Path = Array<string | number | {r: string}>;
@@ -43,6 +43,7 @@ export enum JsonTypeValidatorError {
   OR,
   REF,
   ENUM,
+  VALIDATION,
 }
 
 /**
@@ -64,6 +65,7 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.OR]: 'None of types matched.',
   [JsonTypeValidatorError.REF]: 'Validation error in referenced type.',
   [JsonTypeValidatorError.ENUM]: 'Not an enum value.',
+  [JsonTypeValidatorError.VALIDATION]: 'Custom validator failed.',
 }
 
 /**
@@ -110,6 +112,11 @@ export interface JsonTypeValidatorCodegenOptions {
    * Get validator for a "ref" type.
    */
   ref?: (id: string) => JsonTypeValidator | undefined;
+
+  /**
+   * User-defined custom validators.
+   */
+  customValidators?: CustomValidator[];
 }
 
 export class JsonTypeValidatorCodegen {
@@ -131,6 +138,7 @@ export class JsonTypeValidatorCodegen {
       skipObjectExtraFieldsCheck: false,
       unsafeMode: false,
       ref: () => undefined,
+      customValidators: [],
       ...options,
     };
   }
@@ -238,6 +246,25 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
+  protected emitValidations(path: Path, validatorNames: string[], type: CustomValidatorType, r: string): void {
+    for (const validatorName of validatorNames) {
+      const v = this.linkValidator(validatorName, type);
+      const err = this.err(JsonTypeValidatorError.VALIDATION, path);
+      this.js(/* js */ `if (!${v}(${r})) return ${err};`);
+    }
+  }
+
+  /** @ignore */
+  protected linkValidator(name: string, type: CustomValidatorType): string {
+    for (const validator of this.options.customValidators) {
+      if (name !== validator.name) continue;
+      if (validator.types.indexOf(type) === -1) continue;
+      return this.addDependencies([validator.fn])[0];
+    }
+    throw new Error(`Custom validator "${name}" not found.`);
+  }
+
+  /** @ignore */
   protected onString(path: Path, str: TString, r: string) {
     if (str.const !== undefined) {
       const error = this.err(JsonTypeValidatorError.STR_CONST, path);
@@ -245,6 +272,9 @@ export class JsonTypeValidatorCodegen {
     } else {
       const error = this.err(JsonTypeValidatorError.STR, path);
       this.js(/* js */ `if(typeof ${r} !== "string") return ${error};`);
+    }
+    if (str.validator) {
+      this.emitValidations(path, str.validator instanceof Array ? str.validator : [str.validator], 'string', r);
     }
   }
 

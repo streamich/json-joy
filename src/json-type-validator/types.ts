@@ -30,3 +30,20 @@ export interface ObjectValidatorError {
   path: Array<string | number>;
 }
 export type ObjectValidator = (value: unknown) => ObjectValidatorSuccess | ObjectValidatorError;
+
+/** A custom user provided validator. */
+export interface CustomValidator {
+  /** Name of the validator. */
+  name: string;
+
+  /** Acceptable input value types for this validator. */
+  types: CustomValidatorType[];
+
+  /**
+   * Receives the value that needs to be validated, returns true on success or
+   * false on error, or throws on error. */
+   fn: (value: unknown) => boolean;
+};
+
+/** Node types that custom validators are allowed to accept. */
+export type CustomValidatorType = 'string' | 'number' | 'array' | 'object' | 'bin' | 'any';

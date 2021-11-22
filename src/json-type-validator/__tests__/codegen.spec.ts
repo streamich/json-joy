@@ -336,3 +336,24 @@ describe('single root element', () => {
     exec(type2, 123, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
   });
 });
+
+describe('validators', () => {
+  test('can specify a custom validator for a string', () => {
+    const type = t.String({
+      validator: 'is-a',
+    });
+    const validator = createObjValidator(type, {
+      customValidators: [
+        {
+          name: 'is-a',
+          types: ['string'],
+          fn: (value) => value === 'a',
+        },
+      ],
+    });
+    const res1 = validator('a');
+    expect(res1).toStrictEqual(null);
+    const res2 = validator('b');
+    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": []});
+  });
+});
