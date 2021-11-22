@@ -2,7 +2,7 @@ const Benchmark = require('benchmark');
 const Ajv = require("ajv")
 const Schemasafe = require('@exodus/schemasafe');
 const createBoolValidator = require('../../es2020/json-type-validator').createBoolValidator;
-const t = require('../../es2020/json-type/type').t;
+const t = require('../../es2020/json-type').t;
 
 const unknownFields = false;
 

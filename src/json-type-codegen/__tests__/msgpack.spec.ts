@@ -1,4 +1,4 @@
-import {t} from '../../json-type/type';
+import {t} from '../../json-type';
 import {EncoderFull} from '../../json-pack/EncoderFull';
 import {Decoder} from '../../json-pack/Decoder';
 import {EncodingPlan} from '../msgpack';

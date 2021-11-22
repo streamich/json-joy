@@ -1,7 +1,7 @@
 const Benchmark = require('benchmark');
 const encoder = require('../../es2020/json-pack/util').encoder;
 const EncodingPlan = require('../../es2020/json-type-codegen/msgpack').EncodingPlan;
-const t = require('../../es2020/json-type/type').t;
+const t = require('../../es2020/json-type').t;
 
 const type = t.Object({
   fields: [

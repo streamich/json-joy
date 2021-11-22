@@ -1,4 +1,4 @@
-import {t} from '../../json-type/type';
+import {t} from '../../json-type';
 import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError, JsonTypeValidatorCodegenOptions} from '..';
 import {TType} from '../../json-type/types/json';
 

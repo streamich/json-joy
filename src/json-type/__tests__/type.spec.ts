@@ -1,4 +1,4 @@
-import {t} from '../type';
+import {t} from '..';
 
 test('can generate a type', () => {
   const address = t.Object({

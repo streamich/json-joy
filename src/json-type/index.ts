@@ -1,2 +1,5 @@
+import {JsonTypeBuilder} from './JsonTypeBuilder';
+
 export * from './types';
-export * from './type';
+export const t = new JsonTypeBuilder();
+
