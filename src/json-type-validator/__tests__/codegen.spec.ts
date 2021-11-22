@@ -1,6 +1,5 @@
-import {t} from '../../json-type';
+import {t, TType} from '../../json-type';
 import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError, JsonTypeValidatorCodegenOptions} from '..';
-import {TType} from '../../json-type/types/json';
 
 const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}) => {
   const fn1 = createBoolValidator(type, options);
@@ -183,7 +182,7 @@ describe('OR type', () => {
   test('object key can be of multiple types', () => {
     const type = t.Object({
       fields: [
-        t.Field('foo', [t.num, t.str]),
+        t.Field('foo', t.Or(t.num, t.str)),
       ],
     });
     exec(type, {foo: 123}, null);
@@ -194,7 +193,7 @@ describe('OR type', () => {
   test('array can be of multiple types', () => {
     const type = t.Object({
       fields: [
-        t.Field('gg', t.Array([t.num, t.str])),
+        t.Field('gg', t.Array(t.Or(t.num, t.str))),
       ],
     });
     exec(type, {gg: []}, null);

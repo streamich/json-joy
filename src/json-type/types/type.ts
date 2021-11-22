@@ -60,7 +60,7 @@ export interface TObjectField {
   /** Key name of the field. */
   key: string;
   /** One or more "one-of" types of the field. */
-  type: TType | TType[];
+  type: TType;
   isOptional?: boolean;
 }
 
@@ -70,7 +70,7 @@ export interface TObjectField {
 export interface TArray extends TType {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
-  type: TType | TType[];
+  type: TType;
   const?: unknown[];
 }
 

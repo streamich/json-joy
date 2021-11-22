@@ -1,5 +1,5 @@
 import type {JsonTypeValidator} from './types';
-import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef} from '../json-type/types';
+import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr} from '../json-type/types';
 import {CompiledFunction, compileFn} from '../util/codegen';
 import {BooleanValidator, ObjectValidator, StringValidator} from '.';
 
@@ -145,11 +145,6 @@ export class JsonTypeValidatorCodegen {
     return `r${++this.registerCounter}`;
   }
 
-  /** @ignore */
-  protected normalizeTypes(type: TType | TType[]): TType[] {
-    return Array.isArray(type) ? type : [type];
-  }
-
   protected dependencies: unknown[] = [];
 
   protected addDependencies(deps: unknown[]): string[] {
@@ -273,7 +268,7 @@ export class JsonTypeValidatorCodegen {
     this.js(/* js */ `if (!(${r} instanceof Array)) return ${err};`);
     this.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
     this.js(`${rv} = ${r}[${ri}];`);
-    this.onTypes([...path, {r: ri}], this.normalizeTypes(arr.type), rv);
+    this.onType([...path, {r: ri}], arr.type, rv);
     this.js(`}`);
   }
 
@@ -297,20 +292,19 @@ export class JsonTypeValidatorCodegen {
       const rv = this.getRegister();
       const accessor = this.normalizeAccessor(field.key);
       const keyPath = [...path, field.key];
-      const types = this.normalizeTypes(field.type);
       if (field.isOptional) {
         this.js(/* js */ `var ${rv} = ${r}${accessor};`);
         this.js(`if (${rv} !== undefined) {`);
-        this.onTypes(keyPath, types, rv);
+        this.onType(keyPath, field.type, rv);
         this.js(`}`);
       } else {
-        if (types.length === 1 && canSkipObjectKeyUndefinedCheck(types[0].__t)) {
-          this.onTypes(keyPath, types, `${r}${accessor}`);
+        if (canSkipObjectKeyUndefinedCheck(field.type.__t)) {
+          this.onType(keyPath, field.type, `${r}${accessor}`);
         } else {
           this.js(/* js */ `var ${rv} = ${r}${accessor};`);
           const err = this.err(JsonTypeValidatorError.KEY, [...path, field.key]);
           this.js(/* js */ `if (${rv} === undefined) return ${err};`);
-          this.onTypes(keyPath, types, rv);
+          this.onType(keyPath, field.type, rv);
         }
       }
     }
@@ -338,12 +332,12 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
-  protected onTypes(path: Path, types: TType[], expr: string) {
-    if (types.length === 1) {
-      this.onType(path, types[0], expr);
+  protected onOr(path: Path, or: TOr, expr: string) {
+    if (or.types.length === 1) {
+      this.onType(path, or.types[0], expr);
       return;
     }
-    this.onTypesRecursive(path, types, expr);
+    this.onTypesRecursive(path, or.types, expr);
   }
 
   /** @ignore */
@@ -399,6 +393,10 @@ export class JsonTypeValidatorCodegen {
       }
       case 'ref': {
         this.onRef(path, type as TRef, expr);
+        break;
+      }
+      case 'or': {
+        this.onOr(path, type as TOr, expr);
         break;
       }
       default: {

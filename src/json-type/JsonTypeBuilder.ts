@@ -18,7 +18,7 @@ export class JsonTypeBuilder {
   }
 
   get arr() {
-    return this.Array([]);
+    return this.Array(this.any);
   }
 
   get obj() {
@@ -63,10 +63,10 @@ export class JsonTypeBuilder {
     return {__t: 'str', ...a};
   }
 
-  public Array(id: string, type: TType | TType[], options?: Omit<NoT<TArray>, 'id' | 'type'>): TArray;
-  public Array(type: TType | TType[], options?: Omit<NoT<TArray>, 'type'>): TArray;
-  public Array(a: string | TType | TType[], b?: TType | TType[] | Omit<NoT<TArray>, 'type'>, c?: Omit<NoT<TArray>, 'id' | 'type'>): TArray {
-    if (typeof a === 'string') return this.Array(b as TType | TType[], {id: a, ...(c || {})});
+  public Array(id: string, type: TType, options?: Omit<NoT<TArray>, 'id' | 'type'>): TArray;
+  public Array(type: TType, options?: Omit<NoT<TArray>, 'type'>): TArray;
+  public Array(a: string | TType, b?: TType | Omit<NoT<TArray>, 'type'>, c?: Omit<NoT<TArray>, 'id' | 'type'>): TArray {
+    if (typeof a === 'string') return this.Array(b as TType, {id: a, ...(c || {})});
     return {__t: 'arr', ...(b as Omit<NoT<TArray>, 'id' | 'type'>), type: a};
   }
 
@@ -84,7 +84,7 @@ export class JsonTypeBuilder {
     return {__t: 'obj', ...a};
   }
 
-  public Field(key: string, type: TType | TType[], options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField {
+  public Field(key: string, type: TType, options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField {
     return {
       key,
       type,
@@ -113,10 +113,12 @@ export class JsonTypeBuilder {
     };
   }
 
-  public Or(types: TType[]): TOr {
+  public Or(types: TType[]): TOr;
+  public Or(...types: TType[]): TOr;
+  public Or(...a: unknown[]): TOr {
     return {
       __t: 'or',
-      types,
+      types: a[0] instanceof Array ? a[0] : a,
     };
   }
 };
