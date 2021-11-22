@@ -40,6 +40,7 @@ export enum JsonTypeValidatorError {
   KEYS,
   BIN,
   OR,
+  REF,
 }
 
 /**
@@ -59,6 +60,7 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.KEYS]: 'Too many or missing object keys.',
   [JsonTypeValidatorError.BIN]: 'Not a binary.',
   [JsonTypeValidatorError.OR]: 'None of types matched.',
+  [JsonTypeValidatorError.REF]: 'Validation error in referenced type.',
 }
 
 /**
@@ -114,6 +116,12 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected options: Required<JsonTypeValidatorCodegenOptions>;
 
+  /**
+   * @ignore
+   * Type for which validator is being generated.
+   */
+  protected type!: TType;
+
   constructor(options: JsonTypeValidatorCodegenOptions = {}) {
     this.options = {
       errorReporting: 'boolean',
@@ -163,7 +171,7 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
-  protected err(code: JsonTypeValidatorError, path: Path): string {
+  protected err(code: JsonTypeValidatorError, path: Path, refError?: string): string {
     switch (this.options.errorReporting) {
       case 'boolean': return 'true';
       case 'string': {
@@ -190,7 +198,28 @@ export class JsonTypeValidatorCodegen {
           }
           i++;
         }
-        return out + ']}';
+        out += ']';
+        if (this.type.id) {
+          out += ', type: ' + JSON.stringify(this.type.id || '');
+        }
+        if (refError) {
+          out += ', ref: ' + refError;
+        }
+        return out + '}';
+      }
+    }
+  }
+
+  /** @ignore */
+  protected refErr(path: Path, r: string): string {
+    switch (this.options.errorReporting) {
+      case 'boolean': return r;
+      case 'string': {
+        return this.err(JsonTypeValidatorError.REF, [...path, {r}]);
+      }
+      case 'object':
+      default: {
+        return this.err(JsonTypeValidatorError.REF, [...path], r);
       }
     }
   }
@@ -305,7 +334,7 @@ export class JsonTypeValidatorCodegen {
     const [d] = this.addDependencies([validator]);
     const rerr = this.getRegister();
     this.js(/* js */ `var ${rerr} = ${d}(${expr});`);
-    this.js(/* js */ `if (${rerr}) return ${rerr};`);
+    this.js(/* js */ `if (${rerr}) return ${this.refErr(path, rerr)};`);
   }
 
   /** @ignore */
@@ -379,6 +408,7 @@ export class JsonTypeValidatorCodegen {
   }
 
   public generate(type: TType): CompiledFunction<JsonTypeValidator> {
+    this.type = type;
     this.onType([], type, 'r0');
     const successResult = this.options.errorReporting === 'boolean'
       ? 'false'

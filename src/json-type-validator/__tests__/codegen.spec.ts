@@ -149,10 +149,18 @@ describe('"ref" type', () => {
       },
     };
     expect(userResponseValidator(json2)).toEqual({
-      code: 'STR',
-      errno: 0,
-      message: 'Not a string.',
-      path: ['name'],
+      type: 'UserResponse',
+      code: 'REF',
+      errno: 13,
+      message: 'Validation error in referenced type.',
+      path: ['user'],
+      ref: {
+        type: 'User',
+        code: 'STR',
+        errno: 0,
+        message: 'Not a string.',
+        path: ['name'],
+      },
     });
   });
 

@@ -1,6 +1,6 @@
 import type {Display, Identifiable} from "./common";
 
-export interface TType extends Display {
+export interface TType extends Display, Partial<Identifiable> {
   /**
    * "t" is short for "type". Double underscore "__" is borrowed from GraphQL,
    * where they use "__typeName". Values are short strings, such as "str", "num",
@@ -25,7 +25,7 @@ export interface TType extends Display {
  * Represents a JSON object type, the "object" type excluding "null" in JavaScript,
  * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
-export interface TObject extends TType, Partial<Identifiable> {
+export interface TObject extends TType {
   __t: 'obj';
 
   /**
@@ -67,7 +67,7 @@ export interface TObjectField {
 /**
  * Represents a JSON array.
  */
-export interface TArray extends TType, Partial<Identifiable> {
+export interface TArray extends TType {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
   type: TType | TType[];
@@ -77,7 +77,7 @@ export interface TArray extends TType, Partial<Identifiable> {
 /**
  * Represents a JSON number.
  */
-export interface TNumber extends TType, Partial<Identifiable> {
+export interface TNumber extends TType {
   __t: 'num';
   const?: number;
   isInteger?: boolean;
@@ -86,7 +86,7 @@ export interface TNumber extends TType, Partial<Identifiable> {
 /**
  * Represents a JSON string.
  */
-export interface TString extends TType, Partial<Identifiable> {
+export interface TString extends TType {
   __t: 'str';
   const?: string;
 }
@@ -94,7 +94,7 @@ export interface TString extends TType, Partial<Identifiable> {
 /**
  * Represents a JSON boolean.
  */
-export interface TBoolean extends TType, Partial<Identifiable> {
+export interface TBoolean extends TType {
   __t: 'bool';
   const?: boolean;
 }
@@ -102,21 +102,21 @@ export interface TBoolean extends TType, Partial<Identifiable> {
 /**
  * Represents a JSON "null" value.
  */
-export interface TNull extends TType, Partial<Identifiable> {
+export interface TNull extends TType {
   __t: 'nil';
 }
 
 /**
  * Represents a MessagePack binary type.
  */
-export interface TBinary extends TType, Partial<Identifiable> {
+export interface TBinary extends TType {
   __t: 'bin';
 }
 
 /**
  * Represents something of which type is not known.
  */
-export interface TAny extends TType, Partial<Identifiable> {
+export interface TAny extends TType {
   __t: 'any';
 }
 
