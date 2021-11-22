@@ -22,11 +22,11 @@ export interface TType extends Display, Partial<Identifiable> {
 }
 
 /**
- * A type for which an explicit validation function should be applied.
+ * A type for which an explicit validation function can be applied.
  */
 export interface Validatable {
   /** Name of the validation to apply. */
-  validator?: 'string';
+  validator?: string | string[];
 }
 
 /**
@@ -117,14 +117,14 @@ export interface TNull extends TType {
 /**
  * Represents a MessagePack binary type.
  */
-export interface TBinary extends TType {
+export interface TBinary extends TType, Validatable {
   __t: 'bin';
 }
 
 /**
  * Represents something of which type is not known.
  */
-export interface TAny extends TType {
+export interface TAny extends TType, Validatable {
   __t: 'any';
 }
 

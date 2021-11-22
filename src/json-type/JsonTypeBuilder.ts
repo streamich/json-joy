@@ -46,21 +46,21 @@ export class JsonTypeBuilder {
   public Boolean(options?: NoT<TBoolean>): TBoolean;
   public Boolean(a?: string | NoT<TBoolean>, b?: NoT<TBoolean> | void): TBoolean {
     if (typeof a === 'string') return this.Boolean({id: a, ...(b || {})});
-    return {__t: 'bool', ...a};
+    return {__t: 'bool', ...(a || {})};
   }
 
   public Number(id: string, options?: Omit<NoT<TNumber>, 'id'>): TNumber;
   public Number(options?: NoT<TNumber>): TNumber;
   public Number(a?: string | NoT<TNumber>, b?: NoT<TNumber>): TNumber {
     if (typeof a === 'string') return this.Number({id: a, ...(b || {})});
-    return {__t: 'num', ...a};
+    return {__t: 'num', ...(a || {})};
   }
 
   public String(id: string, options?: NoT<TString>): TString;
   public String(options?: NoT<TString>): TString;
   public String(a?: string | NoT<TString>, b?: NoT<TString>): TString {
     if (typeof a === 'string') return this.String({id: a, ...(b || {})});
-    return {__t: 'str', ...a};
+    return {__t: 'str', ...(a || {})};
   }
 
   public Array(id: string, type: TType, options?: Omit<NoT<TArray>, 'id' | 'type'>): TArray;
@@ -81,7 +81,7 @@ export class JsonTypeBuilder {
     } else if (Array.isArray(a)) {
       return this.Object({fields: a, ...(b || {})});
     }
-    return {__t: 'obj', ...a};
+    return {__t: 'obj', ...(a || {})};
   }
 
   public Field(key: string, type: TType, options: Omit<TObjectField, 'key' | 'type'> = {}): TObjectField {
