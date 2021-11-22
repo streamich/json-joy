@@ -145,13 +145,28 @@ export class JsonTypeValidatorCodegen {
     return `r${++this.registerCounter}`;
   }
 
+  /** @ignore */
   protected dependencies: unknown[] = [];
 
+  /** @ignore */
   protected addDependencies(deps: unknown[]): string[] {
     let symbols: string [] = [];
     for (const dep of deps) {
       this.dependencies.push(dep);
       symbols.push(`d${this.dependencies.length - 1}`);
+    }
+    return symbols;
+  }
+
+  /** @ignore */
+  protected consts: string[] = [];
+
+  /** @ignore */
+  protected addConsts(consts: string[]): string[] {
+    let symbols: string [] = [];
+    for (const const_ of consts) {
+      this.consts.push(const_);
+      symbols.push(`c${this.consts.length - 1}`);
     }
     return symbols;
   }
@@ -279,7 +294,7 @@ export class JsonTypeValidatorCodegen {
     const canSkipObjectTypeCheck = this.options.unsafeMode && (obj.fields.length > 0);
     if (!canSkipObjectTypeCheck) {
       const err = this.err(JsonTypeValidatorError.OBJ, path);
-      this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${err};`);
+      this.js(/* js */ `if (typeof ${r} !== 'object' || !${r} || (${r} instanceof Array)) return ${err};`);
     }
     if (obj.fields.length && !obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
@@ -337,23 +352,14 @@ export class JsonTypeValidatorCodegen {
       this.onType(path, or.types[0], expr);
       return;
     }
-    this.onTypesRecursive(path, or.types, expr);
-  }
-
-  /** @ignore */
-  protected onTypesRecursive(path: Path, types: TType[], expr: string) {
-    if (!types.length) {
-      const err = this.err(JsonTypeValidatorError.OR, path);
-      this.js(/* js */ `return ${err};`);
-      return;
-    }
-    const type = types[0];
-    const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
-    const fn = codegen.generate(type);
-    const symbols = this.addDependencies(fn.deps);
-    this.js(`if ((${fn.js}(${symbols.join(',')}))(${expr})) {`);
-    this.onTypesRecursive(path, types.slice(1), expr);
-    this.js(`}`);
+    const consts = this.addConsts(or.types.map((type) => {
+      const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
+      const fn = codegen.generate(type);
+      const symbols = this.addDependencies(fn.deps);
+      return `((${fn.js})(${symbols.join(', ')}))`;
+    })).map(c => `${c}(${expr})`);
+    const err = this.err(JsonTypeValidatorError.OR, path);
+    this.js(`if (${consts.join(' && ')}) return ${err}`);
   }
 
   /** @ignore */
@@ -416,7 +422,9 @@ export class JsonTypeValidatorCodegen {
 
     const dependencyArgs = this.dependencies.map((_, index) => `d${index}`).join(', ');
 
-    const js = /* js */ `(function(${dependencyArgs}){return function(r0){
+    const js = /* js */ `(function(${dependencyArgs}){
+${this.consts.map((value, index) => `var c${index} = (${value});`).join('\n')}
+return function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
 }})`

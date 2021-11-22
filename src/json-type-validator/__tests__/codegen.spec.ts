@@ -178,7 +178,7 @@ describe('"ref" type', () => {
   });
 });
 
-describe('OR type', () => {
+describe('"or" type', () => {
   test('object key can be of multiple types', () => {
     const type = t.Object({
       fields: [
@@ -202,6 +202,17 @@ describe('OR type', () => {
     exec(type, {gg: [1, '3', '']}, null);
     exec(type, {gg: [1, '3', false]}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]});
   });
+
+  test.only('root value can be of multiple types', () => {
+    const type = t.Or(t.str, t.num, t.obj);
+    exec(type, 123, null);
+    exec(type, 'asdf', null);
+    exec(type, {}, null);
+    exec(type, {foo: 'bar'}, null);
+    exec(type, [], {"code": "OR", "errno": 12, "message": "None of types matched.", "path": []});
+    exec(type, null, {"code": "OR", "errno": 12, "message": "None of types matched.", "path": []});
+  });
+});
 
 describe('"obj" type', () => {
   test('object can have unknown fields', () => {
