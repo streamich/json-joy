@@ -15,8 +15,8 @@
     "json-random",
     "json-size",
     "json-type",
+    "json-type-serializer",
     "json-type-validator",
-    "json-type-codegen",
     "reactive-rpc",
     "util"
   ]

@@ -49,10 +49,6 @@ export class EncodingPlan {
     this.writeBlob(this.getBlob(callback));
   }
 
-  protected normalizeTypes(type: TType | TType[]): TType[] {
-    return Array.isArray(type) ? type : [type];
-  }
-
   protected normalizeAccessor(accessor: string): string {
     if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
       return '.' + accessor;
@@ -94,22 +90,15 @@ export class EncodingPlan {
       this.genAndWriteBlob(encoder => encoder.encodeArray(arr.const!));
       return;
     }
-    const types = this.normalizeTypes(arr.type);
-    if (types.length !== 1) {
-      this.execJs(/* js */ `e.encodeAny(${value.use()});`);
-      return;
-    }
-
     const r = this.getRegister(); // array
     const rl = this.getRegister(); // array.length
     const ri = this.getRegister(); // index
     const rItem = this.getRegister(); // item
-
     this.execJs(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
     this.execJs(/* js */ `e.encodeArrayHeader(${rl});`);
     this.execJs(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
     this.execJs(/* js */ `${rItem} = ${r}[${ri}];`);
-    this.onType(types[0], new JsExpression(() => `${rItem}`));
+    this.onType(arr.type, new JsExpression(() => `${rItem}`));
     this.execJs(`}`);
   }
 
@@ -150,13 +139,8 @@ export class EncodingPlan {
       const fieldSerialized = JSON.stringify(field.key);
       this.execJs(/* js */ `var ${rv} = ${r}${accessor};`);
       this.execJs(`if (${rv} !== undefined) {`);
-      const type = this.normalizeTypes(field.type);
-      if (type.length === 1) {
-        this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
-        this.onType(type[0], new JsExpression(() => rv));
-      } else {
-        this.execJs(/* js */ `e.encodeAny(${rv});`);
-      }
+      this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
+      this.onType(field.type, new JsExpression(() => rv));
       this.execJs('}');
     }
   }
@@ -177,21 +161,17 @@ export class EncodingPlan {
     for (let i = 0; i < length; i++) {
       const field = requiredFields[i];
       this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
-      const types = this.normalizeTypes(field.type);
-      if (types.length === 1) {
-        const type = types[0];
-        const accessor = this.normalizeAccessor(field.key);
-        this.onType(type, value.chain(() => `${r}${accessor}`));
-      } else {
-        const accessor = this.normalizeAccessor(field.key);
-        const expr = value.chain(() => `${r}${accessor}`).use();
-        this.execJs(/* js */ `e.encodeAny(${expr});`);
-      }
+      const accessor = this.normalizeAccessor(field.key);
+      this.onType(field.type, value.chain(() => `${r}${accessor}`));
     }
   }
 
   public onBinary(value: JsExpression) {
     this.execJs(/* js */ `e.encodeBinary(${value.use()});`);
+  }
+
+  public onAny(value: JsExpression) {
+    this.execJs(/* js */ `e.encodeAny(${value.use()});`);
   }
 
   public onType(type: TType, value: JsExpression): void {
@@ -223,6 +203,10 @@ export class EncodingPlan {
       }
       case 'bin': {
         this.onBinary(value);
+        break;
+      }
+      case 'any': {
+        this.onAny(value);
         break;
       }
     }

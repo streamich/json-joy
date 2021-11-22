@@ -2,7 +2,7 @@ import {t} from '../../json-type';
 import {EncoderFull} from '../../json-pack/EncoderFull';
 import {Decoder} from '../../json-pack/Decoder';
 import {EncodingPlan} from '../msgpack';
-import {TType} from '../../json-type/types/json';
+import {TType} from '../../json-type/types';
 
 const encoder = new EncoderFull();
 const decoder = new Decoder();
@@ -12,9 +12,9 @@ const exec = (type: TType, json: unknown) => {
   plan.createPlan(type);
   const js = plan.codegen();
   const fn = eval(js)(encoder);
+  // console.log(fn.toString());
   const blob = fn(json);
   const decoded = decoder.decode(blob);
-
   expect(decoded).toStrictEqual(json);
 };
 
