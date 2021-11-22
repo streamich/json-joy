@@ -71,9 +71,16 @@ export class JsonTypeBuilder {
   }
 
   public Object(id: string, options: Omit<NoT<TObject>, 'id'>): TObject;
+  public Object(fields: TObject['fields'], options?: Omit<NoT<TObject>,  'fields'>): TObject;
+  public Object(id: string, fields: TObject['fields'], options?: Omit<NoT<TObject>, 'id' | 'fields'>): TObject;
   public Object(options: NoT<TObject>): TObject;
-  public Object(a: string | NoT<TObject>, b?: Omit<NoT<TObject>, 'id'>): TObject {
-    if (typeof a === 'string') return this.Object({id: a, ...(b || {} as Omit<NoT<TObject>, 'id'>)});
+  public Object(a: string | TObject['fields'] | NoT<TObject>, b?: Omit<NoT<TObject>, 'id'> | Omit<NoT<TObject>,  'fields'> | TObject['fields'], c?: Omit<NoT<TObject>, 'id' | 'fields'>): TObject {
+    if (typeof a === 'string') {
+      if (Array.isArray(b)) return this.Object({id: a, fields: b, ...(c || {})});
+      return this.Object({id: a, ...((b as Omit<NoT<TObject>, 'id'>) || {})});
+    } else if (Array.isArray(a)) {
+      return this.Object({fields: a, ...(b || {})});
+    }
     return {__t: 'obj', ...a};
   }
 
