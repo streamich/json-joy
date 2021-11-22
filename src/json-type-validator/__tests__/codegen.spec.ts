@@ -202,6 +202,18 @@ describe('OR type', () => {
     exec(type, {gg: [1, '3', '']}, null);
     exec(type, {gg: [1, '3', false]}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]});
   });
+
+describe('"obj" type', () => {
+  test('object can have unknown fields', () => {
+    const type = t.obj;
+    exec(type, {}, null);
+    exec(type, {a: 'b'}, null);
+  });
+
+  test('"null" is not of type "obj"', () => {
+    const type = t.obj;
+    exec(type, null, {"code": "OBJ", "errno": 8, "message": "Not an object.", "path": []});
+  });
 });
 
 describe('single root element', () => {

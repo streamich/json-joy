@@ -281,7 +281,7 @@ export class JsonTypeValidatorCodegen {
       const err = this.err(JsonTypeValidatorError.OBJ, path);
       this.js(/* js */ `if (typeof ${r} !== 'object' || !${r}) return ${err};`);
     }
-    if (!obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
+    if (obj.fields.length && !obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       this.js(`for (var ${rk} in ${r}) {`);
       this.js(`switch (${rk}) { case ${obj.fields.map(field => JSON.stringify(field.key)).join(": case ")}: break; default: return ${this.err(JsonTypeValidatorError.KEYS, [...path, {r: rk}])};}`);
