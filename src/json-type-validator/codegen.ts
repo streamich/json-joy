@@ -1,5 +1,5 @@
 import type {JsonTypeValidator} from './types';
-import type {TArray, TBoolean, TNumber, TObject, TString, TType} from '../json-type/types/json';
+import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef} from '../json-type/types/json';
 import {CompiledFunction, compileFn} from '../util/codegen';
 import {BooleanValidator, ObjectValidator, StringValidator} from '.';
 
@@ -100,6 +100,11 @@ export interface JsonTypeValidatorCodegenOptions {
    * that this setting improves performance much.
    */
   unsafeMode?: boolean;
+
+  /**
+   * Get validator for a "ref" type.
+   */
+  ref?: (id: string) => JsonTypeValidator | undefined;
 }
 
 export class JsonTypeValidatorCodegen {
@@ -107,11 +112,14 @@ export class JsonTypeValidatorCodegen {
   protected steps: EncodingPlanStepExecJs[] = [];
 
   /** @ignore */
-  protected options: JsonTypeValidatorCodegenOptions;
+  protected options: Required<JsonTypeValidatorCodegenOptions>;
 
   constructor(options: JsonTypeValidatorCodegenOptions = {}) {
     this.options = {
       errorReporting: 'boolean',
+      skipObjectExtraFieldsCheck: false,
+      unsafeMode: false,
+      ref: () => undefined,
       ...options,
     };
   }
@@ -289,6 +297,18 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
+  protected onRef(path: Path, ref: TRef, expr: string) {
+    const validator = this.options.ref(ref.ref);
+    if (!validator) {
+      throw new Error(`Could not resolve validator for [ref = ${ref.ref}]. Provide it through .ref option.`);
+    }
+    const [d] = this.addDependencies([validator]);
+    const rerr = this.getRegister();
+    this.js(/* js */ `var ${rerr} = ${d}(${expr});`);
+    this.js(/* js */ `if (${rerr}) return ${rerr};`);
+  }
+
+  /** @ignore */
   protected onTypes(path: Path, types: TType[], expr: string) {
     if (types.length === 1) {
       this.onType(path, types[0], expr);
@@ -344,6 +364,17 @@ export class JsonTypeValidatorCodegen {
         this.onBinary(path, expr);
         break;
       }
+      case 'any': {
+        // Nothing to validate...
+        break;
+      }
+      case 'ref': {
+        this.onRef(path, type as TRef, expr);
+        break;
+      }
+      default: {
+        throw new Error(`Unknown node type [__t = ${type.__t}].`);
+      }
     }
   }
 
@@ -361,7 +392,7 @@ export class JsonTypeValidatorCodegen {
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
 }})`
-
+// console.log(js);
     return {
       deps: this.dependencies as unknown[],
       js,

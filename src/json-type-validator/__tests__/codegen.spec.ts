@@ -45,7 +45,6 @@ test('validates according to schema a POJO object', () => {
       t.Field('bin.', t.bin),
     ],
   });
-
   const json = {
     collection: {
       id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
@@ -60,7 +59,6 @@ test('validates according to schema a POJO object', () => {
     },
     'bin.': new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
   };
-
   exec(type, json, null);
 });
 
@@ -112,6 +110,65 @@ test('can disable extra property check', () => {
   exec(type, {foo: 123, zup: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
   exec(type, {foo: 123, bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
   exec(type, {foo: 123, zup: '1', bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
+});
+
+describe('"ref" type', () => {
+  test('can be used to reference other types', () => {
+    const userType = t.Object({
+      id: 'User',
+      fields: [
+        t.Field('id', t.str),
+        t.Field('name', t.str),
+      ],
+    });
+    const type = t.Object({
+      id: 'UserResponse',
+      fields: [
+        t.Field('user', t.Ref('User')),
+      ],
+    });
+    const userValidator = createObjValidator(userType, {
+      skipObjectExtraFieldsCheck: true,
+      unsafeMode: true,
+    });
+    const userResponseValidator = createObjValidator(type, {
+      skipObjectExtraFieldsCheck: true,
+      unsafeMode: true,
+      ref: ref => ref === 'User' ? userValidator : undefined,
+    });
+    const json1 = {
+      user: {
+        id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+        name: 'Super user',
+      },
+    };
+    expect(userResponseValidator(json1)).toBe(null);
+    const json2 = {
+      user: {
+        id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+      },
+    };
+    expect(userResponseValidator(json2)).toEqual({
+      code: 'STR',
+      errno: 0,
+      message: 'Not a string.',
+      path: ['name'],
+    });
+  });
+
+  test('throws on missing ref resolver', () => {
+    const type = t.Object({
+      id: 'UserResponse',
+      fields: [
+        t.Field('user', t.Ref('User')),
+      ],
+    });
+    const callback = () => createObjValidator(type, {
+      skipObjectExtraFieldsCheck: true,
+      unsafeMode: true,
+    });
+    expect(callback).toThrow(new Error('Could not resolve validator for [ref = User]. Provide it through .ref option.'));
+  });
 });
 
 describe('OR type', () => {
