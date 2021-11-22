@@ -347,13 +347,120 @@ describe('validators', () => {
         {
           name: 'is-a',
           types: ['string'],
-          fn: (value) => value === 'a',
+          fn: (value) => value === 'a' ? false : true,
         },
       ],
     });
     const res1 = validator('a');
     expect(res1).toStrictEqual(null);
     const res2 = validator('b');
-    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": []});
+    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-a', ref: true});
+  });
+
+  test('can specify multiple validators', () => {
+    const type = t.String({
+      validator: ['is-ab', 'is-a'],
+    });
+    const validator = createObjValidator(type, {
+      customValidators: [
+        {
+          name: 'is-ab',
+          types: ['string'],
+          fn: (value) => value === 'a' || value === 'b' ? false : true,
+        },
+        {
+          name: 'is-a',
+          types: ['string'],
+          fn: (value) => value === 'a' ? false : true,
+        },
+      ],
+    });
+    const res1 = validator('a');
+    const res2 = validator('b');
+    const res3 = validator('c');
+    expect(res1).toStrictEqual(null);
+    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-a', ref: true});
+    expect(res3).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-ab', ref: true});
+  });
+
+  test('throws if custom validator is not provided', () => {
+    const type = t.Object([
+      t.Field('id', t.String({
+        validator: ['assetId'],
+      }))
+    ]);
+    const callback = () => createObjValidator(type, {});
+    expect(callback).toThrow(new Error('Custom validator "assetId" not found.'));
+  });
+
+  test('returns the error, which validator throws', () => {
+    const type = t.Object([
+      t.Field('id', t.String({
+        validator: ['assetId'],
+      }))
+    ]);
+    const validator = createObjValidator(type, {
+      customValidators: [
+        {
+          name: 'assetId',
+          types: ['string'],
+          fn: (id: string): void => {
+            if (!/^[a-z]+$/.test(id)) throw new Error('Asset ID must be a string.');
+          },
+        },
+      ],
+    });
+    expect(validator({id: 'xxxxxxx'})).toBe(null);
+    expect(validator({id: '123'})).toStrictEqual({
+      "code": "VALIDATION",
+      "errno": 15,
+      "message": "Custom validator failed.",
+      "path": ["id"],
+      "ref": new Error('Asset ID must be a string.'),
+      "validator": "assetId",
+    });
+  });
+
+  test('returns the error, which validator throws, even inside a "ref" type', () => {
+    const idType = t.String('ID', {validator: 'assetId'});
+    const type = t.Object([
+      t.Field('id', t.Ref('ID')),
+    ]);
+    const idValidator = createObjValidator(idType, {
+      customValidators: [
+        {
+          name: 'assetId',
+          types: ['string'],
+          fn: (id: string) => {
+            if (id === 'xxxxxxx') return;
+            if (id === 'y') return;
+            throw new Error('Asset ID must be a string.');
+          },
+        },
+      ],
+    });
+    const validator = createObjValidator(type, {
+      ref: (id) => {
+        if (id === 'ID') return idValidator;
+        return undefined;
+      },
+    });
+    expect(validator({id: 'xxxxxxx'})).toBe(null);
+    expect(validator({id: 'y'})).toBe(null);
+    expect(validator({id: '123'})).toStrictEqual({
+      "code": "REF",
+      "errno": 13,
+      "message": "Validation error in referenced type.",
+      "path": ["id"],
+      "ref": {
+        "type": "ID",
+        "code": "VALIDATION",
+        "errno": 15,
+        "message": "Custom validator failed.",
+        "path": [],
+        "validator": "assetId",
+        ref: new Error('Asset ID must be a string.'),
+      },
+    });
   });
 });

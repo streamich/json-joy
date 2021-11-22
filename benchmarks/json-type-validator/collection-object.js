@@ -2,6 +2,7 @@ const Benchmark = require('benchmark');
 const Ajv = require("ajv")
 const Schemasafe = require('@exodus/schemasafe');
 const createBoolValidator = require('../../es2020/json-type-validator').createBoolValidator;
+const createObjValidator = require('../../es2020/json-type-validator').createObjValidator;
 const t = require('../../es2020/json-type').t;
 
 const unknownFields = false;
@@ -107,6 +108,7 @@ const fastestHandcraftedValidator = (function(r0) {
 const jsonTypeValidator1 = createBoolValidator(type, {});
 const jsonTypeValidator2 = createBoolValidator(type, {skipObjectExtraFieldsCheck: true});
 const jsonTypeValidator3 = createBoolValidator(type, {skipObjectExtraFieldsCheck: true, unsafeMode: true});
+const jsonTypeValidator4 = createObjValidator(type, {skipObjectExtraFieldsCheck: true});
 
 const ajv = new Ajv();
 const ajvValidator = ajv.compile(schema);
@@ -135,6 +137,10 @@ const validators = [
   {
     name: 'json-joy/json-type-codegen {skipObjectExtraFieldsCheck: true, unsafeMode: true}',
     validate: (json) => !jsonTypeValidator3(json),
+  },
+  {
+    name: 'json-joy/json-type-codegen (errors as objects) {skipObjectExtraFieldsCheck: true}',
+    validate: (json) => !jsonTypeValidator4(json),
   },
   {
     name: 'ajv',

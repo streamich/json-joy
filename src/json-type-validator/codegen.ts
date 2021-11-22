@@ -192,7 +192,7 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
-  protected err(code: JsonTypeValidatorError, path: Path, refError?: string): string {
+  protected err(code: JsonTypeValidatorError, path: Path, opts: {refError?: string; validator?: string} = {}): string {
     switch (this.options.errorReporting) {
       case 'boolean': return 'true';
       case 'string': {
@@ -223,8 +223,11 @@ export class JsonTypeValidatorCodegen {
         if (this.type.id) {
           out += ', type: ' + JSON.stringify(this.type.id || '');
         }
-        if (refError) {
-          out += ', ref: ' + refError;
+        if (opts.refError) {
+          out += ', ref: ' + opts.refError;
+        }
+        if (opts.validator) {
+          out += ', validator: ' + JSON.stringify(opts.validator);
         }
         return out + '}';
       }
@@ -240,7 +243,7 @@ export class JsonTypeValidatorCodegen {
       }
       case 'object':
       default: {
-        return this.err(JsonTypeValidatorError.REF, [...path], r);
+        return this.err(JsonTypeValidatorError.REF, [...path], {refError: r});
       }
     }
   }
@@ -249,8 +252,17 @@ export class JsonTypeValidatorCodegen {
   protected emitValidations(path: Path, validatorNames: string[], type: CustomValidatorType, r: string): void {
     for (const validatorName of validatorNames) {
       const v = this.linkValidator(validatorName, type);
-      const err = this.err(JsonTypeValidatorError.VALIDATION, path);
-      this.js(/* js */ `if (!${v}(${r})) return ${err};`);
+      const rerr = this.getRegister();
+      const rc = this.getRegister();
+      const err = this.err(JsonTypeValidatorError.VALIDATION, path, {validator: validatorName, refError: rerr});
+      const errInCatch = this.err(JsonTypeValidatorError.VALIDATION, path, {validator: validatorName, refError: rc});
+      this.js(`try {`);
+      this.js(/* js */ `const ${rerr} = ${v}(${r});`);
+      this.js(/* js */ `if (${rerr}) return ${err};`);
+      this.js(`} catch (e) {`);
+      this.js(/* js */ `var ${rc} = e ? e : new Error('Validator ${JSON.stringify(validatorName)} failed.');`);
+      this.js(/* js */ `return ${errInCatch};`);
+      this.js(`}`);
     }
   }
 
@@ -473,7 +485,10 @@ return function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
 }})`
+
+// IF YOUR ARE INTERESTED HOW IT WORKS, THIS IS THE LINE YOU WANT TO UNCOMMENT:
 // console.log(js);
+
     return {
       deps: this.dependencies as unknown[],
       js,

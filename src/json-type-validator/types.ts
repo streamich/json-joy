@@ -40,9 +40,10 @@ export interface CustomValidator {
   types: CustomValidatorType[];
 
   /**
-   * Receives the value that needs to be validated, returns true on success or
-   * false on error, or throws on error. */
-   fn: (value: unknown) => boolean;
+   * Receives the value that needs to be validated, returns a truthy value representing an error
+   * or throws an error when validation fails. When validation succeeds, returns a falsy value.
+   */
+   fn: (value: any) => unknown;
 };
 
 /** Node types that custom validators are allowed to accept. */
