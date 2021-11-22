@@ -85,21 +85,21 @@ const fastestHandcraftedValidator = (function(r0) {
   if (typeof r5.ts !== "number") return true;
   if (typeof r5.cid !== "string") return true;
   if (typeof r5.prid !== "string") return true;
-  var r12 = r5.slug;
-  if (r12 !== undefined) {
-    if (typeof r12 !== "string") return true;
+  switch (typeof r5.slug) {
+    case 'undefined': case 'string': break;
+    default: return true;
   }
-  var r13 = r5.name;
-  if (r13 !== undefined) {
-    if (typeof r13 !== "string") return true;
+  switch (typeof r5.name) {
+    case 'undefined': case 'string': break;
+    default: return true;
   }
-  var r14 = r5.src;
-  if (r14 !== undefined) {
-    if (typeof r14 !== "string") return true;
+  switch (typeof r5.src) {
+    case 'undefined': case 'string': break;
+    default: return true;
   }
-  var r15 = r5.authz;
-  if (r15 !== undefined) {
-    if (typeof r15 !== "string") return true;
+  switch (typeof r5.authz) {
+    case 'undefined': case 'string': break;
+    default: return true;
   }
   return false;
 });
