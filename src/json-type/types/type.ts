@@ -22,10 +22,18 @@ export interface TType extends Display, Partial<Identifiable> {
 }
 
 /**
+ * A type for which an explicit validation function should be applied.
+ */
+export interface Validatable {
+  /** Name of the validation to apply. */
+  validator?: 'string';
+}
+
+/**
  * Represents a JSON object type, the "object" type excluding "null" in JavaScript,
  * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
-export interface TObject extends TType {
+export interface TObject extends TType, Validatable {
   __t: 'obj';
 
   /**
@@ -67,7 +75,7 @@ export interface TObjectField {
 /**
  * Represents a JSON array.
  */
-export interface TArray extends TType {
+export interface TArray extends TType, Validatable {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
   type: TType;
@@ -77,7 +85,7 @@ export interface TArray extends TType {
 /**
  * Represents a JSON number.
  */
-export interface TNumber extends TType {
+export interface TNumber extends TType, Validatable {
   __t: 'num';
   const?: number;
   isInteger?: boolean;
@@ -86,7 +94,7 @@ export interface TNumber extends TType {
 /**
  * Represents a JSON string.
  */
-export interface TString extends TType {
+export interface TString extends TType, Validatable {
   __t: 'str';
   const?: string;
 }
