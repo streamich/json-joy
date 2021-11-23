@@ -3,6 +3,7 @@ import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr, TEnu
 import {CompiledFunction, compileFn} from '../util/codegen';
 import {BooleanValidator, CustomValidator, CustomValidatorType, ObjectValidator, StringValidator} from '.';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
+import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 
 type Path = Array<string | number | {r: string}>;
 
@@ -183,15 +184,6 @@ export class JsonTypeValidatorCodegen {
   }
 
   /** @ignore */
-  protected normalizeAccessor(accessor: string): string {
-    if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
-      return '.' + accessor;
-    } else {
-      return `[${JSON.stringify(accessor)}]`;
-    }
-  }
-
-  /** @ignore */
   protected err(code: JsonTypeValidatorError, path: Path, opts: {refError?: string; validator?: string} = {}): string {
     switch (this.options.errorReporting) {
       case 'boolean': return 'true';
@@ -350,7 +342,7 @@ export class JsonTypeValidatorCodegen {
     for (let i = 0; i < obj.fields.length; i++) {
       const field = obj.fields[i];
       const rv = this.getRegister();
-      const accessor = this.normalizeAccessor(field.key);
+      const accessor = normalizeAccessor(field.key);
       const keyPath = [...path, field.key];
       if (field.isOptional) {
         this.js(/* js */ `var ${rv} = ${r}${accessor};`);

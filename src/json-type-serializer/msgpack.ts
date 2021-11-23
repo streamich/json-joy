@@ -1,7 +1,8 @@
 import type {MsgPack, Encoder} from '../json-pack';
 import {encoder} from '../json-pack/util';
 import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType, TRef} from '../json-type/types';
-import {JsExpression} from './util/JsExpression';
+import {JsExpression} from '../util/codegen/util/JsExpression';
+import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
   const res = new Uint8Array(a.length + b.length);
@@ -61,14 +62,6 @@ export class MsgPackSerializerCodegen {
 
   protected genAndWriteBlob(callback: (encoder: Encoder) => void): void {
     this.writeBlob(this.getBlob(callback));
-  }
-
-  protected normalizeAccessor(accessor: string): string {
-    if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
-      return '.' + accessor;
-    } else {
-      return `[${JSON.stringify(accessor)}]`;
-    }
   }
 
   public onString(str: TString, value: JsExpression) {
@@ -153,7 +146,7 @@ export class MsgPackSerializerCodegen {
     this.onRequiredFields(requiredFields, value, r);
     for (let i = 0; i < optionalFields.length; i++) {
       const field = optionalFields[i];
-      const accessor = this.normalizeAccessor(field.key);
+      const accessor = normalizeAccessor(field.key);
       const fieldSerialized = JSON.stringify(field.key);
       this.execJs(/* js */ `var ${rv} = ${r}${accessor};`);
       this.execJs(`if (${rv} !== undefined) {`);
@@ -179,7 +172,7 @@ export class MsgPackSerializerCodegen {
     for (let i = 0; i < length; i++) {
       const field = requiredFields[i];
       this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
-      const accessor = this.normalizeAccessor(field.key);
+      const accessor = normalizeAccessor(field.key);
       this.onType(field.type, value.chain(() => `${r}${accessor}`));
     }
   }
