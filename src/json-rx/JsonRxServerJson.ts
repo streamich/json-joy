@@ -1,5 +1,4 @@
 import {json_string} from '../json-brand';
-import {asString} from 'json-schema-serializer';
 import {
   MessageSubscribe,
   MessageError,
@@ -13,6 +12,7 @@ import {Subscription, Observable, from, isObservable, of} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {assertId, assertName, isArray, microtask} from './util';
 import {TimedQueue} from './TimedQueue';
+import {asString} from '../util/asString';
 
 type IncomingMessage = MessageOrMessageBatch<MessageSubscribe | MessageUnsubscribe | MessageNotification>;
 type OutgoingMessage = MessageOrMessageBatch<MessageData | MessageComplete | MessageError>;

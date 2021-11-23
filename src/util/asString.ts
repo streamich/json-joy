@@ -1,11 +1,11 @@
 const stringify = JSON.stringify;
 
 const asStringSmall = (str: string) => {
+  const l = str.length;
   let result = '';
   let last = 0;
   let found = false;
   let surrogateFound = false;
-  const l = str.length;
   let point = 255;
   for (let i = 0; i < l && point >= 32; i++) {
     point = str.charCodeAt(i)
