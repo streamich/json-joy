@@ -1,42 +1,70 @@
 import {json_string} from '../json-brand';
 import {TArray, TBoolean, TNumber, TObject, TString, TType, TRef} from '../json-type/types';
-import {JsExpression} from './util/JsExpression';
+import {Codegen, CodegenStepExecJs} from '../util/codegen';
+import {JsExpression} from '../util/codegen/util/JsExpression';
+import {asString} from '../util/asString';
 
 export type EncoderFn = <T>(value: T) => json_string<T>;
 
-class JsonSerializerStepWriteText {
+class WriteTextStep {
   constructor(public str: string) {}
 }
 
-class JsonSerializerStepExecJs {
-  constructor(public readonly js: string) {}
-}
-
-type JsonSerializerStep = JsonSerializerStepWriteText | JsonSerializerStepExecJs;
+type Step = WriteTextStep | CodegenStepExecJs;
 
 export interface JsonSerializerCodegenOptions {
+  type: TType;
   ref?: (id: string) => TType | undefined;
 }
 
 export class JsonSerializerCodegen {
-  public steps: JsonSerializerStep[] = [];
-
   /** @ignore */
   protected options: Required<JsonSerializerCodegenOptions>;
 
-  constructor(opts: JsonSerializerCodegenOptions = {}) {
+  /** @ignore */
+  protected codegen: Codegen<EncoderFn>;
+
+  constructor(opts: JsonSerializerCodegenOptions) {
     this.options = {
       ref: (id: string) => undefined,
       ...opts,
     };
+    this.codegen = new Codegen<EncoderFn>({
+      name: 'toJson' + (this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id) ? (this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)) : ''),
+      prologue: `var s = '';`,
+      epilogue: `return s;`,
+      processSteps: (steps) => {
+        const stepsJoined: Step[] = [];
+        for (let i = 0; i < steps.length; i++) {
+          const step = steps[i];
+          if (step instanceof CodegenStepExecJs) stepsJoined.push(step);
+          else if (step instanceof WriteTextStep) {
+            const last = stepsJoined[stepsJoined.length - 1];
+            if (last instanceof WriteTextStep) last.str += step.str;
+            else stepsJoined.push(step);
+          }
+        }
+        const execSteps: CodegenStepExecJs[] = [];
+        for (const step of stepsJoined) {
+          if (step instanceof CodegenStepExecJs) {
+            execSteps.push(step);
+          } else if (step instanceof WriteTextStep) {
+            const js = /* js */ `s += ${JSON.stringify(step.str)};`;
+            execSteps.push(new CodegenStepExecJs(js));
+          }
+        }
+        return execSteps;
+      },
+    });
+    this.codegen.linkDependency(asString, 'asString');
   }
 
   protected js(js: string) {
-    this.steps.push(new JsonSerializerStepExecJs(js));
+    this.codegen.js(js);
   }
 
   protected writeText(str: string): void {
-    this.steps.push(new JsonSerializerStepWriteText(str));
+    this.codegen.step(new WriteTextStep(str));
   }
 
   protected registerCounter = 0;
@@ -161,41 +189,18 @@ export class JsonSerializerCodegen {
     }
   }
 
-  public createPlan(type: TType): void {
+  public run(): this {
     const r = this.getRegister();
     const value = new JsExpression(() => r);
-    this.onType(type, value);
+    this.onType(this.options.type, value);
+    return this;
   }
 
-  public codegen(): string {
-    const stepsJoined: JsonSerializerStep[] = [];
-    for (let i = 0; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      if (step instanceof JsonSerializerStepExecJs) stepsJoined.push(step);
-      else if (step instanceof JsonSerializerStepWriteText) {
-        const last = stepsJoined[stepsJoined.length - 1];
-        if (last instanceof JsonSerializerStepWriteText) last.str += step.str;
-        else stepsJoined.push(step);
-      }
-    }
-    const execSteps: JsonSerializerStepExecJs[] = [];
-    for (const step of stepsJoined) {
-      if (step instanceof JsonSerializerStepExecJs) {
-        execSteps.push(step);
-      } else if (step instanceof JsonSerializerStepWriteText) {
-        const js = /* js */ `s += ${JSON.stringify(step.str)};`;
-        execSteps.push(new JsonSerializerStepExecJs(js));
-      }
-    }
+  public generate() {
+    return this.codegen.generate();
+  }
 
-    const js = /* js */ `(function(asString){
-var js = JSON.serialize;
-return function(r0){
-var s = '';
-${execSteps.map((step) => (step as JsonSerializerStepExecJs).js).join('\n')}
-return s;
-}})`
-
-    return js;
+  public compile() {
+    return this.codegen.compile();
   }
 }
