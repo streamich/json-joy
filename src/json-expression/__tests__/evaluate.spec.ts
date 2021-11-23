@@ -21,7 +21,7 @@ describe('=', () => {
   });
 });
 
-describe('&&', () => {
+describe('and', () => {
   test('works in base case', () => {
     check(['&&', true, true], null, true);
     check(['&&', true, false], null, false);
@@ -59,5 +59,27 @@ describe('&&', () => {
       zero: 0,
     };
     check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], data, false);
+  });
+});
+
+describe('or', () => {
+  test('works in base case', () => {
+    check(['||', true, true], null, true);
+    check(['||', true, false], null, true);
+    check(['||', false, true], null, true);
+    check(['||', false, false], null, false);
+    check(['or', true, true], null, true);
+    check(['or', true, false], null, true);
+    check(['or', false, true], null, true);
+    check(['or', false, false], null, false);
+  });
+});
+
+describe('not', () => {
+  test('works in base case', () => {
+    check(['!', true], null, false);
+    check(['!', false], null, true);
+    check(['not', true], null, false);
+    check(['not', false], null, true);
   });
 });

@@ -12,5 +12,11 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
     case '&&':
     case 'and':
       return expr.slice(1).every(e => evaluate(e, data));
+    case '||':
+    case 'or':
+      return expr.slice(1).some(e => evaluate(e, data));
+    case '!':
+    case 'not':
+      return !evaluate(expr[1], data);
   }
 };
