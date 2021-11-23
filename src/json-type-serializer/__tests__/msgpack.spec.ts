@@ -8,10 +8,8 @@ const encoder = new EncoderFull();
 const decoder = new Decoder();
 
 const exec = (type: TType, json: unknown) => {
-  const plan = new MsgPackSerializerCodegen();
-  plan.createPlan(type);
-  const js = plan.codegen();
-  const fn = eval(js)(encoder);
+  const codegen = new MsgPackSerializerCodegen({encoder});
+  const fn = codegen.compile(type);
   // console.log(fn.toString());
   const blob = fn(json);
   const decoded = decoder.decode(blob);
@@ -221,12 +219,11 @@ describe('"ref" type', () => {
     const typeResponse = t.Object('Response', [
       t.Field('user', t.Ref('User')),
     ]);
-    const plan = new MsgPackSerializerCodegen({
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
       ref: () => typeUser,
     });
-    plan.createPlan(typeResponse);
-    const js = plan.codegen();
-    const fn = eval(js)(encoder);
+    const fn = codegen.compile(typeResponse);
     const json = {
       user: {
         id: '123',
@@ -241,8 +238,10 @@ describe('"ref" type', () => {
     const typeResponse = t.Object('Response', [
       t.Field('user', t.Ref('User')),
     ]);
-    const plan = new MsgPackSerializerCodegen({});
-    const callback = () => plan.createPlan(typeResponse);
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
+    });
+    const callback = () => codegen.compile(typeResponse);
     expect(callback).toThrow(new Error('Unknown [ref = User].'));
   });
 });
