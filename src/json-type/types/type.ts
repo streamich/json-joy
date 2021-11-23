@@ -87,8 +87,18 @@ export interface TArray extends TType, Validatable {
  */
 export interface TNumber extends TType, Validatable {
   __t: 'num';
+
+  /**
+   * Exact constant value of the number.
+   */
   const?: number;
-  isInteger?: boolean;
+
+  /**
+   * A more specific format of the number. When this is set, faster compiled
+   * serialization functions can generate. "i" stands for signed integer, "u"
+   * for unsigned integer, and "f" for float.
+   */
+  format?: 'i'  | 'u' | 'f' | 'i8' | 'i16' | 'i32' | 'i64' | 'u8' | 'u16' | 'u32' | 'u64' | 'f32' | 'f64';
 }
 
 /**
@@ -96,7 +106,24 @@ export interface TNumber extends TType, Validatable {
  */
 export interface TString extends TType, Validatable {
   __t: 'str';
+
+  /**
+   * Exact constant value of the string.
+   */
   const?: string;
+
+  /**
+   * When set to "ascii" a faster compiled serialization function can be
+   * generated for MessagePack serialization.
+   */
+  format?: 'ascii';
+
+  /**
+   * When set to `true`, a faster JSON serialization function can be
+   * generated, which does not escape special JSON string characters.
+   * See: https://www.json.org/json-en.html
+   */
+  noJsonEscape?: boolean;
 }
 
 /**
