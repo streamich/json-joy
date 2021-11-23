@@ -1,3 +1,4 @@
+import {compileFn} from '.';
 import type {CompiledFunction} from './types';
 
 /**
@@ -159,12 +160,23 @@ export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unkn
     return constants.map((constant) => this.addConstant(constant));
   }
 
-  public compile(): CompiledFunction<Fn> {
+  /**
+   * Returns generated JavaScript code with the dependency list.
+   *
+   * ```js
+   * const code = codegen.generate();
+   * const fn = eval(code.js)(...code.deps);
+   * const result = fn(...args);
+   * ```
+   *
+   * @returns Returns a {@link CompiledFunction} object ready for compilation.
+   */
+  public generate(): CompiledFunction<Fn> {
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
 ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = (${constant});`).join('\n')}
 return function(${this.options.arguments}){
-${this.options.epilogue}
+${this.options.prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
 ${this.options.epilogue}
 }})`;
@@ -173,5 +185,14 @@ ${this.options.epilogue}
       deps: this.dependencies,
       js: js as CompiledFunction<Fn>['js'],
     };
+  }
+
+  /**
+   * Compiles the generated JavaScript code into a function.
+   *
+   * @returns JavaScript function ready for execution.
+   */
+  public compile(): Fn {
+    return compileFn(this.generate());
   }
 }
