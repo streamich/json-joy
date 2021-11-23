@@ -3,6 +3,7 @@ import {Codegen} from '../Codegen';
 
 test('can generate a simple function', () => {
   const codegen = new Codegen({
+    name: 'foobar',
     arguments: 'a, b',
     prologue: 'var res = 0;',
     epilogue: 'return res;',
@@ -26,4 +27,5 @@ test('can generate a simple function', () => {
   expect(code.deps).toStrictEqual([byTwo]);
   expect(typeof code.js).toBe('string');
   expect(fn(1, 2)).toBe(20);
+  expect(fn.name).toBe('foobar');
 });

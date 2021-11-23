@@ -25,6 +25,11 @@ export interface CodegenOptions {
   arguments?: string;
 
   /**
+   * Name of the generated function.
+   */
+  name?: string;
+
+  /**
    * Inline JavaScript statements, that execute at the beginning of the main
    * function body.
    */
@@ -47,6 +52,25 @@ export interface CodegenOptions {
  * function. It keeps track of external dependencies, internally generated
  * constants, and execution steps, which at the end are all converted to
  * to an executable JavaScript function.
+ *
+ * The final output is a JavaScript function enclosed in a closure:
+ *
+ * ```js
+ * (function(d1, d2, d3) {
+ *   var c1 = something;
+ *   var c2 = something;
+ *   var c3 = something;
+ *   return function(r0) {
+ *     var r1 = something;
+ *     var r2 = something;
+ *     var r3 = something;
+ *     return something;
+ *   }
+ * })
+ * ```
+ *
+ * Where `d*` are the external dependencies, `c*` are the internal constants,
+ * and `r*` are the local immutable infinite registers.
  */
 export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unknown[]) => unknown> {
   /** @ignore */
@@ -58,6 +82,7 @@ export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unkn
   constructor(opts: CodegenOptions) {
     this.options = {
       arguments: 'r0',
+      name: '',
       prologue: opts.prologue || '',
       processSteps: (steps) => steps.filter(step => step instanceof CodegenStepExecJs) as CodegenStepExecJs[],
       ...opts,
@@ -175,7 +200,7 @@ export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unkn
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
 ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = (${constant});`).join('\n')}
-return function(${this.options.arguments}){
+return ${this.options.name ? `function ${this.options.name}` : 'function'}(${this.options.arguments}){
 ${this.options.prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
 ${this.options.epilogue}
