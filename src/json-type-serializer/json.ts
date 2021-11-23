@@ -1,8 +1,8 @@
-import type {MsgPack, Encoder} from '../json-pack';
-import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType, TRef} from '../json-type/types';
+import {json_string} from '../json-brand';
+import {TArray, TBoolean, TNumber, TObject, TString, TType, TRef} from '../json-type/types';
 import {JsExpression} from './util/JsExpression';
 
-export type EncoderFn = <T>(value: T) => MsgPack<T>;
+export type EncoderFn = <T>(value: T) => json_string<T>;
 
 class JsonSerializerStepWriteText {
   constructor(public str: string) {}
@@ -102,7 +102,7 @@ export class JsonSerializerCodegen {
   }
 
   public onBinary(value: JsExpression) {
-    this.js(/* js */ `e.encodeBinary(${value.use()});`);
+    this.js(/* js */ `js += '"<BINARY>"';`);
   }
 
   public onRef(ref: TRef, value: JsExpression): void {
@@ -114,7 +114,7 @@ export class JsonSerializerCodegen {
   }
 
   public onAny(value: JsExpression) {
-    this.js(/* js */ `e.encodeAny(${value.use()});`);
+    this.js(/* js */ `s += js(${value.use()});`);
   }
 
   public onType(type: TType, value: JsExpression): void {
@@ -193,7 +193,7 @@ var js = JSON.serialize;
 return function(r0){
 var s = '';
 ${execSteps.map((step) => (step as JsonSerializerStepExecJs).js).join('\n')}
-return e.flush();
+return s;
 }})`
 
     return js;
