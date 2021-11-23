@@ -7,11 +7,11 @@ const type = t.Object({
   fields: [
     t.Field('collection', t.Object({
       fields: [
-        t.Field('id', t.str),
+        t.Field('id', t.String({format: 'ascii'})),
         t.Field('ts', t.num),
-        t.Field('cid', t.str),
-        t.Field('prid', t.str),
-        t.Field('slug', t.str),
+        t.Field('cid', t.String({format: 'ascii'})),
+        t.Field('prid', t.String({format: 'ascii'})),
+        t.Field('slug', t.String({format: 'ascii'})),
         t.Field('name', t.str, {isOptional: true}),
         t.Field('src', t.str, {isOptional: true}),
         t.Field('doc', t.str, {isOptional: true}),
@@ -20,10 +20,10 @@ const type = t.Object({
     })),
     t.Field('block', t.Object({
       fields: [
-        t.Field('id', t.str),
+        t.Field('id', t.String({format: 'ascii'})),
         t.Field('ts', t.num),
-        t.Field('cid', t.str),
-        t.Field('slug', t.str),
+        t.Field('cid', t.String({format: 'ascii'})),
+        t.Field('slug', t.String({format: 'ascii'})),
       ],
     })),
   ],

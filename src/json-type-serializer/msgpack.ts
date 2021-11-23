@@ -76,6 +76,10 @@ export class MsgPackSerializerCodegen {
       this.writeBlob(encoder.encode(str.const));
       return;
     }
+    if (str.format === 'ascii') {
+      this.execJs(/* js */ `e.encodeAsciiString(${value.use()});`);
+      return;
+    }
     this.execJs(/* js */ `e.encodeString(${value.use()});`);
   }
 

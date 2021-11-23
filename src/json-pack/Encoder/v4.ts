@@ -171,6 +171,17 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
   }
 
+  public encodeAsciiString(str: string) {
+    const length = str.length;
+    this.encodeStringHeader(length);
+    this.ensureCapacity(length);
+    const uint8 = this.uint8;
+    let offset = this.offset;
+    let pos = 0;
+    while (pos < length) uint8[offset++] = str.charCodeAt(pos++);
+    this.offset = offset;
+  }
+
   public encodeArrayHeader(length: number): void {
     if (length <= 0b1111) this.u8(0b10010000 | length);
     else if (length <= 0xffff) {

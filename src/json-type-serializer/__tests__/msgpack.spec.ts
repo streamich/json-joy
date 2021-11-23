@@ -18,113 +18,115 @@ const exec = (type: TType, json: unknown) => {
   expect(decoded).toStrictEqual(json);
 };
 
-test('serializes according to schema a POJO object', () => {
-  const type = t.Object({
-    fields: [
-      t.Field('a', t.num),
-      t.Field('b', t.str),
-      t.Field('c', t.nil),
-      t.Field('d', t.bool),
-      t.Field('arr', t.Array(t.Object({
-        fields: [
-          t.Field('foo', t.Array(t.num)),
-          t.Field('.!@#', t.str),
-        ],
-      }))),
-      t.Field('bin', t.bin),
-    ],
+describe('general', () => {
+  test('serializes according to schema a POJO object', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('a', t.num),
+        t.Field('b', t.str),
+        t.Field('c', t.nil),
+        t.Field('d', t.bool),
+        t.Field('arr', t.Array(t.Object({
+          fields: [
+            t.Field('foo', t.Array(t.num)),
+            t.Field('.!@#', t.str),
+          ],
+        }))),
+        t.Field('bin', t.bin),
+      ],
+    });
+    const json = {
+      a: 1.1,
+      b: 'sdf',
+      c: null,
+      d: true,
+      arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
+      bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+    };
+
+    exec(type, json);
   });
-  const json = {
-    a: 1.1,
-    b: 'sdf',
-    c: null,
-    d: true,
-    arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
-    bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-  };
 
-  exec(type, json);
-});
+  test('supports "unknownFields" property', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('a', t.Object({
+          fields: [],
+          unknownFields: true,
+        })),
+      ],
+    });
+    const json = {
+      a: {
+        foo: 123,
+      },
+    };
 
-test('supports "unknownFields" property', () => {
-  const type = t.Object({
-    fields: [
-      t.Field('a', t.Object({
-        fields: [],
-        unknownFields: true,
-      })),
-    ],
+    exec(type, json);
   });
-  const json = {
-    a: {
-      foo: 123,
-    },
-  };
 
-  exec(type, json);
-});
+  test('can encode object with optional fields', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('a', t.num),
+        t.Field('b', t.num, {isOptional: true}),
+        t.Field('c', t.bool),
+        t.Field('d', t.nil, {isOptional: true}),
+      ],
+    });
+    const json1 = {
+      a: 1.1,
+      b: 3,
+      c: true,
+      d: null,
+    };
+    const json2 = {
+      a: 1.1,
+      c: true,
+    };
+    const json3 = {
+      a: 1.1,
+      c: true,
+      b: 0,
+    };
 
-test('can encode object with optional fields', () => {
-  const type = t.Object({
-    fields: [
-      t.Field('a', t.num),
-      t.Field('b', t.num, {isOptional: true}),
-      t.Field('c', t.bool),
-      t.Field('d', t.nil, {isOptional: true}),
-    ],
+    exec(type, json1);
+    exec(type, json2);
+    exec(type, json3);
   });
-  const json1 = {
-    a: 1.1,
-    b: 3,
-    c: true,
-    d: null,
-  };
-  const json2 = {
-    a: 1.1,
-    c: true,
-  };
-  const json3 = {
-    a: 1.1,
-    c: true,
-    b: 0,
-  };
 
-  exec(type, json1);
-  exec(type, json2);
-  exec(type, json3);
-});
-
-test('example object', () => {
-  const type = t.Object({
-    fields: [
-      t.Field('collection', t.Object({
-        fields: [
-          t.Field('id', t.str),
-          t.Field('ts', t.num),
-          t.Field('cid', t.str),
-          t.Field('prid', t.str),
-          t.Field('slug', t.str),
-          t.Field('name', t.str, {isOptional: true}),
-          t.Field('src', t.str, {isOptional: true}),
-          t.Field('doc', t.str, {isOptional: true}),
-          t.Field('authz', t.str, {isOptional: true}),
-        ],
-      })),
-    ],
+  test('example object', () => {
+    const type = t.Object({
+      fields: [
+        t.Field('collection', t.Object({
+          fields: [
+            t.Field('id', t.str),
+            t.Field('ts', t.num),
+            t.Field('cid', t.str),
+            t.Field('prid', t.str),
+            t.Field('slug', t.str),
+            t.Field('name', t.str, {isOptional: true}),
+            t.Field('src', t.str, {isOptional: true}),
+            t.Field('doc', t.str, {isOptional: true}),
+            t.Field('authz', t.str, {isOptional: true}),
+          ],
+        })),
+      ],
+    });
+    const json = {
+      collection: {
+        id: '123',
+        ts: 123,
+        cid: '123',
+        prid: '123',
+        slug: 'slug',
+        name: 'name',
+        src: 'src',
+        authz: 'authz',
+      },
+    };
+    exec(type, json);
   });
-  const json = {
-    collection: {
-      id: '123',
-      ts: 123,
-      cid: '123',
-      prid: '123',
-      slug: 'slug',
-      name: 'name',
-      src: 'src',
-      authz: 'authz',
-    },
-  };
-  exec(type, json);
 });
 
 describe('single value', () => {
@@ -172,6 +174,20 @@ describe('single value', () => {
         t.Field('a', t.str),
       ]
     }), {a: 'b'});
+  });
+});
+
+describe('"str" type', () => {
+  test('can encode a simple string', () => {
+    const type = t.str;
+    const json = 'asdf';
+    exec(type, json);
+  });
+
+  test('can encode an ASCII optimized string', () => {
+    const type = t.String({format: 'ascii'});
+    const json = 'asdf';
+    exec(type, json);
   });
 });
 
