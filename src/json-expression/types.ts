@@ -1,6 +1,6 @@
 export type ExprGet = [fn: '=', path: string];
 
-export type ExprAnd = [fn: '&&', ...expressions: unknown[]];
+export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
 export type ExprOr = [fn: '||', ...expressions: unknown[]];
 export type ExprNot = [fn: '!', expression: unknown];
 
