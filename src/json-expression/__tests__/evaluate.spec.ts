@@ -1,7 +1,7 @@
 import {evaluate} from '../evaluate';
 import { Expr } from '../types';
 
-const check = (expression: Expr, data: unknown, expected: unknown) => {
+const check = (expression: Expr, expected: unknown, data: unknown = null) => {
   const res = evaluate(expression, data);
   expect(res).toBe(expected);
 };
@@ -23,21 +23,21 @@ describe('=', () => {
 
 describe('and', () => {
   test('works in base case', () => {
-    check(['&&', true, true], null, true);
-    check(['&&', true, false], null, false);
-    check(['&&', false, true], null, false);
-    check(['&&', false, false], null, false);
-    check(['and', true, true], null, true);
-    check(['and', true, false], null, false);
-    check(['and', false, true], null, false);
-    check(['and', false, false], null, false);
+    check(['&&', true, true], true, null);
+    check(['&&', true, false], false, null);
+    check(['&&', false, true], false, null);
+    check(['&&', false, false], false, null);
+    check(['and', true, true], true, null);
+    check(['and', true, false], false, null);
+    check(['and', false, true], false, null);
+    check(['and', false, false], false, null);
   });
 
   test('works with number', () => {
-    check(['&&', 1, 1], null, true);
-    check(['&&', 1, 0], null, false);
-    check(['&&', 0, 1], null, false);
-    check(['&&', 0, 0], null, false);
+    check(['&&', 1, 1], true, null);
+    check(['&&', 1, 0], false, null);
+    check(['&&', 0, 1], false, null);
+    check(['&&', 0, 0], false, null);
   });
 
   test('true on multiple truthy values', () => {
@@ -47,8 +47,8 @@ describe('and', () => {
       one: 1,
       zero: 0,
     };
-    check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/true']], data, true);
-    check(['&&', ['=', '/true'], ['=', '/one']], data, true);
+    check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/true']], true, data);
+    check(['&&', ['=', '/true'], ['=', '/one']], true, data);
   });
 
   test('false on single falsy value', () => {
@@ -58,28 +58,39 @@ describe('and', () => {
       one: 1,
       zero: 0,
     };
-    check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], data, false);
+    check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], false, data);
   });
 });
 
 describe('or', () => {
   test('works in base case', () => {
-    check(['||', true, true], null, true);
-    check(['||', true, false], null, true);
-    check(['||', false, true], null, true);
-    check(['||', false, false], null, false);
-    check(['or', true, true], null, true);
-    check(['or', true, false], null, true);
-    check(['or', false, true], null, true);
-    check(['or', false, false], null, false);
+    check(['||', true, true], true, null);
+    check(['||', true, false], true, null);
+    check(['||', false, true], true, null);
+    check(['||', false, false], false, null);
+    check(['or', true, true], true, null);
+    check(['or', true, false], true, null);
+    check(['or', false, true], true, null);
+    check(['or', false, false], false, null);
   });
 });
 
 describe('not', () => {
   test('works in base case', () => {
-    check(['!', true], null, false);
-    check(['!', false], null, true);
-    check(['not', true], null, false);
-    check(['not', false], null, true);
+    check(['!', true], false, null);
+    check(['!', false], true, null);
+    check(['not', true], false, null);
+    check(['not', false], true, null);
+  });
+});
+
+describe('type', () => {
+  test('returns value types', () => {
+    check(['type', null], 'null');
+    check(['type', 123], 'number');
+    check(['type', [[]]], 'array');
+    check(['type', {}], 'object');
+    check(['type', ''], 'string');
+    check(['type', false], 'boolean');
   });
 });

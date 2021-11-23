@@ -18,5 +18,13 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
     case '!':
     case 'not':
       return !evaluate(expr[1], data);
+    case 'type': {
+      const res = evaluate(expr[1], data);
+      if (res === null) return 'null';
+      if (res instanceof Array) return 'array';
+      return typeof res;
+    }
   }
+
+  throw new Error('Unknown expression.');
 };
