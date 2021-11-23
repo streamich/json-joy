@@ -7164,18 +7164,6 @@ trim-repeated@^1.0.0:
   dependencies:
     escape-string-regexp "^1.0.2"
 
-ts-brand-json@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/ts-brand-json/-/ts-brand-json-0.1.1.tgz#3b34bf9aaff5dd8794222973f6b0ea95a7be82c7"
-  integrity sha512-2Lb/g531rUtKBLlXnJDmWbEE+Mzv4SuxNDSVqWB2HHS5AJZ9Yh4bl6wFaNsAqWnhDg0zD3zi/oGhS//cDINQpw==
-  dependencies:
-    ts-brand "^0.0.2"
-
-ts-brand@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/ts-brand/-/ts-brand-0.0.2.tgz#b6cbca6ac94df1050a05844e23944eaeda1738a0"
-  integrity sha512-UhSzWY4On9ZHIj6DKkRYVN/8OaprbLAZ3b/Y2AJwdl6oozSABsQ0PvwDh4vOVdkvOtWQOkIrjctZ1kj8YfF3jA==
-
 ts-jest@^26.5.6:
   version "26.5.6"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.6.tgz#c32e0746425274e1dfe333f43cd3c800e014ec35"

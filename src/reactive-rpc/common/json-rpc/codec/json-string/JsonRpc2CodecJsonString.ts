@@ -1,5 +1,5 @@
 import {asString} from 'json-schema-serializer';
-import {json_string, JSON} from 'ts-brand-json';
+import {json_string, JSON} from '../../../../../json-brand';
 import type {
   JsonRpc2Error,
   JsonRpc2ErrorMessage,

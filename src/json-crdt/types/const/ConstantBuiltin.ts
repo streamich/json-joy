@@ -1,4 +1,3 @@
-import {json_string} from 'ts-brand-json';
 import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {ConstantType} from './ConstantType';
 

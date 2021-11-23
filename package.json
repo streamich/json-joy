@@ -63,8 +63,7 @@
     "tslib": "2"
   },
   "dependencies": {
-    "json-schema-serializer": "1.0.2",
-    "ts-brand-json": "0.1.1"
+    "json-schema-serializer": "1.0.2"
   },
   "devDependencies": {
     "@exodus/schemasafe": "^1.0.0-rc.6",

@@ -1,4 +1,4 @@
-import {json_string} from 'ts-brand-json';
+import {json_string} from '../json-brand';
 import {asString} from 'json-schema-serializer';
 import {
   MessageSubscribe,

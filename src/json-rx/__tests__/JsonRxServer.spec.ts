@@ -1,7 +1,7 @@
 import {JsonRxServer} from '../JsonRxServer';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {Defer} from './util';
-import {json_string} from 'ts-brand-json';
+import {json_string} from '../../json-brand';
 import {until} from '../../__tests__/util';
 
 test('can create server', async () => {

@@ -1,4 +1,4 @@
-import type {json_string} from 'ts-brand-json';
+import type {json_string} from '../json-brand';
 import type {JsonTypeValidatorError} from './codegen';
 
 export type JsonTypeValidator = (value: unknown) => unknown;
