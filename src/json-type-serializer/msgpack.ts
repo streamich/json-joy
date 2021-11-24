@@ -6,6 +6,9 @@ import {JsExpression} from '../util/codegen/util/JsExpression';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 import {Codegen, CompiledFunction, CodegenStepExecJs} from '../util/codegen';
 
+const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
+const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS]
+
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
   const res = new Uint8Array(a.length + b.length);
   res.set(a);
@@ -105,6 +108,16 @@ export class MsgPackSerializerCodegen {
   public onNumber(num: TNumber, value: JsExpression) {
     if (num.const !== undefined) {
       this.writeBlob(encoder.encode(num.const));
+      return;
+    }
+    const isInteger = INTS.indexOf(num.format) > -1;
+    if (isInteger) {
+      const isUnsignedInteger = UINTS.indexOf(num.format) > -1;
+      if (isUnsignedInteger) {
+        this.execJs(/* js */ `e.encodeUnsignedInteger(${value.use()});`);
+      } else {
+        this.execJs(/* js */ `e.encodeInteger(${value.use()});`);
+      }
       return;
     }
     this.execJs(/* js */ `e.encodeNumber(${value.use()});`);

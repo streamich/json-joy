@@ -7,13 +7,13 @@ import {TType} from '../../json-type/types';
 const encoder = new EncoderFull();
 const decoder = new Decoder();
 
-const exec = (type: TType, json: unknown) => {
+const exec = (type: TType, json: unknown, expected: unknown = json) => {
   const codegen = new MsgPackSerializerCodegen({encoder});
   const fn = codegen.compile(type);
   // console.log(fn.toString());
   const blob = fn(json);
   const decoded = decoder.decode(blob);
-  expect(decoded).toStrictEqual(json);
+  expect(decoded).toStrictEqual(expected);
 };
 
 describe('general', () => {
@@ -186,6 +186,26 @@ describe('"str" type', () => {
     const type = t.String({format: 'ascii'});
     const json = 'asdf';
     exec(type, json);
+  });
+});
+
+describe('"num" type', () => {
+  test('can encode number as integer', () => {
+    exec(t.Number({format: 'i'}), 123);
+    exec(t.Number({format: 'i'}), -123);
+    exec(t.Number({format: 'i'}), 123.4, 123);
+    exec(t.Number({format: 'i8'}), -123);
+    exec(t.Number({format: 'i16'}), -123);
+    exec(t.Number({format: 'i32'}), -123);
+    exec(t.Number({format: 'i64'}), -123);
+  });
+
+  test('can encode number as unsigned integer', () => {
+    exec(t.Number({format: 'u'}), 123);
+    exec(t.Number({format: 'u8'}), 0);
+    exec(t.Number({format: 'u16'}), 3223);
+    exec(t.Number({format: 'u32'}), 32233);
+    exec(t.Number({format: 'u64'}), 1);
   });
 });
 

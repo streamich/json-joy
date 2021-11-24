@@ -7,7 +7,7 @@ const t = require('../../es2020/json-type').t;
 const type = t.Object([
   t.Field('collection', t.Object([
     t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
-    t.Field('ts', t.num),
+    t.Field('ts', t.num, {format: 'u64'}),
     t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
     t.Field('prid', t.String({format: 'ascii', noJsonEscape: true})),
     t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
@@ -19,7 +19,7 @@ const type = t.Object([
   ])),
   t.Field('block', t.Object([
     t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
-    t.Field('ts', t.num),
+    t.Field('ts', t.num, {format: 'u64'}),
     t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
     t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
   ])),
