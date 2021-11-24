@@ -6,6 +6,15 @@ export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
     throw new Error('chars must be 64 characters long');
 
   const table = chars.split('');
+  const table2: string[] = [];
+
+  for (const c1 of table) {
+    for (const c2 of table) {
+      const two = c1 + c2;
+      Number(two);
+      table2.push(two);
+    }
+  }
 
   return (uint8: Uint8Array, length: number): string => {
     let out = ''
@@ -15,23 +24,20 @@ export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
       const o1 = uint8[i];
       const o2 = uint8[i + 1];
       const o3 = uint8[i + 2];
-      const v1 = o1 >> 2;
-      const v2 = ((o1 & 0b11) << 4) | (o2 >> 4);
-      const v3 = ((o2 & 0b1111) << 2) | (o3 >> 6);
-      const v4 = o3 & 0b111111;
-      out += table[v1] + table[v2] + table[v3] + table[v4];
+      const v1 = o1 << 4 | o2 >> 4;
+      const v2 = (o2 & 0b1111) << 8 | o3;
+      out += table2[v1] + table2[v2];
     }
     if (extraLength) {
       if (extraLength === 1) {
-        const o1 = uint8[baseLength] & 0xFF;
-        out += table[o1 >> 2] + table[(o1 & 0b11) << 4] + EE;
+        const o1 = uint8[baseLength];
+        out += table2[o1 << 4] + EE;
       } else {
         const o1 = uint8[baseLength];
         const o2 = uint8[baseLength + 1];
-        const v1 = o1 >> 2;
-        const v2 = ((o1 & 0b11) << 4) | (o2 >> 4);
-        const v3 = ((o2 & 0b1111) << 2);
-        out += table[v1] + table[v2] + table[v3] + E;
+        const v1 = o1 << 4 | o2 >> 4;
+        const v2 = ((o2 & 0b1111) << 2);
+        out += table2[v1] + table[v2] + E;
       }
     }
     return out;
@@ -41,8 +47,8 @@ export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 const encodeSmall = createEncode();
 const hasBuffer = typeof Buffer === 'function' && (typeof Buffer.from === 'function');
 
-export const encode = !hasBuffer ? encodeSmall : (uint8: Uint8Array): string => {
+export const encode = !hasBuffer ? (uint8: Uint8Array) => encodeSmall(uint8, uint8.byteLength) : (uint8: Uint8Array): string => {
   const length = uint8.byteLength;
-  if (length <= 25) return encodeSmall(uint8, length);
+  if (length <= 48) return encodeSmall(uint8, length);
   return Buffer.from(uint8).toString('base64');
 };

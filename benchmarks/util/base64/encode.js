@@ -9,8 +9,14 @@ const generateBlob = (length) => {
   return uint8;
 };
 
-const uint8Short = generateBlob(10);
-const uint8Long = generateBlob(1000);
+const arr8 = generateBlob(9);
+const arr16 = generateBlob(17);
+const arr32 = generateBlob(33);
+const arr64 = generateBlob(65);
+const arr128 = generateBlob(127);
+const arr256 = generateBlob(257);
+const arr512 = generateBlob(513);
+const arr1024 = generateBlob(1025);
 
 // fast-base64-encode
 const table = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'.split('');
@@ -55,8 +61,14 @@ const encoders = [
 
 for (const encoder of encoders) {
   suite.add(encoder.name, () => {
-    encoder.encode(uint8Short);
-    encoder.encode(uint8Long);
+    encoder.encode(arr8);
+    encoder.encode(arr16);
+    encoder.encode(arr32);
+    encoder.encode(arr64);
+    encoder.encode(arr128);
+    encoder.encode(arr256);
+    encoder.encode(arr512);
+    encoder.encode(arr1024);
   });
 }
 
