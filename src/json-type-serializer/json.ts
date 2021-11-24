@@ -57,6 +57,7 @@ export class JsonSerializerCodegen {
       },
     });
     this.codegen.linkDependency(asString, 'asString');
+    this.codegen.linkDependency(JSON.stringify, 'stringify');
   }
 
   protected js(js: string) {
@@ -86,7 +87,7 @@ export class JsonSerializerCodegen {
       this.writeText(JSON.stringify(num.const));
       return;
     }
-    this.js(/* js */ `s += js(${value.use()});`);
+    this.js(/* js */ `s += stringify(${value.use()});`);
   }
 
   public onBoolean(bool: TBoolean, value: JsExpression) {
@@ -142,7 +143,7 @@ export class JsonSerializerCodegen {
   }
 
   public onAny(value: JsExpression) {
-    this.js(/* js */ `s += js(${value.use()});`);
+    this.js(/* js */ `s += stringify(${value.use()});`);
   }
 
   public onType(type: TType, value: JsExpression): void {
