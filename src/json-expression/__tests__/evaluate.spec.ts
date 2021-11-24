@@ -2,7 +2,7 @@ import {evaluate} from '../evaluate';
 import { Expr } from '../types';
 
 const check = (expression: Expr, expected: unknown, data: unknown = null) => {
-  const res = evaluate(expression, data);
+  const res = evaluate(expression, {data});
   expect(res).toStrictEqual(expected);
 };
 
@@ -16,7 +16,7 @@ describe('get', () => {
       },
     };
     const expression = ['=', '/a/b/c'];
-    const res = evaluate(expression, data);
+    const res = evaluate(expression, {data});
     expect(res).toBe(1);
   });
 
@@ -29,7 +29,7 @@ describe('get', () => {
       },
     };
     const expression = ['get', '/a/b/c'];
-    const res = evaluate(expression, data);
+    const res = evaluate(expression, {data});
     expect(res).toBe(1);
   });
 });
