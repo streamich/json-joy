@@ -3,7 +3,7 @@
 
 ## Encoder
 
-- Implements base base64 encoding algorithm compatible with Node's Buffer.
+- Implements Base64 encoding algorithm compatible with Node's Buffer.
 - Isomorphic&mdash;it can be used in both Node and the browser.
 - Faster than the Node's implementation for short blobs, smaller than 40 bytes.
 - Uses Node's implementation for long blobs, if available. Hence, it also works
