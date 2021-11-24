@@ -120,3 +120,14 @@ describe('str', () => {
     check(['str', 123], '123');
   });
 });
+
+describe('starts', () => {
+  test('returns true when string starts with another sub-string', () => {
+    const data = {a: 'asdf', b: 'as'};
+    check(['starts', ['=', '/b'], 'asdf'], true, data);
+    check(['starts', ['=', '/b'], ['=', '/a']], true, data);
+    check(['starts', ['=', '/b'], ['=', '/b']], true, data);
+    check(['starts', ['=', '/b'], 'gg'], false, data);
+    check(['starts', ['=', '/a'], ['=', '/b']], false, data);
+  });
+});

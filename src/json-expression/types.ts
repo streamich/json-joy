@@ -10,9 +10,9 @@ export type ExprNum = [fn: 'num', expression: unknown];
 export type ExprInt = [fn: 'int', expression: unknown];
 export type ExprStr = [fn: 'str', expression: unknown];
 
-export type ExprStarts = [fn: 'starts', str: string, expression: unknown];
-export type ExprContains = [fn: 'contains', str: string, expression: unknown];
-export type ExprEnds = [fn: 'ends', str: string, expression: unknown];
+export type ExprStarts = [fn: 'starts', inner: unknown, outer: unknown];
+export type ExprContains = [fn: 'contains', inner: unknown, outer: unknown];
+export type ExprEnds = [fn: 'ends', inner: unknown, outer: unknown];
 export type ExprDefined = [fn: 'defined', expression: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
 export type ExprIn = [fn: 'in', list: unknown[], expression: unknown];
