@@ -24,6 +24,10 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
       if (res instanceof Array) return 'array';
       return typeof res;
     }
+    case 'bool': return !!evaluate(expr[1], data);
+    case 'num': return +evaluate(expr[1], data) || 0;
+    case 'int': return ~~evaluate(expr[1], data);
+    case 'str': return '' + evaluate(expr[1], data);
   }
 
   throw new Error('Unknown expression.');

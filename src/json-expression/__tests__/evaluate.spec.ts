@@ -3,7 +3,7 @@ import { Expr } from '../types';
 
 const check = (expression: Expr, expected: unknown, data: unknown = null) => {
   const res = evaluate(expression, data);
-  expect(res).toBe(expected);
+  expect(res).toStrictEqual(expected);
 };
 
 describe('=', () => {
@@ -92,5 +92,31 @@ describe('type', () => {
     check(['type', {}], 'object');
     check(['type', ''], 'string');
     check(['type', false], 'boolean');
+  });
+});
+
+describe('bool', () => {
+  test('converts value to boolean', () => {
+    check(['bool', null], false);
+    check(['bool', 123], true);
+  });
+});
+
+describe('num', () => {
+  test('converts value to number', () => {
+    check(['num', '123.4'], 123.4);
+    check(['num', {}], 0);
+  });
+});
+
+describe('int', () => {
+  test('converts value to integer', () => {
+    check(['int', '123.4'], 123);
+  });
+});
+
+describe('str', () => {
+  test('converts value to string', () => {
+    check(['str', 123], '123');
   });
 });
