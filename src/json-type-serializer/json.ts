@@ -3,6 +3,7 @@ import {TArray, TBoolean, TNumber, TObject, TString, TType, TRef} from '../json-
 import {Codegen, CodegenStepExecJs} from '../util/codegen';
 import {JsExpression} from '../util/codegen/util/JsExpression';
 import {asString} from '../util/asString';
+import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 
 export type EncoderFn = <T>(value: T) => json_string<T>;
 
@@ -88,7 +89,8 @@ export class JsonSerializerCodegen {
       this.writeText(JSON.stringify(num.const));
       return;
     }
-    this.js(/* js */ `s += stringify(${value.use()});`);
+    // this.js(/* js */ `s += stringify(${value.use()});`);
+    this.js(/* js */ `s += ${value.use()};`);
   }
 
   public onBoolean(bool: TBoolean, value: JsExpression) {
@@ -109,7 +111,6 @@ export class JsonSerializerCodegen {
       return;
     }
     this.writeText('[');
-    this.writeText(']');
     const r = this.getRegister(); // array
     const rl = this.getRegister(); // array.length
     const ri = this.getRegister(); // index
@@ -117,17 +118,47 @@ export class JsonSerializerCodegen {
     this.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
     this.js(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
     this.js(/* js */ `${rItem} = ${r}[${ri}];`);
+    this.js(/* js */ `if (${ri}) s += ',';`);
     this.onType(arr.type, new JsExpression(() => `${rItem}`));
-    this.js(`}`)
+    this.js(`}`);
+    this.writeText(']');
   }
 
   public onObject(obj: TObject, value: JsExpression) {
     if (obj.unknownFields) {
-      this.js(/* js */ `s += c0(${value.use()});`);
+      this.js(/* js */ `s += stringify(${value.use()});`);
       return;
     }
+    const requiredFields = obj.fields.filter(field => !field.isOptional);
+    const optionalFields = obj.fields.filter(field => field.isOptional);
     this.writeText('{');
-
+    for (let i = 0; i < requiredFields.length; i++) {
+      const field = requiredFields[i];
+      if (i) this.writeText(',');
+      this.writeText(JSON.stringify(field.key) + ':');
+      const accessor = normalizeAccessor(field.key);
+      this.onType(field.type, new JsExpression(() => `${value.use()}${accessor}`));
+    }
+    const rHasFields = this.getRegister();
+    if (!requiredFields.length) {
+      this.js(/* js */ `var ${rHasFields} = false;`);
+    }
+    for (let i = 0; i < optionalFields.length; i++) {
+      const field = optionalFields[i];
+      const accessor = normalizeAccessor(field.key);
+      const rValue = this.getRegister();
+      this.js(/* js */ `var ${rValue} = ${value.use()}${accessor};`);
+      this.js(`if (${rValue} !== undefined) {`);
+      if (requiredFields.length) {
+        this.writeText(',');
+      } else {
+        this.js(`if (${rHasFields}) s += ',';`);
+        this.js(/* js */ `${rHasFields} = true;`);
+      }
+      this.writeText(JSON.stringify(field.key) + ':');
+      this.onType(field.type, new JsExpression(() => `${rValue}`));
+      this.js(`}`);
+    }
     this.writeText('}');
   }
 
