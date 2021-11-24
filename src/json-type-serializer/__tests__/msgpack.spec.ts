@@ -7,15 +7,13 @@ import {TType} from '../../json-type/types';
 const encoder = new EncoderFull();
 const decoder = new Decoder();
 
-const exec = (type: TType, json: unknown) => {
-  const plan = new MsgPackSerializerCodegen();
-  plan.createPlan(type);
-  const js = plan.codegen();
-  const fn = eval(js)(encoder);
+const exec = (type: TType, json: unknown, expected: unknown = json) => {
+  const codegen = new MsgPackSerializerCodegen({encoder});
+  const fn = codegen.compile(type);
   // console.log(fn.toString());
   const blob = fn(json);
   const decoded = decoder.decode(blob);
-  expect(decoded).toStrictEqual(json);
+  expect(decoded).toStrictEqual(expected);
 };
 
 describe('general', () => {
@@ -191,6 +189,26 @@ describe('"str" type', () => {
   });
 });
 
+describe('"num" type', () => {
+  test('can encode number as integer', () => {
+    exec(t.Number({format: 'i'}), 123);
+    exec(t.Number({format: 'i'}), -123);
+    exec(t.Number({format: 'i'}), 123.4, 123);
+    exec(t.Number({format: 'i8'}), -123);
+    exec(t.Number({format: 'i16'}), -123);
+    exec(t.Number({format: 'i32'}), -123);
+    exec(t.Number({format: 'i64'}), -123);
+  });
+
+  test('can encode number as unsigned integer', () => {
+    exec(t.Number({format: 'u'}), 123);
+    exec(t.Number({format: 'u8'}), 0);
+    exec(t.Number({format: 'u16'}), 3223);
+    exec(t.Number({format: 'u32'}), 32233);
+    exec(t.Number({format: 'u64'}), 1);
+  });
+});
+
 describe('"enum" type', () => {
   test('string enum', () => {
     const type = t.Enum(['add', 'replace']);
@@ -221,12 +239,11 @@ describe('"ref" type', () => {
     const typeResponse = t.Object('Response', [
       t.Field('user', t.Ref('User')),
     ]);
-    const plan = new MsgPackSerializerCodegen({
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
       ref: () => typeUser,
     });
-    plan.createPlan(typeResponse);
-    const js = plan.codegen();
-    const fn = eval(js)(encoder);
+    const fn = codegen.compile(typeResponse);
     const json = {
       user: {
         id: '123',
@@ -241,8 +258,10 @@ describe('"ref" type', () => {
     const typeResponse = t.Object('Response', [
       t.Field('user', t.Ref('User')),
     ]);
-    const plan = new MsgPackSerializerCodegen({});
-    const callback = () => plan.createPlan(typeResponse);
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
+    });
+    const callback = () => codegen.compile(typeResponse);
     expect(callback).toThrow(new Error('Unknown [ref = User].'));
   });
 });

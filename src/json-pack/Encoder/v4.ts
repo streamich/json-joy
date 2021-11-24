@@ -40,41 +40,44 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     }
   }
 
-  public encodeNumber(num: number) {
-    if (isSafeInteger(num)) {
-      if (num >= 0) {
-        if (num <= 0b1111111) return this.u8(num);
-        if (num <= 0xff) return this.u16((0xcc << 8) | num);
-        else if (num <= 0xffff) {
-          this.ensureCapacity(3);
-          this.uint8[this.offset++] = 0xcd;
-          this.uint8[this.offset++] = num >>> 8;
-          this.uint8[this.offset++] = num & 0xff;
-          return;
-        } else if (num <= 0xffffffff) {
-          this.ensureCapacity(5);
-          this.uint8[this.offset++] = 0xce;
-          this.view.setUint32(this.offset, num);
-          this.offset += 4;
-          return;
-        }
-      } else {
-        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
-        else if (num > -0x7fff) {
-          this.ensureCapacity(3);
-          this.uint8[this.offset++] = 0xd1;
-          this.view.setInt16(this.offset, num);
-          this.offset += 2;
-          return;
-        } else if (num > -0x7fffffff) {
-          this.ensureCapacity(5);
-          this.uint8[this.offset++] = 0xd2;
-          this.view.setInt32(this.offset, num);
-          this.offset += 4;
-          return;
-        }
-      }
+  public encodeUnsignedInteger(num: number): void {
+    if (num <= 0b1111111) return this.u8(num);
+    if (num <= 0xff) return this.u16((0xcc << 8) | num);
+    else if (num <= 0xffff) {
+      this.ensureCapacity(3);
+      this.uint8[this.offset++] = 0xcd;
+      this.uint8[this.offset++] = num >>> 8;
+      this.uint8[this.offset++] = num & 0xff;
+      return;
+    } else if (num <= 0xffffffff) {
+      this.ensureCapacity(5);
+      this.uint8[this.offset++] = 0xce;
+      this.view.setUint32(this.offset, num);
+      this.offset += 4;
+      return;
     }
+  }
+
+  public encodeInteger(num: number): void {
+    if (num >= 0) return this.encodeUnsignedInteger(num);
+    if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
+    else if (num > -0x7fff) {
+      this.ensureCapacity(3);
+      this.uint8[this.offset++] = 0xd1;
+      this.view.setInt16(this.offset, num);
+      this.offset += 2;
+      return;
+    } else if (num > -0x7fffffff) {
+      this.ensureCapacity(5);
+      this.uint8[this.offset++] = 0xd2;
+      this.view.setInt32(this.offset, num);
+      this.offset += 4;
+      return;
+    }
+  }
+
+  public encodeNumber(num: number): void {
+    if (isSafeInteger(num)) return this.encodeInteger(num);
     this.ensureCapacity(9);
     this.uint8[this.offset++] = 0xcb;
     this.view.setFloat64(this.offset, num);

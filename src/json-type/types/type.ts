@@ -97,6 +97,20 @@ export interface TNumber extends TType, Validatable {
    * A more specific format of the number. When this is set, faster compiled
    * serialization functions can generate. "i" stands for signed integer, "u"
    * for unsigned integer, and "f" for float.
+   *
+   * - "i" is signed integer.
+   * - "i8" is 8-bit signed integer.
+   * - "i16" is 16-bit signed integer.
+   * - "i32" is 32-bit signed integer.
+   * - "i64" is 64-bit signed integer.
+   * - "u" is unsigned integer.
+   * - "u8" is 8-bit unsigned integer.
+   * - "u16" is 16-bit unsigned integer.
+   * - "u32" is 32-bit unsigned integer.
+   * - "u64" is 64-bit unsigned integer.
+   * - "f" is float.
+   * - "f32" is 32-bit float.
+   * - "f64" is 64-bit float.
    */
   format?: 'i'  | 'u' | 'f' | 'i8' | 'i16' | 'i32' | 'i64' | 'u8' | 'u16' | 'u32' | 'u64' | 'f32' | 'f64';
 }

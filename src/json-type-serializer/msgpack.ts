@@ -1,7 +1,13 @@
 import type {MsgPack, Encoder} from '../json-pack';
+import type {EncoderFull} from '../json-pack/EncoderFull';
 import {encoder} from '../json-pack/util';
 import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType, TRef} from '../json-type/types';
-import {JsExpression} from './util/JsExpression';
+import {JsExpression} from '../util/codegen/util/JsExpression';
+import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
+import {Codegen, CompiledFunction, CodegenStepExecJs} from '../util/codegen';
+
+const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
+const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS]
 
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
   const res = new Uint8Array(a.length + b.length);
@@ -12,39 +18,63 @@ const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
 
-class EncodingPlanStepWriteBlob {
+class WriteBlobStep {
   constructor(public arr: Uint8Array) {}
 }
 
-class EncodingPlanStepExecJs {
-  constructor(public readonly js: string) {}
-}
-
-type EncodingPlanStep = EncodingPlanStepWriteBlob | EncodingPlanStepExecJs;
+type Step = WriteBlobStep | CodegenStepExecJs;
 
 export interface MsgPackSerializerCodegenOptions {
+  encoder: EncoderFull;
   ref?: (id: string) => TType | undefined;
 }
 
 export class MsgPackSerializerCodegen {
-  public steps: EncodingPlanStep[] = [];
+  protected codegen: Codegen<EncoderFn>;
 
   /** @ignore */
   protected options: Required<MsgPackSerializerCodegenOptions>;
 
-  constructor(opts: MsgPackSerializerCodegenOptions = {}) {
+  constructor(opts: MsgPackSerializerCodegenOptions) {
     this.options = {
       ref: (id: string) => undefined,
       ...opts,
     };
+    this.codegen = new Codegen<EncoderFn>({
+      name: 'toMsgPack',
+      prologue: 'e.reset();',
+      epilogue: 'return e.flush();',
+      processSteps: (steps) => {
+        const stepsJoined: Step[] = [];
+        for (let i = 0; i < steps.length; i++) {
+          const step = steps[i];
+          if (step instanceof CodegenStepExecJs) stepsJoined.push(step);
+          else if (step instanceof WriteBlobStep) {
+            const last = stepsJoined[stepsJoined.length - 1];
+            if (last instanceof WriteBlobStep) last.arr = join(last.arr, step.arr);
+            else stepsJoined.push(step);
+          }
+        }
+        const execSteps: CodegenStepExecJs[] = [];
+        for (const step of stepsJoined) {
+          if (step instanceof CodegenStepExecJs) {
+            execSteps.push(step);
+          } else if (step instanceof WriteBlobStep) {
+            execSteps.push(this.codegenBlob(step));
+          }
+        }
+        return execSteps;
+      },
+    });
+    this.codegen.linkDependency(this.options.encoder, 'e');
   }
 
-  protected execJs(js: string) {
-    this.steps.push(new EncodingPlanStepExecJs(js));
+  protected execJs(js: string): void {
+    this.codegen.js(js);
   }
 
   protected writeBlob(arr: Uint8Array): void {
-    this.steps.push(new EncodingPlanStepWriteBlob(arr));
+    this.codegen.step(new WriteBlobStep(arr));
   }
 
   protected getBlob(callback: (encoder: Encoder) => void): Uint8Array {
@@ -63,14 +93,6 @@ export class MsgPackSerializerCodegen {
     this.writeBlob(this.getBlob(callback));
   }
 
-  protected normalizeAccessor(accessor: string): string {
-    if (/^[a-z_][a-z_0-9]*$/i.test(accessor)) {
-      return '.' + accessor;
-    } else {
-      return `[${JSON.stringify(accessor)}]`;
-    }
-  }
-
   public onString(str: TString, value: JsExpression) {
     if (str.const !== undefined) {
       this.writeBlob(encoder.encode(str.const));
@@ -86,6 +108,16 @@ export class MsgPackSerializerCodegen {
   public onNumber(num: TNumber, value: JsExpression) {
     if (num.const !== undefined) {
       this.writeBlob(encoder.encode(num.const));
+      return;
+    }
+    const isInteger = INTS.indexOf(num.format) > -1;
+    if (isInteger) {
+      const isUnsignedInteger = UINTS.indexOf(num.format) > -1;
+      if (isUnsignedInteger) {
+        this.execJs(/* js */ `e.encodeUnsignedInteger(${value.use()});`);
+      } else {
+        this.execJs(/* js */ `e.encodeInteger(${value.use()});`);
+      }
       return;
     }
     this.execJs(/* js */ `e.encodeNumber(${value.use()});`);
@@ -153,8 +185,7 @@ export class MsgPackSerializerCodegen {
     this.onRequiredFields(requiredFields, value, r);
     for (let i = 0; i < optionalFields.length; i++) {
       const field = optionalFields[i];
-      const accessor = this.normalizeAccessor(field.key);
-      const fieldSerialized = JSON.stringify(field.key);
+      const accessor = normalizeAccessor(field.key);
       this.execJs(/* js */ `var ${rv} = ${r}${accessor};`);
       this.execJs(`if (${rv} !== undefined) {`);
       this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
@@ -179,7 +210,7 @@ export class MsgPackSerializerCodegen {
     for (let i = 0; i < length; i++) {
       const field = requiredFields[i];
       this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
-      const accessor = this.normalizeAccessor(field.key);
+      const accessor = normalizeAccessor(field.key);
       this.onType(field.type, value.chain(() => `${r}${accessor}`));
     }
   }
@@ -244,12 +275,6 @@ export class MsgPackSerializerCodegen {
     }
   }
 
-  public createPlan(type: TType): void {
-    const r = this.getRegister();
-    const value = new JsExpression(() => r);
-    this.onType(type, value);
-  }
-
   // private codegenBlob(step: EncodingPlanStepWriteBlob) {
   //   const lines: string[] = [];
   //   for (let i = 0; i < step.arr.length;) {
@@ -271,7 +296,7 @@ export class MsgPackSerializerCodegen {
   //   return new EncodingPlanStepExecJs(js);
   // }
 
-  private codegenBlob(step: EncodingPlanStepWriteBlob) {
+  private codegenBlob(step: WriteBlobStep) {
     const lines: string[] = [];
     const ro = this.getRegister();
     const ru = this.getRegister();
@@ -281,37 +306,22 @@ export class MsgPackSerializerCodegen {
     for (let i = 0; i < step.arr.length; i++)
       lines.push(/* js */ `${ru}[${ro} + ${i}] = ${step.arr[i]};`);
     const js = lines.join('\n');
-    return new EncodingPlanStepExecJs(js);
+    return new CodegenStepExecJs(js);
   }
 
-  public codegen(): string {
-    const stepsJoined: EncodingPlanStep[] = [];
-    for (let i = 0; i < this.steps.length; i++) {
-      const step = this.steps[i];
-      if (step instanceof EncodingPlanStepExecJs) stepsJoined.push(step);
-      else if (step instanceof EncodingPlanStepWriteBlob) {
-        const last = stepsJoined[stepsJoined.length - 1];
-        if (last instanceof EncodingPlanStepWriteBlob) last.arr = join(last.arr, step.arr);
-        else stepsJoined.push(step);
-      }
-    }
+  protected run(type: TType) {
+    const r = this.getRegister();
+    const value = new JsExpression(() => r);
+    this.onType(type, value);
+  }
 
-    const execSteps: EncodingPlanStepExecJs[] = [];
+  public generate(type: TType): CompiledFunction<EncoderFn> {
+    this.run(type);
+    return this.codegen.generate();
+  }
 
-    for (const step of stepsJoined) {
-      if (step instanceof EncodingPlanStepExecJs) {
-        execSteps.push(step);
-      } else if (step instanceof EncodingPlanStepWriteBlob) {
-        execSteps.push(this.codegenBlob(step));
-      }
-    }
-
-    const js = /* js */ `(function(e){return function(r0){
-e.reset();
-${execSteps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
-return e.flush();
-};})`
-
-    return js;
+  public compile(type: TType): EncoderFn {
+    this.run(type);
+    return this.codegen.compile();
   }
 }

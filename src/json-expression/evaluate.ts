@@ -9,7 +9,12 @@ const toString = (value: unknown): string => {
 
 const toNumber = (value: unknown): number => +(value as number) || 0;
 
-export const evaluate = (expr: Expr | unknown, data: unknown): any => {
+export interface JsonExpressionContext {
+  data: unknown;
+  createPattern?: (pattern: string) => (value: string) => boolean;
+}
+
+export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any => {
   if (!(expr instanceof Array)) return expr;
   if (expr.length === 1 && expr[0] instanceof Array) return expr[0];
 
@@ -17,73 +22,74 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
 
   switch (fn) {
     case '=':
+    case '<-':
     case 'get': {
-      const value = evaluate(expr[1], data);
-      return findByPointer(String(value), data).val;
+      const value = evaluate(expr[1], ctx);
+      return findByPointer(String(value), ctx.data).val;
     }
     case '==':
     case 'eq': {
-      const left = evaluate(expr[1], data);
-      const right = evaluate(expr[2], data);
+      const left = evaluate(expr[1], ctx);
+      const right = evaluate(expr[2], ctx);
       return deepEqual(left, right);
     }
     case '&&':
     case 'and':
-      return expr.slice(1).every(e => evaluate(e, data));
+      return expr.slice(1).every(e => evaluate(e, ctx));
     case '||':
     case 'or':
-      return expr.slice(1).some(e => evaluate(e, data));
+      return expr.slice(1).some(e => evaluate(e, ctx));
     case '!':
     case 'not':
-      return !evaluate(expr[1], data);
+      return !evaluate(expr[1], ctx);
     case 'type': {
-      const res = evaluate(expr[1], data);
+      const res = evaluate(expr[1], ctx);
       if (res === null) return 'null';
       if (res instanceof Array) return 'array';
       return typeof res;
     }
     case 'defined': {
-      const pointer = evaluate(expr[1], data);
-      const value = findByPointer(String(pointer), data).val;
+      const pointer = evaluate(expr[1], ctx);
+      const value = findByPointer(String(pointer), ctx.data).val;
       return value !== undefined;
     }
-    case 'bool': return !!evaluate(expr[1], data);
-    case 'num': return toNumber(evaluate(expr[1], data));
-    case 'int': return ~~evaluate(expr[1], data);
-    case 'str': return toString(evaluate(expr[1], data));
+    case 'bool': return !!evaluate(expr[1], ctx);
+    case 'num': return toNumber(evaluate(expr[1], ctx));
+    case 'int': return ~~evaluate(expr[1], ctx);
+    case 'str': return toString(evaluate(expr[1], ctx));
     case 'starts': {
-      const inner = evaluate(expr[1], data);
-      const outer = evaluate(expr[2], data);
+      const inner = evaluate(expr[1], ctx);
+      const outer = evaluate(expr[2], ctx);
       return toString(outer).indexOf(toString(inner)) === 0;
     }
     case 'contains': {
-      const inner = evaluate(expr[1], data);
-      const outer = evaluate(expr[2], data);
+      const inner = evaluate(expr[1], ctx);
+      const outer = evaluate(expr[2], ctx);
       return toString(outer).indexOf(toString(inner)) > -1;
     }
     case 'ends': {
-      const inner = toString(evaluate(expr[1], data));
-      const outer = toString(evaluate(expr[2], data));
+      const inner = toString(evaluate(expr[1], ctx));
+      const outer = toString(evaluate(expr[2], ctx));
       return outer.indexOf(inner) === (outer.length - inner.length);
     }
     case '<': {
-      const left = toNumber(evaluate(expr[1], data));
-      const right = toNumber(evaluate(expr[2], data));
+      const left = toNumber(evaluate(expr[1], ctx));
+      const right = toNumber(evaluate(expr[2], ctx));
       return left < right;
     }
     case '<=': {
-      const left = toNumber(evaluate(expr[1], data));
-      const right = toNumber(evaluate(expr[2], data));
+      const left = toNumber(evaluate(expr[1], ctx));
+      const right = toNumber(evaluate(expr[2], ctx));
       return left <= right;
     }
     case '>': {
-      const left = toNumber(evaluate(expr[1], data));
-      const right = toNumber(evaluate(expr[2], data));
+      const left = toNumber(evaluate(expr[1], ctx));
+      const right = toNumber(evaluate(expr[2], ctx));
       return left > right;
     }
     case '>=': {
-      const left = toNumber(evaluate(expr[1], data));
-      const right = toNumber(evaluate(expr[2], data));
+      const left = toNumber(evaluate(expr[1], ctx));
+      const right = toNumber(evaluate(expr[2], ctx));
       return left >= right;
     }
   }
