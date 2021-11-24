@@ -202,3 +202,32 @@ describe('>=', () => {
     check(['>=', 0, 1], false);
   });
 });
+
+describe('scenarios', () => {
+  test('can filter messages', () => {
+    const data = {
+      chan: 'slides-123',
+      data: {
+        type: 'cursor-move',
+        username: 'uk/hardy',
+        pos: [309, 123],
+      },
+    };
+
+    const expression1: Expr = ['and',
+      ['==', ['get', '/chan'], 'slides-123'],
+      ['==', ['get', '/data/type'], 'cursor-move'],
+      ['>', ['=', '/data/pos/0'], 300],
+      ['starts', 'uk/', ['=', '/data/username']],
+    ];
+    check(expression1, true, data);
+
+    const expression2: Expr = ['and',
+      ['==', ['get', '/chan'], 'slides-123'],
+      ['==', ['get', '/data/type'], 'cursor-move'],
+      ['>', ['=', '/data/pos/1'], 555],
+      ['starts', 'uk/', ['=', '/data/username']],
+    ];
+    check(expression2, false, data);
+  });
+});

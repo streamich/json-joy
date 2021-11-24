@@ -23,8 +23,8 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
     }
     case '==':
     case 'eq': {
-      const left = toNumber(evaluate(expr[1], data));
-      const right = toNumber(evaluate(expr[2], data));
+      const left = evaluate(expr[1], data);
+      const right = evaluate(expr[2], data);
       return deepEqual(left, right);
     }
     case '&&':

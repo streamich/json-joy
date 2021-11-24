@@ -16,7 +16,7 @@ export type ExprContains = [fn: 'contains', inner: unknown, outer: unknown];
 export type ExprEnds = [fn: 'ends', inner: unknown, outer: unknown];
 export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
-export type ExprIn = [fn: 'in', list: unknown[], expression: unknown];
+// export type ExprIn = [fn: 'in', list: unknown[], expression: unknown];
 export type ExprMatches = [fn: 'matches', pattern: string, expression: unknown];
 
 export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
@@ -38,7 +38,7 @@ export type Expr =
   | ExprContains
   | ExprEnds
   | ExprDefined
-  | ExprIn
+  // | ExprIn
   | ExprMatches
   | ExprLessThan
   | ExprLessThanOrEqual
