@@ -9,16 +9,14 @@ test('can generate a type', () => {
       t.Field('zip', t.String()),
     ],
   });
-  const userType = t.Object({
-    fields: [
-      t.Field('id', t.Number({isInteger: true})),
-      t.Field('alwaysOne', t.Number({const: 1})),
-      t.Field('name', t.String()),
-      t.Field('address', address),
-      t.Field('timeCreated', t.Number()),
-      t.Field('tags', t.Array([t.Number(), t.String()])),
-    ],
-  });
+  const userType = t.Object([
+    t.Field('id', t.Number({format: 'i'})),
+    t.Field('alwaysOne', t.Number({const: 1})),
+    t.Field('name', t.String()),
+    t.Field('address', address),
+    t.Field('timeCreated', t.Number()),
+    t.Field('tags', t.Array(t.Or(t.Number(), t.String()))),
+  ]);
 
   expect(userType).toMatchObject({
     "__t": "obj",
@@ -27,7 +25,7 @@ test('can generate a type', () => {
         "key": "id",
         "type": {
           "__t": "num",
-          "isInteger": true
+          "format": "i",
         }
       },
       {
@@ -75,14 +73,17 @@ test('can generate a type', () => {
         "key": "tags",
         "type": {
           "__t": "arr",
-          "type": [
-            {
-              "__t": "num"
-            },
-            {
-              "__t": "str"
-            }
-          ]
+          "type": {
+            "__t": "or",
+            "types": [
+              {
+                "__t": "num"
+              },
+              {
+                "__t": "str"
+              }
+            ]
+          }
         }
       }
     ]
