@@ -1,10 +1,12 @@
-import { findByPointer } from "../json-pointer";
+import {findByPointer} from "../json-pointer";
 import {Expr} from "./types";
 
 const toString = (value: unknown): string => {
   if (typeof value === 'string') return value;
   return JSON.stringify(value);
 };
+
+const toNumber = (value: unknown): number => +(value as number) || 0;
 
 export const evaluate = (expr: Expr | unknown, data: unknown): any => {
   if (!(expr instanceof Array)) return expr;
@@ -32,7 +34,7 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
       return typeof res;
     }
     case 'bool': return !!evaluate(expr[1], data);
-    case 'num': return +evaluate(expr[1], data) || 0;
+    case 'num': return toNumber(evaluate(expr[1], data));
     case 'int': return ~~evaluate(expr[1], data);
     case 'str': return toString(evaluate(expr[1], data));
     case 'starts': {
@@ -49,6 +51,26 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
       const inner = toString(evaluate(expr[1], data));
       const outer = toString(evaluate(expr[2], data));
       return outer.indexOf(inner) === (outer.length - inner.length);
+    }
+    case '<': {
+      const left = toNumber(evaluate(expr[1], data));
+      const right = toNumber(evaluate(expr[2], data));
+      return left < right;
+    }
+    case '<=': {
+      const left = toNumber(evaluate(expr[1], data));
+      const right = toNumber(evaluate(expr[2], data));
+      return left <= right;
+    }
+    case '>': {
+      const left = toNumber(evaluate(expr[1], data));
+      const right = toNumber(evaluate(expr[2], data));
+      return left > right;
+    }
+    case '>=': {
+      const left = toNumber(evaluate(expr[1], data));
+      const right = toNumber(evaluate(expr[2], data));
+      return left >= right;
     }
   }
 

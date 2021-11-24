@@ -163,3 +163,34 @@ describe('ends', () => {
     check(['ends', '78', '123456789'], false, data);
   });
 });
+
+describe('<', () => {
+  test('works', () => {
+    check(['<', 1, 2], true);
+    check(['<', 1, 1.1], true);
+    check(['<', 1, 1], false);
+  });
+});
+
+describe('<=', () => {
+  test('works', () => {
+    check(['<=', 1, 2], true);
+    check(['<=', 1, 1], true);
+    check(['<=', 1, 0], false);
+  });
+});
+
+describe('>', () => {
+  test('works', () => {
+    check(['>', 2, 1], true);
+    check(['>', 1, 1], false);
+  });
+});
+
+describe('>=', () => {
+  test('works', () => {
+    check(['>=', 2, 1], true);
+    check(['>=', 1, 1], true);
+    check(['>=', 0, 1], false);
+  });
+});
