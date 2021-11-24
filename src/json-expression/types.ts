@@ -1,4 +1,5 @@
-export type ExprGet = [fn: '=' | 'get', path: string];
+export type ExprGet = [fn: '=' | 'get', path: unknown];
+export type ExprEqual = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
 
 export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
 export type ExprOr = [fn: '||' | 'or', ...expressions: unknown[]];
@@ -13,7 +14,7 @@ export type ExprStr = [fn: 'str', expression: unknown];
 export type ExprStarts = [fn: 'starts', inner: unknown, outer: unknown];
 export type ExprContains = [fn: 'contains', inner: unknown, outer: unknown];
 export type ExprEnds = [fn: 'ends', inner: unknown, outer: unknown];
-export type ExprDefined = [fn: 'defined', expression: unknown];
+export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
 export type ExprIn = [fn: 'in', list: unknown[], expression: unknown];
 export type ExprMatches = [fn: 'matches', pattern: string, expression: unknown];

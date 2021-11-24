@@ -1,3 +1,4 @@
+import {deepEqual} from "../json-equal/deepEqual";
 import {findByPointer} from "../json-pointer";
 import {Expr} from "./types";
 
@@ -16,8 +17,16 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
 
   switch (fn) {
     case '=':
-    case 'get':
-      return findByPointer(String(expr[1]), data).val;
+    case 'get': {
+      const value = evaluate(expr[1], data);
+      return findByPointer(String(value), data).val;
+    }
+    case '==':
+    case 'eq': {
+      const left = toNumber(evaluate(expr[1], data));
+      const right = toNumber(evaluate(expr[2], data));
+      return deepEqual(left, right);
+    }
     case '&&':
     case 'and':
       return expr.slice(1).every(e => evaluate(e, data));
@@ -32,6 +41,11 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
       if (res === null) return 'null';
       if (res instanceof Array) return 'array';
       return typeof res;
+    }
+    case 'defined': {
+      const pointer = evaluate(expr[1], data);
+      const value = findByPointer(String(pointer), data).val;
+      return value !== undefined;
     }
     case 'bool': return !!evaluate(expr[1], data);
     case 'num': return toNumber(evaluate(expr[1], data));

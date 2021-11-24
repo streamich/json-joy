@@ -108,6 +108,14 @@ describe('type', () => {
   });
 });
 
+describe('defined', () => {
+  test('works', () => {
+    const data = {foo: 'bar'};
+    check(['defined', '/foo'], true, data);
+    check(['defined', '/foo2'], false, data);
+  });
+});
+
 describe('bool', () => {
   test('converts value to boolean', () => {
     check(['bool', null], false);
