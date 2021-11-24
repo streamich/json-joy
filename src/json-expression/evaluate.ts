@@ -13,7 +13,9 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
   const fn = expr[0];
 
   switch (fn) {
-    case '=': return findByPointer(String(expr[1]), data).val;
+    case '=':
+    case 'get':
+      return findByPointer(String(expr[1]), data).val;
     case '&&':
     case 'and':
       return expr.slice(1).every(e => evaluate(e, data));
@@ -37,6 +39,16 @@ export const evaluate = (expr: Expr | unknown, data: unknown): any => {
       const inner = evaluate(expr[1], data);
       const outer = evaluate(expr[2], data);
       return toString(outer).indexOf(toString(inner)) === 0;
+    }
+    case 'contains': {
+      const inner = evaluate(expr[1], data);
+      const outer = evaluate(expr[2], data);
+      return toString(outer).indexOf(toString(inner)) > -1;
+    }
+    case 'ends': {
+      const inner = toString(evaluate(expr[1], data));
+      const outer = toString(evaluate(expr[2], data));
+      return outer.indexOf(inner) === (outer.length - inner.length);
     }
   }
 

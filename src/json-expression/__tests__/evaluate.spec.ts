@@ -6,7 +6,7 @@ const check = (expression: Expr, expected: unknown, data: unknown = null) => {
   expect(res).toStrictEqual(expected);
 };
 
-describe('=', () => {
+describe('get', () => {
   test('can pick from data', () => {
     const data = {
       a: {
@@ -16,6 +16,19 @@ describe('=', () => {
       },
     };
     const expression = ['=', '/a/b/c'];
+    const res = evaluate(expression, data);
+    expect(res).toBe(1);
+  });
+
+  test('can pick from data with "get" expression', () => {
+    const data = {
+      a: {
+        b: {
+          c: 1,
+        },
+      },
+    };
+    const expression = ['get', '/a/b/c'];
     const res = evaluate(expression, data);
     expect(res).toBe(1);
   });
@@ -129,5 +142,24 @@ describe('starts', () => {
     check(['starts', ['=', '/b'], ['=', '/b']], true, data);
     check(['starts', ['=', '/b'], 'gg'], false, data);
     check(['starts', ['=', '/a'], ['=', '/b']], false, data);
+  });
+});
+
+describe('contains', () => {
+  test('returns true when string contains another string', () => {
+    const data = {a: 'asdf', b: 'as'};
+    check(['contains', '456', '123456789'], true, data);
+    check(['contains', '1', '123456789'], true, data);
+    check(['contains', '9', '123456789'], true, data);
+    check(['contains', 'df', '123456789'], false, data);
+  });
+});
+
+describe('ends', () => {
+  test('returns true when string ends with give sub-string', () => {
+    const data = {a: 'asdf', b: 'as'};
+    check(['ends', '789', '123456789'], true, data);
+    check(['ends', '9', '123456789'], true, data);
+    check(['ends', '78', '123456789'], false, data);
   });
 });
