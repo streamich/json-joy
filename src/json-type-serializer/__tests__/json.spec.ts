@@ -142,7 +142,7 @@ describe('general', () => {
             t.Field('.!@#', t.str),
           ],
         }))),
-        // t.Field('bin', t.bin),
+        t.Field('bin', t.bin),
       ],
     });
     const json = {
@@ -151,9 +151,29 @@ describe('general', () => {
       c: null,
       d: true,
       arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
-      // bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+      bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
     };
 
-    exec(type, json);
+    exec(type, json, {
+      a: 1.1,
+      b: 'sdf',
+      c: null,
+      d: true,
+      arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
+      bin: 'data:application/octet-stream;base64,AQIDBAUGBwgJCg==',
+    });
+  });
+
+  test('can encode binary', () => {
+    const type = t.Object([
+      t.Field('bin', t.bin),
+    ]);
+    const json = {
+      bin: new Uint8Array([1, 2, 3]),
+    };
+
+    exec(type, json, {
+      bin: 'data:application/octet-stream;base64,AQID',
+    });
   });
 });

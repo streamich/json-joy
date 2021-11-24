@@ -4,6 +4,7 @@ import {Codegen, CodegenStepExecJs} from '../util/codegen';
 import {JsExpression} from '../util/codegen/util/JsExpression';
 import {asString} from '../util/asString';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
+import {encode} from '../util/base64/encode';
 
 export type JsonEncoderFn = <T>(value: T) => json_string<T>;
 
@@ -60,6 +61,12 @@ export class JsonSerializerCodegen {
     });
     this.codegen.linkDependency(asString, 'asString');
     this.codegen.linkDependency(JSON.stringify, 'stringify');
+  }
+
+  protected base64Linked = false;
+  protected linkBase64() {
+    if (this.base64Linked) return;
+    this.codegen.linkDependency(encode, 'toBase64');
   }
 
   protected js(js: string) {
@@ -167,7 +174,10 @@ export class JsonSerializerCodegen {
   }
 
   public onBinary(value: JsExpression) {
-    this.js(/* js */ `js += '"<BINARY>"';`);
+    this.linkBase64();
+    this.writeText('"data:application/octet-stream;base64,');
+    this.js(/* js */ `s += toBase64(${value.use()});`);
+    this.writeText('"');
   }
 
   public onRef(ref: TRef, value: JsExpression): void {
