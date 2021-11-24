@@ -29,8 +29,9 @@ export class JsonSerializerCodegen {
       ref: (id: string) => undefined,
       ...opts,
     };
+    const typeNamePart = this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id) ? (this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)) : '';
     this.codegen = new Codegen<EncoderFn>({
-      name: 'toJson' + (this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id) ? (this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)) : ''),
+      name: 'toJson' + (typeNamePart),
       prologue: `var s = '';`,
       epilogue: `return s;`,
       processSteps: (steps) => {
