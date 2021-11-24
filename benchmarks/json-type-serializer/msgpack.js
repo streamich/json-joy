@@ -4,31 +4,26 @@ const MsgPackSerializerCodegen = require('../../es2020/json-type-serializer').Ms
 const JsonSerializerCodegen = require('../../es2020/json-type-serializer').JsonSerializerCodegen;
 const t = require('../../es2020/json-type').t;
 
-const type = t.Object({
-  fields: [
-    t.Field('collection', t.Object({
-      fields: [
-        t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('ts', t.num),
-        t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('prid', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('name', t.str, {isOptional: true}),
-        t.Field('src', t.str, {isOptional: true}),
-        t.Field('doc', t.str, {isOptional: true}),
-        t.Field('authz', t.str, {isOptional: true}),
-      ],
-    })),
-    t.Field('block', t.Object({
-      fields: [
-        t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('ts', t.num),
-        t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
-        t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
-      ],
-    })),
-  ],
-});
+const type = t.Object([
+  t.Field('collection', t.Object([
+    t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('ts', t.num),
+    t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('prid', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('name', t.str, {isOptional: true}),
+    t.Field('src', t.str, {isOptional: true}),
+    t.Field('doc', t.str, {isOptional: true}),
+    t.Field('authz', t.str, {isOptional: true}),
+    t.Field('active', t.bool),
+  ])),
+  t.Field('block', t.Object([
+    t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('ts', t.num),
+    t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
+    t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
+  ])),
+]);
 
 const json = {
   collection: {
@@ -40,6 +35,7 @@ const json = {
     name: 'Super collection',
     src: '{"foo": "bar"}',
     authz: 'export const (ctx) => ctx.userId === "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";',
+    active: true,
   },
   block: {
     id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
