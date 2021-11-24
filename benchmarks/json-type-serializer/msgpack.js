@@ -1,17 +1,18 @@
 const Benchmark = require('benchmark');
 const encoder = require('../../es2020/json-pack/util').encoder;
 const MsgPackSerializerCodegen = require('../../es2020/json-type-serializer').MsgPackSerializerCodegen;
+const JsonSerializerCodegen = require('../../es2020/json-type-serializer').JsonSerializerCodegen;
 const t = require('../../es2020/json-type').t;
 
 const type = t.Object({
   fields: [
     t.Field('collection', t.Object({
       fields: [
-        t.Field('id', t.String({format: 'ascii'})),
+        t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
         t.Field('ts', t.num),
-        t.Field('cid', t.String({format: 'ascii'})),
-        t.Field('prid', t.String({format: 'ascii'})),
-        t.Field('slug', t.String({format: 'ascii'})),
+        t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
+        t.Field('prid', t.String({format: 'ascii', noJsonEscape: true})),
+        t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
         t.Field('name', t.str, {isOptional: true}),
         t.Field('src', t.str, {isOptional: true}),
         t.Field('doc', t.str, {isOptional: true}),
@@ -20,10 +21,10 @@ const type = t.Object({
     })),
     t.Field('block', t.Object({
       fields: [
-        t.Field('id', t.String({format: 'ascii'})),
+        t.Field('id', t.String({format: 'ascii', noJsonEscape: true})),
         t.Field('ts', t.num),
-        t.Field('cid', t.String({format: 'ascii'})),
-        t.Field('slug', t.String({format: 'ascii'})),
+        t.Field('cid', t.String({format: 'ascii', noJsonEscape: true})),
+        t.Field('slug', t.String({format: 'ascii', noJsonEscape: true})),
       ],
     })),
   ],
@@ -48,16 +49,20 @@ const json = {
   },
 };
 
-const plan = new MsgPackSerializerCodegen();
-plan.createPlan(type);
-const js = plan.codegen();
-const fn = eval(js)(encoder);
+const msgPackCodegen = new MsgPackSerializerCodegen({encoder});
+const serializeMsgpack = msgPackCodegen.compile(type);
+
+const jsonCodegen = new JsonSerializerCodegen({type});
+const serializeJson = jsonCodegen.run().compile();
 
 const suite = new Benchmark.Suite;
 
 suite
-  .add(`json-joy/json-type-serializer`, function() {
-    fn(json);
+  .add(`json-joy/json-type-serializer MsgPackSerializerCodegen`, function() {
+    serializeMsgpack(json);
+  })
+  .add(`json-joy/json-type-serializer JsonSerializerCodegen`, function() {
+    serializeJson(json);
   })
   .add(`json-joy/json-pack`, function() {
     encoder.encode(json);

@@ -81,6 +81,10 @@ export class JsonSerializerCodegen {
       this.writeText(JSON.stringify(str.const));
       return;
     }
+    if (str.noJsonEscape) {
+      this.js(/* js */ `s += ${value.use()};`);
+      return;
+    }
     this.js(/* js */ `s += asString(${value.use()});`);
   }
 
