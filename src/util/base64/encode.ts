@@ -1,3 +1,6 @@
+const E = '=';
+const EE = '==';
+
 export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/') => {
   if (chars.length !== 64)
     throw new Error('chars must be 64 characters long');
@@ -6,24 +9,33 @@ export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 
   return (source: Uint8Array): string => {
     let out = ''
-    let tmp;
 
     const length = source.byteLength;
     const extraLength = length % 3;
     const baseLength = length - extraLength;
 
     for (let i = 0; i < baseLength; i += 3) {
-      tmp = (source[i] & 0xFF) << 16 | (source[i + 1] & 0xFF) << 8 | (source[i + 2] & 0xFF);
-      out += (table[tmp >> 18 & 0x3F] + table[tmp >> 12 & 0x3F] + table[tmp >> 6 & 0x3F] + table[tmp & 0x3F]);
+      const o1 = source[i];
+      const o2 = source[i + 1];
+      const o3 = source[i + 2];
+      const v1 = o1 >> 2;
+      const v2 = ((o1 & 0b11) << 4) | (o2 >> 4);
+      const v3 = ((o2 & 0b1111) << 2) | (o3 >> 6);
+      const v4 = o3 & 0b111111;
+      out += table[v1] + table[v2] + table[v3] + table[v4];
     }
 
     if (extraLength) {
       if (extraLength === 1) {
-        tmp = (source[baseLength] & 0xFF);
-        out += table[tmp >> 2] + table[tmp << 4 & 0x3F] + '==';
+        const o1 = source[baseLength] & 0xFF;
+        out += table[o1 >> 2] + table[(o1 & 0b11) << 4] + EE;
       } else {
-        tmp = (source[baseLength] & 0xFF) << 8 | (source[baseLength + 1] & 0xFF);
-        out += table[tmp >> 10] + table[tmp >> 4 & 0x3F] + table[tmp << 2 & 0x3F] + '=';
+        const o1 = source[baseLength];
+        const o2 = source[baseLength + 1];
+        const v1 = o1 >> 2;
+        const v2 = ((o1 & 0b11) << 4) | (o2 >> 4);
+        const v3 = ((o2 & 0b1111) << 2);
+        out += table[v1] + table[v2] + table[v3] + E;
       }
     }
 
