@@ -5,7 +5,7 @@ import {JsExpression} from '../util/codegen/util/JsExpression';
 import {asString} from '../util/asString';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 
-export type EncoderFn = <T>(value: T) => json_string<T>;
+export type JsonEncoderFn = <T>(value: T) => json_string<T>;
 
 class WriteTextStep {
   constructor(public str: string) {}
@@ -23,7 +23,7 @@ export class JsonSerializerCodegen {
   protected options: Required<JsonSerializerCodegenOptions>;
 
   /** @ignore */
-  protected codegen: Codegen<EncoderFn>;
+  protected codegen: Codegen<JsonEncoderFn>;
 
   constructor(opts: JsonSerializerCodegenOptions) {
     this.options = {
@@ -31,7 +31,7 @@ export class JsonSerializerCodegen {
       ...opts,
     };
     const typeNamePart = this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id) ? (this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)) : '';
-    this.codegen = new Codegen<EncoderFn>({
+    this.codegen = new Codegen<JsonEncoderFn>({
       name: 'toJson' + (typeNamePart),
       prologue: `var s = '';`,
       epilogue: `return s;`,
