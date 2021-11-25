@@ -75,6 +75,38 @@ describe('and', () => {
   });
 });
 
+describe('eq', () => {
+  test('equals return true', () => {
+    const data = {
+      true: true,
+      false: false,
+      one: 1,
+      zero: 0,
+    };
+    check(['eq', ['=', '/true'], true], true, data);
+    check(['eq', {foo: 'bar'}, {foo: 'bar'}], true, data);
+    check(['==', {foo: 'bar'}, {foo: 'bar'}], true, data);
+    check(['eq', {foo: 'bar'}, {foo: 'baz'}], false, data);
+    check(['==', {foo: 'bar'}, {foo: 'baz'}], false, data);
+  });
+});
+
+describe('ne', () => {
+  test('equals return true', () => {
+    const data = {
+      true: true,
+      false: false,
+      one: 1,
+      zero: 0,
+    };
+    check(['ne', ['=', '/true'], true], false, data);
+    check(['ne', {foo: 'bar'}, {foo: 'bar'}], false, data);
+    check(['!=', {foo: 'bar'}, {foo: 'bar'}], false, data);
+    check(['ne', {foo: 'bar'}, {foo: 'baz'}], true, data);
+    check(['!=', {foo: 'bar'}, {foo: 'baz'}], true, data);
+  });
+});
+
 describe('or', () => {
   test('works in base case', () => {
     check(['||', true, true], true, null);
