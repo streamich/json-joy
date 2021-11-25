@@ -1,6 +1,6 @@
 import {deepEqual} from "../json-equal/deepEqual";
 import {findByPointer} from "../json-pointer";
-import {Expr} from "./types";
+import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
 
 const toString = (value: unknown): string => {
   if (typeof value === 'string') return value;
@@ -9,12 +9,7 @@ const toString = (value: unknown): string => {
 
 const toNumber = (value: unknown): number => +(value as number) || 0;
 
-export interface JsonExpressionContext {
-  data: unknown;
-  createPattern?: (pattern: string) => (value: string) => boolean;
-}
-
-export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any => {
+export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext): any => {
   if (!(expr instanceof Array)) return expr;
   if (expr.length === 1 && expr[0] instanceof Array) return expr[0];
 

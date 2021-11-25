@@ -35,6 +35,8 @@ export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
 export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
 export type ExprMod = [fn: '%', expr1: unknown, expr2: unknown];
 
+// export type ExprJsonParse = [fn: 'json.parse', expr: unknown];
+
 export type Expr =
   | ExprGet
   | ExprEquals
@@ -68,3 +70,11 @@ export type Expr =
   | ExprSlash
   | ExprMod
   ;
+
+export interface JsonExpressionExecutionContext {
+  data: unknown;
+}
+
+export interface JsonExpressionCodegenContext {
+  createPattern?: (pattern: string) => (value: string) => boolean;
+}
