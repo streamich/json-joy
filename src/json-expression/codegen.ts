@@ -1,4 +1,4 @@
-import type {Expr, ExprEquals, ExprGet, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprEquals, ExprGet, ExprNotEquals, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
@@ -106,6 +106,12 @@ export class JsonExpressionCodegen {
     return new Expression(`deepEqual(${this.onExpression(a as Expr)}, ${this.onExpression(b as Expr)})`);
   }
 
+  protected onNotEquals([, a, b]: ExprNotEquals): ExpressionResult {
+    const res = this.onEquals(['eq', a, b]);
+    if (res instanceof Literal) return new Literal(!res.val);
+    return new Expression(`!(${res})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -120,6 +126,8 @@ export class JsonExpressionCodegen {
       case 'get': return this.onGet(expr as ExprGet);
       case '==':
       case 'eq': return this.onEquals(expr as ExprEquals);
+      case '!=':
+      case 'ne': return this.onNotEquals(expr as ExprNotEquals);
     }
     return new Literal(false);;
   }

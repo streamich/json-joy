@@ -41,4 +41,27 @@ describe('eq', () => {
     check(['eq', 'bar', ['eq', 1, 1]], false);
     check(['eq', true, ['eq', 1, 1]], true);
   });
+
+  test('together with get', () => {
+    check(['eq', 3, ['=', '/foo']], true, {foo: 3});
+  });
+});
+
+describe('ne', () => {
+  test('on two literals', () => {
+    check(['!=', 1, 2], true);
+    check(['!=', {foo: 'bar'}, {foo: 'bar'}], false);
+    check(['!=', {foo: 'bar'}, {foo: 'baz'}], true);
+    check(['!=', [[]], [[]]], false);
+  });
+
+  test('literal and expression', () => {
+    check(['ne', 3, ['=', '/foo']], true);
+    check(['ne', 'bar', ['eq', 1, 1]], true);
+    check(['!=', true, ['eq', 1, 1]], false);
+  });
+
+  test('together with get', () => {
+    check(['ne', 3, ['=', '/foo']], false, {foo: 3});
+  });
 });
