@@ -86,6 +86,12 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
     case '.': {
       return expr.slice(1).map(e => evaluate(e, ctx)).join('');
     }
+    case 'substr': {
+      const str = toString(evaluate(expr[1], ctx));
+      const start = toNumber(evaluate(expr[2], ctx));
+      const end = expr.length > 3 ? toNumber(evaluate(expr[3], ctx)) : undefined;
+      return str.substr(start, end);
+    }
     case '<': {
       const left = toNumber(evaluate(expr[1], ctx));
       const right = toNumber(evaluate(expr[2], ctx));

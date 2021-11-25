@@ -228,6 +228,12 @@ describe('cat', () => {
   });
 });
 
+describe('substr', () => {
+  test('works', () => {
+    check(['substr', '12345', 1, 2], '23');
+  });
+});
+
 describe('<', () => {
   test('works', () => {
     check(['<', 1, 2], true);
