@@ -72,7 +72,7 @@ export interface CodegenOptions {
  * Where `d*` are the external dependencies, `c*` are the internal constants,
  * and `r*` are the local immutable infinite registers.
  */
-export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unknown[]) => unknown> {
+export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown> {
   /** @ignore */
   protected steps: JsonSerializerStep[] = [];
 
@@ -171,7 +171,7 @@ export class Codegen<Fn extends (...deps: unknown[]) => unknown = (...deps: unkn
    * @returns Returns the constant name, a code symbol which can be used as
    *          variable name.
    */
-  protected addConstant(constant: string, name: string = 'c' + this.constants.length): string {
+  public addConstant(constant: string, name: string = 'c' + this.constants.length): string {
     this.constants.push(constant);
     this.constantNames.push(name);
     return name;
