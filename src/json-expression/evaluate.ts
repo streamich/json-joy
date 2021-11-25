@@ -102,6 +102,12 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
       const right = toNumber(evaluate(expr[2], ctx));
       return left >= right;
     }
+    case 'min': {
+      return Math.min(...expr.slice(1).map(e => toNumber(evaluate(e, ctx))));
+    }
+    case 'max': {
+      return Math.max(...expr.slice(1).map(e => toNumber(evaluate(e, ctx))));
+    }
   }
 
   throw new Error('Unknown expression.');

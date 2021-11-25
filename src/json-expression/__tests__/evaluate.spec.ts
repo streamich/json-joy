@@ -251,6 +251,20 @@ describe('>=', () => {
   });
 });
 
+describe('min', () => {
+  test('works', () => {
+    check(['min', 2, 1], 1);
+    check(['min', '2', 1], 1);
+  });
+});
+
+describe('max', () => {
+  test('works', () => {
+    check(['max', 2, 1], 2);
+    check(['max', '2', 1], 2);
+  });
+});
+
 describe('scenarios', () => {
   test('can filter messages', () => {
     const data = {

@@ -25,6 +25,8 @@ export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
 export type ExprLessThanOrEqual = [fn: '<=', expr1: unknown, expr2: unknown];
 export type ExprGreaterThan = [fn: '>', expr1: unknown, expr2: unknown];
 export type ExprGreaterThanOrEqual = [fn: '>=', expr1: unknown, expr2: unknown];
+export type ExprMin = [fn: 'min', ...expressions: unknown[]];
+export type ExprMax = [fn: 'max', ...expressions: unknown[]];
 
 export type Expr =
   | ExprGet
@@ -48,4 +50,7 @@ export type Expr =
   | ExprLessThan
   | ExprLessThanOrEqual
   | ExprGreaterThan
-  | ExprGreaterThanOrEqual;
+  | ExprGreaterThanOrEqual
+  | ExprMin
+  | ExprMax
+  ;
