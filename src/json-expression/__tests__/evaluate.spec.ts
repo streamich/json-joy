@@ -107,6 +107,22 @@ describe('ne', () => {
   });
 });
 
+describe('if', () => {
+  test('works', () => {
+    const data = {
+      true: true,
+      false: false,
+      one: 1,
+      zero: 0,
+    };
+    check(['if', true, ['<-', '/one'], ['=', '/true']], 1, data);
+    check(['if', false, ['<-', '/one'], ['=', '/true']], true, data);
+    check(['?', true, '1', '2'], '1', data);
+    check(['?', 0, '1', '2'], '2', data);
+    check(['?', ['get', '/true'], '1', '2'], '1', data);
+  });
+});
+
 describe('or', () => {
   test('works in base case', () => {
     check(['||', true, true], true, null);

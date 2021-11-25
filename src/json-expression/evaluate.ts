@@ -39,6 +39,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
       const right = evaluate(expr[2], ctx);
       return !deepEqual(left, right);
     }
+    case '?':
+    case 'if': {
+      return evaluate(expr[1], ctx) ? evaluate(expr[2], ctx) : evaluate(expr[3], ctx);
+    }
     case '&&':
     case 'and':
       return expr.slice(1).every(e => evaluate(e, ctx));

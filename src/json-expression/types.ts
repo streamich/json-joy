@@ -2,6 +2,7 @@ export type ExprGet = [fn: '=' | 'get', path: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
 export type ExprNotEquals = [fn: '!=' | 'ne', expr1: unknown, expr2: unknown];
 
+export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, els: unknown];
 export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
 export type ExprOr = [fn: '||' | 'or', ...expressions: unknown[]];
 export type ExprNot = [fn: '!' | 'not', expression: unknown];
@@ -29,6 +30,7 @@ export type Expr =
   | ExprGet
   | ExprEquals
   | ExprNotEquals
+  | ExprIf
   | ExprAnd
   | ExprOr
   | ExprNot
