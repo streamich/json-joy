@@ -65,3 +65,22 @@ describe('ne', () => {
     check(['ne', 3, ['=', '/foo']], false, {foo: 3});
   });
 });
+
+describe('not', () => {
+  test('on two literals', () => {
+    check(['!', ['==', 1, 2]], true);
+    check(['!', ['==', {foo: 'bar'}, {foo: 'bar'}]], false);
+    check(['not', ['==', {foo: 'bar'}, {foo: 'baz'}]], true);
+    check(['not', ['==', [[]], [[]]]], false);
+  });
+
+  test('literal and expression', () => {
+    check(['!', ['eq', 3, ['=', '/foo']]], true);
+    check(['not', ['eq', 'bar', ['eq', 1, 1]]], true);
+    check(['not', ['eq', true, ['eq', 1, 1]]], false);
+  });
+
+  test('together with get', () => {
+    check(['!', ['eq', 3, ['=', '/foo']]], false, {foo: 3});
+  });
+});
