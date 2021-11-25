@@ -82,6 +82,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
       const outer = toString(evaluate(expr[2], ctx));
       return outer.indexOf(inner) === (outer.length - inner.length);
     }
+    case 'cat':
+    case '.': {
+      return expr.slice(1).map(e => evaluate(e, ctx)).join('');
+    }
     case '<': {
       const left = toNumber(evaluate(expr[1], ctx));
       const right = toNumber(evaluate(expr[2], ctx));

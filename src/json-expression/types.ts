@@ -20,6 +20,7 @@ export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
 // export type ExprIn = [fn: 'in', list: unknown[], expression: unknown];
 export type ExprMatches = [fn: 'matches', pattern: string, expression: unknown];
+export type ExprCat = [fn: 'cat' | '.', ...expressions: unknown[]];
 
 export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
 export type ExprLessThanOrEqual = [fn: '<=', expr1: unknown, expr2: unknown];
@@ -52,6 +53,7 @@ export type Expr =
   | ExprDefined
   // | ExprIn
   | ExprMatches
+  | ExprCat
   | ExprLessThan
   | ExprLessThanOrEqual
   | ExprGreaterThan
