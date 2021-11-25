@@ -9,5 +9,6 @@
 export * from './types';
 export * from './util';
 export * from './validate';
+export * from './get';
 export * from './find';
 export * from './findByPointer';
