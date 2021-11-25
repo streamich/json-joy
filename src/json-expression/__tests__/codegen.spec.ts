@@ -12,6 +12,22 @@ const check = (expression: Expr, expected: unknown, data: unknown = null) => {
   expect(result).toStrictEqual(expected);
 };
 
+describe('get', () => {
+  test('can pick from object', () => {
+    check(['get', '/foo'], 'bar', {foo: 'bar'});
+    check(['=', '/foo'], 'bar', {foo: 'bar'});
+    check(['=', '/baz'], undefined, {foo: 'bar'});
+  });
+
+  test('can pick using expression', () => {
+    check(['get', ['get', '/pointer']], 'bar', {foo: 'bar', pointer: '/foo'});
+  });
+
+  test('can pick itself recursively', () => {
+    check(['=', ['=', '/pointer']], '/pointer', {foo: 'bar', pointer: '/pointer'});
+  });
+});
+
 describe('eq', () => {
   test('on two literals', () => {
     check(['==', 1, 2], false);

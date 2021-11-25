@@ -1,12 +1,18 @@
-import type {Expr, ExprEquals, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprEquals, ExprGet, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
+import {toPath, get as get_} from '../json-pointer';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
+import {$$find} from '../json-pointer/codegen/find';
+import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 // const isLiteral = (expr: unknown): boolean => !isExpression(expr);
 
+const get = (path: string, data: unknown) => get_(data, toPath(path));
+
 const linkable = {
+  get,
   deepEqual,
 };
 
@@ -51,6 +57,8 @@ export class JsonExpressionCodegen {
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
     this.codegen = new Codegen<JsonExpressionFn>({
+      arguments: 'ctx',
+      prologue: 'var data = ctx.data;',
       epilogue: '',
     });
   }
@@ -59,6 +67,20 @@ export class JsonExpressionCodegen {
     if (this.linked[name]) return;
     this.linked[name] = 1;
     this.codegen.linkDependency(linkable[name], name);
+  }
+
+  protected onGet(expr: ExprGet): ExpressionResult {
+    const path = this.onExpression(expr[1]);
+    if (path instanceof Literal) {
+      if (typeof path.val !== 'string') throw new Error('Invalid JSON pointer.');
+      validateJsonPointer(path.val);
+      const fn = $$find(parseJsonPointer(path.val));
+      const d = this.codegen.addConstant(fn);
+      return new Expression(`${d}(data)`);
+    } else {
+      this.link('get');
+      return new Expression(`get(${path}, data)`);
+    }
   }
 
   protected onEqualsLiteralLiteral(a: unknown, b: unknown): ExpressionResult {
@@ -84,9 +106,18 @@ export class JsonExpressionCodegen {
     return new Expression(`deepEqual(${this.onExpression(a as Expr)}, ${this.onExpression(b as Expr)})`);
   }
 
-  protected onExpression(expr: Expr): ExpressionResult {
+  protected onExpression(expr: Expr | unknown): ExpressionResult {
+    if (!isExpression(expr)) {
+      if (expr instanceof Array) {
+        if (expr.length !== 1 || !(expr[0] instanceof Array))
+          throw new Error('Expected array literal to be boxed as single array element.');
+        return new Literal(expr[0]);
+      } else return new Literal(expr);
+    }
     const type = expr[0];
     switch(type) {
+      case '=':
+      case 'get': return this.onGet(expr as ExprGet);
       case '==':
       case 'eq': return this.onEquals(expr as ExprEquals);
     }
