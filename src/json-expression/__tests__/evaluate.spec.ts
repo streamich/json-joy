@@ -99,11 +99,11 @@ describe('in', () => {
         foo: 'bar',
       },
     };
-    check(['in', ['application/octet-stream', 'application/json'], ['get', '/contentType']], true, data);
-    check(['in', ['application/json'], ['get', '/contentType']], true, data);
-    check(['in', ['application/octet-stream', 'application/json2'], ['get', '/contentType']], false, data);
-    check(['in', [{}], ['get', '/data']], false, data);
-    check(['in', [{foo: 'bar'}], ['get', '/data']], true, data);
+    check(['in', ['get', '/contentType'], [['application/octet-stream', 'application/json']]], true, data);
+    check(['in', ['get', '/contentType'], [['application/json']]], true, data);
+    check(['in', ['get', '/contentType'], [['application/octet-stream', 'application/json2']]], false, data);
+    check(['in', ['get', '/data'], [[{}]]], false, data);
+    check(['in', ['get', '/data'], [[{foo: 'bar'}]]], true, data);
   });
 });
 
@@ -356,5 +356,125 @@ describe('scenarios', () => {
       ['starts', 'uk/', ['=', '/data/username']],
     ];
     check(expression2, false, data);
+  });
+
+  describe('feature parity with AWS SNS filtering policies (https://docs.aws.amazon.com/sns/latest/dg/sns-subscription-filter-policies.html)', () => {
+    //   {
+    //     "store": ["example_corp"],
+    //     "event": [{"anything-but": "order_cancelled"}],
+    //     "customer_interests": [
+    //        "rugby",
+    //        "football",
+    //        "baseball"
+    //     ],
+    //     "price_usd": [{"numeric": [">=", 100]}]
+    //  }
+    test('can work as AWS sample filtering policy - 1', () => {
+      const data = {
+        store: 'example_corp',
+        event: 'order_created',
+        customer_interests: 'football',
+        price_usd: 105.95,
+      };
+
+      const expression1: Expr = ['and',
+        ['==', ['get', '/store'], 'example_corp'],
+        ['!', ['==', ['get', '/event'], 'order_cancelled']],
+        ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
+        ['>=', ['=', '/price_usd'], 100],
+      ];
+      check(expression1, true, data);
+
+      const expression2: Expr = ['and',
+        ['==', ['get', '/store'], 'some_other_example_corp'],
+        ['!', ['==', ['get', '/event'], 'order_cancelled']],
+        ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
+        ['>=', ['=', '/price_usd'], 100],
+      ];
+      check(expression2, false, data);
+    });
+
+    // "key_b": ["value_one"],
+    test('can match a single value', () => {
+      const data = {
+        key_b: 'value_one',
+      };
+      check(['==', ['get', '/key_b'], 'value_one'], true, data);
+      check(['==', ['get', '/key_b'], 'value_two'], false, data);
+    });
+
+    // "key_a": ["value_one", "value_two", "value_three"],
+    test('can match multiple values', () => {
+      const data = {
+        key_a: 'value_three',
+      };
+      check(['in', ['get', '/key_a'], [["value_one", "value_two", "value_three"]]], true, data);
+      check(['in', ['get', '/key_a'], [["value_one", "value_two", "value_four"]]], false, data);
+    });
+
+    // "price": {"Type": "Number.Array", "Value": "[100, 50]"}
+    test('can match value in array', () => {
+      const data = {
+        price: [100, 50],
+      };
+      check(['in', 100, ['=', '/price']], true, data);
+      check(['in', 50, ['=', '/price']], true, data);
+      check(['in', 1, ['=', '/price']], false, data);
+    });
+
+    // "customer_interests": [{"prefix": "bas"}]
+    test('can match by prefix', () => {
+      const data = {
+        customer_interests: 'baseball',
+      };
+      check(['starts', 'bas', ['get', '/customer_interests']], true, data);
+      check(['starts', 'rug', ['get', '/customer_interests']], false, data);
+    });
+
+    // "customer_interests": [{"anything-but": ["rugby", "tennis"]}]
+    test('anything but', () => {
+      const data = {
+        customer_interests: 'rugby',
+      };
+      check(['!', ['in', ['get', '/customer_interests'], [["rugby", "tennis"]]]], false, data);
+      check(['not', ['in', ['get', '/customer_interests'], [["football", "tennis"]]]], true, data);
+    });
+
+    // "event": [{"anything-but": {"prefix":"order-"}}]
+    test('anything but with prefix', () => {
+      const data = {
+        event: 'order-return',
+      };
+      check(['!', ['starts', 'order-', ['get', '/event']]], false, data);
+      check(['not', ['starts', 'log-', ['get', '/event']]], true, data);
+    });
+
+    // "source_ip": [{"cidr": "10.0.0.0/24"}]
+    xtest('IP address matching', () => {
+      // const data = {
+      //   source_ip: '10.0.0.255',
+      // };
+      // check(['cidr', '10.0.0.0/24', ['get', '/source_ip']], true, data);
+    });
+
+    // "price_usd": [{"numeric": [">", 0, "<=", 150]}]
+    xtest('between operator', () => {
+      // const data = {
+      //   price_usd: 100,
+      // };
+      // check(['><=', 0, 150, ['/price_usd']], true, data);
+    });
+
+    // "store": [{"exists": true}]
+    // "store": [{"exists": false}]
+    test('attribute key matching', () => {
+      const data = {
+        store: 'Halloween Inc',
+      };
+      check(['defined', '/store'], true, data);
+      check(['defined', '/foo'], false, data);
+      check(['!', ['defined', '/store']], false, data);
+      check(['!', ['defined', '/foo']], true, data);
+    });
   });
 });

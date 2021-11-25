@@ -34,8 +34,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
       return deepEqual(left, right);
     }
     case 'in': {
-      const what = evaluate(expr[2], ctx);
-      return expr[1].some((item: unknown) => deepEqual(item, what));
+      const v2 = evaluate(expr[2], ctx);
+      if (!(v2 instanceof Array) || !v2.length) return false;
+      const v1 = evaluate(expr[1], ctx);
+      return v2.some((item: unknown) => deepEqual(item, v1));
     }
     case '!=':
     case 'ne': {
