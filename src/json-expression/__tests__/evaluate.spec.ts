@@ -91,6 +91,22 @@ describe('eq', () => {
   });
 });
 
+describe('in', () => {
+  test('can deeply match one of multiple values', () => {
+    const data = {
+      contentType: 'application/json',
+      data: {
+        foo: 'bar',
+      },
+    };
+    check(['in', ['application/octet-stream', 'application/json'], ['get', '/contentType']], true, data);
+    check(['in', ['application/json'], ['get', '/contentType']], true, data);
+    check(['in', ['application/octet-stream', 'application/json2'], ['get', '/contentType']], false, data);
+    check(['in', [{}], ['get', '/data']], false, data);
+    check(['in', [{foo: 'bar'}], ['get', '/data']], true, data);
+  });
+});
+
 describe('ne', () => {
   test('equals return true', () => {
     const data = {
