@@ -108,6 +108,21 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionContext): any 
     case 'max': {
       return Math.max(...expr.slice(1).map(e => toNumber(evaluate(e, ctx))));
     }
+    case '+': {
+      return expr.slice(1).reduce((acc, e) => toNumber(evaluate(e, ctx)) + acc, 0);
+    }
+    case '-': {
+      return expr.slice(2).reduce((acc, e) => acc - toNumber(evaluate(e, ctx)), expr[1]);
+    }
+    case '*': {
+      return expr.slice(2).reduce((acc, e) => toNumber(evaluate(e, ctx)) * acc, expr[1]);
+    }
+    case '/': {
+      return evaluate(expr[1], ctx) / evaluate(expr[2], ctx);
+    }
+    case '%': {
+      return evaluate(expr[1], ctx) % evaluate(expr[2], ctx);
+    }
   }
 
   throw new Error('Unknown expression.');

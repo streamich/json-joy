@@ -265,6 +265,41 @@ describe('max', () => {
   });
 });
 
+describe('+', () => {
+  test('works', () => {
+    check(['+', 2, 1, 3], 6);
+    check(['+', 2, 1, 3.1], 6.1);
+  });
+});
+
+describe('-', () => {
+  test('works', () => {
+    check(['-', 2, 1], 1);
+    check(['-', 5, 1], 4);
+    check(['-', 5, 1, 3], 1);
+  });
+});
+
+describe('*', () => {
+  test('works', () => {
+    check(['*', 2, 1], 2);
+    check(['*', 1 * 2 * 3], 6);
+  });
+});
+
+describe('/', () => {
+  test('works', () => {
+    check(['/', 6, 2], 3);
+  });
+});
+
+describe('%', () => {
+  test('works', () => {
+    check(['%', 6, 2], 0);
+    check(['%', 6, 4], 2);
+  });
+});
+
 describe('scenarios', () => {
   test('can filter messages', () => {
     const data = {

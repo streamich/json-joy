@@ -27,6 +27,11 @@ export type ExprGreaterThan = [fn: '>', expr1: unknown, expr2: unknown];
 export type ExprGreaterThanOrEqual = [fn: '>=', expr1: unknown, expr2: unknown];
 export type ExprMin = [fn: 'min', ...expressions: unknown[]];
 export type ExprMax = [fn: 'max', ...expressions: unknown[]];
+export type ExprPlus = [fn: '+', ...expressions: unknown[]];
+export type ExprMinus = [fn: '-', ...expressions: unknown[]];
+export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
+export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
+export type ExprMod = [fn: '%', expr1: unknown, expr2: unknown];
 
 export type Expr =
   | ExprGet
@@ -53,4 +58,9 @@ export type Expr =
   | ExprGreaterThanOrEqual
   | ExprMin
   | ExprMax
+  | ExprPlus
+  | ExprMinus
+  | ExprAsterisk
+  | ExprSlash
+  | ExprMod
   ;
