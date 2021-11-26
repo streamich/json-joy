@@ -232,3 +232,26 @@ describe('num', () => {
     check(['num', ['get', '/foo']], 5, {foo: '5'});
   });
 });
+
+describe('int', () => {
+  test('when operand is literal', () => {
+    check(['int', 1], 1);
+    check(['int', 0], 0);
+    check(['int', 0.0], 0);
+    check(['int', ''], 0);
+    check(['int', '1'], 1);
+    check(['int', '1.1'], 1);
+    check(['int', '1.6'], 1);
+    check(['int', 'asdf'], 0);
+    check(['int', {}], 0);
+    check(['int', [[]]], 0);
+    check(['int', true], 1);
+    check(['int', false], 0);
+    check(['int', null], 0);
+  });
+
+  test('when operand is expression', () => {
+    check(['int', ['get', '/foo']], 1, {foo: 1});
+    check(['int', ['get', '/foo']], 5, {foo: '5'});
+  });
+});
