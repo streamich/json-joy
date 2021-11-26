@@ -1,3 +1,4 @@
+import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
 
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
@@ -25,4 +26,10 @@ export const ends = (outer: unknown, inner: unknown): boolean => {
   const o = str(outer);
   const i = str(inner);
   return o.indexOf(i) === (o.length - i.length);
+};
+
+export const isInContainer = (what: unknown, container: unknown[]): boolean => {
+  const length = container.length;
+  for (let i = 0; i < length; i++) if (deepEqual(container[i], what)) return true;
+  return false;
 };

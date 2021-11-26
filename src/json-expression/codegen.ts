@@ -1,12 +1,13 @@
-import type {Expr, ExprAnd, ExprBool, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts, contains, ends} from './util';
+import {get, str, type, starts, contains, ends, isInContainer} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
+const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
 // const isLiteral = (expr: unknown): boolean => !isExpression(expr);
 
 const linkable = {
@@ -17,6 +18,7 @@ const linkable = {
   starts,
   contains,
   ends,
+  isInContainer,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -225,6 +227,22 @@ export class JsonExpressionCodegen {
     return new Expression(`${d}(data) !== undefined`);
   }
 
+  protected onIn(expr: ExprIn): ExpressionResult {
+    if (expr.length > 3) throw new Error('"in" operator expects two operands.');
+    const [, a, b] = expr;
+    const container = this.onExpression(b);
+    const what = this.onExpression(a);
+    if (container instanceof Literal) {
+      if (!(container.val instanceof Array))
+        throw new Error('"in" operator expects second operand to be an array.');
+      if (what instanceof Literal) return new Literal(isInContainer(what.val, container.val));
+      if (container.val.length === 0) return new Literal(false);
+      if (container.val.length === 1) return this.onExpression(['==', a, toBoxed(container.val[0])]);
+    }
+    this.codegen.link('isInContainer');
+    return new Expression(`isInContainer(${what}, ${container})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -257,6 +275,7 @@ export class JsonExpressionCodegen {
       case 'contains': return this.onContains(expr as ExprContains);
       case 'ends': return this.onEnds(expr as ExprEnds);
       case 'defined': return this.onDefined(expr as ExprDefined);
+      case 'in': return this.onIn(expr as ExprIn);
     }
     return new Literal(false);;
   }

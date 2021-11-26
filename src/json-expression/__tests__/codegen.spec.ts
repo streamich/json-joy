@@ -344,3 +344,25 @@ describe('defined', () => {
     check(['defined', '/bar'], false, {foo: [0, 1]})
   });
 });
+
+describe('in', () => {
+  test('works with literals', () => {
+    check(['in', 'foo', [[]]], false, {foo: 'bar'});
+    check(['in', 'foo', [['a']]], false, {foo: 'bar'});
+    check(['in', 'foo', [['foo']]], true, {foo: 'bar'});
+    check(['in', 'foo', [['a', {b: 'b'}]]], false, {foo: 'bar'});
+    check(['in', {b: 'b'}, [['a', {b: 'b'}]]], true, {foo: 'bar'});
+  });
+
+  test('works with expressions', () => {
+    check(['in', ['=', '/foo'], [[]]], false, {foo: 'bar'});
+    check(['in', ['=', '/foo'], [['gg']]], false, {foo: 'bar'});
+    check(['in', ['=', '/foo'], [['gg', 'bar']]], true, {foo: 'bar'});
+    check(['in', ['=', '/foo'], [['bar']]], true, {foo: 'bar'});
+    check(['in', ['=', '/foo'], [['bar1']]], false, {foo: 'bar'});
+    check(['in', ['=', '/foo'], [['gg', 'bar', 'ss']]], true, {foo: 'bar'});
+    check(['in', ['=', '/foo'], ['=', '/lol']], true, {foo: 'bar', lol: ['gg', 'bar', 'ss']});
+    check(['in', ['=', '/foo'], ['=', '/lol']], false, {foo: 'bar', lol: ['gg', 'ss']});
+    check(['in', 'ss', ['=', '/lol']], true, {foo: 'bar', lol: ['gg', 'ss']});
+  });
+});
