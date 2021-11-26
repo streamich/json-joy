@@ -79,27 +79,26 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onEqualsLiteralLiteral(a: unknown, b: unknown): ExpressionResult {
-    return new Literal(deepEqual(a, b));
+  protected onEqualsLiteralLiteral(a: Literal, b: Literal): ExpressionResult {
+    return new Literal(deepEqual(a.val, b.val));
   }
 
-  protected onEqualsLiteralExpression(literal: unknown, expression: Expr): ExpressionResult {
-    const expr = this.onExpression(expression);
-    if (expr instanceof Literal) return new Literal(deepEqual(literal, expr.val));
-    const fn = $$deepEqual(literal);
+  protected onEqualsLiteralExpression(literal: Literal, expression: Expression): ExpressionResult {
+    const fn = $$deepEqual(literal.val);
     const d = this.codegen.addConstant(fn);
-    return new Expression(`${d}(${this.onExpression(expression)})`);
+    return new Expression(`${d}(${expression})`);
   }
 
   protected onEquals(expr: ExprEquals): ExpressionResult {
-    const [, a, b] = expr;
-    if (a === undefined || b === undefined)
+    if (expr.length !== 3)
       throw new Error('Equals operator expects two operands.');
-    if (!isExpression(a) && !isExpression(b)) return this.onEqualsLiteralLiteral(a, b);
-    if (isExpression(a)) return this.onEqualsLiteralExpression(b, a);
-    if (isExpression(b)) return this.onEqualsLiteralExpression(a, b);
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal) return this.onEqualsLiteralLiteral(a, b);
+    if (a instanceof Literal && b instanceof Expression) return this.onEqualsLiteralExpression(a, b);
+    if (b instanceof Literal && a instanceof Expression) return this.onEqualsLiteralExpression(b, a);
     this.codegen.link('deepEqual');
-    return new Expression(`deepEqual(${this.onExpression(a as Expr)}, ${this.onExpression(b as Expr)})`);
+    return new Expression(`deepEqual(${a}, ${b})`);
   }
 
   protected onNotEquals([, a, b]: ExprNotEquals): ExpressionResult {

@@ -44,6 +44,8 @@ describe('eq', () => {
 
   test('together with get', () => {
     check(['eq', 3, ['=', '/foo']], true, {foo: 3});
+    check(['eq', ['=', '/foo'], ['=', '/foo']], true, {foo: 3});
+    check(['eq', ['=', '/foo'], ['=', '/bar']], true, {foo: 3, bar: 3});
   });
 });
 
