@@ -325,6 +325,56 @@ describe('ends', () => {
   });
 });
 
+describe('matches', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['matches']  as any, '')).toThrowError(new Error('"matches" operator expects two operands.'));
+    expect(() => check(['matches', 'asdf']  as any, '')).toThrowError(new Error('"matches" operator expects two operands.'));
+    expect(() => check(['matches', 'asdf', 'asdf', 'asdf']  as any, '')).toThrowError(new Error('"matches" operator expects two operands.'));
+  });
+
+  test('throws when pattern is not a string', () => {
+    expect(() => check(['matches', 'adsf', 123 as any], 123)).toThrowError(new Error('"matches" second argument should be a regular expression string.'));
+  });
+
+  test('works with literals', () => {
+    const codegen = new JsonExpressionCodegen({
+      expression: ['matches', 'aaabbb', 'a{3}b{3}'],
+      createPattern: (pattern: string) => {
+        const regex = new RegExp(pattern);
+        return (subject: string) => regex.test(subject);
+      },
+    });
+    const fn = codegen.run().compile();
+    const result = fn({
+      data: {},
+    });
+    expect(result).toStrictEqual(true);
+  });
+
+  test('works with expressions', () => {
+    const codegen = new JsonExpressionCodegen({
+      expression: ['matches', ['=', '/foo'], 'a{3}b{3}'],
+      createPattern: (pattern: string) => {
+        const regex = new RegExp(pattern);
+        return (subject: string) => regex.test(subject);
+      },
+    });
+    const fn = codegen.run().compile();
+    const result1 = fn({
+      data: {
+        foo: 'aaabbb'
+      },
+    });
+    expect(result1).toStrictEqual(true);
+    const result2 = fn({
+      data: {
+        foo: 'aabbb'
+      },
+    });
+    expect(result2).toStrictEqual(false);
+  });
+});
+
 describe('defined', () => {
   test('accepts only one operand', () => {
     const callback = () => check(['defined', '/foo', '/bar'] as any, true, {foo: 123});

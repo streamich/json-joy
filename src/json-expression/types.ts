@@ -15,12 +15,12 @@ export type ExprStr = [fn: 'str', expression: unknown];
 
 export type ExprStarts = [fn: 'starts', outer: unknown, inner: unknown];
 export type ExprContains = [fn: 'contains', outer: unknown, inner: unknown];
-export type ExprEnds = [fn: 'ends', inner: unknown, outer: unknown];
+export type ExprEnds = [fn: 'ends', outer: unknown, inner: unknown];
 export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
-export type ExprIn = [fn: 'in', list: unknown, expression: unknown];
-export type ExprMatches = [fn: 'matches', pattern: string, expression: unknown];
-export type ExprCat = [fn: 'cat' | '.', ...expressions: unknown[]];
+export type ExprIn = [fn: 'in', what: unknown, list: unknown];
+export type ExprMatches = [fn: 'matches', subject: unknown, pattern: string];
+export type ExprCat = [fn: '.' | 'cat', ...expressions: unknown[]];
 export type ExprSubstr = [fn: 'substr', str: unknown, from: unknown, length?: unknown];
 
 export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
@@ -58,6 +58,7 @@ export type Expr =
   | ExprEnds
   | ExprDefined
   | ExprIn
+  | ExprMatches
   | ExprMatches
   | ExprCat
   | ExprSubstr

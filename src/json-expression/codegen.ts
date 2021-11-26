@@ -251,8 +251,19 @@ export class JsonExpressionCodegen {
     return new Expression(`ends(${outer}, ${inner})`);
   }
 
-  protected onMatches([, a, b]: ExprMatches): ExpressionResult {
-    throw new Error('"matches" operator is not supported.');
+  protected onMatches(expr: ExprMatches): ExpressionResult {
+    if (expr.length !== 3) throw new Error('"matches" operator expects two operands.');
+    const [, a, pattern] = expr;
+    if (typeof pattern !== 'string')
+      throw new Error('"matches" second argument should be a regular expression string.');
+    const subject = this.onExpression(a);
+    if (!this.options.createPattern) 
+      throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
+    const fn = this.options.createPattern(pattern);
+    if (subject instanceof Literal) return new Literal(fn(str(subject.val)));
+    const d = this.codegen.linkDependency(fn);
+    this.codegen.link('str');
+    return new Expression(`${d}(str(${subject}))`);
   }
 
   protected onDefined(expr: ExprDefined): ExpressionResult {
@@ -296,8 +307,8 @@ export class JsonExpressionCodegen {
     if (areAllLiteral)
       return new Literal(expressions.map(expr => str(expr.val)).join(''));
     this.codegen.link('str');
-    const evaledExpressions = expressions.map(expr => `str(${expr})`);
-    return new Expression(evaledExpressions.join(' + '));
+    const params = expressions.map(expr => `str(${expr})`);
+    return new Expression(params.join(' + '));
   }
 
   protected onSubstr(expr: ExprSubstr): ExpressionResult {
