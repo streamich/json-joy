@@ -1,8 +1,9 @@
 import {deepClone} from '../util';
 import {Operation} from '../types';
-import {findByPointer, hasOwnProperty, unescapeComponent} from '../../json-pointer';
+import {findByPointer, unescapeComponent} from '../../json-pointer';
 import {deepEqual} from '../../json-equal/deepEqual';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
+import {hasOwnProperty} from '../../util/hasOwnProperty';
 
 const {isArray} = Array;
 

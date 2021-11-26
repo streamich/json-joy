@@ -1,7 +1,7 @@
 import type {Reference} from '../find';
 import type {Path} from '../types';
 import {CompiledFunction, compileFn} from '../../util/codegen';
-import {hasOwnProperty} from '..';
+import {hasOwnProperty} from '../../util/hasOwnProperty';
 
 type Fn = (val: unknown) => Reference;
 
