@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprBool, ExprContains, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -216,6 +216,16 @@ export class JsonExpressionCodegen {
     return new Expression(`ends(${outer}, ${inner})`);
   }
 
+  protected onDefined(expr: ExprDefined): ExpressionResult {
+    if (expr.length > 2) throw new Error('Defined operator expects one operand.');
+    const [, pointer] = expr;
+    if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
+    validateJsonPointer(pointer);
+    const fn = $$find(parseJsonPointer(pointer));
+    const d = this.codegen.addConstant(fn);
+    return new Expression(`${d}(data) !== undefined`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -247,6 +257,7 @@ export class JsonExpressionCodegen {
       case 'starts': return this.onStarts(expr as ExprStarts);
       case 'contains': return this.onContains(expr as ExprContains);
       case 'ends': return this.onEnds(expr as ExprEnds);
+      case 'defined': return this.onDefined(expr as ExprDefined);
     }
     return new Literal(false);;
   }

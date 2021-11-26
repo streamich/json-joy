@@ -322,3 +322,23 @@ describe('ends', () => {
     check(['ends', ['get', '/a'], ['get', '/b']], false, {a: 'document-123', b: '-1234'});
   });
 });
+
+describe('defined', () => {
+  test('accepts only one operand', () => {
+    const callback = () => check(['defined', '/foo', '/bar'] as any, true, {foo: 123});
+    expect(callback).toThrowError(new Error('Defined operator expects one operand.'));
+  });
+
+  test('validates JSON Pointer', () => {
+    const callback = () => check(['defined', null] as any, true, {foo: 123});
+    expect(callback).toThrowError(new Error('Invalid JSON pointer.'));
+  });
+
+  test('check if data member is defined', () => {
+    check(['defined', '/foo'], true, {foo: [0, 1]})
+    check(['defined', '/foo/0'], true, {foo: [0, 1]})
+    check(['defined', '/foo/1'], true, {foo: [0, 1]})
+    check(['defined', '/foo/2'], false, {foo: [0, 1]})
+    check(['defined', '/bar'], false, {foo: [0, 1]})
+  });
+});
