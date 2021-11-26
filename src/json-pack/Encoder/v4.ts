@@ -40,6 +40,13 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     }
   }
 
+  protected encodeFloat64(num: number): void {
+    this.ensureCapacity(9);
+    this.uint8[this.offset++] = 0xcb;
+    this.view.setFloat64(this.offset, num);
+    this.offset += 8;
+  }
+
   public encodeUnsignedInteger(num: number): void {
     if (num <= 0b1111111) return this.u8(num);
     if (num <= 0xff) return this.u16((0xcc << 8) | num);
@@ -56,6 +63,7 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
       this.offset += 4;
       return;
     }
+    this.encodeFloat64(num);
   }
 
   public encodeInteger(num: number): void {
@@ -74,14 +82,12 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
       this.offset += 4;
       return;
     }
+    this.encodeFloat64(num);
   }
 
   public encodeNumber(num: number): void {
     if (isSafeInteger(num)) return this.encodeInteger(num);
-    this.ensureCapacity(9);
-    this.uint8[this.offset++] = 0xcb;
-    this.view.setFloat64(this.offset, num);
-    this.offset += 8;
+    this.encodeFloat64(num);
   }
 
   public encodeNull(): void {
