@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprAsterisk, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprMinus, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprPlus, ExprSlash, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprAsterisk, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprMinus, ExprMod, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprPlus, ExprSlash, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -377,6 +377,16 @@ export class JsonExpressionCodegen {
     return new Expression(`slash(${a}, ${b})`);
   }
 
+  protected onMod(expr: ExprMod): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('"%" operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(num(a.val as any % (b.val as any)));
+    return new Expression(`+(${a} % ${b}) || 0`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -423,6 +433,8 @@ export class JsonExpressionCodegen {
       case '-': return this.onMinus(expr as ExprMinus);
       case '*': return this.onAsterisk(expr as ExprAsterisk);
       case '/': return this.onSlash(expr as ExprSlash);
+      case '%':
+      case 'mod': return this.onMod(expr as ExprMod);
     }
     return new Literal(false);;
   }

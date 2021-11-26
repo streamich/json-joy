@@ -33,7 +33,7 @@ export type ExprPlus = [fn: '+', ...expressions: unknown[]];
 export type ExprMinus = [fn: '-', ...expressions: unknown[]];
 export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
 export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
-export type ExprMod = [fn: '%', expr1: unknown, expr2: unknown];
+export type ExprMod = [fn: '%' | 'mod', expr1: unknown, expr2: unknown];
 
 // export type ExprJsonParse = [fn: 'json.parse', expr: unknown];
 

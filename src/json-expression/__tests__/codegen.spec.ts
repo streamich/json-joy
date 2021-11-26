@@ -628,3 +628,37 @@ describe('division', () => {
     ], 0, [1, 0]);
   });
 });
+
+describe('mod', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['%']  as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
+    expect(() => check(['%', 1]  as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
+    expect(() => check(['%', 1, 1, 1]  as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['%', 1, 1], 0);
+    check(['%', 5, 2], 1);
+    check(['%', 5, 0], 0);
+    check(['%', 5, -0], 0);
+  });
+
+  test('works with expressions', () => {
+    check(['%',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 1, [1, 2]);
+    check(['%',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 0, [1, 0]);
+    check(['%',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 1, [5, 2]);
+    check(['%',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 3, [7, 4]);
+  });
+});
