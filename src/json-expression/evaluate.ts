@@ -80,9 +80,9 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     }
     case 'substr': {
       const str2 = str(evaluate(expr[1], ctx));
-      const start = toNumber(evaluate(expr[2], ctx));
-      const end = expr.length > 3 ? toNumber(evaluate(expr[3], ctx)) : undefined;
-      return str2.substr(start, end);
+      const from = toNumber(evaluate(expr[2], ctx));
+      const length = expr.length > 3 ? toNumber(evaluate(expr[3], ctx)) : undefined;
+      return str2.substr(from, length);
     }
     case '<': {
       const left = toNumber(evaluate(expr[1], ctx));

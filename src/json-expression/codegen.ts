@@ -1,10 +1,10 @@
-import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts, contains, ends, isInContainer} from './util';
+import {get, str, type, starts, contains, ends, isInContainer, substr} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
@@ -19,6 +19,7 @@ const linkable = {
   contains,
   ends,
   isInContainer,
+  substr,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -262,6 +263,18 @@ export class JsonExpressionCodegen {
     return new Expression(evaledExpressions.join(' + '));
   }
 
+  protected onSubstr(expr: ExprSubstr): ExpressionResult {
+    if (expr.length < 3 || expr.length > 4)
+      throw new Error('"substr" operator expects two or three operands.');
+    const str = this.onExpression(expr[1]);
+    const from = this.onExpression(expr[2]);
+    const length = expr[3] ? this.onExpression(expr[3]) : new Literal(0);
+    if (str instanceof Literal && from instanceof Literal && length instanceof Literal)
+      return new Literal(substr(str.val, from.val, length.val));
+    this.codegen.link('substr');
+    return new Expression(`substr(${str}, ${from}, ${length})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -297,6 +310,7 @@ export class JsonExpressionCodegen {
       case 'in': return this.onIn(expr as ExprIn);
       case '.':
       case 'cat': return this.onCat(expr as ExprCat);
+      case 'substr': return this.onSubstr(expr as ExprSubstr);
     }
     return new Literal(false);;
   }

@@ -386,3 +386,24 @@ describe('cat', () => {
       ], 'cba', ['a', 'b', 'c']);
   });
 });
+
+describe('substr', () => {
+  test('throws on too few  or too many operands', () => {
+    expect(() => check(['substr']  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
+    expect(() => check(['substr', 'str']  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
+    expect(() => check(['substr', 'str', 1, 1, 1]  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['substr', '0123456789', 0, 3], '012');
+    check(['substr', '0123456789', 1, 3], '123');
+    check(['substr', '0123456789', -4, 3], '678');
+    check(['substr', '0123456789', 7, 4], '789');
+  });
+
+  test('works with expressions', () => {
+    check(['substr', ['=', '/str'], 0, 3], '012', {str: '0123456789'});
+    check(['substr', ['=', '/str'], ['=', '/from'], 3], '234', {str: '0123456789', from: 2});
+    check(['substr', ['=', '/str'], ['=', '/from'], ['=', '/len']], '23', {str: '0123456789', from: 2, len: 2});
+  });
+});

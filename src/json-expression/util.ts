@@ -33,3 +33,8 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
   for (let i = 0; i < length; i++) if (deepEqual(container[i], what)) return true;
   return false;
 };
+
+export const int = (value: unknown): number => +(value as number) || 0;
+
+export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
+  str(probablyString).substr(int(from), int(length));
