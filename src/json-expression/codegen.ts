@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -315,6 +315,26 @@ export class JsonExpressionCodegen {
     return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
   }
 
+  protected onMin(expr: ExprMin): ExpressionResult {
+    if (expr.length < 3)
+      throw new Error('"min" operator expects at least two operands.');
+    const expressions = expr.slice(1).map(operand => this.onExpression(operand));
+    const allLiterals = expressions.every(expr => expr instanceof Literal);
+    if (allLiterals) return new Literal(num(Math.min(...expressions.map(expr => expr.val as any))));
+    const params = expressions.map(expr => `${expr}`);
+    return new Expression(`+Math.min(${params.join(', ')}) || 0`);
+  }
+
+  protected onMax(expr: ExprMax): ExpressionResult {
+    if (expr.length < 3)
+      throw new Error('"max" operator expects at least two operands.');
+    const expressions = expr.slice(1).map(operand => this.onExpression(operand));
+    const allLiterals = expressions.every(expr => expr instanceof Literal);
+    if (allLiterals) return new Literal(num(Math.max(...expressions.map(expr => expr.val as any))));
+    const params = expressions.map(expr => `${expr}`);
+    return new Expression(`+Math.max(${params.join(', ')}) || 0`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -355,6 +375,8 @@ export class JsonExpressionCodegen {
       case '<=': return this.onLessThanOrEqual(expr as ExprLessThanOrEqual);
       case '>': return this.onGreaterThan(expr as ExprGreaterThan);
       case '>=': return this.onGreaterThanOrEqual(expr as ExprGreaterThanOrEqual);
+      case 'min': return this.onMin(expr as ExprMin);
+      case 'max': return this.onMax(expr as ExprMax);
     }
     return new Literal(false);;
   }

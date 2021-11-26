@@ -502,3 +502,38 @@ describe('greater than or equal', () => {
     check(['>=', ['=', '/0'], ['=', '/0']], true, [0, 2.4]);
   });
 });
+
+describe('min', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['min']  as any, '')).toThrowError(new Error('"min" operator expects at least two operands.'));
+    expect(() => check(['min', 1]  as any, '')).toThrowError(new Error('"min" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['min', 1, 2], 1);
+    check(['min', 1, 2, null], 0);
+    check(['min', 1, 2, 0.4], .4);
+    check(['min', 1, 2, 0.4, '.1'], .1);
+  });
+
+  test('works with expressions', () => {
+    check(['min', ['=', '/1'], ['=', '/2'], ['=', '/0']], 3.3, [3.3, 4.4, 5.5]);
+  });
+});
+
+describe('max', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['max']  as any, '')).toThrowError(new Error('"max" operator expects at least two operands.'));
+    expect(() => check(['max', 1]  as any, '')).toThrowError(new Error('"max" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['max', 1, 2], 2);
+    check(['max', 1, 2, 2.4], 2.4);
+    check(['max', 1, 2, 2.4, '4.1'], 4.1);
+  });
+
+  test('works with expressions', () => {
+    check(['max', ['=', '/1'], ['=', '/2'], ['=', '/0']], 5.5, [3.3, 4.4, 5.5]);
+  });
+});
