@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, ExprOr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
@@ -136,6 +136,24 @@ export class JsonExpressionCodegen {
     return new Expression(expressions.map(expr => `!!(${expr})`).join(' && '));
   }
 
+  protected onOr([, ...operands]: ExprOr): ExpressionResult {
+    const expressions: ExpressionResult[] = [];
+    let allLiteral = true;
+    for (let i = 0; i < operands.length; i++) {
+      const expression = this.onExpression(operands[i]);
+      if (!(expression instanceof Literal)) allLiteral = false;
+      expressions.push(expression);
+    }
+    if (allLiteral) {
+      for (let i = 0; i < expressions.length; i++) {
+        const expression = expressions[i];
+        if (expression.val) return new Literal(true);
+      }
+      return new Literal(false);
+    }
+    return new Expression(expressions.map(expr => `!!(${expr})`).join(' || '));
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -155,6 +173,8 @@ export class JsonExpressionCodegen {
       case 'if': return this.onIf(expr as ExprIf);
       case '&&':
       case 'and': return this.onAnd(expr as ExprAnd);
+      case '||':
+      case 'or': return this.onOr(expr as ExprOr);
       case '!':
       case 'not': return this.onNot(expr as ExprNot);
     }

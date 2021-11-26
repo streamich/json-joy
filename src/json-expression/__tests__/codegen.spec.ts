@@ -135,3 +135,37 @@ describe('and', () => {
     check(['and', ['get', '/0'], 0], false, [1, 0]);
   });
 });
+
+describe('or', () => {
+  test('two operand case', () => {
+    check(['or', true, true], true);
+    check(['or', true, false], true);
+    check(['or', false, false], false);
+    check(['or', false, true], true);
+    check(['||', true, true], true);
+    check(['||', true, false], true);
+    check(['||', false, false], false);
+    check(['||', false, true], true);
+  });
+
+  test('two operand case', () => {
+    check(['or', 1, 1], true);
+    check(['or', 1, 0], true);
+    check(['or', 0, 1], true);
+    check(['or', 0, 0], false);
+  });
+
+  test('three operand case', () => {
+    check(['or', true, true, true], true);
+    check(['or', true, false, true], true);
+    check(['or', false, false, false], false);
+  });
+
+  test('operands are expressions', () => {
+    check(['or', ['get', '/0'], ['get', '/0']], true, [1, 0]);
+    check(['or', ['get', '/0'], ['get', '/1']], true, [1, 0]);
+    check(['or', ['get', '/0'], 1], true, [1, 0]);
+    check(['or', ['get', '/0'], 0], true, [1, 0]);
+    check(['or', ['get', '/1'], 0], false, [1, 0]);
+  });
+});
