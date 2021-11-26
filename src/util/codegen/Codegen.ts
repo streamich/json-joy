@@ -17,7 +17,7 @@ type JsonSerializerStep = CodegenStepExecJs | unknown;
 /**
  * Configuration options for {@link Codegen} instances.
  */
-export interface CodegenOptions {
+export interface CodegenOptions<Linkable = Record<string, unknown>> {
   /**
    * Inline JavaScript string that represents the arguments that will be passed
    * to the main function body. Defaults to "r0", i.e. the first register.
@@ -45,6 +45,12 @@ export interface CodegenOptions {
    * Converts all steps to `CodegenStepExecJs`.
    */
   processSteps?: (steps: JsonSerializerStep[]) => CodegenStepExecJs[];
+
+  /**
+   * Predefined list of dependencies that can be linked on demand. Dependency is
+   * linked with the name of the property and is linked only once.
+   */
+  linkable?: Linkable;
 }
 
 /**
@@ -72,19 +78,20 @@ export interface CodegenOptions {
  * Where `d*` are the external dependencies, `c*` are the internal constants,
  * and `r*` are the local immutable infinite registers.
  */
-export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown> {
+export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown, Linkable = Record<string, unknown>> {
   /** @ignore */
   protected steps: JsonSerializerStep[] = [];
 
   /** @ignore */
-  protected options: Required<CodegenOptions>;
+  protected options: Required<CodegenOptions<Linkable>>;
 
-  constructor(opts: CodegenOptions) {
+  constructor(opts: CodegenOptions<Linkable>) {
     this.options = {
       arguments: 'r0',
       name: '',
       prologue: opts.prologue || '',
       processSteps: (steps) => steps.filter(step => step instanceof CodegenStepExecJs) as CodegenStepExecJs[],
+      linkable: {} as Linkable,
       ...opts,
     };
   }
@@ -154,6 +161,21 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
    */
   public linkDependencies(deps: unknown[]): string[] {
     return deps.map((dep) => this.linkDependency(dep));
+  }
+
+  protected linked: {[key: string]: 1} = {};
+
+  /**
+   * Link a dependency from the pre-defined `options.linkable` object. This method
+   * can be called many times with the same dependency name, the dependency will
+   * be linked only once.
+   * 
+   * @param name Linkable dependency name.
+   */
+  public link(name: keyof Linkable): void {
+    if (this.linked[name as string]) return;
+    this.linked[name as string] = 1;
+    this.linkDependency(this.options.linkable[name], name as string);
   }
 
   /** @ignore */

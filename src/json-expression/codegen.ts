@@ -51,22 +51,15 @@ export interface JsonExpressionCodegenOptions extends JsonExpressionCodegenConte
 }
 
 export class JsonExpressionCodegen {
-  protected codegen: Codegen<JsonExpressionFn>;
-
-  protected linked: {[key: string]: 1} = {};
+  protected codegen: Codegen<JsonExpressionFn, typeof linkable>;
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
-    this.codegen = new Codegen<JsonExpressionFn>({
+    this.codegen = new Codegen<JsonExpressionFn, typeof linkable>({
       arguments: 'ctx',
       prologue: 'var data = ctx.data;',
       epilogue: '',
+      linkable,
     });
-  }
-
-  protected link(name: keyof typeof linkable): void {
-    if (this.linked[name]) return;
-    this.linked[name] = 1;
-    this.codegen.linkDependency(linkable[name], name);
   }
 
   protected onGet(expr: ExprGet): ExpressionResult {
@@ -78,7 +71,7 @@ export class JsonExpressionCodegen {
       const d = this.codegen.addConstant(fn);
       return new Expression(`${d}(data)`);
     } else {
-      this.link('get');
+      this.codegen.link('get');
       return new Expression(`get(${path}, data)`);
     }
   }
@@ -102,7 +95,7 @@ export class JsonExpressionCodegen {
     if (!isExpression(a) && !isExpression(b)) return this.onEqualsLiteralLiteral(a, b);
     if (isExpression(a)) return this.onEqualsLiteralExpression(b, a);
     if (isExpression(b)) return this.onEqualsLiteralExpression(a, b);
-    this.link('deepEqual');
+    this.codegen.link('deepEqual');
     return new Expression(`deepEqual(${this.onExpression(a as Expr)}, ${this.onExpression(b as Expr)})`);
   }
 
