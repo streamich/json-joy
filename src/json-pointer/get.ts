@@ -1,5 +1,5 @@
+import { hasOwnProperty } from '../util/hasOwnProperty';
 import type {Path} from './types';
-import {hasOwnProperty} from './util';
 
 export const get = (val: unknown, path: Path): unknown | undefined => {
   const pathLength = path.length;

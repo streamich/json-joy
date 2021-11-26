@@ -89,11 +89,6 @@ export function isValidIndex(index: string | number): boolean {
   return String(n) === index && n >= 0;
 }
 
-const Object$prototype$hasOwnProperty = Object.prototype.hasOwnProperty;
-export function hasOwnProperty(obj: object, key: string) {
-  return Object$prototype$hasOwnProperty.call(obj, key);
-}
-
 export const isInteger = (str: string): boolean => {
   const len = str.length;
   let i = 0;
