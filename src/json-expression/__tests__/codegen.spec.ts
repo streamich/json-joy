@@ -278,3 +278,16 @@ describe('str', () => {
     check(['str', ['get', '/foo']], '5', {foo: '5'});
   });
 });
+
+describe('starts', () => {
+  test('when operands are literals', () => {
+    check(['starts', 'asdf', 'as'], true);
+    check(['starts', 'asdf', 'az'], false);
+  });
+
+  test('when operands are expressions', () => {
+    check(['starts', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: 'doc'});
+    check(['starts', ['get', '/a'], 'document-'], true, {a: 'document-123', b: 'doc'});
+    check(['starts', ['get', '/a'], 'document2-'], false, {a: 'document-123', b: 'doc'});
+  });
+});

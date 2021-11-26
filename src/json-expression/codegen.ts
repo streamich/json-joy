@@ -1,10 +1,10 @@
-import type {Expr, ExprAnd, ExprBool, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type} from './util';
+import {get, str, type, starts} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 // const isLiteral = (expr: unknown): boolean => !isExpression(expr);
@@ -14,6 +14,7 @@ const linkable = {
   deepEqual,
   type,
   str,
+  starts,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -186,6 +187,15 @@ export class JsonExpressionCodegen {
     return new Expression(`str(${expression})`);
   }
 
+  protected onStarts([, a, b]: ExprStarts): ExpressionResult {
+    const outer = this.onExpression(a);
+    const inner = this.onExpression(b);
+    if ((outer instanceof Literal) && (inner instanceof Literal))
+      return new Literal(starts(outer.val, inner.val));
+    this.codegen.link('starts');
+    return new Expression(`starts(${outer}, ${inner})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -214,6 +224,7 @@ export class JsonExpressionCodegen {
       case 'num': return this.onNum(expr as ExprNum);
       case 'int': return this.onInt(expr as ExprInt);
       case 'str': return this.onStr(expr as ExprStr);
+      case 'starts': return this.onStarts(expr as ExprStarts);
     }
     return new Literal(false);;
   }

@@ -13,8 +13,8 @@ export type ExprNum = [fn: 'num', expression: unknown];
 export type ExprInt = [fn: 'int', expression: unknown];
 export type ExprStr = [fn: 'str', expression: unknown];
 
-export type ExprStarts = [fn: 'starts', inner: unknown, outer: unknown];
-export type ExprContains = [fn: 'contains', inner: unknown, outer: unknown];
+export type ExprStarts = [fn: 'starts', outer: unknown, inner: unknown];
+export type ExprContains = [fn: 'contains', outer: unknown, inner: unknown];
 export type ExprEnds = [fn: 'ends', inner: unknown, outer: unknown];
 export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
