@@ -388,7 +388,7 @@ describe('cat', () => {
 });
 
 describe('substr', () => {
-  test('throws on too few  or too many operands', () => {
+  test('throws on too few or too many operands', () => {
     expect(() => check(['substr']  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
     expect(() => check(['substr', 'str']  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
     expect(() => check(['substr', 'str', 1, 1, 1]  as any, '')).toThrowError(new Error('"substr" operator expects two or three operands.'));
@@ -405,5 +405,100 @@ describe('substr', () => {
     check(['substr', ['=', '/str'], 0, 3], '012', {str: '0123456789'});
     check(['substr', ['=', '/str'], ['=', '/from'], 3], '234', {str: '0123456789', from: 2});
     check(['substr', ['=', '/str'], ['=', '/from'], ['=', '/len']], '23', {str: '0123456789', from: 2, len: 2});
+  });
+});
+
+describe('less than', () => {
+  test('throws on too few or too many operands', () => {
+    expect(() => check(['<']  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
+    expect(() => check(['<', 1]  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
+    expect(() => check(['<', 1, 2, 3]  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['<', 1, 2.4], true);
+    check(['<', 3.33, 3.333], true);
+    check(['<', 1, '2.4'], true);
+    check(['<', '2.4', 0], false);
+  });
+
+  test('works with expressions', () => {
+    check(['<', ['=', '/0'], ['=', '/1']], true, [1, 2.4]);
+    check(['<', ['=', '/0'], ['=', '/1']], true, [3.33, 3.333]);
+    check(['<', ['=', '/1'], ['=', '/0']], false, [1, 2.4]);
+    check(['<', ['=', '/1'], ['=', '/1']], false, [1, 2.4]);
+    check(['<', ['=', '/0'], ['=', '/0']], false, [0, 2.4]);
+  });
+});
+
+describe('less than or equal', () => {
+  test('throws on too few or too many operands', () => {
+    expect(() => check(['<=']  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
+    expect(() => check(['<=', 1]  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
+    expect(() => check(['<=', 1, 2, 3]  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['<=', 1, 2.4], true);
+    check(['<=', 1, '2.4'], true);
+    check(['<=', 3.33, 3.333], true);
+    check(['<=', '2.4', 0], false);
+    check(['<=', 0, 0], true);
+  });
+
+  test('works with expressions', () => {
+    check(['<=', ['=', '/0'], ['=', '/1']], true, [1, 2.4]);
+    check(['<=', ['=', '/0'], ['=', '/1']], true, [3.33, 3.333]);
+    check(['<=', ['=', '/1'], ['=', '/0']], false, [1, 2.4]);
+    check(['<=', ['=', '/1'], ['=', '/1']], true, [1, 2.4]);
+    check(['<=', ['=', '/0'], ['=', '/0']], true, [0, 2.4]);
+  });
+});
+
+describe('greater than', () => {
+  test('throws on too few or too many operands', () => {
+    expect(() => check(['>']  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
+    expect(() => check(['>', 1]  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
+    expect(() => check(['>', 1, 2, 3]  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['>', 1, 2.4], false);
+    check(['>', 1, '2.4'], false);
+    check(['>', '2.4', 0], true);
+    check(['>', 3.333, 3.33], true);
+    check(['>', 0, 0], false);
+  });
+
+  test('works with expressions', () => {
+    check(['>', ['=', '/0'], ['=', '/1']], false, [1, 2.4]);
+    check(['>', ['=', '/1'], ['=', '/0']], true, [1, 2.4]);
+    check(['>', ['=', '/0'], ['=', '/1']], true, [3.333, 3.33]);
+    check(['>', ['=', '/1'], ['=', '/1']], false, [1, 2.4]);
+    check(['>', ['=', '/0'], ['=', '/0']], false, [0, 2.4]);
+  });
+});
+
+describe('greater than or equal', () => {
+  test('throws on too few or too many operands', () => {
+    expect(() => check(['>=']  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
+    expect(() => check(['>=', 1]  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
+    expect(() => check(['>=', 1, 2, 3]  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['>=', 1, 2.4], false);
+    check(['>=', 1, '2.4'], false);
+    check(['>=', '2.4', 0], true);
+    check(['>=', 3.333, 3.33], true);
+    check(['>=', 0, 0], true);
+  });
+
+  test('works with expressions', () => {
+    check(['>=', ['=', '/0'], ['=', '/1']], false, [1, 2.4]);
+    check(['>=', ['=', '/1'], ['=', '/0']], true, [1, 2.4]);
+    check(['>=', ['=', '/0'], ['=', '/1']], true, [3.333, 3.33]);
+    check(['>=', ['=', '/1'], ['=', '/1']], true, [1, 2.4]);
+    check(['>=', ['=', '/0'], ['=', '/0']], true, [0, 2.4]);
   });
 });

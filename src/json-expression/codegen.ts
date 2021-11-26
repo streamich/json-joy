@@ -1,10 +1,10 @@
-import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts, contains, ends, isInContainer, substr} from './util';
+import {get, str, type, starts, contains, ends, isInContainer, substr, num} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
@@ -275,6 +275,46 @@ export class JsonExpressionCodegen {
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
+  protected onLessThan(expr: ExprLessThan): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('Less than operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(num(a.val) < num(b.val));
+    return new Expression(`(+(${a})||0) < (+(${b})||0)`);
+  }
+
+  protected onLessThanOrEqual(expr: ExprLessThanOrEqual): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('Less than or equal operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(num(a.val) <= num(b.val));
+    return new Expression(`(+(${a})||0) <= (+(${b})||0)`);
+  }
+
+  protected onGreaterThan(expr: ExprGreaterThan): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('Greater than operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(num(a.val) > num(b.val));
+    return new Expression(`(+(${a})||0) > (+(${b})||0)`);
+  }
+
+  protected onGreaterThanOrEqual(expr: ExprGreaterThanOrEqual): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('Greater than or equal operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(num(a.val) >= num(b.val));
+    return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -311,6 +351,10 @@ export class JsonExpressionCodegen {
       case '.':
       case 'cat': return this.onCat(expr as ExprCat);
       case 'substr': return this.onSubstr(expr as ExprSubstr);
+      case '<': return this.onLessThan(expr as ExprLessThan);
+      case '<=': return this.onLessThanOrEqual(expr as ExprLessThanOrEqual);
+      case '>': return this.onGreaterThan(expr as ExprGreaterThan);
+      case '>=': return this.onGreaterThanOrEqual(expr as ExprGreaterThanOrEqual);
     }
     return new Literal(false);;
   }

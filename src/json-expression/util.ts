@@ -34,7 +34,8 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
   return false;
 };
 
-export const int = (value: unknown): number => +(value as number) || 0;
+export const num = (value: unknown): number => +(value as number) || 0;
+export const int = (value: unknown): number => ~~(value as number);
 
 export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
   str(probablyString).substr(int(from), int(length));
