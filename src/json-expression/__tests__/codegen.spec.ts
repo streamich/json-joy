@@ -189,3 +189,23 @@ describe('type', () => {
     check(['type', ['get', '/foo']], 'object', {foo: {}});
   });
 });
+
+describe('bool', () => {
+  test('when operand is literal', () => {
+    check(['bool', 1], true);
+    check(['bool', 0], false);
+    check(['bool', 0.0], false);
+    check(['bool', ''], false);
+    check(['bool', 'asdf'], true);
+    check(['bool', {}], true);
+    check(['bool', [[]]], true);
+    check(['bool', true], true);
+    check(['bool', false], false);
+    check(['bool', null], false);
+  });
+
+  test('when operand is expression', () => {
+    check(['bool', ['get', '/foo']], true, {foo: 1});
+    check(['bool', ['get', '/foo']], false, {foo: 0});
+  });
+});
