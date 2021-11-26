@@ -209,3 +209,26 @@ describe('bool', () => {
     check(['bool', ['get', '/foo']], false, {foo: 0});
   });
 });
+
+describe('num', () => {
+  test('when operand is literal', () => {
+    check(['num', 1], 1);
+    check(['num', 0], 0);
+    check(['num', 0.0], 0.0);
+    check(['num', ''], 0);
+    check(['num', '1'], 1);
+    check(['num', '1.1'], 1.1);
+    check(['num', '1.6'], 1.6);
+    check(['num', 'asdf'], 0);
+    check(['num', {}], 0);
+    check(['num', [[]]], 0);
+    check(['num', true], 1);
+    check(['num', false], 0);
+    check(['num', null], 0);
+  });
+
+  test('when operand is expression', () => {
+    check(['num', ['get', '/foo']], 1, {foo: 1});
+    check(['num', ['get', '/foo']], 5, {foo: '5'});
+  });
+});
