@@ -255,3 +255,26 @@ describe('int', () => {
     check(['int', ['get', '/foo']], 5, {foo: '5'});
   });
 });
+
+describe('str', () => {
+  test('when operand is literal', () => {
+    check(['str', 1], '1');
+    check(['str', 0], '0');
+    check(['str', 0.0], '0');
+    check(['str', ''], '');
+    check(['str', '1'], '1');
+    check(['str', '1.1'], '1.1');
+    check(['str', '1.6'], '1.6');
+    check(['str', 'asdf'], 'asdf');
+    check(['str', {}], '{}');
+    check(['str', [[]]], '[]');
+    check(['str', true], 'true');
+    check(['str', false], 'false');
+    check(['str', null], 'null');
+  });
+
+  test('when operand is expression', () => {
+    check(['str', ['get', '/foo']], '1', {foo: 1});
+    check(['str', ['get', '/foo']], '5', {foo: '5'});
+  });
+});
