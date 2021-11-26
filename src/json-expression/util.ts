@@ -3,6 +3,12 @@ import {toPath, get as get_} from '../json-pointer';
 
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
 
+export const throwOnUndef = (value: unknown, def?: unknown) => {
+  if (value !== undefined) return value;
+  if (def === undefined) throw new Error('NOT_FOUND');
+  return def;
+};
+
 export const type = (value: unknown): string => {
   if (value === null) return 'null';
   if (value instanceof Array) return 'array'
@@ -44,3 +50,8 @@ export const slash = (a: unknown, b: unknown) => {
 
 export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
   str(probablyString).substr(int(from), int(length));
+
+export const isLiteral = (value: unknown): boolean => {
+  if (value instanceof Array) return value.length === 1 && value[0] instanceof Array;
+  else return true;
+};

@@ -4,14 +4,14 @@ import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts, contains, ends, isInContainer, substr, num, slash} from './util';
+import {get, throwOnUndef, str, type, starts, contains, ends, isInContainer, substr, num, slash, isLiteral} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
-// const isLiteral = (expr: unknown): boolean => !isExpression(expr);
 
 const linkable = {
   get,
+  throwOnUndef,
   deepEqual,
   type,
   str,
@@ -70,16 +70,22 @@ export class JsonExpressionCodegen {
   }
 
   protected onGet(expr: ExprGet): ExpressionResult {
+    if (expr.length < 2  || expr.length > 3)
+      throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
+    const def = expr[2] === undefined ? undefined : this.onExpression(expr[2]);
+    if (def !== undefined && !isLiteral(expr[2]))
+      throw new Error('"get" operator expects a default value to be a literal.');
+    this.codegen.link('throwOnUndef');
     if (path instanceof Literal) {
       if (typeof path.val !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(path.val);
       const fn = $$find(toPath(path.val));
       const d = this.codegen.addConstant(fn);
-      return new Expression(`${d}(data)`);
+      return new Expression(`throwOnUndef(${d}(data), ${def})`);
     } else {
       this.codegen.link('get');
-      return new Expression(`get(${path}, data)`);
+      return new Expression(`throwOnUndef(get(${path}, data), ${def})`);
     }
   }
 

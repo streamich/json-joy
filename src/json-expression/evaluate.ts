@@ -2,7 +2,7 @@ import {deepEqual} from "../json-equal/deepEqual";
 import {get, toPath} from "../json-pointer";
 import {validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
-import {contains, ends, num, slash, starts, str, type} from "./util";
+import {contains, ends, isLiteral, num, slash, starts, str, throwOnUndef, type} from "./util";
 
 const toNumber = num;
 
@@ -16,9 +16,12 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
+      if (expr[2] !== undefined && !isLiteral(expr[2]))
+        throw new Error('"get" operator expects a default value to be a literal.');
+      const def = evaluate(expr[2], ctx);
       if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(pointer);
-      return get(ctx.data, toPath(pointer));
+      return throwOnUndef(get(ctx.data, toPath(pointer)), def);
     }
     case '==':
     case 'eq': {

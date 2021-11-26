@@ -8,7 +8,11 @@ export const jsonExpressionCodegenTests = (check: Check, {skipOperandArityTests}
       test('can pick from object', () => {
         check(['get', '/foo'], 'bar', {foo: 'bar'});
         check(['=', '/foo'], 'bar', {foo: 'bar'});
-        check(['=', '/baz'], undefined, {foo: 'bar'});
+        check(['=', '/baz', 123], 123, {foo: 'bar'});
+      });
+
+      test('throws if default value is not literal', () => {
+        expect(() => check(['=', '/', ['!', true]], '')).toThrowError(new Error('"get" operator expects a default value to be a literal.'));
       });
 
       test('can pick using expression', () => {
@@ -29,7 +33,7 @@ export const jsonExpressionCodegenTests = (check: Check, {skipOperandArityTests}
       });
 
       test('literal and expression', () => {
-        check(['eq', 3, ['=', '/foo']], false);
+        check(['eq', 3, ['=', '/foo', null]], false);
         check(['eq', 'bar', ['eq', 1, 1]], false);
         check(['eq', true, ['eq', 1, 1]], true);
       });
@@ -50,7 +54,7 @@ export const jsonExpressionCodegenTests = (check: Check, {skipOperandArityTests}
       });
 
       test('literal and expression', () => {
-        check(['ne', 3, ['=', '/foo']], true);
+        check(['ne', 3, ['=', '/foo', null]], true);
         check(['ne', 'bar', ['eq', 1, 1]], true);
         check(['!=', true, ['eq', 1, 1]], false);
       });
@@ -69,7 +73,7 @@ export const jsonExpressionCodegenTests = (check: Check, {skipOperandArityTests}
       });
 
       test('literal and expression', () => {
-        check(['!', ['eq', 3, ['=', '/foo']]], true);
+        check(['!', ['eq', 3, ['=', '/foo', null]]], true);
         check(['not', ['eq', 'bar', ['eq', 1, 1]]], true);
         check(['not', ['eq', true, ['eq', 1, 1]]], false);
       });

@@ -1,4 +1,4 @@
-export type ExprGet = [fn: '=' | 'get', path: unknown];
+export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
 export type ExprNotEquals = [fn: '!=' | 'ne', expr1: unknown, expr2: unknown];
 
