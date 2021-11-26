@@ -103,3 +103,35 @@ describe('if', () => {
     check(['if', ['>', ['=', '/foo'], 10], ['=', '/bar'], ['=', '/baz']], 3, data);
   });
 });
+
+describe('and', () => {
+  test('two operand case', () => {
+    check(['and', true, true], true);
+    check(['and', true, false], false);
+    check(['and', false, false], false);
+    check(['and', false, true], false);
+    check(['&&', true, true], true);
+    check(['&&', true, false], false);
+    check(['&&', false, false], false);
+    check(['&&', false, true], false);
+  });
+
+  test('two operand case', () => {
+    check(['and', 1, 1], true);
+    check(['and', 1, 0], false);
+    check(['and', 0, 1], false);
+    check(['and', 0, 0], false);
+  });
+
+  test('three operand case', () => {
+    check(['and', true, true, true], true);
+    check(['and', true, false, true], false);
+  });
+
+  test('operands are expressions', () => {
+    check(['and', ['get', '/0'], ['get', '/0']], true, [1, 0]);
+    check(['and', ['get', '/0'], ['get', '/1']], false, [1, 0]);
+    check(['and', ['get', '/0'], 1], true, [1, 0]);
+    check(['and', ['get', '/0'], 0], false, [1, 0]);
+  });
+});

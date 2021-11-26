@@ -1,4 +1,4 @@
-import type {Expr, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
@@ -118,6 +118,24 @@ export class JsonExpressionCodegen {
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
   }
 
+  protected onAnd([, ...operands]: ExprAnd): ExpressionResult {
+    const expressions: ExpressionResult[] = [];
+    let allLiteral = true;
+    for (let i = 0; i < operands.length; i++) {
+      const expression = this.onExpression(operands[i]);
+      if (!(expression instanceof Literal)) allLiteral = false;
+      expressions.push(expression);
+    }
+    if (allLiteral) {
+      for (let i = 0; i < expressions.length; i++) {
+        const expression = expressions[i];
+        if (!expression.val) return new Literal(false);
+      }
+      return new Literal(true);
+    }
+    return new Expression(expressions.map(expr => `!!(${expr})`).join(' && '));
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -126,18 +144,19 @@ export class JsonExpressionCodegen {
         return new Literal(expr[0]);
       } else return new Literal(expr);
     }
-    const type = expr[0];
-    switch(type) {
+    switch(expr[0]) {
       case '=':
       case 'get': return this.onGet(expr as ExprGet);
       case '==':
       case 'eq': return this.onEquals(expr as ExprEquals);
       case '!=':
       case 'ne': return this.onNotEquals(expr as ExprNotEquals);
-      case '!':
-      case 'not': return this.onNot(expr as ExprNot);
       case '?':
       case 'if': return this.onIf(expr as ExprIf);
+      case '&&':
+      case 'and': return this.onAnd(expr as ExprAnd);
+      case '!':
+      case 'not': return this.onNot(expr as ExprNot);
     }
     return new Literal(false);;
   }
