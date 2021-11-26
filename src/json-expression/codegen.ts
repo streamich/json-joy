@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, ExprOr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprEquals, ExprGet, ExprIf, ExprNot, ExprNotEquals, ExprOr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
@@ -11,9 +11,16 @@ const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) &&
 
 const get = (path: string, data: unknown) => get_(data, toPath(path));
 
+const type = (value: unknown): string => {
+  if (value === null) return 'null';
+  if (value instanceof Array) return 'array'
+  return typeof value;
+};
+
 const linkable = {
   get,
   deepEqual,
+  type,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -154,6 +161,13 @@ export class JsonExpressionCodegen {
     return new Expression(expressions.map(expr => `!!(${expr})`).join(' || '));
   }
 
+  protected onType([, operand]: ExprType): ExpressionResult {
+    const expression = this.onExpression(operand);
+    if (expression instanceof Literal) return new Literal(type(expression.val));
+    this.codegen.link('type');
+    return new Expression(`type(${expression})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -177,6 +191,7 @@ export class JsonExpressionCodegen {
       case 'or': return this.onOr(expr as ExprOr);
       case '!':
       case 'not': return this.onNot(expr as ExprNot);
+      case 'type': return this.onType(expr as ExprType);
     }
     return new Literal(false);;
   }

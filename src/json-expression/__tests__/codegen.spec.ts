@@ -169,3 +169,23 @@ describe('or', () => {
     check(['or', ['get', '/1'], 0], false, [1, 0]);
   });
 });
+
+describe('type', () => {
+  test('when operand is literal', () => {
+    check(['type', 1], 'number');
+    check(['type', true], 'boolean');
+    check(['type', null], 'null');
+    check(['type', 'asdf'], 'string');
+    check(['type', [[]]], 'array');
+    check(['type', {}], 'object');
+  });
+
+  test('when operand is expression', () => {
+    check(['type', ['get', '/foo']], 'number', {foo: 1});
+    check(['type', ['get', '/foo']], 'boolean', {foo: false});
+    check(['type', ['get', '/foo']], 'null', {foo: null});
+    check(['type', ['get', '/foo']], 'string', {foo: ''});
+    check(['type', ['get', '/foo']], 'array', {foo: []});
+    check(['type', ['get', '/foo']], 'object', {foo: {}});
+  });
+});
