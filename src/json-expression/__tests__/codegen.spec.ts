@@ -328,7 +328,7 @@ describe('ends', () => {
 describe('defined', () => {
   test('accepts only one operand', () => {
     const callback = () => check(['defined', '/foo', '/bar'] as any, true, {foo: 123});
-    expect(callback).toThrowError(new Error('Defined operator expects one operand.'));
+    expect(callback).toThrowError(new Error('"defined" operator expects one operand.'));
   });
 
   test('validates JSON Pointer', () => {
