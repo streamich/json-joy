@@ -1,6 +1,7 @@
 const Benchmark = require('benchmark');
 const JsonExpressionCodegen = require('../../es2020/json-expression').JsonExpressionCodegen;
 const evaluate = require('../../es2020/json-expression').evaluate;
+const jsonLogic = require('json-logic-js');
 
 const json = {
   "specversion" : "1.0",
@@ -26,6 +27,13 @@ const expression = ['and',
   ['==', ['=', '/data/appinfoA'], 'abc'],
 ];
 
+const jsonLogicExpression = {"and" : [
+  {"==" : [ {"var": "specversion"} , "1.0" ] },
+  {"==" : [ {"substr": [{"var": "type"}, 0, 12]} , "com.example." ] },
+  {"in":[ {"var": "datacontenttype"}, ['application/octet-stream', 'application/json']]},
+  {"==" : [ {"var": "data.appinfoA"} , "abc" ] },
+]};
+
 const codegen = new JsonExpressionCodegen({expression});
 const fn = codegen.run().compile();
 
@@ -41,6 +49,9 @@ suite
   })
   .add(`json-joy/json-expression evaluate`, function() {
     evaluate(expression, {data: json})
+  })
+  .add(`json-logic-js`, function() {
+    jsonLogic.apply(jsonLogicExpression, json);
   })
   .on('cycle', function(event) {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);
