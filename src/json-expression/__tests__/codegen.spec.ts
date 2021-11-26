@@ -662,3 +662,73 @@ describe('mod', () => {
     ], 3, [7, 4]);
   });
 });
+
+describe('round', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['round']  as any, '')).toThrowError(new Error('"round" operator expects one operand.'));
+    expect(() => check(['round', 1, 1]  as any, '')).toThrowError(new Error('"round" operator expects one operand.'));
+  });
+
+  test('works with literals', () => {
+    check(['round', 1.5], 2);
+    check(['round', 1.3], 1);
+    check(['round', 1], 1);
+    check(['round', '3.6'], 4);
+    check(['round', 3.6], 4);
+  });
+
+  test('works with expressions', () => {
+    check(['round', ['=', '/0']], 2, [1.5]);
+    check(['round', ['=', '/0']], 1, [1]);
+    check(['round', ['=', '/0']], 4, ['3.6']);
+    check(['round', ['=', '/0']], 4, [3.6]);
+  });
+});
+
+describe('ceil', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['ceil']  as any, '')).toThrowError(new Error('"ceil" operator expects one operand.'));
+    expect(() => check(['ceil', 1, 1]  as any, '')).toThrowError(new Error('"ceil" operator expects one operand.'));
+  });
+
+  test('works with literals', () => {
+    check(['ceil', 1.5], 2);
+    check(['ceil', 1.3], 2);
+    check(['ceil', 1], 1);
+    check(['ceil', '3.6'], 4);
+    check(['ceil', 3.6], 4);
+  });
+
+  test('works with expressions', () => {
+    check(['ceil', ['=', '/0']], 2, [1.5]);
+    check(['ceil', ['=', '/0']], -1, [-1.2]);
+    check(['ceil', ['=', '/0']], -1, [-1.8]);
+    check(['ceil', ['=', '/0']], 1, [1]);
+    check(['ceil', ['=', '/0']], 4, ['3.6']);
+    check(['ceil', ['=', '/0']], 4, [3.6]);
+  });
+});
+
+describe('floor', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['floor']  as any, '')).toThrowError(new Error('"floor" operator expects one operand.'));
+    expect(() => check(['floor', 1, 1]  as any, '')).toThrowError(new Error('"floor" operator expects one operand.'));
+  });
+
+  test('works with literals', () => {
+    check(['floor', 1.5], 1);
+    check(['floor', 1.3], 1);
+    check(['floor', 1], 1);
+    check(['floor', '3.6'], 3);
+    check(['floor', 3.6], 3);
+  });
+
+  test('works with expressions', () => {
+    check(['floor', ['=', '/0']], 1, [1.5]);
+    check(['floor', ['=', '/0']], -2, [-1.2]);
+    check(['floor', ['=', '/0']], -2, [-1.8]);
+    check(['floor', ['=', '/0']], 1, [1]);
+    check(['floor', ['=', '/0']], 3, ['3.6']);
+    check(['floor', ['=', '/0']], 3, [3.6]);
+  });
+});

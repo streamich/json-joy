@@ -34,6 +34,9 @@ export type ExprMinus = [fn: '-', ...expressions: unknown[]];
 export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
 export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
 export type ExprMod = [fn: '%' | 'mod', expr1: unknown, expr2: unknown];
+export type ExprRound = [fn: 'round', expr: unknown];
+export type ExprCeil = [fn: 'ceil', expr: unknown];
+export type ExprFloor = [fn: 'floor', expr: unknown];
 
 // export type ExprJsonParse = [fn: 'json.parse', expr: unknown];
 
@@ -69,6 +72,9 @@ export type Expr =
   | ExprAsterisk
   | ExprSlash
   | ExprMod
+  | ExprRound
+  | ExprCeil
+  | ExprFloor
   ;
 
 export interface JsonExpressionExecutionContext {

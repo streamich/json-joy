@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprAsterisk, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprMinus, ExprMod, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprPlus, ExprSlash, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprAsterisk, ExprBool, ExprCat, ExprCeil, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprFloor, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprMinus, ExprMod, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprPlus, ExprRound, ExprSlash, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -387,6 +387,33 @@ export class JsonExpressionCodegen {
     return new Expression(`+(${a} % ${b}) || 0`);
   }
 
+  protected onRound(expr: ExprRound): ExpressionResult {
+    if (expr.length !== 2)
+      throw new Error('"round" operator expects one operand.');
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal)
+      return new Literal(Math.round(num(a.val)));
+    return new Expression(`Math.round(+(${a}) || 0)`);
+  }
+
+  protected onCeil(expr: ExprCeil): ExpressionResult {
+    if (expr.length !== 2)
+      throw new Error('"ceil" operator expects one operand.');
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal)
+      return new Literal(Math.ceil(num(a.val)));
+    return new Expression(`Math.ceil(+(${a}) || 0)`);
+  }
+
+  protected onFloor(expr: ExprFloor): ExpressionResult {
+    if (expr.length !== 2)
+      throw new Error('"floor" operator expects one operand.');
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal)
+      return new Literal(Math.floor(num(a.val)));
+    return new Expression(`Math.floor(+(${a}) || 0)`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -435,6 +462,9 @@ export class JsonExpressionCodegen {
       case '/': return this.onSlash(expr as ExprSlash);
       case '%':
       case 'mod': return this.onMod(expr as ExprMod);
+      case 'round': return this.onRound(expr as ExprRound);
+      case 'ceil': return this.onCeil(expr as ExprCeil);
+      case 'floor': return this.onFloor(expr as ExprFloor);
     }
     return new Literal(false);;
   }
