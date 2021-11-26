@@ -84,3 +84,22 @@ describe('not', () => {
     check(['!', ['eq', 3, ['=', '/foo']]], false, {foo: 3});
   });
 });
+
+describe('if', () => {
+  test('works as ternary conditional expression', () => {
+    check(['if', true, 1, 2], 1);
+    check(['if', false, 1, 2], 2);
+    check(['?', true, 1, 2], 1);
+    check(['?', false, 1, 2], 2);
+  });
+
+  test('all operands are expressions', () => {
+    const data = {
+      foo: 1,
+      bar: 2,
+      baz: 3,
+    };
+    check(['if', ['=', '/foo'], ['=', '/bar'], ['=', '/baz']], 2, data);
+    check(['if', ['>', ['=', '/foo'], 10], ['=', '/bar'], ['=', '/baz']], 3, data);
+  });
+});
