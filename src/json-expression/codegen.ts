@@ -1,10 +1,10 @@
-import type {Expr, ExprAnd, ExprBool, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprContains, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts} from './util';
+import {get, str, type, starts, contains, ends} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 // const isLiteral = (expr: unknown): boolean => !isExpression(expr);
@@ -15,6 +15,8 @@ const linkable = {
   type,
   str,
   starts,
+  contains,
+  ends,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -196,6 +198,15 @@ export class JsonExpressionCodegen {
     return new Expression(`starts(${outer}, ${inner})`);
   }
 
+  protected onContains([, a, b]: ExprContains): ExpressionResult {
+    const outer = this.onExpression(a);
+    const inner = this.onExpression(b);
+    if ((outer instanceof Literal) && (inner instanceof Literal))
+      return new Literal(contains(outer.val, inner.val));
+    this.codegen.link('contains');
+    return new Expression(`contains(${outer}, ${inner})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -225,6 +236,7 @@ export class JsonExpressionCodegen {
       case 'int': return this.onInt(expr as ExprInt);
       case 'str': return this.onStr(expr as ExprStr);
       case 'starts': return this.onStarts(expr as ExprStarts);
+      case 'contains': return this.onContains(expr as ExprContains);
     }
     return new Literal(false);;
   }

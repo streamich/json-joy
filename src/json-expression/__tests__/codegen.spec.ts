@@ -291,3 +291,21 @@ describe('starts', () => {
     check(['starts', ['get', '/a'], 'document2-'], false, {a: 'document-123', b: 'doc'});
   });
 });
+
+describe('contains', () => {
+  test('when operands are literals', () => {
+    check(['contains', 'asdf', 'as'], true);
+    check(['contains', 'asdf', 'az'], false);
+    check(['contains', 'zzasdf', 'az'], false);
+    check(['contains', 'az', 'az'], true);
+    check(['contains', '1az', 'az'], true);
+    check(['contains', '1az2', 'az'], true);
+  });
+
+  test('when operands are expressions', () => {
+    check(['contains', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: 'me'});
+    check(['contains', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: 'do'});
+    check(['contains', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: '123'});
+    check(['contains', ['get', '/a'], ['get', '/b']], false, {a: 'document-123', b: 'me__'});
+  });
+});
