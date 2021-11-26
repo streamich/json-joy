@@ -366,3 +366,23 @@ describe('in', () => {
     check(['in', 'ss', ['=', '/lol']], true, {foo: 'bar', lol: ['gg', 'ss']});
   });
 });
+
+describe('cat', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['cat'], '')).toThrowError(new Error('"cat" operator expects at least two operands.'));
+    expect(() => check(['cat', 'a'], '')).toThrowError(new Error('"cat" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['cat', 'a', 'ds'], 'ads');
+  });
+
+  test('works with expressions', () => {
+    check(
+      ['cat',
+        ['get', '/2'],
+        ['get', '/1'],
+        ['get', '/0'],
+      ], 'cba', ['a', 'b', 'c']);
+  });
+});

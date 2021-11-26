@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprBool, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprIn, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -243,6 +243,25 @@ export class JsonExpressionCodegen {
     return new Expression(`isInContainer(${what}, ${container})`);
   }
 
+  protected onCat(expr: ExprCat): ExpressionResult {
+    if (expr.length <= 2) throw new Error('"cat" operator expects at least two operands.');
+    const [, ...operands] = expr;
+    const expressions = operands.map(operand => this.onExpression(operand));
+    let areAllLiteral = true;
+    for (let i = 0; i < expressions.length; i++) {
+      const expression = expressions[i];
+      if (!(expression instanceof Literal)) {
+        areAllLiteral = false;
+        break;
+      }
+    }
+    if (areAllLiteral)
+      return new Literal(expressions.map(expr => str(expr.val)).join(''));
+    this.codegen.link('str');
+    const evaledExpressions = expressions.map(expr => `str(${expr})`);
+    return new Expression(evaledExpressions.join(' + '));
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -276,6 +295,8 @@ export class JsonExpressionCodegen {
       case 'ends': return this.onEnds(expr as ExprEnds);
       case 'defined': return this.onDefined(expr as ExprDefined);
       case 'in': return this.onIn(expr as ExprIn);
+      case '.':
+      case 'cat': return this.onCat(expr as ExprCat);
     }
     return new Literal(false);;
   }
