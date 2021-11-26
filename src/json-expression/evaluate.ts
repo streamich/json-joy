@@ -1,7 +1,7 @@
 import {deepEqual} from "../json-equal/deepEqual";
 import {findByPointer} from "../json-pointer";
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
-import {starts, str, type} from "./util";
+import {contains, ends, starts, str, type} from "./util";
 
 const toNumber = (value: unknown): number => +(value as number) || 0;
 
@@ -67,12 +67,12 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     case 'contains': {
       const inner = evaluate(expr[1], ctx);
       const outer = evaluate(expr[2], ctx);
-      return str(outer).indexOf(str(inner)) > -1;
+      return contains(outer, inner);
     }
     case 'ends': {
       const inner = str(evaluate(expr[1], ctx));
       const outer = str(evaluate(expr[2], ctx));
-      return outer.indexOf(inner) === (outer.length - inner.length);
+      return ends(outer, inner);
     }
     case 'cat':
     case '.': {

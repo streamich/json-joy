@@ -16,3 +16,13 @@ export const str = (value: unknown): string => {
 export const starts = (outer: unknown, inner: unknown): boolean => {
   return str(outer).indexOf(str(inner)) === 0;
 };
+
+export const contains = (outer: unknown, inner: unknown): boolean => {
+  return str(outer).indexOf(str(inner)) > -1;
+};
+
+export const ends = (outer: unknown, inner: unknown): boolean => {
+  const o = str(outer);
+  const i = str(inner);
+  return o.indexOf(i) === (o.length - i.length);
+};
