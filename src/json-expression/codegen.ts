@@ -1,4 +1,4 @@
-import type {Expr, ExprAnd, ExprBool, ExprContains, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprBool, ExprContains, ExprEnds, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
@@ -207,6 +207,15 @@ export class JsonExpressionCodegen {
     return new Expression(`contains(${outer}, ${inner})`);
   }
 
+  protected onEnds([, a, b]: ExprEnds): ExpressionResult {
+    const outer = this.onExpression(a);
+    const inner = this.onExpression(b);
+    if ((outer instanceof Literal) && (inner instanceof Literal))
+      return new Literal(ends(outer.val, inner.val));
+    this.codegen.link('ends');
+    return new Expression(`ends(${outer}, ${inner})`);
+  }
+
   protected onExpression(expr: Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -237,6 +246,7 @@ export class JsonExpressionCodegen {
       case 'str': return this.onStr(expr as ExprStr);
       case 'starts': return this.onStarts(expr as ExprStarts);
       case 'contains': return this.onContains(expr as ExprContains);
+      case 'ends': return this.onEnds(expr as ExprEnds);
     }
     return new Literal(false);;
   }

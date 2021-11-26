@@ -309,3 +309,16 @@ describe('contains', () => {
     check(['contains', ['get', '/a'], ['get', '/b']], false, {a: 'document-123', b: 'me__'});
   });
 });
+
+describe('ends', () => {
+  test('when operands are literals', () => {
+    check(['ends', 'asdf', 'df'], true);
+    check(['ends', 'asdf', 'f'], true);
+    check(['ends', 'asdf', 'f3'], false);
+  });
+
+  test('when operands are expressions', () => {
+    check(['ends', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: '-123'});
+    check(['ends', ['get', '/a'], ['get', '/b']], false, {a: 'document-123', b: '-1234'});
+  });
+});
