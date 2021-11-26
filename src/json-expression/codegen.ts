@@ -1,21 +1,13 @@
 import type {Expr, ExprAnd, ExprBool, ExprEquals, ExprGet, ExprIf, ExprInt, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
-import {toPath, get as get_} from '../json-pointer';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
+import {get, type} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 // const isLiteral = (expr: unknown): boolean => !isExpression(expr);
-
-const get = (path: string, data: unknown) => get_(data, toPath(path));
-
-const type = (value: unknown): string => {
-  if (value === null) return 'null';
-  if (value instanceof Array) return 'array'
-  return typeof value;
-};
 
 const linkable = {
   get,

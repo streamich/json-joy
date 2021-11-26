@@ -1,11 +1,7 @@
 import {deepEqual} from "../json-equal/deepEqual";
 import {findByPointer} from "../json-pointer";
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
-
-const toString = (value: unknown): string => {
-  if (typeof value === 'string') return value;
-  return JSON.stringify(value);
-};
+import {str} from "./util";
 
 const toNumber = (value: unknown): number => +(value as number) || 0;
 
@@ -67,20 +63,20 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     case 'bool': return !!evaluate(expr[1], ctx);
     case 'num': return toNumber(evaluate(expr[1], ctx));
     case 'int': return ~~evaluate(expr[1], ctx);
-    case 'str': return toString(evaluate(expr[1], ctx));
+    case 'str': return str(evaluate(expr[1], ctx));
     case 'starts': {
       const inner = evaluate(expr[1], ctx);
       const outer = evaluate(expr[2], ctx);
-      return toString(outer).indexOf(toString(inner)) === 0;
+      return str(outer).indexOf(str(inner)) === 0;
     }
     case 'contains': {
       const inner = evaluate(expr[1], ctx);
       const outer = evaluate(expr[2], ctx);
-      return toString(outer).indexOf(toString(inner)) > -1;
+      return str(outer).indexOf(str(inner)) > -1;
     }
     case 'ends': {
-      const inner = toString(evaluate(expr[1], ctx));
-      const outer = toString(evaluate(expr[2], ctx));
+      const inner = str(evaluate(expr[1], ctx));
+      const outer = str(evaluate(expr[2], ctx));
       return outer.indexOf(inner) === (outer.length - inner.length);
     }
     case 'cat':
@@ -88,10 +84,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
       return expr.slice(1).map(e => evaluate(e, ctx)).join('');
     }
     case 'substr': {
-      const str = toString(evaluate(expr[1], ctx));
+      const str2 = str(evaluate(expr[1], ctx));
       const start = toNumber(evaluate(expr[2], ctx));
       const end = expr.length > 3 ? toNumber(evaluate(expr[3], ctx)) : undefined;
-      return str.substr(start, end);
+      return str2.substr(start, end);
     }
     case '<': {
       const left = toNumber(evaluate(expr[1], ctx));
