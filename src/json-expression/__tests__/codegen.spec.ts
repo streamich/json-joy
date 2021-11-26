@@ -410,9 +410,9 @@ describe('substr', () => {
 
 describe('less than', () => {
   test('throws on too few or too many operands', () => {
-    expect(() => check(['<']  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
-    expect(() => check(['<', 1]  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
-    expect(() => check(['<', 1, 2, 3]  as any, '')).toThrowError(new Error('Less than operator expects two operands.'));
+    expect(() => check(['<']  as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
+    expect(() => check(['<', 1]  as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
+    expect(() => check(['<', 1, 2, 3]  as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
   });
 
   test('works with literals', () => {
@@ -433,9 +433,9 @@ describe('less than', () => {
 
 describe('less than or equal', () => {
   test('throws on too few or too many operands', () => {
-    expect(() => check(['<=']  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
-    expect(() => check(['<=', 1]  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
-    expect(() => check(['<=', 1, 2, 3]  as any, '')).toThrowError(new Error('Less than or equal operator expects two operands.'));
+    expect(() => check(['<=']  as any, '')).toThrowError(new Error('"<=" operator expects two operands.'));
+    expect(() => check(['<=', 1]  as any, '')).toThrowError(new Error('"<=" operator expects two operands.'));
+    expect(() => check(['<=', 1, 2, 3]  as any, '')).toThrowError(new Error('"<=" operator expects two operands.'));
   });
 
   test('works with literals', () => {
@@ -457,9 +457,9 @@ describe('less than or equal', () => {
 
 describe('greater than', () => {
   test('throws on too few or too many operands', () => {
-    expect(() => check(['>']  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
-    expect(() => check(['>', 1]  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
-    expect(() => check(['>', 1, 2, 3]  as any, '')).toThrowError(new Error('Greater than operator expects two operands.'));
+    expect(() => check(['>']  as any, '')).toThrowError(new Error('">" operator expects two operands.'));
+    expect(() => check(['>', 1]  as any, '')).toThrowError(new Error('">" operator expects two operands.'));
+    expect(() => check(['>', 1, 2, 3]  as any, '')).toThrowError(new Error('">" operator expects two operands.'));
   });
 
   test('works with literals', () => {
@@ -481,9 +481,9 @@ describe('greater than', () => {
 
 describe('greater than or equal', () => {
   test('throws on too few or too many operands', () => {
-    expect(() => check(['>=']  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
-    expect(() => check(['>=', 1]  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
-    expect(() => check(['>=', 1, 2, 3]  as any, '')).toThrowError(new Error('Greater than or equal operator expects two operands.'));
+    expect(() => check(['>=']  as any, '')).toThrowError(new Error('">=" operator expects two operands.'));
+    expect(() => check(['>=', 1]  as any, '')).toThrowError(new Error('">=" operator expects two operands.'));
+    expect(() => check(['>=', 1, 2, 3]  as any, '')).toThrowError(new Error('">=" operator expects two operands.'));
   });
 
   test('works with literals', () => {
@@ -535,5 +535,96 @@ describe('max', () => {
 
   test('works with expressions', () => {
     check(['max', ['=', '/1'], ['=', '/2'], ['=', '/0']], 5.5, [3.3, 4.4, 5.5]);
+  });
+});
+
+describe('plus', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['+']  as any, '')).toThrowError(new Error('"+" operator expects at least two operands.'));
+    expect(() => check(['+', 1]  as any, '')).toThrowError(new Error('"+" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['+', 1, 2, 3, 4], 10);
+  });
+
+  test('does not concatenate strings', () => {
+    check(['+', '1', 1], 2);
+    check(['+', ['=', '/0'], ['=', '/1']], 2, ['1', 1]);
+  });
+
+  test('works with expressions', () => {
+    check(['+',
+      ['=', '/0'],
+      ['=', '/1'],
+      ['=', '/2'],
+      ['=', '/3'],
+    ], 10, [1, 2, 3, 4]);
+  });
+});
+
+describe('minus', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['-']  as any, '')).toThrowError(new Error('"-" operator expects at least two operands.'));
+    expect(() => check(['-', 1]  as any, '')).toThrowError(new Error('"-" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['-', 4, 1, 2, 3], -2);
+  });
+
+  test('works with expressions', () => {
+    check(['-',
+      ['=', '/0'],
+      ['=', '/1'],
+      ['=', '/2'],
+      ['=', '/3'],
+    ], -8, [1, 2, 3, 4]);
+  });
+});
+
+describe('multiplication', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['*']  as any, '')).toThrowError(new Error('"*" operator expects at least two operands.'));
+    expect(() => check(['*', 1]  as any, '')).toThrowError(new Error('"*" operator expects at least two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['*', 1, 2, 3, 4], 24);
+  });
+
+  test('works with expressions', () => {
+    check(['*',
+      ['=', '/0'],
+      ['=', '/1'],
+      ['=', '/2'],
+      ['=', '/3'],
+    ], 24, [1, 2, 3, 4]);
+  });
+});
+
+describe('division', () => {
+  test('throws on too few operands', () => {
+    expect(() => check(['/']  as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
+    expect(() => check(['/', 1]  as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
+    expect(() => check(['/', 1, 1, 1]  as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
+  });
+
+  test('works with literals', () => {
+    check(['/', 1, 1], 1);
+    check(['/', 5, 2], 2.5);
+    check(['/', 5, 0], 0);
+    check(['/', 5, -0], 0);
+  });
+
+  test('works with expressions', () => {
+    check(['/',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 0.5, [1, 2]);
+    check(['/',
+      ['=', '/0'],
+      ['=', '/1'],
+    ], 0, [1, 0]);
   });
 });

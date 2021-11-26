@@ -1,10 +1,10 @@
-import type {Expr, ExprAnd, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import type {Expr, ExprAnd, ExprAsterisk, ExprBool, ExprCat, ExprContains, ExprDefined, ExprEnds, ExprEquals, ExprGet, ExprGreaterThan, ExprGreaterThanOrEqual, ExprIf, ExprIn, ExprInt, ExprLessThan, ExprLessThanOrEqual, ExprMax, ExprMin, ExprMinus, ExprNot, ExprNotEquals, ExprNum, ExprOr, ExprPlus, ExprSlash, ExprStarts, ExprStr, ExprSubstr, ExprType, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
-import {get, str, type, starts, contains, ends, isInContainer, substr, num} from './util';
+import {get, str, type, starts, contains, ends, isInContainer, substr, num, slash} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
@@ -20,6 +20,7 @@ const linkable = {
   ends,
   isInContainer,
   substr,
+  slash,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -277,7 +278,7 @@ export class JsonExpressionCodegen {
 
   protected onLessThan(expr: ExprLessThan): ExpressionResult {
     if (expr.length !== 3)
-      throw new Error('Less than operator expects two operands.');
+      throw new Error('"<" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
     if (a instanceof Literal && b instanceof Literal)
@@ -287,7 +288,7 @@ export class JsonExpressionCodegen {
 
   protected onLessThanOrEqual(expr: ExprLessThanOrEqual): ExpressionResult {
     if (expr.length !== 3)
-      throw new Error('Less than or equal operator expects two operands.');
+      throw new Error('"<=" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
     if (a instanceof Literal && b instanceof Literal)
@@ -297,7 +298,7 @@ export class JsonExpressionCodegen {
 
   protected onGreaterThan(expr: ExprGreaterThan): ExpressionResult {
     if (expr.length !== 3)
-      throw new Error('Greater than operator expects two operands.');
+      throw new Error('">" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
     if (a instanceof Literal && b instanceof Literal)
@@ -307,7 +308,7 @@ export class JsonExpressionCodegen {
 
   protected onGreaterThanOrEqual(expr: ExprGreaterThanOrEqual): ExpressionResult {
     if (expr.length !== 3)
-      throw new Error('Greater than or equal operator expects two operands.');
+      throw new Error('">=" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
     if (a instanceof Literal && b instanceof Literal)
@@ -333,6 +334,47 @@ export class JsonExpressionCodegen {
     if (allLiterals) return new Literal(num(Math.max(...expressions.map(expr => expr.val as any))));
     const params = expressions.map(expr => `${expr}`);
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
+  }
+
+  protected onPlus(expr: ExprPlus): ExpressionResult {
+    if (expr.length < 3)
+      throw new Error('"+" operator expects at least two operands.');
+    const expressions = expr.slice(1).map(operand => this.onExpression(operand));
+    const allLiterals = expressions.every(expr => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + num(b.val), 0));
+    const params = expressions.map(expr => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' + ')}`);
+  }
+
+  protected onMinus(expr: ExprMinus): ExpressionResult {
+    if (expr.length < 3)
+      throw new Error('"-" operator expects at least two operands.');
+    const expressions = expr.slice(1).map(operand => this.onExpression(operand));
+    const allLiterals = expressions.every(expr => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - num(b.val), num(expressions[0].val)));
+    const params = expressions.map(expr => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' - ')}`);
+  }
+
+  protected onAsterisk(expr: ExprAsterisk): ExpressionResult {
+    if (expr.length < 3)
+      throw new Error('"*" operator expects at least two operands.');
+    const expressions = expr.slice(1).map(operand => this.onExpression(operand));
+    const allLiterals = expressions.every(expr => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * num(b.val), 1));
+    const params = expressions.map(expr => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' * ')}`);
+  }
+
+  protected onSlash(expr: ExprSlash): ExpressionResult {
+    if (expr.length !== 3)
+      throw new Error('"/" operator expects two operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal)
+      return new Literal(slash(a.val, b.val));
+    this.codegen.link('slash');
+    return new Expression(`slash(${a}, ${b})`);
   }
 
   protected onExpression(expr: Expr | unknown): ExpressionResult {
@@ -377,6 +419,10 @@ export class JsonExpressionCodegen {
       case '>=': return this.onGreaterThanOrEqual(expr as ExprGreaterThanOrEqual);
       case 'min': return this.onMin(expr as ExprMin);
       case 'max': return this.onMax(expr as ExprMax);
+      case '+': return this.onPlus(expr as ExprPlus);
+      case '-': return this.onMinus(expr as ExprMinus);
+      case '*': return this.onAsterisk(expr as ExprAsterisk);
+      case '/': return this.onSlash(expr as ExprSlash);
     }
     return new Literal(false);;
   }

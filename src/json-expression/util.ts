@@ -37,5 +37,10 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 
+export const slash = (a: unknown, b: unknown) => {
+  const res = num(a) / num(b);
+  return Number.isFinite(res) ? res : 0;
+};
+
 export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
   str(probablyString).substr(int(from), int(length));
