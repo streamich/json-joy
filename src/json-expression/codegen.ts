@@ -3,7 +3,7 @@ import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
-import {parseJsonPointer, validateJsonPointer} from '../json-pointer';
+import {toPath, validateJsonPointer} from '../json-pointer';
 import {get, str, type, starts, contains, ends, isInContainer, substr, num, slash} from './util';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
@@ -74,7 +74,7 @@ export class JsonExpressionCodegen {
     if (path instanceof Literal) {
       if (typeof path.val !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(path.val);
-      const fn = $$find(parseJsonPointer(path.val));
+      const fn = $$find(toPath(path.val));
       const d = this.codegen.addConstant(fn);
       return new Expression(`${d}(data)`);
     } else {
@@ -271,7 +271,7 @@ export class JsonExpressionCodegen {
     const [, pointer] = expr;
     if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
     validateJsonPointer(pointer);
-    const fn = $$find(parseJsonPointer(pointer));
+    const fn = $$find(toPath(pointer));
     const d = this.codegen.addConstant(fn);
     return new Expression(`${d}(data) !== undefined`);
   }
