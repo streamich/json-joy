@@ -11,7 +11,7 @@ export const throwOnUndef = (value: unknown, def?: unknown) => {
 
 export const type = (value: unknown): string => {
   if (value === null) return 'null';
-  if (value instanceof Array) return 'array'
+  if (value instanceof Array) return 'array';
   return typeof value;
 };
 
@@ -31,7 +31,7 @@ export const contains = (outer: unknown, inner: unknown): boolean => {
 export const ends = (outer: unknown, inner: unknown): boolean => {
   const o = str(outer);
   const i = str(inner);
-  return o.indexOf(i) === (o.length - i.length);
+  return o.indexOf(i) === o.length - i.length;
 };
 
 export const isInContainer = (what: unknown, container: unknown[]): boolean => {

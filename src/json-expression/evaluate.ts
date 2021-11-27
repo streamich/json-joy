@@ -1,12 +1,29 @@
-import {deepEqual} from "../json-equal/deepEqual";
-import {get, toPath} from "../json-pointer";
+import {deepEqual} from '../json-equal/deepEqual';
+import {get, toPath} from '../json-pointer';
 import {validateJsonPointer} from '../json-pointer';
-import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
-import {betweenEqEq, betweenEqNe, betweenNeEq, betweenNeNe, contains, ends, isLiteral, num, slash, starts, str, throwOnUndef, type} from "./util";
+import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import {
+  betweenEqEq,
+  betweenEqNe,
+  betweenNeEq,
+  betweenNeNe,
+  contains,
+  ends,
+  isLiteral,
+  num,
+  slash,
+  starts,
+  str,
+  throwOnUndef,
+  type,
+} from './util';
 
 const toNumber = num;
 
-export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext): any => {
+export const evaluate = (
+  expr: Expr | unknown,
+  ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext,
+): any => {
   if (!(expr instanceof Array)) return expr;
   if (expr.length === 1 && expr[0] instanceof Array) return expr[0];
 
@@ -47,14 +64,15 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     }
     case '&&':
     case 'and':
-      return expr.slice(1).every(e => evaluate(e, ctx));
+      return expr.slice(1).every((e) => evaluate(e, ctx));
     case '||':
     case 'or':
-      return expr.slice(1).some(e => evaluate(e, ctx));
+      return expr.slice(1).some((e) => evaluate(e, ctx));
     case '!':
     case 'not':
       return !evaluate(expr[1], ctx);
-    case 'type': return type(evaluate(expr[1], ctx));
+    case 'type':
+      return type(evaluate(expr[1], ctx));
     case 'defined': {
       const pointer = evaluate(expr[1], ctx);
       if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
@@ -62,10 +80,14 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
       const value = get(ctx.data, toPath(pointer));
       return value !== undefined;
     }
-    case 'bool': return !!evaluate(expr[1], ctx);
-    case 'num': return toNumber(evaluate(expr[1], ctx));
-    case 'int': return ~~evaluate(expr[1], ctx);
-    case 'str': return str(evaluate(expr[1], ctx));
+    case 'bool':
+      return !!evaluate(expr[1], ctx);
+    case 'num':
+      return toNumber(evaluate(expr[1], ctx));
+    case 'int':
+      return ~~evaluate(expr[1], ctx);
+    case 'str':
+      return str(evaluate(expr[1], ctx));
     case 'starts': {
       const subject = evaluate(expr[1], ctx);
       const test = evaluate(expr[2], ctx);
@@ -83,7 +105,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
     }
     case 'cat':
     case '.': {
-      return expr.slice(1).map(e => evaluate(e, ctx)).join('');
+      return expr
+        .slice(1)
+        .map((e) => evaluate(e, ctx))
+        .join('');
     }
     case 'substr': {
       const str2 = str(evaluate(expr[1], ctx));
@@ -146,10 +171,10 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
       return betweenEqEq(val, min, max);
     }
     case 'min': {
-      return Math.min(...expr.slice(1).map(e => num(evaluate(e, ctx))));
+      return Math.min(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
     }
     case 'max': {
-      return Math.max(...expr.slice(1).map(e => num(evaluate(e, ctx))));
+      return Math.max(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
     }
     case '+': {
       return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) + acc, 0);

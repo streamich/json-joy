@@ -6,11 +6,10 @@ evaluate expressions.
 For example, the following expression
 
 ```js
-['+', 1, 2] // 1 + 2
+['+', 1, 2]; // 1 + 2
 ```
 
 evaluates to 3.
-
 
 ## Example
 
@@ -39,14 +38,14 @@ You could write and compile a JSON Expression to efficiently filter out events
 you are interested in, for example your expression could look like this:
 
 ```js
-['and',
+[
+  'and',
   ['==', ['get', '/specversion'], '1.0'],
   ['starts', ['get', '/type'], 'com.example.'],
   ['in', ['get', '/datacontenttype'], [['application/octet-stream', 'application/json']]],
   ['==', ['=', '/data/appinfoA'], 'abc'],
-]
+];
 ```
-
 
 ## Documentation
 
@@ -64,7 +63,6 @@ Parsing rules:
    be enclosed in square brackets. For example, to specify an empty array, you
    box your array in square brackets: `[[]]`. This evaluates to an empty array
    JSON value `[]`.
-
 
 ## Reference
 
@@ -95,7 +93,6 @@ const data = {foo: 2};
 
 fn({data}); // 3
 ```
-
 
 ## Benchmark
 

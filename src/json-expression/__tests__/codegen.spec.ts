@@ -3,7 +3,12 @@ import {Expr, JsonExpressionCodegenContext} from '../types';
 import {jsonExpressionCodegenTests} from './jsonExpressionCodegenTests';
 import {jsonExpressionEvaluateTests} from './jsonExpressionEvaluateTests';
 
-const check = (expression: Expr, expected: unknown, data: unknown = null, options: JsonExpressionCodegenContext = {}) => {
+const check = (
+  expression: Expr,
+  expected: unknown,
+  data: unknown = null,
+  options: JsonExpressionCodegenContext = {},
+) => {
   const codegen = new JsonExpressionCodegen({
     ...options,
     expression,

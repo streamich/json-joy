@@ -339,7 +339,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           },
         };
 
-        const expression1: Expr = ['and',
+        const expression1: Expr = [
+          'and',
           ['==', ['get', '/chan'], 'slides-123'],
           ['==', ['get', '/data/type'], 'cursor-move'],
           ['>', ['=', '/data/pos/0'], 300],
@@ -347,7 +348,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
         ];
         check(expression1, true, data);
 
-        const expression2: Expr = ['and',
+        const expression2: Expr = [
+          'and',
           ['==', ['get', '/chan'], 'slides-123'],
           ['==', ['get', '/data/type'], 'cursor-move'],
           ['>', ['=', '/data/pos/1'], 555],
@@ -375,7 +377,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             price_usd: 105.95,
           };
 
-          const expression1: Expr = ['and',
+          const expression1: Expr = [
+            'and',
             ['==', ['get', '/store'], 'example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
             ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
@@ -383,7 +386,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           ];
           check(expression1, true, data);
 
-          const expression2: Expr = ['and',
+          const expression2: Expr = [
+            'and',
             ['==', ['get', '/store'], 'some_other_example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
             ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
@@ -406,8 +410,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             key_a: 'value_three',
           };
-          check(['in', ['get', '/key_a'], [["value_one", "value_two", "value_three"]]], true, data);
-          check(['in', ['get', '/key_a'], [["value_one", "value_two", "value_four"]]], false, data);
+          check(['in', ['get', '/key_a'], [['value_one', 'value_two', 'value_three']]], true, data);
+          check(['in', ['get', '/key_a'], [['value_one', 'value_two', 'value_four']]], false, data);
         });
 
         // "price": {"Type": "Number.Array", "Value": "[100, 50]"}
@@ -434,8 +438,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             customer_interests: 'rugby',
           };
-          check(['!', ['in', ['get', '/customer_interests'], [["rugby", "tennis"]]]], false, data);
-          check(['not', ['in', ['get', '/customer_interests'], [["football", "tennis"]]]], true, data);
+          check(['!', ['in', ['get', '/customer_interests'], [['rugby', 'tennis']]]], false, data);
+          check(['not', ['in', ['get', '/customer_interests'], [['football', 'tennis']]]], true, data);
         });
 
         // "event": [{"anything-but": {"prefix":"order-"}}]

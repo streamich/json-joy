@@ -83,8 +83,7 @@ export type Expr =
   | ExprMod
   | ExprRound
   | ExprCeil
-  | ExprFloor
-  ;
+  | ExprFloor;
 
 export interface JsonExpressionExecutionContext {
   data: unknown;
