@@ -64,7 +64,7 @@ export interface TObject extends TType, Validatable {
 /**
  * Represents a single field of an object.
  */
-export interface TObjectField {
+export interface TObjectField extends Display {
   /** Key name of the field. */
   key: string;
   /** One or more "one-of" types of the field. */
@@ -205,8 +205,6 @@ export interface TEnum extends TType {
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
 export type TMessagePack = TJson | TBinary;
 
-export interface TTypeMap {
-  types: TMessagePack;
-}
+export type TAnyType = TMessagePack | TRef | TOr | TEnum | TAny;
 
 export type NoT<T extends TType> = Omit<T, '__t'>;

@@ -62,7 +62,9 @@
     "rxjs": "7",
     "tslib": "2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "word-wrap": "^1.2.3"
+  },
   "devDependencies": {
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^2.5.1",

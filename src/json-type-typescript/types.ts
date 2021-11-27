@@ -1,23 +1,63 @@
 export interface TsModuleBlock {
-  __node: 'ModuleBlock';
+  node: 'ModuleBlock';
+  name: string;
   statements: Array<TsInterfaceDeclaration>;
 }
 
+export type TsType =
+  | TsStringKeyword
+  | TsNumberKeyword
+  | TsBooleanKeyword
+  | TsNullKeyword
+  | TsStringLiteral
+  | TsNumericLiteral
+  ;
+
 export interface TsInterfaceDeclaration {
-  __node: 'InterfaceDeclaration';
+  node: 'InterfaceDeclaration';
   name: string;
-  members: [];
+  members: TsPropertySignature[];
 }
 
 export interface TsPropertySignature {
-  __node: 'PropertySignature';
+  node: 'PropertySignature';
   name: string;
   optional?: boolean;
   type: TsType;
 }
 
-export interface TsQuestionToken {
-  __node: 'QuestionToken',
+export interface TsArrayType {
+  node: 'ArrayType';
+  elementType: TsType;
 }
 
-export type TsType = 'string' | 'number' | 'boolean' | 'null';
+export interface TsStringKeyword {
+  node: 'StringKeyword';
+}
+
+export interface TsNumberKeyword {
+  node: 'NumberKeyword';
+}
+
+export interface TsBooleanKeyword {
+  node: 'BooleanKeyword';
+}
+
+export interface TsNullKeyword {
+  node: 'NullKeyword';
+}
+
+export interface TsStringLiteral {
+  node: 'StringLiteral';
+  text: string;
+}
+
+export interface TsNumericLiteral {
+  node: 'NumericLiteral';
+  text: string;
+}
+
+export interface TsTypeLiteral {
+  node: 'TypeLiteral';
+  members: TsPropertySignature[];
+}
