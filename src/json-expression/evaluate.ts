@@ -2,7 +2,7 @@ import {deepEqual} from "../json-equal/deepEqual";
 import {get, toPath} from "../json-pointer";
 import {validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from "./types";
-import {contains, ends, isLiteral, num, slash, starts, str, throwOnUndef, type} from "./util";
+import {betweenEqEq, betweenEqNe, betweenNeEq, betweenNeNe, contains, ends, isLiteral, num, slash, starts, str, throwOnUndef, type} from "./util";
 
 const toNumber = num;
 
@@ -95,7 +95,7 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
       const [, a, pattern] = expr;
       if (typeof pattern !== 'string')
         throw new Error('"matches" second argument should be a regular expression string.');
-      if (!ctx.createPattern) 
+      if (!ctx.createPattern)
         throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
       const subject = evaluate(a, ctx);
       const fn = ctx.createPattern(pattern);
@@ -120,6 +120,30 @@ export const evaluate = (expr: Expr | unknown, ctx: JsonExpressionExecutionConte
       const left = num(evaluate(expr[1], ctx));
       const right = num(evaluate(expr[2], ctx));
       return left >= right;
+    }
+    case '><': {
+      const val = num(evaluate(expr[1], ctx));
+      const min = num(evaluate(expr[2], ctx));
+      const max = num(evaluate(expr[3], ctx));
+      return betweenNeNe(val, min, max);
+    }
+    case '=><': {
+      const val = num(evaluate(expr[1], ctx));
+      const min = num(evaluate(expr[2], ctx));
+      const max = num(evaluate(expr[3], ctx));
+      return betweenEqNe(val, min, max);
+    }
+    case '><=': {
+      const val = num(evaluate(expr[1], ctx));
+      const min = num(evaluate(expr[2], ctx));
+      const max = num(evaluate(expr[3], ctx));
+      return betweenNeEq(val, min, max);
+    }
+    case '=><=': {
+      const val = num(evaluate(expr[1], ctx));
+      const min = num(evaluate(expr[2], ctx));
+      const max = num(evaluate(expr[3], ctx));
+      return betweenEqEq(val, min, max);
     }
     case 'min': {
       return Math.min(...expr.slice(1).map(e => num(evaluate(e, ctx))));
