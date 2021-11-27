@@ -69,18 +69,18 @@ This package consists of multiple self-contained libraries:
 To reduce your browser-side bundle size import directly from the library you use.
 
 ```ts
-import from 'json-joy/{lib,es6,esm}/<library>';
+import from 'json-joy/{lib,es2020,es6,esm}/<library>';
 ```
 
 For example:
 
 ```ts
-import {applyOperations} from 'json-joy/lib/json-patch`;
+import {deepEqual} from 'json-joy/lib/json-equal`;
 ```
 
 All libraries can be imported from one of the below folders:
 
 - `lib` &mdash; ES5 compiled CommonJS code.
-- `es6` &mdash; ES6 compiled CommonJS code.
 - `es2020` &mdash; ES2020 compiled CommonJS code.
+- `es6` &mdash; ES6 compiled CommonJS code.
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.
