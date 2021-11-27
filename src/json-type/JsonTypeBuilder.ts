@@ -1,4 +1,19 @@
-import {TNull, TBoolean, TNumber, TString, TArray, TObject, TObjectField, NoT, TBinary, TType, TAny, TRef, TOr, TEnum} from "./types/type";
+import {
+  TNull,
+  TBoolean,
+  TNumber,
+  TString,
+  TArray,
+  TObject,
+  TObjectField,
+  NoT,
+  TBinary,
+  TType,
+  TAny,
+  TRef,
+  TOr,
+  TEnum,
+} from './types/type';
 
 export class JsonTypeBuilder {
   get str() {
@@ -71,10 +86,14 @@ export class JsonTypeBuilder {
   }
 
   public Object(id: string, options: Omit<NoT<TObject>, 'id'>): TObject;
-  public Object(fields: TObject['fields'], options?: Omit<NoT<TObject>,  'fields'>): TObject;
+  public Object(fields: TObject['fields'], options?: Omit<NoT<TObject>, 'fields'>): TObject;
   public Object(id: string, fields: TObject['fields'], options?: Omit<NoT<TObject>, 'id' | 'fields'>): TObject;
   public Object(options: NoT<TObject>): TObject;
-  public Object(a: string | TObject['fields'] | NoT<TObject>, b?: Omit<NoT<TObject>, 'id'> | Omit<NoT<TObject>,  'fields'> | TObject['fields'], c?: Omit<NoT<TObject>, 'id' | 'fields'>): TObject {
+  public Object(
+    a: string | TObject['fields'] | NoT<TObject>,
+    b?: Omit<NoT<TObject>, 'id'> | Omit<NoT<TObject>, 'fields'> | TObject['fields'],
+    c?: Omit<NoT<TObject>, 'id' | 'fields'>,
+  ): TObject {
     if (typeof a === 'string') {
       if (Array.isArray(b)) return this.Object({id: a, fields: b, ...(c || {})});
       return this.Object({id: a, ...((b as Omit<NoT<TObject>, 'id'>) || {})});
@@ -125,7 +144,7 @@ export class JsonTypeBuilder {
   public Enum(id: string, values: unknown[], options?: Omit<NoT<TObject>, 'id'>): TEnum;
   public Enum(values: unknown[], options?: NoT<TObject>): TEnum;
   public Enum(a: string | unknown[], b?: unknown[] | NoT<TObject>, c?: Omit<NoT<TObject>, 'id'>) {
-    if (typeof a === 'string') return this.Enum(b as unknown[], {id: a, ...(c as Omit<NoT<TObject>, 'id'> || {})});
+    if (typeof a === 'string') return this.Enum(b as unknown[], {id: a, ...((c as Omit<NoT<TObject>, 'id'>) || {})});
     const values = a as unknown[];
     const options = b as NoT<TObject>;
     if (!values.length) throw new Error('Enum must have at least one value.');
@@ -135,4 +154,4 @@ export class JsonTypeBuilder {
       ...options,
     };
   }
-};
+}

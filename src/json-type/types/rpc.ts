@@ -1,4 +1,4 @@
-import type {Display, Identifiable} from "./common";
+import type {Display, Identifiable} from './common';
 
 /**
  * Represents an RPC function.
@@ -22,7 +22,7 @@ export interface TFunction extends Display, Identifiable {
 /**
  * An example of a single argument RPC function call.
  */
- export interface TFunctionExample extends Display {
+export interface TFunctionExample extends Display {
   /** Example request data. */
   req?: unknown;
   /** Example response data. */

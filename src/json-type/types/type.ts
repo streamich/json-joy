@@ -1,4 +1,4 @@
-import type {Display, Identifiable} from "./common";
+import type {Display, Identifiable} from './common';
 
 export interface TType extends Display, Partial<Identifiable> {
   /**
@@ -17,7 +17,7 @@ export interface TType extends Display, Partial<Identifiable> {
 /**
  * An example of how a value of a given type could look like.
  */
- export interface TExample extends Display {
+export interface TExample extends Display {
   value: unknown;
 }
 
@@ -112,7 +112,7 @@ export interface TNumber extends TType, Validatable {
    * - "f32" is 32-bit float.
    * - "f64" is 64-bit float.
    */
-  format?: 'i'  | 'u' | 'f' | 'i8' | 'i16' | 'i32' | 'i64' | 'u8' | 'u16' | 'u32' | 'u64' | 'f32' | 'f64';
+  format?: 'i' | 'u' | 'f' | 'i8' | 'i16' | 'i32' | 'i64' | 'u8' | 'u16' | 'u32' | 'u64' | 'f32' | 'f64';
 }
 
 /**

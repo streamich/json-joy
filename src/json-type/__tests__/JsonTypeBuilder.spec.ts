@@ -35,10 +35,7 @@ describe('object', () => {
   });
 
   test('can specify types', () => {
-    const type = t.Object('User', [
-      t.Field('id', t.String('UserId')),
-      t.Field('name', t.str),
-    ]);
+    const type = t.Object('User', [t.Field('id', t.String('UserId')), t.Field('name', t.str)]);
     expect(type).toEqual({
       __t: 'obj',
       id: 'User',
@@ -66,10 +63,7 @@ describe('or', () => {
     const type = t.Or([t.str, t.num]);
     expect(type).toEqual({
       __t: 'or',
-      types: [
-        {__t: 'str'},
-        {__t: 'num'},
-      ],
+      types: [{__t: 'str'}, {__t: 'num'}],
     });
   });
 });
