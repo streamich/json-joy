@@ -77,12 +77,6 @@ export class JsonSerializerCodegen {
     this.codegen.step(new WriteTextStep(str));
   }
 
-  protected registerCounter = 0;
-
-  protected getRegister(): string {
-    return `r${this.registerCounter++}`;
-  }
-
   public onString(str: TString, value: JsExpression) {
     if (str.const !== undefined) {
       this.writeText(JSON.stringify(str.const));
@@ -122,10 +116,10 @@ export class JsonSerializerCodegen {
       return;
     }
     this.writeText('[');
-    const r = this.getRegister(); // array
-    const rl = this.getRegister(); // array.length
-    const ri = this.getRegister(); // index
-    const rItem = this.getRegister(); // item
+    const r = this.codegen.getRegister(); // array
+    const rl = this.codegen.getRegister(); // array.length
+    const ri = this.codegen.getRegister(); // index
+    const rItem = this.codegen.getRegister(); // item
     this.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
     this.js(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
     this.js(/* js */ `${rItem} = ${r}[${ri}];`);
@@ -150,14 +144,14 @@ export class JsonSerializerCodegen {
       const accessor = normalizeAccessor(field.key);
       this.onType(field.type, new JsExpression(() => `${value.use()}${accessor}`));
     }
-    const rHasFields = this.getRegister();
+    const rHasFields = this.codegen.getRegister();
     if (!requiredFields.length) {
       this.js(/* js */ `var ${rHasFields} = false;`);
     }
     for (let i = 0; i < optionalFields.length; i++) {
       const field = optionalFields[i];
       const accessor = normalizeAccessor(field.key);
-      const rValue = this.getRegister();
+      const rValue = this.codegen.getRegister();
       this.js(/* js */ `var ${rValue} = ${value.use()}${accessor};`);
       this.js(`if (${rValue} !== undefined) {`);
       if (requiredFields.length) {
@@ -237,7 +231,7 @@ export class JsonSerializerCodegen {
   }
 
   public run(): this {
-    const r = this.getRegister();
+    const r = this.codegen.getRegister();
     const value = new JsExpression(() => r);
     this.onType(this.options.type, value);
     return this;
