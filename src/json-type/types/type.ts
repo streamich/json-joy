@@ -205,4 +205,8 @@ export interface TEnum extends TType {
 export type TJson = TObject | TArray | TNumber | TString | TBoolean | TNull;
 export type TMessagePack = TJson | TBinary;
 
+export interface TTypeMap {
+  types: TMessagePack;
+}
+
 export type NoT<T extends TType> = Omit<T, '__t'>;
