@@ -3,9 +3,9 @@
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
 
-- __`json-brand`__ &mdash; TypeScript branded type for JSON.
+- __`json-brand`__ &mdash; TypeScript *branded type* for JSON.
   - [__Documentation__ 🚀](./src/json-brand/README.md)
-- __`json-expression`__ &mdash; implementation of JSON Expression language.
+- __`json-expression`__ &mdash; implementation of __JSON Expression__ language.
   - [__Documentation__ 🚀](./src/json-expression/README.md)
 - __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
   - [__Documentation__ 🚀](./src/json-pack/README.md)

@@ -57,8 +57,9 @@ Parsing rules:
 
 1. JSON Expression is a valid JSON value.
 2. All expressions are JSON arrays, which start with a string which specifies
-   the operator. For example, the "get" operator fetches some value from
-   supplied data using JSON Pointer: `["get", "/some/path"]`.
+   the operator and remaining array elements are operands. For example, the
+   "get" operator fetches some value from supplied data using JSON
+   Pointer:`["get", "/some/path"]`.
 3. All other values are treated as literals. Except for arrays, which need to
    be enclosed in square brackets. For example, to specify an empty array, you
    box your array in square brackets: `[[]]`. This evaluates to an empty array
