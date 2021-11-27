@@ -4,7 +4,25 @@ import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {get, throwOnUndef, str, type, starts, contains, ends, isInContainer, substr, num, slash, isLiteral} from './util';
+import {
+  get,
+  throwOnUndef,
+  str,
+  type,
+  starts,
+  contains,
+  ends,
+  isInContainer,
+  substr,
+  num,
+  slash,
+  isLiteral,
+  betweenNeNe,
+  betweenEqNe,
+  betweenNeEq,
+  betweenEqEq,
+} from './util';
+import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe} from '.';
 
 const isExpression = (expr: unknown): expr is Expr => (expr instanceof Array) && (typeof expr[0] === 'string');
 const toBoxed = (value: unknown): unknown => (value instanceof Array) ? [value] : value;
@@ -21,6 +39,10 @@ const linkable = {
   isInContainer,
   substr,
   slash,
+  betweenNeNe,
+  betweenEqNe,
+  betweenNeEq,
+  betweenEqEq,
 };
 
 export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
@@ -263,7 +285,7 @@ export class JsonExpressionCodegen {
     if (typeof pattern !== 'string')
       throw new Error('"matches" second argument should be a regular expression string.');
     const subject = this.onExpression(a);
-    if (!this.options.createPattern) 
+    if (!this.options.createPattern)
       throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
     const fn = this.options.createPattern(pattern);
     if (subject instanceof Literal) return new Literal(fn(str(subject.val)));
@@ -367,6 +389,54 @@ export class JsonExpressionCodegen {
     if (a instanceof Literal && b instanceof Literal)
       return new Literal(num(a.val) >= num(b.val));
     return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
+  }
+
+  protected onBetweenNeNe(expr: ExprBetweenNeNe): ExpressionResult {
+    if (expr.length !== 4)
+      throw new Error('"><" operator expects three operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    const c = this.onExpression(expr[3]);
+    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
+      return new Literal(betweenNeNe(num(a.val), num(b.val), num(c.val)));
+    this.codegen.link('betweenNeNe');
+    return new Expression(`betweenNeNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
+  }
+
+  protected onBetweenEqNe(expr: ExprBetweenEqNe): ExpressionResult {
+    if (expr.length !== 4)
+      throw new Error('"=><" operator expects three operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    const c = this.onExpression(expr[3]);
+    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
+      return new Literal(betweenEqNe(num(a.val), num(b.val), num(c.val)));
+    this.codegen.link('betweenEqNe');
+    return new Expression(`betweenEqNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
+  }
+
+  protected onBetweenNeEq(expr: ExprBetweenNeEq): ExpressionResult {
+    if (expr.length !== 4)
+      throw new Error('"><=" operator expects three operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    const c = this.onExpression(expr[3]);
+    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
+      return new Literal(betweenNeEq(num(a.val), num(b.val), num(c.val)));
+    this.codegen.link('betweenNeEq');
+    return new Expression(`betweenNeEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
+  }
+
+  protected onBetweenEqEq(expr: ExprBetweenEqEq): ExpressionResult {
+    if (expr.length !== 4)
+      throw new Error('"=><=" operator expects three operands.');
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    const c = this.onExpression(expr[3]);
+    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
+      return new Literal(betweenEqEq(num(a.val), num(b.val), num(c.val)));
+    this.codegen.link('betweenEqEq');
+    return new Expression(`betweenEqEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
   protected onMin(expr: ExprMin): ExpressionResult {
@@ -508,6 +578,10 @@ export class JsonExpressionCodegen {
       case '<=': return this.onLessThanOrEqual(expr as ExprLessThanOrEqual);
       case '>': return this.onGreaterThan(expr as ExprGreaterThan);
       case '>=': return this.onGreaterThanOrEqual(expr as ExprGreaterThanOrEqual);
+      case '><': return this.onBetweenNeNe(expr as ExprBetweenNeNe);
+      case '=><': return this.onBetweenEqNe(expr as ExprBetweenEqNe);
+      case '><=': return this.onBetweenNeEq(expr as ExprBetweenNeEq);
+      case '=><=': return this.onBetweenEqEq(expr as ExprBetweenEqEq);
       case 'min': return this.onMin(expr as ExprMin);
       case 'max': return this.onMax(expr as ExprMax);
       case '+': return this.onPlus(expr as ExprPlus);

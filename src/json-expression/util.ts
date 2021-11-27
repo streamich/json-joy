@@ -43,6 +43,11 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 
+export const betweenNeNe = (val: number, min: number, max: number): boolean => val > min && val < max;
+export const betweenNeEq = (val: number, min: number, max: number): boolean => val > min && val <= max;
+export const betweenEqNe = (val: number, min: number, max: number): boolean => val >= min && val < max;
+export const betweenEqEq = (val: number, min: number, max: number): boolean => val >= min && val <= max;
+
 export const slash = (a: unknown, b: unknown) => {
   const res = num(a) / num(b);
   return Number.isFinite(res) ? res : 0;

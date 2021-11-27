@@ -27,6 +27,10 @@ export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
 export type ExprLessThanOrEqual = [fn: '<=', expr1: unknown, expr2: unknown];
 export type ExprGreaterThan = [fn: '>', expr1: unknown, expr2: unknown];
 export type ExprGreaterThanOrEqual = [fn: '>=', expr1: unknown, expr2: unknown];
+export type ExprBetweenNeNe = [fn: '><', what: unknown, min: unknown, max: unknown];
+export type ExprBetweenEqNe = [fn: '=><', what: unknown, min: unknown, max: unknown];
+export type ExprBetweenNeEq = [fn: '><=', what: unknown, min: unknown, max: unknown];
+export type ExprBetweenEqEq = [fn: '=><=', what: unknown, min: unknown, max: unknown];
 export type ExprMin = [fn: 'min', ...expressions: unknown[]];
 export type ExprMax = [fn: 'max', ...expressions: unknown[]];
 export type ExprPlus = [fn: '+', ...expressions: unknown[]];
@@ -66,6 +70,10 @@ export type Expr =
   | ExprLessThanOrEqual
   | ExprGreaterThan
   | ExprGreaterThanOrEqual
+  | ExprBetweenNeNe
+  | ExprBetweenNeEq
+  | ExprBetweenEqNe
+  | ExprBetweenEqEq
   | ExprMin
   | ExprMax
   | ExprPlus

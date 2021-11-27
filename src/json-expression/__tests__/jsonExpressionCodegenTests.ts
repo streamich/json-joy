@@ -555,6 +555,65 @@ export const jsonExpressionCodegenTests = (check: Check, {skipOperandArityTests}
       });
     });
 
+    describe('between', () => {
+      if (!skipOperandArityTests) {
+        test('throws on too few or too many operands', () => {
+          expect(() => check(['><']  as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
+          expect(() => check(['><', 1]  as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
+          expect(() => check(['><', 1, 2]  as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
+          expect(() => check(['><', 1, 2, 3, 4]  as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
+        });
+      }
+
+      test('ne ne works', () => {
+        check(['><', 5, 1, 6], true);
+        check(['><', 5, 5, 6], false);
+        check(['><', 5, 4.9, 6], true);
+        check(['><', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 6]);
+        check(['><', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5.1]);
+        check(['><', ['=', '/0'], ['=', '/1'], ['=', '/2']], false, [5, 4.9, 5]);
+      });
+
+      test('eq ne works', () => {
+        check(['=><', 5, 1, 6], true);
+        check(['=><', 5, 5, 6], true);
+        check(['=><', 5, 5, 5], false);
+        check(['=><', 5, 4.9, 6], true);
+        check(['=><', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 6]);
+        check(['=><', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5.1]);
+        check(['=><', ['=', '/0'], ['=', '/1'], ['=', '/2']], false, [5, 4.9, 5]);
+        check(['=><', ['=', '/0'], ['=', '/1'], ['=', '/2']], false, [3, 4.9, 4.9]);
+      });
+
+      test('ne eq works', () => {
+        check(['><=', 5, 1, 6], true);
+        check(['><=', 5, 5, 6], false);
+        check(['><=', 5, 5, 5], false);
+        check(['><=', 5, 4.9, 6], true);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 6]);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5.1]);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5]);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], false, [3, 3, 4.9]);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [3, 2.99, 4.9]);
+        check(['><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [3, 2.99, 3]);
+      });
+
+      test('eq eq works', () => {
+        check(['=><=', 5, 1, 6], true);
+        check(['=><=', 5, 5, 6], true);
+        check(['=><=', 5, 5.01, 6], false);
+        check(['=><=', 5, 5, 5], true);
+        check(['=><=', 5, 4.9, 6], true);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 6]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5.1]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [5, 4.9, 5]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [3, 3, 4.9]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], false, [3, 3.01, 4.9]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [3, 2.99, 4.9]);
+        check(['=><=', ['=', '/0'], ['=', '/1'], ['=', '/2']], true, [3, 2.99, 3]);
+      });
+    });
+
     describe('min', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
