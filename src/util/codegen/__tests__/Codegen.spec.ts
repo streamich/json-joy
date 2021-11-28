@@ -4,7 +4,7 @@ import {Codegen} from '../Codegen';
 test('can generate a simple function', () => {
   const codegen = new Codegen({
     name: 'foobar',
-    arguments: 'a, b',
+    args: 'a, b',
     prologue: 'var res = 0;',
     epilogue: 'return res;',
     processSteps: steps => {

@@ -122,7 +122,7 @@ export class JsonExpressionCodegen {
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
     this.codegen = new Codegen<JsonExpressionFn, typeof linkable>({
-      arguments: 'ctx',
+      args: 'ctx',
       prologue: 'var data = ctx.data;',
       epilogue: '',
       linkable,

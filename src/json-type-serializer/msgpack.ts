@@ -17,6 +17,7 @@ const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
 };
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
+export type PartialEncoderFn = <T>(value: T) => void;
 
 class WriteBlobStep {
   constructor(public arr: Uint8Array) {}
@@ -42,6 +43,7 @@ export class MsgPackSerializerCodegen {
     };
     this.codegen = new Codegen<EncoderFn>({
       name: 'toMsgPack',
+      args: 'r0',
       prologue: 'e.reset();',
       epilogue: 'return e.flush();',
       processSteps: (steps) => {
@@ -323,5 +325,15 @@ export class MsgPackSerializerCodegen {
   public compile(type: TType): EncoderFn {
     this.run(type);
     return this.codegen.compile();
+  }
+
+  public compilePartial(type: TType): PartialEncoderFn {
+    this.run(type);
+    return this.codegen.compile({
+      name: 'partial',
+      args: 'r0, e',
+      epilogue: '',
+      prologue: '',
+    });
   }
 }
