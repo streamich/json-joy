@@ -239,3 +239,37 @@ describe('full validator', () => {
     assertUserAndAddress(userValidator, addressValidator);
   });
 });
+
+describe('json serializer', () => {
+  test('can create string serializer', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getJsonSerializer('ID');
+    expect(serializer('123')).toBe(JSON.stringify('123'));
+  });
+
+  test('can create a serializer with ref', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getJsonSerializer('db.ApplyPatchRequest');
+    const result = serializer({
+      id: 'asdf',
+      v: 123,
+    });
+    expect(JSON.parse(result)).toStrictEqual({
+      id: 'asdf',
+      v: 123,
+    });
+  });
+
+  test('can create a serializer with ref', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getJsonSerializer('db.ApplyPatchRequest');
+    const result = serializer({
+      id: 'asdf',
+      v: 123,
+    });
+    expect(JSON.parse(result)).toStrictEqual({
+      id: 'asdf',
+      v: 123,
+    });
+  });
+});

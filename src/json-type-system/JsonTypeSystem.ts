@@ -1,6 +1,7 @@
 import type {TType} from '../json-type/types';
 import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
+import {JsonSerializerCodegen} from '../json-type-serializer';
 
 export type Types = {[ref: string]: TType};
 
@@ -11,12 +12,17 @@ export interface JsonTypeSystemOptions<T extends Types> {
 export class JsonTypeSystem<T extends Types> {
   public constructor(protected readonly options: JsonTypeSystemOptions<T>) {}
 
+  public readonly ref = (ref: string): TType => {
+    const type = this.options.types[ref];
+    if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
+    return type;
+  };
+
   protected readonly fastValidatorCache: {[ref: string]: BooleanValidator} = {};
   protected readonly fastValidatorUsage: {[ref: string]: number} = {};
 
   public getFastValidator(ref: string) {
-    const type = this.options.types[ref];
-    if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
+    const type = this.ref(ref);
     const cachedFastValidator = this.fastValidatorCache[ref];
     if (cachedFastValidator) {
       this.fastValidatorUsage[ref] = (this.fastValidatorUsage[ref] || 0) + 1;
@@ -40,8 +46,7 @@ export class JsonTypeSystem<T extends Types> {
   protected readonly fullValidatorCache: {[ref: string]: ObjectValidator} = {};
 
   public getFullValidator(ref: string) {
-    const type = this.options.types[ref];
-    if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
+    const type = this.ref(ref);
     const cachedFastValidator = this.fastValidatorCache[ref];
     if (cachedFastValidator) return cachedFastValidator;
     const [validator, setValidator] = dynamicFunction<ObjectValidator>(() => {
@@ -53,5 +58,14 @@ export class JsonTypeSystem<T extends Types> {
       ref: (id: string) => this.getFastValidator(id),
     }));
     return validator;
+  }
+
+  public getJsonSerializer(ref: string) {
+    const type = this.ref(ref);
+    const codegen = new JsonSerializerCodegen({
+      type,
+      ref: this.ref,
+    });
+    return codegen.run().compile();
   }
 }
