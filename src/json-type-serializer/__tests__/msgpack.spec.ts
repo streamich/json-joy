@@ -264,4 +264,68 @@ describe('"ref" type', () => {
     const callback = () => codegen.compile(typeResponse);
     expect(callback).toThrow(new Error('Unknown [ref = User].'));
   });
+
+  test('can generate partial function, where encoder is injected', () => {
+    const type = t.Object('User', [
+      t.Field('id', t.str),
+    ]);
+    const codegen = new MsgPackSerializerCodegen({encoder});
+    const fn = codegen.compilePartial(type);
+    const json = {
+      id: '123',
+    };
+    encoder.reset();
+    expect(() => (fn as any)(json)).toThrow();
+    fn(json, encoder);
+    const blob = encoder.flush();
+    const decoded = decoder.decode(blob);
+    expect(decoded).toStrictEqual(json);
+  });
+
+  test('can serialize reference by resolving to type', () => {
+    const typeId = t.String();
+    const type = t.Object('User', [
+      t.Field('name', t.str),
+      t.Field('id', t.Ref('ID')),
+      t.Field('createdAt', t.num),
+    ]);
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
+      ref: () => typeId,
+    });
+    const json = {
+      name: 'John',
+      id: '123',
+      createdAt: 123,
+    };
+    const fn = codegen.compile(type);
+    const blob = fn(json);
+    const decoded = decoder.decode(blob);
+    expect(decoded).toStrictEqual(json);
+  });
+
+  test('can serialize reference by partial serializer', () => {
+    const typeId = t.String();
+    const type = t.Object('User', [
+      t.Field('name', t.str),
+      t.Field('id', t.Ref('ID')),
+      t.Field('createdAt', t.num),
+    ]);
+    const codegen = new MsgPackSerializerCodegen({
+      encoder,
+      ref: () => {
+        const codegen2 = new MsgPackSerializerCodegen({encoder});
+        return codegen2.compilePartial(typeId);
+      },
+    });
+    const json = {
+      name: 'John',
+      id: '123',
+      createdAt: 123,
+    };
+    const fn = codegen.compile(type);
+    const blob = fn(json);
+    const decoded = decoder.decode(blob);
+    expect(decoded).toStrictEqual(json);
+  });
 });

@@ -17,7 +17,7 @@ const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
 };
 
 export type EncoderFn = <T>(value: T) => MsgPack<T>;
-export type PartialEncoderFn = <T>(value: T) => void;
+export type PartialEncoderFn = <T>(value: T, encoder: EncoderFull) => void;
 
 class WriteBlobStep {
   constructor(public arr: Uint8Array) {}
@@ -27,7 +27,7 @@ type Step = WriteBlobStep | CodegenStepExecJs;
 
 export interface MsgPackSerializerCodegenOptions {
   encoder: EncoderFull;
-  ref?: (id: string) => TType | undefined;
+  ref?: (id: string) => PartialEncoderFn | TType | undefined;
 }
 
 export class MsgPackSerializerCodegen {
@@ -223,10 +223,18 @@ export class MsgPackSerializerCodegen {
 
   public onRef(ref: TRef, value: JsExpression): void {
     const type = this.options.ref(ref.ref);
-    if (type === undefined) {
-      throw new Error(`Unknown [ref = ${ref.ref}].`);
+    switch (typeof type) {
+      case 'function': {
+        const d = this.codegen.linkDependency(type);
+        this.execJs(/* js */ `${d}(${value.use()}, e);`);
+        break;
+      }
+      case 'object': {
+        this.onType(type as TType, value);
+        break;
+      }
+      default: throw new Error(`Unknown [ref = ${ref.ref}].`);
     }
-    this.onType(type, value);
   }
 
   public onAny(value: JsExpression) {
