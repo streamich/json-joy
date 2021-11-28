@@ -22,7 +22,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript string that represents the arguments that will be passed
    * to the main function body. Defaults to "r0", i.e. the first register.
    */
-  arguments?: string;
+  args?: string;
 
   /**
    * Name of the generated function.
@@ -39,7 +39,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript statements, that execute at the end of the main
    * function body.
    */
-  epilogue: string;
+  epilogue?: string;
 
   /**
    * Converts all steps to `CodegenStepExecJs`.
@@ -52,6 +52,8 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    */
   linkable?: Linkable;
 }
+
+export type CodegenGenerateOptions = Pick<CodegenOptions, 'name' | 'args' | 'prologue' | 'epilogue'>;
 
 /**
  * A helper class which helps with building JavaScript code for a single
@@ -87,9 +89,10 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
 
   constructor(opts: CodegenOptions<Linkable>) {
     this.options = {
-      arguments: 'r0',
+      args: 'r0',
       name: '',
-      prologue: opts.prologue || '',
+      prologue: '',
+      epilogue: '',
       processSteps: (steps) => steps.filter(step => step instanceof CodegenStepExecJs) as CodegenStepExecJs[],
       linkable: {} as Linkable,
       ...opts,
@@ -169,7 +172,7 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
    * Link a dependency from the pre-defined `options.linkable` object. This method
    * can be called many times with the same dependency name, the dependency will
    * be linked only once.
-   * 
+   *
    * @param name Linkable dependency name.
    */
   public link(name: keyof Linkable): void {
@@ -218,14 +221,15 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
    *
    * @returns Returns a {@link CompiledFunction} object ready for compilation.
    */
-  public generate(): CompiledFunction<Fn> {
+  public generate(opts: CodegenGenerateOptions = {}): CompiledFunction<Fn> {
+    const {name, args, prologue, epilogue} = {...this.options, ...opts};
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
 ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = (${constant});`).join('\n')}
-return ${this.options.name ? `function ${this.options.name}` : 'function'}(${this.options.arguments}){
-${this.options.prologue}
+return ${name ? `function ${name}` : 'function'}(${args}){
+${prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
-${this.options.epilogue}
+${epilogue}
 }})`;
 
     return {
@@ -239,7 +243,7 @@ ${this.options.epilogue}
    *
    * @returns JavaScript function ready for execution.
    */
-  public compile(): Fn {
-    return compileFn(this.generate());
+  public compile(opts?: CodegenGenerateOptions): Fn {
+    return compileFn(this.generate(opts));
   }
 }
