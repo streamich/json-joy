@@ -177,3 +177,52 @@ describe('general', () => {
     });
   });
 });
+
+describe('"ref" type', () => {
+  test('can serialize reference by resolving to type', () => {
+    const typeId = t.String();
+    const type = t.Object('User', [
+      t.Field('name', t.str),
+      t.Field('id', t.Ref('ID')),
+      t.Field('createdAt', t.num),
+    ]);
+    const codegen = new JsonSerializerCodegen({
+      type,
+      ref: () => typeId,
+    });
+    const fn = codegen.run().compile();
+    const json = {
+      name: 'John',
+      id: '123',
+      createdAt: 123,
+    };
+    const blob = fn(json);
+    const decoded = JSON.parse(blob);
+    expect(decoded).toStrictEqual(json);
+  });
+
+  test('can serialize reference by partial serializer', () => {
+    const typeId = t.String();
+    const type = t.Object('User', [
+      t.Field('name', t.str),
+      t.Field('id', t.Ref('ID')),
+      t.Field('createdAt', t.num),
+    ]);
+    const codegen = new JsonSerializerCodegen({
+      type,
+      ref: () => {
+        const codegen2 = new JsonSerializerCodegen({type: typeId});
+        return codegen2.run().compile();
+      },
+    });
+    const fn = codegen.run().compile();
+    const json = {
+      name: 'John',
+      id: '123',
+      createdAt: 123,
+    };
+    const blob = fn(json);
+    const decoded = JSON.parse(blob);
+    expect(decoded).toStrictEqual(json);
+  });
+});

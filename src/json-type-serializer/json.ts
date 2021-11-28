@@ -16,7 +16,7 @@ type Step = WriteTextStep | CodegenStepExecJs;
 
 export interface JsonSerializerCodegenOptions {
   type: TType;
-  ref?: (id: string) => TType | undefined;
+  ref?: (id: string) => JsonEncoderFn | TType | undefined;
 }
 
 export class JsonSerializerCodegen {
@@ -176,10 +176,18 @@ export class JsonSerializerCodegen {
 
   public onRef(ref: TRef, value: JsExpression): void {
     const type = this.options.ref(ref.ref);
-    if (type === undefined) {
-      throw new Error(`Unknown [ref = ${ref.ref}].`);
+    switch (typeof type) {
+      case 'function': {
+        const d = this.codegen.linkDependency(type);
+        this.js(/* js */ `s += ${d}(${value.use()});`);
+        break;
+      }
+      case 'object': {
+        this.onType(type as TType, value);
+        break;
+      }
+      default: throw new Error(`Unknown [ref = ${ref.ref}].`);
     }
-    this.onType(type, value);
   }
 
   public onAny(value: JsExpression) {
