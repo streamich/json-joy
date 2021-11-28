@@ -1,5 +1,5 @@
 import type {TType} from '../json-type/types';
-import {BooleanValidator, createBoolValidator} from '../json-type-validator';
+import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
 
 export type Types = {[ref: string]: TType};
@@ -35,5 +35,23 @@ export class JsonTypeSystem<T extends Types> {
     if (this.fastValidatorUsage[ref]) setValidator(realValidator);
     this.fastValidatorCache[ref] = realValidator;
     return realValidator;
+  }
+
+  protected readonly fullValidatorCache: {[ref: string]: ObjectValidator} = {};
+
+  public getFullValidator(ref: string) {
+    const type = this.options.types[ref];
+    if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
+    const cachedFastValidator = this.fastValidatorCache[ref];
+    if (cachedFastValidator) return cachedFastValidator;
+    const [validator, setValidator] = dynamicFunction<ObjectValidator>(() => {
+      throw new Error(`Type [ref = ${ref}] not implemented.`);
+    });
+    this.fullValidatorCache[ref] = validator;
+    setValidator(createObjValidator(type, {
+      customValidators: [],
+      ref: (id: string) => this.getFastValidator(id),
+    }));
+    return validator;
   }
 }
