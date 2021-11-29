@@ -17,6 +17,7 @@
     "json-size",
     "json-type",
     "json-type-serializer",
+    "json-type-system",
     "json-type-validator",
     "reactive-rpc",
     "util"

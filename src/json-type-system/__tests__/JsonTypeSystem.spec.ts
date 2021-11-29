@@ -1,3 +1,4 @@
+import {decode} from '../../json-pack/util';
 import {t} from '../../json-type';
 import {BooleanValidator, ObjectValidator} from '../../json-type-validator';
 import {JsonTypeSystem} from '../JsonTypeSystem';
@@ -260,19 +261,6 @@ describe('json serializer', () => {
     });
   });
 
-  test('can create a serializer with ref', () => {
-    const system = new JsonTypeSystem({types});
-    const serializer = system.getJsonSerializer('db.ApplyPatchRequest');
-    const result = serializer({
-      id: 'asdf',
-      v: 123,
-    });
-    expect(JSON.parse(result)).toStrictEqual({
-      id: 'asdf',
-      v: 123,
-    });
-  });
-
   test('can serialize object with ref to itself', () => {
     const system = new JsonTypeSystem({types});
     const serializer = system.getJsonSerializer('User');
@@ -321,5 +309,77 @@ describe('json serializer', () => {
     const result2 = serializer(json2);
     expect(JSON.parse(result)).toStrictEqual(json);
     expect(JSON.parse(result2)).toStrictEqual(json2);
+  });
+});
+
+describe('msgpack serializer', () => {
+  test('can create string serializer', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getMsgPackEncoder('ID');
+    const result = serializer('123');
+    expect(decode(result)).toBe('123');
+  });
+
+  test('can create a serializer with ref', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getMsgPackEncoder('db.ApplyPatchRequest');
+    const result = serializer({
+      id: 'asdf',
+      v: 123,
+    });
+    expect(decode(result)).toStrictEqual({
+      id: 'asdf',
+      v: 123,
+    });
+  });
+
+  test('can serialize object with ref to itself', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getMsgPackEncoder('User');
+    const json = {
+      id: '123',
+      name: 'John',
+    };
+    const result = serializer(json);
+    const json2 = {
+      id: '123',
+      name: 'John',
+      partner: {
+        id: '456',
+        name: 'Jane',
+      },
+    };
+    const result2 = serializer(json2);
+    expect(decode(result)).toStrictEqual(json);
+    expect(decode(result2)).toStrictEqual(json2);
+  });
+
+  test('can serialize two objects with circular refs', () => {
+    const system = new JsonTypeSystem({types});
+    const serializer = system.getMsgPackEncoder('User');
+    const json = {
+      id: '123',
+      name: 'John',
+      address: {
+        street: '123',
+        zip: '123',
+        owner: {
+          id: '1',
+          name: 'Lol',
+        },
+      },
+    };
+    const result = serializer(json);
+    const json2 = {
+      id: '123',
+      name: 'John',
+      address: {
+        street: '123',
+        zip: '123',
+      },
+    };
+    const result2 = serializer(json2);
+    expect(decode(result)).toStrictEqual(json);
+    expect(decode(result2)).toStrictEqual(json2);
   });
 });

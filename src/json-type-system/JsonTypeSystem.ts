@@ -1,7 +1,8 @@
 import type {TType} from '../json-type/types';
 import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
-import {JsonEncoderFn, JsonSerializerCodegen} from '../json-type-serializer';
+import {JsonEncoderFn, JsonSerializerCodegen, EncoderFn, PartialEncoderFn, MsgPackSerializerCodegen} from '../json-type-serializer';
+import {encoderFull} from '../json-pack/util';
 
 export type Types = {[ref: string]: TType};
 
@@ -76,8 +77,8 @@ export class JsonTypeSystem<T extends Types> {
       type,
       ref: (id: string) => {
         const type = this.ref(id);
-        if (literalTypes.indexOf(type.__t) !== -1) return type;
-        return this.getJsonSerializer(id);
+        const isLiteralType = literalTypes.indexOf(type.__t) !== -1;
+        return isLiteralType ? type : this.getJsonSerializer(id);
       },
     });
     const [serializer, setSerializer] = dynamicFunction<JsonEncoderFn>(() => {
@@ -88,5 +89,50 @@ export class JsonTypeSystem<T extends Types> {
     if (this.jsonSerializerUsage[ref]) setSerializer(realSerializer);
     this.jsonSerializerCache[ref] = realSerializer;
     return realSerializer;
+  }
+
+  protected readonly msgPackPartialEncoderCache: {[ref: string]: PartialEncoderFn} = {};
+  protected readonly msgPackPartialEncoderUsage: {[ref: string]: number} = {};
+
+  protected getMsgPackPartialEncoder(ref: string): PartialEncoderFn {
+    const type = this.ref(ref);
+    const msgPackPartialEncoderCached = this.msgPackPartialEncoderCache[ref];
+    if (msgPackPartialEncoderCached) {
+      this.msgPackPartialEncoderUsage[ref] = (this.msgPackPartialEncoderUsage[ref] || 0) + 1;
+      return msgPackPartialEncoderCached;
+    }
+    const codegen = new MsgPackSerializerCodegen({
+      encoder: encoderFull,
+      ref: (id: string) => {
+        const type = this.ref(id);
+        const isLiteralType = literalTypes.indexOf(type.__t) !== -1;
+        return isLiteralType ? type : this.getMsgPackPartialEncoder(id);
+      },
+    });
+    const [partialEncoder, setPartialEncoder] = dynamicFunction<PartialEncoderFn>(() => {
+      throw new Error(`Type [ref = ${ref}] MessagePack partial encoder not implemented.`);
+    });
+    this.msgPackPartialEncoderCache[ref] = partialEncoder;
+    const realPartialEncoder = codegen.compilePartial(type);
+    if (this.msgPackPartialEncoderUsage[ref]) setPartialEncoder(realPartialEncoder);
+    this.msgPackPartialEncoderCache[ref] = realPartialEncoder;
+    return realPartialEncoder;
+  }
+
+  protected readonly msgPackEncoderCache: {[ref: string]: EncoderFn} = {};
+
+  public getMsgPackEncoder(ref: string): EncoderFn {
+    const type = this.ref(ref);
+    const msgPackSerializerCached = this.msgPackEncoderCache[ref];
+    if (msgPackSerializerCached) return msgPackSerializerCached;
+    const codegen = new MsgPackSerializerCodegen({
+      encoder: encoderFull,
+      ref: (id: string) => {
+        const type = this.ref(id);
+        const isLiteralType = literalTypes.indexOf(type.__t) !== -1;
+        return isLiteralType ? type : this.getMsgPackPartialEncoder(id);
+      },
+    });
+    return this.msgPackEncoderCache[ref] = codegen.compile(type);
   }
 }
