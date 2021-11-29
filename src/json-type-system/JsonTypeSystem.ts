@@ -15,7 +15,7 @@ export interface JsonTypeSystemOptions<T extends Types> {
 export class JsonTypeSystem<T extends Types> {
   public constructor(protected readonly options: JsonTypeSystemOptions<T>) {}
 
-  public readonly ref = (ref: string): TType => {
+  public readonly ref = (ref: keyof T): TType => {
     const type = this.options.types[ref];
     if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
     return type;
