@@ -1,9 +1,11 @@
 import type {TType} from '../json-type/types';
 import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
-import {JsonSerializerCodegen} from '../json-type-serializer';
+import {JsonEncoderFn, JsonSerializerCodegen} from '../json-type-serializer';
 
 export type Types = {[ref: string]: TType};
+
+const literalTypes: string[] = ['bin', 'bool', 'nil', 'num', 'str'];
 
 export interface JsonTypeSystemOptions<T extends Types> {
   types: T;
@@ -60,12 +62,31 @@ export class JsonTypeSystem<T extends Types> {
     return validator;
   }
 
-  public getJsonSerializer(ref: string) {
+  protected readonly jsonSerializerCache: {[ref: string]: JsonEncoderFn} = {};
+  protected readonly jsonSerializerUsage: {[ref: string]: number} = {};
+
+  public getJsonSerializer(ref: string): JsonEncoderFn {
     const type = this.ref(ref);
+    const jsonSerializerCached = this.jsonSerializerCache[ref];
+    if (jsonSerializerCached) {
+      this.jsonSerializerUsage[ref] = (this.jsonSerializerUsage[ref] || 0) + 1;
+      return jsonSerializerCached;
+    }
     const codegen = new JsonSerializerCodegen({
       type,
-      ref: this.ref,
+      ref: (id: string) => {
+        const type = this.ref(id);
+        if (literalTypes.indexOf(type.__t) !== -1) return type;
+        return this.getJsonSerializer(id);
+      },
     });
-    return codegen.run().compile();
+    const [serializer, setSerializer] = dynamicFunction<JsonEncoderFn>(() => {
+      throw new Error(`Type [ref = ${ref}] JSON serializer not implemented.`);
+    });
+    this.jsonSerializerCache[ref] = serializer;
+    const realSerializer = codegen.run().compile();
+    if (this.jsonSerializerUsage[ref]) setSerializer(realSerializer);
+    this.jsonSerializerCache[ref] = realSerializer;
+    return realSerializer;
   }
 }
