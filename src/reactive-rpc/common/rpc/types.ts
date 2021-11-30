@@ -1,4 +1,6 @@
 import type {Observable} from 'rxjs';
+import type {json_string} from '../../../json-brand';
+import type {MsgPack} from '../../../json-pack';
 
 export type RpcMethod<Context = unknown, Request = unknown, Response = unknown> =
   | RpcMethodStatic<Context, Request, Response>
@@ -50,6 +52,20 @@ export interface RpcMethodStatic<Context = unknown, Request = unknown, Response 
    * Execute the static method.
    */
   call(ctx: Context, request: Request): Promise<Response>;
+}
+
+export interface RpcMethodStaticImplementation<Context = unknown, Request = unknown, Response = unknown>
+  extends Omit<RpcMethodStatic<Context, Request, Response>, 'call'> {
+  call?(ctx: Context, request: Request): Promise<Response>;
+  callJson?(ctx: Context, request: Request): Promise<json_string<Response>>;
+  callMsgPack?(ctx: Context, request: Request): Promise<MsgPack<Response>>;
+}
+
+export interface RpcMethodStaticPolymorphic<Context = unknown, Request = unknown, Response = unknown>
+  extends Omit<RpcMethodStatic<Context, Request, Response>, 'call'> {
+  call(ctx: Context, request: Request): Promise<Response>;
+  callJson(ctx: Context, request: Request): Promise<json_string<Response>>;
+  callMsgPack(ctx: Context, request: Request): Promise<MsgPack<Response>>;
 }
 
 export interface RpcMethodStreaming<Context = unknown, Request = unknown, Response = unknown>
