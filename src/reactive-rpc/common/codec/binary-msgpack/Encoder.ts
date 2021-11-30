@@ -12,7 +12,6 @@ import {
 } from '../../messages/binary';
 import {
   ReactiveRpcMessage,
-  NotificationMessage,
   RequestDataMessage,
   RequestCompleteMessage,
   RequestErrorMessage,
@@ -23,7 +22,7 @@ import {
   ResponseUnsubscribeMessage,
 } from '../../messages/nominal';
 import {Encoder as EncoderBinary} from '../binary/Encoder';
-import {Encoder as MessagePackEncoder} from '../../../../json-pack/Encoder';
+import {encoderFull} from '../../../../json-pack/util';
 
 const EMPTY = new Uint8Array([]);
 
@@ -31,8 +30,8 @@ const EMPTY = new Uint8Array([]);
  * @category Codec
  */
 export class Encoder {
-  protected binary = new EncoderBinary();
-  protected msgpack = new MessagePackEncoder();
+  protected readonly binary = new EncoderBinary();
+  protected readonly msgpack = encoderFull;
 
   protected encodeData(data: undefined | unknown): Uint8Array {
     if (data === undefined) return EMPTY;
