@@ -20,7 +20,7 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
    * In case request is a stream, validation method is executed for every
    * emitted value.
    */
-  validate?(request: Request): void;
+  validate?: (request: Request) => void;
 
   /**
    * Method which is executed before an actual call to an RPC method. Pre-call
@@ -33,12 +33,18 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
    * @param request Request payload, the first emitted value in case of
    *                streaming request.
    */
-  onPreCall?(ctx: Context, request: Request): Promise<void>;
+  onPreCall?: (ctx: Context, request: Request) => Promise<void>;
 
   /**
    * Whether to pretty print the response.
    */
   pretty?: boolean;
+
+  /** Type ref of the method request, can be used for validation. */
+  req: string;
+
+  /** Type ref of the method response, can be used for serialization. */
+  res: string;
 }
 
 export interface RpcMethodStatic<Context = unknown, Request = unknown, Response = unknown>
@@ -48,24 +54,9 @@ export interface RpcMethodStatic<Context = unknown, Request = unknown, Response 
    */
   isStreaming: false;
 
-  /**
-   * Execute the static method.
-   */
-  call(ctx: Context, request: Request): Promise<Response>;
-}
-
-export interface RpcMethodStaticImplementation<Context = unknown, Request = unknown, Response = unknown>
-  extends Omit<RpcMethodStatic<Context, Request, Response>, 'call'> {
-  call?(ctx: Context, request: Request): Promise<Response>;
-  callJson?(ctx: Context, request: Request): Promise<json_string<Response>>;
-  callMsgPack?(ctx: Context, request: Request): Promise<MsgPack<Response>>;
-}
-
-export interface RpcMethodStaticPolymorphic<Context = unknown, Request = unknown, Response = unknown>
-  extends Omit<RpcMethodStatic<Context, Request, Response>, 'call'> {
-  call(ctx: Context, request: Request): Promise<Response>;
-  callJson(ctx: Context, request: Request): Promise<json_string<Response>>;
-  callMsgPack(ctx: Context, request: Request): Promise<MsgPack<Response>>;
+  call?: (ctx: Context, request: Request) => Promise<Response>;
+  callJson?: (ctx: Context, request: Request) => Promise<json_string<Response>>;
+  callMsgPack?: (ctx: Context, request: Request) => Promise<MsgPack<Response>>;
 }
 
 export interface RpcMethodStreaming<Context = unknown, Request = unknown, Response = unknown>
@@ -91,10 +82,9 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
    */
   timeout?: number;
 
-  /**
-   * Execute the streaming method.
-   */
-  call$(ctx: Context, request$: Observable<Request>): Observable<Response>;
+  call$: (ctx: Context, request$: Observable<Request>) => Observable<Response>;
+  callJson$: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
+  callMsgPack$: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 }
 
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
