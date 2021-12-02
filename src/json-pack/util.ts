@@ -8,6 +8,7 @@ export const encoderFull = new EncoderFull();
 export const decoder = new Decoder();
 
 export const encode = <T>(data: T): MsgPack<T> => encoder.encode(data) as MsgPack<T>;
+export const encodeFull = <T>(data: T): MsgPack<T> => encoderFull.encode(data) as MsgPack<T>;
 export const decode = <T>(blob: MsgPack<T>): T => decoder.decode(blob) as T;
 
 export type {MsgPack};

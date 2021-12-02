@@ -41,10 +41,10 @@ export interface RpcMethodBase<Context = unknown, Request = unknown> {
   pretty?: boolean;
 
   /** Type ref of the method request, can be used for validation. */
-  req: string;
+  req?: string;
 
   /** Type ref of the method response, can be used for serialization. */
-  res: string;
+  res?: string;
 }
 
 export interface RpcMethodStatic<Context = unknown, Request = unknown, Response = unknown>
@@ -82,9 +82,9 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
    */
   timeout?: number;
 
-  call$: (ctx: Context, request$: Observable<Request>) => Observable<Response>;
-  callJson$: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
-  callMsgPack$: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
+  call$?: (ctx: Context, request$: Observable<Request>) => Observable<Response>;
+  callJson$?: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
+  callMsgPack$?: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 }
 
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
@@ -93,9 +93,21 @@ export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, an
   exists<K extends keyof Api>(name: K): boolean;
   get<K extends keyof Api>(name: K): Api[K];
   call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
+  callJson<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<json_string<RpcMethodResponse<Api[K]>>>;
+  callMsgPack<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<MsgPack<RpcMethodResponse<Api[K]>>>;
   call$<K extends keyof Api>(
     name: K,
     request$: Observable<RpcMethodRequest<Api[K]>>,
     ctx: Ctx,
   ): Observable<RpcMethodResponse<Api[K]>>;
+  callJson$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<json_string<RpcMethodResponse<Api[K]>>>;
+  callMsgPack$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<MsgPack<RpcMethodResponse<Api[K]>>>;
 }

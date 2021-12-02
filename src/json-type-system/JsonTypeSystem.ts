@@ -21,6 +21,10 @@ export class JsonTypeSystem<T extends Types> {
     return type;
   };
 
+  public hasType(ref: string) {
+    return Object.prototype.hasOwnProperty.call(this.options.types, ref);
+  }
+
   protected readonly fastValidatorCache: {[ref: string]: BooleanValidator} = {};
   protected readonly fastValidatorUsage: {[ref: string]: number} = {};
 
