@@ -1,10 +1,10 @@
 import type {RpcMethodStatic, RpcMethodStreaming} from "./types";
 import type {MsgPack} from "../../../json-pack";
+import type {JsonTypeSystem} from "../../../json-type-system/JsonTypeSystem";
 import {JSON, json_string} from "../../../json-brand";
 import {decode, encodeFull} from "../../../json-pack/util";
 import {Observable, of, firstValueFrom, from} from "rxjs";
 import {map} from "rxjs/operators";
-import {JsonTypeSystem} from "../../../json-type-system/JsonTypeSystem";
 
 export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response = unknown> implements RpcMethodStatic<Context, Request, Response> {
   public readonly isStreaming = false;
@@ -23,11 +23,13 @@ export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response 
   constructor (method: RpcMethodStatic<Context, Request, Response>, types: JsonTypeSystem<{}>) {
     this.req = method.req || '';
     this.res = method.res || '';
-    this.validate = method.validate;
-    this.onPreCall = method.onPreCall;
+    this.validate = method.validate ? method.validate.bind(method) : undefined;
+    this.onPreCall = method.onPreCall ? method.onPreCall.bind(method) : undefined;
     this.pretty = !!method.pretty;
 
-    const {call, callJson, callMsgPack} = method;
+    const call = method.call ? method.call.bind(method) : undefined;
+    const callJson = method.callJson ? method.callJson.bind(method) : undefined;
+    const callMsgPack = method.callMsgPack ? method.callMsgPack.bind(method) : undefined;
 
     if (call) this.call = call;
     else if (callJson) {
@@ -86,13 +88,15 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
   constructor (method: RpcMethodStreaming<Context, Request, Response>, types: JsonTypeSystem<{}>) {
     this.req = method.req || '';
     this.res = method.res || '';
-    this.validate = method.validate;
-    this.onPreCall = method.onPreCall;
+    this.validate = method.validate ? method.validate.bind(method) : undefined;
+    this.onPreCall = method.onPreCall ? method.onPreCall.bind(method) : undefined;
     this.preCallBufferSize = method.preCallBufferSize;
     this.timeout = method.timeout;
     this.pretty = !!method.pretty;
 
-    const {call$, callJson$, callMsgPack$} = method;
+    const call$ = method.call$ ? method.call$.bind(method) : undefined;
+    const callJson$ = method.callJson$ ? method.callJson$.bind(method) : undefined;
+    const callMsgPack$ = method.callMsgPack$ ? method.callMsgPack$.bind(method) : undefined;
 
     if (call$) this.call$ = call$;
     else if (callJson$) {
@@ -120,3 +124,9 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
     this.callMsgPack = (ctx, request) => firstValueFrom(this.callMsgPack$(ctx, of(request)));
   }
 }
+
+export const wrapMethod = <Context = unknown, Request = unknown, Response = unknown> (types: JsonTypeSystem<any>, method: RpcMethodStatic<Context, Request, Response> | RpcMethodStreaming<Context, Request, Response>): RpcMethodStaticWrap<Context, Request, Response> | RpcMethodStreamingWrap<Context, Request, Response> => {
+  return method.isStreaming
+    ? new RpcMethodStreamingWrap(method as RpcMethodStreaming<Context, Request, Response>, types)
+    : new RpcMethodStaticWrap(method as RpcMethodStatic<Context, Request, Response>, types);
+};

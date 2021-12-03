@@ -1,11 +1,16 @@
 import {EMPTY, firstValueFrom, from, interval, Observable, Observer, of, Subject} from 'rxjs';
 import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap, take, tap} from 'rxjs/operators';
-import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodStreaming} from './types';
+import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodWrapFromRpcMethod} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
+import {RpcMethodStreamingWrap, wrapMethod} from './methods';
+import type {JsonTypeSystem} from '../../../json-type-system/JsonTypeSystem';
+import type {json_string} from '../../../json-brand';
+import type {MsgPack} from '../../../json-pack';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
+  types: JsonTypeSystem<any>
   api: Api;
   error?: ErrorFormatter<E>;
 
@@ -38,15 +43,16 @@ export interface Call<Request = unknown, Response = unknown> {
  */
 export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown>
   implements IRpcApiCaller<Api, Ctx> {
-  public readonly api: Api;
+  public readonly api;
   public readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
   protected readonly maxActiveCalls: number;
 
   protected _calls: number = 0;
 
-  constructor({api, error, preCallBufferSize = 10, maxActiveCalls = 50}: RpcApiCallerParams<Api, Ctx, E>) {
-    this.api = api;
+  constructor({types, api, error, preCallBufferSize = 10, maxActiveCalls = 50}: RpcApiCallerParams<Api, Ctx, E>) {
+    this.api = {} as any;
+    for (const key in api) this.api[key] = wrapMethod(types, api[key]);
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.preCallBufferSize = preCallBufferSize;
     this.maxActiveCalls = maxActiveCalls;
@@ -72,7 +78,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * @param name Name of the RPC method.
    * @returns RpcMethod
    */
-  public get<K extends keyof Api>(name: K): Api[K] {
+  public get<K extends keyof Api>(name: K): RpcMethodWrapFromRpcMethod<Api[K]> {
     if (!this.exists(name)) throw new RpcError(RpcServerError.NoMethodSpecified);
     return this.api[name]!;
   }
@@ -101,9 +107,49 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       try {
         this._calls++;
         if (method.onPreCall) await method.onPreCall(ctx, request);
-        return !method.isStreaming
-          ? await (method as any).call(ctx, request)
-          : await firstValueFrom((method as any).call$(ctx, of(request)));
+        return await method.call(ctx, request);
+      } finally {
+        this._calls--;
+      }
+    } catch (error) {
+      throw this.error.format(error);
+    }
+  }
+
+  public async callJson<K extends keyof Api>(
+    name: K,
+    request: RpcMethodRequest<Api[K]>,
+    ctx: Ctx,
+  ): Promise<json_string<RpcMethodResponse<Api[K]>>> {
+    try {
+      if (this._calls >= this.maxActiveCalls) throw new RpcError(RpcServerError.TooManyActiveCalls);
+      const method = this.get(name);
+      if (method.validate) method.validate(request);
+      try {
+        this._calls++;
+        if (method.onPreCall) await method.onPreCall(ctx, request);
+        return await method.callJson(ctx, request);
+      } finally {
+        this._calls--;
+      }
+    } catch (error) {
+      throw this.error.format(error);
+    }
+  }
+
+  public async callMsgPack<K extends keyof Api>(
+    name: K,
+    request: RpcMethodRequest<Api[K]>,
+    ctx: Ctx,
+  ): Promise<MsgPack<RpcMethodResponse<Api[K]>>> {
+    try {
+      if (this._calls >= this.maxActiveCalls) throw new RpcError(RpcServerError.TooManyActiveCalls);
+      const method = this.get(name);
+      if (method.validate) method.validate(request);
+      try {
+        this._calls++;
+        if (method.onPreCall) await method.onPreCall(ctx, request);
+        return await method.callMsgPack(ctx, request);
       } finally {
         this._calls--;
       }
@@ -121,7 +167,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * - [x] Pre-call request buffer is overflown.
    * - [x] Due to inactivity timeout.
    */
-  public createCall<K extends keyof Api>(name: K, ctx: Ctx): Call<RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>> {
+  public createCall<R, K extends keyof Api>(name: K, ctx: Ctx, call: (method: RpcMethodWrapFromRpcMethod<Api[K]>, ctx: Ctx, req$: Observable<R>) => Observable<K>): Call<RpcMethodRequest<Api[K]>, R> {
     const req$ = new Subject<RpcMethodRequest<Api[K]>>();
     const reqUnsubscribe$ = new Subject<null>();
     try {
@@ -154,7 +200,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       }
 
       // Here we are sure the call will be streaming.
-      const methodStreaming = method as RpcMethodStreaming<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
+      const methodStreaming = method as RpcMethodStreamingWrap<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
 
       // Validate all incoming stream requests.
       const requestValidated$ = req$.pipe(
@@ -194,7 +240,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
           Promise.resolve().then(() => {
             requestBuffered$.flush();
           });
-          return methodStreaming.call$(ctx, requestBuffered$).pipe(
+          return call(methodStreaming as RpcMethodWrapFromRpcMethod<Api[K]>, ctx, requestBuffered$).pipe(
             finalize(() => {
               error$.complete();
             }),
@@ -263,7 +309,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     request$: Observable<RpcMethodRequest<Api[K]>>,
     ctx: Ctx,
   ): Observable<RpcMethodResponse<Api[K]>> {
-    const call = this.createCall(name, ctx);
+    const call = this.createCall(name, ctx, (method, ctx, req$) => method.call$(ctx, req$));
     request$.subscribe(call.req$);
     return call.res$;
   }

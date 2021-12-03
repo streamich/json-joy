@@ -1,11 +1,13 @@
 import type {Observable} from 'rxjs';
 import type {json_string} from '../../../json-brand';
 import type {MsgPack} from '../../../json-pack';
+import type {RpcMethodStaticWrap, RpcMethodStreamingWrap} from './methods';
 
 export type RpcMethod<Context = unknown, Request = unknown, Response = unknown> =
   | RpcMethodStatic<Context, Request, Response>
   | RpcMethodStreaming<Context, Request, Response>;
 
+export type RpcMethodContext<T> = T extends RpcMethod<infer U, any, any> ? U : never;
 export type RpcMethodRequest<T> = T extends RpcMethod<any, infer U, any> ? U : never;
 export type RpcMethodResponse<T> = T extends RpcMethod<any, any, infer U> ? U : never;
 
@@ -87,11 +89,22 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
   callMsgPack$?: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 }
 
+
+export type RpcMethodWrap<Context = unknown, Request = unknown, Response = unknown> =
+  | RpcMethodStaticWrap<Context, Request, Response>
+  | RpcMethodStreamingWrap<Context, Request, Response>;
+
+// export type RpcMethodWrapContext<T> = T extends RpcMethodWrap<infer U, any, any> ? U : never;
+// export type RpcMethodWrapRequest<T> = T extends RpcMethodWrap<any, infer U, any> ? U : never;
+// export type RpcMethodWrapResponse<T> = T extends RpcMethodWrap<any, any, infer U> ? U : never;
+
+export type RpcMethodWrapFromRpcMethod<T> = T extends RpcMethod<infer A, infer B, infer C> ? RpcMethodWrap<A, B, C> : never;
+
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
 
 export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown> {
   exists<K extends keyof Api>(name: K): boolean;
-  get<K extends keyof Api>(name: K): Api[K];
+  get<K extends keyof Api>(name: K): RpcMethodWrapFromRpcMethod<Api[K]>;
   call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
   callJson<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<json_string<RpcMethodResponse<Api[K]>>>;
   callMsgPack<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<MsgPack<RpcMethodResponse<Api[K]>>>;
