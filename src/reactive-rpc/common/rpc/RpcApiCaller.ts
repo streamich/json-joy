@@ -213,7 +213,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       // Buffer incoming requests while pre-call checks are executed.
       const bufferSize = methodStreaming.preCallBufferSize || this.preCallBufferSize;
       const requestBuffered$ = new BufferSubject<RpcMethodRequest<Api[K]>>(bufferSize);
-      requestBuffered$.subscribe({error: () => {}});
+      // requestBuffered$.subscribe({error: () => {}});
 
       // Error signal (only emits errors), merged with response stream.
       // Used for pre-call buffer overflow and timeout errors.
@@ -276,13 +276,13 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
             mergeWith(result$.pipe(catchError(() => EMPTY))),
             debounce(() => interval(timeout)),
           )
-          .subscribe(() => {
-            const error = new RpcError(RpcServerError.Timeout);
-            error$.error(error);
-          });
+          // .subscribe(() => {
+          //   const error = new RpcError(RpcServerError.Timeout);
+          //   error$.error(error);
+          // });
 
         return () => {
-          timeoutSubscription.unsubscribe();
+          // timeoutSubscription.unsubscribe();
           subscription.unsubscribe();
         };
       });
