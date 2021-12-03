@@ -3,8 +3,47 @@ import {decode, encode} from '../../../../json-pack/util';
 import {JSON} from '../../../../json-brand';
 import {firstValueFrom, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {JsonTypeSystem} from '../../../../json-type-system/JsonTypeSystem';
+import {t} from '../../../../json-type';
 
 describe('static calls', () => {
+  test('can use efficient serializer from type system', async () => {
+    const types = new JsonTypeSystem({
+      types: {
+        A: t.bool,
+      },
+    });
+    const caller = new RpcApiCaller({
+      types,
+      api: {
+        echo: {
+          isStreaming: false,
+          res: 'A',
+          call: async (_, input: any) => {
+            return input;
+          },
+        },
+      },
+      maxActiveCalls: 3,
+    });
+    const res1 = await caller.callJson('echo', 1, {});
+    const res2 = await caller.callJson('echo', 0, {});
+    const res3 = await caller.callMsgPack('echo', 1, {});
+    const res4 = await caller.callMsgPack('echo', 0, {});
+    const res5 = await firstValueFrom(caller.callJson$('echo', of(1), {}));
+    const res6 = await firstValueFrom(caller.callJson$('echo', of(0), {}));
+    const res7 = await firstValueFrom(caller.callMsgPack$('echo', of(1), {}));
+    const res8 = await firstValueFrom(caller.callMsgPack$('echo', of(0), {}));
+    expect(JSON.parse(res1)).toBe(true);
+    expect(JSON.parse(res2)).toBe(false);
+    expect(decode(res3)).toBe(true);
+    expect(decode(res4)).toBe(false);
+    expect(JSON.parse(res5)).toBe(true);
+    expect(JSON.parse(res6)).toBe(false);
+    expect(decode(res7)).toBe(true);
+    expect(decode(res8)).toBe(false);
+  });
+
   describe('can execute call using different serializations', () => {
     test('when implementation is not serialized', async () => {
       let cnt = 0;
@@ -96,6 +135,41 @@ describe('static calls', () => {
 });
 
 describe('streaming calls', () => {
+  test('can use efficient serializer from type system', async () => {
+    const types = new JsonTypeSystem({
+      types: {
+        A: t.bool,
+      },
+    });
+    const caller = new RpcApiCaller({
+      types,
+      api: {
+        echo: {
+          isStreaming: true,
+          res: 'A',
+          call$: (_, req$: any) => req$,
+        },
+      },
+      maxActiveCalls: 3,
+    });
+    const res1 = await caller.callJson('echo', 1, {});
+    const res2 = await caller.callJson('echo', 0, {});
+    const res3 = await caller.callMsgPack('echo', 1, {});
+    const res4 = await caller.callMsgPack('echo', 0, {});
+    const res5 = await firstValueFrom(caller.callJson$('echo', of(1), {}));
+    const res6 = await firstValueFrom(caller.callJson$('echo', of(0), {}));
+    const res7 = await firstValueFrom(caller.callMsgPack$('echo', of(1), {}));
+    const res8 = await firstValueFrom(caller.callMsgPack$('echo', of(0), {}));
+    expect(JSON.parse(res1)).toBe(true);
+    expect(JSON.parse(res2)).toBe(false);
+    expect(decode(res3)).toBe(true);
+    expect(decode(res4)).toBe(false);
+    expect(JSON.parse(res5)).toBe(true);
+    expect(JSON.parse(res6)).toBe(false);
+    expect(decode(res7)).toBe(true);
+    expect(decode(res8)).toBe(false);
+  });
+
   describe('can execute call using different serializations', () => {
     test('when implementation is not serialized', async () => {
       let cnt = 0;

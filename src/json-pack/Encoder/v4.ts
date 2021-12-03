@@ -103,10 +103,8 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
   }
 
   public encodeBoolean(bool: boolean): void {
-    switch (bool) {
-      case false: return this.encodeFalse();
-      case true: return this.encodeTrue();
-    }
+    if (bool) this.u8(0xc3);
+    else this.u8(0xc2);
   }
 
   public encodeStringHeader(length: number): void {
