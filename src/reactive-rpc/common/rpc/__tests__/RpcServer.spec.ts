@@ -13,6 +13,7 @@ import {
   ResponseUnsubscribeMessage,
 } from '../../messages';
 import {Defer} from '../../../../util/Defer';
+import {until} from '../../../../__tests__/util';
 
 const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcApiCallerParams<any, any>> = {}) => {
   const send = jest.fn();
@@ -228,9 +229,10 @@ test('sends complete message if observable immediately completes after emitting 
   const {server, send, caller, ctx} = setup();
   jest.spyOn(caller, 'createCall');
   server.onMessages([new RequestCompleteMessage(25, 'emitOnceSync', {foo: 'bar'})], ctx);
-  await new Promise((r) => setTimeout(r, 1));
+  await until(() => (caller.createCall as any).mock.calls.length === 1);
   expect(caller.createCall).toHaveBeenCalledTimes(1);
-  expect(caller.createCall).toHaveBeenCalledWith('emitOnceSync', ctx);
+  expect(caller.createCall).toHaveBeenCalledWith('emitOnceSync', ctx, expect.any(Function));
+  await until(() => send.mock.calls.length === 1);
   expect(send).toHaveBeenCalledTimes(1);
   const msg = send.mock.calls[0][0][0];
   expect(msg).toBeInstanceOf(ResponseCompleteMessage);
@@ -249,7 +251,7 @@ test('observable emits three values synchronously', async () => {
   server.onMessages([new RequestCompleteMessage(123, 'emitThreeSync', new Uint8Array([0]))], undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(caller.createCall).toHaveBeenCalledTimes(1);
-  expect(caller.createCall).toHaveBeenCalledWith('emitThreeSync', undefined);
+  expect(caller.createCall).toHaveBeenCalledWith('emitThreeSync', undefined, expect.any(Function));
   expect(send).toHaveBeenCalledTimes(3);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);
@@ -270,7 +272,7 @@ test('when observable completes asynchronously, sends empty complete message', a
   subject.complete();
   await new Promise((r) => setTimeout(r, 1));
   expect(caller.createCall).toHaveBeenCalledTimes(1);
-  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined);
+  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined, expect.any(Function));
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[1][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([2]))]);
@@ -295,7 +297,7 @@ test('when observable completes asynchronously and emits asynchronously, sends e
   subject.complete();
   await new Promise((r) => setTimeout(r, 1));
   expect(caller.createCall).toHaveBeenCalledTimes(1);
-  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined);
+  expect(caller.createCall).toHaveBeenCalledWith('subject', undefined, expect.any(Function));
   expect(send).toHaveBeenCalledTimes(4);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[1][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([2]))]);
