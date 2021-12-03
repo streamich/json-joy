@@ -34,10 +34,7 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * Method to be called by server when it wants to send messages to the client.
    * This is usually your WebSocket "send" method.
    */
-  send?: Send<T>;
-  sendJson?: SendJson<T>;
-  sendMsgPack?: SendMsgPack<T>;
-
+  send: Send<T> | SendJson<T> | SendMsgPack<T>;
   /**
    * Callback called on the server when user sends a notification message.
    */
@@ -75,25 +72,23 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
-  constructor({caller, error, send, sendJson, sendMsgPack, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
+  constructor({caller, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
     this.caller = caller;
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.onNotification = notify;
-
-    this.onSend = send || sendJson || sendMsgPack;
-    if (!send && !sendJson && !sendMsgPack) throw new Error('No send method provided');
+    this.onSend = send;
 
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T> | NotificationMessage<T>>();
       buffer.itemLimit = bufferSize;
       buffer.timeLimit = bufferTime;
-      buffer.onFlush = (messages) => this.onSend(messages);
+      buffer.onFlush = (messages) => this.onSend(messages as any);
       this.send = (message) => {
         buffer.push(message);
       };
     } else {
       this.send = (message) => {
-        this.onSend([message]);
+        this.onSend([message as any]);
       };
     }
   }

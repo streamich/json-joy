@@ -16,7 +16,7 @@ const setup = () => {
       bufferTime: 1,
     }),
     server: new RpcServer<any, any>({
-      send: (messages) => {
+      send: (messages: any) => {
         setTimeout(() => {
           client.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);

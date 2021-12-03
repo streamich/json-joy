@@ -5,7 +5,7 @@ import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {
   const server = new RpcServer<any, any>({
-    send: (messages) => {},
+    send: (messages: unknown) => {},
     onNotification: () => {},
     caller: new RpcApiCaller<any, any>({
       api: sampleApi,

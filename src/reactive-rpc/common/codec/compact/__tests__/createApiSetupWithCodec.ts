@@ -18,7 +18,7 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
   const setup: ApiTestSetup = () => {
     const ctx = {ip: '127.0.0.1'};
     const server = new RpcServer<any, any>({
-      send: (messages) => {
+      send: (messages: unknown) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
           const decoded = decoder.decode(encoded) as ReactiveRpcResponseMessage | ReactiveRpcResponseMessage[];
