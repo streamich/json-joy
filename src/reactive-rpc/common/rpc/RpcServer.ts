@@ -17,8 +17,14 @@ import {RpcApi} from './types';
 import {RpcServerError} from './constants';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
 import {Call, RpcApiCaller} from './RpcApiCaller';
+import {json_string} from '../../../json-brand';
+import {MsgPack} from '../../../json-pack';
 
 export {RpcServerError};
+
+type Send<T> = (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T>)[]) => void;
+type SendJson<T> = (messages: (ReactiveRpcResponseMessage<json_string<T>> | NotificationMessage<json_string<T>>)[]) => void;
+type SendMsgPack<T> = (messages: (ReactiveRpcResponseMessage<MsgPack<T>> | NotificationMessage<MsgPack<T>>)[]) => void;
 
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
   caller: RpcApiCaller<any, Ctx>;
@@ -28,7 +34,9 @@ export interface RpcServerParams<Ctx = unknown, T = unknown> {
    * Method to be called by server when it wants to send messages to the client.
    * This is usually your WebSocket "send" method.
    */
-  send: (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T>)[]) => void;
+  send?: Send<T>;
+  sendJson?: SendJson<T>;
+  sendMsgPack?: SendMsgPack<T>;
 
   /**
    * Callback called on the server when user sends a notification message.
@@ -62,16 +70,19 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   private send: (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => void;
 
   /** Callback which sends message out of the server. */
-  public onSend: (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T>)[]) => void;
+  public onSend: Send<T> | SendJson<T> | SendMsgPack<T>;
 
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
-  constructor({caller, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
+  constructor({caller, error, send, sendJson, sendMsgPack, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
     this.caller = caller;
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.onNotification = notify;
-    this.onSend = send;
+
+    this.onSend = send || sendJson || sendMsgPack;
+    if (!send && !sendJson && !sendMsgPack) throw new Error('No send method provided');
+
     if (bufferTime) {
       const buffer = new TimedQueue<ReactiveRpcResponseMessage<T> | NotificationMessage<T>>();
       buffer.itemLimit = bufferSize;
