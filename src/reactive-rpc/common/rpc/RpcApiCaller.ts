@@ -167,7 +167,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * - [x] Pre-call request buffer is overflown.
    * - [x] Due to inactivity timeout.
    */
-  public createCall<R, K extends keyof Api>(name: K, ctx: Ctx, call: (method: RpcMethodWrapFromRpcMethod<Api[K]>, ctx: Ctx, req$: Observable<R>) => Observable<K>): Call<RpcMethodRequest<Api[K]>, R> {
+  public createCall<R, K extends keyof Api>(name: K, ctx: Ctx, call: (method: RpcMethodWrapFromRpcMethod<Api[K]>, ctx: Ctx, req$: Observable<RpcMethodRequest<Api[K]>>) => Observable<R>): Call<RpcMethodRequest<Api[K]>, R> {
     const req$ = new Subject<RpcMethodRequest<Api[K]>>();
     const reqUnsubscribe$ = new Subject<null>();
     try {
@@ -265,7 +265,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       );
 
       // Observable to which user will subscribe.
-      const res$ = new Observable<RpcMethodResponse<Api[K]>>((observer) => {
+      const res$ = new Observable<R>((observer) => {
         const subscription = resultWithActiveCallTracking$.subscribe(observer);
 
         // Throw error on inactivity timeout.
@@ -310,6 +310,26 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     ctx: Ctx,
   ): Observable<RpcMethodResponse<Api[K]>> {
     const call = this.createCall(name, ctx, (method, ctx, req$) => method.call$(ctx, req$));
+    request$.subscribe(call.req$);
+    return call.res$;
+  }
+
+  public callJson$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<json_string<RpcMethodResponse<Api[K]>>> {
+    const call = this.createCall(name, ctx, (method, ctx, req$) => method.callJson$(ctx, req$));
+    request$.subscribe(call.req$);
+    return call.res$;
+  }
+
+  public callMsgPack$<K extends keyof Api>(
+    name: K,
+    request$: Observable<RpcMethodRequest<Api[K]>>,
+    ctx: Ctx,
+  ): Observable<MsgPack<RpcMethodResponse<Api[K]>>> {
+    const call = this.createCall(name, ctx, (method, ctx, req$) => method.callMsgPack$(ctx, req$));
     request$.subscribe(call.req$);
     return call.res$;
   }
