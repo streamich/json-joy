@@ -264,31 +264,8 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
         }),
       );
 
-      // Observable to which user will subscribe.
-      const res$ = new Observable<R>((observer) => {
-        const subscription = resultWithActiveCallTracking$.subscribe(observer);
-
-        // Throw error on inactivity timeout.
-        const timeout = methodStreaming.timeout ?? 15_000;
-        const timeoutSubscription = requestBuffered$
-          .pipe(
-            catchError(() => EMPTY),
-            mergeWith(result$.pipe(catchError(() => EMPTY))),
-            debounce(() => interval(timeout)),
-          )
-          // .subscribe(() => {
-          //   const error = new RpcError(RpcServerError.Timeout);
-          //   error$.error(error);
-          // });
-
-        return () => {
-          // timeoutSubscription.unsubscribe();
-          subscription.unsubscribe();
-        };
-      });
-
       // Format errors using custom error formatter.
-      const $resWithErrorsFormatted = res$.pipe(
+      const $resWithErrorsFormatted = resultWithActiveCallTracking$.pipe(
         catchError((error) => {
           throw this.error.format(error);
         }),

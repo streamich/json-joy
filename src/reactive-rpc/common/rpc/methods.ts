@@ -91,7 +91,6 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
     this.validate = method.validate ? method.validate.bind(method) : undefined;
     this.onPreCall = method.onPreCall ? method.onPreCall.bind(method) : undefined;
     this.preCallBufferSize = method.preCallBufferSize;
-    this.timeout = method.timeout;
     this.pretty = !!method.pretty;
 
     const call$ = method.call$ ? method.call$.bind(method) : undefined;

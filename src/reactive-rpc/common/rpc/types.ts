@@ -78,12 +78,6 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
    */
   preCallBufferSize?: number;
 
-  /**
-   * Time in milliseconds after which to timeout the call if there is no activity
-   * in request or response observables. Usually defaults to 15,000 milliseconds.
-   */
-  timeout?: number;
-
   call$?: (ctx: Context, request$: Observable<Request>) => Observable<Response>;
   callJson$?: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
   callMsgPack$?: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
@@ -93,10 +87,6 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
 export type RpcMethodWrap<Context = unknown, Request = unknown, Response = unknown> =
   | RpcMethodStaticWrap<Context, Request, Response>
   | RpcMethodStreamingWrap<Context, Request, Response>;
-
-// export type RpcMethodWrapContext<T> = T extends RpcMethodWrap<infer U, any, any> ? U : never;
-// export type RpcMethodWrapRequest<T> = T extends RpcMethodWrap<any, infer U, any> ? U : never;
-// export type RpcMethodWrapResponse<T> = T extends RpcMethodWrap<any, any, infer U> ? U : never;
 
 export type RpcMethodWrapFromRpcMethod<T> = T extends RpcMethod<infer A, infer B, infer C> ? RpcMethodWrap<A, B, C> : never;
 
