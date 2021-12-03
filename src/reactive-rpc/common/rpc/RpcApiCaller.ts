@@ -10,8 +10,8 @@ import type {json_string} from '../../../json-brand';
 import type {MsgPack} from '../../../json-pack';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
-  types: JsonTypeSystem<any>
   api: Api;
+  types?: JsonTypeSystem<any>
   error?: ErrorFormatter<E>;
 
   /**
@@ -52,7 +52,7 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
 
   constructor({types, api, error, preCallBufferSize = 10, maxActiveCalls = 50}: RpcApiCallerParams<Api, Ctx, E>) {
     this.api = {} as any;
-    for (const key in api) this.api[key] = wrapMethod(types, api[key]);
+    for (const key in api) this.api[key] = wrapMethod(api[key], types);
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.preCallBufferSize = preCallBufferSize;
     this.maxActiveCalls = maxActiveCalls;

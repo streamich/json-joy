@@ -154,7 +154,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   private createStreamCall(id: number, name: string, ctx: Ctx): Call<T, T> {
-    const call = this.caller.createCall(name, ctx) as Call<T, T>;
+    const call = this.caller.createCall(name, ctx, (method, ctx, req$) => method.call$(ctx, req$)) as Call<T, T>;
     this.activeStreamCalls.set(id, call);
     subscribeCompleteObserver<T>(call.res$, {
       next: (value: T) => {
@@ -230,7 +230,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     if (!this.caller.exists(method)) return this.sendError(id, RpcServerError.MethodNotFound);
     const rpcMethod = this.caller.get(method);
     if (!rpcMethod.isStreaming) return this.sendError(id, RpcServerError.ErrorForStaticMethod);
-    const streamCall = this.createStreamCall(id, rpcMethod, ctx);
+    const streamCall = this.createStreamCall(id, method, ctx);
     if (!streamCall) return;
     streamCall.req$.error(data);
   }

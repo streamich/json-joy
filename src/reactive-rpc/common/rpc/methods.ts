@@ -20,7 +20,7 @@ export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response 
   public readonly callJson$: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
   public readonly callMsgPack$: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 
-  constructor (method: RpcMethodStatic<Context, Request, Response>, types: JsonTypeSystem<{}>) {
+  constructor (method: RpcMethodStatic<Context, Request, Response>, types?: JsonTypeSystem<{}>) {
     this.req = method.req || '';
     this.res = method.res || '';
     this.validate = method.validate ? method.validate.bind(method) : undefined;
@@ -41,14 +41,14 @@ export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response 
     if (callJson) {
       this.callJson = callJson;
     } else {
-      const serializer = this.res && types.hasType(this.res) ? types.getJsonSerializer(this.res) : JSON.stringify;
+      const serializer = (this.res && types && types.hasType(this.res)) ? types.getJsonSerializer(this.res) : JSON.stringify;
       this.callJson = async (ctx, request) => serializer(await this.call(ctx, request));
     }
 
     if (callMsgPack) {
       this.callMsgPack = callMsgPack;
     } else {
-      const serializer = this.res && types.hasType(this.res) ? types.getMsgPackEncoder(this.res) : encodeFull;
+      const serializer = (this.res && types && types.hasType(this.res)) ? types.getMsgPackEncoder(this.res) : encodeFull;
       this.callMsgPack = async (ctx, request) => serializer(await this.call(ctx, request)) as MsgPack<Response>;
     }
 
@@ -85,7 +85,7 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
   public readonly callJson$: (ctx: Context, request$: Observable<Request>) => Observable<json_string<Response>>;
   public readonly callMsgPack$: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 
-  constructor (method: RpcMethodStreaming<Context, Request, Response>, types: JsonTypeSystem<{}>) {
+  constructor (method: RpcMethodStreaming<Context, Request, Response>, types?: JsonTypeSystem<{}>) {
     this.req = method.req || '';
     this.res = method.res || '';
     this.validate = method.validate ? method.validate.bind(method) : undefined;
@@ -108,14 +108,14 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
     if (callJson$) {
       this.callJson$ = callJson$;
     } else {
-      const serializer = this.res && types.hasType(this.res) ? types.getJsonSerializer(this.res) : JSON.stringify;
+      const serializer = (this.res && types && types.hasType(this.res)) ? types.getJsonSerializer(this.res) : JSON.stringify;
       this.callJson$ = (ctx, request) => this.call$(ctx, request).pipe(map(res => serializer(res)));
     }
 
     if (callMsgPack$) {
       this.callMsgPack$ = callMsgPack$;
     } else {
-      const serializer = this.res && types.hasType(this.res) ? types.getMsgPackEncoder(this.res) : encodeFull;
+      const serializer = (this.res && types && types.hasType(this.res)) ? types.getMsgPackEncoder(this.res) : encodeFull;
       this.callMsgPack$ = (ctx, request) => this.call$(ctx, request).pipe(map(res => serializer(res)));
     }
 
@@ -125,7 +125,7 @@ export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Respon
   }
 }
 
-export const wrapMethod = <Context = unknown, Request = unknown, Response = unknown> (types: JsonTypeSystem<any>, method: RpcMethodStatic<Context, Request, Response> | RpcMethodStreaming<Context, Request, Response>): RpcMethodStaticWrap<Context, Request, Response> | RpcMethodStreamingWrap<Context, Request, Response> => {
+export const wrapMethod = <Context = unknown, Request = unknown, Response = unknown> (method: RpcMethodStatic<Context, Request, Response> | RpcMethodStreaming<Context, Request, Response>, types?: JsonTypeSystem<any>): RpcMethodStaticWrap<Context, Request, Response> | RpcMethodStreamingWrap<Context, Request, Response> => {
   return method.isStreaming
     ? new RpcMethodStreamingWrap(method as RpcMethodStreaming<Context, Request, Response>, types)
     : new RpcMethodStaticWrap(method as RpcMethodStatic<Context, Request, Response>, types);
