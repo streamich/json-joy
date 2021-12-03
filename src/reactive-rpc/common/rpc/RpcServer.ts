@@ -154,7 +154,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   private createStreamCall(id: number, name: string, ctx: Ctx): Call<T, T> {
-    const call = this.caller.createCall(name, ctx, (method, ctx, req$) => method.call$(ctx, req$)) as Call<T, T>;
+    const call = this.caller.createCall(name, ctx, (name, req, ctx) => this.caller.call(name, req, ctx), (method, ctx, req$) => method.call$(ctx, req$)) as Call<T, T>;
     this.activeStreamCalls.set(id, call);
     subscribeCompleteObserver<T>(call.res$, {
       next: (value: T) => {
