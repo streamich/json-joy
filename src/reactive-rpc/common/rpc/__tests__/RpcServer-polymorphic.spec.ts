@@ -101,7 +101,9 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payloadResponse = JSON.stringify('hellohello');
-        expect(messageOut).toStrictEqual(new ResponseCompleteMessage(1, payloadResponse));
+        expect(messageOut).toBeInstanceOf(ResponseCompleteMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payloadResponse);
       });
 
       test('streaming call', async () => {
@@ -173,7 +175,9 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payload = JSON.stringify({message: 'hellohello'});
-        expect(messageOut).toStrictEqual(new ResponseErrorMessage(1, payload));
+        expect(messageOut).toBeInstanceOf(ResponseErrorMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payload);
       });
 
       test('streaming call', async () => {
@@ -183,7 +187,9 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payload = JSON.stringify({message: 'hellohello'});
-        expect(messageOut).toStrictEqual(new ResponseErrorMessage(1, payload));
+        expect(messageOut).toBeInstanceOf(ResponseErrorMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payload);
       });
     });
 

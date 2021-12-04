@@ -1,11 +1,33 @@
 import {RpcServer} from './RpcServer';
 import type {Call} from './RpcApiCaller';
-import {ResponseErrorMessage} from '../messages/nominal';
-import {JSON, json_string} from '../../../json-brand';
+import {json_string, JSON} from '../../../json-brand';
+import {JsonNotificationMessage} from '../messages/json/JsonNotificationMessage';
+import {JsonRequestUnsubscribeMessage} from '../messages/json/JsonRequestUnsubscribeMessage';
+import {JsonResponseCompleteMessage} from '../messages/json/JsonResponseCompleteMessage';
+import {JsonResponseDataMessage} from '../messages/json/JsonResponseDataMessage';
+import {JsonResponseErrorMessage} from '../messages/json/JsonResponseErrorMessage';
+
+const stringify = JSON.stringify;
 
 export class RpcServerJson<Ctx = unknown> extends RpcServer<Ctx> {
-  protected resErrorMessage(id: number, data: unknown): ResponseErrorMessage<json_string<unknown>> {
-    return new ResponseErrorMessage(id, JSON.stringify(data));
+  protected notifMessage(method: string, data: unknown): JsonNotificationMessage {
+    return new JsonNotificationMessage(method, stringify(data));
+  }
+
+  protected resCompleteMessage(id: number, data: unknown): JsonResponseCompleteMessage {
+    return new JsonResponseCompleteMessage(id, data as json_string<unknown>);
+  }
+
+  protected resDataMessage(id: number, data: unknown): JsonResponseDataMessage {
+    return new JsonResponseDataMessage(id, data as json_string<unknown>);
+  }
+
+  protected resErrorMessage(id: number, data: unknown): JsonResponseErrorMessage {
+    return new JsonResponseErrorMessage(id, stringify(data));
+  }
+
+  protected reqUnsubscribeMessage(id: number): JsonRequestUnsubscribeMessage {
+    return new JsonRequestUnsubscribeMessage(id);
   }
 
   protected createStaticCall(name: string, request: unknown, ctx: Ctx): Promise<unknown> {
