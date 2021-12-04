@@ -1,12 +1,13 @@
-import {BinaryNotificationMessage} from './BinaryNotificationMessage';
-import {BinaryRequestCompleteMessage} from './BinaryRequestCompleteMessage';
-import {BinaryRequestDataMessage} from './BinaryRequestDataMessage';
-import {BinaryRequestErrorMessage} from './BinaryRequestErrorMessage';
-import {BinaryRequestUnsubscribeMessage} from './BinaryRequestUnsubscribeMessage';
-import {BinaryResponseCompleteMessage} from './BinaryResponseCompleteMessage';
-import {BinaryResponseDataMessage} from './BinaryResponseDataMessage';
-import {BinaryResponseErrorMessage} from './BinaryResponseErrorMessage';
-import {BinaryResponseUnsubscribeMessage} from './BinaryResponseUnsubscribeMessage';
+import type {Encoder} from '../../../../json-pack';
+import type {BinaryNotificationMessage} from './BinaryNotificationMessage';
+import type {BinaryRequestCompleteMessage} from './BinaryRequestCompleteMessage';
+import type {BinaryRequestDataMessage} from './BinaryRequestDataMessage';
+import type {BinaryRequestErrorMessage} from './BinaryRequestErrorMessage';
+import type {BinaryRequestUnsubscribeMessage} from './BinaryRequestUnsubscribeMessage';
+import type {BinaryResponseCompleteMessage} from './BinaryResponseCompleteMessage';
+import type {BinaryResponseDataMessage} from './BinaryResponseDataMessage';
+import type {BinaryResponseErrorMessage} from './BinaryResponseErrorMessage';
+import type {BinaryResponseUnsubscribeMessage} from './BinaryResponseUnsubscribeMessage';
 
 export type ReactiveRpcBinaryMessage =
   | BinaryNotificationMessage
@@ -21,4 +22,5 @@ export type ReactiveRpcBinaryMessage =
 
 export interface BinaryMessage {
   size(): number;
+  writeCompact(encoder: Encoder): void;
 }
