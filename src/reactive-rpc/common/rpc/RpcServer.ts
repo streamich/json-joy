@@ -17,8 +17,9 @@ import {RpcApi} from './types';
 import {RpcServerError} from './constants';
 import {ErrorFormatter, ErrorLikeErrorFormatter, RpcError} from './error';
 import {Call, RpcApiCaller} from './RpcApiCaller';
-import {json_string} from '../../../json-brand';
+import {JSON, json_string} from '../../../json-brand';
 import {MsgPack} from '../../../json-pack';
+import {encodeFull} from '../../../json-pack/util';
 
 export {RpcServerError};
 
@@ -26,8 +27,21 @@ type Send<T> = (messages: (ReactiveRpcResponseMessage<T> | NotificationMessage<T
 type SendJson<T> = (messages: (ReactiveRpcResponseMessage<json_string<T>> | NotificationMessage<json_string<T>>)[]) => void;
 type SendMsgPack<T> = (messages: (ReactiveRpcResponseMessage<MsgPack<T>> | NotificationMessage<MsgPack<T>>)[]) => void;
 
+/**
+ * Specifies the encoding of the responses.
+ */
+export const enum RpcServerResponseType {
+  /** Plain JavaScript values. */
+  POJO = 1,
+  /** JSON-encoded. */
+  JSON = 2,
+  /** MessagePack-encoded. */
+  PACK = 3,
+}
+
 export interface RpcServerParams<Ctx = unknown, T = unknown> {
   caller: RpcApiCaller<any, Ctx>;
+  callType?: RpcServerResponseType;
   error?: ErrorFormatter<T>;
 
   /**
@@ -61,10 +75,11 @@ export interface RpcServerFromApiParams<Ctx = unknown, T = unknown> extends Omit
 
 export class RpcServer<Ctx = unknown, T = unknown> {
   private readonly caller: RpcApiCaller<any, Ctx>;
+  private readonly callType: RpcServerResponseType;
   public readonly error: ErrorFormatter<T>;
 
-  private readonly activeStreamCalls: Map<number, Call<T, T>> = new Map();
-  private send: (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => void;
+  private readonly activeStreamCalls: Map<number, Call<T, T | json_string<T> | MsgPack<T>>> = new Map();
+  private send: (message: ReactiveRpcResponseMessage<unknown> | NotificationMessage<unknown>) => void;
 
   /** Callback which sends message out of the server. */
   public onSend: Send<T> | SendJson<T> | SendMsgPack<T>;
@@ -72,8 +87,13 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx, T>['onNotification'];
 
-  constructor({caller, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
+  private execStaticCall: (id: number, name: string, request: T, ctx: Ctx) => void;
+  private createCall: <R>(name: string, ctx: Ctx) => Call<any, any>;
+  private onStreamError: (id: number, error: unknown) => void;
+
+  constructor({caller, callType, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx, T>) {
     this.caller = caller;
+    this.callType = callType || RpcServerResponseType.POJO;
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.onNotification = notify;
     this.onSend = send;
@@ -84,11 +104,78 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       buffer.timeLimit = bufferTime;
       buffer.onFlush = (messages) => this.onSend(messages as any);
       this.send = (message) => {
-        buffer.push(message);
+        buffer.push(message as any);
       };
     } else {
       this.send = (message) => {
         this.onSend([message as any]);
+      };
+    }
+
+    if (this.callType === RpcServerResponseType.POJO) {
+      this.execStaticCall = (id: number, name: string, request: T, ctx: Ctx) => {
+        this.caller.call(name, request, ctx)
+          .then((response) => {
+            this.send(new ResponseCompleteMessage<T>(id, response as T));
+          })
+          .catch((error) => {
+            // const formattedError = this.error.format(error);
+            const formattedError = error;
+            this.send(new ResponseErrorMessage<T>(id, formattedError));
+          });
+      };
+    } else if (this.callType === RpcServerResponseType.JSON) {
+      this.execStaticCall = (id: number, name: string, request: T, ctx: Ctx) => {
+        this.caller.callJson(name, request, ctx)
+          .then((response) => {
+            this.send(new ResponseCompleteMessage<json_string<T>>(id, response as json_string<T>));
+          })
+          .catch((error) => {
+            // const formattedError = this.error.format(error);
+            const formattedError = error;
+            const payload = JSON.stringify(formattedError);
+            this.send(new ResponseErrorMessage<json_string<T>>(id, payload));
+          });
+      };
+    } else {
+      this.execStaticCall = (id: number, name: string, request: T, ctx: Ctx) => {
+        this.caller.callMsgPack(name, request, ctx)
+          .then((response) => {
+            this.send(new ResponseCompleteMessage<MsgPack<T>>(id, response as MsgPack<T>));
+          })
+          .catch((error) => {
+            // const formattedError = this.error.format(error);
+            const formattedError = error;
+            const payload = encodeFull(formattedError);
+            this.send(new ResponseErrorMessage<MsgPack<T>>(id, payload));
+          });
+      };
+    }
+
+    if (this.callType === RpcServerResponseType.PACK) {
+      const streamCallback = (method: any, ctx: any, req$: any) => method.callMsgPack$(ctx, req$);
+      this.createCall = (name: string, ctx: Ctx) => this.caller.createCall(name, ctx, (name, req, ctx) => this.caller.callMsgPack(name, req, ctx), streamCallback) as Call<T, MsgPack<T>>;
+      this.onStreamError = (id: number, error: unknown) => {
+        const formattedError = error as T;
+        const payload = encodeFull(formattedError);
+        this.send(new ResponseErrorMessage<MsgPack<T>>(id, payload));
+        this.activeStreamCalls.delete(id);
+      };
+    } else if (this.callType === RpcServerResponseType.JSON) {
+      const streamCallback = (method: any, ctx: any, req$: any) => method.callJson$(ctx, req$);
+      this.createCall = (name: string, ctx: Ctx) => this.caller.createCall(name, ctx, (name, req, ctx) => this.caller.callJson(name, req, ctx), streamCallback) as Call<T, json_string<T>>;
+      this.onStreamError = (id: number, error: unknown) => {
+        const formattedError = error as T;
+        const payload = JSON.stringify(formattedError);
+        this.send(new ResponseErrorMessage<json_string<T>>(id, payload));
+        this.activeStreamCalls.delete(id);
+      };
+    } else {
+      const streamCallback = (method: any, ctx: any, req$: any) => method.call$(ctx, req$);
+      this.createCall = (name: string, ctx: Ctx) => this.caller.createCall(name, ctx, (name, req, ctx) => this.caller.call(name, req, ctx), streamCallback) as Call<T, T>;
+      this.onStreamError = (id: number, error: unknown) => {
+        this.send(new ResponseErrorMessage<T>(id, error as T));
+        this.activeStreamCalls.delete(id);
       };
     }
   }
@@ -130,11 +217,10 @@ export class RpcServer<Ctx = unknown, T = unknown> {
   }
 
   public stop(reason: RpcServerError = RpcServerError.Stop) {
-    this.send = (message: ReactiveRpcResponseMessage<T> | NotificationMessage<T>) => {};
+    this.send = (() => {}) as any;
     this.onNotification = (name: string, data: T | undefined, ctx: Ctx) => {};
-    for (const call of this.activeStreamCalls.values()) {
+    for (const call of this.activeStreamCalls.values())
       call.req$.error(new RpcError(reason));
-    }
     this.activeStreamCalls.clear();
   }
 
@@ -148,30 +234,18 @@ export class RpcServer<Ctx = unknown, T = unknown> {
     this.send(message);
   }
 
-  private execStaticCall(id: number, name: string, request: T, ctx: Ctx) {
-    this.caller
-      .call(name, request, ctx)
-      .then((response) => {
-        this.send(new ResponseCompleteMessage<T>(id, response as T));
-      })
-      .catch((error) => {
-        this.send(new ResponseErrorMessage<T>(id, error));
-      });
-  }
-
-  private createStreamCall(id: number, name: string, ctx: Ctx): Call<T, T> {
-    const call = this.caller.createCall(name, ctx, (name, req, ctx) => this.caller.call(name, req, ctx), (method, ctx, req$) => method.call$(ctx, req$)) as Call<T, T>;
+  private createStreamCall(id: number, name: string, ctx: Ctx): Call<T, T | json_string<T> | MsgPack<T>> {
+    const call = this.createCall(name, ctx);
     this.activeStreamCalls.set(id, call);
-    subscribeCompleteObserver<T>(call.res$, {
-      next: (value: T) => {
-        this.send(new ResponseDataMessage<T>(id, value));
+    subscribeCompleteObserver<T | json_string<T> | MsgPack<T>>(call.res$, {
+      next: (value: T | json_string<T> | MsgPack<T>) => {
+        this.send(new ResponseDataMessage<T | json_string<T> | MsgPack<T>>(id, value));
       },
       error: (error: unknown) => {
-        this.send(new ResponseErrorMessage<T>(id, error as T));
-        this.activeStreamCalls.delete(id);
+        this.onStreamError(id, error);
       },
-      complete: (value: T | undefined) => {
-        this.send(new ResponseCompleteMessage<T>(id, value));
+      complete: (value: T | json_string<T> | MsgPack<T> | undefined) => {
+        this.send(new ResponseCompleteMessage<T | json_string<T> | MsgPack<T>>(id, value));
         this.activeStreamCalls.delete(id);
       },
     });

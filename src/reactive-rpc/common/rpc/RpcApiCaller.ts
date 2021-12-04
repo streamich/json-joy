@@ -1,5 +1,5 @@
-import {EMPTY, firstValueFrom, from, interval, Observable, Observer, of, Subject} from 'rxjs';
-import {catchError, debounce, finalize, first, map, mergeWith, share, switchMap, take, tap} from 'rxjs/operators';
+import {firstValueFrom, from, Observable, Observer, of, Subject} from 'rxjs';
+import {catchError, finalize, first, map, mergeWith, share, switchMap, take, tap} from 'rxjs/operators';
 import type {IRpcApiCaller, RpcMethod, RpcMethodRequest, RpcMethodResponse, RpcMethodWrapFromRpcMethod} from './types';
 import {RpcServerError} from './constants';
 import {BufferSubject} from '../../../util/BufferSubject';
