@@ -15,7 +15,6 @@ export interface RpcWebSocket<Ctx = unknown> extends UwsWebSocket {
 }
 
 export interface EnableWsReactiveRpcApiParams<Ctx> extends EnableReactiveRpcApiParams<Ctx> {
-  createRpcServer: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServer<Ctx>;
   onNotification?: (ws: RpcWebSocket<Ctx>, name: string, data: unknown | undefined, ctx: Ctx) => void;
   idleTimeout?: number;
   compression?: number;

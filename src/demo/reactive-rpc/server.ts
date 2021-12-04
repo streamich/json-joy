@@ -70,6 +70,12 @@ enableWsCompactReactiveRpcApi<ConnectionContext>({
       onNotification,
       send,
     }),
+  createRpcServerMsgPack: ({send}) =>
+    new RpcServerMsgPack({
+      caller,
+      onNotification,
+      send,
+    }),
 });
 
 const options = {
