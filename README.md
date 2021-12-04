@@ -55,6 +55,8 @@ This package consists of multiple self-contained libraries:
   - __Reference__ 🤖
 - __`json-size`__ &mdash; calculate the size of serialized JSON object.
   - [__Documentation__ 🚀](./src/json-size/README.md)
+- __`json-type`__ &mdash; JSON schema builder.
+  - [__Documentation__ 🚀](./src/json-type/README.md)
 - __`json-type-validator`__ &mdash; fast `json-type` schema validator.
   - [__Documentation__ 🚀](./src/json-type-validator/README.md)
 

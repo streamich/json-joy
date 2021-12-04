@@ -1,6 +1,6 @@
 # json-type
 
-Type and builder for JSON types.
+Type builder for JSON and MessagePack.
 
 ```ts
 import {t} from 'json-joy/es2020/json-type';
