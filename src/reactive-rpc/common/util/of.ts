@@ -11,6 +11,6 @@ export const of = async <T, E = any>(promise: Promise<T>): Promise<[T | undefine
   try {
     return [await promise, undefined, true];
   } catch (error) {
-    return [undefined, error, false];
+    return [undefined, error as E, false];
   }
 };

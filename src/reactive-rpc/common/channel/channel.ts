@@ -124,7 +124,7 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
       };
     } catch (error) {
       this.state$.next(ChannelState.CLOSED);
-      this.error$.next(error);
+      this.error$.next(error as Error);
       this.close$.next([this, {code: 0, wasClean: true, reason: 'CONSTRUCTOR'}]);
       this.close$.complete();
     }
