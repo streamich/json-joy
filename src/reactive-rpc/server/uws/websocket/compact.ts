@@ -1,16 +1,21 @@
 import type {EnableWsReactiveRpcApiParams, RpcWebSocket, UwsWebSocket} from './types';
-import type {ReactiveRpcBinaryMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
-import {Encoder as EncoderJson, Decoder as DecoderJson} from '../../../common/codec/compact-json';
-import {Encoder as EncoderMsgPack, Decoder as DecoderMsgPack} from '../../../common/codec/compact-msgpack';
+import {BinaryNotificationMessage, ReactiveRpcBinaryMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
+import {Decoder as DecoderJson} from '../../../common/codec/compact-json/Decoder';
+import {Decoder as DecoderMsgPack} from '../../../common/codec/compact-msgpack/Decoder';
 import {Encoder as EncoderCompactMsgPackBinary} from '../../../common/codec/compact-msgpack-binary';
+import {Encoder as EncoderCompactJsonString} from '../../../common/codec/compact-json_string';
 import {NotificationMessage} from '../../../common/messages/nominal/NotificationMessage';
 import {DEFAULTS} from './constants';
 import {createConnectionContext} from '../context';
 import type {RpcServer, RpcServerParams} from '../../../common/rpc';
 import type {RpcServerMsgPack} from '../../../common/rpc/RpcServerMsgPack';
+import {JsonNotificationMessage, ReactiveRpcJsonMessage} from '../../../common/messages/json';
+import type {RpcServerJson} from '../../../common/rpc/RpcServerJson';
+import {JSON} from '../../../../json-brand';
+import {encode} from '../../../../json-pack/util';
 
 export interface EnableWsCompactReactiveRpcApiParams<Ctx> extends EnableWsReactiveRpcApiParams<Ctx> {
-  createRpcServer: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServer<Ctx>;
+  createRpcServerJson: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServerJson<Ctx>;
   createRpcServerMsgPack: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServerMsgPack<Ctx>;
 }
 
@@ -19,18 +24,16 @@ export interface CompactRpcWebSocket<Ctx = unknown> extends RpcWebSocket<Ctx> {
 }
 
 export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReactiveRpcApiParams<Ctx>) => {
-  const encoderJson = new EncoderJson();
   const decoderJson = new DecoderJson();
-  const encoderMsgPack = new EncoderMsgPack();
   const decoderMsgPack = new DecoderMsgPack();
+  const encoderCompactJsonString = new EncoderCompactJsonString();
   const encoderCompactMsgPackBinary = new EncoderCompactMsgPackBinary();
-  const invalidPayloadNotification = new NotificationMessage('.err', 'CODING');
-  const invalidPayloadJson = encoderJson.encode([invalidPayloadNotification]);
-  const invalidPayloadMsgPack = encoderMsgPack.encode([invalidPayloadNotification]);
+  const invalidPayloadJson = encoderCompactJsonString.encode([new JsonNotificationMessage('.err', JSON.stringify('CODING'))]);
+  const invalidPayloadMsgPack = encoderCompactMsgPackBinary.encode([new BinaryNotificationMessage('.err', encode('CODING'))]);
   const {
     route = '/rpc/compact',
     uws,
-    createRpcServer,
+    createRpcServerJson,
     createRpcServerMsgPack,
     onNotification,
     createContext = createConnectionContext as any,
@@ -65,11 +68,11 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
           },
         });
       } else {
-        rpc = createRpcServer({
+        rpc = createRpcServerJson({
           send: (messages: (ReactiveRpcResponseMessage | NotificationMessage)[]) => {
             if (ws.getBufferedAmount() > maxBackpressure) return;
-            const encoded = encoderJson.encode(messages);
-            ws.send(encoded, isBinary);
+            const encoded = encoderCompactJsonString.encode(messages as ReactiveRpcJsonMessage[]);
+            ws.send(encoded, false);
           },
         });
       }

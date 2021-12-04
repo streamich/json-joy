@@ -12,7 +12,7 @@ if (process.env.TEST_E2E) {
   const decoderJson = new Decoder();
   const clientJson = new RpcClient({
     send: (messages) => {
-      const encoded = encoderJson.encode(messages);
+      const encoded = encoderJson.encode(messages as any);
       ws.send(encoded);
     },
     bufferTime: 5,
