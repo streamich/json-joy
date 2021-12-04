@@ -20,6 +20,7 @@ import {
 } from '../../reactive-rpc/server/uws/http';
 import {UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/types';
 import {enableNdjsonGetRpcApi, enableNdjsonPostRpcApi} from '../../reactive-rpc/server/uws/http/ndjson';
+import {RpcServerMsgPack} from '../../reactive-rpc/common/rpc/RpcServerMsgPack';
 
 const uws = App({});
 
@@ -53,7 +54,7 @@ enableWsBinaryReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
   createRpcServer: ({send}) =>
-    new RpcServer({
+    new RpcServerMsgPack({
       caller,
       onNotification,
       send,
