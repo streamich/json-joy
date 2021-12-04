@@ -323,6 +323,7 @@ export class RpcServer<Ctx = unknown, T = unknown> {
       if (newCall) {
         if (data !== undefined) {
           newCall.req$.next(data!);
+          newCall.req$.complete();
         }
       }
     } else this.execStaticCall(id, method, data as T, ctx);
