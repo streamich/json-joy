@@ -16,12 +16,12 @@ import {RpcServer} from './RpcServer';
 
 export interface RpcDuplexParams<Ctx = unknown, T = unknown> {
   client: RpcClient<T>;
-  server: RpcServer<Ctx, T>;
+  server: RpcServer<Ctx>;
 }
 
 export class RpcDuplex<Ctx = unknown, T = unknown> {
   public readonly client: RpcClient<T>;
-  public readonly server: RpcServer<Ctx, T>;
+  public readonly server: RpcServer<Ctx>;
 
   public constructor(params: RpcDuplexParams<Ctx, T>) {
     this.client = params.client;

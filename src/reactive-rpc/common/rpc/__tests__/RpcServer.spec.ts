@@ -114,7 +114,7 @@ const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcA
     },
     ...callerParams,
   });
-  const server = new RpcServer<any, any>({
+  const server = new RpcServer<any>({
     send,
     onNotification: notify,
     caller,

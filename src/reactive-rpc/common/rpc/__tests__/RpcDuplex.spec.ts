@@ -15,7 +15,7 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: new RpcServer<any, any>({
+    server: new RpcServer<any>({
       send: (messages: any) => {
         setTimeout(() => {
           client.onMessages(messages, {ip: '127.0.0.1'});
@@ -40,7 +40,7 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: new RpcServer<any, any>({
+    server: new RpcServer<any>({
       send: (messages: any) => {
         setTimeout(() => {
           server.onMessages(messages, {ip: '127.0.0.1'});

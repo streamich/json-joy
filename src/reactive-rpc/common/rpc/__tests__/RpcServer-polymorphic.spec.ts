@@ -1,9 +1,8 @@
-import {RpcServer, RpcServerResponseType} from '../RpcServer';
+import {RpcServer} from '../RpcServer';
 import {
   RequestCompleteMessage,
   RequestDataMessage,
   ResponseCompleteMessage,
-  ResponseDataMessage,
   ResponseErrorMessage,
 } from '../../messages/nominal';
 import {RpcApiCaller} from '../RpcApiCaller';
@@ -11,6 +10,8 @@ import {until} from '../../../../__tests__/util';
 import {encode} from '../../../../json-pack/util';
 import {JSON} from '../../../../json-brand';
 import {map, Observable} from 'rxjs';
+import {RpcServerJson} from '../RpcServerJson';
+import {RpcServerMsgPack} from '../RpcServerMsgPack';
 
 const setupStatic = (methodName: 'call' | 'callJson' | 'callMsgPack' = 'call', doThrow: boolean = false) => {
   const caller = new RpcApiCaller({
@@ -28,14 +29,8 @@ const setupStatic = (methodName: 'call' | 'callJson' | 'callMsgPack' = 'call', d
   });
   const onNotification = jest.fn();
   const send = jest.fn();
-  const callType =
-    methodName === 'call'
-      ? RpcServerResponseType.POJO
-      : methodName === 'callJson'
-      ? RpcServerResponseType.JSON
-      : RpcServerResponseType.PACK;
-  const server = new RpcServer({
-    callType,
+  const Server = methodName === 'call' ? RpcServer : methodName === 'callJson' ? RpcServerJson : RpcServerMsgPack;
+  const server = new Server({
     caller,
     onNotification,
     send,
@@ -63,14 +58,8 @@ const setupStreaming = (methodName: 'call' | 'callJson' | 'callMsgPack' = 'call'
   });
   const onNotification = jest.fn();
   const send = jest.fn();
-  const callType =
-    methodName === 'call'
-      ? RpcServerResponseType.POJO
-      : methodName === 'callJson'
-      ? RpcServerResponseType.JSON
-      : RpcServerResponseType.PACK;
-  const server = new RpcServer({
-    callType,
+  const Server = methodName === 'call' ? RpcServer : methodName === 'callJson' ? RpcServerJson : RpcServerMsgPack;
+  const server = new Server({
     caller,
     onNotification,
     send,
@@ -132,7 +121,9 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payloadResponse = encode('hellohello');
-        expect(messageOut).toStrictEqual(new ResponseCompleteMessage(1, payloadResponse));
+        expect(messageOut).toBeInstanceOf(ResponseCompleteMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payloadResponse);
       });
 
       test('streaming call', async () => {
@@ -201,7 +192,9 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payload = encode({message: 'hellohello'});
-        expect(messageOut).toStrictEqual(new ResponseErrorMessage(1, payload));
+        expect(messageOut).toBeInstanceOf(ResponseErrorMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payload);
       });
 
       test('streaming call', async () => {
@@ -211,15 +204,17 @@ const runTests = (setup: typeof setupStatic) => {
         await until(() => send.mock.calls.length === 1);
         const messageOut = send.mock.calls[0][0][0];
         const payload = encode({message: 'hellohello'});
-        expect(messageOut).toStrictEqual(new ResponseErrorMessage(1, payload));
+        expect(messageOut).toBeInstanceOf(ResponseErrorMessage);
+        expect(messageOut.id).toBe(1);
+        expect(messageOut.data).toStrictEqual(payload);
       });
     });
   });
 };
 
-// describe('static method', () => {
-//   runTests(setupStatic);
-// });
+describe('static method', () => {
+  runTests(setupStatic);
+});
 
 describe('streaming method', () => {
   runTests(setupStreaming as any);
