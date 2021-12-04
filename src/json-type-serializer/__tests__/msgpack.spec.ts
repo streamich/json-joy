@@ -24,12 +24,14 @@ describe('general', () => {
         t.Field('b', t.str),
         t.Field('c', t.nil),
         t.Field('d', t.bool),
-        t.Field('arr', t.Array(t.Object({
-          fields: [
-            t.Field('foo', t.Array(t.num)),
-            t.Field('.!@#', t.str),
-          ],
-        }))),
+        t.Field(
+          'arr',
+          t.Array(
+            t.Object({
+              fields: [t.Field('foo', t.Array(t.num)), t.Field('.!@#', t.str)],
+            }),
+          ),
+        ),
         t.Field('bin', t.bin),
       ],
     });
@@ -38,7 +40,10 @@ describe('general', () => {
       b: 'sdf',
       c: null,
       d: true,
-      arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
+      arr: [
+        {foo: [1], '.!@#': ''},
+        {'.!@#': '......', foo: [4, 4, 4.4]},
+      ],
       bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
     };
 
@@ -48,10 +53,13 @@ describe('general', () => {
   test('supports "unknownFields" property', () => {
     const type = t.Object({
       fields: [
-        t.Field('a', t.Object({
-          fields: [],
-          unknownFields: true,
-        })),
+        t.Field(
+          'a',
+          t.Object({
+            fields: [],
+            unknownFields: true,
+          }),
+        ),
       ],
     });
     const json = {
@@ -96,19 +104,22 @@ describe('general', () => {
   test('example object', () => {
     const type = t.Object({
       fields: [
-        t.Field('collection', t.Object({
-          fields: [
-            t.Field('id', t.str),
-            t.Field('ts', t.num),
-            t.Field('cid', t.str),
-            t.Field('prid', t.str),
-            t.Field('slug', t.str),
-            t.Field('name', t.str, {isOptional: true}),
-            t.Field('src', t.str, {isOptional: true}),
-            t.Field('doc', t.str, {isOptional: true}),
-            t.Field('authz', t.str, {isOptional: true}),
-          ],
-        })),
+        t.Field(
+          'collection',
+          t.Object({
+            fields: [
+              t.Field('id', t.str),
+              t.Field('ts', t.num),
+              t.Field('cid', t.str),
+              t.Field('prid', t.str),
+              t.Field('slug', t.str),
+              t.Field('name', t.str, {isOptional: true}),
+              t.Field('src', t.str, {isOptional: true}),
+              t.Field('doc', t.str, {isOptional: true}),
+              t.Field('authz', t.str, {isOptional: true}),
+            ],
+          }),
+        ),
       ],
     });
     const json = {
@@ -143,9 +154,9 @@ describe('single value', () => {
 
   test('number', () => {
     exec(t.num, 1);
-    exec(t.num, 0);;
-    exec(t.num, 1.2);;
-    exec(t.num, -3);;
+    exec(t.num, 0);
+    exec(t.num, 1.2);
+    exec(t.num, -3);
     exec(t.num, -232123);
     exec(t.num, -232123.9);
     exec(t.Number({const: 3}), 3);
@@ -166,12 +177,13 @@ describe('single value', () => {
   });
 
   test('object', () => {
-    exec(t.Object({ fields: [] }), {});
-    exec(t.Object({
-      fields: [
-        t.Field('a', t.str),
-      ]
-    }), {a: 'b'});
+    exec(t.Object({fields: []}), {});
+    exec(
+      t.Object({
+        fields: [t.Field('a', t.str)],
+      }),
+      {a: 'b'},
+    );
   });
 });
 
@@ -233,12 +245,8 @@ describe('"or" type', () => {
 
 describe('"ref" type', () => {
   test('simple example', () => {
-    const typeUser = t.Object('User', [
-      t.Field('id', t.str),
-    ]);
-    const typeResponse = t.Object('Response', [
-      t.Field('user', t.Ref('User')),
-    ]);
+    const typeUser = t.Object('User', [t.Field('id', t.str)]);
+    const typeResponse = t.Object('Response', [t.Field('user', t.Ref('User'))]);
     const codegen = new MsgPackSerializerCodegen({
       encoder,
       ref: () => typeUser,
@@ -255,9 +263,7 @@ describe('"ref" type', () => {
   });
 
   test('throws when ref cannot be resolved', () => {
-    const typeResponse = t.Object('Response', [
-      t.Field('user', t.Ref('User')),
-    ]);
+    const typeResponse = t.Object('Response', [t.Field('user', t.Ref('User'))]);
     const codegen = new MsgPackSerializerCodegen({
       encoder,
     });
@@ -266,9 +272,7 @@ describe('"ref" type', () => {
   });
 
   test('can generate partial function, where encoder is injected', () => {
-    const type = t.Object('User', [
-      t.Field('id', t.str),
-    ]);
+    const type = t.Object('User', [t.Field('id', t.str)]);
     const codegen = new MsgPackSerializerCodegen({encoder});
     const fn = codegen.compilePartial(type);
     const json = {
@@ -284,11 +288,7 @@ describe('"ref" type', () => {
 
   test('can serialize reference by resolving to type', () => {
     const typeId = t.String();
-    const type = t.Object('User', [
-      t.Field('name', t.str),
-      t.Field('id', t.Ref('ID')),
-      t.Field('createdAt', t.num),
-    ]);
+    const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new MsgPackSerializerCodegen({
       encoder,
       ref: () => typeId,
@@ -306,11 +306,7 @@ describe('"ref" type', () => {
 
   test('can serialize reference by partial serializer', () => {
     const typeId = t.String();
-    const type = t.Object('User', [
-      t.Field('name', t.str),
-      t.Field('id', t.Ref('ID')),
-      t.Field('createdAt', t.num),
-    ]);
+    const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new MsgPackSerializerCodegen({
       encoder,
       ref: () => {

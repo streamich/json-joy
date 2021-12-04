@@ -7,8 +7,8 @@ test('can generate a simple function', () => {
     args: 'a, b',
     prologue: 'var res = 0;',
     epilogue: 'return res;',
-    processSteps: steps => {
-      return steps.map(step => {
+    processSteps: (steps) => {
+      return steps.map((step) => {
         if (typeof step === 'number') {
           return new CodegenStepExecJs(`a += ${step};`);
         } else return step;

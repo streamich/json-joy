@@ -10,8 +10,7 @@ export type TsType =
   | TsBooleanKeyword
   | TsNullKeyword
   | TsStringLiteral
-  | TsNumericLiteral
-  ;
+  | TsNumericLiteral;
 
 export interface TsInterfaceDeclaration {
   node: 'InterfaceDeclaration';

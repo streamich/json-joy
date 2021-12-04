@@ -83,12 +83,13 @@ export interface RpcMethodStreaming<Context = unknown, Request = unknown, Respon
   callMsgPack$?: (ctx: Context, request$: Observable<Request>) => Observable<MsgPack<Response>>;
 }
 
-
 export type RpcMethodWrap<Context = unknown, Request = unknown, Response = unknown> =
   | RpcMethodStaticWrap<Context, Request, Response>
   | RpcMethodStreamingWrap<Context, Request, Response>;
 
-export type RpcMethodWrapFromRpcMethod<T> = T extends RpcMethod<infer A, infer B, infer C> ? RpcMethodWrap<A, B, C> : never;
+export type RpcMethodWrapFromRpcMethod<T> = T extends RpcMethod<infer A, infer B, infer C>
+  ? RpcMethodWrap<A, B, C>
+  : never;
 
 export type RpcApi<Context = unknown, T = unknown> = Record<string, RpcMethod<Context, T, T>>;
 
@@ -96,8 +97,16 @@ export interface IRpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, an
   exists<K extends keyof Api>(name: K): boolean;
   get<K extends keyof Api>(name: K): RpcMethodWrapFromRpcMethod<Api[K]>;
   call<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<RpcMethodResponse<Api[K]>>;
-  callJson<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<json_string<RpcMethodResponse<Api[K]>>>;
-  callMsgPack<K extends keyof Api>(name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx): Promise<MsgPack<RpcMethodResponse<Api[K]>>>;
+  callJson<K extends keyof Api>(
+    name: K,
+    request: RpcMethodRequest<Api[K]>,
+    ctx: Ctx,
+  ): Promise<json_string<RpcMethodResponse<Api[K]>>>;
+  callMsgPack<K extends keyof Api>(
+    name: K,
+    request: RpcMethodRequest<Api[K]>,
+    ctx: Ctx,
+  ): Promise<MsgPack<RpcMethodResponse<Api[K]>>>;
   call$<K extends keyof Api>(
     name: K,
     request$: Observable<RpcMethodRequest<Api[K]>>,

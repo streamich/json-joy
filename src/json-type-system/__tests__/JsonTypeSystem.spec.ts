@@ -4,31 +4,31 @@ import {BooleanValidator, ObjectValidator} from '../../json-type-validator';
 import {JsonTypeSystem} from '../JsonTypeSystem';
 
 const types = {
-  'db.ApplyPatchRequest': t.Object([
-    t.Field('id', t.Ref('ID')),
-    t.Field('v', t.num),
-  ]),
+  'db.ApplyPatchRequest': t.Object([t.Field('id', t.Ref('ID')), t.Field('v', t.num)]),
 
-  'ID': t.String({
+  ID: t.String({
     title: 'ID',
     description: 'ID of a document.',
   }),
 
-  'User': t.Object([
+  User: t.Object([
     t.Field('id', t.str),
     t.Field('name', t.str),
     t.Field('partner', t.Ref('User'), {isOptional: true}),
     t.Field('address', t.Ref('Address'), {isOptional: true}),
   ]),
 
-  'Address': t.Object([
+  Address: t.Object([
     t.Field('street', t.str),
     t.Field('zip', t.str),
     t.Field('owner', t.Ref('User'), {isOptional: true}),
   ]),
 };
 
-const assertUserAndAddress = (userValidator: BooleanValidator | ObjectValidator, addressValidator: BooleanValidator | ObjectValidator) => {
+const assertUserAndAddress = (
+  userValidator: BooleanValidator | ObjectValidator,
+  addressValidator: BooleanValidator | ObjectValidator,
+) => {
   const result1 = userValidator({
     id: '123',
     name: 'John',
@@ -68,9 +68,7 @@ const assertUserAndAddress = (userValidator: BooleanValidator | ObjectValidator,
     address: {
       street: '123',
       zip: '123',
-      owner: {
-
-      },
+      owner: {},
     },
   });
   const result8 = userValidator({
@@ -103,10 +101,12 @@ describe('fast validator', () => {
     const idValidator = system.getFastValidator('ID');
     const applyPatchRequestValidator = system.getFastValidator('db.ApplyPatchRequest');
     expect(idValidator('123')).toBe(false);
-    expect(applyPatchRequestValidator({
-      id: 'adsf',
-      v: 1,
-    })).toBe(false);
+    expect(
+      applyPatchRequestValidator({
+        id: 'adsf',
+        v: 1,
+      }),
+    ).toBe(false);
   });
 
   test('can create validators with reference (reverse order)', () => {
@@ -116,10 +116,12 @@ describe('fast validator', () => {
     const applyPatchRequestValidator = system.getFastValidator('db.ApplyPatchRequest');
     const idValidator = system.getFastValidator('ID');
     expect(idValidator('123')).toBe(false);
-    expect(applyPatchRequestValidator({
-      id: 'adsf',
-      v: 1,
-    })).toBe(false);
+    expect(
+      applyPatchRequestValidator({
+        id: 'adsf',
+        v: 1,
+      }),
+    ).toBe(false);
   });
 
   test('can resolve own recursive refs', () => {
@@ -176,10 +178,12 @@ describe('full validator', () => {
     const idValidator = system.getFullValidator('ID');
     const applyPatchRequestValidator = system.getFullValidator('db.ApplyPatchRequest');
     expect(!!idValidator('123')).toBe(false);
-    expect(!!applyPatchRequestValidator({
-      id: 'adsf',
-      v: 1,
-    })).toBe(false);
+    expect(
+      !!applyPatchRequestValidator({
+        id: 'adsf',
+        v: 1,
+      }),
+    ).toBe(false);
   });
 
   test('can create validators with reference (reverse order)', () => {
@@ -189,10 +193,12 @@ describe('full validator', () => {
     const applyPatchRequestValidator = system.getFullValidator('db.ApplyPatchRequest');
     const idValidator = system.getFullValidator('ID');
     expect(!!idValidator('123')).toBe(false);
-    expect(!!applyPatchRequestValidator({
-      id: 'adsf',
-      v: 1,
-    })).toBe(false);
+    expect(
+      !!applyPatchRequestValidator({
+        id: 'adsf',
+        v: 1,
+      }),
+    ).toBe(false);
   });
 
   test('can resolve own recursive refs', () => {

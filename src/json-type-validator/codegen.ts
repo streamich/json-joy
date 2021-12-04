@@ -21,7 +21,8 @@ const canSkipObjectKeyUndefinedCheck = (type: string): boolean => {
     case 'arr':
     case 'bin':
       return true;
-    default: return false;
+    default:
+      return false;
   }
 };
 
@@ -67,7 +68,7 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.REF]: 'Validation error in referenced type.',
   [JsonTypeValidatorError.ENUM]: 'Not an enum value.',
   [JsonTypeValidatorError.VALIDATION]: 'Custom validator failed.',
-}
+};
 
 /**
  * {@link JsonTypeValidatorCodegen} configuration options.
@@ -162,7 +163,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected addDependencies(deps: unknown[]): string[] {
-    let symbols: string [] = [];
+    let symbols: string[] = [];
     for (const dep of deps) {
       this.dependencies.push(dep);
       symbols.push(`d${this.dependencies.length - 1}`);
@@ -175,7 +176,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected addConsts(consts: string[]): string[] {
-    let symbols: string [] = [];
+    let symbols: string[] = [];
     for (const const_ of consts) {
       this.consts.push(const_);
       symbols.push(`c${this.consts.length - 1}`);
@@ -186,7 +187,8 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected err(code: JsonTypeValidatorError, path: Path, opts: {refError?: string; validator?: string} = {}): string {
     switch (this.options.errorReporting) {
-      case 'boolean': return 'true';
+      case 'boolean':
+        return 'true';
       case 'string': {
         let out = "'[" + JSON.stringify(JsonTypeValidatorError[code]);
         for (const step of path) {
@@ -200,7 +202,14 @@ export class JsonTypeValidatorCodegen {
       }
       case 'object':
       default: {
-        let out = '{code: ' + JSON.stringify(JsonTypeValidatorError[code]) + ', errno: ' + JSON.stringify(code) + ', message: ' + JSON.stringify(JsonTypeValidatorErrorMessage[code]) + ', path: [';
+        let out =
+          '{code: ' +
+          JSON.stringify(JsonTypeValidatorError[code]) +
+          ', errno: ' +
+          JSON.stringify(code) +
+          ', message: ' +
+          JSON.stringify(JsonTypeValidatorErrorMessage[code]) +
+          ', path: [';
         let i = 0;
         for (const step of path) {
           if (i) out += ', ';
@@ -229,7 +238,8 @@ export class JsonTypeValidatorCodegen {
   /** @ignore */
   protected refErr(path: Path, r: string): string {
     switch (this.options.errorReporting) {
-      case 'boolean': return r;
+      case 'boolean':
+        return r;
       case 'string': {
         return this.err(JsonTypeValidatorError.REF, [...path, {r}]);
       }
@@ -328,7 +338,7 @@ export class JsonTypeValidatorCodegen {
   protected onObject(path: Path, obj: TObject, expr: string) {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
-    const canSkipObjectTypeCheck = this.options.unsafeMode && (obj.fields.length > 0);
+    const canSkipObjectTypeCheck = this.options.unsafeMode && obj.fields.length > 0;
     if (!canSkipObjectTypeCheck) {
       const err = this.err(JsonTypeValidatorError.OBJ, path);
       this.js(/* js */ `if (typeof ${r} !== 'object' || !${r} || (${r} instanceof Array)) return ${err};`);
@@ -336,7 +346,11 @@ export class JsonTypeValidatorCodegen {
     if (obj.fields.length && !obj.unknownFields && !this.options.skipObjectExtraFieldsCheck) {
       const rk = this.getRegister();
       this.js(`for (var ${rk} in ${r}) {`);
-      this.js(`switch (${rk}) { case ${obj.fields.map(field => JSON.stringify(field.key)).join(": case ")}: break; default: return ${this.err(JsonTypeValidatorError.KEYS, [...path, {r: rk}])};}`);
+      this.js(
+        `switch (${rk}) { case ${obj.fields
+          .map((field) => JSON.stringify(field.key))
+          .join(': case ')}: break; default: return ${this.err(JsonTypeValidatorError.KEYS, [...path, {r: rk}])};}`,
+      );
       this.js(`}`);
     }
     for (let i = 0; i < obj.fields.length; i++) {
@@ -368,7 +382,11 @@ export class JsonTypeValidatorCodegen {
     const r = this.getRegister();
     this.js(/* js */ `var ${r} = ${expr};`);
     const err = this.err(JsonTypeValidatorError.BIN, path);
-    this.js(/* js */ `if(!(${r} instanceof Uint8Array)${hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''}) return ${err};`);
+    this.js(
+      /* js */ `if(!(${r} instanceof Uint8Array)${
+        hasBuffer ? /* js */ ` && !Buffer.isBuffer(${r})` : ''
+      }) return ${err};`,
+    );
   }
 
   /** @ignore */
@@ -389,21 +407,23 @@ export class JsonTypeValidatorCodegen {
       this.onType(path, or.types[0], expr);
       return;
     }
-    const consts = this.addConsts(or.types.map((type) => {
-      const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
-      const fn = codegen.generate(type);
-      const symbols = this.addDependencies(fn.deps);
-      return `((${fn.js})(${symbols.join(', ')}))`;
-    })).map(c => `${c}(${expr})`);
+    const consts = this.addConsts(
+      or.types.map((type) => {
+        const codegen = new JsonTypeValidatorCodegen({...this.options, errorReporting: 'boolean'});
+        const fn = codegen.generate(type);
+        const symbols = this.addDependencies(fn.deps);
+        return `((${fn.js})(${symbols.join(', ')}))`;
+      }),
+    ).map((c) => `${c}(${expr})`);
     const err = this.err(JsonTypeValidatorError.OR, path);
     this.js(`if (${consts.join(' && ')}) return ${err}`);
   }
 
   protected onEnum(path: Path, type: TEnum, r: string) {
     if (!type.values.length) throw new Error('Enum values are not specified.');
-    const equals = type.values.map(value => $$deepEqual(value));
+    const equals = type.values.map((value) => $$deepEqual(value));
     const consts = this.addConsts(equals);
-    const exprs = consts.map(c => `!${c}(${r})`);
+    const exprs = consts.map((c) => `!${c}(${r})`);
     this.js(`if (${exprs.join(' && ')}) return ${this.err(JsonTypeValidatorError.ENUM, path)}`);
   }
 
@@ -463,11 +483,8 @@ export class JsonTypeValidatorCodegen {
   public generate(type: TType): CompiledFunction<JsonTypeValidator> {
     this.type = type;
     this.onType([], type, 'r0');
-    const successResult = this.options.errorReporting === 'boolean'
-      ? 'false'
-      : this.options.errorReporting === 'string'
-        ? "''"
-        : 'null';
+    const successResult =
+      this.options.errorReporting === 'boolean' ? 'false' : this.options.errorReporting === 'string' ? "''" : 'null';
 
     const dependencyArgs = this.dependencies.map((_, index) => `d${index}`).join(', ');
 
@@ -476,10 +493,10 @@ ${this.consts.map((value, index) => `var c${index} = (${value});`).join('\n')}
 return function(r0){
 ${this.steps.map((step) => (step as EncodingPlanStepExecJs).js).join('\n')}
 return ${successResult};
-}})`
+}})`;
 
-// IF YOUR ARE INTERESTED HOW IT WORKS, THIS IS THE LINE YOU WANT TO UNCOMMENT:
-// console.log(js);
+    // IF YOUR ARE INTERESTED HOW IT WORKS, THIS IS THE LINE YOU WANT TO UNCOMMENT:
+    // console.log(js);
 
     return {
       deps: this.dependencies as unknown[],
@@ -496,7 +513,7 @@ return ${successResult};
  * @param options Code-generator options.
  * @returns Compiled validator function.
  */
- export const createValidator = (type: TType, options: JsonTypeValidatorCodegenOptions = {}): JsonTypeValidator => {
+export const createValidator = (type: TType, options: JsonTypeValidatorCodegenOptions = {}): JsonTypeValidator => {
   const codegen = new JsonTypeValidatorCodegen(options);
   const fn = codegen.generate(type);
   return compileFn(fn);
@@ -510,7 +527,10 @@ return ${successResult};
  * Validator returns `true` if error was found, and `false` if no error was
  * found.
  */
-export const createBoolValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): BooleanValidator => {
+export const createBoolValidator = (
+  type: TType,
+  options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {},
+): BooleanValidator => {
   return createValidator(type, {
     ...options,
     errorReporting: 'boolean',
@@ -532,7 +552,10 @@ export const createBoolValidator = (type: TType, options: Omit<JsonTypeValidator
  * more info. The remaining elements in the array represent the path where error
  * happened.
  */
-export const createStrValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): StringValidator => {
+export const createStrValidator = (
+  type: TType,
+  options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {},
+): StringValidator => {
   return createValidator(type, {
     ...options,
     errorReporting: 'string',
@@ -544,7 +567,10 @@ export const createStrValidator = (type: TType, options: Omit<JsonTypeValidatorC
  * which returns errors as objects of type {@link ObjectValidatorError}; or
  * `null` on no error.
  */
-export const createObjValidator = (type: TType, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}): ObjectValidator => {
+export const createObjValidator = (
+  type: TType,
+  options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {},
+): ObjectValidator => {
   return createValidator(type, {
     ...options,
     errorReporting: 'object',

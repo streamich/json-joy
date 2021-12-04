@@ -135,12 +135,18 @@ export class RandomJson {
 
   protected generate(type: NodeType): unknown {
     switch (type) {
-      case 'null': return null;
-      case 'boolean': return RandomJson.genBoolean();
-      case 'number': return RandomJson.genNumber();
-      case 'string': return RandomJson.genString();
-      case 'array': return [];
-      case 'object': return {};
+      case 'null':
+        return null;
+      case 'boolean':
+        return RandomJson.genBoolean();
+      case 'number':
+        return RandomJson.genNumber();
+      case 'string':
+        return RandomJson.genString();
+      case 'array':
+        return [];
+      case 'object':
+        return {};
     }
   }
 

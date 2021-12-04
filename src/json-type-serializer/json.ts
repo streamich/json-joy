@@ -31,9 +31,12 @@ export class JsonSerializerCodegen {
       ref: (id: string) => undefined,
       ...opts,
     };
-    const typeNamePart = this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id) ? (this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)) : '';
+    const typeNamePart =
+      this.options.type.id && /^[a-z][a-z0-9_]*$/i.test(this.options.type.id)
+        ? this.options.type.id[0].toUpperCase() + this.options.type.id.substr(1)
+        : '';
     this.codegen = new Codegen<JsonEncoderFn>({
-      name: 'toJson' + (typeNamePart),
+      name: 'toJson' + typeNamePart,
       prologue: `var s = '';`,
       epilogue: `return s;`,
       processSteps: (steps) => {
@@ -134,8 +137,8 @@ export class JsonSerializerCodegen {
       this.js(/* js */ `s += stringify(${value.use()});`);
       return;
     }
-    const requiredFields = obj.fields.filter(field => !field.isOptional);
-    const optionalFields = obj.fields.filter(field => field.isOptional);
+    const requiredFields = obj.fields.filter((field) => !field.isOptional);
+    const optionalFields = obj.fields.filter((field) => field.isOptional);
     this.writeText('{');
     for (let i = 0; i < requiredFields.length; i++) {
       const field = requiredFields[i];
@@ -186,7 +189,8 @@ export class JsonSerializerCodegen {
         this.onType(type as TType, value);
         break;
       }
-      default: throw new Error(`Unknown [ref = ${ref.ref}].`);
+      default:
+        throw new Error(`Unknown [ref = ${ref.ref}].`);
     }
   }
 

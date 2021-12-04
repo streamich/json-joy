@@ -7,15 +7,14 @@ const check = (str: string) => {
 
 const generateStr = (): string => {
   let str = '';
-  for (let i = 0; i < 5; i++)
-    str += String.fromCodePoint(Math.round(Math.random() * 0x6FFFF));
+  for (let i = 0; i < 5; i++) str += String.fromCodePoint(Math.round(Math.random() * 0x6ffff));
   return str;
 };
 
 test('encodes the same as JSON.stringify()', () => {
   check('');
   check('"');
-  check('\'');
+  check("'");
   check('asdf');
   check('asdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfsadfasdfasdfasdf');
   check('🍻');

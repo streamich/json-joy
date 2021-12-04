@@ -43,8 +43,8 @@ export interface CustomValidator {
    * Receives the value that needs to be validated, returns a truthy value representing an error
    * or throws an error when validation fails. When validation succeeds, returns a falsy value.
    */
-   fn: (value: any) => unknown;
-};
+  fn: (value: any) => unknown;
+}
 
 /** Node types that custom validators are allowed to accept. */
 export type CustomValidatorType = 'string' | 'number' | 'array' | 'object' | 'bin' | 'any';

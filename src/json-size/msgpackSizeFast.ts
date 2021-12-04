@@ -1,5 +1,5 @@
-import {JsonPackExtension, JsonPackValue} from "../json-pack";
-import {isUint8Array} from "../util/isUint8Array";
+import {JsonPackExtension, JsonPackValue} from '../json-pack';
+import {isUint8Array} from '../util/isUint8Array';
 
 const arraySize = (arr: unknown[]): number => {
   let size = 2;

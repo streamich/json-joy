@@ -1,7 +1,13 @@
 import type {TType} from '../json-type/types';
 import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
-import {JsonEncoderFn, JsonSerializerCodegen, EncoderFn, PartialEncoderFn, MsgPackSerializerCodegen} from '../json-type-serializer';
+import {
+  JsonEncoderFn,
+  JsonSerializerCodegen,
+  EncoderFn,
+  PartialEncoderFn,
+  MsgPackSerializerCodegen,
+} from '../json-type-serializer';
 import {encoderFull} from '../json-pack/util';
 
 export type Types = {[ref: string]: TType};
@@ -60,10 +66,12 @@ export class JsonTypeSystem<T extends Types> {
       throw new Error(`Type [ref = ${ref}] not implemented.`);
     });
     this.fullValidatorCache[ref] = validator;
-    setValidator(createObjValidator(type, {
-      customValidators: [],
-      ref: (id: string) => this.getFastValidator(id),
-    }));
+    setValidator(
+      createObjValidator(type, {
+        customValidators: [],
+        ref: (id: string) => this.getFastValidator(id),
+      }),
+    );
     return validator;
   }
 
@@ -137,6 +145,6 @@ export class JsonTypeSystem<T extends Types> {
         return isLiteralType ? type : this.getMsgPackPartialEncoder(id);
       },
     });
-    return this.msgPackEncoderCache[ref] = codegen.compile(type);
+    return (this.msgPackEncoderCache[ref] = codegen.compile(type));
   }
 }

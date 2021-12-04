@@ -12,7 +12,7 @@ const generateBlob = (): Uint8Array => {
 };
 
 test('works', () => {
-  for (let i= 0; i < 100; i++) {
+  for (let i = 0; i < 100; i++) {
     const blob = generateBlob();
     const result = encode(blob);
     const result2 = encode2(blob, blob.byteLength);

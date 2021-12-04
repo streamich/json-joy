@@ -1,5 +1,5 @@
-import {CompiledFunction} from ".";
-import {JavaScript} from "./types";
+import {CompiledFunction} from '.';
+import {JavaScript} from './types';
 
 export const compile = <T>(js: JavaScript<T>): T => eval(js);
 

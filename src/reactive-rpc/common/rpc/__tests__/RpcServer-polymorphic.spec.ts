@@ -1,5 +1,10 @@
 import {RpcServer, RpcServerResponseType} from '../RpcServer';
-import {RequestCompleteMessage, RequestDataMessage, ResponseCompleteMessage, ResponseErrorMessage} from '../../messages/nominal';
+import {
+  RequestCompleteMessage,
+  RequestDataMessage,
+  ResponseCompleteMessage,
+  ResponseErrorMessage,
+} from '../../messages/nominal';
 import {RpcApiCaller} from '../RpcApiCaller';
 import {until} from '../../../../__tests__/util';
 import {encode} from '../../../../json-pack/util';
@@ -20,9 +25,10 @@ const setup = (methodName: 'call' | 'callJson' | 'callMsgPack' = 'call') => {
   });
   const onNotification = jest.fn();
   const send = jest.fn();
-  const callType = methodName === 'call'
-    ? RpcServerResponseType.POJO
-    : methodName === 'callJson'
+  const callType =
+    methodName === 'call'
+      ? RpcServerResponseType.POJO
+      : methodName === 'callJson'
       ? RpcServerResponseType.JSON
       : RpcServerResponseType.PACK;
   const server = new RpcServer({

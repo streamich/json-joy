@@ -15,19 +15,20 @@ const exec = (type: TType, json: unknown, expected: unknown = json) => {
 describe('"str" type', () => {
   test('serializes a plain short string', () => {
     const type = t.str;
-    const json = "asdf";
+    const json = 'asdf';
     exec(type, json);
   });
 
   test('serializes a long string', () => {
     const type = t.str;
-    const json = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    const json =
+      '0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
     exec(type, json);
   });
 
   test('serializes a const string', () => {
-    const type = t.String({const: "asdf"});
-    const json = "555";
+    const type = t.String({const: 'asdf'});
+    const json = '555';
     exec(type, json, 'asdf');
   });
 });
@@ -75,30 +76,24 @@ describe('"bool" type', () => {
 
 describe('"arr" type', () => {
   test('serializes an array', () => {
-    const type = t.Array(t.num)
+    const type = t.Array(t.num);
     exec(type, [1, 2, 3]);
   });
 
   test('serializes an array in array', () => {
-    const type = t.Array(t.Array(t.num))
+    const type = t.Array(t.Array(t.num));
     exec(type, [[1, 2, 3]]);
   });
 });
 
 describe('"obj" type', () => {
   test('serializes object with required fields', () => {
-    const type = t.Object([
-      t.Field('a', t.num),
-      t.Field('b', t.str),
-    ]);
+    const type = t.Object([t.Field('a', t.num), t.Field('b', t.str)]);
     exec(type, {a: 123, b: 'asdf'});
   });
 
   test('serializes object with constant string with required fields', () => {
-    const type = t.Object([
-      t.Field('a', t.num),
-      t.Field('b', t.String({const: 'asdf'})),
-    ]);
+    const type = t.Object([t.Field('a', t.num), t.Field('b', t.String({const: 'asdf'}))]);
     exec(type, {a: 123, b: 'asdf'});
   });
 
@@ -115,12 +110,15 @@ describe('"obj" type', () => {
   });
 
   test('can serialize object with unknown fields', () => {
-    const type = t.Object([
-      t.Field('a', t.num),
-      t.Field('b', t.String({const: 'asdf'})),
-      t.Field('c', t.str, {isOptional: true}),
-      t.Field('d', t.num, {isOptional: true}),
-    ], {unknownFields: true});
+    const type = t.Object(
+      [
+        t.Field('a', t.num),
+        t.Field('b', t.String({const: 'asdf'})),
+        t.Field('c', t.str, {isOptional: true}),
+        t.Field('d', t.num, {isOptional: true}),
+      ],
+      {unknownFields: true},
+    );
     exec(type, {a: 123, b: 'asdf'});
     exec(type, {a: 123, b: 'asdf', c: 'qwerty'});
     exec(type, {a: 123, d: 4343.3, b: 'asdf', c: 'qwerty', e: 'asdf'});
@@ -136,12 +134,14 @@ describe('general', () => {
         t.Field('b', t.str),
         t.Field('c', t.nil),
         t.Field('d', t.bool),
-        t.Field('arr', t.Array(t.Object({
-          fields: [
-            t.Field('foo', t.Array(t.num)),
-            t.Field('.!@#', t.str),
-          ],
-        }))),
+        t.Field(
+          'arr',
+          t.Array(
+            t.Object({
+              fields: [t.Field('foo', t.Array(t.num)), t.Field('.!@#', t.str)],
+            }),
+          ),
+        ),
         t.Field('bin', t.bin),
       ],
     });
@@ -150,7 +150,10 @@ describe('general', () => {
       b: 'sdf',
       c: null,
       d: true,
-      arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
+      arr: [
+        {foo: [1], '.!@#': ''},
+        {'.!@#': '......', foo: [4, 4, 4.4]},
+      ],
       bin: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
     };
 
@@ -159,15 +162,16 @@ describe('general', () => {
       b: 'sdf',
       c: null,
       d: true,
-      arr: [{foo: [1], '.!@#': ''}, {'.!@#': '......', foo: [4, 4, 4.4]}],
+      arr: [
+        {foo: [1], '.!@#': ''},
+        {'.!@#': '......', foo: [4, 4, 4.4]},
+      ],
       bin: 'data:application/octet-stream;base64,AQIDBAUGBwgJCg==',
     });
   });
 
   test('can encode binary', () => {
-    const type = t.Object([
-      t.Field('bin', t.bin),
-    ]);
+    const type = t.Object([t.Field('bin', t.bin)]);
     const json = {
       bin: new Uint8Array([1, 2, 3]),
     };
@@ -181,11 +185,7 @@ describe('general', () => {
 describe('"ref" type', () => {
   test('can serialize reference by resolving to type', () => {
     const typeId = t.String();
-    const type = t.Object('User', [
-      t.Field('name', t.str),
-      t.Field('id', t.Ref('ID')),
-      t.Field('createdAt', t.num),
-    ]);
+    const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new JsonSerializerCodegen({
       type,
       ref: () => typeId,
@@ -203,11 +203,7 @@ describe('"ref" type', () => {
 
   test('can serialize reference by partial serializer', () => {
     const typeId = t.String();
-    const type = t.Object('User', [
-      t.Field('name', t.str),
-      t.Field('id', t.Ref('ID')),
-      t.Field('createdAt', t.num),
-    ]);
+    const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new JsonSerializerCodegen({
       type,
       ref: () => {

@@ -14,7 +14,7 @@
  */
 export class JsExpression {
   private _wasUsed: boolean = false;
-  private _expression?: string
+  private _expression?: string;
   private _listeners: ((expr: string) => void)[] = [];
 
   constructor(private expression: () => string) {}
@@ -26,7 +26,7 @@ export class JsExpression {
   public use(): string {
     if (this._wasUsed) return this._expression!;
     this._wasUsed = true;
-    const expression = this._expression = this.expression();
+    const expression = (this._expression = this.expression());
     for (const listener of this._listeners) listener(expression);
     return expression;
   }

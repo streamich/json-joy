@@ -1,6 +1,6 @@
 /* tslint:disable no-string-throw */
 
-import { hasOwnProperty } from '../util/hasOwnProperty';
+import {hasOwnProperty} from '../util/hasOwnProperty';
 import type {Path} from './types';
 
 export interface Reference {

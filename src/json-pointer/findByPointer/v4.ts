@@ -1,4 +1,4 @@
-import { hasOwnProperty } from '../../util/hasOwnProperty';
+import {hasOwnProperty} from '../../util/hasOwnProperty';
 import {Reference} from '../find';
 import {unescapeComponent} from '../util';
 

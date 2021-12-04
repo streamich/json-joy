@@ -251,7 +251,12 @@ test('observable emits three values synchronously', async () => {
   server.onMessages([new RequestCompleteMessage(123, 'emitThreeSync', new Uint8Array([0]))], undefined);
   await new Promise((r) => setTimeout(r, 1));
   expect(caller.createCall).toHaveBeenCalledTimes(1);
-  expect(caller.createCall).toHaveBeenCalledWith('emitThreeSync', undefined, expect.any(Function), expect.any(Function));
+  expect(caller.createCall).toHaveBeenCalledWith(
+    'emitThreeSync',
+    undefined,
+    expect.any(Function),
+    expect.any(Function),
+  );
   expect(send).toHaveBeenCalledTimes(3);
   expect(send.mock.calls[0][0]).toEqual([new ResponseDataMessage(123, new Uint8Array([1]))]);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseDataMessage);

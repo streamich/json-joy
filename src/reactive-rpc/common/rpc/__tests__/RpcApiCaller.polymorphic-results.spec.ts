@@ -179,9 +179,11 @@ describe('streaming calls', () => {
             isStreaming: true,
             call$: (_: any, req$: Observable<[number, number]>) => {
               cnt++;
-              return req$.pipe(map(([a, b]) => {
-                return `${a} + ${b} = ${a + b}`;
-              }));
+              return req$.pipe(
+                map(([a, b]) => {
+                  return `${a} + ${b} = ${a + b}`;
+                }),
+              );
             },
           } as any,
         },
@@ -210,9 +212,11 @@ describe('streaming calls', () => {
             isStreaming: true,
             callJson$: (_: any, req$: Observable<[number, number]>) => {
               cnt++;
-              return req$.pipe(map(([a, b]) => {
-                return JSON.stringify(`${a} + ${b} = ${a + b}`);
-              }));
+              return req$.pipe(
+                map(([a, b]) => {
+                  return JSON.stringify(`${a} + ${b} = ${a + b}`);
+                }),
+              );
             },
           },
         },
@@ -241,9 +245,11 @@ describe('streaming calls', () => {
             isStreaming: true,
             callMsgPack$: (_: any, req$: Observable<[number, number]>) => {
               cnt++;
-              return req$.pipe(map(([a, b]) => {
-                return encode(`${a} + ${b} = ${a + b}`);
-              }));
+              return req$.pipe(
+                map(([a, b]) => {
+                  return encode(`${a} + ${b} = ${a + b}`);
+                }),
+              );
             },
           },
         },

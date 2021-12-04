@@ -80,7 +80,10 @@ export type CodegenGenerateOptions = Pick<CodegenOptions, 'name' | 'args' | 'pro
  * Where `d*` are the external dependencies, `c*` are the internal constants,
  * and `r*` are the local immutable infinite registers.
  */
-export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown, Linkable = Record<string, unknown>> {
+export class Codegen<
+  Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown,
+  Linkable = Record<string, unknown>
+> {
   /** @ignore */
   protected steps: JsonSerializerStep[] = [];
 
@@ -93,7 +96,7 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
       name: '',
       prologue: '',
       epilogue: '',
-      processSteps: (steps) => steps.filter(step => step instanceof CodegenStepExecJs) as CodegenStepExecJs[],
+      processSteps: (steps) => steps.filter((step) => step instanceof CodegenStepExecJs) as CodegenStepExecJs[],
       linkable: {} as Linkable,
       ...opts,
     };
@@ -206,7 +209,7 @@ export class Codegen<Fn extends (...deps: any[]) => any = (...deps: unknown[]) =
    * Sames as {@link Codegen#addConstant}, but allows to create multiple
    * constants at once.
    */
-   public addConstants(constants: string[]): string[] {
+  public addConstants(constants: string[]): string[] {
     return constants.map((constant) => this.addConstant(constant));
   }
 

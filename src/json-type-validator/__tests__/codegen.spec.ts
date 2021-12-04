@@ -1,7 +1,20 @@
 import {t, TType} from '../../json-type';
-import {createBoolValidator, createStrValidator, createObjValidator, ObjectValidatorError, ObjectValidatorSuccess, JsonTypeValidatorError, JsonTypeValidatorCodegenOptions} from '..';
+import {
+  createBoolValidator,
+  createStrValidator,
+  createObjValidator,
+  ObjectValidatorError,
+  ObjectValidatorSuccess,
+  JsonTypeValidatorError,
+  JsonTypeValidatorCodegenOptions,
+} from '..';
 
-const exec = (type: TType, json: unknown, error: ObjectValidatorSuccess | ObjectValidatorError, options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {}) => {
+const exec = (
+  type: TType,
+  json: unknown,
+  error: ObjectValidatorSuccess | ObjectValidatorError,
+  options: Omit<JsonTypeValidatorCodegenOptions, 'errorReporting'> = {},
+) => {
   const fn1 = createBoolValidator(type, options);
   const fn2 = createStrValidator(type, options);
   const fn3 = createObjValidator(type, options);
@@ -27,20 +40,23 @@ test('validates according to schema a POJO object', () => {
   const type = t.Object({
     unknownFields: false,
     fields: [
-      t.Field('collection', t.Object({
-        unknownFields: false,
-        fields: [
-          t.Field('id', t.str),
-          t.Field('ts', t.num),
-          t.Field('cid', t.str),
-          t.Field('prid', t.str),
-          t.Field('slug', t.str, {isOptional: true}),
-          t.Field('name', t.str, {isOptional: true}),
-          t.Field('src', t.str, {isOptional: true}),
-          t.Field('authz', t.str, {isOptional: true}),
-          t.Field('tags', t.Array(t.str)),
-        ],
-      })),
+      t.Field(
+        'collection',
+        t.Object({
+          unknownFields: false,
+          fields: [
+            t.Field('id', t.str),
+            t.Field('ts', t.num),
+            t.Field('cid', t.str),
+            t.Field('prid', t.str),
+            t.Field('slug', t.str, {isOptional: true}),
+            t.Field('name', t.str, {isOptional: true}),
+            t.Field('src', t.str, {isOptional: true}),
+            t.Field('authz', t.str, {isOptional: true}),
+            t.Field('tags', t.Array(t.str)),
+          ],
+        }),
+      ),
       t.Field('bin.', t.bin),
     ],
   });
@@ -76,9 +92,7 @@ test('can have array of unknown elements', () => {
 
 test('object can have a field of any type', () => {
   const type = t.Object({
-    fields: [
-      t.Field('foo', t.any),
-    ],
+    fields: [t.Field('foo', t.any)],
   });
   exec(type, {foo: 123}, null);
   exec(type, {foo: null}, null);
@@ -88,22 +102,20 @@ test('object can have a field of any type', () => {
 
 test('can detect extra properties in object', () => {
   const type = t.Object({
-    fields: [
-      t.Field('foo', t.any),
-      t.Field('zup', t.any, {isOptional: true}),
-    ],
+    fields: [t.Field('foo', t.any), t.Field('zup', t.any, {isOptional: true})],
   });
   exec(type, {foo: 123}, null);
   exec(type, {foo: 123, zup: 'asdf'}, null);
-  exec(type, {foo: 123, bar: 'asdf'}, {"code": "KEYS", "errno": 10, "message": "Too many or missing object keys.", "path": ["bar"]});
+  exec(
+    type,
+    {foo: 123, bar: 'asdf'},
+    {code: 'KEYS', errno: 10, message: 'Too many or missing object keys.', path: ['bar']},
+  );
 });
 
 test('can disable extra property check', () => {
   const type = t.Object({
-    fields: [
-      t.Field('foo', t.any),
-      t.Field('zup', t.any, {isOptional: true}),
-    ],
+    fields: [t.Field('foo', t.any), t.Field('zup', t.any, {isOptional: true})],
   });
   exec(type, {foo: 123}, null, {skipObjectExtraFieldsCheck: true});
   exec(type, {foo: 123, zup: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
@@ -115,16 +127,11 @@ describe('"ref" type', () => {
   test('can be used to reference other types', () => {
     const userType = t.Object({
       id: 'User',
-      fields: [
-        t.Field('id', t.str),
-        t.Field('name', t.str),
-      ],
+      fields: [t.Field('id', t.str), t.Field('name', t.str)],
     });
     const type = t.Object({
       id: 'UserResponse',
-      fields: [
-        t.Field('user', t.Ref('User')),
-      ],
+      fields: [t.Field('user', t.Ref('User'))],
     });
     const userValidator = createObjValidator(userType, {
       skipObjectExtraFieldsCheck: true,
@@ -133,7 +140,7 @@ describe('"ref" type', () => {
     const userResponseValidator = createObjValidator(type, {
       skipObjectExtraFieldsCheck: true,
       unsafeMode: true,
-      ref: ref => ref === 'User' ? userValidator : undefined,
+      ref: (ref) => (ref === 'User' ? userValidator : undefined),
     });
     const json1 = {
       user: {
@@ -166,41 +173,46 @@ describe('"ref" type', () => {
   test('throws on missing ref resolver', () => {
     const type = t.Object({
       id: 'UserResponse',
-      fields: [
-        t.Field('user', t.Ref('User')),
-      ],
+      fields: [t.Field('user', t.Ref('User'))],
     });
-    const callback = () => createObjValidator(type, {
-      skipObjectExtraFieldsCheck: true,
-      unsafeMode: true,
-    });
-    expect(callback).toThrow(new Error('Could not resolve validator for [ref = User]. Provide it through .ref option.'));
+    const callback = () =>
+      createObjValidator(type, {
+        skipObjectExtraFieldsCheck: true,
+        unsafeMode: true,
+      });
+    expect(callback).toThrow(
+      new Error('Could not resolve validator for [ref = User]. Provide it through .ref option.'),
+    );
   });
 });
 
 describe('"or" type', () => {
   test('object key can be of multiple types', () => {
     const type = t.Object({
-      fields: [
-        t.Field('foo', t.Or(t.num, t.str)),
-      ],
+      fields: [t.Field('foo', t.Or(t.num, t.str))],
     });
     exec(type, {foo: 123}, null);
     exec(type, {foo: '123'}, null);
-    exec(type, {foo: false}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['foo']});
+    exec(
+      type,
+      {foo: false},
+      {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['foo']},
+    );
   });
 
   test('array can be of multiple types', () => {
     const type = t.Object({
-      fields: [
-        t.Field('gg', t.Array(t.Or(t.num, t.str))),
-      ],
+      fields: [t.Field('gg', t.Array(t.Or(t.num, t.str)))],
     });
     exec(type, {gg: []}, null);
     exec(type, {gg: [1]}, null);
     exec(type, {gg: [1, 2]}, null);
     exec(type, {gg: [1, '3', '']}, null);
-    exec(type, {gg: [1, '3', false]}, {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]});
+    exec(
+      type,
+      {gg: [1, '3', false]},
+      {code: 'OR', errno: JsonTypeValidatorError.OR, message: 'None of types matched.', path: ['gg', 2]},
+    );
   });
 
   test('root value can be of multiple types', () => {
@@ -209,8 +221,8 @@ describe('"or" type', () => {
     exec(type, 'asdf', null);
     exec(type, {}, null);
     exec(type, {foo: 'bar'}, null);
-    exec(type, [], {"code": "OR", "errno": 12, "message": "None of types matched.", "path": []});
-    exec(type, null, {"code": "OR", "errno": 12, "message": "None of types matched.", "path": []});
+    exec(type, [], {code: 'OR', errno: 12, message: 'None of types matched.', path: []});
+    exec(type, null, {code: 'OR', errno: 12, message: 'None of types matched.', path: []});
   });
 });
 
@@ -223,7 +235,7 @@ describe('"obj" type', () => {
 
   test('"null" is not of type "obj"', () => {
     const type = t.obj;
-    exec(type, null, {"code": "OBJ", "errno": 8, "message": "Not an object.", "path": []});
+    exec(type, null, {code: 'OBJ', errno: 8, message: 'Not an object.', path: []});
   });
 });
 
@@ -233,17 +245,17 @@ describe('"enum" type', () => {
     exec(type, 'a', null);
     exec(type, 'b', null);
     exec(type, 'c', null);
-    exec(type, 'd', {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, 'd', {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
   });
 
   test('enum can be a complex object', () => {
     const type = t.Enum([{foo: 'bar'}, [5]]);
-    exec(type, 'd', {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
-    exec(type, {}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
-    exec(type, {foo: 'baz'}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, 'd', {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
+    exec(type, {}, {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
+    exec(type, {foo: 'baz'}, {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
     exec(type, {foo: 'bar'}, null);
-    exec(type, [], {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
-    exec(type, [5.5], {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": []});
+    exec(type, [], {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
+    exec(type, [5.5], {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: []});
     exec(type, [5], null);
   });
 
@@ -262,7 +274,11 @@ describe('"enum" type', () => {
     exec(type, {op: 'add', path: '/foo/bar', value: 123}, null);
     exec(type, {op: 'replace', path: '/foo/bar', value: 123}, null);
     exec(type, {op: 'test', path: '/foo/bar', value: 123}, null);
-    exec(type, {op: 'delete', path: '/foo/bar', value: 123}, {"code": "ENUM", "errno": 14, "message": "Not an enum value.", "path": ["op"]});
+    exec(
+      type,
+      {op: 'delete', path: '/foo/bar', value: 123},
+      {code: 'ENUM', errno: 14, message: 'Not an enum value.', path: ['op']},
+    );
   });
 });
 
@@ -285,13 +301,23 @@ describe('single root element', () => {
   test('const number', () => {
     const type = t.Number({const: 66});
     exec(type, 66, null);
-    exec(type, 67, {code: 'NUM_CONST', errno: JsonTypeValidatorError.NUM_CONST, message: 'Invalid number constant.', path: []});
+    exec(type, 67, {
+      code: 'NUM_CONST',
+      errno: JsonTypeValidatorError.NUM_CONST,
+      message: 'Invalid number constant.',
+      path: [],
+    });
   });
 
   test('falsy const number', () => {
     const type = t.Number({const: 0});
     exec(type, 0, null);
-    exec(type, 1, {code: 'NUM_CONST', errno: JsonTypeValidatorError.NUM_CONST, message: 'Invalid number constant.', path: []});
+    exec(type, 1, {
+      code: 'NUM_CONST',
+      errno: JsonTypeValidatorError.NUM_CONST,
+      message: 'Invalid number constant.',
+      path: [],
+    });
   });
 
   test('string', () => {
@@ -305,15 +331,35 @@ describe('single root element', () => {
   test('const string', () => {
     const type = t.String({const: 'asdf'});
     exec(type, 'asdf', null);
-    exec(type, '', {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
-    exec(type, 123, {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+    exec(type, '', {
+      code: 'STR_CONST',
+      errno: JsonTypeValidatorError.STR_CONST,
+      message: 'Invalid string constant.',
+      path: [],
+    });
+    exec(type, 123, {
+      code: 'STR_CONST',
+      errno: JsonTypeValidatorError.STR_CONST,
+      message: 'Invalid string constant.',
+      path: [],
+    });
   });
 
   test('falsy const string', () => {
     const type = t.String({const: ''});
     exec(type, '', null);
-    exec(type, 'asdf', {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
-    exec(type, 123, {code: 'STR_CONST', errno: JsonTypeValidatorError.STR_CONST, message: 'Invalid string constant.', path: []});
+    exec(type, 'asdf', {
+      code: 'STR_CONST',
+      errno: JsonTypeValidatorError.STR_CONST,
+      message: 'Invalid string constant.',
+      path: [],
+    });
+    exec(type, 123, {
+      code: 'STR_CONST',
+      errno: JsonTypeValidatorError.STR_CONST,
+      message: 'Invalid string constant.',
+      path: [],
+    });
   });
 
   test('boolean', () => {
@@ -327,13 +373,43 @@ describe('single root element', () => {
     const type1 = t.Boolean({const: true});
     const type2 = t.Boolean({const: false});
     exec(type1, true, null);
-    exec(type1, false, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
-    exec(type1, '123', {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
-    exec(type1, 123, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type1, false, {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
+    exec(type1, '123', {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
+    exec(type1, 123, {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
     exec(type2, false, null);
-    exec(type2, true, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
-    exec(type2, '123', {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
-    exec(type2, 123, {code: 'BOOL_CONST', errno: JsonTypeValidatorError.BOOL_CONST, message: 'Invalid boolean constant.', path: []});
+    exec(type2, true, {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
+    exec(type2, '123', {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
+    exec(type2, 123, {
+      code: 'BOOL_CONST',
+      errno: JsonTypeValidatorError.BOOL_CONST,
+      message: 'Invalid boolean constant.',
+      path: [],
+    });
   });
 });
 
@@ -347,14 +423,21 @@ describe('validators', () => {
         {
           name: 'is-a',
           types: ['string'],
-          fn: (value) => value === 'a' ? false : true,
+          fn: (value) => (value === 'a' ? false : true),
         },
       ],
     });
     const res1 = validator('a');
     expect(res1).toStrictEqual(null);
     const res2 = validator('b');
-    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-a', ref: true});
+    expect(res2).toStrictEqual({
+      code: 'VALIDATION',
+      errno: 15,
+      message: 'Custom validator failed.',
+      path: [],
+      validator: 'is-a',
+      ref: true,
+    });
   });
 
   test('can specify multiple validators', () => {
@@ -366,12 +449,12 @@ describe('validators', () => {
         {
           name: 'is-ab',
           types: ['string'],
-          fn: (value) => value === 'a' || value === 'b' ? false : true,
+          fn: (value) => (value === 'a' || value === 'b' ? false : true),
         },
         {
           name: 'is-a',
           types: ['string'],
-          fn: (value) => value === 'a' ? false : true,
+          fn: (value) => (value === 'a' ? false : true),
         },
       ],
     });
@@ -379,15 +462,32 @@ describe('validators', () => {
     const res2 = validator('b');
     const res3 = validator('c');
     expect(res1).toStrictEqual(null);
-    expect(res2).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-a', ref: true});
-    expect(res3).toStrictEqual({"code": "VALIDATION", "errno": 15, "message": "Custom validator failed.", "path": [], validator: 'is-ab', ref: true});
+    expect(res2).toStrictEqual({
+      code: 'VALIDATION',
+      errno: 15,
+      message: 'Custom validator failed.',
+      path: [],
+      validator: 'is-a',
+      ref: true,
+    });
+    expect(res3).toStrictEqual({
+      code: 'VALIDATION',
+      errno: 15,
+      message: 'Custom validator failed.',
+      path: [],
+      validator: 'is-ab',
+      ref: true,
+    });
   });
 
   test('throws if custom validator is not provided', () => {
     const type = t.Object([
-      t.Field('id', t.String({
-        validator: ['assetId'],
-      }))
+      t.Field(
+        'id',
+        t.String({
+          validator: ['assetId'],
+        }),
+      ),
     ]);
     const callback = () => createObjValidator(type, {});
     expect(callback).toThrow(new Error('Custom validator "assetId" not found.'));
@@ -395,9 +495,12 @@ describe('validators', () => {
 
   test('returns the error, which validator throws', () => {
     const type = t.Object([
-      t.Field('id', t.String({
-        validator: ['assetId'],
-      }))
+      t.Field(
+        'id',
+        t.String({
+          validator: ['assetId'],
+        }),
+      ),
     ]);
     const validator = createObjValidator(type, {
       customValidators: [
@@ -412,20 +515,18 @@ describe('validators', () => {
     });
     expect(validator({id: 'xxxxxxx'})).toBe(null);
     expect(validator({id: '123'})).toStrictEqual({
-      "code": "VALIDATION",
-      "errno": 15,
-      "message": "Custom validator failed.",
-      "path": ["id"],
-      "ref": new Error('Asset ID must be a string.'),
-      "validator": "assetId",
+      code: 'VALIDATION',
+      errno: 15,
+      message: 'Custom validator failed.',
+      path: ['id'],
+      ref: new Error('Asset ID must be a string.'),
+      validator: 'assetId',
     });
   });
 
   test('returns the error, which validator throws, even inside a "ref" type', () => {
     const idType = t.String('ID', {validator: 'assetId'});
-    const type = t.Object([
-      t.Field('id', t.Ref('ID')),
-    ]);
+    const type = t.Object([t.Field('id', t.Ref('ID'))]);
     const idValidator = createObjValidator(idType, {
       customValidators: [
         {
@@ -448,17 +549,17 @@ describe('validators', () => {
     expect(validator({id: 'xxxxxxx'})).toBe(null);
     expect(validator({id: 'y'})).toBe(null);
     expect(validator({id: '123'})).toStrictEqual({
-      "code": "REF",
-      "errno": 13,
-      "message": "Validation error in referenced type.",
-      "path": ["id"],
-      "ref": {
-        "type": "ID",
-        "code": "VALIDATION",
-        "errno": 15,
-        "message": "Custom validator failed.",
-        "path": [],
-        "validator": "assetId",
+      code: 'REF',
+      errno: 13,
+      message: 'Validation error in referenced type.',
+      path: ['id'],
+      ref: {
+        type: 'ID',
+        code: 'VALIDATION',
+        errno: 15,
+        message: 'Custom validator failed.',
+        path: [],
+        validator: 'assetId',
         ref: new Error('Asset ID must be a string.'),
       },
     });

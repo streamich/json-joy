@@ -1,6 +1,6 @@
-import type {Display, TAnyType} from "../json-type";
+import type {Display, TAnyType} from '../json-type';
 import wrap from 'word-wrap';
-import {normalizeFiledKey} from "./util";
+import {normalizeFiledKey} from './util';
 
 export interface ToTypeScriptTextContext {
   tab: string;
@@ -51,7 +51,7 @@ export const toTypeScriptText = (type: TAnyType, tab: string): string => {
       return `Array<${toTypeScriptText(type.type as TAnyType, tab + TAB)}>`;
     }
     case 'enum': {
-      return `[${type.values.map(t => toTypeScriptText(t as TAnyType, tab + TAB)).join(', ')}]`;
+      return `[${type.values.map((t) => toTypeScriptText(t as TAnyType, tab + TAB)).join(', ')}]`;
     }
     case 'obj': {
       const ____ = tab + TAB;
@@ -71,7 +71,7 @@ export const toTypeScriptText = (type: TAnyType, tab: string): string => {
       return type.ref;
     }
     case 'or': {
-      return type.types.map(t => toTypeScriptText(t as TAnyType, tab + TAB)).join(' | ');
+      return type.types.map((t) => toTypeScriptText(t as TAnyType, tab + TAB)).join(' | ');
     }
     case 'bin': {
       return 'Uint8Array';

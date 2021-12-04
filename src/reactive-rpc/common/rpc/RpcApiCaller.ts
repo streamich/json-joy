@@ -11,7 +11,7 @@ import type {MsgPack} from '../../../json-pack';
 
 export interface RpcApiCallerParams<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown> {
   api: Api;
-  types?: JsonTypeSystem<any>
+  types?: JsonTypeSystem<any>;
   error?: ErrorFormatter<E>;
 
   /**
@@ -167,7 +167,16 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
    * - [x] Pre-call request buffer is overflown.
    * - [x] Due to inactivity timeout.
    */
-  public createCall<R, K extends keyof Api>(name: K, ctx: Ctx, callMethod: (name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx) => Promise<R>, callMethod$: (method: RpcMethodWrapFromRpcMethod<Api[K]>, ctx: Ctx, req$: Observable<RpcMethodRequest<Api[K]>>) => Observable<R>): Call<RpcMethodRequest<Api[K]>, R> {
+  public createCall<R, K extends keyof Api>(
+    name: K,
+    ctx: Ctx,
+    callMethod: (name: K, request: RpcMethodRequest<Api[K]>, ctx: Ctx) => Promise<R>,
+    callMethod$: (
+      method: RpcMethodWrapFromRpcMethod<Api[K]>,
+      ctx: Ctx,
+      req$: Observable<RpcMethodRequest<Api[K]>>,
+    ) => Observable<R>,
+  ): Call<RpcMethodRequest<Api[K]>, R> {
     const req$ = new Subject<RpcMethodRequest<Api[K]>>();
     const reqUnsubscribe$ = new Subject<null>();
     try {
@@ -200,7 +209,11 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
       }
 
       // Here we are sure the call will be streaming.
-      const methodStreaming = method as RpcMethodStreamingWrap<Ctx, RpcMethodRequest<Api[K]>, RpcMethodResponse<Api[K]>>;
+      const methodStreaming = method as RpcMethodStreamingWrap<
+        Ctx,
+        RpcMethodRequest<Api[K]>,
+        RpcMethodResponse<Api[K]>
+      >;
 
       // Validate all incoming stream requests.
       const requestValidated$ = req$.pipe(
@@ -286,7 +299,12 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     request$: Observable<RpcMethodRequest<Api[K]>>,
     ctx: Ctx,
   ): Observable<RpcMethodResponse<Api[K]>> {
-    const call = this.createCall(name, ctx, (name, req, ctx) => this.call(name, req, ctx), (method, ctx, req$) => method.call$(ctx, req$));
+    const call = this.createCall(
+      name,
+      ctx,
+      (name, req, ctx) => this.call(name, req, ctx),
+      (method, ctx, req$) => method.call$(ctx, req$),
+    );
     request$.subscribe(call.req$);
     return call.res$;
   }
@@ -296,7 +314,12 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     request$: Observable<RpcMethodRequest<Api[K]>>,
     ctx: Ctx,
   ): Observable<json_string<RpcMethodResponse<Api[K]>>> {
-    const call = this.createCall(name, ctx, (name, req, ctx) => this.callJson(name, req, ctx), (method, ctx, req$) => method.callJson$(ctx, req$));
+    const call = this.createCall(
+      name,
+      ctx,
+      (name, req, ctx) => this.callJson(name, req, ctx),
+      (method, ctx, req$) => method.callJson$(ctx, req$),
+    );
     request$.subscribe(call.req$);
     return call.res$;
   }
@@ -306,7 +329,12 @@ export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, 
     request$: Observable<RpcMethodRequest<Api[K]>>,
     ctx: Ctx,
   ): Observable<MsgPack<RpcMethodResponse<Api[K]>>> {
-    const call = this.createCall(name, ctx, (name, req, ctx) => this.callMsgPack(name, req, ctx), (method, ctx, req$) => method.callMsgPack$(ctx, req$));
+    const call = this.createCall(
+      name,
+      ctx,
+      (name, req, ctx) => this.callMsgPack(name, req, ctx),
+      (method, ctx, req$) => method.callMsgPack$(ctx, req$),
+    );
     request$.subscribe(call.req$);
     return call.res$;
   }

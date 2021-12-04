@@ -7,7 +7,7 @@ import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
 import {Codegen, CompiledFunction, CodegenStepExecJs} from '../util/codegen';
 
 const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
-const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS]
+const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
 
 const join = (a: Uint8Array, b: Uint8Array): Uint8Array => {
   const res = new Uint8Array(a.length + b.length);
@@ -139,7 +139,7 @@ export class MsgPackSerializerCodegen {
 
   public onArray(arr: TArray, value: JsExpression) {
     if (arr.const !== undefined) {
-      this.genAndWriteBlob(encoder => encoder.encodeArray(arr.const!));
+      this.genAndWriteBlob((encoder) => encoder.encodeArray(arr.const!));
       return;
     }
     const r = this.getRegister(); // array
@@ -190,7 +190,7 @@ export class MsgPackSerializerCodegen {
       const accessor = normalizeAccessor(field.key);
       this.execJs(/* js */ `var ${rv} = ${r}${accessor};`);
       this.execJs(`if (${rv} !== undefined) {`);
-      this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
+      this.genAndWriteBlob((encoder) => encoder.encodeString(field.key));
       this.onType(field.type, new JsExpression(() => rv));
       this.execJs('}');
     }
@@ -198,10 +198,10 @@ export class MsgPackSerializerCodegen {
 
   public onObjectFixedLength(obj: TObject, value: JsExpression) {
     const length = obj.fields.length;
-    this.genAndWriteBlob(encoder => encoder.encodeObjectHeader(length));
+    this.genAndWriteBlob((encoder) => encoder.encodeObjectHeader(length));
     const r = this.getRegister();
     // Assign this object expression to register, conditional on it being used in future steps.
-    value.addListener(expr => {
+    value.addListener((expr) => {
       this.execJs(/* js */ `var ${r} = ${expr};`);
     });
     this.onRequiredFields(obj.fields, value, r);
@@ -211,9 +211,12 @@ export class MsgPackSerializerCodegen {
     const length = requiredFields.length;
     for (let i = 0; i < length; i++) {
       const field = requiredFields[i];
-      this.genAndWriteBlob(encoder => encoder.encodeString(field.key));
+      this.genAndWriteBlob((encoder) => encoder.encodeString(field.key));
       const accessor = normalizeAccessor(field.key);
-      this.onType(field.type, value.chain(() => `${r}${accessor}`));
+      this.onType(
+        field.type,
+        value.chain(() => `${r}${accessor}`),
+      );
     }
   }
 
@@ -233,7 +236,8 @@ export class MsgPackSerializerCodegen {
         this.onType(type as TType, value);
         break;
       }
-      default: throw new Error(`Unknown [ref = ${ref.ref}].`);
+      default:
+        throw new Error(`Unknown [ref = ${ref.ref}].`);
     }
   }
 
@@ -313,8 +317,7 @@ export class MsgPackSerializerCodegen {
     lines.push(/* js */ `var ${ro} = e.offset, ${ru} = e.uint8;`);
     lines.push(/* js */ `e.ensureCapacity(${step.arr.length});`);
     lines.push(/* js */ `e.offset += ${step.arr.length};`);
-    for (let i = 0; i < step.arr.length; i++)
-      lines.push(/* js */ `${ru}[${ro} + ${i}] = ${step.arr[i]};`);
+    for (let i = 0; i < step.arr.length; i++) lines.push(/* js */ `${ru}[${ro} + ${i}] = ${step.arr[i]};`);
     const js = lines.join('\n');
     return new CodegenStepExecJs(js);
   }

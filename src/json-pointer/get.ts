@@ -1,4 +1,4 @@
-import { hasOwnProperty } from '../util/hasOwnProperty';
+import {hasOwnProperty} from '../util/hasOwnProperty';
 import type {Path} from './types';
 
 export const get = (val: unknown, path: Path): unknown | undefined => {
