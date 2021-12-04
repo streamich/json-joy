@@ -7,7 +7,8 @@ import {ResponseCompleteMessage} from '../nominal';
  */
 export class BinaryResponseCompleteMessage
   extends ResponseCompleteMessage<Uint8Array | undefined>
-  implements BinaryMessage {
+  implements BinaryMessage
+{
   public size(): number {
     const dataSize = this.data ? this.data.byteLength : 0;
     return getHeaderSize(dataSize) + 2 + dataSize;

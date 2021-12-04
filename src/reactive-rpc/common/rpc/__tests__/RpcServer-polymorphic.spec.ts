@@ -46,12 +46,15 @@ const setupStreaming = (methodName: 'call' | 'callJson' | 'callMsgPack' = 'call'
       concatEcho: {
         isStreaming: true,
         [methodName + '$']: (ctx: unknown, value$: Observable<string>) => {
-          if (doThrow) return value$.pipe(map(v => {
-            throw v + v;
-          }));
-          if (methodName === 'call') return value$.pipe(map(value => value + value));
-          else if (methodName === 'callJson') return value$.pipe(map(value => JSON.stringify(value + value)));
-          else return value$.pipe(map(value => encode(value + value)));
+          if (doThrow)
+            return value$.pipe(
+              map((v) => {
+                throw v + v;
+              }),
+            );
+          if (methodName === 'call') return value$.pipe(map((value) => value + value));
+          else if (methodName === 'callJson') return value$.pipe(map((value) => JSON.stringify(value + value)));
+          else return value$.pipe(map((value) => encode(value + value)));
         },
       },
     },

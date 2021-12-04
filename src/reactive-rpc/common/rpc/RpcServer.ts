@@ -69,14 +69,7 @@ export class RpcServer<Ctx = unknown> {
   /** Callback called when server receives a notification. */
   public onNotification: RpcServerParams<Ctx>['onNotification'];
 
-  constructor({
-    caller,
-    error,
-    send,
-    onNotification: notify,
-    bufferSize = 10,
-    bufferTime = 1,
-  }: RpcServerParams<Ctx>) {
+  constructor({caller, error, send, onNotification: notify, bufferSize = 10, bufferTime = 1}: RpcServerParams<Ctx>) {
     this.caller = caller;
     this.error = error || (new ErrorLikeErrorFormatter() as any);
     this.onNotification = notify;
@@ -119,7 +112,7 @@ export class RpcServer<Ctx = unknown> {
 
   protected createStaticCall(name: string, request: unknown, ctx: Ctx): Promise<unknown> {
     return this.caller.call(name, request, ctx);
-  };
+  }
 
   protected execStaticCall(id: number, name: string, request: unknown, ctx: Ctx): void {
     this.createStaticCall(name, request, ctx)
@@ -129,7 +122,7 @@ export class RpcServer<Ctx = unknown> {
       .catch((error: unknown) => {
         this.send(this.resErrorMessage(id, error));
       });
-  };
+  }
 
   protected createCall(name: string, ctx: Ctx): Call<unknown, unknown> {
     const streamCallback = (method: any, ctx: any, req$: any) => method.call$(ctx, req$);
@@ -140,7 +133,6 @@ export class RpcServer<Ctx = unknown> {
       streamCallback,
     ) as Call<unknown, unknown>;
   }
-
 
   protected onStreamError = (id: number, error: unknown): void => {
     this.send(this.resErrorMessage(id, error));

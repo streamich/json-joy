@@ -82,7 +82,7 @@ export type CodegenGenerateOptions = Pick<CodegenOptions, 'name' | 'args' | 'pro
  */
 export class Codegen<
   Fn extends (...deps: any[]) => any = (...deps: unknown[]) => unknown,
-  Linkable = Record<string, unknown>
+  Linkable = Record<string, unknown>,
 > {
   /** @ignore */
   protected steps: JsonSerializerStep[] = [];

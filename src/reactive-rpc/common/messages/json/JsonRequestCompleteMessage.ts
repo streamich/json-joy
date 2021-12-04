@@ -6,7 +6,10 @@ import {json_string} from '../../../../json-brand';
 /**
  * @category Message
  */
-export class JsonRequestCompleteMessage<Data = unknown> extends RequestCompleteMessage<json_string<Data>> implements JsonMessage<Data> {
+export class JsonRequestCompleteMessage<Data = unknown>
+  extends RequestCompleteMessage<json_string<Data>>
+  implements JsonMessage<Data>
+{
   public toValue(): Data | undefined {
     return this.data ? JSON.parse(this.data) : undefined;
   }
@@ -17,7 +20,10 @@ export class JsonRequestCompleteMessage<Data = unknown> extends RequestCompleteM
   }
 
   public toCompactJson(): json_string<CompactRequestCompleteMessage<Data>> {
-    if (this.data) return '[' + this.id + ',"' + this.method + '",' + this.data + ']' as json_string<CompactRequestCompleteMessage<Data>>;
-    return '[' + this.id + ',"' + this.method + '"]' as json_string<CompactRequestCompleteMessage<Data>>;
+    if (this.data)
+      return ('[' + this.id + ',"' + this.method + '",' + this.data + ']') as json_string<
+        CompactRequestCompleteMessage<Data>
+      >;
+    return ('[' + this.id + ',"' + this.method + '"]') as json_string<CompactRequestCompleteMessage<Data>>;
   }
 }

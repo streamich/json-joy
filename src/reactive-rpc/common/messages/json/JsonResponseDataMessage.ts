@@ -6,7 +6,10 @@ import {json_string} from '../../../../json-brand';
 /**
  * @category Message
  */
-export class JsonResponseDataMessage<Data = unknown> extends ResponseDataMessage<json_string<Data>> implements JsonMessage<Data> {
+export class JsonResponseDataMessage<Data = unknown>
+  extends ResponseDataMessage<json_string<Data>>
+  implements JsonMessage<Data>
+{
   public toValue(): Data {
     return JSON.parse(this.data);
   }
@@ -17,6 +20,6 @@ export class JsonResponseDataMessage<Data = unknown> extends ResponseDataMessage
   }
 
   public toCompactJson(): json_string<CompactResponseDataMessage<Data>> {
-    return '[-2,' + this.id + ',' + this.data + ']' as json_string<CompactResponseDataMessage<Data>>;
+    return ('[-2,' + this.id + ',' + this.data + ']') as json_string<CompactResponseDataMessage<Data>>;
   }
 }

@@ -7,7 +7,8 @@ import {Observable, of, firstValueFrom, from} from 'rxjs';
 import {map} from 'rxjs/operators';
 
 export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response = unknown>
-  implements RpcMethodStatic<Context, Request, Response> {
+  implements RpcMethodStatic<Context, Request, Response>
+{
   public readonly isStreaming = false;
   public readonly req: string;
   public readonly res: string;
@@ -81,7 +82,8 @@ export class RpcMethodStaticWrap<Context = unknown, Request = unknown, Response 
 }
 
 export class RpcMethodStreamingWrap<Context = unknown, Request = unknown, Response = unknown>
-  implements RpcMethodStreaming<Context, Request, Response> {
+  implements RpcMethodStreaming<Context, Request, Response>
+{
   public readonly isStreaming = true;
   public readonly req: string;
   public readonly res: string;

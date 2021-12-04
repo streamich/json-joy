@@ -32,7 +32,7 @@ export class RpcServerMsgPack<Ctx = unknown> extends RpcServer<Ctx> {
 
   protected createStaticCall(name: string, request: unknown, ctx: Ctx): Promise<unknown> {
     return this.caller.callMsgPack(name, request, ctx);
-  };
+  }
 
   protected createCall(name: string, ctx: Ctx): Call<unknown, unknown> {
     const streamCallback = (method: any, ctx: any, req$: any) => method.callMsgPack$(ctx, req$);

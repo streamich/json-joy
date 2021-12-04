@@ -8,6 +8,6 @@ import {json_string} from '../../../../json-brand';
  */
 export class JsonRequestUnsubscribeMessage extends RequestUnsubscribeMessage implements JsonMessage {
   public toCompactJson(): json_string<CompactRequestUnsubscribeMessage> {
-    return '[' + this.id + ',2]' as json_string<CompactRequestUnsubscribeMessage>;
+    return ('[' + this.id + ',2]') as json_string<CompactRequestUnsubscribeMessage>;
   }
 }

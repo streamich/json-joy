@@ -97,7 +97,7 @@ test('if "call" callback throws, sends back error message', async () => {
 
 test('sends complete message if observable immediately completes after emitting one value', async () => {
   const send = jest.fn();
-  const call = (jest.fn(() => of('go go')) as any) as (
+  const call = jest.fn(() => of('go go')) as any as (
     name: string,
     payload: unknown,
     ctx: any,

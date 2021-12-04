@@ -42,7 +42,8 @@ export interface Call<Request = unknown, Response = unknown> {
  * Implements methods to call Reactive-RPC methods on the server.
  */
 export class RpcApiCaller<Api extends Record<string, RpcMethod<Ctx, any, any>>, Ctx = unknown, E = unknown>
-  implements IRpcApiCaller<Api, Ctx> {
+  implements IRpcApiCaller<Api, Ctx>
+{
   public readonly api;
   public readonly error: ErrorFormatter<E>;
   protected readonly preCallBufferSize: number;
