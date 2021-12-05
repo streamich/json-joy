@@ -21,13 +21,10 @@ const type = t.Object([
   t.Field('name', t.str),
 ]);
 
-const jsonCodegen = new JsonSerializerCodegen({
-  type,
-});
+const codegen = new JsonSerializerCodegen({type});
+const serializer = codegen.run().compile();
 
-const jsonSerializer = jsonCodegen.run().compile();
-
-console.log(jsonSerializer.toString());
+console.log(serializer.toString());
 // function toJson(r0){
 // var s = '';
 // s += "{\"id\":";
@@ -38,7 +35,7 @@ console.log(jsonSerializer.toString());
 // return s;
 // }
 
-console.log(jsonSerializer({
+console.log(serializer({
   id: 123,
   name: 'John',
 }));
@@ -58,14 +55,10 @@ const type = t.Object([
   t.Field('name', t.str),
 ]);
 
-const msgpackCodegen = new MsgPackSerializerCodegen({
-  type,
-  encoder,
-});
+const codegen = new MsgPackSerializerCodegen({type, encoder});
+const serializer = codegen.run().compile();
 
-const msgpackSerializer = msgpackCodegen.run().compile();
-
-console.log(msgpackSerializer.toString());
+console.log(serializer.toString());
 // function toMsgPack(r0){
 // e.reset();
 // var r2 = e.offset, r3 = e.uint8;
@@ -89,7 +82,7 @@ console.log(msgpackSerializer.toString());
 // return e.flush();
 // }
 
-console.log(msgpackSerializer({
+console.log(serializer({
   id: 123,
   name: 'John',
 }));
