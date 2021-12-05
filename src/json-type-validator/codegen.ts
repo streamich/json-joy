@@ -1,6 +1,6 @@
 import type {JsonTypeValidator} from './types';
 import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr, TEnum} from '../json-type/types';
-import {CompiledFunction, compileFn} from '../util/codegen';
+import {JavaScriptLinked, compileFn} from '../util/codegen';
 import {BooleanValidator, CustomValidator, CustomValidatorType, ObjectValidator, StringValidator} from '.';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
@@ -480,7 +480,7 @@ export class JsonTypeValidatorCodegen {
     }
   }
 
-  public generate(type: TType): CompiledFunction<JsonTypeValidator> {
+  public generate(type: TType): JavaScriptLinked<JsonTypeValidator> {
     this.type = type;
     this.onType([], type, 'r0');
     const successResult =
@@ -501,7 +501,7 @@ return ${successResult};
     return {
       deps: this.dependencies as unknown[],
       js,
-    } as CompiledFunction<JsonTypeValidator>;
+    } as JavaScriptLinked<JsonTypeValidator>;
   }
 }
 

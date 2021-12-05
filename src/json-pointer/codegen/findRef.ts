@@ -1,16 +1,16 @@
 import type {Reference} from '../find';
 import type {Path} from '../types';
-import {CompiledFunction, compileFn} from '../../util/codegen';
+import {JavaScriptLinked, compileFn} from '../../util/codegen';
 import {hasOwnProperty} from '../../util/hasOwnProperty';
 
 type Fn = (val: unknown) => Reference;
 
-export const $$findRef = (path: Path): CompiledFunction<Fn> => {
+export const $$findRef = (path: Path): JavaScriptLinked<Fn> => {
   if (!path.length) {
     return {
       deps: [] as unknown[],
       js: /* js */ `(function(){return function(val){return {val:val}}})`,
-    } as CompiledFunction<Fn>;
+    } as JavaScriptLinked<Fn>;
   }
 
   let loop = '';
@@ -46,7 +46,7 @@ export const $$findRef = (path: Path): CompiledFunction<Fn> => {
   return {
     deps: [hasOwnProperty, path] as unknown[],
     js,
-  } as CompiledFunction<Fn>;
+  } as JavaScriptLinked<Fn>;
 };
 
 export const $findRef = (path: Path): Fn => compileFn($$findRef(path));

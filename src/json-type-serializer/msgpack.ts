@@ -4,7 +4,7 @@ import {encoder} from '../json-pack/util';
 import {TArray, TBoolean, TNumber, TObject, TObjectField, TString, TType, TRef} from '../json-type/types';
 import {JsExpression} from '../util/codegen/util/JsExpression';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
-import {Codegen, CompiledFunction, CodegenStepExecJs} from '../util/codegen';
+import {Codegen, JavaScriptLinked, CodegenStepExecJs} from '../util/codegen';
 
 const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
 const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
@@ -330,7 +330,7 @@ export class MsgPackSerializerCodegen {
     return this;
   }
 
-  public generate(): CompiledFunction<EncoderFn> {
+  public generate(): JavaScriptLinked<EncoderFn> {
     return this.codegen.generate();
   }
 

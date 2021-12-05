@@ -1,5 +1,5 @@
 import {compileFn} from '.';
-import type {CompiledFunction} from './types';
+import type {JavaScriptLinked} from './types';
 
 /**
  * Inline JavaScript statements that are executed in main function body.
@@ -224,7 +224,7 @@ export class Codegen<
    *
    * @returns Returns a {@link CompiledFunction} object ready for compilation.
    */
-  public generate(opts: CodegenGenerateOptions = {}): CompiledFunction<Fn> {
+  public generate(opts: CodegenGenerateOptions = {}): JavaScriptLinked<Fn> {
     const {name, args, prologue, epilogue} = {...this.options, ...opts};
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
@@ -237,7 +237,7 @@ ${epilogue}
 
     return {
       deps: this.dependencies,
-      js: js as CompiledFunction<Fn>['js'],
+      js: js as JavaScriptLinked<Fn>['js'],
     };
   }
 
