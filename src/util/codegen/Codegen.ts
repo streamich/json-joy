@@ -1,4 +1,4 @@
-import {compileFn} from '.';
+import {compileClosure} from '.';
 import type {JavaScriptLinked} from './types';
 
 /**
@@ -247,6 +247,6 @@ ${epilogue}
    * @returns JavaScript function ready for execution.
    */
   public compile(opts?: CodegenGenerateOptions): Fn {
-    return compileFn(this.generate(opts));
+    return compileClosure(this.generate(opts));
   }
 }

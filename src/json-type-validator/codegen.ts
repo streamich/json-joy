@@ -1,6 +1,6 @@
 import type {JsonTypeValidator} from './types';
 import type {TType, TArray, TBoolean, TNumber, TObject, TString, TRef, TOr, TEnum} from '../json-type/types';
-import {JavaScriptLinked, compileFn} from '../util/codegen';
+import {JavaScriptLinked, compileClosure} from '../util/codegen';
 import {BooleanValidator, CustomValidator, CustomValidatorType, ObjectValidator, StringValidator} from '.';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
@@ -516,7 +516,7 @@ return ${successResult};
 export const createValidator = (type: TType, options: JsonTypeValidatorCodegenOptions = {}): JsonTypeValidator => {
   const codegen = new JsonTypeValidatorCodegen(options);
   const fn = codegen.generate(type);
-  return compileFn(fn);
+  return compileClosure(fn);
 };
 
 /**
