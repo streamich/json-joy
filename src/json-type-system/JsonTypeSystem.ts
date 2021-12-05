@@ -149,4 +149,9 @@ export class JsonTypeSystem<T extends Types> {
     });
     return (this.msgPackEncoderCache[ref] = codegen.run().compile());
   }
+
+  public toJsonSchema(ref: string): JsonSchemaNode {
+    const type = this.ref(ref);
+    return toJsonSchema(type, this);
+  }
 }

@@ -10,7 +10,11 @@ const augmentNode = (type: TType, node: JsonSchemaNode) => {
   if (type.examples) node.examples = type.examples.map(example => example.value);
 };
 
-export const toJsonSchema = (type: TAnyType): JsonSchemaNode => {
+export interface ToJsonSchemaContext {
+  ref?: (id: string) => TAnyType;
+}
+
+export const toJsonSchema = (type: TAnyType, ctx: ToJsonSchemaContext): JsonSchemaNode => {
   switch (type.__t) {
     case 'str': {
       const node: JsonSchemaString = {type: 'string'};
@@ -46,7 +50,7 @@ export const toJsonSchema = (type: TAnyType): JsonSchemaNode => {
     case 'arr': {
       const node: JsonSchemaArray = {
         type: 'array',
-        items: toJsonSchema(type.type as TAnyType),
+        items: toJsonSchema(type.type as TAnyType, ctx),
       };
       if (type.const) node.const = type.const;
       augmentNode(type, node);
@@ -59,12 +63,16 @@ export const toJsonSchema = (type: TAnyType): JsonSchemaNode => {
       };
       const required = [];
       for (const field of type.fields) {
-        node.properties![field.key] = toJsonSchema(field.type as TAnyType);
+        node.properties![field.key] = toJsonSchema(field.type as TAnyType, ctx);
         if (field.isOptional === undefined || !field.isOptional) required.push(field.key);
       }
       if (required.length) (node as any).required = required;
       augmentNode(type, node);
       return node;
+    }
+    case 'ref': {
+      if (!ctx.ref) return toJsonSchema({__t: 'any'}, ctx);
+      return toJsonSchema(ctx.ref(type.ref), ctx);
     }
     case 'any':
     default: {
