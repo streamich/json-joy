@@ -151,7 +151,7 @@ export class RandomJson {
   }
 
   public pickNodeType(): NodeType {
-    const odd = Math.floor(Math.random() * this.totalOdds);
+    const odd = Math.random() * this.totalOdds;
     if (odd <= this.oddTotals.null) return 'null';
     if (odd <= this.oddTotals.boolean) return 'boolean';
     if (odd <= this.oddTotals.number) return 'number';

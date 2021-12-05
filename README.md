@@ -51,8 +51,7 @@ This package consists of multiple self-contained libraries:
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
 - __`json-random`__ &mdash; generate random JSON value.
-  - __Documentation__ 🚀
-  - __Reference__ 🤖
+  - [__Documentation__ 🚀](./src/json-random/README.md)
 - __`json-size`__ &mdash; calculate the size of serialized JSON object.
   - [__Documentation__ 🚀](./src/json-size/README.md)
 - __`json-type`__ &mdash; JSON schema builder.
