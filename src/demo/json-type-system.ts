@@ -1,3 +1,11 @@
+/* tslint:disable no-console */
+
+/**
+ * Run this demo with:
+ *
+ *     npx ts-node src/demo/json-type-system.ts
+ */
+
 import {JsonTypeSystem} from '../json-type-system';
 import {types, customValidators} from './json-type/samples';
 
@@ -28,3 +36,6 @@ console.log(
 // Convert a type to a JSON Schema.
 const schema = system.toJsonSchema('CreateUserResponse', false);
 console.log(JSON.stringify(schema, null, 4));
+
+const ts = system.toTypeScriptText('CreateUserResponse');
+console.log(ts);

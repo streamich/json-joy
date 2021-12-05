@@ -16,6 +16,7 @@ import {
 } from '../json-type-serializer';
 import {encoderFull} from '../json-pack/util';
 import {JsonSchemaNode, JsonSchemaValueNode, toJsonSchema} from '../json-type-schema';
+import {toTypeScriptText} from '../json-type-typescript/toTypeScriptText';
 
 export type Types = {[ref: string]: TType};
 
@@ -173,5 +174,10 @@ export class JsonTypeSystem<T extends Types> {
       };
     }
     return schema;
+  }
+
+  public toTypeScriptText(ref: string): string {
+    const type = this.ref(ref);
+    return toTypeScriptText(type, '');
   }
 }

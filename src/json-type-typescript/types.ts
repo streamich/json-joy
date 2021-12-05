@@ -1,21 +1,15 @@
-export interface TsModuleBlock {
-  node: 'ModuleBlock';
+export interface TsModuleDeclaration {
+  node: 'ModuleDeclaration';
   name: string;
-  statements: Array<TsInterfaceDeclaration>;
+  statements: Array<TsModuleDeclaration | TsInterfaceDeclaration>;
+  comment?: string;
 }
-
-export type TsType =
-  | TsStringKeyword
-  | TsNumberKeyword
-  | TsBooleanKeyword
-  | TsNullKeyword
-  | TsStringLiteral
-  | TsNumericLiteral;
 
 export interface TsInterfaceDeclaration {
   node: 'InterfaceDeclaration';
   name: string;
   members: TsPropertySignature[];
+  comment?: string;
 }
 
 export interface TsPropertySignature {
@@ -55,6 +49,19 @@ export interface TsNumericLiteral {
   node: 'NumericLiteral';
   text: string;
 }
+
+export interface TsUnionType {
+  types: TsType[];
+}
+
+export type TsType =
+  | TsStringKeyword
+  | TsNumberKeyword
+  | TsBooleanKeyword
+  | TsNullKeyword
+  | TsStringLiteral
+  | TsNumericLiteral
+  | TsUnionType;
 
 export interface TsTypeLiteral {
   node: 'TypeLiteral';
