@@ -1,6 +1,6 @@
 /**
  * Run with:
- * 
+ *
  *     npx ts-node src/demo/json-random.ts
  */
 
@@ -52,7 +52,6 @@ console.log(json2);
 //   '}geJx8\\u_s': 27895
 // }
 
-
 const json3 = RandomJson.generate({
   nodeCount: 5,
   rootNode: 'array',
@@ -64,7 +63,6 @@ console.log(json3);
 //   { 'SQ6QQ<Dmvh!Qowug': '8' },
 //   '*Qc7=J=}|@f!!'
 // ]
-
 
 const json4 = RandomJson.generate({
   nodeCount: 6,
