@@ -3,12 +3,10 @@ import {Encoder} from '../Encoder';
 
 test('encodes a single message when there is one message in the batch', () => {
   const encoder = new Encoder();
-  const messages = [
-    new JsonRequestCompleteMessage(1, 'a', undefined),
-  ];
+  const messages = [new JsonRequestCompleteMessage(1, 'a', undefined)];
   const encoded = encoder.encode(messages);
   const decoded = JSON.parse(encoded as any);
-  expect(decoded).toStrictEqual([ 1, 'a' ]);
+  expect(decoded).toStrictEqual([1, 'a']);
 });
 
 test('can encode a batch of request messages', () => {
@@ -19,5 +17,8 @@ test('can encode a batch of request messages', () => {
   ];
   const encoded = encoder.encode(messages);
   const decoded = JSON.parse(encoded as any);
-  expect(decoded).toStrictEqual([ [ 1, 'a' ], [ 2, 'b' ] ]);
+  expect(decoded).toStrictEqual([
+    [1, 'a'],
+    [2, 'b'],
+  ]);
 });

@@ -1,5 +1,11 @@
 import type {EnableWsReactiveRpcApiParams, RpcWebSocket, UwsWebSocket} from './types';
-import {BinaryNotificationMessage, ReactiveRpcBinaryMessage, ReactiveRpcMessage, ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../common';
+import {
+  BinaryNotificationMessage,
+  ReactiveRpcBinaryMessage,
+  ReactiveRpcMessage,
+  ReactiveRpcRequestMessage,
+  ReactiveRpcResponseMessage,
+} from '../../../common';
 import {Decoder as DecoderJson} from '../../../common/codec/compact-json/Decoder';
 import {Decoder as DecoderMsgPack} from '../../../common/codec/compact-msgpack/Decoder';
 import {Encoder as EncoderCompactMsgPackBinary} from '../../../common/codec/compact-msgpack-binary';
@@ -28,8 +34,12 @@ export const enableWsCompactReactiveRpcApi = <Ctx>(params: EnableWsCompactReacti
   const decoderMsgPack = new DecoderMsgPack();
   const encoderCompactJsonString = new EncoderCompactJsonString();
   const encoderCompactMsgPackBinary = new EncoderCompactMsgPackBinary();
-  const invalidPayloadJson = encoderCompactJsonString.encode([new JsonNotificationMessage('.err', JSON.stringify('CODING'))]);
-  const invalidPayloadMsgPack = encoderCompactMsgPackBinary.encode([new BinaryNotificationMessage('.err', encode('CODING'))]);
+  const invalidPayloadJson = encoderCompactJsonString.encode([
+    new JsonNotificationMessage('.err', JSON.stringify('CODING')),
+  ]);
+  const invalidPayloadMsgPack = encoderCompactMsgPackBinary.encode([
+    new BinaryNotificationMessage('.err', encode('CODING')),
+  ]);
   const {
     route = '/rpc/compact',
     uws,

@@ -1,4 +1,15 @@
-import {BinaryMessage, BinaryNotificationMessage, BinaryRequestCompleteMessage, BinaryRequestDataMessage, BinaryRequestErrorMessage, BinaryRequestUnsubscribeMessage, BinaryResponseCompleteMessage, BinaryResponseDataMessage, BinaryResponseErrorMessage, BinaryResponseUnsubscribeMessage} from '..';
+import {
+  BinaryMessage,
+  BinaryNotificationMessage,
+  BinaryRequestCompleteMessage,
+  BinaryRequestDataMessage,
+  BinaryRequestErrorMessage,
+  BinaryRequestUnsubscribeMessage,
+  BinaryResponseCompleteMessage,
+  BinaryResponseDataMessage,
+  BinaryResponseErrorMessage,
+  BinaryResponseUnsubscribeMessage,
+} from '..';
 import {encode, encoder, decode} from '../../../../../json-pack/util';
 import {MsgPack} from '../../../../../json-pack';
 

@@ -8,6 +8,6 @@ export class Encoder {
     if (length === 1) return messages[0].toCompactJson();
     let out = '[' + messages[0].toCompactJson();
     for (let i = 1; i < length; i++) out += ',' + messages[i].toCompactJson();
-    return out + ']' as json_string<CompactMessage | CompactMessageBatch>;
+    return (out + ']') as json_string<CompactMessage | CompactMessageBatch>;
   }
 }
