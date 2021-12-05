@@ -8,8 +8,8 @@ const encoder = new EncoderFull();
 const decoder = new Decoder();
 
 const exec = (type: TType, json: unknown, expected: unknown = json) => {
-  const codegen = new MsgPackSerializerCodegen({encoder});
-  const fn = codegen.compile(type);
+  const codegen = new MsgPackSerializerCodegen({type, encoder});
+  const fn = codegen.run().compile();
   // console.log(fn.toString());
   const blob = fn(json);
   const decoded = decoder.decode(blob);
@@ -248,10 +248,11 @@ describe('"ref" type', () => {
     const typeUser = t.Object('User', [t.Field('id', t.str)]);
     const typeResponse = t.Object('Response', [t.Field('user', t.Ref('User'))]);
     const codegen = new MsgPackSerializerCodegen({
+      type: typeResponse,
       encoder,
       ref: () => typeUser,
     });
-    const fn = codegen.compile(typeResponse);
+    const fn = codegen.run().compile();
     const json = {
       user: {
         id: '123',
@@ -265,16 +266,17 @@ describe('"ref" type', () => {
   test('throws when ref cannot be resolved', () => {
     const typeResponse = t.Object('Response', [t.Field('user', t.Ref('User'))]);
     const codegen = new MsgPackSerializerCodegen({
+      type: typeResponse,
       encoder,
     });
-    const callback = () => codegen.compile(typeResponse);
+    const callback = () => codegen.run().compile();
     expect(callback).toThrow(new Error('Unknown [ref = User].'));
   });
 
   test('can generate partial function, where encoder is injected', () => {
     const type = t.Object('User', [t.Field('id', t.str)]);
-    const codegen = new MsgPackSerializerCodegen({encoder});
-    const fn = codegen.compilePartial(type);
+    const codegen = new MsgPackSerializerCodegen({type, encoder});
+    const fn = codegen.run().compilePartial();
     const json = {
       id: '123',
     };
@@ -290,6 +292,7 @@ describe('"ref" type', () => {
     const typeId = t.String();
     const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new MsgPackSerializerCodegen({
+      type,
       encoder,
       ref: () => typeId,
     });
@@ -298,7 +301,7 @@ describe('"ref" type', () => {
       id: '123',
       createdAt: 123,
     };
-    const fn = codegen.compile(type);
+    const fn = codegen.run().compile();
     const blob = fn(json);
     const decoded = decoder.decode(blob);
     expect(decoded).toStrictEqual(json);
@@ -308,10 +311,11 @@ describe('"ref" type', () => {
     const typeId = t.String();
     const type = t.Object('User', [t.Field('name', t.str), t.Field('id', t.Ref('ID')), t.Field('createdAt', t.num)]);
     const codegen = new MsgPackSerializerCodegen({
+      type,
       encoder,
       ref: () => {
-        const codegen2 = new MsgPackSerializerCodegen({encoder});
-        return codegen2.compilePartial(typeId);
+        const codegen2 = new MsgPackSerializerCodegen({type: typeId, encoder});
+        return codegen2.run().compilePartial();
       },
     });
     const json = {
@@ -319,7 +323,7 @@ describe('"ref" type', () => {
       id: '123',
       createdAt: 123,
     };
-    const fn = codegen.compile(type);
+    const fn = codegen.run().compile();
     const blob = fn(json);
     const decoded = decoder.decode(blob);
     expect(decoded).toStrictEqual(json);

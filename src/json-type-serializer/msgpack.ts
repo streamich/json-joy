@@ -27,6 +27,7 @@ type Step = WriteBlobStep | CodegenStepExecJs;
 
 export interface MsgPackSerializerCodegenOptions {
   encoder: EncoderFull;
+  type: TType;
   ref?: (id: string) => PartialEncoderFn | TType | undefined;
 }
 
@@ -322,24 +323,22 @@ export class MsgPackSerializerCodegen {
     return new CodegenStepExecJs(js);
   }
 
-  protected run(type: TType) {
+  public run(): this {
     const r = this.getRegister();
     const value = new JsExpression(() => r);
-    this.onType(type, value);
+    this.onType(this.options.type, value);
+    return this;
   }
 
-  public generate(type: TType): CompiledFunction<EncoderFn> {
-    this.run(type);
+  public generate(): CompiledFunction<EncoderFn> {
     return this.codegen.generate();
   }
 
-  public compile(type: TType): EncoderFn {
-    this.run(type);
+  public compile(): EncoderFn {
     return this.codegen.compile();
   }
 
-  public compilePartial(type: TType): PartialEncoderFn {
-    this.run(type);
+  public compilePartial(): PartialEncoderFn {
     return this.codegen.compile({
       name: 'partial',
       args: 'r0, e',

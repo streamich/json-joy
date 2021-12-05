@@ -114,6 +114,7 @@ export class JsonTypeSystem<T extends Types> {
       return msgPackPartialEncoderCached;
     }
     const codegen = new MsgPackSerializerCodegen({
+      type,
       encoder: encoderFull,
       ref: (id: string) => {
         const type = this.ref(id);
@@ -125,7 +126,7 @@ export class JsonTypeSystem<T extends Types> {
       throw new Error(`Type [ref = ${ref}] MessagePack partial encoder not implemented.`);
     });
     this.msgPackPartialEncoderCache[ref] = partialEncoder;
-    const realPartialEncoder = codegen.compilePartial(type);
+    const realPartialEncoder = codegen.run().compilePartial();
     if (this.msgPackPartialEncoderUsage[ref]) setPartialEncoder(realPartialEncoder);
     this.msgPackPartialEncoderCache[ref] = realPartialEncoder;
     return realPartialEncoder;
@@ -138,6 +139,7 @@ export class JsonTypeSystem<T extends Types> {
     const msgPackSerializerCached = this.msgPackEncoderCache[ref];
     if (msgPackSerializerCached) return msgPackSerializerCached;
     const codegen = new MsgPackSerializerCodegen({
+      type,
       encoder: encoderFull,
       ref: (id: string) => {
         const type = this.ref(id);
@@ -145,6 +147,6 @@ export class JsonTypeSystem<T extends Types> {
         return isLiteralType ? type : this.getMsgPackPartialEncoder(id);
       },
     });
-    return (this.msgPackEncoderCache[ref] = codegen.compile(type));
+    return (this.msgPackEncoderCache[ref] = codegen.run().compile());
   }
 }
