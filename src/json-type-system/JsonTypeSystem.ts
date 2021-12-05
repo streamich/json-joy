@@ -1,5 +1,5 @@
-import type {TType} from '../json-type/types';
-import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator} from '../json-type-validator';
+import type {TType, TAnyType} from '../json-type/types';
+import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator, CustomValidator} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
 import {
   JsonEncoderFn,
@@ -9,6 +9,7 @@ import {
   MsgPackSerializerCodegen,
 } from '../json-type-serializer';
 import {encoderFull} from '../json-pack/util';
+import {JsonSchemaNode, toJsonSchema} from '../json-type-schema';
 
 export type Types = {[ref: string]: TType};
 
@@ -16,15 +17,16 @@ const literalTypes: string[] = ['bin', 'bool', 'nil', 'num', 'str'];
 
 export interface JsonTypeSystemOptions<T extends Types> {
   types: T;
+  customValidators?: CustomValidator[];
 }
 
 export class JsonTypeSystem<T extends Types> {
   public constructor(protected readonly options: JsonTypeSystemOptions<T>) {}
 
-  public readonly ref = (ref: keyof T): TType => {
+  public readonly ref = (ref: keyof T): TAnyType => {
     const type = this.options.types[ref];
     if (!type) throw new Error(`Type [ref = ${ref}] not found.`);
-    return type;
+    return type as TAnyType;
   };
 
   public hasType(ref: string) {
@@ -46,7 +48,7 @@ export class JsonTypeSystem<T extends Types> {
     });
     this.fastValidatorCache[ref] = validator;
     const realValidator = createBoolValidator(type, {
-      customValidators: [],
+      customValidators: this.options.customValidators,
       ref: (id: string) => this.getFastValidator(id),
       skipObjectExtraFieldsCheck: true,
       unsafeMode: true,
@@ -60,16 +62,16 @@ export class JsonTypeSystem<T extends Types> {
 
   public getFullValidator(ref: string) {
     const type = this.ref(ref);
-    const cachedFastValidator = this.fastValidatorCache[ref];
-    if (cachedFastValidator) return cachedFastValidator;
+    const cachedFullValidator = this.fullValidatorCache[ref];
+    if (cachedFullValidator) return cachedFullValidator;
     const [validator, setValidator] = dynamicFunction<ObjectValidator>(() => {
       throw new Error(`Type [ref = ${ref}] not implemented.`);
     });
     this.fullValidatorCache[ref] = validator;
     setValidator(
       createObjValidator(type, {
-        customValidators: [],
-        ref: (id: string) => this.getFastValidator(id),
+        customValidators: this.options.customValidators,
+        ref: (id: string) => this.getFullValidator(id),
       }),
     );
     return validator;
