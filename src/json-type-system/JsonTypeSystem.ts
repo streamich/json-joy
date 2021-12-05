@@ -1,5 +1,11 @@
 import type {TType, TAnyType} from '../json-type/types';
-import {BooleanValidator, createBoolValidator, ObjectValidator, createObjValidator, CustomValidator} from '../json-type-validator';
+import {
+  BooleanValidator,
+  createBoolValidator,
+  ObjectValidator,
+  createObjValidator,
+  CustomValidator,
+} from '../json-type-validator';
 import {dynamicFunction} from '../util/codegen/dynamicFunction';
 import {
   JsonEncoderFn,

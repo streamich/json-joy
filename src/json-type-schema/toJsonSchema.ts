@@ -1,6 +1,16 @@
-import {JsonSchemaRef} from ".";
-import {TAnyType, TNumber, TType} from "../json-type";
-import {JsonSchemaAny, JsonSchemaArray, JsonSchemaBoolean, JsonSchemaValueNode, JsonSchemaNode, JsonSchemaNull, JsonSchemaNumber, JsonSchemaObject, JsonSchemaString} from "./types";
+import {JsonSchemaRef} from '.';
+import {TAnyType, TNumber, TType} from '../json-type';
+import {
+  JsonSchemaAny,
+  JsonSchemaArray,
+  JsonSchemaBoolean,
+  JsonSchemaValueNode,
+  JsonSchemaNode,
+  JsonSchemaNull,
+  JsonSchemaNumber,
+  JsonSchemaObject,
+  JsonSchemaString,
+} from './types';
 
 const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
 const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
@@ -8,7 +18,7 @@ const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
 const augmentNode = (type: TType, node: JsonSchemaValueNode) => {
   if (type.title) node.title = type.title;
   if (type.description) node.description = type.description;
-  if (type.examples) node.examples = type.examples.map(example => example.value);
+  if (type.examples) node.examples = type.examples.map((example) => example.value);
 };
 
 export interface ToJsonSchemaContext {
@@ -28,8 +38,7 @@ export const toJsonSchema = (type: TAnyType, ctx: ToJsonSchemaContext): JsonSche
       const node: JsonSchemaNumber = {
         type: 'number',
       };
-      if (type.format)
-        if (INTS.indexOf(type.format) > -1) node.type = 'integer';
+      if (type.format) if (INTS.indexOf(type.format) > -1) node.type = 'integer';
       if (type.const) node.const = type.const;
       augmentNode(type, node);
       return node;
@@ -74,7 +83,7 @@ export const toJsonSchema = (type: TAnyType, ctx: ToJsonSchemaContext): JsonSche
     }
     case 'ref': {
       if (!ctx.ref) {
-        const node: JsonSchemaRef = {$ref: '/' + type.ref}
+        const node: JsonSchemaRef = {$ref: '/' + type.ref};
         return node;
       } else if (ctx.defs) {
         const node: JsonSchemaRef = {$ref: '#/$defs/' + type.ref};

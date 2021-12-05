@@ -9,9 +9,9 @@ const system = new JsonTypeSystem({
       name: 'globalId',
       types: ['string'],
       fn: (id: string) => {
-        if (typeof id  !== 'string') throw new Error('id must be string');
+        if (typeof id !== 'string') throw new Error('id must be string');
         if (id.length > 10) throw new Error('id too long');
-      }
+      },
     },
   ],
 });
@@ -24,13 +24,15 @@ const userValidator = system.getFastValidator('User');
 console.log(userValidator.toString());
 
 // Get and validate a type using full validator.
-console.log(system.getFullValidator('User')({
-  gid: 'User/123',
-  id: 123,
-  email: 'test@example.com',
-  timeCreated: 123123123,
-  timeUpdated: 123123123,
-}));
+console.log(
+  system.getFullValidator('User')({
+    gid: 'User/123',
+    id: 123,
+    email: 'test@example.com',
+    timeCreated: 123123123,
+    timeUpdated: 123123123,
+  }),
+);
 
 // Convert a type to a JSON Schema.
 const schema = system.toJsonSchema('CreateUserResponse', false);

@@ -26,8 +26,8 @@ export interface JsonSchemaObject extends JsonSchemaGenericKeywords {
   type: 'object';
   properties?: {
     [key: string]: JsonSchemaNode;
-  },
-  required?: string[],
+  };
+  required?: string[];
   additionalProperties?: boolean | JsonSchemaNode;
   const?: object;
 }
@@ -64,8 +64,6 @@ export type JsonSchemaValueNode =
   | JsonSchemaArray
   | JsonSchemaBoolean
   | JsonSchemaNull
-  | JsonSchemaAny
+  | JsonSchemaAny;
 
-export type JsonSchemaNode =
-  | JsonSchemaValueNode
-  | JsonSchemaRef;
+export type JsonSchemaNode = JsonSchemaValueNode | JsonSchemaRef;
