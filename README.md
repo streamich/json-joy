@@ -60,6 +60,9 @@ This package consists of multiple self-contained libraries:
   - [__Documentation__ 🚀](./src/json-type-serializer/README.md)
 - __`json-type-validator`__ &mdash; fast `json-type` schema validator.
   - [__Documentation__ 🚀](./src/json-type-validator/README.md)
+- __`util`__ &mdash;
+  - __`base64`__ &mdash; fast isomorphic configurable Base64 encoder.
+    - [__Documentation__ 🚀](./src/util/base64/README.md)
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902
