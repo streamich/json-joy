@@ -27,6 +27,8 @@ const msgpackCodegen = new MsgPackSerializerCodegen({
 
 const msgpackSerializer = msgpackCodegen.run().compile();
 
+console.log(msgpackSerializer.toString());
+
 console.log(msgpackSerializer({
   id: 123,
   name: 'John',

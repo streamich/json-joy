@@ -66,6 +66,30 @@ const msgpackCodegen = new MsgPackSerializerCodegen({
 
 const msgpackSerializer = msgpackCodegen.run().compile();
 
+console.log(msgpackSerializer.toString());
+// function toMsgPack(r0){
+// e.reset();
+// var r2 = e.offset, r3 = e.uint8;
+// e.ensureCapacity(4);
+// e.offset += 4;
+// r3[r2 + 0] = 130;
+// r3[r2 + 1] = 162;
+// r3[r2 + 2] = 105;
+// r3[r2 + 3] = 100;
+// var r1 = r0;
+// e.encodeNumber(r1.id);
+// var r4 = e.offset, r5 = e.uint8;
+// e.ensureCapacity(5);
+// e.offset += 5;
+// r5[r4 + 0] = 164;
+// r5[r4 + 1] = 110;
+// r5[r4 + 2] = 97;
+// r5[r4 + 3] = 109;
+// r5[r4 + 4] = 101;
+// e.encodeString(r1.name);
+// return e.flush();
+// }
+
 console.log(msgpackSerializer({
   id: 123,
   name: 'John',
