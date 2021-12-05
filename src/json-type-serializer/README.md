@@ -15,7 +15,6 @@ serializer, see benchmark below.
 ```ts
 import {t} from 'json-joy/lib/json-type';
 import {JsonSerializerCodegen} from 'json-joy/lib/json-type-serializer';
-import {encoder} from 'json-joy/lib/json-pack/util';
 
 const type = t.Object([
   t.Field('id', t.num),
