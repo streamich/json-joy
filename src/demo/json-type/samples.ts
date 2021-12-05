@@ -1,4 +1,16 @@
 import {t} from '../../json-type';
+import type {CustomValidator} from '../../json-type-validator';
+
+export const customValidators: CustomValidator[] = [
+  {
+    name: 'globalId',
+    types: ['string'],
+    fn: (id: string) => {
+      if (typeof id !== 'string') throw new Error('id must be string');
+      if (id.length > 10) throw new Error('id too long');
+    },
+  },
+];
 
 export const types = {
   ID: t.String({

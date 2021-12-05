@@ -1,19 +1,10 @@
 import {JsonTypeSystem} from '../../json-type-system';
-import {types} from '../json-type/samples';
+import {types, customValidators} from '../json-type/samples';
 
 // Create a new type system.
 const system = new JsonTypeSystem({
   types,
-  customValidators: [
-    {
-      name: 'globalId',
-      types: ['string'],
-      fn: (id: string) => {
-        if (typeof id !== 'string') throw new Error('id must be string');
-        if (id.length > 10) throw new Error('id too long');
-      },
-    },
-  ],
+  customValidators,
 });
 
 // Get type by its ref.
