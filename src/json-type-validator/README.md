@@ -13,12 +13,10 @@ validation failure. And `false` or a falsy value on success.
 import {t} from 'json-joy/es2020/json-type';
 import {createBoolValidator} from 'json-joy/es2020/json-type-validator';
 
-const type = t.Object({
-  fields: [
-    t.Field('id', t.str),
-    t.Field('name', t.str, {isOptional: true}),
-  ],
-});
+const type = t.Object([
+  t.Field('id', t.str),
+  t.Field('name', t.str, {isOptional: true}),
+]);
 
 const json = {
   id: '123',
