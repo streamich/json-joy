@@ -1,5 +1,5 @@
-import {JsonTypeSystem} from '../../json-type-system';
-import {types, customValidators} from '../json-type/samples';
+import {JsonTypeSystem} from '../json-type-system';
+import {types, customValidators} from './json-type/samples';
 
 // Create a new type system.
 const system = new JsonTypeSystem({
