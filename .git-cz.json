@@ -16,6 +16,7 @@
     "json-random",
     "json-size",
     "json-type",
+    "json-type-schema",
     "json-type-serializer",
     "json-type-system",
     "json-type-validator",
