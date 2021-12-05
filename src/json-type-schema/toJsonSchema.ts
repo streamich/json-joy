@@ -1,10 +1,11 @@
+import {JsonSchemaRef} from ".";
 import {TAnyType, TNumber, TType} from "../json-type";
-import {JsonSchemaAny, JsonSchemaArray, JsonSchemaBoolean, JsonSchemaNode, JsonSchemaNull, JsonSchemaNumber, JsonSchemaObject, JsonSchemaString} from "./types";
+import {JsonSchemaAny, JsonSchemaArray, JsonSchemaBoolean, JsonSchemaValueNode, JsonSchemaNode, JsonSchemaNull, JsonSchemaNumber, JsonSchemaObject, JsonSchemaString} from "./types";
 
 const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
 const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
 
-const augmentNode = (type: TType, node: JsonSchemaNode) => {
+const augmentNode = (type: TType, node: JsonSchemaValueNode) => {
   if (type.title) node.title = type.title;
   if (type.description) node.description = type.description;
   if (type.examples) node.examples = type.examples.map(example => example.value);
@@ -12,6 +13,7 @@ const augmentNode = (type: TType, node: JsonSchemaNode) => {
 
 export interface ToJsonSchemaContext {
   ref?: (id: string) => TAnyType;
+  defs?: {[key: string]: JsonSchemaNode};
 }
 
 export const toJsonSchema = (type: TAnyType, ctx: ToJsonSchemaContext): JsonSchemaNode => {
@@ -71,7 +73,14 @@ export const toJsonSchema = (type: TAnyType, ctx: ToJsonSchemaContext): JsonSche
       return node;
     }
     case 'ref': {
-      if (!ctx.ref) return toJsonSchema({__t: 'any'}, ctx);
+      if (!ctx.ref) {
+        const node: JsonSchemaRef = {$ref: '/' + type.ref}
+        return node;
+      } else if (ctx.defs) {
+        const node: JsonSchemaRef = {$ref: '#/$defs/' + type.ref};
+        if (!ctx.defs[type.ref]) ctx.defs[type.ref] = toJsonSchema(ctx.ref(type.ref), ctx);
+        return node;
+      }
       return toJsonSchema(ctx.ref(type.ref), ctx);
     }
     case 'any':

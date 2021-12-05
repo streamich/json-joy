@@ -9,7 +9,7 @@ import {
   MsgPackSerializerCodegen,
 } from '../json-type-serializer';
 import {encoderFull} from '../json-pack/util';
-import {JsonSchemaNode, toJsonSchema} from '../json-type-schema';
+import {JsonSchemaNode, JsonSchemaValueNode, toJsonSchema} from '../json-type-schema';
 
 export type Types = {[ref: string]: TType};
 
@@ -152,8 +152,20 @@ export class JsonTypeSystem<T extends Types> {
     return (this.msgPackEncoderCache[ref] = codegen.run().compile());
   }
 
-  public toJsonSchema(ref: string): JsonSchemaNode {
+  public toJsonSchema(ref: string, withDefs?: boolean): JsonSchemaNode {
     const type = this.ref(ref);
-    return toJsonSchema(type, this);
+    const defs = withDefs ? {} : undefined;
+    let schema = toJsonSchema(type, {
+      ref: this.ref,
+      defs,
+    }) as JsonSchemaValueNode;
+    if (defs) {
+      schema = {
+        $id: ref,
+        ...schema,
+        $defs: defs,
+      };
+    }
+    return schema;
   }
 }

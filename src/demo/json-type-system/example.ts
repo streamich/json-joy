@@ -33,5 +33,5 @@ console.log(system.getFullValidator('User')({
 }));
 
 // Convert a type to a JSON Schema.
-const schema = system.toJsonSchema('CreateUserResponse');
+const schema = system.toJsonSchema('CreateUserResponse', false);
 console.log(JSON.stringify(schema, null, 4));

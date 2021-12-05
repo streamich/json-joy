@@ -7,6 +7,9 @@ export interface JsonSchemaGenericKeywords {
   readOnly?: boolean;
   writeOnly?: boolean;
   const?: unknown;
+
+  $id?: string;
+  $defs?: {[name: string]: JsonSchemaValueNode};
 }
 
 export interface JsonSchemaString extends JsonSchemaGenericKeywords {
@@ -50,11 +53,19 @@ export interface JsonSchemaAny extends JsonSchemaGenericKeywords {
   type: Array<'string' | 'number' | 'boolean' | 'null' | 'array' | 'object'>;
 }
 
-export type JsonSchemaNode =
+export interface JsonSchemaRef {
+  $ref: string;
+}
+
+export type JsonSchemaValueNode =
   | JsonSchemaString
   | JsonSchemaNumber
   | JsonSchemaObject
   | JsonSchemaArray
   | JsonSchemaBoolean
   | JsonSchemaNull
-  | JsonSchemaAny;
+  | JsonSchemaAny
+
+export type JsonSchemaNode =
+  | JsonSchemaValueNode
+  | JsonSchemaRef;
