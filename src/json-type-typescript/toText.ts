@@ -5,6 +5,9 @@ const TAB = '  ';
 const normalizeKey = (prop: string): string =>
   /^[a-z_][a-z_0-9]*$/i.test(prop) ? prop : JSON.stringify(prop);
 
+const isSimpleType = ({node}: TsNode): boolean =>
+  (node === 'NumberKeyword') || (node === 'StringKeyword') || (node === 'BooleanKeyword');
+
 
 export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
   if (Array.isArray(node)) return node.map(s => toText(s, __)).join('\n');
@@ -34,6 +37,11 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
     case 'TypeAliasDeclaration': {
       out += `${__}export type ${node.name} = ${toText(node.type)};\n`;
       break;
+    }
+    case 'ArrayType': {
+      const simple = isSimpleType(node.elementType);
+      const inner = toText(node.elementType, ____);
+      return simple ? `${inner}[]` : `Array<${inner}>`;
     }
     case 'StringKeyword': {
       return 'string';

@@ -17,6 +17,7 @@ import {
   TsTrueKeyword,
   TsUnknownKeyword,
   TsTypeLiteral,
+  TsArrayType,
 } from './types';
 
 export interface ToTypeScriptAstContext {
@@ -116,6 +117,13 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
     }
     case 'bool': {
       const node: TsBooleanKeyword = {node: 'BooleanKeyword'};
+      return node;
+    }
+    case 'arr': {
+      const node: TsArrayType = {
+        node: 'ArrayType',
+        elementType: toTsType(type.type as TAnyType, ctx),
+      };
       return node;
     }
     case 'obj': {

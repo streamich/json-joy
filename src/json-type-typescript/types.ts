@@ -110,6 +110,7 @@ export interface TsTypeReference {
 
 /** All type annotations. */
 export type TsType =
+  | TsArrayType
   | TsStringKeyword
   | TsNumberKeyword
   | TsBooleanKeyword

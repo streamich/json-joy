@@ -34,6 +34,7 @@ export const types = {
       t.Field('email', t.str),
       t.Field('timeCreated', t.Number({format: 'u'})),
       t.Field('timeUpdated', t.Number({format: 'u'})),
+      t.Field('scores', t.Array(t.num)),
     ],
     {
       title: 'A user object',
