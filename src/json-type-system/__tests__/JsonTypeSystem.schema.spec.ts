@@ -32,14 +32,68 @@ test('generates JSON schema with refs', () => {
             "id": Object {
               "type": "number",
             },
+            "isActive": Object {
+              "type": "boolean",
+            },
+            "isPost": Object {
+              "type": "boolean",
+            },
+            "isUser": Object {
+              "const": true,
+              "type": "boolean",
+            },
+            "meta": Object {
+              "properties": Object {},
+              "type": "object",
+            },
             "name": Object {
               "type": "string",
+            },
+            "null": Object {
+              "type": "null",
+            },
+            "op": Object {
+              "const": -1,
+              "type": "number",
+            },
+            "scores": Object {
+              "items": Object {
+                "type": "number",
+              },
+              "type": "array",
+            },
+            "tags": Object {
+              "items": Object {
+                "type": Array [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null",
+                  "array",
+                  "object",
+                ],
+              },
+              "type": "array",
             },
             "timeCreated": Object {
               "type": "integer",
             },
             "timeUpdated": Object {
               "type": "integer",
+            },
+            "type": Object {
+              "const": "User",
+              "type": "string",
+            },
+            "unknown": Object {
+              "type": Array [
+                "string",
+                "number",
+                "boolean",
+                "null",
+                "array",
+                "object",
+              ],
             },
           },
           "required": Array [
@@ -48,6 +102,14 @@ test('generates JSON schema with refs', () => {
             "email",
             "timeCreated",
             "timeUpdated",
+            "scores",
+            "isActive",
+            "null",
+            "unknown",
+            "isUser",
+            "isPost",
+            "tags",
+            "meta",
           ],
           "title": "A user object",
           "type": "object",
@@ -85,14 +147,68 @@ test('generates JSON schema with refs resolved to $defs', () => {
             "id": Object {
               "type": "number",
             },
+            "isActive": Object {
+              "type": "boolean",
+            },
+            "isPost": Object {
+              "type": "boolean",
+            },
+            "isUser": Object {
+              "const": true,
+              "type": "boolean",
+            },
+            "meta": Object {
+              "properties": Object {},
+              "type": "object",
+            },
             "name": Object {
               "type": "string",
+            },
+            "null": Object {
+              "type": "null",
+            },
+            "op": Object {
+              "const": -1,
+              "type": "number",
+            },
+            "scores": Object {
+              "items": Object {
+                "type": "number",
+              },
+              "type": "array",
+            },
+            "tags": Object {
+              "items": Object {
+                "type": Array [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null",
+                  "array",
+                  "object",
+                ],
+              },
+              "type": "array",
             },
             "timeCreated": Object {
               "type": "integer",
             },
             "timeUpdated": Object {
               "type": "integer",
+            },
+            "type": Object {
+              "const": "User",
+              "type": "string",
+            },
+            "unknown": Object {
+              "type": Array [
+                "string",
+                "number",
+                "boolean",
+                "null",
+                "array",
+                "object",
+              ],
             },
           },
           "required": Array [
@@ -101,6 +217,14 @@ test('generates JSON schema with refs resolved to $defs', () => {
             "email",
             "timeCreated",
             "timeUpdated",
+            "scores",
+            "isActive",
+            "null",
+            "unknown",
+            "isUser",
+            "isPost",
+            "tags",
+            "meta",
           ],
           "title": "A user object",
           "type": "object",
