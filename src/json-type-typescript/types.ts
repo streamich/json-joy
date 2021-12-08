@@ -1,7 +1,7 @@
 export interface TsModuleDeclaration {
   node: 'ModuleDeclaration';
   name: string;
-  statements: Array<TsModuleDeclaration | TsInterfaceDeclaration>;
+  statements: TsDeclaration[];
   comment?: string;
 }
 
@@ -18,6 +18,17 @@ export interface TsPropertySignature {
   optional?: boolean;
   type: TsType;
 }
+
+export interface TsTypeAliasDeclaration {
+  node: 'TypeAliasDeclaration';
+  name: string;
+  type: TsType;
+}
+
+export type TsDeclaration =
+  | TsModuleDeclaration
+  | TsInterfaceDeclaration
+  | TsTypeAliasDeclaration;
 
 export interface TsArrayType {
   node: 'ArrayType';
@@ -40,6 +51,10 @@ export interface TsNullKeyword {
   node: 'NullKeyword';
 }
 
+export interface TsAnyKeyword {
+  node: 'AnyKeyword';
+}
+
 export interface TsStringLiteral {
   node: 'StringLiteral';
   text: string;
@@ -51,7 +66,13 @@ export interface TsNumericLiteral {
 }
 
 export interface TsUnionType {
+  node: 'UnionType';
   types: TsType[];
+}
+
+export interface TsTypeReference {
+  node: 'TypeReference';
+  typeName: string;
 }
 
 export type TsType =
@@ -59,11 +80,15 @@ export type TsType =
   | TsNumberKeyword
   | TsBooleanKeyword
   | TsNullKeyword
+  | TsAnyKeyword
   | TsStringLiteral
   | TsNumericLiteral
-  | TsUnionType;
+  | TsUnionType
+  | TsTypeReference;
 
-export interface TsTypeLiteral {
-  node: 'TypeLiteral';
-  members: TsPropertySignature[];
-}
+export type TsNode = TsDeclaration | TsType;
+
+// export interface TsTypeLiteral {
+//   node: 'TypeLiteral';
+//   members: TsPropertySignature[];
+// }

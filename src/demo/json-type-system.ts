@@ -37,5 +37,5 @@ console.log(
 const schema = system.toJsonSchema('CreateUserResponse', false);
 console.log(JSON.stringify(schema, null, 4));
 
-const ts = system.toTypeScriptText('CreateUserResponse');
-console.log(ts);
+const declarations = system.exportTypeAndRefTsDeclarations('CreateUserResponse');
+console.log(JSON.stringify(declarations, null, 4));

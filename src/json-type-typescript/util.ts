@@ -5,6 +5,3 @@ export const normalizeFiledKey = (accessor: string): string => {
     return JSON.stringify(accessor);
   }
 };
-
-import {mu} from './types';
-const a: mu.block.Block = {id: '123'};

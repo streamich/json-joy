@@ -17,6 +17,8 @@ import {
 import {encoderFull} from '../json-pack/util';
 import {JsonSchemaNode, JsonSchemaValueNode, toJsonSchema} from '../json-type-schema';
 import {toTypeScriptText} from '../json-type-typescript/toTypeScriptText';
+import {TsDeclaration} from '../json-type-typescript/types';
+import {exportDeclaration} from '../json-type-typescript/toTypeScriptAst';
 
 export type Types = {[ref: string]: TType};
 
@@ -179,5 +181,18 @@ export class JsonTypeSystem<T extends Types> {
   public toTypeScriptText(ref: string): string {
     const type = this.ref(ref);
     return toTypeScriptText(type, '');
+  }
+
+  /**
+   * Exports TypeScript declarations for a type and types
+   * it references.
+   */
+  public exportTypeAndRefTsDeclarations(ref: string): TsDeclaration[] {
+    const declarations: TsDeclaration[] = [];
+    exportDeclaration(ref, {
+      ref: this.ref,
+      statements: declarations,
+    });
+    return declarations;
   }
 }
