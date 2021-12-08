@@ -1,0 +1,419 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generates JSON schema for simple string type 1`] = `
+Array [
+  Object {
+    "name": "ID",
+    "node": "TypeAliasDeclaration",
+    "type": Object {
+      "node": "StringKeyword",
+    },
+  },
+  Object {
+    "members": Array [
+      Object {
+        "name": "type",
+        "node": "PropertySignature",
+        "optional": true,
+        "type": Object {
+          "node": "StringLiteral",
+          "text": "User",
+        },
+      },
+      Object {
+        "name": "op",
+        "node": "PropertySignature",
+        "optional": true,
+        "type": Object {
+          "node": "NumericLiteral",
+          "text": "-1",
+        },
+      },
+      Object {
+        "name": "gid",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "TypeReference",
+          "typeName": "ID",
+        },
+      },
+      Object {
+        "name": "id",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "NumberKeyword",
+        },
+      },
+      Object {
+        "name": "name",
+        "node": "PropertySignature",
+        "optional": true,
+        "type": Object {
+          "node": "StringKeyword",
+        },
+      },
+      Object {
+        "name": "email",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "StringKeyword",
+        },
+      },
+      Object {
+        "name": "timeCreated",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "NumberKeyword",
+        },
+      },
+      Object {
+        "name": "timeUpdated",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "NumberKeyword",
+        },
+      },
+      Object {
+        "name": "scores",
+        "node": "PropertySignature",
+        "type": Object {
+          "elementType": Object {
+            "node": "NumberKeyword",
+          },
+          "node": "ArrayType",
+        },
+      },
+      Object {
+        "name": "isActive",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "BooleanKeyword",
+        },
+      },
+      Object {
+        "name": "null",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "NullKeyword",
+        },
+      },
+      Object {
+        "name": "unknown",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "UnknownKeyword",
+        },
+      },
+      Object {
+        "name": "isUser",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "TrueKeyword",
+        },
+      },
+      Object {
+        "name": "isPost",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "FalseKeyword",
+        },
+      },
+      Object {
+        "name": "tags",
+        "node": "PropertySignature",
+        "type": Object {
+          "elementType": Object {
+            "node": "UnionType",
+            "types": Array [
+              Object {
+                "node": "StringKeyword",
+              },
+              Object {
+                "node": "NumberKeyword",
+              },
+            ],
+          },
+          "node": "ArrayType",
+        },
+      },
+      Object {
+        "name": "meta",
+        "node": "PropertySignature",
+        "type": Object {
+          "members": Array [
+            Object {
+              "node": "IndexSignature",
+              "type": Object {
+                "node": "UnknownKeyword",
+              },
+            },
+          ],
+          "node": "TypeLiteral",
+        },
+      },
+    ],
+    "name": "User",
+    "node": "InterfaceDeclaration",
+  },
+  Object {
+    "members": Array [
+      Object {
+        "name": "user",
+        "node": "PropertySignature",
+        "type": Object {
+          "members": Array [
+            Object {
+              "name": "id",
+              "node": "PropertySignature",
+              "optional": true,
+              "type": Object {
+                "node": "NumberKeyword",
+              },
+            },
+            Object {
+              "name": "name",
+              "node": "PropertySignature",
+              "optional": true,
+              "type": Object {
+                "node": "StringKeyword",
+              },
+            },
+            Object {
+              "name": "email",
+              "node": "PropertySignature",
+              "type": Object {
+                "node": "StringKeyword",
+              },
+            },
+          ],
+          "node": "TypeLiteral",
+        },
+      },
+    ],
+    "name": "CrateUserRequest",
+    "node": "InterfaceDeclaration",
+  },
+  Object {
+    "members": Array [
+      Object {
+        "name": "user",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "TypeReference",
+          "typeName": "User",
+        },
+      },
+    ],
+    "name": "CreateUserResponse",
+    "node": "InterfaceDeclaration",
+  },
+  Object {
+    "members": Array [
+      Object {
+        "name": "user",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "TypeReference",
+          "typeName": "User",
+        },
+      },
+      Object {
+        "name": "changes",
+        "node": "PropertySignature",
+        "type": Object {
+          "node": "NumberKeyword",
+        },
+      },
+    ],
+    "name": "UpdateUserResponse",
+    "node": "InterfaceDeclaration",
+  },
+  Object {
+    "name": "pubsub",
+    "node": "ModuleDeclaration",
+    "statements": Array [
+      Object {
+        "name": "channel",
+        "node": "ModuleDeclaration",
+        "statements": Array [
+          Object {
+            "members": Array [
+              Object {
+                "name": "id",
+                "node": "PropertySignature",
+                "type": Object {
+                  "node": "StringKeyword",
+                },
+              },
+              Object {
+                "name": "payload",
+                "node": "PropertySignature",
+                "type": Object {
+                  "node": "TypeReference",
+                  "typeName": "pubsub.channel.PayloadType",
+                },
+              },
+              Object {
+                "name": "meta",
+                "node": "PropertySignature",
+                "type": Object {
+                  "members": Array [
+                    Object {
+                      "name": "description",
+                      "node": "PropertySignature",
+                      "type": Object {
+                        "node": "StringKeyword",
+                      },
+                    },
+                  ],
+                  "node": "TypeLiteral",
+                },
+              },
+            ],
+            "name": "Channel",
+            "node": "InterfaceDeclaration",
+          },
+          Object {
+            "name": "PayloadType",
+            "node": "TypeAliasDeclaration",
+            "type": Object {
+              "node": "UnionType",
+              "types": Array [
+                Object {
+                  "node": "StringLiteral",
+                  "text": "json",
+                },
+                Object {
+                  "node": "StringLiteral",
+                  "text": "text",
+                },
+                Object {
+                  "node": "StringLiteral",
+                  "text": "blob",
+                },
+              ],
+            },
+          },
+          Object {
+            "members": Array [
+              Object {
+                "name": "channel",
+                "node": "PropertySignature",
+                "type": Object {
+                  "node": "TypeReference",
+                  "typeName": "pubsub.channel.Channel",
+                },
+              },
+              Object {
+                "name": "project",
+                "node": "PropertySignature",
+                "type": Object {
+                  "node": "TypeReference",
+                  "typeName": "util.Project",
+                },
+              },
+            ],
+            "name": "CreateChannelResponse",
+            "node": "InterfaceDeclaration",
+          },
+        ],
+      },
+    ],
+  },
+  Object {
+    "name": "util",
+    "node": "ModuleDeclaration",
+    "statements": Array [
+      Object {
+        "members": Array [
+          Object {
+            "name": "id",
+            "node": "PropertySignature",
+            "type": Object {
+              "node": "StringKeyword",
+            },
+          },
+          Object {
+            "name": "name",
+            "node": "PropertySignature",
+            "type": Object {
+              "node": "StringKeyword",
+            },
+          },
+        ],
+        "name": "Project",
+        "node": "InterfaceDeclaration",
+      },
+    ],
+  },
+]
+`;
+
+exports[`generates JSON schema for simple string type 2`] = `
+"export type ID = string;
+
+export interface User {
+  \\"type\\"?: \\"User\\";
+  op?: -1;
+  gid: ID;
+  id: number;
+  name?: string;
+  email: string;
+  timeCreated: number;
+  timeUpdated: number;
+  scores: number[];
+  isActive: boolean;
+  \\"null\\": null;
+  \\"unknown\\": unknown;
+  isUser: true;
+  isPost: false;
+  tags: Array<string | number>;
+  meta: {
+    [key: string]: unknown;
+  };
+}
+
+export interface CrateUserRequest {
+  user: {
+    id?: number;
+    name?: string;
+    email: string;
+  };
+}
+
+export interface CreateUserResponse {
+  user: User;
+}
+
+export interface UpdateUserResponse {
+  user: User;
+  changes: number;
+}
+
+export namespace pubsub {
+  export namespace channel {
+    export interface Channel {
+      id: string;
+      payload: pubsub.channel.PayloadType;
+      meta: {
+        description: string;
+      };
+    }
+
+    export type PayloadType = \\"json\\" | \\"text\\" | \\"blob\\";
+
+    export interface CreateChannelResponse {
+      channel: pubsub.channel.Channel;
+      project: util.Project;
+    }
+  }
+}
+
+export namespace util {
+  export interface Project {
+    id: string;
+    name: string;
+  }
+}
+"
+`;

@@ -46,6 +46,12 @@ const parseIdentifier = (id: string): Identifier => {
   };
 };
 
+/**
+ * Converts JSON Type to TypeScript AST declarations.
+ *
+ * This function is idempotent, if a declaration already exists
+ * in the resulting AST, it will not be generated again.
+ */
 export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): void => {
   const identifier = parseIdentifier(ref);
   let module: TsModuleDeclaration = {
@@ -105,12 +111,6 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
   }
 };
 
-/**
- * Converts JSON Type to TypeScript AST.
- *
- * This function is idempotent, if the output is already available
- * in the resulting AST, it will not generate it again.
- */
 const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
   switch (type.__t) {
     case 'str': {
