@@ -30,10 +30,7 @@ export interface TsTypeAliasDeclaration {
 }
 
 /** All possible declarations that can be statements of a module. */
-export type TsDeclaration =
-  | TsModuleDeclaration
-  | TsInterfaceDeclaration
-  | TsTypeAliasDeclaration;
+export type TsDeclaration = TsModuleDeclaration | TsInterfaceDeclaration | TsTypeAliasDeclaration;
 
 /** An "Array<*>" type. */
 export interface TsArrayType {
