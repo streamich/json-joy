@@ -1,5 +1,5 @@
 import type {Display, TAnyType} from '../json-type';
-import wrap from 'word-wrap';
+import {wordWrap} from '../util/wordWrap';
 import {normalizeFiledKey} from './util';
 
 const TAB = '  ';
@@ -14,7 +14,7 @@ const formatComment = (node: Display, __: string): string => {
     if (node.title) res += `${__} * # ${node.title}\n`;
     if (node.title && node.description) res += `${__} *\n`;
     if (node.description) {
-      const txt = wrap(node.description);
+      const txt = wordWrap(node.description);
       const lines = txt.split('\n');
       for (const line of lines) {
         res += `${__} * ${line.trim()}\n`;
