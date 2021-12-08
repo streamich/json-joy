@@ -1,5 +1,5 @@
 import {TAnyType} from "../json-type";
-import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration, TsUnionType, TsStringLiteral, TsNumericLiteral, TsFalseKeyword, TsTrueKeyword, TsUnknownKeyword} from "./types";
+import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration, TsUnionType, TsStringLiteral, TsNumericLiteral, TsFalseKeyword, TsTrueKeyword, TsUnknownKeyword, TsTypeLiteral} from "./types";
 
 export interface ToTypeScriptAstContext {
   /**
@@ -83,7 +83,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
  * This function is idempotent, if the output is already available
  * in the resulting AST, it will not generate it again.
  */
-export const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
+const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
   switch(type.__t) {
     case 'str': {
       const node: TsStringKeyword = {node: 'StringKeyword'};
@@ -95,6 +95,21 @@ export const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): Ts
     }
     case 'bool': {
       const node: TsBooleanKeyword = {node: 'BooleanKeyword'};
+      return node;
+    }
+    case 'obj': {
+      const node: TsTypeLiteral = {
+        node: 'TypeLiteral',
+        members: [],
+      };
+      for (const field of type.fields) {
+        const member: TsPropertySignature = {
+          node: 'PropertySignature',
+          name: field.key,
+          type: toTypeScriptAst(field.type as TAnyType, ctx),
+        };
+        node.members.push(member);
+      }
       return node;
     }
     case 'enum': {
@@ -119,7 +134,7 @@ export const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): Ts
   }
 };
 
-export const toTypeScriptLiteral = (value: string | number | boolean | null | unknown, ctx: ToTypeScriptAstContext): TsType => {
+const toTypeScriptLiteral = (value: string | number | boolean | null | unknown, ctx: ToTypeScriptAstContext): TsType => {
   switch(typeof value) {
     case 'string': {
       const node: TsStringLiteral = {node: 'StringLiteral', text: value};
