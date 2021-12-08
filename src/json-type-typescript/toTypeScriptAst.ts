@@ -65,7 +65,8 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
     }
     module = innerModule;
   }
-  console.log('module', module);
+  const exists = module.statements.find((s) => s.name === ref);
+  if (exists) return;
   const type = ctx.ref(ref);
   switch (type.__t) {
     case 'obj': {
@@ -79,7 +80,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         const member: TsPropertySignature = {
           node: 'PropertySignature',
           name: field.key,
-          type: toTypeScriptAst(field.type as TAnyType, ctx),
+          type: toTsType(field.type as TAnyType, ctx),
         };
         node.members.push(member);
       }
@@ -89,7 +90,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
       const node: TsTypeAliasDeclaration = {
         node: 'TypeAliasDeclaration',
         name: ref,
-        type: toTypeScriptAst(type, ctx) as TsType,
+        type: toTsType(type, ctx) as TsType,
       };
       module.statements.push(node);
       return;
@@ -103,7 +104,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
  * This function is idempotent, if the output is already available
  * in the resulting AST, it will not generate it again.
  */
-const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
+const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
   switch (type.__t) {
     case 'str': {
       const node: TsStringKeyword = {node: 'StringKeyword'};
@@ -126,7 +127,7 @@ const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType =>
         const member: TsPropertySignature = {
           node: 'PropertySignature',
           name: field.key,
-          type: toTypeScriptAst(field.type as TAnyType, ctx),
+          type: toTsType(field.type as TAnyType, ctx),
         };
         node.members.push(member);
       }
@@ -135,7 +136,7 @@ const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType =>
     case 'enum': {
       const node: TsUnionType = {
         node: 'UnionType',
-        types: type.values.map(toTypeScriptLiteral),
+        types: type.values.map(toTsLiteral),
       };
       return node;
     }
@@ -154,7 +155,7 @@ const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType =>
   }
 };
 
-const toTypeScriptLiteral = (value: string | number | boolean | null | unknown): TsType => {
+const toTsLiteral = (value: string | number | boolean | null | unknown): TsType => {
   switch (typeof value) {
     case 'string': {
       const node: TsStringLiteral = {node: 'StringLiteral', text: value};
