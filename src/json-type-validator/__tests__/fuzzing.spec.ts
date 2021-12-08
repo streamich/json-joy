@@ -24,7 +24,7 @@ test('validates randomly generated data for a type', () => {
     const fullValidator = system.getFullValidator(typeName);
     for (let i = 0; i < 10; i++) {
       const json = randomType(type, randomTypeOptions);
-      console.log(json);
+      // console.log(json);
       expect(!!fastValidator(json)).toBe(false);
       expect(!!fullValidator(json)).toBe(false);
     }

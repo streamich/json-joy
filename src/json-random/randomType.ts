@@ -16,6 +16,23 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
     }
     case 'num': {
       if (type.const) return type.const;
+      if (type.format) {
+        const num = Math.random();
+        switch(type.format) {
+          case 'i8': return Math.round(num * 0xFF) - 0x80;
+          case 'i16': return Math.round(num * 0xFFFF) - 0x8000;
+          case 'i32': return Math.round(num * 0xFFFFFFFF) - 0x80000000;
+          case 'i64':
+          case 'i':
+            return Math.round(num * 0xFFFFFFFFFF) - 0x8000000000;
+          case 'u8': return Math.round(num * 0xFF);
+          case 'u16': return Math.round(num * 0xFFFF);
+          case 'u32': return Math.round(num * 0xFFFFFFFF);
+          case 'u64':
+          case 'u':
+            return Math.round(num * 0xFFFFFFFFFF);
+        }
+      }
       return RandomJson.genNumber();
     }
     case 'str': {
