@@ -38,5 +38,8 @@ const schema = system.toJsonSchema('CreateUserResponse', false);
 console.log(JSON.stringify(schema, null, 4));
 
 // const declarations = system.exportTypeAndRefTsDeclarations('CreateUserResponse');
-const declarations = system.exportTypeAndRefTsDeclarations('pubsub.channel.Channel');
-console.log(JSON.stringify(declarations, null, 4));
+const declarations1 = system.toTsAst('pubsub.channel.Channel');
+console.log(JSON.stringify(declarations1, null, 4));
+
+const declarations2 = system.toTsAst();
+console.log(JSON.stringify(declarations2, null, 4));

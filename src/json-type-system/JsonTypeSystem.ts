@@ -18,7 +18,7 @@ import {encoderFull} from '../json-pack/util';
 import {JsonSchemaNode, JsonSchemaValueNode, toJsonSchema} from '../json-type-schema';
 import {toTypeScriptText} from '../json-type-typescript/toTypeScriptText';
 import {TsDeclaration} from '../json-type-typescript/types';
-import {exportDeclaration} from '../json-type-typescript/toTypeScriptAst';
+import {exportDeclaration} from '../json-type-typescript/export';
 
 export type Types = {[ref: string]: TType};
 
@@ -184,15 +184,25 @@ export class JsonTypeSystem<T extends Types> {
   }
 
   /**
-   * Exports TypeScript declarations for a type and types
-   * it references.
+   * Exports TypeScript declarations for a type and and all its dependencies.
+   * If not type is provided, exports all types.
    */
-  public exportTypeAndRefTsDeclarations(ref: string): TsDeclaration[] {
-    const declarations: TsDeclaration[] = [];
-    exportDeclaration(ref, {
-      ref: this.ref,
-      statements: declarations,
-    });
-    return declarations;
+  public toTsAst(ref?: string): TsDeclaration[] {
+    const statements: TsDeclaration[] = [];
+    if (ref) {
+      exportDeclaration(ref, {
+        ref: this.ref,
+        statements,
+      });
+    } else {
+      const types = this.options.types;
+      for (const ref of Object.keys(types)) {
+        exportDeclaration(ref, {
+          ref: this.ref,
+          statements,
+        });
+      }
+    }
+    return statements;
   }
 }
