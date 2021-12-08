@@ -4,6 +4,7 @@ import {JavaScriptLinked, compileClosure} from '../util/codegen';
 import {BooleanValidator, CustomValidator, CustomValidatorType, ObjectValidator, StringValidator} from '.';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
+import {INTS, UINTS} from '../json-type/util';
 
 type Path = Array<string | number | {r: string}>;
 
@@ -46,6 +47,8 @@ export enum JsonTypeValidatorError {
   REF,
   ENUM,
   VALIDATION,
+  INT,
+  UINT,
 }
 
 /**
@@ -68,6 +71,8 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.REF]: 'Validation error in referenced type.',
   [JsonTypeValidatorError.ENUM]: 'Not an enum value.',
   [JsonTypeValidatorError.VALIDATION]: 'Custom validator failed.',
+  [JsonTypeValidatorError.INT]: 'Not an integer.',
+  [JsonTypeValidatorError.UINT]: 'Not an unsigned integer.',
 };
 
 /**
@@ -298,8 +303,18 @@ export class JsonTypeValidatorCodegen {
       const err = this.err(JsonTypeValidatorError.NUM_CONST, path);
       this.js(/* js */ `if(${r} !== ${JSON.stringify(num.const)}) return ${err};`);
     } else {
-      const err = this.err(JsonTypeValidatorError.NUM, path);
-      this.js(/* js */ `if(typeof ${r} !== "number") return ${err};`);
+      const errNum = this.err(JsonTypeValidatorError.NUM, path);
+      this.js(/* js */ `if(typeof ${r} !== "number") return ${errNum};`);
+      if (num.format) {
+        if (INTS.indexOf(num.format) !== -1) {
+          const errInt = this.err(JsonTypeValidatorError.INT, path);
+          this.js(/* js */ `if(!Number.isInteger(${r})) return ${errInt};`);
+        }
+        if (UINTS.indexOf(num.format) !== -1) {
+          const errUint = this.err(JsonTypeValidatorError.UINT, path);
+          this.js(/* js */ `if(${r} < 0) return ${errUint};`);
+        }
+      }
     }
   }
 

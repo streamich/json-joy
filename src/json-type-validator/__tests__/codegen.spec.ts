@@ -123,6 +123,38 @@ test('can disable extra property check', () => {
   exec(type, {foo: 123, zup: '1', bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
 });
 
+describe('"num" type', () => {
+  test('validates general number type', () => {
+    const type = t.num;
+    exec(type, 123, null);
+    exec(type, -123, null);
+    exec(type, 0, null);
+    exec(type, '123', {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
+    exec(type, '-123', {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
+    exec(type, '0', {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
+    exec(type, '', {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
+    exec(type, null, {code: 'NUM', errno: JsonTypeValidatorError.NUM, message: 'Not a number.', path: []});
+  });
+
+  test('validates integer type', () => {
+    const type = t.Number({format: 'i'})
+    exec(type, 123, null);
+    exec(type, -123, null);
+    exec(type, 0, null);
+    exec(type, 123.4, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, -1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+
+  test('validates unsigned integer type', () => {
+    const type = t.Number({format: 'u'})
+    exec(type, 123, null);
+    exec(type, 0, null);
+    exec(type, -123, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 123.4, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, -1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+});
+
 describe('"ref" type', () => {
   test('can be used to reference other types', () => {
     const userType = t.Object({

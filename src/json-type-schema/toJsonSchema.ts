@@ -1,5 +1,6 @@
 import {JsonSchemaRef} from '.';
-import {TAnyType, TNumber, TType} from '../json-type';
+import {TAnyType, TType} from '../json-type';
+import {INTS} from '../json-type/util';
 import {
   JsonSchemaAny,
   JsonSchemaArray,
@@ -11,9 +12,6 @@ import {
   JsonSchemaObject,
   JsonSchemaString,
 } from './types';
-
-const UINTS: TNumber['format'][] = ['u', 'u8', 'u16', 'u32', 'u64'];
-const INTS: TNumber['format'][] = ['i', 'i8', 'i16', 'i32', 'i64', ...UINTS];
 
 const augmentNode = (type: TType, node: JsonSchemaValueNode) => {
   if (type.title) node.title = type.title;
