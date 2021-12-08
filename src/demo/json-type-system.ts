@@ -7,6 +7,7 @@
  */
 
 import {JsonTypeSystem} from '../json-type-system';
+import {toText} from '../json-type-typescript/toText';
 import {types, customValidators} from './json-type/samples';
 
 // Create a new type system.
@@ -42,4 +43,4 @@ const declarations1 = system.toTsAst('pubsub.channel.Channel');
 console.log(JSON.stringify(declarations1, null, 4));
 
 const declarations2 = system.toTsAst();
-console.log(JSON.stringify(declarations2, null, 4));
+console.log(toText(declarations2));

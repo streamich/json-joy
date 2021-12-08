@@ -2,29 +2,25 @@ import type {Display, TAnyType} from '../json-type';
 import wrap from 'word-wrap';
 import {normalizeFiledKey} from './util';
 
-export interface ToTypeScriptTextContext {
-  tab: string;
-}
-
 const TAB = '  ';
 
-const formatComment = (node: Display, ____: string): string => {
+const formatComment = (node: Display, __: string): string => {
   if (node.title || node.description) {
     if (!node.description) {
-      return `${____}/** ${node.title} */\n`;
+      return `${__}/** ${node.title} */\n`;
     }
     let res = '';
-    res += `${____}/**\n`;
-    if (node.title) res += `${____} * # ${node.title}\n`;
-    if (node.title && node.description) res += `${____} *\n`;
+    res += `${__}/**\n`;
+    if (node.title) res += `${__} * # ${node.title}\n`;
+    if (node.title && node.description) res += `${__} *\n`;
     if (node.description) {
       const txt = wrap(node.description);
       const lines = txt.split('\n');
       for (const line of lines) {
-        res += `${____} * ${line.trim()}\n`;
+        res += `${__} * ${line.trim()}\n`;
       }
     }
-    res += `${____} */\n`;
+    res += `${__} */\n`;
     return res;
   }
   return '';

@@ -65,7 +65,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
     }
     module = innerModule;
   }
-  const exists = module.statements.find((s) => s.name === ref);
+  const exists = module.statements.find((s) => s.name === identifier.name);
   if (exists) return;
   const type = ctx.ref(ref);
   switch (type.__t) {
@@ -89,7 +89,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
     default: {
       const node: TsTypeAliasDeclaration = {
         node: 'TypeAliasDeclaration',
-        name: ref,
+        name: identifier.name,
         type: toTsType(type, ctx) as TsType,
       };
       module.statements.push(node);

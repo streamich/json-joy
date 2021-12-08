@@ -125,4 +125,4 @@ export type TsType =
   | TsTypeReference;
 
 /** Any possible TypeScript AST node. */
-export type TsNode = TsDeclaration | TsType;
+export type TsNode = TsDeclaration | TsPropertySignature | TsType;
