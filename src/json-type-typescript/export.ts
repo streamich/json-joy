@@ -18,6 +18,7 @@ import {
   TsUnknownKeyword,
   TsTypeLiteral,
   TsArrayType,
+  TsNullKeyword,
 } from './types';
 
 export interface ToTypeScriptAstContext {
@@ -83,6 +84,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
           name: field.key,
           type: toTsType(field.type as TAnyType, ctx),
         };
+        if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
       return;
@@ -108,15 +110,25 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
 const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
   switch (type.__t) {
     case 'str': {
-      const node: TsStringKeyword = {node: 'StringKeyword'};
+      const node: TsStringLiteral | TsStringKeyword = typeof type.const === 'string'
+        ? {node: 'StringLiteral', text: type.const}
+        : {node: 'StringKeyword'};
       return node;
     }
     case 'num': {
-      const node: TsNumberKeyword = {node: 'NumberKeyword'};
+      const node: TsNumericLiteral | TsNumberKeyword = typeof type.const === 'number'
+        ? {node: 'NumericLiteral', text: JSON.stringify(type.const)}
+        : {node: 'NumberKeyword'};
       return node;
     }
     case 'bool': {
-      const node: TsBooleanKeyword = {node: 'BooleanKeyword'};
+      const node: TsTrueKeyword | TsFalseKeyword | TsBooleanKeyword = typeof type.const === 'boolean'
+        ? (type.const ? {node: 'TrueKeyword'} : {node: 'FalseKeyword'})
+        : {node: 'BooleanKeyword'};
+      return node;
+    }
+    case 'nil': {
+      const node: TsNullKeyword = {node: 'NullKeyword'};
       return node;
     }
     case 'arr': {
@@ -137,6 +149,7 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
           name: field.key,
           type: toTsType(field.type as TAnyType, ctx),
         };
+        if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
       return node;
@@ -145,6 +158,13 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
       const node: TsUnionType = {
         node: 'UnionType',
         types: type.values.map(toTsLiteral),
+      };
+      return node;
+    }
+    case 'or': {
+      const node: TsUnionType = {
+        node: 'UnionType',
+        types: type.types.map(t => toTsType(t as TAnyType, ctx)),
       };
       return node;
     }

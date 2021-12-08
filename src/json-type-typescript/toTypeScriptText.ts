@@ -1,6 +1,6 @@
 import type {Display, TAnyType} from '../json-type';
 import {wordWrap} from '../util/wordWrap';
-import {normalizeFiledKey} from './util';
+import {normalizeKey} from './util';
 
 const TAB = '  ';
 
@@ -55,7 +55,7 @@ export const toTypeScriptText = (type: TAnyType, tab: string): string => {
       let res = '{\n';
       for (let i = 0; i < type.fields.length; i++) {
         const field = type.fields[i];
-        const key = normalizeFiledKey(field.key) + (field.isOptional ? '?' : '');
+        const key = normalizeKey(field.key) + (field.isOptional ? '?' : '');
         if (i) if (field.key || field.description) res += `\n`;
         res += formatComment(field, ____);
         res += `${____}${key}: ${toTypeScriptText(field.type as TAnyType, ____)};\n`;

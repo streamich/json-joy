@@ -21,6 +21,8 @@ export const types = {
 
   User: t.Object(
     [
+      t.Field('type', t.String({const: 'User'}), {isOptional: true}),
+      t.Field('op', t.Number({const: -1}), {isOptional: true}),
       t.Field('gid', t.Ref('ID')),
       t.Field('id', t.num, {
         title: 'User ID',
@@ -35,6 +37,15 @@ export const types = {
       t.Field('timeCreated', t.Number({format: 'u'})),
       t.Field('timeUpdated', t.Number({format: 'u'})),
       t.Field('scores', t.Array(t.num)),
+      t.Field('isActive', t.bool),
+      t.Field('null', t.nil),
+      t.Field('unknown', t.any),
+      t.Field('isUser', t.Boolean({const: true})),
+      t.Field('isPost', t.Boolean({const: false})),
+      t.Field('tags', t.Array(t.Or(t.str, t.num))),
+      t.Field('meta', t.Object([], {
+        unknownFields: true,
+      })),
     ],
     {
       title: 'A user object',
