@@ -1,5 +1,5 @@
 import {TAnyType} from "../json-type";
-import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference} from "./types";
+import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration} from "./types";
 
 export interface ToTypeScriptAstContext {
   /**
@@ -13,7 +13,38 @@ export interface ToTypeScriptAstContext {
   statements: TsDeclaration[];
 }
 
+interface Identifier {
+  name: string;
+  namespaces: string[];
+}
+
+const parseIdentifier = (id: string): Identifier => {
+  const parts = id.split('.');
+  return {
+    name: parts.pop()!,
+    namespaces: parts,
+  };
+};
+
 export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): void => {
+  const identifier = parseIdentifier(ref);
+  let module: TsModuleDeclaration = {
+    node: 'ModuleDeclaration',
+    name: '',
+    statements: ctx.statements,
+  };
+  for (const namespace of identifier.namespaces) {
+    let innerModule: TsModuleDeclaration = ctx.statements.find(s => s.node === 'ModuleDeclaration' && s.name === namespace) as TsModuleDeclaration;
+    if (!innerModule) {
+      innerModule = {
+        node: 'ModuleDeclaration',
+        name: namespace,
+        statements: [],
+      };
+      module.statements.push(innerModule);
+    }
+    module = innerModule;
+  }
   const type = ctx.ref(ref);
   switch(type.__t) {
     case 'nil':
@@ -25,16 +56,16 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         name: ref,
         type: toTypeScriptAst(type, ctx) as TsType,
       };
-      ctx.statements.push(node);
+      module.statements.push(node);
       return;
     }
     case 'obj': {
       const node: TsInterfaceDeclaration = {
         node: 'InterfaceDeclaration',
-        name: ref,
+        name: identifier.name,
         members: [],
       };
-      ctx.statements.push(node);
+      module.statements.push(node);
       for (const field of type.fields) {
         const member: TsPropertySignature = {
           node: 'PropertySignature',

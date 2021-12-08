@@ -70,4 +70,9 @@ export const types = {
       description: 'The response to a create user request.',
     },
   ),
+
+  'pubsub.channel.Channel': t.Object([
+    t.Field('id', t.str),
+    t.Field('payload', t.Enum(['json', 'text', 'blob'])),
+  ]),
 };
