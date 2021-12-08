@@ -1,8 +1,8 @@
-import {TsNode} from "./types";
+import {TsNode} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
 export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
-  if (Array.isArray(node)) return node.map(s => toText(s, __)).join('\n');
+  if (Array.isArray(node)) return node.map((s) => toText(s, __)).join('\n');
 
   const ____ = __ + TAB;
 
@@ -73,7 +73,7 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       return 'false';
     }
     case 'UnionType': {
-      return node.types.map(t => toText(t, ____)).join(' | ');
+      return node.types.map((t) => toText(t, ____)).join(' | ');
     }
     case 'TypeReference': {
       return node.typeName;

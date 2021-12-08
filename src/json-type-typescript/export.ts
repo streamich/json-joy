@@ -93,10 +93,11 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
-      if (type.unknownFields) node.members.push({
-        node: 'IndexSignature',
-        type: {node: 'UnknownKeyword'},
-      });
+      if (type.unknownFields)
+        node.members.push({
+          node: 'IndexSignature',
+          type: {node: 'UnknownKeyword'},
+        });
       return;
     }
     default: {
@@ -114,21 +115,24 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
 const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
   switch (type.__t) {
     case 'str': {
-      const node: TsStringLiteral | TsStringKeyword = typeof type.const === 'string'
-        ? {node: 'StringLiteral', text: type.const}
-        : {node: 'StringKeyword'};
+      const node: TsStringLiteral | TsStringKeyword =
+        typeof type.const === 'string' ? {node: 'StringLiteral', text: type.const} : {node: 'StringKeyword'};
       return node;
     }
     case 'num': {
-      const node: TsNumericLiteral | TsNumberKeyword = typeof type.const === 'number'
-        ? {node: 'NumericLiteral', text: JSON.stringify(type.const)}
-        : {node: 'NumberKeyword'};
+      const node: TsNumericLiteral | TsNumberKeyword =
+        typeof type.const === 'number'
+          ? {node: 'NumericLiteral', text: JSON.stringify(type.const)}
+          : {node: 'NumberKeyword'};
       return node;
     }
     case 'bool': {
-      const node: TsTrueKeyword | TsFalseKeyword | TsBooleanKeyword = typeof type.const === 'boolean'
-        ? (type.const ? {node: 'TrueKeyword'} : {node: 'FalseKeyword'})
-        : {node: 'BooleanKeyword'};
+      const node: TsTrueKeyword | TsFalseKeyword | TsBooleanKeyword =
+        typeof type.const === 'boolean'
+          ? type.const
+            ? {node: 'TrueKeyword'}
+            : {node: 'FalseKeyword'}
+          : {node: 'BooleanKeyword'};
       return node;
     }
     case 'nil': {
@@ -156,10 +160,11 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
         if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
-      if (type.unknownFields) node.members.push({
-        node: 'IndexSignature',
-        type: {node: 'UnknownKeyword'},
-      });
+      if (type.unknownFields)
+        node.members.push({
+          node: 'IndexSignature',
+          type: {node: 'UnknownKeyword'},
+        });
       return node;
     }
     case 'enum': {
@@ -172,7 +177,7 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
     case 'or': {
       const node: TsUnionType = {
         node: 'UnionType',
-        types: type.types.map(t => toTsType(t as TAnyType, ctx)),
+        types: type.types.map((t) => toTsType(t as TAnyType, ctx)),
       };
       return node;
     }

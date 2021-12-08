@@ -43,9 +43,12 @@ export const types = {
       t.Field('isUser', t.Boolean({const: true})),
       t.Field('isPost', t.Boolean({const: false})),
       t.Field('tags', t.Array(t.Or(t.str, t.num))),
-      t.Field('meta', t.Object([], {
-        unknownFields: true,
-      })),
+      t.Field(
+        'meta',
+        t.Object([], {
+          unknownFields: true,
+        }),
+      ),
     ],
     {
       title: 'A user object',
@@ -98,8 +101,5 @@ export const types = {
     t.Field('project', t.Ref('util.Project')),
   ]),
 
-  'util.Project': t.Object([
-    t.Field('id', t.String({})),
-    t.Field('name', t.str),
-  ]),
+  'util.Project': t.Object([t.Field('id', t.String({})), t.Field('name', t.str)]),
 };

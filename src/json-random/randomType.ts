@@ -1,6 +1,6 @@
-import {RandomJson} from ".";
-import {deepClone} from "../json-patch/util";
-import {TAnyType} from "../json-type";
+import {RandomJson} from '.';
+import {deepClone} from '../json-patch/util';
+import {TAnyType} from '../json-type';
 
 export interface RandomTypeOptions {
   ref?: (ref: string) => TAnyType;
@@ -8,7 +8,8 @@ export interface RandomTypeOptions {
 
 export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown => {
   switch (type.__t) {
-    case 'nil': return null;
+    case 'nil':
+      return null;
     case 'bool': {
       if (type.const) return type.const;
       return RandomJson.genBoolean();
@@ -30,7 +31,9 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
       return arr;
     }
     case 'obj': {
-      const obj: {[key: string]: unknown} = type.unknownFields ? RandomJson.genObject() as {[key: string]: unknown} : {};
+      const obj: {[key: string]: unknown} = type.unknownFields
+        ? (RandomJson.genObject() as {[key: string]: unknown})
+        : {};
       for (const field of type.fields) {
         if (field.isOptional) if (Math.random() > 0.5) continue;
         obj[field.key] = randomType(field.type as TAnyType, options);
@@ -52,7 +55,9 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
       return RandomJson.generate({nodeCount: 5});
     }
     case 'bin': {
-      const octets = RandomJson.genString().split('').map(c => c.charCodeAt(0));
+      const octets = RandomJson.genString()
+        .split('')
+        .map((c) => c.charCodeAt(0));
       return new Uint8Array(octets);
     }
     case 'or': {

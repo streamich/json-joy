@@ -4,7 +4,7 @@ export interface WrapOptions {
   newline?: string;
 }
 
-const lineMap = (line: string) => line.slice(-1) === '\n' ? line.slice(0, line.length - 1) : line;
+const lineMap = (line: string) => (line.slice(-1) === '\n' ? line.slice(0, line.length - 1) : line);
 
 export const wordWrap = (str: string, options: WrapOptions = {}): string => {
   if (!str) return '';

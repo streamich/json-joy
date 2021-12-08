@@ -16,6 +16,6 @@ test('generates random JSON', () => {
     t.Field('scores', t.Array(t.num), {isOptional: true}),
   ]);
   const json = randomType(type, {});
-  expect(json).toStrictEqual({ id: 'ᴛ', name: '58<', tags: [ 'JNQUY\\`', 'jnquy|"%),04', '>BEIL' ] });
+  expect(json).toStrictEqual({id: 'ᴛ', name: '58<', tags: ['JNQUY\\`', 'jnquy|"%),04', '>BEIL']});
   Math.random = mathRandom;
 });
