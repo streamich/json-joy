@@ -24,9 +24,10 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
     }
     case 'PropertySignature': {
       const name = normalizeKey(node.name);
-      let out: string = '';
-      out += `${__}${name}${node.optional ? '?' : ''}: ${toText(node.type, __)};`;
-      return out;
+      return `${__}${name}${node.optional ? '?' : ''}: ${toText(node.type, __)};`;
+    }
+    case 'IndexSignature': {
+      return `${__}[key: string]: ${toText(node.type, __)};`;
     }
     case 'TypeAliasDeclaration': {
       let out: string = '';

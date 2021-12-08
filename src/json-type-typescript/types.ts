@@ -10,7 +10,7 @@ export interface TsModuleDeclaration {
 export interface TsInterfaceDeclaration {
   node: 'InterfaceDeclaration';
   name: string;
-  members: TsPropertySignature[];
+  members: Array<TsPropertySignature | TsIndexSignature>;
   comment?: string;
 }
 
@@ -19,6 +19,12 @@ export interface TsPropertySignature {
   node: 'PropertySignature';
   name: string;
   optional?: boolean;
+  type: TsType;
+}
+
+/** An index interface signature, e.g. "[key: string]: unknown". */
+export interface TsIndexSignature {
+  node: 'IndexSignature';
   type: TsType;
 }
 
@@ -71,7 +77,7 @@ export interface TsUnknownKeyword {
 /** Inline interface type. */
 export interface TsTypeLiteral {
   node: 'TypeLiteral';
-  members: TsPropertySignature[];
+  members: Array<TsPropertySignature | TsIndexSignature>;
 }
 
 /** Exact string as type. */
@@ -126,4 +132,8 @@ export type TsType =
   | TsTypeReference;
 
 /** Any possible TypeScript AST node. */
-export type TsNode = TsDeclaration | TsPropertySignature | TsType;
+export type TsNode =
+  | TsDeclaration
+  | TsType
+  | TsPropertySignature
+  | TsIndexSignature;

@@ -87,6 +87,10 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
+      if (type.unknownFields) node.members.push({
+        node: 'IndexSignature',
+        type: {node: 'UnknownKeyword'},
+      });
       return;
     }
     default: {
@@ -152,6 +156,10 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
         if (field.isOptional) member.optional = true;
         node.members.push(member);
       }
+      if (type.unknownFields) node.members.push({
+        node: 'IndexSignature',
+        type: {node: 'UnknownKeyword'},
+      });
       return node;
     }
     case 'enum': {
