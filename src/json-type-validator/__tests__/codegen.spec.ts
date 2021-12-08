@@ -153,6 +153,145 @@ describe('"num" type', () => {
     exec(type, 123.4, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
     exec(type, -1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
   });
+
+  test('validates i8', () => {
+    const type = t.Number({format: 'i8'})
+    exec(type, 123, null);
+    exec(type, 0, null);
+    exec(type, -12, null);
+    exec(type, 127, null);
+    exec(type, -127, null);
+    exec(type, -128, null);
+    exec(type, 128, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, -129, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+
+  test('validates u8', () => {
+    const type = t.Number({format: 'u8'})
+    exec(type, 123, null);
+    exec(type, 0, null);
+    exec(type, -12, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 127, null);
+    exec(type, 222, null);
+    exec(type, 255, null);
+    exec(type, 256, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+  });
+
+  test('validates i16', () => {
+    const type = t.Number({format: 'i16'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, -0x33, null);
+    exec(type, -0x3333, null);
+    exec(type, 0, null);
+    exec(type, -44, null);
+    exec(type, 0x7FFF - 1, null);
+    exec(type, 0x7FFF, null);
+    exec(type, 0x7FFF + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, -0x8000 + 1, null);
+    exec(type, -0x8000, null);
+    exec(type, -0x8000 - 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+
+  test('validates u16', () => {
+    const type = t.Number({format: 'u16'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0, null);
+    exec(type, -44, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0x7FFF - 1, null);
+    exec(type, 0x7FFF, null);
+    exec(type, 0xFFFF - 1, null);
+    exec(type, 0xFFFF, null);
+    exec(type, 0xFFFF + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x8000 + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x8000, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+  });
+
+  test('validates i32', () => {
+    const type = t.Number({format: 'i32'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, 0x333333, null);
+    exec(type, 0x33333333, null);
+    exec(type, -0x33, null);
+    exec(type, -0x3333, null);
+    exec(type, -0x333333, null);
+    exec(type, -0x33333333, null);
+    exec(type, 0, null);
+    exec(type, -44, null);
+    exec(type, 0x7FFFFFFF - 1, null);
+    exec(type, 0x7FFFFFFF, null);
+    exec(type, 0x7FFFFFFF + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, -0x80000000 + 1, null);
+    exec(type, -0x80000000, null);
+    exec(type, -0x80000000 - 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+
+  test('validates u32', () => {
+    const type = t.Number({format: 'u32'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0, null);
+    exec(type, -44, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0x7FFF - 1, null);
+    exec(type, 0x7FFF, null);
+    exec(type, 0xFFFF - 1, null);
+    exec(type, 0xFFFF, null);
+    exec(type, 0xFFFFFFFF, null);
+    exec(type, 0xFFFFFFFF + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x8000 + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x8000, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+  });
+
+  test('validates i64', () => {
+    const type = t.Number({format: 'i64'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, 0x333333, null);
+    exec(type, 0x33333333, null);
+    exec(type, 0x3333333333, null);
+    exec(type, 0x333333333333, null);
+    exec(type, -0x33, null);
+    exec(type, -0x3333, null);
+    exec(type, -0x333333, null);
+    exec(type, -0x33333333, null);
+    exec(type, -0x3333333333, null);
+    exec(type, -0x333333333333, null);
+    exec(type, 0, null);
+    exec(type, -44.123, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, 1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
+
+  test('validates u64', () => {
+    const type = t.Number({format: 'u64'})
+    exec(type, 123, null);
+    exec(type, 0x33, null);
+    exec(type, 0x3333, null);
+    exec(type, 0x333333, null);
+    exec(type, 0x33333333, null);
+    exec(type, 0x3333333333, null);
+    exec(type, 0x333333333333, null);
+    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x33333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x3333333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x333333333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0, null);
+    exec(type, -44.123, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, 1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+  });
 });
 
 describe('"ref" type', () => {

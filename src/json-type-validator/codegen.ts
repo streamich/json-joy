@@ -303,17 +303,45 @@ export class JsonTypeValidatorCodegen {
       const err = this.err(JsonTypeValidatorError.NUM_CONST, path);
       this.js(/* js */ `if(${r} !== ${JSON.stringify(num.const)}) return ${err};`);
     } else {
-      const errNum = this.err(JsonTypeValidatorError.NUM, path);
-      this.js(/* js */ `if(typeof ${r} !== "number") return ${errNum};`);
-      if (num.format) {
-        if (INTS.indexOf(num.format) !== -1) {
-          const errInt = this.err(JsonTypeValidatorError.INT, path);
-          this.js(/* js */ `if(!Number.isInteger(${r})) return ${errInt};`);
-        }
+      if (num.format && INTS.indexOf(num.format) !== -1) {
+        const errInt = this.err(JsonTypeValidatorError.INT, path);
+        this.js(/* js */ `if(!Number.isInteger(${r})) return ${errInt};`);
         if (UINTS.indexOf(num.format) !== -1) {
           const errUint = this.err(JsonTypeValidatorError.UINT, path);
           this.js(/* js */ `if(${r} < 0) return ${errUint};`);
+          switch (num.format) {
+            case 'u8': {
+              this.js(/* js */ `if(${r} > 0xFF) return ${errUint};`);
+              break;
+            }
+            case 'u16': {
+              this.js(/* js */ `if(${r} > 0xFFFF) return ${errUint};`);
+              break;
+            }
+            case 'u32': {
+              this.js(/* js */ `if(${r} > 0xFFFFFFFF) return ${errUint};`);
+              break;
+            }
+          }
+        } else {
+          switch (num.format) {
+            case 'i8': {
+              this.js(/* js */ `if(${r} > 0x7F || ${r} < -0x80) return ${errInt};`);
+              break;
+            }
+            case 'i16': {
+              this.js(/* js */ `if(${r} > 0x7FFF || ${r} < -0x8000) return ${errInt};`);
+              break;
+            }
+            case 'i32': {
+              this.js(/* js */ `if(${r} > 0x7FFFFFFF || ${r} < -0x80000000) return ${errInt};`);
+              break;
+            }
+          }
         }
+      } else {
+        const errNum = this.err(JsonTypeValidatorError.NUM, path);
+        this.js(/* js */ `if(typeof ${r} !== "number") return ${errNum};`);
       }
     }
   }
