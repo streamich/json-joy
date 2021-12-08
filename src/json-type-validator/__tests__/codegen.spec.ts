@@ -267,7 +267,7 @@ describe('"enum" type', () => {
 
   test('"enum" can be part of an object', () => {
     const type = t.Object([
-      t.Field('op', t.Enum('OperationType', ['add', 'replace', 'test'])),
+      t.Field('op', t.Enum(['add', 'replace', 'test'])),
       t.Field('path', t.str),
       t.Field('value', t.any),
     ]);
