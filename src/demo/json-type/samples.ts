@@ -73,6 +73,13 @@ export const types = {
 
   'pubsub.channel.Channel': t.Object([
     t.Field('id', t.str),
-    t.Field('payload', t.Enum(['json', 'text', 'blob'])),
+    t.Field('payload', t.Ref('pubsub.channel.PayloadType')),
+    t.Field('meta', t.Object([
+      t.Field('description', t.str),
+    ])),
   ]),
+
+  'pubsub.channel.PayloadType': t.Enum(['json', 'text', 'blob'], {
+    description: 'The type of payload that is sent to the channel.',
+  }),
 };

@@ -1,5 +1,5 @@
 import {TAnyType} from "../json-type";
-import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration} from "./types";
+import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration, TsUnionType, TsStringLiteral, TsNumericLiteral, TsFalseKeyword, TsTrueKeyword, TsUnknownKeyword} from "./types";
 
 export interface ToTypeScriptAstContext {
   /**
@@ -34,7 +34,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
     statements: ctx.statements,
   };
   for (const namespace of identifier.namespaces) {
-    let innerModule: TsModuleDeclaration = ctx.statements.find(s => s.node === 'ModuleDeclaration' && s.name === namespace) as TsModuleDeclaration;
+    let innerModule: TsModuleDeclaration = module.statements.find(s => s.node === 'ModuleDeclaration' && s.name === namespace) as TsModuleDeclaration;
     if (!innerModule) {
       innerModule = {
         node: 'ModuleDeclaration',
@@ -45,20 +45,9 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
     }
     module = innerModule;
   }
+  console.log('module', module);
   const type = ctx.ref(ref);
   switch(type.__t) {
-    case 'nil':
-    case 'bool':
-    case 'num':
-    case 'str': {
-      const node: TsTypeAliasDeclaration = {
-        node: 'TypeAliasDeclaration',
-        name: ref,
-        type: toTypeScriptAst(type, ctx) as TsType,
-      };
-      module.statements.push(node);
-      return;
-    }
     case 'obj': {
       const node: TsInterfaceDeclaration = {
         node: 'InterfaceDeclaration',
@@ -76,12 +65,21 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
       }
       return;
     }
+    default: {
+      const node: TsTypeAliasDeclaration = {
+        node: 'TypeAliasDeclaration',
+        name: ref,
+        type: toTypeScriptAst(type, ctx) as TsType,
+      };
+      module.statements.push(node);
+      return;
+    }
   }
 };
 
 /**
  * Converts JSON Type to TypeScript AST.
- * 
+ *
  * This function is idempotent, if the output is already available
  * in the resulting AST, it will not generate it again.
  */
@@ -99,6 +97,13 @@ export const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): Ts
       const node: TsBooleanKeyword = {node: 'BooleanKeyword'};
       return node;
     }
+    case 'enum': {
+      const node: TsUnionType = {
+        node: 'UnionType',
+        types: type.values.map(val => toTypeScriptLiteral(val, ctx))
+      };
+      return node;
+    }
     case 'ref': {
       const node: TsTypeReference = {
         node: 'TypeReference',
@@ -108,7 +113,28 @@ export const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): Ts
       return node;
     }
     default: {
-      const node: TsAnyKeyword = {node: 'AnyKeyword'};
+      const node: TsUnknownKeyword = {node: 'UnknownKeyword'};
+      return node;
+    }
+  }
+};
+
+export const toTypeScriptLiteral = (value: string | number | boolean | null | unknown, ctx: ToTypeScriptAstContext): TsType => {
+  switch(typeof value) {
+    case 'string': {
+      const node: TsStringLiteral = {node: 'StringLiteral', text: value};
+      return node;
+    }
+    case 'number': {
+      const node: TsNumericLiteral = {node: 'NumericLiteral', text: value.toString()};
+      return node;
+    }
+    case 'boolean': {
+      const node: TsTrueKeyword | TsFalseKeyword = {node: value ? 'TrueKeyword' : 'FalseKeyword'};
+      return node;
+    }
+    default: {
+      const node: TsUnknownKeyword = {node: 'UnknownKeyword'};
       return node;
     }
   }
