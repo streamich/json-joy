@@ -1,5 +1,5 @@
 import {TAnyType} from "../json-type";
-import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsAnyKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration, TsUnionType, TsStringLiteral, TsNumericLiteral, TsFalseKeyword, TsTrueKeyword, TsUnknownKeyword, TsTypeLiteral} from "./types";
+import {TsDeclaration, TsStringKeyword, TsNumberKeyword, TsBooleanKeyword, TsTypeAliasDeclaration, TsType, TsInterfaceDeclaration, TsPropertySignature, TsTypeReference, TsModuleDeclaration, TsUnionType, TsStringLiteral, TsNumericLiteral, TsFalseKeyword, TsTrueKeyword, TsUnknownKeyword, TsTypeLiteral} from "./types";
 
 export interface ToTypeScriptAstContext {
   /**
@@ -115,7 +115,7 @@ const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType =>
     case 'enum': {
       const node: TsUnionType = {
         node: 'UnionType',
-        types: type.values.map(val => toTypeScriptLiteral(val, ctx))
+        types: type.values.map(toTypeScriptLiteral)
       };
       return node;
     }
@@ -134,7 +134,7 @@ const toTypeScriptAst = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType =>
   }
 };
 
-const toTypeScriptLiteral = (value: string | number | boolean | null | unknown, ctx: ToTypeScriptAstContext): TsType => {
+const toTypeScriptLiteral = (value: string | number | boolean | null | unknown): TsType => {
   switch(typeof value) {
     case 'string': {
       const node: TsStringLiteral = {node: 'StringLiteral', text: value};
