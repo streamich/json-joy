@@ -18,8 +18,9 @@ export interface TsInterfaceDeclaration {
 export interface TsPropertySignature {
   node: 'PropertySignature';
   name: string;
-  optional?: boolean;
   type: TsType;
+  optional?: boolean;
+  comment?: string;
 }
 
 /** An index interface signature, e.g. "[key: string]: unknown". */
@@ -33,6 +34,7 @@ export interface TsTypeAliasDeclaration {
   node: 'TypeAliasDeclaration';
   name: string;
   type: TsType;
+  comment?: string;
 }
 
 /** All possible declarations that can be statements of a module. */
