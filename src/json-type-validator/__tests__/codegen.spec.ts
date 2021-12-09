@@ -123,6 +123,61 @@ test('can disable extra property check', () => {
   exec(type, {foo: 123, zup: '1', bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
 });
 
+
+describe('"str" type', () => {
+  test('validates a basic string', () => {
+    const type = t.str;
+    exec(type, '', null);
+    exec(type, 'asdf', null);
+    exec(type, 123, {code: 'STR', errno: JsonTypeValidatorError.STR, message: 'Not a string.', path: []});
+    exec(type, null, {code: 'STR', errno: JsonTypeValidatorError.STR, message: 'Not a string.', path: []});
+  });
+
+  test('validates minLength', () => {
+    const type = t.String({minLength: 3});
+    exec(type, 'asdf', null);
+    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, '12', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+  });
+
+  test('validates maxLength', () => {
+    const type = t.String({maxLength: 5});
+    exec(type, '', null);
+    exec(type, 'asdf', null);
+    exec(type, 'asdfd', null);
+    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+  });
+
+  test('validates minLength and maxLength', () => {
+    const type = t.String({minLength: 3, maxLength: 5});
+    exec(type, 'aaa', null);
+    exec(type, 'bbbb', null);
+    exec(type, 'vvvvv', null);
+    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+  });
+
+  test('validates minLength and maxLength of equal size', () => {
+    const type = t.String({minLength: 4, maxLength: 4});
+    exec(type, 'aaa', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'bbbb', null);
+    exec(type, 'vvvvv', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+  });
+
+  test('throws on invalid length values', () => {
+    expect(() => createBoolValidator(t.String({minLength: 4, maxLength: 3}))).toThrow();
+    expect(() => createBoolValidator(t.String({maxLength: 3.1}))).toThrow();
+    expect(() => createBoolValidator(t.String({maxLength: -1}))).toThrow();
+    expect(() => createBoolValidator(t.String({minLength: -1}))).toThrow();
+    expect(() => createBoolValidator(t.String({minLength: 2.2}))).toThrow();
+  });
+});
+
 describe('"num" type', () => {
   test('validates general number type', () => {
     const type = t.num;

@@ -138,6 +138,12 @@ export interface TString extends TType, Validatable {
    * See: https://www.json.org/json-en.html
    */
   noJsonEscape?: boolean;
+
+  /** Minimum number of characters. */
+  minLength?: number;
+
+  /** Maximum number of characters. */
+  maxLength?: number;
 }
 
 /**

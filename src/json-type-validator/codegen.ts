@@ -49,6 +49,7 @@ export enum JsonTypeValidatorError {
   VALIDATION,
   INT,
   UINT,
+  STR_LEN,
 }
 
 /**
@@ -73,6 +74,7 @@ export const JsonTypeValidatorErrorMessage = {
   [JsonTypeValidatorError.VALIDATION]: 'Custom validator failed.',
   [JsonTypeValidatorError.INT]: 'Not an integer.',
   [JsonTypeValidatorError.UINT]: 'Not an unsigned integer.',
+  [JsonTypeValidatorError.STR_LEN]: 'Invalid string length.',
 };
 
 /**
@@ -291,6 +293,29 @@ export class JsonTypeValidatorCodegen {
     } else {
       const error = this.err(JsonTypeValidatorError.STR, path);
       this.js(/* js */ `if(typeof ${r} !== "string") return ${error};`);
+      if (typeof str.minLength === 'number')
+        if (!Number.isInteger(str.minLength) || str.minLength < 0)
+        throw new Error(`Invalid minLength ${str.minLength} for string type.`);
+      if (typeof str.maxLength === 'number')
+        if (!Number.isInteger(str.maxLength) || str.maxLength < 0)
+          throw new Error(`Invalid maxLength ${str.maxLength} for string type.`);
+      if (typeof str.minLength === 'number' && typeof str.maxLength === 'number') {
+        if (str.minLength > str.maxLength)
+          throw new Error(`Invalid minLength ${str.minLength} and maxLength ${str.maxLength} for string type.`);
+      }
+      if (typeof str.minLength === 'number' && typeof str.maxLength === 'number' && (str.minLength === str.maxLength)) {
+        const strLenError = this.err(JsonTypeValidatorError.STR_LEN, path);
+        this.js(/* js */ `if(${r}.length !== ${str.minLength}) return ${strLenError};`);
+      } else {
+        if (typeof str.minLength === 'number') {
+          const strLenError = this.err(JsonTypeValidatorError.STR_LEN, path);
+          this.js(/* js */ `if(${r}.length < ${str.minLength}) return ${strLenError};`);
+        }
+        if (typeof str.maxLength === 'number') {
+          const strLenError = this.err(JsonTypeValidatorError.STR_LEN, path);
+          this.js(/* js */ `if(${r}.length > ${str.maxLength}) return ${strLenError};`);
+        }
+      }
     }
     if (str.validator) {
       this.emitValidations(path, str.validator instanceof Array ? str.validator : [str.validator], 'string', r);
