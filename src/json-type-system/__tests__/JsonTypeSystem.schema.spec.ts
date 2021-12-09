@@ -19,7 +19,7 @@ test('generates JSON schema with refs', () => {
       "description": "The response to a create user request.",
       "properties": Object {
         "user": Object {
-          "description": "Users are entities in the system that represent a human.",
+          "description": "Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.",
           "properties": Object {
             "email": Object {
               "type": "string",
@@ -136,7 +136,7 @@ test('generates JSON schema with refs resolved to $defs', () => {
           "type": "string",
         },
         "User": Object {
-          "description": "Users are entities in the system that represent a human.",
+          "description": "Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.",
           "properties": Object {
             "email": Object {
               "type": "string",
