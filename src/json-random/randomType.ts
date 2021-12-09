@@ -11,11 +11,11 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
     case 'nil':
       return null;
     case 'bool': {
-      if (type.const) return type.const;
+      if (typeof type.const === 'boolean') return type.const;
       return RandomJson.genBoolean();
     }
     case 'num': {
-      if (type.const) return type.const;
+      if (typeof type.const === 'number') return type.const;
       if (type.format) {
         const num = Math.random();
         switch(type.format) {
@@ -36,7 +36,7 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
       return RandomJson.genNumber();
     }
     case 'str': {
-      if (type.const) return type.const;
+      if (typeof type.const === 'string') return type.const;
       return RandomJson.genString();
     }
     case 'arr': {
