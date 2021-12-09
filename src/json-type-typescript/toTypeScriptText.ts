@@ -14,8 +14,7 @@ const formatComment = (node: Display, __: string): string => {
     if (node.title) res += `${__} * # ${node.title}\n`;
     if (node.title && node.description) res += `${__} *\n`;
     if (node.description) {
-      const txt = wordWrap(node.description);
-      const lines = txt.split('\n');
+      const lines = wordWrap(node.description);
       for (const line of lines) {
         res += `${__} * ${line.trim()}\n`;
       }

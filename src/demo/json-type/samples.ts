@@ -52,7 +52,7 @@ export const types = {
     ],
     {
       title: 'A user object',
-      description: 'Users are entities in the system that represent a human.',
+      description: 'Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.',
     },
   ),
 

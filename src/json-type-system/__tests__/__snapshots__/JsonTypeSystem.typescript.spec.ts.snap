@@ -10,6 +10,9 @@ Array [
     },
   },
   Object {
+    "comment": "# A user object
+
+Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.",
     "members": Array [
       Object {
         "name": "type",
@@ -194,6 +197,9 @@ Array [
     "node": "InterfaceDeclaration",
   },
   Object {
+    "comment": "# A response to a create user request
+
+The response to a create user request.",
     "members": Array [
       Object {
         "name": "user",
@@ -208,6 +214,9 @@ Array [
     "node": "InterfaceDeclaration",
   },
   Object {
+    "comment": "# A response to a create user request
+
+The response to a create user request.",
     "members": Array [
       Object {
         "name": "user",
@@ -352,6 +361,12 @@ Array [
 exports[`generates JSON schema for simple string type 2`] = `
 "export type ID = string;
 
+/**
+ * # A user object
+ * 
+ * Users are entities in the system that represent a human. When user is 
+ * created, automatically a User entity is assigned to that user.
+ */
 export interface User {
   \\"type\\"?: \\"User\\";
   op?: -1;
@@ -381,10 +396,20 @@ export interface CrateUserRequest {
   };
 }
 
+/**
+ * # A response to a create user request
+ * 
+ * The response to a create user request.
+ */
 export interface CreateUserResponse {
   user: User;
 }
 
+/**
+ * # A response to a create user request
+ * 
+ * The response to a create user request.
+ */
 export interface UpdateUserResponse {
   user: User;
   changes: number;

@@ -1,3 +1,4 @@
+import { wordWrap } from '../util/wordWrap';
 import {TsNode} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
@@ -15,8 +16,12 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       return out;
     }
     case 'InterfaceDeclaration': {
-      const {name, members} = node;
+      const {name, members, comment} = node;
       let out: string = '';
+      if (comment) {
+        const lines = wordWrap(comment, {width: 80 - 3 - __.length});
+        out += __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
+      }
       out += `${__}export interface ${name} {\n`;
       out += toText(members, ____);
       out += `\n${__}}\n`;

@@ -83,6 +83,13 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         name: identifier.name,
         members: [],
       };
+      if (type.title || type.description) {
+        let comment = '';
+        if (type.title) comment += '# ' + type.title;
+        if (type.title && type.description) comment += '\n\n';
+        if (type.description) comment += type.description;
+        node.comment = comment;
+      }
       module.statements.push(node);
       for (const field of type.fields) {
         const member: TsPropertySignature = {
