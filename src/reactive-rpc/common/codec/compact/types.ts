@@ -16,15 +16,15 @@ export type CompactResponseErrorMessage<Data = unknown> = [-1, Id, Data];
 export type CompactResponseDataMessage<Data = unknown> = [-2, Id, Data];
 export type CompactResponseUnsubscribeMessage = [-3, Id];
 
-export type CompactMessage =
-  | CompactNotificationMessage
-  | CompactRequestDataMessage
-  | CompactRequestCompleteMessage
-  | CompactRequestErrorMessage
+export type CompactMessage<Data = unknown> =
+  | CompactNotificationMessage<Data>
+  | CompactRequestDataMessage<Data>
+  | CompactRequestCompleteMessage<Data>
+  | CompactRequestErrorMessage<Data>
   | CompactRequestUnsubscribeMessage
-  | CompactResponseDataMessage
-  | CompactResponseCompleteMessage
-  | CompactResponseErrorMessage
+  | CompactResponseDataMessage<Data>
+  | CompactResponseCompleteMessage<Data>
+  | CompactResponseErrorMessage<Data>
   | CompactResponseUnsubscribeMessage;
 
 export type CompactMessageBatch = (CompactMessage | CompactMessageBatch)[];

@@ -1,0 +1,26 @@
+{
+  "maxMessageLength": 72,
+  "scopes": [
+    "",
+    "demo",
+    "json-brand",
+    "json-cli",
+    "json-crdt",
+    "json-crdt-patch",
+    "json-equal",
+    "json-expression",
+    "json-pack",
+    "json-patch",
+    "json-patch-ot",
+    "json-pointer",
+    "json-random",
+    "json-size",
+    "json-type",
+    "json-type-schema",
+    "json-type-serializer",
+    "json-type-system",
+    "json-type-validator",
+    "reactive-rpc",
+    "util"
+  ]
+}

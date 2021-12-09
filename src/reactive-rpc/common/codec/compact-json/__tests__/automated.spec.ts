@@ -10,7 +10,7 @@ describe('Encoder/Decoder', () => {
     // if (name !== 'notification1') continue;
     test(name, () => {
       const messages = decode([message]);
-      const encoded = encoder.encode(messages);
+      const encoded = encoder.encode(messages as any);
       const decoded = decoder.decode(encoded as any);
       expect(decoded).toEqual(messages[0]);
     });

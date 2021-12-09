@@ -7,11 +7,11 @@ import {JsonRpc2Server} from '../JsonRpc2Server';
 
 export const setup = (codec: JsonRpc2Codec = new JsonRpc2CodecJson(), strict: boolean = false) => {
   const onNotification = jest.fn();
-  const caller = new RpcApiCaller({
+  const caller = new RpcApiCaller<typeof sampleApi, any>({
     api: sampleApi,
     maxActiveCalls: 3,
   });
-  const server = new JsonRpc2Server<typeof sampleApi, unknown>({
+  const server = new JsonRpc2Server<typeof sampleApi, any>({
     caller,
     codec,
     onNotification,

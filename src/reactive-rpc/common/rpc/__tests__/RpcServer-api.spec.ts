@@ -17,7 +17,7 @@ const setup = (params: Partial<RpcServerFromApiParams> = {}) => {
     }
   });
   const ctx = {ip: '127.0.0.1'};
-  const server = new RpcServer<any, any>({
+  const server = new RpcServer<any>({
     send,
     onNotification: notify,
     bufferTime: 0,

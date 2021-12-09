@@ -43,8 +43,7 @@ const groups: ScenarioGroup[] = [
         },
       },
       {
-        name:
-          "Second user's operation should be discarded if it tries to modify child property of the first operation.",
+        name: "Second user's operation should be discarded if it tries to modify child property of the first operation.",
         docStart: {
           foo: {
             bar: 1,

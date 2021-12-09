@@ -5,7 +5,7 @@ import {of} from '../../util/of';
 import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {
-  const server = new RpcServer<any, any>({
+  const server = new RpcServer<any>({
     send: (messages: any) => {},
     onNotification: () => {},
     caller: new RpcApiCaller<any, any>({

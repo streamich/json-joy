@@ -1,5 +1,6 @@
+import {hasOwnProperty} from '../../util/hasOwnProperty';
 import {Reference} from '../find';
-import {isInteger, hasOwnProperty, unescapeComponent} from '../util';
+import {isInteger, unescapeComponent} from '../util';
 
 const {isArray} = Array;
 

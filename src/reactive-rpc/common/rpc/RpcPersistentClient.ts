@@ -17,7 +17,7 @@ export interface RpcPersistentClientParams<Ctx = unknown, T = unknown> {
   channel: PersistentChannelParams;
   codec: Codec<string | Uint8Array>;
   client?: Omit<RpcClientParams<T>, 'send'>;
-  server?: Omit<RpcServerParams<Ctx, T>, 'send'>;
+  server?: Omit<RpcServerParams<Ctx>, 'send'>;
 
   /**
    * Number of milliseconds to periodically send keep-alive ".ping" notification
@@ -46,7 +46,7 @@ export class RpcPersistentClient<Ctx = unknown, T = unknown> {
             this.channel.send$(encoded).subscribe();
           },
         }),
-        server: new RpcServer<Ctx, T>({
+        server: new RpcServer<Ctx>({
           ...(params.server || {
             caller: new RpcApiCaller({
               api: {},

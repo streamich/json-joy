@@ -3,6 +3,10 @@
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
 
+- __`json-brand`__ &mdash; TypeScript *branded type* for JSON.
+  - [__Documentation__ 🚀](./src/json-brand/README.md)
+- __`json-expression`__ &mdash; implementation of __JSON Expression__ language.
+  - [__Documentation__ 🚀](./src/json-expression/README.md)
 - __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
   - [__Documentation__ 🚀](./src/json-pack/README.md)
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pack.html)
@@ -46,11 +50,19 @@ This package consists of multiple self-contained libraries:
     - [`json-pack-test` CLI](./src/json-cli/docs/json-pack-test.md)
     - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
     - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
+- __`json-random`__ &mdash; generate random JSON value.
+  - [__Documentation__ 🚀](./src/json-random/README.md)
 - __`json-size`__ &mdash; calculate the size of serialized JSON object.
   - [__Documentation__ 🚀](./src/json-size/README.md)
-- __`json-random`__ &mdash; generate random JSON value.
-  - __Documentation__ 🚀
-  - __Reference__ 🤖
+- __`json-type`__ &mdash; JSON schema builder.
+  - [__Documentation__ 🚀](./src/json-type/README.md)
+- __`json-type-serializer`__ &mdash; fast `json-type` JSON and MessagePack serializer code generators.
+  - [__Documentation__ 🚀](./src/json-type-serializer/README.md)
+- __`json-type-validator`__ &mdash; fast `json-type` schema validator.
+  - [__Documentation__ 🚀](./src/json-type-validator/README.md)
+- __`util`__ &mdash;
+  - __`base64`__ &mdash; fast isomorphic configurable Base64 encoder.
+    - [__Documentation__ 🚀](./src/util/base64/README.md)
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902
@@ -63,18 +75,18 @@ This package consists of multiple self-contained libraries:
 To reduce your browser-side bundle size import directly from the library you use.
 
 ```ts
-import from 'json-joy/{lib,es6,esm}/<library>';
+import from 'json-joy/{lib,es2020,es6,esm}/<library>';
 ```
 
 For example:
 
 ```ts
-import {applyOperations} from 'json-joy/lib/json-patch`;
+import {deepEqual} from 'json-joy/lib/json-equal`;
 ```
 
 All libraries can be imported from one of the below folders:
 
 - `lib` &mdash; ES5 compiled CommonJS code.
-- `es6` &mdash; ES6 compiled CommonJS code.
 - `es2020` &mdash; ES2020 compiled CommonJS code.
+- `es6` &mdash; ES6 compiled CommonJS code.
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.

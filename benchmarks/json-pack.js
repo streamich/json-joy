@@ -53,14 +53,14 @@ const json = [
 const suite = new Benchmark.Suite;
 
 suite
-  .add(`json-joy/json-pack (v2)`, function() {
-    jsonPack2(json);
+  .add(`json-joy/json-pack (v4)`, function() {
+    jsonPack4(json);
   })
   .add(`json-joy/json-pack (v3)`, function() {
     jsonPack3(json);
   })
-  .add(`json-joy/json-pack (v4)`, function() {
-    jsonPack4(json);
+  .add(`json-joy/json-pack (v2)`, function() {
+    jsonPack2(json);
   })
   .add(`JSON.stringify`, function() {
     JSON.stringify(json);

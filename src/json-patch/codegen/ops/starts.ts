@@ -1,10 +1,10 @@
 import {OpStarts} from '../../op';
 import {$$find} from '../../../json-pointer/codegen/find';
-import {CompiledFunction, compileFn, JavaScript} from '../../../util/codegen';
+import {JavaScriptLinked, compileClosure, JavaScript} from '../../../util/codegen';
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';
 
-export const $$starts = (op: OpStarts): CompiledFunction<ApplyFn> => {
+export const $$starts = (op: OpStarts): JavaScriptLinked<ApplyFn> => {
   const compareValue = op.ignore_case ? op.value.toLowerCase() : op.value;
   const js = /* js */ `
 (function(wrapper){
@@ -23,4 +23,4 @@ export const $$starts = (op: OpStarts): CompiledFunction<ApplyFn> => {
   };
 };
 
-export const $starts = (op: OpStarts): ApplyFn => compileFn($$starts(op));
+export const $starts = (op: OpStarts): ApplyFn => compileClosure($$starts(op));

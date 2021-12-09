@@ -1,5 +1,5 @@
-import {asString} from 'json-schema-serializer';
-import {json_string, JSON} from 'ts-brand-json';
+import {json_string, JSON} from '../../../../../json-brand';
+import {asString} from '../../../../../util/asString';
 import type {
   JsonRpc2Error,
   JsonRpc2ErrorMessage,
@@ -38,9 +38,11 @@ export class JsonRpc2CodecJsonString implements JsonRpc2Codec {
       KEY_MESSAGE +
       asString(String(error.message)) +
       (error.data !== undefined ? KEY_DATA + JSON.stringify(error.data) : '');
-    return (KEY_ID + JSON.stringify(id) + KEY_ERROR + errorJson + BRACKET1_CLOSE_TWICE) as json_string<
-      JsonRpc2ErrorMessage
-    >;
+    return (KEY_ID +
+      JSON.stringify(id) +
+      KEY_ERROR +
+      errorJson +
+      BRACKET1_CLOSE_TWICE) as json_string<JsonRpc2ErrorMessage>;
   }
 
   public encodeParseError(): json_string<JsonRpc2ErrorMessage> {
@@ -64,9 +66,11 @@ export class JsonRpc2CodecJsonString implements JsonRpc2Codec {
   }
 
   public encodeResponse(id: JsonRpc2Id, result: unknown): json_string<JsonRpc2ResponseMessage> {
-    return (KEY_ID + JSON.stringify(id) + KEY_RESULT + JSON.stringify(result) + BRACKET1_CLOSE) as json_string<
-      JsonRpc2ResponseMessage
-    >;
+    return (KEY_ID +
+      JSON.stringify(id) +
+      KEY_RESULT +
+      JSON.stringify(result) +
+      BRACKET1_CLOSE) as json_string<JsonRpc2ResponseMessage>;
   }
 
   public encodeBatch(messages: json_string<JsonRpc2ResponseMessage>[]): json_string<JsonRpc2ResponseMessage[]> {

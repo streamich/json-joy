@@ -1,6 +1,6 @@
 import type {Path} from './types';
 
-export const validateJsonPointer = (pointer: string | Path) => {
+export const validateJsonPointer = (pointer: string | Path | unknown) => {
   if (typeof pointer === 'string') {
     if (pointer) {
       if (pointer[0] !== '/') throw new Error('POINTER_INVALID');
@@ -11,7 +11,7 @@ export const validateJsonPointer = (pointer: string | Path) => {
 
 const {isArray} = Array;
 
-export const validatePath = (path: Path) => {
+export const validatePath = (path: Path | unknown) => {
   if (!isArray(path)) throw new Error('Invalid path.');
   if (path.length > 256) throw new Error('Path too long.');
   for (const step of path) {

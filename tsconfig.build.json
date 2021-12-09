@@ -1,5 +1,8 @@
 {
   "extends": "./tsconfig",
+  "compilerOptions": {
+    "sourceMap": false,
+  },
   "exclude": [
     "src/demo",
     "src/__tests__",

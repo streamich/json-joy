@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "pretty": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "strict": true,
     "jsx": "react",
     "esModuleInterop": true,

@@ -1,7 +1,7 @@
 import {JsonRxServerJson} from '../JsonRxServerJson';
 import {of, from, Subject, Observable, Subscriber} from 'rxjs';
 import {Defer} from './util';
-import {json_string} from 'ts-brand-json';
+import {json_string} from '../../json-brand';
 import {until} from '../../__tests__/util';
 
 test('can create server', async () => {
@@ -97,7 +97,7 @@ test('if "call" callback throws, sends back error message', async () => {
 
 test('sends complete message if observable immediately completes after emitting one value', async () => {
   const send = jest.fn();
-  const call = (jest.fn(() => of('"go go"')) as any) as (
+  const call = jest.fn(() => of('"go go"')) as any as (
     name: string,
     payload: unknown,
     ctx: any,

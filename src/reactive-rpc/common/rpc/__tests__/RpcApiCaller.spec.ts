@@ -6,7 +6,7 @@ import {ErrorLikeErrorFormatter} from '../error';
 import {of} from '../../util/of';
 
 const setup = () => {
-  const caller = new RpcApiCaller({
+  const caller = new RpcApiCaller<typeof sampleApi, object>({
     api: sampleApi,
     maxActiveCalls: 3,
   });

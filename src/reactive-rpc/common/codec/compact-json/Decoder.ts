@@ -1,4 +1,4 @@
-import {JSON, json_string} from 'ts-brand-json';
+import {JSON, json_string} from '../../../../json-brand';
 import {decode} from '../compact/decode';
 import {ReactiveRpcMessage} from '../../messages/nominal';
 import {CompactMessage} from '../compact/types';

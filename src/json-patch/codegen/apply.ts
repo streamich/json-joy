@@ -5,7 +5,7 @@ import {AbstractPredicateOp} from '../op';
 import {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
 import type {ApplyFn} from './types';
-import {compile, CompiledFunction, JavaScript} from '../../util/codegen';
+import {compile, JavaScriptLinked, JavaScript} from '../../util/codegen';
 import {codegenOp} from './codegenOp';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {
@@ -24,7 +24,7 @@ export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptio
 export const $$apply = (
   operations: readonly Operation[],
   applyOptions: ApplyPatchOptions,
-): CompiledFunction<ApplyFn> => {
+): JavaScriptLinked<ApplyFn> => {
   const {mutate, createMatcher} = applyOptions;
   const operationOptions: JsonPatchOptions = {createMatcher};
   const fns: ApplyFn[] = [];

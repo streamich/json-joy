@@ -4,8 +4,8 @@ import {RpcServerLocalClient} from '../RpcServerLocalClient';
 import {RpcApiCaller} from '../RpcApiCaller';
 
 const setup = () => {
-  const server = new RpcServer<any, any>({
-    send: (messages) => {},
+  const server = new RpcServer<any>({
+    send: (messages: unknown) => {},
     onNotification: () => {},
     caller: new RpcApiCaller<any, any>({
       api: sampleApi,

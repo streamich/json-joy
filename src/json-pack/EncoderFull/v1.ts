@@ -25,23 +25,9 @@ export class EncoderFull extends Encoder {
       case 'object': {
         if (json instanceof JsonPackValue) return this.buf(json.buf, json.buf.byteLength);
         if (json instanceof JsonPackExtension) return this.encodeExt(json);
-        if (isUint8Array(json)) return this.bin(json);
+        if (isUint8Array(json)) return this.encodeBinary(json);
         return this.encodeObject(json as Record<string, unknown>);
       }
     }
-  }
-
-  /** @ignore */
-  protected bin(buf: Uint8Array): void {
-    const length = buf.byteLength;
-    if (length <= 0xff) this.u16((0xc4 << 8) | length);
-    else if (length <= 0xffff) {
-      this.u8(0xc5);
-      this.u16(length);
-    } else if (length <= 0xffffffff) {
-      this.u8(0xc6);
-      this.u32(length);
-    }
-    this.buf(buf, length);
   }
 }

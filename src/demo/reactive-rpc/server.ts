@@ -7,7 +7,7 @@ import {
   enableWsCompactReactiveRpcApi,
 } from '../../reactive-rpc/server/uws';
 import {sampleApi} from '../../reactive-rpc/common/rpc/__tests__/api';
-import {RpcMethodStatic, RpcServer} from '../../reactive-rpc/common/rpc';
+import {RpcMethodStatic} from '../../reactive-rpc/common/rpc';
 import {RpcApiCaller} from '../../reactive-rpc/common/rpc/RpcApiCaller';
 import {
   enableHttpRpcJsonGetApi,
@@ -20,6 +20,8 @@ import {
 } from '../../reactive-rpc/server/uws/http';
 import {UwsHttpBaseContext} from '../../reactive-rpc/server/uws/http/types';
 import {enableNdjsonGetRpcApi, enableNdjsonPostRpcApi} from '../../reactive-rpc/server/uws/http/ndjson';
+import {RpcServerMsgPack} from '../../reactive-rpc/common/rpc/RpcServerMsgPack';
+import {RpcServerJson} from '../../reactive-rpc/common/rpc/RpcServerJson';
 
 const uws = App({});
 
@@ -53,7 +55,7 @@ enableWsBinaryReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
   createRpcServer: ({send}) =>
-    new RpcServer({
+    new RpcServerMsgPack({
       caller,
       onNotification,
       send,
@@ -63,8 +65,14 @@ enableWsBinaryReactiveRpcApi<ConnectionContext>({
 enableWsCompactReactiveRpcApi<ConnectionContext>({
   uws,
   createContext: createConnectionContext,
-  createRpcServer: ({send}) =>
-    new RpcServer({
+  createRpcServerJson: ({send}) =>
+    new RpcServerJson({
+      caller,
+      onNotification,
+      send,
+    }),
+  createRpcServerMsgPack: ({send}) =>
+    new RpcServerMsgPack({
       caller,
       onNotification,
       send,

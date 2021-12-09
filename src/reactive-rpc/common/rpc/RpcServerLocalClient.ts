@@ -2,9 +2,9 @@ import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../messages
 import {RpcClient} from './RpcClient';
 import {RpcServer} from './RpcServer';
 
-export interface RpcServerLocalClientParams<Ctx = unknown, T = unknown> {
+export interface RpcServerLocalClientParams<Ctx = unknown> {
   ctx: Ctx;
-  server: RpcServer<Ctx, T>;
+  server: RpcServer<Ctx>;
 }
 
 /**
@@ -13,7 +13,7 @@ export interface RpcServerLocalClientParams<Ctx = unknown, T = unknown> {
  * for testing.
  */
 export class RpcServerLocalClient<Ctx = unknown, T = unknown> extends RpcClient<T> {
-  constructor(protected readonly params: RpcServerLocalClientParams<Ctx, T>) {
+  constructor(protected readonly params: RpcServerLocalClientParams<Ctx>) {
     super({
       send: (messages: ReactiveRpcRequestMessage<T>[]) => {
         Promise.resolve().then(() => {
@@ -24,7 +24,7 @@ export class RpcServerLocalClient<Ctx = unknown, T = unknown> extends RpcClient<
       bufferTime: 0,
     });
 
-    this.params.server.onSend = (messages) => {
+    this.params.server.onSend = (messages: unknown) => {
       Promise.resolve().then(() => {
         this.onMessages(messages as ReactiveRpcResponseMessage<T>[]);
       });

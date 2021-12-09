@@ -1,9 +1,9 @@
 import {OpAdd} from '../../op';
-import {CompiledFunction, compileFn, JavaScript} from '../../../util/codegen';
+import {JavaScriptLinked, compileClosure, JavaScript} from '../../../util/codegen';
 import type {ApplyFn} from '../types';
 import {$findRef} from '../../../json-pointer/codegen/findRef';
 
-export const $$add = (op: OpAdd): CompiledFunction<ApplyFn> => {
+export const $$add = (op: OpAdd): JavaScriptLinked<ApplyFn> => {
   const find = $findRef(op.path);
   const js = /* js */ `
 (function(find, path){
@@ -29,4 +29,4 @@ export const $$add = (op: OpAdd): CompiledFunction<ApplyFn> => {
   };
 };
 
-export const $add = (op: OpAdd): ApplyFn => compileFn($$add(op));
+export const $add = (op: OpAdd): ApplyFn => compileClosure($$add(op));

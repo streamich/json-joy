@@ -112,19 +112,19 @@ export class WebSocketChannel<T extends string | Uint8Array = string | Uint8Arra
         this.message$.complete();
       };
       ws.onerror = (event: Event) => {
-        const errorEvent: Partial<ErrorEvent> = (event as unknown) as Partial<ErrorEvent>;
+        const errorEvent: Partial<ErrorEvent> = event as unknown as Partial<ErrorEvent>;
         const error: Error =
           errorEvent.error instanceof Error ? errorEvent.error : new Error(String(errorEvent.message) || 'ERROR');
         this.error$.next(error);
       };
       ws.onmessage = (event) => {
         const data = event.data;
-        const message: T = ((typeof data === 'string' ? data : toUint8Array(data)) as unknown) as T;
+        const message: T = (typeof data === 'string' ? data : toUint8Array(data)) as unknown as T;
         this.message$.next(message);
       };
     } catch (error) {
       this.state$.next(ChannelState.CLOSED);
-      this.error$.next(error);
+      this.error$.next(error as Error);
       this.close$.next([this, {code: 0, wasClean: true, reason: 'CONSTRUCTOR'}]);
       this.close$.complete();
     }

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import {WebSocketChannel} from '../../channel';
 import {RpcPersistentClient} from '../RpcPersistentClient';
 import {Encoder, Decoder} from '../../codec/compact-json';

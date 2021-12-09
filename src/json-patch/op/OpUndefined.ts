@@ -28,7 +28,7 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
       const test = val === undefined;
       return test;
     } catch (error) {
-      if (error.message === 'NOT_FOUND') return true;
+      if ((error as Error).message === 'NOT_FOUND') return true;
       throw error;
     }
   }

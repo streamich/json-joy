@@ -121,11 +121,11 @@ export class BinaryRxServer<Ctx = unknown> {
       }
       if (this.active.size >= this.maxActiveSubscriptions) return this.sendError(id, ERR_TOO_MANY_SUBSCRIPTIONS);
       const callResult = this.call(method, data, ctx);
-      const observable: Observable<Uint8Array> = (isObservable(callResult)
-        ? callResult
-        : from(callResult).pipe(mergeMap((value) => (isObservable(value) ? value : of(value))))) as Observable<
-        Uint8Array
-      >;
+      const observable: Observable<Uint8Array> = (
+        isObservable(callResult)
+          ? callResult
+          : from(callResult).pipe(mergeMap((value) => (isObservable(value) ? value : of(value))))
+      ) as Observable<Uint8Array>;
       const ref: {buffer: Uint8Array[]} = {buffer: []};
       let done = false;
       const subscription = observable.subscribe(

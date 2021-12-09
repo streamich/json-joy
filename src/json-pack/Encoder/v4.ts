@@ -40,45 +40,71 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     }
   }
 
-  public encodeNumber(num: number) {
-    if (isSafeInteger(num)) {
-      if (num >= 0) {
-        if (num <= 0b1111111) return this.u8(num);
-        if (num <= 0xff) return this.u16((0xcc << 8) | num);
-        else if (num <= 0xffff) {
-          this.ensureCapacity(3);
-          this.uint8[this.offset++] = 0xcd;
-          this.uint8[this.offset++] = num >>> 8;
-          this.uint8[this.offset++] = num & 0xff;
-          return;
-        } else if (num <= 0xffffffff) {
-          this.ensureCapacity(5);
-          this.uint8[this.offset++] = 0xce;
-          this.view.setUint32(this.offset, num);
-          this.offset += 4;
-          return;
-        }
-      } else {
-        if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
-        else if (num > -0x7fff) {
-          this.ensureCapacity(3);
-          this.uint8[this.offset++] = 0xd1;
-          this.view.setInt16(this.offset, num);
-          this.offset += 2;
-          return;
-        } else if (num > -0x7fffffff) {
-          this.ensureCapacity(5);
-          this.uint8[this.offset++] = 0xd2;
-          this.view.setInt32(this.offset, num);
-          this.offset += 4;
-          return;
-        }
-      }
-    }
+  protected encodeFloat64(num: number): void {
     this.ensureCapacity(9);
     this.uint8[this.offset++] = 0xcb;
     this.view.setFloat64(this.offset, num);
     this.offset += 8;
+  }
+
+  public encodeUnsignedInteger(num: number): void {
+    if (num <= 0b1111111) return this.u8(num);
+    if (num <= 0xff) return this.u16((0xcc << 8) | num);
+    else if (num <= 0xffff) {
+      this.ensureCapacity(3);
+      this.uint8[this.offset++] = 0xcd;
+      this.uint8[this.offset++] = num >>> 8;
+      this.uint8[this.offset++] = num & 0xff;
+      return;
+    } else if (num <= 0xffffffff) {
+      this.ensureCapacity(5);
+      this.uint8[this.offset++] = 0xce;
+      this.view.setUint32(this.offset, num);
+      this.offset += 4;
+      return;
+    }
+    this.encodeFloat64(num);
+  }
+
+  public encodeInteger(num: number): void {
+    if (num >= 0) return this.encodeUnsignedInteger(num);
+    if (num >= -0b100000) return this.u8(0b11100000 | (num + 0x20));
+    else if (num > -0x7fff) {
+      this.ensureCapacity(3);
+      this.uint8[this.offset++] = 0xd1;
+      this.view.setInt16(this.offset, num);
+      this.offset += 2;
+      return;
+    } else if (num > -0x7fffffff) {
+      this.ensureCapacity(5);
+      this.uint8[this.offset++] = 0xd2;
+      this.view.setInt32(this.offset, num);
+      this.offset += 4;
+      return;
+    }
+    this.encodeFloat64(num);
+  }
+
+  public encodeNumber(num: number): void {
+    if (isSafeInteger(num)) return this.encodeInteger(num);
+    this.encodeFloat64(num);
+  }
+
+  public encodeNull(): void {
+    this.u8(0xc0);
+  }
+
+  public encodeTrue(): void {
+    this.u8(0xc3);
+  }
+
+  public encodeFalse(): void {
+    this.u8(0xc2);
+  }
+
+  public encodeBoolean(bool: boolean): void {
+    if (bool) this.u8(0xc3);
+    else this.u8(0xc2);
   }
 
   public encodeStringHeader(length: number): void {
@@ -150,6 +176,17 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     else if (maxSize <= 0xff) uint8[lengthOffset] = offset - lengthOffset - 1;
     else if (maxSize <= 0xffff) this.view.setUint16(lengthOffset, offset - lengthOffset - 2);
     else this.view.setUint32(lengthOffset, offset - lengthOffset - 4);
+  }
+
+  public encodeAsciiString(str: string) {
+    const length = str.length;
+    this.encodeStringHeader(length);
+    this.ensureCapacity(length);
+    const uint8 = this.uint8;
+    let offset = this.offset;
+    let pos = 0;
+    while (pos < length) uint8[offset++] = str.charCodeAt(pos++);
+    this.offset = offset;
   }
 
   public encodeArrayHeader(length: number): void {
@@ -241,6 +278,20 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
     const {type, buf} = ext;
     const length = buf.byteLength;
     this.encodeExtHeader(type, length);
+    this.buf(buf, length);
+  }
+
+  /** @ignore */
+  protected encodeBinary(buf: Uint8Array): void {
+    const length = buf.byteLength;
+    if (length <= 0xff) this.u16((0xc4 << 8) | length);
+    else if (length <= 0xffff) {
+      this.u8(0xc5);
+      this.u16(length);
+    } else if (length <= 0xffffffff) {
+      this.u8(0xc6);
+      this.u32(length);
+    }
     this.buf(buf, length);
   }
 }
