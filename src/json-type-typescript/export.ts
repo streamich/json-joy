@@ -1,24 +1,24 @@
 import {TAnyType} from '../json-type';
 import {
-  TsDeclaration,
-  TsStringKeyword,
-  TsNumberKeyword,
-  TsBooleanKeyword,
-  TsTypeAliasDeclaration,
-  TsType,
-  TsInterfaceDeclaration,
-  TsPropertySignature,
-  TsTypeReference,
-  TsModuleDeclaration,
-  TsUnionType,
-  TsStringLiteral,
-  TsNumericLiteral,
-  TsFalseKeyword,
-  TsTrueKeyword,
-  TsUnknownKeyword,
-  TsTypeLiteral,
   TsArrayType,
+  TsBooleanKeyword,
+  TsDeclaration,
+  TsFalseKeyword,
+  TsInterfaceDeclaration,
+  TsModuleDeclaration,
   TsNullKeyword,
+  TsNumberKeyword,
+  TsNumericLiteral,
+  TsPropertySignature,
+  TsStringKeyword,
+  TsStringLiteral,
+  TsTrueKeyword,
+  TsType,
+  TsTypeAliasDeclaration,
+  TsTypeLiteral,
+  TsTypeReference,
+  TsUnionType,
+  TsUnknownKeyword,
 } from './types';
 
 export interface ToTypeScriptAstContext {
@@ -44,6 +44,16 @@ const parseIdentifier = (id: string): Identifier => {
     name: parts.pop()!,
     namespaces: parts,
   };
+};
+
+const augmentWithComment = (type: TAnyType, node: TsDeclaration | TsPropertySignature) => {
+  if (type.title || type.description) {
+    let comment = '';
+    if (type.title) comment += '# ' + type.title;
+    if (type.title && type.description) comment += '\n\n';
+    if (type.description) comment += type.description;
+    node.comment = comment;
+  }
 };
 
 /**
@@ -83,13 +93,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         name: identifier.name,
         members: [],
       };
-      if (type.title || type.description) {
-        let comment = '';
-        if (type.title) comment += '# ' + type.title;
-        if (type.title && type.description) comment += '\n\n';
-        if (type.description) comment += type.description;
-        node.comment = comment;
-      }
+      augmentWithComment(type, node);
       module.statements.push(node);
       for (const field of type.fields) {
         const member: TsPropertySignature = {
@@ -113,6 +117,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         name: identifier.name,
         type: toTsType(type, ctx) as TsType,
       };
+      augmentWithComment(type, node);
       module.statements.push(node);
       return;
     }

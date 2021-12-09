@@ -2,6 +2,12 @@ import { wordWrap } from '../util/wordWrap';
 import {TsNode} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
+const formatComment = (comment: string | undefined, __: string): string => {
+  if (!comment) return '';
+  const lines = wordWrap(comment, {width: 80 - 3 - __.length});
+  return __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
+};
+
 export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
   if (Array.isArray(node)) return node.map((s) => toText(s, __)).join('\n');
 
@@ -18,10 +24,7 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
     case 'InterfaceDeclaration': {
       const {name, members, comment} = node;
       let out: string = '';
-      if (comment) {
-        const lines = wordWrap(comment, {width: 80 - 3 - __.length});
-        out += __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
-      }
+      out += formatComment(comment, __);
       out += `${__}export interface ${name} {\n`;
       out += toText(members, ____);
       out += `\n${__}}\n`;
@@ -36,6 +39,7 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
     }
     case 'TypeAliasDeclaration': {
       let out: string = '';
+      out += formatComment(node.comment, __);
       out += `${__}export type ${node.name} = ${toText(node.type)};\n`;
       return out;
     }
