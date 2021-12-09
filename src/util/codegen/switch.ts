@@ -1,25 +1,15 @@
-export interface SwitchOptions<Schema = unknown, Args extends any[] = any[], Result = unknown, Options = unknown> {
-  schema: Schema;
-  evaluate: (schema: Schema, ...args: Args) => Result;
-  codegen: (schema: Schema, options: Options) => (...args: Args) => Result;
-  codegenOptions: Options;
-}
+import {dynamicFunction} from "./dynamicFunction";
 
 /**
- * Switcher for code generation. It first executes "evaluation" function first
+ * Switcher for code generation. It first executes "evaluation" function
  * 3 times, and then generates optimized code.
  */
-export const createSwitch = ({schema, evaluate, codegen, codegenOptions}: SwitchOptions) => {
+export const createSwitch = <F extends (...args: any[]) => any>(fn: F, codegen: () => F): F => {
   let counter = 0;
-  let fn = (...args: any[]): any => {
-    if (counter > 2) {
-      fn = codegen(schema, codegenOptions);
-      return fn(...args);
-    }
+  const [proxy, set] = dynamicFunction((...args) => {
+    if (counter > 2) set(codegen());
     counter++;
-    return evaluate(schema, ...args);
-  };
-  return (...args: any[]) => {
     return fn(...args);
-  };
+  });
+  return proxy as F;
 };
