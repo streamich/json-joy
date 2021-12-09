@@ -1,4 +1,4 @@
-import {TAnyType} from '../json-type';
+import {TAnyType, TObjectField} from '../json-type';
 import {
   TsArrayType,
   TsBooleanKeyword,
@@ -46,7 +46,7 @@ const parseIdentifier = (id: string): Identifier => {
   };
 };
 
-const augmentWithComment = (type: TAnyType, node: TsDeclaration | TsPropertySignature) => {
+const augmentWithComment = (type: TAnyType | TObjectField, node: TsDeclaration | TsPropertySignature | TsTypeLiteral) => {
   if (type.title || type.description) {
     let comment = '';
     if (type.title) comment += '# ' + type.title;
@@ -93,7 +93,6 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
         name: identifier.name,
         members: [],
       };
-      augmentWithComment(type, node);
       module.statements.push(node);
       for (const field of type.fields) {
         const member: TsPropertySignature = {
@@ -102,6 +101,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
           type: toTsType(field.type as TAnyType, ctx),
         };
         if (field.isOptional) member.optional = true;
+        augmentWithComment(field, member);
         node.members.push(member);
       }
       if (type.unknownFields)
@@ -109,6 +109,7 @@ export const exportDeclaration = (ref: string, ctx: ToTypeScriptAstContext): voi
           node: 'IndexSignature',
           type: {node: 'UnknownKeyword'},
         });
+      augmentWithComment(type, node);
       return;
     }
     default: {
@@ -170,6 +171,7 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
           type: toTsType(field.type as TAnyType, ctx),
         };
         if (field.isOptional) member.optional = true;
+        augmentWithComment(field, member);
         node.members.push(member);
       }
       if (type.unknownFields)
@@ -177,6 +179,7 @@ const toTsType = (type: TAnyType, ctx: ToTypeScriptAstContext): TsType => {
           node: 'IndexSignature',
           type: {node: 'UnknownKeyword'},
         });
+      augmentWithComment(type, node);
       return node;
     }
     case 'enum': {

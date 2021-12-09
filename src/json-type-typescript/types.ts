@@ -80,6 +80,7 @@ export interface TsUnknownKeyword {
 export interface TsTypeLiteral {
   node: 'TypeLiteral';
   members: Array<TsPropertySignature | TsIndexSignature>;
+  comment?: string;
 }
 
 /** Exact string as type. */
