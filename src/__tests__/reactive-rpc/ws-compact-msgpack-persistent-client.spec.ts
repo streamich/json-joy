@@ -4,6 +4,7 @@ import {WebSocketChannel} from '../../reactive-rpc/common/channel';
 import {Encoder, Decoder} from '../../reactive-rpc/common/codec/compact-msgpack';
 import {RpcPersistentClient} from '../../reactive-rpc/common/rpc';
 import {Defer} from '../../json-rx/__tests__/util';
+import {tick, until} from '../util';
 
 if (process.env.TEST_E2E) {
   const connected = new Defer<void>();
@@ -26,6 +27,8 @@ if (process.env.TEST_E2E) {
 
   const setup: ApiTestSetup = async () => {
     await connected;
+    await tick(10);
+    await until(() => rpc.channel.open$.getValue());
     return {
       client: {
         call$: (name: string, data: any) => rpc.call$(name, data),

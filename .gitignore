@@ -121,3 +121,5 @@ es6/
 es2020/
 esm/
 typedocs/
+
+.DS_Store

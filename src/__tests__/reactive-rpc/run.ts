@@ -19,7 +19,7 @@ const startServer = async () => {
     process.stderr.write('ERROR: [server] ' + String(data));
   });
   cp.on('close', (code) => {
-    exitCode.resolve(code);
+    exitCode.resolve(code || 0);
     process.stdout.write('[server] ' + `process exited with code ${code}\n`);
   });
   return {
@@ -48,7 +48,7 @@ const runTests = async () => {
     process.stderr.write('ERROR: [jest] ' + String(data));
   });
   cp.on('close', (code) => {
-    exitCode.resolve(code);
+    exitCode.resolve(code || 0);
     process.stdout.write('[jest] ' + `process exited with code ${code}\n`);
   });
   return {
