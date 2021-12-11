@@ -1,3 +1,4 @@
+/** @ignore */
 export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'array' | 'object';
 
 export interface NodeOdds {
@@ -38,6 +39,13 @@ const utf8 = (): string => {
   return String.fromCharCode(Math.floor(Math.random() * 65535));
 };
 
+/**
+ * Create a random JSON value.
+ *
+ * ```ts
+ * RandomJson.generate()
+ * ```
+ */
 export class RandomJson {
   public static generate(opts?: Partial<RandomJsonOptions>): unknown {
     const rnd = new RandomJson(opts);
@@ -81,12 +89,20 @@ export class RandomJson {
     }) as object;
   }
 
+  /** @ignore */
   public opts: RandomJsonOptions;
+  /** @ignore */
   private totalOdds: number;
+  /** @ignore */
   private oddTotals: NodeOdds;
+  /** @ignore */
   public root: unknown[] | object;
+  /** @ignore */
   private containers: ContainerNode[] = [];
 
+  /**
+   * @ignore
+   */
   public constructor(opts: Partial<RandomJsonOptions> = {}) {
     this.opts = {...defaultOpts, ...opts};
     this.oddTotals = {} as any;
@@ -114,11 +130,17 @@ export class RandomJson {
     this.containers.push(this.root);
   }
 
+  /**
+   * @ignore
+   */
   public create(): unknown {
     for (let i = 0; i < this.opts.nodeCount; i++) this.addNode();
     return this.root;
   }
 
+  /**
+   * @ignore
+   */
   public addNode(): void {
     const container = this.pickContainer();
     const newNodeType = this.pickNodeType();
@@ -133,6 +155,9 @@ export class RandomJson {
     }
   }
 
+  /**
+   * @ignore
+   */
   protected generate(type: NodeType): unknown {
     switch (type) {
       case 'null':
@@ -150,6 +175,7 @@ export class RandomJson {
     }
   }
 
+  /** @ignore */
   public pickNodeType(): NodeType {
     const odd = Math.random() * this.totalOdds;
     if (odd <= this.oddTotals.null) return 'null';
@@ -160,12 +186,18 @@ export class RandomJson {
     return 'object';
   }
 
+  /**
+   * @ignore
+   */
   protected pickContainerType(): 'array' | 'object' {
     const sum = this.opts.odds.array + this.opts.odds.object;
     if (Math.random() < this.opts.odds.array / sum) return 'array';
     return 'object';
   }
 
+  /**
+   * @ignore
+   */
   protected pickContainer(): ContainerNode {
     return this.containers[Math.floor(Math.random() * this.containers.length)];
   }
