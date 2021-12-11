@@ -179,7 +179,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const result = await firstValueFrom(client.call$('ping', {}));
       expect(result).toBe('pong');
-    });
+    }, 15_000);
 
     test('can execute without payload', async () => {
       const {client} = await setup();
