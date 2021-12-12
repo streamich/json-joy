@@ -1,3 +1,10 @@
+## [6.0.1](https://github.com/streamich/json-joy/compare/v6.0.0...v6.0.1) (2021-12-12)
+
+
+### Bug Fixes
+
+* **json-brand:** 🐛 make sure json-brand appears in build ([46a156d](https://github.com/streamich/json-joy/commit/46a156da34cdf04344d0679ae655eafc9038bae0))
+
 # [6.0.0](https://github.com/streamich/json-joy/compare/v5.2.0...v6.0.0) (2021-12-09)
 
 
