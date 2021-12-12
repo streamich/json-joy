@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/streamich/json-joy/compare/v6.0.1...v6.0.2) (2021-12-12)
+
+
+### Bug Fixes
+
+* **reactive-rpc:** 🐛 do not fetch method, in case it does not exist ([a27a911](https://github.com/streamich/json-joy/commit/a27a91169005d54669299608f4cdb3fccd1a9cd6))
+
 ## [6.0.1](https://github.com/streamich/json-joy/compare/v6.0.0...v6.0.1) (2021-12-12)
 
 
