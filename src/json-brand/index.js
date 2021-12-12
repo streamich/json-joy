@@ -1,1 +1,0 @@
-exports.JSON = JSON;
