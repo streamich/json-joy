@@ -3,7 +3,6 @@ const Encoder = require('../es6/json-pack/Encoder').Encoder;
 const Decoder9 = require('../es6/json-pack/Decoder/v9').Decoder;
 const {Decoder} = require("@msgpack/msgpack");
 const msgpackLite = require("msgpack-lite").decode;
-const msgpack = require('msgpack').unpack;
 const msgpack5 = require('msgpack5')().decode;
 const messagepack = require('messagepack').decode;
 
@@ -69,9 +68,6 @@ suite
   })
   .add(`@msgpack/msgpack`, function() {
     decode(uint8);
-  })
-  .add(`msgpack`, function() {
-    msgpack(uint8);
   })
   .add(`msgpack-lite`, function() {
     msgpackLite(uint8);

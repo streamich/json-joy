@@ -40,7 +40,7 @@ function processHttpRpcRequest<Ctx extends UwsHttpBaseContext>(
         });
       })
       .catch((error) => {
-        sendError(res, error, caller.get(name).pretty);
+        sendError(res, error, false);
       });
   } catch {
     const error = new Error('Could not parse payload');

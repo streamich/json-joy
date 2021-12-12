@@ -4,7 +4,6 @@ const Encoder3 = require('../es6/json-pack/Encoder/v3').Encoder;
 const Encoder4 = require('../es6/json-pack/Encoder/v4').Encoder;
 const msgpack5 = require('msgpack5')().encode;
 const msgpackLite = require("msgpack-lite").encode;
-const msgpack = require('msgpack').pack;
 const messagepack = require('messagepack').encode;
 const atMsgpackMsgpack = require('@msgpack/msgpack').encode;
 
@@ -70,9 +69,6 @@ suite
   })
   .add(`msgpack-lite`, function() {
     msgpackLite(json);
-  })
-  .add(`msgpack`, function() {
-    msgpack(json);
   })
   .add(`msgpack5`, function() {
     msgpack5(json);
