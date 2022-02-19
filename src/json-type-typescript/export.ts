@@ -46,7 +46,10 @@ const parseIdentifier = (id: string): Identifier => {
   };
 };
 
-const augmentWithComment = (type: TAnyType | TObjectField, node: TsDeclaration | TsPropertySignature | TsTypeLiteral) => {
+const augmentWithComment = (
+  type: TAnyType | TObjectField,
+  node: TsDeclaration | TsPropertySignature | TsTypeLiteral,
+) => {
   if (type.title || type.description) {
     let comment = '';
     if (type.title) comment += '# ' + type.title;

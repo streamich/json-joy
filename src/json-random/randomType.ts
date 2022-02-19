@@ -18,19 +18,25 @@ export const randomType = (type: TAnyType, options: RandomTypeOptions): unknown 
       if (typeof type.const === 'number') return type.const;
       if (type.format) {
         const num = Math.random();
-        switch(type.format) {
-          case 'i8': return Math.round(num * 0xFF) - 0x80;
-          case 'i16': return Math.round(num * 0xFFFF) - 0x8000;
-          case 'i32': return Math.round(num * 0xFFFFFFFF) - 0x80000000;
+        switch (type.format) {
+          case 'i8':
+            return Math.round(num * 0xff) - 0x80;
+          case 'i16':
+            return Math.round(num * 0xffff) - 0x8000;
+          case 'i32':
+            return Math.round(num * 0xffffffff) - 0x80000000;
           case 'i64':
           case 'i':
-            return Math.round(num * 0xFFFFFFFFFF) - 0x8000000000;
-          case 'u8': return Math.round(num * 0xFF);
-          case 'u16': return Math.round(num * 0xFFFF);
-          case 'u32': return Math.round(num * 0xFFFFFFFF);
+            return Math.round(num * 0xffffffffff) - 0x8000000000;
+          case 'u8':
+            return Math.round(num * 0xff);
+          case 'u16':
+            return Math.round(num * 0xffff);
+          case 'u32':
+            return Math.round(num * 0xffffffff);
           case 'u64':
           case 'u':
-            return Math.round(num * 0xFFFFFFFFFF);
+            return Math.round(num * 0xffffffffff);
         }
       }
       return RandomJson.genNumber();

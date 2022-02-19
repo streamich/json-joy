@@ -52,20 +52,24 @@ export const types = {
     ],
     {
       title: 'A user object',
-      description: 'Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.',
+      description:
+        'Users are entities in the system that represent a human. When user is created, automatically a User entity is assigned to that user.',
     },
   ),
 
-  CrateUserRequest: t.Object([
-    t.Field(
-      'user',
-      t.Object([
-        t.Field('id', t.num, {isOptional: true}),
-        t.Field('name', t.str, {isOptional: true}),
-        t.Field('email', t.str),
-      ]),
-    ),
-  ], {title: 'The create user request'}),
+  CrateUserRequest: t.Object(
+    [
+      t.Field(
+        'user',
+        t.Object([
+          t.Field('id', t.num, {isOptional: true}),
+          t.Field('name', t.str, {isOptional: true}),
+          t.Field('email', t.str),
+        ]),
+      ),
+    ],
+    {title: 'The create user request'},
+  ),
 
   CreateUserResponse: t.Object([t.Field('user', t.Ref('User'))], {
     title: 'A response to a create user request',
@@ -86,11 +90,14 @@ export const types = {
     },
   ),
 
-  'pubsub.channel.Channel': t.Object([
-    t.Field('id', t.str, {title: 'ID of the user'}),
-    t.Field('payload', t.Ref('pubsub.channel.PayloadType'), {description: 'Yup, the payload.'}),
-    t.Field('meta', t.Object([t.Field('description', t.str)])),
-  ], {description: 'A channel'}),
+  'pubsub.channel.Channel': t.Object(
+    [
+      t.Field('id', t.str, {title: 'ID of the user'}),
+      t.Field('payload', t.Ref('pubsub.channel.PayloadType'), {description: 'Yup, the payload.'}),
+      t.Field('meta', t.Object([t.Field('description', t.str)])),
+    ],
+    {description: 'A channel'},
+  ),
 
   'pubsub.channel.PayloadType': t.Enum(['json', 'text', 'blob'], {
     description: 'The type of payload that is sent to the channel.',
