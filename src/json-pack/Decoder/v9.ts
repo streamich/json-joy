@@ -1,3 +1,4 @@
+import {JsonPackValue} from '..';
 import {JsonPackExtension} from '../JsonPackExtension';
 import {CachedKeyDecoder} from './CachedKeyDecoder';
 
@@ -244,5 +245,154 @@ export class Decoder {
     const pos = this.x;
     this.x += 8;
     return this.view.getFloat64(pos);
+  }
+
+  // Decode one level of a JSON object or array. -------------------------------
+
+  public decodeOneLevel(uint8: Uint8Array): unknown {
+    this.reset(uint8);
+    return this.valOneLevel();
+  }
+
+  protected valOneLevel(): unknown {
+    const byte = this.view.getUint8(this.x);
+    const isMap = byte === 0xde || byte === 0xdf || (byte >> 4 === 0b1000);
+    if (isMap) {
+      this.x++;
+      const size = byte === 0xde ? this.u16() : byte === 0xdf ? this.u32() : (byte & 0b1111);
+      const obj: Record<string, unknown> = {};
+      for (let i = 0; i < size; i++) {
+        const key = this.key();
+        obj[key] = this.primitive();
+      }
+      return obj;
+    }
+    const isArray = byte === 0xdc || byte === 0xdd || (byte >> 4 === 0b1001);
+    if (isArray) {
+      this.x++;
+      const size = byte === 0xdc ? this.u16() : byte === 0xdd ? this.u32() : (byte & 0b1111);
+      const arr: unknown[] = [];
+      for (let i = 0; i < size; i++) arr.push(this.primitive());
+      return arr;
+    }
+    return this.val();
+  }
+
+  /**
+   * @ignore
+   * @returns Returns a primitive value or {@link JsonPackValue} object, if the value
+   *          is a "map" or an "arr".
+   */
+  protected primitive(): unknown {
+    const byte = this.view.getUint8(this.x);
+    const isMapOrArray = byte === 0xde || byte === 0xdf || byte === 0xdc || byte === 0xdd || (byte >> 5 === 0b100);
+    if (isMapOrArray) {
+      const length = this.valSkip();
+      this.x -= length;
+      const buf =  this.bin(length);
+      return new JsonPackValue(buf);
+    }
+    return this.val();
+  }
+
+  protected skip(length: number): number {
+    this.x += length;
+    return length;
+  }
+
+  /**
+   * Skips a whole JSON value and returns back the number of bytes
+   * that value consumed.
+   */
+  public valSkip(): number {
+    const byte = this.u8();
+    if (byte >= 0xe0) return 1; // 0xe0
+    if (byte <= 0xbf) {
+      if (byte < 0x90) {
+        if (byte <= 0b1111111) return 1; // 0x7f
+        return 1 + this.objSkip(byte & 0b1111); // 0x80, obj(1)
+      } else {
+        if (byte < 0xa0) return 1 + this.arrSkip(byte & 0b1111);
+        // 0x90
+        else return 1 + this.skip(byte & 0b11111); // 0xa0, str(1)
+      }
+    }
+    if (byte <= 0xce) {
+      if (byte <= 0xc8) {
+        if (byte <= 0xc4) {
+          if (byte <= 0xc2) return byte === 0xc2 ? 1 : 1;
+          else return byte === 0xc4 ? 2 + this.skip(this.u8()) : 1;
+        } else {
+          if (byte <= 0xc6) return byte === 0xc6 ? 5 + this.skip(this.u32()) : 3 + this.skip(this.u16());
+          else return byte === 0xc8 ? 4 + this.skip(this.u16()) : 3 + this.skip(this.u8());
+        }
+      } else {
+        return byte <= 0xcc
+          ? byte <= 0xca
+            ? byte === 0xca
+              ? 1 + this.skip(4) // f32
+              : 1 + 1 + 4 + this.skip(this.u32()) // ext32
+            : byte === 0xcc
+            ? 1 + this.skip(1) // u8
+            : 1 + this.skip(8) // f64
+          : byte <= 0xce
+          ? byte === 0xce
+            ? 1 + this.skip(4) // u32
+            : 1 + this.skip(2) // u16
+          : byte === 0xd0
+          ? 1 + this.skip(1) // i8
+          : 1 + this.skip(8); // u64
+      }
+    } else if (byte <= 0xd8) {
+      return byte <= 0xd4
+        ? byte <= 0xd2
+          ? byte === 0xd2
+            ? 1 + this.skip(4) // i32
+            : 1 + this.skip(2) // i16
+          : byte === 0xd4
+          ? 1 + this.skip(2) // ext1
+          : 1 + this.skip(8) // i64
+        : byte <= 0xd6
+        ? byte === 0xd6
+          ? 1 + this.skip(5) // ext4
+          : 1 + this.skip(3) // ext2
+        : byte === 0xd8
+        ? 1 + this.skip(17) // ext16
+        : 1 + this.skip(9); // ext8
+    } else {
+      switch (byte) {
+        case 0xd9:
+          return 2 + this.skip(this.u8()); // str8
+        case 0xda:
+          return 3 + this.skip(this.u16()); // str16
+        case 0xdb:
+          return 5 + this.skip(this.u32()); // str32
+        case 0xdc:
+          return 3 + this.arrSkip(this.u16());
+        case 0xdd:
+          return 5 + this.arrSkip(this.u32());
+        case 0xde:
+          return 3 + this.objSkip(this.u16());
+        case 0xdf:
+          return 5 + this.objSkip(this.u32());
+      }
+    }
+    return 1;
+  }
+
+  /** @ignore */
+  protected arrSkip(size: number): number {
+    let length = 0;
+    for (let i = 0; i < size; i++) length += this.valSkip();
+    return length;
+  }
+
+  /** @ignore */
+  protected objSkip(size: number): number {
+    let length = 0;
+    for (let i = 0; i < size; i++) {
+      length += this.valSkip() + this.valSkip();
+    }
+    return length;
   }
 }

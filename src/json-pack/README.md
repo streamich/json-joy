@@ -105,3 +105,19 @@ const buffer = encoder.encode({foo: ext});
 const obj = decoder.decode(buffe2);
 console.log(obj); // { foo: JsonPackExtension } 
 ```
+
+### Decoding one level at a time
+
+You can use `.decodeOneLevel()` method to decode one level of objects or arrays
+of Message Pack values at a time. Only the primitive values of the first level
+are returned decoded, complex values&mdash;like objects and arrays&mdash;are
+returned as `JsonPackValue` blobs.
+
+```ts
+const msgPack = encoder.encode({
+  a: 1,
+  b: [1],
+});
+const decoded = decoder.decodeOneLevel(msgPack);
+console.log(decoded); // { a: 1, b: JsonPackValue {} }
+```
