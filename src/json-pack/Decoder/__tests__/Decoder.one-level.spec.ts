@@ -1,7 +1,7 @@
 import {Decoder} from '..';
-import {Encoder, JsonPackValue} from '../..';
+import {EncoderFull, JsonPackValue} from '../..';
 
-const encoder = new Encoder();
+const encoder = new EncoderFull();
 const decoder = new Decoder();
 const encode = (x: unknown) => encoder.encode(x);
 const decode = (x: Uint8Array, offset: number) => decoder.decodeOneLevel(x);
@@ -190,6 +190,8 @@ describe('array', () => {
     expect(res[0]).toBe(1);
     expect(res[1]).toStrictEqual(new JsonPackValue(encode([2])));
     expect(res[2]).toBe(3);
+    const arr2 = decoder.decode(encode(res));
+    expect(arr2).toStrictEqual(arr);
   });
 
   test('can decode nested array - 2', () => {
@@ -199,6 +201,8 @@ describe('array', () => {
     expect(res[0]).toBe(1);
     expect(res[1]).toStrictEqual(new JsonPackValue(encode([2])));
     expect(res[2]).toStrictEqual(new JsonPackValue(encode([3, 4, [5]])));
+    const arr2 = decoder.decode(encode(res));
+    expect(arr2).toStrictEqual(arr);
   });
 });
 
@@ -306,5 +310,7 @@ describe('object', () => {
         {g: 123},
       ])),
     });
+    const obj2 = decoder.decode(encode(res));
+    expect(obj2).toStrictEqual(obj);
   });
 });
