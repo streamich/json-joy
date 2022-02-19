@@ -1,3 +1,15 @@
+# [6.1.0](https://github.com/streamich/json-joy/compare/v6.0.2...v6.1.0) (2022-02-19)
+
+
+### Bug Fixes
+
+* **json-pack:** 🐛 correctly decode "obj" and "arr" one level ([db82272](https://github.com/streamich/json-joy/commit/db82272b1f118fdc742dfd4d612e64c9b07c75c6))
+
+
+### Features
+
+* **json-pack:** 🎸 add ability to parse one level at a time ([198277d](https://github.com/streamich/json-joy/commit/198277d93813723cc4a0f2bb7da26b52fee94ae1))
+
 ## [6.0.2](https://github.com/streamich/json-joy/compare/v6.0.1...v6.0.2) (2021-12-12)
 
 
