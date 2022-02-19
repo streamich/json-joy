@@ -254,25 +254,25 @@ export class Decoder {
     return this.valOneLevel();
   }
 
-
   protected valOneLevel(): unknown {
     const byte = this.view.getUint8(this.x);
     const isMap = byte === 0xde || byte === 0xdf || (byte >> 4 === 0b1000);
     if (isMap) {
-      const size = byte === 0xde ? this.u16() : byte === 0xdf ? this.u32() : (byte | 0b1111);
+      this.x++;
+      const size = byte === 0xde ? this.u16() : byte === 0xdf ? this.u32() : (byte & 0b1111);
       const obj: Record<string, unknown> = {};
       for (let i = 0; i < size; i++) {
         const key = this.key();
-        obj[key] = this.val();
+        obj[key] = this.primitive();
       }
       return obj;
     }
     const isArray = byte === 0xdc || byte === 0xdd || (byte >> 4 === 0b1001);
     if (isArray) {
-      this.u8();
-      const size = byte === 0xdc ? this.u16() : byte === 0xdd ? this.u32() : (byte | 0b1111);
+      this.x++;
+      const size = byte === 0xdc ? this.u16() : byte === 0xdd ? this.u32() : (byte & 0b1111);
       const arr: unknown[] = [];
-      for (let i = 0; i < size; i++) arr.push(this.val());
+      for (let i = 0; i < size; i++) arr.push(this.primitive());
       return arr;
     }
     return this.val();
