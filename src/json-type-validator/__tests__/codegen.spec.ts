@@ -123,7 +123,6 @@ test('can disable extra property check', () => {
   exec(type, {foo: 123, zup: '1', bar: 'asdf'}, null, {skipObjectExtraFieldsCheck: true});
 });
 
-
 describe('"str" type', () => {
   test('validates a basic string', () => {
     const type = t.str;
@@ -136,8 +135,18 @@ describe('"str" type', () => {
   test('validates minLength', () => {
     const type = t.String({minLength: 3});
     exec(type, 'asdf', null);
-    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, '12', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, '', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, '12', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
   });
 
   test('validates maxLength', () => {
@@ -145,8 +154,18 @@ describe('"str" type', () => {
     exec(type, '', null);
     exec(type, 'asdf', null);
     exec(type, 'asdfd', null);
-    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'asdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, 'aasdf sdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
   });
 
   test('validates minLength and maxLength', () => {
@@ -154,19 +173,59 @@ describe('"str" type', () => {
     exec(type, 'aaa', null);
     exec(type, 'bbbb', null);
     exec(type, 'vvvvv', null);
-    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, '', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, 'asdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, 'aasdf sdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
   });
 
   test('validates minLength and maxLength of equal size', () => {
     const type = t.String({minLength: 4, maxLength: 4});
-    exec(type, 'aaa', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'aaa', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
     exec(type, 'bbbb', null);
-    exec(type, 'vvvvv', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, '', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, 'asdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
-    exec(type, 'aasdf sdfdf', {code: 'STR_LEN', errno: JsonTypeValidatorError.STR_LEN, message: 'Invalid string length.', path: []});
+    exec(type, 'vvvvv', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, '', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, 'asdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
+    exec(type, 'aasdf sdfdf', {
+      code: 'STR_LEN',
+      errno: JsonTypeValidatorError.STR_LEN,
+      message: 'Invalid string length.',
+      path: [],
+    });
   });
 
   test('throws on invalid length values', () => {
@@ -192,7 +251,7 @@ describe('"num" type', () => {
   });
 
   test('validates integer type', () => {
-    const type = t.Number({format: 'i'})
+    const type = t.Number({format: 'i'});
     exec(type, 123, null);
     exec(type, -123, null);
     exec(type, 0, null);
@@ -201,7 +260,7 @@ describe('"num" type', () => {
   });
 
   test('validates unsigned integer type', () => {
-    const type = t.Number({format: 'u'})
+    const type = t.Number({format: 'u'});
     exec(type, 123, null);
     exec(type, 0, null);
     exec(type, -123, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
@@ -210,7 +269,7 @@ describe('"num" type', () => {
   });
 
   test('validates i8', () => {
-    const type = t.Number({format: 'i8'})
+    const type = t.Number({format: 'i8'});
     exec(type, 123, null);
     exec(type, 0, null);
     exec(type, -12, null);
@@ -222,7 +281,7 @@ describe('"num" type', () => {
   });
 
   test('validates u8', () => {
-    const type = t.Number({format: 'u8'})
+    const type = t.Number({format: 'u8'});
     exec(type, 123, null);
     exec(type, 0, null);
     exec(type, -12, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
@@ -234,7 +293,7 @@ describe('"num" type', () => {
   });
 
   test('validates i16', () => {
-    const type = t.Number({format: 'i16'})
+    const type = t.Number({format: 'i16'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
@@ -242,34 +301,59 @@ describe('"num" type', () => {
     exec(type, -0x3333, null);
     exec(type, 0, null);
     exec(type, -44, null);
-    exec(type, 0x7FFF - 1, null);
-    exec(type, 0x7FFF, null);
-    exec(type, 0x7FFF + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, 0x7fff - 1, null);
+    exec(type, 0x7fff, null);
+    exec(type, 0x7fff + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
     exec(type, -0x8000 + 1, null);
     exec(type, -0x8000, null);
     exec(type, -0x8000 - 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
   });
 
   test('validates u16', () => {
-    const type = t.Number({format: 'u16'})
+    const type = t.Number({format: 'u16'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
-    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x33, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x3333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
     exec(type, 0, null);
     exec(type, -44, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, 0x7FFF - 1, null);
-    exec(type, 0x7FFF, null);
-    exec(type, 0xFFFF - 1, null);
-    exec(type, 0xFFFF, null);
-    exec(type, 0xFFFF + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x8000 + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x8000, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0x7fff - 1, null);
+    exec(type, 0x7fff, null);
+    exec(type, 0xffff - 1, null);
+    exec(type, 0xffff, null);
+    exec(type, 0xffff + 1, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x8000 + 1, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x8000, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
   });
 
   test('validates i32', () => {
-    const type = t.Number({format: 'i32'})
+    const type = t.Number({format: 'i32'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
@@ -281,35 +365,60 @@ describe('"num" type', () => {
     exec(type, -0x33333333, null);
     exec(type, 0, null);
     exec(type, -44, null);
-    exec(type, 0x7FFFFFFF - 1, null);
-    exec(type, 0x7FFFFFFF, null);
-    exec(type, 0x7FFFFFFF + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
+    exec(type, 0x7fffffff - 1, null);
+    exec(type, 0x7fffffff, null);
+    exec(type, 0x7fffffff + 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
     exec(type, -0x80000000 + 1, null);
     exec(type, -0x80000000, null);
     exec(type, -0x80000000 - 1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
   });
 
   test('validates u32', () => {
-    const type = t.Number({format: 'u32'})
+    const type = t.Number({format: 'u32'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
-    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x33, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x3333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
     exec(type, 0, null);
     exec(type, -44, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, 0x7FFF - 1, null);
-    exec(type, 0x7FFF, null);
-    exec(type, 0xFFFF - 1, null);
-    exec(type, 0xFFFF, null);
-    exec(type, 0xFFFFFFFF, null);
-    exec(type, 0xFFFFFFFF + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x8000 + 1, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x8000, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, 0x7fff - 1, null);
+    exec(type, 0x7fff, null);
+    exec(type, 0xffff - 1, null);
+    exec(type, 0xffff, null);
+    exec(type, 0xffffffff, null);
+    exec(type, 0xffffffff + 1, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x8000 + 1, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x8000, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
   });
 
   test('validates i64', () => {
-    const type = t.Number({format: 'i64'})
+    const type = t.Number({format: 'i64'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
@@ -329,7 +438,7 @@ describe('"num" type', () => {
   });
 
   test('validates u64', () => {
-    const type = t.Number({format: 'u64'})
+    const type = t.Number({format: 'u64'});
     exec(type, 123, null);
     exec(type, 0x33, null);
     exec(type, 0x3333, null);
@@ -337,12 +446,42 @@ describe('"num" type', () => {
     exec(type, 0x33333333, null);
     exec(type, 0x3333333333, null);
     exec(type, 0x333333333333, null);
-    exec(type, -0x33, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x3333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x33333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x3333333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
-    exec(type, -0x333333333333, {code: 'UINT', errno: JsonTypeValidatorError.UINT, message: 'Not an unsigned integer.', path: []});
+    exec(type, -0x33, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x3333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x333333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x33333333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x3333333333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
+    exec(type, -0x333333333333, {
+      code: 'UINT',
+      errno: JsonTypeValidatorError.UINT,
+      message: 'Not an unsigned integer.',
+      path: [],
+    });
     exec(type, 0, null);
     exec(type, -44.123, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});
     exec(type, 1.1, {code: 'INT', errno: JsonTypeValidatorError.INT, message: 'Not an integer.', path: []});

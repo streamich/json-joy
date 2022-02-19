@@ -256,10 +256,10 @@ export class Decoder {
 
   protected valOneLevel(): unknown {
     const byte = this.view.getUint8(this.x);
-    const isMap = byte === 0xde || byte === 0xdf || (byte >> 4 === 0b1000);
+    const isMap = byte === 0xde || byte === 0xdf || byte >> 4 === 0b1000;
     if (isMap) {
       this.x++;
-      const size = byte === 0xde ? this.u16() : byte === 0xdf ? this.u32() : (byte & 0b1111);
+      const size = byte === 0xde ? this.u16() : byte === 0xdf ? this.u32() : byte & 0b1111;
       const obj: Record<string, unknown> = {};
       for (let i = 0; i < size; i++) {
         const key = this.key();
@@ -267,10 +267,10 @@ export class Decoder {
       }
       return obj;
     }
-    const isArray = byte === 0xdc || byte === 0xdd || (byte >> 4 === 0b1001);
+    const isArray = byte === 0xdc || byte === 0xdd || byte >> 4 === 0b1001;
     if (isArray) {
       this.x++;
-      const size = byte === 0xdc ? this.u16() : byte === 0xdd ? this.u32() : (byte & 0b1111);
+      const size = byte === 0xdc ? this.u16() : byte === 0xdd ? this.u32() : byte & 0b1111;
       const arr: unknown[] = [];
       for (let i = 0; i < size; i++) arr.push(this.primitive());
       return arr;
@@ -285,11 +285,11 @@ export class Decoder {
    */
   protected primitive(): unknown {
     const byte = this.view.getUint8(this.x);
-    const isMapOrArray = byte === 0xde || byte === 0xdf || byte === 0xdc || byte === 0xdd || (byte >> 5 === 0b100);
+    const isMapOrArray = byte === 0xde || byte === 0xdf || byte === 0xdc || byte === 0xdd || byte >> 5 === 0b100;
     if (isMapOrArray) {
       const length = this.valSkip();
       this.x -= length;
-      const buf =  this.bin(length);
+      const buf = this.bin(length);
       return new JsonPackValue(buf);
     }
     return this.val();

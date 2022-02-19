@@ -1,4 +1,4 @@
-import { wordWrap } from '../util/wordWrap';
+import {wordWrap} from '../util/wordWrap';
 import {TsNode} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 

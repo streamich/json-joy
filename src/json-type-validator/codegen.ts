@@ -295,7 +295,7 @@ export class JsonTypeValidatorCodegen {
       this.js(/* js */ `if(typeof ${r} !== "string") return ${error};`);
       if (typeof str.minLength === 'number')
         if (!Number.isInteger(str.minLength) || str.minLength < 0)
-        throw new Error(`Invalid minLength ${str.minLength} for string type.`);
+          throw new Error(`Invalid minLength ${str.minLength} for string type.`);
       if (typeof str.maxLength === 'number')
         if (!Number.isInteger(str.maxLength) || str.maxLength < 0)
           throw new Error(`Invalid maxLength ${str.maxLength} for string type.`);
@@ -303,7 +303,7 @@ export class JsonTypeValidatorCodegen {
         if (str.minLength > str.maxLength)
           throw new Error(`Invalid minLength ${str.minLength} and maxLength ${str.maxLength} for string type.`);
       }
-      if (typeof str.minLength === 'number' && typeof str.maxLength === 'number' && (str.minLength === str.maxLength)) {
+      if (typeof str.minLength === 'number' && typeof str.maxLength === 'number' && str.minLength === str.maxLength) {
         const strLenError = this.err(JsonTypeValidatorError.STR_LEN, path);
         this.js(/* js */ `if(${r}.length !== ${str.minLength}) return ${strLenError};`);
       } else {

@@ -1,4 +1,4 @@
-import {dynamicFunction} from "./dynamicFunction";
+import {dynamicFunction} from './dynamicFunction';
 
 /**
  * Switcher for code generation. It first executes "evaluation" function

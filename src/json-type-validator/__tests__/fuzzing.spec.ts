@@ -3,7 +3,7 @@ import {t} from '../../json-type';
 import {JsonTypeSystem} from '../../json-type-system';
 
 const types = {
-  'Post': t.Object([
+  Post: t.Object([
     t.Field('id', t.str),
     t.Field('title', t.str),
     t.Field('createdBy', t.str),
@@ -14,7 +14,7 @@ const types = {
     t.Field('op', t.Enum(['add', 'test'])),
   ]),
 
-  'Integers': t.Object([
+  Integers: t.Object([
     t.Field('i8', t.Number({format: 'i8'})),
     t.Field('i16', t.Number({format: 'i16'})),
     t.Field('i32', t.Number({format: 'i32'})),
@@ -25,7 +25,7 @@ const types = {
     t.Field('u64', t.Number({format: 'u64'})),
   ]),
 
-  'BasicTypes': t.Object([
+  BasicTypes: t.Object([
     t.Field('boolean', t.bool),
     t.Field('null', t.nil),
     t.Field('number', t.num),
@@ -43,11 +43,9 @@ const types = {
     t.Field('num2', t.Number({const: 123})),
   ]),
 
-  CreatePostResponse: t.Object([
-    t.Field('post', t.Ref('Post')),
-  ]),
+  CreatePostResponse: t.Object([t.Field('post', t.Ref('Post'))]),
 
-  'User': t.Object([
+  User: t.Object([
     t.Field('id', t.num),
     t.Field('name', t.str, {isOptional: true}),
     t.Field('friend', t.Ref('User'), {isOptional: true}),

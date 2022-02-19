@@ -288,10 +288,7 @@ describe('object', () => {
   test('can decode nested objects', () => {
     const obj: any = {
       a: {},
-      b: [
-        {},
-        {g: 123},
-      ],
+      b: [{}, {g: 123}],
       c: 1,
       d: 'asdf',
       e: null,
@@ -305,10 +302,7 @@ describe('object', () => {
       e: null,
       f: false,
       a: new JsonPackValue(encode({})),
-      b: new JsonPackValue(encode([
-        {},
-        {g: 123},
-      ])),
+      b: new JsonPackValue(encode([{}, {g: 123}])),
     });
     const obj2 = decoder.decode(encode(res));
     expect(obj2).toStrictEqual(obj);
