@@ -4,7 +4,9 @@ import {Defer} from '../../util/Defer';
 const startServer = async () => {
   const started = new Defer<void>();
   const exitCode = new Defer<number>();
-  const cp = spawn('yarn', ['demo:reactive-rpc:server'], {});
+  const cp = spawn('yarn', ['demo:reactive-rpc:server'], {
+    shell: true,
+  });
   process.on('exit', (code) => {
     cp.kill();
   });
@@ -36,16 +38,10 @@ const runTests = async () => {
       ...process.env,
       TEST_E2E: '1',
     },
+    stdio: "inherit",
   });
   process.on('exit', (code) => {
     cp.kill();
-  });
-  cp.stdout.on('data', (data) => {
-    const line = String(data);
-    process.stderr.write('[jest] ' + line);
-  });
-  cp.stderr.on('data', (data) => {
-    process.stderr.write('ERROR: [jest] ' + String(data));
   });
   cp.on('close', (code) => {
     exitCode.resolve(code || 0);
