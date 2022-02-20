@@ -1,3 +1,13 @@
+# [6.2.0](https://github.com/streamich/json-joy/compare/v6.1.0...v6.2.0) (2022-02-20)
+
+
+### Features
+
+* **json-patch:** 🎸 add decoding support for compact JSON Patch ops ([776cad6](https://github.com/streamich/json-joy/commit/776cad656654f6ee35e2c07671335707ae08d9fa))
+* **json-patch:** 🎸 add support for verbose opcode encoding as string ([3a756c2](https://github.com/streamich/json-joy/commit/3a756c23e9aaf79fd876e35a47c962df59a368c9))
+* **json-patch:** 🎸 allow compact encoding opcodes to be strings ([c69810a](https://github.com/streamich/json-joy/commit/c69810a2b49c17ca0ab33e4138401efbba9e0d23))
+* **json-patch:** 🎸 allow to specify compact string opcode in encoder ([d8b84dc](https://github.com/streamich/json-joy/commit/d8b84dc308692a573690012e737a69667037b07b))
+
 # [6.1.0](https://github.com/streamich/json-joy/compare/v6.0.2...v6.1.0) (2022-02-19)
 
 
