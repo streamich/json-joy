@@ -1,4 +1,4 @@
-import type {CompactStrInsOp} from '../codec/compact/types';
+import type {CompactStrInsOp, OPCODE_STR_INS} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrIns} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -47,8 +47,9 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactStrInsOp {
-    return [OPCODE.str_ins, this.path, this.pos, this.str];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactStrInsOp {
+    const opcode: OPCODE_STR_INS = verbose ? 'str_ins' : OPCODE.str_ins;
+    return [opcode, this.path, this.pos, this.str];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

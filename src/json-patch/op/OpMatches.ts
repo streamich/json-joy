@@ -1,4 +1,4 @@
-import type {CompactMatchesOp} from '../codec/compact/types';
+import type {CompactMatchesOp, OPCODE_MATCHES} from '../codec/compact/types';
 import type {OperationMatches, CreateRegexMatcher, RegexMatcher} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -48,10 +48,11 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactMatchesOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactMatchesOp {
+    const opcode: OPCODE_MATCHES = verbose ? 'matches' : OPCODE.matches;
     return this.ignore_case
-      ? [OPCODE.matches, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
-      : [OPCODE.matches, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+      ? [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
+      : [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

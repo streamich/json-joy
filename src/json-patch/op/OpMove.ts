@@ -1,4 +1,4 @@
-import type {CompactMoveOp} from '../codec/compact/types';
+import type {CompactMoveOp, OPCODE_MOVE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationMove} from '../types';
 import {OpRemove} from './OpRemove';
@@ -37,8 +37,9 @@ export class OpMove extends AbstractOp<'move'> {
     };
   }
 
-  public toCompact(parent?: AbstractOp): CompactMoveOp {
-    return [OPCODE.move, this.path, this.from];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactMoveOp {
+    const opcode: OPCODE_MOVE = verbose ? 'move' : OPCODE.move;
+    return [opcode, this.path, this.from];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

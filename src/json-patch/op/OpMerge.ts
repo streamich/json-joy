@@ -1,4 +1,4 @@
-import type {CompactMergeOp} from '../codec/compact/types';
+import type {CompactMergeOp, OPCODE_MERGE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
@@ -55,8 +55,9 @@ export class OpMerge extends AbstractOp<'merge'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactMergeOp {
-    return this.props ? [OPCODE.merge, this.path, this.pos, this.props] : [OPCODE.merge, this.path, this.pos];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactMergeOp {
+    const opcode: OPCODE_MERGE = verbose ? 'merge' : OPCODE.merge;
+    return this.props ? [opcode, this.path, this.pos, this.props] : [opcode, this.path, this.pos];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

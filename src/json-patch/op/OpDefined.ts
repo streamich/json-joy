@@ -1,4 +1,4 @@
-import type {CompactDefinedOp} from '../codec/compact/types';
+import type {CompactDefinedOp, OPCODE_DEFINED} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationDefined} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -36,8 +36,9 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactDefinedOp {
-    return [OPCODE.defined, parent ? this.path.slice(parent.path.length) : this.path];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactDefinedOp {
+    const opcode: OPCODE_DEFINED = verbose ? 'defined' : OPCODE.defined;
+    return [opcode, parent ? this.path.slice(parent.path.length) : this.path];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

@@ -1,4 +1,4 @@
-import type {CompactStartsOp} from '../codec/compact/types';
+import type {CompactStartsOp, OPCODE_STARTS} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationStarts} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -42,10 +42,11 @@ export class OpStarts extends AbstractPredicateOp<'starts'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactStartsOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactStartsOp {
+    const opcode: OPCODE_STARTS = verbose ? 'starts' : OPCODE.starts;
     return this.ignore_case
-      ? [OPCODE.starts, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
-      : [OPCODE.starts, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+      ? [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value, 1]
+      : [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

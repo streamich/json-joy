@@ -1,4 +1,4 @@
-import type {CompactMoreOp} from '../codec/compact/types';
+import type {CompactMoreOp, OPCODE_MORE} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationMore} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -38,8 +38,9 @@ export class OpMore extends AbstractPredicateOp<'more'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactMoreOp {
-    return [OPCODE.more, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactMoreOp {
+    const opcode: OPCODE_MORE = verbose ? 'more' : OPCODE.more;
+    return [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

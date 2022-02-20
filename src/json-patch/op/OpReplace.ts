@@ -1,4 +1,4 @@
-import type {CompactReplaceOp} from '../codec/compact/types';
+import type {CompactReplaceOp, OPCODE_REPLACE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
@@ -40,10 +40,11 @@ export class OpReplace extends AbstractOp<'replace'> {
     return json;
   }
 
-  public toCompact(parent?: AbstractOp): CompactReplaceOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactReplaceOp {
+    const opcode: OPCODE_REPLACE = verbose ? 'replace' : OPCODE.replace;
     return this.oldValue == undefined
-      ? [OPCODE.replace, this.path, this.value]
-      : [OPCODE.replace, this.path, this.value, this.oldValue];
+      ? [opcode, this.path, this.value]
+      : [opcode, this.path, this.value, this.oldValue];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

@@ -1,4 +1,4 @@
-import type {CompactInOp} from '../codec/compact/types';
+import type {CompactInOp, OPCODE_IN} from '../codec/compact/types';
 import {OperationIn} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
@@ -38,8 +38,9 @@ export class OpIn extends AbstractPredicateOp<'in'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactInOp {
-    return [OPCODE.in, parent ? this.path.slice(parent.path.length) : this.path, this.value];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactInOp {
+    const opcode: OPCODE_IN = verbose ? 'in' : OPCODE.in;
+    return [opcode, parent ? this.path.slice(parent.path.length) : this.path, this.value];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

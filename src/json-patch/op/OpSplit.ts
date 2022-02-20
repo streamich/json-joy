@@ -1,4 +1,4 @@
-import type {CompactSplitOp} from '../codec/compact/types';
+import type {CompactSplitOp, OPCODE_SPLIT} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
@@ -103,8 +103,9 @@ export class OpSplit extends AbstractOp<'split'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactSplitOp {
-    return this.props ? [OPCODE.split, this.path, this.pos, this.props] : [OPCODE.split, this.path, this.pos];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactSplitOp {
+    const opcode: OPCODE_SPLIT = verbose ? 'split' : OPCODE.split;
+    return this.props ? [opcode, this.path, this.pos, this.props] : [opcode, this.path, this.pos];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

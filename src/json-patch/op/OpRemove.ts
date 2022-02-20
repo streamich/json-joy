@@ -1,4 +1,4 @@
-import type {CompactRemoveOp} from '../codec/compact/types';
+import type {CompactRemoveOp, OPCODE_REMOVE} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationRemove} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
@@ -40,10 +40,11 @@ export class OpRemove extends AbstractOp<'remove'> {
     return json;
   }
 
-  public toCompact(parent?: AbstractOp): CompactRemoveOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactRemoveOp {
+    const opcode: OPCODE_REMOVE = verbose ? 'remove' : OPCODE.remove;
     return this.oldValue === undefined
-      ? ([OPCODE.remove, this.path] as CompactRemoveOp)
-      : ([OPCODE.remove, this.path, this.oldValue] as CompactRemoveOp);
+      ? ([opcode, this.path] as CompactRemoveOp)
+      : ([opcode, this.path, this.oldValue] as CompactRemoveOp);
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

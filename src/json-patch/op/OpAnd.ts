@@ -1,4 +1,4 @@
-import type {CompactAndOp} from '../codec/compact/types';
+import type {CompactAndOp, OPCODE_AND} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationAnd, PredicateOperation} from '../types';
@@ -37,11 +37,12 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactAndOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactAndOp {
+    const opcode: OPCODE_AND = verbose ? 'and' : OPCODE.and;
     return [
-      OPCODE.and,
+      opcode,
       parent ? this.path.slice(parent.path.length) : this.path,
-      this.ops.map((op) => op.toCompact(this)),
+      this.ops.map((op) => op.toCompact(this, verbose)),
     ];
   }
 
