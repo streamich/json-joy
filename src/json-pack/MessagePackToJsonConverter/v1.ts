@@ -5,7 +5,7 @@ import {toDataUri} from '../util/toDataUri';
 /**
  * @category Decoder
  */
-export class Decoder {
+export class MessagePackToJsonConverter {
   /** @ignore */
   protected uint8 = new Uint8Array([]);
   /** @ignore */
@@ -156,7 +156,7 @@ export class Decoder {
 
   /** @ignore */
   protected arr(size: number): json_string<unknown[]> {
-    let str = '{';
+    let str = '[';
     for (let i = 0; i < size; i++) {
       if (i > 0) str += ',';
       str += this.val();
