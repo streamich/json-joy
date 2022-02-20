@@ -1,5 +1,5 @@
 const Benchmark = require('benchmark');
-const encode = require('../../../es2020/util/base64').encode;
+const toBase64 = require('../../../es2020/util/base64').toBase64;
 
 const generateBlob = (length) => {
   const uint8 = new Uint8Array(length);
@@ -46,8 +46,8 @@ const suite = new Benchmark.Suite;
 
 const encoders = [
   {
-    name: `json-joy/util/base64 encode(uint8)`,
-    encode: (uint8) => encode(uint8),
+    name: `json-joy/util/base64 toBase64(uint8)`,
+    encode: (uint8) => toBase64(uint8),
   },
   {
     name: `fast-base64-encode`,

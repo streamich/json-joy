@@ -207,7 +207,7 @@ test('sends error notification when "notify" callback throws', async () => {
   expect(send).toHaveBeenCalledTimes(0);
   const msg = [new NotificationMessage(name, new Uint8Array([1]))];
   server.onMessages(msg, undefined);
-    expect(send).toHaveBeenCalledTimes(1);
+  expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
   expect(send.mock.calls[0][0][0].data).toEqual({
     message: 'test',

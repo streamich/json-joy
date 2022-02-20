@@ -46,9 +46,7 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactTestStringOp {
     const opcode: OPCODE_TEST_STRING = verbose ? 'test_string' : OPCODE.test_string;
     const path = parent ? this.path.slice(parent.path.length) : this.path;
-    return this.not
-      ? [opcode, path, this.pos, this.str, 1]
-      : [opcode, path, this.pos, this.str];
+    return this.not ? [opcode, path, this.pos, this.str, 1] : [opcode, path, this.pos, this.str];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
