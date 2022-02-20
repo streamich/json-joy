@@ -11,7 +11,7 @@ const stringSize = (str: string) => {
   let byteLength = strLength;
   let pos = 0;
   while (pos < strLength) {
-    let value = str.charCodeAt(pos++);
+    const value = str.charCodeAt(pos++);
     if (value < 128) {
       switch (value) {
         case 8: // \b

@@ -301,7 +301,7 @@ export abstract class AbstractDecoder extends MessagePackDecoder {
     const y = this.u8();
     const z8 = this.u8();
     const x = (((y >>> 3) << 16) | x16) * 0x100000000 + x32;
-    let z = ((y & 0b11) << 8) | z8;
+    const z = ((y & 0b11) << 8) | z8;
     if (!(y & 0b100)) return [x, z];
     const o1 = this.u8();
     if (o1 <= 0b0_1111111) return [x, (o1 << 10) | z];

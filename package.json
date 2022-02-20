@@ -32,7 +32,9 @@
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore --write 'src/**/*.{ts,tsx,js,jsx}'",
     "prettier:diff": "prettier -l 'src/**/*.{ts,tsx,js,jsx}'",
-    "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose",
+    "lint": "yarn tslint",
+    "lint:fix": "yarn tslint --fix",
+    "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
     "clean": "rimraf lib es6 es2019 es2020 esm typedocs",
     "build:cjs": "tsc --project tsconfig.build.json",
     "build:es6": "tsc --project tsconfig.build.json --module commonjs --target es6 --outDir es6",

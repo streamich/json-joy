@@ -43,7 +43,7 @@ ws.onclose = function close() {
 };
 
 ws.onmessage = function incoming(event: any) {
-  let uint8 = toUint8Array(event.data);
+  const uint8 = toUint8Array(event.data);
   const messages = decoder.decode(uint8);
   client.onMessages(messages as ReactiveRpcResponseMessage[]);
 };

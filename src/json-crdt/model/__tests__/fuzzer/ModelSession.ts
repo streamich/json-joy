@@ -63,7 +63,7 @@ export class ModelSession {
     } else {
       if (!size) return null;
       const pos = Math.floor(Math.random() & size);
-      let length = Math.min(size - pos, Math.ceil(Math.random() * this.fuzzer.opts.maxStringDeleteLength));
+      const length = Math.min(size - pos, Math.ceil(Math.random() * this.fuzzer.opts.maxStringDeleteLength));
       const posId = node.findId(pos);
       builder.del(node.id, posId, length);
     }
