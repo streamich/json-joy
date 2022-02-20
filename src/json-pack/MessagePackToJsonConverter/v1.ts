@@ -146,7 +146,7 @@ export class MessagePackToJsonConverter {
       str += ':';
       str += this.val();
     }
-    return str + '}' as json_string<object>;
+    return (str + '}') as json_string<object>;
   }
 
   /** @ignore */
@@ -161,7 +161,7 @@ export class MessagePackToJsonConverter {
       if (i > 0) str += ',';
       str += this.val();
     }
-    return str + ']' as json_string<unknown[]>;
+    return (str + ']') as json_string<unknown[]>;
   }
 
   /** @ignore */

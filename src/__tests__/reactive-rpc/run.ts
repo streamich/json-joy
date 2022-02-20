@@ -39,7 +39,7 @@ const runTests = async () => {
       ...process.env,
       TEST_E2E: '1',
     },
-    stdio: "inherit",
+    stdio: 'inherit',
   });
   process.on('exit', (code) => {
     cp.kill();
