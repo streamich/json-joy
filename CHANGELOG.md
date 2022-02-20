@@ -1,3 +1,26 @@
+# [7.0.0](https://github.com/streamich/json-joy/compare/v6.2.1...v7.0.0) (2022-02-20)
+
+
+### Bug Fixes
+
+* **json-pack:** 🐛 correctly encode first array character ([1566f68](https://github.com/streamich/json-joy/commit/1566f68db90cacf34ecf4e6efe02ee3949059b74))
+
+
+### Code Refactoring
+
+* **util:** 💡 rename Base64 encoder function ([23b1be1](https://github.com/streamich/json-joy/commit/23b1be10aa303cf3bdcb7893fcb81f08fa239778))
+
+
+### Features
+
+* **json-pack:** 🎸 add support for "bin" and "ext" types in converter ([7bf195a](https://github.com/streamich/json-joy/commit/7bf195ad7a4735b0e4634599e2f1d29763d374bf))
+* **json-pack:** 🎸 implement MessagePack to JSON converter ([705bdb0](https://github.com/streamich/json-joy/commit/705bdb070dae27f986c8a0dbf0f9fc24d7645de7))
+
+
+### BREAKING CHANGES
+
+* **util:** 🧨 Base64 encoder method is now called toBase64(), instead of encode().
+
 ## [6.2.1](https://github.com/streamich/json-joy/compare/v6.2.0...v6.2.1) (2022-02-20)
 
 
