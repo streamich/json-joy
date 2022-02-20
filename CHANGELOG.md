@@ -1,3 +1,10 @@
+## [6.2.1](https://github.com/streamich/json-joy/compare/v6.2.0...v6.2.1) (2022-02-20)
+
+
+### Bug Fixes
+
+* **reactive-rpc:** 🐛 collect "token" url param for authentication ([cb65b54](https://github.com/streamich/json-joy/commit/cb65b542c91997c88c3dcfb9606d9b447e6dd58f))
+
 # [6.2.0](https://github.com/streamich/json-joy/compare/v6.1.0...v6.2.0) (2022-02-20)
 
 
