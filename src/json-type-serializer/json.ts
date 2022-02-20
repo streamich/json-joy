@@ -4,7 +4,7 @@ import {Codegen, CodegenStepExecJs} from '../util/codegen';
 import {JsExpression} from '../util/codegen/util/JsExpression';
 import {asString} from '../util/asString';
 import {normalizeAccessor} from '../util/codegen/util/normalizeAccessor';
-import {encode} from '../util/base64/encode';
+import {toBase64} from '../util/base64/encode';
 
 export type JsonEncoderFn = <T>(value: T) => json_string<T>;
 
@@ -69,7 +69,7 @@ export class JsonSerializerCodegen {
   protected base64Linked = false;
   protected linkBase64() {
     if (this.base64Linked) return;
-    this.codegen.linkDependency(encode, 'toBase64');
+    this.codegen.linkDependency(toBase64, 'toBase64');
   }
 
   protected js(js: string) {

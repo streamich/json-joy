@@ -1,7 +1,7 @@
 const E = '=';
 const EE = '==';
 
-export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/') => {
+export const createToBase64 = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/') => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
 
   const table = chars.split('');
@@ -43,10 +43,10 @@ export const createEncode = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
   };
 };
 
-const encodeSmall = createEncode();
+const encodeSmall = createToBase64();
 const hasBuffer = typeof Buffer === 'function' && typeof Buffer.from === 'function';
 
-export const encode = !hasBuffer
+export const toBase64 = !hasBuffer
   ? (uint8: Uint8Array) => encodeSmall(uint8, uint8.byteLength)
   : (uint8: Uint8Array): string => {
       const length = uint8.byteLength;
