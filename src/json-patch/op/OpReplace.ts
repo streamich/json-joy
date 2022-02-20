@@ -42,7 +42,7 @@ export class OpReplace extends AbstractOp<'replace'> {
 
   public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactReplaceOp {
     const opcode: OPCODE_REPLACE = verbose ? 'replace' : OPCODE.replace;
-    return this.oldValue == undefined
+    return this.oldValue === undefined
       ? [opcode, this.path, this.value]
       : [opcode, this.path, this.value, this.oldValue];
   }

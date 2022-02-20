@@ -3,7 +3,7 @@ import {RandomJson} from '../../../json-random/RandomJson';
 
 const deepEqual = (a: unknown, b: unknown) => {
   const js = $$deepEqual(a);
-  const fn = eval(js);
+  const fn = eval(js); // tslint:disable-line
   return fn(b);
 };
 

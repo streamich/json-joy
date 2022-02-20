@@ -14,32 +14,37 @@ const client = new RpcClient({
   },
 });
 
+// tslint:disable-next-line no-console
+const log = (...args: any[]) => console.log(...args);
+// tslint:disable-next-line no-console
+const logError = (...args: any[]) => console.error(...args);
+
 ws.onopen = function open() {
-  console.log('connected');
+  log('connected');
 
-  console.log('ping', '->', {});
+  log('ping', '->', {});
   client.call$('ping', {}).subscribe((res) => {
-    console.log('ping', '<-', res);
+    log('ping', '<-', res);
   });
 
-  console.log('auth.users.get', '->', {id: '123'});
+  log('auth.users.get', '->', {id: '123'});
   client.call$('auth.users.get', {id: '123'}).subscribe((res) => {
-    console.log('auth.users.get', '<-', res);
+    log('auth.users.get', '<-', res);
   });
 
-  console.log('UNKNOWN_METHOD', '->', {});
+  log('UNKNOWN_METHOD', '->', {});
   client.call$('UNKNOWN_METHOD', {id: '123'}).subscribe({
     next: (res) => {
-      console.log('UNKNOWN_METHOD', '<-', res);
+      log('UNKNOWN_METHOD', '<-', res);
     },
     error: (error) => {
-      console.error('ERROR:', 'UNKNOWN_METHOD', '<-', error);
+      logError('ERROR:', 'UNKNOWN_METHOD', '<-', error);
     },
   });
 };
 
 ws.onclose = function close() {
-  console.log('disconnected');
+  log('disconnected');
 };
 
 ws.onmessage = function incoming(event: any) {

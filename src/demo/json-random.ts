@@ -7,7 +7,7 @@
 import {RandomJson} from '../json-random';
 
 const json1 = RandomJson.generate();
-console.log(json1);
+console.log(json1); // tslint:disable-line no-console
 // {
 //   '38': "'@9_nO'Mr2kNsk",
 //   ']Io': 'ek_(3hS_voW|4',
@@ -46,7 +46,7 @@ console.log(json1);
 const json2 = RandomJson.generate({
   nodeCount: 5,
 });
-console.log(json2);
+console.log(json2); // tslint:disable-line no-console
 // {
 //   '?)DClmRrUZAg8z>8': [ null, 596640662.4073832, 82241937.12592442 ],
 //   '}geJx8\\u_s': 27895
@@ -56,7 +56,7 @@ const json3 = RandomJson.generate({
   nodeCount: 5,
   rootNode: 'array',
 });
-console.log(json3);
+console.log(json3); // tslint:disable-line no-console
 // [
 //   421841709.15660113,
 //   641343038.74181,
@@ -75,7 +75,7 @@ const json4 = RandomJson.generate({
     number: 0,
   },
 });
-console.log(json4);
+console.log(json4); // tslint:disable-line no-console
 // {
 //   'ꢗᑨ䣥ꩇ쫃죄苑𥳐ဂ⑏': ';@Vb',
 //   B1s: "'Yk5!E?8[ILNETL",
@@ -84,15 +84,15 @@ console.log(json4);
 // }
 
 const json5 = RandomJson.genString();
-console.log(json5);
+console.log(json5); // tslint:disable-line no-console
 // %r&VwD^Zw
 
 const json6 = RandomJson.genNumber();
-console.log(json6);
+console.log(json6); // tslint:disable-line no-console
 // 820038137.7642472
 
 const json7 = RandomJson.genObject();
-console.log(json7);
+console.log(json7); // tslint:disable-line no-console
 // {
 //   'F#D2o-YUMz_c': 932708949530172,
 //   '(K0&%lE[ta"*R}@J': '05rw{Rz-9+z0R8$',
@@ -103,5 +103,5 @@ console.log(json7);
 // }
 
 const json8 = RandomJson.genArray();
-console.log(json8);
+console.log(json8); // tslint:disable-line no-console
 // [ 'BYTvAq+k', [], [ '&XT93Y', '{LN\\!P5SQ}0>&rZ%' ], null ]

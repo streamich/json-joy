@@ -10,8 +10,10 @@ const jsonCodegen = new JsonSerializerCodegen({
 
 const jsonSerializer = jsonCodegen.run().compile();
 
+// tslint:disable-next-line no-console
 console.log(jsonSerializer.toString());
 
+// tslint:disable-next-line no-console
 console.log(
   jsonSerializer({
     id: 123,
@@ -26,8 +28,10 @@ const msgpackCodegen = new MsgPackSerializerCodegen({
 
 const msgpackSerializer = msgpackCodegen.run().compile();
 
+// tslint:disable-next-line no-console
 console.log(msgpackSerializer.toString());
 
+// tslint:disable-next-line no-console
 console.log(
   msgpackSerializer({
     id: 123,

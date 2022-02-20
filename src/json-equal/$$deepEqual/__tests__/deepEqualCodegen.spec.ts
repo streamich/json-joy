@@ -2,7 +2,7 @@ import {$$deepEqual} from '..';
 
 test('generates a deep equal comparator', () => {
   const js = $$deepEqual([1, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
-  const deepEqual = eval(js);
+  const deepEqual = eval(js); // tslint:disable-line
 
   const res1 = deepEqual([1, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
   const res2 = deepEqual([2, true, false, 'sdf', {foo: 123, null: null}, [null, true, 'asdf'], 3, {}]);
@@ -16,12 +16,14 @@ test('generates a deep equal comparator', () => {
 });
 
 test('generates a deep equal comparator for primitives', () => {
+  /* tslint:disable */
   const equal1 = eval($$deepEqual('asdf'));
   const equal2 = eval($$deepEqual(123));
   const equal3 = eval($$deepEqual(true));
   const equal4 = eval($$deepEqual(null));
   const equal5 = eval($$deepEqual(false));
   const equal6 = eval($$deepEqual(4.4));
+  /* tslint:enable */
 
   expect(equal1('asdf')).toBe(true);
   expect(equal1('asdf2')).toBe(false);
@@ -47,7 +49,7 @@ test('generates a deep equal comparator for primitives', () => {
 
 test('undefined is not an empty object', () => {
   const js = $$deepEqual(undefined);
-  const deepEqual = eval(js);
+  const deepEqual = eval(js); // tslint:disable-line
   const res = deepEqual({});
   expect(res).toBe(false);
 });
