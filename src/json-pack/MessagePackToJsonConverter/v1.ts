@@ -1,6 +1,6 @@
 import {json_string} from '../../json-brand';
 import {asString} from '../../util/asString';
-import {JsonPackExtension} from '../JsonPackExtension';
+import {toDataUri} from '../util/toDataUri';
 
 /**
  * @category Decoder
@@ -165,25 +165,20 @@ export class Decoder {
   }
 
   /** @ignore */
-  protected bin(size: number): json_string<string> {
-    // const end = this.x + size;
-    // const bin = this.uint8.subarray(this.x, end);
-    // this.x = end;
-    return '' as json_string<string>;
+  protected bin(size: number): string {
+    const end = this.x + size;
+    const buf = this.uint8.subarray(this.x, end);
+    this.x = end;
+    return '"' + toDataUri(buf) + '"';
   }
 
   /** @ignore */
-  protected ext(size: number): JsonPackExtension {
-    // const type = this.u8();
-    // const end = this.x + size;
-    // const buf = this.uint8.subarray(this.x, end);
-    // this.x = end;
-    // return new JsonPackExtension(type, buf);
-    return '' as json_string<string>;
-  }
-
-  protected back(bytes: number) {
-    this.x -= bytes;
+  protected ext(size: number): string {
+    const ext = this.u8();
+    const end = this.x + size;
+    const buf = this.uint8.subarray(this.x, end);
+    this.x = end;
+    return '"' + toDataUri(buf, {ext}) + '"';
   }
 
   /** @ignore */
