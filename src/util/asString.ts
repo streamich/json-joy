@@ -1,5 +1,6 @@
 const stringify = JSON.stringify;
 
+/** Serialize text as a JSON string value. */
 export const asString = (str: string) => {
   const length = str.length;
   if (length > 41) return stringify(str);
