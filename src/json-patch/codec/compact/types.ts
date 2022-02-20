@@ -2,6 +2,10 @@ import type {OPCODE} from '../../constants';
 import type {Path} from '../../../json-pointer/types';
 import type {JsonPatchTypes} from '../json/types';
 
+export interface EncoderOptions {
+  stringOpcode?: boolean;
+}
+
 export type CompactOp = CompactJsonPatchOp | CompactJsonPredicateOp | CompactJsonPatchExtendedOp;
 
 /**

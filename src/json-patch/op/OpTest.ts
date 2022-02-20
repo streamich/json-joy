@@ -41,7 +41,7 @@ export class OpTest extends AbstractPredicateOp<'test'> {
     return op;
   }
 
-  public toCompact(parent: AbstractOp, verbose: boolean): CompactTestOp {
+  public toCompact(parent: AbstractOp | undefined, verbose: boolean): CompactTestOp {
     const path = parent ? this.path.slice(parent.path.length) : this.path;
     const opcode: OPCODE_TEST = verbose ? 'test' : OPCODE.test;
     return this.not ? [opcode, path, this.value, 1] : [opcode, path, this.value];

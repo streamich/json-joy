@@ -1,9 +1,9 @@
 import {Op} from '../../op';
 import {encode} from './encode';
-import {CompactOp} from './types';
+import {CompactOp, EncoderOptions} from './types';
 
 export class Encoder {
-  public encode(patch: Op[]): CompactOp[] {
-    return encode(patch);
+  public encode(patch: Op[], options?: EncoderOptions): CompactOp[] {
+    return encode(patch, options);
   }
 }
