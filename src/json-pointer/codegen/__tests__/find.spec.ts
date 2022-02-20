@@ -1,6 +1,7 @@
 import {$$find} from '../find';
 
 test('can generate two levels deep selector', () => {
+  // tslint:disable-next-line
   const selector = eval($$find(['foo', 'bar']));
 
   expect(selector({foo: {bar: 123}})).toBe(123);
@@ -14,6 +15,7 @@ test('can generate two levels deep selector', () => {
 });
 
 test('can generate root selector', () => {
+  // tslint:disable-next-line
   const selector = eval($$find([]));
 
   expect(selector({foo: {bar: {a: 'b'}}})).toEqual({foo: {bar: {a: 'b'}}});
@@ -22,6 +24,7 @@ test('can generate root selector', () => {
 });
 
 test('can select from an array', () => {
+  // tslint:disable-next-line
   const selector = eval($$find(['a', 0, 'b', 1]));
 
   expect(selector({a: [{b: [1, 2, 3]}]})).toEqual(2);
@@ -32,6 +35,7 @@ test('can select from an array', () => {
 });
 
 test('can select from an root array or object', () => {
+  // tslint:disable-next-line
   const selector = eval($$find(['0']));
 
   expect(selector([5])).toEqual(5);

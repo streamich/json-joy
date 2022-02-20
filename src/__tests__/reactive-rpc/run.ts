@@ -16,6 +16,7 @@ const startServer = async () => {
     process.stderr.write('[server] ' + line);
   });
   cp.stderr.on('data', (data) => {
+    // tslint:disable-next-line no-console
     console.error('Could not start server');
     started.reject(data);
     process.stderr.write('ERROR: [server] ' + String(data));
@@ -65,6 +66,7 @@ const runTests = async () => {
     }
     process.exit(exitCode);
   } catch (error) {
+    // tslint:disable-next-line no-console
     console.error(error);
     process.exit(1);
   }

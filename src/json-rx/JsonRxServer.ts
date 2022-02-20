@@ -21,7 +21,7 @@ interface ErrorLike {
 }
 
 const formatError = (error: ErrorLike): ErrorLike => {
-  let obj: ErrorLike = {message: error.message};
+  const obj: ErrorLike = {message: error.message};
   if (typeof error.status === 'number') obj.status = error.status;
   if (typeof error.code === 'string') obj.code = error.code;
   if (typeof error.errno === 'number') obj.errno = error.errno;

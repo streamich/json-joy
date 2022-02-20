@@ -1059,7 +1059,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
       });
 
       it('should apply move on root', () => {
-        //investigate if this test is right (https://github.com/Starcounter-Jack/JSON-Patch/issues/40)
+        // investigate if this test is right (https://github.com/Starcounter-Jack/JSON-Patch/issues/40)
         const obj: any = {
           hello: 'world',
           location: {
@@ -1383,7 +1383,7 @@ export const smokeTestApplyPatch = (applyPatch: ApplyPatch, {dontTestResultHisto
           ],
           bar: [1, 2, 3, 4],
         };
-        //jsonpatch.listenTo(obj,[]);
+        // jsonpatch.listenTo(obj,[]);
 
         applyPatch(
           obj,

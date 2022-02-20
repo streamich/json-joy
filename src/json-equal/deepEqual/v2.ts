@@ -8,7 +8,7 @@ export const deepEqual = (a: unknown, b: unknown): boolean => {
     let length, i, keys;
     if (Array.isArray(a)) {
       length = a.length;
-      if (length != (b as Array<unknown>).length) return false;
+      if (length !== (b as Array<unknown>).length) return false;
       for (i = length; i-- !== 0; ) if (!deepEqual(a[i], (b as Array<unknown>)[i])) return false;
       return true;
     }
@@ -19,7 +19,7 @@ export const deepEqual = (a: unknown, b: unknown): boolean => {
     if (length !== Object.keys(b).length) return false;
     for (i = length; i-- !== 0; ) if ((b as Record<string, unknown>)[keys[i]] === undefined) return false;
     for (i = length; i-- !== 0; ) {
-      var key = keys[i];
+      const key = keys[i];
       if (!deepEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])) return false;
     }
     return true;

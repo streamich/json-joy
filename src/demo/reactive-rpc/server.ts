@@ -100,8 +100,10 @@ const port = 9999;
 
 uws.listen(port, (token) => {
   if (token) {
+    // tslint:disable-next-line no-console
     console.log({msg: 'SERVER_STARTED', url: `http://localhost:${port}`});
   } else {
+    // tslint:disable-next-line no-console
     console.error(`Failed to listen on ${port} port.`);
   }
 });

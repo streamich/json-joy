@@ -83,7 +83,7 @@ export class StringChunk implements JsonChunk {
    * @returns Human readable representation of the array chunk.
    */
   public toString(tab: string = ''): string {
-    let str = `${tab}StringChunk(${this.id.toDisplayString()}) { ${
+    const str = `${tab}StringChunk(${this.id.toDisplayString()}) { ${
       !this.str ? `[${this.deleted || this.span()}]` : this.str.length > 10 ? this.str.substr(0, 10) + '…' : this.str
     } }`;
     return str;

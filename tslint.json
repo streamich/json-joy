@@ -1,5 +1,11 @@
 {
   "extends": [
     "tslint-config-common"
-  ]
+  ],
+  "rules": {
+    "unified-signatures": false,
+    "no-conditional-assignment": false,
+    "variable-name": false,
+    "one-variable-per-declaration": false
+  }
 }

@@ -38,6 +38,7 @@ describe('static calls', () => {
         test: {
           isStreaming: false,
           call: async () => {
+            // tslint:disable-next-line:no-string-throw
             throw 'lol';
           },
         },

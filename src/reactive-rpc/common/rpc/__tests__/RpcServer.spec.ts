@@ -41,6 +41,7 @@ const setup = (params: Partial<RpcServerParams> = {}, callerParams: Partial<RpcA
       promiseError: {
         isStreaming: false,
         call: async () => {
+          // tslint:disable-next-line:no-string-throw
           throw 'this promise can throw';
         },
       },
@@ -204,7 +205,8 @@ test('sends error notification when "notify" callback throws', async () => {
   });
   const name = 'aga';
   expect(send).toHaveBeenCalledTimes(0);
-  server.onMessages([new NotificationMessage(name, new Uint8Array([1]))], undefined),
+  const msg = [new NotificationMessage(name, new Uint8Array([1]))];
+  server.onMessages(msg, undefined);
     expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
   expect(send.mock.calls[0][0][0].data).toEqual({

@@ -84,7 +84,7 @@ export class ArrayChunk implements JsonChunk {
    * @returns Human readable representation of the array chunk.
    */
   public toString(tab: string = ''): string {
-    let str = `${tab}ArrayChunk(${this.id.toDisplayString()}) { ${
+    const str = `${tab}ArrayChunk(${this.id.toDisplayString()}) { ${
       !this.nodes ? `[${this.deleted || 0}]` : this.nodes!.map((val) => val.toString()).join(', ')
     } }`;
     return str;

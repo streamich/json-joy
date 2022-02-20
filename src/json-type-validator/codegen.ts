@@ -170,7 +170,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected addDependencies(deps: unknown[]): string[] {
-    let symbols: string[] = [];
+    const symbols: string[] = [];
     for (const dep of deps) {
       this.dependencies.push(dep);
       symbols.push(`d${this.dependencies.length - 1}`);
@@ -183,7 +183,7 @@ export class JsonTypeValidatorCodegen {
 
   /** @ignore */
   protected addConsts(consts: string[]): string[] {
-    let symbols: string[] = [];
+    const symbols: string[] = [];
     for (const const_ of consts) {
       this.consts.push(const_);
       symbols.push(`c${this.consts.length - 1}`);

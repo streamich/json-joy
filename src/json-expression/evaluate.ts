@@ -1,6 +1,5 @@
 import {deepEqual} from '../json-equal/deepEqual';
-import {get, toPath} from '../json-pointer';
-import {validateJsonPointer} from '../json-pointer';
+import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import {
   betweenEqEq,

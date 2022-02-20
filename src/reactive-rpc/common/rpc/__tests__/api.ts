@@ -59,6 +59,7 @@ const double: RpcMethodStatic<object, {num: number}, {num: number}> = {
 const error: RpcMethodStatic<object, void, void> = {
   isStreaming: false,
   call: async () => {
+    // tslint:disable-next-line:no-string-throw
     throw 'this promise can throw';
   },
 };

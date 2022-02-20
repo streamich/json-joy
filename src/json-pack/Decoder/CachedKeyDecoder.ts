@@ -83,7 +83,7 @@ export class CachedKeyDecoder {
   public decode(bytes: Uint8Array, offset: number, size: number): string {
     if (!size) return '';
     const cachedValue = this.get(bytes, offset, size);
-    if (cachedValue != null) return cachedValue;
+    if (cachedValue !== null) return cachedValue;
     const value = utf8DecodeJs(bytes, offset, size);
     // Ensure to copy a slice of bytes because the byte may be NodeJS Buffer and Buffer#slice() returns a reference to its internal ArrayBuffer.
     const slicedCopyOfBytes = Uint8Array.prototype.slice.call(bytes, offset, offset + size);
