@@ -40,7 +40,7 @@ export const createConnectionContext = (req: HttpRequest, res: HttpResponse): Co
     const query = req.getQuery();
     const params = new URLSearchParams(query);
     token = params.get('access_token') || '';
-    if (!token) params.get('token') || '';
+    if (!token) token = params.get('token') || '';
   }
 
   // Try to retrieve authentication token from Sec-WebSocket-Protocol header.
