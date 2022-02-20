@@ -18,6 +18,10 @@ refs:
       run:
         name: Build
         command: yarn build
+    - &Lint
+      run:
+        name: Run linter
+        command: yarn lint
     - &Test_Unit
       run:
         name: Test - Unit tests
@@ -50,6 +54,7 @@ jobs:
       - checkout
       - *Versions
       - *Install
+      - *Lint
       - *Build
       - *Test_Unit
       - *Test_CLI_Pointer
@@ -64,6 +69,7 @@ jobs:
       - checkout
       - *Versions
       - *Install
+      - *Lint
       - *Build
       - *Test_Unit
       - *Test_CLI_Pointer
@@ -82,6 +88,7 @@ jobs:
       - checkout
       - *Versions
       - *Install
+      - *Lint
       - *Build
       - *Test_Unit
       - *Test_CLI_Pointer

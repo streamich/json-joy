@@ -41,7 +41,7 @@
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir es2020",
     "build:esm": "tsc --project tsconfig.build.json --module ESNext --target ESNEXT --outDir esm",
     "build": "yarn build:cjs && yarn build:es6 && yarn build:es2020 && yarn build:esm",
-    "test:all": "yarn test && yarn test:pointer && yarn test:patch && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer && yarn demo:json-rx",
+    "test:all": "yarn lint && yarn test && yarn test:pointer && yarn test:patch && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer && yarn demo:json-rx",
     "test": "jest --maxWorkers 4",
     "test:ci": "jest --maxWorkers 2 --no-cache",
     "test:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
