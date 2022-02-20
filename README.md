@@ -90,3 +90,21 @@ All libraries can be imported from one of the below folders:
 - `es2020` &mdash; ES2020 compiled CommonJS code.
 - `es6` &mdash; ES6 compiled CommonJS code.
 - `esm` &mdash; latest TypeScript compiler supported EcmaScript modules code.
+
+
+## Development
+
+Run all tests locally:
+
+```bash
+yarn build
+yarn test:all
+```
+
+Use [Angular-type semantic commit messages](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)
+for commit messages. Those are used in determining the version bump of the
+library for the next release. Optional, you can use `git-cz` for that:
+
+```bash
+npx git-cz
+```
