@@ -14,6 +14,6 @@ export abstract class AbstractOp<O extends OpType = OpType> {
   abstract code(): OPCODE;
   abstract apply(doc: unknown): {doc: unknown; old?: unknown};
   abstract toJson(parent?: AbstractOp): Operation;
-  abstract toCompact(parent?: AbstractOp): CompactOpBase;
+  abstract toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactOpBase;
   abstract encode(encoder: IMessagePackEncoder, parent?: AbstractOp): void;
 }

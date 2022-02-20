@@ -1,4 +1,4 @@
-import type {CompactNotOp} from '../codec/compact/types';
+import type {CompactNotOp, OPCODE_NOT} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationNot, PredicateOperation} from '../types';
@@ -37,11 +37,12 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactNotOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactNotOp {
+    const opcode: OPCODE_NOT = verbose ? 'not' : OPCODE.not;
     return [
-      OPCODE.not,
+      opcode,
       parent ? this.path.slice(parent.path.length) : this.path,
-      this.ops.map((op) => op.toCompact(this)),
+      this.ops.map((op) => op.toCompact(this, verbose)),
     ];
   }
 

@@ -1,4 +1,4 @@
-import type {CompactAddOp} from '../codec/compact/types';
+import type {CompactAddOp, OPCODE_ADD} from '../codec/compact/types';
 import type {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
@@ -44,8 +44,9 @@ export class OpAdd extends AbstractOp<'add'> {
     };
   }
 
-  public toCompact(parent?: AbstractOp): CompactAddOp {
-    return [OPCODE.add, this.path, this.value];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactAddOp {
+    const opcode: OPCODE_ADD = verbose ? 'add' : OPCODE.add;
+    return [opcode, this.path, this.value];
   }
 
   public encode(encoder: IMessagePackEncoder) {

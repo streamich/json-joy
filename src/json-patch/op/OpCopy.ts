@@ -1,4 +1,4 @@
-import type {CompactCopyOp} from '../codec/compact/types';
+import type {CompactCopyOp, OPCODE_COPY} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '../../json-pointer';
@@ -38,8 +38,9 @@ export class OpCopy extends AbstractOp<'copy'> {
     };
   }
 
-  public toCompact(parent?: AbstractOp): CompactCopyOp {
-    return [OPCODE.copy, this.path, this.from];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactCopyOp {
+    const opcode: OPCODE_COPY = verbose ? 'copy' : OPCODE.copy;
+    return [opcode, this.path, this.from];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

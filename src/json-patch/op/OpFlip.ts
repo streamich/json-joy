@@ -1,4 +1,4 @@
-import type {CompactFlipOp} from '../codec/compact/types';
+import type {CompactFlipOp, OPCODE_FLIP} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -36,8 +36,9 @@ export class OpFlip extends AbstractOp<'flip'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactFlipOp {
-    return [OPCODE.flip, this.path];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactFlipOp {
+    const opcode: OPCODE_FLIP = verbose ? 'flip' : OPCODE.flip;
+    return [opcode, this.path];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

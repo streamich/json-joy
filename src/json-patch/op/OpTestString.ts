@@ -1,4 +1,4 @@
-import type {CompactTestStringOp} from '../codec/compact/types';
+import type {CompactTestStringOp, OPCODE_TEST_STRING} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestString} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -43,11 +43,12 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactTestStringOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactTestStringOp {
+    const opcode: OPCODE_TEST_STRING = verbose ? 'test_string' : OPCODE.test_string;
     const path = parent ? this.path.slice(parent.path.length) : this.path;
     return this.not
-      ? [OPCODE.test_string, path, this.pos, this.str, 1]
-      : [OPCODE.test_string, path, this.pos, this.str];
+      ? [opcode, path, this.pos, this.str, 1]
+      : [opcode, path, this.pos, this.str];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

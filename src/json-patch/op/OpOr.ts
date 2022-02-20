@@ -1,4 +1,4 @@
-import type {CompactOrOp} from '../codec/compact/types';
+import type {CompactOrOp, OPCODE_OR} from '../codec/compact/types';
 import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationOr, PredicateOperation} from '../types';
@@ -37,11 +37,12 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactOrOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactOrOp {
+    const opcode: OPCODE_OR = verbose ? 'or' : OPCODE.or;
     return [
-      OPCODE.or,
+      opcode,
       parent ? this.path.slice(parent.path.length) : this.path,
-      this.ops.map((op) => op.toCompact(this)),
+      this.ops.map((op) => op.toCompact(this, verbose)),
     ];
   }
 

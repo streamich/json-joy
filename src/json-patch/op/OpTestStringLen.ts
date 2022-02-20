@@ -1,4 +1,4 @@
-import type {CompactTestStringLenOp} from '../codec/compact/types';
+import type {CompactTestStringLenOp, OPCODE_TEST_STRING_LEN} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationTestStringLen} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -40,9 +40,10 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactTestStringLenOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactTestStringLenOp {
+    const opcode: OPCODE_TEST_STRING_LEN = verbose ? 'test_string_len' : OPCODE.test_string_len;
     const path = parent ? this.path.slice(parent.path.length) : this.path;
-    return this.not ? [OPCODE.test_string_len, path, this.len, 1] : [OPCODE.test_string_len, path, this.len];
+    return this.not ? [opcode, path, this.len, 1] : [opcode, path, this.len];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

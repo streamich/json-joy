@@ -1,4 +1,4 @@
-import type {CompactStrDelOp} from '../codec/compact/types';
+import type {CompactStrDelOp, OPCODE_STR_DEL} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrDel} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
@@ -63,10 +63,11 @@ export class OpStrDel extends AbstractOp<'str_del'> {
     };
   }
 
-  public toCompact(parent?: AbstractOp): CompactStrDelOp {
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactStrDelOp {
+    const opcode: OPCODE_STR_DEL = verbose ? 'str_del' : OPCODE.str_del;
     return typeof this.str === 'string'
-      ? [OPCODE.str_del, this.path, this.pos, this.str]
-      : ([OPCODE.str_del, this.path, this.pos, 0, this.len] as CompactStrDelOp);
+      ? [opcode, this.path, this.pos, this.str]
+      : ([opcode, this.path, this.pos, 0, this.len] as CompactStrDelOp);
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {

@@ -1,4 +1,4 @@
-import type {CompactExtendOp} from '../codec/compact/types';
+import type {CompactExtendOp, OPCODE_EXTEND} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
@@ -62,8 +62,9 @@ export class OpExtend extends AbstractOp<'extend'> {
     return op;
   }
 
-  public toCompact(parent?: AbstractOp): CompactExtendOp {
-    return this.deleteNull ? [OPCODE.extend, this.path, this.props, 1] : [OPCODE.extend, this.path, this.props];
+  public toCompact(parent: undefined | AbstractOp, verbose: boolean): CompactExtendOp {
+    const opcode: OPCODE_EXTEND = verbose ? 'extend' : OPCODE.extend;
+    return this.deleteNull ? [opcode, this.path, this.props, 1] : [opcode, this.path, this.props];
   }
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
