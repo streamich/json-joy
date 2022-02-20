@@ -3,7 +3,9 @@ import {encode} from './encode';
 import {CompactOp, EncoderOptions} from './types';
 
 export class Encoder {
-  public encode(patch: Op[], options?: EncoderOptions): CompactOp[] {
-    return encode(patch, options);
+  constructor(public readonly options?: EncoderOptions) {}
+
+  public encode(patch: Op[]): CompactOp[] {
+    return encode(patch, this.options);
   }
 }
