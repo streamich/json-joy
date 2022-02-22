@@ -1,7 +1,6 @@
 /* tslint:disable */
 
 import {spawnSync} from 'child_process';
-import {JsonPackExtension} from '../json-pack';
 import {
   testSuites,
   TestCaseNil,
@@ -10,9 +9,7 @@ import {
   TestCaseNumber,
   TestCaseArray,
   TestCaseMap,
-  TestCaseExt,
 } from './test/msgpack-test-suite';
-const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
 

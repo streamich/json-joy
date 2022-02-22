@@ -2,8 +2,8 @@
 
 import {spawnSync} from 'child_process';
 import {validateOperation} from '../json-patch';
+import {deepEqual} from '../json-equal/deepEqual';
 import {testSuites} from './test/suites';
-const equal = require('fast-deep-equal');
 
 const bin = String(process.argv[2]);
 
@@ -31,7 +31,7 @@ testSuites.forEach((suite) => {
         const input = JSON.stringify(test.doc);
         const {stdout} = spawnSync(bin, [JSON.stringify(test.patch)], {input});
         result = JSON.parse(stdout.toString());
-        isCorrect = equal(result, test.expected);
+        isCorrect = deepEqual(result, test.expected);
       } catch {
         isCorrect = false;
       }
