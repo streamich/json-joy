@@ -28,12 +28,16 @@ refs:
         command: yarn test:ci
     - &Test_CLI_Pointer
       run:
-        name: "Test - CLI: JSON Pointer"
+        name: "Test - CLI: json_pointer"
         command: yarn test:pointer
     - &Test_CLI_Patch
       run:
-        name: "Test - CLI: JSON Patch"
+        name: "Test - CLI: json-patch"
         command: yarn test:patch
+    - &Test_CLI_Pack
+      run:
+        name: "Test - CLI: json-pack"
+        command: yarn test:pack
     - &Test_E2E_Reactive_RPC
       run:
         name: "Test - E2E: Reactive-RPC"
@@ -59,6 +63,7 @@ jobs:
       - *Test_Unit
       - *Test_CLI_Pointer
       - *Test_CLI_Patch
+      - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
       - *Test_Demos
       - *Post_to_dev_null
@@ -74,6 +79,7 @@ jobs:
       - *Test_Unit
       - *Test_CLI_Pointer
       - *Test_CLI_Patch
+      - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
       - *Test_Demos
       - *Post_to_dev_null
@@ -93,6 +99,7 @@ jobs:
       - *Test_Unit
       - *Test_CLI_Pointer
       - *Test_CLI_Patch
+      - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
       - *Test_Demos
       - *Post_to_dev_null
