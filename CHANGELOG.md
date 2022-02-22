@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/streamich/json-joy/compare/v7.0.0...v7.0.1) (2022-02-22)
+
+
+### Bug Fixes
+
+* 🐛 stop using fast-deep-equal in shipped code ([f5a00be](https://github.com/streamich/json-joy/commit/f5a00be3632c60dc630160ad2983c24a5bdf28ee))
+
 # [7.0.0](https://github.com/streamich/json-joy/compare/v6.2.1...v7.0.0) (2022-02-20)
 
 
