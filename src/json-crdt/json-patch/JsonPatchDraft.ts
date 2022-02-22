@@ -5,7 +5,7 @@ import {ObjectType} from '../types/lww-object/ObjectType';
 import {ArrayType} from '../types/rga-array/ArrayType';
 import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {isChild, Path} from '../../json-pointer';
-const isEqual = require('fast-deep-equal');
+import {deepEqual} from '../../json-equal/deepEqual';
 
 export class JsonPatchDraft extends Draft {
   constructor(public readonly model: Model) {
@@ -99,7 +99,7 @@ export class JsonPatchDraft extends Draft {
   public applyOpTest(op: OpTest): void {
     const {path, value} = op;
     const json = this.json(path);
-    if (!isEqual(json, value)) throw new Error('TEST');
+    if (!deepEqual(json, value)) throw new Error('TEST');
   }
 
   private get(steps: Path): unknown {

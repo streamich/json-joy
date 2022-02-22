@@ -2,7 +2,7 @@
 
 import {spawnSync} from 'child_process';
 import {testCases} from './json-pointer-testCases';
-const equal = require('fast-deep-equal');
+import {deepEqual} from '../json-equal/deepEqual';
 
 const bin = String(process.argv[2]);
 
@@ -22,7 +22,7 @@ for (const {name, doc, pointer, result, error} of testCases) {
   const {stdout, stderr} = spawnSync(bin, [pointer], {input: JSON.stringify(doc)});
   let isCorrect = false;
   if (error === undefined) {
-    isCorrect = equal(result, JSON.parse(stdout.toString()));
+    isCorrect = deepEqual(result, JSON.parse(stdout.toString()));
   } else {
     const errorMessage = stderr.toString().trim();
     isCorrect = errorMessage === error;
