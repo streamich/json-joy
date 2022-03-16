@@ -1,20 +1,29 @@
 import {alphabet} from "./constants";
 
 const E = '=';
-const EE = '==';
 
 export const createFromBase64 = (chars: string = alphabet) => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
-
   const list = chars.split('');
   const table: {[key: string]: number} = {};
-
   for (let i = 0; i < list.length; i++) table[list[i]] = i;
 
   return (encoded: string): Uint8Array => {
-    if (encoded.length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
+    if (!encoded) return new Uint8Array(0);
     const length = encoded.length;
+    if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
     const mainLength = encoded[length - 1] !== E ? length : length - 4;
+    let bufferLength = length / 4 * 3;
+    let padding = 0;
+    if (encoded[length - 2] === E) {
+      padding = 2;
+      bufferLength -= 2;
+    } else if (encoded[length - 1] === E) {
+      padding = 1;
+      bufferLength -= 1;
+    }
+    const buf = new Uint8Array(bufferLength);
+    let j = 0;
     for (let i = 0; i < mainLength; i += 4) {
       const c0 = encoded[i];
       const c1 = encoded[i + 1];
@@ -24,10 +33,23 @@ export const createFromBase64 = (chars: string = alphabet) => {
       const sextet1 = table[c1];
       const sextet2 = table[c2];
       const sextet3 = table[c3];
-      const u24 = sextet0 << 18 | sextet1 << 12 | sextet2 << 6 | sextet3;
-
+      buf[i] = (sextet0 << 2) | (sextet1 >> 4);
+      buf[i + 1] = (sextet1 << 4) | (sextet2 >> 2);
+      buf[i + 2] = (sextet2 << 6) | sextet3;
+      j += 3;
     }
-
+    if (padding === 2) {
+      const c0 = encoded[mainLength];
+      const sextet0 = table[c0];
+      buf[mainLength] = (sextet0 << 2);
+    } else if (padding === 1) {
+      const c0 = encoded[mainLength];
+      const c1 = encoded[mainLength + 1];
+      const sextet0 = table[c0];
+      const sextet1 = table[c1];
+      buf[mainLength] = (sextet0 << 2) | (sextet1 >> 4);
+    }
+    return buf;
   };
 };
 
