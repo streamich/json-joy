@@ -1,3 +1,4 @@
+import {bufferToUint8Array} from "../bufferToUint8Array";
 import {alphabet} from "./constants";
 
 const E = '=';
@@ -24,7 +25,8 @@ export const createFromBase64 = (chars: string = alphabet) => {
     }
     const buf = new Uint8Array(bufferLength);
     let j = 0;
-    for (let i = 0; i < mainLength; i += 4) {
+    let i = 0;
+    for (; i < mainLength; i += 4) {
       const c0 = encoded[i];
       const c1 = encoded[i + 1];
       const c2 = encoded[i + 2];
@@ -41,18 +43,20 @@ export const createFromBase64 = (chars: string = alphabet) => {
     if (padding === 2) {
       const c0 = encoded[mainLength];
       const sextet0 = table[c0];
-      buf[mainLength] = (sextet0 << 2);
+      buf[i] = (sextet0 << 2);
     } else if (padding === 1) {
       const c0 = encoded[mainLength];
       const c1 = encoded[mainLength + 1];
       const sextet0 = table[c0];
       const sextet1 = table[c1];
-      buf[mainLength] = (sextet0 << 2) | (sextet1 >> 4);
+      buf[i] = (sextet0 << 2) | (sextet1 >> 4);
     }
     return buf;
   };
 };
 
-const fromBase64Small = createFromBase64();
+const fromBase64Cpp = typeof Buffer === 'function'
+  ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64'))
+  : null;
 
-export const fromBase64 = fromBase64Small;
+export const fromBase64 = fromBase64Cpp || createFromBase64();
