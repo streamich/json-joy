@@ -1,10 +1,10 @@
-import {toBase64, createToBase64} from '../encode';
-import {createFromBase64} from '../decode';
+import {toBase64} from '../encode';
+import {fromBase64, createFromBase64} from '../decode';
 
 const fromBase64_2 = createFromBase64();
 
 const generateBlob = (): Uint8Array => {
-  const length = Math.floor(Math.random() * 100) + 1;
+  const length = Math.floor(Math.random() * 100);
   const uint8 = new Uint8Array(length);
   for (let i = 0; i < length; i++) {
     uint8[i] = Math.floor(Math.random() * 256);
@@ -13,14 +13,12 @@ const generateBlob = (): Uint8Array => {
 };
 
 test('works', () => {
-  for (let i = 0; i < 1; i++) {
-    // const blob = generateBlob();
-    const blob = new Uint8Array([1, 2, 3, 4]);
-    console.log('blob', blob);
+  for (let i = 0; i < 100; i++) {
+    const blob = generateBlob();
     const encoded = toBase64(blob);
-    console.log('encoded', encoded);
     const decoded1 = fromBase64_2(encoded);
-    console.log('decoded1', decoded1);
+    const decoded2 = fromBase64(encoded);
     expect(decoded1).toEqual(blob);
+    expect(decoded2).toEqual(blob);
   }
 });

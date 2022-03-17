@@ -35,21 +35,26 @@ export const createFromBase64 = (chars: string = alphabet) => {
       const sextet1 = table[c1];
       const sextet2 = table[c2];
       const sextet3 = table[c3];
-      buf[i] = (sextet0 << 2) | (sextet1 >> 4);
-      buf[i + 1] = (sextet1 << 4) | (sextet2 >> 2);
-      buf[i + 2] = (sextet2 << 6) | sextet3;
+      buf[j] = (sextet0 << 2) | (sextet1 >> 4);
+      buf[j + 1] = (sextet1 << 4) | (sextet2 >> 2);
+      buf[j + 2] = (sextet2 << 6) | sextet3;
       j += 3;
     }
     if (padding === 2) {
       const c0 = encoded[mainLength];
-      const sextet0 = table[c0];
-      buf[i] = (sextet0 << 2);
-    } else if (padding === 1) {
-      const c0 = encoded[mainLength];
       const c1 = encoded[mainLength + 1];
       const sextet0 = table[c0];
       const sextet1 = table[c1];
-      buf[i] = (sextet0 << 2) | (sextet1 >> 4);
+      buf[j] = (sextet0 << 2) | (sextet1 >> 4);
+    } else if (padding === 1) {
+      const c0 = encoded[mainLength];
+      const c1 = encoded[mainLength + 1];
+      const c2 = encoded[mainLength + 2];
+      const sextet0 = table[c0];
+      const sextet1 = table[c1];
+      const sextet2 = table[c2];
+      buf[j] = (sextet0 << 2) | (sextet1 >> 4);
+      buf[j + 1] = (sextet1 << 4) | (sextet2 >> 2);
     }
     return buf;
   };
