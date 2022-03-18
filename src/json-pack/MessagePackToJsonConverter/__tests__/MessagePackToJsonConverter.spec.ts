@@ -1,4 +1,4 @@
-import {documents} from '../../../util/__tests__/json-documents';
+import {documents} from '../../../__tests__/json-documents';
 import {MessagePackToJsonConverter} from '..';
 import {EncoderFull} from '../../EncoderFull';
 

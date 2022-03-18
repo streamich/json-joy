@@ -1,7 +1,7 @@
 import {JsonPackExtension} from '../../JsonPackExtension';
 import {EncoderFull} from '..';
 import {Decoder} from '../..';
-import {documents} from '../../../util/__tests__/json-documents';
+import {documents} from '../../../__tests__/json-documents';
 
 const encoder = new EncoderFull();
 const encode = (x: unknown) => encoder.encode(x);
