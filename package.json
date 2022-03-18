@@ -44,6 +44,7 @@
     "test:all": "yarn lint && yarn test && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer && yarn demo:json-rx",
     "test": "jest --maxWorkers 4",
     "test:ci": "jest --maxWorkers 2 --no-cache",
+    "test:cli": "yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack",
     "test:cli:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:cli:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "test:cli:pack": "./bin/json-pack-test.js ./bin/json-pack.js",

@@ -101,6 +101,8 @@ yarn build
 yarn test:all
 ```
 
+Read more about testing in [Testing README](./src/__tests__/README.md).
+
 Use [Angular-type semantic commit messages](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)
 for commit messages. Those are used in determining the version bump of the
 library for the next release. Optional, you can use `git-cz` for that:
