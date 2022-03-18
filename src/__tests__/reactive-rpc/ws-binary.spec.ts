@@ -7,7 +7,7 @@ import {ReactiveRpcResponseMessage} from '../../reactive-rpc/common';
 import {Defer} from '../../json-rx/__tests__/util';
 import {tick, until} from '../util';
 
-if (process.env.TEST_E2E) {
+const createSetup = () => {
   const connected = new Defer<void>();
   const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
   const encoder = new Encoder();
@@ -27,6 +27,7 @@ if (process.env.TEST_E2E) {
   ws.onmessage = function incoming(event: any) {
     const uint8 = toUint8Array(event.data);
     const messages = decoder.decode(uint8);
+    // console.log('messages', messages);
     client.onMessages(messages as ReactiveRpcResponseMessage[]);
   };
 
@@ -41,7 +42,38 @@ if (process.env.TEST_E2E) {
     };
   };
 
+  return {
+    connected,
+    ws,
+    encoder,
+    decoder,
+    client,
+    setup,
+  };
+};
+
+if (process.env.TEST_E2E) {
+  const {ws, client, setup} = createSetup();
+
+  describe('protocol errors', () => {
+    it('ignores invalid MessagePack frames', async () => {
+      const ping1 = await client.call('ping', {});
+      expect(ping1).toBe('pong');
+      ws.send(new Uint8Array([0xc0]));
+      ws.send(new Uint8Array([0xd5]));
+      ws.send(new Uint8Array([0x80]));
+      ws.send(new Uint8Array([0xc3]));
+      ws.send(new Uint8Array([0xc1]));
+      ws.send(new Uint8Array([0xa0]));
+      ws.send(new Uint8Array([0xa1]));
+      ws.send(new Uint8Array([0xa1, 0x11]));
+      const ping2 = await client.call('ping', {});
+      expect(ping2).toBe('pong');
+    });
+  });
+
   runApiTests(setup);
+
   afterAll(() => {
     ws.close();
   });

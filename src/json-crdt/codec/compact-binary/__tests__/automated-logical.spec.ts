@@ -2,7 +2,7 @@ import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {LogicalEncoder} from '../LogicalEncoder';
 import {LogicalDecoder} from '../LogicalDecoder';
-import {documents} from '../../../../util/__tests__/json-documents';
+import {documents} from '../../../../__tests__/json-documents';
 
 for (const {name, json} of documents) {
   test(name, () => {

@@ -1,5 +1,5 @@
 import {Encoder, Decoder} from '..';
-import {documents} from '../../util/__tests__/json-documents';
+import {documents} from '../../__tests__/json-documents';
 
 const encoder = new Encoder();
 const decoder = new Decoder();

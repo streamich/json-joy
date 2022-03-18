@@ -1,7 +1,7 @@
 import {Model} from '../../../model';
 import {ServerEncoder} from '../ServerEncoder';
 import {ServerDecoder} from '../ServerDecoder';
-import {documents} from '../../../../util/__tests__/json-documents';
+import {documents} from '../../../../__tests__/json-documents';
 
 for (const {name, json, only} of documents) {
   (only ? test.only : test)(name, () => {
