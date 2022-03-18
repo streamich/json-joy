@@ -29,15 +29,15 @@ refs:
     - &Test_CLI_Pointer
       run:
         name: "Test - CLI: json_pointer"
-        command: yarn test:pointer
+        command: yarn test:cli:pointer
     - &Test_CLI_Patch
       run:
         name: "Test - CLI: json-patch"
-        command: yarn test:patch
+        command: yarn test:cli:patch
     - &Test_CLI_Pack
       run:
         name: "Test - CLI: json-pack"
-        command: yarn test:pack
+        command: yarn test:cli:pack
     - &Test_E2E_Reactive_RPC
       run:
         name: "Test - E2E: Reactive-RPC"
