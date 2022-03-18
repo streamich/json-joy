@@ -1,3 +1,17 @@
+# [7.1.0](https://github.com/streamich/json-joy/compare/v7.0.1...v7.1.0) (2022-03-18)
+
+
+### Features
+
+* improve base64 decoding ([d8c4f90](https://github.com/streamich/json-joy/commit/d8c4f9091d666d1c5d8773360de0601210b1bf4d))
+* **util:** 🎸 handle long strings and padding in Base64 decoding ([52a6810](https://github.com/streamich/json-joy/commit/52a68109b51ba841712e2d3884a33c175d3c5b70))
+* **util:** 🎸 improve base64 decoding ([ab253e5](https://github.com/streamich/json-joy/commit/ab253e574732d11c040faa108fed2d57630283fc))
+
+
+### Performance Improvements
+
+* **util:** ⚡️ add decode benchmark ([1c712ba](https://github.com/streamich/json-joy/commit/1c712bada31424a60d9bd93d777154204de172a3))
+
 ## [7.0.1](https://github.com/streamich/json-joy/compare/v7.0.0...v7.0.1) (2022-02-22)
 
 
