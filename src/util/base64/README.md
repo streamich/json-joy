@@ -31,7 +31,7 @@ encode(new Uint8Array([1, 2, 3]));
 ```
 
 
-## Benchmark
+### Benchmark
 
 Below benchmark encodes random binary blobs of sizes 8, 16, 32, 64, 128, 256, 512, and 1024 byes.
 `json-joy/util/base64` is faster, because for short strings (less than 40 chars) it uses a
@@ -44,4 +44,31 @@ json-joy/util/base64 encode(uint8) x 262,740 ops/sec ±0.63% (91 runs sampled), 
 fast-base64-encode x 47,657 ops/sec ±1.32% (86 runs sampled), 20983 ns/op
 Buffer.from(uint8).toString('base64'); x 223,289 ops/sec ±0.79% (90 runs sampled), 4479 ns/op
 Fastest is json-joy/util/base64 encode(uint8)
+```
+
+
+## Decoder
+
+- Uses Node.js built-in `Buffer`, if available.
+- When `Buffer` is not available, uses JavaScript implementation.
+
+
+### Usage
+
+Use decoder compatible with Node's Buffer:
+
+```ts
+import {toBase64, fromBase64} from 'json-joy/{lib,es2020}/util/base64';
+
+fromBase64(toBase64(new Uint8Array([1, 2, 3])));
+```
+
+Create your custom encoder:
+
+```ts
+import {createFromBase64} from 'json-joy/{lib,es2020}/util/base64';
+
+const decoder = createFromBase64('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_');
+
+decoder(toBase64(new Uint8Array([1, 2, 3])));
 ```

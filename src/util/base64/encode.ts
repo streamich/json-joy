@@ -1,7 +1,9 @@
+import {alphabet} from "./constants";
+
 const E = '=';
 const EE = '==';
 
-export const createToBase64 = (chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/') => {
+export const createToBase64 = (chars: string = alphabet) => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
 
   const table = chars.split('');
