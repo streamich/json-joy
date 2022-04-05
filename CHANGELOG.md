@@ -1,3 +1,15 @@
+# [7.2.0](https://github.com/streamich/json-joy/compare/v7.1.0...v7.2.0) (2022-04-05)
+
+
+### Features
+
+* **reactive-rpc:** 🎸 add initial ws binary Reactive-RCP implementation ([ee7c18d](https://github.com/streamich/json-joy/commit/ee7c18d753dadeaed7594c707cf24a77321645db))
+
+
+### Performance Improvements
+
+* **reactive-rpc:** ⚡️ remove redundant check ([38c15a4](https://github.com/streamich/json-joy/commit/38c15a43b0e8003dbc2bbd97c1ac9e6682b312b9))
+
 # [7.1.0](https://github.com/streamich/json-joy/compare/v7.0.1...v7.1.0) (2022-03-18)
 
 
