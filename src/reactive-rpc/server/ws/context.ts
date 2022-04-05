@@ -1,3 +1,5 @@
+/* tslint:disable no-string-literal */
+
 import type {IncomingMessage} from 'http';
 import {URL} from 'url';
 

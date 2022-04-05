@@ -1,5 +1,4 @@
 import type {IncomingMessage} from 'http';
-import type {WebSocketServer, WebSocket} from 'ws';
 import type {ReactiveRpcBinaryMessage, ReactiveRpcRequestMessage} from '../../common';
 import {createConnectionContext} from './context';
 import {Encoder} from '../../common/codec/binary';
@@ -9,7 +8,16 @@ import type {RpcServerParams} from '../../common/rpc';
 import {bufferToUint8Array} from '../../../util/bufferToUint8Array';
 
 export interface EnableWsReactiveRpcApiParams<Ctx> {
-  wss: WebSocketServer;
+  /**
+   * An instance of `ws` server.
+   * 
+   * ```js
+   * import WebSocket from 'ws';
+   * const wss = new WebSocket('ws://www.host.com/path');
+   * ```
+   */
+  wss: any;
+  // wss: WebSocketServer;
   createContext?: (req: IncomingMessage) => Ctx;
   createRpcServer: (params: Pick<RpcServerParams<Ctx>, 'send'>) => RpcServerMsgPack<Ctx>;
   onNotification?: (ws: WebSocket, name: string, data: unknown | undefined, ctx: Ctx) => void;
@@ -24,10 +32,10 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApi
     createRpcServer,
     onNotification,
   } = params;
-  wss.on('connection', (ws, req) => {
+  wss.on('connection', (ws: any, req: any) => {
     let ctx: Ctx;
     let rpc: RpcServerMsgPack<Ctx>;
-    ws.on('upgrade', (req) => {
+    ws.on('upgrade', (req: any) => {
       ctx = (createContext || createConnectionContext)(req) as unknown as Ctx;
     });
     ws.on('open', () => {
@@ -42,7 +50,7 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApi
           onNotification(ws, name, data, ctx);
         };
     });
-    ws.on('message', (buf) => {
+    ws.on('message', (buf: Buffer) => {
       if (Buffer.isBuffer(buf)) {
         ws.close();
         return;
