@@ -2,7 +2,7 @@ import type {ITimestamp} from './clock';
 
 /**
  * Something in the document that can be identified by ID. All operations have
- * and ID and operations result into JSON nodes and chunks, which also have IDs.
+ * IDs and operations result into JSON nodes and chunks, which also have IDs.
  */
 export interface Identifiable {
   /**
