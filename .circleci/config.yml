@@ -28,7 +28,7 @@ refs:
         command: yarn test:ci
     - &Test_CLI_Pointer
       run:
-        name: "Test - CLI: json_pointer"
+        name: "Test - CLI: json-pointer"
         command: yarn test:cli:pointer
     - &Test_CLI_Patch
       run:
