@@ -34,21 +34,19 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApi
   } = params;
   wss.on('connection', (ws: any, req: any) => {
     let ctx: Ctx;
-    let rpc: RpcServerMsgPack<Ctx>;
+    const rpc = createRpcServer({
+      send: (messages: unknown) => {
+        const uint8 = encoder.encode(messages as ReactiveRpcBinaryMessage[]);
+        ws.send(uint8);
+      },
+    });
+    if (onNotification) {
+      rpc.onNotification = (name: string, data: unknown | undefined, ctx: Ctx) => {
+        onNotification(ws, name, data, ctx);
+      };
+    }
     ws.on('upgrade', (req: any) => {
       ctx = (createContext || createConnectionContext)(req) as unknown as Ctx;
-    });
-    ws.on('open', () => {
-      rpc = createRpcServer({
-        send: (messages: unknown) => {
-          const uint8 = encoder.encode(messages as ReactiveRpcBinaryMessage[]);
-          ws.send(uint8);
-        },
-      });
-      if (onNotification)
-        rpc.onNotification = (name: string, data: unknown | undefined, ctx: Ctx) => {
-          onNotification(ws, name, data, ctx);
-        };
     });
     ws.on('message', (buf: Buffer) => {
       const uint8 = bufferToUint8Array(buf as Buffer);

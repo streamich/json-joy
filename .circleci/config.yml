@@ -42,6 +42,10 @@ refs:
       run:
         name: "Test - E2E: Reactive-RPC"
         command: yarn test:reactive-rpc
+    - &Test_E2E_Reactive_RPC_WS
+      run:
+        name: "Test - E2E: Reactive-RPC ws package"
+        command: yarn test:reactive-rpc:ws
     - &Test_Demos
       run:
         name: "Test - Demos can execute"
@@ -65,6 +69,7 @@ jobs:
       - *Test_CLI_Patch
       - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
+      - *Test_E2E_Reactive_RPC_WS
       - *Test_Demos
       - *Post_to_dev_null
 
@@ -81,6 +86,7 @@ jobs:
       - *Test_CLI_Patch
       - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
+      - *Test_E2E_Reactive_RPC_WS
       - *Test_Demos
       - *Post_to_dev_null
       - run:
@@ -101,6 +107,7 @@ jobs:
       - *Test_CLI_Patch
       - *Test_CLI_Pack
       - *Test_E2E_Reactive_RPC
+      - *Test_E2E_Reactive_RPC_WS
       - *Test_Demos
       - *Post_to_dev_null
       - run:
