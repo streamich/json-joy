@@ -51,10 +51,6 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApi
         };
     });
     ws.on('message', (buf: Buffer) => {
-      if (Buffer.isBuffer(buf)) {
-        ws.close();
-        return;
-      }
       const uint8 = bufferToUint8Array(buf as Buffer);
       const messages = decoder.decode(uint8);
       const length = messages.length;
