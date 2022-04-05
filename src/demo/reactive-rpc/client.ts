@@ -1,10 +1,18 @@
+/* tslint:disable no-console */
+
+/**
+ * Run this demo with:
+ *
+ *     npx ts-node src/demo/reactive-rpc/client.ts
+ */
+
 import WS from 'isomorphic-ws';
 import {RpcClient} from '../../reactive-rpc/common/rpc/RpcClient';
 import {Encoder, Decoder} from '../../reactive-rpc/common/codec/binary-msgpack';
 import {toUint8Array} from '../../util/toUint8Array';
 import {ReactiveRpcResponseMessage} from '../../reactive-rpc/common';
 
-const ws: WebSocket = new WS('ws://localhost:9999/rpc/binary');
+const ws = new WS('ws://localhost:9999/rpc/binary');
 const encoder = new Encoder();
 const decoder = new Decoder();
 const client = new RpcClient({
