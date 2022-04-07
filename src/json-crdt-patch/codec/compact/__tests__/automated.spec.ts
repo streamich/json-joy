@@ -3,8 +3,9 @@ import {decode} from '../decode';
 import {LogicalClock} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
 import {documents} from '../../../../__tests__/json-documents';
+import {binaryDocuments} from '../../../../__tests__/binary-documents';
 
-for (const document of documents) {
+for (const document of [...documents, ...binaryDocuments]) {
   (document.only ? test.only : test)(document.name, () => {
     const clock = new LogicalClock(3, 100);
     const builder = new PatchBuilder(clock);

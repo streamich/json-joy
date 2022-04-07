@@ -286,7 +286,7 @@ export class PatchBuilder {
    */
    public jsonBin(json: Uint8Array): ITimestamp {
     const bin = this.bin();
-    if (json) this.insBin(bin, bin, json);
+    if (json.length) this.insBin(bin, bin, json);
     return bin;
   }
 
