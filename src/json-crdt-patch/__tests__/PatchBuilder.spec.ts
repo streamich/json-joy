@@ -2,8 +2,10 @@ import {LogicalClock, LogicalTimestamp} from '../clock';
 import {ORIGIN, TRUE_ID} from '../constants';
 import {DeleteOperation} from '../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../operations/InsertArrayElementsOperation';
+import { InsertBinaryDataOperation } from '../operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../operations/InsertStringSubstringOperation';
 import {MakeArrayOperation} from '../operations/MakeArrayOperation';
+import { MakeBinaryOperation } from '../operations/MakeBinaryOperation';
 import {MakeNumberOperation} from '../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../operations/MakeObjectOperation';
 import {MakeStringOperation} from '../operations/MakeStringOperation';
@@ -76,6 +78,10 @@ test('adds "noop" padding when clock jumps', () => {
   builder.setNum(ORIGIN, 123); // 20
   clock.tick(1); // 21
   builder.setKeys(ORIGIN, [['asdf', TRUE_ID]]); // 22
+  clock.tick(1); // 23
+  const bin = builder.bin(); // 24
+  clock.tick(1); // 25
+  builder.insBin(bin, bin, new Uint8Array([1, 2])); // 26
   expect(builder.patch.ops[0]).toBeInstanceOf(SetRootOperation);
   expect(builder.patch.ops[1]).toBeInstanceOf(NoopOperation);
   expect(builder.patch.ops[2]).toBeInstanceOf(MakeObjectOperation);
@@ -99,6 +105,10 @@ test('adds "noop" padding when clock jumps', () => {
   expect(builder.patch.ops[20]).toBeInstanceOf(SetNumberOperation);
   expect(builder.patch.ops[21]).toBeInstanceOf(NoopOperation);
   expect(builder.patch.ops[22]).toBeInstanceOf(SetObjectKeysOperation);
+  expect(builder.patch.ops[23]).toBeInstanceOf(NoopOperation);
+  expect(builder.patch.ops[24]).toBeInstanceOf(MakeBinaryOperation);
+  expect(builder.patch.ops[25]).toBeInstanceOf(NoopOperation);
+  expect(builder.patch.ops[26]).toBeInstanceOf(InsertBinaryDataOperation);
   expect(builder.patch.ops[1].span()).toBe(2);
   expect(builder.patch.ops[3].span()).toBe(3);
   expect(builder.patch.ops[5].span()).toBe(4);

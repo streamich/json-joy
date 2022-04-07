@@ -1,20 +1,23 @@
-import type {ITimestamp} from '../../clock';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
+import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation, JsonCodecNoopOperation} from './types';
 import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
+import {MakeBinaryOperation} from '../../operations/MakeBinaryOperation';
 import {MakeConstantOperation} from '../../operations/MakeConstantOperation';
 import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
 import {MakeStringOperation} from '../../operations/MakeStringOperation';
 import {MakeValueOperation} from '../../operations/MakeValueOperation';
 import {NoopOperation} from '../../operations/NoopOperation';
+import {Patch} from '../../Patch';
 import {SetNumberOperation} from '../../operations/SetNumberOperation';
 import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../operations/SetRootOperation';
 import {SetValueOperation} from '../../operations/SetValueOperation';
-import {Patch} from '../../Patch';
-import {JsonCodecPatch, JsonCodecTimestamp, JsonCodecDeleteOperation, JsonCodecNoopOperation} from './types';
+import {toBase64} from '../../../util/base64/encode';
+import type {ITimestamp} from '../../clock';
 
 const encodeTimestamp = (ts: ITimestamp): JsonCodecTimestamp => [ts.getSessionId(), ts.time];
 
@@ -39,6 +42,10 @@ export const encode = (patch: Patch): JsonCodecPatch => {
     }
     if (op instanceof MakeStringOperation) {
       ops.push({op: 'str'});
+      continue;
+    }
+    if (op instanceof MakeBinaryOperation) {
+      ops.push({op: 'bin'});
       continue;
     }
     if (op instanceof MakeNumberOperation) {
@@ -90,6 +97,15 @@ export const encode = (patch: Patch): JsonCodecPatch => {
         obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.after),
         value: op.substring,
+      });
+      continue;
+    }
+    if (op instanceof InsertBinaryDataOperation) {
+      ops.push({
+        op: 'bin_ins',
+        obj: encodeTimestamp(op.obj),
+        after: encodeTimestamp(op.after),
+        value: toBase64(op.data),
       });
       continue;
     }

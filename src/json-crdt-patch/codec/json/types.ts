@@ -16,6 +16,7 @@ export type JsonCodecOperation =
   | JsonCodecMakeObjectOperation
   | JsonCodecMakeArrayOperation
   | JsonCodecMakeStringOperation
+  | JsonCodecMakeBinaryOperation
   | JsonCodecMakeValueOperation
   | JsonCodecMakeNumberOperation
   | JsonCodecMakeConstantOperation
@@ -24,6 +25,7 @@ export type JsonCodecOperation =
   | JsonCodecSetNumberOperation
   | JsonCodecSetValueOperation
   | JsonCodecInsertStringSubstringOperation
+  | JsonCodecBinaryInsertDataOperation
   | JsonCodecInsertArrayElementsOperation
   | JsonCodecDeleteOperation
   | JsonCodecNoopOperation;
@@ -38,6 +40,10 @@ export interface JsonCodecMakeArrayOperation {
 
 export interface JsonCodecMakeStringOperation {
   op: 'str';
+}
+
+export interface JsonCodecMakeBinaryOperation {
+  op: 'bin';
 }
 
 export interface JsonCodecMakeNumberOperation {
@@ -85,6 +91,17 @@ export interface JsonCodecInsertStringSubstringOperation {
   /** If `after` is omitted, it means the insertion is at the start of the string. */
   after?: JsonCodecTimestamp;
   /** The substring to insert in the string. */
+  value: string;
+}
+
+export interface JsonCodecBinaryInsertDataOperation {
+  /** Mnemonic. */
+  op: 'bin_ins';
+  /** Binary into which to insert the substring. */
+  obj: JsonCodecTimestamp;
+  /** If `after` is omitted, it means the insertion is at the start of the binary. */
+  after?: JsonCodecTimestamp;
+  /** The binary data to insert, encoded using Base64. */
   value: string;
 }
 

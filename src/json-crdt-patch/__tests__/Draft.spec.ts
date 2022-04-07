@@ -34,6 +34,24 @@ test('can create a draft patch', () => {
   });
 });
 
+test('can insert binary data into the draft', () => {
+  const draft = new Draft();
+  const id = draft.builder.json({
+    blob: new Uint8Array([1, 2, 3]),
+  });
+  draft.builder.root(id);
+  expect(encode(draft.builder.patch)).toStrictEqual({
+    id: [-1, 0],
+    ops: [
+      {op: 'obj'},
+      {op: 'bin'},
+      {op: 'bin_ins', obj: [-1, 1], after: [-1, 1], value: 'AQID'},
+      {op: 'obj_set', obj: [-1, 0], tuples: [['blob', [-1, 1]]]},
+      {op: 'root', value: [-1, 0]},
+    ],
+  });
+});
+
 test('can return final patch with correct timestamps', () => {
   const draft = new Draft();
   const id = draft.builder.json({

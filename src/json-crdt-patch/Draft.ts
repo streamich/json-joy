@@ -1,19 +1,21 @@
-import {LogicalVectorClock, ITimestamp, IClock, LogicalTimestamp} from './clock';
-import {PatchBuilder} from './PatchBuilder';
-import {Patch} from './Patch';
 import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
+import {LogicalVectorClock, ITimestamp, IClock, LogicalTimestamp} from './clock';
 import {MakeArrayOperation} from './operations/MakeArrayOperation';
+import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
+import {MakeConstantOperation} from './operations/MakeConstantOperation';
 import {MakeNumberOperation} from './operations/MakeNumberOperation';
 import {MakeObjectOperation} from './operations/MakeObjectOperation';
 import {MakeStringOperation} from './operations/MakeStringOperation';
+import {MakeValueOperation} from './operations/MakeValueOperation';
+import {NoopOperation} from './operations/NoopOperation';
+import {Patch} from './Patch';
+import {PatchBuilder} from './PatchBuilder';
 import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
-import {NoopOperation} from './operations/NoopOperation';
-import {MakeConstantOperation} from './operations/MakeConstantOperation';
-import {MakeValueOperation} from './operations/MakeValueOperation';
 
 /**
  * Draft class provides a way to build a patch for which it is not known the
@@ -54,12 +56,15 @@ export class Draft {
         patch.ops.push(new InsertArrayElementsOperation(ts(op.id), ts(op.arr), ts(op.after), op.elements.map(ts)));
       else if (op instanceof InsertStringSubstringOperation)
         patch.ops.push(new InsertStringSubstringOperation(ts(op.id), ts(op.obj), ts(op.after), op.substring));
+      else if (op instanceof InsertBinaryDataOperation)
+        patch.ops.push(new InsertBinaryDataOperation(ts(op.id), ts(op.obj), ts(op.after), op.data));
       else if (op instanceof MakeArrayOperation) patch.ops.push(new MakeArrayOperation(ts(op.id)));
       else if (op instanceof MakeConstantOperation) patch.ops.push(new MakeConstantOperation(ts(op.id), op.value));
       else if (op instanceof MakeValueOperation) patch.ops.push(new MakeValueOperation(ts(op.id), op.value));
       else if (op instanceof MakeNumberOperation) patch.ops.push(new MakeNumberOperation(ts(op.id)));
       else if (op instanceof MakeObjectOperation) patch.ops.push(new MakeObjectOperation(ts(op.id)));
       else if (op instanceof MakeStringOperation) patch.ops.push(new MakeStringOperation(ts(op.id)));
+      else if (op instanceof MakeBinaryOperation) patch.ops.push(new MakeBinaryOperation(ts(op.id)));
       else if (op instanceof SetNumberOperation)
         patch.ops.push(new SetNumberOperation(ts(op.id), ts(op.num), op.value));
       else if (op instanceof SetObjectKeysOperation)
