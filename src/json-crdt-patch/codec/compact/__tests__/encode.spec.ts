@@ -123,7 +123,7 @@ test('test all operations', () => {
     -20,
     null, // val_set
     Code.MakeBinary, // bin
-    7,
+    Code.InsertBinaryData,
     "AQID", // bin_set
     -22, -22,
     Code.SetObjectKeys,

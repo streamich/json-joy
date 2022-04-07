@@ -85,7 +85,7 @@ export const encode = (patch: Patch): unknown[] => {
     }
     if (op instanceof InsertBinaryDataOperation) {
       const {obj, after, data} = op;
-      res.push(Code.InsertStringSubstring, toBase64(data));
+      res.push(Code.InsertBinaryData, toBase64(data));
       pushTimestamp(obj);
       pushTimestamp(after);
       continue;
