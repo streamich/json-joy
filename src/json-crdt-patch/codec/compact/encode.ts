@@ -1,8 +1,11 @@
+import {toBase64} from '../../../util/base64/encode';
 import {ITimestamp} from '../../clock';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
 import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
+import {MakeBinaryOperation} from '../../operations/MakeBinaryOperation';
 import {MakeConstantOperation} from '../../operations/MakeConstantOperation';
 import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
@@ -43,6 +46,10 @@ export const encode = (patch: Patch): unknown[] => {
       res.push(Code.MakeString);
       continue;
     }
+    if (op instanceof MakeBinaryOperation) {
+      res.push(Code.MakeBinary);
+      continue;
+    }
     if (op instanceof MakeNumberOperation) {
       res.push(Code.MakeNumber);
       continue;
@@ -72,6 +79,13 @@ export const encode = (patch: Patch): unknown[] => {
     if (op instanceof InsertStringSubstringOperation) {
       const {obj, after, substring} = op;
       res.push(Code.InsertStringSubstring, substring);
+      pushTimestamp(obj);
+      pushTimestamp(after);
+      continue;
+    }
+    if (op instanceof InsertBinaryDataOperation) {
+      const {obj, after, data} = op;
+      res.push(Code.InsertStringSubstring, toBase64(data));
       pushTimestamp(obj);
       pushTimestamp(after);
       continue;

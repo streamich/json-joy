@@ -15,4 +15,6 @@ export const enum Code {
   MakeConstant = 13,
   MakeValue = 14,
   SetValue = 15,
+  MakeBinary = 16,
+  InsertBinaryData = 17,
 }
