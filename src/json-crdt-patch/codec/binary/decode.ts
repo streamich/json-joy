@@ -3,6 +3,7 @@ import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {decodeVarUint} from './util/varuint';
+import {Code} from '../compact/constants';
 
 export const decodeTimestamp = (buf: Uint8Array, offset: number): ITimestamp => {
   const o1 = buf[offset];
@@ -54,27 +55,27 @@ export const decode = (buf: Uint8Array): Patch => {
     const opcode = buf[offset];
     offset++;
     switch (opcode) {
-      case 0: {
+      case Code.MakeObject: {
         builder.obj();
         continue;
       }
-      case 1: {
+      case Code.MakeArray: {
         builder.arr();
         continue;
       }
-      case 2: {
+      case Code.MakeString: {
         builder.str();
         continue;
       }
-      case 3: {
+      case Code.MakeNumber: {
         builder.num();
         continue;
       }
-      case 4: {
+      case Code.SetRoot: {
         builder.root(ts());
         continue;
       }
-      case 5: {
+      case Code.SetObjectKeys: {
         const object = ts();
         const fields = varuint();
         const tuples: [key: string, value: ITimestamp][] = [];
@@ -88,14 +89,14 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.setKeys(object, tuples);
         continue;
       }
-      case 6: {
+      case Code.SetNumber: {
         const after = ts();
         const value = new Float64Array(buf.slice(offset, offset + 8).buffer)[0];
         offset += 8;
         builder.setNum(after, value);
         continue;
       }
-      case 7: {
+      case Code.InsertStringSubstring: {
         const obj = ts();
         const after = ts();
         const length = varuint();
@@ -104,7 +105,7 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.insStr(obj, after, str);
         continue;
       }
-      case 8: {
+      case Code.InsertArrayElements: {
         const arr = ts();
         const after = ts();
         const length = varuint();
@@ -116,24 +117,24 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.insArr(arr, after, elements);
         continue;
       }
-      case 9: {
+      case Code.Delete: {
         const obj = ts();
         const after = ts();
         const length = varuint();
         builder.del(obj, after, length);
         continue;
       }
-      case 10: {
+      case Code.DeleteOne: {
         const obj = ts();
         const after = ts();
         builder.del(obj, after, 1);
         continue;
       }
-      case 11: {
+      case Code.NoopOne: {
         builder.noop(1);
         continue;
       }
-      case 12: {
+      case Code.Noop: {
         builder.noop(varuint());
         continue;
       }

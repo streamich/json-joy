@@ -13,6 +13,7 @@ import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../operations/SetRootOperation';
 import {Patch} from '../../Patch';
 import {encodeVarUInt} from './util/varuint';
+import {Code} from '../compact/constants';
 
 export const encodeTimestamp = (ts: ITimestamp): [number, number] => {
   const sessionId = ts.getSessionId();
@@ -30,33 +31,33 @@ export const encode = (patch: Patch): Uint8Array => {
 
   for (const op of ops) {
     if (op instanceof MakeObjectOperation) {
-      buffers.push(new Uint8Array([0]));
+      buffers.push(new Uint8Array([Code.MakeObject])); // TODO: move these constant buffers, like new Uint8Array([X]), as a static variable.
       size += 1;
       continue;
     }
     if (op instanceof MakeArrayOperation) {
-      buffers.push(new Uint8Array([1]));
+      buffers.push(new Uint8Array([Code.MakeArray]));
       size += 1;
       continue;
     }
     if (op instanceof MakeStringOperation) {
-      buffers.push(new Uint8Array([2]));
+      buffers.push(new Uint8Array([Code.MakeString]));
       size += 1;
       continue;
     }
     if (op instanceof MakeNumberOperation) {
-      buffers.push(new Uint8Array([3]));
+      buffers.push(new Uint8Array([Code.MakeNumber]));
       size += 1;
       continue;
     }
     if (op instanceof SetRootOperation) {
-      buffers.push(new Uint8Array([4]));
+      buffers.push(new Uint8Array([Code.SetRoot]));
       buffers.push(new Uint32Array(encodeTimestamp(op.value)).buffer);
       size += 1 + 8;
       continue;
     }
     if (op instanceof SetObjectKeysOperation) {
-      buffers.push(new Uint8Array([5]));
+      buffers.push(new Uint8Array([Code.SetObjectKeys]));
       buffers.push(new Uint32Array(encodeTimestamp(op.object)).buffer);
       size += 1 + 8;
       const keyNumberBuffer = new Uint8Array(encodeVarUInt(op.tuples.length));
@@ -73,7 +74,7 @@ export const encode = (patch: Patch): Uint8Array => {
     }
     if (op instanceof SetNumberOperation) {
       buffers.push(
-        new Uint8Array([6]),
+        new Uint8Array([Code.SetNumber]),
         new Uint32Array(encodeTimestamp(op.num)).buffer,
         new Float64Array([op.value]).buffer,
       );
@@ -84,7 +85,7 @@ export const encode = (patch: Patch): Uint8Array => {
       const stringBuffer = encodeString(op.substring);
       const stringLengthBuffer = new Uint8Array(encodeVarUInt(stringBuffer.byteLength));
       buffers.push(
-        new Uint8Array([7]),
+        new Uint8Array([Code.InsertStringSubstring]),
         new Uint32Array(encodeTimestamp(op.obj)).buffer,
         new Uint32Array(encodeTimestamp(op.after)).buffer,
         stringLengthBuffer.buffer,
@@ -98,7 +99,7 @@ export const encode = (patch: Patch): Uint8Array => {
       const length = elements.length;
       const elementLengthBuffer = new Uint8Array(encodeVarUInt(length));
       buffers.push(
-        new Uint8Array([8]),
+        new Uint8Array([Code.InsertArrayElements]),
         new Uint32Array(encodeTimestamp(arr)).buffer,
         new Uint32Array(encodeTimestamp(after)).buffer,
         elementLengthBuffer.buffer,
@@ -112,7 +113,7 @@ export const encode = (patch: Patch): Uint8Array => {
       if (length > 1) {
         const spanBuffer = new Uint8Array(encodeVarUInt(length));
         buffers.push(
-          new Uint8Array([9]),
+          new Uint8Array([Code.Delete]),
           new Uint32Array(encodeTimestamp(obj)).buffer,
           new Uint32Array(encodeTimestamp(after)).buffer,
           spanBuffer.buffer,
@@ -121,7 +122,7 @@ export const encode = (patch: Patch): Uint8Array => {
         continue;
       }
       buffers.push(
-        new Uint8Array([10]),
+        new Uint8Array([Code.DeleteOne]),
         new Uint32Array(encodeTimestamp(obj)).buffer,
         new Uint32Array(encodeTimestamp(after)).buffer,
       );
@@ -132,11 +133,11 @@ export const encode = (patch: Patch): Uint8Array => {
       const {length} = op;
       if (length > 1) {
         const spanBuffer = new Uint8Array(encodeVarUInt(length));
-        buffers.push(new Uint8Array([12]), spanBuffer.buffer);
+        buffers.push(new Uint8Array([Code.Noop]), spanBuffer.buffer);
         size += 1 + spanBuffer.byteLength;
         continue;
       }
-      buffers.push(new Uint8Array([11]));
+      buffers.push(new Uint8Array([Code.NoopOne]));
       size += 1;
       continue;
     }
