@@ -155,6 +155,19 @@ export const decode = (buf: Uint8Array): Patch => {
         builder.noop(varuint());
         continue;
       }
+      case Code.MakeBinary: {
+        builder.bin();
+        continue;
+      }
+      case Code.InsertBinaryData: {
+        const obj = ts();
+        const after = ts();
+        const length = varuint();
+        const data = buf.subarray(offset, offset + length);
+        offset += length;
+        builder.insBin(obj, after, data);
+        continue;
+      }
       default: {
         throw new Error('UNKNOWN_OP');
       }

@@ -4,9 +4,11 @@ import {encodeFull as encodeMsgPack} from '../../../json-pack/util';
 import {encodeString} from '../../../util/encodeString';
 import {encodeVarUInt} from './util/varuint';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
 import {ITimestamp} from '../../clock';
 import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
+import {MakeBinaryOperation} from '../../operations/MakeBinaryOperation';
 import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
 import {MakeStringOperation} from '../../operations/MakeStringOperation';
@@ -163,6 +165,24 @@ export const encode = (patch: Patch): Uint8Array => {
       }
       buffers.push(new Uint8Array([Code.NoopOne]));
       size += 1;
+      continue;
+    }
+    if (op instanceof MakeBinaryOperation) {
+      buffers.push(new Uint8Array([Code.MakeBinary]));
+      size += 1;
+      continue;
+    }
+    if (op instanceof InsertBinaryDataOperation) {
+      const buf = op.data;
+      const bufLengthBuffer = new Uint8Array(encodeVarUInt(buf.byteLength));
+      buffers.push(
+        new Uint8Array([Code.InsertBinaryData]),
+        new Uint32Array(encodeTimestamp(op.obj)).buffer,
+        new Uint32Array(encodeTimestamp(op.after)).buffer,
+        bufLengthBuffer.buffer,
+        buf,
+      );
+      size += 1 + 8 + 8 + bufLengthBuffer.byteLength + buf.byteLength;
       continue;
     }
     throw new Error('UNKNOWN_OP');
