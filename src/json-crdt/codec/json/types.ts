@@ -92,6 +92,20 @@ export interface StringJsonCrdtChunk<Id> {
 }
 
 /**
+ * RGA binary node.
+ */
+export interface BinaryJsonCrdtNode<Id> {
+  type: 'bin';
+  id: Id;
+  chunks: (BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
+}
+
+export interface BinaryJsonCrdtChunk<Id> {
+  id: Id;
+  value: string;
+}
+
+/**
  * A tombstone used in RGA nodes.
  */
 export interface JsonCrdtRgaTombstone<Id> {
@@ -121,5 +135,6 @@ export type JsonCrdtNode<Id> =
   | ObjectJsonCrdtNode<Id>
   | ArrayJsonCrdtNode<Id>
   | StringJsonCrdtNode<Id>
+  | BinaryJsonCrdtNode<Id>
   | ValueJsonCrdtNode<Id>
   | ConstantJsonCrdtNode;

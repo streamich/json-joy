@@ -1,13 +1,16 @@
-import type {ITimestamp} from '../../../json-crdt-patch/clock';
-import {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ConstantType} from '../../types/const/ConstantType';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {JsonNode} from '../../types';
+import {ObjectType} from '../../types/lww-object/ObjectType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
+import {toBase64} from '../../../util/base64/encode';
+import {ValueType} from '../../types/lww-value/ValueType';
+import type {ITimestamp} from '../../../json-crdt-patch/clock';
 import {
   RootJsonCrdtNode,
   JsonCrdtNode,
@@ -20,6 +23,8 @@ import {
   StringJsonCrdtNode,
   StringJsonCrdtChunk,
   ConstantJsonCrdtNode,
+  BinaryJsonCrdtNode,
+  BinaryJsonCrdtChunk,
 } from './types';
 
 export abstract class AbstractEncoder<Id> {
@@ -39,6 +44,7 @@ export abstract class AbstractEncoder<Id> {
     else if (node instanceof StringType) return this.encodeStr(node);
     else if (node instanceof ValueType) return this.encodeVal(node);
     else if (node instanceof ConstantType) return this.encodeConst(node);
+    else if (node instanceof BinaryType) return this.encodeBin(node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -102,6 +108,31 @@ export abstract class AbstractEncoder<Id> {
     const res: StringJsonCrdtChunk<Id> = {
       id: this.encodeTimestamp(chunk.id),
       value: chunk.str!,
+    };
+    return res;
+  }
+
+  public encodeBin(obj: BinaryType): BinaryJsonCrdtNode<Id> {
+    const chunks: (BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
+    for (const chunk of obj.chunks()) chunks.push(this.encodeBinChunk(chunk));
+    return {
+      type: 'bin',
+      id: this.encodeTimestamp(obj.id),
+      chunks,
+    };
+  }
+
+  public encodeBinChunk(chunk: BinaryChunk): BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
+    if (chunk.deleted) {
+      const tombstone: JsonCrdtRgaTombstone<Id> = {
+        id: this.encodeTimestamp(chunk.id),
+        span: chunk.deleted,
+      };
+      return tombstone;
+    }
+    const res: BinaryJsonCrdtChunk<Id> = {
+      id: this.encodeTimestamp(chunk.id),
+      value: toBase64(chunk.buf!),
     };
     return res;
   }

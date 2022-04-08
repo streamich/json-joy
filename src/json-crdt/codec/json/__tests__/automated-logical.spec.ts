@@ -3,8 +3,9 @@ import {Model} from '../../../model';
 import {LogicalEncoder} from '../LogicalEncoder';
 import {LogicalDecoder} from '../LogicalDecoder';
 import {documents} from '../../../../__tests__/json-documents';
+import {binaryDocuments} from '../../../../__tests__/binary-documents';
 
-for (const {name, json} of documents) {
+for (const {name, json} of [...documents, ...binaryDocuments]) {
   test(name, () => {
     const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
     doc1.api.root(json).commit();
