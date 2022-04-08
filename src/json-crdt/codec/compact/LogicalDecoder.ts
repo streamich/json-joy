@@ -1,19 +1,22 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {Model} from '../../model';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ORIGIN} from '../../../json-crdt-patch/constants';
-import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
+import {ConstantType} from '../../types/const/ConstantType';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
+import {fromBase64} from '../../../util/base64/decode';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../../types';
+import {Model} from '../../model';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {TypeCode, ValueCode} from './constants';
+import {ValueType} from '../../types/lww-value/ValueType';
 
 export class LogicalDecoder {
   protected clockDecoder!: ClockDecoder;
@@ -56,6 +59,8 @@ export class LogicalDecoder {
           return this.decodeVal(doc, data);
         case TypeCode.const:
           return this.decodeConst(doc, data);
+        case TypeCode.bin:
+          return this.decodeBin(doc, data);
       }
     }
     throw new Error('UNKNOWN_NODE');
@@ -110,6 +115,26 @@ export class LogicalDecoder {
         chunk.deleted = content;
       } else {
         chunk = new StringChunk(chunkId, content as string);
+      }
+      obj.append(chunk);
+    }
+    doc.nodes.index(obj);
+    return obj;
+  }
+
+  protected decodeBin(doc: Model, data: unknown[]): BinaryType {
+    const id = this.ts(data, 1);
+    const obj = new BinaryType(doc, id);
+    const length = data.length;
+    for (let i = 3; i < length; i += 3) {
+      const chunkId = this.ts(data, i);
+      const content = data[i + 2];
+      let chunk: BinaryChunk;
+      if (typeof content === 'number') {
+        chunk = new BinaryChunk(chunkId, undefined);
+        chunk.deleted = content;
+      } else {
+        chunk = new BinaryChunk(chunkId, fromBase64(content as string));
       }
       obj.append(chunk);
     }

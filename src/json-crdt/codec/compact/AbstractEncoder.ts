@@ -1,14 +1,17 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ConstantType} from '../../types/const/ConstantType';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../../types';
+import {ObjectType} from '../../types/lww-object/ObjectType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
+import {toBase64} from '../../../util/base64/encode';
 import {TypeCode, ValueCode} from './constants';
+import {ValueType} from '../../types/lww-value/ValueType';
 
 export abstract class AbstractEncoder {
   protected abstract ts(arr: unknown[], ts: ITimestamp): void;
@@ -25,6 +28,7 @@ export abstract class AbstractEncoder {
     else if (node instanceof StringType) return this.encodeStr(arr, node);
     else if (node instanceof ValueType) return this.encodeVal(arr, node);
     else if (node instanceof ConstantType) return this.encodeConst(arr, node);
+    else if (node instanceof BinaryType) return this.encodeBin(arr, node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -67,6 +71,19 @@ export abstract class AbstractEncoder {
     this.ts(arr, chunk.id);
     if (chunk.deleted) arr.push(chunk.deleted);
     else arr.push(chunk.str!);
+  }
+
+  protected encodeBin(arr: unknown[], obj: BinaryType): void {
+    const res: unknown[] = [TypeCode.bin];
+    arr.push(res);
+    this.ts(res, obj.id);
+    for (const chunk of obj.chunks()) this.encodeBinChunk(res, chunk);
+  }
+
+  protected encodeBinChunk(arr: unknown[], chunk: BinaryChunk): void {
+    this.ts(arr, chunk.id);
+    if (chunk.deleted) arr.push(chunk.deleted);
+    else arr.push(toBase64(chunk.buf!));
   }
 
   protected encodeVal(arr: unknown[], obj: ValueType): void {
