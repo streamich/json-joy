@@ -1,17 +1,18 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Encoder as JsonPackEncoder} from '../../../json-pack/Encoder';
-import {utf8Count} from '../../../util/utf8';
-import {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ConstantType} from '../../types/const/ConstantType';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {EncoderFull as JsonPackEncoder} from '../../../json-pack/EncoderFull';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../../types';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
+import {utf8Count} from '../../../util/utf8';
+import {ValueType} from '../../types/lww-value/ValueType';
 
 export abstract class AbstractEncoder extends JsonPackEncoder {
   protected abstract ts(ts: ITimestamp): void;
@@ -27,6 +28,7 @@ export abstract class AbstractEncoder extends JsonPackEncoder {
     else if (node instanceof StringType) return this.encodeStr(node);
     else if (node instanceof ValueType) return this.encodeVal(node);
     else if (node instanceof ConstantType) return this.encodeConst(node);
+    else if (node instanceof BinaryType) return this.encodeBin(node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -82,6 +84,26 @@ export abstract class AbstractEncoder extends JsonPackEncoder {
       this.b1vuint56(false, length);
       this.ts(chunk.id);
       this.encodeUtf8(text, length);
+    }
+  }
+
+  protected encodeBin(obj: BinaryType): void {
+    const length = obj.size();
+    this.encodeBinaryHeader(length);
+    this.ts(obj.id);
+    for (const chunk of obj.chunks()) this.encodeBinChunk(chunk);
+  }
+
+  protected encodeBinChunk(chunk: BinaryChunk): void {
+    if (chunk.deleted) {
+      this.b1vuint56(true, chunk.deleted);
+      this.ts(chunk.id);
+    } else {
+      const data = chunk.buf!;
+      const length = data.byteLength;
+      this.b1vuint56(false, length);
+      this.ts(chunk.id);
+      this.buf(data, length);
     }
   }
 
