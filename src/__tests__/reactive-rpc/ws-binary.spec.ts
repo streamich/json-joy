@@ -53,10 +53,11 @@ const createSetup = () => {
 };
 
 if (process.env.TEST_E2E) {
-  const {ws, client, setup} = createSetup();
+  const {ws, client, connected, setup} = createSetup();
 
   describe('protocol errors', () => {
     it('ignores invalid MessagePack frames', async () => {
+      await connected;
       const ping1 = await client.call('ping', {});
       expect(ping1).toBe('pong');
       ws.send(new Uint8Array([0xc0]));
