@@ -17,6 +17,10 @@ export class Decoder {
 
   public constructor(private readonly keyDecoder: CachedKeyDecoder = sharedCachedKeyDecoder) {}
 
+  public getOffset(): number {
+    return this.x;
+  }
+
   public reset(uint8: Uint8Array): void {
     this.x = 0;
     this.uint8 = uint8;

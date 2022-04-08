@@ -4,6 +4,7 @@ import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {decodeVarUint} from './util/varuint';
 import {Code} from '../compact/constants';
+import {decoder as msgPackDecoder} from '../../../json-pack/util';
 
 export const decodeTimestamp = (buf: Uint8Array, offset: number): ITimestamp => {
   const o1 = buf[offset];
@@ -51,6 +52,12 @@ export const decode = (buf: Uint8Array): Patch => {
     return value;
   };
 
+  const msgPack = () => {
+    const value = msgPackDecoder.decode(buf.subarray(offset));
+    offset += msgPackDecoder.getOffset();
+    return value;
+  };
+
   while (offset < length) {
     const opcode = buf[offset];
     offset++;
@@ -65,6 +72,10 @@ export const decode = (buf: Uint8Array): Patch => {
       }
       case Code.MakeString: {
         builder.str();
+        continue;
+      }
+      case Code.MakeValue: {
+        builder.val(msgPack());
         continue;
       }
       case Code.MakeNumber: {
@@ -87,6 +98,12 @@ export const decode = (buf: Uint8Array): Patch => {
           tuples.push([key, value]);
         }
         builder.setKeys(object, tuples);
+        continue;
+      }
+      case Code.SetValue: {
+        const after = ts();
+        const value = msgPack();
+        builder.setVal(after, value);
         continue;
       }
       case Code.SetNumber: {
@@ -137,6 +154,9 @@ export const decode = (buf: Uint8Array): Patch => {
       case Code.Noop: {
         builder.noop(varuint());
         continue;
+      }
+      default: {
+        throw new Error('UNKNOWN_OP');
       }
     }
   }

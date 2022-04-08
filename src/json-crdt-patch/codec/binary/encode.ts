@@ -1,19 +1,22 @@
-import {encodeString} from '../../../util/encodeString';
-import {ITimestamp} from '../../clock';
+import {Code} from '../compact/constants';
 import {DeleteOperation} from '../../operations/DeleteOperation';
+import {encodeFull as encodeMsgPack} from '../../../json-pack/util';
+import {encodeString} from '../../../util/encodeString';
+import {encodeVarUInt} from './util/varuint';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
+import {ITimestamp} from '../../clock';
 import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
 import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
 import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
 import {MakeStringOperation} from '../../operations/MakeStringOperation';
+import {MakeValueOperation} from '../../operations/MakeValueOperation';
 import {NoopOperation} from '../../operations/NoopOperation';
+import {Patch} from '../../Patch';
 import {SetNumberOperation} from '../../operations/SetNumberOperation';
 import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../operations/SetRootOperation';
-import {Patch} from '../../Patch';
-import {encodeVarUInt} from './util/varuint';
-import {Code} from '../compact/constants';
+import {SetValueOperation} from '../../operations/SetValueOperation';
 
 export const encodeTimestamp = (ts: ITimestamp): [number, number] => {
   const sessionId = ts.getSessionId();
@@ -45,14 +48,25 @@ export const encode = (patch: Patch): Uint8Array => {
       size += 1;
       continue;
     }
+    if (op instanceof MakeValueOperation) {
+      const buf = encodeMsgPack(op.value);
+      buffers.push(
+        new Uint8Array([Code.MakeValue]),
+        buf,
+      );
+      size += 1 + buf.byteLength;
+      continue;
+    }
     if (op instanceof MakeNumberOperation) {
       buffers.push(new Uint8Array([Code.MakeNumber]));
       size += 1;
       continue;
     }
     if (op instanceof SetRootOperation) {
-      buffers.push(new Uint8Array([Code.SetRoot]));
-      buffers.push(new Uint32Array(encodeTimestamp(op.value)).buffer);
+      buffers.push(
+        new Uint8Array([Code.SetRoot]),
+        new Uint32Array(encodeTimestamp(op.value)).buffer,
+      );
       size += 1 + 8;
       continue;
     }
@@ -70,6 +84,16 @@ export const encode = (patch: Patch): Uint8Array => {
         buffers.push(valueBuffer, keyLengthBuffer, keyBuffer);
         size += valueBuffer.byteLength + keyLengthBuffer.byteLength + keyBuffer.byteLength;
       }
+      continue;
+    }
+    if (op instanceof SetValueOperation) {
+      const buf = encodeMsgPack(op.value);
+      buffers.push(
+        new Uint8Array([Code.SetValue]),
+        new Uint32Array(encodeTimestamp(op.obj)).buffer,
+        buf,
+      );
+      size += 1 + 8 + buf.byteLength;
       continue;
     }
     if (op instanceof SetNumberOperation) {
@@ -141,6 +165,7 @@ export const encode = (patch: Patch): Uint8Array => {
       size += 1;
       continue;
     }
+    throw new Error('UNKNOWN_OP');
   }
 
   const res = new Uint8Array(size);
