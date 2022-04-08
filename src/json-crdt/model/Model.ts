@@ -153,6 +153,7 @@ export class Model {
       const node = this.nodes.get(op.obj);
       if (node instanceof ArrayType) node.delete(op);
       else if (node instanceof StringType) node.onDelete(op);
+      else if (node instanceof BinaryType) node.onDelete(op);
     } else if (op instanceof MakeBinaryOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new BinaryType(this, op.id));
     } else if (op instanceof InsertBinaryDataOperation) {

@@ -91,7 +91,7 @@ export class BinaryChunk implements JsonChunk {
    * @returns Human readable representation of the array chunk.
    */
   public toString(tab: string = ''): string {
-    const str = `${tab}BinaryChunk(${this.id.toDisplayString()}) { ${
+    const str = `${tab}${this.constructor.name}(${this.id.toDisplayString()}) { ${
       !this.buf ? `[${this.deleted || this.span()}]` : this.buf.length > 10 ? this.buf.subarray(0, 10).toString() + ',…' : this.buf.toString()
     } }`;
     return str;

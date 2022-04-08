@@ -202,7 +202,7 @@ export class BinaryType implements JsonNode {
   }
 
   public toString(tab: string = ''): string {
-    let str = `${tab}StringType(${this.id.toDisplayString()})`;
+    let str = `${tab}${this.constructor.name}(${this.id.toDisplayString()})`;
     let curr: BinaryChunk | null = this.start;
     while (curr) {
       str += `\n${curr.toString(tab + '  ')}`;
