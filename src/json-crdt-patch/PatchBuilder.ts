@@ -161,7 +161,7 @@ export class PatchBuilder {
   }
 
   /**
-   * Set new new value of a JSON value LWW register.
+   * Set new value of a JSON value LWW register.
    * @returns ID of the new operation.
    */
   public setVal(obj: ITimestamp, value: unknown): ITimestamp {
