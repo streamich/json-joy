@@ -6,7 +6,7 @@ import {documents} from '../../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../../__tests__/binary-documents';
 
 // for (const document of [...documents, ...binaryDocuments]) {
-  for (const document of [documents[0], documents[1]]) {
+for (const document of [...documents]) {
   (document.only ? test.only : test)(document.name, () => {
     const clock = new LogicalClock(3, 100);
     const builder = new PatchBuilder(clock);
@@ -17,3 +17,4 @@ import {binaryDocuments} from '../../../../__tests__/binary-documents';
     expect(decoded).toEqual(builder.patch);
   });
 }
+  
