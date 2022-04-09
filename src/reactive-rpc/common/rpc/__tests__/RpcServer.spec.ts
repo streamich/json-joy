@@ -1211,7 +1211,7 @@ describe('buffering', () => {
     server.onMessage(new RequestCompleteMessage(1, 'method1', Buffer.from('a')), {ctx: 1});
     await new Promise((r) => setTimeout(r, 10));
     server.onMessage(new RequestCompleteMessage(2, 'method2', Buffer.from('b')), {ctx: 2});
-    await new Promise((r) => setTimeout(r, 10));
+    await until(() => send.mock.calls.length === 2);
     expect(send).toHaveBeenCalledTimes(2);
     expect(send.mock.calls[0][0]).toEqual([new ResponseCompleteMessage(1, 123)]);
     expect(send.mock.calls[1][0]).toEqual([new ResponseCompleteMessage(2, 123)]);
