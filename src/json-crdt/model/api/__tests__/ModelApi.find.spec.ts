@@ -70,4 +70,66 @@ describe('find', () => {
     expect(doc.api.find(['1']).toJson()).toEqual(json['1']);
     expect(doc.api.find([1]).toJson()).toEqual(json['1']);
   });
+
+  test('can use finder (.find()) on a sub-node', () => {
+    const doc = Model.withLogicalClock();
+    const api = doc.api;
+    api.root({
+      foo: {
+        bar: {
+          baz: 1,
+        }
+      }
+    }).commit();
+    expect(api.toView()).toStrictEqual({
+      foo: {
+        bar: {
+          baz: 1,
+        }
+      },
+    });
+    api.patch(() => {
+      const foo = api.obj(['foo']);
+      foo.set({a: 'b'});
+      const bar = foo.obj(['bar'])
+      bar.set({
+        baz: 2,
+        nil: null,
+      });
+    });
+    expect(api.toView()).toStrictEqual({
+      foo: {
+        a: 'b',
+        bar: {
+          baz: 2,
+          nil: null,
+        }
+      },
+    });
+  });
+
+  test('can use finder (.find()) on a sub-array', () => {
+    const doc = Model.withLogicalClock();
+    const api = doc.api;
+    api.root({
+      foo: {
+        bar: [1],
+      }
+    }).commit();
+    expect(api.toView()).toStrictEqual({
+      foo: {
+        bar: [1],
+      },
+    });
+    api.patch(() => {
+      const foo = api.obj(['foo']);
+      const bar = foo.arr(['bar']);
+      bar.ins(1, [22]);
+    });
+    expect(api.toView()).toStrictEqual({
+      foo: {
+        bar: [1, 22],
+      },
+    });
+  });
 });

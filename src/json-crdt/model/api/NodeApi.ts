@@ -13,6 +13,22 @@ export class NodeApi<Node extends JsonNode, View = unknown> {
     return path ? finder.find(path) : finder;
   }
 
+  public val(path: Path) {
+    return this.find().val(path);
+  }
+
+  public str(path: Path) {
+    return this.find().str(path);
+  }
+
+  public arr(path: Path) {
+    return this.find().arr(path);
+  }
+
+  public obj(path: Path) {
+    return this.find().obj(path);
+  }
+
   public commit(): void {
     this.api.commit();
   }
