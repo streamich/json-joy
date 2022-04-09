@@ -1,4 +1,4 @@
-import {deepClone} from '../util';
+import {clone as deepClone} from '../../json-clone/clone';
 import {Operation} from '../types';
 import {Op} from '../op';
 import {decode} from '../codec/json';
