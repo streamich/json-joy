@@ -31,6 +31,6 @@ export class ClockDecoder {
     if (!sessionIndex) return new LogicalTimestamp(0, timeDiff);
     const ts = this.table.get(sessionIndex);
     if (!ts) throw new Error('INVALID_CLOCK_TABLE');
-    return new LogicalTimestamp(ts.getSessionId(), ts.time - timeDiff);
+    return new LogicalTimestamp(ts.getSessionId(), ts.time - timeDiff - 1);
   }
 }
