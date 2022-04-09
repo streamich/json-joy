@@ -1,3 +1,11 @@
+# [7.4.0](https://github.com/streamich/json-joy/compare/v7.3.0...v7.4.0) (2022-04-09)
+
+
+### Features
+
+* **json-clone:** 🎸 add binaryClone() method ([8ec71fe](https://github.com/streamich/json-joy/commit/8ec71fee270a4708660eb8f568cae2c180c782cc))
+* **json-clone:** 🎸 add json-clone library ([73d44bc](https://github.com/streamich/json-joy/commit/73d44bc1f4b4bfdad59984f62b5be6dc1dfeee6f))
+
 # [7.3.0](https://github.com/streamich/json-joy/compare/v7.2.0...v7.3.0) (2022-04-09)
 
 
