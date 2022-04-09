@@ -223,7 +223,11 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       const ins2 = builder.insBin(id, ins1.tick(4), new Uint8Array([6]));
       const ins3 = builder.insBin(id, ins2, new Uint8Array([7, 8, 9, 10, 11, 12]));
-      const ins4 = builder.insBin(id, ins3.tick(5), new Uint8Array([13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]));
+      const ins4 = builder.insBin(
+        id,
+        ins3.tick(5),
+        new Uint8Array([13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]),
+      );
       builder.del(id, ins1.tick(3), 11);
       builder.root(id);
       doc.applyPatch(builder.patch);

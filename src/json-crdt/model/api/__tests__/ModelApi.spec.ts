@@ -100,7 +100,10 @@ describe('array manipulation', () => {
     expect(doc.toJson()).toEqual([1, 2, true, null, false, 'asdf']);
     api.arr([]).ins(0, [0]).commit();
     expect(doc.toJson()).toEqual([0, 1, 2, true, null, false, 'asdf']);
-    api.arr([]).ins(3, [{4: '4'}, 'five']).commit();
+    api
+      .arr([])
+      .ins(3, [{4: '4'}, 'five'])
+      .commit();
     expect(doc.toJson()).toEqual([0, 1, 2, {4: '4'}, 'five', true, null, false, 'asdf']);
     api.arr([]).del(0, 5).commit();
     expect(doc.toJson()).toEqual([true, null, false, 'asdf']);
@@ -124,7 +127,10 @@ describe('object manipulation', () => {
     const api = doc.api;
     api.root({a: 'a'}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
-    api.obj([]).set({b: 'b', c: {c: 'c'}}).commit();
+    api
+      .obj([])
+      .set({b: 'b', c: {c: 'c'}})
+      .commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {c: 'c'}});
     api.obj(['c']).set({c: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {}});

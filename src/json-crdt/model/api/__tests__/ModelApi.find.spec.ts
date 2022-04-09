@@ -74,24 +74,26 @@ describe('find', () => {
   test('can use finder (.find()) on a sub-node', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root({
-      foo: {
-        bar: {
-          baz: 1,
-        }
-      }
-    }).commit();
+    api
+      .root({
+        foo: {
+          bar: {
+            baz: 1,
+          },
+        },
+      })
+      .commit();
     expect(api.toView()).toStrictEqual({
       foo: {
         bar: {
           baz: 1,
-        }
+        },
       },
     });
     api.patch(() => {
       const foo = api.obj(['foo']);
       foo.set({a: 'b'});
-      const bar = foo.obj(['bar'])
+      const bar = foo.obj(['bar']);
       bar.set({
         baz: 2,
         nil: null,
@@ -103,7 +105,7 @@ describe('find', () => {
         bar: {
           baz: 2,
           nil: null,
-        }
+        },
       },
     });
   });
@@ -111,11 +113,13 @@ describe('find', () => {
   test('can use finder (.find()) on a sub-array', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root({
-      foo: {
-        bar: [1],
-      }
-    }).commit();
+    api
+      .root({
+        foo: {
+          bar: [1],
+        },
+      })
+      .commit();
     expect(api.toView()).toStrictEqual({
       foo: {
         bar: [1],

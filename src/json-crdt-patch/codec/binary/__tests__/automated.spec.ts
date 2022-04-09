@@ -16,4 +16,3 @@ for (const document of [...documents, ...binaryDocuments]) {
     expect(decoded).toEqual(builder.patch);
   });
 }
-  

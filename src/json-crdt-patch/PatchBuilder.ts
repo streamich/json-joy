@@ -284,7 +284,7 @@ export class PatchBuilder {
   /**
    * Run builder commands to create a binary data type.
    */
-   public jsonBin(json: Uint8Array): ITimestamp {
+  public jsonBin(json: Uint8Array): ITimestamp {
     const bin = this.bin();
     if (json.length) this.insBin(bin, bin, json);
     return bin;

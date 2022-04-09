@@ -72,9 +72,7 @@ test('test all operations', () => {
   builder.setVal(valId, null);
   const binId = builder.bin();
   builder.insBin(binId, binId, new Uint8Array([1, 2, 3]));
-  builder.setKeys(objId, [
-    ['bin', binId],
-  ]);
+  builder.setKeys(objId, [['bin', binId]]);
 
   const encoded = encode(builder.patch);
   expect(encoded).toEqual([
@@ -124,12 +122,13 @@ test('test all operations', () => {
     null, // val_set
     Code.MakeBinary, // bin
     Code.InsertBinaryData,
-    "AQID", // bin_set
-    -22, -22,
+    'AQID', // bin_set
+    -22,
+    -22,
     Code.SetObjectKeys,
     1,
     -5,
     'bin',
-    -22
+    -22,
   ]);
 });

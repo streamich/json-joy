@@ -52,10 +52,7 @@ export const encode = (patch: Patch): Uint8Array => {
     }
     if (op instanceof MakeValueOperation) {
       const buf = encodeMsgPack(op.value);
-      buffers.push(
-        new Uint8Array([Code.MakeValue]),
-        buf,
-      );
+      buffers.push(new Uint8Array([Code.MakeValue]), buf);
       size += 1 + buf.byteLength;
       continue;
     }
@@ -65,10 +62,7 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof SetRootOperation) {
-      buffers.push(
-        new Uint8Array([Code.SetRoot]),
-        new Uint32Array(encodeTimestamp(op.value)).buffer,
-      );
+      buffers.push(new Uint8Array([Code.SetRoot]), new Uint32Array(encodeTimestamp(op.value)).buffer);
       size += 1 + 8;
       continue;
     }
@@ -90,11 +84,7 @@ export const encode = (patch: Patch): Uint8Array => {
     }
     if (op instanceof SetValueOperation) {
       const buf = encodeMsgPack(op.value);
-      buffers.push(
-        new Uint8Array([Code.SetValue]),
-        new Uint32Array(encodeTimestamp(op.obj)).buffer,
-        buf,
-      );
+      buffers.push(new Uint8Array([Code.SetValue]), new Uint32Array(encodeTimestamp(op.obj)).buffer, buf);
       size += 1 + 8 + buf.byteLength;
       continue;
     }

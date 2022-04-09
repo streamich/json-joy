@@ -1,5 +1,5 @@
-import {bufferToUint8Array} from "../bufferToUint8Array";
-import {alphabet} from "./constants";
+import {bufferToUint8Array} from '../bufferToUint8Array';
+import {alphabet} from './constants';
 
 const E = '=';
 
@@ -14,7 +14,7 @@ export const createFromBase64 = (chars: string = alphabet) => {
     const length = encoded.length;
     if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
     const mainLength = encoded[length - 1] !== E ? length : length - 4;
-    let bufferLength = length / 4 * 3;
+    let bufferLength = (length / 4) * 3;
     let padding = 0;
     if (encoded[length - 2] === E) {
       padding = 2;
@@ -60,8 +60,7 @@ export const createFromBase64 = (chars: string = alphabet) => {
   };
 };
 
-const fromBase64Cpp = typeof Buffer === 'function'
-  ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64'))
-  : null;
+const fromBase64Cpp =
+  typeof Buffer === 'function' ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64')) : null;
 
 export const fromBase64 = fromBase64Cpp || createFromBase64();

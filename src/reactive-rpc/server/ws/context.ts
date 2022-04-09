@@ -35,7 +35,8 @@ export const createConnectionContext = (req: IncomingMessage): ConnectionContext
   const ip =
     (typeof req.headers['x-forwarded-for'] === 'string' ? req.headers['x-forwarded-for'] : '') ||
     (typeof req.headers['x-real-ip'] === 'string' ? req.headers['x-real-ip'] : '') ||
-    (req.socket.remoteAddress || '');
+    req.socket.remoteAddress ||
+    '';
 
   // Retrieve authentication token.
   let token: string = req.headers['authorization'] || '';
@@ -47,7 +48,7 @@ export const createConnectionContext = (req: IncomingMessage): ConnectionContext
   }
 
   // Try to retrieve authentication token from Sec-WebSocket-Protocol header.
-  if (!token && (typeof req.headers['sec-websocket-protocol'] === 'string')) {
+  if (!token && typeof req.headers['sec-websocket-protocol'] === 'string') {
     const secWebSocketProtocol = req.headers['sec-websocket-protocol'];
     if (secWebSocketProtocol) {
       const protocols = secWebSocketProtocol.split(',');

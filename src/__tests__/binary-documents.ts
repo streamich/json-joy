@@ -46,9 +46,14 @@ export const binaryDocuments: JsonDocument[] = [
     json: {
       a: 123,
       foo: new Uint8Array([]),
-      arr: [true, null, new Uint8Array([5, 3, 4, 2, 2, 34, 2, 1]), {
-        gg: new Uint8Array([1, 2, 55])
-      }],
+      arr: [
+        true,
+        null,
+        new Uint8Array([5, 3, 4, 2, 2, 34, 2, 1]),
+        {
+          gg: new Uint8Array([1, 2, 55]),
+        },
+      ],
       bar: new Uint8Array([1]),
       gg: 123,
       s: 'adsf',

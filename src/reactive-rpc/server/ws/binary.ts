@@ -10,7 +10,7 @@ import {bufferToUint8Array} from '../../../util/bufferToUint8Array';
 export interface EnableWsReactiveRpcApiParams<Ctx> {
   /**
    * An instance of `ws` server.
-   * 
+   *
    * ```js
    * import WebSocket from 'ws';
    * const wss = new WebSocket('ws://www.host.com/path');
@@ -26,12 +26,7 @@ export interface EnableWsReactiveRpcApiParams<Ctx> {
 export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApiParams<Ctx>) => {
   const encoder = new Encoder();
   const decoder = new Decoder();
-  const {
-    wss,
-    createContext,
-    createRpcServer,
-    onNotification,
-  } = params;
+  const {wss, createContext, createRpcServer, onNotification} = params;
   wss.on('connection', (ws: any, req: any) => {
     let ctx: Ctx;
     const rpc = createRpcServer({
@@ -52,8 +47,7 @@ export const enableWsBinaryReactiveRpcApi = <Ctx>(params: EnableWsReactiveRpcApi
       const uint8 = bufferToUint8Array(buf as Buffer);
       const messages = decoder.decode(uint8);
       const length = messages.length;
-      for (let i = 0; i < length; i++)
-        rpc.onMessage(messages[i] as ReactiveRpcRequestMessage, ctx);
+      for (let i = 0; i < length; i++) rpc.onMessage(messages[i] as ReactiveRpcRequestMessage, ctx);
     });
     ws.on('close', () => {
       rpc!.stop();
