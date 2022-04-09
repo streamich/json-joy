@@ -95,14 +95,14 @@ describe('array manipulation', () => {
     api.root([]).commit();
     expect(doc.toJson()).toEqual([]);
     api.patch(() => {
-      api.arrIns([], 0, [1, 2, true, null, false, 'asdf']);
+      api.arr([]).ins(0, [1, 2, true, null, false, 'asdf']);
     });
     expect(doc.toJson()).toEqual([1, 2, true, null, false, 'asdf']);
-    api.arrIns([], 0, [0]).commit();
+    api.arr([]).ins(0, [0]).commit();
     expect(doc.toJson()).toEqual([0, 1, 2, true, null, false, 'asdf']);
-    api.arrIns([], 3, [{4: '4'}, 'five']).commit();
+    api.arr([]).ins(3, [{4: '4'}, 'five']).commit();
     expect(doc.toJson()).toEqual([0, 1, 2, {4: '4'}, 'five', true, null, false, 'asdf']);
-    api.arrDel([], 0, 5).commit();
+    api.arr([]).del(0, 5).commit();
     expect(doc.toJson()).toEqual([true, null, false, 'asdf']);
   });
 });

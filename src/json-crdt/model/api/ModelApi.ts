@@ -1,18 +1,19 @@
+import {ArrayApi} from './ArrayApi';
+import {ArrayType} from '../../types/rga-array/ArrayType';
+import {JsonNode} from '../../types';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
+import {NULL, UNDEFINED} from '../../constants';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {Patch} from '../../../json-crdt-patch/Patch';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {StringApi} from './StringApi';
+import {StringType} from '../../types/rga-string/StringType';
+import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {ValueApi} from './ValueApi';
+import {ValueType} from '../../types/lww-value/ValueType';
 import type {Model} from '../Model';
 import type {Path} from '../../../json-pointer';
-import {StringType} from '../../types/rga-string/StringType';
-import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {Patch} from '../../../json-crdt-patch/Patch';
-import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
-import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
-import {StringApi} from './StringApi';
-import {ArrayType} from '../../types/rga-array/ArrayType';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
-import {ValueType} from '../../types/lww-value/ValueType';
-import {JsonNode} from '../../types';
-import {NULL, UNDEFINED} from '../../constants';
-import { ValueApi } from './ValueApi';
 
 export class ModelApi {
   /** Buffer of accumulated patches. */
@@ -101,38 +102,21 @@ export class ModelApi {
   }
 
   public val(path: Path): ValueApi {
-    const obj = this.find(path);
-    if (obj instanceof ValueType) return new ValueApi(this, obj);
+    const node = this.find(path);
+    if (node instanceof ValueType) return new ValueApi(this, node);
     throw new Error('NOT_VAL');
   }
 
   public str(path: Path): StringApi {
-    const obj = this.find(path);
-    if (obj instanceof StringType) return new StringApi(this, obj);
+    const node = this.find(path);
+    if (node instanceof StringType) return new StringApi(this, node);
     throw new Error('NOT_STR');
   }
 
-  public asArr(path: Path): ArrayType {
-    const obj = this.find(path);
-    if (obj instanceof ArrayType) return obj;
+  public arr(path: Path): ArrayApi {
+    const node = this.find(path);
+    if (node instanceof ArrayType) return new ArrayApi(this, node);
     throw new Error('NOT_ARR');
-  }
-
-  public arrIns(path: Path, index: number, values: unknown[]): this {
-    const {builder} = this;
-    const obj = this.asArr(path);
-    const after = !index ? obj.id : obj.findId(index - 1);
-    const valueIds: ITimestamp[] = [];
-    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
-    builder.insArr(obj.id, after, valueIds);
-    return this;
-  }
-
-  public arrDel(path: Path, index: number, length: number): this {
-    const obj = this.asArr(path);
-    const spans = obj.findIdSpans(index, length);
-    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
-    return this;
   }
 
   public asObj(path: Path): ObjectType {
