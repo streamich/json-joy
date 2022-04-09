@@ -29,7 +29,7 @@ export const encode = (patch: Patch): unknown[] => {
 
   const pushTimestamp = (ts: ITimestamp) => {
     const tsSessionId = ts.getSessionId();
-    if (tsSessionId === sessionId) res.push(time - ts.time - 1);
+    if (tsSessionId === sessionId && ts.time >= time) res.push(time - ts.time - 1);
     else res.push(tsSessionId, ts.time);
   };
 
