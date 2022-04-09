@@ -1,17 +1,12 @@
-import type {Model} from '../Model';
-import type {Path} from '../../../json-pointer';
-import {StringType} from '../../types/rga-string/StringType';
-import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {Patch} from '../../../json-crdt-patch/Patch';
-import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
-import {LogicalTimestamp, ITimestamp} from '../../../json-crdt-patch/clock';
-import {StringApi} from './StringApi';
-import {ArrayType} from '../../types/rga-array/ArrayType';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
-import {ValueType} from '../../types/lww-value/ValueType';
+import {Finder} from './Finder';
 import {JsonNode} from '../../types';
-import {NULL, UNDEFINED} from '../../constants';
+import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
+import {NULL} from '../../constants';
+import {Patch} from '../../../json-crdt-patch/Patch';
+import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Path} from '../../../json-pointer';
+import type {Model} from '../Model';
 
 export class ModelApi {
   /** Buffer of accumulated patches. */
@@ -20,16 +15,53 @@ export class ModelApi {
   /** Currently active builder. */
   public builder: PatchBuilder;
 
-  constructor(private readonly doc: Model) {
-    this.builder = new PatchBuilder(doc.clock);
+  protected getApi() {
+    return this;
+  }
+
+  constructor(public readonly model: Model) {
+    this.builder = new PatchBuilder(model.clock);
+  }
+
+  public getNode() {
+    const model = this.model;
+    const id = model.root.toValue();
+    return model.node(id) || NULL;
+  }
+
+  public find(): Finder;
+  public find(path: Path): JsonNode;
+  public find(path?: Path): Finder | JsonNode {
+    const finder = new Finder(this.getNode(), this);
+    return path ? finder.find(path) : finder;
+  }
+
+  public val(path: Path) {
+    return this.find().val(path);
+  }
+
+  public str(path: Path) {
+    return this.find().str(path);
+  }
+
+  public bin(path: Path) {
+    return this.find().bin(path);
+  }
+
+  public arr(path: Path) {
+    return this.find().arr(path);
+  }
+
+  public obj(path: Path) {
+    return this.find().obj(path);
   }
 
   public commit(): Patch {
     const patch = this.builder.patch;
-    this.builder = new PatchBuilder(this.doc.clock);
+    this.builder = new PatchBuilder(this.model.clock);
     if (patch.ops.length) {
       this.patches.push(patch);
-      this.doc.applyPatch(patch);
+      this.model.applyPatch(patch);
     }
     return patch;
   }
@@ -61,32 +93,6 @@ export class ModelApi {
     return result;
   }
 
-  public find(steps: Path): JsonNode {
-    const doc = this.doc;
-    const id = doc.root.toValue();
-    let node: JsonNode = doc.node(id) || NULL;
-    const length = steps.length;
-    if (!length) return node;
-    let i = 0;
-    while (i < length) {
-      const step = steps[i++];
-      if (node instanceof ObjectType) {
-        const id = node.get(String(step));
-        if (!id) return UNDEFINED;
-        const nextNode = doc.node(id);
-        if (!nextNode) return UNDEFINED;
-        node = nextNode;
-      } else if (node instanceof ArrayType) {
-        const id = node.findValue(Number(step));
-        const nextNode = doc.node(id);
-        if (!nextNode) return UNDEFINED;
-        node = nextNode;
-        continue;
-      }
-    }
-    return node;
-  }
-
   public patch(cb: (api: this) => void) {
     this.commit();
     cb(this);
@@ -99,97 +105,7 @@ export class ModelApi {
     return this;
   }
 
-  public asStr(path: Path): StringType {
-    const obj = this.find(path);
-    if (obj instanceof StringType) return obj;
-    throw new Error('NOT_STR');
-  }
-
-  public str(path: Path): StringApi {
-    const obj = this.asStr(path);
-    return new StringApi(this, obj);
-  }
-
-  public strObjIns(obj: StringType, index: number, substr: string) {
-    const after = !index ? obj.id : obj.findId(index - 1);
-    this.builder.insStr(obj.id, after, substr);
-  }
-
-  public strIns(path: Path, index: number, substr: string): this {
-    const obj = this.asStr(path);
-    this.strObjIns(obj, index, substr);
-    return this;
-  }
-
-  public strObjDel(obj: StringType, index: number, length: number) {
-    const spans = obj.findIdSpan(index, length);
-    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
-  }
-
-  public strDel(path: Path, index: number, length: number): this {
-    const obj = this.asStr(path);
-    this.strObjDel(obj, index, length);
-    return this;
-  }
-
-  public asVal(path: Path): ValueType {
-    const obj = this.find(path);
-    if (obj instanceof ValueType) return obj;
-    throw new Error('NOT_VAL');
-  }
-
-  public valSet(path: Path, value: unknown): this {
-    const {id} = this.asVal(path);
-    this.builder.setVal(id, value);
-    return this;
-  }
-
-  public asArr(path: Path): ArrayType {
-    const obj = this.find(path);
-    if (obj instanceof ArrayType) return obj;
-    throw new Error('NOT_ARR');
-  }
-
-  public arrIns(path: Path, index: number, values: unknown[]): this {
-    const {builder} = this;
-    const obj = this.asArr(path);
-    const after = !index ? obj.id : obj.findId(index - 1);
-    const valueIds: ITimestamp[] = [];
-    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
-    builder.insArr(obj.id, after, valueIds);
-    return this;
-  }
-
-  public arrDel(path: Path, index: number, length: number): this {
-    const obj = this.asArr(path);
-    const spans = obj.findIdSpans(index, length);
-    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
-    return this;
-  }
-
-  public asObj(path: Path): ObjectType {
-    const obj = this.find(path);
-    if (obj instanceof ObjectType) return obj;
-    throw new Error('NOT_OBJ');
-  }
-
-  public objSet(path: Path, entries: Record<string, unknown>): this {
-    const obj = this.asObj(path);
-    const {builder} = this;
-    builder.setKeys(
-      obj.id,
-      Object.entries(entries).map(([key, json]) => [key, builder.json(json)]),
-    );
-    return this;
-  }
-
-  public objDel(path: Path, keys: string[]): this {
-    const obj = this.asObj(path);
-    const {builder} = this;
-    builder.setKeys(
-      obj.id,
-      keys.map((key) => [key, UNDEFINED_ID]),
-    );
-    return this;
+  public toView(): unknown {
+    return this.getNode().toJson();
   }
 }

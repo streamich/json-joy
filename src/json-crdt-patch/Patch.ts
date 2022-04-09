@@ -1,8 +1,9 @@
-import type {ITimestamp} from './clock';
 import {DeleteOperation} from './operations/DeleteOperation';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
 import {MakeArrayOperation} from './operations/MakeArrayOperation';
+import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
 import {MakeConstantOperation} from './operations/MakeConstantOperation';
 import {MakeNumberOperation} from './operations/MakeNumberOperation';
 import {MakeObjectOperation} from './operations/MakeObjectOperation';
@@ -13,16 +14,19 @@ import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
 import {SetValueOperation} from './operations/SetValueOperation';
+import type {ITimestamp} from './clock';
 
 export type JsonCrdtPatchOperation =
   | DeleteOperation
   | InsertArrayElementsOperation
   | InsertStringSubstringOperation
+  | InsertBinaryDataOperation
   | MakeArrayOperation
   | MakeConstantOperation
   | MakeNumberOperation
   | MakeObjectOperation
   | MakeStringOperation
+  | MakeBinaryOperation
   | MakeValueOperation
   | NoopOperation
   | SetNumberOperation

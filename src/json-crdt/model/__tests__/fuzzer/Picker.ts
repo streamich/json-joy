@@ -14,6 +14,10 @@ type StringOp = typeof InsertStringSubstringOperation | typeof DeleteOperation;
 type ArrayOp = typeof InsertArrayElementsOperation | typeof DeleteOperation;
 type ObjectOp = typeof SetObjectKeysOperation | typeof DeleteOperation;
 
+/**
+ * This class picks random nodes from a model and picks a random
+ * operation to apply to that node.
+ */
 export class Picker {
   constructor(public opts: FuzzerOptions) {}
 

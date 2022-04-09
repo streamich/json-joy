@@ -1,20 +1,23 @@
-import {LogicalTimestamp, ITimestamp, IClock} from './clock';
 import {DeleteOperation} from './operations/DeleteOperation';
+import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from './constants';
 import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
+import {isUint8Array} from '../util/isUint8Array';
+import {LogicalTimestamp, ITimestamp, IClock} from './clock';
 import {MakeArrayOperation} from './operations/MakeArrayOperation';
+import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
+import {MakeConstantOperation} from './operations/MakeConstantOperation';
 import {MakeNumberOperation} from './operations/MakeNumberOperation';
 import {MakeObjectOperation} from './operations/MakeObjectOperation';
 import {MakeStringOperation} from './operations/MakeStringOperation';
+import {MakeValueOperation} from './operations/MakeValueOperation';
+import {NoopOperation} from './operations/NoopOperation';
+import {Patch} from './Patch';
+import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
-import {SetNumberOperation} from './operations/SetNumberOperation';
-import {NoopOperation} from './operations/NoopOperation';
-import {MakeConstantOperation} from './operations/MakeConstantOperation';
-import {MakeValueOperation} from './operations/MakeValueOperation';
 import {SetValueOperation} from './operations/SetValueOperation';
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from './constants';
-import {Patch} from './Patch';
 
 /**
  * Utility class that helps in Patch construction.
@@ -60,6 +63,18 @@ export class PatchBuilder {
     this.pad();
     const id = this.clock.tick(1);
     const op = new MakeStringOperation(id);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Create new binary.
+   * @returns ID of the new operation.
+   */
+  public bin(): ITimestamp {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new MakeBinaryOperation(id);
     this.patch.ops.push(op);
     return id;
   }
@@ -146,7 +161,7 @@ export class PatchBuilder {
   }
 
   /**
-   * Set new new value of a JSON value LWW register.
+   * Set new value of a JSON value LWW register.
    * @returns ID of the new operation.
    */
   public setVal(obj: ITimestamp, value: unknown): ITimestamp {
@@ -166,6 +181,21 @@ export class PatchBuilder {
     if (!substring.length) throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
     const op = new InsertStringSubstringOperation(id, obj, after, substring);
+    const span = op.span();
+    if (span > 1) this.clock.tick(span - 1);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Insert binary data into a binary type.
+   * @returns ID of the new operation.
+   */
+  public insBin(obj: ITimestamp, after: ITimestamp, data: Uint8Array): ITimestamp {
+    this.pad();
+    if (!data.length) throw new Error('EMPTY_BINARY');
+    const id = this.clock.tick(1);
+    const op = new InsertBinaryDataOperation(id, obj, after, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -252,6 +282,15 @@ export class PatchBuilder {
   }
 
   /**
+   * Run builder commands to create a binary data type.
+   */
+  public jsonBin(json: Uint8Array): ITimestamp {
+    const bin = this.bin();
+    if (json.length) this.insBin(bin, bin, json);
+    return bin;
+  }
+
+  /**
    * Run builder commands to create a JSON value.
    */
   public jsonVal(json: unknown): ITimestamp {
@@ -271,6 +310,7 @@ export class PatchBuilder {
         return FALSE_ID;
     }
     if (Array.isArray(json)) return this.jsonArr(json);
+    if (isUint8Array(json)) return this.jsonBin(json);
     switch (typeof json) {
       case 'object':
         return this.jsonObj(json!);

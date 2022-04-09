@@ -5,11 +5,11 @@ describe('string manipulation', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root('').commit();
-    api.strIns([], 0, 'var foo = bar').commit();
-    api.strIns([], 10, '"').commit();
-    api.strIns([], 14, '";').commit();
-    api.strDel([], 0, 3).commit();
-    api.strIns([], 0, 'const').commit();
+    api.str([]).ins(0, 'var foo = bar').commit();
+    api.str([]).ins(10, '"').commit();
+    api.str([]).ins(14, '";').commit();
+    api.str([]).del(0, 3).commit();
+    api.str([]).ins(0, 'const').commit();
     expect(doc.toJson()).toBe('const foo = "bar";');
   });
 
@@ -17,11 +17,11 @@ describe('string manipulation', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({foo: [123, '', 5]}).commit();
-    api.strIns(['foo', 1], 0, 'var foo = bar').commit();
-    api.strIns(['foo', 1], 10, '"').commit();
-    api.strIns(['foo', 1], 14, '";').commit();
-    api.strDel(['foo', 1], 0, 3).commit();
-    api.strIns(['foo', 1], 0, 'const').commit();
+    api.str(['foo', 1]).ins(0, 'var foo = bar').commit();
+    api.str(['foo', 1]).ins(10, '"').commit();
+    api.str(['foo', 1]).ins(14, '";').commit();
+    api.str(['foo', 1]).del(0, 3).commit();
+    api.str(['foo', 1]).ins(0, 'const').commit();
     expect(doc.toJson()).toEqual({
       foo: [123, 'const foo = "bar";', 5],
     });
@@ -48,7 +48,7 @@ describe('number manipulation', () => {
         },
       ],
     });
-    api.valSet(['a', 0, 'b'], 0.5);
+    api.val(['a', 0, 'b']).set(0.5);
     expect(doc.toJson()).toEqual({
       a: [
         {
@@ -77,7 +77,7 @@ describe('number manipulation', () => {
     expect(doc.toJson()).toEqual({
       a: [123],
     });
-    api.valSet(['a', 0], 0.5);
+    api.val(['a', 0]).set(0.5);
     expect(doc.toJson()).toEqual({
       a: [123],
     });
@@ -95,14 +95,17 @@ describe('array manipulation', () => {
     api.root([]).commit();
     expect(doc.toJson()).toEqual([]);
     api.patch(() => {
-      api.arrIns([], 0, [1, 2, true, null, false, 'asdf']);
+      api.arr([]).ins(0, [1, 2, true, null, false, 'asdf']);
     });
     expect(doc.toJson()).toEqual([1, 2, true, null, false, 'asdf']);
-    api.arrIns([], 0, [0]).commit();
+    api.arr([]).ins(0, [0]).commit();
     expect(doc.toJson()).toEqual([0, 1, 2, true, null, false, 'asdf']);
-    api.arrIns([], 3, [{4: '4'}, 'five']).commit();
+    api
+      .arr([])
+      .ins(3, [{4: '4'}, 'five'])
+      .commit();
     expect(doc.toJson()).toEqual([0, 1, 2, {4: '4'}, 'five', true, null, false, 'asdf']);
-    api.arrDel([], 0, 5).commit();
+    api.arr([]).del(0, 5).commit();
     expect(doc.toJson()).toEqual([true, null, false, 'asdf']);
   });
 });
@@ -113,9 +116,9 @@ describe('object manipulation', () => {
     const api = doc.api;
     api.root({a: {}}).commit();
     expect(doc.toJson()).toEqual({a: {}});
-    api.objSet([], {gg: true}).commit();
+    api.obj([]).set({gg: true}).commit();
     expect(doc.toJson()).toEqual({a: {}, gg: true});
-    api.objSet(['a'], {1: 1, 2: 2}).commit();
+    api.obj(['a']).set({1: 1, 2: 2}).commit();
     expect(doc.toJson()).toEqual({a: {'1': 1, '2': 2}, gg: true});
   });
 
@@ -124,15 +127,18 @@ describe('object manipulation', () => {
     const api = doc.api;
     api.root({a: 'a'}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
-    api.objSet([], {b: 'b', c: {c: 'c'}}).commit();
+    api
+      .obj([])
+      .set({b: 'b', c: {c: 'c'}})
+      .commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {c: 'c'}});
-    api.objSet(['c'], {c: undefined}).commit();
+    api.obj(['c']).set({c: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {}});
-    api.objSet([], {c: undefined}).commit();
+    api.obj([]).set({c: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b'});
-    api.objSet([], {b: undefined}).commit();
+    api.obj([]).set({b: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
-    api.objSet([], {a: undefined}).commit();
+    api.obj([]).set({a: undefined}).commit();
     expect(doc.toJson()).toEqual({});
     api.root({gg: 'bet'}).commit();
     expect(doc.toJson()).toEqual({gg: 'bet'});
@@ -147,8 +153,8 @@ describe('patch()', () => {
     expect(api.patches.length).toBe(1);
     expect(doc.toJson()).toEqual({foo: 'abc'});
     api.patch(() => {
-      api.strIns(['foo'], 1, '1');
-      api.strIns(['foo'], 3, '2');
+      api.str(['foo']).ins(1, '1');
+      api.str(['foo']).ins(3, '2');
     });
     expect(api.patches.length).toBe(2);
     expect(doc.toJson()).toEqual({foo: 'a1bc2'});

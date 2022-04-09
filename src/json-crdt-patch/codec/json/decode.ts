@@ -1,3 +1,4 @@
+import {fromBase64} from '../../../util/base64/decode';
 import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -21,6 +22,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'str': {
+        builder.str();
+        break;
+      }
+      case 'bin': {
         builder.str();
         break;
       }
@@ -57,6 +62,10 @@ export const decode = (data: JsonCodecPatch): Patch => {
       }
       case 'str_ins': {
         builder.insStr(ts(op.obj), ts(op.after || op.obj), op.value);
+        break;
+      }
+      case 'bin_ins': {
+        builder.insBin(ts(op.obj), ts(op.after || op.obj), fromBase64(op.value));
         break;
       }
       case 'arr_ins': {

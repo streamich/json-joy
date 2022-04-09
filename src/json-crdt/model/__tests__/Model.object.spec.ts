@@ -11,7 +11,7 @@ describe('Document', () => {
     test('can delete object key', () => {
       const model = Model.withLogicalClock();
       model.api.root({foo: 1, bar: 2, baz: 3}).commit();
-      model.api.objDel([], ['bar']).commit();
+      model.api.obj([]).del(['bar']).commit();
       expect(model.toJson()).toEqual({foo: 1, baz: 3});
     });
   });

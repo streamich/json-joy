@@ -357,7 +357,7 @@ test('decodes a .del() operation with span > 1', () => {
     0,
     0,
     0, // Patch ID
-    9, // del
+    10, // del
     5,
     0,
     0,
@@ -397,7 +397,7 @@ test('decodes a .del() operation with span = 3', () => {
     0,
     0,
     0, // Patch ID
-    9, // del
+    10, // del
     7,
     0,
     0,
@@ -436,7 +436,7 @@ test('decodes a .del() operation with span = 1', () => {
     0,
     0,
     0, // Patch ID
-    10, // del
+    9, // del
     8,
     0,
     0,
@@ -736,7 +736,7 @@ test('test all operations', () => {
     0,
     0,
     0, // Value = 3!104
-    10, // del_one
+    9, // del_one
     3,
     0,
     0,
@@ -756,7 +756,7 @@ test('test all operations', () => {
     11, // noop
     12,
     4, // noop (4)
-    9, // del
+    10, // del
     3,
     0,
     0,

@@ -1,3 +1,4 @@
+import {fromBase64} from '../../../util/base64/decode';
 import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -31,6 +32,10 @@ export const decode = (data: unknown[]): Patch => {
         builder.str();
         break;
       }
+      case Code.MakeBinary: {
+        builder.bin();
+        break;
+      }
       case Code.MakeNumber: {
         builder.num();
         break;
@@ -58,6 +63,11 @@ export const decode = (data: unknown[]): Patch => {
       case Code.InsertStringSubstring: {
         const value = data[i++] as string;
         builder.insStr(decodeTimestamp(), decodeTimestamp(), value);
+        break;
+      }
+      case Code.InsertBinaryData: {
+        const value = data[i++] as string;
+        builder.insBin(decodeTimestamp(), decodeTimestamp(), fromBase64(value));
         break;
       }
       case Code.InsertArrayElements: {

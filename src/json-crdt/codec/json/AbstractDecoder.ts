@@ -1,17 +1,20 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {ORIGIN} from '../../../json-crdt-patch/constants';
-import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Model} from '../../model';
-import {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ConstantType} from '../../types/const/ConstantType';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
+import {fromBase64} from '../../../util/base64/decode';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {JsonNode} from '../../types';
+import {Model} from '../../model';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
+import {ValueType} from '../../types/lww-value/ValueType';
 import {
   RootJsonCrdtNode,
   JsonCrdtNode,
@@ -23,6 +26,8 @@ import {
   StringJsonCrdtNode,
   StringJsonCrdtChunk,
   ConstantJsonCrdtNode,
+  BinaryJsonCrdtNode,
+  BinaryJsonCrdtChunk,
 } from './types';
 
 export abstract class AbstractDecoder<Id> {
@@ -47,6 +52,8 @@ export abstract class AbstractDecoder<Id> {
         return this.decodeVal(doc, node);
       case 'const':
         return this.decodeConst(doc, node);
+      case 'bin':
+        return this.decodeBin(doc, node);
     }
     throw new Error('UNKNOWN_NODE');
   }
@@ -97,6 +104,25 @@ export abstract class AbstractDecoder<Id> {
       chunk.deleted = (c as JsonCrdtRgaTombstone<Id>).span;
       return chunk;
     } else return new StringChunk(id, (c as StringJsonCrdtChunk<Id>).value);
+  }
+
+  protected decodeBin(doc: Model, node: BinaryJsonCrdtNode<Id>): BinaryType {
+    const obj = new BinaryType(doc, this.decodeTimestamp(node.id));
+    for (const c of node.chunks) obj.append(this.decodeBinChunk(doc, c));
+    doc.nodes.index(obj);
+    return obj;
+  }
+
+  protected decodeBinChunk(doc: Model, c: BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>): BinaryChunk {
+    const id = this.decodeTimestamp(c.id);
+    if (typeof (c as JsonCrdtRgaTombstone<Id>).span === 'number') {
+      const chunk = new BinaryChunk(id, undefined);
+      chunk.deleted = (c as JsonCrdtRgaTombstone<Id>).span;
+      return chunk;
+    } else {
+      const data = fromBase64((c as StringJsonCrdtChunk<Id>).value);
+      return new BinaryChunk(id, data);
+    }
   }
 
   protected decodeVal(doc: Model, node: ValueJsonCrdtNode<Id>): ValueType {

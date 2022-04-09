@@ -282,8 +282,7 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
   }
 
   /** @ignore */
-  protected encodeBinary(buf: Uint8Array): void {
-    const length = buf.byteLength;
+  protected encodeBinaryHeader(length: number): void {
     if (length <= 0xff) this.u16((0xc4 << 8) | length);
     else if (length <= 0xffff) {
       this.u8(0xc5);
@@ -292,6 +291,12 @@ export class Encoder extends BaseEncoder implements IMessagePackEncoder {
       this.u8(0xc6);
       this.u32(length);
     }
+  }
+
+  /** @ignore */
+  protected encodeBinary(buf: Uint8Array): void {
+    const length = buf.byteLength;
+    this.encodeBinaryHeader(length);
     this.buf(buf, length);
   }
 }

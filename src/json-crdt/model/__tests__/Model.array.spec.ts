@@ -537,7 +537,7 @@ describe('Document', () => {
       const model2 = model1.fork();
       expect(model1.toJson()).toEqual([1, 2]);
       expect(model2.toJson()).toEqual([1, 2]);
-      model2.api.arrIns([], 1, [3]).commit();
+      model2.api.arr([]).ins(1, [3]).commit();
       expect(model1.toJson()).toEqual([1, 2]);
       expect(model2.toJson()).toEqual([1, 3, 2]);
     });

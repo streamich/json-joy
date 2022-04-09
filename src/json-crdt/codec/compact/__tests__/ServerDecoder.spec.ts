@@ -1,4 +1,3 @@
-import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {ServerDecoder} from '../ServerDecoder';
 import {ServerEncoder} from '../ServerEncoder';
@@ -50,8 +49,8 @@ test('can edit documents after decoding', () => {
   const doc2 = decoder.decode(encoded);
   expect(doc1.toJson()).toEqual(json);
   expect(doc2.toJson()).toEqual(json);
-  doc2.api.arrIns(['arr'], 1, [1.5]).commit();
-  doc1.api.strIns(['str'], 0, '__tab__').commit();
+  doc2.api.arr(['arr']).ins(1, [1.5]).commit();
+  doc1.api.str(['str']).ins(0, '__tab__').commit();
   expect((doc2.toJson() as any).arr).toEqual([1, 1.5, 2, 3]);
   expect((doc1.toJson() as any).arr).toEqual([1, 2, 3]);
   expect((doc2.toJson() as any).str).toBe('asdf');

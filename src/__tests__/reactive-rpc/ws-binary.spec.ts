@@ -57,6 +57,7 @@ if (process.env.TEST_E2E) {
 
   describe('protocol errors', () => {
     it('ignores invalid MessagePack frames', async () => {
+      await setup();
       const ping1 = await client.call('ping', {});
       expect(ping1).toBe('pong');
       ws.send(new Uint8Array([0xc0]));
@@ -69,7 +70,7 @@ if (process.env.TEST_E2E) {
       ws.send(new Uint8Array([0xa1, 0x11]));
       const ping2 = await client.call('ping', {});
       expect(ping2).toBe('pong');
-    });
+    }, 20_000);
   });
 
   runApiTests(setup);

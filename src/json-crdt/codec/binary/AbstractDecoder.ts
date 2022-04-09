@@ -1,19 +1,20 @@
-import {ITimestamp} from '../../../json-crdt-patch/clock';
-import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {ORIGIN} from '../../../json-crdt-patch/constants';
-import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
-import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {Model} from '../../model';
-import type {JsonNode} from '../../types';
-import {ConstantType} from '../../types/const/ConstantType';
-import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
-import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
+import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ConstantType} from '../../types/const/ConstantType';
+import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
+import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {Model} from '../../model';
+import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
+import {ObjectType} from '../../types/lww-object/ObjectType';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
+import {ValueType} from '../../types/lww-value/ValueType';
+import type {JsonNode} from '../../types';
 
 export abstract class AbstractDecoder extends MessagePackDecoder {
   protected doc!: Model;
@@ -43,6 +44,12 @@ export abstract class AbstractDecoder extends MessagePackDecoder {
           return FALSE;
         case 0xc3:
           return TRUE;
+        case 0xc4:
+          return this.decodeBin(this.u8());
+        case 0xc5:
+          return this.decodeBin(this.u16());
+        case 0xc6:
+          return this.decodeBin(this.u32());
         case 0xca:
           return this.createConst(this.f32());
         case 0xcb:
@@ -146,6 +153,28 @@ export abstract class AbstractDecoder extends MessagePackDecoder {
     } else {
       const text = this.str(length);
       const chunk = new StringChunk(id, text);
+      obj.append(chunk);
+    }
+  }
+
+  public decodeBin(length: number): BinaryType {
+    const id = this.ts();
+    const obj = new BinaryType(this.doc, id);
+    for (let i = 0; i < length; i++) this.decodeBinChunk(obj);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeBinChunk(obj: BinaryType): void {
+    const [deleted, length] = this.b1vuint56();
+    const id = this.ts();
+    if (deleted) {
+      const chunk = new BinaryChunk(id, undefined);
+      chunk.deleted = length;
+      obj.append(chunk);
+    } else {
+      const text = this.bin(length);
+      const chunk = new BinaryChunk(id, text);
       obj.append(chunk);
     }
   }

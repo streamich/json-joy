@@ -117,6 +117,9 @@ the node type and its size.
 | undefined         | 0xC1              | `0b11000001`                | "undefined" value.                              |
 | false             | 0xC2              | `0b11000010`                | "false" value.                                  |
 | true              | 0xC3              | `0b11000011`                | "true" value.                                   |
+| bin8              | 0xC4              | `0b11000100`                | Binary with up to 256 chunks.                   |
+| bin16             | 0xC5              | `0b11000101`                | Binary with up to 65,535 chunks.                |
+| bin32             | 0xC6              | `0b11000110`                | Binary with up to 4,294,967,295 chunks.         |
 | float32           | 0xCA              | `0b11001010`                | 32-bit floating point number.                   |
 | float64           | 0xCB              | `0b11001011`                | 64-bit floating point number.                   |
 | uint8             | 0xCC              | `0b11001100`                | Unsigned 8 bit integer.                         |
@@ -280,7 +283,7 @@ A chunk with 3 nodes:
 The string node contains the below parts in the following order.
 
 1. First byte encodes whether the string node is of type `str5`, `str8`, `arr16` or `arr32`.
-2. Followed by 0, 1, 2, or 4 bytes of unsigned integer encoding of number of chunks.
+2. Followed by 0, 1, 2, or 4 bytes of unsigned integer encoding the number of chunks.
 2. ID of the string, encoded as a relative ID.
 4. A flat list of string chunks.
 
@@ -348,6 +351,75 @@ A deleted chunk with text of length 256:
 A chunk with text which is not deleted:
 +-|-------+........+········+========+========+
 |0|?tttttt|?ttttttt|tttttttt|   ID   |  text  |
++-^-------+........+········+========+========+
+```
+
+
+##### Binary node encoding
+
+The binary node contains the below parts in the following order.
+
+1. First byte encodes whether the binary node is of type `bin8`, `bin16`, or `bin32`.
+2. Followed by 1, 2, or 4 bytes of unsigned integer encoding the number of chunks.
+2. ID of the binary, encoded as a relative ID.
+4. A flat list of binary chunks.
+
+The number of chunks is encoded with `s` bits as an unsigned integer.
+
+```
+bin8
++--------+--------+========+========+
+|11000100|ssssssss|   ID   | chunks |
++--------+--------+========+========+
+
+bin16
++--------+--------+--------+========+========+
+|11000101|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+========+========+
+
+bin32
++--------+--------+--------+--------+--------+========+========+
+|11000110|ssssssss|ssssssss|ssssssss|ssssssss|   ID   | chunks |
++--------+--------+--------+--------+--------+========+========+
+```
+
+Each chunk contains the bellow parts in the following order.
+
+1. The contents length in the chunk, encoded as b1vuint56.
+   1. If b1vuint56 boolean bit is 1, the contents is considered deleted.
+      There is no contents to follow.
+   2. If b1vuint56 boolean bit is 0, then the value specifies the
+      length of the following `data` binary contents of the chunk.
+2. ID of the first UTF-8 character in the chunk, encoded as a relative ID.
+3. Chunk's `data` contents, if b1vuint56 boolean bit was set to 0, no data otherwise.
+
+```
++===========+========+========+
+| b1vuint56 |   ID   |  data  |
++===========+========+========+
+```
+
+Assuming the node count is encoded using `t` bits:
+
+```
+A deleted chunk:
++-|-------+........+········+========+
+|1|?tttttt|?ttttttt|tttttttt|   ID   |
++-^-------+........+········+========+
+
+A deleted chunk with data contents of length 3:
++-|-------+========+
+|1|0000011|   ID   |
++-^-------+========+
+
+A deleted chunk with data contents of length 256:
++-|-------+--------+========+
+|1|1000000|00000100|   ID   |
++-^-------+--------+========+
+
+A chunk with data, which is not deleted:
++-|-------+........+········+========+========+
+|0|?tttttt|?ttttttt|tttttttt|   ID   |  data  |
 +-^-------+........+········+========+========+
 ```
 

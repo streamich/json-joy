@@ -4,6 +4,7 @@ export const enum TypeCode {
   str = 2,
   val = 3,
   const = 4,
+  bin = 5,
 }
 
 export const enum ValueCode {

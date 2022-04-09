@@ -4,7 +4,7 @@ import {LogicalVectorClock} from '../../../json-crdt-patch/clock';
 
 describe('Scenarios', () => {
   // https://youtu.be/GXJ0D2tfZCM?t=2359
-  test.only('concurrently insert text at different positions', () => {
+  test('concurrently insert text at different positions', () => {
     const doc = Model.withLogicalClock(new LogicalVectorClock(100, 0));
     const builder1 = new PatchBuilder(doc.clock);
     const str = builder1.str();

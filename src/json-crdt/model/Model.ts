@@ -1,26 +1,29 @@
-import type {JsonNode} from '../types/types';
-import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
-import {LogicalNodeIndex, NodeIndex, ServerNodeIndex} from './nodes';
-import {randomSessionId} from './util';
-import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
-import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
-import {ITimestamp, IVectorClock, LogicalVectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
-import {DocRootType} from '../types/lww-doc-root/DocRootType';
-import {ObjectType} from '../types/lww-object/ObjectType';
 import {ArrayType} from '../types/rga-array/ArrayType';
-import {StringType} from '../types/rga-string/StringType';
-import {MakeObjectOperation} from '../../json-crdt-patch/operations/MakeObjectOperation';
-import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {MakeArrayOperation} from '../../json-crdt-patch/operations/MakeArrayOperation';
-import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
-import {ORIGIN} from '../../json-crdt-patch/constants';
+import {BinaryType} from '../types/rga-binary/BinaryType';
 import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
-import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOperation';
+import {DocRootType} from '../types/lww-doc-root/DocRootType';
+import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
+import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../json-crdt-patch/operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
-import {ModelApi} from './api/ModelApi';
+import {ITimestamp, IVectorClock, LogicalVectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
+import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
+import {LogicalNodeIndex, NodeIndex, ServerNodeIndex} from './nodes';
+import {MakeArrayOperation} from '../../json-crdt-patch/operations/MakeArrayOperation';
+import {MakeBinaryOperation} from '../../json-crdt-patch/operations/MakeBinaryOperation';
+import {MakeObjectOperation} from '../../json-crdt-patch/operations/MakeObjectOperation';
+import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOperation';
 import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
-import {ValueType} from '../types/lww-value/ValueType';
+import {ModelApi} from './api/ModelApi';
+import {ObjectType} from '../types/lww-object/ObjectType';
+import {ORIGIN} from '../../json-crdt-patch/constants';
+import {randomSessionId} from './util';
+import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
 import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperation';
+import {StringType} from '../types/rga-string/StringType';
+import {ValueType} from '../types/lww-value/ValueType';
+import type {JsonNode} from '../types/types';
 
 /**
  * In instance of Model class represents the underlying data structure,
@@ -150,6 +153,12 @@ export class Model {
       const node = this.nodes.get(op.obj);
       if (node instanceof ArrayType) node.delete(op);
       else if (node instanceof StringType) node.onDelete(op);
+      else if (node instanceof BinaryType) node.onDelete(op);
+    } else if (op instanceof MakeBinaryOperation) {
+      if (!this.nodes.get(op.id)) this.nodes.index(new BinaryType(this, op.id));
+    } else if (op instanceof InsertBinaryDataOperation) {
+      const arr = this.nodes.get(op.obj);
+      if (arr instanceof BinaryType) arr.onInsert(op);
     }
   }
 

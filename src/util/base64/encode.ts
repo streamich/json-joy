@@ -1,4 +1,4 @@
-import {alphabet} from "./constants";
+import {alphabet} from './constants';
 
 const E = '=';
 const EE = '==';

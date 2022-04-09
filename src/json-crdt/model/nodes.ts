@@ -23,7 +23,7 @@ export interface NodeIndex<T extends Identifiable> {
   iterate(): IterableIterator<T>;
 
   /**
-   * Returns a randomly picket entry. Or none, if there are not entries.
+   * Returns a randomly picked entry. Or none, if there are no entries.
    */
   random(): T | null;
 }
