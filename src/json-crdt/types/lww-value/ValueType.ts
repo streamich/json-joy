@@ -20,7 +20,7 @@ export class ValueType implements JsonNode {
   }
 
   public toString(tab: string = ''): string {
-    return `${tab}num(${this.id.toString()}) { ${this.toJson()} }`;
+    return `${tab}${this.constructor.name}(${this.id.toDisplayString()}) { ${this.toJson()} }`;
   }
 
   public clone(doc: Model): ValueType {
