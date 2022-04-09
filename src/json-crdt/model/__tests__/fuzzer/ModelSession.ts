@@ -112,7 +112,7 @@ export class ModelSession {
 
   private generateValuePatch(model: Model, node: ValueType): Patch {
     const builder = new PatchBuilder(model.clock);
-    builder.setVal(node.id, Math.random());
+    builder.setVal(node.id, RandomJson.genNumber());
     return builder.patch;
   }
 
