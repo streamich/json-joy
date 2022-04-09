@@ -4,12 +4,12 @@ import {JsonNode} from '../../types';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
 import {NULL, UNDEFINED} from '../../constants';
+import {ObjectApi} from './ObjectApi';
 import {ObjectType} from '../../types/lww-object/ObjectType';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {StringApi} from './StringApi';
 import {StringType} from '../../types/rga-string/StringType';
-import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {ValueApi} from './ValueApi';
 import {ValueType} from '../../types/lww-value/ValueType';
 import type {Model} from '../Model';
@@ -119,29 +119,9 @@ export class ModelApi {
     throw new Error('NOT_ARR');
   }
 
-  public asObj(path: Path): ObjectType {
+  public obj(path: Path): ObjectApi {
     const obj = this.find(path);
-    if (obj instanceof ObjectType) return obj;
+    if (obj instanceof ObjectType) return new ObjectApi(this, obj);
     throw new Error('NOT_OBJ');
-  }
-
-  public objSet(path: Path, entries: Record<string, unknown>): this {
-    const obj = this.asObj(path);
-    const {builder} = this;
-    builder.setKeys(
-      obj.id,
-      Object.entries(entries).map(([key, json]) => [key, builder.json(json)]),
-    );
-    return this;
-  }
-
-  public objDel(path: Path, keys: string[]): this {
-    const obj = this.asObj(path);
-    const {builder} = this;
-    builder.setKeys(
-      obj.id,
-      keys.map((key) => [key, UNDEFINED_ID]),
-    );
-    return this;
   }
 }

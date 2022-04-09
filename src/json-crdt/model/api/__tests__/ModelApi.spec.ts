@@ -113,9 +113,9 @@ describe('object manipulation', () => {
     const api = doc.api;
     api.root({a: {}}).commit();
     expect(doc.toJson()).toEqual({a: {}});
-    api.objSet([], {gg: true}).commit();
+    api.obj([]).set({gg: true}).commit();
     expect(doc.toJson()).toEqual({a: {}, gg: true});
-    api.objSet(['a'], {1: 1, 2: 2}).commit();
+    api.obj(['a']).set({1: 1, 2: 2}).commit();
     expect(doc.toJson()).toEqual({a: {'1': 1, '2': 2}, gg: true});
   });
 
@@ -124,15 +124,15 @@ describe('object manipulation', () => {
     const api = doc.api;
     api.root({a: 'a'}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
-    api.objSet([], {b: 'b', c: {c: 'c'}}).commit();
+    api.obj([]).set({b: 'b', c: {c: 'c'}}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {c: 'c'}});
-    api.objSet(['c'], {c: undefined}).commit();
+    api.obj(['c']).set({c: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b', c: {}});
-    api.objSet([], {c: undefined}).commit();
+    api.obj([]).set({c: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a', b: 'b'});
-    api.objSet([], {b: undefined}).commit();
+    api.obj([]).set({b: undefined}).commit();
     expect(doc.toJson()).toEqual({a: 'a'});
-    api.objSet([], {a: undefined}).commit();
+    api.obj([]).set({a: undefined}).commit();
     expect(doc.toJson()).toEqual({});
     api.root({gg: 'bet'}).commit();
     expect(doc.toJson()).toEqual({gg: 'bet'});
