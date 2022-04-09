@@ -1,15 +1,11 @@
-import {ArrayApi} from './ArrayApi';
 import {Finder} from './Finder';
 import {JsonNode} from '../../types';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
 import {NULL} from '../../constants';
-import {ObjectApi} from './ObjectApi';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Path} from '../../../json-pointer';
-import {StringApi} from './StringApi';
-import {ValueApi} from './ValueApi';
 import type {Model} from '../Model';
 
 export class ModelApi {
@@ -40,19 +36,23 @@ export class ModelApi {
     return path ? finder.find(path) : finder;
   }
 
-  public val(path: Path): ValueApi {
+  public val(path: Path) {
     return this.find().val(path);
   }
 
-  public str(path: Path): StringApi {
+  public str(path: Path) {
     return this.find().str(path);
   }
 
-  public arr(path: Path): ArrayApi {
+  public bin(path: Path) {
+    return this.find().bin(path);
+  }
+
+  public arr(path: Path) {
     return this.find().arr(path);
   }
 
-  public obj(path: Path): ObjectApi {
+  public obj(path: Path) {
     return this.find().obj(path);
   }
 

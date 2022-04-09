@@ -21,6 +21,10 @@ export class NodeApi<Node extends JsonNode, View = unknown> {
     return this.find().str(path);
   }
 
+  public bin(path: Path) {
+    return this.find().bin(path);
+  }
+
   public arr(path: Path) {
     return this.find().arr(path);
   }

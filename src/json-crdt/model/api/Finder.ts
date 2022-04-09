@@ -1,15 +1,17 @@
+import {ArrayApi} from './ArrayApi';
 import {ArrayType} from '../../types/rga-array/ArrayType';
-import type {JsonNode} from '../../types';
+import {BinaryApi} from './BinaryApi';
+import {BinaryType} from '../../types/rga-binary/BinaryType';
 import {NULL, UNDEFINED} from '../../constants';
+import {ObjectApi} from './ObjectApi';
 import {ObjectType} from '../../types/lww-object/ObjectType';
-import type {Path} from '../../../json-pointer';
-import {ValueApi} from './ValueApi';
-import {ValueType} from '../../types/lww-value/ValueType';
 import {StringApi} from './StringApi';
 import {StringType} from '../../types/rga-string/StringType';
-import {ArrayApi} from './ArrayApi';
-import {ObjectApi} from './ObjectApi';
+import {ValueApi} from './ValueApi';
+import {ValueType} from '../../types/lww-value/ValueType';
+import type {JsonNode} from '../../types';
 import type {ModelApi} from './ModelApi';
+import type {Path} from '../../../json-pointer';
 
 export class Finder {
   constructor(protected readonly node: JsonNode, protected readonly api: ModelApi) {}
@@ -48,6 +50,12 @@ export class Finder {
     const node = this.find(path);
     if (node instanceof StringType) return new StringApi(this.api, node);
     throw new Error('NOT_STR');
+  }
+
+  public bin(path: Path): BinaryApi {
+    const node = this.find(path);
+    if (node instanceof BinaryType) return new BinaryApi(this.api, node);
+    throw new Error('NOT_BIN');
   }
 
   public arr(path: Path): ArrayApi {
