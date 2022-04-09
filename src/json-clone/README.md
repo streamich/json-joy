@@ -2,7 +2,7 @@
 
 Provides small and fast deep cloning functions.
 
-- `clone()` &mdash; deeply clones a JSON-line value.
+- `clone()` &mdash; deeply clones a JSON-like value.
 - `cloneBinary()` &mdash; same as `clone()` but also supports `Uint8Array` objects.
 
 ```ts
