@@ -17,7 +17,7 @@ export class ClockDecoder {
   public constructor(sessionId: number, time: number) {
     this.index = 1;
     this.clock = new LogicalVectorClock(sessionId, time);
-    if (time) this.clock.observe(new LogicalTimestamp(sessionId, time), 1);
+    if (time) this.clock.observe(new LogicalTimestamp(sessionId, time - 1), 1);
     this.table.set(this.index++, this.clock);
   }
 
@@ -31,6 +31,6 @@ export class ClockDecoder {
     if (!sessionIndex) return new LogicalTimestamp(0, timeDiff);
     const ts = this.table.get(sessionIndex);
     if (!ts) throw new Error('INVALID_CLOCK_TABLE');
-    return new LogicalTimestamp(ts.getSessionId(), ts.time - timeDiff - 1);
+    return new LogicalTimestamp(ts.getSessionId(), ts.time - timeDiff);
   }
 }

@@ -12,6 +12,7 @@ export class LogicalDecoder extends AbstractDecoder {
     this.decodeClockTable(clockTableLength);
     const doc = (this.doc = Model.withLogicalClock(this.clockDecoder.clock));
     this.decodeRoot(doc);
+    doc.clock.time++;
     return doc;
   }
 

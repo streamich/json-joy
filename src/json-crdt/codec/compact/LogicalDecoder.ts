@@ -27,6 +27,7 @@ export class LogicalDecoder {
     const rootId = this.ts(data, 1);
     const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
     doc.root = new DocRootType(doc, rootId, rootNode);
+    doc.clock.time++;
     return doc;
   }
 

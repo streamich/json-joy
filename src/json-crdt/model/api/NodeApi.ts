@@ -4,7 +4,7 @@ import {ModelApi} from './ModelApi';
 import {Path} from '../../../json-pointer';
 
 export class NodeApi<Node extends JsonNode, View = unknown> {
-  constructor(protected readonly api: ModelApi, protected readonly node: Node) {}
+  constructor(protected readonly api: ModelApi, public readonly node: Node) {}
 
   public find(): Finder;
   public find(path: Path): JsonNode;
