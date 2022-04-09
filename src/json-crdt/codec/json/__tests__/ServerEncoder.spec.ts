@@ -12,7 +12,7 @@ test('encodes deleted string chunks', () => {
   const doc = Model.withServerClock(0);
   const encoder = new ServerEncoder();
   doc.api.root('abc').commit();
-  doc.api.strDel([], 1, 1).commit();
+  doc.api.str([]).del(1, 1).commit();
   const res = encoder.encode(doc);
   expect(res).toEqual({
     time: 6,

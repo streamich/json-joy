@@ -98,7 +98,7 @@ test('encodes deleted string chunks', () => {
   const doc = Model.withLogicalClock(new LogicalVectorClock(123, 0));
   const encoder = new LogicalEncoder();
   doc.api.root('abc').commit();
-  doc.api.strDel([], 1, 1).commit();
+  doc.api.str([]).del(1, 1).commit();
   const res = encoder.encode(doc);
   expect(res).toEqual({
     clock: [[123, 5]],

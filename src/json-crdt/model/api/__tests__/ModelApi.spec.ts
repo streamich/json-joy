@@ -5,11 +5,11 @@ describe('string manipulation', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root('').commit();
-    api.strIns([], 0, 'var foo = bar').commit();
-    api.strIns([], 10, '"').commit();
-    api.strIns([], 14, '";').commit();
-    api.strDel([], 0, 3).commit();
-    api.strIns([], 0, 'const').commit();
+    api.str([]).ins(0, 'var foo = bar').commit();
+    api.str([]).ins(10, '"').commit();
+    api.str([]).ins(14, '";').commit();
+    api.str([]).del(0, 3).commit();
+    api.str([]).ins(0, 'const').commit();
     expect(doc.toJson()).toBe('const foo = "bar";');
   });
 
@@ -17,11 +17,11 @@ describe('string manipulation', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({foo: [123, '', 5]}).commit();
-    api.strIns(['foo', 1], 0, 'var foo = bar').commit();
-    api.strIns(['foo', 1], 10, '"').commit();
-    api.strIns(['foo', 1], 14, '";').commit();
-    api.strDel(['foo', 1], 0, 3).commit();
-    api.strIns(['foo', 1], 0, 'const').commit();
+    api.str(['foo', 1]).ins(0, 'var foo = bar').commit();
+    api.str(['foo', 1]).ins(10, '"').commit();
+    api.str(['foo', 1]).ins(14, '";').commit();
+    api.str(['foo', 1]).del(0, 3).commit();
+    api.str(['foo', 1]).ins(0, 'const').commit();
     expect(doc.toJson()).toEqual({
       foo: [123, 'const foo = "bar";', 5],
     });
@@ -147,8 +147,8 @@ describe('patch()', () => {
     expect(api.patches.length).toBe(1);
     expect(doc.toJson()).toEqual({foo: 'abc'});
     api.patch(() => {
-      api.strIns(['foo'], 1, '1');
-      api.strIns(['foo'], 3, '2');
+      api.str(['foo']).ins(1, '1');
+      api.str(['foo']).ins(3, '2');
     });
     expect(api.patches.length).toBe(2);
     expect(doc.toJson()).toEqual({foo: 'a1bc2'});

@@ -105,37 +105,15 @@ export class ModelApi {
     throw new Error('NOT_STR');
   }
 
-  public str(path: Path): StringApi {
-    const obj = this.asStr(path);
-    return new StringApi(this, obj);
-  }
-
-  public strObjIns(obj: StringType, index: number, substr: string) {
-    const after = !index ? obj.id : obj.findId(index - 1);
-    this.builder.insStr(obj.id, after, substr);
-  }
-
-  public strIns(path: Path, index: number, substr: string): this {
-    const obj = this.asStr(path);
-    this.strObjIns(obj, index, substr);
-    return this;
-  }
-
-  public strObjDel(obj: StringType, index: number, length: number) {
-    const spans = obj.findIdSpan(index, length);
-    for (const ts of spans) this.builder.del(obj.id, ts, ts.span);
-  }
-
-  public strDel(path: Path, index: number, length: number): this {
-    const obj = this.asStr(path);
-    this.strObjDel(obj, index, length);
-    return this;
-  }
-
   public asVal(path: Path): ValueType {
     const obj = this.find(path);
     if (obj instanceof ValueType) return obj;
     throw new Error('NOT_VAL');
+  }
+
+  public str(path: Path): StringApi {
+    const obj = this.asStr(path);
+    return new StringApi(this, obj);
   }
 
   public valSet(path: Path, value: unknown): this {
