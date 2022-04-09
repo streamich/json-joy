@@ -99,12 +99,6 @@ export class ModelApi {
     return this;
   }
 
-  public asStr(path: Path): StringType {
-    const obj = this.find(path);
-    if (obj instanceof StringType) return obj;
-    throw new Error('NOT_STR');
-  }
-
   public asVal(path: Path): ValueType {
     const obj = this.find(path);
     if (obj instanceof ValueType) return obj;
@@ -112,8 +106,9 @@ export class ModelApi {
   }
 
   public str(path: Path): StringApi {
-    const obj = this.asStr(path);
-    return new StringApi(this, obj);
+    const obj = this.find(path);
+    if (obj instanceof StringType) return new StringApi(this, obj);
+    throw new Error('NOT_STR');
   }
 
   public valSet(path: Path, value: unknown): this {
