@@ -5,6 +5,8 @@ This package consists of multiple self-contained libraries:
 
 - __`json-brand`__ &mdash; TypeScript *branded type* for JSON.
   - [__Documentation__ 🚀](./src/json-brand/README.md)
+- __`json-clone`__ &mdash; JSON deep cloning methods
+  - [__Documentation__ 🚀](./src/json-clone/README.md)
 - __`json-expression`__ &mdash; implementation of __JSON Expression__ language.
   - [__Documentation__ 🚀](./src/json-expression/README.md)
 - __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
