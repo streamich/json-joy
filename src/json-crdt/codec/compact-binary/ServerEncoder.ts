@@ -1,14 +1,13 @@
 import {ServerEncoder as CompactEncoder} from '../compact/ServerEncoder';
-import {Encoder as MessagePackEncoder} from '../../../json-pack/Encoder';
+import {encoderFull} from '../../../json-pack/util';
 import {Model} from '../../model';
 
 export class ServerEncoder {
   protected encoder = new CompactEncoder();
-  protected msgPack = new MessagePackEncoder();
 
   public encode(doc: Model): Uint8Array {
     const json = this.encoder.encode(doc);
-    const uint8 = this.msgPack.encode(json);
+    const uint8 = encoderFull.encode(json);
     return uint8;
   }
 }
