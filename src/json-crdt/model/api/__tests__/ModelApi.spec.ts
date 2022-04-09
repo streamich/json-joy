@@ -48,7 +48,7 @@ describe('number manipulation', () => {
         },
       ],
     });
-    api.valSet(['a', 0, 'b'], 0.5);
+    api.val(['a', 0, 'b']).set(0.5);
     expect(doc.toJson()).toEqual({
       a: [
         {
@@ -77,7 +77,7 @@ describe('number manipulation', () => {
     expect(doc.toJson()).toEqual({
       a: [123],
     });
-    api.valSet(['a', 0], 0.5);
+    api.val(['a', 0]).set(0.5);
     expect(doc.toJson()).toEqual({
       a: [123],
     });

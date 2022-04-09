@@ -12,6 +12,7 @@ import {UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {ValueType} from '../../types/lww-value/ValueType';
 import {JsonNode} from '../../types';
 import {NULL, UNDEFINED} from '../../constants';
+import { ValueApi } from './ValueApi';
 
 export class ModelApi {
   /** Buffer of accumulated patches. */
@@ -99,9 +100,9 @@ export class ModelApi {
     return this;
   }
 
-  public asVal(path: Path): ValueType {
+  public val(path: Path): ValueApi {
     const obj = this.find(path);
-    if (obj instanceof ValueType) return obj;
+    if (obj instanceof ValueType) return new ValueApi(this, obj);
     throw new Error('NOT_VAL');
   }
 
@@ -109,12 +110,6 @@ export class ModelApi {
     const obj = this.find(path);
     if (obj instanceof StringType) return new StringApi(this, obj);
     throw new Error('NOT_STR');
-  }
-
-  public valSet(path: Path, value: unknown): this {
-    const {id} = this.asVal(path);
-    this.builder.setVal(id, value);
-    return this;
   }
 
   public asArr(path: Path): ArrayType {
