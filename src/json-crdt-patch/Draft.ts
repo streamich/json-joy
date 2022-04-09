@@ -51,7 +51,7 @@ export class Draft {
       id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time);
     for (const op of ops) {
       if (op instanceof DeleteOperation)
-        patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), ts(op.after), op.length));
+        patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), op.after));
       else if (op instanceof InsertArrayElementsOperation)
         patch.ops.push(new InsertArrayElementsOperation(ts(op.id), ts(op.arr), ts(op.after), op.elements.map(ts)));
       else if (op instanceof InsertStringSubstringOperation)

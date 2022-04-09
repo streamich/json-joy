@@ -125,7 +125,8 @@ export const encode = (patch: Patch): Uint8Array => {
       continue;
     }
     if (op instanceof DeleteOperation) {
-      const {obj, after, length} = op;
+      const {obj, after} = op;
+      const length = after.span;
       if (length > 1) {
         const spanBuffer = new Uint8Array(encodeVarUInt(length));
         buffers.push(

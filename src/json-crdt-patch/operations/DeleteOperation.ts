@@ -1,4 +1,4 @@
-import {ITimestamp} from '../clock';
+import {ITimespan, ITimestamp} from '../clock';
 import type {IJsonCrdtPatchOperation} from './types';
 
 export class DeleteOperation implements IJsonCrdtPatchOperation {
@@ -11,12 +11,11 @@ export class DeleteOperation implements IJsonCrdtPatchOperation {
   constructor(
     public readonly id: ITimestamp,
     public readonly obj: ITimestamp,
-    public readonly after: ITimestamp,
-    public readonly length: number,
+    public readonly after: ITimespan,
   ) {}
 
   public span(): number {
-    return this.length;
+    return this.after.span;
   }
 
   public getMnemonic(): string {

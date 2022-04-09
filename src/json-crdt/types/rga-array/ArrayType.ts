@@ -66,7 +66,8 @@ export class ArrayType implements JsonNode {
   }
 
   public delete(op: DeleteOperation) {
-    const {after, length} = op;
+    const {after} = op;
+    const length = after.span;
     let chunk: ArrayChunk | null = this.end;
     const chunks: ArrayChunk[] = [];
     while (chunk) {

@@ -225,7 +225,7 @@ export class PatchBuilder {
   public del(obj: ITimestamp, start: ITimestamp, span: number): ITimestamp {
     this.pad();
     const id = this.clock.tick(span);
-    const op = new DeleteOperation(id, obj, start, span);
+    const op = new DeleteOperation(id, obj, start.interval(0, span));
     this.patch.ops.push(op);
     return id;
   }
