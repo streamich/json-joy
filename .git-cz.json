@@ -5,6 +5,7 @@
     "demo",
     "json-brand",
     "json-cli",
+    "json-clone",
     "json-crdt",
     "json-crdt-patch",
     "json-equal",

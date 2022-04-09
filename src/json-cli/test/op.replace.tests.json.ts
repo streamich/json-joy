@@ -1,4 +1,4 @@
-import {deepClone} from '../../json-patch/util';
+import {clone as deepClone} from '../../json-clone/clone';
 import {TestCase} from './types';
 
 const values: [string, unknown][] = [

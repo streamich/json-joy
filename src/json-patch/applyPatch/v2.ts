@@ -1,4 +1,4 @@
-import {deepClone} from '../util';
+import {clone as deepClone} from '../../json-clone/clone';
 import {Operation} from '../types';
 import {findByPointer} from '../../json-pointer/findByPointer/v6';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';

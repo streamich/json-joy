@@ -1,5 +1,5 @@
 import {RandomJson} from '.';
-import {deepClone} from '../json-patch/util';
+import {clone as deepClone} from '../json-clone/clone';
 import {TAnyType} from '../json-type';
 
 export interface RandomTypeOptions {

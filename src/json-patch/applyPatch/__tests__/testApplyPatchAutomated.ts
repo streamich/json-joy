@@ -1,7 +1,7 @@
 import tests_json from '../../__tests__/tests.json';
 import spec_json from '../../__tests__/spec.json';
 import {validateOperation} from '../../validate';
-import {deepClone} from '../../util';
+import {clone} from '../../../json-clone/clone';
 import {ApplyPatch} from '../types';
 
 const testSuites = [
@@ -18,7 +18,7 @@ const testSuites = [
 export const testApplyPatchAutomated = (applyPatch: ApplyPatch) => {
   describe(`applyPatch [automated]`, () => {
     testSuites.forEach((s) => {
-      const suite = deepClone(s) as any;
+      const suite = clone(s) as any;
       describe(suite.name, () => {
         suite.tests.forEach((test: any) => {
           if (test.disabled) return;

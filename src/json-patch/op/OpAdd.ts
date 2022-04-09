@@ -4,7 +4,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {deepClone} from '../util';
+import {clone as deepClone} from '../../json-clone/clone';
 
 /**
  * @category JSON Patch

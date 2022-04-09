@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '../../json-pointer';
 import {OpAdd} from './OpAdd';
-import {deepClone} from '../util';
+import {clone as deepClone} from '../../json-clone/clone';
 import {OPCODE} from '../constants';
 import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 
