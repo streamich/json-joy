@@ -1,3 +1,32 @@
+# [7.3.0](https://github.com/streamich/json-joy/compare/v7.2.0...v7.3.0) (2022-04-09)
+
+
+### Bug Fixes
+
+* **json-crdt-patch:** 🐛 correctly encode binary data insert operation ([2f5df3d](https://github.com/streamich/json-joy/commit/2f5df3d0ba41f7e3edd4342febfa9f578e136c80))
+* **json-crdt-patch:** 🐛 do not try to insert empty buffers ([f2479b1](https://github.com/streamich/json-joy/commit/f2479b19bfb34570a4fc00d29f81c43ae0f16fbd))
+* **json-crdt:** 🐛 stabilize binary type support ([9915a25](https://github.com/streamich/json-joy/commit/9915a25d9443bb53d7196bb5cebb72b00b72472c))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add binary operation support in compact encod ([22fa3a1](https://github.com/streamich/json-joy/commit/22fa3a18f455a42ef08d7fcfa93ef86059315f02))
+* **json-crdt-patch:** 🎸 add binary type creation and insert operations ([821facf](https://github.com/streamich/json-joy/commit/821facf843d6d2dab6ecee09ab0fb82ce40c647b))
+* **json-crdt-patch:** 🎸 add support for bin ops in binary codec ([5cfd4e8](https://github.com/streamich/json-joy/commit/5cfd4e8e26e0422659617fb419ccb93c3643fe81))
+* **json-crdt-patch:** 🎸 add value operation support to binary codec ([93f5e2b](https://github.com/streamich/json-joy/commit/93f5e2bb74b989197dfd3a9b189cdef03c0fa8f5))
+* **json-crdt-patch:** 🎸 make binary codec op codes like compact encod ([85fb746](https://github.com/streamich/json-joy/commit/85fb746b0d854c792812e28471003be1da8460e9))
+* **json-crdt:** 🎸 add ArrayApi class ([0c717fe](https://github.com/streamich/json-joy/commit/0c717fefe72e1bf616a672640fe63aeb673e8e91))
+* **json-crdt:** 🎸 add binary type support for binary codec ([ad4f60d](https://github.com/streamich/json-joy/commit/ad4f60d008efdc69cd33732cc5b82a551d7f0a16))
+* **json-crdt:** 🎸 add binary type support for json codec ([4543b51](https://github.com/streamich/json-joy/commit/4543b518551d5396631f8aaf333af68b02507b90))
+* **json-crdt:** 🎸 add binary type support to compact codec ([cbf1b57](https://github.com/streamich/json-joy/commit/cbf1b57a7b84a46a300061415e9837426ca35f91))
+* **json-crdt:** 🎸 add BinaryApi class ([90b771e](https://github.com/streamich/json-joy/commit/90b771e1b878828fe3db77bef28b42587d98cc43))
+* **json-crdt:** 🎸 add finder interface to all API nodes ([18860da](https://github.com/streamich/json-joy/commit/18860da1d1823a41174d898ee365a7b62fe70913))
+* **json-crdt:** 🎸 add StringApi class ([a99ac10](https://github.com/streamich/json-joy/commit/a99ac101f2ec6c68ade049d6ad01507e4a56a724))
+* **json-crdt:** 🎸 add ValueApi class ([135e31e](https://github.com/streamich/json-joy/commit/135e31eda3e123545bbfbc93869806c1d22d6563))
+* **json-crdt:** 🎸 clean up string methods in ModelApi ([f19082e](https://github.com/streamich/json-joy/commit/f19082ee9857f96d90c36d10691438917070842e))
+* **json-crdt:** 🎸 implement binary CRDT type ([68c64fa](https://github.com/streamich/json-joy/commit/68c64fa81ea5b623b74b54727f1bb9cb8fdb593f))
+* **json-crdt:** 🎸 improve StringApi ([5579c8b](https://github.com/streamich/json-joy/commit/5579c8bf0426c0c2bbb88acd7f1702a960296991))
+
 # [7.2.0](https://github.com/streamich/json-joy/compare/v7.1.0...v7.2.0) (2022-04-05)
 
 
