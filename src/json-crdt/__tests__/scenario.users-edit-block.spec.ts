@@ -22,7 +22,7 @@ const modelCodecs = [
 
 const patchCodecs = [
   ['json', encodePatchJson, decodePatchJson],
-  // ['compact', encodePatchCompact, decodePatchCompact],
+  ['compact', encodePatchCompact, decodePatchCompact],
   ['binary', encodePatchBinary, decodePatchBinary],
 ];
 
@@ -30,7 +30,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
   for (const [patchCodecName, encodePatch, decodePatch] of patchCodecs) {
     test(`2 users edit concurrently a JSON block and persist changes on the server, model:${modelCodecName}, patch: ${patchCodecName}`, () => {
       // User 1 creates a JSON block.
-      const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+      const model1 = Model.withLogicalClock(new LogicalVectorClock(3145605287749735, 0));
       model1.api.root({
         '@type': 'CreativeWork',
         'name': 'Task list',
@@ -93,6 +93,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
 
       // Server receives User 2's changes.
       const patches2 = batch.map(decodePatch as any);
+      expect(patches1).toStrictEqual(patches2);
       const model5 = (decoder as any).decode(encoded1);
       patches2.forEach((patch: any) => {
         model5.applyPatch(patch as any);
@@ -104,7 +105,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
-      
+
       // Server stores latest state using json encoder.
       const encoded5 = (encoder as any).encode(model5);
 
@@ -131,6 +132,13 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       const batch2 = patches4.map(encodePatch as any);
       const patches5 = batch2.map(decodePatch as any);
       const model6 = (decoder as any).decode(encoded5);
+      expect(model6.toView()).toStrictEqual({
+        '@type': 'CreativeWork',
+        'name': 'Our tasks',
+        'description': 'A list of tasks',
+        pinned: true,
+        tags: ['important', 'todo', 'list'],
+      });
       patches5.forEach(patch => model6.applyPatch(patch as any));
       expect(model6.toView()).toStrictEqual({
         '@type': 'CreativeWork',
