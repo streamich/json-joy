@@ -15,18 +15,18 @@ export class ModelApi {
   /** Currently active builder. */
   public builder: PatchBuilder;
 
-  public getNode() {
-    const model = this.model;
-    const id = model.root.toValue();
-    return model.node(id) || NULL;
-  }
-
   protected getApi() {
     return this;
   }
 
   constructor(public readonly model: Model) {
     this.builder = new PatchBuilder(model.clock);
+  }
+
+  public getNode() {
+    const model = this.model;
+    const id = model.root.toValue();
+    return model.node(id) || NULL;
   }
 
   public find(): Finder;
