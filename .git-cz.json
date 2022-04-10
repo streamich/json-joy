@@ -1,5 +1,5 @@
 {
-  "maxMessageLength": 72,
+  "maxMessageLength": 90,
   "scopes": [
     "",
     "demo",
