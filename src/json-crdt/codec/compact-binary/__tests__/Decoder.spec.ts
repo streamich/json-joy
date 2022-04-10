@@ -31,8 +31,8 @@ test('decodes all types', () => {
   const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('can edit documents after decoding', () => {
@@ -49,12 +49,12 @@ test('can edit documents after decoding', () => {
   const decoder = new LogicalDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
   doc2.api.arr(['arr']).ins(1, [1.5]).commit();
   doc1.api.str(['str']).ins(0, '__tab__').commit();
-  expect((doc2.toJson() as any).arr).toEqual([1, 1.5, 2, 3]);
-  expect((doc1.toJson() as any).arr).toEqual([1, 2, 3]);
-  expect((doc2.toJson() as any).str).toBe('asdf');
-  expect((doc1.toJson() as any).str).toBe('__tab__asdf');
+  expect((doc2.toView() as any).arr).toEqual([1, 1.5, 2, 3]);
+  expect((doc1.toView() as any).arr).toEqual([1, 2, 3]);
+  expect((doc2.toView() as any).str).toBe('asdf');
+  expect((doc1.toView() as any).str).toBe('__tab__asdf');
 });

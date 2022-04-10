@@ -7,7 +7,7 @@ import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {fromBase64} from '../../../util/base64/decode';
-import {ITimestamp, LogicalTimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {Model} from '../../model';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -27,7 +27,6 @@ export class LogicalDecoder {
     const rootId = this.ts(data, 1);
     const rootNode = data[3] ? this.decodeNode(doc, data[3]) : null;
     doc.root = new DocRootType(doc, rootId, rootNode);
-    doc.clock.time++;
     return doc;
   }
 
