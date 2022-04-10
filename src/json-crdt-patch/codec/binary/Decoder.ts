@@ -1,5 +1,5 @@
 import {Code} from '../compact/constants';
-import {CrdtDecoder} from './CrdtDecoder';
+import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
 import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';

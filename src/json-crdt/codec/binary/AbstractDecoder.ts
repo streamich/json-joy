@@ -3,7 +3,7 @@ import {ArrayType} from '../../types/rga-array/ArrayType';
 import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
 import {BinaryType} from '../../types/rga-binary/BinaryType';
 import {ConstantType} from '../../types/const/ConstantType';
-import {CrdtDecoder} from '../../../json-crdt-patch/codec/binary/CrdtDecoder';
+import {CrdtDecoder} from '../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {ITimestamp} from '../../../json-crdt-patch/clock';

@@ -1,5 +1,5 @@
 import {Code} from '../compact/constants';
-import {CrdtEncoder} from './CrdtEncoder';
+import {CrdtEncoder} from '../../util/binary/CrdtEncoder';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
