@@ -200,6 +200,11 @@ export class Decoder {
   }
 
   /** @ignore */
+  protected peak(): number {
+    return this.view.getUint8(this.x);
+  }
+
+  /** @ignore */
   protected u8(): number {
     return this.view.getUint8(this.x++);
   }

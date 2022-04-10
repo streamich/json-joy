@@ -6,10 +6,12 @@ import {PatchBuilder} from '../../PatchBuilder';
 
 export class Decoder extends CrdtDecoder {
   protected builder!: PatchBuilder;
+  private patchId!: ITimestamp;
 
   public decode(data: Uint8Array): Patch {
     this.reset(data);
-    const id = this.decodeId();
+    const [sessionId, time] = this.uint53vuint39();
+    const id = this.patchId = new LogicalTimestamp(sessionId, time);
     const clock = new LogicalVectorClock(id.getSessionId(), id.time);
     this.builder = new PatchBuilder(clock);
     this.decodeOperations();
@@ -17,8 +19,14 @@ export class Decoder extends CrdtDecoder {
   }
 
   protected decodeId(): ITimestamp {
-    const [sessionId, time] = this.uint53vuint39();
-    return new LogicalTimestamp(sessionId, time);
+    const patchId = this.patchId;
+    const [flag, value] = this.b1vuint56();
+    if (flag) {
+      return new LogicalTimestamp(patchId.getSessionId(), patchId.time + value);
+    } else {
+      const time = this.vuint57();
+      return new LogicalTimestamp(value, time);
+    }
   }
 
   public decodeOperations(): void {

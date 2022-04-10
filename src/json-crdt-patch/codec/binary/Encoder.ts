@@ -19,9 +19,11 @@ import {SetRootOperation} from '../../operations/SetRootOperation';
 import {SetValueOperation} from '../../operations/SetValueOperation';
 
 export class Encoder extends CrdtEncoder {
+  private patchId!: ITimestamp;
+
   public encode(patch: Patch): Uint8Array {
     this.reset();
-    const id = patch.getId()!;
+    const id = this.patchId = patch.getId()!;
     this.uint53vuint39(id.getSessionId(), id.time);
     this.encodeOperations(patch);
     return this.flush();
@@ -36,7 +38,15 @@ export class Encoder extends CrdtEncoder {
   }
 
   public encodeId(id: ITimestamp) {
-    this.uint53vuint39(id.getSessionId(), id.time);
+    const patchId = this.patchId;
+    const sessionId = id.getSessionId();
+    const time = id.time;
+    if (sessionId === patchId.getSessionId() && time >= patchId.time) {
+      this.b1vuint56(true, time - patchId.time);
+    } else {
+      this.b1vuint56(false, sessionId);
+      this.vuint57(time);
+    }
   }
 
   public encodeOperation(op: JsonCrdtPatchOperation): void {
