@@ -15,6 +15,8 @@ export class LogicalEncoder extends AbstractEncoder {
   }
 
   protected ts(arr: unknown[], ts: ITimestamp): void {
-    this.clock.append(ts).push(arr);
+    // this.clock.append(ts).push(arr);
+    this.clock.append(ts);
+    arr.push(ts.getSessionId(), ts.time);
   }
 }

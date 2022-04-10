@@ -7,7 +7,7 @@ import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {fromBase64} from '../../../util/base64/decode';
-import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {Model} from '../../model';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -34,7 +34,8 @@ export class LogicalDecoder {
   protected ts(arr: unknown[], index: number): ITimestamp {
     const sessionIndex = arr[index] as number;
     const timeDiff = arr[index + 1] as number;
-    return this.clockDecoder.decodeId(sessionIndex, timeDiff);
+    this.clockDecoder.decodeId(sessionIndex, timeDiff);
+    return new LogicalTimestamp(sessionIndex, timeDiff);
   }
 
   protected decodeNode(doc: Model, data: unknown): JsonNode {
