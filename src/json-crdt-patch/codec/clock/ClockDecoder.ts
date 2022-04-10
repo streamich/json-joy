@@ -19,7 +19,7 @@ export class ClockDecoder {
     this.clock = new LogicalVectorClock(sessionId, time);
     if (time) this.clock.observe(new LogicalTimestamp(sessionId, time - 1), 1);
   }
-  
+
   public pushTuple(sessionId: number, time: number) {
     const ts = new LogicalTimestamp(sessionId, time);
     this.clock.observe(ts, 1);

@@ -8,11 +8,7 @@ export class DeleteOperation implements IJsonCrdtPatchOperation {
    * @param after ID of the first operation to be deleted.
    * @param span Number of operations to delete sequentially increasing IDs.
    */
-  constructor(
-    public readonly id: ITimestamp,
-    public readonly obj: ITimestamp,
-    public readonly after: ITimespan,
-  ) {}
+  constructor(public readonly id: ITimestamp, public readonly obj: ITimestamp, public readonly after: ITimespan) {}
 
   public span(): number {
     return this.after.span;

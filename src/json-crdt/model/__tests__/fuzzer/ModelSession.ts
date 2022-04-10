@@ -68,9 +68,9 @@ export class ModelSession {
     if (!patch) return;
     model.applyPatch(patch);
 
-    if (Math.random() < .5) patch = decodeJson(encodeJson(patch));
-    if (Math.random() < .5) patch = decodeCompact(encodeCompact(patch));
-    if (Math.random() < .5) patch = decodeBinary(encodeBinary(patch));
+    if (Math.random() < 0.5) patch = decodeJson(encodeJson(patch));
+    if (Math.random() < 0.5) patch = decodeCompact(encodeCompact(patch));
+    if (Math.random() < 0.5) patch = decodeBinary(encodeBinary(patch));
 
     this.patches[peer].push(patch);
   }
@@ -144,10 +144,10 @@ export class ModelSession {
     for (let i = 0; i < this.concurrency; i++) {
       let model = this.models[i];
 
-      if (Math.random() < .5) model = jsonDecoder.decode(jsonEncoder.encode(model));
-      if (Math.random() < .5) model = compactDecoder.decode(compactEncoder.encode(model));
-      if (Math.random() < .5) model = binaryDecoder.decode(binaryEncoder.encode(model));
-        
+      if (Math.random() < 0.5) model = jsonDecoder.decode(jsonEncoder.encode(model));
+      if (Math.random() < 0.5) model = compactDecoder.decode(compactEncoder.encode(model));
+      if (Math.random() < 0.5) model = binaryDecoder.decode(binaryEncoder.encode(model));
+
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
         for (const patch of patches) {

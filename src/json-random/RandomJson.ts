@@ -57,13 +57,14 @@ export class RandomJson {
   }
 
   public static genNumber(): number {
-    const num = Math.random() > 0.2
-      ? Math.random() * 1e9
-      : Math.random() < 0.2
-      ? Math.round(0xff * (2 * Math.random() - 1))
-      : Math.random() < 0.2
-      ? Math.round(0xffff * (2 * Math.random() - 1))
-      : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
+    const num =
+      Math.random() > 0.2
+        ? Math.random() * 1e9
+        : Math.random() < 0.2
+        ? Math.round(0xff * (2 * Math.random() - 1))
+        : Math.random() < 0.2
+        ? Math.round(0xffff * (2 * Math.random() - 1))
+        : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
     if (num === -0) return 0;
     return num;
   }

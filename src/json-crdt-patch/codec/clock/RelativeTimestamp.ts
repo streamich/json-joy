@@ -4,7 +4,7 @@
  */
 export class RelativeTimestamp {
   /**
-   * 
+   *
    * @param sessionIndex Index of the clock in clock table.
    * @param timeDiff Time difference relative to the clock time from the table.
    */

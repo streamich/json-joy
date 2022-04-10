@@ -1,4 +1,4 @@
-import {encode as encodeCompact} from '../compact/encode'
+import {encode as encodeCompact} from '../compact/encode';
 import {encodeFull as encodeMsgPack} from '../../../json-pack/util';
 import {Patch} from '../../Patch';
 import type {MsgPack} from '../../../json-pack';

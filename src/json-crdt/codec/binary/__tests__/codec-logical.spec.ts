@@ -10,9 +10,7 @@ test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new LogicalVectorClock(5, 0));
   model1.api.root('').commit();
   expect(model1.toView()).toStrictEqual('');
-  model1.api.str([])
-    .ins(0, 'a')
-    .commit();
+  model1.api.str([]).ins(0, 'a').commit();
   const encoded1 = encoder.encode(model1);
   const model2 = decoder.decode(encoded1);
   expect(model1.toView()).toStrictEqual('a');

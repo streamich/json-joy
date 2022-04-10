@@ -11,11 +11,11 @@ export class Decoder extends CrdtDecoder {
   public decode(data: Uint8Array): Patch {
     this.reset(data);
     const [sessionId, time] = this.uint53vuint39();
-    const id = this.patchId = new LogicalTimestamp(sessionId, time);
+    const id = (this.patchId = new LogicalTimestamp(sessionId, time));
     const clock = new LogicalVectorClock(id.getSessionId(), id.time);
     this.builder = new PatchBuilder(clock);
     this.decodeOperations();
-    return this.builder.patch
+    return this.builder.patch;
   }
 
   protected decodeId(): ITimestamp {
@@ -99,8 +99,7 @@ export class Decoder extends CrdtDecoder {
         const after = this.decodeId();
         const length = this.vuint57();
         const elements: ITimestamp[] = [];
-        for (let i = 0; i < length; i++)
-          elements.push(this.decodeId());
+        for (let i = 0; i < length; i++) elements.push(this.decodeId());
         this.builder.insArr(arr, after, elements);
         return;
       }

@@ -3,25 +3,23 @@ import {LogicalDecoder} from '../LogicalDecoder';
 import {LogicalDecoder as JsonDecoder} from '../../json/LogicalDecoder';
 
 const json = {
-  "clock": [
-      [1540300689752945, 3]
-  ],
-  "root": {
-      "type": "root",
-      "id": [1540300689752945, 1],
-      "node": {
-        "type": "obj",
-        "id": [1540300689752945, 2],
-        "chunks": {
-            "Ek=P4T": {
-                "id": [1540300689752945, 3],
-                "node": {
-                    "type": "const",
-                }
-            }
-        }
-    }
-  }
+  clock: [[1540300689752945, 3]],
+  root: {
+    type: 'root',
+    id: [1540300689752945, 1],
+    node: {
+      type: 'obj',
+      id: [1540300689752945, 2],
+      chunks: {
+        'Ek=P4T': {
+          id: [1540300689752945, 3],
+          node: {
+            type: 'const',
+          },
+        },
+      },
+    },
+  },
 };
 
 test('can encode and decode specific document', () => {

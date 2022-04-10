@@ -124,7 +124,7 @@ export class Model {
    *
    * @param op Any JSON CRDT Patch operation
    */
-   public applyOperation(op: JsonCrdtPatchOperation): void {
+  public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
     if (op instanceof MakeObjectOperation) {
       if (!this.nodes.get(op.id)) this.nodes.index(new ObjectType(this, op.id));

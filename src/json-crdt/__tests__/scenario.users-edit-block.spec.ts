@@ -37,39 +37,40 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       // User 1 creates a JSON block.
       const model1 = Model.withLogicalClock(new LogicalVectorClock(3145605287749735, 0));
       // const model1 = Model.withLogicalClock();
-      model1.api.root({
-        '@type': 'CreativeWork',
-        'name': 'Task list',
-        'description': 'A list of tasks',
-      }).commit();
+      model1.api
+        .root({
+          '@type': 'CreativeWork',
+          name: 'Task list',
+          description: 'A list of tasks',
+        })
+        .commit();
 
       expect(model1.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Task list',
-        'description': 'A list of tasks',
+        name: 'Task list',
+        description: 'A list of tasks',
       });
 
       // User 1 immediately edits title of the block.
-      model1.api.str(['name'])
-        .del(0, 1)
-        .ins(0, 'My t')
-        .del(4, 5)
-        .ins(4, 's')
-        .commit();
+      model1.api.str(['name']).del(0, 1).ins(0, 'My t').del(4, 5).ins(4, 's').commit();
       expect(model1.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'My tasks',
-        'description': 'A list of tasks',
+        name: 'My tasks',
+        description: 'A list of tasks',
       });
       // console.log(model1.toString());
 
       // User 1 saves the block on the server.
-      const encoded1 = (encoder as any).encode((decoder as any).decode((encoder as any).encode(model1)).fork(123456789));
+      const encoded1 = (encoder as any).encode(
+        (decoder as any).decode((encoder as any).encode(model1)).fork(123456789),
+      );
 
       // User 2 loads the block from the server.
-      const model2 = (decoder as any).decode((encoder as any).encode((decoder as any).decode(encoded1))).fork(9876543210);
+      const model2 = (decoder as any)
+        .decode((encoder as any).encode((decoder as any).decode(encoded1)))
+        .fork(9876543210);
       expect(model2.toView()).toStrictEqual(model1.toView());
-      
+
       // User 2 starts their own editing session.
       const model3 = model2.fork(2);
       const encoded3 = (encoder as any).encode(model3);
@@ -77,21 +78,22 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       expect(model4.toView()).toStrictEqual(model1.toView());
 
       // User 2 edits the title of the block.
-      model3.api.str(['name'])
-        .del(0, 2)
-        .ins(0, 'Our');
+      model3.api.str(['name']).del(0, 2).ins(0, 'Our');
       model3.api.obj([]).set({pinned: true});
       model3.api.commit();
-      model3.api.obj([]).set({tags: ['important']}).commit();
+      model3.api
+        .obj([])
+        .set({tags: ['important']})
+        .commit();
       model3.api.arr(['tags']).ins(1, ['todo', 'list']).commit();
       expect(model3.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks',
-        'description': 'A list of tasks',
+        name: 'Our tasks',
+        description: 'A list of tasks',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
-      
+
       // User 2 sends their changes to the server.
       const patches1 = model3.api.flush();
       const batch = patches1.map(encodePatch as any);
@@ -105,8 +107,8 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       });
       expect(model5.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks',
-        'description': 'A list of tasks',
+        name: 'Our tasks',
+        description: 'A list of tasks',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
@@ -119,7 +121,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       model1.api.obj([]).del(['description']).commit();
       expect(model1.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'My tasks!',
+        name: 'My tasks!',
       });
 
       // User 1 receives User 2's changes in json encoding.
@@ -127,7 +129,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       patches3.forEach((patch: any) => model1.applyPatch(patch as any));
       expect(model1.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks!',
+        name: 'Our tasks!',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
@@ -139,33 +141,33 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       const model6 = (decoder as any).decode(encoded5);
       expect(model6.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks',
-        'description': 'A list of tasks',
+        name: 'Our tasks',
+        description: 'A list of tasks',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
-      patches5.forEach(patch => model6.applyPatch(patch as any));
+      patches5.forEach((patch) => model6.applyPatch(patch as any));
       expect(model6.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks!',
+        name: 'Our tasks!',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
-      
+
       // Server sends User 1's changes to User 2.
       const batch3 = patches4.map(encodePatch as any);
       const patches6 = batch3.map(decodePatch as any);
       expect(model3.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks',
-        'description': 'A list of tasks',
+        name: 'Our tasks',
+        description: 'A list of tasks',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });
-      patches6.forEach(patch => model3.applyPatch(patch as any));
+      patches6.forEach((patch) => model3.applyPatch(patch as any));
       expect(model3.toView()).toStrictEqual({
         '@type': 'CreativeWork',
-        'name': 'Our tasks!',
+        name: 'Our tasks!',
         pinned: true,
         tags: ['important', 'todo', 'list'],
       });

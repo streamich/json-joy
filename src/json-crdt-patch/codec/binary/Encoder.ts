@@ -23,7 +23,7 @@ export class Encoder extends CrdtEncoder {
 
   public encode(patch: Patch): Uint8Array {
     this.reset();
-    const id = this.patchId = patch.getId()!;
+    const id = (this.patchId = patch.getId()!);
     this.uint53vuint39(id.getSessionId(), id.time);
     this.encodeOperations(patch);
     return this.flush();
