@@ -9,6 +9,8 @@ import {encode as encodePatchBinary} from '../../json-crdt-patch/codec/binary/en
 import {decode as decodePatchBinary} from '../../json-crdt-patch/codec/binary/decode';
 import {encode as encodePatchCompact} from '../../json-crdt-patch/codec/compact/encode';
 import {decode as decodePatchCompact} from '../../json-crdt-patch/codec/compact/decode';
+import {encode as encodePatchCompactBinary} from '../../json-crdt-patch/codec/compact-binary/encode';
+import {decode as decodePatchCompactBinary} from '../../json-crdt-patch/codec/compact-binary/decode';
 import {encode as encodePatchJson} from '../../json-crdt-patch/codec/json/encode';
 import {decode as decodePatchJson} from '../../json-crdt-patch/codec/json/decode';
 import {LogicalVectorClock} from '../../json-crdt-patch/clock';
@@ -23,6 +25,7 @@ const modelCodecs = [
 const patchCodecs = [
   ['json', encodePatchJson, decodePatchJson],
   ['compact', encodePatchCompact, decodePatchCompact],
+  ['compact-binary', encodePatchCompactBinary, decodePatchCompactBinary],
   ['binary', encodePatchBinary, decodePatchBinary],
 ];
 
@@ -58,11 +61,10 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       // console.log(model1.toString());
 
       // User 1 saves the block on the server.
-      // const encoded1 = encoderBinary.encode(model1.fork(10));
-      const encoded1 = (encoder as any).encode(model1);
+      const encoded1 = (encoder as any).encode((decoder as any).decode((encoder as any).encode(model1)).fork(123456789));
 
       // User 2 loads the block from the server.
-      const model2 = (decoder as any).decode((encoder as any).encode((decoder as any).decode(encoded1)));
+      const model2 = (decoder as any).decode((encoder as any).encode((decoder as any).decode(encoded1))).fork(9876543210);
       expect(model2.toView()).toStrictEqual(model1.toView());
       
       // User 2 starts their own editing session.
