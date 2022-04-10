@@ -23,6 +23,9 @@ import {LogicalEncoder as CompactEncoder} from '../../../codec/compact/LogicalEn
 import {LogicalDecoder as CompactDecoder} from '../../../codec/compact/LogicalDecoder';
 import {LogicalEncoder as BinaryEncoder} from '../../../codec/binary/LogicalEncoder';
 import {LogicalDecoder as BinaryDecoder} from '../../../codec/binary/LogicalDecoder';
+import {DeleteOperation} from '../../../../json-crdt-patch/operations/DeleteOperation';
+import {BinaryType} from '../../../types/rga-binary/BinaryType';
+import {InsertBinaryDataOperation} from '../../../../json-crdt-patch/operations/InsertBinaryDataOperation';
 
 const jsonEncoder = new JsonEncoder();
 const jsonDecoder = new JsonDecoder();
@@ -61,6 +64,7 @@ export class ModelSession {
     const node = this.fuzzer.picker.pickNode(model);
     let patch: Patch | null = null;
     if (node instanceof StringType) patch = this.generateStringPatch(model, node);
+    else if (node instanceof BinaryType) patch = this.generateBinaryPatch(model, node);
     else if (node instanceof ObjectType) patch = this.generateObjectPatch(model, node);
     else if (node instanceof ArrayType) patch = this.generateArrayPatch(model, node);
     else if (node instanceof ValueType) patch = this.generateValuePatch(model, node);
@@ -84,7 +88,26 @@ export class ModelSession {
       const pos = !size ? 0 : Math.min(size - 1, Math.floor(Math.random() * (size + 1)));
       const posId = !size ? node.id : node.findId(pos);
       builder.insStr(node.id, posId, substring);
-    } else {
+    } else if (opcode === DeleteOperation) {
+      if (!size) return null;
+      const pos = Math.floor(Math.random() & size);
+      const length = Math.min(size - pos, Math.ceil(Math.random() * this.fuzzer.opts.maxStringDeleteLength));
+      const posId = node.findId(pos);
+      builder.del(node.id, posId, length);
+    }
+    return builder.patch;
+  }
+
+  private generateBinaryPatch(model: Model, node: BinaryType): Patch | null {
+    const opcode = this.fuzzer.picker.pickBinaryOperation(node);
+    const builder = new PatchBuilder(model.clock);
+    const size = node.length();
+    if (opcode === InsertBinaryDataOperation) {
+      const substring = this.fuzzer.picker.generateBinaryData();
+      const pos = !size ? 0 : Math.min(size - 1, Math.floor(Math.random() * (size + 1)));
+      const posId = !size ? node.id : node.findId(pos);
+      builder.insBin(node.id, posId, substring);
+    } else if (opcode === DeleteOperation) {
       if (!size) return null;
       const pos = Math.floor(Math.random() & size);
       const length = Math.min(size - pos, Math.ceil(Math.random() * this.fuzzer.opts.maxStringDeleteLength));
@@ -98,7 +121,18 @@ export class ModelSession {
     const [key, opcode] = this.fuzzer.picker.pickObjectOperation(node);
     const builder = new PatchBuilder(model.clock);
     if (opcode === SetObjectKeysOperation) {
-      const json = RandomJson.generate({nodeCount: 3});
+      const json = RandomJson.generate({
+        nodeCount: 3,
+        odds: {
+          null: 1,
+          boolean: 2,
+          number: 10,
+          string: 8,
+          binary: 0,
+          array: 2,
+          object: 2,
+        },
+      });
       // console.log('ADDING KEY', key, json);
       const valueId = builder.json(json);
       builder.setKeys(node.id, [[key, valueId]]);

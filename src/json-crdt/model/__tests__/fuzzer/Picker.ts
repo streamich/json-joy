@@ -1,16 +1,20 @@
 import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {DeleteOperation} from '../../../../json-crdt-patch/operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../../../json-crdt-patch/operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operations/InsertStringSubstringOperation';
 import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {RandomJson} from '../../../../json-random';
 import {JsonNode} from '../../../types';
 import {ObjectType} from '../../../types/lww-object/ObjectType';
 import {ArrayType} from '../../../types/rga-array/ArrayType';
+import {BinaryType} from '../../../types/rga-binary/BinaryType';
 import {StringType} from '../../../types/rga-string/StringType';
 import {Model} from '../../Model';
 import {FuzzerOptions} from './types';
 
 type StringOp = typeof InsertStringSubstringOperation | typeof DeleteOperation;
+type BinaryOp = typeof InsertBinaryDataOperation | typeof DeleteOperation;
 type ArrayOp = typeof InsertArrayElementsOperation | typeof DeleteOperation;
 type ObjectOp = typeof SetObjectKeysOperation | typeof DeleteOperation;
 
@@ -31,6 +35,14 @@ export class Picker {
     if (length >= this.opts.maxStringLength) return DeleteOperation;
     if (Math.random() < this.opts.stringDeleteProbability) return DeleteOperation;
     return InsertStringSubstringOperation;
+  }
+
+  public pickBinaryOperation(node: BinaryType): BinaryOp {
+    const length = node.length();
+    if (!length) return InsertBinaryDataOperation;
+    if (length >= this.opts.maxStringLength) return DeleteOperation;
+    if (Math.random() < this.opts.binaryDeleteProbability) return DeleteOperation;
+    return InsertBinaryDataOperation;
   }
 
   public pickObjectOperation(node: ObjectType): [key: string, opcode: ObjectOp] {
@@ -55,6 +67,11 @@ export class Picker {
   public generateSubstring(): string {
     const length = Math.floor(Math.random() * this.opts.maxSubstringLength) + 1;
     return this.generateCharacter().repeat(length);
+  }
+
+  public generateBinaryData(): Uint8Array {
+    const length = Math.floor(Math.random() * this.opts.maxBinaryChunkLength) + 1;
+    return RandomJson.genBinary(length);
   }
 
   public generateObjectKey(): string {

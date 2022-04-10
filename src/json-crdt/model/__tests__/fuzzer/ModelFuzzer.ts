@@ -7,9 +7,12 @@ import {RandomJson} from '../../../../json-random/RandomJson';
 export const defaultFuzzerOptions: FuzzerOptions = {
   startingValue: undefined,
   stringDeleteProbability: 0.2,
+  binaryDeleteProbability: 0.2,
   maxStringDeleteLength: 64,
   maxSubstringLength: 16,
+  maxBinaryChunkLength: 33,
   maxStringLength: 512,
+  maxBinaryLength: 4049,
   maxConcurrentPeers: 5,
   maxPatchesPerPeer: 10,
 };
