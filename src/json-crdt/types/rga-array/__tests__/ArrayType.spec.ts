@@ -24,5 +24,5 @@ test('merges sequential chunks', () => {
   const firstChunk = origin.right;
 
   expect(firstChunk!.nodes!.length).toBe(2);
-  expect(doc.toJson()).toEqual([true, false]);
+  expect(doc.toView()).toEqual([true, false]);
 });

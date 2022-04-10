@@ -46,7 +46,8 @@ export class BinaryType implements JsonNode {
   }
 
   public onDelete(op: DeleteOperation) {
-    const {after, length} = op;
+    const {after} = op;
+    const length = after.span;
     let chunk: BinaryChunk | null = this.end;
     const chunks: BinaryChunk[] = [];
     while (chunk) {

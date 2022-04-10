@@ -9,9 +9,9 @@ test('string fuzz testing', () => {
     fuzzer.setupModel();
     for (let ses = 0; ses < sessionNum; ses++) {
       const session = fuzzer.executeConcurrentSession();
-      const json = session.models[0].toJson();
+      const json = session.models[0].toView();
       for (let i = 1; i < session.models.length; i++) {
-        expect(json).toEqual(session.models[i].toJson());
+        expect(json).toEqual(session.models[i].toView());
       }
     }
   }

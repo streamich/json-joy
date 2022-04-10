@@ -1,16 +1,16 @@
-import {LogicalEncoder} from '../LogicalEncoder';
-import {LogicalDecoder} from '../LogicalDecoder';
+import {CrdtEncoder} from '../CrdtEncoder';
+import {CrdtDecoder} from '../CrdtDecoder';
 
-const encoder = new LogicalEncoder();
-const decoder = new LogicalDecoder();
-const encode = (num: number): Uint8Array => {
+const encoder = new CrdtEncoder();
+const decoder = new CrdtDecoder();
+const encode = (flag: boolean, num: number): Uint8Array => {
   encoder.reset();
-  encoder.vuint39(num);
+  encoder.b1vuint56(flag, num);
   return encoder.flush();
 };
-const decode = (uint8: Uint8Array): number => {
+const decode = (uint8: Uint8Array): [boolean, number] => {
   decoder.reset(uint8);
-  return decoder.vuint39();
+  return decoder.b1vuint56();
 };
 
 const ints: number[] = [
@@ -54,6 +54,20 @@ const ints: number[] = [
   2 ** 36,
   2 ** 37,
   2 ** 38,
+  2 ** 39,
+  2 ** 40,
+  2 ** 41,
+  2 ** 42,
+  2 ** 43,
+  2 ** 44,
+  2 ** 45,
+  2 ** 46,
+  2 ** 47,
+  2 ** 48,
+  2 ** 49,
+  2 ** 50,
+  2 ** 51,
+  2 ** 52,
 
   2 ** 0 - 1,
   2 ** 1 - 1,
@@ -94,11 +108,33 @@ const ints: number[] = [
   2 ** 36 - 1,
   2 ** 37 - 1,
   2 ** 38 - 1,
+  2 ** 39 - 1,
+  2 ** 40 - 1,
+  2 ** 41 - 1,
+  2 ** 42 - 1,
+  2 ** 43 - 1,
+  2 ** 44 - 1,
+  2 ** 45 - 1,
+  2 ** 46 - 1,
+  2 ** 47 - 1,
+  2 ** 48 - 1,
+  2 ** 49 - 1,
+  2 ** 50 - 1,
+  2 ** 51 - 1,
+  2 ** 52 - 1,
+
+  0b111_1111111_1111111_1111111_1111111_1111111_1111111_1111111,
+  0b111_1111111_1111111_1111111_1111111_0000000_1111111,
+  0b111_1111111_1111111_1010101_1111111_1111111,
+  0b100_0000000_0000000_0000000_0000000_0000000_0000000_0000000,
+  0b100_0000000_0000000_0101010_0000000_0000000_0000000,
+  0b100_0000000_0000000_0000000_0000000_1110001,
 ];
 
 test('decodes integers correctly', () => {
   for (let i = 0; i < ints.length; i++) {
     const int = ints[i];
-    expect(decode(encode(int))).toBe(int);
+    expect(decode(encode(true, int))).toEqual([true, int]);
+    expect(decode(encode(false, int))).toEqual([false, int]);
   }
 });

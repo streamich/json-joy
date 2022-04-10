@@ -19,7 +19,7 @@ describe('Document', () => {
       const id = builder.bin();
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([]));
+      expect(doc.toView()).toEqual(new Uint8Array([]));
     });
 
     test('can add one octet to a binary', () => {
@@ -29,7 +29,7 @@ describe('Document', () => {
       builder.insBin(id, id, new Uint8Array([1]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1]));
+      expect(doc.toView()).toEqual(new Uint8Array([1]));
     });
 
     test('can add many octets in one operation', () => {
@@ -39,7 +39,7 @@ describe('Document', () => {
       builder.insBin(id, id, new Uint8Array([1, 2, 3, 4]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3, 4]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3, 4]));
     });
 
     test('can insert three octets sequentially using three operations', () => {
@@ -51,7 +51,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, ins2, new Uint8Array([3]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3]));
     });
 
     test('can insert three octets with two operations', () => {
@@ -62,7 +62,7 @@ describe('Document', () => {
       const ins2 = builder.insBin(id, ins1, new Uint8Array([2, 3]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3]));
     });
 
     test('can insert at the end of two-octet binary', () => {
@@ -73,7 +73,7 @@ describe('Document', () => {
       const ins2 = builder.insBin(id, ins1.tick(1), new Uint8Array([3, 4]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3, 4]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3, 4]));
     });
 
     test('can insert at the end of two-octet binary twice', () => {
@@ -85,7 +85,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, ins2.tick(1), new Uint8Array([5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3, 4, 5]));
     });
 
     test('can insert at the end of the same two-octet binary twice', () => {
@@ -97,7 +97,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, ins1.tick(1), new Uint8Array([5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 5, 3, 4]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 5, 3, 4]));
     });
 
     test('can apply the same patch trice', () => {
@@ -111,7 +111,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 5, 3, 4]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 5, 3, 4]));
     });
 
     test('can insert at the beginning of two-octet binary', () => {
@@ -125,7 +125,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 3, 4, 2]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 3, 4, 2]));
     });
 
     test('can delete a single octet from one-octet chunk', () => {
@@ -139,7 +139,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([13]));
+      expect(doc.toView()).toEqual(new Uint8Array([13]));
     });
 
     test('can delete a single octet from one-octet chunk in the middle of binary', () => {
@@ -154,7 +154,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([5, 7]));
+      expect(doc.toView()).toEqual(new Uint8Array([5, 7]));
     });
 
     test('can delete last octet in two-octet chunk', () => {
@@ -168,7 +168,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual(new Uint8Array([1]));
+      expect(doc.toView()).toEqual(new Uint8Array([1]));
     });
 
     test('can delete first two octets in three-octet chunk', () => {
@@ -182,7 +182,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual(new Uint8Array([4]));
+      expect(doc.toView()).toEqual(new Uint8Array([4]));
     });
 
     test('can delete a range in the middle of a chunk', () => {
@@ -196,7 +196,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual(new Uint8Array([0, 1, 4, 5, 6]));
+      expect(doc.toView()).toEqual(new Uint8Array([0, 1, 4, 5, 6]));
     });
 
     test('can delete two chunks using one delete operation', () => {
@@ -213,7 +213,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 4]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 4]));
     });
 
     test('can delete across chunks', () => {
@@ -233,7 +233,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(new Uint8Array([1, 2, 3, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]));
+      expect(doc.toView()).toEqual(new Uint8Array([1, 2, 3, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]));
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
@@ -250,7 +250,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
       // console.log(doc.node(str)!.toJson());
-      expect(doc.toJson()).toEqual(new Uint8Array([11, 4, 5, 22]));
+      expect(doc.toView()).toEqual(new Uint8Array([11, 4, 5, 22]));
     });
 
     test('can find ID in one one-octet chunk', () => {

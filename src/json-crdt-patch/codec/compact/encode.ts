@@ -29,7 +29,7 @@ export const encode = (patch: Patch): unknown[] => {
 
   const pushTimestamp = (ts: ITimestamp) => {
     const tsSessionId = ts.getSessionId();
-    if (tsSessionId === sessionId) res.push(time - ts.time - 1);
+    if (tsSessionId === sessionId && ts.time >= time) res.push(time - ts.time - 1);
     else res.push(tsSessionId, ts.time);
   };
 
@@ -99,7 +99,8 @@ export const encode = (patch: Patch): unknown[] => {
       continue;
     }
     if (op instanceof DeleteOperation) {
-      const {obj, after, length} = op;
+      const {obj, after} = op;
+      const length = after.span;
       if (length === 1) {
         res.push(Code.DeleteOne);
         pushTimestamp(obj);

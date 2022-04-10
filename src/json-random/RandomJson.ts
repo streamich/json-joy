@@ -1,11 +1,12 @@
 /** @ignore */
-export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'array' | 'object';
+export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'binary' | 'array' | 'object';
 
 export interface NodeOdds {
   null: number;
   boolean: number;
   number: number;
   string: number;
+  binary: number;
   array: number;
   object: number;
 }
@@ -24,6 +25,7 @@ const defaultOpts: RandomJsonOptions = {
     boolean: 2,
     number: 10,
     string: 8,
+    binary: 0,
     array: 2,
     object: 2,
   },
@@ -57,13 +59,16 @@ export class RandomJson {
   }
 
   public static genNumber(): number {
-    return Math.random() > 0.2
-      ? Math.random() * 1e9
-      : Math.random() < 0.2
-      ? Math.round(0xff * (2 * Math.random() - 1))
-      : Math.random() < 0.2
-      ? Math.round(0xffff * (2 * Math.random() - 1))
-      : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
+    const num =
+      Math.random() > 0.2
+        ? Math.random() * 1e9
+        : Math.random() < 0.2
+        ? Math.round(0xff * (2 * Math.random() - 1))
+        : Math.random() < 0.2
+        ? Math.round(0xffff * (2 * Math.random() - 1))
+        : Math.round(Number.MAX_SAFE_INTEGER * (2 * Math.random() - 1));
+    if (num === -0) return 0;
+    return num;
   }
 
   public static genString(length = Math.ceil(Math.random() * 16)): string {
@@ -71,6 +76,12 @@ export class RandomJson {
     if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += utf8();
     else for (let i = 0; i < length; i++) str += ascii();
     return str;
+  }
+
+  public static genBinary(length = Math.ceil(Math.random() * 16)): Uint8Array {
+    const buf = new Uint8Array(length);
+    for (let i = 0; i < length; i++) buf[i] = Math.floor(Math.random() * 256);
+    return buf;
   }
 
   public static genArray(options: Partial<Omit<RandomJsonOptions, 'rootNode'>> = {odds: defaultOpts.odds}): unknown[] {
@@ -110,6 +121,7 @@ export class RandomJson {
     this.oddTotals.boolean = this.oddTotals.null + this.opts.odds.boolean;
     this.oddTotals.number = this.oddTotals.boolean + this.opts.odds.number;
     this.oddTotals.string = this.oddTotals.number + this.opts.odds.string;
+    this.oddTotals.binary = this.oddTotals.string + this.opts.odds.binary;
     this.oddTotals.array = this.oddTotals.string + this.opts.odds.array;
     this.oddTotals.object = this.oddTotals.array + this.opts.odds.object;
     this.totalOdds =
@@ -117,6 +129,7 @@ export class RandomJson {
       this.opts.odds.boolean +
       this.opts.odds.number +
       this.opts.odds.string +
+      this.opts.odds.binary +
       this.opts.odds.array +
       this.opts.odds.object;
     this.root =
@@ -168,6 +181,8 @@ export class RandomJson {
         return RandomJson.genNumber();
       case 'string':
         return RandomJson.genString();
+      case 'binary':
+        return RandomJson.genBinary();
       case 'array':
         return [];
       case 'object':
@@ -182,6 +197,7 @@ export class RandomJson {
     if (odd <= this.oddTotals.boolean) return 'boolean';
     if (odd <= this.oddTotals.number) return 'number';
     if (odd <= this.oddTotals.string) return 'string';
+    if (odd <= this.oddTotals.binary) return 'binary';
     if (odd <= this.oddTotals.array) return 'array';
     return 'object';
   }

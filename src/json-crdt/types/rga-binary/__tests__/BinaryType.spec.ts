@@ -23,5 +23,5 @@ test('merges sequential chunks', () => {
   const firstChunk = origin.right;
 
   expect(firstChunk!.buf).toStrictEqual(new Uint8Array([1, 2, 3, 4]));
-  expect(doc.toJson()).toStrictEqual(new Uint8Array([1, 2, 3, 4]));
+  expect(doc.toView()).toStrictEqual(new Uint8Array([1, 2, 3, 4]));
 });

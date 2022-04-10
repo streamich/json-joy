@@ -1,6 +1,6 @@
-import {LogicalEncoder} from '../LogicalEncoder';
+import {CrdtEncoder} from '../CrdtEncoder';
 
-const encoder = new LogicalEncoder();
+const encoder = new CrdtEncoder();
 const encode = (x: number, z: number): Uint8Array => {
   encoder.reset();
   encoder.uint53vuint39(x, z);

@@ -5,6 +5,6 @@ for (const {name, json, only} of documents) {
   (only ? test.only : test)(name, () => {
     const doc1 = Model.withServerClock(0);
     doc1.api.root(json).commit();
-    expect(doc1.toJson()).toEqual(json);
+    expect(doc1.toView()).toEqual(json);
   });
 }

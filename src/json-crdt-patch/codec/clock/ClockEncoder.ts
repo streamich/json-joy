@@ -21,6 +21,7 @@ export class ClockEncoder {
     if (!this.table.has(sessionId)) this.table.set(sessionId, this.index++);
     const sessionIndex = this.table.get(sessionId)!;
     const timeDiff = clock.time - time;
+    if (timeDiff < 0) throw new Error('INVALID_RELATIVE_TIME');
     const relativeTimestamp = new RelativeTimestamp(sessionIndex, timeDiff);
     return relativeTimestamp;
   }

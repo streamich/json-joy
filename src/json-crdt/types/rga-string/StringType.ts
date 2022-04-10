@@ -46,7 +46,8 @@ export class StringType implements JsonNode {
   }
 
   public onDelete(op: DeleteOperation) {
-    const {after, length} = op;
+    const {after} = op;
+    const length = after.span;
     let chunk: StringChunk | null = this.end;
     const chunks: StringChunk[] = [];
     while (chunk) {

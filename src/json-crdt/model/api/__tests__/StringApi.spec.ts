@@ -10,7 +10,7 @@ test('can edit a simple string', () => {
   str.ins(9, '-yyyyyyyy').commit();
   str.del(9, 1).commit();
   expect(str.toView()).toEqual('0123-xxxxyyyyyyyy');
-  expect(doc.toJson()).toEqual([0, '0123-xxxxyyyyyyyy', 2]);
+  expect(doc.toView()).toEqual([0, '0123-xxxxyyyyyyyy', 2]);
 });
 
 test('can delete across two chunks', () => {

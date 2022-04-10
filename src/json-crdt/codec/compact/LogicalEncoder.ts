@@ -6,15 +6,17 @@ import {AbstractEncoder} from './AbstractEncoder';
 export class LogicalEncoder extends AbstractEncoder {
   protected clock!: ClockEncoder;
 
-  public encode(doc: Model): unknown[] {
-    this.clock = new ClockEncoder(doc.clock);
+  public encode(model: Model): unknown[] {
+    model.advanceClocks();
+    this.clock = new ClockEncoder(model.clock);
     const snapshot: unknown[] = [null];
-    this.encodeRoot(snapshot, doc.root);
+    this.encodeRoot(snapshot, model.root);
     snapshot[0] = this.clock.toJson();
     return snapshot;
   }
 
   protected ts(arr: unknown[], ts: ITimestamp): void {
-    this.clock.append(ts).push(arr);
+    const relativeId = this.clock.append(ts);
+    relativeId.push(arr);
   }
 }

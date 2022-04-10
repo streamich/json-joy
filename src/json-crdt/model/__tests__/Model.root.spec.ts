@@ -6,7 +6,7 @@ describe('Document', () => {
   describe('root', () => {
     test('default root value is undefined', () => {
       const doc = Model.withLogicalClock();
-      expect(doc.toJson()).toBe(undefined);
+      expect(doc.toView()).toBe(undefined);
     });
 
     test('can set root value to "true"', () => {
@@ -14,7 +14,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       builder.root(TRUE_ID);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toBe(true);
+      expect(doc.toView()).toBe(true);
     });
 
     test('can set root value to "false"', () => {
@@ -23,7 +23,7 @@ describe('Document', () => {
       builder.root(TRUE_ID);
       builder.root(FALSE_ID);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toBe(false);
+      expect(doc.toView()).toBe(false);
     });
 
     test('can set root value to "null"', () => {
@@ -33,7 +33,7 @@ describe('Document', () => {
       builder.root(FALSE_ID);
       builder.root(NULL_ID);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toBe(null);
+      expect(doc.toView()).toBe(null);
     });
   });
 });

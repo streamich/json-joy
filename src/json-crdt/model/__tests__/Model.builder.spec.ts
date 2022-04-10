@@ -10,7 +10,7 @@ describe('Document', () => {
       const obj = builder.json({});
       builder.root(obj);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual({});
+      expect(doc.toView()).toEqual({});
     });
 
     test('can create complex object', () => {
@@ -35,7 +35,7 @@ describe('Document', () => {
       // console.log(encode2(builder.patch), JSON.stringify(encode2(builder.patch)), JSON.stringify(encode2(builder.patch)).length);
       // console.log(encode3(builder.patch), encode3(builder.patch).byteLength);
       // console.log(doc.toJson());
-      expect(doc.toJson()).toEqual(json);
+      expect(doc.toView()).toEqual(json);
     });
   });
 });

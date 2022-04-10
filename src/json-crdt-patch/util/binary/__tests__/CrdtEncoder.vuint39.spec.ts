@@ -1,9 +1,9 @@
-import {LogicalEncoder} from '../LogicalEncoder';
+import {CrdtEncoder} from '../CrdtEncoder';
 
-const encoder = new LogicalEncoder();
+const encoder = new CrdtEncoder();
 const encode = (num: number): Uint8Array => {
   encoder.reset();
-  encoder.vuint57(num);
+  encoder.vuint39(num);
   return encoder.flush();
 };
 
@@ -56,31 +56,14 @@ test('encodes five byte integers', () => {
   );
 });
 
-test('encodes six byte integers', () => {
+test('encodes sixth byte up to 4 bits', () => {
   expect(encode(0b1_1111111_1111111_1111111_1111111_1111111)).toEqual(
     new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_0000001]),
   );
   expect(encode(0b1111101_1111111_0000000_1111111_1111111_1111111)).toEqual(
-    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_0000000, 0b1_1111111, 0b0_1111101]),
+    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_0000000, 0b1_1111111, 0b0_0001101]),
   );
   expect(encode(0b1111111_1111111_1111111_1111111_1111111_1111111)).toEqual(
-    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]),
-  );
-});
-
-test('encodes seven byte integers', () => {
-  expect(encode(0b1_1111111_1111111_1111111_1111111_1111111_1111111)).toEqual(
-    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_0000001]),
-  );
-  expect(encode(0b1111111_1111111_1111111_1111111_1111111_1111111_1111111)).toEqual(
-    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_1111111]),
-  );
-});
-
-test('encodes eight byte integers', () => {
-  expect(encode(0b1_1111111_1111111_1111111_1111111_1111111_1111111_1111111)).toEqual(
-    new Uint8Array([
-      0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_0000001,
-    ]),
+    new Uint8Array([0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b1_1111111, 0b0_0001111]),
   );
 });

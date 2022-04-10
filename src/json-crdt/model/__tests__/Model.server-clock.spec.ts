@@ -13,7 +13,7 @@ describe('server clock', () => {
     model.applyPatch(patch2);
     model.applyPatch(patch2);
     expect(model.clock.time).toBe(1 + patch2.span());
-    expect(model.toJson()).toEqual({foo: 'bar'});
+    expect(model.toView()).toEqual({foo: 'bar'});
   });
 
   test('cannot skip operations', () => {

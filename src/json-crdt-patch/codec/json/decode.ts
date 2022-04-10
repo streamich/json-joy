@@ -26,7 +26,7 @@ export const decode = (data: JsonCodecPatch): Patch => {
         break;
       }
       case 'bin': {
-        builder.str();
+        builder.bin();
         break;
       }
       case 'num': {

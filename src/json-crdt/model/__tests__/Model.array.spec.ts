@@ -20,7 +20,7 @@ describe('Document', () => {
       const arrId = builder.arr();
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([]);
+      expect(doc.toView()).toEqual([]);
     });
 
     test('can add one element to array', () => {
@@ -30,7 +30,7 @@ describe('Document', () => {
       builder.insArr(arrId, arrId, [TRUE_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true]);
+      expect(doc.toView()).toEqual([true]);
     });
 
     test('can add two elements to array', () => {
@@ -40,7 +40,7 @@ describe('Document', () => {
       builder.insArr(arrId, arrId, [TRUE_ID, NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, null]);
+      expect(doc.toView()).toEqual([true, null]);
     });
 
     test('can have array-in-array', () => {
@@ -51,7 +51,7 @@ describe('Document', () => {
       builder.insArr(arr1, arr1, [arr2]);
       builder.root(arr1);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([[]]);
+      expect(doc.toView()).toEqual([[]]);
     });
 
     test('can add two elements with two operations', () => {
@@ -62,7 +62,7 @@ describe('Document', () => {
       builder.insArr(arrId, ins1, [NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, null]);
+      expect(doc.toView()).toEqual([true, null]);
     });
 
     test('can add three elements sequentially with three operations', () => {
@@ -74,7 +74,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, ins2, [FALSE_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, null, false]);
+      expect(doc.toView()).toEqual([true, null, false]);
     });
 
     test('can add three elements with in-the-middle insertion', () => {
@@ -86,7 +86,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, ins1, [FALSE_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, null]);
+      expect(doc.toView()).toEqual([true, false, null]);
     });
 
     test('can add three elements with two operations', () => {
@@ -97,7 +97,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, null]);
+      expect(doc.toView()).toEqual([true, false, null]);
     });
 
     test('can insert after last element in the chunk', () => {
@@ -109,7 +109,7 @@ describe('Document', () => {
       const ins2 = builder.insArr(arrId, lastElementId, [FALSE_ID, NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true, false, null]);
+      expect(doc.toView()).toEqual([true, true, false, null]);
     });
 
     test('can insert after last element in the chunk twice', () => {
@@ -123,7 +123,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, lastElementId2, [NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true, false, null, null]);
+      expect(doc.toView()).toEqual([true, true, false, null, null]);
     });
 
     test('can insert after last element twice for the same chunk', () => {
@@ -136,7 +136,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arrId, lastElementId1, [NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true, null, false, null]);
+      expect(doc.toView()).toEqual([true, true, null, false, null]);
     });
 
     test('can apply same patch trice', () => {
@@ -151,7 +151,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true, null, false, null]);
+      expect(doc.toView()).toEqual([true, true, null, false, null]);
     });
 
     test('insert at the beginning of a chunk', () => {
@@ -162,7 +162,7 @@ describe('Document', () => {
       const ins2 = builder.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, null, true]);
+      expect(doc.toView()).toEqual([true, false, null, true]);
     });
 
     test('insert at the beginning of a chunk using two patches', () => {
@@ -175,7 +175,7 @@ describe('Document', () => {
       const ins2 = builder2.insArr(arrId, ins1, [FALSE_ID, NULL_ID]);
       doc.applyPatch(builder1.patch);
       doc.applyPatch(builder2.patch);
-      expect(doc.toJson()).toEqual([true, false, null, true]);
+      expect(doc.toView()).toEqual([true, false, null, true]);
     });
 
     test('insert at the beginning of a chunk trice', () => {
@@ -188,7 +188,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, null, true]);
+      expect(doc.toView()).toEqual([true, false, null, true]);
     });
 
     test('can delete a single element from single-element chunk', () => {
@@ -202,7 +202,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true]);
+      expect(doc.toView()).toEqual([true]);
     });
 
     test('can delete a single element from single-element chunk in the middle of array', () => {
@@ -216,7 +216,7 @@ describe('Document', () => {
       builder.root(arrId);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, null]);
+      expect(doc.toView()).toEqual([true, null]);
     });
 
     test('delete last element in a chunk', () => {
@@ -227,7 +227,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(1), 1);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true]);
+      expect(doc.toView()).toEqual([true]);
     });
 
     test('delete first two elements in chunk', () => {
@@ -238,7 +238,7 @@ describe('Document', () => {
       builder.del(arrId, ins1, 2);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([null]);
+      expect(doc.toView()).toEqual([null]);
     });
 
     test('delete a section in the middle of a chunk', () => {
@@ -249,7 +249,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(1), 2);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true]);
+      expect(doc.toView()).toEqual([true, true]);
     });
 
     test('delete two chunks using one delete operation', () => {
@@ -263,7 +263,7 @@ describe('Document', () => {
       builder.del(arrId, ins2, 2);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true]);
+      expect(doc.toView()).toEqual([true, true]);
     });
 
     test('can delete across chunks', () => {
@@ -277,7 +277,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(1), 6);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false]);
+      expect(doc.toView()).toEqual([true, false]);
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
@@ -289,7 +289,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(1), 2);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, false]);
+      expect(doc.toView()).toEqual([true, false, false]);
     });
 
     test('can delete across chunk when chunk were split due to insertion - 2', () => {
@@ -301,7 +301,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(2), 1);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, true, false, false]);
+      expect(doc.toView()).toEqual([true, true, false, false]);
     });
 
     test('can delete across chunk when chunk were split due to insertion - 3', () => {
@@ -313,7 +313,7 @@ describe('Document', () => {
       builder.del(arrId, ins1.tick(1), 1);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true, false, false, true]);
+      expect(doc.toView()).toEqual([true, false, false, true]);
     });
 
     test('can delete across chunk when chunk were split due to insertion - 4', () => {
@@ -325,7 +325,7 @@ describe('Document', () => {
       builder.del(arrId, ins1, 3);
       builder.root(arrId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([false, false]);
+      expect(doc.toView()).toEqual([false, false]);
     });
 
     test('can find ID in one one-element one-chunk array', () => {
@@ -535,11 +535,11 @@ describe('Document', () => {
       const model1 = Model.withLogicalClock();
       model1.api.root([1, 2]).commit();
       const model2 = model1.fork();
-      expect(model1.toJson()).toEqual([1, 2]);
-      expect(model2.toJson()).toEqual([1, 2]);
+      expect(model1.toView()).toEqual([1, 2]);
+      expect(model2.toView()).toEqual([1, 2]);
       model2.api.arr([]).ins(1, [3]).commit();
-      expect(model1.toJson()).toEqual([1, 2]);
-      expect(model2.toJson()).toEqual([1, 3, 2]);
+      expect(model1.toView()).toEqual([1, 2]);
+      expect(model2.toView()).toEqual([1, 3, 2]);
     });
   });
 });

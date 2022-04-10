@@ -14,4 +14,9 @@ export class StringOriginChunk extends StringChunk {
   public span(): number {
     return 1;
   }
+
+  public toString(tab: string = ''): string {
+    const str = `${tab}${this.constructor.name}(${this.id.toDisplayString()}) { }`;
+    return str;
+  }
 }

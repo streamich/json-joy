@@ -76,7 +76,7 @@ can be skipped.
 ### The vector clock table section
 
 The vector clock section is present only if the document uses logical timestamps
-as IDs. If document uses increasing sequence numbers as Ids, this section is
+as IDs. If document uses increasing sequence numbers as IDs, this section is
 empty.
 
 The vector clock table section starts with a vuint57 integer. The value of this

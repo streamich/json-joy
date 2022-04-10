@@ -175,6 +175,29 @@ export class Model {
     this.nodes.delete(value);
   }
 
+  /**
+   * @deprecated This method should never be needed, it is an unfortunate
+   * necessity for codecs, which need vector clock to be on the front of
+   * all known IDs, which currently is not the case. We need to find
+   * what causes the vector clock fall behind and fix it.
+   */
+  public advanceClocks() {
+    for (const node of this.nodes.iterate()) {
+      this.clock.observe(node.id, 1);
+      if (node instanceof ObjectType) {
+        for (const chunk of node.latest.values()) this.clock.observe(chunk.id, 1);
+      } else if (node instanceof ArrayType) {
+        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
+      } else if (node instanceof StringType) {
+        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
+      } else if (node instanceof BinaryType) {
+        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
+      } else if (node instanceof ValueType) {
+        this.clock.observe(node.id, 1);
+      }
+    }
+  }
+
   /** Creates a copy of this model with the same session ID. */
   public clone(): Model {
     const model =
@@ -195,8 +218,8 @@ export class Model {
     return model;
   }
 
-  /** @returns Returns JSON view of the model. */
-  public toJson(): unknown {
+  /** @returns Returns the view of the model. */
+  public toView(): unknown {
     return this.root.toJson();
   }
 

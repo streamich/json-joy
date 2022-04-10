@@ -357,7 +357,7 @@ for (const {only, name, doc1, doc2, patches, throws} of testCases) {
       }).toThrow(new Error(throws));
     } else {
       for (const patch of patches) jsonPatch.applyPatch(patch, {});
-      expect(model.toJson()).toEqual(doc2);
+      expect(model.toView()).toEqual(doc2);
     }
   });
 }

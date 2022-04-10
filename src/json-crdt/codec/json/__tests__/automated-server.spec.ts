@@ -12,7 +12,7 @@ for (const {name, json, only} of [...documents, ...binaryDocuments]) {
     const decoder = new ServerDecoder();
     const encoded = encoder.encode(doc1);
     const doc2 = decoder.decode(encoded);
-    expect(doc1.toJson()).toEqual(json);
-    expect(doc2.toJson()).toEqual(json);
+    expect(doc1.toView()).toEqual(json);
+    expect(doc2.toView()).toEqual(json);
   });
 }

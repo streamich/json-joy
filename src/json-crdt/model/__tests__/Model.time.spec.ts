@@ -10,11 +10,12 @@ test('new document time starts from zero', () => {
 
 test('local time is incremented on local operation application', () => {
   const doc = Model.withLogicalClock();
+  const time = doc.clock.time;
   const builder1 = new PatchBuilder(doc.clock);
   builder1.root(TRUE_ID);
   doc.applyPatch(builder1.patch);
-  expect(doc.toJson()).toEqual(true);
-  expect(doc.clock.time).toBe(1);
+  expect(doc.toView()).toEqual(true);
+  expect(doc.clock.time).toBe(time + 1);
 });
 
 test('local time is incremented on remote operation application', () => {
@@ -22,7 +23,7 @@ test('local time is incremented on remote operation application', () => {
   const builder1 = new PatchBuilder(new LogicalClock(123, 0));
   builder1.root(TRUE_ID);
   doc.applyPatch(builder1.patch);
-  expect(doc.toJson()).toEqual(true);
+  expect(doc.toView()).toEqual(true);
   expect(doc.clock.time).toBe(1);
 });
 
@@ -31,6 +32,6 @@ test('local time is incremented on remote operation application - 2', () => {
   const builder1 = new PatchBuilder(new LogicalClock(123, 0));
   builder1.root(builder1.json({a: 'b'}));
   doc.applyPatch(builder1.patch);
-  expect(doc.toJson()).toEqual({a: 'b'});
+  expect(doc.toView()).toEqual({a: 'b'});
   expect(doc.clock.time).toBe(5);
 });

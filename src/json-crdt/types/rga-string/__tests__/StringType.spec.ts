@@ -23,5 +23,5 @@ test('merges sequential chunks', () => {
   const firstChunk = origin.right;
 
   expect(firstChunk!.str).toBe('1234');
-  expect(doc.toJson()).toBe('1234');
+  expect(doc.toView()).toBe('1234');
 });

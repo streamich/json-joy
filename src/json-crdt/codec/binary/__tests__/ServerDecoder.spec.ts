@@ -22,8 +22,8 @@ test('decodes an empty object', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('decodes an object with a key', () => {
@@ -34,8 +34,8 @@ test('decodes an object with a key', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('decodes an object with more than 15 keys', () => {
@@ -63,8 +63,8 @@ test('decodes an object with more than 15 keys', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('decodes an array with single entry', () => {
@@ -75,8 +75,8 @@ test('decodes an array with single entry', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('decodes nested array with two nodes', () => {
@@ -87,8 +87,8 @@ test('decodes nested array with two nodes', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('decodes a string', () => {
@@ -99,8 +99,8 @@ test('decodes a string', () => {
   const encoder = new ServerEncoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 const encoder = new ServerEncoder();
@@ -119,8 +119,8 @@ test('decodes all types', () => {
   const decoder = new ServerDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
 });
 
 test('can edit documents after decoding', () => {
@@ -137,12 +137,12 @@ test('can edit documents after decoding', () => {
   const decoder = new ServerDecoder();
   const encoded = encoder.encode(doc1);
   const doc2 = decoder.decode(encoded);
-  expect(doc1.toJson()).toEqual(json);
-  expect(doc2.toJson()).toEqual(json);
+  expect(doc1.toView()).toEqual(json);
+  expect(doc2.toView()).toEqual(json);
   doc2.api.arr(['arr']).ins(1, [1.5]).commit();
   doc1.api.str(['str']).ins(0, '__tab__').commit();
-  expect((doc2.toJson() as any).arr).toEqual([1, 1.5, 2, 3]);
-  expect((doc1.toJson() as any).arr).toEqual([1, 2, 3]);
-  expect((doc2.toJson() as any).str).toBe('asdf');
-  expect((doc1.toJson() as any).str).toBe('__tab__asdf');
+  expect((doc2.toView() as any).arr).toEqual([1, 1.5, 2, 3]);
+  expect((doc1.toView() as any).arr).toEqual([1, 2, 3]);
+  expect((doc2.toView() as any).str).toBe('asdf');
+  expect((doc1.toView() as any).str).toBe('__tab__asdf');
 });
