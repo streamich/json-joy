@@ -17,6 +17,19 @@ import {encode as encodeCompact} from '../../../../json-crdt-patch/codec/compact
 import {decode as decodeCompact} from '../../../../json-crdt-patch/codec/compact/decode';
 import {encode as encodeBinary} from '../../../../json-crdt-patch/codec/binary/encode';
 import {decode as decodeBinary} from '../../../../json-crdt-patch/codec/binary/decode';
+import {LogicalEncoder as JsonEncoder} from '../../../codec/json/LogicalEncoder';
+import {LogicalDecoder as JsonDecoder} from '../../../codec/json/LogicalDecoder';
+import {LogicalEncoder as CompactEncoder} from '../../../codec/compact/LogicalEncoder';
+import {LogicalDecoder as CompactDecoder} from '../../../codec/compact/LogicalDecoder';
+import {LogicalEncoder as BinaryEncoder} from '../../../codec/binary/LogicalEncoder';
+import {LogicalDecoder as BinaryDecoder} from '../../../codec/binary/LogicalDecoder';
+
+const jsonEncoder = new JsonEncoder();
+const jsonDecoder = new JsonDecoder();
+const compactEncoder = new CompactEncoder();
+const compactDecoder = new CompactDecoder();
+const binaryEncoder = new BinaryEncoder();
+const binaryDecoder = new BinaryDecoder();
 
 export class ModelSession {
   public models: Model[] = [];
@@ -55,9 +68,10 @@ export class ModelSession {
     if (!patch) return;
     model.applyPatch(patch);
 
-    patch = decodeJson(encodeJson(patch));
-    patch = decodeCompact(encodeCompact(patch));
-    patch = decodeBinary(encodeBinary(patch));
+    if (Math.random() < .5) patch = decodeJson(encodeJson(patch));
+    if (Math.random() < .5) patch = decodeCompact(encodeCompact(patch));
+    if (Math.random() < .5) patch = decodeBinary(encodeBinary(patch));
+
     this.patches[peer].push(patch);
   }
 
@@ -128,11 +142,18 @@ export class ModelSession {
 
   public synchronize() {
     for (let i = 0; i < this.concurrency; i++) {
-      const model = this.models[i];
+      let model = this.models[i];
+
+      if (Math.random() < .5) model = jsonDecoder.decode(jsonEncoder.encode(model));
+      if (Math.random() < .5) model = compactDecoder.decode(compactEncoder.encode(model));
+      // model = binaryDecoder.decode(binaryEncoder.encode(model));
+
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
         for (const patch of patches) model.applyPatch(patch);
       }
+
+      this.models[i] = model;
     }
 
     for (let j = 0; j < this.concurrency; j++) {
