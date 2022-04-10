@@ -4,7 +4,7 @@ import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 
-export class Encoder extends CrdtDecoder {
+export class Decoder extends CrdtDecoder {
   protected builder!: PatchBuilder;
 
   public decode(data: Uint8Array): Patch {
