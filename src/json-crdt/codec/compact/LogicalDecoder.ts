@@ -34,8 +34,7 @@ export class LogicalDecoder {
   protected ts(arr: unknown[], index: number): ITimestamp {
     const sessionIndex = arr[index] as number;
     const timeDiff = arr[index + 1] as number;
-    this.clockDecoder.decodeId(sessionIndex, timeDiff);
-    return new LogicalTimestamp(sessionIndex, timeDiff);
+    return this.clockDecoder.decodeId(sessionIndex, timeDiff);
   }
 
   protected decodeNode(doc: Model, data: unknown): JsonNode {

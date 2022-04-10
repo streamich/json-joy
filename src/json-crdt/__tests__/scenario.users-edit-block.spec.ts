@@ -3,6 +3,8 @@ import {LogicalEncoder as EncoderBinary} from '../codec/binary/LogicalEncoder';
 import {LogicalDecoder as DecoderBinary} from '../codec/binary/LogicalDecoder';
 import {LogicalEncoder as EncoderCompact} from '../codec/compact/LogicalEncoder';
 import {LogicalDecoder as DecoderCompact} from '../codec/compact/LogicalDecoder';
+import {LogicalEncoder as EncoderCompactBinary} from '../codec/compact-binary/LogicalEncoder';
+import {LogicalDecoder as DecoderCompactBinary} from '../codec/compact-binary/LogicalDecoder';
 import {LogicalEncoder as EncoderJson} from '../codec/json/LogicalEncoder';
 import {LogicalDecoder as DecoderJson} from '../codec/json/LogicalDecoder';
 import {encode as encodePatchBinary} from '../../json-crdt-patch/codec/binary/encode';
@@ -15,11 +17,11 @@ import {encode as encodePatchJson} from '../../json-crdt-patch/codec/json/encode
 import {decode as decodePatchJson} from '../../json-crdt-patch/codec/json/decode';
 import {LogicalVectorClock} from '../../json-crdt-patch/clock';
 
-
 const modelCodecs = [
   ['json', new EncoderJson(), new DecoderJson()],
-  // ['compact', new EncoderCompact(), new DecoderCompact()],
-  // ['binary', new EncoderBinary(), new DecoderBinary()],
+  ['compact', new EncoderCompact(), new DecoderCompact()],
+  ['compact-binary', new EncoderCompactBinary(), new DecoderCompactBinary()],
+  ['binary', new EncoderBinary(), new DecoderBinary()],
 ];
 
 const patchCodecs = [
@@ -34,6 +36,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
     test(`2 users edit concurrently a JSON block and persist changes on the server, model:${modelCodecName}, patch: ${patchCodecName}`, () => {
       // User 1 creates a JSON block.
       const model1 = Model.withLogicalClock(new LogicalVectorClock(3145605287749735, 0));
+      // const model1 = Model.withLogicalClock();
       model1.api.root({
         '@type': 'CreativeWork',
         'name': 'Task list',
