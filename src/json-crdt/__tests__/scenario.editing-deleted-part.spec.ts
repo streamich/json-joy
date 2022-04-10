@@ -70,13 +70,10 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       });
 
       // User 1 saves the block on the server.
-      const encoded1 = (encoder as any).encode(
-        (decoder as any).decode((encoder as any).encode(model1)).fork(),
-      );
+      const encoded1 = (encoder as any).encode((decoder as any).decode((encoder as any).encode(model1)).fork());
 
       // User 2 loads the block from the server.
-      const model2 = (decoder as any)
-        .decode((encoder as any).encode((decoder as any).decode(encoded1))).fork();
+      const model2 = (decoder as any).decode((encoder as any).encode((decoder as any).decode(encoded1))).fork();
       expect(model2.toView()).toStrictEqual(model1.toView());
 
       // User 2 starts their own editing session.
@@ -135,13 +132,16 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
 
       // User 1 in parallel removes second todo item.
       model1.api.obj(['items']).del(['2']);
-      model1.api.obj(['items']).set({
-        '3': {
-          '@type': 'todo-item',
-          id: '3',
-          name: 'Plyometrics for the win!',
-        }
-      }).commit();
+      model1.api
+        .obj(['items'])
+        .set({
+          '3': {
+            '@type': 'todo-item',
+            id: '3',
+            name: 'Plyometrics for the win!',
+          },
+        })
+        .commit();
       expect(model1.toView()).toStrictEqual({
         '@type': 'todo',
         items: {
@@ -154,7 +154,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
             '@type': 'todo-item',
             id: '3',
             name: 'Plyometrics for the win!',
-          }
+          },
         },
       });
 
@@ -173,7 +173,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
             '@type': 'todo-item',
             id: '3',
             name: 'Plyometrics for the win!',
-          }
+          },
         },
       });
 
@@ -210,7 +210,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
             '@type': 'todo-item',
             id: '3',
             name: 'Plyometrics for the win!',
-          }
+          },
         },
       });
 
@@ -245,7 +245,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
             '@type': 'todo-item',
             id: '3',
             name: 'Plyometrics for the win!',
-          }
+          },
         },
       });
     });
