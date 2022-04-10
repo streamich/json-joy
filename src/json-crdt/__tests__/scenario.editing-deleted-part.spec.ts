@@ -32,7 +32,7 @@ const patchCodecs = [
 
 for (const [modelCodecName, encoder, decoder] of modelCodecs) {
   for (const [patchCodecName, encodePatch, decodePatch] of patchCodecs) {
-    test(`2 users edit concurrently a JSON block and persist changes on the server, model:${modelCodecName}, patch: ${patchCodecName}`, () => {
+    test(`User 2 edits part which User 1 already deleted, model:${modelCodecName}, patch: ${patchCodecName}`, () => {
       // User 1 creates a JSON block.
       const model1 = Model.withLogicalClock();
       model1.api
