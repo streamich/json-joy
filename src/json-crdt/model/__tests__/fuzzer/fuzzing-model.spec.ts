@@ -3,8 +3,8 @@ import {ModelFuzzer} from './ModelFuzzer';
 const runs = 10;
 const sessionNum = 50;
 
-for (let r = 0; r < runs; r++) {
-  test(`model fuzz testing, run ${r + 1}`, () => {
+test(`model fuzz testing`, () => {
+  for (let r = 0; r < runs; r++) {
     const fuzzer = new ModelFuzzer();
     fuzzer.setupModel();
     for (let ses = 0; ses < sessionNum; ses++) {
@@ -14,5 +14,5 @@ for (let r = 0; r < runs; r++) {
         expect(json).toEqual(session.models[i].toView());
       }
     }
-  });
-}
+  }
+});

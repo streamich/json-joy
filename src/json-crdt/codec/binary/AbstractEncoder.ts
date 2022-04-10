@@ -111,10 +111,12 @@ export abstract class AbstractEncoder extends CrdtEncoder {
     const {value} = obj;
     switch (value) {
       case null:
-      case undefined:
       case false:
       case true:
         this.encodeAny(value);
+        break;
+      case undefined:
+        this.u8(0xc1);
         break;
       default: {
         if (typeof value === 'number') this.encodeNumber(value);

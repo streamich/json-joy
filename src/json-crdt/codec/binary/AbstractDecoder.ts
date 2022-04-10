@@ -70,6 +70,8 @@ export abstract class AbstractDecoder extends CrdtDecoder {
           return this.createConst(this.i32());
         case 0xd3:
           return this.createConst(this.i32() * 4294967296 + this.i32());
+        case 0xd4:
+          return this.createConst(this.val());
         case 0xd5:
           return this.decodeVal();
         case 0xde:
