@@ -128,7 +128,7 @@ export class ModelSession {
           boolean: 2,
           number: 10,
           string: 8,
-          binary: 0,
+          binary: 4,
           array: 2,
           object: 2,
         },
