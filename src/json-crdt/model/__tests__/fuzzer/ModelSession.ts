@@ -146,11 +146,13 @@ export class ModelSession {
 
       if (Math.random() < .5) model = jsonDecoder.decode(jsonEncoder.encode(model));
       if (Math.random() < .5) model = compactDecoder.decode(compactEncoder.encode(model));
-      // model = binaryDecoder.decode(binaryEncoder.encode(model));
-
+      if (Math.random() < .5) model = binaryDecoder.decode(binaryEncoder.encode(model));
+        
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
-        for (const patch of patches) model.applyPatch(patch);
+        for (const patch of patches) {
+          model.applyPatch(patch);
+        }
       }
 
       this.models[i] = model;

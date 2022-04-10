@@ -6,10 +6,11 @@ import {AbstractEncoder} from './AbstractEncoder';
 export class LogicalEncoder extends AbstractEncoder {
   protected clockEncoder!: ClockEncoder;
 
-  public encode(doc: Model): Uint8Array {
+  public encode(model: Model): Uint8Array {
+    model.advanceClocks();
     this.reset();
-    this.clockEncoder = new ClockEncoder(doc.clock);
-    this.encodeRoot(doc.root);
+    this.clockEncoder = new ClockEncoder(model.clock);
+    this.encodeRoot(model.root);
     const data = this.flush();
     this.encodeClockTable(data);
     return this.flush();
