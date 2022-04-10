@@ -22,7 +22,7 @@ export class LogicalEncoder extends AbstractEncoder {
     this.uint8 = new Uint8Array(8 + 12 * length + dataSize);
     this.view = new DataView(this.uint8.buffer, this.uint8.byteOffset, this.uint8.byteLength);
     this.offset = 0;
-    this.vuint57(length);
+    this.b1vuint56(false, length);
     for (const sid of clockEncoder.table.keys()) {
       const ts = clockEncoder.clock.clocks.get(sid);
       if (ts) this.uint53vuint39(sid, ts.time);
@@ -33,9 +33,8 @@ export class LogicalEncoder extends AbstractEncoder {
     }
     this.buf(data, dataSize);
   }
-
   protected ts(ts: ITimestamp) {
-    const id = this.clockEncoder.append(ts);
-    this.id(id.sessionIndex, id.timeDiff);
+    const relativeId = this.clockEncoder.append(ts);
+    this.id(relativeId.sessionIndex, relativeId.timeDiff);
   }
 }

@@ -15,6 +15,7 @@ export class LogicalEncoder extends AbstractEncoder {
   }
 
   protected ts(arr: unknown[], ts: ITimestamp): void {
-    this.clock.append(ts).push(arr);
+    const relativeId = this.clock.append(ts);
+    relativeId.push(arr);
   }
 }

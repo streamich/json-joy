@@ -12,21 +12,21 @@ export class LogicalDecoder extends AbstractDecoder {
     this.decodeClockTable(clockTableLength);
     const doc = (this.doc = Model.withLogicalClock(this.clockDecoder.clock));
     this.decodeRoot(doc);
-    doc.clock.time++;
     return doc;
   }
 
   protected decodeClockTable(length: number): void {
-    const firstTimestamp = this.uint53vuint39();
-    this.clockDecoder = new ClockDecoder(firstTimestamp[0], firstTimestamp[1]);
+    const [sessionId, time] = this.uint53vuint39();
+    this.clockDecoder = new ClockDecoder(sessionId, 0);
+    this.clockDecoder.pushTuple(sessionId, time);
     for (let i = 1; i < length; i++) {
       const ts = this.uint53vuint39();
       this.clockDecoder.pushTuple(ts[0], ts[1]);
     }
   }
-
   protected ts(): ITimestamp {
-    const id = this.id();
-    return this.clockDecoder.decodeId(id[0], id[1]);
+    const [sessionIndex, timeDiff] = this.id();
+    const id = this.clockDecoder.decodeId(sessionIndex, timeDiff);
+    return id;
   }
 }

@@ -8,9 +8,9 @@ export class ClockDecoder {
   public readonly clock: LogicalVectorClock;
 
   public static fromArr(arr: number[]): ClockDecoder {
-    const decoder = new ClockDecoder(arr[0], arr[1]);
+    const decoder = new ClockDecoder(arr[0], 0);
     const length = arr.length;
-    for (let i = 2; i < length; i += 2) decoder.pushTuple(arr[i], arr[i + 1]);
+    for (let i = 0; i < length; i += 2) decoder.pushTuple(arr[i], arr[i + 1]);
     return decoder;
   }
 
@@ -18,9 +18,8 @@ export class ClockDecoder {
     this.index = 1;
     this.clock = new LogicalVectorClock(sessionId, time);
     if (time) this.clock.observe(new LogicalTimestamp(sessionId, time - 1), 1);
-    this.table.set(this.index++, this.clock);
   }
-
+  
   public pushTuple(sessionId: number, time: number) {
     const ts = new LogicalTimestamp(sessionId, time);
     this.clock.observe(ts, 1);

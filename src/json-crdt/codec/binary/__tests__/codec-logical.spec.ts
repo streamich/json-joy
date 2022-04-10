@@ -32,3 +32,27 @@ test('forking and encoding/decoding results in the same node IDs', () => {
   expect(model1.api.str([]).node.id.compare(model3.api.str([]).node.id)).toBe(0);
   expect(model1.toString()).toBe(model3.toString());
 });
+
+test('vector clocks are the same after decoding', () => {
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  model1.api.root('').commit();
+  const encoded1 = encoder.encode(model1);
+  const decoded1 = decoder.decode(encoded1);
+  expect(model1.clock).toStrictEqual(decoded1.clock);
+});
+
+test('decoded root node ID is correct', () => {
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  model1.api.root('').commit();
+  const encoded1 = encoder.encode(model1);
+  const decoded1 = decoder.decode(encoded1);
+  expect(model1.root.id.isEqual(decoded1.root.id)).toBe(true);
+});
+
+test('simple string document decoded string node ID is correct', () => {
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  model1.api.root('').commit();
+  const encoded1 = encoder.encode(model1);
+  const decoded1 = decoder.decode(encoded1);
+  expect(model1.api.str([]).node.id.isEqual(decoded1.api.str([]).node.id)).toBe(true);
+});
