@@ -195,15 +195,6 @@ export class Model {
     return model;
   }
 
-  /**
-   * @deprecated Use `.toView()` instead.
-   * @todo Remove this method.
-   * @returns Returns JSON view of the model.
-   */
-  public toJson(): unknown {
-    return this.toView();
-  }
-
   /** @returns Returns the view of the model. */
   public toView(): unknown {
     return this.root.toJson();

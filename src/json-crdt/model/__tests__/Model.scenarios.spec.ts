@@ -22,7 +22,7 @@ describe('Scenarios', () => {
     doc.applyPatch(builder3.patch);
     doc.applyPatch(builder3.patch);
 
-    expect(doc.toJson()).toBe('Hello!');
+    expect(doc.toView()).toBe('Hello!');
   });
 
   test('concurrently insert text at different positions (reverse)', () => {
@@ -43,7 +43,7 @@ describe('Scenarios', () => {
     doc.applyPatch(builder3.patch);
     doc.applyPatch(builder3.patch);
 
-    expect(doc.toJson()).toBe('Hello!');
+    expect(doc.toView()).toBe('Hello!');
   });
 
   // https://youtu.be/GXJ0D2tfZCM?t=2587
@@ -66,7 +66,7 @@ describe('Scenarios', () => {
     doc.applyPatch(builder3.patch);
     doc.applyPatch(builder3.patch);
 
-    expect(doc.toJson()).toBe('axypqbc');
+    expect(doc.toView()).toBe('axypqbc');
   });
 
   test('concurrently insert text at the same position (2)', () => {
@@ -88,6 +88,6 @@ describe('Scenarios', () => {
     doc.applyPatch(builder3.patch);
     doc.applyPatch(builder2.patch);
 
-    expect(doc.toJson()).toBe('axypqbc');
+    expect(doc.toView()).toBe('axypqbc');
   });
 });

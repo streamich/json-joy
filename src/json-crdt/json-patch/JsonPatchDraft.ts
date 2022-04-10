@@ -103,7 +103,7 @@ export class JsonPatchDraft extends Draft {
   }
 
   private get(steps: Path): unknown {
-    if (!steps.length) return this.model.toJson();
+    if (!steps.length) return this.model.toView();
     else {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);

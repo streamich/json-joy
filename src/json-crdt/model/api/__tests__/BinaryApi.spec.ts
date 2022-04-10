@@ -11,7 +11,7 @@ test('can edit a simple binary', () => {
   bin.del(9, 1).commit();
   const result = new Uint8Array([0, 1, 2, 3, 44, 4, 4, 4, 4, 7, 7, 7, 7, 7, 7, 7]);
   expect(bin.toView()).toStrictEqual(result);
-  expect(doc.toJson()).toStrictEqual([0, result, 2]);
+  expect(doc.toView()).toStrictEqual([0, result, 2]);
 });
 
 test('can delete across two chunks', () => {

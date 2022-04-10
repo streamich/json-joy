@@ -19,7 +19,7 @@ describe('Document', () => {
       const numId = builder.val(10_000);
       builder.root(numId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(10_000);
+      expect(doc.toView()).toEqual(10_000);
     });
 
     test('can update value to a number', () => {
@@ -29,7 +29,7 @@ describe('Document', () => {
       builder.setVal(objId, 2);
       builder.root(objId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(2);
+      expect(doc.toView()).toEqual(2);
     });
 
     test('can update value to a string', () => {
@@ -39,7 +39,7 @@ describe('Document', () => {
       builder.setVal(objId, 'boom');
       builder.root(objId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('boom');
+      expect(doc.toView()).toEqual('boom');
     });
 
     test('can overwrite number value', () => {
@@ -50,7 +50,7 @@ describe('Document', () => {
       builder.setVal(valId, 5.5);
       builder.root(valId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual(5.5);
+      expect(doc.toView()).toEqual(5.5);
     });
 
     test('can set object field value as number', () => {
@@ -63,7 +63,7 @@ describe('Document', () => {
       builder.setVal(valId, 99);
       builder.root(objId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual({gg: 99});
+      expect(doc.toView()).toEqual({gg: 99});
     });
 
     test('can update object field value to boolean', () => {
@@ -76,7 +76,7 @@ describe('Document', () => {
       builder.setVal(valId, true);
       builder.root(objId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual({gg: true});
+      expect(doc.toView()).toEqual({gg: true});
     });
 
     test('can update array value to boolean', () => {
@@ -89,7 +89,7 @@ describe('Document', () => {
       builder.setVal(valId, true);
       builder.root(objId);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual([true]);
+      expect(doc.toView()).toEqual([true]);
     });
   });
 });

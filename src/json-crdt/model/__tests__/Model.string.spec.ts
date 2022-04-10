@@ -19,7 +19,7 @@ describe('Document', () => {
       const str = builder.str();
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('');
+      expect(doc.toView()).toEqual('');
     });
 
     test('can add one char to a string', () => {
@@ -29,7 +29,7 @@ describe('Document', () => {
       builder.insStr(str, str, 'a');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('a');
+      expect(doc.toView()).toEqual('a');
     });
 
     test('can add long string in one operation', () => {
@@ -39,7 +39,7 @@ describe('Document', () => {
       builder.insStr(str, str, 'asdf');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('asdf');
+      expect(doc.toView()).toEqual('asdf');
     });
 
     test('can insert three characters sequentially using three operations', () => {
@@ -51,7 +51,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins2, '3');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('123');
+      expect(doc.toView()).toEqual('123');
     });
 
     test('can insert three characters with two operations', () => {
@@ -62,7 +62,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, ins1, '23');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('123');
+      expect(doc.toView()).toEqual('123');
     });
 
     test('can insert at the end of two-char string', () => {
@@ -73,7 +73,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, ins1.tick(1), '34');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('1234');
+      expect(doc.toView()).toEqual('1234');
     });
 
     test('can insert at the end of two-char string twice', () => {
@@ -85,7 +85,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins2.tick(1), '5');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('12345');
+      expect(doc.toView()).toEqual('12345');
     });
 
     test('can insert at the end of the same two-char string twice', () => {
@@ -97,7 +97,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, ins1.tick(1), '5');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('12534');
+      expect(doc.toView()).toEqual('12534');
     });
 
     test('can apply the same patch trice', () => {
@@ -111,7 +111,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('12534');
+      expect(doc.toView()).toEqual('12534');
     });
 
     test('can insert at the beginning of two-char string', () => {
@@ -125,7 +125,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('1342');
+      expect(doc.toView()).toEqual('1342');
     });
 
     test('can delete a single char from one-char chunk', () => {
@@ -140,7 +140,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('y');
+      expect(doc.toView()).toEqual('y');
     });
 
     test('can delete a single char from one-char chunk in the middle of string', () => {
@@ -156,7 +156,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('xz');
+      expect(doc.toView()).toEqual('xz');
     });
 
     test('can delete last char in two-char chunk', () => {
@@ -170,7 +170,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('x');
+      expect(doc.toView()).toEqual('x');
     });
 
     test('can delete first two chars in three-char chunk', () => {
@@ -184,7 +184,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('c');
+      expect(doc.toView()).toEqual('c');
     });
 
     test('can delete a substring in the middle of a chunk', () => {
@@ -198,7 +198,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('abefg');
+      expect(doc.toView()).toEqual('abefg');
     });
 
     test('can delete two chunks using one delete operation', () => {
@@ -215,7 +215,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
-      expect(doc.toJson()).toEqual('mp');
+      expect(doc.toView()).toEqual('mp');
     });
 
     test('can delete across chunks', () => {
@@ -231,7 +231,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
-      expect(doc.toJson()).toEqual('Helow are you?');
+      expect(doc.toView()).toEqual('Helow are you?');
     });
 
     test('can delete across chunk when chunk were split due to insertion', () => {
@@ -248,7 +248,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       // console.log(doc.node(str)!.toString());
       // console.log(doc.node(str)!.toJson());
-      expect(doc.toJson()).toEqual('alo!');
+      expect(doc.toView()).toEqual('alo!');
     });
 
     test('can find ID in one one-char chunk', () => {
