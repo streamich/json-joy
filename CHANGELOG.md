@@ -1,3 +1,36 @@
+# [7.5.0](https://github.com/streamich/json-joy/compare/v7.4.0...v7.5.0) (2022-04-10)
+
+
+### Bug Fixes
+
+* **json-crdt-patch:** 🐛 correct logical time decoding for nodes ([9dc12e9](https://github.com/streamich/json-joy/commit/9dc12e99ebf3975764101debd8dc0da6ff8fc281))
+* **json-crdt-patch:** 🐛 correctly decode logical clock time ([369f763](https://github.com/streamich/json-joy/commit/369f7633ae88b0543f29984a0a3068b31303e077))
+* **json-crdt-patch:** 🐛 correctly decoke MakeBinary operation in json codec ([4585ff7](https://github.com/streamich/json-joy/commit/4585ff76bda6aa6803f3fe24e62833224e044b56))
+* **json-crdt-patch:** 🐛 encode correctly old IDs ([1012244](https://github.com/streamich/json-joy/commit/1012244dd0f77842a192e175df64ffb16ecbf9a0))
+* **json-crdt:** 🐛 correctly encode negative relative ID times ([aa4c7fc](https://github.com/streamich/json-joy/commit/aa4c7fcba6a280ce58f94498b3533732166f6454))
+* **json-crdt:** 🐛 deprecate .toJson() method ([a68184d](https://github.com/streamich/json-joy/commit/a68184d1338dca5b6fdd5209daf7761ab1b384f1))
+* **json-crdt:** 🐛 do not increment time in compact decoder ([5abd08f](https://github.com/streamich/json-joy/commit/5abd08fcb56e6666a2518d88ab454efc57930ca1))
+* **json-crdt:** 🐛 encode undefined in binary codec ([41096ce](https://github.com/streamich/json-joy/commit/41096ceba4213e25511bf32dfc783f2173d6136d))
+* **json-crdt:** 🐛 make structural binary codec work again ([7557892](https://github.com/streamich/json-joy/commit/7557892ee0d2f6dda8acec111be094be6917197d))
+* **json-crdt:** 🐛 remove deprecated .toJson() method ([8ba7ed0](https://github.com/streamich/json-joy/commit/8ba7ed0de5f515a81673254617223f877d1217cb))
+* **json-crdt:** 🐛 use absolute IDs in compact codec ([3872b63](https://github.com/streamich/json-joy/commit/3872b635b945edd7f9fce0983e3668636a301559))
+* **json-random:** 🐛 do not allow negative zero ([e4ebf89](https://github.com/streamich/json-joy/commit/e4ebf89b0f501dd15c23b8e59b65b1d1e2acda57))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add compact-binary patch codec ([03cd51a](https://github.com/streamich/json-joy/commit/03cd51a1240489ac83241ced3a923f5ec3a4c215))
+* **json-crdt-patch:** 🎸 create CRDT binary encoder/decoder classes ([cd4e767](https://github.com/streamich/json-joy/commit/cd4e767b0a87ec5ffd54cbbe81acb36d0566d421))
+* **json-crdt:** 🎸 improve string type .toString() methods ([1621b04](https://github.com/streamich/json-joy/commit/1621b046a663c92d6424d0e23e785c648f8afd25))
+
+
+### Performance Improvements
+
+* **json-crdt-patch:** ⚡️ add new implementation of binary codec ([7d5e4af](https://github.com/streamich/json-joy/commit/7d5e4affcac13aa5d5d59df5be5a3ebc8aa0ab65))
+* **json-crdt-patch:** ⚡️ implement new binary decoder ([bc3aa20](https://github.com/streamich/json-joy/commit/bc3aa20c26435534b391fbbc4501ca1a909af169))
+* **json-crdt-patch:** ⚡️ improve binary codec ID encoding ([5568847](https://github.com/streamich/json-joy/commit/556884744a25a8bbc0191862f95513ac5fea09e0))
+* **json-crdt:** ⚡️ use shared MessagePack codecs in compact-binary ([a685928](https://github.com/streamich/json-joy/commit/a6859289862624f6275ce016d708ad20f39d6cf6))
+
 # [7.4.0](https://github.com/streamich/json-joy/compare/v7.3.0...v7.4.0) (2022-04-09)
 
 
