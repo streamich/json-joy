@@ -11,6 +11,12 @@ import {RandomJson} from '../../../../json-random/RandomJson';
 import {ArrayType} from '../../../types/rga-array/ArrayType';
 import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
 import {ValueType} from '../../../types/lww-value/ValueType';
+import {encode as encodeJson} from '../../../../json-crdt-patch/codec/json/encode';
+import {decode as decodeJson} from '../../../../json-crdt-patch/codec/json/decode';
+import {encode as encodeCompact} from '../../../../json-crdt-patch/codec/compact/encode';
+import {decode as decodeCompact} from '../../../../json-crdt-patch/codec/compact/decode';
+import {encode as encodeBinary} from '../../../../json-crdt-patch/codec/binary/encode';
+import {decode as decodeBinary} from '../../../../json-crdt-patch/codec/binary/decode';
 
 export class ModelSession {
   public models: Model[] = [];
@@ -47,8 +53,12 @@ export class ModelSession {
     else if (node instanceof ValueType) patch = this.generateValuePatch(model, node);
     else return;
     if (!patch) return;
-    this.patches[peer].push(patch);
     model.applyPatch(patch);
+
+    patch = decodeJson(encodeJson(patch));
+    patch = decodeCompact(encodeCompact(patch));
+    patch = decodeBinary(encodeBinary(patch));
+    this.patches[peer].push(patch);
   }
 
   private generateStringPatch(model: Model, node: StringType): Patch | null {
