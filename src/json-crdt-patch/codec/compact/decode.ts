@@ -1,21 +1,25 @@
 import {fromBase64} from '../../../util/base64/decode';
-import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock, ServerTimestamp, ServerVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {Code} from './constants';
 
 export const decode = (data: unknown[]): Patch => {
-  const sessionId = data[0] as number;
-  const time = data[1] as number;
-  const clock = new LogicalVectorClock(sessionId, time);
+  const x = data[0];
+  const clock = Array.isArray(x)
+    ? new LogicalVectorClock(x[0], x[1])
+    : new ServerVectorClock(x as number);
+  const sessionId = clock.getSessionId();
+  const time = clock.time;
   const builder = new PatchBuilder(clock);
   const length = data.length;
-  let i = 2;
+  let i = 1;
 
   const decodeTimestamp = (): ITimestamp => {
     const x = data[i++] as number;
-    if (x < 0) return new LogicalTimestamp(sessionId, time - x - 1);
-    else return new LogicalTimestamp(x, data[i++] as number);
+    if (Array.isArray(x)) return new LogicalTimestamp(x[0], x[1]);
+    else if (x < 0) return new LogicalTimestamp(sessionId, time - x - 1);
+    else return new ServerTimestamp(x);
   };
 
   while (i < length) {
