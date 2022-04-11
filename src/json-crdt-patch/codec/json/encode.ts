@@ -18,8 +18,12 @@ import {SetRootOperation} from '../../operations/SetRootOperation';
 import {SetValueOperation} from '../../operations/SetValueOperation';
 import {toBase64} from '../../../util/base64/encode';
 import type {ITimestamp} from '../../clock';
+import {SESSION} from '../../constants';
 
-const encodeTimestamp = (ts: ITimestamp): JsonCodecTimestamp => [ts.getSessionId(), ts.time];
+const encodeTimestamp = (ts: ITimestamp): JsonCodecTimestamp =>
+  ts.getSessionId() === SESSION.SERVER
+    ? ts.time
+    : [ts.getSessionId(), ts.time];
 
 export const encode = (patch: Patch): JsonCodecPatch => {
   const id = patch.getId();

@@ -1,6 +1,6 @@
 import {Code} from '../compact/constants';
 import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
-import {ITimestamp, LogicalTimestamp, LogicalVectorClock} from '../../clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock, ServerTimestamp, ServerVectorClock} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 
@@ -10,22 +10,29 @@ export class Decoder extends CrdtDecoder {
 
   public decode(data: Uint8Array): Patch {
     this.reset(data);
-    const [sessionId, time] = this.uint53vuint39();
-    const id = (this.patchId = new LogicalTimestamp(sessionId, time));
-    const clock = new LogicalVectorClock(id.getSessionId(), id.time);
+    const [isServerClock, x] = this.b1vuint56();
+    const clock = isServerClock
+      ? new ServerVectorClock(x)
+      : new LogicalVectorClock(x, this.vuint57());
+    this.patchId = clock.stamp(clock.getSessionId(), clock.time);
     this.builder = new PatchBuilder(clock);
     this.decodeOperations();
     return this.builder.patch;
   }
 
   protected decodeId(): ITimestamp {
-    const patchId = this.patchId;
-    const [flag, value] = this.b1vuint56();
-    if (flag) {
-      return new LogicalTimestamp(patchId.getSessionId(), patchId.time + value);
+    const [isServerClock, x] = this.b1vuint56();
+    if (isServerClock) {
+      return new ServerTimestamp(x);
     } else {
-      const time = this.vuint57();
-      return new LogicalTimestamp(value, time);
+      const patchId = this.patchId;
+      if (x === 1) {
+        const delta = this.vuint57();
+        return new LogicalTimestamp(patchId.getSessionId(), patchId.time + delta);
+      } else {
+        const time = this.vuint57();
+        return new LogicalTimestamp(x, time);
+      }
     }
   }
 

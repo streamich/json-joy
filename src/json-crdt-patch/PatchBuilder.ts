@@ -4,7 +4,7 @@ import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOper
 import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
 import {isUint8Array} from '../util/isUint8Array';
-import {LogicalTimestamp, ITimestamp, IClock} from './clock';
+import {ITimestamp, IClock} from './clock';
 import {MakeArrayOperation} from './operations/MakeArrayOperation';
 import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
 import {MakeConstantOperation} from './operations/MakeConstantOperation';
@@ -332,7 +332,7 @@ export class PatchBuilder {
     if (!nextTime) return;
     const drift = this.clock.time - nextTime;
     if (drift > 0) {
-      const id = new LogicalTimestamp(this.clock.getSessionId(), nextTime);
+      const id = this.clock.stamp(this.clock.getSessionId(), nextTime);
       const padding = new NoopOperation(id, drift);
       this.patch.ops.push(padding);
     }

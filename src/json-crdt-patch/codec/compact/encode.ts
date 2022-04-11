@@ -1,5 +1,6 @@
 import {toBase64} from '../../../util/base64/encode';
 import {ITimestamp} from '../../clock';
+import {SESSION} from '../../constants';
 import {DeleteOperation} from '../../operations/DeleteOperation';
 import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
 import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
@@ -25,12 +26,15 @@ export const encode = (patch: Patch): unknown[] => {
 
   const sessionId = id.getSessionId();
   const {time} = id;
-  const res: unknown[] = [sessionId, time];
+  const res: unknown[] = sessionId === SESSION.SERVER
+    ? [time]
+    : [[sessionId, time]];
 
   const pushTimestamp = (ts: ITimestamp) => {
     const tsSessionId = ts.getSessionId();
-    if (tsSessionId === sessionId && ts.time >= time) res.push(time - ts.time - 1);
-    else res.push(tsSessionId, ts.time);
+    if (tsSessionId === SESSION.SERVER) res.push(ts.time);
+    else if (tsSessionId === sessionId && ts.time >= time) res.push(time - ts.time - 1);
+    else res.push([tsSessionId, ts.time]);
   };
 
   for (const op of patch.ops) {
