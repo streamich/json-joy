@@ -1,4 +1,4 @@
-export type JsonCodecTimestamp = [sessionId: number, time: number];
+export type JsonCodecTimestamp = [sessionId: number, time: number] | number;
 
 export interface JsonCodecPatch {
   /**
