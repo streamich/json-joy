@@ -8,15 +8,14 @@
  * @module
  */
 
-import {IClock, ITimespan, ITimestamp, IVectorClock} from './types';
-
-const SERVER_SESSION_ID = 1;
+import {SESSION} from '../constants';
+import type {IClock, ITimespan, ITimestamp, IVectorClock} from './types';
 
 export class ServerTimestamp implements ITimestamp {
   constructor(public time: number) {}
 
   public getSessionId(): number {
-    return SERVER_SESSION_ID;
+    return SESSION.SERVER;
   }
 
   public isEqual(ts: ITimestamp): boolean {
@@ -100,7 +99,7 @@ export class ServerVectorClock extends ServerClock implements IVectorClock {
   public readonly clocks = new Map<number, ITimestamp>();
 
   public observe(ts: ITimestamp, span: number) {
-    if (ts.getSessionId() !== SERVER_SESSION_ID) throw new Error('INVALID_SERVER_SESSION');
+    if (ts.getSessionId() !== SESSION.SERVER) throw new Error('INVALID_SERVER_SESSION');
     if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span;
     if (time > this.time) this.time = time;
