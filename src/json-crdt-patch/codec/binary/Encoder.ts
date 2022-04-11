@@ -17,6 +17,7 @@ import {SetNumberOperation} from '../../operations/SetNumberOperation';
 import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../operations/SetRootOperation';
 import {SetValueOperation} from '../../operations/SetValueOperation';
+import {SESSION} from '../../constants';
 
 export class Encoder extends CrdtEncoder {
   private patchId!: ITimestamp;
@@ -24,7 +25,13 @@ export class Encoder extends CrdtEncoder {
   public encode(patch: Patch): Uint8Array {
     this.reset();
     const id = (this.patchId = patch.getId()!);
-    this.uint53vuint39(id.getSessionId(), id.time);
+    const isServerClock = id.getSessionId() === SESSION.SERVER;
+    if (isServerClock) {
+      this.b1vuint56(true, id.time);
+    } else {
+      this.b1vuint56(false, id.getSessionId());
+      this.vuint57(id.time);
+    }
     this.encodeOperations(patch);
     return this.flush();
   }
@@ -38,14 +45,19 @@ export class Encoder extends CrdtEncoder {
   }
 
   public encodeId(id: ITimestamp) {
-    const patchId = this.patchId;
     const sessionId = id.getSessionId();
     const time = id.time;
-    if (sessionId === patchId.getSessionId() && time >= patchId.time) {
-      this.b1vuint56(true, time - patchId.time);
+    if (sessionId === SESSION.SERVER) {
+      this.b1vuint56(true, id.time);
     } else {
-      this.b1vuint56(false, sessionId);
-      this.vuint57(time);
+      const patchId = this.patchId;
+      if (sessionId === patchId.getSessionId() && time >= patchId.time) {
+        this.b1vuint56(false, 1);
+        this.vuint57(time - patchId.time);
+      } else {
+        this.b1vuint56(false, sessionId);
+        this.vuint57(time);
+      }
     }
   }
 
