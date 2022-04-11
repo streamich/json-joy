@@ -49,6 +49,10 @@ export class ServerTimestamp implements ITimestamp {
     return diff <= 0 ? 0 : diff;
   }
 
+  public stamp(sessionId: number, time: number): ServerTimestamp {
+    return new ServerTimestamp(time);
+  }
+
   public tick(cycles: number): ITimestamp {
     return new ServerTimestamp(this.time + cycles);
   }

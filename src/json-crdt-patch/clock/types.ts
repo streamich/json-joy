@@ -40,6 +40,12 @@ export interface ITimestamp {
   overlap(span: number, ts: ITimestamp, tsSpan: number): number;
 
   /**
+   * @returns Returns a new timestamp with `sessionId` as session
+   *          ID and `time` as time components.
+   */
+  stamp(sessionId: number, time: number): ITimestamp;
+
+  /**
    * @returns Returns a new timestamps with the same session ID and time advanced
    *          by the number of specified clock cycles.
    */

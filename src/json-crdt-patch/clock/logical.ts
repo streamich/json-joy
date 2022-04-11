@@ -20,6 +20,10 @@ export class LogicalTimestamp extends ServerTimestamp implements ITimestamp {
     return this.sessionId;
   }
 
+  public stamp(sessionId: number, time: number): ServerTimestamp {
+    return new LogicalTimestamp(sessionId, time);
+  }
+
   public tick(cycles: number): ITimestamp {
     return new LogicalTimestamp(this.getSessionId(), this.time + cycles);
   }
