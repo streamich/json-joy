@@ -37,7 +37,7 @@ export class Encoder {
     const clock = model.clock;
     const isServerClock = clock.getSessionId() === SESSION.SERVER;
     return {
-      clock: isServerClock ? clock.time : this.encodeClock(model.clock),
+      time: isServerClock ? clock.time : this.encodeClock(model.clock),
       root: this.encodeRoot(model.root),
     };
   }

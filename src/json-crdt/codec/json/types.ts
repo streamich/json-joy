@@ -6,7 +6,7 @@ export interface JsonCrdtSnapshot {
    * Vector clock which contains the latest values of all known logical clocks.
    * The first clock is the local clock of this document.
    */
-  clock: JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp[];
+  time: JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp[];
 
   /**
    * Root node of the document data model.

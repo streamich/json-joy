@@ -7,7 +7,7 @@ describe('server', () => {
     const doc = Model.withServerClock(0);
     const encoder = new Encoder();
     const res = encoder.encode(doc);
-    expect(res).toEqual({clock: 0, root: {type: 'root', id: [0, 0], node: null}});
+    expect(res).toEqual({time: 0, root: {type: 'root', id: [0, 0], node: null}});
   });
   
   test('encodes deleted string chunks', () => {
@@ -17,7 +17,7 @@ describe('server', () => {
     doc.api.str([]).del(1, 1).commit();
     const res = encoder.encode(doc);
     expect(res).toEqual({
-      clock: 6,
+      time: 6,
       root: {
         type: 'root',
         id: 4,
@@ -50,7 +50,7 @@ describe('logical', () => {
     const encoder = new Encoder();
     const res = encoder.encode(doc);
     expect(res).toEqual({
-      clock: [[123, 0]],
+      time: [[123, 0]],
       root: {type: 'root', id: [0, 0], node: null},
     });
   });
@@ -69,7 +69,7 @@ describe('logical', () => {
       .commit();
     const res = encoder.encode(doc);
     expect(res).toEqual({
-      clock: [[123, 13]],
+      time: [[123, 13]],
       root: {
         type: 'root',
         id: [123, 13],
@@ -144,7 +144,7 @@ describe('logical', () => {
     doc.api.str([]).del(1, 1).commit();
     const res = encoder.encode(doc);
     expect(res).toEqual({
-      clock: [[123, 5]],
+      time: [[123, 5]],
       root: {
         type: 'root',
         id: [123, 4],

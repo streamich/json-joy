@@ -34,11 +34,11 @@ import {
 } from './types';
 
 export class Decoder {
-  public decode({clock, root}: JsonCrdtSnapshot): Model {
-    const isServerClock = typeof clock === 'number';
+  public decode({time, root}: JsonCrdtSnapshot): Model {
+    const isServerClock = typeof time === 'number';
     const doc = isServerClock
-      ? Model.withServerClock(clock)
-      : Model.withLogicalClock(this.decodeClock(clock));
+      ? Model.withServerClock(time)
+      : Model.withLogicalClock(this.decodeClock(time));
     this.decodeRoot(doc, root);
     return doc;
   }

@@ -3,7 +3,7 @@ import {LogicalDecoder} from '../LogicalDecoder';
 import {Decoder as JsonDecoder} from '../../json/Decoder';
 
 const json = {
-  clock: [[1540300689752945, 3]],
+  time: [[1540300689752945, 3]],
   root: {
     type: 'root',
     id: [1540300689752945, 1],
