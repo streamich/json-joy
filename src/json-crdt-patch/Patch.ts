@@ -102,11 +102,11 @@ export class Patch {
    * the server clock. When receiving a patch from a client, the starting
    * ID of the patch can be out of sync with the server clock. For example,
    * if some other user has in the meantime pushed operations to the server.
-   * 
+   *
    * The .rebase() operation returns a new `Patch` with the IDs recalculated
    * such that the first operation has ID of the patch is equal to the
    * actual server time tip.
-   * 
+   *
    * @param serverTime Real server time tip (ID of the next expected operation).
    */
   public rebase(serverTime: number, transformHorizon: number): Patch {
@@ -126,6 +126,6 @@ export class Patch {
   }
 
   public clone(): Patch {
-    return this.rewriteTime(id => id);
+    return this.rewriteTime((id) => id);
   }
 }

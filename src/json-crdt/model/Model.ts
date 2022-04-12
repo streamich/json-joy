@@ -215,7 +215,7 @@ export class Model {
         ? Model.withLogicalClock(this.clock.fork(sessionId))
         : Model.withServerClock(this.clock.time);
     model.root = this.root.clone(model);
-    model.api.patches = this.api.patches.map(patch => patch.clone());
+    model.api.patches = this.api.patches.map((patch) => patch.clone());
     return model;
   }
 

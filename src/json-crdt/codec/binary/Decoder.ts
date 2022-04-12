@@ -6,7 +6,15 @@ import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ConstantType} from '../../types/const/ConstantType';
 import {CrdtDecoder} from '../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {FALSE_ID, NULL_ID, ORIGIN, SESSION, SYSTEM_SESSION_TIME, TRUE_ID, UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {
+  FALSE_ID,
+  NULL_ID,
+  ORIGIN,
+  SESSION,
+  SYSTEM_SESSION_TIME,
+  TRUE_ID,
+  UNDEFINED_ID,
+} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {ITimestamp, LogicalTimestamp, ServerTimestamp} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
@@ -62,10 +70,14 @@ export class Decoder extends CrdtDecoder {
         const time = this.vuint57();
         if (sessionId === SESSION.SYSTEM) {
           switch (time) {
-            case SYSTEM_SESSION_TIME.NULL: return NULL_ID;
-            case SYSTEM_SESSION_TIME.TRUE: return TRUE_ID;
-            case SYSTEM_SESSION_TIME.FALSE: return FALSE_ID;
-            case SYSTEM_SESSION_TIME.UNDEFINED: return UNDEFINED_ID;
+            case SYSTEM_SESSION_TIME.NULL:
+              return NULL_ID;
+            case SYSTEM_SESSION_TIME.TRUE:
+              return TRUE_ID;
+            case SYSTEM_SESSION_TIME.FALSE:
+              return FALSE_ID;
+            case SYSTEM_SESSION_TIME.UNDEFINED:
+              return UNDEFINED_ID;
           }
         }
         return new LogicalTimestamp(sessionId, time);

@@ -9,7 +9,7 @@ describe('server', () => {
     const res = encoder.encode(doc);
     expect(res).toEqual({time: 0, root: {type: 'root', id: [0, 0], node: null}});
   });
-  
+
   test('encodes deleted string chunks', () => {
     const doc = Model.withServerClock(0);
     const encoder = new Encoder();

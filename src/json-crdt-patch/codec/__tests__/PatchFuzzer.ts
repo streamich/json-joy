@@ -1,8 +1,15 @@
-import {RandomJson} from "../../../json-random";
-import {ITimestamp, LogicalTimespan, LogicalTimestamp, LogicalVectorClock, ServerTimestamp, ServerVectorClock} from "../../clock";
-import {DeleteOperation} from "../../operations/DeleteOperation";
-import {JsonCrdtPatchOperation, Patch} from "../../Patch";
-import {PatchBuilder} from "../../PatchBuilder";
+import {RandomJson} from '../../../json-random';
+import {
+  ITimestamp,
+  LogicalTimespan,
+  LogicalTimestamp,
+  LogicalVectorClock,
+  ServerTimestamp,
+  ServerVectorClock,
+} from '../../clock';
+import {DeleteOperation} from '../../operations/DeleteOperation';
+import {JsonCrdtPatchOperation, Patch} from '../../Patch';
+import {PatchBuilder} from '../../PatchBuilder';
 
 export class PatchFuzzer {
   public generateLogicalPatch(): Patch {
@@ -30,12 +37,21 @@ export class PatchFuzzer {
         () => builder.num(),
         () => builder.val(RandomJson.generate()),
         () => builder.root(ts()),
-        () => builder.setKeys(ts(), this.repeat(this.generateInteger(1, 10), () => [RandomJson.genString(), ts()])),
+        () =>
+          builder.setKeys(
+            ts(),
+            this.repeat(this.generateInteger(1, 10), () => [RandomJson.genString(), ts()]),
+          ),
         () => builder.setNum(ts(), RandomJson.genNumber()),
         () => builder.setVal(ts(), RandomJson.generate()),
         () => builder.insStr(ts(), ts(), RandomJson.genString()),
         () => builder.insBin(ts(), ts(), RandomJson.genBinary()),
-        () => builder.insArr(ts(), ts(), this.repeat(this.generateInteger(1, 10), () => ts())),
+        () =>
+          builder.insArr(
+            ts(),
+            ts(),
+            this.repeat(this.generateInteger(1, 10), () => ts()),
+          ),
         () => builder.del(ts(), ts(), this.generateSpan()),
         () => builder.noop(this.generateInteger(1, 20)),
       ]);
@@ -55,37 +71,41 @@ export class PatchFuzzer {
   }
 
   public generateLogicalOperation(): JsonCrdtPatchOperation {
-    return new DeleteOperation(this.generateLogicalTimestamp(), this.generateLogicalTimestamp(), this.generateLogicalTimespan());
+    return new DeleteOperation(
+      this.generateLogicalTimestamp(),
+      this.generateLogicalTimestamp(),
+      this.generateLogicalTimespan(),
+    );
   }
 
   public readonly generateLogicalTimestamp = (): LogicalTimestamp => {
-    const sessionId = this.generateInteger(0xFFFF + 1, 0xFFFFFFFFFF);
-    const time = this.generateInteger(0, 0xFFFFFF)
+    const sessionId = this.generateInteger(0xffff + 1, 0xffffffffff);
+    const time = this.generateInteger(0, 0xffffff);
     return new LogicalTimestamp(sessionId, time);
-  }
+  };
 
   public readonly generateServerTimestamp = (): ServerTimestamp => {
-    const time = this.generateInteger(0, 0xFFFFFF)
+    const time = this.generateInteger(0, 0xffffff);
     return new ServerTimestamp(time);
-  }
+  };
 
   public readonly generateLogicalTimespan = (): LogicalTimespan => {
     const sessionId = this.generateSessionId();
     const time = this.generateTime();
     const span = this.generateSpan();
     return new LogicalTimespan(sessionId, time, span);
-  }
+  };
 
   public generateSessionId(): number {
-    return this.generateInteger(0xFFFF + 1, 0xFFFFFFFFFF);
+    return this.generateInteger(0xffff + 1, 0xffffffffff);
   }
 
   public generateTime(): number {
-    return this.generateInteger(0, 0xFFFFFFFFFF)
+    return this.generateInteger(0, 0xffffffffff);
   }
 
   public generateSpan(): number {
-    return this.generateInteger(1, 0xFFFF);
+    return this.generateInteger(1, 0xffff);
   }
 
   public generatePatchLength(): number {

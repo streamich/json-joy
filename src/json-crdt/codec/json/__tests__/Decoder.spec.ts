@@ -72,7 +72,7 @@ describe('logical', () => {
     expect(doc2.clock.time).toBe(doc1.clock.time);
     expect(doc2.clock.clocks.size).toBe(1);
   });
-  
+
   test('decodes all types', () => {
     const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
     const json = {
@@ -91,7 +91,7 @@ describe('logical', () => {
     expect(doc1.toView()).toEqual(json);
     expect(doc2.toView()).toEqual(json);
   });
-  
+
   test('can edit documents after decoding', () => {
     const doc1 = Model.withLogicalClock(new LogicalVectorClock(222, 0));
     const json = {
@@ -115,5 +115,5 @@ describe('logical', () => {
     expect((doc1.toView() as any).arr).toEqual([1, 2, 3]);
     expect((doc2.toView() as any).str).toBe('asdf');
     expect((doc1.toView() as any).str).toBe('__tab__asdf');
-  });  
+  });
 });

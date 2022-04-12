@@ -30,9 +30,7 @@ export class Decoder {
     } else {
       this.clockDecoder = ClockDecoder.fromArr(x as number[]);
     }
-    const doc = isServerTime
-      ? Model.withServerClock(x as number)
-      : Model.withLogicalClock(this.clockDecoder!.clock);
+    const doc = isServerTime ? Model.withServerClock(x as number) : Model.withLogicalClock(this.clockDecoder!.clock);
     const [rootId, index] = this.ts(data, 1);
     const rootNode = data[index] ? this.decodeNode(doc, data[index]) : null;
     doc.root = new DocRootType(doc, rootId, rootNode);
@@ -52,12 +50,18 @@ export class Decoder {
     } else {
       const time = (x as [number])[0];
       switch (time) {
-        case ORIGIN.time: return [ORIGIN, index + 1];
-        case NULL_ID.time: return [NULL_ID, index + 1];
-        case TRUE_ID.time: return [TRUE_ID, index + 1];
-        case FALSE_ID.time: return [FALSE_ID, index + 1];
-        case UNDEFINED_ID.time: return [UNDEFINED_ID, index + 1];
-        default: return [new LogicalTimestamp(SESSION.SYSTEM, time), index + 1];
+        case ORIGIN.time:
+          return [ORIGIN, index + 1];
+        case NULL_ID.time:
+          return [NULL_ID, index + 1];
+        case TRUE_ID.time:
+          return [TRUE_ID, index + 1];
+        case FALSE_ID.time:
+          return [FALSE_ID, index + 1];
+        case UNDEFINED_ID.time:
+          return [UNDEFINED_ID, index + 1];
+        default:
+          return [new LogicalTimestamp(SESSION.SYSTEM, time), index + 1];
       }
     }
   }
@@ -96,7 +100,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const obj = new ObjectType(doc, id);
     const length = data.length;
-    for (let i = index; i < length;) {
+    for (let i = index; i < length; ) {
       const key = data[i] as string;
       const [keyId, idx] = this.ts(data, i + 1);
       const node = this.decodeNode(doc, data[idx]);
@@ -112,7 +116,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const obj = new ArrayType(doc, id);
     const length = data.length;
-    for (let i = index; i < length;) {
+    for (let i = index; i < length; ) {
       const [chunkId, idx] = this.ts(data, i);
       const content = data[idx];
       let chunk: ArrayChunk;
@@ -134,7 +138,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const obj = new StringType(doc, id);
     const length = data.length;
-    for (let i = index; i < length;) {
+    for (let i = index; i < length; ) {
       const [chunkId, idx] = this.ts(data, i);
       const content = data[idx];
       let chunk: StringChunk;
@@ -155,7 +159,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const obj = new BinaryType(doc, id);
     const length = data.length;
-    for (let i = index; i < length;) {
+    for (let i = index; i < length; ) {
       const [chunkId, idx] = this.ts(data, i);
       const content = data[idx];
       let chunk: BinaryChunk;

@@ -21,7 +21,7 @@ const codecs = [
   ['binary', encodeBinary, decodeBinary],
 ];
 
-for (const [env, createPatch] of  environments) {
+for (const [env, createPatch] of environments) {
   describe(`${env} environment`, () => {
     for (const [name, encode, decode] of codecs) {
       describe(`${name} codec`, () => {
@@ -49,4 +49,3 @@ for (const [env, createPatch] of  environments) {
     }
   });
 }
-  

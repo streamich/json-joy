@@ -36,9 +36,7 @@ import {
 export class Decoder {
   public decode({time, root}: JsonCrdtSnapshot): Model {
     const isServerClock = typeof time === 'number';
-    const doc = isServerClock
-      ? Model.withServerClock(time)
-      : Model.withLogicalClock(this.decodeClock(time));
+    const doc = isServerClock ? Model.withServerClock(time) : Model.withLogicalClock(this.decodeClock(time));
     this.decodeRoot(doc, root);
     return doc;
   }
@@ -57,9 +55,7 @@ export class Decoder {
 
   protected decodeTimestamp(ts: JsonCrdtTimestamp): ITimestamp {
     const isServerClock = typeof ts === 'number';
-    return isServerClock
-      ? new ServerTimestamp(ts)
-      : new LogicalTimestamp(ts[0], ts[1]);
+    return isServerClock ? new ServerTimestamp(ts) : new LogicalTimestamp(ts[0], ts[1]);
   }
 
   protected decodeRoot(doc: Model, {id, node}: RootJsonCrdtNode): void {

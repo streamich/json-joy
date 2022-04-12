@@ -26,9 +26,7 @@ export const encode = (patch: Patch): unknown[] => {
 
   const sessionId = id.getSessionId();
   const {time} = id;
-  const res: unknown[] = sessionId === SESSION.SERVER
-    ? [time]
-    : [[sessionId, time]];
+  const res: unknown[] = sessionId === SESSION.SERVER ? [time] : [[sessionId, time]];
 
   const pushTimestamp = (ts: ITimestamp) => {
     const tsSessionId = ts.getSessionId();

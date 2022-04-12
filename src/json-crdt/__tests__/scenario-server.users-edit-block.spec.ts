@@ -59,14 +59,11 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       });
 
       // User 1 saves the block on the server.
-      const encoded1 = (encoder as any).encode(
-        (decoder as any).decode((encoder as any).encode(model1)),
-      );
+      const encoded1 = (encoder as any).encode((decoder as any).decode((encoder as any).encode(model1)));
 
       // User 2 loads the block from the server.
-      const model2 = (decoder as any)
-        .decode((encoder as any).encode((decoder as any).decode(encoded1)));
-      expect(model2.api.str(['name']).node.id.time).toBe(model1.api.str(['name']).node.id.time)
+      const model2 = (decoder as any).decode((encoder as any).encode((decoder as any).decode(encoded1)));
+      expect(model2.api.str(['name']).node.id.time).toBe(model1.api.str(['name']).node.id.time);
       expect(model2.toView()).toStrictEqual(model1.toView());
 
       // User 2 starts their own editing session (NOT NEEDED FOR SERVER CLOCK).

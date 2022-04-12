@@ -1,4 +1,4 @@
-import {Patch} from "./Patch";
+import {Patch} from './Patch';
 
 export class Batch {
   constructor(public readonly patches: Patch[]) {}
@@ -16,6 +16,6 @@ export class Batch {
   }
 
   public clone(): Batch {
-    return new Batch(this.patches.map(patch => patch.clone()));
+    return new Batch(this.patches.map((patch) => patch.clone()));
   }
 }

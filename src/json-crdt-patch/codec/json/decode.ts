@@ -4,15 +4,12 @@ import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {JsonCodecPatch, JsonCodecSetObjectKeysOperation, JsonCodecTimestamp} from './types';
 
-const ts = (time: JsonCodecTimestamp): ITimestamp => typeof time === 'number'
-  ? new ServerTimestamp(time)
-  : new LogicalTimestamp(time[0], time[1]);;
+const ts = (time: JsonCodecTimestamp): ITimestamp =>
+  typeof time === 'number' ? new ServerTimestamp(time) : new LogicalTimestamp(time[0], time[1]);
 
 export const decode = (data: JsonCodecPatch): Patch => {
   const {id, ops} = data;
-  const clock = typeof id === 'number'
-    ? new ServerVectorClock(id)
-    : new LogicalVectorClock(id[0], id[1]);
+  const clock = typeof id === 'number' ? new ServerVectorClock(id) : new LogicalVectorClock(id[0], id[1]);
   const builder = new PatchBuilder(clock);
 
   for (const op of ops) {

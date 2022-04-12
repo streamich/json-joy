@@ -31,6 +31,7 @@ export class Draft {
    */
   public patch(clock: IClock): Patch {
     return this.builder.patch.rewriteTime((id: ITimestamp) =>
-      id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time));
+      id.getSessionId() !== -1 ? id : new LogicalTimestamp(clock.getSessionId(), clock.time + id.time),
+    );
   }
 }
