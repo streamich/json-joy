@@ -10,8 +10,10 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {toBase64} from '../../../util/base64/encode';
 import {ValueType} from '../../types/lww-value/ValueType';
-import type {ITimestamp} from '../../../json-crdt-patch/clock';
-import {
+import {SESSION} from '../../../json-crdt-patch/constants';
+import type {ITimestamp, IVectorClock} from '../../../json-crdt-patch/clock';
+import type {Model} from '../../model';
+import type {
   RootJsonCrdtNode,
   JsonCrdtNode,
   ObjectJsonCrdtNode,
@@ -25,12 +27,37 @@ import {
   ConstantJsonCrdtNode,
   BinaryJsonCrdtNode,
   BinaryJsonCrdtChunk,
+  JsonCrdtLogicalTimestamp,
+  JsonCrdtServerTimestamp,
+  JsonCrdtSnapshot,
 } from './types';
 
-export abstract class AbstractEncoder<Id> {
-  abstract encodeTimestamp(ts: ITimestamp): Id;
+export class Encoder {
+  public encode(model: Model): JsonCrdtSnapshot {
+    const clock = model.clock;
+    const isServerClock = clock.getSessionId() === SESSION.SERVER;
+    return {
+      clock: isServerClock ? clock.time : this.encodeClock(model.clock),
+      root: this.encodeRoot(model.root),
+    };
+  }
 
-  public encodeRoot(root: DocRootType): RootJsonCrdtNode<Id> {
+  public encodeClock(clock: IVectorClock): JsonCrdtLogicalTimestamp[] {
+    const data: JsonCrdtLogicalTimestamp[] = [];
+    const sessionId = clock.getSessionId();
+    const localTs = clock.clocks.get(sessionId);
+    if (!localTs) data.push([sessionId, clock.time]);
+    for (const c of clock.clocks.values()) data.push([c.getSessionId(), c.time]);
+    return data;
+  }
+
+  public encodeTimestamp(ts: ITimestamp): JsonCrdtLogicalTimestamp | JsonCrdtServerTimestamp {
+    return ts.getSessionId() === SESSION.SERVER
+      ? ts.time
+      : [ts.getSessionId(), ts.time];
+  }
+
+  public encodeRoot(root: DocRootType): RootJsonCrdtNode {
     return {
       type: 'root',
       id: this.encodeTimestamp(root.id),
@@ -38,7 +65,7 @@ export abstract class AbstractEncoder<Id> {
     };
   }
 
-  public encodeNode(node: JsonNode): JsonCrdtNode<Id> {
+  public encodeNode(node: JsonNode): JsonCrdtNode {
     if (node instanceof ObjectType) return this.encodeObj(node);
     else if (node instanceof ArrayType) return this.encodeArr(node);
     else if (node instanceof StringType) return this.encodeStr(node);
@@ -48,8 +75,8 @@ export abstract class AbstractEncoder<Id> {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public encodeObj(obj: ObjectType): ObjectJsonCrdtNode<Id> {
-    const chunks: Record<string, ObjectJsonCrdtChunk<Id>> = {};
+  public encodeObj(obj: ObjectType): ObjectJsonCrdtNode {
+    const chunks: Record<string, ObjectJsonCrdtChunk> = {};
     for (const [key, entry] of obj.latest.entries())
       chunks[key] = {
         id: this.encodeTimestamp(entry.id),
@@ -62,8 +89,8 @@ export abstract class AbstractEncoder<Id> {
     };
   }
 
-  public encodeArr(obj: ArrayType): ArrayJsonCrdtNode<Id> {
-    const chunks: (ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
+  public encodeArr(obj: ArrayType): ArrayJsonCrdtNode {
+    const chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     for (const chunk of obj.chunks()) chunks.push(this.encodeArrChunk(chunk));
     return {
       type: 'arr',
@@ -72,23 +99,23 @@ export abstract class AbstractEncoder<Id> {
     };
   }
 
-  public encodeArrChunk(chunk: ArrayChunk): ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
+  public encodeArrChunk(chunk: ArrayChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.deleted) {
-      const tombstone: JsonCrdtRgaTombstone<Id> = {
+      const tombstone: JsonCrdtRgaTombstone = {
         id: this.encodeTimestamp(chunk.id),
         span: chunk.deleted,
       };
       return tombstone;
     }
-    const res: ArrayJsonCrdtChunk<Id> = {
+    const res: ArrayJsonCrdtChunk = {
       id: this.encodeTimestamp(chunk.id),
       nodes: chunk.nodes!.map((n) => this.encodeNode(n)),
     };
     return res;
   }
 
-  public encodeStr(obj: StringType): StringJsonCrdtNode<Id> {
-    const chunks: (StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
+  public encodeStr(obj: StringType): StringJsonCrdtNode {
+    const chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     for (const chunk of obj.chunks()) chunks.push(this.encodeStrChunk(chunk));
     return {
       type: 'str',
@@ -97,23 +124,23 @@ export abstract class AbstractEncoder<Id> {
     };
   }
 
-  public encodeStrChunk(chunk: StringChunk): StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
+  public encodeStrChunk(chunk: StringChunk): StringJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.deleted) {
-      const tombstone: JsonCrdtRgaTombstone<Id> = {
+      const tombstone: JsonCrdtRgaTombstone = {
         id: this.encodeTimestamp(chunk.id),
         span: chunk.deleted,
       };
       return tombstone;
     }
-    const res: StringJsonCrdtChunk<Id> = {
+    const res: StringJsonCrdtChunk = {
       id: this.encodeTimestamp(chunk.id),
       value: chunk.str!,
     };
     return res;
   }
 
-  public encodeBin(obj: BinaryType): BinaryJsonCrdtNode<Id> {
-    const chunks: (BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[] = [];
+  public encodeBin(obj: BinaryType): BinaryJsonCrdtNode {
+    const chunks: (BinaryJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     for (const chunk of obj.chunks()) chunks.push(this.encodeBinChunk(chunk));
     return {
       type: 'bin',
@@ -122,22 +149,22 @@ export abstract class AbstractEncoder<Id> {
     };
   }
 
-  public encodeBinChunk(chunk: BinaryChunk): BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id> {
+  public encodeBinChunk(chunk: BinaryChunk): BinaryJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.deleted) {
-      const tombstone: JsonCrdtRgaTombstone<Id> = {
+      const tombstone: JsonCrdtRgaTombstone = {
         id: this.encodeTimestamp(chunk.id),
         span: chunk.deleted,
       };
       return tombstone;
     }
-    const res: BinaryJsonCrdtChunk<Id> = {
+    const res: BinaryJsonCrdtChunk = {
       id: this.encodeTimestamp(chunk.id),
       value: toBase64(chunk.buf!),
     };
     return res;
   }
 
-  public encodeVal(obj: ValueType): ValueJsonCrdtNode<Id> {
+  public encodeVal(obj: ValueType): ValueJsonCrdtNode {
     return {
       type: 'val',
       id: this.encodeTimestamp(obj.id),

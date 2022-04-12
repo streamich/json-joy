@@ -17,8 +17,8 @@ import {encode as encodeCompact} from '../../../../json-crdt-patch/codec/compact
 import {decode as decodeCompact} from '../../../../json-crdt-patch/codec/compact/decode';
 import {encode as encodeBinary} from '../../../../json-crdt-patch/codec/binary/encode';
 import {decode as decodeBinary} from '../../../../json-crdt-patch/codec/binary/decode';
-import {LogicalEncoder as JsonEncoder} from '../../../codec/json/LogicalEncoder';
-import {LogicalDecoder as JsonDecoder} from '../../../codec/json/LogicalDecoder';
+import {Encoder as JsonEncoder} from '../../../codec/json/Encoder';
+import {Decoder as JsonDecoder} from '../../../codec/json/Decoder';
 import {LogicalEncoder as CompactEncoder} from '../../../codec/compact/LogicalEncoder';
 import {LogicalDecoder as CompactDecoder} from '../../../codec/compact/LogicalDecoder';
 import {LogicalEncoder as BinaryEncoder} from '../../../codec/binary/LogicalEncoder';

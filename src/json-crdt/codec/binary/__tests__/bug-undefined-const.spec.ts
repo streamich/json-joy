@@ -1,6 +1,6 @@
 import {LogicalEncoder} from '../LogicalEncoder';
 import {LogicalDecoder} from '../LogicalDecoder';
-import {LogicalDecoder as JsonDecoder} from '../../json/LogicalDecoder';
+import {Decoder as JsonDecoder} from '../../json/Decoder';
 
 const json = {
   clock: [[1540300689752945, 3]],

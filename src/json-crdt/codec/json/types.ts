@@ -1,38 +1,25 @@
 /**
- * A structural snapshot of JSON CRDT model with logical time.
+ * A structural snapshot of JSON CRDT model.
  */
-export interface JsonCrdtLogicalSnapshot {
+export interface JsonCrdtSnapshot {
   /**
    * Vector clock which contains the latest values of all known logical clocks.
    * The first clock is the local clock of this document.
    */
-  clock: JsonCrdtLogicalTimestamp[];
+  clock: JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp[];
 
   /**
    * Root node of the document data model.
    */
-  root: RootJsonCrdtNode<JsonCrdtLogicalTimestamp>;
+  root: RootJsonCrdtNode;
 }
+
+export type JsonCrdtTimestamp = JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp;
 
 /**
  * A serialized logical clock timestamp.
  */
 export type JsonCrdtLogicalTimestamp = [sessionId: number, time: number];
-
-/**
- * A structural snapshot of JSON CRDT model with server time.
- */
-export interface JsonCrdtServerSnapshot {
-  /**
-   * Latest known time sequence number in this model.
-   */
-  time: JsonCrdtServerTimestamp;
-
-  /**
-   * Root node of the document data model.
-   */
-  root: RootJsonCrdtNode<JsonCrdtServerTimestamp>;
-}
 
 /**
  * A serialized server clock timestamp.
@@ -43,83 +30,83 @@ export type JsonCrdtServerTimestamp = number;
  * The root node of the document, implemented as LWW. Only one root node per
  * document is allowed.
  */
-export interface RootJsonCrdtNode<Id> {
+export interface RootJsonCrdtNode {
   type: 'root';
-  id: Id;
-  node: JsonCrdtNode<Id> | null;
+  id: JsonCrdtTimestamp;
+  node: JsonCrdtNode | null;
 }
 
 /**
  * LWW JSON object node.
  */
-export interface ObjectJsonCrdtNode<Id> {
+export interface ObjectJsonCrdtNode {
   type: 'obj';
-  id: Id;
-  chunks: Record<string, ObjectJsonCrdtChunk<Id>>;
+  id: JsonCrdtTimestamp;
+  chunks: Record<string, ObjectJsonCrdtChunk>;
 }
 
-export interface ObjectJsonCrdtChunk<Id> {
-  id: Id;
-  node: JsonCrdtNode<Id>;
+export interface ObjectJsonCrdtChunk {
+  id: JsonCrdtTimestamp;
+  node: JsonCrdtNode;
 }
 
 /**
  * RGA JSON array node.
  */
-export interface ArrayJsonCrdtNode<Id> {
+export interface ArrayJsonCrdtNode {
   type: 'arr';
-  id: Id;
-  chunks: (ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
+  id: JsonCrdtTimestamp;
+  chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[];
 }
 
-export interface ArrayJsonCrdtChunk<Id> {
-  id: Id;
-  nodes: JsonCrdtNode<Id>[];
+export interface ArrayJsonCrdtChunk {
+  id: JsonCrdtTimestamp;
+  nodes: JsonCrdtNode[];
 }
 
 /**
  * RGA JSON string node.
  */
-export interface StringJsonCrdtNode<Id> {
+export interface StringJsonCrdtNode {
   type: 'str';
-  id: Id;
-  chunks: (StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
+  id: JsonCrdtTimestamp;
+  chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[];
 }
 
-export interface StringJsonCrdtChunk<Id> {
-  id: Id;
+export interface StringJsonCrdtChunk {
+  id: JsonCrdtTimestamp;
   value: string;
 }
 
 /**
  * RGA binary node.
  */
-export interface BinaryJsonCrdtNode<Id> {
+export interface BinaryJsonCrdtNode {
   type: 'bin';
-  id: Id;
-  chunks: (BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>)[];
+  id: JsonCrdtTimestamp;
+  chunks: (BinaryJsonCrdtChunk | JsonCrdtRgaTombstone)[];
 }
 
-export interface BinaryJsonCrdtChunk<Id> {
-  id: Id;
+export interface BinaryJsonCrdtChunk {
+  id: JsonCrdtTimestamp;
   value: string;
 }
 
 /**
  * A tombstone used in RGA nodes.
  */
-export interface JsonCrdtRgaTombstone<Id> {
-  id: Id;
+export interface JsonCrdtRgaTombstone {
+  id: JsonCrdtTimestamp;
   span: number;
 }
 
 /**
  * LWW register for any JSON value.
  */
-export interface ValueJsonCrdtNode<Id> {
+export interface ValueJsonCrdtNode {
   type: 'val';
-  id: Id;
-  writeId: Id;
+  id: JsonCrdtTimestamp;
+  writeId: JsonCrdtTimestamp;
   value: unknown;
 }
 
@@ -131,10 +118,10 @@ export interface ConstantJsonCrdtNode {
   value: unknown;
 }
 
-export type JsonCrdtNode<Id> =
-  | ObjectJsonCrdtNode<Id>
-  | ArrayJsonCrdtNode<Id>
-  | StringJsonCrdtNode<Id>
-  | BinaryJsonCrdtNode<Id>
-  | ValueJsonCrdtNode<Id>
+export type JsonCrdtNode =
+  | ObjectJsonCrdtNode
+  | ArrayJsonCrdtNode
+  | StringJsonCrdtNode
+  | BinaryJsonCrdtNode
+  | ValueJsonCrdtNode
   | ConstantJsonCrdtNode;

@@ -5,8 +5,8 @@ import {LogicalEncoder as EncoderCompact} from '../codec/compact/LogicalEncoder'
 import {LogicalDecoder as DecoderCompact} from '../codec/compact/LogicalDecoder';
 import {LogicalEncoder as EncoderCompactBinary} from '../codec/compact-binary/LogicalEncoder';
 import {LogicalDecoder as DecoderCompactBinary} from '../codec/compact-binary/LogicalDecoder';
-import {LogicalEncoder as EncoderJson} from '../codec/json/LogicalEncoder';
-import {LogicalDecoder as DecoderJson} from '../codec/json/LogicalDecoder';
+import {Encoder as EncoderJson} from '../codec/json/Encoder';
+import {Decoder as DecoderJson} from '../codec/json/Decoder';
 import {encode as encodePatchBinary} from '../../json-crdt-patch/codec/binary/encode';
 import {decode as decodePatchBinary} from '../../json-crdt-patch/codec/binary/decode';
 import {encode as encodePatchCompact} from '../../json-crdt-patch/codec/compact/encode';

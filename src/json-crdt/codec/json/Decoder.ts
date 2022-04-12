@@ -6,7 +6,7 @@ import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {fromBase64} from '../../../util/base64/decode';
-import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock, ServerVectorClock} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {Model} from '../../model';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -28,19 +28,48 @@ import {
   ConstantJsonCrdtNode,
   BinaryJsonCrdtNode,
   BinaryJsonCrdtChunk,
+  JsonCrdtSnapshot,
+  JsonCrdtLogicalTimestamp,
+  JsonCrdtTimestamp,
 } from './types';
 
-export abstract class AbstractDecoder<Id> {
-  protected abstract decodeTimestamp(id: Id): ITimestamp;
+export class Decoder {
+  public decode({clock, root}: JsonCrdtSnapshot): Model {
+    const isServerClock = typeof clock === 'number';
+    const doc = isServerClock
+      ? Model.withServerClock(clock)
+      : Model.withLogicalClock(this.decodeClock(clock));
+    this.decodeRoot(doc, root);
+    return doc;
+  }
 
-  protected decodeRoot(doc: Model, {id, node}: RootJsonCrdtNode<Id>): void {
+  protected decodeClock(timestamps: JsonCrdtLogicalTimestamp[]): LogicalVectorClock {
+    const [ts] = timestamps;
+    const vectorClock = new LogicalVectorClock(ts[0], ts[1]);
+    const length = timestamps.length;
+    for (let i = 0; i < length; i++) {
+      const ts = timestamps[i];
+      const [sessionId, time] = ts;
+      vectorClock.observe(new LogicalTimestamp(sessionId, time), 1);
+    }
+    return vectorClock;
+  }
+
+  protected decodeTimestamp(ts: JsonCrdtTimestamp): ITimestamp {
+    const isServerClock = typeof ts === 'number';
+    return isServerClock
+      ? new ServerVectorClock(ts)
+      : new LogicalTimestamp(ts[0], ts[1]);
+  }
+
+  protected decodeRoot(doc: Model, {id, node}: RootJsonCrdtNode): void {
     const ts = this.decodeTimestamp(id);
     const jsonNode = node ? this.decodeNode(doc, node) : null;
     const root = new DocRootType(doc, ts, jsonNode);
     doc.root = root;
   }
 
-  protected decodeNode(doc: Model, node: JsonCrdtNode<Id>): JsonNode {
+  protected decodeNode(doc: Model, node: JsonCrdtNode): JsonNode {
     switch (node.type) {
       case 'obj':
         return this.decodeObj(doc, node);
@@ -58,7 +87,7 @@ export abstract class AbstractDecoder<Id> {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Model, node: ObjectJsonCrdtNode<Id>): ObjectType {
+  protected decodeObj(doc: Model, node: ObjectJsonCrdtNode): ObjectType {
     const id = this.decodeTimestamp(node.id);
     const obj = new ObjectType(doc, id);
     const keys = Object.keys(node.chunks);
@@ -70,62 +99,62 @@ export abstract class AbstractDecoder<Id> {
     return obj;
   }
 
-  protected decodeArr(doc: Model, node: ArrayJsonCrdtNode<Id>): ArrayType {
+  protected decodeArr(doc: Model, node: ArrayJsonCrdtNode): ArrayType {
     const obj = new ArrayType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeArrChunk(doc, c));
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeArrChunk(doc: Model, c: ArrayJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>): ArrayChunk {
+  protected decodeArrChunk(doc: Model, c: ArrayJsonCrdtChunk | JsonCrdtRgaTombstone): ArrayChunk {
     const id = this.decodeTimestamp(c.id);
-    if (typeof (c as JsonCrdtRgaTombstone<Id>).span === 'number') {
+    if (typeof (c as JsonCrdtRgaTombstone).span === 'number') {
       const chunk = new ArrayChunk(id, undefined);
-      chunk.deleted = (c as JsonCrdtRgaTombstone<Id>).span;
+      chunk.deleted = (c as JsonCrdtRgaTombstone).span;
       return chunk;
     } else
       return new ArrayChunk(
         id,
-        (c as ArrayJsonCrdtChunk<Id>).nodes.map((n) => this.decodeNode(doc, n)),
+        (c as ArrayJsonCrdtChunk).nodes.map((n) => this.decodeNode(doc, n)),
       );
   }
 
-  protected decodeStr(doc: Model, node: StringJsonCrdtNode<Id>): StringType {
+  protected decodeStr(doc: Model, node: StringJsonCrdtNode): StringType {
     const obj = new StringType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeStrChunk(doc, c));
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeStrChunk(doc: Model, c: StringJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>): StringChunk {
+  protected decodeStrChunk(doc: Model, c: StringJsonCrdtChunk | JsonCrdtRgaTombstone): StringChunk {
     const id = this.decodeTimestamp(c.id);
-    if (typeof (c as JsonCrdtRgaTombstone<Id>).span === 'number') {
+    if (typeof (c as JsonCrdtRgaTombstone).span === 'number') {
       const chunk = new StringChunk(id, undefined);
-      chunk.deleted = (c as JsonCrdtRgaTombstone<Id>).span;
+      chunk.deleted = (c as JsonCrdtRgaTombstone).span;
       return chunk;
-    } else return new StringChunk(id, (c as StringJsonCrdtChunk<Id>).value);
+    } else return new StringChunk(id, (c as StringJsonCrdtChunk).value);
   }
 
-  protected decodeBin(doc: Model, node: BinaryJsonCrdtNode<Id>): BinaryType {
+  protected decodeBin(doc: Model, node: BinaryJsonCrdtNode): BinaryType {
     const obj = new BinaryType(doc, this.decodeTimestamp(node.id));
     for (const c of node.chunks) obj.append(this.decodeBinChunk(doc, c));
     doc.nodes.index(obj);
     return obj;
   }
 
-  protected decodeBinChunk(doc: Model, c: BinaryJsonCrdtChunk<Id> | JsonCrdtRgaTombstone<Id>): BinaryChunk {
+  protected decodeBinChunk(doc: Model, c: BinaryJsonCrdtChunk | JsonCrdtRgaTombstone): BinaryChunk {
     const id = this.decodeTimestamp(c.id);
-    if (typeof (c as JsonCrdtRgaTombstone<Id>).span === 'number') {
+    if (typeof (c as JsonCrdtRgaTombstone).span === 'number') {
       const chunk = new BinaryChunk(id, undefined);
-      chunk.deleted = (c as JsonCrdtRgaTombstone<Id>).span;
+      chunk.deleted = (c as JsonCrdtRgaTombstone).span;
       return chunk;
     } else {
-      const data = fromBase64((c as StringJsonCrdtChunk<Id>).value);
+      const data = fromBase64((c as StringJsonCrdtChunk).value);
       return new BinaryChunk(id, data);
     }
   }
 
-  protected decodeVal(doc: Model, node: ValueJsonCrdtNode<Id>): ValueType {
+  protected decodeVal(doc: Model, node: ValueJsonCrdtNode): ValueType {
     const obj = new ValueType(this.decodeTimestamp(node.id), this.decodeTimestamp(node.writeId), node.value);
     doc.nodes.index(obj);
     return obj;
