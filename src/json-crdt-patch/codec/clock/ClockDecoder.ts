@@ -30,10 +30,14 @@ export class ClockDecoder {
   public decodeId(sessionIndex: number, timeDiff: number): ITimestamp {
     if (sessionIndex === SESSION.SYSTEM) {
       switch (timeDiff) {
-        case SYSTEM_SESSION_TIME.NULL: return NULL_ID;
-        case SYSTEM_SESSION_TIME.TRUE: return TRUE_ID;
-        case SYSTEM_SESSION_TIME.FALSE: return FALSE_ID;
-        case SYSTEM_SESSION_TIME.UNDEFINED: return UNDEFINED_ID;
+        case SYSTEM_SESSION_TIME.NULL:
+          return NULL_ID;
+        case SYSTEM_SESSION_TIME.TRUE:
+          return TRUE_ID;
+        case SYSTEM_SESSION_TIME.FALSE:
+          return FALSE_ID;
+        case SYSTEM_SESSION_TIME.UNDEFINED:
+          return UNDEFINED_ID;
       }
       return new LogicalTimestamp(SESSION.SYSTEM, timeDiff);
     }

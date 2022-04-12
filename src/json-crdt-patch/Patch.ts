@@ -14,7 +14,8 @@ import {SetNumberOperation} from './operations/SetNumberOperation';
 import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
 import {SetRootOperation} from './operations/SetRootOperation';
 import {SetValueOperation} from './operations/SetValueOperation';
-import type {ITimestamp} from './clock';
+import {ITimestamp, ServerTimestamp} from './clock';
+import {SESSION} from './constants';
 
 export type JsonCrdtPatchOperation =
   | DeleteOperation
@@ -58,5 +59,73 @@ export class Patch {
     if (!this.ops.length) return 0;
     const lastOp = this.ops[this.ops.length - 1];
     return lastOp.id.time + lastOp.span();
+  }
+
+  public rewriteTime(ts: (id: ITimestamp) => ITimestamp): Patch {
+    const patch = new Patch();
+    const ops = this.ops;
+    const length = ops.length;
+    for (let i = 0; i < length; i++) {
+      const op = ops[i];
+      if (op instanceof DeleteOperation) patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), op.after));
+      else if (op instanceof InsertArrayElementsOperation)
+        patch.ops.push(new InsertArrayElementsOperation(ts(op.id), ts(op.arr), ts(op.after), op.elements.map(ts)));
+      else if (op instanceof InsertStringSubstringOperation)
+        patch.ops.push(new InsertStringSubstringOperation(ts(op.id), ts(op.obj), ts(op.after), op.substring));
+      else if (op instanceof InsertBinaryDataOperation)
+        patch.ops.push(new InsertBinaryDataOperation(ts(op.id), ts(op.obj), ts(op.after), op.data));
+      else if (op instanceof MakeArrayOperation) patch.ops.push(new MakeArrayOperation(ts(op.id)));
+      else if (op instanceof MakeConstantOperation) patch.ops.push(new MakeConstantOperation(ts(op.id), op.value));
+      else if (op instanceof MakeValueOperation) patch.ops.push(new MakeValueOperation(ts(op.id), op.value));
+      else if (op instanceof MakeNumberOperation) patch.ops.push(new MakeNumberOperation(ts(op.id)));
+      else if (op instanceof MakeObjectOperation) patch.ops.push(new MakeObjectOperation(ts(op.id)));
+      else if (op instanceof MakeStringOperation) patch.ops.push(new MakeStringOperation(ts(op.id)));
+      else if (op instanceof MakeBinaryOperation) patch.ops.push(new MakeBinaryOperation(ts(op.id)));
+      else if (op instanceof SetNumberOperation)
+        patch.ops.push(new SetNumberOperation(ts(op.id), ts(op.num), op.value));
+      else if (op instanceof SetObjectKeysOperation)
+        patch.ops.push(
+          new SetObjectKeysOperation(
+            ts(op.id),
+            ts(op.object),
+            op.tuples.map(([key, value]) => [key, ts(value)]),
+          ),
+        );
+      else if (op instanceof SetRootOperation) patch.ops.push(new SetRootOperation(ts(op.id), ts(op.value)));
+      else if (op instanceof NoopOperation) patch.ops.push(new NoopOperation(ts(op.id), op.length));
+    }
+    return patch;
+  }
+
+  /**
+   * The .rebase() operation is meant to work only with patch that use
+   * the server clock. When receiving a patch from a client, the starting
+   * ID of the patch can be out of sync with the server clock. For example,
+   * if some other user has in the meantime pushed operations to the server.
+   *
+   * The .rebase() operation returns a new `Patch` with the IDs recalculated
+   * such that the first operation has ID of the patch is equal to the
+   * actual server time tip.
+   *
+   * @param serverTime Real server time tip (ID of the next expected operation).
+   */
+  public rebase(serverTime: number, transformHorizon: number): Patch {
+    const id = this.getId();
+    if (!id) throw new Error('EMPTY_PATCH');
+    const patchStartTime = id.time;
+    if (patchStartTime === serverTime) return this;
+    const delta = serverTime - patchStartTime;
+    return this.rewriteTime((id: ITimestamp): ITimestamp => {
+      const sessionId = id.getSessionId();
+      const isServerTimestamp = sessionId === SESSION.SERVER;
+      if (!isServerTimestamp) return id;
+      const time = id.time;
+      if (time < transformHorizon) return id;
+      return new ServerTimestamp(time + delta);
+    });
+  }
+
+  public clone(): Patch {
+    return this.rewriteTime((id) => id);
   }
 }

@@ -72,9 +72,9 @@ describe('server', () => {
     expect(doc2.clock.getSessionId()).toBe(1);
     expect(doc2.clock.time).toBe(doc1.clock.time);
   });
-  
+
   const encoder = new Encoder();
-  
+
   test('decodes all types', () => {
     const doc1 = Model.withServerClock();
     const json = {
@@ -92,7 +92,7 @@ describe('server', () => {
     expect(doc1.toView()).toEqual(json);
     expect(doc2.toView()).toEqual(json);
   });
-  
+
   test('can edit documents after decoding', () => {
     const doc1 = Model.withServerClock();
     const json = {

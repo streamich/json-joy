@@ -21,9 +21,7 @@ import type {ITimestamp} from '../../clock';
 import {SESSION} from '../../constants';
 
 const encodeTimestamp = (ts: ITimestamp): JsonCodecTimestamp =>
-  ts.getSessionId() === SESSION.SERVER
-    ? ts.time
-    : [ts.getSessionId(), ts.time];
+  ts.getSessionId() === SESSION.SERVER ? ts.time : [ts.getSessionId(), ts.time];
 
 export const encode = (patch: Patch): JsonCodecPatch => {
   const id = patch.getId();

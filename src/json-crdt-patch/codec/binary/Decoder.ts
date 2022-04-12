@@ -11,9 +11,7 @@ export class Decoder extends CrdtDecoder {
   public decode(data: Uint8Array): Patch {
     this.reset(data);
     const [isServerClock, x] = this.b1vuint56();
-    const clock = isServerClock
-      ? new ServerVectorClock(x)
-      : new LogicalVectorClock(x, this.vuint57());
+    const clock = isServerClock ? new ServerVectorClock(x) : new LogicalVectorClock(x, this.vuint57());
     this.patchId = clock.stamp(clock.getSessionId(), clock.time);
     this.builder = new PatchBuilder(clock);
     this.decodeOperations();

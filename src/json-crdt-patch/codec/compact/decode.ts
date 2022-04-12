@@ -6,9 +6,7 @@ import {Code} from './constants';
 
 export const decode = (data: unknown[]): Patch => {
   const x = data[0];
-  const clock = Array.isArray(x)
-    ? new LogicalVectorClock(x[0], x[1])
-    : new ServerVectorClock(x as number);
+  const clock = Array.isArray(x) ? new LogicalVectorClock(x[0], x[1]) : new ServerVectorClock(x as number);
   const sessionId = clock.getSessionId();
   const time = clock.time;
   const builder = new PatchBuilder(clock);

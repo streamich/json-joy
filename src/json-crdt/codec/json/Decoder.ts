@@ -6,7 +6,7 @@ import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {fromBase64} from '../../../util/base64/decode';
-import {ITimestamp, LogicalTimestamp, LogicalVectorClock, ServerVectorClock} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp, LogicalVectorClock, ServerTimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {Model} from '../../model';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
@@ -36,9 +36,7 @@ import {
 export class Decoder {
   public decode({time, root}: JsonCrdtSnapshot): Model {
     const isServerClock = typeof time === 'number';
-    const doc = isServerClock
-      ? Model.withServerClock(time)
-      : Model.withLogicalClock(this.decodeClock(time));
+    const doc = isServerClock ? Model.withServerClock(time) : Model.withLogicalClock(this.decodeClock(time));
     this.decodeRoot(doc, root);
     return doc;
   }
@@ -57,9 +55,7 @@ export class Decoder {
 
   protected decodeTimestamp(ts: JsonCrdtTimestamp): ITimestamp {
     const isServerClock = typeof ts === 'number';
-    return isServerClock
-      ? new ServerVectorClock(ts)
-      : new LogicalTimestamp(ts[0], ts[1]);
+    return isServerClock ? new ServerTimestamp(ts) : new LogicalTimestamp(ts[0], ts[1]);
   }
 
   protected decodeRoot(doc: Model, {id, node}: RootJsonCrdtNode): void {

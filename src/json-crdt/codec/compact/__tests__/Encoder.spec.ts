@@ -30,7 +30,7 @@ describe('server', () => {
     const res = encoder.encode(doc);
     expect(res).toEqual([0, [0], 0]);
   });
-  
+
   test('can encode object and array', () => {
     const doc = Model.withServerClock();
     const encoder = new Encoder();

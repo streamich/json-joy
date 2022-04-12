@@ -6,7 +6,15 @@ import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ConstantType} from '../../types/const/ConstantType';
 import {CrdtDecoder} from '../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
-import {FALSE_ID, NULL_ID, ORIGIN, SESSION, SYSTEM_SESSION_TIME, TRUE_ID, UNDEFINED_ID} from '../../../json-crdt-patch/constants';
+import {
+  FALSE_ID,
+  NULL_ID,
+  ORIGIN,
+  SESSION,
+  SYSTEM_SESSION_TIME,
+  TRUE_ID,
+  UNDEFINED_ID,
+} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
 import {ITimestamp, LogicalTimestamp, ServerTimestamp} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
@@ -20,12 +28,15 @@ import type {JsonNode} from '../../types';
 export class Decoder extends CrdtDecoder {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
-  protected time: number = 0;
+  protected time: number = -1;
 
   public decode(data: Uint8Array): Model {
+    delete this.clockDecoder;
+    this.time = -1;
     this.reset(data);
     const [isServerTime, x] = this.b1vuint56();
     if (isServerTime) {
+      this.time = x;
       this.doc = Model.withServerClock(x);
     } else {
       this.decodeClockTable(x);
@@ -47,7 +58,7 @@ export class Decoder extends CrdtDecoder {
   }
 
   protected ts(): ITimestamp {
-    if (this.clockDecoder) {
+    if (this.time < 0) {
       const [sessionIndex, timeDiff] = this.id();
       return this.clockDecoder!.decodeId(sessionIndex, timeDiff);
     } else {
@@ -59,10 +70,14 @@ export class Decoder extends CrdtDecoder {
         const time = this.vuint57();
         if (sessionId === SESSION.SYSTEM) {
           switch (time) {
-            case SYSTEM_SESSION_TIME.NULL: return NULL_ID;
-            case SYSTEM_SESSION_TIME.TRUE: return TRUE_ID;
-            case SYSTEM_SESSION_TIME.FALSE: return FALSE_ID;
-            case SYSTEM_SESSION_TIME.UNDEFINED: return UNDEFINED_ID;
+            case SYSTEM_SESSION_TIME.NULL:
+              return NULL_ID;
+            case SYSTEM_SESSION_TIME.TRUE:
+              return TRUE_ID;
+            case SYSTEM_SESSION_TIME.FALSE:
+              return FALSE_ID;
+            case SYSTEM_SESSION_TIME.UNDEFINED:
+              return UNDEFINED_ID;
           }
         }
         return new LogicalTimestamp(sessionId, time);

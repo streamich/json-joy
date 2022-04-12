@@ -52,9 +52,7 @@ export class Encoder {
   }
 
   public encodeTimestamp(ts: ITimestamp): JsonCrdtLogicalTimestamp | JsonCrdtServerTimestamp {
-    return ts.getSessionId() === SESSION.SERVER
-      ? ts.time
-      : [ts.getSessionId(), ts.time];
+    return ts.getSessionId() === SESSION.SERVER ? ts.time : [ts.getSessionId(), ts.time];
   }
 
   public encodeRoot(root: DocRootType): RootJsonCrdtNode {
