@@ -9,7 +9,7 @@ describe('.rebase()', () => {
       const builder = new PatchBuilder(new ServerClock(5));
       builder.insArr(new ServerTimestamp(3), new ServerTimestamp(3), [TRUE_ID]);
       expect(builder.patch.ops[0].id.time).toBe(5);
-      const patch = builder.patch.rebase(10);
+      const patch = builder.patch.rebase(10, 5);
       expect(patch.ops[0].id.time).toBe(10);
     });
 
@@ -17,7 +17,7 @@ describe('.rebase()', () => {
       const builder = new PatchBuilder(new ServerClock(5));
       builder.insArr(new ServerTimestamp(3), new ServerTimestamp(3), [TRUE_ID]);
       expect((builder.patch.ops[0] as InsertArrayElementsOperation).after.time).toBe(3);
-      const patch = builder.patch.rebase(10);
+      const patch = builder.patch.rebase(10, 5);
       expect((patch.ops[0] as InsertArrayElementsOperation).after.time).toBe(3);
     });
 
@@ -25,7 +25,7 @@ describe('.rebase()', () => {
       const builder = new PatchBuilder(new ServerClock(5));
       builder.insArr(new ServerTimestamp(7), new ServerTimestamp(7), [TRUE_ID]);
       expect((builder.patch.ops[0] as InsertArrayElementsOperation).after.time).toBe(7);
-      const patch = builder.patch.rebase(10);
+      const patch = builder.patch.rebase(10, 5);
       expect((patch.ops[0] as InsertArrayElementsOperation).after.time).toBe(12);
     });
   });

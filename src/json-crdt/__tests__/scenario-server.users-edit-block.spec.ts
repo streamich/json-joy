@@ -70,7 +70,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       expect(model2.toView()).toStrictEqual(model1.toView());
 
       // User 2 starts their own editing session (NOT NEEDED FOR SERVER CLOCK).
-      const model3 = model2;//.fork();
+      const model3 = model2.fork();
       const encoded3 = (encoder as any).encode(model3);
       const model4 = (decoder as any).decode(encoded3);
       expect(model4.toView()).toStrictEqual(model1.toView());

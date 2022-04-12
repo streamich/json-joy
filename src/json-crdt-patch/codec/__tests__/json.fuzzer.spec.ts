@@ -39,6 +39,7 @@ for (const [env, createPatch] of  environments) {
               expect(decoded1).toStrictEqual(patch);
               expect(decoded2).toStrictEqual(patch);
             } catch (error) {
+              // tslint:disable-next-line no-console
               console.log(JSON.stringify(encodeJson(patch), null, 2));
               throw error;
             }
