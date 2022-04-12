@@ -97,7 +97,7 @@ export class Encoder extends CrdtEncoder {
       this.encodeAny(op.value);
       return;
     } else if (op instanceof SetNumberOperation) {
-      this.u8(Code.SetValue);
+      this.u8(Code.SetNumber);
       this.encodeId(op.num);
       this.encodeNumber(op.value);
       return;
@@ -133,7 +133,7 @@ export class Encoder extends CrdtEncoder {
     } else if (op instanceof NoopOperation) {
       const {length} = op;
       if (length > 1) {
-        this.u8(Code.NoopOne);
+        this.u8(Code.Noop);
         this.vuint57(length);
         return;
       }
