@@ -1,8 +1,8 @@
 import {Model} from '..';
 import {LogicalEncoder as EncoderBinary} from '../codec/binary/LogicalEncoder';
 import {LogicalDecoder as DecoderBinary} from '../codec/binary/LogicalDecoder';
-import {LogicalEncoder as EncoderCompact} from '../codec/compact/LogicalEncoder';
-import {LogicalDecoder as DecoderCompact} from '../codec/compact/LogicalDecoder';
+import {Encoder as EncoderCompact} from '../codec/compact/Encoder';
+import {Decoder as DecoderCompact} from '../codec/compact/Decoder';
 import {LogicalEncoder as EncoderCompactBinary} from '../codec/compact-binary/LogicalEncoder';
 import {LogicalDecoder as DecoderCompactBinary} from '../codec/compact-binary/LogicalDecoder';
 import {Encoder as EncoderJson} from '../codec/json/Encoder';

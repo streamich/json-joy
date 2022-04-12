@@ -1,10 +1,10 @@
 import {Model} from '../../../';
-import {LogicalEncoder} from '../LogicalEncoder';
-import {LogicalDecoder} from '../LogicalDecoder';
+import {Encoder} from '../Encoder';
+import {Decoder} from '../Decoder';
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 
-const encoder = new LogicalEncoder();
-const decoder = new LogicalDecoder();
+const encoder = new Encoder();
+const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new LogicalVectorClock(5, 0));

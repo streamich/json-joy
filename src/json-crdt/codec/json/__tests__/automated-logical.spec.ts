@@ -19,6 +19,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       expect(doc1.toView()).toEqual(json);
       expect(doc2.toView()).toEqual(json);
       expect(doc3.toView()).toEqual(json);
+      expect(doc3.toString()).toEqual(doc1.toString());
     });
   });
 
@@ -36,6 +37,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       expect(doc1.toView()).toEqual(json);
       expect(doc2.toView()).toEqual(json);
       expect(doc3.toView()).toEqual(json);
+      expect(doc3.toString()).toEqual(doc1.toString());
     });
   });
 }

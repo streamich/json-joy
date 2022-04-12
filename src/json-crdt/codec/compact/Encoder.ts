@@ -2,19 +2,55 @@ import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
 import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {ConstantType} from '../../types/const/ConstantType';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
 import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {ObjectType} from '../../types/lww-object/ObjectType';
+import {SESSION} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {toBase64} from '../../../util/base64/encode';
 import {TypeCode, ValueCode} from './constants';
 import {ValueType} from '../../types/lww-value/ValueType';
+import type {Model} from '../../model';
 
-export abstract class AbstractEncoder {
-  protected abstract ts(arr: unknown[], ts: ITimestamp): void;
+export class Encoder {
+  protected time?: number;
+  protected clock?: ClockEncoder;
+
+  public encode(model: Model): unknown[] {
+    const isServerTime = model.clock.getSessionId() === SESSION.SERVER;
+    const clock = model.clock;
+    const snapshot: unknown[] = isServerTime ? [clock.time] : [null];
+    if (isServerTime) {
+      this.time = clock.time;
+    } else {
+      model.advanceClocks();
+      this.clock = new ClockEncoder(model.clock);
+    }
+    this.encodeRoot(snapshot, model.root);
+    if (!isServerTime) snapshot[0] = this.clock!.toJson();
+    return snapshot;
+  }
+
+  protected ts(arr: unknown[], ts: ITimestamp): void {
+    switch (ts.getSessionId()) {
+      case SESSION.SYSTEM: {
+        arr.push([ts.time]);
+        break;
+      }
+      case SESSION.SERVER: {
+        arr.push(this.time! - ts.time);
+        break;
+      }
+      default: {
+        const relativeId = this.clock!.append(ts);
+        arr.push(-relativeId.sessionIndex, relativeId.timeDiff);
+      }
+    }
+  }
 
   protected encodeRoot(arr: unknown[], root: DocRootType): void {
     this.ts(arr, root.id);

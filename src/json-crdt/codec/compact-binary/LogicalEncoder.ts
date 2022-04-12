@@ -1,4 +1,4 @@
-import {LogicalEncoder as CompactEncoder} from '../compact/LogicalEncoder';
+import {Encoder as CompactEncoder} from '../compact/Encoder';
 import {encoderFull} from '../../../json-pack/util';
 import {Model} from '../../model';
 

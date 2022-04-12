@@ -1,4 +1,4 @@
-import {LogicalDecoder as CompactDecoder} from '../compact/LogicalDecoder';
+import {Decoder as CompactDecoder} from '../compact/Decoder';
 import {decoder} from '../../../json-pack/util';
 import {Model} from '../../model';
 
