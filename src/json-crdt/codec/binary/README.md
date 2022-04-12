@@ -48,29 +48,25 @@ The general structure of the document is composed of three sections:
 
 ### The header section
 
-When document uses logical timestamps as IDs, the header consists of a single
-zero byte.
+The header begins with a single b1vuint56 value, where the first bit is a flag,
+which encodes which vector clock type is used.
 
 ```
-+--------+
-|  0x00  |
-+--------+
++===========+
+| b1vuint56 |
++===========+
 ```
 
-When document uses monotonically growing sequence numbers as Ids, the header
-consists of:
+If the flag is set, the document is using "server timestamps" as unique IDs. Where
+a timestamp is just an increasing sequence of numbers, and server enforces the
+order. When the flag is set, the value of the b1vuint56 is the number which represents
+the next timestamp in the document.
 
-1. a single byte set to 0x01
-2. The latest sequence number of the whole document, encoded as vuint57.
-
-```
-+--------+=========+
-|  0x01  | vuint57 |
-+--------+=========+
-```
-
-In both cases, if the type of the ID is known from the context, the first byte
-can be skipped.
+If the flag is not set, the document is using "logical timestamps" as unique IDs.
+A logical timestamp is a 2-tuple, where the fist element is a randomly generated
+editing session ID, and the second element is a monotonically increasing sequence
+number. When the flag is not set, the value of the b1vuint56 is the length of the
+clock table.
 
 
 ### The vector clock table section
