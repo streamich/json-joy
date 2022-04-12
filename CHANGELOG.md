@@ -1,3 +1,16 @@
+# [7.6.0](https://github.com/streamich/json-joy/compare/v7.5.0...v7.6.0) (2022-04-12)
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add .stamp() method to timestamps ([e76d233](https://github.com/streamich/json-joy/commit/e76d2334498dcf7c82c3838dfc3c8fef74db7afc))
+* **json-crdt-patch:** 🎸 add support for server clock operations in compact codec ([a6c1caa](https://github.com/streamich/json-joy/commit/a6c1caab2efdc2c50a4b91d66bba8b77038c3e39))
+* **json-crdt-patch:** 🎸 intorduce system session time constants ([3dc4696](https://github.com/streamich/json-joy/commit/3dc4696298d15eb8aceb27fdcbf4f3fd7faa76d8))
+* **json-crdt-patch:** 🎸 make json codec work with server clock ([c2e4818](https://github.com/streamich/json-joy/commit/c2e4818c7ed5d34477b08761a7eecfa03eab562c))
+* **json-crdt-patch:** 🎸 support server clock in binary codec ([b056ac9](https://github.com/streamich/json-joy/commit/b056ac93260c9edb2590257cc7fb510fdbb65b0f))
+* **json-crdt-patch:** 🎸 use constants in vector clock codec ([64f1d26](https://github.com/streamich/json-joy/commit/64f1d26a585097a144b93842ea631bc111024e33))
+* **json-crdt:** 🎸 unify implementations in binary codec ([ea663a2](https://github.com/streamich/json-joy/commit/ea663a2452895de0885d44d393e1654a7a6a6406))
+
 # [7.5.0](https://github.com/streamich/json-joy/compare/v7.4.0...v7.5.0) (2022-04-10)
 
 
