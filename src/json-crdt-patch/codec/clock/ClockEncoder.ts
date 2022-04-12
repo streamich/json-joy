@@ -1,4 +1,5 @@
 import type {ITimestamp, IVectorClock} from '../../clock';
+import {SESSION} from '../../constants';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 export class ClockEncoder {
@@ -15,7 +16,7 @@ export class ClockEncoder {
   public append(ts: ITimestamp): RelativeTimestamp {
     const {time} = ts;
     const sessionId = ts.getSessionId();
-    if (sessionId === 0) return new RelativeTimestamp(0, ts.time);
+    if (sessionId === SESSION.SYSTEM) return new RelativeTimestamp(0, ts.time);
     const clock = this.clock.clocks.get(sessionId);
     if (!clock) throw new Error(`Clock not found (${sessionId}, ${time}).`);
     if (!this.table.has(sessionId)) this.table.set(sessionId, this.index++);

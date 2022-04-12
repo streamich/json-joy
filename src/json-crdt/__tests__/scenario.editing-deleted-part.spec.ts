@@ -1,12 +1,12 @@
 import {Model} from '..';
-import {LogicalEncoder as EncoderBinary} from '../codec/binary/LogicalEncoder';
-import {LogicalDecoder as DecoderBinary} from '../codec/binary/LogicalDecoder';
-import {LogicalEncoder as EncoderCompact} from '../codec/compact/LogicalEncoder';
-import {LogicalDecoder as DecoderCompact} from '../codec/compact/LogicalDecoder';
+import {Encoder as EncoderBinary} from '../codec/binary/Encoder';
+import {Decoder as DecoderBinary} from '../codec/binary/Decoder';
+import {Encoder as EncoderCompact} from '../codec/compact/Encoder';
+import {Decoder as DecoderCompact} from '../codec/compact/Decoder';
 import {LogicalEncoder as EncoderCompactBinary} from '../codec/compact-binary/LogicalEncoder';
 import {LogicalDecoder as DecoderCompactBinary} from '../codec/compact-binary/LogicalDecoder';
-import {LogicalEncoder as EncoderJson} from '../codec/json/LogicalEncoder';
-import {LogicalDecoder as DecoderJson} from '../codec/json/LogicalDecoder';
+import {Encoder as EncoderJson} from '../codec/json/Encoder';
+import {Decoder as DecoderJson} from '../codec/json/Decoder';
 import {encode as encodePatchBinary} from '../../json-crdt-patch/codec/binary/encode';
 import {decode as decodePatchBinary} from '../../json-crdt-patch/codec/binary/decode';
 import {encode as encodePatchCompact} from '../../json-crdt-patch/codec/compact/encode';

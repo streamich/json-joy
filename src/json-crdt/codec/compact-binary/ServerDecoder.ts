@@ -1,4 +1,4 @@
-import {ServerDecoder as CompactDecoder} from '../compact/ServerDecoder';
+import {Decoder as CompactDecoder} from '../compact/Decoder';
 import {decoder} from '../../../json-pack/util';
 import {Model} from '../../model';
 
