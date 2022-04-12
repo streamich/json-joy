@@ -109,7 +109,7 @@ export class Patch {
    * 
    * @param serverTime Real server time tip (ID of the next expected operation).
    */
-  public rebase(serverTime: number): Patch {
+  public rebase(serverTime: number, transformHorizon: number): Patch {
     const id = this.getId();
     if (!id) throw new Error('EMPTY_PATCH');
     const patchStartTime = id.time;
@@ -120,8 +120,12 @@ export class Patch {
       const isServerTimestamp = sessionId === SESSION.SERVER;
       if (!isServerTimestamp) return id;
       const time = id.time;
-      if (time < patchStartTime) return id;
+      if (time < transformHorizon) return id;
       return new ServerTimestamp(time + delta);
     });
+  }
+
+  public clone(): Patch {
+    return this.rewriteTime(id => id);
   }
 }
