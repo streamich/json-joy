@@ -16,7 +16,7 @@ import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOp
 import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
 import {ModelApi} from './api/ModelApi';
 import {ObjectType} from '../types/lww-object/ObjectType';
-import {ORIGIN} from '../../json-crdt-patch/constants';
+import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
@@ -93,15 +93,15 @@ export class Model {
 
   /** Returns an indexed node, if any. */
   public node(id: ITimestamp): JsonNode | undefined {
-    if (id.getSessionId() === 0) {
+    if (id.getSessionId() === SESSION.SYSTEM) {
       switch (id.time) {
-        case 1:
+        case SYSTEM_SESSION_TIME.NULL:
           return NULL;
-        case 2:
+        case SYSTEM_SESSION_TIME.TRUE:
           return TRUE;
-        case 3:
+        case SYSTEM_SESSION_TIME.FALSE:
           return FALSE;
-        case 4:
+        case SYSTEM_SESSION_TIME.UNDEFINED:
           return UNDEFINED;
       }
     }
