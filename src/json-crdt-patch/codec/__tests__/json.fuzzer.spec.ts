@@ -7,36 +7,45 @@ import {encode as encodeCompactBinary} from '../compact-binary/encode';
 import {decode as decodeCompactBinary} from '../compact-binary/decode';
 import {encode as encodeBinary} from '../binary/encode';
 import {decode as decodeBinary} from '../binary/decode';
+import {Patch} from '../../Patch';
 
+const fuzzer = new PatchFuzzer();
+const environments: [string, () => Patch][] = [
+  ['logical', () => fuzzer.generateLogicalPatch()],
+  ['server', () => fuzzer.generateServerPatch()],
+];
 const codecs = [
   ['json', encodeJson, decodeJson],
   ['compact', encodeCompact, decodeCompact],
   ['compact-binary', encodeCompactBinary, decodeCompactBinary],
   ['binary', encodeBinary, decodeBinary],
 ];
-const fuzzer = new PatchFuzzer();
 
-for (const [name, encode, decode] of codecs) {
-  describe(`${name} codec`, () => {
-    test('fuzz testing a patch codec', () => {
-      for (let i = 0; i < 1000; i++) {
-        const patch = fuzzer.generateLogicalPatch();
-        try {
-          const encoded1 = (encode as any)(patch);
-          const decoded1 = (decode as any)(encoded1);
-          const encoded2 = (encode as any)(decoded1);
-          const decoded2 = (decode as any)(encoded2);
-          // console.log(patch);
-          // console.log(JSON.stringify(encoded1, null, 2));
-          // console.log(JSON.stringify(encoded2, null, 2));
-          expect(decoded1).toStrictEqual(patch);
-          expect(decoded2).toStrictEqual(patch);
-        } catch (error) {
-          console.log(JSON.stringify(encodeJson(patch), null, 2));
-          throw error;
-        }
-      }
-    });
+for (const [env, createPatch] of  environments) {
+  describe(`${env} environment`, () => {
+    for (const [name, encode, decode] of codecs) {
+      describe(`${name} codec`, () => {
+        test('fuzz testing a patch codec', () => {
+          for (let i = 0; i < 200; i++) {
+            const patch = createPatch();
+            try {
+              const encoded1 = (encode as any)(patch);
+              const decoded1 = (decode as any)(encoded1);
+              const encoded2 = (encode as any)(decoded1);
+              const decoded2 = (decode as any)(encoded2);
+              // console.log(patch);
+              // console.log(JSON.stringify(encoded1, null, 2));
+              // console.log(JSON.stringify(encoded2, null, 2));
+              expect(decoded1).toStrictEqual(patch);
+              expect(decoded2).toStrictEqual(patch);
+            } catch (error) {
+              console.log(JSON.stringify(encodeJson(patch), null, 2));
+              throw error;
+            }
+          }
+        });
+      });
+    }
   });
 }
   
