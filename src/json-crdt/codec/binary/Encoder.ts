@@ -22,6 +22,8 @@ export class Encoder extends CrdtEncoder {
   protected time?: number;
 
   public encode(model: Model): Uint8Array {
+    delete this.clockEncoder;
+    delete this.time;
     this.reset();
     const clock = model.clock;
     const isServerClock = clock.getSessionId() === SESSION.SERVER;
@@ -36,6 +38,7 @@ export class Encoder extends CrdtEncoder {
     const data = this.flush();
     if (isServerClock) return data;
     this.encodeClockTable(data);
+    delete this.clockEncoder;
     return this.flush();
   }
 

@@ -20,12 +20,15 @@ import type {JsonNode} from '../../types';
 export class Decoder extends CrdtDecoder {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
-  protected time: number = 0;
+  protected time: number = -1;
 
   public decode(data: Uint8Array): Model {
+    delete this.clockDecoder;
+    this.time = -1;
     this.reset(data);
     const [isServerTime, x] = this.b1vuint56();
     if (isServerTime) {
+      this.time = x;
       this.doc = Model.withServerClock(x);
     } else {
       this.decodeClockTable(x);
@@ -47,7 +50,7 @@ export class Decoder extends CrdtDecoder {
   }
 
   protected ts(): ITimestamp {
-    if (this.clockDecoder) {
+    if (this.time < 0) {
       const [sessionIndex, timeDiff] = this.id();
       return this.clockDecoder!.decodeId(sessionIndex, timeDiff);
     } else {
