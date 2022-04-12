@@ -96,4 +96,32 @@ export class Patch {
     }
     return patch;
   }
+
+  /**
+   * The .rebase() operation is meant to work only with patch that use
+   * the server clock. When receiving a patch from a client, the starting
+   * ID of the patch can be out of sync with the server clock. For example,
+   * if some other user has in the meantime pushed operations to the server.
+   * 
+   * The .rebase() operation returns a new `Patch` with the IDs recalculated
+   * such that the first operation has ID of the patch is equal to the
+   * actual server time tip.
+   * 
+   * @param serverTime Real server time tip (ID of the next expected operation).
+   */
+  public rebase(serverTime: number): Patch {
+    const id = this.getId();
+    if (!id) throw new Error('EMPTY_PATCH');
+    const patchStartTime = id.time;
+    if (patchStartTime === serverTime) return this;
+    const delta = serverTime - patchStartTime;
+    return this.rewriteTime((id: ITimestamp): ITimestamp => {
+      const sessionId = id.getSessionId();
+      const isServerTimestamp = sessionId === SESSION.SERVER;
+      if (!isServerTimestamp) return id;
+      const time = id.time;
+      if (time < patchStartTime) return id;
+      return new ServerTimestamp(time + delta);
+    });
+  }
 }
