@@ -1,3 +1,19 @@
+# [7.7.0](https://github.com/streamich/json-joy/compare/v7.6.0...v7.7.0) (2022-04-12)
+
+
+### Bug Fixes
+
+* **json-crdt-patch:** 🐛 use correct opcodes in binary encoder ([dc939ac](https://github.com/streamich/json-joy/commit/dc939ac2bb3ac618462eee1f3ad1244a15aad544))
+* **json-crdt:** 🐛 correctly encode/decode using binary codec ([ba9bd7f](https://github.com/streamich/json-joy/commit/ba9bd7f9577efcd9ed0324a26798a8d734cc027c))
+* **json-crdt:** 🐛 use correct timestamp class ([89e31ab](https://github.com/streamich/json-joy/commit/89e31ab3ba652920f677de7c5ba67eb475176f65))
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 add initial Batch class ([12a91da](https://github.com/streamich/json-joy/commit/12a91da3aa219035882c7a649179d9900b2a746d))
+* **json-crdt-patch:** 🎸 add Patch.rebase() method ([472637a](https://github.com/streamich/json-joy/commit/472637a13af248bd29abc78572f531dc43848e89))
+* **json-crdt:** 🎸 clone api patches when cloning the model ([5420814](https://github.com/streamich/json-joy/commit/54208143c939fbdb7b668d329848913e4ace6bcc))
+
 # [7.6.0](https://github.com/streamich/json-joy/compare/v7.5.0...v7.6.0) (2022-04-12)
 
 
