@@ -13,9 +13,65 @@ import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {utf8Count} from '../../../util/utf8';
 import {ValueType} from '../../types/lww-value/ValueType';
+import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
+import type {Model} from '../../model';
+import {SESSION} from '../../../json-crdt-patch/constants';
 
-export abstract class AbstractEncoder extends CrdtEncoder {
-  protected abstract ts(ts: ITimestamp): void;
+export class Encoder extends CrdtEncoder {
+  protected clockEncoder?: ClockEncoder;
+  protected time?: number;
+
+  public encode(model: Model): Uint8Array {
+    this.reset();
+    const clock = model.clock;
+    const isServerClock = clock.getSessionId() === SESSION.SERVER;
+    if (isServerClock) {
+      this.time = clock.time;
+      this.b1vuint56(true, clock.time);
+    } else {
+      model.advanceClocks();
+      this.clockEncoder = new ClockEncoder(model.clock);
+    }
+    this.encodeRoot(model.root);
+    const data = this.flush();
+    if (isServerClock) return data;
+    this.encodeClockTable(data);
+    return this.flush();
+  }
+
+  protected encodeClockTable(data: Uint8Array) {
+    const clockEncoder = this.clockEncoder!;
+    const length = clockEncoder.table.size;
+    const dataSize = data.byteLength;
+    this.uint8 = new Uint8Array(8 + 12 * length + dataSize);
+    this.view = new DataView(this.uint8.buffer, this.uint8.byteOffset, this.uint8.byteLength);
+    this.offset = 0;
+    this.b1vuint56(false, length);
+    for (const sid of clockEncoder.table.keys()) {
+      const ts = clockEncoder.clock.clocks.get(sid);
+      if (ts) this.uint53vuint39(sid, ts.time);
+      else if (sid === clockEncoder.clock.getSessionId()) this.uint53vuint39(sid, 0);
+      else {
+        // Should never happen.
+      }
+    }
+    this.buf(data, dataSize);
+  }
+
+  protected ts(ts: ITimestamp) {
+    if (this.clockEncoder) {
+      const relativeId = this.clockEncoder!.append(ts);
+      this.id(relativeId.sessionIndex, relativeId.timeDiff);
+    } else {
+      const sessionId = ts.getSessionId();
+      if (sessionId === SESSION.SERVER) {
+        this.b1vuint56(true, this.time! - ts.time);
+      } else {
+        this.b1vuint56(false, sessionId);
+        this.vuint57(ts.time);
+      }
+    }
+  }
 
   protected encodeRoot(root: DocRootType): void {
     this.ts(root.id);

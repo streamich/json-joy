@@ -2,26 +2,76 @@ import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
 import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ClockDecoder} from '../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ConstantType} from '../../types/const/ConstantType';
 import {CrdtDecoder} from '../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
+import {FALSE_ID, NULL_ID, ORIGIN, SESSION, SYSTEM_SESSION_TIME, TRUE_ID, UNDEFINED_ID} from '../../../json-crdt-patch/constants';
 import {FALSE, NULL, TRUE, UNDEFINED} from '../../constants';
-import {ITimestamp} from '../../../json-crdt-patch/clock';
+import {ITimestamp, LogicalTimestamp, ServerTimestamp} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
-import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {ValueType} from '../../types/lww-value/ValueType';
 import type {JsonNode} from '../../types';
 
-export abstract class AbstractDecoder extends CrdtDecoder {
+export class Decoder extends CrdtDecoder {
   protected doc!: Model;
+  protected clockDecoder?: ClockDecoder;
+  protected time: number = 0;
 
-  protected abstract ts(): ITimestamp;
+  public decode(data: Uint8Array): Model {
+    this.reset(data);
+    const [isServerTime, x] = this.b1vuint56();
+    if (isServerTime) {
+      this.doc = Model.withServerClock(x);
+    } else {
+      this.decodeClockTable(x);
+      this.doc = Model.withLogicalClock(this.clockDecoder!.clock);
+    }
+    this.decodeRoot();
+    delete this.clockDecoder;
+    return this.doc;
+  }
 
-  protected decodeRoot(doc: Model): void {
+  protected decodeClockTable(length: number): void {
+    const [sessionId, time] = this.uint53vuint39();
+    this.clockDecoder = new ClockDecoder(sessionId, 0);
+    this.clockDecoder.pushTuple(sessionId, time);
+    for (let i = 1; i < length; i++) {
+      const ts = this.uint53vuint39();
+      this.clockDecoder.pushTuple(ts[0], ts[1]);
+    }
+  }
+
+  protected ts(): ITimestamp {
+    if (this.clockDecoder) {
+      const [sessionIndex, timeDiff] = this.id();
+      return this.clockDecoder!.decodeId(sessionIndex, timeDiff);
+    } else {
+      const [isServerTime, x] = this.b1vuint56();
+      if (isServerTime) {
+        return new ServerTimestamp(this.time! - x);
+      } else {
+        const sessionId = x;
+        const time = this.vuint57();
+        if (sessionId === SESSION.SYSTEM) {
+          switch (time) {
+            case SYSTEM_SESSION_TIME.NULL: return NULL_ID;
+            case SYSTEM_SESSION_TIME.TRUE: return TRUE_ID;
+            case SYSTEM_SESSION_TIME.FALSE: return FALSE_ID;
+            case SYSTEM_SESSION_TIME.UNDEFINED: return UNDEFINED_ID;
+          }
+        }
+        return new LogicalTimestamp(sessionId, time);
+      }
+    }
+  }
+
+  protected decodeRoot(): void {
+    const doc = this.doc;
     const id = this.ts();
     const node = this.x >= this.uint8.byteLength ? null : this.decodeNode();
     doc.root = new DocRootType(doc, id, node);

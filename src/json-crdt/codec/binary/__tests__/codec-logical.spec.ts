@@ -1,10 +1,10 @@
 import {Model} from '../../../';
-import {LogicalEncoder} from '../LogicalEncoder';
-import {LogicalDecoder} from '../LogicalDecoder';
+import {Encoder} from '../Encoder';
+import {Decoder} from '../Decoder';
 import {LogicalVectorClock} from '../../../../json-crdt-patch/clock';
 
-const encoder = new LogicalEncoder();
-const decoder = new LogicalDecoder();
+const encoder = new Encoder();
+const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new LogicalVectorClock(5, 0));
@@ -32,7 +32,7 @@ test('forking and encoding/decoding results in the same node IDs', () => {
 });
 
 test('vector clocks are the same after decoding', () => {
-  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(555555, 0));
   model1.api.root('').commit();
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
@@ -40,7 +40,7 @@ test('vector clocks are the same after decoding', () => {
 });
 
 test('decoded root node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(666666, 0));
   model1.api.root('').commit();
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
@@ -48,7 +48,7 @@ test('decoded root node ID is correct', () => {
 });
 
 test('simple string document decoded string node ID is correct', () => {
-  const model1 = Model.withLogicalClock(new LogicalVectorClock(1, 0));
+  const model1 = Model.withLogicalClock(new LogicalVectorClock(777777, 0));
   model1.api.root('').commit();
   const encoded1 = encoder.encode(model1);
   const decoded1 = decoder.decode(encoded1);
