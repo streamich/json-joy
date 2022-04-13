@@ -1,3 +1,4 @@
+import {Batch} from '../../../json-crdt-patch/Batch';
 import {Finder} from './Finder';
 import {JsonNode} from '../../types';
 import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
@@ -10,7 +11,7 @@ import type {Model} from '../Model';
 
 export class ModelApi {
   /** Buffer of accumulated patches. */
-  public patches: Patch[] = [];
+  public batch: Batch = new Batch([]);
 
   /** Currently active builder. */
   public builder: PatchBuilder;
@@ -60,16 +61,14 @@ export class ModelApi {
     const patch = this.builder.patch;
     this.builder = new PatchBuilder(this.model.clock);
     if (patch.ops.length) {
-      this.patches.push(patch);
+      this.batch.patches.push(patch);
       this.model.applyPatch(patch);
     }
     return patch;
   }
 
   public flush(): Patch[] {
-    const patches = this.patches;
-    this.patches = [];
-    return patches;
+    return this.batch.flush();
   }
 
   public flushPatch(): Patch {

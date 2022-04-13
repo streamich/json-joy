@@ -150,13 +150,13 @@ describe('patch()', () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     api.root({foo: 'abc'}).commit();
-    expect(api.patches.length).toBe(1);
+    expect(api.batch.patches.length).toBe(1);
     expect(doc.toView()).toEqual({foo: 'abc'});
     api.patch(() => {
       api.str(['foo']).ins(1, '1');
       api.str(['foo']).ins(3, '2');
     });
-    expect(api.patches.length).toBe(2);
+    expect(api.batch.patches.length).toBe(2);
     expect(doc.toView()).toEqual({foo: 'a1bc2'});
   });
 });

@@ -1,7 +1,7 @@
 import {Patch} from './Patch';
 
 export class Batch {
-  constructor(public readonly patches: Patch[]) {}
+  constructor(public patches: Patch[]) {}
 
   public rebase(serverTime: number): Batch {
     const transformHorizon: number = serverTime;
@@ -17,5 +17,11 @@ export class Batch {
 
   public clone(): Batch {
     return new Batch(this.patches.map((patch) => patch.clone()));
+  }
+
+  public flush(): Patch[] {
+    const patches = this.patches;
+    this.patches = [];
+    return patches;
   }
 }
