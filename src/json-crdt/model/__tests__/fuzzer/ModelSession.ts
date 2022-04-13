@@ -53,7 +53,7 @@ export class ModelSession {
   }
 
   private generatePeerEdits(peer: number) {
-    const patchCount = Math.ceil(Math.random() * this.fuzzer.opts.maxPatchesPerPeer);
+    const patchCount = Math.floor(Math.random() * (this.fuzzer.opts.maxPatchesPerPeer + 1));
     for (let patchIndex = 0; patchIndex < patchCount; patchIndex++) {
       this.generatePatchForPeer(peer);
     }
