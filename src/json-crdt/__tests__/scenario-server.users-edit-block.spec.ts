@@ -90,7 +90,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       });
 
       // User 2 sends their changes to the server.
-      const patches1 = model3.api.flush();
+      const patches1 = model3.api.flush().patches;
       const batch = patches1.map(encodePatch as any);
 
       // Server receives and applies User 2's changes.
@@ -155,7 +155,7 @@ for (const [modelCodecName, encoder, decoder] of modelCodecs) {
       });
 
       // User 1 sends their changes to the server.
-      const patches4 = model111.api.flush();
+      const patches4 = model111.api.flush().patches;
       const batch2 = patches4.map(encodePatch as any);
       const patches5 = batch2.map(decodePatch as any);
       const model6 = (decoder as any).decode(encoded5);

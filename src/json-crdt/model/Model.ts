@@ -1,4 +1,5 @@
 import {ArrayType} from '../types/rga-array/ArrayType';
+import {Batch} from '../../json-crdt-patch/Batch';
 import {BinaryType} from '../types/rga-binary/BinaryType';
 import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
 import {DocRootType} from '../types/lww-doc-root/DocRootType';
@@ -108,6 +109,12 @@ export class Model {
     return this.nodes.get(id);
   }
 
+  public applyBatch(batch: Batch) {
+    const patches = batch.patches;
+    const {length} = patches;
+    for (let i = 0; i < length; i++) this.applyPatch(patches[i]);
+  }
+
   /**
    * Applies a single patch to the document. All mutations to the model must go
    * through this method.
@@ -198,16 +205,6 @@ export class Model {
     }
   }
 
-  /** Creates a copy of this model with the same session ID. */
-  public clone(): Model {
-    const model =
-      this.clock instanceof LogicalVectorClock
-        ? Model.withLogicalClock(this.clock.clone())
-        : Model.withServerClock(this.clock.time);
-    model.root = this.root.clone(model);
-    return model;
-  }
-
   /** Creates a copy of this model with a new session ID. */
   public fork(sessionId: number = randomSessionId()): Model {
     const model =
@@ -217,6 +214,11 @@ export class Model {
     model.root = this.root.clone(model);
     model.api.batch = this.api.batch.clone();
     return model;
+  }
+
+  /** Creates a copy of this model with the same session ID. */
+  public clone(): Model {
+    return this.fork(this.clock.getSessionId());
   }
 
   /** @returns Returns the view of the model. */
