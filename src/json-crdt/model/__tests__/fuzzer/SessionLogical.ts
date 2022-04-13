@@ -3,7 +3,7 @@ import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operat
 import {Patch} from '../../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 import {StringType} from '../../../types/rga-string/StringType';
-import type {ModelFuzzer} from './ModelFuzzer';
+import type {Fuzzer} from './Fuzzer';
 import {ObjectType} from '../../../types/lww-object/ObjectType';
 import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
 import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
@@ -34,11 +34,11 @@ const compactDecoder = new CompactDecoder();
 const binaryEncoder = new BinaryEncoder();
 const binaryDecoder = new BinaryDecoder();
 
-export class ModelSession {
+export class SessionLogical {
   public models: Model[] = [];
   public patches: Patch[][] = [];
 
-  public constructor(public fuzzer: ModelFuzzer, public concurrency: number) {
+  public constructor(public fuzzer: Fuzzer, public concurrency: number) {
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);

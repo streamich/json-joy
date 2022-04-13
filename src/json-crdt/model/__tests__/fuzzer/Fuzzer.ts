@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ModelSession} from './ModelSession';
+import {SessionLogical} from './SessionLogical';
 import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
 import {RandomJson} from '../../../../json-random/RandomJson';
@@ -17,7 +17,15 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   maxPatchesPerPeer: 10,
 };
 
-export class ModelFuzzer {
+/**
+ * Implements fuzzing for JSON CRDT model with logical vector clock.
+ * Some number of peers generate random number of patches, each patch
+ * has random number of operations, executed on random JSON CRDT nodes.
+ * Then all patches from all peers are merged in different order and we
+ * check that all peers arrive at the same state. That finishes one
+ * *editing session*, which is then repeated.
+ */
+export class Fuzzer {
   public opts: FuzzerOptions;
   public model = Model.withLogicalClock();
   public picker: Picker;
@@ -35,9 +43,9 @@ export class ModelFuzzer {
     this.model.api.root(json).commit();
   }
 
-  public executeConcurrentSession(): ModelSession {
+  public executeConcurrentSession(): SessionLogical {
     const concurrency = Math.max(2, Math.ceil(Math.random() * this.opts.maxConcurrentPeers));
-    const session = new ModelSession(this, concurrency);
+    const session = new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
     return session;
