@@ -3,8 +3,11 @@ import {SessionLogical} from './SessionLogical';
 import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
 import {RandomJson} from '../../../../json-random/RandomJson';
+import {SessionServer} from './SessionServer';
+import {generateInteger} from './util';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
+  useServerClock: false,
   startingValue: undefined,
   stringDeleteProbability: 0.2,
   binaryDeleteProbability: 0.2,
@@ -13,25 +16,18 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   maxBinaryChunkLength: 33,
   maxStringLength: 512,
   maxBinaryLength: 4049,
-  maxConcurrentPeers: 5,
-  maxPatchesPerPeer: 10,
+  concurrentPeers: [1, 6],
+  patchesPerPeer: [0, 12],
 };
 
-/**
- * Implements fuzzing for JSON CRDT model with logical vector clock.
- * Some number of peers generate random number of patches, each patch
- * has random number of operations, executed on random JSON CRDT nodes.
- * Then all patches from all peers are merged in different order and we
- * check that all peers arrive at the same state. That finishes one
- * *editing session*, which is then repeated.
- */
 export class Fuzzer {
   public opts: FuzzerOptions;
-  public model = Model.withLogicalClock();
+  public model: Model;
   public picker: Picker;
 
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
+    this.model = this.opts.useServerClock ? Model.withServerClock() : Model.withLogicalClock();
     this.picker = new Picker(this.opts);
   }
 
@@ -40,12 +36,12 @@ export class Fuzzer {
       this.opts.startingValue === undefined
         ? RandomJson.generate({nodeCount: 8, rootNode: Math.random() > 0.5 ? 'object' : 'array'})
         : this.opts.startingValue;
-    this.model.api.root(json).commit();
+    // this.model.api.root(json).commit();
   }
 
-  public executeConcurrentSession(): SessionLogical {
-    const concurrency = Math.max(2, Math.ceil(Math.random() * this.opts.maxConcurrentPeers));
-    const session = new SessionLogical(this, concurrency);
+  public executeConcurrentSession(): SessionLogical | SessionServer {
+    const concurrency = generateInteger(...this.opts.concurrentPeers);
+    const session = this.opts.useServerClock ? new SessionServer(this, concurrency) : new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
     return session;
