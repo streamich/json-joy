@@ -19,11 +19,6 @@ test('can stringify a short buffer in an object', () => {
 });
 
 test('can stringify a short buffer in an array', () => {
-  const json = stringify([
-    null,
-    1,
-    new Uint8Array([0, 1, 2, 3]),
-    "a",
-  ]);
+  const json = stringify([null, 1, new Uint8Array([0, 1, 2, 3]), 'a']);
   expect(json).toBe(`[null,1,"${binUriStart}AAECAw==","a"]`);
 });

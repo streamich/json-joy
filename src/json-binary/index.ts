@@ -1,6 +1,6 @@
-import {fromBase64, toBase64} from "../util/base64";
-import {isUint8Array} from "../util/isUint8Array";
-import {binUriStart} from "./constants";
+import {fromBase64, toBase64} from '../util/base64';
+import {isUint8Array} from '../util/isUint8Array';
+import {binUriStart} from './constants';
 
 const binUriStartLength = binUriStart.length;
 
@@ -56,7 +56,7 @@ const unwrapBinary = (value: unknown): unknown => {
 export const parse = (json: string): unknown => {
   const parsed = JSON.parse(json);
   return unwrapBinary(parsed);
-}
+};
 
 /**
  * Replaces Uint8Arrays with strings, returns a new structure,
@@ -70,7 +70,7 @@ const wrapBinary = (value: unknown): unknown => {
     const len = value.length;
     for (let i = 0; i < len; i++) {
       const item = value[i];
-      out.push(!item || (typeof item !== 'object') ? item : wrapBinary(item));
+      out.push(!item || typeof item !== 'object' ? item : wrapBinary(item));
     }
     return out;
   }
@@ -78,7 +78,7 @@ const wrapBinary = (value: unknown): unknown => {
     const out: {[key: string]: unknown} = {};
     for (let key in value) {
       const item = (value as any)[key];
-      out[key] = !item || (typeof item !== 'object') ? item : wrapBinary(item);
+      out[key] = !item || typeof item !== 'object' ? item : wrapBinary(item);
     }
     return out;
   }

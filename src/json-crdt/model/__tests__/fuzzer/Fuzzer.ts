@@ -41,7 +41,9 @@ export class Fuzzer {
 
   public executeConcurrentSession(): SessionLogical | SessionServer {
     const concurrency = generateInteger(...this.opts.concurrentPeers);
-    const session = this.opts.useServerClock ? new SessionServer(this, concurrency) : new SessionLogical(this, concurrency);
+    const session = this.opts.useServerClock
+      ? new SessionServer(this, concurrency)
+      : new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
     return session;

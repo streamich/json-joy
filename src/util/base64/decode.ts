@@ -60,11 +60,10 @@ export const createFromBase64 = (chars: string = alphabet) => {
   };
 };
 
-const fromBase64Cpp =
-  hasBuffer ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64')) : null;
+const fromBase64Cpp = hasBuffer ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64')) : null;
 
 const fromBase64Native = createFromBase64();
 
 export const fromBase64 = !fromBase64Cpp
   ? fromBase64Native
-  : (encoded: string): Uint8Array => encoded.length > 50 ? fromBase64Cpp(encoded) : fromBase64Native(encoded);
+  : (encoded: string): Uint8Array => (encoded.length > 50 ? fromBase64Cpp(encoded) : fromBase64Native(encoded));
