@@ -46,11 +46,21 @@ export class ObjectType implements JsonNode {
     this.latest.set(key, chunk);
   }
 
+  private _toJson: Record<string, unknown> = {};
   public toJson(): Record<string, unknown> {
+    const _toJson = this._toJson;
     const obj: Record<string, unknown> = {};
-    for (const [key, entry] of this.latest.entries())
-      if (!entry.node.id.isEqual(UNDEFINED_ID)) obj[key] = entry.node.toJson();
-    return obj;
+    let useCache = true;
+    for (const [key, entry] of this.latest.entries()) {
+      if (!entry.node.id.isEqual(UNDEFINED_ID)) {
+        const value = entry.node.toJson();
+        if (_toJson[key] !== value) useCache = false;
+        obj[key] = value;
+      } else {
+        if (_toJson[key] !== undefined) useCache = false;
+      }
+    }
+    return useCache ? _toJson : (this._toJson = obj);
   }
 
   public toString(tab: string = ''): string {
