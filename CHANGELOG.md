@@ -1,3 +1,16 @@
+# [7.8.0](https://github.com/streamich/json-joy/compare/v7.7.0...v7.8.0) (2022-04-15)
+
+
+### Bug Fixes
+
+* **json-crdt-patch:** 🐛 add support for SetValue operation in Patch ([b60137e](https://github.com/streamich/json-joy/commit/b60137ee7517dd0361479eb06ce12468e558d0be))
+
+
+### Features
+
+* **json-crdt:** 🎸 make use of Batch.rebase() ([7afe98e](https://github.com/streamich/json-joy/commit/7afe98ed235972c967d2b97e74b0542bb03c3861))
+* **json-crdt:** 🎸 use Batch in ModelApi ([390b279](https://github.com/streamich/json-joy/commit/390b27905d81914ad860b4ba1ca250bf7fe28fa1))
+
 # [7.7.0](https://github.com/streamich/json-joy/compare/v7.6.0...v7.7.0) (2022-04-12)
 
 
