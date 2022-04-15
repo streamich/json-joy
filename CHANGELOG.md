@@ -1,3 +1,13 @@
+# [7.10.0](https://github.com/streamich/json-joy/compare/v7.9.0...v7.10.0) (2022-04-15)
+
+
+### Features
+
+* **json-binary:** 🎸 add support for all MessagePack encoder values ([31e8728](https://github.com/streamich/json-joy/commit/31e8728175c24fa947db94ca709a6cf74e337bee))
+* **json-binary:** 🎸 add support for JsonPackValue instances ([4a108cd](https://github.com/streamich/json-joy/commit/4a108cdbe5ee2a7b4ffc3b73a3d0a4f4300b8469))
+* **json-cli:** 🎸 support binary data in json-pack and json-unpack ([085297a](https://github.com/streamich/json-joy/commit/085297a3df92c3894aa881c094dbeab111ec057d))
+* **util:** 🎸 handle invalid Base64 strings when decoding ([52615b4](https://github.com/streamich/json-joy/commit/52615b408c3ed31003e4e25b3358367bf81c4254))
+
 # [7.9.0](https://github.com/streamich/json-joy/compare/v7.8.0...v7.9.0) (2022-04-15)
 
 
