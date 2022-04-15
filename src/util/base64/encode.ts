@@ -1,4 +1,4 @@
-import {alphabet} from './constants';
+import {alphabet, hasBuffer} from './constants';
 
 const E = '=';
 const EE = '==';
@@ -46,7 +46,6 @@ export const createToBase64 = (chars: string = alphabet) => {
 };
 
 const encodeSmall = createToBase64();
-const hasBuffer = typeof Buffer === 'function' && typeof Buffer.from === 'function';
 
 export const toBase64 = !hasBuffer
   ? (uint8: Uint8Array) => encodeSmall(uint8, uint8.byteLength)

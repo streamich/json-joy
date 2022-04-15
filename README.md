@@ -3,6 +3,8 @@
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
 
+- __`json-binary`__ &mdash; JSON serializer and parser with `Uint8Array` binary data support.
+  - [__Documentation__ 🚀](./src/json-binary/README.md)
 - __`json-brand`__ &mdash; TypeScript *branded type* for JSON.
   - [__Documentation__ 🚀](./src/json-brand/README.md)
 - __`json-clone`__ &mdash; JSON deep cloning methods.

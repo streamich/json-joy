@@ -23,7 +23,6 @@ export class SessionServer extends SessionLogical {
     }
 
     for (const patches of this.patches) {
-
       if (Math.random() < 0.5) this.fuzzer.model = jsonDecoder.decode(jsonEncoder.encode(this.fuzzer.model));
       if (Math.random() < 0.5) this.fuzzer.model = compactDecoder.decode(compactEncoder.encode(this.fuzzer.model));
       if (Math.random() < 0.5) this.fuzzer.model = binaryDecoder.decode(binaryEncoder.encode(this.fuzzer.model));

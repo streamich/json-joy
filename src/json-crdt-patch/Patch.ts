@@ -83,8 +83,7 @@ export class Patch {
       else if (op instanceof MakeBinaryOperation) patch.ops.push(new MakeBinaryOperation(ts(op.id)));
       else if (op instanceof SetNumberOperation)
         patch.ops.push(new SetNumberOperation(ts(op.id), ts(op.num), op.value));
-      else if (op instanceof SetValueOperation)
-        patch.ops.push(new SetValueOperation(ts(op.id), ts(op.obj), op.value));
+      else if (op instanceof SetValueOperation) patch.ops.push(new SetValueOperation(ts(op.id), ts(op.obj), op.value));
       else if (op instanceof SetObjectKeysOperation)
         patch.ops.push(
           new SetObjectKeysOperation(

@@ -3,6 +3,7 @@
   "scopes": [
     "",
     "demo",
+    "json-binary",
     "json-brand",
     "json-cli",
     "json-clone",
