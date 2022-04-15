@@ -5,7 +5,17 @@ import {binUriStart, msgPackExtStart, msgPackUriStart} from './constants';
 
 const binUriStartLength = binUriStart.length;
 const msgPackUriStartLength = msgPackUriStart.length;
+const msgPackExtStartLength = msgPackExtStart.length;
 const minDataUri = Math.min(binUriStartLength, msgPackUriStartLength);
+
+const parseExtDataUri = (uri: string): JsonPackExtension => {
+  uri = uri.substring(msgPackExtStartLength);
+  const commaIndex = uri.indexOf(',');
+  if (commaIndex === -1) throw new Error('INVALID_EXT_DATA_URI');
+  const typeString = uri.substring(0, commaIndex);
+  const buf = fromBase64(uri.substring(commaIndex + 1));
+  return new JsonPackExtension(Number(typeString), buf);
+};
 
 /**
  * Replaces strings with Uint8Arrays in-place.
@@ -26,6 +36,7 @@ const unwrapBinary = (value: unknown): unknown => {
           if (item.substring(0, binUriStartLength) === binUriStart) value[i] = fromBase64(item.substring(binUriStartLength));
           else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart)
             value[i] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
+          else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) value[i] = parseExtDataUri(item);
         }
       }
     }
@@ -47,6 +58,7 @@ const unwrapBinary = (value: unknown): unknown => {
           } else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart) {
             (value as any)[key] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
           }
+          else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) (value as any)[key] = parseExtDataUri(item);
         }
       }
     }
@@ -56,6 +68,7 @@ const unwrapBinary = (value: unknown): unknown => {
     if (value.length < minDataUri) return value;
     if (value.substring(0, binUriStartLength) === binUriStart) return fromBase64(value.substring(binUriStartLength));
     if (value.substring(0, msgPackUriStartLength) === msgPackUriStart) return new JsonPackValue(fromBase64(value.substring(msgPackUriStartLength)));
+    if (value.substring(0, msgPackExtStartLength) === msgPackExtStart) return parseExtDataUri(value);
     else return value;
   }
   return value;
