@@ -15,6 +15,7 @@ export class StringType implements JsonNode {
   }
 
   public onInsert(op: InsertStringSubstringOperation) {
+    this._toString = '';
     let curr: StringChunk | null = this.end;
     while (curr) {
       if (curr.id.overlap(curr.span(), op.id, op.span())) return;
@@ -46,6 +47,7 @@ export class StringType implements JsonNode {
   }
 
   public onDelete(op: DeleteOperation) {
+    this._toString = '';
     const {after} = op;
     const length = after.span;
     let chunk: StringChunk | null = this.end;
@@ -142,11 +144,13 @@ export class StringType implements JsonNode {
     this.end = chunk;
   }
 
+  private _toString: string = '';
   public toJson(): string {
+    if (this._toString) return this._toString;
     let str: string = '';
     let curr: StringChunk | null = this.start;
     while ((curr = curr.right)) if (curr.str) str += curr.str;
-    return str;
+    return this._toString = str;
   }
 
   public clone(doc: Model): StringType {
