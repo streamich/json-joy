@@ -49,7 +49,7 @@ test('can encode three element delete operation', () => {
   const model = Model.withLogicalClock(new LogicalVectorClock(5, 0));
   model.api.root({name: 'a'}).commit();
   model.api.str(['name']).ins(0, 'b').commit();
-  const patches = model.api.flush();
+  const patches = model.api.flush().patches;
   // console.log(JSON.stringify(patches.map(encodeJson), null, 4));
   // console.log(JSON.stringify(patches.map(encode), null, 4));
   const patch = patches[1];

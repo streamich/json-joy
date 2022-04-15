@@ -1,10 +1,13 @@
 import {Model} from '../../Model';
-import {ModelSession} from './ModelSession';
+import {SessionLogical} from './SessionLogical';
 import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
 import {RandomJson} from '../../../../json-random/RandomJson';
+import {SessionServer} from './SessionServer';
+import {generateInteger} from './util';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
+  useServerClock: false,
   startingValue: undefined,
   stringDeleteProbability: 0.2,
   binaryDeleteProbability: 0.2,
@@ -13,17 +16,18 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   maxBinaryChunkLength: 33,
   maxStringLength: 512,
   maxBinaryLength: 4049,
-  maxConcurrentPeers: 5,
-  maxPatchesPerPeer: 10,
+  concurrentPeers: [1, 6],
+  patchesPerPeer: [0, 12],
 };
 
-export class ModelFuzzer {
+export class Fuzzer {
   public opts: FuzzerOptions;
-  public model = Model.withLogicalClock();
+  public model: Model;
   public picker: Picker;
 
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
+    this.model = this.opts.useServerClock ? Model.withServerClock() : Model.withLogicalClock();
     this.picker = new Picker(this.opts);
   }
 
@@ -35,9 +39,9 @@ export class ModelFuzzer {
     this.model.api.root(json).commit();
   }
 
-  public executeConcurrentSession(): ModelSession {
-    const concurrency = Math.max(2, Math.ceil(Math.random() * this.opts.maxConcurrentPeers));
-    const session = new ModelSession(this, concurrency);
+  public executeConcurrentSession(): SessionLogical | SessionServer {
+    const concurrency = generateInteger(...this.opts.concurrentPeers);
+    const session = this.opts.useServerClock ? new SessionServer(this, concurrency) : new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
     return session;

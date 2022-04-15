@@ -1,31 +1,32 @@
-import {Model} from '../..';
+import {ArrayType} from '../../../types/rga-array/ArrayType';
+import {BinaryType} from '../../../types/rga-binary/BinaryType';
+import {decode as decodeBinary} from '../../../../json-crdt-patch/codec/binary/decode';
+import {decode as decodeCompact} from '../../../../json-crdt-patch/codec/compact/decode';
+import {decode as decodeJson} from '../../../../json-crdt-patch/codec/json/decode';
+import {Decoder as BinaryDecoder} from '../../../codec/binary/Decoder';
+import {Decoder as CompactDecoder} from '../../../codec/compact/Decoder';
+import {Decoder as JsonDecoder} from '../../../codec/json/Decoder';
+import {DeleteOperation} from '../../../../json-crdt-patch/operations/DeleteOperation';
+import {encode as encodeBinary} from '../../../../json-crdt-patch/codec/binary/encode';
+import {encode as encodeCompact} from '../../../../json-crdt-patch/codec/compact/encode';
+import {encode as encodeJson} from '../../../../json-crdt-patch/codec/json/encode';
+import {Encoder as BinaryEncoder} from '../../../codec/binary/Encoder';
+import {Encoder as CompactEncoder} from '../../../codec/compact/Encoder';
+import {Encoder as JsonEncoder} from '../../../codec/json/Encoder';
+import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {InsertBinaryDataOperation} from '../../../../json-crdt-patch/operations/InsertBinaryDataOperation';
 import {InsertStringSubstringOperation} from '../../../../json-crdt-patch/operations/InsertStringSubstringOperation';
+import {Model} from '../..';
+import {ObjectType} from '../../../types/lww-object/ObjectType';
 import {Patch} from '../../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
-import {StringType} from '../../../types/rga-string/StringType';
-import type {ModelFuzzer} from './ModelFuzzer';
-import {ObjectType} from '../../../types/lww-object/ObjectType';
-import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {RandomJson} from '../../../../json-random/RandomJson';
-import {ArrayType} from '../../../types/rga-array/ArrayType';
-import {InsertArrayElementsOperation} from '../../../../json-crdt-patch/operations/InsertArrayElementsOperation';
+import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/SetObjectKeysOperation';
+import {StringType} from '../../../types/rga-string/StringType';
+import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {ValueType} from '../../../types/lww-value/ValueType';
-import {encode as encodeJson} from '../../../../json-crdt-patch/codec/json/encode';
-import {decode as decodeJson} from '../../../../json-crdt-patch/codec/json/decode';
-import {encode as encodeCompact} from '../../../../json-crdt-patch/codec/compact/encode';
-import {decode as decodeCompact} from '../../../../json-crdt-patch/codec/compact/decode';
-import {encode as encodeBinary} from '../../../../json-crdt-patch/codec/binary/encode';
-import {decode as decodeBinary} from '../../../../json-crdt-patch/codec/binary/decode';
-import {Encoder as JsonEncoder} from '../../../codec/json/Encoder';
-import {Decoder as JsonDecoder} from '../../../codec/json/Decoder';
-import {Encoder as CompactEncoder} from '../../../codec/compact/Encoder';
-import {Decoder as CompactDecoder} from '../../../codec/compact/Decoder';
-import {Encoder as BinaryEncoder} from '../../../codec/binary/Encoder';
-import {Decoder as BinaryDecoder} from '../../../codec/binary/Decoder';
-import {DeleteOperation} from '../../../../json-crdt-patch/operations/DeleteOperation';
-import {BinaryType} from '../../../types/rga-binary/BinaryType';
-import {InsertBinaryDataOperation} from '../../../../json-crdt-patch/operations/InsertBinaryDataOperation';
+import type {Fuzzer} from './Fuzzer';
+import {generateInteger} from './util';
 
 const jsonEncoder = new JsonEncoder();
 const jsonDecoder = new JsonDecoder();
@@ -34,11 +35,11 @@ const compactDecoder = new CompactDecoder();
 const binaryEncoder = new BinaryEncoder();
 const binaryDecoder = new BinaryDecoder();
 
-export class ModelSession {
+export class SessionLogical {
   public models: Model[] = [];
   public patches: Patch[][] = [];
 
-  public constructor(public fuzzer: ModelFuzzer, public concurrency: number) {
+  public constructor(public fuzzer: Fuzzer, public concurrency: number) {
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);
@@ -53,7 +54,7 @@ export class ModelSession {
   }
 
   private generatePeerEdits(peer: number) {
-    const patchCount = Math.ceil(Math.random() * this.fuzzer.opts.maxPatchesPerPeer);
+    const patchCount = generateInteger(...this.fuzzer.opts.patchesPerPeer);
     for (let patchIndex = 0; patchIndex < patchCount; patchIndex++) {
       this.generatePatchForPeer(peer);
     }
@@ -170,7 +171,8 @@ export class ModelSession {
 
   private generateValuePatch(model: Model, node: ValueType): Patch {
     const builder = new PatchBuilder(model.clock);
-    builder.setVal(node.id, RandomJson.genNumber());
+    const value = Math.random() > 0.5 ? RandomJson.genNumber() : RandomJson.generate();
+    builder.setVal(node.id, value);
     return builder.patch;
   }
 

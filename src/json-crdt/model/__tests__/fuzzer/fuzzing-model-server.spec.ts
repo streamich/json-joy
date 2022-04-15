@@ -1,20 +1,19 @@
 import {Fuzzer} from './Fuzzer';
 
-const runs = 10;
+const runs = 5;
 const sessionNum = 50;
 
-test('binary fuzz testing', () => {
+test(`model fuzz testing`, () => {
   for (let r = 0; r < runs; r++) {
     const fuzzer = new Fuzzer({
-      startingValue: new Uint8Array(0),
-      binaryDeleteProbability: 0.5,
+      useServerClock: true,
     });
     fuzzer.setupModel();
     for (let ses = 0; ses < sessionNum; ses++) {
       const session = fuzzer.executeConcurrentSession();
-      const json = session.models[0].toView();
+      const json = fuzzer.model.toView();
       for (let i = 1; i < session.models.length; i++) {
-        expect(json).toEqual(session.models[i].toView());
+        expect(json).toStrictEqual(session.models[i].toView());
       }
     }
   }

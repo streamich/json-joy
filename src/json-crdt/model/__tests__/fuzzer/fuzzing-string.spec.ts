@@ -1,11 +1,11 @@
-import {ModelFuzzer} from './ModelFuzzer';
+import {Fuzzer} from './Fuzzer';
 
 const runs = 30;
 const sessionNum = 30;
 
 test('string fuzz testing', () => {
   for (let r = 0; r < runs; r++) {
-    const fuzzer = new ModelFuzzer({startingValue: ''});
+    const fuzzer = new Fuzzer({startingValue: ''});
     fuzzer.setupModel();
     for (let ses = 0; ses < sessionNum; ses++) {
       const session = fuzzer.executeConcurrentSession();

@@ -1,7 +1,6 @@
+import {Batch} from '../../../json-crdt-patch/Batch';
 import {Finder} from './Finder';
 import {JsonNode} from '../../types';
-import {LogicalTimestamp} from '../../../json-crdt-patch/clock';
-import {NoopOperation} from '../../../json-crdt-patch/operations/NoopOperation';
 import {NULL} from '../../constants';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
@@ -10,7 +9,7 @@ import type {Model} from '../Model';
 
 export class ModelApi {
   /** Buffer of accumulated patches. */
-  public patches: Patch[] = [];
+  public batch: Batch = new Batch([]);
 
   /** Currently active builder. */
   public builder: PatchBuilder;
@@ -60,37 +59,16 @@ export class ModelApi {
     const patch = this.builder.patch;
     this.builder = new PatchBuilder(this.model.clock);
     if (patch.ops.length) {
-      this.patches.push(patch);
+      this.batch.patches.push(patch);
       this.model.applyPatch(patch);
     }
     return patch;
   }
 
-  public flush(): Patch[] {
-    const patches = this.patches;
-    this.patches = [];
-    return patches;
-  }
-
-  public flushPatch(): Patch {
-    const patches = this.flush();
-    const length = patches.length;
-    const result = new Patch();
-    let prev: null | Patch = null;
-    for (let i = 0; i < length; i++) {
-      const patch = patches[i];
-      if (!patch.ops) continue;
-      if (!prev) result.ops.push(...patch.ops);
-      else {
-        const id = patch.getId()!;
-        const nextTime = prev.nextTime();
-        const gap = id.time - nextTime;
-        if (gap > 0) result.ops.push(new NoopOperation(new LogicalTimestamp(id.getSessionId(), nextTime), gap));
-        result.ops.push(...patch.ops);
-      }
-      prev = patch;
-    }
-    return result;
+  public flush(): Batch {
+    const batch = this.batch;
+    this.batch = new Batch([]);
+    return batch;
   }
 
   public patch(cb: (api: this) => void) {

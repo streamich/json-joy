@@ -1,4 +1,7 @@
 export interface FuzzerOptions {
+  /** Whether to use logical or server clock. */
+  useServerClock: boolean;
+
   /** JSON value which to set as root at the very beginning. */
   startingValue: unknown | undefined;
 
@@ -23,9 +26,9 @@ export interface FuzzerOptions {
   /** Maximum size of binary data to insert in binary type. */
   maxBinaryChunkLength: number;
 
-  /** Maximum number of peers that concurrently should edit the document. */
-  maxConcurrentPeers: number;
+  /** Number of concurrent peers that concurrently should edit the document. */
+  concurrentPeers: [min: number, max: number];
 
-  /** Maximum number of patches each concurrent peer is allowed to generate. */
-  maxPatchesPerPeer: number;
+  /** Interval of how many patches per peer to generate. */
+  patchesPerPeer: [min: number, max: number];
 }
