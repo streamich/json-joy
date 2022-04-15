@@ -1,10 +1,11 @@
 import {readFileSync} from 'fs';
 import {EncoderFull} from '../json-pack';
+import * as JSONB from '../json-binary';
 
 try {
   const encoder = new EncoderFull();
   const buf = readFileSync(0);
-  const doc = JSON.parse(buf.toString());
+  const doc = JSONB.parse(buf.toString());
   const encoded = encoder.encode(doc);
   process.stdout.write(encoded);
 } catch (error) {

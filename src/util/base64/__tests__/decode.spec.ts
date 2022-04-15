@@ -22,3 +22,11 @@ test('works', () => {
     expect(decoded2).toEqual(blob);
   }
 });
+
+test('handles invalid values', () => {
+  for (let i = 0; i < 100; i++) {
+    const blob = generateBlob();
+    const encoded = toBase64(blob);
+    expect(() => fromBase64_2(encoded + '!!!!')).toThrowError(new Error('INVALID_BASE64_STRING'));
+  }
+});

@@ -1,8 +1,21 @@
+import {JsonPackExtension, JsonPackValue} from '../json-pack';
 import {fromBase64, toBase64} from '../util/base64';
 import {isUint8Array} from '../util/isUint8Array';
-import {binUriStart} from './constants';
+import {binUriStart, msgPackExtStart, msgPackUriStart} from './constants';
 
 const binUriStartLength = binUriStart.length;
+const msgPackUriStartLength = msgPackUriStart.length;
+const msgPackExtStartLength = msgPackExtStart.length;
+const minDataUri = Math.min(binUriStartLength, msgPackUriStartLength);
+
+const parseExtDataUri = (uri: string): JsonPackExtension => {
+  uri = uri.substring(msgPackExtStartLength);
+  const commaIndex = uri.indexOf(',');
+  if (commaIndex === -1) throw new Error('INVALID_EXT_DATA_URI');
+  const typeString = uri.substring(0, commaIndex);
+  const buf = fromBase64(uri.substring(commaIndex + 1));
+  return new JsonPackExtension(Number(typeString), buf);
+};
 
 /**
  * Replaces strings with Uint8Arrays in-place.
@@ -19,9 +32,11 @@ const unwrapBinary = (value: unknown): unknown => {
           continue;
         }
         case 'string': {
-          if (item.length < binUriStartLength) continue;
-          if (item.substring(0, binUriStartLength) !== binUriStart) continue;
-          value[i] = fromBase64(item.substring(binUriStartLength));
+          if (item.length < minDataUri) continue;
+          if (item.substring(0, binUriStartLength) === binUriStart) value[i] = fromBase64(item.substring(binUriStartLength));
+          else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart)
+            value[i] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
+          else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) value[i] = parseExtDataUri(item);
         }
       }
     }
@@ -36,19 +51,25 @@ const unwrapBinary = (value: unknown): unknown => {
           continue;
         }
         case 'string': {
-          if (item.length < binUriStartLength) continue;
-          if (item.substring(0, binUriStartLength) !== binUriStart) continue;
-          const buf = fromBase64(item.substring(binUriStartLength));
-          (value as any)[key] = buf;
+          if (item.length < minDataUri) continue;
+          if (item.substring(0, binUriStartLength) === binUriStart) {
+            const buf = fromBase64(item.substring(binUriStartLength));
+            (value as any)[key] = buf;
+          } else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart) {
+            (value as any)[key] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
+          }
+          else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) (value as any)[key] = parseExtDataUri(item);
         }
       }
     }
     return value;
   }
   if (typeof value === 'string') {
-    if (value.length < binUriStartLength) return value;
-    if (value.substring(0, binUriStartLength) !== binUriStart) return value;
-    return fromBase64(value.substring(binUriStartLength));
+    if (value.length < minDataUri) return value;
+    if (value.substring(0, binUriStartLength) === binUriStart) return fromBase64(value.substring(binUriStartLength));
+    if (value.substring(0, msgPackUriStartLength) === msgPackUriStart) return new JsonPackValue(fromBase64(value.substring(msgPackUriStartLength)));
+    if (value.substring(0, msgPackExtStartLength) === msgPackExtStart) return parseExtDataUri(value);
+    else return value;
   }
   return value;
 };
@@ -74,6 +95,8 @@ const wrapBinary = (value: unknown): unknown => {
     }
     return out;
   }
+  if (value instanceof JsonPackValue) return msgPackUriStart + toBase64(value.buf);
+  if (value instanceof JsonPackExtension) return msgPackExtStart + value.type + ',' + toBase64(value.buf);
   if (typeof value === 'object') {
     const out: {[key: string]: unknown} = {};
     for (const key in value) {
