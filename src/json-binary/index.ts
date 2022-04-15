@@ -28,7 +28,7 @@ const unwrapBinary = (value: unknown): unknown => {
     return value;
   }
   if (typeof value === 'object') {
-    for (let key in value) {
+    for (const key in value) {
       const item = (value as any)[key];
       switch (typeof item) {
         case 'object': {
@@ -76,7 +76,7 @@ const wrapBinary = (value: unknown): unknown => {
   }
   if (typeof value === 'object') {
     const out: {[key: string]: unknown} = {};
-    for (let key in value) {
+    for (const key in value) {
       const item = (value as any)[key];
       out[key] = !item || typeof item !== 'object' ? item : wrapBinary(item);
     }
