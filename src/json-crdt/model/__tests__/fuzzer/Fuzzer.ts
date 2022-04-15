@@ -36,7 +36,7 @@ export class Fuzzer {
       this.opts.startingValue === undefined
         ? RandomJson.generate({nodeCount: 8, rootNode: Math.random() > 0.5 ? 'object' : 'array'})
         : this.opts.startingValue;
-    // this.model.api.root(json).commit();
+    this.model.api.root(json).commit();
   }
 
   public executeConcurrentSession(): SessionLogical | SessionServer {

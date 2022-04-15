@@ -7,6 +7,7 @@ import {Decoder as BinaryDecoder} from '../../../codec/binary/Decoder';
 import {SessionLogical} from './SessionLogical';
 import {Batch} from '../../../../json-crdt-patch/Batch';
 import {Patch} from '../../../../json-crdt-patch/Patch';
+import {encode} from '../../../../json-crdt-patch/codec/json/encode';
 
 const jsonEncoder = new JsonEncoder();
 const jsonDecoder = new JsonDecoder();
@@ -17,36 +18,23 @@ const binaryDecoder = new BinaryDecoder();
 
 export class SessionServer extends SessionLogical {
   public synchronize() {
-    const allPatches: Patch[] = [];
-    for (let j = 0; j < this.concurrency; j++) {
-      const patches = this.patches[j];
-      if (!patches.length) continue;
-      allPatches.push(...patches);
+    for (let i = 0; i < this.models.length; i++) {
+      this.models[i] = this.fuzzer.model.fork();
     }
 
-    if (allPatches.length) {
-      for (let i = 0; i < this.concurrency; i++) {
-        let model = this.models[i];
+    for (const patches of this.patches) {
 
-        if (Math.random() < 0.5) model = jsonDecoder.decode(jsonEncoder.encode(model));
-        if (Math.random() < 0.5) model = compactDecoder.decode(compactEncoder.encode(model));
-        if (Math.random() < 0.5) model = binaryDecoder.decode(binaryEncoder.encode(model));
+      if (Math.random() < 0.5) this.fuzzer.model = jsonDecoder.decode(jsonEncoder.encode(this.fuzzer.model));
+      if (Math.random() < 0.5) this.fuzzer.model = compactDecoder.decode(compactEncoder.encode(this.fuzzer.model));
+      if (Math.random() < 0.5) this.fuzzer.model = binaryDecoder.decode(binaryEncoder.encode(this.fuzzer.model));
 
-        const myPatches = this.patches[i];
-        for (const patch of allPatches) {
-          const isMyPatch = myPatches.some(p => p === patch);
-          if (isMyPatch) continue;
-          const rebased = patch.rebase(model.clock.time, patch.getId()!.time);
-          model.applyPatch(rebased);
-        }
-
-      }
-
-      for (const patches of this.patches) {
-        const batch = new Batch(patches);
-        if (!batch.getId()) continue;
-        const rebasedBatch = batch.rebase(this.fuzzer.model.clock.time);
-        this.fuzzer.model.applyBatch(rebasedBatch);
+      const batch = new Batch(patches);
+      if (!batch.getId()) continue;
+      const rebasedBatch = batch.rebase(this.fuzzer.model.clock.time);
+      this.fuzzer.model.applyBatch(rebasedBatch);
+      for (const model of this.models) {
+        const rebasedPatch2 = batch.rebase(model.clock.time);
+        model.applyBatch(rebasedPatch2);
       }
     }
   }
