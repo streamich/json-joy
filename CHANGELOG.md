@@ -1,3 +1,15 @@
+# [7.9.0](https://github.com/streamich/json-joy/compare/v7.8.0...v7.9.0) (2022-04-15)
+
+
+### Features
+
+* **json-binary:** 🎸 add JSONB.{parse,stringify} binary implementation ([7e932c6](https://github.com/streamich/json-joy/commit/7e932c67f57d9dac49716c8cfac0153aa42ba6be))
+
+
+### Performance Improvements
+
+* **util:** ⚡️ decode Base64 using native implementation for small strings ([3fc0c0b](https://github.com/streamich/json-joy/commit/3fc0c0b57636f6034ad4d6ecda9cee9618297914))
+
 # [7.8.0](https://github.com/streamich/json-joy/compare/v7.7.0...v7.8.0) (2022-04-15)
 
 
