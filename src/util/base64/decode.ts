@@ -1,5 +1,5 @@
 import {bufferToUint8Array} from '../bufferToUint8Array';
-import {alphabet} from './constants';
+import {alphabet, hasBuffer} from './constants';
 
 const E = '=';
 
@@ -61,6 +61,10 @@ export const createFromBase64 = (chars: string = alphabet) => {
 };
 
 const fromBase64Cpp =
-  typeof Buffer === 'function' ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64')) : null;
+  hasBuffer ? (encoded: string) => bufferToUint8Array(Buffer.from(encoded, 'base64')) : null;
 
-export const fromBase64 = fromBase64Cpp || createFromBase64();
+const fromBase64Native = createFromBase64();
+
+export const fromBase64 = !fromBase64Cpp
+  ? fromBase64Native
+  : (encoded: string): Uint8Array => encoded.length > 50 ? fromBase64Cpp(encoded) : fromBase64Native(encoded);
