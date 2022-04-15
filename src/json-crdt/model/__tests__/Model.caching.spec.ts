@@ -49,3 +49,27 @@ test('returns cached value, when shallow array is not modified', () => {
   expect((view1 as any).a).not.toBe((view2 as any).a);
   expect((view2 as any).b).toBe((view2 as any).b); // cache hit!
 });
+
+test('caches multiple levels deep objects', () => {
+  const model = Model.withLogicalClock();
+  model.api.root({
+    foo: [
+      {
+        a: [{}],
+        b: [{}],
+      },
+    ],
+  });
+  model.api.commit();
+  const view1 = model.toView() as any;
+  model.api.obj(['foo', 0, 'a', 0]).set({value: 1}).commit();
+  const view2 = model.toView() as any;
+  expect(view1.foo !== view2.foo).toBe(true);
+  expect(view1.foo[0] !== view2.foo[0]).toBe(true);
+  expect(view1.foo[0].a !== view2.foo[0].a).toBe(true);
+  expect(view1.foo[0].a[0] !== view2.foo[0].a[0]).toBe(true);
+  expect(view1.foo[0].a[0].value).toBe(undefined);
+  expect(view2.foo[0].a[0].value).toBe(1);
+  expect(view1.foo[0].b === view2.foo[0].b).toBe(true); // cache hit!
+  expect(view1.foo[0].b[0] === view2.foo[0].b[0]).toBe(true); // cache hit!
+});
