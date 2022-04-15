@@ -7,6 +7,8 @@ CLI executable to decodes JSON document from [MessagePack](https://msgpack.org/i
 - Receives a MessagePack encoded binary document through STDIN.
 - Returns JSON document through STDOUT.
 
+Supports binary data.
+
 
 ## Installation
 
