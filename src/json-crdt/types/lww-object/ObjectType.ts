@@ -46,8 +46,8 @@ export class ObjectType implements JsonNode {
     this.latest.set(key, chunk);
   }
 
-  private _toJson: Record<string, unknown> = {};
-  public toJson(): Record<string, unknown> {
+  private _toJson: Readonly<Record<string, unknown>> = {};
+  public toJson(): Readonly<Record<string, unknown>> {
     const _toJson = this._toJson;
     const obj: Record<string, unknown> = {};
     let useCache = true;
