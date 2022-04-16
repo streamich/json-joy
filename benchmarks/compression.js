@@ -294,6 +294,7 @@ console.log(`JSON CRDT (json): ${Buffer.from(JSON.stringify(new EncoderJson().en
 console.log(`JSON CRDT (compact): ${Buffer.from(JSON.stringify(new EncoderCompact().encode(model))).length} bytes`);
 console.log(`JSON CRDT (binary): ${new EncoderBinary().encode(model).length} bytes`);
 console.log(`JSON: ${Buffer.from(JSON.stringify(selected)).length} bytes`);
+console.log(`MessagePack: ${encoderFull.encode(selected).length} bytes`);
 
 const suite = new Benchmark.Suite;
 for (const strategy of strategies) {
