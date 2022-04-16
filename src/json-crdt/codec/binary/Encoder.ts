@@ -63,6 +63,15 @@ export class Encoder extends CrdtEncoder {
             literalFrequencies.set(str, count + 1);
           }
         }
+      } else if (node instanceof ValueType) {
+        const value = node.value;
+        switch (typeof value) {
+          case 'number':
+          case 'string': {
+            const count = literalFrequencies.get(value) || 0;
+            literalFrequencies.set(value, count + 1);
+          }
+        }
       }
     }
     const literals: unknown[] = [];
@@ -230,10 +239,19 @@ export class Encoder extends CrdtEncoder {
   }
 
   protected encodeVal(obj: ValueType): void {
-    this.u8(0xd5);
-    this.ts(obj.id);
-    this.ts(obj.writeId);
-    this.encodeAny(obj.value);
+    const value = obj.value;
+    const indexInLiteralsTable = this.literals!.get(obj.value);
+    if (indexInLiteralsTable !== undefined && (typeof value === 'number' || typeof value === 'string')) {
+      this.u8(0xd6);
+      this.ts(obj.id);
+      this.ts(obj.writeId);
+      this.vuint57(indexInLiteralsTable!);
+    } else {
+      this.u8(0xd5);
+      this.ts(obj.id);
+      this.ts(obj.writeId);
+      this.encodeAny(obj.value);
+    }
   }
 
   private encodeUtf8(str: string, byteLength: number): void {

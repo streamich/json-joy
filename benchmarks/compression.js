@@ -219,7 +219,7 @@ const json3 = [
   }},
 ];
 
-const selected = json1;
+const selected = json3;
 const model = Model.withServerClock();
 model.api.root(selected).commit();
 // const buf = encoderFull.encode(selected);

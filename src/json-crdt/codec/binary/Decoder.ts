@@ -143,6 +143,8 @@ export class Decoder extends CrdtDecoder {
           return this.createConst(this.val());
         case 0xd5:
           return this.decodeVal();
+        case 0xd6:
+          return this.decodeValLiteral();
         case 0xde:
           return this.decodeObj(this.u16());
         case 0xdf:
@@ -265,6 +267,16 @@ export class Decoder extends CrdtDecoder {
     const id = this.ts();
     const writeId = this.ts();
     const value = this.val();
+    const obj = new ValueType(id, writeId, value);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeValLiteral(): ValueType {
+    const id = this.ts();
+    const writeId = this.ts();
+    const literalIndex = this.vuint57();
+    const value = this.literals![literalIndex] as unknown;
     const obj = new ValueType(id, writeId, value);
     this.doc.nodes.index(obj);
     return obj;
