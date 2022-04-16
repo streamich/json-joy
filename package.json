@@ -90,6 +90,7 @@
     "jest": "^27.5.1",
     "json-logic-js": "^2.0.1",
     "lodash": "^4.17.21",
+    "lz4": "^0.6.5",
     "messagepack": "^1.1.12",
     "msgpack-lite": "^0.1.26",
     "msgpack5": "^5.3.2",
