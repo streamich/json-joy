@@ -2,6 +2,7 @@ import {ArrayChunk} from '../../types/rga-array/ArrayChunk';
 import {ArrayType} from '../../types/rga-array/ArrayType';
 import {BinaryChunk} from '../../types/rga-binary/BinaryChunk';
 import {BinaryType} from '../../types/rga-binary/BinaryType';
+import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {ConstantType} from '../../types/const/ConstantType';
 import {CrdtEncoder} from '../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {DocRootType} from '../../types/lww-doc-root/DocRootType';
@@ -9,21 +10,23 @@ import {ITimestamp} from '../../../json-crdt-patch/clock';
 import {JsonNode} from '../../types';
 import {ObjectChunk} from '../../types/lww-object/ObjectChunk';
 import {ObjectType} from '../../types/lww-object/ObjectType';
+import {SESSION} from '../../../json-crdt-patch/constants';
 import {StringChunk} from '../../types/rga-string/StringChunk';
 import {StringType} from '../../types/rga-string/StringType';
 import {utf8Count} from '../../../util/utf8';
 import {ValueType} from '../../types/lww-value/ValueType';
-import {ClockEncoder} from '../../../json-crdt-patch/codec/clock/ClockEncoder';
 import type {Model} from '../../model';
-import {SESSION} from '../../../json-crdt-patch/constants';
 
 export class Encoder extends CrdtEncoder {
   protected clockEncoder?: ClockEncoder;
   protected time?: number;
+  /** Mapping from literal to position in literal table. */
+  protected literals?: Map<unknown, number>;
 
   public encode(model: Model): Uint8Array {
     delete this.clockEncoder;
     delete this.time;
+    this.literals = new Map<string | number, number>();
     this.reset();
     const clock = model.clock;
     const isServerClock = clock.getSessionId() === SESSION.SERVER;
@@ -34,12 +37,32 @@ export class Encoder extends CrdtEncoder {
       model.advanceClocks();
       this.clockEncoder = new ClockEncoder(model.clock);
     }
+    this.encodeLiteralsTable(model);
     this.encodeRoot(model.root);
     const data = this.flush();
     if (isServerClock) return data;
     this.encodeClockTable(data);
     delete this.clockEncoder;
+    delete this.literals;
     return this.flush();
+  }
+  
+  protected encodeLiteralsTable(model: Model) {
+    const literalFrequencies = new Map<string | number, number>();
+    for (const node of model.nodes.iterate()) {
+      if (node instanceof ObjectType) {
+        for (const key of node.latest.keys()) {
+          const count = literalFrequencies.get(key) || 0;
+          literalFrequencies.set(key, count + 1);
+        }
+      }
+    }
+    const literals: unknown[] = [];
+    for (const [literal, frequency] of literalFrequencies.entries())
+      if (frequency > 1) literals.push(literal);
+    this.encodeArray(literals);
+    for (let i = 0; i < literals.length; i++)
+      this.literals!.set(literals[i], i);
   }
 
   protected encodeClockTable(data: Uint8Array) {
@@ -101,8 +124,13 @@ export class Encoder extends CrdtEncoder {
   protected encodeObjChunk(key: string, chunk: ObjectChunk): void {
     this.ts(chunk.id);
     const length = utf8Count(key);
-    this.vuint57(length);
-    this.encodeUtf8(key, length);
+    const indexInLiteralsTable = this.literals!.get(key);
+    if (indexInLiteralsTable !== undefined) {
+      this.b1vuint56(true, this.literals!.get(key)!);
+    } else {
+      this.b1vuint56(false, length);
+      this.encodeUtf8(key, length);
+    }
     this.encodeNode(chunk.node);
   }
 

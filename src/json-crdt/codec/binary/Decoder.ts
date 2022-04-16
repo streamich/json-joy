@@ -29,6 +29,7 @@ export class Decoder extends CrdtDecoder {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
   protected time: number = -1;
+  protected literals?: unknown[];
 
   public decode(data: Uint8Array): Model {
     delete this.clockDecoder;
@@ -42,8 +43,11 @@ export class Decoder extends CrdtDecoder {
       this.decodeClockTable(x);
       this.doc = Model.withLogicalClock(this.clockDecoder!.clock);
     }
+    this.literals = this.val() as unknown[];
+    if (!(this.literals instanceof Array)) throw new Error('INVALID_LITERALS');
     this.decodeRoot();
     delete this.clockDecoder;
+    delete this.literals;
     return this.doc;
   }
 
@@ -172,8 +176,13 @@ export class Decoder extends CrdtDecoder {
 
   private decodeObjChunk(obj: ObjectType): void {
     const id = this.ts();
-    const length = this.vuint57();
-    const key = this.str(length);
+    const [isLiteralIndex, x] = this.b1vuint56();
+    let key: string;
+    if (isLiteralIndex) {
+      key = this.literals![x] as string;
+    } else {
+      key = this.str(x);
+    }
     const node = this.decodeNode();
     const chunk = new ObjectChunk(id, node);
     obj.putChunk(key, chunk);
