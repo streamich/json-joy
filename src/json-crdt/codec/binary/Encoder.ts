@@ -55,6 +55,14 @@ export class Encoder extends CrdtEncoder {
           const count = literalFrequencies.get(key) || 0;
           literalFrequencies.set(key, count + 1);
         }
+      } else if (node instanceof StringType) {
+        for (const chunk of node.chunks()) {
+          const str = chunk.str;
+          if (str) {
+            const count = literalFrequencies.get(str) || 0;
+            literalFrequencies.set(str, count + 1);
+          }
+        }
       }
     }
     const literals: unknown[] = [];
@@ -167,10 +175,16 @@ export class Encoder extends CrdtEncoder {
       this.ts(chunk.id);
     } else {
       const text = chunk.str!;
-      const length = utf8Count(text);
-      this.b1vuint56(false, length);
+      const indexInLiteralsTable = this.literals!.get(text);
+      const useLiteralsTable = indexInLiteralsTable !== undefined;
+      let length: number;
+      this.b1vuint56(false, useLiteralsTable ? 0 : (length = utf8Count(text)));
       this.ts(chunk.id);
-      this.encodeUtf8(text, length);
+      if (useLiteralsTable) {
+        this.vuint57(indexInLiteralsTable!);
+      } else {
+        this.encodeUtf8(text, length!);
+      }
     }
   }
 

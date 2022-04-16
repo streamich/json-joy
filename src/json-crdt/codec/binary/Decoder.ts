@@ -227,7 +227,13 @@ export class Decoder extends CrdtDecoder {
       chunk.deleted = length;
       obj.append(chunk);
     } else {
-      const text = this.str(length);
+      let text: string;
+      if (length === 0) {
+        const literalIndex = this.vuint57();
+        text = this.literals![literalIndex] as string;
+      } else {
+        text = this.str(length);
+      }
       const chunk = new StringChunk(id, text);
       obj.append(chunk);
     }
