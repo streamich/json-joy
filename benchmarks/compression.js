@@ -219,8 +219,11 @@ const json3 = [
   }},
 ];
 
-const selected = json3;
-const buf = encoderFull.encode(selected);
+const selected = json1;
+const model = Model.withServerClock();
+model.api.root(selected).commit();
+// const buf = encoderFull.encode(selected);
+const buf = new EncoderBinary().encode(model);
 
 const strategies = [];
 
@@ -287,14 +290,10 @@ strategies.push({
   },
 });
 
-const model = Model.withServerClock();
-model.api.root(selected).commit();
-
 console.log(`JSON CRDT (json): ${Buffer.from(JSON.stringify(new EncoderJson().encode(model))).length} bytes`);
 console.log(`JSON CRDT (compact): ${Buffer.from(JSON.stringify(new EncoderCompact().encode(model))).length} bytes`);
 console.log(`JSON CRDT (binary): ${new EncoderBinary().encode(model).length} bytes`);
 console.log(`JSON: ${Buffer.from(JSON.stringify(selected)).length} bytes`);
-console.log(`MessagePack: ${buf.length} bytes`);
 
 const suite = new Benchmark.Suite;
 for (const strategy of strategies) {
@@ -302,7 +301,7 @@ for (const strategy of strategies) {
   const compressed = strategy.compressed = compress(buf);
   const decompressed = strategy.decompress(compressed);
   const areEqual = !Buffer.compare(buf, decompressed);
-  console.log(`MessagePack + ${strategy.name}: ${compressed.length} bytes (${areEqual ? 'works' : 'error'})`);
+  console.log(`JSON CRDT (binary) + ${strategy.name}: ${compressed.length} bytes (${areEqual ? 'works' : 'error'})`);
   suite
     .add(strategy.name, function() {
       compress(buf);
