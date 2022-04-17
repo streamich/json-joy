@@ -5,6 +5,7 @@ const {Encoder: EncoderBinary} = require('../es6/json-crdt/codec/binary/Encoder'
 const {Encoder: EncoderCompact} = require('../es6/json-crdt/codec/compact/Encoder');
 const {Encoder: EncoderJson} = require('../es6/json-crdt/codec/json/Encoder');
 const zlib = require('zlib');
+const Automerge = require('automerge');
 
 const json1 = [
   {op: 'add', path: '/foo/baz', value: 666},
@@ -222,8 +223,13 @@ const json3 = [
 const selected = json3;
 const model = Model.withServerClock();
 model.api.root(selected).commit();
-// const buf = encoderFull.encode(selected);
 const buf = new EncoderBinary().encode(model);
+
+
+let automerge = Automerge.init();
+automerge = Automerge.change(automerge, doc => {
+  doc.a = selected;
+});
 
 const strategies = [];
 
@@ -295,6 +301,9 @@ console.log(`JSON CRDT (compact): ${Buffer.from(JSON.stringify(new EncoderCompac
 console.log(`JSON CRDT (binary): ${new EncoderBinary().encode(model).length} bytes`);
 console.log(`JSON: ${Buffer.from(JSON.stringify(selected)).length} bytes`);
 console.log(`MessagePack: ${encoderFull.encode(selected).length} bytes`);
+console.log(`Automerge: ${Automerge.save(automerge).length} bytes`);
+
+const jj = Automerge.load(Automerge.save(automerge));
 
 const suite = new Benchmark.Suite;
 for (const strategy of strategies) {

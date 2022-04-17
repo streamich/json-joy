@@ -78,6 +78,7 @@
     "@semantic-release/npm": "^9.0.0",
     "@types/jest": "^27.0.3",
     "ajv": "^8.8.1",
+    "automerge": "^1.0.1-preview.7",
     "axios": "^0.24.0",
     "benchmark": "^2.1.4",
     "eventsource": "^1.1.0",
