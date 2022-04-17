@@ -68,7 +68,7 @@ export class Branch<Data, Patch> {
   /**
    * List of patches applied locally to the head, but not saved
    * on the server. This is delta between the base and the head.
-   * */
+   */
   protected patches: Patch[];
 
   /** Number of patches currently being merged to the server. */
