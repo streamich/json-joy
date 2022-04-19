@@ -1,13 +1,30 @@
 const Benchmark = require('benchmark');
-const {encoderFull} = require('../es6/json-pack/util');
-const {Model} = require('../es6/json-crdt');
-const {Encoder: EncoderBinary} = require('../es6/json-crdt/codec/binary/Encoder');
-const {Decoder: DecoderBinary} = require('../es6/json-crdt/codec/binary/Decoder');
-const {Encoder: EncoderCompact} = require('../es6/json-crdt/codec/compact/Encoder');
-const {Encoder: EncoderJson} = require('../es6/json-crdt/codec/json/Encoder');
-const {deepEqual} = require('../es6/json-equal/deepEqual');
+const {encoderFull} = require('../../es6/json-pack/util');
+const {Model} = require('../../es6/json-crdt');
+const {Encoder: EncoderBinary} = require('../../es6/json-crdt/codec/binary/Encoder');
+const {Decoder: DecoderBinary} = require('../../es6/json-crdt/codec/binary/Decoder');
+const {Encoder: EncoderCompact} = require('../../es6/json-crdt/codec/compact/Encoder');
+const {Encoder: EncoderJson} = require('../../es6/json-crdt/codec/json/Encoder');
+const {deepEqual} = require('../../es6/json-equal/deepEqual');
 const zlib = require('zlib');
 const Automerge = require('automerge');
+const Y = require('yjs');
+
+const jsonToYjsType = (json) => {
+  if (!json) return json;
+  if (typeof json === 'object') {
+    if (Array.isArray(json)) {
+      const arr = new Y.Array();
+      arr.push(json.map(jsonToYjsType));
+      return arr;
+    }
+    const obj = new Y.Map();
+    for (const [key, value] of Object.entries(json))
+      obj.set(key, jsonToYjsType(value));
+    return obj;
+  }
+  return json;
+};
 
 const json1 = [
   {op: 'add', path: '/foo/baz', value: 666},
@@ -251,6 +268,22 @@ strategies.push({
 });
 
 strategies.push({
+  name: 'Y.js',
+  encode: (json) => {
+    const ydoc = new Y.Doc()
+    const ymap = ydoc.getMap()
+    ymap.set('a', jsonToYjsType(json));
+    const buf = Y.encodeStateAsUpdate(ydoc);
+    return buf;
+  },
+  decode: (buf) => {
+    const ydoc = new Y.Doc();
+    Y.applyUpdate(ydoc, buf);
+    return ydoc.getMap().get('a').toJSON();
+  },
+});
+
+strategies.push({
   name: 'JSON CRDT (server clock) + binary codec',
   encode: (json) => {
     const model = Model.withServerClock();
@@ -325,6 +358,11 @@ for (const strategy of strategies) {
   const decoded = strategy.decode(encoded);
   const areEqual = deepEqual(selected, decoded);
   console.log(`${strategy.name}: ${encoded.length} bytes (${areEqual ? 'works' : 'error'})`);
+  if (!areEqual) {
+    console.log('Decoding error:');
+    console.log(decoded);
+    console.log(selected);
+  }
   suite
     .add(strategy.name, function() {
       encode(selected);

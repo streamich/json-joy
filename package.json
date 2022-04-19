@@ -110,7 +110,8 @@
     "typedoc": "^0.21.10",
     "typescript": "^4.5.5",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.6.0",
-    "ws": "^8.5.0"
+    "ws": "^8.5.0",
+    "yjs": "^13.5.34"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",

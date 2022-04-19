@@ -3159,6 +3159,11 @@ isomorphic-ws@^4.0.1:
   resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
+isomorphic.js@^0.2.4:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/isomorphic.js/-/isomorphic.js-0.2.5.tgz#13eecf36f2dba53e85d355e11bf9d4208c6f7f88"
+  integrity sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==
+
 issue-parser@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/issue-parser/-/issue-parser-6.0.0.tgz#b1edd06315d4f2044a9755daf85fdafde9b4014a"
@@ -3795,6 +3800,13 @@ levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+lib0@^0.2.49:
+  version "0.2.51"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.51.tgz#23b1271a26f39120a4d0f86b9dfb44577f5ce98c"
+  integrity sha512-05Erb3465CxJa38LQlMz4EbetNvRna1S3BzqEjC0/pmp5cQuQSfNNmeS0722Wev1dRlMUp2Cql0gQ55krSXf2Q==
+  dependencies:
+    isomorphic.js "^0.2.4"
 
 libnpmaccess@^5.0.1:
   version "5.0.1"
@@ -6343,6 +6355,13 @@ yargs@^16.2.0:
     string-width "^4.2.0"
     y18n "^5.0.5"
     yargs-parser "^20.2.2"
+
+yjs@^13.5.34:
+  version "13.5.34"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.5.34.tgz#ad9ddb8b6c0806e15b289ff0eabc4f06ba238952"
+  integrity sha512-w/XTk5vhCzbyd6uKKJWE6rPUBf9+heOTzgq8DBkcVgBMv7oeJVFQw2sRqY0YvuLZxURd/XVD2dcNnw8qeFH7Tw==
+  dependencies:
+    lib0 "^0.2.49"
 
 yn@3.1.1:
   version "3.1.1"
