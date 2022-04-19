@@ -1,3 +1,18 @@
+# [7.14.0](https://github.com/streamich/json-joy/compare/v7.13.0...v7.14.0) (2022-04-19)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 use this.model after it is defined ([7076cfe](https://github.com/streamich/json-joy/commit/7076cfe8d6e507348195bdcb366d74c9376f996d))
+
+
+### Features
+
+* **json-crdt:** 🎸 add JSON Patch+ str_del operation support ([9b6112d](https://github.com/streamich/json-joy/commit/9b6112deb9615184a2836f064f09224de70ea11d))
+* **json-crdt:** 🎸 add str_ins JSON Patch+ operation support ([858ae48](https://github.com/streamich/json-joy/commit/858ae48ac8ac172bb8f77cedac62b7cb890490b6))
+* **json-crdt:** 🎸 improve JSON Patch interfac ([8718818](https://github.com/streamich/json-joy/commit/87188184a8dde0890eb9a3371a4ad0f8f03121b4))
+* **json-crdt:** 🎸 throw on uknown op ([919196b](https://github.com/streamich/json-joy/commit/919196bf059947121772c8b8539d8c88698dc34c))
+
 # [7.13.0](https://github.com/streamich/json-joy/compare/v7.12.0...v7.13.0) (2022-04-19)
 
 
