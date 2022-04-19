@@ -1,4 +1,5 @@
 import {RandomJson} from '../../../json-random';
+import {Fuzzer} from '../../../util/Fuzzer';
 import {
   ITimestamp,
   LogicalTimespan,
@@ -11,7 +12,7 @@ import {DeleteOperation} from '../../operations/DeleteOperation';
 import {JsonCrdtPatchOperation, Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 
-export class PatchFuzzer {
+export class PatchFuzzer extends Fuzzer {
   public generateLogicalPatch(): Patch {
     const clock = this.generateLogicalClock();
     const builder = new PatchBuilder(clock);
@@ -29,7 +30,7 @@ export class PatchFuzzer {
   public generateLogicalPatchBase(builder: PatchBuilder, ts: () => ITimestamp): Patch {
     const length = this.generatePatchLength();
     for (let i = 0; i < length; i++) {
-      const build = this.pick([
+      const build = Fuzzer.pick([
         () => builder.obj(),
         () => builder.arr(),
         () => builder.str(),
@@ -40,7 +41,7 @@ export class PatchFuzzer {
         () =>
           builder.setKeys(
             ts(),
-            this.repeat(this.generateInteger(1, 10), () => [RandomJson.genString(), ts()]),
+            Fuzzer.repeat(Fuzzer.generateInteger(1, 10), () => [RandomJson.genString(), ts()]),
           ),
         () => builder.setNum(ts(), RandomJson.genNumber()),
         () => builder.setVal(ts(), RandomJson.generate()),
@@ -50,10 +51,10 @@ export class PatchFuzzer {
           builder.insArr(
             ts(),
             ts(),
-            this.repeat(this.generateInteger(1, 10), () => ts()),
+            Fuzzer.repeat(Fuzzer.generateInteger(1, 10), () => ts()),
           ),
         () => builder.del(ts(), ts(), this.generateSpan()),
-        () => builder.noop(this.generateInteger(1, 20)),
+        () => builder.noop(Fuzzer.generateInteger(1, 20)),
       ]);
       build();
     }
@@ -79,13 +80,13 @@ export class PatchFuzzer {
   }
 
   public readonly generateLogicalTimestamp = (): LogicalTimestamp => {
-    const sessionId = this.generateInteger(0xffff + 1, 0xffffffffff);
-    const time = this.generateInteger(0, 0xffffff);
+    const sessionId = Fuzzer.generateInteger(0xffff + 1, 0xffffffffff);
+    const time = Fuzzer.generateInteger(0, 0xffffff);
     return new LogicalTimestamp(sessionId, time);
   };
 
   public readonly generateServerTimestamp = (): ServerTimestamp => {
-    const time = this.generateInteger(0, 0xffffff);
+    const time = Fuzzer.generateInteger(0, 0xffffff);
     return new ServerTimestamp(time);
   };
 
@@ -97,32 +98,18 @@ export class PatchFuzzer {
   };
 
   public generateSessionId(): number {
-    return this.generateInteger(0xffff + 1, 0xffffffffff);
+    return Fuzzer.generateInteger(0xffff + 1, 0xffffffffff);
   }
 
   public generateTime(): number {
-    return this.generateInteger(0, 0xffffffffff);
+    return Fuzzer.generateInteger(0, 0xffffffffff);
   }
 
   public generateSpan(): number {
-    return this.generateInteger(1, 0xffff);
+    return Fuzzer.generateInteger(1, 0xffff);
   }
 
   public generatePatchLength(): number {
-    return this.generateInteger(1, 20);
-  }
-
-  public generateInteger(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  public pick<T>(elements: T[]): T {
-    return elements[Math.floor(Math.random() * elements.length)];
-  }
-
-  public repeat<T>(times: number, callback: () => T): T[] {
-    const result: T[] = [];
-    for (let i = 0; i < times; i++) result.push(callback());
-    return result;
+    return Fuzzer.generateInteger(1, 20);
   }
 }
