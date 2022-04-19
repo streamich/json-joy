@@ -1,3 +1,10 @@
+# [7.13.0](https://github.com/streamich/json-joy/compare/v7.12.0...v7.13.0) (2022-04-19)
+
+
+### Features
+
+* **json-pack:** 🎸 implement EncoderStable, which serializes objects predictably ([a21a936](https://github.com/streamich/json-joy/commit/a21a9363214bcd5f92905b18730d12f8102ab8c3)), closes [#134](https://github.com/streamich/json-joy/issues/134)
+
 # [7.12.0](https://github.com/streamich/json-joy/compare/v7.11.0...v7.12.0) (2022-04-19)
 
 
