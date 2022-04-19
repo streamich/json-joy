@@ -27,6 +27,7 @@ export class JsonPatchDraft {
       case 'test': this.applyTest(op); break;
       case 'str_ins': this.applyStrIns(op); break;
       case 'str_del': this.applyStrDel(op); break;
+      default: throw new Error('UNKNOWN_OP');
     }
   }
 
