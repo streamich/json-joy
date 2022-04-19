@@ -18,14 +18,14 @@ export interface BlockModel<Data, Patch> {
 }
 
 export class BasicBlock<Data, Patch> {
-  public version$: BehaviorSubject<number>;
+  public v$: BehaviorSubject<number>;
 
   constructor(version: number, public readonly model: BlockModel<Data, Patch>) {
-    this.version$ = new BehaviorSubject<number>(version);
+    this.v$ = new BehaviorSubject<number>(version);
   }
 
   public fork(): BasicBlock<Data, Patch> {
-    return new BasicBlock<Data, Patch>(this.version$.getValue(), this.model.fork());
+    return new BasicBlock<Data, Patch>(this.v$.getValue(), this.model.fork());
   }
 
   /**
@@ -33,7 +33,7 @@ export class BasicBlock<Data, Patch> {
    * a function to allow for lazy evaluation.
    */
   public data$(): Observable<Data> {
-    return this.version$.pipe(switchMap(() => of(this.model.getData())));
+    return this.v$.pipe(switchMap(() => of(this.model.getData())));
   }
 
   /** Get the latest value of the block. */
@@ -43,7 +43,7 @@ export class BasicBlock<Data, Patch> {
 
   public apply(patch: Patch): void {
     this.model.apply(patch);
-    this.version$.next(this.version$.getValue() + 1);
+    this.v$.next(this.v$.getValue() + 1);
   }
 }
 
@@ -83,7 +83,7 @@ export class Branch<Data, Patch> {
   public async merge(opts: BranchDependencies<Patch>): Promise<void> {
     try {
       const base = this.base$.getValue();
-      const baseVersion = base.version$.getValue();
+      const baseVersion = base.v$.getValue();
       const batch = [...this.patches];
       this.merging = batch.length;
       const res = await opts.merge(baseVersion, batch);
