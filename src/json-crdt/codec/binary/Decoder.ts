@@ -29,6 +29,7 @@ export class Decoder extends CrdtDecoder {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
   protected time: number = -1;
+  protected literals?: unknown[];
 
   public decode(data: Uint8Array): Model {
     delete this.clockDecoder;
@@ -42,8 +43,11 @@ export class Decoder extends CrdtDecoder {
       this.decodeClockTable(x);
       this.doc = Model.withLogicalClock(this.clockDecoder!.clock);
     }
+    this.literals = this.val() as unknown[];
+    if (!(this.literals instanceof Array)) throw new Error('INVALID_LITERALS');
     this.decodeRoot();
     delete this.clockDecoder;
+    delete this.literals;
     return this.doc;
   }
 
@@ -139,6 +143,8 @@ export class Decoder extends CrdtDecoder {
           return this.createConst(this.val());
         case 0xd5:
           return this.decodeVal();
+        case 0xd6:
+          return this.decodeValLiteral();
         case 0xde:
           return this.decodeObj(this.u16());
         case 0xdf:
@@ -172,8 +178,13 @@ export class Decoder extends CrdtDecoder {
 
   private decodeObjChunk(obj: ObjectType): void {
     const id = this.ts();
-    const length = this.vuint57();
-    const key = this.str(length);
+    const [isLiteralIndex, x] = this.b1vuint56();
+    let key: string;
+    if (isLiteralIndex) {
+      key = this.literals![x] as string;
+    } else {
+      key = this.str(x);
+    }
     const node = this.decodeNode();
     const chunk = new ObjectChunk(id, node);
     obj.putChunk(key, chunk);
@@ -218,7 +229,13 @@ export class Decoder extends CrdtDecoder {
       chunk.deleted = length;
       obj.append(chunk);
     } else {
-      const text = this.str(length);
+      let text: string;
+      if (length === 0) {
+        const literalIndex = this.vuint57();
+        text = this.literals![literalIndex] as string;
+      } else {
+        text = this.str(length);
+      }
       const chunk = new StringChunk(id, text);
       obj.append(chunk);
     }
@@ -250,6 +267,16 @@ export class Decoder extends CrdtDecoder {
     const id = this.ts();
     const writeId = this.ts();
     const value = this.val();
+    const obj = new ValueType(id, writeId, value);
+    this.doc.nodes.index(obj);
+    return obj;
+  }
+
+  private decodeValLiteral(): ValueType {
+    const id = this.ts();
+    const writeId = this.ts();
+    const literalIndex = this.vuint57();
+    const value = this.literals![literalIndex] as unknown;
     const obj = new ValueType(id, writeId, value);
     this.doc.nodes.index(obj);
     return obj;

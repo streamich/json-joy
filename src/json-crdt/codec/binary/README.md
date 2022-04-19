@@ -128,6 +128,7 @@ the node type and its size.
 | int64             | 0xD3              | `0b11010011`                | Signed 64 bit integer (53 bit in JavaScript).   |
 | const             | 0xD4              | `0b11010100`                | Immutable JSON value.                           |
 | val               | 0xD5              | `0b11010101`                | LWW JSON value register.                        |
+| vallit            | 0xD6              | `0b11010110`                | LWW JSON value register encoded as literal.     |
 | str8              | 0xD9              | `0b11011001`                | String with up to 255 chunks.                   |
 | str16             | 0xDA              | `0b11011010`                | String with up to 65,535 chunks.                |
 | str32             | 0xDB              | `0b11011011`                | String with up to 4,294,967,295 chunks.         |

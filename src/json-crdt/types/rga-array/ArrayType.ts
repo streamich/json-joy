@@ -162,15 +162,19 @@ export class ArrayType implements JsonNode {
     this.end = chunk;
   }
 
-  public toJson(): unknown[] {
+  private _toJson: readonly unknown[] = [];
+  public toJson(): readonly unknown[] {
     const arr: unknown[] = [];
-    const nodes = this.doc.nodes;
     let curr: ArrayChunk | null = this.start;
     while (curr) {
       if (curr.nodes) arr.push(...curr.nodes!.map((node) => node.toJson()));
       curr = curr.right;
     }
-    return arr;
+    const _toJson = this._toJson;
+    if (arr.length !== _toJson.length) return this._toJson = arr;
+    for (let i = 0; i < arr.length; i++)
+      if (arr[i] !== _toJson[i]) return this._toJson = arr;
+    return _toJson;
   }
 
   public clone(model: Model): ArrayType {

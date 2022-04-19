@@ -20,7 +20,7 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   patchesPerPeer: [0, 12],
 };
 
-export class Fuzzer {
+export class JsonCrdtFuzzer {
   public opts: FuzzerOptions;
   public model: Model;
   public picker: Picker;

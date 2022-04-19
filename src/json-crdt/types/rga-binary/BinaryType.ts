@@ -15,6 +15,7 @@ export class BinaryType implements JsonNode {
   }
 
   public onInsert(op: InsertBinaryDataOperation) {
+    delete this._toJson;
     let curr: BinaryChunk | null = this.end;
     while (curr) {
       if (curr.id.overlap(curr.span(), op.id, op.span())) return;
@@ -46,6 +47,7 @@ export class BinaryType implements JsonNode {
   }
 
   public onDelete(op: DeleteOperation) {
+    delete this._toJson;
     const {after} = op;
     const length = after.span;
     let chunk: BinaryChunk | null = this.end;
@@ -142,7 +144,9 @@ export class BinaryType implements JsonNode {
     this.end = chunk;
   }
 
+  private _toJson?: Uint8Array;
   public toJson(): Uint8Array {
+    if (this._toJson) return this._toJson;
     let curr: BinaryChunk | null = this.start;
     const buffers: Uint8Array[] = [];
     let length = 0;
@@ -160,7 +164,7 @@ export class BinaryType implements JsonNode {
       res.set(buf, offset);
       offset += buf.length;
     }
-    return res;
+    return this._toJson = res;
   }
 
   public clone(doc: Model): BinaryType {

@@ -11,12 +11,22 @@ import {ArrayType} from '../../../types/rga-array/ArrayType';
 import {BinaryType} from '../../../types/rga-binary/BinaryType';
 import {StringType} from '../../../types/rga-string/StringType';
 import {Model} from '../../Model';
+import {Fuzzer} from '../../../../util/Fuzzer';
 import {FuzzerOptions} from './types';
 
 type StringOp = typeof InsertStringSubstringOperation | typeof DeleteOperation;
 type BinaryOp = typeof InsertBinaryDataOperation | typeof DeleteOperation;
 type ArrayOp = typeof InsertArrayElementsOperation | typeof DeleteOperation;
 type ObjectOp = typeof SetObjectKeysOperation | typeof DeleteOperation;
+
+const commonKeys = [
+  'a',
+  'op',
+  'test',
+  'name',
+  '',
+  '__proto__',
+];
 
 /**
  * This class picks random nodes from a model and picks a random
@@ -75,7 +85,12 @@ export class Picker {
   }
 
   public generateObjectKey(): string {
-    const length = Math.floor(Math.random() * 20) + 1;
-    return this.generateCharacter().repeat(length);
+    const useCommonKey = Math.random() < 0.25;
+    if (useCommonKey) {
+      return Fuzzer.pick(commonKeys);
+    } else {
+      const length = Math.floor(Math.random() * 20) + 1;
+      return this.generateCharacter().repeat(length);
+    }
   }
 }
