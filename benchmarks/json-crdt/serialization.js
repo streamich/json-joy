@@ -1,10 +1,16 @@
 const Benchmark = require('benchmark');
-const {encoderFull} = require('../../es6/json-pack/util');
+const {encoderFull, decoder} = require('../../es6/json-pack/util');
 const {Model} = require('../../es6/json-crdt');
+const {clone} = require('../../es6/json-clone');
 const {Encoder: EncoderBinary} = require('../../es6/json-crdt/codec/binary/Encoder');
 const {Decoder: DecoderBinary} = require('../../es6/json-crdt/codec/binary/Decoder');
+const {Encoder: EncoderCompactBinary} = require('../../es6/json-crdt/codec/compact-binary/Encoder');
+const {Decoder: DecoderCompactBinary} = require('../../es6/json-crdt/codec/compact-binary/Decoder');
+const {ViewDecoder: ViewDecoderBinary} = require('../../es6/json-crdt/codec/binary/ViewDecoder');
 const {Encoder: EncoderCompact} = require('../../es6/json-crdt/codec/compact/Encoder');
+const {Decoder: DecoderCompact} = require('../../es6/json-crdt/codec/compact/Decoder');
 const {Encoder: EncoderJson} = require('../../es6/json-crdt/codec/json/Encoder');
+const {Decoder: DecoderJson} = require('../../es6/json-crdt/codec/json/Decoder');
 const {deepEqual} = require('../../es6/json-equal/deepEqual');
 const zlib = require('zlib');
 const Automerge = require('automerge');
@@ -239,11 +245,18 @@ const json3 = [
   }},
 ];
 
-const selected = json2;
+const selected = json1;
 const model = Model.withServerClock();
 model.api.root(selected).commit();
-const decoderBinary = new DecoderBinary();
 const encoderBinary = new EncoderBinary();
+const decoderBinary = new DecoderBinary();
+const viewDecoderBinary = new ViewDecoderBinary();
+const encoderCompactBinary = new EncoderCompactBinary();
+const decoderCompactBinary = new DecoderCompactBinary();
+const encoderCompact = new EncoderCompact();
+const decoderCompact = new DecoderCompact();
+const encoderJson = new EncoderJson();
+const decoderJson = new DecoderJson();
 
 let automerge = Automerge.init();
 automerge = Automerge.change(automerge, doc => {
@@ -253,17 +266,91 @@ automerge = Automerge.change(automerge, doc => {
 const strategies = [];
 
 strategies.push({
-  name: 'Automerge',
+  name: 'JSON.stringify()',
   encode: (json) => {
-    let automerge = Automerge.init();
-    automerge = Automerge.change(automerge, doc => {
-      doc.a = json;
-    });
-    return Automerge.save(automerge);
+    return JSON.stringify(clone(json));
   },
   decode: (buf) => {
-    const automerge = Automerge.load(buf);
-    return automerge.a;
+    return JSON.parse(buf);
+  },
+});
+
+strategies.push({
+  name: 'MessagePack',
+  encode: (json) => {
+    return encoderFull.encode(clone(json));
+  },
+  decode: (buf) => {
+    return decoder.decode(buf);
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + binary codec with view decoder',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
+    return buf;
+  },
+  decode: (buf) => {
+    return viewDecoderBinary.decode(buf);
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + binary codec',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
+    return buf;
+  },
+  decode: (buf) => {
+    const model = decoderBinary.decode(buf);
+    return model.toView();
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + compact-binary codec',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderCompactBinary.encode(model);
+    return buf;
+  },
+  decode: (buf) => {
+    const model = decoderCompactBinary.decode(buf);
+    return model.toView();
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + compact codec',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const res = encoderCompact.encode(model);
+    return JSON.stringify(res);
+  },
+  decode: (buf) => {
+    const model = decoderCompact.decode(JSON.parse(buf));
+    return model.toView();
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + json codec',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const res = encoderJson.encode(model);
+    return JSON.stringify(res);
+  },
+  decode: (buf) => {
+    const model = decoderJson.decode(JSON.parse(buf));
+    return model.toView();
   },
 });
 
@@ -284,16 +371,17 @@ strategies.push({
 });
 
 strategies.push({
-  name: 'JSON CRDT (server clock) + binary codec',
+  name: 'Automerge',
   encode: (json) => {
-    const model = Model.withServerClock();
-    model.api.root(json).commit();
-    const buf = encoderBinary.encode(model);
-    return buf;
+    let automerge = Automerge.init();
+    automerge = Automerge.change(automerge, doc => {
+      doc.a = json;
+    });
+    return Automerge.save(automerge);
   },
   decode: (buf) => {
-    const model = decoderBinary.decode(buf);
-    return model.toView();
+    const automerge = Automerge.load(buf);
+    return automerge.a;
   },
 });
 
@@ -341,14 +429,6 @@ strategies.push({
   },
 });
 
-console.log('Size comparisons:');
-console.log(`JSON CRDT (json): ${Buffer.from(JSON.stringify(new EncoderJson().encode(model))).length} bytes`);
-console.log(`JSON CRDT (compact): ${Buffer.from(JSON.stringify(new EncoderCompact().encode(model))).length} bytes`);
-console.log(`JSON CRDT (binary): ${new EncoderBinary().encode(model).length} bytes`);
-console.log(`JSON: ${Buffer.from(JSON.stringify(selected)).length} bytes`);
-console.log(`MessagePack: ${encoderFull.encode(selected).length} bytes`);
-
-console.log('');
 console.log('Sizes:');
 
 const suite = new Benchmark.Suite;
@@ -357,7 +437,7 @@ for (const strategy of strategies) {
   const encoded = strategy.encoded = encode(selected);
   const decoded = strategy.decode(encoded);
   const areEqual = deepEqual(selected, decoded);
-  console.log(`${strategy.name}: ${encoded.length} bytes (${areEqual ? 'works' : 'error'})`);
+  console.log(`${strategy.name}: ${Buffer.isBuffer(encoded) ? encoded.length : Buffer.from(encoded).length} bytes (${areEqual ? '✅' : '❌'})`);
   if (!areEqual) {
     console.log('Decoding error:');
     console.log(decoded);
