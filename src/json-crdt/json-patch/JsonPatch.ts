@@ -1,4 +1,3 @@
-import {Draft} from '../../json-crdt-patch/Draft';
 import {JsonPatchDraft} from './JsonPatchDraft';
 import type {Model} from '../model/Model';
 import type {Operation} from '../../json-patch';

@@ -6,7 +6,7 @@ import {ObjectType} from '../types/lww-object/ObjectType';
 import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
-import type {Operation, OperationAdd, OperationRemove, OperationReplace, OperationMove, OperationCopy, OperationTest} from '../../json-patch';
+import type {Operation, OperationAdd, OperationRemove, OperationReplace, OperationMove, OperationCopy, OperationTest, OperationStrIns} from '../../json-patch';
 
 export class JsonPatchDraft {
   public readonly draft = new Draft();
@@ -25,6 +25,7 @@ export class JsonPatchDraft {
       case 'move': this.applyMove(op); break;
       case 'copy': this.applyCopy(op); break;
       case 'test': this.applyTest(op); break;
+      case 'str_ins': this.applyStrIns(op); break;
     }
   }
 
@@ -105,6 +106,15 @@ export class JsonPatchDraft {
     const path = toPath(op.path);
     const json = this.json(path);
     if (!deepEqual(json, op.value)) throw new Error('TEST');
+  }
+
+  public applyStrIns(op: OperationStrIns): void {
+    const path = toPath(op.path);
+    const {node} = this.model.api.str(path);
+    const {builder} = this.draft;
+    const length = node.length();
+    const after = op.pos ? node.findId(length < op.pos ? length - 1 : op.pos - 1) : node.id;
+    builder.insStr(node.id, after, op.str);
   }
 
   private get(steps: Path): unknown {
