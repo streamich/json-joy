@@ -4,9 +4,11 @@ import type {Operation} from '../../json-patch';
 import type {Patch} from '../../json-crdt-patch/Patch';
 
 export class JsonPatch {
-  protected draft = new JsonPatchDraft(this.model);
+  protected draft: JsonPatchDraft;
 
-  constructor(public readonly model: Model) {}
+  constructor(public readonly model: Model) {
+    this.draft = new JsonPatchDraft(this.model);
+  }
 
   public apply(ops: Operation[]): this {
     this.draft.applyOps(ops);
