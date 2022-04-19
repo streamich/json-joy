@@ -1,3 +1,15 @@
+# [7.12.0](https://github.com/streamich/json-joy/compare/v7.11.0...v7.12.0) (2022-04-19)
+
+
+### Features
+
+* **json-crdt:** 🎸 add straight to view binary parser ([d80fa46](https://github.com/streamich/json-joy/commit/d80fa46867d33fbc9b007b44dd3ffb8d369c9d53))
+
+
+### Performance Improvements
+
+* **json-crdt:** ⚡️ update CRDT serialization benchmarks ([7ea9b0f](https://github.com/streamich/json-joy/commit/7ea9b0fcdaa5ca04b2af6531f8106476ee31b239))
+
 # [7.11.0](https://github.com/streamich/json-joy/compare/v7.10.0...v7.11.0) (2022-04-19)
 
 
