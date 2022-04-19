@@ -2,7 +2,7 @@ import {Decoder as CompactDecoder} from '../compact/Decoder';
 import {decoder} from '../../../json-pack/util';
 import {Model} from '../../model';
 
-export class ServerDecoder {
+export class Decoder {
   protected decoder = new CompactDecoder();
 
   public decode(uint8: Uint8Array): Model {

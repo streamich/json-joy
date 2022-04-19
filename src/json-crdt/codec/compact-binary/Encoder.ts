@@ -2,7 +2,7 @@ import {Encoder as CompactEncoder} from '../compact/Encoder';
 import {encoderFull} from '../../../json-pack/util';
 import {Model} from '../../model';
 
-export class LogicalEncoder {
+export class Encoder {
   protected encoder = new CompactEncoder();
 
   public encode(doc: Model): Uint8Array {
