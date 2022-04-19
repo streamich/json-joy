@@ -1,3 +1,25 @@
+# [7.11.0](https://github.com/streamich/json-joy/compare/v7.10.0...v7.11.0) (2022-04-19)
+
+
+### Features
+
+* 🎸 start adding JSON block interfaces ([29e4114](https://github.com/streamich/json-joy/commit/29e4114ac10a27e8750c9dbb68862c090772aca0))
+* **json-clone:** 🎸 improve typing of cloning methods ([ac76b77](https://github.com/streamich/json-joy/commit/ac76b77fb6a2d131f7bab17fec72a5917bd2d081))
+* **json-crdt:** 🎸 add object key compression ([d8236fa](https://github.com/streamich/json-joy/commit/d8236fa2efc15504bdca88fe5daffe425ec61f9d))
+* **json-crdt:** 🎸 compress repeating string chunks ([8f57068](https://github.com/streamich/json-joy/commit/8f570684a6d2987288785ca8537c05df84db9677))
+* **json-crdt:** 🎸 use literal compression for value type ([9efbd48](https://github.com/streamich/json-joy/commit/9efbd48c247cf45bc67a6d7e6b1a04eb943317e5))
+
+
+### Performance Improvements
+
+* ⚡️ add compression benchmark ([1fc58f3](https://github.com/streamich/json-joy/commit/1fc58f3e9f0399814d0dcca3821bbfffbcefc108))
+* ⚡️ update compression benchmark ([dae4228](https://github.com/streamich/json-joy/commit/dae4228a6d2ad1f21dcb2371ba59ef2a4f27aade))
+* **json-crdt:** ⚡️ add caching for string and binary type .toJson() methods ([56113d3](https://github.com/streamich/json-joy/commit/56113d38e3aa12b08cce610d5aba8a52f91ac292))
+* **json-crdt:** ⚡️ add caching to object type ([c628fbf](https://github.com/streamich/json-joy/commit/c628fbf016bee6fcf2e9f8ffe775f769d2284346))
+* **json-crdt:** ⚡️ add Y.js to codec benchmarks ([4462099](https://github.com/streamich/json-joy/commit/44620997d1e77d78ea35fe447d9cb7817d8d1637))
+* **json-crdt:** ⚡️ cache object type .toJson() output ([4ac009a](https://github.com/streamich/json-joy/commit/4ac009abadec260a0ae37370593a5e7e35e64191))
+* **json-crdt:** ⚡️ update CRDT serialization benchmark ([e10e6ea](https://github.com/streamich/json-joy/commit/e10e6ea563753b9a4c422ced84d690d06fe89993))
+
 # [7.10.0](https://github.com/streamich/json-joy/compare/v7.9.0...v7.10.0) (2022-04-15)
 
 
