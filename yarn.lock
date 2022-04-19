@@ -4833,7 +4833,7 @@ pacote@^12.0.0, pacote@^12.0.2, pacote@^12.0.3:
     ssri "^8.0.1"
     tar "^6.1.0"
 
-pako@^2.0.3:
+pako@^2.0.3, pako@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/pako/-/pako-2.0.4.tgz#6cebc4bbb0b6c73b0d5b8d7e8476e2b2fbea576d"
   integrity sha512-v8tweI900AUkZN6heMU/4Uy4cXRc2AYNRggVmTR+dEncawDJgCdLMximOVA2p4qO57WMynangsfGRb5WD6L1Bg==

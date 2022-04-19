@@ -2,8 +2,10 @@ const Benchmark = require('benchmark');
 const {encoderFull} = require('../es6/json-pack/util');
 const {Model} = require('../es6/json-crdt');
 const {Encoder: EncoderBinary} = require('../es6/json-crdt/codec/binary/Encoder');
+const {Decoder: DecoderBinary} = require('../es6/json-crdt/codec/binary/Decoder');
 const {Encoder: EncoderCompact} = require('../es6/json-crdt/codec/compact/Encoder');
 const {Encoder: EncoderJson} = require('../es6/json-crdt/codec/json/Encoder');
+const {deepEqual} = require('../es6/json-equal/deepEqual');
 const zlib = require('zlib');
 const Automerge = require('automerge');
 
@@ -220,11 +222,11 @@ const json3 = [
   }},
 ];
 
-const selected = json3;
+const selected = json2;
 const model = Model.withServerClock();
 model.api.root(selected).commit();
-const buf = new EncoderBinary().encode(model);
-
+const decoderBinary = new DecoderBinary();
+const encoderBinary = new EncoderBinary();
 
 let automerge = Automerge.init();
 automerge = Automerge.change(automerge, doc => {
@@ -233,93 +235,104 @@ automerge = Automerge.change(automerge, doc => {
 
 const strategies = [];
 
-const lz4 = require('lz4');
 strategies.push({
-  name: 'lz4',
-  compress: (buf) => {
-    return lz4.encode(buf);
+  name: 'Automerge',
+  encode: (json) => {
+    let automerge = Automerge.init();
+    automerge = Automerge.change(automerge, doc => {
+      doc.a = json;
+    });
+    return Automerge.save(automerge);
   },
-  decompress: (buf) => {
-    return lz4.decode(buf);
+  decode: (buf) => {
+    const automerge = Automerge.load(buf);
+    return automerge.a;
   },
 });
 
 strategies.push({
-  name: 'zlib.deflateSync',
-  compress: (buf) => {
+  name: 'JSON CRDT (server clock) + binary codec',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
+    return buf;
+  },
+  decode: (buf) => {
+    const model = decoderBinary.decode(buf);
+    return model.toView();
+  },
+});
+
+strategies.push({
+  name: 'JSON CRDT (server clock) + binary codec + zlib.deflateSync',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
     return zlib.deflateRawSync(buf);
   },
-  decompress: (buf) => {
-    return zlib.inflateRawSync(buf);
+  decode: (buf) => {
+    const model = decoderBinary.decode(zlib.inflateRawSync(buf));
+    return model.toView();
   },
 });
 
-const params1 = {
-  level: 1,
-  // chunkSize: 1024,
-};
+const lz4 = require('lz4');
 strategies.push({
-  name: 'zlib.deflateSync (level 1)',
-  compress: (buf) => {
-    return zlib.deflateRawSync(buf, params1);
+  name: 'JSON CRDT (server clock) + binary codec + lz4',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
+    return lz4.encode(buf);
   },
-  decompress: (buf) => {
-    return zlib.inflateRawSync(buf);
+  decode: (buf) => {
+    const model = decoderBinary.decode(lz4.decode(buf));
+    return model.toView();
   },
 });
 
-const params2 = {
-  level: 2,
-  // chunkSize: 1024,
-};
+const pako = require('pako');
 strategies.push({
-  name: 'zlib.deflateSync (level 2)',
-  compress: (buf) => {
-    return zlib.deflateRawSync(buf, params2);
+  name: 'JSON CRDT (server clock) + binary codec + pako',
+  encode: (json) => {
+    const model = Model.withServerClock();
+    model.api.root(json).commit();
+    const buf = encoderBinary.encode(model);
+    return pako.deflate(buf);
   },
-  decompress: (buf) => {
-    return zlib.inflateRawSync(buf);
-  },
-});
-
-const params9 = {
-  level: 9,
-  // chunkSize: 1024,
-};
-strategies.push({
-  name: 'zlib.deflateSync (level 9)',
-  compress: (buf) => {
-    return zlib.deflateRawSync(buf, params9);
-  },
-  decompress: (buf) => {
-    return zlib.inflateRawSync(buf);
+  decode: (buf) => {
+    const model = decoderBinary.decode(pako.inflate(buf));
+    return model.toView();
   },
 });
 
+console.log('Size comparisons:');
 console.log(`JSON CRDT (json): ${Buffer.from(JSON.stringify(new EncoderJson().encode(model))).length} bytes`);
 console.log(`JSON CRDT (compact): ${Buffer.from(JSON.stringify(new EncoderCompact().encode(model))).length} bytes`);
 console.log(`JSON CRDT (binary): ${new EncoderBinary().encode(model).length} bytes`);
 console.log(`JSON: ${Buffer.from(JSON.stringify(selected)).length} bytes`);
 console.log(`MessagePack: ${encoderFull.encode(selected).length} bytes`);
-console.log(`Automerge: ${Automerge.save(automerge).length} bytes`);
 
-const jj = Automerge.load(Automerge.save(automerge));
+console.log('');
+console.log('Sizes:');
 
 const suite = new Benchmark.Suite;
 for (const strategy of strategies) {
-  const compress = strategy.compress;
-  const compressed = strategy.compressed = compress(buf);
-  const decompressed = strategy.decompress(compressed);
-  const areEqual = !Buffer.compare(buf, decompressed);
-  console.log(`JSON CRDT (binary) + ${strategy.name}: ${compressed.length} bytes (${areEqual ? 'works' : 'error'})`);
+  const encode = strategy.encode;
+  const encoded = strategy.encoded = encode(selected);
+  const decoded = strategy.decode(encoded);
+  const areEqual = deepEqual(selected, decoded);
+  console.log(`${strategy.name}: ${encoded.length} bytes (${areEqual ? 'works' : 'error'})`);
   suite
     .add(strategy.name, function() {
-      compress(buf);
+      encode(selected);
     });
 }
 
 console.log('');
-console.log('Compress:');
+console.log('Encode:');
 
 suite
   .on('cycle', function(event) {
@@ -332,16 +345,16 @@ suite
 
 const suite2 = new Benchmark.Suite;
 for (const strategy of strategies) {
-  const decompress = strategy.decompress;
-  const compressed = strategy.compressed;
+  const decode = strategy.decode;
+  const encoded = strategy.encoded;
   suite2
     .add(strategy.name, function() {
-      decompress(compressed);
+      decode(encoded);
     });
 }
 
 console.log('');
-console.log('Decompress:');
+console.log('Decode:');
 
 suite2
   .on('cycle', function(event) {
