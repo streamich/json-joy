@@ -121,3 +121,20 @@ const msgPack = encoder.encode({
 const decoded = decoder.decodeOneLevel(msgPack);
 console.log(decoded); // { a: 1, b: JsonPackValue {} }
 ```
+
+### Stable binary output
+
+Objects key order in JavaScript is not predictable, hence the same object can
+result in different MessagePack blobs. Use `EncoderStable` to get stable
+MessagePack blobs.
+
+```ts
+import {EncoderStable} from 'json-joy/{lib,es6,esm}/json-pack';
+
+const encoder = new EncoderStable();
+
+const buf1 = encoder.encode({a: 1, b: 2});
+const buf2 = encoder.encode({b: 2, a: 1});
+
+// buf1.equals(buf2) == true
+```
