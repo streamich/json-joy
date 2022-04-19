@@ -30,6 +30,7 @@
 
 export {Encoder} from './Encoder';
 export {EncoderFull} from './EncoderFull';
+export {EncoderStable} from './EncoderStable';
 export {Decoder} from './Decoder';
 export {MessagePackToJsonConverter} from './MessagePackToJsonConverter';
 export {JsonPackValue} from './JsonPackValue';
