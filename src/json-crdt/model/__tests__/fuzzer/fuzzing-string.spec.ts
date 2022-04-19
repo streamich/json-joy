@@ -1,11 +1,11 @@
-import {Fuzzer} from './Fuzzer';
+import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 
 const runs = 30;
 const sessionNum = 30;
 
 test('string fuzz testing', () => {
   for (let r = 0; r < runs; r++) {
-    const fuzzer = new Fuzzer({startingValue: ''});
+    const fuzzer = new JsonCrdtFuzzer({startingValue: ''});
     fuzzer.setupModel();
     for (let ses = 0; ses < sessionNum; ses++) {
       const session = fuzzer.executeConcurrentSession();

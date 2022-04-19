@@ -25,7 +25,7 @@ import {SetObjectKeysOperation} from '../../../../json-crdt-patch/operations/Set
 import {StringType} from '../../../types/rga-string/StringType';
 import {UNDEFINED_ID} from '../../../../json-crdt-patch/constants';
 import {ValueType} from '../../../types/lww-value/ValueType';
-import type {Fuzzer} from './Fuzzer';
+import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {generateInteger} from './util';
 
 const jsonEncoder = new JsonEncoder();
@@ -39,7 +39,7 @@ export class SessionLogical {
   public models: Model[] = [];
   public patches: Patch[][] = [];
 
-  public constructor(public fuzzer: Fuzzer, public concurrency: number) {
+  public constructor(public fuzzer: JsonCrdtFuzzer, public concurrency: number) {
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);

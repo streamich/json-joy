@@ -1,11 +1,11 @@
-import {Fuzzer} from './Fuzzer';
+import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 
 const runs = 10;
 const sessionNum = 50;
 
 test('binary fuzz testing', () => {
   for (let r = 0; r < runs; r++) {
-    const fuzzer = new Fuzzer({
+    const fuzzer = new JsonCrdtFuzzer({
       startingValue: new Uint8Array(0),
       binaryDeleteProbability: 0.5,
     });

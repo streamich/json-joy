@@ -6,8 +6,6 @@ import {Encoder as BinaryEncoder} from '../../../codec/binary/Encoder';
 import {Decoder as BinaryDecoder} from '../../../codec/binary/Decoder';
 import {SessionLogical} from './SessionLogical';
 import {Batch} from '../../../../json-crdt-patch/Batch';
-import {Patch} from '../../../../json-crdt-patch/Patch';
-import {encode} from '../../../../json-crdt-patch/codec/json/encode';
 
 const jsonEncoder = new JsonEncoder();
 const jsonDecoder = new JsonDecoder();

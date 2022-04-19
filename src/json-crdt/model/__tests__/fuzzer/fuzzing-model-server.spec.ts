@@ -1,11 +1,11 @@
-import {Fuzzer} from './Fuzzer';
+import {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 
 const runs = 5;
 const sessionNum = 50;
 
 test(`model fuzz testing`, () => {
   for (let r = 0; r < runs; r++) {
-    const fuzzer = new Fuzzer({
+    const fuzzer = new JsonCrdtFuzzer({
       useServerClock: true,
     });
     fuzzer.setupModel();
