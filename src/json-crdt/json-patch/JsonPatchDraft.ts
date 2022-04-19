@@ -20,11 +20,11 @@ export class JsonPatchDraft {
   public applyOp(op: Operation): void {
     switch(op.op) {
       case 'add': this.applyOpAdd(op); break;
-      case 'remove': this.applyOpRemove(op); break;
-      case 'replace': this.applyOpReplace(op); break;
-      case 'move': this.applyOpMove(op); break;
-      case 'copy': this.applyOpCopy(op); break;
-      case 'test': this.applyOpTest(op); break;
+      case 'remove': this.applyRemove(op); break;
+      case 'replace': this.applyReplace(op); break;
+      case 'move': this.applyMove(op); break;
+      case 'copy': this.applyCopy(op); break;
+      case 'test': this.applyTest(op); break;
     }
   }
 
@@ -57,7 +57,7 @@ export class JsonPatchDraft {
     }
   }
 
-  public applyOpRemove(op: OperationRemove): void {
+  public applyRemove(op: OperationRemove): void {
     const {builder} = this.draft;
     const steps = toPath(op.path);
     if (!steps.length) this.setRoot(null);
@@ -79,29 +79,29 @@ export class JsonPatchDraft {
     }
   }
 
-  public applyOpReplace(op: OperationReplace): void {
+  public applyReplace(op: OperationReplace): void {
     const {path, value} = op;
-    this.applyOpRemove({op: 'remove', path});
+    this.applyRemove({op: 'remove', path});
     this.applyOpAdd({op: 'add', path, value});
   }
 
-  public applyOpMove(op: OperationMove): void {
+  public applyMove(op: OperationMove): void {
     const path = toPath(op.path);
     const from = toPath(op.from);
     if (isChild(from, path)) throw new Error('INVALID_CHILD');
     const json = this.json(from);
-    this.applyOpRemove({op: 'remove', path: from});
+    this.applyRemove({op: 'remove', path: from});
     this.applyOpAdd({op: 'add', path, value: json});
   }
 
-  public applyOpCopy(op: OperationCopy): void {
+  public applyCopy(op: OperationCopy): void {
     const path = toPath(op.path);
     const from = toPath(op.from);
     const json = this.json(from);
     this.applyOpAdd({op: 'add', path, value: json});
   }
 
-  public applyOpTest(op: OperationTest): void {
+  public applyTest(op: OperationTest): void {
     const path = toPath(op.path);
     const json = this.json(path);
     if (!deepEqual(json, op.value)) throw new Error('TEST');

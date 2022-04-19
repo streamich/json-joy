@@ -5,21 +5,20 @@ import type {Operation} from '../../json-patch';
 import type {Patch} from '../../json-crdt-patch/Patch';
 
 export class JsonPatch {
+  protected draft = new JsonPatchDraft(this.model);
+
   constructor(public readonly model: Model) {}
 
-  public createDraft(ops: Operation[]): Draft {
-    const draft = new JsonPatchDraft(this.model);
-    draft.applyOps(ops);
-    return draft.draft;
+  public apply(ops: Operation[]): this {
+    this.draft.applyOps(ops);
+    return this;
   }
 
-  public createCrdtPatch(ops: Operation[]): Patch {
-    return this.createDraft(ops).patch(this.model.clock);
-  }
-
-  public applyPatch(ops: Operation[]) {
-    const patch = this.createCrdtPatch(ops);
+  public commit(): Patch {
+    const patch = this.draft.draft.patch(this.model.clock);
     this.model.clock.tick(patch.span());
     this.model.applyPatch(patch);
+    this.draft = new JsonPatchDraft(this.model);
+    return patch;
   }
 }
