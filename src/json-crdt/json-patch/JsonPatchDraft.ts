@@ -8,12 +8,12 @@ import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
 import type {Operation, OperationAdd, OperationRemove, OperationReplace, OperationMove, OperationCopy, OperationTest} from '../../json-patch';
 
-export class JsonPatchDraft extends Draft {
-  constructor(public readonly model: Model) {
-    super();
-  }
+export class JsonPatchDraft {
+  public readonly draft = new Draft();
 
-  public applyOps(ops: Operation[]) {
+  constructor(public readonly model: Model) {}
+
+  public applyOps(ops: Operation[]): void {
     for (const op of ops) this.applyOp(op);
   }
 
@@ -29,7 +29,7 @@ export class JsonPatchDraft extends Draft {
   }
 
   public applyOpAdd(op: OperationAdd): void {
-    const {builder} = this;
+    const {builder} = this.draft;
     const steps = toPath(op.path);
     if (!steps.length) this.setRoot(op.value);
     else {
@@ -58,7 +58,7 @@ export class JsonPatchDraft extends Draft {
   }
 
   public applyOpRemove(op: OperationRemove): void {
-    const {builder} = this;
+    const {builder} = this.draft;
     const steps = toPath(op.path);
     if (!steps.length) this.setRoot(null);
     else {
@@ -132,7 +132,7 @@ export class JsonPatchDraft extends Draft {
   }
 
   private setRoot(json: unknown) {
-    const {builder} = this;
+    const {builder} = this.draft;
     builder.root(builder.json(json));
   }
 }

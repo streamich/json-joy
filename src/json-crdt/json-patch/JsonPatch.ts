@@ -10,7 +10,7 @@ export class JsonPatch {
   public createDraft(ops: Operation[]): Draft {
     const draft = new JsonPatchDraft(this.model);
     draft.applyOps(ops);
-    return draft;
+    return draft.draft;
   }
 
   public createCrdtPatch(ops: Operation[]): Patch {
