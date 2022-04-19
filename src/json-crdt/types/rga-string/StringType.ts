@@ -184,7 +184,10 @@ export class StringType implements JsonNode {
     return size;
   }
 
-  /** String length. */
+  /**
+   * String length.
+   * @todo This could be cached same as .toJson().
+   */
   public length(): number {
     let curr: StringChunk | null = this.start;
     let size: number = 0;

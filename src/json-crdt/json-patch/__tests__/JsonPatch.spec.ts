@@ -353,10 +353,10 @@ for (const {only, name, doc1, doc2, patches, throws} of testCases) {
     if (doc1 !== undefined) model.api.root(doc1).commit();
     if (throws) {
       expect(() => {
-        for (const patch of patches) jsonPatch.applyPatch(patch, {});
+        for (const patch of patches) jsonPatch.apply(patch).commit();
       }).toThrow(new Error(throws));
     } else {
-      for (const patch of patches) jsonPatch.applyPatch(patch, {});
+      for (const patch of patches) jsonPatch.apply(patch).commit();
       expect(model.toView()).toEqual(doc2);
     }
   });
