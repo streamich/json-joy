@@ -15,7 +15,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       const viewDecoder = new ViewDecoder();
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);
-      const encoded2 = encoder.encode(doc1);
+      const encoded2 = encoder.encode(doc2);
       const doc3 = decoder.decode(encoded2);
       const json2 = viewDecoder.decode(encoded2);
       expect(doc1.toView()).toEqual(json);
@@ -35,7 +35,7 @@ for (const {name, json} of [...documents, ...binaryDocuments]) {
       doc1.api.root(json).commit();
       const encoded1 = encoder.encode(doc1);
       const doc2 = decoder.decode(encoded1);
-      const encoded2 = encoder.encode(doc1);
+      const encoded2 = encoder.encode(doc2);
       const doc3 = decoder.decode(encoded2);
       const json2 = viewDecoder.decode(encoded2);
       expect(doc1.toView()).toEqual(json);
