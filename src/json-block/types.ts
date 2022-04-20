@@ -11,7 +11,7 @@ export interface BlockClientApiMergeRequest {
   /** Last known batch ID by the client. */
   v: number;
   /** List of patches serialized in block-specific codec. */
-  batch: unknown[];
+  b: unknown[];
 }
 
 /**

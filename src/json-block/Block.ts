@@ -43,15 +43,11 @@ export class BasicBlock<Data, Patch> {
 
   public apply(patch: Patch): void {
     this.model.apply(patch);
-    this.v$.next(this.v$.getValue() + 1);
+    this.v$.next(this.v$.getValue());
   }
 }
 
 export type PatchResponse<Patch> = true | false | Patch;
-
-export interface BranchDependencies<Patch> {
-  readonly merge: (baseVersion: number, patches: Patch[]) => Promise<BranchMergeResponse<Patch>>;
-}
 
 export interface BranchMergeResponse<Patch> {
   version: number;
@@ -66,13 +62,13 @@ export class Branch<Data, Patch> {
   protected readonly head$: BehaviorSubject<BasicBlock<Data, Patch>>;
 
   /**
-   * List of patches applied locally to the head, but not saved
-   * on the server. This is delta between the base and the head.
+   * List of patches applied locally to the head, but not yet
+   * added to the `batches` list.
    */
   protected patches: Patch[];
 
-  /** Number of patches currently being merged to the server. */
-  protected merging: number = 0;
+  /** List of batches to be persisted on the server. */
+  protected batches: Patch[][] = [];
 
   constructor(base: BasicBlock<Data, Patch>) {
     this.base$ = new BehaviorSubject(base);
@@ -80,17 +76,9 @@ export class Branch<Data, Patch> {
     this.head$ = new BehaviorSubject(base.fork());
   }
 
-  public async merge(opts: BranchDependencies<Patch>): Promise<void> {
-    try {
-      const base = this.base$.getValue();
-      const baseVersion = base.v$.getValue();
-      const batch = [...this.patches];
-      this.merging = batch.length;
-      const res = await opts.merge(baseVersion, batch);
-      
-    } catch (error) {
-      this.merging = 0;
-    }
+  public cutBatch(): void {
+    this.batches.push(this.patches);
+    this.patches = [];
   }
 
   /** Apply a patch locally to the head. */
