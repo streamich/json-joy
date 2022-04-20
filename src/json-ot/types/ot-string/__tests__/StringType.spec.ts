@@ -1,4 +1,4 @@
-import {validate, append, normalize} from '../StringType';
+import {validate, append, normalize, apply} from '../StringType';
 import {StringTypeOp} from '../types';
 
 describe('validate()', () => {
@@ -62,5 +62,20 @@ describe('normalize()', () => {
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf']])).toStrictEqual(['asdfe', 3, -5, ['asdf']]);
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf'], ['a']])).toStrictEqual(['asdfe', 3, -5, ['asdfa']]);
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf'], 3, ['a']])).toStrictEqual(['asdfe', 3, -5, ['asdf'], 3, ['a']]);
+  });
+});
+
+describe('apply()', () => {
+  test('can apply operation', () => {
+    expect(apply('', ['abc'])).toBe('abc');
+    expect(apply('13', [1, '2'])).toBe('123');
+    expect(apply('13', [1, '2', '4'])).toBe('1243');
+    expect(apply('13', [1, '2', 1, '4'])).toBe('1234');
+    expect(apply('13', [1, '2', 2, '4'])).toBe('1234');
+    expect(apply('13', [1, '2', 3, '4'])).toBe('1234');
+    expect(apply('123', [1, -1])).toBe('13');
+    expect(apply('123', [1, -1, 1, 'a'])).toBe('13a');
+    expect(apply('123', [1, -1, 1])).toBe('13');
+    expect(apply('123', [1, ['2'], 1, 'a'])).toBe('13a');
   });
 });
