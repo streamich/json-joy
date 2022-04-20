@@ -52,4 +52,34 @@ export class StringType {
     if (isLastRetain) return VALIDATE_RESULT.NO_TRAILING_RETAIN;
     return VALIDATE_RESULT.SUCCESS;
   }
+
+  public static append(op: StringTypeOp, component: StringTypeOpComponent): void {
+    if (!component) return;
+    if (!op.length) {
+      op.push(component);
+      return;
+    }
+    const lastIndex = op.length - 1;
+    const last = op[lastIndex];
+    switch (typeof component) {
+      case 'number': {
+        if (typeof last === 'number') {
+          if (component > 0 && last > 0) op[lastIndex] = last + component;
+          else if (component < 0 && last < 0) op[lastIndex] = last + component;
+          else op.push(component);
+        } else op.push(component);
+        break;
+      }
+      case 'string': {
+        if (typeof last === 'string') op[lastIndex] = last + component;
+        else op.push(component);
+        break;
+      }
+      case 'object': {
+        if (last instanceof Array) last[0] = last + component[0];
+        else op.push(component);
+        break;
+      }
+    }
+  }
 }
