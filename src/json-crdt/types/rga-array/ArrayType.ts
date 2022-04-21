@@ -171,9 +171,8 @@ export class ArrayType implements JsonNode {
       curr = curr.right;
     }
     const _toJson = this._toJson;
-    if (arr.length !== _toJson.length) return this._toJson = arr;
-    for (let i = 0; i < arr.length; i++)
-      if (arr[i] !== _toJson[i]) return this._toJson = arr;
+    if (arr.length !== _toJson.length) return (this._toJson = arr);
+    for (let i = 0; i < arr.length; i++) if (arr[i] !== _toJson[i]) return (this._toJson = arr);
     return _toJson;
   }
 

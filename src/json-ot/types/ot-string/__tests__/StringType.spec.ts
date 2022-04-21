@@ -19,7 +19,7 @@ describe('validate()', () => {
     expect(validate([''])).not.toBe(0);
     expect(validate([1, 2, -1, ['b'], 'a'])).not.toBe(0);
     expect(validate([1, -1, -3, ['b'], 'a'])).not.toBe(0);
-    expect(validate([1, .3, ['b'], 'a'])).not.toBe(0);
+    expect(validate([1, 0.3, ['b'], 'a'])).not.toBe(0);
     expect(validate([1, 0.3])).not.toBe(0);
     expect(validate([1, ''])).not.toBe(0);
     expect(validate([''])).not.toBe(0);
@@ -49,7 +49,7 @@ describe('append()', () => {
     expect(op).toStrictEqual([5, 'asdfasdf', -7, ['a']]);
     append(op, ['b']);
     expect(op).toStrictEqual([5, 'asdfasdf', -7, ['ab']]);
-  });  
+  });
 });
 
 describe('normalize()', () => {
@@ -61,7 +61,14 @@ describe('normalize()', () => {
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1])).toStrictEqual(['asdfe', 3, -5]);
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf']])).toStrictEqual(['asdfe', 3, -5, ['asdf']]);
     expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf'], ['a']])).toStrictEqual(['asdfe', 3, -5, ['asdfa']]);
-    expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf'], 3, ['a']])).toStrictEqual(['asdfe', 3, -5, ['asdf'], 3, ['a']]);
+    expect(normalize(['asdf', 'e', 1, 2, -3, -1, -1, ['asdf'], 3, ['a']])).toStrictEqual([
+      'asdfe',
+      3,
+      -5,
+      ['asdf'],
+      3,
+      ['a'],
+    ]);
   });
 });
 

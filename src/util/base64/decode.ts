@@ -35,7 +35,8 @@ export const createFromBase64 = (chars: string = alphabet) => {
       const sextet1 = table[c1];
       const sextet2 = table[c2];
       const sextet3 = table[c3];
-      if ((sextet0 === undefined) || (sextet1 === undefined) || (sextet2 === undefined) || (sextet3 === undefined)) throw new Error('INVALID_BASE64_STRING');
+      if (sextet0 === undefined || sextet1 === undefined || sextet2 === undefined || sextet3 === undefined)
+        throw new Error('INVALID_BASE64_STRING');
       buf[j] = (sextet0 << 2) | (sextet1 >> 4);
       buf[j + 1] = (sextet1 << 4) | (sextet2 >> 2);
       buf[j + 2] = (sextet2 << 6) | sextet3;
@@ -46,7 +47,7 @@ export const createFromBase64 = (chars: string = alphabet) => {
       const c1 = encoded[mainLength + 1];
       const sextet0 = table[c0];
       const sextet1 = table[c1];
-      if ((sextet0 === undefined) || (sextet1 === undefined)) throw new Error('INVALID_BASE64_STRING');
+      if (sextet0 === undefined || sextet1 === undefined) throw new Error('INVALID_BASE64_STRING');
       buf[j] = (sextet0 << 2) | (sextet1 >> 4);
     } else if (padding === 1) {
       const c0 = encoded[mainLength];
@@ -55,7 +56,8 @@ export const createFromBase64 = (chars: string = alphabet) => {
       const sextet0 = table[c0];
       const sextet1 = table[c1];
       const sextet2 = table[c2];
-      if ((sextet0 === undefined) || (sextet1 === undefined) || (sextet2 === undefined)) throw new Error('INVALID_BASE64_STRING');
+      if (sextet0 === undefined || sextet1 === undefined || sextet2 === undefined)
+        throw new Error('INVALID_BASE64_STRING');
       buf[j] = (sextet0 << 2) | (sextet1 >> 4);
       buf[j + 1] = (sextet1 << 4) | (sextet2 >> 2);
     }

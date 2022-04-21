@@ -1,4 +1,4 @@
-import type {Observable} from "rxjs";
+import type {Observable} from 'rxjs';
 
 export interface BlockServerApi {
   create: () => Promise<void>;
@@ -18,7 +18,7 @@ export interface BlockClientApiMergeRequest {
  * There are a number of scenarios that can happen
  * when merging changes. The possible scenarios also depend
  * on the collaborative editing algorithm used for the block.
- * 
+ *
  * 1. The batch is accepted without any conflicts (changes).
  * 2. The batch is accepted with conflicts, hence the batch may be
  *    be modified to resolve the conflicts. This is relevant for

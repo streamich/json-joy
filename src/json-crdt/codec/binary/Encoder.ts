@@ -46,7 +46,7 @@ export class Encoder extends CrdtEncoder {
     delete this.literals;
     return this.flush();
   }
-  
+
   protected encodeLiteralsTable(model: Model) {
     const literalFrequencies = new Map<string | number, number>();
     for (const node of model.nodes.iterate()) {
@@ -75,11 +75,9 @@ export class Encoder extends CrdtEncoder {
       }
     }
     const literals: unknown[] = [];
-    for (const [literal, frequency] of literalFrequencies.entries())
-      if (frequency > 1) literals.push(literal);
+    for (const [literal, frequency] of literalFrequencies.entries()) if (frequency > 1) literals.push(literal);
     this.encodeArray(literals);
-    for (let i = 0; i < literals.length; i++)
-      this.literals!.set(literals[i], i);
+    for (let i = 0; i < literals.length; i++) this.literals!.set(literals[i], i);
   }
 
   protected encodeClockTable(data: Uint8Array) {

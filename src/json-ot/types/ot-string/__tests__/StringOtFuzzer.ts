@@ -1,7 +1,7 @@
-import {RandomJson} from "../../../../json-random";
-import {Fuzzer} from "../../../../util/Fuzzer";
-import {append, normalize} from "../StringType";
-import {StringTypeOp} from "../types";
+import {RandomJson} from '../../../../json-random';
+import {Fuzzer} from '../../../../util/Fuzzer';
+import {append, normalize} from '../StringType';
+import {StringTypeOp} from '../types';
 
 export class StringOtFuzzer extends Fuzzer {
   genString(): string {

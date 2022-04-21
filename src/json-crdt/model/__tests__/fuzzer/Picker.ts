@@ -19,14 +19,7 @@ type BinaryOp = typeof InsertBinaryDataOperation | typeof DeleteOperation;
 type ArrayOp = typeof InsertArrayElementsOperation | typeof DeleteOperation;
 type ObjectOp = typeof SetObjectKeysOperation | typeof DeleteOperation;
 
-const commonKeys = [
-  'a',
-  'op',
-  'test',
-  'name',
-  '',
-  '__proto__',
-];
+const commonKeys = ['a', 'op', 'test', 'name', '', '__proto__'];
 
 /**
  * This class picks random nodes from a model and picks a random

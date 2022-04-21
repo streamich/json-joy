@@ -1,4 +1,4 @@
-import type {StringTypeOp, StringTypeOpComponent} from "./types";
+import type {StringTypeOp, StringTypeOpComponent} from './types';
 
 export const enum VALIDATE_RESULT {
   SUCCESS = 0,
@@ -19,17 +19,17 @@ export const validate = (op: StringTypeOp): VALIDATE_RESULT => {
         if (!component) return VALIDATE_RESULT.INVALID_COMPONENT;
         if (component !== Math.round(component)) return VALIDATE_RESULT.INVALID_COMPONENT;
         if (component > 0) {
-          const lastComponentIsRetain = (typeof last === 'number') && (last > 0);
+          const lastComponentIsRetain = typeof last === 'number' && last > 0;
           if (lastComponentIsRetain) return VALIDATE_RESULT.ADJACENT_SAME_TYPE;
         } else {
-          const lastComponentIsDelete = (typeof last === 'number') && (last < 0);
+          const lastComponentIsDelete = typeof last === 'number' && last < 0;
           if (lastComponentIsDelete) return VALIDATE_RESULT.ADJACENT_SAME_TYPE;
         }
         break;
       }
       case 'string': {
         if (!component.length) return VALIDATE_RESULT.INVALID_COMPONENT;
-        const lastComponentIsInsert = (typeof last === 'string');
+        const lastComponentIsInsert = typeof last === 'string';
         if (lastComponentIsInsert) return VALIDATE_RESULT.ADJACENT_SAME_TYPE;
         break;
       }
@@ -82,17 +82,23 @@ export const append = (op: StringTypeOp, component: StringTypeOpComponent): void
 
 const componentLength = (component: StringTypeOpComponent): number => {
   switch (typeof component) {
-    case 'number': return Math.abs(component);
-    case 'string': return component.length;
-    default: return component[0].length;
+    case 'number':
+      return Math.abs(component);
+    case 'string':
+      return component.length;
+    default:
+      return component[0].length;
   }
 };
 
 const idDeleteComponent = (component: StringTypeOpComponent): boolean => {
   switch (typeof component) {
-    case 'number': return component < 0;
-    case 'object': return true;
-    default: return false;
+    case 'number':
+      return component < 0;
+    case 'object':
+      return true;
+    default:
+      return false;
   }
 };
 
@@ -158,15 +164,19 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
             const comp1 = i1 >= len1 ? length2 : op1[i1];
             const length1 = componentLength(comp1);
             const isDelete = idDeleteComponent(comp1);
-            if (isDelete || (length2 >= (length1 - off1))) {
+            if (isDelete || length2 >= length1 - off1) {
               if (isDelete) append(op3, copyComponent(comp1));
               else if (off1) {
                 switch (typeof comp1) {
-                  case 'number': append(op3, length1 - off1); break;
-                  case 'string': append(op3, comp1.substring(off1)); break;
+                  case 'number':
+                    append(op3, length1 - off1);
+                    break;
+                  case 'string':
+                    append(op3, comp1.substring(off1));
+                    break;
                 }
               } else append(op3, comp1);
-              if (!isDelete) length2 -= (length1 - off1);
+              if (!isDelete) length2 -= length1 - off1;
               i1++;
               off1 = 0;
             } else {
@@ -201,12 +211,14 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
           append(op3, copyComponent(comp1));
           i1++;
           off1 = 0;
-        } else if (remaining >= (length1 - off1)) {
+        } else if (remaining >= length1 - off1) {
           const end = off2 + (length1 - off1);
           switch (typeof comp1) {
-            case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -(length1 - off1)); break;
+            case 'number':
+              append(op3, isReversible ? [comp2[0].substring(off2, end)] : -(length1 - off1));
+              break;
             case 'string': {
-              off2 += (length1 - off1);
+              off2 += length1 - off1;
               break;
             }
           }
@@ -215,7 +227,9 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
           off2 = end;
         } else {
           switch (typeof comp1) {
-            case 'number': append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining); break;
+            case 'number':
+              append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining);
+              break;
             // case 'string': break;
           }
           off1 += remaining;
@@ -229,11 +243,15 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
     const isDelete = idDeleteComponent(comp1);
     if (isDelete) {
       const isReversible = comp1 instanceof Array;
-      append(op3, isReversible ? [comp1[0].substring(off1)] : ((comp1 as number) + off1));
+      append(op3, isReversible ? [comp1[0].substring(off1)] : (comp1 as number) + off1);
     } else {
       switch (typeof comp1) {
-        case 'number': append(op3, comp1 - off1); break;
-        case 'string': append(op3, comp1.substring(off1)); break;
+        case 'number':
+          append(op3, comp1 - off1);
+          break;
+        case 'string':
+          append(op3, comp1.substring(off1));
+          break;
       }
     }
   }
