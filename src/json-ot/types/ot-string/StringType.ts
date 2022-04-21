@@ -157,11 +157,17 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
             const comp1 = i1 >= len1 ? length2 : op1[i1];
             const length1 = componentLength(comp1);
             const isDelete = idDeleteComponent(comp1);
-            if (isDelete || (length2 >= length1)) {
+            if (isDelete || (length2 >= (length1 - off1))) {
+              if (isDelete) append(op3, copyComponent(comp1));
+              else if (off1) {
+                switch (typeof comp1) {
+                  case 'number': append(op3, length1 - off1); break;
+                  case 'string': append(op3, comp1.substring(off1)); break;
+                }
+              } else append(op3, comp1);
+              if (!isDelete) length2 -= (length1 - off1);
               i1++;
               off1 = 0;
-              append(op3, copyComponent(comp1));
-              if (!isDelete) length2 -= length1;
             } else {
               if (typeof comp1 === 'number') append(op3, length2);
               else append(op3, (comp1 as string).substring(off1, off1 + length2));
@@ -201,7 +207,7 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
               case 'string': off2 += length1; break;
             }
           }
-          off2 = end;
+          if (!isDelete) off2 = end;
         } else {
           if (isDelete) {
            append(op3, copyComponent(comp1));
