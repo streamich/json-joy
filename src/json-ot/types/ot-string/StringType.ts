@@ -102,10 +102,6 @@ const idDeleteComponent = (component: StringTypeOpComponent): boolean => {
   }
 };
 
-const copyComponent = (component: StringTypeOpComponent): StringTypeOpComponent => {
-  return component instanceof Array ? [component[0]] : component;
-};
-
 const trim = (op: StringTypeOp): void => {
   if (!op.length) return;
   const last = op[op.length - 1];
@@ -147,6 +143,33 @@ export const apply = (str: string, op: StringTypeOp): string => {
   return res + str.substring(offset);
 };
 
+/**
+ * Extracts a full or a part of a component from an operation.
+ * 
+ * @param component Component from which to extract a chunk.
+ * @param offset Position within the component to start from.
+ * @param maxLength Maximum length of the component to extract.
+ * @returns Full or partial component at index `index` of operation `op`.
+ */
+const chunk = (component: StringTypeOpComponent, offset: number, maxLength: number): StringTypeOpComponent => {
+  switch (typeof component) {
+    case 'number': {
+      return component > 0
+        ? Math.min(component - offset, maxLength)
+        : -Math.min(-component - offset, maxLength);
+    }
+    case 'string': {
+      const end = Math.min(offset + maxLength, component.length);
+      return component.substring(offset, end);
+    }
+    case 'object': {
+      const str = component[0];
+      const end = Math.min(offset + maxLength, str.length);
+      return [str.substring(offset, end)];
+    }
+  }
+};
+
 export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
   const op3: StringTypeOp = [];
   const len1 = op1.length;
@@ -161,30 +184,18 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
         if (comp2 > 0) {
           let length2 = comp2;
           while (length2 > 0) {
-            const comp1 = i1 >= len1 ? length2 : op1[i1];
-            const length1 = componentLength(comp1);
-            const isDelete = idDeleteComponent(comp1);
-            if (isDelete || length2 >= length1 - off1) {
-              if (isDelete) append(op3, copyComponent(comp1));
-              else if (off1) {
-                switch (typeof comp1) {
-                  case 'number':
-                    append(op3, length1 - off1);
-                    break;
-                  case 'string':
-                    append(op3, comp1.substring(off1));
-                    break;
-                }
-              } else append(op3, comp1);
-              if (!isDelete) length2 -= length1 - off1;
+            const comp1 = op1[i1];
+            const comp = i1 >= len1 ? length2 : chunk(comp1, off1, length2);
+            const compLength = componentLength(comp);
+            const isDelete = idDeleteComponent(comp);
+            const length1 = componentLength(comp1 || comp);
+            append(op3, comp);
+            off1 += compLength;
+            if (off1 >= length1) {
               i1++;
               off1 = 0;
-            } else {
-              if (typeof comp1 === 'number') append(op3, length2);
-              else append(op3, (comp1 as string).substring(off1, off1 + length2));
-              off1 += length2;
-              length2 = 0;
             }
+            if (!isDelete) length2 -= compLength;
           }
         } else doDelete = true;
         break;
@@ -204,57 +215,24 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
       let off2 = 0;
       while (off2 < length2) {
         const remaining = length2 - off2;
-        const comp1 = i1 >= len1 ? remaining : op1[i1];
-        const length1 = componentLength(comp1);
-        const isDelete = idDeleteComponent(comp1);
-        if (isDelete) {
-          append(op3, copyComponent(comp1));
+        const comp1 = op1[i1];
+        const comp = i1 >= len1 ? remaining : chunk(comp1, off1, remaining);
+        const compLength = componentLength(comp);
+        const isDelete = idDeleteComponent(comp);
+        const length1 = componentLength(comp1 || comp);
+        if (isDelete) append(op3, comp);
+        else if (typeof comp === 'number')
+          append(op3, isReversible ? [comp2[0].substring(off2, off2 + compLength)] : -compLength);
+        off1 += compLength;
+        if (off1 >= length1) {
           i1++;
           off1 = 0;
-        } else if (remaining >= length1 - off1) {
-          const end = off2 + (length1 - off1);
-          switch (typeof comp1) {
-            case 'number':
-              append(op3, isReversible ? [comp2[0].substring(off2, end)] : -(length1 - off1));
-              break;
-            case 'string': {
-              off2 += length1 - off1;
-              break;
-            }
-          }
-          i1++;
-          off1 = 0;
-          off2 = end;
-        } else {
-          switch (typeof comp1) {
-            case 'number':
-              append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining);
-              break;
-            // case 'string': break;
-          }
-          off1 += remaining;
-          off2 = length2;
         }
+        if (!isDelete) off2 += compLength;
       }
     }
   }
-  if (i1 < len1 && off1) {
-    const comp1 = op1[i1++];
-    const isDelete = idDeleteComponent(comp1);
-    if (isDelete) {
-      const isReversible = comp1 instanceof Array;
-      append(op3, isReversible ? [comp1[0].substring(off1)] : (comp1 as number) + off1);
-    } else {
-      switch (typeof comp1) {
-        case 'number':
-          append(op3, comp1 - off1);
-          break;
-        case 'string':
-          append(op3, comp1.substring(off1));
-          break;
-      }
-    }
-  }
+  if (i1 < len1 && off1) append(op3, chunk(op1[i1++], off1, Infinity));
   for (; i1 < len1; i1++) append(op3, op1[i1]);
   trim(op3);
   return op3;
