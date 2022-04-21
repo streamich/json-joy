@@ -160,32 +160,27 @@ describe('transform()', () => {
     expect(op4).toStrictEqual([2, -1]);
   });
 
-  // type TestCase = [name: string, str: string, op1: StringTypeOp, op2: StringTypeOp, expected: string, only?: boolean];
+  type TestCase = [name: string, str: string, op1: StringTypeOp, op2: StringTypeOp, expected: string, only?: boolean];
 
-  // const testCases: TestCase[] = [
-  //   ['insert-insert', 'abc', [1, 'a'], [1, 'b'], 'ababc'],
-  //   ['insert-delete', 'abc', [1, 'a'], [1, -1], 'abc'],
-  //   ['insert-delete-2', 'abc', [1, 'a'], [2, -1], 'aac'],
-  //   ['insert in previous insert', 'aabb', [2, '1111'], [4, '22'], 'aa112211bb'],
-  //   ['fuzzer bug #1', 'd6', ['}B'], [['}'], ';0q', 2, ['6']], ';0qBd'],
-  //   ['fuzzer bug #2', 'Ai', [['A'], '#', -1], [-1], ''],
-  //   ['fuzzer bug #3', 'M}', ['!y1'], ["'/*s", 2, ',/@', -2, ['}']], "'/*s!y,/@"],
-  //   ['fuzzer bug #4', '8sL', [-2, 'w', ['L']], [['w']], ''],
-  //   ['fuzzer bug #5', '%V=', [2, ';'], ['3O"', 1, 'J', -2], '3O"%J='],
-  // ];
+  const testCases: TestCase[] = [
+    ['delete-delete', 'abc', [1, -1], [2, -1], 'a'],
+    ['insert-insert', '12345', [1, 'one', 2, 'three'], [2, 'two', 2, 'four'], '1one2two3three4four5'],
+  ];
 
-  // describe('can compose', () => {
-  //   for (const [name, str, op1, op2, expected, only] of testCases) {
-  //     (only ? test.only : test)(`${name}`, () => {
-  //       const res1 = apply(apply(str, op1), op2);
-  //       // console.log('res1', res1);
-  //       const op3 = compose(op1, op2);
-  //       // console.log('op3', op3);
-  //       const res2 = apply(str, op3);
-  //       // console.log('res2', res2);
-  //       expect(res2).toStrictEqual(res1);
-  //       expect(res2).toStrictEqual(expected);
-  //     });
-  //   }
-  // });
+  describe('can transform', () => {
+    for (const [name, str, op1, op2, expected, only] of testCases) {
+      (only ? test.only : test)(`${name}`, () => {
+        const op11 = transform(op1, op2, true);
+        const op22 = transform(op2, op1, false);
+        const res1 = apply(apply(str, op1), op22);
+        const res2 = apply(apply(str, op2), op11);
+        // console.log('op11', op11);
+        // console.log('op22', op22);
+        // console.log('res1', res1);
+        // console.log('res2', res2);
+        expect(res2).toStrictEqual(res1);
+        expect(res2).toStrictEqual(expected);
+      });
+    }
+  });
 });
