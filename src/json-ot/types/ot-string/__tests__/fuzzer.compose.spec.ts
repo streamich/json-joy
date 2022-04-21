@@ -15,6 +15,7 @@ test('works', () => {
     try {
       expect(str4).toBe(str3);
     } catch (error) {
+      // tslint:disable-next-line no-console
       console.log([str1, op1, str2, op2, str3, op3, str4]);
       throw error;
     }
