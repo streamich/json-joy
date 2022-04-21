@@ -106,6 +106,7 @@ describe('compose()', () => {
     ['fuzzer bug #2', 'Ai', [['A'], '#', -1], [-1], ''],
     ['fuzzer bug #3', 'M}', ['!y1'], ["'/*s", 2, ',/@', -2, ['}']], "'/*s!y,/@"],
     ['fuzzer bug #4', '8sL', [-2, 'w', ['L']], [['w']], ''],
+    ['fuzzer bug #5', '%V=', [2, ';'], ['3O"', 1, 'J', -2], '3O"%J='],
   ];
 
   describe('can compose', () => {

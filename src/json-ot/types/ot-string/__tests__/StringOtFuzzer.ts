@@ -5,7 +5,7 @@ import {StringTypeOp} from "../types";
 
 export class StringOtFuzzer extends Fuzzer {
   genString(): string {
-    return RandomJson.genString(2);
+    return RandomJson.genString(20);
   }
 
   genOp(str: string): StringTypeOp {

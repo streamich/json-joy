@@ -4,7 +4,7 @@ import {StringOtFuzzer} from './StringOtFuzzer';
 const fuzzer = new StringOtFuzzer();
 
 test('works', () => {
-  for (let i = 0; i < 100000; i++) {
+  for (let i = 0; i < 10000; i++) {
     const str1 = fuzzer.genString();
     const op1 = fuzzer.genOp(str1);
     const str2 = apply(str1, op1);

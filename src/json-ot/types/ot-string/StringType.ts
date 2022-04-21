@@ -204,7 +204,7 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
         } else if (remaining >= (length1 - off1)) {
           const end = off2 + (length1 - off1);
           switch (typeof comp1) {
-            case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -length1); break;
+            case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -(length1 - off1)); break;
             case 'string': {
               off2 += (length1 - off1);
               break;
