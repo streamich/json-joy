@@ -11,6 +11,7 @@
     "json-crdt-patch",
     "json-equal",
     "json-expression",
+    "json-ot",
     "json-pack",
     "json-patch",
     "json-patch-ot",

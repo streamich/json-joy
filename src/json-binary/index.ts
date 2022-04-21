@@ -33,7 +33,8 @@ const unwrapBinary = (value: unknown): unknown => {
         }
         case 'string': {
           if (item.length < minDataUri) continue;
-          if (item.substring(0, binUriStartLength) === binUriStart) value[i] = fromBase64(item.substring(binUriStartLength));
+          if (item.substring(0, binUriStartLength) === binUriStart)
+            value[i] = fromBase64(item.substring(binUriStartLength));
           else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart)
             value[i] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
           else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) value[i] = parseExtDataUri(item);
@@ -57,8 +58,8 @@ const unwrapBinary = (value: unknown): unknown => {
             (value as any)[key] = buf;
           } else if (item.substring(0, msgPackUriStartLength) === msgPackUriStart) {
             (value as any)[key] = new JsonPackValue(fromBase64(item.substring(msgPackUriStartLength)));
-          }
-          else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart) (value as any)[key] = parseExtDataUri(item);
+          } else if (item.substring(0, msgPackExtStartLength) === msgPackExtStart)
+            (value as any)[key] = parseExtDataUri(item);
         }
       }
     }
@@ -67,7 +68,8 @@ const unwrapBinary = (value: unknown): unknown => {
   if (typeof value === 'string') {
     if (value.length < minDataUri) return value;
     if (value.substring(0, binUriStartLength) === binUriStart) return fromBase64(value.substring(binUriStartLength));
-    if (value.substring(0, msgPackUriStartLength) === msgPackUriStart) return new JsonPackValue(fromBase64(value.substring(msgPackUriStartLength)));
+    if (value.substring(0, msgPackUriStartLength) === msgPackUriStart)
+      return new JsonPackValue(fromBase64(value.substring(msgPackUriStartLength)));
     if (value.substring(0, msgPackExtStartLength) === msgPackExtStart) return parseExtDataUri(value);
     else return value;
   }

@@ -1,4 +1,4 @@
-import {Model} from "..";
+import {Model} from '..';
 
 test('returns cached value, when shallow object keys not modified', () => {
   const model = Model.withLogicalClock();

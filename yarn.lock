@@ -4726,6 +4726,11 @@ original@^1.0.0:
   dependencies:
     url-parse "^1.4.3"
 
+ot-text@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ot-text/-/ot-text-1.0.2.tgz#fc27c12b07a93b13c328c833bf94c9c24ac46231"
+  integrity sha512-1xjcAjB57tYtv722j8J+IaYe4fKZOeaQ3zDa0clUlkhboawrq+dk1cpDfe4+TBSb9NNe7Yra9+tJKsw+8q4H9A==
+
 p-each-series@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/p-each-series/-/p-each-series-2.2.0.tgz#105ab0357ce72b202a8a8b94933672657b5e2a9a"

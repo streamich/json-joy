@@ -150,7 +150,7 @@ export class StringType implements JsonNode {
     let str: string = '';
     let curr: StringChunk | null = this.start;
     while ((curr = curr.right)) if (curr.str) str += curr.str;
-    return this._toString = str;
+    return (this._toString = str);
   }
 
   public clone(doc: Model): StringType {

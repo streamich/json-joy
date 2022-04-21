@@ -9,7 +9,10 @@ describe('logical', () => {
     doc1.api.root([1, 'asdf', false, {}, {foo: 'bar'}]).commit();
     doc1.api.str([1]).ins(4, '!').commit();
     doc1.api.str([4, 'foo']).del(1, 1).commit();
-    doc1.api.arr([]).ins(1, [new Uint8Array([1, 2, 3])]).commit();
+    doc1.api
+      .arr([])
+      .ins(1, [new Uint8Array([1, 2, 3])])
+      .commit();
     doc1.api.bin([1]).del(2, 1).commit();
     doc1.api.arr([]).ins(6, ['a', 'b', 'c']).commit();
     doc1.api.arr([]).del(7, 1).commit();

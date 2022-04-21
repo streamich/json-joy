@@ -6,7 +6,17 @@ import {ObjectType} from '../types/lww-object/ObjectType';
 import {UNDEFINED_ID} from '../../json-crdt-patch/constants';
 import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
-import type {Operation, OperationAdd, OperationRemove, OperationReplace, OperationMove, OperationCopy, OperationTest, OperationStrIns, OperationStrDel} from '../../json-patch';
+import type {
+  Operation,
+  OperationAdd,
+  OperationRemove,
+  OperationReplace,
+  OperationMove,
+  OperationCopy,
+  OperationTest,
+  OperationStrIns,
+  OperationStrDel,
+} from '../../json-patch';
 
 export class JsonPatchDraft {
   public readonly draft = new Draft();
@@ -18,16 +28,33 @@ export class JsonPatchDraft {
   }
 
   public applyOp(op: Operation): void {
-    switch(op.op) {
-      case 'add': this.applyOpAdd(op); break;
-      case 'remove': this.applyRemove(op); break;
-      case 'replace': this.applyReplace(op); break;
-      case 'move': this.applyMove(op); break;
-      case 'copy': this.applyCopy(op); break;
-      case 'test': this.applyTest(op); break;
-      case 'str_ins': this.applyStrIns(op); break;
-      case 'str_del': this.applyStrDel(op); break;
-      default: throw new Error('UNKNOWN_OP');
+    switch (op.op) {
+      case 'add':
+        this.applyOpAdd(op);
+        break;
+      case 'remove':
+        this.applyRemove(op);
+        break;
+      case 'replace':
+        this.applyReplace(op);
+        break;
+      case 'move':
+        this.applyMove(op);
+        break;
+      case 'copy':
+        this.applyCopy(op);
+        break;
+      case 'test':
+        this.applyTest(op);
+        break;
+      case 'str_ins':
+        this.applyStrIns(op);
+        break;
+      case 'str_del':
+        this.applyStrDel(op);
+        break;
+      default:
+        throw new Error('UNKNOWN_OP');
     }
   }
 

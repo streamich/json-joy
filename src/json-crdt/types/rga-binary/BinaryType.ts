@@ -164,7 +164,7 @@ export class BinaryType implements JsonNode {
       res.set(buf, offset);
       offset += buf.length;
     }
-    return this._toJson = res;
+    return (this._toJson = res);
   }
 
   public clone(doc: Model): BinaryType {

@@ -1,5 +1,5 @@
-import {JsonPackExtension, JsonPackValue} from "../json-pack";
-import {encodeFull} from "../json-pack/util";
+import {JsonPackExtension, JsonPackValue} from '../json-pack';
+import {encodeFull} from '../json-pack/util';
 
 export interface JsonDocument {
   name: string;
@@ -24,9 +24,7 @@ export const msgPackDocuments: JsonDocument[] = [
   },
   {
     name: 'MessagePack value in array',
-    json: [
-      new JsonPackValue(encodeFull(null)),
-    ],
+    json: [new JsonPackValue(encodeFull(null))],
   },
   {
     name: 'MessagePack extension',
@@ -36,7 +34,7 @@ export const msgPackDocuments: JsonDocument[] = [
     name: 'MessagePack extension in object',
     json: {
       foo: new JsonPackExtension(1, new Uint8Array([1, 2, 3])),
-    }
+    },
   },
   {
     name: 'MessagePack extension in array',
