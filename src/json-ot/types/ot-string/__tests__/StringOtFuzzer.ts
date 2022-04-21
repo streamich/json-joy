@@ -1,6 +1,6 @@
 import {RandomJson} from "../../../../json-random";
 import {Fuzzer} from "../../../../util/Fuzzer";
-import {append} from "../StringType";
+import {append, normalize} from "../StringType";
 import {StringTypeOp} from "../types";
 
 export class StringOtFuzzer extends Fuzzer {
@@ -10,7 +10,7 @@ export class StringOtFuzzer extends Fuzzer {
 
   genOp(str: string): StringTypeOp {
     if (!str) return [this.genString()];
-    const op: StringTypeOp = [];
+    let op: StringTypeOp = [];
     let off = 0;
     let remaining = str.length;
     while (remaining > 0) {
@@ -24,7 +24,7 @@ export class StringOtFuzzer extends Fuzzer {
           if (Math.random() < 0.5) {
             append(op, -len);
           } else {
-            append(op, [str.substr(off, len)]);
+            append(op, [str.substring(off, off + len)]);
           }
           off += len;
         },
@@ -35,6 +35,7 @@ export class StringOtFuzzer extends Fuzzer {
       fn();
       remaining = str.length - off;
     }
+    op = normalize(op);
     if (op.length === 1 && typeof op[0] === 'number' && op[0] > 0) return [this.genString()];
     return op;
   }

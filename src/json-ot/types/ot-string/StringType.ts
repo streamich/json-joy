@@ -144,9 +144,10 @@ export const apply = (str: string, op: StringTypeOp): string => {
 export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
   const op3: StringTypeOp = [];
   const len1 = op1.length;
+  const len2 = op2.length;
   let off1 = 0;
   let i1 = 0;
-  for (let i2 = 0; i2 < op2.length; i2++) {
+  for (let i2 = 0; i2 < len2; i2++) {
     const comp2 = op2[i2];
     let doDelete = false;
     switch (typeof comp2) {
@@ -196,25 +197,31 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
         const comp1 = i1 >= len1 ? remaining : op1[i1];
         const length1 = componentLength(comp1);
         const isDelete = idDeleteComponent(comp1);
-        if (remaining >= length1) {
-          i1++;
-          off1 = 0;
-          const end = off2 + length1;
-          if (isDelete) append(op3, copyComponent(comp1));
-          else {
+        if (remaining >= (length1 - off1)) {
+          if (isDelete) {
+            append(op3, copyComponent(comp1));
+            i1++;
+            off1 = 0;
+          } else {
+            const end = off2 + (length1 - off1);
             switch (typeof comp1) {
               case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -length1); break;
-              case 'string': off2 += length1; break;
+              case 'string': {
+                off2 += (length1 - off1);
+                break;
+              }
             }
+            i1++;
+            off1 = 0;
+            off2 = end;
           }
-          if (!isDelete) off2 = end;
         } else {
           if (isDelete) {
-           append(op3, copyComponent(comp1));
+            append(op3, copyComponent(comp1));
           } else {
             switch (typeof comp1) {
               case 'number': append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining); break;
-              case 'string': off2 += remaining; break;
+              // case 'string': break;
             }
           }
           off1 += remaining;

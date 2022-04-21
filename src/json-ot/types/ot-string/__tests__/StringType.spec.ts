@@ -104,6 +104,7 @@ describe('compose()', () => {
     ['insert in previous insert', 'aabb', [2, '1111'], [4, '22'], 'aa112211bb'],
     ['fuzzer bug #1', 'd6', ['}B'], [['}'], ';0q', 2, ['6']], ';0qBd'],
     ['fuzzer bug #2', 'Ai', [['A'], '#', -1], [-1], ''],
+    ['fuzzer bug #3', 'M}', ['!y1'], ["'/*s", 2, ',/@', -2, ['}']], "'/*s!y,/@"],
   ];
 
   describe('can compose', () => {
