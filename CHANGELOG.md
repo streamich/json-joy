@@ -1,3 +1,23 @@
+# [7.15.0](https://github.com/streamich/json-joy/compare/v7.14.0...v7.15.0) (2022-04-21)
+
+
+### Bug Fixes
+
+* **json-ot:** 🐛 fix another compose() bug ([8a80e77](https://github.com/streamich/json-joy/commit/8a80e77daaa209414b57e4a2678c8fb16f753604))
+* **json-ot:** 🐛 make compose() function pass fuzzer tests ([9559e60](https://github.com/streamich/json-joy/commit/9559e60f0b6c3775819103a1134cd5d094f6367b))
+* **json-ot:** 🐛 make compose() hand-crafted tests pass ([b0b6a95](https://github.com/streamich/json-joy/commit/b0b6a9559458a0e8306c2ac0246a7d3d380d3f39))
+
+
+### Features
+
+* 🎸 minor edits to block interface ([2caa82c](https://github.com/streamich/json-joy/commit/2caa82ce75b17a4f00c32553a5446ccd30937b57))
+* **json-ot:** 🎸 add append method ([fd3a16f](https://github.com/streamich/json-joy/commit/fd3a16fffee7041ed25ce872b8504a1665556f43))
+* **json-ot:** 🎸 add apply() method ([84053b0](https://github.com/streamich/json-joy/commit/84053b0773954747496d87086dcc83fc0010851b))
+* **json-ot:** 🎸 add normalize() method ([0c6b024](https://github.com/streamich/json-joy/commit/0c6b024a2d177ed3fb1e49a149d35b97d904882f))
+* **json-ot:** 🎸 add string type transform() function ([4ec0aae](https://github.com/streamich/json-joy/commit/4ec0aae4df91609235db20c8ef9391c5fa9f090b))
+* **json-ot:** 🎸 add StringType validate method ([2bb6f6d](https://github.com/streamich/json-joy/commit/2bb6f6d6182a9072e90281891f94d0e6ce03e2a2))
+* **json-ot:** 🎸 implement compose function ([9cbc704](https://github.com/streamich/json-joy/commit/9cbc7045eeebd9e6bde1a97024295239c1ef337d))
+
 # [7.14.0](https://github.com/streamich/json-joy/compare/v7.13.0...v7.14.0) (2022-04-19)
 
 
