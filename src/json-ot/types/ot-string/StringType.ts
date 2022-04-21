@@ -197,32 +197,26 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
         const comp1 = i1 >= len1 ? remaining : op1[i1];
         const length1 = componentLength(comp1);
         const isDelete = idDeleteComponent(comp1);
-        if (remaining >= (length1 - off1)) {
-          if (isDelete) {
-            append(op3, copyComponent(comp1));
-            i1++;
-            off1 = 0;
-          } else {
-            const end = off2 + (length1 - off1);
-            switch (typeof comp1) {
-              case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -length1); break;
-              case 'string': {
-                off2 += (length1 - off1);
-                break;
-              }
+        if (isDelete) {
+          append(op3, copyComponent(comp1));
+          i1++;
+          off1 = 0;
+        } else if (remaining >= (length1 - off1)) {
+          const end = off2 + (length1 - off1);
+          switch (typeof comp1) {
+            case 'number': append(op3, isReversible ? [comp2[0].substring(off2, end)] : -length1); break;
+            case 'string': {
+              off2 += (length1 - off1);
+              break;
             }
-            i1++;
-            off1 = 0;
-            off2 = end;
           }
+          i1++;
+          off1 = 0;
+          off2 = end;
         } else {
-          if (isDelete) {
-            append(op3, copyComponent(comp1));
-          } else {
-            switch (typeof comp1) {
-              case 'number': append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining); break;
-              // case 'string': break;
-            }
+          switch (typeof comp1) {
+            case 'number': append(op3, isReversible ? [comp2[0].substring(off2)] : -remaining); break;
+            // case 'string': break;
           }
           off1 += remaining;
           off2 = length2;
