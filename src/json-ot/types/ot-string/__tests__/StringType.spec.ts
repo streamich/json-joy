@@ -1,4 +1,4 @@
-import {validate, append, normalize, apply} from '../StringType';
+import {validate, append, normalize, apply, compose} from '../StringType';
 import {StringTypeOp} from '../types';
 
 describe('validate()', () => {
@@ -77,5 +77,45 @@ describe('apply()', () => {
     expect(apply('123', [1, -1, 1, 'a'])).toBe('13a');
     expect(apply('123', [1, -1, 1])).toBe('13');
     expect(apply('123', [1, ['2'], 1, 'a'])).toBe('13a');
+  });
+});
+
+describe('compose()', () => {
+  test('can combine two ops', () => {
+    const op1: StringTypeOp = [1, 'a'];
+    const op2: StringTypeOp = [1, 'b'];
+    const op3 = compose(op1, op2);
+    expect(op3).toStrictEqual([1, 'ba']);
+  });
+
+  test('can delete insert of op1', () => {
+    const op1: StringTypeOp = [1, 'a'];
+    const op2: StringTypeOp = [1, -1, 'b'];
+    const op3 = compose(op1, op2);
+    expect(op3).toStrictEqual([1, 'b']);
+  });
+
+  type TestCase = [name: string, str: string, op1: StringTypeOp, op2: StringTypeOp, expected: string, only?: boolean];
+
+  const testCases: TestCase[] = [
+    ['insert-insert', 'abc', [1, 'a'], [1, 'b'], 'ababc'],
+    ['insert-delete', 'abc', [1, 'a'], [1, -1], 'abc'],
+    ['insert-delete-2', 'abc', [1, 'a'], [2, -1], 'aac'],
+    ['insert in previous insert', 'aabb', [2, '1111'], [4, '22'], 'aa112211bb'],
+  ];
+
+  describe('can compose', () => {
+    for (const [name, str, op1, op2, expected, only] of testCases) {
+      (only ? test.only : test)(`${name}`, () => {
+        const res1 = apply(apply(str, op1), op2);
+        // console.log('res1', res1);
+        const op3 = compose(op1, op2);
+        // console.log('op3', op3);
+        const res2 = apply(str, op3);
+        // console.log('res2', res2);
+        expect(res2).toStrictEqual(res1);
+        expect(res2).toStrictEqual(expected);
+      });
+    }
   });
 });
