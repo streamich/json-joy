@@ -44,7 +44,7 @@ export class MsgPackSerializerCodegen {
     };
     this.codegen = new Codegen<EncoderFn>({
       name: 'toMsgPack',
-      args: 'r0',
+      args: ['r0'],
       prologue: 'e.reset();',
       epilogue: 'return e.flush();',
       processSteps: (steps) => {
@@ -86,7 +86,7 @@ export class MsgPackSerializerCodegen {
     return encoder.flush();
   }
 
-  protected registerCounter = 0;
+  protected registerCounter = 1;
 
   protected getRegister(): string {
     return `r${this.registerCounter++}`;
@@ -324,7 +324,7 @@ export class MsgPackSerializerCodegen {
   }
 
   public run(): this {
-    const r = this.getRegister();
+    const r = this.codegen.options.args[0];
     const value = new JsExpression(() => r);
     this.onType(this.options.type, value);
     return this;
@@ -341,7 +341,7 @@ export class MsgPackSerializerCodegen {
   public compilePartial(): PartialEncoderFn {
     return this.codegen.compile({
       name: 'partial',
-      args: 'r0, e',
+      args: ['r0', 'e'],
       epilogue: '',
       prologue: '',
     });

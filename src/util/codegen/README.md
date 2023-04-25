@@ -14,5 +14,4 @@ Some examples:
   It is implemented in `json-patch` library.
 - Given a `json-type` schema of a JSON object, it is possible to generate
   optimized functions for validation and serialization of objects according to
-  that schema. Those are implemented in `json-type-validator` and
-  `json-type-serializer` libraries.
+  that schema.
