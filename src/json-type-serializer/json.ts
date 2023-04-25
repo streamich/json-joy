@@ -243,7 +243,7 @@ export class JsonSerializerCodegen {
   }
 
   public run(): this {
-    const r = this.codegen.getRegister();
+    const r = this.codegen.options.args[0];
     const value = new JsExpression(() => r);
     this.onType(this.options.type, value);
     return this;
