@@ -22,7 +22,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript string that represents the arguments that will be passed
    * to the main function body. Defaults to "r0", i.e. the first register.
    */
-  args?: string;
+  args?: string[];
 
   /**
    * Name of the generated function.
@@ -88,11 +88,11 @@ export class Codegen<
   protected steps: JsonSerializerStep[] = [];
 
   /** @ignore */
-  protected options: Required<CodegenOptions<Linkable>>;
+  public options: Required<CodegenOptions<Linkable>>;
 
   constructor(opts: CodegenOptions<Linkable>) {
     this.options = {
-      args: 'r0',
+      args: ['r0'],
       name: '',
       prologue: '',
       epilogue: '',
@@ -100,6 +100,7 @@ export class Codegen<
       linkable: {} as Linkable,
       ...opts,
     };
+    this.registerCounter = this.options.args.length;
   }
 
   /**
@@ -120,7 +121,7 @@ export class Codegen<
     this.steps.push(step);
   }
 
-  protected registerCounter = 0;
+  protected registerCounter: number;
 
   /**
    * Codegen uses the idea of infinite registers. It starts with `0` and
@@ -138,6 +139,9 @@ export class Codegen<
    */
   public getRegister(): string {
     return `r${this.registerCounter++}`;
+  }
+  public r(): string {
+    return this.getRegister();
   }
 
   /** @ignore */
@@ -221,15 +225,13 @@ export class Codegen<
    * const fn = eval(code.js)(...code.deps);
    * const result = fn(...args);
    * ```
-   *
-   * @returns Returns a {@link CompiledFunction} object ready for compilation.
    */
   public generate(opts: CodegenGenerateOptions = {}): JavaScriptLinked<Fn> {
     const {name, args, prologue, epilogue} = {...this.options, ...opts};
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
 ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = (${constant});`).join('\n')}
-return ${name ? `function ${name}` : 'function'}(${args}){
+return ${name ? `function ${name}` : 'function'}(${args.join(',')}){
 ${prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
 ${epilogue}
@@ -247,6 +249,7 @@ ${epilogue}
    * @returns JavaScript function ready for execution.
    */
   public compile(opts?: CodegenGenerateOptions): Fn {
-    return compileClosure(this.generate(opts));
+    const closure = this.generate(opts);
+    return compileClosure(closure);
   }
 }

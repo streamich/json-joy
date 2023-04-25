@@ -1,3 +1,5 @@
+import type {Brand} from '../types';
+
 /**
  * Represents a string which contains JavaScript code, which can be
  * executed by the `eval` function.
@@ -7,7 +9,7 @@
  * const fn = eval(code); // () => {}
  * ```
  */
-export type JavaScript<T> = string & {__JS_BRAND__: T};
+export type JavaScript<T> = Brand<string, T, 'JavaScript'>;
 
 /**
  * Represents a string which contains JavaScript code, which is enclosed
