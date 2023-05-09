@@ -26,9 +26,6 @@ This package consists of multiple self-contained libraries:
 - __`json-patch-ot`__ &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
   - __Documentation__ 🚀
   - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_patch_ot.html)
-- __`json-crdt`__ &mdash; CRDT implementation for JSON type.
-  - [__Documentation__ 🚀](./src/json-crdt/README.md)
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_crdt.html)
 - __`json-crdt-patch`__ &mdash; JSON type CRDT operation specification and implementation.
   - __Documentation__ 🚀
   - __Specification__ 🤔

@@ -1,2 +1,0 @@
-# JSON CRDT Model codecs
-
