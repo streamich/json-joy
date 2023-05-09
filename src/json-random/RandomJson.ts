@@ -1,3 +1,5 @@
+import type {JsonValue} from '../json-pack/types';
+
 /** @ignore */
 export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'binary' | 'array' | 'object';
 
@@ -37,8 +39,24 @@ const ascii = (): string => {
   return String.fromCharCode(Math.floor(32 + Math.random() * (126 - 32)));
 };
 
-const utf8 = (): string => {
-  return String.fromCharCode(Math.floor(Math.random() * 65535));
+const alphabet = [
+  // 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+  // 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+  // 'u', 'v', 'w', 'x', 'y', 'z',
+  // 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+  // 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+  // 'U', 'V', 'W', 'X', 'Y', 'Z',
+  // '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  // '-', '_', '.', ',', ';', '!', '@', '#', '$', '%',
+  // '^', '&', '*', '\\', '/', '(', ')', '+', '=', '\n',
+  // '👍', '🏻', '😛', 'ä', 'ö', 'ü', 'ß', 'а', 'б', 'в',
+  'г',
+  '诶',
+  '必',
+  '西',
+];
+const utf16 = (): string => {
+  return alphabet[Math.floor(Math.random() * alphabet.length)];
 };
 
 /**
@@ -49,7 +67,7 @@ const utf8 = (): string => {
  * ```
  */
 export class RandomJson {
-  public static generate(opts?: Partial<RandomJsonOptions>): unknown {
+  public static generate(opts?: Partial<RandomJsonOptions>): JsonValue {
     const rnd = new RandomJson(opts);
     return rnd.create();
   }
@@ -73,8 +91,9 @@ export class RandomJson {
 
   public static genString(length = Math.ceil(Math.random() * 16)): string {
     let str: string = '';
-    if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += utf8();
+    if (Math.random() < 0.1) for (let i = 0; i < length; i++) str += utf16();
     else for (let i = 0; i < length; i++) str += ascii();
+    if (str.length !== length) return ascii().repeat(length);
     return str;
   }
 
@@ -107,7 +126,7 @@ export class RandomJson {
   /** @ignore */
   private oddTotals: NodeOdds;
   /** @ignore */
-  public root: unknown[] | object;
+  public root: JsonValue;
   /** @ignore */
   private containers: ContainerNode[] = [];
 
@@ -146,7 +165,7 @@ export class RandomJson {
   /**
    * @ignore
    */
-  public create(): unknown {
+  public create(): JsonValue {
     for (let i = 0; i < this.opts.nodeCount; i++) this.addNode();
     return this.root;
   }
