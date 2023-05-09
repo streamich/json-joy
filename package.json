@@ -69,7 +69,9 @@
     "rxjs": "7",
     "tslib": "2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "hyperdyperid": "^1.2.0"
+  },
   "devDependencies": {
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^2.5.1",
