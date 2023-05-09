@@ -113,6 +113,7 @@ export const insert = <K = unknown, V = unknown>(
   while (curr) {
     const cmp = comparator(key, curr.k);
     const next: ITreeNode<K, V> | undefined = cmp < 0 ? curr.l : curr.r;
+    /** @todo perf: see if it is possible to take this condition outside of the loop. */
     if (!next) {
       if (cmp < 0) insertLeft(node, curr);
       else insertRight(node, curr);
