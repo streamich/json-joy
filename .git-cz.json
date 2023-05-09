@@ -18,6 +18,7 @@
     "json-pointer",
     "json-random",
     "json-size",
+    "json-text",
     "json-type",
     "json-type-schema",
     "json-type-serializer",
