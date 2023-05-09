@@ -6,7 +6,7 @@ export class RadixTree<V = unknown> extends TrieNode<V> implements Printable {
   public size: number = 0;
 
   constructor() {
-    super('', undefined as V);
+    super('', undefined as any as V);
   }
 
   public set(key: string, value: V): void {
