@@ -145,7 +145,7 @@ export const apply = (str: string, op: StringTypeOp): string => {
 
 /**
  * Extracts a full or a part of a component from an operation.
- * 
+ *
  * @param component Component from which to extract a chunk.
  * @param offset Position within the component to start from.
  * @param maxLength Maximum length of the component to extract.
@@ -154,9 +154,7 @@ export const apply = (str: string, op: StringTypeOp): string => {
 const chunk = (component: StringTypeOpComponent, offset: number, maxLength: number): StringTypeOpComponent => {
   switch (typeof component) {
     case 'number': {
-      return component > 0
-        ? Math.min(component - offset, maxLength)
-        : -Math.min(-component - offset, maxLength);
+      return component > 0 ? Math.min(component - offset, maxLength) : -Math.min(-component - offset, maxLength);
     }
     case 'string': {
       const end = Math.min(offset + maxLength, component.length);
@@ -174,11 +172,11 @@ const chunk = (component: StringTypeOpComponent, offset: number, maxLength: numb
  * Combine two operations into one, such that the changes produced by the
  * by the single operation are the same as if the two operations were applied
  * in sequence.
- * 
+ *
  * ```
  * apply(str, combine(op1, op2)) === apply(apply(str, op1), op2)
  * ```
- * 
+ *
  * @param op1 First operation.
  * @param op2 Second operation.
  * @returns A combined operation.
@@ -254,16 +252,16 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
 /**
  * Transforms an operation such that the transformed operations can be
  * applied to a string in reverse order.
- * 
+ *
  * ```
  * apply(apply(doc, op1), transform(op2, op1)) === apply(apply(doc, op2), transform(op1, op2))
  * ```
- * 
+ *
  * @param op1 The operation to transform.
  * @param op2 The operation to transform against.
  * @returns A new operation with user intentions preserved.
  */
- export const transform = (op1: StringTypeOp, op2: StringTypeOp, leftInsertFirst: boolean): StringTypeOp => {
+export const transform = (op1: StringTypeOp, op2: StringTypeOp, leftInsertFirst: boolean): StringTypeOp => {
   const op3: StringTypeOp = [];
   const len1 = op1.length;
   const len2 = op2.length;
@@ -298,7 +296,7 @@ export const compose = (op1: StringTypeOp, op2: StringTypeOp): StringTypeOp => {
           if (typeof op1[i1] === 'string') {
             const comp = chunk(op1[i1++], off1, Infinity);
             off1 = 0;
-            append(op3, comp)
+            append(op3, comp);
           }
         }
         append(op3, comp2.length);
