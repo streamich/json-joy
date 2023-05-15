@@ -5,8 +5,8 @@ implementation of JSON data type as a CRDT (Conflict-free Replicated Data Type).
 aim for JSON CRDT is to create a sound state-of-the-art CRDT specification which will
 support all JSON values, including lists, for which this RGA algorithm is needed.
 
-Now back to the RGA algorithm, what is that? RGA stands for *Replicated Growable Array*,
-also known as CT (*Causal Tree*), sometimes you might find it abbreviated as CT/RGA. The
+Now back to the RGA algorithm, what is that? RGA stands for [*Replicated Growable Array*][rga],
+also known as CT ([*Causal Tree*][causal-tree]), sometimes you might find it abbreviated as CT/RGA. The
 CT/RGA algorithm, or RGA for short, allows to implement conflict free list data
 structures, such as strings, binary blobs, or arrays (think JSON arrays).
 
@@ -383,19 +383,273 @@ libraries. For that, lets first take a look at the datasets wi will use for benc
 
 ### Datasets
 
-Five realistic of relatively long text documents will be used.
+There will be no micro benchmarks, only real world large text documents will be tested. Five
+realistic relatively long text documents will be used.
 
-- The first one is the editing trace of this blog post, yes, the one you are reading. It is
+- The first one is the editing trace of this blog post, yes, the one you are reading now! It is
   called `json-joy-crdt`, the trace contains all inserts and deletes made to type this blog
-  post.
+  post. The trace was collected using the [`vscode-tracker`][vscode-tracker] VS Code extension.
 - The other four traces are taken from the [CRDT benchmarks][crdt-benchmarks] repository, see this
-  [description and license info](https://github.com/josephg/crdt-benchmarks/blob/7b0b90e912cfa88aff8c6336917343ee08653e51/README.md#data-sets).
-  - The first one is the canonical `automerge-paper` trace, made by Martin Kleppmann, the author
-    of the [Automerge][automerge] library.
+  [description and license information](https://github.com/josephg/crdt-benchmarks/blob/7b0b90e912cfa88aff8c6336917343ee08653e51/README.md#data-sets).
+  - The first trace is the canonical `automerge-paper` trace, made by Martin Kleppmann, the author
+    of the [Automerge][automerge] library. The editing trace was collected while writing the
+    ["A Conflict-Free Replicated JSON Datatype" paper](https://arxiv.org/abs/1608.03960). It
+    contains 259,778 single character insert/delete operations, with the final document size
+    of 104,852 bytes, which results in 12,387 `json-joy` RGA blocks in the tree.
+  - The second one is `seph-blog1` trace, which is a trace by Seph Gentle collected while writing
+    the ["5000x faster CRDTs: An Adventure in Optimization"][seph-blog1] blog post. The trace contains
+    137,154 insert/delete operations, with the final document size of 56,769 bytes, which results
+    in 18,222 `json-joy` RGA blocks in the tree.
+  - The third one is `rustcode`. It contains 36,981
+    insert/delete operations, with the final document size of 65,218 bytes, which results in
+    12,505 `json-joy` RGA blocks in the tree.
+  - The last one is `sveltecomponent`, it contains 18,335 insert/delete operations, with the
+    final document size of 18,451 bytes, which results in 5,813 `json-joy` RGA blocks in
+    the tree.
+
+Each dataset contains a list of insert or delete operations, each operations specifies the position
+in the document and whether text needs to be inserted or deleted at that position.
+
+Here is the sample of the first operations of the `automerge-paper` editing trace:
+
+``` js
+[
+  [ 0, 0, '\\' ],  [ 1, 0, 'd' ],   [ 2, 0, 'o' ],   [ 3, 0, 'c' ],
+  [ 4, 0, 'u' ],   [ 5, 0, 'm' ],   [ 6, 0, 'e' ],   [ 7, 0, 'n' ],
+  [ 8, 0, 't' ],   [ 9, 0, 'c' ],   [ 10, 0, 'l' ],  [ 11, 0, 'a' ],
+  [ 12, 0, 's' ],  [ 13, 0, 's' ],  [ 14, 0, '[' ],  [ 15, 0, 'a' ],
+  [ 16, 0, '4' ],  [ 17, 0, 'p' ],  [ 18, 0, 'a' ],  [ 19, 0, 'p' ],
+  [ 20, 0, 'e' ],  [ 21, 0, 'r' ],  [ 22, 0, ',' ],  [ 23, 0, 't' ],
+  [ 24, 0, 'w' ],  [ 25, 0, 'o' ],  [ 26, 0, 'c' ],  [ 27, 0, 'o' ],
+  [ 28, 0, 'l' ],  [ 29, 0, 'u' ],  [ 30, 0, 'm' ],  [ 31, 0, 'n' ],
+  [ 32, 0, ',' ],  [ 33, 0, '1' ],  [ 34, 0, '0' ],  [ 35, 0, 'p' ],
+  [ 36, 0, 't' ],  [ 37, 0, ']' ],  [ 38, 0, '{' ],  [ 39, 0, 'a' ],
+  [ 40, 0, 'r' ],  [ 41, 0, 't' ],  [ 42, 0, 'i' ],  [ 43, 0, 'c' ],
+  [ 44, 0, 'l' ],  [ 45, 0, 'e' ],  [ 46, 0, '}' ],  [ 47, 0, '\n' ],
+  [ 48, 0, '\\' ], [ 49, 0, 'u' ],  [ 50, 0, 's' ],  [ 51, 0, 'e' ],
+  [ 52, 0, 'p' ],  [ 53, 0, 'a' ],  [ 54, 0, 'c' ],  [ 55, 0, 'k' ],
+  [ 56, 0, 'a' ],  [ 57, 0, 'g' ],  [ 58, 0, 'e' ],  [ 59, 0, '{' ],
+  [ 59, 1, '' ],   [ 59, 0, '[' ],  [ 60, 0, 'u' ],  [ 61, 0, 't' ],
+  [ 62, 0, 'f' ],  [ 63, 0, '8' ],  [ 64, 0, ']' ],  [ 65, 0, '{' ],
+  [ 66, 0, 'i' ],  [ 67, 0, 'n' ],  [ 68, 0, 'p' ],  [ 69, 0, 'u' ],
+  [ 70, 0, 't' ],  [ 71, 0, 'e' ],  [ 72, 0, 'n' ],  [ 73, 0, 'c' ],
+  [ 74, 0, '}' ],  [ 75, 0, '\n' ], [ 76, 0, '\\' ], [ 77, 0, 'u' ],
+  [ 78, 0, 's' ],  [ 79, 0, 'e' ],  [ 80, 0, 'p' ],  [ 81, 0, 'a' ],
+  [ 82, 0, 'c' ],  [ 83, 0, 'k' ],  [ 84, 0, 'a' ],  [ 85, 0, 'g' ],
+  [ 86, 0, 'e' ],  [ 87, 0, '{' ],  [ 88, 0, 'm' ],  [ 89, 0, 'a' ],
+  [ 90, 0, 't' ],  [ 91, 0, 'h' ],  [ 92, 0, 'p' ],  [ 93, 0, 't' ],
+  [ 94, 0, 'm' ],  [ 95, 0, 'x' ],  [ 96, 0, '}' ],  [ 97, 0, ' ' ],
+```
+
+Each operation is a 3-tuple which contains: (1) the position in the document; (2) the length of
+the text to be deleted; and (3) the text to be inserted at that position.
 
 
+### Benchmarks against CRDT libraries
+
+First we will benchmark `json-joy` against a peer group of other CRDT libraries:
+
+- [Automerge][automerge] is probably the best known RGA algorithm implementation in JavaScript.
+- [Y.js][yjs] is the most widely used JavaScript CRDT library, which implements YATA algorithm.
+- [Y.rs][yrs] is a port of Y.js to Rust. We use the `ywasm` package, which is a WebAssembly
+  module compiled from its Rust code.
+
+Below is a sample output of running the benchmarks, numbers are in milliseconds it took to
+execute the full trace:
+
+
+```
+============================================================================
+Editing trace: "sveltecomponent" , Transactions: 18335 , End length: 18451
+----------------------------------------------------------------------------
+Automerge
+#1: 7325.6
+#2: 7281
+#3: 7286.3
+Correct: false Length: 18451 Chunks: 0
+Best: 7281 Worst: 7325.6 Average: 7297.6 Tx/sec: 2,512
+----------------------------------------------------------------------------
+Y.js
+#1: 381.2
+#2: 358.6
+#3: 360.1
+Correct: true Length: 18451 Chunks: 4627
+Best: 358.6 Worst: 381.2 Average: 366.6 Tx/sec: 50,008
+----------------------------------------------------------------------------
+Y.rs
+#1: 272.5
+#2: 256.6
+#3: 255.9
+Correct: true Length: 18451 Chunks: 0
+Best: 255.9 Worst: 272.5 Average: 261.7 Tx/sec: 70,071
+----------------------------------------------------------------------------
+StringRga (json-joy)
+#1: 19.1
+#2: 8.1
+#3: 6.2
+Correct: true Length: 18451 Chunks: 5813
+Best: 6.2 Worst: 19.1 Average: 11.1 Tx/sec: 1,650,406
+
+
+============================================================================
+Editing trace: "seph-blog1" , Transactions: 137154 , End length: 56769
+----------------------------------------------------------------------------
+Automerge
+#1: 20531.4
+#2: 22141.3
+#3: 20786.2
+Correct: false Length: 56769 Chunks: 0
+Best: 20531.4 Worst: 22141.3 Average: 21153 Tx/sec: 6,484
+----------------------------------------------------------------------------
+Y.js
+#1: 2661
+#2: 2664.9
+#3: 2652.8
+Correct: true Length: 56769 Chunks: 15092
+Best: 2652.8 Worst: 2664.9 Average: 2659.5 Tx/sec: 51,571
+----------------------------------------------------------------------------
+Y.rs
+#1: 4534.2
+#2: 4411.7
+#3: 4488.2
+Correct: false Length: 56777 Chunks: 0
+Best: 4411.7 Worst: 4534.2 Average: 4478.1 Tx/sec: 30,628
+----------------------------------------------------------------------------
+StringRga (json-joy)
+#1: 23.7
+#2: 24.8
+#3: 22.9
+Correct: true Length: 56769 Chunks: 18222
+Best: 22.9 Worst: 24.8 Average: 23.8 Tx/sec: 5,763,130
+
+
+============================================================================
+Editing trace: "rustcode" , Transactions: 36981 , End length: 65218
+----------------------------------------------------------------------------
+Y.js
+#1: 720
+#2: 717.4
+#3: 710.7
+Correct: true Length: 65218 Chunks: 10044
+Best: 710.7 Worst: 720 Average: 716 Tx/sec: 51,647
+----------------------------------------------------------------------------
+Y.rs
+#1: 856.8
+#2: 862.2
+#3: 857.9
+Correct: false Length: 65235 Chunks: 0
+Best: 856.8 Worst: 862.2 Average: 859 Tx/sec: 43,053
+----------------------------------------------------------------------------
+StringRga (json-joy)
+#1: 19.4
+#2: 17.9
+#3: 12.5
+Correct: true Length: 65218 Chunks: 12505
+Best: 12.5 Worst: 19.4 Average: 16.6 Tx/sec: 2,225,405
+
+
+============================================================================
+Editing trace: "automerge-paper" , Transactions: 259778 , End length: 104852
+----------------------------------------------------------------------------
+Y.js
+#1: 4787.8
+#2: 4740
+#3: 4739.7
+Correct: true Length: 104852 Chunks: 10971
+Best: 4739.7 Worst: 4787.8 Average: 4755.8 Tx/sec: 54,623
+----------------------------------------------------------------------------
+Y.rs
+#1: 5923.9
+#2: 5869.7
+#3: 5904.8
+Correct: true Length: 104852 Chunks: 0
+Best: 5869.7 Worst: 5923.9 Average: 5899.5 Tx/sec: 44,034
+----------------------------------------------------------------------------
+StringRga (json-joy)
+#1: 98.6
+#2: 49.6
+#3: 45.9
+Correct: true Length: 104852 Chunks: 12387
+Best: 45.9 Worst: 98.6 Average: 64.7 Tx/sec: 4,014,031
+```
+
+Notable observations:
+
+- Automerge participated only it the first two traces, as it was not able to handle the
+  larger traces.
+- Y.js is about 10x faster than Automerge.
+- Y.rs is slower than Y.js in all benchmarks, but `sveltecomponent`, which is the smallest
+  trace.
+- `json-joy` is about 50-100x faster than Y.js and 1,000x faster than Automerge.
+
+
+### Benchmarks against non-CRDT libraries
+
+`json-joy` RGA implementation i
+
+- `V8 strings` is a benchmark against native JavaScript strings, which are implemented in V8
+  JavaScript engine. It just uses `str.slice()` to perform insert and delete operations.
+
+
+
+### A note on Rust fad among CRDT library authors
+
+Firstly, we believe that Rust is a great language and would love to port `json-joy` to Rust some day.
+This comment is not about the Rust language, but rather about the Rust fad among CRDT library authors.
+
+It seems there is a pattern of JavaScript CRDT libraries being ported to Rust, and here are the
+examples:
+
+- [Automerge][automerge] is a JavaScript CRDT library, which has rewritten its lower-level API, what it
+  calls "backend", into Rust. Now, the Rust backend is compiled into WebAssembly module and published as
+  `@automerge/automerge-wasm` package, which the `@automerge/automerge` JavaScript
+  code calls into through WebAssembly ABI for all its document operations. But, as you can see from
+  the benchmarks above, Automerge is still 1,000x slower than `json-joy`.
+- [Y.rs][yrs] is a Rust port of a JavaScript CRDT library [Y.js][yrs]. As you can see from the
+  benchmarks above, Y.js is about 100x slower than `json-joy` and the Rust port (which is exposed to
+  JavaScript through WebAssembly `ywasm` package) is about the same speed as the JavaScript version,
+  also about 100x slower than `json-joy`.
+- `diamond-types` is a Rust library which intends to implement various novel CRDT algorithms. It is
+  written by Seph Gentle, the author of numerous JavaScript collaborative editing libraries. The Rust
+  is chosen in search of performance, the library is exposed to JavaScript through WebAssembly ABI from
+  the `diamond-types-node` NPM package.
+
+As a rule of thumb, an equivalent algorithm implemented in Rust will be about 2-5x faster than the
+same algorithm implemented in JavaScript. However, when compiling Rust to WebAssembly, it loses about
+3-4x of its performance. So, net-net code ported from JavaScript to Rust and then compiled to WebAssembly
+for consumption in JavaScript will be about the same speed as the original JavaScript code.
+
+However, packaging code into WebAssembly modules has downsides. Firstly, WebAssembly modules limit
+the data structures one can share between the JavaScript and WebAssembly code.
+
+Secondly, WebAssembly modules result in larger bundle sizes, which is a problem for web applications.
+WASM modules can easily reach 100 KB in size, sometimes even 1 MB. Below are the real-world sizes of the
+WASM modules for the libraries mentioned above:
+
+`@automerge/automerge-wasm` - 1.3 MB
+
+![Character merging into block](https://streamich.github.io/json-joy/blog/images/wasm-sizes/automerge-wasm.png)
+
+`ywasm` - 1 MB
+
+![Character merging into block](https://streamich.github.io/json-joy/blog/images/wasm-sizes/ywasm.png)
+
+`diamond-types-node` - 300 KB
+
+![Character merging into block](https://streamich.github.io/json-joy/blog/images/wasm-sizes/diamond-types-node.png)
+
+
+
+
+
+[rga]: https://www.sciencedirect.com/science/article/abs/pii/S0743731510002716
+[causal-tree]: https://www.researchgate.net/publication/221367739_Deep_hypertext_with_embedded_revision_control_implemented_in_regular_expressions
 [high-responsiveness-crdts]: https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf
 [rope]: https://en.wikipedia.org/wiki/Rope_(data_structure)
 [crdt-benchmarks]: https://github.com/josephg/crdt-benchmarks
 [datasets]: https://github.com/josephg/crdt-benchmarks/blob/7b0b90e912cfa88aff8c6336917343ee08653e51/README.md#data-sets
 [automerge]: https://github.com/automerge/automerge
+[yrs]: https://github.com/y-crdt/y-crdt
+[yjs]: https://github.com/yjs/yjs
+[vscode-tracker]: https://github.com/josephg/vscode-tracker
+[seph-blog1]: https://josephg.com/blog/crdts-go-brrr/
