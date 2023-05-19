@@ -1,64 +1,41 @@
-# JSON Joy 🦄🌈
+[json-joy]: https://jsonjoy.com
 
-JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
-This package consists of multiple self-contained libraries:
+<div align="center">
+  <br />
+  <br />
+  <a href="https://jsonjoy.com">
+      <img src="https://appsets.jsonjoy.com/branding/display/text-block/presentation-with-text.svg" alt="json-joy - JSON tools for real-time and collaborative apps" target="_blank" />
+  </a>
+  <br />
+  <br />
+</div>
 
-- __`json-binary`__ &mdash; JSON serializer and parser with `Uint8Array` binary data support.
-  - [__Documentation__ 🚀](./src/json-binary/README.md)
-- __`json-brand`__ &mdash; TypeScript *branded type* for JSON.
-  - [__Documentation__ 🚀](./src/json-brand/README.md)
-- __`json-clone`__ &mdash; JSON deep cloning methods.
-  - [__Documentation__ 🚀](./src/json-clone/README.md)
-- __`json-expression`__ &mdash; implementation of __JSON Expression__ language.
-  - [__Documentation__ 🚀](./src/json-expression/README.md)
-- __`json-pack`__ &mdash; Fastest __MessagePack__ codec implementation in JavaScript.
-  - [__Documentation__ 🚀](./src/json-pack/README.md)
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pack.html)
-- __`json-equal`__ &mdash; Fastest JSON deep equal implementations in JavaScript.
-  - [__Documentation__ 🚀](./src/json-equal/README.md)
-  - __Reference__ 🤖
-- __`json-patch`__ &mdash; Implementation of __JSON Patch+__ mutation operations.
-  - [__Documentation__ 🚀](./src/json-patch/README.md)
-    - [JSON Patch](./src/json-patch/docs/json-patch.md)
-    - [JSON Predicate](./src/json-patch/docs/json-predicate.md)
-    - [JSON Patch Extended](./src/json-patch/docs/json-patch-extended.md)
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_patch.html)
-- __`json-patch-ot`__ &mdash; Implementation of *Operational Transformations* for JSON Patch+ operations.
-  - __Documentation__ 🚀
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_patch_ot.html)
-- __`json-rx`__ &mdash; Implementation of [__JSON-Rx__][json-rx] protocol for server and browser.
-  - [__Documentation__ 🚀](./src/json-rx/README.md)
-  - __Specification__ 🤔
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_rx.html)
-- __`binary-rx`__ &mdash; Implementation of Binary-Rx protocol (a binary version of JSON-Rx).
-  - [__Documentation__ 🚀](./src/binary-rx/README.md)
-  - __Specification__ 🤔
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/binary_rx.html)
-- __`json-pointer`__ &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
-  - [__Documentation__ 🚀](./src/json-pointer/README.md)
-  - [__Reference__ 🤖](https://streamich.github.io/json-joy/modules/json_pointer.html)
-- __`json-cli`__ &mdash; CLI utilities and functional testing suites.
-  - [__Documentation__ 🚀](./src/json-cli/README.md)
-    - [`json-pack` CLI](./src/json-cli/docs/json-pack.md)
-    - [`json-unpack` CLI](./src/json-cli/docs/json-unpack.md)
-    - [`json-pointer` CLI](./src/json-cli/docs/json-pointer.md)
-    - [`json-patch` CLI](./src/json-cli/docs/json-patch.md)
-    - [`json-pack-test` CLI](./src/json-cli/docs/json-pack-test.md)
-    - [`json-pointer-test` CLI](./src/json-cli/docs/json-pointer-test.md)
-    - [`json-patch-test` CLI](./src/json-cli/docs/json-patch-test.md)
-- __`json-random`__ &mdash; generate random JSON value.
-  - [__Documentation__ 🚀](./src/json-random/README.md)
-- __`json-size`__ &mdash; calculate the size of serialized JSON object.
-  - [__Documentation__ 🚀](./src/json-size/README.md)
-- __`json-type`__ &mdash; JSON schema builder.
-  - [__Documentation__ 🚀](./src/json-type/README.md)
-- __`json-type-serializer`__ &mdash; fast `json-type` JSON and MessagePack serializer code generators.
-  - [__Documentation__ 🚀](./src/json-type-serializer/README.md)
-- __`json-type-validator`__ &mdash; fast `json-type` schema validator.
-  - [__Documentation__ 🚀](./src/json-type-validator/README.md)
+
+# __json-joy__
+
+[json-joy][json-joy] is dedicated to implementing cutting-edge real-time and
+collaborative editing algorithms. Currently, our focus is on developing the
+JSON CRDT protocol, a Conflict-free Replicated Data Type that enables seamless
+merging of changes in JSON data models, avoiding conflicts between replicas.
+
+Additionally, json-joy offers a collection of practical JSON utilities. These
+utilities are designed as stand-alone mini-libraries, allowing you to leverage
+them independently for your specific needs:
+
+- [__`json-binary`__](./src/json-binary/README.md) &mdash; JSON serializer and parser with `Uint8Array` binary data support.
+- [__`json-brand`__](./src/json-brand/README.md) &mdash; TypeScript *branded type* for JSON.
+- [__`json-clone`__](./src/json-clone/README.md) &mdash; JSON deep cloning methods.
+- [__`json-expression`__](./src/json-expression/README.md) &mdash; implementation of __JSON Expression__ language.
+- [__`json-pack`__](./src/json-pack/README.md) &mdash; Fastest __CBOR__, __MessagePack__, and __UBJSON__ codecs in JavaScript.
+- [__`json-equal`__](./src/json-equal/README.md) &mdash; Fastest JSON deep equal implementations in JavaScript.
+- [__`json-patch`__](./src/json-patch/docs/json-patch.md) &mdash; Implementation of __JSON Patch+__ mutation operations.
+- [__`json-pointer`__](./src/json-pointer/README.md) &mdash; utilities for locating data in a JSON document using [__JSON Pointer__][json-pointer].
+- [__`json-cli`__](./src/json-cli/README.md) &mdash; CLI utilities and functional testing suites.
+- [__`json-random`__](./src/json-random/README.md) &mdash; generate random JSON value.
+- [__`json-size`__](./src/json-size/README.md) &mdash; calculate the size of serialized JSON object.
+- [__`json-type`__](./src/json-type/README.md) &mdash; JSON schema builder.
 - __`util`__ &mdash;
-  - __`base64`__ &mdash; fast isomorphic configurable Base64 encoder.
-    - [__Documentation__ 🚀](./src/util/base64/README.md)
+  - [__`base64`__](./src/util/base64/README.md) &mdash; fast isomorphic configurable Base64 encoder.
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 [json-patch]: https://tools.ietf.org/html/rfc6902
