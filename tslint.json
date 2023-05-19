@@ -8,6 +8,9 @@
     "variable-name": false,
     "one-variable-per-declaration": false,
     "no-unnecessary-class": false,
-    "no-unnecessary-initializer": false
+    "no-unnecessary-initializer": false,
+    "ban-comma-operator": false,
+    "no-unused-expression": false,
+    "no-angle-bracket-type-assertion": false
   }
 }
