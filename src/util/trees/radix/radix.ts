@@ -1,7 +1,7 @@
-import {stringify} from '../../json-text/stringify';
-import {printTree} from '../print/printTree';
-import {TrieNode} from './TrieNode';
-import {findOrNextLower, first, insertLeft, insertRight, next, remove as plainRemove} from './util';
+import {stringify} from '../../../json-text/stringify';
+import {printTree} from '../../print/printTree';
+import {TrieNode} from '../trie/TrieNode';
+import {findOrNextLower, first, insertLeft, insertRight, next, remove as plainRemove} from '../util';
 
 const getCommonPrefixLength = (a: string, b: string): number => {
   const len = Math.min(a.length, b.length);

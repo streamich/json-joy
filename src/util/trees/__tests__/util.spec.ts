@@ -1,7 +1,8 @@
 import {Tree} from '../Tree';
 import {TreeNode} from '../TreeNode';
 import {ITreeNode} from '../types';
-import {find, findOrNextLower, insert, insertLeft, insertRight, remove, size, splay} from '../util';
+import {find, findOrNextLower, insert, insertLeft, insertRight, remove, size} from '../util';
+import {splay} from '../splay/util';
 
 type TNode = ITreeNode<number, string>;
 const comparator = (a: number, b: number): number => a - b;

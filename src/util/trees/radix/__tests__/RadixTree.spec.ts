@@ -1,5 +1,5 @@
 import {RadixTree} from '../RadixTree';
-import {TrieNode} from '../TrieNode';
+import {TrieNode} from '../../trie/TrieNode';
 
 describe('.set()', () => {
   test('starts empty', () => {

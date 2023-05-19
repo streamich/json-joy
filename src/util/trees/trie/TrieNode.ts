@@ -1,7 +1,7 @@
-import {print, toRecord} from './radix';
-import {first, next} from './util';
-import type {Printable} from '../print/types';
-import type {ITreeNode} from './types';
+import {print, toRecord} from '../radix/radix';
+import {first, next} from '../util';
+import type {Printable} from '../../print/types';
+import type {ITreeNode} from '../types';
 
 export class TrieNode<V = unknown> implements ITreeNode<string, unknown>, Printable {
   public p: TrieNode<V> | undefined = undefined;

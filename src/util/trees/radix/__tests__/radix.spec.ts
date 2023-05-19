@@ -1,6 +1,6 @@
-import {TrieNode} from '../TrieNode';
+import {TrieNode} from '../../trie/TrieNode';
 import {insert} from '../radix';
-import {first, last} from '../util';
+import {first, last} from '../../util';
 
 test('can insert a node with no common prefix', () => {
   const root = new TrieNode('', undefined);
