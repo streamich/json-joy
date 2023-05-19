@@ -1,4 +1,15 @@
-# JSON Joy 🦄🌈
+[json-joy]: https://jsonjoy.com
+
+<div align="center">
+  <a href="https://jsonjoy.com">
+      <img src="https://appsets.jsonjoy.com/branding/display/text-block/presentation-with-text.svg" alt="json-joy - JSON tools for real-time and collaborative apps" />
+  </a>
+  <br />
+  <br />
+</div>
+
+
+# __json-joy__
 
 JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
 This package consists of multiple self-contained libraries:
