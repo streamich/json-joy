@@ -1,4 +1,5 @@
-import {find, findOrNextLower, first, insert, last, next, remove, splay} from './util';
+import {find, findOrNextLower, first, insert, last, next, remove} from './util';
+import {splay} from './splay/util';
 import {TreeNode} from './TreeNode';
 import type {Comparator, ITreeNode} from './types';
 
@@ -13,7 +14,7 @@ export class Tree<K = unknown, V = unknown> {
   public set(key: K, value: V): void {
     const node = new TreeNode(key, value);
     this.root = insert(this.root, node, this.comparator);
-    if (this.size > 2) this.root = splay(this.root, node, 15);
+    this.root = splay(this.root, node, 15);
     this.size++;
   }
 
