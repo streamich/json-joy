@@ -1,5 +1,5 @@
-import {Printable} from '../print/types';
-import {TrieNode} from './TrieNode';
+import {Printable} from '../../print/types';
+import {TrieNode} from '../trie/TrieNode';
 import {insert, find, remove} from './radix';
 
 export class RadixTree<V = unknown> extends TrieNode<V> implements Printable {
