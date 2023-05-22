@@ -9,6 +9,7 @@
   "homepage": "https://github.com/streamich/json-joy",
   "repository": "streamich/json-joy",
   "license": "Apache-2.0",
+  "funding": "https://github.com/sponsors/streamich",
   "engines": {
     "node": ">=10.0"
   },
