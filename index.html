@@ -58,77 +58,40 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#json-joy-🦄🌈" id="json-joy-🦄🌈" style="color: inherit; text-decoration: none;">
-					<h1>JSON Joy 🦄🌈</h1>
+				<div align="center">
+					<br />
+					<br />
+					<a href="https://jsonjoy.com">
+						<img src="https://appsets.jsonjoy.com/branding/display/text-block/presentation-with-text.svg" alt="json-joy - JSON tools for real-time and collaborative apps" target="_blank" />
+					</a>
+					<br />
+					<br />
+				</div>
+				<a href="#json-joy" id="json-joy" style="color: inherit; text-decoration: none;">
+					<h1><strong>json-joy</strong></h1>
 				</a>
-				<p>JSON utilities. Libraries for collaborative editing with OT and CRDT approaches.
-				This package consists of multiple self-contained libraries:</p>
+				<p><a href="https://jsonjoy.com">json-joy</a> is dedicated to implementing cutting-edge real-time and
+					collaborative editing algorithms. Currently, our focus is on developing the
+					JSON CRDT protocol, a Conflict-free Replicated Data Type that enables seamless
+				merging of changes in JSON data models, avoiding conflicts between replicas.</p>
+				<p>Additionally, json-joy offers a collection of practical JSON utilities. These
+					utilities are designed as stand-alone mini-libraries, allowing you to leverage
+				them independently for your specific needs:</p>
 				<ul>
-					<li><strong><code>json-pack</code></strong> &mdash; Fastest <strong>MessagePack</strong> codec implementation in JavaScript.<ul>
-							<li><a href="./src/json-pack/README.md"><strong>Documentation</strong> 🚀</a></li>
-							<li><a href="https://streamich.github.io/json-joy/modules/json_pack.html"><strong>Reference</strong> 🤖</a></li>
-						</ul>
-					</li>
-					<li><strong><code>json-patch</code></strong> &mdash; Implementation of <strong>JSON Patch+</strong> mutation operations.<ul>
-							<li><a href="./src/json-patch/README.md"><strong>Documentation</strong> 🚀</a><ul>
-									<li><a href="./src/json-patch/docs/json-patch.md">JSON Patch</a></li>
-									<li><a href="./src/json-patch/docs/json-predicate.md">JSON Predicate</a></li>
-									<li><a href="./src/json-patch/docs/json-patch-extended.md">JSON Patch Extended</a></li>
-								</ul>
-							</li>
-							<li><a href="https://streamich.github.io/json-joy/modules/json_patch.html"><strong>Reference</strong> 🤖</a></li>
-						</ul>
-					</li>
-					<li><strong><code>json-patch-ot</code></strong> &mdash; Implementation of <em>Operational Transformations</em> for JSON Patch+ operations.<ul>
-							<li><strong>Documentation</strong> 🚀</li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>json-crdt</code></strong> &mdash; CRDT implementation for JSON type.<ul>
-							<li><a href="./src/json-crdt/README.md"><strong>Documentation</strong> 🚀</a></li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>json-crdt-patch</code></strong> &mdash; JSON type CRDT operation specification and implementation.<ul>
-							<li><strong>Documentation</strong> 🚀</li>
-							<li><strong>Specification</strong> 🤔</li>
-							<li><a href="./src/json-crdt/codec/binary/README.md">Binary snapshot encoding 🧬</a></li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>json-rx</code></strong> &mdash; Implementation of <a href="https://onp4.com/@vadim/p/gv9z33hjuo"><strong>JSON-Rx</strong></a> protocol for server and browser.<ul>
-							<li><a href="./src/json-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
-							<li><strong>Specification</strong> 🤔</li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>binary-rx</code></strong> &mdash; Implementation of Binary-Rx protocol (binary version of JSON-Rx).<ul>
-							<li><a href="./src/binary-rx/README.md"><strong>Documentation</strong> 🚀</a></li>
-							<li><strong>Specification</strong> 🤔</li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>json-rpc</code></strong> &mdash; Server implementation of <a href="https://www.jsonrpc.org/specification"><strong>JSON-RPC 2.0</strong></a> protocol.<ul>
-							<li><strong>Documentation</strong> 🚀</li>
-							<li><strong>Reference</strong> 🤖</li>
-						</ul>
-					</li>
-					<li><strong><code>json-pointer</code></strong> &mdash; utilities for locating data in a JSON document using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>.<ul>
-							<li><a href="./src/json-pointer/README.md"><strong>Documentation</strong> 🚀</a></li>
-							<li><a href="https://streamich.github.io/json-joy/modules/json_pointer.html"><strong>Reference</strong> 🤖</a></li>
-						</ul>
-					</li>
-					<li><strong><code>json-cli</code></strong> &mdash; CLI utilities and functional testing suites.<ul>
-							<li><a href="./src/json-cli/README.md"><strong>Documentation</strong> 🚀</a><ul>
-									<li><a href="./src/json-cli/docs/json-pack.md"><code>json-pack</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-unpack.md"><code>json-unpack</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-pointer.md"><code>json-pointer</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-patch.md"><code>json-patch</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-pack-test.md"><code>json-pack-test</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-pointer-test.md"><code>json-pointer-test</code> CLI</a></li>
-									<li><a href="./src/json-cli/docs/json-patch-test.md"><code>json-patch-test</code> CLI</a></li>
-								</ul>
-							</li>
+					<li><a href="./src/json-binary/README.md"><strong><code>json-binary</code></strong></a> &mdash; JSON serializer and parser with <code>Uint8Array</code> binary data support.</li>
+					<li><a href="./src/json-brand/README.md"><strong><code>json-brand</code></strong></a> &mdash; TypeScript <em>branded type</em> for JSON.</li>
+					<li><a href="./src/json-clone/README.md"><strong><code>json-clone</code></strong></a> &mdash; JSON deep cloning methods.</li>
+					<li><a href="./src/json-expression/README.md"><strong><code>json-expression</code></strong></a> &mdash; implementation of <strong>JSON Expression</strong> language.</li>
+					<li><a href="./src/json-pack/README.md"><strong><code>json-pack</code></strong></a> &mdash; Fastest <strong>CBOR</strong>, <strong>MessagePack</strong>, and <strong>UBJSON</strong> codecs in JavaScript.</li>
+					<li><a href="./src/json-equal/README.md"><strong><code>json-equal</code></strong></a> &mdash; Fastest JSON deep equal implementations in JavaScript.</li>
+					<li><a href="./src/json-patch/docs/json-patch.md"><strong><code>json-patch</code></strong></a> &mdash; Implementation of <strong>JSON Patch+</strong> mutation operations.</li>
+					<li><a href="./src/json-pointer/README.md"><strong><code>json-pointer</code></strong></a> &mdash; utilities for locating data in a JSON document using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>.</li>
+					<li><a href="./src/json-cli/README.md"><strong><code>json-cli</code></strong></a> &mdash; CLI utilities and functional testing suites.</li>
+					<li><a href="./src/json-random/README.md"><strong><code>json-random</code></strong></a> &mdash; generate random JSON value.</li>
+					<li><a href="./src/json-size/README.md"><strong><code>json-size</code></strong></a> &mdash; calculate the size of serialized JSON object.</li>
+					<li><a href="./src/json-type/README.md"><strong><code>json-type</code></strong></a> &mdash; JSON schema builder.</li>
+					<li><strong><code>util</code></strong> &mdash;<ul>
+							<li><a href="./src/util/base64/README.md"><strong><code>base64</code></strong></a> &mdash; fast isomorphic configurable Base64 encoder.</li>
 						</ul>
 					</li>
 				</ul>
@@ -136,21 +99,31 @@
 					<h2>Usage</h2>
 				</a>
 				<p>To reduce your browser-side bundle size import directly from the library you use.</p>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/{lib,es6,esm}/&lt;library&gt;&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/{lib,es2020,es6,esm}/&lt;library&gt;&#039;</span><span style="color: #000000">;</span>
 </code></pre>
 				<p>For example:</p>
-				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">applyOperations</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/lib/json-patch`</span><span style="color: #CD3131">;</span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">deepEqual</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;json-joy/lib/json-equal`</span><span style="color: #CD3131">;</span>
 </code></pre>
 				<p>All libraries can be imported from one of the below folders:</p>
 				<ul>
 					<li><code>lib</code> &mdash; ES5 compiled CommonJS code.</li>
-					<li><code>es6</code> &mdash; ES6 compiled EcmaScript modules code.</li>
+					<li><code>es2020</code> &mdash; ES2020 compiled CommonJS code.</li>
+					<li><code>es6</code> &mdash; ES6 compiled CommonJS code.</li>
 					<li><code>esm</code> &mdash; latest TypeScript compiler supported EcmaScript modules code.</li>
 				</ul>
-				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
-					<h2>License</h2>
+				<a href="#development" id="development" style="color: inherit; text-decoration: none;">
+					<h2>Development</h2>
 				</a>
-				<p><a href="LICENSE">Apache 2.0</a></p>
+				<p>Run all tests locally:</p>
+				<pre><code class="language-bash"><span style="color: #000000">yarn build</span>
+<span style="color: #000000">yarn test:all</span>
+</code></pre>
+				<p>Read more about testing in <a href="./src/__tests__/README.md">Testing README</a>.</p>
+				<p>Use <a href="https://www.conventionalcommits.org/en/v1.0.0-beta.4/">Angular-type semantic commit messages</a>
+					for commit messages. Those are used in determining the version bump of the
+				library for the next release. Optional, you can use <code>git-cz</code> for that:</p>
+				<pre><code class="language-bash"><span style="color: #000000">npx git-cz</span>
+</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -161,6 +134,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/binary_rx.html">binary-<wbr>rx</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/json_crdt_patch.html">json-<wbr>crdt-<wbr>patch</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/json_pack.html">json-<wbr>pack</a>
@@ -175,10 +151,13 @@
 						<a href="modules/json_pointer.html">json-<wbr>pointer</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/json_rpc.html">json-<wbr>rpc</a>
+						<a href="modules/json_random.html">json-<wbr>random</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/json_rx.html">json-<wbr>rx</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/json_type.html">json-<wbr>type</a>
 					</li>
 				</ul>
 			</nav>
@@ -194,9 +173,11 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>

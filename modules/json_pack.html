@@ -86,11 +86,11 @@
 </code></pre>
 					<p>For more:</p>
 					<ul>
-						<li>Use <a href="../classes/json_pack.encoder.html">Encoder</a> to encode only JSON values.</li>
-						<li>Use <a href="../classes/json_pack.encoderfull.html">EncoderFull</a> to also encode binary data, extensions and pre-computed MessagePack buffers.</li>
+						<li>Use <a href="../classes/json_pack.Encoder.html">Encoder</a> to encode only JSON values.</li>
+						<li>Use <a href="../classes/json_pack.EncoderFull.html">EncoderFull</a> to also encode binary data, extensions and pre-computed MessagePack buffers.</li>
 						<li>To encode binary data use <code>Uint8Array</code>.</li>
-						<li>To encode an extension use <a href="../classes/json_pack.jsonpackextension.html">JsonPackExtension</a>.</li>
-						<li>To encode a pre-computed MessagePack value use <a href="../classes/json_pack.jsonpackvalue.html">JsonPackValue</a>.</li>
+						<li>To encode an extension use <a href="../classes/json_pack.JsonPackExtension.html">JsonPackExtension</a>.</li>
+						<li>To encode a pre-computed MessagePack value use <a href="../classes/json_pack.JsonPackValue.html">JsonPackValue</a>.</li>
 					</ul>
 				</div>
 			</section>
@@ -101,20 +101,117 @@
 						<section class="tsd-index-section ">
 							<h3>Decoder Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.decoder.html" class="tsd-kind-icon">Decoder</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.Decoder.html" class="tsd-kind-icon">Decoder</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.MessagePackToJsonConverter.html" class="tsd-kind-icon">Message<wbr>Pack<wbr>ToJson<wbr>Converter</a></li>
 							</ul>
 							<h3>Encoder Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.encoder.html" class="tsd-kind-icon">Encoder</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.encoderfull.html" class="tsd-kind-icon">Encoder<wbr>Full</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.Encoder.html" class="tsd-kind-icon">Encoder</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.EncoderFull.html" class="tsd-kind-icon">Encoder<wbr>Full</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.EncoderStable.html" class="tsd-kind-icon">Encoder<wbr>Stable</a></li>
 							</ul>
 							<h3>Value Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.jsonpackextension.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Extension</a></li>
-								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.jsonpackvalue.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Value</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.JsonPackExtension.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Extension</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/json_pack.JsonPackValue.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Value</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/json_pack.BinaryJsonDecoder.html" class="tsd-kind-icon">Binary<wbr>Json<wbr>Decoder</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/json_pack.BinaryJsonEncoder.html" class="tsd-kind-icon">Binary<wbr>Json<wbr>Encoder</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/json_pack.StreamingBinaryJsonEncoder.html" class="tsd-kind-icon">Streaming<wbr>Binary<wbr>Json<wbr>Encoder</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/json_pack.TlvBinaryJsonEncoder.html" class="tsd-kind-icon">Tlv<wbr>Binary<wbr>Json<wbr>Encoder</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="json_pack.html#JsonPrimitive" class="tsd-kind-icon">Json<wbr>Primitive</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="json_pack.html#JsonValue" class="tsd-kind-icon">Json<wbr>Value</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="json_pack.html#MsgPack" class="tsd-kind-icon">Msg<wbr>Pack</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="json_pack.html#PackPrimitive" class="tsd-kind-icon">Pack<wbr>Primitive</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="json_pack.html#PackValue" class="tsd-kind-icon">Pack<wbr>Value</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="json_pack.html#TypedJsonValue" class="tsd-kind-icon">Typed<wbr>Json<wbr>Value</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="JsonPrimitive" class="tsd-anchor"></a>
+					<h3>Json<wbr>Primitive</h3>
+					<div class="tsd-signature tsd-kind-icon">Json<wbr>Primitive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L6">json-pack/types.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="JsonValue" class="tsd-anchor"></a>
+					<h3>Json<wbr>Value</h3>
+					<div class="tsd-signature tsd-kind-icon">Json<wbr>Value<span class="tsd-signature-symbol">:</span> <a href="json_pack.html#JsonPrimitive" class="tsd-signature-type" data-tsd-kind="Type alias">JsonPrimitive</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JsonArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">JsonObject</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L7">json-pack/types.ts:7</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="MsgPack" class="tsd-anchor"></a>
+					<h3>Msg<wbr>Pack</h3>
+					<div class="tsd-signature tsd-kind-icon">Msg<wbr>Pack&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>__BRAND__<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L1">json-pack/types.ts:1</a></li>
+						</ul>
+					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="PackPrimitive" class="tsd-anchor"></a>
+					<h3>Pack<wbr>Primitive</h3>
+					<div class="tsd-signature tsd-kind-icon">Pack<wbr>Primitive<span class="tsd-signature-symbol">:</span> <a href="json_pack.html#JsonPrimitive" class="tsd-signature-type" data-tsd-kind="Type alias">JsonPrimitive</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol"> | </span><a href="../classes/json_pack.JsonPackValue.html" class="tsd-signature-type" data-tsd-kind="Class">JsonPackValue</a><span class="tsd-signature-symbol"> | </span><a href="../classes/json_pack.JsonPackExtension.html" class="tsd-signature-type" data-tsd-kind="Class">JsonPackExtension</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L13">json-pack/types.ts:13</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="PackValue" class="tsd-anchor"></a>
+					<h3>Pack<wbr>Value</h3>
+					<div class="tsd-signature tsd-kind-icon">Pack<wbr>Value<span class="tsd-signature-symbol">:</span> <a href="json_pack.html#PackPrimitive" class="tsd-signature-type" data-tsd-kind="Type alias">PackPrimitive</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PackArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">PackObject</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L14">json-pack/types.ts:14</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+					<a name="TypedJsonValue" class="tsd-anchor"></a>
+					<h3>Typed<wbr>Json<wbr>Value</h3>
+					<div class="tsd-signature tsd-kind-icon">Typed<wbr>Json<wbr>Value&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol"> &amp; </span><a href="json_pack.html#JsonValue" class="tsd-signature-type" data-tsd-kind="Type alias">JsonValue</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/streamich/json-joy/blob/520decc/src/json-pack/types.ts#L11">json-pack/types.ts:11</a></li>
+						</ul>
+					</aside>
+					<h4 class="tsd-type-parameters-title">Type parameters</h4>
+					<ul class="tsd-type-parameters">
+						<li>
+							<h4>T</h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -126,6 +223,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="binary_rx.html">binary-<wbr>rx</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="json_crdt_patch.html">json-<wbr>crdt-<wbr>patch</a>
 					</li>
 					<li class="current tsd-kind-module">
 						<a href="json_pack.html">json-<wbr>pack</a>
@@ -140,29 +240,68 @@
 						<a href="json_pointer.html">json-<wbr>pointer</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="json_rpc.html">json-<wbr>rpc</a>
+						<a href="json_random.html">json-<wbr>random</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="json_rx.html">json-<wbr>rx</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="json_type.html">json-<wbr>type</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/json_pack.decoder.html" class="tsd-kind-icon">Decoder</a>
+						<a href="../classes/json_pack.Decoder.html" class="tsd-kind-icon">Decoder</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/json_pack.encoder.html" class="tsd-kind-icon">Encoder</a>
+						<a href="../classes/json_pack.Encoder.html" class="tsd-kind-icon">Encoder</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/json_pack.encoderfull.html" class="tsd-kind-icon">Encoder<wbr>Full</a>
+						<a href="../classes/json_pack.EncoderFull.html" class="tsd-kind-icon">Encoder<wbr>Full</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/json_pack.jsonpackextension.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Extension</a>
+						<a href="../classes/json_pack.EncoderStable.html" class="tsd-kind-icon">Encoder<wbr>Stable</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/json_pack.jsonpackvalue.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Value</a>
+						<a href="../classes/json_pack.JsonPackExtension.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Extension</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/json_pack.JsonPackValue.html" class="tsd-kind-icon">Json<wbr>Pack<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/json_pack.MessagePackToJsonConverter.html" class="tsd-kind-icon">Message<wbr>Pack<wbr>ToJson<wbr>Converter</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/json_pack.BinaryJsonDecoder.html" class="tsd-kind-icon">Binary<wbr>Json<wbr>Decoder</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/json_pack.BinaryJsonEncoder.html" class="tsd-kind-icon">Binary<wbr>Json<wbr>Encoder</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/json_pack.StreamingBinaryJsonEncoder.html" class="tsd-kind-icon">Streaming<wbr>Binary<wbr>Json<wbr>Encoder</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/json_pack.TlvBinaryJsonEncoder.html" class="tsd-kind-icon">Tlv<wbr>Binary<wbr>Json<wbr>Encoder</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="json_pack.html#JsonPrimitive" class="tsd-kind-icon">Json<wbr>Primitive</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="json_pack.html#JsonValue" class="tsd-kind-icon">Json<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="json_pack.html#MsgPack" class="tsd-kind-icon">Msg<wbr>Pack</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="json_pack.html#PackPrimitive" class="tsd-kind-icon">Pack<wbr>Primitive</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="json_pack.html#PackValue" class="tsd-kind-icon">Pack<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="json_pack.html#TypedJsonValue" class="tsd-kind-icon">Typed<wbr>Json<wbr>Value</a>
 					</li>
 				</ul>
 			</nav>
@@ -174,9 +313,11 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
