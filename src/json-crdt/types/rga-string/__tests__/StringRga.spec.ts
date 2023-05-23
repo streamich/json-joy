@@ -152,22 +152,22 @@ describe('binary tree', () => {
   test('can print tree layout', () => {
     const tree = createTree();
     expect(tree.toString()).toMatchInlineSnapshot(`
-      "StringRga .0 { \\"a1a2a3a4a5a6a7a8a9a10a11a12a13a1\\"... }
-      └─ StringChunk .8!2 len:36 { \\"a8\\" }
-         ← StringChunk .4!2 len:14 { \\"a4\\" }
-           ← StringChunk .2!2 len:6 { \\"a2\\" }
-             ← StringChunk .1!2 len:2 { \\"a1\\" }
-             → StringChunk .3!2 len:2 { \\"a3\\" }
-           → StringChunk .6!2 len:6 { \\"a6\\" }
-             ← StringChunk .5!2 len:2 { \\"a5\\" }
-             → StringChunk .7!2 len:2 { \\"a7\\" }
-         → StringChunk .12!3 len:20 { \\"a12\\" }
-           ← StringChunk .10!3 len:8 { \\"a10\\" }
-             ← StringChunk .9!2 len:2 { \\"a9\\" }
-             → StringChunk .11!3 len:3 { \\"a11\\" }
-           → StringChunk .14!3 len:9 { \\"a14\\" }
-             ← StringChunk .13!3 len:3 { \\"a13\\" }
-             → StringChunk .15!3 len:3 { \\"a15\\" }"
+      "StringRga .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1"... }
+      └─ StringChunk .8!2 len:36 { "a8" }
+         ← StringChunk .4!2 len:14 { "a4" }
+           ← StringChunk .2!2 len:6 { "a2" }
+             ← StringChunk .1!2 len:2 { "a1" }
+             → StringChunk .3!2 len:2 { "a3" }
+           → StringChunk .6!2 len:6 { "a6" }
+             ← StringChunk .5!2 len:2 { "a5" }
+             → StringChunk .7!2 len:2 { "a7" }
+         → StringChunk .12!3 len:20 { "a12" }
+           ← StringChunk .10!3 len:8 { "a10" }
+             ← StringChunk .9!2 len:2 { "a9" }
+             → StringChunk .11!3 len:3 { "a11" }
+           → StringChunk .14!3 len:9 { "a14" }
+             ← StringChunk .13!3 len:3 { "a13" }
+             → StringChunk .15!3 len:3 { "a15" }"
     `);
   });
 

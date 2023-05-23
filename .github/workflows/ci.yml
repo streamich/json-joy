@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +22,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn install --frozen-lockfile
-      - run: yarn build
+      - run: yarn build:all
       - run: yarn lint
+      - run: yarn prettier:check
       - run: yarn test:ci --ci
+      - run: yarn test:cli:pointer
+      - run: yarn test:cli:patch
+      - run: yarn test:cli:pack
+      - run: PORT=9999 yarn test:reactive-rpc
+      - run: yarn demo:json-patch
+      - run: yarn demo:json-pointer
