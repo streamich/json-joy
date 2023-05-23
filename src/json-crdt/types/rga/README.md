@@ -1,13 +1,15 @@
 # Block-wise Replicated Growable Array (RGA) Tree Split
 
-Details:
+This is a block-wise RGA tree with split links implementation. Two trees index
+by (1) ID and by (2) position are used to keep track of the elements.
 
-- Uses a binary splay tree to store chunks in order of the final view.
-- It uses the *insert int the middle* of chunk operation, as described in
-  Briot et. al (2016).
-- *Split link* references are used to iterate through items for deletion.
-- Two views of the chunks are maintained: (1) spacial (sorted in order of text
-  position), and (2) temporal (sorted in order of operation IDs).
+This abstract RGA implementation is used to implement all list-like data
+structure:
+
+- String 
+- Binary blob
+- Array
+
 
 References:
 
