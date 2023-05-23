@@ -1,8 +1,11 @@
 const Benchmark = require('benchmark');
 const toBase64 = require('../../../es2020/util/base64').toBase64;
-const createFromBase64 = require('../../../es2020/util/base64').createFromBase64;
+const {bufferToUint8Array} = require('../../../es2020/util/bufferToUint8Array');
+const {fromBase64, createFromBase64} = require('../../../es2020/util/base64');
+const {toByteArray} = require('base64-js');
+const {decode: decodeJsBase64} = require('js-base64');
 
-const fromBase64 = createFromBase64();
+const fromBase642 = createFromBase64();
 
 const generateBlob = (length) => {
   const uint8 = new Uint8Array(length);
@@ -12,14 +15,14 @@ const generateBlob = (length) => {
   return uint8;
 };
 
-const str8 = toBase64(generateBlob(9));
-const str16 = toBase64(generateBlob(17));
-const str32 = toBase64(generateBlob(33));
-const str64 = toBase64(generateBlob(65));
-const str128 = toBase64(generateBlob(127));
-const str256 = toBase64(generateBlob(257));
-const str512 = toBase64(generateBlob(513));
-const str1024 = toBase64(generateBlob(1025));
+const str4 = toBase64(generateBlob(4));
+const str8 = toBase64(generateBlob(8));
+const str16 = toBase64(generateBlob(16));
+const str24 = toBase64(generateBlob(24));
+const str32 = toBase64(generateBlob(32));
+const str64 = toBase64(generateBlob(64));
+const str128 = toBase64(generateBlob(128));
+const str256 = toBase64(generateBlob(256));
 
 const suite = new Benchmark.Suite;
 
@@ -29,21 +32,38 @@ const encoders = [
     decode: (str) => fromBase64(str),
   },
   {
+    name: `json-joy/util/base64 createFromBase64()(str)`,
+    decode: (str) => fromBase642(str),
+  },
+  {
     name: `Buffer.from(str, 'base64')`,
-    decode: (str) => Buffer.from(str, 'base64'),
+    decode: (str) => bufferToUint8Array(Buffer.from(str, 'base64')),
+  },
+  {
+    name: `base64-js`,
+    decode: (str) => toByteArray(str),
+  },
+  {
+    name: `js-base64`,
+    decode: (str) => decodeJsBase64(str),
   },
 ];
 
 for (const encoder of encoders) {
+  // Warm up
+  for (let i = 0; i < 100000; i++) {
+    encoder.decode(str8);
+    encoder.decode(str256);
+  }
   suite.add(encoder.name, () => {
+    encoder.decode(str4);
     encoder.decode(str8);
     encoder.decode(str16);
+    encoder.decode(str24);
     encoder.decode(str32);
     encoder.decode(str64);
     encoder.decode(str128);
     encoder.decode(str256);
-    encoder.decode(str512);
-    encoder.decode(str1024);
   });
 }
 
