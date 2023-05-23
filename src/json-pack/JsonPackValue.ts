@@ -1,10 +1,13 @@
 /**
- * Use this wrapper is you have a pre-encoded MessagePack value and you would
- * like to dump it into a MessagePack document as-is. The contents of `buf` will
- * be written as is to the MessagePack document.
+ * Use this wrapper is you have a pre-encoded MessagePack or CBOR value and you would
+ * like to dump it into a the document as-is. The contents of `buf` will
+ * be written as is to the document.
+ *
+ * It also serves as CBOR simple value container. In which case the type of value
+ * `val` field is "number".
  *
  * @category Value
  */
-export class JsonPackValue {
-  constructor(public readonly buf: Uint8Array) {}
+export class JsonPackValue<T = Uint8Array> {
+  constructor(public readonly val: T) {}
 }

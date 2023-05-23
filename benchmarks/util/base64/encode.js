@@ -1,5 +1,9 @@
 const Benchmark = require('benchmark');
-const toBase64 = require('../../../es2020/util/base64').toBase64;
+const {toBase64, createToBase64} = require('../../../es2020/util/base64');
+const {fromByteArray} = require('base64-js');
+const {encode: encodeJsBase64} = require('js-base64');
+
+const toBase64Native = createToBase64();
 
 const generateBlob = (length) => {
   const uint8 = new Uint8Array(length);
@@ -50,8 +54,20 @@ const encoders = [
     encode: (uint8) => toBase64(uint8),
   },
   {
+    name: `json-joy/util/base64 createToBase64()(uint8)`,
+    encode: (uint8) => toBase64Native(uint8, uint8.length),
+  },
+  {
+    name: `js-base64`,
+    encode: (uint8) => encodeJsBase64(uint8),
+  },
+  {
     name: `fast-base64-encode`,
     encode: (uint8) => fastBase64Encode(uint8),
+  },
+  {
+    name: `base64-js`,
+    encode: (uint8) => fromByteArray(uint8),
   },
   {
     name: `Buffer.from(uint8).toString('base64');`,
@@ -66,9 +82,9 @@ for (const encoder of encoders) {
     encoder.encode(arr32);
     encoder.encode(arr64);
     encoder.encode(arr128);
-    encoder.encode(arr256);
-    encoder.encode(arr512);
-    encoder.encode(arr1024);
+    // encoder.encode(arr256);
+    // encoder.encode(arr512);
+    // encoder.encode(arr1024);
   });
 }
 

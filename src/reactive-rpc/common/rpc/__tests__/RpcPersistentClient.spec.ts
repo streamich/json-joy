@@ -1,19 +1,21 @@
-/**
- * @jest-environment jsdom
- */
-
 import {WebSocketChannel} from '../../channel';
 import {RpcPersistentClient} from '../RpcPersistentClient';
-import {Encoder, Decoder} from '../../codec/compact-json';
 import {createWebSocketMock} from '../../channel/mock';
 import {RequestCompleteMessage} from '../..';
 import {until} from '../../../../__tests__/util';
+import {Value} from '../../messages/Value';
+import {RpcCodec} from '../../codec/RpcCodec';
+import {Codecs} from '../../../../json-pack/codecs/Codecs';
+import {Writer} from '../../../../util/buffers/Writer';
+import {RpcMessageCodecs} from '../../codec/RpcMessageCodecs';
 
 test('on remote method execution, sends message over WebSocket only once', async () => {
   const onSend = jest.fn();
   const Ws = createWebSocketMock({onSend});
   const ws = new Ws('');
-  const decoder = new Decoder();
+  const valueCodecs = new Codecs(new Writer(128));
+  const messageCodecs = new RpcMessageCodecs();
+  const codec = new RpcCodec(valueCodecs.cbor, messageCodecs.compact);
   const client = new RpcPersistentClient({
     channel: {
       newChannel: () =>
@@ -21,10 +23,7 @@ test('on remote method execution, sends message over WebSocket only once', async
           newSocket: () => ws,
         }),
     },
-    codec: {
-      encoder: new Encoder(),
-      decoder,
-    },
+    codec,
   });
   client.start();
   setTimeout(() => {
@@ -34,14 +33,12 @@ test('on remote method execution, sends message over WebSocket only once', async
   observable.subscribe(() => {});
   observable.subscribe(() => {});
   observable.subscribe(() => {});
-
-  await new Promise((r) => setTimeout(r, 25));
   await until(() => onSend.mock.calls.length === 1);
-
   expect(onSend).toHaveBeenCalledTimes(1);
-
-  const batch = decoder.decode(onSend.mock.calls[0][0]);
-
-  expect(batch).toBeInstanceOf(RequestCompleteMessage);
-  expect(batch).toMatchObject(new RequestCompleteMessage(1, 'foo.bar', {foo: 'bar'}));
+  const message = onSend.mock.calls[0][0];
+  const decoded = codec.decode(message);
+  const messageDecoded = decoded[0];
+  expect(messageDecoded).toBeInstanceOf(RequestCompleteMessage);
+  expect(messageDecoded).toMatchObject(new RequestCompleteMessage(1, 'foo.bar', new Value({foo: 'bar'}, undefined)));
+  client.stop();
 });

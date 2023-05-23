@@ -5,7 +5,7 @@ import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
 import {Path, toPath, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch
@@ -44,7 +44,7 @@ export class OpMove extends AbstractOp<'move'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
-    encoder.u8(OPCODE.move);
+    encoder.writer.u8(OPCODE.move);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeArray(this.from as unknown[]);
   }

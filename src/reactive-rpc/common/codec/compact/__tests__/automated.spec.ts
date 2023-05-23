@@ -1,25 +1,32 @@
 import {compactMessages} from './compact-messages';
-import {encode, decode, Encoder, Decoder} from '..';
+import {CompactRpcMessageCodec} from '..';
+import {CborJsonValueCodec} from '../../../../../json-pack/codecs/cbor';
+import {Writer} from '../../../../../util/buffers/Writer';
+import {messages} from '../../../messages/__tests__/fixtures';
 
-const encoder = new Encoder();
-const decoder = new Decoder();
+const codec = new CompactRpcMessageCodec();
+const writer = new Writer(8 * Math.round(Math.random() * 100));
+const cborCodec = new CborJsonValueCodec(writer);
 
-describe('encode()/decode()', () => {
-  for (const [name, message] of Object.entries(compactMessages)) {
+describe('hydrate, encode, decode', () => {
+  for (const [name, compact] of Object.entries(compactMessages)) {
     test(name, () => {
-      const [decoded] = decode([message]);
-      const encoded = encode([decoded]);
-      expect(encoded).toEqual(message);
+      const message = codec.fromJson(compact);
+      codec.encodeBatch(cborCodec, [message]);
+      const encoded = cborCodec.encoder.writer.flush();
+      const [decoded] = codec.decodeBatch(cborCodec, encoded);
+      expect(decoded).toStrictEqual(message);
     });
   }
 });
 
-describe('Encoder/Decoder', () => {
-  for (const [name, message] of Object.entries(compactMessages)) {
+describe('encode, decode', () => {
+  for (const [name, message] of Object.entries(messages)) {
     test(name, () => {
-      const [decoded] = decoder.decode([message]);
-      const encoded = encoder.encode([decoded]);
-      expect(encoded).toEqual(message);
+      codec.encodeBatch(cborCodec, [message]);
+      const encoded = cborCodec.encoder.writer.flush();
+      const [decoded] = codec.decodeBatch(cborCodec, encoded);
+      expect(decoded).toStrictEqual(message);
     });
   }
 });

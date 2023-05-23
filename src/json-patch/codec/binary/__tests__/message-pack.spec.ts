@@ -2,7 +2,10 @@ import {operations} from '../../json/__tests__/sample-operations';
 import {Encoder, Decoder} from '..';
 import {decode as decodeJson} from '../../json';
 import {encode as encodeCompact} from '../../compact';
-import {Encoder as MsgPackEncoder, Decoder as MsgPackDecoder} from '../../../../json-pack';
+import {
+  MsgPackEncoderFast as MsgPackEncoder,
+  MsgPackDecoderFast as MsgPackDecoder,
+} from '../../../../json-pack/msgpack';
 
 const msgPackEncoder = new MsgPackEncoder();
 const msgPackDecoder = new MsgPackDecoder();

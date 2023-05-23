@@ -1,4 +1,4 @@
-import {isUint8Array} from '../util/isUint8Array';
+import {isUint8Array} from '../util/buffers/isUint8Array';
 
 const {isArray} = Array;
 const objectKeys = Object.keys;

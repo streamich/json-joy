@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationStrIns} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -54,7 +54,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(4);
-    encoder.u8(OPCODE.str_ins);
+    encoder.writer.u8(OPCODE.str_ins);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeNumber(this.pos);
     encoder.encodeString(this.str);

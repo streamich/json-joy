@@ -4,7 +4,7 @@ import {OperationMore} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Predicate
@@ -45,7 +45,7 @@ export class OpMore extends AbstractPredicateOp<'more'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
-    encoder.u8(OPCODE.more);
+    encoder.writer.u8(OPCODE.more);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeNumber(this.value);
   }

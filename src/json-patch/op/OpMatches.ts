@@ -4,7 +4,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Predicate
@@ -58,9 +58,9 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     const ignoreCase = this.ignore_case;
     encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
-    encoder.u8(OPCODE.matches);
+    encoder.writer.u8(OPCODE.matches);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeString(this.value);
-    if (ignoreCase) encoder.u8(1);
+    if (ignoreCase) encoder.writer.u8(1);
   }
 }

@@ -1,119 +1,106 @@
+import {Uint8ArrayCut} from '../../../../util/buffers/Uint8ArrayCut';
 import {
-  ReactiveRpcBinaryMessage,
-  BinaryNotificationMessage,
-  BinaryResponseDataMessage,
-  BinaryResponseCompleteMessage,
-  BinaryResponseErrorMessage,
-  BinaryResponseUnsubscribeMessage,
-  BinaryRequestUnsubscribeMessage,
-  BinaryRequestDataMessage,
-  BinaryRequestCompleteMessage,
-  BinaryRequestErrorMessage,
-} from '../../messages/binary';
-import {MessageCode} from './constants';
-import {readHeader} from './header';
+  NotificationMessage,
+  ReactiveRpcMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  RequestErrorMessage,
+  RequestUnsubscribeMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+  ResponseUnsubscribeMessage,
+} from '../../messages';
+import {Value} from '../../messages/Value';
+import {BinaryMessageType} from './constants';
+import type {Reader} from '../../../../util/buffers/Reader';
 
-const readMethod = (arr: Uint8Array, offset: number): [method: string, offset: number] => {
-  const size = arr[offset++];
-  let str = '';
-  for (let i = 0; i < size; i++) str += String.fromCharCode(arr[offset++]);
-  return [str, offset];
-};
-
-/**
- * Decodes a single message from Uint8Array. The array buffer must contain at
- * least one complete message starting from the offset.
- *
- * Use this method with sockets that already combine packets into messages, like
- * WebSocket. Do not use this method with TCP/IP socket.
- *
- * @param arr Array buffer from which to decode a message
- * @param offset Starting position from where to start decoding
- *
- * @category Codec
- */
-export const decodeFullMessage = (
-  arr: Uint8Array,
-  offset: number,
-): [message: ReactiveRpcBinaryMessage, offset: number] => {
-  const byte1 = arr[offset++];
-  const code = byte1 >>> 5;
-  switch (code) {
-    case MessageCode.Notification: {
-      const [length, off1] = readHeader(byte1, arr, offset);
-      const [method, off2] = readMethod(arr, off1);
-      const data: Uint8Array = arr.subarray(off2, off2 + length);
-      return [new BinaryNotificationMessage(method, data), off2 + length];
+export const decode = (reader: Reader): ReactiveRpcMessage => {
+  const word = reader.u32();
+  const type = word >>> 29;
+  switch (type) {
+    case BinaryMessageType.Notification: {
+      const z = word & 0xff;
+      const x = word >>> 8;
+      const name = reader.ascii(z);
+      const cut = new Uint8ArrayCut(reader.uint8, reader.x, x);
+      const value = new Value(cut, undefined);
+      reader.skip(x);
+      return new NotificationMessage(name, value);
     }
-    case MessageCode.ResponseData:
-    case MessageCode.ResponseComplete:
-    case MessageCode.ResponseError: {
-      const [length, off1] = readHeader(byte1, arr, offset);
-      const o1 = arr[off1];
-      const o2 = arr[off1 + 1];
-      const id = (o1 << 8) | o2;
-      offset = off1 + 2;
-      const data: Uint8Array = arr.subarray(offset, offset + length);
-      const message =
-        code === MessageCode.ResponseData
-          ? new BinaryResponseDataMessage(id, data)
-          : code === MessageCode.ResponseComplete
-          ? new BinaryResponseCompleteMessage(id, data)
-          : new BinaryResponseErrorMessage(id, data);
-      return [message, offset + length];
-    }
-    case MessageCode.RequestData:
-    case MessageCode.RequestComplete:
-    case MessageCode.RequestError: {
-      const [length, off1] = readHeader(byte1, arr, offset);
-      const o1 = arr[off1];
-      const o2 = arr[off1 + 1];
-      const id = (o1 << 8) | o2;
-      const [method, off2] = readMethod(arr, off1 + 2);
-      const data: Uint8Array | undefined = arr.subarray(off2, off2 + length);
-      const message =
-        code === MessageCode.RequestData
-          ? new BinaryRequestDataMessage(id, method, data)
-          : code === MessageCode.RequestComplete
-          ? new BinaryRequestCompleteMessage(id, method, data)
-          : new BinaryRequestErrorMessage(id, method, data);
-      return [message, off2 + length];
-    }
-    case 0b111: {
-      switch (byte1) {
-        case MessageCode.ResponseUnsubscribe: {
-          const o1 = arr[offset++];
-          const o2 = arr[offset++];
-          const id = (o1 << 8) | o2;
-          return [new BinaryResponseUnsubscribeMessage(id), offset];
+    case BinaryMessageType.RequestData:
+    case BinaryMessageType.RequestComplete:
+    case BinaryMessageType.RequestError: {
+      const z = reader.u8();
+      const name = reader.ascii(z);
+      const cutStart = reader.x;
+      let x = 0,
+        y = 0;
+      if (word & 0b1_0000_00000000_00000000_00000000) {
+        if (word & 0b10000000_00000000) {
+          x = ((0b1111_11111111 & (word >>> 16)) << 15) | (word & 0b1111111_11111111);
+          reader.skip(x);
+          y = reader.u16();
+        } else {
+          x = ((0b1111_11111111 & (word >>> 16)) << 7) | ((word >>> 8) & 0x7f);
+          reader.skip(x);
+          y = ((word & 0xff) << 8) | reader.u8();
         }
-        case MessageCode.RequestUnsubscribe: {
-          const o1 = arr[offset++];
-          const o2 = arr[offset++];
-          const id = (o1 << 8) | o2;
-          return [new BinaryRequestUnsubscribeMessage(id), offset];
-        }
+      } else {
+        x = (word >>> 16) & 0b1111_11111111;
+        y = word & 0xffff;
+        reader.skip(x);
       }
+      const cut = new Uint8ArrayCut(reader.uint8, cutStart, x);
+      const value = new Value(cut, undefined);
+      switch (type) {
+        case BinaryMessageType.RequestData:
+          return new RequestDataMessage(y, name, value);
+        case BinaryMessageType.RequestComplete:
+          return new RequestCompleteMessage(y, name, value);
+        case BinaryMessageType.RequestError:
+          return new RequestErrorMessage(y, name, value);
+      }
+      break;
+    }
+    case BinaryMessageType.ResponseData:
+    case BinaryMessageType.ResponseComplete:
+    case BinaryMessageType.ResponseError: {
+      const cutStart = reader.x;
+      let x = 0,
+        y = 0;
+      if (word & 0b1_0000_00000000_00000000_00000000) {
+        if (word & 0b10000000_00000000) {
+          x = ((0b1111_11111111 & (word >>> 16)) << 15) | (word & 0b1111111_11111111);
+          reader.skip(x);
+          y = reader.u16();
+        } else {
+          x = ((0b1111_11111111 & (word >>> 16)) << 7) | ((word >>> 8) & 0x7f);
+          reader.skip(x);
+          y = ((word & 0xff) << 8) | reader.u8();
+        }
+      } else {
+        x = (word >>> 16) & 0b1111_11111111;
+        y = word & 0xffff;
+        reader.skip(x);
+      }
+      const cut = new Uint8ArrayCut(reader.uint8, cutStart, x);
+      const value = new Value(cut, undefined);
+      switch (type) {
+        case BinaryMessageType.ResponseData:
+          return new ResponseDataMessage(y, value);
+        case BinaryMessageType.ResponseComplete:
+          return new ResponseCompleteMessage(y, value);
+        case BinaryMessageType.ResponseError:
+          return new ResponseErrorMessage(y, value);
+      }
+      break;
+    }
+    case BinaryMessageType.Control: {
+      const isResponse = word & 0b1_00000000_00000000;
+      const id = word & 0xffff;
+      return isResponse ? new ResponseUnsubscribeMessage(id) : new RequestUnsubscribeMessage(id);
     }
   }
-  throw new Error('UNKNOWN_MESSAGE');
-};
-
-/**
- * Decodes multiple Binary-Rx messages.
- *
- * @param arr Uint8Array containing multiple Binary-Rx messages.
- * @param offset Byte offset from which to start decoding.
- * @returns An array of decoded Binary-Rx messages.
- *
- * @category Codec
- */
-export const decodeFullMessages = (arr: Uint8Array, offset: number, end: number): ReactiveRpcBinaryMessage[] => {
-  const messages: ReactiveRpcBinaryMessage[] = [];
-  while (offset < end) {
-    const [message, off] = decodeFullMessage(arr, offset);
-    offset = off;
-    messages.push(message);
-  }
-  return messages;
+  throw new Error('UNKNOWN_MSG');
 };

@@ -4,7 +4,7 @@ import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../typ
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 type Composable = string | number | SlateNode;
 
@@ -110,7 +110,7 @@ export class OpSplit extends AbstractOp<'split'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.props ? 4 : 3);
-    encoder.u8(OPCODE.split);
+    encoder.writer.u8(OPCODE.split);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeNumber(this.pos);
     if (this.props) encoder.encodeObject(this.props as Record<string, unknown>);

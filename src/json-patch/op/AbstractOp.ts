@@ -2,8 +2,8 @@ import type {CompactOpBase} from '../codec/compact/types';
 import type {Path} from '../../json-pointer';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 import {OPCODE} from '../constants';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 export abstract class AbstractOp<O extends OpType = OpType> {
   public readonly from?: Path;

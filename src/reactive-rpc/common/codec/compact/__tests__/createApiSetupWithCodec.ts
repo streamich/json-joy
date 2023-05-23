@@ -1,8 +1,9 @@
-import {sampleApi, ApiTestSetup} from '../../../rpc/__tests__/api';
-import {RpcServer} from '../../../rpc/RpcServer';
+import {sampleApi} from '../../../rpc/__tests__/sample-api';
+import {ApiTestSetup} from '../../../rpc/__tests__/runApiTests';
+import {RpcMessageStreamProcessor} from '../../../rpc/RpcMessageStreamProcessor';
 import {RpcClient} from '../../../rpc/RpcClient';
-import {ReactiveRpcRequestMessage, ReactiveRpcResponseMessage} from '../../../messages/nominal';
-import {RpcApiCaller} from '../../../rpc/RpcApiCaller';
+import {ReactiveRpcClientMessage, ReactiveRpcServerMessage} from '../../../messages';
+import {ApiRpcCaller} from '../../../rpc/caller/ApiRpcCaller';
 
 interface ApiSetupTestCodec {
   encoder: {
@@ -17,19 +18,17 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
   const {encoder, decoder} = codec;
   const setup: ApiTestSetup = () => {
     const ctx = {ip: '127.0.0.1'};
-    const server = new RpcServer<any>({
+    const server = new RpcMessageStreamProcessor<any>({
       send: (messages: unknown) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
-          const decoded = decoder.decode(encoded) as ReactiveRpcResponseMessage | ReactiveRpcResponseMessage[];
+          const decoded = decoder.decode(encoded) as ReactiveRpcServerMessage | ReactiveRpcServerMessage[];
           if (decoded instanceof Array) client.onMessages(decoded);
           else client.onMessage(decoded);
         }, 1);
       },
-      onNotification: () => {},
-      caller: new RpcApiCaller<any, any>({
+      caller: new ApiRpcCaller<any, any>({
         api: sampleApi,
-        maxActiveCalls: 3,
       }),
       bufferSize: 2,
       bufferTime: 1,
@@ -38,7 +37,7 @@ export const createApiSetupWithCodec = (codec: ApiSetupTestCodec) => {
       send: (messages) => {
         const encoded = encoder.encode(messages);
         setTimeout(() => {
-          const decoded = decoder.decode(encoded) as ReactiveRpcRequestMessage | ReactiveRpcRequestMessage[];
+          const decoded = decoder.decode(encoded) as ReactiveRpcClientMessage | ReactiveRpcClientMessage[];
           if (decoded instanceof Array) server.onMessages(decoded, ctx);
           else server.onMessage(decoded, ctx);
         }, 1);

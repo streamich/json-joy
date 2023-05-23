@@ -1,13 +1,16 @@
-import {UwsHttpResponse} from './types';
+import type {TemplatedApp} from './types';
 
-const MAX_BODY_SIZE = 1024 * 1024;
+export const enableCors = (uws: TemplatedApp) => {
+  const AccessControlAllowOrigin = Buffer.from('Access-Control-Allow-Origin');
+  const AccessControlAllowOriginAllowAll = Buffer.from('*');
+  const AccessControlAllowCredentials = Buffer.from('Access-Control-Allow-Credentials');
+  const AccessControlAllowCredentialsTrue = Buffer.from('true');
 
-export const readBody = (res: UwsHttpResponse, cb: (buf: Buffer) => void) => {
-  let buffer: undefined | Buffer;
-  res.onData((ab, isLast) => {
-    const chunk = Buffer.from(ab);
-    buffer = Buffer.concat(buffer ? [buffer, chunk] : [chunk]);
-    if (buffer.length > MAX_BODY_SIZE) res.end('too large');
-    if (isLast) cb(buffer);
+  uws.options('/*', (res, req) => {
+    res.cork(() => {
+      res.writeHeader(AccessControlAllowOrigin, AccessControlAllowOriginAllowAll);
+      res.writeHeader(AccessControlAllowCredentials, AccessControlAllowCredentialsTrue);
+      res.end();
+    });
   });
 };

@@ -1,5 +1,3 @@
+export * from './constants';
 export * from './types';
-export * from './encode';
-export * from './decode';
-export * from './Encoder';
-export * from './Decoder';
+export * from './CompactRpcMessageCodec';
