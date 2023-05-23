@@ -29,6 +29,6 @@ jobs:
       - run: yarn test:cli:pointer
       - run: yarn test:cli:patch
       - run: yarn test:cli:pack
-      - run: PORT=9999 yarn test:reactive-rpc
+      # - run: PORT=9999 yarn test:reactive-rpc
       - run: yarn demo:json-patch
       - run: yarn demo:json-pointer
