@@ -1,4 +1,3 @@
-export type MsgPack<T> = Uint8Array & {__BRAND__: T};
 import type {IReader, IReaderResettable, IWriter, IWriterGrowable} from '../util/buffers';
 import type {JsonPackExtension} from './JsonPackExtension';
 import type {JsonPackValue} from './JsonPackValue';
@@ -10,7 +9,7 @@ type JsonObject = {[key: string]: JsonValue} | Readonly<{[key: string]: JsonValu
 
 export type TypedJsonValue<T> = T & JsonValue;
 
-export type PackPrimitive = JsonPrimitive | undefined | Uint8Array | JsonPackValue | JsonPackExtension;
+export type PackPrimitive = JsonPrimitive | undefined | Uint8Array | JsonPackValue | JsonPackExtension | bigint;
 export type PackValue = PackPrimitive | PackArray | PackObject;
 type PackArray = PackValue[] | readonly PackValue[];
 type PackObject = {[key: string]: PackValue} | Readonly<{[key: string]: PackValue}>;

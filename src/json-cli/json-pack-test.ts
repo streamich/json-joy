@@ -49,14 +49,14 @@ for (const name in testSuites) {
       json = JSON.stringify(value);
     }
     if (!json) continue;
-    const {stdout, stderr} = spawnSync(bin, [], {input: json});
+    const {stdout} = spawnSync(bin, [], {input: json});
     let isCorrect = false;
-    const result = new Uint8Array(stdout.byteLength);
-    for (let i = 0; i < result.byteLength; i++) result[i] = stdout[i];
+    const result = new Uint8Array(stdout.length);
+    for (let i = 0; i < result.length; i++) result[i] = stdout[i];
     EXPECTED: for (const exp of testCase.msgpack) {
       const expected = new Uint8Array(exp.split('-').map((a) => parseInt(a, 16)));
-      if (expected.byteLength !== result.byteLength) continue;
-      for (let i = 0; i < expected.byteLength; i++) if (expected[i] !== result[i]) continue EXPECTED;
+      if (expected.length !== result.length) continue;
+      for (let i = 0; i < expected.length; i++) if (expected[i] !== result[i]) continue EXPECTED;
       isCorrect = true;
       break EXPECTED;
     }

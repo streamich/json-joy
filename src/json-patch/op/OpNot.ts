@@ -5,7 +5,7 @@ import {OperationNot, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Predicate
@@ -48,7 +48,7 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
-    encoder.u8(OPCODE.not);
+    encoder.writer.u8(OPCODE.not);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     const length = this.ops.length;
     encoder.encodeArrayHeader(length);

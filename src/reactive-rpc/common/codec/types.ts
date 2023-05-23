@@ -1,10 +1,12 @@
-import {ReactiveRpcMessage} from '../messages';
+import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import type {ReactiveRpcMessage} from '../messages';
+import type {RpcMessageFormat} from './constants';
 
-export interface Codec<T = unknown> {
-  encoder: {
-    encode(messages: ReactiveRpcMessage[]): T;
-  };
-  decoder: {
-    decode(data: T): ReactiveRpcMessage | ReactiveRpcMessage[];
-  };
+export interface RpcMessageCodec {
+  id: string;
+  format: RpcMessageFormat;
+  encodeMessage(jsonCodec: JsonValueCodec, message: ReactiveRpcMessage): void;
+  encodeBatch(jsonCodec: JsonValueCodec, batch: ReactiveRpcMessage[]): void;
+  encode(jsonCodec: JsonValueCodec, batch: ReactiveRpcMessage[]): Uint8Array;
+  decodeBatch(jsonCodec: JsonValueCodec, uint8: Uint8Array): ReactiveRpcMessage[];
 }

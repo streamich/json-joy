@@ -1,6 +1,6 @@
 import type {WebSocketBase, CloseEventBase} from './types';
-import {Subject, ReplaySubject, BehaviorSubject, Observable, from, merge} from 'rxjs';
-import {toUint8Array} from '../../../util/toUint8Array';
+import {Subject, ReplaySubject, BehaviorSubject, Observable, from} from 'rxjs';
+import {toUint8Array} from '../../../util/buffers/toUint8Array';
 import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 export const enum ChannelState {
@@ -312,6 +312,7 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
       channel.close();
       this.channel$.next(undefined);
     }
+    this.open$.next(false);
   }
 
   public reconnectDelay(): number {

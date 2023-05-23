@@ -31,20 +31,21 @@ import {
   OpType,
   OpUndefined,
 } from '../../op';
-import {Decoder as MessagePackDecoder} from '../../../json-pack/Decoder';
+import {MsgPackDecoderFast} from '../../../json-pack/msgpack/MsgPackDecoderFast';
 import {OPCODE} from '../../constants';
 import {Path} from '../../../json-pointer';
 import {JsonPatchTypes} from '../json/types';
-import type {JsonPatchOptions} from '../../types';
 import {createMatcherDefault} from '../../util';
+import type {JsonPatchOptions} from '../../types';
+import type {Reader} from '../../../util/buffers/Reader';
 
-export class Decoder extends MessagePackDecoder {
+export class Decoder extends MsgPackDecoderFast<Reader> {
   constructor(private readonly options: JsonPatchOptions) {
     super();
   }
 
   public decode(uint8: Uint8Array): Op[] {
-    this.reset(uint8);
+    this.reader.reset(uint8);
     return this.decodePatch();
   }
 
@@ -57,7 +58,7 @@ export class Decoder extends MessagePackDecoder {
 
   protected decodeOp(parent: Op | undefined): Op {
     const length = this.decodeArrayHeader();
-    const opcode = this.u8();
+    const opcode = this.reader.u8();
     switch (opcode) {
       case OPCODE.add: {
         const path = this.decodeArray() as Path;
@@ -191,7 +192,7 @@ export class Decoder extends MessagePackDecoder {
           const str = this.decodeString();
           return new OpStrDel(path, pos, str, undefined);
         } else {
-          this.u8();
+          this.reader.u8();
           const len = this.val() as number;
           return new OpStrDel(path, pos, undefined, len);
         }
@@ -246,31 +247,35 @@ export class Decoder extends MessagePackDecoder {
   }
 
   protected decodeObject(): object {
-    const byte = this.u8();
+    const reader = this.reader;
+    const byte = reader.u8();
     if (byte <= 0xbf) return this.obj(byte & 0b1111);
-    else if (byte === 0xde) return this.obj(this.u16());
-    /* 0xdf */ else return this.obj(this.u32());
+    else if (byte === 0xde) return this.obj(reader.u16());
+    /* 0xdf */ else return this.obj(reader.u32());
   }
 
   protected decodeArray(): unknown[] {
-    const byte = this.u8();
+    const reader = this.reader;
+    const byte = reader.u8();
     if (byte < 0b10011111) return this.arr(byte & 0b1111);
-    else if (byte === 0xdc) return this.arr(this.u16());
-    else return this.arr(this.u32());
+    else if (byte === 0xdc) return this.arr(reader.u16());
+    else return this.arr(reader.u32());
   }
 
   protected decodeArrayHeader(): number {
-    const byte = this.u8();
+    const reader = this.reader;
+    const byte = reader.u8();
     if (byte < 0b10011111) return byte & 0b1111;
-    else if (byte === 0xdc) return this.u16();
-    else return this.u32();
+    else if (byte === 0xdc) return reader.u16();
+    else return reader.u32();
   }
 
   protected decodeString(): string {
-    const byte = this.u8();
-    if (byte <= 0xbf) return this.str(byte & 0b11111);
-    else if (byte === 0xd9) return this.str(this.u8());
-    else if (byte === 0xda) return this.str(this.u16());
-    /* 0xDB */ else return this.str(this.u32());
+    const reader = this.reader;
+    const byte = reader.u8();
+    if (byte <= 0xbf) return reader.utf8(byte & 0b11111);
+    else if (byte === 0xd9) return reader.utf8(reader.u8());
+    else if (byte === 0xda) return reader.utf8(reader.u16());
+    /* 0xDB */ else return reader.utf8(reader.u32());
   }
 }

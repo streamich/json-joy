@@ -1,10 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
 import {createWebSocketMock, MockWebSocket} from '../mock';
 import {WebSocketChannel, PersistentChannel, Channel, PersistentChannelParams} from '../channel';
-import {firstValueFrom, Subject} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {of} from '../../util/of';
 

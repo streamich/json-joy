@@ -1,5 +1,5 @@
-import {JsonPackExtension, JsonPackValue} from '../json-pack';
-import {isUint8Array} from '../util/isUint8Array';
+import {JsonPackExtension, JsonPackValue} from '../json-pack/msgpack';
+import {isUint8Array} from '../util/buffers/isUint8Array';
 
 const arraySize = (arr: unknown[]): number => {
   let size = 2;
@@ -34,8 +34,8 @@ export const msgpackSizeFast = (value: unknown): number => {
       return 1;
   }
   if (value instanceof Array) return arraySize(value);
-  if (isUint8Array(value)) return 5 + value.byteLength;
-  if (value instanceof JsonPackValue) return (value as JsonPackValue).buf.byteLength;
-  if (value instanceof JsonPackExtension) return 6 + (value as JsonPackExtension).buf.byteLength;
+  if (isUint8Array(value)) return 5 + value.length;
+  if (value instanceof JsonPackValue) return (value as JsonPackValue).val.length;
+  if (value instanceof JsonPackExtension) return 6 + (value as JsonPackExtension).val.length;
   return objectSize(value as Record<string, unknown>);
 };

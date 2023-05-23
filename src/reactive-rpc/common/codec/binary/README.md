@@ -3,24 +3,10 @@
 `binary` codec specifies a binary encoding format for Reactive-RPC protocol
 messages.
 
-| First byte (in binary)        | Message                                      | Has payload       |
-|-------------------------------|----------------------------------------------|-------------------|
-| `000?xxxx`                    | Request Data Message                         | Yes               |
-| `001?xxxx`                    | Request Complete Message                     | Maybe             |
-| `010?xxxx`                    | Request Error Message                        | Yes               |
-| `011?xxxx`                    | Notification Message                         | Maybe             |
-| `100?xxxx`                    | Response Data Message                        | Yes               |
-| `101?xxxx`                    | Response Complete Message                    | Maybe             |
-| `110?xxxx`                    | Response Error Message                       | Yes               |
-| `11100001` to `11111101`      | Reserved                                     |                   |
-| `11111110`                    | Request Un-subscribe Message                 | No                |
-| `11111111`                    | Response Un-subscribe Message                | No                |
-
-Where `?` is a bit flat which determines if the next byte should be read to
-determine the message length. And `x` are first 4 bits of the payload length.
-
 
 ## Message encoding
+
+- All messages are at least 4 bytes long.
 
 Notation in diagrams:
 
@@ -44,190 +30,176 @@ Variable number of bytes:
 
 ### Notification Message
 
-Notification message consists of:
+The Notification message consists of:
 
-1. Remote `method` name string, encoded as ASCII text. Preceded with a method
-  `size` byte, encoded as unsigned integer.
-2. Optional binary payload `data`.
+1. Leading `000` represents the message type.
+1. `x` encodes the size of the payload `data`.
+1. `z` encodes method `name` as unsigned 8-bit integer.
+1. Remote method `name` string, encoded as ASCII text.
+1. Binary payload `data`.
+
+The Notification message has only this form:
 
 ```
-+--------+........+--------+========+========+
-|011?xxxx|?xxxxxxx|  size  | method |  data  |
-+--------+........+--------+========+========+
++--------+--------+--------+--------+========+========+
+|000xxxxx|xxxxxxxx|xxxxxxxx|zzzzzzzz|  name  |  data  |
++--------+--------+--------+--------+========+========+
 ```
 
-- `?` is a bit flag which determines if the following byte should be used for
+- The maximum size of the payload `data` is 2 ** 23 - 1 bytes (~2MB).
+
+
+### Message with payload and name encoding
+
+A message with payload and name consists of:
+
+1. Leading bits `iii` represent the message type.
+1. `x` encodes the size of the payload `data`.
+1. `y` encodes the channel/subscription sequence number.
+1. `z` encodes method `name` as unsigned 8-bit integer.
+1. Remote method `name` string, encoded as ASCII text.
+1. Binary payload `data`.
+1. `?` is a bit flag which determines if the following byte should be used for
   decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
+
+General message structure:
+
+```
++--------+--------+--------+--------+--------+========+========+........+........+
+|iii?xxxx|xxxxxxxx|?xyxyxyx|xyxyxyxy|zzzzzzzz|  name  |  data  |yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+--------+========+========+........+........+
+```
+
+Encoding depends on the size of `data`:
+
+```
+if x <= 0b1111_11111111 (4095 ~ 4KB):
++--------+--------+--------+--------+--------+========+========+
+|iii0xxxx|xxxxxxxx|yyyyyyyy|yyyyyyyy|zzzzzzzz|  name  |  data  |
++--------+--------+--------+--------+--------+========+========+
+
+if x <= 0b1111_11111111_1111111 (524287 ~ 512KB):
++--------+--------+--------+--------+--------+========+========+--------+
+|iii1xxxx|xxxxxxxx|0xxxxxxx|yyyyyyyy|zzzzzzzz|  name  |  data  |yyyyyyyy|
++--------+--------+--------+--------+--------+========+========+--------+
+
+if x > 0b1111_11111111_1111111 (524287)
+  and x <= 0b1111_11111111_1111111_11111111 (134217727 ~ 128MB):
++--------+--------+--------+--------+--------+========+========+--------+--------+
+|iii1xxxx|xxxxxxxx|1xxxxxxx|xxxxxxxx|zzzzzzzz|  name  |  data  |yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+--------+========+========+--------+--------+
+```
+
+
+### Message with payload-only encoding
+
+A message with payload-only consists of:
+
+1. Leading bits `iii` represent the message type.
+1. `x` encodes the size of the payload `data`.
+1. `y` encodes the channel/subscription sequence number.
+1. Binary payload `data`.
+1. `?` is a bit flag which determines if the following byte should be used for
+  decoding a variable length integer.
+
+General message structure:
+
+```
++--------+--------+--------+--------+========+........+........+
+|iii?xxxx|xxxxxxxx|?xyxyxyx|xyxyxyxy|  data  |yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+========+........+........+
+```
+
+Encoding depends on the size of `data`:
+
+```
+if x <= 0b1111_11111111 (4095 ~ 4KB):
++--------+--------+--------+--------+========+
+|iii0xxxx|xxxxxxxx|yyyyyyyy|yyyyyyyy|  data  |
++--------+--------+--------+--------+========+
+
+if x <= 0b1111_11111111_1111111 (524287 ~ 512KB):
++--------+--------+--------+--------+========+--------+
+|iii1xxxx|xxxxxxxx|0xxxxxxx|yyyyyyyy|  data  |yyyyyyyy|
++--------+--------+--------+--------+========+--------+
+
+if x > 0b1111_11111111_1111111 (524287)
+  and x <= 0b1111_11111111_1111111_11111111 (134217727 ~ 128MB):
++--------+--------+--------+--------+========+--------+--------+
+|iii1xxxx|xxxxxxxx|1xxxxxxx|xxxxxxxx|  data  |yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+========+--------+--------+
+```
 
 
 ### Request Data Message
 
-*Request Data Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Method name `size` byte, encoded as unsigned integer.
-3. Remote `method` name string, encoded as ASCII text.
-4. Binary payload `data`.
-
-```
-+--------+........+--------+--------+--------+========+========+
-|000?xxxx|?xxxxxxx|        id       |  size  | method |  data  |
-+--------+........+--------+--------+--------+========+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
-- When `method` is known from subscription `id`, `size` is set to 0.
+The *Request Data Message* is encoded as a message with payload and name with
+`001` set as the leading bits.
 
 
 ### Request Complete Message
 
-*Request Complete Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Method name `size` byte, encoded as unsigned integer.
-3. Remote `method` name string, encoded as ASCII text.
-4. Optional binary payload `data`.
-
-```
-+--------+........+--------+--------+--------+========+========+
-|001?xxxx|?xxxxxxx|        id       |  size  | method |  data  |
-+--------+........+--------+--------+--------+========+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
-- When `method` is known from subscription `id`, `size` is set to 0.
+The *Request Data Message* is encoded as a message with payload and name with
+`010` set as the leading bits.
 
 
 ### Request Error Message
 
-*Request Error Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Method name `size` byte, encoded as unsigned integer.
-3. Remote `method` name string, encoded as ASCII text.
-4. Optional binary payload `data`.
-
-```
-+--------+........+--------+--------+--------+========+========+
-|010?xxxx|?xxxxxxx|        id       |  size  | method |  data  |
-+--------+........+--------+--------+--------+========+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
-- When `method` is known from subscription `id`, `size` is set to 0.
+The *Request Error Message* is encoded as a message with payload-only with
+`011` set as the leading bits.
 
 
 ### Request Un-subscribe Message
 
-*Request Un-subscribe Message* message consists of:
+The *Request Un-subscribe Message* message consists of:
 
-1. Subscription `id`, encoded as unsigned 16 bit integer.
+1. Leading `111` represents the control message type.
+1. Second byte `00000000` indicates that it is a *Request Un-subscribe Message*.
+1. `y` encodes the channel/subscription sequence number.
 
 ```
-+--------+--------+--------+
-|11111110|        id       |
-+--------+--------+--------+
++--------+--------+--------+--------+
+|11100000|00000000|yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+
 ```
 
 
 ### Response Data Message
 
-*Response Data Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Required binary payload `data`.
-
-```
-+--------+........+--------+--------+========+
-|100?xxxx|?xxxxxxx|        id       |  data  |
-+--------+........+--------+--------+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
+The *Response Data Message* is encoded as a message with payload-only with
+`100` set as the leading bits.
 
 
 ### Response Complete Message
 
-*Response Complete Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Optional binary payload `data`.
-
-```
-+--------+........+--------+--------+========+
-|101?xxxx|?xxxxxxx|        id       |  data  |
-+--------+........+--------+--------+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
+The *Response Complete Message* is encoded as a message with payload-only with
+`101` set as the leading bits.
 
 
 ### Response Error Message
 
-*Response Error Message* consists of:
-
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-2. Required binary payload `data`.
-
-```
-+--------+........+--------+--------+========+
-|110?xxxx|?xxxxxxx|        id       |  data  |
-+--------+........+--------+--------+========+
-```
-
-- `?` is a bit flag which determines if the following byte should be used for
-  decoding a variable length integer.
-- `x` is a variable length unsigned integer that encodes `data` size.
+The *Response Complete Message* is encoded as a message with payload-only with
+`110` set as the leading bits.
 
 
 ### Response Un-subscribe Message
 
-*Response Un-subscribe Message* consists of:
+The *Response Un-subscribe Message* message consists of:
 
-1. Subscription `id`, encoded as unsigned 16 bit integer.
-
-```
-+--------+--------+--------+
-|11111111|        id       |
-+--------+--------+--------+
-```
-
-
-## Operational behavior
-
-...
-
-
-### Header length
-
-The maximum length of header size encoding `x` is 4 bytes.
-
-For example, the maximum length of the notification message header is 4 bytes:
+1. Leading `111` represents the control message type.
+1. Second byte `00000001` indicates that it is a *Response Un-subscribe Message*.
+1. `y` encodes the channel/subscription sequence number.
 
 ```
-+--------+--------+--------+--------+--------+========+========+
-|0001xxxx|1xxxxxxx|1xxxxxxx|xxxxxxxx|  size  | method |  data  |
-+--------+--------+--------+--------+--------+========+========+
++--------+--------+--------+--------+
+|11100000|00000001|yyyyyyyy|yyyyyyyy|
++--------+--------+--------+--------+
 ```
 
-Thi allows the maximum of 26 to represent `x`, which means the maximum `data`
-size of a single message is 67,108,864 bytes (or 64 MB).
 
+### The channel/subscription sequence number `y`
 
-### The `id` field
-
-The `id` field uniquely identifies an *active ID* (a request/response in-flight
+The `y` sequence number uniquely identifies an *active ID* (a request/response in-flight
 or an active subscription). It is chosen to be encoded as 2 bytes as a compromise
 between: (1) it should consume as little bytes on the wire as possible; (2) it
 should be big enough to be able to support a reasonable number of active IDs for

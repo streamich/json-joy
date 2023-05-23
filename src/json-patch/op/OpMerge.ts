@@ -4,7 +4,7 @@ import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -62,7 +62,7 @@ export class OpMerge extends AbstractOp<'merge'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.props ? 4 : 3);
-    encoder.u8(OPCODE.merge);
+    encoder.writer.u8(OPCODE.merge);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeNumber(this.pos);
     if (this.props) encoder.encodeAny(this.props);

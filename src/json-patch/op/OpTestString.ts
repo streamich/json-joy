@@ -4,7 +4,7 @@ import {OperationTestString} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -51,10 +51,10 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.not ? 5 : 4);
-    encoder.u8(OPCODE.test_string);
+    encoder.writer.u8(OPCODE.test_string);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeNumber(this.pos);
     encoder.encodeString(this.str);
-    if (this.not) encoder.u8(1);
+    if (this.not) encoder.writer.u8(1);
   }
 }

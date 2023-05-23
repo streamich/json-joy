@@ -39,7 +39,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript statements, that execute at the end of the main
    * function body.
    */
-  epilogue?: string;
+  epilogue?: string | (() => string);
 
   /**
    * Converts all steps to `CodegenStepExecJs`.
@@ -108,6 +108,47 @@ export class Codegen<
    */
   public js(js: string): void {
     this.steps.push(new CodegenStepExecJs(js));
+  }
+
+  public var(expression?: string): string {
+    const r = this.getRegister();
+    if (expression) this.js('var ' + r + ' = ' + expression + ';');
+    else this.js('var ' + r + ';');
+    return r;
+  }
+
+  public if(condition: string, then: () => void, otherwise?: () => void): void {
+    this.js('if (' + condition + ') {');
+    then();
+    if (otherwise) {
+      this.js('} else {');
+      otherwise();
+    }
+    this.js('}');
+  }
+
+  public switch(
+    expression: string,
+    cases: [match: string | number | boolean | null, block: () => void, noBreak?: boolean][],
+    def?: () => void,
+  ): void {
+    this.js('switch (' + expression + ') {');
+    for (const [match, block, noBreak] of cases) {
+      this.js('case ' + match + ': {');
+      block();
+      if (!noBreak) this.js('break;');
+      this.js('}');
+    }
+    if (def) {
+      this.js('default: {');
+      def();
+      this.js('}');
+    }
+    this.js('}');
+  }
+
+  public return(expression: string): void {
+    this.js('return ' + expression + ';');
   }
 
   /**
@@ -234,9 +275,9 @@ ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = ($
 return ${name ? `function ${name}` : 'function'}(${args.join(',')}){
 ${prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
-${epilogue}
+${typeof epilogue === 'function' ? epilogue() : epilogue || ''}
 }})`;
-
+    // console.log(js);
     return {
       deps: this.dependencies,
       js: js as JavaScriptLinked<Fn>['js'],

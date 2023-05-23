@@ -1,15 +1,51 @@
 import {readFileSync} from 'fs';
-import {Decoder} from '../json-pack';
+import {MsgPackDecoderFast} from '../json-pack/msgpack';
+import {CborDecoder} from '../json-pack/cbor/CborDecoder';
 import * as JSONB from '../json-binary';
+import arg from 'arg';
+
+const args = arg(
+  {
+    '--format': String,
+    '--cbor': Boolean,
+  },
+  {
+    argv: process.argv,
+  },
+);
+
+type Format = 'msgpack' | 'messagepack' | 'cbor';
+const ALLOWED_FORMATS: Set<Format> = new Set(['msgpack', 'messagepack', 'cbor']);
+
+const format: Format = args['--cbor']
+  ? 'cbor'
+  : (String((args['--format'] as Format) ?? 'msgpack').toLowerCase() as Format);
+if (!ALLOWED_FORMATS.has(format)) throw new Error(`Unknown format: ${format}`);
 
 try {
-  const decoder = new Decoder();
-  const buf = readFileSync(0);
-  const arr = new Uint8Array(buf.byteLength);
-  for (let i = 0; i < buf.byteLength; i++) arr[i] = buf[i];
-  const decoded = decoder.decode(arr);
-  const json = JSONB.stringify(decoded);
-  process.stdout.write(json);
+  switch (format) {
+    case 'msgpack':
+    case 'messagepack': {
+      const decoder = new MsgPackDecoderFast();
+      const buf = readFileSync(0);
+      const arr = new Uint8Array(buf.length);
+      for (let i = 0; i < buf.length; i++) arr[i] = buf[i];
+      const decoded = decoder.decode(arr);
+      const json = JSONB.stringify(decoded);
+      process.stdout.write(json);
+      break;
+    }
+    case 'cbor': {
+      const decoder = new CborDecoder();
+      const buf = readFileSync(0);
+      const arr = new Uint8Array(buf.length);
+      for (let i = 0; i < buf.length; i++) arr[i] = buf[i];
+      const decoded = decoder.decode(arr);
+      const json = JSONB.stringify(decoded);
+      process.stdout.write(json);
+      break;
+    }
+  }
 } catch (error) {
   const output = error instanceof Error ? error.message : String(error);
   process.stderr.write(output + '\n');

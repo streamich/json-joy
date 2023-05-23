@@ -5,7 +5,7 @@ import {Path, find, formatJsonPointer} from '../../json-pointer';
 import {OpAdd} from './OpAdd';
 import {clone as deepClone} from '../../json-clone/clone';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch
@@ -45,7 +45,7 @@ export class OpCopy extends AbstractOp<'copy'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(3);
-    encoder.u8(OPCODE.copy);
+    encoder.writer.u8(OPCODE.copy);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeArray(this.from as unknown[]);
   }

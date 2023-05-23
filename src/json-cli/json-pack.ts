@@ -1,13 +1,47 @@
 import {readFileSync} from 'fs';
-import {EncoderFull} from '../json-pack';
+import {MsgPackEncoder} from '../json-pack/msgpack';
+import {CborEncoder} from '../json-pack/cbor/CborEncoder';
 import * as JSONB from '../json-binary';
+import arg from 'arg';
+
+const args = arg(
+  {
+    '--format': String,
+    '--cbor': Boolean,
+  },
+  {
+    argv: process.argv,
+  },
+);
+
+type Format = 'msgpack' | 'messagepack' | 'cbor';
+const ALLOWED_FORMATS: Set<Format> = new Set(['msgpack', 'messagepack', 'cbor']);
+
+const format: Format = args['--cbor']
+  ? 'cbor'
+  : (String((args['--format'] as Format) ?? 'msgpack').toLowerCase() as Format);
+if (!ALLOWED_FORMATS.has(format)) throw new Error(`Unknown format: ${format}`);
 
 try {
-  const encoder = new EncoderFull();
-  const buf = readFileSync(0);
-  const doc = JSONB.parse(buf.toString());
-  const encoded = encoder.encode(doc);
-  process.stdout.write(encoded);
+  switch (format) {
+    case 'msgpack':
+    case 'messagepack': {
+      const encoder = new MsgPackEncoder();
+      const buf = readFileSync(0);
+      const doc = JSONB.parse(buf.toString());
+      const encoded = encoder.encode(doc);
+      process.stdout.write(encoded);
+      break;
+    }
+    case 'cbor': {
+      const encoder = new CborEncoder();
+      const buf = readFileSync(0);
+      const doc = JSONB.parse(buf.toString());
+      const encoded = encoder.encode(doc);
+      process.stdout.write(encoded);
+      break;
+    }
+  }
 } catch (error) {
   const output = error instanceof Error ? error.message : String(error);
   process.stderr.write(output + '\n');

@@ -1,20 +1,30 @@
+import type {CompactMessageType} from './constants';
+
 /** Must be positive integer. */
 export type Id = number;
 
 /** Must be non-empty string, no longer than 128 characters. */
 export type Name = string;
 
-export type CompactNotificationMessage<Data = unknown> = [Name] | [Name, Data];
+export type CompactNotificationMessage<Data = unknown> =
+  | [CompactMessageType.Notification, Name]
+  | [CompactMessageType.Notification, Name, Data];
 
-export type CompactRequestCompleteMessage<Data = unknown> = [Id, Name] | [Id, Name, Data];
-export type CompactRequestDataMessage<Data = unknown> = [Id, 0, Name] | [Id, 0, Name, Data];
-export type CompactRequestErrorMessage<Data = unknown> = [Id, 1, Name, Data];
-export type CompactRequestUnsubscribeMessage = [Id, 2];
+export type CompactRequestDataMessage<Data = unknown> =
+  | [CompactMessageType.RequestData, Id, Name]
+  | [CompactMessageType.RequestData, Id, Name, Data];
+export type CompactRequestCompleteMessage<Data = unknown> =
+  | [CompactMessageType.RequestComplete, Id, Name]
+  | [CompactMessageType.RequestComplete, Id, Name, Data];
+export type CompactRequestErrorMessage<Data = unknown> = [CompactMessageType.RequestError, Id, Name, Data];
+export type CompactRequestUnsubscribeMessage = [CompactMessageType.RequestUnsubscribe, Id];
 
-export type CompactResponseCompleteMessage<Data = unknown> = [0, Id] | [0, Id, Data];
-export type CompactResponseErrorMessage<Data = unknown> = [-1, Id, Data];
-export type CompactResponseDataMessage<Data = unknown> = [-2, Id, Data];
-export type CompactResponseUnsubscribeMessage = [-3, Id];
+export type CompactResponseDataMessage<Data = unknown> = [CompactMessageType.ResponseData, Id, Data];
+export type CompactResponseCompleteMessage<Data = unknown> =
+  | [CompactMessageType.ResponseComplete, Id]
+  | [CompactMessageType.ResponseComplete, Id, Data];
+export type CompactResponseErrorMessage<Data = unknown> = [CompactMessageType.ResponseError, Id, Data];
+export type CompactResponseUnsubscribeMessage = [CompactMessageType.ResponseUnsubscribe, Id];
 
 export type CompactMessage<Data = unknown> =
   | CompactNotificationMessage<Data>

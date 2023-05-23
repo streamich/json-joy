@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationRemove} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch
@@ -50,7 +50,7 @@ export class OpRemove extends AbstractOp<'remove'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     const hasOldValue = this.oldValue !== undefined;
     encoder.encodeArrayHeader(hasOldValue ? 3 : 2);
-    encoder.u8(OPCODE.remove);
+    encoder.writer.u8(OPCODE.remove);
     encoder.encodeArray(this.path as unknown[]);
     if (hasOldValue) encoder.encodeAny(this.oldValue);
   }
