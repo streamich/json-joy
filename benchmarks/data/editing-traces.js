@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const zlib = require('zlib');
 
 const loadTrace = (filename) => {
@@ -9,9 +10,10 @@ const loadTrace = (filename) => {
 };
 
 const cache = {};
+const rootFolder = path.resolve(__dirname, '..', '..');
 
 const traces = {
-  filename: (name) => __dirname + `/text-editing-traces/${name}.json.gz`,
+  filename: (name) => path.resolve(rootFolder, 'node_modules', 'editing-traces', 'sequential_traces', `${name}.json.gz`),
   get: (name) => {
     if (!cache[name]) {
       const filename = traces.filename(name);

@@ -9,7 +9,7 @@ const {runTrace} = require('./util/editors');
 const os = require('os');
 
 const traceList = [
-  'json-joy-crdt',
+  'friendsforever_flat',
   'sveltecomponent',
   'rustcode',
   'seph-blog1',
