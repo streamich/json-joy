@@ -1,13 +1,23 @@
 import {toBase64Bin} from '../../util/base64/toBase64Bin';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
+import type {Slice} from '../../util/buffers/Slice';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder} from '../types';
 
 export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncoder {
   constructor(public readonly writer: IWriter & IWriterGrowable) {}
 
   public encode(value: unknown): Uint8Array {
+    const writer = this.writer;
+    writer.reset();
     this.writeAny(value);
-    return this.writer.flush();
+    return writer.flush();
+  }
+
+  public encodeFast(value: unknown): Slice {
+    const writer = this.writer;
+    writer.reset();
+    this.writeAny(value);
+    return writer.flushSlice();
   }
 
   public writeAny(value: unknown): void {

@@ -1,22 +1,22 @@
+import {deepEqual} from '../../src/json-equal/deepEqual';
 const Benchmark = require('benchmark');
-const {deepEqual} = require('../../es2020/json-equal/deepEqual');
 const os = require('os');
 
 export interface Runner {
   name: string;
-  setup: () => (data: unknown) => void;
+  setup: (data: unknown) => (data: unknown) => void;
 }
 
 export interface Payload {
   name: string | ((data: unknown) => string);
   data: unknown;
-  test?: (data: unknown) => unknown;
 }
 
 export interface Benchmark {
   name?: string;
   warmup?: number;
   payloads?: Payload[];
+  test?: (payload: unknown, result: unknown) => boolean;
   runners: Runner[];
 }
 
@@ -39,14 +39,16 @@ export const runBenchmark = (benchmark: Benchmark) => {
     console.log('-'.repeat(100 - title.length - 2) + ' ' + title);
 
     for (const runner of benchmark.runners) {
-      const fn = runner.setup();
+      const fn = runner.setup(data);
       if (benchmark.warmup)
         for (let i = 0; i < benchmark.warmup; i++) fn(data);
-      let isCorrect = undefined;
-      if (payload.test) {
-        const expected = payload.test(data);
-        const res = fn(data);
-        isCorrect = deepEqual(expected, res);
+      let isCorrect: undefined | boolean = undefined;
+      if (benchmark.test) {
+        try {
+          isCorrect = benchmark.test(data, fn(data));
+        } catch {
+          isCorrect = false;
+        }
       }
       const icon = isCorrect === undefined ? '🤞' : isCorrect ? '👍' : '👎';
       suite.add(icon + ' ' + runner.name, () => fn(data));

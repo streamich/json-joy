@@ -1,9 +1,9 @@
 import {CONST, ERROR, MAJOR} from './constants';
-import {CborDecoderFast} from './CborDecoderFast';
+import {CborDecoderBase} from './CborDecoderBase';
 import {JsonPackValue} from '../JsonPackValue';
 import type {Path} from '../../json-pointer';
 
-export class CborDecoder extends CborDecoderFast {
+export class CborDecoder extends CborDecoderBase {
   // -------------------------------------------------------------- Map reading
 
   public readAsMap(): Map<unknown, unknown> {

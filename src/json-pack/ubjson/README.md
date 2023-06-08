@@ -15,7 +15,9 @@
 
 `json-joy` implementation of UBJSON is about an order of magnitude faster than `@shelacek/ubjson`.
 
-Encoding:
+### Encoding
+
+Node v20:
 
 ```
 npx ts-node benchmarks/json-pack/bench.encoding.ubjson.ts
@@ -71,4 +73,112 @@ Fastest is 🤞 json-joy/json-pack UbjsonEncoder
 🤞 @shelacek/ubjson x 272,256 ops/sec ±0.11% (101 runs sampled)
 🤞 Buffer.from(JSON.stringify()) x 1,075,468 ops/sec ±0.18% (101 runs sampled)
 Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+```
+
+Node v18:
+
+```
+npx ts-node benchmarks/json-pack/bench.encoding.ubjson.ts
+=============================================================================== Benchmark: Encoding
+Warmup: 1000x , Node.js: v18.16.0 , Arch: arm64 , CPU: Apple M1
+---------------------------------------------------------------------------- Small object, 44 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 6,702,065 ops/sec ±1.34% (99 runs sampled)
+🤞 @shelacek/ubjson x 244,890 ops/sec ±0.83% (88 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 2,272,407 ops/sec ±0.20% (100 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+------------------------------------------------------------------------- Typical object, 993 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 499,534 ops/sec ±0.37% (101 runs sampled)
+🤞 @shelacek/ubjson x 21,968 ops/sec ±0.55% (95 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 198,487 ops/sec ±5.53% (90 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+-------------------------------------------------------------------------- Large object, 3741 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 101,614 ops/sec ±6.22% (71 runs sampled)
+🤞 @shelacek/ubjson x 6,928 ops/sec ±4.39% (86 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 63,549 ops/sec ±2.57% (95 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+-------------------------------------------------------------------- Very large object, 45750 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 6,548 ops/sec ±0.26% (99 runs sampled)
+🤞 @shelacek/ubjson x 441 ops/sec ±1.05% (80 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 5,973 ops/sec ±1.06% (97 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+------------------------------------------------------------------ Object with many keys, 969 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 299,428 ops/sec ±1.96% (95 runs sampled)
+🤞 @shelacek/ubjson x 15,818 ops/sec ±1.29% (86 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 188,231 ops/sec ±0.82% (100 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+------------------------------------------------------------------------- String ladder, 3398 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 303,012 ops/sec ±2.13% (97 runs sampled)
+🤞 @shelacek/ubjson x 28,397 ops/sec ±1.71% (86 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 126,743 ops/sec ±1.43% (99 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+-------------------------------------------------------------------------- Long strings, 7011 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 434,614 ops/sec ±0.73% (97 runs sampled)
+🤞 @shelacek/ubjson x 74,697 ops/sec ±5.70% (91 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 30,070 ops/sec ±0.10% (99 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+-------------------------------------------------------------------------- Short strings, 170 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 1,818,725 ops/sec ±0.64% (98 runs sampled)
+🤞 @shelacek/ubjson x 63,728 ops/sec ±1.30% (88 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 1,007,266 ops/sec ±0.59% (100 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+-------------------------------------------------------------------------------- Numbers, 136 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 4,132,602 ops/sec ±0.42% (100 runs sampled)
+🤞 @shelacek/ubjson x 361,219 ops/sec ±0.78% (99 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 1,119,393 ops/sec ±0.14% (100 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+--------------------------------------------------------------------------------- Tokens, 308 bytes
+🤞 json-joy/json-pack UbjsonEncoder x 1,907,200 ops/sec ±0.25% (100 runs sampled)
+🤞 @shelacek/ubjson x 258,382 ops/sec ±0.52% (100 runs sampled)
+🤞 Buffer.from(JSON.stringify()) x 971,885 ops/sec ±0.81% (99 runs sampled)
+Fastest is 🤞 json-joy/json-pack UbjsonEncoder
+```
+
+### Decoding
+
+Node v18:
+
+```
+npx ts-node benchmarks/json-pack/bench.ubjson.decoding.ts
+=============================================================================== Benchmark: Encoding
+Warmup: 1000x , Node.js: v18.16.0 , Arch: arm64 , CPU: Apple M1
+--------------------------------------------------------------------------- Small object, 331 bytes
+👍 json-joy/json-pack UbjsonDecoder x 2,615,977 ops/sec ±0.16% (101 runs sampled)
+👍 @shelacek/ubjson x 536,500 ops/sec ±1.09% (96 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------------ Typical object, 8911 bytes
+👍 json-joy/json-pack UbjsonDecoder x 235,867 ops/sec ±0.29% (100 runs sampled)
+👍 @shelacek/ubjson x 56,058 ops/sec ±1.43% (97 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------------- Large object, 36678 bytes
+👍 json-joy/json-pack UbjsonDecoder x 73,598 ops/sec ±0.78% (99 runs sampled)
+👍 @shelacek/ubjson x 18,320 ops/sec ±0.58% (99 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------- Very large object, 474391 bytes
+👍 json-joy/json-pack UbjsonDecoder x 3,197 ops/sec ±0.10% (100 runs sampled)
+👍 @shelacek/ubjson x 932 ops/sec ±1.42% (98 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+----------------------------------------------------------------- Object with many keys, 8314 bytes
+👍 json-joy/json-pack UbjsonDecoder x 98,536 ops/sec ±1.03% (98 runs sampled)
+👍 @shelacek/ubjson x 35,345 ops/sec ±0.57% (100 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------------ String ladder, 36555 bytes
+👍 json-joy/json-pack UbjsonDecoder x 250,466 ops/sec ±5.04% (93 runs sampled)
+👍 @shelacek/ubjson x 68,201 ops/sec ±2.84% (91 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------------- Long strings, 85535 bytes
+👍 json-joy/json-pack UbjsonDecoder x 102,333 ops/sec ±2.35% (96 runs sampled)
+👍 @shelacek/ubjson x 79,448 ops/sec ±0.70% (95 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+------------------------------------------------------------------------- Short strings, 1556 bytes
+👍 json-joy/json-pack UbjsonDecoder x 899,484 ops/sec ±0.44% (96 runs sampled)
+👍 @shelacek/ubjson x 156,232 ops/sec ±2.08% (95 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+-------------------------------------------------------------------------------- Numbers, 790 bytes
+👍 json-joy/json-pack UbjsonDecoder x 3,313,595 ops/sec ±0.14% (99 runs sampled)
+👍 @shelacek/ubjson x 430,527 ops/sec ±0.76% (95 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
+--------------------------------------------------------------------------------- Tokens, 471 bytes
+👍 json-joy/json-pack UbjsonDecoder x 1,879,654 ops/sec ±0.20% (95 runs sampled)
+👍 @shelacek/ubjson x 322,744 ops/sec ±0.39% (98 runs sampled)
+Fastest is 👍 json-joy/json-pack UbjsonDecoder
 ```

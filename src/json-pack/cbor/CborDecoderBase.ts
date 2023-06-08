@@ -8,7 +8,7 @@ import type {CachedUtf8Decoder} from '../../util/buffers/utf8/CachedUtf8Decoder'
 import type {IReader, IReaderResettable} from '../../util/buffers';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
-export class CborDecoderFast implements BinaryJsonDecoder {
+export class CborDecoderBase implements BinaryJsonDecoder {
   public constructor(
     public reader: IReader & IReaderResettable = new Reader(),
     protected readonly keyDecoder: CachedUtf8Decoder = sharedCachedUtf8Decoder,
@@ -28,52 +28,29 @@ export class CborDecoderFast implements BinaryJsonDecoder {
   // -------------------------------------------------------- Any value reading
 
   public val(): unknown {
-    const octet = this.reader.u8();
+    const reader = this.reader;
+    const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & CONST.MINOR_MASK;
-    switch (major) {
-      case MAJOR.UIN:
-        return this.readUint(minor);
-      case MAJOR.NIN:
-        return this.readNint(minor);
-      case MAJOR.STR:
-        return this.readStr(minor);
-      case MAJOR.MAP:
-        return this.readObj(minor);
-      case MAJOR.ARR:
-        return this.readArr(minor);
-      case MAJOR.TKN:
-        return this.readTkn(minor);
-      case MAJOR.BIN:
-        return this.readBin(minor);
-      case MAJOR.TAG:
-        return this.readTag(minor);
+    if (major < MAJOR.ARR) {
+      if (major < MAJOR.BIN) return major === MAJOR.UIN ? this.readUint(minor) : this.readNint(minor);
+      else return major === MAJOR.BIN ? this.readBin(minor) : this.readStr(minor);
+    } else {
+      if (major < MAJOR.TAG) return major === MAJOR.ARR ? this.readArr(minor) : this.readObj(minor);
+      else return major === MAJOR.TAG ? this.readTag(minor) : this.readTkn(minor);
     }
-    return;
   }
 
   public readAnyRaw(octet: number): unknown {
     const major = octet >> 5;
     const minor = octet & CONST.MINOR_MASK;
-    switch (major) {
-      case MAJOR.UIN:
-        return this.readUint(minor);
-      case MAJOR.NIN:
-        return this.readNint(minor);
-      case MAJOR.BIN:
-        return this.readBin(minor);
-      case MAJOR.STR:
-        return this.readStr(minor);
-      case MAJOR.ARR:
-        return this.readArr(minor);
-      case MAJOR.MAP:
-        return this.readObj(minor);
-      case MAJOR.TKN:
-        return this.readTkn(minor);
-      case MAJOR.TAG:
-        return this.readTag(minor);
+    if (major < MAJOR.ARR) {
+      if (major < MAJOR.BIN) return major === MAJOR.UIN ? this.readUint(minor) : this.readNint(minor);
+      else return major === MAJOR.BIN ? this.readBin(minor) : this.readStr(minor);
+    } else {
+      if (major < MAJOR.TAG) return major === MAJOR.ARR ? this.readArr(minor) : this.readObj(minor);
+      else return major === MAJOR.TAG ? this.readTag(minor) : this.readTkn(minor);
     }
-    return undefined;
   }
 
   public readMinorLen(minor: number): number {
@@ -97,40 +74,30 @@ export class CborDecoderFast implements BinaryJsonDecoder {
   // ----------------------------------------------------- Unsigned int reading
 
   public readUint(minor: number): number | bigint {
-    if (minor <= 23) return minor;
-    switch (minor) {
-      case 24:
-        return this.reader.u8();
-      case 25:
-        return this.reader.u16();
-      case 26:
-        return this.reader.u32();
-      case 27: {
+    if (minor < 25) {
+      return minor === 24 ? this.reader.u8() : minor;
+    } else {
+      if (minor < 27) {
+        return minor === 25 ? this.reader.u16() : this.reader.u32();
+      } else {
         const num = this.reader.u64();
         return num > CONST.MAX_UINT ? num : Number(num);
       }
-      default:
-        throw ERROR.UNEXPECTED_MINOR;
     }
   }
 
   // ----------------------------------------------------- Negative int reading
 
   public readNint(minor: number): number | bigint {
-    if (minor <= 23) return -minor - 1;
-    switch (minor) {
-      case 24:
-        return -this.reader.u8() - 1;
-      case 25:
-        return -this.reader.u16() - 1;
-      case 26:
-        return -this.reader.u32() - 1;
-      case 27: {
+    if (minor < 25) {
+      return minor === 24 ? -this.reader.u8() - 1 : -minor - 1;
+    } else {
+      if (minor < 27) {
+        return minor === 25 ? -this.reader.u16() - 1 : -this.reader.u32() - 1;
+      } else {
         const num = this.reader.u64();
         return num > CONST.MAX_UINT - 1 ? -num - BigInt(1) : -Number(num) - 1;
       }
-      default:
-        throw ERROR.UNEXPECTED_MINOR;
     }
   }
 
