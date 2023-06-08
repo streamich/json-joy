@@ -80,6 +80,83 @@ const findEndingQuote = (uint8: Uint8Array, x: number): number => {
   return x;
 };
 
+const fromCharCode = String.fromCharCode;
+
+const readShortUtf8StrAndUnescape = (reader: Reader): string => {
+  const buf = reader.uint8;
+  const len = buf.length;
+  const points: number[] = [];
+  let x = reader.x;
+  let prev = 0;
+  while (x < len) {
+    let code = buf[x++]!;
+    if ((code & 0x80) === 0) {
+      if (prev === 92) {
+        switch (code) {
+          case 98: // \b
+            code = 8;
+            break;
+          case 102: // \f
+            code = 12;
+            break;
+          case 110: // \n
+            code = 10;
+            break;
+          case 114: // \r
+            code = 13;
+            break;
+          case 116: // \t
+            code = 9;
+            break;
+          case 34: // \"
+            code = 34;
+            break;
+          case 47: // \/
+            code = 47;
+            break;
+          case 92: // \\
+            code = 92;
+            break;
+          default:
+            throw new Error('Invalid JSON');
+        }
+        prev = 0;
+      } else {
+        if (code === 34) break;
+        prev = code;
+        if (prev === 92) continue;
+      }
+    } else {
+      const octet2 = buf[x++]! & 0x3f;
+      if ((code & 0xe0) === 0xc0) {
+        code = ((code & 0x1f) << 6) | octet2;
+      } else {
+        const octet3 = buf[x++]! & 0x3f;
+        if ((code & 0xf0) === 0xe0) {
+          code = ((code & 0x1f) << 12) | (octet2 << 6) | octet3;
+        } else {
+          if ((code & 0xf8) === 0xf0) {
+            const octet4 = buf[x++]! & 0x3f;
+            let unit = ((code & 0x07) << 0x12) | (octet2 << 0x0c) | (octet3 << 0x06) | octet4;
+            if (unit > 0xffff) {
+              unit -= 0x10000;
+              const unit0 = ((unit >>> 10) & 0x3ff) | 0xd800;
+              unit = 0xdc00 | (unit & 0x3ff);
+              points.push(unit0);
+              code = unit;
+            } else {
+              code = unit;
+            }
+          }
+        }
+      }
+    }
+    points.push(code);
+  }
+  reader.x = x;
+  return fromCharCode.apply(String, points);
+};
+
 export class JsonDecoder implements BinaryJsonDecoder {
   public reader = new Reader();
 
@@ -250,13 +327,15 @@ export class JsonDecoder implements BinaryJsonDecoder {
     const uint8 = reader.uint8;
     while (true) {
       this.skipWhitespace();
-      const char = uint8[reader.x];
+      let char = uint8[reader.x];
       if (char === 0x7d) return reader.x++, obj; // }
       if (char === 0x2c) {
         reader.x++;
         continue;
       } // ,
-      const key = this.readStr();
+      char = uint8[reader.x++];
+      if (char !== 0x22) throw new Error('Invalid JSON');
+      const key = readShortUtf8StrAndUnescape(reader);
       if (key === '__proto__') throw new Error('Invalid JSON');
       this.skipWhitespace();
       if (reader.u8() !== 0x3a) throw new Error('Invalid JSON');
