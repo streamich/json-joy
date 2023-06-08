@@ -1,6 +1,11 @@
 export interface ITimestampStruct {
   readonly sid: number;
-  time: number; // Needs to be mutable in vector clock.
+
+  /**
+   * Needs to be mutable in vector clock. Other than that, it should be
+   * treated as immutable.
+   */
+  time: number;
 }
 
 /**
