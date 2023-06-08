@@ -1,3 +1,3 @@
-import decodeUtf8 from './v15';
+import decodeUtf8 from './v16';
 
 export {decodeUtf8};

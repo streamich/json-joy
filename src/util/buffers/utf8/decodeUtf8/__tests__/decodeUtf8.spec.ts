@@ -11,6 +11,11 @@ import v10 from '../v10';
 import v11 from '../v11';
 import v12 from '../v12';
 import v13 from '../v13';
+import v14 from '../v14';
+import v15 from '../v15';
+import v16 from '../v16';
+import v17 from '../v17';
+import v18 from '../v18';
 
 type Decoder = (buf: Uint8Array, start: number, length: number) => string;
 
@@ -56,6 +61,40 @@ const runTests = (name: string, decodeUtf8: Decoder) => {
       const str2 = decodeUtf8(arr, 0, arr.length);
       expect(str2).toBe(str);
     });
+
+    test('can decode real-world sentence', () => {
+      const str = '💯 RëactQuill v2 ReactQuill 2 is here, baby! And it brings a füll port to TypeScript and React 16+.';
+      const buf = Buffer.from(str);
+      const arr = new Uint8Array(buf.length);
+      for (let i = 0; i < arr.length; i++) arr[i] = buf[i];
+      const str2 = decodeUtf8(arr, 0, arr.length);
+      expect(str2).toBe(str);
+    });
+
+    test('can decode various types of characters', () => {
+      const alphabet = [
+        // 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+        // 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+        // 'u', 'v', 'w', 'x', 'y', 'z',
+        // 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+        // 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+        // 'U', 'V', 'W', 'X', 'Y', 'Z',
+        // '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        // '-', '_', '.', ',', ';', '!', '@', '#', '$', '%',
+        // '^', '&', '*', '\\', '/', '(', ')', '+', '=', '\n',
+        // '👍', '🏻', '😛', 'ä', 'ö', 'ü', 'ß', 'а', 'б', 'в',
+        'г',
+        '诶',
+        '必',
+        '西',
+      ];
+      const str = alphabet.join('');
+      const buf = Buffer.from(str);
+      const arr = new Uint8Array(buf.length);
+      for (let i = 0; i < arr.length; i++) arr[i] = buf[i];
+      const str2 = decodeUtf8(arr, 0, arr.length);
+      expect(str2).toBe(str);
+    });
   });
 };
 
@@ -72,3 +111,8 @@ runTests('v10', v10);
 runTests('v11', v11);
 runTests('v12', v12);
 runTests('v13', v13);
+runTests('v14', v14);
+runTests('v15', v15);
+runTests('v16', v16);
+runTests('v17', v17);
+runTests('v18', v18);
