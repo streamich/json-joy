@@ -28,7 +28,8 @@ export class Reader implements IReader, IReaderResettable {
   }
 
   public u8(): number {
-    return this.view.getUint8(this.x++);
+    return this.uint8[this.x++];
+    // return this.view.getUint8(this.x++);
   }
 
   public i8(): number {
@@ -36,8 +37,12 @@ export class Reader implements IReader, IReaderResettable {
   }
 
   public u16(): number {
-    const num = this.view.getUint16(this.x);
-    this.x += 2;
+    // const num = this.view.getUint16(this.x);
+    // this.x += 2;
+    // return num;
+    let x = this.x;
+    const num = (this.uint8[x++] << 8) + this.uint8[x++];
+    this.x = x;
     return num;
   }
 
