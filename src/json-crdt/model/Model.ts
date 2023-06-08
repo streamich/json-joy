@@ -1,13 +1,19 @@
 import {ITimestampStruct, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {NodeIndex} from './NodeIndex';
-import {ORIGIN, SESSION} from '../../json-crdt-patch/constants';
+import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {printTree} from '../../util/print/printTree';
 import {RootLww} from '../types/lww-root/RootLww';
 import {Const} from '../types/const/Const';
+import {ArrInsOp} from '../../json-crdt-patch/operations/ArrInsOp';
+import {ArrayRga} from '../types/rga-array/ArrayRga';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
+import {ValSetOp} from '../../json-crdt-patch/operations/ValSetOp';
+import {ValueLww} from '../types/lww-value/ValueLww';
+import {ConstOp} from '../../json-crdt-patch/operations/ConstOp';
+import {ArrOp} from '../../json-crdt-patch/operations/ArrOp';
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -90,7 +96,38 @@ export class Model implements Printable {
    * @param op Any JSON CRDT Patch operation
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {
-    throw new Error('Not implemented');
+    this.clock.observe(op.id, op.span());
+    const index = this.index;
+    if (op instanceof ConstOp) {
+      if (!index.get(op.id)) index.set(new Const(op.id, op.val));
+    } else if (op instanceof ValSetOp) {
+      const obj = op.obj;
+      const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
+      if (node instanceof ValueLww) {
+        const newValue = index.get(op.val);
+        if (newValue) {
+          const old = node.set(op.val);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
+    } else if (op instanceof ArrInsOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrayRga) {
+        const nodes: ITimestampStruct[] = [];
+        const data = op.data;
+        const length = data.length;
+        for (let i = 0; i < length; i++) {
+          const stamp = data[i];
+          const valueNode = index.get(stamp);
+          if (!valueNode) continue;
+          if (node.id.time >= stamp.time) continue;
+          nodes.push(stamp);
+        }
+        if (nodes.length) node.ins(op.ref, op.id, nodes);
+      }
+    } else if (op instanceof ArrOp) {
+      if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
+    }
   }
 
   /**
