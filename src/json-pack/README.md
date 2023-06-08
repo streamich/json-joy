@@ -169,7 +169,7 @@ Warmup: 1000x , Node.js: v16.14.2 , Arch: arm64 , CPU: Apple M1
 -------------------------------------------------------------------- Very large object, 45750 bytes
 👍 JSON.parse() x 3,506 ops/sec ±0.19% (100 runs sampled)
 👍 sjson.parse() x 3,336 ops/sec ±0.11% (99 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 4,915 ops/sec ±0.18% (100 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 4,915 ops/sec ±0.18% (100 runs sampled)
 👍 cbor-x x 4,747 ops/sec ±0.15% (100 runs sampled)
 👍 cbor x 260 ops/sec ±0.29% (90 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 5,506 ops/sec ±0.48% (100 runs sampled)
@@ -182,7 +182,7 @@ Fastest is 👍 json-joy/json-pack MsgPackDecoderFast
 -------------------------------------------------------------------------- Large object, 3741 bytes
 👍 JSON.parse() x 91,582 ops/sec ±0.30% (100 runs sampled)
 👍 sjson.parse() x 84,411 ops/sec ±0.16% (99 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 94,618 ops/sec ±0.27% (97 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 94,618 ops/sec ±0.27% (97 runs sampled)
 👍 cbor-x x 108,102 ops/sec ±0.37% (101 runs sampled)
 👍 cbor x 4,845 ops/sec ±0.79% (95 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 102,544 ops/sec ±0.39% (99 runs sampled)
@@ -195,7 +195,7 @@ Fastest is 👍 msgpackr
 ------------------------------------------------------------------------- Typical object, 993 bytes
 👍 JSON.parse() x 304,670 ops/sec ±0.98% (97 runs sampled)
 👍 sjson.parse() x 283,259 ops/sec ±0.20% (98 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 298,666 ops/sec ±0.19% (100 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 298,666 ops/sec ±0.19% (100 runs sampled)
 👍 cbor-x x 322,995 ops/sec ±0.71% (97 runs sampled)
 👍 cbor x 14,391 ops/sec ±0.88% (95 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 321,984 ops/sec ±0.23% (100 runs sampled)
@@ -208,7 +208,7 @@ Fastest is 👍 msgpackr
 ---------------------------------------------------------------------------- Small object, 44 bytes
 👍 JSON.parse() x 2,654,389 ops/sec ±0.28% (98 runs sampled)
 👍 sjson.parse() x 2,325,941 ops/sec ±0.21% (98 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 3,357,402 ops/sec ±0.31% (99 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 3,357,402 ops/sec ±0.31% (99 runs sampled)
 👍 cbor-x x 4,133,737 ops/sec ±0.29% (101 runs sampled)
 👍 cbor x 112,776 ops/sec ±5.79% (88 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 3,359,127 ops/sec ±0.56% (98 runs sampled)
@@ -221,7 +221,7 @@ Fastest is 👍 cbor-x
 ------------------------------------------------------------------ Object with many keys, 969 bytes
 👍 JSON.parse() x 270,312 ops/sec ±0.57% (98 runs sampled)
 👍 sjson.parse() x 242,328 ops/sec ±3.10% (97 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 81,403 ops/sec ±0.42% (96 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 81,403 ops/sec ±0.42% (96 runs sampled)
 👍 cbor-x x 93,131 ops/sec ±0.48% (99 runs sampled)
 👍 cbor x 8,760 ops/sec ±0.93% (95 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 84,014 ops/sec ±0.31% (96 runs sampled)
@@ -234,7 +234,7 @@ Fastest is 👍 JSON.parse()
 ------------------------------------------------------------------------- String ladder, 3398 bytes
 👍 JSON.parse() x 287,387 ops/sec ±0.36% (99 runs sampled)
 👍 sjson.parse() x 192,836 ops/sec ±0.40% (95 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 177,787 ops/sec ±0.48% (98 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 177,787 ops/sec ±0.48% (98 runs sampled)
 👍 cbor-x x 320,303 ops/sec ±0.51% (94 runs sampled)
 👍 cbor x 15,416 ops/sec ±0.61% (94 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 179,625 ops/sec ±0.59% (100 runs sampled)
@@ -247,7 +247,7 @@ Fastest is 👍 msgpackr
 -------------------------------------------------------------------------- Long strings, 7011 bytes
 👍 JSON.parse() x 117,335 ops/sec ±3.32% (89 runs sampled)
 👍 sjson.parse() x 103,275 ops/sec ±0.64% (94 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 74,140 ops/sec ±7.50% (81 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 74,140 ops/sec ±7.50% (81 runs sampled)
 👍 cbor-x x 92,753 ops/sec ±0.78% (96 runs sampled)
 👍 cbor x 24,292 ops/sec ±27.70% (75 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 88,124 ops/sec ±1.65% (90 runs sampled)
@@ -260,7 +260,7 @@ Fastest is 👍 JSON.parse()
 -------------------------------------------------------------------------- Short strings, 170 bytes
 👍 JSON.parse() x 1,077,084 ops/sec ±6.88% (77 runs sampled)
 👍 sjson.parse() x 837,130 ops/sec ±2.70% (80 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 698,901 ops/sec ±4.69% (88 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 698,901 ops/sec ±4.69% (88 runs sampled)
 👍 cbor-x x 1,182,303 ops/sec ±0.39% (94 runs sampled)
 👍 cbor x 26,810 ops/sec ±14.70% (73 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 742,562 ops/sec ±5.06% (88 runs sampled)
@@ -273,7 +273,7 @@ Fastest is 👍 cbor-x,👍 JSON.parse()
 -------------------------------------------------------------------------------- Numbers, 136 bytes
 👍 JSON.parse() x 1,747,460 ops/sec ±0.61% (95 runs sampled)
 👍 sjson.parse() x 1,553,635 ops/sec ±1.04% (93 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 2,289,002 ops/sec ±0.93% (87 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 2,289,002 ops/sec ±0.93% (87 runs sampled)
 👍 cbor-x x 3,775,727 ops/sec ±2.86% (82 runs sampled)
 👍 cbor x 77,650 ops/sec ±4.32% (83 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 2,287,682 ops/sec ±1.54% (80 runs sampled)
@@ -286,7 +286,7 @@ Fastest is 👍 cbor-x
 --------------------------------------------------------------------------------- Tokens, 308 bytes
 👍 JSON.parse() x 1,303,300 ops/sec ±2.26% (92 runs sampled)
 👍 sjson.parse() x 1,091,921 ops/sec ±2.85% (86 runs sampled)
-👍 json-joy/json-pack CborDecoderFast x 1,203,319 ops/sec ±2.12% (90 runs sampled)
+👍 json-joy/json-pack CborDecoderBase x 1,203,319 ops/sec ±2.12% (90 runs sampled)
 👍 cbor-x x 1,787,591 ops/sec ±2.94% (74 runs sampled)
 👍 cbor x 45,127 ops/sec ±24.11% (64 runs sampled)
 👍 json-joy/json-pack MsgPackDecoderFast x 1,283,322 ops/sec ±1.93% (94 runs sampled)
@@ -296,6 +296,114 @@ Fastest is 👍 cbor-x
 👍 msgpack-lite x 1,316,133 ops/sec ±0.74% (99 runs sampled)
 👍 messagepack x 733,566 ops/sec ±1.55% (87 runs sampled)
 Fastest is 👍 msgpackr
+```
+
+Encoder comparison:
+
+```
+npx ts-node benchmarks/json-pack/bench.encoders.ts
+=============================================================================== Benchmark: Encoding
+Warmup: 1000x , Node.js: v20.2.0 , Arch: arm64 , CPU: Apple M1 Max
+---------------------------------------------------------------------------- Small object, 44 bytes
+👍 CborEncoderFast x 6,319,117 ops/sec ±0.11% (101 runs sampled)
+👍 CborEncoder x 6,001,443 ops/sec ±0.15% (101 runs sampled)
+👎 MsgPackEncoderFast x 6,047,466 ops/sec ±0.20% (99 runs sampled)
+👎 MsgPackEncoder x 5,493,093 ops/sec ±0.10% (101 runs sampled)
+👎 JsonEncoder x 6,018,890 ops/sec ±0.11% (97 runs sampled)
+👎 UbjsonEncoder x 6,545,118 ops/sec ±0.10% (97 runs sampled)
+👎 IonEncoderFast x 1,032,434 ops/sec ±0.14% (99 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 2,300,069 ops/sec ±0.15% (100 runs sampled)
+Fastest is 👎 UbjsonEncoder
+------------------------------------------------------------------------- Typical object, 993 bytes
+👍 CborEncoderFast x 460,125 ops/sec ±0.14% (98 runs sampled)
+👍 CborEncoder x 439,506 ops/sec ±0.18% (98 runs sampled)
+👎 MsgPackEncoderFast x 458,530 ops/sec ±0.15% (99 runs sampled)
+👎 MsgPackEncoder x 449,540 ops/sec ±0.16% (100 runs sampled)
+👎 JsonEncoder x 303,410 ops/sec ±0.12% (101 runs sampled)
+👎 UbjsonEncoder x 479,450 ops/sec ±0.13% (99 runs sampled)
+👎 IonEncoderFast x 68,000 ops/sec ±0.11% (102 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 207,747 ops/sec ±0.11% (98 runs sampled)
+Fastest is 👎 UbjsonEncoder
+-------------------------------------------------------------------------- Large object, 3741 bytes
+👍 CborEncoderFast x 133,608 ops/sec ±0.15% (100 runs sampled)
+👍 CborEncoder x 128,019 ops/sec ±0.13% (97 runs sampled)
+👎 MsgPackEncoderFast x 133,863 ops/sec ±0.14% (99 runs sampled)
+👎 MsgPackEncoder x 131,521 ops/sec ±0.18% (99 runs sampled)
+👎 JsonEncoder x 93,018 ops/sec ±0.13% (98 runs sampled)
+👎 UbjsonEncoder x 140,969 ops/sec ±0.15% (101 runs sampled)
+👎 IonEncoderFast x 11,523 ops/sec ±0.15% (101 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 63,389 ops/sec ±0.13% (101 runs sampled)
+Fastest is 👎 UbjsonEncoder
+-------------------------------------------------------------------- Very large object, 45750 bytes
+👍 CborEncoderFast x 5,790 ops/sec ±0.15% (100 runs sampled)
+👍 CborEncoder x 5,579 ops/sec ±0.14% (100 runs sampled)
+👎 MsgPackEncoderFast x 6,005 ops/sec ±0.13% (100 runs sampled)
+👎 MsgPackEncoder x 5,670 ops/sec ±0.18% (99 runs sampled)
+👎 JsonEncoder x 6,351 ops/sec ±0.16% (101 runs sampled)
+👎 UbjsonEncoder x 6,248 ops/sec ±0.18% (99 runs sampled)
+👎 IonEncoderFast x 1,868 ops/sec ±0.21% (98 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 7,240 ops/sec ±0.19% (99 runs sampled)
+Fastest is 👎 Buffer.from(JSON.stringify())
+------------------------------------------------------------------ Object with many keys, 969 bytes
+👍 CborEncoderFast x 283,371 ops/sec ±0.18% (99 runs sampled)
+👍 CborEncoder x 268,056 ops/sec ±0.17% (96 runs sampled)
+👎 MsgPackEncoderFast x 285,224 ops/sec ±0.17% (96 runs sampled)
+👎 MsgPackEncoder x 272,416 ops/sec ±0.21% (98 runs sampled)
+👎 JsonEncoder x 234,921 ops/sec ±0.21% (98 runs sampled)
+👎 UbjsonEncoder x 292,228 ops/sec ±0.19% (95 runs sampled)
+👎 IonEncoderFast x 63,456 ops/sec ±0.14% (98 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 175,341 ops/sec ±0.86% (93 runs sampled)
+Fastest is 👎 UbjsonEncoder
+------------------------------------------------------------------------- String ladder, 3398 bytes
+👍 CborEncoderFast x 280,167 ops/sec ±0.20% (100 runs sampled)
+👍 CborEncoder x 283,404 ops/sec ±0.20% (97 runs sampled)
+👎 MsgPackEncoderFast x 272,800 ops/sec ±0.18% (99 runs sampled)
+👎 MsgPackEncoder x 283,433 ops/sec ±0.23% (98 runs sampled)
+👎 JsonEncoder x 147,390 ops/sec ±0.16% (98 runs sampled)
+👎 UbjsonEncoder x 290,624 ops/sec ±0.21% (98 runs sampled)
+👎 IonEncoderFast x 25,452 ops/sec ±0.17% (101 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 145,352 ops/sec ±0.23% (99 runs sampled)
+Fastest is 👎 UbjsonEncoder
+-------------------------------------------------------------------------- Long strings, 7011 bytes
+👍 CborEncoderFast x 394,386 ops/sec ±0.53% (95 runs sampled)
+👍 CborEncoder x 394,442 ops/sec ±0.49% (94 runs sampled)
+👎 MsgPackEncoderFast x 386,894 ops/sec ±0.54% (95 runs sampled)
+👎 MsgPackEncoder x 394,019 ops/sec ±0.50% (95 runs sampled)
+👎 JsonEncoder x 50,781 ops/sec ±0.13% (97 runs sampled)
+👎 UbjsonEncoder x 396,184 ops/sec ±0.57% (95 runs sampled)
+👎 IonEncoderFast x 11,799 ops/sec ±0.22% (99 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 28,742 ops/sec ±0.11% (102 runs sampled)
+Fastest is 👎 UbjsonEncoder,👍 CborEncoder,👍 CborEncoderFast,👎 MsgPackEncoder
+-------------------------------------------------------------------------- Short strings, 170 bytes
+👍 CborEncoderFast x 1,816,742 ops/sec ±0.16% (100 runs sampled)
+👍 CborEncoder x 1,831,503 ops/sec ±0.22% (97 runs sampled)
+👎 MsgPackEncoderFast x 1,641,743 ops/sec ±0.17% (101 runs sampled)
+👎 MsgPackEncoder x 1,694,803 ops/sec ±0.17% (97 runs sampled)
+👎 JsonEncoder x 1,595,041 ops/sec ±0.12% (99 runs sampled)
+👎 UbjsonEncoder x 1,779,112 ops/sec ±0.24% (98 runs sampled)
+👎 IonEncoderFast x 422,031 ops/sec ±0.10% (101 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 1,001,976 ops/sec ±0.24% (98 runs sampled)
+Fastest is 👍 CborEncoder
+-------------------------------------------------------------------------------- Numbers, 136 bytes
+👍 CborEncoderFast x 2,822,683 ops/sec ±0.14% (99 runs sampled)
+👍 CborEncoder x 3,111,311 ops/sec ±0.20% (97 runs sampled)
+👎 MsgPackEncoderFast x 2,918,971 ops/sec ±0.14% (100 runs sampled)
+👎 MsgPackEncoder x 2,862,193 ops/sec ±0.13% (100 runs sampled)
+👎 JsonEncoder x 1,706,584 ops/sec ±0.18% (96 runs sampled)
+👎 UbjsonEncoder x 3,238,810 ops/sec ±0.15% (97 runs sampled)
+👎 IonEncoderFast x 545,885 ops/sec ±0.16% (98 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 1,216,907 ops/sec ±0.20% (98 runs sampled)
+Fastest is 👎 UbjsonEncoder
+--------------------------------------------------------------------------------- Tokens, 308 bytes
+👍 CborEncoderFast x 1,360,976 ops/sec ±0.20% (96 runs sampled)
+👍 CborEncoder x 1,367,625 ops/sec ±0.16% (101 runs sampled)
+👎 MsgPackEncoderFast x 1,753,202 ops/sec ±0.19% (99 runs sampled)
+👎 MsgPackEncoder x 1,733,298 ops/sec ±0.16% (100 runs sampled)
+👎 JsonEncoder x 1,411,382 ops/sec ±0.27% (98 runs sampled)
+👎 UbjsonEncoder x 1,734,304 ops/sec ±0.17% (101 runs sampled)
+👎 IonEncoderFast x 369,161 ops/sec ±0.21% (97 runs sampled)
+👎 Buffer.from(JSON.stringify()) x 1,092,623 ops/sec ±0.15% (101 runs sampled)
+Fastest is 👎 MsgPackEncoderFast
 ```
 
 
