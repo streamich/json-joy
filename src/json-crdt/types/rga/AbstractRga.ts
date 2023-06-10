@@ -14,6 +14,7 @@ import {splay2} from '../../../util/trees/splay/util2';
 import {insert2, remove2} from '../../../util/trees/util2';
 import {printBinary} from '../../../util/print/printBinary';
 import {printTree} from '../../../util/print/printTree';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 
 export interface Chunk<T> {
   /** Unique sortable ID of this chunk and its span. */
@@ -411,6 +412,8 @@ export abstract class AbstractRga<T> {
       }
       const len = chunk.span - off;
       callback(chunk, off, len);
+    } else {
+      if (containsId(chunk.id, chunk.span, to)) return;
     }
     chunk = next(chunk);
     while (chunk) {
@@ -689,6 +692,8 @@ export abstract class AbstractRga<T> {
     const p = chunk.p;
     const l = chunk.l;
     const r = chunk.r;
+    chunk.id = ORIGIN; // mark chunk as disposed
+    // TODO: perf: maybe set .p, .l, .r to undefined to help GC?
     if (!l && !r) {
       if (!p) this.root = undefined;
       else {
