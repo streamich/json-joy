@@ -152,7 +152,7 @@ describe('binary tree', () => {
   test('can print tree layout', () => {
     const tree = createTree();
     expect(tree.toString()).toMatchInlineSnapshot(`
-      "StringRga .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1"... }
+      "StringRga .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
       └─ StringChunk .8!2 len:36 { "a8" }
          ← StringChunk .4!2 len:14 { "a4" }
            ← StringChunk .2!2 len:6 { "a2" }
@@ -538,7 +538,7 @@ describe('StringRga', () => {
       assetTreeIsValid(type);
     });
 
-    test('can merge subsequent ID nodes', () => {
+    test('can merge subsequent ID chunks', () => {
       const id1 = ts(1, 1);
       const type = new StringRga(id1);
       const id2 = ts(1, 2);
@@ -546,6 +546,12 @@ describe('StringRga', () => {
       const id3 = ts(1, 3);
       type.ins(id2, id3, 'b');
       expect(type.view()).toBe('ab');
+      expect(type.size()).toBe(1);
+      assetTreeIsValid(type);
+      const id4 = ts(1, 4);
+      type.ins(id3, id4, 'c');
+      expect(type.view()).toBe('abc');
+      expect(type.size()).toBe(1);
       assetTreeIsValid(type);
     });
 
@@ -1245,6 +1251,23 @@ describe('StringRga', () => {
         curr = type.next(curr);
       }
     });
+
+    test('calculates correctly position when tombstones present', () => {
+      const type = new StringRga(ts(1, 1));
+      type.ins(ts(1, 1), ts(1, 7), 'xxx');
+      type.ins(ts(1, 9), ts(1, 10), 'AA');
+      type.ins(ts(1, 1), ts(1, 38), 'n');
+      type.delete([tss(1, 7, 3)]);
+      type.ins(ts(1, 11), ts(1, 46), 'BBBB');
+      const c1 = type.first()!;
+      const c2 = type.next(c1)!;
+      const c3 = type.next(c2)!;
+      const c4 = type.next(c3)!;
+      expect(type.pos(c1)).toBe(0);
+      expect(type.pos(c2)).toBe(1);
+      expect(type.pos(c3)).toBe(1);
+      expect(type.pos(c4)).toBe(3);
+    });
   });
 
   describe('export / import', () => {
@@ -1344,6 +1367,72 @@ describe('StringRga', () => {
             interval2.push(tss(chunk.id.sid, chunk.id.time + from, length));
           });
           expect(interval2).toStrictEqual(interval);
+        }
+      }
+    });
+
+    test('can stop iteration at deleted chunk', () => {
+      const type = new StringRga(ts(1, 1));
+      type.insAt(0, ts(1, 2), '123456');
+      type.delete([tss(1, 4, 2)]);
+      const from = ts(1, 2);
+      const to = ts(1, 4);
+      let str = '';
+      type.range0(undefined, from, to, (chunk, off, len) => {
+        if (chunk.data) str += chunk.data.slice(off, off + len);
+      });
+      expect(str).toBe('12');
+    });
+
+    test('can start iteration at deleted chunk', () => {
+      const type = new StringRga(ts(1, 1));
+      type.insAt(0, ts(1, 2), '123456');
+      type.delete([tss(1, 4, 2)]);
+      const from = ts(1, 4);
+      const to = ts(1, 7);
+      let str = '';
+      type.range0(undefined, from, to, (chunk, off, len) => {
+        if (chunk.data) str += chunk.data.slice(off, off + len);
+      });
+      expect(str).toBe('56');
+    });
+
+    test('does not iterate when from and to are in deleted chunk', () => {
+      const type = new StringRga(ts(1, 1));
+      type.insAt(0, ts(1, 2), '123456');
+      type.delete([tss(1, 3, 3)]);
+      const from = ts(1, 3);
+      const to = ts(1, 5);
+      let str = '';
+      type.range0(undefined, from, to, (chunk, off, len) => {
+        if (chunk.data) str += chunk.data.slice(off, off + len);
+      });
+      expect(str).toBe('');
+    });
+
+    test('all possible combinations of range computation across deleted chunks', () => {
+      const type = new StringRga(ts(1, 1));
+      const subject = '1234abcd5678efgh';
+      type.insAt(0, ts(1, 2), '1234abcd5678efgh');
+      type.delete([tss(1, 6, 4), tss(1, 14, 4)]);
+      const str = (from: number, to: number) => {
+        let acc = '';
+        const x1 = ts(1, from + 2);
+        const x2 = ts(1, to + 2);
+        type.range0(undefined, x1, x2, (chunk, off, len) => {
+          if (chunk.data) acc += chunk.data.slice(off, off + len);
+        });
+        return acc;
+      };
+      const assert = (from: number, to: number) => {
+        const computed = str(from, to);
+        const expected = subject.slice(from, to + 1).replace(/[^0-9]/g, '');
+        expect(computed).toBe(expected);
+      };
+      const length = subject.length;
+      for (let i = 0; i < length; i++) {
+        for (let y = i; y < length; y++) {
+          assert(i, y);
         }
       }
     });
