@@ -14,6 +14,7 @@ import {splay2} from '../../../util/trees/splay/util2';
 import {insert2, remove2} from '../../../util/trees/util2';
 import {printBinary} from '../../../util/print/printBinary';
 import {printTree} from '../../../util/print/printTree';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 
 export interface Chunk<T> {
   /** Unique sortable ID of this chunk and its span. */
@@ -411,6 +412,8 @@ export abstract class AbstractRga<T> {
       }
       const len = chunk.span - off;
       callback(chunk, off, len);
+    } else {
+      if (containsId(chunk.id, chunk.span, to)) return;
     }
     chunk = next(chunk);
     while (chunk) {
@@ -674,11 +677,23 @@ export abstract class AbstractRga<T> {
     if (left) this.mergeTombstones(left, start);
   }
 
+  public removeTombstones(): void {
+    let curr = this.first();
+    const list: Chunk<T>[] = [];
+    while (curr) {
+      if (curr.del) list.push(curr);
+      curr = next(curr);
+    }
+    for (let i = 0; i < list.length; i++) this.deleteChunk(list[i]);
+  }
+
   public deleteChunk(chunk: Chunk<T>): void {
     this.deleteId(chunk);
     const p = chunk.p;
     const l = chunk.l;
     const r = chunk.r;
+    chunk.id = ORIGIN; // mark chunk as disposed
+    // TODO: perf: maybe set .p, .l, .r to undefined to help GC?
     if (!l && !r) {
       if (!p) this.root = undefined;
       else {
@@ -857,9 +872,9 @@ export abstract class AbstractRga<T> {
   public toString(tab: string = ''): string {
     const view = this.view();
     let value = '';
-    if (isUint8Array(view)) value += ` { ${view.toString()} }`;
+    if (isUint8Array(view)) value += ` { ${('' + view).replaceAll(',', ', ')} }`;
     else if (typeof view === 'string')
-      value += `{ ${view.length > 32 ? JSON.stringify(view.substring(0, 32)) + '...' : JSON.stringify(view)} }`;
+      value += `{ ${view.length > 32 ? JSON.stringify(view.substring(0, 32)) + ' …' : JSON.stringify(view)} }`;
     const header = `${this.constructor.name} ${toDisplayString(this.id)} ${value}`;
     return header + printTree(tab, [(tab) => (this.root ? this.printChunk(tab, this.root) : '∅')]);
   }
@@ -882,7 +897,7 @@ export abstract class AbstractRga<T> {
       if (isUint8Array(chunk.data)) str += ` { ${chunk.data.toString()} }`;
       else if (typeof chunk.data === 'string') {
         const data =
-          chunk.data.length > 32 ? JSON.stringify(chunk.data.substring(0, 32)) + '...' : JSON.stringify(chunk.data);
+          chunk.data.length > 32 ? JSON.stringify(chunk.data.substring(0, 32)) + ' …' : JSON.stringify(chunk.data);
         str += ` { ${data} }`;
       }
     }
