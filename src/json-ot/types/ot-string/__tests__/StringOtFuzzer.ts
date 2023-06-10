@@ -14,8 +14,8 @@ export class StringOtFuzzer extends Fuzzer {
     let off = 0;
     let remaining = str.length;
     while (remaining > 0) {
-      const len = Fuzzer.generateInteger(1, remaining);
-      const fn = Fuzzer.pick([
+      const len = this.randomInt(1, remaining);
+      const fn = this.pick([
         () => {
           append(op, len);
           off += len;
