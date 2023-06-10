@@ -674,6 +674,16 @@ export abstract class AbstractRga<T> {
     if (left) this.mergeTombstones(left, start);
   }
 
+  public removeTombstones(): void {
+    let curr = this.first();
+    const list: Chunk<T>[] = [];
+    while (curr) {
+      if (curr.del) list.push(curr);
+      curr = next(curr);
+    }
+    for (let i = 0; i < list.length; i++) this.deleteChunk(list[i]);
+  }
+
   public deleteChunk(chunk: Chunk<T>): void {
     this.deleteId(chunk);
     const p = chunk.p;
