@@ -16,6 +16,7 @@ import v15 from '../v15';
 import v16 from '../v16';
 import v17 from '../v17';
 import v18 from '../v18';
+import v19 from '../v19';
 
 type Decoder = (buf: Uint8Array, start: number, length: number) => string;
 
@@ -116,3 +117,4 @@ runTests('v15', v15);
 runTests('v16', v16);
 runTests('v17', v17);
 runTests('v18', v18);
+runTests('v19', v19);

@@ -109,6 +109,7 @@
     "js-sdsl": "^4.4.0",
     "jsbi": "^4.3.0",
     "json-logic-js": "^2.0.1",
+    "json-pack-napi": "^0.0.2",
     "lodash": "^4.17.21",
     "markdown-it": "^13.0.1",
     "messagepack": "^1.1.12",

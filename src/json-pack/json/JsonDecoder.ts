@@ -245,16 +245,314 @@ export class JsonDecoder implements BinaryJsonDecoder {
     const reader = this.reader;
     const uint8 = reader.uint8;
     let x = reader.x;
-    let str = '';
-    let char = uint8[x];
-    while ((char >= 45 && char <= 57) || char === 43 || char === 69 || char === 101) {
-      str += String.fromCharCode(char);
-      char = uint8[++x];
+    let c = uint8[x++];
+    const c1 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
     }
-    const num = +str;
-    if (num !== num) throw new Error('Invalid JSON');
-    reader.x = x;
-    return num;
+    const c2 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c3 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c4 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c5 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c6 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c7 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c8 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 43 && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c9 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c10 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c11 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c12 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c13 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c14 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c15 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c16 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c17 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c18 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c19 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19);
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c20 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(
+        c1,
+        c2,
+        c3,
+        c4,
+        c5,
+        c6,
+        c7,
+        c8,
+        c9,
+        c10,
+        c11,
+        c12,
+        c13,
+        c14,
+        c15,
+        c16,
+        c17,
+        c18,
+        c19,
+        c20,
+      );
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c21 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(
+        c1,
+        c2,
+        c3,
+        c4,
+        c5,
+        c6,
+        c7,
+        c8,
+        c9,
+        c10,
+        c11,
+        c12,
+        c13,
+        c14,
+        c15,
+        c16,
+        c17,
+        c18,
+        c19,
+        c20,
+        c21,
+      );
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c22 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(
+        c1,
+        c2,
+        c3,
+        c4,
+        c5,
+        c6,
+        c7,
+        c8,
+        c9,
+        c10,
+        c11,
+        c12,
+        c13,
+        c14,
+        c15,
+        c16,
+        c17,
+        c18,
+        c19,
+        c20,
+        c21,
+        c22,
+      );
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c23 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(
+        c1,
+        c2,
+        c3,
+        c4,
+        c5,
+        c6,
+        c7,
+        c8,
+        c9,
+        c10,
+        c11,
+        c12,
+        c13,
+        c14,
+        c15,
+        c16,
+        c17,
+        c18,
+        c19,
+        c20,
+        c21,
+        c22,
+        c23,
+      );
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    const c24 = c;
+    c = uint8[x++];
+    if (!c || ((c < 45 || c > 57) && c !== 69 && c !== 101)) {
+      reader.x = x - 1;
+      const num = +fromCharCode(
+        c1,
+        c2,
+        c3,
+        c4,
+        c5,
+        c6,
+        c7,
+        c8,
+        c9,
+        c10,
+        c11,
+        c12,
+        c13,
+        c14,
+        c15,
+        c16,
+        c17,
+        c18,
+        c19,
+        c20,
+        c21,
+        c22,
+        c24,
+      );
+      if (num !== num) throw new Error('Invalid JSON');
+      return num;
+    }
+    throw new Error('Invalid JSON');
   }
 
   public readStr(): string {
