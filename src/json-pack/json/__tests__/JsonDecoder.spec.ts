@@ -81,6 +81,41 @@ describe('number', () => {
     expect(value).toBe(1);
   });
 
+  test('12', () => {
+    const data = Buffer.from('12', 'utf-8');
+    decoder.reader.reset(data);
+    const value = decoder.readAny();
+    expect(value).toBe(12);
+  });
+
+  test('123', () => {
+    const data = Buffer.from('123', 'utf-8');
+    decoder.reader.reset(data);
+    const value = decoder.readAny();
+    expect(value).toBe(123);
+  });
+
+  test('1234', () => {
+    const data = Buffer.from('1234', 'utf-8');
+    decoder.reader.reset(data);
+    const value = decoder.readAny();
+    expect(value).toBe(1234);
+  });
+
+  test('12345', () => {
+    const data = Buffer.from('12345', 'utf-8');
+    decoder.reader.reset(data);
+    const value = decoder.readAny();
+    expect(value).toBe(12345);
+  });
+
+  test('123456', () => {
+    const data = Buffer.from('123456', 'utf-8');
+    decoder.reader.reset(data);
+    const value = decoder.readAny();
+    expect(value).toBe(123456);
+  });
+
   test('-0.1234', () => {
     const data = Buffer.from('-0.1234', 'utf-8');
     decoder.reader.reset(data);
