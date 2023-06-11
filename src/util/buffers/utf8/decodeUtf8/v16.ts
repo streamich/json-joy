@@ -1,11 +1,11 @@
 import {decodeAscii, decodeAsciiMax15} from '../decodeAscii';
 import v18 from './v18';
 
+type Decoder = (buf: Uint8Array, start: number, length: number) => string;
+
 const hasBuffer = typeof Buffer !== 'undefined';
 const utf8Slice = hasBuffer ? Buffer.prototype.utf8Slice : null;
 const from = hasBuffer ? Buffer.from : null;
-
-type Decoder = (buf: Uint8Array, start: number, length: number) => string;
 
 const shortDecoder: Decoder = (buf, start, length) => decodeAsciiMax15(buf, start, length) ?? v18(buf, start, length);
 
