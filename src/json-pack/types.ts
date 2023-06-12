@@ -2,7 +2,7 @@ import type {IReader, IReaderResettable, IWriter, IWriterGrowable} from '../util
 import type {JsonPackExtension} from './JsonPackExtension';
 import type {JsonPackValue} from './JsonPackValue';
 
-export type JsonPrimitive = string | number | boolean | null;
+export type JsonPrimitive = string | number | bigint | boolean | null;
 export type JsonValue = JsonPrimitive | JsonArray | JsonObject;
 type JsonArray = JsonValue[] | readonly JsonValue[];
 type JsonObject = {[key: string]: JsonValue} | Readonly<{[key: string]: JsonValue}>;

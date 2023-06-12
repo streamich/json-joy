@@ -1,4 +1,4 @@
-import {decode, encode} from '@shelacek/ubjson';
+import {encode} from '@shelacek/ubjson';
 import {Writer} from '../../../util/buffers/Writer';
 import {PackValue} from '../../types';
 import {UbjsonEncoder} from '../UbjsonEncoder';

@@ -24,18 +24,30 @@ export class UbjsonDecoder implements BinaryJsonDecoder {
         return reader.u8();
       case 0x69:
         return reader.i8();
-      case 0x49:
-        return reader.i16();
-      case 0x6c:
-        return reader.i32();
-      case 0x64:
-        return reader.f32();
-      case 0x44:
-        return reader.f64();
-      case 0x4c: {
-        const value = reader.view.getBigInt64(reader.x);
+      case 0x49: {
+        const int = reader.view.getInt16(reader.x, false);
+        reader.x += 2;
+        return int;
+      }
+      case 0x6c: {
+        const int = reader.view.getInt32(reader.x, false);
+        reader.x += 4;
+        return int;
+      }
+      case 0x64: {
+        const num = reader.view.getFloat32(reader.x, false);
+        reader.x += 4;
+        return num;
+      }
+      case 0x44: {
+        const num = reader.view.getFloat64(reader.x, false);
         reader.x += 8;
-        return value;
+        return num;
+      }
+      case 0x4c: {
+        const num = reader.view.getBigInt64(reader.x, false);
+        reader.x += 8;
+        return num;
       }
       case 0x53:
         return reader.utf8(+(this.readAny() as number));
