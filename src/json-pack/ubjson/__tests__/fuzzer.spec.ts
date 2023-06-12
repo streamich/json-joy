@@ -32,3 +32,10 @@ test('fuzzing', () => {
     assertEncoder(json);
   }
 }, 50000);
+
+test('big ints', () => {
+  for (let i = 0; i < 10; i++) {
+    const int = BigInt(Math.round(Math.random() * Number.MAX_SAFE_INTEGER));
+    assertEncoder(int);
+  }
+});

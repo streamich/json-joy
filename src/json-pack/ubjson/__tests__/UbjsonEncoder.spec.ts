@@ -1,4 +1,4 @@
-import {decode, encode} from '@shelacek/ubjson';
+import {decode} from '@shelacek/ubjson';
 import {Writer} from '../../../util/buffers/Writer';
 import {PackValue} from '../../types';
 import {UbjsonEncoder} from '../UbjsonEncoder';
@@ -8,11 +8,7 @@ const encoder = new UbjsonEncoder(writer);
 
 const assertEncoder = (value: PackValue, expected: PackValue = value) => {
   const encoded1 = encoder.encode(value);
-  const encoded2 = new Uint8Array(encode(value, {optimizeArrays: true}));
-  // console.log('encoded1', encoded1);
-  // console.log('encoded2', encoded2);
   const decoded = decode(encoded1, {useTypedArrays: true});
-  // console.log(decoded);
   expect(decoded).toEqual(expected);
 };
 

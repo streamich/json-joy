@@ -63,8 +63,17 @@ export class UbjsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEnco
     else if (int <= 127 && -128 <= int) {
       writer.u16(0x6900);
       writer.view.setInt8(writer.x - 1, int);
-    } else if (int <= 32767 && -32768 <= int) writer.u8u16(0x49, int);
-    else if (int <= 2147483647 && -2147483648 <= int) writer.u8u32(0x6c, int);
+    } else if (int <= 32767 && -32768 <= int) {
+      writer.ensureCapacity(3);
+      writer.u8(0x49);
+      writer.view.setInt16(writer.x, int, false);
+      writer.x += 2;
+    } else if (int <= 2147483647 && -2147483648 <= int) {
+      writer.ensureCapacity(5);
+      writer.u8(0x6c);
+      writer.view.setInt32(writer.x, int, false);
+      writer.x += 4;
+    }
   }
 
   public writeUInteger(uint: number): void {
@@ -78,7 +87,7 @@ export class UbjsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEnco
     const view = writer.view;
     const x = writer.x;
     view.setUint8(x, 0x44);
-    view.setFloat64(x + 1, float);
+    view.setFloat64(x + 1, float, false);
     writer.x = x + 9;
   }
 
@@ -88,7 +97,7 @@ export class UbjsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEnco
     const view = writer.view;
     const x = writer.x;
     view.setUint8(x, 0x4c);
-    view.setBigInt64(x + 1, int);
+    view.setBigInt64(x + 1, int, false);
     writer.x = x + 9;
   }
 
