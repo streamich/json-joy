@@ -14,6 +14,10 @@ import {StrOp} from './operations/StrOp';
 import {ValOp} from './operations/ValOp';
 import {ValSetOp} from './operations/ValSetOp';
 import {TupOp} from './operations/TupOp';
+import {encode} from './codec/json/encode';
+import {decode} from './codec/json/decode';
+import {encoder, decoder} from '../json-pack/msgpack/util';
+import {JsonCodecPatch} from './codec/json/types';
 
 export type JsonCrdtPatchOperation =
   | DelOp
@@ -32,6 +36,10 @@ export type JsonCrdtPatchOperation =
   | ObjSetOp;
 
 export class Patch {
+  public static fromBinary(data: Uint8Array): Patch {
+    return decode(decoder.decode(data) as JsonCodecPatch);
+  }
+
   public readonly ops: JsonCrdtPatchOperation[] = [];
 
   public getId(): ITimestampStruct | undefined {
@@ -128,5 +136,9 @@ export class Patch {
       out += `\n${tab}${isLast ? '└─' : '├─'} ${this.ops[i].toString(tab + (isLast ? '  ' : '│ '))}`;
     }
     return out;
+  }
+
+  public toBinary(): Uint8Array {
+    return encoder.encode(encode(this));
   }
 }

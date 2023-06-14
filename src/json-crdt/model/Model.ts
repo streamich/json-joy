@@ -1,19 +1,38 @@
-import {ITimestampStruct, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
+import {ArrayRga} from '../types/rga-array/ArrayRga';
+import {ArrInsOp} from '../../json-crdt-patch/operations/ArrInsOp';
+import {ArrOp} from '../../json-crdt-patch/operations/ArrOp';
+import {Batch} from '../../json-crdt-patch/Batch';
+import {BinaryRga} from '../types/rga-binary/BinaryRga';
+import {BinInsOp} from '../../json-crdt-patch/operations/BinInsOp';
+import {BinOp} from '../../json-crdt-patch/operations/BinOp';
+import {Const} from '../types/const/Const';
+import {ConstOp} from '../../json-crdt-patch/operations/ConstOp';
+import {DelOp} from '../../json-crdt-patch/operations/DelOp';
+import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {NodeIndex} from './NodeIndex';
+import {ObjectLww} from '../types/lww-object/ObjectLww';
+import {ObjOp} from '../../json-crdt-patch/operations/ObjOp';
+import {ObjSetOp} from '../../json-crdt-patch/operations/ObjSetOp';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {printTree} from '../../util/print/printTree';
 import {RootLww} from '../types/lww-root/RootLww';
-import {Const} from '../types/const/Const';
-import {ArrInsOp} from '../../json-crdt-patch/operations/ArrInsOp';
-import {ArrayRga} from '../types/rga-array/ArrayRga';
-import type {JsonNode} from '../types/types';
-import type {Printable} from '../../util/print/types';
+import {StringRga} from '../types/rga-string/StringRga';
+import {StrInsOp} from '../../json-crdt-patch/operations/StrInsOp';
+import {StrOp} from '../../json-crdt-patch/operations/StrOp';
+import {ValOp} from '../../json-crdt-patch/operations/ValOp';
 import {ValSetOp} from '../../json-crdt-patch/operations/ValSetOp';
 import {ValueLww} from '../types/lww-value/ValueLww';
-import {ConstOp} from '../../json-crdt-patch/operations/ConstOp';
-import {ArrOp} from '../../json-crdt-patch/operations/ArrOp';
+import {TupOp} from '../../json-crdt-patch/operations/TupOp';
+import {printTree} from '../../util/print/printTree';
+import {encode, decode} from '../../json-pack/msgpack/util';
+import {Encoder} from '../codec/structural/json/Encoder';
+import {Decoder} from '../codec/structural/json/Decoder';
+import type {JsonNode} from '../types/types';
+import type {Printable} from '../../util/print/types';
+
+const encoder = new Encoder();
+const decoder = new Decoder();
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -56,6 +75,16 @@ export class Model implements Printable {
   }
 
   /**
+   * Un-serializes a model from "binary" structural encoding.
+   * @param data Binary blob of a model encoded using "binary" structural
+   *        encoding.
+   * @returns An instance of a model.
+   */
+  public static fromBinary(data: Uint8Array): Model {
+    return decoder.decode(decode(data as any));
+  }
+
+  /**
    * Root of the JSON document is implemented as Last Write Wins Register,
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
@@ -79,6 +108,12 @@ export class Model implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
+  public applyBatch(batch: Batch) {
+    const patches = batch.patches;
+    const {length} = patches;
+    for (let i = 0; i < length; i++) this.applyPatch(patches[i]);
+  }
+
   /**
    * Applies a single patch to the document. All mutations to the model must go
    * through this method.
@@ -98,8 +133,37 @@ export class Model implements Printable {
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
     const index = this.index;
-    if (op instanceof ConstOp) {
+    // TODO: Use switch statement here?
+    if (op instanceof StrInsOp) {
+      const node = index.get(op.obj);
+      if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
+    } else if (op instanceof ObjOp) {
+      if (!index.get(op.id)) index.set(new ObjectLww(this, op.id));
+    } else if (op instanceof ArrOp) {
+      if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
+    } else if (op instanceof StrOp) {
+      if (!index.get(op.id)) index.set(new StringRga(op.id));
+    } else if (op instanceof ValOp) {
+      if (!index.get(op.id)) {
+        const val = index.get(op.val);
+        if (val) index.set(new ValueLww(this, op.id, op.val));
+      }
+    } else if (op instanceof ConstOp) {
       if (!index.get(op.id)) index.set(new Const(op.id, op.val));
+    } else if (op instanceof ObjSetOp) {
+      const node = index.get(op.obj);
+      const tuples = op.data;
+      const length = tuples.length;
+      if (node instanceof ObjectLww) {
+        for (let i = 0; i < length; i++) {
+          const tuple = tuples[i];
+          const valueNode = index.get(tuple[1]);
+          if (!valueNode) continue;
+          if (node.id.time >= tuple[1].time) continue;
+          const old = node.put(tuple[0] + '', valueNode.id);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
     } else if (op instanceof ValSetOp) {
       const obj = op.obj;
       const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
@@ -125,8 +189,25 @@ export class Model implements Printable {
         }
         if (nodes.length) node.ins(op.ref, op.id, nodes);
       }
-    } else if (op instanceof ArrOp) {
-      if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
+    } else if (op instanceof DelOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrayRga) {
+        const length = op.what.length;
+        for (let i = 0; i < length; i++) {
+          const span = op.what[i];
+          for (let j = 0; j < span.span; j++) {
+            const id = node.getById(new Timestamp(span.sid, span.time + j));
+            if (id) this.deleteNodeTree(id);
+          }
+        }
+        node.delete(op.what);
+      } else if (node instanceof StringRga) node.delete(op.what);
+      else if (node instanceof BinaryRga) node.delete(op.what);
+    } else if (op instanceof BinOp) {
+      if (!index.get(op.id)) index.set(new BinaryRga(op.id));
+    } else if (op instanceof BinInsOp) {
+      const node = index.get(op.obj);
+      if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
     }
   }
 
@@ -147,7 +228,9 @@ export class Model implements Printable {
    * Creates a copy of this model with a new session ID.
    */
   public fork(sessionId: number = randomSessionId()): Model {
-    throw new Error('Not implemented');
+    const copy = Model.fromBinary(this.toBinary());
+    if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
+    return copy;
   }
 
   /**
@@ -179,5 +262,13 @@ export class Model implements Printable {
         (tab) => this.clock.toString(tab),
       ])
     );
+  }
+
+  /**
+   * Serialize this model using "binary" structural encoding.
+   * @returns This model encoded in octets.
+   */
+  public toBinary(): Uint8Array {
+    return encode(encoder.encode(this));
   }
 }
