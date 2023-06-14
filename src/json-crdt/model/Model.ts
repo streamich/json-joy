@@ -108,7 +108,6 @@ export class Model implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
-
   public applyBatch(batch: Batch) {
     const patches = batch.patches;
     const {length} = patches;
