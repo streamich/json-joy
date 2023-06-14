@@ -177,7 +177,7 @@ export class SessionLogical {
 
   public synchronize() {
     for (let i = 0; i < this.concurrency; i++) {
-      let model = this.models[i];
+      const model = this.models[i];
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
         for (const patch of patches) {
