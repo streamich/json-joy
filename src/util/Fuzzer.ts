@@ -17,8 +17,20 @@ function xoshiro128ss(a: number, b: number, c: number, d: number) {
 
 export class Fuzzer {
   /** @deprecated */
+  public static randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  /** @deprecated */
   public static pick<T>(elements: T[]): T {
     return elements[Math.floor(Math.random() * elements.length)];
+  }
+
+  /** @deprecated */
+  public static repeat<T>(times: number, callback: () => T): T[] {
+    const result: T[] = [];
+    for (let i = 0; i < times; i++) result.push(callback());
+    return result;
   }
 
   public readonly seed: Buffer;
