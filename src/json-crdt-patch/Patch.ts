@@ -13,11 +13,9 @@ import {StrInsOp} from './operations/StrInsOp';
 import {StrOp} from './operations/StrOp';
 import {ValOp} from './operations/ValOp';
 import {ValSetOp} from './operations/ValSetOp';
+import {encode} from './codec/binary/encode';
+import {decode} from './codec/binary/decode';
 import {TupOp} from './operations/TupOp';
-import {encode} from './codec/json/encode';
-import {decode} from './codec/json/decode';
-import {encoder, decoder} from '../json-pack/msgpack/util';
-import {JsonCodecPatch} from './codec/json/types';
 
 export type JsonCrdtPatchOperation =
   | DelOp
@@ -37,7 +35,7 @@ export type JsonCrdtPatchOperation =
 
 export class Patch {
   public static fromBinary(data: Uint8Array): Patch {
-    return decode(decoder.decode(data) as JsonCodecPatch);
+    return decode(data);
   }
 
   public readonly ops: JsonCrdtPatchOperation[] = [];
@@ -139,6 +137,6 @@ export class Patch {
   }
 
   public toBinary(): Uint8Array {
-    return encoder.encode(encode(this));
+    return encode(this);
   }
 }
