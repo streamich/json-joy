@@ -1,5 +1,7 @@
 import {CborEncoder} from '../CborEncoder';
 import {CborEncoderFast} from '../CborEncoderFast';
+import {CborEncoderStable} from '../CborEncoderStable';
+import {CborEncoderDag} from '../CborEncoderDag';
 import {CborDecoder} from '../CborDecoder';
 import {decode as deocode__} from 'cbor';
 import {documents} from '../../../__tests__/json-documents';
@@ -56,5 +58,15 @@ describe('CbroEncoder', () => {
 
 describe('CbroEncoderFast', () => {
   const encoderFast = new CborEncoderFast();
+  run(encoderFast);
+});
+
+describe('CbroEncoderStable', () => {
+  const encoderFast = new CborEncoderStable();
+  run(encoderFast);
+});
+
+describe('CborEncoderDag', () => {
+  const encoderFast = new CborEncoderDag();
   run(encoderFast);
 });
