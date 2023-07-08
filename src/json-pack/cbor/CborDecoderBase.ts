@@ -287,7 +287,7 @@ export class CborDecoderBase implements BinaryJsonDecoder {
 
   // -------------------------------------------------------------- Tag reading
 
-  public readTag(minor: number): JsonPackExtension<unknown> {
+  public readTag(minor: number): JsonPackExtension<unknown> | unknown {
     if (minor <= 23) return this.readTagRaw(minor);
     switch (minor) {
       case 24:
@@ -303,7 +303,7 @@ export class CborDecoderBase implements BinaryJsonDecoder {
     }
   }
 
-  public readTagRaw(tag: number): JsonPackExtension<unknown> {
+  public readTagRaw(tag: number): JsonPackExtension<unknown> | unknown {
     return new JsonPackExtension<unknown>(tag, this.val());
   }
 

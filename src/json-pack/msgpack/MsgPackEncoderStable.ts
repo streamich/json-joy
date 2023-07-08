@@ -1,4 +1,4 @@
-import {sort} from '../../util/sort';
+import {sort} from '../../util/sort/insertion';
 import {MsgPackEncoderFast} from './MsgPackEncoderFast';
 
 /**

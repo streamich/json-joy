@@ -403,3 +403,88 @@ Fastest is 👎 Slice
 👎 Slice x 1,721,419 ops/sec ±0.35% (97 runs sampled)
 Fastest is 👎 Slice
 ```
+
+### DAG-CBOR benchmarks
+
+```
+npx ts-node benchmarks/json-pack/bench.cbor-dag.encoding.ts
+=============================================================================== Benchmark: Encoding
+Warmup: 1000x , Node.js: v20.4.0 , Arch: arm64 , CPU: Apple M1
+----------------------------------------------------------------------------- Combined, 63365 bytes
+👍 json-joy/json-pack CborEncoder x 4,802 ops/sec ±0.29% (99 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 3,747 ops/sec ±0.15% (99 runs sampled)
+👍 cborg x 494 ops/sec ±2.66% (74 runs sampled)
+👍 cbor-x x 4,119 ops/sec ±0.29% (98 runs sampled)
+👎 Buffer.from(JSON.stringify) x 3,069 ops/sec ±0.13% (101 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+---------------------------------------------------------------------------- Small object, 44 bytes
+👍 json-joy/json-pack CborEncoder x 5,373,104 ops/sec ±0.64% (98 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 5,046,824 ops/sec ±0.37% (95 runs sampled)
+👍 cborg x 444,568 ops/sec ±3.20% (85 runs sampled)
+👍 cbor-x x 3,876,636 ops/sec ±0.54% (94 runs sampled)
+👎 Buffer.from(JSON.stringify) x 2,419,844 ops/sec ±0.13% (97 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+------------------------------------------------------------------------- Typical object, 993 bytes
+👍 json-joy/json-pack CborEncoder x 444,693 ops/sec ±0.24% (98 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 395,237 ops/sec ±0.55% (98 runs sampled)
+👍 cborg x 38,173 ops/sec ±2.96% (89 runs sampled)
+👍 cbor-x x 369,911 ops/sec ±0.20% (97 runs sampled)
+👎 Buffer.from(JSON.stringify) x 209,177 ops/sec ±0.14% (99 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+-------------------------------------------------------------------------- Large object, 3741 bytes
+👍 json-joy/json-pack CborEncoder x 129,963 ops/sec ±0.15% (98 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 116,481 ops/sec ±0.40% (97 runs sampled)
+👍 cborg x 11,650 ops/sec ±2.91% (86 runs sampled)
+👍 cbor-x x 102,557 ops/sec ±0.21% (96 runs sampled)
+👎 Buffer.from(JSON.stringify) x 63,205 ops/sec ±0.11% (102 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+-------------------------------------------------------------------- Very large object, 45750 bytes
+👍 json-joy/json-pack CborEncoder x 5,532 ops/sec ±0.20% (99 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 4,209 ops/sec ±0.48% (99 runs sampled)
+👍 cborg x 563 ops/sec ±2.88% (72 runs sampled)
+👍 cbor-x x 4,767 ops/sec ±0.28% (99 runs sampled)
+👎 Buffer.from(JSON.stringify) x 6,769 ops/sec ±0.19% (98 runs sampled)
+Fastest is 👎 Buffer.from(JSON.stringify)
+------------------------------------------------------------------ Object with many keys, 969 bytes
+👍 json-joy/json-pack CborEncoder x 263,890 ops/sec ±0.26% (97 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 180,107 ops/sec ±0.26% (98 runs sampled)
+👍 cborg x 25,011 ops/sec ±2.62% (91 runs sampled)
+👍 cbor-x x 195,063 ops/sec ±0.30% (97 runs sampled)
+👎 Buffer.from(JSON.stringify) x 192,690 ops/sec ±0.19% (96 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+------------------------------------------------------------------------- String ladder, 4037 bytes
+👍 json-joy/json-pack CborEncoder x 204,028 ops/sec ±0.20% (101 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 187,891 ops/sec ±0.18% (97 runs sampled)
+👍 cborg x 30,417 ops/sec ±3.11% (90 runs sampled)
+👍 cbor-x x 158,968 ops/sec ±0.40% (100 runs sampled)
+👎 Buffer.from(JSON.stringify) x 56,748 ops/sec ±0.09% (99 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+-------------------------------------------------------------------------- Long strings, 7011 bytes
+👍 json-joy/json-pack CborEncoder x 407,500 ops/sec ±0.21% (97 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 398,762 ops/sec ±0.25% (98 runs sampled)
+👍 cborg x 86,854 ops/sec ±2.66% (81 runs sampled)
+👍 cbor-x x 398,117 ops/sec ±0.62% (98 runs sampled)
+👎 Buffer.from(JSON.stringify) x 28,748 ops/sec ±0.40% (100 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+-------------------------------------------------------------------------- Short strings, 170 bytes
+👍 json-joy/json-pack CborEncoder x 2,022,274 ops/sec ±0.15% (100 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 1,543,637 ops/sec ±0.16% (99 runs sampled)
+👍 cborg x 168,393 ops/sec ±2.98% (88 runs sampled)
+👍 cbor-x x 1,348,931 ops/sec ±0.51% (100 runs sampled)
+👎 Buffer.from(JSON.stringify) x 1,005,204 ops/sec ±0.45% (99 runs sampled)
+Fastest is 👍 json-joy/json-pack CborEncoder
+-------------------------------------------------------------------------------- Numbers, 331 bytes
+👍 json-joy/json-pack CborEncoder x 1,290,404 ops/sec ±0.15% (99 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 1,293,654 ops/sec ±0.12% (101 runs sampled)
+👍 cborg x 117,671 ops/sec ±2.12% (92 runs sampled)
+👍 cbor-x x 1,547,093 ops/sec ±0.19% (99 runs sampled)
+👎 Buffer.from(JSON.stringify) x 677,253 ops/sec ±0.14% (99 runs sampled)
+Fastest is 👍 cbor-x
+--------------------------------------------------------------------------------- Tokens, 308 bytes
+👍 json-joy/json-pack CborEncoder x 1,525,319 ops/sec ±0.37% (99 runs sampled)
+👍 json-joy/json-pack CborEncoderDag x 1,509,373 ops/sec ±0.20% (98 runs sampled)
+👍 cborg x 225,699 ops/sec ±1.00% (96 runs sampled)
+👍 cbor-x x 1,980,475 ops/sec ±0.18% (99 runs sampled)
+👎 Buffer.from(JSON.stringify) x 1,074,160 ops/sec ±0.15% (97 runs sampled)
+Fastest is 👍 cbor-x
+```
