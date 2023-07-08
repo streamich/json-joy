@@ -1,10 +1,19 @@
 import {isFloat32} from '../../util/buffers/isFloat32';
+import {JsonPackExtension} from '../JsonPackExtension';
 import {CborEncoderFast} from './CborEncoderFast';
-import {MAJOR_OVERLAY} from './constants';
 
 const isSafeInteger = Number.isSafeInteger;
 
 export class CborEncoder extends CborEncoderFast {
+  /**
+   * Called when the encoder encounters a value that it does not know how to encode.
+   *
+   * @param value Some JavaScript value.
+   */
+  public writeUnknown(value: unknown): void {
+    this.writeNull();
+  }
+
   public writeAny(value: unknown): void {
     switch (typeof value) {
       case 'number':
@@ -17,20 +26,26 @@ export class CborEncoder extends CborEncoderFast {
         if (!value) return this.writer.u8(0xf6);
         const constructor = value.constructor;
         switch (constructor) {
+          case Object:
+            return this.writeObj(value as Record<string, unknown>);
           case Array:
             return this.writeArr(value as unknown[]);
           case Uint8Array:
             return this.writeBin(value as Uint8Array);
           case Map:
             return this.writeMap(value as Map<unknown, unknown>);
+          case JsonPackExtension:
+            return this.writeTag((<JsonPackExtension>value).tag, (<JsonPackExtension>value).val);
           default:
-            return this.writeObj(value as Record<string, unknown>);
+            return this.writeUnknown(value);
         }
       }
       case 'undefined':
-        return this.writer.u8(0xf7);
+        return this.writeUndef();
       case 'bigint':
         return this.writeBigInt(value as bigint);
+      default:
+        return this.writeUnknown(value);
     }
   }
 
@@ -46,45 +61,14 @@ export class CborEncoder extends CborEncoderFast {
   }
 
   public writeBigUint(uint: bigint): void {
-    switch (true) {
-      case uint <= 23:
-        this.writer.u8(MAJOR_OVERLAY.UIN + Number(uint));
-        break;
-      case uint <= 0xff:
-        this.writer.u16((0x18 << 8) + Number(uint));
-        break;
-      case uint <= 0xffff:
-        this.writer.u8u16(0x19, Number(uint));
-        break;
-      case uint <= 0xffffffff:
-        this.writer.u8u32(0x1a, Number(uint));
-        break;
-      default: {
-        this.writer.u8u64(0x1b, uint);
-        break;
-      }
-    }
+    if (uint <= Number.MAX_SAFE_INTEGER) return this.writeUInteger(Number(uint));
+    this.writer.u8u64(0x1b, uint);
   }
 
   public writeBigSint(int: bigint): void {
+    if (int >= Number.MIN_SAFE_INTEGER) return this.encodeNint(Number(int));
     const uint = -BigInt(1) - int;
-    switch (true) {
-      case uint <= 24:
-        this.writer.u8(MAJOR_OVERLAY.NIN + Number(uint));
-        break;
-      case uint <= 0xff:
-        this.writer.u16((0x38 << 8) + Number(uint));
-        break;
-      case uint <= 0xffff:
-        this.writer.u8u16(0x39, Number(uint));
-        break;
-      case uint <= 0xffffffff:
-        this.writer.u8u32(0x3a, Number(uint));
-        break;
-      default:
-        this.writer.u8u64(0x3b, uint);
-        break;
-    }
+    this.writer.u8u64(0x3b, uint);
   }
 
   public writeFloat(float: number): void {
@@ -98,5 +82,9 @@ export class CborEncoder extends CborEncoderFast {
       this.writeAny(key);
       this.writeAny(value);
     });
+  }
+
+  public writeUndef(): void {
+    this.writer.u8(0xf7);
   }
 }
