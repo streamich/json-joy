@@ -1,37 +1,38 @@
-import {ArrInsOp} from './operations/ArrInsOp';
-import {ArrOp} from './operations/ArrOp';
-import {BinInsOp} from './operations/BinInsOp';
-import {BinOp} from './operations/BinOp';
-import {ConstOp} from './operations/ConstOp';
-import {DelOp} from './operations/DelOp';
+import {
+  NewConOp,
+  NewObjOp,
+  NewValOp,
+  NewVecOp,
+  NewStrOp,
+  NewBinOp,
+  NewArrOp,
+  InsValOp,
+  InsObjOp,
+  InsStrOp,
+  InsBinOp,
+  InsArrOp,
+  DelOp,
+  NopOp,
+} from './operations';
 import {ITimestampStruct, ts, toDisplayString} from './clock';
-import {NoopOp} from './operations/NoopOp';
-import {ObjOp} from './operations/ObjOp';
-import {ObjSetOp} from './operations/ObjSetOp';
 import {SESSION} from './constants';
-import {StrInsOp} from './operations/StrInsOp';
-import {StrOp} from './operations/StrOp';
-import {ValOp} from './operations/ValOp';
-import {ValSetOp} from './operations/ValSetOp';
-import {encode} from './codec/binary/encode';
-import {decode} from './codec/binary/decode';
-import {TupOp} from './operations/TupOp';
+import {encode, decode} from './codec/binary';
 
 export type JsonCrdtPatchOperation =
+  | NewConOp
+  | NewValOp
+  | NewVecOp
+  | NewObjOp
+  | NewStrOp
+  | NewBinOp
+  | NewArrOp
+  | InsValOp
+  | InsObjOp
+  | InsStrOp
+  | InsBinOp
+  | InsArrOp
   | DelOp
-  | ArrInsOp
-  | StrInsOp
-  | BinInsOp
-  | ArrOp
-  | TupOp
-  | ConstOp
-  | ObjOp
-  | StrOp
-  | BinOp
-  | ValOp
-  | NoopOp
-  | ValSetOp
-  | ObjSetOp;
+  | NopOp;
 
 export class Patch {
   public static fromBinary(data: Uint8Array): Patch {
@@ -39,6 +40,7 @@ export class Patch {
   }
 
   public readonly ops: JsonCrdtPatchOperation[] = [];
+  public meta: unknown = undefined;
 
   public getId(): ITimestampStruct | undefined {
     const op = this.ops[0];
@@ -67,29 +69,30 @@ export class Patch {
     const patch = new Patch();
     const ops = this.ops;
     const length = ops.length;
+    const patchOps = patch.ops;
     for (let i = 0; i < length; i++) {
       const op = ops[i];
-      if (op instanceof DelOp) patch.ops.push(new DelOp(ts(op.id), ts(op.obj), op.what));
-      else if (op instanceof ArrInsOp) patch.ops.push(new ArrInsOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
-      else if (op instanceof StrInsOp) patch.ops.push(new StrInsOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof BinInsOp) patch.ops.push(new BinInsOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof ArrOp) patch.ops.push(new ArrOp(ts(op.id)));
-      else if (op instanceof TupOp) patch.ops.push(new TupOp(ts(op.id)));
-      else if (op instanceof ConstOp) patch.ops.push(new ConstOp(ts(op.id), op.val));
-      else if (op instanceof ValOp) patch.ops.push(new ValOp(ts(op.id), ts(op.val)));
-      else if (op instanceof ObjOp) patch.ops.push(new ObjOp(ts(op.id)));
-      else if (op instanceof StrOp) patch.ops.push(new StrOp(ts(op.id)));
-      else if (op instanceof BinOp) patch.ops.push(new BinOp(ts(op.id)));
-      else if (op instanceof ValSetOp) patch.ops.push(new ValSetOp(ts(op.id), ts(op.obj), ts(op.val)));
-      else if (op instanceof ObjSetOp)
-        patch.ops.push(
-          new ObjSetOp(
+      if (op instanceof DelOp) patchOps.push(new DelOp(ts(op.id), ts(op.obj), op.what));
+      else if (op instanceof NewConOp) patchOps.push(new NewConOp(ts(op.id), op.val));
+      else if (op instanceof NewVecOp) patchOps.push(new NewVecOp(ts(op.id)));
+      else if (op instanceof NewValOp) patchOps.push(new NewValOp(ts(op.id), ts(op.val)));
+      else if (op instanceof NewObjOp) patchOps.push(new NewObjOp(ts(op.id)));
+      else if (op instanceof NewStrOp) patchOps.push(new NewStrOp(ts(op.id)));
+      else if (op instanceof NewBinOp) patchOps.push(new NewBinOp(ts(op.id)));
+      else if (op instanceof NewArrOp) patchOps.push(new NewArrOp(ts(op.id)));
+      else if (op instanceof InsArrOp) patchOps.push(new InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
+      else if (op instanceof InsStrOp) patchOps.push(new InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof InsBinOp) patchOps.push(new InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof InsValOp) patchOps.push(new InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
+      else if (op instanceof InsObjOp)
+        patchOps.push(
+          new InsObjOp(
             ts(op.id),
             ts(op.obj),
             op.data.map(([key, value]) => [key, ts(value)]),
           ),
         );
-      else if (op instanceof NoopOp) patch.ops.push(new NoopOp(ts(op.id), op.len));
+      else if (op instanceof NopOp) patchOps.push(new NopOp(ts(op.id), op.len));
     }
     return patch;
   }
@@ -136,7 +139,7 @@ export class Patch {
     return out;
   }
 
-  public toBinary(): Uint8Array {
+  public toBinary() {
     return encode(this);
   }
 }

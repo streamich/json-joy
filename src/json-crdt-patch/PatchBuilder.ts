@@ -1,20 +1,23 @@
-import {ArrInsOp} from './operations/ArrInsOp';
-import {ArrOp} from './operations/ArrOp';
-import {BinInsOp} from './operations/BinInsOp';
-import {BinOp} from './operations/BinOp';
-import {ConstOp} from './operations/ConstOp';
-import {DelOp} from './operations/DelOp';
+import {
+  NewConOp,
+  NewObjOp,
+  NewValOp,
+  NewVecOp,
+  NewStrOp,
+  NewBinOp,
+  NewArrOp,
+  InsValOp,
+  InsObjOp,
+  InsVecOp,
+  InsStrOp,
+  InsBinOp,
+  InsArrOp,
+  DelOp,
+  NopOp,
+} from './operations';
 import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock';
 import {isUint8Array} from '../util/buffers/isUint8Array';
-import {NoopOp} from './operations/NoopOp';
-import {ObjOp} from './operations/ObjOp';
-import {ObjSetOp} from './operations/ObjSetOp';
 import {Patch} from './Patch';
-import {StrInsOp} from './operations/StrInsOp';
-import {StrOp} from './operations/StrOp';
-import {ValOp} from './operations/ValOp';
-import {ValSetOp} from './operations/ValSetOp';
-import {TupOp} from './operations/TupOp';
 import {ORIGIN} from './constants';
 import {Tuple} from './builder/Tuple';
 import {Konst} from './builder/Konst';
@@ -59,7 +62,7 @@ export class PatchBuilder {
   public obj(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new ObjOp(id));
+    this.patch.ops.push(new NewObjOp(id));
     return id;
   }
 
@@ -70,18 +73,18 @@ export class PatchBuilder {
   public arr(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new ArrOp(id));
+    this.patch.ops.push(new NewArrOp(id));
     return id;
   }
 
   /**
-   * Create new tuple - a fixed size LWW-slots array.
+   * Create new vector - a LWW-array.
    * @returns ID of the new operation.
    */
-  public tup(): ITimestampStruct {
+  public vec(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new TupOp(id));
+    this.patch.ops.push(new NewVecOp(id));
     return id;
   }
 
@@ -92,7 +95,7 @@ export class PatchBuilder {
   public str(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new StrOp(id));
+    this.patch.ops.push(new NewStrOp(id));
     return id;
   }
 
@@ -103,7 +106,7 @@ export class PatchBuilder {
   public bin(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new BinOp(id));
+    this.patch.ops.push(new NewBinOp(id));
     return id;
   }
 
@@ -117,7 +120,7 @@ export class PatchBuilder {
   public const(value: unknown): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new ConstOp(id, value));
+    this.patch.ops.push(new NewConOp(id, value));
     return id;
   }
 
@@ -131,7 +134,7 @@ export class PatchBuilder {
   public val(val: ITimestampStruct): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new ValOp(id, val));
+    this.patch.ops.push(new NewValOp(id, val));
     return id;
   }
 
@@ -142,7 +145,7 @@ export class PatchBuilder {
   public root(val: ITimestampStruct): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new ValSetOp(id, ORIGIN, val));
+    this.patch.ops.push(new InsValOp(id, ORIGIN, val));
     return id;
   }
 
@@ -150,11 +153,26 @@ export class PatchBuilder {
    * Set field of an object.
    * @returns ID of the new operation.
    */
-  public setKeys(obj: ITimestampStruct, data: [key: string | number, value: ITimestampStruct][]): ITimestampStruct {
+  public setKeys(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
     this.pad();
     if (!data.length) throw new Error('EMPTY_TUPLES');
-    const id = this.clock.tick(0);
-    const op = new ObjSetOp(id, obj, data);
+    const id = this.clock.tick(1);
+    const op = new InsObjOp(id, obj, data);
+    const span = op.span();
+    if (span > 1) this.clock.tick(span - 1);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Set field of an object.
+   * @returns ID of the new operation.
+   */
+  public insVec(obj: ITimestampStruct, data: [index: number, value: ITimestampStruct][]): ITimestampStruct {
+    this.pad();
+    if (!data.length) throw new Error('EMPTY_TUPLES');
+    const id = this.clock.tick(1);
+    const op = new InsVecOp(id, obj, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -167,8 +185,8 @@ export class PatchBuilder {
    */
   public setVal(obj: ITimestampStruct, val: ITimestampStruct): ITimestampStruct {
     this.pad();
-    const id = this.clock.tick(0);
-    const op = new ValSetOp(id, obj, val);
+    const id = this.clock.tick(1);
+    const op = new InsValOp(id, obj, val);
     this.patch.ops.push(op);
     return id;
   }
@@ -181,7 +199,7 @@ export class PatchBuilder {
     this.pad();
     if (!data.length) throw new Error('EMPTY_STRING');
     const id = this.clock.tick(1);
-    const op = new StrInsOp(id, obj, ref, data);
+    const op = new InsStrOp(id, obj, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -196,7 +214,7 @@ export class PatchBuilder {
     this.pad();
     if (!data.length) throw new Error('EMPTY_BINARY');
     const id = this.clock.tick(1);
-    const op = new BinInsOp(id, obj, ref, data);
+    const op = new InsBinOp(id, obj, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -210,7 +228,7 @@ export class PatchBuilder {
   public insArr(arr: ITimestampStruct, ref: ITimestampStruct, data: ITimestampStruct[]): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new ArrInsOp(id, arr, ref, data);
+    const op = new InsArrOp(id, arr, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -225,7 +243,7 @@ export class PatchBuilder {
    */
   public del(obj: ITimestampStruct, what: ITimespanStruct[]): ITimestampStruct {
     this.pad();
-    const id = this.clock.tick(0);
+    const id = this.clock.tick(1);
     this.patch.ops.push(new DelOp(id, obj, what));
     return id;
   }
@@ -234,11 +252,12 @@ export class PatchBuilder {
    * Operation that does nothing just skips IDs in the patch.
    * @param span Length of the operation.
    * @returns ID of the new operation.
+   *
    */
-  public noop(span: number) {
+  public nop(span: number) {
     this.pad();
     const id = this.clock.tick(span);
-    this.patch.ops.push(new NoopOp(id, span));
+    this.patch.ops.push(new NopOp(id, span));
     return id;
   }
 
@@ -305,12 +324,12 @@ export class PatchBuilder {
    * Run builder commands to create a tuple.
    */
   public jsonTup(slots: unknown[]): ITimestampStruct {
-    const tup = this.tup();
+    const tup = this.vec();
     const length = slots.length;
     if (length) {
       const writes: [index: number, value: ITimestampStruct][] = [];
       for (let i = 0; i < length; i++) writes.push([i, this.constOrJson(slots[i])]);
-      this.setKeys(tup, writes);
+      this.insVec(tup, writes);
     }
     return tup;
   }
@@ -358,7 +377,7 @@ export class PatchBuilder {
     const drift = this.clock.time - nextTime;
     if (drift > 0) {
       const id = ts(this.clock.sid, nextTime);
-      const padding = new NoopOp(id, drift);
+      const padding = new NopOp(id, drift);
       this.patch.ops.push(padding);
     }
   }
