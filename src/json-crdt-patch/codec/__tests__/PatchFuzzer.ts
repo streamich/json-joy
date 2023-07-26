@@ -47,7 +47,7 @@ export class PatchFuzzer extends Fuzzer {
           ),
         () => builder.del(ts(), [interval(ts(), 0, this.generateSpan())]),
         () => builder.del(ts(), [interval(ts(), 0, this.generateSpan()), interval(ts(), 0, this.generateSpan())]),
-        () => builder.noop(Fuzzer.randomInt(1, 20)),
+        () => builder.nop(Fuzzer.randomInt(1, 20)),
       ]);
       build();
     }

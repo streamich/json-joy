@@ -1,14 +1,14 @@
 import {LogicalClock, ts, VectorClock} from '../clock';
 import {ORIGIN} from '../constants';
 import {PatchBuilder} from '../PatchBuilder';
-import {ValSetOp} from '../operations/ValSetOp';
+import {InsValOp} from '../operations';
 
 test('can set document root', () => {
   const clock = new LogicalClock(1, 5);
   const builder = new PatchBuilder(clock);
   builder.root(ts(0, 2));
   expect(builder.patch.ops.length).toBe(1);
-  expect(builder.patch.ops[0]).toBeInstanceOf(ValSetOp);
+  expect(builder.patch.ops[0]).toBeInstanceOf(InsValOp);
   expect((builder.patch.ops[0] as any).obj).toBe(ORIGIN);
 });
 
@@ -36,7 +36,7 @@ test('uses injected clock to set operations IDs', () => {
   expect(builder.patch.ops[0].id.sid).toBe(1);
   expect(builder.patch.ops[0].id.time).toBe(5);
   expect(builder.patch.ops[1].id.sid).toBe(1);
-  expect(builder.patch.ops[1].id.time).toBe(5);
+  expect(builder.patch.ops[1].id.time).toBe(6);
 });
 
 test('pads clock jumps in between string inserts', () => {
