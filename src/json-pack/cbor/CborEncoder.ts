@@ -1,10 +1,11 @@
 import {isFloat32} from '../../util/buffers/isFloat32';
 import {JsonPackExtension} from '../JsonPackExtension';
 import {CborEncoderFast} from './CborEncoderFast';
+import type {IWriter, IWriterGrowable} from '../../util/buffers';
 
 const isSafeInteger = Number.isSafeInteger;
 
-export class CborEncoder extends CborEncoderFast {
+export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> extends CborEncoderFast<W> {
   /**
    * Called when the encoder encounters a value that it does not know how to encode.
    *

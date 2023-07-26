@@ -8,9 +8,11 @@ import type {CachedUtf8Decoder} from '../../util/buffers/utf8/CachedUtf8Decoder'
 import type {IReader, IReaderResettable} from '../../util/buffers';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
-export class CborDecoderBase implements BinaryJsonDecoder {
+export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & IReaderResettable>
+  implements BinaryJsonDecoder
+{
   public constructor(
-    public reader: IReader & IReaderResettable = new Reader(),
+    public reader: R = new Reader() as any,
     protected readonly keyDecoder: CachedUtf8Decoder = sharedCachedUtf8Decoder,
   ) {}
 

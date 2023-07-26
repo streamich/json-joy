@@ -8,8 +8,10 @@ import type {Slice} from '../../util/buffers/Slice';
  * Fast CBOR encoder supports only JSON values. Use regular `CborEncoder` if
  * you need ability to encode all CBOR value types.
  */
-export class CborEncoderFast implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder {
-  constructor(public readonly writer: IWriter & IWriterGrowable = new Writer()) {}
+export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
+  implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder
+{
+  constructor(public readonly writer: W = new Writer() as any) {}
 
   public encode(value: unknown): Uint8Array {
     this.writeAny(value);
