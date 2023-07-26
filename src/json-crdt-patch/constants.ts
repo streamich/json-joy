@@ -26,3 +26,31 @@ export const enum SYSTEM_SESSION_TIME {
  * logical timestamp.
  */
 export const ORIGIN = ts(SESSION.SYSTEM, SYSTEM_SESSION_TIME.ORIGIN);
+
+export const enum JsonCrdtDataType {
+  con = 0b000,
+  val = 0b001,
+  obj = 0b010,
+  vec = 0b011,
+  str = 0b100,
+  bin = 0b101,
+  arr = 0b110,
+}
+
+export const enum JsonCrdtPatchOpcode {
+  new_con = 0b00000 | JsonCrdtDataType.con, // 0
+  new_val = 0b00000 | JsonCrdtDataType.val, // 1
+  new_obj = 0b00000 | JsonCrdtDataType.obj, // 2
+  new_vec = 0b00000 | JsonCrdtDataType.vec, // 3
+  new_str = 0b00000 | JsonCrdtDataType.str, // 4
+  new_bin = 0b00000 | JsonCrdtDataType.bin, // 5
+  new_arr = 0b00000 | JsonCrdtDataType.arr, // 6
+  ins_val = 0b01000 | JsonCrdtDataType.val, // 9
+  ins_obj = 0b01000 | JsonCrdtDataType.obj, // 10
+  ins_vec = 0b01000 | JsonCrdtDataType.vec, // 11
+  ins_str = 0b01000 | JsonCrdtDataType.str, // 12
+  ins_bin = 0b01000 | JsonCrdtDataType.bin, // 13
+  ins_arr = 0b01000 | JsonCrdtDataType.arr, // 14
+  del = 0b10000, // 16
+  nop = 0b10001, // 17
+}
