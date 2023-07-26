@@ -1,5 +1,4 @@
-import {encode} from '../encode';
-import {decode} from '../decode';
+import {encode, decode} from '../shared';
 import {LogicalClock} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
 import {documents} from '../../../../__tests__/json-documents';

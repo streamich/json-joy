@@ -1,12 +1,12 @@
-import {Code} from '../compact/constants';
 import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
 import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, ts} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
-import {MsgPackDecoderFast} from '../../../json-pack/msgpack';
+import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
+import {JsonCrdtPatchOpcode} from '../../constants';
 
-export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
+export class Decoder extends CborDecoder<CrdtDecoder> {
   protected builder!: PatchBuilder;
   private patchId!: ITimestampStruct;
 
@@ -15,26 +15,30 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
   }
 
   public decode(data: Uint8Array): Patch {
-    this.reader.reset(data);
-    const [isServerClock, x] = this.reader.b1vu56();
-    const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, x) : new VectorClock(x, this.reader.vu57());
+    const reader = this.reader;
+    reader.reset(data);
+    const [isServerClock, x] = reader.b1vu56();
+    const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, x) : new VectorClock(x, reader.vu57());
     this.patchId = ts(clock.sid, clock.time);
     this.builder = new PatchBuilder(clock);
+    const map = this.val();
+    if (map instanceof Array) this.builder.patch.meta = map[0];
     this.decodeOperations();
     return this.builder.patch;
   }
 
   protected decodeId(): ITimestampStruct {
-    const [isServerClock, x] = this.reader.b1vu56();
+    const reader = this.reader;
+    const [isServerClock, x] = reader.b1vu56();
     if (isServerClock) {
       return ts(SESSION.SERVER, x);
     } else {
       const patchId = this.patchId;
       if (x === 1) {
-        const delta = this.reader.vu57();
+        const delta = reader.vu57();
         return ts(patchId.sid, patchId.time + delta);
       } else {
-        const time = this.reader.vu57();
+        const time = reader.vu57();
         return ts(x, time);
       }
     }
@@ -47,116 +51,122 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
   }
 
   public decodeOperations(): void {
-    while (this.reader.x < this.reader.uint8.length) this.decodeOperation();
+    const reader = this.reader;
+    while (reader.x < reader.uint8.length) this.decodeOperation();
   }
 
   protected decodeOperation(): void {
+    const builder = this.builder;
     const reader = this.reader;
-    const opcode = reader.u8();
+    const octet = reader.u8();
+    const opcode = octet & 0b11111;
     switch (opcode) {
-      case Code.MakeObject: {
-        this.builder.obj();
-        return;
+      case JsonCrdtPatchOpcode.new_con: {
+        const length = octet >> 5;
+        builder.const(length === 0 ? this.val() : this.decodeId());
+        break;
       }
-      case Code.MakeArray: {
-        this.builder.arr();
-        return;
+      case JsonCrdtPatchOpcode.new_val: {
+        builder.val(this.decodeId());
+        break;
       }
-      case Code.MakeString: {
-        this.builder.str();
-        return;
+      case JsonCrdtPatchOpcode.new_obj: {
+        builder.obj();
+        break;
       }
-      case Code.MakeValue: {
-        this.builder.val(this.decodeId());
-        return;
+      case JsonCrdtPatchOpcode.new_vec: {
+        builder.vec();
+        break;
       }
-      case Code.MakeConstant: {
-        const val = this.val();
-        this.builder.const(val);
-        return;
+      case JsonCrdtPatchOpcode.new_str: {
+        builder.str();
+        break;
       }
-      case Code.MakeUndefined: {
-        this.builder.const(undefined);
-        return;
+      case JsonCrdtPatchOpcode.new_bin: {
+        builder.bin();
+        break;
       }
-      case Code.SetObjectKeys: {
-        const object = this.decodeId();
-        const fields = reader.vu57();
-        const tuples: [key: string | number, value: ITimestampStruct][] = [];
-        for (let i = 0; i < fields; i++) {
-          const value = this.decodeId();
-          const key = this.val();
-          if (typeof key !== 'string' && typeof key !== 'number') continue;
-          tuples.push([key, value]);
-        }
-        this.builder.setKeys(object, tuples);
-        return;
+      case JsonCrdtPatchOpcode.new_arr: {
+        builder.arr();
+        break;
       }
-      case Code.SetValue: {
+      case JsonCrdtPatchOpcode.ins_val: {
         const obj = this.decodeId();
         const val = this.decodeId();
-        this.builder.setVal(obj, val);
-        return;
+        builder.setVal(obj, val);
+        break;
       }
-      case Code.InsertStringSubstring: {
+      case JsonCrdtPatchOpcode.ins_obj: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
+        const obj = this.decodeId();
+        const tuples: [key: string, value: ITimestampStruct][] = [];
+        for (let i = 0; i < length; i++) {
+          const key = this.val();
+          if (typeof key !== 'string') continue;
+          const value = this.decodeId();
+          tuples.push([key, value]);
+        }
+        builder.setKeys(obj, tuples);
+        break;
+      }
+      case JsonCrdtPatchOpcode.ins_vec: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
+        const obj = this.decodeId();
+        const tuples: [index: number, value: ITimestampStruct][] = [];
+        for (let i = 0; i < length; i++) {
+          const index = this.val();
+          if (typeof index !== 'number') continue;
+          const value = this.decodeId();
+          tuples.push([index, value]);
+        }
+        builder.insVec(obj, tuples);
+        break;
+      }
+      case JsonCrdtPatchOpcode.ins_str: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
         const obj = this.decodeId();
         const after = this.decodeId();
-        const str = this.val();
-        if (typeof str !== 'string') return;
-        this.builder.insStr(obj, after, str);
-        return;
+        const str = reader.utf8(length);
+        builder.insStr(obj, after, str);
+        break;
       }
-      case Code.InsertArrayElements: {
-        const arr = this.decodeId();
+      case JsonCrdtPatchOpcode.ins_bin: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
+        const obj = this.decodeId();
         const after = this.decodeId();
-        const length = reader.vu57();
+        const buf = reader.buf(length);
+        if (!(buf instanceof Uint8Array)) return;
+        builder.insBin(obj, after, buf);
+        break;
+      }
+      case JsonCrdtPatchOpcode.ins_arr: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
+        const obj = this.decodeId();
+        const after = this.decodeId();
         const elements: ITimestampStruct[] = [];
         for (let i = 0; i < length; i++) elements.push(this.decodeId());
-        this.builder.insArr(arr, after, elements);
-        return;
+        builder.insArr(obj, after, elements);
+        break;
       }
-      case Code.Delete: {
+      case JsonCrdtPatchOpcode.del: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
         const obj = this.decodeId();
-        const length = reader.vu57();
         const what: ITimespanStruct[] = [];
         for (let i = 0; i < length; i++) what.push(this.decodeTss());
-        this.builder.del(obj, what);
-        return;
+        builder.del(obj, what);
+        break;
       }
-      case Code.DeleteOne: {
-        const obj = this.decodeId();
-        const span = this.decodeTss();
-        this.builder.del(obj, [span]);
-        return;
-      }
-      case Code.NoopOne: {
-        this.builder.noop(1);
-        return;
-      }
-      case Code.Noop: {
-        this.builder.noop(reader.vu57());
-        return;
-      }
-      case Code.MakeBinary: {
-        this.builder.bin();
-        return;
-      }
-      case Code.InsertBinaryData: {
-        const obj = this.decodeId();
-        const after = this.decodeId();
-        const length = this.reader.vu57();
-        const data = reader.buf(length);
-        this.builder.insBin(obj, after, data);
-        return;
-      }
-      case Code.MakeTuple: {
-        this.builder.tup();
-        return;
-      }
-      case Code.MakeConstId: {
-        const id = this.decodeId();
-        this.builder.const(id);
-        return;
+      case JsonCrdtPatchOpcode.nop: {
+        let length = octet >> 5;
+        if (length === 0) length = reader.vu57();
+        builder.nop(length);
+        break;
       }
       default: {
         throw new Error('UNKNOWN_OP');
