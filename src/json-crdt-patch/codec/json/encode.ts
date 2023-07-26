@@ -1,109 +1,98 @@
-import {ArrInsOp} from '../../operations/ArrInsOp';
-import {ArrOp} from '../../operations/ArrOp';
-import {BinInsOp} from '../../operations/BinInsOp';
-import {BinOp} from '../../operations/BinOp';
-import {ConstOp} from '../../operations/ConstOp';
-import {DelOp} from '../../operations/DelOp';
-import {NoopOp} from '../../operations/NoopOp';
-import {ObjOp} from '../../operations/ObjOp';
-import {ObjSetOp} from '../../operations/ObjSetOp';
+import * as operations from '../../operations';
 import {Patch} from '../../Patch';
 import {SESSION} from '../../constants';
-import {StrInsOp} from '../../operations/StrInsOp';
-import {StrOp} from '../../operations/StrOp';
 import {toBase64} from '../../../util/base64/toBase64';
-import {ValOp} from '../../operations/ValOp';
-import {ValSetOp} from '../../operations/ValSetOp';
 import {ITimestampStruct, Timestamp} from '../../clock';
-import type {
-  JsonCodecPatch,
-  JsonCodecTimestamp,
-  JsonCodecDeleteOperation,
-  JsonCodecNoopOperation,
-  JsonCodecTimespan,
-} from './types';
-import {TupOp} from '../../operations/TupOp';
+import type * as types from './types';
 
-const encodeTimestamp = (ts: ITimestampStruct): JsonCodecTimestamp =>
+const encodeTimestamp = (ts: ITimestampStruct): types.JsonCodecTimestamp =>
   ts.sid === SESSION.SERVER ? ts.time : [ts.sid, ts.time];
 
-export const encode = (patch: Patch): JsonCodecPatch => {
+export const encode = (patch: Patch): types.JsonCodecPatch => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');
 
-  const ops: JsonCodecPatch['ops'] = [];
-  const res: JsonCodecPatch = {
+  const ops: types.JsonCodecPatch['ops'] = [];
+  const res: types.JsonCodecPatch = {
     id: encodeTimestamp(id),
     ops,
   };
 
+  if (patch.meta !== undefined) res.meta = patch.meta;
+
   for (const op of patch.ops) {
-    if (op instanceof ObjOp) {
-      ops.push({op: 'obj'});
-    } else if (op instanceof ArrOp) {
-      ops.push({op: 'arr'});
-    } else if (op instanceof StrOp) {
-      ops.push({op: 'str'});
-    } else if (op instanceof BinOp) {
-      ops.push({op: 'bin'});
-    } else if (op instanceof ValOp) {
-      ops.push({op: 'val', value: encodeTimestamp(op.val)});
-    } else if (op instanceof ConstOp) {
+    if (op instanceof operations.NewConOp) {
       const val = op.val;
       if (val instanceof Timestamp) {
-        ops.push({op: 'const', timestamp: true, value: encodeTimestamp(val)});
+        ops.push({op: 'con', timestamp: true, value: encodeTimestamp(val)});
       } else {
-        ops.push({op: 'const', value: val});
+        ops.push({op: 'con', value: val});
       }
-    } else if (op instanceof ObjSetOp) {
+    } else if (op instanceof operations.NewObjOp) {
+      ops.push({op: 'obj'});
+    } else if (op instanceof operations.NewVecOp) {
+      ops.push({op: 'vec'});
+    } else if (op instanceof operations.NewArrOp) {
+      ops.push({op: 'arr'});
+    } else if (op instanceof operations.NewStrOp) {
+      ops.push({op: 'str'});
+    } else if (op instanceof operations.NewBinOp) {
+      ops.push({op: 'bin'});
+    } else if (op instanceof operations.NewValOp) {
+      ops.push({op: 'val', value: encodeTimestamp(op.val)});
+    } else if (op instanceof operations.InsObjOp) {
       ops.push({
-        op: 'obj_set',
+        op: 'ins_obj',
         obj: encodeTimestamp(op.obj),
-        tuples: op.data.map(([key, value]) => [key, encodeTimestamp(value)]),
+        value: op.data.map(([key, value]) => [key, encodeTimestamp(value)]),
       });
-    } else if (op instanceof ValSetOp) {
+    } else if (op instanceof operations.InsVecOp) {
       ops.push({
-        op: 'val_set',
+        op: 'ins_vec',
+        obj: encodeTimestamp(op.obj),
+        value: op.data.map(([key, value]) => [key, encodeTimestamp(value)]),
+      });
+    } else if (op instanceof operations.InsValOp) {
+      ops.push({
+        op: 'ins_val',
         obj: encodeTimestamp(op.obj),
         value: encodeTimestamp(op.val),
       });
-    } else if (op instanceof StrInsOp) {
+    } else if (op instanceof operations.InsStrOp) {
       ops.push({
-        op: 'str_ins',
+        op: 'ins_str',
         obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.ref),
         value: op.data,
       });
-    } else if (op instanceof BinInsOp) {
+    } else if (op instanceof operations.InsBinOp) {
       ops.push({
-        op: 'bin_ins',
+        op: 'ins_bin',
         obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.ref),
         value: toBase64(op.data),
       });
-    } else if (op instanceof ArrInsOp) {
+    } else if (op instanceof operations.InsArrOp) {
       ops.push({
-        op: 'arr_ins',
+        op: 'ins_arr',
         obj: encodeTimestamp(op.obj),
         after: encodeTimestamp(op.ref),
         values: op.data.map(encodeTimestamp),
       });
-    } else if (op instanceof DelOp) {
-      const encoded: JsonCodecDeleteOperation = {
+    } else if (op instanceof operations.DelOp) {
+      const encoded: types.JsonCodecDelOperation = {
         op: 'del',
         obj: encodeTimestamp(op.obj),
-        what: op.what.map((span) => [span.sid, span.time, span.span] as JsonCodecTimespan),
+        what: op.what.map((span) => [span.sid, span.time, span.span] as types.JsonCodecTimespan),
       };
       ops.push(encoded);
-    } else if (op instanceof NoopOp) {
-      const encoded: JsonCodecNoopOperation = {
-        op: 'noop',
+    } else if (op instanceof operations.NopOp) {
+      const encoded: types.JsonCodecNopOperation = {
+        op: 'nop',
       };
       const length = op.len;
       if (length > 1) encoded.len = length;
       ops.push(encoded);
-    } else if (op instanceof TupOp) {
-      ops.push({op: 'tup'});
     }
   }
 

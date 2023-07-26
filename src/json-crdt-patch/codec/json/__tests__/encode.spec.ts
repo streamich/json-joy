@@ -9,7 +9,7 @@ test('encodes a simple patch', () => {
   const encoded = encode(builder.patch);
   expect(encoded).toEqual({
     id: [3, 5],
-    ops: [{op: 'val_set', obj: [0, 0], value: [0, 3]}],
+    ops: [{op: 'ins_val', obj: [0, 0], value: [0, 3]}],
   });
 });
 
@@ -28,10 +28,10 @@ test('create {foo: "bar"} object', () => {
     id: [5, 25],
     ops: [
       {op: 'str'}, // 25
-      {op: 'str_ins', obj: [5, 25], after: [5, 25], value: 'bar'}, // 26-28
+      {op: 'ins_str', obj: [5, 25], after: [5, 25], value: 'bar'}, // 26-28
       {op: 'obj'}, // 29
-      {op: 'obj_set', obj: [5, 29], tuples: [['foo', [5, 25]]]}, // 30
-      {op: 'val_set', obj: [0, 0], value: [5, 29]}, // 31
+      {op: 'ins_obj', obj: [5, 29], value: [['foo', [5, 25]]]}, // 30
+      {op: 'ins_val', obj: [0, 0], value: [5, 29]}, // 31
     ],
   });
 });
