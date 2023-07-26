@@ -106,7 +106,7 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
   public writeStr(str: string): void {
     const writer = this.writer;
     const length = str.length;
-    writer.ensureCapacity(length * 5 + 2);
+    writer.ensureCapacity(length * 4 + 2);
     if (length < 256) {
       let x = writer.x;
       const uint8 = writer.uint8;
