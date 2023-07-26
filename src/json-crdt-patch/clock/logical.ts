@@ -13,14 +13,7 @@ import {SESSION} from '../constants';
 
 export class Timestamp implements ITimestampStruct {
   constructor(public readonly sid: number, public time: number) {}
-
-  // toString() {
-  //   return this.sid + '.' + this.time;
-  // }
 }
-
-// TODO: Try this optimization:
-// Timestamp.prototype = Object.create(null);
 
 export class Timespan implements ITimespanStruct {
   constructor(public readonly sid: number, public time: number, public span: number) {}
