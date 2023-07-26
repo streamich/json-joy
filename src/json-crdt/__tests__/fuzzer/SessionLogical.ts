@@ -1,19 +1,15 @@
 import {ArrayRga} from '../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../types/rga-binary/BinaryRga';
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/json/decode';
-import {DelOp} from '../../../json-crdt-patch/operations/DelOp';
+import {DelOp, InsArrOp, InsBinOp, InsStrOp, InsObjOp} from '../../../json-crdt-patch/operations';
 import {encode as encodeJson} from '../../../json-crdt-patch/codec/json/encode';
 import {generateInteger} from './util';
-import {ArrInsOp} from '../../../json-crdt-patch/operations/ArrInsOp';
-import {BinInsOp} from '../../../json-crdt-patch/operations/BinInsOp';
-import {StrInsOp} from '../../../json-crdt-patch/operations/StrInsOp';
 import {Model} from '../../model';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {ObjSetOp} from '../../../json-crdt-patch/operations/ObjSetOp';
 import {StringRga} from '../../types/rga-string/StringRga';
 import {interval} from '../../../json-crdt-patch/clock';
 import {ValueLww} from '../../types/lww-value/ValueLww';
@@ -80,7 +76,7 @@ export class SessionLogical {
     const opcode = this.fuzzer.picker.pickStringOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
-    if (opcode === StrInsOp) {
+    if (opcode === InsStrOp) {
       const substring = this.fuzzer.picker.generateSubstring();
       const pos = !size ? 0 : Math.min(size - 1, Math.floor(Math.random() * (size + 1)));
       const posId = !size ? node.id : node.find(pos)!;
@@ -99,7 +95,7 @@ export class SessionLogical {
     const opcode = this.fuzzer.picker.pickBinaryOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
-    if (opcode === BinInsOp) {
+    if (opcode === InsBinOp) {
       const substring = this.fuzzer.picker.generateBinaryData();
       const pos = !size ? 0 : Math.min(size - 1, Math.floor(Math.random() * (size + 1)));
       const posId = !size ? node.id : node.find(pos)!;
@@ -117,7 +113,7 @@ export class SessionLogical {
   private generateObjectPatch(model: Model, node: ObjectLww): Patch {
     const [key, opcode] = this.fuzzer.picker.pickObjectOperation(node);
     const builder = new PatchBuilder(model.clock);
-    if (opcode === ObjSetOp) {
+    if (opcode === InsObjOp) {
       const json = RandomJson.generate({
         nodeCount: 3,
         odds: {
@@ -144,7 +140,7 @@ export class SessionLogical {
     const opcode = this.fuzzer.picker.pickArrayOperation(node);
     const builder = new PatchBuilder(model.clock);
     const length = node.length();
-    if (opcode === ArrInsOp) {
+    if (opcode === InsArrOp) {
       const json = RandomJson.generate({nodeCount: Math.ceil(Math.random() * 5)});
       const valueId = builder.json(json);
       if (!length) builder.insArr(node.id, node.id, [valueId]);

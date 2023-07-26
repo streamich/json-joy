@@ -1,130 +1,130 @@
-import {Code} from './constants';
+import {JsonCrdtPatchOpcode} from '../../constants';
 import {fromBase64} from '../../../util/base64/fromBase64';
-import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, ts} from '../../clock';
+import {ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timespan, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
+import type * as types from './types';
 
-export const decode = (data: unknown[]): Patch => {
-  const x = data[0];
+const timestamp = (sid: number, time: number, x: types.CompactCodecTimestamp): ITimestampStruct => {
+  if (Array.isArray(x)) return new Timestamp(x[0], x[1]);
+  else if (x < 0) return new Timestamp(sid, time - x - 1);
+  else return new Timestamp(SESSION.SERVER, x);
+};
+
+const timespan = (sid: number, time: number, span: types.CompactCodecTimespan): ITimespanStruct => {
+  if (span.length === 3) return new Timespan(span[0], span[1], span[2]);
+  else {
+    const x = span[0];
+    return x < 0 ? new Timespan(sid, time - x - 1, span[1]) : new Timespan(SESSION.SERVER, x, span[1]);
+  }
+};
+
+export const decode = (data: types.CompactCodecPatch): Patch => {
+  const header = data[0];
+  const x = header[0];
   const clock = Array.isArray(x) ? new VectorClock(x[0], x[1]) : new ServerVectorClock(SESSION.SERVER, x as number);
-  const sessionId = clock.sid;
+  const sid = clock.sid;
   const time = clock.time;
   const builder = new PatchBuilder(clock);
   const length = data.length;
-  let i = 1;
 
-  const decodeTimestamp = (): ITimestampStruct => {
-    const x = data[i++] as number;
-    if (Array.isArray(x)) return ts(x[0], x[1]);
-    else if (x < 0) return ts(sessionId, time - x - 1);
-    else return ts(SESSION.SERVER, x);
-  };
-
-  const decodeTimespan = (): ITimespanStruct => {
-    const time = decodeTimestamp();
-    const span = data[i++];
-    return interval(time, 0, span as number);
-  };
-
-  while (i < length) {
-    switch (data[i++]) {
-      case Code.MakeObject: {
+  for (let i = 1; i < length; i++) {
+    const op = data[i] as types.CompactCodecOperation;
+    switch (op[0]) {
+      case JsonCrdtPatchOpcode.new_con: {
+        const [, value, isTimestamp] = op;
+        builder.const(isTimestamp ? timestamp(sid, time, value as types.CompactCodecTimestamp) : value);
+        break;
+      }
+      case JsonCrdtPatchOpcode.new_val: {
+        builder.val(timestamp(sid, time, op[1]));
+        break;
+      }
+      case JsonCrdtPatchOpcode.new_obj: {
         builder.obj();
         break;
       }
-      case Code.MakeArray: {
-        builder.arr();
+      case JsonCrdtPatchOpcode.new_vec: {
+        builder.vec();
         break;
       }
-      case Code.MakeString: {
+      case JsonCrdtPatchOpcode.new_str: {
         builder.str();
         break;
       }
-      case Code.MakeBinary: {
+      case JsonCrdtPatchOpcode.new_bin: {
         builder.bin();
         break;
       }
-      case Code.SetObjectKeys: {
-        const length = data[i++] as number;
-        const obj = decodeTimestamp();
-        const tuples: [key: string | number, value: ITimestampStruct][] = [];
+      case JsonCrdtPatchOpcode.new_arr: {
+        builder.arr();
+        break;
+      }
+      case JsonCrdtPatchOpcode.ins_val: {
+        builder.setVal(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]));
+        break;
+      }
+      case JsonCrdtPatchOpcode.ins_obj: {
+        const obj = timestamp(sid, time, op[1]);
+        const tuples: [key: string, value: ITimestampStruct][] = [];
+        const value = op[2];
+        const length = value.length;
         for (let j = 0; j < length; j++) {
-          const key = data[i++] as string | number;
-          tuples.push([key, decodeTimestamp()]);
+          const [key, x] = value[j];
+          tuples.push([key, timestamp(sid, time, x)]);
         }
         builder.setKeys(obj, tuples);
         break;
       }
-      case Code.InsertStringSubstring: {
-        const value = data[i++] as string;
-        builder.insStr(decodeTimestamp(), decodeTimestamp(), value);
+      case JsonCrdtPatchOpcode.ins_vec: {
+        const obj = timestamp(sid, time, op[1]);
+        const tuples: [key: number, value: ITimestampStruct][] = [];
+        const value = op[2];
+        const length = value.length;
+        for (let j = 0; j < length; j++) {
+          const [key, x] = value[j];
+          tuples.push([key, timestamp(sid, time, x)]);
+        }
+        builder.insVec(obj, tuples);
         break;
       }
-      case Code.InsertBinaryData: {
-        const value = data[i++] as string;
-        builder.insBin(decodeTimestamp(), decodeTimestamp(), fromBase64(value));
+      case JsonCrdtPatchOpcode.ins_str: {
+        builder.insStr(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]), op[3]);
         break;
       }
-      case Code.InsertArrayElements: {
-        const length = data[i++] as number;
-        const arr = decodeTimestamp();
-        const after = decodeTimestamp();
-        const values: ITimestampStruct[] = [];
-        for (let j = 0; j < length; j++) values.push(decodeTimestamp());
-        builder.insArr(arr, after, values);
+      case JsonCrdtPatchOpcode.ins_bin: {
+        builder.insBin(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]), fromBase64(op[3]));
         break;
       }
-      case Code.DeleteOne: {
-        const obj = decodeTimestamp();
-        const what = decodeTimespan();
-        builder.del(obj, [what]);
+      case JsonCrdtPatchOpcode.ins_arr: {
+        const obj = timestamp(sid, time, op[1]);
+        const ref = timestamp(sid, time, op[2]);
+        const value = op[3];
+        const elements: ITimestampStruct[] = [];
+        const length = value.length;
+        for (let j = 0; j < length; j++) elements.push(timestamp(sid, time, value[j]));
+        builder.insArr(obj, ref, elements);
         break;
       }
-      case Code.Delete: {
-        const length = data[i++] as number;
-        const obj = decodeTimestamp();
+      case JsonCrdtPatchOpcode.del: {
+        const obj = timestamp(sid, time, op[1]);
+        const spans = op[2];
         const what: ITimespanStruct[] = [];
-        for (let i = 0; i < length; i++) what.push(decodeTimespan());
+        const length = spans.length;
+        for (let i = 0; i < length; i++) what.push(timespan(sid, time, spans[i]));
         builder.del(obj, what);
         break;
       }
-      case Code.NoopOne: {
-        builder.noop(1);
-        break;
-      }
-      case Code.Noop: {
-        builder.noop(data[i++] as number);
-        break;
-      }
-      case Code.MakeConstant: {
-        builder.const(data[i++]);
-        break;
-      }
-      case Code.MakeUndefined: {
-        builder.const(undefined);
-        break;
-      }
-      case Code.MakeConstId: {
-        builder.const(decodeTimestamp());
-        break;
-      }
-      case Code.MakeValue: {
-        builder.val(decodeTimestamp());
-        break;
-      }
-      case Code.SetValue: {
-        const obj = decodeTimestamp();
-        const value = decodeTimestamp();
-        builder.setVal(obj, value);
-        break;
-      }
-      case Code.MakeTuple: {
-        builder.tup();
+      case JsonCrdtPatchOpcode.nop: {
+        builder.nop(op[1] || 1);
         break;
       }
     }
   }
 
-  return builder.patch;
+  const patch = builder.patch;
+  patch.meta = header[1];
+
+  return patch;
 };

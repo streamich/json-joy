@@ -1,5 +1,4 @@
-import {encode} from '../encode';
-import {decode} from '../decode';
+import {encode, decode} from '../shared';
 import {LogicalClock, Timestamp, ts, tss} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
 
@@ -99,9 +98,9 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.del(ts(5, 4), [tss(1, 1, 1), tss(2, 2, 2)]);
   assertCodec();
-  builder.noop(1);
+  builder.nop(1);
   assertCodec();
-  builder.noop(5);
+  builder.nop(5);
   assertCodec();
   builder.arr();
   assertCodec();
@@ -123,7 +122,7 @@ test('supports consts with undefined value', () => {
   assertCodec();
 });
 
-test('encodes new tuple operations', () => {
+test('encodes new vector operations', () => {
   const clock = new LogicalClock(12345678, 123);
   const builder = new PatchBuilder(clock);
   const assertCodec = () => {
@@ -131,12 +130,12 @@ test('encodes new tuple operations', () => {
     const decoded = decode(encoded);
     expect(decoded).toStrictEqual(builder.patch);
   };
-  const tupId = builder.tup();
+  const tupId = builder.vec();
   builder.root(tupId);
   assertCodec();
 });
 
-test('can set tuple slots using object operations', () => {
+test('can set vector slots using ins_vec operation', () => {
   const clock = new LogicalClock(12345678, 123);
   const builder = new PatchBuilder(clock);
   const assertCodec = () => {
@@ -144,9 +143,9 @@ test('can set tuple slots using object operations', () => {
     const decoded = decode(encoded);
     expect(decoded).toStrictEqual(builder.patch);
   };
-  const tupId = builder.tup();
+  const tupId = builder.vec();
   builder.root(tupId);
-  builder.setKeys(tupId, [[0, ts(1, 1)]]);
+  builder.insVec(tupId, [[0, ts(1, 1)]]);
   assertCodec();
 });
 
@@ -160,4 +159,28 @@ test('can encode an ID', () => {
   expect((builder.patch.ops[0] as any).val).toBeInstanceOf(Timestamp);
   expect((decoded.ops[0] as any).val).toBeInstanceOf(Timestamp);
   expect(decoded + '').toBe(builder.patch + '');
+});
+
+test('can encode custom metadata', () => {
+  const clock = new LogicalClock(12345678, 123);
+  const builder = new PatchBuilder(clock);
+  const constId = builder.const(new Timestamp(555, 666));
+  builder.root(constId);
+  const patch = builder.flush();
+  patch.meta = {foo: 'bar'};
+  const encoded = encode(patch);
+  const decoded = decode(encoded);
+  expect(decoded.meta).toStrictEqual({foo: 'bar'});
+});
+
+test('metadata can be a falsy value', () => {
+  const clock = new LogicalClock(12345678, 123);
+  const builder = new PatchBuilder(clock);
+  const constId = builder.const(new Timestamp(555, 666));
+  builder.root(constId);
+  const patch = builder.flush();
+  patch.meta = false;
+  const encoded = encode(patch);
+  const decoded = decode(encoded);
+  expect(decoded.meta).toBe(false);
 });

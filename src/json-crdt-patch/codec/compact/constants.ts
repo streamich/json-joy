@@ -1,10 +1,12 @@
+// TODO: Remove this file.
+
 /**
  * Operation opcodes. Any change to this enum is a BREAKING CHANGE.
  */
 export const enum Code {
   // "Make" operations go first, as they are reused in structural encoding.
   MakeUndefined = 0,
-  MakeConstant,
+  MakeConst,
   MakeValue,
   MakeObject,
   MakeString,

@@ -199,3 +199,29 @@ describe('strings', () => {
     }
   });
 });
+
+describe('recursion', () => {
+  test('can prevent recursive objects', () => {
+    const encoder = new (class extends CborEncoderStable {
+      private readonly objectSet = new Set<unknown>();
+
+      public encode(value: unknown): Uint8Array {
+        this.objectSet.clear();
+        return super.encode(value);
+      }
+
+      public writeAny(value: unknown): void {
+        if (this.objectSet.has(value)) {
+          throw new Error('Recursive object');
+        }
+        this.objectSet.add(value);
+        super.writeAny(value);
+      }
+    })();
+    const obj1 = {a: 1};
+    const obj2 = {b: 2};
+    (<any>obj1).b = obj2;
+    (<any>obj2).a = obj1;
+    expect(() => encoder.encode(obj1)).toThrowError('Recursive object');
+  });
+});

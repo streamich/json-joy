@@ -1,8 +1,4 @@
-import {DelOp} from '../../../json-crdt-patch/operations/DelOp';
-import {ArrInsOp} from '../../../json-crdt-patch/operations/ArrInsOp';
-import {BinInsOp} from '../../../json-crdt-patch/operations/BinInsOp';
-import {StrInsOp} from '../../../json-crdt-patch/operations/StrInsOp';
-import {ObjSetOp} from '../../../json-crdt-patch/operations/ObjSetOp';
+import {DelOp, InsArrOp, InsBinOp, InsStrOp, InsObjOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
 import {JsonNode} from '../../types';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';
@@ -13,10 +9,10 @@ import {Model} from '../../model/Model';
 import {Fuzzer} from '../../../util/Fuzzer';
 import {FuzzerOptions} from './types';
 
-type StringOp = typeof StrInsOp | typeof DelOp;
-type BinaryOp = typeof BinInsOp | typeof DelOp;
-type ArrayOp = typeof ArrInsOp | typeof DelOp;
-type ObjectOp = typeof ObjSetOp | typeof DelOp;
+type StringOp = typeof InsStrOp | typeof DelOp;
+type BinaryOp = typeof InsBinOp | typeof DelOp;
+type ArrayOp = typeof InsArrOp | typeof DelOp;
+type ObjectOp = typeof InsObjOp | typeof DelOp;
 
 const commonKeys = ['a', 'op', 'test', 'name', '', '__proto__'];
 
@@ -44,32 +40,32 @@ export class Picker {
 
   public pickStringOperation(node: StringRga): StringOp {
     const length = node.length();
-    if (!length) return StrInsOp;
+    if (!length) return InsStrOp;
     if (length >= this.opts.maxStringLength) return DelOp;
     if (Math.random() < this.opts.stringDeleteProbability) return DelOp;
-    return StrInsOp;
+    return InsStrOp;
   }
 
   public pickBinaryOperation(node: BinaryRga): BinaryOp {
     const length = node.length();
-    if (!length) return BinInsOp;
+    if (!length) return InsBinOp;
     if (length >= this.opts.maxStringLength) return DelOp;
     if (Math.random() < this.opts.binaryDeleteProbability) return DelOp;
-    return BinInsOp;
+    return InsBinOp;
   }
 
   public pickObjectOperation(node: ObjectLww): [key: string, opcode: ObjectOp] {
-    if (!node.keys.size) return [this.generateObjectKey(), ObjSetOp];
-    if (Math.random() > 0.45) return [this.generateObjectKey(), ObjSetOp];
+    if (!node.keys.size) return [this.generateObjectKey(), InsObjOp];
+    if (Math.random() > 0.45) return [this.generateObjectKey(), InsObjOp];
     const keys = [...node.keys.keys()];
-    if (!keys.length) return [this.generateObjectKey(), ObjSetOp];
+    if (!keys.length) return [this.generateObjectKey(), InsObjOp];
     const key = keys[Math.floor(Math.random() * keys.length)];
     return [key, DelOp];
   }
 
   public pickArrayOperation(node: ArrayRga): ArrayOp {
-    if (!node.length()) return ArrInsOp;
-    if (Math.random() > 0.45) return ArrInsOp;
+    if (!node.length()) return InsArrOp;
+    if (Math.random() > 0.45) return InsArrOp;
     else return DelOp;
   }
 

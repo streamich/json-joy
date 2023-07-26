@@ -1,6 +1,6 @@
 import {LogicalClock, ts} from '../clock';
 import {SESSION} from '../constants';
-import {ArrInsOp} from '../operations/ArrInsOp';
+import {InsArrOp} from '../operations';
 import {PatchBuilder} from '../PatchBuilder';
 
 describe('.rebase()', () => {
@@ -16,17 +16,17 @@ describe('.rebase()', () => {
     test('does not rewrite references, which are commited on the server', () => {
       const builder = new PatchBuilder(new LogicalClock(SESSION.SERVER, 5));
       builder.insArr(ts(SESSION.SERVER, 3), ts(SESSION.SERVER, 3), [ts(0, 10)]);
-      expect((builder.patch.ops[0] as ArrInsOp).ref.time).toBe(3);
+      expect((builder.patch.ops[0] as InsArrOp).ref.time).toBe(3);
       const patch = builder.patch.rebase(10, 5);
-      expect((patch.ops[0] as ArrInsOp).ref.time).toBe(3);
+      expect((patch.ops[0] as InsArrOp).ref.time).toBe(3);
     });
 
     test('rewrites new references, which are of the first ID in the patch', () => {
       const builder = new PatchBuilder(new LogicalClock(SESSION.SERVER, 5));
       builder.insArr(ts(SESSION.SERVER, 7), ts(SESSION.SERVER, 7), [ts(0, 10)]);
-      expect((builder.patch.ops[0] as ArrInsOp).ref.time).toBe(7);
+      expect((builder.patch.ops[0] as InsArrOp).ref.time).toBe(7);
       const patch = builder.patch.rebase(10, 5);
-      expect((patch.ops[0] as ArrInsOp).ref.time).toBe(12);
+      expect((patch.ops[0] as InsArrOp).ref.time).toBe(12);
     });
   });
 });

@@ -1,5 +1,5 @@
-import {ITimestampStruct} from '../clock';
-import {Identifiable} from '../Identifiable';
+import type {ITimestampStruct} from './clock';
+import type {Identifiable} from './Identifiable';
 
 export interface IJsonCrdtPatchOperation extends Identifiable {
   /**

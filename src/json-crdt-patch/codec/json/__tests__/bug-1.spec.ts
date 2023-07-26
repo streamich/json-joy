@@ -15,7 +15,7 @@ const encoded1 = {
       op: 'bin',
     },
     {
-      op: 'bin_ins',
+      op: 'ins_bin',
       obj: [698, 27],
       after: [698, 27],
       value: '0UTYEA==',
@@ -25,18 +25,18 @@ const encoded1 = {
       value: 2,
     },
     {
-      op: 'obj_set',
+      op: 'ins_obj',
       obj: [698, 25],
-      tuples: [
+      value: [
         ['aUt/w?4(RFcAwLm', [698, 26]],
         ['OrTy', [698, 27]],
         ['MA|m*3V#Y+G&w', [698, 32]],
       ],
     },
     {
-      op: 'obj_set',
+      op: 'ins_obj',
       obj: [592121, 4],
-      tuples: [['땣땣땣땣땣땣땣땣땣', [698, 25]]],
+      value: [['땣땣땣땣땣땣땣땣땣', [698, 25]]],
     },
   ],
 };

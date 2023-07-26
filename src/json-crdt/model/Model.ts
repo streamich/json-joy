@@ -1,29 +1,30 @@
+// TODO: perf: try namespace import
+import {
+  NewConOp,
+  NewObjOp,
+  NewValOp,
+  NewStrOp,
+  NewBinOp,
+  NewArrOp,
+  InsValOp,
+  InsObjOp,
+  InsStrOp,
+  InsBinOp,
+  InsArrOp,
+  DelOp,
+} from '../../json-crdt-patch/operations';
 import {ArrayRga} from '../types/rga-array/ArrayRga';
-import {ArrInsOp} from '../../json-crdt-patch/operations/ArrInsOp';
-import {ArrOp} from '../../json-crdt-patch/operations/ArrOp';
-import {Batch} from '../../json-crdt-patch/Batch';
 import {BinaryRga} from '../types/rga-binary/BinaryRga';
-import {BinInsOp} from '../../json-crdt-patch/operations/BinInsOp';
-import {BinOp} from '../../json-crdt-patch/operations/BinOp';
 import {Const} from '../types/const/Const';
-import {ConstOp} from '../../json-crdt-patch/operations/ConstOp';
-import {DelOp} from '../../json-crdt-patch/operations/DelOp';
 import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {NodeIndex} from './NodeIndex';
 import {ObjectLww} from '../types/lww-object/ObjectLww';
-import {ObjOp} from '../../json-crdt-patch/operations/ObjOp';
-import {ObjSetOp} from '../../json-crdt-patch/operations/ObjSetOp';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
 import {RootLww} from '../types/lww-root/RootLww';
 import {StringRga} from '../types/rga-string/StringRga';
-import {StrInsOp} from '../../json-crdt-patch/operations/StrInsOp';
-import {StrOp} from '../../json-crdt-patch/operations/StrOp';
-import {ValOp} from '../../json-crdt-patch/operations/ValOp';
-import {ValSetOp} from '../../json-crdt-patch/operations/ValSetOp';
 import {ValueLww} from '../types/lww-value/ValueLww';
-import {TupOp} from '../../json-crdt-patch/operations/TupOp';
 import {printTree} from '../../util/print/printTree';
 import {encode, decode} from '../../json-pack/msgpack/util';
 import {Encoder} from '../codec/structural/json/Encoder';
@@ -108,9 +109,8 @@ export class Model implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
-  public applyBatch(batch: Batch) {
-    const patches = batch.patches;
-    const {length} = patches;
+  public applyBatch(patches: Patch[]) {
+    const length = patches.length;
     for (let i = 0; i < length; i++) this.applyPatch(patches[i]);
   }
 
@@ -133,24 +133,24 @@ export class Model implements Printable {
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
     const index = this.index;
-    // TODO: Use switch statement here?
-    if (op instanceof StrInsOp) {
+    // TODO: Use switch statement here? And rearrange cases by frequency of use?
+    if (op instanceof InsStrOp) {
       const node = index.get(op.obj);
       if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
-    } else if (op instanceof ObjOp) {
+    } else if (op instanceof NewObjOp) {
       if (!index.get(op.id)) index.set(new ObjectLww(this, op.id));
-    } else if (op instanceof ArrOp) {
+    } else if (op instanceof NewArrOp) {
       if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
-    } else if (op instanceof StrOp) {
+    } else if (op instanceof NewStrOp) {
       if (!index.get(op.id)) index.set(new StringRga(op.id));
-    } else if (op instanceof ValOp) {
+    } else if (op instanceof NewValOp) {
       if (!index.get(op.id)) {
         const val = index.get(op.val);
         if (val) index.set(new ValueLww(this, op.id, op.val));
       }
-    } else if (op instanceof ConstOp) {
+    } else if (op instanceof NewConOp) {
       if (!index.get(op.id)) index.set(new Const(op.id, op.val));
-    } else if (op instanceof ObjSetOp) {
+    } else if (op instanceof InsObjOp) {
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
@@ -164,7 +164,7 @@ export class Model implements Printable {
           if (old) this.deleteNodeTree(old);
         }
       }
-    } else if (op instanceof ValSetOp) {
+    } else if (op instanceof InsValOp) {
       const obj = op.obj;
       const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
       if (node instanceof ValueLww) {
@@ -174,7 +174,7 @@ export class Model implements Printable {
           if (old) this.deleteNodeTree(old);
         }
       }
-    } else if (op instanceof ArrInsOp) {
+    } else if (op instanceof InsArrOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrayRga) {
         const nodes: ITimestampStruct[] = [];
@@ -203,9 +203,9 @@ export class Model implements Printable {
         node.delete(op.what);
       } else if (node instanceof StringRga) node.delete(op.what);
       else if (node instanceof BinaryRga) node.delete(op.what);
-    } else if (op instanceof BinOp) {
+    } else if (op instanceof NewBinOp) {
       if (!index.get(op.id)) index.set(new BinaryRga(op.id));
-    } else if (op instanceof BinInsOp) {
+    } else if (op instanceof InsBinOp) {
       const node = index.get(op.obj);
       if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
     }

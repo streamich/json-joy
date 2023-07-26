@@ -5,8 +5,7 @@ import {encode as encodeCompact} from '../compact/encode';
 import {decode as decodeCompact} from '../compact/decode';
 import {encode as encodeCompactBinary} from '../compact-binary/encode';
 import {decode as decodeCompactBinary} from '../compact-binary/decode';
-import {encode as encodeBinary} from '../binary/encode';
-import {decode as decodeBinary} from '../binary/decode';
+import {encode as encodeBinary, decode as decodeBinary} from '../binary';
 import {Patch} from '../../Patch';
 
 const fuzzer = new PatchFuzzer();
