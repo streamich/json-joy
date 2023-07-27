@@ -1,6 +1,9 @@
 import type {ITimestampStruct} from './clock';
 import type {Identifiable} from './Identifiable';
 
+/**
+ * Represents a common interface for all JSON CRDT patch operations.
+ */
 export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
    * Unique ID of that operation within the document, Lamport timestamp.
@@ -21,9 +24,17 @@ export interface IJsonCrdtPatchOperation extends Identifiable {
    */
   name(): string;
 
+  /**
+   * Returns a textual human-readable representation of the operation.
+   *
+   * @param tab String to use for indentation.
+   */
   toString(tab?: string): string;
 }
 
+/**
+ * Represents a JSON CRDT patch operation which edits an existing object.
+ */
 export interface IJsonCrdtPatchEditOperation extends IJsonCrdtPatchOperation {
   /**
    * Object which is being edited.

@@ -3,6 +3,9 @@ import type {ITimestampStruct} from '../clock';
 
 export type DelayedValueBuilderCallback = (api: PatchBuilder) => ITimestampStruct;
 
+/**
+ * @category Patch
+ */
 export class DelayedValueBuilder {
   constructor(public readonly build: DelayedValueBuilderCallback) {}
 }

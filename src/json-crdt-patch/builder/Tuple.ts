@@ -1,3 +1,6 @@
+/**
+ * @category Patch
+ */
 export class Tuple<T extends unknown[]> {
   constructor(public readonly slots: T) {}
 }

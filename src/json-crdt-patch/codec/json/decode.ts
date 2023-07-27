@@ -8,6 +8,12 @@ import type * as types from './types';
 const decodeId = (time: types.JsonCodecTimestamp): ITimestampStruct =>
   typeof time === 'number' ? ts(SESSION.SERVER, time) : ts(time[0], time[1]);
 
+/**
+ * Decodes a JSON CRDT patch from a JavaScript POJO into a {@link Patch} instance.
+ *
+ * @param data A JavaScript POJO representing a JSON CRDT patch in "json" format.
+ * @returns A decoded {@link Patch} instance.
+ */
 export const decode = (data: types.JsonCodecPatch): Patch => {
   const {id, ops} = data;
   const clock = typeof id === 'number' ? new ServerVectorClock(SESSION.SERVER, id) : new VectorClock(id[0], id[1]);

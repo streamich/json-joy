@@ -17,7 +17,11 @@ import {
 import {ITimestampStruct, ts, toDisplayString} from './clock';
 import {SESSION} from './constants';
 import {encode, decode} from './codec/binary';
+import type {Printable} from '../util/print/types';
 
+/**
+ * A union type of all possible JSON CRDT patch operations.
+ */
 export type JsonCrdtPatchOperation =
   | NewConOp
   | NewValOp
@@ -34,20 +38,70 @@ export type JsonCrdtPatchOperation =
   | DelOp
   | NopOp;
 
-export class Patch {
+/**
+ * Represents a JSON CRDT patch.
+ *
+ * Normally, you would create a new patch using the {@link PatchBuilder} class.
+ *
+ * ```ts
+ * import {Patch, PatchBuilder, LogicalClock} from 'json-joy/lib/json-crdt-patch';
+ *
+ * const clock = new LogicalClock(3, 100);
+ * const builder = new PatchBuilder(clock);
+ * const patch = builder.flush();
+ * ```
+ *
+ * Save patch to a binary representation:
+ *
+ * ```ts
+ * const binary = patch.toBinary();
+ * ```
+ *
+ * Load patch from a binary representation:
+ *
+ * ```ts
+ * const patch = Patch.fromBinary(binary);
+ * ```
+ *
+ * @category Patch
+ */
+export class Patch implements Printable {
+  /**
+   * Un-marshals a JSON CRDT patch from a binary representation.
+   */
   public static fromBinary(data: Uint8Array): Patch {
     return decode(data);
   }
 
+  /**
+   * A list of operations in the patch.
+   */
   public readonly ops: JsonCrdtPatchOperation[] = [];
+
+  /**
+   * Arbitrary metadata associated with the patch, which is not used by the
+   * library.
+   */
   public meta: unknown = undefined;
 
+  /**
+   * Returns the patch ID, which is equal to the ID of the first operation
+   * in the patch.
+   *
+   * @returns The ID of the first operation in the patch.
+   */
   public getId(): ITimestampStruct | undefined {
     const op = this.ops[0];
     if (!op) return undefined;
     return op.id;
   }
 
+  /**
+   * Returns the total time span of the patch, which is the sum of all
+   * operation spans.
+   *
+   * @returns The length of the patch.
+   */
   public span(): number {
     let span = 0;
     for (const op of this.ops) span += op.span();
@@ -65,6 +119,13 @@ export class Patch {
     return lastOp.id.time + lastOp.span();
   }
 
+  /**
+   * Creates a new patch where all timestamps are transformed using the
+   * provided function.
+   *
+   * @param ts Timestamp transformation function.
+   * @returns A new patch with transformed timestamps.
+   */
   public rewriteTime(ts: (id: ITimestampStruct) => ITimestampStruct): Patch {
     const patch = new Patch();
     const ops = this.ops;
@@ -125,10 +186,33 @@ export class Patch {
     });
   }
 
+  /**
+   * Creates a deep clone of the patch.
+   *
+   * @returns A deep clone of the patch.
+   */
   public clone(): Patch {
     return this.rewriteTime((id) => id);
   }
 
+  /**
+   * Marshals the patch into a binary representation.
+   *
+   * @returns A binary representation of the patch.
+   */
+  public toBinary() {
+    return encode(this);
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  /**
+   * Returns a textual human-readable representation of the patch. This can be
+   * used for debugging purposes.
+   *
+   * @param tab Start string for each line.
+   * @returns Text representation of the patch.
+   */
   public toString(tab: string = ''): string {
     const id = this.getId();
     let out = `${this.constructor.name} ${id ? toDisplayString(id) : '(nil)'}!${this.span()}`;
@@ -137,9 +221,5 @@ export class Patch {
       out += `\n${tab}${isLast ? '└─' : '├─'} ${this.ops[i].toString(tab + (isLast ? '  ' : '│ '))}`;
     }
     return out;
-  }
-
-  public toBinary() {
-    return encode(this);
   }
 }

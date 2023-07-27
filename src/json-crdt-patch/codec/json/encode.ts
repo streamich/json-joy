@@ -8,6 +8,12 @@ import type * as types from './types';
 const encodeTimestamp = (ts: ITimestampStruct): types.JsonCodecTimestamp =>
   ts.sid === SESSION.SERVER ? ts.time : [ts.sid, ts.time];
 
+/**
+ * Encodes a patch into a JSON CRDT Patch "json" format.
+ *
+ * @param patch The {@link Patch} to encode.
+ * @returns A JavaScript POJO object in JSON CRDT Patch "json" format.
+ */
 export const encode = (patch: Patch): types.JsonCodecPatch => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');

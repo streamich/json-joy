@@ -1,5 +1,8 @@
 import {Reader} from '../../../util/buffers/Reader';
 
+/**
+ * @todo Rename to `CrdtReader`.
+ */
 export class CrdtDecoder extends Reader {
   public id(): [x: number, y: number] {
     const byte = this.u8();
