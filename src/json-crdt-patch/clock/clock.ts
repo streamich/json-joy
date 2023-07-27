@@ -1,15 +1,5 @@
-/**
- * This module implements logical clock, where each session ID (we call it
- * session because it can be different user or even the same user from a
- * different device or even the same device but from a different browser tab) is
- * a randomly generated 53-bit integer (as 53 bits is the maximum integer value
- * in JavaScript) and time is a monotonically incrementing integer.
- *
- * @module
- */
-
-import type {IClock, IVectorClock, ITimestampStruct, ITimespanStruct} from './types';
 import {SESSION} from '../constants';
+import type {IClock, IVectorClock, ITimestampStruct, ITimespanStruct} from './types';
 
 export class Timestamp implements ITimestampStruct {
   constructor(public readonly sid: number, public time: number) {}
@@ -19,18 +9,45 @@ export class Timespan implements ITimespanStruct {
   constructor(public readonly sid: number, public time: number, public span: number) {}
 }
 
+/**
+ * A factory function for creating a new timestamp.
+ *
+ * @param sid Session ID.
+ * @param time Logical clock sequence number.
+ * @returns A new timestamp.
+ */
 export const ts = (sid: number, time: number): ITimestampStruct => new Timestamp(sid, time);
+
+/**
+ * A factory function for creating a new timespan.
+ *
+ * @param sid Session ID.
+ * @param time Logical clock sequence number.
+ * @param span Length of the timespan.
+ * @returns A new timespan.
+ */
 export const tss = (sid: number, time: number, span: number): ITimespanStruct => new Timespan(sid, time, span);
 
+/**
+ * Advance a timestamp by a number of cycles.
+ *
+ * @param stamp A reference timestamp.
+ * @param cycles Number of cycles to advance.
+ * @returns A new timestamp.
+ */
 export const tick = (stamp: ITimestampStruct, cycles: number): ITimestampStruct => ts(stamp.sid, stamp.time + cycles);
 
 /**
+ * Compares for equality two timestamps, time first.
+ *
  * @returns True if timestamps are equal.
  */
 export const equal = (ts1: ITimestampStruct, ts2: ITimestampStruct): boolean =>
   ts1.time === ts2.time && ts1.sid === ts2.sid;
 
 /**
+ * Compares two timestamps, time first.
+ *
  * @returns 1 if current timestamp is larger, -1 if smaller, and 0 otherwise.
  */
 export const compare = (ts1: ITimestampStruct, ts2: ITimestampStruct): -1 | 0 | 1 => {
@@ -45,6 +62,15 @@ export const compare = (ts1: ITimestampStruct, ts2: ITimestampStruct): -1 | 0 | 
   return 0;
 };
 
+/**
+ * Checks if the first timespan contains the second timespan.
+ *
+ * @param ts1 Start of container timespan.
+ * @param span1 Length of container timespan.
+ * @param ts2 Start of contained timespan.
+ * @param span2 Length of contained timespan.
+ * @returns Returns true if the first timespan contains the second timespan.
+ */
 export const contains = (ts1: ITimestampStruct, span1: number, ts2: ITimestampStruct, span2: number): boolean => {
   if (ts1.sid !== ts2.sid) return false;
   const t1 = ts1.time;
@@ -54,6 +80,14 @@ export const contains = (ts1: ITimestampStruct, span1: number, ts2: ITimestampSt
   return true;
 };
 
+/**
+ * Checks if a timespan contains the `ts2` point.
+ *
+ * @param ts1 Start of container timespan.
+ * @param span1 Length of container timespan.
+ * @param ts2 A point in time.
+ * @returns Returns true if the first timespan contains the `ts2` point.
+ */
 export const containsId = (ts1: ITimestampStruct, span1: number, ts2: ITimestampStruct): boolean => {
   if (ts1.sid !== ts2.sid) return false;
   const t1 = ts1.time;
@@ -63,17 +97,42 @@ export const containsId = (ts1: ITimestampStruct, span1: number, ts2: ITimestamp
   return true;
 };
 
-export const toDisplayString = (id: ITimestampStruct) => {
+/**
+ * Returns a human-readable string representation of the timestamp.
+ *
+ * @param id A timestamp.
+ * @returns Human-readable string representation of the timestamp.
+ */
+export const toDisplayString = (id: ITimestampStruct): string => {
   if (id.sid === SESSION.SERVER) return '.' + id.time;
   let session = '' + id.sid;
   if (session.length > 4) session = '..' + session.slice(session.length - 4);
   return session + '.' + id.time;
 };
 
+/**
+ * Advances a given timestamp by a number of cycles and then returns a timespan
+ * starting from that position.
+ *
+ * @param ts A start timestamp.
+ * @param tick Number of cycles to advance the starting timestamp.
+ * @param span Length of the timespan.
+ * @returns A new timespan.
+ */
 export const interval = (ts: ITimestampStruct, tick: number, span: number): ITimespanStruct =>
   new Timespan(ts.sid, ts.time + tick, span);
 
+/**
+ * Represents a *Logical Clock*, which can be advanced by a number of cycles.
+ */
 export class LogicalClock extends Timestamp implements IClock {
+  /**
+   * Returns a new timestamp, which is the current clock value, and advances the
+   * clock by a number of cycles.
+   *
+   * @param cycles Number of cycles to advance the clock.
+   * @returns A new timestamp, which is the current clock value.
+   */
   public tick(cycles: number): ITimestampStruct {
     const timestamp = new Timestamp(this.sid, this.time);
     this.time += cycles;
@@ -81,11 +140,22 @@ export class LogicalClock extends Timestamp implements IClock {
   }
 }
 
+/**
+ * Represents a *Vector Clock*, which is a *Logical Clock* together with a set
+ * of *Logical Clocks* of other peers.
+ */
 export class VectorClock extends LogicalClock implements IVectorClock {
+  /**
+   * A set of *Logical Clocks* of other peers.
+   */
   public readonly peers = new Map<number, ITimestampStruct>();
 
   /**
-   * Advance local time every time we see any timestamp with higher time value.
+   * Advances local time every time we see any timestamp with higher time value.
+   * This is an idempotent method which can be called every time a new timestamp
+   * is observed, it advances the local time only if the observed timestamp is
+   * greater than the current local time.
+   *
    * @param id The time stamp we observed.
    * @param span Length of the time span.
    */
@@ -101,10 +171,21 @@ export class VectorClock extends LogicalClock implements IVectorClock {
     if (edge >= this.time) this.time = edge + 1;
   }
 
+  /**
+   * Returns a deep copy of the current vector clock with the same session ID.
+   *
+   * @returns A new vector clock, which is a clone of the current vector clock.
+   */
   public clone(): VectorClock {
     return this.fork(this.sid);
   }
 
+  /**
+   * Returns a deep copy of the current vector clock with a different session ID.
+   *
+   * @param sessionId The session ID of the new vector clock.
+   * @returns A new vector clock, which is a fork of the current vector clock.
+   */
   public fork(sessionId: number): VectorClock {
     const clock = new VectorClock(sessionId, this.time);
     if (sessionId !== this.sid) clock.observe(tick(this, -1), 1);
@@ -114,6 +195,12 @@ export class VectorClock extends LogicalClock implements IVectorClock {
     return clock;
   }
 
+  /**
+   * Returns a human-readable string representation of the vector clock.
+   *
+   * @param tab String to use for indentation.
+   * @returns Human-readable string representation of the vector clock.
+   */
   public toString(tab: string = ''): string {
     const last = this.peers.size;
     let i = 1;
@@ -128,10 +215,11 @@ export class VectorClock extends LogicalClock implements IVectorClock {
 }
 
 /**
- * This is not a vector clock. It implements the IVectorClock interface, but
- * under the hood it is just a single incrementing sequence integer.
+ * Implements a *Vector Clock* with a fixed session ID. The *Server Clock*
+ * is used when the CRDT is powered by a central server.
  */
 export class ServerVectorClock extends LogicalClock implements IVectorClock {
+  /** A stub for other peers. Not used in the server clock. */
   public readonly peers = new Map<number, ITimespanStruct>();
 
   public observe(ts: ITimespanStruct, span: number) {

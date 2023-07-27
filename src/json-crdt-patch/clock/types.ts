@@ -1,7 +1,20 @@
+/**
+ * Represents a logical clock timestamp. Logical timestamps are used to identify
+ * all JSON CRDT operations, objects, and parts of their contents, e.g. timestamps
+ * serve as unique IDs.
+ */
 export interface ITimestampStruct {
+  /**
+   * Session ID (or actor ID, site ID, process ID, etc.), a random identifier
+   * randomly assigned to each editing session.
+   */
   readonly sid: number;
 
   /**
+   * Logical time (or sequence number, tick, etc.), a monotonically increasing
+   * integer, starting from 0. It does not produce gaps on local machine, but
+   * it can produce gaps when merged with other clocks.
+   *
    * Needs to be mutable in vector clock. Other than that, it should be
    * treated as immutable.
    */
@@ -9,24 +22,14 @@ export interface ITimestampStruct {
 }
 
 /**
- * Similar to ITimestamp, but represents an interval, instead of just a
- * single time point.
+ * Similar to ITimestamp, but represents a logical time interval, instead of
+ * just a single time point.
  */
 export interface ITimespanStruct extends ITimestampStruct {
   /**
-   * Length of the time interval.
+   * Length of the logical time interval.
    */
   readonly span: number;
-}
-
-/**
- * Represents a unique logical timestamp used to identify things such as
- * objects, chunks and operations in a document.
- *
- * @deprecated
- */
-export interface ITimestamp extends ITimestampStruct {
-  toString(): string;
 }
 
 /**
@@ -50,7 +53,7 @@ export interface IClock extends ITimestampStruct {
   tick(cycles: number): ITimestampStruct;
 }
 
-/** A vector clock. Used in CRDT Model. */
+/** A vector clock. Used in the CRDT Model. */
 export interface IVectorClock extends IClock {
   /**
    * Mapping of session IDs to logical timestamps.
@@ -70,5 +73,6 @@ export interface IVectorClock extends IClock {
   /** Copy the clock with a new session ID. */
   fork(sessionId: number): IVectorClock;
 
+  /** Returns a textual human-readable representation, useful for debugging. */
   toString(tab?: string): string;
 }
