@@ -6,14 +6,28 @@ import {SESSION} from '../../constants';
 import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
 import {JsonCrdtPatchOpcode} from '../../constants';
 
+/**
+ * JSON CRDT Patch "binary" codec decoder.
+ */
 export class Decoder extends CborDecoder<CrdtDecoder> {
   protected builder!: PatchBuilder;
   private patchId!: ITimestampStruct;
 
-  constructor() {
-    super(new CrdtDecoder());
+  /**
+   * Creates a new JSON CRDT patch decoder.
+   *
+   * @param reader An optional custom implementation of a CRDT decoder.
+   */
+  constructor(reader: CrdtDecoder = new CrdtDecoder()) {
+    super(reader);
   }
 
+  /**
+   * Decodes a JSON CRDT patch from a binary blob.
+   *
+   * @param data Binary data to decode.
+   * @returns A JSON CRDT patch.
+   */
   public decode(data: Uint8Array): Patch {
     const reader = this.reader;
     reader.reset(data);
@@ -50,7 +64,7 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
     return interval(id, 0, span);
   }
 
-  public decodeOperations(): void {
+  protected decodeOperations(): void {
     const reader = this.reader;
     while (reader.x < reader.uint8.length) this.decodeOperation();
   }

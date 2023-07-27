@@ -1,3 +1,6 @@
+/**
+ * @category Patch
+ */
 export class Konst<T = unknown> {
   constructor(public readonly val: T) {}
 }

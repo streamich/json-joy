@@ -1,4 +1,4 @@
-import {ts, VectorClock} from '../logical';
+import {ts, VectorClock} from '..';
 
 test('cloning returns clock with the same session ID and time', () => {
   const clock = new VectorClock(1, 2);

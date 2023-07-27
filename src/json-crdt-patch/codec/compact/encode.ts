@@ -21,6 +21,12 @@ const timespan = (sid: number, time: number, span: ITimespanStruct): types.Compa
   return [ts, span.span];
 };
 
+/**
+ * Encodes a patch into a compact binary format into a JavaScript array.
+ *
+ * @param patch The patch to encode.
+ * @returns The encoded patch as a JavaScript POJO.
+ */
 export const encode = (patch: Patch): types.CompactCodecPatch => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');

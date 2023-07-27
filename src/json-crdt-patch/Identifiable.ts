@@ -3,6 +3,8 @@ import type {ITimestampStruct} from './clock';
 /**
  * Something in the document that can be identified by ID. All operations have
  * IDs and operations result into JSON nodes and chunks, which also have IDs.
+ *
+ * @todo Move it to `types.ts` file.
  */
 export interface Identifiable {
   /**

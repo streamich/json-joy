@@ -20,6 +20,12 @@ const timespan = (sid: number, time: number, span: types.CompactCodecTimespan): 
   }
 };
 
+/**
+ * Decodes a JSON CRDT Patch from a "compact" POJO into a {@link Patch} instance.
+ *
+ * @param data A JavaScript POJO array in the compact codec format.
+ * @returns A decoded patch.
+ */
 export const decode = (data: types.CompactCodecPatch): Patch => {
   const header = data[0];
   const x = header[0];

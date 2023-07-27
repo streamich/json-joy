@@ -6,13 +6,27 @@ import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../constants';
 import type {JsonCrdtPatchOperation, Patch} from '../../Patch';
 
+/**
+ * JSON CRDT Patch "binary" codec encoder.
+ */
 export class Encoder extends CborEncoder<CrdtWriter> {
   private patchId!: ITimestampStruct;
 
+  /**
+   * Creates a new encoder instance.
+   *
+   * @param writer An optional custom implementation of CRDT writer.
+   */
   constructor(public readonly writer: CrdtWriter = new CrdtWriter()) {
     super(writer);
   }
 
+  /**
+   * Encodes a JSON CRDT Patch into a {@link Uint8Array} blob.
+   *
+   * @param patch A JSON CRDT Patch to encode.
+   * @returns A {@link Uint8Array} blob containing the encoded JSON CRDT Patch.
+   */
   public encode(patch: Patch): Uint8Array {
     this.writer.reset();
     const id = (this.patchId = patch.getId()!);
@@ -31,7 +45,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     return writer.flush();
   }
 
-  public encodeOperations(patch: Patch): void {
+  protected encodeOperations(patch: Patch): void {
     const ops = patch.ops;
     for (let i = 0; i < ops.length; i++) {
       const op = ops[i];
@@ -39,7 +53,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  public encodeId(id: ITimestampStruct) {
+  protected encodeId(id: ITimestampStruct) {
     const sessionId = id.sid;
     const time = id.time;
     const writer = this.writer;
@@ -74,7 +88,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     return writer.utf8(str);
   }
 
-  public encodeOperation(op: JsonCrdtPatchOperation): void {
+  protected encodeOperation(op: JsonCrdtPatchOperation): void {
     const writer = this.writer;
     const constructor = op.constructor;
     switch (constructor) {

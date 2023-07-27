@@ -1,4 +1,4 @@
-import {ts} from '../logical';
+import {ts} from '..';
 
 describe('LogicalTimestamp', () => {
   describe('performance', () => {

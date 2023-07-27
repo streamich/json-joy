@@ -3,6 +3,8 @@ import {type ITimestampStruct, type ITimespanStruct, Timestamp, toDisplayString}
 
 /**
  * Operation which creates a constant "con" data type.
+ *
+ * @category Operations
  */
 export class NewConOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct, public readonly val: unknown | undefined | ITimestampStruct) {}
@@ -31,6 +33,8 @@ export class NewConOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new value object.
+ *
+ * @category Operations
  */
 export class NewValOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct, public readonly val: ITimestampStruct) {}
@@ -50,6 +54,8 @@ export class NewValOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new object.
+ *
+ * @category Operations
  */
 export class NewObjOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
@@ -69,6 +75,8 @@ export class NewObjOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new vector object.
+ *
+ * @category Operations
  */
 export class NewVecOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
@@ -88,6 +96,8 @@ export class NewVecOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new string object.
+ *
+ * @category Operations
  */
 export class NewStrOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
@@ -107,6 +117,8 @@ export class NewStrOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new binary object.
+ *
+ * @category Operations
  */
 export class NewBinOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
@@ -126,6 +138,8 @@ export class NewBinOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which creates a new array object.
+ *
+ * @category Operations
  */
 export class NewArrOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct) {}
@@ -145,6 +159,8 @@ export class NewArrOp implements IJsonCrdtPatchOperation {
 
 /**
  * Operation which writes a new value to a value "val" object.
+ *
+ * @category Operations
  */
 export class InsValOp implements IJsonCrdtPatchEditOperation {
   constructor(
@@ -170,6 +186,8 @@ export class InsValOp implements IJsonCrdtPatchEditOperation {
 
 /**
  * Operation which sets object keys.
+ *
+ * @category Operations
  */
 export class InsObjOp implements IJsonCrdtPatchEditOperation {
   constructor(
@@ -200,6 +218,8 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
 
 /**
  * Operation which sets vector elements.
+ *
+ * @category Operations
  */
 export class InsVecOp implements IJsonCrdtPatchEditOperation {
   constructor(
@@ -230,6 +250,8 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
 
 /**
  * Operation which inserts text into a "str" string object.
+ *
+ * @category Operations
  */
 export class InsStrOp implements IJsonCrdtPatchEditOperation {
   constructor(
@@ -256,6 +278,8 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
 
 /**
  * Operations which inserts binary data into a "bin" binary object.
+ *
+ * @category Operations
  */
 export class InsBinOp implements IJsonCrdtPatchEditOperation {
   constructor(
@@ -283,6 +307,8 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
 
 /**
  * Operation which inserts elements into an array.
+ *
+ * @category Operations
  */
 export class InsArrOp implements IJsonCrdtPatchEditOperation {
   /**
@@ -322,6 +348,8 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
 /**
  * Operation which does nothing. Useful for skipping clock cycles, so that
  * operations with a gap in clock can be included in the same patch.
+ *
+ * @category Operations
  */
 export class NopOp implements IJsonCrdtPatchOperation {
   constructor(public readonly id: ITimestampStruct, public readonly len: number) {}
@@ -342,6 +370,8 @@ export class NopOp implements IJsonCrdtPatchOperation {
 /**
  * Operation which deletes one or more ranges of values in some object.
  * The object could be a string, an array, or a binary.
+ *
+ * @category Operations
  */
 export class DelOp implements IJsonCrdtPatchEditOperation {
   /**
