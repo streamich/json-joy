@@ -12,14 +12,28 @@ import {LogicalClock} from '../clock';
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);
 
-const strId = builder.str();
-builder.insStr(strId, strId, 'Hello, world!');
+// Create a "str" RGA-String.
+const stringId = builder.str();
 
-builder.root(strId);
+// Insert "bar" text into the string at the starting position.
+builder.insStr(stringId, stringId, 'bar');
 
-const patch = builder.flush();
-console.log(patch.toString());
-// Patch 123.456!15
+// Create an "obj" LWW-Object.
+const objectId = builder.obj();
+
+// Set "foo" property of the object to "bar".
+builder.setKeys(objectId, [
+  ['foo', stringId],
+]);
+
+// Set the document root LWW-Register value to the object.
+builder.root(objectId);
+
+console.log(builder.patch + '');
+// Patch 123.456!7
 // ├─ "str" 123.456
-// ├─ "ins_str" 123.457!13, obj = 123.456 { 123.456 ← "Hello, world!" }
-// └─ "ins_val" 123.470!1, obj = 0.0, val = 123.456
+// ├─ "ins_str" 123.457!3, obj = 123.456 { 123.456 ← "bar" }
+// ├─ "obj" 123.460
+// ├─ "ins_obj" 123.461!1, obj = 123.460
+// │   └─ "foo": 123.456
+// └─ "ins_val" 123.462!1, obj = 0.0, val = 123.460

@@ -12,24 +12,35 @@ import {LogicalClock} from '../clock';
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);
 
+const json = {
+  foo: 'bar',
+  baz: 123,
+  bools: [true, false],
+};
+
 builder.root(
-  builder.json({
-    foo: 'bar',
-    baz: 123,
-  }),
+  builder.json(json),
 );
 
 const patch = builder.flush();
 console.log(patch.toString());
-// Patch 123.456!8
+
+// Patch 123.456!15
 // ├─ "obj" 123.456
 // ├─ "str" 123.457
 // ├─ "ins_str" 123.458!3, obj = 123.457 { 123.457 ← "bar" }
 // ├─ "con" 123.461 { 123 }
-// ├─ "ins_obj" 123.462!1, obj = 123.456
+// ├─ "arr" 123.462
+// ├─ "con" 123.463 { true }
+// ├─ "val" 123.464 { 123.463 }
+// ├─ "con" 123.465 { false }
+// ├─ "val" 123.466 { 123.465 }
+// ├─ "ins_arr" 123.467!2, obj = 123.462 { 123.462 ← 123.464, 123.466 }
+// ├─ "ins_obj" 123.469!1, obj = 123.456
 // │   ├─ "foo": 123.457
-// │   └─ "baz": 123.461
-// └─ "ins_val" 123.463!1, obj = 0.0, val = 123.456
+// │   ├─ "baz": 123.461
+// │   └─ "bools": 123.462
+// └─ "ins_val" 123.470!1, obj = 0.0, val = 123.456
 
 const buf = patch.toBinary();
 console.log(buf);
