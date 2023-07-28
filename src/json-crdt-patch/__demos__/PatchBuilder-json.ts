@@ -18,9 +18,7 @@ const json = {
   bools: [true, false],
 };
 
-builder.root(
-  builder.json(json),
-);
+builder.root(builder.json(json));
 
 const patch = builder.flush();
 console.log(patch.toString());

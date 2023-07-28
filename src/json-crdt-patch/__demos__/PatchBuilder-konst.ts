@@ -15,7 +15,7 @@ const builder = new PatchBuilder(clock);
 builder.json({
   bools: konst([true, false]),
 }),
-console.log(builder.patch + '');
+  console.log(builder.patch + '');
 
 // Patch 123.456!3
 // ├─ "obj" 123.456
