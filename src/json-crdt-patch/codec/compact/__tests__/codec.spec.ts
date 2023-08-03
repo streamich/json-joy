@@ -2,7 +2,7 @@ import {encode} from '../encode';
 import {decode} from '../decode';
 import {LogicalClock, Timestamp, ts, tss} from '../../../clock';
 import {PatchBuilder} from '../../../PatchBuilder';
-import {encode as encodeJson} from '../../json/encode';
+import {encode as encodeJson} from '../../verbose/encode';
 
 test('can encode and decode a simple object', () => {
   const clock = new LogicalClock(3, 100);

@@ -1,5 +1,5 @@
 import type {JsonCrdtPatchOpcode} from '../../constants';
-import {JsonCodecTimestamp} from '../json/types';
+import {JsonCodecTimestamp} from '../verbose/types';
 
 /**
  * Represents a JSON CRDT Patch object in *Compact encoding*. Compact encoding
@@ -233,10 +233,9 @@ export type CompactCodecInsStrOperation = [
 
   /**
    * Specifies the ID of element after which to attempt to insert the substring
-   * using the RGA algorithm. If `after` is 0, it means the insertion is
-   * at the start of the string.
+   * using the RGA algorithm.
    */
-  after: 0 | CompactCodecTimestamp,
+  after: CompactCodecTimestamp,
 
   /** The substring to insert in the string. */
   value: string,
@@ -252,10 +251,9 @@ export type CompactCodecInsBinOperation = [
 
   /**
    * Specifies the ID of element after which to attempt to insert the substring
-   * using the RGA algorithm. If `after` is 0, it means the insertion is
-   * at the start of the string.
+   * using the RGA algorithm.
    */
-  after: 0 | CompactCodecTimestamp,
+  after: CompactCodecTimestamp,
 
   /** The binary data to insert, encoded using Base64. */
   value: string,
@@ -271,10 +269,9 @@ export type CompactCodecInsArrOperation = [
 
   /**
    * Specifies the ID of element after which to attempt to insert the substring
-   * using the RGA algorithm. If `after` is 0, it means the insertion is
-   * at the start of the string.
+   * using the RGA algorithm.
    */
-  after: 0 | CompactCodecTimestamp,
+  after: CompactCodecTimestamp,
 
   /** Values to insert in the array. */
   values: JsonCodecTimestamp[],
