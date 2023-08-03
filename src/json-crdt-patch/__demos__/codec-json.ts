@@ -7,7 +7,7 @@
  */
 
 import {PatchBuilder} from '..';
-import {encode} from '../codec/json';
+import {encode} from '../codec/verbose';
 import {LogicalClock} from '../clock';
 
 const clock = new LogicalClock(123, 456);
