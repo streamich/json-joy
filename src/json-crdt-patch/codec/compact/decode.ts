@@ -6,18 +6,12 @@ import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
 import type * as types from './types';
 
-const timestamp = (sid: number, time: number, x: types.CompactCodecTimestamp): ITimestampStruct => {
-  if (Array.isArray(x)) return new Timestamp(x[0], x[1]);
-  else if (x < 0) return new Timestamp(sid, time - x - 1);
-  else return new Timestamp(SESSION.SERVER, x);
+const timestamp = (sid: number, x: types.CompactCodecTimestamp): ITimestampStruct => {
+  return Array.isArray(x) ? new Timestamp(x[0], x[1]) : new Timestamp(sid, x);
 };
 
-const timespan = (sid: number, time: number, span: types.CompactCodecTimespan): ITimespanStruct => {
-  if (span.length === 3) return new Timespan(span[0], span[1], span[2]);
-  else {
-    const x = span[0];
-    return x < 0 ? new Timespan(sid, time - x - 1, span[1]) : new Timespan(SESSION.SERVER, x, span[1]);
-  }
+const timespan = (sid: number, span: types.CompactCodecTimespan): ITimespanStruct => {
+  return span.length === 3 ? new Timespan(span[0], span[1], span[2]) : new Timespan(sid, span[0], span[1]);
 };
 
 /**
@@ -40,11 +34,11 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
     switch (op[0]) {
       case JsonCrdtPatchOpcode.new_con: {
         const [, value, isTimestamp] = op;
-        builder.const(isTimestamp ? timestamp(sid, time, value as types.CompactCodecTimestamp) : value);
+        builder.const(isTimestamp ? timestamp(sid, value as types.CompactCodecTimestamp) : value);
         break;
       }
       case JsonCrdtPatchOpcode.new_val: {
-        builder.val(timestamp(sid, time, op[1]));
+        builder.val(timestamp(sid, op[1]));
         break;
       }
       case JsonCrdtPatchOpcode.new_obj: {
@@ -68,57 +62,57 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
         break;
       }
       case JsonCrdtPatchOpcode.ins_val: {
-        builder.setVal(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]));
+        builder.setVal(timestamp(sid, op[1]), timestamp(sid, op[2]));
         break;
       }
       case JsonCrdtPatchOpcode.ins_obj: {
-        const obj = timestamp(sid, time, op[1]);
+        const obj = timestamp(sid, op[1]);
         const tuples: [key: string, value: ITimestampStruct][] = [];
         const value = op[2];
         const length = value.length;
         for (let j = 0; j < length; j++) {
           const [key, x] = value[j];
-          tuples.push([key, timestamp(sid, time, x)]);
+          tuples.push([key, timestamp(sid, x)]);
         }
         builder.setKeys(obj, tuples);
         break;
       }
       case JsonCrdtPatchOpcode.ins_vec: {
-        const obj = timestamp(sid, time, op[1]);
+        const obj = timestamp(sid, op[1]);
         const tuples: [key: number, value: ITimestampStruct][] = [];
         const value = op[2];
         const length = value.length;
         for (let j = 0; j < length; j++) {
           const [key, x] = value[j];
-          tuples.push([key, timestamp(sid, time, x)]);
+          tuples.push([key, timestamp(sid, x)]);
         }
         builder.insVec(obj, tuples);
         break;
       }
       case JsonCrdtPatchOpcode.ins_str: {
-        builder.insStr(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]), op[3]);
+        builder.insStr(timestamp(sid, op[1]), timestamp(sid, op[2]), op[3]);
         break;
       }
       case JsonCrdtPatchOpcode.ins_bin: {
-        builder.insBin(timestamp(sid, time, op[1]), timestamp(sid, time, op[2]), fromBase64(op[3]));
+        builder.insBin(timestamp(sid, op[1]), timestamp(sid, op[2]), fromBase64(op[3]));
         break;
       }
       case JsonCrdtPatchOpcode.ins_arr: {
-        const obj = timestamp(sid, time, op[1]);
-        const ref = timestamp(sid, time, op[2]);
+        const obj = timestamp(sid, op[1]);
+        const ref = timestamp(sid, op[2]);
         const value = op[3];
         const elements: ITimestampStruct[] = [];
         const length = value.length;
-        for (let j = 0; j < length; j++) elements.push(timestamp(sid, time, value[j]));
+        for (let j = 0; j < length; j++) elements.push(timestamp(sid, value[j]));
         builder.insArr(obj, ref, elements);
         break;
       }
       case JsonCrdtPatchOpcode.del: {
-        const obj = timestamp(sid, time, op[1]);
+        const obj = timestamp(sid, op[1]);
         const spans = op[2];
         const what: ITimespanStruct[] = [];
         const length = spans.length;
-        for (let i = 0; i < length; i++) what.push(timespan(sid, time, spans[i]));
+        for (let i = 0; i < length; i++) what.push(timespan(sid, spans[i]));
         builder.del(obj, what);
         break;
       }

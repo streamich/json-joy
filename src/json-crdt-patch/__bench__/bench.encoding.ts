@@ -8,7 +8,7 @@ import {Patch} from '../Patch';
 import {PatchBuilder} from '../PatchBuilder';
 import {encode as encodeBinary} from '../codec/binary';
 import {encode as encodeCompact} from '../codec/compact-binary';
-import {encode as encodeJson} from '../codec/json';
+import {encode as encodeJson} from '../codec/verbose';
 import {encode as encodeCbor} from '../../json-pack/cbor/shared';
 
 const createPatch = (json: any) => {

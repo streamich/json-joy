@@ -9,10 +9,10 @@ const encodeTimestamp = (ts: ITimestampStruct): types.JsonCodecTimestamp =>
   ts.sid === SESSION.SERVER ? ts.time : [ts.sid, ts.time];
 
 /**
- * Encodes a patch into a JSON CRDT Patch "json" format.
+ * Encodes a patch into a JSON CRDT Patch "verbose" format.
  *
  * @param patch The {@link Patch} to encode.
- * @returns A JavaScript POJO object in JSON CRDT Patch "json" format.
+ * @returns A JavaScript POJO object in JSON CRDT Patch "verbose" format.
  */
 export const encode = (patch: Patch): types.JsonCodecPatch => {
   const id = patch.getId();
@@ -20,7 +20,7 @@ export const encode = (patch: Patch): types.JsonCodecPatch => {
 
   const ops: types.JsonCodecPatch['ops'] = [];
   const res: types.JsonCodecPatch = {
-    id: encodeTimestamp(id),
+    id: [id.sid, id.time],
     ops,
   };
 
@@ -30,22 +30,22 @@ export const encode = (patch: Patch): types.JsonCodecPatch => {
     if (op instanceof operations.NewConOp) {
       const val = op.val;
       if (val instanceof Timestamp) {
-        ops.push({op: 'con', timestamp: true, value: encodeTimestamp(val)});
+        ops.push({op: 'new_con', timestamp: true, value: encodeTimestamp(val)});
       } else {
-        ops.push({op: 'con', value: val});
+        ops.push({op: 'new_con', value: val});
       }
     } else if (op instanceof operations.NewObjOp) {
-      ops.push({op: 'obj'});
+      ops.push({op: 'new_obj'});
     } else if (op instanceof operations.NewVecOp) {
-      ops.push({op: 'vec'});
+      ops.push({op: 'new_vec'});
     } else if (op instanceof operations.NewArrOp) {
-      ops.push({op: 'arr'});
+      ops.push({op: 'new_arr'});
     } else if (op instanceof operations.NewStrOp) {
-      ops.push({op: 'str'});
+      ops.push({op: 'new_str'});
     } else if (op instanceof operations.NewBinOp) {
-      ops.push({op: 'bin'});
+      ops.push({op: 'new_bin'});
     } else if (op instanceof operations.NewValOp) {
-      ops.push({op: 'val', value: encodeTimestamp(op.val)});
+      ops.push({op: 'new_val', value: encodeTimestamp(op.val)});
     } else if (op instanceof operations.InsObjOp) {
       ops.push({
         op: 'ins_obj',

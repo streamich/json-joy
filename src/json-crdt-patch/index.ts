@@ -8,7 +8,7 @@
  * - {@link Patch} class, which represents a JSON CRDT Patch.
  * - {@link PatchBuilder} class, which is used to build a JSON CRDT Patch.
  * - {@link json-crdt-patch/clock} module implements the logical clock.
- * - {@link json-crdt-patch/codec/json} module implements "json" serialization codec.
+ * - {@link json-crdt-patch/codec/verbose} module implements "verbose" serialization codec.
  * - {@link json-crdt-patch/codec/compact} module implements "compact" serialization codec.
  * - {@link json-crdt-patch/codec/binary} module implements "binary" serialization codec.
  *
@@ -100,10 +100,10 @@
  * const patch2 = Patch.fromBinary(buf);
  * ```
  *
- * Also, "json" and "compact" serialization formats are supported. See the
+ * Also, "verbose" and "compact" serialization formats are supported. See the
  * following modules:
  *
- * - {@link json-crdt-patch/codec/json} module implements "json" serialization codec.
+ * - {@link json-crdt-patch/codec/verbose} module implements "verbose" serialization codec.
  * - {@link json-crdt-patch/codec/compact} module implements "compact" serialization codec.
  * - {@link json-crdt-patch/codec/binary} module implements "binary" serialization codec.
  *

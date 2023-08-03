@@ -11,7 +11,7 @@ const decodeId = (time: types.JsonCodecTimestamp): ITimestampStruct =>
 /**
  * Decodes a JSON CRDT patch from a JavaScript POJO into a {@link Patch} instance.
  *
- * @param data A JavaScript POJO representing a JSON CRDT patch in "json" format.
+ * @param data A JavaScript POJO representing a JSON CRDT patch in "verbose" format.
  * @returns A decoded {@link Patch} instance.
  */
 export const decode = (data: types.JsonCodecPatch): Patch => {
@@ -21,7 +21,7 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
 
   for (const op of ops) {
     switch (op.op) {
-      case 'con': {
+      case 'new_con': {
         if (op.timestamp) {
           builder.const(decodeId(op.value as types.JsonCodecTimestamp));
         } else {
@@ -29,27 +29,27 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
         }
         break;
       }
-      case 'val': {
+      case 'new_val': {
         builder.val(decodeId(op.value));
         break;
       }
-      case 'obj': {
+      case 'new_obj': {
         builder.obj();
         break;
       }
-      case 'vec': {
+      case 'new_vec': {
         builder.vec();
         break;
       }
-      case 'str': {
+      case 'new_str': {
         builder.str();
         break;
       }
-      case 'bin': {
+      case 'new_bin': {
         builder.bin();
         break;
       }
-      case 'arr': {
+      case 'new_arr': {
         builder.arr();
         break;
       }

@@ -27,9 +27,9 @@ test('create {foo: "bar"} object', () => {
   expect(encoded).toEqual({
     id: [5, 25],
     ops: [
-      {op: 'str'}, // 25
+      {op: 'new_str'}, // 25
       {op: 'ins_str', obj: [5, 25], after: [5, 25], value: 'bar'}, // 26-28
-      {op: 'obj'}, // 29
+      {op: 'new_obj'}, // 29
       {op: 'ins_obj', obj: [5, 29], value: [['foo', [5, 25]]]}, // 30
       {op: 'ins_val', obj: [0, 0], value: [5, 29]}, // 31
     ],

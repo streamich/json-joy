@@ -39,16 +39,17 @@ export class CrdtWriter extends Writer {
   }
 
   /**
-   * #### `vuint57` (variable length unsigned 57 bit integer)
+   * #### `vu57`
    *
-   * Variable length unsigned 57 bit integer is encoded using up to 8 bytes. The maximum
-   * size of the decoded value is 57 bits of data.
+   * `vu57` stands for *variable length unsigned 57 bit integer*. It consumes
+   * up to 8 bytes. The maximum size of the decoded value is 57 bits.
    *
-   * The high bit "?" of each byte indicates if the next byte should be consumed, up
-   * to 8 bytes.
+   * The high bit `?` of each octet indicates if the next byte should be
+   * consumed, up to 8 bytes. When `?` is set to `0`, it means that the current
+   * byte is the last byte of the encoded value.
    *
    * ```
-   * byte 1                                                         byte 8
+   *  byte 1   byte 2   byte 3   byte 4   byte 5   byte 6   byte 7   byte 8
    * +--------+........+........+........+........+........+........+········+
    * |?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
    * +--------+........+........+........+........+........+........+········+
@@ -130,6 +131,32 @@ export class CrdtWriter extends Writer {
     }
   }
 
+  /**
+   * #### `vu39`
+   *
+   * `vu39` stands for *variable length unsigned 39 bit integer*. It consumes
+   * up to 6 bytes of storage. The maximum size of the decoded value is 39 bits.
+   *
+   * The high bit `?` of each octet indicates if the next byte should be
+   * consumed, up to 8 bytes. When `?` is set to `0`, it means that the current
+   * byte is the last byte of the encoded value.
+   *
+   * ```
+   *  byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
+   * +--------+........+........+........+........+........+
+   * |?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?000zzzz|
+   * +--------+........+........+........+........+........+
+   *
+   *            11111    2211111  2222222  3333332     3333
+   *   7654321  4321098  1098765  8765432  5432109     9876
+   *     |                        |                    |
+   *     5th bit of z             |                    |
+   *                              28th bit of z        |
+   *                                                   39th bit of z
+   * ```
+   *
+   * @param num Number to encode as variable length unsigned 57 bit integer.
+   */
   public vu39(num: number) {
     // TODO: perf: maybe just .ensureCapacity(6) at the top.
     if (num <= 0b1111111) {
@@ -177,6 +204,35 @@ export class CrdtWriter extends Writer {
     }
   }
 
+  /**
+   * #### `b1vu56`
+   *
+   * `b1vu56` stands for: 1 bit flag followed by variable length unsigned 56 bit integer.
+   * It consumes up to 8 bytes.
+   *
+   * The high bit "?" of each byte indicates if the next byte should be
+   * consumed, up to 8 bytes.
+   *
+   * - f - flag
+   * - z - variable length unsigned 56 bit integer
+   * - ? - whether the next byte is used for encoding
+   *
+   * ```
+   * byte 1                                                         byte 8
+   * +--------+........+........+........+........+........+........+········+
+   * |f?zzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
+   * +--------+........+........+........+........+........+........+········+
+   *
+   *            1111     2111111  2222222  3333322  4433333  4444444 55555554
+   *    654321  3210987  0987654  7654321  4321098  1098765  8765432 65432109
+   *     |                        |                    |             |
+   *     5th bit of z             |                    |             |
+   *                              27th bit of z        |             56th bit of z
+   *                                                   38th bit of z
+   * ```
+   *
+   * @param num Number to encode as variable length unsigned 56 bit integer.
+   */
   public b1vu56(flag: boolean, num: number) {
     if (num <= 0b111111) {
       this.u8((flag ? 0b10000000 : 0b00000000) | num);
@@ -247,6 +303,34 @@ export class CrdtWriter extends Writer {
     }
   }
 
+  /**
+   * #### `b1vu28`
+   *
+   * `b1vu28` stands for: 1 bit flag followed by variable length unsigned 28 bit integer.
+   * It consumes up to 4 bytes.
+   *
+   * The high bit "?" of each byte indicates if the next byte should be
+   * consumed, up to 8 bytes.
+   *
+   * - f - flag
+   * - z - variable length unsigned 56 bit integer
+   * - ? - whether the next byte is used for encoding
+   *
+   * ```
+   *  byte 1   byte 2   byte 3   byte 4
+   * +--------+........+........+........+
+   * |f?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
+   * +--------+........+........+........+
+   *
+   *            1111     2111111 22222222
+   *    654321  3210987  0987654 87654321
+   *     |                        |
+   *     5th bit of z             |
+   *                              27th bit of z
+   * ```
+   *
+   * @param num Number to encode as variable length unsigned 57 bit integer.
+   */
   public b1vu28(flag: boolean, num: number) {
     if (num <= 0b111111) {
       this.u8((flag ? 0b10000000 : 0b00000000) | num);

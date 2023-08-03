@@ -1,5 +1,5 @@
 import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
-import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, ts} from '../../clock';
+import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
@@ -11,7 +11,7 @@ import {JsonCrdtPatchOpcode} from '../../constants';
  */
 export class Decoder extends CborDecoder<CrdtDecoder> {
   protected builder!: PatchBuilder;
-  private patchId!: ITimestampStruct;
+  private patchSid?: number;
 
   /**
    * Creates a new JSON CRDT patch decoder.
@@ -33,29 +33,18 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
     reader.reset(data);
     const [isServerClock, x] = reader.b1vu56();
     const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, x) : new VectorClock(x, reader.vu57());
-    this.patchId = ts(clock.sid, clock.time);
-    this.builder = new PatchBuilder(clock);
+    this.patchSid = clock.sid;
+    const builder = (this.builder = new PatchBuilder(clock));
     const map = this.val();
-    if (map instanceof Array) this.builder.patch.meta = map[0];
+    if (map instanceof Array) builder.patch.meta = map[0];
     this.decodeOperations();
-    return this.builder.patch;
+    return builder.patch;
   }
 
   protected decodeId(): ITimestampStruct {
     const reader = this.reader;
-    const [isServerClock, x] = reader.b1vu56();
-    if (isServerClock) {
-      return ts(SESSION.SERVER, x);
-    } else {
-      const patchId = this.patchId;
-      if (x === 1) {
-        const delta = reader.vu57();
-        return ts(patchId.sid, patchId.time + delta);
-      } else {
-        const time = reader.vu57();
-        return ts(x, time);
-      }
-    }
+    const [isRelativeTime, x] = reader.b1vu56();
+    return isRelativeTime ? new Timestamp(this.patchSid!, x) : new Timestamp(x, reader.vu57());
   }
 
   protected decodeTss(): ITimespanStruct {
@@ -66,7 +55,8 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
 
   protected decodeOperations(): void {
     const reader = this.reader;
-    while (reader.x < reader.uint8.length) this.decodeOperation();
+    const length = reader.vu57();
+    for (let i = 0; i < length; i++) this.decodeOperation();
   }
 
   protected decodeOperation(): void {
