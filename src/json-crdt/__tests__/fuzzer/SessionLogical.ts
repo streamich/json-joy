@@ -1,8 +1,8 @@
 import {ArrayRga} from '../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {decode as decodeJson} from '../../../json-crdt-patch/codec/json/decode';
+import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
 import {DelOp, InsArrOp, InsBinOp, InsStrOp, InsObjOp} from '../../../json-crdt-patch/operations';
-import {encode as encodeJson} from '../../../json-crdt-patch/codec/json/encode';
+import {encode as encodeJson} from '../../../json-crdt-patch/codec/verbose/encode';
 import {generateInteger} from './util';
 import {Model} from '../../model';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';
