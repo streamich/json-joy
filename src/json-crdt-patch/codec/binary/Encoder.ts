@@ -39,7 +39,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
       writer.vu57(id.time);
     }
     const meta = patch.meta;
-    if (meta === undefined) this.writeNull();
+    if (meta === undefined) this.writeUndef();
     else this.writeArr([meta]);
     this.encodeOperations(patch);
     return writer.flush();
@@ -47,26 +47,21 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected encodeOperations(patch: Patch): void {
     const ops = patch.ops;
-    for (let i = 0; i < ops.length; i++) {
-      const op = ops[i];
-      this.encodeOperation(op);
-    }
+    const length = ops.length;
+    this.writer.vu57(length);
+    for (let i = 0; i < length; i++) this.encodeOperation(ops[i]);
   }
 
   protected encodeId(id: ITimestampStruct) {
     const sessionId = id.sid;
     const time = id.time;
     const writer = this.writer;
-    if (sessionId === SESSION.SERVER) {
-      writer.b1vu56(true, id.time);
+    const patchId = this.patchId;
+    if (sessionId === patchId.sid) {
+      writer.b1vu56(true, time);
     } else {
-      const patchId = this.patchId;
-      let vu56: number = 1;
-      let vu57: number = time;
-      if (sessionId === patchId.sid && time >= patchId.time) vu57 = time - patchId.time;
-      else vu56 = sessionId;
-      writer.b1vu56(false, vu56);
-      writer.vu57(vu57);
+      writer.b1vu56(false, sessionId);
+      writer.vu57(time);
     }
   }
 

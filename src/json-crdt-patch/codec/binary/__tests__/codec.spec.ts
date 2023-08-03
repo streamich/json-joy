@@ -184,3 +184,15 @@ test('metadata can be a falsy value', () => {
   const decoded = decode(encoded);
   expect(decoded.meta).toBe(false);
 });
+
+test('metadata can be a null value', () => {
+  const clock = new LogicalClock(12345678, 123);
+  const builder = new PatchBuilder(clock);
+  const constId = builder.const(new Timestamp(555, 666));
+  builder.root(constId);
+  const patch = builder.flush();
+  patch.meta = null;
+  const encoded = encode(patch);
+  const decoded = decode(encoded);
+  expect(decoded.meta).toBe(null);
+});
