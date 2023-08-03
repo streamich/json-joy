@@ -5,14 +5,14 @@ const encoded1 = {
   id: [698, 25],
   ops: [
     {
-      op: 'obj',
+      op: 'new_obj',
     },
     {
-      op: 'val',
+      op: 'new_val',
       value: 1,
     },
     {
-      op: 'bin',
+      op: 'new_bin',
     },
     {
       op: 'ins_bin',
@@ -21,7 +21,7 @@ const encoded1 = {
       value: '0UTYEA==',
     },
     {
-      op: 'val',
+      op: 'new_val',
       value: 2,
     },
     {

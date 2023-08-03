@@ -6,7 +6,7 @@ export interface JsonCodecPatch {
    * ID of the first operation in the patch. IDs of subsequent operations are
    * derived from this ID.
    */
-  id: JsonCodecTimestamp;
+  id: [sessionId: number, time: number];
 
   /**
    * List of operations comprising this patch. Patches are atomic, so all
@@ -78,16 +78,18 @@ export interface JsonCodecOperationBase<T> {
   op: T;
 }
 
+export type NotUndefined<T> = T extends undefined ? never : T;
+
 /**
  * Operations which creates a new "con" Constant data type. Constant CRDT data
  * types are immutable and cannot be changed after creation.
  */
-export interface JsonCodecNewConOperation extends JsonCodecOperationBase<'con'> {
+export interface JsonCodecNewConOperation extends JsonCodecOperationBase<'new_con'> {
   /**
    * Literal JSON value, which can also contain binary data; or, a logical clock
    * timestamp.
    */
-  value: unknown | JsonCodecTimestamp;
+  value?: NotUndefined<unknown> | JsonCodecTimestamp;
 
   /** If true, the `value` is a timestamp. */
   timestamp?: boolean;
@@ -97,7 +99,7 @@ export interface JsonCodecNewConOperation extends JsonCodecOperationBase<'con'> 
  * Operation which creates a new "val" CRDT data type, which is a
  * Last-Write-Wins Register of a pointer to another CRDT data type.
  */
-export interface JsonCodecNewValOperation extends JsonCodecOperationBase<'val'> {
+export interface JsonCodecNewValOperation extends JsonCodecOperationBase<'new_val'> {
   /**
    * ID of the "val" LWW-Register object latest value.
    */
@@ -109,32 +111,32 @@ export interface JsonCodecNewValOperation extends JsonCodecOperationBase<'val'> 
  * key-value pairs. Keys are strings. The values of the map are Last-Write-Wins
  * Registers of pointers to other CRDT data types.
  */
-export type JsonCodecNewObjOperation = JsonCodecOperationBase<'obj'>;
+export type JsonCodecNewObjOperation = JsonCodecOperationBase<'new_obj'>;
 
 /**
  * Operation which creates a new "vec" CRDT data type, which is a vector
  * of indexed contiguously starting from zero. The values of the vector are
  * Last-Write-Wins Registers of pointers to other CRDT data types.
  */
-export type JsonCodecNewVecOperation = JsonCodecOperationBase<'vec'>;
+export type JsonCodecNewVecOperation = JsonCodecOperationBase<'new_vec'>;
 
 /**
  * Operation which creates a new "str" CRDT data type, which is an RGA
  * (Replicated Growable Array) of JavaScript (UTF-16) characters.
  */
-export type JsonCodecNewStrOperation = JsonCodecOperationBase<'str'>;
+export type JsonCodecNewStrOperation = JsonCodecOperationBase<'new_str'>;
 
 /**
  * Operation which creates a new "bin" CRDT data type, which is an RGA
  * (Replicated Growable Array) of binary octet data.
  */
-export type JsonCodecNewBinOperation = JsonCodecOperationBase<'bin'>;
+export type JsonCodecNewBinOperation = JsonCodecOperationBase<'new_bin'>;
 
 /**
  * Operation which creates a new "arr" CRDT data type, which is an RGA
  * (Replicated Growable Array) of immutable pointers to other CRDT data types.
  */
-export type JsonCodecNewArrOperation = JsonCodecOperationBase<'arr'>;
+export type JsonCodecNewArrOperation = JsonCodecOperationBase<'new_arr'>;
 
 /**
  * Inserts contents into a CRDT object. The `obj` property specifies the
@@ -186,10 +188,9 @@ export interface JsonCodecInsVecOperation extends JsonCodecObjectOperation<'ins_
 export interface JsonCodecInsStrOperation extends JsonCodecObjectOperation<'ins_str'> {
   /**
    * Specifies the ID of element after which to attempt to insert the substring
-   * using the RGA algorithm. If `after` is omitted, it means the insertion is
-   * at the start of the string.
+   * using the RGA algorithm.
    */
-  after?: JsonCodecTimestamp;
+  after: JsonCodecTimestamp;
 
   /** The substring to insert in the string. */
   value: string;
@@ -199,10 +200,9 @@ export interface JsonCodecInsStrOperation extends JsonCodecObjectOperation<'ins_
 export interface JsonCodecInsBinOperation extends JsonCodecObjectOperation<'ins_bin'> {
   /**
    * Specifies the ID of element after which to attempt to insert the substring
-   * using the RGA algorithm. If `after` is omitted, it means the insertion is
-   * at the start of the string.
+   * using the RGA algorithm.
    */
-  after?: JsonCodecTimestamp;
+  after: JsonCodecTimestamp;
 
   /** The binary data to insert, encoded using Base64. */
   value: string;
@@ -212,10 +212,9 @@ export interface JsonCodecInsBinOperation extends JsonCodecObjectOperation<'ins_
 export interface JsonCodecInsArrOperation extends JsonCodecObjectOperation<'ins_arr'> {
   /**
    * Specifies the ID of element after which to attempt to insert the elements
-   * using the RGA algorithm. If `after` is omitted, it means the insertion is
-   * at the start of the array.
+   * using the RGA algorithm.
    */
-  after?: JsonCodecTimestamp;
+  after: JsonCodecTimestamp;
 
   /** Values to insert in the array. */
   values: JsonCodecTimestamp[];
