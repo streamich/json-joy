@@ -114,9 +114,9 @@ export class CrdtDecoder extends Reader {
     this.x++;
   }
 
-  public b1vu56(): [flag: boolean, value56: number] {
+  public b1vu56(): [flag: 0 | 1, value56: number] {
     const byte = this.u8();
-    const flag: boolean = !!(byte & 0b10000000);
+    const flag: 0 | 1 = byte & 0b10000000 ? 1 : 0;
     const o1 = 0b0_1_111111 & byte;
     if (o1 <= 0b0_0_111111) return [flag, o1];
     const o2 = this.u8();
