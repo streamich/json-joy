@@ -27,6 +27,7 @@ import {
   JsonCrdtTimestamp,
   TupleJsonCrdtNode,
 } from './types';
+import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Decoder {
   public decode({time, root}: JsonCrdtSnapshot): Model {
@@ -71,6 +72,8 @@ export class Decoder {
         return this.cVal(doc, node);
       case 'const':
         return this.cConst(doc, node);
+      case 'tup':
+        return this.cTup(doc, node);
       case 'bin':
         return this.cBin(doc, node);
     }
@@ -84,6 +87,21 @@ export class Decoder {
     for (const key of keys) {
       const keyNode = node.keys[key];
       obj.put(key, this.cNode(doc, keyNode).id);
+    }
+    doc.index.set(obj);
+    return obj;
+  }
+
+  protected cTup(doc: Model, node: TupleJsonCrdtNode): ArrayLww {
+    const id = this.cTs(node.id);
+    const obj = new ArrayLww(doc, id);
+    const elements = obj.elements;
+    const components = node.components;
+    const length = components.length;
+    for (let i = 0; i < length; i++) {
+      const component = components[i];
+      if (!component) elements.push(undefined);
+      else elements.push(this.cNode(doc, component).id);
     }
     doc.index.set(obj);
     return obj;
