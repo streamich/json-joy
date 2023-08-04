@@ -32,4 +32,9 @@ export interface JsonNode extends Identifiable {
    * an array are container nodes, as they hold other nodes.
    */
   container(): JsonNode | undefined;
+
+  /**
+   * Instance which provides public API for this node.
+   */
+  api: undefined | unknown;
 }

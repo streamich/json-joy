@@ -1579,4 +1579,18 @@ describe('StringRga', () => {
       expect(rga1.view()).toStrictEqual(rga2.view());
     });
   });
+
+  //   describe('events', () => {
+  //     test('calls .onchange on inserts and deletes', () => {
+  //       const rga1 = new StringRga(ts(3, 0));
+  //       let cnt = 0;
+  //       rga1.onchange = () => cnt++;
+  //       rga1.ins(ts(3, 0), ts(1, 2), 'bbbbbbbbbbbbbb');
+  //       expect(cnt).toBe(1);
+  //       rga1.ins(ts(3, 0), ts(1, 30), 'aaaaaaaaa');
+  //       expect(cnt).toBe(2);
+  //       rga1.delete([tss(1, 2, 14)]);
+  //       expect(cnt).toBe(3);
+  //     });
+  //   });
 });

@@ -28,28 +28,12 @@ export class ObjectLww implements JsonNode, Printable {
     return currentId;
   }
 
-  private _view: Readonly<Record<string, unknown>> = {};
-  public view(): Readonly<Record<string, unknown>> {
-    const _toJson = this._view;
-    const obj: Record<string, unknown> = {};
-    let useCache = true;
-    const index = this.doc.index;
-    for (const [key, id] of this.keys.entries()) {
-      const value = index.get(id)!.view();
-      if (value !== undefined) {
-        if (_toJson[key] !== value) useCache = false;
-        obj[key] = value;
-      } else {
-        if (_toJson[key] !== undefined) useCache = false;
-      }
-    }
-    return useCache ? _toJson : (this._view = obj);
-  }
-
   public nodes(callback: (node: JsonNode, key: string) => void) {
     const index = this.doc.index;
     this.keys.forEach((id, key) => callback(index.get(id)!, key));
   }
+
+  // ----------------------------------------------------------------- JsonNode
 
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
@@ -63,6 +47,30 @@ export class ObjectLww implements JsonNode, Printable {
   public container(): JsonNode | undefined {
     return this;
   }
+
+  private _tick: number = 0;
+  private _view: Readonly<Record<string, unknown>> = {};
+  public view(): Readonly<Record<string, unknown>> {
+    const doc = this.doc;
+    const tick = doc.clock.time + doc.tick;
+    const _view = this._view;
+    if (this._tick === tick) return _view;
+    const view: Record<string, unknown> = {};
+    const index = doc.index;
+    let useCache = true;
+    this.keys.forEach((id, key) => {
+      const value = index.get(id)!.view();
+      if (value !== undefined) {
+        if (_view[key] !== value) useCache = false;
+        view[key] = value;
+      } else if (_view[key] !== undefined) useCache = false;
+    });
+    return useCache ? _view : ((this._tick = tick), (this._view = view));
+  }
+
+  public api: undefined | unknown = undefined;
+
+  // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
     const header = this.constructor.name + ' ' + toDisplayString(this.id);

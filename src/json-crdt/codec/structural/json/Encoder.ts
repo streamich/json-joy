@@ -26,6 +26,7 @@ import type {
   JsonCrdtSnapshot,
   TupleJsonCrdtNode,
 } from './types';
+import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Encoder {
   protected model!: Model;
@@ -60,6 +61,7 @@ export class Encoder {
     else if (node instanceof ValueLww) return this.cVal(node);
     else if (node instanceof Const) return this.cConst(node);
     else if (node instanceof BinaryRga) return this.cBin(node);
+    else if (node instanceof ArrayLww) return this.cTup(node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -72,6 +74,23 @@ export class Encoder {
       type: 'obj',
       id: this.cTs(obj.id),
       keys,
+    };
+  }
+
+  public cTup(obj: ArrayLww): TupleJsonCrdtNode {
+    const components: TupleJsonCrdtNode['components'] = [];
+    const elements = obj.elements;
+    const length = elements.length;
+    const index = this.model.index;
+    for (let i = 0; i < length; i++) {
+      const element = elements[i];
+      if (element === undefined) components.push(null);
+      else components.push(this.cNode(index.get(element)!));
+    }
+    return {
+      type: 'tup',
+      id: this.cTs(obj.id),
+      components,
     };
   }
 

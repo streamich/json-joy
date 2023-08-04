@@ -117,7 +117,7 @@ export abstract class AbstractRga<T> {
 
   public abstract view(): unknown;
   protected abstract createChunk(id: ITimestampStruct, content: T | undefined): Chunk<T>;
-  protected abstract onViewChange(): void;
+  protected abstract onChange(): void;
 
   constructor(public readonly id: ITimestampStruct) {}
 
@@ -224,7 +224,7 @@ export abstract class AbstractRga<T> {
   public delete(spans: ITimespanStruct[]): void {
     const length = spans.length;
     for (let i = 0; i < length; i++) this.deleteSpan(spans[i]);
-    this.onViewChange();
+    this.onChange();
   }
 
   protected deleteSpan(span: ITimespanStruct): void {
@@ -501,7 +501,7 @@ export abstract class AbstractRga<T> {
   public setRoot(chunk: Chunk<T>): void {
     this.root = chunk;
     this.insertId(chunk);
-    this.onViewChange();
+    this.onChange();
   }
 
   public insertBefore(chunk: Chunk<T>, before: Chunk<T>): void {
@@ -517,7 +517,7 @@ export abstract class AbstractRga<T> {
     chunk.len = chunk.span + lLen;
     dLen(before, chunk.span);
     this.insertId(chunk);
-    this.onViewChange();
+    this.onChange();
   }
 
   public insertAfter(chunk: Chunk<T>, after: Chunk<T>): void {
@@ -533,7 +533,7 @@ export abstract class AbstractRga<T> {
     chunk.len = chunk.span + rLen;
     dLen(after, chunk.span);
     this.insertId(chunk);
-    this.onViewChange();
+    this.onChange();
   }
 
   protected insertAfterRef(chunk: Chunk<T>, ref: ITimestampStruct, left: Chunk<T>): void {
@@ -570,7 +570,7 @@ export abstract class AbstractRga<T> {
     const span1 = chunk.span;
     chunk.merge(content);
     dLen(chunk, chunk.span - span1);
-    this.onViewChange();
+    this.onChange();
     return;
   }
 
@@ -627,7 +627,7 @@ export abstract class AbstractRga<T> {
     // TODO: perf: could insert these two ids in one go
     this.insertId(at2);
     this.insertIdFast(chunk);
-    this.onViewChange();
+    this.onChange();
   }
 
   protected split(chunk: Chunk<T>, ticks: number): Chunk<T> {

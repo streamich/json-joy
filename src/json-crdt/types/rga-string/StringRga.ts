@@ -60,16 +60,16 @@ export class StringChunk implements Chunk<string> {
 }
 
 export class StringRga extends AbstractRga<string> implements JsonNode {
-  protected create(): StringRga {
-    return new StringRga(this.id);
+  // ----------------------------------------------------------------- JsonNode
+
+  public children() {}
+
+  public child() {
+    return undefined;
   }
 
-  public createChunk(id: ITimestampStruct, str: string | undefined): StringChunk {
-    return new StringChunk(id, str ? str.length : 0, str || '');
-  }
-
-  protected onViewChange(): void {
-    this._view = '';
+  public container(): JsonNode | undefined {
+    return undefined;
   }
 
   private _view: string = '';
@@ -82,13 +82,15 @@ export class StringRga extends AbstractRga<string> implements JsonNode {
     return (this._view = str);
   }
 
-  public children() {}
+  public api: undefined | unknown = undefined;
 
-  public child() {
-    return undefined;
+  // -------------------------------------------------------------- AbstractRga
+
+  public createChunk(id: ITimestampStruct, str: string | undefined): StringChunk {
+    return new StringChunk(id, str ? str.length : 0, str || '');
   }
 
-  public container(): JsonNode | undefined {
-    return undefined;
+  protected onChange(): void {
+    this._view = '';
   }
 }

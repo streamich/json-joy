@@ -68,39 +68,6 @@ export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
     super(id);
   }
 
-  protected create(): ArrayRga {
-    return new ArrayRga(this.doc, this.id);
-  }
-
-  public createChunk(id: ITimestampStruct, data: E[] | undefined): ArrayChunk {
-    return new ArrayChunk(id, data ? data.length : 0, data);
-  }
-
-  protected onViewChange(): void {
-    this._view = Empty;
-  }
-
-  private _view: unknown[] = Empty;
-  public view(): unknown[] {
-    const arr: unknown[] = [];
-    let chunk = this.first();
-    const index = this.doc.index;
-    while (chunk) {
-      if (!chunk.del) for (const node of chunk.data!) arr.push(index.get(node)!.view());
-      chunk = this.next(chunk);
-    }
-    const _view = this._view;
-    if (arr.length !== _view.length) return (this._view = arr);
-    for (let i = 0; i < arr.length; i++) if (arr[i] !== _view[i]) return (this._view = arr);
-    return _view;
-  }
-
-  public children(callback: (node: JsonNode) => void) {
-    const index = this.doc.index;
-    for (let chunk = this.first(); chunk; chunk = this.next(chunk))
-      if (!chunk.del) for (const node of chunk.data!) callback(index.get(node)!);
-  }
-
   public get(position: number): E | undefined {
     const pair = this.findChunk(position);
     if (!pair) return undefined;
@@ -120,6 +87,18 @@ export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
     return chunk.data![offset];
   }
 
+  // -------------------------------------------------------------- AbstractRga
+
+  public createChunk(id: ITimestampStruct, data: E[] | undefined): ArrayChunk {
+    return new ArrayChunk(id, data ? data.length : 0, data);
+  }
+
+  protected onChange(): void {
+    this._view = Empty;
+  }
+
+  // ----------------------------------------------------------------- JsonNode
+
   public child() {
     return undefined;
   }
@@ -127,6 +106,36 @@ export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
   public container(): JsonNode | undefined {
     return this;
   }
+
+  private _tick: number = 0;
+  private _view: unknown[] = Empty;
+  public view(): unknown[] {
+    const doc = this.doc;
+    const tick = doc.clock.time + doc.tick;
+    const _view = this._view;
+    if (this._tick === tick) return _view;
+    const view: unknown[] = [];
+    const index = doc.index;
+    let useCache = true;
+    for (let chunk = this.first(); chunk; chunk = this.next(chunk)) {
+      if (chunk.del) continue;
+      for (const node of chunk.data!) {
+        const element = index.get(node)!.view();
+        if (_view[view.length] !== element) useCache = false;
+        view.push(element);
+      }
+    }
+    if (_view.length !== view.length) useCache = false;
+    return useCache ? _view : ((this._tick = tick), (this._view = view));
+  }
+
+  public children(callback: (node: JsonNode) => void) {
+    const index = this.doc.index;
+    for (let chunk = this.first(); chunk; chunk = this.next(chunk))
+      if (!chunk.del) for (const node of chunk.data!) callback(index.get(node)!);
+  }
+
+  public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
 
