@@ -3,14 +3,13 @@ import {JsonCrdtPatchOpcode} from '../../constants';
 import {CrdtWriter} from '../../util/binary/CrdtEncoder';
 import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import {SESSION} from '../../constants';
 import type {JsonCrdtPatchOperation, Patch} from '../../Patch';
 
 /**
  * JSON CRDT Patch "binary" codec encoder.
  */
 export class Encoder extends CborEncoder<CrdtWriter> {
-  private patchId!: ITimestampStruct;
+  private patchSid: number = 0;
 
   /**
    * Creates a new encoder instance.
@@ -29,15 +28,11 @@ export class Encoder extends CborEncoder<CrdtWriter> {
    */
   public encode(patch: Patch): Uint8Array {
     this.writer.reset();
-    const id = (this.patchId = patch.getId()!);
-    const isServerClock = id.sid === SESSION.SERVER;
+    const id = patch.getId()!;
+    const sid = (this.patchSid = id.sid);
     const writer = this.writer;
-    if (isServerClock) {
-      writer.b1vu56(true, id.time);
-    } else {
-      writer.b1vu56(false, id.sid);
-      writer.vu57(id.time);
-    }
+    writer.vu57(sid);
+    writer.vu57(id.time);
     const meta = patch.meta;
     if (meta === undefined) this.writeUndef();
     else this.writeArr([meta]);
@@ -56,11 +51,10 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const sessionId = id.sid;
     const time = id.time;
     const writer = this.writer;
-    const patchId = this.patchId;
-    if (sessionId === patchId.sid) {
-      writer.b1vu56(true, time);
+    if (sessionId === this.patchSid) {
+      writer.b1vu56(1, time);
     } else {
-      writer.b1vu56(false, sessionId);
+      writer.b1vu56(0, sessionId);
       writer.vu57(time);
     }
   }
