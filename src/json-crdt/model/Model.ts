@@ -114,6 +114,9 @@ export class Model implements Printable {
    */
   public ext: Extensions = new Extensions();
 
+  /** Tracks number of times the `applyPatch` was called. */
+  public tick: number = 0;
+
   public constructor(clock: IVectorClock) {
     this.clock = clock;
     if (!clock.time) clock.time = 1;
