@@ -6,6 +6,8 @@ import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
 
 export class ValueLww implements JsonNode, Printable {
+  public api: undefined | unknown = undefined;
+
   constructor(public readonly doc: Model, public readonly id: ITimestampStruct, public val: ITimestampStruct) {}
 
   public set(val: ITimestampStruct): ITimestampStruct | undefined {
@@ -14,6 +16,8 @@ export class ValueLww implements JsonNode, Printable {
     this.val = val;
     return oldVal;
   }
+
+  // ----------------------------------------------------------------- JsonNode
 
   public node(): JsonNode {
     return this.child()!;
@@ -35,6 +39,8 @@ export class ValueLww implements JsonNode, Printable {
     const child = this.node();
     return child ? child.container() : undefined;
   }
+
+  // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
     const node = this.node();

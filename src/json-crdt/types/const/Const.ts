@@ -10,9 +10,7 @@ import type {Printable} from '../../../util/print/types';
 export class Const implements JsonNode, Printable {
   constructor(public readonly id: ITimestampStruct, public readonly val: unknown | ITimestampStruct) {}
 
-  public view() {
-    return this.val;
-  }
+  // ----------------------------------------------------------------- JsonNode
 
   public children() {}
 
@@ -23,6 +21,14 @@ export class Const implements JsonNode, Printable {
   public container(): JsonNode | undefined {
     return undefined;
   }
+
+  public view() {
+    return this.val;
+  }
+
+  public api: undefined | unknown = undefined;
+
+  // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string): string {
     const val = this.val;

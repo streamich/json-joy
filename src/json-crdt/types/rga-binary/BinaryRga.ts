@@ -63,17 +63,7 @@ export class BinaryChunk implements Chunk<Uint8Array> {
 }
 
 export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode {
-  protected create(): BinaryRga {
-    return new BinaryRga(this.id);
-  }
-
-  public createChunk(id: ITimestampStruct, buf: Uint8Array | undefined): BinaryChunk {
-    return new BinaryChunk(id, buf ? buf.length : 0, buf);
-  }
-
-  protected onViewChange(): void {
-    this._view = null;
-  }
+  // ----------------------------------------------------------------- JsonNode
 
   private _view: null | Uint8Array = null;
   public view(): Uint8Array {
@@ -100,5 +90,17 @@ export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode {
 
   public container(): JsonNode | undefined {
     return undefined;
+  }
+
+  public api: undefined | unknown = undefined;
+
+  // -------------------------------------------------------------- AbstractRga
+
+  public createChunk(id: ITimestampStruct, buf: Uint8Array | undefined): BinaryChunk {
+    return new BinaryChunk(id, buf ? buf.length : 0, buf);
+  }
+
+  protected onChange(): void {
+    this._view = null;
   }
 }
