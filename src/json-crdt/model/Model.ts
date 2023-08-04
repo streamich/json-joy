@@ -27,8 +27,12 @@ import {randomSessionId} from './util';
 import {RootLww} from '../types/lww-root/RootLww';
 import {StringRga} from '../types/rga-string/StringRga';
 import {ValueLww} from '../types/lww-value/ValueLww';
+import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
+import {encode, decode} from '../../json-pack/msgpack/util';
+import {Encoder} from '../codec/structural/json/Encoder';
+import {Decoder} from '../codec/structural/json/Decoder';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
 
