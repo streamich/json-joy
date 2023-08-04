@@ -3,12 +3,12 @@ import {CrdtDecoder} from '../CrdtDecoder';
 
 const encoder = new CrdtWriter();
 const decoder = new CrdtDecoder();
-const encode = (flag: boolean, num: number): Uint8Array => {
+const encode = (flag: 0 | 1, num: number): Uint8Array => {
   encoder.reset();
   encoder.b1vu56(flag, num);
   return encoder.flush();
 };
-const decode = (uint8: Uint8Array): [boolean, number] => {
+const decode = (uint8: Uint8Array): [0 | 1, number] => {
   decoder.reset(uint8);
   return decoder.b1vu56();
 };
@@ -134,7 +134,7 @@ const ints: number[] = [
 test('decodes integers correctly', () => {
   for (let i = 0; i < ints.length; i++) {
     const int = ints[i];
-    expect(decode(encode(true, int))).toEqual([true, int]);
-    expect(decode(encode(false, int))).toEqual([false, int]);
+    expect(decode(encode(1, int))).toEqual([1, int]);
+    expect(decode(encode(0, int))).toEqual([0, int]);
   }
 });

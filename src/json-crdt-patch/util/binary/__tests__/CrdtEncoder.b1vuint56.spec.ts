@@ -3,7 +3,7 @@ import {CrdtWriter} from '../CrdtEncoder';
 const encoder = new CrdtWriter(1);
 const encode = (flag: boolean, num: number): Uint8Array => {
   encoder.reset();
-  encoder.b1vu56(flag, num);
+  encoder.b1vu56(flag ? 1 : 0, num);
   return encoder.flush();
 };
 

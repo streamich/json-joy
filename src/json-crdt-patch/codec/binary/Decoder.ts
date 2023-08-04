@@ -31,8 +31,10 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
   public decode(data: Uint8Array): Patch {
     const reader = this.reader;
     reader.reset(data);
-    const [isServerClock, x] = reader.b1vu56();
-    const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, x) : new VectorClock(x, reader.vu57());
+    const sid = reader.vu57();
+    const time = reader.vu57();
+    const isServerClock = sid === SESSION.SERVER;
+    const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, time) : new VectorClock(sid, time);
     this.patchSid = clock.sid;
     const builder = (this.builder = new PatchBuilder(clock));
     const map = this.val();

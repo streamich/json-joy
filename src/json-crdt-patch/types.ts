@@ -1,4 +1,5 @@
 import type {ITimestampStruct} from './clock';
+import type {JsonCrdtPatchMnemonic} from './codec/verbose';
 import type {Identifiable} from './Identifiable';
 
 /**
@@ -22,7 +23,7 @@ export interface IJsonCrdtPatchOperation extends Identifiable {
   /**
    * User friendly name of the operation.
    */
-  name(): string;
+  name(): JsonCrdtPatchMnemonic;
 
   /**
    * Returns a textual human-readable representation of the operation.

@@ -13,8 +13,8 @@ export class NewConOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'con';
+  public name() {
+    return 'new_con' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -43,8 +43,8 @@ export class NewValOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'val';
+  public name() {
+    return 'new_val' as const;
   }
 
   public toString(): string {
@@ -64,8 +64,8 @@ export class NewObjOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'obj';
+  public name() {
+    return 'new_obj' as const;
   }
 
   public toString(): string {
@@ -85,8 +85,8 @@ export class NewVecOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'vec';
+  public name() {
+    return 'new_vec' as const;
   }
 
   public toString(): string {
@@ -106,8 +106,8 @@ export class NewStrOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'str';
+  public name() {
+    return 'new_str' as const;
   }
 
   public toString(): string {
@@ -127,8 +127,8 @@ export class NewBinOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'bin';
+  public name() {
+    return 'new_bin' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -148,8 +148,8 @@ export class NewArrOp implements IJsonCrdtPatchOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'arr';
+  public name() {
+    return 'new_arr' as const;
   }
 
   public toString(): string {
@@ -173,8 +173,8 @@ export class InsValOp implements IJsonCrdtPatchEditOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'ins_val';
+  public name() {
+    return 'ins_val' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -200,8 +200,8 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'ins_obj';
+  public name() {
+    return 'ins_obj' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -232,8 +232,8 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'ins_vec';
+  public name() {
+    return 'ins_vec' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -265,8 +265,8 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
     return this.data.length;
   }
 
-  public name(): string {
-    return 'ins_str';
+  public name() {
+    return 'ins_str' as const;
   }
 
   public toString(): string {
@@ -293,8 +293,8 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
     return this.data.length;
   }
 
-  public name(): string {
-    return 'ins_bin';
+  public name() {
+    return 'ins_bin' as const;
   }
 
   public toString(tab: string = ''): string {
@@ -334,36 +334,14 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
     return this.data.length;
   }
 
-  public name(): string {
-    return 'ins_arr';
+  public name() {
+    return 'ins_arr' as const;
   }
 
   public toString(): string {
     return `"${this.name()}" ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(
       this.obj,
     )} { ${toDisplayString(this.ref)} ← ${this.data.map(toDisplayString).join(', ')} }`;
-  }
-}
-
-/**
- * Operation which does nothing. Useful for skipping clock cycles, so that
- * operations with a gap in clock can be included in the same patch.
- *
- * @category Operations
- */
-export class NopOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct, public readonly len: number) {}
-
-  public span(): number {
-    return this.len;
-  }
-
-  public name(): string {
-    return 'nop';
-  }
-
-  public toString(): string {
-    return `"${this.name()}" ${toDisplayString(this.id)}!${this.len}`;
   }
 }
 
@@ -389,12 +367,34 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
     return 1;
   }
 
-  public name(): string {
-    return 'del';
+  public name() {
+    return 'del' as const;
   }
 
   public toString(): string {
     const spans = this.what.map((span) => toDisplayString(span) + '!' + span.span).join(', ');
     return `"${this.name()}" ${toDisplayString(this.id)}, obj = ${toDisplayString(this.obj)} { ${spans} }`;
+  }
+}
+
+/**
+ * Operation which does nothing. Useful for skipping clock cycles, so that
+ * operations with a gap in clock can be included in the same patch.
+ *
+ * @category Operations
+ */
+export class NopOp implements IJsonCrdtPatchOperation {
+  constructor(public readonly id: ITimestampStruct, public readonly len: number) {}
+
+  public span(): number {
+    return this.len;
+  }
+
+  public name() {
+    return 'nop' as const;
+  }
+
+  public toString(): string {
+    return `"${this.name()}" ${toDisplayString(this.id)}!${this.len}`;
   }
 }

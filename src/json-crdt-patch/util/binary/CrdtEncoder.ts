@@ -233,11 +233,11 @@ export class CrdtWriter extends Writer {
    *
    * @param num Number to encode as variable length unsigned 56 bit integer.
    */
-  public b1vu56(flag: boolean, num: number) {
+  public b1vu56(flag: 0 | 1, num: number) {
     if (num <= 0b111111) {
-      this.u8((flag ? 0b10000000 : 0b00000000) | num);
+      this.u8((flag << 7) | num);
     } else {
-      const firstByteMask = flag ? 0b11000000 : 0b01000000;
+      const firstByteMask = (flag << 7) | 0b1000000;
       if (num <= 0b1111111_111111) {
         this.ensureCapacity(2);
         const uint8 = this.uint8;

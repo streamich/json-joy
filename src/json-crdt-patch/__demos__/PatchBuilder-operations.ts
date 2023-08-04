@@ -8,6 +8,10 @@
 
 import {PatchBuilder} from '..';
 import {LogicalClock} from '../clock';
+import * as verbose from '../codec/verbose';
+import * as compact from '../codec/compact';
+import * as binary from '../codec/binary';
+import * as cbor from '../../json-pack/cbor/shared';
 
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);
@@ -35,3 +39,14 @@ console.log(builder.patch + '');
 // ├─ "ins_obj" 123.461!1, obj = 123.460
 // │   └─ "foo": 123.456
 // └─ "ins_val" 123.462!1, obj = 0.0, val = 123.460
+
+console.log(JSON.stringify(verbose.encode(builder.patch), null, 2));
+console.log('Size:', JSON.stringify(verbose.encode(builder.patch)).length);
+
+console.log(JSON.stringify(compact.encode(builder.patch), null, 2));
+console.log('Size:', JSON.stringify(compact.encode(builder.patch)).length);
+console.log('Size:', cbor.encode(compact.encode(builder.patch)).length);
+
+console.log(binary.encode(builder.patch));
+console.log(Buffer.from(binary.encode(builder.patch)));
+console.log('Size:', binary.encode(builder.patch).length);
