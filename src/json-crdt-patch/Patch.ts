@@ -8,6 +8,7 @@ import {
   NewArrOp,
   InsValOp,
   InsObjOp,
+  InsVecOp,
   InsStrOp,
   InsBinOp,
   InsArrOp,
@@ -32,6 +33,7 @@ export type JsonCrdtPatchOperation =
   | NewArrOp
   | InsValOp
   | InsObjOp
+  | InsVecOp
   | InsStrOp
   | InsBinOp
   | InsArrOp

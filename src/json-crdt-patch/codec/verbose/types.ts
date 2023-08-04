@@ -73,7 +73,27 @@ export type JsonCodecTimespan = [
   span: number,
 ];
 
-export interface JsonCodecOperationBase<T> {
+/**
+ * Represents a JSON CRDT Patch operation mnemonic.
+ */
+export type JsonCrdtPatchMnemonic =
+  | 'new_con'
+  | 'new_val'
+  | 'new_obj'
+  | 'new_vec'
+  | 'new_str'
+  | 'new_bin'
+  | 'new_arr'
+  | 'ins_val'
+  | 'ins_obj'
+  | 'ins_vec'
+  | 'ins_str'
+  | 'ins_bin'
+  | 'ins_arr'
+  | 'del'
+  | 'nop';
+
+export interface JsonCodecOperationBase<T extends JsonCrdtPatchMnemonic> {
   /** Mnemonic. */
   op: T;
 }
@@ -142,7 +162,7 @@ export type JsonCodecNewArrOperation = JsonCodecOperationBase<'new_arr'>;
  * Inserts contents into a CRDT object. The `obj` property specifies the
  * object on which to perform the operation.
  */
-export interface JsonCodecObjectOperation<T> extends JsonCodecOperationBase<T> {
+export interface JsonCodecObjectOperation<T extends JsonCrdtPatchMnemonic> extends JsonCodecOperationBase<T> {
   /**
    * Object on which to perform the operation.
    *
