@@ -3,11 +3,13 @@ import {
   NewConOp,
   NewObjOp,
   NewValOp,
+  NewVecOp,
   NewStrOp,
   NewBinOp,
   NewArrOp,
   InsValOp,
   InsObjOp,
+  InsVecOp,
   InsStrOp,
   InsBinOp,
   InsArrOp,
@@ -26,9 +28,7 @@ import {RootLww} from '../types/lww-root/RootLww';
 import {StringRga} from '../types/rga-string/StringRga';
 import {ValueLww} from '../types/lww-value/ValueLww';
 import {printTree} from '../../util/print/printTree';
-import {encode, decode} from '../../json-pack/msgpack/util';
-import {Encoder} from '../codec/structural/json/Encoder';
-import {Decoder} from '../codec/structural/json/Decoder';
+import {Extensions} from '../extensions/Extensions';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
 
@@ -104,6 +104,12 @@ export class Model implements Printable {
    */
   public index: NodeIndex<JsonNode> = new NodeIndex<JsonNode>();
 
+  /**
+   * Extensions to the JSON CRDT protocol. Extensions are used to implement
+   * custom data types on top of the JSON CRDT protocol.
+   */
+  public ext: Extensions = new Extensions();
+
   public constructor(clock: IVectorClock) {
     this.clock = clock;
     if (!clock.time) clock.time = 1;
@@ -161,6 +167,20 @@ export class Model implements Printable {
           if (!valueNode) continue;
           if (node.id.time >= tuple[1].time) continue;
           const old = node.put(tuple[0] + '', valueNode.id);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
+    } else if (op instanceof InsVecOp) {
+      const node = index.get(op.obj);
+      const tuples = op.data;
+      const length = tuples.length;
+      if (node instanceof ArrayLww) {
+        for (let i = 0; i < length; i++) {
+          const tuple = tuples[i];
+          const valueNode = index.get(tuple[1]);
+          if (!valueNode) continue;
+          if (node.id.time >= tuple[1].time) continue;
+          const old = node.put(Number(tuple[0]), valueNode.id);
           if (old) this.deleteNodeTree(old);
         }
       }
