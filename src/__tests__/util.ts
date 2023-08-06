@@ -6,3 +6,7 @@ export const until = async (check: () => boolean, pollInterval: number = 1) => {
     await tick(pollInterval);
   } while (true);
 };
+
+const nodeMajorVersion = +process.version.split('.')[0].slice(1);
+
+export const onlyOnNode20 = nodeMajorVersion >= 20 ? describe : describe.skip;
