@@ -1,4 +1,4 @@
-import {DelOp, InsArrOp, InsBinOp, InsStrOp, InsObjOp} from '../../../json-crdt-patch/operations';
+import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
 import {JsonNode} from '../../types';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';

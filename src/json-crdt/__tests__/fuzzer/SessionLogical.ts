@@ -1,10 +1,19 @@
 import {ArrayRga} from '../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../types/rga-binary/BinaryRga';
+import {decode as decodeBinary, encode as encodeBinary} from '../../../json-crdt-patch/codec/binary';
+import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/decode';
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
-import {DelOp, InsArrOp, InsBinOp, InsStrOp, InsObjOp} from '../../../json-crdt-patch/operations';
+import {Decoder as BinaryDecoder} from '../../codec/structural/binary/Decoder';
+import {Decoder as CompactDecoder} from '../../codec/structural/compact/Decoder';
+import {Decoder as JsonDecoder} from '../../codec/structural/json/Decoder';
+import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
+import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeJson} from '../../../json-crdt-patch/codec/verbose/encode';
+import {Encoder as BinaryEncoder} from '../../codec/structural/binary/Encoder';
+import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder';
+import {Encoder as JsonEncoder} from '../../codec/structural/json/Encoder';
 import {generateInteger} from './util';
-import {Model} from '../../model';
+import {Model} from '../..';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
@@ -13,8 +22,15 @@ import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {StringRga} from '../../types/rga-string/StringRga';
 import {interval} from '../../../json-crdt-patch/clock';
 import {ValueLww} from '../../types/lww-value/ValueLww';
-import {Fuzzer} from '../../../util/Fuzzer';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
+import {Fuzzer} from '../../../util/Fuzzer';
+
+const jsonEncoder = new JsonEncoder();
+const jsonDecoder = new JsonDecoder();
+const compactEncoder = new CompactEncoder();
+const compactDecoder = new CompactDecoder();
+const binaryEncoder = new BinaryEncoder();
+const binaryDecoder = new BinaryDecoder();
 
 export class SessionLogical {
   public models: Model[] = [];
@@ -28,11 +44,11 @@ export class SessionLogical {
   public readonly debug = false;
 
   public constructor(public fuzzer: JsonCrdtFuzzer, public concurrency: number) {
-    if (this.debug) this.modelStart = fuzzer.model.toBinary();
+    if (this.debug) this.modelStart = jsonEncoder.encode(fuzzer.model);
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();
       this.models.push(model);
-      if (this.debug) this.modelsStart.push(model.toBinary());
+      if (this.debug) this.modelsStart.push(jsonEncoder.encode(model));
       this.patches.push([]);
       this.patchesSerialized.push([]);
     }
@@ -66,6 +82,8 @@ export class SessionLogical {
     if (this.fuzzer.opts.testCodecs) {
       if (patch.span()) {
         if (randomU32(0, 1)) patch = decodeJson(encodeJson(patch));
+        if (randomU32(0, 1)) patch = decodeCompact(encodeCompact(patch));
+        if (randomU32(0, 1)) patch = decodeBinary(encodeBinary(patch));
       }
     }
     this.patches[peer].push(patch);
@@ -173,7 +191,12 @@ export class SessionLogical {
 
   public synchronize() {
     for (let i = 0; i < this.concurrency; i++) {
-      const model = this.models[i];
+      let model = this.models[i];
+      if (this.fuzzer.opts.testCodecs) {
+        if (randomU32(0, 1)) model = jsonDecoder.decode(jsonEncoder.encode(model));
+        if (randomU32(0, 1)) model = compactDecoder.decode(compactEncoder.encode(model));
+        if (randomU32(0, 1)) model = binaryDecoder.decode(binaryEncoder.encode(model));
+      }
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
         for (const patch of patches) {
@@ -188,6 +211,6 @@ export class SessionLogical {
         this.fuzzer.model.applyPatch(patch);
       }
     }
-    if (this.debug) for (const model of this.models) this.modelsEnd.push(model.toBinary());
+    if (this.debug) for (const model of this.models) this.modelsEnd.push(jsonEncoder.encode(model));
   }
 }
