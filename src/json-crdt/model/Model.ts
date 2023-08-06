@@ -18,8 +18,10 @@ import {
 import {ArrayRga} from '../types/rga-array/ArrayRga';
 import {BinaryRga} from '../types/rga-binary/BinaryRga';
 import {Const} from '../types/const/Const';
+import {encoder, decoder} from '../codec/structural/binary/shared';
 import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
+import {ModelApi} from './api/ModelApi';
 import {NodeIndex} from './NodeIndex';
 import {ObjectLww} from '../types/lww-object/ObjectLww';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
@@ -30,14 +32,8 @@ import {ValueLww} from '../types/lww-value/ValueLww';
 import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
-import {encode, decode} from '../../json-pack/msgpack/util';
-import {Encoder} from '../codec/structural/json/Encoder';
-import {Decoder} from '../codec/structural/json/Decoder';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
-
-const encoder = new Encoder();
-const decoder = new Decoder();
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -86,7 +82,7 @@ export class Model implements Printable {
    * @returns An instance of a model.
    */
   public static fromBinary(data: Uint8Array): Model {
-    return decoder.decode(decode(data as any));
+    return decoder.decode(data);
   }
 
   /**
@@ -114,13 +110,25 @@ export class Model implements Printable {
    */
   public ext: Extensions = new Extensions();
 
-  /** Tracks number of times the `applyPatch` was called. */
-  public tick: number = 0;
-
   public constructor(clock: IVectorClock) {
     this.clock = clock;
     if (!clock.time) clock.time = 1;
   }
+
+  private _api?: ModelApi;
+
+  /**
+   * API for applying changes to the current document.
+   */
+  public get api(): ModelApi {
+    if (!this._api) this._api = new ModelApi(this);
+    return this._api;
+  }
+
+  /** Tracks number of times the `applyPatch` was called. */
+  public tick: number = 0;
+
+  public onchange: undefined | (() => void) = undefined;
 
   public applyBatch(patches: Patch[]) {
     const length = patches.length;
@@ -135,11 +143,16 @@ export class Model implements Printable {
     const ops = patch.ops;
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
+    this.tick++;
+    this.onchange?.();
   }
 
   /**
    * Applies a single operation to the model. All mutations to the model must go
    * through this method.
+   *
+   * For advanced use only, better use `applyPatch` instead. You MUST increment
+   * the `tick` property and call `onchange` after calling this method.
    *
    * @param op Any JSON CRDT Patch operation
    */
@@ -235,6 +248,8 @@ export class Model implements Printable {
     } else if (op instanceof InsBinOp) {
       const node = index.get(op.obj);
       if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
+    } else if (op instanceof NewVecOp) {
+      if (!index.get(op.id)) index.set(new ArrayLww(this, op.id));
     }
   }
 
@@ -257,6 +272,7 @@ export class Model implements Printable {
   public fork(sessionId: number = randomSessionId()): Model {
     const copy = Model.fromBinary(this.toBinary());
     if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
+    copy.ext = this.ext;
     return copy;
   }
 
@@ -279,6 +295,7 @@ export class Model implements Printable {
    */
   public toString(tab: string = ''): string {
     const nl = () => '';
+    const hasExtensions = this.ext.size() > 0;
     return (
       this.constructor.name +
       printTree(tab, [
@@ -287,6 +304,8 @@ export class Model implements Printable {
         (tab) => this.index.toString(tab),
         nl,
         (tab) => this.clock.toString(tab),
+        hasExtensions ? nl : null,
+        hasExtensions ? (tab) => this.ext.toString(tab) : null,
       ])
     );
   }
@@ -296,6 +315,6 @@ export class Model implements Printable {
    * @returns This model encoded in octets.
    */
   public toBinary(): Uint8Array {
-    return encode(encoder.encode(this));
+    return encoder.encode(this);
   }
 }
