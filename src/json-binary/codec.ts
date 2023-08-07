@@ -21,7 +21,7 @@ const parseExtDataUri = (uri: string): JsonPackExtension => {
 /**
  * Replaces strings with Uint8Arrays in-place.
  */
-const unwrapBinary = (value: unknown): unknown => {
+export const unwrapBinary = (value: unknown): unknown => {
   if (!value) return value;
   if (value instanceof Array) {
     const len = value.length;
@@ -89,7 +89,7 @@ export const stringifyBinary = <T extends Uint8Array>(value: T): binary_string<T
  * Replaces Uint8Arrays with strings, returns a new structure,
  * without mutating the original.
  */
-const wrapBinary = (value: unknown): unknown => {
+export const wrapBinary = (value: unknown): unknown => {
   if (!value) return value;
   if (isUint8Array(value)) return stringifyBinary(value);
   if (value instanceof Array) {
