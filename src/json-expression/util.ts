@@ -10,6 +10,7 @@ export const throwOnUndef = (value: unknown, def?: unknown) => {
 };
 
 export const type = (value: unknown): string => {
+  // TODO: Shall "null" be of type "const"?
   if (value === null) return 'null';
   if (value instanceof Array) return 'array';
   return typeof value;
@@ -21,7 +22,7 @@ export const str = (value: unknown): string => {
 };
 
 export const starts = (outer: unknown, inner: unknown): boolean => {
-  return str(outer).indexOf(str(inner)) === 0;
+  return str(outer).startsWith(str(inner), 0);
 };
 
 export const contains = (outer: unknown, inner: unknown): boolean => {
@@ -31,7 +32,7 @@ export const contains = (outer: unknown, inner: unknown): boolean => {
 export const ends = (outer: unknown, inner: unknown): boolean => {
   const o = str(outer);
   const i = str(inner);
-  return o.indexOf(i) === o.length - i.length;
+  return o.endsWith(i);
 };
 
 export const isInContainer = (what: unknown, container: unknown[]): boolean => {
@@ -60,3 +61,5 @@ export const isLiteral = (value: unknown): boolean => {
   if (value instanceof Array) return value.length === 1 && value[0] instanceof Array;
   else return true;
 };
+
+export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);

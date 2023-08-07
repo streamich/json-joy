@@ -1,4 +1,3 @@
-import {deepEqual} from '../../src/json-equal/deepEqual';
 const Benchmark = require('benchmark');
 const os = require('os');
 
@@ -12,7 +11,7 @@ export interface Payload {
   data: unknown;
 }
 
-export interface Benchmark {
+export interface IBenchmark {
   name?: string;
   warmup?: number;
   payloads?: Payload[];
@@ -20,7 +19,7 @@ export interface Benchmark {
   runners: Runner[];
 }
 
-export const runBenchmark = (benchmark: Benchmark) => {
+export const runBenchmark = (benchmark: IBenchmark) => {
   const title = 'Benchmark: ' + (benchmark.name || '[unknown benchmark]');
   console.log('='.repeat(100 - title.length - 2) + ' ' + title);
 

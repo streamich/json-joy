@@ -1,6 +1,6 @@
 // npx ts-node benchmarks/json-pack/bench.cbor.decoding.ts
 
-import {runBenchmark, Benchmark} from '../bench/runBenchmark';
+import {runBenchmark, IBenchmark} from '../bench/runBenchmark';
 import {CborEncoder} from '../../src/json-pack/cbor/CborEncoder';
 import {CborDecoderBase} from '../../src/json-pack/cbor/CborDecoderBase';
 import {payloads} from './payloads';
@@ -15,7 +15,7 @@ const encodedPayloads = payloads.map((payload) => {
   };
 });
 
-const benchmark: Benchmark = {
+const benchmark: IBenchmark = {
   name: 'CBOR Decoding',
   warmup: 1000,
   payloads: encodedPayloads,
