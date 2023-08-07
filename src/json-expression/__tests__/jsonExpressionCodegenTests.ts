@@ -293,6 +293,10 @@ export const jsonExpressionCodegenTests = (
         check(['starts', 'asdf', 'az'], false);
       });
 
+      test('when "inner" operand is literal', () => {
+        check(['starts', ['get', '/a'], 'docu'], true, {a: 'document-123', b: 'doc'});
+      });
+
       test('when operands are expressions', () => {
         check(['starts', ['get', '/a'], ['get', '/b']], true, {a: 'document-123', b: 'doc'});
         check(['starts', ['get', '/a'], 'document-'], true, {a: 'document-123', b: 'doc'});
@@ -323,6 +327,11 @@ export const jsonExpressionCodegenTests = (
         check(['ends', 'asdf', 'df'], true);
         check(['ends', 'asdf', 'f'], true);
         check(['ends', 'asdf', 'f3'], false);
+      });
+
+      test('when "inner" operand is literals', () => {
+        check(['ends', ['get', '/a'], '-123'], true, {a: 'document-123', b: '-123'});
+        expect(() => check(['ends', ['get', '/a'], '-1234'], true, {a: 'document-123', b: '-123'})).toThrow();
       });
 
       test('when operands are expressions', () => {

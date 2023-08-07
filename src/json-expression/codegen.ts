@@ -61,6 +61,7 @@ import {
   betweenEqEq,
 } from './util';
 import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe} from '.';
+import {emitStringMatch} from '../util/codegen/util/helpers';
 
 const isExpression = (expr: unknown): expr is Expr => expr instanceof Array && typeof expr[0] === 'string';
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
@@ -280,9 +281,16 @@ export class JsonExpressionCodegen {
     const [, a, b] = expr;
     const outer = this.onExpression(a);
     const inner = this.onExpression(b);
-    if (outer instanceof Literal && inner instanceof Literal) return new Literal(starts(outer.val, inner.val));
-    this.codegen.link('starts');
-    return new Expression(`starts(${outer}, ${inner})`);
+    if (inner instanceof Literal) {
+      if (outer instanceof Literal) return new Literal(starts(outer.val, inner.val));
+      else {
+        const rOuter = this.codegen.var();
+        return new Expression(`(${rOuter} = ${outer.toString()}, (${emitStringMatch(rOuter, '0', '' + inner.val)}))`);
+      }
+    } else {
+      this.codegen.link('starts');
+      return new Expression(`starts(${outer}, ${inner})`);
+    }
   }
 
   protected onContains(expr: ExprContains): ExpressionResult {
@@ -300,9 +308,24 @@ export class JsonExpressionCodegen {
     const [, a, b] = expr;
     const outer = this.onExpression(a);
     const inner = this.onExpression(b);
-    if (outer instanceof Literal && inner instanceof Literal) return new Literal(ends(outer.val, inner.val));
-    this.codegen.link('ends');
-    return new Expression(`ends(${outer}, ${inner})`);
+    if (inner instanceof Literal) {
+      if (outer instanceof Literal) return new Literal(ends(outer.val, inner.val));
+      else {
+        const rOuter = this.codegen.var();
+        const rStart = this.codegen.var();
+        const match = '' + inner.val;
+        return new Expression(
+          `(${rOuter} = ${outer.toString()}, ${rStart} = ${rOuter}.length - ${match.length}, (${emitStringMatch(
+            rOuter,
+            rStart,
+            match,
+          )}))`,
+        );
+      }
+    } else {
+      this.codegen.link('ends');
+      return new Expression(`ends(${outer}, ${inner})`);
+    }
   }
 
   protected onMatches(expr: ExprMatches): ExpressionResult {

@@ -22,7 +22,7 @@ const toNumber = num;
 export const evaluate = (
   expr: Expr | unknown,
   ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext,
-): any => {
+): unknown => {
   if (!(expr instanceof Array)) return expr;
   if (expr.length === 1 && expr[0] instanceof Array) return expr[0];
 
@@ -73,6 +73,7 @@ export const evaluate = (
     case 'type':
       return type(evaluate(expr[1], ctx));
     case 'defined': {
+      // TODO: rename to "def" or "exists"?
       const pointer = evaluate(expr[1], ctx);
       if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(pointer);
@@ -84,7 +85,7 @@ export const evaluate = (
     case 'num':
       return toNumber(evaluate(expr[1], ctx));
     case 'int':
-      return ~~evaluate(expr[1], ctx);
+      return ~~(evaluate(expr[1], ctx) as any);
     case 'str':
       return str(evaluate(expr[1], ctx));
     case 'starts': {
@@ -188,7 +189,7 @@ export const evaluate = (
       return slash(evaluate(expr[1], ctx), evaluate(expr[2], ctx));
     }
     case '%': {
-      return num(evaluate(expr[1], ctx) % evaluate(expr[2], ctx));
+      return num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
     }
     case 'round': {
       return Math.round(num(evaluate(expr[1], ctx)));

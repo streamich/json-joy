@@ -2,7 +2,7 @@ export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
 export type ExprNotEquals = [fn: '!=' | 'ne', expr1: unknown, expr2: unknown];
 
-export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, els: unknown];
+export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
 export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
 export type ExprOr = [fn: '||' | 'or', ...expressions: unknown[]];
 export type ExprNot = [fn: '!' | 'not', expression: unknown];
@@ -31,11 +31,14 @@ export type ExprBetweenNeNe = [fn: '><', what: unknown, min: unknown, max: unkno
 export type ExprBetweenEqNe = [fn: '=><', what: unknown, min: unknown, max: unknown];
 export type ExprBetweenNeEq = [fn: '><=', what: unknown, min: unknown, max: unknown];
 export type ExprBetweenEqEq = [fn: '=><=', what: unknown, min: unknown, max: unknown];
+
+/** @todo Normalize all of these to accept only 2 arguments. */
 export type ExprMin = [fn: 'min', ...expressions: unknown[]];
 export type ExprMax = [fn: 'max', ...expressions: unknown[]];
 export type ExprPlus = [fn: '+', ...expressions: unknown[]];
 export type ExprMinus = [fn: '-', ...expressions: unknown[]];
 export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
+
 export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
 export type ExprMod = [fn: '%' | 'mod', expr1: unknown, expr2: unknown];
 export type ExprRound = [fn: 'round', expr: unknown];
