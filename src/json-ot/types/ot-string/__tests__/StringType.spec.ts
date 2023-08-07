@@ -1,5 +1,6 @@
-import {validate, append, normalize, apply, compose, transform} from '../StringType';
-import {StringTypeOp} from '../types';
+import {validate, normalize, apply, compose, transform} from '..';
+import {append} from '../util';
+import {StringOp} from '../types';
 
 describe('validate()', () => {
   test('returns 0 on valid op', () => {
@@ -28,7 +29,7 @@ describe('validate()', () => {
 
 describe('append()', () => {
   test('adds components to operation', () => {
-    const op: StringTypeOp = [];
+    const op: StringOp = [];
     append(op, 1);
     expect(op).toStrictEqual([1]);
     append(op, 0);
@@ -89,20 +90,20 @@ describe('apply()', () => {
 
 describe('compose()', () => {
   test('can combine two ops', () => {
-    const op1: StringTypeOp = [1, 'a'];
-    const op2: StringTypeOp = [1, 'b'];
+    const op1: StringOp = [1, 'a'];
+    const op2: StringOp = [1, 'b'];
     const op3 = compose(op1, op2);
     expect(op3).toStrictEqual([1, 'ba']);
   });
 
   test('can delete insert of op1', () => {
-    const op1: StringTypeOp = [1, 'a'];
-    const op2: StringTypeOp = [1, -1, 'b'];
+    const op1: StringOp = [1, 'a'];
+    const op2: StringOp = [1, -1, 'b'];
     const op3 = compose(op1, op2);
     expect(op3).toStrictEqual([1, 'b']);
   });
 
-  type TestCase = [name: string, str: string, op1: StringTypeOp, op2: StringTypeOp, expected: string, only?: boolean];
+  type TestCase = [name: string, str: string, op1: StringOp, op2: StringOp, expected: string, only?: boolean];
 
   const testCases: TestCase[] = [
     ['insert-insert', 'abc', [1, 'a'], [1, 'b'], 'ababc'],
@@ -134,8 +135,8 @@ describe('compose()', () => {
 
 describe('transform()', () => {
   test('can transform two inserts', () => {
-    const op1: StringTypeOp = [1, 'a'];
-    const op2: StringTypeOp = [3, 'b'];
+    const op1: StringOp = [1, 'a'];
+    const op2: StringOp = [3, 'b'];
     const op3 = transform(op1, op2, true);
     const op4 = transform(op2, op1, false);
     expect(op3).toStrictEqual([1, 'a']);
@@ -143,8 +144,8 @@ describe('transform()', () => {
   });
 
   test('insert at the same place', () => {
-    const op1: StringTypeOp = [3, 'a'];
-    const op2: StringTypeOp = [3, 'b'];
+    const op1: StringOp = [3, 'a'];
+    const op2: StringOp = [3, 'b'];
     const op3 = transform(op1, op2, true);
     const op4 = transform(op2, op1, false);
     expect(op3).toStrictEqual([3, 'a']);
@@ -152,15 +153,15 @@ describe('transform()', () => {
   });
 
   test('can transform two deletes', () => {
-    const op1: StringTypeOp = [1, -1];
-    const op2: StringTypeOp = [3, -1];
+    const op1: StringOp = [1, -1];
+    const op2: StringOp = [3, -1];
     const op3 = transform(op1, op2, true);
     const op4 = transform(op2, op1, false);
     expect(op3).toStrictEqual([1, -1]);
     expect(op4).toStrictEqual([2, -1]);
   });
 
-  type TestCase = [name: string, str: string, op1: StringTypeOp, op2: StringTypeOp, expected: string, only?: boolean];
+  type TestCase = [name: string, str: string, op1: StringOp, op2: StringOp, expected: string, only?: boolean];
 
   const testCases: TestCase[] = [
     ['delete-delete', 'abc', [1, -1], [2, -1], 'a'],

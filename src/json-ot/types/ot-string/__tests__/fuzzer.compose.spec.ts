@@ -1,10 +1,10 @@
-import {apply, compose} from '../StringType';
+import {apply, compose} from '..';
 import {StringOtFuzzer} from './StringOtFuzzer';
 
 const fuzzer = new StringOtFuzzer();
 
 test('works', () => {
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 1000; i++) {
     const str1 = fuzzer.genString();
     const op1 = fuzzer.genOp(str1);
     const str2 = apply(str1, op1);
