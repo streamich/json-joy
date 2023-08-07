@@ -1,10 +1,9 @@
 /**
  * - Positive number specifies how many chars to retain.
- * - Negative number specifies how many chars to remove.
- * - String in an array specifies a substring deletion.
+ * - Negative number specifies how many chars to remove
  * - String is a substring insertion.
  */
-export type StringOpComponent = number | [string] | string;
+export type StringOpComponent = number | string;
 
 /**
  * This form of operation encoding results in most efficient

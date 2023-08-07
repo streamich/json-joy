@@ -21,11 +21,7 @@ export class StringOtFuzzer extends Fuzzer {
           off += len;
         },
         () => {
-          if (Math.random() < 0.5) {
-            append(op, -len);
-          } else {
-            append(op, [str.substring(off, off + len)]);
-          }
+          append(op, -len);
           off += len;
         },
         () => {
