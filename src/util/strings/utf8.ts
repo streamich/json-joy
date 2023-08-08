@@ -2,6 +2,8 @@
  * Adopted from: https://github.com/msgpack/msgpack-javascript/blob/main/src/utils/utf8.ts
  * License: https://github.com/msgpack/msgpack-javascript/blob/main/LICENSE
  *
+ * @todo Rename to `utf8Size`.
+ *
  * @param str JavaScript UTF-8 string.
  * @returns Length in bytes.
  */
