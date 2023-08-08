@@ -75,9 +75,6 @@ export class Writer implements IWriter, IWriterGrowable {
     this.x += capacity;
   }
 
-  /**
-   * @deprecated
-   */
   public reset() {
     this.x0 = this.x;
   }
