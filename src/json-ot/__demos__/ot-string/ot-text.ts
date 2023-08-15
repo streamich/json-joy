@@ -3,7 +3,7 @@
 /**
  * Run this demo with:
  *
- *     npx ts-node src/demo/ot-text.ts
+ *     npx ts-node src/json-ot/__demos__/ot-string/ot-text.ts
  */
 
 const {type} = require('ot-text');

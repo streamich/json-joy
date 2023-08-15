@@ -3,10 +3,10 @@
 /**
  * Run this demo with:
  *
- *     npx ts-node demo/json-pointer.ts
+ *     npx ts-node src/json-pointer/__demos__/json-pointer.ts
  */
 
-import {find, unescapeComponent, escapeComponent, parseJsonPointer, formatJsonPointer} from '../json-pointer';
+import {find, unescapeComponent, escapeComponent, parseJsonPointer, formatJsonPointer} from '../../json-pointer';
 
 const doc = {
   foo: {

@@ -1,4 +1,4 @@
-import {definitions, type RouteDefinition} from '../../../../benchmarks/util/router/routes';
+import {definitions, type RouteDefinition} from '../__bench__/routes';
 import {Router} from '../router';
 
 const createRouter = (definitions: RouteDefinition[]) => {

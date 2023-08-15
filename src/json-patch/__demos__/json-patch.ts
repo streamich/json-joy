@@ -3,10 +3,10 @@
 /**
  * Run this demo with:
  *
- *     npx ts-node demo/json-patch.ts
+ *     npx ts-node src/json-patch/__demos__/json-patch.ts
  */
 
-import {applyPatch, Operation} from '../json-patch';
+import {applyPatch, Operation} from '../../json-patch';
 
 const doc = {
   foo: {
