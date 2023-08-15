@@ -13,6 +13,7 @@
     "no-duplicate-imports": false,
     "no-angle-bracket-type-assertion": false,
     "ban-comma-operator": false,
-    "no-unused-expression": false
+    "no-unused-expression": false,
+    "no-implicit-dependencies": false
   }
 }
