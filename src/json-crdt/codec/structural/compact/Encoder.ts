@@ -10,8 +10,8 @@ import {SESSION} from '../../../../json-crdt-patch/constants';
 import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
 import {Code} from '../../../../json-crdt-patch/codec/compact/constants';
 import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import type {Model} from '../../../model';
+import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Encoder {
   protected time?: number;
