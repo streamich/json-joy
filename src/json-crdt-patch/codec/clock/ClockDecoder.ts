@@ -13,17 +13,6 @@ export class ClockDecoder {
     return decoder;
   }
 
-  public static from(reader: CrdtDecoder): ClockDecoder {
-    const length = reader.vu57();
-    const tuple = reader.u53vu39();
-    const decoder = new ClockDecoder(tuple[0], tuple[1]);
-    for (let i = 2; i < length; i += 2) {
-      const tuple = reader.u53vu39();
-      decoder.pushTuple(tuple[0], tuple[1]);
-    }
-    return decoder;
-  }
-
   public constructor(sid: number, time: number) {
     this.clock = new VectorClock(sid, time + 1);
     this.table.push(ts(sid, time));
