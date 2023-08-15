@@ -29,22 +29,12 @@ export class ClockTable {
   public readonly bySid: Map<number, ClockTableEntry> = new Map<number, ClockTableEntry>();
   public readonly byIdx: ITimestampStruct[] = [];
 
-  public reset() {
-    this.bySid.clear();
-    this.byIdx.length = 0;
-  }
-
   public parseField(field: `${string}_${string}`): ITimestampStruct {
     const underscoreIndex = field.indexOf('_');
     const relativeSid = parseInt(field.slice(0, underscoreIndex), 36);
     const time = parseInt(field.slice(underscoreIndex + 1), 36);
     const clock = this.byIdx[relativeSid];
     return new Timestamp(clock.sid, time);
-  }
-
-  public relative(id: ITimestampStruct): ITimestampStruct {
-    const relativeSid = this.getBySid(id.sid).index;
-    return new Timestamp(relativeSid, id.time);
   }
 
   public push(id: ITimestampStruct): void {
@@ -60,12 +50,6 @@ export class ClockTable {
     return entry;
   }
 
-  public getByIdx(index: number): ITimestampStruct {
-    const clock = this.byIdx[index];
-    if (!clock) throw new Error('CLOCK_NOT_FOUND');
-    return clock;
-  }
-
   public write(writer: CrdtWriter): void {
     const table = this.byIdx;
     const length = table.length;
@@ -73,20 +57,6 @@ export class ClockTable {
     for (let i = 0; i < length; i++) {
       const clock = table[i];
       writer.u53vu39(clock.sid, clock.time);
-    }
-  }
-
-  public read(reader: CrdtDecoder): void {
-    const length = reader.vu39();
-    const bySid = this.bySid;
-    const byIdx = this.byIdx;
-    for (let i = 0; i < length; i++) {
-      const [sid, time] = reader.u53vu39();
-      const index = byIdx.length;
-      const clock = new Timestamp(sid, time);
-      const entry = new ClockTableEntry(index, clock);
-      byIdx.push(clock);
-      bySid.set(sid, entry);
     }
   }
 }

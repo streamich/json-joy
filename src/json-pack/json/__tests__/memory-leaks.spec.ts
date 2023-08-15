@@ -2,7 +2,7 @@ import {Writer} from '../../../util/buffers/Writer';
 import {JsonValue} from '../../types';
 import {JsonEncoder} from '../JsonEncoder';
 import {parse} from '../../../json-binary';
-import largeJson from '../../../../benchmarks/data/json-very-large-object';
+import largeJson from '../../../__bench__/data/json-very-large-object';
 
 const writer = new Writer(1024 * 64);
 const encoder = new JsonEncoder(writer);

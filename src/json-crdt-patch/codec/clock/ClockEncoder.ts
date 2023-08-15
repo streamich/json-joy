@@ -20,12 +20,6 @@ export class ClockEncoder {
     this.table.set(clock.sid, entry);
   }
 
-  public getIndex(sid: number): number {
-    const entry = this.table.get(sid);
-    if (!entry) throw new Error('CLOCK_NOT_FOUND');
-    return entry.index;
-  }
-
   public append(ts: ITimestampStruct): RelativeTimestamp {
     const time = ts.time;
     const sid = ts.sid;
@@ -47,14 +41,5 @@ export class ClockEncoder {
       out.push(clock.sid, clock.time);
     });
     return out;
-  }
-
-  public write(writer: CrdtWriter): void {
-    const table = this.table;
-    writer.vu57(table.size);
-    table.forEach((entry) => {
-      const clock = entry.clock;
-      writer.u53vu39(clock.sid, clock.time);
-    });
   }
 }

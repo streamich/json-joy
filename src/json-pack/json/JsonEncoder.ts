@@ -13,13 +13,6 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
     return writer.flush();
   }
 
-  public encodeFast(value: unknown): Slice {
-    const writer = this.writer;
-    writer.reset();
-    this.writeAny(value);
-    return writer.flushSlice();
-  }
-
   public writeAny(value: unknown): void {
     switch (typeof value) {
       case 'boolean':
