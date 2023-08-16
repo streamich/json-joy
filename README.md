@@ -22,10 +22,10 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - [__Website__](https://jsonjoy.com)
 - [__Documentation__](https://jsonjoy.com/libs/json-joy-js)
 - [__Blog posts__](https://jsonjoy.com/blog)
-  - [*Fuzz Testing RGA CRDT*](https://jsonjoy.com/blog/fuzz-testing-rga-crdt) &mdash; Making sure collaborative text editing works correctly
-  - [*Benchmarking JSON Serialization Codecs*](https://jsonjoy.com/blog/json-codec-benchmarks) &mdash; High performance MessagePack, CBOR, JSON, and UBJSON codecs for JavaScript
-  - [*List CRDT Benchmarks*](https://jsonjoy.com/blog/list-crdt-benchmarks) &mdash; 100x faster than state-of-art. Benchmarking json-joy against Automerge v2 and Y-libraries
-  - [*Blazing Fast List CRDT*](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm) &mdash; Block-wise RGA algorithm implementation that will power JSON CRDT and other future CRDTs
+  - [*Fuzz Testing RGA CRDT*](https://jsonjoy.com/blog/fuzz-testing-rga-crdt)
+  - [*Benchmarking JSON Serialization Codecs*](https://jsonjoy.com/blog/json-codec-benchmarks)
+  - [*List CRDT Benchmarks*](https://jsonjoy.com/blog/list-crdt-benchmarks)
+  - [*Blazing Fast List CRDT*](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm)
 - [__JSON CRDT__](https://jsonjoy.com/specs/json-crdt) Specification
 - [__JSON CRDT Patch__](https://jsonjoy.com/specs/json-crdt-patch) Specification
 - [__JSON Reactive RPC__](https://jsonjoy.com/specs/json-rx) Specification
@@ -42,7 +42,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - The fastest (HTTP) router implementation in JavaScript.
 - The fastest schema validation implementation in JavaScript.
 - Very fast binary tree (Radix, AVL, Red-black*, Splay) implementations in JavaScript.
-- Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations.
+- Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.
 - Very fast JSON Expression implementation in JavaScript.
 - JSON Reactive RPC protocol (RPC with server push) implementation, for real-time collaborative apps.
 
