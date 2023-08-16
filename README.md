@@ -8,6 +8,11 @@
   <br />
 </div>
 
+
+# json-joy
+
+[![npm version](https://badge.fury.io/js/json-joy.svg)](https://badge.fury.io/js/json-joy)
+
 [`json-joy`][json-joy] library implements cutting-edge real-time and
 collaborative editing algorithms and other utilities for JSON data models.
 Major focus of `json-joy` is development of the JSON CRDT protocol, a
