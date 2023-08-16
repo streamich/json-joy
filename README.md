@@ -8,7 +8,7 @@
   <br />
 </div>
 
-[`json-joy``][json-joy] library implements cutting-edge real-time and
+[`json-joy`][json-joy] library implements cutting-edge real-time and
 collaborative editing algorithms and other utilities for JSON data models.
 Major focus of `json-joy` is development of the JSON CRDT protocol, a
 Conflict-free Replicated Data Type that enables seamless
