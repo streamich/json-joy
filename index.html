@@ -23,53 +23,22 @@
 </div>
 
 
-<a id="md:json-joy" class="tsd-anchor"></a><h1><a href="#md:json-joy"><strong>json-joy</strong></a></h1><p><a href="https://jsonjoy.com">json-joy</a> is dedicated to implementing cutting-edge real-time and
-collaborative editing algorithms. Currently, our focus is on developing the
-JSON CRDT protocol, a Conflict-free Replicated Data Type that enables seamless
+<a id="md:json-joy" class="tsd-anchor"></a><h1><a href="#md:json-joy">json-joy</a></h1><p><a href="https://badge.fury.io/js/json-joy"><img src="https://badge.fury.io/js/json-joy.svg" alt="npm version"></a></p>
+<p><a href="https://jsonjoy.com"><code>json-joy</code></a> library implements cutting-edge real-time and
+collaborative editing algorithms and other utilities for JSON data models.
+Major focus of <code>json-joy</code> is development of the JSON CRDT protocol, a
+Conflict-free Replicated Data Type that enables seamless
 merging of changes in JSON data models, avoiding conflicts between replicas.</p>
-<p>Additionally, json-joy offers a collection of practical JSON utilities. These
-utilities are designed as stand-alone mini-libraries, allowing you to leverage
-them independently for your specific needs:</p>
 <ul>
-<li><a href="./src/json-binary/README.md"><strong><code>json-binary</code></strong></a> &mdash; JSON serializer and parser with <code>Uint8Array</code> binary data support.</li>
-<li><a href="./src/json-brand/README.md"><strong><code>json-brand</code></strong></a> &mdash; TypeScript <em>branded type</em> for JSON.</li>
-<li><a href="./src/json-clone/README.md"><strong><code>json-clone</code></strong></a> &mdash; JSON deep cloning methods.</li>
-<li><a href="./src/json-expression/README.md"><strong><code>json-expression</code></strong></a> &mdash; implementation of <strong>JSON Expression</strong> language.</li>
-<li><a href="./src/json-pack/README.md"><strong><code>json-pack</code></strong></a> &mdash; Fastest <strong>CBOR</strong>, <strong>MessagePack</strong>, and <strong>UBJSON</strong> codecs in JavaScript.</li>
-<li><a href="./src/json-equal/README.md"><strong><code>json-equal</code></strong></a> &mdash; Fastest JSON deep equal implementations in JavaScript.</li>
-<li><a href="./src/json-patch/docs/json-patch.md"><strong><code>json-patch</code></strong></a> &mdash; Implementation of <strong>JSON Patch+</strong> mutation operations.</li>
-<li><a href="./src/json-pointer/README.md"><strong><code>json-pointer</code></strong></a> &mdash; utilities for locating data in a JSON document using <a href="https://tools.ietf.org/html/rfc6901"><strong>JSON Pointer</strong></a>.</li>
-<li><a href="./src/json-cli/README.md"><strong><code>json-cli</code></strong></a> &mdash; CLI utilities and functional testing suites.</li>
-<li><a href="./src/json-random/README.md"><strong><code>json-random</code></strong></a> &mdash; generate random JSON value.</li>
-<li><a href="./src/json-size/README.md"><strong><code>json-size</code></strong></a> &mdash; calculate the size of serialized JSON object.</li>
-<li><a href="./src/json-type/README.md"><strong><code>json-type</code></strong></a> &mdash; JSON schema builder.</li>
-<li><strong><code>util</code></strong> &mdash;<ul>
-<li><a href="./src/util/base64/README.md"><strong><code>base64</code></strong></a> &mdash; fast isomorphic configurable Base64 encoder.</li>
+<li><a href="https://jsonjoy.com/blog"><strong>Blog</strong></a></li>
+<li><a href="https://jsonjoy.com"><strong>Website</strong></a></li>
+<li><a href="https://jsonjoy.com/libs/json-joy-js"><strong>Documentation</strong></a></li>
+<li><a href="https://jsonjoy.com/specs/json-crdt"><strong>JSON CRDT</strong></a> Specification</li>
+<li><a href="https://jsonjoy.com/specs/json-crdt-patch"><strong>JSON CRDT Patch</strong></a> Specification</li>
+<li><a href="https://jsonjoy.com/specs/json-rx"><strong>JSON Reactive RPC</strong></a> Specification</li>
+<li><a href="https://streamich.github.io/json-joy/"><strong>API Reference</strong></a></li>
+<li><a href="https://streamich.github.io/json-joy/coverage/lcov-report/"><strong>Test coverage</strong></a></li>
 </ul>
-</li>
-</ul>
-<a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage">Usage</a></h2><p>To reduce your browser-side bundle size import directly from the library you use.</p>
-<pre><code class="language-ts"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-2">&#39;json-joy/{lib,es2020,es6,esm}/&lt;library&gt;&#39;</span><span class="hl-1">;</span>
-</code><button>Copy</button></pre>
-<p>For example:</p>
-<pre><code class="language-ts"><span class="hl-0">import</span><span class="hl-1"> {</span><span class="hl-3">deepEqual</span><span class="hl-1">} </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-2">&#39;json-joy/lib/json-equal`</span><span class="hl-4">;</span>
-</code><button>Copy</button></pre>
-<p>All libraries can be imported from one of the below folders:</p>
-<ul>
-<li><code>lib</code> &mdash; ES5 compiled CommonJS code.</li>
-<li><code>es2020</code> &mdash; ES2020 compiled CommonJS code.</li>
-<li><code>es6</code> &mdash; ES6 compiled CommonJS code.</li>
-<li><code>esm</code> &mdash; latest TypeScript compiler supported EcmaScript modules code.</li>
-</ul>
-<a id="md:development" class="tsd-anchor"></a><h2><a href="#md:development">Development</a></h2><p>Run all tests locally:</p>
-<pre><code class="language-bash"><span class="hl-5">yarn</span><span class="hl-1"> </span><span class="hl-2">build</span><br/><span class="hl-5">yarn</span><span class="hl-1"> </span><span class="hl-2">test:all</span>
-</code><button>Copy</button></pre>
-<p>Read more about testing in <a href="./src/__tests__/README.md">Testing README</a>.</p>
-<p>Use <a href="https://www.conventionalcommits.org/en/v1.0.0-beta.4/">Angular-type semantic commit messages</a>
-for commit messages. Those are used in determining the version bump of the
-library for the next release. Optional, you can use <code>git-cz</code> for that:</p>
-<pre><code class="language-bash"><span class="hl-5">npx</span><span class="hl-1"> </span><span class="hl-2">git-cz</span>
-</code><button>Copy</button></pre>
 </div></div>
 <div class="col-sidebar">
 <div class="page-menu">
@@ -92,19 +61,15 @@ library for the next release. Optional, you can use <code>git-cz</code> for that
 <ul>
 <li>
 <ul>
-<li><a href="#md:json-joy"><span>json-<wbr/>joy</span></a></li>
-<li>
-<ul>
-<li><a href="#md:usage"><span>Usage</span></a></li>
-<li><a href="#md:development"><span>Development</span></a></li></ul></li></ul></li></ul></div></details></div>
+<li><a href="#md:json-joy"><span>json-<wbr/>joy</span></a></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>json-<wbr/>joy</span></a>
 <ul class="tsd-small-nested-navigation">
+<li><a href="modules/json_crdt.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt</span></a></li>
 <li><a href="modules/json_crdt_patch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch</span></a></li>
 <li><a href="modules/json_crdt_patch_clock.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch/clock</span></a></li>
 <li><a href="modules/json_crdt_patch_codec_binary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch/codec/binary</span></a></li>
 <li><a href="modules/json_crdt_patch_codec_compact.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch/codec/compact</span></a></li>
-<li><a href="modules/json_crdt_patch_codec_json.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch/codec/json</span></a></li>
 <li><a href="modules/json_patch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>patch</span></a></li>
 <li><a href="modules/json_patch_ot.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>patch-<wbr/>ot</span></a></li>
 <li><a href="modules/json_pointer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>pointer</span></a></li>
