@@ -26,9 +26,9 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
   - [*Benchmarking JSON Serialization Codecs*](https://jsonjoy.com/blog/json-codec-benchmarks)
   - [*List CRDT Benchmarks*](https://jsonjoy.com/blog/list-crdt-benchmarks)
   - [*Blazing Fast List CRDT*](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm)
-- [__JSON CRDT__](https://jsonjoy.com/specs/json-crdt) Specification
-- [__JSON CRDT Patch__](https://jsonjoy.com/specs/json-crdt-patch) Specification
-- [__JSON Reactive RPC__](https://jsonjoy.com/specs/json-rx) Specification
+- [__JSON CRDT__ Specification](https://jsonjoy.com/specs/json-crdt)
+- [__JSON CRDT Patch__ Specification](https://jsonjoy.com/specs/json-crdt-patch)
+- [__JSON Reactive RPC__ Specification](https://jsonjoy.com/specs/json-rx)
 - [__API Reference__](https://streamich.github.io/json-joy/)
 - [__Test coverage__](https://streamich.github.io/json-joy/coverage/lcov-report/)
 
@@ -40,7 +40,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - The fastest text OT (Operational Transformation) implementation in JavaScript.
 - The fastest implementation of CBOR, DAG-CBOR, MessagePack, UBJSON, and JSON codecs in JavaScript.
 - The fastest (HTTP) router implementation in JavaScript.
-- The fastest schema validation implementation in JavaScript.
+- The fastest JSON schema validation implementation in JavaScript.
 - Very fast binary tree (Radix, AVL, Red-black*, Splay) implementations in JavaScript.
 - Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.
 - Very fast JSON Expression implementation in JavaScript.
