@@ -255,7 +255,7 @@ describe('validateSchema()', () => {
   test('validates or', () => {
     const type = t.import({
       __t: 'or',
-      types: [{__t: 'str', ascii: '123' as any}],
+      types: [{__t: 'str', ascii: '123'} as any],
       discriminator: ['!', 0],
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
