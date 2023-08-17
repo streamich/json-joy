@@ -116,7 +116,7 @@ export interface StringSchema extends TType, WithValidator {
 /**
  * Represents a binary type.
  */
-export interface BinarySchema<T extends Schema = any> extends TType, WithValidator {
+export interface BinarySchema<T extends TType = any> extends TType, WithValidator {
   __t: 'bin';
   /** Type of value encoded in the binary data. */
   type: T;
@@ -127,7 +127,7 @@ export interface BinarySchema<T extends Schema = any> extends TType, WithValidat
 /**
  * Represents a JSON array.
  */
-export interface ArraySchema<T extends Schema = any> extends TType, WithValidator {
+export interface ArraySchema<T extends TType = any> extends TType, WithValidator {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
   type: T;
@@ -149,7 +149,7 @@ export interface ConstSchema<V = any> extends TType, WithValidator {
 /**
  * Represents a JSON array.
  */
-export interface TupleSchema<T extends Schema[] = any> extends TType, WithValidator {
+export interface TupleSchema<T extends TType[] = any> extends TType, WithValidator {
   __t: 'tup';
   // types: any[] extends T ? never : T;
   types: T;
@@ -160,7 +160,7 @@ export interface TupleSchema<T extends Schema[] = any> extends TType, WithValida
  * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
 export interface ObjectSchema<
-  Fields extends ObjectFieldSchema<string, Schema>[] | readonly ObjectFieldSchema<string, Schema>[] = any,
+  Fields extends ObjectFieldSchema<string, TType>[] | readonly ObjectFieldSchema<string, TType>[] = any,
 > extends TType,
     WithValidator {
   __t: 'obj';
@@ -198,7 +198,7 @@ export interface ObjectSchema<
 /**
  * Represents a single field of an object.
  */
-export interface ObjectFieldSchema<K extends string = string, V extends Schema = any> extends TType, Display {
+export interface ObjectFieldSchema<K extends string = string, V extends TType = TType> extends TType, Display {
   __t: 'field';
   /** Key name of the field. */
   key: K;
@@ -207,7 +207,7 @@ export interface ObjectFieldSchema<K extends string = string, V extends Schema =
   optional?: boolean;
 }
 
-export interface ObjectOptionalFieldSchema<K extends string = string, V extends Schema = any>
+export interface ObjectOptionalFieldSchema<K extends string = string, V extends TType = TType>
   extends ObjectFieldSchema<K, V> {
   optional: true;
 }
@@ -215,7 +215,7 @@ export interface ObjectOptionalFieldSchema<K extends string = string, V extends 
 /**
  * Reference to another type.
  */
-export interface RefSchema<T extends Schema = Schema> extends TType {
+export interface RefSchema<T extends TType = TType> extends TType {
   __t: 'ref';
 
   /** ID of the type it references. */
@@ -225,7 +225,7 @@ export interface RefSchema<T extends Schema = Schema> extends TType {
 /**
  * Represents a type that is one of a set of types.
  */
-export interface OrSchema<T extends Schema[] = Schema[]> extends TType {
+export interface OrSchema<T extends TType[] = TType[]> extends TType {
   __t: 'or';
 
   /** One or more "one-of" types. */
@@ -234,13 +234,13 @@ export interface OrSchema<T extends Schema[] = Schema[]> extends TType {
   discriminator: Expr;
 }
 
-export interface FunctionSchema<Req extends Schema = Schema, Res extends Schema = Schema> extends TType {
+export interface FunctionSchema<Req extends TType = TType, Res extends TType = TType> extends TType {
   __t: 'fn';
   req: Req;
   res: Res;
 }
 
-export interface FunctionStreamingSchema<Req extends Schema = Schema, Res extends Schema = Schema> extends TType {
+export interface FunctionStreamingSchema<Req extends TType = TType, Res extends TType = TType> extends TType {
   __t: 'fn$';
   req: Req;
   res: Res;

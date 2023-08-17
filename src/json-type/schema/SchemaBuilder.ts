@@ -17,6 +17,7 @@ import {
   TupleSchema,
   FunctionSchema,
   FunctionStreamingSchema,
+  TType,
 } from '.';
 
 export class SchemaBuilder {
@@ -223,7 +224,7 @@ export class SchemaBuilder {
     };
   }
 
-  public Ref<T extends Schema = any>(ref: string): RefSchema<T> {
+  public Ref<T extends TType = any>(ref: string): RefSchema<T> {
     return {
       __t: 'ref',
       ref: ref as string & T,

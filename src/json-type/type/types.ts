@@ -1,7 +1,7 @@
 import type * as schema from '../schema';
 import type * as classes from './classes';
 
-export interface BaseType<S extends schema.Schema> {
+export interface BaseType<S extends schema.TType> {
   getSchema(): S;
 }
 
