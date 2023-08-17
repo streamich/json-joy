@@ -109,7 +109,7 @@ describe('string', () => {
   test.skip('encodes 0xFFFF char string', () => {
     const buf = encode('b'.repeat(0xffff));
     expect(buf.byteLength).toBe(0xffff + 3);
-    const view = new DataView(buf);
+    const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
     expect(view.getUint8(0)).toBe(0xda);
     expect(view.getUint16(1)).toBe(0xffff);
   });
@@ -118,7 +118,7 @@ describe('string', () => {
   test.skip('encodes 2000 char string', () => {
     const buf = encode('ab'.repeat(1000));
     expect(buf.byteLength).toBe(2003);
-    const view = new DataView(buf);
+    const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
     expect(view.getUint8(0)).toBe(0xda);
     expect(view.getUint16(1)).toBe(2000);
   });
