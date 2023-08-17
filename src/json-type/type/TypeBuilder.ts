@@ -169,7 +169,7 @@ export class TypeBuilder {
         return this.Array(this.import(node.type), node);
       case 'obj': {
         return this.Object(
-          ...node.fields.map((f) =>
+          ...node.fields.map((f: any) =>
             f.optional
               ? this.propOpt(f.key, this.import(f.type)).options(f)
               : this.prop(f.key, this.import(f.type)).options(f),

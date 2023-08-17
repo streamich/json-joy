@@ -160,9 +160,7 @@ export interface TupleSchema<T extends Schema[] = any> extends TType, WithValida
  * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
 export interface ObjectSchema<
-  Fields extends ObjectFieldSchema<string, Schema>[] | readonly ObjectFieldSchema<string, Schema>[] =
-    | ObjectFieldSchema<string, Schema>[]
-    | readonly ObjectFieldSchema<string, Schema>[],
+  Fields extends ObjectFieldSchema<string, Schema>[] | readonly ObjectFieldSchema<string, Schema>[] = any,
 > extends TType,
     WithValidator {
   __t: 'obj';
