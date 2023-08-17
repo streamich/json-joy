@@ -271,7 +271,7 @@ export type Schema = JsonSchema | RefSchema | OrSchema | AnySchema | FunctionSch
 
 export type NoT<T extends TType> = Omit<T, '__t'>;
 
-export type TypeOf<T extends Schema> = T extends OrSchema<any>
+export type TypeOf<T> = T extends OrSchema<any>
   ? TypeOfValue<T['types'][number]>
   : T extends RefSchema<infer U>
   ? TypeOf<U>
