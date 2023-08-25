@@ -22,7 +22,7 @@ export type Expression =
   | VariadicExpression<any, any>;
 
 // Arithmetic expressions
-export type ExprArithmetic =
+export type ArithmeticExpression =
   | ExprPlus
   | ExprMinus
   | ExprAsterisk
@@ -61,14 +61,42 @@ export type ExprLog = BinaryExpression<'log'>;
 export type ExprLog10 = UnaryExpression<'log10'>;
 export type ExprPow = BinaryExpression<'pow' | '**' | '^'>;
 
-export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
-export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
-export type ExprNotEquals = [fn: '!=' | 'ne', expr1: unknown, expr2: unknown];
+// Comparison expressions
+export type ComparisonExpression =
+  | ExprEquals
+  | ExprNotEquals
+  | ExprLessThan
+  | ExprLessThanOrEqual
+  | ExprGreaterThan
+  | ExprGreaterThanOrEqual
+  | ExprBetweenNeNe
+  | ExprBetweenEqNe
+  | ExprBetweenNeEq
+  | ExprBetweenEqEq;
 
-export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
+export type ExprEquals = BinaryExpression<'==' | 'eq'>;
+export type ExprNotEquals = BinaryExpression<'!=' | 'ne'>;
+export type ExprLessThan = BinaryExpression<'<'>;
+export type ExprLessThanOrEqual = BinaryExpression<'<='>;
+export type ExprGreaterThan = BinaryExpression<'>'>;
+export type ExprGreaterThanOrEqual = BinaryExpression<'>='>;
+export type ExprBetweenNeNe = TernaryExpression<'><'>;
+export type ExprBetweenEqNe = TernaryExpression<'=><'>;
+export type ExprBetweenNeEq = TernaryExpression<'><='>;
+export type ExprBetweenEqEq = TernaryExpression<'=><='>;
+
+// Logical expressions
+export type BooleanExpression = ExprAnd | ExprOr | ExprNot;
+
 export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
 export type ExprOr = [fn: '||' | 'or', ...expressions: unknown[]];
 export type ExprNot = [fn: '!' | 'not', expression: unknown];
+
+
+export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
+export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
+
+
 
 export type ExprType = [fn: 'type', expression: unknown];
 export type ExprBool = [fn: 'bool', expression: unknown];
@@ -76,34 +104,27 @@ export type ExprNum = [fn: 'num', expression: unknown];
 export type ExprInt = [fn: 'int', expression: unknown];
 export type ExprStr = [fn: 'str', expression: unknown];
 
+// String expressions
 export type ExprStarts = [fn: 'starts', outer: unknown, inner: unknown];
 export type ExprContains = [fn: 'contains', outer: unknown, inner: unknown];
 export type ExprEnds = [fn: 'ends', outer: unknown, inner: unknown];
-export type ExprDefined = [fn: 'defined', path: unknown];
-// export type ExprUndefined = [fn: 'undefined', expression: unknown];
-export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 export type ExprMatches = [fn: 'matches', subject: unknown, pattern: string];
 export type ExprCat = [fn: '.' | 'cat', ...expressions: unknown[]];
 export type ExprSubstr = [fn: 'substr', str: unknown, from: unknown, length?: unknown];
 
-export type ExprLessThan = [fn: '<', expr1: unknown, expr2: unknown];
-export type ExprLessThanOrEqual = [fn: '<=', expr1: unknown, expr2: unknown];
-export type ExprGreaterThan = [fn: '>', expr1: unknown, expr2: unknown];
-export type ExprGreaterThanOrEqual = [fn: '>=', expr1: unknown, expr2: unknown];
-export type ExprBetweenNeNe = [fn: '><', what: unknown, min: unknown, max: unknown];
-export type ExprBetweenEqNe = [fn: '=><', what: unknown, min: unknown, max: unknown];
-export type ExprBetweenNeEq = [fn: '><=', what: unknown, min: unknown, max: unknown];
-export type ExprBetweenEqEq = [fn: '=><=', what: unknown, min: unknown, max: unknown];
+
+export type ExprDefined = [fn: 'defined', path: unknown];
+// export type ExprUndefined = [fn: 'undefined', expression: unknown];
+export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 export type Expr =
-  | ExprArithmetic
+  | ArithmeticExpression
+  | ComparisonExpression
+  | BooleanExpression
   | ExprGet
   | ExprEquals
   | ExprNotEquals
   | ExprIf
-  | ExprAnd
-  | ExprOr
-  | ExprNot
   | ExprType
   | ExprBool
   | ExprNum
@@ -117,15 +138,7 @@ export type Expr =
   | ExprMatches
   | ExprMatches
   | ExprCat
-  | ExprSubstr
-  | ExprLessThan
-  | ExprLessThanOrEqual
-  | ExprGreaterThan
-  | ExprGreaterThanOrEqual
-  | ExprBetweenNeNe
-  | ExprBetweenNeEq
-  | ExprBetweenEqNe
-  | ExprBetweenEqEq;
+  | ExprSubstr;
 
 export interface JsonExpressionExecutionContext {
   data: unknown;
