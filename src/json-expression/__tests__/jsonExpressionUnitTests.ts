@@ -398,5 +398,25 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('pow', () => {
+      const pow = (num: number, base: number) => num ** base;
+
+      test('returns logarithm', () => {
+        check(['pow', ['+', 0, 2], 8], pow(2, 8));
+        check(['pow', 3, 5], pow(3, 5));
+        check(['pow', ['+', 0, 4.4], 6], pow(4.4, 6));
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['pow', ['pow', 2, 2], 5], pow(pow(2, 2), 5));
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['pow'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""pow" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 };

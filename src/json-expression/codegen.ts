@@ -190,6 +190,15 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.log10(+(${a}) || 0)`);
   }
 
+  protected onPow(expr: types.ExprPow): ExpressionResult {
+    util.assertArity('pow', 2, expr);
+    const num = this.onExpression(expr[1]);
+    const base = this.onExpression(expr[1]);
+    if (num instanceof Literal && base instanceof Literal)
+      return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
+  }
+
 
 
 
@@ -600,6 +609,8 @@ export class JsonExpressionCodegen {
         return this.onLog(expr as types.ExprLog);
       case 'log10':
         return this.onLog10(expr as types.ExprLog10);
+      case 'pow':
+        return this.onPow(expr as types.ExprPow);
 
 
       case '=':
