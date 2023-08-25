@@ -585,6 +585,7 @@ export class JsonExpressionCodegen {
       case 'subtract':
         return this.onMinus(expr as types.ExprMinus);
       case '*':
+      case 'multiply':
         return this.onAsterisk(expr as types.ExprAsterisk);
       case '/':
         return this.onSlash(expr as types.ExprSlash);
