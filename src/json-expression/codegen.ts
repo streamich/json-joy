@@ -174,6 +174,13 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.log(+(${a}) || 0)`);
   }
 
+  protected onLog10(expr: types.ExprLog10): ExpressionResult {
+    util.assertArity('log10', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.log10(+(${a}) || 0)`);
+  }
+
 
 
 
@@ -580,6 +587,8 @@ export class JsonExpressionCodegen {
         return this.onExp(expr as types.ExprExp);
       case 'ln':
         return this.onLn(expr as types.ExprLn);
+      case 'log10':
+        return this.onLog10(expr as types.ExprLog10);
 
 
       case '=':

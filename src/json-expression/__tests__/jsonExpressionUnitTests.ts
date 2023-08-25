@@ -359,5 +359,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('log10', () => {
+      test('returns logarithm', () => {
+        check(['log10', ['+', 0, 2]], Math.log10(2));
+        check(['log10', 3], Math.log10(3));
+        check(['log10', ['+', 0, 4.4]], Math.log10(4.4));
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['log10', ['log10', 2]], Math.log10(Math.log10(2)));
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['log10'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""log10" operator expects 1 operands."`,
+        );
+        expect(() => check(['log10', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""log10" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };
