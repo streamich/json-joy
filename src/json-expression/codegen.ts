@@ -174,6 +174,15 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.log(+(${a}) || 0)`);
   }
 
+  protected onLog(expr: types.ExprLog): ExpressionResult {
+    util.assertArity('log', 2, expr);
+    const num = this.onExpression(expr[1]);
+    const base = this.onExpression(expr[1]);
+    if (num instanceof Literal && base instanceof Literal)
+      return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.log(+(${num}) || 0) / Math.log(+(${base}) || 0)`);
+  }
+
   protected onLog10(expr: types.ExprLog10): ExpressionResult {
     util.assertArity('log10', 1, expr);
     const a = this.onExpression(expr[1]);
@@ -587,6 +596,8 @@ export class JsonExpressionCodegen {
         return this.onExp(expr as types.ExprExp);
       case 'ln':
         return this.onLn(expr as types.ExprLn);
+      case 'log':
+        return this.onLog(expr as types.ExprLog);
       case 'log10':
         return this.onLog10(expr as types.ExprLog10);
 

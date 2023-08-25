@@ -83,6 +83,12 @@ export const evaluate = (
       util.assertArity('ln', 1, expr);
       return Math.log(util.num(evaluate(expr[1], ctx)));
     }
+    case 'log': {
+      util.assertArity('log', 2, expr);
+      const num = util.num(evaluate(expr[1], ctx));
+      const base = util.num(evaluate(expr[2], ctx))
+      return Math.log(num) / Math.log(base);
+    }
     case 'log10': {
       util.assertArity('log10', 1, expr);
       return Math.log10(util.num(evaluate(expr[1], ctx)));

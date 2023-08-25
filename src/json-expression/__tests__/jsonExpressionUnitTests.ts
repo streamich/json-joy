@@ -351,9 +351,7 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few arguments', () => {
-        expect(() => check(['ln'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""ln" operator expects 1 operands."`,
-        );
+        expect(() => check(['ln'] as any, 2)).toThrowErrorMatchingInlineSnapshot(`""ln" operator expects 1 operands."`);
         expect(() => check(['ln', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""ln" operator expects 1 operands."`,
         );
@@ -377,6 +375,26 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['log10', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""log10" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('log', () => {
+      const log = (num: number, base: number) => Math.log(num) / Math.log(base);
+
+      test('returns logarithm', () => {
+        check(['log', ['+', 0, 2], 8], log(2, 8));
+        check(['log', 3, 5], log(3, 5));
+        check(['log', ['+', 0, 4.4], 6], log(4.4, 6));
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['log', ['log', 2, 2], 5], log(log(2, 2), 5));
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['log'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""log" operator expects 2 operands."`,
         );
       });
     });
