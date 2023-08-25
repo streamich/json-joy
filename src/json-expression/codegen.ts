@@ -1,93 +1,38 @@
-import type {
-  Expr,
-  ExprAnd,
-  ExprAsterisk,
-  ExprBool,
-  ExprCat,
-  ExprCeil,
-  ExprContains,
-  ExprDefined,
-  ExprEnds,
-  ExprEquals,
-  ExprFloor,
-  ExprGet,
-  ExprGreaterThan,
-  ExprGreaterThanOrEqual,
-  ExprIf,
-  ExprIn,
-  ExprInt,
-  ExprLessThan,
-  ExprLessThanOrEqual,
-  ExprMatches,
-  ExprMax,
-  ExprMin,
-  ExprMinus,
-  ExprMod,
-  ExprNot,
-  ExprNotEquals,
-  ExprNum,
-  ExprOr,
-  ExprPlus,
-  ExprRound,
-  ExprSlash,
-  ExprStarts,
-  ExprStr,
-  ExprSubstr,
-  ExprType,
-  JsonExpressionCodegenContext,
-  JsonExpressionExecutionContext,
-} from './types';
+import * as util from './util';
 import {Codegen} from '../util/codegen/Codegen';
 import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {
-  get,
-  throwOnUndef,
-  str,
-  type,
-  starts,
-  contains,
-  ends,
-  isInContainer,
-  substr,
-  num,
-  slash,
-  isLiteral,
-  betweenNeNe,
-  betweenEqNe,
-  betweenNeEq,
-  betweenEqEq,
-} from './util';
 import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe} from '.';
 import {emitStringMatch} from '../util/codegen/util/helpers';
+import type * as types from './types';
 
-const isExpression = (expr: unknown): expr is Expr => expr instanceof Array && typeof expr[0] === 'string';
+const isExpression = (expr: unknown): expr is types.Expr => expr instanceof Array && typeof expr[0] === 'string';
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
 const linkable = {
-  get,
-  throwOnUndef,
+  get: util.get,
+  throwOnUndef: util.throwOnUndef,
   deepEqual,
-  type,
-  str,
-  starts,
-  contains,
-  ends,
-  isInContainer,
-  substr,
-  slash,
-  betweenNeNe,
-  betweenEqNe,
-  betweenNeEq,
-  betweenEqEq,
+  type: util.type,
+  str: util.str,
+  starts: util.starts,
+  contains: util.contains,
+  ends: util.ends,
+  isInContainer: util.isInContainer,
+  substr: util.substr,
+  slash: util.slash,
+  betweenNeNe: util.betweenNeNe,
+  betweenEqNe: util.betweenEqNe,
+  betweenNeEq: util.betweenNeEq,
+  betweenEqEq: util.betweenEqEq,
 };
 
-export type JsonExpressionFn = (ctx: JsonExpressionExecutionContext) => unknown;
+export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
 
 /**
- * Represents an expression {@link Expr} which was evaluated by codegen and
+ * Represents an expression {@link types.Expr} which was evaluated by codegen and
  * which value is already know at compilation time, hence it can be emitted
  * as a literal.
  */
@@ -100,7 +45,7 @@ class Literal {
 }
 
 /**
- * Represents an expression {@link Expr} which was evaluated by codegen and
+ * Represents an expression {@link types.Expr} which was evaluated by codegen and
  * which value is not yet known at compilation time, hence its value will
  * be evaluated at runtime.
  */
@@ -114,8 +59,8 @@ class Expression {
 
 type ExpressionResult = Literal | Expression;
 
-export interface JsonExpressionCodegenOptions extends JsonExpressionCodegenContext {
-  expression: Expr;
+export interface JsonExpressionCodegenOptions extends types.JsonExpressionCodegenContext {
+  expression: types.Expr;
 }
 
 export class JsonExpressionCodegen {
@@ -130,11 +75,11 @@ export class JsonExpressionCodegen {
     });
   }
 
-  protected onGet(expr: ExprGet): ExpressionResult {
+  protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
     const def = expr[2] === undefined ? undefined : this.onExpression(expr[2]);
-    if (def !== undefined && !isLiteral(expr[2]))
+    if (def !== undefined && !util.isLiteral(expr[2]))
       throw new Error('"get" operator expects a default value to be a literal.');
     this.codegen.link('throwOnUndef');
     if (path instanceof Literal) {
@@ -159,7 +104,7 @@ export class JsonExpressionCodegen {
     return new Expression(`${d}(${expression})`);
   }
 
-  protected onEquals(expr: ExprEquals): ExpressionResult {
+  protected onEquals(expr: types.ExprEquals): ExpressionResult {
     if (expr.length !== 3) throw new Error('"==" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
@@ -170,7 +115,7 @@ export class JsonExpressionCodegen {
     return new Expression(`deepEqual(${a}, ${b})`);
   }
 
-  protected onNotEquals(expr: ExprNotEquals): ExpressionResult {
+  protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
     if (expr.length !== 3) throw new Error('"!=" operator expects two operands.');
     const [, a, b] = expr;
     const res = this.onEquals(['eq', a, b]);
@@ -178,7 +123,7 @@ export class JsonExpressionCodegen {
     return new Expression(`!(${res})`);
   }
 
-  protected onNot(expr: ExprNot): ExpressionResult {
+  protected onNot(expr: types.ExprNot): ExpressionResult {
     if (expr.length > 2) throw new Error('"not" operator expects one operand.');
     const [, a] = expr;
     const res = this.onExpression(a);
@@ -186,7 +131,7 @@ export class JsonExpressionCodegen {
     return new Expression(`!(${res})`);
   }
 
-  protected onIf(expr: ExprIf): ExpressionResult {
+  protected onIf(expr: types.ExprIf): ExpressionResult {
     if (expr.length !== 4) throw new Error('"if" operator expects three operands.');
     const [, a, b, c] = expr;
     const condition = this.onExpression(a);
@@ -194,7 +139,7 @@ export class JsonExpressionCodegen {
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
   }
 
-  protected onAnd(expr: ExprAnd): ExpressionResult {
+  protected onAnd(expr: types.ExprAnd): ExpressionResult {
     if (expr.length <= 2) throw new Error('"and" operator expects at least two operands.');
     const [, ...operands] = expr;
     const expressions: ExpressionResult[] = [];
@@ -214,7 +159,7 @@ export class JsonExpressionCodegen {
     return new Expression(expressions.map((expr) => `!!(${expr})`).join(' && '));
   }
 
-  protected onOr(expr: ExprOr): ExpressionResult {
+  protected onOr(expr: types.ExprOr): ExpressionResult {
     if (expr.length <= 2) throw new Error('"or" operator expects at least two operands.');
     const [, ...operands] = expr;
     const expressions: ExpressionResult[] = [];
@@ -234,16 +179,16 @@ export class JsonExpressionCodegen {
     return new Expression(expressions.map((expr) => `!!(${expr})`).join(' || '));
   }
 
-  protected onType(expr: ExprType): ExpressionResult {
+  protected onType(expr: types.ExprType): ExpressionResult {
     if (expr.length !== 2) throw new Error('"type" operator expects one operand.');
     const [, operand] = expr;
     const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(type(expression.val));
+    if (expression instanceof Literal) return new Literal(util.type(expression.val));
     this.codegen.link('type');
     return new Expression(`type(${expression})`);
   }
 
-  protected onBool(expr: ExprBool): ExpressionResult {
+  protected onBool(expr: types.ExprBool): ExpressionResult {
     if (expr.length !== 2) throw new Error('"bool" operator expects one operand.');
     const [, operand] = expr;
     const expression = this.onExpression(operand);
@@ -251,7 +196,7 @@ export class JsonExpressionCodegen {
     return new Expression(`!!(${expression})`);
   }
 
-  protected onNum(expr: ExprNum): ExpressionResult {
+  protected onNum(expr: types.ExprNum): ExpressionResult {
     if (expr.length !== 2) throw new Error('"num" operator expects one operand.');
     const [, operand] = expr;
     const expression = this.onExpression(operand);
@@ -259,7 +204,7 @@ export class JsonExpressionCodegen {
     return new Expression(`+(${expression}) || 0`);
   }
 
-  protected onInt(expr: ExprInt): ExpressionResult {
+  protected onInt(expr: types.ExprInt): ExpressionResult {
     if (expr.length !== 2) throw new Error('"int" operator expects one operand.');
     const [, operand] = expr;
     const expression = this.onExpression(operand);
@@ -267,22 +212,22 @@ export class JsonExpressionCodegen {
     return new Expression(`+(${expression})`);
   }
 
-  protected onStr(expr: ExprStr): ExpressionResult {
+  protected onStr(expr: types.ExprStr): ExpressionResult {
     if (expr.length !== 2) throw new Error('"str" operator expects one operand.');
     const [, operand] = expr;
     const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(str(expression.val));
+    if (expression instanceof Literal) return new Literal(util.str(expression.val));
     this.codegen.link('str');
     return new Expression(`str(${expression})`);
   }
 
-  protected onStarts(expr: ExprStarts): ExpressionResult {
+  protected onStarts(expr: types.ExprStarts): ExpressionResult {
     if (expr.length !== 3) throw new Error('"starts" operator expects two operands.');
     const [, a, b] = expr;
     const outer = this.onExpression(a);
     const inner = this.onExpression(b);
     if (inner instanceof Literal) {
-      if (outer instanceof Literal) return new Literal(starts(outer.val, inner.val));
+      if (outer instanceof Literal) return new Literal(util.starts(outer.val, inner.val));
       else {
         const rOuter = this.codegen.var();
         return new Expression(`(${rOuter} = ${outer.toString()}, (${emitStringMatch(rOuter, '0', '' + inner.val)}))`);
@@ -293,23 +238,23 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onContains(expr: ExprContains): ExpressionResult {
+  protected onContains(expr: types.ExprContains): ExpressionResult {
     if (expr.length !== 3) throw new Error('"contains" operator expects two operands.');
     const [, a, b] = expr;
     const outer = this.onExpression(a);
     const inner = this.onExpression(b);
-    if (outer instanceof Literal && inner instanceof Literal) return new Literal(contains(outer.val, inner.val));
+    if (outer instanceof Literal && inner instanceof Literal) return new Literal(util.contains(outer.val, inner.val));
     this.codegen.link('contains');
     return new Expression(`contains(${outer}, ${inner})`);
   }
 
-  protected onEnds(expr: ExprEnds): ExpressionResult {
+  protected onEnds(expr: types.ExprEnds): ExpressionResult {
     if (expr.length !== 3) throw new Error('"ends" operator expects two operands.');
     const [, a, b] = expr;
     const outer = this.onExpression(a);
     const inner = this.onExpression(b);
     if (inner instanceof Literal) {
-      if (outer instanceof Literal) return new Literal(ends(outer.val, inner.val));
+      if (outer instanceof Literal) return new Literal(util.ends(outer.val, inner.val));
       else {
         const rOuter = this.codegen.var();
         const rStart = this.codegen.var();
@@ -328,7 +273,7 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onMatches(expr: ExprMatches): ExpressionResult {
+  protected onMatches(expr: types.ExprMatches): ExpressionResult {
     if (expr.length !== 3) throw new Error('"matches" operator expects two operands.');
     const [, a, pattern] = expr;
     if (typeof pattern !== 'string')
@@ -337,13 +282,13 @@ export class JsonExpressionCodegen {
     if (!this.options.createPattern)
       throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
     const fn = this.options.createPattern(pattern);
-    if (subject instanceof Literal) return new Literal(fn(str(subject.val)));
+    if (subject instanceof Literal) return new Literal(fn(util.str(subject.val)));
     const d = this.codegen.linkDependency(fn);
     this.codegen.link('str');
     return new Expression(`${d}(str(${subject}))`);
   }
 
-  protected onDefined(expr: ExprDefined): ExpressionResult {
+  protected onDefined(expr: types.ExprDefined): ExpressionResult {
     if (expr.length > 2) throw new Error('"defined" operator expects one operand.');
     const [, pointer] = expr;
     if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
@@ -353,14 +298,14 @@ export class JsonExpressionCodegen {
     return new Expression(`${d}(data) !== undefined`);
   }
 
-  protected onIn(expr: ExprIn): ExpressionResult {
+  protected onIn(expr: types.ExprIn): ExpressionResult {
     if (expr.length > 3) throw new Error('"in" operator expects two operands.');
     const [, a, b] = expr;
     const container = this.onExpression(b);
     const what = this.onExpression(a);
     if (container instanceof Literal) {
       if (!(container.val instanceof Array)) throw new Error('"in" operator expects second operand to be an array.');
-      if (what instanceof Literal) return new Literal(isInContainer(what.val, container.val));
+      if (what instanceof Literal) return new Literal(util.isInContainer(what.val, container.val));
       if (container.val.length === 0) return new Literal(false);
       if (container.val.length === 1) return this.onExpression(['==', a, toBoxed(container.val[0])]);
     }
@@ -368,7 +313,7 @@ export class JsonExpressionCodegen {
     return new Expression(`isInContainer(${what}, ${container})`);
   }
 
-  protected onCat(expr: ExprCat): ExpressionResult {
+  protected onCat(expr: types.ExprCat): ExpressionResult {
     if (expr.length <= 2) throw new Error('"cat" operator expects at least two operands.');
     const [, ...operands] = expr;
     const expressions = operands.map((operand) => this.onExpression(operand));
@@ -380,52 +325,52 @@ export class JsonExpressionCodegen {
         break;
       }
     }
-    if (areAllLiteral) return new Literal(expressions.map((expr) => str(expr.val)).join(''));
+    if (areAllLiteral) return new Literal(expressions.map((expr) => util.str(expr.val)).join(''));
     this.codegen.link('str');
     const params = expressions.map((expr) => `str(${expr})`);
     return new Expression(params.join(' + '));
   }
 
-  protected onSubstr(expr: ExprSubstr): ExpressionResult {
+  protected onSubstr(expr: types.ExprSubstr): ExpressionResult {
     if (expr.length < 3 || expr.length > 4) throw new Error('"substr" operator expects two or three operands.');
     const str = this.onExpression(expr[1]);
     const from = this.onExpression(expr[2]);
     const length = expr[3] ? this.onExpression(expr[3]) : new Literal(0);
     if (str instanceof Literal && from instanceof Literal && length instanceof Literal)
-      return new Literal(substr(str.val, from.val, length.val));
+      return new Literal(util.substr(str.val, from.val, length.val));
     this.codegen.link('substr');
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
-  protected onLessThan(expr: ExprLessThan): ExpressionResult {
+  protected onLessThan(expr: types.ExprLessThan): ExpressionResult {
     if (expr.length !== 3) throw new Error('"<" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(num(a.val) < num(b.val));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) < util.num(b.val));
     return new Expression(`(+(${a})||0) < (+(${b})||0)`);
   }
 
-  protected onLessThanOrEqual(expr: ExprLessThanOrEqual): ExpressionResult {
+  protected onLessThanOrEqual(expr: types.ExprLessThanOrEqual): ExpressionResult {
     if (expr.length !== 3) throw new Error('"<=" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(num(a.val) <= num(b.val));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) <= util.num(b.val));
     return new Expression(`(+(${a})||0) <= (+(${b})||0)`);
   }
 
-  protected onGreaterThan(expr: ExprGreaterThan): ExpressionResult {
+  protected onGreaterThan(expr: types.ExprGreaterThan): ExpressionResult {
     if (expr.length !== 3) throw new Error('">" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(num(a.val) > num(b.val));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) > util.num(b.val));
     return new Expression(`(+(${a})||0) > (+(${b})||0)`);
   }
 
-  protected onGreaterThanOrEqual(expr: ExprGreaterThanOrEqual): ExpressionResult {
+  protected onGreaterThanOrEqual(expr: types.ExprGreaterThanOrEqual): ExpressionResult {
     if (expr.length !== 3) throw new Error('">=" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(num(a.val) >= num(b.val));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) >= util.num(b.val));
     return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
   }
 
@@ -435,7 +380,7 @@ export class JsonExpressionCodegen {
     const b = this.onExpression(expr[2]);
     const c = this.onExpression(expr[3]);
     if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(betweenNeNe(num(a.val), num(b.val), num(c.val)));
+      return new Literal(util.betweenNeNe(util.num(a.val), util.num(b.val), util.num(c.val)));
     this.codegen.link('betweenNeNe');
     return new Expression(`betweenNeNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
@@ -446,7 +391,7 @@ export class JsonExpressionCodegen {
     const b = this.onExpression(expr[2]);
     const c = this.onExpression(expr[3]);
     if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(betweenEqNe(num(a.val), num(b.val), num(c.val)));
+      return new Literal(util.betweenEqNe(util.num(a.val), util.num(b.val), util.num(c.val)));
     this.codegen.link('betweenEqNe');
     return new Expression(`betweenEqNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
@@ -457,7 +402,7 @@ export class JsonExpressionCodegen {
     const b = this.onExpression(expr[2]);
     const c = this.onExpression(expr[3]);
     if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(betweenNeEq(num(a.val), num(b.val), num(c.val)));
+      return new Literal(util.betweenNeEq(util.num(a.val), util.num(b.val), util.num(c.val)));
     this.codegen.link('betweenNeEq');
     return new Expression(`betweenNeEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
@@ -468,95 +413,95 @@ export class JsonExpressionCodegen {
     const b = this.onExpression(expr[2]);
     const c = this.onExpression(expr[3]);
     if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(betweenEqEq(num(a.val), num(b.val), num(c.val)));
+      return new Literal(util.betweenEqEq(util.num(a.val), util.num(b.val), util.num(c.val)));
     this.codegen.link('betweenEqEq');
     return new Expression(`betweenEqEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onMin(expr: ExprMin): ExpressionResult {
+  protected onMin(expr: types.ExprMin): ExpressionResult {
     if (expr.length < 3) throw new Error('"min" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(num(Math.min(...expressions.map((expr) => expr.val as any))));
+    if (allLiterals) return new Literal(util.num(Math.min(...expressions.map((expr) => expr.val as any))));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.min(${params.join(', ')}) || 0`);
   }
 
-  protected onMax(expr: ExprMax): ExpressionResult {
+  protected onMax(expr: types.ExprMax): ExpressionResult {
     if (expr.length < 3) throw new Error('"max" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(num(Math.max(...expressions.map((expr) => expr.val as any))));
+    if (allLiterals) return new Literal(util.num(Math.max(...expressions.map((expr) => expr.val as any))));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
   }
 
-  protected onPlus(expr: ExprPlus): ExpressionResult {
+  protected onPlus(expr: types.ExprPlus): ExpressionResult {
     if (expr.length < 3) throw new Error('"+" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + num(b.val), 0));
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + util.num(b.val), 0));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     return new Expression(`${params.join(' + ')}`);
   }
 
-  protected onMinus(expr: ExprMinus): ExpressionResult {
+  protected onMinus(expr: types.ExprMinus): ExpressionResult {
     if (expr.length < 3) throw new Error('"-" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - num(b.val), num(expressions[0].val)));
+    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     return new Expression(`${params.join(' - ')}`);
   }
 
-  protected onAsterisk(expr: ExprAsterisk): ExpressionResult {
+  protected onAsterisk(expr: types.ExprAsterisk): ExpressionResult {
     if (expr.length < 3) throw new Error('"*" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * num(b.val), 1));
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * util.num(b.val), 1));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     return new Expression(`${params.join(' * ')}`);
   }
 
-  protected onSlash(expr: ExprSlash): ExpressionResult {
+  protected onSlash(expr: types.ExprSlash): ExpressionResult {
     if (expr.length !== 3) throw new Error('"/" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(slash(a.val, b.val));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.slash(a.val, b.val));
     this.codegen.link('slash');
     return new Expression(`slash(${a}, ${b})`);
   }
 
-  protected onMod(expr: ExprMod): ExpressionResult {
+  protected onMod(expr: types.ExprMod): ExpressionResult {
     if (expr.length !== 3) throw new Error('"%" operator expects two operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(num((a.val as any) % (b.val as any)));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num((a.val as any) % (b.val as any)));
     return new Expression(`+(${a} % ${b}) || 0`);
   }
 
-  protected onRound(expr: ExprRound): ExpressionResult {
+  protected onRound(expr: types.ExprRound): ExpressionResult {
     if (expr.length !== 2) throw new Error('"round" operator expects one operand.');
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.round(num(a.val)));
+    if (a instanceof Literal) return new Literal(Math.round(util.num(a.val)));
     return new Expression(`Math.round(+(${a}) || 0)`);
   }
 
-  protected onCeil(expr: ExprCeil): ExpressionResult {
+  protected onCeil(expr: types.ExprCeil): ExpressionResult {
     if (expr.length !== 2) throw new Error('"ceil" operator expects one operand.');
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.ceil(num(a.val)));
+    if (a instanceof Literal) return new Literal(Math.ceil(util.num(a.val)));
     return new Expression(`Math.ceil(+(${a}) || 0)`);
   }
 
-  protected onFloor(expr: ExprFloor): ExpressionResult {
+  protected onFloor(expr: types.ExprFloor): ExpressionResult {
     if (expr.length !== 2) throw new Error('"floor" operator expects one operand.');
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.floor(num(a.val)));
+    if (a instanceof Literal) return new Literal(Math.floor(util.num(a.val)));
     return new Expression(`Math.floor(+(${a}) || 0)`);
   }
 
-  protected onExpression(expr: Expr | unknown): ExpressionResult {
+  protected onExpression(expr: types.Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
         if (expr.length !== 1 || !(expr[0] instanceof Array))
@@ -567,60 +512,60 @@ export class JsonExpressionCodegen {
     switch (expr[0]) {
       case '=':
       case 'get':
-        return this.onGet(expr as ExprGet);
+        return this.onGet(expr as types.ExprGet);
       case '==':
       case 'eq':
-        return this.onEquals(expr as ExprEquals);
+        return this.onEquals(expr as types.ExprEquals);
       case '!=':
       case 'ne':
-        return this.onNotEquals(expr as ExprNotEquals);
+        return this.onNotEquals(expr as types.ExprNotEquals);
       case '?':
       case 'if':
-        return this.onIf(expr as ExprIf);
+        return this.onIf(expr as types.ExprIf);
       case '&&':
       case 'and':
-        return this.onAnd(expr as ExprAnd);
+        return this.onAnd(expr as types.ExprAnd);
       case '||':
       case 'or':
-        return this.onOr(expr as ExprOr);
+        return this.onOr(expr as types.ExprOr);
       case '!':
       case 'not':
-        return this.onNot(expr as ExprNot);
+        return this.onNot(expr as types.ExprNot);
       case 'type':
-        return this.onType(expr as ExprType);
+        return this.onType(expr as types.ExprType);
       case 'bool':
-        return this.onBool(expr as ExprBool);
+        return this.onBool(expr as types.ExprBool);
       case 'num':
-        return this.onNum(expr as ExprNum);
+        return this.onNum(expr as types.ExprNum);
       case 'int':
-        return this.onInt(expr as ExprInt);
+        return this.onInt(expr as types.ExprInt);
       case 'str':
-        return this.onStr(expr as ExprStr);
+        return this.onStr(expr as types.ExprStr);
       case 'starts':
-        return this.onStarts(expr as ExprStarts);
+        return this.onStarts(expr as types.ExprStarts);
       case 'contains':
-        return this.onContains(expr as ExprContains);
+        return this.onContains(expr as types.ExprContains);
       case 'ends':
-        return this.onEnds(expr as ExprEnds);
+        return this.onEnds(expr as types.ExprEnds);
       case 'matches':
-        return this.onMatches(expr as ExprMatches);
+        return this.onMatches(expr as types.ExprMatches);
       case 'defined':
-        return this.onDefined(expr as ExprDefined);
+        return this.onDefined(expr as types.ExprDefined);
       case 'in':
-        return this.onIn(expr as ExprIn);
+        return this.onIn(expr as types.ExprIn);
       case '.':
       case 'cat':
-        return this.onCat(expr as ExprCat);
+        return this.onCat(expr as types.ExprCat);
       case 'substr':
-        return this.onSubstr(expr as ExprSubstr);
+        return this.onSubstr(expr as types.ExprSubstr);
       case '<':
-        return this.onLessThan(expr as ExprLessThan);
+        return this.onLessThan(expr as types.ExprLessThan);
       case '<=':
-        return this.onLessThanOrEqual(expr as ExprLessThanOrEqual);
+        return this.onLessThanOrEqual(expr as types.ExprLessThanOrEqual);
       case '>':
-        return this.onGreaterThan(expr as ExprGreaterThan);
+        return this.onGreaterThan(expr as types.ExprGreaterThan);
       case '>=':
-        return this.onGreaterThanOrEqual(expr as ExprGreaterThanOrEqual);
+        return this.onGreaterThanOrEqual(expr as types.ExprGreaterThanOrEqual);
       case '><':
         return this.onBetweenNeNe(expr as ExprBetweenNeNe);
       case '=><':
@@ -630,27 +575,27 @@ export class JsonExpressionCodegen {
       case '=><=':
         return this.onBetweenEqEq(expr as ExprBetweenEqEq);
       case 'min':
-        return this.onMin(expr as ExprMin);
+        return this.onMin(expr as types.ExprMin);
       case 'max':
-        return this.onMax(expr as ExprMax);
+        return this.onMax(expr as types.ExprMax);
       case '+':
       case 'add':
-        return this.onPlus(expr as ExprPlus);
+        return this.onPlus(expr as types.ExprPlus);
       case '-':
-        return this.onMinus(expr as ExprMinus);
+        return this.onMinus(expr as types.ExprMinus);
       case '*':
-        return this.onAsterisk(expr as ExprAsterisk);
+        return this.onAsterisk(expr as types.ExprAsterisk);
       case '/':
-        return this.onSlash(expr as ExprSlash);
+        return this.onSlash(expr as types.ExprSlash);
       case '%':
       case 'mod':
-        return this.onMod(expr as ExprMod);
+        return this.onMod(expr as types.ExprMod);
       case 'round':
-        return this.onRound(expr as ExprRound);
+        return this.onRound(expr as types.ExprRound);
       case 'ceil':
-        return this.onCeil(expr as ExprCeil);
+        return this.onCeil(expr as types.ExprCeil);
       case 'floor':
-        return this.onFloor(expr as ExprFloor);
+        return this.onFloor(expr as types.ExprFloor);
     }
     return new Literal(false);
   }
