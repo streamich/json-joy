@@ -425,8 +425,8 @@ export const jsonExpressionUnitTests = (
 
       test('returns logarithm', () => {
         check(['pow', ['+', 0, 2], 8], pow(2, 8));
-        check(['pow', 3, 5], pow(3, 5));
-        check(['pow', ['+', 0, 4.4], 6], pow(4.4, 6));
+        check(['**', 3, 5], pow(3, 5));
+        check(['^', ['+', 0, 4.4], 6], pow(4.4, 6));
       });
 
       test('evaluates sub-expressions', () => {

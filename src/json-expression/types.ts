@@ -59,7 +59,7 @@ export type ExprExp = UnaryExpression<'exp'>;
 export type ExprLn = UnaryExpression<'ln'>;
 export type ExprLog = BinaryExpression<'log'>;
 export type ExprLog10 = UnaryExpression<'log10'>;
-export type ExprPow = BinaryExpression<'pow' | '^'>;
+export type ExprPow = BinaryExpression<'pow' | '**' | '^'>;
 
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];

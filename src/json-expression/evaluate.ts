@@ -95,6 +95,8 @@ export const evaluate = (
       util.assertArity('log10', 1, expr);
       return Math.log10(util.num(evaluate(expr[1], ctx)));
     }
+    case '^':
+    case '**':
     case 'pow': {
       util.assertArity('pow', 2, expr);
       const num = util.num(evaluate(expr[1], ctx));

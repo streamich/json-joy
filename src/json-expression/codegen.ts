@@ -616,6 +616,8 @@ export class JsonExpressionCodegen {
         return this.onLog(expr as types.ExprLog);
       case 'log10':
         return this.onLog10(expr as types.ExprLog10);
+      case '^':
+      case '**':
       case 'pow':
         return this.onPow(expr as types.ExprPow);
       case '=':
