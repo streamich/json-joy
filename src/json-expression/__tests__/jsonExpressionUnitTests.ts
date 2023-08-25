@@ -317,5 +317,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('exp', () => {
+      test('returns exponent', () => {
+        check(['exp', ['+', 0, 2]], Math.exp(2));
+        check(['exp', 3], Math.exp(3));
+        check(['exp', ['+', 0, 4.4]], Math.exp(4.4));
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['exp', ['exp', 2]], Math.exp(Math.exp(2)));
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['exp'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""exp" operator expects 1 operands."`,
+        );
+        expect(() => check(['exp', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""exp" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };

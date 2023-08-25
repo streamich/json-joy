@@ -160,6 +160,13 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.sqrt(+(${a}) || 0)`);
   }
 
+  protected onExp(expr: types.ExprExp): ExpressionResult {
+    util.assertArity('exp', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.exp(+(${a}) || 0)`);
+  }
+
 
 
 
@@ -562,6 +569,8 @@ export class JsonExpressionCodegen {
         return this.onAbs(expr as types.ExprAbs);
       case 'sqrt':
         return this.onSqrt(expr as types.ExprSqrt);
+      case 'exp':
+        return this.onExp(expr as types.ExprExp);
 
       case '=':
       case 'get':

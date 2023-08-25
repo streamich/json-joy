@@ -75,6 +75,10 @@ export const evaluate = (
       util.assertArity('sqrt', 1, expr);
       return Math.sqrt(util.num(evaluate(expr[1], ctx)));
     }
+    case 'exp': {
+      util.assertArity('exp', 1, expr);
+      return Math.exp(util.num(evaluate(expr[1], ctx)));
+    }
 
 
     case '=':
