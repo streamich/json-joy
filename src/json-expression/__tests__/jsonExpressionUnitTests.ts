@@ -32,6 +32,15 @@ export const jsonExpressionUnitTests = (
         check(['add', '2', '2'], 4);
         check(['+', '1', '10.5'], 11.5);
       });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['add', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""+" operator expects at least two operands."`,
+        );
+        expect(() => check(['+', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""+" operator expects at least two operands."`,
+        );
+      });
     });
 
     describe('subtract or -', () => {
@@ -54,6 +63,15 @@ export const jsonExpressionUnitTests = (
         check(['subtract', '2', '2'], 0);
         check(['-', '1', '10.5'], -9.5);
       });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['subtract', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""-" operator expects at least two operands."`,
+        );
+        expect(() => check(['-', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""-" operator expects at least two operands."`,
+        );
+      });
     });
 
     describe('multiply or *', () => {
@@ -75,6 +93,15 @@ export const jsonExpressionUnitTests = (
       test('casts strings to numbers', () => {
         check(['multiply', '2', '2'], 4);
         check(['*', '1', '10.5'], 10.5);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['multiply', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""*" operator expects at least two operands."`,
+        );
+        expect(() => check(['*', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""*" operator expects at least two operands."`,
+        );
       });
     });
 

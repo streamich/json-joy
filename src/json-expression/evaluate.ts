@@ -18,14 +18,17 @@ export const evaluate = (
     // Arithmetic operators
     case '+':
     case 'add': {
+      if (expr.length < 3) throw new Error('"+" operator expects at least two operands.');
       return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) + acc, 0);
     }
     case '-':
     case 'subtract': {
+      if (expr.length < 3) throw new Error('"-" operator expects at least two operands.');
       return expr.slice(2).reduce((acc, e) => acc - util.num(evaluate(e, ctx)), util.num(evaluate(expr[1], ctx)));
     }
     case '*':
     case 'multiply': {
+      if (expr.length < 3) throw new Error('"*" operator expects at least two operands.');
       return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) * acc, 1);
     }
     case '/':
