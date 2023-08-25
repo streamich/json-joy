@@ -50,7 +50,9 @@ export const betweenEqNe = (val: number, min: number, max: number): boolean => v
 export const betweenEqEq = (val: number, min: number, max: number): boolean => val >= min && val <= max;
 
 export const slash = (a: unknown, b: unknown) => {
-  const res = num(a) / num(b);
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) / divisor;
   return Number.isFinite(res) ? res : 0;
 };
 

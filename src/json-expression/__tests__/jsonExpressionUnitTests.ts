@@ -77,5 +77,41 @@ export const jsonExpressionUnitTests = (
         check(['*', '1', '10.5'], 10.5);
       });
     });
+
+    describe('divide or /', () => {
+      test('two operands', () => {
+        check(['divide', 1, 2], 0.5);
+        check(['/', 3, 2], 1.5);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['divide', 1, ['divide', 4, 2]], 0.5);
+        check(['/', 0.5, ['/', 4, 4]], 0.5);
+      });
+
+      test('is variadic', () => {
+        check(['divide', 2, 2, 2, 2], 0.25);
+        check(['/', 32, 2, 4, ['+', 1, 1]], 2);
+      });
+
+      test('casts strings to numbers', () => {
+        check(['divide', '4', '2'], 2);
+        check(['/', '1', '10'], 0.1);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['divide', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""/" operator expects at least two operands."`,
+        );
+        expect(() => check(['/', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""/" operator expects at least two operands."`,
+        );
+      });
+
+      test('throws throws when dividing by zero', () => {
+        expect(() => check(['divide', 1, 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
+        expect(() => check(['/', ['+', 1, 1], 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
+      });
+    });
   });
 };

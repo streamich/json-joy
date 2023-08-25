@@ -4,7 +4,7 @@ import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe} from '.';
+import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe, evaluate} from '.';
 import {emitStringMatch} from '../util/codegen/util/helpers';
 import type * as types from './types';
 
@@ -464,12 +464,14 @@ export class JsonExpressionCodegen {
   }
 
   protected onSlash(expr: types.ExprSlash): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"/" operator expects two operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(util.slash(a.val, b.val));
-    this.codegen.link('slash');
-    return new Expression(`slash(${a}, ${b})`);
+    if (expr.length < 3) throw new Error('"/" operator expects at least two operands.');
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    let last: string = params[0];
+    for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
+    return new Expression(last);
   }
 
   protected onMod(expr: types.ExprMod): ExpressionResult {
@@ -588,6 +590,7 @@ export class JsonExpressionCodegen {
       case 'multiply':
         return this.onAsterisk(expr as types.ExprAsterisk);
       case '/':
+      case 'divide':
         return this.onSlash(expr as types.ExprSlash);
       case '%':
       case 'mod':

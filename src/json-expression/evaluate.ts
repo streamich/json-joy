@@ -1,23 +1,9 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
-import {
-  betweenEqEq,
-  betweenEqNe,
-  betweenNeEq,
-  betweenNeNe,
-  contains,
-  ends,
-  isLiteral,
-  num,
-  slash,
-  starts,
-  str,
-  throwOnUndef,
-  type,
-} from './util';
+import * as util from './util';
 
-const toNumber = num;
+const toNumber = util.num;
 
 export const evaluate = (
   expr: Expr | unknown,
@@ -32,46 +18,51 @@ export const evaluate = (
     // Arithmetic operators
     case '+':
     case 'add': {
-      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) + acc, 0);
+      return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) + acc, 0);
     }
     case '-':
     case 'subtract': {
-      return expr.slice(2).reduce((acc, e) => acc - num(evaluate(e, ctx)), num(evaluate(expr[1], ctx)));
+      return expr.slice(2).reduce((acc, e) => acc - util.num(evaluate(e, ctx)), util.num(evaluate(expr[1], ctx)));
     }
     case '*':
     case 'multiply': {
-      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) * acc, 1);
+      return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) * acc, 1);
+    }
+    case '/':
+    case 'divide': {
+      if (expr.length < 3) throw new Error('"/" operator expects at least two operands.');
+      let result = util.num(evaluate(expr[1], ctx));
+      for (let i = 2; i < expr.length; i++)
+        result = util.slash(result, util.num(evaluate(expr[i], ctx)));
+      return result;
     }
     case 'min': {
-      return Math.min(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
+      return Math.min(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case 'max': {
-      return Math.max(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
-    }
-    case '/': {
-      return slash(evaluate(expr[1], ctx), evaluate(expr[2], ctx));
+      return Math.max(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case '%': {
-      return num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
+      return util.num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
     }
     case 'round': {
-      return Math.round(num(evaluate(expr[1], ctx)));
+      return Math.round(util.num(evaluate(expr[1], ctx)));
     }
     case 'ceil': {
-      return Math.ceil(num(evaluate(expr[1], ctx)));
+      return Math.ceil(util.num(evaluate(expr[1], ctx)));
     }
     case 'floor': {
-      return Math.floor(num(evaluate(expr[1], ctx)));
+      return Math.floor(util.num(evaluate(expr[1], ctx)));
     }
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
-      if (expr[2] !== undefined && !isLiteral(expr[2]))
+      if (expr[2] !== undefined && !util.isLiteral(expr[2]))
         throw new Error('"get" operator expects a default value to be a literal.');
       const def = evaluate(expr[2], ctx);
       if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(pointer);
-      return throwOnUndef(get(ctx.data, toPath(pointer)), def);
+      return util.throwOnUndef(get(ctx.data, toPath(pointer)), def);
     }
     case '==':
     case 'eq': {
@@ -105,7 +96,7 @@ export const evaluate = (
     case 'not':
       return !evaluate(expr[1], ctx);
     case 'type':
-      return type(evaluate(expr[1], ctx));
+      return util.type(evaluate(expr[1], ctx));
     case 'defined': {
       // TODO: rename to "def" or "exists"?
       const pointer = evaluate(expr[1], ctx);
@@ -121,21 +112,21 @@ export const evaluate = (
     case 'int':
       return ~~(evaluate(expr[1], ctx) as any);
     case 'str':
-      return str(evaluate(expr[1], ctx));
+      return util.str(evaluate(expr[1], ctx));
     case 'starts': {
       const subject = evaluate(expr[1], ctx);
       const test = evaluate(expr[2], ctx);
-      return starts(subject, test);
+      return util.starts(subject, test);
     }
     case 'contains': {
       const subject = evaluate(expr[1], ctx);
       const test = evaluate(expr[2], ctx);
-      return contains(subject, test);
+      return util.contains(subject, test);
     }
     case 'ends': {
       const subject = evaluate(expr[1], ctx);
       const test = evaluate(expr[2], ctx);
-      return ends(subject, test);
+      return util.ends(subject, test);
     }
     case 'cat':
     case '.': {
@@ -145,9 +136,9 @@ export const evaluate = (
         .join('');
     }
     case 'substr': {
-      const str2 = str(evaluate(expr[1], ctx));
-      const from = num(evaluate(expr[2], ctx));
-      const length = expr.length > 3 ? num(evaluate(expr[3], ctx)) : undefined;
+      const str2 = util.str(evaluate(expr[1], ctx));
+      const from = util.num(evaluate(expr[2], ctx));
+      const length = expr.length > 3 ? util.num(evaluate(expr[3], ctx)) : undefined;
       return str2.substr(from, length);
     }
     case 'matches': {
@@ -158,51 +149,51 @@ export const evaluate = (
         throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
       const subject = evaluate(a, ctx);
       const fn = ctx.createPattern(pattern);
-      return fn(str(subject));
+      return fn(util.str(subject));
     }
     case '<': {
-      const left = num(evaluate(expr[1], ctx));
-      const right = num(evaluate(expr[2], ctx));
+      const left = util.num(evaluate(expr[1], ctx));
+      const right = util.num(evaluate(expr[2], ctx));
       return left < right;
     }
     case '<=': {
-      const left = num(evaluate(expr[1], ctx));
-      const right = num(evaluate(expr[2], ctx));
+      const left = util.num(evaluate(expr[1], ctx));
+      const right = util.num(evaluate(expr[2], ctx));
       return left <= right;
     }
     case '>': {
-      const left = num(evaluate(expr[1], ctx));
-      const right = num(evaluate(expr[2], ctx));
+      const left = util.num(evaluate(expr[1], ctx));
+      const right = util.num(evaluate(expr[2], ctx));
       return left > right;
     }
     case '>=': {
-      const left = num(evaluate(expr[1], ctx));
-      const right = num(evaluate(expr[2], ctx));
+      const left = util.num(evaluate(expr[1], ctx));
+      const right = util.num(evaluate(expr[2], ctx));
       return left >= right;
     }
     case '><': {
-      const val = num(evaluate(expr[1], ctx));
-      const min = num(evaluate(expr[2], ctx));
-      const max = num(evaluate(expr[3], ctx));
-      return betweenNeNe(val, min, max);
+      const val = util.num(evaluate(expr[1], ctx));
+      const min = util.num(evaluate(expr[2], ctx));
+      const max = util.num(evaluate(expr[3], ctx));
+      return util.betweenNeNe(val, min, max);
     }
     case '=><': {
-      const val = num(evaluate(expr[1], ctx));
-      const min = num(evaluate(expr[2], ctx));
-      const max = num(evaluate(expr[3], ctx));
-      return betweenEqNe(val, min, max);
+      const val = util.num(evaluate(expr[1], ctx));
+      const min = util.num(evaluate(expr[2], ctx));
+      const max = util.num(evaluate(expr[3], ctx));
+      return util.betweenEqNe(val, min, max);
     }
     case '><=': {
-      const val = num(evaluate(expr[1], ctx));
-      const min = num(evaluate(expr[2], ctx));
-      const max = num(evaluate(expr[3], ctx));
-      return betweenNeEq(val, min, max);
+      const val = util.num(evaluate(expr[1], ctx));
+      const min = util.num(evaluate(expr[2], ctx));
+      const max = util.num(evaluate(expr[3], ctx));
+      return util.betweenNeEq(val, min, max);
     }
     case '=><=': {
-      const val = num(evaluate(expr[1], ctx));
-      const min = num(evaluate(expr[2], ctx));
-      const max = num(evaluate(expr[3], ctx));
-      return betweenEqEq(val, min, max);
+      const val = util.num(evaluate(expr[1], ctx));
+      const min = util.num(evaluate(expr[2], ctx));
+      const max = util.num(evaluate(expr[3], ctx));
+      return util.betweenEqEq(val, min, max);
     }
   }
 
