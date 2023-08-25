@@ -338,5 +338,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('ln', () => {
+      test('returns logarithm', () => {
+        check(['ln', ['+', 0, 2]], Math.log(2));
+        check(['ln', 3], Math.log(3));
+        check(['ln', ['+', 0, 4.4]], Math.log(4.4));
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['ln', ['ln', 2]], Math.log(Math.log(2)));
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['ln'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""ln" operator expects 1 operands."`,
+        );
+        expect(() => check(['ln', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""ln" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };
