@@ -222,6 +222,15 @@ export const jsonExpressionUnitTests = (
       test('evaluates sub-expressions', () => {
         check(['round', ['round', 5.8]], 6);
       });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['round'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""round" operator expects 1 operands."`,
+        );
+        expect(() => check(['round', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""round" operator expects 1 operands."`,
+        );
+      });
     });
 
     describe('ceil', () => {
@@ -234,6 +243,15 @@ export const jsonExpressionUnitTests = (
       test('evaluates sub-expressions', () => {
         check(['ceil', ['ceil', 5.8]], 6);
       });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['ceil'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""ceil" operator expects 1 operands."`,
+        );
+        expect(() => check(['ceil', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""ceil" operator expects 1 operands."`,
+        );
+      });
     });
 
     describe('floor', () => {
@@ -245,6 +263,15 @@ export const jsonExpressionUnitTests = (
 
       test('evaluates sub-expressions', () => {
         check(['floor', ['floor', 5.8]], 5);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['floor'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""floor" operator expects 1 operands."`,
+        );
+        expect(() => check(['floor', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""floor" operator expects 1 operands."`,
+        );
       });
     });
   });

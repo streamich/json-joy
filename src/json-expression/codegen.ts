@@ -125,6 +125,30 @@ export class JsonExpressionCodegen {
     return new Expression(last);
   }
 
+  protected onRound(expr: types.ExprRound): ExpressionResult {
+    util.assertArity('round', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(Math.round(util.num(a.val)));
+    return new Expression(`Math.round(+(${a}) || 0)`);
+  }
+
+  protected onCeil(expr: types.ExprCeil): ExpressionResult {
+    util.assertArity('ceil', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(Math.ceil(util.num(a.val)));
+    return new Expression(`Math.ceil(+(${a}) || 0)`);
+  }
+
+  protected onFloor(expr: types.ExprFloor): ExpressionResult {
+    util.assertArity('floor', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(Math.floor(util.num(a.val)));
+    return new Expression(`Math.floor(+(${a}) || 0)`);
+  }
+
+
+
+
   protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
@@ -486,27 +510,6 @@ export class JsonExpressionCodegen {
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
   }
 
-  protected onRound(expr: types.ExprRound): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"round" operator expects one operand.');
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.round(util.num(a.val)));
-    return new Expression(`Math.round(+(${a}) || 0)`);
-  }
-
-  protected onCeil(expr: types.ExprCeil): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"ceil" operator expects one operand.');
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.ceil(util.num(a.val)));
-    return new Expression(`Math.ceil(+(${a}) || 0)`);
-  }
-
-  protected onFloor(expr: types.ExprFloor): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"floor" operator expects one operand.');
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.floor(util.num(a.val)));
-    return new Expression(`Math.floor(+(${a}) || 0)`);
-  }
-
   protected onExpression(expr: types.Expr | unknown): ExpressionResult {
     if (!isExpression(expr)) {
       if (expr instanceof Array) {
@@ -535,6 +538,12 @@ export class JsonExpressionCodegen {
         return this.onMin(expr as types.ExprMin);
       case 'max':
         return this.onMax(expr as types.ExprMax);
+      case 'round':
+        return this.onRound(expr as types.ExprRound);
+      case 'ceil':
+        return this.onCeil(expr as types.ExprCeil);
+      case 'floor':
+        return this.onFloor(expr as types.ExprFloor);
 
       case '=':
       case 'get':
@@ -600,12 +609,6 @@ export class JsonExpressionCodegen {
         return this.onBetweenNeEq(expr as ExprBetweenNeEq);
       case '=><=':
         return this.onBetweenEqEq(expr as ExprBetweenEqEq);
-      case 'round':
-        return this.onRound(expr as types.ExprRound);
-      case 'ceil':
-        return this.onCeil(expr as types.ExprCeil);
-      case 'floor':
-        return this.onFloor(expr as types.ExprFloor);
     }
     return new Literal(false);
   }

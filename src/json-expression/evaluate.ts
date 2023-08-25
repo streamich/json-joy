@@ -56,12 +56,15 @@ export const evaluate = (
       return Math.max(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case 'round': {
+      util.assertArity('round', 1, expr);
       return Math.round(util.num(evaluate(expr[1], ctx)));
     }
     case 'ceil': {
+      util.assertArity('ceil', 1, expr);
       return Math.ceil(util.num(evaluate(expr[1], ctx)));
     }
     case 'floor': {
+      util.assertArity('floor', 1, expr);
       return Math.floor(util.num(evaluate(expr[1], ctx)));
     }
 
