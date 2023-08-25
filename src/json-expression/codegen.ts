@@ -109,6 +109,7 @@ export class JsonExpressionCodegen {
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
     if (allLiterals) return new Literal(evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
+    this.codegen.link('slash');
     let last: string = params[0];
     for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
     return new Expression(last);
@@ -120,6 +121,7 @@ export class JsonExpressionCodegen {
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
     if (allLiterals) return new Literal(evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
+    this.codegen.link('mod');
     let last: string = params[0];
     for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
     return new Expression(last);
@@ -205,9 +207,6 @@ export class JsonExpressionCodegen {
       return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
   }
-
-
-
 
   protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
@@ -620,8 +619,6 @@ export class JsonExpressionCodegen {
         return this.onLog10(expr as types.ExprLog10);
       case 'pow':
         return this.onPow(expr as types.ExprPow);
-
-
       case '=':
       case 'get':
         return this.onGet(expr as types.ExprGet);
