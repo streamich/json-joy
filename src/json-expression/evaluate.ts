@@ -29,6 +29,38 @@ export const evaluate = (
   const fn = expr[0];
 
   switch (fn) {
+    // Arithmetic operators
+    case '+':
+    case 'add': {
+      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) + acc, 0);
+    }
+    case 'min': {
+      return Math.min(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
+    }
+    case 'max': {
+      return Math.max(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
+    }
+    case '-': {
+      return expr.slice(2).reduce((acc, e) => acc - num(evaluate(e, ctx)), num(evaluate(expr[1], ctx)));
+    }
+    case '*': {
+      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) * acc, 1);
+    }
+    case '/': {
+      return slash(evaluate(expr[1], ctx), evaluate(expr[2], ctx));
+    }
+    case '%': {
+      return num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
+    }
+    case 'round': {
+      return Math.round(num(evaluate(expr[1], ctx)));
+    }
+    case 'ceil': {
+      return Math.ceil(num(evaluate(expr[1], ctx)));
+    }
+    case 'floor': {
+      return Math.floor(num(evaluate(expr[1], ctx)));
+    }
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
@@ -169,36 +201,6 @@ export const evaluate = (
       const min = num(evaluate(expr[2], ctx));
       const max = num(evaluate(expr[3], ctx));
       return betweenEqEq(val, min, max);
-    }
-    case 'min': {
-      return Math.min(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
-    }
-    case 'max': {
-      return Math.max(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
-    }
-    case '+': {
-      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) + acc, 0);
-    }
-    case '-': {
-      return expr.slice(2).reduce((acc, e) => acc - num(evaluate(e, ctx)), num(evaluate(expr[1], ctx)));
-    }
-    case '*': {
-      return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) * acc, 1);
-    }
-    case '/': {
-      return slash(evaluate(expr[1], ctx), evaluate(expr[2], ctx));
-    }
-    case '%': {
-      return num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
-    }
-    case 'round': {
-      return Math.round(num(evaluate(expr[1], ctx)));
-    }
-    case 'ceil': {
-      return Math.ceil(num(evaluate(expr[1], ctx)));
-    }
-    case 'floor': {
-      return Math.floor(num(evaluate(expr[1], ctx)));
     }
   }
 

@@ -634,6 +634,7 @@ export class JsonExpressionCodegen {
       case 'max':
         return this.onMax(expr as ExprMax);
       case '+':
+      case 'add':
         return this.onPlus(expr as ExprPlus);
       case '-':
         return this.onMinus(expr as ExprMinus);
