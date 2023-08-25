@@ -176,5 +176,41 @@ export const jsonExpressionUnitTests = (
         expect(() => check(['%', ['+', 1, 1], 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
       });
     });
+
+    describe('min', () => {
+      test('two operands', () => {
+        check(['min', 1, 2], 1);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['min', 5, ['min', 4, 3]], 3);
+      });
+
+      test('is variadic', () => {
+        check(['min', 13, 7, 4, 2], 2);
+      });
+
+      test('casts strings to numbers', () => {
+        check(['min', '4', '2'], 2);
+      });
+    });
+
+    describe('max', () => {
+      test('two operands', () => {
+        check(['max', 1, 2], 2);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['max', 5, ['max', 4, 3]], 5);
+      });
+
+      test('is variadic', () => {
+        check(['max', 13, 7, 4, 2], 13);
+      });
+
+      test('casts strings to numbers', () => {
+        check(['max', '4', '2'], 4);
+      });
+    });
   });
 };

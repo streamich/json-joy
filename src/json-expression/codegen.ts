@@ -423,7 +423,7 @@ export class JsonExpressionCodegen {
     if (expr.length < 3) throw new Error('"min" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(util.num(Math.min(...expressions.map((expr) => expr.val as any))));
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.min(${params.join(', ')}) || 0`);
   }
@@ -432,7 +432,7 @@ export class JsonExpressionCodegen {
     if (expr.length < 3) throw new Error('"max" operator expects at least two operands.');
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(util.num(Math.max(...expressions.map((expr) => expr.val as any))));
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
   }
@@ -516,6 +516,26 @@ export class JsonExpressionCodegen {
       } else return new Literal(expr);
     }
     switch (expr[0]) {
+      case '+':
+      case 'add':
+        return this.onPlus(expr as types.ExprPlus);
+      case '-':
+      case 'subtract':
+        return this.onMinus(expr as types.ExprMinus);
+      case '*':
+      case 'multiply':
+        return this.onAsterisk(expr as types.ExprAsterisk);
+      case '/':
+      case 'divide':
+        return this.onSlash(expr as types.ExprSlash);
+      case '%':
+      case 'mod':
+        return this.onMod(expr as types.ExprMod);
+      case 'min':
+        return this.onMin(expr as types.ExprMin);
+      case 'max':
+        return this.onMax(expr as types.ExprMax);
+
       case '=':
       case 'get':
         return this.onGet(expr as types.ExprGet);
@@ -580,25 +600,6 @@ export class JsonExpressionCodegen {
         return this.onBetweenNeEq(expr as ExprBetweenNeEq);
       case '=><=':
         return this.onBetweenEqEq(expr as ExprBetweenEqEq);
-      case 'min':
-        return this.onMin(expr as types.ExprMin);
-      case 'max':
-        return this.onMax(expr as types.ExprMax);
-      case '+':
-      case 'add':
-        return this.onPlus(expr as types.ExprPlus);
-      case '-':
-      case 'subtract':
-        return this.onMinus(expr as types.ExprMinus);
-      case '*':
-      case 'multiply':
-        return this.onAsterisk(expr as types.ExprAsterisk);
-      case '/':
-      case 'divide':
-        return this.onSlash(expr as types.ExprSlash);
-      case '%':
-      case 'mod':
-        return this.onMod(expr as types.ExprMod);
       case 'round':
         return this.onRound(expr as types.ExprRound);
       case 'ceil':
