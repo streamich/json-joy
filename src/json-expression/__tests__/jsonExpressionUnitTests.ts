@@ -296,5 +296,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('sqrt', () => {
+      test('returns the root', () => {
+        check(['sqrt', ['+', 0, 9]], 3);
+        check(['sqrt', 16], 4);
+        check(['sqrt', ['+', 0, 1]], 1);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['sqrt', ['sqrt', 81]], 3);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['sqrt'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""sqrt" operator expects 1 operands."`,
+        );
+        expect(() => check(['sqrt', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""sqrt" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };
