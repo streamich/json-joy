@@ -74,16 +74,16 @@ export type ComparisonExpression =
   | ExprBetweenNeEq
   | ExprBetweenEqEq;
 
-export type ExprEquals = BinaryExpression<'==' | 'eq'>;
-export type ExprNotEquals = BinaryExpression<'!=' | 'ne'>;
-export type ExprLessThan = BinaryExpression<'<'>;
-export type ExprLessThanOrEqual = BinaryExpression<'<='>;
-export type ExprGreaterThan = BinaryExpression<'>'>;
-export type ExprGreaterThanOrEqual = BinaryExpression<'>='>;
+export type ExprEquals = BinaryExpression<'eq' | '=='>;
+export type ExprNotEquals = BinaryExpression<'ne' | '!='>;
+export type ExprGreaterThan = BinaryExpression<'gt' | '>'>;
+export type ExprGreaterThanOrEqual = BinaryExpression<'ge' | '>='>;
+export type ExprLessThan = BinaryExpression<'lt' | '<'>;
+export type ExprLessThanOrEqual = BinaryExpression<'le' | '<='>;
+export type ExprBetweenEqEq = TernaryExpression<'between' | '=><='>;
 export type ExprBetweenNeNe = TernaryExpression<'><'>;
 export type ExprBetweenEqNe = TernaryExpression<'=><'>;
 export type ExprBetweenNeEq = TernaryExpression<'><='>;
-export type ExprBetweenEqEq = TernaryExpression<'=><='>;
 
 // Logical expressions
 export type BooleanExpression = ExprAnd | ExprOr | ExprNot;
