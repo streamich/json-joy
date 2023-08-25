@@ -108,7 +108,7 @@ test('can infer a simple object type', () => {
   const schema3 = s.Object({
     fields: <const>[s.prop('bar', s.bool)],
   });
-  const schema4 = s.Object([s.prop('baz', s.num), s.propOpt('bazOptional', s.bool)], {});
+  const schema4 = s.Object([s.prop('baz', s.num), s.propOpt('bazOptional', s.bool), s.propOpt('z', s.str)], {});
   type T1 = TypeOf<typeof schema1>;
   type T2 = TypeOf<typeof schema2>;
   type T3 = TypeOf<typeof schema3>;
@@ -166,6 +166,21 @@ test('can infer a simple "fn$" type', () => {
   type T2 = TypeOf<typeof schema2>;
   const val1: T1 = (arg) => arg.pipe(map((x: string) => +x));
   const val2: T2 = () => EMPTY;
+});
+
+test('can infer a complex "fn" type', () => {
+  const req = s.Object(
+    s.prop('id', s.str),
+    s.prop('age', s.num),
+    s.prop('patch', s.Object(s.prop('ops', s.Array(s.Object(s.prop('op', s.str), s.prop('path', s.str)))))),
+  );
+  const res = s.Object(s.prop('id', s.String()));
+  const schema1 = s.Function(req, res);
+  type T1 = TypeOf<typeof schema1>;
+  const val1: T1 = async ({patch, id}) => {
+    const str = patch.ops[0].op + id;
+    return {id: str};
+  };
 });
 
 test('can infer a realistic schema', () => {

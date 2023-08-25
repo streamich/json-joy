@@ -88,7 +88,7 @@ export class Writer implements IWriter, IWriterGrowable {
   public newBuffer(size: number) {
     const uint8 = (this.uint8 = new Uint8Array(size));
     this.size = size;
-    this.view = new DataView(uint8);
+    this.view = new DataView(uint8.buffer);
     this.x = this.x0 = 0;
   }
 

@@ -3,7 +3,7 @@ import type {Mutable} from '../../util/types';
 import type {Display, Identifiable} from './common';
 import type {Expr} from '../../json-expression';
 
-export interface TType extends Display, Partial<Identifiable> {
+export interface TType<Value = unknown> extends Display, Partial<Identifiable> {
   /**
    * "t" is short for "type". Double underscore "__" is borrowed from GraphQL,
    * where they use "__typeName". Values are short strings, such as "str", "num",
@@ -14,14 +14,14 @@ export interface TType extends Display, Partial<Identifiable> {
   /**
    * List of example usages of this type.
    */
-  examples?: TExample[];
+  examples?: TExample<Value>[];
 }
 
 /**
  * An example of how a value of a given type could look like.
  */
-export interface TExample extends Display {
-  value: unknown;
+export interface TExample<Value = unknown> extends Display {
+  value: Value;
 }
 
 /**
@@ -35,21 +35,21 @@ export interface WithValidator {
 /**
  * Represents something of which type is not known.
  */
-export interface AnySchema extends TType, WithValidator {
+export interface AnySchema extends TType<unknown>, WithValidator {
   __t: 'any';
 }
 
 /**
  * Represents a JSON boolean.
  */
-export interface BooleanSchema extends TType, WithValidator {
+export interface BooleanSchema extends TType<boolean>, WithValidator {
   __t: 'bool';
 }
 
 /**
  * Represents a JSON number.
  */
-export interface NumberSchema extends TType, WithValidator {
+export interface NumberSchema extends TType<number>, WithValidator {
   __t: 'num';
 
   /**
@@ -89,7 +89,7 @@ export interface NumberSchema extends TType, WithValidator {
 /**
  * Represents a JSON string.
  */
-export interface StringSchema extends TType, WithValidator {
+export interface StringSchema extends TType<string>, WithValidator {
   __t: 'str';
 
   /**
@@ -116,7 +116,7 @@ export interface StringSchema extends TType, WithValidator {
 /**
  * Represents a binary type.
  */
-export interface BinarySchema<T extends Schema = any> extends TType, WithValidator {
+export interface BinarySchema<T extends TType = any> extends TType, WithValidator {
   __t: 'bin';
   /** Type of value encoded in the binary data. */
   type: T;
@@ -127,7 +127,7 @@ export interface BinarySchema<T extends Schema = any> extends TType, WithValidat
 /**
  * Represents a JSON array.
  */
-export interface ArraySchema<T extends Schema = any> extends TType, WithValidator {
+export interface ArraySchema<T extends TType = any> extends TType<Array<unknown>>, WithValidator {
   __t: 'arr';
   /** One or more "one-of" types that array contains. */
   type: T;
@@ -141,6 +141,7 @@ export interface ArraySchema<T extends Schema = any> extends TType, WithValidato
  * Represents a constant value.
  */
 export interface ConstSchema<V = any> extends TType, WithValidator {
+  /** @todo Rename to "con". */
   __t: 'const';
   /** The value. */
   value: V;
@@ -149,7 +150,7 @@ export interface ConstSchema<V = any> extends TType, WithValidator {
 /**
  * Represents a JSON array.
  */
-export interface TupleSchema<T extends Schema[] = any> extends TType, WithValidator {
+export interface TupleSchema<T extends TType[] = any> extends TType, WithValidator {
   __t: 'tup';
   // types: any[] extends T ? never : T;
   types: T;
@@ -160,10 +161,8 @@ export interface TupleSchema<T extends Schema[] = any> extends TType, WithValida
  * the "object" type in JSON Schema, and the "obj" type in MessagePack.
  */
 export interface ObjectSchema<
-  Fields extends ObjectFieldSchema<string, Schema>[] | readonly ObjectFieldSchema<string, Schema>[] =
-    | ObjectFieldSchema<string, Schema>[]
-    | readonly ObjectFieldSchema<string, Schema>[],
-> extends TType,
+  Fields extends ObjectFieldSchema<string, TType>[] | readonly ObjectFieldSchema<string, TType>[] = any,
+> extends TType<object>,
     WithValidator {
   __t: 'obj';
 
@@ -200,7 +199,7 @@ export interface ObjectSchema<
 /**
  * Represents a single field of an object.
  */
-export interface ObjectFieldSchema<K extends string = string, V extends Schema = any> extends TType, Display {
+export interface ObjectFieldSchema<K extends string = string, V extends TType = TType> extends TType<[K, V]>, Display {
   __t: 'field';
   /** Key name of the field. */
   key: K;
@@ -209,7 +208,7 @@ export interface ObjectFieldSchema<K extends string = string, V extends Schema =
   optional?: boolean;
 }
 
-export interface ObjectOptionalFieldSchema<K extends string = string, V extends Schema = any>
+export interface ObjectOptionalFieldSchema<K extends string = string, V extends TType = TType>
   extends ObjectFieldSchema<K, V> {
   optional: true;
 }
@@ -217,7 +216,7 @@ export interface ObjectOptionalFieldSchema<K extends string = string, V extends 
 /**
  * Reference to another type.
  */
-export interface RefSchema<T extends Schema = Schema> extends TType {
+export interface RefSchema<T extends TType = TType> extends TType {
   __t: 'ref';
 
   /** ID of the type it references. */
@@ -227,7 +226,7 @@ export interface RefSchema<T extends Schema = Schema> extends TType {
 /**
  * Represents a type that is one of a set of types.
  */
-export interface OrSchema<T extends Schema[] = Schema[]> extends TType {
+export interface OrSchema<T extends TType[] = TType[]> extends TType {
   __t: 'or';
 
   /** One or more "one-of" types. */
@@ -236,13 +235,17 @@ export interface OrSchema<T extends Schema[] = Schema[]> extends TType {
   discriminator: Expr;
 }
 
-export interface FunctionSchema<Req extends Schema = Schema, Res extends Schema = Schema> extends TType {
+export type FunctionValue<Req, Res, Ctx = unknown> = (req: Req, ctx?: Ctx) => Res | Promise<Res>;
+
+export interface FunctionSchema<Req extends TType = TType, Res extends TType = TType> extends TType {
   __t: 'fn';
   req: Req;
   res: Res;
 }
 
-export interface FunctionStreamingSchema<Req extends Schema = Schema, Res extends Schema = Schema> extends TType {
+export type FunctionStreamingValue<Req, Res, Ctx = unknown> = (req: Observable<Req>, ctx?: Ctx) => Observable<Res>;
+
+export interface FunctionStreamingSchema<Req extends TType = TType, Res extends TType = TType> extends TType {
   __t: 'fn$';
   req: Req;
   res: Res;
@@ -273,7 +276,7 @@ export type Schema = JsonSchema | RefSchema | OrSchema | AnySchema | FunctionSch
 
 export type NoT<T extends TType> = Omit<T, '__t'>;
 
-export type TypeOf<T extends Schema> = T extends OrSchema<any>
+export type TypeOf<T> = T extends OrSchema<any>
   ? TypeOfValue<T['types'][number]>
   : T extends RefSchema<infer U>
   ? TypeOf<U>

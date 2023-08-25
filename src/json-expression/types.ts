@@ -1,3 +1,66 @@
+export type Literal<T> = T | LiteralExpression<T>;
+export type LiteralExpression<O> = [constant: O];
+export type UnaryExpression<O, A1 extends Expression = Expression> = [operator: O, operand1: A1];
+export type BinaryExpression<O, A1 extends Expression = Expression, A2 extends Expression = Expression> = [
+  operator: O,
+  operand1: A1,
+  operand2: A2,
+];
+export type TernaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3];
+export type VariadicExpression<O, A extends Expression = Expression> = [operator: O, ...operands: A[]];
+
+export type Expression =
+  | Literal<any>
+  | UnaryExpression<any, any>
+  | BinaryExpression<any, any, any>
+  | TernaryExpression<any, any, any, any>
+  | VariadicExpression<any, any>;
+
+// Arithmetic expressions
+export type ExprArithmetic =
+  | ExprPlus
+  | ExprMinus
+  | ExprAsterisk
+  | ExprSlash
+  | ExprMod
+  | ExprMin
+  | ExprMax
+  | ExprRound
+  | ExprCeil
+  | ExprFloor
+  | ExprAbs
+  | ExprSqrt
+  | ExprExp
+  | ExprLn
+  | ExprLog
+  | ExprLog10
+  | ExprPow
+  | ExprTrunc;
+
+export type ExprPlus = VariadicExpression<'add' | '+'>;
+export type ExprMinus = VariadicExpression<'subtract' | '-'>;
+export type ExprAsterisk = VariadicExpression<'multiply' | '*'>;
+export type ExprSlash = VariadicExpression<'divide' | '/'>;
+export type ExprMod = VariadicExpression<'mod' | '%'>;
+export type ExprMin = VariadicExpression<'min'>;
+export type ExprMax = VariadicExpression<'max'>;
+export type ExprRound = UnaryExpression<'round'>;
+export type ExprCeil = UnaryExpression<'ceil'>;
+export type ExprFloor = UnaryExpression<'floor'>;
+export type ExprTrunc = UnaryExpression<'trunc'>;
+export type ExprAbs = UnaryExpression<'abs'>;
+export type ExprSqrt = UnaryExpression<'sqrt'>;
+export type ExprExp = UnaryExpression<'exp'>;
+export type ExprLn = UnaryExpression<'ln'>;
+export type ExprLog = BinaryExpression<'log'>;
+export type ExprLog10 = UnaryExpression<'log10'>;
+export type ExprPow = BinaryExpression<'pow' | '**' | '^'>;
+
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];
 export type ExprNotEquals = [fn: '!=' | 'ne', expr1: unknown, expr2: unknown];
@@ -32,22 +95,8 @@ export type ExprBetweenEqNe = [fn: '=><', what: unknown, min: unknown, max: unkn
 export type ExprBetweenNeEq = [fn: '><=', what: unknown, min: unknown, max: unknown];
 export type ExprBetweenEqEq = [fn: '=><=', what: unknown, min: unknown, max: unknown];
 
-/** @todo Normalize all of these to accept only 2 arguments. */
-export type ExprMin = [fn: 'min', ...expressions: unknown[]];
-export type ExprMax = [fn: 'max', ...expressions: unknown[]];
-export type ExprPlus = [fn: '+', ...expressions: unknown[]];
-export type ExprMinus = [fn: '-', ...expressions: unknown[]];
-export type ExprAsterisk = [fn: '*', ...expressions: unknown[]];
-
-export type ExprSlash = [fn: '/', expr1: unknown, expr2: unknown];
-export type ExprMod = [fn: '%' | 'mod', expr1: unknown, expr2: unknown];
-export type ExprRound = [fn: 'round', expr: unknown];
-export type ExprCeil = [fn: 'ceil', expr: unknown];
-export type ExprFloor = [fn: 'floor', expr: unknown];
-
-// export type ExprJsonParse = [fn: 'json.parse', expr: unknown];
-
 export type Expr =
+  | ExprArithmetic
   | ExprGet
   | ExprEquals
   | ExprNotEquals
@@ -76,17 +125,7 @@ export type Expr =
   | ExprBetweenNeNe
   | ExprBetweenNeEq
   | ExprBetweenEqNe
-  | ExprBetweenEqEq
-  | ExprMin
-  | ExprMax
-  | ExprPlus
-  | ExprMinus
-  | ExprAsterisk
-  | ExprSlash
-  | ExprMod
-  | ExprRound
-  | ExprCeil
-  | ExprFloor;
+  | ExprBetweenEqEq;
 
 export interface JsonExpressionExecutionContext {
   data: unknown;

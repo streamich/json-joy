@@ -1,5 +1,6 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
+import {Expression} from './types';
 
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
 
@@ -50,7 +51,16 @@ export const betweenEqNe = (val: number, min: number, max: number): boolean => v
 export const betweenEqEq = (val: number, min: number, max: number): boolean => val >= min && val <= max;
 
 export const slash = (a: unknown, b: unknown) => {
-  const res = num(a) / num(b);
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) / divisor;
+  return Number.isFinite(res) ? res : 0;
+};
+
+export const mod = (a: unknown, b: unknown) => {
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) % divisor;
   return Number.isFinite(res) ? res : 0;
 };
 
@@ -63,3 +73,11 @@ export const isLiteral = (value: unknown): boolean => {
 };
 
 export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);
+
+export const assertArity = (operator: string, arity: number, expr: Expression): void => {
+  if (expr.length !== arity + 1) throw new Error(`"${operator}" operator expects ${arity} operands.`);
+};
+
+export const assertVariadicArity = (operator: string, expr: Expression): void => {
+  if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
+};

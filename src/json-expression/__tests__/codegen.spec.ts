@@ -2,6 +2,7 @@ import {JsonExpressionCodegen} from '../codegen';
 import {Expr, JsonExpressionCodegenContext} from '../types';
 import {jsonExpressionCodegenTests} from './jsonExpressionCodegenTests';
 import {jsonExpressionEvaluateTests} from './jsonExpressionEvaluateTests';
+import {jsonExpressionUnitTests} from './jsonExpressionUnitTests';
 
 const check = (
   expression: Expr,
@@ -20,5 +21,6 @@ const check = (
   expect(result).toStrictEqual(expected);
 };
 
+jsonExpressionUnitTests(check);
 jsonExpressionCodegenTests(check);
 jsonExpressionEvaluateTests(check);
