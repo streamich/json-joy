@@ -27,6 +27,33 @@ export const jsonExpressionUnitTests = (
         check(['add', 1, 1, 1, 1], 4);
         check(['+', 1, 2, 3, 4], 10);
       });
+
+      test('casts strings to numbers', () => {
+        check(['add', '2', '2'], 4);
+        check(['+', '1', '10.5'], 11.5);
+      });
+    });
+
+    describe('subtract or -', () => {
+      test('two operands', () => {
+        check(['subtract', 1, 2], -1);
+        check(['-', 1, 2], -1);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['subtract', 1, ['subtract', 1, 1]], 1);
+        check(['-', 1, ['-', 1, 1]], 1);
+      });
+
+      test('is variadic', () => {
+        check(['subtract', 1, 1, 1, 1], -2);
+        check(['-', 1, 2, 3, 4], -8);
+      });
+
+      test('casts strings to numbers', () => {
+        check(['subtract', '2', '2'], 0);
+        check(['-', '1', '10.5'], -9.5);
+      });
     });
   });
 };

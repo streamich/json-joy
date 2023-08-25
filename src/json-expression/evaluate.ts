@@ -34,14 +34,15 @@ export const evaluate = (
     case 'add': {
       return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) + acc, 0);
     }
+    case '-':
+    case 'subtract': {
+      return expr.slice(2).reduce((acc, e) => acc - num(evaluate(e, ctx)), num(evaluate(expr[1], ctx)));
+    }
     case 'min': {
       return Math.min(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
     }
     case 'max': {
       return Math.max(...expr.slice(1).map((e) => num(evaluate(e, ctx))));
-    }
-    case '-': {
-      return expr.slice(2).reduce((acc, e) => acc - num(evaluate(e, ctx)), num(evaluate(expr[1], ctx)));
     }
     case '*': {
       return expr.slice(1).reduce((acc, e) => num(evaluate(e, ctx)) * acc, 1);
