@@ -244,7 +244,7 @@ export const jsonExpressionUnitTests = (
         check(['ceil', ['ceil', 5.8]], 6);
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['ceil'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""ceil" operator expects 1 operands."`,
         );
@@ -265,12 +265,33 @@ export const jsonExpressionUnitTests = (
         check(['floor', ['floor', 5.8]], 5);
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['floor'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""floor" operator expects 1 operands."`,
         );
         expect(() => check(['floor', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""floor" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('trunc', () => {
+      test('can round', () => {
+        check(['trunc', 1.6], 1);
+        check(['trunc', -1.2], -1);
+        check(['trunc', -3.7], -3);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['trunc', ['trunc', 5.8]], 5);
+      });
+
+      test('throws on too few or too many arguments', () => {
+        expect(() => check(['trunc'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""trunc" operator expects 1 operands."`,
+        );
+        expect(() => check(['trunc', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""trunc" operator expects 1 operands."`,
         );
       });
     });
@@ -287,7 +308,7 @@ export const jsonExpressionUnitTests = (
         check(['abs', ['abs', -5.8]], 5.8);
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['abs'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""abs" operator expects 1 operands."`,
         );
@@ -308,7 +329,7 @@ export const jsonExpressionUnitTests = (
         check(['sqrt', ['sqrt', 81]], 3);
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['sqrt'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""sqrt" operator expects 1 operands."`,
         );
@@ -329,7 +350,7 @@ export const jsonExpressionUnitTests = (
         check(['exp', ['exp', 2]], Math.exp(Math.exp(2)));
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['exp'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""exp" operator expects 1 operands."`,
         );
@@ -350,7 +371,7 @@ export const jsonExpressionUnitTests = (
         check(['ln', ['ln', 2]], Math.log(Math.log(2)));
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['ln'] as any, 2)).toThrowErrorMatchingInlineSnapshot(`""ln" operator expects 1 operands."`);
         expect(() => check(['ln', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""ln" operator expects 1 operands."`,
@@ -369,7 +390,7 @@ export const jsonExpressionUnitTests = (
         check(['log10', ['log10', 2]], Math.log10(Math.log10(2)));
       });
 
-      test('throws on too few arguments', () => {
+      test('throws on too few or too many arguments', () => {
         expect(() => check(['log10'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""log10" operator expects 1 operands."`,
         );

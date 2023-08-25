@@ -43,6 +43,7 @@ export type ExprMax = VariadicExpression<'max'>;
 export type ExprRound = UnaryExpression<'round'>;
 export type ExprCeil = UnaryExpression<'ceil'>;
 export type ExprFloor = UnaryExpression<'floor'>;
+export type ExprTrunc = UnaryExpression<'trunc'>;
 export type ExprAbs = UnaryExpression<'abs'>;
 export type ExprSqrt = UnaryExpression<'sqrt'>;
 export type ExprExp = UnaryExpression<'exp'>;
@@ -50,7 +51,6 @@ export type ExprLn = UnaryExpression<'ln'>;
 export type ExprLog = BinaryExpression<'log'>;
 export type ExprLog10 = UnaryExpression<'log10'>;
 export type ExprPow = BinaryExpression<'pow' | '^'>;
-export type ExprTrunc = BinaryExpression<'trunc'>;
 
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprEquals = [fn: '==' | 'eq', expr1: unknown, expr2: unknown];

@@ -146,6 +146,13 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.floor(+(${a}) || 0)`);
   }
 
+  protected onTrunc(expr: types.ExprTrunc): ExpressionResult {
+    util.assertArity('trunc', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.trunc(+(${a}) || 0)`);
+  }
+
   protected onAbs(expr: types.ExprAbs): ExpressionResult {
     util.assertArity('abs', 1, expr);
     const a = this.onExpression(expr[1]);
@@ -597,6 +604,8 @@ export class JsonExpressionCodegen {
         return this.onCeil(expr as types.ExprCeil);
       case 'floor':
         return this.onFloor(expr as types.ExprFloor);
+      case 'trunc':
+        return this.onTrunc(expr as types.ExprTrunc);
       case 'abs':
         return this.onAbs(expr as types.ExprAbs);
       case 'sqrt':
