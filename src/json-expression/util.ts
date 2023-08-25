@@ -56,6 +56,13 @@ export const slash = (a: unknown, b: unknown) => {
   return Number.isFinite(res) ? res : 0;
 };
 
+export const mod = (a: unknown, b: unknown) => {
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) % divisor;
+  return Number.isFinite(res) ? res : 0;
+};
+
 export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
   str(probablyString).substr(int(from), int(length));
 

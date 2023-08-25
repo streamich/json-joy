@@ -39,14 +39,19 @@ export const evaluate = (
         result = util.slash(result, util.num(evaluate(expr[i], ctx)));
       return result;
     }
+    case '%':
+    case 'mod': {
+      if (expr.length < 3) throw new Error('"%" operator expects at least two operands.');
+      let result = util.num(evaluate(expr[1], ctx));
+      for (let i = 2; i < expr.length; i++)
+        result = util.mod(result, util.num(evaluate(expr[i], ctx)));
+      return result;
+    }
     case 'min': {
       return Math.min(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case 'max': {
       return Math.max(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
-    }
-    case '%': {
-      return util.num((evaluate(expr[1], ctx) as number) % (evaluate(expr[2], ctx) as number));
     }
     case 'round': {
       return Math.round(util.num(evaluate(expr[1], ctx)));

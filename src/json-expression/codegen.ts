@@ -23,6 +23,7 @@ const linkable = {
   isInContainer: util.isInContainer,
   substr: util.substr,
   slash: util.slash,
+  mod: util.mod,
   betweenNeNe: util.betweenNeNe,
   betweenEqNe: util.betweenEqNe,
   betweenNeEq: util.betweenNeEq,
@@ -475,11 +476,14 @@ export class JsonExpressionCodegen {
   }
 
   protected onMod(expr: types.ExprMod): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"%" operator expects two operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num((a.val as any) % (b.val as any)));
-    return new Expression(`+(${a} % ${b}) || 0`);
+    if (expr.length < 3) throw new Error('"%" operator expects at least two operands.');
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    let last: string = params[0];
+    for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
+    return new Expression(last);
   }
 
   protected onRound(expr: types.ExprRound): ExpressionResult {

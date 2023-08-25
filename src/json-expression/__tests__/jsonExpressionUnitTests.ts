@@ -140,5 +140,41 @@ export const jsonExpressionUnitTests = (
         expect(() => check(['/', ['+', 1, 1], 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
       });
     });
+
+    describe('divide or %', () => {
+      test('two operands', () => {
+        check(['mod', 1, 2], 1);
+        check(['%', 3, 2], 1);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['mod', 3, ['mod', 4, 3]], 0);
+        check(['%', 5, ['%', 7, 5]], 1);
+      });
+
+      test('is variadic', () => {
+        check(['mod', 13, 7, 4, 2], 0);
+        check(['%', 32, 25, 4, ['%', 5, 3]], 1);
+      });
+
+      test('casts strings to numbers', () => {
+        check(['mod', '4', '2'], 0);
+        check(['%', '1', '10'], 1);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['mod', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""%" operator expects at least two operands."`,
+        );
+        expect(() => check(['%', 1], 2)).toThrowErrorMatchingInlineSnapshot(
+          `""%" operator expects at least two operands."`,
+        );
+      });
+
+      test('throws throws when dividing by zero', () => {
+        expect(() => check(['mod', 1, 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
+        expect(() => check(['%', ['+', 1, 1], 0], 0)).toThrowErrorMatchingInlineSnapshot(`"DIVISION_BY_ZERO"`);
+      });
+    });
   });
 };
