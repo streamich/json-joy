@@ -89,7 +89,8 @@ export class JsonExpressionCodegen {
     util.assertVariadicArity('-', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
+    if (allLiterals)
+      return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     return new Expression(`${params.join(' - ')}`);
   }
@@ -187,8 +188,7 @@ export class JsonExpressionCodegen {
     util.assertArity('log', 2, expr);
     const num = this.onExpression(expr[1]);
     const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal)
-      return new Literal(evaluate(expr, {data: null}));
+    if (num instanceof Literal && base instanceof Literal) return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.log(+(${num}) || 0) / Math.log(+(${base}) || 0)`);
   }
 
@@ -203,8 +203,7 @@ export class JsonExpressionCodegen {
     util.assertArity('pow', 2, expr);
     const num = this.onExpression(expr[1]);
     const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal)
-      return new Literal(evaluate(expr, {data: null}));
+    if (num instanceof Literal && base instanceof Literal) return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
   }
 

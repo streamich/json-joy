@@ -2169,8 +2169,9 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
   }
 }
 
-const fnNotImplemented: schema.FunctionValue<any, any> =
-  async () => { throw new Error('NOT_IMPLEMENTED'); };
+const fnNotImplemented: schema.FunctionValue<any, any> = async () => {
+  throw new Error('NOT_IMPLEMENTED');
+};
 
 export class FunctionType<Req extends Type, Res extends Type> extends AbstractType<
   schema.FunctionSchema<SchemaOf<Req>, SchemaOf<Res>>

@@ -27,10 +27,10 @@ export class Cli {
   protected readonly codecs: Codecs;
 
   public constructor() {
-    const system = this.system = new TypeSystem();
+    const system = (this.system = new TypeSystem());
     this.t = this.system.t;
     // system.importTypes(opts.define(system));
-    const caller = this.caller = new TypedApiCaller<FilterFunctions<TypeMap>>({system: this.system});
+    const caller = (this.caller = new TypedApiCaller<FilterFunctions<TypeMap>>({system: this.system}));
     // opts.implement(caller);
     this.writer = new Writer();
     this.codecs = new Codecs(this.writer);
@@ -58,17 +58,18 @@ export class Cli {
     });
     const methodName = args.positionals.join('.');
     const request = args.values;
-    this.caller.call(methodName, request, {})
+    this.caller
+      .call(methodName, request, {})
       .then((value) => {
         this.writer.reset();
-        value.encode(this.codecs.json)
+        value.encode(this.codecs.json);
         const buf = this.writer.flush();
         process.stdout.write(buf);
       })
       .catch((err) => {
         const value = err as Value;
         this.writer.reset();
-        value.encode(this.codecs.json)
+        value.encode(this.codecs.json);
         const buf = this.writer.flush();
         process.stdout.write(buf);
       });

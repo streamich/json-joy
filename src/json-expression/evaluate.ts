@@ -35,16 +35,14 @@ export const evaluate = (
     case 'divide': {
       util.assertVariadicArity('/', expr);
       let result = util.num(evaluate(expr[1], ctx));
-      for (let i = 2; i < expr.length; i++)
-        result = util.slash(result, util.num(evaluate(expr[i], ctx)));
+      for (let i = 2; i < expr.length; i++) result = util.slash(result, util.num(evaluate(expr[i], ctx)));
       return result;
     }
     case '%':
     case 'mod': {
       util.assertVariadicArity('%', expr);
       let result = util.num(evaluate(expr[1], ctx));
-      for (let i = 2; i < expr.length; i++)
-        result = util.mod(result, util.num(evaluate(expr[i], ctx)));
+      for (let i = 2; i < expr.length; i++) result = util.mod(result, util.num(evaluate(expr[i], ctx)));
       return result;
     }
     case 'min': {
@@ -90,7 +88,7 @@ export const evaluate = (
     case 'log': {
       util.assertArity('log', 2, expr);
       const num = util.num(evaluate(expr[1], ctx));
-      const base = util.num(evaluate(expr[2], ctx))
+      const base = util.num(evaluate(expr[2], ctx));
       return Math.log(num) / Math.log(base);
     }
     case 'log10': {
@@ -100,10 +98,9 @@ export const evaluate = (
     case 'pow': {
       util.assertArity('pow', 2, expr);
       const num = util.num(evaluate(expr[1], ctx));
-      const base = util.num(evaluate(expr[2], ctx))
+      const base = util.num(evaluate(expr[2], ctx));
       return Math.pow(num, base);
     }
-
 
     case '=':
     case 'get': {

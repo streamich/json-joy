@@ -1,8 +1,17 @@
 export type Literal<T> = T | LiteralExpression<T>;
 export type LiteralExpression<O> = [constant: O];
 export type UnaryExpression<O, A1 extends Expression = Expression> = [operator: O, operand1: A1];
-export type BinaryExpression<O, A1 extends Expression = Expression, A2 extends Expression = Expression> = [operator: O, operand1: A1, operand2: A2];
-export type TernaryExpression<O, A1 extends Expression = Expression, A2 extends Expression = Expression, A3 extends Expression = Expression> = [operator: O, operand1: A1, operand2: A2, operand3: A3];
+export type BinaryExpression<O, A1 extends Expression = Expression, A2 extends Expression = Expression> = [
+  operator: O,
+  operand1: A1,
+  operand2: A2,
+];
+export type TernaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3];
 export type VariadicExpression<O, A extends Expression = Expression> = [operator: O, ...operands: A[]];
 
 export type Expression =
