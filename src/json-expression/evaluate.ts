@@ -18,22 +18,22 @@ export const evaluate = (
     // Arithmetic operators
     case '+':
     case 'add': {
-      if (expr.length < 3) throw new Error('"+" operator expects at least two operands.');
+      util.assertVariadicArity('+', expr);
       return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) + acc, 0);
     }
     case '-':
     case 'subtract': {
-      if (expr.length < 3) throw new Error('"-" operator expects at least two operands.');
+      util.assertVariadicArity('-', expr);
       return expr.slice(2).reduce((acc, e) => acc - util.num(evaluate(e, ctx)), util.num(evaluate(expr[1], ctx)));
     }
     case '*':
     case 'multiply': {
-      if (expr.length < 3) throw new Error('"*" operator expects at least two operands.');
+      util.assertVariadicArity('*', expr);
       return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) * acc, 1);
     }
     case '/':
     case 'divide': {
-      if (expr.length < 3) throw new Error('"/" operator expects at least two operands.');
+      util.assertVariadicArity('/', expr);
       let result = util.num(evaluate(expr[1], ctx));
       for (let i = 2; i < expr.length; i++)
         result = util.slash(result, util.num(evaluate(expr[i], ctx)));
@@ -41,16 +41,18 @@ export const evaluate = (
     }
     case '%':
     case 'mod': {
-      if (expr.length < 3) throw new Error('"%" operator expects at least two operands.');
+      util.assertVariadicArity('%', expr);
       let result = util.num(evaluate(expr[1], ctx));
       for (let i = 2; i < expr.length; i++)
         result = util.mod(result, util.num(evaluate(expr[i], ctx)));
       return result;
     }
     case 'min': {
+      util.assertVariadicArity('min', expr);
       return Math.min(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case 'max': {
+      util.assertVariadicArity('max', expr);
       return Math.max(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
     }
     case 'round': {
@@ -62,6 +64,8 @@ export const evaluate = (
     case 'floor': {
       return Math.floor(util.num(evaluate(expr[1], ctx)));
     }
+
+
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);

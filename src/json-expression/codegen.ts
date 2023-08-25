@@ -76,6 +76,55 @@ export class JsonExpressionCodegen {
     });
   }
 
+  protected onPlus(expr: types.ExprPlus): ExpressionResult {
+    util.assertVariadicArity('+', expr);
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + util.num(b.val), 0));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' + ')}`);
+  }
+
+  protected onMinus(expr: types.ExprMinus): ExpressionResult {
+    util.assertVariadicArity('-', expr);
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' - ')}`);
+  }
+
+  protected onAsterisk(expr: types.ExprAsterisk): ExpressionResult {
+    util.assertVariadicArity('*', expr);
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * util.num(b.val), 1));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    return new Expression(`${params.join(' * ')}`);
+  }
+
+  protected onSlash(expr: types.ExprSlash): ExpressionResult {
+    util.assertVariadicArity('/', expr);
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    let last: string = params[0];
+    for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
+    return new Expression(last);
+  }
+
+  protected onMod(expr: types.ExprMod): ExpressionResult {
+    util.assertVariadicArity('%', expr);
+    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+    const allLiterals = expressions.every((expr) => expr instanceof Literal);
+    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    const params = expressions.map((expr) => `(+(${expr})||0)`);
+    let last: string = params[0];
+    for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
+    return new Expression(last);
+  }
+
   protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
@@ -420,7 +469,7 @@ export class JsonExpressionCodegen {
   }
 
   protected onMin(expr: types.ExprMin): ExpressionResult {
-    if (expr.length < 3) throw new Error('"min" operator expects at least two operands.');
+    util.assertVariadicArity('min', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
     if (allLiterals) return new Literal(evaluate(expr, {data: null}));
@@ -429,61 +478,12 @@ export class JsonExpressionCodegen {
   }
 
   protected onMax(expr: types.ExprMax): ExpressionResult {
-    if (expr.length < 3) throw new Error('"max" operator expects at least two operands.');
+    util.assertVariadicArity('max', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
     if (allLiterals) return new Literal(evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
-  }
-
-  protected onPlus(expr: types.ExprPlus): ExpressionResult {
-    if (expr.length < 3) throw new Error('"+" operator expects at least two operands.');
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + util.num(b.val), 0));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' + ')}`);
-  }
-
-  protected onMinus(expr: types.ExprMinus): ExpressionResult {
-    if (expr.length < 3) throw new Error('"-" operator expects at least two operands.');
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' - ')}`);
-  }
-
-  protected onAsterisk(expr: types.ExprAsterisk): ExpressionResult {
-    if (expr.length < 3) throw new Error('"*" operator expects at least two operands.');
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * util.num(b.val), 1));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' * ')}`);
-  }
-
-  protected onSlash(expr: types.ExprSlash): ExpressionResult {
-    if (expr.length < 3) throw new Error('"/" operator expects at least two operands.');
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    let last: string = params[0];
-    for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
-    return new Expression(last);
-  }
-
-  protected onMod(expr: types.ExprMod): ExpressionResult {
-    if (expr.length < 3) throw new Error('"%" operator expects at least two operands.');
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    let last: string = params[0];
-    for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
-    return new Expression(last);
   }
 
   protected onRound(expr: types.ExprRound): ExpressionResult {
