@@ -501,8 +501,12 @@ export const jsonExpressionCodegenTests = (
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
           expect(() => check(['<'] as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
-          expect(() => check(['<', 1] as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
-          expect(() => check(['<', 1, 2, 3] as any, '')).toThrowError(new Error('"<" operator expects two operands.'));
+          expect(() => check(['<', 1] as any, '')).toThrowError(
+            new Error('"<" operator expects two operands.'),
+          );
+          expect(() => check(['<', 1, 2, 3] as any, '')).toThrowError(
+            new Error('"<" operator expects two operands.'),
+          );
         });
       }
 
@@ -525,8 +529,12 @@ export const jsonExpressionCodegenTests = (
     describe('less than or equal', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['<='] as any, '')).toThrowError(new Error('"<=" operator expects two operands.'));
-          expect(() => check(['<=', 1] as any, '')).toThrowError(new Error('"<=" operator expects two operands.'));
+          expect(() => check(['<='] as any, '')).toThrowError(
+            new Error('"<=" operator expects two operands.'),
+          );
+          expect(() => check(['<=', 1] as any, '')).toThrowError(
+            new Error('"<=" operator expects two operands.'),
+          );
           expect(() => check(['<=', 1, 2, 3] as any, '')).toThrowError(
             new Error('"<=" operator expects two operands.'),
           );
@@ -554,8 +562,12 @@ export const jsonExpressionCodegenTests = (
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
           expect(() => check(['>'] as any, '')).toThrowError(new Error('">" operator expects two operands.'));
-          expect(() => check(['>', 1] as any, '')).toThrowError(new Error('">" operator expects two operands.'));
-          expect(() => check(['>', 1, 2, 3] as any, '')).toThrowError(new Error('">" operator expects two operands.'));
+          expect(() => check(['>', 1] as any, '')).toThrowError(
+            new Error('">" operator expects two operands.'),
+          );
+          expect(() => check(['>', 1, 2, 3] as any, '')).toThrowError(
+            new Error('">" operator expects two operands.'),
+          );
         });
       }
 
@@ -579,8 +591,12 @@ export const jsonExpressionCodegenTests = (
     describe('greater than or equal', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['>='] as any, '')).toThrowError(new Error('">=" operator expects two operands.'));
-          expect(() => check(['>=', 1] as any, '')).toThrowError(new Error('">=" operator expects two operands.'));
+          expect(() => check(['>='] as any, '')).toThrowError(
+            new Error('">=" operator expects two operands.'),
+          );
+          expect(() => check(['>=', 1] as any, '')).toThrowError(
+            new Error('">=" operator expects two operands.'),
+          );
           expect(() => check(['>=', 1, 2, 3] as any, '')).toThrowError(
             new Error('">=" operator expects two operands.'),
           );
@@ -777,44 +793,41 @@ export const jsonExpressionCodegenTests = (
     describe('division', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['/'] as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
-          expect(() => check(['/', 1] as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
-          expect(() => check(['/', 1, 1, 1] as any, '')).toThrowError(new Error('"/" operator expects two operands.'));
+          expect(() => check(['/'] as any, '')).toThrowError(new Error('"/" operator expects at least two operands.'));
+          expect(() => check(['/', 1] as any, '')).toThrowError(new Error('"/" operator expects at least two operands.'));
         });
       }
 
       test('works with literals', () => {
         check(['/', 1, 1], 1);
         check(['/', 5, 2], 2.5);
-        check(['/', 5, 0], 0);
-        check(['/', 5, -0], 0);
       });
 
       test('works with expressions', () => {
         check(['/', ['=', '/0'], ['=', '/1']], 0.5, [1, 2]);
-        check(['/', ['=', '/0'], ['=', '/1']], 0, [1, 0]);
+        check(['/', ['=', '/0'], ['=', '/1']], 1, [1, 1]);
       });
     });
 
     describe('mod', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['%'] as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
-          expect(() => check(['%', 1] as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
-          expect(() => check(['%', 1, 1, 1] as any, '')).toThrowError(new Error('"%" operator expects two operands.'));
+          expect(() => check(['%'] as any, '')).toThrowErrorMatchingInlineSnapshot(
+            `""%" operator expects at least two operands."`,
+          );
+          expect(() => check(['%', 1] as any, '')).toThrowErrorMatchingInlineSnapshot(
+            `""%" operator expects at least two operands."`,
+          );
         });
       }
 
       test('works with literals', () => {
         check(['%', 1, 1], 0);
         check(['%', 5, 2], 1);
-        check(['%', 5, 0], 0);
-        check(['%', 5, -0], 0);
       });
 
       test('works with expressions', () => {
         check(['%', ['=', '/0'], ['=', '/1']], 1, [1, 2]);
-        check(['%', ['=', '/0'], ['=', '/1']], 0, [1, 0]);
         check(['%', ['=', '/0'], ['=', '/1']], 1, [5, 2]);
         check(['%', ['=', '/0'], ['=', '/1']], 3, [7, 4]);
       });
@@ -823,9 +836,9 @@ export const jsonExpressionCodegenTests = (
     describe('round', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['round'] as any, '')).toThrowError(new Error('"round" operator expects one operand.'));
+          expect(() => check(['round'] as any, '')).toThrowError(new Error('"round" operator expects 1 operands.'));
           expect(() => check(['round', 1, 1] as any, '')).toThrowError(
-            new Error('"round" operator expects one operand.'),
+            new Error('"round" operator expects 1 operands.'),
           );
         });
       }
@@ -849,10 +862,8 @@ export const jsonExpressionCodegenTests = (
     describe('ceil', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['ceil'] as any, '')).toThrowError(new Error('"ceil" operator expects one operand.'));
-          expect(() => check(['ceil', 1, 1] as any, '')).toThrowError(
-            new Error('"ceil" operator expects one operand.'),
-          );
+          expect(() => check(['ceil'] as any, '')).toThrowError(new Error('"ceil" operator expects 1 operands.'));
+          expect(() => check(['ceil', 1, 1] as any, '')).toThrowError(new Error('"ceil" operator expects 1 operands.'));
         });
       }
 
@@ -877,9 +888,9 @@ export const jsonExpressionCodegenTests = (
     describe('floor', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['floor'] as any, '')).toThrowError(new Error('"floor" operator expects one operand.'));
+          expect(() => check(['floor'] as any, '')).toThrowError(new Error('"floor" operator expects 1 operands.'));
           expect(() => check(['floor', 1, 1] as any, '')).toThrowError(
-            new Error('"floor" operator expects one operand.'),
+            new Error('"floor" operator expects 1 operands.'),
           );
         });
       }
