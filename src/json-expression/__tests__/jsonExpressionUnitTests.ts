@@ -212,5 +212,40 @@ export const jsonExpressionUnitTests = (
         check(['max', '4', '2'], 4);
       });
     });
+
+    describe('round', () => {
+      test('can round', () => {
+        check(['round', 1.6], 2);
+        check(['round', 3], 3);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['round', ['round', 5.8]], 6);
+      });
+    });
+
+    describe('ceil', () => {
+      test('can round', () => {
+        check(['ceil', 1.6], 2);
+        check(['ceil', 1.2], 2);
+        check(['ceil', 3], 3);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['ceil', ['ceil', 5.8]], 6);
+      });
+    });
+
+    describe('floor', () => {
+      test('can round', () => {
+        check(['floor', 1.6], 1);
+        check(['floor', 1.2], 1);
+        check(['floor', 3], 3);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['floor', ['floor', 5.8]], 5);
+      });
+    });
   });
 };
