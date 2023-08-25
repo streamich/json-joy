@@ -534,5 +534,53 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('gt or >', () => {
+      test('can compare numbers', () => {
+        check(['>', 2, 1], true);
+        check(['>', 5, ['+', 0, 5]], false);
+        check(['gt', 5, 4], true);
+        check(['gt', ['+', 0, 5], -5], true);
+      });
+
+      test('can compare strings', () => {
+        check(['>', '22', '1'], true);
+        check(['>', 'bb', 'a'], true);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['gt', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `"">" operator expects 2 operands."`,
+        );
+        expect(() => check(['>', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `"">" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('ge or >=', () => {
+      test('can compare numbers', () => {
+        check(['>=', 2, 1], true);
+        check(['>=', 5, ['+', 0, 5]], true);
+        check(['ge', 5, 4], true);
+        check(['ge', ['+', 0, 5], -5], true);
+      });
+
+      test('can compare strings', () => {
+        check(['>=', '22', '1'], true);
+        check(['>=', 'bb', 'a'], true);
+        check(['>=', 'bb', 'bb'], true);
+        check(['>=', 'bb', 'ccc'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['ge', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `"">=" operator expects 2 operands."`,
+        );
+        expect(() => check(['>=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `"">=" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 };

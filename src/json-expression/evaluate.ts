@@ -3,6 +3,17 @@ import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
 import * as util from './util';
 
+const binaryOperands = (
+  operator: string,
+  expr: Expr,
+  ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext
+): [left: unknown, right: unknown] => {
+  util.assertArity(operator, 2, expr);
+  const left = evaluate(expr[1], ctx);
+  const right = evaluate(expr[2], ctx);
+  return [left, right];
+};
+
 const toNumber = util.num;
 
 export const evaluate = (
@@ -98,24 +109,28 @@ export const evaluate = (
     case '^':
     case '**':
     case 'pow': {
-      util.assertArity('pow', 2, expr);
-      const num = util.num(evaluate(expr[1], ctx));
-      const base = util.num(evaluate(expr[2], ctx));
-      return Math.pow(num, base);
+      const [num, base] = binaryOperands('pow', expr as Expr, ctx);
+      return Math.pow(util.num(num), util.num(base));
     }
     case '==':
     case 'eq': {
-      util.assertArity('==', 2, expr);
-      const left = evaluate(expr[1], ctx);
-      const right = evaluate(expr[2], ctx);
+      const [left, right] = binaryOperands('==', expr as Expr, ctx);
       return deepEqual(left, right);
     }
     case '!=':
     case 'ne': {
-      util.assertArity('!=', 2, expr);
-      const left = evaluate(expr[1], ctx);
-      const right = evaluate(expr[2], ctx);
+      const [left, right] = binaryOperands('!=', expr as Expr, ctx);
       return !deepEqual(left, right);
+    }
+    case '>':
+    case 'gt': {
+      const [left, right] = binaryOperands('>', expr as Expr, ctx);
+      return <any>left > <any>right;
+    }
+    case '>=':
+    case 'ge': {
+      const [left, right] = binaryOperands('>=', expr as Expr, ctx);
+      return <any>left >= <any>right;
     }
     case '=':
     case 'get': {
@@ -211,16 +226,6 @@ export const evaluate = (
       const left = util.num(evaluate(expr[1], ctx));
       const right = util.num(evaluate(expr[2], ctx));
       return left <= right;
-    }
-    case '>': {
-      const left = util.num(evaluate(expr[1], ctx));
-      const right = util.num(evaluate(expr[2], ctx));
-      return left > right;
-    }
-    case '>=': {
-      const left = util.num(evaluate(expr[1], ctx));
-      const right = util.num(evaluate(expr[2], ctx));
-      return left >= right;
     }
     case '><': {
       const val = util.num(evaluate(expr[1], ctx));
