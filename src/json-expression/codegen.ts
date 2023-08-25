@@ -219,7 +219,7 @@ export class JsonExpressionCodegen {
   }
 
   protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"!=" operator expects two operands.');
+    util.assertArity('!=', 2, expr);
     const [, a, b] = expr;
     const res = this.onEquals(['eq', a, b]);
     if (res instanceof Literal) return new Literal(!res.val);
@@ -623,12 +623,12 @@ export class JsonExpressionCodegen {
       case '==':
       case 'eq':
         return this.onEquals(expr as types.ExprEquals);
-      case '=':
-      case 'get':
-        return this.onGet(expr as types.ExprGet);
       case '!=':
       case 'ne':
         return this.onNotEquals(expr as types.ExprNotEquals);
+      case '=':
+      case 'get':
+        return this.onGet(expr as types.ExprGet);
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);

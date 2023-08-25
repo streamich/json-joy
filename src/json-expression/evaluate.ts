@@ -110,6 +110,13 @@ export const evaluate = (
       const right = evaluate(expr[2], ctx);
       return deepEqual(left, right);
     }
+    case '!=':
+    case 'ne': {
+      util.assertArity('!=', 2, expr);
+      const left = evaluate(expr[1], ctx);
+      const right = evaluate(expr[2], ctx);
+      return !deepEqual(left, right);
+    }
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
@@ -125,12 +132,6 @@ export const evaluate = (
       if (!(v2 instanceof Array) || !v2.length) return false;
       const v1 = evaluate(expr[1], ctx);
       return v2.some((item: unknown) => deepEqual(item, v1));
-    }
-    case '!=':
-    case 'ne': {
-      const left = evaluate(expr[1], ctx);
-      const right = evaluate(expr[2], ctx);
-      return !deepEqual(left, right);
     }
     case '?':
     case 'if': {

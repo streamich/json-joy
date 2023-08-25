@@ -445,9 +445,9 @@ export const jsonExpressionUnitTests = (
     describe('eq or ==', () => {
       test('can compare numbers', () => {
         check(['eq', 1, 1], true);
-        check(['eq', 5, 5], true);
-        check(['eq', 5, 4], false);
-        check(['eq', 5, -5], false);
+        check(['eq', 5, ['+', 0, 5]], true);
+        check(['==', 5, 4], false);
+        check(['==', ['+', 0, 5], -5], false);
       });
 
       test('can compare strings', () => {
@@ -484,6 +484,53 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['eq', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""==" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('ne or !=', () => {
+      test('can compare numbers', () => {
+        check(['ne', 1, 1], false);
+        check(['!=', 5, ['+', 0, 5]], false);
+        check(['ne', 5, 4], true);
+        check(['!=', ['+', 0, 5], -5], true);
+      });
+
+      test('can compare strings', () => {
+        check(['ne', '1', '1'], false);
+        check(['ne', 'abc', 'abc'], false);
+        check(['ne', 'abc', 'abc!'], true);
+      });
+
+      test('can compare strings', () => {
+        check(['ne', '1', '1'], false);
+        check(['ne', 'abc', 'abc'], false);
+        check(['ne', 'abc', 'abc!'], true);
+      });
+
+      test('can compare booleans', () => {
+        check(['ne', true, true], false);
+        check(['ne', true, false], true);
+        check(['ne', false, true], true);
+        check(['ne', false, false], false);
+      });
+
+      test('deeply compares objects', () => {
+        check(['ne', {foo: 'bar'}, {foo: 'bar'}], false);
+        check(['ne', {foo: 'bar'}, {foo: 'bar!'}], true);
+      });
+
+      test('different types', () => {
+        check(['ne', 1, '1'], true);
+        check(['ne', 123, '123'], true);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['ne', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""!=" operator expects 2 operands."`,
+        );
+        expect(() => check(['!=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""!=" operator expects 2 operands."`,
         );
       });
     });
