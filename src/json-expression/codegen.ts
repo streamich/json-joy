@@ -207,6 +207,25 @@ export class JsonExpressionCodegen {
     return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
   }
 
+  protected onEquals(expr: types.ExprEquals): ExpressionResult {
+    util.assertArity('==', 2, expr);
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal) return this.onEqualsLiteralLiteral(a, b);
+    if (a instanceof Literal && b instanceof Expression) return this.onEqualsLiteralExpression(a, b);
+    if (b instanceof Literal && a instanceof Expression) return this.onEqualsLiteralExpression(b, a);
+    this.codegen.link('deepEqual');
+    return new Expression(`deepEqual(${a}, ${b})`);
+  }
+
+  protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
+    if (expr.length !== 3) throw new Error('"!=" operator expects two operands.');
+    const [, a, b] = expr;
+    const res = this.onEquals(['eq', a, b]);
+    if (res instanceof Literal) return new Literal(!res.val);
+    return new Expression(`!(${res})`);
+  }
+
   protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
@@ -234,25 +253,6 @@ export class JsonExpressionCodegen {
     const fn = $$deepEqual(literal.val);
     const d = this.codegen.addConstant(fn);
     return new Expression(`${d}(${expression})`);
-  }
-
-  protected onEquals(expr: types.ExprEquals): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"==" operator expects two operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return this.onEqualsLiteralLiteral(a, b);
-    if (a instanceof Literal && b instanceof Expression) return this.onEqualsLiteralExpression(a, b);
-    if (b instanceof Literal && a instanceof Expression) return this.onEqualsLiteralExpression(b, a);
-    this.codegen.link('deepEqual');
-    return new Expression(`deepEqual(${a}, ${b})`);
-  }
-
-  protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"!=" operator expects two operands.');
-    const [, a, b] = expr;
-    const res = this.onEquals(['eq', a, b]);
-    if (res instanceof Literal) return new Literal(!res.val);
-    return new Expression(`!(${res})`);
   }
 
   protected onNot(expr: types.ExprNot): ExpressionResult {
@@ -620,12 +620,12 @@ export class JsonExpressionCodegen {
       case '**':
       case 'pow':
         return this.onPow(expr as types.ExprPow);
-      case '=':
-      case 'get':
-        return this.onGet(expr as types.ExprGet);
       case '==':
       case 'eq':
         return this.onEquals(expr as types.ExprEquals);
+      case '=':
+      case 'get':
+        return this.onGet(expr as types.ExprGet);
       case '!=':
       case 'ne':
         return this.onNotEquals(expr as types.ExprNotEquals);

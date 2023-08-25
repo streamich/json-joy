@@ -103,7 +103,13 @@ export const evaluate = (
       const base = util.num(evaluate(expr[2], ctx));
       return Math.pow(num, base);
     }
-
+    case '==':
+    case 'eq': {
+      util.assertArity('==', 2, expr);
+      const left = evaluate(expr[1], ctx);
+      const right = evaluate(expr[2], ctx);
+      return deepEqual(left, right);
+    }
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
@@ -113,12 +119,6 @@ export const evaluate = (
       if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
       validateJsonPointer(pointer);
       return util.throwOnUndef(get(ctx.data, toPath(pointer)), def);
-    }
-    case '==':
-    case 'eq': {
-      const left = evaluate(expr[1], ctx);
-      const right = evaluate(expr[2], ctx);
-      return deepEqual(left, right);
     }
     case 'in': {
       const v2 = evaluate(expr[2], ctx);

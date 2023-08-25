@@ -440,4 +440,52 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('Comparison operators', () => {
+    describe('eq or ==', () => {
+      test('can compare numbers', () => {
+        check(['eq', 1, 1], true);
+        check(['eq', 5, 5], true);
+        check(['eq', 5, 4], false);
+        check(['eq', 5, -5], false);
+      });
+
+      test('can compare strings', () => {
+        check(['eq', '1', '1'], true);
+        check(['eq', 'abc', 'abc'], true);
+        check(['eq', 'abc', 'abc!'], false);
+      });
+
+      test('can compare strings', () => {
+        check(['eq', '1', '1'], true);
+        check(['eq', 'abc', 'abc'], true);
+        check(['eq', 'abc', 'abc!'], false);
+      });
+
+      test('can compare booleans', () => {
+        check(['eq', true, true], true);
+        check(['eq', true, false], false);
+        check(['eq', false, true], false);
+        check(['eq', false, false], true);
+      });
+
+      test('deeply compares objects', () => {
+        check(['eq', {foo: 'bar'}, {foo: 'bar'}], true);
+      });
+
+      test('different types', () => {
+        check(['eq', 1, '1'], false);
+        check(['eq', 123, '123'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['eq', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""==" operator expects 2 operands."`,
+        );
+        expect(() => check(['eq', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""==" operator expects 2 operands."`,
+        );
+      });
+    });
+  });
 };
