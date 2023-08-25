@@ -274,5 +274,27 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('abs', () => {
+      test('returns positive value', () => {
+        check(['abs', ['+', 0, 1.6]], 1.6);
+        check(['abs', ['+', 0, -1.2]], 1.2);
+        check(['abs', ['+', 0, -3]], 3);
+        check(['abs', ['+', 0, 5]], 5);
+      });
+
+      test('evaluates sub-expressions', () => {
+        check(['abs', ['abs', -5.8]], 5.8);
+      });
+
+      test('throws on too few arguments', () => {
+        expect(() => check(['abs'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""abs" operator expects 1 operands."`,
+        );
+        expect(() => check(['abs', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+          `""abs" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };

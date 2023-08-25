@@ -67,6 +67,10 @@ export const evaluate = (
       util.assertArity('floor', 1, expr);
       return Math.floor(util.num(evaluate(expr[1], ctx)));
     }
+    case 'abs': {
+      util.assertArity('abs', 1, expr);
+      return Math.abs(util.num(evaluate(expr[1], ctx)));
+    }
 
 
     case '=':

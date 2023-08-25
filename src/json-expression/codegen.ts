@@ -128,22 +128,29 @@ export class JsonExpressionCodegen {
   protected onRound(expr: types.ExprRound): ExpressionResult {
     util.assertArity('round', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.round(util.num(a.val)));
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.round(+(${a}) || 0)`);
   }
 
   protected onCeil(expr: types.ExprCeil): ExpressionResult {
     util.assertArity('ceil', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.ceil(util.num(a.val)));
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.ceil(+(${a}) || 0)`);
   }
 
   protected onFloor(expr: types.ExprFloor): ExpressionResult {
     util.assertArity('floor', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(Math.floor(util.num(a.val)));
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
     return new Expression(`Math.floor(+(${a}) || 0)`);
+  }
+
+  protected onAbs(expr: types.ExprAbs): ExpressionResult {
+    util.assertArity('abs', 1, expr);
+    const a = this.onExpression(expr[1]);
+    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`Math.abs(+(${a}) || 0)`);
   }
 
 
@@ -544,6 +551,8 @@ export class JsonExpressionCodegen {
         return this.onCeil(expr as types.ExprCeil);
       case 'floor':
         return this.onFloor(expr as types.ExprFloor);
+      case 'abs':
+        return this.onAbs(expr as types.ExprAbs);
 
       case '=':
       case 'get':
