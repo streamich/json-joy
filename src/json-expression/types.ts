@@ -183,3 +183,5 @@ export interface OperatorCodegenCtx<E extends Expression> {
   ctx: JsonExpressionContext;
   operand: (operand: Expression) => ExpressionResult;
 }
+
+export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;

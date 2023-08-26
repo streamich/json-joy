@@ -1,11 +1,11 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {get, toPath, validateJsonPointer} from '../json-pointer';
-import {Expr, Expression, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorDefinition} from './types';
+import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorMap} from './types';
 import * as util from './util';
 
 const toNum = util.num;
 
-export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expression>[]}) => {
+export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
   const binaryOperands = (
     operator: string,
     expr: Expr,
@@ -25,6 +25,14 @@ export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expre
     if (expr.length === 1) return expr[0];
 
     const fn = expr[0];
+
+    const def = operators.get(fn);
+    if (def) {
+      const [name, , arity, fn] = def;
+      if (arity !== -1) util.assertArity(name, arity, expr);
+      else util.assertVariadicArity(name, expr);
+      return fn(expr, {...ctx, eval: evaluate});
+    }
 
     switch (fn) {
       // Arithmetic operators

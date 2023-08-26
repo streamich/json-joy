@@ -1,6 +1,6 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
-import {Expression} from './types';
+import {Expression, OperatorDefinition, OperatorMap} from './types';
 
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
 
@@ -80,4 +80,14 @@ export const assertArity = (operator: string, arity: number, expr: Expression): 
 
 export const assertVariadicArity = (operator: string, expr: Expression): void => {
   if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
+};
+
+export const operatorsToMap = (operators: OperatorDefinition<Expression>[]): OperatorMap => {
+  const map: OperatorMap = new Map();
+  for (const operator of operators) {
+    const [name, aliases] = operator;
+    map.set(name, operator);
+    for (const alias of aliases) map.set(alias, operator);
+  }
+  return map;
 };
