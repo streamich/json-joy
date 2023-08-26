@@ -1,6 +1,6 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {get, toPath, validateJsonPointer} from '../json-pointer';
-import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext} from './types';
+import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal} from './types';
 import * as util from './util';
 
 const binaryOperands = (
@@ -17,11 +17,11 @@ const binaryOperands = (
 const toNumber = util.num;
 
 export const evaluate = (
-  expr: Expr | unknown,
+  expr: Expr | Literal<unknown>,
   ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext,
 ): unknown => {
   if (!(expr instanceof Array)) return expr;
-  if (expr.length === 1 && expr[0] instanceof Array) return expr[0];
+  if (expr.length === 1) return expr[0];
 
   const fn = expr[0];
 

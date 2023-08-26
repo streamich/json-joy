@@ -224,9 +224,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few arguments', () => {
-        expect(() => check(['round'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""round" operator expects 1 operands."`,
-        );
         expect(() => check(['round', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""round" operator expects 1 operands."`,
         );
@@ -245,9 +242,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['ceil'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""ceil" operator expects 1 operands."`,
-        );
         expect(() => check(['ceil', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""ceil" operator expects 1 operands."`,
         );
@@ -266,9 +260,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['floor'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""floor" operator expects 1 operands."`,
-        );
         expect(() => check(['floor', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""floor" operator expects 1 operands."`,
         );
@@ -287,9 +278,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['trunc'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""trunc" operator expects 1 operands."`,
-        );
         expect(() => check(['trunc', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""trunc" operator expects 1 operands."`,
         );
@@ -309,9 +297,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['abs'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""abs" operator expects 1 operands."`,
-        );
         expect(() => check(['abs', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""abs" operator expects 1 operands."`,
         );
@@ -330,9 +315,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['sqrt'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""sqrt" operator expects 1 operands."`,
-        );
         expect(() => check(['sqrt', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""sqrt" operator expects 1 operands."`,
         );
@@ -351,9 +333,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['exp'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""exp" operator expects 1 operands."`,
-        );
         expect(() => check(['exp', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""exp" operator expects 1 operands."`,
         );
@@ -372,7 +351,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['ln'] as any, 2)).toThrowErrorMatchingInlineSnapshot(`""ln" operator expects 1 operands."`);
         expect(() => check(['ln', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""ln" operator expects 1 operands."`,
         );
@@ -391,9 +369,6 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on too few or too many arguments', () => {
-        expect(() => check(['log10'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""log10" operator expects 1 operands."`,
-        );
         expect(() => check(['log10', 1, 2] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""log10" operator expects 1 operands."`,
         );
@@ -413,8 +388,8 @@ export const jsonExpressionUnitTests = (
         check(['log', ['log', 2, 2], 5], log(log(2, 2), 5));
       });
 
-      test('throws on too few arguments', () => {
-        expect(() => check(['log'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+      test('throws on too many arguments', () => {
+        expect(() => check(['log', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""log" operator expects 2 operands."`,
         );
       });
@@ -433,8 +408,8 @@ export const jsonExpressionUnitTests = (
         check(['pow', ['pow', 2, 2], 5], pow(pow(2, 2), 5));
       });
 
-      test('throws on too few arguments', () => {
-        expect(() => check(['pow'] as any, 2)).toThrowErrorMatchingInlineSnapshot(
+      test('throws on too many arguments', () => {
+        expect(() => check(['pow', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
           `""pow" operator expects 2 operands."`,
         );
       });

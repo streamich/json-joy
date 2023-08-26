@@ -147,3 +147,6 @@ export interface JsonExpressionExecutionContext {
 export interface JsonExpressionCodegenContext {
   createPattern?: (pattern: string) => (value: string) => boolean;
 }
+
+export type JsonExpressionContext = JsonExpressionExecutionContext & JsonExpressionCodegenContext;
+
