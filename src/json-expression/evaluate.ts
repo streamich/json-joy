@@ -132,6 +132,16 @@ export const evaluate = (
       const [left, right] = binaryOperands('>=', expr as Expr, ctx);
       return <any>left >= <any>right;
     }
+    case '<':
+    case 'lt': {
+      const [left, right] = binaryOperands('<', expr as Expr, ctx);
+      return <any>left < <any>right;
+    }
+    case '<=':
+    case 'le': {
+      const [left, right] = binaryOperands('<=', expr as Expr, ctx);
+      return <any>left <= <any>right;
+    }
     case '=':
     case 'get': {
       const pointer = evaluate(expr[1], ctx);
@@ -216,16 +226,6 @@ export const evaluate = (
       const subject = evaluate(a, ctx);
       const fn = ctx.createPattern(pattern);
       return fn(util.str(subject));
-    }
-    case '<': {
-      const left = util.num(evaluate(expr[1], ctx));
-      const right = util.num(evaluate(expr[2], ctx));
-      return left < right;
-    }
-    case '<=': {
-      const left = util.num(evaluate(expr[1], ctx));
-      const right = util.num(evaluate(expr[2], ctx));
-      return left <= right;
     }
     case '><': {
       const val = util.num(evaluate(expr[1], ctx));

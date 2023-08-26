@@ -582,5 +582,60 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('lt or <', () => {
+      test('can compare numbers', () => {
+        check(['<', 2, ['get', '/a']], false, {a: 1});
+        check(['<', 2, ['get', '/a']], true, {a: 4});
+        check(['<', 2, 5], true);
+        check(['<', 5, ['+', 0, 5]], false);
+      });
+
+      test('"lt" alias works', () => {
+        check(['lt', 2, ['get', '/a']], false, {a: 1});
+        check(['lt', 2, ['get', '/a']], true, {a: 4});
+        check(['lt', 2, 1], false);
+        check(['lt', 2, 4], true);
+      });
+
+      test('can compare strings', () => {
+        check(['<', '22', '1'], false);
+        check(['<', 'bb', 'a'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['lt', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""<" operator expects 2 operands."`,
+        );
+        expect(() => check(['<', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""<" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('le or <=', () => {
+      test('can compare numbers', () => {
+        check(['<=', 2, 1], false);
+        check(['<=', 5, ['+', 0, 5]], true);
+        check(['le', 5, 4], false);
+        check(['le', ['+', 0, 5], -5], false);
+      });
+
+      test('can compare strings', () => {
+        check(['<=', '22', '1'], false);
+        check(['<=', 'bb', 'a'], false);
+        check(['<=', 'bb', 'bb'], true);
+        check(['<=', 'bb', 'ccc'], true);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['le', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""<=" operator expects 2 operands."`,
+        );
+        expect(() => check(['<=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""<=" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 };

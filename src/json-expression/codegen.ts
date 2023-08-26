@@ -242,6 +242,22 @@ export class JsonExpressionCodegen {
     return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
   }
 
+  protected onLessThan(expr: types.ExprLessThan): ExpressionResult {
+    util.assertArity('<', 2, expr);
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`(${a})<(${b})`);
+  }
+
+  protected onLessThanOrEqual(expr: types.ExprLessThanOrEqual): ExpressionResult {
+    util.assertArity('<=', 2, expr);
+    const a = this.onExpression(expr[1]);
+    const b = this.onExpression(expr[2]);
+    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    return new Expression(`(${a})<=(${b})`);
+  }
+
   protected onGet(expr: types.ExprGet): ExpressionResult {
     if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
     const path = this.onExpression(expr[1]);
@@ -490,22 +506,6 @@ export class JsonExpressionCodegen {
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
-  protected onLessThan(expr: types.ExprLessThan): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"<" operator expects two operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) < util.num(b.val));
-    return new Expression(`(+(${a})||0) < (+(${b})||0)`);
-  }
-
-  protected onLessThanOrEqual(expr: types.ExprLessThanOrEqual): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"<=" operator expects two operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(util.num(a.val) <= util.num(b.val));
-    return new Expression(`(+(${a})||0) <= (+(${b})||0)`);
-  }
-
   protected onBetweenNeNe(expr: ExprBetweenNeNe): ExpressionResult {
     if (expr.length !== 4) throw new Error('"><" operator expects three operands.');
     const a = this.onExpression(expr[1]);
@@ -632,6 +632,12 @@ export class JsonExpressionCodegen {
       case '>=':
       case 'ge':
         return this.onGreaterThanOrEqual(expr as types.ExprGreaterThanOrEqual);
+      case '<':
+      case 'lt':
+        return this.onLessThan(expr as types.ExprLessThan);
+      case '<=':
+      case 'le':
+        return this.onLessThanOrEqual(expr as types.ExprLessThanOrEqual);
       case '=':
       case 'get':
         return this.onGet(expr as types.ExprGet);
@@ -674,10 +680,6 @@ export class JsonExpressionCodegen {
         return this.onCat(expr as types.ExprCat);
       case 'substr':
         return this.onSubstr(expr as types.ExprSubstr);
-      case '<':
-        return this.onLessThan(expr as types.ExprLessThan);
-      case '<=':
-        return this.onLessThanOrEqual(expr as types.ExprLessThanOrEqual);
       case '><':
         return this.onBetweenNeNe(expr as ExprBetweenNeNe);
       case '=><':
