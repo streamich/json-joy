@@ -1,3 +1,5 @@
+import type {ExpressionResult} from "./codegen";
+
 export type Literal<T> = T | LiteralExpression<T>;
 export type LiteralExpression<O> = [constant: O];
 export type UnaryExpression<O, A1 extends Expression = Expression> = [operator: O, operand1: A1];
@@ -150,3 +152,34 @@ export interface JsonExpressionCodegenContext {
 
 export type JsonExpressionContext = JsonExpressionExecutionContext & JsonExpressionCodegenContext;
 
+export type OperatorDefinition<E extends Expression> = [
+  /** Canonical operator name. */
+  name: string,
+
+  /** Alternative names for this operator. */
+  aliases: Array<string | number>,
+
+  /** Operator arity. -1 means operator is variadic. */
+  arity: -1 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+
+  /** Evaluates an expression with this operator. */
+  eval: OperatorEval<E>,
+
+  /** Compile expression to executable JavaScript. */
+  codegen?: (ctx: OperatorCodegenCtx<E>) => ExpressionResult,
+];
+
+export type OperatorEval<E extends Expression> = (
+  expr: E,
+  ctx: OperatorEvalCtx,
+) => unknown;
+
+export interface OperatorEvalCtx extends JsonExpressionExecutionContext, JsonExpressionCodegenContext {
+  eval: OperatorEval<Expression>;
+}
+
+export interface OperatorCodegenCtx<E extends Expression> {
+  expr: E;
+  ctx: JsonExpressionContext;
+  operand: (operand: Expression) => ExpressionResult;
+}

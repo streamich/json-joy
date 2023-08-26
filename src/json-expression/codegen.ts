@@ -58,7 +58,7 @@ class Expression {
   }
 }
 
-type ExpressionResult = Literal | Expression;
+export type ExpressionResult = Literal | Expression;
 
 export interface JsonExpressionCodegenOptions extends types.JsonExpressionCodegenContext {
   expression: types.Expr;
