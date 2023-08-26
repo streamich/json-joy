@@ -3,7 +3,7 @@ import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, Expression, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorDefinition} from './types';
 import * as util from './util';
 
-const toNumber = util.num;
+const toNum = util.num;
 
 export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expression>[]}) => {
   const binaryOperands = (
@@ -31,87 +31,87 @@ export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expre
       case '+':
       case 'add': {
         util.assertVariadicArity('+', expr);
-        return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) + acc, 0);
+        return expr.slice(1).reduce((acc, e) => toNum(evaluate(e, ctx)) + acc, 0);
       }
       case '-':
       case 'subtract': {
         util.assertVariadicArity('-', expr);
-        return expr.slice(2).reduce((acc, e) => acc - util.num(evaluate(e, ctx)), util.num(evaluate(expr[1], ctx)));
+        return expr.slice(2).reduce((acc, e) => acc - toNum(evaluate(e, ctx)), toNum(evaluate(expr[1], ctx)));
       }
       case '*':
       case 'multiply': {
         util.assertVariadicArity('*', expr);
-        return expr.slice(1).reduce((acc, e) => util.num(evaluate(e, ctx)) * acc, 1);
+        return expr.slice(1).reduce((acc, e) => toNum(evaluate(e, ctx)) * acc, 1);
       }
       case '/':
       case 'divide': {
         util.assertVariadicArity('/', expr);
         let result = util.num(evaluate(expr[1], ctx));
-        for (let i = 2; i < expr.length; i++) result = util.slash(result, util.num(evaluate(expr[i], ctx)));
+        for (let i = 2; i < expr.length; i++) result = util.slash(result, toNum(evaluate(expr[i], ctx)));
         return result;
       }
       case '%':
       case 'mod': {
         util.assertVariadicArity('%', expr);
         let result = util.num(evaluate(expr[1], ctx));
-        for (let i = 2; i < expr.length; i++) result = util.mod(result, util.num(evaluate(expr[i], ctx)));
+        for (let i = 2; i < expr.length; i++) result = util.mod(result, toNum(evaluate(expr[i], ctx)));
         return result;
       }
       case 'min': {
         util.assertVariadicArity('min', expr);
-        return Math.min(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
+        return Math.min(...expr.slice(1).map((e) => toNum(evaluate(e, ctx))));
       }
       case 'max': {
         util.assertVariadicArity('max', expr);
-        return Math.max(...expr.slice(1).map((e) => util.num(evaluate(e, ctx))));
+        return Math.max(...expr.slice(1).map((e) => toNum(evaluate(e, ctx))));
       }
       case 'round': {
         util.assertArity('round', 1, expr);
-        return Math.round(util.num(evaluate(expr[1], ctx)));
+        return Math.round(toNum(evaluate(expr[1], ctx)));
       }
       case 'ceil': {
         util.assertArity('ceil', 1, expr);
-        return Math.ceil(util.num(evaluate(expr[1], ctx)));
+        return Math.ceil(toNum(evaluate(expr[1], ctx)));
       }
       case 'floor': {
         util.assertArity('floor', 1, expr);
-        return Math.floor(util.num(evaluate(expr[1], ctx)));
+        return Math.floor(toNum(evaluate(expr[1], ctx)));
       }
       case 'trunc': {
         util.assertArity('trunc', 1, expr);
-        return Math.trunc(util.num(evaluate(expr[1], ctx)));
+        return Math.trunc(toNum(evaluate(expr[1], ctx)));
       }
       case 'abs': {
         util.assertArity('abs', 1, expr);
-        return Math.abs(util.num(evaluate(expr[1], ctx)));
+        return Math.abs(toNum(evaluate(expr[1], ctx)));
       }
       case 'sqrt': {
         util.assertArity('sqrt', 1, expr);
-        return Math.sqrt(util.num(evaluate(expr[1], ctx)));
+        return Math.sqrt(toNum(evaluate(expr[1], ctx)));
       }
       case 'exp': {
         util.assertArity('exp', 1, expr);
-        return Math.exp(util.num(evaluate(expr[1], ctx)));
+        return Math.exp(toNum(evaluate(expr[1], ctx)));
       }
       case 'ln': {
         util.assertArity('ln', 1, expr);
-        return Math.log(util.num(evaluate(expr[1], ctx)));
+        return Math.log(toNum(evaluate(expr[1], ctx)));
       }
       case 'log': {
         util.assertArity('log', 2, expr);
-        const num = util.num(evaluate(expr[1], ctx));
-        const base = util.num(evaluate(expr[2], ctx));
+        const num = toNum(evaluate(expr[1], ctx));
+        const base = toNum(evaluate(expr[2], ctx));
         return Math.log(num) / Math.log(base);
       }
       case 'log10': {
         util.assertArity('log10', 1, expr);
-        return Math.log10(util.num(evaluate(expr[1], ctx)));
+        return Math.log10(toNum(evaluate(expr[1], ctx)));
       }
       case '^':
       case '**':
       case 'pow': {
         const [num, base] = binaryOperands('pow', expr as Expr, ctx);
-        return Math.pow(util.num(num), util.num(base));
+        return Math.pow(toNum(num), toNum(base));
       }
       case '==':
       case 'eq': {
@@ -185,7 +185,7 @@ export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expre
       case 'bool':
         return !!evaluate(expr[1], ctx);
       case 'num':
-        return toNumber(evaluate(expr[1], ctx));
+        return toNum(evaluate(expr[1], ctx));
       case 'int':
         return ~~(evaluate(expr[1], ctx) as any);
       case 'str':
@@ -214,8 +214,8 @@ export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expre
       }
       case 'substr': {
         const str2 = util.str(evaluate(expr[1], ctx));
-        const from = util.num(evaluate(expr[2], ctx));
-        const length = expr.length > 3 ? util.num(evaluate(expr[3], ctx)) : undefined;
+        const from = toNum(evaluate(expr[2], ctx));
+        const length = expr.length > 3 ? toNum(evaluate(expr[3], ctx)) : undefined;
         return str2.substr(from, length);
       }
       case 'matches': {
@@ -229,27 +229,27 @@ export const createEvaluate = ({operators}: {operators: OperatorDefinition<Expre
         return fn(util.str(subject));
       }
       case '><': {
-        const val = util.num(evaluate(expr[1], ctx));
-        const min = util.num(evaluate(expr[2], ctx));
-        const max = util.num(evaluate(expr[3], ctx));
+        const val = toNum(evaluate(expr[1], ctx));
+        const min = toNum(evaluate(expr[2], ctx));
+        const max = toNum(evaluate(expr[3], ctx));
         return util.betweenNeNe(val, min, max);
       }
       case '=><': {
-        const val = util.num(evaluate(expr[1], ctx));
-        const min = util.num(evaluate(expr[2], ctx));
-        const max = util.num(evaluate(expr[3], ctx));
+        const val = toNum(evaluate(expr[1], ctx));
+        const min = toNum(evaluate(expr[2], ctx));
+        const max = toNum(evaluate(expr[3], ctx));
         return util.betweenEqNe(val, min, max);
       }
       case '><=': {
-        const val = util.num(evaluate(expr[1], ctx));
-        const min = util.num(evaluate(expr[2], ctx));
-        const max = util.num(evaluate(expr[3], ctx));
+        const val = toNum(evaluate(expr[1], ctx));
+        const min = toNum(evaluate(expr[2], ctx));
+        const max = toNum(evaluate(expr[3], ctx));
         return util.betweenNeEq(val, min, max);
       }
       case '=><=': {
-        const val = util.num(evaluate(expr[1], ctx));
-        const min = util.num(evaluate(expr[2], ctx));
-        const max = util.num(evaluate(expr[3], ctx));
+        const val = toNum(evaluate(expr[1], ctx));
+        const min = toNum(evaluate(expr[2], ctx));
+        const max = toNum(evaluate(expr[3], ctx));
         return util.betweenEqEq(val, min, max);
       }
     }
