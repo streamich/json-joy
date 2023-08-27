@@ -772,12 +772,21 @@ export const jsonExpressionUnitTests = (
         check(['&&', true, ['get', ''], true, true], false, false);
       });
 
-      test('casts types to booleans', () => {
-        check(['&&', 1, 1], true);
-        check(['&&', 1, 0], false);
-        check(['&&', 'asdf', ''], false);
-        check(['&&', '', ''], false);
-        check(['&&', 'a', 'b'], true);
+      test('returns the last value, when all values truthy', () => {
+        check(['&&', 1, 1], 1);
+        check(['&&', 1, 2], 2);
+        check(['&&', 1, 2, '3'], '3');
+        check(['&&', 1, 2, '3', true], true);
+        check(['&&', 1, 2, '3', true, {}], {});
+        check(['&&', 1, 2, '3', true, {}, [[0]]], [0]);
+      });
+
+      test('returns the first falsy value', () => {
+        check(['&&', 1, 1, 0, 1], 0);
+        check(['&&', 1, 1, false, 1], false);
+        check(['&&', 1, 1, '', 1], '');
+        check(['&&', 1, 1, null, 1], null);
+        check(['&&', 1, 1, undefined, 1], undefined);
       });
 
       test('alias works', () => {

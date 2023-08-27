@@ -125,10 +125,10 @@ export const jsonExpressionCodegenTests = (
       });
 
       test('two operand case', () => {
-        check(['and', 1, 1], true);
-        check(['and', 1, 0], false);
-        check(['and', 0, 1], false);
-        check(['and', 0, 0], false);
+        check(['and', 1, 1], 1);
+        check(['and', 1, 0], 0);
+        check(['and', 0, 1], 0);
+        check(['and', 0, 0], 0);
       });
 
       test('three operand case', () => {
@@ -137,10 +137,10 @@ export const jsonExpressionCodegenTests = (
       });
 
       test('operands are expressions', () => {
-        check(['and', ['get', '/0'], ['get', '/0']], true, [1, 0]);
-        check(['and', ['get', '/0'], ['get', '/1']], false, [1, 0]);
-        check(['and', ['get', '/0'], 1], true, [1, 0]);
-        check(['and', ['get', '/0'], 0], false, [1, 0]);
+        check(['and', ['get', '/0'], ['get', '/0']], 1, [1, 0]);
+        check(['and', ['get', '/0'], ['get', '/1']], 0, [1, 0]);
+        check(['and', ['get', '/0'], 1], 1, [1, 0]);
+        check(['and', ['get', '/0'], 0], 0, [1, 0]);
       });
     });
 

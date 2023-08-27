@@ -45,10 +45,10 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
       });
 
       test('works with number', () => {
-        check(['&&', 1, 1], true, null);
-        check(['&&', 1, 0], false, null);
-        check(['&&', 0, 1], false, null);
-        check(['&&', 0, 0], false, null);
+        check(['&&', 1, 1], 1, null);
+        check(['&&', 1, 0], 0, null);
+        check(['&&', 0, 1], 0, null);
+        check(['&&', 0, 0], 0, null);
       });
 
       test('true on multiple truthy values', () => {
@@ -59,7 +59,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           zero: 0,
         };
         check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/true']], true, data);
-        check(['&&', ['=', '/true'], ['=', '/one']], true, data);
+        check(['&&', ['=', '/true'], ['=', '/one']], 1, data);
       });
 
       test('false on single falsy value', () => {
@@ -69,7 +69,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], false, data);
+        check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], 0, data);
       });
     });
 
