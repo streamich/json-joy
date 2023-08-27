@@ -72,6 +72,7 @@ export type ComparisonExpression =
   | ExprLessThanOrEqual
   | ExprGreaterThan
   | ExprGreaterThanOrEqual
+  | ExprCmp
   | ExprBetweenNeNe
   | ExprBetweenEqNe
   | ExprBetweenNeEq
@@ -83,6 +84,7 @@ export type ExprGreaterThan = BinaryExpression<'gt' | '>'>;
 export type ExprGreaterThanOrEqual = BinaryExpression<'ge' | '>='>;
 export type ExprLessThan = BinaryExpression<'lt' | '<'>;
 export type ExprLessThanOrEqual = BinaryExpression<'le' | '<='>;
+export type ExprCmp = BinaryExpression<'cmp'>;
 export type ExprBetweenEqEq = TernaryExpression<'between' | '=><='>;
 export type ExprBetweenNeNe = TernaryExpression<'><'>;
 export type ExprBetweenEqNe = TernaryExpression<'=><'>;

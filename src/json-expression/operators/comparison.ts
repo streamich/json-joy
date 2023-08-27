@@ -124,6 +124,20 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
   ] as types.OperatorDefinition<types.ExprLessThanOrEqual>,
 
   [
+    'cmp',
+    [],
+    2,
+    (expr: types.ExprCmp, ctx) => {
+      const [left, right] = binaryOperands(expr, ctx);
+      return util.cmp(left, right);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprCmp>): ExpressionResult => {
+      ctx.link(util.cmp, 'cmp');
+      return new Expression(`cmp((${ctx.operands[0]}),(${ctx.operands[1]}))`);
+    },
+  ] as types.OperatorDefinition<types.ExprCmp>,
+
+  [
     '=><=',
     ['between'],
     3,

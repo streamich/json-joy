@@ -44,6 +44,8 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 
+export const cmp = (a: any, b: any): 1 | -1 | 0 => a > b ? 1 : a < b ? -1 : 0;
+
 export const betweenNeNe = (val: any, min: any, max: any): boolean => val > min && val < max;
 export const betweenNeEq = (val: any, min: any, max: any): boolean => val > min && val <= max;
 export const betweenEqNe = (val: any, min: any, max: any): boolean => val >= min && val < max;

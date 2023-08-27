@@ -623,6 +623,29 @@ export const jsonExpressionUnitTests = (
       });
     });
 
+    describe('cmp', () => {
+      test('can compare numbers', () => {
+        check(['cmp', 2, 1], 1);
+        check(['cmp', 2, 4], -1);
+        check(['cmp', 3.3, 3.3], 0);
+      });
+
+      test('can compare strings', () => {
+        check(['cmp', '22', '1'], 1);
+        check(['cmp', '22', '33'], -1);
+        check(['cmp', '22', ['=', '']], 0, '22');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['cmp', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""cmp" operator expects 2 operands."`,
+        );
+        expect(() => check(['cmp', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""cmp" operator expects 2 operands."`,
+        );
+      });
+    });
+
     describe('between or =><=', () => {
       test('can compare numbers', () => {
         check(['=><=', 1.5, 1, 2], true);
