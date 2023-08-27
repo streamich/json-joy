@@ -88,16 +88,6 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onContains(expr: types.ExprContains): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"contains" operator expects two operands.');
-    const [, a, b] = expr;
-    const outer = this.onExpression(a);
-    const inner = this.onExpression(b);
-    if (outer instanceof Literal && inner instanceof Literal) return new Literal(util.contains(outer.val, inner.val));
-    this.codegen.link('contains');
-    return new Expression(`contains(${outer}, ${inner})`);
-  }
-
   protected onEnds(expr: types.ExprEnds): ExpressionResult {
     if (expr.length !== 3) throw new Error('"ends" operator expects two operands.');
     const [, a, b] = expr;
@@ -222,8 +212,6 @@ export class JsonExpressionCodegen {
         return this.onIf(expr as types.ExprIf);
       case 'starts':
         return this.onStarts(expr as types.ExprStarts);
-      case 'contains':
-        return this.onContains(expr as types.ExprContains);
       case 'ends':
         return this.onEnds(expr as types.ExprEnds);
       case 'matches':

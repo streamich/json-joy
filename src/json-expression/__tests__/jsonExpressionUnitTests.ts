@@ -966,5 +966,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('contains', () => {
+      test('can find a substring', () => {
+        check(['contains', 'abc', 'ab'], true);
+        check(['contains', 'abc', 'b'], true);
+        check(['contains', 'abc', 'c'], true);
+      });
+
+      test('returns false on missing substring', () => {
+        check(['contains', 'abc', 'g'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['contains', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""contains" operator expects 2 operands."`,
+        );
+        expect(() => check(['contains', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""contains" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 };

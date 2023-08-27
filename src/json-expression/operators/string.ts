@@ -16,4 +16,20 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprCat>,
+
+  [
+    'contains',
+    [],
+    2,
+    (expr: types.ExprContains, ctx) => {
+      const outer = ctx.eval(expr[1], ctx);
+      const inner = ctx.eval(expr[2], ctx);
+      return util.contains(outer, inner);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprContains>): ExpressionResult => {
+      ctx.link('contains', util.contains);
+      const js = `contains(${ctx.operands[0]},${ctx.operands[1]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprContains>,
 ];

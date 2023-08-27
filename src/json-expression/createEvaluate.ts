@@ -58,11 +58,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const test = evaluate(expr[2], ctx);
         return util.starts(subject, test);
       }
-      case 'contains': {
-        const subject = evaluate(expr[1], ctx);
-        const test = evaluate(expr[2], ctx);
-        return util.contains(subject, test);
-      }
       case 'ends': {
         const subject = evaluate(expr[1], ctx);
         const test = evaluate(expr[2], ctx);
