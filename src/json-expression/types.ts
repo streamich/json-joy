@@ -1,3 +1,4 @@
+import type {JavaScript} from "../util/codegen";
 import type {ExpressionResult} from "./codegen-steps";
 
 export type Literal<T> = T | LiteralExpression<T>;
@@ -189,6 +190,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   operands: ExpressionResult[];
   operand: (operand: Expression) => ExpressionResult;
   link: (name: string, value: unknown) => void;
+  const: (js: JavaScript<unknown>) => string;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;

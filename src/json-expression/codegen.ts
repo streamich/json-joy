@@ -1,20 +1,18 @@
 import * as util from './util';
 import {Codegen} from '../util/codegen/Codegen';
-import {deepEqual} from '../json-equal/deepEqual';
-import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
 import {emitStringMatch} from '../util/codegen/util/helpers';
 import {Expression, ExpressionResult, Literal} from './codegen-steps';
 import type * as types from './types';
 import {createEvaluate} from './createEvaluate';
+import {JavaScript} from '../util/codegen';
 
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
 const linkable = {
   get: util.get,
   throwOnUndef: util.throwOnUndef,
-  deepEqual,
   type: util.type,
   str: util.str,
   starts: util.starts,
@@ -49,25 +47,6 @@ export class JsonExpressionCodegen {
       linkable,
     });
     this.evaluate = createEvaluate({operators: options.operators});
-  }
-
-  protected onEquals(expr: types.ExprEquals): ExpressionResult {
-    util.assertFixedArity('==', 2, expr);
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return this.onEqualsLiteralLiteral(a, b);
-    if (a instanceof Literal && b instanceof Expression) return this.onEqualsLiteralExpression(a, b);
-    if (b instanceof Literal && a instanceof Expression) return this.onEqualsLiteralExpression(b, a);
-    this.codegen.link('deepEqual');
-    return new Expression(`deepEqual(${a}, ${b})`);
-  }
-
-  protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
-    util.assertFixedArity('!=', 2, expr);
-    const [, a, b] = expr;
-    const res = this.onEquals(['eq', a, b]);
-    if (res instanceof Literal) return new Literal(!res.val);
-    return new Expression(`!(${res})`);
   }
 
   protected onGreaterThan(expr: types.ExprGreaterThan): ExpressionResult {
@@ -119,16 +98,6 @@ export class JsonExpressionCodegen {
       this.codegen.link('get');
       return new Expression(`throwOnUndef(get(${path}, data), ${def})`);
     }
-  }
-
-  protected onEqualsLiteralLiteral(a: Literal, b: Literal): ExpressionResult {
-    return new Literal(deepEqual(a.val, b.val));
-  }
-
-  protected onEqualsLiteralExpression(literal: Literal, expression: Expression): ExpressionResult {
-    const fn = $$deepEqual(literal.val);
-    const d = this.codegen.addConstant(fn);
-    return new Expression(`${d}(${expression})`);
   }
 
   protected onNot(expr: types.ExprNot): ExpressionResult {
@@ -401,6 +370,10 @@ export class JsonExpressionCodegen {
     this.codegen.linkDependency(dependency, name);
   };
 
+  private operatorConst = (js: JavaScript<unknown>): string => {
+    return this.codegen.addConstant(js);
+  };
+
   protected onExpression(expr: types.Expr | unknown): ExpressionResult {
     if (expr instanceof Array) {
       if (expr.length === 1) return new Literal(expr[0]);
@@ -424,17 +397,12 @@ export class JsonExpressionCodegen {
         createPattern: this.options.createPattern,
         operand: (operand: types.Expression) => this.onExpression(operand),
         link: this.linkOperandDeps,
+        const: this.operatorConst,
       };
       return codegen(ctx);
     }
 
     switch (expr[0]) {
-      case '==':
-      case 'eq':
-        return this.onEquals(expr as types.ExprEquals);
-      case '!=':
-      case 'ne':
-        return this.onNotEquals(expr as types.ExprNotEquals);
       case '>':
       case 'gt':
         return this.onGreaterThan(expr as types.ExprGreaterThan);

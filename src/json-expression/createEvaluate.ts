@@ -34,16 +34,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
     }
 
     switch (fn) {
-      case '==':
-      case 'eq': {
-        const [left, right] = binaryOperands('==', expr as Expr, ctx);
-        return deepEqual(left, right);
-      }
-      case '!=':
-      case 'ne': {
-        const [left, right] = binaryOperands('!=', expr as Expr, ctx);
-        return !deepEqual(left, right);
-      }
       case '>':
       case 'gt': {
         const [left, right] = binaryOperands('>', expr as Expr, ctx);
