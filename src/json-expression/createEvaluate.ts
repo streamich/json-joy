@@ -34,26 +34,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
     }
 
     switch (fn) {
-      case '>':
-      case 'gt': {
-        const [left, right] = binaryOperands('>', expr as Expr, ctx);
-        return <any>left > <any>right;
-      }
-      case '>=':
-      case 'ge': {
-        const [left, right] = binaryOperands('>=', expr as Expr, ctx);
-        return <any>left >= <any>right;
-      }
-      case '<':
-      case 'lt': {
-        const [left, right] = binaryOperands('<', expr as Expr, ctx);
-        return <any>left < <any>right;
-      }
-      case '<=':
-      case 'le': {
-        const [left, right] = binaryOperands('<=', expr as Expr, ctx);
-        return <any>left <= <any>right;
-      }
       case '=':
       case 'get': {
         const pointer = evaluate(expr[1], ctx);
