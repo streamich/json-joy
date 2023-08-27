@@ -51,27 +51,6 @@ export class JsonExpressionCodegen {
     this.evaluate = createEvaluate({operators: options.operators});
   }
 
-  protected onAsterisk(expr: types.ExprAsterisk): ExpressionResult {
-    util.assertVariadicArity('*', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a * util.num(b.val), 1));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' * ')}`);
-  }
-
-  protected onSlash(expr: types.ExprSlash): ExpressionResult {
-    util.assertVariadicArity('/', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    this.codegen.link('slash');
-    let last: string = params[0];
-    for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
-    return new Expression(last);
-  }
-
   protected onMod(expr: types.ExprMod): ExpressionResult {
     util.assertVariadicArity('%', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
@@ -524,6 +503,13 @@ export class JsonExpressionCodegen {
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
   }
 
+  private linkedOperandDeps: Set<string> = new Set();
+  private linkOperandDeps = (name: string, dependency: unknown): void => {
+    if (this.linkedOperandDeps.has(name)) return;
+    this.linkedOperandDeps.add(name);
+    this.codegen.linkDependency(dependency, name);
+  };
+
   protected onExpression(expr: types.Expr | unknown): ExpressionResult {
     if (expr instanceof Array) {
       if (expr.length === 1) return new Literal(expr[0]);
@@ -544,17 +530,12 @@ export class JsonExpressionCodegen {
         expr,
         createPattern: this.options.createPattern,
         operand: (operand: types.Expression) => this.onExpression(operand),
+        link: this.linkOperandDeps,
       };
       return codegen(ctx);
     }
 
     switch (expr[0]) {
-      case '*':
-      case 'multiply':
-        return this.onAsterisk(expr as types.ExprAsterisk);
-      case '/':
-      case 'divide':
-        return this.onSlash(expr as types.ExprSlash);
       case '%':
       case 'mod':
         return this.onMod(expr as types.ExprMod);

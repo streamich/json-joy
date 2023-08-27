@@ -167,6 +167,12 @@ export type OperatorDefinition<E extends Expression> = [
 
   /** Compile expression to executable JavaScript. */
   codegen: (ctx: OperatorCodegenCtx<E>) => ExpressionResult,
+
+  /**
+   * Whether this expression has side effects. For example, data retrieval
+   * expressions or random value generation is considered impure.
+   */
+  impure?: boolean,
 ];
 
 export type OperatorEval<E extends Expression> = (
@@ -181,7 +187,7 @@ export interface OperatorEvalCtx extends JsonExpressionExecutionContext, JsonExp
 export interface OperatorCodegenCtx<E extends Expression> extends JsonExpressionCodegenContext {
   expr: E;
   operand: (operand: Expression) => ExpressionResult;
-  // link: () => string;
+  link: (name: string, value: unknown) => void;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;
