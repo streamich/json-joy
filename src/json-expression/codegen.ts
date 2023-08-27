@@ -59,14 +59,6 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onIf(expr: types.ExprIf): ExpressionResult {
-    if (expr.length !== 4) throw new Error('"if" operator expects three operands.');
-    const [, a, b, c] = expr;
-    const condition = this.onExpression(a);
-    if (condition instanceof Literal) return condition.val ? this.onExpression(b) : this.onExpression(c);
-    return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
-  }
-
   protected onDefined(expr: types.ExprDefined): ExpressionResult {
     if (expr.length > 2) throw new Error('"defined" operator expects one operand.');
     const [, pointer] = expr;
@@ -151,9 +143,6 @@ export class JsonExpressionCodegen {
       case '=':
       case 'get':
         return this.onGet(expr as types.ExprGet);
-      case '?':
-      case 'if':
-        return this.onIf(expr as types.ExprIf);
       case 'defined':
         return this.onDefined(expr as types.ExprDefined);
       case 'in':

@@ -4,6 +4,7 @@ import {comparisonOperators} from './comparison';
 import {booleanOperators} from './boolean';
 import {typeOperators} from './type';
 import {stringOperators} from './string';
+import {branchingOperators} from './branching';
 
 export const operators = [
   ...arithmeticOperators,
@@ -11,6 +12,7 @@ export const operators = [
   ...booleanOperators,
   ...typeOperators,
   ...stringOperators,
+  ...branchingOperators,
 ];
 
 export const operatorsMap = operatorsToMap(operators);

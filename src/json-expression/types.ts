@@ -114,10 +114,19 @@ export type ExprEnds = BinaryExpression<'ends'>;
 export type ExprMatches = BinaryExpression<'matches'>;
 export type ExprSubstr = TernaryExpression<'substr'>;
 
+// Branching expressions
+export type BranchingExpression = ExprIf | ExprThrow;
+
+export type ExprIf = TernaryExpression<'if' | '?'>;
+export type ExprThrow = UnaryExpression<'throw'>;
+
+// Input expressions
+export type InputExpression = ExprGet | ExprDefined;
+
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
-export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
 export type ExprDefined = [fn: 'defined', path: unknown];
-// export type ExprUndefined = [fn: 'undefined', expression: unknown];
+
+
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 export type Expr =
@@ -126,11 +135,8 @@ export type Expr =
   | BooleanExpression
   | TypeExpression
   | StringExpression
-  | ExprGet
-  | ExprEquals
-  | ExprNotEquals
-  | ExprIf
-  | ExprDefined
+  | BranchingExpression
+  | InputExpression
   | ExprIn;
 
 export interface JsonExpressionExecutionContext {

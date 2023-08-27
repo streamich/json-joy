@@ -3,8 +3,6 @@ import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorMap} from './types';
 import * as util from './util';
 
-const toNum = util.num;
-
 export const createEvaluate = ({operators, createPattern}: {operators: OperatorMap} & JsonExpressionCodegenContext) => {
   const evaluate = (
     expr: Expr | Literal<unknown>,
@@ -38,10 +36,6 @@ export const createEvaluate = ({operators, createPattern}: {operators: OperatorM
         if (!(v2 instanceof Array) || !v2.length) return false;
         const v1 = evaluate(expr[1], ctx);
         return v2.some((item: unknown) => deepEqual(item, v1));
-      }
-      case '?':
-      case 'if': {
-        return evaluate(expr[1], ctx) ? evaluate(expr[2], ctx) : evaluate(expr[3], ctx);
       }
       case 'defined': {
         // TODO: rename to "def" or "exists"?

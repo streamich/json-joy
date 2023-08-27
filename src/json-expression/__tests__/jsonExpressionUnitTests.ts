@@ -1090,4 +1090,30 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('Branching operators', () => {
+    describe('if or ?', () => {
+      test('branches', () => {
+        check(['?', true, 'a', 'b'], 'a');
+        check(['if', false, 'a', 'b'], 'b');
+      });
+
+      test('branches input values', () => {
+        check(['?', ['=', '/0'], ['=', '/1'], ['=', '/2']], 'a', [true, 'a', 'b']);
+        check(['?', ['=', '/0'], ['=', '/1'], ['=', '/2']], 'b', [false, 'a', 'b']);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['?', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""?" operator expects 3 operands."`,
+        );
+        expect(() => check(['if', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""?" operator expects 3 operands."`,
+        );
+        expect(() => check(['?', 'a', 'b', 'c', 'd'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""?" operator expects 3 operands."`,
+        );
+      });
+    });
+  });
 };
