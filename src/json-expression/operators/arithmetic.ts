@@ -13,11 +13,8 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(1).reduce((acc, e) => toNum(ctx.eval(e, ctx)) + acc, 0);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprPlus>): ExpressionResult => {
-      const params = ctx.expr.slice(1).map((operand) => {
-        const expr = ctx.operand(operand);
-        return `(+(${expr})||0)`;
-      });
-      return new Expression(`${params.join('+')}`);
+      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('+');
+      return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprPlus>,
 
@@ -29,11 +26,8 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(2).reduce((acc, e) => acc - toNum(ctx.eval(e, ctx)), toNum(ctx.eval(expr[1], ctx)));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMinus>): ExpressionResult => {
-      const params = ctx.expr.slice(1).map((operand) => {
-        const expr = ctx.operand(operand);
-        return `(+(${expr})||0)`;
-      });
-      return new Expression(`${params.join('-')}`);
+      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('-');
+      return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprMinus>,
 
@@ -45,11 +39,8 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(1).reduce((acc, e) => toNum(ctx.eval(e, ctx)) * acc, 1);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprAsterisk>): ExpressionResult => {
-      const params = ctx.expr.slice(1).map((operand) => {
-        const expr = ctx.operand(operand);
-        return `(+(${expr})||0)`;
-      });
-      return new Expression(`${params.join('*')}`);
+      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('*');
+      return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprAsterisk>,
 
@@ -62,11 +53,8 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(2).reduce((acc, e) => util.slash(acc, toNum(ctx.eval(e, ctx))), start);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMinus>): ExpressionResult => {
-      const params = ctx.expr.slice(1).map((operand) => {
-        const expr = ctx.operand(operand);
-        return `(+(${expr})||0)`;
-      });
       ctx.link('slash', util.slash);
+      const params = ctx.operands.map(expr => `(+(${expr})||0)`);
       let last: string = params[0];
       for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
       return new Expression(last);

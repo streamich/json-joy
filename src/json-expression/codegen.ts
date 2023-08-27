@@ -517,17 +517,19 @@ export class JsonExpressionCodegen {
 
     const def = this.options.operators.get(expr[0]);
     if (def) {
-      const [name,, arity,, codegen] = def;
+      const [name,, arity,, codegen, impure] = def;
       util.assertArity(name, arity, expr);
-      const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-      const allLiterals = expressions.every((expr) => expr instanceof Literal);
-      /** @todo check the operator for side-effects there. */
-      if (allLiterals) {
-        const result = this.evaluate(expr, {data: undefined})
-        return new Literal(result);
+      const operands = expr.slice(1).map((operand) => this.onExpression(operand));
+      if (!impure) {
+        const allLiterals = operands.every((expr) => expr instanceof Literal);
+        if (allLiterals) {
+          const result = this.evaluate(expr, {data: undefined})
+          return new Literal(result);
+        }
       }
       const ctx: types.OperatorCodegenCtx<types.Expression> = {
         expr,
+        operands,
         createPattern: this.options.createPattern,
         operand: (operand: types.Expression) => this.onExpression(operand),
         link: this.linkOperandDeps,

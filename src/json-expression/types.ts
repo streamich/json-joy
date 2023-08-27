@@ -186,6 +186,7 @@ export interface OperatorEvalCtx extends JsonExpressionExecutionContext, JsonExp
 
 export interface OperatorCodegenCtx<E extends Expression> extends JsonExpressionCodegenContext {
   expr: E;
+  operands: ExpressionResult[];
   operand: (operand: Expression) => ExpressionResult;
   link: (name: string, value: unknown) => void;
 }
