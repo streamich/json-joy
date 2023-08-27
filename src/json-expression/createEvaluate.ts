@@ -51,14 +51,8 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const value = get(ctx.data, toPath(pointer));
         return value !== undefined;
       }
-      case 'bool':
-        return !!evaluate(expr[1], ctx);
-      case 'num':
-        return toNum(evaluate(expr[1], ctx));
       case 'int':
         return ~~(evaluate(expr[1], ctx) as any);
-      case 'str':
-        return util.str(evaluate(expr[1], ctx));
       case 'starts': {
         const subject = evaluate(expr[1], ctx);
         const test = evaluate(expr[2], ctx);

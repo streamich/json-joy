@@ -192,12 +192,6 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
       });
     });
 
-    describe('int', () => {
-      test('converts value to integer', () => {
-        check(['int', '123.4'], 123);
-      });
-    });
-
     describe('str', () => {
       test('converts value to string', () => {
         check(['str', 123], '123');

@@ -71,39 +71,6 @@ export class JsonExpressionCodegen {
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
   }
 
-  protected onBool(expr: types.ExprBool): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"bool" operator expects one operand.');
-    const [, operand] = expr;
-    const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(!!expression.val);
-    return new Expression(`!!(${expression})`);
-  }
-
-  protected onNum(expr: types.ExprNum): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"num" operator expects one operand.');
-    const [, operand] = expr;
-    const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(+(expression.val as number) || 0);
-    return new Expression(`+(${expression}) || 0`);
-  }
-
-  protected onInt(expr: types.ExprInt): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"int" operator expects one operand.');
-    const [, operand] = expr;
-    const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(~~(expression.val as number));
-    return new Expression(`+(${expression})`);
-  }
-
-  protected onStr(expr: types.ExprStr): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"str" operator expects one operand.');
-    const [, operand] = expr;
-    const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(util.str(expression.val));
-    this.codegen.link('str');
-    return new Expression(`str(${expression})`);
-  }
-
   protected onStarts(expr: types.ExprStarts): ExpressionResult {
     if (expr.length !== 3) throw new Error('"starts" operator expects two operands.');
     const [, a, b] = expr;
@@ -271,14 +238,6 @@ export class JsonExpressionCodegen {
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);
-      case 'bool':
-        return this.onBool(expr as types.ExprBool);
-      case 'num':
-        return this.onNum(expr as types.ExprNum);
-      case 'int':
-        return this.onInt(expr as types.ExprInt);
-      case 'str':
-        return this.onStr(expr as types.ExprStr);
       case 'starts':
         return this.onStarts(expr as types.ExprStarts);
       case 'contains':

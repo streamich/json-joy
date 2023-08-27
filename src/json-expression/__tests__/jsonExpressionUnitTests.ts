@@ -865,5 +865,77 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('bool', () => {
+      test('casts to boolean', () => {
+        check(['bool', true], true);
+        check(['bool', ['get', '']], false, false);
+        check(['bool', ['get', '']], false, null);
+        check(['bool', ['get', '']], true, 123);
+        check(['bool', ['get', '']], true, 123.5);
+        check(['bool', ['get', '']], false, 0);
+        check(['bool', ['get', '']], false, 0.0);
+        check(['bool', ['get', '']], true, 'abc');
+        check(['bool', ['get', '']], false, '');
+        check(['bool', ['get', '']], true, {});
+        check(['bool', ['get', '']], true, []);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['bool', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""bool" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('num', () => {
+      test('casts to number', () => {
+        check(['num', true], 1);
+        check(['num', ['get', '']], 0, false);
+        check(['num', ['get', '']], 0, null);
+        check(['num', ['get', '']], 123, 123);
+        check(['num', ['get', '']], 123.5, 123.5);
+        check(['num', ['get', '']], 0, 0);
+        check(['num', ['get', '']], 0, 0.0);
+        check(['num', ['get', '']], 0, 'abc');
+        check(['num', ['get', '']], 0, '');
+        check(['num', ['get', '']], 1, '1');
+        check(['num', ['get', '']], 2, '2');
+        check(['num', ['get', '']], 4.5, '4.5');
+        check(['num', ['get', '']], 0, {});
+        check(['num', ['get', '']], 0, []);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['num', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""num" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('str', () => {
+      test('casts to number', () => {
+        check(['str', true], 'true');
+        check(['str', ['get', '']], 'false', false);
+        check(['str', ['get', '']], 'null', null);
+        check(['str', ['get', '']], '123', 123);
+        check(['str', ['get', '']], '123.5', 123.5);
+        check(['str', ['get', '']], '0', 0);
+        check(['str', ['get', '']], '0', 0.0);
+        check(['str', ['get', '']], 'abc', 'abc');
+        check(['str', ['get', '']], '', '');
+        check(['str', ['get', '']], '1', '1');
+        check(['str', ['get', '']], '2', '2');
+        check(['str', ['get', '']], '4.5', '4.5');
+        check(['str', ['get', '']], '{}', {});
+        check(['str', ['get', '']], '[]', []);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['str', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""str" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };
