@@ -938,4 +938,33 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('String operators', () => {
+    describe('car or .', () => {
+      test('can concatenate two strings', () => {
+        check(['.', 'a', 'b'], 'ab');
+        check(['.', 'a', ['get', '']], 'ac', 'c');
+      });
+
+      test('long form', () => {
+        check(['cat', 'a', 'b'], 'ab');
+        check(['cat', 'a', ['get', '']], 'ac', 'c');
+      });
+
+      test('variadic form', () => {
+        check(['.', 'a', 'b', 'c', 'def'], 'abcdef');
+        check(['.', 'a', 'b', 'c', 'def', ['get', '']], 'abcdef!', '!');
+      });
+
+      test('casts to string', () => {
+        check(['.', '1', true, '!'], '1true!');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['cat', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""." operator expects at least two operands."`,
+        );
+      });
+    });
+  });
 };

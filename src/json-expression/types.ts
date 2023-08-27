@@ -104,20 +104,18 @@ export type ExprNum = UnaryExpression<'num'>;
 export type ExprInt = UnaryExpression<'int'>;
 export type ExprStr = UnaryExpression<'str'>;
 
+// String expressions
+export type StringExpression = ExprCat | ExprContains | ExprStarts | ExprEnds | ExprMatches | ExprSubstr;
+
+export type ExprCat = VariadicExpression<'cat' | '.'>;
+export type ExprContains = BinaryExpression<'contains'>;
+export type ExprStarts = BinaryExpression<'starts'>;
+export type ExprEnds = BinaryExpression<'ends'>;
+export type ExprMatches = BinaryExpression<'matches'>;
+export type ExprSubstr = TernaryExpression<'substr'>;
 
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
-
-
-// String expressions
-export type ExprStarts = [fn: 'starts', outer: unknown, inner: unknown];
-export type ExprContains = [fn: 'contains', outer: unknown, inner: unknown];
-export type ExprEnds = [fn: 'ends', outer: unknown, inner: unknown];
-export type ExprMatches = [fn: 'matches', subject: unknown, pattern: string];
-export type ExprCat = [fn: '.' | 'cat', ...expressions: unknown[]];
-export type ExprSubstr = [fn: 'substr', str: unknown, from: unknown, length?: unknown];
-
-
 export type ExprDefined = [fn: 'defined', path: unknown];
 // export type ExprUndefined = [fn: 'undefined', expression: unknown];
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
@@ -127,19 +125,13 @@ export type Expr =
   | ComparisonExpression
   | BooleanExpression
   | TypeExpression
+  | StringExpression
   | ExprGet
   | ExprEquals
   | ExprNotEquals
   | ExprIf
-  | ExprStarts
-  | ExprContains
-  | ExprEnds
   | ExprDefined
-  | ExprIn
-  | ExprMatches
-  | ExprMatches
-  | ExprCat
-  | ExprSubstr;
+  | ExprIn;
 
 export interface JsonExpressionExecutionContext {
   data: unknown;

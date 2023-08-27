@@ -404,7 +404,7 @@ export const jsonExpressionCodegenTests = (
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
           expect(() => check(['cat', 'a'], '')).toThrowError(
-            new Error('"cat" operator expects at least two operands.'),
+            new Error('"." operator expects at least two operands.'),
           );
         });
       }

@@ -163,24 +163,6 @@ export class JsonExpressionCodegen {
     return new Expression(`isInContainer(${what}, ${container})`);
   }
 
-  protected onCat(expr: types.ExprCat): ExpressionResult {
-    if (expr.length <= 2) throw new Error('"cat" operator expects at least two operands.');
-    const [, ...operands] = expr;
-    const expressions = operands.map((operand) => this.onExpression(operand));
-    let areAllLiteral = true;
-    for (let i = 0; i < expressions.length; i++) {
-      const expression = expressions[i];
-      if (!(expression instanceof Literal)) {
-        areAllLiteral = false;
-        break;
-      }
-    }
-    if (areAllLiteral) return new Literal(expressions.map((expr) => util.str(expr.val)).join(''));
-    this.codegen.link('str');
-    const params = expressions.map((expr) => `str(${expr})`);
-    return new Expression(params.join(' + '));
-  }
-
   protected onSubstr(expr: types.ExprSubstr): ExpressionResult {
     if (expr.length < 3 || expr.length > 4) throw new Error('"substr" operator expects two or three operands.');
     const str = this.onExpression(expr[1]);
@@ -250,9 +232,6 @@ export class JsonExpressionCodegen {
         return this.onDefined(expr as types.ExprDefined);
       case 'in':
         return this.onIn(expr as types.ExprIn);
-      case '.':
-      case 'cat':
-        return this.onCat(expr as types.ExprCat);
       case 'substr':
         return this.onSubstr(expr as types.ExprSubstr);
     }

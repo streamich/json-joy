@@ -68,13 +68,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const test = evaluate(expr[2], ctx);
         return util.ends(subject, test);
       }
-      case 'cat':
-      case '.': {
-        return expr
-          .slice(1)
-          .map((e) => evaluate(e, ctx))
-          .join('');
-      }
       case 'substr': {
         const str2 = util.str(evaluate(expr[1], ctx));
         const from = toNum(evaluate(expr[2], ctx));
