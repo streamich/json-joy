@@ -227,8 +227,8 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
   ] as types.OperatorDefinition<types.ExprLog10>,
 
   [
-    '^',
-    ['**', 'pow'],
+    '**',
+    ['pow'],
     2,
     (expr: types.ExprPow, ctx) => {
       const num = toNum(ctx.eval(expr[1], ctx));

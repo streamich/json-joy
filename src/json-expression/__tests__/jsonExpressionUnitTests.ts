@@ -401,7 +401,7 @@ export const jsonExpressionUnitTests = (
       test('returns logarithm', () => {
         check(['pow', ['+', 0, 2], 8], pow(2, 8));
         check(['**', 3, 5], pow(3, 5));
-        check(['^', ['+', 0, 4.4], 6], pow(4.4, 6));
+        check(['**', ['+', 0, 4.4], 6], pow(4.4, 6));
       });
 
       test('evaluates sub-expressions', () => {
@@ -410,7 +410,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too many arguments', () => {
         expect(() => check(['pow', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""^" operator expects 2 operands."`,
+          `""**" operator expects 2 operands."`,
         );
       });
     });
