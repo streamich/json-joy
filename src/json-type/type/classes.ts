@@ -49,6 +49,7 @@ import type {TypeSystem} from '../system/TypeSystem';
 import type {json_string} from '../../json-brand';
 import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
+import {operatorsMap} from '../../json-expression/operators';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -2056,6 +2057,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
     if (!expr || (expr[0] === 'num' && expr[1] === 0)) throw new Error('NO_DISCRIMINATOR');
     const codegen = new JsonExpressionCodegen({
       expression: expr,
+      operators: operatorsMap,
     });
     const fn = codegen.run().compile();
     return (this.__discriminator = (data: unknown) => +(fn({data}) as any));
