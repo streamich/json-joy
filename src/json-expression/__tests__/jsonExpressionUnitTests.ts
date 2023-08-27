@@ -651,7 +651,7 @@ export const jsonExpressionUnitTests = (
       });
     });
 
-    describe('between or ><', () => {
+    describe('><', () => {
       test('can compare numbers', () => {
         check(['><', 1.5, 1, 2], true);
         check(['><', ['get', ''], 1, 2], true, 1.4);
@@ -673,6 +673,60 @@ export const jsonExpressionUnitTests = (
         expect(() => check(['><', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""><" operator expects 3 operands."`,
         );
+      });
+    });
+
+    describe('=><', () => {
+      test('can compare numbers', () => {
+        check(['=><', 1.5, 1, 2], true);
+        check(['=><', 1, 1, 2], true);
+        check(['=><', ['get', ''], 1, 2], true, 1.4);
+      });
+
+      test('can compare strings', () => {
+        check(['=><', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['=><', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['=><', ['get', ''], 'a', 'ccc'], true, 'a');
+        check(['=><', 'dddd', 'a', 'ccc'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['=><', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><" operator expects 3 operands."`,
+        );
+        expect(() => check(['=><', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><" operator expects 3 operands."`,
+        );
+        expect(() => check(['=><', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><" operator expects 3 operands."`,
+        );
+      });
+
+      describe('><=', () => {
+        test('can compare numbers', () => {
+          check(['><=', 1.5, 1, 2], true);
+          check(['><=', 2, 1, 2], true);
+          check(['><=', ['get', ''], 1, 2], true, 1.4);
+        });
+  
+        test('can compare strings', () => {
+          check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
+          check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
+          check(['><=', ['get', ''], 'a', 'ccc'], true, 'ccc');
+          check(['><=', 'dddd', 'a', 'ccc'], false);
+        });
+  
+        test('throws on invalid operand count', () => {
+          expect(() => check(['><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+            `""><=" operator expects 3 operands."`,
+          );
+          expect(() => check(['><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+            `""><=" operator expects 3 operands."`,
+          );
+          expect(() => check(['><=', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+            `""><=" operator expects 3 operands."`,
+          );
+        });
       });
     });
   });

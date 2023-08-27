@@ -108,18 +108,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const fn = ctx.createPattern(pattern);
         return fn(util.str(subject));
       }
-      case '=><': {
-        const val = toNum(evaluate(expr[1], ctx));
-        const min = toNum(evaluate(expr[2], ctx));
-        const max = toNum(evaluate(expr[3], ctx));
-        return util.betweenEqNe(val, min, max);
-      }
-      case '><=': {
-        const val = toNum(evaluate(expr[1], ctx));
-        const min = toNum(evaluate(expr[2], ctx));
-        const max = toNum(evaluate(expr[3], ctx));
-        return util.betweenNeEq(val, min, max);
-      }
     }
 
     throw new Error('Unknown expression.');

@@ -22,8 +22,6 @@ const linkable = {
   substr: util.substr,
   slash: util.slash,
   mod: util.mod,
-  betweenEqNe: util.betweenEqNe,
-  betweenNeEq: util.betweenNeEq,
 };
 
 export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
@@ -285,28 +283,6 @@ export class JsonExpressionCodegen {
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
-  protected onBetweenEqNe(expr: types.ExprBetweenEqNe): ExpressionResult {
-    if (expr.length !== 4) throw new Error('"=><" operator expects three operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    const c = this.onExpression(expr[3]);
-    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(util.betweenEqNe(util.num(a.val), util.num(b.val), util.num(c.val)));
-    this.codegen.link('betweenEqNe');
-    return new Expression(`betweenEqNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
-  }
-
-  protected onBetweenNeEq(expr: types.ExprBetweenNeEq): ExpressionResult {
-    if (expr.length !== 4) throw new Error('"><=" operator expects three operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    const c = this.onExpression(expr[3]);
-    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(util.betweenNeEq(util.num(a.val), util.num(b.val), util.num(c.val)));
-    this.codegen.link('betweenNeEq');
-    return new Expression(`betweenNeEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
-  }
-
   private linkedOperandDeps: Set<string> = new Set();
   private linkOperandDeps = (name: string, dependency: unknown): void => {
     if (this.linkedOperandDeps.has(name)) return;
@@ -389,10 +365,6 @@ export class JsonExpressionCodegen {
         return this.onCat(expr as types.ExprCat);
       case 'substr':
         return this.onSubstr(expr as types.ExprSubstr);
-      case '=><':
-        return this.onBetweenEqNe(expr as types.ExprBetweenEqNe);
-      case '><=':
-        return this.onBetweenNeEq(expr as types.ExprBetweenNeEq);
     }
     return new Literal(false);
   }
