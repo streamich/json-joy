@@ -11,7 +11,7 @@ export const typeOperators: types.OperatorDefinition<any>[] = [
       return util.type(ctx.eval(expr[1], ctx));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprNot>): ExpressionResult => {
-      ctx.link('type', util.type);
+      ctx.link(util.type, 'type');
       const js = `type(${ctx.operands[0]})`;
       return new Expression(js);
     },
@@ -51,7 +51,7 @@ export const typeOperators: types.OperatorDefinition<any>[] = [
       return util.str(ctx.eval(expr[1], ctx));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprStr>): ExpressionResult => {
-      ctx.link('str', util.str);
+      ctx.link(util.str, 'str');
       const js = `str(${ctx.operands[0]})`;
       return new Expression(js);
     },

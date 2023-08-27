@@ -37,7 +37,7 @@ export class JsonExpressionCodegen {
       epilogue: '',
       linkable,
     });
-    this.evaluate = createEvaluate({operators: options.operators});
+    this.evaluate = createEvaluate({...options});
   }
 
   protected onGet(expr: types.ExprGet): ExpressionResult {
@@ -65,21 +65,6 @@ export class JsonExpressionCodegen {
     const condition = this.onExpression(a);
     if (condition instanceof Literal) return condition.val ? this.onExpression(b) : this.onExpression(c);
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
-  }
-
-  protected onMatches(expr: types.ExprMatches): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"matches" operator expects two operands.');
-    const [, a, pattern] = expr;
-    if (typeof pattern !== 'string')
-      throw new Error('"matches" second argument should be a regular expression string.');
-    const subject = this.onExpression(a);
-    if (!this.options.createPattern)
-      throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
-    const fn = this.options.createPattern(pattern);
-    if (subject instanceof Literal) return new Literal(fn(util.str(subject.val)));
-    const d = this.codegen.linkDependency(fn);
-    this.codegen.link('str');
-    return new Expression(`${d}(str(${subject}))`);
   }
 
   protected onDefined(expr: types.ExprDefined): ExpressionResult {
@@ -119,10 +104,15 @@ export class JsonExpressionCodegen {
   }
 
   private linkedOperandDeps: Set<string> = new Set();
-  private linkOperandDeps = (name: string, dependency: unknown): void => {
-    if (this.linkedOperandDeps.has(name)) return;
-    this.linkedOperandDeps.add(name);
+  private linkOperandDeps = (dependency: unknown, name?: string): string => {
+    if (name) {
+      if (this.linkedOperandDeps.has(name)) return name;
+      this.linkedOperandDeps.add(name);
+    } else {
+      name = this.codegen.getRegister();
+    }
     this.codegen.linkDependency(dependency, name);
+    return name;
   };
 
   private operatorConst = (js: JavaScript<unknown>): string => {
@@ -164,8 +154,6 @@ export class JsonExpressionCodegen {
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);
-      case 'matches':
-        return this.onMatches(expr as types.ExprMatches);
       case 'defined':
         return this.onDefined(expr as types.ExprDefined);
       case 'in':

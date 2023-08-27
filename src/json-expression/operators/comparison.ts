@@ -43,7 +43,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       const b = ctx.operands[1];
       if (a instanceof Literal && b instanceof Expression) return eqLitVsExpr(a, b, ctx);
       if (b instanceof Literal && a instanceof Expression) return eqLitVsExpr(b, a, ctx);
-      ctx.link('deepEqual', deepEqual);
+      ctx.link(deepEqual, 'deepEqual');
       return new Expression(`deepEqual(${a},${b})`);
     },
   ] as types.OperatorDefinition<types.ExprEquals>,
@@ -61,7 +61,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       const b = ctx.operands[1];
       if (a instanceof Literal && b instanceof Expression) return eqLitVsExpr(a, b, ctx, true);
       if (b instanceof Literal && a instanceof Expression) return eqLitVsExpr(b, a, ctx, true);
-      ctx.link('deepEqual', deepEqual);
+      ctx.link(deepEqual, 'deepEqual');
       return new Expression(`!deepEqual(${a},${b})`);
     },
   ] as types.OperatorDefinition<types.ExprNotEquals>,
@@ -127,7 +127,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return util.betweenEqEq(val, min, max);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprBetweenEqEq>): ExpressionResult => {
-      ctx.link('betweenEqEq', util.betweenEqEq);
+      ctx.link(util.betweenEqEq, 'betweenEqEq');
       return new Expression(`betweenEqEq(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
     },
   ] as types.OperatorDefinition<types.ExprBetweenEqEq>,
@@ -141,7 +141,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return util.betweenNeNe(val, min, max);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprBetweenNeNe>): ExpressionResult => {
-      ctx.link('betweenNeNe', util.betweenNeNe);
+      ctx.link(util.betweenNeNe, 'betweenNeNe');
       return new Expression(`betweenNeNe(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
     },
   ] as types.OperatorDefinition<types.ExprBetweenNeNe>,
@@ -155,7 +155,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return util.betweenEqNe(val, min, max);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprBetweenEqNe>): ExpressionResult => {
-      ctx.link('betweenEqNe', util.betweenEqNe);
+      ctx.link(util.betweenEqNe, 'betweenEqNe');
       return new Expression(`betweenEqNe(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
     },
   ] as types.OperatorDefinition<types.ExprBetweenEqNe>,
@@ -169,7 +169,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return util.betweenNeEq(val, min, max);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprBetweenNeEq>): ExpressionResult => {
-      ctx.link('betweenNeEq', util.betweenNeEq);
+      ctx.link(util.betweenNeEq, 'betweenNeEq');
       return new Expression(`betweenNeEq(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
     },
   ] as types.OperatorDefinition<types.ExprBetweenNeEq>,

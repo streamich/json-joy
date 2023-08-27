@@ -5,7 +5,7 @@ import * as util from './util';
 
 const toNum = util.num;
 
-export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
+export const createEvaluate = ({operators, createPattern}: {operators: OperatorMap} & JsonExpressionCodegenContext) => {
   const evaluate = (
     expr: Expr | Literal<unknown>,
     ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext,
@@ -19,7 +19,7 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
     if (def) {
       const [name, , arity, fn] = def;
       util.assertArity(name, arity, expr);
-      return fn(expr, {...ctx, eval: evaluate});
+      return fn(expr, {createPattern, ...ctx, eval: evaluate});
     }
 
     switch (fn) {
@@ -50,16 +50,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         validateJsonPointer(pointer);
         const value = get(ctx.data, toPath(pointer));
         return value !== undefined;
-      }
-      case 'matches': {
-        const [, a, pattern] = expr;
-        if (typeof pattern !== 'string')
-          throw new Error('"matches" second argument should be a regular expression string.');
-        if (!ctx.createPattern)
-          throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
-        const subject = evaluate(a, ctx);
-        const fn = ctx.createPattern(pattern);
-        return fn(util.str(subject));
       }
     }
 

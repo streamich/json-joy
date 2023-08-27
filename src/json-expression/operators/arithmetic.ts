@@ -53,7 +53,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(2).reduce((acc, e) => util.slash(acc, toNum(ctx.eval(e, ctx))), start);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMinus>): ExpressionResult => {
-      ctx.link('slash', util.slash);
+      ctx.link(util.slash, 'slash');
       const params = ctx.operands.map(expr => `(+(${expr})||0)`);
       let last: string = params[0];
       for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
@@ -70,7 +70,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(2).reduce((acc, e) => util.mod(acc, toNum(ctx.eval(e, ctx))), start);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMod>): ExpressionResult => {
-      ctx.link('mod', util.mod);
+      ctx.link(util.mod, 'mod');
       const params = ctx.operands.map(expr => `(+(${expr})||0)`);
       let last: string = params[0];
       for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;

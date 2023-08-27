@@ -179,7 +179,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   expr: E;
   operands: ExpressionResult[];
   operand: (operand: Expression) => ExpressionResult;
-  link: (name: string, value: unknown) => void;
+  link: (value: unknown, name?: string) => string;
   const: (js: JavaScript<unknown>) => string;
 }
 

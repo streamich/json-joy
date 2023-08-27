@@ -1056,5 +1056,38 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('matches', () => {
+      const createPattern = (pattern: string) => {
+        const reg = new RegExp(pattern);
+        return (value: string) => reg.test(value);
+      };
+
+      test('matches a pattern', () => {
+        check(['matches', 'abc', 'bc'], true, null, {
+          createPattern,
+        });
+        check(['matches', 'abc', 'bcd'], false, null, {
+          createPattern,
+        });
+      });
+
+      test('pattern must be a literal', () => {
+        expect(() =>
+          check(['matches', 'abc', ['get', '']], true, 'bc', {
+            createPattern,
+          }),
+        ).toThrowErrorMatchingInlineSnapshot(`""matches" second argument should be a regular expression string."`);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['matches', 'a'] as any, false, null, {createPattern})).toThrowErrorMatchingInlineSnapshot(
+          `""matches" operator expects 2 operands."`,
+        );
+        expect(() =>
+          check(['matches', 'a', 'b', 'c'] as any, false, null, {createPattern}),
+        ).toThrowErrorMatchingInlineSnapshot(`""matches" operator expects 2 operands."`);
+      });
+    });
   });
 };

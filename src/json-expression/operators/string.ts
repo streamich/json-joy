@@ -1,4 +1,4 @@
-import {Expression, ExpressionResult} from '../codegen-steps';
+import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import * as util from "../util";
 import type * as types from "../types";
 
@@ -20,7 +20,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(1).reduce((acc, e) => acc + util.str(ctx.eval(e, ctx)), '');
     },
     (ctx: types.OperatorCodegenCtx<types.ExprCat>): ExpressionResult => {
-      ctx.link('str', util.str);
+      ctx.link(util.str, 'str');
       const js = ctx.operands.map(expr => `str(${expr})`).join('+');
       return new Expression(js);
     },
@@ -35,7 +35,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return util.contains(outer, inner);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprContains>): ExpressionResult => {
-      ctx.link('contains', util.contains);
+      ctx.link(util.contains, 'contains');
       const js = `contains(${ctx.operands[0]},${ctx.operands[1]})`;
       return new Expression(js);
     },
@@ -50,7 +50,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return util.starts(outer, inner);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprStarts>): ExpressionResult => {
-      ctx.link('starts', util.starts);
+      ctx.link(util.starts, 'starts');
       const js = `starts(${ctx.operands[0]},${ctx.operands[1]})`;
       return new Expression(js);
     },
@@ -65,7 +65,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return util.ends(outer, inner);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprEnds>): ExpressionResult => {
-      ctx.link('ends', util.ends);
+      ctx.link(util.ends, 'ends');
       const js = `ends(${ctx.operands[0]},${ctx.operands[1]})`;
       return new Expression(js);
     },
@@ -82,9 +82,38 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return util.substr(str, start, end);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprSubstr>): ExpressionResult => {
-      ctx.link('substr', util.substr);
+      ctx.link(util.substr, 'substr');
       const js = `substr(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprSubstr>,
+
+  [
+    'matches',
+    [],
+    2,
+    (expr: types.ExprEnds, ctx) => {
+      let pattern = expr[2];
+      if (pattern instanceof Array && pattern.length === 1) pattern = pattern[0];
+      if (typeof pattern !== 'string')
+        throw new Error('"matches" second argument should be a regular expression string.');
+      if (!ctx.createPattern)
+        throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
+      const fn = ctx.createPattern(pattern);
+      const outer = ctx.eval(expr[1], ctx);
+      return fn(util.str(outer));
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprEnds>): ExpressionResult => {
+      const pattern = ctx.operands[1];
+      if (!(pattern instanceof Literal) || (typeof pattern.val !== 'string'))
+        throw new Error('"matches" second argument should be a regular expression string.');
+      if (!ctx.createPattern)
+        throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');
+      const fn = ctx.createPattern(pattern.val);
+      const d = ctx.link(fn);
+      ctx.link(util.str, 'str');
+      const subject = ctx.operands[0];
+      return new Expression(`${d}(str(${subject}))`);
+    },
+  ] as types.OperatorDefinition<types.ExprEnds>,
 ];

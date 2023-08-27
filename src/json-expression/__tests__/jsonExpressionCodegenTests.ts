@@ -298,10 +298,10 @@ export const jsonExpressionCodegenTests = (
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
           expect(() => check(['matches', 'asdf'] as any, '')).toThrowError(
-            new Error('"matches" operator expects two operands.'),
+            new Error('"matches" operator expects 2 operands.'),
           );
           expect(() => check(['matches', 'asdf', 'asdf', 'asdf'] as any, '')).toThrowError(
-            new Error('"matches" operator expects two operands.'),
+            new Error('"matches" operator expects 2 operands.'),
           );
         });
       }
