@@ -88,24 +88,26 @@ export type ExprBetweenNeNe = TernaryExpression<'><'>;
 export type ExprBetweenEqNe = TernaryExpression<'=><'>;
 export type ExprBetweenNeEq = TernaryExpression<'><='>;
 
-// Logical expressions
+// Boolean expressions
 export type BooleanExpression = ExprAnd | ExprOr | ExprNot;
 
 export type ExprAnd = VariadicExpression<'and' | '&&'>;
 export type ExprOr = VariadicExpression<'or' | '||'>;
 export type ExprNot = UnaryExpression<'not' | '!'>;
 
+// Type expressions
+export type TypeExpression = ExprType | ExprBool | ExprNum | ExprInt | ExprStr;
+
+export type ExprType = UnaryExpression<'type'>;
+export type ExprBool = UnaryExpression<'bool'>;
+export type ExprNum = UnaryExpression<'num'>;
+export type ExprInt = UnaryExpression<'int'>;
+export type ExprStr = UnaryExpression<'str'>;
+
 
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprIf = [fn: '?' | 'if', test: unknown, then: unknown, otherwise: unknown];
 
-
-
-export type ExprType = [fn: 'type', expression: unknown];
-export type ExprBool = [fn: 'bool', expression: unknown];
-export type ExprNum = [fn: 'num', expression: unknown];
-export type ExprInt = [fn: 'int', expression: unknown];
-export type ExprStr = [fn: 'str', expression: unknown];
 
 // String expressions
 export type ExprStarts = [fn: 'starts', outer: unknown, inner: unknown];
@@ -124,15 +126,11 @@ export type Expr =
   | ArithmeticExpression
   | ComparisonExpression
   | BooleanExpression
+  | TypeExpression
   | ExprGet
   | ExprEquals
   | ExprNotEquals
   | ExprIf
-  | ExprType
-  | ExprBool
-  | ExprNum
-  | ExprInt
-  | ExprStr
   | ExprStarts
   | ExprContains
   | ExprEnds

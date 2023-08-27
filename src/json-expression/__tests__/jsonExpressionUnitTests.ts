@@ -845,4 +845,25 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('Type operators', () => {
+    describe('type', () => {
+      test('returns value type', () => {
+        check(['type', true], 'boolean');
+        check(['type', ['get', '']], 'boolean', false);
+        check(['type', ['get', '']], 'null', null);
+        check(['type', ['get', '']], 'number', 123);
+        check(['type', ['get', '']], 'number', 123.5);
+        check(['type', ['get', '']], 'string', 'abc');
+        check(['type', ['get', '']], 'object', {});
+        check(['type', ['get', '']], 'array', []);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['type', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""type" operator expects 1 operands."`,
+        );
+      });
+    });
+  });
 };

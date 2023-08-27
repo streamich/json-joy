@@ -13,7 +13,6 @@ const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] :
 const linkable = {
   get: util.get,
   throwOnUndef: util.throwOnUndef,
-  type: util.type,
   str: util.str,
   starts: util.starts,
   contains: util.contains,
@@ -70,15 +69,6 @@ export class JsonExpressionCodegen {
     const condition = this.onExpression(a);
     if (condition instanceof Literal) return condition.val ? this.onExpression(b) : this.onExpression(c);
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
-  }
-
-  protected onType(expr: types.ExprType): ExpressionResult {
-    if (expr.length !== 2) throw new Error('"type" operator expects one operand.');
-    const [, operand] = expr;
-    const expression = this.onExpression(operand);
-    if (expression instanceof Literal) return new Literal(util.type(expression.val));
-    this.codegen.link('type');
-    return new Expression(`type(${expression})`);
   }
 
   protected onBool(expr: types.ExprBool): ExpressionResult {
@@ -281,8 +271,6 @@ export class JsonExpressionCodegen {
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);
-      case 'type':
-        return this.onType(expr as types.ExprType);
       case 'bool':
         return this.onBool(expr as types.ExprBool);
       case 'num':

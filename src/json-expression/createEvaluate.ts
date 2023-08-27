@@ -43,8 +43,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
       case 'if': {
         return evaluate(expr[1], ctx) ? evaluate(expr[2], ctx) : evaluate(expr[3], ctx);
       }
-      case 'type':
-        return util.type(evaluate(expr[1], ctx));
       case 'defined': {
         // TODO: rename to "def" or "exists"?
         const pointer = evaluate(expr[1], ctx);
