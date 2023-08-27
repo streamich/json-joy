@@ -51,97 +51,6 @@ export class JsonExpressionCodegen {
     this.evaluate = createEvaluate({operators: options.operators});
   }
 
-  protected onMod(expr: types.ExprMod): ExpressionResult {
-    util.assertVariadicArity('%', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    this.codegen.link('mod');
-    let last: string = params[0];
-    for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
-    return new Expression(last);
-  }
-
-  protected onRound(expr: types.ExprRound): ExpressionResult {
-    util.assertFixedArity('round', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.round(+(${a}) || 0)`);
-  }
-
-  protected onCeil(expr: types.ExprCeil): ExpressionResult {
-    util.assertFixedArity('ceil', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.ceil(+(${a}) || 0)`);
-  }
-
-  protected onFloor(expr: types.ExprFloor): ExpressionResult {
-    util.assertArity('floor', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.floor(+(${a}) || 0)`);
-  }
-
-  protected onTrunc(expr: types.ExprTrunc): ExpressionResult {
-    util.assertFixedArity('trunc', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.trunc(+(${a}) || 0)`);
-  }
-
-  protected onAbs(expr: types.ExprAbs): ExpressionResult {
-    util.assertFixedArity('abs', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.abs(+(${a}) || 0)`);
-  }
-
-  protected onSqrt(expr: types.ExprSqrt): ExpressionResult {
-    util.assertFixedArity('sqrt', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.sqrt(+(${a}) || 0)`);
-  }
-
-  protected onExp(expr: types.ExprExp): ExpressionResult {
-    util.assertFixedArity('exp', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.exp(+(${a}) || 0)`);
-  }
-
-  protected onLn(expr: types.ExprLn): ExpressionResult {
-    util.assertFixedArity('ln', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.log(+(${a}) || 0)`);
-  }
-
-  protected onLog(expr: types.ExprLog): ExpressionResult {
-    util.assertFixedArity('log', 2, expr);
-    const num = this.onExpression(expr[1]);
-    const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.log(+(${num}) || 0) / Math.log(+(${base}) || 0)`);
-  }
-
-  protected onLog10(expr: types.ExprLog10): ExpressionResult {
-    util.assertFixedArity('log10', 1, expr);
-    const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.log10(+(${a}) || 0)`);
-  }
-
-  protected onPow(expr: types.ExprPow): ExpressionResult {
-    util.assertFixedArity('pow', 2, expr);
-    const num = this.onExpression(expr[1]);
-    const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
-    return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
-  }
-
   protected onEquals(expr: types.ExprEquals): ExpressionResult {
     util.assertFixedArity('==', 2, expr);
     const a = this.onExpression(expr[1]);
@@ -485,24 +394,6 @@ export class JsonExpressionCodegen {
     return new Expression(`betweenEqEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onMin(expr: types.ExprMin): ExpressionResult {
-    util.assertVariadicArity('min', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `${expr}`);
-    return new Expression(`+Math.min(${params.join(', ')}) || 0`);
-  }
-
-  protected onMax(expr: types.ExprMax): ExpressionResult {
-    util.assertVariadicArity('max', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
-    const params = expressions.map((expr) => `${expr}`);
-    return new Expression(`+Math.max(${params.join(', ')}) || 0`);
-  }
-
   private linkedOperandDeps: Set<string> = new Set();
   private linkOperandDeps = (name: string, dependency: unknown): void => {
     if (this.linkedOperandDeps.has(name)) return;
@@ -538,37 +429,6 @@ export class JsonExpressionCodegen {
     }
 
     switch (expr[0]) {
-      case '%':
-      case 'mod':
-        return this.onMod(expr as types.ExprMod);
-      case 'min':
-        return this.onMin(expr as types.ExprMin);
-      case 'max':
-        return this.onMax(expr as types.ExprMax);
-      case 'round':
-        return this.onRound(expr as types.ExprRound);
-      case 'ceil':
-        return this.onCeil(expr as types.ExprCeil);
-      case 'floor':
-        return this.onFloor(expr as types.ExprFloor);
-      case 'trunc':
-        return this.onTrunc(expr as types.ExprTrunc);
-      case 'abs':
-        return this.onAbs(expr as types.ExprAbs);
-      case 'sqrt':
-        return this.onSqrt(expr as types.ExprSqrt);
-      case 'exp':
-        return this.onExp(expr as types.ExprExp);
-      case 'ln':
-        return this.onLn(expr as types.ExprLn);
-      case 'log':
-        return this.onLog(expr as types.ExprLog);
-      case 'log10':
-        return this.onLog10(expr as types.ExprLog10);
-      case '^':
-      case '**':
-      case 'pow':
-        return this.onPow(expr as types.ExprPow);
       case '==':
       case 'eq':
         return this.onEquals(expr as types.ExprEquals);

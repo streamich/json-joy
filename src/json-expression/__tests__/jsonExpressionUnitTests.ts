@@ -410,7 +410,7 @@ export const jsonExpressionUnitTests = (
 
       test('throws on too many arguments', () => {
         expect(() => check(['pow', 1, 2, 3, 4] as any, 2)).toThrowErrorMatchingInlineSnapshot(
-          `""pow" operator expects 2 operands."`,
+          `""^" operator expects 2 operands."`,
         );
       });
     });
