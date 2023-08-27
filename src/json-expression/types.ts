@@ -126,7 +126,6 @@ export type InputExpression = ExprGet | ExprDefined;
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
 export type ExprDefined = [fn: 'defined', path: unknown];
 
-
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 export type Expr =
