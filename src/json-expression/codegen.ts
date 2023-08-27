@@ -51,16 +51,6 @@ export class JsonExpressionCodegen {
     this.evaluate = createEvaluate({operators: options.operators});
   }
 
-  protected onMinus(expr: types.ExprMinus): ExpressionResult {
-    util.assertVariadicArity('-', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals)
-      return new Literal(expressions.slice(1).reduce((a, b) => a - util.num(b.val), util.num(expressions[0].val)));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' - ')}`);
-  }
-
   protected onAsterisk(expr: types.ExprAsterisk): ExpressionResult {
     util.assertVariadicArity('*', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
@@ -541,12 +531,12 @@ export class JsonExpressionCodegen {
 
     const def = this.options.operators.get(expr[0]);
     if (def) {
-      const [name,, arity, evaluate, codegen] = def;
+      const [name,, arity,, codegen] = def;
       util.assertArity(name, arity, expr);
       const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
       const allLiterals = expressions.every((expr) => expr instanceof Literal);
+      /** @todo check the operator for side-effects there. */
       if (allLiterals) {
-        /** @todo check the operator for side-effects there. */
         const result = this.evaluate(expr, {data: undefined})
         return new Literal(result);
       }
@@ -559,9 +549,6 @@ export class JsonExpressionCodegen {
     }
 
     switch (expr[0]) {
-      case '-':
-      case 'subtract':
-        return this.onMinus(expr as types.ExprMinus);
       case '*':
       case 'multiply':
         return this.onAsterisk(expr as types.ExprAsterisk);

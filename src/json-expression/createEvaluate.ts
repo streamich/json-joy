@@ -35,11 +35,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
 
     switch (fn) {
       // Arithmetic operators
-      case '-':
-      case 'subtract': {
-        util.assertVariadicArity('-', expr);
-        return expr.slice(2).reduce((acc, e) => acc - toNum(evaluate(e, ctx)), toNum(evaluate(expr[1], ctx)));
-      }
       case '*':
       case 'multiply': {
         util.assertVariadicArity('*', expr);
