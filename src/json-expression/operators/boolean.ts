@@ -1,5 +1,5 @@
 import {Expression, ExpressionResult} from '../codegen-steps';
-import type * as types from "../types";
+import type * as types from '../types';
 
 export const booleanOperators: types.OperatorDefinition<any>[] = [
   [
@@ -7,10 +7,10 @@ export const booleanOperators: types.OperatorDefinition<any>[] = [
     ['and'],
     -1,
     (expr: types.ExprAnd, ctx) => {
-      return expr.slice(1).reduce((acc, e) => acc && !!(ctx.eval(e, ctx)), true);
+      return expr.slice(1).reduce((acc, e) => acc && !!ctx.eval(e, ctx), true);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprAnd>): ExpressionResult => {
-      const js = ctx.operands.map(expr => `(!!(${expr}))`).join('&&');
+      const js = ctx.operands.map((expr) => `(!!(${expr}))`).join('&&');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprAnd>,
@@ -20,10 +20,10 @@ export const booleanOperators: types.OperatorDefinition<any>[] = [
     ['or'],
     -1,
     (expr: types.ExprOr, ctx) => {
-      return expr.slice(1).reduce((acc, e) => acc || !!(ctx.eval(e, ctx)), false);
+      return expr.slice(1).reduce((acc, e) => acc || !!ctx.eval(e, ctx), false);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprOr>): ExpressionResult => {
-      const js = ctx.operands.map(expr => `(!!(${expr}))`).join('||');
+      const js = ctx.operands.map((expr) => `(!!(${expr}))`).join('||');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprOr>,

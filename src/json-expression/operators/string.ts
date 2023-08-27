@@ -1,6 +1,6 @@
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
-import * as util from "../util";
-import type * as types from "../types";
+import * as util from '../util';
+import type * as types from '../types';
 
 const binaryOperands = (
   expr: types.BinaryExpression<any>,
@@ -21,7 +21,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
     },
     (ctx: types.OperatorCodegenCtx<types.ExprCat>): ExpressionResult => {
       ctx.link(util.str, 'str');
-      const js = ctx.operands.map(expr => `str(${expr})`).join('+');
+      const js = ctx.operands.map((expr) => `str(${expr})`).join('+');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprCat>,
@@ -105,7 +105,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
     },
     (ctx: types.OperatorCodegenCtx<types.ExprEnds>): ExpressionResult => {
       const pattern = ctx.operands[1];
-      if (!(pattern instanceof Literal) || (typeof pattern.val !== 'string'))
+      if (!(pattern instanceof Literal) || typeof pattern.val !== 'string')
         throw new Error('"matches" second argument should be a regular expression string.');
       if (!ctx.createPattern)
         throw new Error('"matches" operator requires ".createPattern()" option to be implemented.');

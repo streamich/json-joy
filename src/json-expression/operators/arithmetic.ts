@@ -1,6 +1,6 @@
 import * as util from '../util';
 import {Expression, ExpressionResult} from '../codegen-steps';
-import type * as types from "../types";
+import type * as types from '../types';
 
 const toNum = util.num;
 
@@ -13,7 +13,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(1).reduce((acc, e) => toNum(ctx.eval(e, ctx)) + acc, 0);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprPlus>): ExpressionResult => {
-      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('+');
+      const js = ctx.operands.map((expr) => `(+(${expr})||0)`).join('+');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprPlus>,
@@ -26,7 +26,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(2).reduce((acc, e) => acc - toNum(ctx.eval(e, ctx)), toNum(ctx.eval(expr[1], ctx)));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMinus>): ExpressionResult => {
-      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('-');
+      const js = ctx.operands.map((expr) => `(+(${expr})||0)`).join('-');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprMinus>,
@@ -39,7 +39,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return expr.slice(1).reduce((acc, e) => toNum(ctx.eval(e, ctx)) * acc, 1);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprAsterisk>): ExpressionResult => {
-      const js = ctx.operands.map(expr => `(+(${expr})||0)`).join('*');
+      const js = ctx.operands.map((expr) => `(+(${expr})||0)`).join('*');
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprAsterisk>,
@@ -54,7 +54,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMinus>): ExpressionResult => {
       ctx.link(util.slash, 'slash');
-      const params = ctx.operands.map(expr => `(+(${expr})||0)`);
+      const params = ctx.operands.map((expr) => `(+(${expr})||0)`);
       let last: string = params[0];
       for (let i = 1; i < params.length; i++) last = `slash(${last}, ${params[i]})`;
       return new Expression(last);
@@ -71,7 +71,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMod>): ExpressionResult => {
       ctx.link(util.mod, 'mod');
-      const params = ctx.operands.map(expr => `(+(${expr})||0)`);
+      const params = ctx.operands.map((expr) => `(+(${expr})||0)`);
       let last: string = params[0];
       for (let i = 1; i < params.length; i++) last = `mod(${last}, ${params[i]})`;
       return new Expression(last);
@@ -86,7 +86,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return Math.min(...expr.slice(1).map((e) => toNum(ctx.eval(e, ctx))));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMin>): ExpressionResult => {
-      const params = ctx.operands.map(expr => `(+(${expr})||0)`);
+      const params = ctx.operands.map((expr) => `(+(${expr})||0)`);
       return new Expression(`+Math.min(${params.join(',')})||0`);
     },
   ] as types.OperatorDefinition<types.ExprMin>,
@@ -99,7 +99,7 @@ export const arithmeticOperators: types.OperatorDefinition<any>[] = [
       return Math.max(...expr.slice(1).map((e) => toNum(ctx.eval(e, ctx))));
     },
     (ctx: types.OperatorCodegenCtx<types.ExprMax>): ExpressionResult => {
-      const params = ctx.operands.map(expr => `(+(${expr})||0)`);
+      const params = ctx.operands.map((expr) => `(+(${expr})||0)`);
       return new Expression(`+Math.max(${params.join(',')})||0`);
     },
   ] as types.OperatorDefinition<types.ExprMax>,

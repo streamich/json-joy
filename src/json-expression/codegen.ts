@@ -126,13 +126,13 @@ export class JsonExpressionCodegen {
 
     const def = this.options.operators.get(expr[0]);
     if (def) {
-      const [name,, arity,, codegen, impure] = def;
+      const [name, , arity, , codegen, impure] = def;
       util.assertArity(name, arity, expr);
       const operands = expr.slice(1).map((operand) => this.onExpression(operand));
       if (!impure) {
         const allLiterals = operands.every((expr) => expr instanceof Literal);
         if (allLiterals) {
-          const result = this.evaluate(expr, {data: undefined})
+          const result = this.evaluate(expr, {data: undefined});
           return new Literal(result);
         }
       }

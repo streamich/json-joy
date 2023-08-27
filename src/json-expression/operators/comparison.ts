@@ -1,14 +1,19 @@
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
-import * as util from "../util";
-import type * as types from "../types";
+import * as util from '../util';
+import type * as types from '../types';
 
-const eqLitVsExpr = (literal: Literal, expression: Expression, ctx: types.OperatorCodegenCtx<types.Expression>, not?: boolean): ExpressionResult => {
+const eqLitVsExpr = (
+  literal: Literal,
+  expression: Expression,
+  ctx: types.OperatorCodegenCtx<types.Expression>,
+  not?: boolean,
+): ExpressionResult => {
   const fn = $$deepEqual(literal.val);
   const d = ctx.const(fn);
   return new Expression(`${not ? '!' : ''}${d}(${expression})`);
-}
+};
 
 const binaryOperands = (
   expr: types.BinaryExpression<any>,

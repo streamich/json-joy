@@ -1,5 +1,5 @@
-import type {JavaScript} from "../util/codegen";
-import type {ExpressionResult} from "./codegen-steps";
+import type {JavaScript} from '../util/codegen';
+import type {ExpressionResult} from './codegen-steps';
 
 export type Literal<T> = T | LiteralExpression<T>;
 export type LiteralExpression<O> = [constant: O];
@@ -166,10 +166,7 @@ export type OperatorDefinition<E extends Expression> = [
   impure?: boolean,
 ];
 
-export type OperatorEval<E extends Expression> = (
-  expr: E,
-  ctx: OperatorEvalCtx,
-) => unknown;
+export type OperatorEval<E extends Expression> = (expr: E, ctx: OperatorEvalCtx) => unknown;
 
 export interface OperatorEvalCtx extends JsonExpressionExecutionContext, JsonExpressionCodegenContext {
   eval: OperatorEval<Expression>;

@@ -1,6 +1,6 @@
 import {Expression, ExpressionResult} from '../codegen-steps';
-import * as util from "../util";
-import type * as types from "../types";
+import * as util from '../util';
+import type * as types from '../types';
 
 export const typeOperators: types.OperatorDefinition<any>[] = [
   [
@@ -22,7 +22,7 @@ export const typeOperators: types.OperatorDefinition<any>[] = [
     [],
     1,
     (expr: types.ExprBool, ctx) => {
-      return !!(ctx.eval(expr[1], ctx));
+      return !!ctx.eval(expr[1], ctx);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprBool>): ExpressionResult => {
       const js = `!!${ctx.operands[0]}`;
