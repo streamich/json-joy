@@ -53,16 +53,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
       }
       case 'int':
         return ~~(evaluate(expr[1], ctx) as any);
-      case 'starts': {
-        const subject = evaluate(expr[1], ctx);
-        const test = evaluate(expr[2], ctx);
-        return util.starts(subject, test);
-      }
-      case 'ends': {
-        const subject = evaluate(expr[1], ctx);
-        const test = evaluate(expr[2], ctx);
-        return util.ends(subject, test);
-      }
       case 'substr': {
         const str2 = util.str(evaluate(expr[1], ctx));
         const from = toNum(evaluate(expr[2], ctx));

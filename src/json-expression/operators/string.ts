@@ -2,6 +2,15 @@ import {Expression, ExpressionResult} from '../codegen-steps';
 import * as util from "../util";
 import type * as types from "../types";
 
+const binaryOperands = (
+  expr: types.BinaryExpression<any>,
+  ctx: types.OperatorEvalCtx,
+): [left: unknown, right: unknown] => {
+  const left = ctx.eval(expr[1], ctx);
+  const right = ctx.eval(expr[2], ctx);
+  return [left, right];
+};
+
 export const stringOperators: types.OperatorDefinition<any>[] = [
   [
     '.',
@@ -22,8 +31,7 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
     [],
     2,
     (expr: types.ExprContains, ctx) => {
-      const outer = ctx.eval(expr[1], ctx);
-      const inner = ctx.eval(expr[2], ctx);
+      const [outer, inner] = binaryOperands(expr, ctx);
       return util.contains(outer, inner);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprContains>): ExpressionResult => {
@@ -32,4 +40,34 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprContains>,
+
+  [
+    'starts',
+    [],
+    2,
+    (expr: types.ExprStarts, ctx) => {
+      const [outer, inner] = binaryOperands(expr, ctx);
+      return util.starts(outer, inner);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprStarts>): ExpressionResult => {
+      ctx.link('starts', util.starts);
+      const js = `starts(${ctx.operands[0]},${ctx.operands[1]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprStarts>,
+
+  [
+    'ends',
+    [],
+    2,
+    (expr: types.ExprEnds, ctx) => {
+      const [outer, inner] = binaryOperands(expr, ctx);
+      return util.ends(outer, inner);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprEnds>): ExpressionResult => {
+      ctx.link('ends', util.ends);
+      const js = `ends(${ctx.operands[0]},${ctx.operands[1]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprEnds>,
 ];

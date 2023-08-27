@@ -987,5 +987,54 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('starts', () => {
+      test('can find a substring', () => {
+        check(['starts', 'abc', 'ab'], true);
+        check(['starts', 'abc', 'a'], true);
+        check(['starts', 'abc', 'abc'], true);
+        check(['starts', 'abc', 'b'], false);
+        check(['starts', 'abc', 'c'], false);
+      });
+
+      test('returns false on missing substring', () => {
+        check(['starts', 'abc', 'g'], false);
+        check(['starts', 'abc', 'aa'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['starts', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""starts" operator expects 2 operands."`,
+        );
+        expect(() => check(['starts', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""starts" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('ends', () => {
+      test('can find a substring', () => {
+        check(['ends', 'abc', 'ab'], false);
+        check(['ends', 'abc', 'a'], false);
+        check(['ends', 'abc', 'b'], false);
+        check(['ends', 'abc', 'abc'], true);
+        check(['ends', 'abc', 'bc'], true);
+        check(['ends', 'abc', 'c'], true);
+      });
+
+      test('returns false on missing substring', () => {
+        check(['ends', 'abc', 'g'], false);
+        check(['ends', 'abc', 'aa'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['ends', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""ends" operator expects 2 operands."`,
+        );
+        expect(() => check(['ends', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""ends" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 };

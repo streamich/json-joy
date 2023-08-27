@@ -2,7 +2,6 @@ import * as util from './util';
 import {Codegen} from '../util/codegen/Codegen';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {emitStringMatch} from '../util/codegen/util/helpers';
 import {Expression, ExpressionResult, Literal} from './codegen-steps';
 import {createEvaluate} from './createEvaluate';
 import {JavaScript} from '../util/codegen';
@@ -14,9 +13,6 @@ const linkable = {
   get: util.get,
   throwOnUndef: util.throwOnUndef,
   str: util.str,
-  starts: util.starts,
-  contains: util.contains,
-  ends: util.ends,
   isInContainer: util.isInContainer,
   substr: util.substr,
   slash: util.slash,
@@ -69,48 +65,6 @@ export class JsonExpressionCodegen {
     const condition = this.onExpression(a);
     if (condition instanceof Literal) return condition.val ? this.onExpression(b) : this.onExpression(c);
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
-  }
-
-  protected onStarts(expr: types.ExprStarts): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"starts" operator expects two operands.');
-    const [, a, b] = expr;
-    const outer = this.onExpression(a);
-    const inner = this.onExpression(b);
-    if (inner instanceof Literal) {
-      if (outer instanceof Literal) return new Literal(util.starts(outer.val, inner.val));
-      else {
-        const rOuter = this.codegen.var();
-        return new Expression(`(${rOuter} = ${outer.toString()}, (${emitStringMatch(rOuter, '0', '' + inner.val)}))`);
-      }
-    } else {
-      this.codegen.link('starts');
-      return new Expression(`starts(${outer}, ${inner})`);
-    }
-  }
-
-  protected onEnds(expr: types.ExprEnds): ExpressionResult {
-    if (expr.length !== 3) throw new Error('"ends" operator expects two operands.');
-    const [, a, b] = expr;
-    const outer = this.onExpression(a);
-    const inner = this.onExpression(b);
-    if (inner instanceof Literal) {
-      if (outer instanceof Literal) return new Literal(util.ends(outer.val, inner.val));
-      else {
-        const rOuter = this.codegen.var();
-        const rStart = this.codegen.var();
-        const match = '' + inner.val;
-        return new Expression(
-          `(${rOuter} = ${outer.toString()}, ${rStart} = ${rOuter}.length - ${match.length}, (${emitStringMatch(
-            rOuter,
-            rStart,
-            match,
-          )}))`,
-        );
-      }
-    } else {
-      this.codegen.link('ends');
-      return new Expression(`ends(${outer}, ${inner})`);
-    }
   }
 
   protected onMatches(expr: types.ExprMatches): ExpressionResult {
@@ -210,10 +164,6 @@ export class JsonExpressionCodegen {
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);
-      case 'starts':
-        return this.onStarts(expr as types.ExprStarts);
-      case 'ends':
-        return this.onEnds(expr as types.ExprEnds);
       case 'matches':
         return this.onMatches(expr as types.ExprMatches);
       case 'defined':

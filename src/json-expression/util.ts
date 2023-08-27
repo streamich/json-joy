@@ -23,7 +23,7 @@ export const str = (value: unknown): string => {
 };
 
 export const starts = (outer: unknown, inner: unknown): boolean => {
-  return str(outer).startsWith(str(inner), 0);
+  return str(outer).startsWith(str(inner));
 };
 
 export const contains = (outer: unknown, inner: unknown): boolean => {
@@ -31,9 +31,7 @@ export const contains = (outer: unknown, inner: unknown): boolean => {
 };
 
 export const ends = (outer: unknown, inner: unknown): boolean => {
-  const o = str(outer);
-  const i = str(inner);
-  return o.endsWith(i);
+  return str(outer).endsWith(str(inner));
 };
 
 export const isInContainer = (what: unknown, container: unknown[]): boolean => {
