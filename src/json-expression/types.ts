@@ -90,8 +90,8 @@ export type ExprBetweenNeNe = TernaryExpression<'><'>;
 export type ExprBetweenEqNe = TernaryExpression<'=><'>;
 export type ExprBetweenNeEq = TernaryExpression<'><='>;
 
-// Boolean expressions
-export type BooleanExpression = ExprAnd | ExprOr | ExprNot;
+// Logical expressions
+export type LogicalExpression = ExprAnd | ExprOr | ExprNot;
 
 export type ExprAnd = VariadicExpression<'and' | '&&'>;
 export type ExprOr = VariadicExpression<'or' | '||'>;
@@ -133,7 +133,7 @@ export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 export type Expr =
   | ArithmeticExpression
   | ComparisonExpression
-  | BooleanExpression
+  | LogicalExpression
   | TypeExpression
   | StringExpression
   | BranchingExpression

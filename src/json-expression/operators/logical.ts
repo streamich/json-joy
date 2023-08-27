@@ -1,7 +1,7 @@
 import {Expression, ExpressionResult} from '../codegen-steps';
 import type * as types from '../types';
 
-export const booleanOperators: types.OperatorDefinition<any>[] = [
+export const logicalOperators: types.OperatorDefinition<any>[] = [
   [
     '&&',
     ['and'],

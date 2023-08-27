@@ -754,7 +754,7 @@ export const jsonExpressionUnitTests = (
     });
   });
 
-  describe('Boolean operators', () => {
+  describe('Logical operators', () => {
     describe('and or &&', () => {
       test('works with booleans', () => {
         check(['&&', true, false], false);
