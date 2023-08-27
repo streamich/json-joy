@@ -51,14 +51,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const value = get(ctx.data, toPath(pointer));
         return value !== undefined;
       }
-      case 'int':
-        return ~~(evaluate(expr[1], ctx) as any);
-      case 'substr': {
-        const str2 = util.str(evaluate(expr[1], ctx));
-        const from = toNum(evaluate(expr[2], ctx));
-        const length = expr.length > 3 ? toNum(evaluate(expr[3], ctx)) : undefined;
-        return str2.substr(from, length);
-      }
       case 'matches': {
         const [, a, pattern] = expr;
         if (typeof pattern !== 'string')

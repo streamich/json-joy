@@ -238,7 +238,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
 
     describe('substr', () => {
       test('works', () => {
-        check(['substr', '12345', 1, 2], '23');
+        check(['substr', '12345', 1, 1 + 2], '23');
       });
     });
 

@@ -857,6 +857,8 @@ export const jsonExpressionUnitTests = (
         check(['type', ['get', '']], 'string', 'abc');
         check(['type', ['get', '']], 'object', {});
         check(['type', ['get', '']], 'array', []);
+        check(['type', undefined], 'undefined');
+        check(['type', new Uint8Array()], 'binary');
       });
 
       test('throws on invalid operand count', () => {
@@ -1033,6 +1035,24 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['ends', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""ends" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('substr', () => {
+      test('computes a substring', () => {
+        check(['substr', 'abc', 1, 2], 'b');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['substr', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""substr" operator expects 3 operands."`,
+        );
+        expect(() => check(['substr', 'a', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""substr" operator expects 3 operands."`,
+        );
+        expect(() => check(['substr', 'a', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""substr" operator expects 3 operands."`,
         );
       });
     });

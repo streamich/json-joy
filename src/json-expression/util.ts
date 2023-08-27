@@ -14,6 +14,7 @@ export const type = (value: unknown): string => {
   // TODO: Shall "null" be of type "const"?
   if (value === null) return 'null';
   if (value instanceof Array) return 'array';
+  if (value instanceof Uint8Array) return 'binary';
   return typeof value;
 };
 
@@ -62,8 +63,8 @@ export const mod = (a: unknown, b: unknown) => {
   return Number.isFinite(res) ? res : 0;
 };
 
-export const substr = (probablyString: string | unknown, from: number | unknown, length?: number | unknown) =>
-  str(probablyString).substr(int(from), int(length));
+export const substr = (probablyString: string | unknown, from: number | unknown, to: number | unknown) =>
+  str(probablyString).slice(int(from), int(to));
 
 export const isLiteral = (value: unknown): boolean => {
   if (value instanceof Array) return value.length === 1 && value[0] instanceof Array;

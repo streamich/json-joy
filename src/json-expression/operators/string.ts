@@ -70,4 +70,21 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprEnds>,
+
+  [
+    'substr',
+    [],
+    3,
+    (expr: types.ExprSubstr, ctx) => {
+      const str = ctx.eval(expr[1], ctx);
+      const start = ctx.eval(expr[2], ctx);
+      const end = ctx.eval(expr[3], ctx);
+      return util.substr(str, start, end);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprSubstr>): ExpressionResult => {
+      ctx.link('substr', util.substr);
+      const js = `substr(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprSubstr>,
 ];
