@@ -164,6 +164,16 @@ export class JsonExpressionCodegen {
   }
 
   public compile() {
-    return this.codegen.compile();
+    const fn = this.codegen.compile();
+    return (ctx: types.JsonExpressionExecutionContext) => {
+      try {
+        return fn(ctx);
+      } catch (err) {
+        if (err instanceof Error) throw err;
+        const error = new Error('Expression evaluation error.');
+        (<any>error).value = err;
+        throw error;
+      }
+    };
   }
 }

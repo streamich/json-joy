@@ -17,4 +17,16 @@ export const branchingOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`(${condition})?(${then}):(${otherwise})`);
     },
   ] as types.OperatorDefinition<types.ExprIf>,
+
+  [
+    'throw',
+    [],
+    1,
+    (expr: types.ExprThrow, ctx) => {
+      throw ctx.eval(expr[1], ctx);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprThrow>): ExpressionResult => {
+      return new Expression(`(function(){throw (${ctx.operands[0]})})()`);
+    },
+  ] as types.OperatorDefinition<types.ExprThrow>,
 ];

@@ -1115,5 +1115,31 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('throw', () => {
+      test('can throw specified value', () => {
+        try {
+          check(['throw', 123], '');
+          throw new Error('should not reach here');
+        } catch (err) {
+          expect((<any>err).value).toBe(123);
+        }
+      });
+
+      test('can throw specified value, from input', () => {
+        try {
+          check(['throw', ['get', '']], '', 123);
+          throw new Error('should not reach here');
+        } catch (err) {
+          expect((<any>err).value).toBe(123);
+        }
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['throw', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""throw" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 };
