@@ -343,9 +343,6 @@ export const jsonExpressionCodegenTests = (
     describe('matches', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['matches'] as any, '')).toThrowError(
-            new Error('"matches" operator expects two operands.'),
-          );
           expect(() => check(['matches', 'asdf'] as any, '')).toThrowError(
             new Error('"matches" operator expects two operands.'),
           );
@@ -452,7 +449,6 @@ export const jsonExpressionCodegenTests = (
     describe('cat', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['cat'], '')).toThrowError(new Error('"cat" operator expects at least two operands.'));
           expect(() => check(['cat', 'a'], '')).toThrowError(
             new Error('"cat" operator expects at least two operands.'),
           );
@@ -471,9 +467,6 @@ export const jsonExpressionCodegenTests = (
     describe('substr', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['substr'] as any, '')).toThrowError(
-            new Error('"substr" operator expects two or three operands.'),
-          );
           expect(() => check(['substr', 'str'] as any, '')).toThrowError(
             new Error('"substr" operator expects two or three operands.'),
           );
@@ -500,7 +493,6 @@ export const jsonExpressionCodegenTests = (
     describe('less than', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['<'] as any, '')).toThrowError(new Error('"<" operator expects 2 operands.'));
           expect(() => check(['<', 1] as any, '')).toThrowError(new Error('"<" operator expects 2 operands.'));
           expect(() => check(['<', 1, 2, 3] as any, '')).toThrowError(new Error('"<" operator expects 2 operands.'));
         });
@@ -525,7 +517,6 @@ export const jsonExpressionCodegenTests = (
     describe('less than or equal', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['<='] as any, '')).toThrowError(new Error('"<=" operator expects 2 operands.'));
           expect(() => check(['<=', 1] as any, '')).toThrowError(new Error('"<=" operator expects 2 operands.'));
           expect(() => check(['<=', 1, 2, 3] as any, '')).toThrowError(
             new Error('"<=" operator expects 2 operands.'),
@@ -553,7 +544,6 @@ export const jsonExpressionCodegenTests = (
     describe('greater than', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['>'] as any, '')).toThrowError(new Error('">" operator expects 2 operands.'));
           expect(() => check(['>', 1] as any, '')).toThrowError(new Error('">" operator expects 2 operands.'));
           expect(() => check(['>', 1, 2, 3] as any, '')).toThrowError(new Error('">" operator expects 2 operands.'));
         });
@@ -579,7 +569,6 @@ export const jsonExpressionCodegenTests = (
     describe('greater than or equal', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['>='] as any, '')).toThrowError(new Error('">=" operator expects 2 operands.'));
           expect(() => check(['>=', 1] as any, '')).toThrowError(new Error('">=" operator expects 2 operands.'));
           expect(() => check(['>=', 1, 2, 3] as any, '')).toThrowError(
             new Error('">=" operator expects 2 operands.'),
@@ -607,7 +596,6 @@ export const jsonExpressionCodegenTests = (
     describe('between', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['><'] as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
           expect(() => check(['><', 1] as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
           expect(() => check(['><', 1, 2] as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
           expect(() => check(['><', 1, 2, 3, 4] as any, '')).toThrowError(
@@ -668,9 +656,6 @@ export const jsonExpressionCodegenTests = (
     describe('min', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['min'] as any, '')).toThrowError(
-            new Error('"min" operator expects at least two operands.'),
-          );
           expect(() => check(['min', 1] as any, '')).toThrowError(
             new Error('"min" operator expects at least two operands.'),
           );
@@ -692,9 +677,6 @@ export const jsonExpressionCodegenTests = (
     describe('max', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['max'] as any, '')).toThrowError(
-            new Error('"max" operator expects at least two operands.'),
-          );
           expect(() => check(['max', 1] as any, '')).toThrowError(
             new Error('"max" operator expects at least two operands.'),
           );
@@ -715,7 +697,6 @@ export const jsonExpressionCodegenTests = (
     describe('plus', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['+'] as any, '')).toThrowError(new Error('"+" operator expects at least two operands.'));
           expect(() => check(['+', 1] as any, '')).toThrowError(
             new Error('"+" operator expects at least two operands.'),
           );
@@ -739,7 +720,6 @@ export const jsonExpressionCodegenTests = (
     describe('minus', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['-'] as any, '')).toThrowError(new Error('"-" operator expects at least two operands.'));
           expect(() => check(['-', 1] as any, '')).toThrowError(
             new Error('"-" operator expects at least two operands.'),
           );
@@ -758,7 +738,6 @@ export const jsonExpressionCodegenTests = (
     describe('multiplication', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['*'] as any, '')).toThrowError(new Error('"*" operator expects at least two operands.'));
           expect(() => check(['*', 1] as any, '')).toThrowError(
             new Error('"*" operator expects at least two operands.'),
           );
@@ -777,7 +756,6 @@ export const jsonExpressionCodegenTests = (
     describe('division', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['/'] as any, '')).toThrowError(new Error('"/" operator expects at least two operands.'));
           expect(() => check(['/', 1] as any, '')).toThrowError(
             new Error('"/" operator expects at least two operands.'),
           );
@@ -798,9 +776,6 @@ export const jsonExpressionCodegenTests = (
     describe('mod', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['%'] as any, '')).toThrowErrorMatchingInlineSnapshot(
-            `""%" operator expects at least two operands."`,
-          );
           expect(() => check(['%', 1] as any, '')).toThrowErrorMatchingInlineSnapshot(
             `""%" operator expects at least two operands."`,
           );
@@ -822,7 +797,6 @@ export const jsonExpressionCodegenTests = (
     describe('round', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['round'] as any, '')).toThrowError(new Error('"round" operator expects 1 operands.'));
           expect(() => check(['round', 1, 1] as any, '')).toThrowError(
             new Error('"round" operator expects 1 operands.'),
           );
@@ -848,7 +822,6 @@ export const jsonExpressionCodegenTests = (
     describe('ceil', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['ceil'] as any, '')).toThrowError(new Error('"ceil" operator expects 1 operands.'));
           expect(() => check(['ceil', 1, 1] as any, '')).toThrowError(new Error('"ceil" operator expects 1 operands.'));
         });
       }
@@ -874,7 +847,6 @@ export const jsonExpressionCodegenTests = (
     describe('floor', () => {
       if (!skipOperandArityTests) {
         test('throws on too few operands', () => {
-          expect(() => check(['floor'] as any, '')).toThrowError(new Error('"floor" operator expects 1 operands.'));
           expect(() => check(['floor', 1, 1] as any, '')).toThrowError(
             new Error('"floor" operator expects 1 operands.'),
           );

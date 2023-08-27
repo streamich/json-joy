@@ -4,11 +4,11 @@ import {deepEqual} from '../json-equal/deepEqual';
 import {$$deepEqual} from '../json-equal/$$deepEqual';
 import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
-import {ExprBetweenEqEq, ExprBetweenEqNe, ExprBetweenNeEq, ExprBetweenNeNe, evaluate} from '.';
 import {emitStringMatch} from '../util/codegen/util/helpers';
+import {Expression, ExpressionResult, Literal} from './codegen-steps';
 import type * as types from './types';
+import {createEvaluate} from './createEvaluate';
 
-const isExpression = (expr: unknown): expr is types.Expr => expr instanceof Array && typeof expr[0] === 'string';
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
 const linkable = {
@@ -32,40 +32,14 @@ const linkable = {
 
 export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
 
-/**
- * Represents an expression {@link types.Expr} which was evaluated by codegen and
- * which value is already know at compilation time, hence it can be emitted
- * as a literal.
- */
-class Literal {
-  constructor(public val: unknown) {}
-
-  public toString() {
-    return JSON.stringify(this.val);
-  }
-}
-
-/**
- * Represents an expression {@link types.Expr} which was evaluated by codegen and
- * which value is not yet known at compilation time, hence its value will
- * be evaluated at runtime.
- */
-class Expression {
-  constructor(public val: string) {}
-
-  public toString() {
-    return this.val;
-  }
-}
-
-export type ExpressionResult = Literal | Expression;
-
 export interface JsonExpressionCodegenOptions extends types.JsonExpressionCodegenContext {
   expression: types.Expr;
+  operators: types.OperatorMap;
 }
 
 export class JsonExpressionCodegen {
   protected codegen: Codegen<JsonExpressionFn, typeof linkable>;
+  protected evaluate: ReturnType<typeof createEvaluate>;
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
     this.codegen = new Codegen<JsonExpressionFn, typeof linkable>({
@@ -74,15 +48,7 @@ export class JsonExpressionCodegen {
       epilogue: '',
       linkable,
     });
-  }
-
-  protected onPlus(expr: types.ExprPlus): ExpressionResult {
-    util.assertVariadicArity('+', expr);
-    const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
-    const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(expressions.reduce((a, b) => a + util.num(b.val), 0));
-    const params = expressions.map((expr) => `(+(${expr})||0)`);
-    return new Expression(`${params.join(' + ')}`);
+    this.evaluate = createEvaluate({operators: options.operators});
   }
 
   protected onMinus(expr: types.ExprMinus): ExpressionResult {
@@ -108,7 +74,7 @@ export class JsonExpressionCodegen {
     util.assertVariadicArity('/', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     this.codegen.link('slash');
     let last: string = params[0];
@@ -120,7 +86,7 @@ export class JsonExpressionCodegen {
     util.assertVariadicArity('%', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `(+(${expr})||0)`);
     this.codegen.link('mod');
     let last: string = params[0];
@@ -129,86 +95,86 @@ export class JsonExpressionCodegen {
   }
 
   protected onRound(expr: types.ExprRound): ExpressionResult {
-    util.assertArity('round', 1, expr);
+    util.assertFixedArity('round', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.round(+(${a}) || 0)`);
   }
 
   protected onCeil(expr: types.ExprCeil): ExpressionResult {
-    util.assertArity('ceil', 1, expr);
+    util.assertFixedArity('ceil', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.ceil(+(${a}) || 0)`);
   }
 
   protected onFloor(expr: types.ExprFloor): ExpressionResult {
     util.assertArity('floor', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.floor(+(${a}) || 0)`);
   }
 
   protected onTrunc(expr: types.ExprTrunc): ExpressionResult {
-    util.assertArity('trunc', 1, expr);
+    util.assertFixedArity('trunc', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.trunc(+(${a}) || 0)`);
   }
 
   protected onAbs(expr: types.ExprAbs): ExpressionResult {
-    util.assertArity('abs', 1, expr);
+    util.assertFixedArity('abs', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.abs(+(${a}) || 0)`);
   }
 
   protected onSqrt(expr: types.ExprSqrt): ExpressionResult {
-    util.assertArity('sqrt', 1, expr);
+    util.assertFixedArity('sqrt', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.sqrt(+(${a}) || 0)`);
   }
 
   protected onExp(expr: types.ExprExp): ExpressionResult {
-    util.assertArity('exp', 1, expr);
+    util.assertFixedArity('exp', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.exp(+(${a}) || 0)`);
   }
 
   protected onLn(expr: types.ExprLn): ExpressionResult {
-    util.assertArity('ln', 1, expr);
+    util.assertFixedArity('ln', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.log(+(${a}) || 0)`);
   }
 
   protected onLog(expr: types.ExprLog): ExpressionResult {
-    util.assertArity('log', 2, expr);
+    util.assertFixedArity('log', 2, expr);
     const num = this.onExpression(expr[1]);
     const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (num instanceof Literal && base instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.log(+(${num}) || 0) / Math.log(+(${base}) || 0)`);
   }
 
   protected onLog10(expr: types.ExprLog10): ExpressionResult {
-    util.assertArity('log10', 1, expr);
+    util.assertFixedArity('log10', 1, expr);
     const a = this.onExpression(expr[1]);
-    if (a instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.log10(+(${a}) || 0)`);
   }
 
   protected onPow(expr: types.ExprPow): ExpressionResult {
-    util.assertArity('pow', 2, expr);
+    util.assertFixedArity('pow', 2, expr);
     const num = this.onExpression(expr[1]);
     const base = this.onExpression(expr[1]);
-    if (num instanceof Literal && base instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (num instanceof Literal && base instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`Math.pow(+(${num}) || 0, +(${base}) || 0)`);
   }
 
   protected onEquals(expr: types.ExprEquals): ExpressionResult {
-    util.assertArity('==', 2, expr);
+    util.assertFixedArity('==', 2, expr);
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
     if (a instanceof Literal && b instanceof Literal) return this.onEqualsLiteralLiteral(a, b);
@@ -219,7 +185,7 @@ export class JsonExpressionCodegen {
   }
 
   protected onNotEquals(expr: types.ExprNotEquals): ExpressionResult {
-    util.assertArity('!=', 2, expr);
+    util.assertFixedArity('!=', 2, expr);
     const [, a, b] = expr;
     const res = this.onEquals(['eq', a, b]);
     if (res instanceof Literal) return new Literal(!res.val);
@@ -227,34 +193,34 @@ export class JsonExpressionCodegen {
   }
 
   protected onGreaterThan(expr: types.ExprGreaterThan): ExpressionResult {
-    util.assertArity('>', 2, expr);
+    util.assertFixedArity('>', 2, expr);
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`(+(${a})||0) > (+(${b})||0)`);
   }
 
   protected onGreaterThanOrEqual(expr: types.ExprGreaterThanOrEqual): ExpressionResult {
-    util.assertArity('>=', 2, expr);
+    util.assertFixedArity('>=', 2, expr);
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`(+(${a})||0) >= (+(${b})||0)`);
   }
 
   protected onLessThan(expr: types.ExprLessThan): ExpressionResult {
-    util.assertArity('<', 2, expr);
+    util.assertFixedArity('<', 2, expr);
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`(${a})<(${b})`);
   }
 
   protected onLessThanOrEqual(expr: types.ExprLessThanOrEqual): ExpressionResult {
-    util.assertArity('<=', 2, expr);
+    util.assertFixedArity('<=', 2, expr);
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
-    if (a instanceof Literal && b instanceof Literal) return new Literal(evaluate(expr, {data: null}));
+    if (a instanceof Literal && b instanceof Literal) return new Literal(this.evaluate(expr, {data: null}));
     return new Expression(`(${a})<=(${b})`);
   }
 
@@ -506,7 +472,7 @@ export class JsonExpressionCodegen {
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
-  protected onBetweenNeNe(expr: ExprBetweenNeNe): ExpressionResult {
+  protected onBetweenNeNe(expr: types.ExprBetweenNeNe): ExpressionResult {
     if (expr.length !== 4) throw new Error('"><" operator expects three operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
@@ -517,7 +483,7 @@ export class JsonExpressionCodegen {
     return new Expression(`betweenNeNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onBetweenEqNe(expr: ExprBetweenEqNe): ExpressionResult {
+  protected onBetweenEqNe(expr: types.ExprBetweenEqNe): ExpressionResult {
     if (expr.length !== 4) throw new Error('"=><" operator expects three operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
@@ -528,7 +494,7 @@ export class JsonExpressionCodegen {
     return new Expression(`betweenEqNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onBetweenNeEq(expr: ExprBetweenNeEq): ExpressionResult {
+  protected onBetweenNeEq(expr: types.ExprBetweenNeEq): ExpressionResult {
     if (expr.length !== 4) throw new Error('"><=" operator expects three operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
@@ -539,7 +505,7 @@ export class JsonExpressionCodegen {
     return new Expression(`betweenNeEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onBetweenEqEq(expr: ExprBetweenEqEq): ExpressionResult {
+  protected onBetweenEqEq(expr: types.ExprBetweenEqEq): ExpressionResult {
     if (expr.length !== 4) throw new Error('"=><=" operator expects three operands.');
     const a = this.onExpression(expr[1]);
     const b = this.onExpression(expr[2]);
@@ -554,7 +520,7 @@ export class JsonExpressionCodegen {
     util.assertVariadicArity('min', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.min(${params.join(', ')}) || 0`);
   }
@@ -563,23 +529,36 @@ export class JsonExpressionCodegen {
     util.assertVariadicArity('max', expr);
     const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
     const allLiterals = expressions.every((expr) => expr instanceof Literal);
-    if (allLiterals) return new Literal(evaluate(expr, {data: null}));
+    if (allLiterals) return new Literal(this.evaluate(expr, {data: null}));
     const params = expressions.map((expr) => `${expr}`);
     return new Expression(`+Math.max(${params.join(', ')}) || 0`);
   }
 
   protected onExpression(expr: types.Expr | unknown): ExpressionResult {
-    if (!isExpression(expr)) {
-      if (expr instanceof Array) {
-        if (expr.length !== 1 || !(expr[0] instanceof Array))
-          throw new Error('Expected array literal to be boxed as single array element.');
-        return new Literal(expr[0]);
-      } else return new Literal(expr);
+    if (expr instanceof Array) {
+      if (expr.length === 1) return new Literal(expr[0]);
+    } else return new Literal(expr);
+
+    const def = this.options.operators.get(expr[0]);
+    if (def) {
+      const [name,, arity, evaluate, codegen] = def;
+      util.assertArity(name, arity, expr);
+      const expressions = expr.slice(1).map((operand) => this.onExpression(operand));
+      const allLiterals = expressions.every((expr) => expr instanceof Literal);
+      if (allLiterals) {
+        /** @todo check the operator for side-effects there. */
+        const result = this.evaluate(expr, {data: undefined})
+        return new Literal(result);
+      }
+      const ctx: types.OperatorCodegenCtx<types.Expression> = {
+        expr,
+        createPattern: this.options.createPattern,
+        operand: (operand: types.Expression) => this.onExpression(operand),
+      };
+      return codegen(ctx);
     }
+
     switch (expr[0]) {
-      case '+':
-      case 'add':
-        return this.onPlus(expr as types.ExprPlus);
       case '-':
       case 'subtract':
         return this.onMinus(expr as types.ExprMinus);
@@ -681,13 +660,13 @@ export class JsonExpressionCodegen {
       case 'substr':
         return this.onSubstr(expr as types.ExprSubstr);
       case '><':
-        return this.onBetweenNeNe(expr as ExprBetweenNeNe);
+        return this.onBetweenNeNe(expr as types.ExprBetweenNeNe);
       case '=><':
-        return this.onBetweenEqNe(expr as ExprBetweenEqNe);
+        return this.onBetweenEqNe(expr as types.ExprBetweenEqNe);
       case '><=':
-        return this.onBetweenNeEq(expr as ExprBetweenNeEq);
+        return this.onBetweenNeEq(expr as types.ExprBetweenNeEq);
       case '=><=':
-        return this.onBetweenEqEq(expr as ExprBetweenEqEq);
+        return this.onBetweenEqEq(expr as types.ExprBetweenEqEq);
     }
     return new Literal(false);
   }

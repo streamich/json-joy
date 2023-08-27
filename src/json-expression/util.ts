@@ -74,12 +74,17 @@ export const isLiteral = (value: unknown): boolean => {
 
 export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);
 
-export const assertArity = (operator: string, arity: number, expr: Expression): void => {
+export const assertFixedArity = (operator: string, arity: number, expr: Expression): void => {
   if (expr.length !== arity + 1) throw new Error(`"${operator}" operator expects ${arity} operands.`);
 };
 
 export const assertVariadicArity = (operator: string, expr: Expression): void => {
   if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
+};
+
+export const assertArity = (operator: string, arity: number, expr: Expression): void => {
+  if (arity !== -1) assertFixedArity(operator, arity, expr);
+  else assertVariadicArity(operator, expr);
 };
 
 export const operatorsToMap = (operators: OperatorDefinition<Expression>[]): OperatorMap => {

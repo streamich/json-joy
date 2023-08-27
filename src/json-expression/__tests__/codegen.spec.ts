@@ -1,4 +1,5 @@
 import {JsonExpressionCodegen} from '../codegen';
+import {operatorsMap} from '../operators';
 import {Expr, JsonExpressionCodegenContext} from '../types';
 import {jsonExpressionCodegenTests} from './jsonExpressionCodegenTests';
 import {jsonExpressionEvaluateTests} from './jsonExpressionEvaluateTests';
@@ -13,6 +14,7 @@ const check = (
   const codegen = new JsonExpressionCodegen({
     ...options,
     expression,
+    operators: operatorsMap,
   });
   const fn = codegen.run().compile();
   // console.log(codegen.generate().js);

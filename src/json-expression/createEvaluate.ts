@@ -11,7 +11,7 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
     expr: Expr,
     ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext
   ): [left: unknown, right: unknown] => {
-    util.assertArity(operator, 2, expr);
+    util.assertFixedArity(operator, 2, expr);
     const left = evaluate(expr[1], ctx);
     const right = evaluate(expr[2], ctx);
     return [left, right];
@@ -29,18 +29,12 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
     const def = operators.get(fn);
     if (def) {
       const [name, , arity, fn] = def;
-      if (arity !== -1) util.assertArity(name, arity, expr);
-      else util.assertVariadicArity(name, expr);
+      util.assertArity(name, arity, expr);
       return fn(expr, {...ctx, eval: evaluate});
     }
 
     switch (fn) {
       // Arithmetic operators
-      case '+':
-      case 'add': {
-        util.assertVariadicArity('+', expr);
-        return expr.slice(1).reduce((acc, e) => toNum(evaluate(e, ctx)) + acc, 0);
-      }
       case '-':
       case 'subtract': {
         util.assertVariadicArity('-', expr);
@@ -74,45 +68,45 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         return Math.max(...expr.slice(1).map((e) => toNum(evaluate(e, ctx))));
       }
       case 'round': {
-        util.assertArity('round', 1, expr);
+        util.assertFixedArity('round', 1, expr);
         return Math.round(toNum(evaluate(expr[1], ctx)));
       }
       case 'ceil': {
-        util.assertArity('ceil', 1, expr);
+        util.assertFixedArity('ceil', 1, expr);
         return Math.ceil(toNum(evaluate(expr[1], ctx)));
       }
       case 'floor': {
-        util.assertArity('floor', 1, expr);
+        util.assertFixedArity('floor', 1, expr);
         return Math.floor(toNum(evaluate(expr[1], ctx)));
       }
       case 'trunc': {
-        util.assertArity('trunc', 1, expr);
+        util.assertFixedArity('trunc', 1, expr);
         return Math.trunc(toNum(evaluate(expr[1], ctx)));
       }
       case 'abs': {
-        util.assertArity('abs', 1, expr);
+        util.assertFixedArity('abs', 1, expr);
         return Math.abs(toNum(evaluate(expr[1], ctx)));
       }
       case 'sqrt': {
-        util.assertArity('sqrt', 1, expr);
+        util.assertFixedArity('sqrt', 1, expr);
         return Math.sqrt(toNum(evaluate(expr[1], ctx)));
       }
       case 'exp': {
-        util.assertArity('exp', 1, expr);
+        util.assertFixedArity('exp', 1, expr);
         return Math.exp(toNum(evaluate(expr[1], ctx)));
       }
       case 'ln': {
-        util.assertArity('ln', 1, expr);
+        util.assertFixedArity('ln', 1, expr);
         return Math.log(toNum(evaluate(expr[1], ctx)));
       }
       case 'log': {
-        util.assertArity('log', 2, expr);
+        util.assertFixedArity('log', 2, expr);
         const num = toNum(evaluate(expr[1], ctx));
         const base = toNum(evaluate(expr[2], ctx));
         return Math.log(num) / Math.log(base);
       }
       case 'log10': {
-        util.assertArity('log10', 1, expr);
+        util.assertFixedArity('log10', 1, expr);
         return Math.log10(toNum(evaluate(expr[1], ctx)));
       }
       case '^':

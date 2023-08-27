@@ -1,4 +1,4 @@
-import type {ExpressionResult} from "./codegen";
+import type {ExpressionResult} from "./codegen-steps";
 
 export type Literal<T> = T | LiteralExpression<T>;
 export type LiteralExpression<O> = [constant: O];
@@ -166,7 +166,7 @@ export type OperatorDefinition<E extends Expression> = [
   eval: OperatorEval<E>,
 
   /** Compile expression to executable JavaScript. */
-  codegen?: (ctx: OperatorCodegenCtx<E>) => ExpressionResult,
+  codegen: (ctx: OperatorCodegenCtx<E>) => ExpressionResult,
 ];
 
 export type OperatorEval<E extends Expression> = (
@@ -178,10 +178,10 @@ export interface OperatorEvalCtx extends JsonExpressionExecutionContext, JsonExp
   eval: OperatorEval<Expression>;
 }
 
-export interface OperatorCodegenCtx<E extends Expression> {
+export interface OperatorCodegenCtx<E extends Expression> extends JsonExpressionCodegenContext {
   expr: E;
-  ctx: JsonExpressionContext;
   operand: (operand: Expression) => ExpressionResult;
+  // link: () => string;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;
