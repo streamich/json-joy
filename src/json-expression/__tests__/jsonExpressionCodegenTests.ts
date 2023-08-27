@@ -156,11 +156,11 @@ export const jsonExpressionCodegenTests = (
         check(['||', false, true], true);
       });
 
-      test('two operand case', () => {
-        check(['or', 1, 1], true);
-        check(['or', 1, 0], true);
-        check(['or', 0, 1], true);
-        check(['or', 0, 0], false);
+      test('two operand case - numbers', () => {
+        check(['or', 1, 1], 1);
+        check(['or', 1, 0], 1);
+        check(['or', 0, 1], 1);
+        check(['or', 0, 0], 0);
       });
 
       test('three operand case', () => {
@@ -170,11 +170,11 @@ export const jsonExpressionCodegenTests = (
       });
 
       test('operands are expressions', () => {
-        check(['or', ['get', '/0'], ['get', '/0']], true, [1, 0]);
-        check(['or', ['get', '/0'], ['get', '/1']], true, [1, 0]);
-        check(['or', ['get', '/0'], 1], true, [1, 0]);
-        check(['or', ['get', '/0'], 0], true, [1, 0]);
-        check(['or', ['get', '/1'], 0], false, [1, 0]);
+        check(['or', ['get', '/0'], ['get', '/0']], 1, [1, 0]);
+        check(['or', ['get', '/0'], ['get', '/1']], 1, [1, 0]);
+        check(['or', ['get', '/0'], 1], 1, [1, 0]);
+        check(['or', ['get', '/0'], 0], 1, [1, 0]);
+        check(['or', ['get', '/1'], 0], 0, [1, 0]);
       });
     });
 

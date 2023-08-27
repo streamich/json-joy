@@ -813,12 +813,14 @@ export const jsonExpressionUnitTests = (
         check(['||', true, ['get', ''], true, true], true, false);
       });
 
-      test('casts types to booleans', () => {
-        check(['||', 1, 1], true);
-        check(['||', 1, 0], true);
-        check(['||', 'asdf', ''], true);
-        check(['||', '', ''], false);
-        check(['||', 'a', 'b'], true);
+      test('returns the first truthy value', () => {
+        check(['||', 1, 1], 1);
+        check(['||', 1, 0], 1);
+        check(['||', 'asdf', ''], 'asdf');
+        check(['||', '', ''], '');
+        check(['||', 'a', 'b'], 'a');
+        check(['||', '', 'b'], 'b');
+        check(['||', 0, '', false, null, {}], {});
       });
 
       test('alias works', () => {
