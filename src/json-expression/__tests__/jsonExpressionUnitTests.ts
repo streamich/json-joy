@@ -708,14 +708,14 @@ export const jsonExpressionUnitTests = (
           check(['><=', 2, 1, 2], true);
           check(['><=', ['get', ''], 1, 2], true, 1.4);
         });
-  
+
         test('can compare strings', () => {
           check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
           check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
           check(['><=', ['get', ''], 'a', 'ccc'], true, 'ccc');
           check(['><=', 'dddd', 'a', 'ccc'], false);
         });
-  
+
         test('throws on invalid operand count', () => {
           expect(() => check(['><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
             `""><=" operator expects 3 operands."`,
@@ -727,6 +727,121 @@ export const jsonExpressionUnitTests = (
             `""><=" operator expects 3 operands."`,
           );
         });
+      });
+    });
+  });
+
+  describe('Boolean operators', () => {
+    describe('and or &&', () => {
+      test('works with booleans', () => {
+        check(['&&', true, false], false);
+        check(['&&', true, true], true);
+        check(['&&', false, ['get', '']], false, true);
+        check(['&&', ['get', ''], ['get', '']], true, true);
+        check(['&&', ['get', ''], ['get', '']], false, false);
+      });
+
+      test('variadic form works', () => {
+        check(['&&', true, true], true);
+        check(['&&', true, true, true], true);
+        check(['&&', true, true, true, false], false);
+        check(['&&', true, false, true, true], false);
+        check(['&&', true, ['get', ''], true, true], false, false);
+      });
+
+      test('casts types to booleans', () => {
+        check(['&&', 1, 1], true);
+        check(['&&', 1, 0], false);
+        check(['&&', 'asdf', ''], false);
+        check(['&&', '', ''], false);
+        check(['&&', 'a', 'b'], true);
+      });
+
+      test('alias works', () => {
+        check(['and', ['get', ''], ['get', '']], true, true);
+        check(['and', ['get', ''], ['get', '']], false, false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['and', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""&&" operator expects at least two operands."`,
+        );
+        expect(() => check(['&&', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""&&" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('or or ||', () => {
+      test('works with booleans', () => {
+        check(['||', true, false], true);
+        check(['||', true, true], true);
+        check(['||', false, ['get', '']], false, false);
+        check(['||', ['get', ''], ['get', '']], true, true);
+        check(['||', ['get', ''], ['get', '']], false, false);
+      });
+
+      test('variadic form works', () => {
+        check(['||', true, true], true);
+        check(['||', true, true, true], true);
+        check(['||', true, true, true, false], true);
+        check(['||', true, false, true, true], true);
+        check(['||', false, false, false], false);
+        check(['||', true, ['get', ''], true, true], true, false);
+      });
+
+      test('casts types to booleans', () => {
+        check(['||', 1, 1], true);
+        check(['||', 1, 0], true);
+        check(['||', 'asdf', ''], true);
+        check(['||', '', ''], false);
+        check(['||', 'a', 'b'], true);
+      });
+
+      test('alias works', () => {
+        check(['or', ['get', ''], ['get', '']], true, true);
+        check(['or', ['get', ''], ['get', '']], false, false);
+        check(['or', ['get', ''], true], true, false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['||', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""||" operator expects at least two operands."`,
+        );
+        expect(() => check(['or', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""||" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('not or !', () => {
+      test('works with booleans', () => {
+        check(['!', true], false);
+        check(['!', false], true);
+      });
+
+      test('casts types to booleans', () => {
+        check(['!', 1], false);
+        check(['!', 0], true);
+        check(['!', ['!', 0]], false);
+        check(['!', 'asdf'], false);
+        check(['!', ''], true);
+        check(['!', null], true);
+      });
+
+      test('alias works', () => {
+        check(['not', true], false);
+        check(['not', false], true);
+        check(['not', ['get', '']], true, false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['!', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""!" operator expects 1 operands."`,
+        );
+        expect(() => check(['not', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""!" operator expects 1 operands."`,
+        );
       });
     });
   });

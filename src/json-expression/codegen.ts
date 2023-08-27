@@ -64,60 +64,12 @@ export class JsonExpressionCodegen {
     }
   }
 
-  protected onNot(expr: types.ExprNot): ExpressionResult {
-    if (expr.length > 2) throw new Error('"not" operator expects one operand.');
-    const [, a] = expr;
-    const res = this.onExpression(a);
-    if (res instanceof Literal) return new Literal(!res.val);
-    return new Expression(`!(${res})`);
-  }
-
   protected onIf(expr: types.ExprIf): ExpressionResult {
     if (expr.length !== 4) throw new Error('"if" operator expects three operands.');
     const [, a, b, c] = expr;
     const condition = this.onExpression(a);
     if (condition instanceof Literal) return condition.val ? this.onExpression(b) : this.onExpression(c);
     return new Expression(`${condition} ? ${this.onExpression(b)} : ${this.onExpression(c)}`);
-  }
-
-  protected onAnd(expr: types.ExprAnd): ExpressionResult {
-    if (expr.length <= 2) throw new Error('"and" operator expects at least two operands.');
-    const [, ...operands] = expr;
-    const expressions: ExpressionResult[] = [];
-    let allLiteral = true;
-    for (let i = 0; i < operands.length; i++) {
-      const expression = this.onExpression(operands[i]);
-      if (!(expression instanceof Literal)) allLiteral = false;
-      expressions.push(expression);
-    }
-    if (allLiteral) {
-      for (let i = 0; i < expressions.length; i++) {
-        const expression = expressions[i];
-        if (!expression.val) return new Literal(false);
-      }
-      return new Literal(true);
-    }
-    return new Expression(expressions.map((expr) => `!!(${expr})`).join(' && '));
-  }
-
-  protected onOr(expr: types.ExprOr): ExpressionResult {
-    if (expr.length <= 2) throw new Error('"or" operator expects at least two operands.');
-    const [, ...operands] = expr;
-    const expressions: ExpressionResult[] = [];
-    let allLiteral = true;
-    for (let i = 0; i < operands.length; i++) {
-      const expression = this.onExpression(operands[i]);
-      if (!(expression instanceof Literal)) allLiteral = false;
-      expressions.push(expression);
-    }
-    if (allLiteral) {
-      for (let i = 0; i < expressions.length; i++) {
-        const expression = expressions[i];
-        if (expression.val) return new Literal(true);
-      }
-      return new Literal(false);
-    }
-    return new Expression(expressions.map((expr) => `!!(${expr})`).join(' || '));
   }
 
   protected onType(expr: types.ExprType): ExpressionResult {
@@ -329,15 +281,6 @@ export class JsonExpressionCodegen {
       case '?':
       case 'if':
         return this.onIf(expr as types.ExprIf);
-      case '&&':
-      case 'and':
-        return this.onAnd(expr as types.ExprAnd);
-      case '||':
-      case 'or':
-        return this.onOr(expr as types.ExprOr);
-      case '!':
-      case 'not':
-        return this.onNot(expr as types.ExprNot);
       case 'type':
         return this.onType(expr as types.ExprType);
       case 'bool':

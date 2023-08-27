@@ -43,15 +43,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
       case 'if': {
         return evaluate(expr[1], ctx) ? evaluate(expr[2], ctx) : evaluate(expr[3], ctx);
       }
-      case '&&':
-      case 'and':
-        return expr.slice(1).every((e) => evaluate(e, ctx));
-      case '||':
-      case 'or':
-        return expr.slice(1).some((e) => evaluate(e, ctx));
-      case '!':
-      case 'not':
-        return !evaluate(expr[1], ctx);
       case 'type':
         return util.type(evaluate(expr[1], ctx));
       case 'defined': {

@@ -91,9 +91,9 @@ export type ExprBetweenNeEq = TernaryExpression<'><='>;
 // Logical expressions
 export type BooleanExpression = ExprAnd | ExprOr | ExprNot;
 
-export type ExprAnd = [fn: '&&' | 'and', ...expressions: unknown[]];
-export type ExprOr = [fn: '||' | 'or', ...expressions: unknown[]];
-export type ExprNot = [fn: '!' | 'not', expression: unknown];
+export type ExprAnd = VariadicExpression<'and' | '&&'>;
+export type ExprOr = VariadicExpression<'or' | '||'>;
+export type ExprNot = UnaryExpression<'not' | '!'>;
 
 
 export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
