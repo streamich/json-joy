@@ -1,6 +1,7 @@
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
+import * as util from "../util";
 import type * as types from "../types";
 
 const eqLitVsExpr = (literal: Literal, expression: Expression, ctx: types.OperatorCodegenCtx<types.Expression>, not?: boolean): ExpressionResult => {
@@ -16,6 +17,16 @@ const binaryOperands = (
   const left = ctx.eval(expr[1], ctx);
   const right = ctx.eval(expr[2], ctx);
   return [left, right];
+};
+
+const ternaryOperands = (
+  expr: types.TernaryExpression<any>,
+  ctx: types.OperatorEvalCtx,
+): [a: unknown, b: unknown, c: unknown] => {
+  const a = ctx.eval(expr[1], ctx);
+  const b = ctx.eval(expr[2], ctx);
+  const c = ctx.eval(expr[3], ctx);
+  return [a, b, c];
 };
 
 export const comparisonOperators: types.OperatorDefinition<any>[] = [
@@ -106,4 +117,18 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`(+(${ctx.operands[0]})||0)<=(+(${ctx.operands[1]})||0)`);
     },
   ] as types.OperatorDefinition<types.ExprLessThanOrEqual>,
+
+  [
+    '=><=',
+    ['between'],
+    3,
+    (expr: types.ExprBetweenEqEq, ctx) => {
+      const [val, min, max] = ternaryOperands(expr, ctx);
+      return util.betweenEqEq(val, min, max);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprBetweenEqEq>): ExpressionResult => {
+      ctx.link('betweenEqEq', util.betweenEqEq);
+      return new Expression(`betweenEqEq(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprBetweenEqEq>,
 ];

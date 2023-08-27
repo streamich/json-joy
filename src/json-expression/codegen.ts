@@ -320,17 +320,6 @@ export class JsonExpressionCodegen {
     return new Expression(`betweenNeEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
   }
 
-  protected onBetweenEqEq(expr: types.ExprBetweenEqEq): ExpressionResult {
-    if (expr.length !== 4) throw new Error('"=><=" operator expects three operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    const c = this.onExpression(expr[3]);
-    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(util.betweenEqEq(util.num(a.val), util.num(b.val), util.num(c.val)));
-    this.codegen.link('betweenEqEq');
-    return new Expression(`betweenEqEq((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
-  }
-
   private linkedOperandDeps: Set<string> = new Set();
   private linkOperandDeps = (name: string, dependency: unknown): void => {
     if (this.linkedOperandDeps.has(name)) return;
@@ -419,8 +408,6 @@ export class JsonExpressionCodegen {
         return this.onBetweenEqNe(expr as types.ExprBetweenEqNe);
       case '><=':
         return this.onBetweenNeEq(expr as types.ExprBetweenNeEq);
-      case '=><=':
-        return this.onBetweenEqEq(expr as types.ExprBetweenEqEq);
     }
     return new Literal(false);
   }
