@@ -519,8 +519,9 @@ export const jsonExpressionUnitTests = (
       });
 
       test('can compare strings', () => {
-        check(['>', '22', '1'], true);
-        check(['>', 'bb', 'a'], true);
+        check(['>', ['get', '/1'], ['get', '/0']], true, ['1', '22']);
+        check(['>', ['get', '/1'], ['get', '/0']], false, ['bb', 'a']);
+        check(['>', ['get', '/1'], ['get', '/0']], true, ['bb', 'ccc']);
       });
 
       test('throws on invalid operand count', () => {
@@ -546,6 +547,9 @@ export const jsonExpressionUnitTests = (
         check(['>=', 'bb', 'a'], true);
         check(['>=', 'bb', 'bb'], true);
         check(['>=', 'bb', 'ccc'], false);
+        check(['>=', ['get', '/1'], ['get', '/0']], true, ['1', '22']);
+        check(['>=', ['get', '/1'], ['get', '/0']], false, ['bb', 'a']);
+        check(['>=', ['get', '/1'], ['get', '/0']], true, ['bb', 'ccc']);
       });
 
       test('throws on invalid operand count', () => {
@@ -576,6 +580,9 @@ export const jsonExpressionUnitTests = (
       test('can compare strings', () => {
         check(['<', '22', '1'], false);
         check(['<', 'bb', 'a'], false);
+        check(['<', ['get', '/1'], ['get', '/0']], false, ['1', '22']);
+        check(['<', ['get', '/1'], ['get', '/0']], true, ['bb', 'a']);
+        check(['<', ['get', '/1'], ['get', '/0']], false, ['bb', 'ccc']);
       });
 
       test('throws on invalid operand count', () => {
@@ -601,6 +608,9 @@ export const jsonExpressionUnitTests = (
         check(['<=', 'bb', 'a'], false);
         check(['<=', 'bb', 'bb'], true);
         check(['<=', 'bb', 'ccc'], true);
+        check(['<=', ['get', '/1'], ['get', '/0']], false, ['1', '22']);
+        check(['<=', ['get', '/1'], ['get', '/0']], true, ['bb', 'a']);
+        check(['<=', ['get', '/1'], ['get', '/0']], false, ['bb', 'ccc']);
       });
 
       test('throws on invalid operand count', () => {
@@ -609,6 +619,59 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['<=', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""<=" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('between or =><=', () => {
+      test('can compare numbers', () => {
+        check(['=><=', 1.5, 1, 2], true);
+        check(['=><=', 2, 1, 2], true);
+        check(['=><=', 1, 1, 2], true);
+        check(['=><=', ['get', ''], 1, 2], true, 1.4);
+        check(['between', ['get', ''], 1, 2], false, 2.7);
+      });
+
+      test('can compare strings', () => {
+        check(['=><=', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['between', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['between', 'dddd', 'a', 'ccc'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['=><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><=" operator expects 3 operands."`,
+        );
+        expect(() => check(['=><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><=" operator expects 3 operands."`,
+        );
+        expect(() => check(['between', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""=><=" operator expects 3 operands."`,
+        );
+      });
+    });
+
+    describe('between or ><', () => {
+      test('can compare numbers', () => {
+        check(['><', 1.5, 1, 2], true);
+        check(['><', ['get', ''], 1, 2], true, 1.4);
+      });
+
+      test('can compare strings', () => {
+        check(['><', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['><', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['><', 'dddd', 'a', 'ccc'], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['><', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><" operator expects 3 operands."`,
+        );
+        expect(() => check(['><', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><" operator expects 3 operands."`,
+        );
+        expect(() => check(['><', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><" operator expects 3 operands."`,
         );
       });
     });

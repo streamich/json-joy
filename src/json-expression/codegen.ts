@@ -4,9 +4,9 @@ import {$$find} from '../json-pointer/codegen/find';
 import {toPath, validateJsonPointer} from '../json-pointer';
 import {emitStringMatch} from '../util/codegen/util/helpers';
 import {Expression, ExpressionResult, Literal} from './codegen-steps';
-import type * as types from './types';
 import {createEvaluate} from './createEvaluate';
 import {JavaScript} from '../util/codegen';
+import type * as types from './types';
 
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
@@ -22,10 +22,8 @@ const linkable = {
   substr: util.substr,
   slash: util.slash,
   mod: util.mod,
-  betweenNeNe: util.betweenNeNe,
   betweenEqNe: util.betweenEqNe,
   betweenNeEq: util.betweenNeEq,
-  betweenEqEq: util.betweenEqEq,
 };
 
 export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
@@ -287,17 +285,6 @@ export class JsonExpressionCodegen {
     return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
-  protected onBetweenNeNe(expr: types.ExprBetweenNeNe): ExpressionResult {
-    if (expr.length !== 4) throw new Error('"><" operator expects three operands.');
-    const a = this.onExpression(expr[1]);
-    const b = this.onExpression(expr[2]);
-    const c = this.onExpression(expr[3]);
-    if (a instanceof Literal && b instanceof Literal && c instanceof Literal)
-      return new Literal(util.betweenNeNe(util.num(a.val), util.num(b.val), util.num(c.val)));
-    this.codegen.link('betweenNeNe');
-    return new Expression(`betweenNeNe((+(${a})||0), (+(${b})||0), (+(${c})||0))`);
-  }
-
   protected onBetweenEqNe(expr: types.ExprBetweenEqNe): ExpressionResult {
     if (expr.length !== 4) throw new Error('"=><" operator expects three operands.');
     const a = this.onExpression(expr[1]);
@@ -402,8 +389,6 @@ export class JsonExpressionCodegen {
         return this.onCat(expr as types.ExprCat);
       case 'substr':
         return this.onSubstr(expr as types.ExprSubstr);
-      case '><':
-        return this.onBetweenNeNe(expr as types.ExprBetweenNeNe);
       case '=><':
         return this.onBetweenEqNe(expr as types.ExprBetweenEqNe);
       case '><=':

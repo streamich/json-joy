@@ -596,10 +596,10 @@ export const jsonExpressionCodegenTests = (
     describe('between', () => {
       if (!skipOperandArityTests) {
         test('throws on too few or too many operands', () => {
-          expect(() => check(['><', 1] as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
-          expect(() => check(['><', 1, 2] as any, '')).toThrowError(new Error('"><" operator expects three operands.'));
+          expect(() => check(['><', 1] as any, '')).toThrowError(new Error('"><" operator expects 3 operands.'));
+          expect(() => check(['><', 1, 2] as any, '')).toThrowError(new Error('"><" operator expects 3 operands.'));
           expect(() => check(['><', 1, 2, 3, 4] as any, '')).toThrowError(
-            new Error('"><" operator expects three operands.'),
+            new Error('"><" operator expects 3 operands.'),
           );
         });
       }

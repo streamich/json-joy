@@ -6,17 +6,6 @@ import * as util from './util';
 const toNum = util.num;
 
 export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
-  const binaryOperands = (
-    operator: string,
-    expr: Expr,
-    ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext
-  ): [left: unknown, right: unknown] => {
-    util.assertFixedArity(operator, 2, expr);
-    const left = evaluate(expr[1], ctx);
-    const right = evaluate(expr[2], ctx);
-    return [left, right];
-  };
-
   const evaluate = (
     expr: Expr | Literal<unknown>,
     ctx: JsonExpressionExecutionContext & JsonExpressionCodegenContext,
@@ -118,12 +107,6 @@ export const createEvaluate = ({operators}: {operators: OperatorMap}) => {
         const subject = evaluate(a, ctx);
         const fn = ctx.createPattern(pattern);
         return fn(util.str(subject));
-      }
-      case '><': {
-        const val = toNum(evaluate(expr[1], ctx));
-        const min = toNum(evaluate(expr[2], ctx));
-        const max = toNum(evaluate(expr[3], ctx));
-        return util.betweenNeNe(val, min, max);
       }
       case '=><': {
         const val = toNum(evaluate(expr[1], ctx));

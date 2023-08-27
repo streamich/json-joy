@@ -45,10 +45,10 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 
-export const betweenNeNe = (val: any, min: any, max: any): boolean => val > min && val < max;
-export const betweenNeEq = (val: any, min: any, max: any): boolean => val > min && val <= max;
-export const betweenEqNe = (val: any, min: any, max: any): boolean => val >= min && val < max;
-export const betweenEqEq = (val: any, min: any, max: any): boolean => val >= min && val <= max;
+export const betweenNeNe = (val: any, min: any, max: any): boolean => (val > min) && (val < max);
+export const betweenNeEq = (val: any, min: any, max: any): boolean => (val > min) && (val <= max);
+export const betweenEqNe = (val: any, min: any, max: any): boolean => (val >= min) && (val < max);
+export const betweenEqEq = (val: any, min: any, max: any): boolean => (val >= min) && (val <= max);
 
 export const slash = (a: unknown, b: unknown) => {
   const divisor = num(b);

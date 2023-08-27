@@ -75,7 +75,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return <any>left > <any>right;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprGreaterThan>): ExpressionResult => {
-      return new Expression(`(+(${ctx.operands[0]})||0)>(+(${ctx.operands[1]})||0)`);
+      return new Expression(`(${ctx.operands[0]})>(${ctx.operands[1]})`);
     },
   ] as types.OperatorDefinition<types.ExprGreaterThan>,
 
@@ -88,7 +88,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return <any>left >= <any>right;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprGreaterThanOrEqual>): ExpressionResult => {
-      return new Expression(`(+(${ctx.operands[0]})||0)>=(+(${ctx.operands[1]})||0)`);
+      return new Expression(`(${ctx.operands[0]})>=(${ctx.operands[1]})`);
     },
   ] as types.OperatorDefinition<types.ExprGreaterThanOrEqual>,
 
@@ -101,7 +101,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return <any>left < <any>right;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprLessThan>): ExpressionResult => {
-      return new Expression(`(+(${ctx.operands[0]})||0)<(+(${ctx.operands[1]})||0)`);
+      return new Expression(`(${ctx.operands[0]})<(${ctx.operands[1]})`);
     },
   ] as types.OperatorDefinition<types.ExprLessThan>,
 
@@ -114,7 +114,7 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return <any>left <= <any>right;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprLessThanOrEqual>): ExpressionResult => {
-      return new Expression(`(+(${ctx.operands[0]})||0)<=(+(${ctx.operands[1]})||0)`);
+      return new Expression(`(${ctx.operands[0]})<=(${ctx.operands[1]})`);
     },
   ] as types.OperatorDefinition<types.ExprLessThanOrEqual>,
 
@@ -131,4 +131,19 @@ export const comparisonOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`betweenEqEq(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
     },
   ] as types.OperatorDefinition<types.ExprBetweenEqEq>,
+
+  [
+    '><',
+    [],
+    3,
+    (expr: types.ExprBetweenNeNe, ctx) => {
+      const [val, min, max] = ternaryOperands(expr, ctx);
+
+      return util.betweenNeNe(val, min, max);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprBetweenNeNe>): ExpressionResult => {
+      ctx.link('betweenNeNe', util.betweenNeNe);
+      return new Expression(`betweenNeNe(${ctx.operands[0]},${ctx.operands[1]},${ctx.operands[2]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprBetweenNeNe>,
 ];
