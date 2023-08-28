@@ -37,6 +37,33 @@ export const len = (value: unknown): number => {
   }
 };
 
+export const member = (container: unknown, index: unknown): unknown => {
+  switch (typeof container) {
+    case 'string': {
+      const i = int(index);
+      if (i < 0 || i >= container.length) return undefined;
+      return container[i];
+    }
+    case 'object': {
+      if (!container) throw new Error('NOT_CONTAINER');
+      if (container instanceof Array || container instanceof Uint8Array) {
+        const i = int(index);
+        if (i < 0 || i >= container.length) return undefined;
+        return container[i];
+      }
+      switch (typeof index) {
+        case 'string':
+        case 'number':
+          return (container as any)[index];
+        default:
+          throw new Error('NOT_STRING_INDEX');
+      }
+    }
+    default:
+      throw new Error('NOT_CONTAINER');
+  }
+};
+
 export const asBin = (value: unknown): Uint8Array => {
   if (value instanceof Uint8Array) return value;
   throw new Error('NOT_BINARY');

@@ -98,10 +98,15 @@ export type ExprAnd = VariadicExpression<'and' | '&&'>;
 export type ExprOr = VariadicExpression<'or' | '||'>;
 export type ExprNot = UnaryExpression<'not' | '!'>;
 
+// Container expressions
+export type ContainerExpression = ExprLen | ExprMember;
+
+export type ExprLen = UnaryExpression<'len'>;
+export type ExprMember = BinaryExpression<'member' | '[]'>;
+
 // Type expressions
 export type TypeExpression =
   | ExprType
-  | ExprLen
   | ExprBool
   | ExprNum
   | ExprStr
@@ -115,7 +120,6 @@ export type TypeExpression =
   | ExprIsObject;
 
 export type ExprType = UnaryExpression<'type'>;
-export type ExprLen = UnaryExpression<'len'>;
 export type ExprBool = UnaryExpression<'bool'>;
 export type ExprNum = UnaryExpression<'num'>;
 export type ExprStr = UnaryExpression<'str'>;
@@ -213,6 +217,7 @@ export type Expr =
   | ComparisonExpression
   | LogicalExpression
   | TypeExpression
+  | ContainerExpression
   | StringExpression
   | BinaryExpressions
   | ObjectExpression

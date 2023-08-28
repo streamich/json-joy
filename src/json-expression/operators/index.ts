@@ -3,6 +3,7 @@ import {arithmeticOperators} from './arithmetic';
 import {comparisonOperators} from './comparison';
 import {logicalOperators} from './logical';
 import {typeOperators} from './type';
+import {containerOperators} from './container';
 import {stringOperators} from './string';
 import {binaryOperators} from './binary';
 import {objectOperators} from './object';
@@ -15,6 +16,7 @@ export const operators = [
   ...comparisonOperators,
   ...logicalOperators,
   ...typeOperators,
+  ...containerOperators,
   ...stringOperators,
   ...binaryOperators,
   ...objectOperators,
