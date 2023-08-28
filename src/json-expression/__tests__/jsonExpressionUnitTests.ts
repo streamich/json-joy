@@ -1596,6 +1596,22 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('entries', () => {
+      test('returns empty array for empty object', () => {
+        check(['entries', {}], []);
+      });
+
+      test('returns entries of an object', () => {
+        check(['entries', {foo: 1}], [['foo', 1]]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['entries', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""entries" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Branching operators', () => {

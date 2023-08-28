@@ -180,10 +180,12 @@ export type ExprF64 = BinaryExpression<'f64'>;
 export type ObjectExpression = 
   | ExprKeys
   | ExprValues
+  | ExprEntries
   | ExprIn;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
+export type ExprEntries = UnaryExpression<'entries'>;
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 // Bitwise expressions

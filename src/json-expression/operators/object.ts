@@ -32,4 +32,19 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprValues>,
+
+  [
+    'entries',
+    [],
+    1,
+    (expr: types.ExprEntries, ctx) => {
+      const operand = ctx.eval(expr[1], ctx);
+      return util.entries(operand);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprEntries>): ExpressionResult => {
+      ctx.link(util.entries, 'entries');
+      const js = `entries(${ctx.operands[0]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprEntries>,
 ];

@@ -58,6 +58,17 @@ export const values = (value: unknown): unknown[] => {
   return values;
 };
 
+export const entries = (value: unknown): [key: string, value: unknown][] => {
+  const entries: [key: string, value: unknown][] = [];
+  const theKeys = keys(value);
+  const length = theKeys.length;
+  for (let i = 0; i < length; i++) {
+    const key = theKeys[i];
+    entries.push([key, (value as any)[key]]);
+  }
+  return entries;
+};
+
 export const u8 = (bin: unknown, pos: unknown) => {
   const buf = asBin(bin);
   const index = int(pos);
