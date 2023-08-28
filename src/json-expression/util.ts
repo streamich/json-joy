@@ -25,14 +25,16 @@ export const str = (value: unknown): string => {
 
 export const len = (value: unknown): number => {
   switch (typeof value) {
-    case 'string': return value.length;
+    case 'string':
+      return value.length;
     case 'object': {
       if (value instanceof Array) return value.length;
       if (value instanceof Uint8Array) return value.length;
       if (!value) return 0;
       return Object.keys(value).length;
     }
-    default: return 0;
+    default:
+      return 0;
   }
 };
 
