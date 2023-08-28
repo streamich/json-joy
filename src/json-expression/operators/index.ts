@@ -6,6 +6,7 @@ import {typeOperators} from './type';
 import {stringOperators} from './string';
 import {branchingOperators} from './branching';
 import {inputOperators} from './input';
+import {bitwiseOperators} from './bitwise';
 
 export const operators = [
   ...arithmeticOperators,
@@ -15,6 +16,7 @@ export const operators = [
   ...stringOperators,
   ...branchingOperators,
   ...inputOperators,
+  ...bitwiseOperators,
 ];
 
 export const operatorsMap = operatorsToMap(operators);

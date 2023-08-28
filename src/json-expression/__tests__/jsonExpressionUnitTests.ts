@@ -1243,4 +1243,103 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('Bitwise operators', () => {
+    describe('bitAnd or &', () => {
+      test('works with two operands', () => {
+        check(['&', 3, 6], 3 & 6);
+        check(['bitAnd', 3, 6], 3 & 6);
+      });
+
+      test('works with variadic operands', () => {
+        check(['&', 3, 6, 12], 3 & 6 & 12);
+        check(['bitAnd', 3, 6, 8, 123], 3 & 6 & 8 & 123);
+      });
+
+      test('works with side-effects', () => {
+        check(['&', 3, 6, ['$', '']], 3 & 6 & 12, 12);
+        check(['bitAnd', 3, ['get', '/foo'], 8, 123], 3 & 6 & 8 & 123, {foo: 6});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['&', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""&" operator expects at least two operands."`,
+        );
+        expect(() => check(['bitAnd', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""&" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('bitOr or |', () => {
+      test('works with two operands', () => {
+        check(['|', 3, 6], 3 | 6);
+        check(['bitOr', 3, 6], 3 | 6);
+      });
+
+      test('works with variadic operands', () => {
+        check(['|', 3, 6, 12], 3 | 6 | 12);
+        check(['bitOr', 3, 6, 8, 123], 3 | 6 | 8 | 123);
+        check(['|', 1, 2, 3], 1 | 2 | 3);
+      });
+
+      test('works with side-effects', () => {
+        check(['|', 3, 6, ['$', '']], 3 | 6 | 12, 12);
+        check(['bitOr', 3, ['get', '/foo'], 8, 123], 3 | 6 | 8 | 123, {foo: 6});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['|', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""|" operator expects at least two operands."`,
+        );
+        expect(() => check(['bitOr', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""|" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('bitXor or ^', () => {
+      test('works with two operands', () => {
+        check(['^', 3, 6], 3 ^ 6);
+        check(['bitXor', 3, 6], 3 ^ 6);
+      });
+
+      test('works with variadic operands', () => {
+        check(['^', 3, 6, 12], 3 ^ 6 ^ 12);
+        check(['bitXor', 3, 6, 8, 123], 3 ^ 6 ^ 8 ^ 123);
+        check(['^', 1, 2, 3], 1 ^ 2 ^ 3);
+      });
+
+      test('works with side-effects', () => {
+        check(['^', 3, 6, ['$', '']], 3 ^ 6 ^ 12, 12);
+        check(['bitXor', 3, ['get', '/foo'], 8, 123], 3 ^ 6 ^ 8 ^ 123, {foo: 6});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['^', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""^" operator expects at least two operands."`,
+        );
+        expect(() => check(['bitXor', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""^" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('bitNot or ~', () => {
+      test('works', () => {
+        check(['~', 3], ~3);
+        check(['~', 12], ~12);
+        check(['bitNot', 6], ~6);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['~', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""~" operator expects 1 operands."`,
+        );
+        expect(() => check(['bitNot', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""~" operator expects 1 operands."`,
+        );
+      });
+    });
+  });
 };

@@ -122,6 +122,14 @@ export type ObjectExpression = ExprIn;
 
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
+// Bitwise expressions
+export type BitwiseExpression = ExprBitAnd | ExprBitOr | ExprBitXor | ExprBitNot;
+
+export type ExprBitAnd = VariadicExpression<'bitAnd' | '&'>;
+export type ExprBitOr = VariadicExpression<'bitOr' | '|'>;
+export type ExprBitXor = VariadicExpression<'bitXor' | '^'>;
+export type ExprBitNot = UnaryExpression<'bitNot' | '~'>;
+
 // Branching expressions
 export type BranchingExpression = ExprIf | ExprThrow;
 
@@ -141,6 +149,7 @@ export type Expr =
   | TypeExpression
   | StringExpression
   | ObjectExpression
+  | BitwiseExpression
   | BranchingExpression
   | InputExpression;
 
