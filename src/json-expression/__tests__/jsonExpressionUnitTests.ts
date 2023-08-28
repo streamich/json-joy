@@ -1467,7 +1467,7 @@ export const jsonExpressionUnitTests = (
 
     describe('date?', () => {
       test('returns true for an date', () => {
-        check(['date?', '1937-01-01T12:00:27.87'], true);
+        check(['date?', '1937-01-01'], true);
       });
 
       test('return false for not date', () => {
@@ -1483,6 +1483,28 @@ export const jsonExpressionUnitTests = (
       test('throws on invalid operand count', () => {
         expect(() => check(['date?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""date?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('time?', () => {
+      test('returns true for an time', () => {
+        check(['time?', '20:20:39+00:00'], true);
+      });
+
+      test('return false for not time', () => {
+        check(['time?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['time?', '1.2.3.4.5'], false);
+        check(['time?', 'abc+'], false);
+        check(['time?', 123], false);
+        check(['time?', true], false);
+        check(['time?', null], false);
+        check(['time?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['time?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""time?" operator expects 1 operands."`,
         );
       });
     });

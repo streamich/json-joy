@@ -156,6 +156,7 @@ const URI_REG =
   /^(?:[a-z][a-z0-9+\-.]*:)(?:\/?\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:]|%[0-9a-f]{2})*@)?(?:\[(?:(?:(?:(?:[0-9a-f]{1,4}:){6}|::(?:[0-9a-f]{1,4}:){5}|(?:[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){4}|(?:(?:[0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){3}|(?:(?:[0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::(?:[0-9a-f]{1,4}:){2}|(?:(?:[0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:|(?:(?:[0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::)(?:[0-9a-f]{1,4}:[0-9a-f]{1,4}|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?))|(?:(?:[0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4}|(?:(?:[0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::)|[Vv][0-9a-f]+\.[a-z0-9\-._~!$&'()*+,;=:]+)\]|(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)|(?:[a-z0-9\-._~!$&'()*+,;=]|%[0-9a-f]{2})*)(?::\d*)?(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*|\/(?:(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)?|(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})+(?:\/(?:[a-z0-9\-._~!$&'()*+,;=:@]|%[0-9a-f]{2})*)*)(?:\?(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?(?:#(?:[a-z0-9\-._~!$&'()*+,;=:@/?]|%[0-9a-f]{2})*)?$/i;
 const DURATION_REG = /^P(?!$)((\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+S)?)?|(\d+W)?)$/;
 const DATE_REG = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
+const TIME_REG = /^(\d\d):(\d\d):(\d\d(?:\.\d+)?)(z|([+-])(\d\d)(?::?(\d\d))?)?$/i;
 
 export const isEmail = (value: unknown): boolean => typeof value === 'string' && EMAIL_REG.test(value);
 export const isHostname = (value: unknown): boolean => typeof value === 'string' && HOSTNAME_REG.test(value);
@@ -183,4 +184,22 @@ export const isDate = (value: unknown): boolean => {
     day >= 1 &&
     day <= (month === 2 && isLeapYear(year) ? 29 : DAYS[month])
   )
+};
+
+export const isTime = (value: unknown): boolean => {
+  if (typeof value !== 'string') return false;
+  const matches: string[] | null = TIME_REG.exec(value)
+  if (!matches) return false
+  const hr: number = +matches[1]
+  const min: number = +matches[2]
+  const sec: number = +matches[3]
+  const tz: string | undefined = matches[4]
+  const tzSign: number = matches[5] === "-" ? -1 : 1
+  const tzH: number = +(matches[6] || 0)
+  const tzM: number = +(matches[7] || 0)
+  if (tzH > 23 || tzM > 59 || !tz) return false
+  if (hr <= 23 && min <= 59 && sec < 60) return true
+  const utcMin = min - tzM * tzSign
+  const utcHr = hr - tzH * tzSign - (utcMin < 0 ? 1 : 0)
+  return (utcHr === 23 || utcHr === -1) && (utcMin === 59 || utcMin === -1) && sec < 61
 };

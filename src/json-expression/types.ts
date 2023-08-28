@@ -143,7 +143,8 @@ export type StringExpression =
   | ExprIsUuid
   | ExprIsUri
   | ExprIsDuration
-  | ExprIsDate;
+  | ExprIsDate
+  | ExprIsTime;
 
 export type ExprCat = VariadicExpression<'cat' | '.'>;
 export type ExprContains = BinaryExpression<'contains'>;
@@ -159,6 +160,7 @@ export type ExprIsUuid = UnaryExpression<'uuid?'>;
 export type ExprIsUri = UnaryExpression<'uri?'>;
 export type ExprIsDuration = UnaryExpression<'duration?'>;
 export type ExprIsDate = UnaryExpression<'date?'>;
+export type ExprIsTime = UnaryExpression<'time?'>;
 
 // Binary expressions
 export type BinaryExpressions = ExprU8 | ExprI8 | ExprU16 | ExprI16 | ExprU32 | ExprI32 | ExprF32 | ExprF64;
