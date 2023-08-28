@@ -1564,6 +1564,24 @@ export const jsonExpressionUnitTests = (
     });
   });
 
+  describe('Object operators', () => {
+    describe('keys', () => {
+      test('returns empty array for empty object', () => {
+        check(['keys', {}], []);
+      });
+
+      test('returns keys of an object', () => {
+        check(['keys', {foo: 1}], ['foo']);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['keys', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""keys" operator expects 1 operands."`,
+        );
+      });
+    });
+  });
+
   describe('Branching operators', () => {
     describe('if or ?', () => {
       test('branches', () => {

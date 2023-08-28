@@ -42,6 +42,14 @@ export const asBin = (value: unknown): Uint8Array => {
   throw new Error('NOT_BINARY');
 };
 
+export const asObj = (value: unknown): object => {
+  if (type(value) === 'object') return value as object;
+  throw new Error('NOT_OBJECT');
+};
+
+export const keys = (value: unknown): string[] =>
+  Object.keys(asObj(value));
+
 export const u8 = (bin: unknown, pos: unknown) => {
   const buf = asBin(bin);
   const index = int(pos);

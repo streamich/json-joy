@@ -5,6 +5,7 @@ import {logicalOperators} from './logical';
 import {typeOperators} from './type';
 import {stringOperators} from './string';
 import {binaryOperators} from './binary';
+import {objectOperators} from './object';
 import {branchingOperators} from './branching';
 import {inputOperators} from './input';
 import {bitwiseOperators} from './bitwise';
@@ -16,6 +17,7 @@ export const operators = [
   ...typeOperators,
   ...stringOperators,
   ...binaryOperators,
+  ...objectOperators,
   ...branchingOperators,
   ...inputOperators,
   ...bitwiseOperators,
