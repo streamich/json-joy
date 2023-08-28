@@ -1508,6 +1508,28 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('dateTime?', () => {
+      test('returns true for an dateTime', () => {
+        check(['dateTime?', '2018-11-13T20:20:39+00:00'], true);
+      });
+
+      test('return false for not dateTime', () => {
+        check(['dateTime?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['dateTime?', '1.2.3.4.5'], false);
+        check(['dateTime?', 'abc+'], false);
+        check(['dateTime?', 123], false);
+        check(['dateTime?', true], false);
+        check(['dateTime?', null], false);
+        check(['dateTime?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['dateTime?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""dateTime?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Binary operators', () => {

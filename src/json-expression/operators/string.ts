@@ -142,4 +142,5 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
   createValidationOperator<types.ExprIsDuration>('duration', util.isDuration),
   createValidationOperator<types.ExprIsDate>('date', util.isDate),
   createValidationOperator<types.ExprIsTime>('time', util.isTime),
+  createValidationOperator<types.ExprIsDateTime>('dateTime', util.isDateTime),
 ];

@@ -157,6 +157,7 @@ const URI_REG =
 const DURATION_REG = /^P(?!$)((\d+Y)?(\d+M)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+S)?)?|(\d+W)?)$/;
 const DATE_REG = /^(\d\d\d\d)-(\d\d)-(\d\d)$/;
 const TIME_REG = /^(\d\d):(\d\d):(\d\d(?:\.\d+)?)(z|([+-])(\d\d)(?::?(\d\d))?)?$/i;
+const DATE_TIME_SEPARATOR_REG = /t|\s/i;
 
 export const isEmail = (value: unknown): boolean => typeof value === 'string' && EMAIL_REG.test(value);
 export const isHostname = (value: unknown): boolean => typeof value === 'string' && HOSTNAME_REG.test(value);
@@ -202,4 +203,10 @@ export const isTime = (value: unknown): boolean => {
   const utcMin = min - tzM * tzSign
   const utcHr = hr - tzH * tzSign - (utcMin < 0 ? 1 : 0)
   return (utcHr === 23 || utcHr === -1) && (utcMin === 59 || utcMin === -1) && sec < 61
+};
+
+export const isDateTime = (str: unknown): boolean => {
+  if (typeof str !== 'string') return false;
+  const dateTime = str.split(DATE_TIME_SEPARATOR_REG) as [string, string];
+  return dateTime.length === 2 && isDate(dateTime[0]) && isTime(dateTime[1])
 };

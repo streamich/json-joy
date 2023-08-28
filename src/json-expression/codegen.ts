@@ -3,8 +3,8 @@ import {Codegen} from '../util/codegen/Codegen';
 import {Expression, ExpressionResult, Literal} from './codegen-steps';
 import {createEvaluate} from './createEvaluate';
 import {JavaScript} from '../util/codegen';
-import type * as types from './types';
 import {Vars} from './Vars';
+import type * as types from './types';
 
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
