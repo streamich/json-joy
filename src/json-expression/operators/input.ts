@@ -1,25 +1,74 @@
-import {get, toPath, validateJsonPointer} from '../../json-pointer';
-import {Expression, ExpressionResult} from '../codegen-steps';
+import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import * as util from '../util';
+import * as jsonPointer from '../../json-pointer';
+import {Vars} from '../Vars';
+import {$$find} from '../../json-pointer/codegen/find';
 import type * as types from '../types';
+
+const get = (vars: Vars, varname: unknown) => {
+  if (typeof varname !== 'string') throw new Error('varname must be a string.');
+  const [name, pointer] = util.parseVar(varname);
+  jsonPointer.validateJsonPointer(pointer);
+  const data = vars.get(name);
+  const path = jsonPointer.toPath(pointer);
+  const value = jsonPointer.get(data, path);
+  return value;
+};
 
 export const inputOperators: types.OperatorDefinition<any>[] = [
   [
-    '=',
+    '$',
     ['get'],
-    0,
-    (expr: types.ExprGet, ctx) => {
+    [1, 2],
+    (expr: types.ExprGet, ctx: types.OperatorEvalCtx) => {
       const varname = ctx.eval(expr[1], ctx);
-      if (typeof varname !== 'string') throw new Error('Invalid varname.');
-      const [name, pointer] = util.parseVar(varname);
-      validateJsonPointer(pointer);
-      const data = !name ? ctx.data : {};
-      const path = toPath(pointer);
-      return util.throwOnUndef(get(data, path), undefined);
+      const defval = ctx.eval(expr[2], ctx);
+      const value = get(ctx.vars, varname);
+      return util.throwOnUndef(value, defval);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprGet>): ExpressionResult => {
-      const js = ctx.operands.map((expr) => `(${expr})`).join('&&');
-      return new Expression(js);
+      ctx.link(util.throwOnUndef, 'throwOnUndef');
+      const varname = ctx.operands[0];
+      if (varname instanceof Literal) {
+        if (typeof varname.val !== 'string') throw new Error('varname must be a string.');
+        const [name, pointer] = util.parseVar(varname.val);
+        jsonPointer.validateJsonPointer(pointer);
+        const hasDefaultValue = ctx.expr.length === 3;
+        const defaultValue = hasDefaultValue ? ctx.operands[1] : undefined;
+        const fn = $$find(jsonPointer.toPath(pointer));
+        const find = ctx.const(fn);
+        const data = `vars.get(${JSON.stringify(name)})`;
+        return new Expression(`throwOnUndef(${find}(${data}),(${defaultValue}))`);
+      }
+      ctx.link(get, 'get');
+      return new Expression(`throwOnUndef(get(vars,(${varname})),(${ctx.operands[1]}))`);
     },
+    /* has side-effects */ true,
   ] as types.OperatorDefinition<types.ExprGet>,
+
+  [
+    '$?',
+    ['get?'],
+    1,
+    (expr: types.ExprDefined, ctx: types.OperatorEvalCtx) => {
+      const varname = ctx.eval(expr[1], ctx);
+      const value = get(ctx.vars, varname);
+      return value !== undefined;
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprDefined>): ExpressionResult => {
+      const varname = ctx.operands[0];
+      if (varname instanceof Literal) {
+        if (typeof varname.val !== 'string') throw new Error('varname must be a string.');
+        const [name, pointer] = util.parseVar(varname.val);
+        jsonPointer.validateJsonPointer(pointer);
+        const fn = $$find(jsonPointer.toPath(pointer));
+        const find = ctx.const(fn);
+        const data = `vars.get(${JSON.stringify(name)})`;
+        return new Expression(`${find}(${data})!==undefined`);
+      }
+      ctx.link(get, 'get');
+      return new Expression(`get(vars,(${varname}))!==undefined`);
+    },
+    /* has side-effects */ true,
+  ] as types.OperatorDefinition<types.ExprDefined>,
 ];

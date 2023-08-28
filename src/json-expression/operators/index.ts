@@ -5,6 +5,7 @@ import {logicalOperators} from './logical';
 import {typeOperators} from './type';
 import {stringOperators} from './string';
 import {branchingOperators} from './branching';
+import {inputOperators} from './input';
 
 export const operators = [
   ...arithmeticOperators,
@@ -13,6 +14,7 @@ export const operators = [
   ...typeOperators,
   ...stringOperators,
   ...branchingOperators,
+  ...inputOperators,
 ];
 
 export const operatorsMap = operatorsToMap(operators);

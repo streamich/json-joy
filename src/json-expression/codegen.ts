@@ -1,11 +1,10 @@
 import * as util from './util';
 import {Codegen} from '../util/codegen/Codegen';
-import {$$find} from '../json-pointer/codegen/find';
-import {toPath, validateJsonPointer} from '../json-pointer';
 import {Expression, ExpressionResult, Literal} from './codegen-steps';
 import {createEvaluate} from './createEvaluate';
 import {JavaScript} from '../util/codegen';
 import type * as types from './types';
+import {Vars} from './Vars';
 
 const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
 
@@ -33,40 +32,11 @@ export class JsonExpressionCodegen {
   public constructor(protected options: JsonExpressionCodegenOptions) {
     this.codegen = new Codegen<JsonExpressionFn, typeof linkable>({
       args: ['ctx'],
-      prologue: 'var data = ctx.data;',
+      prologue: 'var vars = ctx.vars;',
       epilogue: '',
       linkable,
     });
     this.evaluate = createEvaluate({...options});
-  }
-
-  protected onGet(expr: types.ExprGet): ExpressionResult {
-    if (expr.length < 2 || expr.length > 3) throw new Error('"get" operator expects two or three operands.');
-    const path = this.onExpression(expr[1]);
-    const def = expr[2] === undefined ? undefined : this.onExpression(expr[2]);
-    if (def !== undefined && !util.isLiteral(expr[2]))
-      throw new Error('"get" operator expects a default value to be a literal.');
-    this.codegen.link('throwOnUndef');
-    if (path instanceof Literal) {
-      if (typeof path.val !== 'string') throw new Error('Invalid JSON pointer.');
-      validateJsonPointer(path.val);
-      const fn = $$find(toPath(path.val));
-      const d = this.codegen.addConstant(fn);
-      return new Expression(`throwOnUndef(${d}(data), ${def})`);
-    } else {
-      this.codegen.link('get');
-      return new Expression(`throwOnUndef(get(${path}, data), ${def})`);
-    }
-  }
-
-  protected onDefined(expr: types.ExprDefined): ExpressionResult {
-    if (expr.length > 2) throw new Error('"defined" operator expects one operand.');
-    const [, pointer] = expr;
-    if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
-    validateJsonPointer(pointer);
-    const fn = $$find(toPath(pointer));
-    const d = this.codegen.addConstant(fn);
-    return new Expression(`${d}(data) !== undefined`);
   }
 
   protected onIn(expr: types.ExprIn): ExpressionResult {
@@ -82,17 +52,6 @@ export class JsonExpressionCodegen {
     }
     this.codegen.link('isInContainer');
     return new Expression(`isInContainer(${what}, ${container})`);
-  }
-
-  protected onSubstr(expr: types.ExprSubstr): ExpressionResult {
-    if (expr.length < 3 || expr.length > 4) throw new Error('"substr" operator expects two or three operands.');
-    const str = this.onExpression(expr[1]);
-    const from = this.onExpression(expr[2]);
-    const length = expr[3] ? this.onExpression(expr[3]) : new Literal(0);
-    if (str instanceof Literal && from instanceof Literal && length instanceof Literal)
-      return new Literal(util.substr(str.val, from.val, length.val));
-    this.codegen.link('substr');
-    return new Expression(`substr(${str}, ${from}, ${length})`);
   }
 
   private linkedOperandDeps: Set<string> = new Set();
@@ -124,7 +83,7 @@ export class JsonExpressionCodegen {
       if (!impure) {
         const allLiterals = operands.every((expr) => expr instanceof Literal);
         if (allLiterals) {
-          const result = this.evaluate(expr, {data: undefined});
+          const result = this.evaluate(expr, {vars: new Vars(undefined)});
           return new Literal(result);
         }
       }
@@ -140,15 +99,8 @@ export class JsonExpressionCodegen {
     }
 
     switch (expr[0]) {
-      case '=':
-      case 'get':
-        return this.onGet(expr as types.ExprGet);
-      case 'defined':
-        return this.onDefined(expr as types.ExprDefined);
       case 'in':
         return this.onIn(expr as types.ExprIn);
-      case 'substr':
-        return this.onSubstr(expr as types.ExprSubstr);
     }
     return new Literal(false);
   }

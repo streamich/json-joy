@@ -1,4 +1,5 @@
 import type {JavaScript} from '../util/codegen';
+import type {Vars} from './Vars';
 import type {ExpressionResult} from './codegen-steps';
 
 export type Literal<T> = T | LiteralExpression<T>;
@@ -116,6 +117,11 @@ export type ExprEnds = BinaryExpression<'ends'>;
 export type ExprMatches = BinaryExpression<'matches'>;
 export type ExprSubstr = TernaryExpression<'substr'>;
 
+// Object expressions
+export type ObjectExpression = ExprIn;
+
+export type ExprIn = [fn: 'in', what: unknown, list: unknown];
+
 // Branching expressions
 export type BranchingExpression = ExprIf | ExprThrow;
 
@@ -125,10 +131,8 @@ export type ExprThrow = UnaryExpression<'throw'>;
 // Input expressions
 export type InputExpression = ExprGet | ExprDefined;
 
-export type ExprGet = VariadicExpression<'get', '='>;
-export type ExprDefined = UnaryExpression<'defined'>;
-
-export type ExprIn = [fn: 'in', what: unknown, list: unknown];
+export type ExprGet = UnaryExpression<'get' | '$'> | BinaryExpression<'get' | '$'>;
+export type ExprDefined = UnaryExpression<'get?' | '$?'>;
 
 export type Expr =
   | ArithmeticExpression
@@ -136,12 +140,12 @@ export type Expr =
   | LogicalExpression
   | TypeExpression
   | StringExpression
+  | ObjectExpression
   | BranchingExpression
-  | InputExpression
-  | ExprIn;
+  | InputExpression;
 
 export interface JsonExpressionExecutionContext {
-  data: unknown;
+  vars: Vars;
 }
 
 export interface JsonExpressionCodegenContext {
@@ -158,7 +162,7 @@ export type OperatorDefinition<E extends Expression> = [
   aliases: Array<string | number>,
 
   /** Operator arity. -1 means operator is variadic. */
-  arity: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+  arity: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | [min: number, max: number],
 
   /** Evaluates an expression with this operator. */
   eval: OperatorEval<E>,

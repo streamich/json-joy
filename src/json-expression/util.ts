@@ -1,6 +1,6 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
-import {Expression, OperatorDefinition, OperatorMap} from './types';
+import {Expression, Literal, OperatorDefinition, OperatorMap} from './types';
 
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
 
@@ -69,8 +69,16 @@ export const substr = (probablyString: string | unknown, from: number | unknown,
   str(probablyString).slice(int(from), int(to));
 
 export const isLiteral = (value: unknown): boolean => {
-  if (value instanceof Array) return value.length === 1 && value[0] instanceof Array;
+  if (value instanceof Array) return value.length === 1;
   else return true;
+};
+
+export const asLiteral = <T>(value: Literal<T>): T => {
+  if (value instanceof Array) {
+    if (value.length !== 1) throw new Error('Invalid literal.');
+    return value[0];
+  }
+  else return value;
 };
 
 export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);
@@ -83,9 +91,13 @@ export const assertVariadicArity = (operator: string, expr: Expression): void =>
   if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
 };
 
-export const assertArity = (operator: string, arity: number, expr: Expression): void => {
+export const assertArity = (operator: string, arity: number | [min: number, max: number], expr: Expression): void => {
   if (!arity) return;
-  if (arity !== -1) assertFixedArity(operator, arity, expr);
+  if (arity instanceof Array) {
+    const [min, max] = arity;
+    if (expr.length < min + 1) throw new Error(`"${operator}" operator expects at least ${min} operands.`);
+    if (max !== -1 && expr.length > max + 1) throw new Error(`"${operator}" operator expects at most ${max} operands.`);
+  } else if (arity !== -1) assertFixedArity(operator, arity, expr);
   else assertVariadicArity(operator, expr);
 };
 

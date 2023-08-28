@@ -633,7 +633,7 @@ export const jsonExpressionUnitTests = (
       test('can compare strings', () => {
         check(['cmp', '22', '1'], 1);
         check(['cmp', '22', '33'], -1);
-        check(['cmp', '22', ['=', '']], 0, '22');
+        check(['cmp', '22', ['$', '']], 0, '22');
       });
 
       test('throws on invalid operand count', () => {
@@ -724,32 +724,32 @@ export const jsonExpressionUnitTests = (
           `""=><" operator expects 3 operands."`,
         );
       });
+    });
 
-      describe('><=', () => {
-        test('can compare numbers', () => {
-          check(['><=', 1.5, 1, 2], true);
-          check(['><=', 2, 1, 2], true);
-          check(['><=', ['get', ''], 1, 2], true, 1.4);
-        });
+    describe('><=', () => {
+      test('can compare numbers', () => {
+        check(['><=', 1.5, 1, 2], true);
+        check(['><=', 2, 1, 2], true);
+        check(['><=', ['get', ''], 1, 2], true, 1.4);
+      });
 
-        test('can compare strings', () => {
-          check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
-          check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
-          check(['><=', ['get', ''], 'a', 'ccc'], true, 'ccc');
-          check(['><=', 'dddd', 'a', 'ccc'], false);
-        });
+      test('can compare strings', () => {
+        check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['><=', ['get', ''], 'a', 'ccc'], true, 'bb');
+        check(['><=', ['get', ''], 'a', 'ccc'], true, 'ccc');
+        check(['><=', 'dddd', 'a', 'ccc'], false);
+      });
 
-        test('throws on invalid operand count', () => {
-          expect(() => check(['><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
-            `""><=" operator expects 3 operands."`,
-          );
-          expect(() => check(['><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
-            `""><=" operator expects 3 operands."`,
-          );
-          expect(() => check(['><=', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
-            `""><=" operator expects 3 operands."`,
-          );
-        });
+      test('throws on invalid operand count', () => {
+        expect(() => check(['><=', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><=" operator expects 3 operands."`,
+        );
+        expect(() => check(['><=', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><=" operator expects 3 operands."`,
+        );
+        expect(() => check(['><=', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""><=" operator expects 3 operands."`,
+        );
       });
     });
   });
@@ -1133,8 +1133,8 @@ export const jsonExpressionUnitTests = (
       });
 
       test('branches input values', () => {
-        check(['?', ['=', '/0'], ['=', '/1'], ['=', '/2']], 'a', [true, 'a', 'b']);
-        check(['?', ['=', '/0'], ['=', '/1'], ['=', '/2']], 'b', [false, 'a', 'b']);
+        check(['?', ['$', '/0'], ['$', '/1'], ['$', '/2']], 'a', [true, 'a', 'b']);
+        check(['?', ['$', '/0'], ['$', '/1'], ['$', '/2']], 'b', [false, 'a', 'b']);
       });
 
       test('throws on invalid operand count', () => {
@@ -1172,6 +1172,73 @@ export const jsonExpressionUnitTests = (
       test('throws on invalid operand count', () => {
         expect(() => check(['throw', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""throw" operator expects 1 operands."`,
+        );
+      });
+    });
+  });
+
+  describe('Input operators', () => {
+    describe('get or $', () => {
+      test('can retrieve root value', () => {
+        check(['$', ''], 'a', 'a');
+        check(['get', ''], 123, 123);
+      });
+
+      test('can retrieve nested value', () => {
+        check(['$', '/foo/1'], 2, {foo: [1, 2]});
+        check(['get', '/foo/1'], 2, {foo: [1, 2]});
+      });
+
+      test('returns default value when destination not found', () => {
+        check(['$', '/foo/5', 'miss'], 'miss', {foo: [1, 2]});
+        check(['get', '/foo/5', 'miss'], 'miss', {foo: [1, 2]});
+      });
+
+      test('pointer can be variable', () => {
+        check(['$', ['$', '/foo/0']], ['/foo'], {foo: ['/foo']});
+      });
+
+      test('throws when value not found', () => {
+        expect(() => check(['$', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`"NOT_FOUND"`);
+        expect(() => check(['get', '/foo/5'], '', {foo: [1, 2]})).toThrowErrorMatchingInlineSnapshot(`"NOT_FOUND"`);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['get', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""$" operator expects at most 2 operands."`,
+        );
+        expect(() => check(['$', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""$" operator expects at most 2 operands."`,
+        );
+      });
+    });
+
+    describe('get? and $?', () => {
+      test('can retrieve root value', () => {
+        check(['$?', ''], true, 'a');
+        check(['get?', ''], true, 123);
+      });
+
+      test('can retrieve nested value', () => {
+        check(['$?', '/foo/1'], true, {foo: [1, 2]});
+        check(['get?', '/foo/1'], true, {foo: [1, 2]});
+      });
+
+      test('returns false value when destination not found', () => {
+        check(['$?', '/foo/5'], false, {foo: [1, 2]});
+        check(['get?', '/foo/5'], false, {foo: [1, 2]});
+      });
+
+      test('pointer can be variable', () => {
+        check(['$?', ['$', '/foo/0']], true, {foo: ['/foo']});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['get?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""$?" operator expects 1 operands."`,
+        );
+        expect(() => check(['$?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""$?" operator expects 1 operands."`,
         );
       });
     });

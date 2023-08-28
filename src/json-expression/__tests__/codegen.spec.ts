@@ -1,3 +1,4 @@
+import {Vars} from '../Vars';
 import {JsonExpressionCodegen} from '../codegen';
 import {operatorsMap} from '../operators';
 import {Expr, JsonExpressionCodegenContext} from '../types';
@@ -19,7 +20,7 @@ const check = (
   const fn = codegen.run().compile();
   // console.log(codegen.generate().js);
   // console.log(fn.toString());
-  const result = fn({data});
+  const result = fn({vars: new Vars(data)});
   expect(result).toStrictEqual(expected);
 };
 

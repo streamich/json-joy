@@ -1,3 +1,4 @@
+import {Vars} from '../Vars';
 import {evaluate} from '../evaluate';
 import {Expr} from '../types';
 import {Check} from './jsonExpressionCodegenTests';
@@ -13,8 +14,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             },
           },
         };
-        const expression = ['=', '/a/b/c'];
-        const res = evaluate(expression, {data});
+        const expression = ['$', '/a/b/c'];
+        const res = evaluate(expression, {vars: new Vars(data)});
         expect(res).toBe(1);
       });
 
@@ -27,7 +28,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           },
         };
         const expression = ['get', '/a/b/c'];
-        const res = evaluate(expression, {data});
+        const res = evaluate(expression, {vars: new Vars(data)});
         expect(res).toBe(1);
       });
     });
@@ -58,8 +59,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/true']], true, data);
-        check(['&&', ['=', '/true'], ['=', '/one']], 1, data);
+        check(['&&', ['$', '/true'], ['$', '/one'], ['$', '/true']], true, data);
+        check(['&&', ['$', '/true'], ['$', '/one']], 1, data);
       });
 
       test('false on single falsy value', () => {
@@ -69,7 +70,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['&&', ['=', '/true'], ['=', '/one'], ['=', '/zero']], 0, data);
+        check(['&&', ['$', '/true'], ['$', '/one'], ['$', '/zero']], 0, data);
       });
     });
 
@@ -81,7 +82,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['eq', ['=', '/true'], true], true, data);
+        check(['eq', ['$', '/true'], true], true, data);
         check(['eq', {foo: 'bar'}, {foo: 'bar'}], true, data);
         check(['==', {foo: 'bar'}, {foo: 'bar'}], true, data);
         check(['eq', {foo: 'bar'}, {foo: 'baz'}], false, data);
@@ -113,7 +114,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['ne', ['=', '/true'], true], false, data);
+        check(['ne', ['$', '/true'], true], false, data);
         check(['ne', {foo: 'bar'}, {foo: 'bar'}], false, data);
         check(['!=', {foo: 'bar'}, {foo: 'bar'}], false, data);
         check(['ne', {foo: 'bar'}, {foo: 'baz'}], true, data);
@@ -129,8 +130,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           one: 1,
           zero: 0,
         };
-        check(['if', true, ['=', '/one'], ['=', '/true']], 1, data);
-        check(['if', false, ['=', '/one'], ['=', '/true']], true, data);
+        check(['if', true, ['$', '/one'], ['$', '/true']], 1, data);
+        check(['if', false, ['$', '/one'], ['$', '/true']], true, data);
         check(['?', true, '1', '2'], '1', data);
         check(['?', 0, '1', '2'], '2', data);
         check(['?', ['get', '/true'], '1', '2'], '1', data);
@@ -173,8 +174,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
     describe('defined', () => {
       test('works', () => {
         const data = {foo: 'bar'};
-        check(['defined', '/foo'], true, data);
-        check(['defined', '/foo2'], false, data);
+        check(['$?', '/foo'], true, data);
+        check(['get?', '/foo2'], false, data);
       });
     });
 
@@ -201,11 +202,11 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
     describe('starts', () => {
       test('returns true when string starts with another sub-string', () => {
         const data = {a: 'asdf', b: 'as'};
-        check(['starts', 'asdf', ['=', '/b']], true, data);
-        check(['starts', ['=', '/a'], ['=', '/b']], true, data);
-        check(['starts', ['=', '/b'], ['=', '/b']], true, data);
-        check(['starts', 'gg', ['=', '/b']], false, data);
-        check(['starts', ['=', '/b'], ['=', '/a']], false, data);
+        check(['starts', 'asdf', ['$', '/b']], true, data);
+        check(['starts', ['$', '/a'], ['$', '/b']], true, data);
+        check(['starts', ['$', '/b'], ['$', '/b']], true, data);
+        check(['starts', 'gg', ['$', '/b']], false, data);
+        check(['starts', ['$', '/b'], ['$', '/a']], false, data);
       });
     });
 
@@ -337,8 +338,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           'and',
           ['==', ['get', '/chan'], 'slides-123'],
           ['==', ['get', '/data/type'], 'cursor-move'],
-          ['>', ['=', '/data/pos/0'], 300],
-          ['starts', ['=', '/data/username'], 'uk/'],
+          ['>', ['$', '/data/pos/0'], 300],
+          ['starts', ['$', '/data/username'], 'uk/'],
         ];
         check(expression1, true, data);
 
@@ -346,8 +347,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           'and',
           ['==', ['get', '/chan'], 'slides-123'],
           ['==', ['get', '/data/type'], 'cursor-move'],
-          ['>', ['=', '/data/pos/1'], 555],
-          ['starts', ['=', '/data/username'], 'uk/'],
+          ['>', ['$', '/data/pos/1'], 555],
+          ['starts', ['$', '/data/username'], 'uk/'],
         ];
         check(expression2, false, data);
       });
@@ -376,7 +377,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             ['==', ['get', '/store'], 'example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
             ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
-            ['>=', ['=', '/price_usd'], 100],
+            ['>=', ['$', '/price_usd'], 100],
           ];
           check(expression1, true, data);
 
@@ -385,7 +386,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             ['==', ['get', '/store'], 'some_other_example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
             ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
-            ['>=', ['=', '/price_usd'], 100],
+            ['>=', ['$', '/price_usd'], 100],
           ];
           check(expression2, false, data);
         });
@@ -413,9 +414,9 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             price: [100, 50],
           };
-          check(['in', 100, ['=', '/price']], true, data);
-          check(['in', 50, ['=', '/price']], true, data);
-          check(['in', 1, ['=', '/price']], false, data);
+          check(['in', 100, ['$', '/price']], true, data);
+          check(['in', 50, ['$', '/price']], true, data);
+          check(['in', 1, ['$', '/price']], false, data);
         });
 
         // "customer_interests": [{"prefix": "bas"}]
@@ -467,10 +468,10 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             store: 'Halloween Inc',
           };
-          check(['defined', '/store'], true, data);
-          check(['defined', '/foo'], false, data);
-          check(['!', ['defined', '/store']], false, data);
-          check(['!', ['defined', '/foo']], true, data);
+          check(['$?', '/store'], true, data);
+          check(['get?', '/foo'], false, data);
+          check(['!', ['$?', '/store']], false, data);
+          check(['!', ['$?', '/foo']], true, data);
         });
       });
     });

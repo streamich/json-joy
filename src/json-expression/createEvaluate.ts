@@ -1,5 +1,4 @@
 import {deepEqual} from '../json-equal/deepEqual';
-import {get, toPath, validateJsonPointer} from '../json-pointer';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorMap} from './types';
 import * as util from './util';
 
@@ -22,29 +21,11 @@ export const createEvaluate = ({operators, createPattern}: {operators: OperatorM
       }
 
       switch (fn) {
-        case '=':
-        case 'get': {
-          const pointer = evaluate(expr[1], ctx);
-          if (expr[2] !== undefined && !util.isLiteral(expr[2]))
-            throw new Error('"get" operator expects a default value to be a literal.');
-          const def = evaluate(expr[2], ctx);
-          if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
-          validateJsonPointer(pointer);
-          return util.throwOnUndef(get(ctx.data, toPath(pointer)), def);
-        }
         case 'in': {
           const v2 = evaluate(expr[2], ctx);
           if (!(v2 instanceof Array) || !v2.length) return false;
           const v1 = evaluate(expr[1], ctx);
           return v2.some((item: unknown) => deepEqual(item, v1));
-        }
-        case 'defined': {
-          // TODO: rename to "def" or "exists"?
-          const pointer = evaluate(expr[1], ctx);
-          if (typeof pointer !== 'string') throw new Error('Invalid JSON pointer.');
-          validateJsonPointer(pointer);
-          const value = get(ctx.data, toPath(pointer));
-          return value !== undefined;
         }
       }
 
