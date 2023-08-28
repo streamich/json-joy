@@ -138,6 +138,26 @@ export type ExprEnds = BinaryExpression<'ends'>;
 export type ExprMatches = BinaryExpression<'matches'>;
 export type ExprSubstr = TernaryExpression<'substr'>;
 
+// Binary expressions
+export type BinaryExpressions =
+  | ExprU8
+  | ExprI8
+  | ExprU16
+  | ExprI16
+  | ExprU32
+  | ExprI32
+  | ExprF32
+  | ExprF64;
+
+export type ExprU8 = BinaryExpression<'u8'>;
+export type ExprI8 = BinaryExpression<'i8'>;
+export type ExprU16 = BinaryExpression<'u16'>;
+export type ExprI16 = BinaryExpression<'i16'>;
+export type ExprU32 = BinaryExpression<'u32'>;
+export type ExprI32 = BinaryExpression<'i32'>;
+export type ExprF32 = BinaryExpression<'f32'>;
+export type ExprF64 = BinaryExpression<'f64'>;
+
 // Object expressions
 export type ObjectExpression = ExprIn;
 
@@ -169,6 +189,7 @@ export type Expr =
   | LogicalExpression
   | TypeExpression
   | StringExpression
+  | BinaryExpressions
   | ObjectExpression
   | BitwiseExpression
   | BranchingExpression

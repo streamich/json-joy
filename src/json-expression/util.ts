@@ -37,6 +37,18 @@ export const len = (value: unknown): number => {
   }
 };
 
+export const asBin = (value: unknown): Uint8Array => {
+  if (value instanceof Uint8Array) return value;
+  throw new Error('NOT_BINARY');
+};
+
+export const u8 = (bin: unknown, pos: unknown) => {
+  const buf = asBin(bin);
+  const index = int(pos);
+  if (index < 0 || index >= buf.length) throw new Error('OUT_OF_BOUNDS');
+  return buf[index];
+};
+
 export const starts = (outer: unknown, inner: unknown): boolean => {
   return str(outer).startsWith(str(inner));
 };

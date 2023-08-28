@@ -1309,6 +1309,38 @@ export const jsonExpressionUnitTests = (
     });
   });
 
+  describe('Binary operators', () => {
+    describe('u8', () => {
+      test('can read from binary', () => {
+        check(['u8', new Uint8Array([1, 2, 3]), 0], 1);
+        check(['u8', new Uint8Array([1, 2, 3]), 1], 2);
+        check(['u8', new Uint8Array([1, 2, 3]), 2], 3);
+      });
+
+      test('can read from binary input', () => {
+        check(['u8', ['$', ''], 1], 2, new Uint8Array([1, 2, 3]));
+      });
+
+      test('throws when reading out of bounds', () => {
+        expect(() => check(['u8', new Uint8Array([1, 2, 3]), -1], 0)).toThrowErrorMatchingInlineSnapshot(
+          `"OUT_OF_BOUNDS"`,
+        );
+        expect(() => check(['u8', new Uint8Array([1, 2, 3]), 3], 0)).toThrowErrorMatchingInlineSnapshot(
+          `"OUT_OF_BOUNDS"`,
+        );
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['u8', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""u8" operator expects 2 operands."`,
+        );
+        expect(() => check(['u8', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""u8" operator expects 2 operands."`,
+        );
+      });
+    });
+  });
+
   describe('Branching operators', () => {
     describe('if or ?', () => {
       test('branches', () => {
