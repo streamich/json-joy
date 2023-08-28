@@ -142,3 +142,7 @@ export const parseVar = (name: string): [name: string, pointer: string] => {
   if (slashIndex === -1) return [name, ''];
   return [name.slice(0, slashIndex), name.slice(slashIndex)];
 };
+
+const EMAIL_REG = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+
+export const isEmail = (value: unknown): boolean => EMAIL_REG.test(value + '');

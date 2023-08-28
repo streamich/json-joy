@@ -116,4 +116,18 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`${d}(str(${subject}))`);
     },
   ] as types.OperatorDefinition<types.ExprEnds>,
+
+  [
+    'email?',
+    [],
+    1,
+    (expr: types.ExprIsEmail, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isEmail(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsEmail>): ExpressionResult => {
+      ctx.link(util.isEmail, 'isEmail');
+      return new Expression(`isEmail(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsEmail>,
 ];

@@ -129,7 +129,14 @@ export type ExprIsArray = UnaryExpression<'arr?'>;
 export type ExprIsObject = UnaryExpression<'obj?'>;
 
 // String expressions
-export type StringExpression = ExprCat | ExprContains | ExprStarts | ExprEnds | ExprMatches | ExprSubstr;
+export type StringExpression =
+  | ExprCat
+  | ExprContains
+  | ExprStarts
+  | ExprEnds
+  | ExprMatches
+  | ExprSubstr
+  | ExprIsEmail;
 
 export type ExprCat = VariadicExpression<'cat' | '.'>;
 export type ExprContains = BinaryExpression<'contains'>;
@@ -137,6 +144,7 @@ export type ExprStarts = BinaryExpression<'starts'>;
 export type ExprEnds = BinaryExpression<'ends'>;
 export type ExprMatches = BinaryExpression<'matches'>;
 export type ExprSubstr = TernaryExpression<'substr'>;
+export type ExprIsEmail = UnaryExpression<'email?'>;
 
 // Binary expressions
 export type BinaryExpressions =

@@ -1307,6 +1307,27 @@ export const jsonExpressionUnitTests = (
         ).toThrowErrorMatchingInlineSnapshot(`""matches" operator expects 2 operands."`);
       });
     });
+
+    describe('email?', () => {
+      test('returns true for an email', () => {
+        check(['email?', 'a@b.c'], true);
+        check(['email?', 'vadim@gmail.com'], true);
+      });
+
+      test('return false for not email', () => {
+        check(['email?', 'abc'], false);
+        check(['email?', 123], false);
+        check(['email?', true], false);
+        check(['email?', null], false);
+        check(['email?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['email?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""email?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Binary operators', () => {
