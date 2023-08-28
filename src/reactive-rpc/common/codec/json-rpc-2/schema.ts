@@ -72,7 +72,7 @@ system.alias('JsonRpc2Error', JsonRpc2Error);
 //     t.Ref<typeof JsonRpc2Request>('JsonRpc2Request'),
 //     t.Ref<typeof JsonRpc2Notification>('JsonRpc2Notification'),
 //   ).options({
-//     discriminator: ['if', ['defined', ['=', '/method']], 0, 1],
+//     discriminator: ['if', ['$?', ['=', '/method']], 0, 1],
 //   }),
 // );
 
@@ -81,7 +81,7 @@ system.alias('JsonRpc2Error', JsonRpc2Error);
 //     t.Ref<typeof JsonRpc2Response>('JsonRpc2Response'),
 //     t.Ref<typeof JsonRpc2Error>('JsonRpc2Error'),
 //   ).options({
-//     discriminator: ['if', ['defined', ['=', '/result']], 0, 1],
+//     discriminator: ['if', ['$?', ['=', '/result']], 0, 1],
 //   }),
 // );
 

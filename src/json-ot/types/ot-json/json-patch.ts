@@ -10,7 +10,7 @@ export const jsonPatchOpToJsonOp = (operation: Operation): JsonOp => {
   switch (op) {
     case 'test': {
       const value = literal(operation.value);
-      const expression: Expr = [operation.not ? '!=' : '==', ['=', operation.path], value];
+      const expression: Expr = [operation.not ? '!=' : '==', ['$', operation.path], value];
       return [[expression]];
     }
     case 'add': {

@@ -15,8 +15,8 @@ test('succeeds when tests execute successfully', () => {
 
   apply(doc, [
     [
-      ['==', ['=', '/foo'], 'bar'],
-      ['!=', ['=', '/foo'], 'bar2'],
+      ['==', ['$', '/foo'], 'bar'],
+      ['!=', ['$', '/foo'], 'bar2'],
     ],
     [],
     [],
@@ -41,8 +41,8 @@ test('throws when at least one test fails', () => {
   expect(() => {
     apply(doc, [
       [
-        ['==', ['=', '/foo'], 'bar'],
-        ['!=', ['=', '/foo'], 'bar'],
+        ['==', ['$', '/foo'], 'bar'],
+        ['!=', ['$', '/foo'], 'bar'],
       ],
       [],
       [],
