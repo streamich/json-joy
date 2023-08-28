@@ -56,4 +56,18 @@ export const typeOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprStr>,
+
+  [
+    'len',
+    [],
+    1,
+    (expr: types.ExprStr, ctx) => {
+      return util.len(ctx.eval(expr[1], ctx));
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprStr>): ExpressionResult => {
+      ctx.link(util.len, 'len');
+      const js = `len(${ctx.operands[0]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprStr>,
 ];

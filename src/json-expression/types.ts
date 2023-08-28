@@ -99,13 +99,14 @@ export type ExprOr = VariadicExpression<'or' | '||'>;
 export type ExprNot = UnaryExpression<'not' | '!'>;
 
 // Type expressions
-export type TypeExpression = ExprType | ExprBool | ExprNum | ExprInt | ExprStr;
+export type TypeExpression = ExprType | ExprBool | ExprNum | ExprInt | ExprStr | ExprLen;
 
 export type ExprType = UnaryExpression<'type'>;
 export type ExprBool = UnaryExpression<'bool'>;
 export type ExprNum = UnaryExpression<'num'>;
 export type ExprInt = UnaryExpression<'int'>;
 export type ExprStr = UnaryExpression<'str'>;
+export type ExprLen = UnaryExpression<'len'>;
 
 // String expressions
 export type StringExpression = ExprCat | ExprContains | ExprStarts | ExprEnds | ExprMatches | ExprSubstr;

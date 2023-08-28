@@ -973,6 +973,45 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('len', () => {
+      test('returns length of a string', () => {
+        check(['len', ''], 0);
+        check(['len', 'a'], 1);
+        check(['len', ['$', '']], 3, 'abc');
+      });
+
+      test('returns length of an array', () => {
+        check(['len', [[]]], 0);
+        check(['len', [[1]]], 1);
+        check(['len', ['$', '']], 3, [2, 2, 2]);
+      });
+
+      test('returns number of object entries', () => {
+        check(['len', [{}]], 0);
+        check(['len', {foo: 'bar'}], 1);
+        check(['len', ['$', '']], 3, {a: 1, b: 2, c: 3});
+      });
+
+      test('returns length of a binary', () => {
+        check(['len', new Uint8Array([])], 0);
+        check(['len', new Uint8Array([0])], 1);
+        check(['len', ['$', '']], 3, new Uint8Array([1, 2, 3]));
+      });
+
+      test('returns for all types that have no length', () => {
+        check(['len', null], 0);
+        check(['len', undefined], 0);
+        check(['len', true], 0);
+        check(['len', 123], 0);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['len', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""len" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('String operators', () => {

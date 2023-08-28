@@ -23,6 +23,19 @@ export const str = (value: unknown): string => {
   return JSON.stringify(value);
 };
 
+export const len = (value: unknown): number => {
+  switch (typeof value) {
+    case 'string': return value.length;
+    case 'object': {
+      if (value instanceof Array) return value.length;
+      if (value instanceof Uint8Array) return value.length;
+      if (!value) return 0;
+      return Object.keys(value).length;
+    }
+    default: return 0;
+  }
+};
+
 export const starts = (outer: unknown, inner: unknown): boolean => {
   return str(outer).startsWith(str(inner));
 };
