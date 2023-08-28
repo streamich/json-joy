@@ -159,15 +159,7 @@ export type ExprIsUri = UnaryExpression<'uri?'>;
 export type ExprIsDuration = UnaryExpression<'duration?'>;
 
 // Binary expressions
-export type BinaryExpressions =
-  | ExprU8
-  | ExprI8
-  | ExprU16
-  | ExprI16
-  | ExprU32
-  | ExprI32
-  | ExprF32
-  | ExprF64;
+export type BinaryExpressions = ExprU8 | ExprI8 | ExprU16 | ExprI16 | ExprU32 | ExprI32 | ExprF32 | ExprF64;
 
 export type ExprU8 = BinaryExpression<'u8'>;
 export type ExprI8 = BinaryExpression<'i8'>;

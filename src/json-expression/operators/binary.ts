@@ -21,7 +21,7 @@ export const binaryOperators: types.OperatorDefinition<any>[] = [
       return util.u8(bin, index);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprU8>): ExpressionResult => {
-      ctx.link(util.u8, 'u8')
+      ctx.link(util.u8, 'u8');
       const js = `u8((${ctx.operands[0]}),(${ctx.operands[1]}))`;
       return new Expression(js);
     },

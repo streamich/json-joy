@@ -1401,7 +1401,7 @@ export const jsonExpressionUnitTests = (
         check(['uuid?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'], true);
         check(['uuid?', '12345678-aaaa-aaaa-aaaa-ffffffffffff'], true);
       });
-      
+
       test('return false for not UUID', () => {
         check(['uuid?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
         check(['uuid?', '1.2.3.4.5'], false);
@@ -1425,7 +1425,7 @@ export const jsonExpressionUnitTests = (
         check(['uri?', 'ftp://www.goolge.com/path'], true);
         check(['uri?', 'http://123.124.125.126'], true);
       });
-      
+
       test('return false for not URI', () => {
         check(['uri?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
         check(['uri?', '1.2.3.4.5'], false);
@@ -1447,7 +1447,7 @@ export const jsonExpressionUnitTests = (
       test('returns true for an duration', () => {
         check(['duration?', 'P3D'], true);
       });
-      
+
       test('return false for not duration', () => {
         check(['duration?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
         check(['duration?', '1.2.3.4.5'], false);
