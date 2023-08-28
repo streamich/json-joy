@@ -12,7 +12,7 @@ const binaryOperands = (
 };
 
 const createValidationOperator = <E extends types.Expr>(name: string, validate: (value: unknown) => boolean) => {
-  return   [
+  return [
     name + '?',
     [],
     1,
