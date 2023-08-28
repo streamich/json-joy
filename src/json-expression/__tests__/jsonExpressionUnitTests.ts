@@ -1328,6 +1328,73 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('hostname?', () => {
+      test('returns true for an hostname', () => {
+        check(['hostname?', 'google.com'], true);
+        check(['hostname?', 'www.google.com'], true);
+        check(['hostname?', 'staging.www.google.com'], true);
+        check(['hostname?', 'x.com'], true);
+      });
+
+      test('return false for not hostname', () => {
+        check(['hostname?', 'abc+'], false);
+        check(['hostname?', 123], false);
+        check(['hostname?', true], false);
+        check(['hostname?', null], false);
+        check(['hostname?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['hostname?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""hostname?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('ip4?', () => {
+      test('returns true for an IPv4', () => {
+        check(['ip4?', '127.0.1.0'], true);
+        check(['ip4?', '255.255.255.255'], true);
+      });
+
+      test('return false for not IPv4', () => {
+        check(['ip4?', '1.2.3.4.5'], false);
+        check(['ip4?', 'abc+'], false);
+        check(['ip4?', 123], false);
+        check(['ip4?', true], false);
+        check(['ip4?', null], false);
+        check(['ip4?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['ip4?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""ip4?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('ip6?', () => {
+      test('returns true for an IPv6', () => {
+        check(['ip6?', '2001:0db8:0000:0000:0000:ff00:0042:8329'], true);
+        check(['ip6?', '2001:db8:0:0:0:ff00:42:8329'], true);
+      });
+
+      test('return false for not IPv6', () => {
+        check(['ip6?', '1.2.3.4.5'], false);
+        check(['ip6?', 'abc+'], false);
+        check(['ip6?', 123], false);
+        check(['ip6?', true], false);
+        check(['ip6?', null], false);
+        check(['ip6?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['ip6?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""ip6?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Binary operators', () => {

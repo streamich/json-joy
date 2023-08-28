@@ -130,4 +130,46 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`isEmail(${ctx.operands[0]})`);
     },
   ] as types.OperatorDefinition<types.ExprIsEmail>,
+
+  [
+    'hostname?',
+    [],
+    1,
+    (expr: types.ExprIsHostname, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isHostname(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsHostname>): ExpressionResult => {
+      ctx.link(util.isHostname, 'isHostname');
+      return new Expression(`isHostname(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsHostname>,
+
+  [
+    'ip4?',
+    [],
+    1,
+    (expr: types.ExprIsIp4, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isIp4(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsIp4>): ExpressionResult => {
+      ctx.link(util.isIp4, 'isIp4');
+      return new Expression(`isIp4(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsIp4>,
+
+  [
+    'ip6?',
+    [],
+    1,
+    (expr: types.ExprIsIp6, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isIp6(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsIp6>): ExpressionResult => {
+      ctx.link(util.isIp6, 'isIp6');
+      return new Expression(`isIp6(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsIp6>,
 ];

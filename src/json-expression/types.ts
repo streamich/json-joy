@@ -136,7 +136,10 @@ export type StringExpression =
   | ExprEnds
   | ExprMatches
   | ExprSubstr
-  | ExprIsEmail;
+  | ExprIsEmail
+  | ExprIsHostname
+  | ExprIsIp4
+  | ExprIsIp6;
 
 export type ExprCat = VariadicExpression<'cat' | '.'>;
 export type ExprContains = BinaryExpression<'contains'>;
@@ -145,6 +148,9 @@ export type ExprEnds = BinaryExpression<'ends'>;
 export type ExprMatches = BinaryExpression<'matches'>;
 export type ExprSubstr = TernaryExpression<'substr'>;
 export type ExprIsEmail = UnaryExpression<'email?'>;
+export type ExprIsHostname = UnaryExpression<'hostname?'>;
+export type ExprIsIp4 = UnaryExpression<'ip4?'>;
+export type ExprIsIp6 = UnaryExpression<'ip6?'>;
 
 // Binary expressions
 export type BinaryExpressions =
