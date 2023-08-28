@@ -172,4 +172,46 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
       return new Expression(`isIp6(${ctx.operands[0]})`);
     },
   ] as types.OperatorDefinition<types.ExprIsIp6>,
+
+  [
+    'uuid?',
+    [],
+    1,
+    (expr: types.ExprIsUuid, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isUuid(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsUuid>): ExpressionResult => {
+      ctx.link(util.isUuid, 'isUuid');
+      return new Expression(`isUuid(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsUuid>,
+
+  [
+    'uri?',
+    [],
+    1,
+    (expr: types.ExprIsUri, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isUri(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsUri>): ExpressionResult => {
+      ctx.link(util.isUri, 'isUri');
+      return new Expression(`isUri(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsUri>,
+
+  [
+    'duration?',
+    [],
+    1,
+    (expr: types.ExprIsDuration, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return util.isDuration(email);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIsDuration>): ExpressionResult => {
+      ctx.link(util.isDuration, 'isDuration');
+      return new Expression(`isDuration(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<types.ExprIsDuration>,
 ];

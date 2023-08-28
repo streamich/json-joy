@@ -63,7 +63,7 @@ export type ExprExp = UnaryExpression<'exp'>;
 export type ExprLn = UnaryExpression<'ln'>;
 export type ExprLog = BinaryExpression<'log'>;
 export type ExprLog10 = UnaryExpression<'log10'>;
-export type ExprPow = BinaryExpression<'pow' | '**' | '^'>;
+export type ExprPow = BinaryExpression<'pow' | '**'>;
 
 // Comparison expressions
 export type ComparisonExpression =
@@ -139,7 +139,10 @@ export type StringExpression =
   | ExprIsEmail
   | ExprIsHostname
   | ExprIsIp4
-  | ExprIsIp6;
+  | ExprIsIp6
+  | ExprIsUuid
+  | ExprIsUri
+  | ExprIsDuration;
 
 export type ExprCat = VariadicExpression<'cat' | '.'>;
 export type ExprContains = BinaryExpression<'contains'>;
@@ -151,6 +154,9 @@ export type ExprIsEmail = UnaryExpression<'email?'>;
 export type ExprIsHostname = UnaryExpression<'hostname?'>;
 export type ExprIsIp4 = UnaryExpression<'ip4?'>;
 export type ExprIsIp6 = UnaryExpression<'ip6?'>;
+export type ExprIsUuid = UnaryExpression<'uuid?'>;
+export type ExprIsUri = UnaryExpression<'uri?'>;
+export type ExprIsDuration = UnaryExpression<'duration?'>;
 
 // Binary expressions
 export type BinaryExpressions =

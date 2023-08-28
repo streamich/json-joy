@@ -1395,6 +1395,75 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('uuid?', () => {
+      test('returns true for an UUID', () => {
+        check(['uuid?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'], true);
+        check(['uuid?', '12345678-aaaa-aaaa-aaaa-ffffffffffff'], true);
+      });
+      
+      test('return false for not UUID', () => {
+        check(['uuid?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['uuid?', '1.2.3.4.5'], false);
+        check(['uuid?', 'abc+'], false);
+        check(['uuid?', 123], false);
+        check(['uuid?', true], false);
+        check(['uuid?', null], false);
+        check(['uuid?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['uuid?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""uuid?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('uri?', () => {
+      test('returns true for an URI', () => {
+        check(['uri?', 'https://goolge.com/paht?key=value#fragment'], true);
+        check(['uri?', 'ftp://www.goolge.com/path'], true);
+        check(['uri?', 'http://123.124.125.126'], true);
+      });
+      
+      test('return false for not URI', () => {
+        check(['uri?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['uri?', '1.2.3.4.5'], false);
+        check(['uri?', 'abc+'], false);
+        check(['uri?', 123], false);
+        check(['uri?', true], false);
+        check(['uri?', null], false);
+        check(['uri?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['uri?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""uri?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('duration?', () => {
+      test('returns true for an duration', () => {
+        check(['duration?', 'P3D'], true);
+      });
+      
+      test('return false for not duration', () => {
+        check(['duration?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['duration?', '1.2.3.4.5'], false);
+        check(['duration?', 'abc+'], false);
+        check(['duration?', 123], false);
+        check(['duration?', true], false);
+        check(['duration?', null], false);
+        check(['duration?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['duration?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""duration?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Binary operators', () => {
