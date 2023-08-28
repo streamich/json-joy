@@ -11,6 +11,22 @@ const binaryOperands = (
   return [left, right];
 };
 
+const createValidationOperator = <E extends types.Expr>(name: string, validate: (value: unknown) => boolean) => {
+  return   [
+    name + '?',
+    [],
+    1,
+    (expr: E, ctx) => {
+      const email = ctx.eval(expr[1], ctx);
+      return validate(email);
+    },
+    (ctx: types.OperatorCodegenCtx<E>): ExpressionResult => {
+      ctx.link(validate, 'is_' + name);
+      return new Expression(`is_${name}(${ctx.operands[0]})`);
+    },
+  ] as types.OperatorDefinition<E>;
+};
+
 export const stringOperators: types.OperatorDefinition<any>[] = [
   [
     '.',
@@ -117,101 +133,12 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
     },
   ] as types.OperatorDefinition<types.ExprEnds>,
 
-  [
-    'email?',
-    [],
-    1,
-    (expr: types.ExprIsEmail, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isEmail(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsEmail>): ExpressionResult => {
-      ctx.link(util.isEmail, 'isEmail');
-      return new Expression(`isEmail(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsEmail>,
-
-  [
-    'hostname?',
-    [],
-    1,
-    (expr: types.ExprIsHostname, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isHostname(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsHostname>): ExpressionResult => {
-      ctx.link(util.isHostname, 'isHostname');
-      return new Expression(`isHostname(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsHostname>,
-
-  [
-    'ip4?',
-    [],
-    1,
-    (expr: types.ExprIsIp4, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isIp4(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsIp4>): ExpressionResult => {
-      ctx.link(util.isIp4, 'isIp4');
-      return new Expression(`isIp4(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsIp4>,
-
-  [
-    'ip6?',
-    [],
-    1,
-    (expr: types.ExprIsIp6, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isIp6(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsIp6>): ExpressionResult => {
-      ctx.link(util.isIp6, 'isIp6');
-      return new Expression(`isIp6(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsIp6>,
-
-  [
-    'uuid?',
-    [],
-    1,
-    (expr: types.ExprIsUuid, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isUuid(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsUuid>): ExpressionResult => {
-      ctx.link(util.isUuid, 'isUuid');
-      return new Expression(`isUuid(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsUuid>,
-
-  [
-    'uri?',
-    [],
-    1,
-    (expr: types.ExprIsUri, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isUri(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsUri>): ExpressionResult => {
-      ctx.link(util.isUri, 'isUri');
-      return new Expression(`isUri(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsUri>,
-
-  [
-    'duration?',
-    [],
-    1,
-    (expr: types.ExprIsDuration, ctx) => {
-      const email = ctx.eval(expr[1], ctx);
-      return util.isDuration(email);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprIsDuration>): ExpressionResult => {
-      ctx.link(util.isDuration, 'isDuration');
-      return new Expression(`isDuration(${ctx.operands[0]})`);
-    },
-  ] as types.OperatorDefinition<types.ExprIsDuration>,
+  createValidationOperator<types.ExprIsEmail>('email', util.isEmail),
+  createValidationOperator<types.ExprIsHostname>('hostname', util.isHostname),
+  createValidationOperator<types.ExprIsIp4>('ip4', util.isIp4),
+  createValidationOperator<types.ExprIsIp6>('ip6', util.isIp6),
+  createValidationOperator<types.ExprIsUuid>('uuid', util.isUuid),
+  createValidationOperator<types.ExprIsUri>('uri', util.isUri),
+  createValidationOperator<types.ExprIsDuration>('duration', util.isDuration),
+  createValidationOperator<types.ExprIsDate>('date', util.isDate),
 ];

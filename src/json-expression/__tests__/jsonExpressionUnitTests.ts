@@ -1464,6 +1464,28 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('date?', () => {
+      test('returns true for an date', () => {
+        check(['date?', '1937-01-01T12:00:27.87'], true);
+      });
+
+      test('return false for not date', () => {
+        check(['date?', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa!'], false);
+        check(['date?', '1.2.3.4.5'], false);
+        check(['date?', 'abc+'], false);
+        check(['date?', 123], false);
+        check(['date?', true], false);
+        check(['date?', null], false);
+        check(['date?', undefined], false);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['date?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""date?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Binary operators', () => {
