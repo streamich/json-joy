@@ -44,7 +44,7 @@ export const isInContainer = (what: unknown, container: unknown[]): boolean => {
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 
-export const cmp = (a: any, b: any): 1 | -1 | 0 => a > b ? 1 : a < b ? -1 : 0;
+export const cmp = (a: any, b: any): 1 | -1 | 0 => (a > b ? 1 : a < b ? -1 : 0);
 
 export const betweenNeNe = (val: any, min: any, max: any): boolean => val > min && val < max;
 export const betweenNeEq = (val: any, min: any, max: any): boolean => val > min && val <= max;
@@ -77,8 +77,7 @@ export const asLiteral = <T>(value: Literal<T>): T => {
   if (value instanceof Array) {
     if (value.length !== 1) throw new Error('Invalid literal.');
     return value[0];
-  }
-  else return value;
+  } else return value;
 };
 
 export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);

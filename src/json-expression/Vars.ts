@@ -1,4 +1,4 @@
-import {get, toPath, validateJsonPointer} from "../json-pointer";
+import {get, toPath, validateJsonPointer} from '../json-pointer';
 
 export class Vars {
   protected env: unknown;
