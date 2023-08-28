@@ -74,8 +74,7 @@ export const asObj = (value: unknown): object => {
   throw new Error('NOT_OBJECT');
 };
 
-export const keys = (value: unknown): string[] =>
-  Object.keys(asObj(value));
+export const keys = (value: unknown): string[] => Object.keys(asObj(value));
 
 export const values = (value: unknown): unknown[] => {
   const values: unknown[] = [];

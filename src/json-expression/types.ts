@@ -181,11 +181,7 @@ export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
 // Object expressions
-export type ObjectExpression = 
-  | ExprKeys
-  | ExprValues
-  | ExprEntries
-  | ExprIn;
+export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprIn;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
