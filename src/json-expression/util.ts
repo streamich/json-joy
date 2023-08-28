@@ -84,6 +84,7 @@ export const assertVariadicArity = (operator: string, expr: Expression): void =>
 };
 
 export const assertArity = (operator: string, arity: number, expr: Expression): void => {
+  if (!arity) return;
   if (arity !== -1) assertFixedArity(operator, arity, expr);
   else assertVariadicArity(operator, expr);
 };
@@ -96,4 +97,11 @@ export const operatorsToMap = (operators: OperatorDefinition<Expression>[]): Ope
     for (const alias of aliases) map.set(alias, operator);
   }
   return map;
+};
+
+export const parseVar = (name: string): [name: string, pointer: string] => {
+  if (name[0] === '/') return ['', name];
+  const slashIndex = name.indexOf('/');
+  if (slashIndex === -1) return [name, ''];
+  return [name.slice(0, slashIndex), name.slice(slashIndex)];
 };

@@ -125,8 +125,8 @@ export type ExprThrow = UnaryExpression<'throw'>;
 // Input expressions
 export type InputExpression = ExprGet | ExprDefined;
 
-export type ExprGet = [fn: '=' | 'get', path: unknown, def?: unknown];
-export type ExprDefined = [fn: 'defined', path: unknown];
+export type ExprGet = VariadicExpression<'get', '='>;
+export type ExprDefined = UnaryExpression<'defined'>;
 
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
@@ -158,7 +158,7 @@ export type OperatorDefinition<E extends Expression> = [
   aliases: Array<string | number>,
 
   /** Operator arity. -1 means operator is variadic. */
-  arity: -1 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+  arity: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
 
   /** Evaluates an expression with this operator. */
   eval: OperatorEval<E>,
