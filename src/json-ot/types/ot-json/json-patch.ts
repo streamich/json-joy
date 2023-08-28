@@ -18,17 +18,17 @@ export const jsonPatchOpToJsonOp = (operation: Operation): JsonOp => {
     }
     case 'remove': {
       const path = toPath(operation.path);
-      return [[['defined', operation.path]], [[0, path]]];
+      return [[['$?', operation.path]], [[0, path]]];
     }
     case 'replace': {
       const path = toPath(operation.path);
-      const test: Expr[] = path.length ? [['defined', operation.path]] : [];
+      const test: Expr[] = path.length ? [['$?', operation.path]] : [];
       return [test, [[0, path]], [[1, operation.value]], [[1, path]]];
     }
     case 'move': {
       const path = toPath(operation.path);
       const from = toPath(operation.from);
-      const test: Expr[] = from.length ? [['defined', operation.from]] : [];
+      const test: Expr[] = from.length ? [['$?', operation.from]] : [];
       return [test, [[0, from]], [], [[0, path]]];
     }
     case 'copy': {

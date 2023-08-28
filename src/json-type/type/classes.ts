@@ -43,13 +43,14 @@ import {
 import {MaxEncodingOverhead, maxEncodingCapacity} from '../../json-size';
 import {JsonValueCodec} from '../../json-pack/codecs/types';
 import {JsonExpressionCodegen} from '../../json-expression';
+import {operatorsMap} from '../../json-expression/operators';
+import {Vars} from '../../json-expression/Vars';
 import type * as jsonSchema from '../../json-schema';
 import type {BaseType, SchemaOf, SchemaOfObjectFields, Type} from './types';
 import type {TypeSystem} from '../system/TypeSystem';
 import type {json_string} from '../../json-brand';
 import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
-import {operatorsMap} from '../../json-expression/operators';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -2060,7 +2061,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
       operators: operatorsMap,
     });
     const fn = codegen.run().compile();
-    return (this.__discriminator = (data: unknown) => +(fn({data}) as any));
+    return (this.__discriminator = (data: unknown) => +(fn({vars: new Vars(data)}) as any));
   }
 
   public validateSchema(): void {
