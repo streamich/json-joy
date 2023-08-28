@@ -50,6 +50,14 @@ export const asObj = (value: unknown): object => {
 export const keys = (value: unknown): string[] =>
   Object.keys(asObj(value));
 
+export const values = (value: unknown): unknown[] => {
+  const values: unknown[] = [];
+  const theKeys = keys(value);
+  const length = theKeys.length;
+  for (let i = 0; i < length; i++) values.push((value as any)[theKeys[i]]);
+  return values;
+};
+
 export const u8 = (bin: unknown, pos: unknown) => {
   const buf = asBin(bin);
   const index = int(pos);

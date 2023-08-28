@@ -1580,6 +1580,22 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('values', () => {
+      test('returns empty array for empty object', () => {
+        check(['values', {}], []);
+      });
+
+      test('returns values of an object', () => {
+        check(['values', {foo: 1}], [1]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['values', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""values" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Branching operators', () => {

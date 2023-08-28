@@ -17,4 +17,19 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprKeys>,
+
+  [
+    'values',
+    [],
+    1,
+    (expr: types.ExprValues, ctx) => {
+      const operand = ctx.eval(expr[1], ctx);
+      return util.values(operand);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprValues>): ExpressionResult => {
+      ctx.link(util.values, 'values');
+      const js = `values(${ctx.operands[0]})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprValues>,
 ];

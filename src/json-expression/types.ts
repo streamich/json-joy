@@ -179,9 +179,11 @@ export type ExprF64 = BinaryExpression<'f64'>;
 // Object expressions
 export type ObjectExpression = 
   | ExprKeys
+  | ExprValues
   | ExprIn;
 
 export type ExprKeys = UnaryExpression<'keys'>;
+export type ExprValues = UnaryExpression<'values'>;
 export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 // Bitwise expressions
