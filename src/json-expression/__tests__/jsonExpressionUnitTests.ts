@@ -1012,6 +1012,151 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('und?', () => {
+      test('returns true if value is undefined', () => {
+        check(['und?', undefined], true);
+        // TODO: make this pass...
+        // check(['und?', ['$', '']], true, undefined);
+      });
+
+      test('returns false if value not undefined', () => {
+        check(['und?', 123], false);
+        check(['und?', ['$', '']], false, 'lol');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['und?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""und?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('nil?', () => {
+      test('returns true if value is null', () => {
+        check(['nil?', null], true);
+        check(['nil?', ['$', '']], true, null);
+      });
+
+      test('returns false if value not null', () => {
+        check(['nil?', 123], false);
+        check(['nil?', ['$', '']], false, 'lol');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['nil?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""nil?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('bool?', () => {
+      test('returns true if value is boolean', () => {
+        check(['bool?', true], true);
+        check(['bool?', ['$', '']], true, false);
+      });
+
+      test('returns false if value not boolean', () => {
+        check(['bool?', 123], false);
+        check(['bool?', ['$', '']], false, 'lol');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['bool?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""bool?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('num?', () => {
+      test('returns true if value is number', () => {
+        check(['num?', 0], true);
+        check(['num?', ['$', '']], true, 123);
+      });
+
+      test('returns false if value not number', () => {
+        check(['num?', true], false);
+        check(['num?', ['$', '']], false, 'lol');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['num?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""num?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('str?', () => {
+      test('returns true if value is string', () => {
+        check(['str?', ''], true);
+        check(['str?', ['$', '']], true, '123');
+      });
+
+      test('returns false if value not string', () => {
+        check(['str?', true], false);
+        check(['str?', ['$', '']], false, 123);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['str?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""str?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('arr?', () => {
+      test('returns true if value is array', () => {
+        check(['arr?', [[]]], true);
+        check(['arr?', ['$', '']], true, [1, true, false]);
+      });
+
+      test('returns false if value not array', () => {
+        check(['arr?', true], false);
+        check(['arr?', ['$', '']], false, 123);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['arr?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""arr?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('bin?', () => {
+      test('returns true if value is binary', () => {
+        check(['bin?', [new Uint8Array([])]], true);
+        check(['bin?', ['$', '']], true, new Uint8Array([1, 2, 3]));
+      });
+
+      test('returns false if value not binary', () => {
+        check(['bin?', true], false);
+        check(['bin?', ['$', '']], false, 123);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['bin?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""bin?" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('obj?', () => {
+      test('returns true if value is object', () => {
+        check(['obj?', [{}]], true);
+        check(['obj?', ['$', '']], true, {foo: 'bar'});
+      });
+
+      test('returns false if value not object', () => {
+        check(['obj?', true], false);
+        check(['obj?', ['$', '']], false, 123);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['obj?', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""obj?" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('String operators', () => {

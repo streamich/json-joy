@@ -11,7 +11,6 @@ export const throwOnUndef = (value: unknown, def?: unknown) => {
 };
 
 export const type = (value: unknown): string => {
-  // TODO: Shall "null" be of type "const"?
   if (value === null) return 'null';
   if (value instanceof Array) return 'array';
   if (value instanceof Uint8Array) return 'binary';

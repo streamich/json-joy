@@ -99,14 +99,34 @@ export type ExprOr = VariadicExpression<'or' | '||'>;
 export type ExprNot = UnaryExpression<'not' | '!'>;
 
 // Type expressions
-export type TypeExpression = ExprType | ExprBool | ExprNum | ExprInt | ExprStr | ExprLen;
+export type TypeExpression =
+  | ExprType
+  | ExprLen
+  | ExprBool
+  | ExprNum
+  | ExprStr
+  | ExprIsUndefined
+  | ExprIsNull
+  | ExprIsBool
+  | ExprIsNumber
+  | ExprIsString
+  | ExprIsBinary
+  | ExprIsArray
+  | ExprIsObject;
 
 export type ExprType = UnaryExpression<'type'>;
+export type ExprLen = UnaryExpression<'len'>;
 export type ExprBool = UnaryExpression<'bool'>;
 export type ExprNum = UnaryExpression<'num'>;
-export type ExprInt = UnaryExpression<'int'>;
 export type ExprStr = UnaryExpression<'str'>;
-export type ExprLen = UnaryExpression<'len'>;
+export type ExprIsUndefined = UnaryExpression<'und?'>;
+export type ExprIsNull = UnaryExpression<'nil?'>;
+export type ExprIsBool = UnaryExpression<'bool?'>;
+export type ExprIsNumber = UnaryExpression<'num?'>;
+export type ExprIsString = UnaryExpression<'str?'>;
+export type ExprIsBinary = UnaryExpression<'bin?'>;
+export type ExprIsArray = UnaryExpression<'arr?'>;
+export type ExprIsObject = UnaryExpression<'obj?'>;
 
 // String expressions
 export type StringExpression = ExprCat | ExprContains | ExprStarts | ExprEnds | ExprMatches | ExprSubstr;
