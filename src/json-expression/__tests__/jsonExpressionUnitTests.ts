@@ -1712,6 +1712,25 @@ export const jsonExpressionUnitTests = (
       });
     });
 
+    describe('reverse', () => {
+      test('sorts an array', () => {
+        check(['reverse', [[1, 2, 3]]], [3, 2, 1]);
+        check(['reverse', [[4, 1, 2, 3]]], [3, 2, 1, 4]);
+        check(['[]', ['reverse', [[4, 1, 6, 2, 3]]], 4], 4);
+      });
+
+      test('sorts an array - 2', () => {
+        check(['reverse', ['$', '']], [3, 2, 1, 4], [4, 1, 2, 3]);
+        check(['[]', ['reverse', ['$', '']], 4], 4, [4, 1, 6, 2, 3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['reverse', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reverse" operator expects 1 operands."`,
+        );
+      });
+    });
+
     describe('in', () => {
       test('returns true if value found in array', () => {
         check(['in', [[1, 2, 3]], 3], true);

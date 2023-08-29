@@ -53,6 +53,23 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
   ] as types.OperatorDefinition<types.ExprSort>,
 
   [
+    'reverse',
+    [],
+    1,
+    (expr: types.ExprReverse, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const arr = util.asArr(operand1);
+      /** @todo use `.toReversed()`, once it is more common. */
+      return [...arr].reverse();
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprReverse>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      const js = `[...asArr(${ctx.operands[0]})].reverse()`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprReverse>,
+
+  [
     'in',
     [],
     2,
