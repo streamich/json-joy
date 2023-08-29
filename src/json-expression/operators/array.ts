@@ -100,13 +100,11 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
     1,
     (expr: types.ExprFromEntries, ctx) => {
       const operand1 = ctx.eval(expr[1], ctx);
-      const arr = util.asArr(operand1);
-      /** @todo use `.toReversed()`, once it is more common. */
-      return [...arr].reverse();
+      return util.fromEntries(operand1);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprFromEntries>): ExpressionResult => {
-      ctx.link(util.asArr, 'asArr');
-      const js = `[...asArr(${ctx.operands[0]})].reverse()`;
+      ctx.link(util.fromEntries, 'fromEntries');
+      const js = `fromEntries(${ctx.operands[0]})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprFromEntries>,

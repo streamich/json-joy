@@ -1756,6 +1756,26 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('fromEntries', () => {
+      test('returns object from 2-tuple list', () => {
+        check(['fromEntries', [[['foo', 'bar']]]], {foo: 'bar'});
+      });
+
+      test('returns object from 2-tuple list - 2', () => {
+        check(['fromEntries', ['++', [[]], [[['foo', 'bar']]]]], {foo: 'bar'});
+      });
+
+      test('returns object empty object', () => {
+        check(['fromEntries', [[]]], {});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['fromEntries', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""fromEntries" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {

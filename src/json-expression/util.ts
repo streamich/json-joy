@@ -226,6 +226,18 @@ export const isInArr2 = (arr: unknown, check: (item: unknown) => boolean): boole
   return false;
 };
 
+export const fromEntries = (maybeEntries: unknown): Record<string, unknown> => {
+  const entries = asArr(maybeEntries);
+  const result: Record<string, unknown> = {};
+  for (const maybeEntry of entries) {
+    const entry = asArr(maybeEntry);
+    const [key, value] = asArr(entry);
+    if (entry.length !== 2) throw new Error('NOT_PAIR');
+    result[str(key)] = value;
+  }
+  return result;
+};
+
 // ---------------------------------------------------- Object operator helpers
 
 export const asObj = (value: unknown): object => {

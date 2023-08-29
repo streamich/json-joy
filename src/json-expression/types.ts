@@ -188,7 +188,7 @@ export type ExprHead = BinaryExpression<'head'>;
 export type ExprSort = UnaryExpression<'sort'>;
 export type ExprReverse = UnaryExpression<'reverse'>;
 export type ExprIn = BinaryExpression<'in'>;
-export type ExprFromEntries = BinaryExpression<'fromEntries'>;
+export type ExprFromEntries = UnaryExpression<'fromEntries'>;
 
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
