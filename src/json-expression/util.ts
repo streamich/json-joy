@@ -205,7 +205,7 @@ export const head = (operand1: unknown, operand2: unknown): unknown => {
 
 export const concat = (arrays: unknown[]): unknown[] => {
   const result: unknown[] = [];
-  for (let array of arrays) {
+  for (const array of arrays) {
     asArr(array);
     for (const item of array as unknown[]) result.push(item);
   }
