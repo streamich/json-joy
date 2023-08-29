@@ -1736,12 +1736,15 @@ export const jsonExpressionUnitTests = (
         check(['in', [[1, 2, 3]], 3], true);
         check(['in', [[1, 2, 3]], 2], true);
         check(['in', [[1, 2, 3]], 1], true);
+        check(['in', ['$', ''], {foo: 'bar'}], true, [1, 2, 3, {foo: 'bar'}]);
       });
 
       test('returns false if value not found in array', () => {
         check(['in', [[1, 2, 3]], 4], false);
         check(['in', [[1, 2, 3]], 'a'], false);
         check(['in', [[1, 2, 3]], ['$', '']], false, '1');
+        check(['in', ['$', ''], '1'], false, [1, 2, 3]);
+        check(['in', ['$', '/0'], ['$', '/1']], false, [[1, 2, 3], '1']);
       });
 
       test('throws on invalid operand count', () => {

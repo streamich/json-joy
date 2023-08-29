@@ -181,13 +181,14 @@ export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
 // Array expressions
-export type ArrayExpression = ExprConcat | ExprHead | ExprSort | ExprReverse | ExprIn;
+export type ArrayExpression = ExprConcat | ExprHead | ExprSort | ExprReverse | ExprIn | ExprFromEntries;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;
 export type ExprSort = UnaryExpression<'sort'>;
 export type ExprReverse = UnaryExpression<'reverse'>;
 export type ExprIn = BinaryExpression<'in'>;
+export type ExprFromEntries = BinaryExpression<'fromEntries'>;
 
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;

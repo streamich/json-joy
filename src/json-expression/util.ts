@@ -141,6 +141,13 @@ export const isInArr = (arr: unknown, what: unknown): boolean => {
   return false;
 };
 
+export const isInArr2 = (arr: unknown, check: (item: unknown) => boolean): boolean => {
+  const arr2 = asArr(arr);
+  const length = arr2.length;
+  for (let i = 0; i < length; i++) if (check(arr2[i])) return true;
+  return false;
+};
+
 export const num = (value: unknown): number => +(value as number) || 0;
 export const int = (value: unknown): number => ~~(value as number);
 

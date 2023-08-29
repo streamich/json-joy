@@ -1,7 +1,8 @@
 import * as util from '../util';
-import {Expression, ExpressionResult} from '../codegen-steps';
+import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import type * as types from '../types';
 import {deepEqual} from '../../json-equal/deepEqual';
+import {$$deepEqual} from '../../json-equal/$$deepEqual';
 
 export const arrayOperators: types.OperatorDefinition<any>[] = [
   [
@@ -79,20 +80,18 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return util.isInArr(arr, val);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprIn>): ExpressionResult => {
+      const arr = ctx.operands[0];
+      const val = ctx.operands[1];
+      if (val instanceof Literal) {
+        const fnJs = $$deepEqual(val.val);
+        const d = ctx.const(fnJs);
+        ctx.link(util.isInArr2, 'isInArr2');
+        const js = `isInArr2((${ctx.operands[0]}),${d})`;
+        return new Expression(js);
+      }
       ctx.link(util.isInArr, 'isInArr');
       const js = `isInArr((${ctx.operands[0]}),(${ctx.operands[1]}))`;
       return new Expression(js);
-      // const [, a, b] = expr;
-      // const container = this.onExpression(b);
-      // const what = this.onExpression(a);
-      // if (container instanceof Literal) {
-      //   if (!(container.val instanceof Array)) throw new Error('"in" operator expects second operand to be an array.');
-      //   if (what instanceof Literal) return new Literal(util.isInContainer(what.val, container.val));
-      //   if (container.val.length === 0) return new Literal(false);
-      //   if (container.val.length === 1) return this.onExpression(['==', a, toBoxed(container.val[0])]);
-      // }
-      // this.codegen.link('isInContainer');
-      // return new Expression(`isInContainer(${what}, ${container})`);
     },
   ] as types.OperatorDefinition<types.ExprIn>,
 ];
