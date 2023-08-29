@@ -1776,6 +1776,30 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('indexOf', () => {
+      test('finds element in an array', () => {
+        check(['indexOf', [[1, 2, 3]], 2], 1);
+        check(['indexOf', [[1, 2, 3, {a: null}, {a: false}]], {a: false}], 4);
+      });
+
+      test('when array is input', () => {
+        check(['indexOf', ['$', ''], {a: false}], 4, [1, 2, 3, {a: null}, {a: false}]);
+      });
+
+      test('when array is input and element is input', () => {
+        check(['indexOf', ['$', ''], ['$', '/4']], 4, [1, 2, 3, {a: null}, {a: false}]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['indexOf', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""indexOf" operator expects 2 operands."`,
+        );
+        expect(() => check(['indexOf', 'a', 'a', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""indexOf" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {

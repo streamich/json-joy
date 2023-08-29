@@ -238,6 +238,13 @@ export const fromEntries = (maybeEntries: unknown): Record<string, unknown> => {
   return result;
 };
 
+export const indexOf = (container: unknown, item: unknown): -1 | number => {
+  const arr = asArr(container);
+  const length = arr.length;
+  for (let i = 0; i < length; i++) if (deepEqual(arr[i], item)) return i;
+  return -1;
+};
+
 // ---------------------------------------------------- Object operator helpers
 
 export const asObj = (value: unknown): object => {

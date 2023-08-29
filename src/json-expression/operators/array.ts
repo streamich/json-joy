@@ -108,4 +108,20 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprFromEntries>,
+
+  [
+    'indexOf',
+    [],
+    2,
+    (expr: types.ExprIndexOf, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const operand2 = ctx.eval(expr[2], ctx);
+      return util.indexOf(operand1, operand2);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprIndexOf>): ExpressionResult => {
+      ctx.link(util.indexOf, 'indexOf');
+      const js = `indexOf((${ctx.operands[0]}),(${ctx.operands[1]}))`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprIndexOf>,
 ];
