@@ -2,6 +2,8 @@ import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
 import {Expression, Literal, OperatorDefinition, OperatorMap} from './types';
 
+// ----------------------------------------------------- Input operator helpers
+
 export const get = (path: string, data: unknown) => get_(data, toPath(path));
 
 export const throwOnUndef = (value: unknown, def?: unknown) => {
@@ -10,6 +12,8 @@ export const throwOnUndef = (value: unknown, def?: unknown) => {
   return def;
 };
 
+// ------------------------------------------------------ Type operator helpers
+
 export const type = (value: unknown): string => {
   if (value === null) return 'null';
   if (value instanceof Array) return 'array';
@@ -17,10 +21,39 @@ export const type = (value: unknown): string => {
   return typeof value;
 };
 
+export const num = (value: unknown): number => +(value as number) || 0;
+export const int = (value: unknown): number => ~~(value as number);
+
 export const str = (value: unknown): string => {
   if (typeof value !== 'object') return '' + value;
   return JSON.stringify(value);
 };
+
+// ------------------------------------------------ Comparison operator helpers
+
+export const cmp = (a: any, b: any): 1 | -1 | 0 => (a > b ? 1 : a < b ? -1 : 0);
+export const betweenNeNe = (val: any, min: any, max: any): boolean => val > min && val < max;
+export const betweenNeEq = (val: any, min: any, max: any): boolean => val > min && val <= max;
+export const betweenEqNe = (val: any, min: any, max: any): boolean => val >= min && val < max;
+export const betweenEqEq = (val: any, min: any, max: any): boolean => val >= min && val <= max;
+
+// ------------------------------------------------ Arithmetic operator helpers
+
+export const slash = (a: unknown, b: unknown) => {
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) / divisor;
+  return Number.isFinite(res) ? res : 0;
+};
+
+export const mod = (a: unknown, b: unknown) => {
+  const divisor = num(b);
+  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
+  const res = num(a) % divisor;
+  return Number.isFinite(res) ? res : 0;
+};
+
+// ----------------------------------------- Generic container operator helpers
 
 export const len = (value: unknown): number => {
   switch (typeof value) {
@@ -69,58 +102,7 @@ export const asBin = (value: unknown): Uint8Array => {
   throw new Error('NOT_BINARY');
 };
 
-export const asArr = (value: unknown): unknown[] => {
-  if (value instanceof Array) return value as unknown[];
-  throw new Error('NOT_ARRAY');
-};
-
-export const concat = (arrays: unknown[]): unknown[] => {
-  const result: unknown[] = [];
-  for (let array of arrays) {
-    asArr(array);
-    for (const item of array as unknown[]) result.push(item);
-  }
-  return result;
-};
-
-export const head = (operand1: unknown, operand2: unknown): unknown => {
-  const arr = asArr(operand1);
-  const count = int(operand2);
-  return count >= 0 ? arr.slice(0, count) : arr.slice(count);
-};
-
-export const asObj = (value: unknown): object => {
-  if (type(value) === 'object') return value as object;
-  throw new Error('NOT_OBJECT');
-};
-
-export const keys = (value: unknown): string[] => Object.keys(asObj(value));
-
-export const values = (value: unknown): unknown[] => {
-  const values: unknown[] = [];
-  const theKeys = keys(value);
-  const length = theKeys.length;
-  for (let i = 0; i < length; i++) values.push((value as any)[theKeys[i]]);
-  return values;
-};
-
-export const entries = (value: unknown): [key: string, value: unknown][] => {
-  const entries: [key: string, value: unknown][] = [];
-  const theKeys = keys(value);
-  const length = theKeys.length;
-  for (let i = 0; i < length; i++) {
-    const key = theKeys[i];
-    entries.push([key, (value as any)[key]]);
-  }
-  return entries;
-};
-
-export const u8 = (bin: unknown, pos: unknown) => {
-  const buf = asBin(bin);
-  const index = int(pos);
-  if (index < 0 || index >= buf.length) throw new Error('OUT_OF_BOUNDS');
-  return buf[index];
-};
+// ---------------------------------------------------- String operator helpers
 
 export const starts = (outer: unknown, inner: unknown): boolean => {
   return str(outer).startsWith(str(inner));
@@ -134,95 +116,8 @@ export const ends = (outer: unknown, inner: unknown): boolean => {
   return str(outer).endsWith(str(inner));
 };
 
-export const isInArr = (arr: unknown, what: unknown): boolean => {
-  const arr2 = asArr(arr);
-  const length = arr2.length;
-  for (let i = 0; i < length; i++) if (deepEqual(arr2[i], what)) return true;
-  return false;
-};
-
-export const isInArr2 = (arr: unknown, check: (item: unknown) => boolean): boolean => {
-  const arr2 = asArr(arr);
-  const length = arr2.length;
-  for (let i = 0; i < length; i++) if (check(arr2[i])) return true;
-  return false;
-};
-
-export const num = (value: unknown): number => +(value as number) || 0;
-export const int = (value: unknown): number => ~~(value as number);
-
-export const cmp = (a: any, b: any): 1 | -1 | 0 => (a > b ? 1 : a < b ? -1 : 0);
-
-export const betweenNeNe = (val: any, min: any, max: any): boolean => val > min && val < max;
-export const betweenNeEq = (val: any, min: any, max: any): boolean => val > min && val <= max;
-export const betweenEqNe = (val: any, min: any, max: any): boolean => val >= min && val < max;
-export const betweenEqEq = (val: any, min: any, max: any): boolean => val >= min && val <= max;
-
-export const slash = (a: unknown, b: unknown) => {
-  const divisor = num(b);
-  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
-  const res = num(a) / divisor;
-  return Number.isFinite(res) ? res : 0;
-};
-
-export const mod = (a: unknown, b: unknown) => {
-  const divisor = num(b);
-  if (divisor === 0) throw new Error('DIVISION_BY_ZERO');
-  const res = num(a) % divisor;
-  return Number.isFinite(res) ? res : 0;
-};
-
 export const substr = (probablyString: string | unknown, from: number | unknown, to: number | unknown) =>
   str(probablyString).slice(int(from), int(to));
-
-export const isLiteral = (value: unknown): boolean => {
-  if (value instanceof Array) return value.length === 1;
-  else return true;
-};
-
-export const asLiteral = <T>(value: Literal<T>): T => {
-  if (value instanceof Array) {
-    if (value.length !== 1) throw new Error('Invalid literal.');
-    return value[0];
-  } else return value;
-};
-
-export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);
-
-export const assertFixedArity = (operator: string, arity: number, expr: Expression): void => {
-  if (expr.length !== arity + 1) throw new Error(`"${operator}" operator expects ${arity} operands.`);
-};
-
-export const assertVariadicArity = (operator: string, expr: Expression): void => {
-  if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
-};
-
-export const assertArity = (operator: string, arity: number | [min: number, max: number], expr: Expression): void => {
-  if (!arity) return;
-  if (arity instanceof Array) {
-    const [min, max] = arity;
-    if (expr.length < min + 1) throw new Error(`"${operator}" operator expects at least ${min} operands.`);
-    if (max !== -1 && expr.length > max + 1) throw new Error(`"${operator}" operator expects at most ${max} operands.`);
-  } else if (arity !== -1) assertFixedArity(operator, arity, expr);
-  else assertVariadicArity(operator, expr);
-};
-
-export const operatorsToMap = (operators: OperatorDefinition<Expression>[]): OperatorMap => {
-  const map: OperatorMap = new Map();
-  for (const operator of operators) {
-    const [name, aliases] = operator;
-    map.set(name, operator);
-    for (const alias of aliases) map.set(alias, operator);
-  }
-  return map;
-};
-
-export const parseVar = (name: string): [name: string, pointer: string] => {
-  if (name[0] === '/') return ['', name];
-  const slashIndex = name.indexOf('/');
-  if (slashIndex === -1) return [name, ''];
-  return [name.slice(0, slashIndex), name.slice(slashIndex)];
-};
 
 const EMAIL_REG =
   /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/i;
@@ -284,4 +179,128 @@ export const isDateTime = (str: unknown): boolean => {
   if (typeof str !== 'string') return false;
   const dateTime = str.split(DATE_TIME_SEPARATOR_REG) as [string, string];
   return dateTime.length === 2 && isDate(dateTime[0]) && isTime(dateTime[1]);
+};
+
+// ---------------------------------------------------- Binary operator helpers
+
+export const u8 = (bin: unknown, pos: unknown) => {
+  const buf = asBin(bin);
+  const index = int(pos);
+  if (index < 0 || index >= buf.length) throw new Error('OUT_OF_BOUNDS');
+  return buf[index];
+};
+
+// ----------------------------------------------------- Array operator helpers
+
+export const asArr = (value: unknown): unknown[] => {
+  if (value instanceof Array) return value as unknown[];
+  throw new Error('NOT_ARRAY');
+};
+
+export const head = (operand1: unknown, operand2: unknown): unknown => {
+  const arr = asArr(operand1);
+  const count = int(operand2);
+  return count >= 0 ? arr.slice(0, count) : arr.slice(count);
+};
+
+export const concat = (arrays: unknown[]): unknown[] => {
+  const result: unknown[] = [];
+  for (let array of arrays) {
+    asArr(array);
+    for (const item of array as unknown[]) result.push(item);
+  }
+  return result;
+};
+
+export const isInArr = (arr: unknown, what: unknown): boolean => {
+  const arr2 = asArr(arr);
+  const length = arr2.length;
+  for (let i = 0; i < length; i++) if (deepEqual(arr2[i], what)) return true;
+  return false;
+};
+
+export const isInArr2 = (arr: unknown, check: (item: unknown) => boolean): boolean => {
+  const arr2 = asArr(arr);
+  const length = arr2.length;
+  for (let i = 0; i < length; i++) if (check(arr2[i])) return true;
+  return false;
+};
+
+// ---------------------------------------------------- Object operator helpers
+
+export const asObj = (value: unknown): object => {
+  if (type(value) === 'object') return value as object;
+  throw new Error('NOT_OBJECT');
+};
+
+export const keys = (value: unknown): string[] => Object.keys(asObj(value));
+
+export const values = (value: unknown): unknown[] => {
+  const values: unknown[] = [];
+  const theKeys = keys(value);
+  const length = theKeys.length;
+  for (let i = 0; i < length; i++) values.push((value as any)[theKeys[i]]);
+  return values;
+};
+
+export const entries = (value: unknown): [key: string, value: unknown][] => {
+  const entries: [key: string, value: unknown][] = [];
+  const theKeys = keys(value);
+  const length = theKeys.length;
+  for (let i = 0; i < length; i++) {
+    const key = theKeys[i];
+    entries.push([key, (value as any)[key]]);
+  }
+  return entries;
+};
+
+// -------------------------------------------------------------------- Various
+
+export const isLiteral = (value: unknown): boolean => {
+  if (value instanceof Array) return value.length === 1;
+  else return true;
+};
+
+export const asLiteral = <T>(value: Literal<T>): T => {
+  if (value instanceof Array) {
+    if (value.length !== 1) throw new Error('Invalid literal.');
+    return value[0];
+  } else return value;
+};
+
+export const literal = <T = unknown>(value: T): T | [T] => (value instanceof Array ? [value] : value);
+
+export const assertFixedArity = (operator: string, arity: number, expr: Expression): void => {
+  if (expr.length !== arity + 1) throw new Error(`"${operator}" operator expects ${arity} operands.`);
+};
+
+export const assertVariadicArity = (operator: string, expr: Expression): void => {
+  if (expr.length < 3) throw new Error(`"${operator}" operator expects at least two operands.`);
+};
+
+export const assertArity = (operator: string, arity: number | [min: number, max: number], expr: Expression): void => {
+  if (!arity) return;
+  if (arity instanceof Array) {
+    const [min, max] = arity;
+    if (expr.length < min + 1) throw new Error(`"${operator}" operator expects at least ${min} operands.`);
+    if (max !== -1 && expr.length > max + 1) throw new Error(`"${operator}" operator expects at most ${max} operands.`);
+  } else if (arity !== -1) assertFixedArity(operator, arity, expr);
+  else assertVariadicArity(operator, expr);
+};
+
+export const operatorsToMap = (operators: OperatorDefinition<Expression>[]): OperatorMap => {
+  const map: OperatorMap = new Map();
+  for (const operator of operators) {
+    const [name, aliases] = operator;
+    map.set(name, operator);
+    for (const alias of aliases) map.set(alias, operator);
+  }
+  return map;
+};
+
+export const parseVar = (name: string): [name: string, pointer: string] => {
+  if (name[0] === '/') return ['', name];
+  const slashIndex = name.indexOf('/');
+  if (slashIndex === -1) return [name, ''];
+  return [name.slice(0, slashIndex), name.slice(slashIndex)];
 };

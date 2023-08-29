@@ -1,7 +1,6 @@
 import * as util from '../util';
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import type * as types from '../types';
-import {deepEqual} from '../../json-equal/deepEqual';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
 
 export const arrayOperators: types.OperatorDefinition<any>[] = [
@@ -94,4 +93,21 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprIn>,
+
+  [
+    'fromEntries',
+    [],
+    1,
+    (expr: types.ExprFromEntries, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const arr = util.asArr(operand1);
+      /** @todo use `.toReversed()`, once it is more common. */
+      return [...arr].reverse();
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprFromEntries>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      const js = `[...asArr(${ctx.operands[0]})].reverse()`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprFromEntries>,
 ];
