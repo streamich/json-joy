@@ -149,4 +149,20 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprSlice>,
+
+  [
+    'zip',
+    [],
+    2,
+    (expr: types.ExprZip, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const operand2 = ctx.eval(expr[2], ctx);
+      return util.zip(operand1, operand2);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprZip>): ExpressionResult => {
+      ctx.link(util.zip, 'zip');
+      const js = `zip((${ctx.operands[0]}),(${ctx.operands[1]}))`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprZip>,
 ];

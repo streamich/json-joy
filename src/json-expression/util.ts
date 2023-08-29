@@ -252,6 +252,15 @@ export const indexOf2 = (container: unknown, check: (item: unknown) => boolean):
   return -1;
 };
 
+export const zip = (maybeArr1: unknown, maybeArr2: unknown): [unknown, unknown][] => {
+  const arr1 = asArr(maybeArr1);
+  const arr2 = asArr(maybeArr2);
+  const length = Math.min(arr1.length, arr2.length);
+  const result: [unknown, unknown][] = [];
+  for (let i = 0; i < length; i++) result.push([arr1[i], arr2[i]]);
+  return result;
+};
+
 // ---------------------------------------------------- Object operator helpers
 
 export const asObj = (value: unknown): object => {

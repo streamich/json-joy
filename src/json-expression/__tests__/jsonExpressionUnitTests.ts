@@ -1825,6 +1825,37 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('zip', () => {
+      test('can join two arrays', () => {
+        check(
+          ['zip', [['foo', 'bar']], [[1, 2]]],
+          [
+            ['foo', 1],
+            ['bar', 2],
+          ],
+        );
+        check(
+          ['fromEntries',
+            ['zip', [['foo', 'bar']], ['$', '']],
+          ],
+          {
+            foo: 1,
+            bar: 2,
+          },
+          [1, 2],
+        );
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['zip', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""zip" operator expects 2 operands."`,
+        );
+        expect(() => check(['zip', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""zip" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {
