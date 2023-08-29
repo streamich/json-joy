@@ -1639,6 +1639,59 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('head', () => {
+      test('returns first two elements', () => {
+        check(['head', [[1, 2, 3]], 2], [1, 2]);
+      });
+
+      test('returns zero first elements', () => {
+        check(['head', [[1, 2, 3]], 0], []);
+      });
+
+      test('returns whole array when count is greater than array size', () => {
+        check(['head', [[1, 2, 3]], 10], [1, 2, 3]);
+      });
+
+      test('returns whole array when count is greater than array size - 2', () => {
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: 10,
+        });
+      });
+
+      test('negative values select from the end', () => {
+        check(['head', ['$', '/arr'], ['$', '/n']], [], {
+          arr: [1, 2, 3],
+          n: 0,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [3], {
+          arr: [1, 2, 3],
+          n: -1,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [2, 3], {
+          arr: [1, 2, 3],
+          n: -2,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: -3,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: -4,
+        });
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['head', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""head" operator expects 2 operands."`,
+        );
+        expect(() => check(['head', 'a', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""head" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {

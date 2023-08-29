@@ -17,4 +17,20 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprConcat>,
+
+  [
+    'head',
+    [],
+    2,
+    (expr: types.ExprHead, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const operand2 = ctx.eval(expr[2], ctx);
+      return util.head(operand1, operand2);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprHead>): ExpressionResult => {
+      ctx.link(util.head, 'head');
+      const js = `head((${ctx.operands[0]}),(${ctx.operands[1]}))`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprHead>,
 ];

@@ -69,18 +69,24 @@ export const asBin = (value: unknown): Uint8Array => {
   throw new Error('NOT_BINARY');
 };
 
-export const asArr = (value: unknown): object => {
-  if (value instanceof Array) return value as object;
+export const asArr = (value: unknown): unknown[] => {
+  if (value instanceof Array) return value as unknown[];
   throw new Error('NOT_ARRAY');
 };
 
 export const concat = (arrays: unknown[]): unknown[] => {
   const result: unknown[] = [];
-  for (const array of arrays) {
+  for (let array of arrays) {
     asArr(array);
     for (const item of (array as unknown[])) result.push(item);
   }
   return result;
+};
+
+export const head = (operand1: unknown, operand2: unknown): unknown => {
+  const arr = asArr(operand1);
+  const count = int(operand2);
+  return count >= 0 ? arr.slice(0, count) : arr.slice(count);
 };
 
 export const asObj = (value: unknown): object => {
