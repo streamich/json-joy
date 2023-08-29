@@ -181,10 +181,7 @@ export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
 // Array expressions
-export type ArrayExpression = 
-  | ExprConcat
-  | ExprHead
-  | ExprSort; //ExprMap | ExprFilter | ExprReduce | ExprSlice | ExprJoin;
+export type ArrayExpression = ExprConcat | ExprHead | ExprSort; //ExprMap | ExprFilter | ExprReduce | ExprSlice | ExprJoin;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;

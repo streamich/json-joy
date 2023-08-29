@@ -78,7 +78,7 @@ export const concat = (arrays: unknown[]): unknown[] => {
   const result: unknown[] = [];
   for (let array of arrays) {
     asArr(array);
-    for (const item of (array as unknown[])) result.push(item);
+    for (const item of array as unknown[]) result.push(item);
   }
   return result;
 };
