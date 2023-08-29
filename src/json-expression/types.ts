@@ -190,7 +190,8 @@ export type ArrayExpression =
   | ExprFromEntries
   | ExprIndexOf
   | ExprSlice
-  | ExprZip;
+  | ExprZip
+  | ExprFilter;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;
@@ -201,6 +202,7 @@ export type ExprFromEntries = UnaryExpression<'fromEntries'>;
 export type ExprIndexOf = BinaryExpression<'indexOf'>;
 export type ExprSlice = TernaryExpression<'slice'>;
 export type ExprZip = BinaryExpression<'zip'>;
+export type ExprFilter = TernaryExpression<'filter'>;
 
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
@@ -288,6 +290,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   operand: (operand: Expression) => ExpressionResult;
   link: (value: unknown, name?: string) => string;
   const: (js: JavaScript<unknown>) => string;
+  subExpression: (expr: Expression) => (ctx: JsonExpressionExecutionContext) => unknown;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;

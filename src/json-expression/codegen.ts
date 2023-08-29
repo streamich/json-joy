@@ -42,6 +42,12 @@ export class JsonExpressionCodegen {
     return this.codegen.addConstant(js);
   };
 
+  private subExpression = (expr: types.Expr): ((ctx: types.JsonExpressionExecutionContext) => unknown) => {
+    const codegen = new JsonExpressionCodegen({...this.options, expression: expr});
+    const fn = codegen.compile();
+    return fn;
+  };
+
   protected onExpression(expr: types.Expr | unknown): ExpressionResult {
     if (expr instanceof Array) {
       if (expr.length === 1) return new Literal(expr[0]);
@@ -66,6 +72,7 @@ export class JsonExpressionCodegen {
         operand: (operand: types.Expression) => this.onExpression(operand),
         link: this.linkOperandDeps,
         const: this.operatorConst,
+        subExpression: this.subExpression,
       };
       return codegen(ctx);
     }

@@ -104,6 +104,11 @@ export const asBin = (value: unknown): Uint8Array => {
 
 // ---------------------------------------------------- String operator helpers
 
+export const asStr = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+  throw new Error('NOT_STRING');
+};
+
 export const starts = (outer: unknown, inner: unknown): boolean => {
   return str(outer).startsWith(str(inner));
 };

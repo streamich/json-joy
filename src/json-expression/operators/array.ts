@@ -165,4 +165,28 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprZip>,
+
+  [
+    'filter',
+    [],
+    3,
+    (expr: types.ExprFilter, ctx) => {
+      const arr = util.asArr(ctx.eval(expr[1], ctx));
+      const varname = util.asStr(util.asLiteral(expr[2]));
+      const expression = expr[3];
+      const result = arr.filter(item => {
+        ctx.vars.set(varname, item);
+        ctx.eval(expression, ctx);
+      });
+      ctx.vars.del(varname);
+      return result;
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprFilter>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      const varname = util.asStr(util.asLiteral(ctx.expr[2]));
+      const d = ctx.link(ctx.subExpression(ctx.expr[3]));
+      const js = `asArr(${ctx.operands[0]}).filter(item => vars.set(${JSON.stringify(varname)},item),${d}({vars:vars}))`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprFilter>,
 ];
