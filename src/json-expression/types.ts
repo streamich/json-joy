@@ -181,19 +181,19 @@ export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
 // Array expressions
-export type ArrayExpression = ExprConcat | ExprHead | ExprSort; //ExprMap | ExprFilter | ExprReduce | ExprSlice | ExprJoin;
+export type ArrayExpression = ExprConcat | ExprHead | ExprSort | ExprIn;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;
 export type ExprSort = UnaryExpression<'sort'>;
+export type ExprIn = BinaryExpression<'in'>;
 
 // Object expressions
-export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprIn;
+export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
 export type ExprEntries = UnaryExpression<'entries'>;
-export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 // Bitwise expressions
 export type BitwiseExpression = ExprBitAnd | ExprBitOr | ExprBitXor | ExprBitNot;

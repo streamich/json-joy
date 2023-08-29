@@ -374,23 +374,23 @@ export const jsonExpressionCodegenTests = (
 
     describe('in', () => {
       test('works with literals', () => {
-        check(['in', 'foo', [[]]], false, {foo: 'bar'});
-        check(['in', 'foo', [['a']]], false, {foo: 'bar'});
-        check(['in', 'foo', [['foo']]], true, {foo: 'bar'});
-        check(['in', 'foo', [['a', {b: 'b'}]]], false, {foo: 'bar'});
-        check(['in', {b: 'b'}, [['a', {b: 'b'}]]], true, {foo: 'bar'});
+        check(['in', [[]], 'foo'], false, {foo: 'bar'});
+        check(['in', [['a']], 'foo'], false, {foo: 'bar'});
+        check(['in', [['foo']], 'foo'], true, {foo: 'bar'});
+        check(['in', [['a', {b: 'b'}]], 'foo'], false, {foo: 'bar'});
+        check(['in', [['a', {b: 'b'}]], {b: 'b'}], true, {foo: 'bar'});
       });
 
       test('works with expressions', () => {
-        check(['in', ['$', '/foo'], [[]]], false, {foo: 'bar'});
-        check(['in', ['$', '/foo'], [['gg']]], false, {foo: 'bar'});
-        check(['in', ['$', '/foo'], [['gg', 'bar']]], true, {foo: 'bar'});
-        check(['in', ['$', '/foo'], [['bar']]], true, {foo: 'bar'});
-        check(['in', ['$', '/foo'], [['bar1']]], false, {foo: 'bar'});
-        check(['in', ['$', '/foo'], [['gg', 'bar', 'ss']]], true, {foo: 'bar'});
-        check(['in', ['$', '/foo'], ['$', '/lol']], true, {foo: 'bar', lol: ['gg', 'bar', 'ss']});
-        check(['in', ['$', '/foo'], ['$', '/lol']], false, {foo: 'bar', lol: ['gg', 'ss']});
-        check(['in', 'ss', ['$', '/lol']], true, {foo: 'bar', lol: ['gg', 'ss']});
+        check(['in', [[]], ['$', '/foo']], false, {foo: 'bar'});
+        check(['in', [['gg']], ['$', '/foo']], false, {foo: 'bar'});
+        check(['in', [['gg', 'bar']], ['$', '/foo']], true, {foo: 'bar'});
+        check(['in', [['bar']], ['$', '/foo']], true, {foo: 'bar'});
+        check(['in', [['bar1']], ['$', '/foo']], false, {foo: 'bar'});
+        check(['in', [['gg', 'bar', 'ss']], ['$', '/foo']], true, {foo: 'bar'});
+        check(['in', ['$', '/lol'], ['$', '/foo']], true, {foo: 'bar', lol: ['gg', 'bar', 'ss']});
+        check(['in', ['$', '/lol'], ['$', '/foo']], false, {foo: 'bar', lol: ['gg', 'ss']});
+        check(['in', ['$', '/lol'], 'ss'], true, {foo: 'bar', lol: ['gg', 'ss']});
       });
     });
 

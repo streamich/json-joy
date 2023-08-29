@@ -19,16 +19,6 @@ export const createEvaluate = ({operators, createPattern}: {operators: OperatorM
         util.assertArity(name, arity, expr);
         return fn(expr, {createPattern, ...ctx, eval: evaluate});
       }
-
-      switch (fn) {
-        case 'in': {
-          const v2 = evaluate(expr[2], ctx);
-          if (!(v2 instanceof Array) || !v2.length) return false;
-          const v1 = evaluate(expr[1], ctx);
-          return v2.some((item: unknown) => deepEqual(item, v1));
-        }
-      }
-
       throw new Error('Unknown expression.');
     } catch (err) {
       if (err instanceof Error) throw err;

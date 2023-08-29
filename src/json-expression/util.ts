@@ -134,9 +134,10 @@ export const ends = (outer: unknown, inner: unknown): boolean => {
   return str(outer).endsWith(str(inner));
 };
 
-export const isInContainer = (what: unknown, container: unknown[]): boolean => {
-  const length = container.length;
-  for (let i = 0; i < length; i++) if (deepEqual(container[i], what)) return true;
+export const isInArr = (arr: unknown, what: unknown): boolean => {
+  const arr2 = asArr(arr);
+  const length = arr2.length;
+  for (let i = 0; i < length; i++) if (deepEqual(arr2[i], what)) return true;
   return false;
 };
 

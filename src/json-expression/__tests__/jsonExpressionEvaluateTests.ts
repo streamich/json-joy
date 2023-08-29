@@ -98,11 +98,11 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             foo: 'bar',
           },
         };
-        check(['in', ['get', '/contentType'], [['application/octet-stream', 'application/json']]], true, data);
-        check(['in', ['get', '/contentType'], [['application/json']]], true, data);
-        check(['in', ['get', '/contentType'], [['application/octet-stream', 'application/json2']]], false, data);
-        check(['in', ['get', '/data'], [[{}]]], false, data);
-        check(['in', ['get', '/data'], [[{foo: 'bar'}]]], true, data);
+        check(['in', [['application/octet-stream', 'application/json']], ['get', '/contentType']], true, data);
+        check(['in', [['application/json']], ['get', '/contentType']], true, data);
+        check(['in', [['application/octet-stream', 'application/json2']], ['get', '/contentType']], false, data);
+        check(['in', [[{}]], ['get', '/data']], false, data);
+        check(['in', [[{foo: 'bar'}]], ['get', '/data']], true, data);
       });
     });
 
@@ -376,7 +376,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             'and',
             ['==', ['get', '/store'], 'example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
-            ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
+            ['in', [['rugby', 'football', 'baseball']], ['get', '/customer_interests']],
             ['>=', ['$', '/price_usd'], 100],
           ];
           check(expression1, true, data);
@@ -385,7 +385,7 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
             'and',
             ['==', ['get', '/store'], 'some_other_example_corp'],
             ['!', ['==', ['get', '/event'], 'order_cancelled']],
-            ['in', ['get', '/customer_interests'], [['rugby', 'football', 'baseball']]],
+            ['in', [['rugby', 'football', 'baseball']], ['get', '/customer_interests']],
             ['>=', ['$', '/price_usd'], 100],
           ];
           check(expression2, false, data);
@@ -405,8 +405,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             key_a: 'value_three',
           };
-          check(['in', ['get', '/key_a'], [['value_one', 'value_two', 'value_three']]], true, data);
-          check(['in', ['get', '/key_a'], [['value_one', 'value_two', 'value_four']]], false, data);
+          check(['in', [['value_one', 'value_two', 'value_three']], ['get', '/key_a']], true, data);
+          check(['in', [['value_one', 'value_two', 'value_four']], ['get', '/key_a']], false, data);
         });
 
         // "price": {"Type": "Number.Array", "Value": "[100, 50]"}
@@ -414,9 +414,9 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             price: [100, 50],
           };
-          check(['in', 100, ['$', '/price']], true, data);
-          check(['in', 50, ['$', '/price']], true, data);
-          check(['in', 1, ['$', '/price']], false, data);
+          check(['in', ['$', '/price'], 100], true, data);
+          check(['in', ['$', '/price'], 50], true, data);
+          check(['in', ['$', '/price'], 1], false, data);
         });
 
         // "customer_interests": [{"prefix": "bas"}]
@@ -433,8 +433,8 @@ export const jsonExpressionEvaluateTests = (check: Check) => {
           const data = {
             customer_interests: 'rugby',
           };
-          check(['!', ['in', ['get', '/customer_interests'], [['rugby', 'tennis']]]], false, data);
-          check(['not', ['in', ['get', '/customer_interests'], [['football', 'tennis']]]], true, data);
+          check(['!', ['in', [['rugby', 'tennis']], ['get', '/customer_interests']]], false, data);
+          check(['not', ['in', [['football', 'tennis']], ['get', '/customer_interests']]], true, data);
         });
 
         // "event": [{"anything-but": {"prefix":"order-"}}]

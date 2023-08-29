@@ -1,22 +1,10 @@
 import * as util from './util';
 import {Codegen} from '../util/codegen/Codegen';
-import {Expression, ExpressionResult, Literal} from './codegen-steps';
+import {ExpressionResult, Literal} from './codegen-steps';
 import {createEvaluate} from './createEvaluate';
 import {JavaScript} from '../util/codegen';
 import {Vars} from './Vars';
 import type * as types from './types';
-
-const toBoxed = (value: unknown): unknown => (value instanceof Array ? [value] : value);
-
-const linkable = {
-  get: util.get,
-  throwOnUndef: util.throwOnUndef,
-  str: util.str,
-  isInContainer: util.isInContainer,
-  substr: util.substr,
-  slash: util.slash,
-  mod: util.mod,
-};
 
 export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
 
@@ -26,32 +14,16 @@ export interface JsonExpressionCodegenOptions extends types.JsonExpressionCodege
 }
 
 export class JsonExpressionCodegen {
-  protected codegen: Codegen<JsonExpressionFn, typeof linkable>;
+  protected codegen: Codegen<JsonExpressionFn>;
   protected evaluate: ReturnType<typeof createEvaluate>;
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
-    this.codegen = new Codegen<JsonExpressionFn, typeof linkable>({
+    this.codegen = new Codegen<JsonExpressionFn>({
       args: ['ctx'],
       prologue: 'var vars = ctx.vars;',
       epilogue: '',
-      linkable,
     });
     this.evaluate = createEvaluate({...options});
-  }
-
-  protected onIn(expr: types.ExprIn): ExpressionResult {
-    if (expr.length > 3) throw new Error('"in" operator expects two operands.');
-    const [, a, b] = expr;
-    const container = this.onExpression(b);
-    const what = this.onExpression(a);
-    if (container instanceof Literal) {
-      if (!(container.val instanceof Array)) throw new Error('"in" operator expects second operand to be an array.');
-      if (what instanceof Literal) return new Literal(util.isInContainer(what.val, container.val));
-      if (container.val.length === 0) return new Literal(false);
-      if (container.val.length === 1) return this.onExpression(['==', a, toBoxed(container.val[0])]);
-    }
-    this.codegen.link('isInContainer');
-    return new Expression(`isInContainer(${what}, ${container})`);
   }
 
   private linkedOperandDeps: Set<string> = new Set();
@@ -96,11 +68,6 @@ export class JsonExpressionCodegen {
         const: this.operatorConst,
       };
       return codegen(ctx);
-    }
-
-    switch (expr[0]) {
-      case 'in':
-        return this.onIn(expr as types.ExprIn);
     }
     return new Literal(false);
   }

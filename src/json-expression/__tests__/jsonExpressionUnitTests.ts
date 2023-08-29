@@ -1711,6 +1711,29 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('in', () => {
+      test('returns true if value found in array', () => {
+        check(['in', [[1, 2, 3]], 3], true);
+        check(['in', [[1, 2, 3]], 2], true);
+        check(['in', [[1, 2, 3]], 1], true);
+      });
+
+      test('returns false if value not found in array', () => {
+        check(['in', [[1, 2, 3]], 4], false);
+        check(['in', [[1, 2, 3]], 'a'], false);
+        check(['in', [[1, 2, 3]], ['$', '']], false, '1');
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['in', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""in" operator expects 2 operands."`,
+        );
+        expect(() => check(['in', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""in" operator expects 2 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {
