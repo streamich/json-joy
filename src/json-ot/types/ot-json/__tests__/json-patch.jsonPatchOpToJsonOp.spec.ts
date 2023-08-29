@@ -3,12 +3,12 @@ import {jsonPatchOpToJsonOp} from '../json-patch';
 describe('"test"', () => {
   test('transforms "test" operation', () => {
     const op = jsonPatchOpToJsonOp({op: 'test', path: '/a/b/c', value: 'd'});
-    expect(op).toStrictEqual([[['==', ['=', '/a/b/c'], 'd']]]);
+    expect(op).toStrictEqual([[['==', ['$', '/a/b/c'], 'd']]]);
   });
 
   test('boxes array literals', () => {
     const op = jsonPatchOpToJsonOp({op: 'test', path: '/a/b/c', value: [0]});
-    expect(op).toStrictEqual([[['==', ['=', '/a/b/c'], [[0]]]]]);
+    expect(op).toStrictEqual([[['==', ['$', '/a/b/c'], [[0]]]]]);
   });
 });
 
@@ -27,21 +27,21 @@ describe('"add"', () => {
 describe('"remove"', () => {
   test('transforms "remove" operation at root', () => {
     const op = jsonPatchOpToJsonOp({op: 'remove', path: '/a/b/c'});
-    expect(op).toStrictEqual([[['defined', '/a/b/c']], [[0, ['a', 'b', 'c']]]]);
+    expect(op).toStrictEqual([[['$?', '/a/b/c']], [[0, ['a', 'b', 'c']]]]);
   });
 });
 
 describe('"replace"', () => {
   test('transforms "replace" operation at root', () => {
     const op = jsonPatchOpToJsonOp({op: 'replace', path: '/a/b/c', value: true});
-    expect(op).toStrictEqual([[['defined', '/a/b/c']], [[0, ['a', 'b', 'c']]], [[1, true]], [[1, ['a', 'b', 'c']]]]);
+    expect(op).toStrictEqual([[['$?', '/a/b/c']], [[0, ['a', 'b', 'c']]], [[1, true]], [[1, ['a', 'b', 'c']]]]);
   });
 });
 
 describe('"move"', () => {
   test('transforms "move" operation at root', () => {
     const op = jsonPatchOpToJsonOp({op: 'move', path: '/a/b/c', from: '/a/b/d'});
-    expect(op).toStrictEqual([[['defined', '/a/b/d']], [[0, ['a', 'b', 'd']]], [], [[0, ['a', 'b', 'c']]]]);
+    expect(op).toStrictEqual([[['$?', '/a/b/d']], [[0, ['a', 'b', 'd']]], [], [[0, ['a', 'b', 'c']]]]);
   });
 });
 

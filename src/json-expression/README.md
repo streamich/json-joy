@@ -40,10 +40,10 @@ you are interested in, for example your expression could look like this:
 ```js
 [
   'and',
-  ['==', ['get', '/specversion'], '1.0'],
-  ['starts', ['get', '/type'], 'com.example.'],
-  ['in', ['get', '/datacontenttype'], [['application/octet-stream', 'application/json']]],
-  ['==', ['=', '/data/appinfoA'], 'abc'],
+  ['==', ['$', '/specversion'], '1.0'],
+  ['starts', ['$', '/type'], 'com.example.'],
+  ['in', ['$', '/datacontenttype'], [['application/octet-stream', 'application/json']]],
+  ['==', ['$', '/data/appinfoA'], 'abc'],
 ];
 ```
 
@@ -75,7 +75,7 @@ Evaluating expression immediately as-is.
 ```ts
 import {evaluate} from 'json-joy/{lib,es2020}/json-expression';
 
-const expression = ['+', 1, ['get', '/foo']];
+const expression = ['+', 1, ['$', '/foo']];
 const data = {foo: 2};
 
 evaluate(expression, {data}); // 3
@@ -86,7 +86,7 @@ Pre-compiling expression to an optimized function.
 ```ts
 import {JsonExpressionCodegen} from 'json-joy/{lib,es2020}/json-expression';
 
-const expression = ['+', 1, ['get', '/foo']];
+const expression = ['+', 1, ['$', '/foo']];
 const codegen = new JsonExpressionCodegen({expression});
 const fn = codegen.run().compile();
 const data = {foo: 2};

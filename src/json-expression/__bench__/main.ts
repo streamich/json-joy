@@ -28,7 +28,7 @@ const expression: Expr = [
   ['==', ['get', '/specversion'], '1.0'],
   ['starts', ['get', '/type'], 'com.example.'],
   ['in', ['get', '/datacontenttype'], [['application/octet-stream', 'application/json']]],
-  ['==', ['=', '/data/appinfoA'], 'abc'],
+  ['==', ['$', '/data/appinfoA'], 'abc'],
 ];
 
 const jsonLogicExpression = {

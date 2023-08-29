@@ -5,12 +5,13 @@ import {comparePath} from './util';
 import {EDIT_TYPE} from './constants';
 import {apply as applyStr} from '../ot-string-irreversible/apply';
 import {apply as applyBin} from '../ot-binary-irreversible/apply';
+import {Vars} from '../../../json-expression/Vars';
 
 export const apply = (doc: unknown, op: JsonOp): unknown => {
   const [test, pick = [], data = [], drop = [], edit = []] = op;
   const testLength = test.length;
   if (testLength) {
-    const expressionContext = {data: doc};
+    const expressionContext = {vars: new Vars(doc)};
     for (let i = 0; i < testLength; i++) {
       const testExpr = test[i];
       const testValue = evalExpression(testExpr, expressionContext);
