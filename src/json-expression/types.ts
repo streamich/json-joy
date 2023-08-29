@@ -180,6 +180,11 @@ export type ExprI32 = BinaryExpression<'i32'>;
 export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
+// Array expressions
+export type ArrayExpression = ExprConcat; //ExprMap | ExprFilter | ExprReduce | ExprSort | ExprSlice | ExprJoin;
+
+export type ExprConcat = VariadicExpression<'concat' | '++'>;
+
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprIn;
 
@@ -216,6 +221,7 @@ export type Expr =
   | ContainerExpression
   | StringExpression
   | BinaryExpressions
+  | ArrayExpression
   | ObjectExpression
   | BitwiseExpression
   | BranchingExpression

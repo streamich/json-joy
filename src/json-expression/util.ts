@@ -69,6 +69,20 @@ export const asBin = (value: unknown): Uint8Array => {
   throw new Error('NOT_BINARY');
 };
 
+export const asArr = (value: unknown): object => {
+  if (value instanceof Array) return value as object;
+  throw new Error('NOT_ARRAY');
+};
+
+export const concat = (arrays: unknown[]): unknown[] => {
+  const result: unknown[] = [];
+  for (const array of arrays) {
+    asArr(array);
+    for (const item of (array as unknown[])) result.push(item);
+  }
+  return result;
+};
+
 export const asObj = (value: unknown): object => {
   if (type(value) === 'object') return value as object;
   throw new Error('NOT_OBJECT');

@@ -1610,6 +1610,37 @@ export const jsonExpressionUnitTests = (
     });
   });
 
+  describe('Array operators', () => {
+    describe('concat', () => {
+      test('concatenates two arrays', () => {
+        check(['concat', [[1]], [[2]]], [1, 2]);
+      });
+
+      test('concatenates empty arrays', () => {
+        check(['concat', [[1]], [[]]], [1]);
+        check(['concat', [[]], [[]]], []);
+      });
+
+      test('concatenates variadic number of arrays', () => {
+        check(['concat', [[1, 2]], [[3]], [[4, 5]]], [1, 2, 3, 4, 5]);
+        check(['concat', [[1, 2]], [[3]], [[4, 5, 'a']], [[true, null]]], [1, 2, 3, 4, 5, 'a', true, null]);
+      });
+
+      test('resolves variables at runtime', () => {
+        check(['concat', [[1, 2]], ['$', ''], [[4, 5]]], [1, 2, 3, 4, 5], [3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['concat', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""concat" operator expects at least two operands."`,
+        );
+        expect(() => check(['++', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""concat" operator expects at least two operands."`,
+        );
+      });
+    });
+  });
+
   describe('Object operators', () => {
     describe('keys', () => {
       test('returns empty array for empty object', () => {

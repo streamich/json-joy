@@ -1,0 +1,20 @@
+import * as util from '../util';
+import {Expression, ExpressionResult} from '../codegen-steps';
+import type * as types from '../types';
+
+export const arrayOperators: types.OperatorDefinition<any>[] = [
+  [
+    'concat',
+    ['++'],
+    -1,
+    (expr: types.ExprConcat, ctx) => {
+      const arrays = expr.slice(1).map((e) => ctx.eval(e, ctx));
+      return util.concat(arrays);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprConcat>): ExpressionResult => {
+      ctx.link(util.concat, 'concat');
+      const js = `concat([(${ctx.operands.join('),(')})])`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprConcat>,
+];
