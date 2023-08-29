@@ -119,6 +119,14 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return util.indexOf(operand1, operand2);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprIndexOf>): ExpressionResult => {
+      const val = ctx.operands[1];
+      if (val instanceof Literal) {
+        const fnJs = $$deepEqual(val.val);
+        const d = ctx.const(fnJs);
+        ctx.link(util.indexOf2, 'indexOf2');
+        const js = `indexOf2((${ctx.operands[0]}),${d})`;
+        return new Expression(js);
+      }
       ctx.link(util.indexOf, 'indexOf');
       const js = `indexOf((${ctx.operands[0]}),(${ctx.operands[1]}))`;
       return new Expression(js);

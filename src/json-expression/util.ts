@@ -245,6 +245,13 @@ export const indexOf = (container: unknown, item: unknown): -1 | number => {
   return -1;
 };
 
+export const indexOf2 = (container: unknown, check: (item: unknown) => boolean): -1 | number => {
+  const arr = asArr(container);
+  const length = arr.length;
+  for (let i = 0; i < length; i++) if (check(arr[i])) return i;
+  return -1;
+};
+
 // ---------------------------------------------------- Object operator helpers
 
 export const asObj = (value: unknown): object => {
