@@ -132,4 +132,21 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprIndexOf>,
+
+  [
+    'slice',
+    [],
+    3,
+    (expr: types.ExprSlice, ctx) => {
+      const operand1 = util.asArr(ctx.eval(expr[1], ctx));
+      const operand2 = util.int(ctx.eval(expr[2], ctx));
+      const operand3 = util.int(ctx.eval(expr[3], ctx));
+      return operand1.slice(operand2, operand3);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprSlice>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      const js = `asArr(${ctx.operands[0]}).slice((${ctx.operands[1]}),(${ctx.operands[2]}))`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprSlice>,
 ];

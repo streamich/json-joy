@@ -1800,6 +1800,31 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('slice', () => {
+      test('returns a slice of an array', () => {
+        check(['slice', [[1, 2, 3]], 0, 1], [1]);
+        check(['slice', [[1, 2, 3]], 0, 2], [1, 2]);
+        check(['slice', ['$', ''], 1, 3], [2, 3], [1, 2, 3]);
+      });
+
+      test('can use negative values', () => {
+        check(['slice', [[1, 2, 3]], 0, -2], [1]);
+        check(['slice', [[1, 2, 3]], 0, -1], [1, 2]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['slice', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+        expect(() => check(['slice', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+        expect(() => check(['slice', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {
