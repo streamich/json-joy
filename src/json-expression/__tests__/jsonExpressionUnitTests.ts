@@ -1692,6 +1692,25 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('sort', () => {
+      test('sorts an array', () => {
+        check(['sort', [[1, 2, 3]]], [1, 2, 3]);
+        check(['sort', [[4, 1, 2, 3]]], [1, 2, 3, 4]);
+        check(['[]', ['sort', [[4, 1, 6, 2, 3]]], 4], 6);
+      });
+
+      test('sorts an array - 2', () => {
+        check(['sort', ['$', '']], [1, 2, 3, 4], [4, 1, 2, 3]);
+        check(['[]', ['sort', ['$', '']], 4], 6, [4, 1, 6, 2, 3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['sort', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""sort" operator expects 1 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {

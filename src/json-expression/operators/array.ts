@@ -33,4 +33,21 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprHead>,
+
+  [
+    'sort',
+    [],
+    1,
+    (expr: types.ExprSort, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const arr = util.asArr(operand1);
+      /** @todo use `.toSorted()`, once it is more common. */
+      return [...arr].sort();
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprSort>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      const js = `[...asArr(${ctx.operands[0]})].sort()`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprSort>,
 ];
