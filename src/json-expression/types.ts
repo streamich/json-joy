@@ -16,6 +16,21 @@ export type TernaryExpression<
   A2 extends Expression = Expression,
   A3 extends Expression = Expression,
 > = [operator: O, operand1: A1, operand2: A2, operand3: A3];
+export type QuaternaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+  A4 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3, operand4: A4];
+export type QuinaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+  A4 extends Expression = Expression,
+  A5 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3, operand4: A4, operand5: A5];
 export type VariadicExpression<O, A extends Expression = Expression> = [operator: O, ...operands: A[]];
 
 export type Expression =
@@ -23,6 +38,8 @@ export type Expression =
   | UnaryExpression<any, any>
   | BinaryExpression<any, any, any>
   | TernaryExpression<any, any, any, any>
+  | QuaternaryExpression<any, any, any, any, any>
+  | QuinaryExpression<any, any, any, any, any, any>
   | VariadicExpression<any, any>;
 
 // Arithmetic expressions
@@ -180,13 +197,40 @@ export type ExprI32 = BinaryExpression<'i32'>;
 export type ExprF32 = BinaryExpression<'f32'>;
 export type ExprF64 = BinaryExpression<'f64'>;
 
+// Array expressions
+export type ArrayExpression =
+  | ExprConcat
+  | ExprHead
+  | ExprSort
+  | ExprReverse
+  | ExprIn
+  | ExprFromEntries
+  | ExprIndexOf
+  | ExprSlice
+  | ExprZip
+  | ExprFilter
+  | ExprMap
+  | ExprReduce;
+
+export type ExprConcat = VariadicExpression<'concat' | '++'>;
+export type ExprHead = BinaryExpression<'head'>;
+export type ExprSort = UnaryExpression<'sort'>;
+export type ExprReverse = UnaryExpression<'reverse'>;
+export type ExprIn = BinaryExpression<'in'>;
+export type ExprFromEntries = UnaryExpression<'fromEntries'>;
+export type ExprIndexOf = BinaryExpression<'indexOf'>;
+export type ExprSlice = TernaryExpression<'slice'>;
+export type ExprZip = BinaryExpression<'zip'>;
+export type ExprFilter = TernaryExpression<'filter'>;
+export type ExprMap = TernaryExpression<'map'>;
+export type ExprReduce = QuinaryExpression<'reduce'>;
+
 // Object expressions
-export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprIn;
+export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
 export type ExprEntries = UnaryExpression<'entries'>;
-export type ExprIn = [fn: 'in', what: unknown, list: unknown];
 
 // Bitwise expressions
 export type BitwiseExpression = ExprBitAnd | ExprBitOr | ExprBitXor | ExprBitNot;
@@ -216,6 +260,7 @@ export type Expr =
   | ContainerExpression
   | StringExpression
   | BinaryExpressions
+  | ArrayExpression
   | ObjectExpression
   | BitwiseExpression
   | BranchingExpression
@@ -266,6 +311,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   operand: (operand: Expression) => ExpressionResult;
   link: (value: unknown, name?: string) => string;
   const: (js: JavaScript<unknown>) => string;
+  subExpression: (expr: Expression) => (ctx: JsonExpressionExecutionContext) => unknown;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;

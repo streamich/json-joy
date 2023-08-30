@@ -6,6 +6,7 @@ import {typeOperators} from './type';
 import {containerOperators} from './container';
 import {stringOperators} from './string';
 import {binaryOperators} from './binary';
+import {arrayOperators} from './array';
 import {objectOperators} from './object';
 import {branchingOperators} from './branching';
 import {inputOperators} from './input';
@@ -19,6 +20,7 @@ export const operators = [
   ...containerOperators,
   ...stringOperators,
   ...binaryOperators,
+  ...arrayOperators,
   ...objectOperators,
   ...branchingOperators,
   ...inputOperators,

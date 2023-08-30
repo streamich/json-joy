@@ -1610,6 +1610,327 @@ export const jsonExpressionUnitTests = (
     });
   });
 
+  describe('Array operators', () => {
+    describe('concat', () => {
+      test('concatenates two arrays', () => {
+        check(['concat', [[1]], [[2]]], [1, 2]);
+      });
+
+      test('concatenates empty arrays', () => {
+        check(['concat', [[1]], [[]]], [1]);
+        check(['concat', [[]], [[]]], []);
+      });
+
+      test('concatenates variadic number of arrays', () => {
+        check(['concat', [[1, 2]], [[3]], [[4, 5]]], [1, 2, 3, 4, 5]);
+        check(['concat', [[1, 2]], [[3]], [[4, 5, 'a']], [[true, null]]], [1, 2, 3, 4, 5, 'a', true, null]);
+      });
+
+      test('resolves variables at runtime', () => {
+        check(['concat', [[1, 2]], ['$', ''], [[4, 5]]], [1, 2, 3, 4, 5], [3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['concat', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""concat" operator expects at least two operands."`,
+        );
+        expect(() => check(['++', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""concat" operator expects at least two operands."`,
+        );
+      });
+    });
+
+    describe('head', () => {
+      test('returns first two elements', () => {
+        check(['head', [[1, 2, 3]], 2], [1, 2]);
+      });
+
+      test('returns zero first elements', () => {
+        check(['head', [[1, 2, 3]], 0], []);
+      });
+
+      test('returns whole array when count is greater than array size', () => {
+        check(['head', [[1, 2, 3]], 10], [1, 2, 3]);
+      });
+
+      test('returns whole array when count is greater than array size - 2', () => {
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: 10,
+        });
+      });
+
+      test('negative values select from the end', () => {
+        check(['head', ['$', '/arr'], ['$', '/n']], [], {
+          arr: [1, 2, 3],
+          n: 0,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [3], {
+          arr: [1, 2, 3],
+          n: -1,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [2, 3], {
+          arr: [1, 2, 3],
+          n: -2,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: -3,
+        });
+        check(['head', ['$', '/arr'], ['$', '/n']], [1, 2, 3], {
+          arr: [1, 2, 3],
+          n: -4,
+        });
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['head', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""head" operator expects 2 operands."`,
+        );
+        expect(() => check(['head', 'a', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""head" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('sort', () => {
+      test('sorts an array', () => {
+        check(['sort', [[1, 2, 3]]], [1, 2, 3]);
+        check(['sort', [[4, 1, 2, 3]]], [1, 2, 3, 4]);
+        check(['[]', ['sort', [[4, 1, 6, 2, 3]]], 4], 6);
+      });
+
+      test('sorts an array - 2', () => {
+        check(['sort', ['$', '']], [1, 2, 3, 4], [4, 1, 2, 3]);
+        check(['[]', ['sort', ['$', '']], 4], 6, [4, 1, 6, 2, 3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['sort', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""sort" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('reverse', () => {
+      test('sorts an array', () => {
+        check(['reverse', [[1, 2, 3]]], [3, 2, 1]);
+        check(['reverse', [[4, 1, 2, 3]]], [3, 2, 1, 4]);
+        check(['[]', ['reverse', [[4, 1, 6, 2, 3]]], 4], 4);
+      });
+
+      test('sorts an array - 2', () => {
+        check(['reverse', ['$', '']], [3, 2, 1, 4], [4, 1, 2, 3]);
+        check(['[]', ['reverse', ['$', '']], 4], 4, [4, 1, 6, 2, 3]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['reverse', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reverse" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('in', () => {
+      test('returns true if value found in array', () => {
+        check(['in', [[1, 2, 3]], 3], true);
+        check(['in', [[1, 2, 3]], 2], true);
+        check(['in', [[1, 2, 3]], 1], true);
+        check(['in', ['$', ''], {foo: 'bar'}], true, [1, 2, 3, {foo: 'bar'}]);
+      });
+
+      test('returns false if value not found in array', () => {
+        check(['in', [[1, 2, 3]], 4], false);
+        check(['in', [[1, 2, 3]], 'a'], false);
+        check(['in', [[1, 2, 3]], ['$', '']], false, '1');
+        check(['in', ['$', ''], '1'], false, [1, 2, 3]);
+        check(['in', ['$', '/0'], ['$', '/1']], false, [[1, 2, 3], '1']);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['in', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""in" operator expects 2 operands."`,
+        );
+        expect(() => check(['in', 'a', 'b', 'c'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""in" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('fromEntries', () => {
+      test('returns object from 2-tuple list', () => {
+        check(['fromEntries', [[['foo', 'bar']]]], {foo: 'bar'});
+      });
+
+      test('returns object from 2-tuple list - 2', () => {
+        check(['fromEntries', ['++', [[]], [[['foo', 'bar']]]]], {foo: 'bar'});
+      });
+
+      test('returns object empty object', () => {
+        check(['fromEntries', [[]]], {});
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['fromEntries', 'a', 'b'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""fromEntries" operator expects 1 operands."`,
+        );
+      });
+    });
+
+    describe('indexOf', () => {
+      test('finds element in an array', () => {
+        check(['indexOf', [[1, 2, 3]], 2], 1);
+        check(['indexOf', [[1, 2, 3, {a: null}, {a: false}]], {a: false}], 4);
+      });
+
+      test('when array is input', () => {
+        check(['indexOf', ['$', ''], {a: false}], 4, [1, 2, 3, {a: null}, {a: false}]);
+      });
+
+      test('when array is input and element is input', () => {
+        check(['indexOf', ['$', ''], ['$', '/4']], 4, [1, 2, 3, {a: null}, {a: false}]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['indexOf', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""indexOf" operator expects 2 operands."`,
+        );
+        expect(() => check(['indexOf', 'a', 'a', 'a'] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""indexOf" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('slice', () => {
+      test('returns a slice of an array', () => {
+        check(['slice', [[1, 2, 3]], 0, 1], [1]);
+        check(['slice', [[1, 2, 3]], 0, 2], [1, 2]);
+        check(['slice', ['$', ''], 1, 3], [2, 3], [1, 2, 3]);
+      });
+
+      test('can use negative values', () => {
+        check(['slice', [[1, 2, 3]], 0, -2], [1]);
+        check(['slice', [[1, 2, 3]], 0, -1], [1, 2]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['slice', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+        expect(() => check(['slice', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+        expect(() => check(['slice', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""slice" operator expects 3 operands."`,
+        );
+      });
+    });
+
+    describe('zip', () => {
+      test('can join two arrays', () => {
+        check(
+          ['zip', [['foo', 'bar']], [[1, 2]]],
+          [
+            ['foo', 1],
+            ['bar', 2],
+          ],
+        );
+        check(
+          ['fromEntries', ['zip', [['foo', 'bar']], ['$', '']]],
+          {
+            foo: 1,
+            bar: 2,
+          },
+          [1, 2],
+        );
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['zip', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""zip" operator expects 2 operands."`,
+        );
+        expect(() => check(['zip', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""zip" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('filter', () => {
+      test('can filter out odd numbers', () => {
+        check(['filter', [[1, 2, 3, 4, 5]], 'x', ['!', ['%', ['$', 'x'], 2]]], [2, 4]);
+      });
+
+      test('can filter out strings', () => {
+        check(['filter', ['$', ''], 'item', ['str?', ['$', 'item']]], ['a', 'b', 'c'], [1, 2, 3, 'a', 4, 'b', 'c', 5]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['filter', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
+        );
+        expect(() => check(['filter', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
+        );
+        expect(() => check(['filter', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
+        );
+      });
+    });
+
+    describe('map', () => {
+      test('can multiply all numbers by 3', () => {
+        check(['map', [[1, 2, 3, 4, 5]], 'x', ['*', ['$', 'x'], 3]], [3, 6, 9, 12, 15]);
+      });
+
+      test('can multiply all numbers by 3', () => {
+        check(['map', ['$', '/arr'], 'x', ['*', ['$', 'x'], ['$', '/multiple']]], [3, 6, 9, 12, 15], {
+          arr: [1, 2, 3, 4, 5],
+          multiple: 3,
+        });
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['map', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+        expect(() => check(['map', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+        expect(() => check(['map', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+      });
+    });
+
+    describe('reduce', () => {
+      test('can add up numbers', () => {
+        check(['reduce', [[1, 2, 3, 4, 5]], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15);
+      });
+
+      test('can add up numbers - 2', () => {
+        check(['reduce', ['$', ''], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15, [1, 2, 3, 4, 5]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['reduce', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+      });
+    });
+  });
+
   describe('Object operators', () => {
     describe('keys', () => {
       test('returns empty array for empty object', () => {
