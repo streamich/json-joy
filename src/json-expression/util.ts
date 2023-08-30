@@ -268,7 +268,7 @@ export const zip = (maybeArr1: unknown, maybeArr2: unknown): [unknown, unknown][
 };
 
 export const filter = (arr: unknown[], varname: string, vars: Vars, run: () => unknown): unknown => {
-  const result = arr.filter(item => {
+  const result = arr.filter((item) => {
     vars.set(varname, item);
     return run();
   });
@@ -277,7 +277,7 @@ export const filter = (arr: unknown[], varname: string, vars: Vars, run: () => u
 };
 
 export const map = (arr: unknown[], varname: string, vars: Vars, run: () => unknown): unknown => {
-  const result = arr.map(item => {
+  const result = arr.map((item) => {
     vars.set(varname, item);
     return run();
   });
@@ -285,9 +285,16 @@ export const map = (arr: unknown[], varname: string, vars: Vars, run: () => unkn
   return result;
 };
 
-export const reduce = (arr: unknown[], initialValue: unknown, accname: string, varname: string, vars: Vars, run: () => unknown): unknown => {
+export const reduce = (
+  arr: unknown[],
+  initialValue: unknown,
+  accname: string,
+  varname: string,
+  vars: Vars,
+  run: () => unknown,
+): unknown => {
   vars.set(accname, initialValue);
-  arr.forEach(item => {
+  arr.forEach((item) => {
     vars.set(varname, item);
     const res = run();
     vars.set(accname, res);

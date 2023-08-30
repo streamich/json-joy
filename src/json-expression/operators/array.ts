@@ -4,7 +4,10 @@ import {$$deepEqual} from '../../json-equal/$$deepEqual';
 import type * as types from '../types';
 import {Vars} from '../Vars';
 
-const createSubExpressionOperator = <N extends string>(name: N, fn: (arr: unknown[], varname: string, vars: Vars, run: () => unknown) => unknown) => {
+const createSubExpressionOperator = <N extends string>(
+  name: N,
+  fn: (arr: unknown[], varname: string, vars: Vars, run: () => unknown) => unknown,
+) => {
   return [
     name,
     [],
@@ -22,7 +25,10 @@ const createSubExpressionOperator = <N extends string>(name: N, fn: (arr: unknow
       const varname = util.asStr(util.asLiteral(ctx.expr[2]));
       const d = ctx.link(ctx.subExpression(ctx.expr[3]));
       const operand1 = ctx.operands[0];
-      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
+      const arr =
+        operand1 instanceof Literal && operand1.val instanceof Array
+          ? JSON.stringify(operand1.val)
+          : `asArr(${operand1})`;
       const js = `${name}(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
       return new Expression(js);
     },
@@ -215,8 +221,13 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       const varname = util.asStr(util.asLiteral(ctx.expr[4]));
       const d = ctx.link(ctx.subExpression(ctx.expr[5]));
       const operand1 = ctx.operands[0];
-      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
-      const js = `reduce((${arr}),(${ctx.operands[1]}),${JSON.stringify(accname)},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
+      const arr =
+        operand1 instanceof Literal && operand1.val instanceof Array
+          ? JSON.stringify(operand1.val)
+          : `asArr(${operand1})`;
+      const js = `reduce((${arr}),(${ctx.operands[1]}),${JSON.stringify(accname)},${JSON.stringify(
+        varname,
+      )},vars,function(){return ${d}({vars:vars})})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprReduce>,

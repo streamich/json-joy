@@ -1907,7 +1907,7 @@ export const jsonExpressionUnitTests = (
         check(['reduce', [[1, 2, 3, 4, 5]], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15);
       });
 
-      test('can add up numbers = 2', () => {
+      test('can add up numbers - 2', () => {
         check(['reduce', ['$', ''], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15, [1, 2, 3, 4, 5]);
       });
 
