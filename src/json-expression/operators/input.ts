@@ -32,6 +32,7 @@ export const inputOperators: types.OperatorDefinition<any>[] = [
       if (varname instanceof Literal) {
         if (typeof varname.val !== 'string') throw new Error('varname must be a string.');
         const [name, pointer] = util.parseVar(varname.val);
+        if (!pointer) return new Expression(!name ? 'vars.env' : `vars.get(${JSON.stringify(name)})`);
         jsonPointer.validateJsonPointer(pointer);
         const hasDefaultValue = ctx.expr.length === 3;
         const defaultValue = hasDefaultValue ? ctx.operands[1] : undefined;
