@@ -191,7 +191,8 @@ export type ArrayExpression =
   | ExprIndexOf
   | ExprSlice
   | ExprZip
-  | ExprFilter;
+  | ExprFilter
+  | ExprMap;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;
@@ -203,6 +204,7 @@ export type ExprIndexOf = BinaryExpression<'indexOf'>;
 export type ExprSlice = TernaryExpression<'slice'>;
 export type ExprZip = BinaryExpression<'zip'>;
 export type ExprFilter = TernaryExpression<'filter'>;
+export type ExprMap = TernaryExpression<'map'>;
 
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;

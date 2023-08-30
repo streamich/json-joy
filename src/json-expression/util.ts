@@ -1,6 +1,7 @@
 import {deepEqual} from '../json-equal/deepEqual';
 import {toPath, get as get_} from '../json-pointer';
-import {Expression, Literal, OperatorDefinition, OperatorMap} from './types';
+import type {Vars} from './Vars';
+import type {Expression, Literal, OperatorDefinition, OperatorMap} from './types';
 
 // ----------------------------------------------------- Input operator helpers
 
@@ -263,6 +264,24 @@ export const zip = (maybeArr1: unknown, maybeArr2: unknown): [unknown, unknown][
   const length = Math.min(arr1.length, arr2.length);
   const result: [unknown, unknown][] = [];
   for (let i = 0; i < length; i++) result.push([arr1[i], arr2[i]]);
+  return result;
+};
+
+export const filter = (arr: unknown[], varname: string, vars: Vars, run: () => unknown): unknown => {
+  const result = arr.filter(item => {
+    vars.set(varname, item);
+    return run();
+  });
+  vars.del(varname);
+  return result;
+};
+
+export const map = (arr: unknown[], varname: string, vars: Vars, run: () => unknown): unknown => {
+  const result = arr.map(item => {
+    vars.set(varname, item);
+    return run();
+  });
+  vars.del(varname);
   return result;
 };
 

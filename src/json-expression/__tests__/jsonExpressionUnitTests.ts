@@ -1882,6 +1882,35 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('map', () => {
+      test('can multiply all numbers by 3', () => {
+        check(['map', [[1, 2, 3, 4, 5]], 'x',
+          ['*', ['$', 'x'], 3]
+        ], [3, 6, 9, 12, 15]);
+      });
+
+      test('can multiply all numbers by 3', () => {
+        check(['map', ['$', '/arr'], 'x',
+          ['*', ['$', 'x'], ['$', '/multiple']]
+        ], [3, 6, 9, 12, 15], {
+          arr: [1, 2, 3, 4, 5],
+          multiple: 3,
+        });
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['map', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+        expect(() => check(['map', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+        expect(() => check(['map', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""map" operator expects 3 operands."`,
+        );
+      });
+    });
   });
 
   describe('Object operators', () => {

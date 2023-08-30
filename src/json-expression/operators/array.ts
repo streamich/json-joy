@@ -174,21 +174,41 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       const arr = util.asArr(ctx.eval(expr[1], ctx));
       const varname = util.asStr(util.asLiteral(expr[2]));
       const expression = expr[3];
-      const result = arr.filter(item => {
-        ctx.vars.set(varname, item);
-        return !!ctx.eval(expression, ctx);
-      });
-      ctx.vars.del(varname);
-      return result;
+      const run = () => ctx.eval(expression, ctx);
+      return util.filter(arr, varname, ctx.vars, run);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprFilter>): ExpressionResult => {
       ctx.link(util.asArr, 'asArr');
+      ctx.link(util.filter, 'filter');
       const varname = util.asStr(util.asLiteral(ctx.expr[2]));
       const d = ctx.link(ctx.subExpression(ctx.expr[3]));
       const operand1 = ctx.operands[0];
       const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
-      const js = `${arr}.filter(function(x){vars.set(${JSON.stringify(varname)},x);return !!${d}({vars:vars})})`;
+      const js = `filter(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprFilter>,
+
+  [
+    'map',
+    [],
+    3,
+    (expr: types.ExprMap, ctx) => {
+      const arr = util.asArr(ctx.eval(expr[1], ctx));
+      const varname = util.asStr(util.asLiteral(expr[2]));
+      const expression = expr[3];
+      const run = () => ctx.eval(expression, ctx);
+      return util.map(arr, varname, ctx.vars, run);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprMap>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      ctx.link(util.map, 'map');
+      const varname = util.asStr(util.asLiteral(ctx.expr[2]));
+      const d = ctx.link(ctx.subExpression(ctx.expr[3]));
+      const operand1 = ctx.operands[0];
+      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
+      const js = `map(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprMap>,
 ];
