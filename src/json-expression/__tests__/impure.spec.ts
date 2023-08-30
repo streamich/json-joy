@@ -27,3 +27,9 @@ test('constant expression is collapsed', () => {
   expect(fn(2)).toBe(3);
   expect(fn(3)).toBe(3);
 });
+
+test('linked in dependencies are linked only once', () => {
+  const fn = compile(['/', ['/', ['$', ''], 2], 3]);
+  expect(fn(24)).toBe(4);
+  // Check that "slash" function is linked only once.
+});
