@@ -285,6 +285,19 @@ export const map = (arr: unknown[], varname: string, vars: Vars, run: () => unkn
   return result;
 };
 
+export const reduce = (arr: unknown[], initialValue: unknown, accname: string, varname: string, vars: Vars, run: () => unknown): unknown => {
+  vars.set(accname, initialValue);
+  arr.forEach(item => {
+    vars.set(varname, item);
+    const res = run();
+    vars.set(accname, res);
+  });
+  const result = vars.get(accname);
+  vars.del(accname);
+  vars.del(varname);
+  return result;
+};
+
 // ---------------------------------------------------- Object operator helpers
 
 export const asObj = (value: unknown): object => {

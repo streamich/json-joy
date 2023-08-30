@@ -16,6 +16,21 @@ export type TernaryExpression<
   A2 extends Expression = Expression,
   A3 extends Expression = Expression,
 > = [operator: O, operand1: A1, operand2: A2, operand3: A3];
+export type QuaternaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+  A4 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3, operand4: A4];
+export type QuinaryExpression<
+  O,
+  A1 extends Expression = Expression,
+  A2 extends Expression = Expression,
+  A3 extends Expression = Expression,
+  A4 extends Expression = Expression,
+  A5 extends Expression = Expression,
+> = [operator: O, operand1: A1, operand2: A2, operand3: A3, operand4: A4, operand5: A5];
 export type VariadicExpression<O, A extends Expression = Expression> = [operator: O, ...operands: A[]];
 
 export type Expression =
@@ -23,6 +38,8 @@ export type Expression =
   | UnaryExpression<any, any>
   | BinaryExpression<any, any, any>
   | TernaryExpression<any, any, any, any>
+  | QuaternaryExpression<any, any, any, any, any>
+  | QuinaryExpression<any, any, any, any, any, any>
   | VariadicExpression<any, any>;
 
 // Arithmetic expressions
@@ -192,7 +209,8 @@ export type ArrayExpression =
   | ExprSlice
   | ExprZip
   | ExprFilter
-  | ExprMap;
+  | ExprMap
+  | ExprReduce;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
 export type ExprHead = BinaryExpression<'head'>;
@@ -205,6 +223,7 @@ export type ExprSlice = TernaryExpression<'slice'>;
 export type ExprZip = BinaryExpression<'zip'>;
 export type ExprFilter = TernaryExpression<'filter'>;
 export type ExprMap = TernaryExpression<'map'>;
+export type ExprReduce = QuinaryExpression<'reduce'>;
 
 // Object expressions
 export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;

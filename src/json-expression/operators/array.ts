@@ -194,4 +194,30 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
 
   createSubExpressionOperator<'filter'>('filter', util.filter),
   createSubExpressionOperator<'map'>('map', util.map),
+
+  [
+    'reduce',
+    [],
+    5,
+    (expr: types.ExprReduce, ctx) => {
+      const arr = util.asArr(ctx.eval(expr[1], ctx));
+      const initialValue = ctx.eval(expr[2], ctx);
+      const accname = util.asStr(util.asLiteral(expr[3]));
+      const varname = util.asStr(util.asLiteral(expr[4]));
+      const expression = expr[5];
+      const run = () => ctx.eval(expression, ctx);
+      return util.reduce(arr, initialValue, accname, varname, ctx.vars, run);
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprReduce>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      ctx.link(util.reduce, 'reduce');
+      const accname = util.asStr(util.asLiteral(ctx.expr[3]));
+      const varname = util.asStr(util.asLiteral(ctx.expr[4]));
+      const d = ctx.link(ctx.subExpression(ctx.expr[5]));
+      const operand1 = ctx.operands[0];
+      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
+      const js = `reduce((${arr}),(${ctx.operands[1]}),${JSON.stringify(accname)},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.ExprReduce>,
 ];

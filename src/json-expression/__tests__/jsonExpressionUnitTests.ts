@@ -1857,17 +1857,11 @@ export const jsonExpressionUnitTests = (
 
     describe('filter', () => {
       test('can filter out odd numbers', () => {
-        check(['filter', [[1, 2, 3, 4, 5]], 'x',
-          ['!',
-            ['%', ['$', 'x'], 2]
-          ]
-        ], [2, 4]);
+        check(['filter', [[1, 2, 3, 4, 5]], 'x', ['!', ['%', ['$', 'x'], 2]]], [2, 4]);
       });
 
       test('can filter out strings', () => {
-        check(['filter', ['$', ''], 'item',
-          ['str?', ['$', 'item']]
-        ], ['a', 'b', 'c'], [1, 2, 3, 'a', 4, 'b', 'c', 5]);
+        check(['filter', ['$', ''], 'item', ['str?', ['$', 'item']]], ['a', 'b', 'c'], [1, 2, 3, 'a', 4, 'b', 'c', 5]);
       });
 
       test('throws on invalid operand count', () => {
@@ -1885,15 +1879,11 @@ export const jsonExpressionUnitTests = (
 
     describe('map', () => {
       test('can multiply all numbers by 3', () => {
-        check(['map', [[1, 2, 3, 4, 5]], 'x',
-          ['*', ['$', 'x'], 3]
-        ], [3, 6, 9, 12, 15]);
+        check(['map', [[1, 2, 3, 4, 5]], 'x', ['*', ['$', 'x'], 3]], [3, 6, 9, 12, 15]);
       });
 
       test('can multiply all numbers by 3', () => {
-        check(['map', ['$', '/arr'], 'x',
-          ['*', ['$', 'x'], ['$', '/multiple']]
-        ], [3, 6, 9, 12, 15], {
+        check(['map', ['$', '/arr'], 'x', ['*', ['$', 'x'], ['$', '/multiple']]], [3, 6, 9, 12, 15], {
           arr: [1, 2, 3, 4, 5],
           multiple: 3,
         });
@@ -1908,6 +1898,34 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['map', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""map" operator expects 3 operands."`,
+        );
+      });
+    });
+
+    describe('reduce', () => {
+      test('can add up numbers', () => {
+        check(['reduce', [[1, 2, 3, 4, 5]], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15);
+      });
+
+      test('can add up numbers = 2', () => {
+        check(['reduce', ['$', ''], 0, 'acc', 'x', ['+', ['$', 'acc'], ['$', 'x']]], 15, [1, 2, 3, 4, 5]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['reduce', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
+        );
+        expect(() => check(['reduce', '', '', '', '', '', ''] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""reduce" operator expects 5 operands."`,
         );
       });
     });
