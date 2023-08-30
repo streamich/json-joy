@@ -21,3 +21,9 @@ test('can execute expression twice with different inputs', () => {
   expect(fn(2)).toBe(3);
   expect(fn(3)).toBe(4);
 });
+
+test('constant expression is collapsed', () => {
+  const fn = compile(['+', 1, 2]);
+  expect(fn(2)).toBe(3);
+  expect(fn(3)).toBe(3);
+});
