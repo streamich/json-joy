@@ -2,6 +2,32 @@ import * as util from '../util';
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
 import type * as types from '../types';
+import {Vars} from '../Vars';
+
+const createSubExpressionOperator = <N extends string>(name: N, fn: (arr: unknown[], varname: string, vars: Vars, run: () => unknown) => unknown) => {
+  return [
+    name,
+    [],
+    3,
+    (expr: types.TernaryExpression<N>, ctx) => {
+      const arr = util.asArr(ctx.eval(expr[1], ctx));
+      const varname = util.asStr(util.asLiteral(expr[2]));
+      const expression = expr[3];
+      const run = () => ctx.eval(expression, ctx);
+      return fn(arr, varname, ctx.vars, run);
+    },
+    (ctx: types.OperatorCodegenCtx<types.TernaryExpression<N>>): ExpressionResult => {
+      ctx.link(util.asArr, 'asArr');
+      ctx.link(fn, name);
+      const varname = util.asStr(util.asLiteral(ctx.expr[2]));
+      const d = ctx.link(ctx.subExpression(ctx.expr[3]));
+      const operand1 = ctx.operands[0];
+      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
+      const js = `${name}(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
+      return new Expression(js);
+    },
+  ] as types.OperatorDefinition<types.TernaryExpression<N>>;
+};
 
 export const arrayOperators: types.OperatorDefinition<any>[] = [
   [
@@ -166,49 +192,6 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
     },
   ] as types.OperatorDefinition<types.ExprZip>,
 
-  [
-    'filter',
-    [],
-    3,
-    (expr: types.ExprFilter, ctx) => {
-      const arr = util.asArr(ctx.eval(expr[1], ctx));
-      const varname = util.asStr(util.asLiteral(expr[2]));
-      const expression = expr[3];
-      const run = () => ctx.eval(expression, ctx);
-      return util.filter(arr, varname, ctx.vars, run);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprFilter>): ExpressionResult => {
-      ctx.link(util.asArr, 'asArr');
-      ctx.link(util.filter, 'filter');
-      const varname = util.asStr(util.asLiteral(ctx.expr[2]));
-      const d = ctx.link(ctx.subExpression(ctx.expr[3]));
-      const operand1 = ctx.operands[0];
-      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
-      const js = `filter(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
-      return new Expression(js);
-    },
-  ] as types.OperatorDefinition<types.ExprFilter>,
-
-  [
-    'map',
-    [],
-    3,
-    (expr: types.ExprMap, ctx) => {
-      const arr = util.asArr(ctx.eval(expr[1], ctx));
-      const varname = util.asStr(util.asLiteral(expr[2]));
-      const expression = expr[3];
-      const run = () => ctx.eval(expression, ctx);
-      return util.map(arr, varname, ctx.vars, run);
-    },
-    (ctx: types.OperatorCodegenCtx<types.ExprMap>): ExpressionResult => {
-      ctx.link(util.asArr, 'asArr');
-      ctx.link(util.map, 'map');
-      const varname = util.asStr(util.asLiteral(ctx.expr[2]));
-      const d = ctx.link(ctx.subExpression(ctx.expr[3]));
-      const operand1 = ctx.operands[0];
-      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
-      const js = `map(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
-      return new Expression(js);
-    },
-  ] as types.OperatorDefinition<types.ExprMap>,
+  createSubExpressionOperator<'filter'>('filter', util.filter),
+  createSubExpressionOperator<'map'>('map', util.map),
 ];
