@@ -1836,9 +1836,7 @@ export const jsonExpressionUnitTests = (
           ],
         );
         check(
-          ['fromEntries',
-            ['zip', [['foo', 'bar']], ['$', '']],
-          ],
+          ['fromEntries', ['zip', [['foo', 'bar']], ['$', '']]],
           {
             foo: 1,
             bar: 2,
@@ -1853,6 +1851,34 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['zip', 1, 2, 3] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""zip" operator expects 2 operands."`,
+        );
+      });
+    });
+
+    describe('filter', () => {
+      test('can filter out odd numbers', () => {
+        check(['filter', [[1, 2, 3, 4, 5]], 'x',
+          ['!',
+            ['%', ['$', 'x'], 2]
+          ]
+        ], [2, 4]);
+      });
+
+      test('can filter out strings', () => {
+        check(['filter', ['$', ''], 'item',
+          ['str?', ['$', 'item']]
+        ], ['a', 'b', 'c'], [1, 2, 3, 'a', 4, 'b', 'c', 5]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['filter', 1] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
+        );
+        expect(() => check(['filter', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
+        );
+        expect(() => check(['filter', 1, 2, 3, 4] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""filter" operator expects 3 operands."`,
         );
       });
     });

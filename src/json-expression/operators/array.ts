@@ -1,7 +1,7 @@
 import * as util from '../util';
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
-import type * as types from '../types';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
+import type * as types from '../types';
 
 export const arrayOperators: types.OperatorDefinition<any>[] = [
   [
@@ -176,7 +176,7 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       const expression = expr[3];
       const result = arr.filter(item => {
         ctx.vars.set(varname, item);
-        ctx.eval(expression, ctx);
+        return !!ctx.eval(expression, ctx);
       });
       ctx.vars.del(varname);
       return result;
@@ -185,7 +185,9 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       ctx.link(util.asArr, 'asArr');
       const varname = util.asStr(util.asLiteral(ctx.expr[2]));
       const d = ctx.link(ctx.subExpression(ctx.expr[3]));
-      const js = `asArr(${ctx.operands[0]}).filter(item => vars.set(${JSON.stringify(varname)},item),${d}({vars:vars}))`;
+      const operand1 = ctx.operands[0];
+      const arr = (operand1 instanceof Literal && operand1.val instanceof Array) ? JSON.stringify(operand1.val) : `asArr(${operand1})`;
+      const js = `${arr}.filter(function(x){vars.set(${JSON.stringify(varname)},x);return !!${d}({vars:vars})})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprFilter>,

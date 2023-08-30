@@ -44,7 +44,7 @@ export class JsonExpressionCodegen {
 
   private subExpression = (expr: types.Expr): ((ctx: types.JsonExpressionExecutionContext) => unknown) => {
     const codegen = new JsonExpressionCodegen({...this.options, expression: expr});
-    const fn = codegen.compile();
+    const fn = codegen.run().compile();
     return fn;
   };
 
