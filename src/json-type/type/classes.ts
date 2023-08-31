@@ -51,6 +51,7 @@ import type {TypeSystem} from '../system/TypeSystem';
 import type {json_string} from '../../json-brand';
 import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
+import type {ResolveType} from '../system';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -2176,6 +2177,8 @@ const fnNotImplemented: schema.FunctionValue<any, any> = async () => {
   throw new Error('NOT_IMPLEMENTED');
 };
 
+type FunctionImpl<Req extends Type, Res extends Type> = (req: ResolveType<Req>) => Promise<ResolveType<Res>>;
+
 export class FunctionType<Req extends Type, Res extends Type> extends AbstractType<
   schema.FunctionSchema<SchemaOf<Req>, SchemaOf<Res>>
 > {
@@ -2212,6 +2215,13 @@ export class FunctionType<Req extends Type, Res extends Type> extends AbstractTy
 
   public random(): unknown {
     return async () => this.res.random();
+  }
+
+  public value?: FunctionImpl<Req, Res> = undefined;
+
+  public singleton(value: FunctionImpl<Req, Res>): this {
+
+    return this;
   }
 
   public toTypeScriptAst(): ts.TsUnionType {
