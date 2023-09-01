@@ -1,22 +1,16 @@
 import {Type} from "../type";
 import {TypeSystem} from "./TypeSystem";
+import * as classes from "../type/classes";
 import {ResolveType} from "./types";
 
-interface Route<Req extends Type = Type, Res extends Type = Type> {
-  req: Req;
-  res: Res;
-  call: (req: ResolveType<Req>) => Promise<ResolveType<Res>>;
-}
-
-export interface TypeRouterOptions<R extends Record<string, Route>> {
+export interface TypeRouterOptions<R extends Record<string, classes.FunctionType<any, any>>> {
   system: TypeSystem;
   routes: R;
 }
 
-export class TypeRouter<R extends Record<string, Route>> {
+export class TypeRouter<R extends Record<string, classes.FunctionType<any, any>>> {
   constructor(options: TypeRouterOptions<R>) {}
 }
-
 
 const system = new TypeSystem();
 const t = system.t;
@@ -27,7 +21,7 @@ const fn = t.Function(
   t.Object(
     t.prop('doc', system.t.any),
   ),
-).singleton(async ({value}) => {
+).implement(async ({value}) => {
   return {
     doc: {},
   };
@@ -36,18 +30,6 @@ const fn = t.Function(
 const router = new TypeRouter({
   system,
   routes: {
-    'crdtCreate': {
-      req: t.Object(
-        t.prop('value', system.t.any),
-      ),
-      res: t.Object(
-        t.prop('doc', system.t.any),
-      ),
-      call: async ({}) => {
-        return {
-          
-        };
-      },
-    } as const,
+    'crdtCreate': fn,
   },
 });
