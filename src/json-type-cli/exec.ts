@@ -1,40 +1,17 @@
-import {Cli, CliOptions} from './Cli';
-// import * as util from './services/util/methods/echo';
-// import * as crdt from './services/crdt/methods/create';
+import {TypeSystem} from '../json-type/system';
+import {TypeRouter} from '../json-type/system/TypeRouter';
+import {Cli} from './Cli';
 
-// const options: CliOptions<crdt.Methods> = {
-//   define: crdt.define,
-//   implement: crdt.implement,
-// };
-
-const cli = new Cli();
-const {t} = cli;
-
-cli.register('util.echo', t.any, t.any, async (req) => {
-  return req;
+const system = new TypeSystem();
+const t = system.t;
+const router = new TypeRouter({
+  system,
+  routes: {
+    'util.echo': t.Function(t.any, t.any).implement(async (req) => {
+      return req;
+    }),
+  },
 });
-
-cli.register(
-  'crdt.create',
-  t.Object(t.propOpt('sid', t.num), t.propOpt('value', t.any)),
-  t.num,
-  // t.Object(
-  //   t.prop('doc', t.num),
-  // ),
-  async (req) => {
-    return 123;
-  },
-);
-
-const res = t.Object(t.prop('doc', t.any));
-
-cli.register(
-  'crdt.create2',
-  t.Object(t.propOpt('sid', t.num), t.propOpt('value', t.any)),
-  res,
-  async ({sid, value}) => {
-    return {doc: {}};
-  },
-);
+const cli = new Cli(router);
 
 cli.run();

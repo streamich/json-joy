@@ -1,7 +1,6 @@
-import {Type} from "../type";
 import {TypeSystem} from "./TypeSystem";
 import * as classes from "../type/classes";
-import {ResolveType} from "./types";
+import type {TypeBuilder} from "../type/TypeBuilder";
 
 export interface TypeRouterOptions<R extends Record<string, classes.FunctionType<any, any>>> {
   system: TypeSystem;
@@ -9,27 +8,13 @@ export interface TypeRouterOptions<R extends Record<string, classes.FunctionType
 }
 
 export class TypeRouter<R extends Record<string, classes.FunctionType<any, any>>> {
-  constructor(options: TypeRouterOptions<R>) {}
+  public system: TypeSystem;
+  public t: TypeBuilder;
+  public routes: R;
+
+  constructor(options: TypeRouterOptions<R>) {
+    this.system = options.system;
+    this.t = this.system.t;
+    this.routes = options.routes;
+  }
 }
-
-const system = new TypeSystem();
-const t = system.t;
-const fn = t.Function(
-  t.Object(
-    t.prop('value', system.t.any),
-  ),
-  t.Object(
-    t.prop('doc', system.t.any),
-  ),
-).implement(async ({value}) => {
-  return {
-    doc: {},
-  };
-});
-
-const router = new TypeRouter({
-  system,
-  routes: {
-    'crdtCreate': fn,
-  },
-});
