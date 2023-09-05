@@ -3,5 +3,4 @@ export * from './client';
 export * from './RpcMessageBatchProcessor';
 export * from './RpcMessageStreamProcessor';
 export * from './RpcDuplex';
-export * from './RpcPersistentClient';
-export * from './caller';
+export {RpcPersistentClient, type RpcPersistentClientParams} from './RpcPersistentClient';
