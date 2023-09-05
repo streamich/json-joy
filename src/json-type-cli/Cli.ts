@@ -3,17 +3,19 @@ import {Codecs} from '../json-pack/codecs/Codecs';
 import {TypeSystem} from '../json-type/system/TypeSystem';
 import {Writer} from '../util/buffers/Writer';
 import {TypeRouter} from '../json-type/system/TypeRouter';
-import {FunctionType} from '../json-type/type/classes';
+import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 
 export class Cli<Router extends TypeRouter<any>> {
   protected readonly system: TypeSystem;
   public readonly t: TypeBuilder;
+  public readonly caller: TypeRouterCaller<Router>;
   protected readonly writer: Writer;
   protected readonly codecs: Codecs;
 
   public constructor(public readonly router: Router) {
+    this.caller = new TypeRouterCaller({router});
     this.system = router.system;
     this.t = this.system.t;
     this.writer = new Writer();
@@ -28,11 +30,7 @@ export class Cli<Router extends TypeRouter<any>> {
     });
     const methodName = args.positionals.join('.');
     const request = args.values;
-    const fn = this.router.routes[methodName];
-    if (!(fn instanceof FunctionType)) throw new Error(`Method ${methodName} not found.`);
-    const method = fn.singleton;
-    if (!method) throw new Error(`Method ${methodName} not implemented.`);
-    method(request, {})
+    this.caller.call(methodName, request as any, {})
       .then((value) => {
         this.writer.reset();
         value.encode(this.codecs.json);
