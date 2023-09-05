@@ -49,11 +49,11 @@ export class RpcCaller<Ctx = unknown> {
   }
 
   protected validate(method: StaticRpcMethod<Ctx> | StreamingRpcMethod<Ctx>, request: unknown): void {
+    const validate = method.validate;
+    if (!validate) return;
     try {
-      if (method.validate) {
-        const errors = method.validate(request);
-        if (errors as any) throw errors;
-      }
+      const errors = validate(request);
+      if (errors as any) throw errors;
     } catch (error) {
       throw this.wrapValidationError(error);
     }
@@ -76,10 +76,11 @@ export class RpcCaller<Ctx = unknown> {
    * @returns Response data.
    */
   public async call(name: string, request: unknown, ctx: Ctx): Promise<Value<unknown>> {
-    const method = this.getMethodStrict(name);
-    this.validate(method, request);
     try {
-      if (method.onPreCall) await method.onPreCall(ctx, request);
+      const method = this.getMethodStrict(name);
+      this.validate(method, request);
+      const preCall = method.onPreCall;
+      if (preCall) await preCall(ctx, request);
       const data = await method.call(request, ctx);
       return new Value(data, method.res);
     } catch (error) {
