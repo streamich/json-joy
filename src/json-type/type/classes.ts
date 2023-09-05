@@ -21,6 +21,8 @@ import {
 } from '../codegen/json/JsonTextEncoderCodegenContext';
 import {CompiledBinaryEncoder} from '../codegen/types';
 import {CborEncoderCodegenContext, CborEncoderCodegenContextOptions} from '../codegen/binary/CborEncoderCodegenContext';
+import {JsonEncoderCodegenContext, JsonEncoderCodegenContextOptions} from '../codegen/binary/JsonEncoderCodegenContext';
+import {BinaryEncoderCodegenContext} from '../codegen/binary/BinaryEncoderCodegenContext';
 import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
 import {JsExpression} from '../../util/codegen/util/JsExpression';
 import {
@@ -30,10 +32,8 @@ import {
 import {MsgPackEncoder} from '../../json-pack/msgpack';
 import {lazy} from '../../util/lazyFunction';
 import {EncodingFormat} from '../../json-pack/constants';
-import {JsonEncoderCodegenContext, JsonEncoderCodegenContextOptions} from '../codegen/binary/JsonEncoderCodegenContext';
 import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
 import {Writer} from '../../util/buffers/Writer';
-import {BinaryEncoderCodegenContext} from '../codegen/binary/BinaryEncoderCodegenContext';
 import {BinaryJsonEncoder} from '../../json-pack/types';
 import {
   CapacityEstimatorCodegenContext,
@@ -52,6 +52,7 @@ import type {json_string} from '../../json-brand';
 import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
 import type {ResolveType} from '../system';
+import type {Observable} from 'rxjs';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -2236,6 +2237,8 @@ export class FunctionType<Req extends Type, Res extends Type> extends AbstractTy
   }
 }
 
+type FunctionStreamingImpl<Req extends Type, Res extends Type, Ctx = unknown> = (req: Observable<ResolveType<Req>>, ctx: Ctx) => Observable<ResolveType<Res>>;
+
 export class FunctionStreamingType<Req extends Type, Res extends Type> extends AbstractType<
   schema.FunctionStreamingSchema<SchemaOf<Req>, SchemaOf<Res>>
 > {
@@ -2271,6 +2274,13 @@ export class FunctionStreamingType<Req extends Type, Res extends Type> extends A
 
   public random(): unknown {
     return async () => this.res.random();
+  }
+
+  public singleton?: FunctionStreamingImpl<Req, Res, any> = undefined;
+
+  public implement<Ctx = unknown>(singleton: FunctionStreamingImpl<Req, Res, Ctx>): this {
+    this.singleton = singleton;
+    return this;
   }
 
   public toTypeScriptAst(): ts.TsUnionType {
