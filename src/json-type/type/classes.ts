@@ -73,7 +73,7 @@ interface Validators {
   boolean?: JsonTypeValidator;
 }
 
-abstract class AbstractType<S extends schema.Schema> implements BaseType<S>, Printable {
+export abstract class AbstractType<S extends schema.Schema> implements BaseType<S>, Printable {
   /** Default type system to use, if any. */
   public system?: TypeSystem;
 

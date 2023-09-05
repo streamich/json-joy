@@ -1,9 +1,9 @@
 import {RpcError, RpcErrorCodes} from './error';
 import {RpcCaller, type RpcApiCallerOptions} from './RpcCaller';
-import {FunctionStreamingType, FunctionType} from '../../../../json-type/type/classes';
+import {type AbstractType, FunctionStreamingType, FunctionType} from '../../../../json-type/type/classes';
 import {StaticRpcMethod, type StaticRpcMethodOptions} from '../methods/StaticRpcMethod';
 import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/StreamingRpcMethod';
-import type {SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
+import type {Schema, SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
 import type {TypeRouter} from '../../../../json-type/system/TypeRouter';
 
 export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown> extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
@@ -31,10 +31,13 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     let method = this.methods.get(id as string) as any;
     if (method) return method;
     const fn = this.router.routes[id as string];
+    // TODO: do this check without relying on constructor and importing the `FunctionType` class.
     if (!fn || !(fn instanceof FunctionType || fn instanceof FunctionStreamingType))
       throw RpcError.valueFromCode(RpcErrorCodes.METHOD_NOT_FOUND, `Type [alias = ${id as string}] is not a function.`);
     const validator = fn.req.validator('boolean');
-    const validate = (req: unknown) => {
+    const requestSchema = (fn.req as AbstractType<Schema>).getSchema();
+    const isRequestVoid = requestSchema.__t === 'const' && requestSchema.value === undefined;
+    const validate = isRequestVoid ? () => {} : (req: unknown) => {
       const error = validator(req);
       if (error) throw RpcError.valueFromCode(RpcErrorCodes.BAD_REQUEST);
     };

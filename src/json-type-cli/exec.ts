@@ -12,6 +12,13 @@ const router = new TypeRouter({
     }),
   },
 });
-const cli = new Cli(router);
+
+const router2 = router.extend(({t}) => {
+  return {
+    'util.time': t.Function(t.undef, t.num).implement(async () => Date.now()),
+  };
+});
+
+const cli = new Cli(router2);
 
 cli.run();
