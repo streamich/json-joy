@@ -28,8 +28,11 @@ export class Cli<Router extends TypeRouter<any>> {
       strict: false,
       allowPositionals: true,
     });
-    const methodName = args.positionals.join('.');
-    const request = args.values;
+    const methodName = args.positionals[0];
+    const request = {
+      ...JSON.parse(args.positionals[1] || '{}'),
+      ...args.values,
+    };
     this.caller.call(methodName, request as any, {})
       .then((value) => {
         this.writer.reset();
