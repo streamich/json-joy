@@ -51,15 +51,16 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       strict: false,
       allowPositionals: true,
     });
+    const methodName = args.positionals[0];
     if (args.values.v || args.values.version) {
       this.printVersion(options);
       return;
     }
     if (args.values.h || args.values.help) {
-      this.printHelp(options);
+      if (methodName) this.printMethodHelp(methodName, options);
+      else this.printHelp(options);
       return;
     }
-    const methodName = args.positionals[0];
     const {'ctx.format': format = '', ...commandRequestPart} = {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
@@ -100,6 +101,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       if (schema.title) line += ` - ${schema.title}`;
       return line;
     });
+    const cmd = this.cmd();
     const text = `
 
   JSON Type CLI uses request/response paradigm to execute CLI commands. Each
@@ -108,15 +110,15 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
 
   Usage:
 
-    ${this.cmd()} <method> --key=value
-    ${this.cmd()} <method> '<json>'
-    echo '<json>' | ${this.cmd()} <method>
+    ${cmd} <method> --key=value
+    ${cmd} <method> '<json>'
+    echo '<json>' | ${cmd} <method>
 
   Examples:
 
-    ${this.cmd()} util.echo --value=123
-    ${this.cmd()} util.echo --value='{"foo":123}'
-    echo '{"foo":123}' | ${this.cmd()} util.echo
+    ${cmd} util.echo --value=123
+    ${cmd} util.echo --value='{"foo":123}'
+    echo '{"foo":123}' | ${cmd} util.echo
 
   Methods:
 
@@ -124,8 +126,40 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
 
   Add "--help" or "-h" to see command specific help:
 
-    ${this.cmd()} --help <method>
-    ${this.cmd()} -h <method>
+    ${cmd} --help <method>
+    ${cmd} -h <method>
+
+`;
+    const stdout = options.stdout ?? process.stdout;
+    stdout.write(text);
+  }
+
+  private printMethodHelp(method: string, options: RunOptions = {}): void {
+    const fn = this.router.routes[method];
+    if (!fn) {
+      const stderr = options.stderr ?? process.stderr;
+      stderr.write(`Method not found: ${method}\n`);
+      return;
+    }
+    const schema = fn.getSchema();
+    const cmd = this.cmd();
+    const text = `
+
+  ${schema.title ? schema.title + ` - ` : ''}"${method}"
+
+  ${schema.description ?? '[no description]'}
+
+  Usage:
+
+    ${cmd} ${method} '<request-json>'
+
+  Request:
+
+    ${fn.req.toString('    ')}
+
+  Response:
+
+    ${fn.res.toString('    ')}
 
 `;
     const stdout = options.stdout ?? process.stdout;
