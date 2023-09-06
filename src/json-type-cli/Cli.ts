@@ -50,10 +50,13 @@ export class Cli<Router extends TypeRouter<any>> {
       allowPositionals: true,
     });
     const methodName = args.positionals[0];
-    const {'ctx.format': format = '', ...request} = {
-      ...(input ? JSON.parse(input.toString()) : {}),
+    const {'ctx.format': format = '', ...commandRequestPart} = {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
+    };
+    const request = {
+      ...(input ? JSON.parse(input.toString()) : {}),
+      ...commandRequestPart,
     };
     const [requestCodec, responseCodec] = this.codecs.getCodecs(format);
     this.caller
