@@ -43,5 +43,5 @@ export class TypeRouter<Routes extends RoutesBase> {
   }
 }
 
-type RoutesBase = Record<string, classes.FunctionType<any, any>>;
+export type RoutesBase = Record<string, classes.FunctionType<any, any>>;
 type TypeRouterRoutes<R extends TypeRouter<any>> = R extends TypeRouter<infer R2> ? R2 : never;
