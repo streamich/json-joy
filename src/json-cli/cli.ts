@@ -1,4 +1,4 @@
-import {Cli} from '../json-type-cli/Cli';
+import {createCli} from '../json-type-cli';
 import {TypeRouter} from '../json-type/system/TypeRouter';
 import {defineCrdtRoutes} from './routes/crdt';
 import {defineUtilRoutes} from './routes/util';
@@ -9,5 +9,5 @@ const router =
   ( defineUtilRoutes
   ( TypeRouter.create())));
 
-const cli = new Cli({router});
+const cli = createCli({router});
 cli.run();

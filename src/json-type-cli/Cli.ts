@@ -1,14 +1,14 @@
 import {parseArgs} from 'node:util';
-import {Codecs} from '../json-pack/codecs/Codecs';
 import {TypeSystem} from '../json-type/system/TypeSystem';
-import {Writer} from '../util/buffers/Writer';
 import {TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
+import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {WriteStream, ReadStream} from 'tty';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
+  codecs: CliCodecs;
   router?: Router;
 }
 
@@ -24,16 +24,14 @@ export class Cli<Router extends TypeRouter<any>> {
   protected readonly system: TypeSystem;
   public readonly t: TypeBuilder;
   public readonly caller: TypeRouterCaller<Router>;
-  protected readonly writer: Writer;
-  protected readonly codecs: Codecs;
+  public readonly codecs: CliCodecs;
 
-  public constructor(options: CliOptions<Router> = {}) {
+  public constructor(options: CliOptions<Router>) {
     const router = (this.router = options.router ?? (TypeRouter.create() as any));
     this.caller = new TypeRouterCaller({router});
     this.system = router.system;
     this.t = this.system.t;
-    this.writer = new Writer();
-    this.codecs = new Codecs(this.writer);
+    this.codecs = options.codecs;
   }
 
   public run(options?: RunOptions): void {
@@ -57,19 +55,17 @@ export class Cli<Router extends TypeRouter<any>> {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
     };
+    const responseCodecId = 'json';
+    const responseCodec = this.codecs.codecs.get(responseCodecId);
+    if (!responseCodec) throw new Error(`Codec not found: ${responseCodecId}`);
     this.caller
       .call(methodName, request as any, {})
       .then((value) => {
-        this.writer.reset();
-        value.encode(this.codecs.json);
-        const buf = this.writer.flush();
+        const buf = responseCodec.encode((value as Value).data);
         stdout.write(buf);
       })
       .catch((err) => {
-        const value = err as Value;
-        this.writer.reset();
-        value.encode(this.codecs.json);
-        const buf = this.writer.flush();
+        const buf = responseCodec.encode((err as Value).data);
         stderr.write(buf);
       });
   }

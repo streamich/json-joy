@@ -1,0 +1,23 @@
+import {JsonDecoder} from '../../json-pack/json/JsonDecoder';
+import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
+import type {Writer} from '../../util/buffers/Writer';
+import type {CliCodec} from '../types';
+
+export class CliCodecJson implements CliCodec<'json'> {
+  public readonly id = 'json';
+  protected readonly encoder: JsonEncoder;
+  protected readonly decoder: JsonDecoder;
+
+  constructor(protected readonly writer: Writer) {
+    this.encoder = new JsonEncoder(writer);
+    this.decoder = new JsonDecoder();
+  }
+
+  encode(value: unknown): Uint8Array {
+    return this.encoder.encode(value);
+  }
+
+  decode(bytes: Uint8Array): unknown {
+    return this.decoder.read(bytes);
+  }
+}
