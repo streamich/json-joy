@@ -28,7 +28,7 @@ export class Cli<Router extends TypeRouter<any>> {
   protected readonly codecs: Codecs;
 
   public constructor(options: CliOptions<Router> = {}) {
-    const router = this.router = options.router ?? TypeRouter.create() as any;
+    const router = (this.router = options.router ?? (TypeRouter.create() as any));
     this.caller = new TypeRouterCaller({router});
     this.system = router.system;
     this.t = this.system.t;
@@ -57,7 +57,8 @@ export class Cli<Router extends TypeRouter<any>> {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
     };
-    this.caller.call(methodName, request as any, {})
+    this.caller
+      .call(methodName, request as any, {})
       .then((value) => {
         this.writer.reset();
         value.encode(this.codecs.json);
@@ -82,5 +83,5 @@ export class Cli<Router extends TypeRouter<any>> {
       length += chunk.length;
     }
     return Buffer.concat(result, length);
-  };
+  }
 }

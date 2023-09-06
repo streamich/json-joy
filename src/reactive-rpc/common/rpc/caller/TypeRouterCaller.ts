@@ -6,7 +6,8 @@ import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/Str
 import type {Schema, SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
 import type {TypeRouter} from '../../../../json-type/system/TypeRouter';
 
-export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown> extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
+export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown>
+  extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
   router: Router;
 }
 
@@ -37,28 +38,35 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     const validator = fn.req.validator('boolean');
     const requestSchema = (fn.req as AbstractType<Schema>).getSchema();
     const isRequestVoid = requestSchema.__t === 'const' && requestSchema.value === undefined;
-    const validate = isRequestVoid ? () => {} : (req: unknown) => {
-      const error = validator(req);
-      if (error) throw RpcError.valueFromCode(RpcErrorCodes.BAD_REQUEST);
-    };
-    method = fn instanceof FunctionType
-      ? new StaticRpcMethod({
-          req: fn.req,
-          res: fn.res,
-          validate,
-          call: fn.singleton as any,
-        })
-      : new StreamingRpcMethod({
-          req: fn.req,
-          res: fn.res,
-          validate,
-          call$: fn.singleton as any,
-        });
+    const validate = isRequestVoid
+      ? () => {}
+      : (req: unknown) => {
+          const error = validator(req);
+          if (error) throw RpcError.valueFromCode(RpcErrorCodes.BAD_REQUEST);
+        };
+    method =
+      fn instanceof FunctionType
+        ? new StaticRpcMethod({
+            req: fn.req,
+            res: fn.res,
+            validate,
+            call: fn.singleton as any,
+          })
+        : new StreamingRpcMethod({
+            req: fn.req,
+            res: fn.res,
+            validate,
+            call$: fn.singleton as any,
+          });
     this.methods.set(id as string, method as any);
     return method;
   }
 
-  public async call<K extends keyof Routes<Router>>(id: K, request: MethodReq<Routes<Router>[K]>, ctx: Ctx): Promise<MethodRes<Routes<Router>[K]>> {
+  public async call<K extends keyof Routes<Router>>(
+    id: K,
+    request: MethodReq<Routes<Router>[K]>,
+    ctx: Ctx,
+  ): Promise<MethodRes<Routes<Router>[K]>> {
     return super.call(id as string, request, ctx) as any;
   }
 }

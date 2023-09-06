@@ -1,6 +1,6 @@
-import * as classes from "../type/classes";
-import {TypeSystem} from "./TypeSystem";
-import type {TypeBuilder} from "../type/TypeBuilder";
+import * as classes from '../type/classes';
+import {TypeSystem} from './TypeSystem';
+import type {TypeBuilder} from '../type/TypeBuilder';
 
 export interface TypeRouterOptions<R extends RoutesBase> {
   system: TypeSystem;
@@ -8,13 +8,15 @@ export interface TypeRouterOptions<R extends RoutesBase> {
 }
 
 export class TypeRouter<Routes extends RoutesBase> {
-  public static create = <NewRoutes extends RoutesBase>(routes?: (t: TypeRouter<{}>) => NewRoutes): TypeRouter<NewRoutes> => {
+  public static create = <NewRoutes extends RoutesBase>(
+    routes?: (t: TypeRouter<{}>) => NewRoutes,
+  ): TypeRouter<NewRoutes> => {
     const system = new TypeSystem();
     const router = new TypeRouter({
       system,
       routes: {},
     });
-    return routes ? router.extend(routes) : router as any;
+    return routes ? router.extend(routes) : (router as any);
   };
 
   public system: TypeSystem;

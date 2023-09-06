@@ -2178,7 +2178,10 @@ const fnNotImplemented: schema.FunctionValue<any, any> = async () => {
   throw new Error('NOT_IMPLEMENTED');
 };
 
-type FunctionImpl<Req extends Type, Res extends Type, Ctx = unknown> = (req: ResolveType<Req>, ctx: Ctx) => Promise<ResolveType<Res>>;
+type FunctionImpl<Req extends Type, Res extends Type, Ctx = unknown> = (
+  req: ResolveType<Req>,
+  ctx: Ctx,
+) => Promise<ResolveType<Res>>;
 
 export class FunctionType<Req extends Type, Res extends Type> extends AbstractType<
   schema.FunctionSchema<SchemaOf<Req>, SchemaOf<Res>>
@@ -2237,7 +2240,10 @@ export class FunctionType<Req extends Type, Res extends Type> extends AbstractTy
   }
 }
 
-type FunctionStreamingImpl<Req extends Type, Res extends Type, Ctx = unknown> = (req: Observable<ResolveType<Req>>, ctx: Ctx) => Observable<ResolveType<Res>>;
+type FunctionStreamingImpl<Req extends Type, Res extends Type, Ctx = unknown> = (
+  req: Observable<ResolveType<Req>>,
+  ctx: Ctx,
+) => Observable<ResolveType<Res>>;
 
 export class FunctionStreamingType<Req extends Type, Res extends Type> extends AbstractType<
   schema.FunctionStreamingSchema<SchemaOf<Req>, SchemaOf<Res>>

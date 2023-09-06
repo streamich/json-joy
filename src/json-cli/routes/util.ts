@@ -1,4 +1,4 @@
-import {RoutesBase, TypeRouter} from "../../json-type/system/TypeRouter";
+import {RoutesBase, TypeRouter} from '../../json-type/system/TypeRouter';
 
 export const defineUtilRoutes = <Routes extends RoutesBase>(router: TypeRouter<Routes>) => {
   const router2 = router.extend(({t}) => ({
