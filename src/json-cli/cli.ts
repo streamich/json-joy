@@ -12,6 +12,7 @@ const router =
 const cli = createCli({
   router,
   version: 'v1.2.3',
+  cmd: 'jj',
 });
 
 cli.run();

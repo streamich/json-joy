@@ -29,6 +29,10 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
             }),
           ),
         )
+        .options({
+          title: 'Create a CRDT document',
+          description: 'Creates a new JSON CRDT document.',
+        })
         .implement(async ({value, sid, serverClock}) => {
           const model = Model.withLogicalClock();
           return {
