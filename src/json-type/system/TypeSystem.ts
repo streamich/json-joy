@@ -16,7 +16,8 @@ export class TypeSystem implements Printable {
    * GraphQL "nodes".
    */
   public readonly alias = <K extends string, T extends Type>(id: K, type: T): TypeAlias<K, T> => {
-    if (this.aliases.has(id)) throw new Error(`Alias [id = ${id}] already exists.`);
+    const existingAlias = this.aliases.get(id);
+    if (existingAlias) return existingAlias as TypeAlias<K, T>;
     const alias = new TypeAlias<K, T>(this, id, type);
     this.aliases.set(id, alias);
     return alias;

@@ -27,6 +27,7 @@ export class TypeRouter<Routes extends RoutesBase> {
     this.system = options.system;
     this.t = this.system.t;
     this.routes = options.routes;
+    this.system.importTypes(this.routes);
   }
 
   protected merge<Router extends TypeRouter<any>>(router: Router): TypeRouter<Routes & TypeRouterRoutes<Router>> {
