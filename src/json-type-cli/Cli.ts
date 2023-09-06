@@ -10,6 +10,7 @@ import type {WriteStream, ReadStream} from 'tty';
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;
   router?: Router;
+  version?: string;
 }
 
 export interface RunOptions {
@@ -26,7 +27,7 @@ export class Cli<Router extends TypeRouter<any>> {
   public readonly caller: TypeRouterCaller<Router>;
   public readonly codecs: CliCodecs;
 
-  public constructor(options: CliOptions<Router>) {
+  public constructor(protected readonly options: CliOptions<Router>) {
     const router = (this.router = options.router ?? (TypeRouter.create() as any));
     this.caller = new TypeRouterCaller({router});
     this.system = router.system;
@@ -49,6 +50,10 @@ export class Cli<Router extends TypeRouter<any>> {
       strict: false,
       allowPositionals: true,
     });
+    if (args.values.v || args.values.version) {
+      this.printVersion(options);
+      return;
+    }
     const methodName = args.positionals[0];
     const {'ctx.format': format = '', ...commandRequestPart} = {
       ...JSON.parse(args.positionals[1] || '{}'),
@@ -69,6 +74,12 @@ export class Cli<Router extends TypeRouter<any>> {
         const buf = responseCodec.encode((err as Value).data);
         stderr.write(buf);
       });
+  }
+
+  private printVersion(options: RunOptions = {}): void {
+    const version = this.options.version ?? '0.0.0-unknown';
+    const stdout = options.stdout ?? process.stdout;
+    stdout.write(version + '\n');
   }
 
   private async getStdin(stdin: ReadStream): Promise<Buffer> {

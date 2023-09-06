@@ -9,5 +9,9 @@ const router =
   ( defineUtilRoutes
   ( TypeRouter.create())));
 
-const cli = createCli({router});
+const cli = createCli({
+  router,
+  version: 'v1.2.3',
+});
+
 cli.run();
