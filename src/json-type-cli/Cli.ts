@@ -7,14 +7,20 @@ import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCall
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 
+export interface CliOptions<Router extends TypeRouter<any>> {
+  router?: Router;
+}
+
 export class Cli<Router extends TypeRouter<any>> {
+  public router: Router;
   protected readonly system: TypeSystem;
   public readonly t: TypeBuilder;
   public readonly caller: TypeRouterCaller<Router>;
   protected readonly writer: Writer;
   protected readonly codecs: Codecs;
 
-  public constructor(public readonly router: Router) {
+  public constructor(options: CliOptions<Router> = {}) {
+    const router = this.router = options.router ?? TypeRouter.create() as any;
     this.caller = new TypeRouterCaller({router});
     this.system = router.system;
     this.t = this.system.t;

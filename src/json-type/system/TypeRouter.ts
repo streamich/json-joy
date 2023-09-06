@@ -8,13 +8,13 @@ export interface TypeRouterOptions<R extends RoutesBase> {
 }
 
 export class TypeRouter<Routes extends RoutesBase> {
-  public static create = <NewRoutes extends RoutesBase>(routes: (t: TypeRouter<{}>) => NewRoutes): TypeRouter<NewRoutes> => {
+  public static create = <NewRoutes extends RoutesBase>(routes?: (t: TypeRouter<{}>) => NewRoutes): TypeRouter<NewRoutes> => {
     const system = new TypeSystem();
     const router = new TypeRouter({
       system,
       routes: {},
     });
-    return router.extend(routes);
+    return routes ? router.extend(routes) : router as any;
   };
 
   public system: TypeSystem;
