@@ -6,9 +6,12 @@ import {TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
+import type {WriteStream} from 'tty';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   router?: Router;
+  stdout?: WriteStream;
+  stderr?: WriteStream;
 }
 
 export class Cli<Router extends TypeRouter<any>> {
@@ -18,6 +21,8 @@ export class Cli<Router extends TypeRouter<any>> {
   public readonly caller: TypeRouterCaller<Router>;
   protected readonly writer: Writer;
   protected readonly codecs: Codecs;
+  protected readonly stdout: WriteStream;
+  protected readonly stderr: WriteStream;
 
   public constructor(options: CliOptions<Router> = {}) {
     const router = this.router = options.router ?? TypeRouter.create() as any;
@@ -26,6 +31,8 @@ export class Cli<Router extends TypeRouter<any>> {
     this.t = this.system.t;
     this.writer = new Writer();
     this.codecs = new Codecs(this.writer);
+    this.stdout = options.stdout ?? process.stdout;
+    this.stderr = options.stderr ?? process.stderr;
   }
 
   public run(argv: string[] = process.argv.slice(2)): void {
@@ -44,14 +51,14 @@ export class Cli<Router extends TypeRouter<any>> {
         this.writer.reset();
         value.encode(this.codecs.json);
         const buf = this.writer.flush();
-        process.stdout.write(buf);
+        this.stdout.write(buf);
       })
       .catch((err) => {
         const value = err as Value;
         this.writer.reset();
         value.encode(this.codecs.json);
         const buf = this.writer.flush();
-        process.stdout.write(buf);
+        this.stderr.write(buf);
       });
   }
 }
