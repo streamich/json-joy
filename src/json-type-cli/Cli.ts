@@ -2,23 +2,18 @@ import {parseArgs} from 'node:util';
 import {TypeSystem} from '../json-type/system/TypeSystem';
 import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
+import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
-import type {WriteStream, ReadStream} from 'tty';
+import type {ReadStream} from 'tty';
+import type {CliCodec, CliContext, RunOptions} from './types';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;
   router?: Router;
   version?: string;
   cmd?: string;
-}
-
-export interface RunOptions {
-  argv?: string[];
-  stdout?: WriteStream;
-  stderr?: WriteStream;
-  stdin?: ReadStream;
 }
 
 export class Cli<Router extends TypeRouter<RoutesBase>> {
@@ -37,7 +32,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
   }
 
   public run(options?: RunOptions): void {
-    this.runAsync(options).catch(() => {});
+    this.runAsync(options);
   }
 
   public async runAsync(options: RunOptions = {}): Promise<void> {
@@ -45,7 +40,6 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     const stdin = options.stdin ?? process.stdin;
     const stdout = options.stdout ?? process.stdout;
     const stderr = options.stderr ?? process.stderr;
-    const input = await this.getStdin(stdin);
     const args = parseArgs({
       args: argv,
       strict: false,
@@ -65,13 +59,20 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
     };
+    const codecs = this.codecs.getCodecs(format);
+    const [requestCodec, responseCodec] = codecs;
+    const input = await this.getStdinValue(stdin, requestCodec);
     const request = {
-      ...(input ? JSON.parse(input.toString()) : {}),
+      ...(typeof input === 'object' ? input : {input}),
       ...commandRequestPart,
     };
-    const [requestCodec, responseCodec] = this.codecs.getCodecs(format);
+    const ctx: CliContext<Router> = {
+      cli: this,
+      run: options,
+      codecs,
+    };
     this.caller
-      .call(methodName, request as any, {})
+      .call(methodName, request as any, ctx)
       .then((value) => {
         const buf = responseCodec.encode((value as Value).data);
         stdout.write(buf);
@@ -175,5 +176,16 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       length += chunk.length;
     }
     return Buffer.concat(result, length);
+  }
+
+  private async getStdinValue(stdin: ReadStream, codec: CliCodec): Promise<unknown> {
+    if (stdin.isTTY) return Object.create(null);
+    const input = await this.getStdin(stdin);
+    if (codec.id === 'json') {
+      const str = input.toString().trim();
+      if (!str) return Object.create(null);
+    }
+    const uint8 = bufferToUint8Array(input);
+    return codec.decode(uint8);
   }
 }
