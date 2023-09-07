@@ -35,14 +35,16 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     // TODO: do this check without relying on constructor and importing the `FunctionType` class.
     if (!fn || !(fn instanceof FunctionType || fn instanceof FunctionStreamingType))
       throw RpcError.valueFromCode(RpcErrorCodes.METHOD_NOT_FOUND, `Type [alias = ${id as string}] is not a function.`);
-    const validator = fn.req.validator('boolean');
+    const validator = fn.req.validator('object');
     const requestSchema = (fn.req as AbstractType<Schema>).getSchema();
     const isRequestVoid = requestSchema.__t === 'const' && requestSchema.value === undefined;
     const validate = isRequestVoid
       ? () => {}
       : (req: unknown) => {
           const error = validator(req);
-          if (error) throw RpcError.valueFromCode(RpcErrorCodes.BAD_REQUEST);
+          if (error) {
+            throw RpcError.value(RpcError.validation(error.message, error));
+          }
         };
     method =
       fn instanceof FunctionType

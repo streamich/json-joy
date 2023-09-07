@@ -1,3 +1,6 @@
+/**
+ * @todo Rename to `toLine`?
+ */
 export const stringify = (value: unknown, spacing: string = ' '): string => {
   switch (value) {
     case null:

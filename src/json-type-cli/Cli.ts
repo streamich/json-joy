@@ -6,6 +6,7 @@ import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {applyPatch} from '../json-patch';
 import {ingestParams} from './util';
 import {find, validateJsonPointer, toPath} from '../json-pointer';
+import {RpcError} from '../reactive-rpc/common/rpc/caller';
 import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
@@ -43,6 +44,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     const stdin = options.stdin ?? process.stdin;
     const stdout = options.stdout ?? process.stdout;
     const stderr = options.stderr ?? process.stderr;
+    const exit = options.exit ?? process.exit;
     const args = parseArgs({
       args: argv,
       strict: false,
@@ -78,18 +80,19 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       run: options,
       codecs,
     };
-    this.caller
-      .call(methodName, request as any, ctx)
-      .then((value) => {
-        let response = (value as Value).data;
+    try {
+      const value = await this.caller.call(methodName, request as any, ctx)
+      let response = (value as Value).data;
         if (outPath) response = find(response, toPath(String(outPath))).val;
         const buf = responseCodec.encode(response);
         stdout.write(buf);
-      })
-      .catch((err) => {
-        const buf = responseCodec.encode((err as Value).data);
-        stderr.write(buf);
-      });
+    } catch (err) {
+      const data = (err as Value).data;
+      const error = data instanceof RpcError ? data.toJson() : RpcError.valueFrom(err).data.toJson();
+      const buf = responseCodec.encode(error);
+      stderr.write(buf);
+      exit(1);
+    }
   }
 
   private async ingestStdinInput(stdin: ReadStream, codec: CliCodec, request: unknown, path: string): Promise<unknown> {

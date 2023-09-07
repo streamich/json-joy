@@ -19,4 +19,5 @@ export interface RunOptions {
   stdout?: WriteStream;
   stderr?: WriteStream;
   stdin?: ReadStream;
+  exit?: (errno: number) => void;
 }
