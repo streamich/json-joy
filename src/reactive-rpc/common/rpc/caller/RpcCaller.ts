@@ -19,7 +19,7 @@ export interface RpcApiCallerOptions<Ctx = unknown> {
    */
   preCallBufferSize?: number;
 
-  wrapInternalError?: (error: unknown) => unknown,
+  wrapInternalError?: (error: unknown) => unknown;
 }
 
 const INVALID_REQUEST_ERROR_VALUE = RpcError.value(RpcError.invalidRequest());
@@ -34,7 +34,11 @@ export class RpcCaller<Ctx = unknown> {
   protected readonly preCallBufferSize: number;
   protected readonly wrapInternalError: (error: unknown) => unknown;
 
-  constructor({getMethod, preCallBufferSize = 10, wrapInternalError = defaultWrapInternalError}: RpcApiCallerOptions<Ctx>) {
+  constructor({
+    getMethod,
+    preCallBufferSize = 10,
+    wrapInternalError = defaultWrapInternalError,
+  }: RpcApiCallerOptions<Ctx>) {
     this.getMethod = getMethod;
     this.preCallBufferSize = preCallBufferSize;
     this.wrapInternalError = wrapInternalError;

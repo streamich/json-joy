@@ -31,7 +31,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     let router = options.router ?? (TypeRouter.create() as any);
     router = defineBuiltinRoutes(router);
     this.router = router;
-    this.caller = new TypeRouterCaller({router, wrapInternalError: err => err});
+    this.caller = new TypeRouterCaller({router, wrapInternalError: (err) => err});
     this.types = router.system;
     this.t = this.types.t;
     this.codecs = options.codecs;
@@ -84,7 +84,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
         codecs,
       };
       try {
-        const value = await this.caller.call(methodName, request as any, ctx)
+        const value = await this.caller.call(methodName, request as any, ctx);
         let response = (value as Value).data;
         if (outPath) response = find(response, toPath(String(outPath))).val;
         const buf = responseCodec.encode(response);
