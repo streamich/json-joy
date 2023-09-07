@@ -1,4 +1,4 @@
-import {parseParamKey} from "../util";
+import {ingestParams, parseParamKey} from '../util';
 
 describe('parseParamKey()', () => {
   test('can parse valid param keys', () => {
@@ -13,8 +13,97 @@ describe('parseParamKey()', () => {
   });
 
   test('returns undefined on invalid param', () => {
-    expect(parseParamKey('j.a/foo')).toBe(undefined);
-    expect(parseParamKey('j.foo')).toBe(undefined);
-    expect(parseParamKey('string-number/foo')).toBe(undefined);
+    expect(parseParamKey('j.a/foo')).toStrictEqual([]);
+    expect(parseParamKey('j.foo')).toStrictEqual([]);
+    expect(parseParamKey('string-number/foo')).toStrictEqual([]);
+  });
+});
+
+describe('ingestParams()', () => {
+  test('throws un unknown parameter type', () => {
+    const request = {};
+    expect(() =>
+      ingestParams(
+        {
+          'hmmmmm/foo': '{"gg":"bet"}',
+        },
+        request,
+      ),
+    ).toThrowErrorMatchingInlineSnapshot(`"Invalid param type: hmmmmm"`);
+  });
+
+  test('can ingest JSON', () => {
+    const request = {};
+    ingestParams(
+      {
+        'json/foo': '{"gg":"bet"}',
+        'j/a': '[1, 2, 3]',
+      },
+      request,
+    );
+    expect(request).toStrictEqual({
+      foo: {gg: 'bet'},
+      a: [1, 2, 3],
+    });
+  });
+
+  test('can ingest strings', () => {
+    const request = {};
+    ingestParams(
+      {
+        'str/foo': 'abc',
+        's/bar': 'xyz',
+      },
+      request,
+    );
+    expect(request).toStrictEqual({
+      foo: 'abc',
+      bar: 'xyz',
+    });
+  });
+
+  test('can ingest numbers', () => {
+    const request = {};
+    ingestParams(
+      {
+        'num/foo': '123',
+        'n/bar': '-3.14',
+      },
+      request,
+    );
+    expect(request).toStrictEqual({
+      foo: 123,
+      bar: -3.14,
+    });
+  });
+
+  test('can ingest booleans', () => {
+    const request = {};
+    ingestParams(
+      {
+        'bool/foo': 'true',
+        'b/bar': 'false',
+      },
+      request,
+    );
+    expect(request).toStrictEqual({
+      foo: true,
+      bar: false,
+    });
+  });
+
+  test('can ingest null and undefined', () => {
+    const request = {};
+    ingestParams(
+      {
+        'nil/foo': '123',
+        'und/bar': '123',
+      },
+      request,
+    );
+    expect(request).toStrictEqual({
+      foo: null,
+      bar: undefined,
+    });
   });
 });
