@@ -23,27 +23,34 @@ test('can format empty array', () => {
 });
 
 test('can format simple object', () => {
-  expect(toTree({foo: 'bar'})).toMatchInlineSnapshot(`"└─ "foo": "bar""`);
+  expect(toTree({foo: 'bar'})).toMatchInlineSnapshot(`"└─ foo = "bar""`);
 });
 
 test('can format empty object', () => {
-  expect(toTree({foo: {}})).toMatchInlineSnapshot(`"└─ "foo": {}"`);
+  expect(toTree({foo: {}})).toMatchInlineSnapshot(`"└─ foo = {}"`);
 });
 
 test('can format empty array', () => {
-  expect(toTree({foo: []})).toMatchInlineSnapshot(`"└─ "foo": []"`);
+  expect(toTree({foo: []})).toMatchInlineSnapshot(`"└─ foo = []"`);
+});
+
+test('object in array', () => {
+  expect(toTree({foo: [{}]})).toMatchInlineSnapshot(`
+    "└─ foo
+       └─ [0]: {}"
+  `);
 });
 
 test('can format complex object', () => {
   expect(toTree([{foo: 'bar'}, {key: [1, 2, null, true, false]}])).toMatchInlineSnapshot(`
-    "├─ [0]: 
-    │   └─ "foo": "bar"
-    └─ [1]: 
-        └─ "key": 
-            ├─ [0]: 1
-            ├─ [1]: 2
-            ├─ [2]: !n
-            ├─ [3]: !t
-            └─ [4]: !f"
+    "├─ [0]
+    │   └─ foo = "bar"
+    └─ [1]
+        └─ key
+           ├─ [0]: 1
+           ├─ [1]: 2
+           ├─ [2]!n
+           ├─ [3]: !t
+           └─ [4]: !f"
   `);
 });
