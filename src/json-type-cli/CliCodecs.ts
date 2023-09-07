@@ -20,10 +20,10 @@ export class CliCodecs {
   /**
    * Select codecs for the given format specifier. The format specifier is a
    * string of the form:
-   * 
+   *
    *   <request-and-response>
    *   <request>:<response>
-   * 
+   *
    * Examples:
    *
    *   json
