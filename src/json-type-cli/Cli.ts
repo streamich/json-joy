@@ -11,6 +11,7 @@ import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {ReadStream} from 'tty';
 import type {CliCodec, CliContext, RunOptions} from './types';
+import {defineBuiltinRoutes} from './methods';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;
@@ -27,7 +28,9 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
   public readonly codecs: CliCodecs;
 
   public constructor(protected readonly options: CliOptions<Router>) {
-    const router = (this.router = options.router ?? (TypeRouter.create() as any));
+    let router = options.router ?? (TypeRouter.create() as any);
+    router = defineBuiltinRoutes(router);
+    this.router = router;
     this.caller = new TypeRouterCaller({router, wrapInternalError: err => err});
     this.types = router.system;
     this.t = this.types.t;
@@ -57,8 +60,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
         return;
       }
       if (args.values.h || args.values.help) {
-        if (methodName) this.printMethodHelp(methodName, opts);
-        else this.printHelp(opts);
+        this.printHelp(opts);
         return;
       }
       let request = JSON.parse(args.positionals[1] || '{}');
@@ -153,46 +155,16 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     ${cmd} util.echo --value='{"foo":123}'
     echo '{"foo":123}' | ${cmd} util.echo
 
+  Method help:
+
+    ${cmd} .types --format=tree --out=/<method>
+    ${cmd} .types --format=tree --out=/<method>/description
+    ${cmd} .types --format=tree --out=/<method>/req
+    ${cmd} .types --format=tree --out=/<method>/res
+
   Methods:
 
     ${methodLines.join('\n    ')}
-
-  Add "--help" or "-h" to see command specific help:
-
-    ${cmd} --help <method>
-    ${cmd} -h <method>
-
-`;
-    const stdout = options.stdout ?? process.stdout;
-    stdout.write(text);
-  }
-
-  private printMethodHelp(method: string, options: RunOptions): void {
-    const fn = this.router.routes[method];
-    if (!fn) {
-      const stderr = options.stderr ?? process.stderr;
-      stderr.write(`Method not found: ${method}\n`);
-      return;
-    }
-    const schema = fn.getSchema();
-    const cmd = this.cmd();
-    const text = `
-
-  ${schema.title ? schema.title + ` - ` : ''}"${method}"
-
-  ${schema.description ?? '[no description]'}
-
-  Usage:
-
-    ${cmd} ${method} '<request-json>'
-
-  Request:
-
-    ${fn.req.toString('    ')}
-
-  Response:
-
-    ${fn.res.toString('    ')}
 
 `;
     const stdout = options.stdout ?? process.stdout;

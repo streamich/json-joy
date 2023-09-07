@@ -3,15 +3,6 @@ import {RoutesBase, TypeRouter} from '../../json-type/system/TypeRouter';
 
 export const defineUtilRoutes = <Routes extends RoutesBase>(router: TypeRouter<Routes>) => {
   const router2 = router.extend(({t}) => ({
-    'util.echo': t
-      .Function(t.any, t.any)
-      .options({
-        title: 'Echo input',
-        description: 'Echo the input value back to the caller',
-      })
-      .implement(async (req) => {
-        return req;
-      }),
     'util.time': t
       .Function(t.undef, t.num)
       .options({
@@ -39,15 +30,6 @@ export const defineUtilRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
         return {
           schema: resolved.getType().getSchema(),
         };
-      }),
-    'util.types': t
-      .Function(t.undef, t.any)
-      .options({
-        title: 'Retrieve type system',
-        description: 'Returns whole type system of this CLI.',
-      })
-      .implement<CliContext>(async (request, ctx) => {
-        return ctx.cli.types.exportTypes();
       }),
   }));
 
