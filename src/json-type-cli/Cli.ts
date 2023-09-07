@@ -4,6 +4,7 @@ import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {applyPatch} from '../json-patch';
+import {ingestParams} from './util';
 import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
@@ -59,14 +60,9 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     let request = JSON.parse(args.positionals[1] || '{}');
     const {'ctx.format': format = '', stdin: stdinParam = '', ...params} = args.values;
     const codecs = this.codecs.getCodecs(format);
-
     const [requestCodec, responseCodec] = codecs;
     request = await this.ingestStdinInput(stdin, requestCodec, request, String(stdinParam));
-
-    request = {
-      ...request,
-      ...params,
-    };
+    ingestParams(params, request);
     const ctx: CliContext<Router> = {
       cli: this,
       run: options,
