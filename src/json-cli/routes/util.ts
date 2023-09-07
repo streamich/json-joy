@@ -32,14 +32,14 @@ export const defineUtilRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
         };
       }),
     'util.types': t
-      .Function(t.undef, t.Object(t.prop('schema', t.any)))
+      .Function(t.undef, t.Object(t.prop('types', t.any)))
       .options({
         title: 'Retrieve type system',
         description: 'Returns whole type system of this CLI.',
       })
       .implement<CliContext>(async (request, ctx) => {
         return {
-          schema: ctx.cli.types.getSchema(),
+          types: ctx.cli.types.exportTypes(),
         };
       }),
   }));
