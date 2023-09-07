@@ -37,6 +37,12 @@ export interface WithValidator {
  */
 export interface AnySchema extends TType<unknown>, WithValidator {
   __t: 'any';
+
+  /**
+   * Custom metadata that can be attached to the type. This is useful for
+   * documentation generation, and for custom code generators.
+   */
+  metadata?: Record<string, unknown>;
 }
 
 /**
