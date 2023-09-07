@@ -55,7 +55,10 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       else this.printHelp(options);
       return;
     }
-    const {'ctx.format': format = '', ...commandRequestPart} = {
+    const {
+      'ctx.format': format = '',
+      ...commandRequestPart
+    } = {
       ...JSON.parse(args.positionals[1] || '{}'),
       ...args.values,
     };
