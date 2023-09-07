@@ -1,7 +1,7 @@
 import {JsonDecoder} from '../../json-pack/json/JsonDecoder';
 import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
-import type {Writer} from '../../util/buffers/Writer';
 import {bufferToUint8Array} from '../../util/buffers/bufferToUint8Array';
+import type {Writer} from '../../util/buffers/Writer';
 import type {CliCodec} from '../types';
 
 /**
