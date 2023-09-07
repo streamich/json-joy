@@ -1,5 +1,5 @@
-import type {RoutesBase, TypeRouter} from "../json-type/system/TypeRouter";
-import type {Cli} from "./Cli";
+import type {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
+import type {Cli} from './Cli';
 import type {WriteStream, ReadStream} from 'tty';
 
 export interface CliCodec<Id extends string = string> {

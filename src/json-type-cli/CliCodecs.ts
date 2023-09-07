@@ -1,4 +1,4 @@
-import type {CliCodec} from "./types";
+import type {CliCodec} from './types';
 
 const CODEC_REGEX = /(\w{0,32})(?:\:(\w{0,32}))?/;
 

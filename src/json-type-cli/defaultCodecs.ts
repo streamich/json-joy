@@ -1,14 +1,14 @@
-import {Writer} from "../util/buffers/Writer";
-import {CliCodecs} from "./CliCodecs";
-import {CliCodecCbor} from "./codecs/cbor";
-import {CliCodecJson} from "./codecs/json";
-import {CliCodecJson2} from "./codecs/json2";
-import {CliCodecJson4} from "./codecs/json4";
-import {CliCodecMsgpack} from "./codecs/msgpack";
-import {CliCodecRaw} from "./codecs/raw";
-import {CliCodecText} from "./codecs/text";
-import {CliCodecTree} from "./codecs/tree";
-import {CliCodecUbjson} from "./codecs/ubjson";
+import {Writer} from '../util/buffers/Writer';
+import {CliCodecs} from './CliCodecs';
+import {CliCodecCbor} from './codecs/cbor';
+import {CliCodecJson} from './codecs/json';
+import {CliCodecJson2} from './codecs/json2';
+import {CliCodecJson4} from './codecs/json4';
+import {CliCodecMsgpack} from './codecs/msgpack';
+import {CliCodecRaw} from './codecs/raw';
+import {CliCodecText} from './codecs/text';
+import {CliCodecTree} from './codecs/tree';
+import {CliCodecUbjson} from './codecs/ubjson';
 
 export const defaultCodecs = new CliCodecs();
 
