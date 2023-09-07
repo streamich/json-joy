@@ -2,7 +2,9 @@ import {applyPatch, validateOperations, type Operation} from '../../json-patch';
 import {TypeRouter, RoutesBase} from '../../json-type/system/TypeRouter';
 
 export const definePatchRoutes = <Routes extends RoutesBase>(router: TypeRouter<Routes>) => {
-  return router.extend(({t}) => {
+  return router.extend(({t, system}) => {
+    system.alias('JsonPatch', t.Array(t.any));
+
     return {
       'patch.apply': t
         .Function(
@@ -11,7 +13,7 @@ export const definePatchRoutes = <Routes extends RoutesBase>(router: TypeRouter<
               title: 'A document',
               description: 'A JSON document to apply the patch to.',
             }),
-            t.prop('patch', t.Array(t.any)).options({
+            t.prop('patch', t.Ref('JsonPatch')).options({
               title: 'A JSON Patch',
               description: 'A JSON Patch to apply to the document.',
             }),

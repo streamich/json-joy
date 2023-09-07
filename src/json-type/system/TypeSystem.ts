@@ -58,6 +58,14 @@ export class TypeSystem implements Printable {
     return validator;
   };
 
+  public getSchema() {
+    const result: Record<string, unknown> = {};
+    for (const [id, alias] of this.aliases.entries()) {
+      result[id] = alias.getType().getSchema();
+    }
+    return result;
+  }
+
   public toString(tab: string = '') {
     const nl = () => '';
     return (
