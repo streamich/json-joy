@@ -18,7 +18,7 @@ export interface CliOptions<Router extends TypeRouter<any>> {
 
 export class Cli<Router extends TypeRouter<RoutesBase>> {
   public router: Router;
-  protected readonly system: TypeSystem;
+  public readonly types: TypeSystem;
   public readonly t: TypeBuilder;
   public readonly caller: TypeRouterCaller<Router>;
   public readonly codecs: CliCodecs;
@@ -26,8 +26,8 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
   public constructor(protected readonly options: CliOptions<Router>) {
     const router = (this.router = options.router ?? (TypeRouter.create() as any));
     this.caller = new TypeRouterCaller({router});
-    this.system = router.system;
-    this.t = this.system.t;
+    this.types = router.system;
+    this.t = this.types.t;
     this.codecs = options.codecs;
   }
 

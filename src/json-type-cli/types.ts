@@ -8,7 +8,7 @@ export interface CliCodec<Id extends string = string> {
   decode: (bytes: Uint8Array) => unknown;
 }
 
-export interface CliContext<Router extends TypeRouter<RoutesBase>> {
+export interface CliContext<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
   cli: Cli<Router>;
   run: RunOptions;
   codecs: [request: CliCodec, response: CliCodec];
