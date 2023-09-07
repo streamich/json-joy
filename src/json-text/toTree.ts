@@ -13,9 +13,12 @@ const isSimpleString = (str: string) => /^[a-z0-9]+$/i.test(str);
 export const toTree = (value: unknown, tab: string = ''): string => {
   if (value instanceof Array) {
     if (value.length === 0) return '[]';
-    return printTree(tab, value.map((v, i) => (tab: string) => {
-      return `[${i}]${isOneLineValue(v) ? ': ' : ''}${toTree(v, tab + ' ')}`;
-    })).slice(tab ? 0 : 1);
+    return printTree(
+      tab,
+      value.map((v, i) => (tab: string) => {
+        return `[${i}]${isOneLineValue(v) ? ': ' : ''}${toTree(v, tab + ' ')}`;
+      }),
+    ).slice(tab ? 0 : 1);
   } else if (value && typeof value === 'object') {
     const keys = Object.keys(value);
     if (keys.length === 0) return '{}';
