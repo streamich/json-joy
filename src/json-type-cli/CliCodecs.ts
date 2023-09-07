@@ -17,7 +17,25 @@ export class CliCodecs {
     return codec;
   }
 
-  public getCodecs(format: string): [request: CliCodec<string>, response: CliCodec<string>] {
+  /**
+   * Select codecs for the given format specifier. The format specifier is a
+   * string of the form:
+   * 
+   *   <request-and-response>
+   *   <request>:<response>
+   * 
+   * Examples:
+   *
+   *   json
+   *   json:json
+   *   cbor:json
+   *   cbor
+   *
+   * @param format Codec specifier, e.g. `json:json` or `json`.
+   * @returns 2-tuple of selected codecs.
+   */
+  public getCodecs(format: unknown): [request: CliCodec<string>, response: CliCodec<string>] {
+    if (typeof format !== 'string') throw new Error(`Invalid --format type.`);
     if (!format) {
       const codec = this.get('');
       return [codec, codec];

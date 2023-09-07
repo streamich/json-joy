@@ -3,6 +3,7 @@ import {TypeSystem} from '../json-type/system/TypeSystem';
 import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
+import {applyPatch} from '../json-patch';
 import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
@@ -55,16 +56,16 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       else this.printHelp(options);
       return;
     }
-    const {'ctx.format': format = '', ...commandRequestPart} = {
-      ...JSON.parse(args.positionals[1] || '{}'),
-      ...args.values,
-    };
+    let request = JSON.parse(args.positionals[1] || '{}');
+    const {'ctx.format': format = '', stdin: stdinParam = '', ...params} = args.values;
     const codecs = this.codecs.getCodecs(format);
+
     const [requestCodec, responseCodec] = codecs;
-    const input = await this.getStdinValue(stdin, requestCodec);
-    const request = {
-      ...(typeof input === 'object' ? input : {input}),
-      ...commandRequestPart,
+    request = await this.ingestStdinInput(stdin, requestCodec, request, String(stdinParam));
+
+    request = {
+      ...request,
+      ...params,
     };
     const ctx: CliContext<Router> = {
       cli: this,
@@ -81,6 +82,20 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
         const buf = responseCodec.encode((err as Value).data);
         stderr.write(buf);
       });
+  }
+
+  private async ingestStdinInput(stdin: ReadStream, codec: CliCodec, request: unknown, path: string): Promise<unknown> {
+    const input = await this.getStdinValue(stdin, codec);
+    if (input === undefined) return request;
+    if (path) {
+      const res = applyPatch(request, [{op: 'add', path, value: input}], {mutate: true});
+      return res.doc;
+    }
+    if (typeof request === 'object') {
+      if (typeof input === 'object') return {...request, ...input};
+      return {...request, input};
+    }
+    return input;
   }
 
   public cmd(): string {
