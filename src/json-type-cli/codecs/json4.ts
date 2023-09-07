@@ -20,7 +20,7 @@ export class CliCodecJson4 implements CliCodec<'json4'> {
   encode(value: unknown): Uint8Array {
     const uint8 = this.encoder.encode(value);
     const pojo = JSON.parse(Buffer.from(uint8).toString('utf8'));
-    const json = JSON.stringify(pojo, null, 4);
+    const json = JSON.stringify(pojo, null, 4) + '\n';
     return bufferToUint8Array(Buffer.from(json, 'utf8'));
   }
 

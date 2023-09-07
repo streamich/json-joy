@@ -3,7 +3,7 @@ import type {CliCodec} from './types';
 const CODEC_REGEX = /(\w{0,32})(?:\:(\w{0,32}))?/;
 
 export class CliCodecs {
-  public defaultCodec: string = 'json';
+  public defaultCodec: string = 'json4';
   public readonly codecs: Map<string, CliCodec<string>> = new Map();
 
   public register(codec: CliCodec<string>): void {
