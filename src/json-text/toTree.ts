@@ -3,15 +3,18 @@ import {stringify} from './stringify';
 
 export const toTree = (value: unknown, tab: string = ''): string => {
   if (value instanceof Array) {
-    return printTree(tab, value.map((v, i) => (tab) => `[${i}]: ${toTree(v, tab + ' ')}`));
+    if (value.length === 0) return '[]';
+    return printTree(tab, value.map((v, i) => (tab: string) => `[${i}]: ${toTree(v, tab + ' ')}`)).slice(tab ? 0 : 1);
   } else if (value && typeof value === 'object') {
+    const keys = Object.keys(value);
+    if (keys.length === 0) return '{}';
     return printTree(
       tab,
-      Object.keys(value).map((k) => (tab) => {
+      keys.map((k) => (tab: string) => {
         const formattedKey = JSON.stringify(k);
         return `${formattedKey}: ${toTree((value as any)[k], tab + ' ')}`;
       }),
-    );
+    ).slice(tab ? 0 : 1);
   }
   return stringify(value);
 };

@@ -6,7 +6,7 @@ export class CliCodecText implements CliCodec<'text'> {
 
   encode(value: unknown): Uint8Array {
     const str = stringify(value);
-    return new TextEncoder().encode(str);
+    return new TextEncoder().encode(str + '\n');
   }
 
   decode(bytes: Uint8Array): unknown {
