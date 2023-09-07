@@ -58,7 +58,12 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       return;
     }
     let request = JSON.parse(args.positionals[1] || '{}');
-    const {'ctx.format': format = '', stdin: stdinParam = '', ...params} = args.values;
+    const {
+      format = '',
+      stdin: stdinParam_ = '',
+      in: stdinParam = stdinParam_,
+      ...params
+    } = args.values;
     const codecs = this.codecs.getCodecs(format);
     const [requestCodec, responseCodec] = codecs;
     request = await this.ingestStdinInput(stdin, requestCodec, request, String(stdinParam));
