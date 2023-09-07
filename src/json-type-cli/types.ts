@@ -15,9 +15,9 @@ export interface CliContext<Router extends TypeRouter<RoutesBase> = TypeRouter<R
 }
 
 export interface RunOptions {
-  argv?: string[];
-  stdout?: WriteStream;
-  stderr?: WriteStream;
-  stdin?: ReadStream;
-  exit?: (errno: number) => void;
+  argv: string[];
+  stdout: WriteStream;
+  stderr: WriteStream;
+  stdin: ReadStream;
+  exit: (errno: number) => void;
 }

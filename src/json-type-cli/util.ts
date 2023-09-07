@@ -1,4 +1,6 @@
 import {applyPatch} from '../json-patch';
+import {Value} from '../reactive-rpc/common/messages/Value';
+import {RpcError} from '../reactive-rpc/common/rpc/caller';
 
 const PARAM_REGEX = /^([a-z]+)(\/.*)$/;
 
@@ -50,4 +52,11 @@ export const ingestParams = (params: Record<string, unknown>, result: Record<str
         throw new Error(`Invalid param type: ${type}`);
     }
   }
+};
+
+export const formatError = (err: unknown): unknown => {
+  if (err instanceof Value) return formatError(err.data);
+  if (err instanceof RpcError) return err.toJson();
+  if (err instanceof Error) return {message: err.message, stack: err.stack};
+  return err;
 };
