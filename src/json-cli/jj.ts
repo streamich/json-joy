@@ -13,7 +13,7 @@ const router =
 
 const cli = createCli({
   router,
-  version: 'v1.2.3',
+  version: 'v' + require('../../package.json').version,
   cmd: 'jj',
 });
 
