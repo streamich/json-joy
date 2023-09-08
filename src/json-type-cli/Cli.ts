@@ -65,7 +65,8 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       }
       let request = JSON.parse(args.positionals[1] || '{}');
       const {
-        format = '',
+        f: format_ = '',
+        format = format_,
         stdin: inPath_ = '',
         in: inPath = inPath_,
         stdout: outPath_ = '',
@@ -137,7 +138,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       return line;
     });
     const cmd = this.cmd();
-    const codecLines = [...this.codecs.codecs.values()].map(codec => `- "${codec.id}" - ${codec.description}`);
+    const codecLines = [...this.codecs.codecs.values()].map((codec) => `- "${codec.id}" - ${codec.description}`);
     const text = `
   JSON Type CLI uses request/response paradigm to execute CLI commands. Each
   command is identified by the <method> name. Each command receives a JSON
@@ -153,7 +154,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
 
       ${cmd} <method> '<json>'
       echo '<json>' | ${cmd} <method>
-      ${cmd} <method> --<type>/<pointer>=value
+      ${cmd} <method> --<type><pointer>=<value>
 
   Examples:
 
@@ -163,6 +164,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       echo '{ "foo": 123 }' | ${cmd} .echo
       ${cmd} .echo --s/foo=bar --format=cbor
       cat data.cbor | ${cmd} .echo --format=cbor:json
+      ${cmd} .echo '{"foo": 123}' --f=cbor | ${cmd} .echo --f=cbor:tree
 
   Options:
 
@@ -170,9 +172,9 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
   - "-v" or "--version" - Print version.
   - "--stdin" or "--in" - JSON pointer where to inject STDIN input.
   - "--stdout" or "--out" - JSON pointer of response value for STDOUT.
-  - "--format" - Codec format to use for encoding/decoding request/response
-    values. To specify both request and response codecs use "<codec>",
-    or "<reqCodec>:<resCodec>" to specify them separately.
+  - "--format" or "--f" - Codec format to use for encoding/decoding
+    request/response values. To specify both request and response codecs use
+    "<codec>", or "<reqCodec>:<resCodec>" to specify them separately.
     
     Available codecs:
 
