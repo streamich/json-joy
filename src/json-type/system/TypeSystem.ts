@@ -16,7 +16,8 @@ export class TypeSystem implements Printable {
    * GraphQL "nodes".
    */
   public readonly alias = <K extends string, T extends Type>(id: K, type: T): TypeAlias<K, T> => {
-    if (this.aliases.has(id)) throw new Error(`Alias [id = ${id}] already exists.`);
+    const existingAlias = this.aliases.get(id);
+    if (existingAlias) return existingAlias as TypeAlias<K, T>;
     const alias = new TypeAlias<K, T>(this, id, type);
     this.aliases.set(id, alias);
     return alias;
@@ -56,6 +57,14 @@ export class TypeSystem implements Printable {
     if (!validator) throw new Error(`Validator [name = ${name}] not found.`);
     return validator;
   };
+
+  public exportTypes() {
+    const result: Record<string, unknown> = {};
+    for (const [id, alias] of this.aliases.entries()) {
+      result[id] = alias.getType().getSchema();
+    }
+    return result;
+  }
 
   public toString(tab: string = '') {
     const nl = () => '';

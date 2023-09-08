@@ -14,7 +14,7 @@ import {
   ResponseUnsubscribeMessage,
 } from '../../../messages';
 import {Value} from '../../../messages/Value';
-import {RpcError} from '../../../rpc';
+import {RpcError} from '../../../rpc/caller/error';
 
 const writer = new Writer(8 * Math.round(Math.random() * 100));
 const codecs = new Codecs(writer);

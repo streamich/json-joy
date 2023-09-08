@@ -18,9 +18,13 @@ export interface RpcApiCallerOptions<Ctx = unknown> {
    * and stopping the streaming call. Defaults to 10.
    */
   preCallBufferSize?: number;
+
+  wrapInternalError?: (error: unknown) => unknown;
 }
 
 const INVALID_REQUEST_ERROR_VALUE = RpcError.value(RpcError.invalidRequest());
+
+const defaultWrapInternalError = (error: unknown) => RpcError.valueFrom(error);
 
 /**
  * Implements methods to call Reactive-RPC methods on the server.
@@ -28,10 +32,16 @@ const INVALID_REQUEST_ERROR_VALUE = RpcError.value(RpcError.invalidRequest());
 export class RpcCaller<Ctx = unknown> {
   protected readonly getMethod: RpcApiCallerOptions<Ctx>['getMethod'];
   protected readonly preCallBufferSize: number;
+  protected readonly wrapInternalError: (error: unknown) => unknown;
 
-  constructor({getMethod, preCallBufferSize = 10}: RpcApiCallerOptions<Ctx>) {
+  constructor({
+    getMethod,
+    preCallBufferSize = 10,
+    wrapInternalError = defaultWrapInternalError,
+  }: RpcApiCallerOptions<Ctx>) {
     this.getMethod = getMethod;
     this.preCallBufferSize = preCallBufferSize;
+    this.wrapInternalError = wrapInternalError;
   }
 
   public exists(name: string): boolean {
@@ -49,11 +59,11 @@ export class RpcCaller<Ctx = unknown> {
   }
 
   protected validate(method: StaticRpcMethod<Ctx> | StreamingRpcMethod<Ctx>, request: unknown): void {
+    const validate = method.validate;
+    if (!validate) return;
     try {
-      if (method.validate) {
-        const errors = method.validate(request);
-        if (errors as any) throw errors;
-      }
+      const errors = validate(request);
+      if (errors as any) throw errors;
     } catch (error) {
       throw this.wrapValidationError(error);
     }
@@ -76,14 +86,15 @@ export class RpcCaller<Ctx = unknown> {
    * @returns Response data.
    */
   public async call(name: string, request: unknown, ctx: Ctx): Promise<Value<unknown>> {
-    const method = this.getMethodStrict(name);
-    this.validate(method, request);
     try {
-      if (method.onPreCall) await method.onPreCall(ctx, request);
+      const method = this.getMethodStrict(name);
+      this.validate(method, request);
+      const preCall = method.onPreCall;
+      if (preCall) await preCall(ctx, request);
       const data = await method.call(request, ctx);
       return new Value(data, method.res);
     } catch (error) {
-      throw RpcError.valueFrom(error);
+      throw this.wrapInternalError(error);
     }
   }
 
@@ -96,7 +107,7 @@ export class RpcCaller<Ctx = unknown> {
       if (method.onPreCall) await method.onPreCall(ctx, request);
       await method.call(request, ctx);
     } catch (error) {
-      throw RpcError.valueFrom(error);
+      throw this.wrapInternalError(error);
     }
   }
 
@@ -130,7 +141,7 @@ export class RpcCaller<Ctx = unknown> {
         // Format errors using custom error formatter.
         const $resWithErrorsFormatted = res$.pipe(
           catchError((error) => {
-            throw RpcError.valueFrom(error);
+            throw this.wrapInternalError(error);
           }),
         );
 
