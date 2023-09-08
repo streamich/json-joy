@@ -5,6 +5,7 @@ import type {CliCodec} from '../types';
 
 export class CliCodecMsgpack implements CliCodec<'msgpack'> {
   public readonly id = 'msgpack';
+  public readonly description = 'MessagePack codec';
   protected readonly encoder: MsgPackEncoder;
   protected readonly decoder: MsgPackDecoder;
 

@@ -3,6 +3,7 @@ import type {CliCodec} from '../types';
 
 export class CliCodecTree implements CliCodec<'tree'> {
   public readonly id = 'tree';
+  public readonly description = 'Formatted JSON tree';
 
   encode(value: unknown): Uint8Array {
     const str = toTree(value);

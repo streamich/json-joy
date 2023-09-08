@@ -132,39 +132,62 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     const methodLines = methods.map((m) => {
       const route = this.router.routes[m];
       const schema = route.getSchema();
-      let line = `* "${m}"`;
+      let line = `- "${m}"`;
       if (schema.title) line += ` - ${schema.title}`;
       return line;
     });
     const cmd = this.cmd();
+    const codecLines = [...this.codecs.codecs.values()].map(codec => `- "${codec.id}" - ${codec.description}`);
     const text = `
-
   JSON Type CLI uses request/response paradigm to execute CLI commands. Each
-  command is identified by the <method> name. It receives a JSON object as the
-  request payload and returns a JSON object as a response.
+  command is identified by the <method> name. Each command receives a JSON
+  object as the request payload and returns a JSON object as a response.
+
+  Request payload is composed from the following sources: (1) command line
+  second parameter; (2) STDIN input; (3) command line options.
+
+  Response object is returned to STDOUT. A part of it can be extracted using
+  the "--stdout" or "--out" option.
 
   Usage:
 
-    ${cmd} <method> --key=value
-    ${cmd} <method> '<json>'
-    echo '<json>' | ${cmd} <method>
+      ${cmd} <method> '<json>'
+      echo '<json>' | ${cmd} <method>
+      ${cmd} <method> --<type>/<pointer>=value
 
   Examples:
 
-    ${cmd} util.echo --value=123
-    ${cmd} util.echo --value='{"foo":123}'
-    echo '{"foo":123}' | ${cmd} util.echo
+      ${cmd} .echo '{ "foo": 123 }'
+      ${cmd} .echo --num/value=123
+      ${cmd} .echo --json/value='{ "foo": 123 }' --out=/value
+      echo '{ "foo": 123 }' | ${cmd} .echo
+      ${cmd} .echo --s/foo=bar --format=cbor
+      cat data.cbor | ${cmd} .echo --format=cbor:json
+
+  Options:
+
+  - "-h" or "--help" - Print this help.
+  - "-v" or "--version" - Print version.
+  - "--stdin" or "--in" - JSON pointer where to inject STDIN input.
+  - "--stdout" or "--out" - JSON pointer of response value for STDOUT.
+  - "--format" - Codec format to use for encoding/decoding request/response
+    values. To specify both request and response codecs use "<codec>",
+    or "<reqCodec>:<resCodec>" to specify them separately.
+    
+    Available codecs:
+
+    ${codecLines.join('\n    ')}
 
   Method help:
 
-    ${cmd} .types --format=tree --out=/<method>
-    ${cmd} .types --format=tree --out=/<method>/description
-    ${cmd} .types --format=tree --out=/<method>/req
-    ${cmd} .types --format=tree --out=/<method>/res
+      ${cmd} .type --out=/<method>
+      ${cmd} .type --out=/<method>/description
+      ${cmd} .type --out=/<method>/req
+      ${cmd} .type --out=/<method>/res --format=tree
 
   Methods:
 
-    ${methodLines.join('\n    ')}
+  ${methodLines.join('\n  ')}
 
 `;
     const stdout = options.stdout ?? process.stdout;

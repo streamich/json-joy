@@ -12,7 +12,7 @@ export const defineBuiltinRoutes = <Routes extends RoutesBase>(router: TypeRoute
       .implement(async (req) => {
         return req;
       }),
-    '.types': t
+    '.type': t
       .Function(t.undef, t.any)
       .options({
         title: 'Type information',

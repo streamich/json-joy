@@ -5,6 +5,7 @@ import type {CliCodec} from '../types';
 
 export class CliCodecJson implements CliCodec<'json'> {
   public readonly id = 'json';
+  public readonly description = 'JSON codec, which also supports binary data';
   protected readonly encoder: JsonEncoder;
   protected readonly decoder: JsonDecoder;
 

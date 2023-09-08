@@ -5,6 +5,7 @@ import type {CliCodec} from '../types';
 
 export class CliCodecUbjson implements CliCodec<'ubjson'> {
   public readonly id = 'ubjson';
+  public readonly description = 'UBJSON codec';
   protected readonly encoder: UbjsonEncoder;
   protected readonly decoder: UbjsonDecoder;
 

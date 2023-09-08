@@ -4,6 +4,7 @@ import type {WriteStream, ReadStream} from 'tty';
 
 export interface CliCodec<Id extends string = string> {
   id: Id;
+  description: string;
   encode: (value: unknown) => Uint8Array;
   decode: (bytes: Uint8Array) => unknown;
 }

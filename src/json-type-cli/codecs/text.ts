@@ -3,6 +3,7 @@ import type {CliCodec} from '../types';
 
 export class CliCodecText implements CliCodec<'text'> {
   public readonly id = 'text';
+  public readonly description = 'Formatted JSON text';
 
   encode(value: unknown): Uint8Array {
     const str = stringify(value);

@@ -9,6 +9,7 @@ import type {CliCodec} from '../types';
  */
 export class CliCodecJson2 implements CliCodec<'json2'> {
   public readonly id = 'json2';
+  public readonly description = 'JSON codec with 2 space pretty-printing';
   protected readonly encoder: JsonEncoder;
   protected readonly decoder: JsonDecoder;
 
