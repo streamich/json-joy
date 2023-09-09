@@ -78,7 +78,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       const codecs = this.codecs.getCodecs(format);
       const [requestCodec, responseCodec] = codecs;
       request = await this.ingestStdinInput(stdin, requestCodec, request, String(inPath));
-      ingestParams(params, request);
+      await ingestParams(params, request);
       const ctx: CliContext<Router> = {
         cli: this,
         run: opts,

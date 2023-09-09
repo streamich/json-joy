@@ -1,3 +1,4 @@
+import {defaultCodecs} from '../defaultCodecs';
 import {ingestParams, parseParamKey} from '../util';
 
 describe('parseParamKey()', () => {
@@ -28,18 +29,20 @@ describe('ingestParams()', () => {
           'hmmmmm/foo': '{"gg":"bet"}',
         },
         request,
+        defaultCodecs,
       ),
-    ).toThrowErrorMatchingInlineSnapshot(`"Invalid param type: hmmmmm"`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid param type: hmmmmm"`);
   });
 
-  test('can ingest JSON', () => {
+  test('can ingest JSON', async () => {
     const request = {};
-    ingestParams(
+    await ingestParams(
       {
         'json/foo': '{"gg":"bet"}',
         'j/a': '[1, 2, 3]',
       },
       request,
+      defaultCodecs,
     );
     expect(request).toStrictEqual({
       foo: {gg: 'bet'},
@@ -47,14 +50,15 @@ describe('ingestParams()', () => {
     });
   });
 
-  test('can ingest strings', () => {
+  test('can ingest strings', async () => {
     const request = {};
-    ingestParams(
+    await ingestParams(
       {
         'str/foo': 'abc',
         's/bar': 'xyz',
       },
       request,
+      defaultCodecs,
     );
     expect(request).toStrictEqual({
       foo: 'abc',
@@ -62,14 +66,15 @@ describe('ingestParams()', () => {
     });
   });
 
-  test('can ingest numbers', () => {
+  test('can ingest numbers', async () => {
     const request = {};
-    ingestParams(
+    await ingestParams(
       {
         'num/foo': '123',
         'n/bar': '-3.14',
       },
       request,
+      defaultCodecs,
     );
     expect(request).toStrictEqual({
       foo: 123,
@@ -77,14 +82,15 @@ describe('ingestParams()', () => {
     });
   });
 
-  test('can ingest booleans', () => {
+  test('can ingest booleans', async () => {
     const request = {};
-    ingestParams(
+    await ingestParams(
       {
         'bool/foo': 'true',
         'b/bar': 'false',
       },
       request,
+      defaultCodecs,
     );
     expect(request).toStrictEqual({
       foo: true,
@@ -92,14 +98,15 @@ describe('ingestParams()', () => {
     });
   });
 
-  test('can ingest null and undefined', () => {
+  test('can ingest null and undefined', async () => {
     const request = {};
-    ingestParams(
+    await ingestParams(
       {
         'nil/foo': '123',
         'und/bar': '123',
       },
       request,
+      defaultCodecs,
     );
     expect(request).toStrictEqual({
       foo: null,
