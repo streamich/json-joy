@@ -32,7 +32,7 @@ export class CliParamCmd implements CliParam {
         }
         const uint8 = await new Promise<Uint8Array>((resolve, reject) => {
           const ls = spawn(cmd, {shell: true});
-          let uint8s: Uint8Array[] = [];
+          const uint8s: Uint8Array[] = [];
           ls.stdout.on('data', (data) => {
             uint8s.push(bufferToUint8Array(data));
           });
