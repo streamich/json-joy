@@ -120,7 +120,7 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       }
     } catch (err) {
       const error = formatError(err);
-      const buf = JSON.stringify(error);
+      const buf = JSON.stringify(error, null, 4);
       this.stderr.write(buf);
       this.exit(1);
     }

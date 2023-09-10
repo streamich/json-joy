@@ -1,6 +1,6 @@
 import {applyPatch} from '../../json-patch';
 import {spawn} from 'child_process';
-import {toPath} from '../../json-pointer';
+import {find, toPath, validateJsonPointer} from '../../json-pointer';
 import {bufferToUint8Array} from '../../util/buffers/bufferToUint8Array';
 import {listToUint8} from '../../util/buffers/concat';
 import type {Cli} from '../Cli';
@@ -14,15 +14,19 @@ export class CliParamCmd implements CliParam {
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {
         let cmd = String(rawValue);
-        const regex = new RegExp(`^((${[...cli.codecs.codecs.keys()].join('|')}):)?(.+)$`);
-        const match = regex.exec(cmd);
         let codec = cli.requestCodec;
-        if (match) {
-          const [, , codecName, cmd_] = match;
-          const codec_ = cli.codecs.get(codecName);
-          if (codec_) {
-            codec = codec_;
+        let cmdPointer: string = '';
+        if (cmd[0] === '(') {
+          const regex = /^\((.+)\)\:([a-z0-9]*)(\:([^\:]*))$/;
+          const match = regex.exec(cmd);
+          if (match) {
+            const [, cmd_, cmdCodec, , cmdPointer_] = match;
             cmd = cmd_;
+            if (cmdCodec) codec = cli.codecs.get(cmdCodec);
+            if (cmdPointer_) {
+              validateJsonPointer(cmdPointer_);
+              cmdPointer = cmdPointer_;
+            }
           }
         }
         const uint8 = await new Promise<Uint8Array>((resolve, reject) => {
@@ -38,7 +42,8 @@ export class CliParamCmd implements CliParam {
             resolve(listToUint8(uint8s));
           });
         });
-        const value = codec.decode(uint8);
+        let value = codec.decode(uint8);
+        if (cmdPointer) value = find(value, toPath(cmdPointer)).val;
         const path = toPath(pointer);
         cli.request = applyPatch(cli.request, [{op: 'add', path, value}], {mutate: true}).doc;
       };
