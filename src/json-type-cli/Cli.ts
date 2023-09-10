@@ -3,7 +3,6 @@ import {TypeSystem} from '../json-type/system/TypeSystem';
 import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
-import {applyPatch} from '../json-patch';
 import {formatError} from './util';
 import {find, validateJsonPointer, toPath} from '../json-pointer';
 import {defineBuiltinRoutes} from './methods';
@@ -43,6 +42,8 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
   public exit: (errno: number) => void;
   public requestCodec: CliCodec;
   public responseCodec: CliCodec;
+  public rawStdinInput?: Uint8Array;
+  public stdinInput?: unknown;
   protected paramInstances: CliParamInstance[] = [];
 
   public constructor(public readonly options: CliOptions<Router>) {
@@ -102,14 +103,13 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       const methodName = args.positionals[0];
       this.request = JSON.parse(args.positionals[1] || '{}');
       const {
-        stdin: inPath_ = '',
-        in: inPath = inPath_,
         stdout: outPath_ = '',
         out: outPath = outPath_,
       } = args.values;
-      if (inPath) validateJsonPointer(inPath);
       if (outPath) validateJsonPointer(outPath);
-      this.request = await this.ingestStdinInput(this.stdin, this.requestCodec, this.request, String(inPath));
+      await this.readStdin();
+      for (const instance of this.paramInstances)
+        if (instance.onStdin) await instance.onStdin();
       const ctx: CliContext<Router> = {cli: this};
       for (const instance of this.paramInstances)
         if (instance.onRequest) await instance.onRequest();
@@ -135,25 +135,12 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
     }
   }
 
-  private async ingestStdinInput(stdin: ReadStream, codec: CliCodec, request: unknown, path: string): Promise<unknown> {
-    const input = await this.getStdinValue(stdin, codec);
-    if (input === undefined) return request;
-    if (path) {
-      const res = applyPatch(request, [{op: 'add', path, value: input}], {mutate: true});
-      return res.doc;
-    }
-    if (typeof request === 'object') {
-      if (typeof input === 'object') return {...request, ...input};
-      return {...request, input};
-    }
-    return input;
-  }
-
   public cmd(): string {
     return this.options.cmd ?? '<cmd>';
   }
 
-  private async getStdin(stdin: ReadStream): Promise<Buffer> {
+  private async getStdin(): Promise<Buffer> {
+    const stdin = this.stdin;
     if (stdin.isTTY) return Buffer.alloc(0);
     const result = [];
     let length = 0;
@@ -164,14 +151,16 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
     return Buffer.concat(result, length);
   }
 
-  private async getStdinValue(stdin: ReadStream, codec: CliCodec): Promise<unknown> {
+  private async readStdin(): Promise<void> {
+    const stdin = this.stdin;
+    const codec = this.requestCodec;
     if (stdin.isTTY) return Object.create(null);
-    const input = await this.getStdin(stdin);
+    const input = await this.getStdin();
     if (codec.id === 'json') {
       const str = input.toString().trim();
       if (!str) return Object.create(null);
     }
-    const uint8 = bufferToUint8Array(input);
-    return codec.decode(uint8);
+    this.rawStdinInput = bufferToUint8Array(input);
+    this.stdinInput = codec.decode(this.rawStdinInput);
   }
 }
