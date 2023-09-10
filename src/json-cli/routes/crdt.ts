@@ -56,7 +56,8 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
             ? Model.withLogicalClock(sid)
             : Model.withLogicalClock();
           if (value !== undefined) model.api.root(value);
-          const patch = encodePatch(model.api.flush());
+          const patch = model.api.flush();
+          const patchEncoded = patch && patch.ops.length ? encodePatch(patch) : null;
           codec ??= 'binary';
           let doc: any = null;
           switch (codec) {
@@ -80,7 +81,7 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
           return {
             doc,
             codec,
-            patch,
+            patch: patchEncoded,
           };
         }),
     };

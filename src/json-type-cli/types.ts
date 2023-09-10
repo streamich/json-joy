@@ -25,5 +25,6 @@ export interface CliParamInstance {
   onParam?: () => Promise<void>;
   onStdin?: () => Promise<void>;
   onRequest?: () => Promise<void>;
+  onBeforeCall?: (method: string, ctx: CliContext) => Promise<void>;
   onResponse?: () => Promise<void>;
 }

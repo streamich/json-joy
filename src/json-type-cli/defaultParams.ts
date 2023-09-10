@@ -5,6 +5,7 @@ import {CliParamFormat} from './params/CliParamFormat';
 import {CliParamHelp} from './params/CliParamHelp';
 import {CliParamJson} from './params/CliParamJson';
 import {CliParamNum} from './params/CliParamNum';
+import {CliParamPlan} from './params/CliParamPlan';
 import {CliParamStdin} from './params/CliParamStdin';
 import {CliParamStdout} from './params/CliParamStdout';
 import {CliParamStr} from './params/CliParamStr';
@@ -25,4 +26,5 @@ export const defaultParams: CliParam[] = [
   new CliParamFormat(),
   new CliParamStdin(),
   new CliParamStdout(),
+  new CliParamPlan(),
 ];

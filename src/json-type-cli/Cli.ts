@@ -100,14 +100,15 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         this.paramInstances.push(instance);
         if (instance.onParam) await instance.onParam();
       }
-      const methodName = args.positionals[0];
+      const method = args.positionals[0];
       this.request = JSON.parse(args.positionals[1] || '{}');
       await this.readStdin();
       for (const instance of this.paramInstances) if (instance.onStdin) await instance.onStdin();
-      const ctx: CliContext<Router> = {cli: this};
       for (const instance of this.paramInstances) if (instance.onRequest) await instance.onRequest();
       try {
-        const value = await this.caller.call(methodName, this.request as any, ctx);
+        const ctx: CliContext<Router> = {cli: this};
+        for (const instance of this.paramInstances) if (instance.onBeforeCall) await instance.onBeforeCall(method, ctx);
+        const value = await this.caller.call(method, this.request as any, ctx);
         this.response = (value as Value).data;
         for (const instance of this.paramInstances) if (instance.onResponse) await instance.onResponse();
         const buf = this.responseCodec.encode(this.response);
