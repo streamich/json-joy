@@ -17,7 +17,7 @@ export const defineUtilRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
         description: 'This method always throws an error.',
       })
       .implement<CliContext>(async (req, ctx) => {
-        throw new Error(`${ctx.run.argv![0]} always throws an error.`);
+        throw new Error(`${ctx.cli.argv![0]} always throws an error.`);
       }),
     'util.schema': t
       .Function(t.Object(t.prop('alias', t.str)), t.Object(t.prop('schema', t.any)))

@@ -1,6 +1,5 @@
 import type {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import type {Cli} from './Cli';
-import type {WriteStream, ReadStream} from 'tty';
 
 export interface CliCodec<Id extends string = string> {
   id: Id;
@@ -11,14 +10,18 @@ export interface CliCodec<Id extends string = string> {
 
 export interface CliContext<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
   cli: Cli<Router>;
-  run: RunOptions;
   codecs: [request: CliCodec, response: CliCodec];
 }
 
-export interface RunOptions {
-  argv: string[];
-  stdout: WriteStream;
-  stderr: WriteStream;
-  stdin: ReadStream;
-  exit: (errno: number) => void;
+export interface CliParam {
+  param: string;
+  short?: string;
+  title: string;
+  createInstance: (cli: Cli, pointer: string, value: string) => CliParamInstance;
+}
+
+export interface CliParamInstance {
+  onParam?: () => Promise<void>;
+  onBeforeExec?: (cli: Cli) => Promise<void>;
+  onAfterExec?: (cli: Cli) => Promise<void>;
 }

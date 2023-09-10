@@ -20,6 +20,8 @@ describe('parseParamKey()', () => {
   });
 });
 
+const defaultCodec = defaultCodecs.get('json');
+
 describe('ingestParams()', () => {
   test('throws un unknown parameter type', () => {
     const request = {};
@@ -30,6 +32,7 @@ describe('ingestParams()', () => {
         },
         request,
         defaultCodecs,
+        defaultCodec,
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`"Invalid param type: hmmmmm"`);
   });
@@ -43,6 +46,7 @@ describe('ingestParams()', () => {
       },
       request,
       defaultCodecs,
+      defaultCodec,
     );
     expect(request).toStrictEqual({
       foo: {gg: 'bet'},
@@ -59,6 +63,7 @@ describe('ingestParams()', () => {
       },
       request,
       defaultCodecs,
+      defaultCodec,
     );
     expect(request).toStrictEqual({
       foo: 'abc',
@@ -75,6 +80,7 @@ describe('ingestParams()', () => {
       },
       request,
       defaultCodecs,
+      defaultCodec,
     );
     expect(request).toStrictEqual({
       foo: 123,
@@ -91,6 +97,7 @@ describe('ingestParams()', () => {
       },
       request,
       defaultCodecs,
+      defaultCodec,
     );
     expect(request).toStrictEqual({
       foo: true,
@@ -107,6 +114,7 @@ describe('ingestParams()', () => {
       },
       request,
       defaultCodecs,
+      defaultCodec,
     );
     expect(request).toStrictEqual({
       foo: null,

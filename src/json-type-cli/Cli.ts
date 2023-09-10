@@ -6,26 +6,37 @@ import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {applyPatch} from '../json-patch';
 import {formatError, ingestParams} from './util';
 import {find, validateJsonPointer, toPath} from '../json-pointer';
+import {defineBuiltinRoutes} from './methods';
 import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
-import type {ReadStream} from 'tty';
-import type {CliCodec, CliContext, RunOptions} from './types';
-import {defineBuiltinRoutes} from './methods';
+import type {WriteStream, ReadStream} from 'tty';
+import type {CliCodec, CliContext} from './types';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;
   router?: Router;
   version?: string;
   cmd?: string;
+  argv?: string[];
+  stdout?: WriteStream;
+  stderr?: WriteStream;
+  stdin?: ReadStream;
+  exit?: (errno: number) => void;
 }
 
-export class Cli<Router extends TypeRouter<RoutesBase>> {
+export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
   public router: Router;
   public readonly types: TypeSystem;
   public readonly t: TypeBuilder;
   public readonly caller: TypeRouterCaller<Router>;
   public readonly codecs: CliCodecs;
+  public request: unknown;
+  public argv: string[];
+  public stdout: WriteStream;
+  public stderr: WriteStream;
+  public stdin: ReadStream;
+  public exit: (errno: number) => void;
 
   public constructor(protected readonly options: CliOptions<Router>) {
     let router = options.router ?? (TypeRouter.create() as any);
@@ -35,35 +46,34 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     this.types = router.system;
     this.t = this.types.t;
     this.codecs = options.codecs;
+    this.argv = options.argv ?? process.argv.slice(2);
+    this.stdin = options.stdin ?? process.stdin;
+    this.stdout = options.stdout ?? process.stdout;
+    this.stderr = options.stderr ?? process.stderr;
+    this.exit = options.exit ?? process.exit;
   }
 
-  public run(options?: RunOptions): void {
-    this.runAsync(options);
+  public run(): void {
+    this.runAsync();
   }
 
-  public async runAsync(options: Partial<RunOptions> = {}): Promise<void> {
-    const argv: string[] = options.argv ?? process.argv.slice(2);
-    const stdin = options.stdin ?? process.stdin;
-    const stdout = options.stdout ?? process.stdout;
-    const stderr = options.stderr ?? process.stderr;
-    const exit = options.exit ?? process.exit;
-    const opts: RunOptions = {argv, stdin, stdout, stderr, exit};
+  public async runAsync(): Promise<void> {
     try {
       const args = parseArgs({
-        args: argv,
+        args: this.argv,
         strict: false,
         allowPositionals: true,
       });
       const methodName = args.positionals[0];
       if (args.values.v || args.values.version) {
-        this.printVersion(opts);
+        this.printVersion();
         return;
       }
       if (args.values.h || args.values.help) {
-        this.printHelp(opts);
+        this.printHelp();
         return;
       }
-      let request = JSON.parse(args.positionals[1] || '{}');
+      this.request = JSON.parse(args.positionals[1] || '{}');
       const {
         f: format_ = '',
         format = format_,
@@ -77,30 +87,29 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
       if (outPath) validateJsonPointer(outPath);
       const codecs = this.codecs.getCodecs(format);
       const [requestCodec, responseCodec] = codecs;
-      request = await this.ingestStdinInput(stdin, requestCodec, request, String(inPath));
-      await ingestParams(params, request);
+      this.request = await this.ingestStdinInput(this.stdin, requestCodec, this.request, String(inPath));
+      await ingestParams(params, this.request, this.codecs, requestCodec);
       const ctx: CliContext<Router> = {
         cli: this,
-        run: opts,
         codecs,
       };
       try {
-        const value = await this.caller.call(methodName, request as any, ctx);
+        const value = await this.caller.call(methodName, this.request as any, ctx);
         let response = (value as Value).data;
         if (outPath) response = find(response, toPath(String(outPath))).val;
         const buf = responseCodec.encode(response);
-        stdout.write(buf);
+        this.stdout.write(buf);
       } catch (err) {
         const error = formatError(err);
         const buf = responseCodec.encode(error);
-        stderr.write(buf);
-        exit(1);
+        this.stderr.write(buf);
+        this.exit(1);
       }
     } catch (err) {
       const error = formatError(err);
       const buf = JSON.stringify(error);
-      stderr.write(buf);
-      exit(1);
+      this.stderr.write(buf);
+      this.exit(1);
     }
   }
 
@@ -122,13 +131,12 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
     return this.options.cmd ?? '<cmd>';
   }
 
-  private printVersion(options: RunOptions): void {
+  private printVersion(): void {
     const version = this.options.version ?? '0.0.0-unknown';
-    const stdout = options.stdout ?? process.stdout;
-    stdout.write(version + '\n');
+    this.stdout.write(version + '\n');
   }
 
-  private printHelp(options: RunOptions): void {
+  private printHelp(): void {
     const methods: string[] = Object.keys(this.router.routes).sort();
     const methodLines = methods.map((m) => {
       const route = this.router.routes[m];
@@ -192,8 +200,7 @@ export class Cli<Router extends TypeRouter<RoutesBase>> {
   ${methodLines.join('\n  ')}
 
 `;
-    const stdout = options.stdout ?? process.stdout;
-    stdout.write(text);
+    this.stdout.write(text);
   }
 
   private async getStdin(stdin: ReadStream): Promise<Buffer> {

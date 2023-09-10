@@ -5,6 +5,7 @@ import {RpcError} from '../reactive-rpc/common/rpc/caller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {listToUint8} from '../util/buffers/concat';
 import type {CliCodecs} from './CliCodecs';
+import type {CliCodec} from './types';
 
 const PARAM_REGEX = /^([a-z]+)(\/.*)$/;
 
@@ -15,16 +16,7 @@ export const parseParamKey = (key: string): [] | [type: string, path: string] =>
   return [type, path];
 };
 
-const CODEC_CMD_REGEX = /^([a-z]+:)?(.+)$/;
-
-export const parseCodecCommand = (key: string): [] | [type: string, path: string] => {
-  const match = PARAM_REGEX.exec(key);
-  if (!match) return [];
-  const [, type, path] = match;
-  return [type, path];
-};
-
-export const ingestParams = async (params: Record<string, unknown>, result: Record<string, unknown>, codecs: CliCodecs): Promise<void> => {
+export const ingestParams = async (params: Record<string, unknown>, request: unknown, codecs: CliCodecs, requestCodec: CliCodec): Promise<void> => {
   for (const key of Object.keys(params)) {
     const [type, path] = parseParamKey(key);
     if (!type) continue;
@@ -32,38 +24,48 @@ export const ingestParams = async (params: Record<string, unknown>, result: Reco
       case 'j':
       case 'json': {
         const value = JSON.parse(params[key] as string);
-        applyPatch(result, [{op: 'add', path: path as string, value}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value}], {mutate: true});
         break;
       }
       case 'n':
       case 'num': {
         const value = Number(JSON.parse(params[key] as string));
-        applyPatch(result, [{op: 'add', path: path as string, value}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value}], {mutate: true});
         break;
       }
       case 's':
       case 'str': {
         const value = String(params[key]);
-        applyPatch(result, [{op: 'add', path: path as string, value}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value}], {mutate: true});
         break;
       }
       case 'b':
       case 'bool': {
         const value = Boolean(JSON.parse(params[key] as string));
-        applyPatch(result, [{op: 'add', path: path as string, value}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value}], {mutate: true});
         break;
       }
       case 'nil': {
-        applyPatch(result, [{op: 'add', path: path as string, value: null}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value: null}], {mutate: true});
         break;
       }
       case 'und': {
-        applyPatch(result, [{op: 'add', path: path as string, value: undefined}], {mutate: true});
+        applyPatch(request, [{op: 'add', path: path as string, value: undefined}], {mutate: true});
         break;
       }
       case 'c':
       case 'cmd': {
-        const cmd = String(params[key]);
+        let cmd = String(params[key]);
+        const regex = new RegExp(`^((${[...codecs.codecs.keys()].join('|')}):)?(.+)$`);
+        const match = regex.exec(cmd);
+        if (match) {
+          const [, , codecName, cmd_] = match;
+          const codec_ = codecs.get(codecName);
+          if (codec_) {
+            requestCodec = codec_;
+            cmd = cmd_;
+          }
+        }
         const uint8 = await new Promise<Uint8Array>((resolve, reject) => {
           const ls = spawn(cmd, {shell: true});
           let uint8s: Uint8Array[] = [];
@@ -77,8 +79,8 @@ export const ingestParams = async (params: Record<string, unknown>, result: Reco
             resolve(listToUint8(uint8s));
           });
         });
-        const value = uint8;
-        applyPatch(result, [{op: 'add', path: path as string, value}], {mutate: true});
+        const value = requestCodec.decode(uint8);
+        applyPatch(request, [{op: 'add', path: path as string, value}], {mutate: true});
         break;
       }
       default:
