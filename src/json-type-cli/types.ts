@@ -10,7 +10,6 @@ export interface CliCodec<Id extends string = string> {
 
 export interface CliContext<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
   cli: Cli<Router>;
-  codecs: [request: CliCodec, response: CliCodec];
 }
 
 export interface CliParam {

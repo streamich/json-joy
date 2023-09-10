@@ -1,5 +1,6 @@
 import {CliParamBool} from './params/CliParamBool';
 import {CliParamCmd} from './params/CliParamCmd';
+import {CliParamFormat} from './params/CliParamFormat';
 import {CliParamHelp} from './params/CliParamHelp';
 import {CliParamJson} from './params/CliParamJson';
 import {CliParamNum} from './params/CliParamNum';
@@ -17,4 +18,5 @@ export const defaultParams: CliParam[] = [
   new CliParamJson(),
   new CliParamUnd(),
   new CliParamCmd(),
+  new CliParamFormat(),
 ];

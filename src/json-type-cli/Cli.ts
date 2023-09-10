@@ -102,8 +102,6 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       const methodName = args.positionals[0];
       this.request = JSON.parse(args.positionals[1] || '{}');
       const {
-        f: format_ = '',
-        format = format_,
         stdin: inPath_ = '',
         in: inPath = inPath_,
         stdout: outPath_ = '',
@@ -111,13 +109,8 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       } = args.values;
       if (inPath) validateJsonPointer(inPath);
       if (outPath) validateJsonPointer(outPath);
-      const codecs = this.codecs.getCodecs(format);
-      const [requestCodec, responseCodec] = codecs;
-      this.request = await this.ingestStdinInput(this.stdin, requestCodec, this.request, String(inPath));
-      const ctx: CliContext<Router> = {
-        cli: this,
-        codecs,
-      };
+      this.request = await this.ingestStdinInput(this.stdin, this.requestCodec, this.request, String(inPath));
+      const ctx: CliContext<Router> = {cli: this};
       for (const instance of this.paramInstances)
         if (instance.onRequest) await instance.onRequest();
       try {
@@ -126,11 +119,11 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         for (const instance of this.paramInstances)
           if (instance.onResponse) await instance.onResponse();
         if (outPath) response = find(response, toPath(String(outPath))).val;
-        const buf = responseCodec.encode(response);
+        const buf = this.responseCodec.encode(response);
         this.stdout.write(buf);
       } catch (err) {
         const error = formatError(err);
-        const buf = responseCodec.encode(error);
+        const buf = this.responseCodec.encode(error);
         this.stderr.write(buf);
         this.exit(1);
       }
