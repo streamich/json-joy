@@ -56,7 +56,7 @@ Options:
   
   Available codecs:
 
-  ${codecLines.join('\n    ')}
+  ${codecLines.join('\n  ')}
 
 Method help:
 
@@ -67,7 +67,7 @@ Method help:
 
 Methods:
 
-${methodLines.join('\n  ')}
+${methodLines.join('\n')}
 
   `;
       cli.stdout.write(text);

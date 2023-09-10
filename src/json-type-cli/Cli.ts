@@ -4,7 +4,7 @@ import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {applyPatch} from '../json-patch';
-import {formatError, ingestParams} from './util';
+import {formatError} from './util';
 import {find, validateJsonPointer, toPath} from '../json-pointer';
 import {defineBuiltinRoutes} from './methods';
 import {defaultParams} from './defaultParams';
@@ -12,7 +12,7 @@ import type {CliCodecs} from './CliCodecs';
 import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {WriteStream, ReadStream} from 'tty';
-import type {CliCodec, CliContext, CliParam} from './types';
+import type {CliCodec, CliContext, CliParam, CliParamInstance} from './types';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;
@@ -41,6 +41,9 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
   public stderr: WriteStream;
   public stdin: ReadStream;
   public exit: (errno: number) => void;
+  public requestCodec: CliCodec;
+  public responseCodec: CliCodec;
+  protected paramInstances: CliParamInstance[] = [];
 
   public constructor(public readonly options: CliOptions<Router>) {
     let router = options.router ?? (TypeRouter.create() as any);
@@ -56,6 +59,8 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
     this.types = router.system;
     this.t = this.types.t;
     this.codecs = options.codecs;
+    this.requestCodec = this.codecs.get(this.codecs.defaultCodec);
+    this.responseCodec = this.codecs.get(this.codecs.defaultCodec);
     this.argv = options.argv ?? process.argv.slice(2);
     this.stdin = options.stdin ?? process.stdin;
     this.stdout = options.stdout ?? process.stdout;
@@ -78,13 +83,20 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         strict: false,
         allowPositionals: true,
       });
-      for (const argKey of Object.keys(args.values)) {
+      for (let argKey of Object.keys(args.values)) {
+        let pointer = '';
+        const value = args.values[argKey];
+        const slashIndex = argKey.indexOf('/');
+        if (slashIndex !== -1) {
+          pointer = argKey.slice(slashIndex);
+          argKey = argKey.slice(0, slashIndex);
+        }
         const param = this.param(argKey);
         if (!param) {
           throw new Error(`Unknown parameter "${argKey}"`);
         }
-        const value = args.values[argKey];
-        const instance = param.createInstance(this, '', value);
+        const instance = param.createInstance(this, pointer, value);
+        this.paramInstances.push(instance);
         if (instance.onParam) await instance.onParam();
       }
       const methodName = args.positionals[0];
@@ -96,21 +108,23 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         in: inPath = inPath_,
         stdout: outPath_ = '',
         out: outPath = outPath_,
-        ...params
       } = args.values;
       if (inPath) validateJsonPointer(inPath);
       if (outPath) validateJsonPointer(outPath);
       const codecs = this.codecs.getCodecs(format);
       const [requestCodec, responseCodec] = codecs;
       this.request = await this.ingestStdinInput(this.stdin, requestCodec, this.request, String(inPath));
-      await ingestParams(params, this.request, this.codecs, requestCodec);
       const ctx: CliContext<Router> = {
         cli: this,
         codecs,
       };
+      for (const instance of this.paramInstances)
+        if (instance.onRequest) await instance.onRequest();
       try {
         const value = await this.caller.call(methodName, this.request as any, ctx);
         let response = (value as Value).data;
+        for (const instance of this.paramInstances)
+          if (instance.onResponse) await instance.onResponse();
         if (outPath) response = find(response, toPath(String(outPath))).val;
         const buf = responseCodec.encode(response);
         this.stdout.write(buf);

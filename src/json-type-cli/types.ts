@@ -22,6 +22,6 @@ export interface CliParam {
 
 export interface CliParamInstance {
   onParam?: () => Promise<void>;
-  onBeforeExec?: (cli: Cli) => Promise<void>;
-  onAfterExec?: (cli: Cli) => Promise<void>;
+  onRequest?: () => Promise<void>;
+  onResponse?: () => Promise<void>;
 }
