@@ -4,7 +4,6 @@ import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {formatError} from './util';
-import {find, validateJsonPointer, toPath} from '../json-pointer';
 import {defineBuiltinRoutes} from './methods';
 import {defaultParams} from './defaultParams';
 import type {CliCodecs} from './CliCodecs';
@@ -34,7 +33,8 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
   public readonly t: TypeBuilder;
   public readonly caller: TypeRouterCaller<Router>;
   public readonly codecs: CliCodecs;
-  public request: unknown;
+  public request?: unknown;
+  public response?: unknown;
   public argv: string[];
   public stdout: WriteStream;
   public stderr: WriteStream;
@@ -102,18 +102,15 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       }
       const methodName = args.positionals[0];
       this.request = JSON.parse(args.positionals[1] || '{}');
-      const {stdout: outPath_ = '', out: outPath = outPath_} = args.values;
-      if (outPath) validateJsonPointer(outPath);
       await this.readStdin();
       for (const instance of this.paramInstances) if (instance.onStdin) await instance.onStdin();
       const ctx: CliContext<Router> = {cli: this};
       for (const instance of this.paramInstances) if (instance.onRequest) await instance.onRequest();
       try {
         const value = await this.caller.call(methodName, this.request as any, ctx);
-        let response = (value as Value).data;
+        this.response = (value as Value).data;
         for (const instance of this.paramInstances) if (instance.onResponse) await instance.onResponse();
-        if (outPath) response = find(response, toPath(String(outPath))).val;
-        const buf = this.responseCodec.encode(response);
+        const buf = this.responseCodec.encode(this.response);
         this.stdout.write(buf);
       } catch (err) {
         const error = formatError(err);
