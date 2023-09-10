@@ -12,7 +12,7 @@ export class CliParamBool implements CliParam {
       public readonly onRequest = async () => {
         const value = Boolean(JSON.parse(String(rawValue)));
         const path = toPath(pointer);
-        applyPatch(cli.request, [{op: 'add', path, value}], {mutate: true});
+        cli.request = applyPatch(cli.request, [{op: 'add', path, value}], {mutate: true}).doc;
       };
     })();
 }

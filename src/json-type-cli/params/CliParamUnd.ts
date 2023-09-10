@@ -10,7 +10,7 @@ export class CliParamUnd implements CliParam {
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {
         const path = toPath(pointer);
-        applyPatch(cli.request, [{op: 'add', path, value: undefined}], {mutate: true});
+        cli.request = applyPatch(cli.request, [{op: 'add', path, value: undefined}], {mutate: true}).doc;
       };
     })();
 }
