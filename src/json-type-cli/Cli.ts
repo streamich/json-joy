@@ -102,22 +102,16 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       }
       const methodName = args.positionals[0];
       this.request = JSON.parse(args.positionals[1] || '{}');
-      const {
-        stdout: outPath_ = '',
-        out: outPath = outPath_,
-      } = args.values;
+      const {stdout: outPath_ = '', out: outPath = outPath_} = args.values;
       if (outPath) validateJsonPointer(outPath);
       await this.readStdin();
-      for (const instance of this.paramInstances)
-        if (instance.onStdin) await instance.onStdin();
+      for (const instance of this.paramInstances) if (instance.onStdin) await instance.onStdin();
       const ctx: CliContext<Router> = {cli: this};
-      for (const instance of this.paramInstances)
-        if (instance.onRequest) await instance.onRequest();
+      for (const instance of this.paramInstances) if (instance.onRequest) await instance.onRequest();
       try {
         const value = await this.caller.call(methodName, this.request as any, ctx);
         let response = (value as Value).data;
-        for (const instance of this.paramInstances)
-          if (instance.onResponse) await instance.onResponse();
+        for (const instance of this.paramInstances) if (instance.onResponse) await instance.onResponse();
         if (outPath) response = find(response, toPath(String(outPath))).val;
         const buf = this.responseCodec.encode(response);
         this.stdout.write(buf);

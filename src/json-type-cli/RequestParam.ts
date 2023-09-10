@@ -1,3 +1,1 @@
-export class RequestParam {
-  
-}
+export class RequestParam {}

@@ -24,18 +24,17 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
               description:
                 'Whether to use server logical clock for this document. If set to true, the session ID will be ignored set to 1.',
             }),
-            t.propOpt('codec',
-              t.Or(
-                t.Const(<const>'binary'),
-                t.Const(<const>'compact'),
-                t.Const(<const>'verbose'),
-              ).options({
-                discriminator: ['?', ['==', ['$', ''], 'binary'], 0, ['?', ['==', ['$', ''], 'compact'], 1, 2]]
-              })
-            ).options({
-              title: 'Codec for the document',
-              description: 'Codec to use for the document. Defaults to binary.',
-            }),
+            t
+              .propOpt(
+                'codec',
+                t.Or(t.Const(<const>'binary'), t.Const(<const>'compact'), t.Const(<const>'verbose')).options({
+                  discriminator: ['?', ['==', ['$', ''], 'binary'], 0, ['?', ['==', ['$', ''], 'compact'], 1, 2]],
+                }),
+              )
+              .options({
+                title: 'Codec for the document',
+                description: 'Codec to use for the document. Defaults to binary.',
+              }),
           ),
           t.Object(
             t.prop('doc', t.any).options({
@@ -51,13 +50,13 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
           description: 'Creates a new JSON CRDT document.',
         })
         .implement(async ({value, sid, serverClock, codec}) => {
-          const model = serverClock ?
-            Model.withServerClock()
+          const model = serverClock
+            ? Model.withServerClock()
             : sid !== undefined
-              ? Model.withLogicalClock(sid)
-              : Model.withLogicalClock();
+            ? Model.withLogicalClock(sid)
+            : Model.withLogicalClock();
           if (value !== undefined) model.api.root(value);
-          const patch = encodePatch(model.api.flush());          
+          const patch = encodePatch(model.api.flush());
           codec ??= 'binary';
           let doc: any = null;
           switch (codec) {
@@ -75,7 +74,8 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
               doc = encoder.encode(model);
               break;
             }
-            default: throw new Error(`Unknown codec: ${codec}`);
+            default:
+              throw new Error(`Unknown codec: ${codec}`);
           }
           return {
             doc,

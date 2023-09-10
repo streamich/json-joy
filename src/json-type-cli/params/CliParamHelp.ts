@@ -1,23 +1,24 @@
-import type {Cli} from "../Cli";
-import type {CliParam, CliParamInstance} from "../types";
+import type {Cli} from '../Cli';
+import type {CliParam, CliParamInstance} from '../types';
 
 export class CliParamHelp implements CliParam {
   public readonly param = 'help';
   public readonly short = 'h';
   public readonly title = 'Print help and exit';
-  public readonly createInstance = (cli: Cli, pointer: string, value: unknown) => new class implements CliParamInstance {
-    public readonly onParam = async () => {
-      const methods: string[] = Object.keys(cli.router.routes).sort();
-      const methodLines = methods.map((m) => {
-        const route = cli.router.routes[m];
-        const schema = route.getSchema();
-        let line = `- "${m}"`;
-        if (schema.title) line += ` - ${schema.title}`;
-        return line;
-      });
-      const cmd = cli.cmd();
-      const codecLines = [...cli.codecs.codecs.values()].map((codec) => `- "${codec.id}" - ${codec.description}`);
-      const text = `
+  public readonly createInstance = (cli: Cli, pointer: string, value: unknown) =>
+    new (class implements CliParamInstance {
+      public readonly onParam = async () => {
+        const methods: string[] = Object.keys(cli.router.routes).sort();
+        const methodLines = methods.map((m) => {
+          const route = cli.router.routes[m];
+          const schema = route.getSchema();
+          let line = `- "${m}"`;
+          if (schema.title) line += ` - ${schema.title}`;
+          return line;
+        });
+        const cmd = cli.cmd();
+        const codecLines = [...cli.codecs.codecs.values()].map((codec) => `- "${codec.id}" - ${codec.description}`);
+        const text = `
 JSON Type CLI uses request/response paradigm to execute CLI commands. Each
 command is identified by the <method> name. Each command receives a JSON
 object as the request payload and returns a JSON object as a response.
@@ -70,8 +71,8 @@ Methods:
 ${methodLines.join('\n')}
 
   `;
-      cli.stdout.write(text);
-      cli.exit(0);
-    };
-  }
+        cli.stdout.write(text);
+        cli.exit(0);
+      };
+    })();
 }
