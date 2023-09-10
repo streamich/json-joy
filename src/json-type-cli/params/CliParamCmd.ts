@@ -10,7 +10,7 @@ export class CliParamCmd implements CliParam {
   public readonly param = 'cmd';
   public readonly short = 'c';
   public readonly title = 'Set value by command';
-  public readonly example = '--c/foo=\'(echo [1,2,3]):json:/1\'';
+  public readonly example = "--c/foo='(echo [1,2,3]):json:/1'";
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {
