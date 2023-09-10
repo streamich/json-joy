@@ -3,7 +3,7 @@ import type {CliParam, CliParamInstance} from '../types';
 
 export class CliParamFormat implements CliParam {
   public readonly param = 'format';
-  public readonly short = 'f';
+  public readonly short = 'fmt';
   public readonly title =
     'Codec format to use for encoding/decoding request/response values. To specify both request and response codecs use "<codec>", or "<reqCodec>:<resCodec>" to specify them separately.';
   public readonly createInstance = (cli: Cli, pointer: string, value: unknown) =>
