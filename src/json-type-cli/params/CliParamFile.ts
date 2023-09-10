@@ -8,6 +8,7 @@ export class CliParamFile implements CliParam {
   public readonly param = 'file';
   public readonly short = 'f';
   public readonly title = 'Read value from file';
+  public readonly example = '--f/foo=test.json:json:/a/b/c';
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {

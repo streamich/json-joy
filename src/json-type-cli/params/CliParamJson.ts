@@ -7,6 +7,7 @@ export class CliParamJson implements CliParam {
   public readonly param = 'json';
   public readonly short = 'j';
   public readonly title = 'Set JSON value';
+  public readonly example = '--j/foo=\'{"a":1}\'';
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {

@@ -7,6 +7,7 @@ export class CliParamStr implements CliParam {
   public readonly param = 'str';
   public readonly short = 's';
   public readonly title = 'Set string value';
+  public readonly example = '--s/foo=abc';
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {

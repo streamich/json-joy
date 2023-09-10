@@ -16,6 +16,8 @@ export interface CliParam {
   param: string;
   short?: string;
   title: string;
+  example?: string;
+  examples?: string[];
   createInstance: (cli: Cli, pointer: string, value: unknown) => CliParamInstance;
 }
 

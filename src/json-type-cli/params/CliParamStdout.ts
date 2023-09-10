@@ -5,7 +5,8 @@ import type {CliParam, CliParamInstance} from '../types';
 export class CliParamStdout implements CliParam {
   public readonly param = 'stdout';
   public readonly short = 'out';
-  public readonly title = 'Write data to stdout';
+  public readonly title = 'Write data to STDOUT';
+  public readonly example = '--out=/foo';
   public readonly createInstance = (cli: Cli, _: string, rawValue: unknown) => {
     return new (class implements CliParamInstance {
       public readonly onResponse = async () => {

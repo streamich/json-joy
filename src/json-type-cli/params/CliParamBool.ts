@@ -7,6 +7,7 @@ export class CliParamBool implements CliParam {
   public readonly param = 'bool';
   public readonly short = 'b';
   public readonly title = 'Set boolean value';
+  public readonly example = '--b/foo=true';
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {

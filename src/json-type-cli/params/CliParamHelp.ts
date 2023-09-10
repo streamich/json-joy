@@ -8,6 +8,13 @@ export class CliParamHelp implements CliParam {
   public readonly createInstance = (cli: Cli, pointer: string, value: unknown) =>
     new (class implements CliParamInstance {
       public readonly onParam = async () => {
+        const paramLines = cli.params.map((param) => {
+          let line = `--${param.param}`;
+          if (param.short) line += ` or --${param.short}`;
+          line += ` - ${param.title}`;
+          if (param.example) line += `, eg. ${param.example}`;
+          return line;
+        });
         const methods: string[] = Object.keys(cli.router.routes).sort();
         const methodLines = methods.map((m) => {
           const route = cli.router.routes[m];
@@ -47,17 +54,11 @@ Examples:
 
 Options:
 
-- "-h" or "--help" - Print this help.
-- "-v" or "--version" - Print version.
-- "--stdin" or "--in" - JSON pointer where to inject STDIN input.
-- "--stdout" or "--out" - JSON pointer of response value for STDOUT.
-- "--format" or "--f" - Codec format to use for encoding/decoding
-  request/response values. To specify both request and response codecs use
-  "<codec>", or "<reqCodec>:<resCodec>" to specify them separately.
-  
-  Available codecs:
+    ${paramLines.join('\n    ')}
 
-  ${codecLines.join('\n  ')}
+Formats:
+
+    ${codecLines.join('\n    ')}
 
 Method help:
 
@@ -68,7 +69,7 @@ Method help:
 
 Methods:
 
-${methodLines.join('\n')}
+    ${methodLines.join('\n    ')}
 
   `;
         cli.stdout.write(text);

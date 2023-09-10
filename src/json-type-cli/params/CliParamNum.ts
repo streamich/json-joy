@@ -7,6 +7,7 @@ export class CliParamNum implements CliParam {
   public readonly param = 'num';
   public readonly short = 'n';
   public readonly title = 'Set number value';
+  public readonly example = '--n/foo=123';
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onRequest = async () => {
