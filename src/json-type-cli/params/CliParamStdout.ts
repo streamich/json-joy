@@ -12,7 +12,7 @@ export class CliParamStdout implements CliParam {
         const pointer = String(rawValue);
         validateJsonPointer(pointer);
         const path = toPath(pointer);
-        cli.response = find(cli.response, path).val;        
+        cli.response = find(cli.response, path).val;
       };
     })();
   };
