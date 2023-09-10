@@ -40,7 +40,7 @@ export class CliParamCmd implements CliParam {
         });
         const value = codec.decode(uint8);
         const path = toPath(pointer);
-        applyPatch(cli.request, [{op: 'add', path, value}], {mutate: true});
+        cli.request = applyPatch(cli.request, [{op: 'add', path, value}], {mutate: true}).doc;
       };
     })();
 }
