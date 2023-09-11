@@ -1,4 +1,7 @@
 import {Model} from '../../json-crdt';
+import {Encoder as VerboseEncoder} from '../../json-crdt/codec/structural/json/Encoder';
+import {Encoder as CompactEncoder} from '../../json-crdt/codec/structural/compact/Encoder';
+import {encode as encodePatch} from '../../json-crdt-patch/codec/compact/encode';
 import {TypeRouter, RoutesBase} from '../../json-type/system/TypeRouter';
 
 export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<Routes>) => {
@@ -21,22 +24,64 @@ export const defineCrdtRoutes = <Routes extends RoutesBase>(router: TypeRouter<R
               description:
                 'Whether to use server logical clock for this document. If set to true, the session ID will be ignored set to 1.',
             }),
+            t
+              .propOpt(
+                'codec',
+                t.Or(t.Const(<const>'binary'), t.Const(<const>'compact'), t.Const(<const>'verbose')).options({
+                  discriminator: ['?', ['==', ['$', ''], 'binary'], 0, ['?', ['==', ['$', ''], 'compact'], 1, 2]],
+                }),
+              )
+              .options({
+                title: 'Codec for the document',
+                description: 'Codec to use for the document. Defaults to binary.',
+              }),
           ),
           t.Object(
-            t.propOpt('doc', t.any).options({
+            t.prop('doc', t.any).options({
               title: 'JSON CRDT document',
               description: 'JSON CRDT document.',
             }),
+            t.prop('codec', t.str),
+            t.prop('patch', t.any),
           ),
         )
         .options({
           title: 'Create a CRDT document',
           description: 'Creates a new JSON CRDT document.',
         })
-        .implement(async ({value, sid, serverClock}) => {
-          const model = Model.withLogicalClock();
+        .implement(async ({value, sid, serverClock, codec}) => {
+          const model = serverClock
+            ? Model.withServerClock()
+            : sid !== undefined
+            ? Model.withLogicalClock(sid)
+            : Model.withLogicalClock();
+          if (value !== undefined) model.api.root(value);
+          const patch = model.api.flush();
+          const patchEncoded = patch && patch.ops.length ? encodePatch(patch) : null;
+          codec ??= 'binary';
+          let doc: any = null;
+          switch (codec) {
+            case 'binary': {
+              doc = model.toBinary();
+              break;
+            }
+            case 'compact': {
+              const encoder = new CompactEncoder();
+              doc = encoder.encode(model);
+              break;
+            }
+            case 'verbose': {
+              const encoder = new VerboseEncoder();
+              doc = encoder.encode(model);
+              break;
+            }
+            default:
+              throw new Error(`Unknown codec: ${codec}`);
+          }
           return {
-            doc: model.toBinary(),
+            doc,
+            codec,
+            patch: patchEncoded,
           };
         }),
     };
