@@ -123,33 +123,20 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
   }
 }
 
-export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
-  public ins(index: number, values: T[]): this {
+export class ConstApi<T = unknown> extends NodeApi<Const, T> {}
+
+export class ValueApi<T = unknown> extends NodeApi<ValueLww, T> {
+  public set(json: T): this {
     const {api, node} = this;
-    const {builder} = api;
-    const after = !index ? node.id : node.find(index - 1);
-    if (!after) throw new Error('OUT_OF_BOUNDS');
-    const valueIds: ITimestampStruct[] = [];
-    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
-    builder.insArr(node.id, after, valueIds);
+    const builder = api.builder;
+    const val = builder.constOrJson(json);
+    api.builder.setVal(node.id, val);
     api.apply();
     return this;
-  }
-
-  public del(index: number, length: number): this {
-    const {api, node} = this;
-    const spans = node.findInterval(index, length);
-    if (!spans) throw new Error('OUT_OF_BOUNDS');
-    api.builder.del(node.id, spans);
-    api.apply();
-    return this;
-  }
-
-  public length(): number {
-    return this.node.length();
   }
 }
 
+/** @todo Rename to `VectorApi`. */
 export class TupleApi<T extends unknown[] = unknown[]> extends NodeApi<ArrayLww, T> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
@@ -162,28 +149,6 @@ export class TupleApi<T extends unknown[] = unknown[]> extends NodeApi<ArrayLww,
     return this;
   }
 }
-
-export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
-  public ins(index: number, data: Uint8Array): this {
-    const {api, node} = this;
-    const after = !index ? node.id : node.find(index - 1);
-    if (!after) throw new Error('OUT_OF_BOUNDS');
-    api.builder.insBin(node.id, after, data);
-    api.apply();
-    return this;
-  }
-
-  public del(index: number, length: number): this {
-    const {api, node} = this;
-    const spans = node.findInterval(index, length);
-    if (!spans) throw new Error('OUT_OF_BOUNDS');
-    api.builder.del(node.id, spans);
-    api.apply();
-    return this;
-  }
-}
-
-export class ConstApi<T = unknown> extends NodeApi<Const, T> {}
 
 export class ObjectApi<T extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<ObjectLww, T> {
   public set(entries: Partial<T>): this {
@@ -236,13 +201,49 @@ export class StringApi extends NodeApi<StringRga, string> {
   }
 }
 
-export class ValueApi<T = unknown> extends NodeApi<ValueLww, T> {
-  public set(json: T): this {
+export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
+  public ins(index: number, data: Uint8Array): this {
     const {api, node} = this;
-    const builder = api.builder;
-    const val = builder.constOrJson(json);
-    api.builder.setVal(node.id, val);
+    const after = !index ? node.id : node.find(index - 1);
+    if (!after) throw new Error('OUT_OF_BOUNDS');
+    api.builder.insBin(node.id, after, data);
     api.apply();
     return this;
+  }
+
+  public del(index: number, length: number): this {
+    const {api, node} = this;
+    const spans = node.findInterval(index, length);
+    if (!spans) throw new Error('OUT_OF_BOUNDS');
+    api.builder.del(node.id, spans);
+    api.apply();
+    return this;
+  }
+}
+
+export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
+  public ins(index: number, values: T[]): this {
+    const {api, node} = this;
+    const {builder} = api;
+    const after = !index ? node.id : node.find(index - 1);
+    if (!after) throw new Error('OUT_OF_BOUNDS');
+    const valueIds: ITimestampStruct[] = [];
+    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
+    builder.insArr(node.id, after, valueIds);
+    api.apply();
+    return this;
+  }
+
+  public del(index: number, length: number): this {
+    const {api, node} = this;
+    const spans = node.findInterval(index, length);
+    if (!spans) throw new Error('OUT_OF_BOUNDS');
+    api.builder.del(node.id, spans);
+    api.apply();
+    return this;
+  }
+
+  public length(): number {
+    return this.node.length();
   }
 }
