@@ -123,8 +123,8 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
   }
 }
 
-export class ArrayApi extends NodeApi<ArrayRga, unknown[]> {
-  public ins(index: number, values: unknown[]): this {
+export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
+  public ins(index: number, values: T[]): this {
     const {api, node} = this;
     const {builder} = api;
     const after = !index ? node.id : node.find(index - 1);
@@ -150,7 +150,7 @@ export class ArrayApi extends NodeApi<ArrayRga, unknown[]> {
   }
 }
 
-export class TupleApi extends NodeApi<ArrayLww, unknown[]> {
+export class TupleApi<T extends unknown[] = unknown[]> extends NodeApi<ArrayLww, T> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
     const {builder} = api;
@@ -183,14 +183,10 @@ export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
   }
 }
 
-export class ConstApi extends NodeApi<Const, unknown> {
-  public view(): unknown {
-    return this.node.view();
-  }
-}
+export class ConstApi<T = unknown> extends NodeApi<Const, T> {}
 
-export class ObjectApi extends NodeApi<ObjectLww, unknown[]> {
-  public set(entries: Record<string, unknown>): this {
+export class ObjectApi<T extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<ObjectLww, T> {
+  public set(entries: Partial<T>): this {
     const {api, node} = this;
     const {builder} = api;
     builder.setKeys(
@@ -240,8 +236,8 @@ export class StringApi extends NodeApi<StringRga, string> {
   }
 }
 
-export class ValueApi extends NodeApi<ValueLww, unknown> {
-  public set(json: unknown): this {
+export class ValueApi<T = unknown> extends NodeApi<ValueLww, T> {
+  public set(json: T): this {
     const {api, node} = this;
     const builder = api.builder;
     const val = builder.constOrJson(json);
