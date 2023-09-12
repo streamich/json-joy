@@ -16,7 +16,7 @@ import type {ModelApi} from './ModelApi';
 export type ApiPath = string | number | Path | void;
 
 export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
-  constructor(public readonly node: N, public readonly api: ModelApi) {}
+  constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
 
   private ev: undefined | NodeEvents = undefined;
   public get events(): NodeEvents {

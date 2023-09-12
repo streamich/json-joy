@@ -8,7 +8,7 @@ export class RootLww extends ValueLww {
   /**
    * @param val Latest value of the document root.
    */
-  constructor(doc: Model, val: ITimestampStruct) {
+  constructor(doc: Model<any>, val: ITimestampStruct) {
     super(doc, ORIGIN, val);
   }
 

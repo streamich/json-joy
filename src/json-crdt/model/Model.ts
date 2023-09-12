@@ -32,8 +32,10 @@ import {ValueLww} from '../types/lww-value/ValueLww';
 import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
+import {createProxy} from './proxy/createProxy';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
+import type {ViewToProxy} from './proxy/types';
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -115,14 +117,18 @@ export class Model<View = unknown> implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
-  private _api?: ModelApi;
+  private _api?: ModelApi<View>;
 
   /**
    * API for applying changes to the current document.
    */
-  public get api(): ModelApi {
-    if (!this._api) this._api = new ModelApi(this);
+  public get api(): ModelApi<View> {
+    if (!this._api) this._api = new ModelApi<View>(this);
     return this._api;
+  }
+
+  public get find(): ViewToProxy<View> {
+    return createProxy(this);
   }
 
   /** Tracks number of times the `applyPatch` was called. */

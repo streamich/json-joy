@@ -8,7 +8,7 @@ import type {Printable} from '../../../util/print/types';
 export class ValueLww implements JsonNode, Printable {
   public api: undefined | unknown = undefined;
 
-  constructor(public readonly doc: Model, public readonly id: ITimestampStruct, public val: ITimestampStruct) {}
+  constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct, public val: ITimestampStruct) {}
 
   public set(val: ITimestampStruct): ITimestampStruct | undefined {
     if (compare(val, this.val) <= 0 && this.val.sid !== SESSION.SYSTEM) return;

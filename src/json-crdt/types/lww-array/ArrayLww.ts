@@ -9,7 +9,7 @@ import type {Printable} from '../../../util/print/types';
 export class ArrayLww implements JsonNode, Printable {
   public readonly elements: (ITimestampStruct | undefined)[] = [];
 
-  constructor(public readonly doc: Model, public readonly id: ITimestampStruct) {}
+  constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
 
   public val(index: number): undefined | ITimestampStruct {
     return this.elements[index] as ITimestampStruct | undefined;

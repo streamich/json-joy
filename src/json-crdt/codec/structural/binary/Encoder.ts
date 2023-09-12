@@ -23,7 +23,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     super(new CrdtWriter());
   }
 
-  public encode(doc: Model): Uint8Array {
+  public encode(doc: Model<any>): Uint8Array {
     this.doc = doc;
     this.writer.reset();
     if (doc.clock.sid === SESSION.SERVER) this.encodeServer(doc);

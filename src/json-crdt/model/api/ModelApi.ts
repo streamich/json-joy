@@ -11,13 +11,13 @@ import {StringRga} from '../../types/rga-string/StringRga';
 import {ValueLww} from '../../types/lww-value/ValueLww';
 import type {Model} from '../Model';
 
-export class ModelApi {
+export class ModelApi<View = unknown> {
   public builder: PatchBuilder;
 
   /** Index of the next operation in builder's patch to be committed locally. */
   public next: number = 0;
 
-  constructor(public readonly model: Model) {
+  constructor(public readonly model: Model<View>) {
     this.builder = new PatchBuilder(this.model.clock);
   }
 

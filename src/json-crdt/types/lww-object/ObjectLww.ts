@@ -7,7 +7,7 @@ import type {JsonNode} from '../../types';
 export class ObjectLww implements JsonNode, Printable {
   public readonly keys: Map<string, ITimestampStruct> = new Map();
 
-  constructor(protected readonly doc: Model, public readonly id: ITimestampStruct) {}
+  constructor(protected readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
 
   public get(key: string): undefined | JsonNode {
     const id = this.keys.get(key);
