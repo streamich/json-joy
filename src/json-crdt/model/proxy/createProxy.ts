@@ -6,7 +6,7 @@ export const createProxy = <V>(model: Model<V>): ViewToProxy<V> => {
   const factory: any = {};
   factory.create = () => new Proxy({}, {
     get: (target, prop, receiver) => {
-      if (prop === 'toNode') return () => model.api.find(path);
+      if (prop === 'toNode') return () => model.api.wrap(model.api.find(path) as any);
       if (prop === 'toView') return () => model.api.find(path).view();
       path.push(String(prop));
       return factory.create();
