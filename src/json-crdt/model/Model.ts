@@ -42,7 +42,7 @@ export const UNDEFINED = new Const(ORIGIN, undefined);
  * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
  * compute the "view" of the model.
  */
-export class Model implements Printable {
+export class Model<View = unknown> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
@@ -286,8 +286,8 @@ export class Model implements Printable {
   /**
    * @returns Returns the view of the model.
    */
-  public view(): unknown {
-    return this.root.view();
+  public view(): View {
+    return this.root.view() as View;
   }
 
   /**
