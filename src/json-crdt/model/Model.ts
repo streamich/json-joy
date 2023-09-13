@@ -35,7 +35,6 @@ import {Extensions} from '../extensions/Extensions';
 import {createProxy} from './proxy/createProxy';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
-import type {ViewToProxy} from './proxy/types';
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -127,8 +126,12 @@ export class Model<View = unknown> implements Printable {
     return this._api;
   }
 
-  public get find(): ViewToProxy<View> {
-    return createProxy(this);
+  /**
+   * @private
+   * Experimental node retrieval API using proxy objects.
+   */
+  public get find() {
+    return createProxy<View>(this);
   }
 
   /** Tracks number of times the `applyPatch` was called. */

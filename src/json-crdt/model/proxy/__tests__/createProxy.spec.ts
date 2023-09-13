@@ -1,6 +1,6 @@
 import {tup} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
-import {ArrayApi, ConstApi, ObjectApi, StringApi, ValueApi} from '../../api/nodes';
+import {ArrayApi, ConstApi, ObjectApi, StringApi} from '../../api/nodes';
 
 test('creates a proxy for medium complexity object', () => {
   type View = {
@@ -16,6 +16,7 @@ test('creates a proxy for medium complexity object', () => {
     },
     coords: [x: number, y: number];
     verified?: boolean;
+    scores: number[];
   };
   const view: View = {
     id: '123',
@@ -29,6 +30,7 @@ test('creates a proxy for medium complexity object', () => {
     },
     coords: tup([1, 2]) as any,
     verified: true,
+    scores: [1, 2, 3],
   };
   const model = Model.withLogicalClock() as Model<View>;
   model.api.root(view);
@@ -48,6 +50,10 @@ test('creates a proxy for medium complexity object', () => {
   expect(model.find.tags[1].toView()).toStrictEqual(view.tags[1]);
   expect(model.find.tags[1].toNode().view()).toStrictEqual(view.tags[1]);
   expect(model.find.tags[1].toNode()).toBeInstanceOf(ObjectApi);
+
+  expect(model.find.tags[1].value.toView()).toStrictEqual(view.tags[1].value);
+  expect(model.find.tags[1].value.toNode().view()).toStrictEqual(view.tags[1].value);
+  expect(model.find.tags[1].value.toNode()).toBeInstanceOf(ConstApi);
 
   expect(model.find.verified?.toView()).toStrictEqual(view.verified);
   expect(model.find.verified?.toNode().view()).toStrictEqual(view.verified);
