@@ -1,6 +1,6 @@
 import {tup} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
-import {ArrayApi, ConstApi, ObjectApi, StringApi} from '../../api/nodes';
+import {ArrayApi, ConstApi, ObjectApi, StringApi, ValueApi} from '../../api/nodes';
 
 test('creates a proxy for medium complexity object', () => {
   type View = {
@@ -58,4 +58,17 @@ test('creates a proxy for medium complexity object', () => {
   expect(model.find.verified?.toView()).toStrictEqual(view.verified);
   expect(model.find.verified?.toNode().view()).toStrictEqual(view.verified);
   expect(model.find.verified?.toNode()).toBeInstanceOf(ConstApi);
+
+  expect(model.find.scores.toView()).toStrictEqual(view.scores);
+  expect(model.find.scores.toNode().view()).toStrictEqual(view.scores);
+  expect(model.find.scores.toNode()).toBeInstanceOf(ArrayApi);
+
+  expect(model.find.scores[0].toView()).toStrictEqual(view.scores[0]);
+  expect(model.find.scores[0].toNode().view()).toStrictEqual(view.scores[0]);
+  expect(model.find.scores[0].toNode()).toBeInstanceOf(ValueApi);
+
+  expect(model.find.scores[0].val.toView()).toStrictEqual(view.scores[0]);
+  // expect(model.find.scores[0].val.toView()).toStrictEqual(view.scores[0]);
+  // expect(model.find.scores[0].toNode().view()).toStrictEqual(view.scores[0]);
+  // expect(model.find.scores[0].toNode()).toBeInstanceOf(ValueApi);
 });

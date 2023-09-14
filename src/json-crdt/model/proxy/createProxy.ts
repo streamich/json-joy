@@ -1,7 +1,7 @@
 import type {Model} from '../Model';
-import type {ViewToProxy} from './types';
+import type {ToProxyComplexNode} from './types';
 
-export const createProxy = <V>(model: Model<V>): ViewToProxy<V> => {
+export const createProxy = <V>(model: Model<V>): ToProxyComplexNode<V> => {
   const path: string[] = [];
   const factory: any = {};
   factory.create = () => new Proxy({}, {
@@ -12,5 +12,5 @@ export const createProxy = <V>(model: Model<V>): ViewToProxy<V> => {
       return factory.create();
     },
   });
-  return factory.create() as ViewToProxy<V>;
+  return factory.create() as ToProxyComplexNode<V>;
 };
