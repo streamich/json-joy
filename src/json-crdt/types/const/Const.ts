@@ -7,8 +7,8 @@ import type {Printable} from '../../../util/print/types';
  * including deeply nested objects and arrays, Uint8Array binary data. The
  * constant value cannot be edited.
  */
-export class Const implements JsonNode, Printable {
-  constructor(public readonly id: ITimestampStruct, public readonly val: unknown | ITimestampStruct) {}
+export class Const<View = unknown | ITimestampStruct> implements JsonNode<View>, Printable {
+  constructor(public readonly id: ITimestampStruct, public readonly val: View) {}
 
   // ----------------------------------------------------------------- JsonNode
 
@@ -22,7 +22,7 @@ export class Const implements JsonNode, Printable {
     return undefined;
   }
 
-  public view() {
+  public view(): Readonly<View> {
     return this.val;
   }
 

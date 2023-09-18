@@ -59,7 +59,7 @@ export class StringChunk implements Chunk<string> {
   }
 }
 
-export class StringRga extends AbstractRga<string> implements JsonNode {
+export class StringRga extends AbstractRga<string> implements JsonNode<string> {
   // ----------------------------------------------------------------- JsonNode
 
   public children() {}

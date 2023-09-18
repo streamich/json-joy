@@ -9,11 +9,11 @@ import type {Identifiable} from '../../json-crdt-patch/Identifiable';
  * create a new "object" JSON node, "make number" operation creates a number
  * JSON node, etc.
  */
-export interface JsonNode extends Identifiable {
+export interface JsonNode<View = unknown> extends Identifiable {
   /**
    * Returns a POJO object which represents the "view" of this JSON node model.
    */
-  view(): unknown;
+  view(): View;
 
   /**
    * Returns a list of immediate child nodes.
@@ -38,3 +38,5 @@ export interface JsonNode extends Identifiable {
    */
   api: undefined | unknown;
 }
+
+export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]: JsonNodeView<N[K]>};
