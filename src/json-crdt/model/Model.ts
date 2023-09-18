@@ -32,7 +32,6 @@ import {ValueLww} from '../types/lww-value/ValueLww';
 import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
-import {createProxy} from './proxy/createProxy';
 import type {JsonNode} from '../types/types';
 import type {Printable} from '../../util/print/types';
 
@@ -131,7 +130,7 @@ export class Model<View = unknown> implements Printable {
    * Experimental node retrieval API using proxy objects.
    */
   public get find() {
-    return createProxy<View>(this);
+    return this.api.r.proxy();
   }
 
   /** Tracks number of times the `applyPatch` was called. */

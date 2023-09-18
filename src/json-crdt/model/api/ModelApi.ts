@@ -50,6 +50,7 @@ export class ModelApi<View = unknown> {
   public wrap(node: ObjectLww): ObjectApi;
   public wrap(node: Const): ConstApi;
   public wrap(node: ArrayLww): TupleApi;
+  public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
     else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
@@ -66,7 +67,7 @@ export class ModelApi<View = unknown> {
   }
 
   public get r() {
-    return new NodeApi(this.model.root, this);
+    return new ValueApi(this.model.root, this);
   }
 
   public in(path?: ApiPath) {
