@@ -1,5 +1,9 @@
+import {Const} from "../../types/const/Const";
+import {ObjectLww} from "../../types/lww-object/ObjectLww";
+import {ValueLww} from "../../types/lww-value/ValueLww";
+import {StringRga} from "../../types/rga-string/StringRga";
+import {Model} from "../Model";
 import {ProxyNodeArray, ProxyNodeBinary, ProxyNodeConst, ProxyNodeObject, ProxyNodeString, ProxyNodeValue, ProxyNodeVector, ViewOfProxyNode} from "../types";
-
 
 test('ViewOfProxyNode<T> cna infer type from proxy nodes', () => {
   type N1 = ProxyNodeConst<123>;
@@ -31,4 +35,21 @@ test('ViewOfProxyNode<T> cna infer type from proxy nodes', () => {
       n5: [123, 'asdf', Uint8Array.from([1, 2, 3]), 123],
     },
   ];
+});
+
+test('...', () => {
+  const model = Model.withLogicalClock() as Model<ObjectLww<{
+    id: StringRga;
+    name: StringRga;
+    age: Const<number>;
+    count: ValueLww<Const<4>>;
+  }>>;
+
+  const view1 = model.view();
+  const view2 = model.root.view();
+  const view3 = model.root.node().view();
+  const view4 = model.root.node().get('id');
+  const view5 = model.root.node().get("age")!.view();
+  const view6 = model.root.node().get('count')!.node()!.view();
+
 });

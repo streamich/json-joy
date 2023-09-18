@@ -9,10 +9,10 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
 
   constructor(protected readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
 
-  public get(key: string): undefined | JsonNode {
-    const id = this.keys.get(key);
+  public get<K extends keyof Value>(key: K): undefined | Value[K] {
+    const id = this.keys.get(key as string);
     if (!id) return undefined;
-    return this.doc.index.get(id);
+    return this.doc.index.get(id) as Value[K];
   }
 
   /**

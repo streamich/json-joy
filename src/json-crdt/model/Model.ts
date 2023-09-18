@@ -32,7 +32,7 @@ import {ValueLww} from '../types/lww-value/ValueLww';
 import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
-import type {JsonNode} from '../types/types';
+import type {JsonNode, JsonNodeView} from '../types/types';
 import type {Printable} from '../../util/print/types';
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
@@ -42,7 +42,7 @@ export const UNDEFINED = new Const(ORIGIN, undefined);
  * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
  * compute the "view" of the model.
  */
-export class Model<View = unknown> implements Printable {
+export class Model<Value extends JsonNode = JsonNode> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
@@ -90,7 +90,7 @@ export class Model<View = unknown> implements Printable {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: RootLww = new RootLww(this, ORIGIN);
+  public root: RootLww<Value> = new RootLww<Value>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session
@@ -115,13 +115,13 @@ export class Model<View = unknown> implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
-  private _api?: ModelApi<View>;
+  private _api?: ModelApi<Value>;
 
   /**
    * API for applying changes to the current document.
    */
-  public get api(): ModelApi<View> {
-    if (!this._api) this._api = new ModelApi<View>(this);
+  public get api(): ModelApi<Value> {
+    if (!this._api) this._api = new ModelApi<Value>(this);
     return this._api;
   }
 
@@ -294,8 +294,8 @@ export class Model<View = unknown> implements Printable {
   /**
    * @returns Returns the view of the model.
    */
-  public view(): View {
-    return this.root.view() as View;
+  public view(): Readonly<JsonNodeView<Value>> {
+    return this.root.view();
   }
 
   /**

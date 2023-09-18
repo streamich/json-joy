@@ -4,7 +4,7 @@ import {Model, UNDEFINED} from '../../model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 
-export class RootLww extends ValueLww {
+export class RootLww<Value extends JsonNode = JsonNode> extends ValueLww<Value> {
   /**
    * @param val Latest value of the document root.
    */
@@ -12,7 +12,7 @@ export class RootLww extends ValueLww {
     super(doc, ORIGIN, val);
   }
 
-  public node(): JsonNode {
-    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : super.node();
+  public node(): Value {
+    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : super.node() ;
   }
 }
