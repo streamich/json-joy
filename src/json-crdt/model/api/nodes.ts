@@ -48,7 +48,7 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
   }
 
   public asVal(): ValueApi {
-    if (this.node instanceof ValueLww) return this.api.wrap(this.node);
+    if (this.node instanceof ValueLww) return this.api.wrap(this.node as ValueLww);
     throw new Error('NOT_VAL');
   }
 
@@ -68,12 +68,12 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
   }
 
   public asTup(): TupleApi {
-    if (this.node instanceof ArrayLww) return this.api.wrap(this.node);
+    if (this.node instanceof ArrayLww) return this.api.wrap(this.node as ArrayLww);
     throw new Error('NOT_ARR');
   }
 
   public asObj(): ObjectApi {
-    if (this.node instanceof ObjectLww) return this.api.wrap(this.node);
+    if (this.node instanceof ObjectLww) return this.api.wrap(this.node as ObjectLww);
     throw new Error('NOT_OBJ');
   }
 

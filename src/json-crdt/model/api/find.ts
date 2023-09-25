@@ -15,7 +15,7 @@ export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
     node = node.container();
     if (!node) throw new Error('NOT_CONTAINER');
     if (node instanceof ObjectLww) {
-      const nextNode = node.get(String(step));
+      const nextNode = node.get(String(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
     } else if (node instanceof ArrayRga) {
@@ -23,7 +23,7 @@ export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
     } else if (node instanceof ArrayLww) {
-      const nextNode = node.get(Number(step));
+      const nextNode = node.get(Number(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
     }
