@@ -1,5 +1,5 @@
+import {type ITimestampStruct, toDisplayString} from '../../json-crdt-patch/clock';
 import type {Identifiable} from '../../json-crdt-patch/Identifiable';
-import {ITimestampStruct, toDisplayString} from '../../json-crdt-patch/clock';
 
 /**
  * @todo Check if this can be sped up by using a tree.

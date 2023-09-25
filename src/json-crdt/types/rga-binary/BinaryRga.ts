@@ -62,11 +62,11 @@ export class BinaryChunk implements Chunk<Uint8Array> {
   }
 }
 
-export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode {
+export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
   private _view: null | Uint8Array = null;
-  public view(): Uint8Array {
+  public view(): Readonly<Uint8Array> {
     if (this._view) return this._view;
     const res = new Uint8Array(this.length());
     let offset = 0;

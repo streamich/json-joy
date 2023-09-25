@@ -1,14 +1,14 @@
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import {SESSION} from '../../../json-crdt-patch/constants';
 import {printTree} from '../../../util/print/printTree';
-import type {JsonNode} from '../../types';
+import type {JsonNode, JsonNodeView} from '../../types';
 import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
 
-export class ValueLww implements JsonNode, Printable {
+export class ValueLww<Value extends JsonNode = JsonNode> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {
   public api: undefined | unknown = undefined;
 
-  constructor(public readonly doc: Model, public readonly id: ITimestampStruct, public val: ITimestampStruct) {}
+  constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct, public val: ITimestampStruct) {}
 
   public set(val: ITimestampStruct): ITimestampStruct | undefined {
     if (compare(val, this.val) <= 0 && this.val.sid !== SESSION.SYSTEM) return;
@@ -19,15 +19,15 @@ export class ValueLww implements JsonNode, Printable {
 
   // ----------------------------------------------------------------- JsonNode
 
-  public node(): JsonNode {
-    return this.child()!;
+  public node(): Value {
+    return this.child()! as Value;
   }
 
-  public view(): unknown {
-    return this.node().view();
+  public view(): Readonly<JsonNodeView<Value>> {
+    return this.node().view() as Readonly<JsonNodeView<Value>>;
   }
 
-  public children(callback: (node: JsonNode) => void) {
+  public children(callback: (node: Value) => void) {
     callback(this.node());
   }
 

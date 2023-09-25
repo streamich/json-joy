@@ -1,18 +1,20 @@
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
-import {Model} from '../../model';
 import {printTree} from '../../../util/print/printTree';
+import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
-import type {JsonNode} from '../../types';
+import type {JsonNode, JsonNodeView} from '../../types';
 
-export class ObjectLww implements JsonNode, Printable {
+export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
+  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
+{
   public readonly keys: Map<string, ITimestampStruct> = new Map();
 
-  constructor(protected readonly doc: Model, public readonly id: ITimestampStruct) {}
+  constructor(protected readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
 
-  public get(key: string): undefined | JsonNode {
-    const id = this.keys.get(key);
+  public get<K extends keyof Value>(key: K): undefined | Value[K] {
+    const id = this.keys.get(key as string);
     if (!id) return undefined;
-    return this.doc.index.get(id);
+    return this.doc.index.get(id) as Value[K];
   }
 
   /**
@@ -49,20 +51,20 @@ export class ObjectLww implements JsonNode, Printable {
   }
 
   private _tick: number = 0;
-  private _view: Readonly<Record<string, unknown>> = {};
-  public view(): Readonly<Record<string, unknown>> {
+  private _view = {} as Readonly<JsonNodeView<Value>>;
+  public view(): Readonly<JsonNodeView<Value>> {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
     if (this._tick === tick) return _view;
-    const view: Record<string, unknown> = {};
+    const view = {} as Readonly<JsonNodeView<Value>>;
     const index = doc.index;
     let useCache = true;
     this.keys.forEach((id, key) => {
       const value = index.get(id)!.view();
       if (value !== undefined) {
         if (_view[key] !== value) useCache = false;
-        view[key] = value;
+        (<any>view)[key] = value;
       } else if (_view[key] !== undefined) useCache = false;
     });
     return useCache ? _view : ((this._tick = tick), (this._view = view));

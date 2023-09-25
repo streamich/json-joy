@@ -3,20 +3,22 @@ import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from '../../../util/print/printTree';
 import {Const} from '../const/Const';
 import type {Model} from '../../model';
-import type {JsonNode} from '../../types';
+import type {JsonNode, JsonNodeView} from '../../types';
 import type {Printable} from '../../../util/print/types';
 
-export class ArrayLww implements JsonNode, Printable {
+export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
+  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
+{
   public readonly elements: (ITimestampStruct | undefined)[] = [];
 
-  constructor(public readonly doc: Model, public readonly id: ITimestampStruct) {}
+  constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
 
   public val(index: number): undefined | ITimestampStruct {
     return this.elements[index] as ITimestampStruct | undefined;
   }
 
   /** @todo Normalize `.get()` and `.getNode()` APIs across `ArrayLww` and `ArrayRga`. */
-  public get(index: number): undefined | JsonNode {
+  public get<Index extends number>(index: Index): undefined | Value[Index] {
     const id = this.val(index);
     if (!id) return undefined;
     return this.doc.index.get(id);
@@ -83,13 +85,13 @@ export class ArrayLww implements JsonNode, Printable {
     }
   }
 
-  private _view: readonly unknown[] = [];
-  public view(): readonly unknown[] {
+  private _view = [] as JsonNodeView<Value>;
+  public view(): Readonly<JsonNodeView<Value>> {
     const extNode = this.ext();
     if (extNode) return extNode.view() as any;
     let useCache = true;
     const _view = this._view;
-    const arr: unknown[] = [];
+    const arr = [] as JsonNodeView<Value>;
     const index = this.doc.index;
     const elements = this.elements;
     const length = elements.length;

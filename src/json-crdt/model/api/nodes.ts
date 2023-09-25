@@ -10,13 +10,25 @@ import {ValueLww} from '../../types/lww-value/ValueLww';
 import {ArrayLww} from '../../types/lww-array/ArrayLww';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
+import {
+  ModelProxyArrNode,
+  ModelProxyBinNode,
+  ModelProxyConstNode,
+  ModelProxyNode,
+  ModelProxyObjNode,
+  ModelProxyStrNode,
+  ModelProxyValNode,
+  ModelProxyVecNode,
+} from '../proxy/types';
+import {printTree} from '../../../util/print/printTree';
 import type {JsonNode} from '../../types';
 import type {ModelApi} from './ModelApi';
+import type {Printable} from '../../../util/print/types';
 
 export type ApiPath = string | number | Path | void;
 
-export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
-  constructor(public readonly node: N, public readonly api: ModelApi) {}
+export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements Printable {
+  constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
 
   private ev: undefined | NodeEvents = undefined;
   public get events(): NodeEvents {
@@ -45,7 +57,7 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
   }
 
   public asVal(): ValueApi {
-    if (this.node instanceof ValueLww) return this.api.wrap(this.node);
+    if (this.node instanceof ValueLww) return this.api.wrap(this.node as ValueLww);
     throw new Error('NOT_VAL');
   }
 
@@ -65,12 +77,12 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
   }
 
   public asTup(): TupleApi {
-    if (this.node instanceof ArrayLww) return this.api.wrap(this.node);
+    if (this.node instanceof ArrayLww) return this.api.wrap(this.node as ArrayLww);
     throw new Error('NOT_ARR');
   }
 
   public asObj(): ObjectApi {
-    if (this.node instanceof ObjectLww) return this.api.wrap(this.node);
+    if (this.node instanceof ObjectLww) return this.api.wrap(this.node as ObjectLww);
     throw new Error('NOT_OBJ');
   }
 
@@ -121,36 +133,50 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> {
   public view(): View {
     return this.node.view() as unknown as View;
   }
+
+  public proxy(): ModelProxyNode<View, unknown> {
+    return {
+      toNode: () => this,
+      toView: () => this.view(),
+    };
+  }
+
+  public toString(tab: string = ''): string {
+    return this.constructor.name + printTree(tab, [(tab) => this.node.toString(tab)]);
+  }
 }
 
-export class ArrayApi extends NodeApi<ArrayRga, unknown[]> {
-  public ins(index: number, values: unknown[]): this {
+export class ConstApi<View = unknown> extends NodeApi<Const, View> {
+  public proxy(): ModelProxyConstNode<View> {
+    return super.proxy() as ModelProxyConstNode<View>;
+  }
+}
+
+export class ValueApi<View = unknown> extends NodeApi<ValueLww, View> {
+  public set(json: View): this {
     const {api, node} = this;
-    const {builder} = api;
-    const after = !index ? node.id : node.find(index - 1);
-    if (!after) throw new Error('OUT_OF_BOUNDS');
-    const valueIds: ITimestampStruct[] = [];
-    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
-    builder.insArr(node.id, after, valueIds);
+    const builder = api.builder;
+    const val = builder.constOrJson(json);
+    api.builder.setVal(node.id, val);
     api.apply();
     return this;
   }
 
-  public del(index: number, length: number): this {
-    const {api, node} = this;
-    const spans = node.findInterval(index, length);
-    if (!spans) throw new Error('OUT_OF_BOUNDS');
-    api.builder.del(node.id, spans);
-    api.apply();
-    return this;
-  }
-
-  public length(): number {
-    return this.node.length();
+  public proxy<Child extends ModelProxyNode<View, any> = any>(): ModelProxyValNode<View, Child> {
+    const self = this;
+    return {
+      toNode: () => this,
+      toView: () => this.view(),
+      get val() {
+        const childNode = self.node.node();
+        return self.api.wrap(childNode).proxy() as Child;
+      },
+    };
   }
 }
 
-export class TupleApi extends NodeApi<ArrayLww, unknown[]> {
+/** @todo Rename to `VectorApi`. */
+export class TupleApi<View extends unknown[] = unknown[]> extends NodeApi<ArrayLww, View> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
     const {builder} = api;
@@ -161,36 +187,31 @@ export class TupleApi extends NodeApi<ArrayLww, unknown[]> {
     api.apply();
     return this;
   }
-}
 
-export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
-  public ins(index: number, data: Uint8Array): this {
-    const {api, node} = this;
-    const after = !index ? node.id : node.find(index - 1);
-    if (!after) throw new Error('OUT_OF_BOUNDS');
-    api.builder.insBin(node.id, after, data);
-    api.apply();
-    return this;
-  }
-
-  public del(index: number, length: number): this {
-    const {api, node} = this;
-    const spans = node.findInterval(index, length);
-    if (!spans) throw new Error('OUT_OF_BOUNDS');
-    api.builder.del(node.id, spans);
-    api.apply();
-    return this;
+  public proxy<Child = unknown>(): ModelProxyVecNode<View> {
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => this;
+          if (prop === 'toView') return () => this.view();
+          const index = Number(prop);
+          if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
+          const child = this.node.get(index);
+          if (!child) throw new Error('OUT_OF_BOUNDS');
+          return this.api.wrap(child).proxy() as Child;
+        },
+      },
+    );
+    return proxy as ModelProxyVecNode<View>;
   }
 }
 
-export class ConstApi extends NodeApi<Const, unknown> {
-  public view(): unknown {
-    return this.node.view();
-  }
-}
-
-export class ObjectApi extends NodeApi<ObjectLww, unknown[]> {
-  public set(entries: Record<string, unknown>): this {
+export class ObjectApi<View extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<
+  ObjectLww,
+  View
+> {
+  public set(entries: Partial<View>): this {
     const {api, node} = this;
     const {builder} = api;
     builder.setKeys(
@@ -210,6 +231,24 @@ export class ObjectApi extends NodeApi<ObjectLww, unknown[]> {
     );
     api.apply();
     return this;
+  }
+
+  public proxy<Child = unknown>(): ModelProxyObjNode<View> {
+    const self = this;
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => self;
+          if (prop === 'toView') return () => self.view();
+          const key = String(prop);
+          const child = this.node.get(key);
+          if (!child) throw new Error('NO_SUCH_KEY');
+          return this.api.wrap(child).proxy() as Child;
+        },
+      },
+    );
+    return proxy as ModelProxyObjNode<View>;
   }
 }
 
@@ -238,15 +277,77 @@ export class StringApi extends NodeApi<StringRga, string> {
     api.advance();
     return this;
   }
+
+  public proxy(): ModelProxyStrNode {
+    return super.proxy() as ModelProxyStrNode;
+  }
 }
 
-export class ValueApi extends NodeApi<ValueLww, unknown> {
-  public set(json: unknown): this {
+export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
+  public ins(index: number, data: Uint8Array): this {
     const {api, node} = this;
-    const builder = api.builder;
-    const val = builder.constOrJson(json);
-    api.builder.setVal(node.id, val);
+    const after = !index ? node.id : node.find(index - 1);
+    if (!after) throw new Error('OUT_OF_BOUNDS');
+    api.builder.insBin(node.id, after, data);
     api.apply();
     return this;
+  }
+
+  public del(index: number, length: number): this {
+    const {api, node} = this;
+    const spans = node.findInterval(index, length);
+    if (!spans) throw new Error('OUT_OF_BOUNDS');
+    api.builder.del(node.id, spans);
+    api.apply();
+    return this;
+  }
+
+  public proxy(): ModelProxyBinNode {
+    return super.proxy() as ModelProxyBinNode;
+  }
+}
+
+export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
+  public ins(index: number, values: T[]): this {
+    const {api, node} = this;
+    const {builder} = api;
+    const after = !index ? node.id : node.find(index - 1);
+    if (!after) throw new Error('OUT_OF_BOUNDS');
+    const valueIds: ITimestampStruct[] = [];
+    for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
+    builder.insArr(node.id, after, valueIds);
+    api.apply();
+    return this;
+  }
+
+  public del(index: number, length: number): this {
+    const {api, node} = this;
+    const spans = node.findInterval(index, length);
+    if (!spans) throw new Error('OUT_OF_BOUNDS');
+    api.builder.del(node.id, spans);
+    api.apply();
+    return this;
+  }
+
+  public length(): number {
+    return this.node.length();
+  }
+
+  public proxy(): ModelProxyArrNode<T> {
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => this;
+          if (prop === 'toView') return () => this.view();
+          const index = Number(prop);
+          if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
+          const child = this.node.getNode(index);
+          if (!child) throw new Error('OUT_OF_BOUNDS');
+          return this.api.wrap(child).proxy();
+        },
+      },
+    );
+    return proxy as ModelProxyArrNode<T>;
   }
 }

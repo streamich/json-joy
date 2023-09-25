@@ -11,13 +11,13 @@ import {StringRga} from '../../types/rga-string/StringRga';
 import {ValueLww} from '../../types/lww-value/ValueLww';
 import type {Model} from '../Model';
 
-export class ModelApi {
+export class ModelApi<Value extends JsonNode = JsonNode> {
   public builder: PatchBuilder;
 
   /** Index of the next operation in builder's patch to be committed locally. */
   public next: number = 0;
 
-  constructor(public readonly model: Model) {
+  constructor(public readonly model: Model<Value>) {
     this.builder = new PatchBuilder(this.model.clock);
   }
 
@@ -50,6 +50,7 @@ export class ModelApi {
   public wrap(node: ObjectLww): ObjectApi;
   public wrap(node: Const): ConstApi;
   public wrap(node: ArrayLww): TupleApi;
+  public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
     else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
@@ -66,7 +67,7 @@ export class ModelApi {
   }
 
   public get r() {
-    return new NodeApi(this.model.root, this);
+    return new ValueApi(this.model.root, this);
   }
 
   public in(path?: ApiPath) {

@@ -3,12 +3,12 @@ import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {printBinary} from '../../../util/print/printBinary';
 import {printTree} from '../../../util/print/printTree';
-import type {JsonNode} from '../../types';
+import type {JsonNode, JsonNodeView} from '../../types';
 import type {Printable} from '../../../util/print/types';
 
 type E = ITimestampStruct;
 
-const Empty: unknown[] = [];
+const Empty = [] as any[];
 
 export class ArrayChunk implements Chunk<E[]> {
   public readonly id: ITimestampStruct;
@@ -63,8 +63,11 @@ export class ArrayChunk implements Chunk<E[]> {
   }
 }
 
-export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
-  constructor(public readonly doc: Model, id: ITimestampStruct) {
+export class ArrayRga<Element extends JsonNode = JsonNode>
+  extends AbstractRga<E[]>
+  implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable
+{
+  constructor(public readonly doc: Model<any>, id: ITimestampStruct) {
     super(id);
   }
 
@@ -94,7 +97,7 @@ export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
   }
 
   protected onChange(): void {
-    this._view = Empty;
+    this._view = Empty as any;
   }
 
   // ----------------------------------------------------------------- JsonNode
@@ -108,19 +111,19 @@ export class ArrayRga extends AbstractRga<E[]> implements JsonNode, Printable {
   }
 
   private _tick: number = 0;
-  private _view: unknown[] = Empty;
-  public view(): unknown[] {
+  private _view = Empty;
+  public view(): Readonly<JsonNodeView<Element>[]> {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
     if (this._tick === tick) return _view;
-    const view: unknown[] = [];
+    const view = [] as JsonNodeView<Element>[];
     const index = doc.index;
     let useCache = true;
     for (let chunk = this.first(); chunk; chunk = this.next(chunk)) {
       if (chunk.del) continue;
       for (const node of chunk.data!) {
-        const element = index.get(node)!.view();
+        const element = index.get(node)!.view() as JsonNodeView<Element>;
         if (_view[view.length] !== element) useCache = false;
         view.push(element);
       }
