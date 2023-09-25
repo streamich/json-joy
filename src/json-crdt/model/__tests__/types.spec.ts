@@ -36,20 +36,3 @@ test('ViewOfProxyNode<T> cna infer type from proxy nodes', () => {
     },
   ];
 });
-
-test('...', () => {
-  const model = Model.withLogicalClock() as Model<ObjectLww<{
-    id: StringRga;
-    name: StringRga;
-    age: Const<number>;
-    count: ValueLww<Const<4>>;
-  }>>;
-
-  const view1 = model.view();
-  const view2 = model.root.view();
-  const view3 = model.root.node().view();
-  const view4 = model.root.node().get('id');
-  const view5 = model.root.node().get("age")!.view();
-  const view6 = model.root.node().get('count')!.node()!.view();
-
-});
