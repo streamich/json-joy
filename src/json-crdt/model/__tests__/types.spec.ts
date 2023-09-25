@@ -1,8 +1,3 @@
-import {Const} from "../../types/const/Const";
-import {ObjectLww} from "../../types/lww-object/ObjectLww";
-import {ValueLww} from "../../types/lww-value/ValueLww";
-import {StringRga} from "../../types/rga-string/StringRga";
-import {Model} from "../Model";
 import {ProxyNodeArray, ProxyNodeBinary, ProxyNodeConst, ProxyNodeObject, ProxyNodeString, ProxyNodeValue, ProxyNodeVector, ViewOfProxyNode} from "../types";
 
 test('ViewOfProxyNode<T> cna infer type from proxy nodes', () => {
