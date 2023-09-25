@@ -13,6 +13,6 @@ export class RootLww<Value extends JsonNode = JsonNode> extends ValueLww<Value> 
   }
 
   public node(): Value {
-    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : super.node() ;
+    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : super.node();
   }
 }

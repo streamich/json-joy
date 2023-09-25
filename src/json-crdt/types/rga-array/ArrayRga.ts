@@ -63,7 +63,10 @@ export class ArrayChunk implements Chunk<E[]> {
   }
 }
 
-export class ArrayRga<Element extends JsonNode = JsonNode> extends AbstractRga<E[]> implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable {
+export class ArrayRga<Element extends JsonNode = JsonNode>
+  extends AbstractRga<E[]>
+  implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable
+{
   constructor(public readonly doc: Model<any>, id: ITimestampStruct) {
     super(id);
   }

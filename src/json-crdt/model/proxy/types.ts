@@ -40,7 +40,9 @@ export type ToProxyPreferValPrimitives<V> = V extends number
 
 export type ModelProxyConstNode<V> = ModelProxyNode<V, ConstApi<V>>;
 export type ModelProxyValNode<V, Child> = ModelProxyNode<V, ValueApi<V>> & {val: Child};
-export type ModelProxyVecNode<V extends unknown[]> = ModelProxyNode<V, TupleApi<V>> & {[K in keyof V]: ToProxyPreferValPrimitives<V[K]>};
+export type ModelProxyVecNode<V extends unknown[]> = ModelProxyNode<V, TupleApi<V>> & {
+  [K in keyof V]: ToProxyPreferValPrimitives<V[K]>;
+};
 export type ModelProxyObjNode<V> = ModelProxyNode<V, ObjectApi> & {[K in keyof V]: ToProxyPreferConstPrimitives<V[K]>};
 export type ModelProxyStrNode = ModelProxyNode<string, StringApi>;
 export type ModelProxyBinNode = ModelProxyNode<Uint8Array, BinaryApi>;

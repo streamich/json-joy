@@ -6,7 +6,9 @@ import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '../../types';
 import type {Printable} from '../../../util/print/types';
 
-export class ArrayLww<Value extends JsonNode[] = JsonNode[]> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {
+export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
+  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
+{
   public readonly elements: (ITimestampStruct | undefined)[] = [];
 
   constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct) {}

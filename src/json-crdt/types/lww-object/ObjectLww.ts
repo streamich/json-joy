@@ -4,7 +4,9 @@ import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
 import type {JsonNode, JsonNodeView} from '../../types';
 
-export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {
+export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
+  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
+{
   public readonly keys: Map<string, ITimestampStruct> = new Map();
 
   constructor(protected readonly doc: Model<any>, public readonly id: ITimestampStruct) {}

@@ -10,7 +10,16 @@ import {ValueLww} from '../../types/lww-value/ValueLww';
 import {ArrayLww} from '../../types/lww-array/ArrayLww';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
-import {ModelProxyArrNode, ModelProxyBinNode, ModelProxyConstNode, ModelProxyNode, ModelProxyObjNode, ModelProxyStrNode, ModelProxyValNode, ModelProxyVecNode} from '../proxy/types';
+import {
+  ModelProxyArrNode,
+  ModelProxyBinNode,
+  ModelProxyConstNode,
+  ModelProxyNode,
+  ModelProxyObjNode,
+  ModelProxyStrNode,
+  ModelProxyValNode,
+  ModelProxyVecNode,
+} from '../proxy/types';
 import {printTree} from '../../../util/print/printTree';
 import type {JsonNode} from '../../types';
 import type {ModelApi} from './ModelApi';
@@ -133,12 +142,7 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
   }
 
   public toString(tab: string = ''): string {
-    return (
-      this.constructor.name +
-      printTree(tab, [
-        (tab) => this.node.toString(tab),
-      ])
-    );
+    return this.constructor.name + printTree(tab, [(tab) => this.node.toString(tab)]);
   }
 }
 
@@ -166,7 +170,7 @@ export class ValueApi<View = unknown> extends NodeApi<ValueLww, View> {
       get val() {
         const childNode = self.node.node();
         return self.api.wrap(childNode).proxy() as Child;
-      }
+      },
     };
   }
 }
@@ -185,22 +189,28 @@ export class TupleApi<View extends unknown[] = unknown[]> extends NodeApi<ArrayL
   }
 
   public proxy<Child = unknown>(): ModelProxyVecNode<View> {
-    const proxy = new Proxy({}, {
-      get: (target, prop, receiver) => {
-        if (prop === 'toNode') return () => this;
-        if (prop === 'toView') return () => this.view();
-        const index = Number(prop);
-        if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
-        const child = this.node.get(index);
-        if (!child) throw new Error('OUT_OF_BOUNDS');
-        return this.api.wrap(child).proxy() as Child;
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => this;
+          if (prop === 'toView') return () => this.view();
+          const index = Number(prop);
+          if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
+          const child = this.node.get(index);
+          if (!child) throw new Error('OUT_OF_BOUNDS');
+          return this.api.wrap(child).proxy() as Child;
+        },
       },
-    });
+    );
     return proxy as ModelProxyVecNode<View>;
   }
 }
 
-export class ObjectApi<View extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<ObjectLww, View> {
+export class ObjectApi<View extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<
+  ObjectLww,
+  View
+> {
   public set(entries: Partial<View>): this {
     const {api, node} = this;
     const {builder} = api;
@@ -225,16 +235,19 @@ export class ObjectApi<View extends Record<string, unknown> = Record<string, unk
 
   public proxy<Child = unknown>(): ModelProxyObjNode<View> {
     const self = this;
-    const proxy = new Proxy({}, {
-      get: (target, prop, receiver) => {
-        if (prop === 'toNode') return () => self;
-        if (prop === 'toView') return () => self.view();
-        const key = String(prop);
-        const child = this.node.get(key);
-        if (!child) throw new Error('NO_SUCH_KEY');
-        return this.api.wrap(child).proxy() as Child;
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => self;
+          if (prop === 'toView') return () => self.view();
+          const key = String(prop);
+          const child = this.node.get(key);
+          if (!child) throw new Error('NO_SUCH_KEY');
+          return this.api.wrap(child).proxy() as Child;
+        },
       },
-    });
+    );
     return proxy as ModelProxyObjNode<View>;
   }
 }
@@ -321,17 +334,20 @@ export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
   }
 
   public proxy(): ModelProxyArrNode<T> {
-    const proxy = new Proxy({}, {
-      get: (target, prop, receiver) => {
-        if (prop === 'toNode') return () => this;
-        if (prop === 'toView') return () => this.view();
-        const index = Number(prop);
-        if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
-        const child = this.node.getNode(index);
-        if (!child) throw new Error('OUT_OF_BOUNDS');
-        return this.api.wrap(child).proxy();
+    const proxy = new Proxy(
+      {},
+      {
+        get: (target, prop, receiver) => {
+          if (prop === 'toNode') return () => this;
+          if (prop === 'toView') return () => this.view();
+          const index = Number(prop);
+          if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
+          const child = this.node.getNode(index);
+          if (!child) throw new Error('OUT_OF_BOUNDS');
+          return this.api.wrap(child).proxy();
+        },
       },
-    });
+    );
     return proxy as ModelProxyArrNode<T>;
   }
 }

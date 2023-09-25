@@ -1,4 +1,13 @@
-import {ProxyNodeArray, ProxyNodeBinary, ProxyNodeConst, ProxyNodeObject, ProxyNodeString, ProxyNodeValue, ProxyNodeVector, ViewOfProxyNode} from "../types";
+import {
+  ProxyNodeArray,
+  ProxyNodeBinary,
+  ProxyNodeConst,
+  ProxyNodeObject,
+  ProxyNodeString,
+  ProxyNodeValue,
+  ProxyNodeVector,
+  ViewOfProxyNode,
+} from '../types';
 
 test('ViewOfProxyNode<T> cna infer type from proxy nodes', () => {
   type N1 = ProxyNodeConst<123>;
