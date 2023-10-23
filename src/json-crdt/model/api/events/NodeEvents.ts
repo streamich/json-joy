@@ -30,6 +30,7 @@ export class NodeEvents extends Emitter<NodeEventMap> {
     const _view = this._view;
     const view = this.api.node.view();
     const viewHasChanged = _view !== view;
+    this._view = view;
     if (viewHasChanged) this.emit(new CustomEvent<void>('view'));
   };
 
