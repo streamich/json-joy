@@ -42,7 +42,7 @@ export const UNDEFINED = new Const(ORIGIN, undefined);
  * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
  * compute the "view" of the model.
  */
-export class Model<Value extends JsonNode = JsonNode> implements Printable {
+export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
@@ -90,7 +90,7 @@ export class Model<Value extends JsonNode = JsonNode> implements Printable {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: RootLww<Value> = new RootLww<Value>(this, ORIGIN);
+  public root: RootLww<RootJsonNode> = new RootLww<RootJsonNode>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session
@@ -115,13 +115,13 @@ export class Model<Value extends JsonNode = JsonNode> implements Printable {
     if (!clock.time) clock.time = 1;
   }
 
-  private _api?: ModelApi<Value>;
+  private _api?: ModelApi<RootJsonNode>;
 
   /**
    * API for applying changes to the current document.
    */
-  public get api(): ModelApi<Value> {
-    if (!this._api) this._api = new ModelApi<Value>(this);
+  public get api(): ModelApi<RootJsonNode> {
+    if (!this._api) this._api = new ModelApi<RootJsonNode>(this);
     return this._api;
   }
 
@@ -294,7 +294,7 @@ export class Model<Value extends JsonNode = JsonNode> implements Printable {
   /**
    * @returns Returns the view of the model.
    */
-  public view(): Readonly<JsonNodeView<Value>> {
+  public view(): Readonly<JsonNodeView<RootJsonNode>> {
     return this.root.view();
   }
 
