@@ -5,7 +5,7 @@ import {ExtensionDefinition} from './types';
 export class Extensions implements Printable {
   protected readonly ext: Record<number, ExtensionDefinition> = {};
 
-  public register(extension: ExtensionDefinition<any, any, any, any>) {
+  public register(extension: ExtensionDefinition<any, any, any>) {
     this.ext[extension.id] = extension;
   }
 

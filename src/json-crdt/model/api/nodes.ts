@@ -82,8 +82,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_CONST');
   }
 
-  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN, V>>(
-    ext: ExtensionDefinition<V, any, EN, EApi>,
+  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN>>(
+    ext: ExtensionDefinition<any, EN, EApi>,
   ): EApi {
     let node: JsonNode | undefined = this.node;
     while (node) {
@@ -161,7 +161,6 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
   }
 }
 
-/** @todo Rename to `VectorApi`. */
 export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
@@ -293,7 +292,7 @@ export class BinaryApi extends NodeApi<BinaryRga> {
 }
 
 export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
-  public ins(index: number, values: Array<[JsonNodeView<N>]>): this {
+  public ins(index: number, values: Array<JsonNodeView<N>[number]>): this {
     const {api, node} = this;
     const {builder} = api;
     const after = !index ? node.id : node.find(index - 1);
