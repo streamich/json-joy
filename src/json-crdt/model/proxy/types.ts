@@ -18,7 +18,9 @@ export type ProxyNodeVal<N extends ValueLww<any>> = ProxyNode<N> & {val: JsonNod
 export type ProxyNodeVec<N extends ArrayLww<any>> = ProxyNode<N> & {
   [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<JsonNodeView<N>[K]>;
 };
-export type ProxyNodeObj<N extends ObjectLww<any>> = ProxyNode<N> & {[K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<(N extends ObjectLww<infer M> ? M : never)[K]>};
+export type ProxyNodeObj<N extends ObjectLww<any>> = ProxyNode<N> & {
+  [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<(N extends ObjectLww<infer M> ? M : never)[K]>;
+};
 export type ProxyNodeStr = ProxyNode<StringRga>;
 export type ProxyNodeBin = ProxyNode<BinaryRga>;
 export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> & Record<number, JsonNodeToProxyNode<N['get']>>;

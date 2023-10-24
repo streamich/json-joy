@@ -1,4 +1,4 @@
-import { Model } from '../Model';
+import {Model} from '../Model';
 
 describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is set', () => {
@@ -13,7 +13,7 @@ describe('DOM Level 0, .onchange event system', () => {
     model.api.obj([]).set({hello: 123});
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({
-      foo:'bar',
+      foo: 'bar',
       hello: 123,
     });
   });

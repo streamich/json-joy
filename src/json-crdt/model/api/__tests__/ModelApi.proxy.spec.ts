@@ -8,10 +8,12 @@ import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import {tup} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
-  const model = Model.withLogicalClock() as Model<ObjectLww<{
-    foo: StringRga;
-    bar: Const<number>;
-  }>>;
+  const model = Model.withLogicalClock() as Model<
+    ObjectLww<{
+      foo: StringRga;
+      bar: Const<number>;
+    }>
+  >;
   model.api.root({
     foo: 'asdf',
     bar: 1234,
@@ -50,9 +52,7 @@ describe('supports all node types', () => {
       str: StringRga;
       num: Const<number>;
     }>;
-    vec: ArrayLww<[
-      StringRga,
-    ]>;
+    vec: ArrayLww<[StringRga]>;
   }>;
   const model = Model.withLogicalClock() as Model<Schema>;
   const data = {
@@ -60,12 +60,7 @@ describe('supports all node types', () => {
       str: 'asdf',
       num: 1234,
     },
-    vec: tup(
-      'asdf',
-      1234,
-      true,
-      null,
-    ),
+    vec: tup('asdf', 1234, true, null),
   };
   model.api.root(data);
 
@@ -117,11 +112,6 @@ describe('supports all node types', () => {
     const vecApi: TupleApi = vec.toApi();
     expect(vecApi).toBeInstanceOf(TupleApi);
     expect(vecApi.node).toBeInstanceOf(ArrayLww);
-    expect(vecApi.view()).toStrictEqual([
-      'asdf',
-      1234,
-      true,
-      null,
-    ]);
+    expect(vecApi.view()).toStrictEqual(['asdf', 1234, true, null]);
   });
 });

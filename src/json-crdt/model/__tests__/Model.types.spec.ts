@@ -4,10 +4,12 @@ import type {StringRga} from '../../types/rga-string/StringRga';
 import type {Const} from '../../types/const/Const';
 
 test('can add TypeScript types to Model view', () => {
-  const model = Model.withLogicalClock() as Model<ObjectLww<{
-    foo: StringRga;
-    bar: Const<number>;
-  }>>;
+  const model = Model.withLogicalClock() as Model<
+    ObjectLww<{
+      foo: StringRga;
+      bar: Const<number>;
+    }>
+  >;
   model.api.root({
     foo: 'asdf',
     bar: 1234,

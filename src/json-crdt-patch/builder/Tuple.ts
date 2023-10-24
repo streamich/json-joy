@@ -8,6 +8,6 @@ export class Tuple<T extends unknown[]> {
 /**
  * @todo Rename to `vec`.
  * @param slots
- * @returns 
+ * @returns
  */
 export const tup = <T extends unknown[]>(...slots: T): Tuple<T> => new Tuple(slots);

@@ -1,5 +1,5 @@
 import {onlyOnNode20} from '../../../../__tests__/util';
-import { Model } from '../../Model';
+import {Model} from '../../Model';
 
 onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
   test('dispatches "change" events on document change', async () => {

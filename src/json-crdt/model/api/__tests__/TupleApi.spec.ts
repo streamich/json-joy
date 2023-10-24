@@ -20,19 +20,13 @@ onlyOnNode20('events', () => {
     const tuple = api.tup([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
-    tuple.set([
-      [0, 1.5],
-    ]);
+    tuple.set([[0, 1.5]]);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
   });
@@ -46,24 +40,16 @@ onlyOnNode20('events', () => {
     const tuple = api.tup([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
-    tuple.set([
-      [0, 1.5],
-    ]);
+    tuple.set([[0, 1.5]]);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
   });
@@ -77,20 +63,14 @@ onlyOnNode20('events', () => {
     const tuple = api.tup([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
-    tuple.set([
-      [0, 1.5],
-    ]);
+    tuple.set([[0, 1.5]]);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    tuple.set([
-      [0, 2.5],
-    ]);
+    tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
     tuple.events.off('view', onView);
-    tuple.set([
-      [0, 3.5],
-    ]);
+    tuple.set([[0, 3.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
   });
@@ -104,12 +84,8 @@ onlyOnNode20('events', () => {
     const tuple = api.tup([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
-    tuple.set([
-      [0, 1.5],
-    ]);
-    tuple.set([
-      [1, 44],
-    ]);
+    tuple.set([[0, 1.5]]);
+    tuple.set([[1, 44]]);
     await Promise.resolve();
     expect(cnt).toBe(1);
   });
