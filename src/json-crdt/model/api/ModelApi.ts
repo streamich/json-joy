@@ -44,14 +44,22 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     return et;
   }
 
-  public wrap<T extends JsonNode<any>>(node: T): JsonNodeApi<T> {
-    if (node instanceof ValueLww) return node.api as any || (node.api = new ValueApi(node, this));
-    else if (node instanceof StringRga) return node.api as any || (node.api = new StringApi(node, this));
-    else if (node instanceof BinaryRga) return node.api as any || (node.api = new BinaryApi(node, this));
-    else if (node instanceof ArrayRga) return node.api as any || (node.api = new ArrayApi(node, this));
-    else if (node instanceof ObjectLww) return node.api as any || (node.api = new ObjectApi(node, this));
-    else if (node instanceof Const) return node.api as any || (node.api = new ConstApi(node, this));
-    else if (node instanceof ArrayLww) return node.api as any || (node.api = new TupleApi(node, this));
+  public wrap(node: ValueLww): ValueApi;
+  public wrap(node: StringRga): StringApi;
+  public wrap(node: BinaryRga): BinaryApi;
+  public wrap(node: ArrayRga): ArrayApi;
+  public wrap(node: ObjectLww): ObjectApi;
+  public wrap(node: Const): ConstApi;
+  public wrap(node: ArrayLww): TupleApi;
+  public wrap(node: JsonNode): NodeApi;
+  public wrap(node: JsonNode) {
+    if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
+    else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
+    else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
+    else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
+    else if (node instanceof ObjectLww) return node.api || (node.api = new ObjectApi(node, this));
+    else if (node instanceof Const) return node.api || (node.api = new ConstApi(node, this));
+    else if (node instanceof ArrayLww) return node.api || (node.api = new TupleApi(node, this));
     else throw new Error('UNKNOWN_NODE');
   }
 
