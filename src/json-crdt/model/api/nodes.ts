@@ -10,24 +10,15 @@ import {ValueLww} from '../../types/lww-value/ValueLww';
 import {ArrayLww} from '../../types/lww-array/ArrayLww';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
-import {
-  ModelProxyArrNode,
-  ModelProxyBinNode,
-  ModelProxyConstNode,
-  ModelProxyNode,
-  ModelProxyObjNode,
-  ModelProxyStrNode,
-  ModelProxyValNode,
-  ModelProxyVecNode,
-} from '../proxy/types';
 import {printTree} from '../../../util/print/printTree';
-import type {JsonNode} from '../../types';
+import type * as types from '../proxy/types';
+import type {JsonNode, JsonNodeView} from '../../types';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from '../../../util/print/types';
 
 export type ApiPath = string | number | Path | void;
 
-export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements Printable {
+export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
 
   private ev: undefined | NodeEvents = undefined;
@@ -91,8 +82,8 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
     throw new Error('NOT_CONST');
   }
 
-  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN, V>>(
-    ext: ExtensionDefinition<V, any, EN, EApi>,
+  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN>>(
+    ext: ExtensionDefinition<any, EN, EApi>,
   ): EApi {
     let node: JsonNode | undefined = this.node;
     while (node) {
@@ -130,15 +121,8 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
     return this.in(path).asConst();
   }
 
-  public view(): View {
-    return this.node.view() as unknown as View;
-  }
-
-  public proxy(): ModelProxyNode<View, unknown> {
-    return {
-      toNode: () => this,
-      toView: () => this.view(),
-    };
+  public view(): JsonNodeView<N> {
+    return this.node.view() as unknown as JsonNodeView<N>;
   }
 
   public toString(tab: string = ''): string {
@@ -146,14 +130,16 @@ export class NodeApi<N extends JsonNode = JsonNode, View = unknown> implements P
   }
 }
 
-export class ConstApi<View = unknown> extends NodeApi<Const, View> {
-  public proxy(): ModelProxyConstNode<View> {
-    return super.proxy() as ModelProxyConstNode<View>;
+export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
+  public proxy(): types.ProxyNodeConst<N> {
+    return {
+      toApi: () => <any>this,
+    };
   }
 }
 
-export class ValueApi<View = unknown> extends NodeApi<ValueLww, View> {
-  public set(json: View): this {
+export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N> {
+  public set(json: JsonNodeView<N>): this {
     const {api, node} = this;
     const builder = api.builder;
     const val = builder.constOrJson(json);
@@ -162,21 +148,20 @@ export class ValueApi<View = unknown> extends NodeApi<ValueLww, View> {
     return this;
   }
 
-  public proxy<Child extends ModelProxyNode<View, any> = any>(): ModelProxyValNode<View, Child> {
+  public proxy(): types.ProxyNodeVal<N> {
     const self = this;
-    return {
-      toNode: () => this,
-      toView: () => this.view(),
+    const proxy = {
+      toApi: () => <any>this,
       get val() {
         const childNode = self.node.node();
-        return self.api.wrap(childNode).proxy() as Child;
+        return (<any>self).api.wrap(childNode).proxy();
       },
     };
+    return <any>proxy;
   }
 }
 
-/** @todo Rename to `VectorApi`. */
-export class TupleApi<View extends unknown[] = unknown[]> extends NodeApi<ArrayLww, View> {
+export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
     const {builder} = api;
@@ -188,30 +173,26 @@ export class TupleApi<View extends unknown[] = unknown[]> extends NodeApi<ArrayL
     return this;
   }
 
-  public proxy<Child = unknown>(): ModelProxyVecNode<View> {
+  public proxy(): types.ProxyNodeVec<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toNode') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === 'toApi') return () => this;
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return this.api.wrap(child).proxy() as Child;
+          return (<any>this).api.wrap(child).proxy();
         },
       },
     );
-    return proxy as ModelProxyVecNode<View>;
+    return proxy as types.ProxyNodeVec<N>;
   }
 }
 
-export class ObjectApi<View extends Record<string, unknown> = Record<string, unknown>> extends NodeApi<
-  ObjectLww,
-  View
-> {
-  public set(entries: Partial<View>): this {
+export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
+  public set(entries: Partial<JsonNodeView<N>>): this {
     const {api, node} = this;
     const {builder} = api;
     builder.setKeys(
@@ -233,26 +214,25 @@ export class ObjectApi<View extends Record<string, unknown> = Record<string, unk
     return this;
   }
 
-  public proxy<Child = unknown>(): ModelProxyObjNode<View> {
+  public proxy(): types.ProxyNodeObj<N> {
     const self = this;
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toNode') return () => self;
-          if (prop === 'toView') return () => self.view();
+          if (prop === 'toApi') return () => self;
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
-          return this.api.wrap(child).proxy() as Child;
+          return (<any>this).api.wrap(child).proxy();
         },
       },
     );
-    return proxy as ModelProxyObjNode<View>;
+    return proxy as types.ProxyNodeObj<N>;
   }
 }
 
-export class StringApi extends NodeApi<StringRga, string> {
+export class StringApi extends NodeApi<StringRga> {
   public ins(index: number, text: string): this {
     const {api, node} = this;
     const builder = api.builder;
@@ -278,12 +258,14 @@ export class StringApi extends NodeApi<StringRga, string> {
     return this;
   }
 
-  public proxy(): ModelProxyStrNode {
-    return super.proxy() as ModelProxyStrNode;
+  public proxy(): types.ProxyNodeStr {
+    return {
+      toApi: () => this,
+    };
   }
 }
 
-export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
+export class BinaryApi extends NodeApi<BinaryRga> {
   public ins(index: number, data: Uint8Array): this {
     const {api, node} = this;
     const after = !index ? node.id : node.find(index - 1);
@@ -302,13 +284,15 @@ export class BinaryApi extends NodeApi<BinaryRga, Uint8Array> {
     return this;
   }
 
-  public proxy(): ModelProxyBinNode {
-    return super.proxy() as ModelProxyBinNode;
+  public proxy(): types.ProxyNodeBin {
+    return {
+      toApi: () => this,
+    };
   }
 }
 
-export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
-  public ins(index: number, values: T[]): this {
+export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
+  public ins(index: number, values: Array<JsonNodeView<N>[number]>): this {
     const {api, node} = this;
     const {builder} = api;
     const after = !index ? node.id : node.find(index - 1);
@@ -333,21 +317,20 @@ export class ArrayApi<T = unknown> extends NodeApi<ArrayRga, T[]> {
     return this.node.length();
   }
 
-  public proxy(): ModelProxyArrNode<T> {
+  public proxy(): types.ProxyNodeArr<N> {
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toNode') return () => this;
-          if (prop === 'toView') return () => this.view();
+          if (prop === 'toApi') return () => this;
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);
           if (!child) throw new Error('OUT_OF_BOUNDS');
-          return this.api.wrap(child).proxy();
+          return (this.api.wrap(child) as any).proxy();
         },
       },
     );
-    return proxy as ModelProxyArrNode<T>;
+    return proxy as types.ProxyNodeArr<N>;
   }
 }

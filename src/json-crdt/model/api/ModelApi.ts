@@ -10,6 +10,7 @@ import {BinaryRga} from '../../types/rga-binary/BinaryRga';
 import {StringRga} from '../../types/rga-string/StringRga';
 import {ValueLww} from '../../types/lww-value/ValueLww';
 import type {Model} from '../Model';
+import type {JsonNodeApi} from './types';
 
 export class ModelApi<Value extends JsonNode = JsonNode> {
   public builder: PatchBuilder;

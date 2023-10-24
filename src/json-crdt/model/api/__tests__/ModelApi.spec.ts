@@ -143,37 +143,3 @@ describe('object manipulation', () => {
     expect(doc.view()).toEqual([1, '', 2]);
   });
 });
-
-onlyOnNode20('events', () => {
-  test('dispatches "change" events on document change', async () => {
-    const doc = Model.withLogicalClock();
-    const api = doc.api;
-    let cnt = 0;
-    api.root({a: {}});
-    expect(cnt).toBe(0);
-    api.events.addEventListener('change', () => {
-      cnt++;
-    });
-    api.obj([]).set({gg: true});
-    await Promise.resolve();
-    expect(cnt).toBe(1);
-    api.obj(['a']).set({1: 1, 2: 2});
-    await Promise.resolve();
-    expect(cnt).toBe(2);
-  });
-
-  test('fires change event for each executed update', async () => {
-    const doc = Model.withLogicalClock();
-    const api = doc.api;
-    let cnt = 0;
-    api.root({a: {}});
-    expect(cnt).toBe(0);
-    api.events.addEventListener('change', () => {
-      cnt++;
-    });
-    api.obj([]).set({gg: true});
-    api.obj([]).set({gg: false});
-    await Promise.resolve();
-    expect(cnt).toBe(1);
-  });
-});

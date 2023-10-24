@@ -36,7 +36,7 @@ export interface JsonNode<View = unknown> extends Identifiable {
   /**
    * Instance which provides public API for this node.
    */
-  api: undefined | unknown;
+  api: undefined | unknown; // JsonNodeApi<this>;
 }
 
 export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]: JsonNodeView<N[K]>};

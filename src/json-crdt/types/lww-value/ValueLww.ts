@@ -31,8 +31,8 @@ export class ValueLww<Value extends JsonNode = JsonNode> implements JsonNode<Rea
     callback(this.node());
   }
 
-  public child() {
-    return this.doc.index.get(this.val)!;
+  public child(): Value {
+    return this.doc.index.get(this.val)! as Value;
   }
 
   public container(): JsonNode | undefined {
