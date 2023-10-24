@@ -1,49 +1,43 @@
-import type {StringApi, ObjectApi, ValueApi, ArrayApi, BinaryApi, TupleApi, ConstApi} from '../api/nodes';
+import type {JsonNodeApi} from '../api/types';
+import type {JsonNode, JsonNodeView} from '../../types';
+import type {Const} from '../../types/const/Const';
+import type {ArrayLww} from '../../types/lww-array/ArrayLww';
+import type {ObjectLww} from '../../types/lww-object/ObjectLww';
+import type {RootLww} from '../../types/lww-root/RootLww';
+import type {ValueLww} from '../../types/lww-value/ValueLww';
+import type {ArrayRga} from '../../types/rga-array/ArrayRga';
+import type {BinaryRga} from '../../types/rga-binary/BinaryRga';
+import type {StringRga} from '../../types/rga-string/StringRga';
 
-export interface ModelProxyNode<V, N> {
-  toView(): V;
-  toNode(): N;
+export interface ProxyNode<N extends JsonNode = JsonNode> {
+  toApi(): JsonNodeApi<N>;
 }
 
-// prettier-ignore
-export type ToProxyComplexNode<V> = V extends string
-  ? ModelProxyStrNode
-  : V extends Uint8Array
-    ? ModelProxyBinNode
-    : V extends Array<infer T>
-      ? T[] extends V
-        ? ModelProxyArrNode<T>
-        : ModelProxyVecNode<V>
-      : ModelProxyObjNode<V>;
-
-// prettier-ignore
-export type ToProxyPreferConstPrimitives<V> = V extends number
-  ? ModelProxyConstNode<number>
-  : V extends boolean
-    ? ModelProxyConstNode<boolean>
-    : V extends null
-      ? ModelProxyConstNode<null>
-      : V extends undefined
-        ? ModelProxyConstNode<undefined>
-        : ToProxyComplexNode<V>;
-
-// prettier-ignore
-export type ToProxyPreferValPrimitives<V> = V extends number
-  ? ModelProxyValNode<number, ModelProxyConstNode<number>>
-  : V extends boolean
-    ? ModelProxyValNode<boolean, ModelProxyConstNode<boolean>>
-    : V extends null
-      ? ModelProxyValNode<null, ModelProxyConstNode<null>>
-      : V extends undefined
-        ? ModelProxyValNode<undefined, ModelProxyConstNode<undefined>>
-        : ToProxyComplexNode<V>;
-
-export type ModelProxyConstNode<V> = ModelProxyNode<V, ConstApi<V>>;
-export type ModelProxyValNode<V, Child> = ModelProxyNode<V, ValueApi<V>> & {val: Child};
-export type ModelProxyVecNode<V extends unknown[]> = ModelProxyNode<V, TupleApi<V>> & {
-  [K in keyof V]: ToProxyPreferValPrimitives<V[K]>;
+export type ProxyNodeConst<N extends Const<any>> = ProxyNode<N>;
+export type ProxyNodeVal<N extends ValueLww<any>> = ProxyNode<N> & {val: JsonNodeToProxyNode<ReturnType<N['child']>>};
+export type ProxyNodeVec<N extends ArrayLww<any>> = ProxyNode<N> & {
+  [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<JsonNodeView<N>[K]>;
 };
-export type ModelProxyObjNode<V> = ModelProxyNode<V, ObjectApi> & {[K in keyof V]: ToProxyPreferConstPrimitives<V[K]>};
-export type ModelProxyStrNode = ModelProxyNode<string, StringApi>;
-export type ModelProxyBinNode = ModelProxyNode<Uint8Array, BinaryApi>;
-export type ModelProxyArrNode<V> = ModelProxyNode<V[], ArrayApi<V>> & Record<number, ToProxyPreferValPrimitives<V>>;
+export type ProxyNodeObj<N extends ObjectLww<any>> = ProxyNode<N> & {[K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<(N extends ObjectLww<infer M> ? M : never)[K]>};
+export type ProxyNodeStr = ProxyNode<StringRga>;
+export type ProxyNodeBin = ProxyNode<BinaryRga>;
+export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> & Record<number, JsonNodeToProxyNode<N['get']>>;
+
+// prettier-ignore
+export type JsonNodeToProxyNode<N> = N extends Const<any>
+  ? ProxyNodeConst<N>
+  : N extends RootLww<any>
+    ? ProxyNodeVal<N>
+    : N extends ValueLww<any>
+      ? ProxyNodeVal<N>
+      : N extends StringRga
+        ? ProxyNodeStr
+        : N extends BinaryRga
+          ? ProxyNodeBin
+          : N extends ArrayRga<any>
+            ? ProxyNodeArr<N>
+            : N extends ObjectLww<any>
+              ? ProxyNodeObj<N>
+              : N extends ArrayLww<any>
+                ? ProxyNodeVec<N>
+                : never;
