@@ -33,7 +33,7 @@
     "esm/"
   ],
   "scripts": {
-    "prettier": "prettier --ignore-path .gitignore --write 'src/**/*.{ts,tsx,js,jsx}'",
+    "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",
     "prettier:check": "prettier --ignore-path .gitignore --list-different 'src/**/*.{ts,tsx,js,jsx}'",
     "lint": "yarn tslint",
     "lint:fix": "yarn tslint --fix",
@@ -46,7 +46,7 @@
     "build:all": "concurrently \"yarn build:cjs\" \"yarn build:es6\" \"yarn build:es2020\" \"yarn build:esm\"",
     "build": "yarn build:es2020",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
-    "test": "yarn jest --maxWorkers 7",
+    "test": "jest --maxWorkers 7",
     "test:all": "yarn lint && yarn test && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
     "test:cli": "yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack",
