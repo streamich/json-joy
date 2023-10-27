@@ -91,18 +91,18 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
           return this.cBin(id, reader.u32());
         case 0xd4: {
           const obj = new Const(id, this.val());
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd5: {
           const obj = new Const(id, this.ts());
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd6: {
           const val = this.cNode();
           const obj = new ValueLww(this.doc, id, val.id);
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xde:
@@ -129,7 +129,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   public cObj(id: ITimestampStruct, length: number): ObjectLww {
     const obj = new ObjectLww(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
@@ -151,14 +151,14 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
         elements.push(undefined);
       } else elements.push(this.cNode().id);
     }
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
   public cArr(id: ITimestampStruct, length: number): ArrayRga {
     const obj = new ArrayRga(this.doc, id);
     obj.ingest(length, this.cArrChunk);
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
@@ -174,7 +174,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   public cStr(id: ITimestampStruct, length: number): StringRga {
     const node = new StringRga(id);
     if (length) node.ingest(length, this.cStrChunk);
-    this.doc.index.set(node);
+    this.doc.index.set(id, node);
     return node;
   }
 
@@ -194,7 +194,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   public cBin(id: ITimestampStruct, length: number): BinaryRga {
     const node = new BinaryRga(id);
     if (length) node.ingest(length, this.cBinChunk);
-    this.doc.index.set(node);
+    this.doc.index.set(id, node);
     return node;
   }
 

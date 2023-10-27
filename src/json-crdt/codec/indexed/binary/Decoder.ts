@@ -49,7 +49,7 @@ export class Decoder {
       const id = clockTable.parseField(field as FieldName);
       reader.reset(arr);
       const node = this.decodeNode(id);
-      docIndex.set(node);
+      docIndex.set(node.id, node);
     }
     return doc;
   }

@@ -3,10 +3,9 @@ import {ArrayRga} from '../types/rga-array/ArrayRga';
 import {BinaryRga} from '../types/rga-binary/BinaryRga';
 import {Const} from '../types/const/Const';
 import {encoder, decoder} from '../codec/structural/binary/shared';
-import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
+import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock, compare} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
-import {NodeIndex} from './NodeIndex';
 import {ObjectLww} from '../types/lww-object/ObjectLww';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
@@ -16,6 +15,7 @@ import {ValueLww} from '../types/lww-value/ValueLww';
 import {ArrayLww} from '../types/lww-array/ArrayLww';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
+import {AvlMap} from '../../util/trees/avl/AvlMap';
 import type {JsonNode, JsonNodeView} from '../types/types';
 import type {Printable} from '../../util/print/types';
 
@@ -86,7 +86,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * Index of all known node objects (objects, array, strings, values)
    * in this document.
    */
-  public index: NodeIndex<JsonNode> = new NodeIndex<JsonNode>();
+  public index = new AvlMap<ITimestampStruct, JsonNode>(compare);
 
   /**
    * Extensions to the JSON CRDT protocol. Extensions are used to implement
@@ -155,18 +155,23 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       const node = index.get(op.obj);
       if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewObjOp) {
-      if (!index.get(op.id)) index.set(new ObjectLww(this, op.id));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ObjectLww(this, id));
     } else if (op instanceof operations.NewArrOp) {
-      if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ArrayRga(this, id));
     } else if (op instanceof operations.NewStrOp) {
-      if (!index.get(op.id)) index.set(new StringRga(op.id));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new StringRga(id));
     } else if (op instanceof operations.NewValOp) {
-      if (!index.get(op.id)) {
+      const id = op.id;
+      if (!index.get(id)) {
         const val = index.get(op.val);
-        if (val) index.set(new ValueLww(this, op.id, op.val));
+        if (val) index.set(id, new ValueLww(this, id, op.val));
       }
     } else if (op instanceof operations.NewConOp) {
-      if (!index.get(op.id)) index.set(new Const(op.id, op.val));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new Const(id, op.val));
     } else if (op instanceof operations.InsObjOp) {
       const node = index.get(op.obj);
       const tuples = op.data;
@@ -235,12 +240,14 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       } else if (node instanceof StringRga) node.delete(op.what);
       else if (node instanceof BinaryRga) node.delete(op.what);
     } else if (op instanceof operations.NewBinOp) {
-      if (!index.get(op.id)) index.set(new BinaryRga(op.id));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new BinaryRga(id));
     } else if (op instanceof operations.InsBinOp) {
       const node = index.get(op.obj);
       if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewVecOp) {
-      if (!index.get(op.id)) index.set(new ArrayLww(this, op.id));
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ArrayLww(this, id));
     }
   }
 
@@ -254,7 +261,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const node = this.index.get(value);
     if (!node) return;
     node.children((child) => this.deleteNodeTree(child.id));
-    this.index.delete(value);
+    this.index.del(value);
   }
 
   /**
@@ -291,8 +298,8 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       this.constructor.name +
       printTree(tab, [
         (tab) => this.root.toString(tab),
-        nl,
-        (tab) => this.index.toString(tab),
+        // nl,
+        // (tab) => this.index.toString(tab),
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,

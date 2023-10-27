@@ -1,4 +1,4 @@
-import {insert, insertLeft, insertRight, print} from './util';
+import {insert, insertLeft, remove, insertRight, print} from './util';
 import {printTree} from '../../print/printTree';
 import {findOrNextLower, first, next} from '../util';
 import type {Printable} from '../../print/types';
@@ -60,6 +60,12 @@ export class AvlMap<K, V> implements Printable {
 
   public get(k: K): V | undefined {
     return this.find(k)?.v;
+  }
+
+  public del(k: K): void {
+    const node = this.find(k);
+    if (!node) return;
+    this.root = remove(this.root, node as IAvlTreeNode<K, V>);
   }
 
   public has(k: K): boolean {
