@@ -13,6 +13,14 @@ const loadTrace = (filename: SequentialTraceName) => {
 const cache = {} as Record<SequentialTraceName, SequentialTrace>;
 const rootFolder = path.resolve(__dirname, '..', '..', '..', '..');
 
+export const sequentialTraceNames: SequentialTraceName[] = [
+  "automerge-paper",
+  "friendsforever_flat",
+  "rustcode",
+  "seph-blog1",
+  "sveltecomponent",
+];
+
 export const traces = {
   filename: (name: SequentialTraceName) => path.resolve(rootFolder, 'node_modules', 'editing-traces', 'sequential_traces', `${name}.json.gz`),
   get: (name: SequentialTraceName) => {
