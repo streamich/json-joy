@@ -178,9 +178,8 @@ export class PatchBuilder {
    * Set fields of an "obj" object.
    *
    * @returns ID of the new operation.
-   * @todo Rename to `insObj`.
    */
-  public setKeys(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
+  public insObj(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
     this.pad();
     if (!data.length) throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
@@ -310,7 +309,7 @@ export class PatchBuilder {
         const valueId = value instanceof Timestamp ? value : maybeConst(value) ? this.const(value) : this.json(value);
         tuples.push([k, valueId]);
       }
-      this.setKeys(id, tuples);
+      this.insObj(id, tuples);
     }
     return id;
   }

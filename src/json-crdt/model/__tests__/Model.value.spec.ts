@@ -59,7 +59,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.obj();
       const valId = builder.val(builder.const(25));
-      builder.setKeys(objId, [['gg', valId]]);
+      builder.insObj(objId, [['gg', valId]]);
       builder.setVal(valId, builder.const(123));
       builder.setVal(valId, builder.const(99));
       builder.root(objId);
@@ -72,7 +72,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const objId = builder.obj();
       const valId = builder.val(builder.const(25));
-      builder.setKeys(objId, [['gg', valId]]);
+      builder.insObj(objId, [['gg', valId]]);
       builder.setVal(valId, builder.const(123));
       builder.setVal(valId, builder.const(true));
       builder.root(objId);

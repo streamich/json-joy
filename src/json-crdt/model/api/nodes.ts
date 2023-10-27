@@ -195,7 +195,7 @@ export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeAp
   public set(entries: Partial<JsonNodeView<N>>): this {
     const {api, node} = this;
     const {builder} = api;
-    builder.setKeys(
+    builder.insObj(
       node.id,
       Object.entries(entries).map(([key, json]) => [key, builder.constOrJson(json)]),
     );
@@ -206,7 +206,7 @@ export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeAp
   public del(keys: string[]): this {
     const {api, node} = this;
     const {builder} = api;
-    api.builder.setKeys(
+    api.builder.insObj(
       node.id,
       keys.map((key) => [key, builder.const(undefined)]),
     );

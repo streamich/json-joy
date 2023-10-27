@@ -73,7 +73,7 @@ export class JsonPatch {
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjectLww) {
-        builder.setKeys(node.id, [[String(key), builder.json(op.value)]]);
+        builder.insObj(node.id, [[String(key), builder.json(op.value)]]);
       } else if (node instanceof ArrayRga) {
         const value = builder.json(op.value);
         if (key === '-') {
@@ -105,7 +105,7 @@ export class JsonPatch {
       if (node instanceof ObjectLww) {
         const stringKey = String(key);
         if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
-        builder.setKeys(node.id, [[stringKey, builder.const(undefined)]]);
+        builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
       } else if (node instanceof ArrayRga) {
         const key = steps[steps.length - 1];
         const index = ~~key;

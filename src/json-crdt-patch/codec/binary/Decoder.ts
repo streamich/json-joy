@@ -113,7 +113,7 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
           const value = this.decodeId();
           tuples.push([key, value]);
         }
-        builder.setKeys(obj, tuples);
+        builder.insObj(obj, tuples);
         break;
       }
       case JsonCrdtPatchOpcode.ins_vec: {

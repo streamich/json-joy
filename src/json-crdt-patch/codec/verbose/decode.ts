@@ -58,7 +58,7 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
         break;
       }
       case 'ins_obj': {
-        builder.setKeys(
+        builder.insObj(
           decodeId(op.obj),
           (op as types.JsonCodecInsObjOperation).value.map(([key, id]) => [key, decodeId(id)]),
         );

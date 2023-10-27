@@ -32,7 +32,7 @@ export class PatchFuzzer extends Fuzzer {
         () => builder.const(RandomJson.generate()),
         () => builder.root(ts()),
         () =>
-          builder.setKeys(
+          builder.insObj(
             ts(),
             Fuzzer.repeat(Fuzzer.randomInt(1, 10), () => [RandomJson.genString(), ts()]),
           ),

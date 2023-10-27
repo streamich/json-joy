@@ -22,10 +22,10 @@ describe('clone()', () => {
     doc1.applyPatch(builder1.patch);
     const doc2 = doc1.clone();
     const builder2 = new PatchBuilder(doc2.clock);
-    builder2.setKeys(obj, [['lala', builder2.json({gaga: 'land'})]]);
+    builder2.insObj(obj, [['lala', builder2.json({gaga: 'land'})]]);
     doc2.applyPatch(builder2.patch);
     const builder3 = new PatchBuilder(doc1.clock);
-    builder3.setKeys(obj, [['hmmm', builder3.json('aha')]]);
+    builder3.insObj(obj, [['hmmm', builder3.json('aha')]]);
     doc1.applyPatch(builder3.patch);
     expect(doc1.view()).toEqual({foo: 'bar', hh: true, hmmm: 'aha'});
     expect(doc2.view()).toEqual({foo: 'bar', hh: true, lala: {gaga: 'land'}});

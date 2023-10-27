@@ -26,7 +26,7 @@ builder.insStr(stringId, stringId, 'bar');
 const objectId = builder.obj();
 
 // Set "foo" property of the object to "bar".
-builder.setKeys(objectId, [['foo', stringId]]);
+builder.insObj(objectId, [['foo', stringId]]);
 
 // Set the document root LWW-Register value to the object.
 builder.root(objectId);

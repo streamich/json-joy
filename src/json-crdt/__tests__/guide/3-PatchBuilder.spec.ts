@@ -13,7 +13,7 @@ test('can edit document using JSON Patch operations', () => {
   const obj = builder.obj();
   const str = builder.str();
   const insert1 = builder.insStr(str, str, 'bar');
-  builder.setKeys(obj, [['foo', str]]);
+  builder.insObj(obj, [['foo', str]]);
   builder.root(obj);
   doc.api.apply();
 
@@ -34,7 +34,7 @@ test('can edit document using JSON Patch operations', () => {
   console.log(doc.view());
   console.log(doc.toString());
 
-  builder.setKeys(obj, [['list', builder.json([{title: 'To the dishes!'}, {title: 'Write more tests!'}])]]);
+  builder.insObj(obj, [['list', builder.json([{title: 'To the dishes!'}, {title: 'Write more tests!'}])]]);
   doc.api.apply();
 
   console.log(doc.view());
