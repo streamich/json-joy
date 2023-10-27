@@ -34,18 +34,19 @@ export class Encoder {
       this.ts(rootValueId);
       model.r = writer.flush();
     }
-    doc.index.entries.forEach(this.onNode);
+    doc.index.forEach(({v: node}) => this.onNode(node));
     return model;
   }
 
-  protected readonly onNode = (map: Map<number, JsonNode>, sid: number) => {
+  protected readonly onNode = (node: JsonNode) => {
+    const id = node.id;
+    const sid = id.sid;
+    const time = id.time;
     const model = this.model!;
     const sidIndex = this.clockTable!.getBySid(sid).index;
     const sidFieldPart = sidIndex.toString(36) + '_';
-    map.forEach((node: JsonNode, time: number) => {
-      const field = (sidFieldPart + time.toString(36)) as FieldName;
-      model[field] = this.encodeNode(node);
-    });
+    const field = (sidFieldPart + time.toString(36)) as FieldName;
+    model[field] = this.encodeNode(node);
   };
 
   public encodeNode(node: JsonNode): Uint8Array {

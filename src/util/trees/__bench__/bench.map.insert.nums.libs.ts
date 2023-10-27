@@ -7,7 +7,7 @@ import {RadixTree} from '../radix/RadixTree';
 import * as payloads from './payloads';
 import BTree from 'sorted-btree';
 import {OrderedMap} from 'js-sdsl';
-import {AvlBstMap} from '../avl/AvlBstMap';
+import {AvlMap} from '../avl/AvlMap';
 import {RbMap} from '../red-black/RbMap';
 
 const benchmark: IBenchmark = {
@@ -30,10 +30,10 @@ const benchmark: IBenchmark = {
       },
     },
     {
-      name: 'json-joy AvlBstMap<number, number>',
+      name: 'json-joy AvlMap<number, number>',
       setup: () => {
         return (num: unknown) => {
-          const map = new AvlBstMap<number, number>();
+          const map = new AvlMap<number, number>();
           const numbers = num as number[];
           const length = numbers.length;
           for (let i = 0; i < length; i++) {

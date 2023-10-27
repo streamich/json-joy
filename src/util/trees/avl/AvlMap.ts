@@ -1,4 +1,4 @@
-import {insert, insertLeft, insertRight, print} from './util';
+import {insert, insertLeft, remove, insertRight, print} from './util';
 import {printTree} from '../../print/printTree';
 import {findOrNextLower, first, next} from '../util';
 import type {Printable} from '../../print/types';
@@ -15,7 +15,7 @@ export class AvlNode<K, V> implements IAvlTreeNode<K, V> {
 
 const defaultComparator = (a: unknown, b: unknown) => (a === b ? 0 : (a as any) < (b as any) ? -1 : 1);
 
-export class AvlBstMap<K, V> implements Printable {
+export class AvlMap<K, V> implements Printable {
   public root: AvlNode<K, V> | undefined = undefined;
   public readonly comparator: Comparator<K>;
 
@@ -60,6 +60,12 @@ export class AvlBstMap<K, V> implements Printable {
 
   public get(k: K): V | undefined {
     return this.find(k)?.v;
+  }
+
+  public del(k: K): void {
+    const node = this.find(k);
+    if (!node) return;
+    this.root = remove(this.root, node as IAvlTreeNode<K, V>);
   }
 
   public has(k: K): boolean {

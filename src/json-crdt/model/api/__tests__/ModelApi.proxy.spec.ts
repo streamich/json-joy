@@ -5,7 +5,7 @@ import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga} from '../../../types/rga-string/StringRga';
 import {Const} from '../../../types/const/Const';
 import {ArrayLww} from '../../../types/lww-array/ArrayLww';
-import {tup} from '../../../../json-crdt-patch';
+import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as Model<
@@ -60,7 +60,7 @@ describe('supports all node types', () => {
       str: 'asdf',
       num: 1234,
     },
-    vec: tup('asdf', 1234, true, null),
+    vec: vec('asdf', 1234, true, null),
   };
   model.api.root(data);
 

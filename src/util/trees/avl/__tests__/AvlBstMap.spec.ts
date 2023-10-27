@@ -1,7 +1,7 @@
-import {AvlBstMap} from '../AvlBstMap';
+import {AvlMap} from '../AvlMap';
 
 test('smoke test', () => {
-  const tree = new AvlBstMap<number, number>();
+  const tree = new AvlMap<number, number>();
   tree.set(1, 1);
   tree.set(3, 5);
   tree.set(4, 5);

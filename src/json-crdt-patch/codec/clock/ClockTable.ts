@@ -1,5 +1,5 @@
 import {ITimestampStruct, IVectorClock, Timestamp} from '../../clock';
-import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
+import {CrdtReader} from '../../util/binary/CrdtDecoder';
 import {CrdtWriter} from '../../util/binary/CrdtEncoder';
 
 export class ClockTableEntry {
@@ -14,7 +14,7 @@ export class ClockTable {
     return table;
   }
 
-  public static decode(reader: CrdtDecoder): ClockTable {
+  public static decode(reader: CrdtReader): ClockTable {
     const clockTable = new ClockTable();
     const length = reader.vu57();
     const tuple = reader.u53vu39();

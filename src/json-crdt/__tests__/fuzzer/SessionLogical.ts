@@ -146,10 +146,10 @@ export class SessionLogical {
       });
       // console.log('ADDING KEY', key, json);
       const valueId = builder.json(json);
-      builder.setKeys(node.id, [[key, valueId]]);
+      builder.insObj(node.id, [[key, valueId]]);
     } else {
       // console.log('DELETING KEY', JSON.stringify(key))
-      builder.setKeys(node.id, [[key, builder.const(undefined)]]);
+      builder.insObj(node.id, [[key, builder.const(undefined)]]);
     }
     return builder.patch;
   }

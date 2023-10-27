@@ -1,5 +1,6 @@
 import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, Chunk} from '../rga/AbstractRga';
+import {next} from '../../../util/trees/util';
 import type {JsonNode} from '../../types';
 
 export class StringChunk implements Chunk<string> {
@@ -76,7 +77,7 @@ export class StringRga extends AbstractRga<string> implements JsonNode<string> {
   public view(): string {
     if (this._view) return this._view;
     let str = '';
-    for (let chunk = this.first(); chunk; chunk = this.next(chunk))
+    for (let chunk = this.first(); chunk; chunk = next(chunk))
       // TODO: Check if this optimization improves performance: if (!chunk.del) str += chunk.data;
       str += chunk.data;
     return (this._view = str);

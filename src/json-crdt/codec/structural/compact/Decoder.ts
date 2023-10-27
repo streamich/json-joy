@@ -86,7 +86,7 @@ export class Decoder {
       obj.put(key, val.id);
       i++;
     }
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -103,7 +103,7 @@ export class Decoder {
         elements.push(node.id);
       }
     }
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -121,7 +121,7 @@ export class Decoder {
       const ids = (content as unknown[]).map((c) => this.decodeNode(doc, c).id);
       return new ArrayChunk(chunkId, (content as string).length, ids);
     });
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -138,7 +138,7 @@ export class Decoder {
       if (typeof content === 'number') return new StringChunk(chunkId, content, '');
       return new StringChunk(chunkId, (content as string).length, content as string);
     });
-    doc.index.set(node);
+    doc.index.set(id, node);
     return node;
   }
 
@@ -156,7 +156,7 @@ export class Decoder {
       const buf = content as Uint8Array;
       return new BinaryChunk(chunkId, buf.length, buf);
     });
-    doc.index.set(node);
+    doc.index.set(id, node);
     return node;
   }
 
@@ -164,7 +164,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const child = this.decodeNode(doc, data[index]);
     const obj = new ValueLww(doc, id, child.id);
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -172,7 +172,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const value = data[index];
     const obj = new Const(id, value);
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -180,7 +180,7 @@ export class Decoder {
     const [id, index] = this.ts(data, 1);
     const val = this.ts(data, index)[0];
     const obj = new Const(id, val);
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 }

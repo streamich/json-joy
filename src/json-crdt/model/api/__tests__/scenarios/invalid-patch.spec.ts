@@ -4,8 +4,8 @@ test('does not allow recursively nested objects', () => {
   const doc = Model.withLogicalClock();
   const obj1 = doc.api.builder.obj();
   const obj2 = doc.api.builder.obj();
-  doc.api.builder.setKeys(obj1, [['foo', obj2]]);
-  doc.api.builder.setKeys(obj2, [['bar', obj1]]);
+  doc.api.builder.insObj(obj1, [['foo', obj2]]);
+  doc.api.builder.insObj(obj2, [['bar', obj1]]);
   doc.api.builder.root(obj1);
   doc.api.apply();
   expect(doc.view()).toStrictEqual({foo: {}});
@@ -15,8 +15,8 @@ test('does not allow recursively nested objects - reverse', () => {
   const doc = Model.withLogicalClock();
   const obj1 = doc.api.builder.obj();
   const obj2 = doc.api.builder.obj();
-  doc.api.builder.setKeys(obj1, [['foo', obj2]]);
-  doc.api.builder.setKeys(obj2, [['bar', obj1]]);
+  doc.api.builder.insObj(obj1, [['foo', obj2]]);
+  doc.api.builder.insObj(obj2, [['bar', obj1]]);
   doc.api.builder.root(obj2);
   doc.api.apply();
   expect(doc.view()).toStrictEqual({});
@@ -27,9 +27,9 @@ test('does not allow recursively nested objects, multiple levels deep', () => {
   const obj1 = doc.api.builder.obj();
   const obj2 = doc.api.builder.obj();
   const obj3 = doc.api.builder.obj();
-  doc.api.builder.setKeys(obj1, [['foo', obj2]]);
-  doc.api.builder.setKeys(obj2, [['bar', obj3]]);
-  doc.api.builder.setKeys(obj3, [['baz', obj1]]);
+  doc.api.builder.insObj(obj1, [['foo', obj2]]);
+  doc.api.builder.insObj(obj2, [['bar', obj3]]);
+  doc.api.builder.insObj(obj3, [['baz', obj1]]);
   doc.api.builder.root(obj1);
   doc.api.apply();
   expect(doc.view()).toStrictEqual({foo: {bar: {}}});
@@ -66,7 +66,7 @@ test('does not allow recursively nested arrays, multiple levels deep', () => {
   doc.api.builder.insArr(arr1, arr1, [arr2]);
   doc.api.builder.insArr(arr2, arr2, [arr3]);
   doc.api.builder.insArr(arr3, arr3, [obj]);
-  doc.api.builder.setKeys(obj, [['foo', arr1]]);
+  doc.api.builder.insObj(obj, [['foo', arr1]]);
   doc.api.builder.root(arr1);
   doc.api.apply();
   expect(doc.view()).toStrictEqual([[[{}]]]);

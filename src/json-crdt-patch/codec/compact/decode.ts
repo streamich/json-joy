@@ -74,7 +74,7 @@ export const decode = (data: types.CompactCodecPatch): Patch => {
           const [key, x] = value[j];
           tuples.push([key, timestamp(sid, x)]);
         }
-        builder.setKeys(obj, tuples);
+        builder.insObj(obj, tuples);
         break;
       }
       case JsonCrdtPatchOpcode.ins_vec: {

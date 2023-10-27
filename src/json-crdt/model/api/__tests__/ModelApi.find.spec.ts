@@ -7,7 +7,7 @@ describe('find', () => {
     const builder1 = new PatchBuilder(doc.clock);
     const obj1 = builder1.obj();
     const f = builder1.const(false);
-    builder1.setKeys(obj1, [['foo', f]]);
+    builder1.insObj(obj1, [['foo', f]]);
     builder1.root(obj1);
     doc.applyPatch(builder1.patch);
     expect(doc.api.find(['foo']).view()).toBe(false);

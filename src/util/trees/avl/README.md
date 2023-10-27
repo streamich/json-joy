@@ -23,7 +23,7 @@ npx ts-node benchmarks/util/trees/bench.map.insert.nums.libs.ts
 Warmup: 1000x , Node.js: v20.1.0 , Arch: arm64 , CPU: Apple M1
 --------------------------------------------------------------------- Natural numbers from 10 to 19
 🤞 json-joy AvlBstNumNumMap x 6,813,115 ops/sec ±0.21% (102 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 6,551,550 ops/sec ±0.26% (100 runs sampled)
+🤞 json-joy AvlMap<number, number> x 6,551,550 ops/sec ±0.26% (100 runs sampled)
 🤞 json-joy Tree<number, number> x 11,464,558 ops/sec ±1.00% (100 runs sampled)
 🤞 json-joy RadixTree x 2,818,437 ops/sec ±0.15% (98 runs sampled)
 🤞 sorted-btree BTree x 1,808,419 ops/sec ±0.15% (99 runs sampled)
@@ -31,7 +31,7 @@ Warmup: 1000x , Node.js: v20.1.0 , Arch: arm64 , CPU: Apple M1
 Fastest is 🤞 json-joy Tree<number, number>
 ------------------------------------------------------------------- Natural numbers from 100 to 199
 🤞 json-joy AvlBstNumNumMap x 389,003 ops/sec ±0.98% (99 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 363,491 ops/sec ±0.06% (102 runs sampled)
+🤞 json-joy AvlMap<number, number> x 363,491 ops/sec ±0.06% (102 runs sampled)
 🤞 json-joy Tree<number, number> x 1,118,010 ops/sec ±0.48% (97 runs sampled)
 🤞 json-joy RadixTree x 142,158 ops/sec ±0.55% (100 runs sampled)
 🤞 sorted-btree BTree x 116,945 ops/sec ±0.14% (101 runs sampled)
@@ -39,7 +39,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy Tree<number, number>
 ----------------------------------------------------------------- Natural numbers from 1000 to 1999
 🤞 json-joy AvlBstNumNumMap x 30,573 ops/sec ±0.28% (101 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 28,887 ops/sec ±0.08% (99 runs sampled)
+🤞 json-joy AvlMap<number, number> x 28,887 ops/sec ±0.08% (99 runs sampled)
 🤞 json-joy Tree<number, number> x 114,020 ops/sec ±0.12% (99 runs sampled)
 🤞 json-joy RadixTree x 9,992 ops/sec ±0.14% (98 runs sampled)
 🤞 sorted-btree BTree x 10,195 ops/sec ±0.08% (102 runs sampled)
@@ -47,7 +47,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy Tree<number, number>
 --------------------------------------------------------------- Natural numbers from 10000 to 19999
 🤞 json-joy AvlBstNumNumMap x 2,498 ops/sec ±0.40% (96 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 2,347 ops/sec ±0.54% (99 runs sampled)
+🤞 json-joy AvlMap<number, number> x 2,347 ops/sec ±0.54% (99 runs sampled)
 🤞 json-joy Tree<number, number> x 7,512 ops/sec ±10.55% (65 runs sampled)
 🤞 json-joy RadixTree x 793 ops/sec ±0.50% (97 runs sampled)
 🤞 sorted-btree BTree x 744 ops/sec ±0.32% (98 runs sampled)
@@ -55,7 +55,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy Tree<number, number>
 ------------------------------------------------------------- Natural numbers from 100000 to 199999
 🤞 json-joy AvlBstNumNumMap x 214 ops/sec ±0.07% (92 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 202 ops/sec ±0.11% (87 runs sampled)
+🤞 json-joy AvlMap<number, number> x 202 ops/sec ±0.11% (87 runs sampled)
 🤞 json-joy Tree<number, number> x 632 ops/sec ±0.53% (54 runs sampled)
 🤞 json-joy RadixTree x 54.70 ops/sec ±1.23% (72 runs sampled)
 🤞 sorted-btree BTree x 63.91 ops/sec ±0.16% (68 runs sampled)
@@ -63,7 +63,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy Tree<number, number>
 -------------------------------------------------------------------- Natural numbers from 1000 to 1
 🤞 json-joy AvlBstNumNumMap x 25,579 ops/sec ±0.15% (99 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 22,270 ops/sec ±0.17% (101 runs sampled)
+🤞 json-joy AvlMap<number, number> x 22,270 ops/sec ±0.17% (101 runs sampled)
 🤞 json-joy Tree<number, number> x 97,444 ops/sec ±0.42% (98 runs sampled)
 🤞 json-joy RadixTree x 10,743 ops/sec ±0.27% (100 runs sampled)
 🤞 sorted-btree BTree x 10,162 ops/sec ±0.88% (99 runs sampled)
@@ -71,7 +71,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy Tree<number, number>
 -------------------------------------------------------------------------------- Random 100 numbers
 🤞 json-joy AvlBstNumNumMap x 550,423 ops/sec ±0.16% (101 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 514,462 ops/sec ±0.14% (100 runs sampled)
+🤞 json-joy AvlMap<number, number> x 514,462 ops/sec ±0.14% (100 runs sampled)
 🤞 json-joy Tree<number, number> x 139,674 ops/sec ±0.77% (101 runs sampled)
 🤞 json-joy RadixTree x 289,622 ops/sec ±0.14% (98 runs sampled)
 🤞 sorted-btree BTree x 176,945 ops/sec ±0.21% (100 runs sampled)
@@ -79,7 +79,7 @@ Fastest is 🤞 json-joy Tree<number, number>
 Fastest is 🤞 json-joy AvlBstNumNumMap
 ------------------------------------------------------------------------------- Random 1000 numbers
 🤞 json-joy AvlBstNumNumMap x 29,175 ops/sec ±1.32% (85 runs sampled)
-🤞 json-joy AvlBstMap<number, number> x 25,674 ops/sec ±1.00% (92 runs sampled)
+🤞 json-joy AvlMap<number, number> x 25,674 ops/sec ±1.00% (92 runs sampled)
 🤞 json-joy Tree<number, number> x 5,457 ops/sec ±0.38% (97 runs sampled)
 🤞 json-joy RadixTree x 13,186 ops/sec ±0.63% (98 runs sampled)
 🤞 sorted-btree BTree x 9,889 ops/sec ±0.17% (97 runs sampled)

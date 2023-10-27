@@ -1,4 +1,4 @@
-import type {Identifiable} from '../../json-crdt-patch/Identifiable';
+import type {Identifiable} from '../../json-crdt-patch/types';
 
 /**
  * Each JsonNode represents a structural unit of a JSON document. It is like an

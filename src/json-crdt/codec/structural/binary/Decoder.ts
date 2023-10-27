@@ -2,7 +2,7 @@ import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {Const} from '../../../types/const/Const';
-import {CrdtDecoder} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
@@ -14,13 +14,13 @@ import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import type {JsonNode} from '../../../types';
 
-export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
+export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
   protected time: number = -1;
 
   constructor() {
-    super(new CrdtDecoder());
+    super(new CrdtReader());
   }
 
   public decode(data: Uint8Array): Model {
@@ -91,18 +91,18 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
           return this.cBin(id, reader.u32());
         case 0xd4: {
           const obj = new Const(id, this.val());
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd5: {
           const obj = new Const(id, this.ts());
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd6: {
           const val = this.cNode();
           const obj = new ValueLww(this.doc, id, val.id);
-          this.doc.index.set(obj);
+          this.doc.index.set(id, obj);
           return obj;
         }
         case 0xde:
@@ -129,7 +129,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
   public cObj(id: ITimestampStruct, length: number): ObjectLww {
     const obj = new ObjectLww(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
@@ -151,14 +151,14 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
         elements.push(undefined);
       } else elements.push(this.cNode().id);
     }
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
   public cArr(id: ITimestampStruct, length: number): ArrayRga {
     const obj = new ArrayRga(this.doc, id);
     obj.ingest(length, this.cArrChunk);
-    this.doc.index.set(obj);
+    this.doc.index.set(id, obj);
     return obj;
   }
 
@@ -174,7 +174,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
   public cStr(id: ITimestampStruct, length: number): StringRga {
     const node = new StringRga(id);
     if (length) node.ingest(length, this.cStrChunk);
-    this.doc.index.set(node);
+    this.doc.index.set(id, node);
     return node;
   }
 
@@ -194,7 +194,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
   public cBin(id: ITimestampStruct, length: number): BinaryRga {
     const node = new BinaryRga(id);
     if (length) node.ingest(length, this.cBinChunk);
-    this.doc.index.set(node);
+    this.doc.index.set(id, node);
     return node;
   }
 

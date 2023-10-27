@@ -88,7 +88,7 @@ export class Decoder {
       const keyNode = node.keys[key];
       obj.put(key, this.cNode(doc, keyNode).id);
     }
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -103,12 +103,13 @@ export class Decoder {
       if (!component) elements.push(undefined);
       else elements.push(this.cNode(doc, component).id);
     }
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
   protected cArr(doc: Model, node: ArrayJsonCrdtNode): ArrayRga {
-    const rga = new ArrayRga(doc, this.cTs(node.id));
+    const id = this.cTs(node.id);
+    const rga = new ArrayRga(doc, id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -125,12 +126,13 @@ export class Decoder {
         }
       });
     }
-    doc.index.set(rga);
+    doc.index.set(id, rga);
     return rga;
   }
 
   protected cStr(doc: Model, node: StringJsonCrdtNode): StringRga {
-    const rga = new StringRga(this.cTs(node.id));
+    const id = this.cTs(node.id);
+    const rga = new StringRga(id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -147,12 +149,13 @@ export class Decoder {
         }
       });
     }
-    doc.index.set(rga);
+    doc.index.set(id, rga);
     return rga;
   }
 
   protected cBin(doc: Model, node: BinaryJsonCrdtNode): BinaryRga {
-    const rga = new BinaryRga(this.cTs(node.id));
+    const id = this.cTs(node.id);
+    const rga = new BinaryRga(id);
     const chunks = node.chunks;
     const length = chunks.length;
     const self = this;
@@ -170,7 +173,7 @@ export class Decoder {
         }
       });
     }
-    doc.index.set(rga);
+    doc.index.set(id, rga);
     return rga;
   }
 
@@ -178,7 +181,7 @@ export class Decoder {
     const id = this.cTs(node.id);
     const val = this.cNode(doc, node.node);
     const obj = new ValueLww(doc, id, val.id);
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 
@@ -186,7 +189,7 @@ export class Decoder {
     const id = this.cTs(node.id);
     const val = node.timestamp ? this.cTs(node.value as JsonCrdtLogicalTimestamp) : node.value;
     const obj = new Const(id, val);
-    doc.index.set(obj);
+    doc.index.set(id, obj);
     return obj;
   }
 }

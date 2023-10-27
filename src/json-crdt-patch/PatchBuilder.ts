@@ -19,7 +19,7 @@ import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock'
 import {isUint8Array} from '../util/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
-import {Tuple} from './builder/Tuple';
+import {VectorDelayedValue} from './builder/Tuple';
 import {Konst} from './builder/Konst';
 import {DelayedValueBuilder} from './builder/DelayedValueBuilder';
 
@@ -178,9 +178,8 @@ export class PatchBuilder {
    * Set fields of an "obj" object.
    *
    * @returns ID of the new operation.
-   * @todo Rename to `insObj`.
    */
-  public setKeys(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
+  public insObj(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
     this.pad();
     if (!data.length) throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
@@ -310,7 +309,7 @@ export class PatchBuilder {
         const valueId = value instanceof Timestamp ? value : maybeConst(value) ? this.const(value) : this.json(value);
         tuples.push([k, valueId]);
       }
-      this.setKeys(id, tuples);
+      this.insObj(id, tuples);
     }
     return id;
   }
@@ -376,7 +375,7 @@ export class PatchBuilder {
     if (json === undefined) return this.const(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
-    if (json instanceof Tuple) return this.jsonVec(json.slots);
+    if (json instanceof VectorDelayedValue) return this.jsonVec(json.slots);
     if (json instanceof Konst) return this.const(json.val);
     if (json instanceof DelayedValueBuilder) return json.build(this);
     switch (typeof json) {

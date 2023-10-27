@@ -78,9 +78,9 @@ test('encodes a patch with all operation types', () => {
   assertCodec();
   builder.const({foo: 'bar'});
   assertCodec();
-  builder.setKeys(ts(4, 1), [['asdf', ts(4, 4)]]);
+  builder.insObj(ts(4, 1), [['asdf', ts(4, 4)]]);
   assertCodec();
-  builder.setKeys(ts(44, 123), [
+  builder.insObj(ts(44, 123), [
     ['foo', ts(5, 5)],
     ['bar', ts(5, 6)],
   ]);

@@ -20,7 +20,7 @@ test('create {foo: "bar"} object', () => {
   const strId = builder.str();
   builder.insStr(strId, strId, 'bar');
   const objId = builder.obj();
-  builder.setKeys(objId, [['foo', strId]]);
+  builder.insObj(objId, [['foo', strId]]);
   builder.root(objId);
 
   const encoded = encode(builder.patch);
