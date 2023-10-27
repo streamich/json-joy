@@ -1,9 +1,6 @@
 import {Reader} from '../../../util/buffers/Reader';
 
-/**
- * @todo Rename to `CrdtReader`.
- */
-export class CrdtDecoder extends Reader {
+export class CrdtReader extends Reader {
   public id(): [x: number, y: number] {
     const byte = this.u8();
     if (byte <= 0b0_111_1111) return [byte >>> 4, byte & 0b1111];

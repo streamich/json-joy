@@ -2,7 +2,7 @@ import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {Const} from '../../../types/const/Const';
-import {CrdtDecoder} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
@@ -14,13 +14,13 @@ import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import type {JsonNode} from '../../../types';
 
-export class Decoder extends MsgPackDecoderFast<CrdtDecoder> {
+export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
   protected time: number = -1;
 
   constructor() {
-    super(new CrdtDecoder());
+    super(new CrdtReader());
   }
 
   public decode(data: Uint8Array): Model {

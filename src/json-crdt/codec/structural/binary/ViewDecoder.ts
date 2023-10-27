@@ -1,11 +1,11 @@
-import {CrdtDecoder} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
 
-export class ViewDecoder extends MsgPackDecoderFast<CrdtDecoder> {
+export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
   protected time: number = -1;
 
   constructor() {
-    super(new CrdtDecoder());
+    super(new CrdtReader());
   }
 
   public decode(data: Uint8Array): unknown {

@@ -1,4 +1,4 @@
-import {CrdtDecoder} from '../../util/binary/CrdtDecoder';
+import {CrdtReader} from '../../util/binary/CrdtDecoder';
 import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -9,7 +9,7 @@ import {JsonCrdtPatchOpcode} from '../../constants';
 /**
  * JSON CRDT Patch "binary" codec decoder.
  */
-export class Decoder extends CborDecoder<CrdtDecoder> {
+export class Decoder extends CborDecoder<CrdtReader> {
   protected builder!: PatchBuilder;
   private patchSid?: number;
 
@@ -18,7 +18,7 @@ export class Decoder extends CborDecoder<CrdtDecoder> {
    *
    * @param reader An optional custom implementation of a CRDT decoder.
    */
-  constructor(reader: CrdtDecoder = new CrdtDecoder()) {
+  constructor(reader: CrdtReader = new CrdtReader()) {
     super(reader);
   }
 

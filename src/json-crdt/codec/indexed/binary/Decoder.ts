@@ -2,7 +2,7 @@ import {ArrayChunk, ArrayRga} from '../../../types/rga-array/ArrayRga';
 import {BinaryChunk, BinaryRga} from '../../../types/rga-binary/BinaryRga';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {Const} from '../../../types/const/Const';
-import {CrdtDecoder} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
@@ -13,7 +13,7 @@ import {StringChunk, StringRga} from '../../../types/rga-string/StringRga';
 import {ValueLww} from '../../../types/lww-value/ValueLww';
 
 export class Decoder {
-  public readonly dec = new MsgPackDecoderFast<CrdtDecoder>(new CrdtDecoder());
+  public readonly dec = new MsgPackDecoderFast<CrdtReader>(new CrdtReader());
   protected doc!: Model;
   protected clockTable?: ClockTable;
 

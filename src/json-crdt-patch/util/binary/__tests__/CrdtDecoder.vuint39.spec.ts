@@ -1,8 +1,8 @@
 import {CrdtWriter} from '../CrdtEncoder';
-import {CrdtDecoder} from '../CrdtDecoder';
+import {CrdtReader} from '../CrdtDecoder';
 
 const encoder = new CrdtWriter();
-const decoder = new CrdtDecoder();
+const decoder = new CrdtReader();
 const encode = (num: number): Uint8Array => {
   encoder.reset();
   encoder.vu39(num);

@@ -6,7 +6,6 @@ export class VectorDelayedValue<T extends unknown[]> {
 }
 
 /**
- * @todo Rename to `vec`.
  * @param slots
  * @returns
  */
