@@ -1,4 +1,4 @@
-import {AvlMap} from '../AvlBstMap';
+import {AvlMap} from '../AvlMap';
 
 test('smoke test', () => {
   const tree = new AvlMap<number, number>();
