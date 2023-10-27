@@ -3,6 +3,8 @@ import {traces} from './traces';
 import type {SequentialTrace, SequentialTraceEditor, SequentialTraceName} from './types';
 import {editors, type SequentialEditorName} from './editors';
 
+/* tslint:disable no-console */
+
 function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }

@@ -174,7 +174,7 @@ export const editors = {
   'rope.js': {
     name: 'rope.js',
     factory: () => {
-      var r = new Rope(['']);
+      const r = new Rope(['']);
       return {
         ins: (pos: number, insert: string) => {
           r.splice(pos, 0, insert);
