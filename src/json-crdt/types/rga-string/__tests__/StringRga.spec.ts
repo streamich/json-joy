@@ -2,6 +2,7 @@
 
 import {StringRga, StringChunk} from '../StringRga';
 import {equal, ITimespanStruct, ITimestampStruct, tick, ts, tss} from '../../../../json-crdt-patch/clock';
+import {prev} from '../../../../util/trees/util';
 
 /** Validates that .find() method returns correct timestamp for every position. */
 const assertFind = (type: StringRga) => {
@@ -229,35 +230,35 @@ describe('binary tree', () => {
     const tree = createTree();
     const first = tree.last()!;
     expect(first.id.time).toBe(15);
-    let prev = tree.prev(first)!;
-    expect(prev.id.time).toBe(14);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(13);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(12);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(11);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(10);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(9);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(8);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(7);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(6);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(5);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(4);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(3);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(2);
-    prev = tree.prev(prev)!;
-    expect(prev.id.time).toBe(1);
-    expect(tree.prev(prev)).toBe(undefined);
+    let prevNode = prev(first)!;
+    expect(prevNode.id.time).toBe(14);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(13);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(12);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(11);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(10);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(9);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(8);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(7);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(6);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(5);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(4);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(3);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(2);
+    prevNode = prev(prevNode)!;
+    expect(prevNode.id.time).toBe(1);
+    expect(prev(prevNode)).toBe(undefined);
   });
 
   test('can delete a node with no children', () => {

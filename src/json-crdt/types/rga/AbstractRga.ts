@@ -431,7 +431,6 @@ export abstract class AbstractRga<T> {
 
   // ---------------------------------------------------------------- Retrieval
 
-  /** @todo Maybe use implementation from tree utils, if does not impact performance. */
   public first(): Chunk<T> | undefined {
     let curr = this.root;
     while (curr) {
@@ -442,7 +441,6 @@ export abstract class AbstractRga<T> {
     return curr;
   }
 
-  /** @todo Maybe use implementation from tree utils, if does not impact performance. */
   public last(): Chunk<T> | undefined {
     let curr = this.root;
     while (curr) {
@@ -465,12 +463,6 @@ export abstract class AbstractRga<T> {
   /** @todo Or better remove this method completely, as it does not require "this". */
   public next(curr: Chunk<T>): Chunk<T> | undefined {
     return next(curr);
-  }
-
-  /** @todo Maybe use implementation from tree utils, if does not impact performance. */
-  /** @todo Or better remove this method completely, as it does not require "this". */
-  public prev(curr: Chunk<T>): Chunk<T> | undefined {
-    return prev(curr);
   }
 
   /** Content length. */
