@@ -158,23 +158,18 @@ export class CrdtWriter extends Writer {
    * @param num Number to encode as variable length unsigned 57 bit integer.
    */
   public vu39(num: number) {
-    // TODO: perf: maybe just .ensureCapacity(6) at the top.
+    this.ensureCapacity(6);
+    const uint8 = this.uint8;
     if (num <= 0b1111111) {
-      this.u8(num);
+      uint8[this.x++] = num;
     } else if (num <= 0b1111111_1111111) {
-      this.ensureCapacity(2);
-      const uint8 = this.uint8;
       uint8[this.x++] = 0b10000000 | (num & 0b01111111);
       uint8[this.x++] = num >>> 7;
     } else if (num <= 0b1111111_1111111_1111111) {
-      this.ensureCapacity(3);
-      const uint8 = this.uint8;
       uint8[this.x++] = 0b10000000 | (num & 0b01111111);
       uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
       uint8[this.x++] = num >>> 14;
     } else if (num <= 0b1111111_1111111_1111111_1111111) {
-      this.ensureCapacity(4);
-      const uint8 = this.uint8;
       uint8[this.x++] = 0b10000000 | (num & 0b01111111);
       uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
       uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
@@ -184,16 +179,12 @@ export class CrdtWriter extends Writer {
       if (lo32 < 0) lo32 += 4294967296;
       const hi32 = (num - lo32) / 4294967296;
       if (num <= 0b1111111_1111111_1111111_1111111_1111111) {
-        this.ensureCapacity(5);
-        const uint8 = this.uint8;
         uint8[this.x++] = 0b10000000 | (num & 0b01111111);
         uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
         uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
         uint8[this.x++] = 0b10000000 | ((num >>> 21) & 0b01111111);
         uint8[this.x++] = (hi32 << 4) | (num >>> 28);
       } else if (num <= 0b1111111_1111111_1111111_1111111_1111111_1111111) {
-        this.ensureCapacity(6);
-        const uint8 = this.uint8;
         uint8[this.x++] = 0b10000000 | (num & 0b01111111);
         uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
         uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
