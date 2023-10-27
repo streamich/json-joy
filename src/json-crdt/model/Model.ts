@@ -3,7 +3,14 @@ import {ArrayRga} from '../types/rga-array/ArrayRga';
 import {BinaryRga} from '../types/rga-binary/BinaryRga';
 import {Const} from '../types/const/Const';
 import {encoder, decoder} from '../codec/structural/binary/shared';
-import {ITimestampStruct, Timestamp, IVectorClock, VectorClock, ServerVectorClock, compare} from '../../json-crdt-patch/clock';
+import {
+  ITimestampStruct,
+  Timestamp,
+  IVectorClock,
+  VectorClock,
+  ServerVectorClock,
+  compare,
+} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ObjectLww} from '../types/lww-object/ObjectLww';

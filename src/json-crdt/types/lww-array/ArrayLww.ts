@@ -1,7 +1,7 @@
-import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
+import {Const} from '../const/Const';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from '../../../util/print/printTree';
-import {Const} from '../const/Const';
+import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '../../types';
 import type {Printable} from '../../../util/print/types';
@@ -17,7 +17,6 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
     return this.elements[index] as ITimestampStruct | undefined;
   }
 
-  /** @todo Normalize `.get()` and `.getNode()` APIs across `ArrayLww` and `ArrayRga`. */
   public get<Index extends number>(index: Index): undefined | Value[Index] {
     const id = this.val(index);
     if (!id) return undefined;
