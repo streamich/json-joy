@@ -1,5 +1,5 @@
 import {onlyOnNode20} from '../../../../__tests__/util';
-import {tup} from '../../../../json-crdt-patch';
+import {vec} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a tuple', () => {
@@ -14,7 +14,7 @@ onlyOnNode20('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(tup(1, 2));
+    api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.tup([]);
@@ -34,7 +34,7 @@ onlyOnNode20('events', () => {
   test('does not fire event when view does not change', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(tup(1, 2));
+    api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.tup([]);
@@ -57,7 +57,7 @@ onlyOnNode20('events', () => {
   test('can un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(tup(1, 2));
+    api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.tup([]);
@@ -78,7 +78,7 @@ onlyOnNode20('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
-    api.root(tup(1, 2));
+    api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.tup([]);

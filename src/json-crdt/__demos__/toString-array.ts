@@ -7,7 +7,7 @@
  */
 
 import {Model} from '..';
-import {tup} from '../../json-crdt-patch/builder/Tuple';
+import {vec} from '../../json-crdt-patch/builder/Tuple';
 
 const model = Model.withLogicalClock(123);
 
@@ -20,7 +20,7 @@ model.api.root({
   foo: 'abc',
   bar: true,
   baz: 123,
-  qux: tup(1, 'a', 'asf'),
+  qux: vec(1, 'a', 'asf'),
 });
 
 const str = model.api.str(['foo']);

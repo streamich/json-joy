@@ -1,7 +1,7 @@
 /**
  * @category Patch
  */
-export class Tuple<T extends unknown[]> {
+export class VectorDelayedValue<T extends unknown[]> {
   constructor(public readonly slots: T) {}
 }
 
@@ -10,4 +10,4 @@ export class Tuple<T extends unknown[]> {
  * @param slots
  * @returns
  */
-export const tup = <T extends unknown[]>(...slots: T): Tuple<T> => new Tuple(slots);
+export const vec = <T extends unknown[]>(...slots: T): VectorDelayedValue<T> => new VectorDelayedValue(slots);

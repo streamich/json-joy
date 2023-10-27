@@ -19,7 +19,7 @@ import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock'
 import {isUint8Array} from '../util/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
-import {Tuple} from './builder/Tuple';
+import {VectorDelayedValue} from './builder/Tuple';
 import {Konst} from './builder/Konst';
 import {DelayedValueBuilder} from './builder/DelayedValueBuilder';
 
@@ -375,7 +375,7 @@ export class PatchBuilder {
     if (json === undefined) return this.const(json);
     if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
-    if (json instanceof Tuple) return this.jsonVec(json.slots);
+    if (json instanceof VectorDelayedValue) return this.jsonVec(json.slots);
     if (json instanceof Konst) return this.const(json.val);
     if (json instanceof DelayedValueBuilder) return json.build(this);
     switch (typeof json) {

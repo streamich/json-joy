@@ -1,5 +1,5 @@
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
-import {tup} from '../../../../../json-crdt-patch/builder/Tuple';
+import {vec} from '../../../../../json-crdt-patch/builder/Tuple';
 import {Timestamp} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 
@@ -36,7 +36,7 @@ export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) =>
 
   test('tuple', () => {
     const model = Model.withLogicalClock();
-    model.api.root(tup(1, 2, 3));
+    model.api.root(vec(1, 2, 3));
     assertCodec(model);
   });
 
