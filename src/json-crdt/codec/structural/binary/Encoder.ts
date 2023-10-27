@@ -97,12 +97,12 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected cObj(obj: ObjectLww): void {
     this.ts(obj.id);
-    this.encodeObjectHeader(obj.keys.size);
+    this.writeObjHdr(obj.keys.size);
     obj.keys.forEach(this.cKey);
   }
 
   protected readonly cKey = (val: ITimestampStruct, key: string) => {
-    this.encodeString(key);
+    this.writeStr(key);
     this.cNode(this.doc.index.get(val)!);
   };
 
@@ -124,7 +124,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
-    this.encodeArrayHeader(obj.size());
+    this.writeArrHdr(obj.size());
     const index = this.doc.index;
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       const span = chunk.span;
@@ -142,7 +142,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const writer = this.writer;
     ts(obj.id);
     const length = obj.size();
-    this.encodeStringHeader(length);
+    this.writeStrHdr(length);
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       ts(chunk.id);
       if (chunk.del) {
@@ -157,7 +157,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const writer = this.writer;
     ts(obj.id);
     const length = obj.size();
-    this.encodeBinaryHeader(length);
+    this.writeBinHdr(length);
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
