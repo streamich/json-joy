@@ -151,7 +151,6 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
     const index = this.index;
-    // TODO: Use switch statement here? And rearrange cases by frequency of use?
     if (op instanceof operations.InsStrOp) {
       const node = index.get(op.obj);
       if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);

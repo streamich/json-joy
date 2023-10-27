@@ -15,7 +15,7 @@ export class AvlNode<K, V> implements IAvlTreeNode<K, V> {
 
 const defaultComparator = (a: unknown, b: unknown) => (a === b ? 0 : (a as any) < (b as any) ? -1 : 1);
 
-export class AvlBstMap<K, V> implements Printable {
+export class AvlMap<K, V> implements Printable {
   public root: AvlNode<K, V> | undefined = undefined;
   public readonly comparator: Comparator<K>;
 
