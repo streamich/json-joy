@@ -1,20 +1,4 @@
-// TODO: perf: try namespace import
-import {
-  NewConOp,
-  NewObjOp,
-  NewValOp,
-  NewVecOp,
-  NewStrOp,
-  NewBinOp,
-  NewArrOp,
-  InsValOp,
-  InsObjOp,
-  InsVecOp,
-  InsStrOp,
-  InsBinOp,
-  InsArrOp,
-  DelOp,
-} from '../../json-crdt-patch/operations';
+import * as operations from '../../json-crdt-patch/operations';
 import {ArrayRga} from '../types/rga-array/ArrayRga';
 import {BinaryRga} from '../types/rga-binary/BinaryRga';
 import {Const} from '../types/const/Const';
@@ -168,23 +152,23 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     this.clock.observe(op.id, op.span());
     const index = this.index;
     // TODO: Use switch statement here? And rearrange cases by frequency of use?
-    if (op instanceof InsStrOp) {
+    if (op instanceof operations.InsStrOp) {
       const node = index.get(op.obj);
       if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
-    } else if (op instanceof NewObjOp) {
+    } else if (op instanceof operations.NewObjOp) {
       if (!index.get(op.id)) index.set(new ObjectLww(this, op.id));
-    } else if (op instanceof NewArrOp) {
+    } else if (op instanceof operations.NewArrOp) {
       if (!index.get(op.id)) index.set(new ArrayRga(this, op.id));
-    } else if (op instanceof NewStrOp) {
+    } else if (op instanceof operations.NewStrOp) {
       if (!index.get(op.id)) index.set(new StringRga(op.id));
-    } else if (op instanceof NewValOp) {
+    } else if (op instanceof operations.NewValOp) {
       if (!index.get(op.id)) {
         const val = index.get(op.val);
         if (val) index.set(new ValueLww(this, op.id, op.val));
       }
-    } else if (op instanceof NewConOp) {
+    } else if (op instanceof operations.NewConOp) {
       if (!index.get(op.id)) index.set(new Const(op.id, op.val));
-    } else if (op instanceof InsObjOp) {
+    } else if (op instanceof operations.InsObjOp) {
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
@@ -198,7 +182,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           if (old) this.deleteNodeTree(old);
         }
       }
-    } else if (op instanceof InsVecOp) {
+    } else if (op instanceof operations.InsVecOp) {
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
@@ -212,7 +196,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           if (old) this.deleteNodeTree(old);
         }
       }
-    } else if (op instanceof InsValOp) {
+    } else if (op instanceof operations.InsValOp) {
       const obj = op.obj;
       const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
       if (node instanceof ValueLww) {
@@ -222,7 +206,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           if (old) this.deleteNodeTree(old);
         }
       }
-    } else if (op instanceof InsArrOp) {
+    } else if (op instanceof operations.InsArrOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrayRga) {
         const nodes: ITimestampStruct[] = [];
@@ -237,7 +221,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         }
         if (nodes.length) node.ins(op.ref, op.id, nodes);
       }
-    } else if (op instanceof DelOp) {
+    } else if (op instanceof operations.DelOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrayRga) {
         const length = op.what.length;
@@ -251,12 +235,12 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         node.delete(op.what);
       } else if (node instanceof StringRga) node.delete(op.what);
       else if (node instanceof BinaryRga) node.delete(op.what);
-    } else if (op instanceof NewBinOp) {
+    } else if (op instanceof operations.NewBinOp) {
       if (!index.get(op.id)) index.set(new BinaryRga(op.id));
-    } else if (op instanceof InsBinOp) {
+    } else if (op instanceof operations.InsBinOp) {
       const node = index.get(op.obj);
       if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
-    } else if (op instanceof NewVecOp) {
+    } else if (op instanceof operations.NewVecOp) {
       if (!index.get(op.id)) index.set(new ArrayLww(this, op.id));
     }
   }
