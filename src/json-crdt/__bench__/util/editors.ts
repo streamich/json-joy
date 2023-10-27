@@ -1,11 +1,11 @@
-import {Timestamp} from "../../../json-crdt-patch/clock";
-import {StringRga} from "../../types/rga-string/StringRga";
+import {Timestamp} from '../../../json-crdt-patch/clock';
+import {StringRga} from '../../types/rga-string/StringRga';
 import {Model} from '../../model';
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
-import type {SequentialTraceEditor} from "./types";
+import type {SequentialTraceEditor} from './types';
 const AutomergeUnstable = require('@automerge/automerge/dist/cjs/unstable');
 const Rope = require('rope.js');
 

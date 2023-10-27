@@ -2,7 +2,7 @@
  * npx ts-node src/json-crdt/__bench__/bench.traces.non-crdt-libs.ts
  */
 
-import {runTraceMatrix} from "./util/execute";
+import {runTraceMatrix} from './util/execute';
 
 // prettier-ignore
 runTraceMatrix({

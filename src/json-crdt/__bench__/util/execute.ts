@@ -1,6 +1,6 @@
 import * as os from 'os';
 import {traces} from './traces';
-import type {SequentialTrace, SequentialTraceEditor, SequentialTraceName} from "./types";
+import type {SequentialTrace, SequentialTraceEditor, SequentialTraceName} from './types';
 import {editors, type SequentialEditorName} from './editors';
 
 function numberWithCommas(x: number) {
@@ -28,7 +28,11 @@ export const runTrace = (trace: SequentialTrace, editor: SequentialTraceEditor) 
   return editorInstance;
 };
 
-export const runTraceWithEditor = (traceName: SequentialTraceName, editorName: SequentialEditorName, iterations = 1) => {
+export const runTraceWithEditor = (
+  traceName: SequentialTraceName,
+  editorName: SequentialEditorName,
+  iterations = 1,
+) => {
   const trace = traces.get(traceName);
   const editorFactory = editors[editorName];
   let instance, view;
@@ -65,7 +69,11 @@ export const runTraceWithEditor = (traceName: SequentialTraceName, editorName: S
   );
 };
 
-export const runTraceWithEditorList = (traceName: SequentialTraceName, editors: SequentialEditorName[], iterations: number) => {
+export const runTraceWithEditorList = (
+  traceName: SequentialTraceName,
+  editors: SequentialEditorName[],
+  iterations: number,
+) => {
   const trace = traces.get(traceName);
   const version = process.version;
   const arch = os.arch();
