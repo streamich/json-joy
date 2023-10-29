@@ -8,7 +8,7 @@ import type {Model} from '../Model';
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
  * for executing local user actions on a JSON CRDT document.
- * 
+ *
  * @category Local API
  */
 export class ModelApi<Value extends JsonNode = JsonNode> {
@@ -19,7 +19,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
 
   /**
    * Index of the next operation in builder's patch to be committed locally.
-   * 
+   *
    * @ignore
    */
   public next: number = 0;
@@ -224,7 +224,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   /**
    * Advance patch pointer to the end without applying the operations. With the
    * idea that they have already been applied locally.
-   * 
+   *
    * @ignore
    */
   public advance() {

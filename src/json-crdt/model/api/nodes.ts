@@ -238,7 +238,7 @@ export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N
 
 /**
  * Local changes API for the `obj` JSON CRDT node {@link ObjectLww}.
- * 
+ *
  * @category Local API
  */
 export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
