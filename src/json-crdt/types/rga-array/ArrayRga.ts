@@ -10,6 +10,10 @@ type E = ITimestampStruct;
 
 const Empty = [] as any[];
 
+/**
+ * @ignore
+ * @category CRDT Node
+ */
 export class ArrayChunk implements Chunk<E[]> {
   public readonly id: ITimestampStruct;
   public span: number;
@@ -63,6 +67,12 @@ export class ArrayChunk implements Chunk<E[]> {
   }
 }
 
+/**
+ * Represents the `arr` JSON CRDT type, which is a Replicated Growable Array
+ * (RGA). Each element ot the array is a reference to another JSON CRDT node.
+ *
+ * @category CRDT Node
+ */
 export class ArrayRga<Element extends JsonNode = JsonNode>
   extends AbstractRga<E[]>
   implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable
@@ -71,12 +81,24 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
     super(id);
   }
 
+  /**
+   * Returns a reference to an element at a given position in the array.
+   *
+   * @param position The position of the element to get.
+   * @returns An element of the array, if any.
+   */
   public get(position: number): E | undefined {
     const pair = this.findChunk(position);
     if (!pair) return undefined;
     return pair[0].data![pair[1]];
   }
 
+  /**
+   * Returns a JSON node at a given position in the array.
+   *
+   * @param position The position of the element to get.
+   * @returns A JSON node, if any.
+   */
   public getNode(position: number): JsonNode | undefined {
     const id = this.get(position);
     if (!id) return undefined;
@@ -92,25 +114,31 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
 
   // -------------------------------------------------------------- AbstractRga
 
+  /** @ignore */
   public createChunk(id: ITimestampStruct, data: E[] | undefined): ArrayChunk {
     return new ArrayChunk(id, data ? data.length : 0, data);
   }
 
+  /** @ignore */
   protected onChange(): void {
     this._view = Empty as any;
   }
 
   // ----------------------------------------------------------------- JsonNode
 
+  /** @ignore */
   public child() {
     return undefined;
   }
 
+  /** @ignore */
   public container(): JsonNode | undefined {
     return this;
   }
 
+  /** @ignore */
   private _tick: number = 0;
+  /** @ignore */
   private _view = Empty;
   public view(): Readonly<JsonNodeView<Element>[]> {
     const doc = this.doc;
@@ -132,16 +160,19 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
     return useCache ? _view : ((this._tick = tick), (this._view = view));
   }
 
+  /** @ignore */
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
     for (let chunk = this.first(); chunk; chunk = this.next(chunk))
       if (!chunk.del) for (const node of chunk.data!) callback(index.get(node)!);
   }
 
+  /** @ignore */
   public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
 
+  /** @ignore */
   protected printChunk(tab: string, chunk: ArrayChunk): string {
     const pos = this.pos(chunk);
     let valueTree = '';

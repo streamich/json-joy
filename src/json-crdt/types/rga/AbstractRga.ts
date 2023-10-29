@@ -16,6 +16,9 @@ import {printBinary} from '../../../util/print/printBinary';
 import {printTree} from '../../../util/print/printTree';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
 
+/**
+ * @category CRDT Node
+ */
 export interface Chunk<T> {
   /** Unique sortable ID of this chunk and its span. */
   id: ITimestampStruct;
@@ -110,6 +113,9 @@ const prev = <T>(curr: Chunk<T>): Chunk<T> | undefined => {
   return p;
 };
 
+/**
+ * @category CRDT Node
+ */
 export abstract class AbstractRga<T> {
   public root: Chunk<T> | undefined = undefined;
   public ids: Chunk<T> | undefined = undefined;

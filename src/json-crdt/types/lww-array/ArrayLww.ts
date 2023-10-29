@@ -6,23 +6,56 @@ import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '../../types';
 import type {Printable} from '../../../util/print/types';
 
+/**
+ * Represents a `vec` JSON CRDT node, which is a LWW array.
+ *
+ * Vector is, usually a fixed length, last-write-wins array. Each element
+ * in the array is a reference to another JSON CRDT node. The vector
+ * can be extended by adding new elements to the end of the array.
+ *
+ * @category CRDT Node
+ */
 export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
   implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
 {
+  /**
+   * @ignore
+   */
   public readonly elements: (ITimestampStruct | undefined)[] = [];
 
-  constructor(public readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
+  constructor(
+    /**
+     * @ignore
+     */
+    public readonly doc: Model<any>,
+    public readonly id: ITimestampStruct,
+  ) {}
 
+  /**
+   * Retrieves the ID of an element at the given index.
+   *
+   * @param index Index of the element to get.
+   * @returns ID of the element at the given index, if any.
+   */
   public val(index: number): undefined | ITimestampStruct {
     return this.elements[index] as ITimestampStruct | undefined;
   }
 
+  /**
+   * Retrieves the JSON CRDT node at the given index.
+   *
+   * @param index Index of the element to get.
+   * @returns JSON CRDT node at the given index, if any.
+   */
   public get<Index extends number>(index: Index): undefined | Value[Index] {
     const id = this.val(index);
     if (!id) return undefined;
     return this.doc.index.get(id);
   }
 
+  /**
+   * @ignore
+   */
   public put(index: number, id: ITimestampStruct): undefined | ITimestampStruct {
     if (index > CRDT_CONSTANTS.MAX_TUPLE_LENGTH) throw new Error('OUT_OF_BOUNDS');
     const currentId = this.val(index);
@@ -33,8 +66,14 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
     return currentId;
   }
 
+  /**
+   * @ignore
+   */
   private __extNode: JsonNode | undefined;
 
+  /**
+   * @ignore
+   */
   public ext(): JsonNode | undefined {
     if (this.__extNode) return this.__extNode;
     const extensionId = this.getExtId();
@@ -46,10 +85,16 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
     return this.__extNode;
   }
 
+  /**
+   * @ignore
+   */
   public isExt(): boolean {
     return !!this.ext();
   }
 
+  /**
+   * @ignore
+   */
   public getExtId(): number {
     if (this.elements.length !== 2) return -1;
     const type = this.get(0);
@@ -63,14 +108,23 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
 
   // ----------------------------------------------------------------- JsonNode
 
+  /**
+   * @ignore
+   */
   public child(): JsonNode | undefined {
     return this.ext();
   }
 
+  /**
+   * @ignore
+   */
   public container(): JsonNode | undefined {
     return this;
   }
 
+  /**
+   * @ignore
+   */
   public children(callback: (node: JsonNode) => void) {
     if (this.isExt()) return;
     const elements = this.elements;
@@ -84,7 +138,14 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
     }
   }
 
+  /**
+   * @ignore
+   */
   private _view = [] as JsonNodeView<Value>;
+
+  /**
+   * @ignore
+   */
   public view(): Readonly<JsonNodeView<Value>> {
     const extNode = this.ext();
     if (extNode) return extNode.view() as any;
@@ -104,6 +165,9 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
     return useCache ? _view : (this._view = arr);
   }
 
+  /**
+   * @ignore
+   */
   public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable

@@ -6,8 +6,8 @@ test('can edit a tuple', () => {
   const doc = Model.withLogicalClock();
   const api = doc.api;
   api.root(api.builder.vec());
-  api.tup([]).set([[1, 'a']]);
-  expect(api.tup([]).view()).toEqual([undefined, 'a']);
+  api.vec([]).set([[1, 'a']]);
+  expect(api.vec([]).view()).toEqual([undefined, 'a']);
 });
 
 onlyOnNode20('events', () => {
@@ -17,7 +17,7 @@ onlyOnNode20('events', () => {
     api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
-    const tuple = api.tup([]);
+    const tuple = api.vec([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
@@ -37,7 +37,7 @@ onlyOnNode20('events', () => {
     api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
-    const tuple = api.tup([]);
+    const tuple = api.vec([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
@@ -60,7 +60,7 @@ onlyOnNode20('events', () => {
     api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
-    const tuple = api.tup([]);
+    const tuple = api.vec([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
@@ -81,7 +81,7 @@ onlyOnNode20('events', () => {
     api.root(vec(1, 2));
     let cnt = 0;
     const onView = () => cnt++;
-    const tuple = api.tup([]);
+    const tuple = api.vec([]);
     tuple.events.on('view', onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);

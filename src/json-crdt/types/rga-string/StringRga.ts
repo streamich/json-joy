@@ -3,6 +3,10 @@ import {AbstractRga, Chunk} from '../rga/AbstractRga';
 import {next} from '../../../util/trees/util';
 import type {JsonNode} from '../../types';
 
+/**
+ * @ignore
+ * @category CRDT Node
+ */
 export class StringChunk implements Chunk<string> {
   public readonly id: ITimestampStruct;
   public span: number;
@@ -60,19 +64,29 @@ export class StringChunk implements Chunk<string> {
   }
 }
 
+/**
+ * Represents the `str` type in JSON CRDT. The `str` type is a RGA (Replicated
+ * Growable Array) of UTF-16 code units.
+ *
+ * @category CRDT Node
+ */
 export class StringRga extends AbstractRga<string> implements JsonNode<string> {
   // ----------------------------------------------------------------- JsonNode
 
+  /** @ignore */
   public children() {}
 
+  /** @ignore */
   public child() {
     return undefined;
   }
 
+  /** @ignore */
   public container(): JsonNode | undefined {
     return undefined;
   }
 
+  /** @ignore */
   private _view: string = '';
   public view(): string {
     if (this._view) return this._view;
@@ -83,14 +97,17 @@ export class StringRga extends AbstractRga<string> implements JsonNode<string> {
     return (this._view = str);
   }
 
+  /** @ignore */
   public api: undefined | unknown = undefined;
 
   // -------------------------------------------------------------- AbstractRga
 
+  /** @ignore */
   public createChunk(id: ITimestampStruct, str: string | undefined): StringChunk {
     return new StringChunk(id, str ? str.length : 0, str || '');
   }
 
+  /** @ignore */
   protected onChange(): void {
     this._view = '';
   }

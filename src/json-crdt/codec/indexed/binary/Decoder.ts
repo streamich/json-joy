@@ -6,7 +6,7 @@ import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
-import {Model, UNDEFINED} from '../../../model';
+import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringChunk, StringRga} from '../../../types/rga-string/StringRga';

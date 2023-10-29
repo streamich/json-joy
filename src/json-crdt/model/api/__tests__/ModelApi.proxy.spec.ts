@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConstApi, ObjectApi, StringApi, TupleApi, ValueApi} from '../nodes';
+import {ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga} from '../../../types/rga-string/StringRga';
@@ -109,8 +109,8 @@ describe('supports all node types', () => {
   test('vector', () => {
     const proxy = model.api.r.proxy();
     const vec = proxy.val.vec;
-    const vecApi: TupleApi = vec.toApi();
-    expect(vecApi).toBeInstanceOf(TupleApi);
+    const vecApi: VectorApi = vec.toApi();
+    expect(vecApi).toBeInstanceOf(VectorApi);
     expect(vecApi.node).toBeInstanceOf(ArrayLww);
     expect(vecApi.view()).toStrictEqual(['asdf', 1234, true, null]);
   });
