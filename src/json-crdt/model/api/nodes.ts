@@ -28,11 +28,28 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   /** @ignore */
   private ev: undefined | NodeEvents = undefined;
+
+  /**
+   * Event target for listening to node changes. You can subscribe to `"view"`
+   * events, which are triggered every time the node's view changes.
+   *
+   * ```typescript
+   * node.events.on('view', () => {
+   *   // do something...
+   * });
+   * ```
+   */
   public get events(): NodeEvents {
     const et = this.ev;
     return et || (this.ev = new NodeEvents(this));
   }
 
+  /**
+   * Find a child node at the given path starting from this node.
+   *
+   * @param path Path to the child node to find.
+   * @returns JSON CRDT node at the given path.
+   */
   public find(path?: ApiPath): JsonNode {
     const node = this.node;
     if (path === undefined) {
@@ -48,6 +65,13 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return find(this.node, path);
   }
 
+  /**
+   * Find a child node at the given path starting from this node and wrap it in
+   * a local changes API.
+   *
+   * @param path Path to the child node to find.
+   * @returns Local changes API for the child node at the given path.
+   */
   public in(path?: ApiPath) {
     const node = this.find(path);
     return this.api.wrap(node as any);
