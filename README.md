@@ -28,6 +28,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
   - [*Blazing Fast List CRDT*](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm)
 - [__JSON CRDT__](https://jsonjoy.com/specs/json-crdt) `specification`
 - [__JSON CRDT Patch__](https://jsonjoy.com/specs/json-crdt-patch) `specification`
+- [__JSON Expression__](https://jsonjoy.com/specs/json-expression) `specification`
 - [__JSON Reactive RPC__](https://jsonjoy.com/specs/json-rx) `specification`
 - [__API Reference__](https://streamich.github.io/json-joy/)
 - [__Test coverage__](https://streamich.github.io/json-joy/coverage/lcov-report/)
