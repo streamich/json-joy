@@ -8,7 +8,7 @@ import type {JsonNode} from '../types';
  * The root of a JSON CRDT document. {@link RootLww} is a {@link ValueLww} with
  * a special `0.0` ID, which is always the same. It is used to represent the
  * root of a document.
- * 
+ *
  * @category CRDT Node
  */
 export class RootLww<Value extends JsonNode = JsonNode> extends ValueLww<Value> {

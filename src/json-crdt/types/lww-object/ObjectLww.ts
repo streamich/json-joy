@@ -8,7 +8,7 @@ import type {JsonNode, JsonNodeView} from '../../types';
  * Represents a `obj` JSON CRDT node, which is a Last-write-wins (LWW) object.
  * It is a map of string keys to LWW registers. The value of each register is
  * a reference to another JSON CRDT node.
- * 
+ *
  * @category CRDT Node
  */
 export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>>

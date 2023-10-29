@@ -8,11 +8,11 @@ import type {Printable} from '../../../util/print/types';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.
- * 
+ *
  * Vector is, usually a fixed length, last-write-wins array. Each element
  * in the array is a reference to another JSON CRDT node. The vector
  * can be extended by adding new elements to the end of the array.
- * 
+ *
  * @category CRDT Node
  */
 export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
@@ -28,7 +28,7 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
      * @ignore
      */
     public readonly doc: Model<any>,
-    public readonly id: ITimestampStruct
+    public readonly id: ITimestampStruct,
   ) {}
 
   /**

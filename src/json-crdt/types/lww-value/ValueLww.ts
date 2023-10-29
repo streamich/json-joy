@@ -9,7 +9,7 @@ import type {Printable} from '../../../util/print/types';
  * Represents a `val` JSON CRDT node, which is a Last-write-wins (LWW) register.
  * The `val` node holds a single value, which is a reference to another JSON
  * CRDT node.
- * 
+ *
  * @category CRDT Node
  */
 export class ValueLww<Value extends JsonNode = JsonNode> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {

@@ -85,7 +85,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Index of all known node objects (objects, array, strings, values)
    * in this document.
-   * 
+   *
    * @ignore
    */
   public index = new AvlMap<ITimestampStruct, JsonNode>(compare);
@@ -93,7 +93,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Extensions to the JSON CRDT protocol. Extensions are used to implement
    * custom data types on top of the JSON CRDT protocol.
-   * 
+   *
    * @ignore
    */
   public ext: Extensions = new Extensions();
@@ -130,7 +130,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
 
   /**
    * Callback called after every `applyPatch` call.
-   * 
+   *
    * When using the `.api` API, this property is set automatically by
    * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
    * to subscribe to changes.
@@ -275,7 +275,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Recursively deletes a tree of nodes. Used when root node is overwritten or
    * when object contents of container node (object or array) is removed.
-   * 
+   *
    * @ignore
    */
   protected deleteNodeTree(value: ITimestampStruct) {
@@ -290,7 +290,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Creates a copy of this model with a new session ID. If the session ID is
    * not provided, a random session ID is generated.
-   * 
+   *
    * @param sessionId Session ID to use for the new model.
    * @returns A copy of this model with a new session ID.
    */
@@ -303,7 +303,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
 
   /**
    * Creates a copy of this model with the same session ID.
-   * 
+   *
    * @returns A copy of this model with the same session ID.
    */
   public clone(): Model {

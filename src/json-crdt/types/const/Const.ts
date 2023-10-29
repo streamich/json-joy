@@ -4,11 +4,11 @@ import type {Printable} from '../../../util/print/types';
 
 /**
  * Represents the `con` type of the JSON CRDT specification.
- * 
+ *
  * Constant type represents an immutable JSON value. It can be any JSON/CBOR
  * value including deeply nested objects and arrays, Uint8Array binary data, or
  * it can store a logical timestamp. The constant value cannot be edited.
- * 
+ *
  * @category CRDT Node
  */
 export class Const<View = unknown | ITimestampStruct> implements JsonNode<View>, Printable {
