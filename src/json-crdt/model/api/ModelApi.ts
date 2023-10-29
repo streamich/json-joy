@@ -133,9 +133,8 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    *
    * @param path Path at which to locate a node.
    * @returns A local changes API for a `vec` node.
-   * @todo Rename to `vec`.
    */
-  public tup(path?: ApiPath) {
+  public vec(path?: ApiPath) {
     return this.node.tup(path);
   }
 
