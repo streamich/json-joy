@@ -5,15 +5,34 @@ import type {Printable} from '../../../util/print/types';
 import type {JsonNode, JsonNodeView} from '../../types';
 
 /**
+ * Represents a `obj` JSON CRDT node, which is a Last-write-wins (LWW) object.
+ * It is a map of string keys to LWW registers. The value of each register is
+ * a reference to another JSON CRDT node.
+ * 
  * @category CRDT Node
  */
 export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
   implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
 {
+  /**
+   * @ignore
+   */
   public readonly keys: Map<string, ITimestampStruct> = new Map();
 
-  constructor(protected readonly doc: Model<any>, public readonly id: ITimestampStruct) {}
+  constructor(
+    /**
+     * @ignore
+     */
+    protected readonly doc: Model<any>,
+    public readonly id: ITimestampStruct,
+  ) {}
 
+  /**
+   * Retrieves a JSON CRDT node at the given key.
+   *
+   * @param key A key of the object.
+   * @returns JSON CRDT node at the given key, if any.
+   */
   public get<K extends keyof Value>(key: K): undefined | Value[K] {
     const id = this.keys.get(key as string);
     if (!id) return undefined;
@@ -22,9 +41,11 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
 
   /**
    * Rewrites object key.
+   *
    * @param key Object key to set.
    * @param id ID of the contents of the key.
    * @returns Returns old entry ID, if any.
+   * @ignore
    */
   public put(key: string, id: ITimestampStruct): undefined | ITimestampStruct {
     const currentId = this.keys.get(key);
@@ -33,6 +54,11 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
     return currentId;
   }
 
+  /**
+   * Iterate over all key-value pairs in the object.
+   *
+   * @param callback Callback to call for each key-value pair.
+   */
   public nodes(callback: (node: JsonNode, key: string) => void) {
     const index = this.doc.index;
     this.keys.forEach((id, key) => callback(index.get(id)!, key));
@@ -40,21 +66,41 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
 
   // ----------------------------------------------------------------- JsonNode
 
+  /**
+   * @ignore
+   */
   public children(callback: (node: JsonNode) => void) {
     const index = this.doc.index;
     this.keys.forEach((id, key) => callback(index.get(id)!));
   }
 
+  /**
+   * @ignore
+   */
   public child() {
     return undefined;
   }
 
+  /**
+   * @ignore
+   */
   public container(): JsonNode | undefined {
     return this;
   }
 
+  /**
+   * @ignore
+   */
   private _tick: number = 0;
+
+  /**
+   * @ignore
+   */
   private _view = {} as Readonly<JsonNodeView<Value>>;
+
+  /**
+   * @ignore
+   */
   public view(): Readonly<JsonNodeView<Value>> {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
@@ -73,6 +119,9 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
     return useCache ? _view : ((this._tick = tick), (this._view = view));
   }
 
+  /**
+   * @ignore
+   */
   public api: undefined | unknown = undefined;
 
   // ---------------------------------------------------------------- Printable
