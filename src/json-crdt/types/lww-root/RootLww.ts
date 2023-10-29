@@ -4,6 +4,9 @@ import {Model, UNDEFINED} from '../../model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 
+/**
+ * @category CRDT Node
+ */
 export class RootLww<Value extends JsonNode = JsonNode> extends ValueLww<Value> {
   /**
    * @param val Latest value of the document root.

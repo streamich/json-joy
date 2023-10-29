@@ -18,6 +18,9 @@ import type {Printable} from '../../../util/print/types';
 
 export type ApiPath = string | number | Path | void;
 
+/**
+ * @category Local API
+ */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
 
@@ -130,6 +133,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 }
 
+/**
+ * @category Local API
+ */
 export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
   public proxy(): types.ProxyNodeConst<N> {
     return {
@@ -138,6 +144,9 @@ export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
   }
 }
 
+/**
+ * @category Local API
+ */
 export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N> {
   public set(json: JsonNodeView<N>): this {
     const {api, node} = this;
@@ -161,6 +170,9 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
   }
 }
 
+/**
+ * @category Local API
+ */
 export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
   public set(entries: [index: number, value: unknown][]): this {
     const {api, node} = this;
@@ -191,6 +203,9 @@ export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N
   }
 }
 
+/**
+ * @category Local API
+ */
 export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
   public set(entries: Partial<JsonNodeView<N>>): this {
     const {api, node} = this;
@@ -232,6 +247,9 @@ export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeAp
   }
 }
 
+/**
+ * @category Local API
+ */
 export class StringApi extends NodeApi<StringRga> {
   public ins(index: number, text: string): this {
     const {api, node} = this;
@@ -265,6 +283,9 @@ export class StringApi extends NodeApi<StringRga> {
   }
 }
 
+/**
+ * @category Local API
+ */
 export class BinaryApi extends NodeApi<BinaryRga> {
   public ins(index: number, data: Uint8Array): this {
     const {api, node} = this;
@@ -291,6 +312,9 @@ export class BinaryApi extends NodeApi<BinaryRga> {
   }
 }
 
+/**
+ * @category Local API
+ */
 export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
   public ins(index: number, values: Array<JsonNodeView<N>[number]>): this {
     const {api, node} = this;

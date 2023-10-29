@@ -5,6 +5,9 @@ import type {JsonNode, JsonNodeView} from '../../types';
 import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
 
+/**
+ * @category CRDT Node
+ */
 export class ValueLww<Value extends JsonNode = JsonNode> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {
   public api: undefined | unknown = undefined;
 

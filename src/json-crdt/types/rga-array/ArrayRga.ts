@@ -10,6 +10,9 @@ type E = ITimestampStruct;
 
 const Empty = [] as any[];
 
+/**
+ * @category CRDT Node
+ */
 export class ArrayChunk implements Chunk<E[]> {
   public readonly id: ITimestampStruct;
   public span: number;
@@ -63,6 +66,9 @@ export class ArrayChunk implements Chunk<E[]> {
   }
 }
 
+/**
+ * @category CRDT Node
+ */
 export class ArrayRga<Element extends JsonNode = JsonNode>
   extends AbstractRga<E[]>
   implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable

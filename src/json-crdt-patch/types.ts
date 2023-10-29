@@ -1,3 +1,4 @@
+import type {Printable} from '../util/print/types';
 import type {ITimestampStruct} from './clock';
 import type {JsonCrdtPatchMnemonic} from './codec/verbose';
 
@@ -5,7 +6,7 @@ import type {JsonCrdtPatchMnemonic} from './codec/verbose';
  * Something in the document that can be identified by ID. All operations have
  * IDs and operations result into JSON nodes and chunks, which also have IDs.
  */
-export interface Identifiable {
+export interface Identifiable extends Printable {
   /**
    * Unique ID within a document.
    */
@@ -17,11 +18,6 @@ export interface Identifiable {
    * the number of entries.
    */
   span?(): number;
-
-  /**
-   * Used for debugging.
-   */
-  toString(tab?: string): string;
 }
 
 /**
@@ -46,13 +42,6 @@ export interface IJsonCrdtPatchOperation extends Identifiable {
    * User friendly name of the operation.
    */
   name(): JsonCrdtPatchMnemonic;
-
-  /**
-   * Returns a textual human-readable representation of the operation.
-   *
-   * @param tab String to use for indentation.
-   */
-  toString(tab?: string): string;
 }
 
 /**

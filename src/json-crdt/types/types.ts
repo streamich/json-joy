@@ -34,7 +34,7 @@ export interface JsonNode<View = unknown> extends Identifiable {
   container(): JsonNode | undefined;
 
   /**
-   * Instance which provides public API for this node.
+   * A singleton cache, instance which provides public API for this node.
    */
   api: undefined | unknown; // JsonNodeApi<this>;
 }

@@ -3,6 +3,9 @@ import {AbstractRga, Chunk} from '../rga/AbstractRga';
 import {next} from '../../../util/trees/util';
 import type {JsonNode} from '../../types';
 
+/**
+ * @category CRDT Node
+ */
 export class StringChunk implements Chunk<string> {
   public readonly id: ITimestampStruct;
   public span: number;
@@ -60,6 +63,9 @@ export class StringChunk implements Chunk<string> {
   }
 }
 
+/**
+ * @category CRDT Node
+ */
 export class StringRga extends AbstractRga<string> implements JsonNode<string> {
   // ----------------------------------------------------------------- JsonNode
 

@@ -2,6 +2,9 @@ import type {JsonNode} from '../../types';
 import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, Chunk} from '../rga/AbstractRga';
 
+/**
+ * @category CRDT Node
+ */
 export class BinaryChunk implements Chunk<Uint8Array> {
   public readonly id: ITimestampStruct;
   public span: number;
@@ -62,6 +65,9 @@ export class BinaryChunk implements Chunk<Uint8Array> {
   }
 }
 
+/**
+ * @category CRDT Node
+ */
 export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
