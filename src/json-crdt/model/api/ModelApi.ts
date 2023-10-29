@@ -1,31 +1,40 @@
+import {ArrayLww, Const, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
 import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, TupleApi, ValueApi} from './nodes';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {JsonNode} from '../../types';
-import {ArrayLww} from '../../types/lww-array/ArrayLww';
-import {Const} from '../../types/const/Const';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../types/rga-string/StringRga';
-import {ValueLww} from '../../types/lww-value/ValueLww';
+import type {JsonNode} from '../../types';
 import type {Model} from '../Model';
 
 /**
+ * Local changes API for a JSON CRDT model. This class is the main entry point
+ * for executing local user actions on a JSON CRDT document.
+ * 
  * @category Local API
  */
 export class ModelApi<Value extends JsonNode = JsonNode> {
+  /**
+   * Patch builder for the local changes.
+   */
   public builder: PatchBuilder;
 
-  /** Index of the next operation in builder's patch to be committed locally. */
+  /**
+   * Index of the next operation in builder's patch to be committed locally.
+   * 
+   * @ignore
+   */
   public next: number = 0;
 
+  /**
+   * @param model Model instance on which the API operates.
+   */
   constructor(public readonly model: Model<Value>) {
     this.builder = new PatchBuilder(this.model.clock);
   }
 
+  /** @ignore */
   private changeQueued: boolean = false;
 
+  /** @ignore */
   private readonly queueChange = (): void => {
     if (this.changeQueued) return;
     this.changeQueued = true;
@@ -36,7 +45,12 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     });
   };
 
+  /** @ignore */
   private et: undefined | EventTarget = undefined;
+
+  /**
+   * Event target for listening to {@link Model} changes.
+   */
   public get events(): EventTarget {
     let et = this.et;
     if (!et) {
@@ -46,6 +60,10 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     return et;
   }
 
+  /**
+   * Returns a local change API for the given node. If an instance already
+   * exists, returns the existing instance.
+   */
   public wrap(node: ValueLww): ValueApi;
   public wrap(node: StringRga): StringApi;
   public wrap(node: BinaryRga): BinaryApi;
@@ -65,50 +83,124 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     else throw new Error('UNKNOWN_NODE');
   }
 
+  /** @ignore */
   public get node() {
     return new NodeApi(this.model.root.node(), this);
   }
 
+  /**
+   * Local changes API for the root node.
+   */
   public get r() {
     return new ValueApi(this.model.root, this);
   }
 
+  /**
+   * Traverses the model starting from the root node and returns a local
+   * changes API for a node at the given path.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a node at the given path.
+   */
   public in(path?: ApiPath) {
     return this.r.in(path);
   }
 
+  /**
+   * Locates a JSON CRDT node, throws an error if the node doesn't exist.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A JSON CRDT node.
+   */
   public find(path?: ApiPath) {
     return this.node.find(path);
   }
 
+  /**
+   * Locates a `val` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `val` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `val` node.
+   */
   public val(path?: ApiPath) {
     return this.node.val(path);
   }
 
+  /**
+   * Locates a `vec` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `vec` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `vec` node.
+   * @todo Rename to `vec`.
+   */
   public tup(path?: ApiPath) {
     return this.node.tup(path);
   }
 
+  /**
+   * Locates a `str` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `str` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `str` node.
+   */
   public str(path?: ApiPath) {
     return this.node.str(path);
   }
 
+  /**
+   * Locates a `bin` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `bin` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `bin` node.
+   */
   public bin(path?: ApiPath) {
     return this.node.bin(path);
   }
 
+  /**
+   * Locates an `arr` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not an `arr` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for an `arr` node.
+   */
   public arr(path?: ApiPath) {
     return this.node.arr(path);
   }
 
+  /**
+   * Locates an `obj` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not an `obj` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for an `obj` node.
+   */
   public obj(path?: ApiPath) {
     return this.node.obj(path);
   }
 
+  /**
+   * Locates a `con` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `con` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `con` node.
+   */
   public const(path?: ApiPath) {
     return this.node.const(path);
   }
 
+  /**
+   * Given a JSON/CBOR value, constructs CRDT nodes recursively out of it and
+   * sets the root node of the model to the constructed nodes.
+   *
+   * @param json JSON/CBOR value to set as the view of the model.
+   * @returns Reference to itself.
+   */
   public root(json: unknown): this {
     const builder = this.builder;
     builder.root(builder.json(json));
@@ -133,6 +225,8 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   /**
    * Advance patch pointer to the end without applying the operations. With the
    * idea that they have already been applied locally.
+   * 
+   * @ignore
    */
   public advance() {
     this.next = this.builder.patch.ops.length;
@@ -141,10 +235,20 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     model.onchange?.();
   }
 
-  public view(): unknown {
+  /**
+   * Returns the view of the model.
+   *
+   * @returns JSON/CBOR of the model.
+   */
+  public view() {
     return this.model.view();
   }
 
+  /**
+   * Flushes the builder and returns a patch.
+   *
+   * @returns A JSON CRDT patch.
+   */
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;

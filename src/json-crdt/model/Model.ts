@@ -311,7 +311,9 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
-   * @returns Returns the view of the model.
+   * Returns the view of the model.
+   *
+   * @returns JSON/CBOR of the model.
    */
   public view(): Readonly<JsonNodeView<RootJsonNode>> {
     return this.root.view();
