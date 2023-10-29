@@ -3,6 +3,7 @@ import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, Chunk} from '../rga/AbstractRga';
 
 /**
+ * @ignore
  * @category CRDT Node
  */
 export class BinaryChunk implements Chunk<Uint8Array> {
@@ -66,11 +67,15 @@ export class BinaryChunk implements Chunk<Uint8Array> {
 }
 
 /**
+ * Represents the `bin` type in JSON CRDT. The `bin` is a blob of binary data,
+ * powered by a Replicated Growable Array (RGA) algorithm.
+ *
  * @category CRDT Node
  */
 export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
+  /** @ignore */
   private _view: null | Uint8Array = null;
   public view(): Readonly<Uint8Array> {
     if (this._view) return this._view;
@@ -88,24 +93,30 @@ export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8
     return (this._view = res);
   }
 
+  /** @ignore */
   public children() {}
 
+  /** @ignore */
   public child() {
     return undefined;
   }
 
+  /** @ignore */
   public container(): JsonNode | undefined {
     return undefined;
   }
 
+  /** @ignore */
   public api: undefined | unknown = undefined;
 
   // -------------------------------------------------------------- AbstractRga
 
+  /** @ignore */
   public createChunk(id: ITimestampStruct, buf: Uint8Array | undefined): BinaryChunk {
     return new BinaryChunk(id, buf ? buf.length : 0, buf);
   }
 
+  /** @ignore */
   protected onChange(): void {
     this._view = null;
   }
