@@ -30,8 +30,7 @@ export const UNDEFINED = new Const(ORIGIN, undefined);
 
 /**
  * In instance of Model class represents the underlying data structure,
- * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
- * compute the "view" of the model.
+ * i.e. model, of the JSON CRDT document.
  */
 export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printable {
   /**
@@ -92,12 +91,16 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Index of all known node objects (objects, array, strings, values)
    * in this document.
+   * 
+   * @ignore
    */
   public index = new AvlMap<ITimestampStruct, JsonNode>(compare);
 
   /**
    * Extensions to the JSON CRDT protocol. Extensions are used to implement
    * custom data types on top of the JSON CRDT protocol.
+   * 
+   * @ignore
    */
   public ext: Extensions = new Extensions();
 
@@ -106,10 +109,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     if (!clock.time) clock.time = 1;
   }
 
+  /** @ignore */
   private _api?: ModelApi<RootJsonNode>;
 
   /**
-   * API for applying changes to the current document.
+   * API for applying local changes to the current document.
    */
   public get api(): ModelApi<RootJsonNode> {
     if (!this._api) this._api = new ModelApi<RootJsonNode>(this);
@@ -117,18 +121,33 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
-   * @private
    * Experimental node retrieval API using proxy objects.
    */
   public get find() {
     return this.api.r.proxy();
   }
 
-  /** Tracks number of times the `applyPatch` was called. */
+  /**
+   * Tracks number of times the `applyPatch` was called.
+   *
+   * @ignore
+   */
   public tick: number = 0;
 
+  /**
+   * Callback called after every `applyPatch` call.
+   * 
+   * When using the `.api` API, this property is set automatically by
+   * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
+   * to subscribe to changes.
+   */
   public onchange: undefined | (() => void) = undefined;
 
+  /**
+   * Applies a batch of patches to the document.
+   *
+   * @param patches A batch, i.e. an array of patches.
+   */
   public applyBatch(patches: Patch[]) {
     const length = patches.length;
     for (let i = 0; i < length; i++) this.applyPatch(patches[i]);
@@ -154,6 +173,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * the `tick` property and call `onchange` after calling this method.
    *
    * @param op Any JSON CRDT Patch operation
+   * @ignore
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
@@ -261,6 +281,8 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   /**
    * Recursively deletes a tree of nodes. Used when root node is overwritten or
    * when object contents of container node (object or array) is removed.
+   * 
+   * @ignore
    */
   protected deleteNodeTree(value: ITimestampStruct) {
     const isSystemNode = value.sid === SESSION.SYSTEM;
@@ -272,7 +294,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
-   * Creates a copy of this model with a new session ID.
+   * Creates a copy of this model with a new session ID. If the session ID is
+   * not provided, a random session ID is generated.
+   * 
+   * @param sessionId Session ID to use for the new model.
+   * @returns A copy of this model with a new session ID.
    */
   public fork(sessionId: number = randomSessionId()): Model {
     const copy = Model.fromBinary(this.toBinary());
@@ -283,6 +309,8 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
 
   /**
    * Creates a copy of this model with the same session ID.
+   * 
+   * @returns A copy of this model with the same session ID.
    */
   public clone(): Model {
     return this.fork(this.clock.sid);
@@ -296,8 +324,16 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
-   * @returns Returns human-readable text for debugging.
+   * Serialize this model using "binary" structural encoding.
+   *
+   * @returns This model encoded in octets.
    */
+  public toBinary(): Uint8Array {
+    return encoder.encode(this);
+  }
+
+  // ---------------------------------------------------------------- Printable
+
   public toString(tab: string = ''): string {
     const nl = () => '';
     const hasExtensions = this.ext.size() > 0;
@@ -313,13 +349,5 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         hasExtensions ? (tab) => this.ext.toString(tab) : null,
       ])
     );
-  }
-
-  /**
-   * Serialize this model using "binary" structural encoding.
-   * @returns This model encoded in octets.
-   */
-  public toBinary(): Uint8Array {
-    return encoder.encode(this);
   }
 }
