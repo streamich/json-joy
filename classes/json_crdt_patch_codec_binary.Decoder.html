@@ -23,11 +23,11 @@
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
-<li><span class="tsd-signature-type ">CborDecoder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CrdtDecoder</span><span class="tsd-signature-symbol">&gt;</span>
+<li><span class="tsd-signature-type ">CborDecoder</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">CrdtReader</span><span class="tsd-signature-symbol">&gt;</span>
 <ul class="tsd-hierarchy">
 <li><span class="target">Decoder</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L12">json-crdt-patch/codec/binary/Decoder.ts:12</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L12">json-crdt-patch/codec/binary/Decoder.ts:12</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -122,39 +122,39 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">reader</span>: <span class="tsd-signature-type ">CrdtDecoder</span><span class="tsd-signature-symbol"> = ...</span></h5>
+<h5><span class="tsd-kind-parameter">reader</span>: <span class="tsd-signature-type ">CrdtReader</span><span class="tsd-signature-symbol"> = ...</span></h5>
 <div class="tsd-comment tsd-typography"><p>An optional custom implementation of a CRDT decoder.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="json_crdt_patch_codec_binary.Decoder.html" class="tsd-signature-type tsd-kind-class">Decoder</a></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<p>Overrides CborDecoder&lt;CrdtDecoder&gt;.constructor</p>
+<p>Overrides CborDecoder&lt;CrdtReader&gt;.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L21">json-crdt-patch/codec/binary/Decoder.ts:21</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L21">json-crdt-patch/codec/binary/Decoder.ts:21</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="builder" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>builder</span><a href="#builder" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">builder</span><span class="tsd-signature-symbol">:</span> <a href="json_crdt_patch.PatchBuilder.html" class="tsd-signature-type tsd-kind-class">PatchBuilder</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L13">json-crdt-patch/codec/binary/Decoder.ts:13</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L13">json-crdt-patch/codec/binary/Decoder.ts:13</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="keyDecoder" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>key<wbr/>Decoder</span><a href="#keyDecoder" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">key<wbr/>Decoder</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">CachedUtf8Decoder</span><span class="tsd-signature-symbol"> = sharedCachedUtf8Decoder</span></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.keyDecoder</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L16">json-pack/cbor/CborDecoderBase.ts:16</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L16">json-pack/cbor/CborDecoderBase.ts:16</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="patchSid" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagOptional">Optional</code> <span>patch<wbr/>Sid</span><a href="#patchSid" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">patch<wbr/>Sid</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L14">json-crdt-patch/codec/binary/Decoder.ts:14</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L14">json-crdt-patch/codec/binary/Decoder.ts:14</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="reader" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>reader</span><a href="#reader" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">reader</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">CrdtDecoder</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<div class="tsd-signature"><span class="tsd-kind-property">reader</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">CrdtReader</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.reader</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L15">json-pack/cbor/CborDecoderBase.ts:15</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L15">json-pack/cbor/CborDecoderBase.ts:15</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="decode" class="tsd-anchor"></a>
@@ -177,7 +177,7 @@
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Overrides CborDecoder.decode</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L31">json-crdt-patch/codec/binary/Decoder.ts:31</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L31">json-crdt-patch/codec/binary/Decoder.ts:31</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="decodeId" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>decode<wbr/>Id</span><a href="#decodeId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -185,7 +185,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/json_crdt_patch_clock.ITimestampStruct.html" class="tsd-signature-type tsd-kind-interface">ITimestampStruct</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L46">json-crdt-patch/codec/binary/Decoder.ts:46</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L46">json-crdt-patch/codec/binary/Decoder.ts:46</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="decodeLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>decode<wbr/>Level</span><a href="#decodeLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -199,7 +199,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.decodeLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L247">json-pack/cbor/CborDecoder.ts:247</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L247">json-pack/cbor/CborDecoder.ts:247</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="decodeOperation" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>decode<wbr/>Operation</span><a href="#decodeOperation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -207,7 +207,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L64">json-crdt-patch/codec/binary/Decoder.ts:64</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L64">json-crdt-patch/codec/binary/Decoder.ts:64</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="decodeOperations" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>decode<wbr/>Operations</span><a href="#decodeOperations" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -215,7 +215,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L58">json-crdt-patch/codec/binary/Decoder.ts:58</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L58">json-crdt-patch/codec/binary/Decoder.ts:58</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="decodeTss" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>decode<wbr/>Tss</span><a href="#decodeTss" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected">
@@ -223,7 +223,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/json_crdt_patch_clock.ITimespanStruct.html" class="tsd-signature-type tsd-kind-interface">ITimespanStruct</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-crdt-patch/codec/binary/Decoder.ts#L52">json-crdt-patch/codec/binary/Decoder.ts:52</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt-patch/codec/binary/Decoder.ts#L52">json-crdt-patch/codec/binary/Decoder.ts:52</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="f16" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>f16</span><a href="#f16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -232,7 +232,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.f16</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L337">json-pack/cbor/CborDecoderBase.ts:337</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L337">json-pack/cbor/CborDecoderBase.ts:337</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="find" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>find</span><a href="#find" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -246,7 +246,7 @@
 <h4 class="tsd-returns-title">Returns <a href="json_crdt_patch_codec_binary.Decoder.html" class="tsd-signature-type tsd-kind-class">Decoder</a></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.find</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L400">json-pack/cbor/CborDecoder.ts:400</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L400">json-pack/cbor/CborDecoder.ts:400</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="findIndex" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>find<wbr/>Index</span><a href="#findIndex" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -260,7 +260,7 @@
 <h4 class="tsd-returns-title">Returns <a href="json_crdt_patch_codec_binary.Decoder.html" class="tsd-signature-type tsd-kind-class">Decoder</a></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.findIndex</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L393">json-pack/cbor/CborDecoder.ts:393</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L393">json-pack/cbor/CborDecoder.ts:393</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="findKey" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>find<wbr/>Key</span><a href="#findKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -274,7 +274,7 @@
 <h4 class="tsd-returns-title">Returns <a href="json_crdt_patch_codec_binary.Decoder.html" class="tsd-signature-type tsd-kind-class">Decoder</a></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.findKey</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L383">json-pack/cbor/CborDecoder.ts:383</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L383">json-pack/cbor/CborDecoder.ts:383</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="key" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>key</span><a href="#key" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -283,7 +283,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.key</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L278">json-pack/cbor/CborDecoderBase.ts:278</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L278">json-pack/cbor/CborDecoderBase.ts:278</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="read" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read</span><a href="#read" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -297,7 +297,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">PackValue</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.read</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L19">json-pack/cbor/CborDecoderBase.ts:19</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L19">json-pack/cbor/CborDecoderBase.ts:19</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readAnyRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Any<wbr/>Raw</span><a href="#readAnyRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -311,7 +311,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readAnyRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L46">json-pack/cbor/CborDecoderBase.ts:46</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L46">json-pack/cbor/CborDecoderBase.ts:46</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr</span><a href="#readArr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -325,7 +325,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L205">json-pack/cbor/CborDecoderBase.ts:205</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L205">json-pack/cbor/CborDecoderBase.ts:205</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrHdr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Hdr</span><a href="#readArrHdr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -334,7 +334,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrHdr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L379">json-pack/cbor/CborDecoder.ts:379</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L379">json-pack/cbor/CborDecoder.ts:379</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrIndef" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Indef</span><a href="#readArrIndef" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -343,7 +343,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrIndef</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L217">json-pack/cbor/CborDecoderBase.ts:217</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L217">json-pack/cbor/CborDecoderBase.ts:217</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrIndefLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Indef<wbr/>Level</span><a href="#readArrIndefLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -352,7 +352,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrIndefLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L341">json-pack/cbor/CborDecoder.ts:341</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L341">json-pack/cbor/CborDecoder.ts:341</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Level</span><a href="#readArrLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -366,7 +366,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L329">json-pack/cbor/CborDecoder.ts:329</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L329">json-pack/cbor/CborDecoder.ts:329</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Raw</span><a href="#readArrRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -380,7 +380,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L211">json-pack/cbor/CborDecoderBase.ts:211</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L211">json-pack/cbor/CborDecoderBase.ts:211</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readArrRawLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Arr<wbr/>Raw<wbr/>Level</span><a href="#readArrRawLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -394,7 +394,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readArrRawLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L335">json-pack/cbor/CborDecoder.ts:335</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L335">json-pack/cbor/CborDecoder.ts:335</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readAsMap" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>As<wbr/>Map</span><a href="#readAsMap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -403,7 +403,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readAsMap</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L12">json-pack/cbor/CborDecoder.ts:12</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L12">json-pack/cbor/CborDecoder.ts:12</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readAsValue" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>As<wbr/>Value</span><a href="#readAsValue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -412,7 +412,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">JsonPackValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Uint8Array</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readAsValue</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L289">json-pack/cbor/CborDecoder.ts:289</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L289">json-pack/cbor/CborDecoder.ts:289</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readBin" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Bin</span><a href="#readBin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -426,7 +426,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Uint8Array</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readBin</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L108">json-pack/cbor/CborDecoderBase.ts:108</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L108">json-pack/cbor/CborDecoderBase.ts:108</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readBinChunk" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Bin<wbr/>Chunk</span><a href="#readBinChunk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -435,7 +435,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Uint8Array</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readBinChunk</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L144">json-pack/cbor/CborDecoderBase.ts:144</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L144">json-pack/cbor/CborDecoderBase.ts:144</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readHdr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Hdr</span><a href="#readHdr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -449,7 +449,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readHdr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L350">json-pack/cbor/CborDecoder.ts:350</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L350">json-pack/cbor/CborDecoder.ts:350</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Level</span><a href="#readLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -463,7 +463,7 @@ completely.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L258">json-pack/cbor/CborDecoder.ts:258</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L258">json-pack/cbor/CborDecoder.ts:258</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readMap" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Map</span><a href="#readMap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -477,7 +477,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readMap</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L24">json-pack/cbor/CborDecoder.ts:24</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L24">json-pack/cbor/CborDecoder.ts:24</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readMapIndef" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Map<wbr/>Indef</span><a href="#readMapIndef" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -486,7 +486,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readMapIndef</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L40">json-pack/cbor/CborDecoder.ts:40</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L40">json-pack/cbor/CborDecoder.ts:40</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readMapRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Map<wbr/>Raw</span><a href="#readMapRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -500,7 +500,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readMapRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L30">json-pack/cbor/CborDecoder.ts:30</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L30">json-pack/cbor/CborDecoder.ts:30</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readMinorLen" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Minor<wbr/>Len</span><a href="#readMinorLen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -514,7 +514,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readMinorLen</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L58">json-pack/cbor/CborDecoderBase.ts:58</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L58">json-pack/cbor/CborDecoderBase.ts:58</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readNint" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Nint</span><a href="#readNint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -528,7 +528,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bigint</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readNint</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L93">json-pack/cbor/CborDecoderBase.ts:93</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L93">json-pack/cbor/CborDecoderBase.ts:93</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObj" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj</span><a href="#readObj" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -542,7 +542,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObj</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L226">json-pack/cbor/CborDecoderBase.ts:226</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L226">json-pack/cbor/CborDecoderBase.ts:226</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjHdr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Hdr</span><a href="#readObjHdr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -551,7 +551,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjHdr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L375">json-pack/cbor/CborDecoder.ts:375</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L375">json-pack/cbor/CborDecoder.ts:375</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjIndef" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Indef</span><a href="#readObjIndef" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -560,7 +560,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjIndef</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L266">json-pack/cbor/CborDecoderBase.ts:266</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L266">json-pack/cbor/CborDecoderBase.ts:266</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjIndefLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Indef<wbr/>Level</span><a href="#readObjIndefLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -569,7 +569,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjIndefLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L315">json-pack/cbor/CborDecoder.ts:315</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L315">json-pack/cbor/CborDecoder.ts:315</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Level</span><a href="#readObjLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -583,7 +583,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L299">json-pack/cbor/CborDecoder.ts:299</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L299">json-pack/cbor/CborDecoder.ts:299</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Raw</span><a href="#readObjRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -600,7 +600,7 @@ completely.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L256">json-pack/cbor/CborDecoderBase.ts:256</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L256">json-pack/cbor/CborDecoderBase.ts:256</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readObjRawLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Obj<wbr/>Raw<wbr/>Level</span><a href="#readObjRawLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -614,7 +614,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readObjRawLevel</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L305">json-pack/cbor/CborDecoder.ts:305</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L305">json-pack/cbor/CborDecoder.ts:305</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readPrimitiveOrVal" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Primitive<wbr/>Or<wbr/>Val</span><a href="#readPrimitiveOrVal" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -627,7 +627,7 @@ completely.</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readPrimitiveOrVal</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L277">json-pack/cbor/CborDecoder.ts:277</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L277">json-pack/cbor/CborDecoder.ts:277</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readStr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Str</span><a href="#readStr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -641,7 +641,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readStr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L155">json-pack/cbor/CborDecoderBase.ts:155</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L155">json-pack/cbor/CborDecoderBase.ts:155</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readStrChunk" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Str<wbr/>Chunk</span><a href="#readStrChunk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -650,7 +650,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readStrChunk</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L194">json-pack/cbor/CborDecoderBase.ts:194</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L194">json-pack/cbor/CborDecoderBase.ts:194</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readStrHdr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Str<wbr/>Hdr</span><a href="#readStrHdr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -659,7 +659,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readStrHdr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L371">json-pack/cbor/CborDecoder.ts:371</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L371">json-pack/cbor/CborDecoder.ts:371</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readStrLen" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Str<wbr/>Len</span><a href="#readStrLen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -673,7 +673,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readStrLen</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L178">json-pack/cbor/CborDecoderBase.ts:178</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L178">json-pack/cbor/CborDecoderBase.ts:178</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readTag" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Tag</span><a href="#readTag" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -687,7 +687,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readTag</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L292">json-pack/cbor/CborDecoderBase.ts:292</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L292">json-pack/cbor/CborDecoderBase.ts:292</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readTagRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Tag<wbr/>Raw</span><a href="#readTagRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -701,7 +701,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readTagRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L308">json-pack/cbor/CborDecoderBase.ts:308</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L308">json-pack/cbor/CborDecoderBase.ts:308</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readTkn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Tkn</span><a href="#readTkn" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -715,7 +715,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">JsonPackValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readTkn</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L314">json-pack/cbor/CborDecoderBase.ts:314</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L314">json-pack/cbor/CborDecoderBase.ts:314</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="readUint" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>read<wbr/>Uint</span><a href="#readUint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -729,7 +729,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bigint</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.readUint</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L78">json-pack/cbor/CborDecoderBase.ts:78</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L78">json-pack/cbor/CborDecoderBase.ts:78</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipAny" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Any</span><a href="#skipAny" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -738,7 +738,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipAny</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L57">json-pack/cbor/CborDecoder.ts:57</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L57">json-pack/cbor/CborDecoder.ts:57</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipAnyRaw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Any<wbr/>Raw</span><a href="#skipAnyRaw" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -752,7 +752,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipAnyRaw</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L61">json-pack/cbor/CborDecoder.ts:61</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L61">json-pack/cbor/CborDecoder.ts:61</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipArr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Arr</span><a href="#skipArr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -766,7 +766,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipArr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L168">json-pack/cbor/CborDecoder.ts:168</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L168">json-pack/cbor/CborDecoder.ts:168</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipBin" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Bin</span><a href="#skipBin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -780,7 +780,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipBin</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L128">json-pack/cbor/CborDecoder.ts:128</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L128">json-pack/cbor/CborDecoder.ts:128</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipBinChunk" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Bin<wbr/>Chunk</span><a href="#skipBinChunk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -789,7 +789,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipBinChunk</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L137">json-pack/cbor/CborDecoder.ts:137</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L137">json-pack/cbor/CborDecoder.ts:137</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipMinorLen" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Minor<wbr/>Len</span><a href="#skipMinorLen" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -803,7 +803,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipMinorLen</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L90">json-pack/cbor/CborDecoder.ts:90</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L90">json-pack/cbor/CborDecoder.ts:90</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipN" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skipN</span><a href="#skipN" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -817,7 +817,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipN</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L54">json-pack/cbor/CborDecoder.ts:54</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L54">json-pack/cbor/CborDecoder.ts:54</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipObj" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Obj</span><a href="#skipObj" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -831,7 +831,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipObj</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L179">json-pack/cbor/CborDecoder.ts:179</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L179">json-pack/cbor/CborDecoder.ts:179</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipStr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Str</span><a href="#skipStr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -845,7 +845,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipStr</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L148">json-pack/cbor/CborDecoder.ts:148</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L148">json-pack/cbor/CborDecoder.ts:148</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipStrChunk" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Str<wbr/>Chunk</span><a href="#skipStrChunk" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -854,7 +854,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipStrChunk</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L157">json-pack/cbor/CborDecoder.ts:157</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L157">json-pack/cbor/CborDecoder.ts:157</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipTag" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Tag</span><a href="#skipTag" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -868,7 +868,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipTag</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L194">json-pack/cbor/CborDecoder.ts:194</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L194">json-pack/cbor/CborDecoder.ts:194</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipTkn" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skip<wbr/>Tkn</span><a href="#skipTkn" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -882,7 +882,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipTkn</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L202">json-pack/cbor/CborDecoder.ts:202</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L202">json-pack/cbor/CborDecoder.ts:202</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="skipUNint" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>skipUNint</span><a href="#skipUNint" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -896,7 +896,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.skipUNint</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L110">json-pack/cbor/CborDecoder.ts:110</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L110">json-pack/cbor/CborDecoder.ts:110</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="val" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>val</span><a href="#val" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -905,7 +905,7 @@ completely.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <p>Inherited from CborDecoder.val</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoderBase.ts#L32">json-pack/cbor/CborDecoderBase.ts:32</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoderBase.ts#L32">json-pack/cbor/CborDecoderBase.ts:32</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="validate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>validate</span><a href="#validate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -942,7 +942,7 @@ throws if:</p>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from CborDecoder.validate</p>
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/fc2f3ca/src/json-pack/cbor/CborDecoder.ts#L236">json-pack/cbor/CborDecoder.ts:236</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-pack/cbor/CborDecoder.ts#L236">json-pack/cbor/CborDecoder.ts:236</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

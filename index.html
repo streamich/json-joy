@@ -30,14 +30,32 @@ Major focus of <code>json-joy</code> is development of the JSON CRDT protocol, a
 Conflict-free Replicated Data Type that enables seamless
 merging of changes in JSON data models, avoiding conflicts between replicas.</p>
 <ul>
-<li><a href="https://jsonjoy.com/blog"><strong>Blog</strong></a></li>
 <li><a href="https://jsonjoy.com"><strong>Website</strong></a></li>
 <li><a href="https://jsonjoy.com/libs/json-joy-js"><strong>Documentation</strong></a></li>
-<li><a href="https://jsonjoy.com/specs/json-crdt"><strong>JSON CRDT</strong></a> Specification</li>
-<li><a href="https://jsonjoy.com/specs/json-crdt-patch"><strong>JSON CRDT Patch</strong></a> Specification</li>
-<li><a href="https://jsonjoy.com/specs/json-rx"><strong>JSON Reactive RPC</strong></a> Specification</li>
+<li><a href="https://jsonjoy.com/blog"><strong>Blog posts</strong></a><ul>
+<li><a href="https://jsonjoy.com/blog/fuzz-testing-rga-crdt"><em>Fuzz Testing RGA CRDT</em></a></li>
+<li><a href="https://jsonjoy.com/blog/json-codec-benchmarks"><em>Benchmarking JSON Serialization Codecs</em></a></li>
+<li><a href="https://jsonjoy.com/blog/list-crdt-benchmarks"><em>List CRDT Benchmarks</em></a></li>
+<li><a href="https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm"><em>Blazing Fast List CRDT</em></a></li>
+</ul>
+</li>
+<li><a href="https://jsonjoy.com/specs/json-crdt"><strong>JSON CRDT</strong></a> <code>specification</code></li>
+<li><a href="https://jsonjoy.com/specs/json-crdt-patch"><strong>JSON CRDT Patch</strong></a> <code>specification</code></li>
+<li><a href="https://jsonjoy.com/specs/json-rx"><strong>JSON Reactive RPC</strong></a> <code>specification</code></li>
 <li><a href="https://streamich.github.io/json-joy/"><strong>API Reference</strong></a></li>
 <li><a href="https://streamich.github.io/json-joy/coverage/lcov-report/"><strong>Test coverage</strong></a></li>
+</ul>
+<a id="md:notable-features" class="tsd-anchor"></a><h2><a href="#md:notable-features">Notable features</a></h2><ul>
+<li>Full JSON implementation as a CRDT (Conflict-free Replicated Datatype).</li>
+<li>The fastest list CRDT implementation in JavaScript.</li>
+<li>The fastest text OT (Operational Transformation) implementation in JavaScript.</li>
+<li>The fastest implementation of CBOR, DAG-CBOR, MessagePack, UBJSON, and JSON codecs in JavaScript.</li>
+<li>The fastest (HTTP) router implementation in JavaScript.</li>
+<li>The fastest JSON schema validation implementation in JavaScript.</li>
+<li>Very fast binary tree (Radix, AVL, Red-black*, Splay) implementations in JavaScript.</li>
+<li>Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.</li>
+<li>Very fast JSON Expression implementation in JavaScript.</li>
+<li>JSON Reactive RPC protocol (RPC with server push) implementation, for real-time collaborative apps.</li>
 </ul>
 </div></div>
 <div class="col-sidebar">
@@ -61,7 +79,10 @@ merging of changes in JSON data models, avoiding conflicts between replicas.</p>
 <ul>
 <li>
 <ul>
-<li><a href="#md:json-joy"><span>json-<wbr/>joy</span></a></li></ul></li></ul></div></details></div>
+<li><a href="#md:json-joy"><span>json-<wbr/>joy</span></a></li>
+<li>
+<ul>
+<li><a href="#md:notable-features"><span>Notable features</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>json-<wbr/>joy</span></a>
 <ul class="tsd-small-nested-navigation">
