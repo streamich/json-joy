@@ -1,9 +1,13 @@
 /* tslint:disable no-console */
 
+// npx ts-node src/json-expression/__bench__/main.ts
+
 import * as Benchmark from 'benchmark';
 import {JsonExpressionCodegen} from '../codegen';
 import {Expr} from '../types';
 import {evaluate} from '../evaluate';
+import {operatorsMap} from '../operators';
+import {Vars} from '../Vars';
 const jsonLogic = require('json-logic-js');
 
 const json = {
@@ -40,21 +44,21 @@ const jsonLogicExpression = {
   ],
 };
 
-const codegen = new JsonExpressionCodegen({expression});
+const codegen = new JsonExpressionCodegen({expression, operators: operatorsMap});
 const fn = codegen.run().compile();
 
 const suite = new Benchmark.Suite();
 suite
   .add(`json-joy/json-expression JsonExpressionCodegen`, () => {
-    fn({data: json});
+    fn({vars: new Vars(json)});
   })
   .add(`json-joy/json-expression JsonExpressionCodegen with codegen`, () => {
-    const codegen = new JsonExpressionCodegen({expression});
+    const codegen = new JsonExpressionCodegen({expression, operators: operatorsMap});
     const fn = codegen.run().compile();
-    fn({data: json});
+    fn({vars: new Vars(json)});
   })
   .add(`json-joy/json-expression evaluate`, () => {
-    evaluate(expression, {data: json});
+    evaluate(expression, {vars: new Vars(json)});
   })
   .add(`json-logic-js`, () => {
     jsonLogic.apply(jsonLogicExpression, json);
