@@ -6,7 +6,7 @@ import type {ValueLww} from '../../types/lww-value/ValueLww';
 import type {ArrayRga} from '../../types/rga-array/ArrayRga';
 import type {BinaryRga} from '../../types/rga-binary/BinaryRga';
 import type {StringRga} from '../../types/rga-string/StringRga';
-import type {ArrayApi, BinaryApi, ConstApi, ObjectApi, StringApi, TupleApi, ValueApi} from './nodes';
+import type {ArrayApi, BinaryApi, ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 
 // prettier-ignore
 export type JsonNodeApi<N> = N extends Const<any>
@@ -24,5 +24,5 @@ export type JsonNodeApi<N> = N extends Const<any>
             : N extends ObjectLww<any>
               ? ObjectApi<N>
               : N extends ArrayLww<any>
-                ? TupleApi<N>
+                ? VectorApi<N>
                 : never;

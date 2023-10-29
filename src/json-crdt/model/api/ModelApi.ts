@@ -1,5 +1,5 @@
 import {ArrayLww, Const, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
-import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, TupleApi, ValueApi} from './nodes';
+import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import type {JsonNode} from '../../types';
@@ -70,7 +70,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public wrap(node: ArrayRga): ArrayApi;
   public wrap(node: ObjectLww): ObjectApi;
   public wrap(node: Const): ConstApi;
-  public wrap(node: ArrayLww): TupleApi;
+  public wrap(node: ArrayLww): VectorApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
@@ -79,7 +79,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
     else if (node instanceof ObjectLww) return node.api || (node.api = new ObjectApi(node, this));
     else if (node instanceof Const) return node.api || (node.api = new ConstApi(node, this));
-    else if (node instanceof ArrayLww) return node.api || (node.api = new TupleApi(node, this));
+    else if (node instanceof ArrayLww) return node.api || (node.api = new VectorApi(node, this));
     else throw new Error('UNKNOWN_NODE');
   }
 

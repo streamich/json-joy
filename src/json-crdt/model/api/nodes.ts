@@ -73,7 +73,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
-  public asTup(): TupleApi {
+  public asTup(): VectorApi {
     if (this.node instanceof ArrayLww) return this.api.wrap(this.node as ArrayLww);
     throw new Error('NOT_ARR');
   }
@@ -115,7 +115,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asArr();
   }
 
-  public tup(path?: ApiPath): TupleApi {
+  public tup(path?: ApiPath): VectorApi {
     return this.in(path).asTup();
   }
 
@@ -196,7 +196,7 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
  * @category Local API
  * @todo Rename to VectorApi.
  */
-export class TupleApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
+export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
   /**
    * Sets a list of elements to the given values.
    *
