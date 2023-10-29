@@ -1,6 +1,6 @@
 import {ORIGIN, SESSION} from '../../../json-crdt-patch/constants';
 import {ValueLww} from '../lww-value/ValueLww';
-import {Model, UNDEFINED} from '../../model';
+import {Model, UNDEFINED} from '../../model/Model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 

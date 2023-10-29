@@ -4,7 +4,7 @@ import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder
 import {Const} from '../../../types/const/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {Model, UNDEFINED} from '../../../model';
+import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {RootLww} from '../../../types/lww-root/RootLww';

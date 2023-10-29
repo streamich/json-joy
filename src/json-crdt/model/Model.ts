@@ -1,6 +1,4 @@
 import * as operations from '../../json-crdt-patch/operations';
-import {ArrayRga} from '../types/rga-array/ArrayRga';
-import {BinaryRga} from '../types/rga-binary/BinaryRga';
 import {Const} from '../types/const/Const';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
@@ -13,13 +11,9 @@ import {
 } from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
-import {ObjectLww} from '../types/lww-object/ObjectLww';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww} from '../types/lww-root/RootLww';
-import {StringRga} from '../types/rga-string/StringRga';
-import {ValueLww} from '../types/lww-value/ValueLww';
-import {ArrayLww} from '../types/lww-array/ArrayLww';
+import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga} from '../types';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
