@@ -1,4 +1,5 @@
 export * from './types';
+export {n} from './nodes';
 export {Const} from './const/Const';
 export {ValueLww} from './lww-value/ValueLww';
 export {RootLww} from './lww-root/RootLww';
