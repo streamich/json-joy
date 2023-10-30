@@ -175,7 +175,7 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
   public toString(tab: string = ''): string {
     const extNode = this.ext();
     const header =
-      this.constructor.name + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
+      this.constructor.name + ' "vec" ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
       return this.child()!.toString(tab);
     }

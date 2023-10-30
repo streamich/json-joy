@@ -111,4 +111,8 @@ export class StringRga extends AbstractRga<string> implements JsonNode<string> {
   protected onChange(): void {
     this._view = '';
   }
+
+  protected toStringName(): string {
+    return super.toStringName() + ' "str"';
+  }
 }

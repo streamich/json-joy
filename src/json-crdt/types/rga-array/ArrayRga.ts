@@ -124,6 +124,10 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
     this._view = Empty as any;
   }
 
+  protected toStringName(): string {
+    return super.toStringName() + ' "arr"';
+  }
+
   // ----------------------------------------------------------------- JsonNode
 
   /** @ignore */

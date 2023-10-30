@@ -57,6 +57,6 @@ export class Const<View = unknown | ITimestampStruct> implements JsonNode<View>,
       val instanceof Uint8Array
         ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
         : `{ ${val instanceof Timestamp ? toDisplayString(val as Timestamp) : JSON.stringify(val)} }`;
-    return `${this.constructor.name} ${toDisplayString(this.id)} ${valFormatted}`;
-  }
+        return `${this.constructor.name} "con" ${toDisplayString(this.id)} ${valFormatted}`;
+      }
 }

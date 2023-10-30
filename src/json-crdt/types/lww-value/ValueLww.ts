@@ -83,7 +83,7 @@ export class ValueLww<Value extends JsonNode = JsonNode> implements JsonNode<Rea
 
   public toString(tab: string = ''): string {
     const node = this.node();
-    const header = this.constructor.name + ' ' + toDisplayString(this.id);
+    const header = this.constructor.name + ' "val" ' + toDisplayString(this.id);
     return header + printTree(tab, [(tab) => (node ? node.toString(tab) : toDisplayString(this.val))]);
   }
 }
