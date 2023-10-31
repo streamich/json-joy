@@ -7,8 +7,8 @@
  */
 
 import {Model} from '..';
-import { konst } from '../../json-crdt-patch';
-import { Timestamp } from '../../json-crdt-patch/clock';
+import {konst} from '../../json-crdt-patch';
+import {Timestamp} from '../../json-crdt-patch/clock';
 
 const model = Model.withLogicalClock(1234);
 model.api.root({
@@ -22,7 +22,7 @@ console.log(model.toString());
 
 model.api.root({
   str: 'hello',
-  obj: { foo: 'bar' },
+  obj: {foo: 'bar'},
   arr: [1],
 });
 console.log(model + '');
@@ -30,7 +30,7 @@ console.log(model.view());
 
 model.api.root({
   str: konst('hello'),
-  obj: konst({ foo: 'bar' }),
+  obj: konst({foo: 'bar'}),
   arr: konst([1]),
 });
 console.log(model + '');
@@ -46,7 +46,7 @@ console.log(model.view());
 model.api.root({
   foo: {
     bar: 42,
-  }
+  },
 });
 console.log(model + '');
 console.log(model.view());

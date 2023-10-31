@@ -14,20 +14,16 @@ import {Model} from '..';
 // console.log(model.view());
 // console.log(model.toString());
 
-
 const model = Model.withLogicalClock(1234); // 1234 is the session ID
 console.log(model + '');
-
 
 // model.api.root({
 //   arr: [42, 69],
 // });
 // console.log(model + '');
 
-
 model.api.root([42, 69]);
 console.log(model + '');
-
 
 model.api.val([0]).set(99);
 console.log(model + '');

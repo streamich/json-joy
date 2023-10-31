@@ -10,14 +10,15 @@ import {Model, n} from '..';
 import {vec} from '../../json-crdt-patch';
 
 // Create a new JSON CRDT document, 1234 is the session ID.
-const model = Model.withLogicalClock(1234) as Model<n.obj<{
-  counter: n.val<n.con<number>>;
-  text: n.str;
-}>>;
+const model = Model.withLogicalClock(1234) as Model<
+  n.obj<{
+    counter: n.val<n.con<number>>;
+    text: n.str;
+  }>
+>;
 
 console.log(model.view());
 console.log(model + '');
-
 
 model.api.root({
   counter: 0,
@@ -26,7 +27,6 @@ model.api.root({
 
 console.log(model.view());
 console.log(model + '');
-
 
 // model.proxy.toApi().set({
 //   counter: 25,
@@ -40,7 +40,6 @@ model.api.str(['text']).ins(5, ' world!');
 
 console.log(model.view());
 console.log(model + '');
-
 
 const blob = model.toBinary();
 console.log(blob);
@@ -93,4 +92,3 @@ console.log(patchBlob);
 //   120,   7,  99, 111, 117, 110, 116, 101, 114, 139, 236,
 //   131, 136,  32, 119, 111, 114, 108, 100,  33
 // ]
-
