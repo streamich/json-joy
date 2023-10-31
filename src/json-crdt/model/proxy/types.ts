@@ -23,7 +23,7 @@ export type ProxyNodeObj<N extends ObjectLww<any>> = ProxyNode<N> & {
 };
 export type ProxyNodeStr = ProxyNode<StringRga>;
 export type ProxyNodeBin = ProxyNode<BinaryRga>;
-export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> & Record<number, JsonNodeToProxyNode<N['get']>>;
+export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> & Record<number, JsonNodeToProxyNode<N extends ArrayRga<infer E> ? E : never>>;
 
 // prettier-ignore
 export type JsonNodeToProxyNode<N> = N extends Const<any>
