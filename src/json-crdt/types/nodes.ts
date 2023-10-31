@@ -8,6 +8,7 @@ import type {StringRga} from './rga-string/StringRga';
 import type {BinaryRga} from './rga-binary/BinaryRga';
 import type {ArrayRga} from './rga-array/ArrayRga';
 
+// tslint:disable-next-line:no-namespace
 export namespace n {
   export type con<View = unknown | ITimestampStruct> = Const<View>;
   export type val<Value extends JsonNode = JsonNode> = ValueLww<Value>;
