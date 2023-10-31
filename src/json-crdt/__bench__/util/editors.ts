@@ -189,14 +189,11 @@ export const editors = {
       };
     },
   },
-  'collabs': {
+  collabs: {
     name: 'collabs',
     factory: () => {
       const doc = new CRuntime();
-      const text: CText = doc.registerCollab(
-        "text",
-        (init) => new CText(init)
-      );
+      const text: CText = doc.registerCollab('text', (init) => new CText(init));
       return {
         ins: (pos: number, insert: string) => {
           text.insert(pos, insert);
