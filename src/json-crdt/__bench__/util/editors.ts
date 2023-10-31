@@ -5,6 +5,7 @@ import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
+import {CRuntime, CText} from '@collabs/collabs';
 import type {SequentialTraceEditor} from './types';
 const AutomergeUnstable = require('@automerge/automerge/dist/cjs/unstable');
 const Rope = require('rope.js');
@@ -185,6 +186,27 @@ export const editors = {
         get: () => r.toString(),
         len: () => r.toString().length,
         chunks: () => r.segs.length,
+      };
+    },
+  },
+  'collabs': {
+    name: 'collabs',
+    factory: () => {
+      const doc = new CRuntime();
+      const text: CText = doc.registerCollab(
+        "text",
+        (init) => new CText(init)
+      );
+      return {
+        ins: (pos: number, insert: string) => {
+          text.insert(pos, insert);
+        },
+        del: (pos: number, len: number) => {
+          text.delete(pos, len);
+        },
+        get: () => text.toString(),
+        len: () => text.toString().length,
+        chunks: () => 0,
       };
     },
   },
