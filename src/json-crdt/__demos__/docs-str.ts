@@ -38,7 +38,6 @@ console.log(bar + '');
 //    └─ StringChunk 1234.10!6 len:11 { " world" }
 //       ← StringChunk 1234.3!5 len:5 { "hello" }
 
-
 bar.del(0, 6);
 console.log(bar + '');
 // StringApi

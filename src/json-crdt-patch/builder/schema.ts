@@ -1,5 +1,5 @@
-import type {ITimestampStruct} from "../clock";
-import {NodeBuilder} from "./DelayedValueBuilder";
+import type {ITimestampStruct} from '../clock';
+import {NodeBuilder} from './DelayedValueBuilder';
 
 /* tslint:disable no-namespace class-name */
 export namespace nodes {
@@ -7,7 +7,7 @@ export namespace nodes {
     public readonly type = 'con';
 
     constructor(public readonly raw: T) {
-      super(builder => builder.const(raw));
+      super((builder) => builder.const(raw));
     }
   }
 
@@ -15,7 +15,7 @@ export namespace nodes {
     public readonly type = 'str';
 
     constructor(public readonly raw: T) {
-      super(builder => builder.json(raw));
+      super((builder) => builder.json(raw));
     }
   }
 
@@ -23,7 +23,7 @@ export namespace nodes {
     public readonly type = 'bin';
 
     constructor(public readonly raw: Uint8Array) {
-      super(builder => builder.json(raw));
+      super((builder) => builder.json(raw));
     }
   }
 
@@ -31,7 +31,7 @@ export namespace nodes {
     public readonly type = 'val';
 
     constructor(public readonly value: T) {
-      super(builder => {
+      super((builder) => {
         const valueId = value.build(builder);
         return builder.val(valueId);
       });
@@ -42,7 +42,7 @@ export namespace nodes {
     public readonly type = 'vec';
 
     constructor(public readonly value: T) {
-      super(builder => {
+      super((builder) => {
         const vecId = builder.vec();
         const length = value.length;
         if (length) {
@@ -59,11 +59,14 @@ export namespace nodes {
     }
   }
 
-  export class obj<T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder> = {}> extends NodeBuilder {
+  export class obj<
+    T extends Record<string, NodeBuilder>,
+    O extends Record<string, NodeBuilder> = {},
+  > extends NodeBuilder {
     public readonly type = 'obj';
 
     constructor(public readonly obj: T, public readonly opt?: O) {
-      super(builder => {
+      super((builder) => {
         const objId = builder.obj();
         const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
         const merged = {...obj, ...opt};
@@ -79,7 +82,6 @@ export namespace nodes {
         }
         return objId;
       });
-
     }
 
     public optional<OO extends Record<string, NodeBuilder>>(): obj<T, O & OO> {
@@ -91,7 +93,7 @@ export namespace nodes {
     public readonly type = 'arr';
 
     constructor(public readonly arr: T[]) {
-      super(builder => {
+      super((builder) => {
         const arrId = builder.arr();
         const length = arr.length;
         if (length) {
@@ -108,11 +110,12 @@ export namespace nodes {
 
 export const schema = {
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
-  str: <T extends string>(str: T) => new nodes.str<T>(str || '' as T),
+  str: <T extends string>(str: T) => new nodes.str<T>(str || ('' as T)),
   bin: (bin: Uint8Array) => new nodes.bin(bin),
   val: <T extends NodeBuilder>(val: T) => new nodes.val<T>(val),
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
-  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) => new nodes.obj<T, O>(obj, opt),
+  obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
+    new nodes.obj<T, O>(obj, opt),
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
 };
 

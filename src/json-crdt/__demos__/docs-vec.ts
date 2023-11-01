@@ -14,7 +14,7 @@ const model = Model.withLogicalClock(1234); // 1234 is session ID
 model.api.root({
   foo: {
     bar: vec(1, 2),
-  }
+  },
 });
 
 console.log(model.root + '');
