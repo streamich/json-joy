@@ -14,7 +14,16 @@ export namespace n {
   export type val<Value extends JsonNode = JsonNode> = ValueLww<Value>;
   export type vec<Value extends JsonNode[] = JsonNode[]> = ArrayLww<Value>;
   export type obj<Value extends Record<string, JsonNode> = Record<string, JsonNode>> = ObjectLww<Value>;
-  export type str = StringRga;
+  export type str<T extends string = string> = StringRga<T>;
   export type bin = BinaryRga;
   export type arr<Element extends JsonNode = JsonNode> = ArrayRga<Element>;
 }
+
+export {Const} from './const/Const';
+export {ValueLww} from './lww-value/ValueLww';
+export {RootLww} from './lww-root/RootLww';
+export {ArrayLww} from './lww-array/ArrayLww';
+export {ObjectLww} from './lww-object/ObjectLww';
+export {ArrayRga, ArrayChunk} from './rga-array/ArrayRga';
+export {BinaryRga, BinaryChunk} from './rga-binary/BinaryRga';
+export {StringRga, StringChunk} from './rga-string/StringRga';

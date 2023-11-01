@@ -13,12 +13,13 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga} from '../types';
+import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../types';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
 import type {JsonNode, JsonNodeView} from '../types/types';
 import type {Printable} from '../../util/print/types';
+import type {NodeBuilder} from '../../json-crdt-patch';
 
 export const UNDEFINED = new Const(ORIGIN, undefined);
 
@@ -294,11 +295,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @param sessionId Session ID to use for the new model.
    * @returns A copy of this model with a new session ID.
    */
-  public fork(sessionId: number = randomSessionId()): Model {
+  public fork(sessionId: number = randomSessionId()): Model<RootJsonNode> {
     const copy = Model.fromBinary(this.toBinary());
     if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
-    return copy;
+    return copy as Model<RootJsonNode>;
   }
 
   /**
@@ -306,7 +307,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    *
    * @returns A copy of this model with the same session ID.
    */
-  public clone(): Model {
+  public clone(): Model<RootJsonNode> {
     return this.fork(this.clock.sid);
   }
 
@@ -326,6 +327,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public toBinary(): Uint8Array {
     return encoder.encode(this);
+  }
+
+  public setSchema<S extends NodeBuilder>(schema: S): Model<BuilderNodeToJsonNode<S>> {
+    if (this.clock.time < 2) this.api.root(schema);
+    return <any>this;
   }
 
   // ---------------------------------------------------------------- Printable

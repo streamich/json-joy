@@ -65,7 +65,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    * exists, returns the existing instance.
    */
   public wrap(node: ValueLww): ValueApi;
-  public wrap(node: StringRga): StringApi;
+  public wrap(node: StringRga<any>): StringApi;
   public wrap(node: BinaryRga): BinaryApi;
   public wrap(node: ArrayRga): ArrayApi;
   public wrap(node: ObjectLww): ObjectApi;

@@ -70,7 +70,7 @@ export class StringChunk implements Chunk<string> {
  *
  * @category CRDT Node
  */
-export class StringRga extends AbstractRga<string> implements JsonNode<string> {
+export class StringRga<T extends string = string> extends AbstractRga<string> implements JsonNode<string> {
   // ----------------------------------------------------------------- JsonNode
 
   /** @ignore */
@@ -88,13 +88,13 @@ export class StringRga extends AbstractRga<string> implements JsonNode<string> {
 
   /** @ignore */
   private _view: string = '';
-  public view(): string {
-    if (this._view) return this._view;
+  public view(): T {
+    if (this._view) return this._view as T;
     let str = '';
     for (let chunk = this.first(); chunk; chunk = next(chunk))
       // TODO: Check if this optimization improves performance: if (!chunk.del) str += chunk.data;
       str += chunk.data;
-    return (this._view = str);
+    return (this._view = str) as T;
   }
 
   /** @ignore */
