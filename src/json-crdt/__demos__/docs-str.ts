@@ -25,21 +25,21 @@ console.log(model.view());
 // { text: 'hello' }
 
 // Retrieve node at path ['text'] as "str" type.
-const bar = model.api.str(['text']);
-console.log(bar + '');
+const text = model.api.str(['text']);
+console.log(text + '');
 // StringApi
 // └─ StringRga "str" 1234.2 { "hello" }
 //    └─ StringChunk 1234.3!5 len:5 { "hello" }
 
-bar.ins(5, ' world');
-console.log(bar + '');
+text.ins(5, ' world');
+console.log(text + '');
 // StringApi
 // └─ StringRga "str" 1234.2 { "hello world" }
 //    └─ StringChunk 1234.10!6 len:11 { " world" }
 //       ← StringChunk 1234.3!5 len:5 { "hello" }
 
-bar.del(0, 6);
-console.log(bar + '');
+text.del(0, 6);
+console.log(text + '');
 // StringApi
 // └─ StringRga "str" 1234.2 { "world" }
 //    └─ StringChunk 1234.10!1 len:5 [1]
