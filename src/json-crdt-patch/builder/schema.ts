@@ -44,14 +44,16 @@ export namespace nodes {
     constructor(public readonly value: T) {
       super(builder => {
         const vecId = builder.vec();
-        const elementPairs: [index: number, value: ITimestampStruct][] = [];
         const length = value.length;
-        for (let i = 0; i < length; i++) {
-          const element = value[i];
-          const elementId = element.build(builder);
-          elementPairs.push([i, elementId]);
+        if (length) {
+          const elementPairs: [index: number, value: ITimestampStruct][] = [];
+          for (let i = 0; i < length; i++) {
+            const element = value[i];
+            const elementId = element.build(builder);
+            elementPairs.push([i, elementId]);
+          }
+          builder.insVec(vecId, elementPairs);
         }
-        builder.insVec(vecId, elementPairs);
         return vecId;
       });
     }
@@ -67,12 +69,14 @@ export namespace nodes {
         const merged = {...obj, ...opt};
         const keys = Object.keys(merged);
         const length = keys.length;
-        for (let i = 0; i < length; i++) {
-          const key = keys[i];
-          const valueId = merged[key].build(builder);
-          keyValuePairs.push([key, valueId]);
+        if (length) {
+          for (let i = 0; i < length; i++) {
+            const key = keys[i];
+            const valueId = merged[key].build(builder);
+            keyValuePairs.push([key, valueId]);
+          }
+          builder.insObj(objId, keyValuePairs);
         }
-        builder.insObj(objId, keyValuePairs);
         return objId;
       });
 
@@ -90,9 +94,11 @@ export namespace nodes {
       super(builder => {
         const arrId = builder.arr();
         const length = arr.length;
-        const valueIds: ITimestampStruct[] = [];
-        for (let i = 0; i < length; i++) valueIds.push(arr[i].build(builder));
-        builder.insArr(arrId, arrId, valueIds);
+        if (length) {
+          const valueIds: ITimestampStruct[] = [];
+          for (let i = 0; i < length; i++) valueIds.push(arr[i].build(builder));
+          builder.insArr(arrId, arrId, valueIds);
+        }
         return arrId;
       });
     }
