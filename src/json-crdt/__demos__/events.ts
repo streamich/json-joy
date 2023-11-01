@@ -1,0 +1,22 @@
+/* tslint:disable no-console */
+
+/**
+ * Run this demo with:
+ *
+ *     npx nodemon -q -x ts-node src/json-crdt/__demos__/events.ts
+ */
+
+import {Model} from '..';
+
+const model = Model.withLogicalClock(1234); // 1234 is the session ID
+
+// No events
+// model.applyPatch();
+
+// DOM Level 0 events
+// model.onchange = () => {
+// };
+
+// DOM Level 2 events
+model.api.events.addEventListener();
+
