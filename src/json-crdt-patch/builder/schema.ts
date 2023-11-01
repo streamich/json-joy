@@ -1,6 +1,7 @@
 import type {ITimestampStruct} from "../clock";
 import {NodeBuilder} from "./DelayedValueBuilder";
 
+/* tslint:disable no-namespace class-name */
 export namespace nodes {
   export class con<T extends unknown | ITimestampStruct> extends NodeBuilder {
     public readonly type = 'con';
@@ -97,6 +98,7 @@ export namespace nodes {
     }
   }
 }
+/* tslint:enable no-namespace class-name */
 
 export const schema = {
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
