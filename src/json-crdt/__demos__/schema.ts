@@ -7,12 +7,9 @@
  */
 
 import {Model} from '..';
-import {s, nodes} from '../../json-crdt-patch/builder/schema';
+import {nodes, s} from '../../json-crdt-patch/builder/schema';
 
-const model = Model.withLogicalClock(1234);
-
-
-const mySchema = s.obj({
+const schema = s.obj({
   id: s.con(''),
   counter: s.con(0),
   bool: s.con(true),
@@ -42,7 +39,6 @@ const mySchema = s.obj({
   num: nodes.con<number>;
 }>();
 
-
-model.api.root(mySchema);
+const model = Model.withLogicalClock(1234).setSchema(schema);
 
 console.log(model + '');
