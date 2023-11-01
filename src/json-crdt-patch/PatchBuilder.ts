@@ -21,7 +21,7 @@ import {Patch} from './Patch';
 import {ORIGIN} from './constants';
 import {VectorDelayedValue} from './builder/Tuple';
 import {Konst} from './builder/Konst';
-import {DelayedValueBuilder} from './builder/DelayedValueBuilder';
+import {NodeBuilder} from './builder/DelayedValueBuilder';
 
 const maybeConst = (x: unknown): boolean => {
   switch (typeof x) {
@@ -377,7 +377,7 @@ export class PatchBuilder {
     if (isUint8Array(json)) return this.jsonBin(json);
     if (json instanceof VectorDelayedValue) return this.jsonVec(json.slots);
     if (json instanceof Konst) return this.const(json.val);
-    if (json instanceof DelayedValueBuilder) return json.build(this);
+    if (json instanceof NodeBuilder) return json.build(this);
     switch (typeof json) {
       case 'object':
         return json === null ? this.jsonVal(json) : this.jsonObj(json!);

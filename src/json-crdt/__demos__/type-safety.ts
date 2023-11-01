@@ -13,6 +13,7 @@ const model = Model.withLogicalClock(1234) as Model<
     num: n.con<number>;
     text: n.str;
     flags: n.arr<n.val<n.con<boolean>>>;
+    verified?: n.con<boolean>;
   }>
 >;
 
@@ -25,7 +26,8 @@ model.api.root({
   flags: [true, false],
 });
 
-console.log(model.view());
+const view = model.view();
+console.log(view);
 // { num: 123, text: 'hello', flags: [ true, false ] }
 
 console.log(model + '');
