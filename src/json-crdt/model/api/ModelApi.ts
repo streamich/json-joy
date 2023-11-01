@@ -84,16 +84,16 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     else throw new Error('UNKNOWN_NODE');
   }
 
-  /** @ignore */
-  public get node() {
-    return new NodeApi(this.model.root.node(), this);
-  }
-
   /**
    * Local changes API for the root node.
    */
   public get r() {
     return new ValueApi(this.model.root, this);
+  }
+
+  /** @ignore */
+  public get node() {
+    return this.r.get();
   }
 
   /**

@@ -15,6 +15,7 @@ import type * as types from '../proxy/types';
 import type {JsonNode, JsonNodeView} from '../../types';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from '../../../util/print/types';
+import type {JsonNodeApi} from './types';
 
 export type ApiPath = string | number | Path | void;
 
@@ -183,6 +184,14 @@ export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
  */
 export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N> {
   /**
+   * Get API instance of the inner node.
+   * @returns Inner node API.
+   */
+  public get(): JsonNodeApi<N extends ValueLww<infer T> ? T : JsonNode> {
+    return this.in() as any;
+  }
+
+  /**
    * Sets the value of the node.
    *
    * @param json JSON/CBOR value or ID (logical timestamp) of the value to set.
@@ -260,12 +269,19 @@ export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<
   }
 }
 
+type ObjectLwwNodes<N> = N extends ObjectLww<infer T> ? T : never;
+
 /**
  * Local changes API for the `obj` JSON CRDT node {@link ObjectLww}.
  *
  * @category Local API
  */
 export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
+  public get<K extends keyof ObjectLwwNodes<N>>(key: K): JsonNodeApi<ObjectLwwNodes<N>[K]> {
+    return this.in(key as string) as any;
+  }
+
+
   /**
    * Sets a list of keys to the given values.
    *
