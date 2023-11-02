@@ -57,4 +57,3 @@ console.log(model.api.node.get('text').view());
 // "hello"
 console.log(model.api.node.get('friend').get('name').view());
 // "John"
-

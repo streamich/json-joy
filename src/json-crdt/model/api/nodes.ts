@@ -223,6 +223,8 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
   }
 }
 
+type ArrayLwwNodes<N> = N extends ArrayLww<infer T> ? T : never;
+
 /**
  * Local changes API for the `vec` JSON CRDT node {@link ArrayLww}.
  *
@@ -230,6 +232,16 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
  * @todo Rename to VectorApi.
  */
 export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
+  /**
+   * Get API instance of a child node.
+   *
+   * @param key Object key to get.
+   * @returns A specified child node API.
+   */
+  public get<K extends keyof ArrayLwwNodes<N>>(key: K): JsonNodeApi<ArrayLwwNodes<N>[K]> {
+    return this.in(key as string) as any;
+  }
+
   /**
    * Sets a list of elements to the given values.
    *
@@ -277,10 +289,15 @@ type ObjectLwwNodes<N> = N extends ObjectLww<infer T> ? T : never;
  * @category Local API
  */
 export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
+  /**
+   * Get API instance of a child node.
+   *
+   * @param key Object key to get.
+   * @returns A specified child node API.
+   */
   public get<K extends keyof ObjectLwwNodes<N>>(key: K): JsonNodeApi<ObjectLwwNodes<N>[K]> {
     return this.in(key as string) as any;
   }
-
 
   /**
    * Sets a list of keys to the given values.
@@ -445,6 +462,8 @@ export class BinaryApi extends NodeApi<BinaryRga> {
   }
 }
 
+type ArrayRgaInnerType<N> = N extends ArrayRga<infer T> ? T : never;
+
 /**
  * Local changes API for the `arr` JSON CRDT node {@link ArrayRga}. This API
  * allows to insert and delete elements in the array by referencing their local
@@ -453,6 +472,16 @@ export class BinaryApi extends NodeApi<BinaryRga> {
  * @category Local API
  */
 export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
+  /**
+   * Get API instance of a child node.
+   *
+   * @param index Index of the element to get.
+   * @returns Child node API for the element at the given index.
+   */
+  public get(index: number): JsonNodeApi<ArrayRgaInnerType<N>> {
+    return this.in(index) as any;
+  }
+
   /**
    * Inserts elements at a given position.
    *
