@@ -46,12 +46,10 @@ console.log(model + '');
 // │
 // └─ VectorClock 1234.16
 
-
 console.log(model.view().friend.name);
 // "John"
 console.log(model.view().friend.tags[1]);
 // "bar"
-
 
 console.log(model.api.node.get('text').view());
 // "hello"
