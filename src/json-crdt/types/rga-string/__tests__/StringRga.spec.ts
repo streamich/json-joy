@@ -153,7 +153,7 @@ describe('binary tree', () => {
   test('can print tree layout', () => {
     const tree = createTree();
     expect(tree.toString()).toMatchInlineSnapshot(`
-      "StringRga .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
+      "StringRga "str" .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
       └─ StringChunk .8!2 len:36 { "a8" }
          ← StringChunk .4!2 len:14 { "a4" }
            ← StringChunk .2!2 len:6 { "a2" }

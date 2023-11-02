@@ -8,7 +8,7 @@ onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.addEventListener('change', () => {
+    api.events.on('change', () => {
       cnt++;
     });
     api.obj([]).set({gg: true});
@@ -25,7 +25,7 @@ onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.addEventListener('change', () => {
+    api.events.on('change', () => {
       cnt++;
     });
     api.obj([]).set({gg: true});
@@ -40,10 +40,10 @@ onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.addEventListener('change', () => {
+    api.events.on('change', () => {
       cnt++;
     });
-    api.events.addEventListener('change', () => {
+    api.events.on('change', () => {
       cnt++;
     });
     expect(cnt).toBe(0);
@@ -56,7 +56,7 @@ onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
   it('fires "change" event when a value is set to the same value', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.api.events.addEventListener('change', () => {
+    model.api.events.on('change', () => {
       cnt++;
     });
     await Promise.resolve();
@@ -72,7 +72,7 @@ onlyOnNode20('DOM Level 2 events, .et.addEventListener()', () => {
   it('fires "change" event when a value is deleted', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.api.events.addEventListener('change', () => {
+    model.api.events.on('change', () => {
       cnt++;
     });
     await Promise.resolve();

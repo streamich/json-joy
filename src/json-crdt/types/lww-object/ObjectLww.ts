@@ -127,7 +127,7 @@ export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, J
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const header = this.constructor.name + ' ' + toDisplayString(this.id);
+    const header = this.constructor.name + ' "obj" ' + toDisplayString(this.id);
     return (
       header +
       printTree(

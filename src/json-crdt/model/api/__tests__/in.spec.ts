@@ -16,7 +16,7 @@ describe('can use .in() method to reference any model node', () => {
   doc.api.root({
     foo: [1],
   });
-  doc.api.node.in('/foo/0').asVal().set({bar: 'baz'});
+  doc.api.r.in('/foo/0').asVal().set({bar: 'baz'});
 
   test('can access array element ValueLww and its contents', () => {
     const register1 = doc.api.r.in().in('foo').in(0).asVal();

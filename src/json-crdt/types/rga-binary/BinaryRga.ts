@@ -120,4 +120,8 @@ export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8
   protected onChange(): void {
     this._view = null;
   }
+
+  protected toStringName(): string {
+    return super.toStringName() + ' "bin"';
+  }
 }

@@ -1,4 +1,4 @@
-import type {DelayedValueBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
+import type {NodeBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
 import type {ModelApi} from '../model/api/ModelApi';
 import type {NodeApi} from '../model/api/nodes';
 import type {JsonNode} from '../types';
@@ -15,7 +15,7 @@ export interface ExtensionDefinition<
   EApi extends ExtensionApi<ENode> = ExtensionApi<ENode>,
 > {
   id: number;
-  new: (...args: any[]) => DelayedValueBuilder;
+  new: (...args: any[]) => NodeBuilder;
   Node: new (data: Node) => ENode;
   Api: new (node: ENode, api: ModelApi) => EApi;
 }

@@ -36,7 +36,7 @@ export class NodeEvents extends Emitter<NodeEventMap> {
 
   private setupViewEvents(): void {
     this._view = this.api.node.view();
-    this.api.api.events.addEventListener('change', this.onModelChange);
+    this.api.api.events.on('change', this.onModelChange);
   }
 
   public on<K extends keyof NodeEventMap>(
@@ -57,7 +57,7 @@ export class NodeEvents extends Emitter<NodeEventMap> {
   ): void {
     if (type === 'view') this.viewSubs.delete(listener);
     const shouldUnsubscribeFromModelChanges = this.viewSubs.size === 1;
-    if (shouldUnsubscribeFromModelChanges) this.api.api.events.removeEventListener('change', this.onModelChange);
+    if (shouldUnsubscribeFromModelChanges) this.api.api.events.off('change', this.onModelChange);
     super.off(type, listener, options);
   }
 }

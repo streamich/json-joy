@@ -20,6 +20,7 @@ runTraceMatrix({
     // 'Y.rs',
     // 'AutomergeUnstable',
     // 'Automerge',
+    // 'collabs',
   ],
   iterationsPerEditor: 50,
 });

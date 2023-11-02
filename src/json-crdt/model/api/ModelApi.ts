@@ -1,5 +1,6 @@
 import {ArrayLww, Const, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
 import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
+import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import type {JsonNode} from '../../types';
@@ -41,20 +42,20 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     queueMicrotask(() => {
       this.changeQueued = false;
       const et = this.et;
-      if (et) et.dispatchEvent(new CustomEvent('change'));
+      if (et) et.emit(new CustomEvent('change'));
     });
   };
 
   /** @ignore */
-  private et: undefined | EventTarget = undefined;
+  private et: undefined | Emitter<{change: CustomEvent<unknown>}> = undefined;
 
   /**
    * Event target for listening to {@link Model} changes.
    */
-  public get events(): EventTarget {
+  public get events(): Emitter<{change: CustomEvent<unknown>}> {
     let et = this.et;
     if (!et) {
-      this.et = et = new EventTarget();
+      this.et = et = new Emitter();
       this.model.onchange = this.queueChange;
     }
     return et;
@@ -65,7 +66,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    * exists, returns the existing instance.
    */
   public wrap(node: ValueLww): ValueApi;
-  public wrap(node: StringRga): StringApi;
+  public wrap(node: StringRga<any>): StringApi;
   public wrap(node: BinaryRga): BinaryApi;
   public wrap(node: ArrayRga): ArrayApi;
   public wrap(node: ObjectLww): ObjectApi;
@@ -83,16 +84,16 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     else throw new Error('UNKNOWN_NODE');
   }
 
-  /** @ignore */
-  public get node() {
-    return new NodeApi(this.model.root.node(), this);
-  }
-
   /**
    * Local changes API for the root node.
    */
   public get r() {
     return new ValueApi(this.model.root, this);
+  }
+
+  /** @ignore */
+  public get node() {
+    return this.r.get();
   }
 
   /**
