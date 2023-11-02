@@ -14,7 +14,7 @@ console.clear();
 const model = Model.withLogicalClock(1234); // 1234 is session ID
 
 model.api.root({
-  tags: ['big', 'small', 'red']
+  tags: ['big', 'small', 'red'],
 });
 
 console.log(model.view());
@@ -24,7 +24,7 @@ console.log(model.root + '');
 // RootLww "val" 0.0
 // └─ ObjectLww "obj" 1234.1
 //    └─ "tags"
-//        └─ ArrayRga "arr" 1234.2 
+//        └─ ArrayRga "arr" 1234.2
 //           └─ ArrayChunk 1234.17!3 len:3
 //              ├─ [0]: StringRga "str" 1234.3 { "big" }
 //              │       └─ StringChunk 1234.4!3 len:3 { "big" }
@@ -44,7 +44,7 @@ console.log(model.root + '');
 // RootLww "val" 0.0
 // └─ ObjectLww "obj" 1234.1
 //    └─ "tags"
-//        └─ ArrayRga "arr" 1234.22 
+//        └─ ArrayRga "arr" 1234.22
 //           └─ ArrayChunk 1234.26!3 len:3
 //              ├─ [0]: Const "con" 1234.23 { "big" }
 //              ├─ [1]: Const "con" 1234.24 { "small" }
@@ -54,7 +54,7 @@ console.log(model.root + '');
 const tags = model.api.arr(['tags']);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22 
+// └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.26!3 len:3
 //       ├─ [0]: Const "con" 1234.23 { "big" }
 //       ├─ [1]: Const "con" 1234.24 { "small" }
@@ -63,7 +63,7 @@ console.log(tags + '');
 tags.ins(1, [konst('medium'), konst('blue')]);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22 
+// └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.32!2 len:5
 //       ├─ [1]: Const "con" 1234.30 { "medium" }
 //       └─ [2]: Const "con" 1234.31 { "blue" }
@@ -79,7 +79,7 @@ console.log(tags.view());
 tags.del(2, 2);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22 
+// └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.32!1 len:3
 //       └─ [1]: Const "con" 1234.30 { "medium" }
 //       ← ArrayChunk 1234.26!1 len:1
