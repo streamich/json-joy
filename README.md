@@ -30,6 +30,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - [__JSON CRDT Patch__](https://jsonjoy.com/specs/json-crdt-patch) `specification`
 - [__JSON Expression__](https://jsonjoy.com/specs/json-expression) `specification`
 - [__JSON Reactive RPC__](https://jsonjoy.com/specs/json-rx) `specification`
+- [__Compact JSON__](https://jsonjoy.com/specs/compact-json) `encoding`
 - [__API Reference__](https://streamich.github.io/json-joy/)
 - [__Test coverage__](https://streamich.github.io/json-joy/coverage/lcov-report/)
 
