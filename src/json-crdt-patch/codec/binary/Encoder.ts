@@ -52,10 +52,10 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const time = id.time;
     const writer = this.writer;
     if (sessionId === this.patchSid) {
-      writer.b1vu56(1, time);
+      writer.b1vu56(0, time);
     } else {
-      writer.b1vu56(0, sessionId);
-      writer.vu57(time);
+      writer.b1vu56(1, time);
+      writer.vu57(sessionId);
     }
   }
 

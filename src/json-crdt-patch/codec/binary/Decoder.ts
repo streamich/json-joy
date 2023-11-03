@@ -45,8 +45,8 @@ export class Decoder extends CborDecoder<CrdtReader> {
 
   protected decodeId(): ITimestampStruct {
     const reader = this.reader;
-    const [isRelativeTime, x] = reader.b1vu56();
-    return isRelativeTime ? new Timestamp(this.patchSid!, x) : new Timestamp(x, reader.vu57());
+    const [isSessionDifferent, x] = reader.b1vu56();
+    return isSessionDifferent ? new Timestamp(reader.vu57(), x) : new Timestamp(this.patchSid!, x);
   }
 
   protected decodeTss(): ITimespanStruct {
