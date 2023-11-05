@@ -176,7 +176,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
     const extNode = this.ext();
     const header =
       this.constructor.name +
-      ' "vec" ' +
+      ' ' +
       toDisplayString(this.id) +
       (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
