@@ -1,4 +1,4 @@
-import {ValNode} from '../../nodes/val/ValueLww';
+import {ValNode} from '../../nodes';
 import {Model} from '../Model';
 
 test('removes from index rewritten root nodes', () => {
@@ -34,7 +34,7 @@ test('removes from index deleted object keys', () => {
   expect(!!doc.index.get(keyValue)).toBe(false);
 });
 
-test('removes from index rewritten ValueLww register values', () => {
+test('removes from index rewritten ValNode register values', () => {
   const doc = Model.withLogicalClock();
   doc.api.root([123]);
   const register = doc.api.val([0]).node;

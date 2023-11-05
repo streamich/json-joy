@@ -1,17 +1,4 @@
-import {
-  ConNode,
-  RootLww,
-  JsonNode,
-  ValueLww,
-  ArrayLww,
-  ArrayRga,
-  ArrayChunk,
-  BinaryRga,
-  BinaryChunk,
-  ObjectLww,
-  StringRga,
-  StringChunk,
-} from '../../../nodes';
+import * as nodes from '../../../nodes';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
@@ -60,12 +47,12 @@ export class Decoder {
   }
 
   protected cRoot(doc: Model, {node}: ValueJsonCrdtNode): void {
-    const val = node ? this.cNode(doc, node) : new ConNode(doc.clock.tick(0), null);
-    const root = new RootLww(doc, val.id);
+    const val = node ? this.cNode(doc, node) : new nodes.ConNode(doc.clock.tick(0), null);
+    const root = new nodes.RootLww(doc, val.id);
     doc.root = root;
   }
 
-  protected cNode(doc: Model, node: JsonCrdtNode): JsonNode {
+  protected cNode(doc: Model, node: JsonCrdtNode): nodes.JsonNode {
     switch (node.type) {
       case 'obj':
         return this.cObj(doc, node);
@@ -85,9 +72,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cObj(doc: Model, node: ObjectJsonCrdtNode): ObjectLww {
+  protected cObj(doc: Model, node: ObjectJsonCrdtNode): nodes.ObjectLww {
     const id = this.cTs(node.id);
-    const obj = new ObjectLww(doc, id);
+    const obj = new nodes.ObjectLww(doc, id);
     const keys = Object.keys(node.keys);
     for (const key of keys) {
       const keyNode = node.keys[key];
@@ -97,9 +84,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cTup(doc: Model, node: TupleJsonCrdtNode): ArrayLww {
+  protected cTup(doc: Model, node: TupleJsonCrdtNode): nodes.ArrayLww {
     const id = this.cTs(node.id);
-    const obj = new ArrayLww(doc, id);
+    const obj = new nodes.ArrayLww(doc, id);
     const elements = obj.elements;
     const components = node.components;
     const length = components.length;
@@ -112,9 +99,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cArr(doc: Model, node: ArrayJsonCrdtNode): ArrayRga {
+  protected cArr(doc: Model, node: ArrayJsonCrdtNode): nodes.ArrayRga {
     const id = this.cTs(node.id);
-    const rga = new ArrayRga(doc, id);
+    const rga = new nodes.ArrayRga(doc, id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -124,10 +111,10 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new ArrayChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+          return new nodes.ArrayChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
         else {
           const ids = (c as ArrayJsonCrdtChunk).nodes.map((n) => this.cNode(doc, n).id);
-          return new ArrayChunk(id, ids.length, ids);
+          return new nodes.ArrayChunk(id, ids.length, ids);
         }
       });
     }
@@ -135,9 +122,9 @@ export class Decoder {
     return rga;
   }
 
-  protected cStr(doc: Model, node: StringJsonCrdtNode): StringRga {
+  protected cStr(doc: Model, node: StringJsonCrdtNode): nodes.StringRga {
     const id = this.cTs(node.id);
-    const rga = new StringRga(id);
+    const rga = new nodes.StringRga(id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -147,10 +134,10 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new StringChunk(id, (c as JsonCrdtRgaTombstone).span, '');
+          return new nodes.StringChunk(id, (c as JsonCrdtRgaTombstone).span, '');
         else {
           const value = (c as StringJsonCrdtChunk).value;
-          return new StringChunk(id, value.length, value);
+          return new nodes.StringChunk(id, value.length, value);
         }
       });
     }
@@ -158,9 +145,9 @@ export class Decoder {
     return rga;
   }
 
-  protected cBin(doc: Model, node: BinaryJsonCrdtNode): BinaryRga {
+  protected cBin(doc: Model, node: BinaryJsonCrdtNode): nodes.BinaryRga {
     const id = this.cTs(node.id);
-    const rga = new BinaryRga(id);
+    const rga = new nodes.BinaryRga(id);
     const chunks = node.chunks;
     const length = chunks.length;
     const self = this;
@@ -170,11 +157,11 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new BinaryChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+          return new nodes.BinaryChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
         else {
           const value = (c as BinaryJsonCrdtChunk).value;
           const buf = fromBase64(value);
-          return new BinaryChunk(id, buf.length, buf);
+          return new nodes.BinaryChunk(id, buf.length, buf);
         }
       });
     }
@@ -182,18 +169,18 @@ export class Decoder {
     return rga;
   }
 
-  protected cVal(doc: Model, node: ValueJsonCrdtNode): ValueLww {
+  protected cVal(doc: Model, node: ValueJsonCrdtNode): nodes.ValNode {
     const id = this.cTs(node.id);
     const val = this.cNode(doc, node.node);
-    const obj = new ValueLww(doc, id, val.id);
+    const obj = new nodes.ValNode(doc, id, val.id);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected cConst(doc: Model, node: ConstantJsonCrdtNode): ConNode {
+  protected cConst(doc: Model, node: ConstantJsonCrdtNode): nodes.ConNode {
     const id = this.cTs(node.id);
     const val = node.timestamp ? this.cTs(node.value as JsonCrdtLogicalTimestamp) : node.value;
-    const obj = new ConNode(id, val);
+    const obj = new nodes.ConNode(id, val);
     doc.index.set(id, obj);
     return obj;
   }

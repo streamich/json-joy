@@ -1,49 +1,38 @@
 import type {JsonNodeApi} from '../api/types';
-import type {
-  ConNode,
-  RootLww,
-  JsonNode,
-  JsonNodeView,
-  ValueLww,
-  ArrayLww,
-  ArrayRga,
-  BinaryRga,
-  ObjectLww,
-  StringRga,
-} from '../../nodes';
+import type * as nodes from '../../nodes';
 
-export interface ProxyNode<N extends JsonNode = JsonNode> {
+export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   toApi(): JsonNodeApi<N>;
 }
 
-export type ProxyNodeCon<N extends ConNode<any>> = ProxyNode<N>;
-export type ProxyNodeVal<N extends ValueLww<any>> = ProxyNode<N> & {val: JsonNodeToProxyNode<ReturnType<N['child']>>};
-export type ProxyNodeVec<N extends ArrayLww<any>> = ProxyNode<N> & {
-  [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<JsonNodeView<N>[K]>;
+export type ProxyNodeCon<N extends nodes.ConNode<any>> = ProxyNode<N>;
+export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {val: JsonNodeToProxyNode<ReturnType<N['child']>>};
+export type ProxyNodeVec<N extends nodes.ArrayLww<any>> = ProxyNode<N> & {
+  [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<nodes.JsonNodeView<N>[K]>;
 };
-export type ProxyNodeObj<N extends ObjectLww<any>> = ProxyNode<N> & {
-  [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<(N extends ObjectLww<infer M> ? M : never)[K]>;
+export type ProxyNodeObj<N extends nodes.ObjectLww<any>> = ProxyNode<N> & {
+  [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<(N extends nodes.ObjectLww<infer M> ? M : never)[K]>;
 };
-export type ProxyNodeStr = ProxyNode<StringRga>;
-export type ProxyNodeBin = ProxyNode<BinaryRga>;
-export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> &
-  Record<number, JsonNodeToProxyNode<N extends ArrayRga<infer E> ? E : never>>;
+export type ProxyNodeStr = ProxyNode<nodes.StringRga>;
+export type ProxyNodeBin = ProxyNode<nodes.BinaryRga>;
+export type ProxyNodeArr<N extends nodes.ArrayRga<any>> = ProxyNode<N> &
+  Record<number, JsonNodeToProxyNode<N extends nodes.ArrayRga<infer E> ? E : never>>;
 
 // prettier-ignore
-export type JsonNodeToProxyNode<N> = N extends ConNode<any>
+export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
   ? ProxyNodeCon<N>
-  : N extends RootLww<any>
+  : N extends nodes.RootLww<any>
     ? ProxyNodeVal<N>
-    : N extends ValueLww<any>
+    : N extends nodes.ValNode<any>
       ? ProxyNodeVal<N>
-      : N extends StringRga
+      : N extends nodes.StringRga
         ? ProxyNodeStr
-        : N extends BinaryRga
+        : N extends nodes.BinaryRga
           ? ProxyNodeBin
-          : N extends ArrayRga<any>
+          : N extends nodes.ArrayRga<any>
             ? ProxyNodeArr<N>
-            : N extends ObjectLww<any>
+            : N extends nodes.ObjectLww<any>
               ? ProxyNodeObj<N>
-              : N extends ArrayLww<any>
+              : N extends nodes.ArrayLww<any>
                 ? ProxyNodeVec<N>
                 : never;

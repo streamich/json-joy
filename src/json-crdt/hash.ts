@@ -1,9 +1,5 @@
 import {CONST, updateNum} from '../json-hash';
-import {ConNode} from './nodes';
-import {ValNode} from './nodes/val/ValueLww';
-import {ObjectLww} from './nodes/lww-object/ObjectLww';
-import {ArrayLww} from './nodes/lww-array/ArrayLww';
-import {ArrayRga} from './nodes/rga-array/ArrayRga';
+import {ConNode, ValNode, ObjectLww, ArrayLww, ArrayRga} from './nodes';
 import {AbstractRga} from './nodes/rga';
 import {last2} from '../util/trees/util2';
 import type {JsonNode} from './nodes';

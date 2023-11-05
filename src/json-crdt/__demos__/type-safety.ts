@@ -42,9 +42,9 @@ console.log(model + '');
 // │     └─ "flags"
 // │         └─ ArrayRga "arr" 1234.9
 // │            └─ ArrayChunk 1234.14!2 len:2
-// │               ├─ [0]: ValueLww "val" 1234.11
+// │               ├─ [0]: ValNode 1234.11
 // │               │       └─ ConNode 1234.10 { true }
-// │               └─ [1]: ValueLww "val" 1234.13
+// │               └─ [1]: ValNode 1234.13
 // │                       └─ ConNode 1234.12 { false }
 // │
 // └─ VectorClock 1234.18
@@ -67,23 +67,23 @@ console.log(model.find.val.toApi() + '');
 //    └─ "flags"
 //        └─ ArrayRga "arr" 1234.9
 //           └─ ArrayChunk 1234.14!2 len:2
-//              ├─ [0]: ValueLww "val" 1234.11
+//              ├─ [0]: ValNode 1234.11
 //              │       └─ ConNode 1234.10 { true }
-//              └─ [1]: ValueLww "val" 1234.13
+//              └─ [1]: ValNode 1234.13
 //                      └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags.toApi() + '');
 // ArrayApi
 // └─ ArrayRga "arr" 1234.9
 //    └─ ArrayChunk 1234.14!2 len:2
-//       ├─ [0]: ValueLww "val" 1234.11
+//       ├─ [0]: ValNode 1234.11
 //       │       └─ ConNode 1234.10 { true }
-//       └─ [1]: ValueLww "val" 1234.13
+//       └─ [1]: ValNode 1234.13
 //               └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].toApi() + '');
 // ValueApi
-// └─ ValueLww "val" 1234.13
+// └─ ValNode 1234.13
 //    └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].val.toApi() + '');

@@ -14,14 +14,12 @@ import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder'
 import {Encoder as JsonEncoder} from '../../codec/structural/json/Encoder';
 import {generateInteger} from './util';
 import {Model} from '../..';
-import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StringRga} from '../../nodes/rga-string/StringRga';
+import {StringRga, ValNode, ObjectLww} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
-import {ValNode} from '../../nodes/val/ValueLww';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
 

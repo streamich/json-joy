@@ -1,7 +1,7 @@
 import {
   ConNode,
   JsonNode,
-  ValueLww,
+  ValNode,
   ArrayRga,
   ArrayChunk,
   BinaryRga,
@@ -109,9 +109,9 @@ export class Decoder {
     return new ConNode(id, val);
   }
 
-  public cVal(id: ITimestampStruct): ValueLww {
+  public cVal(id: ITimestampStruct): ValNode {
     const val = this.ts();
-    return new ValueLww(this.doc, id, val);
+    return new ValNode(this.doc, id, val);
   }
 
   public cObj(id: ITimestampStruct, length: number): ObjectLww {

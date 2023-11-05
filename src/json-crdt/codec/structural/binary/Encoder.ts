@@ -2,7 +2,7 @@ import {
   ConNode,
   RootLww,
   JsonNode,
-  ValueLww,
+  ValNode,
   ArrayLww,
   ArrayRga,
   BinaryRga,
@@ -89,7 +89,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
   protected cNode(node: JsonNode): void {
     // TODO: PERF: use a switch
     if (node instanceof ConNode) this.cConst(node);
-    else if (node instanceof ValueLww) this.cVal(node);
+    else if (node instanceof ValNode) this.cVal(node);
     else if (node instanceof StringRga) this.cStr(node);
     else if (node instanceof ObjectLww) this.cObj(node);
     else if (node instanceof ArrayLww) this.cTup(node);
@@ -170,7 +170,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cVal(obj: ValueLww): void {
+  protected cVal(obj: ValNode): void {
     this.ts(obj.id);
     this.writer.u8(0xd6);
     this.cNode(obj.node());

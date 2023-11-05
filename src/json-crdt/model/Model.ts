@@ -13,7 +13,7 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
+import {RootLww, ValNode, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -189,7 +189,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       const id = op.id;
       if (!index.get(id)) {
         const val = index.get(op.val);
-        if (val) index.set(id, new ValueLww(this, id, op.val));
+        if (val) index.set(id, new ValNode(this, id, op.val));
       }
     } else if (op instanceof operations.NewConOp) {
       const id = op.id;
@@ -225,7 +225,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     } else if (op instanceof operations.InsValOp) {
       const obj = op.obj;
       const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
-      if (node instanceof ValueLww) {
+      if (node instanceof ValNode) {
         const newValue = index.get(op.val);
         if (newValue) {
           const old = node.set(op.val);

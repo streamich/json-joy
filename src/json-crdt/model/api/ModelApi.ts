@@ -1,4 +1,4 @@
-import {ArrayLww, ConNode, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../nodes';
+import {ArrayLww, ConNode, ObjectLww, ArrayRga, BinaryRga, StringRga, ValNode} from '../../nodes';
 import {ApiPath, ArrayApi, BinaryApi, ConApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
@@ -65,7 +65,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    * Returns a local change API for the given node. If an instance already
    * exists, returns the existing instance.
    */
-  public wrap(node: ValueLww): ValueApi;
+  public wrap(node: ValNode): ValueApi;
   public wrap(node: StringRga<any>): StringApi;
   public wrap(node: BinaryRga): BinaryApi;
   public wrap(node: ArrayRga): ArrayApi;
@@ -74,7 +74,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public wrap(node: ArrayLww): VectorApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
-    if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
+    if (node instanceof ValNode) return node.api || (node.api = new ValueApi(node, this));
     else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
     else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
     else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));

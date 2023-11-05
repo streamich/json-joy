@@ -1,6 +1,6 @@
 import {Model} from '../../../Model';
 
-test('handles ObjectLww inside ValueLww, which was set on ArrayRga', () => {
+test('handles ObjectLww inside ValNode, which was set on ArrayRga', () => {
   const doc = Model.withLogicalClock();
   doc.api.root([123]);
   doc.api.val('/0').set({

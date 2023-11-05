@@ -1,5 +1,5 @@
 import {ORIGIN, SESSION} from '../../../json-crdt-patch/constants';
-import {ValNode} from '../val/ValueLww';
+import {ValNode} from '../val/ValNode';
 import {Model, UNDEFINED} from '../../model/Model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';

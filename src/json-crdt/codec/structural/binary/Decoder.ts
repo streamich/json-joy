@@ -1,18 +1,10 @@
-import {ArrayRga, ArrayChunk} from '../../../nodes/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../nodes/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {ConNode} from '../../../nodes/con/ConNode';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
-import {ObjectLww} from '../../../nodes/lww-object/ObjectLww';
-import {RootLww} from '../../../nodes/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga, StringChunk} from '../../../nodes/rga-string/StringRga';
-import {ValNode} from '../../../nodes/val/ValueLww';
-import {ArrayLww} from '../../../nodes/lww-array/ArrayLww';
-import type {JsonNode} from '../../../nodes';
+import {ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ConNode, ObjectLww, RootLww, StringRga, StringChunk, ValNode, ArrayLww, type JsonNode} from '../../../nodes';
 
 export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   protected doc!: Model;

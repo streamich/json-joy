@@ -1,17 +1,4 @@
-import {
-  ConNode,
-  RootLww,
-  JsonNode,
-  ValueLww,
-  ArrayLww,
-  ArrayRga,
-  ArrayChunk,
-  BinaryRga,
-  BinaryChunk,
-  ObjectLww,
-  StringRga,
-  StringChunk,
-} from '../../../nodes';
+import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
@@ -32,7 +19,7 @@ export class Decoder {
     }
     const doc = isServerTime ? Model.withServerClock(x as number) : Model.withLogicalClock(this.clockDecoder!.clock);
     const val = data[1] ? this.decodeNode(doc, data[1]) : UNDEFINED;
-    doc.root = new RootLww(doc, val.id);
+    doc.root = new nodes.RootLww(doc, val.id);
     return doc;
   }
 
@@ -57,7 +44,7 @@ export class Decoder {
     }
   }
 
-  protected decodeNode(doc: Model, data: unknown): JsonNode {
+  protected decodeNode(doc: Model, data: unknown): nodes.JsonNode {
     if (data instanceof Array) {
       switch (data[0]) {
         case Code.MakeObject:
@@ -81,9 +68,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Model, data: unknown[]): ObjectLww {
+  protected decodeObj(doc: Model, data: unknown[]): nodes.ObjectLww {
     const [id, index] = this.ts(data, 1);
-    const obj = new ObjectLww(doc, id);
+    const obj = new nodes.ObjectLww(doc, id);
     const length = data.length;
     for (let i = index; i < length; ) {
       const key = data[i] as string;
@@ -95,9 +82,9 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeTup(doc: Model, data: unknown[]): ArrayLww {
+  protected decodeTup(doc: Model, data: unknown[]): nodes.ArrayLww {
     const [id, index] = this.ts(data, 1);
-    const obj = new ArrayLww(doc, id);
+    const obj = new nodes.ArrayLww(doc, id);
     const length = data.length;
     const elements = obj.elements;
     for (let i = index; i < length; ) {
@@ -112,79 +99,79 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeArr(doc: Model, data: unknown[]): ArrayRga {
+  protected decodeArr(doc: Model, data: unknown[]): nodes.ArrayRga {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const obj = new ArrayRga(doc, id);
+    const obj = new nodes.ArrayRga(doc, id);
     const self = this;
     let i = index;
     obj.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new ArrayChunk(chunkId, content, undefined);
+      if (typeof content === 'number') return new nodes.ArrayChunk(chunkId, content, undefined);
       const ids = (content as unknown[]).map((c) => this.decodeNode(doc, c).id);
-      return new ArrayChunk(chunkId, (content as string).length, ids);
+      return new nodes.ArrayChunk(chunkId, (content as string).length, ids);
     });
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decodeStr(doc: Model, data: unknown[]): StringRga {
+  protected decodeStr(doc: Model, data: unknown[]): nodes.StringRga {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const node = new StringRga(id);
+    const node = new nodes.StringRga(id);
     const self = this;
     let i = index;
     node.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new StringChunk(chunkId, content, '');
-      return new StringChunk(chunkId, (content as string).length, content as string);
+      if (typeof content === 'number') return new nodes.StringChunk(chunkId, content, '');
+      return new nodes.StringChunk(chunkId, (content as string).length, content as string);
     });
     doc.index.set(id, node);
     return node;
   }
 
-  protected decodeBin(doc: Model, data: unknown[]): BinaryRga {
+  protected decodeBin(doc: Model, data: unknown[]): nodes.BinaryRga {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const node = new BinaryRga(id);
+    const node = new nodes.BinaryRga(id);
     const self = this;
     let i = index;
     node.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new BinaryChunk(chunkId, content, undefined);
+      if (typeof content === 'number') return new nodes.BinaryChunk(chunkId, content, undefined);
       const buf = content as Uint8Array;
-      return new BinaryChunk(chunkId, buf.length, buf);
+      return new nodes.BinaryChunk(chunkId, buf.length, buf);
     });
     doc.index.set(id, node);
     return node;
   }
 
-  protected decodeVal(doc: Model, data: unknown[]): ValueLww {
+  protected decodeVal(doc: Model, data: unknown[]): nodes.ValNode {
     const [id, index] = this.ts(data, 1);
     const child = this.decodeNode(doc, data[index]);
-    const obj = new ValueLww(doc, id, child.id);
+    const obj = new nodes.ValNode(doc, id, child.id);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decodeConst(doc: Model, data: unknown[]): ConNode {
+  protected decodeConst(doc: Model, data: unknown[]): nodes.ConNode {
     const [id, index] = this.ts(data, 1);
     const value = data[index];
-    const obj = new ConNode(id, value);
+    const obj = new nodes.ConNode(id, value);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decodeConstId(doc: Model, data: unknown[]): ConNode {
+  protected decodeConstId(doc: Model, data: unknown[]): nodes.ConNode {
     const [id, index] = this.ts(data, 1);
     const val = this.ts(data, index)[0];
-    const obj = new ConNode(id, val);
+    const obj = new nodes.ConNode(id, val);
     doc.index.set(id, obj);
     return obj;
   }
