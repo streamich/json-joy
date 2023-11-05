@@ -92,7 +92,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
-  public asTup(): VectorApi {
+  public asTup(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
   }
@@ -134,7 +134,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asArr();
   }
 
-  public tup(path?: ApiPath): VectorApi {
+  public tup(path?: ApiPath): VecApi {
     return this.in(path).asTup();
   }
 
@@ -223,9 +223,8 @@ type UnVecNode<N> = N extends VecNode<infer T> ? T : never;
  * Local changes API for the `vec` JSON CRDT node {@link VecNode}.
  *
  * @category Local API
- * @todo Rename to VectorApi.
  */
-export class VectorApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
+export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *

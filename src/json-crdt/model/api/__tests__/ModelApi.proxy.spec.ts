@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConApi, ObjectApi, StringApi, VectorApi, ValApi} from '../nodes';
+import {ConApi, ObjectApi, StringApi, VecApi, ValApi} from '../nodes';
 import {ConNode, RootLww, VecNode, ObjectLww, StringRga} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
@@ -105,8 +105,8 @@ describe('supports all node types', () => {
   test('vector', () => {
     const proxy = model.api.r.proxy();
     const vec = proxy.val.vec;
-    const vecApi: VectorApi = vec.toApi();
-    expect(vecApi).toBeInstanceOf(VectorApi);
+    const vecApi: VecApi = vec.toApi();
+    expect(vecApi).toBeInstanceOf(VecApi);
     expect(vecApi.node).toBeInstanceOf(VecNode);
     expect(vecApi.view()).toStrictEqual(['asdf', 1234, true, null]);
   });

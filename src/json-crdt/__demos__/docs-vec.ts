@@ -33,7 +33,7 @@ console.log(model.view());
 // Retrieve node at path ['foo', 'bar'] as "vec" type.
 const bar = model.api.vec(['foo', 'bar']);
 console.log(bar + '');
-// VectorApi
+// VecApi
 // └─ VecNode 1234.3
 //    ├─ 0: ConNode 1234.4 { 1 }
 //    └─ 1: ConNode 1234.5 { 2 }
@@ -43,7 +43,7 @@ bar.set([
   [2, 42],
 ]);
 console.log(bar + '');
-// VectorApi
+// VecApi
 // └─ VecNode 1234.3
 //    ├─ 0: ConNode 1234.10 { 24 }
 //    ├─ 1: ConNode 1234.5 { 2 }
