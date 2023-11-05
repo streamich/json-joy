@@ -73,7 +73,7 @@ console.log(model.find.val.toApi() + '');
 //                      └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags.toApi() + '');
-// ArrayApi
+// ArrApi
 // └─ ArrNode 1234.9
 //    └─ ArrChunk 1234.14!2 len:2
 //       ├─ [0]: ValNode 1234.11

@@ -87,7 +87,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_BIN');
   }
 
-  public asArr(): ArrayApi {
+  public asArr(): ArrApi {
     if (this.node instanceof ArrNode) return this.api.wrap(this.node);
     throw new Error('NOT_ARR');
   }
@@ -130,7 +130,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asBin();
   }
 
-  public arr(path?: ApiPath): ArrayApi {
+  public arr(path?: ApiPath): ArrApi {
     return this.in(path).asArr();
   }
 
@@ -464,7 +464,7 @@ type UnArrNode<N> = N extends ArrNode<infer T> ? T : never;
  *
  * @category Local API
  */
-export class ArrayApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
+export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
