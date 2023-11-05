@@ -1,4 +1,4 @@
-import {JsonCrdtDataType} from "../../../../json-crdt-patch/constants";
+import {JsonCrdtDataType} from '../../../../json-crdt-patch/constants';
 
 export const enum CRDT_MAJOR {
   CON = JsonCrdtDataType.con,
