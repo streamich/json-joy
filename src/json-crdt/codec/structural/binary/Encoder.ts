@@ -1,14 +1,4 @@
-import {
-  ConNode,
-  RootLww,
-  JsonNode,
-  ValNode,
-  ArrayLww,
-  ArrayRga,
-  BinaryRga,
-  ObjectLww,
-  StringRga,
-} from '../../../nodes';
+import {ConNode, RootLww, JsonNode, ValNode, ArrayLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';

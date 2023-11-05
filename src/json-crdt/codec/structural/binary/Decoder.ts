@@ -4,7 +4,20 @@ import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ConNode, ObjectLww, RootLww, StringRga, StringChunk, ValNode, ArrayLww, type JsonNode} from '../../../nodes';
+import {
+  ArrayRga,
+  ArrayChunk,
+  BinaryRga,
+  BinaryChunk,
+  ConNode,
+  ObjectLww,
+  RootLww,
+  StringRga,
+  StringChunk,
+  ValNode,
+  ArrayLww,
+  type JsonNode,
+} from '../../../nodes';
 
 export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   protected doc!: Model;
