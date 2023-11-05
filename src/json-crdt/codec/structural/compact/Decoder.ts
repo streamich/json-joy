@@ -47,27 +47,27 @@ export class Decoder {
     if (data instanceof Array) {
       switch (data[0]) {
         case JsonCrdtDataType.con:
-          return this.decodeConst(doc, data);
+          return this.decCon(doc, data);
         case JsonCrdtDataType.con + 10:
-          return this.decodeConstId(doc, data);
+          return this.decConId(doc, data);
         case JsonCrdtDataType.val:
-          return this.decodeVal(doc, data);
+          return this.decVal(doc, data);
         case JsonCrdtDataType.obj:
-          return this.decodeObj(doc, data);
+          return this.decObj(doc, data);
         case JsonCrdtDataType.vec:
-          return this.decodeTup(doc, data);
+          return this.decVec(doc, data);
         case JsonCrdtDataType.str:
-          return this.decodeStr(doc, data);
+          return this.decStr(doc, data);
         case JsonCrdtDataType.bin:
-          return this.decodeBin(doc, data);
+          return this.decBin(doc, data);
         case JsonCrdtDataType.arr:
-          return this.decodeArr(doc, data);
+          return this.decArr(doc, data);
       }
     }
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Model, data: unknown[]): nodes.ObjNode {
+  protected decObj(doc: Model, data: unknown[]): nodes.ObjNode {
     const [id, index] = this.ts(data, 1);
     const obj = new nodes.ObjNode(doc, id);
     const length = data.length;
@@ -81,7 +81,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeTup(doc: Model, data: unknown[]): nodes.VecNode {
+  protected decVec(doc: Model, data: unknown[]): nodes.VecNode {
     const [id, index] = this.ts(data, 1);
     const obj = new nodes.VecNode(doc, id);
     const length = data.length;
@@ -98,7 +98,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeArr(doc: Model, data: unknown[]): nodes.ArrNode {
+  protected decArr(doc: Model, data: unknown[]): nodes.ArrNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
     const obj = new nodes.ArrNode(doc, id);
@@ -116,7 +116,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeStr(doc: Model, data: unknown[]): nodes.StrNode {
+  protected decStr(doc: Model, data: unknown[]): nodes.StrNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
     const node = new nodes.StrNode(id);
@@ -133,7 +133,7 @@ export class Decoder {
     return node;
   }
 
-  protected decodeBin(doc: Model, data: unknown[]): nodes.BinNode {
+  protected decBin(doc: Model, data: unknown[]): nodes.BinNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
     const node = new nodes.BinNode(id);
@@ -151,7 +151,7 @@ export class Decoder {
     return node;
   }
 
-  protected decodeVal(doc: Model, data: unknown[]): nodes.ValNode {
+  protected decVal(doc: Model, data: unknown[]): nodes.ValNode {
     const [id, index] = this.ts(data, 1);
     const child = this.decodeNode(doc, data[index]);
     const obj = new nodes.ValNode(doc, id, child.id);
@@ -159,7 +159,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeConst(doc: Model, data: unknown[]): nodes.ConNode {
+  protected decCon(doc: Model, data: unknown[]): nodes.ConNode {
     const [id, index] = this.ts(data, 1);
     const value = data[index];
     const obj = new nodes.ConNode(id, value);
@@ -167,7 +167,7 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeConstId(doc: Model, data: unknown[]): nodes.ConNode {
+  protected decConId(doc: Model, data: unknown[]): nodes.ConNode {
     const [id, index] = this.ts(data, 1);
     const val = this.ts(data, index)[0];
     const obj = new nodes.ConNode(id, val);

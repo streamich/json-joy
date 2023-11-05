@@ -50,17 +50,17 @@ export class Encoder {
 
   protected cNode(arr: unknown[], node: nodes.JsonNode): void {
     // TODO: PERF: use switch with `node.constructor`.
-    if (node instanceof nodes.ObjNode) return this.encodeObj(arr, node);
-    else if (node instanceof nodes.ArrNode) return this.encodeArr(arr, node);
-    else if (node instanceof nodes.StrNode) return this.encodeStr(arr, node);
+    if (node instanceof nodes.ObjNode) return this.cObj(arr, node);
+    else if (node instanceof nodes.ArrNode) return this.cArr(arr, node);
+    else if (node instanceof nodes.StrNode) return this.cStr(arr, node);
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
-    else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
-    else if (node instanceof nodes.ConNode) return this.cConst(arr, node);
-    else if (node instanceof nodes.BinNode) return this.encodeBin(arr, node);
+    else if (node instanceof nodes.VecNode) return this.cVec(arr, node);
+    else if (node instanceof nodes.ConNode) return this.cCon(arr, node);
+    else if (node instanceof nodes.BinNode) return this.cBin(arr, node);
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected encodeObj(arr: unknown[], obj: nodes.ObjNode): void {
+  protected cObj(arr: unknown[], obj: nodes.ObjNode): void {
     const res: unknown[] = [JsonCrdtDataType.obj];
     arr.push(res);
     this.ts(res, obj.id);
@@ -70,7 +70,7 @@ export class Encoder {
     });
   }
 
-  protected cTup(arr: unknown[], obj: nodes.VecNode): void {
+  protected cVec(arr: unknown[], obj: nodes.VecNode): void {
     const res: unknown[] = [JsonCrdtDataType.vec];
     arr.push(res);
     this.ts(res, obj.id);
@@ -87,16 +87,16 @@ export class Encoder {
     }
   }
 
-  protected encodeArr(arr: unknown[], obj: nodes.ArrNode): void {
+  protected cArr(arr: unknown[], obj: nodes.ArrNode): void {
     const res: unknown[] = [JsonCrdtDataType.arr, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeArrChunk(res, chunk);
+    while ((chunk = iterator())) this.cArrChunk(res, chunk);
   }
 
-  protected encodeArrChunk(arr: unknown[], chunk: nodes.ArrChunk): void {
+  protected cArrChunk(arr: unknown[], chunk: nodes.ArrChunk): void {
     this.ts(arr, chunk.id);
     if (chunk.del) arr.push(chunk.span);
     else {
@@ -107,30 +107,30 @@ export class Encoder {
     }
   }
 
-  protected encodeStr(arr: unknown[], obj: nodes.StrNode): void {
+  protected cStr(arr: unknown[], obj: nodes.StrNode): void {
     const res: unknown[] = [JsonCrdtDataType.str, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeStrChunk(res, chunk as nodes.StrChunk);
+    while ((chunk = iterator())) this.cStrChunk(res, chunk as nodes.StrChunk);
   }
 
-  protected encodeStrChunk(arr: unknown[], chunk: nodes.StrChunk): void {
+  protected cStrChunk(arr: unknown[], chunk: nodes.StrChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }
 
-  protected encodeBin(arr: unknown[], obj: nodes.BinNode): void {
+  protected cBin(arr: unknown[], obj: nodes.BinNode): void {
     const res: unknown[] = [JsonCrdtDataType.bin, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeBinChunk(res, chunk as nodes.BinChunk);
+    while ((chunk = iterator())) this.cBinChunk(res, chunk as nodes.BinChunk);
   }
 
-  protected encodeBinChunk(arr: unknown[], chunk: nodes.BinChunk): void {
+  protected cBinChunk(arr: unknown[], chunk: nodes.BinChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }
@@ -142,7 +142,7 @@ export class Encoder {
     this.cNode(res, obj.node());
   }
 
-  protected cConst(arr: unknown[], obj: nodes.ConNode): void {
+  protected cCon(arr: unknown[], obj: nodes.ConNode): void {
     const val = obj.val;
     const res: unknown[] = [];
     if (val instanceof Timestamp) {
