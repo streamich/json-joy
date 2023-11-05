@@ -1,12 +1,8 @@
 import {CONST, updateNum} from '../json-hash';
-import {Const} from './types/const/Const';
-import {ValueLww} from './types/lww-value/ValueLww';
-import {ObjectLww} from './types/lww-object/ObjectLww';
-import {ArrayLww} from './types/lww-array/ArrayLww';
-import {ArrayRga} from './types/rga-array/ArrayRga';
-import {AbstractRga} from './types/rga';
+import {ConNode, ValNode, ObjNode, VecNode, ArrNode} from './nodes';
+import {AbstractRga} from './nodes/rga';
 import {last2} from '../util/trees/util2';
-import type {JsonNode} from './types';
+import type {JsonNode} from './nodes';
 import type {ITimestampStruct} from '../json-crdt-patch/clock';
 import type {Model} from './model';
 
@@ -32,19 +28,19 @@ export const updateRga = (state: number, node: AbstractRga<unknown>): number => 
  * @param node JSON CRDT node from which to compute the hash.
  */
 export const updateNode = (state: number, node: JsonNode): number => {
-  if (node instanceof Const) return updateId(state, node.id);
-  if (node instanceof ValueLww) {
+  if (node instanceof ConNode) return updateId(state, node.id);
+  if (node instanceof ValNode) {
     const child = node.child();
     if (child) state = updateNode(state, child);
     return updateId(state, node.id);
   }
-  if (node instanceof ObjectLww || node instanceof ArrayLww) {
+  if (node instanceof ObjNode || node instanceof VecNode) {
     node.children((child) => {
       state = updateNode(state, child);
     });
     return updateId(state, node.id);
   }
-  if (node instanceof ArrayRga) {
+  if (node instanceof ArrNode) {
     node.children((child) => {
       state = updateNode(state, child);
     });

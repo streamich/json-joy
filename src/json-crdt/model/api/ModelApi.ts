@@ -1,9 +1,9 @@
-import {ArrayLww, Const, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
-import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
+import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
+import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import type {JsonNode} from '../../types';
+import type {JsonNode} from '../../nodes';
 import type {Model} from '../Model';
 
 /**
@@ -65,22 +65,22 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    * Returns a local change API for the given node. If an instance already
    * exists, returns the existing instance.
    */
-  public wrap(node: ValueLww): ValueApi;
-  public wrap(node: StringRga<any>): StringApi;
-  public wrap(node: BinaryRga): BinaryApi;
-  public wrap(node: ArrayRga): ArrayApi;
-  public wrap(node: ObjectLww): ObjectApi;
-  public wrap(node: Const): ConstApi;
-  public wrap(node: ArrayLww): VectorApi;
+  public wrap(node: ValNode): ValApi;
+  public wrap(node: StrNode<any>): StrApi;
+  public wrap(node: BinNode): BinApi;
+  public wrap(node: ArrNode): ArrApi;
+  public wrap(node: ObjNode): ObjApi;
+  public wrap(node: ConNode): ConApi;
+  public wrap(node: VecNode): VecApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
-    if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
-    else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
-    else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
-    else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
-    else if (node instanceof ObjectLww) return node.api || (node.api = new ObjectApi(node, this));
-    else if (node instanceof Const) return node.api || (node.api = new ConstApi(node, this));
-    else if (node instanceof ArrayLww) return node.api || (node.api = new VectorApi(node, this));
+    if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
+    else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
+    else if (node instanceof BinNode) return node.api || (node.api = new BinApi(node, this));
+    else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
+    else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
+    else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
+    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
     else throw new Error('UNKNOWN_NODE');
   }
 
@@ -88,7 +88,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    * Local changes API for the root node.
    */
   public get r() {
-    return new ValueApi(this.model.root, this);
+    return new ValApi(this.model.root, this);
   }
 
   /** @ignore */

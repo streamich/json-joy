@@ -1,18 +1,12 @@
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {Const} from '../../types/const/Const';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
 import {Path} from '../../../json-pointer';
-import {StringRga} from '../../types/rga-string/StringRga';
-import {ValueLww} from '../../types/lww-value/ValueLww';
-import {ArrayLww} from '../../types/lww-array/ArrayLww';
+import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
+import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from '../proxy/types';
-import type {JsonNode, JsonNodeView} from '../../types';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from '../../../util/print/types';
 import type {JsonNodeApi} from './types';
@@ -78,38 +72,38 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.api.wrap(node as any);
   }
 
-  public asVal(): ValueApi {
-    if (this.node instanceof ValueLww) return this.api.wrap(this.node as ValueLww);
+  public asVal(): ValApi {
+    if (this.node instanceof ValNode) return this.api.wrap(this.node as ValNode);
     throw new Error('NOT_VAL');
   }
 
-  public asStr(): StringApi {
-    if (this.node instanceof StringRga) return this.api.wrap(this.node);
+  public asStr(): StrApi {
+    if (this.node instanceof StrNode) return this.api.wrap(this.node);
     throw new Error('NOT_STR');
   }
 
-  public asBin(): BinaryApi {
-    if (this.node instanceof BinaryRga) return this.api.wrap(this.node);
+  public asBin(): BinApi {
+    if (this.node instanceof BinNode) return this.api.wrap(this.node);
     throw new Error('NOT_BIN');
   }
 
-  public asArr(): ArrayApi {
-    if (this.node instanceof ArrayRga) return this.api.wrap(this.node);
+  public asArr(): ArrApi {
+    if (this.node instanceof ArrNode) return this.api.wrap(this.node);
     throw new Error('NOT_ARR');
   }
 
-  public asTup(): VectorApi {
-    if (this.node instanceof ArrayLww) return this.api.wrap(this.node as ArrayLww);
+  public asTup(): VecApi {
+    if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
   }
 
-  public asObj(): ObjectApi {
-    if (this.node instanceof ObjectLww) return this.api.wrap(this.node as ObjectLww);
+  public asObj(): ObjApi {
+    if (this.node instanceof ObjNode) return this.api.wrap(this.node as ObjNode);
     throw new Error('NOT_OBJ');
   }
 
-  public asConst(): ConstApi {
-    if (this.node instanceof Const) return this.api.wrap(this.node);
+  public asCon(): ConApi {
+    if (this.node instanceof ConNode) return this.api.wrap(this.node);
     throw new Error('NOT_CONST');
   }
 
@@ -124,32 +118,32 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_EXT');
   }
 
-  public val(path?: ApiPath): ValueApi {
+  public val(path?: ApiPath): ValApi {
     return this.in(path).asVal();
   }
 
-  public str(path?: ApiPath): StringApi {
+  public str(path?: ApiPath): StrApi {
     return this.in(path).asStr();
   }
 
-  public bin(path?: ApiPath): BinaryApi {
+  public bin(path?: ApiPath): BinApi {
     return this.in(path).asBin();
   }
 
-  public arr(path?: ApiPath): ArrayApi {
+  public arr(path?: ApiPath): ArrApi {
     return this.in(path).asArr();
   }
 
-  public tup(path?: ApiPath): VectorApi {
+  public tup(path?: ApiPath): VecApi {
     return this.in(path).asTup();
   }
 
-  public obj(path?: ApiPath): ObjectApi {
+  public obj(path?: ApiPath): ObjApi {
     return this.in(path).asObj();
   }
 
-  public const(path?: ApiPath): ConstApi {
-    return this.in(path).asConst();
+  public const(path?: ApiPath): ConApi {
+    return this.in(path).asCon();
   }
 
   public view(): JsonNodeView<N> {
@@ -162,15 +156,15 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 }
 
 /**
- * Represents the local changes API for the `con` JSON CRDT node {@link Const}.
+ * Represents the local changes API for the `con` JSON CRDT node {@link ConNode}.
  *
  * @category Local API
  */
-export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
+export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeConst<N> {
+  public proxy(): types.ProxyNodeCon<N> {
     return {
       toApi: () => <any>this,
     };
@@ -178,16 +172,16 @@ export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
 }
 
 /**
- * Local changes API for the `val` JSON CRDT node {@link ValueLww}.
+ * Local changes API for the `val` JSON CRDT node {@link ValNode}.
  *
  * @category Local API
  */
-export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N> {
+export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of the inner node.
    * @returns Inner node API.
    */
-  public get(): JsonNodeApi<N extends ValueLww<infer T> ? T : JsonNode> {
+  public get(): JsonNodeApi<N extends ValNode<infer T> ? T : JsonNode> {
     return this.in() as any;
   }
 
@@ -223,22 +217,21 @@ export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N
   }
 }
 
-type ArrayLwwNodes<N> = N extends ArrayLww<infer T> ? T : never;
+type UnVecNode<N> = N extends VecNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `vec` JSON CRDT node {@link ArrayLww}.
+ * Local changes API for the `vec` JSON CRDT node {@link VecNode}.
  *
  * @category Local API
- * @todo Rename to VectorApi.
  */
-export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
+export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof ArrayLwwNodes<N>>(key: K): JsonNodeApi<ArrayLwwNodes<N>[K]> {
+  public get<K extends keyof UnVecNode<N>>(key: K): JsonNodeApi<UnVecNode<N>[K]> {
     return this.in(key as string) as any;
   }
 
@@ -281,21 +274,21 @@ export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<
   }
 }
 
-type ObjectLwwNodes<N> = N extends ObjectLww<infer T> ? T : never;
+type UnObjNode<N> = N extends ObjNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `obj` JSON CRDT node {@link ObjectLww}.
+ * Local changes API for the `obj` JSON CRDT node {@link ObjNode}.
  *
  * @category Local API
  */
-export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
+export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof ObjectLwwNodes<N>>(key: K): JsonNodeApi<ObjectLwwNodes<N>[K]> {
+  public get<K extends keyof UnObjNode<N>>(key: K): JsonNodeApi<UnObjNode<N>[K]> {
     return this.in(key as string) as any;
   }
 
@@ -356,13 +349,13 @@ export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeAp
 }
 
 /**
- * Local changes API for the `str` JSON CRDT node {@link StringRga}. This API
+ * Local changes API for the `str` JSON CRDT node {@link StrNode}. This API
  * allows to insert and delete bytes in the UTF-16 string by referencing its
  * local character positions.
  *
  * @category Local API
  */
-export class StringApi extends NodeApi<StringRga> {
+export class StrApi extends NodeApi<StrNode> {
   /**
    * Inserts text at a given position.
    *
@@ -413,13 +406,13 @@ export class StringApi extends NodeApi<StringRga> {
 }
 
 /**
- * Local changes API for the `bin` JSON CRDT node {@link BinaryRga}. This API
+ * Local changes API for the `bin` JSON CRDT node {@link BinNode}. This API
  * allows to insert and delete bytes in the binary string by referencing their
  * local index.
  *
  * @category Local API
  */
-export class BinaryApi extends NodeApi<BinaryRga> {
+export class BinApi extends NodeApi<BinNode> {
   /**
    * Inserts octets at a given position.
    *
@@ -462,23 +455,23 @@ export class BinaryApi extends NodeApi<BinaryRga> {
   }
 }
 
-type ArrayRgaInnerType<N> = N extends ArrayRga<infer T> ? T : never;
+type UnArrNode<N> = N extends ArrNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `arr` JSON CRDT node {@link ArrayRga}. This API
+ * Local changes API for the `arr` JSON CRDT node {@link ArrNode}. This API
  * allows to insert and delete elements in the array by referencing their local
  * index.
  *
  * @category Local API
  */
-export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
+export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param index Index of the element to get.
    * @returns Child node API for the element at the given index.
    */
-  public get(index: number): JsonNodeApi<ArrayRgaInnerType<N>> {
+  public get(index: number): JsonNodeApi<UnArrNode<N>> {
     return this.in(index) as any;
   }
 

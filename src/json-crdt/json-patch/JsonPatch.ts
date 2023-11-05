@@ -1,7 +1,6 @@
-import {ArrayRga} from '../types/rga-array/ArrayRga';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {isChild, Path} from '../../json-pointer';
-import {ObjectLww} from '../types/lww-object/ObjectLww';
+import {ObjNode, ArrNode} from '../nodes';
 import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
 import type {
@@ -72,9 +71,9 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         builder.insObj(node.id, [[String(key), builder.json(op.value)]]);
-      } else if (node instanceof ArrayRga) {
+      } else if (node instanceof ArrNode) {
         const value = builder.json(op.value);
         if (key === '-') {
           const length = node.length();
@@ -102,11 +101,11 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         const stringKey = String(key);
         if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
         builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
-      } else if (node instanceof ArrayRga) {
+      } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
         const index = ~~key;
         if ('' + index !== key) throw new Error('INVALID_INDEX');
@@ -172,9 +171,9 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         return node.get(String(key))?.view();
-      } else if (node instanceof ArrayRga) {
+      } else if (node instanceof ArrNode) {
         const index = ~~key;
         if ('' + index !== key) throw new Error('INVALID_INDEX');
         const arrNode = node.getNode(index);

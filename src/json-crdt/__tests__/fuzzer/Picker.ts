@@ -1,10 +1,6 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
-import {JsonNode} from '../../types';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
 import {Model} from '../../model/Model';
 import {Fuzzer} from '../../../util/Fuzzer';
 import {FuzzerOptions} from './types';
@@ -31,7 +27,7 @@ export class Picker {
     return Fuzzer.pick(nodes);
   }
 
-  public pickStringOperation(node: StringRga): StringOp {
+  public pickStringOperation(node: StrNode): StringOp {
     const length = node.length();
     if (!length) return InsStrOp;
     if (length >= this.opts.maxStringLength) return DelOp;
@@ -39,7 +35,7 @@ export class Picker {
     return InsStrOp;
   }
 
-  public pickBinaryOperation(node: BinaryRga): BinaryOp {
+  public pickBinaryOperation(node: BinNode): BinaryOp {
     const length = node.length();
     if (!length) return InsBinOp;
     if (length >= this.opts.maxStringLength) return DelOp;
@@ -47,7 +43,7 @@ export class Picker {
     return InsBinOp;
   }
 
-  public pickObjectOperation(node: ObjectLww): [key: string, opcode: ObjectOp] {
+  public pickObjectOperation(node: ObjNode): [key: string, opcode: ObjectOp] {
     if (!node.keys.size) return [this.generateObjectKey(), InsObjOp];
     if (Math.random() > 0.45) return [this.generateObjectKey(), InsObjOp];
     const keys = [...node.keys.keys()];
@@ -56,7 +52,7 @@ export class Picker {
     return [key, DelOp];
   }
 
-  public pickArrayOperation(node: ArrayRga): ArrayOp {
+  public pickArrayOperation(node: ArrNode): ArrayOp {
     if (!node.length()) return InsArrOp;
     if (Math.random() > 0.45) return InsArrOp;
     else return DelOp;

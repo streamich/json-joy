@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
+import {ArrNode} from '../../nodes';
 import {interval, VectorClock, tick} from '../../../json-crdt-patch/clock';
 
 describe('Document', () => {
@@ -11,7 +11,7 @@ describe('Document', () => {
       const arrId = builder.arr();
       doc.applyPatch(builder.patch);
       const obj = doc.index.get(arrId);
-      expect(obj).toBeInstanceOf(ArrayRga);
+      expect(obj).toBeInstanceOf(ArrNode);
     });
 
     test('can set array as document root', () => {
@@ -415,7 +415,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [f]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       expect(node.find(0)).toStrictEqual(ins1);
     });
 
@@ -426,7 +426,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [builder.const(false), builder.const(true), builder.const(true)]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       expect(node.find(0)).toStrictEqual(ins1);
       expect(node.find(1)).toStrictEqual(tick(ins1, 1));
       expect(node.find(2)).toStrictEqual(tick(ins1, 2));
@@ -444,7 +444,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, tick(ins2, 2), [f, t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       expect(node.find(0)).toStrictEqual(ins1);
       expect(node.find(1)).toStrictEqual(tick(ins1, 1));
       expect(node.find(2)).toStrictEqual(tick(ins1, 2));
@@ -469,7 +469,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, tick(ins2, 2), [f, t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       expect(node.getNode(0)!.id).toStrictEqual(f);
       expect(node.getNode(1)!.id).toStrictEqual(t);
       expect(node.getNode(2)!.id).toStrictEqual(t);
@@ -492,7 +492,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [f, t, t, n]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(1, 2);
       expect(span[0].sid).toBe(ins1.sid);
       expect(span[0].time).toBe(ins1.time + 1);
@@ -509,7 +509,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [f, t, t, n]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(0, 2);
       expect(span[0].sid).toBe(ins1.sid);
       expect(span[0].time).toBe(ins1.time);
@@ -526,7 +526,7 @@ describe('Document', () => {
       const ins1 = builder.insArr(arr, arr, [f, t, t, n]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(2, 2);
       expect(span[0].sid).toBe(ins1.sid);
       expect(span[0].time).toBe(ins1.time + 2);
@@ -545,7 +545,7 @@ describe('Document', () => {
       const ins2 = builder.insArr(arr, tick(ins1, 3), [t, t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].sid).toBe(ins1.sid);
@@ -570,7 +570,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(2, 5);
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -598,7 +598,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(2, 4);
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -626,7 +626,7 @@ describe('Document', () => {
       const ins3 = builder.insArr(arr, ins2, [t, t]);
       builder.root(arr);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(arr)! as ArrayRga;
+      const node = doc.index.get(arr)! as ArrNode;
       const span = node.findInterval(2, 3);
       expect(span.length).toBe(2);
       expect(span[0].sid).toBe(ins1.sid);

@@ -1,17 +1,13 @@
 import {Model} from '../../Model';
-import {ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
-import {RootLww} from '../../../types/lww-root/RootLww';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {StringRga} from '../../../types/rga-string/StringRga';
-import {Const} from '../../../types/const/Const';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
+import {ConApi, ObjApi, StrApi, VecApi, ValApi} from '../nodes';
+import {ConNode, RootNode, VecNode, ObjNode, StrNode} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as Model<
-    ObjectLww<{
-      foo: StringRga;
-      bar: Const<number>;
+    ObjNode<{
+      foo: StrNode;
+      bar: ConNode<number>;
     }>
   >;
   model.api.root({
@@ -19,40 +15,40 @@ test('proxy API supports object types', () => {
     bar: 1234,
   });
   const root = model.api.r.proxy();
-  const rootApi: ValueApi = root.toApi();
-  expect(rootApi).toBeInstanceOf(ValueApi);
-  expect(rootApi.node).toBeInstanceOf(RootLww);
+  const rootApi: ValApi = root.toApi();
+  expect(rootApi).toBeInstanceOf(ValApi);
+  expect(rootApi.node).toBeInstanceOf(RootNode);
   expect(rootApi.view()).toStrictEqual({
     foo: 'asdf',
     bar: 1234,
   });
   const obj = root.val;
-  const objApi: ObjectApi = obj.toApi();
-  expect(objApi).toBeInstanceOf(ObjectApi);
-  expect(objApi.node).toBeInstanceOf(ObjectLww);
+  const objApi: ObjApi = obj.toApi();
+  expect(objApi).toBeInstanceOf(ObjApi);
+  expect(objApi.node).toBeInstanceOf(ObjNode);
   expect(objApi.view()).toStrictEqual({
     foo: 'asdf',
     bar: 1234,
   });
   const foo = obj.foo;
-  const fooApi: StringApi = foo.toApi();
-  expect(fooApi).toBeInstanceOf(StringApi);
-  expect(fooApi.node).toBeInstanceOf(StringRga);
+  const fooApi: StrApi = foo.toApi();
+  expect(fooApi).toBeInstanceOf(StrApi);
+  expect(fooApi.node).toBeInstanceOf(StrNode);
   expect(fooApi.view()).toStrictEqual('asdf');
   const bar = obj.bar;
-  const barApi: ConstApi = bar.toApi();
-  expect(barApi).toBeInstanceOf(ConstApi);
-  expect(barApi.node).toBeInstanceOf(Const);
+  const barApi: ConApi = bar.toApi();
+  expect(barApi).toBeInstanceOf(ConApi);
+  expect(barApi.node).toBeInstanceOf(ConNode);
   expect(barApi.view()).toStrictEqual(1234);
 });
 
 describe('supports all node types', () => {
-  type Schema = ObjectLww<{
-    obj: ObjectLww<{
-      str: StringRga;
-      num: Const<number>;
+  type Schema = ObjNode<{
+    obj: ObjNode<{
+      str: StrNode;
+      num: ConNode<number>;
     }>;
-    vec: ArrayLww<[StringRga]>;
+    vec: VecNode<[StrNode]>;
   }>;
   const model = Model.withLogicalClock() as Model<Schema>;
   const data = {
@@ -69,9 +65,9 @@ describe('supports all node types', () => {
   test('object as root node', () => {
     const proxy = model.api.r.proxy();
     const obj = proxy.val;
-    const objApi: ObjectApi = obj.toApi();
-    expect(objApi).toBeInstanceOf(ObjectApi);
-    expect(objApi.node).toBeInstanceOf(ObjectLww);
+    const objApi: ObjApi = obj.toApi();
+    expect(objApi).toBeInstanceOf(ObjApi);
+    expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('obj')).toBe(true);
     expect(keys.has('vec')).toBe(true);
@@ -80,9 +76,9 @@ describe('supports all node types', () => {
   test('nested object', () => {
     const proxy = model.api.r.proxy();
     const obj = proxy.val.obj;
-    const objApi: ObjectApi = obj.toApi();
-    expect(objApi).toBeInstanceOf(ObjectApi);
-    expect(objApi.node).toBeInstanceOf(ObjectLww);
+    const objApi: ObjApi = obj.toApi();
+    expect(objApi).toBeInstanceOf(ObjApi);
+    expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('str')).toBe(true);
     expect(keys.has('num')).toBe(true);
@@ -91,27 +87,27 @@ describe('supports all node types', () => {
   test('string as object key', () => {
     const proxy = model.api.r.proxy();
     const str = proxy.val.obj.str;
-    const strApi: StringApi = str.toApi();
-    expect(strApi).toBeInstanceOf(StringApi);
-    expect(strApi.node).toBeInstanceOf(StringRga);
+    const strApi: StrApi = str.toApi();
+    expect(strApi).toBeInstanceOf(StrApi);
+    expect(strApi.node).toBeInstanceOf(StrNode);
     expect(strApi.view()).toStrictEqual('asdf');
   });
 
   test('number constant as object key', () => {
     const proxy = model.api.r.proxy();
     const num = proxy.val.obj.num;
-    const numApi: ConstApi = num.toApi();
-    expect(numApi).toBeInstanceOf(ConstApi);
-    expect(numApi.node).toBeInstanceOf(Const);
+    const numApi: ConApi = num.toApi();
+    expect(numApi).toBeInstanceOf(ConApi);
+    expect(numApi.node).toBeInstanceOf(ConNode);
     expect(numApi.view()).toStrictEqual(1234);
   });
 
   test('vector', () => {
     const proxy = model.api.r.proxy();
     const vec = proxy.val.vec;
-    const vecApi: VectorApi = vec.toApi();
-    expect(vecApi).toBeInstanceOf(VectorApi);
-    expect(vecApi.node).toBeInstanceOf(ArrayLww);
+    const vecApi: VecApi = vec.toApi();
+    expect(vecApi).toBeInstanceOf(VecApi);
+    expect(vecApi.node).toBeInstanceOf(VecNode);
     expect(vecApi.view()).toStrictEqual(['asdf', 1234, true, null]);
   });
 });

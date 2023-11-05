@@ -1,5 +1,5 @@
 import * as operations from '../../json-crdt-patch/operations';
-import {Const} from '../types/const/Const';
+import {ConNode} from '../nodes/con/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,
@@ -13,15 +13,15 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../types';
+import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
-import type {JsonNode, JsonNodeView} from '../types/types';
+import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from '../../util/print/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
 
-export const UNDEFINED = new Const(ORIGIN, undefined);
+export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
 /**
  * In instance of Model class represents the underlying data structure,
@@ -75,7 +75,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: RootLww<RootJsonNode> = new RootLww<RootJsonNode>(this, ORIGIN);
+  public root: RootNode<RootJsonNode> = new RootNode<RootJsonNode>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session
@@ -175,30 +175,30 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const index = this.index;
     if (op instanceof operations.InsStrOp) {
       const node = index.get(op.obj);
-      if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
+      if (node instanceof StrNode) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewObjOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new ObjectLww(this, id));
+      if (!index.get(id)) index.set(id, new ObjNode(this, id));
     } else if (op instanceof operations.NewArrOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new ArrayRga(this, id));
+      if (!index.get(id)) index.set(id, new ArrNode(this, id));
     } else if (op instanceof operations.NewStrOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new StringRga(id));
+      if (!index.get(id)) index.set(id, new StrNode(id));
     } else if (op instanceof operations.NewValOp) {
       const id = op.id;
       if (!index.get(id)) {
         const val = index.get(op.val);
-        if (val) index.set(id, new ValueLww(this, id, op.val));
+        if (val) index.set(id, new ValNode(this, id, op.val));
       }
     } else if (op instanceof operations.NewConOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new Const(id, op.val));
+      if (!index.get(id)) index.set(id, new ConNode(id, op.val));
     } else if (op instanceof operations.InsObjOp) {
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         for (let i = 0; i < length; i++) {
           const tuple = tuples[i];
           const valueNode = index.get(tuple[1]);
@@ -212,7 +212,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
-      if (node instanceof ArrayLww) {
+      if (node instanceof VecNode) {
         for (let i = 0; i < length; i++) {
           const tuple = tuples[i];
           const valueNode = index.get(tuple[1]);
@@ -225,7 +225,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     } else if (op instanceof operations.InsValOp) {
       const obj = op.obj;
       const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
-      if (node instanceof ValueLww) {
+      if (node instanceof ValNode) {
         const newValue = index.get(op.val);
         if (newValue) {
           const old = node.set(op.val);
@@ -234,7 +234,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       }
     } else if (op instanceof operations.InsArrOp) {
       const node = index.get(op.obj);
-      if (node instanceof ArrayRga) {
+      if (node instanceof ArrNode) {
         const nodes: ITimestampStruct[] = [];
         const data = op.data;
         const length = data.length;
@@ -249,7 +249,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       }
     } else if (op instanceof operations.DelOp) {
       const node = index.get(op.obj);
-      if (node instanceof ArrayRga) {
+      if (node instanceof ArrNode) {
         const length = op.what.length;
         for (let i = 0; i < length; i++) {
           const span = op.what[i];
@@ -259,17 +259,17 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           }
         }
         node.delete(op.what);
-      } else if (node instanceof StringRga) node.delete(op.what);
-      else if (node instanceof BinaryRga) node.delete(op.what);
+      } else if (node instanceof StrNode) node.delete(op.what);
+      else if (node instanceof BinNode) node.delete(op.what);
     } else if (op instanceof operations.NewBinOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new BinaryRga(id));
+      if (!index.get(id)) index.set(id, new BinNode(id));
     } else if (op instanceof operations.InsBinOp) {
       const node = index.get(op.obj);
-      if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
+      if (node instanceof BinNode) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewVecOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new ArrayLww(this, id));
+      if (!index.get(id)) index.set(id, new VecNode(this, id));
     }
   }
 

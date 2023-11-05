@@ -1,7 +1,7 @@
 import type {NodeBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
 import type {ModelApi} from '../model/api/ModelApi';
 import type {NodeApi} from '../model/api/nodes';
-import type {JsonNode} from '../types';
+import type {JsonNode} from '../nodes';
 
 export type ExtensionValue = [type: Uint8Array, data: unknown];
 

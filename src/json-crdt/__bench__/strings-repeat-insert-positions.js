@@ -1,6 +1,6 @@
 const Benchmark = require('benchmark');
 const {Model} = require('../../es2020/json-crdt');
-const {StringRga} = require('../../es2020/json-crdt/types/rga-string/StringRga');
+const {StrNode} = require('../../es2020/json-crdt/types/str/StrNode');
 const Y = require('yjs');
 const Automerge = require('automerge');
 const {randomU32} = require('hyperdyperid/lib/randomU32');
@@ -15,10 +15,10 @@ const str2 = '1234567890';
 const len1 = str1.length;
 const len2 = str2.length;
 
-const type = new StringRga(ts(1, 1));
+const type = new StrNode(ts(1, 1));
 type.ins(ts(1, 1), ts(1, 2), str1);
 let time = str1.length + 100;
-const editStringRga = () => {
+const editStrNode = () => {
   for (let i = 0; i < insertPositions.length; i++) {
     const pos1 = insertPositions[i] + randomU32(0, variance);
     const pos2 = randomU32(0, len1 - len2);
@@ -71,7 +71,7 @@ const editAutomerge = () => {
 };
 
 for (let i = 0; i < 1000; i++) {
-  editStringRga();
+  editStrNode();
   editJsonCrdt();
   editYjs();
   editAutomerge();
@@ -80,8 +80,8 @@ for (let i = 0; i < 1000; i++) {
 const suite = new Benchmark.Suite();
 
 suite
-  .add('json-crdt StringRga type', function () {
-    editStringRga();
+  .add('json-crdt StrNode type', function () {
+    editStrNode();
   })
   .add('json-crdt', function () {
     editJsonCrdt();

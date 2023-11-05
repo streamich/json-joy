@@ -13,11 +13,11 @@ and random positions of a 10,000-character newly created string.
 
 ```
 node benchmarks/json-crdt/strings-short.js
-json-crdt StringRga type x 228,880 ops/sec ±0.07% (99 runs sampled)
+json-crdt StrNode type x 228,880 ops/sec ±0.07% (99 runs sampled)
 json-crdt x 187,700 ops/sec ±0.17% (98 runs sampled)
 Y.js x 18,288 ops/sec ±0.19% (100 runs sampled)
 Automerge x 23.64 ops/sec ±1.54% (44 runs sampled)
-Fastest is json-crdt StringRga type
+Fastest is json-crdt StrNode type
 ```
 
 Inserting one 10-char string and deleting one 10-char string range at random
@@ -25,11 +25,11 @@ positions from a 10,000-char string, which was beforehand already edited 5,000 t
 
 ```
 node benchmarks/json-crdt/strings-long.js
-json-crdt StringRga type x 54,250 ops/sec ±20.68% (23 runs sampled)
+json-crdt StrNode type x 54,250 ops/sec ±20.68% (23 runs sampled)
 json-crdt x 59,628 ops/sec ±14.39% (32 runs sampled)
 Y.js x 16,358 ops/sec ±10.79% (45 runs sampled)
 Automerge x 1,777 ops/sec ±5.97% (76 runs sampled)
-Fastest is json-crdt,json-crdt StringRga type
+Fastest is json-crdt,json-crdt StrNode type
 ```
 
 Editing a string at 10 repeating positions with +/- 6 characters random variance
@@ -37,11 +37,11 @@ from those positions.
 
 ```
 node benchmarks/json-crdt/strings-repeat-insert-positions.js
-json-crdt StringRga type x 8,313 ops/sec ±1.52% (93 runs sampled)
+json-crdt StrNode type x 8,313 ops/sec ±1.52% (93 runs sampled)
 json-crdt x 6,292 ops/sec ±2.22% (77 runs sampled)
 Y.js x 3,104 ops/sec ±1.40% (78 runs sampled)
 Automerge x 246 ops/sec ±1.04% (85 runs sampled)
-Fastest is json-crdt StringRga type
+Fastest is json-crdt StrNode type
 ```
 
 ### Real-world comparisons
@@ -114,22 +114,22 @@ String length: 104852 , Chunk count: 12487
 JSON CRDT: 134.596ms
 String length: 104852 , Chunk count: 12487
 ---------------------------------------------
-JSON CRDT StringRga: 85.254ms
+JSON CRDT StrNode: 85.254ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
-JSON CRDT StringRga: 86.487ms
+JSON CRDT StrNode: 86.487ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
-JSON CRDT StringRga: 73.346ms
+JSON CRDT StrNode: 73.346ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
-JSON CRDT StringRga: 74.109ms
+JSON CRDT StrNode: 74.109ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
-JSON CRDT StringRga: 73.593ms
+JSON CRDT StrNode: 73.593ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
-JSON CRDT StringRga: 74.138ms
+JSON CRDT StrNode: 74.138ms
 String length: 104852 , Chunk count: 12387
 ---------------------------------------------
 diamond-types-node: 58.114ms

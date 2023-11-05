@@ -1,8 +1,6 @@
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
 import {Path, toPath} from '../../../json-pointer';
-import {ArrayLww} from '../../types/lww-array/ArrayLww';
-import type {JsonNode} from '../../types';
+import {VecNode, ObjNode, ArrNode} from '../../nodes';
+import type {JsonNode} from '../../nodes';
 
 export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
   const steps = toPath(path);
@@ -14,15 +12,15 @@ export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
     const step = steps[i++];
     node = node.container();
     if (!node) throw new Error('NOT_CONTAINER');
-    if (node instanceof ObjectLww) {
+    if (node instanceof ObjNode) {
       const nextNode = node.get(String(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
-    } else if (node instanceof ArrayRga) {
+    } else if (node instanceof ArrNode) {
       const nextNode = node.getNode(Number(step));
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
-    } else if (node instanceof ArrayLww) {
+    } else if (node instanceof VecNode) {
       const nextNode = node.get(Number(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;

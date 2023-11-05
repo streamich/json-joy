@@ -1,17 +1,9 @@
-import {ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
+import {ConNode, RootNode, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Const} from '../../../types/const/Const';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {RootLww} from '../../../types/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import type {Model} from '../../../model';
 
 export class Encoder extends MsgPackEncoder<CrdtWriter> {
@@ -78,7 +70,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected ts: (ts: ITimestampStruct) => void = this.tsLogical;
 
-  protected cRoot(root: RootLww): void {
+  protected cRoot(root: RootNode): void {
     const val = root.val;
     if (val.sid === SESSION.SYSTEM) this.writer.u8(0);
     else this.cNode(root.node());
@@ -86,16 +78,16 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected cNode(node: JsonNode): void {
     // TODO: PERF: use a switch
-    if (node instanceof Const) this.cConst(node);
-    else if (node instanceof ValueLww) this.cVal(node);
-    else if (node instanceof StringRga) this.cStr(node);
-    else if (node instanceof ObjectLww) this.cObj(node);
-    else if (node instanceof ArrayLww) this.cTup(node);
-    else if (node instanceof ArrayRga) this.cArr(node);
-    else if (node instanceof BinaryRga) this.cBin(node);
+    if (node instanceof ConNode) this.cConst(node);
+    else if (node instanceof ValNode) this.cVal(node);
+    else if (node instanceof StrNode) this.cStr(node);
+    else if (node instanceof ObjNode) this.cObj(node);
+    else if (node instanceof VecNode) this.cTup(node);
+    else if (node instanceof ArrNode) this.cArr(node);
+    else if (node instanceof BinNode) this.cBin(node);
   }
 
-  protected cObj(obj: ObjectLww): void {
+  protected cObj(obj: ObjNode): void {
     this.ts(obj.id);
     this.writeObjHdr(obj.keys.size);
     obj.keys.forEach(this.cKey);
@@ -106,7 +98,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     this.cNode(this.doc.index.get(val)!);
   };
 
-  protected cTup(obj: ArrayLww): void {
+  protected cTup(obj: VecNode): void {
     this.ts(obj.id);
     const elements = obj.elements;
     const length = elements.length;
@@ -120,7 +112,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cArr(obj: ArrayRga): void {
+  protected cArr(obj: ArrNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
@@ -137,7 +129,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cStr(obj: StringRga): void {
+  protected cStr(obj: StrNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
@@ -152,7 +144,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cBin(obj: BinaryRga): void {
+  protected cBin(obj: BinNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
@@ -168,13 +160,13 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cVal(obj: ValueLww): void {
+  protected cVal(obj: ValNode): void {
     this.ts(obj.id);
     this.writer.u8(0xd6);
     this.cNode(obj.node());
   }
 
-  protected cConst(obj: Const): void {
+  protected cConst(obj: ConNode): void {
     this.ts(obj.id);
     const val = obj.val;
     if (val instanceof Timestamp) {

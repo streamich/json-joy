@@ -4,18 +4,18 @@
  */
 
 const {traces} = require('../../data/editing-traces');
-const {StringRga} = require('../../../es2020/json-crdt/types/rga-string/StringRga');
+const {StrNode} = require('../../../es2020/json-crdt/types/str/StrNode');
 const {ts} = require('../../../es2020/json-crdt-patch/clock/logical');
 
 const patches = traces.get('automerge-paper').txns.map((txn) => txn.patches[0]);
 const length = patches.length;
 console.log('Document operations:', length, patches);
 
-const runStringRga = () => {
+const runStrNode = () => {
   console.log('---------------------------------------------');
-  console.time('JSON CRDT StringRga');
+  console.time('JSON CRDT StrNode');
   let time = 0;
-  const rga = new StringRga(ts(1, time++));
+  const rga = new StrNode(ts(1, time++));
   for (let i = 0; i < length; i++) {
     const [pos, del, c] = patches[i];
     if (del) {
@@ -27,14 +27,14 @@ const runStringRga = () => {
   }
   rga.view();
   // console.log(rga.view());
-  console.timeEnd('JSON CRDT StringRga');
+  console.timeEnd('JSON CRDT StrNode');
   console.log('String length:', rga.length(), ', Chunk count:', rga.size());
   // console.log(rga.toString());
 };
 
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();

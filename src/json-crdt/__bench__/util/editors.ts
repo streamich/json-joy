@@ -1,5 +1,5 @@
 import {Timestamp} from '../../../json-crdt-patch/clock';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {StrNode} from '../../nodes';
 import {Model} from '../../model';
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
@@ -11,11 +11,11 @@ const AutomergeUnstable = require('@automerge/automerge/dist/cjs/unstable');
 const Rope = require('rope.js');
 
 export const editors = {
-  'StringRga (json-joy)': {
-    name: 'StringRga (json-joy)',
+  'StrNode (json-joy)': {
+    name: 'StrNode (json-joy)',
     factory: () => {
       let time = 0;
-      const rga = new StringRga(new Timestamp(1, time++));
+      const rga = new StrNode(new Timestamp(1, time++));
       return {
         ins: (pos: number, insert: string) => {
           rga.insAt(pos, new Timestamp(1, time), insert);

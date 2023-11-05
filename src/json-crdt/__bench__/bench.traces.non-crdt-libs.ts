@@ -14,7 +14,7 @@ runTraceMatrix({
     'automerge-paper',
   ],
   editors: [
-    'StringRga (json-joy)',
+    'StrNode (json-joy)',
     'diamond-types-node',
     'rope.js',
     'V8 strings',

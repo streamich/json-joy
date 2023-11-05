@@ -24,25 +24,25 @@ const model = Model.withLogicalClock(1234).setSchema(schema);
 
 console.log(model + '');
 // Model
-// ├─ RootLww "val" 0.0
-// │  └─ ObjectLww "obj" 1234.1
+// ├─ RootNode 0.0
+// │  └─ ObjNode 1234.1
 // │     ├─ "text"
-// │     │   └─ Const "con" 1234.2 { "hello" }
+// │     │   └─ ConNode 1234.2 { "hello" }
 // │     ├─ "counter"
-// │     │   └─ Const "con" 1234.3 { 0 }
+// │     │   └─ ConNode 1234.3 { 0 }
 // │     ├─ "checked"
-// │     │   └─ Const "con" 1234.4 { true }
+// │     │   └─ ConNode 1234.4 { true }
 // │     └─ "friend"
-// │         └─ ObjectLww "obj" 1234.5
+// │         └─ ObjNode 1234.5
 // │            ├─ "name"
-// │            │   └─ Const "con" 1234.6 { "John" }
+// │            │   └─ ConNode 1234.6 { "John" }
 // │            ├─ "age"
-// │            │   └─ Const "con" 1234.7 { 42 }
+// │            │   └─ ConNode 1234.7 { 42 }
 // │            └─ "tags"
-// │                └─ ArrayRga "arr" 1234.8
-// │                   └─ ArrayChunk 1234.11!2 len:2
-// │                      ├─ [0]: Const "con" 1234.9 { "foo" }
-// │                      └─ [1]: Const "con" 1234.10 { "bar" }
+// │                └─ ArrNode 1234.8
+// │                   └─ ArrChunk 1234.11!2 len:2
+// │                      ├─ [0]: ConNode 1234.9 { "foo" }
+// │                      └─ [1]: ConNode 1234.10 { "bar" }
 // │
 // └─ VectorClock 1234.16
 

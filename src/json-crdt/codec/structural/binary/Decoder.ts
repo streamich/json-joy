@@ -1,18 +1,23 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {Const} from '../../../types/const/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {RootLww} from '../../../types/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
-import type {JsonNode} from '../../../types';
+import {
+  ArrNode,
+  ArrChunk,
+  BinNode,
+  BinChunk,
+  ConNode,
+  ObjNode,
+  RootNode,
+  StrNode,
+  StrChunk,
+  ValNode,
+  VecNode,
+  type JsonNode,
+} from '../../../nodes';
 
 export class Decoder extends MsgPackDecoderFast<CrdtReader> {
   protected doc!: Model;
@@ -37,7 +42,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
       const clock = this.clockDecoder!.clock;
       this.doc = Model.withLogicalClock(clock);
     }
-    this.doc.root = new RootLww(this.doc, this.cRoot().id);
+    this.doc.root = new RootNode(this.doc, this.cRoot().id);
     delete this.clockDecoder;
     return this.doc;
   }
@@ -90,18 +95,18 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
         case 0xc6:
           return this.cBin(id, reader.u32());
         case 0xd4: {
-          const obj = new Const(id, this.val());
+          const obj = new ConNode(id, this.val());
           this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd5: {
-          const obj = new Const(id, this.ts());
+          const obj = new ConNode(id, this.ts());
           this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd6: {
           const val = this.cNode();
-          const obj = new ValueLww(this.doc, id, val.id);
+          const obj = new ValNode(this.doc, id, val.id);
           this.doc.index.set(id, obj);
           return obj;
         }
@@ -126,23 +131,23 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cObj(id: ITimestampStruct, length: number): ObjectLww {
-    const obj = new ObjectLww(this.doc, id);
+  public cObj(id: ITimestampStruct, length: number): ObjNode {
+    const obj = new ObjNode(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private cObjChunk(obj: ObjectLww): void {
+  private cObjChunk(obj: ObjNode): void {
     const key: string = this.key();
     obj.keys.set(key, this.cNode().id);
   }
 
-  public cTup(id: ITimestampStruct): ArrayLww {
+  public cTup(id: ITimestampStruct): VecNode {
     const reader = this.reader;
     const length = this.reader.u8();
     reader.x++;
-    const obj = new ArrayLww(this.doc, id);
+    const obj = new VecNode(this.doc, id);
     const elements = obj.elements;
     for (let i = 0; i < length; i++) {
       const octet = reader.peak();
@@ -155,54 +160,54 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     return obj;
   }
 
-  public cArr(id: ITimestampStruct, length: number): ArrayRga {
-    const obj = new ArrayRga(this.doc, id);
+  public cArr(id: ITimestampStruct, length: number): ArrNode {
+    const obj = new ArrNode(this.doc, id);
     obj.ingest(length, this.cArrChunk);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private readonly cArrChunk = (): ArrayChunk => {
+  private readonly cArrChunk = (): ArrChunk => {
     const [deleted, length] = this.reader.b1vu28();
     const id = this.ts();
-    if (deleted) return new ArrayChunk(id, length, undefined);
+    if (deleted) return new ArrChunk(id, length, undefined);
     const ids: ITimestampStruct[] = [];
     for (let i = 0; i < length; i++) ids.push(this.cNode().id);
-    return new ArrayChunk(id, length, ids);
+    return new ArrChunk(id, length, ids);
   };
 
-  public cStr(id: ITimestampStruct, length: number): StringRga {
-    const node = new StringRga(id);
+  public cStr(id: ITimestampStruct, length: number): StrNode {
+    const node = new StrNode(id);
     if (length) node.ingest(length, this.cStrChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cStrChunk = (): StringChunk => {
+  private cStrChunk = (): StrChunk => {
     const reader = this.reader;
     const id = this.ts();
     const isTombstone = reader.uint8[reader.x] === 0;
     if (isTombstone) {
       reader.x++;
       const length = reader.vu39();
-      return new StringChunk(id, length, '');
+      return new StrChunk(id, length, '');
     }
     const text: string = this.str() as string;
-    return new StringChunk(id, text.length, text);
+    return new StrChunk(id, text.length, text);
   };
 
-  public cBin(id: ITimestampStruct, length: number): BinaryRga {
-    const node = new BinaryRga(id);
+  public cBin(id: ITimestampStruct, length: number): BinNode {
+    const node = new BinNode(id);
     if (length) node.ingest(length, this.cBinChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cBinChunk = (): BinaryChunk => {
+  private cBinChunk = (): BinChunk => {
     const reader = this.reader;
     const [deleted, length] = reader.b1vu28();
     const id = this.ts();
-    if (deleted) return new BinaryChunk(id, length, undefined);
-    else return new BinaryChunk(id, length, reader.buf(length));
+    if (deleted) return new BinChunk(id, length, undefined);
+    else return new BinChunk(id, length, reader.buf(length));
   };
 }

@@ -32,20 +32,20 @@ console.log(view);
 
 console.log(model + '');
 // Model
-// ├─ RootLww "val" 0.0
-// │  └─ ObjectLww "obj" 1234.1
+// ├─ RootNode 0.0
+// │  └─ ObjNode 1234.1
 // │     ├─ "num"
-// │     │   └─ Const "con" 1234.2 { 123 }
+// │     │   └─ ConNode 1234.2 { 123 }
 // │     ├─ "text"
-// │     │   └─ StringRga "str" 1234.3 { "hello" }
-// │     │      └─ StringChunk 1234.4!5 len:5 { "hello" }
+// │     │   └─ StrNode 1234.3 { "hello" }
+// │     │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 // │     └─ "flags"
-// │         └─ ArrayRga "arr" 1234.9
-// │            └─ ArrayChunk 1234.14!2 len:2
-// │               ├─ [0]: ValueLww "val" 1234.11
-// │               │       └─ Const "con" 1234.10 { true }
-// │               └─ [1]: ValueLww "val" 1234.13
-// │                       └─ Const "con" 1234.12 { false }
+// │         └─ ArrNode 1234.9
+// │            └─ ArrChunk 1234.14!2 len:2
+// │               ├─ [0]: ValNode 1234.11
+// │               │       └─ ConNode 1234.10 { true }
+// │               └─ [1]: ValNode 1234.13
+// │                       └─ ConNode 1234.12 { false }
 // │
 // └─ VectorClock 1234.18
 
@@ -58,43 +58,43 @@ console.log(model.view().flags[0]);
 
 console.log(model.find.val.toApi() + '');
 // ObjectApi
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    ├─ "num"
-//    │   └─ Const "con" 1234.2 { 123 }
+//    │   └─ ConNode 1234.2 { 123 }
 //    ├─ "text"
-//    │   └─ StringRga "str" 1234.3 { "hello" }
-//    │      └─ StringChunk 1234.4!5 len:5 { "hello" }
+//    │   └─ StrNode 1234.3 { "hello" }
+//    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "flags"
-//        └─ ArrayRga "arr" 1234.9
-//           └─ ArrayChunk 1234.14!2 len:2
-//              ├─ [0]: ValueLww "val" 1234.11
-//              │       └─ Const "con" 1234.10 { true }
-//              └─ [1]: ValueLww "val" 1234.13
-//                      └─ Const "con" 1234.12 { false }
+//        └─ ArrNode 1234.9
+//           └─ ArrChunk 1234.14!2 len:2
+//              ├─ [0]: ValNode 1234.11
+//              │       └─ ConNode 1234.10 { true }
+//              └─ [1]: ValNode 1234.13
+//                      └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags.toApi() + '');
-// ArrayApi
-// └─ ArrayRga "arr" 1234.9
-//    └─ ArrayChunk 1234.14!2 len:2
-//       ├─ [0]: ValueLww "val" 1234.11
-//       │       └─ Const "con" 1234.10 { true }
-//       └─ [1]: ValueLww "val" 1234.13
-//               └─ Const "con" 1234.12 { false }
+// ArrApi
+// └─ ArrNode 1234.9
+//    └─ ArrChunk 1234.14!2 len:2
+//       ├─ [0]: ValNode 1234.11
+//       │       └─ ConNode 1234.10 { true }
+//       └─ [1]: ValNode 1234.13
+//               └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].toApi() + '');
-// ValueApi
-// └─ ValueLww "val" 1234.13
-//    └─ Const "con" 1234.12 { false }
+// ValApi
+// └─ ValNode 1234.13
+//    └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].val.toApi() + '');
-// ConstApi
-// └─ Const "con" 1234.12 { false }
+// ConApi
+// └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.num.toApi() + '');
-// ConstApi
-// └─ Const "con" 1234.2 { 123 }
+// ConApi
+// └─ ConNode 1234.2 { 123 }
 
 console.log(model.find.val.text.toApi() + '');
-// StringApi
-// └─ StringRga "str" 1234.3 { "hello" }
-//    └─ StringChunk 1234.4!5 len:5 { "hello" }
+// StrApi
+// └─ StrNode 1234.3 { "hello" }
+//    └─ StrChunk 1234.4!5 len:5 { "hello" }

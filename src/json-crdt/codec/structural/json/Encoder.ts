@@ -1,11 +1,5 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {Const} from '../../../types/const/Const';
-import {JsonNode} from '../../../types';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
+import * as nodes from '../../../nodes';
 import {toBase64} from '../../../../util/base64/toBase64';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {ITimestampStruct, IVectorClock, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
@@ -26,7 +20,6 @@ import type {
   JsonCrdtSnapshot,
   TupleJsonCrdtNode,
 } from './types';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Encoder {
   protected model!: Model;
@@ -54,18 +47,18 @@ export class Encoder {
     return ts.sid === SESSION.SERVER ? ts.time : [ts.sid, ts.time];
   }
 
-  public cNode(node: JsonNode): JsonCrdtNode {
-    if (node instanceof ObjectLww) return this.cObj(node);
-    else if (node instanceof ArrayRga) return this.cArr(node);
-    else if (node instanceof StringRga) return this.cStr(node);
-    else if (node instanceof ValueLww) return this.cVal(node);
-    else if (node instanceof Const) return this.cConst(node);
-    else if (node instanceof BinaryRga) return this.cBin(node);
-    else if (node instanceof ArrayLww) return this.cTup(node);
+  public cNode(node: nodes.JsonNode): JsonCrdtNode {
+    if (node instanceof nodes.ObjNode) return this.cObj(node);
+    else if (node instanceof nodes.ArrNode) return this.cArr(node);
+    else if (node instanceof nodes.StrNode) return this.cStr(node);
+    else if (node instanceof nodes.ValNode) return this.cVal(node);
+    else if (node instanceof nodes.ConNode) return this.cConst(node);
+    else if (node instanceof nodes.BinNode) return this.cBin(node);
+    else if (node instanceof nodes.VecNode) return this.cTup(node);
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cObj(obj: ObjectLww): ObjectJsonCrdtNode {
+  public cObj(obj: nodes.ObjNode): ObjectJsonCrdtNode {
     const keys: Record<string, JsonCrdtNode> = {};
     obj.nodes((node, key) => {
       keys[key] = this.cNode(node);
@@ -77,7 +70,7 @@ export class Encoder {
     };
   }
 
-  public cTup(obj: ArrayLww): TupleJsonCrdtNode {
+  public cTup(obj: nodes.VecNode): TupleJsonCrdtNode {
     const components: TupleJsonCrdtNode['components'] = [];
     const elements = obj.elements;
     const length = elements.length;
@@ -94,7 +87,7 @@ export class Encoder {
     };
   }
 
-  public cArr(obj: ArrayRga): ArrayJsonCrdtNode {
+  public cArr(obj: nodes.ArrNode): ArrayJsonCrdtNode {
     const chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
@@ -106,7 +99,7 @@ export class Encoder {
     };
   }
 
-  public cArrChunk(chunk: ArrayChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public cArrChunk(chunk: nodes.ArrChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.del) {
       const tombstone: JsonCrdtRgaTombstone = {
         id: this.cTs(chunk.id),
@@ -122,11 +115,11 @@ export class Encoder {
     return res;
   }
 
-  public cStr(obj: StringRga): StringJsonCrdtNode {
+  public cStr(obj: nodes.StrNode): StringJsonCrdtNode {
     const chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) chunks.push(this.cStrChunk(chunk as StringChunk));
+    while ((chunk = iterator())) chunks.push(this.cStrChunk(chunk as nodes.StrChunk));
     return {
       type: 'str',
       id: this.cTs(obj.id),
@@ -134,7 +127,7 @@ export class Encoder {
     };
   }
 
-  public cStrChunk(chunk: StringChunk): StringJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public cStrChunk(chunk: nodes.StrChunk): StringJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.del) {
       const tombstone: JsonCrdtRgaTombstone = {
         id: this.cTs(chunk.id),
@@ -149,11 +142,11 @@ export class Encoder {
     return res;
   }
 
-  public cBin(obj: BinaryRga): BinaryJsonCrdtNode {
+  public cBin(obj: nodes.BinNode): BinaryJsonCrdtNode {
     const chunks: (BinaryJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as BinaryChunk));
+    while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as nodes.BinChunk));
     return {
       type: 'bin',
       id: this.cTs(obj.id),
@@ -161,7 +154,7 @@ export class Encoder {
     };
   }
 
-  public cBinChunk(chunk: BinaryChunk): BinaryJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public cBinChunk(chunk: nodes.BinChunk): BinaryJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.del) {
       const tombstone: JsonCrdtRgaTombstone = {
         id: this.cTs(chunk.id),
@@ -176,7 +169,7 @@ export class Encoder {
     return res;
   }
 
-  public cVal(obj: ValueLww): ValueJsonCrdtNode {
+  public cVal(obj: nodes.ValNode): ValueJsonCrdtNode {
     return {
       type: 'val',
       id: this.cTs(obj.id),
@@ -184,7 +177,7 @@ export class Encoder {
     };
   }
 
-  public cConst(obj: Const): ConstantJsonCrdtNode {
+  public cConst(obj: nodes.ConNode): ConstantJsonCrdtNode {
     const node: ConstantJsonCrdtNode = {
       type: 'const',
       id: this.cTs(obj.id),

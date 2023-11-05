@@ -2,7 +2,7 @@ import {RandomJson} from '../../json-random';
 import {hashNode} from '../hash';
 import {Model} from '../model';
 
-test('can compute Const hash', () => {
+test('can compute ConNode hash', () => {
   const model = Model.withLogicalClock();
   model.api.root(123);
   const c1 = model.api.val([]).in();

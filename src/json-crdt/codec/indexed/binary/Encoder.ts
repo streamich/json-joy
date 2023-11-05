@@ -3,13 +3,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
-import {JsonNode} from '../../../types';
-import {Const} from '../../../types/const/Const';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../../types/rga-string/StringRga';
+import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {IndexedFields, FieldName} from './types';
 
 const EMPTY = new Uint8Array(0);
@@ -50,12 +44,12 @@ export class Encoder {
   };
 
   public encodeNode(node: JsonNode): Uint8Array {
-    if (node instanceof ValueLww) return this.encodeVal(node);
-    else if (node instanceof Const) return this.encodeConst(node);
-    else if (node instanceof StringRga) return this.encodeStr(node);
-    else if (node instanceof ObjectLww) return this.encodeObj(node);
-    else if (node instanceof ArrayRga) return this.encodeArr(node);
-    else if (node instanceof BinaryRga) return this.encodeBin(node);
+    if (node instanceof ValNode) return this.encodeVal(node);
+    else if (node instanceof ConNode) return this.encodeConst(node);
+    else if (node instanceof StrNode) return this.encodeStr(node);
+    else if (node instanceof ObjNode) return this.encodeObj(node);
+    else if (node instanceof ArrNode) return this.encodeArr(node);
+    else if (node instanceof BinNode) return this.encodeBin(node);
     else return EMPTY;
   }
 
@@ -64,7 +58,7 @@ export class Encoder {
     this.enc.writer.id(index, id.time);
   }
 
-  public encodeVal(node: ValueLww): Uint8Array {
+  public encodeVal(node: ValNode): Uint8Array {
     const writer = this.enc.writer;
     const child = node.node();
     writer.reset();
@@ -73,7 +67,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeConst(node: Const): Uint8Array {
+  public encodeConst(node: ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;
@@ -88,7 +82,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeStr(node: StringRga): Uint8Array {
+  public encodeStr(node: StrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -101,7 +95,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeBin(node: BinaryRga): Uint8Array {
+  public encodeBin(node: BinNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -117,7 +111,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeObj(node: ObjectLww): Uint8Array {
+  public encodeObj(node: ObjNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -131,7 +125,7 @@ export class Encoder {
     this.ts(value);
   };
 
-  public encodeArr(node: ArrayRga): Uint8Array {
+  public encodeArr(node: ArrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();

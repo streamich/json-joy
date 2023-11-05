@@ -1,5 +1,3 @@
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
 import {decode as decodeBinary, encode as encodeBinary} from '../../../json-crdt-patch/codec/binary';
 import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/decode';
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
@@ -14,14 +12,12 @@ import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder'
 import {Encoder as JsonEncoder} from '../../codec/structural/json/Encoder';
 import {generateInteger} from './util';
 import {Model} from '../..';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {StrNode, ValNode, ObjNode, ArrNode, BinNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
-import {ValueLww} from '../../types/lww-value/ValueLww';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
 
@@ -71,11 +67,11 @@ export class SessionLogical {
     const model = this.models[peer];
     const node = this.fuzzer.picker.pickNode(model);
     let patch: Patch | null = null;
-    if (node instanceof StringRga) patch = this.generateStringPatch(model, node);
-    else if (node instanceof BinaryRga) patch = this.generateBinaryPatch(model, node);
-    else if (node instanceof ObjectLww) patch = this.generateObjectPatch(model, node);
-    else if (node instanceof ArrayRga) patch = this.generateArrayPatch(model, node);
-    else if (node instanceof ValueLww) patch = this.generateValuePatch(model, node);
+    if (node instanceof StrNode) patch = this.generateStringPatch(model, node);
+    else if (node instanceof BinNode) patch = this.generateBinaryPatch(model, node);
+    else if (node instanceof ObjNode) patch = this.generateObjectPatch(model, node);
+    else if (node instanceof ArrNode) patch = this.generateArrayPatch(model, node);
+    else if (node instanceof ValNode) patch = this.generateValuePatch(model, node);
     else return;
     if (!patch) return;
     model.applyPatch(patch);
@@ -90,7 +86,7 @@ export class SessionLogical {
     if (this.debug) this.patchesSerialized[peer].push(encodeJson(patch));
   }
 
-  private generateStringPatch(model: Model, node: StringRga): Patch | null {
+  private generateStringPatch(model: Model, node: StrNode): Patch | null {
     const opcode = this.fuzzer.picker.pickStringOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
@@ -109,7 +105,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateBinaryPatch(model: Model, node: BinaryRga): Patch | null {
+  private generateBinaryPatch(model: Model, node: BinNode): Patch | null {
     const opcode = this.fuzzer.picker.pickBinaryOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
@@ -128,7 +124,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateObjectPatch(model: Model, node: ObjectLww): Patch {
+  private generateObjectPatch(model: Model, node: ObjNode): Patch {
     const [key, opcode] = this.fuzzer.picker.pickObjectOperation(node);
     const builder = new PatchBuilder(model.clock);
     if (opcode === InsObjOp) {
@@ -154,7 +150,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateArrayPatch(model: Model, node: ArrayRga): Patch {
+  private generateArrayPatch(model: Model, node: ArrNode): Patch {
     const opcode = this.fuzzer.picker.pickArrayOperation(node);
     const builder = new PatchBuilder(model.clock);
     const length = node.length();
@@ -179,7 +175,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateValuePatch(model: Model, node: ValueLww): Patch {
+  private generateValuePatch(model: Model, node: ValNode): Patch {
     const builder = new PatchBuilder(model.clock);
     const value =
       Math.random() > 0.1

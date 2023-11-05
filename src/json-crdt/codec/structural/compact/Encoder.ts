@@ -1,17 +1,9 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
+import * as nodes from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Const} from '../../../types/const/Const';
-import {RootLww} from '../../../types/lww-root/RootLww';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
 import {Code} from '../../../../json-crdt-patch/codec/compact/constants';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 import type {Model} from '../../../model';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Encoder {
   protected time?: number;
@@ -51,24 +43,24 @@ export class Encoder {
     }
   }
 
-  protected encodeRoot(arr: unknown[], root: RootLww): void {
+  protected encodeRoot(arr: unknown[], root: nodes.RootNode): void {
     if (!root.val.time) arr.push(0);
     else this.cNode(arr, root.node());
   }
 
-  protected cNode(arr: unknown[], node: JsonNode): void {
+  protected cNode(arr: unknown[], node: nodes.JsonNode): void {
     // TODO: PERF: use switch with `node.constructor`.
-    if (node instanceof ObjectLww) return this.encodeObj(arr, node);
-    else if (node instanceof ArrayRga) return this.encodeArr(arr, node);
-    else if (node instanceof StringRga) return this.encodeStr(arr, node);
-    else if (node instanceof ValueLww) return this.cVal(arr, node);
-    else if (node instanceof ArrayLww) return this.cTup(arr, node);
-    else if (node instanceof Const) return this.cConst(arr, node);
-    else if (node instanceof BinaryRga) return this.encodeBin(arr, node);
+    if (node instanceof nodes.ObjNode) return this.encodeObj(arr, node);
+    else if (node instanceof nodes.ArrNode) return this.encodeArr(arr, node);
+    else if (node instanceof nodes.StrNode) return this.encodeStr(arr, node);
+    else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
+    else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
+    else if (node instanceof nodes.ConNode) return this.cConst(arr, node);
+    else if (node instanceof nodes.BinNode) return this.encodeBin(arr, node);
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected encodeObj(arr: unknown[], obj: ObjectLww): void {
+  protected encodeObj(arr: unknown[], obj: nodes.ObjNode): void {
     const res: unknown[] = [Code.MakeObject];
     arr.push(res);
     this.ts(res, obj.id);
@@ -78,7 +70,7 @@ export class Encoder {
     });
   }
 
-  protected cTup(arr: unknown[], obj: ArrayLww): void {
+  protected cTup(arr: unknown[], obj: nodes.VecNode): void {
     const res: unknown[] = [Code.MakeTuple];
     arr.push(res);
     this.ts(res, obj.id);
@@ -95,7 +87,7 @@ export class Encoder {
     }
   }
 
-  protected encodeArr(arr: unknown[], obj: ArrayRga): void {
+  protected encodeArr(arr: unknown[], obj: nodes.ArrNode): void {
     const res: unknown[] = [Code.MakeArray, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
@@ -104,7 +96,7 @@ export class Encoder {
     while ((chunk = iterator())) this.encodeArrChunk(res, chunk);
   }
 
-  protected encodeArrChunk(arr: unknown[], chunk: ArrayChunk): void {
+  protected encodeArrChunk(arr: unknown[], chunk: nodes.ArrChunk): void {
     this.ts(arr, chunk.id);
     if (chunk.del) arr.push(chunk.span);
     else {
@@ -115,42 +107,42 @@ export class Encoder {
     }
   }
 
-  protected encodeStr(arr: unknown[], obj: StringRga): void {
+  protected encodeStr(arr: unknown[], obj: nodes.StrNode): void {
     const res: unknown[] = [Code.MakeString, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeStrChunk(res, chunk as StringChunk);
+    while ((chunk = iterator())) this.encodeStrChunk(res, chunk as nodes.StrChunk);
   }
 
-  protected encodeStrChunk(arr: unknown[], chunk: StringChunk): void {
+  protected encodeStrChunk(arr: unknown[], chunk: nodes.StrChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }
 
-  protected encodeBin(arr: unknown[], obj: BinaryRga): void {
+  protected encodeBin(arr: unknown[], obj: nodes.BinNode): void {
     const res: unknown[] = [Code.MakeBinary, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeBinChunk(res, chunk as BinaryChunk);
+    while ((chunk = iterator())) this.encodeBinChunk(res, chunk as nodes.BinChunk);
   }
 
-  protected encodeBinChunk(arr: unknown[], chunk: BinaryChunk): void {
+  protected encodeBinChunk(arr: unknown[], chunk: nodes.BinChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }
 
-  protected cVal(arr: unknown[], obj: ValueLww): void {
+  protected cVal(arr: unknown[], obj: nodes.ValNode): void {
     const res: unknown[] = [Code.MakeValue];
     arr.push(res);
     this.ts(res, obj.id);
     this.cNode(res, obj.node());
   }
 
-  protected cConst(arr: unknown[], obj: Const): void {
+  protected cConst(arr: unknown[], obj: nodes.ConNode): void {
     const val = obj.val;
     const res: unknown[] = [];
     if (val instanceof Timestamp) {
