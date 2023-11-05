@@ -116,7 +116,7 @@ export class Decoder {
     const size = chunks.length;
     let i = 0;
     obj.ingest(size, () => {
-      const chunk = chunks[i];
+      const chunk = chunks[i++];
       const chunkId = this.ts(chunk[0]);
       const content = chunk[1];
       if (typeof content === 'number') return new nodes.StrChunk(chunkId, content, '');
@@ -133,7 +133,7 @@ export class Decoder {
     const size = chunks.length;
     let i = 0;
     obj.ingest(size, () => {
-      const chunk = chunks[i];
+      const chunk = chunks[i++];
       const chunkId = this.ts(chunk[0]);
       const content = chunk[1];
       if (typeof content === 'number') return new nodes.BinChunk(chunkId, content, undefined);
@@ -150,7 +150,7 @@ export class Decoder {
     const size = chunks.length;
     let i = 0;
     obj.ingest(size, () => {
-      const chunk = chunks[i];
+      const chunk = chunks[i++];
       const chunkId = this.ts(chunk[0]);
       const content = chunk[1];
       if (typeof content === 'number') return new nodes.ArrChunk(chunkId, content, undefined);
