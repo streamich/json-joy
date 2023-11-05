@@ -1,6 +1,5 @@
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 import {vec} from '../../../../../json-crdt-patch/builder/Tuple';
-import {Timestamp} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 
 export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) => {
@@ -16,13 +15,13 @@ export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) =>
     assertCodec(model);
   });
 
-  test('number with server clock', () => {
+  test('numbers with server clock', () => {
     const model = Model.withServerClock();
     model.api.root([1, 0, -4, 1.132, 8324.234234, 888888888888]);
     assertCodec(model);
   });
 
-  test('string', () => {
+  test('strings', () => {
     const model = Model.withLogicalClock();
     model.api.root(['', 'abc', '😛']);
     assertCodec(model);

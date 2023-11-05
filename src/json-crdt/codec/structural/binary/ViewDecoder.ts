@@ -1,7 +1,8 @@
-import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
-import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
+import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
+import {CRDT_MAJOR} from './constants';
 
-export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
+export class ViewDecoder extends CborDecoderBase<CrdtReader> {
   protected time: number = -1;
 
   constructor() {
@@ -32,49 +33,37 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     return !peek ? undefined : this.cNode();
   }
 
-  public cNode(): unknown {
+  protected cNode(): unknown {
     const reader = this.reader;
     this.ts();
-    const byte = reader.u8();
-    if (byte <= 0b10001111) return this.cObj(byte & 0b1111);
-    else if (byte <= 0b10011111) return this.cArr(byte & 0b1111);
-    else if (byte <= 0b10111111) return this.cStr(byte & 0b11111);
-    else {
-      switch (byte) {
-        case 0xc4:
-          return this.cBin(reader.u8());
-        case 0xc5:
-          return this.cBin(reader.u16());
-        case 0xc6:
-          return this.cBin(reader.u32());
-        case 0xd4:
-          return this.val();
-        case 0xd5:
-          return null;
-        case 0xd6:
-          return this.cNode();
-        case 0xde:
-          return this.cObj(reader.u16());
-        case 0xdf:
-          return this.cObj(reader.u32());
-        case 0xdc:
-          return this.cArr(reader.u16());
-        case 0xdd:
-          return this.cArr(reader.u32());
-        case 0xd9:
-          return this.cStr(reader.u8());
-        case 0xda:
-          return this.cStr(reader.u16());
-        case 0xdb:
-          return this.cStr(reader.u32());
-        case 0xc7:
-          return this.cTup();
-      }
+    const octet = reader.u8();
+    const major = octet >> 5;
+    const minor = octet & 0b11111;
+    const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
+    switch (major) {
+      case CRDT_MAJOR.CON:
+        return this.cCon(length);
+      case CRDT_MAJOR.VAL:
+        return this.cNode();
+      case CRDT_MAJOR.VEC:
+        return this.cVec(length);
+      case CRDT_MAJOR.OBJ:
+        return this.cObj(length);
+      case CRDT_MAJOR.STR:
+        return this.cStr(length);
+      case CRDT_MAJOR.BIN:
+        return this.cBin(length);
+      case CRDT_MAJOR.ARR:
+        return this.cArr(length);
     }
     return undefined;
   }
 
-  public cObj(length: number): Record<string, unknown> {
+  protected cCon(length: number): unknown {
+    return !length ? this.val() : (this.ts(), null);
+  }
+
+  protected cObj(length: number): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < length; i++) {
       const key: string = this.key();
@@ -84,10 +73,8 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     return obj;
   }
 
-  public cTup(): unknown[] {
+  protected cVec(length: number): unknown[] {
     const reader = this.reader;
-    const length = this.reader.u8();
-    reader.x++;
     const obj: unknown[] = [];
     for (let i = 0; i < length; i++) {
       const octet = reader.peak();
@@ -99,7 +86,7 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     return obj;
   }
 
-  public cArr(length: number): unknown[] {
+  protected cArr(length: number): unknown[] {
     const arr: unknown[] = [];
     for (let i = 0; i < length; i++) {
       const values = this.cArrChunk();
@@ -108,7 +95,7 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     return arr;
   }
 
-  private cArrChunk(): unknown[] | undefined {
+  protected cArrChunk(): unknown[] | undefined {
     const [deleted, length] = this.reader.b1vu28();
     this.ts();
     if (deleted) {
@@ -120,7 +107,7 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     }
   }
 
-  public cStr(length: number): string {
+  protected cStr(length: number): string {
     const reader = this.reader;
     let str = '';
     for (let i = 0; i < length; i++) {
@@ -137,7 +124,7 @@ export class ViewDecoder extends MsgPackDecoderFast<CrdtReader> {
     return str;
   }
 
-  public cBin(length: number): Uint8Array {
+  protected cBin(length: number): Uint8Array {
     const reader = this.reader;
     const buffers: Uint8Array[] = [];
     let totalLength = 0;

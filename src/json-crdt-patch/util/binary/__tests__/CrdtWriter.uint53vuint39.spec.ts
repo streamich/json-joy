@@ -1,4 +1,4 @@
-import {CrdtWriter} from '../CrdtEncoder';
+import {CrdtWriter} from '../CrdtWriter';
 
 const encoder = new CrdtWriter(1);
 const encode = (x: number, z: number): Uint8Array => {

@@ -1,6 +1,5 @@
 import {ITimestampStruct, IVectorClock, tick} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
-import type {CrdtWriter} from '../../util/binary/CrdtEncoder';
 
 class ClockTableEntry {
   constructor(public index: number, public clock: ITimestampStruct) {}

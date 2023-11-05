@@ -56,7 +56,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
   }
 
   public readMinorLen(minor: number): number {
-    if (minor <= 23) return minor;
+    if (minor < 24) return minor;
     switch (minor) {
       case 24:
         return this.reader.u8();
@@ -151,6 +151,15 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
   }
 
   // ----------------------------------------------------------- String reading
+
+  public readAsStr(): string {
+    const reader = this.reader;
+    const octet = reader.u8();
+    const major = octet >> 5;
+    const minor = octet & CONST.MINOR_MASK;
+    if (major !== MAJOR.STR) throw ERROR.UNEXPECTED_STR_MAJOR;
+    return this.readStr(minor);
+  }
 
   public readStr(minor: number): string {
     const reader = this.reader;

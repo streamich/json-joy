@@ -1,6 +1,6 @@
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
-import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
+import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
 import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';

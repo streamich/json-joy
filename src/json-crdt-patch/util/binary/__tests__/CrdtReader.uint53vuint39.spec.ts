@@ -1,5 +1,5 @@
-import {CrdtWriter} from '../CrdtEncoder';
-import {CrdtReader} from '../CrdtDecoder';
+import {CrdtWriter} from '../CrdtWriter';
+import {CrdtReader} from '../CrdtReader';
 
 const encoder = new CrdtWriter();
 const decoder = new CrdtReader();
