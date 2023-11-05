@@ -23,7 +23,7 @@ console.log(model.root + '');
 //    └─ "foo"
 //        └─ ObjectLww "obj" 1234.2
 //           └─ "bar"
-//               └─ ArrayLww "vec" 1234.3
+//               └─ VecNode 1234.3
 //                  ├─ 0: ConNode 1234.4 { 1 }
 //                  └─ 1: ConNode 1234.5 { 2 }
 
@@ -34,7 +34,7 @@ console.log(model.view());
 const bar = model.api.vec(['foo', 'bar']);
 console.log(bar + '');
 // VectorApi
-// └─ ArrayLww "vec" 1234.3
+// └─ VecNode 1234.3
 //    ├─ 0: ConNode 1234.4 { 1 }
 //    └─ 1: ConNode 1234.5 { 2 }
 
@@ -44,7 +44,7 @@ bar.set([
 ]);
 console.log(bar + '');
 // VectorApi
-// └─ ArrayLww "vec" 1234.3
+// └─ VecNode 1234.3
 //    ├─ 0: ConNode 1234.10 { 24 }
 //    ├─ 1: ConNode 1234.5 { 2 }
 //    └─ 2: ConNode 1234.11 { 42 }

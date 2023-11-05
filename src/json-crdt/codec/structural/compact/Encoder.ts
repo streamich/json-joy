@@ -54,7 +54,7 @@ export class Encoder {
     else if (node instanceof nodes.ArrayRga) return this.encodeArr(arr, node);
     else if (node instanceof nodes.StringRga) return this.encodeStr(arr, node);
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
-    else if (node instanceof nodes.ArrayLww) return this.cTup(arr, node);
+    else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
     else if (node instanceof nodes.ConNode) return this.cConst(arr, node);
     else if (node instanceof nodes.BinaryRga) return this.encodeBin(arr, node);
     throw new Error('UNKNOWN_NODE');
@@ -70,7 +70,7 @@ export class Encoder {
     });
   }
 
-  protected cTup(arr: unknown[], obj: nodes.ArrayLww): void {
+  protected cTup(arr: unknown[], obj: nodes.VecNode): void {
     const res: unknown[] = [Code.MakeTuple];
     arr.push(res);
     this.ts(res, obj.id);

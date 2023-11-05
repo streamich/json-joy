@@ -1,7 +1,7 @@
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjectLww, ArrayRga, BinaryRga, ConNode, ArrayLww, ValNode, StringRga} from '../../nodes';
+import {ObjectLww, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StringRga} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
@@ -93,7 +93,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asTup(): VectorApi {
-    if (this.node instanceof ArrayLww) return this.api.wrap(this.node as ArrayLww);
+    if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
   }
 
@@ -217,22 +217,22 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
   }
 }
 
-type ArrayLwwNodes<N> = N extends ArrayLww<infer T> ? T : never;
+type UnVecNode<N> = N extends VecNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `vec` JSON CRDT node {@link ArrayLww}.
+ * Local changes API for the `vec` JSON CRDT node {@link VecNode}.
  *
  * @category Local API
  * @todo Rename to VectorApi.
  */
-export class VectorApi<N extends ArrayLww<any> = ArrayLww<any>> extends NodeApi<N> {
+export class VectorApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof ArrayLwwNodes<N>>(key: K): JsonNodeApi<ArrayLwwNodes<N>[K]> {
+  public get<K extends keyof UnVecNode<N>>(key: K): JsonNodeApi<UnVecNode<N>[K]> {
     return this.in(key as string) as any;
   }
 

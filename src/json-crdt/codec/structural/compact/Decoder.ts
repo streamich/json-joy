@@ -82,9 +82,9 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeTup(doc: Model, data: unknown[]): nodes.ArrayLww {
+  protected decodeTup(doc: Model, data: unknown[]): nodes.VecNode {
     const [id, index] = this.ts(data, 1);
-    const obj = new nodes.ArrayLww(doc, id);
+    const obj = new nodes.VecNode(doc, id);
     const length = data.length;
     const elements = obj.elements;
     for (let i = index; i < length; ) {

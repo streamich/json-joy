@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
-import {ArrayLww} from '../../nodes/vec/ArrayLww';
+import {VecNode} from '../../nodes';
 
 describe('Document', () => {
   describe('tuple', () => {
@@ -10,7 +10,7 @@ describe('Document', () => {
       const id = builder.vec();
       doc.applyPatch(builder.patch);
       const obj = doc.index.get(id);
-      expect(obj).toBeInstanceOf(ArrayLww);
+      expect(obj).toBeInstanceOf(VecNode);
       expect(obj?.view()).toStrictEqual([]);
     });
 

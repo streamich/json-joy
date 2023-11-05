@@ -15,7 +15,7 @@ import {
   StringRga,
   StringChunk,
   ValNode,
-  ArrayLww,
+  VecNode,
   type JsonNode,
 } from '../../../nodes';
 
@@ -143,11 +143,11 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     obj.keys.set(key, this.cNode().id);
   }
 
-  public cTup(id: ITimestampStruct): ArrayLww {
+  public cTup(id: ITimestampStruct): VecNode {
     const reader = this.reader;
     const length = this.reader.u8();
     reader.x++;
-    const obj = new ArrayLww(this.doc, id);
+    const obj = new VecNode(this.doc, id);
     const elements = obj.elements;
     for (let i = 0; i < length; i++) {
       const octet = reader.peak();

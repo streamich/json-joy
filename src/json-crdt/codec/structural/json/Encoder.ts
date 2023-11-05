@@ -54,7 +54,7 @@ export class Encoder {
     else if (node instanceof nodes.ValNode) return this.cVal(node);
     else if (node instanceof nodes.ConNode) return this.cConst(node);
     else if (node instanceof nodes.BinaryRga) return this.cBin(node);
-    else if (node instanceof nodes.ArrayLww) return this.cTup(node);
+    else if (node instanceof nodes.VecNode) return this.cTup(node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -70,7 +70,7 @@ export class Encoder {
     };
   }
 
-  public cTup(obj: nodes.ArrayLww): TupleJsonCrdtNode {
+  public cTup(obj: nodes.VecNode): TupleJsonCrdtNode {
     const components: TupleJsonCrdtNode['components'] = [];
     const elements = obj.elements;
     const length = elements.length;

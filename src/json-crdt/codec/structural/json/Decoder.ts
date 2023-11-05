@@ -84,9 +84,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cTup(doc: Model, node: TupleJsonCrdtNode): nodes.ArrayLww {
+  protected cTup(doc: Model, node: TupleJsonCrdtNode): nodes.VecNode {
     const id = this.cTs(node.id);
-    const obj = new nodes.ArrayLww(doc, id);
+    const obj = new nodes.VecNode(doc, id);
     const elements = obj.elements;
     const components = node.components;
     const length = components.length;

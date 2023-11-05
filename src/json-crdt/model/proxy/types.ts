@@ -9,7 +9,7 @@ export type ProxyNodeCon<N extends nodes.ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {
   val: JsonNodeToProxyNode<ReturnType<N['child']>>;
 };
-export type ProxyNodeVec<N extends nodes.ArrayLww<any>> = ProxyNode<N> & {
+export type ProxyNodeVec<N extends nodes.VecNode<any>> = ProxyNode<N> & {
   [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<nodes.JsonNodeView<N>[K]>;
 };
 export type ProxyNodeObj<N extends nodes.ObjectLww<any>> = ProxyNode<N> & {
@@ -35,6 +35,6 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
             ? ProxyNodeArr<N>
             : N extends nodes.ObjectLww<any>
               ? ProxyNodeObj<N>
-              : N extends nodes.ArrayLww<any>
+              : N extends nodes.VecNode<any>
                 ? ProxyNodeVec<N>
                 : never;

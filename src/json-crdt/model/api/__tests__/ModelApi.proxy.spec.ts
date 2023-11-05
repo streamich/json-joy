@@ -1,6 +1,6 @@
 import {Model} from '../../Model';
 import {ConApi, ObjectApi, StringApi, VectorApi, ValApi} from '../nodes';
-import {ConNode, RootLww, ArrayLww, ObjectLww, StringRga} from '../../../nodes';
+import {ConNode, RootLww, VecNode, ObjectLww, StringRga} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
@@ -48,7 +48,7 @@ describe('supports all node types', () => {
       str: StringRga;
       num: ConNode<number>;
     }>;
-    vec: ArrayLww<[StringRga]>;
+    vec: VecNode<[StringRga]>;
   }>;
   const model = Model.withLogicalClock() as Model<Schema>;
   const data = {
@@ -107,7 +107,7 @@ describe('supports all node types', () => {
     const vec = proxy.val.vec;
     const vecApi: VectorApi = vec.toApi();
     expect(vecApi).toBeInstanceOf(VectorApi);
-    expect(vecApi.node).toBeInstanceOf(ArrayLww);
+    expect(vecApi.node).toBeInstanceOf(VecNode);
     expect(vecApi.view()).toStrictEqual(['asdf', 1234, true, null]);
   });
 });

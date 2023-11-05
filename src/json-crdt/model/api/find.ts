@@ -1,7 +1,5 @@
-import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
-import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Path, toPath} from '../../../json-pointer';
-import {ArrayLww} from '../../nodes/vec/ArrayLww';
+import {VecNode, ObjectLww, ArrayRga} from '../../nodes';
 import type {JsonNode} from '../../nodes';
 
 export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
@@ -22,7 +20,7 @@ export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
       const nextNode = node.getNode(Number(step));
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
-    } else if (node instanceof ArrayLww) {
+    } else if (node instanceof VecNode) {
       const nextNode = node.get(Number(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
