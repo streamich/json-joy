@@ -77,7 +77,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_VAL');
   }
 
-  public asStr(): StringApi {
+  public asStr(): StrApi {
     if (this.node instanceof StrNode) return this.api.wrap(this.node);
     throw new Error('NOT_STR');
   }
@@ -122,7 +122,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asVal();
   }
 
-  public str(path?: ApiPath): StringApi {
+  public str(path?: ApiPath): StrApi {
     return this.in(path).asStr();
   }
 
@@ -355,7 +355,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
  *
  * @category Local API
  */
-export class StringApi extends NodeApi<StrNode> {
+export class StrApi extends NodeApi<StrNode> {
   /**
    * Inserts text at a given position.
    *

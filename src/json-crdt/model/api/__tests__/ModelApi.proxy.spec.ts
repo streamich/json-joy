@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConApi, ObjApi, StringApi, VecApi, ValApi} from '../nodes';
+import {ConApi, ObjApi, StrApi, VecApi, ValApi} from '../nodes';
 import {ConNode, RootLww, VecNode, ObjNode, StrNode} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
@@ -31,8 +31,8 @@ test('proxy API supports object types', () => {
     bar: 1234,
   });
   const foo = obj.foo;
-  const fooApi: StringApi = foo.toApi();
-  expect(fooApi).toBeInstanceOf(StringApi);
+  const fooApi: StrApi = foo.toApi();
+  expect(fooApi).toBeInstanceOf(StrApi);
   expect(fooApi.node).toBeInstanceOf(StrNode);
   expect(fooApi.view()).toStrictEqual('asdf');
   const bar = obj.bar;
@@ -87,8 +87,8 @@ describe('supports all node types', () => {
   test('string as object key', () => {
     const proxy = model.api.r.proxy();
     const str = proxy.val.obj.str;
-    const strApi: StringApi = str.toApi();
-    expect(strApi).toBeInstanceOf(StringApi);
+    const strApi: StrApi = str.toApi();
+    expect(strApi).toBeInstanceOf(StrApi);
     expect(strApi.node).toBeInstanceOf(StrNode);
     expect(strApi.view()).toStrictEqual('asdf');
   });
