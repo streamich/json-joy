@@ -1,6 +1,6 @@
 import {CONST, updateNum} from '../json-hash';
 import {ConNode} from './nodes';
-import {ValueLww} from './nodes/val/ValueLww';
+import {ValNode} from './nodes/val/ValueLww';
 import {ObjectLww} from './nodes/lww-object/ObjectLww';
 import {ArrayLww} from './nodes/lww-array/ArrayLww';
 import {ArrayRga} from './nodes/rga-array/ArrayRga';
@@ -33,7 +33,7 @@ export const updateRga = (state: number, node: AbstractRga<unknown>): number => 
  */
 export const updateNode = (state: number, node: JsonNode): number => {
   if (node instanceof ConNode) return updateId(state, node.id);
-  if (node instanceof ValueLww) {
+  if (node instanceof ValNode) {
     const child = node.child();
     if (child) state = updateNode(state, child);
     return updateId(state, node.id);

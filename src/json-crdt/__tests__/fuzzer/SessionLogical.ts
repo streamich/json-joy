@@ -21,7 +21,7 @@ import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {StringRga} from '../../nodes/rga-string/StringRga';
 import {interval} from '../../../json-crdt-patch/clock';
-import {ValueLww} from '../../nodes/val/ValueLww';
+import {ValNode} from '../../nodes/val/ValueLww';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
 
@@ -75,7 +75,7 @@ export class SessionLogical {
     else if (node instanceof BinaryRga) patch = this.generateBinaryPatch(model, node);
     else if (node instanceof ObjectLww) patch = this.generateObjectPatch(model, node);
     else if (node instanceof ArrayRga) patch = this.generateArrayPatch(model, node);
-    else if (node instanceof ValueLww) patch = this.generateValuePatch(model, node);
+    else if (node instanceof ValNode) patch = this.generateValuePatch(model, node);
     else return;
     if (!patch) return;
     model.applyPatch(patch);
@@ -179,7 +179,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateValuePatch(model: Model, node: ValueLww): Patch {
+  private generateValuePatch(model: Model, node: ValNode): Patch {
     const builder = new PatchBuilder(model.clock);
     const value =
       Math.random() > 0.1

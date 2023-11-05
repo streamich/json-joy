@@ -1,6 +1,6 @@
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ConNode} from './con/ConNode';
-import type {ValueLww} from './val/ValueLww';
+import type {ValNode} from './val/ValueLww';
 import type {ArrayLww} from './lww-array/ArrayLww';
 import type {JsonNode} from './types';
 import type {ObjectLww} from './lww-object/ObjectLww';
@@ -11,7 +11,7 @@ import type {ArrayRga} from './rga-array/ArrayRga';
 // tslint:disable-next-line:no-namespace
 export namespace n {
   export type con<View = unknown | ITimestampStruct> = ConNode<View>;
-  export type val<Value extends JsonNode = JsonNode> = ValueLww<Value>;
+  export type val<Value extends JsonNode = JsonNode> = ValNode<Value>;
   export type vec<Value extends JsonNode[] = JsonNode[]> = ArrayLww<Value>;
   export type obj<Value extends Record<string, JsonNode> = Record<string, JsonNode>> = ObjectLww<Value>;
   export type str<T extends string = string> = StringRga<T>;
@@ -20,7 +20,7 @@ export namespace n {
 }
 
 export {ConNode} from './con/ConNode';
-export {ValueLww} from './val/ValueLww';
+export {ValNode as ValueLww} from './val/ValueLww';
 export {RootLww} from './lww-root/RootLww';
 export {ArrayLww} from './lww-array/ArrayLww';
 export {ObjectLww} from './lww-object/ObjectLww';

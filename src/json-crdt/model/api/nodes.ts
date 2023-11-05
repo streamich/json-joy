@@ -6,7 +6,7 @@ import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Path} from '../../../json-pointer';
 import {StringRga} from '../../nodes/rga-string/StringRga';
-import {ValueLww} from '../../nodes/val/ValueLww';
+import {ValNode} from '../../nodes/val/ValueLww';
 import {ArrayLww} from '../../nodes/lww-array/ArrayLww';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
@@ -79,7 +79,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asVal(): ValueApi {
-    if (this.node instanceof ValueLww) return this.api.wrap(this.node as ValueLww);
+    if (this.node instanceof ValNode) return this.api.wrap(this.node as ValNode);
     throw new Error('NOT_VAL');
   }
 
@@ -178,16 +178,16 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
 }
 
 /**
- * Local changes API for the `val` JSON CRDT node {@link ValueLww}.
+ * Local changes API for the `val` JSON CRDT node {@link ValNode}.
  *
  * @category Local API
  */
-export class ValueApi<N extends ValueLww<any> = ValueLww<any>> extends NodeApi<N> {
+export class ValueApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of the inner node.
    * @returns Inner node API.
    */
-  public get(): JsonNodeApi<N extends ValueLww<infer T> ? T : JsonNode> {
+  public get(): JsonNodeApi<N extends ValNode<infer T> ? T : JsonNode> {
     return this.in() as any;
   }
 

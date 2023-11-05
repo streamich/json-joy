@@ -10,7 +10,7 @@ import {ObjectLww} from '../../../nodes/lww-object/ObjectLww';
 import {RootLww} from '../../../nodes/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {StringRga, StringChunk} from '../../../nodes/rga-string/StringRga';
-import {ValueLww} from '../../../nodes/val/ValueLww';
+import {ValNode} from '../../../nodes/val/ValueLww';
 import {ArrayLww} from '../../../nodes/lww-array/ArrayLww';
 import type {JsonNode} from '../../../nodes';
 
@@ -101,7 +101,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
         }
         case 0xd6: {
           const val = this.cNode();
-          const obj = new ValueLww(this.doc, id, val.id);
+          const obj = new ValNode(this.doc, id, val.id);
           this.doc.index.set(id, obj);
           return obj;
         }

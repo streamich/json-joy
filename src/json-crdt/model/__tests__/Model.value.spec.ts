@@ -1,6 +1,6 @@
 import {Model} from '../Model';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {ValueLww} from '../../nodes/val/ValueLww';
+import {ValNode} from '../../nodes/val/ValueLww';
 
 describe('Document', () => {
   describe('value', () => {
@@ -11,7 +11,7 @@ describe('Document', () => {
       const numId = builder.val(val);
       doc.applyPatch(builder.patch);
       const obj = doc.index.get(numId);
-      expect(obj).toBeInstanceOf(ValueLww);
+      expect(obj).toBeInstanceOf(ValNode);
     });
 
     test('can set value as document root', () => {
