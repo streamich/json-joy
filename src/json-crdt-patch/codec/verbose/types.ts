@@ -119,12 +119,7 @@ export interface JsonCodecNewConOperation extends JsonCodecOperationBase<'new_co
  * Operation which creates a new "val" CRDT data type, which is a
  * Last-Write-Wins Register of a pointer to another CRDT data type.
  */
-export interface JsonCodecNewValOperation extends JsonCodecOperationBase<'new_val'> {
-  /**
-   * ID of the "val" LWW-Register object latest value.
-   */
-  value: JsonCodecTimestamp;
-}
+export type JsonCodecNewValOperation = JsonCodecOperationBase<'new_val'>;
 
 /**
  * Operation which creates a new "object" CRDT data type, which is a map of

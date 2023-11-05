@@ -108,8 +108,8 @@ describe('recursive node references are not allowed', () => {
   });
 
   describe('val', () => {
-    describe('new_val', () => {
-      test('reference to parent object in same patch', () => {
+    describe('ins_val', () => {
+      test('reference to parent object in second patch', () => {
         const model = Model.withLogicalClock();
         const builder = model.api.builder;
         const objId = builder.obj();
@@ -118,27 +118,11 @@ describe('recursive node references are not allowed', () => {
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        console.log(model + '');
-        console.log(model.view());
-        expect(model.view()).toStrictEqual({val: undefined});
-      });
-    });
-
-    describe('ins_val', () => {
-      test('reference to parent object in second patch', () => {
-        const model = Model.withLogicalClock();
-        const builder = model.api.builder;
-        const objId = builder.obj();
-        const conId = builder.const(3);
-        const valId = builder.val(conId);
-        builder.insObj(objId, [['val', valId]]);
-        builder.root(objId);
-        const patch1 = builder.flush();
-        model.applyPatch(patch1);
+        expect((model.view() as any).val).toStrictEqual(undefined);
         builder.setVal(valId, objId);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
-        expect(model.view()).toStrictEqual({val: 3});
+        expect((model.view() as any).val).toStrictEqual(undefined);
       });
     });
   });

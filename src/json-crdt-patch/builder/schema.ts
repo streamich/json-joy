@@ -32,8 +32,10 @@ export namespace nodes {
 
     constructor(public readonly value: T) {
       super((builder) => {
+        const valId = builder.val();
         const valueId = value.build(builder);
-        return builder.val(valueId);
+        builder.setVal(valId, valueId);
+        return valId;
       });
     }
   }

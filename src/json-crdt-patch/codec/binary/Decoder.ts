@@ -73,7 +73,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.new_val: {
-        builder.val(this.decodeId());
+        builder.val();
         break;
       }
       case JsonCrdtPatchOpcode.new_obj: {

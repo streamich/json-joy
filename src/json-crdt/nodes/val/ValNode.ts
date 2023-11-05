@@ -1,6 +1,7 @@
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import {SESSION} from '../../../json-crdt-patch/constants';
 import {printTree} from '../../../util/print/printTree';
+import {UNDEFINED} from '../../model/Model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
@@ -31,6 +32,7 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
    */
   public set(val: ITimestampStruct): ITimestampStruct | undefined {
     if (compare(val, this.val) <= 0 && this.val.sid !== SESSION.SYSTEM) return;
+    if (compare (val, this.id) <= 0) return;
     const oldVal = this.val;
     this.val = val;
     return oldVal;
@@ -43,7 +45,7 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
    * @returns The latest value of the node.
    */
   public node(): Value {
-    return this.child()! as Value;
+    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : this.child()!;
   }
 
   // ----------------------------------------------------------------- JsonNode

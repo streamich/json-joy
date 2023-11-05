@@ -154,11 +154,12 @@ export class PatchBuilder {
    *
    * @param val Reference to another object.
    * @returns ID of the new operation.
+   * @todo Rename to `newVal`.
    */
-  public val(val: ITimestampStruct): ITimestampStruct {
+  public val(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new NewValOp(id, val));
+    this.patch.ops.push(new NewValOp(id));
     return id;
   }
 
@@ -351,7 +352,9 @@ export class PatchBuilder {
    */
   public jsonVal(value: unknown): ITimestampStruct {
     const id = this.const(value);
-    return this.val(id);
+    const valId = this.val();
+    this.setVal(valId, id);
+    return valId;
   }
 
   /**

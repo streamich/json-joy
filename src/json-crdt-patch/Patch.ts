@@ -1,20 +1,4 @@
-import {
-  NewConOp,
-  NewObjOp,
-  NewValOp,
-  NewVecOp,
-  NewStrOp,
-  NewBinOp,
-  NewArrOp,
-  InsValOp,
-  InsObjOp,
-  InsVecOp,
-  InsStrOp,
-  InsBinOp,
-  InsArrOp,
-  DelOp,
-  NopOp,
-} from './operations';
+import * as operations from './operations';
 import {ITimestampStruct, ts, toDisplayString} from './clock';
 import {SESSION} from './constants';
 import {encode, decode} from './codec/binary';
@@ -24,21 +8,21 @@ import type {Printable} from '../util/print/types';
  * A union type of all possible JSON CRDT patch operations.
  */
 export type JsonCrdtPatchOperation =
-  | NewConOp
-  | NewValOp
-  | NewVecOp
-  | NewObjOp
-  | NewStrOp
-  | NewBinOp
-  | NewArrOp
-  | InsValOp
-  | InsObjOp
-  | InsVecOp
-  | InsStrOp
-  | InsBinOp
-  | InsArrOp
-  | DelOp
-  | NopOp;
+  | operations.NewConOp
+  | operations.NewValOp
+  | operations.NewVecOp
+  | operations.NewObjOp
+  | operations.NewStrOp
+  | operations.NewBinOp
+  | operations.NewArrOp
+  | operations.InsValOp
+  | operations.InsObjOp
+  | operations.InsVecOp
+  | operations.InsStrOp
+  | operations.InsBinOp
+  | operations.InsArrOp
+  | operations.DelOp
+  | operations.NopOp;
 
 /**
  * Represents a JSON CRDT patch.
@@ -135,27 +119,27 @@ export class Patch implements Printable {
     const patchOps = patch.ops;
     for (let i = 0; i < length; i++) {
       const op = ops[i];
-      if (op instanceof DelOp) patchOps.push(new DelOp(ts(op.id), ts(op.obj), op.what));
-      else if (op instanceof NewConOp) patchOps.push(new NewConOp(ts(op.id), op.val));
-      else if (op instanceof NewVecOp) patchOps.push(new NewVecOp(ts(op.id)));
-      else if (op instanceof NewValOp) patchOps.push(new NewValOp(ts(op.id), ts(op.val)));
-      else if (op instanceof NewObjOp) patchOps.push(new NewObjOp(ts(op.id)));
-      else if (op instanceof NewStrOp) patchOps.push(new NewStrOp(ts(op.id)));
-      else if (op instanceof NewBinOp) patchOps.push(new NewBinOp(ts(op.id)));
-      else if (op instanceof NewArrOp) patchOps.push(new NewArrOp(ts(op.id)));
-      else if (op instanceof InsArrOp) patchOps.push(new InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
-      else if (op instanceof InsStrOp) patchOps.push(new InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof InsBinOp) patchOps.push(new InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof InsValOp) patchOps.push(new InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
-      else if (op instanceof InsObjOp)
+      if (op instanceof operations.DelOp) patchOps.push(new operations.DelOp(ts(op.id), ts(op.obj), op.what));
+      else if (op instanceof operations.NewConOp) patchOps.push(new operations.NewConOp(ts(op.id), op.val));
+      else if (op instanceof operations.NewVecOp) patchOps.push(new operations.NewVecOp(ts(op.id)));
+      else if (op instanceof operations.NewValOp) patchOps.push(new operations.NewValOp(ts(op.id)));
+      else if (op instanceof operations.NewObjOp) patchOps.push(new operations.NewObjOp(ts(op.id)));
+      else if (op instanceof operations.NewStrOp) patchOps.push(new operations.NewStrOp(ts(op.id)));
+      else if (op instanceof operations.NewBinOp) patchOps.push(new operations.NewBinOp(ts(op.id)));
+      else if (op instanceof operations.NewArrOp) patchOps.push(new operations.NewArrOp(ts(op.id)));
+      else if (op instanceof operations.InsArrOp) patchOps.push(new operations.InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
+      else if (op instanceof operations.InsStrOp) patchOps.push(new operations.InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsBinOp) patchOps.push(new operations.InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsValOp) patchOps.push(new operations.InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
+      else if (op instanceof operations.InsObjOp)
         patchOps.push(
-          new InsObjOp(
+          new operations.InsObjOp(
             ts(op.id),
             ts(op.obj),
             op.data.map(([key, value]) => [key, ts(value)]),
           ),
         );
-      else if (op instanceof NopOp) patchOps.push(new NopOp(ts(op.id), op.len));
+      else if (op instanceof operations.NopOp) patchOps.push(new operations.NopOp(ts(op.id), op.len));
     }
     return patch;
   }

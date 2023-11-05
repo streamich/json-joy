@@ -94,10 +94,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         break;
       }
       case operations.NewValOp: {
-        const operation = <operations.NewValOp>op;
-        const val = operation.val;
         writer.u8(JsonCrdtPatchOpcode.new_val);
-        this.encodeId(val);
         break;
       }
       case operations.NewObjOp: {
