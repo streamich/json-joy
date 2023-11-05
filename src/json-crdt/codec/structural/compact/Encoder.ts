@@ -1,8 +1,8 @@
 import * as nodes from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
+import {JsonCrdtDataType} from '../../../../json-crdt-patch/constants';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {Code} from '../../../../json-crdt-patch/codec/compact/constants';
 import type {Model} from '../../../model';
 
 export class Encoder {
@@ -61,7 +61,7 @@ export class Encoder {
   }
 
   protected encodeObj(arr: unknown[], obj: nodes.ObjNode): void {
-    const res: unknown[] = [Code.MakeObject];
+    const res: unknown[] = [JsonCrdtDataType.obj];
     arr.push(res);
     this.ts(res, obj.id);
     obj.nodes((node, key) => {
@@ -71,7 +71,7 @@ export class Encoder {
   }
 
   protected cTup(arr: unknown[], obj: nodes.VecNode): void {
-    const res: unknown[] = [Code.MakeTuple];
+    const res: unknown[] = [JsonCrdtDataType.vec];
     arr.push(res);
     this.ts(res, obj.id);
     const elements = obj.elements;
@@ -88,7 +88,7 @@ export class Encoder {
   }
 
   protected encodeArr(arr: unknown[], obj: nodes.ArrNode): void {
-    const res: unknown[] = [Code.MakeArray, obj.size()];
+    const res: unknown[] = [JsonCrdtDataType.arr, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
@@ -108,7 +108,7 @@ export class Encoder {
   }
 
   protected encodeStr(arr: unknown[], obj: nodes.StrNode): void {
-    const res: unknown[] = [Code.MakeString, obj.size()];
+    const res: unknown[] = [JsonCrdtDataType.str, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
@@ -122,7 +122,7 @@ export class Encoder {
   }
 
   protected encodeBin(arr: unknown[], obj: nodes.BinNode): void {
-    const res: unknown[] = [Code.MakeBinary, obj.size()];
+    const res: unknown[] = [JsonCrdtDataType.bin, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
@@ -136,7 +136,7 @@ export class Encoder {
   }
 
   protected cVal(arr: unknown[], obj: nodes.ValNode): void {
-    const res: unknown[] = [Code.MakeValue];
+    const res: unknown[] = [JsonCrdtDataType.val];
     arr.push(res);
     this.ts(res, obj.id);
     this.cNode(res, obj.node());
@@ -146,11 +146,11 @@ export class Encoder {
     const val = obj.val;
     const res: unknown[] = [];
     if (val instanceof Timestamp) {
-      res.push(Code.MakeConstId);
+      res.push(JsonCrdtDataType.con + 10);
       this.ts(res, obj.id);
       this.ts(res, val);
     } else {
-      res.push(Code.MakeConst);
+      res.push(JsonCrdtDataType.con);
       this.ts(res, obj.id);
       if (val !== undefined) res.push(val);
     }

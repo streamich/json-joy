@@ -2,8 +2,7 @@ import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {ORIGIN, SESSION} from '../../../../json-crdt-patch/constants';
-import {Code} from '../../../../json-crdt-patch/codec/compact/constants';
+import {JsonCrdtDataType, ORIGIN, SESSION} from '../../../../json-crdt-patch/constants';
 
 export class Decoder {
   protected time?: number;
@@ -47,22 +46,22 @@ export class Decoder {
   protected decodeNode(doc: Model, data: unknown): nodes.JsonNode {
     if (data instanceof Array) {
       switch (data[0]) {
-        case Code.MakeObject:
-          return this.decodeObj(doc, data);
-        case Code.MakeArray:
-          return this.decodeArr(doc, data);
-        case Code.MakeString:
-          return this.decodeStr(doc, data);
-        case Code.MakeValue:
-          return this.decodeVal(doc, data);
-        case Code.MakeConst:
+        case JsonCrdtDataType.con:
           return this.decodeConst(doc, data);
-        case Code.MakeConstId:
+        case JsonCrdtDataType.con + 10:
           return this.decodeConstId(doc, data);
-        case Code.MakeBinary:
-          return this.decodeBin(doc, data);
-        case Code.MakeTuple:
+        case JsonCrdtDataType.val:
+          return this.decodeVal(doc, data);
+        case JsonCrdtDataType.obj:
+          return this.decodeObj(doc, data);
+        case JsonCrdtDataType.vec:
           return this.decodeTup(doc, data);
+        case JsonCrdtDataType.str:
+          return this.decodeStr(doc, data);
+        case JsonCrdtDataType.bin:
+          return this.decodeBin(doc, data);
+        case JsonCrdtDataType.arr:
+          return this.decodeArr(doc, data);
       }
     }
     throw new Error('UNKNOWN_NODE');
