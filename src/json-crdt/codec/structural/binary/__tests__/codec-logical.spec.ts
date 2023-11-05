@@ -7,6 +7,53 @@ import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 const encoder = new Encoder();
 const decoder = new Decoder();
 
+test('empty model', () => {
+  const model1 = Model.withLogicalClock(new VectorClock(5, 0));
+  const encoded1 = encoder.encode(model1);
+  const model2 = decoder.decode(encoded1);
+  expect(model1.view()).toBe(undefined);
+  expect(model2.view()).toBe(undefined);
+  expect(model2.clock.sid).toBe(model1.clock.sid);
+  expect(model2.clock.time).toBe(model1.clock.time);
+  expect(model2.clock).toStrictEqual(model1.clock);
+});
+
+test('model with just a single number', () => {
+  const model1 = Model.withLogicalClock(new VectorClock(5, 0));
+  model1.api.root(123);
+  const encoded1 = encoder.encode(model1);
+  const model2 = decoder.decode(encoded1);
+  expect(model1.view()).toBe(123);
+  expect(model2.view()).toBe(123);
+  expect(model2.clock.sid).toBe(model1.clock.sid);
+  expect(model2.clock.time).toBe(model1.clock.time);
+  expect(model2.clock).toStrictEqual(model1.clock);
+});
+
+test('model with just a single string', () => {
+  const model1 = Model.withLogicalClock(new VectorClock(5, 0));
+  model1.api.root('aaaa');
+  const encoded1 = encoder.encode(model1);
+  const model2 = decoder.decode(encoded1);
+  expect(model1.view()).toBe('aaaa');
+  expect(model2.view()).toBe('aaaa');
+  expect(model2.clock.sid).toBe(model1.clock.sid);
+  expect(model2.clock.time).toBe(model1.clock.time);
+  expect(model2.clock).toStrictEqual(model1.clock);
+});
+
+test('model with a simple object', () => {
+  const model1 = Model.withLogicalClock(new VectorClock(5, 0));
+  model1.api.root({foo: 123});
+  const encoded1 = encoder.encode(model1);
+  const model2 = decoder.decode(encoded1);
+  expect(model1.view()).toStrictEqual({foo: 123});
+  expect(model2.view()).toStrictEqual({foo: 123});
+  expect(model2.clock.sid).toBe(model1.clock.sid);
+  expect(model2.clock.time).toBe(model1.clock.time);
+  expect(model2.clock).toStrictEqual(model1.clock);
+});
+
 test('encoding/decoding a model results in the same node IDs', () => {
   const model1 = Model.withLogicalClock(new VectorClock(5, 0));
   model1.api.root('');

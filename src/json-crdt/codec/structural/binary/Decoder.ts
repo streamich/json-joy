@@ -2,7 +2,7 @@ import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
+import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {
   ArrNode,
@@ -18,8 +18,9 @@ import {
   VecNode,
   type JsonNode,
 } from '../../../nodes';
+import {CRDT_MAJOR} from './constants';
 
-export class Decoder extends MsgPackDecoderFast<CrdtReader> {
+export class Decoder extends CborDecoderBase<CrdtReader> {
   protected doc!: Model;
   protected clockDecoder?: ClockDecoder;
   protected time: number = -1;
@@ -79,56 +80,52 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     return !peek ? UNDEFINED : this.cNode();
   }
 
+  protected nodeLength(minor: number): number {
+    if (minor < 24) return minor;
+    switch (minor) {
+      case 24:
+        return this.reader.u8();
+      case 25:
+        return this.reader.u16();
+      case 26:
+        return this.reader.u32();
+    }
+    return 0;
+  }
+
   public cNode(): JsonNode {
     const reader = this.reader;
     const id = this.ts();
-    const byte = reader.u8();
-    if (byte <= 0b10001111) return this.cObj(id, byte & 0b1111);
-    else if (byte <= 0b10011111) return this.cArr(id, byte & 0b1111);
-    else if (byte <= 0b10111111) return this.cStr(id, byte & 0b11111);
-    else {
-      switch (byte) {
-        case 0xc4:
-          return this.cBin(id, reader.u8());
-        case 0xc5:
-          return this.cBin(id, reader.u16());
-        case 0xc6:
-          return this.cBin(id, reader.u32());
-        case 0xd4: {
-          const obj = new ConNode(id, this.val());
-          this.doc.index.set(id, obj);
-          return obj;
-        }
-        case 0xd5: {
-          const obj = new ConNode(id, this.ts());
-          this.doc.index.set(id, obj);
-          return obj;
-        }
-        case 0xd6: {
-          const val = this.cNode();
-          const obj = new ValNode(this.doc, id, val.id);
-          this.doc.index.set(id, obj);
-          return obj;
-        }
-        case 0xde:
-          return this.cObj(id, reader.u16());
-        case 0xdf:
-          return this.cObj(id, reader.u32());
-        case 0xdc:
-          return this.cArr(id, reader.u16());
-        case 0xdd:
-          return this.cArr(id, reader.u32());
-        case 0xd9:
-          return this.cStr(id, reader.u8());
-        case 0xda:
-          return this.cStr(id, reader.u16());
-        case 0xdb:
-          return this.cStr(id, reader.u32());
-        case 0xc7:
-          return this.cTup(id);
-      }
+    const octet = reader.u8();
+    const major = octet >> 5;
+    const minor = octet & 0b11111;
+    const length = this.nodeLength(minor);
+    switch (major) {
+      case CRDT_MAJOR.CON: return this.cCon(id, length);
+      case CRDT_MAJOR.VAL: return this.cVal(id);
+      case CRDT_MAJOR.VEC: return this.cVec(id, length);
+      case CRDT_MAJOR.OBJ: return this.cObj(id, length);
+      case CRDT_MAJOR.STR: return this.cStr(id, length);
+      case CRDT_MAJOR.BIN: return this.cBin(id, length);
+      case CRDT_MAJOR.ARR: return this.cArr(id, length);
     }
     throw new Error('UNKNOWN_NODE');
+  }
+
+  public cCon(id: ITimestampStruct, length: number): ConNode {
+    const doc = this.doc;
+    const data = !length ? this.val() : this.ts();
+    const node = new ConNode(id, data);
+    doc.index.set(id, node);
+    return node;
+  }
+
+  public cVal(id: ITimestampStruct): ValNode {
+    const child = this.cNode();
+    const doc = this.doc;
+    const node = new ValNode(doc, id, child.id);
+    doc.index.set(id, node);
+    return node;
   }
 
   public cObj(id: ITimestampStruct, length: number): ObjNode {
@@ -143,10 +140,8 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     obj.keys.set(key, this.cNode().id);
   }
 
-  public cTup(id: ITimestampStruct): VecNode {
+  public cVec(id: ITimestampStruct, length: number): VecNode {
     const reader = this.reader;
-    const length = this.reader.u8();
-    reader.x++;
     const obj = new VecNode(this.doc, id);
     const elements = obj.elements;
     for (let i = 0; i < length; i++) {
@@ -192,7 +187,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
       const length = reader.vu39();
       return new StrChunk(id, length, '');
     }
-    const text: string = this.str() as string;
+    const text: string = this.readAsStr() as string;
     return new StrChunk(id, text.length, text);
   };
 

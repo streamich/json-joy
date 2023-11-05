@@ -2,11 +2,12 @@ import {ConNode, RootNode, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {MsgPackEncoder} from '../../../../json-pack/msgpack';
+import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
+import {CRDT_MAJOR_OVERLAY} from './constants';
 import type {Model} from '../../../model';
 
-export class Encoder extends MsgPackEncoder<CrdtWriter> {
+export class Encoder extends CborEncoder<CrdtWriter> {
   protected clockEncoder: ClockEncoder = new ClockEncoder();
   protected time: number = 0;
   protected doc!: Model;
@@ -76,21 +77,30 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     else this.cNode(root.node());
   }
 
+  protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
+    const writer = this.writer;
+    if (length < 24) writer.u8(majorOverlay + length);
+    else if (length <= 0xff) writer.u16(((majorOverlay + 24) << 8) + length);
+    else if (length <= 0xffff) writer.u8u16(majorOverlay + 25, length);
+    else writer.u8u32(majorOverlay + 26, length);
+  }
+
   protected cNode(node: JsonNode): void {
-    // TODO: PERF: use a switch
-    if (node instanceof ConNode) this.cConst(node);
+    // TODO: PERF: use a switch?
+    if      (node instanceof ConNode) this.cCon(node);
     else if (node instanceof ValNode) this.cVal(node);
     else if (node instanceof StrNode) this.cStr(node);
     else if (node instanceof ObjNode) this.cObj(node);
-    else if (node instanceof VecNode) this.cTup(node);
+    else if (node instanceof VecNode) this.cVec(node);
     else if (node instanceof ArrNode) this.cArr(node);
     else if (node instanceof BinNode) this.cBin(node);
   }
 
   protected cObj(obj: ObjNode): void {
     this.ts(obj.id);
-    this.writeObjHdr(obj.keys.size);
-    obj.keys.forEach(this.cKey);
+    const keys = obj.keys;
+    this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
+    keys.forEach(this.cKey);
   }
 
   protected readonly cKey = (val: ITimestampStruct, key: string) => {
@@ -98,12 +108,11 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     this.cNode(this.doc.index.get(val)!);
   };
 
-  protected cTup(obj: VecNode): void {
-    this.ts(obj.id);
+  protected cVec(obj: VecNode): void {
     const elements = obj.elements;
     const length = elements.length;
-    const writer = this.writer;
-    writer.u8u16(0xc7, length << 8);
+    this.ts(obj.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
     const index = this.doc.index;
     for (let i = 0; i < length; i++) {
       const elementId = elements[i];
@@ -116,7 +125,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
-    this.writeArrHdr(obj.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, obj.size());
     const index = this.doc.index;
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       const span = chunk.span;
@@ -133,14 +142,13 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
-    const length = obj.size();
-    this.writeStrHdr(length);
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, obj.size());
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       ts(chunk.id);
       if (chunk.del) {
         writer.u8(0);
         writer.vu39(chunk.span);
-      } else this.encodeString(chunk.data!);
+      } else this.writeStr(chunk.data!);
     }
   }
 
@@ -148,8 +156,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
-    const length = obj.size();
-    this.writeBinHdr(length);
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, obj.size());
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
@@ -162,18 +169,18 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected cVal(obj: ValNode): void {
     this.ts(obj.id);
-    this.writer.u8(0xd6);
+    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
     this.cNode(obj.node());
   }
 
-  protected cConst(obj: ConNode): void {
-    this.ts(obj.id);
+  protected cCon(obj: ConNode): void {
     const val = obj.val;
+    this.ts(obj.id);
     if (val instanceof Timestamp) {
-      this.writer.u8(0xd5);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
       this.ts(val as Timestamp);
     } else {
-      this.writer.u8(0xd4);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
       this.writeAny(val);
     }
   }
