@@ -125,7 +125,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
     const index = this.doc.index;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const span = chunk.span;
@@ -142,7 +142,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
       if (chunk.del) {
@@ -156,7 +156,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
