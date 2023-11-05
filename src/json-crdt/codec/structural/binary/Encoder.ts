@@ -125,7 +125,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, obj.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, obj.size());
     const index = this.doc.index;
     for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
       const span = chunk.span;
@@ -152,12 +152,12 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cBin(obj: BinNode): void {
+  protected cBin(node: BinNode): void {
     const ts = this.ts;
     const writer = this.writer;
-    ts(obj.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.STR, obj.size());
-    for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.size());
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
       writer.b1vu28(chunk.del, length);
@@ -167,15 +167,15 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cVal(obj: ValNode): void {
-    this.ts(obj.id);
+  protected cVal(node: ValNode): void {
+    this.ts(node.id);
     this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
-    this.cNode(obj.node());
+    this.cNode(node.node());
   }
 
-  protected cCon(obj: ConNode): void {
-    const val = obj.val;
-    this.ts(obj.id);
+  protected cCon(node: ConNode): void {
+    const val = node.val;
+    this.ts(node.id);
     if (val instanceof Timestamp) {
       this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
       this.ts(val as Timestamp);

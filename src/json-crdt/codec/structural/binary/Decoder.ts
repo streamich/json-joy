@@ -80,26 +80,13 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return !peek ? UNDEFINED : this.cNode();
   }
 
-  protected nodeLength(minor: number): number {
-    if (minor < 24) return minor;
-    switch (minor) {
-      case 24:
-        return this.reader.u8();
-      case 25:
-        return this.reader.u16();
-      case 26:
-        return this.reader.u32();
-    }
-    return 0;
-  }
-
-  public cNode(): JsonNode {
+  protected cNode(): JsonNode {
     const reader = this.reader;
     const id = this.ts();
     const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & 0b11111;
-    const length = this.nodeLength(minor);
+    const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
     switch (major) {
       case CRDT_MAJOR.CON: return this.cCon(id, length);
       case CRDT_MAJOR.VAL: return this.cVal(id);
@@ -112,7 +99,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cCon(id: ITimestampStruct, length: number): ConNode {
+  protected cCon(id: ITimestampStruct, length: number): ConNode {
     const doc = this.doc;
     const data = !length ? this.val() : this.ts();
     const node = new ConNode(id, data);
@@ -120,7 +107,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return node;
   }
 
-  public cVal(id: ITimestampStruct): ValNode {
+  protected cVal(id: ITimestampStruct): ValNode {
     const child = this.cNode();
     const doc = this.doc;
     const node = new ValNode(doc, id, child.id);
@@ -128,19 +115,19 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return node;
   }
 
-  public cObj(id: ITimestampStruct, length: number): ObjNode {
+  protected cObj(id: ITimestampStruct, length: number): ObjNode {
     const obj = new ObjNode(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private cObjChunk(obj: ObjNode): void {
+  protected cObjChunk(obj: ObjNode): void {
     const key: string = this.key();
     obj.keys.set(key, this.cNode().id);
   }
 
-  public cVec(id: ITimestampStruct, length: number): VecNode {
+  protected cVec(id: ITimestampStruct, length: number): VecNode {
     const reader = this.reader;
     const obj = new VecNode(this.doc, id);
     const elements = obj.elements;
@@ -155,7 +142,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return obj;
   }
 
-  public cArr(id: ITimestampStruct, length: number): ArrNode {
+  protected cArr(id: ITimestampStruct, length: number): ArrNode {
     const obj = new ArrNode(this.doc, id);
     obj.ingest(length, this.cArrChunk);
     this.doc.index.set(id, obj);
@@ -171,7 +158,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return new ArrChunk(id, length, ids);
   };
 
-  public cStr(id: ITimestampStruct, length: number): StrNode {
+  protected cStr(id: ITimestampStruct, length: number): StrNode {
     const node = new StrNode(id);
     if (length) node.ingest(length, this.cStrChunk);
     this.doc.index.set(id, node);
@@ -191,7 +178,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return new StrChunk(id, text.length, text);
   };
 
-  public cBin(id: ITimestampStruct, length: number): BinNode {
+  protected cBin(id: ITimestampStruct, length: number): BinNode {
     const node = new BinNode(id);
     if (length) node.ingest(length, this.cBinChunk);
     this.doc.index.set(id, node);

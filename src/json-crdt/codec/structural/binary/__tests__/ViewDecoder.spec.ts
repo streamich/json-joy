@@ -1,4 +1,4 @@
-import {Timestamp, VectorClock, equal} from '../../../../../json-crdt-patch/clock';
+import {Timestamp, VectorClock} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
@@ -6,7 +6,7 @@ import {ViewDecoder} from '../ViewDecoder';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 
 describe('logical', () => {
-  test('decodes clock', () => {
+  test('can decode various documents', () => {
     const doc1 = Model.withLogicalClock(new VectorClock(222, 1));
     const encoder = new Encoder();
     const viewDecoder = new ViewDecoder();
@@ -15,6 +15,9 @@ describe('logical', () => {
       const encoded = encoder.encode(doc1);
       const decoded = viewDecoder.decode(encoded);
       const decoded2 = decoder.decode(encoded).view();
+      // console.log(decoded);
+      // console.log(decoded2);
+      // console.log(doc1.view());
       expect(decoded).toStrictEqual(doc1.view());
       expect(decoded2).toStrictEqual(doc1.view());
     };
@@ -39,7 +42,7 @@ describe('logical', () => {
     assertCanDecode();
   });
 
-  test('can decode ID as const value', () => {
+  test('decodes "con" timestamp as null', () => {
     const model = Model.withLogicalClock();
     model.api.root({
       foo: konst(new Timestamp(model.clock.sid, 2)),
@@ -49,5 +52,35 @@ describe('logical', () => {
     const encoded = encoder.encode(model);
     const view = viewDecoder.decode(encoded);
     expect((view as any).foo).toBe(null);
+  });
+
+  test('can decode a simple number', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(123);
+    const encoder = new Encoder();
+    const viewDecoder = new ViewDecoder();
+    const encoded = encoder.encode(model);
+    const view = viewDecoder.decode(encoded);
+    expect(view).toStrictEqual(123);
+  });
+
+  test('can decode a simple string', () => {
+    const model = Model.withLogicalClock();
+    model.api.root('asdf');
+    const encoder = new Encoder();
+    const viewDecoder = new ViewDecoder();
+    const encoded = encoder.encode(model);
+    const view = viewDecoder.decode(encoded);
+    expect(view).toStrictEqual('asdf');
+  });
+
+  test('can decode a simple object', () => {
+    const model = Model.withLogicalClock();
+    model.api.root({yes: false});
+    const encoder = new Encoder();
+    const viewDecoder = new ViewDecoder();
+    const encoded = encoder.encode(model);
+    const view = viewDecoder.decode(encoded);
+    expect(view).toStrictEqual({yes: false});
   });
 });
