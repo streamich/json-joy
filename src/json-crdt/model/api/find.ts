@@ -1,7 +1,7 @@
 import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
 import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Path, toPath} from '../../../json-pointer';
-import {ArrayLww} from '../../nodes/lww-array/ArrayLww';
+import {ArrayLww} from '../../nodes/vec/ArrayLww';
 import type {JsonNode} from '../../nodes';
 
 export const find = (startNode: JsonNode, path: string | Path): JsonNode => {

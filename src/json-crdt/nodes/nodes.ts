@@ -1,7 +1,7 @@
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ConNode} from './con/ConNode';
 import type {ValNode} from './val/ValNode';
-import type {ArrayLww} from './lww-array/ArrayLww';
+import type {ArrayLww} from './vec/ArrayLww';
 import type {JsonNode} from './types';
 import type {ObjectLww} from './lww-object/ObjectLww';
 import type {StringRga} from './rga-string/StringRga';
@@ -22,7 +22,7 @@ export namespace n {
 export {ConNode} from './con/ConNode';
 export {ValNode} from './val/ValNode';
 export {RootLww} from './lww-root/RootLww';
-export {ArrayLww} from './lww-array/ArrayLww';
+export {ArrayLww} from './vec/ArrayLww';
 export {ObjectLww} from './lww-object/ObjectLww';
 export {ArrayRga, ArrayChunk} from './rga-array/ArrayRga';
 export {BinaryRga, BinaryChunk} from './rga-binary/BinaryRga';

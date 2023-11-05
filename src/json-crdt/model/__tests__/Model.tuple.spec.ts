@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
-import {ArrayLww} from '../../nodes/lww-array/ArrayLww';
+import {ArrayLww} from '../../nodes/vec/ArrayLww';
 
 describe('Document', () => {
   describe('tuple', () => {
