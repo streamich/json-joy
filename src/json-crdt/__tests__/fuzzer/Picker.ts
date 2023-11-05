@@ -1,7 +1,7 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
 import {JsonNode} from '../../nodes';
-import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
+import {ObjectLww} from '../../nodes/obj/ObjectLww';
 import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
 import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
 import {StringRga} from '../../nodes/rga-string/StringRga';
