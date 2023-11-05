@@ -1,4 +1,4 @@
-import type {Const} from '../const/Const';
+import type {Const} from '../con/Const';
 import type {ArrayLww} from '../lww-array/ArrayLww';
 import type {ObjectLww} from '../lww-object/ObjectLww';
 import type {ValueLww} from '../lww-value/ValueLww';

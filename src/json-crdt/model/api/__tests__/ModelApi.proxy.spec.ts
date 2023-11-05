@@ -3,7 +3,7 @@ import {ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga} from '../../../types/rga-string/StringRga';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import {vec} from '../../../../json-crdt-patch';
 

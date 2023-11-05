@@ -1,6 +1,6 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';

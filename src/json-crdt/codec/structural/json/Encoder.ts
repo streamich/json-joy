@@ -1,6 +1,6 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {JsonNode} from '../../../types';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';

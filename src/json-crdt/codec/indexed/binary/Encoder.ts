@@ -4,7 +4,7 @@ import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
 import {JsonNode} from '../../../types';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {ArrayRga} from '../../../types/rga-array/ArrayRga';

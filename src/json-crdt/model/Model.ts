@@ -1,5 +1,5 @@
 import * as operations from '../../json-crdt-patch/operations';
-import {Const} from '../types/const/Const';
+import {Const} from '../types/con/Const';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,

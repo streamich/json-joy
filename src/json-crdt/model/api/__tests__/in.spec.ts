@@ -1,4 +1,4 @@
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {ConstApi, ObjectApi, ValueApi} from '../nodes';
 import {Model} from '../../Model';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';

@@ -1,7 +1,7 @@
 import {ArrayChunk, ArrayRga} from '../../../types/rga-array/ArrayRga';
 import {BinaryChunk, BinaryRga} from '../../../types/rga-binary/BinaryRga';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';

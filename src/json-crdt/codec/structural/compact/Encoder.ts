@@ -1,7 +1,7 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Const} from '../../../types/const/Const';
+import {Const} from '../../../types/con/Const';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
