@@ -9,7 +9,6 @@ const encoded1 = {
     },
     {
       op: 'new_val',
-      value: 1,
     },
     {
       op: 'new_bin',
@@ -22,7 +21,6 @@ const encoded1 = {
     },
     {
       op: 'new_val',
-      value: 2,
     },
     {
       op: 'ins_obj',

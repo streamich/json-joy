@@ -351,8 +351,8 @@ export class PatchBuilder {
    * Run builder commands to create a JSON value.
    */
   public jsonVal(value: unknown): ITimestampStruct {
-    const id = this.const(value);
     const valId = this.val();
+    const id = this.const(value);
     this.setVal(valId, id);
     return valId;
   }
