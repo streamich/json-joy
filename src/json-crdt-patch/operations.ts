@@ -37,7 +37,7 @@ export class NewConOp implements IJsonCrdtPatchOperation {
  * @category Operations
  */
 export class NewValOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct, public readonly val: ITimestampStruct) {}
+  constructor(public readonly id: ITimestampStruct) {}
 
   public span(): number {
     return 1;
@@ -48,7 +48,7 @@ export class NewValOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `"${this.name()}" ${toDisplayString(this.id)} { ${toDisplayString(this.val)} }`;
+    return `"${this.name()}" ${toDisplayString(this.id)}`;
   }
 }
 
@@ -165,6 +165,7 @@ export class NewArrOp implements IJsonCrdtPatchOperation {
 export class InsValOp implements IJsonCrdtPatchEditOperation {
   constructor(
     public readonly id: ITimestampStruct,
+    /** @todo Rename to `node`. */
     public readonly obj: ITimestampStruct,
     public readonly val: ITimestampStruct,
   ) {}

@@ -1,6 +1,6 @@
-import {ORIGIN, SESSION} from '../../../json-crdt-patch/constants';
+import {ORIGIN} from '../../../json-crdt-patch/constants';
 import {ValNode} from '../val/ValNode';
-import {Model, UNDEFINED} from '../../model/Model';
+import {Model} from '../../model/Model';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 
@@ -17,9 +17,5 @@ export class RootNode<Value extends JsonNode = JsonNode> extends ValNode<Value> 
    */
   constructor(doc: Model<any>, val: ITimestampStruct) {
     super(doc, ORIGIN, val);
-  }
-
-  public node(): Value {
-    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : super.node();
   }
 }

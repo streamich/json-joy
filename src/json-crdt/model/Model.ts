@@ -187,10 +187,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       if (!index.get(id)) index.set(id, new StrNode(id));
     } else if (op instanceof operations.NewValOp) {
       const id = op.id;
-      if (!index.get(id)) {
-        const val = index.get(op.val);
-        if (val) index.set(id, new ValNode(this, id, op.val));
-      }
+      if (!index.get(id)) index.set(id, new ValNode(this, id, ORIGIN));
     } else if (op instanceof operations.NewConOp) {
       const id = op.id;
       if (!index.get(id)) index.set(id, new ConNode(id, op.val));

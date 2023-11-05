@@ -154,11 +154,12 @@ export class PatchBuilder {
    *
    * @param val Reference to another object.
    * @returns ID of the new operation.
+   * @todo Rename to `newVal`.
    */
-  public val(val: ITimestampStruct): ITimestampStruct {
+  public val(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    this.patch.ops.push(new NewValOp(id, val));
+    this.patch.ops.push(new NewValOp(id));
     return id;
   }
 
@@ -210,6 +211,7 @@ export class PatchBuilder {
    * Set value of a "val" object.
    *
    * @returns ID of the new operation.
+   * @todo Rename to "insVal".
    */
   public setVal(obj: ITimestampStruct, val: ITimestampStruct): ITimestampStruct {
     this.pad();
@@ -349,8 +351,10 @@ export class PatchBuilder {
    * Run builder commands to create a JSON value.
    */
   public jsonVal(value: unknown): ITimestampStruct {
+    const valId = this.val();
     const id = this.const(value);
-    return this.val(id);
+    this.setVal(valId, id);
+    return valId;
   }
 
   /**

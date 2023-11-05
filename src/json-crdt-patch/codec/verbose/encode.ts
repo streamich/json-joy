@@ -45,7 +45,7 @@ export const encode = (patch: Patch): types.JsonCodecPatch => {
     } else if (op instanceof operations.NewBinOp) {
       ops.push({op: 'new_bin'});
     } else if (op instanceof operations.NewValOp) {
-      ops.push({op: 'new_val', value: encodeTimestamp(op.val)});
+      ops.push({op: 'new_val'});
     } else if (op instanceof operations.InsObjOp) {
       ops.push({
         op: 'ins_obj',

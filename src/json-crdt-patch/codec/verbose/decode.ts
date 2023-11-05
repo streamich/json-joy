@@ -30,7 +30,7 @@ export const decode = (data: types.JsonCodecPatch): Patch => {
         break;
       }
       case 'new_val': {
-        builder.val(decodeId(op.value));
+        builder.val();
         break;
       }
       case 'new_obj': {

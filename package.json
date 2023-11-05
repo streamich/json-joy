@@ -61,7 +61,8 @@
     "coverage": "yarn test --collectCoverage",
     "typedoc": "typedoc",
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
-    "deploy:pages": "gh-pages -d gh-pages"
+    "deploy:pages": "gh-pages -d gh-pages",
+    "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages"
   },
   "keywords": [],
   "peerDependencies": {

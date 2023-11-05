@@ -28,7 +28,7 @@ export class PatchFuzzer extends Fuzzer {
         () => builder.arr(),
         () => builder.str(),
         () => builder.bin(),
-        () => builder.val(ts()),
+        () => builder.val(),
         () => builder.const(RandomJson.generate()),
         () => builder.root(ts()),
         () =>

@@ -47,7 +47,7 @@ export const encode = (patch: Patch): types.CompactCodecPatch => {
         res.push([JsonCrdtPatchOpcode.new_con, val]);
       }
     } else if (op instanceof operations.NewValOp) {
-      res.push([JsonCrdtPatchOpcode.new_val, timestamp(sid, op.val)]);
+      res.push([JsonCrdtPatchOpcode.new_val]);
     } else if (op instanceof operations.NewObjOp) {
       res.push([JsonCrdtPatchOpcode.new_obj]);
     } else if (op instanceof operations.NewVecOp) {

@@ -7,7 +7,7 @@ describe('server clock', () => {
     const model = Model.withServerClock();
     expect(model.clock.time).toBe(1);
     model.api.root(true);
-    expect(model.clock.time).toBe(4);
+    expect(model.clock.time).toBe(5);
     model.api.root({foo: 'bar'});
     model.applyPatch(model.api.builder.patch);
     model.applyPatch(model.api.builder.patch);
@@ -18,7 +18,7 @@ describe('server clock', () => {
     const model = Model.withServerClock();
     expect(model.clock.time).toBe(1);
     model.api.root(true);
-    expect(model.clock.time).toBe(4);
+    expect(model.clock.time).toBe(5);
     const clock = model.clock.clone();
     clock.tick(1);
     const builder = new PatchBuilder(clock);
