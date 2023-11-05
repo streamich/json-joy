@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.14% </span>
+                <span class="strong">97.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>68/70</span>
+                <span class='fraction'>69/71</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.61% </span>
+                <span class="strong">96.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>57/59</span>
+                <span class='fraction'>58/60</span>
             </div>
         
             
@@ -319,7 +319,9 @@
 <a name='L254'></a><a href='#L254'>254</a>
 <a name='L255'></a><a href='#L255'>255</a>
 <a name='L256'></a><a href='#L256'>256</a>
-<a name='L257'></a><a href='#L257'>257</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">77x</span>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">77x</span>
+<span class="cline-any cline-yes">77x</span>
 <span class="cline-any cline-yes">77x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">77x</span>
@@ -394,26 +396,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">460x</span>
-<span class="cline-any cline-yes">407x</span>
-<span class="cline-any cline-yes">215x</span>
-<span class="cline-any cline-yes">209x</span>
-<span class="cline-any cline-yes">144x</span>
-<span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">746x</span>
+<span class="cline-any cline-yes">691x</span>
+<span class="cline-any cline-yes">439x</span>
+<span class="cline-any cline-yes">432x</span>
+<span class="cline-any cline-yes">316x</span>
+<span class="cline-any cline-yes">33x</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">287x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">296x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">286x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -536,7 +538,7 @@
 <span class="cline-any cline-yes">1771x</span>
 <span class="cline-any cline-yes">1771x</span>
 <span class="cline-any cline-yes">1771x</span>
-<span class="cline-any cline-yes">133433x</span>
+<span class="cline-any cline-yes">133463x</span>
 <span class="cline-any cline-yes">1771x</span>
 <span class="cline-any cline-yes">1771x</span>
 <span class="cline-any cline-yes">1771x</span>
@@ -575,11 +577,12 @@
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {ArrayLww, Const, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
-import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
+import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
+import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import type {JsonNode} from '../../types';
+import type {JsonNode} from '../../nodes';
 import type {Model} from '../Model';
 &nbsp;
 /**
@@ -618,20 +621,20 @@ export class ModelApi&lt;Value extends JsonNode = JsonNode&gt; {
     queueMicrotask(() =&gt; {
       this.changeQueued = false;
       const et = this.et;
-      if (et) et.dispatchEvent(new CustomEvent('change'));
+      if (et) et.emit(new CustomEvent('change'));
     });
   };
 &nbsp;
   /** @ignore */
-  private et: undefined | EventTarget = undefined;
+  private et: undefined | Emitter&lt;{change: CustomEvent&lt;unknown&gt;}&gt; = undefined;
 &nbsp;
   /**
    * Event target for listening to {@link Model} changes.
    */
-  public get events(): EventTarget {
+  public get events(): Emitter&lt;{change: CustomEvent&lt;unknown&gt;}&gt; {
     let et = this.et;
     if (!et) {
-      this.et = et = new EventTarget();
+      this.et = et = new Emitter();
       this.model.onchange = this.queueChange;
     }
     return et;
@@ -641,35 +644,35 @@ export class ModelApi&lt;Value extends JsonNode = JsonNode&gt; {
    * Returns a local change API for the given node. If an instance already
    * exists, returns the existing instance.
    */
-  public wrap(node: ValueLww): ValueApi;
-  public wrap(node: StringRga): StringApi;
-  public wrap(node: BinaryRga): BinaryApi;
-  public wrap(node: ArrayRga): ArrayApi;
-  public wrap(node: ObjectLww): ObjectApi;
-  public wrap(node: Const): ConstApi;
-  public wrap(node: ArrayLww): VectorApi;
+  public wrap(node: ValNode): ValApi;
+  public wrap(node: StrNode&lt;any&gt;): StrApi;
+  public wrap(node: BinNode): BinApi;
+  public wrap(node: ArrNode): ArrApi;
+  public wrap(node: ObjNode): ObjApi;
+  public wrap(node: ConNode): ConApi;
+  public wrap(node: VecNode): VecApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
-    if (node instanceof ValueLww) return node.api || (node.api = new ValueApi(node, this));
-    else if (node instanceof StringRga) return node.api || (node.api = new StringApi(node, this));
-    else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
-    else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
-    else if (node instanceof ObjectLww) return node.api || (node.api = new ObjectApi(node, this));
-    else if (node instanceof Const) return node.api || (node.api = new ConstApi(node, this));
-    else if (node instanceof ArrayLww) return node.api || (node.api = new VectorApi(node, this));
+    if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
+    else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
+    else if (node instanceof BinNode) return node.api || (node.api = new BinApi(node, this));
+    else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
+    else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
+    else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
+    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
     else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>throw new Error('UNKNOWN_NODE');</span>
-  }
-&nbsp;
-  /** @ignore */
-  public get node() {
-    return new NodeApi(this.model.root.node(), this);
   }
 &nbsp;
   /**
    * Local changes API for the root node.
    */
   public get r() {
-    return new ValueApi(this.model.root, this);
+    return new ValApi(this.model.root, this);
+  }
+&nbsp;
+  /** @ignore */
+  public get node() {
+    return this.r.get();
   }
 &nbsp;
   /**
@@ -838,7 +841,7 @@ export class ModelApi&lt;Value extends JsonNode = JsonNode&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-29T13:37:52.213Z
+                at 2023-11-05T12:15:45.949Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

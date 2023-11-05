@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">26.66% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>24/90</span>
+                <span class='fraction'>25/100</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">13.55% </span>
+                <span class="strong">12.12% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/59</span>
+                <span class='fraction'>8/66</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">26.66% </span>
+                <span class="strong">25.25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>24/90</span>
+                <span class='fraction'>25/99</span>
             </div>
         
             
@@ -256,7 +256,27 @@
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
 <a name='L193'></a><a href='#L193'>193</a>
-<a name='L194'></a><a href='#L194'>194</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -432,6 +452,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -450,22 +488,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Timestamp} from '../../../json-crdt-patch/clock';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {StrNode} from '../../nodes';
 import {Model} from '../../model';
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
+import {CRuntime, CText} from '@collabs/collabs';
 import type {SequentialTraceEditor} from './types';
 const AutomergeUnstable = require('@automerge/automerge/dist/cjs/unstable');
 const Rope = require('rope.js');
 &nbsp;
 export const editors = {
-  'StringRga (json-joy)': {
-    name: 'StringRga (json-joy)',
+  'StrNode (json-joy)': {
+    name: 'StrNode (json-joy)',
     factory: () =&gt; {
       let time = 0;
-      const rga = new StringRga(new Timestamp(1, time++));
+      const rga = new StrNode(new Timestamp(1, time++));
       return {
         ins: (pos: number, insert: string) =&gt; {
           rga.insAt(pos, new Timestamp(1, time), insert);
@@ -639,6 +678,24 @@ export const editors = {
       };
     },
   },
+  collabs: {
+    name: 'collabs',
+    factory: <span class="fstat-no" title="function not covered" >() =</span>&gt; {
+      const doc = <span class="cstat-no" title="statement not covered" >new CRuntime();</span>
+      const text: CText = <span class="cstat-no" title="statement not covered" >doc.registerCollab('text', <span class="fstat-no" title="function not covered" >(i</span>nit) =&gt; <span class="cstat-no" title="statement not covered" >new CText(init))</span>;</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
+        ins: <span class="fstat-no" title="function not covered" >(p</span>os: number, insert: string) =&gt; {
+<span class="cstat-no" title="statement not covered" >          text.insert(pos, insert);</span>
+        },
+        del: <span class="fstat-no" title="function not covered" >(p</span>os: number, len: number) =&gt; {
+<span class="cstat-no" title="statement not covered" >          text.delete(pos, len);</span>
+        },
+        get: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >text.toString(),</span>
+        len: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >text.toString().length,</span>
+        chunks: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >0,</span>
+      };
+    },
+  },
 };
 &nbsp;
 export type SequentialEditorName = keyof typeof editors;
@@ -649,7 +706,7 @@ export type SequentialEditorName = keyof typeof editors;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-29T13:37:52.213Z
+                at 2023-11-05T12:15:45.949Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

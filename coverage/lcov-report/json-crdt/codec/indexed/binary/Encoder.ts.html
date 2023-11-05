@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.45% </span>
+                <span class="strong">97.34% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>115/118</span>
+                <span class='fraction'>110/113</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">99.02% </span>
+                <span class="strong">98.97% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>102/103</span>
+                <span class='fraction'>97/98</span>
             </div>
         
             
@@ -207,23 +207,11 @@
 <a name='L142'></a><a href='#L142'>142</a>
 <a name='L143'></a><a href='#L143'>143</a>
 <a name='L144'></a><a href='#L144'>144</a>
-<a name='L145'></a><a href='#L145'>145</a>
-<a name='L146'></a><a href='#L146'>146</a>
-<a name='L147'></a><a href='#L147'>147</a>
-<a name='L148'></a><a href='#L148'>148</a>
-<a name='L149'></a><a href='#L149'>149</a>
-<a name='L150'></a><a href='#L150'>150</a>
-<a name='L151'></a><a href='#L151'>151</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
+<a name='L145'></a><a href='#L145'>145</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -368,13 +356,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
-import {JsonNode} from '../../../types';
-import {Const} from '../../../types/const/Const';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../../types/rga-string/StringRga';
+import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {IndexedFields, FieldName} from './types';
 &nbsp;
 const EMPTY = new Uint8Array(0);
@@ -415,12 +397,12 @@ export class Encoder {
   };
 &nbsp;
   public encodeNode(node: JsonNode): Uint8Array {
-    if (node instanceof ValueLww) return this.encodeVal(node);
-    else if (node instanceof Const) return this.encodeConst(node);
-    else if (node instanceof StringRga) return this.encodeStr(node);
-    else if (node instanceof ObjectLww) return this.encodeObj(node);
-    else if (node instanceof ArrayRga) return this.encodeArr(node);
-    else if (node instanceof BinaryRga) return this.encodeBin(node);
+    if (node instanceof ValNode) return this.encodeVal(node);
+    else if (node instanceof ConNode) return this.encodeConst(node);
+    else if (node instanceof StrNode) return this.encodeStr(node);
+    else if (node instanceof ObjNode) return this.encodeObj(node);
+    else if (node instanceof ArrNode) return this.encodeArr(node);
+    else if (node instanceof BinNode) return this.encodeBin(node);
     else <span class="cstat-no" title="statement not covered" ><span class="missing-if-branch" title="else path not taken" >E</span>return EMPTY;</span>
   }
 &nbsp;
@@ -429,7 +411,7 @@ export class Encoder {
     this.enc.writer.id(index, id.time);
   }
 &nbsp;
-  public encodeVal(node: ValueLww): Uint8Array {
+  public encodeVal(node: ValNode): Uint8Array {
     const writer = this.enc.writer;
     const child = node.node();
     writer.reset();
@@ -438,7 +420,7 @@ export class Encoder {
     return writer.flush();
   }
 &nbsp;
-  public encodeConst(node: Const): Uint8Array {
+  public encodeConst(node: ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;
@@ -453,7 +435,7 @@ export class Encoder {
     return writer.flush();
   }
 &nbsp;
-  public encodeStr(node: StringRga): Uint8Array {
+  public encodeStr(node: StrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -466,7 +448,7 @@ export class Encoder {
     return writer.flush();
   }
 &nbsp;
-  public encodeBin(node: BinaryRga): Uint8Array {
+  public encodeBin(node: BinNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -482,7 +464,7 @@ export class Encoder {
     return writer.flush();
   }
 &nbsp;
-  public encodeObj(node: ObjectLww): Uint8Array {
+  public encodeObj(node: ObjNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -496,7 +478,7 @@ export class Encoder {
     this.ts(value);
   };
 &nbsp;
-  public encodeArr(node: ArrayRga): Uint8Array {
+  public encodeArr(node: ArrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -520,7 +502,7 @@ export class Encoder {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-10-29T13:37:52.213Z
+                at 2023-11-05T12:15:45.949Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

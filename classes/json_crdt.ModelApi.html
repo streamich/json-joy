@@ -31,7 +31,7 @@ for executing local user actions on a JSON CRDT document.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">ModelApi</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L14">json-crdt/model/api/ModelApi.ts:14</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L15">json-crdt/model/api/ModelApi.ts:15</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -91,7 +91,7 @@ for executing local user actions on a JSON CRDT document.</p>
 <h4 class="tsd-returns-title">Returns <a href="json_crdt.ModelApi.html" class="tsd-signature-type tsd-kind-class">ModelApi</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L30">json-crdt/model/api/ModelApi.ts:30</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L31">json-crdt/model/api/ModelApi.ts:31</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="builder" class="tsd-anchor"></a>
@@ -101,7 +101,7 @@ for executing local user actions on a JSON CRDT document.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L18">json-crdt/model/api/ModelApi.ts:18</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L19">json-crdt/model/api/ModelApi.ts:19</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="model" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>model</span><a href="#model" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">model</span><span class="tsd-signature-symbol">:</span> <a href="json_crdt.Model.html" class="tsd-signature-type tsd-kind-class">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span></div>
@@ -109,31 +109,31 @@ for executing local user actions on a JSON CRDT document.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L30">json-crdt/model/api/ModelApi.ts:30</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L31">json-crdt/model/api/ModelApi.ts:31</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member"><a id="events" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>events</span><a href="#events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature" id="events.events-1"><span class="tsd-signature-symbol">get</span> events<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">EventTarget</span></li>
+<li class="tsd-signature" id="events.events-1"><span class="tsd-signature-symbol">get</span> events<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Emitter</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">change</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">CustomEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Event target for listening to <a href="json_crdt.Model.html" class="tsd-kind-class">Model</a> changes.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">EventTarget</span></h4>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Emitter</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">change</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">CustomEvent</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L54">json-crdt/model/api/ModelApi.ts:54</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L55">json-crdt/model/api/ModelApi.ts:55</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="r" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>r</span><a href="#r" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature" id="r.r-1"><span class="tsd-signature-symbol">get</span> r<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.RootLww.html" class="tsd-signature-type tsd-kind-class">RootLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-signature" id="r.r-1"><span class="tsd-signature-symbol">get</span> r<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.RootNode.html" class="tsd-signature-type tsd-kind-class">RootNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Local changes API for the root node.</p>
 </div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.RootLww.html" class="tsd-signature-type tsd-kind-class">RootLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.RootNode.html" class="tsd-signature-type tsd-kind-class">RootNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Value</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L94">json-crdt/model/api/ModelApi.ts:94</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L90">json-crdt/model/api/ModelApi.ts:90</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="apply" class="tsd-anchor"></a>
@@ -147,11 +147,11 @@ applied yet.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L214">json-crdt/model/api/ModelApi.ts:214</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L215">json-crdt/model/api/ModelApi.ts:215</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="arr" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>arr</span><a href="#arr" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="arr.arr-1"><span class="tsd-kind-call-signature">arr</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ArrayApi.html" class="tsd-signature-type tsd-kind-class">ArrayApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayRga.html" class="tsd-signature-type tsd-kind-class">ArrayRga</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#arr.arr-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="arr.arr-1"><span class="tsd-kind-call-signature">arr</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ArrApi.html" class="tsd-signature-type tsd-kind-class">ArrApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrNode.html" class="tsd-signature-type tsd-kind-class">ArrNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#arr.arr-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates an <code>arr</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not an <code>arr</code> node, throws an error.</p>
@@ -164,15 +164,15 @@ doesn&#39;t exist or the node at the path is not an <code>arr</code> node, throw
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ArrayApi.html" class="tsd-signature-type tsd-kind-class">ArrayApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayRga.html" class="tsd-signature-type tsd-kind-class">ArrayRga</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for an <code>arr</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ArrApi.html" class="tsd-signature-type tsd-kind-class">ArrApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrNode.html" class="tsd-signature-type tsd-kind-class">ArrNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for an <code>arr</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L170">json-crdt/model/api/ModelApi.ts:170</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L171">json-crdt/model/api/ModelApi.ts:171</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="bin" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>bin</span><a href="#bin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="bin.bin-1"><span class="tsd-kind-call-signature">bin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.BinaryApi.html" class="tsd-signature-type tsd-kind-class">BinaryApi</a><a href="#bin.bin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="bin.bin-1"><span class="tsd-kind-call-signature">bin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.BinApi.html" class="tsd-signature-type tsd-kind-class">BinApi</a><a href="#bin.bin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates a <code>bin</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not a <code>bin</code> node, throws an error.</p>
@@ -185,15 +185,15 @@ doesn&#39;t exist or the node at the path is not a <code>bin</code> node, throws
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.BinaryApi.html" class="tsd-signature-type tsd-kind-class">BinaryApi</a></h4><p>A local changes API for a <code>bin</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.BinApi.html" class="tsd-signature-type tsd-kind-class">BinApi</a></h4><p>A local changes API for a <code>bin</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L159">json-crdt/model/api/ModelApi.ts:159</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L160">json-crdt/model/api/ModelApi.ts:160</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="const" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>const</span><a href="#const" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="const.const-1"><span class="tsd-kind-call-signature">const</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ConstApi.html" class="tsd-signature-type tsd-kind-class">ConstApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.Const.html" class="tsd-signature-type tsd-kind-class">Const</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#const.const-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="const.const-1"><span class="tsd-kind-call-signature">const</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ConApi.html" class="tsd-signature-type tsd-kind-class">ConApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ConNode.html" class="tsd-signature-type tsd-kind-class">ConNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#const.const-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates a <code>con</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not a <code>con</code> node, throws an error.</p>
@@ -206,11 +206,11 @@ doesn&#39;t exist or the node at the path is not a <code>con</code> node, throws
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ConstApi.html" class="tsd-signature-type tsd-kind-class">ConstApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.Const.html" class="tsd-signature-type tsd-kind-class">Const</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>con</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ConApi.html" class="tsd-signature-type tsd-kind-class">ConApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ConNode.html" class="tsd-signature-type tsd-kind-class">ConNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>con</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L192">json-crdt/model/api/ModelApi.ts:192</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L193">json-crdt/model/api/ModelApi.ts:193</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="find" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>find</span><a href="#find" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -230,7 +230,7 @@ doesn&#39;t exist or the node at the path is not a <code>con</code> node, throws
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L115">json-crdt/model/api/ModelApi.ts:115</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L116">json-crdt/model/api/ModelApi.ts:116</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="flush" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>flush</span><a href="#flush" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -242,11 +242,11 @@ doesn&#39;t exist or the node at the path is not a <code>con</code> node, throws
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L251">json-crdt/model/api/ModelApi.ts:251</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L252">json-crdt/model/api/ModelApi.ts:252</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="in" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>in</span><a href="#in" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="in.in-1"><span class="tsd-kind-call-signature">in</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#in.in-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="in.in-1"><span class="tsd-kind-call-signature">in</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#in.in-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Traverses the model starting from the root node and returns a local
 changes API for a node at the given path.</p>
@@ -259,15 +259,15 @@ changes API for a node at the given path.</p>
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a node at the given path.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a node at the given path.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L105">json-crdt/model/api/ModelApi.ts:105</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L106">json-crdt/model/api/ModelApi.ts:106</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="obj" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>obj</span><a href="#obj" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="obj.obj-1"><span class="tsd-kind-call-signature">obj</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ObjectApi.html" class="tsd-signature-type tsd-kind-class">ObjectApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjectLww.html" class="tsd-signature-type tsd-kind-class">ObjectLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#obj.obj-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="obj.obj-1"><span class="tsd-kind-call-signature">obj</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ObjApi.html" class="tsd-signature-type tsd-kind-class">ObjApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjNode.html" class="tsd-signature-type tsd-kind-class">ObjNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#obj.obj-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates an <code>obj</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not an <code>obj</code> node, throws an error.</p>
@@ -280,11 +280,11 @@ doesn&#39;t exist or the node at the path is not an <code>obj</code> node, throw
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ObjectApi.html" class="tsd-signature-type tsd-kind-class">ObjectApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjectLww.html" class="tsd-signature-type tsd-kind-class">ObjectLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for an <code>obj</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ObjApi.html" class="tsd-signature-type tsd-kind-class">ObjApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjNode.html" class="tsd-signature-type tsd-kind-class">ObjNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for an <code>obj</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L181">json-crdt/model/api/ModelApi.ts:181</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L182">json-crdt/model/api/ModelApi.ts:182</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="root" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>root</span><a href="#root" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -305,11 +305,11 @@ sets the root node of the model to the constructed nodes.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L203">json-crdt/model/api/ModelApi.ts:203</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L204">json-crdt/model/api/ModelApi.ts:204</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="str" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>str</span><a href="#str" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="str.str-1"><span class="tsd-kind-call-signature">str</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.StringApi.html" class="tsd-signature-type tsd-kind-class">StringApi</a><a href="#str.str-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="str.str-1"><span class="tsd-kind-call-signature">str</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.StrApi.html" class="tsd-signature-type tsd-kind-class">StrApi</a><a href="#str.str-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates a <code>str</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not a <code>str</code> node, throws an error.</p>
@@ -322,15 +322,15 @@ doesn&#39;t exist or the node at the path is not a <code>str</code> node, throws
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.StringApi.html" class="tsd-signature-type tsd-kind-class">StringApi</a></h4><p>A local changes API for a <code>str</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.StrApi.html" class="tsd-signature-type tsd-kind-class">StrApi</a></h4><p>A local changes API for a <code>str</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L148">json-crdt/model/api/ModelApi.ts:148</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L149">json-crdt/model/api/ModelApi.ts:149</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="val" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>val</span><a href="#val" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="val.val-1"><span class="tsd-kind-call-signature">val</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#val.val-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="val.val-1"><span class="tsd-kind-call-signature">val</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#val.val-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates a <code>val</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not a <code>val</code> node, throws an error.</p>
@@ -343,15 +343,15 @@ doesn&#39;t exist or the node at the path is not a <code>val</code> node, throws
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>val</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>val</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L126">json-crdt/model/api/ModelApi.ts:126</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L127">json-crdt/model/api/ModelApi.ts:127</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="vec" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>vec</span><a href="#vec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="vec.vec-1"><span class="tsd-kind-call-signature">vec</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.VectorApi.html" class="tsd-signature-type tsd-kind-class">VectorApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayLww.html" class="tsd-signature-type tsd-kind-class">ArrayLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#vec.vec-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="vec.vec-1"><span class="tsd-kind-call-signature">vec</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">path</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.VecApi.html" class="tsd-signature-type tsd-kind-class">VecApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.VecNode.html" class="tsd-signature-type tsd-kind-class">VecNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#vec.vec-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Locates a <code>vec</code> node and returns a local changes API for it. If the node
 doesn&#39;t exist or the node at the path is not a <code>vec</code> node, throws an error.</p>
@@ -364,11 +364,11 @@ doesn&#39;t exist or the node at the path is not a <code>vec</code> node, throws
 <div class="tsd-comment tsd-typography"><p>Path at which to locate a node.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.VectorApi.html" class="tsd-signature-type tsd-kind-class">VectorApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayLww.html" class="tsd-signature-type tsd-kind-class">ArrayLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>vec</code> node.</p>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.VecApi.html" class="tsd-signature-type tsd-kind-class">VecApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.VecNode.html" class="tsd-signature-type tsd-kind-class">VecNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><p>A local changes API for a <code>vec</code> node.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L137">json-crdt/model/api/ModelApi.ts:137</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L138">json-crdt/model/api/ModelApi.ts:138</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="view" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>view</span><a href="#view" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -380,11 +380,11 @@ doesn&#39;t exist or the node at the path is not a <code>vec</code> node, throws
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L242">json-crdt/model/api/ModelApi.ts:242</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L243">json-crdt/model/api/ModelApi.ts:243</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="wrap" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>wrap</span><a href="#wrap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-1"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-1"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Returns a local change API for the given node. If an instance already
 exists, returns the existing instance.</p>
@@ -393,71 +393,71 @@ exists, returns the existing instance.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValueApi.html" class="tsd-signature-type tsd-kind-class">ValueApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValueLww.html" class="tsd-signature-type tsd-kind-class">ValueLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ValApi.html" class="tsd-signature-type tsd-kind-class">ValApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ValNode.html" class="tsd-signature-type tsd-kind-class">ValNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L67">json-crdt/model/api/ModelApi.ts:67</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-2"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.StringApi.html" class="tsd-signature-type tsd-kind-class">StringApi</a><a href="#wrap.wrap-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L68">json-crdt/model/api/ModelApi.ts:68</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-2"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.StrApi.html" class="tsd-signature-type tsd-kind-class">StrApi</a><a href="#wrap.wrap-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.StringRga.html" class="tsd-signature-type tsd-kind-class">StringRga</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.StringApi.html" class="tsd-signature-type tsd-kind-class">StringApi</a></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.StrNode.html" class="tsd-signature-type tsd-kind-class">StrNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.StrApi.html" class="tsd-signature-type tsd-kind-class">StrApi</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L68">json-crdt/model/api/ModelApi.ts:68</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-3"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.BinaryApi.html" class="tsd-signature-type tsd-kind-class">BinaryApi</a><a href="#wrap.wrap-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L69">json-crdt/model/api/ModelApi.ts:69</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-3"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.BinApi.html" class="tsd-signature-type tsd-kind-class">BinApi</a><a href="#wrap.wrap-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.BinaryRga.html" class="tsd-signature-type tsd-kind-class">BinaryRga</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.BinaryApi.html" class="tsd-signature-type tsd-kind-class">BinaryApi</a></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.BinNode.html" class="tsd-signature-type tsd-kind-class">BinNode</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.BinApi.html" class="tsd-signature-type tsd-kind-class">BinApi</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L69">json-crdt/model/api/ModelApi.ts:69</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-4"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ArrayApi.html" class="tsd-signature-type tsd-kind-class">ArrayApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayRga.html" class="tsd-signature-type tsd-kind-class">ArrayRga</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L70">json-crdt/model/api/ModelApi.ts:70</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-4"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ArrApi.html" class="tsd-signature-type tsd-kind-class">ArrApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrNode.html" class="tsd-signature-type tsd-kind-class">ArrNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ArrayRga.html" class="tsd-signature-type tsd-kind-class">ArrayRga</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ArrayApi.html" class="tsd-signature-type tsd-kind-class">ArrayApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayRga.html" class="tsd-signature-type tsd-kind-class">ArrayRga</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ArrNode.html" class="tsd-signature-type tsd-kind-class">ArrNode</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ArrApi.html" class="tsd-signature-type tsd-kind-class">ArrApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrNode.html" class="tsd-signature-type tsd-kind-class">ArrNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L70">json-crdt/model/api/ModelApi.ts:70</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-5"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ObjectApi.html" class="tsd-signature-type tsd-kind-class">ObjectApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjectLww.html" class="tsd-signature-type tsd-kind-class">ObjectLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L71">json-crdt/model/api/ModelApi.ts:71</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-5"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ObjApi.html" class="tsd-signature-type tsd-kind-class">ObjApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjNode.html" class="tsd-signature-type tsd-kind-class">ObjNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ObjectLww.html" class="tsd-signature-type tsd-kind-class">ObjectLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ObjectApi.html" class="tsd-signature-type tsd-kind-class">ObjectApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjectLww.html" class="tsd-signature-type tsd-kind-class">ObjectLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ObjNode.html" class="tsd-signature-type tsd-kind-class">ObjNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ObjApi.html" class="tsd-signature-type tsd-kind-class">ObjApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ObjNode.html" class="tsd-signature-type tsd-kind-class">ObjNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L71">json-crdt/model/api/ModelApi.ts:71</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-6"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ConstApi.html" class="tsd-signature-type tsd-kind-class">ConstApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.Const.html" class="tsd-signature-type tsd-kind-class">Const</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L72">json-crdt/model/api/ModelApi.ts:72</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-6"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.ConApi.html" class="tsd-signature-type tsd-kind-class">ConApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ConNode.html" class="tsd-signature-type tsd-kind-class">ConNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.Const.html" class="tsd-signature-type tsd-kind-class">Const</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.ConstApi.html" class="tsd-signature-type tsd-kind-class">ConstApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.Const.html" class="tsd-signature-type tsd-kind-class">Const</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ConNode.html" class="tsd-signature-type tsd-kind-class">ConNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.ConApi.html" class="tsd-signature-type tsd-kind-class">ConApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ConNode.html" class="tsd-signature-type tsd-kind-class">ConNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L72">json-crdt/model/api/ModelApi.ts:72</a></li></ul></aside></li>
-<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-7"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.VectorApi.html" class="tsd-signature-type tsd-kind-class">VectorApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayLww.html" class="tsd-signature-type tsd-kind-class">ArrayLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L73">json-crdt/model/api/ModelApi.ts:73</a></li></ul></aside></li>
+<li class="tsd-signature tsd-anchor-link" id="wrap.wrap-7"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.VecApi.html" class="tsd-signature-type tsd-kind-class">VecApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.VecNode.html" class="tsd-signature-type tsd-kind-class">VecNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.ArrayLww.html" class="tsd-signature-type tsd-kind-class">ArrayLww</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="json_crdt.VectorApi.html" class="tsd-signature-type tsd-kind-class">VectorApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.ArrayLww.html" class="tsd-signature-type tsd-kind-class">ArrayLww</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h5><span class="tsd-kind-parameter">node</span>: <a href="json_crdt.VecNode.html" class="tsd-signature-type tsd-kind-class">VecNode</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="json_crdt.VecApi.html" class="tsd-signature-type tsd-kind-class">VecApi</a><span class="tsd-signature-symbol">&lt;</span><a href="json_crdt.VecNode.html" class="tsd-signature-type tsd-kind-class">VecNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L73">json-crdt/model/api/ModelApi.ts:73</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L74">json-crdt/model/api/ModelApi.ts:74</a></li></ul></aside></li>
 <li class="tsd-signature tsd-anchor-link" id="wrap.wrap-8"><span class="tsd-kind-call-signature">wrap</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">node</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="json_crdt.NodeApi.html" class="tsd-signature-type tsd-kind-class">NodeApi</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><a href="#wrap.wrap-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
@@ -467,7 +467,7 @@ exists, returns the existing instance.</p>
 <h5><span class="tsd-kind-parameter">node</span>: <a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="json_crdt.NodeApi.html" class="tsd-signature-type tsd-kind-class">NodeApi</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/json_crdt.JsonNode.html" class="tsd-signature-type tsd-kind-interface">JsonNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/streamich/json-joy/blob/325a969/src/json-crdt/model/api/ModelApi.ts#L74">json-crdt/model/api/ModelApi.ts:74</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/streamich/json-joy/blob/d070db0d/src/json-crdt/model/api/ModelApi.ts#L75">json-crdt/model/api/ModelApi.ts:75</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -513,29 +513,31 @@ exists, returns the existing instance.</p>
 <details class="tsd-index-accordion" open data-key="json-crdt"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/json_crdt.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt</span></a></summary>
 <div class="tsd-accordion-details">
 <ul class="tsd-nested-navigation">
-<li><a href="json_crdt.ArrayApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Array<wbr/>Api</span></a></li>
-<li><a href="json_crdt.ArrayLww.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Array<wbr/>Lww</span></a></li>
-<li><a href="json_crdt.ArrayRga.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Array<wbr/>Rga</span></a></li>
-<li><a href="json_crdt.BinaryApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Binary<wbr/>Api</span></a></li>
-<li><a href="json_crdt.BinaryRga.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Binary<wbr/>Rga</span></a></li>
-<li><a href="json_crdt.Const.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Const</span></a></li>
-<li><a href="json_crdt.ConstApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Const<wbr/>Api</span></a></li>
+<li><a href="../modules/json_crdt.n.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>n</span></a></li>
+<li><a href="json_crdt.ArrApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Arr<wbr/>Api</span></a></li>
+<li><a href="json_crdt.ArrNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Arr<wbr/>Node</span></a></li>
+<li><a href="json_crdt.BinApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Bin<wbr/>Api</span></a></li>
+<li><a href="json_crdt.BinNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Bin<wbr/>Node</span></a></li>
+<li><a href="json_crdt.ConApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Con<wbr/>Api</span></a></li>
+<li><a href="json_crdt.ConNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Con<wbr/>Node</span></a></li>
 <li><a href="json_crdt.Model.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Model</span></a></li>
 <li><a href="json_crdt.ModelApi.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Model<wbr/>Api</span></a></li>
 <li><a href="json_crdt.NodeApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Node<wbr/>Api</span></a></li>
-<li><a href="json_crdt.ObjectApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Object<wbr/>Api</span></a></li>
-<li><a href="json_crdt.ObjectLww.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Object<wbr/>Lww</span></a></li>
-<li><a href="json_crdt.RootLww.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Root<wbr/>Lww</span></a></li>
-<li><a href="json_crdt.StringApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>String<wbr/>Api</span></a></li>
-<li><a href="json_crdt.StringRga.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>String<wbr/>Rga</span></a></li>
-<li><a href="json_crdt.ValueApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Value<wbr/>Api</span></a></li>
-<li><a href="json_crdt.ValueLww.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Value<wbr/>Lww</span></a></li>
-<li><a href="json_crdt.VectorApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Vector<wbr/>Api</span></a></li>
+<li><a href="json_crdt.ObjApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obj<wbr/>Api</span></a></li>
+<li><a href="json_crdt.ObjNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Obj<wbr/>Node</span></a></li>
+<li><a href="json_crdt.RootNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Root<wbr/>Node</span></a></li>
+<li><a href="json_crdt.StrApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Str<wbr/>Api</span></a></li>
+<li><a href="json_crdt.StrNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Str<wbr/>Node</span></a></li>
+<li><a href="json_crdt.ValApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Val<wbr/>Api</span></a></li>
+<li><a href="json_crdt.ValNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Val<wbr/>Node</span></a></li>
+<li><a href="json_crdt.VecApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Vec<wbr/>Api</span></a></li>
+<li><a href="json_crdt.VecNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Vec<wbr/>Node</span></a></li>
 <li><a href="../interfaces/json_crdt.ExtensionApi.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-256"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)"></path></g></svg><span>Extension<wbr/>Api</span></a></li>
 <li><a href="../interfaces/json_crdt.ExtensionDefinition.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Extension<wbr/>Definition</span></a></li>
 <li><a href="../interfaces/json_crdt.ExtensionJsonNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Extension<wbr/>Json<wbr/>Node</span></a></li>
 <li><a href="../interfaces/json_crdt.JsonNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Json<wbr/>Node</span></a></li>
 <li><a href="../types/json_crdt.ApiPath.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4194304"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-type-alias)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)"></path></g></svg><span>Api<wbr/>Path</span></a></li>
+<li><a href="../types/json_crdt.BuilderNodeToJsonNode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Builder<wbr/>Node<wbr/>To<wbr/>Json<wbr/>Node</span></a></li>
 <li><a href="../types/json_crdt.ExtensionValue.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Extension<wbr/>Value</span></a></li>
 <li><a href="../types/json_crdt.JsonNodeView.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Json<wbr/>Node<wbr/>View</span></a></li></ul></div></details></li>
 <li><a href="../modules/json_crdt_patch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>json-<wbr/>crdt-<wbr/>patch</span></a></li>
