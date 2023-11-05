@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConApi, ObjectApi, StringApi, VecApi, ValApi} from '../nodes';
+import {ConApi, ObjApi, StringApi, VecApi, ValApi} from '../nodes';
 import {ConNode, RootLww, VecNode, ObjNode, StringRga} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
@@ -23,8 +23,8 @@ test('proxy API supports object types', () => {
     bar: 1234,
   });
   const obj = root.val;
-  const objApi: ObjectApi = obj.toApi();
-  expect(objApi).toBeInstanceOf(ObjectApi);
+  const objApi: ObjApi = obj.toApi();
+  expect(objApi).toBeInstanceOf(ObjApi);
   expect(objApi.node).toBeInstanceOf(ObjNode);
   expect(objApi.view()).toStrictEqual({
     foo: 'asdf',
@@ -65,8 +65,8 @@ describe('supports all node types', () => {
   test('object as root node', () => {
     const proxy = model.api.r.proxy();
     const obj = proxy.val;
-    const objApi: ObjectApi = obj.toApi();
-    expect(objApi).toBeInstanceOf(ObjectApi);
+    const objApi: ObjApi = obj.toApi();
+    expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('obj')).toBe(true);
@@ -76,8 +76,8 @@ describe('supports all node types', () => {
   test('nested object', () => {
     const proxy = model.api.r.proxy();
     const obj = proxy.val.obj;
-    const objApi: ObjectApi = obj.toApi();
-    expect(objApi).toBeInstanceOf(ObjectApi);
+    const objApi: ObjApi = obj.toApi();
+    expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('str')).toBe(true);

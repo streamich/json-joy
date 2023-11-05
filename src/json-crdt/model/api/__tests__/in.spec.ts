@@ -1,5 +1,5 @@
 import {ConNode, RootLww, ValNode, ObjNode} from '../../../nodes';
-import {ConApi, ObjectApi, ValApi} from '../nodes';
+import {ConApi, ObjApi, ValApi} from '../nodes';
 import {Model} from '../../Model';
 
 describe('can use .in() method to reference any model node', () => {
@@ -24,7 +24,7 @@ describe('can use .in() method to reference any model node', () => {
     expect(register1.node).toBe(register2.node);
     expect(register1.node).toBe(register3.node);
     const obj1 = register1.in();
-    expect(obj1).toBeInstanceOf(ObjectApi);
+    expect(obj1).toBeInstanceOf(ObjApi);
     expect(obj1.node).toBeInstanceOf(ObjNode);
   });
 

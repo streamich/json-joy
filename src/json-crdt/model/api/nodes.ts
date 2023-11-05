@@ -97,7 +97,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
-  public asObj(): ObjectApi {
+  public asObj(): ObjApi {
     if (this.node instanceof ObjNode) return this.api.wrap(this.node as ObjNode);
     throw new Error('NOT_OBJ');
   }
@@ -138,7 +138,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asTup();
   }
 
-  public obj(path?: ApiPath): ObjectApi {
+  public obj(path?: ApiPath): ObjApi {
     return this.in(path).asObj();
   }
 
@@ -281,7 +281,7 @@ type UnObjNode<N> = N extends ObjNode<infer T> ? T : never;
  *
  * @category Local API
  */
-export class ObjectApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
+export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
