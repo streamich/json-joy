@@ -1,6 +1,6 @@
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ConNode} from './con/ConNode';
-import type {ValueLww} from './lww-value/ValueLww';
+import type {ValueLww} from './val/ValueLww';
 import type {ArrayLww} from './lww-array/ArrayLww';
 import type {JsonNode} from './types';
 import type {ObjectLww} from './lww-object/ObjectLww';
@@ -20,7 +20,7 @@ export namespace n {
 }
 
 export {ConNode} from './con/ConNode';
-export {ValueLww} from './lww-value/ValueLww';
+export {ValueLww} from './val/ValueLww';
 export {RootLww} from './lww-root/RootLww';
 export {ArrayLww} from './lww-array/ArrayLww';
 export {ObjectLww} from './lww-object/ObjectLww';

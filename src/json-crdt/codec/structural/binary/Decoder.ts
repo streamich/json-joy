@@ -10,7 +10,7 @@ import {ObjectLww} from '../../../nodes/lww-object/ObjectLww';
 import {RootLww} from '../../../nodes/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {StringRga, StringChunk} from '../../../nodes/rga-string/StringRga';
-import {ValueLww} from '../../../nodes/lww-value/ValueLww';
+import {ValueLww} from '../../../nodes/val/ValueLww';
 import {ArrayLww} from '../../../nodes/lww-array/ArrayLww';
 import type {JsonNode} from '../../../nodes';
 

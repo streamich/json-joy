@@ -1,4 +1,4 @@
-import {ValueLww} from '../../nodes/lww-value/ValueLww';
+import {ValueLww} from '../../nodes/val/ValueLww';
 import {Model} from '../Model';
 
 test('removes from index rewritten root nodes', () => {

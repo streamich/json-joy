@@ -6,7 +6,7 @@ import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Path} from '../../../json-pointer';
 import {StringRga} from '../../nodes/rga-string/StringRga';
-import {ValueLww} from '../../nodes/lww-value/ValueLww';
+import {ValueLww} from '../../nodes/val/ValueLww';
 import {ArrayLww} from '../../nodes/lww-array/ArrayLww';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';

@@ -1,6 +1,6 @@
 import {CONST, updateNum} from '../json-hash';
 import {ConNode} from './nodes';
-import {ValueLww} from './nodes/lww-value/ValueLww';
+import {ValueLww} from './nodes/val/ValueLww';
 import {ObjectLww} from './nodes/lww-object/ObjectLww';
 import {ArrayLww} from './nodes/lww-array/ArrayLww';
 import {ArrayRga} from './nodes/rga-array/ArrayRga';

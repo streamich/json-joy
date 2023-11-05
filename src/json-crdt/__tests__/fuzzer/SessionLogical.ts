@@ -21,7 +21,7 @@ import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {StringRga} from '../../nodes/rga-string/StringRga';
 import {interval} from '../../../json-crdt-patch/clock';
-import {ValueLww} from '../../nodes/lww-value/ValueLww';
+import {ValueLww} from '../../nodes/val/ValueLww';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
 

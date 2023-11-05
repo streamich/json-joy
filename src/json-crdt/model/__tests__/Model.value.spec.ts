@@ -1,6 +1,6 @@
 import {Model} from '../Model';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {ValueLww} from '../../nodes/lww-value/ValueLww';
+import {ValueLww} from '../../nodes/val/ValueLww';
 
 describe('Document', () => {
   describe('value', () => {
