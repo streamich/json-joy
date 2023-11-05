@@ -13,7 +13,7 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode, BuilderNodeToJsonNode} from '../nodes';
+import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -75,7 +75,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: RootLww<RootJsonNode> = new RootLww<RootJsonNode>(this, ORIGIN);
+  public root: RootNode<RootJsonNode> = new RootNode<RootJsonNode>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session

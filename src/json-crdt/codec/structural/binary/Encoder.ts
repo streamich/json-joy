@@ -1,4 +1,4 @@
-import {ConNode, RootLww, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
+import {ConNode, RootNode, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
@@ -70,7 +70,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected ts: (ts: ITimestampStruct) => void = this.tsLogical;
 
-  protected cRoot(root: RootLww): void {
+  protected cRoot(root: RootNode): void {
     const val = root.val;
     if (val.sid === SESSION.SYSTEM) this.writer.u8(0);
     else this.cNode(root.node());

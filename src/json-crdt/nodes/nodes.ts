@@ -21,7 +21,7 @@ export namespace n {
 
 export {ConNode} from './con/ConNode';
 export {ValNode} from './val/ValNode';
-export {RootLww} from './lww-root/RootLww';
+export {RootNode} from './root/RootNode';
 export {VecNode} from './vec/VecNode';
 export {ObjNode} from './obj/ObjNode';
 export {ArrNode, ArrChunk} from './arr/ArrNode';

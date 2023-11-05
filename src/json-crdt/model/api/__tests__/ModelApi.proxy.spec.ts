@@ -1,6 +1,6 @@
 import {Model} from '../../Model';
 import {ConApi, ObjApi, StrApi, VecApi, ValApi} from '../nodes';
-import {ConNode, RootLww, VecNode, ObjNode, StrNode} from '../../../nodes';
+import {ConNode, RootNode, VecNode, ObjNode, StrNode} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
@@ -17,7 +17,7 @@ test('proxy API supports object types', () => {
   const root = model.api.r.proxy();
   const rootApi: ValApi = root.toApi();
   expect(rootApi).toBeInstanceOf(ValApi);
-  expect(rootApi.node).toBeInstanceOf(RootLww);
+  expect(rootApi.node).toBeInstanceOf(RootNode);
   expect(rootApi.view()).toStrictEqual({
     foo: 'asdf',
     bar: 1234,

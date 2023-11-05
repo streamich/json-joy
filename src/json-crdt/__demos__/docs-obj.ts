@@ -20,7 +20,7 @@ model.api.root({
 });
 
 console.log(model.root + '');
-// RootLww "val" 0.0
+// RootNode 0.0
 // └─ ObjNode 1234.1
 //    └─ "foo"
 //        └─ ObjNode 1234.2

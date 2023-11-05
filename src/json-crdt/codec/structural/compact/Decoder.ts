@@ -19,7 +19,7 @@ export class Decoder {
     }
     const doc = isServerTime ? Model.withServerClock(x as number) : Model.withLogicalClock(this.clockDecoder!.clock);
     const val = data[1] ? this.decodeNode(doc, data[1]) : UNDEFINED;
-    doc.root = new nodes.RootLww(doc, val.id);
+    doc.root = new nodes.RootNode(doc, val.id);
     return doc;
   }
 

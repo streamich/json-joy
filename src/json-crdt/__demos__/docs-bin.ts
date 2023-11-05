@@ -20,7 +20,7 @@ console.log(model.view());
 // { blob: Uint8Array(3) [ 1, 2, 3 ] }
 
 console.log(model.root + '');
-// RootLww "val" 0.0
+// RootNode 0.0
 // └─ ObjNode 1234.1
 //    └─ "blob"
 //        └─ BinNode 1234.2  { 1, 2, 3 }

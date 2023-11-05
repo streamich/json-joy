@@ -43,7 +43,7 @@ export class Encoder {
     }
   }
 
-  protected encodeRoot(arr: unknown[], root: nodes.RootLww): void {
+  protected encodeRoot(arr: unknown[], root: nodes.RootNode): void {
     if (!root.val.time) arr.push(0);
     else this.cNode(arr, root.node());
   }

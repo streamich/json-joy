@@ -32,7 +32,7 @@ console.log(view);
 
 console.log(model + '');
 // Model
-// ├─ RootLww "val" 0.0
+// ├─ RootNode 0.0
 // │  └─ ObjNode 1234.1
 // │     ├─ "num"
 // │     │   └─ ConNode 1234.2 { 123 }

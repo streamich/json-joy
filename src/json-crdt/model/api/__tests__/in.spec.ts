@@ -1,4 +1,4 @@
-import {ConNode, RootLww, ValNode, ObjNode} from '../../../nodes';
+import {ConNode, RootNode, ValNode, ObjNode} from '../../../nodes';
 import {ConApi, ObjApi, ValApi} from '../nodes';
 import {Model} from '../../Model';
 
@@ -7,7 +7,7 @@ describe('can use .in() method to reference any model node', () => {
 
   test('can access root node', () => {
     const node = doc.api.r.asVal();
-    expect(node.node).toBeInstanceOf(RootLww);
+    expect(node.node).toBeInstanceOf(RootNode);
   });
 
   doc.api.root({

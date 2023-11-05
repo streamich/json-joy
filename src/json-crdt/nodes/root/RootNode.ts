@@ -5,13 +5,13 @@ import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
 
 /**
- * The root of a JSON CRDT document. {@link RootLww} is a {@link ValNode} with
+ * The root of a JSON CRDT document. {@link RootNode} is a {@link ValNode} with
  * a special `0.0` ID, which is always the same. It is used to represent the
  * root of a document.
  *
  * @category CRDT Node
  */
-export class RootLww<Value extends JsonNode = JsonNode> extends ValNode<Value> {
+export class RootNode<Value extends JsonNode = JsonNode> extends ValNode<Value> {
   /**
    * @param val Latest value of the document root.
    */

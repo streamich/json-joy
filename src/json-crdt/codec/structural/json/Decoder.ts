@@ -48,7 +48,7 @@ export class Decoder {
 
   protected cRoot(doc: Model, {node}: ValueJsonCrdtNode): void {
     const val = node ? this.cNode(doc, node) : new nodes.ConNode(doc.clock.tick(0), null);
-    const root = new nodes.RootLww(doc, val.id);
+    const root = new nodes.RootNode(doc, val.id);
     doc.root = root;
   }
 

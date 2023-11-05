@@ -11,7 +11,7 @@ import {
   BinChunk,
   ConNode,
   ObjNode,
-  RootLww,
+  RootNode,
   StrNode,
   StrChunk,
   ValNode,
@@ -42,7 +42,7 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
       const clock = this.clockDecoder!.clock;
       this.doc = Model.withLogicalClock(clock);
     }
-    this.doc.root = new RootLww(this.doc, this.cRoot().id);
+    this.doc.root = new RootNode(this.doc, this.cRoot().id);
     delete this.clockDecoder;
     return this.doc;
   }

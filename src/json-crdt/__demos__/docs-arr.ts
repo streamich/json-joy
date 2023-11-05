@@ -21,7 +21,7 @@ console.log(model.view());
 // { tags: [ 'big', 'small', 'red' ] }
 
 console.log(model.root + '');
-// RootLww "val" 0.0
+// RootNode 0.0
 // └─ ObjNode 1234.1
 //    └─ "tags"
 //        └─ ArrNode 1234.2
@@ -41,7 +41,7 @@ console.log(model.view());
 // { tags: [ 'big', 'small', 'red' ] }
 
 console.log(model.root + '');
-// RootLww "val" 0.0
+// RootNode 0.0
 // └─ ObjNode 1234.1
 //    └─ "tags"
 //        └─ ArrNode 1234.22

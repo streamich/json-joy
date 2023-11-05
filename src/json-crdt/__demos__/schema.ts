@@ -24,7 +24,7 @@ const model = Model.withLogicalClock(1234).setSchema(schema);
 
 console.log(model + '');
 // Model
-// ├─ RootLww "val" 0.0
+// ├─ RootNode 0.0
 // │  └─ ObjNode 1234.1
 // │     ├─ "text"
 // │     │   └─ ConNode 1234.2 { "hello" }

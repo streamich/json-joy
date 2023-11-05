@@ -23,7 +23,7 @@ export type ProxyNodeArr<N extends nodes.ArrNode<any>> = ProxyNode<N> &
 // prettier-ignore
 export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
   ? ProxyNodeCon<N>
-  : N extends nodes.RootLww<any>
+  : N extends nodes.RootNode<any>
     ? ProxyNodeVal<N>
     : N extends nodes.ValNode<any>
       ? ProxyNodeVal<N>
