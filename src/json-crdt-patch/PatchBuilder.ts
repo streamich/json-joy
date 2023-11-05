@@ -210,6 +210,7 @@ export class PatchBuilder {
    * Set value of a "val" object.
    *
    * @returns ID of the new operation.
+   * @todo Rename to "insVal".
    */
   public setVal(obj: ITimestampStruct, val: ITimestampStruct): ITimestampStruct {
     this.pad();
