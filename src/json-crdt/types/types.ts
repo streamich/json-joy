@@ -49,7 +49,7 @@ export type BuilderNodeToJsonNode<S> = S extends builder.str<infer T>
   : S extends builder.bin
     ? nodes.BinaryRga
     : S extends builder.con<infer T>
-      ? nodes.Const<T>
+      ? nodes.ConNode<T>
       : S extends builder.val<infer T>
         ? nodes.ValueLww<BuilderNodeToJsonNode<T>>
         : S extends builder.vec<infer T>

@@ -1,11 +1,5 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {ConNode} from '../../../types/con/Const';
-import {JsonNode} from '../../../types';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
+import {ConNode, JsonNode, ValueLww, ArrayLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
 import {toBase64} from '../../../../util/base64/toBase64';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {ITimestampStruct, IVectorClock, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
@@ -26,7 +20,6 @@ import type {
   JsonCrdtSnapshot,
   TupleJsonCrdtNode,
 } from './types';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Encoder {
   protected model!: Model;

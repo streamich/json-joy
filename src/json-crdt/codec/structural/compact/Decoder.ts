@@ -1,17 +1,9 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
+import {ConNode, RootLww, JsonNode, ValueLww, ArrayLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {ConNode} from '../../../types/con/Const';
-import {RootLww} from '../../../types/lww-root/RootLww';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {ORIGIN, SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {Code} from '../../../../json-crdt-patch/codec/compact/constants';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Decoder {
   protected time?: number;

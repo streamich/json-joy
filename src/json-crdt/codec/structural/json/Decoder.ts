@@ -1,15 +1,8 @@
-import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {ConNode} from '../../../types/con/Const';
-import {RootLww} from '../../../types/lww-root/RootLww';
+import {ConNode, RootLww, JsonNode, ValueLww, ArrayLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
 import {Model} from '../../../model';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {
   JsonCrdtNode,
   ObjectJsonCrdtNode,
@@ -27,7 +20,6 @@ import {
   JsonCrdtTimestamp,
   TupleJsonCrdtNode,
 } from './types';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 
 export class Decoder {
   public decode({time, root}: JsonCrdtSnapshot): Model {

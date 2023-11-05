@@ -1,13 +1,5 @@
 import type {JsonNodeApi} from '../api/types';
-import type {JsonNode, JsonNodeView} from '../../types';
-import type {ConNode} from '../../types/con/Const';
-import type {ArrayLww} from '../../types/lww-array/ArrayLww';
-import type {ObjectLww} from '../../types/lww-object/ObjectLww';
-import type {RootLww} from '../../types/lww-root/RootLww';
-import type {ValueLww} from '../../types/lww-value/ValueLww';
-import type {ArrayRga} from '../../types/rga-array/ArrayRga';
-import type {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import type {StringRga} from '../../types/rga-string/StringRga';
+import type {ConNode, RootLww, JsonNode, JsonNodeView, ValueLww, ArrayLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../types';
 
 export interface ProxyNode<N extends JsonNode = JsonNode> {
   toApi(): JsonNodeApi<N>;

@@ -1,17 +1,9 @@
-import {ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
+import {ConNode, RootLww, JsonNode, ValueLww, ArrayLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../../types';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {ConNode} from '../../../types/con/Const';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {RootLww} from '../../../types/lww-root/RootLww';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {StringRga} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import type {Model} from '../../../model';
 
 export class Encoder extends MsgPackEncoder<CrdtWriter> {

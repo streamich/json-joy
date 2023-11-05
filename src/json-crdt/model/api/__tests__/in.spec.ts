@@ -1,9 +1,6 @@
-import {ConNode} from '../../../types/con/Const';
+import {ConNode, RootLww, ValueLww, ObjectLww} from '../../../types';
 import {ConstApi, ObjectApi, ValueApi} from '../nodes';
 import {Model} from '../../Model';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {RootLww} from '../../../types/lww-root/RootLww';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 
 describe('can use .in() method to reference any model node', () => {
   const doc = Model.withLogicalClock();

@@ -1,6 +1,6 @@
 import {ArrayRga} from '../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {ConNode} from '../../types/con/Const';
+import {ConNode} from '../../types';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';

@@ -1,16 +1,10 @@
-import {ArrayChunk, ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryChunk, BinaryRga} from '../../../types/rga-binary/BinaryRga';
+import {ConNode, JsonNode, ValueLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
-import {ConNode} from '../../../types/con/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
-import {JsonNode} from '../../../types';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {StringChunk, StringRga} from '../../../types/rga-string/StringRga';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
 
 export class Decoder {
   public readonly dec = new MsgPackDecoderFast<CrdtReader>(new CrdtReader());

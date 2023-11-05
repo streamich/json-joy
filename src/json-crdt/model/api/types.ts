@@ -1,28 +1,21 @@
-import type {ConNode} from '../../types/con/Const';
-import type {ArrayLww} from '../../types/lww-array/ArrayLww';
-import type {ObjectLww} from '../../types/lww-object/ObjectLww';
-import type {RootLww} from '../../types/lww-root/RootLww';
-import type {ValueLww} from '../../types/lww-value/ValueLww';
-import type {ArrayRga} from '../../types/rga-array/ArrayRga';
-import type {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import type {StringRga} from '../../types/rga-string/StringRga';
-import type {ArrayApi, BinaryApi, ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
+import type * as types from '../../types';
+import type * as nodes from './nodes';
 
 // prettier-ignore
-export type JsonNodeApi<N> = N extends ConNode<any>
-  ? ConstApi<N>
-  : N extends RootLww<any>
-    ? ValueApi<N>
-    : N extends ValueLww<any>
-      ? ValueApi<N>
-      : N extends StringRga
-        ? StringApi
-        : N extends BinaryRga
-          ? BinaryApi
-          : N extends ArrayRga<any>
-            ? ArrayApi<N>
-            : N extends ObjectLww<any>
-              ? ObjectApi<N>
-              : N extends ArrayLww<any>
-                ? VectorApi<N>
+export type JsonNodeApi<N> = N extends types.ConNode<any>
+  ? nodes.ConstApi<N>
+  : N extends types.RootLww<any>
+    ? nodes.ValueApi<N>
+    : N extends types.ValueLww<any>
+      ? nodes.ValueApi<N>
+      : N extends types.StringRga
+        ? nodes.StringApi
+        : N extends types.BinaryRga
+          ? nodes.BinaryApi
+          : N extends types.ArrayRga<any>
+            ? nodes.ArrayApi<N>
+            : N extends types.ObjectLww<any>
+              ? nodes.ObjectApi<N>
+              : N extends types.ArrayLww<any>
+                ? nodes.VectorApi<N>
                 : never;

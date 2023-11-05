@@ -3,13 +3,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
-import {JsonNode} from '../../../types';
-import {ConNode} from '../../../types/con/Const';
-import {ObjectLww} from '../../../types/lww-object/ObjectLww';
-import {ValueLww} from '../../../types/lww-value/ValueLww';
-import {ArrayRga} from '../../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../../types/rga-string/StringRga';
+import {ConNode, JsonNode, ValueLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../../types';
 import {IndexedFields, FieldName} from './types';
 
 const EMPTY = new Uint8Array(0);

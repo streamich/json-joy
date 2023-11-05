@@ -1,10 +1,4 @@
-import type {ConNode} from '../con/Const';
-import type {ArrayLww} from '../lww-array/ArrayLww';
-import type {ObjectLww} from '../lww-object/ObjectLww';
-import type {ValueLww} from '../lww-value/ValueLww';
-import type {ArrayRga} from '../rga-array/ArrayRga';
-import type {BinaryRga} from '../rga-binary/BinaryRga';
-import type {StringRga} from '../rga-string/StringRga';
+import type {ConNode, ValueLww, ArrayLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '..';
 import type {JsonNodeView} from '../types';
 
 test('can infer view type of CRDT nodes', () => {

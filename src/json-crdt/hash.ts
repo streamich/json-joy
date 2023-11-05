@@ -1,5 +1,5 @@
 import {CONST, updateNum} from '../json-hash';
-import {ConNode} from './types/con/Const';
+import {ConNode} from './types';
 import {ValueLww} from './types/lww-value/ValueLww';
 import {ObjectLww} from './types/lww-object/ObjectLww';
 import {ArrayLww} from './types/lww-array/ArrayLww';

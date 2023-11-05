@@ -1,4 +1,4 @@
-import {ConNode} from '../con/Const';
+import {ConNode} from '../con/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from '../../../util/print/printTree';
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
