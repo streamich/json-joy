@@ -16,7 +16,7 @@ export interface ProxyNode<N extends JsonNode = JsonNode> {
   toApi(): JsonNodeApi<N>;
 }
 
-export type ProxyNodeConst<N extends ConNode<any>> = ProxyNode<N>;
+export type ProxyNodeCon<N extends ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends ValueLww<any>> = ProxyNode<N> & {val: JsonNodeToProxyNode<ReturnType<N['child']>>};
 export type ProxyNodeVec<N extends ArrayLww<any>> = ProxyNode<N> & {
   [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<JsonNodeView<N>[K]>;
@@ -31,7 +31,7 @@ export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> &
 
 // prettier-ignore
 export type JsonNodeToProxyNode<N> = N extends ConNode<any>
-  ? ProxyNodeConst<N>
+  ? ProxyNodeCon<N>
   : N extends RootLww<any>
     ? ProxyNodeVal<N>
     : N extends ValueLww<any>

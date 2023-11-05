@@ -3,7 +3,7 @@ import type * as nodes from './nodes';
 
 // prettier-ignore
 export type JsonNodeApi<N> = N extends types.ConNode<any>
-  ? nodes.ConstApi<N>
+  ? nodes.ConApi<N>
   : N extends types.RootLww<any>
     ? nodes.ValueApi<N>
     : N extends types.ValueLww<any>

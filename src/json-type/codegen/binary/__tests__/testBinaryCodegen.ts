@@ -1,4 +1,3 @@
-import {EncodingFormat} from '../../../../json-pack/constants';
 import {TypeSystem} from '../../../system';
 import {Type} from '../../../type';
 

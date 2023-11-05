@@ -27,9 +27,9 @@ console.log(model.root + '');
 //           └─ "bar"
 //               └─ ObjectLww "obj" 1234.3
 //                  ├─ "x"
-//                  │   └─ Const "con" 1234.4 { 1 }
+//                  │   └─ ConNode 1234.4 { 1 }
 //                  └─ "y"
-//                      └─ Const "con" 1234.5 { 2 }
+//                      └─ ConNode 1234.5 { 2 }
 
 console.log(model.view());
 // { foo: { bar: { x: 1, y: 2 } } }
@@ -40,9 +40,9 @@ console.log(bar + '');
 // ObjectApi
 // └─ ObjectLww "obj" 1234.3
 //    ├─ "x"
-//    │   └─ Const "con" 1234.4 { 1 }
+//    │   └─ ConNode 1234.4 { 1 }
 //    └─ "y"
-//        └─ Const "con" 1234.5 { 2 }
+//        └─ ConNode 1234.5 { 2 }
 
 bar.set({
   x: 24,
@@ -52,11 +52,11 @@ console.log(bar + '');
 // ObjectApi
 // └─ ObjectLww "obj" 1234.3
 //    ├─ "x"
-//    │   └─ Const "con" 1234.10 { 24 }
+//    │   └─ ConNode 1234.10 { 24 }
 //    ├─ "y"
-//    │   └─ Const "con" 1234.5 { 2 }
+//    │   └─ ConNode 1234.5 { 2 }
 //    └─ "z"
-//        └─ Const "con" 1234.11 { 42 }
+//        └─ ConNode 1234.11 { 42 }
 
 console.log(bar.view());
 // { x: 24, y: 2, z: 42 }
@@ -67,11 +67,11 @@ console.log(bar + '');
 // ObjectApi
 // └─ ObjectLww "obj" 1234.3
 //    ├─ "x"
-//    │   └─ Const "con" 1234.10 { 24 }
+//    │   └─ ConNode 1234.10 { 24 }
 //    ├─ "y"
-//    │   └─ Const "con" 1234.13 { undefined }
+//    │   └─ ConNode 1234.13 { undefined }
 //    └─ "z"
-//        └─ Const "con" 1234.11 { 42 }
+//        └─ ConNode 1234.11 { 42 }
 
 console.log(bar.view());
 // { x: 24, z: 42 }

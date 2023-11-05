@@ -58,7 +58,7 @@ console.log(fork + '');
 // ├─ RootLww "val" 0.0
 // │  └─ ObjectLww "obj" 1234.1
 // │     ├─ "counter"
-// │     │   └─ Const "con" 1234.11 { 25 }
+// │     │   └─ ConNode 1234.11 { 25 }
 // │     └─ "text"
 // │         └─ StringRga "str" 1234.3 { "Hello world!" }
 // │            └─ StringChunk 1234.13!7 len:12 { " world!" }

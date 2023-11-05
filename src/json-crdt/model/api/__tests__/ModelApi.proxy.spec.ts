@@ -1,5 +1,5 @@
 import {Model} from '../../Model';
-import {ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
+import {ConApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
 import {ConNode, RootLww, ArrayLww, ObjectLww, StringRga} from '../../../types';
 import {vec} from '../../../../json-crdt-patch';
 
@@ -36,8 +36,8 @@ test('proxy API supports object types', () => {
   expect(fooApi.node).toBeInstanceOf(StringRga);
   expect(fooApi.view()).toStrictEqual('asdf');
   const bar = obj.bar;
-  const barApi: ConstApi = bar.toApi();
-  expect(barApi).toBeInstanceOf(ConstApi);
+  const barApi: ConApi = bar.toApi();
+  expect(barApi).toBeInstanceOf(ConApi);
   expect(barApi.node).toBeInstanceOf(ConNode);
   expect(barApi.view()).toStrictEqual(1234);
 });
@@ -96,8 +96,8 @@ describe('supports all node types', () => {
   test('number constant as object key', () => {
     const proxy = model.api.r.proxy();
     const num = proxy.val.obj.num;
-    const numApi: ConstApi = num.toApi();
-    expect(numApi).toBeInstanceOf(ConstApi);
+    const numApi: ConApi = num.toApi();
+    expect(numApi).toBeInstanceOf(ConApi);
     expect(numApi.node).toBeInstanceOf(ConNode);
     expect(numApi.view()).toStrictEqual(1234);
   });

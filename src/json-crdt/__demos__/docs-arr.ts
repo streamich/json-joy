@@ -46,9 +46,9 @@ console.log(model.root + '');
 //    └─ "tags"
 //        └─ ArrayRga "arr" 1234.22
 //           └─ ArrayChunk 1234.26!3 len:3
-//              ├─ [0]: Const "con" 1234.23 { "big" }
-//              ├─ [1]: Const "con" 1234.24 { "small" }
-//              └─ [2]: Const "con" 1234.25 { "red" }
+//              ├─ [0]: ConNode 1234.23 { "big" }
+//              ├─ [1]: ConNode 1234.24 { "small" }
+//              └─ [2]: ConNode 1234.25 { "red" }
 
 // Retrieve node at path ['tags'] as "arr" type.
 const tags = model.api.arr(['tags']);
@@ -56,22 +56,22 @@ console.log(tags + '');
 // ArrayApi
 // └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.26!3 len:3
-//       ├─ [0]: Const "con" 1234.23 { "big" }
-//       ├─ [1]: Const "con" 1234.24 { "small" }
-//       └─ [2]: Const "con" 1234.25 { "red" }
+//       ├─ [0]: ConNode 1234.23 { "big" }
+//       ├─ [1]: ConNode 1234.24 { "small" }
+//       └─ [2]: ConNode 1234.25 { "red" }
 
 tags.ins(1, [konst('medium'), konst('blue')]);
 console.log(tags + '');
 // ArrayApi
 // └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.32!2 len:5
-//       ├─ [1]: Const "con" 1234.30 { "medium" }
-//       └─ [2]: Const "con" 1234.31 { "blue" }
+//       ├─ [1]: ConNode 1234.30 { "medium" }
+//       └─ [2]: ConNode 1234.31 { "blue" }
 //       ← ArrayChunk 1234.26!1 len:1
-//         └─ [0]: Const "con" 1234.23 { "big" }
+//         └─ [0]: ConNode 1234.23 { "big" }
 //       → ArrayChunk 1234.27!2 len:2
-//         ├─ [3]: Const "con" 1234.24 { "small" }
-//         └─ [4]: Const "con" 1234.25 { "red" }
+//         ├─ [3]: ConNode 1234.24 { "small" }
+//         └─ [4]: ConNode 1234.25 { "red" }
 
 console.log(tags.view());
 // [ 'big', 'medium', 'blue', 'small', 'red' ]
@@ -81,13 +81,13 @@ console.log(tags + '');
 // ArrayApi
 // └─ ArrayRga "arr" 1234.22
 //    └─ ArrayChunk 1234.32!1 len:3
-//       └─ [1]: Const "con" 1234.30 { "medium" }
+//       └─ [1]: ConNode 1234.30 { "medium" }
 //       ← ArrayChunk 1234.26!1 len:1
-//         └─ [0]: Const "con" 1234.23 { "big" }
+//         └─ [0]: ConNode 1234.23 { "big" }
 //       → ArrayChunk 1234.33!1 len:1 [1]
 //         → ArrayChunk 1234.27!1 len:1 [1]
 //           → ArrayChunk 1234.28!1 len:1
-//             └─ [2]: Const "con" 1234.25 { "red" }
+//             └─ [2]: ConNode 1234.25 { "red" }
 
 console.log(model.view());
 // { tags: [ 'big', 'medium', 'red' ] }

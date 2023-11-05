@@ -1,5 +1,5 @@
 import {ArrayLww, ConNode, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
-import {ApiPath, ArrayApi, BinaryApi, ConstApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
+import {ApiPath, ArrayApi, BinaryApi, ConApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
@@ -70,7 +70,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public wrap(node: BinaryRga): BinaryApi;
   public wrap(node: ArrayRga): ArrayApi;
   public wrap(node: ObjectLww): ObjectApi;
-  public wrap(node: ConNode): ConstApi;
+  public wrap(node: ConNode): ConApi;
   public wrap(node: ArrayLww): VectorApi;
   public wrap(node: JsonNode): NodeApi;
   public wrap(node: JsonNode) {
@@ -79,7 +79,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
     else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
     else if (node instanceof ObjectLww) return node.api || (node.api = new ObjectApi(node, this));
-    else if (node instanceof ConNode) return node.api || (node.api = new ConstApi(node, this));
+    else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
     else if (node instanceof ArrayLww) return node.api || (node.api = new VectorApi(node, this));
     else throw new Error('UNKNOWN_NODE');
   }

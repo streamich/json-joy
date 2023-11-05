@@ -35,7 +35,7 @@ console.log(model + '');
 // ├─ RootLww "val" 0.0
 // │  └─ ObjectLww "obj" 1234.1
 // │     ├─ "num"
-// │     │   └─ Const "con" 1234.2 { 123 }
+// │     │   └─ ConNode 1234.2 { 123 }
 // │     ├─ "text"
 // │     │   └─ StringRga "str" 1234.3 { "hello" }
 // │     │      └─ StringChunk 1234.4!5 len:5 { "hello" }
@@ -43,9 +43,9 @@ console.log(model + '');
 // │         └─ ArrayRga "arr" 1234.9
 // │            └─ ArrayChunk 1234.14!2 len:2
 // │               ├─ [0]: ValueLww "val" 1234.11
-// │               │       └─ Const "con" 1234.10 { true }
+// │               │       └─ ConNode 1234.10 { true }
 // │               └─ [1]: ValueLww "val" 1234.13
-// │                       └─ Const "con" 1234.12 { false }
+// │                       └─ ConNode 1234.12 { false }
 // │
 // └─ VectorClock 1234.18
 
@@ -60,7 +60,7 @@ console.log(model.find.val.toApi() + '');
 // ObjectApi
 // └─ ObjectLww "obj" 1234.1
 //    ├─ "num"
-//    │   └─ Const "con" 1234.2 { 123 }
+//    │   └─ ConNode 1234.2 { 123 }
 //    ├─ "text"
 //    │   └─ StringRga "str" 1234.3 { "hello" }
 //    │      └─ StringChunk 1234.4!5 len:5 { "hello" }
@@ -68,31 +68,31 @@ console.log(model.find.val.toApi() + '');
 //        └─ ArrayRga "arr" 1234.9
 //           └─ ArrayChunk 1234.14!2 len:2
 //              ├─ [0]: ValueLww "val" 1234.11
-//              │       └─ Const "con" 1234.10 { true }
+//              │       └─ ConNode 1234.10 { true }
 //              └─ [1]: ValueLww "val" 1234.13
-//                      └─ Const "con" 1234.12 { false }
+//                      └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags.toApi() + '');
 // ArrayApi
 // └─ ArrayRga "arr" 1234.9
 //    └─ ArrayChunk 1234.14!2 len:2
 //       ├─ [0]: ValueLww "val" 1234.11
-//       │       └─ Const "con" 1234.10 { true }
+//       │       └─ ConNode 1234.10 { true }
 //       └─ [1]: ValueLww "val" 1234.13
-//               └─ Const "con" 1234.12 { false }
+//               └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].toApi() + '');
 // ValueApi
 // └─ ValueLww "val" 1234.13
-//    └─ Const "con" 1234.12 { false }
+//    └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].val.toApi() + '');
-// ConstApi
-// └─ Const "con" 1234.12 { false }
+// ConApi
+// └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.num.toApi() + '');
-// ConstApi
-// └─ Const "con" 1234.2 { 123 }
+// ConApi
+// └─ ConNode 1234.2 { 123 }
 
 console.log(model.find.val.text.toApi() + '');
 // StringApi

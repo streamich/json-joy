@@ -108,7 +108,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_OBJ');
   }
 
-  public asConst(): ConstApi {
+  public asCon(): ConApi {
     if (this.node instanceof ConNode) return this.api.wrap(this.node);
     throw new Error('NOT_CONST');
   }
@@ -148,8 +148,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asObj();
   }
 
-  public const(path?: ApiPath): ConstApi {
-    return this.in(path).asConst();
+  public const(path?: ApiPath): ConApi {
+    return this.in(path).asCon();
   }
 
   public view(): JsonNodeView<N> {
@@ -166,11 +166,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
  *
  * @category Local API
  */
-export class ConstApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
+export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */
-  public proxy(): types.ProxyNodeConst<N> {
+  public proxy(): types.ProxyNodeCon<N> {
     return {
       toApi: () => <any>this,
     };
