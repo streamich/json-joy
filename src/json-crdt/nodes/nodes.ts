@@ -4,7 +4,7 @@ import type {ValNode} from './val/ValNode';
 import type {VecNode} from './vec/VecNode';
 import type {JsonNode} from './types';
 import type {ObjNode} from './obj/ObjNode';
-import type {StringRga} from './rga-string/StringRga';
+import type {StringRga} from './str/StringRga';
 import type {BinaryRga} from './rga-binary/BinaryRga';
 import type {ArrayRga} from './rga-array/ArrayRga';
 
@@ -26,4 +26,4 @@ export {VecNode} from './vec/VecNode';
 export {ObjNode} from './obj/ObjNode';
 export {ArrayRga, ArrayChunk} from './rga-array/ArrayRga';
 export {BinaryRga, BinaryChunk} from './rga-binary/BinaryRga';
-export {StringRga, StringChunk} from './rga-string/StringRga';
+export {StringRga, StringChunk} from './str/StringRga';

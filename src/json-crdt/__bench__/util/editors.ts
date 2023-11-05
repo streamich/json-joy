@@ -1,5 +1,5 @@
 import {Timestamp} from '../../../json-crdt-patch/clock';
-import {StringRga} from '../../nodes/rga-string/StringRga';
+import {StringRga} from '../../nodes/str/StringRga';
 import {Model} from '../../model';
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';

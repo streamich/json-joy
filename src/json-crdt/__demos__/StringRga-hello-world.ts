@@ -7,7 +7,7 @@
  */
 
 import {ts} from '../../json-crdt-patch/clock';
-import {StringRga} from '../nodes/rga-string/StringRga';
+import {StringRga} from '../nodes/str/StringRga';
 
 const sid = 123; // Site ID
 let time = 0; // "time"

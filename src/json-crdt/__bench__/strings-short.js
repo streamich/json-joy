@@ -1,6 +1,6 @@
 const Benchmark = require('benchmark');
 const {Model} = require('../../es2020/json-crdt');
-const {StringRga} = require('../../es2020/json-crdt/types/rga-string/StringRga');
+const {StrNode} = require('../../es2020/json-crdt/types/str/StrNode');
 const Y = require('yjs');
 const Automerge = require('automerge');
 const {randomU32} = require('hyperdyperid/lib/randomU32');
@@ -15,7 +15,7 @@ const len1 = str1.length;
 const len2 = str2.length;
 
 const editStringRga = () => {
-  const type = new StringRga(ts(1, 1));
+  const type = new StrNode(ts(1, 1));
   type.ins(ts(1, 1), ts(1, 2), str1);
   let time = str1.length + 100;
   for (let i = 0; i < 10; i++) {
