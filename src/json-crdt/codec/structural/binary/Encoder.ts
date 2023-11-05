@@ -1,7 +1,7 @@
 import {ArrayRga} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../../types/rga-binary/BinaryRga';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
@@ -86,7 +86,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
 
   protected cNode(node: JsonNode): void {
     // TODO: PERF: use a switch
-    if (node instanceof Const) this.cConst(node);
+    if (node instanceof ConNode) this.cConst(node);
     else if (node instanceof ValueLww) this.cVal(node);
     else if (node instanceof StringRga) this.cStr(node);
     else if (node instanceof ObjectLww) this.cObj(node);
@@ -174,7 +174,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     this.cNode(obj.node());
   }
 
-  protected cConst(obj: Const): void {
+  protected cConst(obj: ConNode): void {
     this.ts(obj.id);
     const val = obj.val;
     if (val instanceof Timestamp) {

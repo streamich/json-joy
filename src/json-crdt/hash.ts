@@ -1,5 +1,5 @@
 import {CONST, updateNum} from '../json-hash';
-import {Const} from './types/con/Const';
+import {ConNode} from './types/con/Const';
 import {ValueLww} from './types/lww-value/ValueLww';
 import {ObjectLww} from './types/lww-object/ObjectLww';
 import {ArrayLww} from './types/lww-array/ArrayLww';
@@ -32,7 +32,7 @@ export const updateRga = (state: number, node: AbstractRga<unknown>): number => 
  * @param node JSON CRDT node from which to compute the hash.
  */
 export const updateNode = (state: number, node: JsonNode): number => {
-  if (node instanceof Const) return updateId(state, node.id);
+  if (node instanceof ConNode) return updateId(state, node.id);
   if (node instanceof ValueLww) {
     const child = node.child();
     if (child) state = updateNode(state, child);

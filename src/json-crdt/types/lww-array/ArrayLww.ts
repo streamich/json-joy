@@ -1,4 +1,4 @@
-import {Const} from '../con/Const';
+import {ConNode} from '../con/Const';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from '../../../util/print/printTree';
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
@@ -98,7 +98,7 @@ export class ArrayLww<Value extends JsonNode[] = JsonNode[]>
   public getExtId(): number {
     if (this.elements.length !== 2) return -1;
     const type = this.get(0);
-    if (!(type instanceof Const)) return -1;
+    if (!(type instanceof ConNode)) return -1;
     const buf = type.val;
     const id = this.id;
     if (!(buf instanceof Uint8Array) || buf.length !== 3 || buf[1] !== id.sid % 256 || buf[2] !== id.time % 256)

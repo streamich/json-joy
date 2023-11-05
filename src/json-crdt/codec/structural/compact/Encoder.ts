@@ -1,7 +1,7 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
@@ -63,7 +63,7 @@ export class Encoder {
     else if (node instanceof StringRga) return this.encodeStr(arr, node);
     else if (node instanceof ValueLww) return this.cVal(arr, node);
     else if (node instanceof ArrayLww) return this.cTup(arr, node);
-    else if (node instanceof Const) return this.cConst(arr, node);
+    else if (node instanceof ConNode) return this.cConst(arr, node);
     else if (node instanceof BinaryRga) return this.encodeBin(arr, node);
     throw new Error('UNKNOWN_NODE');
   }
@@ -150,7 +150,7 @@ export class Encoder {
     this.cNode(res, obj.node());
   }
 
-  protected cConst(arr: unknown[], obj: Const): void {
+  protected cConst(arr: unknown[], obj: ConNode): void {
     const val = obj.val;
     const res: unknown[] = [];
     if (val instanceof Timestamp) {

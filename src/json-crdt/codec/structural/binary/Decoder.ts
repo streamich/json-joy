@@ -1,7 +1,7 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
@@ -90,12 +90,12 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
         case 0xc6:
           return this.cBin(id, reader.u32());
         case 0xd4: {
-          const obj = new Const(id, this.val());
+          const obj = new ConNode(id, this.val());
           this.doc.index.set(id, obj);
           return obj;
         }
         case 0xd5: {
-          const obj = new Const(id, this.ts());
+          const obj = new ConNode(id, this.ts());
           this.doc.index.set(id, obj);
           return obj;
         }

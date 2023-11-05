@@ -11,7 +11,7 @@ import type {Printable} from '../../../util/print/types';
  *
  * @category CRDT Node
  */
-export class Const<View = unknown | ITimestampStruct> implements JsonNode<View>, Printable {
+export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View>, Printable {
   /**
    * @param id ID of the CRDT node.
    * @param val Raw value of the constant. It can be any JSON/CBOR value, or

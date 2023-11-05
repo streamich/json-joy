@@ -1,6 +1,6 @@
 import type {JsonNodeApi} from '../api/types';
 import type {JsonNode, JsonNodeView} from '../../types';
-import type {Const} from '../../types/con/Const';
+import type {ConNode} from '../../types/con/Const';
 import type {ArrayLww} from '../../types/lww-array/ArrayLww';
 import type {ObjectLww} from '../../types/lww-object/ObjectLww';
 import type {RootLww} from '../../types/lww-root/RootLww';
@@ -13,7 +13,7 @@ export interface ProxyNode<N extends JsonNode = JsonNode> {
   toApi(): JsonNodeApi<N>;
 }
 
-export type ProxyNodeConst<N extends Const<any>> = ProxyNode<N>;
+export type ProxyNodeConst<N extends ConNode<any>> = ProxyNode<N>;
 export type ProxyNodeVal<N extends ValueLww<any>> = ProxyNode<N> & {val: JsonNodeToProxyNode<ReturnType<N['child']>>};
 export type ProxyNodeVec<N extends ArrayLww<any>> = ProxyNode<N> & {
   [K in keyof JsonNodeView<N>]: JsonNodeToProxyNode<JsonNodeView<N>[K]>;
@@ -27,7 +27,7 @@ export type ProxyNodeArr<N extends ArrayRga<any>> = ProxyNode<N> &
   Record<number, JsonNodeToProxyNode<N extends ArrayRga<infer E> ? E : never>>;
 
 // prettier-ignore
-export type JsonNodeToProxyNode<N> = N extends Const<any>
+export type JsonNodeToProxyNode<N> = N extends ConNode<any>
   ? ProxyNodeConst<N>
   : N extends RootLww<any>
     ? ProxyNodeVal<N>

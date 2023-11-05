@@ -1,5 +1,5 @@
 import * as operations from '../../json-crdt-patch/operations';
-import {Const} from '../types/con/Const';
+import {ConNode} from '../types/con/Const';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,
@@ -21,7 +21,7 @@ import type {JsonNode, JsonNodeView} from '../types/types';
 import type {Printable} from '../../util/print/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
 
-export const UNDEFINED = new Const(ORIGIN, undefined);
+export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
 /**
  * In instance of Model class represents the underlying data structure,
@@ -193,7 +193,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       }
     } else if (op instanceof operations.NewConOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new Const(id, op.val));
+      if (!index.get(id)) index.set(id, new ConNode(id, op.val));
     } else if (op instanceof operations.InsObjOp) {
       const node = index.get(op.obj);
       const tuples = op.data;

@@ -1,7 +1,7 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {JsonNode} from '../../../types';
@@ -168,18 +168,18 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeConst(doc: Model, data: unknown[]): Const {
+  protected decodeConst(doc: Model, data: unknown[]): ConNode {
     const [id, index] = this.ts(data, 1);
     const value = data[index];
-    const obj = new Const(id, value);
+    const obj = new ConNode(id, value);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decodeConstId(doc: Model, data: unknown[]): Const {
+  protected decodeConstId(doc: Model, data: unknown[]): ConNode {
     const [id, index] = this.ts(data, 1);
     const val = this.ts(data, index)[0];
-    const obj = new Const(id, val);
+    const obj = new ConNode(id, val);
     doc.index.set(id, obj);
     return obj;
   }

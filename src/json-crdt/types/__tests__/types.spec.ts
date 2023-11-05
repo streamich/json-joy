@@ -1,4 +1,4 @@
-import type {Const} from '../con/Const';
+import type {ConNode} from '../con/Const';
 import type {ArrayLww} from '../lww-array/ArrayLww';
 import type {ObjectLww} from '../lww-object/ObjectLww';
 import type {ValueLww} from '../lww-value/ValueLww';
@@ -8,10 +8,10 @@ import type {StringRga} from '../rga-string/StringRga';
 import type {JsonNodeView} from '../types';
 
 test('can infer view type of CRDT nodes', () => {
-  type N1 = Const<number>;
-  type N2 = Const<boolean>;
-  type N3 = Const<string>;
-  type N4 = Const<{foo: 'bar'}>;
+  type N1 = ConNode<number>;
+  type N2 = ConNode<boolean>;
+  type N3 = ConNode<string>;
+  type N4 = ConNode<{foo: 'bar'}>;
   type N5 = ValueLww<N1>;
   type N6 = ValueLww<N4>;
   type N7 = ValueLww<N6>;

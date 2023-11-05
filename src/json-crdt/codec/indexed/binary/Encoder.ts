@@ -4,7 +4,7 @@ import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
 import {JsonNode} from '../../../types';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {ValueLww} from '../../../types/lww-value/ValueLww';
 import {ArrayRga} from '../../../types/rga-array/ArrayRga';
@@ -51,7 +51,7 @@ export class Encoder {
 
   public encodeNode(node: JsonNode): Uint8Array {
     if (node instanceof ValueLww) return this.encodeVal(node);
-    else if (node instanceof Const) return this.encodeConst(node);
+    else if (node instanceof ConNode) return this.encodeConst(node);
     else if (node instanceof StringRga) return this.encodeStr(node);
     else if (node instanceof ObjectLww) return this.encodeObj(node);
     else if (node instanceof ArrayRga) return this.encodeArr(node);
@@ -73,7 +73,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeConst(node: Const): Uint8Array {
+  public encodeConst(node: ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;

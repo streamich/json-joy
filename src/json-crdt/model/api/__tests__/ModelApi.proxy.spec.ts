@@ -3,7 +3,7 @@ import {ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga} from '../../../types/rga-string/StringRga';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {ArrayLww} from '../../../types/lww-array/ArrayLww';
 import {vec} from '../../../../json-crdt-patch';
 
@@ -11,7 +11,7 @@ test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as Model<
     ObjectLww<{
       foo: StringRga;
-      bar: Const<number>;
+      bar: ConNode<number>;
     }>
   >;
   model.api.root({
@@ -42,7 +42,7 @@ test('proxy API supports object types', () => {
   const bar = obj.bar;
   const barApi: ConstApi = bar.toApi();
   expect(barApi).toBeInstanceOf(ConstApi);
-  expect(barApi.node).toBeInstanceOf(Const);
+  expect(barApi.node).toBeInstanceOf(ConNode);
   expect(barApi.view()).toStrictEqual(1234);
 });
 
@@ -50,7 +50,7 @@ describe('supports all node types', () => {
   type Schema = ObjectLww<{
     obj: ObjectLww<{
       str: StringRga;
-      num: Const<number>;
+      num: ConNode<number>;
     }>;
     vec: ArrayLww<[StringRga]>;
   }>;
@@ -102,7 +102,7 @@ describe('supports all node types', () => {
     const num = proxy.val.obj.num;
     const numApi: ConstApi = num.toApi();
     expect(numApi).toBeInstanceOf(ConstApi);
-    expect(numApi.node).toBeInstanceOf(Const);
+    expect(numApi.node).toBeInstanceOf(ConNode);
     expect(numApi.view()).toStrictEqual(1234);
   });
 

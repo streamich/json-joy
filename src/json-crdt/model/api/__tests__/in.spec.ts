@@ -1,4 +1,4 @@
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {ConstApi, ObjectApi, ValueApi} from '../nodes';
 import {Model} from '../../Model';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
@@ -43,6 +43,6 @@ describe('can use .in() method to reference any model node', () => {
     expect(register1.node).toBe(register3.node);
     const const1 = register1.in();
     expect(const1).toBeInstanceOf(ConstApi);
-    expect(const1.node).toBeInstanceOf(Const);
+    expect(const1.node).toBeInstanceOf(ConNode);
   });
 });

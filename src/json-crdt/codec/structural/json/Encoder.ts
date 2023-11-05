@@ -1,6 +1,6 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {JsonNode} from '../../../types';
 import {ObjectLww} from '../../../types/lww-object/ObjectLww';
 import {StringRga, StringChunk} from '../../../types/rga-string/StringRga';
@@ -59,7 +59,7 @@ export class Encoder {
     else if (node instanceof ArrayRga) return this.cArr(node);
     else if (node instanceof StringRga) return this.cStr(node);
     else if (node instanceof ValueLww) return this.cVal(node);
-    else if (node instanceof Const) return this.cConst(node);
+    else if (node instanceof ConNode) return this.cConst(node);
     else if (node instanceof BinaryRga) return this.cBin(node);
     else if (node instanceof ArrayLww) return this.cTup(node);
     throw new Error('UNKNOWN_NODE');
@@ -184,7 +184,7 @@ export class Encoder {
     };
   }
 
-  public cConst(obj: Const): ConstantJsonCrdtNode {
+  public cConst(obj: ConNode): ConstantJsonCrdtNode {
     const node: ConstantJsonCrdtNode = {
       type: 'const',
       id: this.cTs(obj.id),

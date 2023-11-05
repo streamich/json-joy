@@ -1,7 +1,7 @@
 import {ArrayChunk, ArrayRga} from '../../../types/rga-array/ArrayRga';
 import {BinaryChunk, BinaryRga} from '../../../types/rga-binary/BinaryRga';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
@@ -76,7 +76,7 @@ export class Decoder {
         case 0xd4:
           return this.cConst(id);
         case 0xd5:
-          return new Const(id, this.ts());
+          return new ConNode(id, this.ts());
         case 0xd6:
           return this.cVal(id);
         case 0xde:
@@ -99,9 +99,9 @@ export class Decoder {
     return UNDEFINED;
   }
 
-  public cConst(id: ITimestampStruct): Const {
+  public cConst(id: ITimestampStruct): ConNode {
     const val = this.dec.val();
-    return new Const(id, val);
+    return new ConNode(id, val);
   }
 
   public cVal(id: ITimestampStruct): ValueLww {

@@ -1,6 +1,6 @@
 import {ArrayRga, ArrayChunk} from '../../../types/rga-array/ArrayRga';
 import {BinaryRga, BinaryChunk} from '../../../types/rga-binary/BinaryRga';
-import {Const} from '../../../types/con/Const';
+import {ConNode} from '../../../types/con/Const';
 import {RootLww} from '../../../types/lww-root/RootLww';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
@@ -55,7 +55,7 @@ export class Decoder {
   }
 
   protected cRoot(doc: Model, {node}: ValueJsonCrdtNode): void {
-    const val = node ? this.cNode(doc, node) : new Const(doc.clock.tick(0), null);
+    const val = node ? this.cNode(doc, node) : new ConNode(doc.clock.tick(0), null);
     const root = new RootLww(doc, val.id);
     doc.root = root;
   }
@@ -185,10 +185,10 @@ export class Decoder {
     return obj;
   }
 
-  protected cConst(doc: Model, node: ConstantJsonCrdtNode): Const {
+  protected cConst(doc: Model, node: ConstantJsonCrdtNode): ConNode {
     const id = this.cTs(node.id);
     const val = node.timestamp ? this.cTs(node.value as JsonCrdtLogicalTimestamp) : node.value;
-    const obj = new Const(id, val);
+    const obj = new ConNode(id, val);
     doc.index.set(id, obj);
     return obj;
   }

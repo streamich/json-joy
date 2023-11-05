@@ -1,6 +1,6 @@
 import {ArrayRga} from '../../types/rga-array/ArrayRga';
 import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {Const} from '../../types/con/Const';
+import {ConNode} from '../../types/con/Const';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {ObjectLww} from '../../types/lww-object/ObjectLww';
@@ -109,7 +109,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asConst(): ConstApi {
-    if (this.node instanceof Const) return this.api.wrap(this.node);
+    if (this.node instanceof ConNode) return this.api.wrap(this.node);
     throw new Error('NOT_CONST');
   }
 
@@ -162,11 +162,11 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 }
 
 /**
- * Represents the local changes API for the `con` JSON CRDT node {@link Const}.
+ * Represents the local changes API for the `con` JSON CRDT node {@link ConNode}.
  *
  * @category Local API
  */
-export class ConstApi<N extends Const<any> = Const<any>> extends NodeApi<N> {
+export class ConstApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   /**
    * Returns a proxy object for this node.
    */

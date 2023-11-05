@@ -1,4 +1,4 @@
-import type {Const} from '../../types/con/Const';
+import type {ConNode} from '../../types/con/Const';
 import type {ArrayLww} from '../../types/lww-array/ArrayLww';
 import type {ObjectLww} from '../../types/lww-object/ObjectLww';
 import type {RootLww} from '../../types/lww-root/RootLww';
@@ -9,7 +9,7 @@ import type {StringRga} from '../../types/rga-string/StringRga';
 import type {ArrayApi, BinaryApi, ConstApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 
 // prettier-ignore
-export type JsonNodeApi<N> = N extends Const<any>
+export type JsonNodeApi<N> = N extends ConNode<any>
   ? ConstApi<N>
   : N extends RootLww<any>
     ? ValueApi<N>
