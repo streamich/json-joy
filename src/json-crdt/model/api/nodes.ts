@@ -82,7 +82,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_STR');
   }
 
-  public asBin(): BinaryApi {
+  public asBin(): BinApi {
     if (this.node instanceof BinNode) return this.api.wrap(this.node);
     throw new Error('NOT_BIN');
   }
@@ -126,7 +126,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asStr();
   }
 
-  public bin(path?: ApiPath): BinaryApi {
+  public bin(path?: ApiPath): BinApi {
     return this.in(path).asBin();
   }
 
@@ -412,7 +412,7 @@ export class StrApi extends NodeApi<StrNode> {
  *
  * @category Local API
  */
-export class BinaryApi extends NodeApi<BinNode> {
+export class BinApi extends NodeApi<BinNode> {
   /**
    * Inserts octets at a given position.
    *

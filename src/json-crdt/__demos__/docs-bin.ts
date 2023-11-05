@@ -29,20 +29,20 @@ console.log(model.root + '');
 // Retrieve node at path ['blob'] as "bin" type.
 const blob = model.api.bin(['blob']);
 console.log(blob + '');
-// BinaryApi
+// BinApi
 // └─ BinNode 1234.2  { 1, 2, 3 }
 //    └─ BinChunk 1234.3!3 len:3 { 1, 2, 3 }
 
 blob.ins(3, new Uint8Array([4, 5]));
 console.log(blob + '');
-// BinaryApi
+// BinApi
 // └─ BinNode 1234.2  { 1, 2, 3, 4, 5 }
 //    └─ BinChunk 1234.8!2 len:5 { 4, 5 }
 //       ← BinChunk 1234.3!3 len:3 { 1, 2, 3 }
 
 blob.del(2, 1);
 console.log(blob + '');
-// BinaryApi
+// BinApi
 // └─ BinNode 1234.2  { 1, 2, 4, 5 }
 //    └─ BinChunk 1234.8!2 len:4 { 4, 5 }
 //       ← BinChunk 1234.3!2 len:2 { 1, 2 }
