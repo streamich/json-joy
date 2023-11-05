@@ -84,7 +84,7 @@ export type JsonCrdtCompactArr = [
 
 export type JsonCrdtCompactArrChunk = [
   id: JsonCrdtCompactTimestamp,
-  data: JsonCrdtCompactNode,
+  data: JsonCrdtCompactNode[],
 ];
 
 export type JsonCrdtCompactTombstone = [
