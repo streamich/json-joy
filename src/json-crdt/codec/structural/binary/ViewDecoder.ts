@@ -1,4 +1,4 @@
-import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import {CRDT_MAJOR} from './constants';
 

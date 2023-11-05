@@ -11,7 +11,7 @@ import {
   StrChunk,
 } from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
-import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';

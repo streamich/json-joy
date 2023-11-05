@@ -1,16 +1,16 @@
-import {CrdtWriter} from '../CrdtEncoder';
-import {CrdtReader} from '../CrdtDecoder';
+import {CrdtWriter} from '../CrdtWriter';
+import {CrdtReader} from '../CrdtReader';
 
 const encoder = new CrdtWriter();
 const decoder = new CrdtReader();
-const encode = (num: number): Uint8Array => {
+const encode = (flag: boolean, num: number): Uint8Array => {
   encoder.reset();
-  encoder.vu39(num);
+  encoder.b1vu28(flag, num);
   return encoder.flush();
 };
-const decode = (uint8: Uint8Array): number => {
+const decode = (uint8: Uint8Array): [boolean, number] => {
   decoder.reset(uint8);
-  return decoder.vu39();
+  return decoder.b1vu28();
 };
 
 const ints: number[] = [
@@ -43,17 +43,6 @@ const ints: number[] = [
   2 ** 25,
   2 ** 26,
   2 ** 27,
-  2 ** 28,
-  2 ** 29,
-  2 ** 30,
-  2 ** 31,
-  2 ** 32,
-  2 ** 33,
-  2 ** 34,
-  2 ** 35,
-  2 ** 36,
-  2 ** 37,
-  2 ** 38,
 
   2 ** 0 - 1,
   2 ** 1 - 1,
@@ -83,22 +72,12 @@ const ints: number[] = [
   2 ** 25 - 1,
   2 ** 26 - 1,
   2 ** 27 - 1,
-  2 ** 28 - 1,
-  2 ** 29 - 1,
-  2 ** 30 - 1,
-  2 ** 31 - 1,
-  2 ** 32 - 1,
-  2 ** 33 - 1,
-  2 ** 34 - 1,
-  2 ** 35 - 1,
-  2 ** 36 - 1,
-  2 ** 37 - 1,
-  2 ** 38 - 1,
 ];
 
 test('decodes integers correctly', () => {
   for (let i = 0; i < ints.length; i++) {
     const int = ints[i];
-    expect(decode(encode(int))).toBe(int);
+    expect(decode(encode(true, int))).toEqual([true, int]);
+    expect(decode(encode(false, int))).toEqual([false, int]);
   }
 });

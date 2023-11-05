@@ -1,4 +1,4 @@
-import {CrdtReader} from '../../util/binary/CrdtDecoder';
+import {CrdtReader} from '../../util/binary/CrdtReader';
 import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';

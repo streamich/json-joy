@@ -1,6 +1,6 @@
 import {ConNode, RootNode, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
-import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
+import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';

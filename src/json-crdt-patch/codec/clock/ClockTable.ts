@@ -1,6 +1,6 @@
 import {ITimestampStruct, IVectorClock, Timestamp} from '../../clock';
-import {CrdtReader} from '../../util/binary/CrdtDecoder';
-import {CrdtWriter} from '../../util/binary/CrdtEncoder';
+import {CrdtReader} from '../../util/binary/CrdtReader';
+import {CrdtWriter} from '../../util/binary/CrdtWriter';
 
 export class ClockTableEntry {
   constructor(public index: number, public id: ITimestampStruct) {}

@@ -1,5 +1,5 @@
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
-import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
+import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';

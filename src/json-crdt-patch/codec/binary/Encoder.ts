@@ -1,6 +1,6 @@
 import * as operations from '../../operations';
 import {JsonCrdtPatchOpcode} from '../../constants';
-import {CrdtWriter} from '../../util/binary/CrdtEncoder';
+import {CrdtWriter} from '../../util/binary/CrdtWriter';
 import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import type {JsonCrdtPatchOperation, Patch} from '../../Patch';

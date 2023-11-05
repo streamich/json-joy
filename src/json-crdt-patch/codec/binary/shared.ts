@@ -1,7 +1,7 @@
 import {Encoder} from './Encoder';
 import {Decoder} from './Decoder';
 import {Patch} from '../../Patch';
-import {CrdtWriter} from '../../util/binary/CrdtEncoder';
+import {CrdtWriter} from '../../util/binary/CrdtWriter';
 
 /** A shared instance of the {@link CrdtWriter} class. */
 const writer = new CrdtWriter(1024 * 4);

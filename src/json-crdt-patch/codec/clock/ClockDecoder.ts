@@ -1,5 +1,4 @@
 import {ITimestampStruct, VectorClock, ts} from '../../clock';
-import type {CrdtReader} from '../../util/binary/CrdtDecoder';
 
 export class ClockDecoder {
   /** Clock session index to logical clock. */
