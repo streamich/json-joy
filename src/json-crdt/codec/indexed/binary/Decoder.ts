@@ -1,4 +1,15 @@
-import {ConNode, JsonNode, ValueLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
+import {
+  ConNode,
+  JsonNode,
+  ValueLww,
+  ArrayRga,
+  ArrayChunk,
+  BinaryRga,
+  BinaryChunk,
+  ObjectLww,
+  StringRga,
+  StringChunk,
+} from '../../../types';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';

@@ -1,4 +1,17 @@
-import {ConNode, RootLww, JsonNode, ValueLww, ArrayLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
+import {
+  ConNode,
+  RootLww,
+  JsonNode,
+  ValueLww,
+  ArrayLww,
+  ArrayRga,
+  ArrayChunk,
+  BinaryRga,
+  BinaryChunk,
+  ObjectLww,
+  StringRga,
+  StringChunk,
+} from '../../../types';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';

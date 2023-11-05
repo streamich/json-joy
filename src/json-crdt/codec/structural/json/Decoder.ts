@@ -1,4 +1,17 @@
-import {ConNode, RootLww, JsonNode, ValueLww, ArrayLww, ArrayRga, ArrayChunk, BinaryRga, BinaryChunk, ObjectLww, StringRga, StringChunk} from '../../../types';
+import {
+  ConNode,
+  RootLww,
+  JsonNode,
+  ValueLww,
+  ArrayLww,
+  ArrayRga,
+  ArrayChunk,
+  BinaryRga,
+  BinaryChunk,
+  ObjectLww,
+  StringRga,
+  StringChunk,
+} from '../../../types';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';

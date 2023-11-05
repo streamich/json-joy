@@ -1,5 +1,16 @@
 import type {JsonNodeApi} from '../api/types';
-import type {ConNode, RootLww, JsonNode, JsonNodeView, ValueLww, ArrayLww, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../types';
+import type {
+  ConNode,
+  RootLww,
+  JsonNode,
+  JsonNodeView,
+  ValueLww,
+  ArrayLww,
+  ArrayRga,
+  BinaryRga,
+  ObjectLww,
+  StringRga,
+} from '../../types';
 
 export interface ProxyNode<N extends JsonNode = JsonNode> {
   toApi(): JsonNodeApi<N>;
