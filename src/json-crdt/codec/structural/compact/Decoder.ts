@@ -3,174 +3,151 @@ import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {JsonCrdtDataType, ORIGIN, SESSION} from '../../../../json-crdt-patch/constants';
+import type * as t from './types';
 
 export class Decoder {
   protected time?: number;
   protected clockDecoder?: ClockDecoder;
 
-  public decode(data: unknown[]): Model {
-    const x = data[0];
-    const isServerTime = typeof x === 'number';
+  public decode(doc: t.JsonCrdtCompactDocument): Model {
+    const [time, root] = doc;
+    const isServerTime = typeof time === 'number';
     if (isServerTime) {
-      this.time = x;
+      this.time = time;
     } else {
-      this.clockDecoder = ClockDecoder.fromArr(x as number[]);
+      this.clockDecoder = ClockDecoder.fromArr(time as number[]);
     }
-    const doc = isServerTime ? Model.withServerClock(x as number) : Model.withLogicalClock(this.clockDecoder!.clock);
-    const val = data[1] ? this.decodeNode(doc, data[1]) : UNDEFINED;
-    doc.root = new nodes.RootNode(doc, val.id);
-    return doc;
+    const model = isServerTime ? Model.withServerClock(time as number) : Model.withLogicalClock(this.clockDecoder!.clock);
+    const val = root ? this.decNode(model, root) : UNDEFINED;
+    model.root = new nodes.RootNode(model, val.id);
+    return model;
   }
 
-  protected ts(arr: unknown[], index: number): [ITimestampStruct, number] {
-    const x = arr[index];
+  protected ts(x: t.JsonCrdtCompactTimestamp): ITimestampStruct {
     if (typeof x === 'number') {
-      if (x < 0) {
-        const sessionIndex = -x;
-        const timeDiff = arr[index + 1] as number;
-        return [this.clockDecoder!.decodeId(sessionIndex, timeDiff), index + 2];
-      } else {
-        return [new Timestamp(SESSION.SERVER, this.time! - x), index + 1];
-      }
+      return new Timestamp(SESSION.SERVER, this.time! - x);
     } else {
-      const time = (x as [number])[0];
-      switch (time) {
-        case ORIGIN.time:
-          return [ORIGIN, index + 1];
-        default:
-          return [new Timestamp(SESSION.SYSTEM, time), index + 1];
+      const [sid, time] = x as [number, number];
+      if (sid < 0) {
+        return this.clockDecoder!.decodeId(-sid, time);
+      } else {
+        return new Timestamp(sid, time);
       }
     }
   }
 
-  protected decodeNode(doc: Model, data: unknown): nodes.JsonNode {
-    if (data instanceof Array) {
-      switch (data[0]) {
-        case JsonCrdtDataType.con:
-          return this.decCon(doc, data);
-        case JsonCrdtDataType.con + 10:
-          return this.decConId(doc, data);
-        case JsonCrdtDataType.val:
-          return this.decVal(doc, data);
-        case JsonCrdtDataType.obj:
-          return this.decObj(doc, data);
-        case JsonCrdtDataType.vec:
-          return this.decVec(doc, data);
-        case JsonCrdtDataType.str:
-          return this.decStr(doc, data);
-        case JsonCrdtDataType.bin:
-          return this.decBin(doc, data);
-        case JsonCrdtDataType.arr:
-          return this.decArr(doc, data);
-      }
+  protected decNode(model: Model, node: t.JsonCrdtCompactNode): nodes.JsonNode {
+    switch (node[0]) {
+      case JsonCrdtDataType.con: return this.decCon(model, node);
+      case JsonCrdtDataType.val: return this.decVal(model, node);
+      case JsonCrdtDataType.obj: return this.decObj(model, node);
+      case JsonCrdtDataType.vec: return this.decVec(model, node);
+      case JsonCrdtDataType.str: return this.decStr(model, node);
+      case JsonCrdtDataType.bin: return this.decBin(model, node);
+      case JsonCrdtDataType.arr: return this.decArr(model, node);
     }
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decObj(doc: Model, data: unknown[]): nodes.ObjNode {
-    const [id, index] = this.ts(data, 1);
-    const obj = new nodes.ObjNode(doc, id);
-    const length = data.length;
-    for (let i = index; i < length; ) {
-      const key = data[i] as string;
-      const val = this.decodeNode(doc, data[++i]);
-      obj.put(key, val.id);
-      i++;
+  protected decCon(doc: Model, node: t.JsonCrdtCompactCon): nodes.ConNode {
+    const id = this.ts(node[1]);
+    let data: unknown | undefined | Timestamp = node[2];
+    if (node.length > 3) {
+      const specialData = node[3] as unknown;
+      if (!specialData) data = undefined;
+      else data = this.ts(specialData as t.JsonCrdtCompactTimestamp);
     }
+    const obj = new nodes.ConNode(id, data);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decVec(doc: Model, data: unknown[]): nodes.VecNode {
-    const [id, index] = this.ts(data, 1);
-    const obj = new nodes.VecNode(doc, id);
-    const length = data.length;
-    const elements = obj.elements;
-    for (let i = index; i < length; ) {
-      const component = data[i++];
-      if (!component) elements.push(undefined);
-      else {
-        const node = this.decodeNode(doc, component);
-        elements.push(node.id);
-      }
-    }
-    doc.index.set(id, obj);
-    return obj;
-  }
-
-  protected decArr(doc: Model, data: unknown[]): nodes.ArrNode {
-    const size = data[1] as number;
-    const [id, index] = this.ts(data, 2);
-    const obj = new nodes.ArrNode(doc, id);
-    const self = this;
-    let i = index;
-    obj.ingest(size, () => {
-      const [chunkId, idx] = self.ts(data, i);
-      const content = data[idx];
-      i = idx + 1;
-      if (typeof content === 'number') return new nodes.ArrChunk(chunkId, content, undefined);
-      const ids = (content as unknown[]).map((c) => this.decodeNode(doc, c).id);
-      return new nodes.ArrChunk(chunkId, (content as string).length, ids);
-    });
-    doc.index.set(id, obj);
-    return obj;
-  }
-
-  protected decStr(doc: Model, data: unknown[]): nodes.StrNode {
-    const size = data[1] as number;
-    const [id, index] = this.ts(data, 2);
-    const node = new nodes.StrNode(id);
-    const self = this;
-    let i = index;
-    node.ingest(size, () => {
-      const [chunkId, idx] = self.ts(data, i);
-      const content = data[idx];
-      i = idx + 1;
-      if (typeof content === 'number') return new nodes.StrChunk(chunkId, content, '');
-      return new nodes.StrChunk(chunkId, (content as string).length, content as string);
-    });
-    doc.index.set(id, node);
-    return node;
-  }
-
-  protected decBin(doc: Model, data: unknown[]): nodes.BinNode {
-    const size = data[1] as number;
-    const [id, index] = this.ts(data, 2);
-    const node = new nodes.BinNode(id);
-    const self = this;
-    let i = index;
-    node.ingest(size, () => {
-      const [chunkId, idx] = self.ts(data, i);
-      const content = data[idx];
-      i = idx + 1;
-      if (typeof content === 'number') return new nodes.BinChunk(chunkId, content, undefined);
-      const buf = content as Uint8Array;
-      return new nodes.BinChunk(chunkId, buf.length, buf);
-    });
-    doc.index.set(id, node);
-    return node;
-  }
-
-  protected decVal(doc: Model, data: unknown[]): nodes.ValNode {
-    const [id, index] = this.ts(data, 1);
-    const child = this.decodeNode(doc, data[index]);
+  protected decVal(doc: Model, node: t.JsonCrdtCompactVal): nodes.ValNode {
+    const id = this.ts(node[1]);
+    const child = this.decNode(doc, node[2]);
     const obj = new nodes.ValNode(doc, id, child.id);
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decCon(doc: Model, data: unknown[]): nodes.ConNode {
-    const [id, index] = this.ts(data, 1);
-    const value = data[index];
-    const obj = new nodes.ConNode(id, value);
+  protected decObj(model: Model, node: t.JsonCrdtCompactObj): nodes.ObjNode {
+    const id = this.ts(node[1]);
+    const obj = new nodes.ObjNode(model, id);
+    const map = node[2] as t.JsonCrdtCompactObj[2];
+    for (const key in map) {
+      const val = this.decNode(model, map[key]);
+      obj.put(key, val.id);
+    }
+    model.index.set(id, obj);
+    return obj;
+  }
+
+  protected decVec(model: Model, node: t.JsonCrdtCompactVec): nodes.VecNode {
+    const id = this.ts(node[1]);
+    const obj = new nodes.VecNode(model, id);
+    const map = node[2] as t.JsonCrdtCompactVec[2];
+    const elements = obj.elements;
+    const length = map.length;
+    for (let i = 0; i < length; i++) {
+      const item = map[i];
+      if (!item) elements.push(undefined);
+      else {
+        const child = this.decNode(model, item);
+        elements.push(child.id);
+      }
+    }
+    model.index.set(id, obj);
+    return obj;
+  }
+
+  protected decStr(doc: Model, node: t.JsonCrdtCompactStr): nodes.StrNode {
+    const id = this.ts(node[1]);
+    const obj = new nodes.StrNode(id);
+    const chunks = node[2] as t.JsonCrdtCompactStr[2];
+    const size = chunks.length;
+    let i = 0;
+    obj.ingest(size, () => {
+      const chunk = chunks[i];
+      const chunkId = this.ts(chunk[0]);
+      const content = chunk[1];
+      if (typeof content === 'number') return new nodes.StrChunk(chunkId, content, '');
+      return new nodes.StrChunk(chunkId, (content as string).length, content as string);
+    });
     doc.index.set(id, obj);
     return obj;
   }
 
-  protected decConId(doc: Model, data: unknown[]): nodes.ConNode {
-    const [id, index] = this.ts(data, 1);
-    const val = this.ts(data, index)[0];
-    const obj = new nodes.ConNode(id, val);
+  protected decBin(doc: Model, node: t.JsonCrdtCompactBin): nodes.BinNode {
+    const id = this.ts(node[1]);
+    const obj = new nodes.BinNode(id);
+    const chunks = node[2] as t.JsonCrdtCompactBin[2];
+    const size = chunks.length;
+    let i = 0;
+    obj.ingest(size, () => {
+      const chunk = chunks[i];
+      const chunkId = this.ts(chunk[0]);
+      const content = chunk[1];
+      if (typeof content === 'number') return new nodes.BinChunk(chunkId, content, undefined);
+      return new nodes.BinChunk(chunkId, content.length, content);
+    });
+    doc.index.set(id, obj);
+    return obj;
+  }
+
+  protected decArr(doc: Model, node: t.JsonCrdtCompactArr): nodes.ArrNode {
+    const id = this.ts(node[1]);
+    const obj = new nodes.ArrNode(doc, id);
+    const chunks = node[2] as t.JsonCrdtCompactArr[2];
+    const size = chunks.length;
+    let i = 0;
+    obj.ingest(size, () => {
+      const chunk = chunks[i];
+      const chunkId = this.ts(chunk[0]);
+      const content = chunk[1];
+      if (typeof content === 'number') return new nodes.ArrChunk(chunkId, content, undefined);
+      const ids = (content as t.JsonCrdtCompactNode[]).map((c) => this.decNode(doc, c).id);
+      return new nodes.ArrChunk(chunkId, content.length, ids);
+    });
     doc.index.set(id, obj);
     return obj;
   }

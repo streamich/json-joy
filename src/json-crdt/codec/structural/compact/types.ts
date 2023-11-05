@@ -1,7 +1,7 @@
-import {JsonCrdtDataType} from '../../../../json-crdt-patch/constants';
+import type {JsonCrdtDataType} from '../../../../json-crdt-patch/constants';
 
 export type JsonCrdtCompactDocument = [
-  time: JsonCrdtCompactClockTable | 0,
+  time: JsonCrdtCompactClockTable | number,
   root: JsonCrdtCompactNode | 0,
 ];
 
