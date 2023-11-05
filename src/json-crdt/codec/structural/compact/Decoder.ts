@@ -134,19 +134,19 @@ export class Decoder {
     return node;
   }
 
-  protected decodeBin(doc: Model, data: unknown[]): nodes.BinaryRga {
+  protected decodeBin(doc: Model, data: unknown[]): nodes.BinNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const node = new nodes.BinaryRga(id);
+    const node = new nodes.BinNode(id);
     const self = this;
     let i = index;
     node.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new nodes.BinaryChunk(chunkId, content, undefined);
+      if (typeof content === 'number') return new nodes.BinChunk(chunkId, content, undefined);
       const buf = content as Uint8Array;
-      return new nodes.BinaryChunk(chunkId, buf.length, buf);
+      return new nodes.BinChunk(chunkId, buf.length, buf);
     });
     doc.index.set(id, node);
     return node;

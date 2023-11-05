@@ -4,8 +4,8 @@ import {
   ValNode,
   ArrayRga,
   ArrayChunk,
-  BinaryRga,
-  BinaryChunk,
+  BinNode,
+  BinChunk,
   ObjNode,
   StrNode,
   StrChunk,
@@ -139,16 +139,16 @@ export class Decoder {
     return node;
   }
 
-  protected cBin(id: ITimestampStruct, length: number): BinaryRga {
+  protected cBin(id: ITimestampStruct, length: number): BinNode {
     const decoder = this.dec;
     const reader = decoder.reader;
-    const node = new BinaryRga(id);
+    const node = new BinNode(id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const [deleted, length] = reader.b1vu28();
-      if (deleted) return new BinaryChunk(chunkId, length, undefined);
+      if (deleted) return new BinChunk(chunkId, length, undefined);
       const data = reader.buf(length);
-      return new BinaryChunk(chunkId, length, data);
+      return new BinChunk(chunkId, length, data);
     });
     return node;
   }

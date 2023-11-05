@@ -10,7 +10,7 @@ export type JsonNodeApi<N> = N extends types.ConNode<any>
       ? nodes.ValApi<N>
       : N extends types.StrNode
         ? nodes.StrApi
-        : N extends types.BinaryRga
+        : N extends types.BinNode
           ? nodes.BinaryApi
           : N extends types.ArrayRga<any>
             ? nodes.ArrayApi<N>

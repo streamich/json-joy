@@ -145,9 +145,9 @@ export class Decoder {
     return rga;
   }
 
-  protected cBin(doc: Model, node: BinaryJsonCrdtNode): nodes.BinaryRga {
+  protected cBin(doc: Model, node: BinaryJsonCrdtNode): nodes.BinNode {
     const id = this.cTs(node.id);
-    const rga = new nodes.BinaryRga(id);
+    const rga = new nodes.BinNode(id);
     const chunks = node.chunks;
     const length = chunks.length;
     const self = this;
@@ -157,11 +157,11 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.BinaryChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+          return new nodes.BinChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
         else {
           const value = (c as BinaryJsonCrdtChunk).value;
           const buf = fromBase64(value);
-          return new nodes.BinaryChunk(id, buf.length, buf);
+          return new nodes.BinChunk(id, buf.length, buf);
         }
       });
     }

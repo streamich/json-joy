@@ -7,8 +7,8 @@ import {SESSION} from '../../../../json-crdt-patch/constants';
 import {
   ArrayRga,
   ArrayChunk,
-  BinaryRga,
-  BinaryChunk,
+  BinNode,
+  BinChunk,
   ConNode,
   ObjNode,
   RootLww,
@@ -196,18 +196,18 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     return new StrChunk(id, text.length, text);
   };
 
-  public cBin(id: ITimestampStruct, length: number): BinaryRga {
-    const node = new BinaryRga(id);
+  public cBin(id: ITimestampStruct, length: number): BinNode {
+    const node = new BinNode(id);
     if (length) node.ingest(length, this.cBinChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cBinChunk = (): BinaryChunk => {
+  private cBinChunk = (): BinChunk => {
     const reader = this.reader;
     const [deleted, length] = reader.b1vu28();
     const id = this.ts();
-    if (deleted) return new BinaryChunk(id, length, undefined);
-    else return new BinaryChunk(id, length, reader.buf(length));
+    if (deleted) return new BinChunk(id, length, undefined);
+    else return new BinChunk(id, length, reader.buf(length));
   };
 }

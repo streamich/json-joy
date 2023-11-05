@@ -13,7 +13,7 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValNode, VecNode, ObjNode, StrNode, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
+import {RootLww, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -260,13 +260,13 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         }
         node.delete(op.what);
       } else if (node instanceof StrNode) node.delete(op.what);
-      else if (node instanceof BinaryRga) node.delete(op.what);
+      else if (node instanceof BinNode) node.delete(op.what);
     } else if (op instanceof operations.NewBinOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new BinaryRga(id));
+      if (!index.get(id)) index.set(id, new BinNode(id));
     } else if (op instanceof operations.InsBinOp) {
       const node = index.get(op.obj);
-      if (node instanceof BinaryRga) node.ins(op.ref, op.id, op.data);
+      if (node instanceof BinNode) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewVecOp) {
       const id = op.id;
       if (!index.get(id)) index.set(id, new VecNode(this, id));

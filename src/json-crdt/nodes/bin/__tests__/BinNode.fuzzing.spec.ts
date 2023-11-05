@@ -2,16 +2,16 @@
 
 import {ITimespanStruct, ITimestampStruct, ts} from '../../../../json-crdt-patch/clock';
 import {Fuzzer} from '../../../../util/Fuzzer';
-import {BinaryRga} from '../BinaryRga';
+import {BinNode} from '../BinNode';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {RandomJson} from '../../../../json-random';
 import * as path from 'path';
 import * as fs from 'fs';
 
 type IdGenerator = (span: number) => ITimestampStruct;
-type Operation = ((rga: BinaryRga) => void) & {toString: (symb?: string) => string};
+type Operation = ((rga: BinNode) => void) & {toString: (symb?: string) => string};
 
-class BinaryRgaFuzzer extends Fuzzer {
+class BinNodeFuzzer extends Fuzzer {
   t1: number = 1;
   t2: number = 1;
 
@@ -27,10 +27,10 @@ class BinaryRgaFuzzer extends Fuzzer {
     return id;
   };
 
-  rga1 = new BinaryRga(ts(1, 0));
-  rga2 = new BinaryRga(ts(1, 0));
+  rga1 = new BinNode(ts(1, 0));
+  rga2 = new BinNode(ts(1, 0));
 
-  operation = (source: BinaryRga, id: IdGenerator): Operation => {
+  operation = (source: BinNode, id: IdGenerator): Operation => {
     const doInsert = !source.length() || !randomU32(0, 1);
     if (doInsert) {
       const pos = randomU32(0, source.length() - 1);
@@ -38,7 +38,7 @@ class BinaryRgaFuzzer extends Fuzzer {
       const after = source.find(pos) || source.id;
       const buf = RandomJson.genBinary(length);
       const stamp = id(length);
-      const op = (rga: BinaryRga) => {
+      const op = (rga: BinNode) => {
         rga.ins(after, stamp, buf);
       };
       op.toString = (symb: string = 'rga') => `${symb}.ins(${tsToStr(after)}, ${tsToStr(stamp)}, ${uint8ToStr(buf)});`;
@@ -47,7 +47,7 @@ class BinaryRgaFuzzer extends Fuzzer {
       const pos = randomU32(0, source.length() - 1);
       const length = randomU32(0, source.length() - pos);
       const range = source.findInterval(pos, length);
-      const op = (rga: BinaryRga) => {
+      const op = (rga: BinNode) => {
         rga.delete(range);
       };
       op.toString = (symb: string = 'rga') => `${symb}.delete([${range.map(tssToStr).join(', ')}]);`;
@@ -65,7 +65,7 @@ const tsToStr = (stamp: ITimestampStruct) => `ts(${stamp.sid}, ${stamp.time})`;
 const tssToStr = (span: ITimespanStruct) => `tss(${span.sid}, ${span.time}, ${span.span})`;
 const uint8ToStr = (buf: Uint8Array) => `new Uint8Array([${buf}])`;
 
-const assertEmptyNodes = (rga: BinaryRga) => {
+const assertEmptyNodes = (rga: BinNode) => {
   for (let chunk = rga.first(); chunk; chunk = rga.next(chunk)) {
     if (chunk.del) {
       if (chunk.data) {
@@ -79,16 +79,16 @@ const assertEmptyNodes = (rga: BinaryRga) => {
   }
 };
 
-test('fuzzing BinaryRga', () => {
+test('fuzzing BinNode', () => {
   for (let j = 0; j < 1000; j++) {
-    const fuzzer = new BinaryRgaFuzzer();
+    const fuzzer = new BinNodeFuzzer();
     const lines: string[] = [];
     lines.push(`import {ts, tss} from "../../../../json-crdt-patch/clock";`);
-    lines.push(`import {BinaryRga} from "../BinaryRga";`);
+    lines.push(`import {BinNode} from "../BinNode";`);
     lines.push('');
     lines.push(`test('two concurrent users - #', () => {`);
-    lines.push(`  const rga1 = new BinaryRga(${tsToStr(fuzzer.rga1.id)});`);
-    lines.push(`  const rga2 = new BinaryRga(${tsToStr(fuzzer.rga2.id)});`);
+    lines.push(`  const rga1 = new BinNode(${tsToStr(fuzzer.rga1.id)});`);
+    lines.push(`  const rga2 = new BinNode(${tsToStr(fuzzer.rga2.id)});`);
     lines.push('');
 
     let oldOp1: Operation | undefined;

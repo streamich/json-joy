@@ -5,7 +5,7 @@ import type {VecNode} from './vec/VecNode';
 import type {JsonNode} from './types';
 import type {ObjNode} from './obj/ObjNode';
 import type {StrNode} from './str/StrNode';
-import type {BinaryRga} from './rga-binary/BinaryRga';
+import type {BinNode} from './bin/BinNode';
 import type {ArrayRga} from './rga-array/ArrayRga';
 
 // tslint:disable-next-line:no-namespace
@@ -15,7 +15,7 @@ export namespace n {
   export type vec<Value extends JsonNode[] = JsonNode[]> = VecNode<Value>;
   export type obj<Value extends Record<string, JsonNode> = Record<string, JsonNode>> = ObjNode<Value>;
   export type str<T extends string = string> = StrNode<T>;
-  export type bin = BinaryRga;
+  export type bin = BinNode;
   export type arr<Element extends JsonNode = JsonNode> = ArrayRga<Element>;
 }
 
@@ -25,5 +25,5 @@ export {RootLww} from './lww-root/RootLww';
 export {VecNode} from './vec/VecNode';
 export {ObjNode} from './obj/ObjNode';
 export {ArrayRga, ArrayChunk} from './rga-array/ArrayRga';
-export {BinaryRga, BinaryChunk} from './rga-binary/BinaryRga';
+export {BinNode, BinChunk} from './bin/BinNode';
 export {StrNode, StrChunk} from './str/StrNode';

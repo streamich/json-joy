@@ -1,4 +1,4 @@
-import {VecNode, ConNode, ObjNode, ArrayRga, BinaryRga, StrNode, ValNode} from '../../nodes';
+import {VecNode, ConNode, ObjNode, ArrayRga, BinNode, StrNode, ValNode} from '../../nodes';
 import {ApiPath, ArrayApi, BinaryApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
@@ -67,7 +67,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
    */
   public wrap(node: ValNode): ValApi;
   public wrap(node: StrNode<any>): StrApi;
-  public wrap(node: BinaryRga): BinaryApi;
+  public wrap(node: BinNode): BinaryApi;
   public wrap(node: ArrayRga): ArrayApi;
   public wrap(node: ObjNode): ObjApi;
   public wrap(node: ConNode): ConApi;
@@ -76,7 +76,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public wrap(node: JsonNode) {
     if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
     else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
-    else if (node instanceof BinaryRga) return node.api || (node.api = new BinaryApi(node, this));
+    else if (node instanceof BinNode) return node.api || (node.api = new BinaryApi(node, this));
     else if (node instanceof ArrayRga) return node.api || (node.api = new ArrayApi(node, this));
     else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
     else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));

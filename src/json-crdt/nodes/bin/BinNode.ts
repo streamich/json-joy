@@ -6,19 +6,19 @@ import {AbstractRga, Chunk} from '../rga/AbstractRga';
  * @ignore
  * @category CRDT Node
  */
-export class BinaryChunk implements Chunk<Uint8Array> {
+export class BinChunk implements Chunk<Uint8Array> {
   public readonly id: ITimestampStruct;
   public span: number;
   public del: boolean;
   public data: Uint8Array | undefined;
   public len: number;
-  public p: BinaryChunk | undefined;
-  public l: BinaryChunk | undefined;
-  public r: BinaryChunk | undefined;
-  public p2: BinaryChunk | undefined;
-  public l2: BinaryChunk | undefined;
-  public r2: BinaryChunk | undefined;
-  public s: BinaryChunk | undefined;
+  public p: BinChunk | undefined;
+  public l: BinChunk | undefined;
+  public r: BinChunk | undefined;
+  public p2: BinChunk | undefined;
+  public l2: BinChunk | undefined;
+  public r2: BinChunk | undefined;
+  public s: BinChunk | undefined;
 
   constructor(id: ITimestampStruct, span: number, buf: Uint8Array | undefined) {
     this.id = id;
@@ -41,16 +41,16 @@ export class BinaryChunk implements Chunk<Uint8Array> {
     this.span = combined.length;
   }
 
-  public split(ticks: number): BinaryChunk {
+  public split(ticks: number): BinChunk {
     if (!this.del) {
       const data = this.data!;
       const rightBuffer = data.subarray(ticks);
-      const chunk = new BinaryChunk(tick(this.id, ticks), this.span - ticks, rightBuffer);
+      const chunk = new BinChunk(tick(this.id, ticks), this.span - ticks, rightBuffer);
       this.data = data.subarray(0, ticks);
       this.span = ticks;
       return chunk;
     }
-    const chunk = new BinaryChunk(tick(this.id, ticks), this.span - ticks, undefined);
+    const chunk = new BinChunk(tick(this.id, ticks), this.span - ticks, undefined);
     this.span = ticks;
     return chunk;
   }
@@ -60,8 +60,8 @@ export class BinaryChunk implements Chunk<Uint8Array> {
     this.data = undefined;
   }
 
-  public clone(): BinaryChunk {
-    const chunk = new BinaryChunk(this.id, this.span, this.data);
+  public clone(): BinChunk {
+    const chunk = new BinChunk(this.id, this.span, this.data);
     return chunk;
   }
 }
@@ -72,7 +72,7 @@ export class BinaryChunk implements Chunk<Uint8Array> {
  *
  * @category CRDT Node
  */
-export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
+export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Array> {
   // ----------------------------------------------------------------- JsonNode
 
   /** @ignore */
@@ -112,8 +112,8 @@ export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */
-  public createChunk(id: ITimestampStruct, buf: Uint8Array | undefined): BinaryChunk {
-    return new BinaryChunk(id, buf ? buf.length : 0, buf);
+  public createChunk(id: ITimestampStruct, buf: Uint8Array | undefined): BinChunk {
+    return new BinChunk(id, buf ? buf.length : 0, buf);
   }
 
   /** @ignore */
@@ -122,6 +122,6 @@ export class BinaryRga extends AbstractRga<Uint8Array> implements JsonNode<Uint8
   }
 
   protected toStringName(): string {
-    return super.toStringName() + ' "bin"';
+    return super.toStringName();
   }
 }

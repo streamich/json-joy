@@ -56,7 +56,7 @@ export class Encoder {
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
     else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
     else if (node instanceof nodes.ConNode) return this.cConst(arr, node);
-    else if (node instanceof nodes.BinaryRga) return this.encodeBin(arr, node);
+    else if (node instanceof nodes.BinNode) return this.encodeBin(arr, node);
     throw new Error('UNKNOWN_NODE');
   }
 
@@ -121,16 +121,16 @@ export class Encoder {
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }
 
-  protected encodeBin(arr: unknown[], obj: nodes.BinaryRga): void {
+  protected encodeBin(arr: unknown[], obj: nodes.BinNode): void {
     const res: unknown[] = [Code.MakeBinary, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeBinChunk(res, chunk as nodes.BinaryChunk);
+    while ((chunk = iterator())) this.encodeBinChunk(res, chunk as nodes.BinChunk);
   }
 
-  protected encodeBinChunk(arr: unknown[], chunk: nodes.BinaryChunk): void {
+  protected encodeBinChunk(arr: unknown[], chunk: nodes.BinChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }

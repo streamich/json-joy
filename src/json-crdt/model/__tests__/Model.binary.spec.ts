@@ -1,4 +1,4 @@
-import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
+import {BinNode} from '../../nodes';
 import {Model} from '../Model';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {interval, tick} from '../../../json-crdt-patch/clock';
@@ -11,7 +11,7 @@ describe('Document', () => {
       const id = builder.bin();
       doc.applyPatch(builder.patch);
       const obj = doc.index.get(id);
-      expect(obj).toBeInstanceOf(BinaryRga);
+      expect(obj).toBeInstanceOf(BinNode);
     });
 
     test('can set binary as document root', () => {
@@ -261,7 +261,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array(4));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       expect(node.find(0)!).toStrictEqual(ins1);
     });
 
@@ -272,7 +272,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       expect(node.find(2)!).toStrictEqual(tick(ins1, 2));
     });
 
@@ -284,7 +284,7 @@ describe('Document', () => {
       const ins2 = builder.insBin(id, tick(ins1, 4), new Uint8Array([6, 7, 8, 9, 10, 11]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       // console.log(doc.toJson());
       expect(node.find(2)!).toStrictEqual(tick(ins1, 2));
       expect(node.find(6)!).toStrictEqual(tick(ins2, 1));
@@ -299,7 +299,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(1, 1)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -314,7 +314,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(2, 2)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -329,7 +329,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(0, 3)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -344,7 +344,7 @@ describe('Document', () => {
       const ins1 = builder.insBin(id, id, new Uint8Array([1, 2, 3, 4, 5]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(2, 3)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -361,7 +361,7 @@ describe('Document', () => {
       const ins2 = builder.insBin(id, tick(ins1, 2), new Uint8Array([4, 5, 6]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(2, 2)!;
       expect(span.length).toBe(2);
       expect(span[0].sid).toBe(ins1.sid);
@@ -383,7 +383,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, tick(ins2, 2), new Uint8Array([7, 8, 9]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(0, 9)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -408,7 +408,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, tick(ins2, 2), new Uint8Array([7, 8, 9]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(1, 7)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -433,7 +433,7 @@ describe('Document', () => {
       const ins3 = builder.insBin(id, tick(ins2, 2), new Uint8Array([7, 8, 9]));
       builder.root(id);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(id)! as BinaryRga;
+      const node = doc.index.get(id)! as BinNode;
       const span = node.findInterval(2, 5)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);

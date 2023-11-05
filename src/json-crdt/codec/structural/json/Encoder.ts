@@ -53,7 +53,7 @@ export class Encoder {
     else if (node instanceof nodes.StrNode) return this.cStr(node);
     else if (node instanceof nodes.ValNode) return this.cVal(node);
     else if (node instanceof nodes.ConNode) return this.cConst(node);
-    else if (node instanceof nodes.BinaryRga) return this.cBin(node);
+    else if (node instanceof nodes.BinNode) return this.cBin(node);
     else if (node instanceof nodes.VecNode) return this.cTup(node);
     throw new Error('UNKNOWN_NODE');
   }
@@ -142,11 +142,11 @@ export class Encoder {
     return res;
   }
 
-  public cBin(obj: nodes.BinaryRga): BinaryJsonCrdtNode {
+  public cBin(obj: nodes.BinNode): BinaryJsonCrdtNode {
     const chunks: (BinaryJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as nodes.BinaryChunk));
+    while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as nodes.BinChunk));
     return {
       type: 'bin',
       id: this.cTs(obj.id),
@@ -154,7 +154,7 @@ export class Encoder {
     };
   }
 
-  public cBinChunk(chunk: nodes.BinaryChunk): BinaryJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public cBinChunk(chunk: nodes.BinChunk): BinaryJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.del) {
       const tombstone: JsonCrdtRgaTombstone = {
         id: this.cTs(chunk.id),

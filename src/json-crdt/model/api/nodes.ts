@@ -1,7 +1,7 @@
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjNode, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
+import {ObjNode, ArrayRga, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
@@ -83,7 +83,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asBin(): BinaryApi {
-    if (this.node instanceof BinaryRga) return this.api.wrap(this.node);
+    if (this.node instanceof BinNode) return this.api.wrap(this.node);
     throw new Error('NOT_BIN');
   }
 
@@ -406,13 +406,13 @@ export class StrApi extends NodeApi<StrNode> {
 }
 
 /**
- * Local changes API for the `bin` JSON CRDT node {@link BinaryRga}. This API
+ * Local changes API for the `bin` JSON CRDT node {@link BinNode}. This API
  * allows to insert and delete bytes in the binary string by referencing their
  * local index.
  *
  * @category Local API
  */
-export class BinaryApi extends NodeApi<BinaryRga> {
+export class BinaryApi extends NodeApi<BinNode> {
   /**
    * Inserts octets at a given position.
    *

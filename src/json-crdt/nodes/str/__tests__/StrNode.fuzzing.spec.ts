@@ -11,7 +11,7 @@ import * as fs from 'fs';
 type IdGenerator = (span: number) => ITimestampStruct;
 type Operation = ((rga: StrNode) => void) & {toString: (symb?: string) => string};
 
-class BinaryRgaFuzzer extends Fuzzer {
+class BinNodeFuzzer extends Fuzzer {
   t1: number = 1;
   t2: number = 1;
 
@@ -67,7 +67,7 @@ const tssToStr = (span: ITimespanStruct) => `tss(${span.sid}, ${span.time}, ${sp
 
 test('fuzzing StrNode', () => {
   for (let j = 0; j < 1000; j++) {
-    const fuzzer = new BinaryRgaFuzzer();
+    const fuzzer = new BinNodeFuzzer();
     const lines: string[] = [];
     lines.push(`import {ts, tss} from "../../../../json-crdt-patch/clock";`);
     lines.push(`import {StrNode} from "../StrNode";`);

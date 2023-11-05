@@ -1,7 +1,7 @@
 import {tick} from '../../../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../../../model';
-import {BinaryRga} from '../BinaryRga';
+import {BinNode} from '../BinNode';
 
 test('merges sequential chunks', () => {
   const doc = Model.withLogicalClock();
@@ -19,7 +19,7 @@ test('merges sequential chunks', () => {
   const ins2 = builder3.insBin(bin, tick(ins1, 1), new Uint8Array([3, 4]));
   doc.applyPatch(builder3.patch);
 
-  const node = doc.index.get(bin) as BinaryRga;
+  const node = doc.index.get(bin) as BinNode;
   const firstChunk = node.first();
 
   expect(firstChunk!.data).toStrictEqual(new Uint8Array([1, 2, 3, 4]));

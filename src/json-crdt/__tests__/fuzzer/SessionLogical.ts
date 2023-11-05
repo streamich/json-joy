@@ -1,5 +1,3 @@
-import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
-import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
 import {decode as decodeBinary, encode as encodeBinary} from '../../../json-crdt-patch/codec/binary';
 import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/decode';
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
@@ -18,7 +16,7 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StrNode, ValNode, ObjNode} from '../../nodes';
+import {StrNode, ValNode, ObjNode, ArrayRga, BinNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
@@ -70,7 +68,7 @@ export class SessionLogical {
     const node = this.fuzzer.picker.pickNode(model);
     let patch: Patch | null = null;
     if (node instanceof StrNode) patch = this.generateStringPatch(model, node);
-    else if (node instanceof BinaryRga) patch = this.generateBinaryPatch(model, node);
+    else if (node instanceof BinNode) patch = this.generateBinaryPatch(model, node);
     else if (node instanceof ObjNode) patch = this.generateObjectPatch(model, node);
     else if (node instanceof ArrayRga) patch = this.generateArrayPatch(model, node);
     else if (node instanceof ValNode) patch = this.generateValuePatch(model, node);
@@ -107,7 +105,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateBinaryPatch(model: Model, node: BinaryRga): Patch | null {
+  private generateBinaryPatch(model: Model, node: BinNode): Patch | null {
     const opcode = this.fuzzer.picker.pickBinaryOperation(node);
     const builder = new PatchBuilder(model.clock);
     const size = node.length();
