@@ -72,7 +72,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.api.wrap(node as any);
   }
 
-  public asVal(): ValueApi {
+  public asVal(): ValApi {
     if (this.node instanceof ValNode) return this.api.wrap(this.node as ValNode);
     throw new Error('NOT_VAL');
   }
@@ -118,7 +118,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_EXT');
   }
 
-  public val(path?: ApiPath): ValueApi {
+  public val(path?: ApiPath): ValApi {
     return this.in(path).asVal();
   }
 
@@ -176,7 +176,7 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
  *
  * @category Local API
  */
-export class ValueApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
+export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of the inner node.
    * @returns Inner node API.

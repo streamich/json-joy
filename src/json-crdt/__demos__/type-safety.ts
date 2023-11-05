@@ -82,7 +82,7 @@ console.log(model.find.val.flags.toApi() + '');
 //               └─ ConNode 1234.12 { false }
 
 console.log(model.find.val.flags[1].toApi() + '');
-// ValueApi
+// ValApi
 // └─ ValNode 1234.13
 //    └─ ConNode 1234.12 { false }
 
