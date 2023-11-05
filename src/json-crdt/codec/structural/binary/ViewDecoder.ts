@@ -41,13 +41,20 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     const minor = octet & 0b11111;
     const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
     switch (major) {
-      case CRDT_MAJOR.CON: return this.cCon(length);
-      case CRDT_MAJOR.VAL: return this.cNode();
-      case CRDT_MAJOR.VEC: return this.cVec(length);
-      case CRDT_MAJOR.OBJ: return this.cObj(length);
-      case CRDT_MAJOR.STR: return this.cStr(length);
-      case CRDT_MAJOR.BIN: return this.cBin(length);
-      case CRDT_MAJOR.ARR: return this.cArr(length);
+      case CRDT_MAJOR.CON:
+        return this.cCon(length);
+      case CRDT_MAJOR.VAL:
+        return this.cNode();
+      case CRDT_MAJOR.VEC:
+        return this.cVec(length);
+      case CRDT_MAJOR.OBJ:
+        return this.cObj(length);
+      case CRDT_MAJOR.STR:
+        return this.cStr(length);
+      case CRDT_MAJOR.BIN:
+        return this.cBin(length);
+      case CRDT_MAJOR.ARR:
+        return this.cArr(length);
     }
     return undefined;
   }

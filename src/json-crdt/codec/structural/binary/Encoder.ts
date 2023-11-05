@@ -87,7 +87,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected cNode(node: JsonNode): void {
     // TODO: PERF: use a switch?
-    if      (node instanceof ConNode) this.cCon(node);
+    if (node instanceof ConNode) this.cCon(node);
     else if (node instanceof ValNode) this.cVal(node);
     else if (node instanceof StrNode) this.cStr(node);
     else if (node instanceof ObjNode) this.cObj(node);
