@@ -8,6 +8,7 @@ import {
   VectorClock,
   ServerVectorClock,
   compare,
+  toDisplayString,
 } from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
@@ -340,8 +341,12 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       this.constructor.name +
       printTree(tab, [
         (tab) => this.root.toString(tab),
-        // nl,
-        // (tab) => this.index.toString(tab),
+        nl,
+        (tab) => {
+          const nodes: JsonNode[] = [];
+          this.index.forEach(item => nodes.push(item.v));
+          return `Index (${nodes.length} nodes)` + printTree(tab, nodes.map(node => (tab) => `${node.constructor.name} ${toDisplayString(node.id)}`));
+        },
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,
