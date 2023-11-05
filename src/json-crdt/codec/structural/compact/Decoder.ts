@@ -117,18 +117,18 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeStr(doc: Model, data: unknown[]): nodes.StringRga {
+  protected decodeStr(doc: Model, data: unknown[]): nodes.StrNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const node = new nodes.StringRga(id);
+    const node = new nodes.StrNode(id);
     const self = this;
     let i = index;
     node.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new nodes.StringChunk(chunkId, content, '');
-      return new nodes.StringChunk(chunkId, (content as string).length, content as string);
+      if (typeof content === 'number') return new nodes.StrChunk(chunkId, content, '');
+      return new nodes.StrChunk(chunkId, (content as string).length, content as string);
     });
     doc.index.set(id, node);
     return node;

@@ -122,9 +122,9 @@ export class Decoder {
     return rga;
   }
 
-  protected cStr(doc: Model, node: StringJsonCrdtNode): nodes.StringRga {
+  protected cStr(doc: Model, node: StringJsonCrdtNode): nodes.StrNode {
     const id = this.cTs(node.id);
-    const rga = new nodes.StringRga(id);
+    const rga = new nodes.StrNode(id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -134,10 +134,10 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.StringChunk(id, (c as JsonCrdtRgaTombstone).span, '');
+          return new nodes.StrChunk(id, (c as JsonCrdtRgaTombstone).span, '');
         else {
           const value = (c as StringJsonCrdtChunk).value;
-          return new nodes.StringChunk(id, value.length, value);
+          return new nodes.StrChunk(id, value.length, value);
         }
       });
     }

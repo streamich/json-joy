@@ -45,7 +45,7 @@ export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]:
 
 // prettier-ignore
 export type BuilderNodeToJsonNode<S> = S extends builder.str<infer T>
-  ? nodes.StringRga<T>
+  ? nodes.StrNode<T>
   : S extends builder.bin
     ? nodes.BinaryRga
     : S extends builder.con<infer T>

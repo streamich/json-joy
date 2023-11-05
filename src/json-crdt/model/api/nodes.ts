@@ -1,7 +1,7 @@
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjNode, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StringRga} from '../../nodes';
+import {ObjNode, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
@@ -78,7 +78,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asStr(): StringApi {
-    if (this.node instanceof StringRga) return this.api.wrap(this.node);
+    if (this.node instanceof StrNode) return this.api.wrap(this.node);
     throw new Error('NOT_STR');
   }
 
@@ -349,13 +349,13 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
 }
 
 /**
- * Local changes API for the `str` JSON CRDT node {@link StringRga}. This API
+ * Local changes API for the `str` JSON CRDT node {@link StrNode}. This API
  * allows to insert and delete bytes in the UTF-16 string by referencing its
  * local character positions.
  *
  * @category Local API
  */
-export class StringApi extends NodeApi<StringRga> {
+export class StringApi extends NodeApi<StrNode> {
   /**
    * Inserts text at a given position.
    *

@@ -7,19 +7,19 @@ import type {JsonNode} from '..';
  * @ignore
  * @category CRDT Node
  */
-export class StringChunk implements Chunk<string> {
+export class StrChunk implements Chunk<string> {
   public readonly id: ITimestampStruct;
   public span: number;
   public del: boolean;
   public data: string;
   public len: number;
-  public p: StringChunk | undefined;
-  public l: StringChunk | undefined;
-  public r: StringChunk | undefined;
-  public p2: StringChunk | undefined;
-  public l2: StringChunk | undefined;
-  public r2: StringChunk | undefined;
-  public s: StringChunk | undefined;
+  public p: StrChunk | undefined;
+  public l: StrChunk | undefined;
+  public r: StrChunk | undefined;
+  public p2: StrChunk | undefined;
+  public l2: StrChunk | undefined;
+  public r2: StrChunk | undefined;
+  public s: StrChunk | undefined;
 
   constructor(id: ITimestampStruct, span: number, str: string) {
     this.id = id;
@@ -41,14 +41,14 @@ export class StringChunk implements Chunk<string> {
     this.span = this.data.length;
   }
 
-  public split(ticks: number): StringChunk {
+  public split(ticks: number): StrChunk {
     if (!this.del) {
-      const chunk = new StringChunk(tick(this.id, ticks), this.span - ticks, this.data.slice(ticks));
+      const chunk = new StrChunk(tick(this.id, ticks), this.span - ticks, this.data.slice(ticks));
       this.data = this.data.slice(0, ticks);
       this.span = ticks;
       return chunk;
     }
-    const chunk = new StringChunk(tick(this.id, ticks), this.span - ticks, '');
+    const chunk = new StrChunk(tick(this.id, ticks), this.span - ticks, '');
     this.span = ticks;
     return chunk;
   }
@@ -58,8 +58,8 @@ export class StringChunk implements Chunk<string> {
     this.data = '';
   }
 
-  public clone(): StringChunk {
-    const chunk = new StringChunk(this.id, this.span, this.data);
+  public clone(): StrChunk {
+    const chunk = new StrChunk(this.id, this.span, this.data);
     return chunk;
   }
 }
@@ -70,7 +70,7 @@ export class StringChunk implements Chunk<string> {
  *
  * @category CRDT Node
  */
-export class StringRga<T extends string = string> extends AbstractRga<string> implements JsonNode<string> {
+export class StrNode<T extends string = string> extends AbstractRga<string> implements JsonNode<string> {
   // ----------------------------------------------------------------- JsonNode
 
   /** @ignore */
@@ -103,8 +103,8 @@ export class StringRga<T extends string = string> extends AbstractRga<string> im
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */
-  public createChunk(id: ITimestampStruct, str: string | undefined): StringChunk {
-    return new StringChunk(id, str ? str.length : 0, str || '');
+  public createChunk(id: ITimestampStruct, str: string | undefined): StrChunk {
+    return new StrChunk(id, str ? str.length : 0, str || '');
   }
 
   /** @ignore */
@@ -113,6 +113,6 @@ export class StringRga<T extends string = string> extends AbstractRga<string> im
   }
 
   protected toStringName(): string {
-    return super.toStringName() + ' "str"';
+    return super.toStringName();
   }
 }

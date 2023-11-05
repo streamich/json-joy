@@ -14,7 +14,7 @@ const str2 = '1234567890';
 const len1 = str1.length;
 const len2 = str2.length;
 
-const editStringRga = () => {
+const editStrNode = () => {
   const type = new StrNode(ts(1, 1));
   type.ins(ts(1, 1), ts(1, 2), str1);
   let time = str1.length + 100;
@@ -71,7 +71,7 @@ const editAutomerge = () => {
 };
 
 for (let i = 0; i < 10; i++) {
-  editStringRga();
+  editStrNode();
   editJsonCrdt();
   editYjs();
   editAutomerge();
@@ -86,8 +86,8 @@ suite
   //   arr.splice(pos1, {i: null, r: null, p: null, content: {}, deleted: false, id: [1 ,2]}, {i: null, r: null, p: null, content: {}, deleted: false, id: [1 ,2]});
   //   arr.splice(pos2, 2);
   // })
-  .add('json-crdt StringRga type', function () {
-    editStringRga();
+  .add('json-crdt StrNode type', function () {
+    editStrNode();
   })
   .add('json-crdt', function () {
     editJsonCrdt();

@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
-import {StringRga} from '../../nodes/str/StringRga';
+import {StrNode} from '../../nodes';
 import {interval, tick} from '../../../json-crdt-patch/clock';
 
 describe('Document', () => {
@@ -11,7 +11,7 @@ describe('Document', () => {
       const str = builder.str();
       doc.applyPatch(builder.patch);
       const obj = doc.index.get(str);
-      expect(obj).toBeInstanceOf(StringRga);
+      expect(obj).toBeInstanceOf(StrNode);
     });
 
     test('can set string as document root', () => {
@@ -261,7 +261,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'H');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       expect(node.find(0)!.sid).toBe(ins1.sid);
       expect(node.find(0)!.time).toBe(ins1.time);
     });
@@ -273,7 +273,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'Hello');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       expect(node.find(2)!.sid).toBe(tick(ins1, 2).sid);
       expect(node.find(2)!.time).toBe(tick(ins1, 2).time);
     });
@@ -286,7 +286,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, tick(ins1, 4), ' world');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       // console.log(doc.toJson());
       expect(node.find(2)!.sid).toBe(tick(ins1, 2).sid);
       expect(node.find(2)!.time).toBe(tick(ins1, 2).time);
@@ -304,7 +304,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abc');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(1, 1)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -319,7 +319,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(2, 2)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -334,7 +334,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(0, 3)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -349,7 +349,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'abcde');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(2, 3)!;
       expect(span.length).toBe(1);
       expect(span[0].sid).toBe(ins1.sid);
@@ -366,7 +366,7 @@ describe('Document', () => {
       const ins2 = builder.insStr(str, tick(ins1, 2), 'def');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(2, 2)!;
       expect(span.length).toBe(2);
       expect(span[0].sid).toBe(ins1.sid);
@@ -388,7 +388,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, tick(ins2, 2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(0, 9)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -413,7 +413,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, tick(ins2, 2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(1, 7)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -438,7 +438,7 @@ describe('Document', () => {
       const ins3 = builder.insStr(str, tick(ins2, 2), 'ghi');
       builder.root(str);
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       const span = node.findInterval(2, 5)!;
       expect(span.length).toBe(3);
       expect(span[0].sid).toBe(ins1.sid);
@@ -463,7 +463,7 @@ describe('Document', () => {
       doc.applyPatch(builder.patch);
       builder.insStr(str, ins2, 'c');
       doc.applyPatch(builder.patch);
-      const node = doc.index.get(str)! as StringRga;
+      const node = doc.index.get(str)! as StrNode;
       expect(node.size()).toBe(1);
     });
   });

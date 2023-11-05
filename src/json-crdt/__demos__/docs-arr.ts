@@ -26,12 +26,12 @@ console.log(model.root + '');
 //    └─ "tags"
 //        └─ ArrayRga "arr" 1234.2
 //           └─ ArrayChunk 1234.17!3 len:3
-//              ├─ [0]: StringRga "str" 1234.3 { "big" }
-//              │       └─ StringChunk 1234.4!3 len:3 { "big" }
-//              ├─ [1]: StringRga "str" 1234.7 { "small" }
-//              │       └─ StringChunk 1234.8!5 len:5 { "small" }
-//              └─ [2]: StringRga "str" 1234.13 { "red" }
-//                      └─ StringChunk 1234.14!3 len:3 { "red" }
+//              ├─ [0]: StrNode 1234.3 { "big" }
+//              │       └─ StrChunk 1234.4!3 len:3 { "big" }
+//              ├─ [1]: StrNode 1234.7 { "small" }
+//              │       └─ StrChunk 1234.8!5 len:5 { "small" }
+//              └─ [2]: StrNode 1234.13 { "red" }
+//                      └─ StrChunk 1234.14!3 len:3 { "red" }
 
 model.api.obj([]).set({
   tags: [konst('big'), konst('small'), konst('red')],

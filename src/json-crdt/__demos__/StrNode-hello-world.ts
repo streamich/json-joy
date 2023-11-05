@@ -3,17 +3,17 @@
 /**
  * Run this demo with:
  *
- *     npx nodemon -q -x ts-node src/json-crdt/__demos__/StringRga-hello-world.ts
+ *     npx nodemon -q -x ts-node src/json-crdt/__demos__/StrNode-hello-world.ts
  */
 
 import {ts} from '../../json-crdt-patch/clock';
-import {StringRga} from '../nodes/str/StringRga';
+import {StrNode} from '../nodes';
 
 const sid = 123; // Site ID
 let time = 0; // "time"
 
 const id = ts(sid, time++);
-const str = new StringRga(id);
+const str = new StrNode(id);
 
 console.log(str.view());
 console.log(str + '');

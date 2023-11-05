@@ -11,9 +11,9 @@ const patches = traces.get('automerge-paper').txns.map((txn) => txn.patches[0]);
 const length = patches.length;
 console.log('Document operations:', length, patches);
 
-const runStringRga = () => {
+const runStrNode = () => {
   console.log('---------------------------------------------');
-  console.time('JSON CRDT StringRga');
+  console.time('JSON CRDT StrNode');
   let time = 0;
   const rga = new StrNode(ts(1, time++));
   for (let i = 0; i < length; i++) {
@@ -27,14 +27,14 @@ const runStringRga = () => {
   }
   rga.view();
   // console.log(rga.view());
-  console.timeEnd('JSON CRDT StringRga');
+  console.timeEnd('JSON CRDT StrNode');
   console.log('String length:', rga.length(), ', Chunk count:', rga.size());
   // console.log(rga.toString());
 };
 
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
-runStringRga();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();
+runStrNode();

@@ -1,6 +1,6 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
-import {JsonNode, ObjNode, ArrayRga, BinaryRga, StringRga} from '../../nodes';
+import {JsonNode, ObjNode, ArrayRga, BinaryRga, StrNode} from '../../nodes';
 import {Model} from '../../model/Model';
 import {Fuzzer} from '../../../util/Fuzzer';
 import {FuzzerOptions} from './types';
@@ -27,7 +27,7 @@ export class Picker {
     return Fuzzer.pick(nodes);
   }
 
-  public pickStringOperation(node: StringRga): StringOp {
+  public pickStringOperation(node: StrNode): StringOp {
     const length = node.length();
     if (!length) return InsStrOp;
     if (length >= this.opts.maxStringLength) return DelOp;

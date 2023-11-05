@@ -2,7 +2,7 @@ import {equal} from 'assert';
 import {ITimespanStruct, ITimestampStruct, VectorClock, toDisplayString, ts} from '../../../../json-crdt-patch/clock';
 import {Fuzzer} from '../../../../util/Fuzzer';
 import {randomSessionId} from '../../../model/util';
-import {StringRga} from '../StringRga';
+import {StrNode} from '../StrNode';
 import {printTree} from '../../../../util/print/printTree';
 import {Printable} from '../../../../util/print/types';
 
@@ -36,13 +36,13 @@ interface OpDelete {
 
 type Op = OpInsert | OpDelete;
 
-class StringRgaSite implements Printable {
-  public readonly rga: StringRga;
+class StrNodeSite implements Printable {
+  public readonly rga: StrNode;
   public readonly clock = new VectorClock(randomSessionId(), 0);
   public readonly patches: Op[][] = [];
 
-  constructor(protected readonly fuzzer: StringRgaFuzzer) {
-    this.rga = new StringRga(fuzzer.str.id);
+  constructor(protected readonly fuzzer: StrNodeFuzzer) {
+    this.rga = new StrNode(fuzzer.str.id);
     this.apply(fuzzer.prelude);
   }
 
@@ -102,7 +102,7 @@ class StringRgaSite implements Printable {
   }
 }
 
-export interface StringRgaFuzzerOptions {
+export interface StrNodeFuzzerOptions {
   /**
    * Minimum number of operations in the prelude,
    * before parallel editing sessions.
@@ -169,13 +169,13 @@ export interface StringRgaFuzzerOptions {
   maxInsertLength: number;
 }
 
-export class StringRgaFuzzer extends Fuzzer implements Printable {
-  public readonly str = new StringRga(ts(randomSessionId(), 0));
+export class StrNodeFuzzer extends Fuzzer implements Printable {
+  public readonly str = new StrNode(ts(randomSessionId(), 0));
   public prelude: Op[] = [];
-  public readonly sites: StringRgaSite[] = [new StringRgaSite(this)];
-  public readonly options: StringRgaFuzzerOptions;
+  public readonly sites: StrNodeSite[] = [new StrNodeSite(this)];
+  public readonly options: StrNodeFuzzerOptions;
 
-  constructor(opts: Partial<StringRgaFuzzerOptions> = {}, seed?: Buffer) {
+  constructor(opts: Partial<StrNodeFuzzerOptions> = {}, seed?: Buffer) {
     super(seed);
     this.options = {
       minPreludeLength: 0,
@@ -203,7 +203,7 @@ export class StringRgaFuzzer extends Fuzzer implements Printable {
     this.prelude = this.sites[0].randomPatch(this.options.minPreludeLength, this.options.maxPreludeLength);
     this.sites[0].apply(this.prelude);
     const peerCount = this.randomInt(this.options.minSiteCount, this.options.maxSiteCount) - 1;
-    for (let i = 0; i < peerCount; i++) this.sites.push(new StringRgaSite(this));
+    for (let i = 0; i < peerCount; i++) this.sites.push(new StrNodeSite(this));
   }
 
   public assertSiteViewsEqual(): void {

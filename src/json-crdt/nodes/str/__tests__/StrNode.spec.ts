@@ -1,11 +1,11 @@
 /* tslint:disable no-console */
 
-import {StringRga, StringChunk} from '../StringRga';
+import {StrNode, StrChunk} from '../StrNode';
 import {equal, ITimespanStruct, ITimestampStruct, tick, ts, tss} from '../../../../json-crdt-patch/clock';
 import {prev} from '../../../../util/trees/util';
 
 /** Validates that .find() method returns correct timestamp for every position. */
-const assertFind = (type: StringRga) => {
+const assertFind = (type: StrNode) => {
   const view = type.view();
   const ids: ITimestampStruct[] = [];
   let curr = type.first();
@@ -31,12 +31,12 @@ const assertFind = (type: StringRga) => {
   expect(type.find(view.length + 1)).toBe(undefined);
 };
 
-const chunks = function* (rga: StringRga): IterableIterator<StringChunk> {
-  for (let chunk = rga.first(); chunk; chunk = rga.next(chunk)) yield chunk as StringChunk;
+const chunks = function* (rga: StrNode): IterableIterator<StrChunk> {
+  for (let chunk = rga.first(); chunk; chunk = rga.next(chunk)) yield chunk as StrChunk;
 };
 
 /** Verifies that all chunk parents are connected and chunk IDs are in B+Tree. */
-const assetTreeIsValid = (tree: StringRga, chunk: StringChunk | undefined = tree.root as StringChunk | undefined) => {
+const assetTreeIsValid = (tree: StrNode, chunk: StrChunk | undefined = tree.root as StrChunk | undefined) => {
   if (!chunk) return;
   if (chunk.l && chunk.l.p !== chunk) {
     console.log('Chunk', chunk, 'has invalid left parent', chunk.l);
@@ -53,7 +53,7 @@ const assetTreeIsValid = (tree: StringRga, chunk: StringChunk | undefined = tree
   if (tree.root === chunk) {
     let str = '';
     let size = 0;
-    let prev: StringChunk | undefined = undefined;
+    let prev: StrChunk | undefined = undefined;
     for (const chunk of chunks(tree)) {
       size++;
       str += chunk.data ? chunk.data : '';
@@ -83,7 +83,7 @@ const assetTreeIsValid = (tree: StringRga, chunk: StringChunk | undefined = tree
           }
         }
       }
-      prev = chunk as StringChunk;
+      prev = chunk as StrChunk;
     }
     // Check RGA size is correct.
     if (tree.size() !== size) {
@@ -109,11 +109,11 @@ const assetTreeIsValid = (tree: StringRga, chunk: StringChunk | undefined = tree
 
 describe('binary tree', () => {
   const createTree = () => {
-    const type = new StringRga(ts(1, 0));
+    const type = new StrNode(ts(1, 0));
     let id = 1;
-    const createNode = (l?: StringChunk, r?: StringChunk) => {
+    const createNode = (l?: StrChunk, r?: StrChunk) => {
       const time = id++;
-      const chunk = new StringChunk(ts(1, time), ('a' + time).length, 'a' + time);
+      const chunk = new StrChunk(ts(1, time), ('a' + time).length, 'a' + time);
       return chunk;
     };
     const n1 = createNode();
@@ -153,22 +153,22 @@ describe('binary tree', () => {
   test('can print tree layout', () => {
     const tree = createTree();
     expect(tree.toString()).toMatchInlineSnapshot(`
-      "StringRga "str" .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
-      └─ StringChunk .8!2 len:36 { "a8" }
-         ← StringChunk .4!2 len:14 { "a4" }
-           ← StringChunk .2!2 len:6 { "a2" }
-             ← StringChunk .1!2 len:2 { "a1" }
-             → StringChunk .3!2 len:2 { "a3" }
-           → StringChunk .6!2 len:6 { "a6" }
-             ← StringChunk .5!2 len:2 { "a5" }
-             → StringChunk .7!2 len:2 { "a7" }
-         → StringChunk .12!3 len:20 { "a12" }
-           ← StringChunk .10!3 len:8 { "a10" }
-             ← StringChunk .9!2 len:2 { "a9" }
-             → StringChunk .11!3 len:3 { "a11" }
-           → StringChunk .14!3 len:9 { "a14" }
-             ← StringChunk .13!3 len:3 { "a13" }
-             → StringChunk .15!3 len:3 { "a15" }"
+      "StrNode .0 { "a1a2a3a4a5a6a7a8a9a10a11a12a13a1" … }
+      └─ StrChunk .8!2 len:36 { "a8" }
+         ← StrChunk .4!2 len:14 { "a4" }
+           ← StrChunk .2!2 len:6 { "a2" }
+             ← StrChunk .1!2 len:2 { "a1" }
+             → StrChunk .3!2 len:2 { "a3" }
+           → StrChunk .6!2 len:6 { "a6" }
+             ← StrChunk .5!2 len:2 { "a5" }
+             → StrChunk .7!2 len:2 { "a7" }
+         → StrChunk .12!3 len:20 { "a12" }
+           ← StrChunk .10!3 len:8 { "a10" }
+             ← StrChunk .9!2 len:2 { "a9" }
+             → StrChunk .11!3 len:3 { "a11" }
+           → StrChunk .14!3 len:9 { "a14" }
+             ← StrChunk .13!3 len:3 { "a13" }
+             → StrChunk .15!3 len:3 { "a15" }"
     `);
   });
 
@@ -501,17 +501,17 @@ describe('binary tree', () => {
   });
 });
 
-describe('StringRga', () => {
+describe('StrNode', () => {
   describe('.ins()', () => {
     test('is empty string by default', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       expect(type.view()).toBe('');
       assetTreeIsValid(type);
     });
 
     test('simple insertion produces two chunks', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '1234');
       type.ins(ts(1, 5), ts(1, 33), '5678');
       let cnt = 1;
@@ -522,7 +522,7 @@ describe('StringRga', () => {
 
     test('ignores operations where "after" ID is not found', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const after = ts(1, 123);
       const id2 = ts(1, 2);
       type.ins(after, id2, 'a');
@@ -532,7 +532,7 @@ describe('StringRga', () => {
 
     test('can insert at root', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const id2 = ts(1, 2);
       type.ins(id1, id2, 'a');
       expect(type.view()).toBe('a');
@@ -541,7 +541,7 @@ describe('StringRga', () => {
 
     test('can merge subsequent ID chunks', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const id2 = ts(1, 2);
       type.ins(id1, id2, 'a');
       const id3 = ts(1, 3);
@@ -557,7 +557,7 @@ describe('StringRga', () => {
     });
 
     test('can merge subsequent ID twice', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'a');
       type.ins(ts(1, 2), ts(1, 3), 'bc');
       type.ins(ts(1, 4), ts(1, 5), 'def');
@@ -567,7 +567,7 @@ describe('StringRga', () => {
 
     test('insert chunk into root with higher ID', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const id2 = ts(1, 2);
       type.ins(id1, id2, 'a');
       expect(type.view()).toBe('a');
@@ -578,7 +578,7 @@ describe('StringRga', () => {
     });
 
     test('insert chunk into root with higher ID twice', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'a');
       expect(type.view()).toBe('a');
       type.ins(ts(1, 1), ts(1, 3), 'bb');
@@ -588,7 +588,7 @@ describe('StringRga', () => {
     });
 
     test('insert chunk into root with higher ID twice', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'a');
       expect(type.view()).toBe('a');
       type.ins(ts(1, 1), ts(1, 3), 'bb');
@@ -598,7 +598,7 @@ describe('StringRga', () => {
     });
 
     test('insert chunk to right of root chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'a');
       expect(type.view()).toBe('a');
       type.ins(ts(1, 2), ts(1, 22), 'bb');
@@ -608,7 +608,7 @@ describe('StringRga', () => {
 
     test('insert in between two chunks', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const id2 = ts(1, 2);
       type.ins(id1, id2, 'a');
       expect(type.view()).toBe('a');
@@ -622,7 +622,7 @@ describe('StringRga', () => {
 
     test('insert in between two chunks twice', () => {
       const id1 = ts(1, 1);
-      const type = new StringRga(id1);
+      const type = new StrNode(id1);
       const id2 = ts(1, 2);
       type.ins(id1, id2, 'a');
       expect(type.view()).toBe('a');
@@ -637,7 +637,7 @@ describe('StringRga', () => {
     });
 
     test('can split a chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'aaa');
       type.ins(ts(1, 2), ts(1, 666), '!');
       expect(type.view()).toBe('a!aa');
@@ -645,7 +645,7 @@ describe('StringRga', () => {
     });
 
     test('can split a chunk trice', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 4), ts(1, 222), '!');
       expect(type.view()).toBe('123!456');
@@ -657,7 +657,7 @@ describe('StringRga', () => {
     });
 
     test('can insert at root many times', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 1), ts(1, 111), 'aaa');
       expect(type.view()).toBe('aaa123456');
@@ -674,7 +674,7 @@ describe('StringRga', () => {
     });
 
     test('insert after same chunk many times', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 4), ts(1, 111), '...');
       expect(type.view()).toBe('123...456');
@@ -691,7 +691,7 @@ describe('StringRga', () => {
     });
 
     test('append to end of string many times', () => {
-      const type = new StringRga(ts(123, 10));
+      const type = new StrNode(ts(123, 10));
       type.ins(ts(123, 10), ts(222, 20), 'a');
       expect(type.view()).toBe('a');
       assetTreeIsValid(type);
@@ -716,7 +716,7 @@ describe('StringRga', () => {
     });
 
     test('can do various inserts', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 4), ts(1, 222), '!');
       expect(type.view()).toBe('123!456');
@@ -742,7 +742,7 @@ describe('StringRga', () => {
     });
 
     test('inserting same operation twice is idempotent', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 4), ts(1, 111), '...');
       type.ins(ts(1, 4), ts(1, 111), '...');
@@ -754,7 +754,7 @@ describe('StringRga', () => {
     });
 
     test('inserting at root is idempotent', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 1), ts(1, 2), '123456');
@@ -763,7 +763,7 @@ describe('StringRga', () => {
     });
 
     test('inserting same operation twice is idempotent, when original chunk was merged', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       type.ins(ts(1, 4), ts(1, 111), '...');
       type.ins(ts(1, 113), ts(1, 114), '...');
@@ -776,14 +776,14 @@ describe('StringRga', () => {
     });
 
     test('ignores insert at non-existing position', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 10), '012345');
       type.ins(ts(1, 20), ts(1, 333), '|');
       expect(type.view()).toBe('012345');
     });
 
     test('can insert at the end of the same string twice', () => {
-      const str = new StringRga(ts(1, 1));
+      const str = new StrNode(ts(1, 1));
       str.ins(ts(1, 1), ts(1, 2), '12');
       assetTreeIsValid(str);
       expect(str.view()).toBe('12');
@@ -796,7 +796,7 @@ describe('StringRga', () => {
     });
 
     test('keeps track of split links', () => {
-      const type = new StringRga(ts(1, 4));
+      const type = new StrNode(ts(1, 4));
       type.ins(ts(1, 4), ts(1, 10), '012345');
       type.ins(ts(1, 10), ts(1, 22), '|');
       type.ins(ts(1, 13), ts(1, 33), '|');
@@ -809,7 +809,7 @@ describe('StringRga', () => {
     });
 
     test('can insert twice at root and once in the middle of another chunk', () => {
-      const rga = new StringRga(ts(1, 1));
+      const rga = new StrNode(ts(1, 1));
       rga.ins(ts(1, 1), ts(5, 2), 'ccccc');
       assetTreeIsValid(rga);
       rga.ins(ts(1, 1), ts(4, 2), 'aaaaaaa');
@@ -820,9 +820,9 @@ describe('StringRga', () => {
     });
 
     test('can insert and read back a chunk by ID', () => {
-      const type = new StringRga(ts(1, 1));
-      type.insertId(new StringChunk(ts(4, 2), 'aaaa'.length, 'aaaa'));
-      type.insertId(new StringChunk(ts(5, 2), 'aaaa'.length, 'aaaa'));
+      const type = new StrNode(ts(1, 1));
+      type.insertId(new StrChunk(ts(4, 2), 'aaaa'.length, 'aaaa'));
+      type.insertId(new StrChunk(ts(5, 2), 'aaaa'.length, 'aaaa'));
       const pair1 = type.findById(ts(4, 2))!;
       const pair2 = type.findById(ts(4, 4))!;
       expect(pair1.id).toStrictEqual(ts(4, 2));
@@ -830,12 +830,12 @@ describe('StringRga', () => {
     });
 
     test('inserting concurrently at the root', () => {
-      const rga1 = new StringRga(ts(1, 0));
+      const rga1 = new StrNode(ts(1, 0));
       rga1.ins(ts(1, 0), ts(3, 2), '1');
       rga1.ins(ts(3, 2), ts(3, 3), '2');
       rga1.ins(ts(3, 2), ts(3, 4), '3');
       rga1.ins(ts(1, 0), ts(2, 2), '4');
-      const rga2 = new StringRga(ts(1, 0));
+      const rga2 = new StrNode(ts(1, 0));
       rga2.ins(ts(1, 0), ts(2, 2), '4');
       rga2.ins(ts(1, 0), ts(3, 2), '1');
       rga2.ins(ts(3, 2), ts(3, 3), '2');
@@ -847,14 +847,14 @@ describe('StringRga', () => {
 
   describe('.insAt()', () => {
     test('can insert into empty string', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'abc');
       assetTreeIsValid(type);
       expect(type.view()).toBe('abc');
     });
 
     test('can insert at the beginning of string', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'abc');
       assetTreeIsValid(type);
       type.insAt(0, ts(1, 66), '.');
@@ -866,7 +866,7 @@ describe('StringRga', () => {
     });
 
     test('can insert at the end of string with sequential ID', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'a');
       assetTreeIsValid(type);
       expect(type.view()).toBe('a');
@@ -876,7 +876,7 @@ describe('StringRga', () => {
     });
 
     test('can insert at the end of string with ID jump', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'a');
       assetTreeIsValid(type);
       expect(type.view()).toBe('a');
@@ -886,7 +886,7 @@ describe('StringRga', () => {
     });
 
     test('can insert in the middle of string', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'abc');
       assetTreeIsValid(type);
       expect(type.view()).toBe('abc');
@@ -896,7 +896,7 @@ describe('StringRga', () => {
     });
 
     test('can insert in the middle of string twice', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'abc');
       assetTreeIsValid(type);
       expect(type.view()).toBe('abc');
@@ -912,7 +912,7 @@ describe('StringRga', () => {
     });
 
     test('insert many times at the end', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), '1');
       assetTreeIsValid(type);
       expect(type.view()).toBe('1');
@@ -937,7 +937,7 @@ describe('StringRga', () => {
     });
 
     test('inserting at the same position', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), 'abcd');
       assetTreeIsValid(type);
       expect(type.view()).toBe('abcd');
@@ -958,7 +958,7 @@ describe('StringRga', () => {
 
   describe('.delete()', () => {
     test('can delete a character at beginning', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       type.delete([tss(1, 2, 1)]);
@@ -969,7 +969,7 @@ describe('StringRga', () => {
     });
 
     test('can delete a character in the middle', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       type.delete([tss(1, 3, 1)]);
@@ -990,7 +990,7 @@ describe('StringRga', () => {
     });
 
     test('insert in the middle of a tombstone, and then after each part of split tombstone', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '1234');
       assetTreeIsValid(type);
       expect(type.view()).toBe('1234');
@@ -1009,7 +1009,7 @@ describe('StringRga', () => {
     });
 
     test('can delete 3 chars', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '12345');
       assetTreeIsValid(type);
       expect(type.view()).toBe('12345');
@@ -1019,7 +1019,7 @@ describe('StringRga', () => {
     });
 
     test('can delete right across a split-in-the-middle delete', () => {
-      const type = new StringRga(ts(123456789, 1));
+      const type = new StrNode(ts(123456789, 1));
       type.ins(ts(123456789, 1), ts(1, 2), '12345');
       assetTreeIsValid(type);
       expect(type.view()).toBe('12345');
@@ -1032,14 +1032,14 @@ describe('StringRga', () => {
     });
 
     test('can delete right after split-in-the-middle delete, in cloned RGA', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '12345');
       assetTreeIsValid(type);
       expect(type.view()).toBe('12345');
       type.delete([tss(1, 4, 1)]);
       assetTreeIsValid(type);
       expect(type.view()).toBe('1245');
-      const type2 = new StringRga(ts(1, 1));
+      const type2 = new StrNode(ts(1, 1));
       let curr = type.first();
       type2.ingest(type.size(), () => {
         const res = curr!.clone();
@@ -1058,7 +1058,7 @@ describe('StringRga', () => {
     });
 
     test('can delete right after split-in-the-middle insert', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '12345');
       assetTreeIsValid(type);
       expect(type.view()).toBe('12345');
@@ -1071,7 +1071,7 @@ describe('StringRga', () => {
     });
 
     test('can delete after split insert and split delete', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       expect(type.view()).toBe('123456');
@@ -1089,7 +1089,7 @@ describe('StringRga', () => {
 
   describe('.find()', () => {
     test('can find content in a single chunk RGA', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
     });
@@ -1097,7 +1097,7 @@ describe('StringRga', () => {
 
   describe('.findInterval()', () => {
     test('can find interval in a single chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       expect(type.findInterval(0, 1)).toStrictEqual([tss(1, 2, 1)]);
@@ -1120,7 +1120,7 @@ describe('StringRga', () => {
     });
 
     test('can find interval across two chunks', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '1234');
       type.ins(ts(1, 5), ts(1, 33), '5678');
       assetTreeIsValid(type);
@@ -1137,7 +1137,7 @@ describe('StringRga', () => {
     });
 
     test('can select over deletion ranges', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '12345678');
       assetTreeIsValid(type);
       const interval = type.findInterval(3, 2);
@@ -1167,7 +1167,7 @@ describe('StringRga', () => {
 
   describe('.findInterval2()', () => {
     test('can clone an RGA', () => {
-      const type1 = new StringRga(ts(1, 1));
+      const type1 = new StrNode(ts(1, 1));
       type1.insAt(0, ts(1, 2), '12345');
       type1.insAt(3, ts(3, 2), '1234DF678');
       type1.insAt(7, ts(3, 22), '12aaaadf678');
@@ -1193,7 +1193,7 @@ describe('StringRga', () => {
 
   describe('.pos()', () => {
     test('returns correct position of a single chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       const chunk = type.first();
@@ -1202,7 +1202,7 @@ describe('StringRga', () => {
     });
 
     test('returns correct position for three chunks', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), '123456');
       assetTreeIsValid(type);
       type.ins(ts(1, 4), ts(1, 11), '789');
@@ -1216,7 +1216,7 @@ describe('StringRga', () => {
     });
 
     test('returns correct position for edited text', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'wworld');
       assetTreeIsValid(type);
       type.ins(ts(1, 1), ts(1, 11), 'helo ');
@@ -1231,7 +1231,7 @@ describe('StringRga', () => {
     });
 
     test('check all chunk positions', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 2), 'wworld');
       type.ins(ts(1, 1), ts(1, 11), 'helo ');
       type.ins(ts(1, 12), ts(1, 22), 'l');
@@ -1254,7 +1254,7 @@ describe('StringRga', () => {
     });
 
     test('calculates correctly position when tombstones present', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.ins(ts(1, 1), ts(1, 7), 'xxx');
       type.ins(ts(1, 9), ts(1, 10), 'AA');
       type.ins(ts(1, 1), ts(1, 38), 'n');
@@ -1273,7 +1273,7 @@ describe('StringRga', () => {
 
   describe('export / import', () => {
     type Entry = [ITimestampStruct, number, string];
-    const exp = (type: StringRga) => {
+    const exp = (type: StrNode) => {
       const data: Entry[] = [];
       for (const chunk of chunks(type)) {
         data.push([chunk.id, chunk.span, chunk.data || '']);
@@ -1282,14 +1282,14 @@ describe('StringRga', () => {
     };
 
     test('can ingest balanced binary tree from iterator', () => {
-      const type1 = new StringRga(ts(1, 1));
+      const type1 = new StrNode(ts(1, 1));
       const verifyExportImport = () => {
         const data = exp(type1);
-        const type2 = new StringRga(ts(1, 1));
+        const type2 = new StrNode(ts(1, 1));
         let i = 0;
         type2.ingest(data.length, () => {
           const [id, span, content] = data[i++];
-          return new StringChunk(id, span, content);
+          return new StrChunk(id, span, content);
         });
         assetTreeIsValid(type1);
         assetTreeIsValid(type2);
@@ -1319,7 +1319,7 @@ describe('StringRga', () => {
     });
 
     test('can clone an RGA', () => {
-      const type1 = new StringRga(ts(1, 1));
+      const type1 = new StrNode(ts(1, 1));
       type1.insAt(0, ts(1, 2), '12345678');
       type1.insAt(3, ts(3, 2), '12345678');
       type1.insAt(7, ts(3, 22), '12345678');
@@ -1329,7 +1329,7 @@ describe('StringRga', () => {
       type1.delete(type1.findInterval(4, 4));
       type1.delete(type1.findInterval(0, 3));
       type1.delete(type1.findInterval(5, 1));
-      const type2 = new StringRga(ts(1, 1));
+      const type2 = new StrNode(ts(1, 1));
       const iterator = chunks(type1);
       type2.ingest(type1.size(), () => {
         const chunk = iterator.next().value;
@@ -1346,7 +1346,7 @@ describe('StringRga', () => {
 
   describe('.range0()', () => {
     test('can clone an RGA', () => {
-      const type1 = new StringRga(ts(1, 1));
+      const type1 = new StrNode(ts(1, 1));
       type1.insAt(0, ts(1, 2), '12345');
       type1.insAt(3, ts(3, 2), '1234DF678');
       type1.insAt(7, ts(3, 22), '12aaaadf678');
@@ -1373,7 +1373,7 @@ describe('StringRga', () => {
     });
 
     test('can stop iteration at deleted chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), '123456');
       type.delete([tss(1, 4, 2)]);
       const from = ts(1, 2);
@@ -1386,7 +1386,7 @@ describe('StringRga', () => {
     });
 
     test('can start iteration at deleted chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), '123456');
       type.delete([tss(1, 4, 2)]);
       const from = ts(1, 4);
@@ -1399,7 +1399,7 @@ describe('StringRga', () => {
     });
 
     test('does not iterate when from and to are in deleted chunk', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       type.insAt(0, ts(1, 2), '123456');
       type.delete([tss(1, 3, 3)]);
       const from = ts(1, 3);
@@ -1412,7 +1412,7 @@ describe('StringRga', () => {
     });
 
     test('all possible combinations of range computation across deleted chunks', () => {
-      const type = new StringRga(ts(1, 1));
+      const type = new StrNode(ts(1, 1));
       const subject = '1234abcd5678efgh';
       type.insAt(0, ts(1, 2), '1234abcd5678efgh');
       type.delete([tss(1, 6, 4), tss(1, 14, 4)]);
@@ -1441,7 +1441,7 @@ describe('StringRga', () => {
 
   describe('scenarios', () => {
     test('couple users editing existing document', () => {
-      const rga1 = new StringRga(ts(3, 0));
+      const rga1 = new StrNode(ts(3, 0));
       rga1.ins(ts(3, 0), ts(1, 2), 'bbbbbbbbbbbbbb');
       rga1.ins(ts(3, 0), ts(1, 30), 'aaaaaaaaa');
       rga1.delete([tss(1, 2, 14)]);
@@ -1453,7 +1453,7 @@ describe('StringRga', () => {
       rga1.ins(ts(1, 31), ts(4, 39), 'eeeeeeeeeeeee');
       rga1.delete([tss(1, 30, 22)]);
 
-      const rga2 = new StringRga(ts(3, 0));
+      const rga2 = new StrNode(ts(3, 0));
       rga2.ins(ts(3, 0), ts(1, 2), 'bbbbbbbbbbbbbb');
       rga2.ins(ts(3, 0), ts(1, 30), 'aaaaaaaaa');
       rga2.delete([tss(1, 2, 14)]);
@@ -1470,14 +1470,14 @@ describe('StringRga', () => {
     });
 
     test('combines deleted and newly inserted chunks with split link, if necessary', () => {
-      const rga1 = new StringRga(ts(3, 0));
+      const rga1 = new StrNode(ts(3, 0));
       rga1.ins(ts(3, 0), ts(1, 1), 'aaa');
       rga1.ins(ts(1, 3), ts(1, 4), 'bb');
       rga1.ins(ts(1, 5), ts(1, 6), 'cc');
       rga1.delete([tss(1, 3, 3)]);
       rga1.delete([tss(1, 2, 5)]);
       expect(rga1.view()).toBe('ac');
-      const rga2 = new StringRga(ts(3, 0));
+      const rga2 = new StrNode(ts(3, 0));
       rga2.ins(ts(3, 0), ts(1, 1), 'aaa');
       rga2.ins(ts(1, 3), ts(1, 4), 'bb');
       rga2.delete([tss(1, 3, 3)]);
@@ -1492,13 +1492,13 @@ describe('StringRga', () => {
     });
 
     test('append inserts by concurrent users', () => {
-      const rga1 = new StringRga(ts(1, 0));
+      const rga1 = new StrNode(ts(1, 0));
       rga1.ins(ts(1, 0), ts(1, 1), 'a');
       rga1.ins(ts(1, 1), ts(1, 2), 'a');
       rga1.ins(ts(1, 2), ts(1, 3), '1');
       rga1.ins(ts(1, 2), ts(2, 3), '2');
       expect(rga1.view()).toBe('aa21');
-      const rga2 = new StringRga(ts(1, 0));
+      const rga2 = new StrNode(ts(1, 0));
       rga2.ins(ts(1, 0), ts(1, 1), 'a');
       rga2.ins(ts(1, 1), ts(1, 2), 'a');
       rga2.ins(ts(1, 2), ts(2, 3), '2');
@@ -1507,12 +1507,12 @@ describe('StringRga', () => {
     });
 
     test('one user merging chunk, while another synchronously inserting at the same position', () => {
-      const rga1 = new StringRga(ts(1, 0));
+      const rga1 = new StrNode(ts(1, 0));
       rga1.ins(ts(1, 0), ts(1, 1), 'a');
       rga1.ins(ts(1, 1), ts(1, 2), '1');
       rga1.ins(ts(1, 1), ts(2, 2), '2');
       expect(rga1.view()).toBe('a21');
-      const rga2 = new StringRga(ts(1, 0));
+      const rga2 = new StrNode(ts(1, 0));
       rga2.ins(ts(1, 0), ts(1, 1), 'a');
       rga2.ins(ts(1, 1), ts(2, 2), '2');
       rga2.ins(ts(1, 1), ts(1, 2), '1');
@@ -1520,12 +1520,12 @@ describe('StringRga', () => {
     });
 
     test('one user merging chunk, while another synchronously inserting at the same position - 2', () => {
-      const rga1 = new StringRga(ts(1, 0));
+      const rga1 = new StrNode(ts(1, 0));
       rga1.ins(ts(1, 0), ts(2, 1), 'a');
       rga1.ins(ts(2, 1), ts(2, 2), '12345');
       rga1.ins(ts(2, 1), ts(1, 2), 'x');
       expect(rga1.view()).toBe('a12345x');
-      const rga2 = new StringRga(ts(1, 0));
+      const rga2 = new StrNode(ts(1, 0));
       rga2.ins(ts(1, 0), ts(2, 1), 'a');
       rga2.ins(ts(2, 1), ts(1, 2), 'x');
       rga2.ins(ts(2, 1), ts(2, 2), '12345');
@@ -1533,14 +1533,14 @@ describe('StringRga', () => {
     });
 
     test('one user merging chunk, while another synchronously inserting at the same position - 2', () => {
-      const rga1 = new StringRga(ts(5, 0));
+      const rga1 = new StrNode(ts(5, 0));
       rga1.ins(ts(5, 0), ts(4, 5), 'YYYYYYYYYYY');
       rga1.ins(ts(5, 0), ts(4, 16), 'BBBBBBBBB');
       rga1.delete([tss(4, 6, 4)]);
       rga1.ins(ts(4, 11), ts(7, 81), 'AAAAAAAAAAAA');
       rga1.delete([tss(4, 10, 6)]);
       rga1.delete([tss(4, 5, 3)]);
-      const rga2 = new StringRga(ts(5, 0));
+      const rga2 = new StrNode(ts(5, 0));
       rga2.ins(ts(5, 0), ts(4, 5), 'YYYYYYYYYYY');
       rga2.ins(ts(5, 0), ts(4, 16), 'BBBBBBBBB');
       rga2.delete([tss(4, 10, 6)]);
@@ -1551,8 +1551,8 @@ describe('StringRga', () => {
     });
 
     test('fuzzer bug - do not set split link on a throway chunk', () => {
-      const rga1 = new StringRga(ts(1, 0));
-      const rga2 = new StringRga(ts(1, 0));
+      const rga1 = new StrNode(ts(1, 0));
+      const rga2 = new StrNode(ts(1, 0));
       rga1.ins(ts(1, 0), ts(100, 1), '\\[');
       rga2.ins(ts(1, 0), ts(100, 1), '\\[');
       rga1.ins(ts(1, 0), ts(200, 1), '____');
@@ -1583,7 +1583,7 @@ describe('StringRga', () => {
 
   //   describe('events', () => {
   //     test('calls .onchange on inserts and deletes', () => {
-  //       const rga1 = new StringRga(ts(3, 0));
+  //       const rga1 = new StrNode(ts(3, 0));
   //       let cnt = 0;
   //       rga1.onchange = () => cnt++;
   //       rga1.ins(ts(3, 0), ts(1, 2), 'bbbbbbbbbbbbbb');

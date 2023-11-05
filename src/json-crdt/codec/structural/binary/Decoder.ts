@@ -12,8 +12,8 @@ import {
   ConNode,
   ObjNode,
   RootLww,
-  StringRga,
-  StringChunk,
+  StrNode,
+  StrChunk,
   ValNode,
   VecNode,
   type JsonNode,
@@ -176,24 +176,24 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     return new ArrayChunk(id, length, ids);
   };
 
-  public cStr(id: ITimestampStruct, length: number): StringRga {
-    const node = new StringRga(id);
+  public cStr(id: ITimestampStruct, length: number): StrNode {
+    const node = new StrNode(id);
     if (length) node.ingest(length, this.cStrChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cStrChunk = (): StringChunk => {
+  private cStrChunk = (): StrChunk => {
     const reader = this.reader;
     const id = this.ts();
     const isTombstone = reader.uint8[reader.x] === 0;
     if (isTombstone) {
       reader.x++;
       const length = reader.vu39();
-      return new StringChunk(id, length, '');
+      return new StrChunk(id, length, '');
     }
     const text: string = this.str() as string;
-    return new StringChunk(id, text.length, text);
+    return new StrChunk(id, text.length, text);
   };
 
   public cBin(id: ITimestampStruct, length: number): BinaryRga {

@@ -3,7 +3,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
-import {ConNode, JsonNode, ValNode, ArrayRga, BinaryRga, ObjNode, StringRga} from '../../../nodes';
+import {ConNode, JsonNode, ValNode, ArrayRga, BinaryRga, ObjNode, StrNode} from '../../../nodes';
 import {IndexedFields, FieldName} from './types';
 
 const EMPTY = new Uint8Array(0);
@@ -46,7 +46,7 @@ export class Encoder {
   public encodeNode(node: JsonNode): Uint8Array {
     if (node instanceof ValNode) return this.encodeVal(node);
     else if (node instanceof ConNode) return this.encodeConst(node);
-    else if (node instanceof StringRga) return this.encodeStr(node);
+    else if (node instanceof StrNode) return this.encodeStr(node);
     else if (node instanceof ObjNode) return this.encodeObj(node);
     else if (node instanceof ArrayRga) return this.encodeArr(node);
     else if (node instanceof BinaryRga) return this.encodeBin(node);
@@ -82,7 +82,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeStr(node: StringRga): Uint8Array {
+  public encodeStr(node: StrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();

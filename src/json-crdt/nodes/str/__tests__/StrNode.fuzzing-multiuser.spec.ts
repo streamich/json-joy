@@ -1,8 +1,8 @@
-import {StringRgaFuzzer, StringRgaFuzzerOptions} from './StringRgaFuzzer';
+import {StrNodeFuzzer, StrNodeFuzzerOptions} from './StrNodeFuzzer';
 
-const execute = (times: number, options?: Partial<StringRgaFuzzerOptions>) => {
+const execute = (times: number, options?: Partial<StrNodeFuzzerOptions>) => {
   for (let i = 0; i < times; i++) {
-    const fuzzer = new StringRgaFuzzer(options);
+    const fuzzer = new StrNodeFuzzer(options);
     fuzzer.generatePrelude();
     try {
       fuzzer.assertSiteViewsEqual();

@@ -1,12 +1,12 @@
 /* tslint:disable no-console */
 
-import {StringRga} from '../StringRga';
+import {StrNode} from '../StrNode';
 import {LogicalClock} from '../../../../json-crdt-patch/clock';
 
 describe('.pos()', () => {
   test('correctly returns positions of a characters in alphabet', () => {
     const clock = new LogicalClock(123, 1);
-    const str = new StringRga(clock.tick(1));
+    const str = new StrNode(clock.tick(1));
     const txt = 'abcdefghijklmnopqrstuvwxyz';
     str.insAt(0, clock.tick(txt.length), txt);
     for (let i = 0; i < txt.length; i++) {
@@ -18,7 +18,7 @@ describe('.pos()', () => {
 
   test('correctly returns positions of a characters in alphabet (characters inserted in reverse)', () => {
     const clock = new LogicalClock(123, 1);
-    const str = new StringRga(clock.tick(1));
+    const str = new StrNode(clock.tick(1));
     str.insAt(0, clock.tick(1), 'z');
     str.insAt(0, clock.tick(1), 'y');
     str.insAt(0, clock.tick(1), 'x');

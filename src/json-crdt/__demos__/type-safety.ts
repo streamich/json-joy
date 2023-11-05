@@ -37,8 +37,8 @@ console.log(model + '');
 // │     ├─ "num"
 // │     │   └─ ConNode 1234.2 { 123 }
 // │     ├─ "text"
-// │     │   └─ StringRga "str" 1234.3 { "hello" }
-// │     │      └─ StringChunk 1234.4!5 len:5 { "hello" }
+// │     │   └─ StrNode 1234.3 { "hello" }
+// │     │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 // │     └─ "flags"
 // │         └─ ArrayRga "arr" 1234.9
 // │            └─ ArrayChunk 1234.14!2 len:2
@@ -62,8 +62,8 @@ console.log(model.find.val.toApi() + '');
 //    ├─ "num"
 //    │   └─ ConNode 1234.2 { 123 }
 //    ├─ "text"
-//    │   └─ StringRga "str" 1234.3 { "hello" }
-//    │      └─ StringChunk 1234.4!5 len:5 { "hello" }
+//    │   └─ StrNode 1234.3 { "hello" }
+//    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "flags"
 //        └─ ArrayRga "arr" 1234.9
 //           └─ ArrayChunk 1234.14!2 len:2
@@ -96,5 +96,5 @@ console.log(model.find.val.num.toApi() + '');
 
 console.log(model.find.val.text.toApi() + '');
 // StringApi
-// └─ StringRga "str" 1234.3 { "hello" }
-//    └─ StringChunk 1234.4!5 len:5 { "hello" }
+// └─ StrNode 1234.3 { "hello" }
+//    └─ StrChunk 1234.4!5 len:5 { "hello" }

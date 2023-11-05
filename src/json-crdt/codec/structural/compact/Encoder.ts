@@ -52,7 +52,7 @@ export class Encoder {
     // TODO: PERF: use switch with `node.constructor`.
     if (node instanceof nodes.ObjNode) return this.encodeObj(arr, node);
     else if (node instanceof nodes.ArrayRga) return this.encodeArr(arr, node);
-    else if (node instanceof nodes.StringRga) return this.encodeStr(arr, node);
+    else if (node instanceof nodes.StrNode) return this.encodeStr(arr, node);
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
     else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
     else if (node instanceof nodes.ConNode) return this.cConst(arr, node);
@@ -107,16 +107,16 @@ export class Encoder {
     }
   }
 
-  protected encodeStr(arr: unknown[], obj: nodes.StringRga): void {
+  protected encodeStr(arr: unknown[], obj: nodes.StrNode): void {
     const res: unknown[] = [Code.MakeString, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
     const iterator = obj.iterator();
     let chunk;
-    while ((chunk = iterator())) this.encodeStrChunk(res, chunk as nodes.StringChunk);
+    while ((chunk = iterator())) this.encodeStrChunk(res, chunk as nodes.StrChunk);
   }
 
-  protected encodeStrChunk(arr: unknown[], chunk: nodes.StringChunk): void {
+  protected encodeStrChunk(arr: unknown[], chunk: nodes.StrChunk): void {
     this.ts(arr, chunk.id);
     arr.push(chunk.del ? chunk.span : chunk.data!);
   }

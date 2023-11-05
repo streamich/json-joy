@@ -1,12 +1,12 @@
 import {Model} from '../../Model';
 import {ConApi, ObjApi, StringApi, VecApi, ValApi} from '../nodes';
-import {ConNode, RootLww, VecNode, ObjNode, StringRga} from '../../../nodes';
+import {ConNode, RootLww, VecNode, ObjNode, StrNode} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as Model<
     ObjNode<{
-      foo: StringRga;
+      foo: StrNode;
       bar: ConNode<number>;
     }>
   >;
@@ -33,7 +33,7 @@ test('proxy API supports object types', () => {
   const foo = obj.foo;
   const fooApi: StringApi = foo.toApi();
   expect(fooApi).toBeInstanceOf(StringApi);
-  expect(fooApi.node).toBeInstanceOf(StringRga);
+  expect(fooApi.node).toBeInstanceOf(StrNode);
   expect(fooApi.view()).toStrictEqual('asdf');
   const bar = obj.bar;
   const barApi: ConApi = bar.toApi();
@@ -45,10 +45,10 @@ test('proxy API supports object types', () => {
 describe('supports all node types', () => {
   type Schema = ObjNode<{
     obj: ObjNode<{
-      str: StringRga;
+      str: StrNode;
       num: ConNode<number>;
     }>;
-    vec: VecNode<[StringRga]>;
+    vec: VecNode<[StrNode]>;
   }>;
   const model = Model.withLogicalClock() as Model<Schema>;
   const data = {
@@ -89,7 +89,7 @@ describe('supports all node types', () => {
     const str = proxy.val.obj.str;
     const strApi: StringApi = str.toApi();
     expect(strApi).toBeInstanceOf(StringApi);
-    expect(strApi.node).toBeInstanceOf(StringRga);
+    expect(strApi.node).toBeInstanceOf(StrNode);
     expect(strApi.view()).toStrictEqual('asdf');
   });
 

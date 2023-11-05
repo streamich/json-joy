@@ -13,7 +13,7 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValNode, VecNode, ObjNode, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
+import {RootLww, ValNode, VecNode, ObjNode, StrNode, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -175,7 +175,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const index = this.index;
     if (op instanceof operations.InsStrOp) {
       const node = index.get(op.obj);
-      if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
+      if (node instanceof StrNode) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewObjOp) {
       const id = op.id;
       if (!index.get(id)) index.set(id, new ObjNode(this, id));
@@ -184,7 +184,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       if (!index.get(id)) index.set(id, new ArrayRga(this, id));
     } else if (op instanceof operations.NewStrOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new StringRga(id));
+      if (!index.get(id)) index.set(id, new StrNode(id));
     } else if (op instanceof operations.NewValOp) {
       const id = op.id;
       if (!index.get(id)) {
@@ -259,7 +259,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           }
         }
         node.delete(op.what);
-      } else if (node instanceof StringRga) node.delete(op.what);
+      } else if (node instanceof StrNode) node.delete(op.what);
       else if (node instanceof BinaryRga) node.delete(op.what);
     } else if (op instanceof operations.NewBinOp) {
       const id = op.id;

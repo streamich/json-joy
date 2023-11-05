@@ -1,4 +1,4 @@
-import type {ConNode, ValNode, VecNode, ArrayRga, BinaryRga, ObjNode, StringRga} from '..';
+import type {ConNode, ValNode, VecNode, ArrayRga, BinaryRga, ObjNode, StrNode} from '..';
 import type {JsonNodeView} from '../types';
 
 test('can infer view type of CRDT nodes', () => {
@@ -9,7 +9,7 @@ test('can infer view type of CRDT nodes', () => {
   type N5 = ValNode<N1>;
   type N6 = ValNode<N4>;
   type N7 = ValNode<N6>;
-  type N8 = StringRga;
+  type N8 = StrNode;
   type N9 = BinaryRga;
   type N10 = ArrayRga<N5>;
   type N11 = ArrayRga<N5 | N2>;

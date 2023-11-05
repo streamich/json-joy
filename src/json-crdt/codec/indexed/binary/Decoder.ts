@@ -7,8 +7,8 @@ import {
   BinaryRga,
   BinaryChunk,
   ObjNode,
-  StringRga,
-  StringChunk,
+  StrNode,
+  StrChunk,
 } from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
@@ -126,15 +126,15 @@ export class Decoder {
     return obj;
   }
 
-  protected cStr(id: ITimestampStruct, length: number): StringRga {
+  protected cStr(id: ITimestampStruct, length: number): StrNode {
     const decoder = this.dec;
-    const node = new StringRga(id);
+    const node = new StrNode(id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const val = decoder.val();
-      if (typeof val === 'number') return new StringChunk(chunkId, val, '');
+      if (typeof val === 'number') return new StrChunk(chunkId, val, '');
       const data = String(val);
-      return new StringChunk(chunkId, data.length, data);
+      return new StrChunk(chunkId, data.length, data);
     });
     return node;
   }

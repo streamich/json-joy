@@ -60,9 +60,9 @@ console.log(fork + '');
 // │     ├─ "counter"
 // │     │   └─ ConNode 1234.11 { 25 }
 // │     └─ "text"
-// │         └─ StringRga "str" 1234.3 { "Hello world!" }
-// │            └─ StringChunk 1234.13!7 len:12 { " world!" }
-// │               ← StringChunk 1234.4!5 len:5 { "Hello" }
+// │         └─ StrNode 1234.3 { "Hello world!" }
+// │            └─ StrChunk 1234.13!7 len:12 { " world!" }
+// │               ← StrChunk 1234.4!5 len:5 { "Hello" }
 // │
 // └─ VectorClock 1234.20
 
