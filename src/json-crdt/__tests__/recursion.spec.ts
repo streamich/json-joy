@@ -54,15 +54,11 @@ describe('recursive node references are not allowed', () => {
         const model = Model.withLogicalClock();
         const builder = model.api.builder;
         const objId = builder.obj();
-        builder.insObj(objId, [
-          ['con', builder.const(2)],
-        ]);
+        builder.insObj(objId, [['con', builder.const(2)]]);
         builder.root(objId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        builder.insObj(objId, [
-          ['obj', objId],
-        ]);
+        builder.insObj(objId, [['obj', objId]]);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
         expect(model.view()).toStrictEqual({con: 2});
@@ -97,9 +93,7 @@ describe('recursive node references are not allowed', () => {
         builder.root(vecId);
         const patch1 = builder.flush();
         model.applyPatch(patch1);
-        builder.insVec(vecId, [
-          [1, vecId],
-        ]);
+        builder.insVec(vecId, [[1, vecId]]);
         const patch2 = builder.flush();
         model.applyPatch(patch2);
         expect(model.view()).toStrictEqual([1]);

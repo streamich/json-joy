@@ -32,7 +32,7 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
    */
   public set(val: ITimestampStruct): ITimestampStruct | undefined {
     if (compare(val, this.val) <= 0 && this.val.sid !== SESSION.SYSTEM) return;
-    if (compare (val, this.id) <= 0) return;
+    if (compare(val, this.id) <= 0) return;
     const oldVal = this.val;
     this.val = val;
     return oldVal;

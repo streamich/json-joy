@@ -127,10 +127,14 @@ export class Patch implements Printable {
       else if (op instanceof operations.NewStrOp) patchOps.push(new operations.NewStrOp(ts(op.id)));
       else if (op instanceof operations.NewBinOp) patchOps.push(new operations.NewBinOp(ts(op.id)));
       else if (op instanceof operations.NewArrOp) patchOps.push(new operations.NewArrOp(ts(op.id)));
-      else if (op instanceof operations.InsArrOp) patchOps.push(new operations.InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
-      else if (op instanceof operations.InsStrOp) patchOps.push(new operations.InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof operations.InsBinOp) patchOps.push(new operations.InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
-      else if (op instanceof operations.InsValOp) patchOps.push(new operations.InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
+      else if (op instanceof operations.InsArrOp)
+        patchOps.push(new operations.InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
+      else if (op instanceof operations.InsStrOp)
+        patchOps.push(new operations.InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsBinOp)
+        patchOps.push(new operations.InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsValOp)
+        patchOps.push(new operations.InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
       else if (op instanceof operations.InsObjOp)
         patchOps.push(
           new operations.InsObjOp(
