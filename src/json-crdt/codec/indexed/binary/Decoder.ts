@@ -9,7 +9,7 @@ import {
   ObjectLww,
   StringRga,
   StringChunk,
-} from '../../../types';
+} from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtDecoder';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';

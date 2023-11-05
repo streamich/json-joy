@@ -11,7 +11,7 @@ import {
   ObjectLww,
   StringRga,
   StringChunk,
-} from '../../../types';
+} from '../../../nodes';
 import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';

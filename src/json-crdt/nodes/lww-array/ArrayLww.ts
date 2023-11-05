@@ -3,7 +3,7 @@ import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from '../../../util/print/printTree';
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
-import type {JsonNode, JsonNodeView} from '../../types';
+import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from '../../../util/print/types';
 
 /**

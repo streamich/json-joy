@@ -1,7 +1,7 @@
-import {ArrayRga} from '../types/rga-array/ArrayRga';
+import {ArrayRga} from '../nodes/rga-array/ArrayRga';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {isChild, Path} from '../../json-pointer';
-import {ObjectLww} from '../types/lww-object/ObjectLww';
+import {ObjectLww} from '../nodes/lww-object/ObjectLww';
 import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
 import type {

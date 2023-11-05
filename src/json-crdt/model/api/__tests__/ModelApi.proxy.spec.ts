@@ -1,6 +1,6 @@
 import {Model} from '../../Model';
 import {ConApi, ObjectApi, StringApi, VectorApi, ValueApi} from '../nodes';
-import {ConNode, RootLww, ArrayLww, ObjectLww, StringRga} from '../../../types';
+import {ConNode, RootLww, ArrayLww, ObjectLww, StringRga} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {

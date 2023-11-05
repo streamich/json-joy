@@ -1,5 +1,5 @@
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
+import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
+import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
 import {decode as decodeBinary, encode as encodeBinary} from '../../../json-crdt-patch/codec/binary';
 import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/decode';
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
@@ -14,14 +14,14 @@ import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder'
 import {Encoder as JsonEncoder} from '../../codec/structural/json/Encoder';
 import {generateInteger} from './util';
 import {Model} from '../..';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
+import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {StringRga} from '../../nodes/rga-string/StringRga';
 import {interval} from '../../../json-crdt-patch/clock';
-import {ValueLww} from '../../types/lww-value/ValueLww';
+import {ValueLww} from '../../nodes/lww-value/ValueLww';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
 

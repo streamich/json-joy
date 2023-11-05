@@ -1,4 +1,4 @@
-import type * as types from '../../types';
+import type * as types from '../../nodes';
 import type * as nodes from './nodes';
 
 // prettier-ignore

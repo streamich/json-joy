@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {StringRga} from '../../nodes/rga-string/StringRga';
 import {interval, tick} from '../../../json-crdt-patch/clock';
 
 describe('Document', () => {

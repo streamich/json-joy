@@ -11,7 +11,7 @@ import {
   ObjectLww,
   StringRga,
   StringChunk,
-} from '../../../types';
+} from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';

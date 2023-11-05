@@ -1,7 +1,7 @@
 import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, Chunk} from '../rga/AbstractRga';
 import {next} from '../../../util/trees/util';
-import type {JsonNode} from '../../types';
+import type {JsonNode} from '..';
 
 /**
  * @ignore

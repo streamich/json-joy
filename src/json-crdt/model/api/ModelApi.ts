@@ -1,9 +1,9 @@
-import {ArrayLww, ConNode, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../types';
+import {ArrayLww, ConNode, ObjectLww, ArrayRga, BinaryRga, StringRga, ValueLww} from '../../nodes';
 import {ApiPath, ArrayApi, BinaryApi, ConApi, NodeApi, ObjectApi, StringApi, VectorApi, ValueApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import type {JsonNode} from '../../types';
+import type {JsonNode} from '../../nodes';
 import type {Model} from '../Model';
 
 /**

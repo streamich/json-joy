@@ -1,4 +1,4 @@
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
+import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
 import {Model} from '../Model';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {interval, tick} from '../../../json-crdt-patch/clock';

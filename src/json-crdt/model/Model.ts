@@ -1,5 +1,5 @@
 import * as operations from '../../json-crdt-patch/operations';
-import {ConNode} from '../types/con/ConNode';
+import {ConNode} from '../nodes/con/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,
@@ -13,11 +13,11 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../types';
+import {RootLww, ValueLww, ArrayLww, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
-import type {JsonNode, JsonNodeView} from '../types/types';
+import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from '../../util/print/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
 

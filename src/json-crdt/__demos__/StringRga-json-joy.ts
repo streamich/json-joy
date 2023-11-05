@@ -7,7 +7,7 @@
  */
 
 import {ts} from '../../json-crdt-patch/clock';
-import {StringRga} from '../types/rga-string/StringRga';
+import {StringRga} from '../nodes/rga-string/StringRga';
 
 const user1 = 123;
 const user2 = 345;

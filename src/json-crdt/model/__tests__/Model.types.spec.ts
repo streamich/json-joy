@@ -1,5 +1,5 @@
 import {Model} from '../Model';
-import type {ConNode, ObjectLww, StringRga} from '../../types';
+import type {ConNode, ObjectLww, StringRga} from '../../nodes';
 
 test('can add TypeScript types to Model view', () => {
   const model = Model.withLogicalClock() as Model<

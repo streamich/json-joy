@@ -1,4 +1,4 @@
-import type {JsonNode} from '../../types';
+import type {JsonNode} from '..';
 import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {AbstractRga, Chunk} from '../rga/AbstractRga';
 

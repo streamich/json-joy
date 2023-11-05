@@ -10,7 +10,7 @@ import {
   ObjectLww,
   StringRga,
   StringChunk,
-} from '../../../types';
+} from '../../../nodes';
 import {toBase64} from '../../../../util/base64/toBase64';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {ITimestampStruct, IVectorClock, Timestamp} from '../../../../json-crdt-patch/clock';

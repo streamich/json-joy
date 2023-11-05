@@ -10,7 +10,7 @@ import type {
   BinaryRga,
   ObjectLww,
   StringRga,
-} from '../../types';
+} from '../../nodes';
 
 export interface ProxyNode<N extends JsonNode = JsonNode> {
   toApi(): JsonNodeApi<N>;

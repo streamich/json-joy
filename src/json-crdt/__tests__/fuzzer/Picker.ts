@@ -1,10 +1,10 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
-import {JsonNode} from '../../types';
-import {ObjectLww} from '../../types/lww-object/ObjectLww';
-import {ArrayRga} from '../../types/rga-array/ArrayRga';
-import {BinaryRga} from '../../types/rga-binary/BinaryRga';
-import {StringRga} from '../../types/rga-string/StringRga';
+import {JsonNode} from '../../nodes';
+import {ObjectLww} from '../../nodes/lww-object/ObjectLww';
+import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
+import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
+import {StringRga} from '../../nodes/rga-string/StringRga';
 import {Model} from '../../model/Model';
 import {Fuzzer} from '../../../util/Fuzzer';
 import {FuzzerOptions} from './types';

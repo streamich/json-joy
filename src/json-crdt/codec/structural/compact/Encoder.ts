@@ -11,7 +11,7 @@ import {
   ObjectLww,
   StringRga,
   StringChunk,
-} from '../../../types';
+} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {SESSION} from '../../../../json-crdt-patch/constants';

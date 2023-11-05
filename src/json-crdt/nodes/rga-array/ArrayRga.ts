@@ -3,7 +3,7 @@ import {ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {Model} from '../../model';
 import {printBinary} from '../../../util/print/printBinary';
 import {printTree} from '../../../util/print/printTree';
-import type {JsonNode, JsonNodeView} from '../../types';
+import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from '../../../util/print/types';
 
 type E = ITimestampStruct;

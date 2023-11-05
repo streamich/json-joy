@@ -2,7 +2,7 @@ import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-pat
 import {printTree} from '../../../util/print/printTree';
 import type {Model} from '../../model';
 import type {Printable} from '../../../util/print/types';
-import type {JsonNode, JsonNodeView} from '../../types';
+import type {JsonNode, JsonNodeView} from '..';
 
 /**
  * Represents a `obj` JSON CRDT node, which is a Last-write-wins (LWW) object.

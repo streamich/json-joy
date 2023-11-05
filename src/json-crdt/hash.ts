@@ -1,12 +1,12 @@
 import {CONST, updateNum} from '../json-hash';
-import {ConNode} from './types';
-import {ValueLww} from './types/lww-value/ValueLww';
-import {ObjectLww} from './types/lww-object/ObjectLww';
-import {ArrayLww} from './types/lww-array/ArrayLww';
-import {ArrayRga} from './types/rga-array/ArrayRga';
-import {AbstractRga} from './types/rga';
+import {ConNode} from './nodes';
+import {ValueLww} from './nodes/lww-value/ValueLww';
+import {ObjectLww} from './nodes/lww-object/ObjectLww';
+import {ArrayLww} from './nodes/lww-array/ArrayLww';
+import {ArrayRga} from './nodes/rga-array/ArrayRga';
+import {AbstractRga} from './nodes/rga';
 import {last2} from '../util/trees/util2';
-import type {JsonNode} from './types';
+import type {JsonNode} from './nodes';
 import type {ITimestampStruct} from '../json-crdt-patch/clock';
 import type {Model} from './model';
 

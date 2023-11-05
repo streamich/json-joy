@@ -1,4 +1,4 @@
-import {ConNode, RootLww, ValueLww, ObjectLww} from '../../../types';
+import {ConNode, RootLww, ValueLww, ObjectLww} from '../../../nodes';
 import {ConApi, ObjectApi, ValueApi} from '../nodes';
 import {Model} from '../../Model';
 
