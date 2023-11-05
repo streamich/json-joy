@@ -344,12 +344,18 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         nl,
         (tab) => {
           const nodes: JsonNode[] = [];
-          this.index.forEach(item => nodes.push(item.v));
-          return `Index (${nodes.length} nodes)` + printTree(tab, nodes.map(node => (tab) => `${node.constructor.name} ${toDisplayString(node.id)}`));
+          this.index.forEach((item) => nodes.push(item.v));
+          return (
+            `Index (${nodes.length} nodes)` +
+            printTree(
+              tab,
+              nodes.map((node) => (tab) => `${node.constructor.name} ${toDisplayString(node.id)}`),
+            )
+          );
         },
         nl,
         // (tab) => `View ${toTree(this.view(), tab)}`,
-        (tab) => `View${printTree(tab, [tab => JSON.stringify(this.view(), null, 2).replace(/\n/g, '\n' + tab)])}`,
+        (tab) => `View${printTree(tab, [(tab) => JSON.stringify(this.view(), null, 2).replace(/\n/g, '\n' + tab)])}`,
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,
