@@ -95,6 +95,6 @@ console.log(model.find.val.num.toApi() + '');
 // └─ ConNode 1234.2 { 123 }
 
 console.log(model.find.val.text.toApi() + '');
-// StringApi
+// StrApi
 // └─ StrNode 1234.3 { "hello" }
 //    └─ StrChunk 1234.4!5 len:5 { "hello" }
