@@ -96,9 +96,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     else if (node instanceof BinNode) this.cBin(node);
   }
 
-  protected cObj(obj: ObjNode): void {
-    this.ts(obj.id);
-    const keys = obj.keys;
+  protected cObj(node: ObjNode): void {
+    this.ts(node.id);
+    const keys = node.keys;
     this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
     keys.forEach(this.cKey);
   }
@@ -108,10 +108,10 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     this.cNode(this.doc.index.get(val)!);
   };
 
-  protected cVec(obj: VecNode): void {
-    const elements = obj.elements;
+  protected cVec(node: VecNode): void {
+    const elements = node.elements;
     const length = elements.length;
-    this.ts(obj.id);
+    this.ts(node.id);
     this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
     const index = this.doc.index;
     for (let i = 0; i < length; i++) {
@@ -121,13 +121,13 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cArr(obj: ArrNode): void {
+  protected cArr(node: ArrNode): void {
     const ts = this.ts;
     const writer = this.writer;
-    ts(obj.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, obj.size());
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.size());
     const index = this.doc.index;
-    for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const span = chunk.span;
       const deleted = chunk.del;
       writer.b1vu28(deleted, span);
@@ -138,12 +138,12 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cStr(obj: StrNode): void {
+  protected cStr(node: StrNode): void {
     const ts = this.ts;
     const writer = this.writer;
-    ts(obj.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.STR, obj.size());
-    for (let chunk = obj.first(); chunk; chunk = obj.next(chunk)) {
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.size());
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
       if (chunk.del) {
         writer.u8(0);
