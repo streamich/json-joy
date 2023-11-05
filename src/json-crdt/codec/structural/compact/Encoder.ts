@@ -22,18 +22,17 @@ export class Encoder {
       this.clock.reset(model.clock);
     }
     const root = model.root;
-    const doc: t.JsonCrdtCompactDocument = [
-      0,
-      !root.val.time ? 0 : this.cNode(root.node()),
-    ];
+    const doc: t.JsonCrdtCompactDocument = [0, !root.val.time ? 0 : this.cNode(root.node())];
     doc[0] = isServerTime ? this.time! : this.clock!.toJson();
     return doc;
   }
 
   protected ts(ts: ITimestampStruct): t.JsonCrdtCompactTimestamp {
     switch (ts.sid) {
-      case SESSION.SYSTEM: return [ts.sid, ts.time];
-      case SESSION.SERVER: return this.time! - ts.time;
+      case SESSION.SYSTEM:
+        return [ts.sid, ts.time];
+      case SESSION.SERVER:
+        return this.time! - ts.time;
       default: {
         const relativeId = this.clock!.append(ts);
         return [-relativeId.sessionIndex, relativeId.timeDiff];
@@ -55,7 +54,7 @@ export class Encoder {
 
   protected cObj(obj: nodes.ObjNode): t.JsonCrdtCompactObj {
     const map: t.JsonCrdtCompactObj[2] = {};
-    obj.nodes((child, key) => map[key] = this.cNode(child));
+    obj.nodes((child, key) => (map[key] = this.cNode(child)));
     const res: t.JsonCrdtCompactObj = [JsonCrdtDataType.obj, this.ts(obj.id), map];
     return res;
   }
@@ -100,7 +99,9 @@ export class Encoder {
   protected cStr(node: nodes.StrNode): t.JsonCrdtCompactStr {
     const chunks: t.JsonCrdtCompactStr[2] = [];
     for (let chunk = node.first(); chunk; chunk = node.next(chunk))
-      chunks.push([this.ts(chunk.id), chunk.del ? chunk.span : chunk.data!] as t.JsonCrdtCompactStrChunk | t.JsonCrdtCompactTombstone);
+      chunks.push([this.ts(chunk.id), chunk.del ? chunk.span : chunk.data!] as
+        | t.JsonCrdtCompactStrChunk
+        | t.JsonCrdtCompactTombstone);
     const res: t.JsonCrdtCompactStr = [JsonCrdtDataType.str, this.ts(node.id), chunks];
     return res;
   }
@@ -108,7 +109,9 @@ export class Encoder {
   protected cBin(node: nodes.BinNode): t.JsonCrdtCompactBin {
     const chunks: t.JsonCrdtCompactBin[2] = [];
     for (let chunk = node.first(); chunk; chunk = node.next(chunk))
-      chunks.push([this.ts(chunk.id), chunk.del ? chunk.span : chunk.data!] as t.JsonCrdtCompactBinChunk | t.JsonCrdtCompactTombstone);
+      chunks.push([this.ts(chunk.id), chunk.del ? chunk.span : chunk.data!] as
+        | t.JsonCrdtCompactBinChunk
+        | t.JsonCrdtCompactTombstone);
     const res: t.JsonCrdtCompactBin = [JsonCrdtDataType.bin, this.ts(node.id), chunks];
     return res;
   }

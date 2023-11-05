@@ -17,7 +17,9 @@ export class Decoder {
     } else {
       this.clockDecoder = ClockDecoder.fromArr(time as number[]);
     }
-    const model = isServerTime ? Model.withServerClock(time as number) : Model.withLogicalClock(this.clockDecoder!.clock);
+    const model = isServerTime
+      ? Model.withServerClock(time as number)
+      : Model.withLogicalClock(this.clockDecoder!.clock);
     const val = root ? this.decNode(model, root) : UNDEFINED;
     model.root = new nodes.RootNode(model, val.id);
     return model;
@@ -38,13 +40,20 @@ export class Decoder {
 
   protected decNode(model: Model, node: t.JsonCrdtCompactNode): nodes.JsonNode {
     switch (node[0]) {
-      case JsonCrdtDataType.con: return this.decCon(model, node);
-      case JsonCrdtDataType.val: return this.decVal(model, node);
-      case JsonCrdtDataType.obj: return this.decObj(model, node);
-      case JsonCrdtDataType.vec: return this.decVec(model, node);
-      case JsonCrdtDataType.str: return this.decStr(model, node);
-      case JsonCrdtDataType.bin: return this.decBin(model, node);
-      case JsonCrdtDataType.arr: return this.decArr(model, node);
+      case JsonCrdtDataType.con:
+        return this.decCon(model, node);
+      case JsonCrdtDataType.val:
+        return this.decVal(model, node);
+      case JsonCrdtDataType.obj:
+        return this.decObj(model, node);
+      case JsonCrdtDataType.vec:
+        return this.decVec(model, node);
+      case JsonCrdtDataType.str:
+        return this.decStr(model, node);
+      case JsonCrdtDataType.bin:
+        return this.decBin(model, node);
+      case JsonCrdtDataType.arr:
+        return this.decArr(model, node);
     }
     throw new Error('UNKNOWN_NODE');
   }
