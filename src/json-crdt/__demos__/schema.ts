@@ -39,8 +39,8 @@ console.log(model + '');
 // │            ├─ "age"
 // │            │   └─ ConNode 1234.7 { 42 }
 // │            └─ "tags"
-// │                └─ ArrayRga "arr" 1234.8
-// │                   └─ ArrayChunk 1234.11!2 len:2
+// │                └─ ArrNode 1234.8
+// │                   └─ ArrChunk 1234.11!2 len:2
 // │                      ├─ [0]: ConNode 1234.9 { "foo" }
 // │                      └─ [1]: ConNode 1234.10 { "bar" }
 // │

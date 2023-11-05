@@ -1,4 +1,4 @@
-import {ConNode, RootLww, JsonNode, ValNode, VecNode, ArrayRga, BinNode, ObjNode, StrNode} from '../../../nodes';
+import {ConNode, RootLww, JsonNode, ValNode, VecNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
@@ -83,7 +83,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     else if (node instanceof StrNode) this.cStr(node);
     else if (node instanceof ObjNode) this.cObj(node);
     else if (node instanceof VecNode) this.cTup(node);
-    else if (node instanceof ArrayRga) this.cArr(node);
+    else if (node instanceof ArrNode) this.cArr(node);
     else if (node instanceof BinNode) this.cBin(node);
   }
 
@@ -112,7 +112,7 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     }
   }
 
-  protected cArr(obj: ArrayRga): void {
+  protected cArr(obj: ArrNode): void {
     const ts = this.ts;
     const writer = this.writer;
     ts(obj.id);

@@ -5,8 +5,8 @@ import {Model, UNDEFINED} from '../../../model/Model';
 import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {
-  ArrayRga,
-  ArrayChunk,
+  ArrNode,
+  ArrChunk,
   BinNode,
   BinChunk,
   ConNode,
@@ -160,20 +160,20 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     return obj;
   }
 
-  public cArr(id: ITimestampStruct, length: number): ArrayRga {
-    const obj = new ArrayRga(this.doc, id);
+  public cArr(id: ITimestampStruct, length: number): ArrNode {
+    const obj = new ArrNode(this.doc, id);
     obj.ingest(length, this.cArrChunk);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private readonly cArrChunk = (): ArrayChunk => {
+  private readonly cArrChunk = (): ArrChunk => {
     const [deleted, length] = this.reader.b1vu28();
     const id = this.ts();
-    if (deleted) return new ArrayChunk(id, length, undefined);
+    if (deleted) return new ArrChunk(id, length, undefined);
     const ids: ITimestampStruct[] = [];
     for (let i = 0; i < length; i++) ids.push(this.cNode().id);
-    return new ArrayChunk(id, length, ids);
+    return new ArrChunk(id, length, ids);
   };
 
   public cStr(id: ITimestampStruct, length: number): StrNode {

@@ -14,19 +14,19 @@ const Empty = [] as any[];
  * @ignore
  * @category CRDT Node
  */
-export class ArrayChunk implements Chunk<E[]> {
+export class ArrChunk implements Chunk<E[]> {
   public readonly id: ITimestampStruct;
   public span: number;
   public del: boolean;
   public data: E[] | undefined;
   public len: number;
-  public p: ArrayChunk | undefined;
-  public l: ArrayChunk | undefined;
-  public r: ArrayChunk | undefined;
-  public p2: ArrayChunk | undefined;
-  public l2: ArrayChunk | undefined;
-  public r2: ArrayChunk | undefined;
-  public s: ArrayChunk | undefined;
+  public p: ArrChunk | undefined;
+  public l: ArrChunk | undefined;
+  public r: ArrChunk | undefined;
+  public p2: ArrChunk | undefined;
+  public l2: ArrChunk | undefined;
+  public r2: ArrChunk | undefined;
+  public s: ArrChunk | undefined;
 
   constructor(id: ITimestampStruct, span: number, data: E[] | undefined) {
     this.id = id;
@@ -45,16 +45,16 @@ export class ArrayChunk implements Chunk<E[]> {
     this.span = this.data!.length;
   }
 
-  public split(ticks: number): ArrayChunk {
+  public split(ticks: number): ArrChunk {
     const span = this.span;
     this.span = ticks;
     if (!this.del) {
       const data = this.data!;
       const rightData = data.splice(ticks);
-      const chunk = new ArrayChunk(tick(this.id, ticks), span - ticks, rightData);
+      const chunk = new ArrChunk(tick(this.id, ticks), span - ticks, rightData);
       return chunk;
     }
-    return new ArrayChunk(tick(this.id, ticks), span - ticks, undefined);
+    return new ArrChunk(tick(this.id, ticks), span - ticks, undefined);
   }
 
   public delete(): void {
@@ -62,8 +62,8 @@ export class ArrayChunk implements Chunk<E[]> {
     this.data = undefined;
   }
 
-  public clone(): ArrayChunk {
-    return new ArrayChunk(this.id, this.span, this.data ? [...this.data] : undefined);
+  public clone(): ArrChunk {
+    return new ArrChunk(this.id, this.span, this.data ? [...this.data] : undefined);
   }
 }
 
@@ -73,7 +73,7 @@ export class ArrayChunk implements Chunk<E[]> {
  *
  * @category CRDT Node
  */
-export class ArrayRga<Element extends JsonNode = JsonNode>
+export class ArrNode<Element extends JsonNode = JsonNode>
   extends AbstractRga<E[]>
   implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable
 {
@@ -115,8 +115,8 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */
-  public createChunk(id: ITimestampStruct, data: E[] | undefined): ArrayChunk {
-    return new ArrayChunk(id, data ? data.length : 0, data);
+  public createChunk(id: ITimestampStruct, data: E[] | undefined): ArrChunk {
+    return new ArrChunk(id, data ? data.length : 0, data);
   }
 
   /** @ignore */
@@ -125,7 +125,7 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
   }
 
   protected toStringName(): string {
-    return super.toStringName() + ' "arr"';
+    return super.toStringName();
   }
 
   // ----------------------------------------------------------------- JsonNode
@@ -177,7 +177,7 @@ export class ArrayRga<Element extends JsonNode = JsonNode>
   // ---------------------------------------------------------------- Printable
 
   /** @ignore */
-  protected printChunk(tab: string, chunk: ArrayChunk): string {
+  protected printChunk(tab: string, chunk: ArrChunk): string {
     const pos = this.pos(chunk);
     let valueTree = '';
     if (!chunk.del) {

@@ -16,7 +16,7 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StrNode, ValNode, ObjNode, ArrayRga, BinNode} from '../../nodes';
+import {StrNode, ValNode, ObjNode, ArrNode, BinNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
@@ -70,7 +70,7 @@ export class SessionLogical {
     if (node instanceof StrNode) patch = this.generateStringPatch(model, node);
     else if (node instanceof BinNode) patch = this.generateBinaryPatch(model, node);
     else if (node instanceof ObjNode) patch = this.generateObjectPatch(model, node);
-    else if (node instanceof ArrayRga) patch = this.generateArrayPatch(model, node);
+    else if (node instanceof ArrNode) patch = this.generateArrayPatch(model, node);
     else if (node instanceof ValNode) patch = this.generateValuePatch(model, node);
     else return;
     if (!patch) return;
@@ -150,7 +150,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateArrayPatch(model: Model, node: ArrayRga): Patch {
+  private generateArrayPatch(model: Model, node: ArrNode): Patch {
     const opcode = this.fuzzer.picker.pickArrayOperation(node);
     const builder = new PatchBuilder(model.clock);
     const length = node.length();

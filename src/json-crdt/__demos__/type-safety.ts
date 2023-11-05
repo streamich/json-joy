@@ -40,8 +40,8 @@ console.log(model + '');
 // │     │   └─ StrNode 1234.3 { "hello" }
 // │     │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 // │     └─ "flags"
-// │         └─ ArrayRga "arr" 1234.9
-// │            └─ ArrayChunk 1234.14!2 len:2
+// │         └─ ArrNode 1234.9
+// │            └─ ArrChunk 1234.14!2 len:2
 // │               ├─ [0]: ValNode 1234.11
 // │               │       └─ ConNode 1234.10 { true }
 // │               └─ [1]: ValNode 1234.13
@@ -65,8 +65,8 @@ console.log(model.find.val.toApi() + '');
 //    │   └─ StrNode 1234.3 { "hello" }
 //    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "flags"
-//        └─ ArrayRga "arr" 1234.9
-//           └─ ArrayChunk 1234.14!2 len:2
+//        └─ ArrNode 1234.9
+//           └─ ArrChunk 1234.14!2 len:2
 //              ├─ [0]: ValNode 1234.11
 //              │       └─ ConNode 1234.10 { true }
 //              └─ [1]: ValNode 1234.13
@@ -74,8 +74,8 @@ console.log(model.find.val.toApi() + '');
 
 console.log(model.find.val.flags.toApi() + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.9
-//    └─ ArrayChunk 1234.14!2 len:2
+// └─ ArrNode 1234.9
+//    └─ ArrChunk 1234.14!2 len:2
 //       ├─ [0]: ValNode 1234.11
 //       │       └─ ConNode 1234.10 { true }
 //       └─ [1]: ValNode 1234.13

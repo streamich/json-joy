@@ -17,8 +17,8 @@ export type ProxyNodeObj<N extends nodes.ObjNode<any>> = ProxyNode<N> & {
 };
 export type ProxyNodeStr = ProxyNode<nodes.StrNode>;
 export type ProxyNodeBin = ProxyNode<nodes.BinNode>;
-export type ProxyNodeArr<N extends nodes.ArrayRga<any>> = ProxyNode<N> &
-  Record<number, JsonNodeToProxyNode<N extends nodes.ArrayRga<infer E> ? E : never>>;
+export type ProxyNodeArr<N extends nodes.ArrNode<any>> = ProxyNode<N> &
+  Record<number, JsonNodeToProxyNode<N extends nodes.ArrNode<infer E> ? E : never>>;
 
 // prettier-ignore
 export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
@@ -31,7 +31,7 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
         ? ProxyNodeStr
         : N extends nodes.BinNode
           ? ProxyNodeBin
-          : N extends nodes.ArrayRga<any>
+          : N extends nodes.ArrNode<any>
             ? ProxyNodeArr<N>
             : N extends nodes.ObjNode<any>
               ? ProxyNodeObj<N>

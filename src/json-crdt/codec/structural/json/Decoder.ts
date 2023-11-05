@@ -99,9 +99,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cArr(doc: Model, node: ArrayJsonCrdtNode): nodes.ArrayRga {
+  protected cArr(doc: Model, node: ArrayJsonCrdtNode): nodes.ArrNode {
     const id = this.cTs(node.id);
-    const rga = new nodes.ArrayRga(doc, id);
+    const rga = new nodes.ArrNode(doc, id);
     const chunks = node.chunks;
     const length = chunks.length;
     if (length) {
@@ -111,10 +111,10 @@ export class Decoder {
         const c = chunks[i++];
         const id = self.cTs(c.id);
         if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.ArrayChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+          return new nodes.ArrChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
         else {
           const ids = (c as ArrayJsonCrdtChunk).nodes.map((n) => this.cNode(doc, n).id);
-          return new nodes.ArrayChunk(id, ids.length, ids);
+          return new nodes.ArrChunk(id, ids.length, ids);
         }
       });
     }

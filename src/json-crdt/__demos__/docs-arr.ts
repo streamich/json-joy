@@ -24,8 +24,8 @@ console.log(model.root + '');
 // RootLww "val" 0.0
 // └─ ObjNode 1234.1
 //    └─ "tags"
-//        └─ ArrayRga "arr" 1234.2
-//           └─ ArrayChunk 1234.17!3 len:3
+//        └─ ArrNode 1234.2
+//           └─ ArrChunk 1234.17!3 len:3
 //              ├─ [0]: StrNode 1234.3 { "big" }
 //              │       └─ StrChunk 1234.4!3 len:3 { "big" }
 //              ├─ [1]: StrNode 1234.7 { "small" }
@@ -44,8 +44,8 @@ console.log(model.root + '');
 // RootLww "val" 0.0
 // └─ ObjNode 1234.1
 //    └─ "tags"
-//        └─ ArrayRga "arr" 1234.22
-//           └─ ArrayChunk 1234.26!3 len:3
+//        └─ ArrNode 1234.22
+//           └─ ArrChunk 1234.26!3 len:3
 //              ├─ [0]: ConNode 1234.23 { "big" }
 //              ├─ [1]: ConNode 1234.24 { "small" }
 //              └─ [2]: ConNode 1234.25 { "red" }
@@ -55,7 +55,7 @@ const tags = model.api.arr(['tags']);
 console.log(tags + '');
 // ArrayApi
 // └─ ObjNode 1234.22
-//    └─ ArrayChunk 1234.26!3 len:3
+//    └─ ArrChunk 1234.26!3 len:3
 //       ├─ [0]: ConNode 1234.23 { "big" }
 //       ├─ [1]: ConNode 1234.24 { "small" }
 //       └─ [2]: ConNode 1234.25 { "red" }
@@ -63,13 +63,13 @@ console.log(tags + '');
 tags.ins(1, [konst('medium'), konst('blue')]);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22
-//    └─ ArrayChunk 1234.32!2 len:5
+// └─ ArrNode 1234.22
+//    └─ ArrChunk 1234.32!2 len:5
 //       ├─ [1]: ConNode 1234.30 { "medium" }
 //       └─ [2]: ConNode 1234.31 { "blue" }
-//       ← ArrayChunk 1234.26!1 len:1
+//       ← ArrChunk 1234.26!1 len:1
 //         └─ [0]: ConNode 1234.23 { "big" }
-//       → ArrayChunk 1234.27!2 len:2
+//       → ArrChunk 1234.27!2 len:2
 //         ├─ [3]: ConNode 1234.24 { "small" }
 //         └─ [4]: ConNode 1234.25 { "red" }
 
@@ -79,14 +79,14 @@ console.log(tags.view());
 tags.del(2, 2);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22
-//    └─ ArrayChunk 1234.32!1 len:3
+// └─ ArrNode 1234.22
+//    └─ ArrChunk 1234.32!1 len:3
 //       └─ [1]: ConNode 1234.30 { "medium" }
-//       ← ArrayChunk 1234.26!1 len:1
+//       ← ArrChunk 1234.26!1 len:1
 //         └─ [0]: ConNode 1234.23 { "big" }
-//       → ArrayChunk 1234.33!1 len:1 [1]
-//         → ArrayChunk 1234.27!1 len:1 [1]
-//           → ArrayChunk 1234.28!1 len:1
+//       → ArrChunk 1234.33!1 len:1 [1]
+//         → ArrChunk 1234.27!1 len:1 [1]
+//           → ArrChunk 1234.28!1 len:1
 //             └─ [2]: ConNode 1234.25 { "red" }
 
 console.log(model.view());

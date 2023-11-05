@@ -1,5 +1,5 @@
 import {CONST, updateNum} from '../json-hash';
-import {ConNode, ValNode, ObjNode, VecNode, ArrayRga} from './nodes';
+import {ConNode, ValNode, ObjNode, VecNode, ArrNode} from './nodes';
 import {AbstractRga} from './nodes/rga';
 import {last2} from '../util/trees/util2';
 import type {JsonNode} from './nodes';
@@ -40,7 +40,7 @@ export const updateNode = (state: number, node: JsonNode): number => {
     });
     return updateId(state, node.id);
   }
-  if (node instanceof ArrayRga) {
+  if (node instanceof ArrNode) {
     node.children((child) => {
       state = updateNode(state, child);
     });

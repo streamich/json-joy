@@ -1,5 +1,5 @@
 import {Path, toPath} from '../../../json-pointer';
-import {VecNode, ObjNode, ArrayRga} from '../../nodes';
+import {VecNode, ObjNode, ArrNode} from '../../nodes';
 import type {JsonNode} from '../../nodes';
 
 export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
@@ -16,7 +16,7 @@ export const find = (startNode: JsonNode, path: string | Path): JsonNode => {
       const nextNode = node.get(String(step)) as JsonNode | undefined;
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;
-    } else if (node instanceof ArrayRga) {
+    } else if (node instanceof ArrNode) {
       const nextNode = node.getNode(Number(step));
       if (!nextNode) throw new Error('NOT_FOUND');
       node = nextNode;

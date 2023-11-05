@@ -51,7 +51,7 @@ export class Encoder {
   protected cNode(arr: unknown[], node: nodes.JsonNode): void {
     // TODO: PERF: use switch with `node.constructor`.
     if (node instanceof nodes.ObjNode) return this.encodeObj(arr, node);
-    else if (node instanceof nodes.ArrayRga) return this.encodeArr(arr, node);
+    else if (node instanceof nodes.ArrNode) return this.encodeArr(arr, node);
     else if (node instanceof nodes.StrNode) return this.encodeStr(arr, node);
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
     else if (node instanceof nodes.VecNode) return this.cTup(arr, node);
@@ -87,7 +87,7 @@ export class Encoder {
     }
   }
 
-  protected encodeArr(arr: unknown[], obj: nodes.ArrayRga): void {
+  protected encodeArr(arr: unknown[], obj: nodes.ArrNode): void {
     const res: unknown[] = [Code.MakeArray, obj.size()];
     arr.push(res);
     this.ts(res, obj.id);
@@ -96,7 +96,7 @@ export class Encoder {
     while ((chunk = iterator())) this.encodeArrChunk(res, chunk);
   }
 
-  protected encodeArrChunk(arr: unknown[], chunk: nodes.ArrayChunk): void {
+  protected encodeArrChunk(arr: unknown[], chunk: nodes.ArrChunk): void {
     this.ts(arr, chunk.id);
     if (chunk.del) arr.push(chunk.span);
     else {

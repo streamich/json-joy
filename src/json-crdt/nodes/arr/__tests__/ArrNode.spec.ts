@@ -1,6 +1,6 @@
 import {PatchBuilder} from '../../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../../../model';
-import {ArrayRga} from '../ArrayRga';
+import {ArrNode} from '../ArrNode';
 
 test('can insert two booleans into an array', () => {
   const doc = Model.withLogicalClock();
@@ -20,7 +20,7 @@ test('can insert two booleans into an array', () => {
   const ins2 = builder3.insArr(arr, ins1, [f]);
   doc.applyPatch(builder3.patch);
 
-  const node = doc.index.get(arr) as ArrayRga;
+  const node = doc.index.get(arr) as ArrNode;
   const firstChunk = node.first();
 
   expect(node.length()).toBe(2);

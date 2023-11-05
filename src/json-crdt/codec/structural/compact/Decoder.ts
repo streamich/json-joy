@@ -99,19 +99,19 @@ export class Decoder {
     return obj;
   }
 
-  protected decodeArr(doc: Model, data: unknown[]): nodes.ArrayRga {
+  protected decodeArr(doc: Model, data: unknown[]): nodes.ArrNode {
     const size = data[1] as number;
     const [id, index] = this.ts(data, 2);
-    const obj = new nodes.ArrayRga(doc, id);
+    const obj = new nodes.ArrNode(doc, id);
     const self = this;
     let i = index;
     obj.ingest(size, () => {
       const [chunkId, idx] = self.ts(data, i);
       const content = data[idx];
       i = idx + 1;
-      if (typeof content === 'number') return new nodes.ArrayChunk(chunkId, content, undefined);
+      if (typeof content === 'number') return new nodes.ArrChunk(chunkId, content, undefined);
       const ids = (content as unknown[]).map((c) => this.decodeNode(doc, c).id);
-      return new nodes.ArrayChunk(chunkId, (content as string).length, ids);
+      return new nodes.ArrChunk(chunkId, (content as string).length, ids);
     });
     doc.index.set(id, obj);
     return obj;

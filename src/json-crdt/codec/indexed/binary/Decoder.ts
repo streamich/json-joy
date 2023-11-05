@@ -2,8 +2,8 @@ import {
   ConNode,
   JsonNode,
   ValNode,
-  ArrayRga,
-  ArrayChunk,
+  ArrNode,
+  ArrChunk,
   BinNode,
   BinChunk,
   ObjNode,
@@ -153,17 +153,17 @@ export class Decoder {
     return node;
   }
 
-  protected cArr(id: ITimestampStruct, length: number): ArrayRga {
+  protected cArr(id: ITimestampStruct, length: number): ArrNode {
     const decoder = this.dec;
     const reader = decoder.reader;
-    const node = new ArrayRga(this.doc, id);
+    const node = new ArrNode(this.doc, id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const [deleted, length] = reader.b1vu28();
-      if (deleted) return new ArrayChunk(chunkId, length, undefined);
+      if (deleted) return new ArrChunk(chunkId, length, undefined);
       const data: ITimestampStruct[] = [];
       for (let i = 0; i < length; i++) data.push(this.ts());
-      return new ArrayChunk(chunkId, length, data);
+      return new ArrChunk(chunkId, length, data);
     });
     return node;
   }

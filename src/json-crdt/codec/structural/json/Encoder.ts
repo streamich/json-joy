@@ -49,7 +49,7 @@ export class Encoder {
 
   public cNode(node: nodes.JsonNode): JsonCrdtNode {
     if (node instanceof nodes.ObjNode) return this.cObj(node);
-    else if (node instanceof nodes.ArrayRga) return this.cArr(node);
+    else if (node instanceof nodes.ArrNode) return this.cArr(node);
     else if (node instanceof nodes.StrNode) return this.cStr(node);
     else if (node instanceof nodes.ValNode) return this.cVal(node);
     else if (node instanceof nodes.ConNode) return this.cConst(node);
@@ -87,7 +87,7 @@ export class Encoder {
     };
   }
 
-  public cArr(obj: nodes.ArrayRga): ArrayJsonCrdtNode {
+  public cArr(obj: nodes.ArrNode): ArrayJsonCrdtNode {
     const chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
@@ -99,7 +99,7 @@ export class Encoder {
     };
   }
 
-  public cArrChunk(chunk: nodes.ArrayChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
+  public cArrChunk(chunk: nodes.ArrChunk): ArrayJsonCrdtChunk | JsonCrdtRgaTombstone {
     if (chunk.del) {
       const tombstone: JsonCrdtRgaTombstone = {
         id: this.cTs(chunk.id),

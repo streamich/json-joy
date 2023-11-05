@@ -1,7 +1,7 @@
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjNode, ArrayRga, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
+import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
@@ -88,7 +88,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asArr(): ArrayApi {
-    if (this.node instanceof ArrayRga) return this.api.wrap(this.node);
+    if (this.node instanceof ArrNode) return this.api.wrap(this.node);
     throw new Error('NOT_ARR');
   }
 
@@ -455,23 +455,23 @@ export class BinApi extends NodeApi<BinNode> {
   }
 }
 
-type ArrayRgaInnerType<N> = N extends ArrayRga<infer T> ? T : never;
+type UnArrNode<N> = N extends ArrNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `arr` JSON CRDT node {@link ArrayRga}. This API
+ * Local changes API for the `arr` JSON CRDT node {@link ArrNode}. This API
  * allows to insert and delete elements in the array by referencing their local
  * index.
  *
  * @category Local API
  */
-export class ArrayApi<N extends ArrayRga<any> = ArrayRga<any>> extends NodeApi<N> {
+export class ArrayApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param index Index of the element to get.
    * @returns Child node API for the element at the given index.
    */
-  public get(index: number): JsonNodeApi<ArrayRgaInnerType<N>> {
+  public get(index: number): JsonNodeApi<UnArrNode<N>> {
     return this.in(index) as any;
   }
 
