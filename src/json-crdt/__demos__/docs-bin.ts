@@ -21,7 +21,7 @@ console.log(model.view());
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "blob"
 //        └─ BinaryRga "bin" 1234.2  { 1, 2, 3 }
 //           └─ BinaryChunk 1234.3!3 len:3 { 1, 2, 3 }

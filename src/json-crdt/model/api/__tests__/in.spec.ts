@@ -1,4 +1,4 @@
-import {ConNode, RootLww, ValNode, ObjectLww} from '../../../nodes';
+import {ConNode, RootLww, ValNode, ObjNode} from '../../../nodes';
 import {ConApi, ObjectApi, ValApi} from '../nodes';
 import {Model} from '../../Model';
 
@@ -25,7 +25,7 @@ describe('can use .in() method to reference any model node', () => {
     expect(register1.node).toBe(register3.node);
     const obj1 = register1.in();
     expect(obj1).toBeInstanceOf(ObjectApi);
-    expect(obj1.node).toBeInstanceOf(ObjectLww);
+    expect(obj1.node).toBeInstanceOf(ObjNode);
   });
 
   doc.api.obj([]).set({val: doc.api.builder.jsonVal(123)});

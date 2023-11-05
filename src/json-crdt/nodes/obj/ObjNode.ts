@@ -11,7 +11,8 @@ import type {JsonNode, JsonNodeView} from '..';
  *
  * @category CRDT Node
  */
-export class ObjectLww<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
+
+export class ObjNode<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
   implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
 {
   /**

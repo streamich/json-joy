@@ -19,9 +19,9 @@ model.api.root({
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "foo"
-//        └─ ObjectLww "obj" 1234.2
+//        └─ ObjNode 1234.2
 //           └─ "bar"
 //               └─ VecNode 1234.3
 //                  ├─ 0: ConNode 1234.4 { 1 }

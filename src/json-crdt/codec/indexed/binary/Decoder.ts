@@ -6,7 +6,7 @@ import {
   ArrayChunk,
   BinaryRga,
   BinaryChunk,
-  ObjectLww,
+  ObjNode,
   StringRga,
   StringChunk,
 } from '../../../nodes';
@@ -114,9 +114,9 @@ export class Decoder {
     return new ValNode(this.doc, id, val);
   }
 
-  public cObj(id: ITimestampStruct, length: number): ObjectLww {
+  public cObj(id: ITimestampStruct, length: number): ObjNode {
     const decoder = this.dec;
-    const obj = new ObjectLww(this.doc, id);
+    const obj = new ObjNode(this.doc, id);
     const keys = obj.keys;
     for (let i = 0; i < length; i++) {
       const key = String(decoder.val());

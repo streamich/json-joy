@@ -68,9 +68,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected decodeObj(doc: Model, data: unknown[]): nodes.ObjectLww {
+  protected decodeObj(doc: Model, data: unknown[]): nodes.ObjNode {
     const [id, index] = this.ts(data, 1);
-    const obj = new nodes.ObjectLww(doc, id);
+    const obj = new nodes.ObjNode(doc, id);
     const length = data.length;
     for (let i = index; i < length; ) {
       const key = data[i] as string;

@@ -33,7 +33,7 @@ console.log(view);
 console.log(model + '');
 // Model
 // ├─ RootLww "val" 0.0
-// │  └─ ObjectLww "obj" 1234.1
+// │  └─ ObjNode 1234.1
 // │     ├─ "num"
 // │     │   └─ ConNode 1234.2 { 123 }
 // │     ├─ "text"
@@ -58,7 +58,7 @@ console.log(model.view().flags[0]);
 
 console.log(model.find.val.toApi() + '');
 // ObjectApi
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    ├─ "num"
 //    │   └─ ConNode 1234.2 { 123 }
 //    ├─ "text"

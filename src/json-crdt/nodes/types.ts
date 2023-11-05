@@ -55,7 +55,7 @@ export type BuilderNodeToJsonNode<S> = S extends builder.str<infer T>
         : S extends builder.vec<infer T>
           ? nodes.VecNode<{[K in keyof T]: BuilderNodeToJsonNode<T[K]>}>
           : S extends builder.obj<infer T>
-            ? nodes.ObjectLww<{[K in keyof T]: BuilderNodeToJsonNode<T[K]>}>
+            ? nodes.ObjNode<{[K in keyof T]: BuilderNodeToJsonNode<T[K]>}>
             : S extends builder.arr<infer T>
               ? nodes.ArrayRga<BuilderNodeToJsonNode<T>>
               : JsonNode;

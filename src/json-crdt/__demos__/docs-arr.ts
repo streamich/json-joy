@@ -22,7 +22,7 @@ console.log(model.view());
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "tags"
 //        └─ ArrayRga "arr" 1234.2
 //           └─ ArrayChunk 1234.17!3 len:3
@@ -42,7 +42,7 @@ console.log(model.view());
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "tags"
 //        └─ ArrayRga "arr" 1234.22
 //           └─ ArrayChunk 1234.26!3 len:3
@@ -54,7 +54,7 @@ console.log(model.root + '');
 const tags = model.api.arr(['tags']);
 console.log(tags + '');
 // ArrayApi
-// └─ ArrayRga "arr" 1234.22
+// └─ ObjNode 1234.22
 //    └─ ArrayChunk 1234.26!3 len:3
 //       ├─ [0]: ConNode 1234.23 { "big" }
 //       ├─ [1]: ConNode 1234.24 { "small" }

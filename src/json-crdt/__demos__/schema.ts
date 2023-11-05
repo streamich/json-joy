@@ -25,7 +25,7 @@ const model = Model.withLogicalClock(1234).setSchema(schema);
 console.log(model + '');
 // Model
 // ├─ RootLww "val" 0.0
-// │  └─ ObjectLww "obj" 1234.1
+// │  └─ ObjNode 1234.1
 // │     ├─ "text"
 // │     │   └─ ConNode 1234.2 { "hello" }
 // │     ├─ "counter"
@@ -33,7 +33,7 @@ console.log(model + '');
 // │     ├─ "checked"
 // │     │   └─ ConNode 1234.4 { true }
 // │     └─ "friend"
-// │         └─ ObjectLww "obj" 1234.5
+// │         └─ ObjNode 1234.5
 // │            ├─ "name"
 // │            │   └─ ConNode 1234.6 { "John" }
 // │            ├─ "age"

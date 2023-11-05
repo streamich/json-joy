@@ -13,7 +13,7 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootLww, ValNode, VecNode, ObjectLww, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
+import {RootLww, ValNode, VecNode, ObjNode, StringRga, BinaryRga, ArrayRga, BuilderNodeToJsonNode} from '../nodes';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -178,7 +178,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       if (node instanceof StringRga) node.ins(op.ref, op.id, op.data);
     } else if (op instanceof operations.NewObjOp) {
       const id = op.id;
-      if (!index.get(id)) index.set(id, new ObjectLww(this, id));
+      if (!index.get(id)) index.set(id, new ObjNode(this, id));
     } else if (op instanceof operations.NewArrOp) {
       const id = op.id;
       if (!index.get(id)) index.set(id, new ArrayRga(this, id));
@@ -198,7 +198,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
       const node = index.get(op.obj);
       const tuples = op.data;
       const length = tuples.length;
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         for (let i = 0; i < length; i++) {
           const tuple = tuples[i];
           const valueNode = index.get(tuple[1]);

@@ -72,9 +72,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cObj(doc: Model, node: ObjectJsonCrdtNode): nodes.ObjectLww {
+  protected cObj(doc: Model, node: ObjectJsonCrdtNode): nodes.ObjNode {
     const id = this.cTs(node.id);
-    const obj = new nodes.ObjectLww(doc, id);
+    const obj = new nodes.ObjNode(doc, id);
     const keys = Object.keys(node.keys);
     for (const key of keys) {
       const keyNode = node.keys[key];

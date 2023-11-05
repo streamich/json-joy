@@ -48,7 +48,7 @@ export class Encoder {
   }
 
   public cNode(node: nodes.JsonNode): JsonCrdtNode {
-    if (node instanceof nodes.ObjectLww) return this.cObj(node);
+    if (node instanceof nodes.ObjNode) return this.cObj(node);
     else if (node instanceof nodes.ArrayRga) return this.cArr(node);
     else if (node instanceof nodes.StringRga) return this.cStr(node);
     else if (node instanceof nodes.ValNode) return this.cVal(node);
@@ -58,7 +58,7 @@ export class Encoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cObj(obj: nodes.ObjectLww): ObjectJsonCrdtNode {
+  public cObj(obj: nodes.ObjNode): ObjectJsonCrdtNode {
     const keys: Record<string, JsonCrdtNode> = {};
     obj.nodes((node, key) => {
       keys[key] = this.cNode(node);

@@ -1,4 +1,4 @@
-import {ConNode, RootLww, JsonNode, ValNode, VecNode, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../../nodes';
+import {ConNode, RootLww, JsonNode, ValNode, VecNode, ArrayRga, BinaryRga, ObjNode, StringRga} from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
@@ -81,13 +81,13 @@ export class Encoder extends MsgPackEncoder<CrdtWriter> {
     if (node instanceof ConNode) this.cConst(node);
     else if (node instanceof ValNode) this.cVal(node);
     else if (node instanceof StringRga) this.cStr(node);
-    else if (node instanceof ObjectLww) this.cObj(node);
+    else if (node instanceof ObjNode) this.cObj(node);
     else if (node instanceof VecNode) this.cTup(node);
     else if (node instanceof ArrayRga) this.cArr(node);
     else if (node instanceof BinaryRga) this.cBin(node);
   }
 
-  protected cObj(obj: ObjectLww): void {
+  protected cObj(obj: ObjNode): void {
     this.ts(obj.id);
     this.writeObjHdr(obj.keys.size);
     obj.keys.forEach(this.cKey);

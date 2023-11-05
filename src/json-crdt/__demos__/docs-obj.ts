@@ -21,11 +21,11 @@ model.api.root({
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "foo"
-//        └─ ObjectLww "obj" 1234.2
+//        └─ ObjNode 1234.2
 //           └─ "bar"
-//               └─ ObjectLww "obj" 1234.3
+//               └─ ObjNode 1234.3
 //                  ├─ "x"
 //                  │   └─ ConNode 1234.4 { 1 }
 //                  └─ "y"
@@ -38,7 +38,7 @@ console.log(model.view());
 const bar = model.api.obj(['foo', 'bar']);
 console.log(bar + '');
 // ObjectApi
-// └─ ObjectLww "obj" 1234.3
+// └─ ObjNode 1234.3
 //    ├─ "x"
 //    │   └─ ConNode 1234.4 { 1 }
 //    └─ "y"
@@ -50,7 +50,7 @@ bar.set({
 });
 console.log(bar + '');
 // ObjectApi
-// └─ ObjectLww "obj" 1234.3
+// └─ ObjNode 1234.3
 //    ├─ "x"
 //    │   └─ ConNode 1234.10 { 24 }
 //    ├─ "y"
@@ -65,7 +65,7 @@ bar.del(['y']);
 
 console.log(bar + '');
 // ObjectApi
-// └─ ObjectLww "obj" 1234.3
+// └─ ObjNode 1234.3
 //    ├─ "x"
 //    │   └─ ConNode 1234.10 { 24 }
 //    ├─ "y"

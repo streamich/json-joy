@@ -1,7 +1,6 @@
-import {ArrayRga} from '../nodes/rga-array/ArrayRga';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {isChild, Path} from '../../json-pointer';
-import {ObjectLww} from '../nodes/obj/ObjectLww';
+import {ObjNode, ArrayRga} from '../nodes';
 import {toPath} from '../../json-pointer/util';
 import type {Model} from '../model';
 import type {
@@ -72,7 +71,7 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         builder.insObj(node.id, [[String(key), builder.json(op.value)]]);
       } else if (node instanceof ArrayRga) {
         const value = builder.json(op.value);
@@ -102,7 +101,7 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         const stringKey = String(key);
         if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
         builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
@@ -172,7 +171,7 @@ export class JsonPatch {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = model.api.find(objSteps);
       const key = steps[steps.length - 1];
-      if (node instanceof ObjectLww) {
+      if (node instanceof ObjNode) {
         return node.get(String(key))?.view();
       } else if (node instanceof ArrayRga) {
         const index = ~~key;

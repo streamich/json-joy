@@ -18,7 +18,7 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {StringRga, ValNode, ObjectLww} from '../../nodes';
+import {StringRga, ValNode, ObjNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
 import {Fuzzer} from '../../../util/Fuzzer';
@@ -71,7 +71,7 @@ export class SessionLogical {
     let patch: Patch | null = null;
     if (node instanceof StringRga) patch = this.generateStringPatch(model, node);
     else if (node instanceof BinaryRga) patch = this.generateBinaryPatch(model, node);
-    else if (node instanceof ObjectLww) patch = this.generateObjectPatch(model, node);
+    else if (node instanceof ObjNode) patch = this.generateObjectPatch(model, node);
     else if (node instanceof ArrayRga) patch = this.generateArrayPatch(model, node);
     else if (node instanceof ValNode) patch = this.generateValuePatch(model, node);
     else return;
@@ -126,7 +126,7 @@ export class SessionLogical {
     return builder.patch;
   }
 
-  private generateObjectPatch(model: Model, node: ObjectLww): Patch {
+  private generateObjectPatch(model: Model, node: ObjNode): Patch {
     const [key, opcode] = this.fuzzer.picker.pickObjectOperation(node);
     const builder = new PatchBuilder(model.clock);
     if (opcode === InsObjOp) {

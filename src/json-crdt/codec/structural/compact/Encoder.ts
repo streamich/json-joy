@@ -50,7 +50,7 @@ export class Encoder {
 
   protected cNode(arr: unknown[], node: nodes.JsonNode): void {
     // TODO: PERF: use switch with `node.constructor`.
-    if (node instanceof nodes.ObjectLww) return this.encodeObj(arr, node);
+    if (node instanceof nodes.ObjNode) return this.encodeObj(arr, node);
     else if (node instanceof nodes.ArrayRga) return this.encodeArr(arr, node);
     else if (node instanceof nodes.StringRga) return this.encodeStr(arr, node);
     else if (node instanceof nodes.ValNode) return this.cVal(arr, node);
@@ -60,7 +60,7 @@ export class Encoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected encodeObj(arr: unknown[], obj: nodes.ObjectLww): void {
+  protected encodeObj(arr: unknown[], obj: nodes.ObjNode): void {
     const res: unknown[] = [Code.MakeObject];
     arr.push(res);
     this.ts(res, obj.id);

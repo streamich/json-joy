@@ -56,7 +56,7 @@ const fork = Model.fromBinary(blob);
 console.log(fork + '');
 // Model
 // ├─ RootLww "val" 0.0
-// │  └─ ObjectLww "obj" 1234.1
+// │  └─ ObjNode 1234.1
 // │     ├─ "counter"
 // │     │   └─ ConNode 1234.11 { 25 }
 // │     └─ "text"

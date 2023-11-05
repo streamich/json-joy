@@ -12,8 +12,8 @@ export type ProxyNodeVal<N extends nodes.ValNode<any>> = ProxyNode<N> & {
 export type ProxyNodeVec<N extends nodes.VecNode<any>> = ProxyNode<N> & {
   [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<nodes.JsonNodeView<N>[K]>;
 };
-export type ProxyNodeObj<N extends nodes.ObjectLww<any>> = ProxyNode<N> & {
-  [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<(N extends nodes.ObjectLww<infer M> ? M : never)[K]>;
+export type ProxyNodeObj<N extends nodes.ObjNode<any>> = ProxyNode<N> & {
+  [K in keyof nodes.JsonNodeView<N>]: JsonNodeToProxyNode<(N extends nodes.ObjNode<infer M> ? M : never)[K]>;
 };
 export type ProxyNodeStr = ProxyNode<nodes.StringRga>;
 export type ProxyNodeBin = ProxyNode<nodes.BinaryRga>;
@@ -33,7 +33,7 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
           ? ProxyNodeBin
           : N extends nodes.ArrayRga<any>
             ? ProxyNodeArr<N>
-            : N extends nodes.ObjectLww<any>
+            : N extends nodes.ObjNode<any>
               ? ProxyNodeObj<N>
               : N extends nodes.VecNode<any>
                 ? ProxyNodeVec<N>

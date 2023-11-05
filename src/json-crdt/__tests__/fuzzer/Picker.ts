@@ -1,10 +1,6 @@
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {RandomJson} from '../../../json-random';
-import {JsonNode} from '../../nodes';
-import {ObjectLww} from '../../nodes/obj/ObjectLww';
-import {ArrayRga} from '../../nodes/rga-array/ArrayRga';
-import {BinaryRga} from '../../nodes/rga-binary/BinaryRga';
-import {StringRga} from '../../nodes/rga-string/StringRga';
+import {JsonNode, ObjNode, ArrayRga, BinaryRga, StringRga} from '../../nodes';
 import {Model} from '../../model/Model';
 import {Fuzzer} from '../../../util/Fuzzer';
 import {FuzzerOptions} from './types';
@@ -47,7 +43,7 @@ export class Picker {
     return InsBinOp;
   }
 
-  public pickObjectOperation(node: ObjectLww): [key: string, opcode: ObjectOp] {
+  public pickObjectOperation(node: ObjNode): [key: string, opcode: ObjectOp] {
     if (!node.keys.size) return [this.generateObjectKey(), InsObjOp];
     if (Math.random() > 0.45) return [this.generateObjectKey(), InsObjOp];
     const keys = [...node.keys.keys()];

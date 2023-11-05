@@ -1,11 +1,11 @@
 import {Model} from '../../Model';
 import {ConApi, ObjectApi, StringApi, VecApi, ValApi} from '../nodes';
-import {ConNode, RootLww, VecNode, ObjectLww, StringRga} from '../../../nodes';
+import {ConNode, RootLww, VecNode, ObjNode, StringRga} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
   const model = Model.withLogicalClock() as Model<
-    ObjectLww<{
+    ObjNode<{
       foo: StringRga;
       bar: ConNode<number>;
     }>
@@ -25,7 +25,7 @@ test('proxy API supports object types', () => {
   const obj = root.val;
   const objApi: ObjectApi = obj.toApi();
   expect(objApi).toBeInstanceOf(ObjectApi);
-  expect(objApi.node).toBeInstanceOf(ObjectLww);
+  expect(objApi.node).toBeInstanceOf(ObjNode);
   expect(objApi.view()).toStrictEqual({
     foo: 'asdf',
     bar: 1234,
@@ -43,8 +43,8 @@ test('proxy API supports object types', () => {
 });
 
 describe('supports all node types', () => {
-  type Schema = ObjectLww<{
-    obj: ObjectLww<{
+  type Schema = ObjNode<{
+    obj: ObjNode<{
       str: StringRga;
       num: ConNode<number>;
     }>;
@@ -67,7 +67,7 @@ describe('supports all node types', () => {
     const obj = proxy.val;
     const objApi: ObjectApi = obj.toApi();
     expect(objApi).toBeInstanceOf(ObjectApi);
-    expect(objApi.node).toBeInstanceOf(ObjectLww);
+    expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('obj')).toBe(true);
     expect(keys.has('vec')).toBe(true);
@@ -78,7 +78,7 @@ describe('supports all node types', () => {
     const obj = proxy.val.obj;
     const objApi: ObjectApi = obj.toApi();
     expect(objApi).toBeInstanceOf(ObjectApi);
-    expect(objApi.node).toBeInstanceOf(ObjectLww);
+    expect(objApi.node).toBeInstanceOf(ObjNode);
     const keys = new Set(Object.keys(objApi.view()));
     expect(keys.has('str')).toBe(true);
     expect(keys.has('num')).toBe(true);

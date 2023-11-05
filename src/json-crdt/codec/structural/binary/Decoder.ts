@@ -10,7 +10,7 @@ import {
   BinaryRga,
   BinaryChunk,
   ConNode,
-  ObjectLww,
+  ObjNode,
   RootLww,
   StringRga,
   StringChunk,
@@ -131,14 +131,14 @@ export class Decoder extends MsgPackDecoderFast<CrdtReader> {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cObj(id: ITimestampStruct, length: number): ObjectLww {
-    const obj = new ObjectLww(this.doc, id);
+  public cObj(id: ITimestampStruct, length: number): ObjNode {
+    const obj = new ObjNode(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private cObjChunk(obj: ObjectLww): void {
+  private cObjChunk(obj: ObjNode): void {
     const key: string = this.key();
     obj.keys.set(key, this.cNode().id);
   }

@@ -1,7 +1,7 @@
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjectLww, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StringRga} from '../../nodes';
+import {ObjNode, ArrayRga, BinaryRga, ConNode, VecNode, ValNode, StringRga} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './events/NodeEvents';
 import {printTree} from '../../../util/print/printTree';
@@ -98,7 +98,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public asObj(): ObjectApi {
-    if (this.node instanceof ObjectLww) return this.api.wrap(this.node as ObjectLww);
+    if (this.node instanceof ObjNode) return this.api.wrap(this.node as ObjNode);
     throw new Error('NOT_OBJ');
   }
 
@@ -274,21 +274,21 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
   }
 }
 
-type ObjectLwwNodes<N> = N extends ObjectLww<infer T> ? T : never;
+type UnObjNode<N> = N extends ObjNode<infer T> ? T : never;
 
 /**
- * Local changes API for the `obj` JSON CRDT node {@link ObjectLww}.
+ * Local changes API for the `obj` JSON CRDT node {@link ObjNode}.
  *
  * @category Local API
  */
-export class ObjectApi<N extends ObjectLww<any> = ObjectLww<any>> extends NodeApi<N> {
+export class ObjectApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
   /**
    * Get API instance of a child node.
    *
    * @param key Object key to get.
    * @returns A specified child node API.
    */
-  public get<K extends keyof ObjectLwwNodes<N>>(key: K): JsonNodeApi<ObjectLwwNodes<N>[K]> {
+  public get<K extends keyof UnObjNode<N>>(key: K): JsonNodeApi<UnObjNode<N>[K]> {
     return this.in(key as string) as any;
   }
 

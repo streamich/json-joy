@@ -3,7 +3,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {Model} from '../../../model';
-import {ConNode, JsonNode, ValNode, ArrayRga, BinaryRga, ObjectLww, StringRga} from '../../../nodes';
+import {ConNode, JsonNode, ValNode, ArrayRga, BinaryRga, ObjNode, StringRga} from '../../../nodes';
 import {IndexedFields, FieldName} from './types';
 
 const EMPTY = new Uint8Array(0);
@@ -47,7 +47,7 @@ export class Encoder {
     if (node instanceof ValNode) return this.encodeVal(node);
     else if (node instanceof ConNode) return this.encodeConst(node);
     else if (node instanceof StringRga) return this.encodeStr(node);
-    else if (node instanceof ObjectLww) return this.encodeObj(node);
+    else if (node instanceof ObjNode) return this.encodeObj(node);
     else if (node instanceof ArrayRga) return this.encodeArr(node);
     else if (node instanceof BinaryRga) return this.encodeBin(node);
     else return EMPTY;
@@ -111,7 +111,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeObj(node: ObjectLww): Uint8Array {
+  public encodeObj(node: ObjNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();

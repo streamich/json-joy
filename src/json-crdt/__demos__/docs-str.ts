@@ -16,7 +16,7 @@ model.api.root({
 
 console.log(model.root + '');
 // RootLww "val" 0.0
-// └─ ObjectLww "obj" 1234.1
+// └─ ObjNode 1234.1
 //    └─ "text"
 //        └─ StringRga "str" 1234.2 { "hello" }
 //           └─ StringChunk 1234.3!5 len:5 { "hello" }
