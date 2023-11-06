@@ -48,7 +48,7 @@ export class Picker {
     if (Math.random() > 0.45) return [this.generateObjectKey(), InsObjOp];
     const keys = [...node.keys.keys()];
     if (!keys.length) return [this.generateObjectKey(), InsObjOp];
-    const key = keys[Math.floor(Math.random() * keys.length)];
+    const key = Fuzzer.pick(keys);
     return [key, DelOp];
   }
 

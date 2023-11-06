@@ -2,7 +2,7 @@ import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {JsonCrdtDataType, ORIGIN, SESSION} from '../../../../json-crdt-patch/constants';
+import {JsonCrdtDataType, SESSION} from '../../../../json-crdt-patch/constants';
 import type * as t from './types';
 
 export class Decoder {
@@ -83,7 +83,10 @@ export class Decoder {
     const id = this.ts(node[1]);
     const obj = new nodes.ObjNode(model, id);
     const map = node[2] as t.JsonCrdtCompactObj[2];
-    for (const key in map) {
+    const keys = Object.keys(map);
+    const length = keys.length;
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
       const val = this.decNode(model, map[key]);
       obj.put(key, val.id);
     }
