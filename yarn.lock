@@ -6075,10 +6075,10 @@ yargs@^17.3.1, yargs@^17.7.1:
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
 
-yjs@13.6.1:
-  version "13.6.1"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.1.tgz#13c1b26b2215cd39ba7bf9ef8b570561d82fa98e"
-  integrity sha512-IyyHL+/v9N2S4YLSjGHMa0vMAfFxq8RDG5Nvb77raTTHJPweU3L/fRlqw6ElZvZUuHWnax3ufHR0Tx0ntfG63Q==
+yjs@13.6.8:
+  version "13.6.8"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.8.tgz#0d6cebf4d7e69b08ede5ecf6368ddbd9c7603c2e"
+  integrity sha512-ZPq0hpJQb6f59B++Ngg4cKexDJTvfOgeiv0sBc4sUm8CaBWH7OQC4kcCgrqbjJ/B2+6vO49exvTmYfdlPtcjbg==
   dependencies:
     lib0 "^0.2.74"
 

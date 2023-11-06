@@ -158,7 +158,7 @@
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0",
     "ws": "^8.6.0",
-    "yjs": "13.6.1",
+    "yjs": "13.6.8",
     "ywasm": "0.16.5"
   },
   "types": "lib/index.d.ts",
