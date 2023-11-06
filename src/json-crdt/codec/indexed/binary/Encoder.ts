@@ -7,12 +7,9 @@ import * as nodes from '../../../nodes';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {IndexedFields, FieldName} from './types';
 
-const EMPTY = new Uint8Array(0);
-
 export class Encoder {
   public readonly enc: CborEncoder<CrdtWriter>;
   protected clockTable?: ClockTable;
-  protected model?: IndexedFields;
 
   constructor(writer?: CrdtWriter) {
     this.enc = new CborEncoder<CrdtWriter>(writer || new CrdtWriter());
@@ -25,27 +22,25 @@ export class Encoder {
     clockTable.write(writer);
     const encodedClock = writer.flush();
     const rootValueId = doc.root.val;
-    const model: IndexedFields = (this.model = {
+    const result: IndexedFields = {
       c: encodedClock,
-    });
+    };
     if (rootValueId.sid !== 0) {
       writer.reset();
       this.ts(rootValueId);
-      model.r = writer.flush();
+      result.r = writer.flush();
     }
-    doc.index.forEach(({v: node}) => this.onNode(node));
-    return model;
+    doc.index.forEach(({v: node}) => this.onNode(result, node));
+    return result;
   }
 
-  protected readonly onNode = (node: nodes.JsonNode) => {
+  protected readonly onNode = (result: IndexedFields, node: nodes.JsonNode) => {
     const id = node.id;
     const sid = id.sid;
     const time = id.time;
-    const model = this.model!;
     const sidIndex = this.clockTable!.getBySid(sid).index;
-    const sidFieldPart = sidIndex.toString(36) + '_';
-    const field = (sidFieldPart + time.toString(36)) as FieldName;
-    model[field] = this.encodeNode(node);
+    const field = (sidIndex.toString(36) + '_' + time.toString(36)) as FieldName;
+    result[field] = this.encodeNode(node);
   };
 
   public encodeNode(node: nodes.JsonNode): Uint8Array {
@@ -56,7 +51,7 @@ export class Encoder {
     else if (node instanceof nodes.StrNode) return this.encodeStr(node);
     else if (node instanceof nodes.BinNode) return this.encodeBin(node);
     else if (node instanceof nodes.ArrNode) return this.encodeArr(node);
-    else return EMPTY;
+    throw new Error('UNKNOWN_NODE');
   }
 
   protected ts(id: ITimestampStruct): void {
