@@ -10,6 +10,8 @@ import {encode as encodeJson} from '../../../json-crdt-patch/codec/verbose/encod
 import {Encoder as BinaryEncoder} from '../../codec/structural/binary/Encoder';
 import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder';
 import {Encoder as JsonEncoder} from '../../codec/structural/verbose/Encoder';
+import {Encoder as IndexedBinaryEncoder} from '../../codec/indexed/binary/Encoder';
+import {Decoder as IndexedBinaryDecoder} from '../../codec/indexed/binary/Decoder';
 import {generateInteger} from './util';
 import {Model} from '../..';
 import {Patch} from '../../../json-crdt-patch/Patch';
@@ -27,6 +29,8 @@ const compactEncoder = new CompactEncoder();
 const compactDecoder = new CompactDecoder();
 const binaryEncoder = new BinaryEncoder();
 const binaryDecoder = new BinaryDecoder();
+const indexedBinaryEncoder = new IndexedBinaryEncoder();
+const indexedBinaryDecoder = new IndexedBinaryDecoder();
 
 export class SessionLogical {
   public models: Model[] = [];
@@ -192,6 +196,7 @@ export class SessionLogical {
         if (randomU32(0, 1)) model = jsonDecoder.decode(jsonEncoder.encode(model));
         if (randomU32(0, 1)) model = compactDecoder.decode(compactEncoder.encode(model));
         if (randomU32(0, 1)) model = binaryDecoder.decode(binaryEncoder.encode(model));
+        if (randomU32(0, 1)) model = indexedBinaryDecoder.decode(indexedBinaryEncoder.encode(model));
       }
       for (let j = 0; j < this.concurrency; j++) {
         const patches = this.patches[j];
