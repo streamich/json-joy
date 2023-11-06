@@ -8,7 +8,7 @@ import type * as types from './types';
 export class Encoder {
   protected model!: Model;
 
-  public encode(model: Model): types.JsonCrdtSnapshot {
+  public encode(model: Model): types.JsonCrdtVerboseDocument {
     this.model = model;
     const clock = model.clock;
     const isServerClock = clock.sid === SESSION.SERVER;
@@ -18,8 +18,8 @@ export class Encoder {
     };
   }
 
-  public cClock(clock: IVectorClock): types.JsonCrdtLogicalTimestamp[] {
-    const data: types.JsonCrdtLogicalTimestamp[] = [];
+  public cClock(clock: IVectorClock): types.JsonCrdtVerboseLogicalTimestamp[] {
+    const data: types.JsonCrdtVerboseLogicalTimestamp[] = [];
     const sessionId = clock.sid;
     const localTs = clock.peers.get(sessionId);
     if (!localTs) data.push([sessionId, clock.time]);
@@ -27,7 +27,7 @@ export class Encoder {
     return data;
   }
 
-  public cTs(ts: ITimestampStruct): types.JsonCrdtLogicalTimestamp | types.JsonCrdtServerTimestamp {
+  public cTs(ts: ITimestampStruct): types.JsonCrdtVerboseLogicalTimestamp | types.JsonCrdtVerboseServerTimestamp {
     return ts.sid === SESSION.SERVER ? ts.time : [ts.sid, ts.time];
   }
 
@@ -42,7 +42,7 @@ export class Encoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  public cObj(obj: nodes.ObjNode): types.ObjectJsonCrdtNode {
+  public cObj(obj: nodes.ObjNode): types.JsonCrdtVerboseObj {
     const map: Record<string, types.JsonCrdtNode> = {};
     obj.nodes((node, key) => {
       map[key] = this.cNode(node);
@@ -54,8 +54,8 @@ export class Encoder {
     };
   }
 
-  public cVec(obj: nodes.VecNode): types.VectorJsonCrdtNode {
-    const map: types.VectorJsonCrdtNode['map'] = [];
+  public cVec(obj: nodes.VecNode): types.JsonCrdtVerboseVec {
+    const map: types.JsonCrdtVerboseVec['map'] = [];
     const elements = obj.elements;
     const length = elements.length;
     const index = this.model.index;
@@ -71,8 +71,8 @@ export class Encoder {
     };
   }
 
-  public cArr(obj: nodes.ArrNode): types.ArrayJsonCrdtNode {
-    const chunks: (types.ArrayJsonCrdtChunk | types.JsonCrdtRgaTombstone)[] = [];
+  public cArr(obj: nodes.ArrNode): types.JsonCrdtVerboseArr {
+    const chunks: (types.JsonCrdtVerboseArrChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
     while ((chunk = iterator())) chunks.push(this.cArrChunk(chunk));
@@ -83,24 +83,24 @@ export class Encoder {
     };
   }
 
-  public cArrChunk(chunk: nodes.ArrChunk): types.ArrayJsonCrdtChunk | types.JsonCrdtRgaTombstone {
+  public cArrChunk(chunk: nodes.ArrChunk): types.JsonCrdtVerboseArrChunk | types.JsonCrdtVerboseTombstone {
     if (chunk.del) {
-      const tombstone: types.JsonCrdtRgaTombstone = {
+      const tombstone: types.JsonCrdtVerboseTombstone = {
         id: this.cTs(chunk.id),
         span: chunk.span,
       };
       return tombstone;
     }
     const index = this.model.index;
-    const res: types.ArrayJsonCrdtChunk = {
+    const res: types.JsonCrdtVerboseArrChunk = {
       id: this.cTs(chunk.id),
       value: chunk.data!.map((n) => this.cNode(index.get(n)!)),
     };
     return res;
   }
 
-  public cStr(obj: nodes.StrNode): types.StringJsonCrdtNode {
-    const chunks: (types.StringJsonCrdtChunk | types.JsonCrdtRgaTombstone)[] = [];
+  public cStr(obj: nodes.StrNode): types.JsonCrdtVerboseStr {
+    const chunks: (types.JsonCrdtVerboseStrChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
     while ((chunk = iterator())) chunks.push(this.cStrChunk(chunk as nodes.StrChunk));
@@ -111,23 +111,23 @@ export class Encoder {
     };
   }
 
-  public cStrChunk(chunk: nodes.StrChunk): types.StringJsonCrdtChunk | types.JsonCrdtRgaTombstone {
+  public cStrChunk(chunk: nodes.StrChunk): types.JsonCrdtVerboseStrChunk | types.JsonCrdtVerboseTombstone {
     if (chunk.del) {
-      const tombstone: types.JsonCrdtRgaTombstone = {
+      const tombstone: types.JsonCrdtVerboseTombstone = {
         id: this.cTs(chunk.id),
         span: chunk.span,
       };
       return tombstone;
     }
-    const res: types.StringJsonCrdtChunk = {
+    const res: types.JsonCrdtVerboseStrChunk = {
       id: this.cTs(chunk.id),
       value: chunk.data!,
     };
     return res;
   }
 
-  public cBin(obj: nodes.BinNode): types.BinaryJsonCrdtNode {
-    const chunks: (types.BinaryJsonCrdtChunk | types.JsonCrdtRgaTombstone)[] = [];
+  public cBin(obj: nodes.BinNode): types.JsonCrdtVerboseBin {
+    const chunks: (types.JsonCrdtVerboseBinChunk | types.JsonCrdtVerboseTombstone)[] = [];
     const iterator = obj.iterator();
     let chunk;
     while ((chunk = iterator())) chunks.push(this.cBinChunk(chunk as nodes.BinChunk));
@@ -138,22 +138,22 @@ export class Encoder {
     };
   }
 
-  public cBinChunk(chunk: nodes.BinChunk): types.BinaryJsonCrdtChunk | types.JsonCrdtRgaTombstone {
+  public cBinChunk(chunk: nodes.BinChunk): types.JsonCrdtVerboseBinChunk | types.JsonCrdtVerboseTombstone {
     if (chunk.del) {
-      const tombstone: types.JsonCrdtRgaTombstone = {
+      const tombstone: types.JsonCrdtVerboseTombstone = {
         id: this.cTs(chunk.id),
         span: chunk.span,
       };
       return tombstone;
     }
-    const res: types.StringJsonCrdtChunk = {
+    const res: types.JsonCrdtVerboseStrChunk = {
       id: this.cTs(chunk.id),
       value: toBase64(chunk.data!),
     };
     return res;
   }
 
-  public cVal(obj: nodes.ValNode): types.ValueJsonCrdtNode {
+  public cVal(obj: nodes.ValNode): types.JsonCrdtVerboseVal {
     return {
       type: 'val',
       id: this.cTs(obj.id),
@@ -161,8 +161,8 @@ export class Encoder {
     };
   }
 
-  public cCon(obj: nodes.ConNode): types.ConstantJsonCrdtNode {
-    const node: types.ConstantJsonCrdtNode = {
+  public cCon(obj: nodes.ConNode): types.JsonCrdtVerboseCon {
+    const node: types.JsonCrdtVerboseCon = {
       type: 'con',
       id: this.cTs(obj.id),
     };

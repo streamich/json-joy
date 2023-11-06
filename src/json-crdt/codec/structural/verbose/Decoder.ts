@@ -6,14 +6,14 @@ import {SESSION} from '../../../../json-crdt-patch/constants';
 import * as types from './types';
 
 export class Decoder {
-  public decode({time, root}: types.JsonCrdtSnapshot): Model {
+  public decode({time, root}: types.JsonCrdtVerboseDocument): Model {
     const isServerClock = typeof time === 'number';
     const doc = isServerClock ? Model.withServerClock(time) : Model.withLogicalClock(this.cClock(time));
     this.cRoot(doc, root);
     return doc;
   }
 
-  protected cClock(timestamps: types.JsonCrdtLogicalTimestamp[]): VectorClock {
+  protected cClock(timestamps: types.JsonCrdtVerboseLogicalTimestamp[]): VectorClock {
     const [stamp] = timestamps;
     const vectorClock = new VectorClock(stamp[0], stamp[1]);
     const length = timestamps.length;
@@ -25,12 +25,12 @@ export class Decoder {
     return vectorClock;
   }
 
-  protected cTs(stamp: types.JsonCrdtTimestamp): ITimestampStruct {
+  protected cTs(stamp: types.JsonCrdtVerboseTimestamp): ITimestampStruct {
     const isServerClock = typeof stamp === 'number';
     return isServerClock ? ts(SESSION.SERVER, stamp) : ts(stamp[0], stamp[1]);
   }
 
-  protected cRoot(doc: Model, {value}: types.ValueJsonCrdtNode): void {
+  protected cRoot(doc: Model, {value}: types.JsonCrdtVerboseVal): void {
     const val = value ? this.cNode(doc, value) : new nodes.ConNode(doc.clock.tick(0), null);
     const root = new nodes.RootNode(doc, val.id);
     doc.root = root;
@@ -56,7 +56,7 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cObj(doc: Model, node: types.ObjectJsonCrdtNode): nodes.ObjNode {
+  protected cObj(doc: Model, node: types.JsonCrdtVerboseObj): nodes.ObjNode {
     const id = this.cTs(node.id);
     const obj = new nodes.ObjNode(doc, id);
     const map = node.map;
@@ -69,7 +69,7 @@ export class Decoder {
     return obj;
   }
 
-  protected cVec(doc: Model, node: types.VectorJsonCrdtNode): nodes.VecNode {
+  protected cVec(doc: Model, node: types.JsonCrdtVerboseVec): nodes.VecNode {
     const id = this.cTs(node.id);
     const obj = new nodes.VecNode(doc, id);
     const elements = obj.elements;
@@ -84,7 +84,7 @@ export class Decoder {
     return obj;
   }
 
-  protected cArr(doc: Model, node: types.ArrayJsonCrdtNode): nodes.ArrNode {
+  protected cArr(doc: Model, node: types.JsonCrdtVerboseArr): nodes.ArrNode {
     const id = this.cTs(node.id);
     const rga = new nodes.ArrNode(doc, id);
     const chunks = node.chunks;
@@ -95,10 +95,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.ArrChunk(id, (c as types.JsonCrdtRgaTombstone).span, undefined);
+        if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
+          return new nodes.ArrChunk(id, (c as types.JsonCrdtVerboseTombstone).span, undefined);
         else {
-          const ids = (c as types.ArrayJsonCrdtChunk).value.map((n) => this.cNode(doc, n).id);
+          const ids = (c as types.JsonCrdtVerboseArrChunk).value.map((n) => this.cNode(doc, n).id);
           return new nodes.ArrChunk(id, ids.length, ids);
         }
       });
@@ -107,7 +107,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cStr(doc: Model, node: types.StringJsonCrdtNode): nodes.StrNode {
+  protected cStr(doc: Model, node: types.JsonCrdtVerboseStr): nodes.StrNode {
     const id = this.cTs(node.id);
     const rga = new nodes.StrNode(id);
     const chunks = node.chunks;
@@ -118,10 +118,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.StrChunk(id, (c as types.JsonCrdtRgaTombstone).span, '');
+        if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
+          return new nodes.StrChunk(id, (c as types.JsonCrdtVerboseTombstone).span, '');
         else {
-          const value = (c as types.StringJsonCrdtChunk).value;
+          const value = (c as types.JsonCrdtVerboseStrChunk).value;
           return new nodes.StrChunk(id, value.length, value);
         }
       });
@@ -130,7 +130,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cBin(doc: Model, node: types.BinaryJsonCrdtNode): nodes.BinNode {
+  protected cBin(doc: Model, node: types.JsonCrdtVerboseBin): nodes.BinNode {
     const id = this.cTs(node.id);
     const rga = new nodes.BinNode(id);
     const chunks = node.chunks;
@@ -141,10 +141,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.BinChunk(id, (c as types.JsonCrdtRgaTombstone).span, undefined);
+        if (typeof (c as types.JsonCrdtVerboseTombstone).span === 'number')
+          return new nodes.BinChunk(id, (c as types.JsonCrdtVerboseTombstone).span, undefined);
         else {
-          const value = (c as types.BinaryJsonCrdtChunk).value;
+          const value = (c as types.JsonCrdtVerboseBinChunk).value;
           const buf = fromBase64(value);
           return new nodes.BinChunk(id, buf.length, buf);
         }
@@ -154,7 +154,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cVal(doc: Model, node: types.ValueJsonCrdtNode): nodes.ValNode {
+  protected cVal(doc: Model, node: types.JsonCrdtVerboseVal): nodes.ValNode {
     const id = this.cTs(node.id);
     const val = this.cNode(doc, node.value);
     const obj = new nodes.ValNode(doc, id, val.id);
@@ -162,9 +162,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cCon(doc: Model, node: types.ConstantJsonCrdtNode): nodes.ConNode {
+  protected cCon(doc: Model, node: types.JsonCrdtVerboseCon): nodes.ConNode {
     const id = this.cTs(node.id);
-    const val = node.timestamp ? this.cTs(node.value as types.JsonCrdtLogicalTimestamp) : node.value;
+    const val = node.timestamp ? this.cTs(node.value as types.JsonCrdtVerboseLogicalTimestamp) : node.value;
     const obj = new nodes.ConNode(id, val);
     doc.index.set(id, obj);
     return obj;

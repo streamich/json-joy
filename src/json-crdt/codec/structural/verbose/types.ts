@@ -1,123 +1,123 @@
 /**
  * A structural snapshot of JSON CRDT model.
  */
-export interface JsonCrdtSnapshot {
+export interface JsonCrdtVerboseDocument {
   /**
    * Vector clock which contains the latest values of all known logical clocks.
    * The first clock is the local clock of this document.
    */
-  time: JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp[];
+  time: JsonCrdtVerboseServerTimestamp | JsonCrdtVerboseLogicalTimestamp[];
 
   /**
    * Root node of the document data model.
    */
-  root: ValueJsonCrdtNode;
+  root: JsonCrdtVerboseVal;
 }
 
-export type JsonCrdtTimestamp = JsonCrdtServerTimestamp | JsonCrdtLogicalTimestamp;
+export type JsonCrdtVerboseTimestamp = JsonCrdtVerboseServerTimestamp | JsonCrdtVerboseLogicalTimestamp;
 
 /**
  * A serialized logical clock timestamp.
  */
-export type JsonCrdtLogicalTimestamp = [sessionId: number, time: number];
+export type JsonCrdtVerboseLogicalTimestamp = [sessionId: number, time: number];
 
 /**
  * A serialized server clock timestamp.
  */
-export type JsonCrdtServerTimestamp = number;
+export type JsonCrdtVerboseServerTimestamp = number;
 
 /**
  * A constant immutable JSON value.
  */
-export interface ConstantJsonCrdtNode {
+export interface JsonCrdtVerboseCon {
   type: 'con';
-  id: JsonCrdtTimestamp;
+  id: JsonCrdtVerboseTimestamp;
   timestamp?: boolean;
-  value?: unknown | JsonCrdtTimestamp;
+  value?: unknown | JsonCrdtVerboseTimestamp;
 }
 
 /**
  * LWW register for any JSON value.
  */
-export interface ValueJsonCrdtNode {
+export interface JsonCrdtVerboseVal {
   type: 'val';
-  id: JsonCrdtTimestamp;
+  id: JsonCrdtVerboseTimestamp;
   value: JsonCrdtNode;
 }
 
 /**
  * LWW JSON object node.
  */
-export interface ObjectJsonCrdtNode {
+export interface JsonCrdtVerboseObj {
   type: 'obj';
-  id: JsonCrdtTimestamp;
+  id: JsonCrdtVerboseTimestamp;
   map: Record<string, JsonCrdtNode>;
 }
 
 /**
  * Tuple (LWW JSON array) node.
  */
-export interface VectorJsonCrdtNode {
+export interface JsonCrdtVerboseVec {
   type: 'vec';
-  id: JsonCrdtTimestamp;
+  id: JsonCrdtVerboseTimestamp;
   map: (null | JsonCrdtNode)[];
 }
 
 /**
  * RGA JSON string node.
  */
-export interface StringJsonCrdtNode {
+export interface JsonCrdtVerboseStr {
   type: 'str';
-  id: JsonCrdtTimestamp;
-  chunks: (StringJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+  id: JsonCrdtVerboseTimestamp;
+  chunks: (JsonCrdtVerboseStrChunk | JsonCrdtVerboseTombstone)[];
 }
 
-export interface StringJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
+export interface JsonCrdtVerboseStrChunk {
+  id: JsonCrdtVerboseTimestamp;
   value: string;
 }
 
 /**
  * RGA binary node.
  */
-export interface BinaryJsonCrdtNode {
+export interface JsonCrdtVerboseBin {
   type: 'bin';
-  id: JsonCrdtTimestamp;
-  chunks: (BinaryJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+  id: JsonCrdtVerboseTimestamp;
+  chunks: (JsonCrdtVerboseBinChunk | JsonCrdtVerboseTombstone)[];
 }
 
-export interface BinaryJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
+export interface JsonCrdtVerboseBinChunk {
+  id: JsonCrdtVerboseTimestamp;
   value: string;
 }
 
 /**
  * RGA JSON array node.
  */
-export interface ArrayJsonCrdtNode {
+export interface JsonCrdtVerboseArr {
   type: 'arr';
-  id: JsonCrdtTimestamp;
-  chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+  id: JsonCrdtVerboseTimestamp;
+  chunks: (JsonCrdtVerboseArrChunk | JsonCrdtVerboseTombstone)[];
 }
 
-export interface ArrayJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
+export interface JsonCrdtVerboseArrChunk {
+  id: JsonCrdtVerboseTimestamp;
   value: JsonCrdtNode[];
 }
 
 /**
  * A tombstone used in RGA nodes.
  */
-export interface JsonCrdtRgaTombstone {
-  id: JsonCrdtTimestamp;
+export interface JsonCrdtVerboseTombstone {
+  id: JsonCrdtVerboseTimestamp;
   span: number;
 }
 
 export type JsonCrdtNode =
-  | ObjectJsonCrdtNode
-  | VectorJsonCrdtNode
-  | ArrayJsonCrdtNode
-  | StringJsonCrdtNode
-  | BinaryJsonCrdtNode
-  | ValueJsonCrdtNode
-  | ConstantJsonCrdtNode;
+  | JsonCrdtVerboseObj
+  | JsonCrdtVerboseVec
+  | JsonCrdtVerboseArr
+  | JsonCrdtVerboseStr
+  | JsonCrdtVerboseBin
+  | JsonCrdtVerboseVal
+  | JsonCrdtVerboseCon;
