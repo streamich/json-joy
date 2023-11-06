@@ -3221,10 +3221,10 @@ interpret@^3.1.1:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-3.1.1.tgz#5be0ceed67ca79c6c4bc5cf0d7ee843dcea110c4"
   integrity sha512-6xwYfHbajpoF0xLW+iwLkhwgvLoZDfjYfoFNu8ftMoXINzwuymNLd9u/KmwtdT2GbR+/Cz66otEGEVVUHX9QLQ==
 
-ion-js@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/ion-js/-/ion-js-4.3.0.tgz#ea511b94a3a555ac6e2e58832c7b66c41c302a0f"
-  integrity sha512-8yhU1yx6Uia109cMbiDQDQS0InGJj8BaXckjyaN+5vCzL0e8qEXzLVRy579TmNThBDq8IfUJfqe0565Syh+0JA==
+ion-js@^5.0.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/ion-js/-/ion-js-5.2.0.tgz#1c06d421c3a4ea1013857f6652c86c6e2f1e03ce"
+  integrity sha512-2ip7YvjTifaFRXrPgs4lTd+h3KcrWg2vrQ+vKEL443vvavbK8blB/C1FScm18cTaKkgfAr95pp3JLtndCtWaDQ==
 
 ip@^2.0.0:
   version "2.0.0"
