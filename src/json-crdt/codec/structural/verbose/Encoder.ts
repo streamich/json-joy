@@ -157,7 +157,7 @@ export class Encoder {
     return {
       type: 'val',
       id: this.cTs(obj.id),
-      node: this.cNode(obj.node()),
+      value: this.cNode(obj.node()),
     };
   }
 

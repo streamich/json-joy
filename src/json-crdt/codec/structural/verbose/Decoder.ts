@@ -30,8 +30,8 @@ export class Decoder {
     return isServerClock ? ts(SESSION.SERVER, stamp) : ts(stamp[0], stamp[1]);
   }
 
-  protected cRoot(doc: Model, {node}: types.ValueJsonCrdtNode): void {
-    const val = node ? this.cNode(doc, node) : new nodes.ConNode(doc.clock.tick(0), null);
+  protected cRoot(doc: Model, {value}: types.ValueJsonCrdtNode): void {
+    const val = value ? this.cNode(doc, value) : new nodes.ConNode(doc.clock.tick(0), null);
     const root = new nodes.RootNode(doc, val.id);
     doc.root = root;
   }
@@ -155,7 +155,7 @@ export class Decoder {
 
   protected cVal(doc: Model, node: types.ValueJsonCrdtNode): nodes.ValNode {
     const id = this.cTs(node.id);
-    const val = this.cNode(doc, node.node);
+    const val = this.cNode(doc, node.value);
     const obj = new nodes.ValNode(doc, id, val.id);
     doc.index.set(id, obj);
     return obj;
