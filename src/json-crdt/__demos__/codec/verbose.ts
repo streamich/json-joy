@@ -4,7 +4,7 @@
 // npx nodemon -q -x ts-node src/json-crdt/__demos__/codec/verbose.ts
 
 import {Model} from '../..';
-import {Encoder} from '../../codec/structural/json/Encoder';
+import {Encoder} from '../../codec/structural/verbose/Encoder';
 import {inspect} from 'util';
 
 const encoder = new Encoder();

@@ -1,5 +1,5 @@
 import {Model} from '../../../../model';
-import {runCodecAllTypesSmokeTests} from '../../json/__tests__/runCodecAllTypesSmokeTests';
+import {runCodecAllTypesSmokeTests} from '../../verbose/__tests__/runCodecAllTypesSmokeTests';
 import {ViewDecoder} from '../ViewDecoder';
 
 const assertCodec = (doc: Model) => {

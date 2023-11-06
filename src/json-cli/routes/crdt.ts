@@ -1,5 +1,5 @@
 import {Model} from '../../json-crdt';
-import {Encoder as VerboseEncoder} from '../../json-crdt/codec/structural/json/Encoder';
+import {Encoder as VerboseEncoder} from '../../json-crdt/codec/structural/verbose/Encoder';
 import {Encoder as CompactEncoder} from '../../json-crdt/codec/structural/compact/Encoder';
 import {encode as encodePatch} from '../../json-crdt-patch/codec/compact/encode';
 import {TypeRouter, RoutesBase} from '../../json-type/system/TypeRouter';

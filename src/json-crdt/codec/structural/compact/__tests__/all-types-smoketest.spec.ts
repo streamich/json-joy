@@ -1,7 +1,7 @@
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
-import {runCodecAllTypesSmokeTests} from '../../json/__tests__/runCodecAllTypesSmokeTests';
+import {runCodecAllTypesSmokeTests} from '../../verbose/__tests__/runCodecAllTypesSmokeTests';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
