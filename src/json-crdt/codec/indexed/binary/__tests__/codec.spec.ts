@@ -72,7 +72,7 @@ test('can encode ID as const value', () => {
   expect(equal(ts, new Timestamp(model.clock.sid, 2))).toBe(true);
 });
 
-describe.only('basic types', () => {
+describe('basic types', () => {
   test('con', () => {
     const model = Model.withLogicalClock();
     model.api.root(konst(123));
