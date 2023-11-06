@@ -1,15 +1,4 @@
-import {
-  ConNode,
-  JsonNode,
-  ValNode,
-  ArrNode,
-  ArrChunk,
-  BinNode,
-  BinChunk,
-  ObjNode,
-  StrNode,
-  StrChunk,
-} from '../../../nodes';
+import * as nodes from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
@@ -69,7 +58,7 @@ export class Decoder {
     return new Timestamp(this.clockTable!.byIdx[sessionIndex].sid, timeDiff);
   }
 
-  protected decodeNode(id: ITimestampStruct): JsonNode {
+  protected decodeNode(id: ITimestampStruct): nodes.JsonNode {
     const reader = this.dec.reader;
     const octet = reader.u8();
     const major = octet >> 5;
@@ -94,23 +83,23 @@ export class Decoder {
     return UNDEFINED;
   }
 
-  public decodeCon(id: ITimestampStruct, length: number): ConNode {
+  public decodeCon(id: ITimestampStruct, length: number): nodes.ConNode {
     const doc = this.doc;
     const decoder = this.dec;
     const data = !length ? decoder.val() : this.ts();
-    const node = new ConNode(id, data);
+    const node = new nodes.ConNode(id, data);
     doc.index.set(id, node);
     return node;
   }
 
-  public cVal(id: ITimestampStruct): ValNode {
+  public cVal(id: ITimestampStruct): nodes.ValNode {
     const val = this.ts();
-    return new ValNode(this.doc, id, val);
+    return new nodes.ValNode(this.doc, id, val);
   }
 
-  public cObj(id: ITimestampStruct, length: number): ObjNode {
+  public cObj(id: ITimestampStruct, length: number): nodes.ObjNode {
     const decoder = this.dec;
-    const obj = new ObjNode(this.doc, id);
+    const obj = new nodes.ObjNode(this.doc, id);
     const keys = obj.keys;
     for (let i = 0; i < length; i++) {
       const key = String(decoder.val());
@@ -120,44 +109,44 @@ export class Decoder {
     return obj;
   }
 
-  protected cStr(id: ITimestampStruct, length: number): StrNode {
+  protected cStr(id: ITimestampStruct, length: number): nodes.StrNode {
     const decoder = this.dec;
-    const node = new StrNode(id);
+    const node = new nodes.StrNode(id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const val = decoder.val();
-      if (typeof val === 'number') return new StrChunk(chunkId, val, '');
+      if (typeof val === 'number') return new nodes.StrChunk(chunkId, val, '');
       const data = String(val);
-      return new StrChunk(chunkId, data.length, data);
+      return new nodes.StrChunk(chunkId, data.length, data);
     });
     return node;
   }
 
-  protected cBin(id: ITimestampStruct, length: number): BinNode {
+  protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {
     const decoder = this.dec;
     const reader = decoder.reader;
-    const node = new BinNode(id);
+    const node = new nodes.BinNode(id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const [deleted, length] = reader.b1vu28();
-      if (deleted) return new BinChunk(chunkId, length, undefined);
+      if (deleted) return new nodes.BinChunk(chunkId, length, undefined);
       const data = reader.buf(length);
-      return new BinChunk(chunkId, length, data);
+      return new nodes.BinChunk(chunkId, length, data);
     });
     return node;
   }
 
-  protected cArr(id: ITimestampStruct, length: number): ArrNode {
+  protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {
     const decoder = this.dec;
     const reader = decoder.reader;
-    const node = new ArrNode(this.doc, id);
+    const node = new nodes.ArrNode(this.doc, id);
     node.ingest(length, () => {
       const chunkId = this.ts();
       const [deleted, length] = reader.b1vu28();
-      if (deleted) return new ArrChunk(chunkId, length, undefined);
+      if (deleted) return new nodes.ArrChunk(chunkId, length, undefined);
       const data: ITimestampStruct[] = [];
       for (let i = 0; i < length; i++) data.push(this.ts());
-      return new ArrChunk(chunkId, length, data);
+      return new nodes.ArrChunk(chunkId, length, data);
     });
     return node;
   }
