@@ -63,15 +63,6 @@ export class Encoder {
     this.enc.writer.id(index, id.time);
   }
 
-  public encodeVal(node: ValNode): Uint8Array {
-    const writer = this.enc.writer;
-    const child = node.node();
-    writer.reset();
-    writer.u8(0xd6);
-    this.ts(child.id);
-    return writer.flush();
-  }
-
   protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
     const writer = this.enc.writer;
     if (length < 24) writer.u8(majorOverlay + length);
@@ -92,6 +83,15 @@ export class Encoder {
       this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
       encoder.writeAny(val);
     }
+    return writer.flush();
+  }
+
+  public encodeVal(node: ValNode): Uint8Array {
+    const writer = this.enc.writer;
+    const child = node.node();
+    writer.reset();
+    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.ts(child.id);
     return writer.flush();
   }
 

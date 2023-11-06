@@ -3,6 +3,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {compare, equal, Timestamp, VectorClock} from '../../../../../json-crdt-patch/clock';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../../json-crdt-patch';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -76,10 +77,25 @@ describe.only('basic types', () => {
     const model = Model.withLogicalClock();
     model.api.root(konst(123));
     const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('val', () => {
+    const model = Model.withLogicalClock();
+    model.setSchema(s.val(s.con(true)));
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('obj', () => {
+    const model = Model.withLogicalClock();
+    model.api.root({foo: null});
+    const encoded = encoder.encode(model);
     console.log(model + '');
     console.log(encoded);
     const decoded = decoder.decode(encoded);
-    const view = decoded.view();
-    expect(view).toBe(123);
+    expect(decoded.view()).toStrictEqual(model.view());
   });
 });

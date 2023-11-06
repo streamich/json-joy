@@ -41,14 +41,17 @@ export class Decoder {
       const rootValue = this.ts();
       doc.root.set(rootValue);
     }
-    const docIndex = doc.index;
-    for (const field in fields) {
+    const index = doc.index;
+    const keys = Object.keys(fields);
+    const length = keys.length;
+    for (let i = 0; i < length; i++) {
+      const field = keys[i];
       if (field.length < 3) continue; // Skip "c" and "r".
       const arr = fields[field as FieldName];
       const id = clockTable.parseField(field as FieldName);
       reader.reset(arr);
       const node = this.decodeNode(id);
-      docIndex.set(node.id, node);
+      index.set(id, node);
     }
     return doc;
   }
@@ -67,8 +70,8 @@ export class Decoder {
     switch (major) {
       case CRDT_MAJOR.CON:
         return this.decodeCon(id, length);
-      // case CRDT_MAJOR.VAL:
-      //   return this.cVal(id);
+      case CRDT_MAJOR.VAL:
+        return this.decodeVal(id);
       // case CRDT_MAJOR.VEC:
       //   return this.cVec(id, length);
       // case CRDT_MAJOR.OBJ:
@@ -84,17 +87,16 @@ export class Decoder {
   }
 
   public decodeCon(id: ITimestampStruct, length: number): nodes.ConNode {
-    const doc = this.doc;
     const decoder = this.dec;
     const data = !length ? decoder.val() : this.ts();
     const node = new nodes.ConNode(id, data);
-    doc.index.set(id, node);
     return node;
   }
 
-  public cVal(id: ITimestampStruct): nodes.ValNode {
+  public decodeVal(id: ITimestampStruct): nodes.ValNode {
     const val = this.ts();
-    return new nodes.ValNode(this.doc, id, val);
+    const node = new nodes.ValNode(this.doc, id, val);
+    return node;
   }
 
   public cObj(id: ITimestampStruct, length: number): nodes.ObjNode {
