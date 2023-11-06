@@ -162,15 +162,15 @@ export class Encoder {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
-    encoder.writeArrHdr(node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
       this.ts(chunk.id);
-      writer.b1vu28(deleted, length);
+      writer.b1vu56(~~deleted as 0 | 1, length);
       if (deleted) continue;
-      const data = chunk.data!;
-      for (let i = 0; i < length; i++) this.ts(data[i]);
+      const data = chunk.data;
+      for (let i = 0; i < length; i++) this.ts(data![i]);
     }
     return writer.flush();
   }

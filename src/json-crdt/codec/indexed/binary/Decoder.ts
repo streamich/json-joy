@@ -81,7 +81,7 @@ export class Decoder {
       case CRDT_MAJOR.BIN:
         return this.decodeBin(id, length);
       case CRDT_MAJOR.ARR:
-        return this.cArr(id, length);
+        return this.decodeArr(id, length);
     }
     return UNDEFINED;
   }
@@ -125,7 +125,7 @@ export class Decoder {
 
   protected decodeStr(id: ITimestampStruct, length: number): nodes.StrNode {
     const node = new nodes.StrNode(id);
-    if (length) node.ingest(length, this.decodeStrChunk);
+    node.ingest(length, this.decodeStrChunk);
     return node;
   }
 
@@ -145,7 +145,7 @@ export class Decoder {
 
   protected decodeBin(id: ITimestampStruct, length: number): nodes.BinNode {
     const node = new nodes.BinNode(id);
-    if (length) node.ingest(length, this.decodeBinChunk);
+    node.ingest(length, this.decodeBinChunk);
     return node;
   }
 
@@ -157,18 +157,21 @@ export class Decoder {
     else return new nodes.BinChunk(id, length, reader.buf(length));
   };
 
-  protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {
-    const decoder = this.dec;
-    const reader = decoder.reader;
+  protected decodeArr(id: ITimestampStruct, length: number): nodes.ArrNode {
     const node = new nodes.ArrNode(this.doc, id);
-    node.ingest(length, () => {
-      const chunkId = this.ts();
-      const [deleted, length] = reader.b1vu28();
-      if (deleted) return new nodes.ArrChunk(chunkId, length, undefined);
-      const data: ITimestampStruct[] = [];
-      for (let i = 0; i < length; i++) data.push(this.ts());
-      return new nodes.ArrChunk(chunkId, length, data);
-    });
+    node.ingest(length, this.decodeArrChunk);
     return node;
   }
+
+  private decodeArrChunk = (): nodes.ArrChunk => {
+    const id = this.ts();
+    const reader = this.dec.reader;
+    const [deleted, length] = reader.b1vu56();
+    if (deleted) return new nodes.ArrChunk(id, length, undefined);
+    else {
+      const data: ITimestampStruct[] = [];
+      for (let i = 0; i < length; i++) data.push(this.ts());
+      return new nodes.ArrChunk(id, length, data);
+    }
+  };
 }

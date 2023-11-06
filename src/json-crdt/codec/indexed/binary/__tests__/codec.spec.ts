@@ -137,8 +137,24 @@ describe.only('basic types', () => {
     model.api.bin([]).ins(1, new Uint8Array([2, 3, 4]));
     model.api.bin([]).del(2, 1);
     const encoded = encoder.encode(model);
-    console.log(model + '');
-    console.log(encoded);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('arr', () => {
+    const model = Model.withLogicalClock();
+    model.api.root([-1]);
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('arr - 2', () => {
+    const model = Model.withLogicalClock();
+    model.api.root([-1]);
+    model.api.arr([]).ins(1, [2, 3, 4]);
+    model.api.arr([]).del(2, 1);
+    const encoded = encoder.encode(model);
     const decoded = decoder.decode(encoded);
     expect(decoded.view()).toStrictEqual(model.view());
   });
