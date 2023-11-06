@@ -11,11 +11,13 @@ export class Encoder {
   protected clockEncoder: ClockEncoder = new ClockEncoder();
   protected time: number = 0;
   protected doc!: Model;
-  protected readonly viewEncoder: CborEncoder<CrdtWriter> = new CborEncoder();
-  protected readonly metaEncoder: CborEncoder<CrdtWriter> = new CborEncoder();
+  protected readonly viewEncoder: CborEncoder<CrdtWriter> = new CborEncoder(new CrdtWriter());
+  protected readonly metaEncoder: CborEncoder<CrdtWriter> = new CborEncoder(new CrdtWriter());
+  protected index: number = 0;
 
   public encode(doc: Model<any>): [view: Uint8Array, meta: Uint8Array] {
     this.doc = doc;
+    this.index = 0;
     this.metaEncoder.writer.reset();
     this.encodeLogical(doc);
     return [this.viewEncoder.writer.flush(), this.metaEncoder.writer.flush()];
@@ -23,7 +25,6 @@ export class Encoder {
 
   public encodeLogical(model: Model): void {
     const writer = this.metaEncoder.writer;
-    writer.u8(1);
     this.clockEncoder.reset(model.clock);
     writer.ensureCapacity(4);
     const x0 = writer.x0;
@@ -83,94 +84,97 @@ export class Encoder {
     const val = node.val;
     this.ts(node.id);
     if (val instanceof Timestamp) {
+      this.viewEncoder.writeNull();
       this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
-      // TODO: REFERENCE
     } else {
+      this.viewEncoder.writeAny(val);
       this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
-      // TODO: REFERENCE
     }
   }
 
   protected cVal(node: nodes.ValNode): void {
-    this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
-    this.cNode(node.node());
+    // this.ts(node.id);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    // this.cNode(node.node());
   }
 
   protected cObj(node: nodes.ObjNode): void {
-    this.ts(node.id);
-    const keys = node.keys;
-    this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
-    keys.forEach(this.cKey);
+    // this.ts(node.id);
+    // const keys = node.keys;
+    // const size = keys.size;
+    // this.viewEncoder.writeObjHdr(size);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, size);
+    // keys.forEach(this.cKey);
   }
 
   protected readonly cKey = (val: ITimestampStruct, key: string) => {
-    this.writeStr(key);
-    this.cNode(this.doc.index.get(val)!);
+    // this.viewEncoder.writeStr(key);
+    // this.writeStr(key);
+    // this.cNode(this.doc.index.get(val)!);
   };
 
   protected cVec(node: nodes.VecNode): void {
-    const elements = node.elements;
-    const length = elements.length;
-    this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
-    const index = this.doc.index;
-    for (let i = 0; i < length; i++) {
-      const elementId = elements[i];
-      if (!elementId) this.writer.u8(0);
-      else this.cNode(index.get(elementId)!);
-    }
+    // const elements = node.elements;
+    // const length = elements.length;
+    // this.ts(node.id);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
+    // const index = this.doc.index;
+    // for (let i = 0; i < length; i++) {
+    //   const elementId = elements[i];
+    //   if (!elementId) this.writer.u8(0);
+    //   else this.cNode(index.get(elementId)!);
+    // }
   }
 
   protected cStr(node: nodes.StrNode): void {
-    const ts = this.ts;
-    const writer = this.writer;
-    ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      ts(chunk.id);
-      if (chunk.del) {
-        writer.u8(0);
-        writer.vu39(chunk.span);
-      } else {
-        // TODO: REFERENCE
-      }
-    }
+    // const ts = this.ts;
+    // const writer = this.writer;
+    // ts(node.id);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
+    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+    //   ts(chunk.id);
+    //   if (chunk.del) {
+    //     writer.u8(0);
+    //     writer.vu39(chunk.span);
+    //   } else {
+    //     // TODO: REFERENCE
+    //   }
+    // }
   }
 
   protected cBin(node: nodes.BinNode): void {
-    const ts = this.ts;
-    const writer = this.writer;
-    ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      // TODO: Encode ID first
-      // TODO: Use b1vu56
-      const length = chunk.span;
-      const deleted = chunk.del;
-      writer.b1vu28(chunk.del, length);
-      ts(chunk.id);
-      if (deleted) continue;
-      // TODO: REFERENCE
-    }
+    // const ts = this.ts;
+    // const writer = this.writer;
+    // ts(node.id);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
+    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+    //   // TODO: Encode ID first
+    //   // TODO: Use b1vu56
+    //   const length = chunk.span;
+    //   const deleted = chunk.del;
+    //   writer.b1vu28(chunk.del, length);
+    //   ts(chunk.id);
+    //   if (deleted) continue;
+    //   // TODO: REFERENCE
+    // }
   }
 
   protected cArr(node: nodes.ArrNode): void {
-    const ts = this.ts;
-    const writer = this.writer;
-    ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
-    const index = this.doc.index;
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      // TODO: Encode ID first
-      // TODO: Use b1vu56
-      const span = chunk.span;
-      const deleted = chunk.del;
-      writer.b1vu28(deleted, span);
-      ts(chunk.id);
-      if (deleted) continue;
-      const nodes = chunk.data!;
-      for (let i = 0; i < span; i++) this.cNode(index.get(nodes[i])!);
-    }
+  //   const ts = this.ts;
+  //   const writer = this.writer;
+  //   ts(node.id);
+  //   this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
+  //   const index = this.doc.index;
+  //   for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+  //     // TODO: Encode ID first
+  //     // TODO: Use b1vu56
+  //     const span = chunk.span;
+  //     const deleted = chunk.del;
+  //     writer.b1vu28(deleted, span);
+  //     ts(chunk.id);
+  //     if (deleted) continue;
+  //     const nodes = chunk.data!;
+  //     for (let i = 0; i < span; i++) this.cNode(index.get(nodes[i])!);
+  //   }
   }
 }
