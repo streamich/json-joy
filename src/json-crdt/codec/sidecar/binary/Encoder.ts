@@ -93,9 +93,9 @@ export class Encoder {
   }
 
   protected cVal(node: nodes.ValNode): void {
-    // this.ts(node.id);
-    // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
-    // this.cNode(node.node());
+    this.ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.cNode(node.node());
   }
 
   protected cObj(node: nodes.ObjNode): void {

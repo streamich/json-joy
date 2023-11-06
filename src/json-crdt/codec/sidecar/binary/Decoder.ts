@@ -75,8 +75,8 @@ export class Decoder {
     switch (major) {
       case CRDT_MAJOR.CON:
         return this.cCon(view, id);
-      // case CRDT_MAJOR.VAL:
-      //   return this.cVal(id);
+      case CRDT_MAJOR.VAL:
+        return this.cVal(view, id);
       // case CRDT_MAJOR.OBJ:
       //   return this.cObj(id, length);
       // case CRDT_MAJOR.VEC:
@@ -98,13 +98,13 @@ export class Decoder {
     return node;
   }
 
-  // protected cVal(id: ITimestampStruct): ValNode {
-  //   const child = this.cNode();
-  //   const doc = this.doc;
-  //   const node = new ValNode(doc, id, child.id);
-  //   doc.index.set(id, node);
-  //   return node;
-  // }
+  protected cVal(view: unknown, id: ITimestampStruct): ValNode {
+    const child = this.cNode(view);
+    const doc = this.doc;
+    const node = new ValNode(doc, id, child.id);
+    doc.index.set(id, node);
+    return node;
+  }
 
   // protected cObj(id: ITimestampStruct, length: number): ObjNode {
   //   const obj = new ObjNode(this.doc, id);

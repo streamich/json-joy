@@ -19,24 +19,39 @@ test('con', () => {
   expect(decoded.clock.time).toBe(model.clock.time);
 });
 
-// test('con', () => {
-//   const model = Model.withLogicalClock();
-//   const encoder = new Encoder();
-//   const decoder = new Decoder();
-//   const cborDecoder = new CborDecoder();
-//   model.api.root(s.con(123));
+test('val', () => {
+  const model = Model.withLogicalClock();
+  const encoder = new Encoder();
+  const decoder = new Decoder();
+  const cborDecoder = new CborDecoder();
+  model.api.root(s.val(s.con(123)));
+  const [view, meta] = encoder.encode(model);
+  const viewDecoded = cborDecoder.decode(view);
+  const decoded = decoder.decode(viewDecoded, meta);
+  expect(model.view()).toEqual(decoded.view());
+  expect(model.view()).toEqual(viewDecoded);
+  expect(decoded.clock.sid).toBe(model.clock.sid);
+  expect(decoded.clock.time).toBe(model.clock.time);
+});
 
-//   console.log(model + '');
+test('obj', () => {
+  const model = Model.withLogicalClock();
+  const encoder = new Encoder();
+  const decoder = new Decoder();
+  const cborDecoder = new CborDecoder();
+  model.api.root(s.val(s.con(123)));
 
-//   const [view, meta] = encoder.encode(model);
+  console.log(model + '');
 
-//   console.log(view);
-//   console.log(meta);
+  const [view, meta] = encoder.encode(model);
 
-//   const viewDecoded = cborDecoder.decode(view);
-//   const decoded = decoder.decode(viewDecoded, meta);
+  console.log(view);
+  console.log(meta);
 
-//   console.log(viewDecoded);
-//   console.log(decoded + '');
+  const viewDecoded = cborDecoder.decode(view);
+  const decoded = decoder.decode(viewDecoded, meta);
 
-// });
+  console.log(viewDecoded);
+  console.log(decoded + '');
+
+});
