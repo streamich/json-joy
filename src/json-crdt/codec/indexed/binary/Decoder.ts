@@ -110,7 +110,7 @@ export class Decoder {
     }
     return obj;
   }
-  
+
   public decodeVec(id: ITimestampStruct, length: number): nodes.VecNode {
     const reader = this.dec.reader;
     const node = new nodes.VecNode(this.doc, id);
