@@ -27,6 +27,25 @@ export type JsonCrdtLogicalTimestamp = [sessionId: number, time: number];
 export type JsonCrdtServerTimestamp = number;
 
 /**
+ * A constant immutable JSON value.
+ */
+export interface ConstantJsonCrdtNode {
+  type: 'con';
+  id: JsonCrdtTimestamp;
+  timestamp?: boolean;
+  value?: unknown | JsonCrdtTimestamp;
+}
+
+/**
+ * LWW register for any JSON value.
+ */
+export interface ValueJsonCrdtNode {
+  type: 'val';
+  id: JsonCrdtTimestamp;
+  value: JsonCrdtNode;
+}
+
+/**
  * LWW JSON object node.
  */
 export interface ObjectJsonCrdtNode {
@@ -42,20 +61,6 @@ export interface TupleJsonCrdtNode {
   type: 'tup';
   id: JsonCrdtTimestamp;
   components: (null | JsonCrdtNode)[];
-}
-
-/**
- * RGA JSON array node.
- */
-export interface ArrayJsonCrdtNode {
-  type: 'arr';
-  id: JsonCrdtTimestamp;
-  chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[];
-}
-
-export interface ArrayJsonCrdtChunk {
-  id: JsonCrdtTimestamp;
-  nodes: JsonCrdtNode[];
 }
 
 /**
@@ -87,30 +92,25 @@ export interface BinaryJsonCrdtChunk {
 }
 
 /**
+ * RGA JSON array node.
+ */
+export interface ArrayJsonCrdtNode {
+  type: 'arr';
+  id: JsonCrdtTimestamp;
+  chunks: (ArrayJsonCrdtChunk | JsonCrdtRgaTombstone)[];
+}
+
+export interface ArrayJsonCrdtChunk {
+  id: JsonCrdtTimestamp;
+  nodes: JsonCrdtNode[];
+}
+
+/**
  * A tombstone used in RGA nodes.
  */
 export interface JsonCrdtRgaTombstone {
   id: JsonCrdtTimestamp;
   span: number;
-}
-
-/**
- * LWW register for any JSON value.
- */
-export interface ValueJsonCrdtNode {
-  type: 'val';
-  id: JsonCrdtTimestamp;
-  value: JsonCrdtNode;
-}
-
-/**
- * A constant immutable JSON value.
- */
-export interface ConstantJsonCrdtNode {
-  type: 'con';
-  id: JsonCrdtTimestamp;
-  timestamp?: boolean;
-  value?: unknown | JsonCrdtTimestamp;
 }
 
 export type JsonCrdtNode =
