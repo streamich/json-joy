@@ -1853,10 +1853,10 @@ cbor@^8.1.0:
   dependencies:
     nofilter "^3.1.0"
 
-cborg@^2.0.3:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/cborg/-/cborg-2.0.5.tgz#b5393c8b1843d5c1a61f2b79b4c9f752052a4d44"
-  integrity sha512-xVW1rSIw1ZXbkwl2XhJ7o/jAv0vnVoQv/QlfQxV8a7V5PlA4UU/AcIiXqmpyybwNWy/GPQU1m/aBVNIWr7/T0w==
+cborg@^4.0.0:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/cborg/-/cborg-4.0.5.tgz#20680c0e8d0521e5700b5d9a1d0a644207ca2878"
+  integrity sha512-q8TAjprr8pn9Fp53rOIGp/UFDdFY6os2Nq62YogPSIzczJD9M6g2b6igxMkpCiZZKJ0kn/KzDLDvG+EqBIEeCg==
 
 chalk@^2.3.0, chalk@^2.4.2:
   version "2.4.2"
