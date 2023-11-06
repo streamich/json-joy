@@ -59,9 +59,10 @@ export class Decoder {
   protected cObj(doc: Model, node: types.ObjectJsonCrdtNode): nodes.ObjNode {
     const id = this.cTs(node.id);
     const obj = new nodes.ObjNode(doc, id);
-    const keys = Object.keys(node.keys);
+    const map = node.map;
+    const keys = Object.keys(map);
     for (const key of keys) {
-      const keyNode = node.keys[key];
+      const keyNode = map[key];
       obj.put(key, this.cNode(doc, keyNode).id);
     }
     doc.index.set(id, obj);
@@ -72,10 +73,10 @@ export class Decoder {
     const id = this.cTs(node.id);
     const obj = new nodes.VecNode(doc, id);
     const elements = obj.elements;
-    const components = node.components;
-    const length = components.length;
+    const map = node.map;
+    const length = map.length;
     for (let i = 0; i < length; i++) {
-      const component = components[i];
+      const component = map[i];
       if (!component) elements.push(undefined);
       else elements.push(this.cNode(doc, component).id);
     }

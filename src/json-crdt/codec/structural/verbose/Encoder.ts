@@ -43,31 +43,31 @@ export class Encoder {
   }
 
   public cObj(obj: nodes.ObjNode): types.ObjectJsonCrdtNode {
-    const keys: Record<string, types.JsonCrdtNode> = {};
+    const map: Record<string, types.JsonCrdtNode> = {};
     obj.nodes((node, key) => {
-      keys[key] = this.cNode(node);
+      map[key] = this.cNode(node);
     });
     return {
       type: 'obj',
       id: this.cTs(obj.id),
-      keys,
+      map,
     };
   }
 
   public cVec(obj: nodes.VecNode): types.TupleJsonCrdtNode {
-    const components: types.TupleJsonCrdtNode['components'] = [];
+    const map: types.TupleJsonCrdtNode['map'] = [];
     const elements = obj.elements;
     const length = elements.length;
     const index = this.model.index;
     for (let i = 0; i < length; i++) {
       const element = elements[i];
-      if (element === undefined) components.push(null);
-      else components.push(this.cNode(index.get(element)!));
+      if (element === undefined) map.push(null);
+      else map.push(this.cNode(index.get(element)!));
     }
     return {
       type: 'tup',
       id: this.cTs(obj.id),
-      components,
+      map,
     };
   }
 

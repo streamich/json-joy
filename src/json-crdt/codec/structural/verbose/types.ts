@@ -51,7 +51,7 @@ export interface ValueJsonCrdtNode {
 export interface ObjectJsonCrdtNode {
   type: 'obj';
   id: JsonCrdtTimestamp;
-  keys: Record<string, JsonCrdtNode>;
+  map: Record<string, JsonCrdtNode>;
 }
 
 /**
@@ -60,7 +60,7 @@ export interface ObjectJsonCrdtNode {
 export interface TupleJsonCrdtNode {
   type: 'tup';
   id: JsonCrdtTimestamp;
-  components: (null | JsonCrdtNode)[];
+  map: (null | JsonCrdtNode)[];
 }
 
 /**
