@@ -15,12 +15,17 @@ import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
 import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {MsgPackDecoderFast} from '../../../../json-pack/msgpack';
+import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
+import {CRDT_MAJOR} from '../../structural/binary/constants';
 
 export class Decoder {
-  public readonly dec = new MsgPackDecoderFast<CrdtReader>(new CrdtReader());
+  public readonly dec: CborDecoderBase<CrdtReader>;
   protected doc!: Model;
   protected clockTable?: ClockTable;
+
+  constructor(reader?: CrdtReader) {
+    this.dec = new CborDecoderBase<CrdtReader>(reader || new CrdtReader());
+  }
 
   public decode<M extends Model>(
     fields: IndexedFields,
@@ -66,47 +71,36 @@ export class Decoder {
 
   protected decodeNode(id: ITimestampStruct): JsonNode {
     const reader = this.dec.reader;
-    const byte = reader.u8();
-    if (byte <= 0b10001111) return this.cObj(id, byte & 0b1111);
-    else if (byte <= 0b10011111) return this.cArr(id, byte & 0b1111);
-    else if (byte <= 0b10111111) return this.cStr(id, byte & 0b11111);
-    else {
-      switch (byte) {
-        case 0xc4:
-          return this.cBin(id, reader.u8());
-        case 0xc5:
-          return this.cBin(id, reader.u16());
-        case 0xc6:
-          return this.cBin(id, reader.u32());
-        case 0xd4:
-          return this.cConst(id);
-        case 0xd5:
-          return new ConNode(id, this.ts());
-        case 0xd6:
-          return this.cVal(id);
-        case 0xde:
-          return this.cObj(id, reader.u16());
-        case 0xdf:
-          return this.cObj(id, reader.u32());
-        case 0xdc:
-          return this.cArr(id, reader.u16());
-        case 0xdd:
-          return this.cArr(id, reader.u32());
-        case 0xd9:
-          return this.cStr(id, reader.u8());
-        case 0xda:
-          return this.cStr(id, reader.u16());
-        case 0xdb:
-          return this.cStr(id, reader.u32());
-      }
+    const octet = reader.u8();
+    const major = octet >> 5;
+    const minor = octet & 0b11111;
+    const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
+    switch (major) {
+      case CRDT_MAJOR.CON:
+        return this.decodeCon(id, length);
+      // case CRDT_MAJOR.VAL:
+      //   return this.cVal(id);
+      // case CRDT_MAJOR.VEC:
+      //   return this.cVec(id, length);
+      // case CRDT_MAJOR.OBJ:
+      //   return this.cObj(id, length);
+      // case CRDT_MAJOR.STR:
+      //   return this.cStr(id, length);
+      // case CRDT_MAJOR.BIN:
+      //   return this.cBin(id, length);
+      // case CRDT_MAJOR.ARR:
+      //   return this.cArr(id, length);
     }
-
     return UNDEFINED;
   }
 
-  public cConst(id: ITimestampStruct): ConNode {
-    const val = this.dec.val();
-    return new ConNode(id, val);
+  public decodeCon(id: ITimestampStruct, length: number): ConNode {
+    const doc = this.doc;
+    const decoder = this.dec;
+    const data = !length ? decoder.val() : this.ts();
+    const node = new ConNode(id, data);
+    doc.index.set(id, node);
+    return node;
   }
 
   public cVal(id: ITimestampStruct): ValNode {

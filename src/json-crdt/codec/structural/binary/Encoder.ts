@@ -12,8 +12,8 @@ export class Encoder extends CborEncoder<CrdtWriter> {
   protected time: number = 0;
   protected doc!: Model;
 
-  constructor() {
-    super(new CrdtWriter());
+  constructor(writer?: CrdtWriter) {
+    super(writer || new CrdtWriter());
   }
 
   public encode(doc: Model<any>): Uint8Array {
@@ -96,6 +96,24 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     else if (node instanceof BinNode) this.cBin(node);
   }
 
+  protected cCon(node: ConNode): void {
+    const val = node.val;
+    this.ts(node.id);
+    if (val instanceof Timestamp) {
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.ts(val as Timestamp);
+    } else {
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      this.writeAny(val);
+    }
+  }
+
+  protected cVal(node: ValNode): void {
+    this.ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.cNode(node.node());
+  }
+
   protected cObj(node: ObjNode): void {
     this.ts(node.id);
     const keys = node.keys;
@@ -118,23 +136,6 @@ export class Encoder extends CborEncoder<CrdtWriter> {
       const elementId = elements[i];
       if (!elementId) this.writer.u8(0);
       else this.cNode(index.get(elementId)!);
-    }
-  }
-
-  protected cArr(node: ArrNode): void {
-    const ts = this.ts;
-    const writer = this.writer;
-    ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
-    const index = this.doc.index;
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      const span = chunk.span;
-      const deleted = chunk.del;
-      writer.b1vu28(deleted, span);
-      ts(chunk.id);
-      if (deleted) continue;
-      const nodes = chunk.data!;
-      for (let i = 0; i < span; i++) this.cNode(index.get(nodes[i])!);
     }
   }
 
@@ -167,21 +168,20 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     }
   }
 
-  protected cVal(node: ValNode): void {
-    this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
-    this.cNode(node.node());
-  }
-
-  protected cCon(node: ConNode): void {
-    const val = node.val;
-    this.ts(node.id);
-    if (val instanceof Timestamp) {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
-      this.ts(val as Timestamp);
-    } else {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
-      this.writeAny(val);
+  protected cArr(node: ArrNode): void {
+    const ts = this.ts;
+    const writer = this.writer;
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
+    const index = this.doc.index;
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+      const span = chunk.span;
+      const deleted = chunk.del;
+      writer.b1vu28(deleted, span);
+      ts(chunk.id);
+      if (deleted) continue;
+      const nodes = chunk.data!;
+      for (let i = 0; i < span; i++) this.cNode(index.get(nodes[i])!);
     }
   }
 }

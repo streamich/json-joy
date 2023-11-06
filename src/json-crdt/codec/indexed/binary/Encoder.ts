@@ -1,17 +1,22 @@
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
-import {MsgPackEncoder} from '../../../../json-pack/msgpack';
+import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {Model} from '../../../model';
 import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
+import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {IndexedFields, FieldName} from './types';
 
 const EMPTY = new Uint8Array(0);
 
 export class Encoder {
+  public readonly enc: CborEncoder<CrdtWriter>;
   protected clockTable?: ClockTable;
-  public readonly enc = new MsgPackEncoder(new CrdtWriter());
   protected model?: IndexedFields;
+
+  constructor(writer?: CrdtWriter) {
+    this.enc = new CborEncoder<CrdtWriter>(writer || new CrdtWriter());
+  }
 
   public encode(doc: Model, clockTable: ClockTable = ClockTable.from(doc.clock)): IndexedFields {
     this.clockTable = clockTable;
@@ -45,7 +50,7 @@ export class Encoder {
 
   public encodeNode(node: JsonNode): Uint8Array {
     if (node instanceof ValNode) return this.encodeVal(node);
-    else if (node instanceof ConNode) return this.encodeConst(node);
+    else if (node instanceof ConNode) return this.encodeCon(node);
     else if (node instanceof StrNode) return this.encodeStr(node);
     else if (node instanceof ObjNode) return this.encodeObj(node);
     else if (node instanceof ArrNode) return this.encodeArr(node);
@@ -67,32 +72,41 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeConst(node: ConNode): Uint8Array {
+  protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
+    const writer = this.enc.writer;
+    if (length < 24) writer.u8(majorOverlay + length);
+    else if (length <= 0xff) writer.u16(((majorOverlay + 24) << 8) + length);
+    else if (length <= 0xffff) writer.u8u16(majorOverlay + 25, length);
+    else writer.u8u32(majorOverlay + 26, length);
+  }
+
+  public encodeCon(node: ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;
     writer.reset();
     if (val instanceof Timestamp) {
-      writer.u8(0xd5);
-      this.ts(val);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.ts(val as Timestamp);
     } else {
-      writer.u8(0xd4);
-      encoder.writeAny(node.val);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      encoder.writeAny(val);
     }
     return writer.flush();
   }
 
   public encodeStr(node: StrNode): Uint8Array {
-    const encoder = this.enc;
-    const writer = encoder.writer;
-    writer.reset();
-    encoder.writeStrHdr(node.size());
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      this.ts(chunk.id);
-      if (chunk.del) encoder.u32(chunk.span);
-      else encoder.encodeString(chunk.data!);
-    }
-    return writer.flush();
+    throw new Error('TODO');
+    // const encoder = this.enc;
+    // const writer = encoder.writer;
+    // writer.reset();
+    // encoder.writeStrHdr(node.size());
+    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+    //   this.ts(chunk.id);
+    //   if (chunk.del) encoder.u32(chunk.span);
+    //   else encoder.encodeString(chunk.data!);
+    // }
+    // return writer.flush();
   }
 
   public encodeBin(node: BinNode): Uint8Array {

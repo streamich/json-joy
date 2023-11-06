@@ -70,3 +70,16 @@ test('can encode ID as const value', () => {
   expect(ts).toBeInstanceOf(Timestamp);
   expect(equal(ts, new Timestamp(model.clock.sid, 2))).toBe(true);
 });
+
+describe.only('basic types', () => {
+  test('con', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(konst(123));
+    const encoded = encoder.encode(model);
+    console.log(model + '');
+    console.log(encoded);
+    const decoded = decoder.decode(encoded);
+    const view = decoded.view();
+    expect(view).toBe(123);
+  });
+});
