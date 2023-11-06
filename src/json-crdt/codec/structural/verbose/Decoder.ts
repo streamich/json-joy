@@ -98,7 +98,7 @@ export class Decoder {
         if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
           return new nodes.ArrChunk(id, (c as types.JsonCrdtRgaTombstone).span, undefined);
         else {
-          const ids = (c as types.ArrayJsonCrdtChunk).nodes.map((n) => this.cNode(doc, n).id);
+          const ids = (c as types.ArrayJsonCrdtChunk).value.map((n) => this.cNode(doc, n).id);
           return new nodes.ArrChunk(id, ids.length, ids);
         }
       });

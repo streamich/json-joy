@@ -102,7 +102,7 @@ export interface ArrayJsonCrdtNode {
 
 export interface ArrayJsonCrdtChunk {
   id: JsonCrdtTimestamp;
-  nodes: JsonCrdtNode[];
+  value: JsonCrdtNode[];
 }
 
 /**

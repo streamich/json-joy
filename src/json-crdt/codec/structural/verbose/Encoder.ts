@@ -94,7 +94,7 @@ export class Encoder {
     const index = this.model.index;
     const res: types.ArrayJsonCrdtChunk = {
       id: this.cTs(chunk.id),
-      nodes: chunk.data!.map((n) => this.cNode(index.get(n)!)),
+      value: chunk.data!.map((n) => this.cNode(index.get(n)!)),
     };
     return res;
   }
