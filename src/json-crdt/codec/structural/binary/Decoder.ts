@@ -186,7 +186,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
 
   protected cArr(id: ITimestampStruct, length: number): ArrNode {
     const obj = new ArrNode(this.doc, id);
-    obj.ingest(length, this.cArrChunk);
+    if (length) obj.ingest(length, this.cArrChunk);
     this.doc.index.set(id, obj);
     return obj;
   }

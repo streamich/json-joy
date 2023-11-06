@@ -146,12 +146,12 @@ export class Encoder {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
-    encoder.writeBinHdr(node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      this.ts(chunk.id);
-      const deleted = chunk.del;
       const length = chunk.span;
-      writer.b1vu28(deleted, length);
+      const deleted = chunk.del;
+      this.ts(chunk.id);
+      writer.b1vu56(~~deleted as 0 | 1, length);
       if (deleted) continue;
       writer.buf(chunk.data!, length);
     }

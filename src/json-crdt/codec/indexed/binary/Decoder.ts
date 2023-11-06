@@ -79,7 +79,7 @@ export class Decoder {
       case CRDT_MAJOR.STR:
         return this.decodeStr(id, length);
       case CRDT_MAJOR.BIN:
-        return this.cBin(id, length);
+        return this.decodeBin(id, length);
       case CRDT_MAJOR.ARR:
         return this.cArr(id, length);
     }
@@ -125,7 +125,7 @@ export class Decoder {
 
   protected decodeStr(id: ITimestampStruct, length: number): nodes.StrNode {
     const node = new nodes.StrNode(id);
-    node.ingest(length, this.decodeStrChunk);
+    if (length) node.ingest(length, this.decodeStrChunk);
     return node;
   }
 
@@ -143,19 +143,19 @@ export class Decoder {
     return new nodes.StrChunk(id, text.length, text);
   };
 
-  protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {
-    const decoder = this.dec;
-    const reader = decoder.reader;
+  protected decodeBin(id: ITimestampStruct, length: number): nodes.BinNode {
     const node = new nodes.BinNode(id);
-    node.ingest(length, () => {
-      const chunkId = this.ts();
-      const [deleted, length] = reader.b1vu28();
-      if (deleted) return new nodes.BinChunk(chunkId, length, undefined);
-      const data = reader.buf(length);
-      return new nodes.BinChunk(chunkId, length, data);
-    });
+    if (length) node.ingest(length, this.decodeBinChunk);
     return node;
   }
+
+  private decodeBinChunk = (): nodes.BinChunk => {
+    const id = this.ts();
+    const reader = this.dec.reader;
+    const [deleted, length] = reader.b1vu56();
+    if (deleted) return new nodes.BinChunk(id, length, undefined);
+    else return new nodes.BinChunk(id, length, reader.buf(length));
+  };
 
   protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {
     const decoder = this.dec;
