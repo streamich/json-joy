@@ -1036,12 +1036,12 @@
   integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
 
 "@types/quill@^2.0.10":
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/@types/quill/-/quill-2.0.10.tgz#bd3df7b59e0cfeb90f3d38892e4d1866261e7c0e"
-  integrity sha512-L6OHONEj2v4NRbWQOsn7j1N0SyzhRR3M4g1M6j/uuIwIsIW2ShWHhwbqNvH8hSmVktzqu0lITfdnqVOQ4qkrhA==
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@types/quill/-/quill-2.0.13.tgz#20d7b3830d6cd176d73d3b92df8aded806d41335"
+  integrity sha512-poUCs3uxuJHMtJPrs5IjBK2LO5+msTntUXIdgMDmX0lcypwsX8ReLINUQQbpUdabdcsg75YyaNufRtgbwnJuHw==
   dependencies:
     parchment "^1.1.2"
-    quill-delta "^4.0.1"
+    quill-delta "^5.1.0"
 
 "@types/range-parser@*":
   version "1.2.4"
@@ -2575,6 +2575,11 @@ fast-diff@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
   integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
+
+fast-diff@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/fast-diff/-/fast-diff-1.3.0.tgz#ece407fa550a64d638536cd727e129c61616e0f0"
+  integrity sha512-VxPP4NqbUjj6MaAOafWeUn2cXWLcCtljklUtZf0Ind4XQ+QPtmA0b18zZy0jIQx+ExRVCR/ZQpBmik5lXshNsw==
 
 fast-equals@^5.0.1:
   version "5.0.1"
@@ -4807,21 +4812,21 @@ qs@6.11.0:
   dependencies:
     side-channel "^1.0.4"
 
-quill-delta@^4.0.1:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-4.2.2.tgz#015397d046e0a3bed087cd8a51f98c11a1b8f351"
-  integrity sha512-qjbn82b/yJzOjstBgkhtBjN2TNK+ZHP/BgUQO+j6bRhWQQdmj2lH6hXG7+nwwLF41Xgn//7/83lxs9n2BkTtTg==
-  dependencies:
-    fast-diff "1.2.0"
-    lodash.clonedeep "^4.5.0"
-    lodash.isequal "^4.5.0"
-
 quill-delta@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-5.0.0.tgz#bde8d53e0e40587d0c2c0fdc1422b544da962444"
   integrity sha512-lVORU8dBPJdxPmwtdGhfRcz2cekn8Osuj5kwHoPMQ3MNlDT/IZ0CGUnQ/tLsAaTn31LWcDC1KyL+gkiGbBlBBw==
   dependencies:
     fast-diff "1.2.0"
+    lodash.clonedeep "^4.5.0"
+    lodash.isequal "^4.5.0"
+
+quill-delta@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/quill-delta/-/quill-delta-5.1.0.tgz#1c4bc08f7c8e5cc4bdc88a15a1a70c1cc72d2b48"
+  integrity sha512-X74oCeRI4/p0ucjb5Ma8adTXd9Scumz367kkMK5V/IatcX6A0vlgLgKbzXWy5nZmCGeNJm2oQX0d2Eqj+ZIlCA==
+  dependencies:
+    fast-diff "^1.3.0"
     lodash.clonedeep "^4.5.0"
     lodash.isequal "^4.5.0"
 
