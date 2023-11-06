@@ -54,8 +54,8 @@ export class Encoder {
     };
   }
 
-  public cVec(obj: nodes.VecNode): types.TupleJsonCrdtNode {
-    const map: types.TupleJsonCrdtNode['map'] = [];
+  public cVec(obj: nodes.VecNode): types.VectorJsonCrdtNode {
+    const map: types.VectorJsonCrdtNode['map'] = [];
     const elements = obj.elements;
     const length = elements.length;
     const index = this.model.index;
@@ -65,7 +65,7 @@ export class Encoder {
       else map.push(this.cNode(index.get(element)!));
     }
     return {
-      type: 'tup',
+      type: 'vec',
       id: this.cTs(obj.id),
       map,
     };

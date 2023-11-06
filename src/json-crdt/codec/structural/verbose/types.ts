@@ -57,8 +57,8 @@ export interface ObjectJsonCrdtNode {
 /**
  * Tuple (LWW JSON array) node.
  */
-export interface TupleJsonCrdtNode {
-  type: 'tup';
+export interface VectorJsonCrdtNode {
+  type: 'vec';
   id: JsonCrdtTimestamp;
   map: (null | JsonCrdtNode)[];
 }
@@ -115,7 +115,7 @@ export interface JsonCrdtRgaTombstone {
 
 export type JsonCrdtNode =
   | ObjectJsonCrdtNode
-  | TupleJsonCrdtNode
+  | VectorJsonCrdtNode
   | ArrayJsonCrdtNode
   | StringJsonCrdtNode
   | BinaryJsonCrdtNode

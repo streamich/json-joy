@@ -48,7 +48,7 @@ export class Decoder {
         return this.cVal(doc, node);
       case 'con':
         return this.cCon(doc, node);
-      case 'tup':
+      case 'vec':
         return this.cVec(doc, node);
       case 'bin':
         return this.cBin(doc, node);
@@ -69,7 +69,7 @@ export class Decoder {
     return obj;
   }
 
-  protected cVec(doc: Model, node: types.TupleJsonCrdtNode): nodes.VecNode {
+  protected cVec(doc: Model, node: types.VectorJsonCrdtNode): nodes.VecNode {
     const id = this.cTs(node.id);
     const obj = new nodes.VecNode(doc, id);
     const elements = obj.elements;
