@@ -126,7 +126,7 @@
     "msgpack-lite": "^0.1.26",
     "msgpack5": "^6.0.2",
     "msgpackr": "^1.6.0",
-    "nodemon": "^2.0.16",
+    "nodemon": "^3.0.0",
     "ot-text": "^1.0.2",
     "ot-text-unicode": "^4.0.0",
     "p4-css": "^1.5.1",
