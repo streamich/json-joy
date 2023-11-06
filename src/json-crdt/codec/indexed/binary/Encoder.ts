@@ -3,7 +3,7 @@ import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {Model} from '../../../model';
-import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
+import * as nodes from '../../../nodes';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {IndexedFields, FieldName} from './types';
 
@@ -37,7 +37,7 @@ export class Encoder {
     return model;
   }
 
-  protected readonly onNode = (node: JsonNode) => {
+  protected readonly onNode = (node: nodes.JsonNode) => {
     const id = node.id;
     const sid = id.sid;
     const time = id.time;
@@ -48,13 +48,14 @@ export class Encoder {
     model[field] = this.encodeNode(node);
   };
 
-  public encodeNode(node: JsonNode): Uint8Array {
-    if (node instanceof ValNode) return this.encodeVal(node);
-    else if (node instanceof ConNode) return this.encodeCon(node);
-    else if (node instanceof StrNode) return this.encodeStr(node);
-    else if (node instanceof ObjNode) return this.encodeObj(node);
-    else if (node instanceof ArrNode) return this.encodeArr(node);
-    else if (node instanceof BinNode) return this.encodeBin(node);
+  public encodeNode(node: nodes.JsonNode): Uint8Array {
+    if (node instanceof nodes.ConNode) return this.encodeCon(node);
+    else if (node instanceof nodes.ValNode) return this.encodeVal(node);
+    else if (node instanceof nodes.ObjNode) return this.encodeObj(node);
+    else if (node instanceof nodes.VecNode) return this.encodeVec(node);
+    else if (node instanceof nodes.StrNode) return this.encodeStr(node);
+    else if (node instanceof nodes.BinNode) return this.encodeBin(node);
+    else if (node instanceof nodes.ArrNode) return this.encodeArr(node);
     else return EMPTY;
   }
 
@@ -71,7 +72,7 @@ export class Encoder {
     else writer.u8u32(majorOverlay + 26, length);
   }
 
-  public encodeCon(node: ConNode): Uint8Array {
+  public encodeCon(node: nodes.ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;
@@ -86,7 +87,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeVal(node: ValNode): Uint8Array {
+  public encodeVal(node: nodes.ValNode): Uint8Array {
     const writer = this.enc.writer;
     const child = node.node();
     writer.reset();
@@ -95,7 +96,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeObj(node: ObjNode): Uint8Array {
+  public encodeObj(node: nodes.ObjNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -110,7 +111,23 @@ export class Encoder {
     this.ts(value);
   };
 
-  public encodeStr(node: StrNode): Uint8Array {
+  public encodeVec(node: nodes.VecNode): Uint8Array {
+    const writer = this.enc.writer;
+    writer.reset();
+    const length = node.elements.length;
+    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
+    for (let i = 0; i < length; i++) {
+      const childId = node.val(i);
+      if (!childId) writer.u8(0);
+      else {
+        writer.u8(1);
+        this.ts(childId);
+      }
+    }
+    return writer.flush();
+  }
+
+  public encodeStr(node: nodes.StrNode): Uint8Array {
     throw new Error('TODO');
     // const encoder = this.enc;
     // const writer = encoder.writer;
@@ -124,7 +141,7 @@ export class Encoder {
     // return writer.flush();
   }
 
-  public encodeBin(node: BinNode): Uint8Array {
+  public encodeBin(node: nodes.BinNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
@@ -140,7 +157,7 @@ export class Encoder {
     return writer.flush();
   }
 
-  public encodeArr(node: ArrNode): Uint8Array {
+  public encodeArr(node: nodes.ArrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();

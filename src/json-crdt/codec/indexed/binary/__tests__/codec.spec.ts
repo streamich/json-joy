@@ -93,6 +93,14 @@ describe.only('basic types', () => {
     const model = Model.withLogicalClock();
     model.api.root({foo: null});
     const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('vec', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(s.vec(s.con(false)));
+    const encoded = encoder.encode(model);
     console.log(model + '');
     console.log(encoded);
     const decoded = decoder.decode(encoded);

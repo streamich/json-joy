@@ -48,7 +48,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
    * @returns JSON CRDT node at the given index, if any.
    */
   public get<Index extends number>(index: Index): undefined | Value[Index] {
-    const id = this.val(index);
+    const id = this.elements[index] as ITimestampStruct | undefined;
     if (!id) return undefined;
     return this.doc.index.get(id);
   }

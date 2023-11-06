@@ -74,8 +74,8 @@ export class Decoder {
         return this.decodeVal(id);
       case CRDT_MAJOR.OBJ:
         return this.decodeObj(id, length);
-      // case CRDT_MAJOR.VEC:
-      //   return this.cVec(id, length);
+      case CRDT_MAJOR.VEC:
+        return this.decodeVec(id, length);
       // case CRDT_MAJOR.STR:
       //   return this.cStr(id, length);
       // case CRDT_MAJOR.BIN:
@@ -109,6 +109,18 @@ export class Decoder {
       keys.set(key, val);
     }
     return obj;
+  }
+  
+  public decodeVec(id: ITimestampStruct, length: number): nodes.VecNode {
+    const reader = this.dec.reader;
+    const node = new nodes.VecNode(this.doc, id);
+    const elements = node.elements;
+    for (let i = 0; i < length; i++) {
+      const octet = reader.u8();
+      if (!octet) elements.push(undefined);
+      else elements.push(this.ts());
+    }
+    return node;
   }
 
   protected cStr(id: ITimestampStruct, length: number): nodes.StrNode {

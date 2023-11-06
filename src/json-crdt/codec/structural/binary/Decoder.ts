@@ -92,10 +92,10 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
         return this.cCon(id, length);
       case CRDT_MAJOR.VAL:
         return this.cVal(id);
-      case CRDT_MAJOR.VEC:
-        return this.cVec(id, length);
       case CRDT_MAJOR.OBJ:
         return this.cObj(id, length);
+      case CRDT_MAJOR.VEC:
+        return this.cVec(id, length);
       case CRDT_MAJOR.STR:
         return this.cStr(id, length);
       case CRDT_MAJOR.BIN:
