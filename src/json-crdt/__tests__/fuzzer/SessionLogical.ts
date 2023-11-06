@@ -3,13 +3,13 @@ import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/de
 import {decode as decodeJson} from '../../../json-crdt-patch/codec/verbose/decode';
 import {Decoder as BinaryDecoder} from '../../codec/structural/binary/Decoder';
 import {Decoder as CompactDecoder} from '../../codec/structural/compact/Decoder';
-import {Decoder as JsonDecoder} from '../../codec/structural/json/Decoder';
+import {Decoder as JsonDecoder} from '../../codec/structural/verbose/Decoder';
 import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-patch/operations';
 import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeJson} from '../../../json-crdt-patch/codec/verbose/encode';
 import {Encoder as BinaryEncoder} from '../../codec/structural/binary/Encoder';
 import {Encoder as CompactEncoder} from '../../codec/structural/compact/Encoder';
-import {Encoder as JsonEncoder} from '../../codec/structural/json/Encoder';
+import {Encoder as JsonEncoder} from '../../codec/structural/verbose/Encoder';
 import {generateInteger} from './util';
 import {Model} from '../..';
 import {Patch} from '../../../json-crdt-patch/Patch';
