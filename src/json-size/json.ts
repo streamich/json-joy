@@ -1,4 +1,4 @@
-import {utf8Count} from '../util/utf8';
+import {utf8Count} from '../util/strings/utf8';
 
 const numberSize = (num: number) => {
   const isInteger = num === Math.round(num);

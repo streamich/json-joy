@@ -5,22 +5,20 @@ import {Model} from '../Model';
 describe('server clock', () => {
   test('increments timestamps', () => {
     const model = Model.withServerClock();
-    expect(model.clock.time).toBe(0);
-    const patch = model.api.root(true).commit();
     expect(model.clock.time).toBe(1);
-    expect(patch.ops.length).toBe(1);
-    const patch2 = model.api.root({foo: 'bar'}).commit();
-    model.applyPatch(patch2);
-    model.applyPatch(patch2);
-    expect(model.clock.time).toBe(1 + patch2.span());
-    expect(model.toView()).toEqual({foo: 'bar'});
+    model.api.root(true);
+    expect(model.clock.time).toBe(5);
+    model.api.root({foo: 'bar'});
+    model.applyPatch(model.api.builder.patch);
+    model.applyPatch(model.api.builder.patch);
+    expect(model.view()).toEqual({foo: 'bar'});
   });
 
   test('cannot skip operations', () => {
     const model = Model.withServerClock();
-    expect(model.clock.time).toBe(0);
-    const patch = model.api.root(true).commit();
     expect(model.clock.time).toBe(1);
+    model.api.root(true);
+    expect(model.clock.time).toBe(5);
     const clock = model.clock.clone();
     clock.tick(1);
     const builder = new PatchBuilder(clock);
@@ -30,7 +28,7 @@ describe('server clock', () => {
 
   test('cloning creates model with server clock', () => {
     const model = Model.withServerClock();
-    const patch = model.api.root('asdf').commit();
+    model.api.root('asdf');
     const model2 = model.clone();
     expect(model2.clock.time).toBe(model.clock.time);
     expect(model2.clock).toBeInstanceOf(ServerVectorClock);
@@ -38,7 +36,7 @@ describe('server clock', () => {
 
   test('forking creates model with server clock', () => {
     const model = Model.withServerClock();
-    const patch = model.api.root('asdf').commit();
+    model.api.root('asdf');
     const model2 = model.fork();
     expect(model2.clock.time).toBe(model.clock.time);
     expect(model2.clock).toBeInstanceOf(ServerVectorClock);

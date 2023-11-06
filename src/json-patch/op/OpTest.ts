@@ -4,8 +4,8 @@ import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 import {deepEqual} from '../../json-equal/deepEqual';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch
@@ -49,9 +49,9 @@ export class OpTest extends AbstractPredicateOp<'test'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(this.not ? 4 : 3);
-    encoder.u8(OPCODE.test);
+    encoder.writer.u8(OPCODE.test);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeAny(this.value);
-    if (this.not) encoder.u8(1);
+    if (this.not) encoder.writer.u8(1);
   }
 }

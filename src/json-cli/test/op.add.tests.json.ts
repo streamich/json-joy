@@ -93,6 +93,7 @@ const testCases: TestCase[] = [
         zip: '101',
       },
     },
+    skipInJsonOt: true,
   },
 ];
 

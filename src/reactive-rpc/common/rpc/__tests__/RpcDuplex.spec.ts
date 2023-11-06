@@ -1,12 +1,13 @@
-import {ApiTestSetup, runApiTests, sampleApi} from './api';
-import {RpcServer} from '../RpcServer';
-import {RpcClient} from '../RpcClient';
+import {RpcMessageStreamProcessor} from '../RpcMessageStreamProcessor';
+import {StreamingRpcClient} from '../client/StreamingRpcClient';
 import {RpcDuplex} from '../RpcDuplex';
-import {RpcApiCaller} from '../RpcApiCaller';
+import {ApiRpcCaller} from '../caller/ApiRpcCaller';
+import {sampleApi} from './sample-api';
+import {ApiTestSetup, runApiTests} from './runApiTests';
 
 const setup = () => {
   const server = new RpcDuplex({
-    client: new RpcClient({
+    client: new StreamingRpcClient({
       send: (messages) => {
         setTimeout(() => {
           client.onMessages(messages, {ip: '127.0.0.1'});
@@ -15,23 +16,21 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: new RpcServer<any>({
+    server: new RpcMessageStreamProcessor<any>({
       send: (messages: any) => {
         setTimeout(() => {
           client.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
-      onNotification: () => {},
-      caller: new RpcApiCaller<any, any>({
+      caller: new ApiRpcCaller<any, any>({
         api: sampleApi,
-        maxActiveCalls: 3,
       }),
       bufferSize: 2,
       bufferTime: 1,
     }),
   });
   const client = new RpcDuplex({
-    client: new RpcClient({
+    client: new StreamingRpcClient({
       send: (messages) => {
         setTimeout(() => {
           server.onMessages(messages, {ip: '127.0.0.1'});
@@ -40,16 +39,14 @@ const setup = () => {
       bufferSize: 2,
       bufferTime: 1,
     }),
-    server: new RpcServer<any>({
+    server: new RpcMessageStreamProcessor<any>({
       send: (messages: any) => {
         setTimeout(() => {
           server.onMessages(messages, {ip: '127.0.0.1'});
         }, 1);
       },
-      onNotification: () => {},
-      caller: new RpcApiCaller<any, any>({
+      caller: new ApiRpcCaller<any, any>({
         api: sampleApi,
-        maxActiveCalls: 3,
       }),
       bufferSize: 2,
       bufferTime: 1,

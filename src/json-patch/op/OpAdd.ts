@@ -1,10 +1,10 @@
 import type {CompactAddOp, OPCODE_ADD} from '../codec/compact/types';
-import type {IMessagePackEncoder} from '../../json-pack/Encoder/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '../../json-clone/clone';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch
@@ -51,7 +51,7 @@ export class OpAdd extends AbstractOp<'add'> {
 
   public encode(encoder: IMessagePackEncoder) {
     encoder.encodeArrayHeader(3);
-    encoder.u8(OPCODE.add);
+    encoder.writer.u8(OPCODE.add);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeAny(this.value);
   }

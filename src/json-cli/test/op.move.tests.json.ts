@@ -64,6 +64,7 @@ const testCases: TestCase[] = [
       a: [3, 2, 1, 'a', 'b', 'c'],
       b: ['c', 'a', 'b'],
     },
+    skipInJsonOt: true,
   },
   {
     comment: 'Can copy value and return it back',

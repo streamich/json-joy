@@ -1,39 +1,44 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {FALSE_ID, NULL_ID, TRUE_ID} from '../../../json-crdt-patch/constants';
 import {Model} from '../Model';
 
 describe('Document', () => {
   describe('root', () => {
     test('default root value is undefined', () => {
       const doc = Model.withLogicalClock();
-      expect(doc.toView()).toBe(undefined);
+      expect(doc.view()).toBe(undefined);
     });
 
     test('can set root value to "true"', () => {
       const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
-      builder.root(TRUE_ID);
+      const t = builder.json(true);
+      builder.root(t);
       doc.applyPatch(builder.patch);
-      expect(doc.toView()).toBe(true);
+      expect(doc.view()).toBe(true);
     });
 
     test('can set root value to "false"', () => {
       const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
-      builder.root(TRUE_ID);
-      builder.root(FALSE_ID);
+      const t = builder.json(true);
+      const f = builder.json(false);
+      builder.root(t);
+      builder.root(f);
       doc.applyPatch(builder.patch);
-      expect(doc.toView()).toBe(false);
+      expect(doc.view()).toBe(false);
     });
 
     test('can set root value to "null"', () => {
       const doc = Model.withLogicalClock();
       const builder = new PatchBuilder(doc.clock);
-      builder.root(TRUE_ID);
-      builder.root(FALSE_ID);
-      builder.root(NULL_ID);
+      const t = builder.json(true);
+      const f = builder.json(false);
+      const n = builder.json(null);
+      builder.root(t);
+      builder.root(f);
+      builder.root(n);
       doc.applyPatch(builder.patch);
-      expect(doc.toView()).toBe(null);
+      expect(doc.view()).toBe(null);
     });
   });
 });

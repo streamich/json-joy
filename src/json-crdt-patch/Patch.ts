@@ -1,51 +1,93 @@
-import {DeleteOperation} from './operations/DeleteOperation';
-import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
-import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
-import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
-import {MakeArrayOperation} from './operations/MakeArrayOperation';
-import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
-import {MakeConstantOperation} from './operations/MakeConstantOperation';
-import {MakeNumberOperation} from './operations/MakeNumberOperation';
-import {MakeObjectOperation} from './operations/MakeObjectOperation';
-import {MakeStringOperation} from './operations/MakeStringOperation';
-import {MakeValueOperation} from './operations/MakeValueOperation';
-import {NoopOperation} from './operations/NoopOperation';
-import {SetNumberOperation} from './operations/SetNumberOperation';
-import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
-import {SetRootOperation} from './operations/SetRootOperation';
-import {SetValueOperation} from './operations/SetValueOperation';
-import {ITimestamp, ServerTimestamp} from './clock';
+import * as operations from './operations';
+import {ITimestampStruct, ts, toDisplayString} from './clock';
 import {SESSION} from './constants';
+import {encode, decode} from './codec/binary';
+import type {Printable} from '../util/print/types';
 
+/**
+ * A union type of all possible JSON CRDT patch operations.
+ */
 export type JsonCrdtPatchOperation =
-  | DeleteOperation
-  | InsertArrayElementsOperation
-  | InsertStringSubstringOperation
-  | InsertBinaryDataOperation
-  | MakeArrayOperation
-  | MakeConstantOperation
-  | MakeNumberOperation
-  | MakeObjectOperation
-  | MakeStringOperation
-  | MakeBinaryOperation
-  | MakeValueOperation
-  | NoopOperation
-  | SetNumberOperation
-  | SetValueOperation
-  | SetObjectKeysOperation
-  | SetRootOperation;
+  | operations.NewConOp
+  | operations.NewValOp
+  | operations.NewVecOp
+  | operations.NewObjOp
+  | operations.NewStrOp
+  | operations.NewBinOp
+  | operations.NewArrOp
+  | operations.InsValOp
+  | operations.InsObjOp
+  | operations.InsVecOp
+  | operations.InsStrOp
+  | operations.InsBinOp
+  | operations.InsArrOp
+  | operations.DelOp
+  | operations.NopOp;
 
-export class Patch {
+/**
+ * Represents a JSON CRDT patch.
+ *
+ * Normally, you would create a new patch using the {@link PatchBuilder} class.
+ *
+ * ```ts
+ * import {Patch, PatchBuilder, LogicalClock} from 'json-joy/lib/json-crdt-patch';
+ *
+ * const clock = new LogicalClock(3, 100);
+ * const builder = new PatchBuilder(clock);
+ * const patch = builder.flush();
+ * ```
+ *
+ * Save patch to a binary representation:
+ *
+ * ```ts
+ * const binary = patch.toBinary();
+ * ```
+ *
+ * Load patch from a binary representation:
+ *
+ * ```ts
+ * const patch = Patch.fromBinary(binary);
+ * ```
+ *
+ * @category Patch
+ */
+export class Patch implements Printable {
+  /**
+   * Un-marshals a JSON CRDT patch from a binary representation.
+   */
+  public static fromBinary(data: Uint8Array): Patch {
+    return decode(data);
+  }
+
+  /**
+   * A list of operations in the patch.
+   */
   public readonly ops: JsonCrdtPatchOperation[] = [];
 
-  constructor() {}
+  /**
+   * Arbitrary metadata associated with the patch, which is not used by the
+   * library.
+   */
+  public meta: unknown = undefined;
 
-  public getId(): ITimestamp | undefined {
+  /**
+   * Returns the patch ID, which is equal to the ID of the first operation
+   * in the patch.
+   *
+   * @returns The ID of the first operation in the patch.
+   */
+  public getId(): ITimestampStruct | undefined {
     const op = this.ops[0];
     if (!op) return undefined;
     return op.id;
   }
 
+  /**
+   * Returns the total time span of the patch, which is the sum of all
+   * operation spans.
+   *
+   * @returns The length of the patch.
+   */
   public span(): number {
     let span = 0;
     for (const op of this.ops) span += op.span();
@@ -56,44 +98,52 @@ export class Patch {
    * Returns the expected time of the next inserted operation.
    */
   public nextTime(): number {
-    if (!this.ops.length) return 0;
-    const lastOp = this.ops[this.ops.length - 1];
+    const ops = this.ops;
+    const length = ops.length;
+    if (!length) return 0;
+    const lastOp = ops[length - 1];
     return lastOp.id.time + lastOp.span();
   }
 
-  public rewriteTime(ts: (id: ITimestamp) => ITimestamp): Patch {
+  /**
+   * Creates a new patch where all timestamps are transformed using the
+   * provided function.
+   *
+   * @param ts Timestamp transformation function.
+   * @returns A new patch with transformed timestamps.
+   */
+  public rewriteTime(ts: (id: ITimestampStruct) => ITimestampStruct): Patch {
     const patch = new Patch();
     const ops = this.ops;
     const length = ops.length;
+    const patchOps = patch.ops;
     for (let i = 0; i < length; i++) {
       const op = ops[i];
-      if (op instanceof DeleteOperation) patch.ops.push(new DeleteOperation(ts(op.id), ts(op.obj), op.after));
-      else if (op instanceof InsertArrayElementsOperation)
-        patch.ops.push(new InsertArrayElementsOperation(ts(op.id), ts(op.arr), ts(op.after), op.elements.map(ts)));
-      else if (op instanceof InsertStringSubstringOperation)
-        patch.ops.push(new InsertStringSubstringOperation(ts(op.id), ts(op.obj), ts(op.after), op.substring));
-      else if (op instanceof InsertBinaryDataOperation)
-        patch.ops.push(new InsertBinaryDataOperation(ts(op.id), ts(op.obj), ts(op.after), op.data));
-      else if (op instanceof MakeArrayOperation) patch.ops.push(new MakeArrayOperation(ts(op.id)));
-      else if (op instanceof MakeConstantOperation) patch.ops.push(new MakeConstantOperation(ts(op.id), op.value));
-      else if (op instanceof MakeValueOperation) patch.ops.push(new MakeValueOperation(ts(op.id), op.value));
-      else if (op instanceof MakeNumberOperation) patch.ops.push(new MakeNumberOperation(ts(op.id)));
-      else if (op instanceof MakeObjectOperation) patch.ops.push(new MakeObjectOperation(ts(op.id)));
-      else if (op instanceof MakeStringOperation) patch.ops.push(new MakeStringOperation(ts(op.id)));
-      else if (op instanceof MakeBinaryOperation) patch.ops.push(new MakeBinaryOperation(ts(op.id)));
-      else if (op instanceof SetNumberOperation)
-        patch.ops.push(new SetNumberOperation(ts(op.id), ts(op.num), op.value));
-      else if (op instanceof SetValueOperation) patch.ops.push(new SetValueOperation(ts(op.id), ts(op.obj), op.value));
-      else if (op instanceof SetObjectKeysOperation)
-        patch.ops.push(
-          new SetObjectKeysOperation(
+      if (op instanceof operations.DelOp) patchOps.push(new operations.DelOp(ts(op.id), ts(op.obj), op.what));
+      else if (op instanceof operations.NewConOp) patchOps.push(new operations.NewConOp(ts(op.id), op.val));
+      else if (op instanceof operations.NewVecOp) patchOps.push(new operations.NewVecOp(ts(op.id)));
+      else if (op instanceof operations.NewValOp) patchOps.push(new operations.NewValOp(ts(op.id)));
+      else if (op instanceof operations.NewObjOp) patchOps.push(new operations.NewObjOp(ts(op.id)));
+      else if (op instanceof operations.NewStrOp) patchOps.push(new operations.NewStrOp(ts(op.id)));
+      else if (op instanceof operations.NewBinOp) patchOps.push(new operations.NewBinOp(ts(op.id)));
+      else if (op instanceof operations.NewArrOp) patchOps.push(new operations.NewArrOp(ts(op.id)));
+      else if (op instanceof operations.InsArrOp)
+        patchOps.push(new operations.InsArrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data.map(ts)));
+      else if (op instanceof operations.InsStrOp)
+        patchOps.push(new operations.InsStrOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsBinOp)
+        patchOps.push(new operations.InsBinOp(ts(op.id), ts(op.obj), ts(op.ref), op.data));
+      else if (op instanceof operations.InsValOp)
+        patchOps.push(new operations.InsValOp(ts(op.id), ts(op.obj), ts(op.val)));
+      else if (op instanceof operations.InsObjOp)
+        patchOps.push(
+          new operations.InsObjOp(
             ts(op.id),
-            ts(op.object),
-            op.tuples.map(([key, value]) => [key, ts(value)]),
+            ts(op.obj),
+            op.data.map(([key, value]) => [key, ts(value)]),
           ),
         );
-      else if (op instanceof SetRootOperation) patch.ops.push(new SetRootOperation(ts(op.id), ts(op.value)));
-      else if (op instanceof NoopOperation) patch.ops.push(new NoopOperation(ts(op.id), op.length));
+      else if (op instanceof operations.NopOp) patchOps.push(new operations.NopOp(ts(op.id), op.len));
     }
     return patch;
   }
@@ -116,17 +166,50 @@ export class Patch {
     const patchStartTime = id.time;
     if (patchStartTime === serverTime) return this;
     const delta = serverTime - patchStartTime;
-    return this.rewriteTime((id: ITimestamp): ITimestamp => {
-      const sessionId = id.getSessionId();
+    return this.rewriteTime((id: ITimestampStruct): ITimestampStruct => {
+      const sessionId = id.sid;
       const isServerTimestamp = sessionId === SESSION.SERVER;
       if (!isServerTimestamp) return id;
       const time = id.time;
       if (time < transformHorizon) return id;
-      return new ServerTimestamp(time + delta);
+      return ts(SESSION.SERVER, time + delta);
     });
   }
 
+  /**
+   * Creates a deep clone of the patch.
+   *
+   * @returns A deep clone of the patch.
+   */
   public clone(): Patch {
     return this.rewriteTime((id) => id);
+  }
+
+  /**
+   * Marshals the patch into a binary representation.
+   *
+   * @returns A binary representation of the patch.
+   */
+  public toBinary() {
+    return encode(this);
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  /**
+   * Returns a textual human-readable representation of the patch. This can be
+   * used for debugging purposes.
+   *
+   * @param tab Start string for each line.
+   * @returns Text representation of the patch.
+   */
+  public toString(tab: string = ''): string {
+    const id = this.getId();
+    let out = `${this.constructor.name} ${id ? toDisplayString(id) : '(nil)'}!${this.span()}`;
+    for (let i = 0; i < this.ops.length; i++) {
+      const isLast = i === this.ops.length - 1;
+      out += `\n${tab}${isLast ? '└─' : '├─'} ${this.ops[i].toString(tab + (isLast ? '  ' : '│ '))}`;
+    }
+    return out;
   }
 }

@@ -1,5 +1,5 @@
-import {JsonPackExtension, JsonPackValue} from '../json-pack';
-import {encodeFull} from '../json-pack/util';
+import {JsonPackExtension, JsonPackValue} from '../json-pack/msgpack';
+import {encodeFull} from '../json-pack/msgpack/util';
 
 export interface JsonDocument {
   name: string;

@@ -14,11 +14,11 @@ test('generates random JSON', () => {
   expect(str.length > 5).toBe(true);
   expect(JSON.parse(str)).toEqual(json);
   expect(json).toMatchInlineSnapshot(`
-    Object {
-      "\\"%),047;>BEILPTW": Array [
+    {
+      ""%),047;>BEILPTW": [
         "]\`dgknrvy}",
         "aehlpswz #",
-        "knruy|\\"&)-04",
+        "knruy|"&)-04",
         "vy}#&*-148;?CF",
         378700000.0000067,
         399200000.0000046,
@@ -28,14 +28,14 @@ test('generates random JSON', () => {
         466300000.0000035,
         588700000.0000046,
         "imptw{ $'+/2",
-        Array [
+        [
           "bfimqtx{!$(",
-          "jnquy|\\"%),03",
+          "jnquy|"%),03",
           "hlosvz}#'*.1",
           "jnqux|!%),03",
           "lpswz $'+.25",
           "adhkosvz}#",
-          Object {},
+          {},
         ],
       ],
       "58<": false,
@@ -47,8 +47,8 @@ test('generates random JSON', () => {
       "GKNRUY": -3494793310839458,
       "ORVY]\`d": 387700000.000001,
       "PTW[_bfi": 405100000.00000304,
-      "UY\\\\\`cgjn": 454799999.99999994,
-      "៛": "\\\\_cfjmqtx|",
+      "UY\\\`cgjn": 454799999.99999994,
+      "г": "\\_cfjmqtx|",
     }
   `);
   Math.random = mathRandom;
@@ -103,4 +103,20 @@ describe('exact root type', () => {
       expect(!!json).toBe(true);
     });
   });
+});
+
+test('emoji strings can be converted to UTF-8', () => {
+  for (let i = 0; i < 100; i++) {
+    const str = '👍🏻😛' + '👍🏻😛';
+    const test = Buffer.from(str).toString('utf8');
+    expect(test).toBe(str);
+  }
+});
+
+test('random strings can be converted to UTF-8', () => {
+  for (let i = 0; i < 1000; i++) {
+    const str = RandomJson.genString(10);
+    const test = Buffer.from(str).toString('utf8');
+    expect(test).toBe(str);
+  }
 });

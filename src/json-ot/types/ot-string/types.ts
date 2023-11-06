@@ -4,7 +4,7 @@
  * - String in an array specifies a substring deletion.
  * - String is a substring insertion.
  */
-export type StringTypeOpComponent = number | [string] | string;
+export type StringOpComponent = number | [string] | string;
 
 /**
  * This form of operation encoding results in most efficient
@@ -21,4 +21,4 @@ export type StringTypeOpComponent = number | [string] | string;
  * - String header is encoded as one byte fixstr followed by 5 bytes of UTF-8 string.
  * - -4 is encoded as one byte fixint.
  */
-export type StringTypeOp = StringTypeOpComponent[];
+export type StringOp = StringOpComponent[];

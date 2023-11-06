@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "Node",
     "removeComments": true,
@@ -24,6 +24,7 @@
     "noImplicitReturns": true,
     "declaration": true,
     "downlevelIteration": true,
+    "isolatedModules": false,
     "lib": ["es2018", "es2017", "esnext", "dom", "esnext.asynciterable"],
     "outDir": "./lib"
   },
@@ -42,6 +43,10 @@
       "src/binary-rx/index.ts",
       "src/json-crdt/index.ts",
       "src/json-crdt-patch/index.ts",
+      "src/json-crdt-patch/clock/index.ts",
+      "src/json-crdt-patch/codec/json/index.ts",
+      "src/json-crdt-patch/codec/compact/index.ts",
+      "src/json-crdt-patch/codec/binary/index.ts",
       "src/json-pack/index.ts",
       "src/json-patch/index.ts",
       "src/json-patch-ot/index.ts",

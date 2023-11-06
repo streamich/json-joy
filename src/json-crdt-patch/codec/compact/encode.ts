@@ -1,140 +1,121 @@
-import {toBase64} from '../../../util/base64/encode';
-import {ITimestamp} from '../../clock';
-import {SESSION} from '../../constants';
-import {DeleteOperation} from '../../operations/DeleteOperation';
-import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
-import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
-import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
-import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
-import {MakeBinaryOperation} from '../../operations/MakeBinaryOperation';
-import {MakeConstantOperation} from '../../operations/MakeConstantOperation';
-import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
-import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
-import {MakeStringOperation} from '../../operations/MakeStringOperation';
-import {MakeValueOperation} from '../../operations/MakeValueOperation';
-import {NoopOperation} from '../../operations/NoopOperation';
-import {SetNumberOperation} from '../../operations/SetNumberOperation';
-import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
-import {SetRootOperation} from '../../operations/SetRootOperation';
-import {SetValueOperation} from '../../operations/SetValueOperation';
+import * as operations from '../../operations';
+import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
-import {Code} from './constants';
+import {JsonCrdtPatchOpcode, SESSION} from '../../constants';
+import {toBase64} from '../../../util/base64/toBase64';
+import type * as types from './types';
 
-export const encode = (patch: Patch): unknown[] => {
+const timestamp = (sid: number, ts: ITimestampStruct): types.CompactCodecTimestamp => {
+  const tsSessionId = ts.sid;
+  return tsSessionId === sid ? ts.time : [tsSessionId, ts.time];
+};
+
+const timespan = (sid: number, span: ITimespanStruct): types.CompactCodecTimespan => {
+  const ts = timestamp(sid, span);
+  if (ts instanceof Array) {
+    ts.push(span.span);
+    return ts;
+  }
+  return [ts, span.span];
+};
+
+/**
+ * Encodes a patch into a compact binary format into a JavaScript array.
+ *
+ * @param patch The patch to encode.
+ * @returns The encoded patch as a JavaScript POJO.
+ */
+export const encode = (patch: Patch): types.CompactCodecPatch => {
   const id = patch.getId();
   if (!id) throw new Error('PATCH_EMPTY');
 
-  const sessionId = id.getSessionId();
-  const {time} = id;
-  const res: unknown[] = sessionId === SESSION.SERVER ? [time] : [[sessionId, time]];
-
-  const pushTimestamp = (ts: ITimestamp) => {
-    const tsSessionId = ts.getSessionId();
-    if (tsSessionId === SESSION.SERVER) res.push(ts.time);
-    else if (tsSessionId === sessionId && ts.time >= time) res.push(time - ts.time - 1);
-    else res.push([tsSessionId, ts.time]);
-  };
+  const sid = id.sid;
+  const time = id.time;
+  const header: types.CompactCodecPatch[0] = sid === SESSION.SERVER ? [time] : [[sid, time]];
+  const meta = patch.meta;
+  if (meta !== undefined) header.push(meta);
+  const res: types.CompactCodecPatch = [header];
 
   for (const op of patch.ops) {
-    if (op instanceof MakeObjectOperation) {
-      res.push(Code.MakeObject);
-      continue;
-    }
-    if (op instanceof MakeArrayOperation) {
-      res.push(Code.MakeArray);
-      continue;
-    }
-    if (op instanceof MakeStringOperation) {
-      res.push(Code.MakeString);
-      continue;
-    }
-    if (op instanceof MakeBinaryOperation) {
-      res.push(Code.MakeBinary);
-      continue;
-    }
-    if (op instanceof MakeNumberOperation) {
-      res.push(Code.MakeNumber);
-      continue;
-    }
-    if (op instanceof SetRootOperation) {
-      const {value} = op;
-      res.push(Code.SetRoot);
-      pushTimestamp(value);
-      continue;
-    }
-    if (op instanceof SetObjectKeysOperation) {
-      const {object, tuples} = op;
-      res.push(Code.SetObjectKeys, tuples.length);
-      pushTimestamp(object);
-      for (const [key, value] of tuples) {
-        res.push(key);
-        pushTimestamp(value);
-      }
-      continue;
-    }
-    if (op instanceof SetNumberOperation) {
-      const {num, value} = op;
-      res.push(Code.SetNumber, value);
-      pushTimestamp(num);
-      continue;
-    }
-    if (op instanceof InsertStringSubstringOperation) {
-      const {obj, after, substring} = op;
-      res.push(Code.InsertStringSubstring, substring);
-      pushTimestamp(obj);
-      pushTimestamp(after);
-      continue;
-    }
-    if (op instanceof InsertBinaryDataOperation) {
-      const {obj, after, data} = op;
-      res.push(Code.InsertBinaryData, toBase64(data));
-      pushTimestamp(obj);
-      pushTimestamp(after);
-      continue;
-    }
-    if (op instanceof InsertArrayElementsOperation) {
-      const {arr, after, elements} = op;
-      res.push(Code.InsertArrayElements, elements.length);
-      pushTimestamp(arr);
-      pushTimestamp(after);
-      for (const element of elements) pushTimestamp(element);
-      continue;
-    }
-    if (op instanceof DeleteOperation) {
-      const {obj, after} = op;
-      const length = after.span;
-      if (length === 1) {
-        res.push(Code.DeleteOne);
-        pushTimestamp(obj);
-        pushTimestamp(after);
+    if (op instanceof operations.NewConOp) {
+      const val = op.val;
+      if (val instanceof Timestamp) {
+        res.push([JsonCrdtPatchOpcode.new_con, timestamp(sid, val), true]);
+      } else if (val === undefined) {
+        res.push([JsonCrdtPatchOpcode.new_con]);
       } else {
-        res.push(Code.Delete, length);
-        pushTimestamp(obj);
-        pushTimestamp(after);
+        res.push([JsonCrdtPatchOpcode.new_con, val]);
       }
-      continue;
-    }
-    if (op instanceof NoopOperation) {
-      const {length} = op;
-      if (length === 1) res.push(Code.NoopOne);
-      else res.push(Code.Noop, length);
-      continue;
-    }
-    if (op instanceof MakeConstantOperation) {
-      res.push(Code.MakeConstant);
-      res.push(op.value);
-      continue;
-    }
-    if (op instanceof MakeValueOperation) {
-      res.push(Code.MakeValue);
-      res.push(op.value);
-      continue;
-    }
-    if (op instanceof SetValueOperation) {
-      res.push(Code.SetValue);
-      pushTimestamp(op.obj);
-      res.push(op.value);
-      continue;
+    } else if (op instanceof operations.NewValOp) {
+      res.push([JsonCrdtPatchOpcode.new_val]);
+    } else if (op instanceof operations.NewObjOp) {
+      res.push([JsonCrdtPatchOpcode.new_obj]);
+    } else if (op instanceof operations.NewVecOp) {
+      res.push([JsonCrdtPatchOpcode.new_vec]);
+    } else if (op instanceof operations.NewStrOp) {
+      res.push([JsonCrdtPatchOpcode.new_str]);
+    } else if (op instanceof operations.NewBinOp) {
+      res.push([JsonCrdtPatchOpcode.new_bin]);
+    } else if (op instanceof operations.NewArrOp) {
+      res.push([JsonCrdtPatchOpcode.new_arr]);
+    } else if (op instanceof operations.InsValOp) {
+      res.push([JsonCrdtPatchOpcode.ins_val, timestamp(sid, op.obj), timestamp(sid, op.val)]);
+    } else if (op instanceof operations.InsObjOp) {
+      const tuples: types.CompactCodecInsObjOperation[2] = [];
+      for (const [key, value] of op.data) tuples.push([key, timestamp(sid, value)]);
+      const operation: types.CompactCodecInsObjOperation = [
+        JsonCrdtPatchOpcode.ins_obj,
+        timestamp(sid, op.obj),
+        tuples,
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.InsVecOp) {
+      const tuples: types.CompactCodecInsVecOperation[2] = [];
+      for (const [key, value] of op.data) tuples.push([key, timestamp(sid, value)]);
+      const operation: types.CompactCodecInsVecOperation = [
+        JsonCrdtPatchOpcode.ins_vec,
+        timestamp(sid, op.obj),
+        tuples,
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.InsStrOp) {
+      const operation: types.CompactCodecInsStrOperation = [
+        JsonCrdtPatchOpcode.ins_str,
+        timestamp(sid, op.obj),
+        timestamp(sid, op.ref),
+        op.data,
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.InsBinOp) {
+      const operation: types.CompactCodecInsBinOperation = [
+        JsonCrdtPatchOpcode.ins_bin,
+        timestamp(sid, op.obj),
+        timestamp(sid, op.ref),
+        toBase64(op.data),
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.InsArrOp) {
+      const elements: types.CompactCodecInsArrOperation[3] = [];
+      for (const element of op.data) elements.push(timestamp(sid, element));
+      const operation: types.CompactCodecInsArrOperation = [
+        JsonCrdtPatchOpcode.ins_arr,
+        timestamp(sid, op.obj),
+        timestamp(sid, op.ref),
+        elements,
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.DelOp) {
+      const operation: types.CompactCodecDelOperation = [
+        JsonCrdtPatchOpcode.del,
+        timestamp(sid, op.obj),
+        op.what.map((span) => timespan(sid, span)),
+      ];
+      res.push(operation);
+    } else if (op instanceof operations.NopOp) {
+      const operation: types.CompactCodecNopOperation = [JsonCrdtPatchOpcode.nop];
+      const len = op.len;
+      if (len > 1) operation.push(len);
+      res.push(operation);
     }
   }
 

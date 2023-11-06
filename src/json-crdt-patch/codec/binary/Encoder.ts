@@ -1,157 +1,238 @@
-import {Code} from '../compact/constants';
-import {CrdtEncoder} from '../../util/binary/CrdtEncoder';
-import {DeleteOperation} from '../../operations/DeleteOperation';
-import {InsertArrayElementsOperation} from '../../operations/InsertArrayElementsOperation';
-import {InsertBinaryDataOperation} from '../../operations/InsertBinaryDataOperation';
-import {InsertStringSubstringOperation} from '../../operations/InsertStringSubstringOperation';
-import {ITimestamp} from '../../clock';
-import {JsonCrdtPatchOperation, Patch} from '../../Patch';
-import {MakeArrayOperation} from '../../operations/MakeArrayOperation';
-import {MakeBinaryOperation} from '../../operations/MakeBinaryOperation';
-import {MakeNumberOperation} from '../../operations/MakeNumberOperation';
-import {MakeObjectOperation} from '../../operations/MakeObjectOperation';
-import {MakeStringOperation} from '../../operations/MakeStringOperation';
-import {MakeValueOperation} from '../../operations/MakeValueOperation';
-import {NoopOperation} from '../../operations/NoopOperation';
-import {SetNumberOperation} from '../../operations/SetNumberOperation';
-import {SetObjectKeysOperation} from '../../operations/SetObjectKeysOperation';
-import {SetRootOperation} from '../../operations/SetRootOperation';
-import {SetValueOperation} from '../../operations/SetValueOperation';
-import {SESSION} from '../../constants';
+import * as operations from '../../operations';
+import {JsonCrdtPatchOpcode} from '../../constants';
+import {CrdtWriter} from '../../util/binary/CrdtWriter';
+import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
+import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
+import type {JsonCrdtPatchOperation, Patch} from '../../Patch';
 
-export class Encoder extends CrdtEncoder {
-  private patchId!: ITimestamp;
+/**
+ * JSON CRDT Patch "binary" codec encoder.
+ */
+export class Encoder extends CborEncoder<CrdtWriter> {
+  private patchSid: number = 0;
 
+  /**
+   * Creates a new encoder instance.
+   *
+   * @param writer An optional custom implementation of CRDT writer.
+   */
+  constructor(public readonly writer: CrdtWriter = new CrdtWriter()) {
+    super(writer);
+  }
+
+  /**
+   * Encodes a JSON CRDT Patch into a {@link Uint8Array} blob.
+   *
+   * @param patch A JSON CRDT Patch to encode.
+   * @returns A {@link Uint8Array} blob containing the encoded JSON CRDT Patch.
+   */
   public encode(patch: Patch): Uint8Array {
-    this.reset();
-    const id = (this.patchId = patch.getId()!);
-    const isServerClock = id.getSessionId() === SESSION.SERVER;
-    if (isServerClock) {
-      this.b1vuint56(true, id.time);
-    } else {
-      this.b1vuint56(false, id.getSessionId());
-      this.vuint57(id.time);
-    }
+    this.writer.reset();
+    const id = patch.getId()!;
+    const sid = (this.patchSid = id.sid);
+    const writer = this.writer;
+    writer.vu57(sid);
+    writer.vu57(id.time);
+    const meta = patch.meta;
+    if (meta === undefined) this.writeUndef();
+    else this.writeArr([meta]);
     this.encodeOperations(patch);
-    return this.flush();
+    return writer.flush();
   }
 
-  public encodeOperations(patch: Patch): void {
+  protected encodeOperations(patch: Patch): void {
     const ops = patch.ops;
-    for (let i = 0; i < ops.length; i++) {
-      const op = ops[i];
-      this.encodeOperation(op);
-    }
+    const length = ops.length;
+    this.writer.vu57(length);
+    for (let i = 0; i < length; i++) this.encodeOperation(ops[i]);
   }
 
-  public encodeId(id: ITimestamp) {
-    const sessionId = id.getSessionId();
+  protected encodeId(id: ITimestampStruct) {
+    const sessionId = id.sid;
     const time = id.time;
-    if (sessionId === SESSION.SERVER) {
-      this.b1vuint56(true, id.time);
+    const writer = this.writer;
+    if (sessionId === this.patchSid) {
+      writer.b1vu56(0, time);
     } else {
-      const patchId = this.patchId;
-      if (sessionId === patchId.getSessionId() && time >= patchId.time) {
-        this.b1vuint56(false, 1);
-        this.vuint57(time - patchId.time);
-      } else {
-        this.b1vuint56(false, sessionId);
-        this.vuint57(time);
-      }
+      writer.b1vu56(1, time);
+      writer.vu57(sessionId);
     }
   }
 
-  public encodeOperation(op: JsonCrdtPatchOperation): void {
-    if (op instanceof MakeObjectOperation) {
-      this.u8(Code.MakeObject);
-      return;
-    } else if (op instanceof MakeArrayOperation) {
-      this.u8(Code.MakeArray);
-      return;
-    } else if (op instanceof MakeStringOperation) {
-      this.u8(Code.MakeString);
-      return;
-    } else if (op instanceof MakeValueOperation) {
-      this.u8(Code.MakeValue);
-      this.encodeAny(op.value);
-      return;
-    } else if (op instanceof MakeNumberOperation) {
-      this.u8(Code.MakeNumber);
-      return;
-    } else if (op instanceof SetRootOperation) {
-      this.u8(Code.SetRoot);
-      this.encodeId(op.value);
-      return;
-    } else if (op instanceof SetObjectKeysOperation) {
-      this.u8(Code.SetObjectKeys);
-      this.encodeId(op.object);
-      this.vuint57(op.tuples.length);
-      for (const [key, value] of op.tuples) {
-        this.encodeId(value);
-        this.encodeString(key);
-      }
-      return;
-    } else if (op instanceof SetValueOperation) {
-      this.u8(Code.SetValue);
-      this.encodeId(op.obj);
-      this.encodeAny(op.value);
-      return;
-    } else if (op instanceof SetNumberOperation) {
-      this.u8(Code.SetNumber);
-      this.encodeId(op.num);
-      this.encodeNumber(op.value);
-      return;
-    } else if (op instanceof InsertStringSubstringOperation) {
-      this.u8(Code.InsertStringSubstring);
-      this.encodeId(op.obj);
-      this.encodeId(op.after);
-      this.encodeString(op.substring);
-      return;
-    } else if (op instanceof InsertArrayElementsOperation) {
-      const {arr, after, elements} = op;
-      const length = elements.length;
-      this.u8(Code.InsertArrayElements);
-      this.encodeId(arr);
-      this.encodeId(after);
-      this.vuint57(length);
-      for (let i = 0; i < length; i++) this.encodeId(elements[i]);
-      return;
-    } else if (op instanceof DeleteOperation) {
-      const {obj, after} = op;
-      const length = after.span;
-      if (length > 1) {
-        this.u8(Code.Delete);
-        this.encodeId(obj);
-        this.encodeId(after);
-        this.vuint57(length);
-        return;
-      }
-      this.u8(Code.DeleteOne);
-      this.encodeId(obj);
-      this.encodeId(after);
-      return;
-    } else if (op instanceof NoopOperation) {
-      const {length} = op;
-      if (length > 1) {
-        this.u8(Code.Noop);
-        this.vuint57(length);
-        return;
-      }
-      this.u8(Code.NoopOne);
-      return;
-    } else if (op instanceof MakeBinaryOperation) {
-      this.u8(Code.MakeBinary);
-      return;
-    } else if (op instanceof InsertBinaryDataOperation) {
-      const buf = op.data;
-      const length = buf.length;
-      this.u8(Code.InsertBinaryData);
-      this.encodeId(op.obj);
-      this.encodeId(op.after);
-      this.vuint57(length);
-      this.buf(buf, length);
-      return;
+  protected encodeTss(span: ITimespanStruct): void {
+    this.encodeId(span);
+    this.writer.vu57(span.span);
+  }
+
+  private writeInsStr(length: number, obj: ITimestampStruct, ref: ITimestampStruct, str: string): number {
+    const writer = this.writer;
+    if (length <= 0b111) {
+      writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_str);
+    } else {
+      writer.u8(JsonCrdtPatchOpcode.ins_str);
+      writer.vu57(length);
     }
-    throw new Error('UNKNOWN_OP');
+    this.encodeId(obj);
+    this.encodeId(ref);
+    return writer.utf8(str);
+  }
+
+  protected encodeOperation(op: JsonCrdtPatchOperation): void {
+    const writer = this.writer;
+    const constructor = op.constructor;
+    switch (constructor) {
+      case operations.NewConOp: {
+        const operation = <operations.NewConOp>op;
+        const val = operation.val;
+        if (val instanceof Timestamp) {
+          writer.u8(0b001_00000 | JsonCrdtPatchOpcode.new_con);
+          this.encodeId(val);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.new_con);
+          this.writeAny(val);
+        }
+        break;
+      }
+      case operations.NewValOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_val);
+        break;
+      }
+      case operations.NewObjOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_obj);
+        break;
+      }
+      case operations.NewVecOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_vec);
+        break;
+      }
+      case operations.NewStrOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_str);
+        break;
+      }
+      case operations.NewBinOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_bin);
+        break;
+      }
+      case operations.NewArrOp: {
+        writer.u8(JsonCrdtPatchOpcode.new_arr);
+        break;
+      }
+      case operations.InsValOp: {
+        const operation = <operations.InsValOp>op;
+        writer.u8(JsonCrdtPatchOpcode.ins_val);
+        this.encodeId(operation.obj);
+        this.encodeId(operation.val);
+        break;
+      }
+      case operations.InsObjOp: {
+        const operation = <operations.InsObjOp>op;
+        const data = operation.data;
+        const length = data.length;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_obj);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.ins_obj);
+          writer.vu57(length);
+        }
+        this.encodeId(operation.obj);
+        for (let i = 0; i < length; i++) {
+          const tuple = data[i];
+          this.writeStr(tuple[0]);
+          this.encodeId(tuple[1]);
+        }
+        break;
+      }
+      case operations.InsVecOp: {
+        const operation = <operations.InsVecOp>op;
+        const data = operation.data;
+        const length = data.length;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_vec);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.ins_vec);
+          writer.vu57(length);
+        }
+        this.encodeId(operation.obj);
+        for (let i = 0; i < length; i++) {
+          const tuple = data[i];
+          writer.u8(tuple[0]);
+          this.encodeId(tuple[1]);
+        }
+        break;
+      }
+      case operations.InsStrOp: {
+        const operation = <operations.InsStrOp>op;
+        const obj = operation.obj;
+        const ref = operation.ref;
+        const str = operation.data;
+        const len1 = str.length;
+        writer.ensureCapacity(24 + len1 * 4);
+        const x = writer.x;
+        const len2 = this.writeInsStr(len1, obj, ref, str);
+        if (len1 !== len2) {
+          writer.x = x;
+          this.writeInsStr(len2, obj, ref, str);
+        }
+        break;
+      }
+      case operations.InsBinOp: {
+        const operation = <operations.InsBinOp>op;
+        const buf = operation.data;
+        const length = buf.length;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_bin);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.ins_bin);
+          writer.vu57(length);
+        }
+        this.encodeId(operation.obj);
+        this.encodeId(operation.ref);
+        writer.buf(buf, length);
+        break;
+      }
+      case operations.InsArrOp: {
+        const operation = <operations.InsArrOp>op;
+        const elements = operation.data;
+        const length = elements.length;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_arr);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.ins_arr);
+          writer.vu57(length);
+        }
+        this.encodeId(operation.obj);
+        this.encodeId(operation.ref);
+        for (let i = 0; i < length; i++) this.encodeId(elements[i]);
+        break;
+      }
+      case operations.DelOp: {
+        const operation = <operations.DelOp>op;
+        const what = operation.what;
+        const length = what.length;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.del);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.del);
+          writer.vu57(length);
+        }
+        this.encodeId(operation.obj);
+        for (let i = 0; i < length; i++) this.encodeTss(what[i]);
+        break;
+      }
+      case operations.NopOp: {
+        const operation = <operations.NopOp>op;
+        const length = operation.len;
+        if (length <= 0b111) {
+          writer.u8((length << 5) | JsonCrdtPatchOpcode.nop);
+        } else {
+          writer.u8(JsonCrdtPatchOpcode.nop);
+          writer.vu57(length);
+        }
+        break;
+      }
+      default: {
+        throw new Error('UNKNOWN_OP');
+      }
+    }
   }
 }

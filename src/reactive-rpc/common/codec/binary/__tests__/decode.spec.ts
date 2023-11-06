@@ -1,91 +1,91 @@
-import {Encoder} from '../Encoder';
-import {decodeFullMessages} from '../decode';
 import {
-  BinaryNotificationMessage,
-  BinaryRequestCompleteMessage,
-  BinaryRequestDataMessage,
-  BinaryRequestErrorMessage,
-  BinaryRequestUnsubscribeMessage,
-  BinaryResponseCompleteMessage,
-  BinaryResponseDataMessage,
-  BinaryResponseErrorMessage,
-  BinaryResponseUnsubscribeMessage,
-} from '../../../messages/binary';
+  NotificationMessage,
+  ReactiveRpcMessage,
+  RequestCompleteMessage,
+  RequestDataMessage,
+  RequestUnsubscribeMessage,
+  ResponseCompleteMessage,
+  ResponseDataMessage,
+  ResponseErrorMessage,
+  ResponseUnsubscribeMessage,
+} from '../../../messages';
+import {Value} from '../../../messages/Value';
+import {decode} from '../decode';
+import {Reader} from '../../../../../util/buffers/Reader';
+import {Uint8ArrayCut} from '../../../../../util/buffers/Uint8ArrayCut';
+import {CborJsonValueCodec} from '../../../../../json-pack/codecs/cbor';
+import {Writer} from '../../../../../util/buffers/Writer';
 
-const encoder = new Encoder();
+const codec = new CborJsonValueCodec(new Writer(64));
+const encoder = codec.encoder;
+const decoder = codec.decoder;
+const val = <T>(v: T) => new Value<T>(v, undefined);
+const assertMessage = (msg: ReactiveRpcMessage) => {
+  encoder.writer.reset();
+  msg.encodeBinary(codec);
+  const encoded = encoder.writer.flush();
+  const reader = new Reader();
+  reader.reset(encoded);
+  const decoded = decode(reader);
+  // console.log(decoded);
+  if ((decoded as any).value) {
+    const cut = (decoded as any).value.data as Uint8ArrayCut;
+    const arr = cut.uint8.subarray(cut.start, cut.start + cut.size);
+    (decoded as any).value.data = arr.length ? decoder.decode(arr) : undefined;
+  }
+  expect(decoded).toEqual(msg);
+};
 
-test('decodes a simple un-subscribe message', () => {
-  const messages1 = [new BinaryResponseUnsubscribeMessage(5)];
-  const buf = encoder.encode(messages1);
-  const messages2 = decodeFullMessages(buf, 0, buf.length);
-  expect(messages2).toEqual(messages1);
-});
+describe('decodes back various messages', () => {
+  test('empty notification', () => {
+    assertMessage(new NotificationMessage('', val(undefined)));
+  });
 
-test('decodes all message types', () => {
-  const messages1 = [
-    new BinaryResponseUnsubscribeMessage(5),
-    new BinaryRequestDataMessage(0xfafb, 'lala', new Uint8Array([1, 2, 3])),
-    new BinaryRequestCompleteMessage(0xfafb, 'lala', new Uint8Array([1, 2, 3])),
-    new BinaryRequestDataMessage(0xf1, '', new Uint8Array([])),
-    new BinaryRequestCompleteMessage(0xf1, '', new Uint8Array([])),
-    new BinaryRequestErrorMessage(0xdfdf, '', new Uint8Array([1, 2])),
-    new BinaryRequestErrorMessage(0xdfdf, 'ma/super/method/name', new Uint8Array([])),
-    new BinaryRequestUnsubscribeMessage(2312),
-    new BinaryNotificationMessage('ag.util', new Uint8Array([123, 123, 123])),
-    new BinaryNotificationMessage('ag.util2', new Uint8Array([])),
-    new BinaryResponseDataMessage(0x0, new Uint8Array([])),
-    new BinaryResponseDataMessage(0xaaaa, new Uint8Array([0, 0, 0])),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryResponseErrorMessage(0xabba, new Uint8Array('1'.repeat(11).split('').map(Number))),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryResponseCompleteMessage(123, new Uint8Array([1])),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryResponseCompleteMessage(123, new Uint8Array('1'.repeat(17).split('').map(Number))),
-    new BinaryResponseCompleteMessage(123, new Uint8Array('1'.repeat(333).split('').map(Number))),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-  ];
-  const buf = encoder.encode(messages1);
-  const messages2 = decodeFullMessages(buf, 0, buf.length);
-  expect(messages2).toEqual(messages1);
-});
+  test('notification with empty payload', () => {
+    assertMessage(new NotificationMessage('hello.world', val(undefined)));
+  });
 
-test('decodes long messages', () => {
-  const messages1 = [
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryResponseCompleteMessage(123, new Uint8Array('1'.repeat(0b1_0000).split('').map(Number))),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-  ];
-  const buf = encoder.encode(messages1);
-  const messages2 = decodeFullMessages(buf, 0, buf.length);
-  expect(messages2).toEqual(messages1);
-});
+  test('notification with payload', () => {
+    assertMessage(new NotificationMessage('foo', val({foo: 'bar'})));
+  });
 
-test('decodes long messages - 2', () => {
-  const messages1 = [
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryRequestDataMessage(
-      4,
-      'asdfasdfasdlfkajs0923lskjdfasdf',
-      new Uint8Array('1'.repeat(0b1_0000000_0000).split('').map(Number)),
-    ),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-  ];
-  const buf = encoder.encode(messages1);
-  const messages2 = decodeFullMessages(buf, 0, buf.length);
-  expect(messages2).toEqual(messages1);
-});
+  test('empty Request Data message', () => {
+    assertMessage(new RequestDataMessage(0, '', val(undefined)));
+  });
 
-test('decodes long messages - 3', () => {
-  const messages1 = [
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-    new BinaryRequestDataMessage(
-      0x1234,
-      'google.who',
-      new Uint8Array('1'.repeat(0b1_1111111_0000000_0000).split('').map(Number)),
-    ),
-    new BinaryResponseUnsubscribeMessage(0xaaaa),
-  ];
-  const buf = encoder.encode(messages1);
-  const messages2 = decodeFullMessages(buf, 0, buf.length);
-  expect(messages2).toEqual(messages1);
+  test('Request Data message', () => {
+    assertMessage(new RequestDataMessage(123, 'abc', val({foo: 'bar'})));
+  });
+
+  test('Request Complete message', () => {
+    assertMessage(new RequestCompleteMessage(23324, 'adfasdf', val({foo: 'bar'})));
+  });
+
+  test('Request Error message', () => {
+    assertMessage(new RequestCompleteMessage(4321, '', val('asdf')));
+  });
+
+  test('Request Un-subscribe message', () => {
+    assertMessage(new RequestUnsubscribeMessage(4321));
+  });
+
+  test('empty Response Data message', () => {
+    assertMessage(new ResponseDataMessage(0, val(undefined)));
+  });
+
+  test('Response Data message', () => {
+    assertMessage(new ResponseDataMessage(123, val({foo: 'bar'})));
+  });
+
+  test('Response Complete message', () => {
+    assertMessage(new ResponseCompleteMessage(123, val({foo: 'bar'})));
+  });
+
+  test('Response Error message', () => {
+    assertMessage(new ResponseErrorMessage(123, val({foo: 'bar'})));
+  });
+
+  test('Response Un-subscribe message', () => {
+    assertMessage(new ResponseUnsubscribeMessage(4321));
+  });
 });

@@ -22,7 +22,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript string that represents the arguments that will be passed
    * to the main function body. Defaults to "r0", i.e. the first register.
    */
-  args?: string;
+  args?: string[];
 
   /**
    * Name of the generated function.
@@ -39,7 +39,7 @@ export interface CodegenOptions<Linkable = Record<string, unknown>> {
    * Inline JavaScript statements, that execute at the end of the main
    * function body.
    */
-  epilogue?: string;
+  epilogue?: string | (() => string);
 
   /**
    * Converts all steps to `CodegenStepExecJs`.
@@ -88,11 +88,11 @@ export class Codegen<
   protected steps: JsonSerializerStep[] = [];
 
   /** @ignore */
-  protected options: Required<CodegenOptions<Linkable>>;
+  public options: Required<CodegenOptions<Linkable>>;
 
   constructor(opts: CodegenOptions<Linkable>) {
     this.options = {
-      args: 'r0',
+      args: ['r0'],
       name: '',
       prologue: '',
       epilogue: '',
@@ -100,6 +100,7 @@ export class Codegen<
       linkable: {} as Linkable,
       ...opts,
     };
+    this.registerCounter = this.options.args.length;
   }
 
   /**
@@ -107,6 +108,47 @@ export class Codegen<
    */
   public js(js: string): void {
     this.steps.push(new CodegenStepExecJs(js));
+  }
+
+  public var(expression?: string): string {
+    const r = this.getRegister();
+    if (expression) this.js('var ' + r + ' = ' + expression + ';');
+    else this.js('var ' + r + ';');
+    return r;
+  }
+
+  public if(condition: string, then: () => void, otherwise?: () => void): void {
+    this.js('if (' + condition + ') {');
+    then();
+    if (otherwise) {
+      this.js('} else {');
+      otherwise();
+    }
+    this.js('}');
+  }
+
+  public switch(
+    expression: string,
+    cases: [match: string | number | boolean | null, block: () => void, noBreak?: boolean][],
+    def?: () => void,
+  ): void {
+    this.js('switch (' + expression + ') {');
+    for (const [match, block, noBreak] of cases) {
+      this.js('case ' + match + ': {');
+      block();
+      if (!noBreak) this.js('break;');
+      this.js('}');
+    }
+    if (def) {
+      this.js('default: {');
+      def();
+      this.js('}');
+    }
+    this.js('}');
+  }
+
+  public return(expression: string): void {
+    this.js('return ' + expression + ';');
   }
 
   /**
@@ -120,7 +162,7 @@ export class Codegen<
     this.steps.push(step);
   }
 
-  protected registerCounter = 0;
+  protected registerCounter: number;
 
   /**
    * Codegen uses the idea of infinite registers. It starts with `0` and
@@ -138,6 +180,9 @@ export class Codegen<
    */
   public getRegister(): string {
     return `r${this.registerCounter++}`;
+  }
+  public r(): string {
+    return this.getRegister();
   }
 
   /** @ignore */
@@ -221,20 +266,18 @@ export class Codegen<
    * const fn = eval(code.js)(...code.deps);
    * const result = fn(...args);
    * ```
-   *
-   * @returns Returns a {@link CompiledFunction} object ready for compilation.
    */
   public generate(opts: CodegenGenerateOptions = {}): JavaScriptLinked<Fn> {
     const {name, args, prologue, epilogue} = {...this.options, ...opts};
     const steps = this.options.processSteps(this.steps);
     const js = `(function(${this.dependencyNames.join(', ')}) {
 ${this.constants.map((constant, index) => `var ${this.constantNames[index]} = (${constant});`).join('\n')}
-return ${name ? `function ${name}` : 'function'}(${args}){
+return ${name ? `function ${name}` : 'function'}(${args.join(',')}){
 ${prologue}
 ${steps.map((step) => (step as CodegenStepExecJs).js).join('\n')}
-${epilogue}
+${typeof epilogue === 'function' ? epilogue() : epilogue || ''}
 }})`;
-
+    // console.log(js);
     return {
       deps: this.dependencies,
       js: js as JavaScriptLinked<Fn>['js'],
@@ -247,6 +290,7 @@ ${epilogue}
    * @returns JavaScript function ready for execution.
    */
   public compile(opts?: CodegenGenerateOptions): Fn {
-    return compileClosure(this.generate(opts));
+    const closure = this.generate(opts);
+    return compileClosure(closure);
   }
 }

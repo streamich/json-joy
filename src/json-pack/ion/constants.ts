@@ -1,0 +1,25 @@
+export const enum TYPE {
+  NULL = 0b0000,
+  BOOL = 0b0001,
+  UINT = 0b0010,
+  NINT = 0b0011,
+  FLOT = 0b0100,
+  STRI = 0b1000,
+  LIST = 0b1011,
+  BINA = 0b1010,
+  STRU = 0b1101,
+  ANNO = 0b1110,
+}
+
+export const enum TYPE_OVERLAY {
+  NULL = 0b0000_0000,
+  BOOL = 0b0001_0000,
+  UINT = 0b0010_0000,
+  NINT = 0b0011_0000,
+  FLOT = 0b0100_0000,
+  STRI = 0b1000_0000,
+  LIST = 0b1011_0000,
+  BINA = 0b1010_0000,
+  STRU = 0b1101_0000,
+  ANNO = 0b1110_0000,
+}

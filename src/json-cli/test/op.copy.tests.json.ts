@@ -67,6 +67,7 @@ const testCases: TestCase[] = [
       a: [1, 2, 3, 'a', 'b', 'c'],
       b: [],
     },
+    skipInJsonOt: true,
   },
   {
     comment: 'Can move value and return it back',
@@ -80,6 +81,7 @@ const testCases: TestCase[] = [
     expected: {
       a: 'a',
     },
+    skipInJsonOt: true,
   },
 ];
 

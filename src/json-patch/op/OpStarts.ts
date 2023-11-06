@@ -4,7 +4,7 @@ import {OperationStarts} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Predicate
@@ -52,9 +52,9 @@ export class OpStarts extends AbstractPredicateOp<'starts'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     const ignoreCase = this.ignore_case;
     encoder.encodeArrayHeader(ignoreCase ? 4 : 3);
-    encoder.u8(OPCODE.starts);
+    encoder.writer.u8(OPCODE.starts);
     encoder.encodeArray(parent ? this.path.slice(parent.path.length) : (this.path as unknown[]));
     encoder.encodeString(this.value);
-    if (ignoreCase) encoder.u8(1);
+    if (ignoreCase) encoder.writer.u8(1);
   }
 }

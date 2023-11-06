@@ -1,93 +1,136 @@
-import {DeleteOperation} from './operations/DeleteOperation';
-import {FALSE_ID, NULL_ID, TRUE_ID, UNDEFINED_ID} from './constants';
-import {InsertArrayElementsOperation} from './operations/InsertArrayElementsOperation';
-import {InsertBinaryDataOperation} from './operations/InsertBinaryDataOperation';
-import {InsertStringSubstringOperation} from './operations/InsertStringSubstringOperation';
-import {isUint8Array} from '../util/isUint8Array';
-import {ITimestamp, IClock} from './clock';
-import {MakeArrayOperation} from './operations/MakeArrayOperation';
-import {MakeBinaryOperation} from './operations/MakeBinaryOperation';
-import {MakeConstantOperation} from './operations/MakeConstantOperation';
-import {MakeNumberOperation} from './operations/MakeNumberOperation';
-import {MakeObjectOperation} from './operations/MakeObjectOperation';
-import {MakeStringOperation} from './operations/MakeStringOperation';
-import {MakeValueOperation} from './operations/MakeValueOperation';
-import {NoopOperation} from './operations/NoopOperation';
+import {
+  NewConOp,
+  NewObjOp,
+  NewValOp,
+  NewVecOp,
+  NewStrOp,
+  NewBinOp,
+  NewArrOp,
+  InsValOp,
+  InsObjOp,
+  InsVecOp,
+  InsStrOp,
+  InsBinOp,
+  InsArrOp,
+  DelOp,
+  NopOp,
+} from './operations';
+import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock';
+import {isUint8Array} from '../util/buffers/isUint8Array';
 import {Patch} from './Patch';
-import {SetNumberOperation} from './operations/SetNumberOperation';
-import {SetObjectKeysOperation} from './operations/SetObjectKeysOperation';
-import {SetRootOperation} from './operations/SetRootOperation';
-import {SetValueOperation} from './operations/SetValueOperation';
+import {ORIGIN} from './constants';
+import {VectorDelayedValue} from './builder/Tuple';
+import {Konst} from './builder/Konst';
+import {NodeBuilder} from './builder/DelayedValueBuilder';
+
+const maybeConst = (x: unknown): boolean => {
+  switch (typeof x) {
+    case 'number':
+    case 'boolean':
+      return true;
+    default:
+      return x === null;
+  }
+};
 
 /**
  * Utility class that helps in Patch construction.
+ *
+ * @category Patch
  */
 export class PatchBuilder {
-  public readonly patch: Patch;
+  /** The patch being constructed. */
+  public patch: Patch;
 
+  /**
+   * Creates a new PatchBuilder instance.
+   *
+   * @param clock Clock to use for generating timestamps.
+   */
   constructor(public readonly clock: IClock) {
     this.patch = new Patch();
   }
 
-  // Basic operations ----------------------------------------------------------
+  /**
+   * Retrieve the sequence number of the next timestamp.
+   *
+   * @returns The next timestamp sequence number that will be used by the builder.
+   */
+  public nextTime(): number {
+    return this.patch.nextTime() || this.clock.time;
+  }
 
   /**
-   * Create new object.
+   * Returns the current {@link Patch} instance and resets the builder.
+   *
+   * @returns A new {@link Patch} instance containing all operations created
+   *          using this builder.
+   */
+  public flush(): Patch {
+    const patch = this.patch;
+    this.patch = new Patch();
+    return patch;
+  }
+
+  // --------------------------------------------------------- Basic operations
+
+  /**
+   * Create a new "obj" LWW-Map object.
+   *
    * @returns ID of the new operation.
    */
-  public obj(): ITimestamp {
+  public obj(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeObjectOperation(id);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewObjOp(id));
     return id;
   }
 
   /**
-   * Create new array.
+   * Create a new "arr" RGA-Array object.
+   *
    * @returns ID of the new operation.
    */
-  public arr(): ITimestamp {
+  public arr(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeArrayOperation(id);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewArrOp(id));
     return id;
   }
 
   /**
-   * Create new string.
+   * Create a new "vec" LWW-Array vector.
+   *
    * @returns ID of the new operation.
    */
-  public str(): ITimestamp {
+  public vec(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeStringOperation(id);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewVecOp(id));
     return id;
   }
 
   /**
-   * Create new binary.
+   * Create a new "str" RGA-String object.
+   *
    * @returns ID of the new operation.
    */
-  public bin(): ITimestamp {
+  public str(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeBinaryOperation(id);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewStrOp(id));
     return id;
   }
 
   /**
-   * Create new number.
+   * Create a new "bin" RGA-Binary object.
+   *
    * @returns ID of the new operation.
    */
-  public num(): ITimestamp {
+  public bin(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeNumberOperation(id);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewBinOp(id));
     return id;
   }
 
@@ -98,50 +141,50 @@ export class PatchBuilder {
    * @param value JSON value
    * @returns ID of the new operation.
    */
-  public const(value: unknown): ITimestamp {
+  public const(value: unknown): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeConstantOperation(id, value);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewConOp(id, value));
     return id;
   }
 
   /**
-   * Create a new LWW register JSON value. Can be anything, including
+   * Create a new "val" LWW-Register object. Can be anything, including
    * nested arrays and objects.
    *
-   * @param value JSON value
+   * @param val Reference to another object.
    * @returns ID of the new operation.
+   * @todo Rename to `newVal`.
    */
-  public val(value: unknown): ITimestamp {
+  public val(): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new MakeValueOperation(id, value);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NewValOp(id));
     return id;
   }
 
   /**
-   * Set value of document's root.
+   * Set value of document's root LWW-Register.
+   *
    * @returns ID of the new operation.
    */
-  public root(value: ITimestamp): ITimestamp {
+  public root(val: ITimestampStruct): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new SetRootOperation(id, value);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new InsValOp(id, ORIGIN, val));
     return id;
   }
 
   /**
-   * Set field of an object.
+   * Set fields of an "obj" object.
+   *
    * @returns ID of the new operation.
    */
-  public setKeys(obj: ITimestamp, tuples: [key: string, value: ITimestamp][]): ITimestamp {
+  public insObj(obj: ITimestampStruct, data: [key: string, value: ITimestampStruct][]): ITimestampStruct {
     this.pad();
-    if (!tuples.length) throw new Error('EMPTY_TUPLES');
+    if (!data.length) throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
-    const op = new SetObjectKeysOperation(id, obj, tuples);
+    const op = new InsObjOp(id, obj, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -149,38 +192,15 @@ export class PatchBuilder {
   }
 
   /**
-   * Set number value.
+   * Set elements of a "vec" object.
+   *
    * @returns ID of the new operation.
    */
-  public setNum(obj: ITimestamp, value: number): ITimestamp {
+  public insVec(obj: ITimestampStruct, data: [index: number, value: ITimestampStruct][]): ITimestampStruct {
     this.pad();
+    if (!data.length) throw new Error('EMPTY_TUPLES');
     const id = this.clock.tick(1);
-    const op = new SetNumberOperation(id, obj, value);
-    this.patch.ops.push(op);
-    return id;
-  }
-
-  /**
-   * Set new value of a JSON value LWW register.
-   * @returns ID of the new operation.
-   */
-  public setVal(obj: ITimestamp, value: unknown): ITimestamp {
-    this.pad();
-    const id = this.clock.tick(1);
-    const op = new SetValueOperation(id, obj, value);
-    this.patch.ops.push(op);
-    return id;
-  }
-
-  /**
-   * Insert substring into a string.
-   * @returns ID of the new operation.
-   */
-  public insStr(obj: ITimestamp, after: ITimestamp, substring: string): ITimestamp {
-    this.pad();
-    if (!substring.length) throw new Error('EMPTY_STRING');
-    const id = this.clock.tick(1);
-    const op = new InsertStringSubstringOperation(id, obj, after, substring);
+    const op = new InsVecOp(id, obj, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -188,14 +208,45 @@ export class PatchBuilder {
   }
 
   /**
-   * Insert binary data into a binary type.
+   * Set value of a "val" object.
+   *
+   * @returns ID of the new operation.
+   * @todo Rename to "insVal".
+   */
+  public setVal(obj: ITimestampStruct, val: ITimestampStruct): ITimestampStruct {
+    this.pad();
+    const id = this.clock.tick(1);
+    const op = new InsValOp(id, obj, val);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Insert a substring into a "str" object.
+   *
    * @returns ID of the new operation.
    */
-  public insBin(obj: ITimestamp, after: ITimestamp, data: Uint8Array): ITimestamp {
+  public insStr(obj: ITimestampStruct, ref: ITimestampStruct, data: string): ITimestampStruct {
+    this.pad();
+    if (!data.length) throw new Error('EMPTY_STRING');
+    const id = this.clock.tick(1);
+    const op = new InsStrOp(id, obj, ref, data);
+    const span = op.span();
+    if (span > 1) this.clock.tick(span - 1);
+    this.patch.ops.push(op);
+    return id;
+  }
+
+  /**
+   * Insert binary data into a "bin" object.
+   *
+   * @returns ID of the new operation.
+   */
+  public insBin(obj: ITimestampStruct, ref: ITimestampStruct, data: Uint8Array): ITimestampStruct {
     this.pad();
     if (!data.length) throw new Error('EMPTY_BINARY');
     const id = this.clock.tick(1);
-    const op = new InsertBinaryDataOperation(id, obj, after, data);
+    const op = new InsBinOp(id, obj, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -203,13 +254,14 @@ export class PatchBuilder {
   }
 
   /**
-   * Insert elements into an array.
+   * Insert elements into an "arr" object.
+   *
    * @returns ID of the new operation.
    */
-  public insArr(arr: ITimestamp, after: ITimestamp, elements: ITimestamp[]): ITimestamp {
+  public insArr(arr: ITimestampStruct, ref: ITimestampStruct, data: ITimestampStruct[]): ITimestampStruct {
     this.pad();
     const id = this.clock.tick(1);
-    const op = new InsertArrayElementsOperation(id, arr, after, elements);
+    const op = new InsArrOp(id, arr, ref, data);
     const span = op.span();
     if (span > 1) this.clock.tick(span - 1);
     this.patch.ops.push(op);
@@ -218,122 +270,170 @@ export class PatchBuilder {
 
   /**
    * Delete a span of operations.
-   * @param start First operation to delete.
-   * @param span Number of subsequent (by incrementing logical clock) operations to delete.
+   *
+   * @param obj Object in which to delete something.
+   * @param what List of time spans to delete.
    * @returns ID of the new operation.
    */
-  public del(obj: ITimestamp, start: ITimestamp, span: number): ITimestamp {
+  public del(obj: ITimestampStruct, what: ITimespanStruct[]): ITimestampStruct {
     this.pad();
-    const id = this.clock.tick(span);
-    const op = new DeleteOperation(id, obj, start.interval(0, span));
-    this.patch.ops.push(op);
+    const id = this.clock.tick(1);
+    this.patch.ops.push(new DelOp(id, obj, what));
     return id;
   }
 
   /**
    * Operation that does nothing just skips IDs in the patch.
+   *
    * @param span Length of the operation.
    * @returns ID of the new operation.
+   *
    */
-  public noop(span: number) {
+  public nop(span: number) {
     this.pad();
     const id = this.clock.tick(span);
-    const op = new NoopOperation(id, span);
-    this.patch.ops.push(op);
+    this.patch.ops.push(new NopOp(id, span));
     return id;
   }
 
-  // JSON value construction operations ----------------------------------------
+  // --------------------------------------- JSON value construction operations
 
   /**
    * Run the necessary builder commands to create an arbitrary JSON object.
    */
-  public jsonObj(json: object): ITimestamp {
-    const obj = this.obj();
-    const keys = Object.keys(json);
+  public jsonObj(obj: object): ITimestampStruct {
+    const id = this.obj();
+    const keys = Object.keys(obj);
     if (keys.length) {
-      const tuples: [key: string, value: ITimestamp][] = [];
-      for (const k of keys) tuples.push([k, this.json((json as any)[k])]);
-      this.setKeys(obj, tuples);
+      const tuples: [key: string, value: ITimestampStruct][] = [];
+      for (const k of keys) {
+        const value = (obj as any)[k];
+        const valueId = value instanceof Timestamp ? value : maybeConst(value) ? this.const(value) : this.json(value);
+        tuples.push([k, valueId]);
+      }
+      this.insObj(id, tuples);
     }
-    return obj;
+    return id;
   }
 
   /**
    * Run the necessary builder commands to create an arbitrary JSON array.
    */
-  public jsonArr(json: unknown[]): ITimestamp {
-    const arr = this.arr();
-    if (json.length) {
-      const values: ITimestamp[] = [];
-      for (const el of json) values.push(this.json(el));
-      this.insArr(arr, arr, values);
+  public jsonArr(arr: unknown[]): ITimestampStruct {
+    const id = this.arr();
+    if (arr.length) {
+      const values: ITimestampStruct[] = [];
+      for (const el of arr) values.push(this.json(el));
+      this.insArr(id, id, values);
     }
-    return arr;
+    return id;
   }
 
   /**
    * Run builder commands to create a JSON string.
    */
-  public jsonStr(json: string): ITimestamp {
-    const str = this.str();
-    if (json) this.insStr(str, str, json);
-    return str;
+  public jsonStr(str: string): ITimestampStruct {
+    const id = this.str();
+    if (str) this.insStr(id, id, str);
+    return id;
   }
 
   /**
    * Run builder commands to create a binary data type.
    */
-  public jsonBin(json: Uint8Array): ITimestamp {
-    const bin = this.bin();
-    if (json.length) this.insBin(bin, bin, json);
-    return bin;
+  public jsonBin(bin: Uint8Array): ITimestampStruct {
+    const id = this.bin();
+    if (bin.length) this.insBin(id, id, bin);
+    return id;
   }
 
   /**
    * Run builder commands to create a JSON value.
    */
-  public jsonVal(json: unknown): ITimestamp {
-    return this.val(json);
+  public jsonVal(value: unknown): ITimestampStruct {
+    const valId = this.val();
+    const id = this.const(value);
+    this.setVal(valId, id);
+    return valId;
+  }
+
+  /**
+   * Run builder commands to create a tuple.
+   */
+  public jsonVec(vector: unknown[]): ITimestampStruct {
+    const id = this.vec();
+    const length = vector.length;
+    if (length) {
+      const writes: [index: number, value: ITimestampStruct][] = [];
+      for (let i = 0; i < length; i++) writes.push([i, this.constOrJson(vector[i])]);
+      this.insVec(id, writes);
+    }
+    return id;
   }
 
   /**
    * Run the necessary builder commands to create any arbitrary JSON value.
    */
-  public json(json: unknown): ITimestamp {
-    switch (json) {
-      case null:
-        return NULL_ID;
-      case true:
-        return TRUE_ID;
-      case false:
-        return FALSE_ID;
-    }
-    if (Array.isArray(json)) return this.jsonArr(json);
+  public json(json: unknown): ITimestampStruct {
+    if (json instanceof Timestamp) return json;
+    if (json === undefined) return this.const(json);
+    if (json instanceof Array) return this.jsonArr(json);
     if (isUint8Array(json)) return this.jsonBin(json);
+    if (json instanceof VectorDelayedValue) return this.jsonVec(json.slots);
+    if (json instanceof Konst) return this.const(json.val);
+    if (json instanceof NodeBuilder) return json.build(this);
     switch (typeof json) {
       case 'object':
-        return this.jsonObj(json!);
+        return json === null ? this.jsonVal(json) : this.jsonObj(json!);
       case 'string':
         return this.jsonStr(json);
       case 'number':
+      case 'boolean':
         return this.jsonVal(json);
     }
-    return UNDEFINED_ID;
+    throw new Error('INVALID_JSON');
   }
 
-  // Private -------------------------------------------------------------------
+  /**
+   * Given a JSON `value` creates the necessary builder commands to create
+   * JSON CRDT Patch operations to construct the value. If the `value` is a
+   * timestamp, it is returned as-is. If the `value` is a JSON primitive is
+   * a number, boolean, or `null`, it is converted to a "con" data type. Otherwise,
+   * the `value` is converted using the {@link PatchBuilder.json} method.
+   *
+   * @param value A JSON value for which to create JSON CRDT Patch construction operations.
+   * @returns ID of the root constructed CRDT object.
+   */
+  public constOrJson(value: unknown): ITimestampStruct {
+    if (value instanceof Timestamp) return value;
+    return maybeConst(value) ? this.const(value) : this.json(value);
+  }
 
   /**
-   * Add padding "noop" operation if clock's time has jumped.
+   * Creates a "con" data type unless the value is already a timestamp, in which
+   * case it is returned as-is.
+   *
+   * @param value Value to convert to a "con" data type.
+   * @returns ID of the new "con" object.
    */
-  private pad() {
+  public maybeConst(value: unknown | Timestamp): Timestamp {
+    return value instanceof Timestamp ? value : this.const(value);
+  }
+
+  // ------------------------------------------------------------------ Private
+
+  /**
+   * Add padding "noop" operation if clock's time has jumped. This method checks
+   * if clock has advanced past the ID of the last operation of the patch and,
+   * if so, adds a "noop" operation to the patch to pad the gap.
+   */
+  public pad() {
     const nextTime = this.patch.nextTime();
     if (!nextTime) return;
     const drift = this.clock.time - nextTime;
     if (drift > 0) {
-      const id = this.clock.stamp(this.clock.getSessionId(), nextTime);
-      const padding = new NoopOperation(id, drift);
+      const id = ts(this.clock.sid, nextTime);
+      const padding = new NopOp(id, drift);
       this.patch.ops.push(padding);
     }
   }

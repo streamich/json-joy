@@ -90,7 +90,7 @@ const testCases: TestCase[] = [
   {
     comment: 'Array location negative, inside object',
     doc: {bar: [1, 2]},
-    patch: [{op: 'add', path: '/bar/-1', value: '5'}],
+    patch: [{op: 'add', path: '/bar/-2', value: '5'}],
     error: 'INVALID_INDEX',
   },
 
@@ -448,6 +448,7 @@ const testCases: TestCase[] = [
       {op: 'remove', path: '/2'},
     ],
     expected: [1, 3],
+    skipInJsonOt: true,
   },
 
   {

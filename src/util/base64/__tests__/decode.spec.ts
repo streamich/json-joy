@@ -1,5 +1,6 @@
-import {toBase64} from '../encode';
-import {fromBase64, createFromBase64} from '../decode';
+import {toBase64} from '../toBase64';
+import {fromBase64} from '../fromBase64';
+import {createFromBase64} from '../createFromBase64';
 
 const fromBase64_2 = createFromBase64();
 

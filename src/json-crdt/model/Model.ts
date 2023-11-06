@@ -1,50 +1,49 @@
-import {ArrayType} from '../types/rga-array/ArrayType';
-import {Batch} from '../../json-crdt-patch/Batch';
-import {BinaryType} from '../types/rga-binary/BinaryType';
-import {DeleteOperation} from '../../json-crdt-patch/operations/DeleteOperation';
-import {DocRootType} from '../types/lww-doc-root/DocRootType';
-import {FALSE, NULL, TRUE, UNDEFINED} from '../constants';
-import {InsertArrayElementsOperation} from '../../json-crdt-patch/operations/InsertArrayElementsOperation';
-import {InsertBinaryDataOperation} from '../../json-crdt-patch/operations/InsertBinaryDataOperation';
-import {InsertStringSubstringOperation} from '../../json-crdt-patch/operations/InsertStringSubstringOperation';
-import {ITimestamp, IVectorClock, LogicalVectorClock, ServerVectorClock} from '../../json-crdt-patch/clock';
+import * as operations from '../../json-crdt-patch/operations';
+import {ConNode} from '../nodes/con/ConNode';
+import {encoder, decoder} from '../codec/structural/binary/shared';
+import {
+  ITimestampStruct,
+  Timestamp,
+  IVectorClock,
+  VectorClock,
+  ServerVectorClock,
+  compare,
+  toDisplayString,
+} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
-import {LogicalNodeIndex, NodeIndex, ServerNodeIndex} from './nodes';
-import {MakeArrayOperation} from '../../json-crdt-patch/operations/MakeArrayOperation';
-import {MakeBinaryOperation} from '../../json-crdt-patch/operations/MakeBinaryOperation';
-import {MakeObjectOperation} from '../../json-crdt-patch/operations/MakeObjectOperation';
-import {MakeStringOperation} from '../../json-crdt-patch/operations/MakeStringOperation';
-import {MakeValueOperation} from '../../json-crdt-patch/operations/MakeValueOperation';
 import {ModelApi} from './api/ModelApi';
-import {ObjectType} from '../types/lww-object/ObjectType';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {SetObjectKeysOperation} from '../../json-crdt-patch/operations/SetObjectKeysOperation';
-import {SetRootOperation} from '../../json-crdt-patch/operations/SetRootOperation';
-import {SetValueOperation} from '../../json-crdt-patch/operations/SetValueOperation';
-import {StringType} from '../types/rga-string/StringType';
-import {ValueType} from '../types/lww-value/ValueType';
-import type {JsonNode} from '../types/types';
+import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode, BuilderNodeToJsonNode} from '../nodes';
+import {printTree} from '../../util/print/printTree';
+import {Extensions} from '../extensions/Extensions';
+import {AvlMap} from '../../util/trees/avl/AvlMap';
+import type {JsonNode, JsonNodeView} from '../nodes/types';
+import type {Printable} from '../../util/print/types';
+import type {NodeBuilder} from '../../json-crdt-patch';
+
+export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
 /**
  * In instance of Model class represents the underlying data structure,
- * i.e. model, of the JSON CRDT document. The `.toJson()` can be called to
- * compute the "view" of the model.
+ * i.e. model, of the JSON CRDT document.
  */
-export class Model {
+export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
-   * of a session ID and sequence number 2-tuple. Logical clock allows to
+   * of a session ID and sequence number 2-tuple. Logical clocks allow to
    * sync peer-to-peer.
    *
-   * @param clock Logical clock to use.
+   * @param clockOrSessionId Logical clock to use.
    * @returns CRDT model.
    */
-  public static withLogicalClock(clock?: LogicalVectorClock): Model {
-    clock = clock || new LogicalVectorClock(randomSessionId(), 0);
-    const nodes = new LogicalNodeIndex<JsonNode>();
-    return new Model(clock, nodes);
+  public static withLogicalClock(clockOrSessionId?: VectorClock | number): Model {
+    const clock =
+      typeof clockOrSessionId === 'number'
+        ? new VectorClock(clockOrSessionId, 1)
+        : clockOrSessionId || new VectorClock(randomSessionId(), 1);
+    return new Model(clock);
   }
 
   /**
@@ -57,10 +56,19 @@ export class Model {
    * @param time Latest known server sequence number.
    * @returns CRDT model.
    */
-  public static withServerClock(time?: number): Model {
-    const clock = new ServerVectorClock(time || 0);
-    const nodes = new ServerNodeIndex<JsonNode>();
-    return new Model(clock, nodes);
+  public static withServerClock(time: number = 0): Model {
+    const clock = new ServerVectorClock(SESSION.SERVER, time);
+    return new Model(clock);
+  }
+
+  /**
+   * Un-serializes a model from "binary" structural encoding.
+   * @param data Binary blob of a model encoded using "binary" structural
+   *        encoding.
+   * @returns An instance of a model.
+   */
+  public static fromBinary(data: Uint8Array): Model {
+    return decoder.decode(data);
   }
 
   /**
@@ -68,7 +76,7 @@ export class Model {
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: DocRootType = new DocRootType(this, ORIGIN, null);
+  public root: RootNode<RootJsonNode> = new RootNode<RootJsonNode>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session
@@ -77,41 +85,67 @@ export class Model {
   public clock: IVectorClock;
 
   /**
-   * Index of all known node objects (objects, array, strings, values) in this document.
+   * Index of all known node objects (objects, array, strings, values)
+   * in this document.
+   *
+   * @ignore
    */
-  public nodes: NodeIndex<JsonNode>;
+  public index = new AvlMap<ITimestampStruct, JsonNode>(compare);
 
   /**
-   * API for applying changes to the current document.
+   * Extensions to the JSON CRDT protocol. Extensions are used to implement
+   * custom data types on top of the JSON CRDT protocol.
+   *
+   * @ignore
    */
-  public api: ModelApi;
+  public ext: Extensions = new Extensions();
 
-  public constructor(clock: IVectorClock, nodes: NodeIndex<JsonNode>) {
+  public constructor(clock: IVectorClock) {
     this.clock = clock;
-    this.nodes = nodes;
-    this.api = new ModelApi(this);
+    if (!clock.time) clock.time = 1;
   }
 
-  /** Returns an indexed node, if any. */
-  public node(id: ITimestamp): JsonNode | undefined {
-    if (id.getSessionId() === SESSION.SYSTEM) {
-      switch (id.time) {
-        case SYSTEM_SESSION_TIME.NULL:
-          return NULL;
-        case SYSTEM_SESSION_TIME.TRUE:
-          return TRUE;
-        case SYSTEM_SESSION_TIME.FALSE:
-          return FALSE;
-        case SYSTEM_SESSION_TIME.UNDEFINED:
-          return UNDEFINED;
-      }
-    }
-    return this.nodes.get(id);
+  /** @ignore */
+  private _api?: ModelApi<RootJsonNode>;
+
+  /**
+   * API for applying local changes to the current document.
+   */
+  public get api(): ModelApi<RootJsonNode> {
+    if (!this._api) this._api = new ModelApi<RootJsonNode>(this);
+    return this._api;
   }
 
-  public applyBatch(batch: Batch) {
-    const patches = batch.patches;
-    const {length} = patches;
+  /**
+   * Experimental node retrieval API using proxy objects.
+   */
+  public get find() {
+    return this.api.r.proxy();
+  }
+
+  /**
+   * Tracks number of times the `applyPatch` was called.
+   *
+   * @ignore
+   */
+  public tick: number = 0;
+
+  /**
+   * Callback called after every `applyPatch` call.
+   *
+   * When using the `.api` API, this property is set automatically by
+   * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
+   * to subscribe to changes.
+   */
+  public onchange: undefined | (() => void) = undefined;
+
+  /**
+   * Applies a batch of patches to the document.
+   *
+   * @param patches A batch, i.e. an array of patches.
+   */
+  public applyBatch(patches: Patch[]) {
+    const length = patches.length;
     for (let i = 0; i < length; i++) this.applyPatch(patches[i]);
   }
 
@@ -123,111 +157,213 @@ export class Model {
     const ops = patch.ops;
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
+    this.tick++;
+    this.onchange?.();
   }
 
   /**
    * Applies a single operation to the model. All mutations to the model must go
    * through this method.
    *
+   * For advanced use only, better use `applyPatch` instead. You MUST increment
+   * the `tick` property and call `onchange` after calling this method.
+   *
    * @param op Any JSON CRDT Patch operation
+   * @ignore
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
-    if (op instanceof MakeObjectOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new ObjectType(this, op.id));
-    } else if (op instanceof MakeArrayOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new ArrayType(this, op.id));
-    } else if (op instanceof MakeStringOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new StringType(this, op.id));
-    } else if (op instanceof MakeValueOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new ValueType(op.id, op.id, op.value));
-    } else if (op instanceof SetRootOperation) {
-      const oldValue = this.root.insert(op);
-      if (oldValue) this.deleteNodeTree(oldValue);
-    } else if (op instanceof SetObjectKeysOperation) {
-      const obj = this.nodes.get(op.object);
-      if (obj instanceof ObjectType) obj.insert(op);
-    } else if (op instanceof SetValueOperation) {
-      const obj = this.nodes.get(op.obj);
-      if (obj instanceof ValueType) obj.insert(op);
-    } else if (op instanceof InsertArrayElementsOperation) {
-      const arr = this.nodes.get(op.arr);
-      if (arr instanceof ArrayType) arr.insert(op);
-    } else if (op instanceof InsertStringSubstringOperation) {
-      const arr = this.nodes.get(op.obj);
-      if (arr instanceof StringType) arr.onInsert(op);
-    } else if (op instanceof DeleteOperation) {
-      const node = this.nodes.get(op.obj);
-      if (node instanceof ArrayType) node.delete(op);
-      else if (node instanceof StringType) node.onDelete(op);
-      else if (node instanceof BinaryType) node.onDelete(op);
-    } else if (op instanceof MakeBinaryOperation) {
-      if (!this.nodes.get(op.id)) this.nodes.index(new BinaryType(this, op.id));
-    } else if (op instanceof InsertBinaryDataOperation) {
-      const arr = this.nodes.get(op.obj);
-      if (arr instanceof BinaryType) arr.onInsert(op);
+    const index = this.index;
+    if (op instanceof operations.InsStrOp) {
+      const node = index.get(op.obj);
+      if (node instanceof StrNode) node.ins(op.ref, op.id, op.data);
+    } else if (op instanceof operations.NewObjOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ObjNode(this, id));
+    } else if (op instanceof operations.NewArrOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ArrNode(this, id));
+    } else if (op instanceof operations.NewStrOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new StrNode(id));
+    } else if (op instanceof operations.NewValOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ValNode(this, id, ORIGIN));
+    } else if (op instanceof operations.NewConOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new ConNode(id, op.val));
+    } else if (op instanceof operations.InsObjOp) {
+      const node = index.get(op.obj);
+      const tuples = op.data;
+      const length = tuples.length;
+      if (node instanceof ObjNode) {
+        for (let i = 0; i < length; i++) {
+          const tuple = tuples[i];
+          const valueNode = index.get(tuple[1]);
+          if (!valueNode) continue;
+          if (node.id.time >= tuple[1].time) continue;
+          const old = node.put(tuple[0] + '', valueNode.id);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
+    } else if (op instanceof operations.InsVecOp) {
+      const node = index.get(op.obj);
+      const tuples = op.data;
+      const length = tuples.length;
+      if (node instanceof VecNode) {
+        for (let i = 0; i < length; i++) {
+          const tuple = tuples[i];
+          const valueNode = index.get(tuple[1]);
+          if (!valueNode) continue;
+          if (node.id.time >= tuple[1].time) continue;
+          const old = node.put(Number(tuple[0]), valueNode.id);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
+    } else if (op instanceof operations.InsValOp) {
+      const obj = op.obj;
+      const node = obj.sid === SESSION.SYSTEM && obj.time === SYSTEM_SESSION_TIME.ORIGIN ? this.root : index.get(obj);
+      if (node instanceof ValNode) {
+        const newValue = index.get(op.val);
+        if (newValue) {
+          const old = node.set(op.val);
+          if (old) this.deleteNodeTree(old);
+        }
+      }
+    } else if (op instanceof operations.InsArrOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrNode) {
+        const nodes: ITimestampStruct[] = [];
+        const data = op.data;
+        const length = data.length;
+        for (let i = 0; i < length; i++) {
+          const stamp = data[i];
+          const valueNode = index.get(stamp);
+          if (!valueNode) continue;
+          if (node.id.time >= stamp.time) continue;
+          nodes.push(stamp);
+        }
+        if (nodes.length) node.ins(op.ref, op.id, nodes);
+      }
+    } else if (op instanceof operations.DelOp) {
+      const node = index.get(op.obj);
+      if (node instanceof ArrNode) {
+        const length = op.what.length;
+        for (let i = 0; i < length; i++) {
+          const span = op.what[i];
+          for (let j = 0; j < span.span; j++) {
+            const id = node.getById(new Timestamp(span.sid, span.time + j));
+            if (id) this.deleteNodeTree(id);
+          }
+        }
+        node.delete(op.what);
+      } else if (node instanceof StrNode) node.delete(op.what);
+      else if (node instanceof BinNode) node.delete(op.what);
+    } else if (op instanceof operations.NewBinOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new BinNode(id));
+    } else if (op instanceof operations.InsBinOp) {
+      const node = index.get(op.obj);
+      if (node instanceof BinNode) node.ins(op.ref, op.id, op.data);
+    } else if (op instanceof operations.NewVecOp) {
+      const id = op.id;
+      if (!index.get(id)) index.set(id, new VecNode(this, id));
     }
   }
 
   /**
    * Recursively deletes a tree of nodes. Used when root node is overwritten or
    * when object contents of container node (object or array) is removed.
+   *
+   * @ignore
    */
-  private deleteNodeTree(value: ITimestamp) {
-    const isSystemNode = value.getSessionId() < 1;
+  protected deleteNodeTree(value: ITimestampStruct) {
+    const isSystemNode = value.sid === SESSION.SYSTEM;
     if (isSystemNode) return;
-    const node = this.nodes.get(value);
+    const node = this.index.get(value);
     if (!node) return;
-    for (const child of node.children()) this.deleteNodeTree(child);
-    this.nodes.delete(value);
+    node.children((child) => this.deleteNodeTree(child.id));
+    this.index.del(value);
   }
 
   /**
-   * @deprecated This method should never be needed, it is an unfortunate
-   * necessity for codecs, which need vector clock to be on the front of
-   * all known IDs, which currently is not the case. We need to find
-   * what causes the vector clock fall behind and fix it.
+   * Creates a copy of this model with a new session ID. If the session ID is
+   * not provided, a random session ID is generated.
+   *
+   * @param sessionId Session ID to use for the new model.
+   * @returns A copy of this model with a new session ID.
    */
-  public advanceClocks() {
-    for (const node of this.nodes.iterate()) {
-      this.clock.observe(node.id, 1);
-      if (node instanceof ObjectType) {
-        for (const chunk of node.latest.values()) this.clock.observe(chunk.id, 1);
-      } else if (node instanceof ArrayType) {
-        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
-      } else if (node instanceof StringType) {
-        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
-      } else if (node instanceof BinaryType) {
-        for (const chunk of node.chunks()) this.clock.observe(chunk.id, chunk.span());
-      } else if (node instanceof ValueType) {
-        this.clock.observe(node.id, 1);
-      }
-    }
+  public fork(sessionId: number = randomSessionId()): Model<RootJsonNode> {
+    const copy = Model.fromBinary(this.toBinary());
+    if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
+    copy.ext = this.ext;
+    return copy as Model<RootJsonNode>;
   }
 
-  /** Creates a copy of this model with a new session ID. */
-  public fork(sessionId: number = randomSessionId()): Model {
-    const model =
-      this.clock instanceof LogicalVectorClock
-        ? Model.withLogicalClock(this.clock.fork(sessionId))
-        : Model.withServerClock(this.clock.time);
-    model.root = this.root.clone(model);
-    model.api.batch = this.api.batch.clone();
-    return model;
+  /**
+   * Creates a copy of this model with the same session ID.
+   *
+   * @returns A copy of this model with the same session ID.
+   */
+  public clone(): Model<RootJsonNode> {
+    return this.fork(this.clock.sid);
   }
 
-  /** Creates a copy of this model with the same session ID. */
-  public clone(): Model {
-    return this.fork(this.clock.getSessionId());
+  /**
+   * Returns the view of the model.
+   *
+   * @returns JSON/CBOR of the model.
+   */
+  public view(): Readonly<JsonNodeView<RootJsonNode>> {
+    return this.root.view();
   }
 
-  /** @returns Returns the view of the model. */
-  public toView(): unknown {
-    return this.root.toJson();
+  /**
+   * Serialize this model using "binary" structural encoding.
+   *
+   * @returns This model encoded in octets.
+   */
+  public toBinary(): Uint8Array {
+    return encoder.encode(this);
   }
 
-  /** @returns Returns human-readable text for debugging. */
-  public toString(tab?: string): string {
-    return this.root.toString(tab);
+  public setSchema<S extends NodeBuilder>(schema: S): Model<BuilderNodeToJsonNode<S>> {
+    if (this.clock.time < 2) this.api.root(schema);
+    return <any>this;
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab: string = ''): string {
+    const nl = () => '';
+    const hasExtensions = this.ext.size() > 0;
+    return (
+      this.constructor.name +
+      printTree(tab, [
+        (tab) => this.root.toString(tab),
+        nl,
+        (tab) => {
+          const nodes: JsonNode[] = [];
+          this.index.forEach((item) => nodes.push(item.v));
+          return (
+            `Index (${nodes.length} nodes)` +
+            (nodes.length
+              ? printTree(
+                  tab,
+                  nodes.map((node) => (tab) => `${node.constructor.name} ${toDisplayString(node.id)}`),
+                )
+              : '')
+          );
+        },
+        nl,
+        // (tab) => `View ${toTree(this.view(), tab)}`,
+        (tab) =>
+          `View${printTree(tab, [(tab) => String(JSON.stringify(this.view(), null, 2)).replace(/\n/g, '\n' + tab)])}`,
+        nl,
+        (tab) => this.clock.toString(tab),
+        hasExtensions ? nl : null,
+        hasExtensions ? (tab) => this.ext.toString(tab) : null,
+      ])
+    );
   }
 }

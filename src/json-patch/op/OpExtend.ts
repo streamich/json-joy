@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
 import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 const {isArray} = Array;
 
@@ -70,9 +70,9 @@ export class OpExtend extends AbstractOp<'extend'> {
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     const {deleteNull} = this;
     encoder.encodeArrayHeader(deleteNull ? 4 : 3);
-    encoder.u8(OPCODE.extend);
+    encoder.writer.u8(OPCODE.extend);
     encoder.encodeArray(this.path as unknown[]);
     encoder.encodeObject(this.props);
-    if (deleteNull) encoder.u8(1);
+    if (deleteNull) encoder.writer.u8(1);
   }
 }

@@ -350,14 +350,14 @@ for (const {only, name, doc1, doc2, patches, throws} of testCases) {
   (only ? test.only : test)(name, () => {
     const model = Model.withLogicalClock();
     const jsonPatch = new JsonPatch(model);
-    if (doc1 !== undefined) model.api.root(doc1).commit();
+    if (doc1 !== undefined) model.api.root(doc1);
     if (throws) {
       expect(() => {
-        for (const patch of patches) jsonPatch.apply(patch).commit();
+        for (const patch of patches) jsonPatch.apply(patch);
       }).toThrow(new Error(throws));
     } else {
-      for (const patch of patches) jsonPatch.apply(patch).commit();
-      expect(model.toView()).toEqual(doc2);
+      for (const patch of patches) jsonPatch.apply(patch);
+      expect(model.view()).toEqual(doc2);
     }
   });
 }

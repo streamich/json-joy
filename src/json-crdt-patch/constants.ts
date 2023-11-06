@@ -1,4 +1,4 @@
-import {LogicalTimestamp} from './clock';
+import {ts} from './clock';
 
 export const enum SESSION {
   /**
@@ -11,40 +11,46 @@ export const enum SESSION {
    * The only valid session ID for CRDT ran in the server clock mode.
    */
   SERVER = 1,
+
+  /** Max allowed session ID, they are capped at 53-bits. */
+  MAX = 9007199254740991,
 }
 
 export const enum SYSTEM_SESSION_TIME {
   ORIGIN = 0,
-  NULL = 1,
-  TRUE = 2,
-  FALSE = 3,
-  UNDEFINED = 4,
+  UNDEFINED = 1,
 }
 
 /**
  * Represents some sort of root element or is simply the bottom value of a
  * logical timestamp.
  */
-export const ORIGIN = new LogicalTimestamp(SESSION.SYSTEM, SYSTEM_SESSION_TIME.ORIGIN);
+export const ORIGIN = ts(SESSION.SYSTEM, SYSTEM_SESSION_TIME.ORIGIN);
 
-/**
- * JSON "null" literal value.
- */
-export const NULL_ID = new LogicalTimestamp(SESSION.SYSTEM, SYSTEM_SESSION_TIME.NULL);
+export const enum JsonCrdtDataType {
+  con = 0b000,
+  val = 0b001,
+  obj = 0b010,
+  vec = 0b011,
+  str = 0b100,
+  bin = 0b101,
+  arr = 0b110,
+}
 
-/**
- * JSON "true" literal value.
- */
-export const TRUE_ID = new LogicalTimestamp(SESSION.SYSTEM, SYSTEM_SESSION_TIME.TRUE);
-
-/**
- * JSON "false" literal value.
- */
-export const FALSE_ID = new LogicalTimestamp(SESSION.SYSTEM, SYSTEM_SESSION_TIME.FALSE);
-
-/**
- * Represents a value that does not exist. Like "undefined" literal value in
- * JavaScript. Can be used instead of a delete operation as a tombstone for
- * object key set operations.
- */
-export const UNDEFINED_ID = new LogicalTimestamp(SESSION.SYSTEM, SYSTEM_SESSION_TIME.UNDEFINED);
+export const enum JsonCrdtPatchOpcode {
+  new_con = 0b00000 | JsonCrdtDataType.con, // 0
+  new_val = 0b00000 | JsonCrdtDataType.val, // 1
+  new_obj = 0b00000 | JsonCrdtDataType.obj, // 2
+  new_vec = 0b00000 | JsonCrdtDataType.vec, // 3
+  new_str = 0b00000 | JsonCrdtDataType.str, // 4
+  new_bin = 0b00000 | JsonCrdtDataType.bin, // 5
+  new_arr = 0b00000 | JsonCrdtDataType.arr, // 6
+  ins_val = 0b01000 | JsonCrdtDataType.val, // 9
+  ins_obj = 0b01000 | JsonCrdtDataType.obj, // 10
+  ins_vec = 0b01000 | JsonCrdtDataType.vec, // 11
+  ins_str = 0b01000 | JsonCrdtDataType.str, // 12
+  ins_bin = 0b01000 | JsonCrdtDataType.bin, // 13
+  ins_arr = 0b01000 | JsonCrdtDataType.arr, // 14
+  del = 0b10000, // 16
+  nop = 0b10001, // 17
+}

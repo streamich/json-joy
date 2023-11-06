@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import {createWebSocketMock, MockWebSocket} from '../mock';
 import {ChannelState, WebSocketChannel} from '../channel';
 import {WebSocketState} from '../constants';

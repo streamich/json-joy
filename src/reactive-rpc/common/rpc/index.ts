@@ -1,6 +1,6 @@
 export * from './types';
-export * from './RpcClient';
-export * from './RpcServer';
+export * from './client';
+export * from './RpcMessageBatchProcessor';
+export * from './RpcMessageStreamProcessor';
 export * from './RpcDuplex';
-export * from './RpcPersistentClient';
-export * from './error';
+export {RpcPersistentClient, type RpcPersistentClientParams} from './RpcPersistentClient';

@@ -29,34 +29,42 @@ export const testSuites: TestSuite[] = [
   {
     name: 'JSON Patch spec',
     tests: spec_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch smoke tests',
     tests: tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "add" operation',
     tests: op_add_tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "replace" operation',
     tests: op_replace_tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "remove" operation',
     tests: op_remove_tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "move" operation',
     tests: op_move_tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "copy" operation',
     tests: op_copy_tests_json,
+    isJsonPatchSpec: true,
   },
   {
     name: 'JSON Patch "test" operation',
     tests: op_test_tests_json,
+    isJsonPatchSpec: true,
   },
 
   // JSON Patch Extended.

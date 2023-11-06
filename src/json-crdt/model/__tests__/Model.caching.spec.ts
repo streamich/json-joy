@@ -10,15 +10,13 @@ test('returns cached value, when shallow object keys not modified', () => {
       value: 2,
     },
   });
-  model.api.commit();
-  const view1 = model.toView();
+  const view1 = model.view();
   expect(view1).toStrictEqual({
     a: {value: 1},
     b: {value: 2},
   });
-  model.api.val(['a', 'value']).set(3);
-  model.api.commit();
-  const view2 = model.toView();
+  model.api.obj(['a']).set({value: 3});
+  const view2 = model.view();
   expect(view2).toStrictEqual({
     a: {value: 3},
     b: {value: 2},
@@ -33,15 +31,13 @@ test('returns cached value, when shallow array is not modified', () => {
     a: [1],
     b: [2],
   });
-  model.api.commit();
-  const view1 = model.toView();
+  const view1 = model.view();
   expect(view1).toStrictEqual({
     a: [1],
     b: [2],
   });
   model.api.arr(['a']).ins(1, [3]);
-  model.api.commit();
-  const view2 = model.toView();
+  const view2 = model.view();
   expect(view2).toStrictEqual({
     a: [1, 3],
     b: [2],
@@ -60,10 +56,9 @@ test('caches multiple levels deep objects', () => {
       },
     ],
   });
-  model.api.commit();
-  const view1 = model.toView() as any;
-  model.api.obj(['foo', 0, 'a', 0]).set({value: 1}).commit();
-  const view2 = model.toView() as any;
+  const view1 = model.view() as any;
+  model.api.obj(['foo', 0, 'a', 0]).set({value: 1});
+  const view2 = model.view() as any;
   expect(view1.foo !== view2.foo).toBe(true);
   expect(view1.foo[0] !== view2.foo[0]).toBe(true);
   expect(view1.foo[0].a !== view2.foo[0].a).toBe(true);

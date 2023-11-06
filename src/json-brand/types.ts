@@ -1,5 +1,6 @@
-export type json<T extends any = any> = string & {__JSON__: T};
-export type json_string<T> = json<T>;
+export type json<T> = json_string<T>;
+
+export type json_string<T extends any = any> = string & {__BRAND__: 'JSON_STRING'; __TYPE__: T};
 
 export interface JSON {
   parse<T>(text: json<T>, reviver?: (key: any, value: any) => any): T;

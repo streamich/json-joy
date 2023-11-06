@@ -1,4 +1,3 @@
-import {LogicalVectorClock} from '../../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
@@ -10,13 +9,11 @@ describe('Document', () => {
       const obj = builder.json({});
       builder.root(obj);
       doc.applyPatch(builder.patch);
-      expect(doc.toView()).toEqual({});
+      expect(doc.view()).toEqual({});
     });
 
     test('can create complex object', () => {
       const doc = Model.withLogicalClock();
-      (doc.clock as LogicalVectorClock).sessionId = 1;
-      // doc.clock.time = 10000;
       const builder = new PatchBuilder(doc.clock);
       const json = {
         score: 123,
@@ -35,7 +32,7 @@ describe('Document', () => {
       // console.log(encode2(builder.patch), JSON.stringify(encode2(builder.patch)), JSON.stringify(encode2(builder.patch)).length);
       // console.log(encode3(builder.patch), encode3(builder.patch).byteLength);
       // console.log(doc.toJson());
-      expect(doc.toView()).toEqual(json);
+      expect(doc.view()).toEqual(json);
     });
   });
 });

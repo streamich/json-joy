@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationFlip} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import {IMessagePackEncoder} from '../../json-pack/Encoder/types';
+import type {IMessagePackEncoder} from '../../json-pack/msgpack';
 
 /**
  * @category JSON Patch Extended
@@ -43,7 +43,7 @@ export class OpFlip extends AbstractOp<'flip'> {
 
   public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
     encoder.encodeArrayHeader(2);
-    encoder.u8(OPCODE.flip);
+    encoder.writer.u8(OPCODE.flip);
     encoder.encodeArray(this.path as unknown[]);
   }
 }

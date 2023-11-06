@@ -1,10 +1,10 @@
-import {ITimestamp} from './clock';
+import {ITimestampStruct, toDisplayString} from './clock';
 import {Patch} from './Patch';
 
 export class Batch {
   constructor(public patches: Patch[]) {}
 
-  public getId(): ITimestamp | undefined {
+  public getId(): ITimestampStruct | undefined {
     if (!this.patches.length) return undefined;
     return this.patches[0].getId();
   }
@@ -26,5 +26,16 @@ export class Batch {
 
   public clone(): Batch {
     return new Batch(this.patches.map((patch) => patch.clone()));
+  }
+
+  public toString(tab: string = ''): string {
+    const id = this.getId();
+    let out = `${this.constructor.name} ${id ? toDisplayString(id) : '(nil)'}\n`;
+    for (let i = 0; i < this.patches.length; i++) {
+      const patch = this.patches[i];
+      const isLast = i === this.patches.length - 1;
+      out += `${tab}${isLast ? '└─' : '├─'} ${patch.toString(tab + `${isLast ? ' ' : '│'} `)}\n`;
+    }
+    return out;
   }
 }
