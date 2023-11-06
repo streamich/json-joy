@@ -76,12 +76,12 @@ export class Decoder {
         return this.decodeObj(id, length);
       case CRDT_MAJOR.VEC:
         return this.decodeVec(id, length);
-      // case CRDT_MAJOR.STR:
-      //   return this.cStr(id, length);
-      // case CRDT_MAJOR.BIN:
-      //   return this.cBin(id, length);
-      // case CRDT_MAJOR.ARR:
-      //   return this.cArr(id, length);
+      case CRDT_MAJOR.STR:
+        return this.decodeStr(id, length);
+      case CRDT_MAJOR.BIN:
+        return this.cBin(id, length);
+      case CRDT_MAJOR.ARR:
+        return this.cArr(id, length);
     }
     return UNDEFINED;
   }
@@ -123,18 +123,25 @@ export class Decoder {
     return node;
   }
 
-  protected cStr(id: ITimestampStruct, length: number): nodes.StrNode {
-    const decoder = this.dec;
+  protected decodeStr(id: ITimestampStruct, length: number): nodes.StrNode {
     const node = new nodes.StrNode(id);
-    node.ingest(length, () => {
-      const chunkId = this.ts();
-      const val = decoder.val();
-      if (typeof val === 'number') return new nodes.StrChunk(chunkId, val, '');
-      const data = String(val);
-      return new nodes.StrChunk(chunkId, data.length, data);
-    });
+    node.ingest(length, this.decodeStrChunk);
     return node;
   }
+
+  private decodeStrChunk = (): nodes.StrChunk => {
+    const decoder = this.dec;
+    const reader = decoder.reader;
+    const id = this.ts();
+    const isTombstone = reader.uint8[reader.x] === 0;
+    if (isTombstone) {
+      reader.x++;
+      const length = reader.vu39();
+      return new nodes.StrChunk(id, length, '');
+    }
+    const text: string = decoder.readAsStr() as string;
+    return new nodes.StrChunk(id, text.length, text);
+  };
 
   protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {
     const decoder = this.dec;

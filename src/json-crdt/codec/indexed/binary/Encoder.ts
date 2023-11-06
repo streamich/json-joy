@@ -128,17 +128,18 @@ export class Encoder {
   }
 
   public encodeStr(node: nodes.StrNode): Uint8Array {
-    throw new Error('TODO');
-    // const encoder = this.enc;
-    // const writer = encoder.writer;
-    // writer.reset();
-    // encoder.writeStrHdr(node.size());
-    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-    //   this.ts(chunk.id);
-    //   if (chunk.del) encoder.u32(chunk.span);
-    //   else encoder.encodeString(chunk.data!);
-    // }
-    // return writer.flush();
+    const encoder = this.enc;
+    const writer = encoder.writer;
+    writer.reset();
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+      this.ts(chunk.id);
+      if (chunk.del) {
+        writer.u8(0);
+        writer.vu39(chunk.span);
+      } else encoder.writeStr(chunk.data!);
+    }
+    return writer.flush();
   }
 
   public encodeBin(node: nodes.BinNode): Uint8Array {
