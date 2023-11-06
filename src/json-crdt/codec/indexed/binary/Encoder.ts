@@ -1,17 +1,19 @@
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
-import {MsgPackEncoder} from '../../../../json-pack/msgpack';
+import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {Model} from '../../../model';
-import {ConNode, JsonNode, ValNode, ArrNode, BinNode, ObjNode, StrNode} from '../../../nodes';
+import * as nodes from '../../../nodes';
+import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {IndexedFields, FieldName} from './types';
 
-const EMPTY = new Uint8Array(0);
-
 export class Encoder {
+  public readonly enc: CborEncoder<CrdtWriter>;
   protected clockTable?: ClockTable;
-  public readonly enc = new MsgPackEncoder(new CrdtWriter());
-  protected model?: IndexedFields;
+
+  constructor(writer?: CrdtWriter) {
+    this.enc = new CborEncoder<CrdtWriter>(writer || new CrdtWriter());
+  }
 
   public encode(doc: Model, clockTable: ClockTable = ClockTable.from(doc.clock)): IndexedFields {
     this.clockTable = clockTable;
@@ -20,37 +22,36 @@ export class Encoder {
     clockTable.write(writer);
     const encodedClock = writer.flush();
     const rootValueId = doc.root.val;
-    const model: IndexedFields = (this.model = {
+    const result: IndexedFields = {
       c: encodedClock,
-    });
+    };
     if (rootValueId.sid !== 0) {
       writer.reset();
       this.ts(rootValueId);
-      model.r = writer.flush();
+      result.r = writer.flush();
     }
-    doc.index.forEach(({v: node}) => this.onNode(node));
-    return model;
+    doc.index.forEach(({v: node}) => this.onNode(result, node));
+    return result;
   }
 
-  protected readonly onNode = (node: JsonNode) => {
+  protected readonly onNode = (result: IndexedFields, node: nodes.JsonNode) => {
     const id = node.id;
     const sid = id.sid;
     const time = id.time;
-    const model = this.model!;
     const sidIndex = this.clockTable!.getBySid(sid).index;
-    const sidFieldPart = sidIndex.toString(36) + '_';
-    const field = (sidFieldPart + time.toString(36)) as FieldName;
-    model[field] = this.encodeNode(node);
+    const field = (sidIndex.toString(36) + '_' + time.toString(36)) as FieldName;
+    result[field] = this.encodeNode(node);
   };
 
-  public encodeNode(node: JsonNode): Uint8Array {
-    if (node instanceof ValNode) return this.encodeVal(node);
-    else if (node instanceof ConNode) return this.encodeConst(node);
-    else if (node instanceof StrNode) return this.encodeStr(node);
-    else if (node instanceof ObjNode) return this.encodeObj(node);
-    else if (node instanceof ArrNode) return this.encodeArr(node);
-    else if (node instanceof BinNode) return this.encodeBin(node);
-    else return EMPTY;
+  public encodeNode(node: nodes.JsonNode): Uint8Array {
+    if (node instanceof nodes.ConNode) return this.encodeCon(node);
+    else if (node instanceof nodes.ValNode) return this.encodeVal(node);
+    else if (node instanceof nodes.ObjNode) return this.encodeObj(node);
+    else if (node instanceof nodes.VecNode) return this.encodeVec(node);
+    else if (node instanceof nodes.StrNode) return this.encodeStr(node);
+    else if (node instanceof nodes.BinNode) return this.encodeBin(node);
+    else if (node instanceof nodes.ArrNode) return this.encodeArr(node);
+    throw new Error('UNKNOWN_NODE');
   }
 
   protected ts(id: ITimestampStruct): void {
@@ -58,86 +59,113 @@ export class Encoder {
     this.enc.writer.id(index, id.time);
   }
 
-  public encodeVal(node: ValNode): Uint8Array {
+  protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
     const writer = this.enc.writer;
-    const child = node.node();
-    writer.reset();
-    writer.u8(0xd6);
-    this.ts(child.id);
-    return writer.flush();
+    if (length < 24) writer.u8(majorOverlay + length);
+    else if (length <= 0xff) writer.u16(((majorOverlay + 24) << 8) + length);
+    else if (length <= 0xffff) writer.u8u16(majorOverlay + 25, length);
+    else writer.u8u32(majorOverlay + 26, length);
   }
 
-  public encodeConst(node: ConNode): Uint8Array {
+  public encodeCon(node: nodes.ConNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     const val = node.val;
     writer.reset();
     if (val instanceof Timestamp) {
-      writer.u8(0xd5);
-      this.ts(val);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.ts(val as Timestamp);
     } else {
-      writer.u8(0xd4);
-      encoder.writeAny(node.val);
+      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      encoder.writeAny(val);
     }
     return writer.flush();
   }
 
-  public encodeStr(node: StrNode): Uint8Array {
+  public encodeVal(node: nodes.ValNode): Uint8Array {
+    const writer = this.enc.writer;
+    const child = node.node();
+    writer.reset();
+    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.ts(child.id);
+    return writer.flush();
+  }
+
+  public encodeObj(node: nodes.ObjNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
-    encoder.writeStrHdr(node.size());
-    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-      this.ts(chunk.id);
-      if (chunk.del) encoder.u32(chunk.span);
-      else encoder.encodeString(chunk.data!);
+    const keys = node.keys;
+    this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
+    keys.forEach(this.onObjKey);
+    return writer.flush();
+  }
+
+  private readonly onObjKey = (value: ITimestampStruct, key: string) => {
+    this.enc.writeStr(key);
+    this.ts(value);
+  };
+
+  public encodeVec(node: nodes.VecNode): Uint8Array {
+    const writer = this.enc.writer;
+    writer.reset();
+    const length = node.elements.length;
+    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
+    for (let i = 0; i < length; i++) {
+      const childId = node.val(i);
+      if (!childId) writer.u8(0);
+      else {
+        writer.u8(1);
+        this.ts(childId);
+      }
     }
     return writer.flush();
   }
 
-  public encodeBin(node: BinNode): Uint8Array {
+  public encodeStr(node: nodes.StrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
-    encoder.writeBinHdr(node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       this.ts(chunk.id);
-      const deleted = chunk.del;
+      if (chunk.del) {
+        writer.u8(0);
+        writer.vu39(chunk.span);
+      } else encoder.writeStr(chunk.data!);
+    }
+    return writer.flush();
+  }
+
+  public encodeBin(node: nodes.BinNode): Uint8Array {
+    const encoder = this.enc;
+    const writer = encoder.writer;
+    writer.reset();
+    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const length = chunk.span;
-      writer.b1vu28(deleted, length);
+      const deleted = chunk.del;
+      this.ts(chunk.id);
+      writer.b1vu56(~~deleted as 0 | 1, length);
       if (deleted) continue;
       writer.buf(chunk.data!, length);
     }
     return writer.flush();
   }
 
-  public encodeObj(node: ObjNode): Uint8Array {
+  public encodeArr(node: nodes.ArrNode): Uint8Array {
     const encoder = this.enc;
     const writer = encoder.writer;
     writer.reset();
-    encoder.writeObjHdr(node.keys.size);
-    node.keys.forEach(this.onObjectKey);
-    return writer.flush();
-  }
-
-  protected readonly onObjectKey = (value: ITimestampStruct, key: string) => {
-    this.enc.writeStr(key);
-    this.ts(value);
-  };
-
-  public encodeArr(node: ArrNode): Uint8Array {
-    const encoder = this.enc;
-    const writer = encoder.writer;
-    writer.reset();
-    encoder.writeArrHdr(node.size());
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       const length = chunk.span;
       const deleted = chunk.del;
       this.ts(chunk.id);
-      writer.b1vu28(deleted, length);
+      writer.b1vu56(~~deleted as 0 | 1, length);
       if (deleted) continue;
-      const data = chunk.data!;
-      for (let i = 0; i < length; i++) this.ts(data[i]);
+      const data = chunk.data;
+      for (let i = 0; i < length; i++) this.ts(data![i]);
     }
     return writer.flush();
   }

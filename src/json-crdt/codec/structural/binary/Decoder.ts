@@ -92,10 +92,10 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
         return this.cCon(id, length);
       case CRDT_MAJOR.VAL:
         return this.cVal(id);
-      case CRDT_MAJOR.VEC:
-        return this.cVec(id, length);
       case CRDT_MAJOR.OBJ:
         return this.cObj(id, length);
+      case CRDT_MAJOR.VEC:
+        return this.cVec(id, length);
       case CRDT_MAJOR.STR:
         return this.cStr(id, length);
       case CRDT_MAJOR.BIN:
@@ -149,22 +149,6 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return obj;
   }
 
-  protected cArr(id: ITimestampStruct, length: number): ArrNode {
-    const obj = new ArrNode(this.doc, id);
-    obj.ingest(length, this.cArrChunk);
-    this.doc.index.set(id, obj);
-    return obj;
-  }
-
-  private readonly cArrChunk = (): ArrChunk => {
-    const [deleted, length] = this.reader.b1vu28();
-    const id = this.ts();
-    if (deleted) return new ArrChunk(id, length, undefined);
-    const ids: ITimestampStruct[] = [];
-    for (let i = 0; i < length; i++) ids.push(this.cNode().id);
-    return new ArrChunk(id, length, ids);
-  };
-
   protected cStr(id: ITimestampStruct, length: number): StrNode {
     const node = new StrNode(id);
     if (length) node.ingest(length, this.cStrChunk);
@@ -198,5 +182,21 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const id = this.ts();
     if (deleted) return new BinChunk(id, length, undefined);
     else return new BinChunk(id, length, reader.buf(length));
+  };
+
+  protected cArr(id: ITimestampStruct, length: number): ArrNode {
+    const obj = new ArrNode(this.doc, id);
+    if (length) obj.ingest(length, this.cArrChunk);
+    this.doc.index.set(id, obj);
+    return obj;
+  }
+
+  private readonly cArrChunk = (): ArrChunk => {
+    const [deleted, length] = this.reader.b1vu28();
+    const id = this.ts();
+    if (deleted) return new ArrChunk(id, length, undefined);
+    const ids: ITimestampStruct[] = [];
+    for (let i = 0; i < length; i++) ids.push(this.cNode().id);
+    return new ArrChunk(id, length, ids);
   };
 }

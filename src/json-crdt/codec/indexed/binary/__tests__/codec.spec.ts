@@ -3,6 +3,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {compare, equal, Timestamp, VectorClock} from '../../../../../json-crdt-patch/clock';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../../json-crdt-patch';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -69,4 +70,92 @@ test('can encode ID as const value', () => {
   const ts = (view as any).foo as Timestamp;
   expect(ts).toBeInstanceOf(Timestamp);
   expect(equal(ts, new Timestamp(model.clock.sid, 2))).toBe(true);
+});
+
+describe('basic types', () => {
+  test('con', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(konst(123));
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('val', () => {
+    const model = Model.withLogicalClock();
+    model.setSchema(s.val(s.con(true)));
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('obj', () => {
+    const model = Model.withLogicalClock();
+    model.api.root({foo: null});
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('vec', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(s.vec(s.con(false)));
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('str', () => {
+    const model = Model.withLogicalClock();
+    model.api.root('');
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('str - 2', () => {
+    const model = Model.withLogicalClock();
+    model.api.root('Hello, ');
+    model.api.str([]).ins(7, 'world!');
+    model.api.str([]).del(5, 1);
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('bin', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(new Uint8Array([]));
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('bin - 2', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(new Uint8Array([1]));
+    model.api.bin([]).ins(1, new Uint8Array([2, 3, 4]));
+    model.api.bin([]).del(2, 1);
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('arr', () => {
+    const model = Model.withLogicalClock();
+    model.api.root([-1]);
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
+
+  test('arr - 2', () => {
+    const model = Model.withLogicalClock();
+    model.api.root([-1]);
+    model.api.arr([]).ins(1, [2, 3, 4]);
+    model.api.arr([]).del(2, 1);
+    const encoded = encoder.encode(model);
+    const decoded = decoder.decode(encoded);
+    expect(decoded.view()).toStrictEqual(model.view());
+  });
 });
