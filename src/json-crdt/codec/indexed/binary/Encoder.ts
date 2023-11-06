@@ -95,6 +95,21 @@ export class Encoder {
     return writer.flush();
   }
 
+  public encodeObj(node: ObjNode): Uint8Array {
+    const encoder = this.enc;
+    const writer = encoder.writer;
+    writer.reset();
+    const keys = node.keys;
+    this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, keys.size);
+    keys.forEach(this.onObjKey);
+    return writer.flush();
+  }
+
+  private readonly onObjKey = (value: ITimestampStruct, key: string) => {
+    this.enc.writeStr(key);
+    this.ts(value);
+  };
+
   public encodeStr(node: StrNode): Uint8Array {
     throw new Error('TODO');
     // const encoder = this.enc;
@@ -124,20 +139,6 @@ export class Encoder {
     }
     return writer.flush();
   }
-
-  public encodeObj(node: ObjNode): Uint8Array {
-    const encoder = this.enc;
-    const writer = encoder.writer;
-    writer.reset();
-    encoder.writeObjHdr(node.keys.size);
-    node.keys.forEach(this.onObjectKey);
-    return writer.flush();
-  }
-
-  protected readonly onObjectKey = (value: ITimestampStruct, key: string) => {
-    this.enc.writeStr(key);
-    this.ts(value);
-  };
 
   public encodeArr(node: ArrNode): Uint8Array {
     const encoder = this.enc;

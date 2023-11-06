@@ -72,10 +72,10 @@ export class Decoder {
         return this.decodeCon(id, length);
       case CRDT_MAJOR.VAL:
         return this.decodeVal(id);
+      case CRDT_MAJOR.OBJ:
+        return this.decodeObj(id, length);
       // case CRDT_MAJOR.VEC:
       //   return this.cVec(id, length);
-      // case CRDT_MAJOR.OBJ:
-      //   return this.cObj(id, length);
       // case CRDT_MAJOR.STR:
       //   return this.cStr(id, length);
       // case CRDT_MAJOR.BIN:
@@ -99,12 +99,12 @@ export class Decoder {
     return node;
   }
 
-  public cObj(id: ITimestampStruct, length: number): nodes.ObjNode {
+  public decodeObj(id: ITimestampStruct, length: number): nodes.ObjNode {
     const decoder = this.dec;
     const obj = new nodes.ObjNode(this.doc, id);
     const keys = obj.keys;
     for (let i = 0; i < length; i++) {
-      const key = String(decoder.val());
+      const key = decoder.val() + '';
       const val = this.ts();
       keys.set(key, val);
     }
