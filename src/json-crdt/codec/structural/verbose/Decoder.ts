@@ -3,33 +3,17 @@ import {fromBase64} from '../../../../util/base64/fromBase64';
 import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {
-  JsonCrdtNode,
-  ObjectJsonCrdtNode,
-  ArrayJsonCrdtNode,
-  ArrayJsonCrdtChunk,
-  JsonCrdtRgaTombstone,
-  ValueJsonCrdtNode,
-  StringJsonCrdtNode,
-  StringJsonCrdtChunk,
-  ConstantJsonCrdtNode,
-  BinaryJsonCrdtNode,
-  BinaryJsonCrdtChunk,
-  JsonCrdtSnapshot,
-  JsonCrdtLogicalTimestamp,
-  JsonCrdtTimestamp,
-  TupleJsonCrdtNode,
-} from './types';
+import * as types from './types';
 
 export class Decoder {
-  public decode({time, root}: JsonCrdtSnapshot): Model {
+  public decode({time, root}: types.JsonCrdtSnapshot): Model {
     const isServerClock = typeof time === 'number';
     const doc = isServerClock ? Model.withServerClock(time) : Model.withLogicalClock(this.cClock(time));
     this.cRoot(doc, root);
     return doc;
   }
 
-  protected cClock(timestamps: JsonCrdtLogicalTimestamp[]): VectorClock {
+  protected cClock(timestamps: types.JsonCrdtLogicalTimestamp[]): VectorClock {
     const [stamp] = timestamps;
     const vectorClock = new VectorClock(stamp[0], stamp[1]);
     const length = timestamps.length;
@@ -41,18 +25,18 @@ export class Decoder {
     return vectorClock;
   }
 
-  protected cTs(stamp: JsonCrdtTimestamp): ITimestampStruct {
+  protected cTs(stamp: types.JsonCrdtTimestamp): ITimestampStruct {
     const isServerClock = typeof stamp === 'number';
     return isServerClock ? ts(SESSION.SERVER, stamp) : ts(stamp[0], stamp[1]);
   }
 
-  protected cRoot(doc: Model, {node}: ValueJsonCrdtNode): void {
+  protected cRoot(doc: Model, {node}: types.ValueJsonCrdtNode): void {
     const val = node ? this.cNode(doc, node) : new nodes.ConNode(doc.clock.tick(0), null);
     const root = new nodes.RootNode(doc, val.id);
     doc.root = root;
   }
 
-  protected cNode(doc: Model, node: JsonCrdtNode): nodes.JsonNode {
+  protected cNode(doc: Model, node: types.JsonCrdtNode): nodes.JsonNode {
     switch (node.type) {
       case 'obj':
         return this.cObj(doc, node);
@@ -62,17 +46,17 @@ export class Decoder {
         return this.cStr(doc, node);
       case 'val':
         return this.cVal(doc, node);
-      case 'const':
-        return this.cConst(doc, node);
+      case 'con':
+        return this.cCon(doc, node);
       case 'tup':
-        return this.cTup(doc, node);
+        return this.cVec(doc, node);
       case 'bin':
         return this.cBin(doc, node);
     }
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cObj(doc: Model, node: ObjectJsonCrdtNode): nodes.ObjNode {
+  protected cObj(doc: Model, node: types.ObjectJsonCrdtNode): nodes.ObjNode {
     const id = this.cTs(node.id);
     const obj = new nodes.ObjNode(doc, id);
     const keys = Object.keys(node.keys);
@@ -84,7 +68,7 @@ export class Decoder {
     return obj;
   }
 
-  protected cTup(doc: Model, node: TupleJsonCrdtNode): nodes.VecNode {
+  protected cVec(doc: Model, node: types.TupleJsonCrdtNode): nodes.VecNode {
     const id = this.cTs(node.id);
     const obj = new nodes.VecNode(doc, id);
     const elements = obj.elements;
@@ -99,7 +83,7 @@ export class Decoder {
     return obj;
   }
 
-  protected cArr(doc: Model, node: ArrayJsonCrdtNode): nodes.ArrNode {
+  protected cArr(doc: Model, node: types.ArrayJsonCrdtNode): nodes.ArrNode {
     const id = this.cTs(node.id);
     const rga = new nodes.ArrNode(doc, id);
     const chunks = node.chunks;
@@ -110,10 +94,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.ArrChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
+          return new nodes.ArrChunk(id, (c as types.JsonCrdtRgaTombstone).span, undefined);
         else {
-          const ids = (c as ArrayJsonCrdtChunk).nodes.map((n) => this.cNode(doc, n).id);
+          const ids = (c as types.ArrayJsonCrdtChunk).nodes.map((n) => this.cNode(doc, n).id);
           return new nodes.ArrChunk(id, ids.length, ids);
         }
       });
@@ -122,7 +106,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cStr(doc: Model, node: StringJsonCrdtNode): nodes.StrNode {
+  protected cStr(doc: Model, node: types.StringJsonCrdtNode): nodes.StrNode {
     const id = this.cTs(node.id);
     const rga = new nodes.StrNode(id);
     const chunks = node.chunks;
@@ -133,10 +117,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.StrChunk(id, (c as JsonCrdtRgaTombstone).span, '');
+        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
+          return new nodes.StrChunk(id, (c as types.JsonCrdtRgaTombstone).span, '');
         else {
-          const value = (c as StringJsonCrdtChunk).value;
+          const value = (c as types.StringJsonCrdtChunk).value;
           return new nodes.StrChunk(id, value.length, value);
         }
       });
@@ -145,7 +129,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cBin(doc: Model, node: BinaryJsonCrdtNode): nodes.BinNode {
+  protected cBin(doc: Model, node: types.BinaryJsonCrdtNode): nodes.BinNode {
     const id = this.cTs(node.id);
     const rga = new nodes.BinNode(id);
     const chunks = node.chunks;
@@ -156,10 +140,10 @@ export class Decoder {
       rga.ingest(length, () => {
         const c = chunks[i++];
         const id = self.cTs(c.id);
-        if (typeof (c as JsonCrdtRgaTombstone).span === 'number')
-          return new nodes.BinChunk(id, (c as JsonCrdtRgaTombstone).span, undefined);
+        if (typeof (c as types.JsonCrdtRgaTombstone).span === 'number')
+          return new nodes.BinChunk(id, (c as types.JsonCrdtRgaTombstone).span, undefined);
         else {
-          const value = (c as BinaryJsonCrdtChunk).value;
+          const value = (c as types.BinaryJsonCrdtChunk).value;
           const buf = fromBase64(value);
           return new nodes.BinChunk(id, buf.length, buf);
         }
@@ -169,7 +153,7 @@ export class Decoder {
     return rga;
   }
 
-  protected cVal(doc: Model, node: ValueJsonCrdtNode): nodes.ValNode {
+  protected cVal(doc: Model, node: types.ValueJsonCrdtNode): nodes.ValNode {
     const id = this.cTs(node.id);
     const val = this.cNode(doc, node.node);
     const obj = new nodes.ValNode(doc, id, val.id);
@@ -177,9 +161,9 @@ export class Decoder {
     return obj;
   }
 
-  protected cConst(doc: Model, node: ConstantJsonCrdtNode): nodes.ConNode {
+  protected cCon(doc: Model, node: types.ConstantJsonCrdtNode): nodes.ConNode {
     const id = this.cTs(node.id);
-    const val = node.timestamp ? this.cTs(node.value as JsonCrdtLogicalTimestamp) : node.value;
+    const val = node.timestamp ? this.cTs(node.value as types.JsonCrdtLogicalTimestamp) : node.value;
     const obj = new nodes.ConNode(id, val);
     doc.index.set(id, obj);
     return obj;

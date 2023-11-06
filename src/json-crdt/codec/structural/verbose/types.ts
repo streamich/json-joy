@@ -107,7 +107,7 @@ export interface ValueJsonCrdtNode {
  * A constant immutable JSON value.
  */
 export interface ConstantJsonCrdtNode {
-  type: 'const';
+  type: 'con';
   id: JsonCrdtTimestamp;
   timestamp?: boolean;
   value?: unknown | JsonCrdtTimestamp;
