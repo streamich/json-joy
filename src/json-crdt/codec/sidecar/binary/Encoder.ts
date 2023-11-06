@@ -5,6 +5,7 @@ import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
+import {sort} from '../../../../util/sort/insertion';
 import type {Model} from '../../../model';
 
 export class Encoder {
@@ -99,19 +100,18 @@ export class Encoder {
   }
 
   protected cObj(node: nodes.ObjNode): void {
-    // this.ts(node.id);
-    // const keys = node.keys;
-    // const size = keys.size;
-    // this.viewEncoder.writeObjHdr(size);
-    // this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, size);
-    // keys.forEach(this.cKey);
+    this.ts(node.id);
+    const keys = sort([...node.keys.keys()]);
+    const size = keys.length;
+    this.writeTL(CRDT_MAJOR_OVERLAY.OBJ, size);
+    const viewEncoder = this.viewEncoder;
+    viewEncoder.writeObjHdr(size);
+    for (let i = 0; i < size; i++) {
+      const key = keys[i];
+      viewEncoder.writeStr(key);
+      this.cNode(node.get(key)!);
+    }
   }
-
-  protected readonly cKey = (val: ITimestampStruct, key: string) => {
-    // this.viewEncoder.writeStr(key);
-    // this.writeStr(key);
-    // this.cNode(this.doc.index.get(val)!);
-  };
 
   protected cVec(node: nodes.VecNode): void {
     // const elements = node.elements;

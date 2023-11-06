@@ -19,6 +19,7 @@ import {
   type JsonNode,
 } from '../../../nodes';
 import {CRDT_MAJOR} from '../../structural/binary/constants';
+import {sort} from '../../../../util/sort/insertion';
 
 export class Decoder {
   protected doc!: Model;
@@ -77,8 +78,8 @@ export class Decoder {
         return this.cCon(view, id);
       case CRDT_MAJOR.VAL:
         return this.cVal(view, id);
-      // case CRDT_MAJOR.OBJ:
-      //   return this.cObj(id, length);
+      case CRDT_MAJOR.OBJ:
+        return this.cObj(view, id, length);
       // case CRDT_MAJOR.VEC:
       //   return this.cVec(id, length);
       // case CRDT_MAJOR.STR:
@@ -106,12 +107,20 @@ export class Decoder {
     return node;
   }
 
-  // protected cObj(id: ITimestampStruct, length: number): ObjNode {
-  //   const obj = new ObjNode(this.doc, id);
-  //   for (let i = 0; i < length; i++) this.cObjChunk(obj);
-  //   this.doc.index.set(id, obj);
-  //   return obj;
-  // }
+  protected cObj(view: unknown, id: ITimestampStruct, length: number): ObjNode {
+    const obj = new ObjNode(this.doc, id);
+    if (!view || typeof view !== 'object') throw new Error('INVALID_OBJ');
+    const keys = sort(Object.keys(view));
+    if (keys.length !== length) throw new Error('INVALID_OBJ');
+    const objKeys = obj.keys;
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      const childNode = this.cNode((view as any)[key]);
+      objKeys.set(key, childNode.id);
+    }
+    this.doc.index.set(id, obj);
+    return obj;
+  }
 
   // protected cObjChunk(obj: ObjNode): void {
   //   const key: string = this.key();
