@@ -140,20 +140,15 @@ export class Encoder {
   }
 
   protected cBin(node: nodes.BinNode): void {
-    // const ts = this.ts;
-    // const writer = this.writer;
-    // ts(node.id);
-    // this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
-    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-    //   // TODO: Encode ID first
-    //   // TODO: Use b1vu56
-    //   const length = chunk.span;
-    //   const deleted = chunk.del;
-    //   writer.b1vu28(chunk.del, length);
-    //   ts(chunk.id);
-    //   if (deleted) continue;
-    //   // TODO: REFERENCE
-    // }
+    const ts = this.ts;
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.BIN, node.count);
+    this.viewEncoder.writeBin(node.view());
+    const writer = this.metaEncoder.writer;
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+      ts(chunk.id);
+      writer.vu39(chunk.span);
+    }
   }
 
   protected cArr(node: nodes.ArrNode): void {

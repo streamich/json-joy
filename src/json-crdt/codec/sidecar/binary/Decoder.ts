@@ -84,8 +84,8 @@ export class Decoder {
         return this.cVec(view, id, length);
       case CRDT_MAJOR.STR:
         return this.cStr(view, id, length);
-      // case CRDT_MAJOR.BIN:
-      //   return this.cBin(id, length);
+      case CRDT_MAJOR.BIN:
+        return this.cBin(view, id, length);
       // case CRDT_MAJOR.ARR:
       //   return this.cArr(id, length);
     }
@@ -150,6 +150,23 @@ export class Decoder {
       const text = view.slice(offset, offset + span);
       offset += span;
       return new StrChunk(id, text.length, text);
+    });
+    this.doc.index.set(id, node);
+    return node;
+  }
+
+  protected cBin(view: unknown, id: ITimestampStruct, length: number): BinNode {
+    if (!(view instanceof Uint8Array)) throw new Error('INVALID_BIN');
+    const node = new BinNode(id);
+    const reader = this.decoder.reader;
+    let offset = 0;
+    node.ingest(length, (): BinChunk => {
+      const id = this.ts();
+      const span = reader.vu39();
+      if (!span) return new BinChunk(id, length, undefined);
+      const slice = view.slice(offset, offset + span);
+      offset += span;
+      return new BinChunk(id, slice.length, slice);
     });
     this.doc.index.set(id, node);
     return node;
