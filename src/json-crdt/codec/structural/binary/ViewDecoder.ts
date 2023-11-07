@@ -86,27 +86,6 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     return obj;
   }
 
-  protected cArr(length: number): unknown[] {
-    const arr: unknown[] = [];
-    for (let i = 0; i < length; i++) {
-      const values = this.cArrChunk();
-      if (values && values.length) arr.push(...values);
-    }
-    return arr;
-  }
-
-  protected cArrChunk(): unknown[] | undefined {
-    const [deleted, length] = this.reader.b1vu28();
-    this.ts();
-    if (deleted) {
-      return undefined;
-    } else {
-      const values: unknown[] = [];
-      for (let i = 0; i < length; i++) values.push(this.cNode());
-      return values;
-    }
-  }
-
   protected cStr(length: number): string {
     const reader = this.reader;
     let str = '';
@@ -129,8 +108,8 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     const buffers: Uint8Array[] = [];
     let totalLength = 0;
     for (let i = 0; i < length; i++) {
-      const [deleted, length] = reader.b1vu28();
       this.ts();
+      const [deleted, length] = reader.b1vu56();
       if (deleted) continue;
       buffers.push(reader.buf(length));
       totalLength += length;
@@ -143,5 +122,26 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
       offset += byteLength;
     }
     return res;
+  }
+
+  protected cArr(length: number): unknown[] {
+    const arr: unknown[] = [];
+    for (let i = 0; i < length; i++) {
+      const values = this.cArrChunk();
+      if (values && values.length) arr.push(...values);
+    }
+    return arr;
+  }
+
+  protected cArrChunk(): unknown[] | undefined {
+    this.ts();
+    const [deleted, length] = this.reader.b1vu56();
+    if (deleted) {
+      return undefined;
+    } else {
+      const values: unknown[] = [];
+      for (let i = 0; i < length; i++) values.push(this.cNode());
+      return values;
+    }
   }
 }

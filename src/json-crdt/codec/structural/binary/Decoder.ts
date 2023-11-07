@@ -177,9 +177,9 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
   }
 
   private cBinChunk = (): BinChunk => {
-    const reader = this.reader;
-    const [deleted, length] = reader.b1vu28();
     const id = this.ts();
+    const reader = this.reader;
+    const [deleted, length] = reader.b1vu56();
     if (deleted) return new BinChunk(id, length, undefined);
     else return new BinChunk(id, length, reader.buf(length));
   };
@@ -192,8 +192,8 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
   }
 
   private readonly cArrChunk = (): ArrChunk => {
-    const [deleted, length] = this.reader.b1vu28();
     const id = this.ts();
+    const [deleted, length] = this.reader.b1vu56();
     if (deleted) return new ArrChunk(id, length, undefined);
     const ids: ITimestampStruct[] = [];
     for (let i = 0; i < length; i++) ids.push(this.cNode().id);
