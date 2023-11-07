@@ -300,9 +300,9 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
 
   public toString(tab: string = ''): string {
     const ref = toDisplayString(this.ref);
-    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(
-      this.obj,
-    )} { ${ref} ← ${this.data} }`;
+    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(this.obj)} { ${ref} ← ${
+      this.data
+    } }`;
   }
 }
 

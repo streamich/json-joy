@@ -1,8 +1,8 @@
-import {Model} from "../../model";
+import {Model} from '../../model';
 import * as Y from 'yjs';
 import * as Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
-import type {StructuralEditor, StructuralEditorInstance} from "./types";
+import type {StructuralEditor, StructuralEditorInstance} from './types';
 
 const editorNativeJs: StructuralEditor = {
   name: 'Native JavaScript',
