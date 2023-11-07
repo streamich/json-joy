@@ -16,6 +16,7 @@ export interface Payload {
 
 export interface IBenchmark {
   name: string;
+  description?: string,
   warmup?: number;
   payloads?: Payload[];
   test?: (payload: unknown, result: unknown) => boolean;
@@ -109,6 +110,14 @@ export const formatSuite = ([suite, payload, events]: PayloadResult): string => 
 export const formatSuites = (benchmark: IBenchmark, result: PayloadResult[]): string => {
   let str = '';
   str += `# Benchmark report: __${benchmark.name}__\n`;
+  str += '\n';
+  const warmup = !benchmark.warmup ? 'Not specified' : `${benchmark.warmup}x`;
+  const version = process.version;
+  const arch = os.arch();
+  const cpu = os.cpus()[0].model;
+  str += `> Warmup: ${warmup}, Node.js: ${version}, Arch: ${arch}, CPU: ${cpu}\n`;
+  str += '\n';
+  if (benchmark.description) str += benchmark.description + '\n';
   str += '\n';
   for (const res of result) str += formatSuite(res);
   return str;
