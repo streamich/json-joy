@@ -41,10 +41,15 @@ export const payloads = [
   },
 ];
 
-if (payloads.length > 1) {
-  const combined = payloads.reduce((acc, payload) => [...acc, payload.data], [] as unknown[]);
-  payloads.splice(0, 0, {
-    data: combined,
-    name: (json: any) => `Combined, ${JSON.stringify(json).length} bytes`,
-  });
-}
+export const payloadsWithCombined = [
+  ...(payloads.length > 1 ? (
+    (() => {
+      const combined = payloads.reduce((acc, payload) => [...acc, payload.data], [] as unknown[]);
+      return [{
+        data: combined,
+        name: (json: any) => `Combined, ${JSON.stringify(json).length} bytes`,
+      }];
+    })()
+  ) : []),
+  ...payloads
+];
