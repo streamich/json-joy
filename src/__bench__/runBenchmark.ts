@@ -129,5 +129,5 @@ export const runBenchmarkAndSave = (benchmark: IBenchmark, path: string): void =
   fs.mkdirSync(path, {recursive: true});
   const results = runBenchmark(benchmark);
   const markdown = formatSuites(benchmark, results);
-  fs.writeFileSync(path + `/${benchmark.name}.md`, markdown);
+  fs.writeFileSync(path + `/${benchmark.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.md`, markdown);
 };
