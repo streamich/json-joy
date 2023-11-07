@@ -88,13 +88,7 @@ test('vec - 2', () => {
   const encoder = new Encoder();
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
-  model.api.root(
-    s.vec(
-      s.con(false),
-      s.con(1),
-      s.con(null),
-    )
-  );
+  model.api.root(s.vec(s.con(false), s.con(1), s.con(null)));
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.decode(view);
   const decoded = decoder.decode(viewDecoded, meta);

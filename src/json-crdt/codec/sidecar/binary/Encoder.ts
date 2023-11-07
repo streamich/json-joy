@@ -166,8 +166,7 @@ export class Encoder {
       if (span) {
         const elements = chunk.data!;
         const elementsLength = elements.length;
-        for (let i = 0; i < elementsLength; i++)
-          this.cNode(index.get(elements[i])!);
+        for (let i = 0; i < elementsLength; i++) this.cNode(index.get(elements[i])!);
       }
     }
   }
