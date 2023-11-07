@@ -80,8 +80,8 @@ export class Decoder {
         return this.cVal(view, id);
       case CRDT_MAJOR.OBJ:
         return this.cObj(view, id, length);
-      // case CRDT_MAJOR.VEC:
-      //   return this.cVec(id, length);
+      case CRDT_MAJOR.VEC:
+        return this.cVec(view, id, length);
       // case CRDT_MAJOR.STR:
       //   return this.cStr(id, length);
       // case CRDT_MAJOR.BIN:
@@ -122,25 +122,21 @@ export class Decoder {
     return obj;
   }
 
-  // protected cObjChunk(obj: ObjNode): void {
-  //   const key: string = this.key();
-  //   obj.keys.set(key, this.cNode().id);
-  // }
-
-  // protected cVec(id: ITimestampStruct, length: number): VecNode {
-  //   const reader = this.reader;
-  //   const obj = new VecNode(this.doc, id);
-  //   const elements = obj.elements;
-  //   for (let i = 0; i < length; i++) {
-  //     const octet = reader.peak();
-  //     if (!octet) {
-  //       reader.x++;
-  //       elements.push(undefined);
-  //     } else elements.push(this.cNode().id);
-  //   }
-  //   this.doc.index.set(id, obj);
-  //   return obj;
-  // }
+  protected cVec(view: unknown, id: ITimestampStruct, length: number): VecNode {
+    const obj = new VecNode(this.doc, id);
+    if (!Array.isArray(view) || view.length !== length) throw new Error('INVALID_VEC');
+    const elements = obj.elements;
+    const reader = this.decoder.reader;
+    for (let i = 0; i < length; i++) {
+      const octet = reader.peak();
+      if (octet === 0xff) {
+        reader.x++;
+        elements.push(undefined);
+      } else elements.push(this.cNode(view[i]).id);
+    }
+    this.doc.index.set(id, obj);
+    return obj;
+  }
 
   // protected cStr(id: ITimestampStruct, length: number): StrNode {
   //   const node = new StrNode(id);

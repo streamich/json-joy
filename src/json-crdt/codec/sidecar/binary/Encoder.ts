@@ -114,16 +114,17 @@ export class Encoder {
   }
 
   protected cVec(node: nodes.VecNode): void {
-    // const elements = node.elements;
-    // const length = elements.length;
-    // this.ts(node.id);
-    // this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
-    // const index = this.doc.index;
-    // for (let i = 0; i < length; i++) {
-    //   const elementId = elements[i];
-    //   if (!elementId) this.writer.u8(0);
-    //   else this.cNode(index.get(elementId)!);
-    // }
+    this.ts(node.id);
+    const elements = node.elements;
+    const length = elements.length;
+    this.writeTL(CRDT_MAJOR_OVERLAY.VEC, length);
+    this.viewEncoder.writeArrHdr(length);
+    const index = this.doc.index;
+    for (let i = 0; i < length; i++) {
+      const elementId = elements[i];
+      if (!elementId) this.metaEncoder.writer.u8(0xff);
+      else this.cNode(index.get(elementId)!);
+    }
   }
 
   protected cStr(node: nodes.StrNode): void {
