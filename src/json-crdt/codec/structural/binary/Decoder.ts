@@ -162,7 +162,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const isTombstone = reader.uint8[reader.x] === 0;
     if (isTombstone) {
       reader.x++;
-      const length = reader.vu39();
+      const length = reader.vu57();
       return new StrChunk(id, length, '');
     }
     const text: string = this.readAsStr() as string;

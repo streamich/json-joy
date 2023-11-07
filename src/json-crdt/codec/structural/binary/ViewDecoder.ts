@@ -94,7 +94,7 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
       const isTombstone = reader.uint8[reader.x] === 0;
       if (isTombstone) {
         reader.x++;
-        reader.vu39Skip();
+        reader.vu57Skip();
         continue;
       }
       const text: string = this.val() as string;
