@@ -3,8 +3,6 @@ import {JsonPackExtension} from '../JsonPackExtension';
 import {CborEncoderFast} from './CborEncoderFast';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 
-const isSafeInteger = Number.isSafeInteger;
-
 export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> extends CborEncoderFast<W> {
   /**
    * Called when the encoder encounters a value that it does not know how to encode.
@@ -48,28 +46,6 @@ export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
       default:
         return this.writeUnknown(value);
     }
-  }
-
-  public writeNumber(num: number): void {
-    if (isSafeInteger(num)) this.writeInteger(num);
-    else if (typeof num === 'bigint') this.writeBigInt(num);
-    else this.writeFloat(num);
-  }
-
-  public writeBigInt(int: bigint): void {
-    if (int >= 0) this.writeBigUint(int);
-    else this.writeBigSint(int);
-  }
-
-  public writeBigUint(uint: bigint): void {
-    if (uint <= Number.MAX_SAFE_INTEGER) return this.writeUInteger(Number(uint));
-    this.writer.u8u64(0x1b, uint);
-  }
-
-  public writeBigSint(int: bigint): void {
-    if (int >= Number.MIN_SAFE_INTEGER) return this.encodeNint(Number(int));
-    const uint = -BigInt(1) - int;
-    this.writer.u8u64(0x3b, uint);
   }
 
   public writeFloat(float: number): void {
