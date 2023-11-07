@@ -3,11 +3,13 @@
 /**
  * Run this demo with:
  *
- *     npx ts-node src/json-crdt-patch/__demos__/PatchBuilder-json.ts
+ *    npx nodemon -q -x ts-node src/json-crdt-patch/__demos__/PatchBuilder-json.ts
  */
 
 import {PatchBuilder, Patch} from '..';
 import {LogicalClock} from '../clock';
+
+console.clear();
 
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);
@@ -23,22 +25,24 @@ builder.root(builder.json(json));
 const patch = builder.flush();
 console.log(patch.toString());
 
-// Patch 123.456!15
-// ├─ "obj" 123.456
-// ├─ "str" 123.457
-// ├─ "ins_str" 123.458!3, obj = 123.457 { 123.457 ← "bar" }
-// ├─ "con" 123.461 { 123 }
-// ├─ "arr" 123.462
-// ├─ "con" 123.463 { true }
-// ├─ "val" 123.464 { 123.463 }
-// ├─ "con" 123.465 { false }
-// ├─ "val" 123.466 { 123.465 }
-// ├─ "ins_arr" 123.467!2, obj = 123.462 { 123.462 ← 123.464, 123.466 }
-// ├─ "ins_obj" 123.469!1, obj = 123.456
+// Patch 123.456!17
+// ├─ new_obj 123.456
+// ├─ new_str 123.457
+// ├─ ins_str 123.458!3, obj = 123.457 { 123.457 ← "bar" }
+// ├─ new_con 123.461 { 123 }
+// ├─ new_arr 123.462
+// ├─ new_val 123.463
+// ├─ new_con 123.464 { true }
+// ├─ ins_val 123.465!1, obj = 123.463, val = 123.464
+// ├─ new_val 123.466
+// ├─ new_con 123.467 { false }
+// ├─ ins_val 123.468!1, obj = 123.466, val = 123.467
+// ├─ ins_arr 123.469!2, obj = 123.462 { 123.462 ← 123.463, 123.466 }
+// ├─ ins_obj 123.471!1, obj = 123.456
 // │   ├─ "foo": 123.457
 // │   ├─ "baz": 123.461
 // │   └─ "bools": 123.462
-// └─ "ins_val" 123.470!1, obj = 0.0, val = 123.456
+// └─ ins_val 123.472!1, obj = 0.0, val = 123.456
 
 const buf = patch.toBinary();
 console.log(buf);
@@ -51,12 +55,21 @@ console.log(buf);
 
 const patch2 = Patch.fromBinary(buf);
 console.log(patch2.toString());
-// Patch 123.456!8
-// ├─ "obj" 123.456
-// ├─ "str" 123.457
-// ├─ "ins_str" 123.458!3, obj = 123.457 { 123.457 ← "bar" }
-// ├─ "con" 123.461 { 123 }
-// ├─ "ins_obj" 123.462!1, obj = 123.456
+// Patch 123.456!17
+// ├─ new_obj 123.456
+// ├─ new_str 123.457
+// ├─ ins_str 123.458!3, obj = 123.457 { 123.457 ← "bar" }
+// ├─ new_con 123.461 { 123 }
+// ├─ new_arr 123.462
+// ├─ new_val 123.463
+// ├─ new_con 123.464 { true }
+// ├─ ins_val 123.465!1, obj = 123.463, val = 123.464
+// ├─ new_val 123.466
+// ├─ new_con 123.467 { false }
+// ├─ ins_val 123.468!1, obj = 123.466, val = 123.467
+// ├─ ins_arr 123.469!2, obj = 123.462 { 123.462 ← 123.463, 123.466 }
+// ├─ ins_obj 123.471!1, obj = 123.456
 // │   ├─ "foo": 123.457
-// │   └─ "baz": 123.461
-// └─ "ins_val" 123.463!1, obj = 0.0, val = 123.456
+// │   ├─ "baz": 123.461
+// │   └─ "bools": 123.462
+// └─ ins_val 123.472!1, obj = 0.0, val = 123.456
