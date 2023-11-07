@@ -26,4 +26,5 @@ export interface SequentialTraceEditorInstance {
   get: () => string;
   len: () => number;
   chunks: () => number;
+  toBlob?: () => Uint8Array;
 }
