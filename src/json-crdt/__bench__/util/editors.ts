@@ -191,6 +191,42 @@ const editorDiamondTypesNode: SequentialTraceEditor = {
   },
 };
 
+const editorV8Strings: SequentialTraceEditor = {
+  name: 'V8 strings',
+  factory: () => {
+    let str = '';
+    return {
+      ins: (pos: number, insert: string) => {
+        str = str.slice(0, pos) + insert + str.slice(pos);
+      },
+      del: (pos: number, len: number) => {
+        str = str.slice(0, pos) + str.slice(pos + len);
+      },
+      get: () => str,
+      len: () => str.length,
+      chunks: () => 0,
+    };
+  },
+};
+
+const editorRopeJs: SequentialTraceEditor = {
+  name: 'rope.js',
+  factory: () => {
+    const r = new Rope(['']);
+    return {
+      ins: (pos: number, insert: string) => {
+        r.splice(pos, 0, insert);
+      },
+      del: (pos: number, len: number) => {
+        r.splice(pos, len, '');
+      },
+      get: () => r.toString(),
+      len: () => r.toString().length,
+      chunks: () => r.segs.length,
+    };
+  },
+};
+
 export const editors = {
   'StrNode (json-joy)': editorStrNode,
   'json-joy': editorJsonJoy,
@@ -200,40 +236,8 @@ export const editors = {
   AutomergeUnstable: editorAutomergeUnstable,
   collabs: editorCollabs,
   'diamond-types-node': editorDiamondTypesNode,
-  'V8 strings': {
-    name: 'V8 strings',
-    factory: () => {
-      let str = '';
-      return {
-        ins: (pos: number, insert: string) => {
-          str = str.slice(0, pos) + insert + str.slice(pos);
-        },
-        del: (pos: number, len: number) => {
-          str = str.slice(0, pos) + str.slice(pos + len);
-        },
-        get: () => str,
-        len: () => str.length,
-        chunks: () => 0,
-      };
-    },
-  },
-  'rope.js': {
-    name: 'rope.js',
-    factory: () => {
-      const r = new Rope(['']);
-      return {
-        ins: (pos: number, insert: string) => {
-          r.splice(pos, 0, insert);
-        },
-        del: (pos: number, len: number) => {
-          r.splice(pos, len, '');
-        },
-        get: () => r.toString(),
-        len: () => r.toString().length,
-        chunks: () => r.segs.length,
-      };
-    },
-  },
+  'V8 strings': editorV8Strings,
+  'rope.js': editorRopeJs,
 };
 
 export type SequentialEditorName = keyof typeof editors;

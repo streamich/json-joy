@@ -2,8 +2,13 @@
 
 import {payloads} from '../../__bench__/payloads';
 import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
-import {structuralEditors} from './util/structural-editors';
+import {StructuralEditors, structuralEditors} from './util/structural-editors';
 import {StructuralEditor} from './util/types';
+
+const editors: StructuralEditors[] = [
+  'nativeJs',
+  'jsonJoy',
+];
 
 const benchmark: IBenchmark = {
   name: 'CRDT libraries JSON documents',
@@ -14,13 +19,14 @@ const benchmark: IBenchmark = {
   warmup: 1000,
   payloads,
   runners: [
-    ...Object.values(structuralEditors).map((editor: StructuralEditor) => ({
+    ...editors.map(name => structuralEditors[name]).map((editor: StructuralEditor) => ({
       name: editor.name,
-      setup: () => {
-        return (json: any) => {
-          const instance = editor.factory();
-          instance.setRoot(json);
-          return instance.toBlob();
+      setup: (json: any) => {
+        let instance = editor.factory();
+        instance.setRoot(json);
+        return () => {
+          const blob = instance.toBlob();
+          instance = editor.factory(blob);
         };
       },
     })),
