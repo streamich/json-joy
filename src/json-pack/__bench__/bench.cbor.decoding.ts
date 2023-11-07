@@ -3,7 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {CborEncoder} from '../cbor/CborEncoder';
 import {CborDecoderBase} from '../cbor/CborDecoderBase';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 
 const encoder = new CborEncoder();

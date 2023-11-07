@@ -3,7 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {IonEncoderFast} from '../ion/IonEncoderFast';
 import {Writer} from '../../util/buffers/Writer';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {load, makeBinaryWriter, dom} from 'ion-js';
 import {deepEqual} from '../../json-equal/deepEqual';
 

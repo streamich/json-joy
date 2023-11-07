@@ -4,7 +4,7 @@ import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {MsgPackEncoder} from '../msgpack/MsgPackEncoder';
 import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
 import {CborDecoder} from '../cbor/CborDecoder';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 
 const benchmark: IBenchmark = {

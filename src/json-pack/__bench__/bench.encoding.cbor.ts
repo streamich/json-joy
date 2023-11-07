@@ -3,7 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {CborEncoderFast} from '../cbor/CborEncoderFast';
 import {CborEncoder} from '../cbor/CborEncoder';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

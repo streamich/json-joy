@@ -1,43 +1,43 @@
 export const payloads = [
   {
     name: (json: any) => `Small object, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json1'),
+    data: require('./data/json1'),
   },
   {
     name: (json: any) => `Typical object, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json2'),
+    data: require('./data/json2'),
   },
   {
     name: (json: any) => `Large object, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json3'),
+    data: require('./data/json3'),
   },
   {
     name: (json: any) => `Very large object, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json6'),
+    data: require('./data/json6'),
   },
   {
     name: (json: any) => `Object with many keys, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-object-many-keys'),
+    data: require('./data/json-object-many-keys'),
   },
   {
     name: (json: any) => `String ladder, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-strings-ladder'),
+    data: require('./data/json-strings-ladder'),
   },
   {
     name: (json: any) => `Long strings, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-strings-long'),
+    data: require('./data/json-strings-long'),
   },
   {
     name: (json: any) => `Short strings, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-strings-short'),
+    data: require('./data/json-strings-short'),
   },
   {
     name: (json: any) => `Numbers, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-numbers'),
+    data: require('./data/json-numbers'),
   },
   {
     name: (json: any) => `Tokens, ${JSON.stringify(json).length} bytes`,
-    data: require('../../__bench__/data/json-tokens'),
+    data: require('./data/json-tokens'),
   },
 ];
 
