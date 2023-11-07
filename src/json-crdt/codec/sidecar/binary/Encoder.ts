@@ -152,21 +152,23 @@ export class Encoder {
   }
 
   protected cArr(node: nodes.ArrNode): void {
-  //   const ts = this.ts;
-  //   const writer = this.writer;
-  //   ts(node.id);
-  //   this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
-  //   const index = this.doc.index;
-  //   for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-  //     // TODO: Encode ID first
-  //     // TODO: Use b1vu56
-  //     const span = chunk.span;
-  //     const deleted = chunk.del;
-  //     writer.b1vu28(deleted, span);
-  //     ts(chunk.id);
-  //     if (deleted) continue;
-  //     const nodes = chunk.data!;
-  //     for (let i = 0; i < span; i++) this.cNode(index.get(nodes[i])!);
-  //   }
+    const ts = this.ts;
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.ARR, node.count);
+    this.viewEncoder.writeArrHdr(node.length());
+    const writer = this.metaEncoder.writer;
+    const index = this.doc.index;
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+      ts(chunk.id);
+      const deleted = chunk.del;
+      const span = chunk.span;
+      writer.b1vu28(deleted, span);
+      if (span) {
+        const elements = chunk.data!;
+        const elementsLength = elements.length;
+        for (let i = 0; i < elementsLength; i++)
+          this.cNode(index.get(elements[i])!);
+      }
+    }
   }
 }
