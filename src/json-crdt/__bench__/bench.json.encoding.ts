@@ -1,13 +1,14 @@
 // npx ts-node src/json-crdt/__bench__/bench.json.encoding.ts
 
 import {payloads} from '../../__bench__/payloads';
-import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';;
+import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
 import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
 import {Model} from '../model';
 
 const benchmark: IBenchmark = {
   name: 'Encoding JSON documents',
-  description: 'This benchmarks tests encoding speed of JSON various JSON documents. It constructs a CRDT model from the JSON document and then encodes the model to binary.' +
+  description:
+    'This benchmarks tests encoding speed of JSON various JSON documents. It constructs a CRDT model from the JSON document and then encodes the model to binary.' +
     '\n\n' +
     'CRDT models are compared against native CBOR encoder and Node.js native `Buffer.from(JSON.stringify(obj))` plain object encoding to binary.' +
     '\n\n' +

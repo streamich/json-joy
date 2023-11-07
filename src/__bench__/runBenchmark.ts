@@ -16,7 +16,7 @@ export interface Payload {
 
 export interface IBenchmark {
   name: string;
-  description?: string,
+  description?: string;
   warmup?: number;
   payloads?: Payload[];
   test?: (payload: unknown, result: unknown) => boolean;
@@ -57,7 +57,9 @@ export const runBenchmark = (benchmark: IBenchmark): PayloadResult[] => {
         }
       }
       const icon = isCorrect === undefined ? '' : isCorrect ? '👍' : '👎';
-      suite.add((icon ? icon + ' ' : '') + (typeof runner.name === 'function' ? runner.name(data) : runner.name), () => fn(data));
+      suite.add((icon ? icon + ' ' : '') + (typeof runner.name === 'function' ? runner.name(data) : runner.name), () =>
+        fn(data),
+      );
     }
 
     const events: Benchmark.Event[] = [];
