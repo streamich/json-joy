@@ -170,12 +170,16 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
    */
   public api: undefined | unknown = undefined;
 
+  public name(): string {
+    return 'vec';
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
     const extNode = this.ext();
     const header =
-      this.constructor.name + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
+      this.name() + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
       return this.child()!.toString(tab);
     }

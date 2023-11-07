@@ -338,7 +338,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const nl = () => '';
     const hasExtensions = this.ext.size() > 0;
     return (
-      this.constructor.name +
+      'model' +
       printTree(tab, [
         (tab) => this.root.toString(tab),
         nl,
@@ -346,11 +346,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           const nodes: JsonNode[] = [];
           this.index.forEach((item) => nodes.push(item.v));
           return (
-            `Index (${nodes.length} nodes)` +
+            `index (${nodes.length} nodes)` +
             (nodes.length
               ? printTree(
                   tab,
-                  nodes.map((node) => (tab) => `${node.constructor.name} ${toDisplayString(node.id)}`),
+                  nodes.map((node) => (tab) => `${node.name()} ${toDisplayString(node.id)}`),
                 )
               : '')
           );
@@ -358,7 +358,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
         nl,
         // (tab) => `View ${toTree(this.view(), tab)}`,
         (tab) =>
-          `View${printTree(tab, [(tab) => String(JSON.stringify(this.view(), null, 2)).replace(/\n/g, '\n' + tab)])}`,
+          `view${printTree(tab, [(tab) => String(JSON.stringify(this.view(), null, 2)).replace(/\n/g, '\n' + tab)])}`,
         nl,
         (tab) => this.clock.toString(tab),
         hasExtensions ? nl : null,

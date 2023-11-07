@@ -100,6 +100,10 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  public name(): string {
+    return 'str';
+  }
+
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */
@@ -113,6 +117,6 @@ export class StrNode<T extends string = string> extends AbstractRga<string> impl
   }
 
   protected toStringName(): string {
-    return super.toStringName();
+    return this.name();
   }
 }

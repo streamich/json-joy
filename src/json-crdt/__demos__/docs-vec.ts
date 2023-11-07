@@ -9,6 +9,8 @@
 import {Model} from '..';
 import {vec} from '../../json-crdt-patch';
 
+console.clear();
+
 const model = Model.withLogicalClock(1234); // 1234 is session ID
 
 model.api.root({

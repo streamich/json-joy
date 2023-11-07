@@ -125,7 +125,7 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   }
 
   protected toStringName(): string {
-    return super.toStringName();
+    return this.name();
   }
 
   // ----------------------------------------------------------------- JsonNode
@@ -173,6 +173,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
 
   /** @ignore */
   public api: undefined | unknown = undefined;
+
+  public name(): string {
+    return 'arr';
+  }
 
   // ---------------------------------------------------------------- Printable
 

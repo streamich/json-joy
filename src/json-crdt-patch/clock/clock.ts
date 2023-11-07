@@ -210,7 +210,7 @@ export class VectorClock extends LogicalClock implements IVectorClock {
       lines += `\n${tab}${isLast ? '└─' : '├─'} ${clock.sid}.${clock.time}`;
       i++;
     });
-    return `${this.constructor.name} ${this.sid}.${this.time}${lines}`;
+    return `clock ${this.sid}.${this.time}${lines}`;
   }
 }
 
