@@ -84,13 +84,13 @@ export interface IBenchmarkResult {
   count: number;
   cycles: number;
   hz: number;
-  compiled: Function | string;
+  compiled: (() => void) | string;
   error: Error;
-  fn: Function | string;
+  fn: (() => void) | string;
   aborted: boolean;
   running: boolean;
-  setup: Function | string;
-  teardown: Function | string;
+  setup: (() => void) | string;
+  teardown: (() => void) | string;
   stats: Benchmark.Stats;
   times: Benchmark.Times;
 }
