@@ -82,8 +82,8 @@ export class Decoder {
         return this.cObj(view, id, length);
       case CRDT_MAJOR.VEC:
         return this.cVec(view, id, length);
-      // case CRDT_MAJOR.STR:
-      //   return this.cStr(id, length);
+      case CRDT_MAJOR.STR:
+        return this.cStr(view, id, length);
       // case CRDT_MAJOR.BIN:
       //   return this.cBin(id, length);
       // case CRDT_MAJOR.ARR:
@@ -138,25 +138,22 @@ export class Decoder {
     return obj;
   }
 
-  // protected cStr(id: ITimestampStruct, length: number): StrNode {
-  //   const node = new StrNode(id);
-  //   if (length) node.ingest(length, this.cStrChunk);
-  //   this.doc.index.set(id, node);
-  //   return node;
-  // }
-
-  // private cStrChunk = (): StrChunk => {
-  //   const reader = this.reader;
-  //   const id = this.ts();
-  //   const isTombstone = reader.uint8[reader.x] === 0;
-  //   if (isTombstone) {
-  //     reader.x++;
-  //     const length = reader.vu39();
-  //     return new StrChunk(id, length, '');
-  //   }
-  //   const text: string = this.readAsStr() as string;
-  //   return new StrChunk(id, text.length, text);
-  // };
+  protected cStr(view: unknown, id: ITimestampStruct, length: number): StrNode {
+    if (typeof view !== 'string') throw new Error('INVALID_STR');
+    const node = new StrNode(id);
+    const reader = this.decoder.reader;
+    let offset = 0;
+    node.ingest(length, (): StrChunk => {
+      const id = this.ts();
+      const span = reader.vu39();
+      if (!span) return new StrChunk(id, length, '');
+      const text = view.slice(offset, offset + span);
+      offset += span;
+      return new StrChunk(id, text.length, text);
+    });
+    this.doc.index.set(id, node);
+    return node;
+  }
 
   // protected cBin(id: ITimestampStruct, length: number): BinNode {
   //   const node = new BinNode(id);

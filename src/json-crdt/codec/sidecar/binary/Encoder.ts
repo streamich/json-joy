@@ -128,19 +128,15 @@ export class Encoder {
   }
 
   protected cStr(node: nodes.StrNode): void {
-    // const ts = this.ts;
-    // const writer = this.writer;
-    // ts(node.id);
-    // this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
-    // for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
-    //   ts(chunk.id);
-    //   if (chunk.del) {
-    //     writer.u8(0);
-    //     writer.vu39(chunk.span);
-    //   } else {
-    //     // TODO: REFERENCE
-    //   }
-    // }
+    const ts = this.ts;
+    ts(node.id);
+    this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
+    this.viewEncoder.writeStr(node.view());
+    const writer = this.metaEncoder.writer;
+    for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
+      ts(chunk.id);
+      writer.vu39(chunk.span);
+    }
   }
 
   protected cBin(node: nodes.BinNode): void {
