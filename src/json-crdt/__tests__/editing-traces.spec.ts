@@ -16,9 +16,7 @@ describe('sequential traces', () => {
 });
 
 describe('concurrent traces', () => {
-  const traces: string [] = [
-    'friendsforever',
-  ];  
+  const traces: string[] = ['friendsforever'];
   for (const traceName of traces) {
     test(`"${traceName}" trace`, async () => {
       const json = loadConcurrentTrace(traceName);
