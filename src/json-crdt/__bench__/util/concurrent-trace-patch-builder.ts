@@ -12,6 +12,9 @@ import * as zlib from 'zlib';
 import {Model} from '../../model';
 import type {ConcurrentTrace} from './types';
 import {Patch} from '../../../json-crdt-patch';
+import {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose';
+import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact';
+import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 
 const root = path.resolve(__dirname, '..', '..', '..', '..');
 const traceName = 'friendsforever';
@@ -68,3 +71,54 @@ console.log('-------------------------------------------------------------------
 console.log(json.endContent);
 console.log(agents[0].view() === json.endContent);
 console.log((agents[0].view() as any).length, json.endContent.length);
+
+const patchExists = new Set<string>();
+const history = histories[0];
+const batch: Patch[] = [];
+for (const patch of history) {
+  const id = patch.getId()!.sid + '_' + patch.getId()!.time;
+  if (patchExists.has(id)) continue;
+  patchExists.add(id);
+  batch.push(patch);
+}
+
+const model = Model.withLogicalClock(1000000);
+model.applyBatch(batch);
+
+console.log(model.view());
+console.log(model.view() === json.endContent);
+console.log((model.view() as any).length, json.endContent.length);
+
+const cborEncoder = new CborEncoder();
+
+const dataVerbose = batch.map(patch => encodeVerbose(patch));
+const dataCompact = batch.map(patch => encodeCompact(patch));
+const dataBinary = batch.map(patch => patch.toBinary());
+
+fs.writeFileSync(path.join(__dirname, `${traceName}.verbose.json`), JSON.stringify(dataVerbose));
+fs.writeFileSync(path.join(__dirname, `${traceName}.verbose.cbor`), cborEncoder.encode(dataVerbose));
+
+fs.writeFileSync(path.join(__dirname, `${traceName}.compact.json`), JSON.stringify(dataCompact));
+fs.writeFileSync(path.join(__dirname, `${traceName}.compact.cbor`), cborEncoder.encode(dataCompact));
+
+fs.writeFileSync(path.join(__dirname, `${traceName}.binary.bin`), cborEncoder.encode(dataBinary));
+
+fs.createReadStream(path.join(__dirname, `${traceName}.verbose.json`))
+  .pipe(zlib.createGzip({level: 9}))
+  .pipe(fs.createWriteStream(path.join(__dirname, `${traceName}.verbose.json.gz`)));
+
+fs.createReadStream(path.join(__dirname, `${traceName}.verbose.cbor`))
+  .pipe(zlib.createGzip({level: 9}))
+  .pipe(fs.createWriteStream(path.join(__dirname, `${traceName}.verbose.cbor.gz`)));
+
+fs.createReadStream(path.join(__dirname, `${traceName}.compact.json`))
+  .pipe(zlib.createGzip({level: 9}))
+  .pipe(fs.createWriteStream(path.join(__dirname, `${traceName}.compact.json.gz`)));
+
+fs.createReadStream(path.join(__dirname, `${traceName}.compact.cbor`))
+  .pipe(zlib.createGzip({level: 9}))
+  .pipe(fs.createWriteStream(path.join(__dirname, `${traceName}.compact.cbor.gz`)));
+
+fs.createReadStream(path.join(__dirname, `${traceName}.binary.bin`))
+  .pipe(zlib.createGzip({level: 9}))
+  .pipe(fs.createWriteStream(path.join(__dirname, `${traceName}.binary.bin.gz`)));
