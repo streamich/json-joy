@@ -16,7 +16,7 @@ import {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose';
 import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 
-const loadConcurrentTrace = (traceName: string): ConcurrentTrace => {
+export const loadConcurrentTrace = (traceName: string): ConcurrentTrace => {
   const root = path.resolve(__dirname, '..', '..', '..', '..');
   const traceFile = path.resolve(root, 'node_modules', 'editing-traces', 'concurrent_traces', `${traceName}.json.gz`);
   const buf = fs.readFileSync(traceFile);
@@ -25,7 +25,7 @@ const loadConcurrentTrace = (traceName: string): ConcurrentTrace => {
   return json;
 };
 
-const convertConcurrentTraceToPatches = (json: ConcurrentTrace): Patch[] => {
+export const convertConcurrentTraceToPatches = (json: ConcurrentTrace): Patch[] => {
   const agent0 = Model.withLogicalClock(1000000);
   agent0.api.root('');
   const agents: Model[] = [agent0];
