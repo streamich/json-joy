@@ -13,7 +13,8 @@ const cborEncoder = new CborEncoder();
 
 const benchmark: IBenchmark = {
   name: 'Encoding - JSON CRDT codecs',
-  description: 'All structural encoding return `Uint8Array` as their result. The "compact" and "verbose" codecs first encode into POJO which then is encoded into binary using the CBOR encoder.' +
+  description:
+    'All structural encoding return `Uint8Array` as their result. The "compact" and "verbose" codecs first encode into POJO which then is encoded into binary using the CBOR encoder.' +
     '\n\n' +
     'The indexed encoding returns a map of `Uint8Array` values.' +
     '\n\n' +
