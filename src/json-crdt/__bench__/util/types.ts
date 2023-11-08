@@ -39,3 +39,17 @@ export interface StructuralEditorInstance {
   setRoot: (pojo: unknown) => void;
   toBlob: () => Uint8Array;
 }
+
+export interface ConcurrentTrace {
+  kind: 'concurrent';
+  endContent: 'string',
+  numAgents: number;
+  txns: ConcurrentTraceTransaction[];
+}
+
+export interface ConcurrentTraceTransaction {
+  parents: number[];
+  numChildren: number;
+  agent: number;
+  patches: [position: number, remove: number, text: string][];
+}
