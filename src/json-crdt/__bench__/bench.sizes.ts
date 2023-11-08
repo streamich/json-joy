@@ -1,3 +1,4 @@
+/* tslint:disable no-console */
 // npx nodemon -q -x ts-node src/json-crdt/__bench__/bench.sizes.ts
 
 import {payloads} from '../../__bench__/payloads';
