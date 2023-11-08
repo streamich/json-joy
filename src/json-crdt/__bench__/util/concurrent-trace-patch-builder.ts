@@ -29,10 +29,7 @@ export const convertConcurrentTraceToPatches = (json: ConcurrentTrace): Patch[] 
   const agent0 = Model.withLogicalClock(1000000);
   agent0.api.root('');
   const agents: Model[] = [agent0];
-  const histories: Patch[][] = [
-    [agent0.api.flush()],
-    ...Array.from({length: json.numAgents - 1}, () => [])
-  ];
+  const histories: Patch[][] = [[agent0.api.flush()], ...Array.from({length: json.numAgents - 1}, () => [])];
   const historyLenAtTxn: number[][] = [];
   const historyConsumed: number[][] = Array.from({length: json.numAgents}, () => []);
   for (let i = 1; i < json.numAgents; i++) {
@@ -60,12 +57,10 @@ export const convertConcurrentTraceToPatches = (json: ConcurrentTrace): Patch[] 
     }
     const agentPatch = agent.api.flush();
     histories[txn.agent].push(agentPatch);
-    historyLenAtTxn.push(histories.map(h => h.length));
+    historyLenAtTxn.push(histories.map((h) => h.length));
   }
-  if (agents[0].view() !== json.endContent)
-    console.warn('Contents do not match!');
-  if ((agents[0].view() as any).length !== json.endContent.length)
-    throw new Error('Lengths do not match!');
+  if (agents[0].view() !== json.endContent) console.warn('Contents do not match!');
+  if ((agents[0].view() as any).length !== json.endContent.length) throw new Error('Lengths do not match!');
   const patchExists = new Set<string>();
   const history = histories[0];
   const batch: Patch[] = [];
@@ -77,10 +72,8 @@ export const convertConcurrentTraceToPatches = (json: ConcurrentTrace): Patch[] 
   }
   const model = Model.withLogicalClock(1000000);
   model.applyBatch(batch);
-  if (model.view() !== json.endContent)
-    console.warn('Contents do not match!');
-  if ((model.view() as any).length !== json.endContent.length)
-    throw new Error('Lengths do not match!');
+  if (model.view() !== json.endContent) console.warn('Contents do not match!');
+  if ((model.view() as any).length !== json.endContent.length) throw new Error('Lengths do not match!');
   return batch;
 };
 

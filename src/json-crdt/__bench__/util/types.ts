@@ -42,7 +42,7 @@ export interface StructuralEditorInstance {
 
 export interface ConcurrentTrace {
   kind: 'concurrent';
-  endContent: 'string',
+  endContent: 'string';
   numAgents: number;
   txns: ConcurrentTraceTransaction[];
 }
