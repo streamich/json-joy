@@ -18,4 +18,8 @@ export class RootNode<Value extends JsonNode = JsonNode> extends ValNode<Value> 
   constructor(doc: Model<any>, val: ITimestampStruct) {
     super(doc, ORIGIN, val);
   }
+
+  public name(): string {
+    return 'root';
+  }
 }

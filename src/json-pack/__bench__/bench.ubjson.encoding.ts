@@ -3,7 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 import {Writer} from '../../util/buffers/Writer';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',

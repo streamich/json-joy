@@ -3,7 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {BsonEncoder} from '../bson/BsonEncoder';
 import {Writer} from '../../util/buffers/Writer';
-import {payloads as payloads_} from './payloads';
+import {payloads as payloads_} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {BSON, EJSON} from 'bson';
 

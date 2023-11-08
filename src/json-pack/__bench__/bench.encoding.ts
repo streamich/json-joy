@@ -6,7 +6,7 @@ import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 import {CborEncoderFast} from '../cbor/CborEncoderFast';
 import {CborEncoder} from '../cbor/CborEncoder';
 import {Writer} from '../../util/buffers/Writer';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {MsgPackEncoderFast} from '../msgpack';
 
 const benchmark: IBenchmark = {

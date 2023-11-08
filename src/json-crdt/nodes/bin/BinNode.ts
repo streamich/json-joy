@@ -109,6 +109,10 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
   /** @ignore */
   public api: undefined | unknown = undefined;
 
+  public name(): string {
+    return 'bin';
+  }
+
   // -------------------------------------------------------------- AbstractRga
 
   /** @ignore */
@@ -122,6 +126,6 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
   }
 
   protected toStringName(): string {
-    return super.toStringName();
+    return this.name();
   }
 }

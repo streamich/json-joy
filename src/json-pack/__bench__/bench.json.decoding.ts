@@ -2,7 +2,7 @@
 
 import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {JsonDecoder} from '../json/JsonDecoder';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 
 const encodedPayloads = payloads.map((payload) => {

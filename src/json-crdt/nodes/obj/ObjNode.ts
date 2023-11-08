@@ -125,10 +125,14 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
    */
   public api: undefined | unknown = undefined;
 
+  public name(): string {
+    return 'str';
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const header = this.constructor.name + ' ' + toDisplayString(this.id);
+    const header = this.name() + ' ' + toDisplayString(this.id);
     return (
       header +
       printTree(

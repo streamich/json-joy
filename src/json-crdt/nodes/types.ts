@@ -13,6 +13,11 @@ import type {Identifiable} from '../../json-crdt-patch/types';
  */
 export interface JsonNode<View = unknown> extends Identifiable {
   /**
+   * Returns the name of the JSON node type.
+   */
+  name(): string;
+
+  /**
    * Returns a POJO object which represents the "view" of this JSON node model.
    */
   view(): View;

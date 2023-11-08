@@ -26,4 +26,16 @@ export interface SequentialTraceEditorInstance {
   get: () => string;
   len: () => number;
   chunks: () => number;
+  toBlob?: () => Uint8Array;
+}
+
+export interface StructuralEditor {
+  name: string;
+  factory: (snapshot?: Uint8Array) => StructuralEditorInstance;
+}
+
+export interface StructuralEditorInstance {
+  view: () => unknown;
+  setRoot: (pojo: unknown) => void;
+  toBlob: () => Uint8Array;
 }

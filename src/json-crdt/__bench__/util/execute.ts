@@ -57,7 +57,16 @@ export const runTraceWithEditor = (
     console.log(Number(ms.toFixed(3)));
   }
   // console.log('Result:', view);
-  console.log('Correct:', view === trace.endContent, 'Length:', instance!.len(), 'Chunks:', instance!.chunks());
+  console.log(
+    'Correct:',
+    view === trace.endContent,
+    'Length:',
+    instance!.len(),
+    'Chunks:',
+    instance!.chunks(),
+    'Bytes:',
+    instance!.toBlob?.().length,
+  );
   const avg = measurements.reduce((acc, x) => acc + x, 0) / measurements.length;
   console.log(
     'Best:',

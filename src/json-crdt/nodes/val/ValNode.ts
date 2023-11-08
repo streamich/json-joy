@@ -81,11 +81,15 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
    */
   public api: undefined | unknown = undefined;
 
+  public name(): string {
+    return 'val';
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
     const node = this.node();
-    const header = this.constructor.name + ' ' + toDisplayString(this.id);
+    const header = this.name() + ' ' + toDisplayString(this.id);
     return header + printTree(tab, [(tab) => (node ? node.toString(tab) : toDisplayString(this.val))]);
   }
 }

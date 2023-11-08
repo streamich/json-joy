@@ -4,13 +4,13 @@ import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {CborEncoder} from '../cbor/CborEncoder';
 import {CborEncoderFast} from '../cbor/CborEncoderFast';
 import {CborDecoder} from '../cbor/CborDecoder';
-import {payloads} from './payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
+import {payloads} from '../../__bench__/payloads';
 
 const benchmark: IBenchmark = {
   name: 'Encoding',
   warmup: 1000,
-  payloads,
+  payloads: payloads,
   test: (payload: unknown, data: unknown): boolean => {
     const decoder = new CborDecoder();
     const decoded = decoder.read(data as any);

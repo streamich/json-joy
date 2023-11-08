@@ -4,7 +4,7 @@ import {runBenchmark, IBenchmark} from '../../__bench__/runBenchmark';
 import {MsgPackEncoderFast} from '../msgpack/MsgPackEncoderFast';
 import {MsgPackDecoderFast} from '../msgpack/MsgPackDecoderFast';
 import {MsgPackDecoder} from '../msgpack/MsgPackDecoder';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 
 const encoder = new MsgPackEncoderFast();

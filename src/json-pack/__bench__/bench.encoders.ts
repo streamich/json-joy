@@ -9,7 +9,7 @@ import {JsonEncoder} from '../json/JsonEncoder';
 import {UbjsonEncoder} from '../ubjson/UbjsonEncoder';
 import {IonEncoderFast} from '../ion/IonEncoderFast';
 import {CborDecoder} from '../cbor/CborDecoder';
-import {payloads} from './payloads';
+import {payloads} from '../../__bench__/payloads';
 import {deepEqual} from '../../json-equal/deepEqual';
 import {Writer} from '../../util/buffers/Writer';
 
