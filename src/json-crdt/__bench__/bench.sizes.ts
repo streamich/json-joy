@@ -8,6 +8,18 @@ console.clear();
 const editorNames: StructuralEditors[] = [
   'jsonJoy',
   'jsonJoyServerClock',
+  'jsonJoyCompact',
+  'jsonJoyCompactServerClock',
+  'jsonJoyVerbose',
+  'jsonJoyVerboseServerClock',
+  'jsonJoyIndexed',
+  'jsonJoyIndexedServerClock',
+  'jsonJoySidecar',
+  'jsonJoySidecarServerClock',
+  'yjs',
+  'yrs',
+  'automerge',
+  'nativeJs',
 ];
 
 for (const payload of payloads) {
@@ -21,7 +33,7 @@ for (const payload of payloads) {
     instance.setRoot(payload.data);
     const blob = instance.toBlob();
     const size = new Intl.NumberFormat().format(blob.length);
-    console.log(`${name} ${size} bytes`);
+    console.log(`${editor.name} -> ${size} bytes`);
   }
   console.log('\n');
 }
