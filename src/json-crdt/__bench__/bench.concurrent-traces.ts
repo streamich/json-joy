@@ -1,3 +1,4 @@
+/* tslint:disable no-console */
 // npx ts-node src/json-crdt/__bench__/bench.concurrent-traces.ts
 
 import {convertConcurrentTraceToPatches, loadConcurrentTrace} from './util/concurrent-trace-patch-builder';
