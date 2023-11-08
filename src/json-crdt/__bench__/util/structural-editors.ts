@@ -39,6 +39,21 @@ const editorJsonJoy: StructuralEditor = {
   },
 };
 
+const editorJsonJoyServerClock: StructuralEditor = {
+  name: 'json-joy (server clock)',
+  factory: (snapshot?: Uint8Array) => {
+    const model: Model = snapshot ? Model.fromBinary(snapshot) : Model.withServerClock();
+    const instance: StructuralEditorInstance = {
+      view: () => model.view(),
+      setRoot: (pojo: unknown) => {
+        model.api.root(pojo);
+      },
+      toBlob: () => model.toBinary(),
+    };
+    return instance;
+  },
+};
+
 const jsonToYjsType = (ydoc: Y.Doc | Yrs.YDoc, json: any) => {
   if (!json) return json;
   if (typeof json === 'object') {
@@ -111,6 +126,7 @@ const editorAutomerge: StructuralEditor = {
 export const structuralEditors = {
   nativeJs: editorNativeJs,
   jsonJoy: editorJsonJoy,
+  jsonJoyServerClock: editorJsonJoyServerClock,
   yjs: editorYjs,
   yrs: editorYrs,
   editorAutomerge,
