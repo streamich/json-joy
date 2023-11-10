@@ -15,6 +15,6 @@ export const loadConcurrentTrace = (traceName: string): [batch: Patch[], view: u
   const jsonDecoder = new JsonDecoder();
   const data = cborDecoder.read(buf) as Uint8Array[];
   const view = jsonDecoder.read(viewBuf);
-  const batch = data.map(blob => Patch.fromBinary(blob));
+  const batch = data.map((blob) => Patch.fromBinary(blob));
   return [batch, view];
 };
