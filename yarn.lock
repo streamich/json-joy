@@ -2353,7 +2353,6 @@ eastasianwidth@^0.2.0:
 
 "editing-traces@https://github.com/josephg/editing-traces#3caad3dcce0043ef925d588d4788dbcddececbd8":
   version "0.0.0"
-  uid "3caad3dcce0043ef925d588d4788dbcddececbd8"
   resolved "https://github.com/josephg/editing-traces#3caad3dcce0043ef925d588d4788dbcddececbd8"
 
 ee-first@1.1.1:
@@ -3894,6 +3893,10 @@ jsesc@^2.5.1:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.2.tgz#80564d2e483dacf6e8ef209650a67df3f0c283a4"
   integrity sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==
+
+"json-crdt-traces@https://github.com/streamich/json-crdt-traces#ce8905957287554402ba865b22b1e31badea5ed7":
+  version "0.0.1"
+  resolved "https://github.com/streamich/json-crdt-traces#ce8905957287554402ba865b22b1e31badea5ed7"
 
 json-logic-js@^2.0.1:
   version "2.0.2"
@@ -5872,7 +5875,6 @@ typescript@^5.1.6:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.23.0:
   version "20.23.0"
-  uid "49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
