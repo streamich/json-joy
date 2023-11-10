@@ -310,17 +310,14 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
-   * Cannibalizes the given model. Steals all the internal state (the root node,
-   * clock, index and extensions) of a given model and applies it to this model.
-   * The given model is left in an unusable state.
-   *
-   * @param model A model to cannibalize.
+   * Resets the model to equivalent state of another model.
    */
-  public cannibalize(model: Model<RootJsonNode>): void {
-    this.root = model.root;
-    this.clock = model.clock;
-    this.index = model.index;
-    this.ext = model.ext;
+  public reset(to: Model<RootJsonNode>): void {
+    this.index = new AvlMap<ITimestampStruct, JsonNode>(compare);
+    const blob = to.toBinary();
+    decoder.decode(blob, this);
+    this.clock = to.clock.clone();
+    this.ext = to.ext.clone();
   }
 
   /**

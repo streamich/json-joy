@@ -29,7 +29,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     super(new CrdtReader());
   }
 
-  public decode(data: Uint8Array): Model {
+  public decode(data: Uint8Array, model?: Model): Model {
     delete this.clockDecoder;
     this.time = -1;
     const reader = this.reader;
@@ -37,15 +37,18 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const isServerTime = reader.u8() === 0;
     if (isServerTime) {
       const time = (this.time = reader.vu57());
-      this.doc = Model.withServerClock(time);
+      if (!model) model = Model.withServerClock(time);
     } else {
       this.decodeClockTable();
-      const clock = this.clockDecoder!.clock;
-      this.doc = Model.withLogicalClock(clock);
+      if (!model) {
+        const clock = this.clockDecoder!.clock;
+        model = Model.withLogicalClock(clock);
+      }
     }
-    this.doc.root = new RootNode(this.doc, this.cRoot().id);
+    this.doc = model;
+    model.root = new RootNode(this.doc, this.cRoot().id);
     delete this.clockDecoder;
-    return this.doc;
+    return model;
   }
 
   protected decodeClockTable(): void {

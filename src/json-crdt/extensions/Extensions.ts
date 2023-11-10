@@ -17,6 +17,12 @@ export class Extensions implements Printable {
     return Object.keys(this.ext).length;
   }
 
+  public clone(): Extensions {
+    const clone = new Extensions();
+    for (const ext of Object.values(this.ext)) clone.register(ext);
+    return clone;
+  }
+
   public toString(tab: string = ''): string {
     const keys = Object.keys(this.ext)
       .map((k) => +k)
