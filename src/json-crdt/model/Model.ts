@@ -310,6 +310,20 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /**
+   * Cannibalizes the given model. Steals all the internal state (the root node,
+   * clock, index and extensions) of a given model and applies it to this model.
+   * The given model is left in an unusable state.
+   *
+   * @param model A model to cannibalize.
+   */
+  public cannibalize(model: Model<RootJsonNode>): void {
+    this.root = model.root;
+    this.clock = model.clock;
+    this.index = model.index;
+    this.ext = model.ext;
+  }
+
+  /**
    * Returns the view of the model.
    *
    * @returns JSON/CBOR of the model.
@@ -327,6 +341,13 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     return encoder.encode(this);
   }
 
+  /**
+   * Strictly types the model and sets the default value of the model, if
+   * the document is empty.
+   *
+   * @param schema The schema to set for this model.
+   * @returns Strictly typed model.
+   */
   public setSchema<S extends NodeBuilder>(schema: S): Model<BuilderNodeToJsonNode<S>> {
     if (this.clock.time < 2) this.api.root(schema);
     return <any>this;
