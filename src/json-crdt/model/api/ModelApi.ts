@@ -6,6 +6,19 @@ import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import type {JsonNode} from '../../nodes';
 import type {Model} from '../Model';
 
+export interface ModelApiEvents {
+  /**
+   * Emitted when the model changes. This event is emitted once per microtask,
+   * multiple changes in the same microtask are batched into a single event.
+   */
+  change: CustomEvent<unknown>;
+
+  /**
+   * Emitted when the builder is flushed. The event detail is the flushed patch.
+   */
+  flush: CustomEvent<Patch>;
+}
+
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
  * for executing local user actions on a JSON CRDT document.
@@ -47,7 +60,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   };
 
   /** @ignore */
-  private et: undefined | Emitter<{change: CustomEvent<unknown>}> = undefined;
+  private et: undefined | Emitter<ModelApiEvents> = undefined;
 
   /**
    * Event target for listening to {@link Model} changes.
@@ -252,6 +265,8 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
+    const event = new CustomEvent<Patch>('flush', {detail: patch});
+    this.events.emit(event);
     return patch;
   }
 }
