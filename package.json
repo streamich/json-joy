@@ -75,7 +75,7 @@
     "hyperdyperid": "^1.2.0"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.0.3",
+    "@automerge/automerge": "2.1.7",
     "@collabs/collabs": "^0.13.4",
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^3.0.0-beta2",
