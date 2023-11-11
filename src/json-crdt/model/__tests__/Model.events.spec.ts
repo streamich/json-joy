@@ -1,4 +1,4 @@
-import {Model} from '../Model';
+import {Model, ModelChangeType} from '../Model';
 
 describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is set', () => {
@@ -72,5 +72,54 @@ describe('DOM Level 0, .onchange event system', () => {
     expect(cnt).toBe(2);
     model.api.root('asdf');
     expect(cnt).toBe(3);
+  });
+
+  describe('event types', () => {
+    it('should trigger the onchange event with a LOCAL event type', () => {
+      const model = Model.withLogicalClock();
+      let cnt = 0;
+      model.onchange = (type) => {
+        expect(type).toBe(ModelChangeType.LOCAL);
+        cnt++;
+      };
+      expect(cnt).toBe(0);
+      model.api.root({foo: 123});
+      expect(cnt).toBe(1);
+      model.api.obj([]).set({foo: 55});
+      expect(cnt).toBe(2);
+      expect(model.view()).toStrictEqual({foo: 55});
+    });
+
+    it('should trigger the onchange event with a REMOTE event type', () => {
+      const model = Model.withLogicalClock();
+      let cnt = 0;
+      model.onchange = (type) => {
+        expect(type).toBe(ModelChangeType.REMOTE);
+        cnt++;
+      };
+      const builder = model.api.builder;
+      builder.root(builder.json({foo: 123}));
+      const patch = builder.flush();
+      expect(cnt).toBe(0);
+      model.applyPatch(patch);
+      expect(cnt).toBe(1);
+      expect(model.view()).toStrictEqual({foo: 123});
+    });
+
+    it('should trigger the onchange event with a RESET event type', () => {
+      const model1 = Model.withLogicalClock();
+      const model2 = Model.withLogicalClock();
+      model1.api.root({foo: 123});
+      model2.api.root([1, 2, 3]);
+      let cnt = 0;
+      model1.onchange = (type) => {
+        expect(type).toBe(ModelChangeType.RESET);
+        cnt++;
+      };
+      expect(cnt).toBe(0);
+      model1.reset(model2);
+      expect(cnt).toBe(1);
+      expect(model1.view()).toStrictEqual([1, 2, 3]);
+    });
   });
 });
