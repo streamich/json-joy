@@ -1,4 +1,3 @@
-import {onlyOnNode20} from '../../../../__tests__/util';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
@@ -26,7 +25,7 @@ test('can delete across two chunks', () => {
   expect(str.view()).toEqual('ca');
 });
 
-onlyOnNode20('events', () => {
+describe('events', () => {
   test('can subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;

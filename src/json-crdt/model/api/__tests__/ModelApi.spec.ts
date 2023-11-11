@@ -1,4 +1,3 @@
-import {onlyOnNode20} from '../../../../__tests__/util';
 import {Model} from '../../Model';
 
 describe('string manipulation', () => {

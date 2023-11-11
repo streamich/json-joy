@@ -1,4 +1,3 @@
-import {onlyOnNode20} from '../../../../__tests__/util';
 import {vec} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
@@ -10,7 +9,7 @@ test('can edit a tuple', () => {
   expect(api.vec([]).view()).toEqual([undefined, 'a']);
 });
 
-onlyOnNode20('events', () => {
+describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
