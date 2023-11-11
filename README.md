@@ -2,7 +2,7 @@
   <br />
   <br />
   <a href="https://jsonjoy.com">
-      <img src="https://appsets.jsonjoy.com/branding/display/text-block/presentation-with-text.svg" alt="json-joy - JSON tools for real-time and collaborative apps" target="_blank" />
+      <img src="https://appsets.jsonjoy.com/branding/avatars/avatar-256x256-fitted.svg" alt="json-joy - JSON tools for real-time and collaborative apps" target="_blank" />
   </a>
   <br />
   <br />
