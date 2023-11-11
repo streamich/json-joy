@@ -327,6 +327,8 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     decoder.decode(blob, this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
+    const api = this._api;
+    if (api) api.flush();
     this.onchange?.(ModelChangeType.RESET);
   }
 
