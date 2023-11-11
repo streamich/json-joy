@@ -24,6 +24,15 @@ import type {NodeBuilder} from '../../json-crdt-patch';
 
 export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
+export const enum ModelChangeType {
+  /** When operations are applied through `.applyPatch()` directly. */
+  REMOTE = 0,
+  /** When local operations are applied through the `ModelApi`. */
+  LOCAL = 1,
+  /** When model is reset using the `.reset()` method. */
+  RESET = 2,
+}
+
 /**
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
@@ -137,7 +146,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
    * to subscribe to changes.
    */
-  public onchange: undefined | (() => void) = undefined;
+  public onchange: undefined | ((type: ModelChangeType) => void) = undefined;
 
   /**
    * Applies a batch of patches to the document.
@@ -158,7 +167,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
     this.tick++;
-    this.onchange?.();
+    this.onchange?.(ModelChangeType.REMOTE);
   }
 
   /**
@@ -318,7 +327,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     decoder.decode(blob, this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
-    this.onchange?.();
+    this.onchange?.(ModelChangeType.RESET);
   }
 
   /**
