@@ -57,9 +57,12 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
       return;
     }
     changesQueued = this.queuedChanges = new Set<ModelChangeType>();
+    changesQueued.add(changeType);
     queueMicrotask(() => {
-      const changes = (this.queuedChanges = undefined);
+      let changes = this.queuedChanges || new Set<ModelChangeType>();
+      this.queuedChanges = undefined;
       const et = this.et;
+      if (changes.has(ModelChangeType.RESET)) changes = new Set([ModelChangeType.RESET]);
       if (et) et.emit(new CustomEvent<Set<ModelChangeType>>('change', {detail: changes}));
     });
   };
@@ -70,7 +73,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   /**
    * Event target for listening to {@link Model} changes.
    */
-  public get events(): Emitter<{change: CustomEvent<unknown>}> {
+  public get events(): Emitter<ModelApiEvents> {
     let et = this.et;
     if (!et) {
       this.et = et = new Emitter();
