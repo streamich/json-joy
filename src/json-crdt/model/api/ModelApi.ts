@@ -58,7 +58,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     }
     changesQueued = this.queuedChanges = new Set<ModelChangeType>();
     queueMicrotask(() => {
-      const changes = this.queuedChanges = undefined;
+      const changes = (this.queuedChanges = undefined);
       const et = this.et;
       if (et) et.emit(new CustomEvent<Set<ModelChangeType>>('change', {detail: changes}));
     });
