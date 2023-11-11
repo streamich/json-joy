@@ -4,9 +4,9 @@ import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,
   Timestamp,
-  IVectorClock,
-  VectorClock,
-  ServerVectorClock,
+  IClockVector,
+  ClockVector,
+  ServerClockVector,
   compare,
   toDisplayString,
 } from '../../json-crdt-patch/clock';
@@ -47,11 +47,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @param clockOrSessionId Logical clock to use.
    * @returns CRDT model.
    */
-  public static withLogicalClock(clockOrSessionId?: VectorClock | number): Model {
+  public static withLogicalClock(clockOrSessionId?: ClockVector | number): Model {
     const clock =
       typeof clockOrSessionId === 'number'
-        ? new VectorClock(clockOrSessionId, 1)
-        : clockOrSessionId || new VectorClock(randomSessionId(), 1);
+        ? new ClockVector(clockOrSessionId, 1)
+        : clockOrSessionId || new ClockVector(randomSessionId(), 1);
     return new Model(clock);
   }
 
@@ -66,7 +66,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @returns CRDT model.
    */
   public static withServerClock(time: number = 0): Model {
-    const clock = new ServerVectorClock(SESSION.SERVER, time);
+    const clock = new ServerClockVector(SESSION.SERVER, time);
     return new Model(clock);
   }
 
@@ -91,7 +91,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * Clock that keeps track of logical timestamps of the current editing session
    * and logical clocks of all known peers.
    */
-  public clock: IVectorClock;
+  public clock: IClockVector;
 
   /**
    * Index of all known node objects (objects, array, strings, values)
@@ -109,7 +109,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public ext: Extensions = new Extensions();
 
-  public constructor(clock: IVectorClock) {
+  public constructor(clock: IClockVector) {
     this.clock = clock;
     if (!clock.time) clock.time = 1;
   }
@@ -304,7 +304,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public fork(sessionId: number = randomSessionId()): Model<RootJsonNode> {
     const copy = Model.fromBinary(this.toBinary());
-    if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
+    if (copy.clock.sid !== sessionId && copy.clock instanceof ClockVector) copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
     return copy as Model<RootJsonNode>;
   }

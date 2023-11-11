@@ -1,4 +1,4 @@
-import {LogicalClock, ts, VectorClock} from '../clock';
+import {LogicalClock, ts, ClockVector} from '../clock';
 import {ORIGIN} from '../constants';
 import {PatchBuilder} from '../PatchBuilder';
 import {InsValOp} from '../operations';
@@ -41,7 +41,7 @@ test('uses injected clock to set operations IDs', () => {
 
 test('pads clock jumps in between string inserts', () => {
   const str = ts(122, 50);
-  const clock = new VectorClock(123, 100);
+  const clock = new ClockVector(123, 100);
   const builder = new PatchBuilder(clock);
   const insert1 = builder.insStr(str, str, 'asdf');
   expect(insert1.sid).toBe(clock.sid);

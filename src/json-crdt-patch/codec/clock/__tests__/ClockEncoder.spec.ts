@@ -1,8 +1,8 @@
-import {ts, VectorClock} from '../../../clock';
+import {ts, ClockVector} from '../../../clock';
 import {ClockEncoder} from '../ClockEncoder';
 
 test('always encodes the default clock', () => {
-  const clock = new VectorClock(123, 5);
+  const clock = new ClockVector(123, 5);
   clock.observe(ts(123, 5), 1);
   const encoder = new ClockEncoder();
   encoder.reset(clock);
@@ -11,7 +11,7 @@ test('always encodes the default clock', () => {
 });
 
 test('encodes the default clock as first', () => {
-  const clock = new VectorClock(3, 10);
+  const clock = new ClockVector(3, 10);
   clock.observe(ts(3, 10), 1);
   const stamp = ts(2, 5);
   clock.observe(stamp, 1);
@@ -23,7 +23,7 @@ test('encodes the default clock as first', () => {
 });
 
 test('does not encode clocks which are not appended', () => {
-  const clock = new VectorClock(3, 10);
+  const clock = new ClockVector(3, 10);
   clock.observe(ts(3, 10), 1);
   const stamp = ts(2, 5);
   clock.observe(stamp, 1);
@@ -34,7 +34,7 @@ test('does not encode clocks which are not appended', () => {
 });
 
 test('encodes each clock only once', () => {
-  const clock = new VectorClock(100, 100);
+  const clock = new ClockVector(100, 100);
   clock.observe(ts(100, 100), 1);
   const ts1 = ts(50, 50);
   const ts2 = ts(10, 10);
@@ -52,7 +52,7 @@ test('encodes each clock only once', () => {
 });
 
 test('throws when unknown clock is being encoded', () => {
-  const clock = new VectorClock(100, 100);
+  const clock = new ClockVector(100, 100);
   const ts1 = ts(50, 50);
   const ts2 = ts(10, 10);
   clock.observe(ts1, 1);

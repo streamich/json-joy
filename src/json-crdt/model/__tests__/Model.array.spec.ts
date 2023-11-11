@@ -1,7 +1,7 @@
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 import {ArrNode} from '../../nodes';
-import {interval, VectorClock, tick} from '../../../json-crdt-patch/clock';
+import {interval, ClockVector, tick} from '../../../json-crdt-patch/clock';
 
 describe('Document', () => {
   describe('array', () => {
@@ -638,7 +638,7 @@ describe('Document', () => {
     });
 
     test('can insert element into a forked model', () => {
-      const model1 = Model.withLogicalClock(new VectorClock(1234, 0));
+      const model1 = Model.withLogicalClock(new ClockVector(1234, 0));
       model1.api.root([[1]]);
       const model2 = model1.fork();
       model1.api.arr([]).ins(0, [2]);

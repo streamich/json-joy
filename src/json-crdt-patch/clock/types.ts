@@ -53,8 +53,10 @@ export interface IClock extends ITimestampStruct {
   tick(cycles: number): ITimestampStruct;
 }
 
-/** A vector clock. Used in the CRDT Model. */
-export interface IVectorClock extends IClock {
+/**
+ * Interface which represents a local clock and a list of remote clocks.
+ */
+export interface IClockVector extends IClock {
   /**
    * Mapping of session IDs to logical timestamps.
    */
@@ -68,10 +70,10 @@ export interface IVectorClock extends IClock {
   observe(ts: ITimestampStruct, span: number): void;
 
   /** Copy the clock while keeping the same session ID. */
-  clone(): IVectorClock;
+  clone(): IClockVector;
 
   /** Copy the clock with a new session ID. */
-  fork(sessionId: number): IVectorClock;
+  fork(sessionId: number): IClockVector;
 
   /** Returns a textual human-readable representation, useful for debugging. */
   toString(tab?: string): string;

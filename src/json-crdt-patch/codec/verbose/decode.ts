@@ -1,5 +1,5 @@
 import {fromBase64} from '../../../util/base64/fromBase64';
-import {ts, VectorClock, ServerVectorClock, tss, ITimestampStruct} from '../../clock';
+import {ts, ClockVector, ServerClockVector, tss, ITimestampStruct} from '../../clock';
 import {SESSION} from '../../constants';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -16,7 +16,7 @@ const decodeId = (time: types.JsonCodecTimestamp): ITimestampStruct =>
  */
 export const decode = (data: types.JsonCodecPatch): Patch => {
   const {id, ops} = data;
-  const clock = typeof id === 'number' ? new ServerVectorClock(SESSION.SERVER, id) : new VectorClock(id[0], id[1]);
+  const clock = typeof id === 'number' ? new ServerClockVector(SESSION.SERVER, id) : new ClockVector(id[0], id[1]);
   const builder = new PatchBuilder(clock);
 
   for (const op of ops) {

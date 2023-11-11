@@ -1,4 +1,4 @@
-import {ITimestampStruct, IVectorClock, tick} from '../../clock';
+import {ITimestampStruct, IClockVector, tick} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 class ClockTableEntry {
@@ -9,9 +9,9 @@ export class ClockEncoder {
   public readonly table: Map<number, ClockTableEntry> = new Map<number, ClockTableEntry>();
   /** Start from 1, as 0 is reserved for system session ID. */
   protected index: number = 1;
-  public clock: IVectorClock | null = null;
+  public clock: IClockVector | null = null;
 
-  public reset(clock: IVectorClock) {
+  public reset(clock: IClockVector) {
     this.index = 1;
     this.clock = clock;
     const entry = new ClockTableEntry(this.index++, tick(clock, -1));

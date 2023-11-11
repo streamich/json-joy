@@ -1,11 +1,11 @@
-import {VectorClock} from '../../../../../json-crdt-patch/clock';
+import {ClockVector} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 
 describe('logical', () => {
   test('decodes clock', () => {
-    const doc1 = Model.withLogicalClock(new VectorClock(222, 0));
+    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
     doc1.api.root(123);
     const encoder = new Encoder();
     const decoder = new Decoder();
@@ -19,7 +19,7 @@ describe('logical', () => {
   const encoder = new Encoder();
 
   test('decodes all types', () => {
-    const doc1 = Model.withLogicalClock(new VectorClock(222, 0));
+    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],
@@ -37,7 +37,7 @@ describe('logical', () => {
   });
 
   test('can edit documents after decoding', () => {
-    const doc1 = Model.withLogicalClock(new VectorClock(222, 0));
+    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
     const json = {
       str: 'asdf',
       arr: [1, 2, 3],

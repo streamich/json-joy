@@ -1,4 +1,4 @@
-import {VectorClock} from '../../../../../json-crdt-patch/clock';
+import {ClockVector} from '../../../../../json-crdt-patch/clock';
 import {Model} from '../../../../model';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
@@ -7,7 +7,7 @@ import {binaryDocuments} from '../../../../../__tests__/binary-documents';
 
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   test(name, () => {
-    const doc1 = Model.withLogicalClock(new VectorClock(222, 0));
+    const doc1 = Model.withLogicalClock(new ClockVector(222, 0));
     doc1.api.root(json);
     const encoder = new Encoder();
     const decoder = new Decoder();
