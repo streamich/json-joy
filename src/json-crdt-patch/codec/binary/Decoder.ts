@@ -1,5 +1,5 @@
 import {CrdtReader} from '../../util/binary/CrdtReader';
-import {interval, ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timestamp} from '../../clock';
+import {interval, ITimespanStruct, ITimestampStruct, ClockVector, ServerClockVector, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
@@ -34,7 +34,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
     const sid = reader.vu57();
     const time = reader.vu57();
     const isServerClock = sid === SESSION.SERVER;
-    const clock = isServerClock ? new ServerVectorClock(SESSION.SERVER, time) : new VectorClock(sid, time);
+    const clock = isServerClock ? new ServerClockVector(SESSION.SERVER, time) : new ClockVector(sid, time);
     this.patchSid = clock.sid;
     const builder = (this.builder = new PatchBuilder(clock));
     const map = this.val();

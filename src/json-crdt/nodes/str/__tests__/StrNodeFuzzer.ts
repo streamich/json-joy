@@ -1,5 +1,5 @@
 import {equal} from 'assert';
-import {ITimespanStruct, ITimestampStruct, VectorClock, toDisplayString, ts} from '../../../../json-crdt-patch/clock';
+import {ITimespanStruct, ITimestampStruct, ClockVector, toDisplayString, ts} from '../../../../json-crdt-patch/clock';
 import {Fuzzer} from '../../../../util/Fuzzer';
 import {randomSessionId} from '../../../model/util';
 import {StrNode} from '../StrNode';
@@ -38,7 +38,7 @@ type Op = OpInsert | OpDelete;
 
 class StrNodeSite implements Printable {
   public readonly rga: StrNode;
-  public readonly clock = new VectorClock(randomSessionId(), 0);
+  public readonly clock = new ClockVector(randomSessionId(), 0);
   public readonly patches: Op[][] = [];
 
   constructor(protected readonly fuzzer: StrNodeFuzzer) {

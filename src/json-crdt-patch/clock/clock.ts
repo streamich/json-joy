@@ -1,5 +1,5 @@
 import {SESSION} from '../constants';
-import type {IClock, IVectorClock, ITimestampStruct, ITimespanStruct} from './types';
+import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct} from './types';
 
 export class Timestamp implements ITimestampStruct {
   constructor(public readonly sid: number, public time: number) {}
@@ -141,12 +141,12 @@ export class LogicalClock extends Timestamp implements IClock {
 }
 
 /**
- * Represents a *Vector Clock*, which is a *Logical Clock* together with a set
- * of *Logical Clocks* of other peers.
+ * Represents a clock vector, which is a local logical clock together with a set
+ * of logical clocks of other peers.
  */
-export class VectorClock extends LogicalClock implements IVectorClock {
+export class ClockVector extends LogicalClock implements IClockVector {
   /**
-   * A set of *Logical Clocks* of other peers.
+   * A set of logical clocks of other peers.
    */
   public readonly peers = new Map<number, ITimestampStruct>();
 
@@ -176,7 +176,7 @@ export class VectorClock extends LogicalClock implements IVectorClock {
    *
    * @returns A new vector clock, which is a clone of the current vector clock.
    */
-  public clone(): VectorClock {
+  public clone(): ClockVector {
     return this.fork(this.sid);
   }
 
@@ -186,8 +186,8 @@ export class VectorClock extends LogicalClock implements IVectorClock {
    * @param sessionId The session ID of the new vector clock.
    * @returns A new vector clock, which is a fork of the current vector clock.
    */
-  public fork(sessionId: number): VectorClock {
-    const clock = new VectorClock(sessionId, this.time);
+  public fork(sessionId: number): ClockVector {
+    const clock = new ClockVector(sessionId, this.time);
     if (sessionId !== this.sid) clock.observe(tick(this, -1), 1);
     this.peers.forEach((peer) => {
       clock.observe(peer, 1);
@@ -215,10 +215,10 @@ export class VectorClock extends LogicalClock implements IVectorClock {
 }
 
 /**
- * Implements a *Vector Clock* with a fixed session ID. The *Server Clock*
+ * Implements a clock vector with a fixed session ID. The *server clock*
  * is used when the CRDT is powered by a central server.
  */
-export class ServerVectorClock extends LogicalClock implements IVectorClock {
+export class ServerClockVector extends LogicalClock implements IClockVector {
   /** A stub for other peers. Not used in the server clock. */
   public readonly peers = new Map<number, ITimespanStruct>();
 
@@ -229,11 +229,11 @@ export class ServerVectorClock extends LogicalClock implements IVectorClock {
     if (time > this.time) this.time = time;
   }
 
-  public clone(): ServerVectorClock {
+  public clone(): ServerClockVector {
     return this.fork();
   }
 
-  public fork(): ServerVectorClock {
-    return new ServerVectorClock(SESSION.SERVER, this.time);
+  public fork(): ServerClockVector {
+    return new ServerClockVector(SESSION.SERVER, this.time);
   }
 }

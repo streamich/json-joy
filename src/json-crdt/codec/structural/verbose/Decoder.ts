@@ -1,6 +1,6 @@
 import * as nodes from '../../../nodes';
 import {fromBase64} from '../../../../util/base64/fromBase64';
-import {ITimestampStruct, ts, VectorClock} from '../../../../json-crdt-patch/clock';
+import {ITimestampStruct, ts, ClockVector} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import * as types from './types';
@@ -13,9 +13,9 @@ export class Decoder {
     return doc;
   }
 
-  protected cClock(timestamps: types.JsonCrdtVerboseLogicalTimestamp[]): VectorClock {
+  protected cClock(timestamps: types.JsonCrdtVerboseLogicalTimestamp[]): ClockVector {
     const [stamp] = timestamps;
-    const vectorClock = new VectorClock(stamp[0], stamp[1]);
+    const vectorClock = new ClockVector(stamp[0], stamp[1]);
     const length = timestamps.length;
     for (let i = 1; i < length; i++) {
       const stamp = timestamps[i];

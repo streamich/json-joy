@@ -4,9 +4,9 @@ import {encoder, decoder} from '../codec/structural/binary/shared';
 import {
   ITimestampStruct,
   Timestamp,
-  IVectorClock,
-  VectorClock,
-  ServerVectorClock,
+  IClockVector,
+  ClockVector,
+  ServerClockVector,
   compare,
   toDisplayString,
 } from '../../json-crdt-patch/clock';
@@ -24,6 +24,15 @@ import type {NodeBuilder} from '../../json-crdt-patch';
 
 export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
+export const enum ModelChangeType {
+  /** When operations are applied through `.applyPatch()` directly. */
+  REMOTE = 0,
+  /** When local operations are applied through the `ModelApi`. */
+  LOCAL = 1,
+  /** When model is reset using the `.reset()` method. */
+  RESET = 2,
+}
+
 /**
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
@@ -38,11 +47,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @param clockOrSessionId Logical clock to use.
    * @returns CRDT model.
    */
-  public static withLogicalClock(clockOrSessionId?: VectorClock | number): Model {
+  public static withLogicalClock(clockOrSessionId?: ClockVector | number): Model {
     const clock =
       typeof clockOrSessionId === 'number'
-        ? new VectorClock(clockOrSessionId, 1)
-        : clockOrSessionId || new VectorClock(randomSessionId(), 1);
+        ? new ClockVector(clockOrSessionId, 1)
+        : clockOrSessionId || new ClockVector(randomSessionId(), 1);
     return new Model(clock);
   }
 
@@ -57,7 +66,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @returns CRDT model.
    */
   public static withServerClock(time: number = 0): Model {
-    const clock = new ServerVectorClock(SESSION.SERVER, time);
+    const clock = new ServerClockVector(SESSION.SERVER, time);
     return new Model(clock);
   }
 
@@ -82,7 +91,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * Clock that keeps track of logical timestamps of the current editing session
    * and logical clocks of all known peers.
    */
-  public clock: IVectorClock;
+  public clock: IClockVector;
 
   /**
    * Index of all known node objects (objects, array, strings, values)
@@ -100,7 +109,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public ext: Extensions = new Extensions();
 
-  public constructor(clock: IVectorClock) {
+  public constructor(clock: IClockVector) {
     this.clock = clock;
     if (!clock.time) clock.time = 1;
   }
@@ -137,7 +146,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
    * to subscribe to changes.
    */
-  public onchange: undefined | (() => void) = undefined;
+  public onchange: undefined | ((type: ModelChangeType) => void) = undefined;
 
   /**
    * Applies a batch of patches to the document.
@@ -158,7 +167,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
     this.tick++;
-    this.onchange?.();
+    this.onchange?.(ModelChangeType.REMOTE);
   }
 
   /**
@@ -295,7 +304,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public fork(sessionId: number = randomSessionId()): Model<RootJsonNode> {
     const copy = Model.fromBinary(this.toBinary());
-    if (copy.clock.sid !== sessionId && copy.clock instanceof VectorClock) copy.clock = copy.clock.fork(sessionId);
+    if (copy.clock.sid !== sessionId && copy.clock instanceof ClockVector) copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
     return copy as Model<RootJsonNode>;
   }
@@ -307,6 +316,18 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    */
   public clone(): Model<RootJsonNode> {
     return this.fork(this.clock.sid);
+  }
+
+  /**
+   * Resets the model to equivalent state of another model.
+   */
+  public reset(to: Model<RootJsonNode>): void {
+    this.index = new AvlMap<ITimestampStruct, JsonNode>(compare);
+    const blob = to.toBinary();
+    decoder.decode(blob, this);
+    this.clock = to.clock.clone();
+    this.ext = to.ext.clone();
+    this.onchange?.(ModelChangeType.RESET);
   }
 
   /**
@@ -327,6 +348,13 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
     return encoder.encode(this);
   }
 
+  /**
+   * Strictly types the model and sets the default value of the model, if
+   * the document is empty.
+   *
+   * @param schema The schema to set for this model.
+   * @returns Strictly typed model.
+   */
   public setSchema<S extends NodeBuilder>(schema: S): Model<BuilderNodeToJsonNode<S>> {
     if (this.clock.time < 2) this.api.root(schema);
     return <any>this;

@@ -1,4 +1,4 @@
-import {ITimestampStruct, IVectorClock, Timestamp} from '../../clock';
+import {ITimestampStruct, IClockVector, Timestamp} from '../../clock';
 import {CrdtReader} from '../../util/binary/CrdtReader';
 import {CrdtWriter} from '../../util/binary/CrdtWriter';
 
@@ -7,7 +7,7 @@ export class ClockTableEntry {
 }
 
 export class ClockTable {
-  public static from(clock: IVectorClock): ClockTable {
+  public static from(clock: IClockVector): ClockTable {
     const table = new ClockTable();
     table.push(new Timestamp(clock.sid, clock.time - 1));
     clock.peers.forEach((id) => table.push(id));

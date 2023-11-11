@@ -1,13 +1,13 @@
 import {Model} from '../../../../';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
-import {compare, VectorClock} from '../../../../../json-crdt-patch/clock';
+import {compare, ClockVector} from '../../../../../json-crdt-patch/clock';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
 
 test('encoding/decoding a model results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new VectorClock(5, 0));
+  const model1 = Model.withLogicalClock(new ClockVector(5, 0));
   model1.api.root('');
   expect(model1.view()).toStrictEqual('');
   model1.api.str([]).ins(0, 'a');
@@ -18,7 +18,7 @@ test('encoding/decoding a model results in the same node IDs', () => {
 });
 
 test('forking and encoding/decoding results in the same node IDs', () => {
-  const model1 = Model.withLogicalClock(new VectorClock(3, 0));
+  const model1 = Model.withLogicalClock(new ClockVector(3, 0));
   model1.api.root('abc');
   expect(model1.view()).toStrictEqual('abc');
   const model2 = model1.fork(4);

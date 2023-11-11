@@ -1,9 +1,9 @@
-import {ITimestampStruct, VectorClock, ts} from '../../clock';
+import {ITimestampStruct, ClockVector, ts} from '../../clock';
 
 export class ClockDecoder {
   /** Clock session index to logical clock. */
   protected readonly table: ITimestampStruct[] = [];
-  public readonly clock: VectorClock;
+  public readonly clock: ClockVector;
 
   public static fromArr(arr: number[]): ClockDecoder {
     const decoder = new ClockDecoder(arr[0], arr[1]);
@@ -13,7 +13,7 @@ export class ClockDecoder {
   }
 
   public constructor(sid: number, time: number) {
-    this.clock = new VectorClock(sid, time + 1);
+    this.clock = new ClockVector(sid, time + 1);
     this.table.push(ts(sid, time));
   }
 

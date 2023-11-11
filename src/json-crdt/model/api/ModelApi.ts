@@ -3,8 +3,22 @@ import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {ModelChangeType, type Model} from '../Model';
 import type {JsonNode} from '../../nodes';
-import type {Model} from '../Model';
+
+export interface ModelApiEvents {
+  /**
+   * Emitted when the model changes. This event is emitted once per microtask,
+   * multiple changes in the same microtask are batched into a single event. The
+   * payload is a set of change types that occurred in the model.
+   */
+  change: CustomEvent<Set<ModelChangeType>>;
+
+  /**
+   * Emitted when the builder is flushed. The event detail is the flushed patch.
+   */
+  flush: CustomEvent<Patch>;
+}
 
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
@@ -33,21 +47,25 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   }
 
   /** @ignore */
-  private changeQueued: boolean = false;
+  private queuedChanges: undefined | Set<ModelChangeType> = undefined;
 
   /** @ignore */
-  private readonly queueChange = (): void => {
-    if (this.changeQueued) return;
-    this.changeQueued = true;
+  private readonly queueChange = (changeType: ModelChangeType): void => {
+    let changesQueued = this.queuedChanges;
+    if (changesQueued) {
+      changesQueued.add(changeType);
+      return;
+    }
+    changesQueued = this.queuedChanges = new Set<ModelChangeType>();
     queueMicrotask(() => {
-      this.changeQueued = false;
+      const changes = (this.queuedChanges = undefined);
       const et = this.et;
-      if (et) et.emit(new CustomEvent('change'));
+      if (et) et.emit(new CustomEvent<Set<ModelChangeType>>('change', {detail: changes}));
     });
   };
 
   /** @ignore */
-  private et: undefined | Emitter<{change: CustomEvent<unknown>}> = undefined;
+  private et: undefined | Emitter<ModelApiEvents> = undefined;
 
   /**
    * Event target for listening to {@link Model} changes.
@@ -219,7 +237,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     for (let i = this.next; i < length; i++) model.applyOperation(ops[i]);
     this.next = length;
     model.tick++;
-    model.onchange?.();
+    model.onchange?.(ModelChangeType.LOCAL);
   }
 
   /**
@@ -232,7 +250,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     this.next = this.builder.patch.ops.length;
     const model = this.model;
     model.tick++;
-    model.onchange?.();
+    model.onchange?.(ModelChangeType.LOCAL);
   }
 
   /**
@@ -252,6 +270,8 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
+    const event = new CustomEvent<Patch>('flush', {detail: patch});
+    this.events.emit(event);
     return patch;
   }
 }

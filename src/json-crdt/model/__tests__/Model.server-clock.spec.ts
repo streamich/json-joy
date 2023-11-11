@@ -1,4 +1,4 @@
-import {ServerVectorClock} from '../../../json-crdt-patch/clock';
+import {ServerClockVector} from '../../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
@@ -31,7 +31,7 @@ describe('server clock', () => {
     model.api.root('asdf');
     const model2 = model.clone();
     expect(model2.clock.time).toBe(model.clock.time);
-    expect(model2.clock).toBeInstanceOf(ServerVectorClock);
+    expect(model2.clock).toBeInstanceOf(ServerClockVector);
   });
 
   test('forking creates model with server clock', () => {
@@ -39,6 +39,6 @@ describe('server clock', () => {
     model.api.root('asdf');
     const model2 = model.fork();
     expect(model2.clock.time).toBe(model.clock.time);
-    expect(model2.clock).toBeInstanceOf(ServerVectorClock);
+    expect(model2.clock).toBeInstanceOf(ServerClockVector);
   });
 });

@@ -1,6 +1,6 @@
 import {RandomJson} from '../../../json-random';
 import {Fuzzer} from '../../../util/Fuzzer';
-import {interval, ITimestampStruct, Timespan, VectorClock, ServerVectorClock, ts} from '../../clock';
+import {interval, ITimestampStruct, Timespan, ClockVector, ServerClockVector, ts} from '../../clock';
 import {SESSION} from '../../constants';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -54,14 +54,14 @@ export class PatchFuzzer extends Fuzzer {
     return builder.patch;
   }
 
-  public generateLogicalClock(): VectorClock {
+  public generateLogicalClock(): ClockVector {
     const sessionId = this.generateSessionId();
     const time = this.generateTime();
-    return new VectorClock(sessionId, time);
+    return new ClockVector(sessionId, time);
   }
 
-  public generateServerClock(): ServerVectorClock {
-    return new ServerVectorClock(SESSION.SERVER, this.generateTime());
+  public generateServerClock(): ServerClockVector {
+    return new ServerClockVector(SESSION.SERVER, this.generateTime());
   }
 
   public readonly generateLogicalTimestamp = (): ITimestampStruct => {

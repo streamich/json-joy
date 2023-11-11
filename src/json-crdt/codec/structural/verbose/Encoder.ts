@@ -1,7 +1,7 @@
 import * as nodes from '../../../nodes';
 import {toBase64} from '../../../../util/base64/toBase64';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {ITimestampStruct, IVectorClock, Timestamp} from '../../../../json-crdt-patch/clock';
+import {ITimestampStruct, IClockVector, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import type * as types from './types';
 
@@ -18,7 +18,7 @@ export class Encoder {
     };
   }
 
-  public cClock(clock: IVectorClock): types.JsonCrdtVerboseLogicalTimestamp[] {
+  public cClock(clock: IClockVector): types.JsonCrdtVerboseLogicalTimestamp[] {
     const data: types.JsonCrdtVerboseLogicalTimestamp[] = [];
     const sessionId = clock.sid;
     const localTs = clock.peers.get(sessionId);

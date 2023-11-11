@@ -1,6 +1,6 @@
 import {JsonCrdtPatchOpcode} from '../../constants';
 import {fromBase64} from '../../../util/base64/fromBase64';
-import {ITimespanStruct, ITimestampStruct, VectorClock, ServerVectorClock, Timespan, Timestamp} from '../../clock';
+import {ITimespanStruct, ITimestampStruct, ClockVector, ServerClockVector, Timespan, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
@@ -23,7 +23,7 @@ const timespan = (sid: number, span: types.CompactCodecTimespan): ITimespanStruc
 export const decode = (data: types.CompactCodecPatch): Patch => {
   const header = data[0];
   const x = header[0];
-  const clock = Array.isArray(x) ? new VectorClock(x[0], x[1]) : new ServerVectorClock(SESSION.SERVER, x as number);
+  const clock = Array.isArray(x) ? new ClockVector(x[0], x[1]) : new ServerClockVector(SESSION.SERVER, x as number);
   const sid = clock.sid;
   const time = clock.time;
   const builder = new PatchBuilder(clock);

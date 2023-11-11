@@ -1,7 +1,7 @@
-import {ts, VectorClock} from '..';
+import {ts, ClockVector} from '..';
 
 test('cloning returns clock with the same session ID and time', () => {
-  const clock = new VectorClock(1, 2);
+  const clock = new ClockVector(1, 2);
   clock.observe(ts(1, 0), 1);
   const clock2 = clock.clone();
   expect(clock2.sid).toBe(clock.sid);
@@ -9,7 +9,7 @@ test('cloning returns clock with the same session ID and time', () => {
 });
 
 test('cloning clones all clocks in vector', () => {
-  const clock = new VectorClock(1, 1);
+  const clock = new ClockVector(1, 1);
   clock.observe(ts(1, 1), 1);
   clock.observe(ts(2, 2), 1);
   clock.observe(ts(3, 3), 1);
@@ -26,14 +26,14 @@ test('cloning clones all clocks in vector', () => {
 });
 
 test('forking returns clock with the same session ID and time', () => {
-  const clock = new VectorClock(1, 2);
+  const clock = new ClockVector(1, 2);
   const clock2 = clock.fork(4);
   expect(clock2.sid).toBe(4);
   expect(clock2.time).toBe(clock.time);
 });
 
 test('forking clones all clocks in vector', () => {
-  const clock = new VectorClock(1, 1);
+  const clock = new ClockVector(1, 1);
   clock.observe(ts(1, 1), 1);
   clock.observe(ts(2, 2), 1);
   clock.observe(ts(3, 3), 1);

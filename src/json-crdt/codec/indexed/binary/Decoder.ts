@@ -2,7 +2,7 @@ import * as nodes from '../../../nodes';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {IndexedFields, FieldName, IndexedNodeFields} from './types';
-import {ITimestampStruct, IVectorClock, Timestamp, VectorClock} from '../../../../json-crdt-patch/clock';
+import {ITimestampStruct, IClockVector, Timestamp, ClockVector} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import {CRDT_MAJOR} from '../../structural/binary/constants';
@@ -18,7 +18,7 @@ export class Decoder {
 
   public decode<M extends Model>(
     fields: IndexedFields,
-    ModelConstructor: new (clock: IVectorClock) => M = Model as unknown as new (clock: IVectorClock) => M,
+    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (clock: IClockVector) => M,
   ): M {
     const reader = this.dec.reader;
     reader.reset(fields.c);
@@ -29,11 +29,11 @@ export class Decoder {
   public decodeFields<M extends Model>(
     clockTable: ClockTable,
     fields: IndexedNodeFields,
-    ModelConstructor: new (clock: IVectorClock) => M = Model as unknown as new (clock: IVectorClock) => M,
+    ModelConstructor: new (clock: IClockVector) => M = Model as unknown as new (clock: IClockVector) => M,
   ): M {
     const reader = this.dec.reader;
     const firstClock = clockTable.byIdx[0];
-    const vectorClock = new VectorClock(firstClock.sid, firstClock.time + 1);
+    const vectorClock = new ClockVector(firstClock.sid, firstClock.time + 1);
     const doc = (this.doc = new ModelConstructor(vectorClock));
     const root = fields.r;
     if (root && root.length) {
