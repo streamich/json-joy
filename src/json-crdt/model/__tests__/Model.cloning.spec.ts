@@ -1,3 +1,4 @@
+import {until} from '../../../__tests__/util';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
@@ -202,5 +203,20 @@ describe('reset()', () => {
     expect(doc1.clock.sid).toBe(doc2.clock.sid);
     expect(doc1.clock.time).not.toBe(doc2.clock.time);
     expect(doc1.clock).not.toBe(doc2.clock);
+  });
+
+  test('emits change event on reset', async () => {
+    const doc1 = Model.withLogicalClock();
+    const doc2 = Model.withLogicalClock();
+    doc1.api.root({foo: 123});
+    doc2.api.root({
+      text: 'hello',
+    });
+    doc2.api.str(['text']).ins(5, ' world');
+    let cnt = 0;
+    doc2.api.events.on('change', () => cnt++);
+    doc2.reset(doc1);
+    await until(() => cnt > 0);
+    expect(cnt).toBe(1);
   });
 });
