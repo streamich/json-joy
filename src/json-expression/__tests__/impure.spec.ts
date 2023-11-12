@@ -3,10 +3,7 @@ import {JsonExpressionCodegen} from '../codegen';
 import {operatorsMap} from '../operators';
 import {Expr, JsonExpressionCodegenContext} from '../types';
 
-const compile = (
-  expression: Expr,
-  options: JsonExpressionCodegenContext = {},
-) => {
+const compile = (expression: Expr, options: JsonExpressionCodegenContext = {}) => {
   const codegen = new JsonExpressionCodegen({
     ...options,
     expression,
