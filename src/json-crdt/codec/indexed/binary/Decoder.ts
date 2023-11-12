@@ -136,7 +136,7 @@ export class Decoder {
     const isTombstone = reader.uint8[reader.x] === 0;
     if (isTombstone) {
       reader.x++;
-      const length = reader.vu39();
+      const length = reader.vu57();
       return new nodes.StrChunk(id, length, '');
     }
     const text: string = decoder.readAsStr() as string;

@@ -17,12 +17,9 @@ export class ClockTable {
   public static decode(reader: CrdtReader): ClockTable {
     const clockTable = new ClockTable();
     const length = reader.vu57();
-    const tuple = reader.u53vu39();
-    clockTable.push(new Timestamp(tuple[0], tuple[1]));
-    for (let i = 1; i < length; i++) {
-      const tuple = reader.u53vu39();
-      clockTable.push(new Timestamp(tuple[0], tuple[1]));
-    }
+    clockTable.push(new Timestamp(reader.vu57(), reader.vu57()));
+    for (let i = 1; i < length; i++)
+      clockTable.push(new Timestamp(reader.vu57(), reader.vu57()));
     return clockTable;
   }
 
@@ -53,10 +50,11 @@ export class ClockTable {
   public write(writer: CrdtWriter): void {
     const table = this.byIdx;
     const length = table.length;
-    writer.vu39(length);
+    writer.vu57(length);
     for (let i = 0; i < length; i++) {
       const clock = table[i];
-      writer.u53vu39(clock.sid, clock.time);
+      writer.vu57(clock.sid);
+      writer.vu57(clock.time);
     }
   }
 }

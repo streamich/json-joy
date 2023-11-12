@@ -33,8 +33,8 @@ export class CrdtWriter extends Writer {
     if (x <= 0b111 && y <= 0b1111) {
       this.u8((x << 4) | y);
     } else {
-      this.b1vu28(true, x);
-      this.vu39(y);
+      this.b1vu56(1, x);
+      this.vu57(y);
     }
   }
 
@@ -127,70 +127,6 @@ export class CrdtWriter extends Writer {
         uint8[this.x++] = 0b10000000 | ((hi32 & 0b1111111_000) >>> 3);
         uint8[this.x++] = 0b10000000 | ((hi32 & 0b1111111_0000000_000) >>> 10);
         uint8[this.x++] = hi32 >>> 17;
-      }
-    }
-  }
-
-  /**
-   * #### `vu39`
-   *
-   * `vu39` stands for *variable length unsigned 39 bit integer*. It consumes
-   * up to 6 bytes of storage. The maximum size of the decoded value is 39 bits.
-   *
-   * The high bit `?` of each octet indicates if the next byte should be
-   * consumed, up to 8 bytes. When `?` is set to `0`, it means that the current
-   * byte is the last byte of the encoded value.
-   *
-   * ```
-   *  byte 1   byte 2   byte 3   byte 4   byte 5   byte 6
-   * +--------+........+........+........+........+........+
-   * |?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|?000zzzz|
-   * +--------+........+........+........+........+........+
-   *
-   *            11111    2211111  2222222  3333332     3333
-   *   7654321  4321098  1098765  8765432  5432109     9876
-   *     |                        |                    |
-   *     5th bit of z             |                    |
-   *                              28th bit of z        |
-   *                                                   39th bit of z
-   * ```
-   *
-   * @param num Number to encode as variable length unsigned 57 bit integer.
-   */
-  public vu39(num: number) {
-    this.ensureCapacity(6);
-    const uint8 = this.uint8;
-    if (num <= 0b1111111) {
-      uint8[this.x++] = num;
-    } else if (num <= 0b1111111_1111111) {
-      uint8[this.x++] = 0b10000000 | (num & 0b01111111);
-      uint8[this.x++] = num >>> 7;
-    } else if (num <= 0b1111111_1111111_1111111) {
-      uint8[this.x++] = 0b10000000 | (num & 0b01111111);
-      uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
-      uint8[this.x++] = num >>> 14;
-    } else if (num <= 0b1111111_1111111_1111111_1111111) {
-      uint8[this.x++] = 0b10000000 | (num & 0b01111111);
-      uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
-      uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
-      uint8[this.x++] = num >>> 21;
-    } else {
-      let lo32 = num | 0;
-      if (lo32 < 0) lo32 += 4294967296;
-      const hi32 = (num - lo32) / 4294967296;
-      if (num <= 0b1111111_1111111_1111111_1111111_1111111) {
-        uint8[this.x++] = 0b10000000 | (num & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 21) & 0b01111111);
-        uint8[this.x++] = (hi32 << 4) | (num >>> 28);
-      } else if (num <= 0b1111111_1111111_1111111_1111111_1111111_1111111) {
-        uint8[this.x++] = 0b10000000 | (num & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 7) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 14) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 21) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((hi32 & 0b111) << 4) | (num >>> 28);
-        uint8[this.x++] = (hi32 >>> 3) & 0b1111;
       }
     }
   }
@@ -291,123 +227,6 @@ export class CrdtWriter extends Writer {
           uint8[this.x++] = hi32 >>> 16;
         }
       }
-    }
-  }
-
-  /**
-   * #### `b1vu28`
-   *
-   * `b1vu28` stands for: 1 bit flag followed by variable length unsigned 28 bit integer.
-   * It consumes up to 4 bytes.
-   *
-   * The high bit "?" of each byte indicates if the next byte should be
-   * consumed, up to 8 bytes.
-   *
-   * - f - flag
-   * - z - variable length unsigned 56 bit integer
-   * - ? - whether the next byte is used for encoding
-   *
-   * ```
-   *  byte 1   byte 2   byte 3   byte 4
-   * +--------+........+........+........+
-   * |f?zzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-   * +--------+........+........+........+
-   *
-   *            1111     2111111 22222222
-   *    654321  3210987  0987654 87654321
-   *     |                        |
-   *     5th bit of z             |
-   *                              27th bit of z
-   * ```
-   *
-   * @param num Number to encode as variable length unsigned 57 bit integer.
-   */
-  public b1vu28(flag: boolean, num: number) {
-    if (num <= 0b111111) {
-      this.u8((flag ? 0b10000000 : 0b00000000) | num);
-    } else {
-      const firstByteMask = flag ? 0b11000000 : 0b01000000;
-      if (num <= 0b1111111_111111) {
-        this.ensureCapacity(2);
-        const uint8 = this.uint8;
-        uint8[this.x++] = firstByteMask | (num & 0b00111111);
-        uint8[this.x++] = num >>> 6;
-      } else if (num <= 0b1111111_1111111_111111) {
-        this.ensureCapacity(3);
-        const uint8 = this.uint8;
-        uint8[this.x++] = firstByteMask | (num & 0b00111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 6) & 0b01111111);
-        uint8[this.x++] = num >>> 13;
-      } else {
-        this.ensureCapacity(4);
-        const uint8 = this.uint8;
-        uint8[this.x++] = firstByteMask | (num & 0b00111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 6) & 0b01111111);
-        uint8[this.x++] = 0b10000000 | ((num >>> 13) & 0b01111111);
-        uint8[this.x++] = num >>> 20;
-      }
-    }
-  }
-
-  /**
-   * Encoding schema:
-   *
-   * ```
-   * byte 1                                                          byte 8                              byte 12
-   * +--------+--------+--------+--------+--------+--------+-----|---+--------+........+........+........+········+
-   * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxx|?zz|zzzzzzzz|?zzzzzzz|?zzzzzzz|?zzzzzzz|zzzzzzzz|
-   * +--------+--------+--------+--------+--------+--------+-----^---+--------+........+........+........+········+
-   *
-   *  33322222 22222111 1111111           44444444 43333333 55554 .1           .1111111 .2222211 .3322222 33333333
-   *  21098765 43210987 65432109 87654321 87654321 09876543 32109 .09 87654321 .7654321 .4321098 .1098765 98765432
-   *  |                                     |               |      |                       |
-   *  |                                     |               |      10th bit of z           |
-   *  |                                     46th bit of x   |                              |
-   *  |                                                     |                              22nd bit of z
-   *  |                                                     53rd bit of x
-   *  32nd bit of x
-   * ```
-   */
-  public u53vu39(x: number, z: number): void {
-    let x1 = x | 0;
-    if (x1 < 0) x1 += 4294967296;
-    const x2 = (x - x1) / 4294967296;
-    const fiveXBits = (x2 >>> 16) << 3;
-    const twoZBits = (z >>> 8) & 0b11;
-    const zFitsIn10Bits = z <= 0b11_11111111;
-    this.ensureCapacity(8);
-    const uint8 = this.uint8;
-    const view = this.view;
-    view.setUint32(this.x, x1);
-    this.x += 4;
-    view.setUint16(this.x, x2 & 0xffff);
-    this.x += 2;
-    uint8[this.x++] = fiveXBits | (zFitsIn10Bits ? 0b000 : 0b100) | twoZBits;
-    uint8[this.x++] = z & 0xff;
-    if (zFitsIn10Bits) return;
-    if (z <= 0b1111111_11_11111111) {
-      this.u8(z >>> 10);
-    } else if (z <= 0b1111111_1111111_11_11111111) {
-      this.ensureCapacity(2);
-      const uint8 = this.uint8;
-      uint8[this.x++] = 0b1_0000000 | ((z >>> 10) & 0b0_1111111);
-      uint8[this.x++] = z >>> 17;
-    } else if (z <= 0b1111111_1111111_1111111_11_11111111) {
-      this.ensureCapacity(3);
-      const uint8 = this.uint8;
-      uint8[this.x++] = 0b1_0000000 | ((z >>> 10) & 0b0_1111111);
-      uint8[this.x++] = 0b1_0000000 | ((z >>> 17) & 0b0_1111111);
-      uint8[this.x++] = z >>> 24;
-    } else {
-      let z1 = z | 0;
-      if (z1 < 0) z1 += 4294967296;
-      const z2 = (z - z1) / 4294967296;
-      this.ensureCapacity(4);
-      const uint8 = this.uint8;
-      uint8[this.x++] = 0b1_0000000 | ((z1 >>> 10) & 0b0_1111111);
-      uint8[this.x++] = 0b1_0000000 | ((z1 >>> 17) & 0b0_1111111);
-      uint8[this.x++] = 0b1_0000000 | ((z1 >>> 24) & 0b0_1111111);
-      uint8[this.x++] = (z1 >>> 31) | (z2 << 1);
     }
   }
 }

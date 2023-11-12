@@ -30,11 +30,13 @@ export class Decoder {
     const clockTableOffset = reader.u32();
     const offset = reader.x;
     reader.x += clockTableOffset;
-    const length = reader.vu39();
-    const [sessionId, time] = reader.u53vu39();
+    const length = reader.vu57();
+    const sessionId = reader.vu57();
+    const time = reader.vu57();
     this.clockDecoder = new ClockDecoder(sessionId, time);
     for (let i = 1; i < length; i++) {
-      const [sid, time] = reader.u53vu39();
+      const sid = reader.vu57();
+      const time = reader.vu57();
       this.clockDecoder.pushTuple(sid, time);
     }
     reader.x = offset;
@@ -131,7 +133,7 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.StrChunk => {
       const id = this.ts();
-      const span = reader.vu39();
+      const span = reader.vu57();
       if (!span) return new nodes.StrChunk(id, length, '');
       const text = view.slice(offset, offset + span);
       offset += span;
@@ -148,7 +150,7 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.BinChunk => {
       const id = this.ts();
-      const span = reader.vu39();
+      const span = reader.vu57();
       if (!span) return new nodes.BinChunk(id, length, undefined);
       const slice = view.slice(offset, offset + span);
       offset += span;
@@ -165,7 +167,7 @@ export class Decoder {
     let i = 0;
     obj.ingest(length, (): nodes.ArrChunk => {
       const id = this.ts();
-      const [deleted, span] = reader.b1vu28();
+      const [deleted, span] = reader.b1vu56();
       if (deleted) return new nodes.ArrChunk(id, span, undefined);
       const ids: ITimestampStruct[] = [];
       for (let j = 0; j < span; j++) ids.push(this.cNode(view[i++]).id);
