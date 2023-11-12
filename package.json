@@ -75,8 +75,8 @@
     "hyperdyperid": "^1.2.0"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.0.3",
-    "@collabs/collabs": "^0.13.4",
+    "@automerge/automerge": "2.1.7",
+    "@collabs/collabs": "0.13.4",
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@shelacek/ubjson": "^1.1.1",
@@ -158,8 +158,8 @@
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0",
     "ws": "^8.6.0",
-    "yjs": "13.6.1",
-    "ywasm": "0.16.5"
+    "yjs": "13.6.8",
+    "ywasm": "0.16.10"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
