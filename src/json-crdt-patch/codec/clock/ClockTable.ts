@@ -18,8 +18,7 @@ export class ClockTable {
     const clockTable = new ClockTable();
     const length = reader.vu57();
     clockTable.push(new Timestamp(reader.vu57(), reader.vu57()));
-    for (let i = 1; i < length; i++)
-      clockTable.push(new Timestamp(reader.vu57(), reader.vu57()));
+    for (let i = 1; i < length; i++) clockTable.push(new Timestamp(reader.vu57(), reader.vu57()));
     return clockTable;
   }
 
