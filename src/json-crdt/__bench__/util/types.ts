@@ -3,7 +3,9 @@ export type SequentialTraceName =
   | 'friendsforever_flat'
   | 'rustcode'
   | 'seph-blog1'
-  | 'sveltecomponent';
+  | 'sveltecomponent'
+  | 'json-crdt-patch'
+  | 'json-crdt-blog-post';
 
 export interface SequentialTrace {
   startContent: string;

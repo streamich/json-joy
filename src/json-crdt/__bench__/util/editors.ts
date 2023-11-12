@@ -7,7 +7,6 @@ import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
 import {CRuntime, CText} from '@collabs/collabs';
 import type {SequentialTraceEditor} from './types';
-const AutomergeUnstable = require('@automerge/automerge/dist/cjs/unstable');
 const Rope = require('rope.js');
 
 const editorStrNode: SequentialTraceEditor = {
@@ -125,29 +124,6 @@ const editorAutomerge: SequentialTraceEditor = {
   },
 };
 
-const editorAutomergeUnstable: SequentialTraceEditor = {
-  name: 'AutomergeUnstable',
-  factory: () => {
-    let doc = AutomergeUnstable.from({text: ''});
-    return {
-      ins: (pos: number, insert: string) => {
-        doc = AutomergeUnstable.change(doc, (doc: any) => {
-          AutomergeUnstable.splice(doc, 'text', pos, 0, insert);
-        });
-      },
-      del: (pos: number, len: number) => {
-        doc = AutomergeUnstable.change(doc, (doc: any) => {
-          AutomergeUnstable.splice(doc, 'text', pos, len);
-        });
-      },
-      get: () => AutomergeUnstable.toJS(doc).text,
-      len: () => AutomergeUnstable.toJS(doc).text.length,
-      chunks: () => 0,
-      toBlob: () => AutomergeUnstable.save(doc),
-    };
-  },
-};
-
 const editorCollabs: SequentialTraceEditor = {
   name: 'collabs',
   factory: () => {
@@ -233,7 +209,6 @@ export const editors = {
   'Y.js': editorYjs,
   'Y.rs': editorYrs,
   Automerge: editorAutomerge,
-  AutomergeUnstable: editorAutomergeUnstable,
   collabs: editorCollabs,
   'diamond-types-node': editorDiamondTypesNode,
   'V8 strings': editorV8Strings,

@@ -75,8 +75,8 @@
     "hyperdyperid": "^1.2.0"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.0.3",
-    "@collabs/collabs": "^0.13.4",
+    "@automerge/automerge": "2.1.7",
+    "@collabs/collabs": "0.13.4",
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@msgpack/msgpack": "^3.0.0-beta2",
     "@shelacek/ubjson": "^1.1.1",
@@ -98,8 +98,8 @@
     "cborg": "^2.0.3",
     "concurrently": "^8.0.1",
     "diamond-types-node": "1.0.2",
-    "editing-traces": "https://github.com/josephg/editing-traces#3caad3dcce0043ef925d588d4788dbcddececbd8",
-    "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ce8905957287554402ba865b22b1e31badea5ed7",
+    "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
+    "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#5f68a13baf798897d39b87d7028b0b3cd5a50a6c",
     "eventsource": "^2.0.2",
     "fast-deep-equal": "^3.1.3",
     "fast-equals": "^5.0.1",
@@ -158,8 +158,8 @@
     "webpack-cli": "^5.1.1",
     "webpack-dev-server": "^4.15.0",
     "ws": "^8.6.0",
-    "yjs": "13.6.1",
-    "ywasm": "0.16.5"
+    "yjs": "13.6.8",
+    "ywasm": "0.16.10"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",

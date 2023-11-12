@@ -19,6 +19,8 @@ export const sequentialTraceNames: SequentialTraceName[] = [
   'rustcode',
   'seph-blog1',
   'sveltecomponent',
+  'json-crdt-patch',
+  'json-crdt-blog-post',
 ];
 
 export const traces = {
