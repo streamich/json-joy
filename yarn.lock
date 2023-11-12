@@ -2241,9 +2241,9 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
-"editing-traces@https://github.com/josephg/editing-traces#3caad3dcce0043ef925d588d4788dbcddececbd8":
+"editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  resolved "https://github.com/josephg/editing-traces#3caad3dcce0043ef925d588d4788dbcddececbd8"
+  resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -3664,9 +3664,9 @@ jsesc@^2.5.1:
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.2.tgz#80564d2e483dacf6e8ef209650a67df3f0c283a4"
   integrity sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==
 
-"json-crdt-traces@https://github.com/streamich/json-crdt-traces#ce8905957287554402ba865b22b1e31badea5ed7":
+"json-crdt-traces@https://github.com/streamich/json-crdt-traces#5f68a13baf798897d39b87d7028b0b3cd5a50a6c":
   version "0.0.1"
-  resolved "https://github.com/streamich/json-crdt-traces#ce8905957287554402ba865b22b1e31badea5ed7"
+  resolved "https://github.com/streamich/json-crdt-traces#5f68a13baf798897d39b87d7028b0b3cd5a50a6c"
 
 json-logic-js@^2.0.1:
   version "2.0.2"
