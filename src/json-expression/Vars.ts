@@ -1,11 +1,9 @@
 import {get, toPath, validateJsonPointer} from '../json-pointer';
 
 export class Vars {
-  protected env: unknown;
-
   protected readonly vars: Map<string, unknown> = new Map();
 
-  constructor(env: unknown) {
+  constructor(public readonly env: unknown) {
     this.env = env;
   }
 
