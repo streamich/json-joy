@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,17 +18,31 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn test:ci --ci
+  rest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn build:all
       - run: yarn lint
       - run: yarn prettier:check
-      - run: yarn test:ci --ci
       - run: yarn test:cli:pointer
       - run: yarn test:cli:patch
       - run: yarn test:cli:pack
       - run: yarn demo:json-patch
       - run: yarn demo:json-pointer
-  reactive-rpc-tests:
+  rx-rpc:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,6 +53,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn build:all
       - run: PORT=9999 yarn test:reactive-rpc
