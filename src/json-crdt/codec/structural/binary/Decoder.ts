@@ -56,11 +56,13 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const clockTableOffset = reader.u32();
     const offset = reader.x;
     reader.x += clockTableOffset;
-    const length = reader.vu39();
-    const [sessionId, time] = reader.u53vu39();
+    const length = reader.vu57();
+    const sessionId = reader.vu57();
+    const time = reader.vu57();
     this.clockDecoder = new ClockDecoder(sessionId, time);
     for (let i = 1; i < length; i++) {
-      const [sid, time] = reader.u53vu39();
+      const sid = reader.vu57();
+      const time = reader.vu57();
       this.clockDecoder.pushTuple(sid, time);
     }
     reader.x = offset;

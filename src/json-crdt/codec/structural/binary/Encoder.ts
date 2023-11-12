@@ -18,10 +18,11 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   public encode(doc: Model<any>): Uint8Array {
     this.doc = doc;
-    this.writer.reset();
+    const writer = this.writer;
+    writer.reset();
     if (doc.clock.sid === SESSION.SERVER) this.encodeServer(doc);
     else this.encodeLogical(doc);
-    return this.writer.flush();
+    return writer.flush();
   }
 
   public encodeLogical(model: Model): void {
@@ -51,13 +52,15 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const clockEncoder = this.clockEncoder!;
     const table = clockEncoder.table;
     const length = table.size;
-    writer.vu39(length);
+    writer.vu57(length);
     table.forEach(this.cTableEntry);
   }
 
   protected readonly cTableEntry = (entry: {clock: ITimestampStruct}) => {
     const clock = entry.clock;
-    this.writer.u53vu39(clock.sid, clock.time);
+    const writer = this.writer;
+    writer.vu57(clock.sid);
+    writer.vu57(clock.time);
   };
 
   protected readonly tsLogical = (ts: ITimestampStruct): void => {

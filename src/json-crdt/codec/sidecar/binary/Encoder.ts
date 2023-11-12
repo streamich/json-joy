@@ -42,13 +42,15 @@ export class Encoder {
     const clockEncoder = this.clockEncoder!;
     const table = clockEncoder.table;
     const length = table.size;
-    writer.vu39(length);
+    writer.vu57(length);
     table.forEach(this.cTableEntry);
   }
 
   protected readonly cTableEntry = (entry: {clock: ITimestampStruct}) => {
     const clock = entry.clock;
-    this.metaEncoder.writer.u53vu39(clock.sid, clock.time);
+    const writer = this.metaEncoder.writer;
+    writer.vu57(clock.sid);
+    writer.vu57(clock.time);
   };
 
   protected readonly ts = (ts: ITimestampStruct): void => {
@@ -135,7 +137,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu39(chunk.span);
+      writer.vu57(chunk.span);
     }
   }
 
@@ -147,7 +149,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu39(chunk.span);
+      writer.vu57(chunk.span);
     }
   }
 
@@ -162,7 +164,7 @@ export class Encoder {
       ts(chunk.id);
       const deleted = chunk.del;
       const span = chunk.span;
-      writer.b1vu28(deleted, span);
+      writer.b1vu56(~~deleted as 0 | 1, span);
       if (span) {
         const elements = chunk.data!;
         const elementsLength = elements.length;

@@ -131,7 +131,7 @@ export class Encoder {
       this.ts(chunk.id);
       if (chunk.del) {
         writer.u8(0);
-        writer.vu39(chunk.span);
+        writer.vu57(chunk.span);
       } else encoder.writeStr(chunk.data!);
     }
     return writer.flush();
