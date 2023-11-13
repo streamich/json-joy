@@ -158,15 +158,11 @@ test('vec - with gaps', () => {
   const decoder = new Decoder();
   const cborDecoder = new CborDecoder();
   model.api.root(s.vec(s.con(1)));
-  model.api.vec([]).set([
-    [2, s.con(3)],
-  ]);
-  console.log(model + '');
+  model.api.vec([]).set([[2, s.con(3)]]);
   expect(model.view()).toStrictEqual([1, undefined, 3]);
   const [view, meta] = encoder.encode(model);
   const viewDecoded = cborDecoder.read(view);
   const decoded = decoder.decode(viewDecoded, meta);
-  console.log(decoded + '');
   expect(decoded.view()).toStrictEqual([1, undefined, 3]);
   expect(decoded.clock.sid).toBe(model.clock.sid);
   expect(decoded.clock.time).toBe(model.clock.time);
