@@ -78,22 +78,21 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & 0b11111;
-    const length = minor < 0b11111 ? minor : reader.vu57();
     switch (major) {
       case CRDT_MAJOR.CON:
-        return this.cCon(id, length);
+        return this.cCon(id, minor);
       case CRDT_MAJOR.VAL:
         return this.cVal(id);
       case CRDT_MAJOR.OBJ:
-        return this.cObj(id, length);
+        return this.cObj(id, minor < 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.VEC:
-        return this.cVec(id, length);
+        return this.cVec(id, minor < 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.STR:
-        return this.cStr(id, length);
+        return this.cStr(id, minor < 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.BIN:
-        return this.cBin(id, length);
+        return this.cBin(id, minor < 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.ARR:
-        return this.cArr(id, length);
+        return this.cArr(id, minor < 0b11111 ? minor : reader.vu57());
     }
     throw new Error('UNKNOWN_NODE');
   }
