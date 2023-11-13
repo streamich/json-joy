@@ -28,7 +28,6 @@ export class Encoder extends CborEncoder<CrdtWriter> {
   public encodeLogical(model: Model): void {
     const writer = this.writer;
     this.ts = this.tsLogical;
-    writer.u8(1);
     this.clockEncoder.reset(model.clock);
     writer.ensureCapacity(4);
     const x0 = writer.x0;
@@ -40,8 +39,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   public encodeServer(model: Model): void {
     this.ts = this.tsServer;
-    this.writer.u8(0);
-    this.writer.vu57((this.time = model.clock.time));
+    const writer = this.writer;
+    writer.u8(0b10000000);
+    writer.vu57((this.time = model.clock.time));
     this.cRoot(model.root);
   }
 

@@ -21,8 +21,9 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     this.time = -1;
     const reader = this.reader;
     reader.reset(data);
-    const isServerTime = reader.u8() === 0;
+    const isServerTime = reader.peak() & 0b10000000;
     if (isServerTime) {
+      reader.x++;
       const time = (this.time = reader.vu57());
       if (!model) model = Model.withServerClock(time);
     } else {

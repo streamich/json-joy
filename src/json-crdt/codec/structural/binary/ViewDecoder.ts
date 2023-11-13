@@ -13,8 +13,9 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     const reader = this.reader;
     this.time = -1;
     reader.reset(data);
-    const isServerTime = reader.u8() === 0;
+    const isServerTime = reader.peak() & 0b10000000;
     if (isServerTime) {
+      reader.x++;
       this.time = reader.vu57();
     } else {
       reader.x += 4;
