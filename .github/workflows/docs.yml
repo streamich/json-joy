@@ -18,4 +18,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn publish-coverage-and-typedocs
+      - run: yarn typedoc
+      - run: yarn coverage
+      - run: yarn build:pages
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./gh-pages
