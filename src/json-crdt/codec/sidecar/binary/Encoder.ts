@@ -86,13 +86,14 @@ export class Encoder {
   protected cCon(node: nodes.ConNode): void {
     const val = node.val;
     this.ts(node.id);
+    const metaEncoder = this.metaEncoder;
     if (val instanceof Timestamp) {
       this.viewEncoder.writeNull();
-      this.metaEncoder.writer.u8(1); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      metaEncoder.writer.u8(1); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.ts(val);
     } else {
       this.viewEncoder.writeAny(val);
-      this.metaEncoder.writer.u8(0); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
-      // TODO: Encode the value timestamp
+      metaEncoder.writer.u8(0); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
     }
   }
 

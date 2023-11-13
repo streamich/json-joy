@@ -63,7 +63,7 @@ export class Decoder {
     const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
     switch (major) {
       case CRDT_MAJOR.CON:
-        return this.cCon(view, id);
+        return this.cCon(view, id, length);
       case CRDT_MAJOR.VAL:
         return this.cVal(view, id);
       case CRDT_MAJOR.OBJ:
@@ -80,9 +80,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cCon(view: unknown, id: ITimestampStruct): nodes.ConNode {
+  protected cCon(view: unknown, id: ITimestampStruct, length: number): nodes.ConNode {
     const doc = this.doc;
-    const node = new nodes.ConNode(id, view);
+    const node = new nodes.ConNode(id, length ? this.ts() : view);
     doc.index.set(id, node);
     return node;
   }

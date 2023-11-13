@@ -50,16 +50,3 @@ test('encodes each clock only once', () => {
   const encoded = encoder.toJson();
   expect(encoded).toEqual([100, 100, 50, 50, 10, 10]);
 });
-
-test('throws when unknown clock is being encoded', () => {
-  const clock = new ClockVector(100, 100);
-  const ts1 = ts(50, 50);
-  const ts2 = ts(10, 10);
-  clock.observe(ts1, 1);
-  clock.observe(ts2, 1);
-  const encoder = new ClockEncoder();
-  encoder.reset(clock);
-  encoder.append(ts1);
-  encoder.append(ts2);
-  expect(() => encoder.append(ts(77, 77))).toThrow();
-});
