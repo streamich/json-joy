@@ -84,6 +84,44 @@ test('obj - 2', () => {
   expect(decoded.clock.time).toBe(model.clock.time);
 });
 
+test('obj - with deleted keys', () => {
+  const model = Model.withLogicalClock();
+  const encoder = new Encoder();
+  const decoder = new Decoder();
+  const cborDecoder = new CborDecoder();
+  model.api.root({
+    a: 1,
+    b: 2,
+    c: 3,
+    d: 4,
+  });
+  model.api.obj([]).del(['b', 'd']);
+  expect(model.view()).toEqual({a: 1, c: 3});
+  const [view, meta] = encoder.encode(model);
+  const viewDecoded = cborDecoder.decode(view);
+  const decoded = decoder.decode(viewDecoded, meta);
+  expect(decoded.view()).toEqual({a: 1, c: 3});
+});
+
+test('obj - supports "__proto__" key', () => {
+  const model = Model.withLogicalClock();
+  const encoder = new Encoder();
+  const decoder = new Decoder();
+  const cborDecoder = new CborDecoder();
+  model.api.root({
+    a: 1,
+    b: 2,
+    __proto__: 3,
+    d: 4,
+  });
+  model.api.obj([]).del(['b', 'd']);
+  expect(model.view()).toEqual({a: 1, __proto__: 3});
+  const [view, meta] = encoder.encode(model);
+  const viewDecoded = cborDecoder.decode(view);
+  const decoded = decoder.decode(viewDecoded, meta);
+  expect(decoded.view()).toEqual({a: 1, __proto__: 3});
+});
+
 test('vec', () => {
   const model = Model.withLogicalClock();
   const encoder = new Encoder();
