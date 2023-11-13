@@ -1,3 +1,4 @@
+import {s} from '../../../../../json-crdt-patch';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
 import {vec} from '../../../../../json-crdt-patch/builder/Tuple';
 import {Model} from '../../../../model';
@@ -48,6 +49,19 @@ export const runCodecAllTypesSmokeTests = (assertCodec: (doc: Model) => void) =>
   test('object', () => {
     const model = Model.withLogicalClock();
     model.api.root({foo: 'bar', empty: {}});
+    assertCodec(model);
+  });
+
+  test('vector', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(s.vec(s.con(1), s.con(2), s.con(3)));
+    assertCodec(model);
+  });
+
+  test('vector - with gaps', () => {
+    const model = Model.withLogicalClock();
+    model.api.root(s.vec(s.con(1)));
+    model.api.vec([]).set([[2, s.con(3)]]);
     assertCodec(model);
   });
 };

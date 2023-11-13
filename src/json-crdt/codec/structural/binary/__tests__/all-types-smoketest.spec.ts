@@ -6,6 +6,7 @@ const assertCodec = (doc: Model) => {
   const encoded = doc.toBinary();
   const decoded = Model.fromBinary(encoded);
   expect(doc.view()).toEqual(decoded.view());
+  expect(doc.toString()).toEqual(decoded.toString());
 };
 
 const view = new ViewDecoder();
