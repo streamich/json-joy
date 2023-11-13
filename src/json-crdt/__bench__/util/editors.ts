@@ -208,7 +208,7 @@ const editorLoro: SequentialTraceEditor = {
   name: 'loro',
   factory: () => {
     const doc = new Loro();
-    const text = doc.getText("text");
+    const text = doc.getText('text');
     return {
       ins: (pos: number, insert: string) => {
         text.insert(pos, insert);
@@ -233,7 +233,7 @@ export const editors = {
   'diamond-types-node': editorDiamondTypesNode,
   'V8 strings': editorV8Strings,
   'rope.js': editorRopeJs,
-  'loro': editorLoro,
+  loro: editorLoro,
 };
 
 export type SequentialEditorName = keyof typeof editors;

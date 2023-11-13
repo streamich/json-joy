@@ -140,7 +140,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.b1vu56(~~(chunk.del) as 0 | 1, chunk.span);
+      writer.b1vu56(~~chunk.del as 0 | 1, chunk.span);
     }
   }
 
@@ -152,7 +152,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.b1vu56(~~(chunk.del) as 0 | 1, chunk.span);
+      writer.b1vu56(~~chunk.del as 0 | 1, chunk.span);
     }
   }
 
