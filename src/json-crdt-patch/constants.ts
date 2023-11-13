@@ -54,3 +54,21 @@ export const enum JsonCrdtPatchOpcode {
   del = 0b10000, // 16
   nop = 0b10001, // 17
 }
+
+export const enum JsonCrdtPatchOpcodeOverlay {
+  new_con = JsonCrdtPatchOpcode.new_con << 3,
+  new_val = JsonCrdtPatchOpcode.new_val << 3,
+  new_obj = JsonCrdtPatchOpcode.new_obj << 3,
+  new_vec = JsonCrdtPatchOpcode.new_vec << 3,
+  new_str = JsonCrdtPatchOpcode.new_str << 3,
+  new_bin = JsonCrdtPatchOpcode.new_bin << 3,
+  new_arr = JsonCrdtPatchOpcode.new_arr << 3,
+  ins_val = JsonCrdtPatchOpcode.ins_val << 3,
+  ins_obj = JsonCrdtPatchOpcode.ins_obj << 3,
+  ins_vec = JsonCrdtPatchOpcode.ins_vec << 3,
+  ins_str = JsonCrdtPatchOpcode.ins_str << 3,
+  ins_bin = JsonCrdtPatchOpcode.ins_bin << 3,
+  ins_arr = JsonCrdtPatchOpcode.ins_arr << 3,
+  del = JsonCrdtPatchOpcode.del << 3,
+  nop = JsonCrdtPatchOpcode.nop << 3,
+}

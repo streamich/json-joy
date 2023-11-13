@@ -28,7 +28,6 @@ export class Encoder extends CborEncoder<CrdtWriter> {
   public encodeLogical(model: Model): void {
     const writer = this.writer;
     this.ts = this.tsLogical;
-    writer.u8(1);
     this.clockEncoder.reset(model.clock);
     writer.ensureCapacity(4);
     const x0 = writer.x0;
@@ -40,8 +39,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   public encodeServer(model: Model): void {
     this.ts = this.tsServer;
-    this.writer.u8(0);
-    this.writer.vu57((this.time = model.clock.time));
+    const writer = this.writer;
+    writer.u8(0b10000000);
+    writer.vu57((this.time = model.clock.time));
     this.cRoot(model.root);
   }
 
@@ -82,10 +82,11 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
     const writer = this.writer;
-    if (length < 24) writer.u8(majorOverlay + length);
-    else if (length <= 0xff) writer.u16(((majorOverlay + 24) << 8) + length);
-    else if (length <= 0xffff) writer.u8u16(majorOverlay + 25, length);
-    else writer.u8u32(majorOverlay + 26, length);
+    if (length < 0b11111) writer.u8(majorOverlay | length);
+    else {
+      writer.u8(majorOverlay | 0b11111);
+      writer.vu57(length);
+    }
   }
 
   protected cNode(node: nodes.JsonNode): void {
@@ -103,17 +104,17 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const val = node.val;
     this.ts(node.id);
     if (val instanceof Timestamp) {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.writer.u8(1); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
       this.ts(val as Timestamp);
     } else {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      this.writer.u8(0); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
       this.writeAny(val);
     }
   }
 
   protected cVal(node: nodes.ValNode): void {
     this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.writer.u8(0b00100000); // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
     this.cNode(node.node());
   }
 

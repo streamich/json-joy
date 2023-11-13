@@ -13,8 +13,9 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     const reader = this.reader;
     this.time = -1;
     reader.reset(data);
-    const isServerTime = reader.u8() === 0;
+    const isServerTime = reader.peak() & 0b10000000;
     if (isServerTime) {
+      reader.x++;
       this.time = reader.vu57();
     } else {
       reader.x += 4;
@@ -39,7 +40,7 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
     const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & 0b11111;
-    const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
+    const length = minor < 0b11111 ? minor : reader.vu57();
     switch (major) {
       case CRDT_MAJOR.CON:
         return this.cCon(length);

@@ -1,5 +1,5 @@
 import * as operations from '../../operations';
-import {JsonCrdtPatchOpcode} from '../../constants';
+import {JsonCrdtPatchOpcodeOverlay} from '../../constants';
 import {CrdtWriter} from '../../util/binary/CrdtWriter';
 import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
@@ -67,9 +67,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
   private writeInsStr(length: number, obj: ITimestampStruct, ref: ITimestampStruct, str: string): number {
     const writer = this.writer;
     if (length <= 0b111) {
-      writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_str);
+      writer.u8(JsonCrdtPatchOpcodeOverlay.ins_str + length);
     } else {
-      writer.u8(JsonCrdtPatchOpcode.ins_str);
+      writer.u8(JsonCrdtPatchOpcodeOverlay.ins_str);
       writer.vu57(length);
     }
     this.encodeId(obj);
@@ -85,41 +85,41 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const operation = <operations.NewConOp>op;
         const val = operation.val;
         if (val instanceof Timestamp) {
-          writer.u8(0b001_00000 | JsonCrdtPatchOpcode.new_con);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.new_con + 1);
           this.encodeId(val);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.new_con);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.new_con);
           this.writeAny(val);
         }
         break;
       }
       case operations.NewValOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_val);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_val);
         break;
       }
       case operations.NewObjOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_obj);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_obj);
         break;
       }
       case operations.NewVecOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_vec);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_vec);
         break;
       }
       case operations.NewStrOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_str);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_str);
         break;
       }
       case operations.NewBinOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_bin);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_bin);
         break;
       }
       case operations.NewArrOp: {
-        writer.u8(JsonCrdtPatchOpcode.new_arr);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.new_arr);
         break;
       }
       case operations.InsValOp: {
         const operation = <operations.InsValOp>op;
-        writer.u8(JsonCrdtPatchOpcode.ins_val);
+        writer.u8(JsonCrdtPatchOpcodeOverlay.ins_val);
         this.encodeId(operation.obj);
         this.encodeId(operation.val);
         break;
@@ -129,9 +129,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const data = operation.data;
         const length = data.length;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_obj);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_obj + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.ins_obj);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_obj);
           writer.vu57(length);
         }
         this.encodeId(operation.obj);
@@ -147,9 +147,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const data = operation.data;
         const length = data.length;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_vec);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_vec + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.ins_vec);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_vec);
           writer.vu57(length);
         }
         this.encodeId(operation.obj);
@@ -180,9 +180,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const buf = operation.data;
         const length = buf.length;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_bin);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_bin + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.ins_bin);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_bin);
           writer.vu57(length);
         }
         this.encodeId(operation.obj);
@@ -195,9 +195,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const elements = operation.data;
         const length = elements.length;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.ins_arr);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_arr + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.ins_arr);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.ins_arr);
           writer.vu57(length);
         }
         this.encodeId(operation.obj);
@@ -210,9 +210,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const what = operation.what;
         const length = what.length;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.del);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.del + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.del);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.del);
           writer.vu57(length);
         }
         this.encodeId(operation.obj);
@@ -223,9 +223,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
         const operation = <operations.NopOp>op;
         const length = operation.len;
         if (length <= 0b111) {
-          writer.u8((length << 5) | JsonCrdtPatchOpcode.nop);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.nop + length);
         } else {
-          writer.u8(JsonCrdtPatchOpcode.nop);
+          writer.u8(JsonCrdtPatchOpcodeOverlay.nop);
           writer.vu57(length);
         }
         break;

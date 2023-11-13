@@ -1,23 +1,10 @@
+import * as nodes from '../../../nodes';
 import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
 import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import {SESSION} from '../../../../json-crdt-patch/constants';
-import {
-  ArrNode,
-  ArrChunk,
-  BinNode,
-  BinChunk,
-  ConNode,
-  ObjNode,
-  RootNode,
-  StrNode,
-  StrChunk,
-  ValNode,
-  VecNode,
-  type JsonNode,
-} from '../../../nodes';
 import {CRDT_MAJOR} from './constants';
 
 export class Decoder extends CborDecoderBase<CrdtReader> {
@@ -34,8 +21,9 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     this.time = -1;
     const reader = this.reader;
     reader.reset(data);
-    const isServerTime = reader.u8() === 0;
+    const isServerTime = reader.peak() & 0b10000000;
     if (isServerTime) {
+      reader.x++;
       const time = (this.time = reader.vu57());
       if (!model) model = Model.withServerClock(time);
     } else {
@@ -46,7 +34,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
       }
     }
     this.doc = model;
-    model.root = new RootNode(this.doc, this.cRoot().id);
+    model.root = new nodes.RootNode(this.doc, this.cRoot().id);
     delete this.clockDecoder;
     return model;
   }
@@ -79,69 +67,68 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     }
   }
 
-  protected cRoot(): JsonNode {
+  protected cRoot(): nodes.JsonNode {
     const reader = this.reader;
     const peek = reader.uint8[reader.x];
     return !peek ? UNDEFINED : this.cNode();
   }
 
-  protected cNode(): JsonNode {
+  protected cNode(): nodes.JsonNode {
     const reader = this.reader;
     const id = this.ts();
     const octet = reader.u8();
     const major = octet >> 5;
     const minor = octet & 0b11111;
-    const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
     switch (major) {
       case CRDT_MAJOR.CON:
-        return this.cCon(id, length);
+        return this.cCon(id, minor);
       case CRDT_MAJOR.VAL:
         return this.cVal(id);
       case CRDT_MAJOR.OBJ:
-        return this.cObj(id, length);
+        return this.cObj(id, minor !== 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.VEC:
-        return this.cVec(id, length);
+        return this.cVec(id, minor !== 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.STR:
-        return this.cStr(id, length);
+        return this.cStr(id, minor !== 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.BIN:
-        return this.cBin(id, length);
+        return this.cBin(id, minor !== 0b11111 ? minor : reader.vu57());
       case CRDT_MAJOR.ARR:
-        return this.cArr(id, length);
+        return this.cArr(id, minor !== 0b11111 ? minor : reader.vu57());
     }
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cCon(id: ITimestampStruct, length: number): ConNode {
+  protected cCon(id: ITimestampStruct, length: number): nodes.ConNode {
     const doc = this.doc;
     const data = !length ? this.val() : this.ts();
-    const node = new ConNode(id, data);
+    const node = new nodes.ConNode(id, data);
     doc.index.set(id, node);
     return node;
   }
 
-  protected cVal(id: ITimestampStruct): ValNode {
+  protected cVal(id: ITimestampStruct): nodes.ValNode {
     const child = this.cNode();
     const doc = this.doc;
-    const node = new ValNode(doc, id, child.id);
+    const node = new nodes.ValNode(doc, id, child.id);
     doc.index.set(id, node);
     return node;
   }
 
-  protected cObj(id: ITimestampStruct, length: number): ObjNode {
-    const obj = new ObjNode(this.doc, id);
+  protected cObj(id: ITimestampStruct, length: number): nodes.ObjNode {
+    const obj = new nodes.ObjNode(this.doc, id);
     for (let i = 0; i < length; i++) this.cObjChunk(obj);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  protected cObjChunk(obj: ObjNode): void {
+  protected cObjChunk(obj: nodes.ObjNode): void {
     const key: string = this.key();
     obj.keys.set(key, this.cNode().id);
   }
 
-  protected cVec(id: ITimestampStruct, length: number): VecNode {
+  protected cVec(id: ITimestampStruct, length: number): nodes.VecNode {
     const reader = this.reader;
-    const obj = new VecNode(this.doc, id);
+    const obj = new nodes.VecNode(this.doc, id);
     const elements = obj.elements;
     for (let i = 0; i < length; i++) {
       const octet = reader.peak();
@@ -154,54 +141,54 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     return obj;
   }
 
-  protected cStr(id: ITimestampStruct, length: number): StrNode {
-    const node = new StrNode(id);
+  protected cStr(id: ITimestampStruct, length: number): nodes.StrNode {
+    const node = new nodes.StrNode(id);
     if (length) node.ingest(length, this.cStrChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cStrChunk = (): StrChunk => {
+  private cStrChunk = (): nodes.StrChunk => {
     const reader = this.reader;
     const id = this.ts();
     const isTombstone = reader.uint8[reader.x] === 0;
     if (isTombstone) {
       reader.x++;
       const length = reader.vu57();
-      return new StrChunk(id, length, '');
+      return new nodes.StrChunk(id, length, '');
     }
     const text: string = this.readAsStr() as string;
-    return new StrChunk(id, text.length, text);
+    return new nodes.StrChunk(id, text.length, text);
   };
 
-  protected cBin(id: ITimestampStruct, length: number): BinNode {
-    const node = new BinNode(id);
+  protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {
+    const node = new nodes.BinNode(id);
     if (length) node.ingest(length, this.cBinChunk);
     this.doc.index.set(id, node);
     return node;
   }
 
-  private cBinChunk = (): BinChunk => {
+  private cBinChunk = (): nodes.BinChunk => {
     const id = this.ts();
     const reader = this.reader;
     const [deleted, length] = reader.b1vu56();
-    if (deleted) return new BinChunk(id, length, undefined);
-    else return new BinChunk(id, length, reader.buf(length));
+    if (deleted) return new nodes.BinChunk(id, length, undefined);
+    else return new nodes.BinChunk(id, length, reader.buf(length));
   };
 
-  protected cArr(id: ITimestampStruct, length: number): ArrNode {
-    const obj = new ArrNode(this.doc, id);
+  protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {
+    const obj = new nodes.ArrNode(this.doc, id);
     if (length) obj.ingest(length, this.cArrChunk);
     this.doc.index.set(id, obj);
     return obj;
   }
 
-  private readonly cArrChunk = (): ArrChunk => {
+  private readonly cArrChunk = (): nodes.ArrChunk => {
     const id = this.ts();
     const [deleted, length] = this.reader.b1vu56();
-    if (deleted) return new ArrChunk(id, length, undefined);
+    if (deleted) return new nodes.ArrChunk(id, length, undefined);
     const ids: ITimestampStruct[] = [];
     for (let i = 0; i < length; i++) ids.push(this.cNode().id);
-    return new ArrChunk(id, length, ids);
+    return new nodes.ArrChunk(id, length, ids);
   };
 }
