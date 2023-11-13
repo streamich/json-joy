@@ -104,10 +104,12 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     const val = node.val;
     this.ts(node.id);
     if (val instanceof Timestamp) {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.writer.u8(1);
       this.ts(val as Timestamp);
     } else {
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      this.writer.u8(0);
       this.writeAny(val);
     }
   }
