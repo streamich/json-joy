@@ -6,6 +6,7 @@ import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import * as nodes from '../../../nodes';
 import {CRDT_MAJOR} from '../../structural/binary/constants';
 import {sort} from '../../../../util/sort/insertion';
+import {SESSION} from '../../../../json-crdt-patch/constants';
 
 export class Decoder {
   protected doc!: Model;
@@ -116,11 +117,10 @@ export class Decoder {
     const elements = obj.elements;
     const reader = this.decoder.reader;
     for (let i = 0; i < length; i++) {
-      const octet = reader.peak();
-      if (octet === 0xff) {
-        reader.x++;
-        elements.push(undefined);
-      } else elements.push(this.cNode(view[i]).id);
+      const child = this.cNode(view[i]);
+      const childId = child.id;
+      if (childId.sid === SESSION.SYSTEM) elements.push(undefined);
+      else elements.push(childId);
     }
     this.doc.index.set(id, obj);
     return obj;

@@ -6,6 +6,7 @@ import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {sort} from '../../../../util/sort/insertion';
+import {UNDEFINED} from '../../../model/Model';
 import type {Model} from '../../../model';
 
 export class Encoder {
@@ -126,8 +127,7 @@ export class Encoder {
     const index = this.doc.index;
     for (let i = 0; i < length; i++) {
       const elementId = elements[i];
-      if (!elementId) this.metaEncoder.writer.u8(0xff);
-      // TODO: if (!elementId) this.cCon(UNDEFINED);
+      if (!elementId) this.cCon(UNDEFINED);
       else this.cNode(index.get(elementId)!);
     }
   }
