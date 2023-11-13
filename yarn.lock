@@ -2243,7 +2243,6 @@ eastasianwidth@^0.2.0:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -3667,7 +3666,6 @@ jsesc@^2.5.1:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#5f68a13baf798897d39b87d7028b0b3cd5a50a6c":
   version "0.0.1"
-  uid "5f68a13baf798897d39b87d7028b0b3cd5a50a6c"
   resolved "https://github.com/streamich/json-crdt-traces#5f68a13baf798897d39b87d7028b0b3cd5a50a6c"
 
 json-logic-js@^2.0.1:
@@ -3974,7 +3972,7 @@ minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   dependencies:
     brace-expansion "^1.1.7"
 
-minimatch@^9.0.0, minimatch@^9.0.1:
+minimatch@^9.0.1, minimatch@^9.0.3:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.3.tgz#a6e00c3de44c3a542bfaae70abfc22420a6da825"
   integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
@@ -5415,24 +5413,23 @@ type-is@~1.6.18:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
-typedoc@^0.24.8:
-  version "0.24.8"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.24.8.tgz#cce9f47ba6a8d52389f5e583716a2b3b4335b63e"
-  integrity sha512-ahJ6Cpcvxwaxfu4KtjA8qZNqS43wYt6JL27wYiIgl1vd38WW/KWX11YuAeZhuz9v+ttrutSsgK+XO1CjL1kA3w==
+typedoc@^0.25.3:
+  version "0.25.3"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.25.3.tgz#53c6d668e1001b3d488e9a750fcdfb05433554c0"
+  integrity sha512-Ow8Bo7uY1Lwy7GTmphRIMEo6IOZ+yYUyrc8n5KXIZg1svpqhZSWgni2ZrDhe+wLosFS8yswowUzljTAV/3jmWw==
   dependencies:
     lunr "^2.3.9"
     marked "^4.3.0"
-    minimatch "^9.0.0"
+    minimatch "^9.0.3"
     shiki "^0.14.1"
 
-typescript@^5.1.6:
+typescript@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
   integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.23.0:
   version "20.23.0"
-  uid "49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
