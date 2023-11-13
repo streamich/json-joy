@@ -103,7 +103,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.ins_obj: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const tuples: [key: string, value: ITimestampStruct][] = [];
         for (let i = 0; i < length; i++) {
@@ -116,7 +116,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.ins_vec: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const tuples: [index: number, value: ITimestampStruct][] = [];
         for (let i = 0; i < length; i++) {
@@ -129,7 +129,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.ins_str: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const after = this.decodeId();
         const str = reader.utf8(length);
@@ -137,7 +137,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.ins_bin: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const after = this.decodeId();
         const buf = reader.buf(length);
@@ -146,7 +146,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.ins_arr: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const after = this.decodeId();
         const elements: ITimestampStruct[] = [];
@@ -155,7 +155,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.del: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         const obj = this.decodeId();
         const what: ITimespanStruct[] = [];
         for (let i = 0; i < length; i++) what.push(this.decodeTss());
@@ -163,7 +163,7 @@ export class Decoder extends CborDecoder<CrdtReader> {
         break;
       }
       case JsonCrdtPatchOpcode.nop: {
-        const length = (octet & 0b111) || reader.vu57();
+        const length = octet & 0b111 || reader.vu57();
         builder.nop(length);
         break;
       }
