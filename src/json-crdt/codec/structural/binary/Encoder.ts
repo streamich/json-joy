@@ -82,9 +82,9 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected writeTL(majorOverlay: CRDT_MAJOR_OVERLAY, length: number): void {
     const writer = this.writer;
-    if (length < 0b11111) writer.u8(majorOverlay + length);
+    if (length < 0b11111) writer.u8(majorOverlay | length);
     else {
-      writer.u8(majorOverlay + 0b11111);
+      writer.u8(majorOverlay | 0b11111);
       writer.vu57(length);
     }
   }
