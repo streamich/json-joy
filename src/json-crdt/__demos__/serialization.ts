@@ -18,10 +18,7 @@ const schema = s.obj({
   temperature: s.con(36.6),
 });
 
-const model = Model
-  .withLogicalClock(1234)
-  .setSchema(schema);
-
+const model = Model.withLogicalClock(1234).setSchema(schema);
 
 console.log(model + '');
 // model
@@ -34,20 +31,20 @@ console.log(model + '');
 // │     │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 // │     └─ "temperature"
 // │         └─ con 1234.9 { 36.6 }
-// │  
+// │
 // ├─ index (4 nodes)
 // │  ├─ obj 1234.1
 // │  ├─ con 1234.2
 // │  ├─ str 1234.3
 // │  └─ con 1234.9
-// │  
+// │
 // ├─ view
 // │  └─ {
 // │       "id": "xyz",
 // │       "text": "hello",
 // │       "temperature": 36.6
 // │     }
-// │  
+// │
 // └─ clock 1234.12
 
 console.log(model.root + '');
@@ -60,7 +57,6 @@ console.log(model.root + '');
 //    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "temperature"
 //        └─ con 1234.9 { 36.6 }
-
 
 const encoded = model.toBinary();
 console.log(encoded);
@@ -84,7 +80,6 @@ console.log(decoded.root + '');
 //    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "temperature"
 //        └─ con 1234.9 { 36.6 }
-
 
 import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
 import {Decoder as VerboseDecoder} from '../codec/structural/verbose/Decoder';
@@ -124,7 +119,6 @@ console.log(verboseDecoded.root + '');
 //    └─ "temperature"
 //        └─ con 1234.9 { 36.6 }
 
-
 import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
 import {Decoder as CompactDecoder} from '../codec/structural/compact/Decoder';
 const compactEncoder = new CompactEncoder();
@@ -158,7 +152,6 @@ console.log(compactDecoded.root + '');
 //    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "temperature"
 //        └─ con 1234.9 { 36.6 }
-
 
 import {Encoder as IndexedEncoder} from '../codec/indexed/binary/Encoder';
 import {Decoder as IndexedDecoder} from '../codec/indexed/binary/Decoder';
@@ -197,7 +190,6 @@ console.log(indexedDecoded.root + '');
 //    │      └─ StrChunk 1234.4!5 len:5 { "hello" }
 //    └─ "temperature"
 //        └─ con 1234.9 { 36.6 }
-
 
 import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
 import {Decoder as SidecarDecoder} from '../codec/sidecar/binary/Decoder';
