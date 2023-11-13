@@ -126,7 +126,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   public api: undefined | unknown = undefined;
 
   public name(): string {
-    return 'str';
+    return 'obj';
   }
 
   // ---------------------------------------------------------------- Printable
