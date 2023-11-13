@@ -116,7 +116,8 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected cVal(node: nodes.ValNode): void {
     this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.writer.u8(0b00100000);
     this.cNode(node.node());
   }
 
