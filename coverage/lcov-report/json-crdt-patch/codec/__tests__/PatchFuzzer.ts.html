@@ -188,33 +188,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1600x</span>
 <span class="cline-any cline-yes">1600x</span>
-<span class="cline-any cline-yes">16756x</span>
-<span class="cline-any cline-yes">1130x</span>
-<span class="cline-any cline-yes">1174x</span>
-<span class="cline-any cline-yes">1115x</span>
-<span class="cline-any cline-yes">1097x</span>
-<span class="cline-any cline-yes">1112x</span>
-<span class="cline-any cline-yes">1100x</span>
-<span class="cline-any cline-yes">1154x</span>
+<span class="cline-any cline-yes">16848x</span>
+<span class="cline-any cline-yes">1157x</span>
+<span class="cline-any cline-yes">1103x</span>
+<span class="cline-any cline-yes">1139x</span>
+<span class="cline-any cline-yes">1081x</span>
+<span class="cline-any cline-yes">1094x</span>
+<span class="cline-any cline-yes">1072x</span>
+<span class="cline-any cline-yes">1136x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1135x</span>
+<span class="cline-any cline-yes">1136x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6161x</span>
+<span class="cline-any cline-yes">6253x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1112x</span>
-<span class="cline-any cline-yes">1096x</span>
+<span class="cline-any cline-yes">1146x</span>
+<span class="cline-any cline-yes">1131x</span>
+<span class="cline-any cline-yes">1111x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1123x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6116x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1169x</span>
+<span class="cline-any cline-yes">1133x</span>
 <span class="cline-any cline-yes">1117x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1115x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6219x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1118x</span>
-<span class="cline-any cline-yes">1081x</span>
-<span class="cline-any cline-yes">1100x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16756x</span>
+<span class="cline-any cline-yes">16848x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1600x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -230,14 +230,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">14397x</span>
-<span class="cline-any cline-yes">14397x</span>
-<span class="cline-any cline-yes">14397x</span>
+<span class="cline-any cline-yes">14841x</span>
+<span class="cline-any cline-yes">14841x</span>
+<span class="cline-any cline-yes">14841x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">14631x</span>
-<span class="cline-any cline-yes">14631x</span>
+<span class="cline-any cline-yes">14559x</span>
+<span class="cline-any cline-yes">14559x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -256,7 +256,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3280x</span>
+<span class="cline-any cline-yes">3435x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -265,7 +265,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {RandomJson} from '../../../json-random';
 import {Fuzzer} from '../../../util/Fuzzer';
-import {interval, ITimestampStruct, Timespan, VectorClock, ServerVectorClock, ts} from '../../clock';
+import {interval, ITimestampStruct, Timespan, ClockVector, ServerClockVector, ts} from '../../clock';
 import {SESSION} from '../../constants';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
@@ -319,14 +319,14 @@ export class PatchFuzzer extends Fuzzer {
     return builder.patch;
   }
 &nbsp;
-  public generateLogicalClock(): VectorClock {
+  public generateLogicalClock(): ClockVector {
     const sessionId = this.generateSessionId();
     const time = this.generateTime();
-    return new VectorClock(sessionId, time);
+    return new ClockVector(sessionId, time);
   }
 &nbsp;
-  public generateServerClock(): ServerVectorClock {
-    return new ServerVectorClock(SESSION.SERVER, this.generateTime());
+  public generateServerClock(): ServerClockVector {
+    return new ServerClockVector(SESSION.SERVER, this.generateTime());
   }
 &nbsp;
   public readonly generateLogicalTimestamp = (): ITimestampStruct =&gt; {
@@ -370,7 +370,7 @@ export class PatchFuzzer extends Fuzzer {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-05T14:27:44.846Z
+                at 2023-11-13T14:55:42.753Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
