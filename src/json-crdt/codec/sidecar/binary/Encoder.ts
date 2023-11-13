@@ -88,16 +88,17 @@ export class Encoder {
     this.ts(node.id);
     if (val instanceof Timestamp) {
       this.viewEncoder.writeNull();
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.metaEncoder.writer.u8(1); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
     } else {
       this.viewEncoder.writeAny(val);
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      this.metaEncoder.writer.u8(0); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      // TODO: Encode the value timestamp
     }
   }
 
   protected cVal(node: nodes.ValNode): void {
     this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.metaEncoder.writer.u8(0b00100000); // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
     this.cNode(node.node());
   }
 
@@ -125,6 +126,7 @@ export class Encoder {
     for (let i = 0; i < length; i++) {
       const elementId = elements[i];
       if (!elementId) this.metaEncoder.writer.u8(0xff);
+      // TODO: if (!elementId) this.cCon(UNDEFINED);
       else this.cNode(index.get(elementId)!);
     }
   }
@@ -138,6 +140,7 @@ export class Encoder {
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
       writer.vu57(chunk.span);
+      // TODO: What if chunk is deleted?
     }
   }
 
