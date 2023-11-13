@@ -140,8 +140,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu57(chunk.span);
-      // TODO: What if chunk is deleted?
+      writer.b1vu56(~~(chunk.del) as 0 | 1, chunk.span);
     }
   }
 
@@ -153,7 +152,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu57(chunk.span);
+      writer.b1vu56(~~(chunk.del) as 0 | 1, chunk.span);
     }
   }
 
@@ -169,7 +168,7 @@ export class Encoder {
       const deleted = chunk.del;
       const span = chunk.span;
       writer.b1vu56(~~deleted as 0 | 1, span);
-      if (span) {
+      if (!deleted) {
         const elements = chunk.data!;
         const elementsLength = elements.length;
         for (let i = 0; i < elementsLength; i++) this.cNode(index.get(elements[i])!);

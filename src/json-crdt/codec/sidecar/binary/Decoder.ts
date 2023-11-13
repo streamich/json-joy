@@ -133,8 +133,8 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.StrChunk => {
       const id = this.ts();
-      const span = reader.vu57();
-      if (!span) return new nodes.StrChunk(id, length, '');
+      const [deleted, span] = reader.b1vu56();
+      if (deleted) return new nodes.StrChunk(id, span, '');
       const text = view.slice(offset, offset + span);
       offset += span;
       return new nodes.StrChunk(id, text.length, text);
@@ -150,8 +150,8 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.BinChunk => {
       const id = this.ts();
-      const span = reader.vu57();
-      if (!span) return new nodes.BinChunk(id, length, undefined);
+      const [deleted, span] = reader.b1vu56();
+      if (deleted) return new nodes.BinChunk(id, span, undefined);
       const slice = view.slice(offset, offset + span);
       offset += span;
       return new nodes.BinChunk(id, slice.length, slice);
