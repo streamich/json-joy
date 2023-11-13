@@ -17,11 +17,12 @@ runTraceMatrix({
   ],
   editors: [
     'StrNode (json-joy)',
-    'json-joy',
+    // 'json-joy',
     // 'Y.js',
     // 'Y.rs',
     // 'Automerge',
     // 'collabs',
+    'loro',
   ],
-  iterationsPerEditor: 50,
+  iterationsPerEditor: 20,
 });

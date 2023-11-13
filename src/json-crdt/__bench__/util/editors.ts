@@ -6,6 +6,7 @@ import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
 import {CRuntime, CText} from '@collabs/collabs';
+import {Loro} from 'loro-crdt';
 import type {SequentialTraceEditor} from './types';
 const Rope = require('rope.js');
 
@@ -203,6 +204,25 @@ const editorRopeJs: SequentialTraceEditor = {
   },
 };
 
+const editorLoro: SequentialTraceEditor = {
+  name: 'loro',
+  factory: () => {
+    const doc = new Loro();
+    const text = doc.getText("text");
+    return {
+      ins: (pos: number, insert: string) => {
+        text.insert(pos, insert);
+      },
+      del: (pos: number, len: number) => {
+        text.delete(pos, len);
+      },
+      get: () => text.toString(),
+      len: () => text.toString().length,
+      chunks: () => 0,
+    };
+  },
+};
+
 export const editors = {
   'StrNode (json-joy)': editorStrNode,
   'json-joy': editorJsonJoy,
@@ -213,6 +233,7 @@ export const editors = {
   'diamond-types-node': editorDiamondTypesNode,
   'V8 strings': editorV8Strings,
   'rope.js': editorRopeJs,
+  'loro': editorLoro,
 };
 
 export type SequentialEditorName = keyof typeof editors;

@@ -3813,6 +3813,18 @@ loose-envify@^1.1.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
+loro-crdt@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/loro-crdt/-/loro-crdt-0.4.1.tgz#4a8cf0602c7232a66f20b4d9a05d236b14d0192c"
+  integrity sha512-VoGJ6dPu38QqMOztU2q5GQgbV5cl0oZ4U0Trgjfz7l/u5S0RHpMhiZhSqSeYO4sieDtTA97GMirt0jYrJO3TGw==
+  dependencies:
+    loro-wasm "0.4.1"
+
+loro-wasm@0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/loro-wasm/-/loro-wasm-0.4.1.tgz#93e2aeb35d7518c9ad482388bcc35b838582c50a"
+  integrity sha512-tE+cH1AM8/IoWeA3gwq0DalsXVzqjH1uVL390xyjTvrmAtiNXfPxR8PSQDZQ+z6vTreJToLih2Hc9ajHC99JZA==
+
 lower-case@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/lower-case/-/lower-case-2.0.2.tgz#6fa237c63dbdc4a82ca0fd882e4722dc5e634e28"
