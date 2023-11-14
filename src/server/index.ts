@@ -11,16 +11,14 @@ import type {MyCtx} from './services/types';
 
 const uws = App({});
 const codecs = new Codecs(new Writer());
-const caller = createCaller();
 const services = new Services();
+const caller = createCaller(services);
 const app = new RpcApp<MyCtx>({
   uws,
   caller: caller as RpcCaller<MyCtx>,
   codecs,
   maxRequestBodySize: 1024 * 1024,
-  augmentContext: (ctx) => {
-    ctx.meta.services = services;
-  },
+  augmentContext: (ctx) => ctx,
 });
 
 app.enableCors();
