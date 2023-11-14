@@ -4,9 +4,9 @@ import {App} from 'uWebSockets.js';
 import {RpcApp} from '../reactive-rpc/server/uws/RpcApp';
 import {Codecs} from '../json-pack/codecs/Codecs';
 import {Writer} from '../util/buffers/Writer';
-import {createCaller} from './caller';
+import {createCaller} from './routes';
 import type {RpcCaller} from '../reactive-rpc/common/rpc/caller/RpcCaller';
-import type {MyCtx} from './context/types';
+import type {MyCtx} from './services/types';
 
 const uws = App({});
 const codecs = new Codecs(new Writer());
