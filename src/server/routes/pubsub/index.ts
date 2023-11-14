@@ -1,4 +1,4 @@
-import {RoutesBase, TypeRouter} from "../../../json-type/system/TypeRouter";
+import {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import {publish} from './publish';
 import {subscribe} from './subscribe';
 

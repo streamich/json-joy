@@ -1,5 +1,5 @@
-import type {RoutesBase, TypeRouter} from "../../../json-type/system/TypeRouter";
-import type {MyCtx} from "../../services/types";
+import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
+import type {MyCtx} from '../../services/types';
 
 export const ping = <R extends RoutesBase>(router: TypeRouter<R>) => {
   const t = router.t;

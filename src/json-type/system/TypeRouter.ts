@@ -45,7 +45,10 @@ export class TypeRouter<Routes extends RoutesBase> {
     return this.merge(router);
   }
 
-  public route<K extends string, R extends classes.FunctionType<any, any>>(name: K, type: R): TypeRouter<Routes & {[KK in K]: R}> {
+  public route<K extends string, R extends classes.FunctionType<any, any>>(
+    name: K,
+    type: R,
+  ): TypeRouter<Routes & {[KK in K]: R}> {
     this.routes[name] = <any>type;
     return <any>this;
   }

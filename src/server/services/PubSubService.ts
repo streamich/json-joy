@@ -1,4 +1,4 @@
-import {Observable, Observer} from "rxjs";
+import {Observable, Observer} from 'rxjs';
 
 export class PubsubService {
   private readonly observers = new Map<string, Observer<unknown>[]>();
