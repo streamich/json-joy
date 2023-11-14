@@ -1,4 +1,4 @@
-import {setup} from "./setup";
+import {setup} from './setup';
 
 describe('util', () => {
   describe('ping', () => {

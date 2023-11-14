@@ -1,4 +1,4 @@
-import {createCaller} from "../routes";
+import {createCaller} from '../routes';
 
 export const setup = () => {
   const caller = createCaller();
