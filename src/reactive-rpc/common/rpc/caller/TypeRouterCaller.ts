@@ -6,6 +6,7 @@ import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/Str
 import type {Schema, SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
 import type {TypeRouter} from '../../../../json-type/system/TypeRouter';
 import type {Value} from '../../messages/Value';
+import type {Observable} from 'rxjs';
 
 export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown>
   extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
@@ -71,6 +72,14 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     ctx: Ctx,
   ): Promise<Value<MethodRes<Routes<Router>[K]>>> {
     return super.call(id as string, request, ctx) as any;
+  }
+
+  public call$<K extends keyof Routes<Router>>(
+    id: K,
+    request: Observable<MethodReq<Routes<Router>[K]>>,
+    ctx: Ctx,
+  ): Observable<Value<MethodRes<Routes<Router>[K]>>> {
+    return super.call$(id as string, request, ctx) as any;
   }
 }
 

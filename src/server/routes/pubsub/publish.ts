@@ -16,5 +16,5 @@ export const publish =
       return {};
     });
 
-    return router.route('pubsub.publish', func);
+    return router.fn('pubsub.publish', func);
   };

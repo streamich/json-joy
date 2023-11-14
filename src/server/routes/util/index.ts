@@ -11,7 +11,7 @@ export const ping =
     const func = t.Function(req, res).implement<MyCtx>(async () => {
       return 'pong';
     });
-    return router.route('util.ping', func);
+    return router.fn('util.ping', func);
   };
 
 export const echo =
@@ -21,7 +21,7 @@ export const echo =
     const req = t.any;
     const res = t.any;
     const func = t.Function(req, res).implement<MyCtx>(async (msg) => msg);
-    return router.route('util.echo', func);
+    return router.fn('util.echo', func);
   };
 
 // prettier-ignore
