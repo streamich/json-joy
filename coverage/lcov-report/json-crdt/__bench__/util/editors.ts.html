@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30.84% </span>
+                <span class="strong">29.91% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/107</span>
+                <span class='fraction'>35/117</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.12% </span>
+                <span class="strong">11.11% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/66</span>
+                <span class='fraction'>8/72</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">31.13% </span>
+                <span class="strong">30.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>33/106</span>
+                <span class='fraction'>35/116</span>
             </div>
         
             
@@ -281,7 +281,29 @@
 <a name='L216'></a><a href='#L216'>216</a>
 <a name='L217'></a><a href='#L217'>217</a>
 <a name='L218'></a><a href='#L218'>218</a>
-<a name='L219'></a><a href='#L219'>219</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -487,6 +509,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -507,6 +549,7 @@ import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
 import {CRuntime, CText} from '@collabs/collabs';
+import {Loro} from 'loro-crdt';
 import type {SequentialTraceEditor} from './types';
 const Rope = require('rope.js');
 &nbsp;
@@ -704,6 +747,25 @@ const editorRopeJs: SequentialTraceEditor = {
   },
 };
 &nbsp;
+const editorLoro: SequentialTraceEditor = {
+  name: 'loro',
+  factory: <span class="fstat-no" title="function not covered" >() =</span>&gt; {
+    const doc = <span class="cstat-no" title="statement not covered" >new Loro();</span>
+    const text = <span class="cstat-no" title="statement not covered" >doc.getText('text');</span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      ins: <span class="fstat-no" title="function not covered" >(p</span>os: number, insert: string) =&gt; {
+<span class="cstat-no" title="statement not covered" >        text.insert(pos, insert);</span>
+      },
+      del: <span class="fstat-no" title="function not covered" >(p</span>os: number, len: number) =&gt; {
+<span class="cstat-no" title="statement not covered" >        text.delete(pos, len);</span>
+      },
+      get: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >text.toString(),</span>
+      len: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >text.toString().length,</span>
+      chunks: <span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >0,</span>
+    };
+  },
+};
+&nbsp;
 export const editors = {
   'StrNode (json-joy)': editorStrNode,
   'json-joy': editorJsonJoy,
@@ -714,6 +776,7 @@ export const editors = {
   'diamond-types-node': editorDiamondTypesNode,
   'V8 strings': editorV8Strings,
   'rope.js': editorRopeJs,
+  loro: editorLoro,
 };
 &nbsp;
 export type SequentialEditorName = keyof typeof editors;
@@ -724,7 +787,7 @@ export type SequentialEditorName = keyof typeof editors;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-13T18:29:27.292Z
+                at 2023-11-14T00:39:08.961Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
