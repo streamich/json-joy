@@ -1,3 +1,4 @@
+/* tslint:disable no-console */
 // Run: npx ts-node src/json-crdt/__tests__/fuzzer/generate-trace.ts
 
 import {Patch} from '../../../json-crdt-patch';
