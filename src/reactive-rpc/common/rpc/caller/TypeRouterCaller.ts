@@ -5,6 +5,7 @@ import {StaticRpcMethod, type StaticRpcMethodOptions} from '../methods/StaticRpc
 import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/StreamingRpcMethod';
 import type {Schema, SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
 import type {TypeRouter} from '../../../../json-type/system/TypeRouter';
+import type {Value} from '../../messages/Value';
 
 export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown>
   extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
@@ -68,7 +69,7 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     id: K,
     request: MethodReq<Routes<Router>[K]>,
     ctx: Ctx,
-  ): Promise<MethodRes<Routes<Router>[K]>> {
+  ): Promise<Value<MethodRes<Routes<Router>[K]>>> {
     return super.call(id as string, request, ctx) as any;
   }
 }

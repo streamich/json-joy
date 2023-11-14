@@ -3,7 +3,6 @@ import {TypeRouter} from '../../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {Services} from '../services/Services';
 import {routes} from './routes';
-import type {MyCtx} from '../services/types';
 import type {RouteDeps} from './types';
 
 export const createRouter = () => {
@@ -17,6 +16,6 @@ export const createRouter = () => {
 
 export const createCaller = () => {
   const router = createRouter();
-  const caller = new TypeRouterCaller<typeof router, MyCtx>({router});
+  const caller = new TypeRouterCaller<typeof router>({router});
   return caller;
 };
