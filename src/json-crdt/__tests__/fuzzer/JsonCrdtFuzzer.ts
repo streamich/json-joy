@@ -5,6 +5,7 @@ import {FuzzerOptions} from './types';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {generateInteger} from './util';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Patch} from '../../../json-crdt-patch';
 
 export const defaultFuzzerOptions: FuzzerOptions = {
   startingValue: undefined,
@@ -18,12 +19,14 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   concurrentPeers: [1, 6],
   patchesPerPeer: [0, 12],
   testCodecs: true,
+  collectPatches: false,
 };
 
 export class JsonCrdtFuzzer {
   public opts: FuzzerOptions;
   public model: Model;
   public picker: Picker;
+  public patches: Patch[] = [];
 
   constructor(opts: Partial<FuzzerOptions> = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
@@ -39,6 +42,7 @@ export class JsonCrdtFuzzer {
     const builder = new PatchBuilder(this.model.clock);
     builder.root(builder.json(json));
     const patch = builder.flush();
+    this.patches.push(patch);
     this.model.applyPatch(patch);
   }
 
@@ -47,6 +51,7 @@ export class JsonCrdtFuzzer {
     const session = new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
+    if (this.opts.collectPatches) for (const patches of session.patches) this.patches.push(...patches);
     return session;
   }
 }

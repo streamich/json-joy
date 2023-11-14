@@ -34,4 +34,7 @@ export interface FuzzerOptions {
 
   /** Do not generate "__proto__" as a string, so it does not appear as object key. */
   noProtoString?: boolean;
+
+  /** Whether to collect all generated patches. */
+  collectPatches?: boolean;
 }
