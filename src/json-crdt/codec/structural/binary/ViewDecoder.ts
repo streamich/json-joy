@@ -88,18 +88,11 @@ export class ViewDecoder extends CborDecoderBase<CrdtReader> {
   }
 
   protected cStr(length: number): string {
-    const reader = this.reader;
     let str = '';
     for (let i = 0; i < length; i++) {
       this.ts();
-      const isTombstone = reader.uint8[reader.x] === 0;
-      if (isTombstone) {
-        reader.x++;
-        reader.vu57Skip();
-        continue;
-      }
-      const text: string = this.val() as string;
-      str += text;
+      const val = this.val();
+      if (typeof val === 'string') str += val;
     }
     return str;
   }

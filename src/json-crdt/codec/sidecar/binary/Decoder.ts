@@ -6,6 +6,7 @@ import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import * as nodes from '../../../nodes';
 import {CRDT_MAJOR} from '../../structural/binary/constants';
 import {sort} from '../../../../util/sort/insertion';
+import {SESSION} from '../../../../json-crdt-patch/constants';
 
 export class Decoder {
   protected doc!: Model;
@@ -63,7 +64,7 @@ export class Decoder {
     const length = minor < 24 ? minor : minor === 24 ? reader.u8() : minor === 25 ? reader.u16() : reader.u32();
     switch (major) {
       case CRDT_MAJOR.CON:
-        return this.cCon(view, id);
+        return this.cCon(view, id, length);
       case CRDT_MAJOR.VAL:
         return this.cVal(view, id);
       case CRDT_MAJOR.OBJ:
@@ -80,9 +81,9 @@ export class Decoder {
     throw new Error('UNKNOWN_NODE');
   }
 
-  protected cCon(view: unknown, id: ITimestampStruct): nodes.ConNode {
+  protected cCon(view: unknown, id: ITimestampStruct, length: number): nodes.ConNode {
     const doc = this.doc;
-    const node = new nodes.ConNode(id, view);
+    const node = new nodes.ConNode(id, length ? this.ts() : view);
     doc.index.set(id, node);
     return node;
   }
@@ -116,11 +117,10 @@ export class Decoder {
     const elements = obj.elements;
     const reader = this.decoder.reader;
     for (let i = 0; i < length; i++) {
-      const octet = reader.peak();
-      if (octet === 0xff) {
-        reader.x++;
-        elements.push(undefined);
-      } else elements.push(this.cNode(view[i]).id);
+      const child = this.cNode(view[i]);
+      const childId = child.id;
+      if (childId.sid === SESSION.SYSTEM) elements.push(undefined);
+      else elements.push(childId);
     }
     this.doc.index.set(id, obj);
     return obj;
@@ -133,8 +133,8 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.StrChunk => {
       const id = this.ts();
-      const span = reader.vu57();
-      if (!span) return new nodes.StrChunk(id, length, '');
+      const [deleted, span] = reader.b1vu56();
+      if (deleted) return new nodes.StrChunk(id, span, '');
       const text = view.slice(offset, offset + span);
       offset += span;
       return new nodes.StrChunk(id, text.length, text);
@@ -150,8 +150,8 @@ export class Decoder {
     let offset = 0;
     node.ingest(length, (): nodes.BinChunk => {
       const id = this.ts();
-      const span = reader.vu57();
-      if (!span) return new nodes.BinChunk(id, length, undefined);
+      const [deleted, span] = reader.b1vu56();
+      if (deleted) return new nodes.BinChunk(id, span, undefined);
       const slice = view.slice(offset, offset + span);
       offset += span;
       return new nodes.BinChunk(id, slice.length, slice);

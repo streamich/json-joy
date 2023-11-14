@@ -145,15 +145,12 @@ export class Encoder extends CborEncoder<CrdtWriter> {
 
   protected cStr(node: nodes.StrNode): void {
     const ts = this.ts;
-    const writer = this.writer;
     ts(node.id);
     this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      if (chunk.del) {
-        writer.u8(0);
-        writer.vu57(chunk.span);
-      } else this.writeStr(chunk.data!);
+      if (chunk.del) this.writeUInteger(chunk.span);
+      else this.writeStr(chunk.data!);
     }
   }
 
@@ -166,7 +163,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
       ts(chunk.id);
       const length = chunk.span;
       const deleted = chunk.del;
-      writer.b1vu56(~~chunk.del as 0 | 1, length);
+      writer.b1vu56(~~deleted as 0 | 1, length);
       if (deleted) continue;
       writer.buf(chunk.data!, length);
     }

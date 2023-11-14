@@ -31,4 +31,7 @@ export interface FuzzerOptions {
 
   /** Whether to serialize/deserialize models and patches. */
   testCodecs: boolean;
+
+  /** Do not generate "__proto__" as a string, so it does not appear as object key. */
+  noProtoString?: boolean;
 }

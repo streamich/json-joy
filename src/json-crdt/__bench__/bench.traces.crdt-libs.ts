@@ -22,6 +22,7 @@ runTraceMatrix({
     // 'Y.rs',
     // 'Automerge',
     // 'collabs',
+    // 'loro',
   ],
   iterationsPerEditor: 50,
 });

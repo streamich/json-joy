@@ -71,7 +71,9 @@ export class Picker {
   public generateObjectKey(): string {
     const useCommonKey = Math.random() < 0.25;
     if (useCommonKey) {
-      return Fuzzer.pick(commonKeys);
+      const str = Fuzzer.pick(commonKeys);
+      if (this.opts.noProtoString && str === '__proto__') return this.generateObjectKey();
+      return str;
     } else {
       const length = Math.floor(Math.random() * 20) + 1;
       return RandomJson.genString(length);

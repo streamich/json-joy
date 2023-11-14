@@ -3,6 +3,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {compare, equal, Timestamp, ClockVector} from '../../../../../json-crdt-patch/clock';
 import {konst} from '../../../../../json-crdt-patch/builder/Konst';
+import {s} from '../../../../../json-crdt-patch';
 
 const encoder = new Encoder();
 const decoder = new Decoder();
@@ -116,4 +117,14 @@ test('can encode ID as const value', () => {
   const ts = (view as any).foo as Timestamp;
   expect(ts).toBeInstanceOf(Timestamp);
   expect(equal(ts, new Timestamp(model.clock.sid, 2))).toBe(true);
+});
+
+test('can encode timestamp in "con" node', () => {
+  const model = Model.withLogicalClock();
+  model.api.root(s.con(new Timestamp(666, 1)));
+  const encoded = encoder.encode(model);
+  const decoded = decoder.decode(encoded);
+  expect(model.view()).toEqual(decoded.view());
+  expect(decoded.clock.sid).toBe(model.clock.sid);
+  expect(decoded.clock.time).toBe(model.clock.time);
 });

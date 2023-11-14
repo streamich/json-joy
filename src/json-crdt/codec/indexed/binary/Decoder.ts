@@ -133,14 +133,9 @@ export class Decoder {
     const decoder = this.dec;
     const reader = decoder.reader;
     const id = this.ts();
-    const isTombstone = reader.uint8[reader.x] === 0;
-    if (isTombstone) {
-      reader.x++;
-      const length = reader.vu57();
-      return new nodes.StrChunk(id, length, '');
-    }
-    const text: string = decoder.readAsStr() as string;
-    return new nodes.StrChunk(id, text.length, text);
+    const val = decoder.val();
+    if (typeof val === 'string') return new nodes.StrChunk(id, val.length, val);
+    return new nodes.StrChunk(id, ~~(<number>val), '');
   };
 
   protected decodeBin(id: ITimestampStruct, length: number): nodes.BinNode {
@@ -154,7 +149,7 @@ export class Decoder {
     const reader = this.dec.reader;
     const [deleted, length] = reader.b1vu56();
     if (deleted) return new nodes.BinChunk(id, length, undefined);
-    else return new nodes.BinChunk(id, length, reader.buf(length));
+    return new nodes.BinChunk(id, length, reader.buf(length));
   };
 
   protected decodeArr(id: ITimestampStruct, length: number): nodes.ArrNode {

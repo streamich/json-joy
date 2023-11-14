@@ -6,6 +6,7 @@ import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
 import {sort} from '../../../../util/sort/insertion';
+import {UNDEFINED} from '../../../model/Model';
 import type {Model} from '../../../model';
 
 export class Encoder {
@@ -86,18 +87,20 @@ export class Encoder {
   protected cCon(node: nodes.ConNode): void {
     const val = node.val;
     this.ts(node.id);
+    const metaEncoder = this.metaEncoder;
     if (val instanceof Timestamp) {
       this.viewEncoder.writeNull();
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      metaEncoder.writer.u8(1); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 1);
+      this.ts(val);
     } else {
       this.viewEncoder.writeAny(val);
-      this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
+      metaEncoder.writer.u8(0); // this.writeTL(CRDT_MAJOR_OVERLAY.CON, 0);
     }
   }
 
   protected cVal(node: nodes.ValNode): void {
     this.ts(node.id);
-    this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
+    this.metaEncoder.writer.u8(0b00100000); // this.writeTL(CRDT_MAJOR_OVERLAY.VAL, 0);
     this.cNode(node.node());
   }
 
@@ -124,7 +127,7 @@ export class Encoder {
     const index = this.doc.index;
     for (let i = 0; i < length; i++) {
       const elementId = elements[i];
-      if (!elementId) this.metaEncoder.writer.u8(0xff);
+      if (!elementId) this.cCon(UNDEFINED);
       else this.cNode(index.get(elementId)!);
     }
   }
@@ -137,7 +140,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu57(chunk.span);
+      writer.b1vu56(~~chunk.del as 0 | 1, chunk.span);
     }
   }
 
@@ -149,7 +152,7 @@ export class Encoder {
     const writer = this.metaEncoder.writer;
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      writer.vu57(chunk.span);
+      writer.b1vu56(~~chunk.del as 0 | 1, chunk.span);
     }
   }
 
@@ -165,7 +168,7 @@ export class Encoder {
       const deleted = chunk.del;
       const span = chunk.span;
       writer.b1vu56(~~deleted as 0 | 1, span);
-      if (span) {
+      if (!deleted) {
         const elements = chunk.data!;
         const elementsLength = elements.length;
         for (let i = 0; i < elementsLength; i++) this.cNode(index.get(elements[i])!);

@@ -149,16 +149,10 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
   }
 
   private cStrChunk = (): nodes.StrChunk => {
-    const reader = this.reader;
     const id = this.ts();
-    const isTombstone = reader.uint8[reader.x] === 0;
-    if (isTombstone) {
-      reader.x++;
-      const length = reader.vu57();
-      return new nodes.StrChunk(id, length, '');
-    }
-    const text: string = this.readAsStr() as string;
-    return new nodes.StrChunk(id, text.length, text);
+    const val = this.val();
+    if (typeof val === 'string') return new nodes.StrChunk(id, val.length, val);
+    return new nodes.StrChunk(id, ~~(<number>val), '');
   };
 
   protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {
@@ -173,7 +167,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const reader = this.reader;
     const [deleted, length] = reader.b1vu56();
     if (deleted) return new nodes.BinChunk(id, length, undefined);
-    else return new nodes.BinChunk(id, length, reader.buf(length));
+    return new nodes.BinChunk(id, length, reader.buf(length));
   };
 
   protected cArr(id: ITimestampStruct, length: number): nodes.ArrNode {

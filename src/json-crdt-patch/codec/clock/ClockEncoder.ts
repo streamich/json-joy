@@ -1,4 +1,4 @@
-import {ITimestampStruct, IClockVector, tick} from '../../clock';
+import {ITimestampStruct, IClockVector, tick, Timestamp} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 class ClockTableEntry {
@@ -24,12 +24,14 @@ export class ClockEncoder {
     const sid = ts.sid;
     let entry = this.table.get(sid);
     if (!entry) {
-      const clock = this.clock!.peers.get(sid)!;
+      let clock = this.clock!.peers.get(sid);
+      if (!clock) clock = new Timestamp(sid, this.clock!.time - 1);
       entry = new ClockTableEntry(this.index++, clock);
       this.table.set(sid, entry);
     }
     const clock = entry.clock;
     const timeDiff = clock.time - time;
+    if (timeDiff < 0) throw new Error('TIME_TRAVEL');
     return new RelativeTimestamp(entry.index, timeDiff);
   }
 
