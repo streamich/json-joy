@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>24/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/21</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
@@ -115,26 +115,18 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
@@ -143,6 +135,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">90x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">90x</span>
 <span class="cline-any cline-yes">90x</span>
 <span class="cline-any cline-yes">90x</span>
@@ -157,9 +165,11 @@
 <span class="cline-any cline-yes">90x</span>
 <span class="cline-any cline-yes">90x</span>
 <span class="cline-any cline-yes">90x</span>
+<span class="cline-any cline-yes">90x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1000x</span>
 <span class="cline-any cline-yes">1000x</span>
 <span class="cline-any cline-yes">1000x</span>
 <span class="cline-any cline-yes">1000x</span>
@@ -174,6 +184,7 @@ import {FuzzerOptions} from './types';
 import {RandomJson} from '../../../json-random/RandomJson';
 import {generateInteger} from './util';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
+import {Patch} from '../../../json-crdt-patch';
 &nbsp;
 export const defaultFuzzerOptions: FuzzerOptions = {
   startingValue: undefined,
@@ -187,12 +198,14 @@ export const defaultFuzzerOptions: FuzzerOptions = {
   concurrentPeers: [1, 6],
   patchesPerPeer: [0, 12],
   testCodecs: true,
+  collectPatches: false,
 };
 &nbsp;
 export class JsonCrdtFuzzer {
   public opts: FuzzerOptions;
   public model: Model;
   public picker: Picker;
+  public patches: Patch[] = [];
 &nbsp;
   constructor(opts: Partial&lt;FuzzerOptions&gt; = {}) {
     this.opts = {...defaultFuzzerOptions, ...opts};
@@ -208,6 +221,7 @@ export class JsonCrdtFuzzer {
     const builder = new PatchBuilder(this.model.clock);
     builder.root(builder.json(json));
     const patch = builder.flush();
+    this.patches.push(patch);
     this.model.applyPatch(patch);
   }
 &nbsp;
@@ -216,6 +230,7 @@ export class JsonCrdtFuzzer {
     const session = new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (this.opts.collectPatches) <span class="cstat-no" title="statement not covered" >for (const patches of session.patches) <span class="cstat-no" title="statement not covered" >this.patches.push(...patches);</span></span>
     return session;
   }
 }
@@ -226,7 +241,7 @@ export class JsonCrdtFuzzer {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-14T09:34:41.248Z
+                at 2023-11-14T11:26:32.231Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.04% </span>
+                <span class="strong">70.23% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>58/84</span>
+                <span class='fraction'>59/84</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.53% </span>
+                <span class="strong">69.23% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/13</span>
+                <span class='fraction'>9/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">81.53% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>52/65</span>
+                <span class='fraction'>53/65</span>
             </div>
         
             
@@ -336,30 +336,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">39259x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">45348x</span>
+<span class="cline-any cline-yes">83698x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">45348x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24441x</span>
-<span class="cline-any cline-yes">24441x</span>
-<span class="cline-any cline-yes">24441x</span>
+<span class="cline-any cline-yes">83698x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -368,21 +357,32 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13661x</span>
-<span class="cline-any cline-yes">21095x</span>
-<span class="cline-any cline-yes">13661x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23854x</span>
+<span class="cline-any cline-yes">23854x</span>
+<span class="cline-any cline-yes">23854x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1787618x</span>
-<span class="cline-any cline-yes">1787618x</span>
-<span class="cline-any cline-yes">1787618x</span>
-<span class="cline-any cline-yes">1742398x</span>
-<span class="cline-any cline-yes">1742398x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13270x</span>
+<span class="cline-any cline-yes">19578x</span>
+<span class="cline-any cline-yes">13270x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1857025x</span>
+<span class="cline-any cline-yes">1857025x</span>
+<span class="cline-any cline-yes">1857025x</span>
+<span class="cline-any cline-yes">1773455x</span>
+<span class="cline-any cline-yes">1773455x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -550,8 +550,8 @@ export class Patch implements Printable {
   /**
    * Un-marshals a JSON CRDT patch from a binary representation.
    */
-  public <span class="fstat-no" title="function not covered" >static </span>fromBinary(data: Uint8Array): Patch {
-<span class="cstat-no" title="statement not covered" >    return decode(data);</span>
+  public static fromBinary(data: Uint8Array): Patch {
+    return decode(data);
   }
 &nbsp;
   /**
@@ -715,7 +715,7 @@ export class Patch implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-14T09:34:41.248Z
+                at 2023-11-14T11:26:32.231Z
             </div>
         <script src="../prettify.js"></script>
         <script>

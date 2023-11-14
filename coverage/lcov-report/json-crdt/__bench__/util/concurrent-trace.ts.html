@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/20</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/18</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,18 +90,18 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3728x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as path from 'path';
 import * as fs from 'fs';
@@ -109,19 +109,19 @@ import {Patch} from '../../../json-crdt-patch';
 import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
 import {JsonDecoder} from '../../../json-pack/json/JsonDecoder';
 &nbsp;
-export const loadConcurrentTrace = <span class="fstat-no" title="function not covered" >(t</span>raceName: string): [batch: Patch[], view: unknown] =&gt; {
-  const root = <span class="cstat-no" title="statement not covered" >path.resolve(__dirname, '..', '..', '..', '..');</span>
-  const dir = <span class="cstat-no" title="statement not covered" >path.join(root, 'node_modules', 'json-crdt-traces', 'traces', 'text', 'concurrent', traceName);</span>
-  const patchFile = <span class="cstat-no" title="statement not covered" >path.join(dir, 'patches.bin');</span>
-  const viewFile = <span class="cstat-no" title="statement not covered" >path.join(dir, 'view.json');</span>
-  const buf = <span class="cstat-no" title="statement not covered" >fs.readFileSync(patchFile);</span>
-  const viewBuf = <span class="cstat-no" title="statement not covered" >fs.readFileSync(viewFile);</span>
-  const cborDecoder = <span class="cstat-no" title="statement not covered" >new CborDecoder();</span>
-  const jsonDecoder = <span class="cstat-no" title="statement not covered" >new JsonDecoder();</span>
-  const data = <span class="cstat-no" title="statement not covered" >cborDecoder.read(buf) as Uint8Array[];</span>
-  const view = <span class="cstat-no" title="statement not covered" >jsonDecoder.read(viewBuf);</span>
-  const batch = <span class="cstat-no" title="statement not covered" >data.map(<span class="fstat-no" title="function not covered" >(b</span>lob) =&gt; <span class="cstat-no" title="statement not covered" >Patch.fromBinary(blob))</span>;</span>
-<span class="cstat-no" title="statement not covered" >  return [batch, view];</span>
+export const loadConcurrentTrace = (traceName: string): [batch: Patch[], view: unknown] =&gt; {
+  const root = path.resolve(__dirname, '..', '..', '..', '..');
+  const dir = path.join(root, 'node_modules', 'json-crdt-traces', 'traces', 'text', 'concurrent', traceName);
+  const patchFile = path.join(dir, 'patches.bin');
+  const viewFile = path.join(dir, 'view.json');
+  const buf = fs.readFileSync(patchFile);
+  const viewBuf = fs.readFileSync(viewFile);
+  const cborDecoder = new CborDecoder();
+  const jsonDecoder = new JsonDecoder();
+  const data = cborDecoder.read(buf) as Uint8Array[];
+  const view = jsonDecoder.read(viewBuf);
+  const batch = data.map((blob) =&gt; Patch.fromBinary(blob));
+  return [batch, view];
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -130,7 +130,7 @@ export const loadConcurrentTrace = <span class="fstat-no" title="function not co
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-14T09:34:41.248Z
+                at 2023-11-14T11:26:32.231Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
