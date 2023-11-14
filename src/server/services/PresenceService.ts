@@ -28,9 +28,9 @@ export class PresenceService {
     return entry;
   }
 
-  public async listen$(roomId: string): Promise<Observable<TPresenceEntry[]>> {
-    this.cleanUpRoom(roomId);
+  public listen$(roomId: string): Observable<TPresenceEntry[]> {
     return new Observable<TPresenceEntry[]>((observer) => {
+      this.cleanUpRoom(roomId);
       if (!this.observers.has(roomId)) this.observers.set(roomId, []);
       this.observers.get(roomId)!.push(observer);
       return () => {

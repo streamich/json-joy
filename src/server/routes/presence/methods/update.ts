@@ -1,7 +1,10 @@
-import type {ResolveType} from '../../../json-type';
-import type {PresenceEntry} from './schema';
-import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../types';
+import type {ResolveType} from '../../../../json-type';
+import type {PresenceEntry} from '../schema';
+import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
+import type {RouteDeps} from '../../types';
+
+/** Entry TLL in seconds. */
+const ttl = 30;
 
 export const update =
   ({services}: RouteDeps) =>
@@ -52,14 +55,14 @@ export const update =
 
     const Func = t.Function(Request, Response)
       .options({
-        title: 'Publish to channel',
-        intro: 'Publish a message to a channel.',
-        description: 'This method publishes a message to a global channel with the given `channel` name. ' +
-          'All subscribers to the channel will receive the message. The `message` can be any value. ' +
-          'The most efficient way to publish a message is to send a primitive or a `Uint8Array` buffer.',
+        title: 'Update presence entry',
+        intro: 'Update a presence entry in a room.',
+        description: 'This method updates a presence entry in a room. ' +
+          `The entry is automatically removed after ${ttl} seconds. ` +
+          `Every time the entry is updated, the TTL is reset to ${ttl} seconds.`,
       })
       .implement(async ({room, id, data}) => {
-        const entry = await services.presence.update(room, id, 30_000, data) as ResolveType<typeof PresenceEntry>;
+        const entry = await services.presence.update(room, id, ttl * 1000, data) as ResolveType<typeof PresenceEntry>;
         return {
           entry,
           time: Date.now(),
