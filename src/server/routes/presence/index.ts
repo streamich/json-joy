@@ -12,8 +12,8 @@ export const presence =
 
     // prettier-ignore
     return (
-    ( update(d)
-    ( remove(d)
-    ( listen(d)
-    ( r )))));
+      ( update(d)
+      ( remove(d)
+      ( listen(d)
+      ( r )))));
   };
