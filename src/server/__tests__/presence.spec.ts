@@ -9,13 +9,17 @@ describe('presence', () => {
     caller.call$('presence.listen', of({room: 'my-room'}), {}).subscribe((res) => {
       emits.push(res.data);
     });
-    await caller.call('presence.update', {
-      room: 'my-room',
-      id: 'user-1',
-      data: {
-        hello: 'world'
+    await caller.call(
+      'presence.update',
+      {
+        room: 'my-room',
+        id: 'user-1',
+        data: {
+          hello: 'world',
+        },
       },
-    }, {});
+      {},
+    );
     await until(() => emits.length === 1);
     expect(emits[0]).toMatchObject({
       time: expect.any(Number),
@@ -25,7 +29,7 @@ describe('presence', () => {
           lastSeen: expect.any(Number),
           validUntil: expect.any(Number),
           data: {
-            hello: 'world'
+            hello: 'world',
           },
         },
       ],
@@ -38,13 +42,17 @@ describe('presence', () => {
     caller.call$('presence.listen', of({room: 'my-room'}), {}).subscribe((res) => {
       emits.push(res.data);
     });
-    await caller.call('presence.update', {
-      room: 'my-room',
-      id: 'user-1',
-      data: {
-        hello: 'world'
+    await caller.call(
+      'presence.update',
+      {
+        room: 'my-room',
+        id: 'user-1',
+        data: {
+          hello: 'world',
+        },
       },
-    }, {});
+      {},
+    );
     await until(() => emits.length === 1);
     const emits2: any[] = [];
     caller.call$('presence.listen', of({room: 'my-room'}), {}).subscribe((res) => {
@@ -59,7 +67,7 @@ describe('presence', () => {
           lastSeen: expect.any(Number),
           validUntil: expect.any(Number),
           data: {
-            hello: 'world'
+            hello: 'world',
           },
         },
       ],

@@ -10,14 +10,14 @@ export const listen =
     const req = t.Object(
       t.prop('channel', t.str).options({
         title: 'Channel name',
-        description: 'The name of the channel to subscribe to.'
+        description: 'The name of the channel to subscribe to.',
       }),
     );
 
     const res = t.Object(
       t.prop('message', t.any).options({
         title: 'Subscription message',
-        description: 'A message received from the channel. Emitted every time a message is published to the channel.'
+        description: 'A message received from the channel. Emitted every time a message is published to the channel.',
       }),
     );
 
