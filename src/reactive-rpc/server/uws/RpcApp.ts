@@ -34,7 +34,7 @@ export interface RpcAppOptions {
   uws: TemplatedApp;
   maxRequestBodySize: number;
   codecs: Codecs;
-  caller: RpcCaller;
+  caller: RpcCaller<any>;
 }
 
 export class RpcApp<Ctx extends ConnectionContext> {

@@ -1,4 +1,5 @@
 import type {RoutesBase, TypeRouter} from "../../../json-type/system/TypeRouter";
+import type {MyCtx} from "../../context/types";
 
 export const publish = <R extends RoutesBase>(router: TypeRouter<R>) => {
   const t = router.t;
@@ -10,7 +11,7 @@ export const publish = <R extends RoutesBase>(router: TypeRouter<R>) => {
 
   const res = t.obj;
 
-  const func = t.Function(req, res).implement(async ({channel, data}) => {
+  const func = t.Function(req, res).implement<MyCtx>(async ({channel, data}) => {
     return {};
   });
 
