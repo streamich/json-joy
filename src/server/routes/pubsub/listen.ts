@@ -2,7 +2,7 @@ import {map, switchMap} from 'rxjs';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../types';
 
-export const subscribe =
+export const listen =
   ({services}: RouteDeps) =>
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
@@ -29,5 +29,5 @@ export const subscribe =
       return response;
     });
 
-    return router.fn$('pubsub.subscribe', func);
+    return router.fn$('pubsub.listen', func);
   };

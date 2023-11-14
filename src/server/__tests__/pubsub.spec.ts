@@ -6,7 +6,7 @@ describe('pubsub', () => {
   test('can subscribe and receive published messages', async () => {
     const {caller} = setup();
     const emits: any[] = [];
-    caller.call$('pubsub.subscribe', of({channel: 'my-channel'}), {}).subscribe((res) => {
+    caller.call$('pubsub.listen', of({channel: 'my-channel'}), {}).subscribe((res) => {
       emits.push(res.data.message);
     });
     await caller.call('pubsub.publish', {
@@ -20,7 +20,7 @@ describe('pubsub', () => {
   test('does not receive messages after un-subscription', async () => {
     const {caller} = setup();
     const emits: any[] = [];
-    const sub = caller.call$('pubsub.subscribe', of({channel: 'my-channel'}), {}).subscribe((res) => {
+    const sub = caller.call$('pubsub.listen', of({channel: 'my-channel'}), {}).subscribe((res) => {
       emits.push(res.data.message);
     });
     await caller.call('pubsub.publish', {
@@ -46,16 +46,16 @@ describe('pubsub', () => {
     const user1: any[] = [];
     const user2: any[] = [];
     const user3: any[] = [];
-    caller.call$('pubsub.subscribe', of({channel: 'channel-1'}), {}).subscribe((res) => {
+    caller.call$('pubsub.listen', of({channel: 'channel-1'}), {}).subscribe((res) => {
       user1.push(res.data.message);
     });
-    const sub2 = caller.call$('pubsub.subscribe', of({channel: 'channel-2'}), {}).subscribe((res) => {
+    const sub2 = caller.call$('pubsub.listen', of({channel: 'channel-2'}), {}).subscribe((res) => {
       user2.push(res.data.message);
     });
-    caller.call$('pubsub.subscribe', of({channel: 'channel-1'}), {}).subscribe((res) => {
+    caller.call$('pubsub.listen', of({channel: 'channel-1'}), {}).subscribe((res) => {
       user3.push(res.data.message);
     });
-    caller.call$('pubsub.subscribe', of({channel: 'channel-2'}), {}).subscribe((res) => {
+    caller.call$('pubsub.listen', of({channel: 'channel-2'}), {}).subscribe((res) => {
       user3.push(res.data.message);
     });
     await caller.call('pubsub.publish', {
