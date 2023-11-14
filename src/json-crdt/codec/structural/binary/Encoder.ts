@@ -149,7 +149,7 @@ export class Encoder extends CborEncoder<CrdtWriter> {
     this.writeTL(CRDT_MAJOR_OVERLAY.STR, node.count);
     for (let chunk = node.first(); chunk; chunk = node.next(chunk)) {
       ts(chunk.id);
-      if (chunk.del) this.writeNumber(chunk.span);
+      if (chunk.del) this.writeUInteger(chunk.span);
       else this.writeStr(chunk.data!);
     }
   }
