@@ -14,6 +14,7 @@ const app = new RpcApp({
   caller,
   codecs,
   maxRequestBodySize: 1024 * 1024,
+  augmentContext: ctx => ctx,
 });
 
 app.enableCors();
