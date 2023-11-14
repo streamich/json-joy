@@ -20,7 +20,7 @@ export const update =
         title: 'ID of the entry',
         description: 'The ID of the entry to update.'
       }),
-      t.prop('data', t.obj).options({
+      t.prop('data', t.any).options({
         title: 'Entry data',
         description: 'A map of key-value pairs to update. The object is merged with the existing entry data, if any.'
       })

@@ -7,11 +7,11 @@ export class PresenceService {
   private readonly rooms = new Map<string, PresenceRoom>();
   private readonly observers = new Map<string, Observer<TPresenceEntry[]>[]>();
 
-  public async update(roomId: string, entryId: string, ttl: number, data: Record<string, unknown>): Promise<TPresenceEntry> {
+  public async update(roomId: string, entryId: string, ttl: number, data: unknown): Promise<TPresenceEntry> {
     const now = Date.now();
     const room = this.getRoom(roomId);
     if (!data || typeof data !== 'object') throw new Error('ROOM_ENTRY_MUST_BE_OBJECT');
-    let entry: TPresenceEntry = room.get(entryId) ?? {
+    const entry: TPresenceEntry = room.get(entryId) ?? {
       id: entryId,
       lastSeen: now,
       validUntil: now + ttl,
@@ -33,6 +33,13 @@ export class PresenceService {
       this.cleanUpRoom(roomId);
       if (!this.observers.has(roomId)) this.observers.set(roomId, []);
       this.observers.get(roomId)!.push(observer);
+      const room = this.getRoom(roomId);
+      const entries: TPresenceEntry[] = [];
+      for (const entry of room.values()) {
+        entries.push(entry);
+        if (entries.length === 100) break;
+      }
+      if (entries.length) observer.next(entries);
       return () => {
         const observers: Observer<TPresenceEntry[]>[] = this.observers.get(roomId)!;
         if (!observers) {
