@@ -51,8 +51,7 @@ export class JsonCrdtFuzzer {
     const session = new SessionLogical(this, concurrency);
     session.generateEdits();
     session.synchronize();
-    if (this.opts.collectPatches)
-      for (const patches of session.patches) this.patches.push(...patches);
+    if (this.opts.collectPatches) for (const patches of session.patches) this.patches.push(...patches);
     return session;
   }
 }

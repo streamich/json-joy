@@ -31,7 +31,7 @@ for (const patch of fuzzer.patches) {
 const model = Model.withLogicalClock();
 model.applyBatch(patches);
 const cborEncoder = new CborEncoder(new Writer());
-fs.writeFileSync(__dirname + '/trace.cbor', cborEncoder.encode(patches.map(p => p.toBinary())));
+fs.writeFileSync(__dirname + '/trace.cbor', cborEncoder.encode(patches.map((p) => p.toBinary())));
 
 // console.log(Buffer.from(jsonEncoder.encode(encoded)).toString());
 console.log(model.view());
