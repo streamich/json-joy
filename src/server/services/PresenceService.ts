@@ -28,6 +28,20 @@ export class PresenceService {
     return entry;
   }
 
+  public async remove(roomId: string, entryId: string): Promise<void> {
+    const room = this.getRoom(roomId);
+    room.delete(entryId);
+    if (!room.size) this.rooms.delete(roomId);
+    await new Promise((resolve) => setImmediate(resolve));
+    const observers = this.observers.get(roomId);
+    if (observers) for (const observer of observers) observer.next([{
+      id: entryId,
+      lastSeen: Date.now(),
+      validUntil: 0,
+      data: {},
+    }]);
+  }
+
   public listen$(roomId: string): Observable<TPresenceEntry[]> {
     return new Observable<TPresenceEntry[]>((observer) => {
       this.cleanUpRoom(roomId);

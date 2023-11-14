@@ -31,7 +31,7 @@ export const listen =
         description:
           'This method subscribes to presence updates in a room. ' +
           'It returns an array of all current presence entries in the room, and then emits an update whenever ' +
-          'a presence entry is updated.',
+          'a presence entry is updated or deleted. '
       })
       .implement((req$) => {
         return req$.pipe(
