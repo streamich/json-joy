@@ -1,3 +1,4 @@
-import {ConnectionContext} from '../../reactive-rpc/server/context';
+import type {ConnectionContext} from '../../reactive-rpc/server/context';
+import type {Services} from './Services';
 
-export interface MyCtx extends ConnectionContext {}
+export type MyCtx = ConnectionContext<{services: Services}>;

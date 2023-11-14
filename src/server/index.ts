@@ -5,17 +5,22 @@ import {RpcApp} from '../reactive-rpc/server/uws/RpcApp';
 import {Codecs} from '../json-pack/codecs/Codecs';
 import {Writer} from '../util/buffers/Writer';
 import {createCaller} from './routes';
+import {Services} from './services/Services';
 import type {RpcCaller} from '../reactive-rpc/common/rpc/caller/RpcCaller';
 import type {MyCtx} from './services/types';
 
 const uws = App({});
 const codecs = new Codecs(new Writer());
 const caller = createCaller();
+const services = new Services();
 const app = new RpcApp<MyCtx>({
   uws,
   caller: caller as RpcCaller<MyCtx>,
   codecs,
   maxRequestBodySize: 1024 * 1024,
+  augmentContext: (ctx) => {
+    ctx.meta.services = services;
+  },
 });
 
 app.enableCors();

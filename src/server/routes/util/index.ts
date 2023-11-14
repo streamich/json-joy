@@ -1,7 +1,8 @@
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {MyCtx} from '../../services/types';
+import type {RouteDeps} from '../types';
 
-export const ping = <R extends RoutesBase>(router: TypeRouter<R>) => {
+export const ping = (deps: RouteDeps) => <R extends RoutesBase>(router: TypeRouter<R>) => {
   const t = router.t;
   const req = t.any;
   const res = t.Const(<const>'pong');
@@ -11,7 +12,7 @@ export const ping = <R extends RoutesBase>(router: TypeRouter<R>) => {
   return router.route('util.ping', func);
 };
 
-export const echo = <R extends RoutesBase>(router: TypeRouter<R>) => {
+export const echo = (deps: RouteDeps) => <R extends RoutesBase>(router: TypeRouter<R>) => {
   const t = router.t;
   const req = t.any;
   const res = t.any;
@@ -20,7 +21,7 @@ export const echo = <R extends RoutesBase>(router: TypeRouter<R>) => {
 };
 
 // prettier-ignore
-export const util = <R extends RoutesBase>(r: TypeRouter<R>) =>
-  ( ping
-  ( echo
+export const util = (deps: RouteDeps) => <R extends RoutesBase>(r: TypeRouter<R>) =>
+  ( ping(deps)
+  ( echo(deps)
   ( r )));

@@ -1,7 +1,8 @@
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {MyCtx} from '../../services/types';
+import type {RouteDeps} from '../types';
 
-export const subscribe = <R extends RoutesBase>(router: TypeRouter<R>) => {
+export const subscribe = ({services}: RouteDeps) => <R extends RoutesBase>(router: TypeRouter<R>) => {
   const t = router.t;
 
   const req = t.Object(t.prop('channel', t.str));
