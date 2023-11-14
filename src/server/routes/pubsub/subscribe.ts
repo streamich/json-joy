@@ -1,5 +1,5 @@
+import {map, switchMap} from 'rxjs';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
-import type {MyCtx} from '../../services/types';
 import type {RouteDeps} from '../types';
 
 export const subscribe =
@@ -7,15 +7,27 @@ export const subscribe =
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
 
-    const req = t.Object(t.prop('channel', t.str));
+    const req = t.Object(
+      t.prop('channel', t.str).options({
+        title: 'Channel name',
+        description: 'The name of the channel to subscribe to.'
+      }),
+    );
 
-    const res = t.Object(t.prop('data', t.any));
+    const res = t.Object(
+      t.prop('message', t.any).options({
+        title: 'Subscription message',
+        description: 'A message received from the channel. Emitted every time a message is published to the channel.'
+      }),
+    );
 
-    const func = t.Function(req, res).implement<MyCtx>(async ({channel}) => {
-      return {
-        data: {},
-      };
+    const func = t.Function$(req, res).implement((req) => {
+      const response = req.pipe(
+        switchMap((req) => services.pubsub.listen$(req.channel)),
+        map((message: any) => ({message})),
+      );
+      return response;
     });
 
-    return router.route('pubsub.subscribe', func);
+    return router.fn$('pubsub.subscribe', func);
   };
