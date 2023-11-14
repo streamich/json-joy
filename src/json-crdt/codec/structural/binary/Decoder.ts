@@ -152,7 +152,7 @@ export class Decoder extends CborDecoderBase<CrdtReader> {
     const id = this.ts();
     const val = this.val();
     if (typeof val === 'string') return new nodes.StrChunk(id, val.length, val);
-    return new nodes.StrChunk(id, ~~<number>val, '');
+    return new nodes.StrChunk(id, ~~(<number>val), '');
   };
 
   protected cBin(id: ITimestampStruct, length: number): nodes.BinNode {

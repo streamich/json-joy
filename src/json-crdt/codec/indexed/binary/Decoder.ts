@@ -135,7 +135,7 @@ export class Decoder {
     const id = this.ts();
     const val = decoder.val();
     if (typeof val === 'string') return new nodes.StrChunk(id, val.length, val);
-    return new nodes.StrChunk(id, ~~<number>val, '');
+    return new nodes.StrChunk(id, ~~(<number>val), '');
   };
 
   protected decodeBin(id: ITimestampStruct, length: number): nodes.BinNode {
