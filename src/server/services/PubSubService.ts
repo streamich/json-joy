@@ -21,6 +21,7 @@ export class PubsubService {
   }
 
   public async publish(channel: string, message: unknown): Promise<void> {
+    await new Promise((resolve) => setImmediate(resolve));
     const observers = this.observers.get(channel);
     if (!observers) return;
     for (const observer of observers) observer.next(message);
