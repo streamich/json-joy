@@ -34,12 +34,16 @@ export class PresenceService {
     if (!room.size) this.rooms.delete(roomId);
     await new Promise((resolve) => setImmediate(resolve));
     const observers = this.observers.get(roomId);
-    if (observers) for (const observer of observers) observer.next([{
-      id: entryId,
-      lastSeen: Date.now(),
-      validUntil: 0,
-      data: {},
-    }]);
+    if (observers)
+      for (const observer of observers)
+        observer.next([
+          {
+            id: entryId,
+            lastSeen: Date.now(),
+            validUntil: 0,
+            data: {},
+          },
+        ]);
   }
 
   public listen$(roomId: string): Observable<TPresenceEntry[]> {

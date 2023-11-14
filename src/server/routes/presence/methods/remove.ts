@@ -24,8 +24,7 @@ export const remove =
       .options({
         title: 'Remove a presence entry.',
         intro: 'Removes a presence entry from a room and notifies all listeners.',
-        description:
-          'This method removes a presence entry from a room and notifies all listeners. '
+        description: 'This method removes a presence entry from a room and notifies all listeners. ',
       })
       .implement(async ({room, id}) => {
         await services.presence.remove(room, id);
