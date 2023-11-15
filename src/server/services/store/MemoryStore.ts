@@ -1,6 +1,6 @@
-import {Model} from "../../../json-crdt";
-import {Patch} from "../../../json-crdt-patch";
-import type * as types from "./types";
+import {Model} from '../../../json-crdt';
+import {Patch} from '../../../json-crdt-patch';
+import type * as types from './types';
 
 export class MemoryStore implements types.Store {
   protected readonly blocks = new Map<string, types.StoreBlock>();

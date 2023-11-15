@@ -18,9 +18,7 @@ export const apply =
       }),
     );
 
-    const Response = t.Object(
-      t.prop('block', t.Ref<typeof StoreBlock>('StoreBlock')),
-    );
+    const Response = t.Object(t.prop('block', t.Ref<typeof StoreBlock>('StoreBlock')));
 
     const Func = t
       .Function(Request, Response)

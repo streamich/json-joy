@@ -7,7 +7,7 @@ export class Services {
   public readonly presence: PresenceService;
   public readonly store: StoreService;
 
-  constructor () {
+  constructor() {
     this.pubsub = new PubsubService();
     this.presence = new PresenceService();
     this.store = new StoreService(this);

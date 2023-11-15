@@ -10,8 +10,4 @@ export const StoreBlock = t.Object(
 );
 
 export type TStorePatch = ResolveType<typeof StorePatch>;
-export const StorePatch = t.Object(
-  t.prop('seq', t.num),
-  t.prop('created', t.num),
-  t.prop('blob', t.bin),
-);
+export const StorePatch = t.Object(t.prop('seq', t.num), t.prop('created', t.num), t.prop('blob', t.bin));
