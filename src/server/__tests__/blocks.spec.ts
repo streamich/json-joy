@@ -1,8 +1,10 @@
 import {Model} from '../../json-crdt';
+import {Value} from '../../reactive-rpc/common/messages/Value';
+import {RpcError, RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
 
-describe('blocks', () => {
-  describe('create', () => {
+describe('blocks.*', () => {
+  describe('blocks.create', () => {
     test('can create an empty block', async () => {
       const {caller} = setup();
       await caller.call('blocks.create', {id: 'my-block', patches: []}, {});
@@ -58,6 +60,25 @@ describe('blocks', () => {
         name: 'Super Woman',
         age: 26,
       });
+    });
+  });
+
+  describe('blocks.remove', () => {
+    test('can remove an existing block', async () => {
+      const {call} = setup();
+      await call('blocks.create', {id: 'my-block', patches: []});
+      const {block} = await call('blocks.get', {id: 'my-block'});
+      expect(block.id).toBe('my-block');
+      await call('blocks.remove', {id: 'my-block'});
+      try {
+        await call('blocks.get', {id: 'my-block'});
+        throw new Error('not this error');
+      } catch (err) {
+        if (!(err instanceof Value)) throw err;
+        const error = err.data;
+        if (!(error instanceof RpcError)) throw err;
+        expect(error.errno).toBe(RpcErrorCodes.NOT_FOUND);
+      }
     });
   });
 });

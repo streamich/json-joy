@@ -1,8 +1,8 @@
 import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../../types';
-import type {Block, BlockId} from '../schema';
+import type {BlockId} from '../schema';
 
-export const get =
+export const remove =
   ({services}: RouteDeps) =>
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
@@ -10,13 +10,11 @@ export const get =
     const Request = t.Object(
       t.prop('id', t.Ref<typeof BlockId>('BlockId')).options({
         title: 'Block ID',
-        description: 'The ID of the block to retrieve.',
+        description: 'The ID of the block to delete.',
       }),
     );
 
-    const Response = t.Object(
-      t.prop('block', t.Ref<typeof Block>('Block').options({})),
-    );
+    const Response = t.obj;
 
     const Func = t
       .Function(Request, Response)
@@ -26,11 +24,9 @@ export const get =
         description: 'Fetches a block by ID.',
       })
       .implement(async ({id}) => {
-        const {block} = await services.blocks.get(id);
-        return {
-          block: block,
-        };
+        await services.blocks.remove(id);
+        return {};
       });
 
-    return router.fn('blocks.get', Func);
+    return router.fn('blocks.remove', Func);
   };

@@ -1,6 +1,7 @@
 import {MemoryStore} from './MemoryStore';
 import {StorePatch} from './types';
 import type {Services} from '../Services';
+import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
 
 export class BlocksServices {
   protected readonly store = new MemoryStore();
@@ -16,9 +17,13 @@ export class BlocksServices {
   public async get(id: string) {
     const {store} = this;
     const result = await store.get(id);
-    if (!result) throw new Error('BLOCK_NOT_FOUND');
+    if (!result) throw RpcError.fromCode(RpcErrorCodes.NOT_FOUND);
     const {block} = result;
     return {block};
+  }
+
+  public async remove(id: string) {
+    await this.store.remove(id);
   }
 
   public async apply(id: string, patches: any[]) {
