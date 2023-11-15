@@ -44,7 +44,23 @@ export class TypeRouter<Routes extends RoutesBase> {
     const router = new TypeRouter({system: this.system, routes: routes(this)});
     return this.merge(router);
   }
+
+  public fn<K extends string, R extends classes.FunctionType<any, any>>(
+    name: K,
+    type: R,
+  ): TypeRouter<Routes & {[KK in K]: R}> {
+    this.routes[name] = <any>type;
+    return <any>this;
+  }
+
+  public fn$<K extends string, R extends classes.FunctionStreamingType<any, any>>(
+    name: K,
+    type: R,
+  ): TypeRouter<Routes & {[KK in K]: R}> {
+    this.routes[name] = <any>type;
+    return <any>this;
+  }
 }
 
-export type RoutesBase = Record<string, classes.FunctionType<any, any>>;
+export type RoutesBase = Record<string, classes.FunctionType<any, any> | classes.FunctionStreamingType<any, any>>;
 type TypeRouterRoutes<R extends TypeRouter<any>> = R extends TypeRouter<infer R2> ? R2 : never;

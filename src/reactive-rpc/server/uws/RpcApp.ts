@@ -1,6 +1,5 @@
 import {enableCors} from './util';
 import {Match, Router} from '../../../util/router';
-import {listToUint8} from '../../../util/buffers/concat';
 import {IncomingBatchMessage, RpcMessageBatchProcessor} from '../../common/rpc/RpcMessageBatchProcessor';
 import {RpcError, RpcErrorCodes, RpcErrorType} from '../../common/rpc/caller/error';
 import {ConnectionContext} from '../context';
@@ -11,15 +10,7 @@ import {RpcMessageFormat} from '../../common/codec/constants';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
 import type {Codecs} from '../../../json-pack/codecs/Codecs';
-import type {
-  TemplatedApp,
-  HttpRequest,
-  HttpResponse,
-  HttpMethodPermissive,
-  JsonRouteHandler,
-  WebSocket,
-  RpcWebSocket,
-} from './types';
+import type * as types from './types';
 import type {RouteHandler} from './types';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
@@ -31,15 +22,16 @@ const ERR_NOT_FOUND = RpcError.fromCode(RpcErrorCodes.NOT_FOUND, 'Not Found');
 const ERR_INTERNAL = RpcError.internal();
 
 export interface RpcAppOptions {
-  uws: TemplatedApp;
+  uws: types.TemplatedApp;
   maxRequestBodySize: number;
   codecs: Codecs;
-  caller: RpcCaller;
+  caller: RpcCaller<any>;
+  augmentContext: (ctx: ConnectionContext) => void;
 }
 
 export class RpcApp<Ctx extends ConnectionContext> {
   public readonly codecs: RpcCodecs;
-  protected readonly app: TemplatedApp;
+  protected readonly app: types.TemplatedApp;
   protected readonly maxRequestBodySize: number;
   protected readonly router = new Router();
   protected readonly batchProcessor: RpcMessageBatchProcessor<Ctx>;
@@ -55,12 +47,12 @@ export class RpcApp<Ctx extends ConnectionContext> {
     enableCors(this.options.uws);
   }
 
-  public routeRaw(method: HttpMethodPermissive, path: string, handler: RouteHandler<Ctx>): void {
-    method = method.toLowerCase() as HttpMethodPermissive;
+  public routeRaw(method: types.HttpMethodPermissive, path: string, handler: RouteHandler<Ctx>): void {
+    method = method.toLowerCase() as types.HttpMethodPermissive;
     this.router.add(method + path, handler);
   }
 
-  public route(method: HttpMethodPermissive, path: string, handler: JsonRouteHandler<Ctx>): void {
+  public route(method: types.HttpMethodPermissive, path: string, handler: types.JsonRouteHandler<Ctx>): void {
     this.routeRaw(method, path, async (ctx: Ctx) => {
       const result = await handler(ctx);
       const res = ctx.res!;
@@ -112,6 +104,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
 
   public enableWsRpc(path: string = '/rpc'): this {
     const maxBackpressure = 4 * 1024 * 1024;
+    const augmentContext = this.options.augmentContext;
     this.app.ws(path, {
       idleTimeout: 0,
       maxPayloadLength: 4 * 1024 * 1024,
@@ -120,11 +113,12 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
         const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
         const ctx = ConnectionContext.fromReqRes(req, res, null, this);
+        augmentContext(ctx);
         /* This immediately calls open handler, you must not use res after this call */
         res.upgrade({ctx}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
       },
-      open: (ws_: WebSocket) => {
-        const ws = ws_ as RpcWebSocket<Ctx>;
+      open: (ws_: types.WebSocket) => {
+        const ws = ws_ as types.RpcWebSocket<Ctx>;
         const ctx = ws.ctx;
         const resCodec = ctx.resCodec;
         const msgCodec = ctx.msgCodec;
@@ -144,8 +138,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
           bufferTime: 0,
         });
       },
-      message: (ws_: WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
-        const ws = ws_ as RpcWebSocket<Ctx>;
+      message: (ws_: types.WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
+        const ws = ws_ as types.RpcWebSocket<Ctx>;
         const ctx = ws.ctx;
         const reqCodec = ctx.reqCodec;
         const msgCodec = ctx.msgCodec;
@@ -158,8 +152,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
           rpc.sendNotification('.err', RpcError.value(RpcError.invalidRequest()));
         }
       },
-      close: (ws_: WebSocket, code: number, message: ArrayBuffer) => {
-        const ws = ws_ as RpcWebSocket<Ctx>;
+      close: (ws_: types.WebSocket, code: number, message: ArrayBuffer) => {
+        const ws = ws_ as types.RpcWebSocket<Ctx>;
         ws.rpc!.stop();
       },
     });
@@ -170,7 +164,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
     const matcher = this.router.compile();
     const codecs = this.codecs;
     let responseCodec: JsonValueCodec = codecs.value.json;
-    this.app.any('/*', async (res: HttpResponse, req: HttpRequest) => {
+    const augmentContext = this.options.augmentContext;
+    this.app.any('/*', async (res: types.HttpResponse, req: types.HttpRequest) => {
       res.onAborted(() => {
         res.aborted = true;
       });
@@ -189,6 +184,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const params = match.params;
         const ctx = ConnectionContext.fromReqRes(req, res, params, this) as Ctx;
         responseCodec = ctx.resCodec;
+        augmentContext(ctx);
         await handler(ctx);
       } catch (err) {
         if (err instanceof RpcError) {

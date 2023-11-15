@@ -1,17 +1,21 @@
-// npx ts-node src/reactive-rpc/__demos__/server.ts
+// Run: npx ts-node src/server/index.ts
 
 import {App} from 'uWebSockets.js';
-import {createCaller} from '../common/rpc/__tests__/sample-api';
-import {RpcApp} from '../server/uws/RpcApp';
-import {Codecs} from '../../json-pack/codecs/Codecs';
-import {Writer} from '../../util/buffers/Writer';
+import {RpcApp} from '../reactive-rpc/server/uws/RpcApp';
+import {Codecs} from '../json-pack/codecs/Codecs';
+import {Writer} from '../util/buffers/Writer';
+import {createCaller} from './routes';
+import {Services} from './services/Services';
+import type {RpcCaller} from '../reactive-rpc/common/rpc/caller/RpcCaller';
+import type {MyCtx} from './services/types';
 
 const uws = App({});
-const caller = createCaller();
 const codecs = new Codecs(new Writer());
-const app = new RpcApp({
+const services = new Services();
+const caller = createCaller(services);
+const app = new RpcApp<MyCtx>({
   uws,
-  caller,
+  caller: caller as RpcCaller<MyCtx>,
   codecs,
   maxRequestBodySize: 1024 * 1024,
   augmentContext: (ctx) => ctx,
