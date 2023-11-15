@@ -21,6 +21,7 @@ export const createCaller = (services: Services) => {
     wrapInternalError: (error: unknown) => {
       if (error instanceof Value) return error;
       if (error instanceof RpcError) return RpcError.value(error);
+      // tslint:disable-next-line:no-console
       console.error(error);
       return RpcError.valueFrom(error);
     },
