@@ -91,29 +91,35 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {id, patches: [
-        {
-          seq: 0,
-          created: Date.now(),
-          blob: patch1.toBinary(),
-        },
-      ]});
+      await call('blocks.create', {
+        id,
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
       model.api.str(['text']).ins(4, 'o');
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      await call('blocks.edit', {id, patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2.toBinary(),
-        },
-        {
-          seq: 2,
-          created: Date.now(),
-          blob: patch3.toBinary(),
-        },
-      ]});
+      await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
       const block2 = await call('blocks.get', {id});
       expect(Model.fromBinary(block2.block.blob).view()).toStrictEqual({
         text: 'Hello World',
@@ -122,18 +128,21 @@ describe('blocks.*', () => {
       const patch4 = model.api.flush();
       model.api.str(['text']).ins(12, '!');
       const patch5 = model.api.flush();
-      await call('blocks.edit', {id, patches: [
-        {
-          seq: 3,
-          created: Date.now(),
-          blob: patch4.toBinary(),
-        },
-        {
-          seq: 4,
-          created: Date.now(),
-          blob: patch5.toBinary(),
-        },
-      ]});
+      await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 3,
+            created: Date.now(),
+            blob: patch4.toBinary(),
+          },
+          {
+            seq: 4,
+            created: Date.now(),
+            blob: patch5.toBinary(),
+          },
+        ],
+      });
       const block3 = await call('blocks.get', {id});
       expect(Model.fromBinary(block3.block.blob).view()).toStrictEqual({
         text: 'Hello, World!',
@@ -150,26 +159,32 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {id, patches: [
-        {
-          seq: 0,
-          created: Date.now(),
-          blob: patch1.toBinary(),
-        },
-      ]});
+      await call('blocks.create', {
+        id,
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
 
       // User 2
       const block2 = await call('blocks.get', {id});
       const model2 = Model.fromBinary(block2.block.blob).fork();
       model2.api.str(['text']).ins(4, ' yeah!');
       const patch2User2 = model2.api.flush();
-      await call('blocks.edit', {id, patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2User2.toBinary(),
-        },
-      ]});
+      await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2User2.toBinary(),
+          },
+        ],
+      });
       expect(model2.view()).toStrictEqual({text: 'Hell yeah!'});
 
       const block3 = await call('blocks.get', {id});
@@ -181,18 +196,21 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      const {patches} = await call('blocks.edit', {id, patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2.toBinary(),
-        },
-        {
-          seq: 2,
-          created: Date.now(),
-          blob: patch3.toBinary(),
-        },
-      ]});
+      const {patches} = await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
 
       const block4 = await call('blocks.get', {id});
       const model4 = Model.fromBinary(block4.block.blob).fork();
@@ -209,44 +227,53 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {id, patches: [
-        {
-          seq: 0,
-          created: Date.now(),
-          blob: patch1.toBinary(),
-        },
-      ]});
+      await call('blocks.create', {
+        id,
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
 
       // User 2
       const block2 = await call('blocks.get', {id});
       const model2 = Model.fromBinary(block2.block.blob).fork();
       model2.api.str(['text']).ins(4, ' yeah!');
       const patch2User2 = model2.api.flush();
-      await call('blocks.edit', {id, patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2User2.toBinary(),
-        },
-      ]});
+      await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2User2.toBinary(),
+          },
+        ],
+      });
 
       // User 1
       model.api.str(['text']).ins(4, 'o');
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      const {patches} = await call('blocks.edit', {id, patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2.toBinary(),
-        },
-        {
-          seq: 2,
-          created: Date.now(),
-          blob: patch3.toBinary(),
-        },
-      ]});
+      const {patches} = await call('blocks.edit', {
+        id,
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
       expect(patches.length).toBe(3);
       expect(patches[0].seq).toBe(1);
       expect(patches[1].seq).toBe(2);

@@ -14,9 +14,7 @@ export const get =
       }),
     );
 
-    const Response = t.Object(
-      t.prop('block', t.Ref<typeof Block>('Block').options({})),
-    );
+    const Response = t.Object(t.prop('block', t.Ref<typeof Block>('Block').options({})));
 
     const Func = t
       .Function(Request, Response)
