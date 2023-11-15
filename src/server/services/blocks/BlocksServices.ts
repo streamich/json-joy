@@ -1,7 +1,7 @@
 import {MemoryStore} from './MemoryStore';
 import type {Services} from '../Services';
 
-export class StoreService {
+export class BlocksServices {
   protected readonly store = new MemoryStore();
 
   constructor(protected readonly services: Services) {}

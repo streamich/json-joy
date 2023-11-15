@@ -1,8 +1,8 @@
 import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../../types';
-import type {StoreBlock, StorePatch} from '../schema';
+import type {Block, BlockPatch} from '../schema';
 
-export const apply =
+export const edit =
   ({services}: RouteDeps) =>
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
@@ -12,13 +12,13 @@ export const apply =
         title: 'Document ID',
         description: 'The ID of the document to apply the patch to.',
       }),
-      t.prop('patches', t.Array(t.Ref<typeof StorePatch>('StorePatch'))).options({
+      t.prop('patches', t.Array(t.Ref<typeof BlockPatch>('StorePatch'))).options({
         title: 'Patches',
         description: 'The patches to apply to the document.',
       }),
     );
 
-    const Response = t.Object(t.prop('block', t.Ref<typeof StoreBlock>('StoreBlock')));
+    const Response = t.Object(t.prop('block', t.Ref<typeof Block>('StoreBlock')));
 
     const Func = t
       .Function(Request, Response)
@@ -32,5 +32,5 @@ export const apply =
         return {block};
       });
 
-    return router.fn('store.apply', Func);
+    return router.fn('blocks.edit', Func);
   };

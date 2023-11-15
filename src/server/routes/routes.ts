@@ -1,7 +1,7 @@
 import {util} from './util';
 import {pubsub} from './pubsub';
 import {presence} from './presence';
-import {store} from './store';
+import {blocks} from './blocks';
 import type {RoutesBase, TypeRouter} from '../../json-type/system/TypeRouter';
 import type {RouteDeps} from './types';
 
@@ -10,5 +10,5 @@ export const routes = (d: RouteDeps) => <R extends RoutesBase>(r: TypeRouter<R>)
   ( util(d)
   ( pubsub(d)
   ( presence(d)
-  ( store(d)
+  ( blocks(d)
   ( r )))));

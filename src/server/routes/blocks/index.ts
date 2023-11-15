@@ -1,16 +1,16 @@
-import {apply} from './methods/apply';
-import {StoreBlock, StorePatch} from './schema';
+import {edit} from './methods/edit';
+import {Block, BlockPatch} from './schema';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../types';
 
-export const store =
+export const blocks =
   (d: RouteDeps) =>
   <R extends RoutesBase>(r: TypeRouter<R>) => {
-    r.system.alias('StoreBlock', StoreBlock);
-    r.system.alias('StorePatch', StorePatch);
+    r.system.alias('StoreBlock', Block);
+    r.system.alias('StorePatch', BlockPatch);
 
     // prettier-ignore
     return (
-    apply(d)
+    edit(d)
     ( r ));
   };
