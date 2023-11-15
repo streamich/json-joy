@@ -27,7 +27,7 @@ export class MemoryStore implements types.Store {
       const block: types.StoreBlock = {
         id,
         seq: seq - 1,
-        model: model.toBinary(),
+        blob: model.toBinary(),
         created: now,
         updated: now,
       };
@@ -38,14 +38,14 @@ export class MemoryStore implements types.Store {
     if (!block) throw new Error('BLOCK_NOT_FOUND');
     let seq = patches[0].seq;
     if (block.seq < seq) throw new Error('PATCH_SEQ_TOO_HIGH');
-    const model = Model.fromBinary(block.model);
+    const model = Model.fromBinary(block.blob);
     for (const patch of patches) {
       if (seq !== patch.seq) throw new Error('PATCHES_OUT_OF_ORDER');
       model.applyPatch(Patch.fromBinary(patch.blob));
       seq++;
     }
     block.seq = seq - 1;
-    block.model = model.toBinary();
+    block.blob = model.toBinary();
     block.updated = Date.now();
     return {block};
   }

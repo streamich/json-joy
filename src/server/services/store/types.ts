@@ -3,11 +3,12 @@ export interface StoreBlock {
   seq: number;
   created: number;
   updated: number;
-  model: Uint8Array;
+  blob: Uint8Array;
 }
 
 export interface StorePatch {
   seq: number;
+  created: number;
   blob: Uint8Array;
 }
 
