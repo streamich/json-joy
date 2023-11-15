@@ -8,7 +8,7 @@ export class BlocksServices {
 
   async apply(id: string, patches: any[]) {
     const {store} = this;
-    const {block} = await store.apply(id, patches);
+    const {block} = await store.edit(id, patches);
     return {block};
   }
 }

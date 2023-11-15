@@ -12,29 +12,33 @@ export class MemoryStore implements types.Store {
     return {block};
   }
 
-  public async apply(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
-    if (!Array.isArray(patches) || !patches.length) throw new Error('NO_PATCHES');
-    const block = this.blocks.get(id);
-    if (!block && patches[0] && patches[0].seq === 0) {
-      const model = Model.withLogicalClock();
-      let seq = 0;
+  public async create(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
+    const model = Model.withLogicalClock();
+    let seq = 0;
+    if (patches.length) {
       for (const patch of patches) {
         if (seq !== patch.seq) throw new Error('PATCHES_OUT_OF_ORDER');
         model.applyPatch(Patch.fromBinary(patch.blob));
         seq++;
       }
-      const now = Date.now();
-      const block: types.StoreBlock = {
-        id,
-        seq: seq - 1,
-        blob: model.toBinary(),
-        created: now,
-        updated: now,
-      };
-      this.blocks.set(id, block);
-      this.patches.set(id, patches);
-      return {block};
+      seq--;
     }
+    const now = Date.now();
+    const block: types.StoreBlock = {
+      id,
+      seq: seq,
+      blob: model.toBinary(),
+      created: now,
+      updated: now,
+    };
+    this.blocks.set(id, block);
+    this.patches.set(id, patches);
+    return {block};
+  }
+
+  public async edit(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
+    if (!Array.isArray(patches) || !patches.length) throw new Error('NO_PATCHES');
+    const block = this.blocks.get(id);
     if (!block) throw new Error('BLOCK_NOT_FOUND');
     let seq = patches[0].seq;
     if (block.seq < seq) throw new Error('PATCH_SEQ_TOO_HIGH');
