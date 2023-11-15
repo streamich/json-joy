@@ -26,9 +26,21 @@ export class BlocksServices {
     await this.store.remove(id);
   }
 
-  public async apply(id: string, patches: any[]) {
+  public async edit(id: string, patches: any[]) {
+    if (!Array.isArray(patches)) throw RpcError.validation('patches must be an array');
+    if (!patches.length) throw RpcError.validation('patches must not be empty');
+    const seq = patches[0].seq;
     const {store} = this;
     const {block} = await store.edit(id, patches);
-    return {block};
+    const expectedBlockSeq = seq + patches.length - 1;
+    const hadConcurrentEdits = block.seq !== expectedBlockSeq;
+    let patchesBack: StorePatch[] = [];
+    if (hadConcurrentEdits) {
+      patchesBack = await store.history(id, seq, block.seq);
+    }
+    return {
+      block,
+      patches: patchesBack,
+    };
   }
 }

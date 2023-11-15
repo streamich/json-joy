@@ -1,35 +1,51 @@
 import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../../types';
-import type {Block, BlockPatch} from '../schema';
+import type {BlockId, BlockPatch} from '../schema';
 
 export const edit =
   ({services}: RouteDeps) =>
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
+    const PatchType = t.Ref<typeof BlockPatch>('BlockPatch');
 
     const Request = t.Object(
-      t.prop('id', t.str).options({
+      t.prop('id', t.Ref<typeof BlockId>('BlockId')).options({
         title: 'Document ID',
         description: 'The ID of the document to apply the patch to.',
       }),
-      t.prop('patches', t.Array(t.Ref<typeof BlockPatch>('StorePatch'))).options({
+      // This can be inferred from the "seq" of the first patch:
+      // t.prop('seq', t.Ref<typeof BlockSeq>('BlockSeq')).options({
+      //   title: 'Last known sequence number',
+      //   description:
+      //     'The last known sequence number of the document. ' +
+      //     'If the document has changed since this sequence number, ' +
+      //     'the response will contain all the necessary patches for the client to catch up.',
+      // }),
+      t.prop('patches', t.Array(PatchType)).options({
         title: 'Patches',
         description: 'The patches to apply to the document.',
       }),
     );
 
-    const Response = t.Object(t.prop('block', t.Ref<typeof Block>('StoreBlock')));
+    const Response = t.Object(
+      t.prop('patches', t.Array(PatchType)).options({
+        title: 'Latest patches',
+        description: 'The list of patches that the client might have missed and should apply to the document.',
+      }),
+    );
 
     const Func = t
       .Function(Request, Response)
       .options({
-        title: 'Apply Patches',
-        intro: 'Applies patches to an existing document or creates a new document if it does not exist.',
-        description: 'Applies patches to an existing document or creates a new document if it does not exist.',
+        title: 'Edit Block',
+        intro: 'Applies patches to an existing block.',
+        description: 'Applies patches to an existing document and returns the latest concurrent changes.',
       })
       .implement(async ({id, patches}) => {
-        const {block} = await services.blocks.apply(id, patches);
-        return {block};
+        const res = await services.blocks.edit(id, patches);
+        return {
+          patches: res.patches,
+        };
       });
 
     return router.fn('blocks.edit', Func);

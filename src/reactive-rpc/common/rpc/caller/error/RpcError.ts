@@ -39,21 +39,21 @@ export class RpcError extends Error implements IRpcError {
     return RpcError.internal();
   }
 
-  public static fromCode(errno: RpcErrorCodes, message: string = '', meta: unknown = undefined) {
+  public static fromCode(errno: RpcErrorCodes, message: string = '', meta: unknown = undefined): RpcError{
     const code = RpcErrorCodes[errno];
     return new RpcError(message || code, code, errno, undefined, meta || undefined);
   }
 
-  public static internal(message: string = 'Internal Server Error') {
+  public static internal(message: string = 'Internal Server Error'): RpcError {
     return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message);
   }
 
   /** @todo Rename to "badRequest". */
-  public static invalidRequest() {
+  public static invalidRequest(): RpcError {
     return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, 'Bad Request');
   }
 
-  public static validation(message: string, meta?: unknown) {
+  public static validation(message: string, meta?: unknown): RpcError {
     return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, message, meta);
   }
 

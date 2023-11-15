@@ -16,7 +16,7 @@ export interface Store {
   create(id: string, patches: StorePatch[]): Promise<StoreApplyResult>;
   get(id: string): Promise<StoreGetResult | undefined>;
   edit(id: string, patches: StorePatch[]): Promise<StoreApplyResult>;
-  history(id: string, maxSeq: number, limit: number): Promise<StorePatch[]>;
+  history(id: string, min: number, max: number): Promise<StorePatch[]>;
   remove(id: string): Promise<void>;
 }
 

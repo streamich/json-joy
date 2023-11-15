@@ -7,25 +7,28 @@ export class MemoryStore implements types.Store {
   protected readonly patches = new Map<string, types.StorePatch[]>();
 
   public async get(id: string): Promise<types.StoreGetResult | undefined> {
+    await new Promise((resolve) => setImmediate(resolve));
     const block = this.blocks.get(id);
     if (!block) return;
     return {block};
   }
 
   public async create(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
+    await new Promise((resolve) => setImmediate(resolve));
     if (!Array.isArray(patches)) throw new Error('NO_PATCHES');
     if (this.blocks.has(id)) throw new Error('BLOCK_EXISTS');
     const model = Model.withLogicalClock();
     let seq = 0;
+    const now = Date.now();
     if (patches.length) {
       for (const patch of patches) {
         if (seq !== patch.seq) throw new Error('PATCHES_OUT_OF_ORDER');
         model.applyPatch(Patch.fromBinary(patch.blob));
+        if (patch.created > now) patch.created = now;
         seq++;
       }
       seq--;
     }
-    const now = Date.now();
     const block: types.StoreBlock = {
       id,
       seq: seq,
@@ -39,39 +42,37 @@ export class MemoryStore implements types.Store {
   }
 
   public async edit(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
+    await new Promise((resolve) => setImmediate(resolve));
     if (!Array.isArray(patches) || !patches.length) throw new Error('NO_PATCHES');
     const block = this.blocks.get(id);
-    if (!block) throw new Error('BLOCK_NOT_FOUND');
+    const existingPatches = this.patches.get(id);
+    if (!block || !existingPatches) throw new Error('BLOCK_NOT_FOUND');
     let seq = patches[0].seq;
-    if (block.seq < seq) throw new Error('PATCH_SEQ_TOO_HIGH');
+    const diff = seq - block.seq - 1;
+    if (block.seq + 1 < seq) throw new Error('PATCH_SEQ_TOO_HIGH');
     const model = Model.fromBinary(block.blob);
     for (const patch of patches) {
       if (seq !== patch.seq) throw new Error('PATCHES_OUT_OF_ORDER');
       model.applyPatch(Patch.fromBinary(patch.blob));
+      patch.seq -= diff;
       seq++;
     }
-    block.seq = seq - 1;
+    block.seq += patches.length;
     block.blob = model.toBinary();
     block.updated = Date.now();
+    for (const patch of patches) existingPatches.push(patch);
     return {block};
   }
 
-  public async history(id: string, maxSeq: number, limit: number): Promise<types.StorePatch[]> {
+  public async history(id: string, min: number, max: number): Promise<types.StorePatch[]> {
+    await new Promise((resolve) => setImmediate(resolve));
     const patches = this.patches.get(id);
     if (!patches) return [];
-    const list: types.StorePatch[] = [];
-    let cnt = 0;
-    for (let i = patches.length - 1; i >= 0; i--) {
-      const patch = patches[i];
-      if (patch.seq > maxSeq) continue;
-      list.push(patch);
-      cnt++;
-      if (cnt >= limit) break;
-    }
-    return list;
+    return patches.slice(min, max + 1);
   }
 
   public async remove(id: string): Promise<void> {
+    await new Promise((resolve) => setImmediate(resolve));
     this.blocks.delete(id);
     this.patches.delete(id);
   }
