@@ -31,21 +31,14 @@ export const info =
     const Request = t.any;
     const Response = t.Object(
       t.prop('now', t.num),
-      t.prop('stats', t.Object(
-        t.prop('pubsub', t.Object(
-          t.prop('channels', t.num),
-          t.prop('observers', t.num),
-        )),
-        t.prop('presence', t.Object(
-          t.prop('rooms', t.num),
-          t.prop('entries', t.num),
-          t.prop('observers', t.num),
-        )),
-        t.prop('blocks', t.Object(
-          t.prop('blocks', t.num),
-          t.prop('patches', t.num),
-        )),
-      )),
+      t.prop(
+        'stats',
+        t.Object(
+          t.prop('pubsub', t.Object(t.prop('channels', t.num), t.prop('observers', t.num))),
+          t.prop('presence', t.Object(t.prop('rooms', t.num), t.prop('entries', t.num), t.prop('observers', t.num))),
+          t.prop('blocks', t.Object(t.prop('blocks', t.num), t.prop('patches', t.num))),
+        ),
+      ),
     );
     const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
       return {

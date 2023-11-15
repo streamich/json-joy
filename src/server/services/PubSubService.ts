@@ -27,7 +27,7 @@ export class PubsubService {
     for (const observer of observers) observer.next(message);
   }
 
-  public stats(): {channels: number, observers: number} {
+  public stats(): {channels: number; observers: number} {
     return {
       channels: this.observers.size,
       observers: [...this.observers.values()].reduce((acc, v) => acc + v.length, 0),

@@ -91,7 +91,7 @@ export class PresenceService {
     if (!room.size) this.rooms.delete(roomId);
   }
 
-  public stats(): {rooms: number, entries: number, observers: number} {
+  public stats(): {rooms: number; entries: number; observers: number} {
     return {
       rooms: this.rooms.size,
       entries: [...this.rooms.values()].reduce((acc, v) => acc + v.size, 0),
