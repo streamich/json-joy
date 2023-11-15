@@ -16,6 +16,7 @@ export class BlocksServices {
       patches,
     };
     this.services.pubsub.publish(`__block:${id}`, data).catch((error) => {
+      // tslint:disable-next-line:no-console
       console.error('Error publishing block patches', error);
     });
     return {block};
@@ -32,6 +33,7 @@ export class BlocksServices {
   public async remove(id: string) {
     await this.store.remove(id);
     this.services.pubsub.publish(`__block:${id}`, {deleted: true}).catch((error) => {
+      // tslint:disable-next-line:no-console
       console.error('Error publishing block deletion', error);
     });
   }
@@ -43,6 +45,7 @@ export class BlocksServices {
     const {store} = this;
     const {block} = await store.edit(id, patches);
     this.services.pubsub.publish(`__block:${id}`, {patches}).catch((error) => {
+      // tslint:disable-next-line:no-console
       console.error('Error publishing block patches', error);
     });
     const expectedBlockSeq = seq + patches.length - 1;
