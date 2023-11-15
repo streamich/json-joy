@@ -6,17 +6,14 @@ describe('pubsub', () => {
   test('throws error on invalid input', async () => {
     const {call} = setup();
     try {
-      await call(
-        'pubsub.publish',
-        {
-          channel2: 'INVALID KEY',
-          message: 'hello world',
-        } as any,
-        );
-        throw new Error('should not reach here');
-      } catch (err: any) {
-        expect(err.meta.path).toStrictEqual(['channel2']);
-      }
+      await call('pubsub.publish', {
+        channel2: 'INVALID KEY',
+        message: 'hello world',
+      } as any);
+      throw new Error('should not reach here');
+    } catch (err: any) {
+      expect(err.meta.path).toStrictEqual(['channel2']);
+    }
   });
 
   test('can subscribe and receive published messages', async () => {

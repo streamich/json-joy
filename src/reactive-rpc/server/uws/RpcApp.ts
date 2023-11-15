@@ -37,7 +37,7 @@ export interface RpcAppOptions {
    * Serializers and de-serializers for request and response bodies.
    */
   codecs?: Codecs;
-  
+
   /**
    * HTTP port to listen on. If not specified, the PORT environment variable
    * will be used, or 9999 if not set.
@@ -72,8 +72,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
 
   constructor(protected readonly options: RpcAppOptions) {
     this.app = options.uws;
-    this.maxRequestBodySize = options.maxRequestBodySize ?? 1024 * 1024,
-    this.codecs = new RpcCodecs(options.codecs ?? new Codecs(new Writer()), new RpcMessageCodecs());
+    (this.maxRequestBodySize = options.maxRequestBodySize ?? 1024 * 1024),
+      (this.codecs = new RpcCodecs(options.codecs ?? new Codecs(new Writer()), new RpcMessageCodecs()));
     this.batchProcessor = new RpcMessageBatchProcessor<Ctx>({caller: options.caller});
   }
 
@@ -256,7 +256,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
     this.startRouting();
     const options = this.options;
     const port = options.port ?? +(process.env.PORT || 9999);
-    const host = options.host ?? (process.env.HOST ?? '0.0.0.0');
+    const host = options.host ?? process.env.HOST ?? '0.0.0.0';
     const logger = options.logger ?? console;
     this.options.uws.listen(host, port, (token) => {
       if (token) {
