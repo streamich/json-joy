@@ -74,6 +74,14 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     return super.call(id as string, request, ctx) as any;
   }
 
+  public async callSimple<K extends keyof Routes<Router>>(
+    id: K,
+    request: MethodReq<Routes<Router>[K]>,
+    ctx: Ctx = {} as any,
+  ): Promise<MethodRes<Routes<Router>[K]>> {
+    return (await super.call(id as string, request, ctx)).data as any;
+  }
+
   public call$<K extends keyof Routes<Router>>(
     id: K,
     request: Observable<MethodReq<Routes<Router>[K]>>,

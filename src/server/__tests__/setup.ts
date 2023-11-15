@@ -4,5 +4,6 @@ import {Services} from '../services/Services';
 export const setup = () => {
   const services = new Services();
   const caller = createCaller(services);
-  return {services, caller};
+  const call = caller.callSimple.bind(caller);
+  return {services, caller, call};
 };
