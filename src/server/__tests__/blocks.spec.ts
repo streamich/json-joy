@@ -1,7 +1,9 @@
+import {of} from 'rxjs';
 import {Model} from '../../json-crdt';
 import {Value} from '../../reactive-rpc/common/messages/Value';
 import {RpcError, RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
+import {tick, until} from '../../__tests__/util';
 
 describe('blocks.*', () => {
   describe('blocks.create', () => {
@@ -11,7 +13,7 @@ describe('blocks.*', () => {
       const {block} = (await caller.call('blocks.get', {id: 'my-block'}, {})).data;
       expect(block).toMatchObject({
         id: 'my-block',
-        seq: 0,
+        seq: -1,
         blob: expect.any(Uint8Array),
         created: expect.any(Number),
         updated: expect.any(Number),
@@ -280,6 +282,76 @@ describe('blocks.*', () => {
       expect(patches[2].seq).toBe(3);
       expect(patches[1].blob).toStrictEqual(patch2.toBinary());
       expect(patches[2].blob).toStrictEqual(patch3.toBinary());
+    });
+  });
+
+  describe('blocks.listen', () => {
+    test('can listen for block changes', async () => {
+      const {call, caller} = setup();
+      await call('blocks.create', {id: 'my-block', patches: []});
+      await tick(11);
+      const emits: any[] = [];
+      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
+      const model = Model.withLogicalClock(); 
+      model.api.root({
+        text: 'Hell',
+      });
+      const patch1 = model.api.flush();
+      await tick(12);
+      expect(emits.length).toBe(0);
+      await call('blocks.edit', {id: 'my-block', patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}]});
+      await until(() => emits.length === 1);
+      expect(emits.length).toBe(1);
+      expect(emits[0].data.patches.length).toBe(1);
+      expect(emits[0].data.patches[0].seq).toBe(0);
+      model.api.root({
+        text: 'Hello',
+      });
+      const patch2 = model.api.flush();
+      await tick(12);
+      expect(emits.length).toBe(1);
+      await call('blocks.edit', {id: 'my-block', patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}]});
+      await until(() => emits.length === 2);
+      expect(emits.length).toBe(2);
+      expect(emits[1].data.patches.length).toBe(1);
+      expect(emits[1].data.patches[0].seq).toBe(1);
+    });
+
+    test('can subscribe before block is created', async () => {
+      const {call, caller} = setup();
+      const emits: any[] = [];
+      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
+      const model = Model.withLogicalClock(); 
+      model.api.root({
+        text: 'Hell',
+      });
+      const patch1 = model.api.flush();
+      await tick(12);
+      expect(emits.length).toBe(0);
+      await call('blocks.create', {id: 'my-block', patches: [
+        {
+          seq: 0,
+          created: Date.now(),
+          blob: patch1.toBinary(),
+        },
+      ]});
+      await until(() => emits.length === 1);
+      expect(emits.length).toBe(1);
+      expect(emits[0].data.patches.length).toBe(1);
+      expect(emits[0].data.patches[0].seq).toBe(0);
+      expect(emits[0].data.patches[0].blob).toStrictEqual(patch1.toBinary());
+    });
+
+    test('can receive deletion events', async () => {
+      const {call, caller} = setup();
+      const emits: any[] = [];
+      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
+      await call('blocks.create', {id: 'my-block', patches: []});
+      await until(() => emits.length === 1);
+      expect(emits[0].data.block.seq).toBe(-1);
+      await call('blocks.remove', {id: 'my-block'});
+      await until(() => emits.length === 2);
+      expect(emits[1].data.deleted).toBe(true);
     });
   });
 });

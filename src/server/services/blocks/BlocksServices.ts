@@ -1,7 +1,7 @@
 import {MemoryStore} from './MemoryStore';
 import {StorePatch} from './types';
-import type {Services} from '../Services';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
+import type {Services} from '../Services';
 
 export class BlocksServices {
   protected readonly store = new MemoryStore();
@@ -11,6 +11,13 @@ export class BlocksServices {
   public async create(id: string, patches: StorePatch[]) {
     const {store} = this;
     const {block} = await store.create(id, patches);
+    const data = {
+      block,
+      patches,
+    };
+    this.services.pubsub.publish(`__block:${id}`, data).catch(error => {
+      console.error('Error publishing block patches', error);
+    });
     return {block};
   }
 
@@ -24,6 +31,9 @@ export class BlocksServices {
 
   public async remove(id: string) {
     await this.store.remove(id);
+    this.services.pubsub.publish(`__block:${id}`, {deleted: true}).catch(error => {
+      console.error('Error publishing block deletion', error);
+    });
   }
 
   public async edit(id: string, patches: any[]) {
@@ -32,6 +42,9 @@ export class BlocksServices {
     const seq = patches[0].seq;
     const {store} = this;
     const {block} = await store.edit(id, patches);
+    this.services.pubsub.publish(`__block:${id}`, {patches}).catch(error => {
+      console.error('Error publishing block patches', error);
+    });
     const expectedBlockSeq = seq + patches.length - 1;
     const hadConcurrentEdits = block.seq !== expectedBlockSeq;
     let patchesBack: StorePatch[] = [];

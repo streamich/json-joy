@@ -2,6 +2,7 @@ import {create} from './methods/create';
 import {get} from './methods/get';
 import {remove} from './methods/remove';
 import {edit} from './methods/edit';
+import {listen} from './methods/listen';
 import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../types';
@@ -20,5 +21,6 @@ export const blocks =
       ( get(d)
       ( remove(d)
       ( edit(d)
-      ( r ))))));
+      ( listen(d)
+      ( r )))))));
   };

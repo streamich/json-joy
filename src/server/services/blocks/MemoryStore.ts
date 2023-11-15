@@ -18,16 +18,15 @@ export class MemoryStore implements types.Store {
     if (!Array.isArray(patches)) throw new Error('NO_PATCHES');
     if (this.blocks.has(id)) throw new Error('BLOCK_EXISTS');
     const model = Model.withLogicalClock();
-    let seq = 0;
+    let seq = -1;
     const now = Date.now();
     if (patches.length) {
       for (const patch of patches) {
+        seq++;
         if (seq !== patch.seq) throw new Error('PATCHES_OUT_OF_ORDER');
         model.applyPatch(Patch.fromBinary(patch.blob));
         if (patch.created > now) patch.created = now;
-        seq++;
       }
-      seq--;
     }
     const block: types.StoreBlock = {
       id,
