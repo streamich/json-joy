@@ -8,12 +8,13 @@ import {Value} from '../../common/messages/Value';
 import {EncodingFormat} from '../../../json-pack/constants';
 import {RpcMessageFormat} from '../../common/codec/constants';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
+import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
-import type {Codecs} from '../../../json-pack/codecs/Codecs';
 import type * as types from './types';
 import type {RouteHandler} from './types';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import {Writer} from '../../../util/buffers/Writer';
 
 const HDR_BAD_REQUEST = Buffer.from('400 Bad Request', 'utf8');
 const HDR_NOT_FOUND = Buffer.from('404 Not Found', 'utf8');
@@ -21,12 +22,40 @@ const HDR_INTERNAL_SERVER_ERROR = Buffer.from('500 Internal Server Error', 'utf8
 const ERR_NOT_FOUND = RpcError.fromCode(RpcErrorCodes.NOT_FOUND, 'Not Found');
 const ERR_INTERNAL = RpcError.internal();
 
+const noop = (x: any) => {};
+
 export interface RpcAppOptions {
   uws: types.TemplatedApp;
-  maxRequestBodySize: number;
-  codecs: Codecs;
   caller: RpcCaller<any>;
-  augmentContext: (ctx: ConnectionContext) => void;
+
+  /**
+   * Maximum request body size in bytes. Default is 1MB.
+   */
+  maxRequestBodySize?: number;
+
+  /**
+   * Serializers and de-serializers for request and response bodies.
+   */
+  codecs?: Codecs;
+  
+  /**
+   * HTTP port to listen on. If not specified, the PORT environment variable
+   * will be used, or 9999 if not set.
+   */
+  port?: number;
+
+  /**
+   * Host to listen to. If not specified, the HOST environment variable will be
+   * used, or '0.0.0.0' if not set.
+   */
+  host?: string;
+
+  /**
+   * This method allows to augment connection context with additional data.
+   *
+   * @param ctx Connection context.
+   */
+  augmentContext?: (ctx: ConnectionContext) => void;
 }
 
 export class RpcApp<Ctx extends ConnectionContext> {
@@ -38,8 +67,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
 
   constructor(protected readonly options: RpcAppOptions) {
     this.app = options.uws;
-    this.maxRequestBodySize = options.maxRequestBodySize;
-    this.codecs = new RpcCodecs(options.codecs, new RpcMessageCodecs());
+    this.maxRequestBodySize = options.maxRequestBodySize ?? 1024 * 1024,
+    this.codecs = new RpcCodecs(options.codecs ?? new Codecs(new Writer()), new RpcMessageCodecs());
     this.batchProcessor = new RpcMessageBatchProcessor<Ctx>({caller: options.caller});
   }
 
@@ -104,7 +133,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
 
   public enableWsRpc(path: string = '/rpc'): this {
     const maxBackpressure = 4 * 1024 * 1024;
-    const augmentContext = this.options.augmentContext;
+    const augmentContext = this.options.augmentContext ?? noop;
     this.app.ws(path, {
       idleTimeout: 0,
       maxPayloadLength: 4 * 1024 * 1024,
@@ -164,7 +193,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
     const matcher = this.router.compile();
     const codecs = this.codecs;
     let responseCodec: JsonValueCodec = codecs.value.json;
-    const augmentContext = this.options.augmentContext;
+    const augmentContext = this.options.augmentContext ?? noop;
     this.app.any('/*', async (res: types.HttpResponse, req: types.HttpRequest) => {
       res.onAborted(() => {
         res.aborted = true;
@@ -209,6 +238,25 @@ export class RpcApp<Ctx extends ConnectionContext> {
           res.writeStatus(HDR_INTERNAL_SERVER_ERROR);
           res.end(RpcErrorType.encode(responseCodec, ERR_INTERNAL));
         });
+      }
+    });
+  }
+
+  public startWithDefaults(): void {
+    this.enableCors();
+    this.enableHttpPing();
+    this.enableHttpRpc();
+    this.enableWsRpc();
+    this.startRouting();
+    const port = this.options.port ?? +(process.env.PORT || 9999);
+    const host = this.options.host ?? (process.env.HOST ?? '0.0.0.0');
+    this.options.uws.listen(host, port, (token) => {
+      if (token) {
+        // tslint:disable-next-line no-console
+        console.log({msg: 'SERVER_STARTED', url: `http://localhost:${port}`});
+      } else {
+        // tslint:disable-next-line no-console
+        console.error(`Failed to listen on ${port} port.`);
       }
     });
   }
