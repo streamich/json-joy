@@ -45,7 +45,8 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
       : (req: unknown) => {
           const error = validator(req);
           if (error) {
-            throw RpcError.value(RpcError.validation(error.message, error));
+            const message = error.message + (Array.isArray(error?.path) ? ' Path: /' + error.path.join('/') : '');
+            throw RpcError.value(RpcError.validation(message, error));
           }
         };
     method =
@@ -79,7 +80,13 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
     request: MethodReq<Routes<Router>[K]>,
     ctx: Ctx = {} as any,
   ): Promise<MethodRes<Routes<Router>[K]>> {
-    return (await super.call(id as string, request, ctx)).data as any;
+    try {
+      const res = await this.call(id as string, request, ctx);
+      return res.data;
+    } catch (err) {
+      const error = err as Value<RpcError>;
+      throw error.data;
+    }
   }
 
   public call$<K extends keyof Routes<Router>>(

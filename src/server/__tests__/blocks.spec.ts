@@ -75,11 +75,8 @@ describe('blocks.*', () => {
       try {
         await call('blocks.get', {id: 'my-block'});
         throw new Error('not this error');
-      } catch (err) {
-        if (!(err instanceof Value)) throw err;
-        const error = err.data;
-        if (!(error instanceof RpcError)) throw err;
-        expect(error.errno).toBe(RpcErrorCodes.NOT_FOUND);
+      } catch (err: any) {
+        expect(err.errno).toBe(RpcErrorCodes.NOT_FOUND);
       }
     });
   });
