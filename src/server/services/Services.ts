@@ -5,11 +5,11 @@ import {BlocksServices} from './blocks/BlocksServices';
 export class Services {
   public readonly pubsub: PubsubService;
   public readonly presence: PresenceService;
-  public readonly store: BlocksServices;
+  public readonly blocks: BlocksServices;
 
   constructor() {
     this.pubsub = new PubsubService();
     this.presence = new PresenceService();
-    this.store = new BlocksServices(this);
+    this.blocks = new BlocksServices(this);
   }
 }

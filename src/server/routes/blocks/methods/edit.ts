@@ -28,7 +28,7 @@ export const edit =
         description: 'Applies patches to an existing document or creates a new document if it does not exist.',
       })
       .implement(async ({id, patches}) => {
-        const {block} = await services.store.apply(id, patches);
+        const {block} = await services.blocks.apply(id, patches);
         return {block};
       });
 

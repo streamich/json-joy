@@ -13,6 +13,8 @@ export class MemoryStore implements types.Store {
   }
 
   public async create(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
+    if (!Array.isArray(patches)) throw new Error('NO_PATCHES');
+    if (this.blocks.has(id)) throw new Error('BLOCK_EXISTS');
     const model = Model.withLogicalClock();
     let seq = 0;
     if (patches.length) {

@@ -1,16 +1,22 @@
 import {edit} from './methods/edit';
-import {Block, BlockPatch} from './schema';
+import {create} from './methods/create';
+import {get} from './methods/get';
+import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../types';
 
 export const blocks =
   (d: RouteDeps) =>
   <R extends RoutesBase>(r: TypeRouter<R>) => {
-    r.system.alias('StoreBlock', Block);
-    r.system.alias('StorePatch', BlockPatch);
+    r.system.alias('BlockId', BlockId);
+    r.system.alias('BlockSeq', BlockSeq);
+    r.system.alias('Block', Block);
+    r.system.alias('BlockPatch', BlockPatch);
 
     // prettier-ignore
     return (
-    edit(d)
-    ( r ));
+      ( create(d)
+      ( get(d)
+      ( edit(d)
+      ( r )))));
   };
