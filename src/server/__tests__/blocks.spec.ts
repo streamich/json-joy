@@ -292,7 +292,7 @@ describe('blocks.*', () => {
       await tick(11);
       const emits: any[] = [];
       caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
-      const model = Model.withLogicalClock(); 
+      const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
       });
@@ -321,20 +321,23 @@ describe('blocks.*', () => {
       const {call, caller} = setup();
       const emits: any[] = [];
       caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
-      const model = Model.withLogicalClock(); 
+      const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
       });
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await call('blocks.create', {id: 'my-block', patches: [
-        {
-          seq: 0,
-          created: Date.now(),
-          blob: patch1.toBinary(),
-        },
-      ]});
+      await call('blocks.create', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
       expect(emits[0].data.patches.length).toBe(1);

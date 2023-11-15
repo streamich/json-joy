@@ -38,9 +38,7 @@ export const listen =
         description: 'Subscribe to a block to receive updates when it changes.',
       })
       .implement((req$) => {
-        return req$.pipe(
-          switchMap(({id}) => services.pubsub.listen$(`__block:${id}`)),
-        ) as any;
+        return req$.pipe(switchMap(({id}) => services.pubsub.listen$(`__block:${id}`))) as any;
       });
 
     return router.fn$('blocks.listen', Func);

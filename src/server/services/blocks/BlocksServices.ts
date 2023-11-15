@@ -15,7 +15,7 @@ export class BlocksServices {
       block,
       patches,
     };
-    this.services.pubsub.publish(`__block:${id}`, data).catch(error => {
+    this.services.pubsub.publish(`__block:${id}`, data).catch((error) => {
       console.error('Error publishing block patches', error);
     });
     return {block};
@@ -31,7 +31,7 @@ export class BlocksServices {
 
   public async remove(id: string) {
     await this.store.remove(id);
-    this.services.pubsub.publish(`__block:${id}`, {deleted: true}).catch(error => {
+    this.services.pubsub.publish(`__block:${id}`, {deleted: true}).catch((error) => {
       console.error('Error publishing block deletion', error);
     });
   }
@@ -42,7 +42,7 @@ export class BlocksServices {
     const seq = patches[0].seq;
     const {store} = this;
     const {block} = await store.edit(id, patches);
-    this.services.pubsub.publish(`__block:${id}`, {patches}).catch(error => {
+    this.services.pubsub.publish(`__block:${id}`, {patches}).catch((error) => {
       console.error('Error publishing block patches', error);
     });
     const expectedBlockSeq = seq + patches.length - 1;
