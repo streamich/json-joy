@@ -10,10 +10,4 @@ const app = new RpcApp<MyCtx>({
   uws: App({}),
   caller: createCaller(new Services()),
 });
-
-app.route('POST', '/echo', async (ctx) => {
-  const json = await ctx.requestBodyJson(1024);
-  return json;
-});
-
 app.startWithDefaults();
