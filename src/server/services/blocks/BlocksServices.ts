@@ -59,4 +59,8 @@ export class BlocksServices {
       patches: patchesBack,
     };
   }
+
+  public stats() {
+    return this.store.stats();
+  }
 }

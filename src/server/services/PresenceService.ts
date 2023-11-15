@@ -90,4 +90,12 @@ export class PresenceService {
     }
     if (!room.size) this.rooms.delete(roomId);
   }
+
+  public stats(): {rooms: number, entries: number, observers: number} {
+    return {
+      rooms: this.rooms.size,
+      entries: [...this.rooms.values()].reduce((acc, v) => acc + v.size, 0),
+      observers: [...this.observers.values()].reduce((acc, v) => acc + v.length, 0),
+    };
+  }
 }

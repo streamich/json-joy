@@ -24,8 +24,45 @@ export const echo =
     return router.fn('util.echo', func);
   };
 
+export const info =
+  ({services}: RouteDeps) =>
+  <R extends RoutesBase>(router: TypeRouter<R>) => {
+    const t = router.t;
+    const Request = t.any;
+    const Response = t.Object(
+      t.prop('now', t.num),
+      t.prop('stats', t.Object(
+        t.prop('pubsub', t.Object(
+          t.prop('channels', t.num),
+          t.prop('observers', t.num),
+        )),
+        t.prop('presence', t.Object(
+          t.prop('rooms', t.num),
+          t.prop('entries', t.num),
+          t.prop('observers', t.num),
+        )),
+        t.prop('blocks', t.Object(
+          t.prop('blocks', t.num),
+          t.prop('patches', t.num),
+        )),
+      )),
+    );
+    const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
+      return {
+        now: Date.now(),
+        stats: {
+          pubsub: services.pubsub.stats(),
+          presence: services.presence.stats(),
+          blocks: services.blocks.stats(),
+        },
+      };
+    });
+    return router.fn('util.info', Func);
+  };
+
 // prettier-ignore
 export const util = (deps: RouteDeps) => <R extends RoutesBase>(r: TypeRouter<R>) =>
   ( ping(deps)
   ( echo(deps)
-  ( r )));
+  ( info(deps)
+  ( r ))));

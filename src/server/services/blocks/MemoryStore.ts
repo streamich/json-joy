@@ -75,4 +75,11 @@ export class MemoryStore implements types.Store {
     this.blocks.delete(id);
     this.patches.delete(id);
   }
+
+  public stats(): {blocks: number, patches: number} {
+    return {
+      blocks: this.blocks.size,
+      patches: [...this.patches.values()].reduce((acc, v) => acc + v.length, 0),
+    };
+  }
 }
