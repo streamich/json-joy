@@ -56,6 +56,11 @@ export interface RpcAppOptions {
    * @param ctx Connection context.
    */
   augmentContext?: (ctx: ConnectionContext) => void;
+
+  /**
+   * Logger to use for logging. If not specified, console will be used.
+   */
+  logger?: types.ServerLogger;
 }
 
 export class RpcApp<Ctx extends ConnectionContext> {
@@ -193,7 +198,9 @@ export class RpcApp<Ctx extends ConnectionContext> {
     const matcher = this.router.compile();
     const codecs = this.codecs;
     let responseCodec: JsonValueCodec = codecs.value.json;
-    const augmentContext = this.options.augmentContext ?? noop;
+    const options = this.options;
+    const augmentContext = options.augmentContext ?? noop;
+    const logger = options.logger ?? console;
     this.app.any('/*', async (res: types.HttpResponse, req: types.HttpRequest) => {
       res.onAborted(() => {
         res.aborted = true;
@@ -232,8 +239,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
           });
           return;
         }
-        // tslint:disable-next-line:no-console
-        console.error(err);
+        logger.error(err);
         res.cork(() => {
           res.writeStatus(HDR_INTERNAL_SERVER_ERROR);
           res.end(RpcErrorType.encode(responseCodec, ERR_INTERNAL));
@@ -248,15 +254,15 @@ export class RpcApp<Ctx extends ConnectionContext> {
     this.enableHttpRpc();
     this.enableWsRpc();
     this.startRouting();
-    const port = this.options.port ?? +(process.env.PORT || 9999);
-    const host = this.options.host ?? (process.env.HOST ?? '0.0.0.0');
+    const options = this.options;
+    const port = options.port ?? +(process.env.PORT || 9999);
+    const host = options.host ?? (process.env.HOST ?? '0.0.0.0');
+    const logger = options.logger ?? console;
     this.options.uws.listen(host, port, (token) => {
       if (token) {
-        // tslint:disable-next-line no-console
-        console.log({msg: 'SERVER_STARTED', url: `http://localhost:${port}`});
+        logger.log({msg: 'SERVER_STARTED', url: `http://localhost:${port}`});
       } else {
-        // tslint:disable-next-line no-console
-        console.error(`Failed to listen on ${port} port.`);
+        logger.error(`Failed to listen on ${port} port.`);
       }
     });
   }

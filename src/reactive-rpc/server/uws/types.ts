@@ -24,3 +24,8 @@ export interface RpcWebSocket<Ctx extends ConnectionContext = ConnectionContext>
   ctx: Ctx;
   rpc?: RpcMessageStreamProcessor<Ctx>;
 }
+
+export interface ServerLogger {
+  log(msg: unknown): void;
+  error(msg: unknown): void;
+}
