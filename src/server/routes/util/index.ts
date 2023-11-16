@@ -53,9 +53,26 @@ export const info =
     return router.fn('util.info', Func);
   };
 
+export const schema =
+  (deps: RouteDeps) =>
+  <R extends RoutesBase>(router: TypeRouter<R>) => {
+    const t = router.t;
+    const Request = t.any;
+    const Response = t.Object(
+      t.prop('typescript', t.str),
+    );
+    const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
+      return {
+        typescript: deps.router.toString(),
+      };
+    });
+    return router.fn('util.schema', Func);
+  };
+
 // prettier-ignore
 export const util = (deps: RouteDeps) => <R extends RoutesBase>(r: TypeRouter<R>) =>
   ( ping(deps)
   ( echo(deps)
   ( info(deps)
-  ( r ))));
+  ( schema(deps)
+  ( r )))));
