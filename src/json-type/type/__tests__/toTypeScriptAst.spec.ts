@@ -244,3 +244,86 @@ describe('or', () => {
     `);
   });
 });
+
+describe('fn', () => {
+  test('can emit reference AST', () => {
+    const system = new TypeSystem();
+    const {t} = system;
+    const type = system.t.Function(t.str, t.num);
+    expect(type.toTypeScriptAst()).toMatchInlineSnapshot(`
+      {
+        "node": "FunctionType",
+        "parameters": [
+          {
+            "name": {
+              "name": "request",
+              "node": "Identifier",
+            },
+            "node": "Parameter",
+            "type": {
+              "node": "StringKeyword",
+            },
+          },
+        ],
+        "type": {
+          "node": "TypeReference",
+          "typeArguments": [
+            {
+              "node": "NumberKeyword",
+            },
+          ],
+          "typeName": {
+            "name": "Promise",
+            "node": "Identifier",
+          },
+        },
+      }
+    `);
+  });
+});
+
+describe('fn$', () => {
+  test('can emit reference AST', () => {
+    const system = new TypeSystem();
+    const {t} = system;
+    const type = system.t.Function$(t.str, t.num);
+    expect(type.toTypeScriptAst()).toMatchInlineSnapshot(`
+      {
+        "node": "FunctionType",
+        "parameters": [
+          {
+            "name": {
+              "name": "request$",
+              "node": "Identifier",
+            },
+            "node": "Parameter",
+            "type": {
+              "node": "TypeReference",
+              "typeArguments": [
+                {
+                  "node": "StringKeyword",
+                },
+              ],
+              "typeName": {
+                "name": "Observable",
+                "node": "Identifier",
+              },
+            },
+          },
+        ],
+        "type": {
+          "node": "TypeReference",
+          "typeArguments": [
+            {
+              "node": "NumberKeyword",
+            },
+          ],
+          "typeName": {
+            "name": "Observable",
+            "node": "Identifier",
+          },
+        },
+      }
+    `);
+  });
+});

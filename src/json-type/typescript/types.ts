@@ -134,7 +134,20 @@ export interface TsGenericTypeAnnotation {
 /** A reference to a type alias, e.g. "foo: Reference". */
 export interface TsTypeReference {
   node: 'TypeReference';
-  typeName: string;
+  typeName: string | TsIdentifier;
+  typeArguments?: TsType[];
+}
+
+export interface TsFunctionType {
+  node: 'FunctionType';
+  parameters: TsParameter[];
+  type: TsType;
+}
+
+export interface TsParameter {
+  node: 'Parameter';
+  name: TsIdentifier;
+  type: TsType;
 }
 
 /** All type annotations. */
@@ -155,7 +168,8 @@ export type TsType =
   | TsUnknownKeyword
   | TsUnionType
   | TsTypeReference
-  | TsGenericTypeAnnotation;
+  | TsGenericTypeAnnotation
+  | TsFunctionType;
 
 /** Any possible TypeScript AST node. */
 export type TsNode = TsDeclaration | TsType | TsPropertySignature | TsIndexSignature;

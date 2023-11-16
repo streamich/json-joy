@@ -1,5 +1,5 @@
 import {wordWrap} from '../../util/strings/wordWrap';
-import {TsNode} from './types';
+import {TsIdentifier, TsNode} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
 const formatComment = (comment: string | undefined, __: string): string => {
@@ -8,7 +8,7 @@ const formatComment = (comment: string | undefined, __: string): string => {
   return __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
 };
 
-export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
+export const toText = (node: TsNode | TsNode[] | TsIdentifier, __: string = ''): string => {
   if (Array.isArray(node)) return node.map((s) => toText(s, __)).join('\n');
 
   const ____ = __ + TAB;
@@ -96,7 +96,10 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       return node.types.map((t) => toText(t, ____)).join(' | ');
     }
     case 'TypeReference': {
-      return node.typeName;
+      return typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __);
+    }
+    case 'Identifier': {
+      return node.name;
     }
   }
 
