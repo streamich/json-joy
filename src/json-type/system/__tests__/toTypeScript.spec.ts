@@ -98,14 +98,17 @@ test('can export whole router', () => {
   const {t} = system;
   const router = new TypeRouter({system, routes: {}}).extend(() => ({
     callMe: t.Function(t.str, t.num),
-    subscribe: t.Function$(t.Object(t.prop('id', t.str)), t.obj),
+    'block.subscribe': t.Function$(t.Object(t.prop('id', t.str)), t.obj),
   }));
   expect(router.toTypeScript()).toMatchInlineSnapshot(`
-    "{
-      callMe: (request: string) => Promise<number>;
-      subscribe: (request$: Observable<{
-        id: string;
-      }>) => Observable<{}>;
-    }"
+    "export namespace Router {
+      export type Routes = {
+        callMe: (request: string) => Promise<number>;
+        "block.subscribe": (request$: Observable<{
+          id: string;
+        }>) => Observable<{}>;
+      };
+    }
+    "
   `);
 });

@@ -16,7 +16,7 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __:
   switch (node.node) {
     case 'ModuleDeclaration': {
       let out: string = '';
-      out += `${__}namespace ${node.name} {\n`;
+      out += `${__}${node.export ? 'export ' : ''}namespace ${node.name} {\n`;
       out += toText(node.statements, ____);
       out += `${__}}\n`;
       return out;
@@ -25,9 +25,15 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __:
       const {name, members, comment} = node;
       let out: string = '';
       out += formatComment(comment, __);
-      out += `${__}interface ${name} {\n`;
+      out += `${__}${node.export ? 'export ' : ''}interface ${name} {\n`;
       out += toText(members, ____);
       out += `\n${__}}\n`;
+      return out;
+    }
+    case 'TypeAliasDeclaration': {
+      let out: string = '';
+      out += formatComment(node.comment, __);
+      out += `${__}${node.export ? 'export ' : ''}type ${node.name} = ${toText(node.type, __)};\n`;
       return out;
     }
     case 'PropertySignature': {
@@ -38,12 +44,6 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __:
     }
     case 'IndexSignature': {
       return `${__}[key: string]: ${toText(node.type, __)};`;
-    }
-    case 'TypeAliasDeclaration': {
-      let out: string = '';
-      out += formatComment(node.comment, __);
-      out += `${__}type ${node.name} = ${toText(node.type)};\n`;
-      return out;
     }
     case 'ArrayType': {
       const simple = isSimpleType(node.elementType);

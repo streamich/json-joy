@@ -4,6 +4,7 @@ export interface TsModuleDeclaration {
   name: string;
   statements: TsDeclaration[];
   comment?: string;
+  export?: boolean;
 }
 
 /** An interface declaration, e.g. "interface Bar {". */
@@ -12,6 +13,7 @@ export interface TsInterfaceDeclaration {
   name: string;
   members: Array<TsPropertySignature | TsIndexSignature>;
   comment?: string;
+  export?: boolean;
 }
 
 /** A property of an interface type. */
@@ -35,6 +37,7 @@ export interface TsTypeAliasDeclaration {
   name: string;
   type: TsType;
   comment?: string;
+  export?: boolean;
 }
 
 /** All possible declarations that can be statements of a module. */

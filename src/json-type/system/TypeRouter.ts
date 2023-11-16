@@ -29,7 +29,7 @@ export class TypeRouter<Routes extends RoutesBase> {
     this.system = options.system;
     this.t = this.system.t;
     this.routes = options.routes;
-    this.system.importTypes(this.routes);
+    // this.system.importTypes(this.routes);
   }
 
   protected merge<Router extends TypeRouter<any>>(router: Router): TypeRouter<Routes & TypeRouterRoutes<Router>> {
@@ -81,8 +81,28 @@ export class TypeRouter<Routes extends RoutesBase> {
     return node;
   }
 
+  public toTypeScriptModuleAst(): ts.TsModuleDeclaration {
+    const node: ts.TsModuleDeclaration = {
+      node: 'ModuleDeclaration',
+      name: 'Router',
+      export: true,
+      statements: [
+        {
+          node: 'TypeAliasDeclaration',
+          name: 'Routes',
+          type: this.toTypeScriptAst(),
+          export: true,
+        },
+      ],
+    };
+    for (const alias of this.system.aliases.values())
+      node.statements.push(alias.toTypeScriptAst());
+    return node;
+  }
+
   public toTypeScript(): string {
-    return toText(this.toTypeScriptAst());
+    this.system.exportTypes
+    return toText(this.toTypeScriptModuleAst());
   }
 }
 
