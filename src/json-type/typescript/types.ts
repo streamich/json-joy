@@ -152,20 +152,20 @@ export interface TsParameter {
 
 /** All type annotations. */
 export type TsType =
-  | TsArrayType
-  | TsTupleType
-  | TsStringKeyword
-  | TsNumberKeyword
-  | TsBooleanKeyword
-  | TsNullKeyword
-  | TsObjectKeyword
   | TsAnyKeyword
-  | TsTypeLiteral
-  | TsStringLiteral
-  | TsNumericLiteral
+  | TsUnknownKeyword
+  | TsNullKeyword
+  | TsBooleanKeyword
   | TsTrueKeyword
   | TsFalseKeyword
-  | TsUnknownKeyword
+  | TsNumberKeyword
+  | TsStringKeyword
+  | TsStringLiteral
+  | TsArrayType
+  | TsTupleType
+  | TsObjectKeyword
+  | TsTypeLiteral
+  | TsNumericLiteral
   | TsUnionType
   | TsTypeReference
   | TsGenericTypeAnnotation

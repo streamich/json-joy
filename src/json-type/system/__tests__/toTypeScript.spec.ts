@@ -1,4 +1,5 @@
 import {TypeSystem} from '..';
+import {TypeRouter} from '../TypeRouter';
 
 test('generates TypeScript source for simple string type', () => {
   const system = new TypeSystem();
@@ -89,5 +90,22 @@ test('type interface inside a tuple', () => {
       ];
     }
     "
+  `);
+});
+
+test('can export whole router', () => {
+  const system = new TypeSystem();
+  const {t} = system;
+  const router = new TypeRouter({system, routes: {}}).extend(() => ({
+    callMe: t.Function(t.str, t.num),
+    subscribe: t.Function$(t.Object(t.prop('id', t.str)), t.obj),
+  }));
+  expect(router.toTypeScript()).toMatchInlineSnapshot(`
+    "{
+      callMe: (request: string) => Promise<number>;
+      subscribe: (request$: Observable<{
+        id: string;
+      }>) => Observable<{}>;
+    }"
   `);
 });

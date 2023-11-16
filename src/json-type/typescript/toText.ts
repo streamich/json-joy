@@ -1,5 +1,5 @@
 import {wordWrap} from '../../util/strings/wordWrap';
-import {TsIdentifier, TsNode} from './types';
+import {TsIdentifier, TsNode, TsParameter} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
 const formatComment = (comment: string | undefined, __: string): string => {
@@ -8,7 +8,7 @@ const formatComment = (comment: string | undefined, __: string): string => {
   return __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
 };
 
-export const toText = (node: TsNode | TsNode[] | TsIdentifier, __: string = ''): string => {
+export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __: string = ''): string => {
   if (Array.isArray(node)) return node.map((s) => toText(s, __)).join('\n');
 
   const ____ = __ + TAB;
@@ -78,7 +78,7 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier, __: string = ''):
       return 'unknown';
     }
     case 'TypeLiteral': {
-      return `{\n${toText(node.members, ____)}\n${__}}`;
+      return !node.members.length ? '{}' : `{\n${toText(node.members, ____)}\n${__}}`;
     }
     case 'StringLiteral': {
       return JSON.stringify(node.text);
@@ -96,10 +96,23 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier, __: string = ''):
       return node.types.map((t) => toText(t, ____)).join(' | ');
     }
     case 'TypeReference': {
-      return typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __);
+      return (typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __)) +
+        (node.typeArguments && node.typeArguments.length > 0  ? `<${node.typeArguments.map((t) => toText(t, __)).join(', ')}>` : '');
     }
     case 'Identifier': {
       return node.name;
+    }
+    case 'FunctionType': {
+      const {parameters, type} = node;
+      const params = parameters.map((p) => toText(p, __)).join(', ');
+      return `(${params}) => ${toText(type, __)}`;
+    }
+    case 'ObjectKeyword': {
+      return 'object';
+    }
+    case 'Parameter': {
+      const {name, type} = node;
+      return `${toText(name, __)}: ${toText(type, __)}`;
     }
   }
 
