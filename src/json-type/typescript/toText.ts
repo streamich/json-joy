@@ -96,8 +96,12 @@ export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __:
       return node.types.map((t) => toText(t, ____)).join(' | ');
     }
     case 'TypeReference': {
-      return (typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __)) +
-        (node.typeArguments && node.typeArguments.length > 0  ? `<${node.typeArguments.map((t) => toText(t, __)).join(', ')}>` : '');
+      return (
+        (typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __)) +
+        (node.typeArguments && node.typeArguments.length > 0
+          ? `<${node.typeArguments.map((t) => toText(t, __)).join(', ')}>`
+          : '')
+      );
     }
     case 'Identifier': {
       return node.name;

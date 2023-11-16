@@ -58,9 +58,7 @@ export const schema =
   <R extends RoutesBase>(router: TypeRouter<R>) => {
     const t = router.t;
     const Request = t.any;
-    const Response = t.Object(
-      t.prop('typescript', t.str),
-    );
+    const Response = t.Object(t.prop('typescript', t.str));
     const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
       return {
         typescript: deps.router.toTypeScript(),
