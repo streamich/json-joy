@@ -63,7 +63,7 @@ export const schema =
     );
     const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
       return {
-        typescript: deps.router.toString(),
+        typescript: deps.router.toTypeScript(),
       };
     });
     return router.fn('util.schema', Func);
