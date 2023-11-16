@@ -96,7 +96,7 @@ export class TypeRouter<Routes extends RoutesBase> {
       ],
     };
     for (const alias of this.system.aliases.values())
-      node.statements.push(alias.toTypeScriptAst());
+      node.statements.push({...alias.toTypeScriptAst(), export: true});
     return node;
   }
 

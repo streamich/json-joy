@@ -112,3 +112,29 @@ test('can export whole router', () => {
     "
   `);
 });
+
+test('can export whole router and aliases', () => {
+  const system = new TypeSystem();
+  const {t} = system;
+  system.alias('Document', t.Object(t.prop('id', t.str), t.prop('title', t.str)).options({title: 'The document'}));
+  const router = new TypeRouter({system, routes: {}}).extend(() => ({
+    callMe: t.Function(t.str, t.num),
+    'block.subscribe': t.Function$(t.Object(t.prop('id', t.str)), t.Ref('Document')),
+  }));
+  expect(router.toTypeScript()).toMatchInlineSnapshot(`
+    "export namespace Router {
+      export type Routes = {
+        callMe: (request: string) => Promise<number>;
+        "block.subscribe": (request$: Observable<{
+          id: string;
+        }>) => Observable<Document>;
+      };
+
+      export interface Document {
+        id: string;
+        title: string;
+      }
+    }
+    "
+  `);
+});
