@@ -215,17 +215,17 @@
 <a name='L150'></a><a href='#L150'>150</a>
 <a name='L151'></a><a href='#L151'>151</a>
 <a name='L152'></a><a href='#L152'>152</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -481,12 +481,12 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
       return messages;
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      <span class="missing-if-branch" title="if path not taken" >I</span>if (error instanceof RpcError) <span class="cstat-no" title="statement not covered" >throw error;</span></span>
-<span class="cstat-no" title="statement not covered" >      throw RpcError.invalidRequest();</span>
+<span class="cstat-no" title="statement not covered" >      throw RpcError.badRequest();</span>
     }
   }
 &nbsp;
   public fromJson(message: schema.JsonRpc2Message): msg.ReactiveRpcMessage {
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!message || typeof message !== 'object') <span class="cstat-no" title="statement not covered" >throw RpcError.invalidRequest();</span>
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!message || typeof message !== 'object') <span class="cstat-no" title="statement not covered" >throw RpcError.badRequest();</span>
     if ((message as any).id === undefined) {
       const notification = message as schema.JsonRpc2NotificationMessage;
       const data = notification.params;
@@ -497,12 +497,12 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
       const request = message as schema.JsonRpc2RequestMessage;
       const data = request.params;
       const value = data === undefined ? undefined : new Value(request.params, undefined);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof request.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.invalidRequest();</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof request.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.badRequest();</span>
       return new msg.RequestCompleteMessage(request.id, request.method, value);
     }
     if ((message as schema.JsonRpc2ResponseMessage).result !== undefined) {
       const response = message as schema.JsonRpc2ResponseMessage;
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof response.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.invalidRequest();</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof response.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.badRequest();</span>
       const data = response.result;
       const value = data === undefined ? <span class="branch-0 cbranch-no" title="branch not covered" >undefined </span>: new Value(response.result, undefined);
       return new msg.ResponseCompleteMessage(response.id, value);
@@ -510,10 +510,10 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
     if ((message as schema.JsonRpc2ErrorMessage).error !== undefined) {
       const response = message as schema.JsonRpc2ErrorMessage;
       const value = new Value(response.error.data, undefined);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof response.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.invalidRequest();</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof response.id !== 'number') <span class="cstat-no" title="statement not covered" >throw RpcError.badRequest();</span>
       return new msg.ResponseErrorMessage(response.id, value);
     }
-<span class="cstat-no" title="statement not covered" >    throw RpcError.invalidRequest();</span>
+<span class="cstat-no" title="statement not covered" >    throw RpcError.badRequest();</span>
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -523,7 +523,7 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-15T22:37:45.453Z
+                at 2023-11-17T13:51:24.695Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
