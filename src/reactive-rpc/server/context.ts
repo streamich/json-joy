@@ -13,9 +13,11 @@ const CODECS_REGEX = /rpc.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
 
 export class ConnectionContext<Meta = Record<string, unknown>> {
   private static findIp(req: HttpRequest, res: HttpResponse): string {
-    return req.getHeader('x-forwarded-for') ||
+    return (
+      req.getHeader('x-forwarded-for') ||
       req.getHeader('x-real-ip') ||
-      Buffer.from(res.getRemoteAddressAsText()).toString();
+      Buffer.from(res.getRemoteAddressAsText()).toString()
+    );
   }
 
   private static findToken(req: HttpRequest, params: string[] | null): string {

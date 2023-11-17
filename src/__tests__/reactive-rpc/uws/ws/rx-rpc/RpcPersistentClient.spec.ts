@@ -59,8 +59,7 @@ if (process.env.TEST_E2E) {
         channel: {
           newChannel: () =>
             new WebSocketChannel({
-              newSocket: () =>
-                new WebSocket(url, [protocolSpecifier]) as any,
+              newSocket: () => new WebSocket(url, [protocolSpecifier]) as any,
             }),
         },
       });
