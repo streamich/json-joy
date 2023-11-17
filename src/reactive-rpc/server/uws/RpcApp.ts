@@ -185,11 +185,11 @@ export class RpcApp<Ctx extends ConnectionContext> {
           try {
             rpc.onMessages(messages, ctx);
           } catch (error) {
-            logger.error('RX_RPC_PROCESSING_ERROR', error, Buffer.from(uint8).toString());
+            logger.error('RX_RPC_PROCESSING_ERROR', error, messages);
             return;
           }
         } catch (error) {
-          logger.error('RX_RPC_DECODING_ERROR', error, Buffer.from(uint8).toString());
+          logger.error('RX_RPC_DECODING_ERROR', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString()});
         }
       },
       close: (ws_: types.WebSocket, code: number, message: ArrayBuffer) => {
