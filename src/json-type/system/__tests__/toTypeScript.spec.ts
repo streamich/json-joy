@@ -1,4 +1,5 @@
 import {TypeSystem} from '..';
+import {TypeRouter} from '../TypeRouter';
 
 test('generates TypeScript source for simple string type', () => {
   const system = new TypeSystem();
@@ -87,6 +88,52 @@ test('type interface inside a tuple', () => {
         },
         number
       ];
+    }
+    "
+  `);
+});
+
+test('can export whole router', () => {
+  const system = new TypeSystem();
+  const {t} = system;
+  const router = new TypeRouter({system, routes: {}}).extend(() => ({
+    callMe: t.Function(t.str, t.num),
+    'block.subscribe': t.Function$(t.Object(t.prop('id', t.str)), t.obj),
+  }));
+  expect(router.toTypeScript()).toMatchInlineSnapshot(`
+    "export namespace Router {
+      export type Routes = {
+        callMe: (request: string) => Promise<number>;
+        "block.subscribe": (request$: Observable<{
+          id: string;
+        }>) => Observable<{}>;
+      };
+    }
+    "
+  `);
+});
+
+test('can export whole router and aliases', () => {
+  const system = new TypeSystem();
+  const {t} = system;
+  system.alias('Document', t.Object(t.prop('id', t.str), t.prop('title', t.str)).options({title: 'The document'}));
+  const router = new TypeRouter({system, routes: {}}).extend(() => ({
+    callMe: t.Function(t.str, t.num),
+    'block.subscribe': t.Function$(t.Object(t.prop('id', t.str)), t.Ref('Document')),
+  }));
+  expect(router.toTypeScript()).toMatchInlineSnapshot(`
+    "export namespace Router {
+      export type Routes = {
+        callMe: (request: string) => Promise<number>;
+        "block.subscribe": (request$: Observable<{
+          id: string;
+        }>) => Observable<Document>;
+      };
+
+      export interface Document {
+        id: string;
+        title: string;
+      }
     }
     "
   `);

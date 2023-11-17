@@ -1,5 +1,7 @@
 import * as classes from '../type/classes';
 import {TypeSystem} from './TypeSystem';
+import {toText} from '../typescript/toText';
+import type * as ts from '../typescript/types';
 import type {TypeBuilder} from '../type/TypeBuilder';
 
 export interface TypeRouterOptions<R extends RoutesBase> {
@@ -27,7 +29,7 @@ export class TypeRouter<Routes extends RoutesBase> {
     this.system = options.system;
     this.t = this.system.t;
     this.routes = options.routes;
-    this.system.importTypes(this.routes);
+    // this.system.importTypes(this.routes);
   }
 
   protected merge<Router extends TypeRouter<any>>(router: Router): TypeRouter<Routes & TypeRouterRoutes<Router>> {
@@ -59,6 +61,47 @@ export class TypeRouter<Routes extends RoutesBase> {
   ): TypeRouter<Routes & {[KK in K]: R}> {
     this.routes[name] = <any>type;
     return <any>this;
+  }
+
+  public toTypeScriptAst(): ts.TsTypeLiteral {
+    const node: ts.TsTypeLiteral = {
+      node: 'TypeLiteral',
+      members: [],
+    };
+    for (const [name, type] of Object.entries(this.routes)) {
+      const schema = type.getSchema();
+      const property: ts.TsPropertySignature = {
+        node: 'PropertySignature',
+        name,
+        type: type.toTypeScriptAst(),
+      };
+      if (schema.title) property.comment = schema.title;
+      node.members.push(property);
+    }
+    return node;
+  }
+
+  public toTypeScriptModuleAst(): ts.TsModuleDeclaration {
+    const node: ts.TsModuleDeclaration = {
+      node: 'ModuleDeclaration',
+      name: 'Router',
+      export: true,
+      statements: [
+        {
+          node: 'TypeAliasDeclaration',
+          name: 'Routes',
+          type: this.toTypeScriptAst(),
+          export: true,
+        },
+      ],
+    };
+    for (const alias of this.system.aliases.values()) node.statements.push({...alias.toTypeScriptAst(), export: true});
+    return node;
+  }
+
+  public toTypeScript(): string {
+    this.system.exportTypes;
+    return toText(this.toTypeScriptModuleAst());
   }
 }
 

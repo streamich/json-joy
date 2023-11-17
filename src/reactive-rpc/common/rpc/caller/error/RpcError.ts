@@ -48,8 +48,7 @@ export class RpcError extends Error implements IRpcError {
     return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message);
   }
 
-  /** @todo Rename to "badRequest". */
-  public static invalidRequest(): RpcError {
+  public static badRequest(): RpcError {
     return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, 'Bad Request');
   }
 

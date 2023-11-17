@@ -2228,8 +2228,29 @@ export class FunctionType<Req extends Type, Res extends Type> extends AbstractTy
     return this;
   }
 
-  public toTypeScriptAst(): ts.TsUnionType {
-    throw new Error('Method not implemented.');
+  public toTypeScriptAst(): ts.TsFunctionType {
+    const node: ts.TsFunctionType = {
+      node: 'FunctionType',
+      parameters: [
+        {
+          node: 'Parameter',
+          name: {
+            node: 'Identifier',
+            name: 'request',
+          },
+          type: this.req.toTypeScriptAst(),
+        },
+      ],
+      type: {
+        node: 'TypeReference',
+        typeName: {
+          node: 'Identifier',
+          name: 'Promise',
+        },
+        typeArguments: [this.res.toTypeScriptAst()],
+      },
+    };
+    return node;
   }
 
   public toString(tab: string = ''): string {
@@ -2289,8 +2310,36 @@ export class FunctionStreamingType<Req extends Type, Res extends Type> extends A
     return this;
   }
 
-  public toTypeScriptAst(): ts.TsUnionType {
-    throw new Error('Method not implemented.');
+  public toTypeScriptAst(): ts.TsFunctionType {
+    const node: ts.TsFunctionType = {
+      node: 'FunctionType',
+      parameters: [
+        {
+          node: 'Parameter',
+          name: {
+            node: 'Identifier',
+            name: 'request$',
+          },
+          type: {
+            node: 'TypeReference',
+            typeName: {
+              node: 'Identifier',
+              name: 'Observable',
+            },
+            typeArguments: [this.req.toTypeScriptAst()],
+          },
+        },
+      ],
+      type: {
+        node: 'TypeReference',
+        typeName: {
+          node: 'Identifier',
+          name: 'Observable',
+        },
+        typeArguments: [this.res.toTypeScriptAst()],
+      },
+    };
+    return node;
   }
 
   public toString(tab: string = ''): string {

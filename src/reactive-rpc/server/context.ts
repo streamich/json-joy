@@ -12,16 +12,15 @@ const X_AUTH_PARAM_LENGTH = X_AUTH_PARAM.length;
 const CODECS_REGEX = /rpc.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
 
 export class ConnectionContext<Meta = Record<string, unknown>> {
-  public static fromReqRes(
-    req: HttpRequest,
-    res: HttpResponse,
-    params: string[] | null,
-    app: RpcApp<any>,
-  ): ConnectionContext {
-    const ip =
+  private static findIp(req: HttpRequest, res: HttpResponse): string {
+    return (
       req.getHeader('x-forwarded-for') ||
       req.getHeader('x-real-ip') ||
-      Buffer.from(res.getRemoteAddressAsText()).toString();
+      Buffer.from(res.getRemoteAddressAsText()).toString()
+    );
+  }
+
+  private static findToken(req: HttpRequest, params: string[] | null): string {
     let token: string = req.getHeader('authorization') || '';
     if (!token) {
       const query = req.getQuery();
@@ -29,20 +28,53 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
       token = params.get('access_token') || '';
       if (!token) token = params.get('token') || '';
     }
-    let secWebSocketProtocol: string = '';
-    if (!token) {
-      secWebSocketProtocol = String(req.getHeader('sec-websocket-protocol')) || '';
-      if (secWebSocketProtocol) {
-        const protocols = secWebSocketProtocol.split(',');
-        const length = protocols.length;
-        for (let i = 0; i < length; i++) {
-          let protocol = protocols[i].trim();
-          if (protocol.startsWith(X_AUTH_PARAM)) {
-            protocol = protocol.slice(X_AUTH_PARAM_LENGTH);
-            if (protocol) {
-              token = Buffer.from(protocol, 'base64').toString();
-              break;
-            }
+    return token;
+  }
+
+  public static fromReqRes(
+    req: HttpRequest,
+    res: HttpResponse,
+    params: string[] | null,
+    app: RpcApp<any>,
+  ): ConnectionContext {
+    const ip = ConnectionContext.findIp(req, res);
+    const token: string = ConnectionContext.findToken(req, params);
+    const codecs = app.codecs;
+    const valueCodecs = codecs.value;
+    const ctx = new ConnectionContext(
+      ip,
+      token,
+      params,
+      new NullObject(),
+      valueCodecs.json,
+      valueCodecs.json,
+      codecs.messages.compact,
+      res,
+    );
+    const contentType = req.getHeader('content-type');
+    if (contentType) ctx.setCodecs(contentType, codecs);
+    return ctx;
+  }
+
+  public static fromWs(
+    req: HttpRequest,
+    res: HttpResponse,
+    secWebSocketProtocol: string,
+    params: string[] | null,
+    app: RpcApp<any>,
+  ): ConnectionContext {
+    const ip = ConnectionContext.findIp(req, res);
+    let token: string = ConnectionContext.findToken(req, params);
+    if (!token && secWebSocketProtocol) {
+      const protocols = secWebSocketProtocol.split(',');
+      const length = protocols.length;
+      for (let i = 0; i < length; i++) {
+        let protocol = protocols[i].trim();
+        if (protocol.startsWith(X_AUTH_PARAM)) {
+          protocol = protocol.slice(X_AUTH_PARAM_LENGTH);
+          if (protocol) {
+            token = Buffer.from(protocol, 'base64').toString();
+            break;
           }
         }
       }

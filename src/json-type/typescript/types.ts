@@ -4,6 +4,7 @@ export interface TsModuleDeclaration {
   name: string;
   statements: TsDeclaration[];
   comment?: string;
+  export?: boolean;
 }
 
 /** An interface declaration, e.g. "interface Bar {". */
@@ -12,6 +13,7 @@ export interface TsInterfaceDeclaration {
   name: string;
   members: Array<TsPropertySignature | TsIndexSignature>;
   comment?: string;
+  export?: boolean;
 }
 
 /** A property of an interface type. */
@@ -35,6 +37,7 @@ export interface TsTypeAliasDeclaration {
   name: string;
   type: TsType;
   comment?: string;
+  export?: boolean;
 }
 
 /** All possible declarations that can be statements of a module. */
@@ -134,28 +137,42 @@ export interface TsGenericTypeAnnotation {
 /** A reference to a type alias, e.g. "foo: Reference". */
 export interface TsTypeReference {
   node: 'TypeReference';
-  typeName: string;
+  typeName: string | TsIdentifier;
+  typeArguments?: TsType[];
+}
+
+export interface TsFunctionType {
+  node: 'FunctionType';
+  parameters: TsParameter[];
+  type: TsType;
+}
+
+export interface TsParameter {
+  node: 'Parameter';
+  name: TsIdentifier;
+  type: TsType;
 }
 
 /** All type annotations. */
 export type TsType =
-  | TsArrayType
-  | TsTupleType
-  | TsStringKeyword
-  | TsNumberKeyword
-  | TsBooleanKeyword
-  | TsNullKeyword
-  | TsObjectKeyword
   | TsAnyKeyword
-  | TsTypeLiteral
-  | TsStringLiteral
-  | TsNumericLiteral
+  | TsUnknownKeyword
+  | TsNullKeyword
+  | TsBooleanKeyword
   | TsTrueKeyword
   | TsFalseKeyword
-  | TsUnknownKeyword
+  | TsNumberKeyword
+  | TsStringKeyword
+  | TsStringLiteral
+  | TsArrayType
+  | TsTupleType
+  | TsObjectKeyword
+  | TsTypeLiteral
+  | TsNumericLiteral
   | TsUnionType
   | TsTypeReference
-  | TsGenericTypeAnnotation;
+  | TsGenericTypeAnnotation
+  | TsFunctionType;
 
 /** Any possible TypeScript AST node. */
 export type TsNode = TsDeclaration | TsType | TsPropertySignature | TsIndexSignature;

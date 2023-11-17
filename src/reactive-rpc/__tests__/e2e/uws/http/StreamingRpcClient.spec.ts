@@ -2,13 +2,13 @@
  * @jest-environment node
  */
 
-import {ApiTestSetup, runApiTests} from '../../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
-import {StreamingRpcClient} from '../../../../../reactive-rpc/common';
-import {RpcCodecs} from '../../../../../reactive-rpc/common/codec/RpcCodecs';
-import {RpcMessageCodecs} from '../../../../../reactive-rpc/common/codec/RpcMessageCodecs';
+import {ApiTestSetup, runApiTests} from '../../../../common/rpc/__tests__/runApiTests';
+import {StreamingRpcClient} from '../../../../common';
+import {RpcCodecs} from '../../../../common/codec/RpcCodecs';
+import {RpcMessageCodecs} from '../../../../common/codec/RpcMessageCodecs';
 import {Writer} from '../../../../../util/buffers/Writer';
 import {Codecs} from '../../../../../json-pack/codecs/Codecs';
-import {RpcMessageCodec} from '../../../../../reactive-rpc/common/codec/types';
+import {RpcMessageCodec} from '../../../../common/codec/types';
 import {JsonValueCodec} from '../../../../../json-pack/codecs/types';
 
 if (process.env.TEST_E2E) {

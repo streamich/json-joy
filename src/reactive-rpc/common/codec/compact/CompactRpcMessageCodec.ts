@@ -95,7 +95,7 @@ export class CompactRpcMessageCodec implements RpcMessageCodec {
   public decodeBatch(jsonCodec: JsonValueCodec, uint8: Uint8Array): msg.ReactiveRpcMessage[] {
     const decoder = jsonCodec.decoder;
     const value = decoder.read(uint8);
-    if (!(value instanceof Array)) throw RpcError.invalidRequest();
+    if (!(value instanceof Array)) throw RpcError.badRequest();
     if (typeof value[0] === 'number') return [fromJson(value as unknown[])];
     const result: msg.ReactiveRpcMessage[] = [];
     const length = value.length;

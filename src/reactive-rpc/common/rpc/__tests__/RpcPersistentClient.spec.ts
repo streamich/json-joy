@@ -15,7 +15,7 @@ test('on remote method execution, sends message over WebSocket only once', async
   const ws = new Ws('');
   const valueCodecs = new Codecs(new Writer(128));
   const messageCodecs = new RpcMessageCodecs();
-  const codec = new RpcCodec(valueCodecs.cbor, messageCodecs.compact);
+  const codec = new RpcCodec(messageCodecs.compact, valueCodecs.cbor, valueCodecs.cbor);
   const client = new RpcPersistentClient({
     channel: {
       newChannel: () =>
@@ -36,7 +36,7 @@ test('on remote method execution, sends message over WebSocket only once', async
   await until(() => onSend.mock.calls.length === 1);
   expect(onSend).toHaveBeenCalledTimes(1);
   const message = onSend.mock.calls[0][0];
-  const decoded = codec.decode(message);
+  const decoded = codec.decode(message, codec.req);
   const messageDecoded = decoded[0];
   expect(messageDecoded).toBeInstanceOf(RequestCompleteMessage);
   expect(messageDecoded).toMatchObject(new RequestCompleteMessage(1, 'foo.bar', new Value({foo: 'bar'}, undefined)));

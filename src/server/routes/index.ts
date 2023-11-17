@@ -9,9 +9,9 @@ import {Value} from '../../reactive-rpc/common/messages/Value';
 
 export const createRouter = (services: Services) => {
   const system = new TypeSystem();
-  const r = new TypeRouter({system, routes: {}});
-  const deps: RouteDeps = {services};
-  return routes(deps)(r);
+  const router = new TypeRouter({system, routes: {}});
+  const deps: RouteDeps = {services, router};
+  return routes(deps)(router);
 };
 
 export const createCaller = (services: Services) => {

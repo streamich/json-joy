@@ -1,18 +1,14 @@
+import * as msg from '../messages';
 import {firstValueFrom, Observable, ReplaySubject, timer} from 'rxjs';
 import {filter, first, share, switchMap, takeUntil} from 'rxjs/operators';
-import * as msg from '../messages';
 import {StreamingRpcClient, StreamingRpcClientOptions} from './client/StreamingRpcClient';
-import {ApiRpcCaller} from './caller/ApiRpcCaller';
-import {RpcDuplex} from '../rpc/RpcDuplex';
-import {RpcMessageStreamProcessor, RpcMessageStreamProcessorOptions} from './RpcMessageStreamProcessor';
 import {PersistentChannel, PersistentChannelParams} from '../channel';
-import {RpcCodec} from '../codec/RpcCodec';
+import type {RpcCodec} from '../codec/RpcCodec';
 
-export interface RpcPersistentClientParams<Ctx = unknown> {
+export interface RpcPersistentClientParams {
   channel: PersistentChannelParams;
   codec: RpcCodec;
   client?: Omit<StreamingRpcClientOptions, 'send'>;
-  server?: Omit<RpcMessageStreamProcessorOptions<Ctx>, 'send'>;
 
   /**
    * Number of milliseconds to periodically send keep-alive ".ping" notification
@@ -20,47 +16,41 @@ export interface RpcPersistentClientParams<Ctx = unknown> {
    * not send ping messages.
    */
   ping?: number;
+
+  /**
+   * The notification method name that is used for ping keep-alive messages, if
+   * not specified, defaults to ".ping".
+   */
+  pingMethod?: string;
 }
 
-export class RpcPersistentClient<Ctx = unknown> {
+/**
+ * RPC client which automatically reconnects if disconnected.
+ */
+export class RpcPersistentClient {
   public channel: PersistentChannel;
-  public rpc?: RpcDuplex<Ctx>;
-  public readonly rpc$ = new ReplaySubject<RpcDuplex<Ctx>>(1);
+  public rpc?: StreamingRpcClient;
+  public readonly rpc$ = new ReplaySubject<StreamingRpcClient>(1);
 
-  constructor(params: RpcPersistentClientParams<Ctx>) {
+  constructor(params: RpcPersistentClientParams) {
     const ping = params.ping ?? 15000;
     const codec = params.codec;
     const textEncoder = new TextEncoder();
     this.channel = new PersistentChannel(params.channel);
     this.channel.open$.pipe(filter((open) => open)).subscribe(() => {
       const close$ = this.channel.open$.pipe(filter((open) => !open));
-
-      const duplex = new RpcDuplex<Ctx>({
-        client: new StreamingRpcClient({
-          ...(params.client || {}),
-          send: (messages: msg.ReactiveRpcClientMessage[]): void => {
-            const encoded = codec.encode(messages);
-            this.channel.send$(encoded).subscribe();
-          },
-        }),
-        server: new RpcMessageStreamProcessor<Ctx>({
-          ...(params.server || {
-            caller: new ApiRpcCaller({
-              api: {},
-            }),
-            onNotification: () => {},
-          }),
-          send: (messages: (msg.ReactiveRpcServerMessage | msg.NotificationMessage)[]): void => {
-            const encoded = codec.encode(messages);
-            this.channel.send$(encoded).subscribe();
-          },
-        }),
+      const client = new StreamingRpcClient({
+        ...(params.client || {}),
+        send: (messages: msg.ReactiveRpcClientMessage[]): void => {
+          const encoded = codec.encode(messages, codec.req);
+          this.channel.send$(encoded).subscribe();
+        },
       });
 
       this.channel.message$.pipe(takeUntil(close$)).subscribe((data) => {
         const encoded = typeof data === 'string' ? textEncoder.encode(data) : new Uint8Array(data);
-        const messages = codec.decode(encoded);
-        duplex.onMessages((messages instanceof Array ? messages : [messages]) as msg.ReactiveRpcMessage[], {} as Ctx);
+        const messages = codec.decode(encoded, codec.res);
+        client.onMessages((messages instanceof Array ? messages : [messages]) as msg.ReactiveRpcServerMessage[]);
       });
 
       // Send ping notifications to keep the connection alive.
@@ -68,13 +58,13 @@ export class RpcPersistentClient<Ctx = unknown> {
         timer(ping, ping)
           .pipe(takeUntil(close$))
           .subscribe(() => {
-            duplex.notify('.ping', undefined);
+            client.notify(params.pingMethod || '.ping', undefined);
           });
       }
 
       if (this.rpc) this.rpc.disconnect();
-      this.rpc = duplex;
-      this.rpc$.next(duplex);
+      this.rpc = client;
+      this.rpc$.next(client);
     });
   }
 

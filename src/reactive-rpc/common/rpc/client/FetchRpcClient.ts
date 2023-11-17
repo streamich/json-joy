@@ -59,4 +59,6 @@ export class FetchRpcClient implements RpcClient {
   public notify(method: string, data: undefined | unknown): void {
     this.notify(method, data);
   }
+
+  public stop() {}
 }

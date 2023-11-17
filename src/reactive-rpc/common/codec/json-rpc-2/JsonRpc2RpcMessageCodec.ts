@@ -114,12 +114,12 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
       return messages;
     } catch (error) {
       if (error instanceof RpcError) throw error;
-      throw RpcError.invalidRequest();
+      throw RpcError.badRequest();
     }
   }
 
   public fromJson(message: schema.JsonRpc2Message): msg.ReactiveRpcMessage {
-    if (!message || typeof message !== 'object') throw RpcError.invalidRequest();
+    if (!message || typeof message !== 'object') throw RpcError.badRequest();
     if ((message as any).id === undefined) {
       const notification = message as schema.JsonRpc2NotificationMessage;
       const data = notification.params;
@@ -130,12 +130,12 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
       const request = message as schema.JsonRpc2RequestMessage;
       const data = request.params;
       const value = data === undefined ? undefined : new Value(request.params, undefined);
-      if (typeof request.id !== 'number') throw RpcError.invalidRequest();
+      if (typeof request.id !== 'number') throw RpcError.badRequest();
       return new msg.RequestCompleteMessage(request.id, request.method, value);
     }
     if ((message as schema.JsonRpc2ResponseMessage).result !== undefined) {
       const response = message as schema.JsonRpc2ResponseMessage;
-      if (typeof response.id !== 'number') throw RpcError.invalidRequest();
+      if (typeof response.id !== 'number') throw RpcError.badRequest();
       const data = response.result;
       const value = data === undefined ? undefined : new Value(response.result, undefined);
       return new msg.ResponseCompleteMessage(response.id, value);
@@ -143,9 +143,9 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
     if ((message as schema.JsonRpc2ErrorMessage).error !== undefined) {
       const response = message as schema.JsonRpc2ErrorMessage;
       const value = new Value(response.error.data, undefined);
-      if (typeof response.id !== 'number') throw RpcError.invalidRequest();
+      if (typeof response.id !== 'number') throw RpcError.badRequest();
       return new msg.ResponseErrorMessage(response.id, value);
     }
-    throw RpcError.invalidRequest();
+    throw RpcError.badRequest();
   }
 }

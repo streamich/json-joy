@@ -1,5 +1,5 @@
 import {wordWrap} from '../../util/strings/wordWrap';
-import {TsNode} from './types';
+import {TsIdentifier, TsNode, TsParameter} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 
 const formatComment = (comment: string | undefined, __: string): string => {
@@ -8,7 +8,7 @@ const formatComment = (comment: string | undefined, __: string): string => {
   return __ + '/**\n' + __ + ' * ' + lines.join('\n' + __ + ' * ') + '\n' + __ + ' */\n';
 };
 
-export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
+export const toText = (node: TsNode | TsNode[] | TsIdentifier | TsParameter, __: string = ''): string => {
   if (Array.isArray(node)) return node.map((s) => toText(s, __)).join('\n');
 
   const ____ = __ + TAB;
@@ -16,7 +16,7 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
   switch (node.node) {
     case 'ModuleDeclaration': {
       let out: string = '';
-      out += `${__}namespace ${node.name} {\n`;
+      out += `${__}${node.export ? 'export ' : ''}namespace ${node.name} {\n`;
       out += toText(node.statements, ____);
       out += `${__}}\n`;
       return out;
@@ -25,9 +25,15 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       const {name, members, comment} = node;
       let out: string = '';
       out += formatComment(comment, __);
-      out += `${__}interface ${name} {\n`;
+      out += `${__}${node.export ? 'export ' : ''}interface ${name} {\n`;
       out += toText(members, ____);
       out += `\n${__}}\n`;
+      return out;
+    }
+    case 'TypeAliasDeclaration': {
+      let out: string = '';
+      out += formatComment(node.comment, __);
+      out += `${__}${node.export ? 'export ' : ''}type ${node.name} = ${toText(node.type, __)};\n`;
       return out;
     }
     case 'PropertySignature': {
@@ -38,12 +44,6 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
     }
     case 'IndexSignature': {
       return `${__}[key: string]: ${toText(node.type, __)};`;
-    }
-    case 'TypeAliasDeclaration': {
-      let out: string = '';
-      out += formatComment(node.comment, __);
-      out += `${__}type ${node.name} = ${toText(node.type)};\n`;
-      return out;
     }
     case 'ArrayType': {
       const simple = isSimpleType(node.elementType);
@@ -78,7 +78,7 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       return 'unknown';
     }
     case 'TypeLiteral': {
-      return `{\n${toText(node.members, ____)}\n${__}}`;
+      return !node.members.length ? '{}' : `{\n${toText(node.members, ____)}\n${__}}`;
     }
     case 'StringLiteral': {
       return JSON.stringify(node.text);
@@ -96,7 +96,27 @@ export const toText = (node: TsNode | TsNode[], __: string = ''): string => {
       return node.types.map((t) => toText(t, ____)).join(' | ');
     }
     case 'TypeReference': {
-      return node.typeName;
+      return (
+        (typeof node.typeName === 'string' ? node.typeName : toText(node.typeName, __)) +
+        (node.typeArguments && node.typeArguments.length > 0
+          ? `<${node.typeArguments.map((t) => toText(t, __)).join(', ')}>`
+          : '')
+      );
+    }
+    case 'Identifier': {
+      return node.name;
+    }
+    case 'FunctionType': {
+      const {parameters, type} = node;
+      const params = parameters.map((p) => toText(p, __)).join(', ');
+      return `(${params}) => ${toText(type, __)}`;
+    }
+    case 'ObjectKeyword': {
+      return 'object';
+    }
+    case 'Parameter': {
+      const {name, type} = node;
+      return `${toText(name, __)}: ${toText(type, __)}`;
     }
   }
 

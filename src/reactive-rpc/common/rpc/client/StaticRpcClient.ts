@@ -97,4 +97,6 @@ export class StaticRpcClient implements RpcClient {
     const value = new Value(data, undefined);
     this.buffer.push(new msg.NotificationMessage(method, value));
   }
+
+  public stop() {}
 }

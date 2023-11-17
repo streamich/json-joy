@@ -129,7 +129,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
         if (res.aborted) return;
         res.end(buf);
       } catch (err: any) {
-        if (typeof err === 'object' && err) if (err.message === 'Invalid JSON') throw RpcError.invalidRequest();
+        if (typeof err === 'object' && err) if (err.message === 'Invalid JSON') throw RpcError.badRequest();
         throw RpcError.from(err);
       }
     });
@@ -139,6 +139,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
   public enableWsRpc(path: string = '/rpc'): this {
     const maxBackpressure = 4 * 1024 * 1024;
     const augmentContext = this.options.augmentContext ?? noop;
+    const logger = this.options.logger ?? console;
     this.app.ws(path, {
       idleTimeout: 0,
       maxPayloadLength: 4 * 1024 * 1024,
@@ -146,7 +147,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const secWebSocketKey = req.getHeader('sec-websocket-key');
         const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
         const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
-        const ctx = ConnectionContext.fromReqRes(req, res, null, this);
+        const ctx = ConnectionContext.fromWs(req, res, secWebSocketProtocol, null, this);
         augmentContext(ctx);
         /* This immediately calls open handler, you must not use res after this call */
         res.upgrade({ctx}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
@@ -157,7 +158,6 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const resCodec = ctx.resCodec;
         const msgCodec = ctx.msgCodec;
         const encoder = resCodec.encoder;
-        const isBinary = resCodec.format !== EncodingFormat.Json || msgCodec.format === RpcMessageFormat.Binary;
         ws.rpc = new RpcMessageStreamProcessor({
           caller: this.options.caller,
           send: (messages: ReactiveRpcMessage[]) => {
@@ -166,7 +166,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
             writer.reset();
             msgCodec.encodeBatch(resCodec, messages);
             const encoded = writer.flush();
-            ws.send(encoded, isBinary, false);
+            ws.send(encoded, true, false);
           },
           bufferSize: 1,
           bufferTime: 0,
@@ -180,10 +180,15 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const uint8 = new Uint8Array(buf);
         const rpc = ws.rpc!;
         try {
-          const messages = msgCodec.decodeBatch(reqCodec, uint8);
-          rpc.onMessages(messages as ReactiveRpcClientMessage[], ctx);
+          const messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
+          try {
+            rpc.onMessages(messages, ctx);
+          } catch (error) {
+            logger.error('RX_RPC_PROCESSING_ERROR', error, messages);
+            return;
+          }
         } catch (error) {
-          rpc.sendNotification('.err', RpcError.value(RpcError.invalidRequest()));
+          logger.error('RX_RPC_DECODING_ERROR', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString()});
         }
       },
       close: (ws_: types.WebSocket, code: number, message: ArrayBuffer) => {
@@ -239,7 +244,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
           });
           return;
         }
-        logger.error(err);
+        logger.error('UWS_ROUTER_INTERNAL_ERROR', err);
         res.cork(() => {
           res.writeStatus(HDR_INTERNAL_SERVER_ERROR);
           res.end(RpcErrorType.encode(responseCodec, ERR_INTERNAL));

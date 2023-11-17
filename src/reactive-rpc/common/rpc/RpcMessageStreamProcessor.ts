@@ -67,34 +67,24 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
   /**
    * Processes a single incoming Reactive-RPC message.
    *
-   * This method will not throw.
-   *
    * @param message A single Reactive-RPC message.
    * @param ctx Server context.
    */
   public onMessage(message: msg.ReactiveRpcClientMessage, ctx: Ctx): void {
-    try {
-      /** @todo perf: could switch statement with message.constructor help here? */
-      if (message instanceof msg.RequestDataMessage) this.onRequestDataMessage(message, ctx);
-      else if (message instanceof msg.RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
-      else if (message instanceof msg.RequestErrorMessage) this.onRequestErrorMessage(message, ctx);
-      else if (message instanceof msg.NotificationMessage) this.onNotificationMessage(message, ctx);
-      else if (message instanceof msg.ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
-    } catch (error) {
-      this.sendNotification('.err', RpcError.valueFrom(error));
-    }
+    if (message instanceof msg.RequestDataMessage) this.onRequestDataMessage(message, ctx);
+    else if (message instanceof msg.RequestCompleteMessage) this.onRequestCompleteMessage(message, ctx);
+    else if (message instanceof msg.RequestErrorMessage) this.onRequestErrorMessage(message, ctx);
+    else if (message instanceof msg.NotificationMessage) this.onNotificationMessage(message, ctx);
+    else if (message instanceof msg.ResponseUnsubscribeMessage) this.onUnsubscribeMessage(message);
   }
 
   /**
    * Receives a list of all incoming messages from the client to process.
    *
-   * This method will not throw.
-   *
    * @param messages A list of received messages.
    * @param ctx Server context.
    */
   public onMessages(messages: msg.ReactiveRpcClientMessage[], ctx: Ctx): void {
-    // This method should not throw.
     const length = messages.length;
     for (let i = 0; i < length; i++) this.onMessage(messages[i], ctx);
   }
@@ -252,6 +242,7 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
   public onNotificationMessage(message: msg.NotificationMessage, ctx: Ctx): void {
     const {method, value} = message;
     if (!method || method.length > 128) throw RpcError.fromCode(RpcErrorCodes.INVALID_METHOD);
-    this.caller.notification(method, value.data, ctx).catch((error: unknown) => {});
+    const request = value && typeof value === 'object' ? value?.data : undefined;
+    this.caller.notification(method, request, ctx).catch((error: unknown) => {});
   }
 }

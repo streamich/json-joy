@@ -9,7 +9,7 @@ import type {Printable} from '../../util/print/types';
 export class TypeSystem implements Printable {
   public readonly t = new TypeBuilder(this);
 
-  protected readonly aliases: Map<string, TypeAlias<string, any>> = new Map();
+  public readonly aliases: Map<string, TypeAlias<string, any>> = new Map();
 
   /**
    * @todo Add ability fetch object of given type by its ID, analogous to
