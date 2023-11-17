@@ -1,3 +1,4 @@
+export * from './client/types';
 export * from './methods/types';
 export * from './caller/types';
 
