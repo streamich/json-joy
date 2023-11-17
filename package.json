@@ -47,7 +47,7 @@
     "build": "yarn build:es2020",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",
-    "test:all": "yarn lint && yarn test && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer",
+    "test:all": "yarn lint && yarn test && yarn build:all && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn test:reactive-rpc && yarn demo:json-patch && yarn demo:json-pointer",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
     "test:cli": "yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack",
     "test:cli:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",

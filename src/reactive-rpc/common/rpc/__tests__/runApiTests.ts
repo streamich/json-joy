@@ -4,7 +4,7 @@ import {of} from '../../util/of';
 import {RpcError} from '../caller';
 
 export interface ApiTestSetupResult {
-  client: Pick<StreamingRpcClient, 'call$'>;
+  client: Pick<StreamingRpcClient, 'call$' | 'stop'>;
 }
 
 export type ApiTestSetup = () => ApiTestSetupResult | Promise<ApiTestSetupResult>;
@@ -15,18 +15,21 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const result = await firstValueFrom(client.call$('ping', {}));
       expect(result).toBe('pong');
+      await client.stop();
     }, 15_000);
 
     test('can execute without payload', async () => {
       const {client} = await setup();
       const result = await firstValueFrom(client.call$('ping', undefined));
       expect(result).toBe('pong');
+      await client.stop();
     });
 
     test('can execute with unexpected payload', async () => {
       const {client} = await setup();
       const result = await firstValueFrom(client.call$('ping', 'VERY_UNEXPECTED'));
       expect(result).toBe('pong');
+      await client.stop();
     });
   });
 
@@ -35,6 +38,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const result = await firstValueFrom(client.call$('double', {num: 1.2}));
       expect(result).toEqual({num: 2.4});
+      await client.stop();
     });
 
     test('can execute two request in parallel', async () => {
@@ -44,6 +48,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const [res1, res2] = await Promise.all([promise1, promise2]);
       expect(res1[0]).toEqual({num: 2});
       expect(res2[0]).toEqual({num: 4});
+      await client.stop();
     });
 
     test('throws error when validation fails', async () => {
@@ -51,6 +56,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const [, error] = await of(firstValueFrom(client.call$('double', {num: {}})));
       expect((error as RpcError).code).toBe('BAD_REQUEST');
       expect((error as RpcError).message).toBe('Payload .num field missing.');
+      await client.stop();
     });
   });
 
@@ -59,6 +65,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const [, error] = await of(firstValueFrom(client.call$('error', {})));
       expect(error).toMatchObject({message: 'this promise can throw'});
+      await client.stop();
     });
   });
 
@@ -67,6 +74,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       const {client} = await setup();
       const [, error] = await of(lastValueFrom(client.call$('streamError', {})));
       expect(error).toMatchObject({message: 'Stream always errors'});
+      await client.stop();
     });
   });
 
@@ -79,6 +87,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         commit: 'AAAAAAAAAAAAAAAAAAA',
         sha1: 'BBBBBBBBBBBBBBBBBBB',
       });
+      await client.stop();
     });
   });
 
@@ -89,6 +98,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       expect(result).toEqual({
         bar: 'aa',
       });
+      await client.stop();
     });
 
     test('throws on invalid data', async () => {
@@ -97,6 +107,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
       expect(error).toMatchObject({
         message: '"foo" property missing.',
       });
+      await client.stop();
     });
   });
 
@@ -110,6 +121,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         expect(result).toEqual({
           bar: 'aa',
         });
+        await client.stop();
       });
 
       test('throws on invalid data', async () => {
@@ -118,6 +130,7 @@ export const runApiTests = (setup: ApiTestSetup, params: {staticOnly?: boolean} 
         expect(error).toMatchObject({
           message: '"foo" property missing.',
         });
+        await client.stop();
       });
     });
   }
