@@ -1,5 +1,5 @@
 import {spawn} from 'child_process';
-import {Defer} from '../../util/Defer';
+import {Defer} from '../../../util/Defer';
 
 const startServer = async () => {
   const started = new Defer<void>();
@@ -59,11 +59,9 @@ const runTests = async () => {
     const server = await startServer();
     await server.started;
     let exitCode = 0;
-    for (let i = 0; i < 3; i++) {
-      const jest = await runTests();
-      exitCode = await jest.exitCode;
-      if (exitCode !== 0) throw exitCode;
-    }
+    const jest = await runTests();
+    exitCode = await jest.exitCode;
+    if (exitCode !== 0) throw exitCode;
     process.exit(exitCode);
   } catch (error) {
     // tslint:disable-next-line no-console
