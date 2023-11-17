@@ -30,7 +30,7 @@ if (process.env.TEST_E2E) {
 
     ['rpc.rx.binary.cbor', binary, cbor, cbor],
     ['rpc.rx.binary.msgpack', binary, msgpack, msgpack],
-    // ['rpc.rx.binary.json', binary, json, json],
+    ['rpc.rx.binary.json', binary, json, json],
     // ['rpc.rx.binary.json-cbor', binary, json, cbor],
     // ['rpc.rx.binary.json-msgpack', binary, json, msgpack],
     // ['rpc.rx.binary.cbor-json', binary, cbor, json],

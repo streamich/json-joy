@@ -158,7 +158,6 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const resCodec = ctx.resCodec;
         const msgCodec = ctx.msgCodec;
         const encoder = resCodec.encoder;
-        const isBinary = resCodec.format !== EncodingFormat.Json || msgCodec.format === RpcMessageFormat.Binary;
         ws.rpc = new RpcMessageStreamProcessor({
           caller: this.options.caller,
           send: (messages: ReactiveRpcMessage[]) => {
@@ -167,7 +166,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
             writer.reset();
             msgCodec.encodeBatch(resCodec, messages);
             const encoded = writer.flush();
-            ws.send(encoded, isBinary, false);
+            ws.send(encoded, true, false);
           },
           bufferSize: 1,
           bufferTime: 0,
