@@ -27,5 +27,5 @@ export interface RpcWebSocket<Ctx extends ConnectionContext = ConnectionContext>
 
 export interface ServerLogger {
   log(msg: unknown): void;
-  error(msg: unknown): void;
+  error(kind: string, error?: Error | unknown | null, meta?: unknown): void;
 }

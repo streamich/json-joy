@@ -129,7 +129,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
         if (res.aborted) return;
         res.end(buf);
       } catch (err: any) {
-        if (typeof err === 'object' && err) if (err.message === 'Invalid JSON') throw RpcError.invalidRequest();
+        if (typeof err === 'object' && err) if (err.message === 'Invalid JSON') throw RpcError.badRequest();
         throw RpcError.from(err);
       }
     });
@@ -139,6 +139,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
   public enableWsRpc(path: string = '/rpc'): this {
     const maxBackpressure = 4 * 1024 * 1024;
     const augmentContext = this.options.augmentContext ?? noop;
+    const logger = this.options.logger ?? console;
     this.app.ws(path, {
       idleTimeout: 0,
       maxPayloadLength: 4 * 1024 * 1024,
@@ -180,10 +181,15 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const uint8 = new Uint8Array(buf);
         const rpc = ws.rpc!;
         try {
-          const messages = msgCodec.decodeBatch(reqCodec, uint8);
-          rpc.onMessages(messages as ReactiveRpcClientMessage[], ctx);
+          const messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
+          try {
+            rpc.onMessages(messages, ctx);
+          } catch (error) {
+            logger.error('RX_RPC_PROCESSING_ERROR', error, Buffer.from(uint8).toString());
+            return;
+          }
         } catch (error) {
-          rpc.sendNotification('.err', RpcError.value(RpcError.invalidRequest()));
+          logger.error('RX_RPC_DECODING_ERROR', error, Buffer.from(uint8).toString());
         }
       },
       close: (ws_: types.WebSocket, code: number, message: ArrayBuffer) => {
@@ -239,7 +245,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
           });
           return;
         }
-        logger.error(err);
+        logger.error('UWS_ROUTER_INTERNAL_ERROR', err);
         res.cork(() => {
           res.writeStatus(HDR_INTERNAL_SERVER_ERROR);
           res.end(RpcErrorType.encode(responseCodec, ERR_INTERNAL));
