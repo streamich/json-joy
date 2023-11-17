@@ -15,7 +15,7 @@ test('on remote method execution, sends message over WebSocket only once', async
   const ws = new Ws('');
   const valueCodecs = new Codecs(new Writer(128));
   const messageCodecs = new RpcMessageCodecs();
-  const codec = new RpcCodec(valueCodecs.cbor, messageCodecs.compact);
+  const codec = new RpcCodec(messageCodecs.compact, valueCodecs.cbor, valueCodecs.cbor);
   const client = new RpcPersistentClient({
     channel: {
       newChannel: () =>

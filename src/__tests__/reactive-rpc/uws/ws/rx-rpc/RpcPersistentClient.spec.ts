@@ -53,13 +53,13 @@ if (process.env.TEST_E2E) {
     const setup: ApiTestSetup = async () => {
       const port = +(process.env.PORT || 9999);
       const url = `ws://localhost:${port}/rpc`;
-      const codec = new RpcCodec(reqCodec, msgCodec);
+      const codec = new RpcCodec(msgCodec, reqCodec, resCodec);
       const client = new RpcPersistentClient({
         codec,
         channel: {
           newChannel: () =>
             new WebSocketChannel({
-              newSocket: () => new WebSocket(url, [protocolSpecifier]) as any,
+              newSocket: () => new WebSocket(url, [codec.specifier()]) as any,
             }),
         },
       });
