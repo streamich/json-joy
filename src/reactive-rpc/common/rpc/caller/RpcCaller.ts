@@ -22,7 +22,7 @@ export interface RpcApiCallerOptions<Ctx = unknown> {
   wrapInternalError?: (error: unknown) => unknown;
 }
 
-const INVALID_REQUEST_ERROR_VALUE = RpcError.value(RpcError.invalidRequest());
+const INVALID_REQUEST_ERROR_VALUE = RpcError.value(RpcError.badRequest());
 
 const defaultWrapInternalError = (error: unknown) => RpcError.valueFrom(error);
 
