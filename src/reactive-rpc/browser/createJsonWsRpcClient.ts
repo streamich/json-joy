@@ -1,8 +1,8 @@
-import {JsonJsonValueCodec} from "../../json-pack/codecs/json";
-import {Writer} from "../../util/buffers/Writer";
-import {RpcPersistentClient, WebSocketChannel} from "../common";
-import {RpcCodec} from "../common/codec/RpcCodec";
-import {CompactRpcMessageCodec} from "../common/codec/compact";
+import {JsonJsonValueCodec} from '../../json-pack/codecs/json';
+import {Writer} from '../../util/buffers/Writer';
+import {RpcPersistentClient, WebSocketChannel} from '../common';
+import {RpcCodec} from '../common/codec/RpcCodec';
+import {CompactRpcMessageCodec} from '../common/codec/compact';
 
 export const createJsonWsRpcClient = (url: string) => {
   const writer = new Writer(1024 * 4);

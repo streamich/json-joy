@@ -1,8 +1,8 @@
-import {CborJsonValueCodec} from "../../json-pack/codecs/cbor";
-import {Writer} from "../../util/buffers/Writer";
-import {RpcPersistentClient, WebSocketChannel} from "../common";
-import {RpcCodec} from "../common/codec/RpcCodec";
-import {BinaryRpcMessageCodec} from "../common/codec/binary";
+import {CborJsonValueCodec} from '../../json-pack/codecs/cbor';
+import {Writer} from '../../util/buffers/Writer';
+import {RpcPersistentClient, WebSocketChannel} from '../common';
+import {RpcCodec} from '../common/codec/RpcCodec';
+import {BinaryRpcMessageCodec} from '../common/codec/binary';
 
 export const createBinaryWsRpcClient = (url: string) => {
   const writer = new Writer(1024 * 4);
