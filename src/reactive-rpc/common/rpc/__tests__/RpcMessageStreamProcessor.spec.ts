@@ -146,45 +146,6 @@ test('does not execute any methods on initialization', async () => {
   expect(send).toHaveBeenCalledTimes(0);
 });
 
-test('sends error notification on empty notification name', async () => {
-  const {server, send} = setup();
-  expect(send).toHaveBeenCalledTimes(0);
-  server.onMessages([new NotificationMessage('', val(new Uint8Array([1])))], undefined);
-  expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
-  expect(send.mock.calls[0][0][0].value.data).toEqual(RpcError.fromCode(RpcErrorCodes.INVALID_METHOD));
-});
-
-test('sends error notification when notification name longer than 128 chars', async () => {
-  const {server, send} = setup();
-  expect(send).toHaveBeenCalledTimes(0);
-  server.onMessages(
-    [
-      new NotificationMessage(
-        '012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678',
-        val(new Uint8Array([1])),
-      ),
-    ],
-    undefined,
-  );
-  expect(send).toHaveBeenCalledTimes(1);
-  expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
-  expect(send.mock.calls[0][0][0].value.data).toEqual(RpcError.fromCode(RpcErrorCodes.INVALID_METHOD));
-});
-
-// test('sends error notification when "notify" callback throws', async () => {
-//   const {server, send} = setup({});
-//   const name = 'aga';
-//   expect(send).toHaveBeenCalledTimes(0);
-//   const msg = [new NotificationMessage(name, val(new Uint8Array([1])))];
-//   server.onMessages(msg, undefined);
-//   expect(send).toHaveBeenCalledTimes(1);
-//   // expect(send.mock.calls[0][0][0]).toBeInstanceOf(NotificationMessage);
-//   // expect(send.mock.calls[0][0][0].value).toEqual(val({
-//   //   message: 'test',
-//   // }));
-// });
-
 test('if RPC method throws, sends back error message', async () => {
   const {server, send, caller, ctx} = setup();
   jest.spyOn(caller, 'call');

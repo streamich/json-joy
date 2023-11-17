@@ -3,7 +3,7 @@
  */
 
 import {ApiTestSetup, runApiTests} from '../../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
-import WebSocket from "ws";
+import WebSocket from 'ws';
 import {RpcCodecs} from '../../../../../reactive-rpc/common/codec/RpcCodecs';
 import {RpcMessageCodecs} from '../../../../../reactive-rpc/common/codec/RpcMessageCodecs';
 import {Writer} from '../../../../../util/buffers/Writer';
@@ -60,9 +60,10 @@ if (process.env.TEST_E2E) {
         channel: {
           newChannel: () =>
             new WebSocketChannel({
-              newSocket: () => new WebSocket(url, {
-                protocol: protocolSpecifier,
-              }) as any,
+              newSocket: () =>
+                new WebSocket(url, {
+                  protocol: protocolSpecifier,
+                }) as any,
             }),
         },
       });
