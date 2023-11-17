@@ -114,6 +114,7 @@ describe('smoke tests', () => {
               throw error.data;
             }),
           ),
+        stop: () => {},
       },
     };
   });

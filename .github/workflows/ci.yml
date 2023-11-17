@@ -46,7 +46,7 @@ jobs:
       - run: yarn test:cli:pack
       - run: yarn demo:json-patch
       - run: yarn demo:json-pointer
-  rx-rpc:
+  e2e-rx-rpc:
     runs-on: ubuntu-latest
     strategy:
       matrix:
