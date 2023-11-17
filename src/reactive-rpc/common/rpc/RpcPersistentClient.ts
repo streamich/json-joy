@@ -12,6 +12,10 @@ export interface RpcPersistentClientParams<Ctx = unknown> {
   channel: PersistentChannelParams;
   codec: RpcCodec;
   client?: Omit<StreamingRpcClientOptions, 'send'>;
+
+  /**
+   * @todo Remove this option. Remove server from here.
+   */
   server?: Omit<RpcMessageStreamProcessorOptions<Ctx>, 'send'>;
 
   /**
@@ -28,6 +32,9 @@ export interface RpcPersistentClientParams<Ctx = unknown> {
   pingMethod?: string;
 }
 
+/**
+ * RPC client which automatically reconnects if disconnected.
+ */
 export class RpcPersistentClient<Ctx = unknown> {
   public channel: PersistentChannel;
   public rpc?: RpcDuplex<Ctx>;
@@ -45,7 +52,7 @@ export class RpcPersistentClient<Ctx = unknown> {
         client: new StreamingRpcClient({
           ...(params.client || {}),
           send: (messages: msg.ReactiveRpcClientMessage[]): void => {
-            const encoded = codec.encode(messages);
+            const encoded = codec.encode(messages, codec.req);
             this.channel.send$(encoded).subscribe();
           },
         }),
@@ -57,7 +64,7 @@ export class RpcPersistentClient<Ctx = unknown> {
             onNotification: () => {},
           }),
           send: (messages: (msg.ReactiveRpcServerMessage | msg.NotificationMessage)[]): void => {
-            const encoded = codec.encode(messages);
+            const encoded = codec.encode(messages, codec.req);
             this.channel.send$(encoded).subscribe();
           },
         }),
@@ -65,7 +72,7 @@ export class RpcPersistentClient<Ctx = unknown> {
 
       this.channel.message$.pipe(takeUntil(close$)).subscribe((data) => {
         const encoded = typeof data === 'string' ? textEncoder.encode(data) : new Uint8Array(data);
-        const messages = codec.decode(encoded);
+        const messages = codec.decode(encoded, codec.res);
         duplex.onMessages((messages instanceof Array ? messages : [messages]) as msg.ReactiveRpcMessage[], {} as Ctx);
       });
 

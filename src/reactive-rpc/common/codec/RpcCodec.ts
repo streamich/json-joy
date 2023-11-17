@@ -11,8 +11,7 @@ export class RpcCodec {
     return specifier as RpcSpecifier;
   }
 
-  public encode(messages: ReactiveRpcMessage[]): Uint8Array {
-    const valueCodec = this.res;
+  public encode(messages: ReactiveRpcMessage[], valueCodec: JsonValueCodec): Uint8Array {
     const encoder = valueCodec.encoder;
     const writer = encoder.writer;
     writer.reset();
@@ -20,8 +19,7 @@ export class RpcCodec {
     return writer.flush();
   }
 
-  public decode(data: Uint8Array): ReactiveRpcMessage[] {
-    const valueCodec = this.req;
+  public decode(data: Uint8Array, valueCodec: JsonValueCodec): ReactiveRpcMessage[] {
     const decoder = valueCodec.decoder;
     const reader = decoder.reader;
     reader.reset(data);
