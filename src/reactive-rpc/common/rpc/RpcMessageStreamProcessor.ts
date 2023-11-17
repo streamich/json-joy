@@ -242,6 +242,7 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
   public onNotificationMessage(message: msg.NotificationMessage, ctx: Ctx): void {
     const {method, value} = message;
     if (!method || method.length > 128) throw RpcError.fromCode(RpcErrorCodes.INVALID_METHOD);
-    this.caller.notification(method, value.data, ctx).catch((error: unknown) => {});
+    const request = value && (typeof value === 'object') ? value?.data : undefined;
+    this.caller.notification(method, request, ctx).catch((error: unknown) => {});
   }
 }
