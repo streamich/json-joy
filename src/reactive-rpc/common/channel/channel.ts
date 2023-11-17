@@ -221,7 +221,6 @@ export class PersistentChannel<T extends string | Uint8Array = string | Uint8Arr
   public readonly message$ = this.channel$.pipe(
     filter((channel) => !!channel),
     switchMap((channel) => channel!.message$),
-    tap((msg) => console.log('->', msg)),
   );
 
   /** Number of times we have attempted to reconnect. */

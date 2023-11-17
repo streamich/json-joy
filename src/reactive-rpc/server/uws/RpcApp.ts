@@ -147,7 +147,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
         const secWebSocketKey = req.getHeader('sec-websocket-key');
         const secWebSocketProtocol = req.getHeader('sec-websocket-protocol');
         const secWebSocketExtensions = req.getHeader('sec-websocket-extensions');
-        const ctx = ConnectionContext.fromReqRes(req, res, null, this);
+        const ctx = ConnectionContext.fromWs(req, res, secWebSocketProtocol, null, this);
         augmentContext(ctx);
         /* This immediately calls open handler, you must not use res after this call */
         res.upgrade({ctx}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
