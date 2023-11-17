@@ -2,15 +2,14 @@
  * @jest-environment node
  */
 
-import {ApiTestSetup, runApiTests} from '../../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
-
-import {RpcCodecs} from '../../../../../reactive-rpc/common/codec/RpcCodecs';
-import {RpcMessageCodecs} from '../../../../../reactive-rpc/common/codec/RpcMessageCodecs';
-import {Writer} from '../../../../../util/buffers/Writer';
-import {Codecs} from '../../../../../json-pack/codecs/Codecs';
-import {RpcMessageCodec} from '../../../../../reactive-rpc/common/codec/types';
-import {JsonValueCodec} from '../../../../../json-pack/codecs/types';
-import {FetchRpcClient} from '../../../../../reactive-rpc/common/rpc/client/FetchRpcClient';
+import {ApiTestSetup, runApiTests} from '../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
+import {StreamingRpcClient} from '../../../../reactive-rpc/common';
+import {RpcCodecs} from '../../../../reactive-rpc/common/codec/RpcCodecs';
+import {RpcMessageCodecs} from '../../../../reactive-rpc/common/codec/RpcMessageCodecs';
+import {Writer} from '../../../../util/buffers/Writer';
+import {Codecs} from '../../../../json-pack/codecs/Codecs';
+import {RpcMessageCodec} from '../../../../reactive-rpc/common/codec/types';
+import {JsonValueCodec} from '../../../../json-pack/codecs/types';
 
 if (process.env.TEST_E2E) {
   const codecs = new RpcCodecs(new Codecs(new Writer()), new RpcMessageCodecs());
@@ -49,18 +48,36 @@ if (process.env.TEST_E2E) {
   ];
 
   for (const [protocolSpecifier, msgCodec, reqCodec, resCodec] of cases) {
+    const contentType = 'application/x.' + protocolSpecifier;
     const setup: ApiTestSetup = async () => {
-      const port = +(process.env.PORT || 9999);
-      const url = `http://localhost:${port}/rpc`;
-      const client = new FetchRpcClient({
-        url,
-        msgCodec,
-        reqCodec,
-        resCodec,
+      const client = new StreamingRpcClient({
+        send: async (messages) => {
+          const port = +(process.env.PORT || 9999);
+          const url = `http://localhost:${port}/rpc`;
+          reqCodec.encoder.writer.reset();
+          msgCodec.encodeBatch(reqCodec, messages);
+          const body = reqCodec.encoder.writer.flush();
+          try {
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': contentType,
+              },
+              body,
+            });
+            const buffer = await response.arrayBuffer();
+            const data = new Uint8Array(buffer);
+            const responseMessages = msgCodec.decodeBatch(resCodec, data);
+            client.onMessages(responseMessages as any);
+          } catch (err) {
+            // tslint:disable-next-line:no-console
+            console.error(err);
+          }
+        },
       });
       return {client};
     };
-    describe(`Content-Type: application/x.${protocolSpecifier}`, () => {
+    describe(`Content-Type: ${contentType}`, () => {
       runApiTests(setup, {staticOnly: true});
     });
   }

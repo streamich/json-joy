@@ -2,16 +2,16 @@
  * @jest-environment node
  */
 
-import {ApiTestSetup, runApiTests} from '../../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
+import {ApiTestSetup, runApiTests} from '../../../../reactive-rpc/common/rpc/__tests__/runApiTests';
 import WebSocket from 'ws';
-import {RpcCodecs} from '../../../../../reactive-rpc/common/codec/RpcCodecs';
-import {RpcMessageCodecs} from '../../../../../reactive-rpc/common/codec/RpcMessageCodecs';
-import {Writer} from '../../../../../util/buffers/Writer';
-import {Codecs} from '../../../../../json-pack/codecs/Codecs';
-import {RpcMessageCodec} from '../../../../../reactive-rpc/common/codec/types';
-import {JsonValueCodec} from '../../../../../json-pack/codecs/types';
-import {RpcCodec} from '../../../../../reactive-rpc/common/codec/RpcCodec';
-import {RpcPersistentClient, WebSocketChannel} from '../../../../../reactive-rpc/common';
+import {RpcCodecs} from '../../../../reactive-rpc/common/codec/RpcCodecs';
+import {RpcMessageCodecs} from '../../../../reactive-rpc/common/codec/RpcMessageCodecs';
+import {Writer} from '../../../../util/buffers/Writer';
+import {Codecs} from '../../../../json-pack/codecs/Codecs';
+import {RpcMessageCodec} from '../../../../reactive-rpc/common/codec/types';
+import {JsonValueCodec} from '../../../../json-pack/codecs/types';
+import {RpcCodec} from '../../../../reactive-rpc/common/codec/RpcCodec';
+import {RpcPersistentClient, WebSocketChannel} from '../../../../reactive-rpc/common';
 
 if (process.env.TEST_E2E) {
   const codecs = new RpcCodecs(new Codecs(new Writer()), new RpcMessageCodecs());
