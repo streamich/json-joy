@@ -20,6 +20,12 @@ export interface RpcPersistentClientParams<Ctx = unknown> {
    * not send ping messages.
    */
   ping?: number;
+
+  /**
+   * The notification method name that is used for ping keep-alive messages, if
+   * not specified, defaults to ".ping".
+   */
+  pingMethod?: string;
 }
 
 export class RpcPersistentClient<Ctx = unknown> {
@@ -68,7 +74,7 @@ export class RpcPersistentClient<Ctx = unknown> {
         timer(ping, ping)
           .pipe(takeUntil(close$))
           .subscribe(() => {
-            duplex.notify('.ping', undefined);
+            duplex.notify(params.pingMethod || '.ping', undefined);
           });
       }
 

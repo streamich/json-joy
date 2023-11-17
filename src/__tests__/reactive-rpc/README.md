@@ -22,5 +22,5 @@ yarn test:reactive-rpc:jest
 To run a specific test suite use this command:
 
 ```
-TEST_E2E=1 npx jest --no-cache src/__tests__/reactive-rpc/ws-binary.spec.ts
+TEST_E2E=1 npx jest --no-cache src/__tests__/reactive-rpc/uws/http/rx-rpc/FetchRpcClient.spec.ts
 ```
