@@ -7,9 +7,8 @@ import type {RpcApp} from './uws/RpcApp';
 import type {HttpRequest, HttpResponse} from './uws/types';
 import type {RpcCodecs} from '../common/codec/RpcCodecs';
 
-const X_AUTH_PARAM = 'X-Authorization=';
-const X_AUTH_PARAM_LENGTH = X_AUTH_PARAM.length;
-const CODECS_REGEX = /rpc.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
+const REGEX_AUTH_TOKEN_SPECIFIER = /tkn\.([a-zA-Z0-9\-_]+)(?:[^a-zA-Z0-9\-_]|$)/;
+const REGEX_CODECS_SPECIFIER = /rpc\.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
 
 export class ConnectionContext<Meta = Record<string, unknown>> {
   private static findIp(req: HttpRequest, res: HttpResponse): string {
@@ -20,14 +19,37 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
     );
   }
 
-  private static findToken(req: HttpRequest, params: string[] | null): string {
-    let token: string = req.getHeader('authorization') || '';
-    if (!token) {
-      const query = req.getQuery();
-      const params = new URLSearchParams(query);
-      token = params.get('access_token') || '';
-      if (!token) token = params.get('token') || '';
-    }
+  private static findTokenInText(text: string): string {
+    const match = REGEX_AUTH_TOKEN_SPECIFIER.exec(text);
+    if (!match) return '';
+    return match[1] || '';
+  }
+
+  /**
+   * Looks for an authentication token in the following places:
+   * 
+   * 1. The `Authorization` header.
+   * 2. The URI query parameters.
+   * 3. The `Cookie` header.
+   * 4. The `Sec-Websocket-Protocol` header.
+   * 
+   * @param req HTTP request
+   * @returns Authentication token, if any.
+   */
+  private static findToken(req: HttpRequest): string {
+    let token: string = '';
+    let text: string = '';
+    text = req.getHeader('authorization');
+    if (text) token = ConnectionContext.findTokenInText(text);
+    if (token) return token;
+    text = req.getQuery();
+    if (text) token = ConnectionContext.findTokenInText(text);
+    if (token) return token;
+    text = req.getHeader('cookie');
+    if (text) token = ConnectionContext.findTokenInText(text);
+    if (token) return token;
+    text = req.getHeader('sec-websocket-protocol');
+    if (text) token = ConnectionContext.findTokenInText(text);
     return token;
   }
 
@@ -38,7 +60,7 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
     app: RpcApp<any>,
   ): ConnectionContext {
     const ip = ConnectionContext.findIp(req, res);
-    const token: string = ConnectionContext.findToken(req, params);
+    const token: string = ConnectionContext.findToken(req);
     const codecs = app.codecs;
     const valueCodecs = codecs.value;
     const ctx = new ConnectionContext(
@@ -64,21 +86,7 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
     app: RpcApp<any>,
   ): ConnectionContext {
     const ip = ConnectionContext.findIp(req, res);
-    let token: string = ConnectionContext.findToken(req, params);
-    if (!token && secWebSocketProtocol) {
-      const protocols = secWebSocketProtocol.split(',');
-      const length = protocols.length;
-      for (let i = 0; i < length; i++) {
-        let protocol = protocols[i].trim();
-        if (protocol.startsWith(X_AUTH_PARAM)) {
-          protocol = protocol.slice(X_AUTH_PARAM_LENGTH);
-          if (protocol) {
-            token = Buffer.from(protocol, 'base64').toString();
-            break;
-          }
-        }
-      }
-    }
+    const token: string = ConnectionContext.findToken(req);
     const codecs = app.codecs;
     const valueCodecs = codecs.value;
     const ctx = new ConnectionContext(
@@ -114,7 +122,7 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
    *  - `rpc.json2.verbose.json` for JSON-RPC 2.0 with verbose messages encoded as JSON.
    */
   public setCodecs(specifier: string, codecs: RpcCodecs): void {
-    const match = CODECS_REGEX.exec(specifier);
+    const match = REGEX_CODECS_SPECIFIER.exec(specifier);
     if (!match) return;
     const [, protocol, messageFormat, request, response] = match;
     switch (protocol) {
