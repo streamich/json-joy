@@ -1,4 +1,5 @@
-import {type ResolveType, t} from '../../../json-type';
+import {type ResolveType} from '../../../json-type';
+import {t} from '../system';
 
 export const PresenceEntry = t.Object(
   t.prop('id', t.str),
