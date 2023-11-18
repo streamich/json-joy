@@ -5,7 +5,6 @@ import {Services} from '../services/Services';
 export const setup = () => {
   const services = new Services();
   const {caller} = createCaller(services);
-  const call = caller.callSimple.bind(caller);
   const {client} = buildE2eClient(caller, {
     writerDefaultBufferKb: [1, 32],
     clientBufferSize: [1, 3],
@@ -15,5 +14,7 @@ export const setup = () => {
     requestLatency: [1, 10],
     responseLatency: [1, 10],
   });
-  return {services, caller, call, client};
+  const call = client.call.bind(client);
+  const call$ = client.call$.bind(client);
+  return {services, caller, client, call, call$};
 };
