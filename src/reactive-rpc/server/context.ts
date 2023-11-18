@@ -27,12 +27,12 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
 
   /**
    * Looks for an authentication token in the following places:
-   * 
+   *
    * 1. The `Authorization` header.
    * 2. The URI query parameters.
    * 3. The `Cookie` header.
    * 4. The `Sec-Websocket-Protocol` header.
-   * 
+   *
    * @param req HTTP request
    * @returns Authentication token, if any.
    */
