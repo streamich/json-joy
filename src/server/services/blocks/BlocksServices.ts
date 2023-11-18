@@ -3,12 +3,15 @@ import {StorePatch} from './types';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
 import type {Services} from '../Services';
 
+const BLOCK_TTL = 1000 * 60 * 20; // 20 minutes
+
 export class BlocksServices {
   protected readonly store = new MemoryStore();
 
   constructor(protected readonly services: Services) {}
 
   public async create(id: string, patches: StorePatch[]) {
+    this.maybeGc();
     const {store} = this;
     const {block} = await store.create(id, patches);
     const data = {
@@ -45,6 +48,7 @@ export class BlocksServices {
   }
 
   public async edit(id: string, patches: any[]) {
+    this.maybeGc();
     if (!Array.isArray(patches)) throw RpcError.validation('patches must be an array');
     if (!patches.length) throw RpcError.validation('patches must not be empty');
     const seq = patches[0].seq;
@@ -68,5 +72,19 @@ export class BlocksServices {
 
   public stats() {
     return this.store.stats();
+  }
+
+  private maybeGc(): void {
+    if (Math.random() < 0.05)
+      this.gc().catch((error) => {
+        // tslint:disable-next-line:no-console
+        console.error('Error running gc', error);
+      });
+  }
+
+  private async gc(): Promise<void> {
+    const ts = Date.now() - BLOCK_TTL;
+    const {store} = this;
+    await store.removeOlderThan(ts);
   }
 }
