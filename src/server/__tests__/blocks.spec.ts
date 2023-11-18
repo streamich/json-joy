@@ -1,4 +1,3 @@
-import {of} from 'rxjs';
 import {Model} from '../../json-crdt';
 import {RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
@@ -287,7 +286,7 @@ describe('blocks.*', () => {
       await client.call('blocks.create', {id: 'my-block', patches: []});
       await tick(11);
       const emits: any[] = [];
-      client.call$('blocks.listen', of({id: 'my-block'})).subscribe((data) => emits.push(data));
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -322,7 +321,7 @@ describe('blocks.*', () => {
     test('can subscribe before block is created', async () => {
       const {client} = setup();
       const emits: any[] = [];
-      client.call$('blocks.listen', of({id: 'my-block'})).subscribe((data) => emits.push(data));
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -350,7 +349,7 @@ describe('blocks.*', () => {
     test('can receive deletion events', async () => {
       const {client} = setup();
       const emits: any[] = [];
-      client.call$('blocks.listen', of({id: 'my-block'})).subscribe((data) => emits.push(data));
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       await client.call('blocks.create', {id: 'my-block', patches: []});
       await until(() => emits.length === 1);
       expect(emits[0].block.seq).toBe(-1);
