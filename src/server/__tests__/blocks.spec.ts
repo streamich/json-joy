@@ -362,11 +362,16 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {id: 'my-block', patches: [{
-        seq: 0,
-        created: Date.now(),
-        blob: patch1.toBinary(),
-      }]});
+      await call('blocks.create', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
       await tick(11);
       model.api.str(['text']).ins(4, 'o');
       const patch2 = model.api.flush();
@@ -374,18 +379,21 @@ describe('blocks.*', () => {
         age: 26,
       });
       const patch3 = model.api.flush();
-      await call('blocks.edit', {id: 'my-block', patches: [
-        {
-          seq: 1,
-          created: Date.now(),
-          blob: patch2.toBinary(),
-        },
-        {
-          seq: 2,
-          created: Date.now(),
-          blob: patch3.toBinary(),
-        },
-      ]});
+      await call('blocks.edit', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
       const history = await call('blocks.history', {id: 'my-block', min: 0, max: 2});
       expect(history).toMatchObject({
         patches: [

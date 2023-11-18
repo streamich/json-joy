@@ -26,7 +26,7 @@ export const history =
       t.prop('patches', t.Array(t.Ref<typeof BlockPatch>('BlockPatch'))).options({
         title: 'Patches',
         description: 'The list of patches.',
-      })
+      }),
     );
 
     const Func = t
