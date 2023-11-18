@@ -26,20 +26,6 @@ export interface BuildE2eClientOptions {
   writerDefaultBufferKb?: [min: number, max: number];
 
   /**
-   * Minimum and maximum request latencies in milliseconds. An actual latency
-   * number will be picked randomly between these two values. Defaults to
-   * `[1, 1]`.
-   */
-  requestLatency?: [min: number, max: number];
-
-  /**
-   * Minimum and maximum response latencies in milliseconds. An actual latency
-   * number will be picked randomly between these two values. Defaults to
-   * `[1, 1]`.
-   */
-  responseLatency?: [min: number, max: number];
-
-  /**
    * Number of messages to keep in buffer before sending them to the client.
    * The actual number of messages will be picked randomly between these two
    * values. Defaults to `[1, 1]`.
@@ -95,11 +81,10 @@ export const buildE2eClient = <Caller extends TypeRouterCaller<any>>(caller: Cal
     caller,
     send: (messages: ReactiveRpcMessage[]) => {
       const encoded = ctx.msgCodec.encode(ctx.resCodec, messages);
-      const latency = opt.responseLatency ?? [1, 1];
       setTimeout(() => {
         const decoded = ctx.msgCodec.decodeBatch(ctx.resCodec, encoded);
         client.onMessages(decoded as ReactiveRpcServerMessage[]);
-      }, Fuzzer.randomInt(latency[0], latency[1]));
+      }, 1);
     },
     bufferSize: Fuzzer.randomInt2(opt.serverBufferSize ?? [1, 1]),
     bufferTime: Fuzzer.randomInt2(opt.serverBufferTime ?? [0, 0]),
@@ -107,11 +92,10 @@ export const buildE2eClient = <Caller extends TypeRouterCaller<any>>(caller: Cal
   client = new StreamingRpcClient({
     send: (messages: ReactiveRpcClientMessage[]) => {
       const encoded = ctx.msgCodec.encode(ctx.reqCodec, messages);
-      const latency = opt.requestLatency ?? [1, 1];
       setTimeout(() => {
         const decoded = ctx.msgCodec.decodeBatch(ctx.reqCodec, encoded);
         streamProcessor.onMessages(decoded as ReactiveRpcClientMessage[], {});
-      }, Fuzzer.randomInt(latency[0], latency[1]));
+      }, 1);
     },
     bufferSize: Fuzzer.randomInt2(opt.clientBufferSize ?? [1, 1]),
     bufferTime: Fuzzer.randomInt2(opt.clientBufferTime ?? [0, 0]),
