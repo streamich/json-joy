@@ -1,4 +1,5 @@
-import {type ResolveType, t} from '../../../json-type';
+import {type ResolveType} from '../../../json-type';
+import {t} from '../system';
 
 export type TBlockId = ResolveType<typeof BlockId>;
 export const BlockId = t.str.options({
@@ -11,7 +12,7 @@ export type TBlockSeq = ResolveType<typeof BlockSeq>;
 export const BlockSeq = t.num.options({
   title: 'Block Sequence Number',
   gte: 0,
-  format: 'u32',
+  format: 'i32',
 });
 
 export type TBlock = ResolveType<typeof Block>;
