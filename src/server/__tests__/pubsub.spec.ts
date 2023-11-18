@@ -21,13 +21,10 @@ describe('pubsub', () => {
     call$('pubsub.listen', {channel: 'my-channel'}).subscribe((res) => {
       emits.push(res.message);
     });
-    await call(
-      'pubsub.publish',
-      {
-        channel: 'my-channel',
-        message: 'hello world',
-      },
-    );
+    await call('pubsub.publish', {
+      channel: 'my-channel',
+      message: 'hello world',
+    });
     await until(() => emits.length === 1);
     expect(emits).toStrictEqual(['hello world']);
   });
@@ -38,30 +35,21 @@ describe('pubsub', () => {
     const sub = call$('pubsub.listen', {channel: 'my-channel'}).subscribe((res) => {
       emits.push(res.message);
     });
-    await call(
-      'pubsub.publish',
-      {
-        channel: 'my-channel',
-        message: 'msg1',
-      },
-    );
-    await call(
-      'pubsub.publish',
-      {
-        channel: 'my-channel',
-        message: 'msg2',
-      },
-    );
+    await call('pubsub.publish', {
+      channel: 'my-channel',
+      message: 'msg1',
+    });
+    await call('pubsub.publish', {
+      channel: 'my-channel',
+      message: 'msg2',
+    });
     await until(() => emits.length === 2);
     sub.unsubscribe();
     await tick(25);
-    await call(
-      'pubsub.publish',
-      {
-        channel: 'my-channel',
-        message: 'msg3',
-      },
-    );
+    await call('pubsub.publish', {
+      channel: 'my-channel',
+      message: 'msg3',
+    });
     await tick(50);
     expect(emits.indexOf('msg1') > -1).toBe(true);
     expect(emits.indexOf('msg2') > -1).toBe(true);
@@ -84,33 +72,22 @@ describe('pubsub', () => {
     call$('pubsub.listen', {channel: 'channel-2'}).subscribe((res) => {
       user3.push(res.message);
     });
-    await call(
-      'pubsub.publish',
-      {
-        channel: 'my-channel',
-        message: 'hello world',
-      },
-    );
+    await call('pubsub.publish', {
+      channel: 'my-channel',
+      message: 'hello world',
+    });
     await tick(50);
     expect(user1).toStrictEqual([]);
     expect(user2).toStrictEqual([]);
     expect(user3).toStrictEqual([]);
-    call(
-        'pubsub.publish',
-        {
-          channel: 'channel-1',
-          message: 'msg1',
-        },
-      )
-      .catch(() => {});
-    call(
-        'pubsub.publish',
-        {
-          channel: 'channel-2',
-          message: 'msg2',
-        },
-      )
-      .catch(() => {});
+    call('pubsub.publish', {
+      channel: 'channel-1',
+      message: 'msg1',
+    }).catch(() => {});
+    call('pubsub.publish', {
+      channel: 'channel-2',
+      message: 'msg2',
+    }).catch(() => {});
     await until(() => user1.length === 1);
     await until(() => user2.length === 1);
     await until(() => user3.length === 2);
@@ -119,14 +96,10 @@ describe('pubsub', () => {
     expect(user3.indexOf('msg1') > -1).toBe(true);
     expect(user3.indexOf('msg2') > -1).toBe(true);
     sub2.unsubscribe();
-    call(
-        'pubsub.publish',
-        {
-          channel: 'channel-2',
-          message: 'msg3',
-        },
-      )
-      .catch(() => {});
+    call('pubsub.publish', {
+      channel: 'channel-2',
+      message: 'msg3',
+    }).catch(() => {});
     await until(() => user3.length === 3);
     expect(user1).toStrictEqual(['msg1']);
     expect(user2).toStrictEqual(['msg2']);

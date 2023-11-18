@@ -9,7 +9,7 @@ describe('blocks.*', () => {
     test('can create an empty block', async () => {
       const {call} = setup();
       await call('blocks.create', {id: 'my-block', patches: []});
-      const {block} = (await call('blocks.get', {id: 'my-block'}));
+      const {block} = await call('blocks.get', {id: 'my-block'});
       expect(block).toMatchObject({
         id: 'my-block',
         seq: -1,
@@ -295,7 +295,10 @@ describe('blocks.*', () => {
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await client.call('blocks.edit', {id: 'my-block', patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}]});
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}],
+      });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
       expect(emits[0].patches.length).toBe(1);
@@ -306,7 +309,10 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(1);
-      await client.call('blocks.edit', {id: 'my-block', patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}]});
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}],
+      });
       await until(() => emits.length === 2);
       expect(emits.length).toBe(2);
       expect(emits[1].patches.length).toBe(1);

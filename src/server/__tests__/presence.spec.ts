@@ -8,16 +8,13 @@ describe('presence', () => {
     call$('presence.listen', {room: 'my-room'}).subscribe((res) => {
       emits.push(res);
     });
-    await call(
-      'presence.update',
-      {
-        room: 'my-room',
-        id: 'user-1',
-        data: {
-          hello: 'world',
-        },
+    await call('presence.update', {
+      room: 'my-room',
+      id: 'user-1',
+      data: {
+        hello: 'world',
       },
-    );
+    });
     await until(() => emits.length === 1);
     expect(emits[0]).toMatchObject({
       time: expect.any(Number),
@@ -40,16 +37,13 @@ describe('presence', () => {
     call$('presence.listen', {room: 'my-room'}).subscribe((res) => {
       emits.push(res);
     });
-    await call(
-      'presence.update',
-      {
-        room: 'my-room',
-        id: 'user-1',
-        data: {
-          hello: 'world',
-        },
+    await call('presence.update', {
+      room: 'my-room',
+      id: 'user-1',
+      data: {
+        hello: 'world',
       },
-    );
+    });
     await until(() => emits.length === 1);
     const emits2: any[] = [];
     call$('presence.listen', {room: 'my-room'}).subscribe((res) => {
@@ -77,16 +71,13 @@ describe('presence', () => {
     call$('presence.listen', {room: 'my-room'}).subscribe((res) => {
       emits.push(res);
     });
-    await call(
-      'presence.update',
-      {
-        room: 'my-room',
-        id: 'user-1',
-        data: {
-          hello: 'world',
-        },
+    await call('presence.update', {
+      room: 'my-room',
+      id: 'user-1',
+      data: {
+        hello: 'world',
       },
-    );
+    });
     await until(() => emits.length === 1);
     await call('presence.remove', {room: 'my-room', id: 'user-1'});
     await until(() => emits.length === 2);
@@ -100,16 +91,13 @@ describe('presence', () => {
 
   test('emits entry deletion messages', async () => {
     const {call, call$} = setup();
-    await call(
-      'presence.update',
-      {
-        room: 'my-room',
-        id: 'user-1',
-        data: {
-          hello: 'world',
-        },
+    await call('presence.update', {
+      room: 'my-room',
+      id: 'user-1',
+      data: {
+        hello: 'world',
       },
-    );
+    });
     const emits: any[] = [];
     call$('presence.listen', {room: 'my-room'}).subscribe((res) => {
       emits.push(res);

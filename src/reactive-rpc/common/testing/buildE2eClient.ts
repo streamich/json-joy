@@ -130,5 +130,5 @@ type UnTypeRouter<T> = T extends TypeRouter<infer R> ? R : never;
 type UnwrapFunction<F> = F extends FunctionType<infer Req, infer Res>
   ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
   : F extends FunctionStreamingType<infer Req, infer Res>
-    ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
-    : never;
+  ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
+  : never;
