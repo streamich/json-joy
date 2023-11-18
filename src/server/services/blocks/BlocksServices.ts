@@ -38,6 +38,12 @@ export class BlocksServices {
     });
   }
 
+  public async history(id: string, min: number, max: number) {
+    const {store} = this;
+    const patches = await store.history(id, min, max);
+    return {patches};
+  }
+
   public async edit(id: string, patches: any[]) {
     if (!Array.isArray(patches)) throw RpcError.validation('patches must be an array');
     if (!patches.length) throw RpcError.validation('patches must not be empty');

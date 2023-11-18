@@ -1,7 +1,6 @@
 import {of} from 'rxjs';
 import {Model} from '../../json-crdt';
-import {Value} from '../../reactive-rpc/common/messages/Value';
-import {RpcError, RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
+import {RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
 import {tick, until} from '../../__tests__/util';
 
@@ -352,6 +351,61 @@ describe('blocks.*', () => {
       await call('blocks.remove', {id: 'my-block'});
       await until(() => emits.length === 2);
       expect(emits[1].data.deleted).toBe(true);
+    });
+  });
+
+  describe('blocks.history', () => {
+    test('can retrieve change history', async () => {
+      const {call} = setup();
+      const model = Model.withLogicalClock();
+      model.api.root({
+        text: 'Hell',
+      });
+      const patch1 = model.api.flush();
+      await call('blocks.create', {id: 'my-block', patches: [{
+        seq: 0,
+        created: Date.now(),
+        blob: patch1.toBinary(),
+      }]});
+      await tick(11);
+      model.api.str(['text']).ins(4, 'o');
+      const patch2 = model.api.flush();
+      model.api.obj([]).set({
+        age: 26,
+      });
+      const patch3 = model.api.flush();
+      await call('blocks.edit', {id: 'my-block', patches: [
+        {
+          seq: 1,
+          created: Date.now(),
+          blob: patch2.toBinary(),
+        },
+        {
+          seq: 2,
+          created: Date.now(),
+          blob: patch3.toBinary(),
+        },
+      ]});
+      const history = await call('blocks.history', {id: 'my-block', min: 0, max: 2});
+      expect(history).toMatchObject({
+        patches: [
+          {
+            seq: 0,
+            created: expect.any(Number),
+            blob: patch1.toBinary(),
+          },
+          {
+            seq: 1,
+            created: expect.any(Number),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: expect.any(Number),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
     });
   });
 });
