@@ -64,6 +64,16 @@ export interface BuildE2eClientOptions {
    * values. Defaults to `[0, 0]`.
    */
   clientBufferTime?: [min: number, max: number];
+
+  /**
+   * IP address to use for the connection. Defaults to `0.0.0.0`.
+   */
+  ip?: string;
+
+  /**
+   * Authentication token to use for the connection. Defaults to empty string.
+   */
+  token?: string;
 }
 
 export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
@@ -71,8 +81,8 @@ export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
   const writer = opt.writer ?? new Writer(Fuzzer.randomInt2(opt.writerDefaultBufferKb ?? [4, 4]) * 1024);
   const codecs = new RpcCodecs(new Codecs(writer), new RpcMessageCodecs());
   const ctx = new ConnectionContext(
-    '0.0.0.0',
-    '',
+    opt.ip ?? '0.0.0.0',
+    opt.ip ?? '',
     null,
     {},
     codecs.value.cbor,
