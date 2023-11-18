@@ -8,6 +8,7 @@ import {Value} from '../../common/messages/Value';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {Writer} from '../../../util/buffers/Writer';
+import {copy} from '../../../util/buffers/copy';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
 import type * as types from './types';
 import type {RouteHandler} from './types';
@@ -191,7 +192,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
           const ctx = ws.ctx;
           const reqCodec = ctx.reqCodec;
           const msgCodec = ctx.msgCodec;
-          const uint8 = new Uint8Array(buf);
+          const uint8 = copy(new Uint8Array(buf));
           const rpc = ws.rpc!;
           try {
             const messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
@@ -275,7 +276,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
       if (token) {
         logger.log({msg: 'SERVER_STARTED', url: `http://localhost:${port}`});
       } else {
-        logger.error(`Failed to listen on ${port} port.`);
+        logger.error('SERVER_START', new Error(`Failed to listen on ${port} port.`));
       }
     });
   }

@@ -182,8 +182,11 @@ export class ConnectionContext<Meta = Record<string, unknown>> {
       let running = 0;
       res.onData((ab, isLast) => {
         running += ab.byteLength;
-        if (running > max) res.end('too large');
-        // Last `ab` does not need to be copied.
+        if (running > max) {
+          res.aborted = true;
+          res.end('too large');
+        }
+        // Last `ab` does not need to be copied, as per docs.
         if (isLast) list.push(new Uint8Array(ab)), resolve(list);
         else list.push(copy(new Uint8Array(ab)));
       });
