@@ -30,13 +30,11 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
   public readonly req: {[K in keyof Routes<Router>]: MethodReq<Routes<Router>[K]>} = null as any;
   public readonly res: {[K in keyof Routes<Router>]: MethodRes<Routes<Router>[K]>} = null as any;
 
-  public get<K extends keyof Routes<Router>>(id: K): MethodDefinition<Ctx, Routes<Router>[K]> {
+  public get<K extends keyof Routes<Router>>(id: K): MethodDefinition<Ctx, Routes<Router>[K]> | undefined {
     let method = this.methods.get(id as string) as any;
     if (method) return method;
     const fn = this.router.routes[id as string];
-    // TODO: do this check without relying on constructor and importing the `FunctionType` class.
-    if (!fn || !(fn instanceof FunctionType || fn instanceof FunctionStreamingType))
-      throw RpcError.valueFromCode(RpcErrorCodes.METHOD_NOT_FOUND, `Type [alias = ${id as string}] is not a function.`);
+    if (!fn || !(fn instanceof FunctionType || fn instanceof FunctionStreamingType)) return undefined;
     const validator = fn.req.validator('object');
     const requestSchema = (fn.req as AbstractType<Schema>).getSchema();
     const isRequestVoid = requestSchema.__t === 'const' && requestSchema.value === undefined;

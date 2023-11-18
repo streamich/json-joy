@@ -86,9 +86,9 @@ export class RpcCaller<Ctx = unknown> {
    * @returns Response data.
    */
   public async call(name: string, request: unknown, ctx: Ctx): Promise<Value<unknown>> {
+    const method = this.getMethodStrict(name);
+    this.validate(method, request);
     try {
-      const method = this.getMethodStrict(name);
-      this.validate(method, request);
       const preCall = method.onPreCall;
       if (preCall) await preCall(ctx, request);
       const data = await method.call(request, ctx);
