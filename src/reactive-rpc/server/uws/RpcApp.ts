@@ -5,22 +5,18 @@ import {RpcError, RpcErrorCodes, RpcErrorType} from '../../common/rpc/caller/err
 import {ConnectionContext} from '../context';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
 import {Value} from '../../common/messages/Value';
-import {EncodingFormat} from '../../../json-pack/constants';
-import {RpcMessageFormat} from '../../common/codec/constants';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {Codecs} from '../../../json-pack/codecs/Codecs';
+import {Writer} from '../../../util/buffers/Writer';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
 import type * as types from './types';
 import type {RouteHandler} from './types';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
-import {Writer} from '../../../util/buffers/Writer';
 
 const HDR_BAD_REQUEST = Buffer.from('400 Bad Request', 'utf8');
 const HDR_NOT_FOUND = Buffer.from('404 Not Found', 'utf8');
-const HDR_INTERNAL_SERVER_ERROR = Buffer.from('500 Internal Server Error', 'utf8');
 const ERR_NOT_FOUND = RpcError.fromCode(RpcErrorCodes.NOT_FOUND, 'Not Found');
-const ERR_INTERNAL = RpcError.internal();
 
 const noop = (x: any) => {};
 
@@ -121,16 +117,22 @@ export class RpcApp<Ctx extends ConnectionContext> {
         if (res.aborted) return;
         const messageCodec = ctx.msgCodec;
         const incomingMessages = messageCodec.decodeBatch(ctx.reqCodec, bodyUint8);
-        const outgoingMessages = await this.batchProcessor.onBatch(incomingMessages as IncomingBatchMessage[], ctx);
-        if (res.aborted) return;
-        const resCodec = ctx.resCodec;
-        messageCodec.encodeBatch(resCodec, outgoingMessages);
-        const buf = resCodec.encoder.writer.flush();
-        if (res.aborted) return;
-        res.end(buf);
-      } catch (err: any) {
-        if (typeof err === 'object' && err) if (err.message === 'Invalid JSON') throw RpcError.badRequest();
-        throw RpcError.from(err);
+        try {
+          const outgoingMessages = await this.batchProcessor.onBatch(incomingMessages as IncomingBatchMessage[], ctx);
+          if (res.aborted) return;
+          const resCodec = ctx.resCodec;
+          messageCodec.encodeBatch(resCodec, outgoingMessages);
+          const buf = resCodec.encoder.writer.flush();
+          if (res.aborted) return;
+          res.end(buf);
+        } catch (error) {
+          const logger = this.options.logger ?? console;
+          logger.error('HTTP_RPC_PROCESSING', error, {messages: incomingMessages});
+          throw RpcError.internal(error);
+        }
+      } catch (error) {
+        if (typeof error === 'object' && error) if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
+        throw RpcError.from(error);
       }
     });
     return this;
@@ -221,49 +223,40 @@ export class RpcApp<Ctx extends ConnectionContext> {
     const augmentContext = options.augmentContext ?? noop;
     const logger = options.logger ?? console;
     this.app.any('/*', async (res: types.HttpResponse, req: types.HttpRequest) => {
-      res.onAborted(() => {
-        res.aborted = true;
-      });
-      const method = req.getMethod();
-      const url = req.getUrl();
       try {
-        const match = matcher(method + url) as undefined | Match;
-        if (!match) {
-          res.cork(() => {
-            res.writeStatus(HDR_NOT_FOUND);
-            res.end(RpcErrorType.encode(responseCodec, ERR_NOT_FOUND));
-          });
-          return;
-        }
-        const handler = match.data as RouteHandler<Ctx>;
-        const params = match.params;
-        const ctx = ConnectionContext.fromReqRes(req, res, params, this) as Ctx;
-        responseCodec = ctx.resCodec;
-        augmentContext(ctx);
-        await handler(ctx);
-      } catch (err) {
-        if (err instanceof RpcError) {
-          const error = <RpcError>err;
-          res.cork(() => {
-            res.writeStatus(HDR_BAD_REQUEST);
-            res.end(RpcErrorType.encode(responseCodec, error));
-          });
-          return;
-        }
-        if (err instanceof Value && err.data instanceof RpcError) {
-          const error = <RpcError>err.data;
-          res.cork(() => {
-            res.writeStatus(HDR_BAD_REQUEST);
-            res.end(RpcErrorType.encode(responseCodec, error));
-          });
-          return;
-        }
-        logger.error('UWS_ROUTER_INTERNAL_ERROR', err);
-        res.cork(() => {
-          res.writeStatus(HDR_INTERNAL_SERVER_ERROR);
-          res.end(RpcErrorType.encode(responseCodec, ERR_INTERNAL));
+        res.onAborted(() => {
+          res.aborted = true;
         });
-      }
+        const method = req.getMethod();
+        const url = req.getUrl();
+        try {
+          const match = matcher(method + url) as undefined | Match;
+          if (!match) {
+            res.cork(() => {
+              res.writeStatus(HDR_NOT_FOUND);
+              res.end(RpcErrorType.encode(responseCodec, ERR_NOT_FOUND));
+            });
+            return;
+          }
+          const handler = match.data as RouteHandler<Ctx>;
+          const params = match.params;
+          const ctx = ConnectionContext.fromReqRes(req, res, params, this) as Ctx;
+          responseCodec = ctx.resCodec;
+          augmentContext(ctx);
+          await handler(ctx);
+        } catch (err) {
+          if (err instanceof Value) err = err.data;
+          if (!(err instanceof RpcError)) err = RpcError.from(err);
+          const error = <RpcError>err;
+          if (error.errno === RpcErrorCodes.INTERNAL_ERROR) {
+            logger.error('UWS_ROUTER_INTERNAL_ERROR', error, {originalError: error.originalError ?? null});
+          }
+          res.cork(() => {
+            res.writeStatus(HDR_BAD_REQUEST);
+            res.end(RpcErrorType.encode(responseCodec, error));
+          });
+        }
+      } catch {}
     });
   }
 
