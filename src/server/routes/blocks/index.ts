@@ -4,6 +4,7 @@ import {remove} from './methods/remove';
 import {edit} from './methods/edit';
 import {listen} from './methods/listen';
 import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
+import {history} from './methods/history';
 import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../types';
 
@@ -22,5 +23,6 @@ export const blocks =
       ( remove(d)
       ( edit(d)
       ( listen(d)
-      ( r )))))));
+      ( history(d)
+      ( r ))))))));
   };

@@ -84,7 +84,7 @@ for (const jsonCodec of codecList) {
     });
 
     test('Response Error typed', () => {
-      const value = RpcError.internalErrorValue();
+      const value = RpcError.internalErrorValue(null);
       const message = new ResponseErrorMessage(123, value);
       const encoded = codec.encode(jsonCodec, [message]);
       const decoded1 = jsonCodec.decoder.read(encoded);

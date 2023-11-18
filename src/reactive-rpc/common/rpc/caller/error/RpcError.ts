@@ -36,16 +36,21 @@ export type RpcErrorValue = Value<RpcError>;
 export class RpcError extends Error implements IRpcError {
   public static from(error: unknown) {
     if (error instanceof RpcError) return error;
-    return RpcError.internal();
+    return RpcError.internal(error);
   }
 
-  public static fromCode(errno: RpcErrorCodes, message: string = '', meta: unknown = undefined): RpcError {
+  public static fromCode(
+    errno: RpcErrorCodes,
+    message: string = '',
+    meta: unknown = undefined,
+    originalError: unknown = undefined,
+  ): RpcError {
     const code = RpcErrorCodes[errno];
-    return new RpcError(message || code, code, errno, undefined, meta || undefined);
+    return new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
   }
 
-  public static internal(message: string = 'Internal Server Error'): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message);
+  public static internal(originalError: unknown, message: string = 'Internal Server Error'): RpcError {
+    return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message, undefined, originalError);
   }
 
   public static badRequest(): RpcError {
@@ -60,7 +65,7 @@ export class RpcError extends Error implements IRpcError {
     return new Value(error, RpcErrorType);
   }
 
-  public static valueFrom(error: unknown, def = RpcError.internalErrorValue()): RpcErrorValue {
+  public static valueFrom(error: unknown, def = RpcError.internalErrorValue(error)): RpcErrorValue {
     if (error instanceof Value && error.data instanceof RpcError && error.type === RpcErrorType) return error;
     if (error instanceof RpcError) return RpcError.value(error);
     return def;
@@ -70,8 +75,8 @@ export class RpcError extends Error implements IRpcError {
     return RpcError.value(RpcError.fromCode(errno, message));
   }
 
-  public static internalErrorValue(): RpcErrorValue {
-    return RpcError.value(RpcError.internal());
+  public static internalErrorValue(originalError: unknown): RpcErrorValue {
+    return RpcError.value(RpcError.internal(originalError));
   }
 
   public static isRpcError(error: unknown): error is RpcError {
@@ -84,6 +89,7 @@ export class RpcError extends Error implements IRpcError {
     public readonly errno: number,
     public readonly errorId: string | undefined,
     public readonly meta: unknown | undefined,
+    public readonly originalError: unknown | undefined,
   ) {
     super(message);
     if (message === code) this.code = undefined;

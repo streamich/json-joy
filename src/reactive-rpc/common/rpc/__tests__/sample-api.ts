@@ -76,7 +76,7 @@ const double: IStaticRpcMethod<object, {num: number}, {num: number}> = {
 const error: IStaticRpcMethod<object, void, void> = {
   isStreaming: false,
   call: async () => {
-    throw new RpcError('this promise can throw', '', 0, '', undefined);
+    throw new RpcError('this promise can throw', '', 0, '', undefined, undefined);
   },
 };
 
@@ -96,7 +96,7 @@ const streamError: IStreamingRpcMethod<object, void, void> = {
   call$: () =>
     from(
       (async () => {
-        throw RpcError.internal('Stream always errors');
+        throw RpcError.internal(null, 'Stream always errors');
       })(),
     ),
 };

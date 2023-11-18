@@ -46,7 +46,7 @@ describe('static calls', () => {
       },
     });
     const [, error] = await of(caller.call('test', {}, {}));
-    expect(error).toEqual(RpcError.internalErrorValue());
+    expect(error).toEqual(RpcError.internalErrorValue(null));
   });
 });
 
@@ -95,10 +95,10 @@ describe('streaming calls', () => {
     });
 
     const [, error1] = await of(caller.call('test', {}, {}));
-    expect(error1).toEqual(RpcError.internalErrorValue());
+    expect(error1).toEqual(RpcError.internalErrorValue(null));
 
     const [, error2] = await of(Rx.firstValueFrom(caller.call$('test', Rx.of(undefined), {})));
-    expect(error2).toEqual(RpcError.internalErrorValue());
+    expect(error2).toEqual(RpcError.internalErrorValue(null));
   });
 });
 

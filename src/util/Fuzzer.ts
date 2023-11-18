@@ -16,8 +16,11 @@ function xoshiro128ss(a: number, b: number, c: number, d: number) {
 }
 
 export class Fuzzer {
-  /** @deprecated */
   public static randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  public static randomInt2([min, max]: [min: number, max: number]): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 

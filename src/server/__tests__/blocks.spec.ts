@@ -1,16 +1,14 @@
-import {of} from 'rxjs';
 import {Model} from '../../json-crdt';
-import {Value} from '../../reactive-rpc/common/messages/Value';
-import {RpcError, RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
+import {RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
 import {tick, until} from '../../__tests__/util';
 
 describe('blocks.*', () => {
   describe('blocks.create', () => {
     test('can create an empty block', async () => {
-      const {caller} = setup();
-      await caller.call('blocks.create', {id: 'my-block', patches: []}, {});
-      const {block} = (await caller.call('blocks.get', {id: 'my-block'}, {})).data;
+      const {call} = setup();
+      await call('blocks.create', {id: 'my-block', patches: []});
+      const {block} = await call('blocks.get', {id: 'my-block'});
       expect(block).toMatchObject({
         id: 'my-block',
         seq: -1,
@@ -284,11 +282,11 @@ describe('blocks.*', () => {
 
   describe('blocks.listen', () => {
     test('can listen for block changes', async () => {
-      const {call, caller} = setup();
-      await call('blocks.create', {id: 'my-block', patches: []});
+      const {client} = setup();
+      await client.call('blocks.create', {id: 'my-block', patches: []});
       await tick(11);
       const emits: any[] = [];
-      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -296,28 +294,34 @@ describe('blocks.*', () => {
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await call('blocks.edit', {id: 'my-block', patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}]});
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}],
+      });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
-      expect(emits[0].data.patches.length).toBe(1);
-      expect(emits[0].data.patches[0].seq).toBe(0);
+      expect(emits[0].patches.length).toBe(1);
+      expect(emits[0].patches[0].seq).toBe(0);
       model.api.root({
         text: 'Hello',
       });
       const patch2 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(1);
-      await call('blocks.edit', {id: 'my-block', patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}]});
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}],
+      });
       await until(() => emits.length === 2);
       expect(emits.length).toBe(2);
-      expect(emits[1].data.patches.length).toBe(1);
-      expect(emits[1].data.patches[0].seq).toBe(1);
+      expect(emits[1].patches.length).toBe(1);
+      expect(emits[1].patches[0].seq).toBe(1);
     });
 
     test('can subscribe before block is created', async () => {
-      const {call, caller} = setup();
+      const {client} = setup();
       const emits: any[] = [];
-      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -325,7 +329,7 @@ describe('blocks.*', () => {
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await call('blocks.create', {
+      await client.call('blocks.create', {
         id: 'my-block',
         patches: [
           {
@@ -337,21 +341,85 @@ describe('blocks.*', () => {
       });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
-      expect(emits[0].data.patches.length).toBe(1);
-      expect(emits[0].data.patches[0].seq).toBe(0);
-      expect(emits[0].data.patches[0].blob).toStrictEqual(patch1.toBinary());
+      expect(emits[0].patches.length).toBe(1);
+      expect(emits[0].patches[0].seq).toBe(0);
+      expect(emits[0].patches[0].blob).toStrictEqual(patch1.toBinary());
     });
 
     test('can receive deletion events', async () => {
-      const {call, caller} = setup();
+      const {client} = setup();
       const emits: any[] = [];
-      caller.call$('blocks.listen', of({id: 'my-block'}), {}).subscribe((data) => emits.push(data));
-      await call('blocks.create', {id: 'my-block', patches: []});
+      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
+      await client.call('blocks.create', {id: 'my-block', patches: []});
       await until(() => emits.length === 1);
-      expect(emits[0].data.block.seq).toBe(-1);
-      await call('blocks.remove', {id: 'my-block'});
+      expect(emits[0].block.seq).toBe(-1);
+      await tick(3);
+      await client.call('blocks.remove', {id: 'my-block'});
       await until(() => emits.length === 2);
-      expect(emits[1].data.deleted).toBe(true);
+      expect(emits[1].deleted).toBe(true);
+    });
+  });
+
+  describe('blocks.history', () => {
+    test('can retrieve change history', async () => {
+      const {client} = setup();
+      const model = Model.withLogicalClock();
+      model.api.root({
+        text: 'Hell',
+      });
+      const patch1 = model.api.flush();
+      await client.call('blocks.create', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
+      await tick(11);
+      model.api.str(['text']).ins(4, 'o');
+      const patch2 = model.api.flush();
+      model.api.obj([]).set({
+        age: 26,
+      });
+      const patch3 = model.api.flush();
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
+      const history = await client.call('blocks.history', {id: 'my-block', min: 0, max: 2});
+      expect(history).toMatchObject({
+        patches: [
+          {
+            seq: 0,
+            created: expect.any(Number),
+            blob: patch1.toBinary(),
+          },
+          {
+            seq: 1,
+            created: expect.any(Number),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: expect.any(Number),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
     });
   });
 });

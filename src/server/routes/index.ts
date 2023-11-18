@@ -1,14 +1,13 @@
 import {routes} from './routes';
-import {TypeSystem} from '../../json-type';
+import {system} from './system';
 import {TypeRouter} from '../../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
+import {Value} from '../../reactive-rpc/common/messages/Value';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
-import {Value} from '../../reactive-rpc/common/messages/Value';
 
 export const createRouter = (services: Services) => {
-  const system = new TypeSystem();
   const router = new TypeRouter({system, routes: {}});
   const deps: RouteDeps = {services, router};
   return routes(deps)(router);
@@ -26,5 +25,5 @@ export const createCaller = (services: Services) => {
       return RpcError.valueFrom(error);
     },
   });
-  return caller;
+  return {router, caller};
 };

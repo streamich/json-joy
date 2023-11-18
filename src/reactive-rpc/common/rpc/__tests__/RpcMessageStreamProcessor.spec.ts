@@ -51,7 +51,7 @@ const setup = (
         isStreaming: false,
         call: async () => {
           // tslint:disable-next-line:no-string-throw
-          throw RpcError.internal('this promise can throw');
+          throw RpcError.internal(null, 'this promise can throw');
         },
       },
       promiseDelay: {
@@ -64,7 +64,7 @@ const setup = (
       error: {
         isStreaming: false,
         call: async () => {
-          throw RpcError.internal('this promise can throw');
+          throw RpcError.internal(null, 'this promise can throw');
         },
       },
       emitOnceSync: {
@@ -635,7 +635,7 @@ describe('pre-call checks', () => {
 
     test('fails call when pre-call checks fail', async () => {
       const onPreCall = jest.fn(async (request) => {
-        throw RpcError.internal('fail...');
+        throw RpcError.internal(null, 'fail...');
       });
       const {server, send} = setup(
         {},

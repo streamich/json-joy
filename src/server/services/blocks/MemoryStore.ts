@@ -72,6 +72,10 @@ export class MemoryStore implements types.Store {
 
   public async remove(id: string): Promise<void> {
     await new Promise((resolve) => setImmediate(resolve));
+    this.removeSync(id);
+  }
+
+  private removeSync(id: string): void {
     this.blocks.delete(id);
     this.patches.delete(id);
   }
@@ -81,5 +85,10 @@ export class MemoryStore implements types.Store {
       blocks: this.blocks.size,
       patches: [...this.patches.values()].reduce((acc, v) => acc + v.length, 0),
     };
+  }
+
+  public async removeOlderThan(ts: number): Promise<void> {
+    await new Promise((resolve) => setImmediate(resolve));
+    for (const [id, block] of this.blocks) if (block.created < ts) this.removeSync(id);
   }
 }

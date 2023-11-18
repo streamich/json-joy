@@ -8,6 +8,6 @@ import type {MyCtx} from './services/types';
 
 const app = new RpcApp<MyCtx>({
   uws: App({}),
-  caller: createCaller(new Services()),
+  caller: createCaller(new Services()).caller,
 });
 app.startWithDefaults();

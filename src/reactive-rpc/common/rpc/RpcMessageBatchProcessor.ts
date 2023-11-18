@@ -59,7 +59,7 @@ export class RpcMessageBatchProcessor<Ctx = unknown> {
       }
       return result;
     } catch (error) {
-      const value = RpcError.internalErrorValue();
+      const value = RpcError.internalErrorValue(error);
       return [new msg.ResponseErrorMessage(-1, value)];
     }
   }
