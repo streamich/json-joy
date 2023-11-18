@@ -139,7 +139,9 @@ export class RpcApp<Ctx extends ConnectionContext> {
   public enableWsRpc(path: string = '/rpc'): this {
     const maxBackpressure = 4 * 1024 * 1024;
     const augmentContext = this.options.augmentContext ?? noop;
-    const logger = this.options.logger ?? console;
+    const options = this.options;
+    const logger = options.logger ?? console;
+    const caller = options.caller;
     this.app.ws(path, {
       idleTimeout: 0,
       maxPayloadLength: 4 * 1024 * 1024,
@@ -153,46 +155,54 @@ export class RpcApp<Ctx extends ConnectionContext> {
         res.upgrade({ctx}, secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions, context);
       },
       open: (ws_: types.WebSocket) => {
-        const ws = ws_ as types.RpcWebSocket<Ctx>;
-        const ctx = ws.ctx;
-        const resCodec = ctx.resCodec;
-        const msgCodec = ctx.msgCodec;
-        const encoder = resCodec.encoder;
-        ws.rpc = new RpcMessageStreamProcessor({
-          caller: this.options.caller,
-          send: (messages: ReactiveRpcMessage[]) => {
-            try {
-              if (ws.getBufferedAmount() > maxBackpressure) return;
-              const writer = encoder.writer;
-              writer.reset();
-              msgCodec.encodeBatch(resCodec, messages);
-              const encoded = writer.flush();
-              ws.send(encoded, true, false);
-            } catch (error) {
-              logger.error('WS_SEND', error, {messages});
-            }
-          },
-          bufferSize: 1,
-          bufferTime: 0,
-        });
+        try {
+          const ws = ws_ as types.RpcWebSocket<Ctx>;
+          const ctx = ws.ctx;
+          const resCodec = ctx.resCodec;
+          const msgCodec = ctx.msgCodec;
+          const encoder = resCodec.encoder;
+          ws.rpc = new RpcMessageStreamProcessor({
+            caller,
+            send: (messages: ReactiveRpcMessage[]) => {
+              try {
+                if (ws.getBufferedAmount() > maxBackpressure) return;
+                const writer = encoder.writer;
+                writer.reset();
+                msgCodec.encodeBatch(resCodec, messages);
+                const encoded = writer.flush();
+                ws.send(encoded, true, false);
+              } catch (error) {
+                logger.error('WS_SEND', error, {messages});
+              }
+            },
+            bufferSize: 1,
+            bufferTime: 0,
+          });
+        } catch (error) {
+          logger.error('RX_WS_OPEN', error);
+        }
       },
       message: (ws_: types.WebSocket, buf: ArrayBuffer, isBinary: boolean) => {
-        const ws = ws_ as types.RpcWebSocket<Ctx>;
-        const ctx = ws.ctx;
-        const reqCodec = ctx.reqCodec;
-        const msgCodec = ctx.msgCodec;
-        const uint8 = new Uint8Array(buf);
-        const rpc = ws.rpc!;
         try {
-          const messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
+          const ws = ws_ as types.RpcWebSocket<Ctx>;
+          const ctx = ws.ctx;
+          const reqCodec = ctx.reqCodec;
+          const msgCodec = ctx.msgCodec;
+          const uint8 = new Uint8Array(buf);
+          const rpc = ws.rpc!;
           try {
-            rpc.onMessages(messages, ctx);
+            const messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
+            try {
+              rpc.onMessages(messages, ctx);
+            } catch (error) {
+              logger.error('RX_RPC_PROCESSING', error, messages);
+              return;
+            }
           } catch (error) {
-            logger.error('RX_RPC_PROCESSING_ERROR', error, messages);
-            return;
+            logger.error('RX_RPC_DECODING', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString()});
           }
         } catch (error) {
-          logger.error('RX_RPC_DECODING_ERROR', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString()});
+          logger.error('RX_WS_MESSAGE', error);
         }
       },
       close: (ws_: types.WebSocket, code: number, message: ArrayBuffer) => {
