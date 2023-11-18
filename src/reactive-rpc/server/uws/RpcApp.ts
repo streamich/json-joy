@@ -161,12 +161,16 @@ export class RpcApp<Ctx extends ConnectionContext> {
         ws.rpc = new RpcMessageStreamProcessor({
           caller: this.options.caller,
           send: (messages: ReactiveRpcMessage[]) => {
-            if (ws.getBufferedAmount() > maxBackpressure) return;
-            const writer = encoder.writer;
-            writer.reset();
-            msgCodec.encodeBatch(resCodec, messages);
-            const encoded = writer.flush();
-            ws.send(encoded, true, false);
+            try {
+              if (ws.getBufferedAmount() > maxBackpressure) return;
+              const writer = encoder.writer;
+              writer.reset();
+              msgCodec.encodeBatch(resCodec, messages);
+              const encoded = writer.flush();
+              ws.send(encoded, true, false);
+            } catch (error) {
+              logger.error('WS_SEND', error, {messages});
+            }
           },
           bufferSize: 1,
           bufferTime: 0,
