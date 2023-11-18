@@ -131,7 +131,8 @@ export class RpcApp<Ctx extends ConnectionContext> {
           throw RpcError.internal(error);
         }
       } catch (error) {
-        if (typeof error === 'object' && error) if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
+        if (typeof error === 'object' && error)
+          if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
         throw RpcError.from(error);
       }
     });

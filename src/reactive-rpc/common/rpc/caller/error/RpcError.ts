@@ -39,7 +39,12 @@ export class RpcError extends Error implements IRpcError {
     return RpcError.internal(error);
   }
 
-  public static fromCode(errno: RpcErrorCodes, message: string = '', meta: unknown = undefined, originalError: unknown = undefined): RpcError {
+  public static fromCode(
+    errno: RpcErrorCodes,
+    message: string = '',
+    meta: unknown = undefined,
+    originalError: unknown = undefined,
+  ): RpcError {
     const code = RpcErrorCodes[errno];
     return new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
   }
