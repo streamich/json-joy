@@ -356,13 +356,13 @@ describe('blocks.*', () => {
 
   describe('blocks.history', () => {
     test('can retrieve change history', async () => {
-      const {call} = setup();
+      const {client} = setup();
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {
+      await client.call('blocks.create', {
         id: 'my-block',
         patches: [
           {
@@ -379,7 +379,7 @@ describe('blocks.*', () => {
         age: 26,
       });
       const patch3 = model.api.flush();
-      await call('blocks.edit', {
+      await client.call('blocks.edit', {
         id: 'my-block',
         patches: [
           {
@@ -394,7 +394,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const history = await call('blocks.history', {id: 'my-block', min: 0, max: 2});
+      const history = await client.call('blocks.history', {id: 'my-block', min: 0, max: 2});
       expect(history).toMatchObject({
         patches: [
           {
