@@ -1,12 +1,12 @@
-import {Codecs} from "../../../json-pack/codecs/Codecs";
-import {Fuzzer} from "../../../util/Fuzzer";
-import {Writer} from "../../../util/buffers/Writer";
-import {ConnectionContext} from "../../server/context";
-import {RpcCodecs} from "../codec/RpcCodecs";
-import {RpcMessageCodecs} from "../codec/RpcMessageCodecs";
-import {ReactiveRpcClientMessage, ReactiveRpcMessage, ReactiveRpcServerMessage} from "../messages";
-import {RpcClient, RpcMessageStreamProcessor, StreamingRpcClient} from "../rpc";
-import type {RpcCaller} from "../rpc/caller/RpcCaller";
+import {Codecs} from '../../../json-pack/codecs/Codecs';
+import {Fuzzer} from '../../../util/Fuzzer';
+import {Writer} from '../../../util/buffers/Writer';
+import {ConnectionContext} from '../../server/context';
+import {RpcCodecs} from '../codec/RpcCodecs';
+import {RpcMessageCodecs} from '../codec/RpcMessageCodecs';
+import {ReactiveRpcClientMessage, ReactiveRpcMessage, ReactiveRpcServerMessage} from '../messages';
+import {RpcClient, RpcMessageStreamProcessor, StreamingRpcClient} from '../rpc';
+import type {RpcCaller} from '../rpc/caller/RpcCaller';
 
 export interface BuildE2eClientOptions {
   caller: RpcCaller;
@@ -70,7 +70,15 @@ export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
   const caller = opt.caller;
   const writer = opt.writer ?? new Writer(Fuzzer.randomInt2(opt.writerDefaultBufferKb ?? [4, 4]) * 1024);
   const codecs = new RpcCodecs(new Codecs(writer), new RpcMessageCodecs());
-  const ctx = new ConnectionContext('0.0.0.0', '', null, {}, codecs.value.cbor, codecs.value.cbor, codecs.messages.binary);
+  const ctx = new ConnectionContext(
+    '0.0.0.0',
+    '',
+    null,
+    {},
+    codecs.value.cbor,
+    codecs.value.cbor,
+    codecs.messages.binary,
+  );
   let client: StreamingRpcClient;
   const streamProcessor = new RpcMessageStreamProcessor({
     caller,
@@ -100,5 +108,5 @@ export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
   const typedClient = client as T;
   return {
     client: typedClient,
-  };  
+  };
 };
