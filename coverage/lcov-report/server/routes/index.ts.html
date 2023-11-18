@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.3% </span>
+                <span class="strong">86.36% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>21/23</span>
+                <span class='fraction'>19/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.47% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/19</span>
+                <span class='fraction'>16/18</span>
             </div>
         
             
@@ -92,48 +92,45 @@
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">22x</span>
+<span class="cline-any cline-yes">22x</span>
+<span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">22x</span>
+<span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">21x</span>
+<span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {routes} from './routes';
-import {TypeSystem} from '../../json-type';
+import {system} from './system';
 import {TypeRouter} from '../../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
+import {Value} from '../../reactive-rpc/common/messages/Value';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
-import {Value} from '../../reactive-rpc/common/messages/Value';
 &nbsp;
 export const createRouter = (services: Services) =&gt; {
-  const system = new TypeSystem();
   const router = new TypeRouter({system, routes: {}});
   const deps: RouteDeps = {services, router};
   return routes(deps)(router);
@@ -144,14 +141,14 @@ export const createCaller = (services: Services) =&gt; {
   const caller = new TypeRouterCaller&lt;typeof router&gt;({
     router,
     wrapInternalError: (error: unknown) =&gt; {
-      if (error instanceof Value) return error;
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (error instanceof Value) <span class="cstat-no" title="statement not covered" >return error;</span>
       if (error instanceof RpcError) return RpcError.value(error);
       // tslint:disable-next-line:no-console
 <span class="cstat-no" title="statement not covered" >      console.error(error);</span>
 <span class="cstat-no" title="statement not covered" >      return RpcError.valueFrom(error);</span>
     },
   });
-  return caller;
+  return {router, caller};
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -160,7 +157,7 @@ export const createCaller = (services: Services) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-17T13:56:32.733Z
+                at 2023-11-18T16:43:11.605Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
