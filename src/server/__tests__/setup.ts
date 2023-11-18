@@ -4,11 +4,9 @@ import {Services} from '../services/Services';
 
 export const setup = () => {
   const services = new Services();
-  const caller = createCaller(services);
+  const {caller} = createCaller(services);
   const call = caller.callSimple.bind(caller);
-  // const {client} = buildE2eClient<TypedRpcClient<{}>>({caller});
-  const {client} = buildE2eClient({
-    caller,
+  const {client} = buildE2eClient(caller, {
     writerDefaultBufferKb: [1, 32],
     clientBufferSize: [1, 3],
     clientBufferTime: [1, 10],

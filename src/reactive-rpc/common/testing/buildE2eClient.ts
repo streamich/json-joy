@@ -5,12 +5,14 @@ import {ConnectionContext} from '../../server/context';
 import {RpcCodecs} from '../codec/RpcCodecs';
 import {RpcMessageCodecs} from '../codec/RpcMessageCodecs';
 import {ReactiveRpcClientMessage, ReactiveRpcMessage, ReactiveRpcServerMessage} from '../messages';
-import {RpcClient, RpcMessageStreamProcessor, StreamingRpcClient} from '../rpc';
-import type {RpcCaller} from '../rpc/caller/RpcCaller';
+import {RpcMessageStreamProcessor, StreamingRpcClient, TypedRpcClient} from '../rpc';
+import type {FunctionStreamingType, FunctionType} from '../../../json-type/type/classes';
+import type {Observable} from 'rxjs';
+import type {ResolveType} from '../../../json-type';
+import type {TypeRouter} from '../../../json-type/system/TypeRouter';
+import type {TypeRouterCaller} from '../rpc/caller/TypeRouterCaller';
 
 export interface BuildE2eClientOptions {
-  caller: RpcCaller;
-
   /**
    * Writer to use for encoding messages. Defaults to `new Writer(4 * 1024)`.
    */
@@ -76,8 +78,7 @@ export interface BuildE2eClientOptions {
   token?: string;
 }
 
-export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
-  const caller = opt.caller;
+export const buildE2eClient = <Caller extends TypeRouterCaller<any>>(caller: Caller, opt: BuildE2eClientOptions) => {
   const writer = opt.writer ?? new Writer(Fuzzer.randomInt2(opt.writerDefaultBufferKb ?? [4, 4]) * 1024);
   const codecs = new RpcCodecs(new Codecs(writer), new RpcMessageCodecs());
   const ctx = new ConnectionContext(
@@ -115,8 +116,19 @@ export const buildE2eClient = <T = RpcClient>(opt: BuildE2eClientOptions) => {
     bufferSize: Fuzzer.randomInt2(opt.clientBufferSize ?? [1, 1]),
     bufferTime: Fuzzer.randomInt2(opt.clientBufferTime ?? [0, 0]),
   });
-  const typedClient = client as T;
+  type Router = UnTypeRouterCaller<Caller>;
+  type Routes = UnTypeRouter<Router>;
+  type Methods = {[K in keyof Routes]: UnwrapFunction<Routes[K]>};
+  const typedClient = client as TypedRpcClient<Methods>;
   return {
     client: typedClient,
   };
 };
+
+type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : never;
+type UnTypeRouter<T> = T extends TypeRouter<infer R> ? R : never;
+type UnwrapFunction<F> = F extends FunctionType<infer Req, infer Res>
+  ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
+  : F extends FunctionStreamingType<infer Req, infer Res>
+    ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
+    : never;
