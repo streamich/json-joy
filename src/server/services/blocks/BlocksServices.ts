@@ -3,7 +3,14 @@ import {StorePatch} from './types';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
 import type {Services} from '../Services';
 
-const BLOCK_TTL = 1000 * 60 * 20; // 20 minutes
+const BLOCK_TTL = 1000 * 60 * 60; // 1 hour
+
+const validatePatches = (patches: StorePatch[]) => {
+  for (const patch of patches) {
+    if (patch.blob.length > 2000) throw RpcError.validation('patch blob too large');
+    if (patch.seq > 500_000) throw RpcError.validation('patch seq too large');
+  }
+};
 
 export class BlocksServices {
   protected readonly store = new MemoryStore();
@@ -13,6 +20,7 @@ export class BlocksServices {
   public async create(id: string, patches: StorePatch[]) {
     this.maybeGc();
     const {store} = this;
+    validatePatches(patches);
     const {block} = await store.create(id, patches);
     const data = {
       block,
@@ -47,12 +55,13 @@ export class BlocksServices {
     return {patches};
   }
 
-  public async edit(id: string, patches: any[]) {
+  public async edit(id: string, patches: StorePatch[]) {
     this.maybeGc();
     if (!Array.isArray(patches)) throw RpcError.validation('patches must be an array');
     if (!patches.length) throw RpcError.validation('patches must not be empty');
     const seq = patches[0].seq;
     const {store} = this;
+    validatePatches(patches);
     const {block} = await store.edit(id, patches);
     this.services.pubsub.publish(`__block:${id}`, {patches}).catch((error) => {
       // tslint:disable-next-line:no-console
