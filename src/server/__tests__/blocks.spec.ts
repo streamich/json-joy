@@ -422,4 +422,67 @@ describe('blocks.*', () => {
       });
     });
   });
+
+  describe('blocks.get', () => {
+    test('returns whole history when block is loaded', async () => {
+      const {client} = setup();
+      const model = Model.withLogicalClock();
+      model.api.root({
+        text: 'Hell',
+      });
+      const patch1 = model.api.flush();
+      await client.call('blocks.create', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 0,
+            created: Date.now(),
+            blob: patch1.toBinary(),
+          },
+        ],
+      });
+      model.api.str(['text']).ins(4, 'o');
+      const patch2 = model.api.flush();
+      model.api.obj([]).set({
+        age: 26,
+      });
+      const patch3 = model.api.flush();
+      await client.call('blocks.edit', {
+        id: 'my-block',
+        patches: [
+          {
+            seq: 1,
+            created: Date.now(),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: Date.now(),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
+      const result = await client.call('blocks.get', {id: 'my-block'});
+      expect(result).toMatchObject({
+        block: expect.any(Object),
+        patches: [
+          {
+            seq: 0,
+            created: expect.any(Number),
+            blob: patch1.toBinary(),
+          },
+          {
+            seq: 1,
+            created: expect.any(Number),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: expect.any(Number),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
+    });
+  });
 });

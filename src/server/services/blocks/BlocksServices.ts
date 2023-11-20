@@ -37,8 +37,9 @@ export class BlocksServices {
     const {store} = this;
     const result = await store.get(id);
     if (!result) throw RpcError.fromCode(RpcErrorCodes.NOT_FOUND);
+    const patches = await store.history(id, 0, result.block.seq);
     const {block} = result;
-    return {block};
+    return {block, patches};
   }
 
   public async remove(id: string) {
