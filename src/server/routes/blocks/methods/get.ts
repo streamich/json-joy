@@ -1,6 +1,6 @@
 import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
 import type {RouteDeps} from '../../types';
-import type {Block, BlockId} from '../schema';
+import type {Block, BlockId, BlockPatch} from '../schema';
 
 export const get =
   ({services}: RouteDeps) =>
@@ -14,7 +14,13 @@ export const get =
       }),
     );
 
-    const Response = t.Object(t.prop('block', t.Ref<typeof Block>('Block').options({})));
+    const Response = t.Object(
+      t.prop('block', t.Ref<typeof Block>('Block').options({})),
+      t.prop('patches', t.Array(t.Ref<typeof BlockPatch>('BlockPatch'))).options({
+        title: 'Patches',
+        description: 'The list of all patches.',
+      }),
+    );
 
     const Func = t
       .Function(Request, Response)
@@ -24,9 +30,10 @@ export const get =
         description: 'Fetches a block by ID.',
       })
       .implement(async ({id}) => {
-        const {block} = await services.blocks.get(id);
+        const {block, patches} = await services.blocks.get(id);
         return {
-          block: block,
+          block,
+          patches,
         };
       });
 
