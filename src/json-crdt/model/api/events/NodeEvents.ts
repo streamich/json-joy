@@ -1,5 +1,8 @@
+import {FanOut, FanOutListener, FanOutUnsubscribe} from 'thingies/es2020/fanout';
 import {Emitter} from '../../../../util/events/Emitter';
 import type {NodeApi} from '../nodes';
+import type {JsonNode, JsonNodeView} from '../../../nodes';
+import type {SyncStore, SyncStoreUnsubscribe} from '../../../../util/events/sync-store';
 
 export interface NodeEventMap {
   /**
@@ -17,9 +20,46 @@ export interface NodeEventMap {
   view: CustomEvent<void>;
 }
 
-export class NodeEvents extends Emitter<NodeEventMap> {
-  constructor(private readonly api: NodeApi) {
+class ChangesFanOut<N extends JsonNode = JsonNode> extends FanOut<JsonNodeView<N>> {
+  private _v: JsonNodeView<N> | undefined = undefined;
+  private _u: FanOutUnsubscribe | undefined = undefined;
+
+  constructor(private readonly api: NodeApi<N>) {
     super();
+  }
+
+  public listen(listener: FanOutListener<JsonNodeView<N>>) {
+    if (!this.listeners.size) {
+      const api = this.api;
+      this._v = api.view();
+      this._u = api.api.changes.listen(() => {
+        const view = api.view();
+        if (view !== this._v) {
+          this._v = view;
+          this.emit(view);
+        }
+      });
+    }
+    const unsubscribe = super.listen(listener);
+    return () => {
+      unsubscribe();
+      if (!this.listeners.size) {
+        this._u?.();
+        // this._unsub = this._view = undefined;
+      }
+    };
+  }
+}
+
+export class NodeEvents<N extends JsonNode = JsonNode>
+  extends Emitter<NodeEventMap>
+  implements SyncStore<JsonNodeView<N>>
+{
+  public readonly changes: ChangesFanOut<N>;
+
+  constructor(private readonly api: NodeApi<N>) {
+    super();
+    this.changes = new ChangesFanOut(api);
   }
 
   private viewSubs: Set<(ev: NodeEventMap['view']) => any> = new Set();
@@ -60,4 +100,12 @@ export class NodeEvents extends Emitter<NodeEventMap> {
     if (shouldUnsubscribeFromModelChanges) this.api.api.events.off('change', this.onModelChange);
     super.off(type, listener, options);
   }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe => {
+    return this.changes.listen(() => callback());
+  };
+
+  public readonly getSnapshot = () => this.api.view();
 }

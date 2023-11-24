@@ -1,3 +1,4 @@
+import {PatchBuilder} from '../../../json-crdt-patch';
 import {Model, ModelChangeType} from '../Model';
 
 describe('DOM Level 0, .onchange event system', () => {
@@ -8,13 +9,17 @@ describe('DOM Level 0, .onchange event system', () => {
       cnt++;
     };
     expect(cnt).toBe(0);
-    model.api.root({foo: 'bar'});
+    const builder = new PatchBuilder(model.clock.clone());
+    const objId = builder.json({foo: 123});
+    builder.root(objId);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    model.api.obj([]).set({hello: 123});
+    builder.insObj(objId, [['hello', builder.const(456)]]);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({
-      foo: 'bar',
-      hello: 123,
+      foo: 123,
+      hello: 456,
     });
   });
 
@@ -25,9 +30,12 @@ describe('DOM Level 0, .onchange event system', () => {
       cnt++;
     };
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    const builder = new PatchBuilder(model.clock.clone());
+    builder.root(builder.json({foo: 123}));
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    model.api.obj([]).set({foo: 123});
+    builder.root(builder.json({foo: 123}));
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
   });
 
@@ -38,9 +46,13 @@ describe('DOM Level 0, .onchange event system', () => {
       cnt++;
     };
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    const builder = new PatchBuilder(model.clock.clone());
+    const objId = builder.json({foo: 123});
+    builder.root(objId);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    model.api.obj([]).set({foo: undefined});
+    builder.insObj(objId, [['foo', builder.const(undefined)]]);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({});
   });
@@ -52,9 +64,13 @@ describe('DOM Level 0, .onchange event system', () => {
       cnt++;
     };
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    const builder = new PatchBuilder(model.clock.clone());
+    const objId = builder.json({foo: 123});
+    builder.root(objId);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    model.api.obj([]).set({bar: undefined});
+    builder.insObj(objId, [['bar', builder.const(undefined)]]);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({foo: 123});
   });
@@ -66,30 +82,20 @@ describe('DOM Level 0, .onchange event system', () => {
       cnt++;
     };
     expect(cnt).toBe(0);
-    model.api.root({foo: 123});
+    const builder = new PatchBuilder(model.clock.clone());
+    const objId = builder.json({foo: 123});
+    builder.root(objId);
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    model.api.root(123);
+    builder.root(builder.json(123));
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
-    model.api.root('asdf');
+    builder.root(builder.json('asdf'));
+    model.applyPatch(builder.flush());
     expect(cnt).toBe(3);
   });
 
   describe('event types', () => {
-    it('should trigger the onchange event with a LOCAL event type', () => {
-      const model = Model.withLogicalClock();
-      let cnt = 0;
-      model.onchange = (type) => {
-        expect(type).toBe(ModelChangeType.LOCAL);
-        cnt++;
-      };
-      expect(cnt).toBe(0);
-      model.api.root({foo: 123});
-      expect(cnt).toBe(1);
-      model.api.obj([]).set({foo: 55});
-      expect(cnt).toBe(2);
-      expect(model.view()).toStrictEqual({foo: 55});
-    });
-
     it('should trigger the onchange event with a REMOTE event type', () => {
       const model = Model.withLogicalClock();
       let cnt = 0;
@@ -97,7 +103,7 @@ describe('DOM Level 0, .onchange event system', () => {
         expect(type).toBe(ModelChangeType.REMOTE);
         cnt++;
       };
-      const builder = model.api.builder;
+      const builder = new PatchBuilder(model.clock.clone());
       builder.root(builder.json({foo: 123}));
       const patch = builder.flush();
       expect(cnt).toBe(0);

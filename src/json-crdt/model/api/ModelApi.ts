@@ -1,10 +1,12 @@
+import {FanOut} from 'thingies/es2020/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
 import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {ModelChangeType, type Model} from '../Model';
-import type {JsonNode} from '../../nodes';
+import {SyncStore} from '../../../util/events/sync-store';
+import type {JsonNode, JsonNodeView} from '../../nodes';
 
 export interface ModelApiEvents {
   /**
@@ -26,7 +28,7 @@ export interface ModelApiEvents {
  *
  * @category Local API
  */
-export class ModelApi<Value extends JsonNode = JsonNode> {
+export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<N>> {
   /**
    * Patch builder for the local changes.
    */
@@ -42,15 +44,19 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
   /**
    * @param model Model instance on which the API operates.
    */
-  constructor(public readonly model: Model<Value>) {
+  constructor(public readonly model: Model<N>) {
     this.builder = new PatchBuilder(this.model.clock);
+    this.model.onchange = this.queueChange;
   }
+
+  public readonly changes = new FanOut<ModelChangeType>();
 
   /** @ignore */
   private queuedChanges: undefined | Set<ModelChangeType> = undefined;
 
-  /** @ignore */
+  /** @ignore @deprecated */
   private readonly queueChange = (changeType: ModelChangeType): void => {
+    this.changes.emit(changeType);
     let changesQueued = this.queuedChanges;
     if (changesQueued) {
       changesQueued.add(changeType);
@@ -67,19 +73,16 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     });
   };
 
-  /** @ignore */
-  private et: undefined | Emitter<ModelApiEvents> = undefined;
+  /** @ignore @deprecated */
+  private et: Emitter<ModelApiEvents> = new Emitter();
 
   /**
    * Event target for listening to {@link Model} changes.
+   *
+   * @deprecated
    */
   public get events(): Emitter<ModelApiEvents> {
-    let et = this.et;
-    if (!et) {
-      this.et = et = new Emitter();
-      this.model.onchange = this.queueChange;
-    }
-    return et;
+    return this.et;
   }
 
   /**
@@ -277,4 +280,14 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     this.events.emit(event);
     return patch;
   }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void) => {
+    const listener = () => callback();
+    this.events.on('change', listener);
+    return () => this.events.off('change', listener);
+  };
+
+  public readonly getSnapshot = () => this.view() as any;
 }

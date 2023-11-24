@@ -4,7 +4,7 @@ import {ConNode, RootNode, VecNode, ObjNode, StrNode} from '../../../nodes';
 import {vec} from '../../../../json-crdt-patch';
 
 test('proxy API supports object types', () => {
-  const model = Model.withLogicalClock() as Model<
+  const model = Model.withLogicalClock() as any as Model<
     ObjNode<{
       foo: StrNode;
       bar: ConNode<number>;
@@ -15,7 +15,7 @@ test('proxy API supports object types', () => {
     bar: 1234,
   });
   const root = model.api.r.proxy();
-  const rootApi: ValApi = root.toApi();
+  const rootApi = root.toApi();
   expect(rootApi).toBeInstanceOf(ValApi);
   expect(rootApi.node).toBeInstanceOf(RootNode);
   expect(rootApi.view()).toStrictEqual({
@@ -50,7 +50,7 @@ describe('supports all node types', () => {
     }>;
     vec: VecNode<[StrNode]>;
   }>;
-  const model = Model.withLogicalClock() as Model<Schema>;
+  const model = Model.withLogicalClock() as any as Model<Schema>;
   const data = {
     obj: {
       str: 'asdf',

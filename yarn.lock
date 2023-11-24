@@ -2243,7 +2243,6 @@ eastasianwidth@^0.2.0:
 
 "editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
   version "0.0.0"
-  uid "6494020428530a6e382378b98d1d7e31334e2d7b"
   resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
 
 ee-first@1.1.1:
@@ -3667,7 +3666,6 @@ jsesc@^2.5.1:
 
 "json-crdt-traces@https://github.com/streamich/json-crdt-traces#02718a7a5d09e0dc6c31ea7d45a9ce3cbb0bf085":
   version "0.0.1"
-  uid "02718a7a5d09e0dc6c31ea7d45a9ce3cbb0bf085"
   resolved "https://github.com/streamich/json-crdt-traces#02718a7a5d09e0dc6c31ea7d45a9ce3cbb0bf085"
 
 json-logic-js@^2.0.1:
@@ -5244,10 +5242,10 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
-thingies@^1.11.1:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.12.0.tgz#a815c224482d607aa70f563d3cbb351a338e4710"
-  integrity sha512-AiGqfYC1jLmJagbzQGuoZRM48JPsr9yB734a7K6wzr34NMhjUPrWSQrkF7ZBybf3yCerCL2Gcr02kMv4NmaZfA==
+thingies@^1.14.1:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.14.1.tgz#2456b15db2a4113b434874381b5691dbc4ce2f0f"
+  integrity sha512-ktiTHLvVsS5Cifx8zbvg7x4clgf3AS+52gMSGlW+fvk8xYzog8f9qHvivjpQF56NHCKKpj4O1wI6tH92V4a0rQ==
 
 thunky@^1.0.2:
   version "1.1.0"
@@ -5442,7 +5440,6 @@ typescript@^5.2.2:
 
 uWebSockets.js@uNetworking/uWebSockets.js#v20.23.0:
   version "20.23.0"
-  uid "49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
   resolved "https://codeload.github.com/uNetworking/uWebSockets.js/tar.gz/49f8f1eb54435e4c3e3e436571e93d1f06aaabbb"
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
