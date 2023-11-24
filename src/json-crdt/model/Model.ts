@@ -37,7 +37,7 @@ export const enum ModelChangeType {
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
  */
-export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printable {
+export class Model<N extends JsonNode = JsonNode> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
@@ -85,7 +85,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.
    */
-  public root: RootNode<RootJsonNode> = new RootNode<RootJsonNode>(this, ORIGIN);
+  public root: RootNode<N> = new RootNode<N>(this, ORIGIN);
 
   /**
    * Clock that keeps track of logical timestamps of the current editing session
@@ -115,13 +115,13 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
   }
 
   /** @ignore */
-  private _api?: ModelApi<RootJsonNode>;
+  private _api?: ModelApi<N>;
 
   /**
    * API for applying local changes to the current document.
    */
-  public get api(): ModelApi<RootJsonNode> {
-    if (!this._api) this._api = new ModelApi<RootJsonNode>(this);
+  public get api(): ModelApi<N> {
+    if (!this._api) this._api = new ModelApi<N>(this);
     return this._api;
   }
 
@@ -302,11 +302,11 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    * @param sessionId Session ID to use for the new model.
    * @returns A copy of this model with a new session ID.
    */
-  public fork(sessionId: number = randomSessionId()): Model<RootJsonNode> {
-    const copy = Model.fromBinary(this.toBinary());
+  public fork(sessionId: number = randomSessionId()): Model<N> {
+    const copy = Model.fromBinary(this.toBinary()) as unknown as Model<N>;
     if (copy.clock.sid !== sessionId && copy.clock instanceof ClockVector) copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
-    return copy as Model<RootJsonNode>;
+    return copy;
   }
 
   /**
@@ -314,17 +314,17 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    *
    * @returns A copy of this model with the same session ID.
    */
-  public clone(): Model<RootJsonNode> {
+  public clone(): Model<N> {
     return this.fork(this.clock.sid);
   }
 
   /**
    * Resets the model to equivalent state of another model.
    */
-  public reset(to: Model<RootJsonNode>): void {
+  public reset(to: Model<N>): void {
     this.index = new AvlMap<ITimestampStruct, JsonNode>(compare);
     const blob = to.toBinary();
-    decoder.decode(blob, this);
+    decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
     const api = this._api;
@@ -337,7 +337,7 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
    *
    * @returns JSON/CBOR of the model.
    */
-  public view(): Readonly<JsonNodeView<RootJsonNode>> {
+  public view(): Readonly<JsonNodeView<N>> {
     return this.root.view();
   }
 
@@ -386,7 +386,6 @@ export class Model<RootJsonNode extends JsonNode = JsonNode> implements Printabl
           );
         },
         nl,
-        // (tab) => `View ${toTree(this.view(), tab)}`,
         (tab) =>
           `view${printTree(tab, [(tab) => String(JSON.stringify(this.view(), null, 2)).replace(/\n/g, '\n' + tab)])}`,
         nl,

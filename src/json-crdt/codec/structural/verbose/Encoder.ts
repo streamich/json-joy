@@ -8,7 +8,7 @@ import type * as types from './types';
 export class Encoder {
   protected model!: Model;
 
-  public encode(model: Model): types.JsonCrdtVerboseDocument {
+  public encode(model: Model<any>): types.JsonCrdtVerboseDocument {
     this.model = model;
     const clock = model.clock;
     const isServerClock = clock.sid === SESSION.SERVER;

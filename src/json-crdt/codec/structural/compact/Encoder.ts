@@ -11,7 +11,7 @@ export class Encoder {
   protected clock?: ClockEncoder;
   protected model!: Model;
 
-  public encode(model: Model): t.JsonCrdtCompactDocument {
+  public encode(model: Model<any>): t.JsonCrdtCompactDocument {
     this.model = model;
     const isServerTime = model.clock.sid === SESSION.SERVER;
     const clock = model.clock;

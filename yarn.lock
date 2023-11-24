@@ -5242,10 +5242,10 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
-thingies@^1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.14.0.tgz#247c8d375b2204c2f4ff704d1169a17ec03f5dc3"
-  integrity sha512-KMcHMvDkxtO0D1OizQcyZxsbVGgIYZsJyV6Y3B6GrWcyCHRdVDUoSlK3EOHrDizCZs9p7x2PdUKcSFOzrd3pog==
+thingies@^1.14.1:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.14.1.tgz#2456b15db2a4113b434874381b5691dbc4ce2f0f"
+  integrity sha512-ktiTHLvVsS5Cifx8zbvg7x4clgf3AS+52gMSGlW+fvk8xYzog8f9qHvivjpQF56NHCKKpj4O1wI6tH92V4a0rQ==
 
 thunky@^1.0.2:
   version "1.1.0"

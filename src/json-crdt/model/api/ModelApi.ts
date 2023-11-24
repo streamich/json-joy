@@ -28,7 +28,7 @@ export interface ModelApiEvents {
  *
  * @category Local API
  */
-export class ModelApi<Value extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<Value>> {
+export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<N>> {
   /**
    * Patch builder for the local changes.
    */
@@ -44,7 +44,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> implements SyncStore<Js
   /**
    * @param model Model instance on which the API operates.
    */
-  constructor(public readonly model: Model<Value>) {
+  constructor(public readonly model: Model<N>) {
     this.builder = new PatchBuilder(this.model.clock);
     this.model.onchange = this.queueChange;
   }

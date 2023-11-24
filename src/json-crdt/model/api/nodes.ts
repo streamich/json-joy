@@ -22,7 +22,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
 
   /** @ignore */
-  private ev: undefined | NodeEvents = undefined;
+  private ev: undefined | NodeEvents<N> = undefined;
 
   /**
    * Event target for listening to node changes. You can subscribe to `"view"`
@@ -34,9 +34,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * });
    * ```
    */
-  public get events(): NodeEvents {
+  public get events(): NodeEvents<N> {
     const et = this.ev;
-    return et || (this.ev = new NodeEvents(this));
+    return et || (this.ev = new NodeEvents<N>(this));
   }
 
   /**

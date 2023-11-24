@@ -10,7 +10,7 @@ import {Model, n} from '..';
 
 console.clear();
 
-const model = Model.withLogicalClock(1234) as Model<
+const model = Model.withLogicalClock(1234) as any as Model<
   n.obj<{
     num: n.con<number>;
     text: n.str;

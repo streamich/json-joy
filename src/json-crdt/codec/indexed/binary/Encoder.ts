@@ -15,7 +15,7 @@ export class Encoder {
     this.enc = new CborEncoder<CrdtWriter>(writer || new CrdtWriter());
   }
 
-  public encode(doc: Model, clockTable: ClockTable = ClockTable.from(doc.clock)): IndexedFields {
+  public encode(doc: Model<any>, clockTable: ClockTable = ClockTable.from(doc.clock)): IndexedFields {
     this.clockTable = clockTable;
     const writer = this.enc.writer;
     writer.reset();
