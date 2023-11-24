@@ -51,7 +51,10 @@ class ChangesFanOut<N extends JsonNode = JsonNode> extends FanOut<JsonNodeView<N
   }
 }
 
-export class NodeEvents<N extends JsonNode = JsonNode> extends Emitter<NodeEventMap> implements SyncStore<JsonNodeView<N>> {
+export class NodeEvents<N extends JsonNode = JsonNode>
+  extends Emitter<NodeEventMap>
+  implements SyncStore<JsonNodeView<N>>
+{
   public readonly changes: ChangesFanOut<N>;
 
   constructor(private readonly api: NodeApi<N>) {
