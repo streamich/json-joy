@@ -4,7 +4,7 @@ import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {ModelChangeType, type Model} from '../Model';
-import {SyncExternalStore} from '../../../util/events/types';
+import {SyncStore} from '../../../util/events/sync-store';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
 export interface ModelApiEvents {
@@ -27,7 +27,7 @@ export interface ModelApiEvents {
  *
  * @category Local API
  */
-export class ModelApi<Value extends JsonNode = JsonNode> implements SyncExternalStore<JsonNodeView<Value>> {
+export class ModelApi<Value extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<Value>> {
   /**
    * Patch builder for the local changes.
    */
@@ -280,7 +280,7 @@ export class ModelApi<Value extends JsonNode = JsonNode> implements SyncExternal
   }
 
 
-  // -------------------------------------------------------- SyncExternalStore
+  // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void) => {
     const listener = () => callback();
