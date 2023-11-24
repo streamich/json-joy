@@ -4,7 +4,8 @@ import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {ModelChangeType, type Model} from '../Model';
-import type {JsonNode} from '../../nodes';
+import {SyncExternalStore} from '../../../util/events/types';
+import type {JsonNode, JsonNodeView} from '../../nodes';
 
 export interface ModelApiEvents {
   /**
@@ -26,7 +27,7 @@ export interface ModelApiEvents {
  *
  * @category Local API
  */
-export class ModelApi<Value extends JsonNode = JsonNode> {
+export class ModelApi<Value extends JsonNode = JsonNode> implements SyncExternalStore<JsonNodeView<Value>> {
   /**
    * Patch builder for the local changes.
    */
@@ -277,4 +278,15 @@ export class ModelApi<Value extends JsonNode = JsonNode> {
     this.events.emit(event);
     return patch;
   }
+
+
+  // -------------------------------------------------------- SyncExternalStore
+
+  public readonly subscribe = (callback: () => void) => {
+    const listener = () => callback();
+    this.events.on('change', listener);
+    return () => this.events.off('change', listener);
+  };
+
+  public readonly getSnapshot = () => this.view() as any;
 }
