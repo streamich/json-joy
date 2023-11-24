@@ -144,7 +144,7 @@
     "safe-stable-stringify": "^2.3.1",
     "secure-json-parse": "^2.4.0",
     "sorted-btree": "^1.8.1",
-    "thingies": "^1.11.1",
+    "thingies": "^1.14.0",
     "tinybench": "^2.4.0",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
