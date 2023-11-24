@@ -196,3 +196,42 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     expect(set!.has(ModelChangeType.RESET)).toBe(true);
   });
 });
+
+describe('fanout', () => {
+  describe('changes', () => {
+    test('emits events on document change', async () => {
+      const doc = Model.withLogicalClock();
+      const api = doc.api;
+      let cnt = 0;
+      api.root({a: {}});
+      expect(cnt).toBe(0);
+      api.changes.listen(() => {
+        cnt++;
+      });
+      api.obj([]).set({gg: true});
+      await Promise.resolve();
+      expect(cnt).toBe(1);
+      api.obj(['a']).set({1: 1, 2: 2});
+      await Promise.resolve();
+      expect(cnt).toBe(2);
+    });
+
+    test('can have multiple subscribers', async () => {
+      const doc = Model.withLogicalClock();
+      const api = doc.api;
+      let cnt = 0;
+      api.root({a: {}});
+      expect(cnt).toBe(0);
+      api.changes.listen(() => {
+        cnt++;
+      });
+      api.changes.listen(() => {
+        cnt++;
+      });
+      expect(cnt).toBe(0);
+      api.obj([]).set({gg: true});
+      await Promise.resolve();
+      expect(cnt).toBe(2);
+    });
+  });
+});

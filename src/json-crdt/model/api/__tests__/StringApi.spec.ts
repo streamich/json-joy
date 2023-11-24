@@ -63,4 +63,55 @@ describe('events', () => {
     await Promise.resolve();
     expect(cnt).toEqual(1);
   });
+
+  describe('.changes', () => {
+    test('can listen to events', async () => {
+      const doc = Model.withLogicalClock();
+      const api = doc.api;
+      api.root('');
+      const str = api.str([]);
+      let cnt = 0;
+      const onView = () => cnt++;
+      str.ins(0, 'aaa');
+      expect(cnt).toEqual(0);
+      const unsubscribe = str.events.changes.listen(onView);
+      str.ins(0, 'bbb');
+      await Promise.resolve();
+      expect(cnt).toEqual(1);
+      str.ins(0, 'ccc');
+      await Promise.resolve();
+      expect(cnt).toEqual(2);
+      unsubscribe();
+      str.del(1, 7);
+      expect(cnt).toEqual(2);
+    });
+  });
+
+  describe('SyncStore', () => {
+    test('can listen to events', async () => {
+      const doc = Model.withLogicalClock();
+      const api = doc.api;
+      api.root('');
+      const str = api.str([]);
+      let cnt = 0;
+      const onView = () => cnt++;
+      str.ins(0, 'aaa');
+      expect(cnt).toEqual(0);
+      expect(str.events.getSnapshot()).toEqual('aaa');
+      const unsubscribe = str.events.subscribe(onView);
+      str.ins(0, 'bbb');
+      await Promise.resolve();
+      expect(str.events.getSnapshot()).toEqual('bbbaaa');
+      expect(cnt).toEqual(1);
+      str.ins(0, 'ccc');
+      await Promise.resolve();
+      expect(str.events.getSnapshot()).toEqual('cccbbbaaa');
+      expect(cnt).toEqual(2);
+      unsubscribe();
+      str.del(1, 7);
+      expect(cnt).toEqual(2);
+    });
+  });
 });
+
+
