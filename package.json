@@ -10,6 +10,7 @@
   "repository": "streamich/json-joy",
   "license": "Apache-2.0",
   "funding": "https://github.com/sponsors/streamich",
+  "packageManager": "yarn@4.0.2",
   "engines": {
     "node": ">=10.0"
   },
@@ -19,11 +20,11 @@
     "jj": "./bin/jj.js",
     "json-pack": "./bin/json-pack.js",
     "json-pack-test": "./bin/json-pack-test.js",
-    "json-unpack": "./bin/json-unpack.js",
+    "json-patch": "./bin/json-patch.js",
+    "json-patch-test": "./bin/json-patch-test.js",
     "json-pointer": "./bin/json-pointer.js",
     "json-pointer-test": "./bin/json-pointer-test.js",
-    "json-patch": "./bin/json-patch.js",
-    "json-patch-test": "./bin/json-patch-test.js"
+    "json-unpack": "./bin/json-unpack.js"
   },
   "files": [
     "LICENSE",
@@ -98,7 +99,7 @@
     "cborg": "^2.0.3",
     "concurrently": "^8.0.1",
     "diamond-types-node": "1.0.2",
-    "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
+    "editing-traces": "https://github.com/streamich/editing-traces#e16c704bbe0d59bf268909e1933a1bd1c5096bf4",
     "eventsource": "^2.0.2",
     "fast-deep-equal": "^3.1.3",
     "fast-equals": "^5.0.1",
