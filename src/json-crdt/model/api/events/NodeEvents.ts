@@ -2,6 +2,7 @@ import {FanOut, FanOutListener, FanOutUnsubscribe} from 'thingies/es2020/fanout'
 import {Emitter} from '../../../../util/events/Emitter';
 import type {NodeApi} from '../nodes';
 import type {JsonNode, JsonNodeView} from '../../../nodes';
+import type {SyncStore, SyncStoreUnsubscribe} from '../../../../util/events/sync-store';
 
 export interface NodeEventMap {
   /**
@@ -50,7 +51,7 @@ class ChangesFanOut<N extends JsonNode = JsonNode> extends FanOut<JsonNodeView<N
   }
 }
 
-export class NodeEvents<N extends JsonNode = JsonNode> extends Emitter<NodeEventMap> {
+export class NodeEvents<N extends JsonNode = JsonNode> extends Emitter<NodeEventMap> implements SyncStore<JsonNodeView<N>> {
   public readonly changes: ChangesFanOut<N>;
 
   constructor(private readonly api: NodeApi<N>) {
@@ -96,4 +97,12 @@ export class NodeEvents<N extends JsonNode = JsonNode> extends Emitter<NodeEvent
     if (shouldUnsubscribeFromModelChanges) this.api.api.events.off('change', this.onModelChange);
     super.off(type, listener, options);
   }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe => {
+    return this.changes.listen(() => callback());
+  };
+
+  public readonly getSnapshot = () => this.api.view();
 }
