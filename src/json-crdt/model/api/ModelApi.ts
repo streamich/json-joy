@@ -281,7 +281,6 @@ export class ModelApi<Value extends JsonNode = JsonNode> implements SyncStore<Js
     return patch;
   }
 
-
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void) => {

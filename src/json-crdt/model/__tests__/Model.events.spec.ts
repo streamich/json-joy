@@ -14,9 +14,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.root(objId);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    builder.insObj(objId, [
-      ['hello', builder.const(456)],
-    ]);
+    builder.insObj(objId, [['hello', builder.const(456)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({
@@ -53,9 +51,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.root(objId);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    builder.insObj(objId, [
-      ['foo', builder.const(undefined)],
-    ]);
+    builder.insObj(objId, [['foo', builder.const(undefined)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({});
@@ -73,9 +69,7 @@ describe('DOM Level 0, .onchange event system', () => {
     builder.root(objId);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(1);
-    builder.insObj(objId, [
-      ['bar', builder.const(undefined)],
-    ]);
+    builder.insObj(objId, [['bar', builder.const(undefined)]]);
     model.applyPatch(builder.flush());
     expect(cnt).toBe(2);
     expect(model.view()).toStrictEqual({foo: 123});
