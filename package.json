@@ -72,7 +72,8 @@
   },
   "dependencies": {
     "arg": "^5.0.2",
-    "hyperdyperid": "^1.2.0"
+    "hyperdyperid": "^1.2.0",
+    "thingies": "^1.14.1"
   },
   "devDependencies": {
     "@automerge/automerge": "2.1.7",
@@ -144,7 +145,6 @@
     "safe-stable-stringify": "^2.3.1",
     "secure-json-parse": "^2.4.0",
     "sorted-btree": "^1.8.1",
-    "thingies": "^1.14.1",
     "tinybench": "^2.4.0",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
