@@ -1,3 +1,4 @@
+import {s} from '../../../json-crdt-patch';
 import {ValNode} from '../../nodes';
 import {Model} from '../Model';
 
@@ -159,4 +160,79 @@ test('removes from index recursively after LWW register write', () => {
   expect(!!doc.index.get(val2)).toBe(false);
   expect(!!doc.index.get(val3)).toBe(false);
   expect(!!doc.index.get(val4)).toBe(false);
+});
+
+test('calling .view() on dangling "obj" when it was deleted, should not throw', () => {
+  const doc = Model.withLogicalClock()
+    .setSchema(s.obj({
+      foo: s.obj({
+        bar: s.obj({
+          baz: s.con(123),
+          qux: s.str('asdf'),
+        }),
+      }),
+    }));
+  
+  const bar = doc.root.child()!.get('foo')!.get('bar')!;
+  const baz = bar.get('baz')!;
+  const qux = bar.get('qux')!;
+  expect(bar.view()).toStrictEqual({
+    baz: 123,
+    qux: 'asdf',
+  });
+  doc.api.obj(['foo']).del(['bar']);
+  expect(bar.view()).toStrictEqual({});
+  expect((bar + '').includes(bar.id.time + '')).toBe(true);
+  expect(baz.view()).toBe(123);
+  expect(qux.view()).toBe('asdf');
+});
+
+test('calling .view() on dangling "arr" when it was deleted, should not throw', () => {
+  const doc = Model.withLogicalClock()
+    .setSchema(s.obj({
+      foo: s.obj({
+        bar: s.arr([
+          s.con(123),
+          s.str('asdf'),
+        ]),
+      }),
+    }));
+  const bar = doc.root.child()!.get('foo')!.get('bar')!;
+  expect(bar.view()).toStrictEqual([123, 'asdf']);
+  doc.api.obj(['foo']).del(['bar']);
+  expect(bar.view()).toStrictEqual([]);
+  expect((bar + '').includes(bar.id.time + '')).toBe(true);
+});
+
+test('calling .view() on dangling "vec" when it was deleted, should not throw', () => {
+  const doc = Model.withLogicalClock()
+    .setSchema(s.obj({
+      foo: s.obj({
+        bar: s.vec(
+          s.con(123),
+          s.str('asdf'),
+        ),
+      }),
+    }));
+  const bar = doc.root.child()!.get('foo')!.get('bar')!;
+  expect(bar.view()).toStrictEqual([123, 'asdf']);
+  doc.api.obj(['foo']).del(['bar']);
+  expect(bar.view()).toStrictEqual([undefined, undefined]);
+  expect((bar + '').includes(bar.id.time + '')).toBe(true);
+});
+
+test('calling .view() on dangling "val" when it was deleted, should not throw', () => {
+  const doc = Model.withLogicalClock()
+    .setSchema(s.obj({
+      foo: s.obj({
+        bar: s.val(
+          s.str('asdf'),
+        ),
+      }),
+    }));
+  const bar = doc.root.child()!.get('foo')!.get('bar')!;
+  expect(bar.view()).toStrictEqual('asdf');
+  doc.api.obj(['foo']).del(['bar']);
+  expect(bar.view()).toStrictEqual(undefined);
+  expect((bar + '').includes(bar.id.time + '')).toBe(true);
 });

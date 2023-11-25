@@ -111,7 +111,12 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
     const index = doc.index;
     let useCache = true;
     this.keys.forEach((id, key) => {
-      const value = index.get(id)!.view();
+      const valueNode = index.get(id);
+      if (!valueNode) {
+        useCache = false;
+        return;
+      }
+      const value = valueNode.view();
       if (value !== undefined) {
         if (_view[key] !== value) useCache = false;
         (<any>view)[key] = value;
@@ -137,7 +142,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
       header +
       printTree(
         tab,
-        [...this.keys.entries()].map(
+        [...this.keys.entries()].filter(([, id]) => !!this.doc.index.get(id)).map(
           ([key, id]) =>
             (tab) =>
               JSON.stringify(key) + printTree(tab + ' ', [(tab) => this.doc.index.get(id)!.toString(tab)]),
