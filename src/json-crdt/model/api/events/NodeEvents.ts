@@ -21,9 +21,12 @@ export interface NodeEventMap {
 }
 
 class ChangesFanOut<N extends JsonNode = JsonNode> extends FanOut<JsonNodeView<N>> {
+  /** @ignore */
   private _v: JsonNodeView<N> | undefined = undefined;
+  /** @ignore */
   private _u: FanOutUnsubscribe | undefined = undefined;
 
+  /** @ignore */
   constructor(private readonly api: NodeApi<N>) {
     super();
   }
@@ -45,9 +48,19 @@ class ChangesFanOut<N extends JsonNode = JsonNode> extends FanOut<JsonNodeView<N
       unsubscribe();
       if (!this.listeners.size) {
         this._u?.();
-        // this._unsub = this._view = undefined;
+        this._u = this._v = undefined;
       }
     };
+  }
+
+  /**
+   * @internal
+   * @ignore
+   */
+  public dispose() {
+    this.listeners.clear();
+    this._u?.();
+    this._u = this._v = undefined;
   }
 }
 
@@ -99,6 +112,16 @@ export class NodeEvents<N extends JsonNode = JsonNode>
     const shouldUnsubscribeFromModelChanges = this.viewSubs.size === 1;
     if (shouldUnsubscribeFromModelChanges) this.api.api.events.off('change', this.onModelChange);
     super.off(type, listener, options);
+  }
+
+  /**
+   * Called when this node is deleted.
+   *
+   * @internal
+   * @ignore
+   */
+  public onDelete() {
+    this.changes.dispose();
   }
 
   // ---------------------------------------------------------------- SyncStore
