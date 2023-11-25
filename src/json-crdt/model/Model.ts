@@ -21,6 +21,7 @@ import {AvlMap} from '../../util/trees/avl/AvlMap';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from '../../util/print/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
+import type {NodeApi} from './api/nodes';
 
 export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
@@ -291,6 +292,8 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
     if (isSystemNode) return;
     const node = this.index.get(value);
     if (!node) return;
+    const api = node.api;
+    if (api) (api as NodeApi).events.onDelete();
     node.children((child) => this.deleteNodeTree(child.id));
     this.index.del(value);
   }
