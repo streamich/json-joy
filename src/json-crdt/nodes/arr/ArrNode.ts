@@ -155,7 +155,12 @@ export class ArrNode<Element extends JsonNode = JsonNode>
     for (let chunk = this.first(); chunk; chunk = this.next(chunk)) {
       if (chunk.del) continue;
       for (const node of chunk.data!) {
-        const element = index.get(node)!.view() as JsonNodeView<Element>;
+        const elementNode = index.get(node);
+        if (!elementNode) {
+          useCache = false;
+          continue;
+        }
+        const element = elementNode.view() as JsonNodeView<Element>;
         if (_view[view.length] !== element) useCache = false;
         view.push(element);
       }
@@ -188,9 +193,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
       const index = this.doc.index;
       valueTree = printTree(
         tab,
-        chunk.data!.map(
-          (id, i) => (tab) => `[${pos + i}]: ${index.get(id)!.toString(tab + '    ' + ' '.repeat(String(i).length))}`,
-        ),
+        chunk
+          .data!.map((id) => index.get(id))
+          .filter((node) => !!node)
+          .map((node, i) => (tab) => `[${pos + i}]: ${node!.toString(tab + '    ' + ' '.repeat(String(i).length))}`),
       );
     }
     return (

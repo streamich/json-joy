@@ -183,12 +183,15 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
     if (extNode) {
       return this.child()!.toString(tab);
     }
+    const index = this.doc.index;
     return (
       header +
       printTree(tab, [
         ...this.elements.map(
           (id, i) => (tab: string) =>
-            `${i}: ${!id ? 'nil' : this.doc.index.get(id)!.toString(tab + '  ' + ' '.repeat(('' + i).length))}`,
+            `${i}: ${
+              !id ? 'nil' : index.get(id) ? index.get(id)!.toString(tab + '  ' + ' '.repeat(('' + i).length)) : 'nil'
+            }`,
         ),
         ...(extNode ? [(tab: string) => `${this.child()!.toString(tab)}`] : []),
       ])

@@ -45,13 +45,13 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
    * @returns The latest value of the node.
    */
   public node(): Value {
-    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : this.child()!;
+    return this.val.sid === SESSION.SYSTEM ? <any>UNDEFINED : this.child();
   }
 
   // ----------------------------------------------------------------- JsonNode
 
   public view(): Readonly<JsonNodeView<Value>> {
-    return this.node().view() as Readonly<JsonNodeView<Value>>;
+    return this.node()?.view() as Readonly<JsonNodeView<Value>>;
   }
 
   /**
