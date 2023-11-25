@@ -1,4 +1,4 @@
-import {Model} from "../..";
+import {Model} from '../..';
 
 test('does not fire events after node is deleted', () => {
   const model = Model.withLogicalClock();
@@ -20,6 +20,6 @@ test('does not fire events after node is deleted', () => {
   });
   expect(cnt).toBe(1);
   model.api.obj(['foo']).del(['bar']);
-  model.api.obj(['foo']).set({'gl': 'hf'});
+  model.api.obj(['foo']).set({gl: 'hf'});
   expect(cnt).toBe(1);
 });
