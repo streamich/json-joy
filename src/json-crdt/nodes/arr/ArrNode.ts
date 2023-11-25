@@ -193,9 +193,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
       const index = this.doc.index;
       valueTree = printTree(
         tab,
-        chunk.data!.map((id) => index.get(id)).filter((node) => !!node).map(
-          (node, i) => (tab) => `[${pos + i}]: ${node!.toString(tab + '    ' + ' '.repeat(String(i).length))}`,
-        ),
+        chunk
+          .data!.map((id) => index.get(id))
+          .filter((node) => !!node)
+          .map((node, i) => (tab) => `[${pos + i}]: ${node!.toString(tab + '    ' + ' '.repeat(String(i).length))}`),
       );
     }
     return (

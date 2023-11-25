@@ -142,11 +142,13 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
       header +
       printTree(
         tab,
-        [...this.keys.entries()].filter(([, id]) => !!this.doc.index.get(id)).map(
-          ([key, id]) =>
-            (tab) =>
-              JSON.stringify(key) + printTree(tab + ' ', [(tab) => this.doc.index.get(id)!.toString(tab)]),
-        ),
+        [...this.keys.entries()]
+          .filter(([, id]) => !!this.doc.index.get(id))
+          .map(
+            ([key, id]) =>
+              (tab) =>
+                JSON.stringify(key) + printTree(tab + ' ', [(tab) => this.doc.index.get(id)!.toString(tab)]),
+          ),
       )
     );
   }

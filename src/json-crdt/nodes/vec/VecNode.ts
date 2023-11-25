@@ -189,7 +189,9 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
       printTree(tab, [
         ...this.elements.map(
           (id, i) => (tab: string) =>
-            `${i}: ${!id ? 'nil' : index.get(id) ? index.get(id)!.toString(tab + '  ' + ' '.repeat(('' + i).length)) : 'nil'}`,
+            `${i}: ${
+              !id ? 'nil' : index.get(id) ? index.get(id)!.toString(tab + '  ' + ' '.repeat(('' + i).length)) : 'nil'
+            }`,
         ),
         ...(extNode ? [(tab: string) => `${this.child()!.toString(tab)}`] : []),
       ])
