@@ -91,6 +91,8 @@ export namespace nodes {
     }
   }
 
+  export type map<R extends NodeBuilder> = obj<Record<string, R>, Record<string, R>>;
+
   export class arr<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'arr';
 
@@ -118,7 +120,7 @@ export const schema = {
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
   obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
     new nodes.obj<T, O>(obj, opt),
-  map: <R extends NodeBuilder>(obj: Record<string, R>) => schema.obj<Record<string, R>, Record<string, R>>(obj),
+  map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> => schema.obj<Record<string, R>, Record<string, R>>(obj),
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
 };
 
