@@ -40,7 +40,7 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
     return undefined;
   }
 
-  public view(): Readonly<View> {
+  public view(): View {
     return this.val;
   }
 

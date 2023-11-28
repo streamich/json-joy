@@ -12,3 +12,12 @@ test('can insert a value and delete all previous ones', () => {
   arr.ins(1, [69]);
   expect(arr.view()).toEqual([42, 69]);
 });
+
+test('.length()', () => {
+  const doc = Model.withLogicalClock();
+  doc.api.root({
+    arr: [1, 2, 3],
+  });
+  const arr = doc.api.arr(['arr']);
+  expect(arr.length()).toBe(3);
+});

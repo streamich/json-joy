@@ -1,4 +1,4 @@
-import {vec} from '../../../../json-crdt-patch';
+import {s, vec} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a tuple', () => {
@@ -7,6 +7,38 @@ test('can edit a tuple', () => {
   api.root(api.builder.vec());
   api.vec([]).set([[1, 'a']]);
   expect(api.vec([]).view()).toEqual([undefined, 'a']);
+});
+
+test('.length()', () => {
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
+  expect(doc.find.val.vec.toApi().length()).toBe(2);
+});
+
+test('.push()', () => {
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
+  expect(doc.view().vec).toEqual([1, 2]);
+  doc.find.val.vec.toApi().push(3);
+  expect(doc.view().vec).toEqual([1, 2, 3]);
+  doc.find.val.vec.toApi().push(4, 5, '6');
+  expect(doc.view().vec).toEqual([1, 2, 3, 4, 5, '6']);
+});
+
+test('.view() is not readonly', () => {
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
+  const view = doc.find.val.vec.toApi().view();
+  view[1] = 12;
 });
 
 describe('events', () => {

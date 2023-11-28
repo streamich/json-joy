@@ -1,3 +1,4 @@
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a simple binary', () => {
@@ -24,4 +25,13 @@ test('can delete across two chunks', () => {
   bin.ins(0, new Uint8Array([3, 3, 3]));
   bin.del(1, 7);
   expect(bin.view()).toEqual(new Uint8Array([3, 1]));
+});
+
+test('.length()', () => {
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      bin: s.bin(new Uint8Array([1, 2, 3])),
+    }),
+  );
+  expect(doc.find.val.bin.toApi().length()).toBe(3);
 });

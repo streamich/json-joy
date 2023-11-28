@@ -77,7 +77,7 @@ export class BinNode extends AbstractRga<Uint8Array> implements JsonNode<Uint8Ar
 
   /** @ignore */
   private _view: null | Uint8Array = null;
-  public view(): Readonly<Uint8Array> {
+  public view(): Uint8Array {
     if (this._view) return this._view;
     const res = new Uint8Array(this.length());
     let offset = 0;

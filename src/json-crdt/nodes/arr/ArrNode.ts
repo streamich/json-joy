@@ -75,7 +75,7 @@ export class ArrChunk implements Chunk<E[]> {
  */
 export class ArrNode<Element extends JsonNode = JsonNode>
   extends AbstractRga<E[]>
-  implements JsonNode<Readonly<JsonNodeView<Element>[]>>, Printable
+  implements JsonNode<JsonNodeView<Element>[]>, Printable
 {
   constructor(public readonly doc: Model<any>, id: ITimestampStruct) {
     super(id);
@@ -144,7 +144,7 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   private _tick: number = 0;
   /** @ignore */
   private _view = Empty;
-  public view(): Readonly<JsonNodeView<Element>[]> {
+  public view(): JsonNodeView<Element>[] {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;

@@ -59,7 +59,7 @@
     "demo:json-pointer": "ts-node src/json-pointer/__demos__/json-pointer.ts",
     "demo:reactive-rpc:server": "ts-node src/reactive-rpc/__demos__/server.ts",
     "coverage": "yarn test --collectCoverage",
-    "typedoc": "typedoc",
+    "typedoc": "npx typedoc",
     "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages"
@@ -152,7 +152,6 @@
     "tslib": "^2.5.0",
     "tslint": "^6.1.3",
     "tslint-config-common": "^1.6.2",
-    "typedoc": "^0.25.3",
     "typescript": "^5.2.2",
     "uWebSockets.js": "uNetworking/uWebSockets.js#v20.23.0",
     "webpack": "^5.84.1",
