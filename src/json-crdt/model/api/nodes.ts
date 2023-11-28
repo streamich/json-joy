@@ -6,7 +6,7 @@ import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extens
 import {NodeEvents} from './NodeEvents';
 import {printTree} from '../../../util/print/printTree';
 import type {JsonNode, JsonNodeView} from '../../nodes';
-import type * as types from '../proxy';
+import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from '../../../util/print/types';
 import type {JsonNodeApi} from './types';

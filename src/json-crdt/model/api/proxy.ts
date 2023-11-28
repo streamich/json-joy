@@ -1,5 +1,5 @@
-import type {JsonNodeApi} from './api/types';
-import type * as nodes from '../nodes';
+import type {JsonNodeApi} from './types';
+import type * as nodes from '../../nodes';
 
 export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   toApi(): JsonNodeApi<N>;
