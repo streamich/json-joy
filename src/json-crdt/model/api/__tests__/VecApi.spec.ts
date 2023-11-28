@@ -16,6 +16,17 @@ test('.length()', () => {
   expect(doc.find.val.vec.toApi().length()).toBe(2);
 });
 
+test('.push()', () => {
+  const doc = Model.withLogicalClock().setSchema(s.obj({
+    vec: s.vec(s.con(1), s.con(2)),
+  }));
+  expect(doc.view().vec).toEqual([1, 2]);
+  doc.find.val.vec.toApi().push(3);
+  expect(doc.view().vec).toEqual([1, 2, 3]);
+  doc.find.val.vec.toApi().push(4, 5, '6');
+  expect(doc.view().vec).toEqual([1, 2, 3, 4, 5, '6']);
+});
+
 describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();

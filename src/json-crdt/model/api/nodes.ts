@@ -249,7 +249,12 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       entries.map(([index, json]) => [index, builder.constOrJson(json)]),
     );
     api.apply();
-    return this;
+    return this; // TODO: remove this ...?
+  }
+
+  public push(...values: unknown[]): void {
+    const length = this.length();
+    this.set(values.map((value, index) => [length + index, value]));
   }
 
   /**
