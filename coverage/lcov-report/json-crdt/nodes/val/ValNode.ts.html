@@ -178,54 +178,54 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37163x</span>
-<span class="cline-any cline-yes">37163x</span>
+<span class="cline-any cline-yes">38955x</span>
+<span class="cline-any cline-yes">38955x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37163x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10275x</span>
-<span class="cline-any cline-yes">9164x</span>
-<span class="cline-any cline-yes">9163x</span>
-<span class="cline-any cline-yes">9163x</span>
-<span class="cline-any cline-yes">9163x</span>
+<span class="cline-any cline-yes">38955x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37452x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15632x</span>
+<span class="cline-any cline-yes">10398x</span>
+<span class="cline-any cline-yes">9440x</span>
+<span class="cline-any cline-yes">9439x</span>
+<span class="cline-any cline-yes">9439x</span>
+<span class="cline-any cline-yes">9439x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1298x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">39571x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16396x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">38908x</span>
+<span class="cline-any cline-yes">1329x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41004x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -239,7 +239,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">37163x</span>
+<span class="cline-any cline-yes">38955x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">105x</span>
@@ -268,7 +268,7 @@ import type {Printable} from '../../../util/print/types';
  *
  * @category CRDT Node
  */
-export class ValNode&lt;Value extends JsonNode = JsonNode&gt; implements JsonNode&lt;Readonly&lt;JsonNodeView&lt;Value&gt;&gt;&gt;, Printable {
+export class ValNode&lt;Value extends JsonNode = JsonNode&gt; implements JsonNode&lt;JsonNodeView&lt;Value&gt;&gt;, Printable {
   constructor(
     /**
      * @ignore
@@ -305,8 +305,8 @@ export class ValNode&lt;Value extends JsonNode = JsonNode&gt; implements JsonNod
 &nbsp;
   // ----------------------------------------------------------------- JsonNode
 &nbsp;
-  public view(): Readonly&lt;JsonNodeView&lt;Value&gt;&gt; {
-    return this.node()?.view() as Readonly&lt;JsonNodeView&lt;Value&gt;&gt;;
+  public view(): JsonNodeView&lt;Value&gt; {
+    return this.node()?.view() as JsonNodeView&lt;Value&gt;;
   }
 &nbsp;
   /**
@@ -355,7 +355,7 @@ export class ValNode&lt;Value extends JsonNode = JsonNode&gt; implements JsonNod
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-11-25T15:36:51.055Z
+                at 2023-11-28T19:01:29.272Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
