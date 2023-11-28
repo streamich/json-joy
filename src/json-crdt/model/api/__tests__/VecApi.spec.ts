@@ -27,6 +27,14 @@ test('.push()', () => {
   expect(doc.view().vec).toEqual([1, 2, 3, 4, 5, '6']);
 });
 
+test('.view() is not readonly', () => {
+  const doc = Model.withLogicalClock().setSchema(s.obj({
+    vec: s.vec(s.con(1), s.con(2)),
+  }));
+  const view = doc.find.val.vec.toApi().view();
+  view[1] = 12;
+});
+
 describe('events', () => {
   test('can subscribe and un-subscribe to "view" events', async () => {
     const doc = Model.withLogicalClock();
