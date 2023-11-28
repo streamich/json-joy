@@ -47,7 +47,7 @@
       "src/json-crdt/codec/structural/verbose/index.ts",
       "src/json-crdt/codec/indexed/binary/index.ts",
       "src/json-crdt/codec/sidecar/binary/index.ts",
-      "src/json-crdt-patch/codec/json/index.ts",
+      "src/json-crdt-patch/codec/verbose/index.ts",
       "src/json-crdt-patch/codec/compact/index.ts",
       "src/json-crdt-patch/codec/binary/index.ts",
       "src/json-pack/index.ts",
