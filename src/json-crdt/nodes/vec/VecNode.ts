@@ -15,9 +15,7 @@ import type {Printable} from '../../../util/print/types';
  *
  * @category CRDT Node
  */
-export class VecNode<Value extends JsonNode[] = JsonNode[]>
-  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
-{
+export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<JsonNodeView<Value>>, Printable {
   /**
    * @ignore
    */
@@ -146,7 +144,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]>
   /**
    * @ignore
    */
-  public view(): Readonly<JsonNodeView<Value>> {
+  public view(): JsonNodeView<Value> {
     const extNode = this.ext();
     if (extNode) return extNode.view() as any;
     let useCache = true;

@@ -13,7 +13,7 @@ import type {JsonNode, JsonNodeView} from '..';
  */
 
 export class ObjNode<Value extends Record<string, JsonNode> = Record<string, JsonNode>>
-  implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable
+  implements JsonNode<JsonNodeView<Value>>, Printable
 {
   /**
    * @ignore
@@ -97,17 +97,17 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   /**
    * @ignore
    */
-  private _view = {} as Readonly<JsonNodeView<Value>>;
+  private _view = {} as JsonNodeView<Value>;
 
   /**
    * @ignore
    */
-  public view(): Readonly<JsonNodeView<Value>> {
+  public view(): JsonNodeView<Value> {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
     if (this._tick === tick) return _view;
-    const view = {} as Readonly<JsonNodeView<Value>>;
+    const view = {} as JsonNodeView<Value>;
     const index = doc.index;
     let useCache = true;
     this.keys.forEach((id, key) => {

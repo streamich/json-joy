@@ -13,7 +13,7 @@ import type {Printable} from '../../../util/print/types';
  *
  * @category CRDT Node
  */
-export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Readonly<JsonNodeView<Value>>>, Printable {
+export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<JsonNodeView<Value>>, Printable {
   constructor(
     /**
      * @ignore
@@ -50,8 +50,8 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Read
 
   // ----------------------------------------------------------------- JsonNode
 
-  public view(): Readonly<JsonNodeView<Value>> {
-    return this.node()?.view() as Readonly<JsonNodeView<Value>>;
+  public view(): JsonNodeView<Value> {
+    return this.node()?.view() as JsonNodeView<Value>;
   }
 
   /**

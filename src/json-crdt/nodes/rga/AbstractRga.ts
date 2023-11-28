@@ -292,7 +292,7 @@ export abstract class AbstractRga<T> {
     if (last) this.mergeTombstones2(start, last);
   }
 
-  public find(position: number): void | ITimestampStruct {
+  public find(position: number): undefined | ITimestampStruct {
     let curr = this.root;
     while (curr) {
       const l = curr.l;
@@ -311,9 +311,10 @@ export abstract class AbstractRga<T> {
         curr = curr.r;
       }
     }
+    return;
   }
 
-  public findChunk(position: number): void | [chunk: Chunk<T>, offset: number] {
+  public findChunk(position: number): undefined | [chunk: Chunk<T>, offset: number] {
     let curr = this.root;
     while (curr) {
       const l = curr.l;
@@ -330,6 +331,7 @@ export abstract class AbstractRga<T> {
         curr = curr.r;
       }
     }
+    return;
   }
 
   public findInterval(position: number, length: number): ITimespanStruct[] {
