@@ -111,6 +111,7 @@
  */
 
 export * from './types';
+export * from './clock';
 export * from './operations';
 export * from './Patch';
 export * from './PatchBuilder';
