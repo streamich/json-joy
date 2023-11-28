@@ -253,6 +253,15 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
   }
 
   /**
+   * Get the length of the vector without materializing it to a view.
+   *
+   * @returns Length of the vector.
+   */
+  public length(): number {
+    return this.node.elements.length
+  }
+
+  /**
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
    */
@@ -396,6 +405,15 @@ export class StrApi extends NodeApi<StrNode> {
   }
 
   /**
+   * Get the length of the string without materializing it to a view.
+   *
+   * @returns Length of the string.
+   */
+  public length(): number {
+    return this.node.length();
+  }
+
+  /**
    * Returns a proxy object for this node.
    */
   public proxy(): types.ProxyNodeStr {
@@ -443,6 +461,15 @@ export class BinApi extends NodeApi<BinNode> {
     api.builder.del(node.id, spans);
     api.apply();
     return this;
+  }
+
+  /**
+   * Get the length of the binary blob without materializing it to a view.
+   *
+   * @returns Length of the binary blob.
+   */
+  public length(): number {
+    return this.node.length();
   }
 
   /**

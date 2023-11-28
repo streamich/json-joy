@@ -1,4 +1,4 @@
-import {vec} from '../../../../json-crdt-patch';
+import {s, vec} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a tuple', () => {
@@ -7,6 +7,13 @@ test('can edit a tuple', () => {
   api.root(api.builder.vec());
   api.vec([]).set([[1, 'a']]);
   expect(api.vec([]).view()).toEqual([undefined, 'a']);
+});
+
+test('.length()', () => {
+  const doc = Model.withLogicalClock().setSchema(s.obj({
+    vec: s.vec(s.con(1), s.con(2)),
+  }));
+  expect(doc.find.val.vec.toApi().length()).toBe(2);
 });
 
 describe('events', () => {

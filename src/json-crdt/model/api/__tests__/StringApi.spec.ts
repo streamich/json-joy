@@ -1,3 +1,4 @@
+import {s} from '../../../../json-crdt-patch';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
@@ -23,6 +24,13 @@ test('can delete across two chunks', () => {
   str.ins(0, 'ccc');
   str.del(1, 7);
   expect(str.view()).toEqual('ca');
+});
+
+test('.length()', () => {
+  const doc = Model.withLogicalClock().setSchema(s.obj({
+    str: s.str('hello world'),
+  }));
+  expect(doc.find.val.str.toApi().length()).toBe(11);
 });
 
 describe('events', () => {
