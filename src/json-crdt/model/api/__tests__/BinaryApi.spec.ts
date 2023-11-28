@@ -28,8 +28,10 @@ test('can delete across two chunks', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(s.obj({
-    bin: s.bin(new Uint8Array([1, 2, 3])),
-  }));
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      bin: s.bin(new Uint8Array([1, 2, 3])),
+    }),
+  );
   expect(doc.find.val.bin.toApi().length()).toBe(3);
 });

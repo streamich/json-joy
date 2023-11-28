@@ -15,9 +15,7 @@ import type {Printable} from '../../../util/print/types';
  *
  * @category CRDT Node
  */
-export class VecNode<Value extends JsonNode[] = JsonNode[]>
-  implements JsonNode<JsonNodeView<Value>>, Printable
-{
+export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<JsonNodeView<Value>>, Printable {
   /**
    * @ignore
    */

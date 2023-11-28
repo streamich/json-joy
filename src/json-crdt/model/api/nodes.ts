@@ -263,7 +263,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * @returns Length of the vector.
    */
   public length(): number {
-    return this.node.elements.length
+    return this.node.elements.length;
   }
 
   /**

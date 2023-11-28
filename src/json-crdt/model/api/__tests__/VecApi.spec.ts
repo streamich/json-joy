@@ -10,16 +10,20 @@ test('can edit a tuple', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(s.obj({
-    vec: s.vec(s.con(1), s.con(2)),
-  }));
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
   expect(doc.find.val.vec.toApi().length()).toBe(2);
 });
 
 test('.push()', () => {
-  const doc = Model.withLogicalClock().setSchema(s.obj({
-    vec: s.vec(s.con(1), s.con(2)),
-  }));
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
   expect(doc.view().vec).toEqual([1, 2]);
   doc.find.val.vec.toApi().push(3);
   expect(doc.view().vec).toEqual([1, 2, 3]);
@@ -28,9 +32,11 @@ test('.push()', () => {
 });
 
 test('.view() is not readonly', () => {
-  const doc = Model.withLogicalClock().setSchema(s.obj({
-    vec: s.vec(s.con(1), s.con(2)),
-  }));
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      vec: s.vec(s.con(1), s.con(2)),
+    }),
+  );
   const view = doc.find.val.vec.toApi().view();
   view[1] = 12;
 });

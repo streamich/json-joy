@@ -27,9 +27,11 @@ test('can delete across two chunks', () => {
 });
 
 test('.length()', () => {
-  const doc = Model.withLogicalClock().setSchema(s.obj({
-    str: s.str('hello world'),
-  }));
+  const doc = Model.withLogicalClock().setSchema(
+    s.obj({
+      str: s.str('hello world'),
+    }),
+  );
   expect(doc.find.val.str.toApi().length()).toBe(11);
 });
 
