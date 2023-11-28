@@ -68,7 +68,7 @@ describe('supports all node types', () => {
     const objApi: ObjApi = obj.toApi();
     expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
-    const keys = new Set(Object.keys(objApi.view()));
+    const keys = new Set(Object.keys(objApi.view() as any));
     expect(keys.has('obj')).toBe(true);
     expect(keys.has('vec')).toBe(true);
   });
@@ -79,7 +79,7 @@ describe('supports all node types', () => {
     const objApi: ObjApi = obj.toApi();
     expect(objApi).toBeInstanceOf(ObjApi);
     expect(objApi.node).toBeInstanceOf(ObjNode);
-    const keys = new Set(Object.keys(objApi.view()));
+    const keys = new Set(Object.keys(objApi.view() as any));
     expect(keys.has('str')).toBe(true);
     expect(keys.has('num')).toBe(true);
   });
