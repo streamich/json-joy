@@ -134,6 +134,14 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
+   * Experimental node retrieval API using proxy objects. Returns a strictly
+   * typed proxy wrapper around the value of the root node.
+   */
+  public get s() {
+    return this.api.r.proxy().val;
+  }
+
+  /**
    * Tracks number of times the `applyPatch` was called.
    *
    * @ignore
