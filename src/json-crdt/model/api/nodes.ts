@@ -3,7 +3,7 @@ import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
-import {NodeEvents} from './events/NodeEvents';
+import {NodeEvents} from './NodeEvents';
 import {printTree} from '../../../util/print/printTree';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from '../proxy';
