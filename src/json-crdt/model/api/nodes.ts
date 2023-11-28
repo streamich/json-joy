@@ -410,6 +410,41 @@ export class StrApi extends NodeApi<StrNode> {
   }
 
   /**
+   * Given a character index in local coordinates, find the ID of the character
+   * in the global coordinates.
+   *
+   * @param index Index of the character or `-1` for before the first character.
+   * @returns ID of the character after which the given position is located.
+   */
+  public findId(index: number | -1): ITimestampStruct {
+    const node = this.node;
+    const length = node.length();
+    const max = length - 1;
+    if (index > max) index = max;
+    if (index < 0) return node.id;
+    const id = node.find(index);
+    return id || node.id;
+  }
+
+  /**
+   * Given a position in global coordinates, find the position in local
+   * coordinates.
+   *
+   * @param id ID of the character.
+   * @returns Index of the character in local coordinates. Returns -1 if the
+   *          the position refers to the beginning of the string.
+   */
+  public findPos(id: ITimestampStruct): number | -1 {
+    const node = this.node;
+    const nodeId = node.id;
+    if (nodeId.sid === id.sid && nodeId.time === id.time) return -1;
+    const chunk = node.findById(id);
+    if (!chunk) return -1;
+    const pos = node.pos(chunk);
+    return pos + (chunk.del ? 0 : id.time - chunk.id.time);
+  }
+
+  /**
    * Get the length of the string without materializing it to a view.
    *
    * @returns Length of the string.

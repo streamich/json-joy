@@ -1,4 +1,5 @@
 import {s} from '../../../../json-crdt-patch';
+import {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../Model';
 
 test('can edit a simple string', () => {
@@ -33,6 +34,35 @@ test('.length()', () => {
     }),
   );
   expect(doc.find.val.str.toApi().length()).toBe(11);
+});
+
+describe('position tracking', () => {
+  test('can convert position into global coordinates and back', () => {
+    const doc = Model.withLogicalClock().setSchema(
+      s.obj({
+        str: s.str('hello world'),
+      }),
+    );
+    const str = doc.find.val.str.toApi();
+    for (let i = -1; i < str.length(); i++) {
+      const id = str.findId(i);
+      expect(str.findPos(id)).toBe(i);
+    }
+  });
+
+  test('shifts position when text is inserted in the middle', () => {
+    const doc = Model.withLogicalClock().setSchema(
+      s.obj({
+        str: s.str('123456'),
+      }),
+    );
+    const str = doc.find.val.str.toApi();
+    const ids: ITimestampStruct[] = [];
+    for (let i = -1; i < str.length(); i++) ids.push(str.findId(i));
+    str.ins(3, 'abc');
+    for (let i = 0; i <= 3; i++) expect(str.findPos(ids[i])).toBe(i - 1);
+    for (let i = 4; i < ids.length; i++) expect(str.findPos(ids[i])).toBe(i + 3 - 1);
+  });
 });
 
 describe('events', () => {
