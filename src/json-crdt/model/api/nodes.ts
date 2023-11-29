@@ -3,10 +3,10 @@ import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
-import {NodeEvents} from './events/NodeEvents';
+import {NodeEvents} from './NodeEvents';
 import {printTree} from '../../../util/print/printTree';
 import type {JsonNode, JsonNodeView} from '../../nodes';
-import type * as types from '../proxy/types';
+import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from '../../../util/print/types';
 import type {JsonNodeApi} from './types';
@@ -167,6 +167,7 @@ export class ConApi<N extends ConNode<any> = ConNode<any>> extends NodeApi<N> {
   public proxy(): types.ProxyNodeCon<N> {
     return {
       toApi: () => <any>this,
+      toView: () => this.node.view(),
     };
   }
 }
@@ -208,6 +209,7 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
     const self = this;
     const proxy = {
       toApi: () => <any>this,
+      toView: () => this.node.view(),
       get val() {
         const childNode = self.node.node();
         return (<any>self).api.wrap(childNode).proxy();
@@ -276,6 +278,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       {
         get: (target, prop, receiver) => {
           if (prop === 'toApi') return () => this;
+          if (prop === 'toView') return () => this.view();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
@@ -345,12 +348,12 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * by key.
    */
   public proxy(): types.ProxyNodeObj<N> {
-    const self = this;
     const proxy = new Proxy(
       {},
       {
         get: (target, prop, receiver) => {
-          if (prop === 'toApi') return () => self;
+          if (prop === 'toApi') return () => this;
+          if (prop === 'toView') return () => this.view();
           const key = String(prop);
           const child = this.node.get(key);
           if (!child) throw new Error('NO_SUCH_KEY');
@@ -459,6 +462,7 @@ export class StrApi extends NodeApi<StrNode> {
   public proxy(): types.ProxyNodeStr {
     return {
       toApi: () => this,
+      toView: () => this.node.view(),
     };
   }
 }
@@ -518,6 +522,7 @@ export class BinApi extends NodeApi<BinNode> {
   public proxy(): types.ProxyNodeBin {
     return {
       toApi: () => this,
+      toView: () => this.node.view(),
     };
   }
 }
@@ -597,6 +602,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
       {
         get: (target, prop, receiver) => {
           if (prop === 'toApi') return () => this;
+          if (prop === 'toView') return () => this.view();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.getNode(index);

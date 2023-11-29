@@ -1,8 +1,8 @@
 import {FanOut, FanOutListener, FanOutUnsubscribe} from 'thingies/es2020/fanout';
-import {Emitter} from '../../../../util/events/Emitter';
-import type {NodeApi} from '../nodes';
-import type {JsonNode, JsonNodeView} from '../../../nodes';
-import type {SyncStore, SyncStoreUnsubscribe} from '../../../../util/events/sync-store';
+import {Emitter} from '../../../util/events/Emitter';
+import type {JsonNode, JsonNodeView} from '../../nodes';
+import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';
+import type {NodeApi} from './nodes';
 
 export interface NodeEventMap {
   /**

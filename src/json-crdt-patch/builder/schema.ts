@@ -2,7 +2,26 @@ import type {ITimestampStruct} from '../clock';
 import {NodeBuilder} from './DelayedValueBuilder';
 
 /* tslint:disable no-namespace class-name */
+
+/**
+ * This namespace contains all the node builders. Each node builder is a
+ * schema for a specific node type. Each node builder has a `build` method
+ * that takes a {@link NodeBuilder} and returns the ID of the node.
+ */
 export namespace nodes {
+  /**
+   * The `con` class represents a "con" JSON CRDT node. As the generic type
+   * parameter, it takes the type of the raw value.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.con(0);
+   * s.con('');
+   * s.con<number>(123);
+   * s.con<0 | 1>(0);
+   * ```
+   */
   export class con<T extends unknown | ITimestampStruct> extends NodeBuilder {
     public readonly type = 'con';
 
@@ -11,6 +30,19 @@ export namespace nodes {
     }
   }
 
+  /**
+   * The `str` class represents a "str" JSON CRDT node. As the generic type
+   * parameter, it takes the type of the raw value.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.str('');
+   * s.str('hello');
+   * s.str<string>('world');
+   * s.str<'' | 'hello' | 'world'>('hello');
+   * ```
+   */
   export class str<T extends string = string> extends NodeBuilder {
     public readonly type = 'str';
 
@@ -19,6 +51,9 @@ export namespace nodes {
     }
   }
 
+  /**
+   * The `bin` class represents a "bin" JSON CRDT node.
+   */
   export class bin extends NodeBuilder {
     public readonly type = 'bin';
 
@@ -27,6 +62,18 @@ export namespace nodes {
     }
   }
 
+  /**
+   * The `val` class represents a "val" JSON CRDT node. As the generic type
+   * parameter, it takes the type of the inner node builder.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.val(s.con(0));
+   * s.val(s.str(''));
+   * s.val(s.str('hello'));
+   * ```
+   */
   export class val<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'val';
 
@@ -40,6 +87,17 @@ export namespace nodes {
     }
   }
 
+  /**
+   * The `vec` class represents a "vec" JSON CRDT node. As the generic type
+   * parameter, it takes a tuple of node builders.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.vec(s.con(0), s.con(1));
+   * s.vec(s.str(''), s.str('hello'));
+   * ```
+   */
   export class vec<T extends NodeBuilder[]> extends NodeBuilder {
     public readonly type = 'vec';
 
@@ -61,6 +119,20 @@ export namespace nodes {
     }
   }
 
+  /**
+   * The `obj` class represents a "obj" JSON CRDT node. As the generic type
+   * parameter, it takes a record of node builders. The optional generic type
+   * parameter is a record of optional keys.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.obj({
+   *   name: s.str(''),
+   *   age: s.con(0),
+   * });
+   * ```
+   */
   export class obj<
     T extends Record<string, NodeBuilder>,
     O extends Record<string, NodeBuilder> = {},
@@ -91,6 +163,29 @@ export namespace nodes {
     }
   }
 
+  /**
+   * A type alias for {@link obj}. It creates a "map" node schema, which is an
+   * object where a key can be any string and the value is of the same type.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.map<nodes.con<number>>
+   * ```
+   */
+  export type map<R extends NodeBuilder> = obj<Record<string, R>, Record<string, R>>;
+
+  /**
+   * The `arr` class represents a "arr" JSON CRDT node. As the generic type
+   * parameter, it an array of node builders.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.arr([s.con(0), s.con(1)]);
+   * s.arr([s.str(''), s.str('hello')]);
+   * ```
+   */
   export class arr<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'arr';
 
@@ -110,15 +205,75 @@ export namespace nodes {
 }
 /* tslint:enable no-namespace class-name */
 
+/**
+ * Schema builder. Use this to create a JSON CRDT model schema and the default
+ * value. Example:
+ *
+ * ```typescript
+ * const schema = s.obj({
+ *   name: s.str(''),
+ *   age: s.con(0),
+ *   tags: s.arr<nodes.con<string>>([]),
+ * });
+ * ```
+ */
 export const schema = {
+  /**
+   * Creates a "con" node schema and the default value.
+   * @param raw Raw default value.
+   */
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
+
+  /**
+   * Creates a "str" node schema and the default value.
+   * @param str Default value.
+   */
   str: <T extends string>(str: T) => new nodes.str<T>(str || ('' as T)),
+
+  /**
+   * Creates a "bin" node schema and the default value.
+   * @param bin Default value.
+   */
   bin: (bin: Uint8Array) => new nodes.bin(bin),
+
+  /**
+   * Creates a "val" node schema and the default value.
+   * @param val Default value.
+   */
   val: <T extends NodeBuilder>(val: T) => new nodes.val<T>(val),
+
+  /**
+   * Creates a "vec" node schema and the default value.
+   * @param vec Default value.
+   */
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
+
+  /**
+   * Creates a "obj" node schema and the default value.
+   * @param obj Default value, required object keys.
+   * @param opt Default value of optional object keys.
+   */
   obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
     new nodes.obj<T, O>(obj, opt),
+
+  /**
+   * This is an alias for {@link schema.obj}. It creates a "map" node schema,
+   * which is an object where a key can be any string and the value is of the
+   * same type.
+   * @param obj Default value.
+   */
+  map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> =>
+    schema.obj<Record<string, R>, Record<string, R>>(obj),
+
+  /**
+   * Creates an "arr" node schema and the default value.
+   * @param arr Default value.
+   */
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
 };
 
+/**
+ * Schema builder. Use this to create a JSON CRDT model schema and the default
+ * value. Alias for {@link schema}.
+ */
 export const s = schema;

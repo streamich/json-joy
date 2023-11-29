@@ -8,5 +8,6 @@ export class VectorDelayedValue<T extends unknown[]> {
 /**
  * @param slots
  * @returns
+ * @deprecated Use `s.vec(...)` instead.
  */
 export const vec = <T extends unknown[]>(...slots: T): VectorDelayedValue<T> => new VectorDelayedValue(slots);
