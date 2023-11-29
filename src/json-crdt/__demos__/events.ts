@@ -25,7 +25,7 @@ const model = Model.withLogicalClock(1234); // 1234 is the session ID
 
 // DOM Level 2 node events
 const root = model.api.r;
-root.events.on('view', () => {
+root.events.onViewChange.listen(() => {
   console.log('Root value changed');
 });
 

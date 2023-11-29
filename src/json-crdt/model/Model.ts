@@ -296,7 +296,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
     const node = this.index.get(value);
     if (!node) return;
     const api = node.api;
-    if (api) (api as NodeApi).events.onDelete();
+    if (api) (api as NodeApi).events.handleDelete();
     node.children((child) => this.deleteNodeTree(child.id));
     this.index.del(value);
   }
@@ -351,7 +351,10 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
       const api = node.api as NodeApi | undefined;
       if (!api) return;
       const newNode = this.index.get(node.id);
-      if (!newNode) return;
+      if (!newNode) {
+        api.events.handleDelete();
+        return;
+      }
       api.node = newNode;
       newNode.api = api;
     });

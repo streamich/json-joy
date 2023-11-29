@@ -1,11 +1,11 @@
 import {FanOut} from 'thingies/es2020/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
 import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
-import {Emitter} from '../../../util/events/Emitter';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {ModelChangeType, type Model} from '../Model';
 import {SyncStore} from '../../../util/events/sync-store';
+import {MergeFanOut, MicrotaskBufferFanOut} from './util';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
 export interface ModelApiEvents {
@@ -41,53 +41,34 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    */
   public next: number = 0;
 
+  /** Emitted before the model is reset, using the `.reset()` method. */
   public readonly onBeforeReset = new FanOut<void>();
+  /** Emitted after the model is reset, using the `.reset()` method. */
   public readonly onReset = new FanOut<void>();
+  /** Emitted before a patch is applied using `model.applyPatch()`. */
+  public readonly onBeforePatch = new FanOut<Patch>();
+  /** Emitted after a patch is applied using `model.applyPatch()`. */
+  public readonly onPatch = new FanOut<Patch>();
+  /** Emitted before local changes through `model.api` are applied. */
+  public readonly onBeforeLocalChange = new FanOut<number>();
+  /** Emitted after local changes through `model.api` are applied. */
+  public readonly onLocalChange = new FanOut<number>();
+  /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
+  public readonly onChange = new MergeFanOut<number | Patch | void>([this.onReset, this.onPatch, this.onLocalChange]);
+  /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
+  public readonly onChanges = new MicrotaskBufferFanOut<number | Patch | void>(this.onChange);
+  /** Emitted when the `model.api` builder change buffer is flushed. */
+  public readonly onFlush = new FanOut<Patch>();
 
   /**
    * @param model Model instance on which the API operates.
    */
   constructor(public readonly model: Model<N>) {
-    this.builder = new PatchBuilder(this.model.clock);
-    this.model.onbeforereset = () => this.onBeforeReset.emit();
-    this.model.onreset = () => this.onReset.emit();
-    this.model.onchange = this.queueChange;
-  }
-
-  public readonly changes = new FanOut<ModelChangeType>();
-
-  /** @ignore */
-  private queuedChanges: undefined | Set<ModelChangeType> = undefined;
-
-  /** @ignore @deprecated */
-  private readonly queueChange = (changeType: ModelChangeType): void => {
-    this.changes.emit(changeType);
-    let changesQueued = this.queuedChanges;
-    if (changesQueued) {
-      changesQueued.add(changeType);
-      return;
-    }
-    changesQueued = this.queuedChanges = new Set<ModelChangeType>();
-    changesQueued.add(changeType);
-    queueMicrotask(() => {
-      let changes = this.queuedChanges || new Set<ModelChangeType>();
-      this.queuedChanges = undefined;
-      const et = this.et;
-      if (changes.has(ModelChangeType.RESET)) changes = new Set([ModelChangeType.RESET]);
-      if (et) et.emit(new CustomEvent<Set<ModelChangeType>>('change', {detail: changes}));
-    });
-  };
-
-  /** @ignore @deprecated */
-  private et: Emitter<ModelApiEvents> = new Emitter();
-
-  /**
-   * Event target for listening to {@link Model} changes.
-   *
-   * @deprecated
-   */
-  public get events(): Emitter<ModelApiEvents> {
-    return this.et;
+    this.builder = new PatchBuilder(model.clock);
+    model.onbeforereset = () => this.onBeforeReset.emit();
+    model.onreset = () => this.onReset.emit();
+    model.onbeforepatch = (patch) => this.onBeforePatch.emit(patch);
+    model.onpatch = (patch) => this.onPatch.emit(patch);
   }
 
   /**
@@ -245,23 +226,28 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     const ops = this.builder.patch.ops;
     const length = ops.length;
     const model = this.model;
+    const from = this.next;
+    this.onBeforeLocalChange.emit(from);
     for (let i = this.next; i < length; i++) model.applyOperation(ops[i]);
     this.next = length;
     model.tick++;
-    model.onchange?.(ModelChangeType.LOCAL);
+    this.onLocalChange.emit(from);
   }
 
   /**
    * Advance patch pointer to the end without applying the operations. With the
    * idea that they have already been applied locally.
+   * 
+   * You need to manually call `this.onBeforeLocalChange.emit(this.next)` before
+   * calling this method.
    *
    * @ignore
    */
   public advance() {
+    const from = this.next;
     this.next = this.builder.patch.ops.length;
-    const model = this.model;
-    model.tick++;
-    model.onchange?.(ModelChangeType.LOCAL);
+    this.model.tick++;
+    this.onLocalChange.emit(from);
   }
 
   /**
@@ -281,18 +267,12 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
-    const event = new CustomEvent<Patch>('flush', {detail: patch});
-    this.events.emit(event);
+    this.onFlush.emit(patch);
     return patch;
   }
 
   // ---------------------------------------------------------------- SyncStore
 
-  public readonly subscribe = (callback: () => void) => {
-    const listener = () => callback();
-    this.events.on('change', listener);
-    return () => this.events.off('change', listener);
-  };
-
+  public readonly subscribe = (callback: () => void) => this.onChanges.listen(() => callback());
   public readonly getSnapshot = () => this.view() as any;
 }
