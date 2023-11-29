@@ -141,13 +141,19 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   public tick: number = 0;
 
   /**
-   * Callback called after every `applyPatch` call.
+   * Callback called after every `applyPatch` call. Or after local changes
+   * applied through the `ModelApi`.
    *
    * When using the `.api` API, this property is set automatically by
    * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
    * to subscribe to changes.
    */
   public onchange: undefined | ((type: ModelChangeType) => void) = undefined;
+
+  /**
+   * Callback called before every `applyPatch` call.
+   */
+  public onbeforechange: undefined | ((type: ModelChangeType, patch: Patch) => void) = undefined;
 
   /**
    * Applies a batch of patches to the document.
@@ -164,6 +170,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * through this method.
    */
   public applyPatch(patch: Patch) {
+    this.onbeforechange?.(ModelChangeType.REMOTE, patch);
     const ops = patch.ops;
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
@@ -180,6 +187,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param op Any JSON CRDT Patch operation
    * @ignore
+   * @internal
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
