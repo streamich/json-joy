@@ -334,13 +334,21 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * Resets the model to equivalent state of another model.
    */
   public reset(to: Model<N>): void {
+    const index = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
-    const api = this._api;
-    if (api) api.flush();
+    this._api?.flush();
+    index.forEach(({v: node}) => {
+      const api = node.api as NodeApi | undefined;
+      if (!api) return;
+      const newNode = this.index.get(node.id);
+      if (!newNode) return;
+      api.node = newNode;
+      newNode.api = api;
+    });
     this.onchange?.(ModelChangeType.RESET);
   }
 

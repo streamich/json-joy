@@ -19,7 +19,7 @@ export type ApiPath = string | number | Path | void;
  * @category Local API
  */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
-  constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
+  constructor(public node: N, public readonly api: ModelApi<any>) {}
 
   /** @ignore */
   private ev: undefined | NodeEvents<N> = undefined;
