@@ -307,7 +307,8 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    */
   public fork(sessionId: number = randomSessionId()): Model<N> {
     const copy = Model.fromBinary(this.toBinary()) as unknown as Model<N>;
-    if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector) copy.clock = copy.clock.fork(sessionId);
+    if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector)
+      copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
     return copy;
   }
