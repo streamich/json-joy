@@ -12,9 +12,10 @@ import {isUint8Array} from '../../../util/buffers/isUint8Array';
 import {rSplay, lSplay, llSplay, rrSplay, lrSplay, rlSplay} from '../../../util/trees/splay/util';
 import {splay2} from '../../../util/trees/splay/util2';
 import {insert2, remove2} from '../../../util/trees/util2';
-import {printBinary} from '../../../util/print/printBinary';
-import {printTree} from '../../../util/print/printTree';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
+import {printTree} from '../../../util/print/printTree';
+import {printBinary} from '../../../util/print/printBinary';
+import {printOctets} from '../../../util/buffers/printOctets';
 
 /**
  * @category CRDT Node
@@ -876,7 +877,7 @@ export abstract class AbstractRga<T> {
   public toString(tab: string = ''): string {
     const view = this.view();
     let value = '';
-    if (isUint8Array(view)) value += ` { ${('' + view).replaceAll(',', ', ')} }`;
+    if (isUint8Array(view)) value += ` { ${printOctets(view) || '∅'} }`;
     else if (typeof view === 'string')
       value += `{ ${view.length > 32 ? JSON.stringify(view.substring(0, 32)) + ' …' : JSON.stringify(view)} }`;
     const header = `${this.toStringName()} ${toDisplayString(this.id)} ${value}`;
@@ -898,7 +899,7 @@ export abstract class AbstractRga<T> {
     let str = `${chunk.constructor.name} ${id}!${chunk.span} len:${chunk.len}`;
     if (chunk.del) str += ` [${chunk.span}]`;
     else {
-      if (isUint8Array(chunk.data)) str += ` { ${chunk.data.toString().replaceAll(',', ', ')} }`;
+      if (isUint8Array(chunk.data)) str += ` { ${printOctets(chunk.data) || '∅'} }`;
       else if (typeof chunk.data === 'string') {
         const data =
           chunk.data.length > 32 ? JSON.stringify(chunk.data.substring(0, 32)) + ' …' : JSON.stringify(chunk.data);
