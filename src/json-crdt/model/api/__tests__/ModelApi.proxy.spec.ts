@@ -44,23 +44,17 @@ test('proxy API supports object types', () => {
 });
 
 describe('supports all node types', () => {
-  const model = Model.withLogicalClock().setSchema(s.obj({
-    obj: s.obj({
-      str: s.str('asdf'),
-      num: s.con(1234),
+  const model = Model.withLogicalClock().setSchema(
+    s.obj({
+      obj: s.obj({
+        str: s.str('asdf'),
+        num: s.con(1234),
+      }),
+      vec: s.vec(s.con('asdf'), s.con(1234), s.con(true), s.con(null)),
+      arr: s.arr([s.con('asdf'), s.val(s.con(0))]),
+      bin: s.bin(new Uint8Array([1, 2, 3])),
     }),
-    vec: s.vec(
-      s.con('asdf'),
-      s.con(1234),
-      s.con(true),
-      s.con(null),
-    ),
-    arr: s.arr([
-      s.con('asdf'),
-      s.val(s.con(0)),
-    ]),
-    bin: s.bin(new Uint8Array([1, 2, 3])),
-  }));
+  );
 
   // console.log(model.root + '');
 
