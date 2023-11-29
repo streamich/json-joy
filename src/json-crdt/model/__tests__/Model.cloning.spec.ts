@@ -215,7 +215,7 @@ describe('reset()', () => {
     });
     doc2.api.str(['text']).ins(5, ' world');
     let cnt = 0;
-    doc2.api.events.on('change', () => cnt++);
+    doc2.api.onChanges.listen(() => cnt++);
     doc2.reset(doc1);
     await until(() => cnt > 0);
     expect(cnt).toBe(1);

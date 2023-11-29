@@ -1,11 +1,11 @@
 import {PatchBuilder} from '../../../json-crdt-patch';
-import {Model, ModelChangeType} from '../Model';
+import {Model} from '../Model';
 
 describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is set', () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.onchange = () => {
+    model.onpatch = () => {
       cnt++;
     };
     expect(cnt).toBe(0);
@@ -26,7 +26,7 @@ describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is set to the same value', () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.onchange = () => {
+    model.onpatch = () => {
       cnt++;
     };
     expect(cnt).toBe(0);
@@ -42,7 +42,7 @@ describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a value is deleted', () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.onchange = () => {
+    model.onpatch = () => {
       cnt++;
     };
     expect(cnt).toBe(0);
@@ -60,7 +60,7 @@ describe('DOM Level 0, .onchange event system', () => {
   it('should trigger the onchange event when a non-existent value is deleted', () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.onchange = () => {
+    model.onpatch = () => {
       cnt++;
     };
     expect(cnt).toBe(0);
@@ -78,7 +78,7 @@ describe('DOM Level 0, .onchange event system', () => {
   it('should trigger when root value is changed', () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.onchange = () => {
+    model.onpatch = () => {
       cnt++;
     };
     expect(cnt).toBe(0);
@@ -96,29 +96,12 @@ describe('DOM Level 0, .onchange event system', () => {
   });
 
   describe('event types', () => {
-    it('should trigger the onchange event with a REMOTE event type', () => {
-      const model = Model.withLogicalClock();
-      let cnt = 0;
-      model.onchange = (type) => {
-        expect(type).toBe(ModelChangeType.REMOTE);
-        cnt++;
-      };
-      const builder = new PatchBuilder(model.clock.clone());
-      builder.root(builder.json({foo: 123}));
-      const patch = builder.flush();
-      expect(cnt).toBe(0);
-      model.applyPatch(patch);
-      expect(cnt).toBe(1);
-      expect(model.view()).toStrictEqual({foo: 123});
-    });
-
     it('should trigger the onchange event with a RESET event type', () => {
       const model1 = Model.withLogicalClock();
       const model2 = Model.withLogicalClock();
       model2.api.root([1, 2, 3]);
       let cnt = 0;
-      model1.onchange = (type) => {
-        expect(type).toBe(ModelChangeType.RESET);
+      model1.onreset = () => {
         cnt++;
       };
       expect(cnt).toBe(0);

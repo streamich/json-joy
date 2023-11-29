@@ -24,11 +24,11 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
    * This event depends on overall Model's `onChanges` event, which is
    * batched using `queueMicrotask`.
    */
-  public readonly onViewChange: FanOut<JsonNodeView<N>>;
+  public readonly onViewChanges: FanOut<JsonNodeView<N>>;
 
   constructor(private readonly api: NodeApi<N>) {
     this.onChanges = new MapFanOut(this.api.api.onChanges, this.getSnapshot);
-    this.onViewChange = new OnNewFanOut(this.onChanges);
+    this.onViewChanges = new OnNewFanOut(this.onChanges);
   }
 
   /**
@@ -38,13 +38,13 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
    * @ignore
    */
   public handleDelete() {
-    (this.onViewChange as OnNewFanOut<JsonNodeView<N>>).clear();
+    (this.onViewChanges as OnNewFanOut<JsonNodeView<N>>).clear();
     (this.onChanges as MapFanOut<unknown, unknown>).clear();
   }
 
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe =>
-    this.onViewChange.listen(() => callback());
+    this.onViewChanges.listen(() => callback());
   public readonly getSnapshot = () => this.api.view();
 }
