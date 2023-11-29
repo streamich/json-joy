@@ -1,15 +1,7 @@
 import * as operations from '../../json-crdt-patch/operations';
+import * as clock from '../../json-crdt-patch/clock';
 import {ConNode} from '../nodes/con/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
-import {
-  ITimestampStruct,
-  Timestamp,
-  IClockVector,
-  ClockVector,
-  ServerClockVector,
-  compare,
-  toDisplayString,
-} from '../../json-crdt-patch/clock';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
@@ -48,12 +40,12 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * @param clockOrSessionId Logical clock to use.
    * @returns CRDT model.
    */
-  public static withLogicalClock(clockOrSessionId?: ClockVector | number): Model {
-    const clock =
+  public static withLogicalClock(clockOrSessionId?: clock.ClockVector | number): Model {
+    const clockVector =
       typeof clockOrSessionId === 'number'
-        ? new ClockVector(clockOrSessionId, 1)
-        : clockOrSessionId || new ClockVector(randomSessionId(), 1);
-    return new Model(clock);
+        ? new clock.ClockVector(clockOrSessionId, 1)
+        : clockOrSessionId || new clock.ClockVector(randomSessionId(), 1);
+    return new Model(clockVector);
   }
 
   /**
@@ -67,8 +59,8 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * @returns CRDT model.
    */
   public static withServerClock(time: number = 0): Model {
-    const clock = new ServerClockVector(SESSION.SERVER, time);
-    return new Model(clock);
+    const clockVector = new clock.ServerClockVector(SESSION.SERVER, time);
+    return new Model(clockVector);
   }
 
   /**
@@ -92,7 +84,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * Clock that keeps track of logical timestamps of the current editing session
    * and logical clocks of all known peers.
    */
-  public clock: IClockVector;
+  public clock: clock.IClockVector;
 
   /**
    * Index of all known node objects (objects, array, strings, values)
@@ -100,7 +92,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    *
    * @ignore
    */
-  public index = new AvlMap<ITimestampStruct, JsonNode>(compare);
+  public index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
 
   /**
    * Extensions to the JSON CRDT protocol. Extensions are used to implement
@@ -110,9 +102,9 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    */
   public ext: Extensions = new Extensions();
 
-  public constructor(clock: IClockVector) {
-    this.clock = clock;
-    if (!clock.time) clock.time = 1;
+  public constructor(clockVector: clock.IClockVector) {
+    this.clock = clockVector;
+    if (!clockVector.time) clockVector.time = 1;
   }
 
   /** @ignore */
@@ -251,7 +243,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
     } else if (op instanceof operations.InsArrOp) {
       const node = index.get(op.obj);
       if (node instanceof ArrNode) {
-        const nodes: ITimestampStruct[] = [];
+        const nodes: clock.ITimestampStruct[] = [];
         const data = op.data;
         const length = data.length;
         for (let i = 0; i < length; i++) {
@@ -270,7 +262,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
         for (let i = 0; i < length; i++) {
           const span = op.what[i];
           for (let j = 0; j < span.span; j++) {
-            const id = node.getById(new Timestamp(span.sid, span.time + j));
+            const id = node.getById(new clock.Timestamp(span.sid, span.time + j));
             if (id) this.deleteNodeTree(id);
           }
         }
@@ -295,7 +287,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    *
    * @ignore
    */
-  protected deleteNodeTree(value: ITimestampStruct) {
+  protected deleteNodeTree(value: clock.ITimestampStruct) {
     const isSystemNode = value.sid === SESSION.SYSTEM;
     if (isSystemNode) return;
     const node = this.index.get(value);
@@ -315,7 +307,8 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    */
   public fork(sessionId: number = randomSessionId()): Model<N> {
     const copy = Model.fromBinary(this.toBinary()) as unknown as Model<N>;
-    if (copy.clock.sid !== sessionId && copy.clock instanceof ClockVector) copy.clock = copy.clock.fork(sessionId);
+    if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector)
+      copy.clock = copy.clock.fork(sessionId);
     copy.ext = this.ext;
     return copy;
   }
@@ -333,7 +326,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * Resets the model to equivalent state of another model.
    */
   public reset(to: Model<N>): void {
-    this.index = new AvlMap<ITimestampStruct, JsonNode>(compare);
+    this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
@@ -391,7 +384,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
             (nodes.length
               ? printTree(
                   tab,
-                  nodes.map((node) => (tab) => `${node.name()} ${toDisplayString(node.id)}`),
+                  nodes.map((node) => (tab) => `${node.name()} ${clock.toDisplayString(node.id)}`),
                 )
               : '')
           );
