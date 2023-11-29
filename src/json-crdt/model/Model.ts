@@ -141,21 +141,6 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   public tick: number = 0;
 
   /**
-   * Callback called after every `applyPatch` call. Or after local changes
-   * applied through the `ModelApi`.
-   *
-   * When using the `.api` API, this property is set automatically by
-   * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
-   * to subscribe to changes.
-   */
-  public onchange: undefined | ((type: ModelChangeType) => void) = undefined;
-
-  /**
-   * Callback called before every `applyPatch` call.
-   */
-  public onbeforechange: undefined | ((type: ModelChangeType, patch: Patch) => void) = undefined;
-
-  /**
    * Applies a batch of patches to the document.
    *
    * @param patches A batch, i.e. an array of patches.
@@ -166,16 +151,26 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
+   * Callback called before every `applyPatch` call.
+   */
+  public onbeforepatch?: (patch: Patch) => void = undefined;
+
+  /**
+   * Callback called after every `applyPatch` call.
+   */
+  public onpatch?: (patch: Patch) => void = undefined;
+
+  /**
    * Applies a single patch to the document. All mutations to the model must go
    * through this method.
    */
   public applyPatch(patch: Patch) {
-    this.onbeforechange?.(ModelChangeType.REMOTE, patch);
+    this.onbeforepatch?.(patch);
     const ops = patch.ops;
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
     this.tick++;
-    this.onchange?.(ModelChangeType.REMOTE);
+    this.onpatch?.(patch);
   }
 
   /**
@@ -331,9 +326,20 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
+   * Callback called before model isi reset using the `.reset()` method.
+   */
+  public onbeforereset?: () => void = undefined;
+
+  /**
+   * Callback called after model has been reset using the `.reset()` method.
+   */
+  public onreset?: () => void = undefined;
+
+  /**
    * Resets the model to equivalent state of another model.
    */
   public reset(to: Model<N>): void {
+    this.onbeforereset?.();
     const index = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
@@ -349,7 +355,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
       api.node = newNode;
       newNode.api = api;
     });
-    this.onchange?.(ModelChangeType.RESET);
+    this.onreset?.();
   }
 
   /**

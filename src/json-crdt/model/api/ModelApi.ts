@@ -41,11 +41,16 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    */
   public next: number = 0;
 
+  public readonly onBeforeReset = new FanOut<void>();
+  public readonly onReset = new FanOut<void>();
+
   /**
    * @param model Model instance on which the API operates.
    */
   constructor(public readonly model: Model<N>) {
     this.builder = new PatchBuilder(this.model.clock);
+    this.model.onbeforereset = () => this.onBeforeReset.emit();
+    this.model.onreset = () => this.onReset.emit();
     this.model.onchange = this.queueChange;
   }
 
