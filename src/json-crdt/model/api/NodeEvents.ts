@@ -1,5 +1,5 @@
 import {FanOut} from 'thingies/es2020/fanout';
-import {MapFanOut, OnNewFanOut} from './util';
+import {MapFanOut, OnNewFanOut} from './fanout';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';
 import type {NodeApi} from './nodes';

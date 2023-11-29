@@ -4,7 +4,7 @@ import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {SyncStore} from '../../../util/events/sync-store';
-import {MergeFanOut, MicrotaskBufferFanOut} from './util';
+import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
