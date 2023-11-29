@@ -1,13 +1,14 @@
-import {Model, ModelChangeType} from '../../Model';
+import {Patch} from '../../../../json-crdt-patch';
+import {Model} from '../../Model';
 
-describe('DOM Level 2 events, .et.addEventListener()', () => {
+describe('FanOut event API', () => {
   test('dispatches "change" events on document change', async () => {
     const doc = Model.withLogicalClock();
     const api = doc.api;
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.on('change', () => {
+    api.onChanges.listen(() => {
       cnt++;
     });
     api.obj([]).set({gg: true});
@@ -24,7 +25,7 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.on('change', () => {
+    api.onChanges.listen(() => {
       cnt++;
     });
     api.obj([]).set({gg: true});
@@ -39,10 +40,10 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     let cnt = 0;
     api.root({a: {}});
     expect(cnt).toBe(0);
-    api.events.on('change', () => {
+    api.onChanges.listen(() => {
       cnt++;
     });
-    api.events.on('change', () => {
+    api.onChanges.listen(() => {
       cnt++;
     });
     expect(cnt).toBe(0);
@@ -55,7 +56,7 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
   it('fires "change" event when a value is set to the same value', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.api.events.on('change', () => {
+    model.api.onChanges.listen(() => {
       cnt++;
     });
     await Promise.resolve();
@@ -68,10 +69,10 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     expect(cnt).toBe(2);
   });
 
-  it('fires "change" event when a value is deleted', async () => {
+  it('fires change event when a value is deleted', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    model.api.events.on('change', () => {
+    model.api.onChanges.listen(() => {
       cnt++;
     });
     await Promise.resolve();
@@ -85,31 +86,29 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     expect(model.view()).toStrictEqual({});
   });
 
-  test('reports LOCAL change type when a value is set locally', async () => {
+  test('reports local change type when a value is set locally', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    let set: Set<ModelChangeType> | undefined;
-    model.api.events.on('change', (event) => {
+    let bufferPoint: number | undefined;
+    model.api.onLocalChange.listen((pointer) => {
       cnt++;
-      set = event.detail;
+      bufferPoint = pointer;
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
     model.api.root(123);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    expect(set!.has(ModelChangeType.LOCAL)).toBe(true);
-    expect(set!.has(ModelChangeType.REMOTE)).toBe(false);
-    expect(set!.has(ModelChangeType.RESET)).toBe(false);
+    expect(typeof bufferPoint).toBe('number');
   });
 
-  test('reports REMOTE change type when a value is set remotely', async () => {
+  test('reports remote change type when a value is set remotely', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    let set: Set<ModelChangeType> | undefined;
-    model.api.events.on('change', (event) => {
+    let patchFromEvent: Patch | undefined;
+    model.api.onPatch.listen((p) => {
       cnt++;
-      set = event.detail;
+      patchFromEvent = p;
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
@@ -119,18 +118,16 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     model.applyPatch(patch);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    expect(set!.has(ModelChangeType.LOCAL)).toBe(false);
-    expect(set!.has(ModelChangeType.REMOTE)).toBe(true);
-    expect(set!.has(ModelChangeType.RESET)).toBe(false);
+    expect(patchFromEvent).toBeInstanceOf(Patch);
   });
 
-  test('reports REMOTE and LOCAL changes when both types are present', async () => {
+  test('reports remote and local changes when both types are present', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    let set: Set<ModelChangeType> | undefined;
-    model.api.events.on('change', (event) => {
+    let set: any[] | undefined;
+    model.api.onChanges.listen((changes) => {
       cnt++;
-      set = event.detail;
+      set = changes;
     });
     await Promise.resolve();
     expect(cnt).toBe(0);
@@ -141,18 +138,16 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     model.api.root(321);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    expect(set!.has(ModelChangeType.LOCAL)).toBe(true);
-    expect(set!.has(ModelChangeType.REMOTE)).toBe(true);
-    expect(set!.has(ModelChangeType.RESET)).toBe(false);
+    expect((set as any[]).length).toBe(2);
+    expect((set as any[])[0]).toBeInstanceOf(Patch);
+    expect(typeof (set as any[])[1]).toBe('number');
   });
 
-  test('reports RESET change when model is reset', async () => {
+  test('reports reset change when model is reset', async () => {
     const model = Model.withLogicalClock();
     let cnt = 0;
-    let set: Set<ModelChangeType> | undefined;
-    model.api.events.on('change', (event) => {
+    model.api.onReset.listen(() => {
       cnt++;
-      set = event.detail;
     });
     const model2 = Model.withLogicalClock();
     model2.api.root(123);
@@ -161,9 +156,6 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     model.reset(model2);
     await Promise.resolve();
     expect(cnt).toBe(1);
-    expect(set!.has(ModelChangeType.LOCAL)).toBe(false);
-    expect(set!.has(ModelChangeType.REMOTE)).toBe(false);
-    expect(set!.has(ModelChangeType.RESET)).toBe(true);
   });
 
   test('on reset builder is flushed', async () => {
@@ -177,23 +169,22 @@ describe('DOM Level 2 events, .et.addEventListener()', () => {
     expect(model.api.builder.patch.ops.length > 0).toBe(false);
   });
 
-  test('on reset other change events are removed for the type set', async () => {
+  test('on reset other events are not emitted', async () => {
     const model = Model.withLogicalClock();
     const model2 = Model.withLogicalClock();
-    let cnt = 0;
-    let set: Set<ModelChangeType> | undefined;
-    model.api.events.on('change', (event) => {
-      cnt++;
-      set = event.detail;
-    });
     model2.api.root(123);
     model.api.root('asdf');
+    let cntReset = 0;
+    let cntPatch = 0;
+    let cntLocal = 0;
+    model.api.onReset.listen(() => { cntReset++; });
+    model.api.onPatch.listen(() => { cntPatch++; });
+    model.api.onLocalChange.listen(() => { cntLocal++; });
     model.reset(model2);
     await Promise.resolve();
-    expect(cnt).toBe(1);
-    expect(set!.has(ModelChangeType.LOCAL)).toBe(false);
-    expect(set!.has(ModelChangeType.REMOTE)).toBe(false);
-    expect(set!.has(ModelChangeType.RESET)).toBe(true);
+    expect(cntReset).toBe(1);
+    expect(cntPatch).toBe(0);
+    expect(cntLocal).toBe(0);
   });
 });
 
@@ -205,7 +196,7 @@ describe('fanout', () => {
       let cnt = 0;
       api.root({a: {}});
       expect(cnt).toBe(0);
-      api.changes.listen(() => {
+      api.onChanges.listen(() => {
         cnt++;
       });
       api.obj([]).set({gg: true});
@@ -222,10 +213,10 @@ describe('fanout', () => {
       let cnt = 0;
       api.root({a: {}});
       expect(cnt).toBe(0);
-      api.changes.listen(() => {
+      api.onChanges.listen(() => {
         cnt++;
       });
-      api.changes.listen(() => {
+      api.onChanges.listen(() => {
         cnt++;
       });
       expect(cnt).toBe(0);

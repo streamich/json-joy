@@ -3,24 +3,10 @@ import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../
 import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {ModelChangeType, type Model} from '../Model';
 import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './util';
+import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
-
-export interface ModelApiEvents {
-  /**
-   * Emitted when the model changes. This event is emitted once per microtask,
-   * multiple changes in the same microtask are batched into a single event. The
-   * payload is a set of change types that occurred in the model.
-   */
-  change: CustomEvent<Set<ModelChangeType>>;
-
-  /**
-   * Emitted when the builder is flushed. The event detail is the flushed patch.
-   */
-  flush: CustomEvent<Patch>;
-}
 
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point

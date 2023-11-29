@@ -17,15 +17,6 @@ import type {NodeApi} from './api/nodes';
 
 export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
-export const enum ModelChangeType {
-  /** When operations are applied through `.applyPatch()` directly. */
-  REMOTE = 0,
-  /** When local operations are applied through the `ModelApi`. */
-  LOCAL = 1,
-  /** When model is reset using the `.reset()` method. */
-  RESET = 2,
-}
-
 /**
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
