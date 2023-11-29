@@ -112,17 +112,75 @@ export namespace nodes {
 }
 /* tslint:enable no-namespace class-name */
 
+/**
+ * Schema builder. Use this to create a JSON CRDT model schema and the default
+ * value. Example:
+ *
+ * ```typescript
+ * const schema = s.obj({
+ *  name: s.str(''),
+ *  age: s.con(0),
+ *  tags: s.arr<nodes.con<string>>([]),
+ * });
+ * ```
+ */
 export const schema = {
+  /**
+   * Creates a "con" node schema and the default value.
+   * @param raw Raw default value.
+   */
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
+
+  /**
+   * Creates a "str" node schema and the default value.
+   * @param str Default value.
+   */
   str: <T extends string>(str: T) => new nodes.str<T>(str || ('' as T)),
+
+  /**
+   * Creates a "bin" node schema and the default value.
+   * @param bin Default value.
+   */
   bin: (bin: Uint8Array) => new nodes.bin(bin),
+
+  /**
+   * Creates a "val" node schema and the default value.
+   * @param val Default value.
+   */
   val: <T extends NodeBuilder>(val: T) => new nodes.val<T>(val),
+
+  /**
+   * Creates a "vec" node schema and the default value.
+   * @param vec Default value.
+   */
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
+
+  /**
+   * Creates a "obj" node schema and the default value.
+   * @param obj Default value, required object keys.
+   * @param opt Default value of optional object keys.
+   */
   obj: <T extends Record<string, NodeBuilder>, O extends Record<string, NodeBuilder>>(obj: T, opt?: O) =>
     new nodes.obj<T, O>(obj, opt),
+
+  /**
+   * This is an alias for {@link schema.obj}. It creates a "map" node schema,
+   * which is an object where a key can be any string and the value is of the
+   * same type.
+   * @param obj Default value.
+   */
   map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> =>
     schema.obj<Record<string, R>, Record<string, R>>(obj),
+
+  /**
+   * Creates an "arr" node schema and the default value.
+   * @param arr Default value.
+   */
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
 };
 
+/**
+ * Schema builder. Use this to create a JSON CRDT model schema and the default
+ * value. Alias for {@link schema}.
+ */
 export const s = schema;
