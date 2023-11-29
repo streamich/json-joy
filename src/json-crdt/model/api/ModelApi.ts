@@ -223,7 +223,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   /**
    * Advance patch pointer to the end without applying the operations. With the
    * idea that they have already been applied locally.
-   * 
+   *
    * You need to manually call `this.onBeforeLocalChange.emit(this.next)` before
    * calling this method.
    *

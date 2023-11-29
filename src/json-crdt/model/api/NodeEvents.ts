@@ -44,6 +44,7 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
 
   // ---------------------------------------------------------------- SyncStore
 
-  public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe => this.onViewChange.listen(() => callback());
+  public readonly subscribe = (callback: () => void): SyncStoreUnsubscribe =>
+    this.onViewChange.listen(() => callback());
   public readonly getSnapshot = () => this.api.view();
 }

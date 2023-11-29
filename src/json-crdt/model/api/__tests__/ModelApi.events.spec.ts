@@ -177,9 +177,15 @@ describe('FanOut event API', () => {
     let cntReset = 0;
     let cntPatch = 0;
     let cntLocal = 0;
-    model.api.onReset.listen(() => { cntReset++; });
-    model.api.onPatch.listen(() => { cntPatch++; });
-    model.api.onLocalChange.listen(() => { cntLocal++; });
+    model.api.onReset.listen(() => {
+      cntReset++;
+    });
+    model.api.onPatch.listen(() => {
+      cntPatch++;
+    });
+    model.api.onLocalChange.listen(() => {
+      cntLocal++;
+    });
     model.reset(model2);
     await Promise.resolve();
     expect(cntReset).toBe(1);

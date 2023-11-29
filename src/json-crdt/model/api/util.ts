@@ -12,13 +12,12 @@ export class MergeFanOut<D> extends FanOut<D> {
   }
 
   public listen(listener: FanOutListener<D>): FanOutUnsubscribe {
-    if (!this.listeners.size)
-      this.unsubs = this.fanouts.map(fanout => fanout.listen(data => this.emit(data)));
+    if (!this.listeners.size) this.unsubs = this.fanouts.map((fanout) => fanout.listen((data) => this.emit(data)));
     const unsub = super.listen(listener);
     return () => {
       unsub();
       if (!this.listeners.size) {
-        this.unsubs.forEach(unsub => unsub());
+        this.unsubs.forEach((unsub) => unsub());
         this.unsubs = [];
       }
     };
@@ -32,20 +31,20 @@ export class MicrotaskBufferFanOut<I> extends FanOut<I[]> {
   private buffer: I[] = [];
   private unsub?: FanOutUnsubscribe = undefined;
 
-  constructor (private readonly source: FanOut<I>) {
+  constructor(private readonly source: FanOut<I>) {
     super();
   }
 
   public listen(listener: FanOutListener<I[]>): FanOutUnsubscribe {
     if (!this.unsub) {
-      this.unsub = this.source.listen(data => {
+      this.unsub = this.source.listen((data) => {
         const buffer = this.buffer;
         if (!buffer.length) {
           queueMicrotask(() => {
             this.emit(buffer);
             this.buffer = [];
           });
-        } 
+        }
         buffer.push(data);
       });
     }
@@ -75,8 +74,7 @@ export class MapFanOut<I, O> extends FanOut<O> {
   private unsub?: FanOutUnsubscribe = undefined;
 
   public listen(listener: FanOutListener<O>): FanOutUnsubscribe {
-    if (!this.unsub)
-      this.unsub = this.source.listen(data => this.emit(this.mapper(data)));
+    if (!this.unsub) this.unsub = this.source.listen((data) => this.emit(this.mapper(data)));
     const unsub = super.listen(listener);
     return () => {
       unsub();
@@ -105,8 +103,8 @@ export class OnNewFanOut<D> extends FanOut<D> {
 
   public listen(listener: FanOutListener<D>): FanOutUnsubscribe {
     if (!this.unsub) {
-      this.unsub = this.source.listen(data => {
-        if (this.last !== data) this.emit(this.last = data)
+      this.unsub = this.source.listen((data) => {
+        if (this.last !== data) this.emit((this.last = data));
       });
     }
     const unsub = super.listen(listener);

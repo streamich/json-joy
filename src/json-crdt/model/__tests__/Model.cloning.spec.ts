@@ -222,9 +222,11 @@ describe('reset()', () => {
   });
 
   test('preserves API nodes when model is reset', async () => {
-    const doc1 = Model.withLogicalClock().setSchema(schema.obj({
-      text: schema.str('hell'),
-    }));
+    const doc1 = Model.withLogicalClock().setSchema(
+      schema.obj({
+        text: schema.str('hell'),
+      }),
+    );
     const doc2 = doc1.fork();
     doc2.s.text.toApi().ins(4, 'o');
     const str = doc1.s.text.toApi();
