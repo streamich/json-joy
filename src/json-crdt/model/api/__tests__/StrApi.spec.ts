@@ -75,14 +75,14 @@ describe('events', () => {
     const onView = () => cnt++;
     str.ins(0, 'aaa');
     expect(cnt).toEqual(0);
-    str.events.on('view', onView);
+    const unsub = str.events.onViewChanges.listen(onView);
     str.ins(0, 'bbb');
     await Promise.resolve();
     expect(cnt).toEqual(1);
     str.ins(0, 'ccc');
     await Promise.resolve();
     expect(cnt).toEqual(2);
-    str.events.off('view', onView);
+    unsub();
     str.del(1, 7);
     expect(cnt).toEqual(2);
   });
@@ -96,7 +96,7 @@ describe('events', () => {
     const onChange = () => cnt++;
     str.ins(0, 'aaa');
     expect(cnt).toEqual(0);
-    str.events.on('view', onChange);
+    str.events.onViewChanges.listen(onChange);
     str.ins(0, 'bbb');
     str.ins(0, 'ccc');
     str.del(1, 7);
@@ -114,7 +114,7 @@ describe('events', () => {
       const onView = () => cnt++;
       str.ins(0, 'aaa');
       expect(cnt).toEqual(0);
-      const unsubscribe = str.events.changes.listen(onView);
+      const unsubscribe = str.events.onViewChanges.listen(onView);
       str.ins(0, 'bbb');
       await Promise.resolve();
       expect(cnt).toEqual(1);

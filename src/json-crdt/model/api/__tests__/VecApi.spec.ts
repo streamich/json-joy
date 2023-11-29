@@ -49,7 +49,7 @@ describe('events', () => {
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
-    tuple.events.on('view', onView);
+    tuple.events.onViewChanges.listen(onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
     await Promise.resolve();
@@ -69,7 +69,7 @@ describe('events', () => {
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
-    tuple.events.on('view', onView);
+    tuple.events.onViewChanges.listen(onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
     await Promise.resolve();
@@ -92,7 +92,7 @@ describe('events', () => {
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
-    tuple.events.on('view', onView);
+    const unsub = tuple.events.onViewChanges.listen(onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
     await Promise.resolve();
@@ -100,7 +100,7 @@ describe('events', () => {
     tuple.set([[0, 2.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
-    tuple.events.off('view', onView);
+    unsub();
     tuple.set([[0, 3.5]]);
     await Promise.resolve();
     expect(cnt).toBe(2);
@@ -113,7 +113,7 @@ describe('events', () => {
     let cnt = 0;
     const onView = () => cnt++;
     const tuple = api.vec([]);
-    tuple.events.on('view', onView);
+    tuple.events.onViewChanges.listen(onView);
     expect(cnt).toBe(0);
     tuple.set([[0, 1.5]]);
     tuple.set([[1, 44]]);

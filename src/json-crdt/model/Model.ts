@@ -17,15 +17,6 @@ import type {NodeApi} from './api/nodes';
 
 export const UNDEFINED = new ConNode(ORIGIN, undefined);
 
-export const enum ModelChangeType {
-  /** When operations are applied through `.applyPatch()` directly. */
-  REMOTE = 0,
-  /** When local operations are applied through the `ModelApi`. */
-  LOCAL = 1,
-  /** When model is reset using the `.reset()` method. */
-  RESET = 2,
-}
-
 /**
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
@@ -141,15 +132,6 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   public tick: number = 0;
 
   /**
-   * Callback called after every `applyPatch` call.
-   *
-   * When using the `.api` API, this property is set automatically by
-   * the {@link ModelApi} class. In that case use the `mode.api.evens.on('change')`
-   * to subscribe to changes.
-   */
-  public onchange: undefined | ((type: ModelChangeType) => void) = undefined;
-
-  /**
    * Applies a batch of patches to the document.
    *
    * @param patches A batch, i.e. an array of patches.
@@ -160,15 +142,26 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
+   * Callback called before every `applyPatch` call.
+   */
+  public onbeforepatch?: (patch: Patch) => void = undefined;
+
+  /**
+   * Callback called after every `applyPatch` call.
+   */
+  public onpatch?: (patch: Patch) => void = undefined;
+
+  /**
    * Applies a single patch to the document. All mutations to the model must go
    * through this method.
    */
   public applyPatch(patch: Patch) {
+    this.onbeforepatch?.(patch);
     const ops = patch.ops;
     const {length} = ops;
     for (let i = 0; i < length; i++) this.applyOperation(ops[i]);
     this.tick++;
-    this.onchange?.(ModelChangeType.REMOTE);
+    this.onpatch?.(patch);
   }
 
   /**
@@ -180,6 +173,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    *
    * @param op Any JSON CRDT Patch operation
    * @ignore
+   * @internal
    */
   public applyOperation(op: JsonCrdtPatchOperation): void {
     this.clock.observe(op.id, op.span());
@@ -293,7 +287,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
     const node = this.index.get(value);
     if (!node) return;
     const api = node.api;
-    if (api) (api as NodeApi).events.onDelete();
+    if (api) (api as NodeApi).events.handleDelete();
     node.children((child) => this.deleteNodeTree(child.id));
     this.index.del(value);
   }
@@ -323,17 +317,39 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
+   * Callback called before model isi reset using the `.reset()` method.
+   */
+  public onbeforereset?: () => void = undefined;
+
+  /**
+   * Callback called after model has been reset using the `.reset()` method.
+   */
+  public onreset?: () => void = undefined;
+
+  /**
    * Resets the model to equivalent state of another model.
    */
   public reset(to: Model<N>): void {
+    this.onbeforereset?.();
+    const index = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);
     const blob = to.toBinary();
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
-    const api = this._api;
-    if (api) api.flush();
-    this.onchange?.(ModelChangeType.RESET);
+    this._api?.flush();
+    index.forEach(({v: node}) => {
+      const api = node.api as NodeApi | undefined;
+      if (!api) return;
+      const newNode = this.index.get(node.id);
+      if (!newNode) {
+        api.events.handleDelete();
+        return;
+      }
+      api.node = newNode;
+      newNode.api = api;
+    });
+    this.onreset?.();
   }
 
   /**

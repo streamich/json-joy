@@ -19,7 +19,7 @@ export type ApiPath = string | number | Path | void;
  * @category Local API
  */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
-  constructor(public readonly node: N, public readonly api: ModelApi<any>) {}
+  constructor(public node: N, public readonly api: ModelApi<any>) {}
 
   /** @ignore */
   private ev: undefined | NodeEvents<N> = undefined;
@@ -382,6 +382,7 @@ export class StrApi extends NodeApi<StrNode> {
    */
   public ins(index: number, text: string): this {
     const {api, node} = this;
+    api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
     builder.pad();
     const nextTime = api.builder.nextTime();
@@ -402,6 +403,7 @@ export class StrApi extends NodeApi<StrNode> {
    */
   public del(index: number, length: number): this {
     const {api, node} = this;
+    api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
     builder.pad();
     const spans = node.findInterval(index, length);

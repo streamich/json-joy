@@ -1,4 +1,5 @@
 import {until} from '../../../__tests__/util';
+import {schema} from '../../../json-crdt-patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Model} from '../Model';
 
@@ -214,9 +215,24 @@ describe('reset()', () => {
     });
     doc2.api.str(['text']).ins(5, ' world');
     let cnt = 0;
-    doc2.api.events.on('change', () => cnt++);
+    doc2.api.onChanges.listen(() => cnt++);
     doc2.reset(doc1);
     await until(() => cnt > 0);
     expect(cnt).toBe(1);
+  });
+
+  test('preserves API nodes when model is reset', async () => {
+    const doc1 = Model.withLogicalClock().setSchema(
+      schema.obj({
+        text: schema.str('hell'),
+      }),
+    );
+    const doc2 = doc1.fork();
+    doc2.s.text.toApi().ins(4, 'o');
+    const str = doc1.s.text.toApi();
+    expect(str === doc2.s.text.toApi()).toBe(false);
+    expect(str.view()).toBe('hell');
+    doc1.reset(doc2);
+    expect(str.view()).toBe('hello');
   });
 });
