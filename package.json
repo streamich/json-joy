@@ -118,7 +118,7 @@
     "js-base64": "^3.7.2",
     "js-sdsl": "^4.4.0",
     "jsbi": "^4.3.0",
-    "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#02718a7a5d09e0dc6c31ea7d45a9ce3cbb0bf085",
+    "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
     "json-logic-js": "^2.0.1",
     "json-pack-napi": "^0.0.2",
     "load-script": "^2.0.0",
