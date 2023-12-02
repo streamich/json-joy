@@ -169,7 +169,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
    * through this method.
    *
    * For advanced use only, better use `applyPatch` instead. You MUST increment
-   * the `tick` property and call `onchange` after calling this method.
+   * the `tick` property and call the necessary event emitters manually.
    *
    * @param op Any JSON CRDT Patch operation
    * @ignore
@@ -349,6 +349,7 @@ export class Model<N extends JsonNode = JsonNode> implements Printable {
       api.node = newNode;
       newNode.api = api;
     });
+    this.tick++;
     this.onreset?.();
   }
 
