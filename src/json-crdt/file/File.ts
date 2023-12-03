@@ -6,10 +6,12 @@ import {Encoder as StructuralEncoderCompact} from '../codec/structural/compact/E
 import {Encoder as StructuralEncoderVerbose} from '../codec/structural/verbose/Encoder';
 import {encode as encodeCompact} from '../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeVerbose} from '../../json-crdt-patch/codec/verbose/encode';
+import {printTree} from "../../util/print/printTree";
 import type * as types from "./types";
+import type {Printable} from "../../util/print/types";
 
-export class File {
-  public static fromModel(model: Model): File {
+export class File implements Printable {
+  public static fromModel(model: Model<any>): File {
     return new File(model, PatchLog.fromModel(model));
   }
 
@@ -88,5 +90,15 @@ export class File {
       model,
       history,
     ];
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab?: string) {
+    return `file` + printTree(tab, [
+      (tab) => this.model.toString(tab),
+      () => '',
+      (tab) => this.history.toString(tab),
+    ]);
   }
 }

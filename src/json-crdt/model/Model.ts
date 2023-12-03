@@ -21,7 +21,7 @@ export const UNDEFINED = new ConNode(ORIGIN, undefined);
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
  */
-export class Model<N extends JsonNode = JsonNode> implements Printable {
+export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
