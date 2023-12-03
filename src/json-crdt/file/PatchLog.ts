@@ -1,8 +1,8 @@
-import {ITimestampStruct, Patch, compare} from "../../json-crdt-patch";
-import {printTree} from "../../util/print/printTree";
-import {AvlMap} from "../../util/trees/avl/AvlMap";
-import {Model} from "../model";
-import type {Printable} from "../../util/print/types";
+import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
+import {printTree} from '../../util/print/printTree';
+import {AvlMap} from '../../util/trees/avl/AvlMap';
+import {Model} from '../model';
+import type {Printable} from '../../util/print/types';
 
 export class PatchLog implements Printable {
   public static fromModel(model: Model<any>): PatchLog {
@@ -17,7 +17,7 @@ export class PatchLog implements Printable {
 
   public readonly patches = new AvlMap<ITimestampStruct, Patch>(compare);
 
-  constructor (public readonly start: Model) {}
+  constructor(public readonly start: Model) {}
 
   public push(patch: Patch): void {
     const id = patch.getId();
@@ -30,10 +30,18 @@ export class PatchLog implements Printable {
   public toString(tab?: string) {
     const log: Patch[] = [];
     this.patches.forEach(({v}) => log.push(v));
-    return `log` + printTree(tab, [
-      (tab) => this.start.toString(tab),
-      () => '',
-      (tab) => 'history' + printTree(tab, log.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`)),
-    ]);
+    return (
+      `log` +
+      printTree(tab, [
+        (tab) => this.start.toString(tab),
+        () => '',
+        (tab) =>
+          'history' +
+          printTree(
+            tab,
+            log.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`),
+          ),
+      ])
+    );
   }
 }

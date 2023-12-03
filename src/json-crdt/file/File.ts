@@ -1,31 +1,25 @@
-import {Model} from "../model";
-import {PatchLog} from "./PatchLog";
-import {FileModelEncoding} from "./constants";
+import {Model} from '../model';
+import {PatchLog} from './PatchLog';
+import {FileModelEncoding} from './constants';
 import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
 import {Encoder as StructuralEncoderCompact} from '../codec/structural/compact/Encoder';
 import {Encoder as StructuralEncoderVerbose} from '../codec/structural/verbose/Encoder';
 import {encode as encodeCompact} from '../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeVerbose} from '../../json-crdt-patch/codec/verbose/encode';
-import {printTree} from "../../util/print/printTree";
-import type * as types from "./types";
-import type {Printable} from "../../util/print/types";
+import {printTree} from '../../util/print/printTree';
+import type * as types from './types';
+import type {Printable} from '../../util/print/types';
 
 export class File implements Printable {
   public static fromModel(model: Model<any>): File {
     return new File(model, PatchLog.fromModel(model));
   }
 
-  constructor(
-    public readonly model: Model,
-    public readonly history: PatchLog,
-  ) {}
+  constructor(public readonly model: Model, public readonly history: PatchLog) {}
 
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
     const view = this.model.view();
-    const metadata: types.FileMetadata = [
-      {},
-      FileModelEncoding.SidecarBinary,
-    ];
+    const metadata: types.FileMetadata = [{}, FileModelEncoding.SidecarBinary];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
     switch (modelFormat) {
@@ -54,10 +48,7 @@ export class File implements Printable {
       default:
         throw new Error(`Invalid model format: ${modelFormat}`);
     }
-    const history: types.FileWriteSequenceHistory = [
-      null,
-      [],
-    ];
+    const history: types.FileWriteSequenceHistory = [null, []];
     const patchFormat = params.history ?? 'binary';
     switch (patchFormat) {
       case 'binary': {
@@ -84,21 +75,12 @@ export class File implements Printable {
       default:
         throw new Error(`Invalid history format: ${patchFormat}`);
     }
-    return [
-      view,
-      metadata,
-      model,
-      history,
-    ];
+    return [view, metadata, model, history];
   }
 
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string) {
-    return `file` + printTree(tab, [
-      (tab) => this.model.toString(tab),
-      () => '',
-      (tab) => this.history.toString(tab),
-    ]);
+    return `file` + printTree(tab, [(tab) => this.model.toString(tab), () => '', (tab) => this.history.toString(tab)]);
   }
 }
