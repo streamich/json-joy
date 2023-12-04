@@ -76,6 +76,22 @@ export class File implements Printable {
     this.log.push(patch);
   }
 
+  public sync(): (() => void) {
+    const {model, log} = this;
+    const api = model.api;
+    const onPatchUnsubscribe = api.onPatch.listen((patch) => {
+      log.push(patch);
+    });
+    const onLocalChangeUnsubscribe = api.onLocalChange.listen(() => {
+      const patch = api.flush();
+      if (patch.ops.length) this.log.push(patch);
+    });
+    return () => {
+      onPatchUnsubscribe();
+      onLocalChangeUnsubscribe();
+    };
+  }
+
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
     const metadata: types.FileMetadata = [{}, FileModelEncoding.Auto];

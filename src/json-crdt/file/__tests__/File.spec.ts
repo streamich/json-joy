@@ -119,3 +119,28 @@ describe('.unserialize()', () => {
     expect(file2.model.view()).toEqual({foo: 'bar', xyz: 123});
   });
 });
+
+describe('.sync()', () => {
+  test('keeps track of local changes', async () => {
+    const {file, model} = setup({foo: 'bar'});
+    file.sync();
+    model.api.obj([]).set({x: 1});
+    await Promise.resolve();
+    expect(file.model.view()).toEqual({foo: 'bar', x: 1});
+    expect(file.log.replayToEnd().view()).toEqual({foo: 'bar', x: 1});
+  });
+
+  test('keeps track of remote changes', async () => {
+    const {file, model} = setup({foo: 'bar'});
+    const clone = model.clone();
+    file.sync();
+    clone.api.obj([]).set({x: 1});
+    expect(clone.view()).toEqual({foo: 'bar', x: 1});
+    expect(file.model.view()).toEqual({foo: 'bar'});
+    const patch = clone.api.flush();
+    file.model.applyPatch(patch);
+    await Promise.resolve();
+    expect(file.model.view()).toEqual({foo: 'bar', x: 1});
+    expect(file.log.replayToEnd().view()).toEqual({foo: 'bar', x: 1});
+  });
+});
