@@ -39,6 +39,9 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
+  /** Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask. */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
   public readonly onChange = new MergeFanOut<number | Patch | void>([this.onReset, this.onPatch, this.onLocalChange]);
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
@@ -249,12 +252,24 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    * Flushes the builder and returns a patch.
    *
    * @returns A JSON CRDT patch.
+   * @todo Make this return undefined if there are no operations in the builder.
    */
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
     this.onFlush.emit(patch);
     return patch;
+  }
+
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
+
+  public transaction(callback: () => void) {
+    this.onBeforeTransaction.emit();
+    callback();
+    this.onTransaction.emit();
   }
 
   // ---------------------------------------------------------------- SyncStore

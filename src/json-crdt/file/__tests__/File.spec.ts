@@ -130,6 +130,17 @@ describe('.sync()', () => {
     expect(file.log.replayToEnd().view()).toEqual({foo: 'bar', x: 1});
   });
 
+  test('processes local transactions', async () => {
+    const {file, model} = setup({foo: 'bar'});
+    file.sync();
+    const logLength = file.log.patches.size();
+    model.api.transaction(() => {
+      model.api.obj([]).set({x: 1});
+      model.api.obj([]).set({y: 2});
+    });
+    expect(file.log.patches.size()).toBe(logLength + 1);
+  });
+
   test('keeps track of remote changes', async () => {
     const {file, model} = setup({foo: 'bar'});
     const clone = model.clone();
