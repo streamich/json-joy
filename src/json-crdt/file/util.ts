@@ -36,10 +36,8 @@ export const decodeSeqCborComponents = (blob: Uint8Array): unknown[] => {
 export const decodeModel = (serialized: unknown): Model => {
   if (!serialized) throw new Error('NO_MODEL');
   if (serialized instanceof Uint8Array) return Model.fromBinary(serialized);
-  if (Array.isArray(serialized))
-    return new StructuralDecoderCompact().decode(<JsonCrdtCompactDocument>serialized);
-  if (typeof serialized === 'object')
-    return new StructuralDecoderVerbose().decode(<JsonCrdtVerboseDocument>serialized);
+  if (Array.isArray(serialized)) return new StructuralDecoderCompact().decode(<JsonCrdtCompactDocument>serialized);
+  if (typeof serialized === 'object') return new StructuralDecoderVerbose().decode(<JsonCrdtVerboseDocument>serialized);
   throw new Error('UNKNOWN_MODEL');
 };
 

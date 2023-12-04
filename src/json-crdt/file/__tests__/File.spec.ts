@@ -90,7 +90,7 @@ describe('.toBinary()', () => {
       for (const model of modelFormats) {
         for (const history of historyFormats) {
           for (const noView of noViews) {
-            if (noView && (model === 'sidecar')) continue;
+            if (noView && model === 'sidecar') continue;
             const params = {format, model, history, noView};
             test(JSON.stringify(params), () => {
               const {file} = setup({foo: 'bar'});

@@ -62,8 +62,7 @@ export class File implements Printable {
   constructor(public readonly model: Model, public readonly log: PatchLog) {}
 
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
-    if (params.noView && (params.model === 'sidecar'))
-      throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
+    if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
     const metadata: types.FileMetadata = [{}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
