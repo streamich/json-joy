@@ -12,6 +12,7 @@ import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
 import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
 import {printTree} from '../../util/print/printTree';
 import {decodeModel, decodeNdjsonComponents, decodePatch, decodeSeqCborComponents} from './util';
+import {Patch} from '../../json-crdt-patch';
 import type * as types from './types';
 import type {Printable} from '../../util/print/types';
 
@@ -67,6 +68,13 @@ export class File implements Printable {
   }
 
   constructor(public readonly model: Model, public readonly log: PatchLog) {}
+
+  public apply(patch: Patch): void {
+    const id = patch.getId();
+    if (!id) return;
+    this.model.applyPatch(patch);
+    this.log.push(patch);
+  }
 
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
