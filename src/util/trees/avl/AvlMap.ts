@@ -72,6 +72,15 @@ export class AvlMap<K, V> implements Printable {
     return !!this.find(k);
   }
 
+  public size(): number {
+    const root = this.root;
+    if (!root) return 0;
+    let curr = first(root);
+    let size = 1;
+    while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined)) size++;
+    return size;
+  }
+
   public getOrNextLower(k: K): AvlNode<K, V> | undefined {
     return (findOrNextLower(this.root, k, this.comparator) as AvlNode<K, V>) || undefined;
   }

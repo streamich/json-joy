@@ -3,6 +3,7 @@ import {Model} from '../../model';
 import {File} from '../File';
 import {JsonDecoder} from '../../../json-pack/json/JsonDecoder';
 import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
+import {FileEncodingParams} from '../types';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
@@ -67,5 +68,37 @@ describe('.toBinary()', () => {
       expect(file.log.start.view()).toEqual(undefined);
       expect(file.log.replayToEnd().view()).toEqual({foo: 'bar'});
     });
+  });
+
+  const assertEncoding = (file: File, params: FileEncodingParams) => {
+    const blob = file.toBinary(params);
+    // if (params.format === 'ndjson') console.log(Buffer.from(blob).toString('utf8'))
+    const file2 = params.format === 'seq.cbor' ? File.fromSeqCbor(blob) : File.fromNdjson(blob);
+    expect(file2.model.view()).toEqual(file.model.view());
+    expect(file2.model !== file.model).toBe(true);
+    expect(file2.log.start.view()).toEqual(undefined);
+    expect(file2.log.replayToEnd().view()).toEqual(file.model.view());
+    expect(file2.log.patches.size()).toBe(file.log.patches.size());
+  };
+
+  describe('can encode/decode all format combinations', () => {
+    const formats: FileEncodingParams['format'][] = ['ndjson', 'seq.cbor'];
+    const modelFormats: FileEncodingParams['model'][] = ['sidecar', 'binary', 'compact', 'verbose'];
+    const historyFormats: FileEncodingParams['history'][] = ['binary', 'compact', 'verbose'];
+    const noViews = [true, false];
+    for (const format of formats) {
+      for (const model of modelFormats) {
+        for (const history of historyFormats) {
+          for (const noView of noViews) {
+            if (noView && (model === 'sidecar')) continue;
+            const params = {format, model, history, noView};
+            test(JSON.stringify(params), () => {
+              const {file} = setup({foo: 'bar'});
+              assertEncoding(file, params);
+            });
+          }
+        }
+      }
+    }
   });
 });

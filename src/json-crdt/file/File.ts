@@ -62,7 +62,8 @@ export class File implements Printable {
   constructor(public readonly model: Model, public readonly log: PatchLog) {}
 
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
-    const view = this.model.view();
+    if (params.noView && (params.model === 'sidecar'))
+      throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
     const metadata: types.FileMetadata = [{}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
@@ -123,7 +124,7 @@ export class File implements Printable {
       default:
         throw new Error(`Invalid history format: ${patchFormat}`);
     }
-    return [view, metadata, model, history];
+    return [params.noView ? null : this.model.view(), metadata, model, history];
   }
 
   public toBinary(params: types.FileEncodingParams): Uint8Array {
