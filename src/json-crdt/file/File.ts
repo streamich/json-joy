@@ -76,7 +76,7 @@ export class File implements Printable {
     this.log.push(patch);
   }
 
-  public sync(): (() => void) {
+  public sync(): () => void {
     const {model, log} = this;
     const api = model.api;
     const drain = () => {

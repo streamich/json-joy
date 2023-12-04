@@ -28,14 +28,13 @@ export class PatchLog implements Printable {
 
   public replayToEnd(): Model {
     const clone = this.start.clone();
-    for (let node = first(this.patches.root); node; node = next(node))
-      clone.applyPatch(node.v);
+    for (let node = first(this.patches.root); node; node = next(node)) clone.applyPatch(node.v);
     return clone;
   }
 
   public replayTo(ts: ITimestampStruct): Model {
     const clone = this.start.clone();
-    for (let node = first(this.patches.root); node && (compare(ts, node.k) >= 0); node = next(node))
+    for (let node = first(this.patches.root); node && compare(ts, node.k) >= 0; node = next(node))
       clone.applyPatch(node.v);
     return clone;
   }
