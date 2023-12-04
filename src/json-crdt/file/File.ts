@@ -6,6 +6,9 @@ import {Encoder as StructuralEncoderCompact} from '../codec/structural/compact/E
 import {Encoder as StructuralEncoderVerbose} from '../codec/structural/verbose/Encoder';
 import {encode as encodeCompact} from '../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeVerbose} from '../../json-crdt-patch/codec/verbose/encode';
+import {Writer} from '../../util/buffers/Writer';
+import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
+import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
 import {printTree} from '../../util/print/printTree';
 import type * as types from './types';
 import type {Printable} from '../../util/print/types';
@@ -76,6 +79,26 @@ export class File implements Printable {
         throw new Error(`Invalid history format: ${patchFormat}`);
     }
     return [view, metadata, model, history];
+  }
+
+  public toBinary(params: types.FileEncodingParams): Uint8Array {
+    const sequence = this.serialize(params);
+    const writer = new Writer(16 * 1024);
+    switch (params.format) {
+      case 'ndjson': {
+        const json = new JsonEncoder(writer);
+        for (const component of sequence) {
+          json.writeAny(component);
+          json.writer.u8('\n'.charCodeAt(0));
+        }
+        return json.writer.flush();
+      }
+      case 'seq.cbor': {
+        const cbor = new CborEncoder(writer);
+        for (const component of sequence) cbor.writeAny(component);
+        return cbor.writer.flush();
+      }
+    }
   }
 
   // ---------------------------------------------------------------- Printable

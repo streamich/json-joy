@@ -18,3 +18,7 @@ export interface FileSerializeParams {
   model?: 'sidecar' | 'binary' | 'compact' | 'verbose';
   history?: 'binary' | 'compact' | 'verbose';
 }
+
+export interface FileEncodingParams extends FileSerializeParams {
+  format: 'ndjson' | 'seq.cbor';
+}
