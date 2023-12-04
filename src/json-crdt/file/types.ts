@@ -15,8 +15,8 @@ export type FileReadSequence = [...FileWriteSequence, ...frontier: Array<Uint8Ar
 
 export interface FileSerializeParams {
   noView?: boolean;
-  model?: 'sidecar' | 'binary' | 'compact' | 'verbose';
-  history?: 'binary' | 'compact' | 'verbose';
+  model?: 'sidecar' | 'binary' | 'compact' | 'verbose' | 'none';
+  history?: 'binary' | 'compact' | 'verbose' | 'none';
 }
 
 export interface FileEncodingParams extends FileSerializeParams {

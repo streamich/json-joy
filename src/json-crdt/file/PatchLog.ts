@@ -25,6 +25,12 @@ export class PatchLog implements Printable {
     this.patches.set(id, patch);
   }
 
+  public replayToEnd(): Model {
+    const model = this.start.clone();
+    this.patches.forEach(({v}) => model.applyPatch(v));
+    return model;
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string) {
