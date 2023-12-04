@@ -41,6 +41,13 @@ export class File implements Printable {
     }
     if (!log) throw new Error('NO_HISTORY');
     if (!decodedModel) decodedModel = log.replayToEnd();
+    if (frontier.length) {
+      for (const patch of frontier) {
+        const patchDecoded = decodePatch(patch);
+        decodedModel.applyPatch(patchDecoded);
+        log.push(patchDecoded);
+      }
+    }
     const file = new File(decodedModel, log);
     return file;
   }

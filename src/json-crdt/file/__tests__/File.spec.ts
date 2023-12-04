@@ -102,3 +102,20 @@ describe('.toBinary()', () => {
     }
   });
 });
+
+describe('.unserialize()', () => {
+  test('applies frontier', () => {
+    const {file, model} = setup({foo: 'bar'});
+    const clone = model.clone();
+    clone.api.obj([]).set({
+      xyz: 123,
+    });
+    const serialized = file.serialize({
+      history: 'binary',
+    });
+    serialized.push(clone.api.flush().toBinary());
+    expect(file.model.view()).toEqual({foo: 'bar'});
+    const file2 = File.unserialize(serialized);
+    expect(file2.model.view()).toEqual({foo: 'bar', xyz: 123});
+  });
+});
