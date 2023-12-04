@@ -20,7 +20,7 @@ export class File implements Printable {
     const [view, metadata, model, history, ...frontier] = components;
     const modelFormat = metadata[1];
     let decodedModel: Model<any> | null = null;
-    if (model && modelFormat !== FileModelEncoding.None) {
+    if (model) {
       const isSidecar = modelFormat === FileModelEncoding.SidecarBinary;
       if (isSidecar) {
         const decoder = new SidecarDecoder();
@@ -63,7 +63,7 @@ export class File implements Printable {
 
   public serialize(params: types.FileSerializeParams = {}): types.FileWriteSequence {
     const view = this.model.view();
-    const metadata: types.FileMetadata = [{}, FileModelEncoding.SidecarBinary];
+    const metadata: types.FileMetadata = [{}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
     switch (modelFormat) {
@@ -75,22 +75,18 @@ export class File implements Printable {
         break;
       }
       case 'binary': {
-        metadata[1] = FileModelEncoding.StructuralBinary;
         model = this.model.toBinary();
         break;
       }
       case 'compact': {
-        metadata[1] = FileModelEncoding.StructuralCompact;
         model = new StructuralEncoderCompact().encode(this.model);
         break;
       }
       case 'verbose': {
-        metadata[1] = FileModelEncoding.StructuralVerbose;
         model = new StructuralEncoderVerbose().encode(this.model);
         break;
       }
       case 'none': {
-        metadata[1] = FileModelEncoding.None;
         model = null;
         break;
       }
