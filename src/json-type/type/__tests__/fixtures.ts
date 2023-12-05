@@ -17,6 +17,9 @@ export const everyType = t.Object(
   t.prop('emptyArray', t.arr.options({max: 0})),
   t.prop('oneItemArray', t.arr.options({min: 1, max: 1})),
   t.prop('objWithArray', t.Object(t.propOpt('arr', t.arr), t.propOpt('arr2', t.arr))),
+  t.prop('emptyMap', t.map),
+  t.prop('mapWithOneNumField', t.Map(t.num)),
+  t.prop('mapOfStr', t.Map(t.str)),
 );
 
 export const everyTypeValue: TypeOf<SchemaOf<typeof everyType>> = {
@@ -36,5 +39,13 @@ export const everyTypeValue: TypeOf<SchemaOf<typeof everyType>> = {
   oneItemArray: [1],
   objWithArray: {
     arr: [1, 2, 3],
+  },
+  emptyMap: {},
+  mapWithOneNumField: {
+    a: 1,
+  },
+  mapOfStr: {
+    a: 'a',
+    b: 'b',
   },
 };

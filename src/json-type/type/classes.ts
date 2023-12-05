@@ -1879,6 +1879,217 @@ if (${rLength}) {
   }
 }
 
+export class MapType<T extends Type> extends AbstractType<schema.MapSchema<SchemaOf<T>>> {
+  protected schema: schema.MapSchema<any>;
+
+  constructor(protected type: T, options?: schema.Optional<schema.MapSchema>) {
+    super();
+    this.schema = schema.s.Map(schema.s.any, options);
+  }
+
+  public getSchema(ctx?: TypeExportContext): schema.MapSchema<SchemaOf<T>> {
+    return {
+      ...this.schema,
+      type: this.type.getSchema(ctx) as any,
+    };
+  }
+
+  public toJsonSchema(): jsonSchema.JsonSchemaObject {
+    const jsonSchema = <jsonSchema.JsonSchemaObject>{
+      type: 'object',
+      patternProperties: {
+        '.*': this.type.toJsonSchema(),
+      },
+    };
+    return jsonSchema;
+  }
+
+  public getOptions(): schema.Optional<schema.MapSchema<SchemaOf<T>>> {
+    const {__t, type, ...options} = this.schema;
+    return options as any;
+  }
+
+  public validateSchema(): void {
+    const schema = this.getSchema();
+    validateTType(schema, 'map');
+    this.type.validateSchema();
+  }
+
+  public codegenValidator(ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
+    throw new Error('TODO');
+  //   const rl = ctx.codegen.getRegister();
+  //   const ri = ctx.codegen.getRegister();
+  //   const rv = ctx.codegen.getRegister();
+  //   const err = ctx.err(ValidationError.ARR, path);
+  //   const errLen = ctx.err(ValidationError.ARR_LEN, path);
+  //   const {min, max} = this.schema;
+  //   ctx.js(/* js */ `if (!Array.isArray(${r})) return ${err};`);
+  //   ctx.js(`var ${rl} = ${r}.length;`);
+  //   if (min !== undefined) ctx.js(`if (${rl} < ${min}) return ${errLen};`);
+  //   if (max !== undefined) ctx.js(`if (${rl} > ${max}) return ${errLen};`);
+  //   ctx.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
+  //   ctx.js(`${rv} = ${r}[${ri}];`);
+  //   this.type.codegenValidator(ctx, [...path, {r: ri}], rv);
+  //   ctx.js(`}`);
+  //   ctx.emitCustomValidators(this, path, r);
+  }
+
+  public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
+    throw new Error('TODO');
+  //   ctx.writeText('[');
+  //   const codegen = ctx.codegen;
+  //   const r = codegen.getRegister(); // array
+  //   const rl = codegen.getRegister(); // array.length
+  //   const rll = codegen.getRegister(); // last
+  //   const ri = codegen.getRegister(); // index
+  //   ctx.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${rll} = ${rl} - 1, ${ri} = 0;`);
+  //   ctx.js(/* js */ `for(; ${ri} < ${rll}; ${ri}++) ` + '{');
+  //   this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${ri}]`));
+  //   ctx.js(/* js */ `s += ',';`);
+  //   ctx.js(`}`);
+  //   ctx.js(`if (${rl}) {`);
+  //   this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rll}]`));
+  //   ctx.js(`}`);
+  //   ctx.writeText(']');
+  }
+
+  private codegenBinaryEncoder(ctx: BinaryEncoderCodegenContext<BinaryJsonEncoder>, value: JsExpression): void {
+    throw new Error('TODO');
+  //   const type = this.type;
+  //   const codegen = ctx.codegen;
+  //   const r = codegen.getRegister(); // array
+  //   const rl = codegen.getRegister(); // array.length
+  //   const ri = codegen.getRegister(); // index
+  //   const rItem = codegen.getRegister(); // item
+  //   const expr = new JsExpression(() => `${rItem}`);
+  //   ctx.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
+  //   ctx.js(/* js */ `encoder.writeArrHdr(${rl});`);
+  //   ctx.js(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
+  //   ctx.js(/* js */ `${rItem} = ${r}[${ri}];`);
+  //   if (ctx instanceof CborEncoderCodegenContext) type.codegenCborEncoder(ctx, expr);
+  //   else if (ctx instanceof MessagePackEncoderCodegenContext) type.codegenMessagePackEncoder(ctx, expr);
+  //   else throw new Error('Unknown encoder');
+  //   ctx.js(`}`);
+  }
+
+  public codegenCborEncoder(ctx: CborEncoderCodegenContext, value: JsExpression): void {
+    throw new Error('TODO');
+  //   this.codegenBinaryEncoder(ctx, value);
+  }
+
+  public codegenMessagePackEncoder(ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
+    throw new Error('TODO');
+  //   this.codegenBinaryEncoder(ctx, value);
+  }
+
+  public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
+    throw new Error('TODO');
+  //   const type = this.type;
+  //   const codegen = ctx.codegen;
+  //   const expr = new JsExpression(() => `${rItem}`);
+  //   const r = codegen.var(value.use());
+  //   const rLen = codegen.var(`${r}.length`);
+  //   const rLast = codegen.var(`${rLen} - 1`);
+  //   const ri = codegen.var('0');
+  //   const rItem = codegen.var();
+  //   ctx.blob(
+  //     ctx.gen((encoder) => {
+  //       encoder.writeStartArr();
+  //     }),
+  //   );
+  //   codegen.js(`for(; ${ri} < ${rLast}; ${ri}++) {`);
+  //   codegen.js(`${rItem} = ${r}[${ri}];`);
+  //   type.codegenJsonEncoder(ctx, expr);
+  //   ctx.blob(
+  //     ctx.gen((encoder) => {
+  //       encoder.writeArrSeparator();
+  //     }),
+  //   );
+  //   ctx.js(`}`);
+  //   ctx.js(`if (${rLen}) {`);
+  //   codegen.js(`${rItem} = ${r}[${rLast}];`);
+  //   type.codegenJsonEncoder(ctx, expr);
+  //   ctx.js(`}`);
+  //   ctx.blob(
+  //     ctx.gen((encoder) => {
+  //       encoder.writeEndArr();
+  //     }),
+  //   );
+  }
+
+  public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
+    throw new Error('TODO');
+  //   const codegen = ctx.codegen;
+  //   ctx.inc(MaxEncodingOverhead.Array);
+  //   const rLen = codegen.var(`${value.use()}.length`);
+  //   const type = this.type;
+  //   codegen.js(
+  //     `size += ${
+  //       MaxEncodingOverhead.ArrayElement === 1 ? `${rLen}` : `${MaxEncodingOverhead.ArrayElement} * ${rLen}`
+  //     };`,
+  //   );
+  //   // TODO: Use ".capacityEstimator()" here.
+  //   const fn = type.compileCapacityEstimator({
+  //     system: ctx.options.system,
+  //     name: ctx.options.name,
+  //   });
+  //   const isConstantSizeType = type instanceof ConstType || type instanceof BooleanType || type instanceof NumberType;
+  //   if (isConstantSizeType) {
+  //     codegen.js(`size += ${rLen} * ${fn(null)};`);
+  //   } else {
+  //     const r = codegen.var(value.use());
+  //     const rFn = codegen.linkDependency(fn);
+  //     const ri = codegen.getRegister();
+  //     codegen.js(`for(var ${ri} = ${rLen}; ${ri}-- !== 0;) size += ${rFn}(${r}[${ri}]);`);
+  //   }
+  }
+
+  public random(): unknown[] {
+    throw new Error('TODO');
+  //   let length = Math.round(Math.random() * 10);
+  //   const {min, max} = this.schema;
+  //   if (min !== undefined && length < min) length = min + length;
+  //   if (max !== undefined && length > max) length = max;
+  //   const arr = [];
+  //   for (let i = 0; i < length; i++) arr.push(this.type.random());
+  //   return arr;
+  }
+
+  public toTypeScriptAst(): ts.TsArrayType {
+    throw new Error('TODO');
+  //   return {
+  //     node: 'ArrayType',
+  //     elementType: this.type.toTypeScriptAst() as ts.TsType,
+  //   };
+  }
+
+  public toJson(value: unknown, system: TypeSystem | undefined = this.system): json_string<unknown> {
+    const map = value as Record<string, unknown>;
+    const keys = Object.keys(map);
+    const length = keys.length;
+    if (!length) return '{}' as json_string<unknown>;
+    const last = length - 1;
+    const type = this.type;
+    let str = '{';
+    for (let i = 0; i < last; i++) {
+      const key = keys[i];
+      const val = (value as any)[key];
+      if (val === undefined) continue;
+      str += asString(key) + ':' + type.toJson(val as any, system) + ',';
+    }
+    const key = keys[last];
+    const val = (value as any)[key];
+    if (val !== undefined) {
+      str += asString(key) + ':' + type.toJson(val as any, system);
+    } else if (str.length > 1) str = str.slice(0, -1);
+    return (str + '}') as json_string<unknown>;
+  }
+
+  public toString(tab: string = ''): string {
+    return super.toString(tab) + printTree(tab, [(tab) => this.type.toString(tab)]);
+  }
+}
+
 export class RefType<T extends Type> extends AbstractType<schema.RefSchema<SchemaOf<T>>> {
   protected schema: schema.RefSchema<SchemaOf<T>>;
 

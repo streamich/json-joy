@@ -15,6 +15,7 @@ export type Type =
   | classes.ArrayType<any>
   | classes.TupleType<any>
   | classes.ObjectType<any>
+  | classes.MapType<any>
   | classes.RefType<any>
   | classes.OrType<any>
   | classes.FunctionType<any, any>

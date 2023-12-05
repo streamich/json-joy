@@ -46,6 +46,10 @@ export class TypeBuilder {
     return this.Object();
   }
 
+  get map() {
+    return this.Map(this.any);
+  }
+
   get fn() {
     return this.Function(this.any, this.any);
   }
@@ -127,6 +131,12 @@ export class TypeBuilder {
     const field = new classes.ObjectOptionalFieldType<K, V>(key, value);
     field.system = this.system;
     return field;
+  }
+
+  public Map<T extends Type>(type: T, options?: schema.Optional<schema.MapSchema>) {
+    const map = new classes.MapType<T>(type, options);
+    map.system = this.system;
+    return map;
   }
 
   public Or<F extends Type[]>(...types: F) {
