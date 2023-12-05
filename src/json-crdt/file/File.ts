@@ -79,22 +79,17 @@ export class File implements Printable {
   public sync(): () => void {
     const {model, log} = this;
     const api = model.api;
-    const drain = () => {
-      if (!api.builder.patch.ops.length) return;
-      const patch = api.flush();
-      this.log.push(patch);
-    };
+    const autoflushUnsubscribe = api.autoFlush();
     const onPatchUnsubscribe = api.onPatch.listen((patch) => {
       log.push(patch);
     });
-    const onLocalChangesUnsubscribe = api.onLocalChanges.listen(drain);
-    const onBeforeTransactionUnsubscribe = api.onBeforeTransaction.listen(drain);
-    const onTransactionUnsubscribe = api.onTransaction.listen(drain);
+    const onFlushUnsubscribe = api.onFlush.listen((patch) => {
+      log.push(patch);
+    });
     return () => {
+      autoflushUnsubscribe();
       onPatchUnsubscribe();
-      onLocalChangesUnsubscribe();
-      onBeforeTransactionUnsubscribe();
-      onTransactionUnsubscribe();
+      onFlushUnsubscribe();
     };
   }
 
