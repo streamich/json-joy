@@ -196,10 +196,10 @@ export class ClockVector extends LogicalClock implements IClockVector {
   }
 
   /**
-   * Returns a human-readable string representation of the vector clock.
+   * Returns a human-readable string representation of the clock vector.
    *
    * @param tab String to use for indentation.
-   * @returns Human-readable string representation of the vector clock.
+   * @returns Human-readable string representation of the clock vector.
    */
   public toString(tab: string = ''): string {
     const last = this.peers.size;
@@ -235,5 +235,14 @@ export class ServerClockVector extends LogicalClock implements IClockVector {
 
   public fork(): ServerClockVector {
     return new ServerClockVector(SESSION.SERVER, this.time);
+  }
+
+  /**
+   * Returns a human-readable string representation of the clock vector.
+   *
+   * @returns Human-readable string representation of the clock vector.
+   */
+  public toString(): string {
+    return `clock ${this.sid}.${this.time}`;
   }
 }

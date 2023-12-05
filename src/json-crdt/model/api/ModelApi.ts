@@ -39,6 +39,15 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   */
+  public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
+  /** Emitted before a transaction is started. */
+  public readonly onBeforeTransaction = new FanOut<void>();
+  /** Emitted after transaction completes. */
+  public readonly onTransaction = new FanOut<void>();
   /** Emitted when the model changes. Combines `onReset`, `onPatch` and `onLocalChange`. */
   public readonly onChange = new MergeFanOut<number | Patch | void>([this.onReset, this.onPatch, this.onLocalChange]);
   /** Emitted when the model changes. Same as `.onChange`, but this event is emitted once per microtask. */
@@ -245,16 +254,45 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.model.view();
   }
 
+  public transaction(callback: () => void) {
+    this.onBeforeTransaction.emit();
+    callback();
+    this.onTransaction.emit();
+  }
+
   /**
    * Flushes the builder and returns a patch.
    *
    * @returns A JSON CRDT patch.
+   * @todo Make this return undefined if there are no operations in the builder.
    */
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
     this.onFlush.emit(patch);
     return patch;
+  }
+
+  public stopAutoFlush?: () => void = undefined;
+
+  /**
+   * Begins to automatically flush buffered operations into patches, grouping
+   * operations by microtasks or by transactions. To capture the patch, listen
+   * to the `.onFlush` event.
+   *
+   * @returns Callback to stop auto flushing.
+   */
+  public autoFlush(): () => void {
+    const drain = () => this.builder.patch.ops.length && this.flush();
+    const onLocalChangesUnsubscribe = this.onLocalChanges.listen(drain);
+    const onBeforeTransactionUnsubscribe = this.onBeforeTransaction.listen(drain);
+    const onTransactionUnsubscribe = this.onTransaction.listen(drain);
+    return (this.stopAutoFlush = () => {
+      this.stopAutoFlush = undefined;
+      onLocalChangesUnsubscribe();
+      onBeforeTransactionUnsubscribe();
+      onTransactionUnsubscribe();
+    });
   }
 
   // ---------------------------------------------------------------- SyncStore
