@@ -5,6 +5,7 @@ import {
   ArraySchema,
   ObjectSchema,
   ObjectFieldSchema,
+  MapSchema,
   NoT,
   BinarySchema,
   AnySchema,
@@ -47,6 +48,10 @@ export class SchemaBuilder {
 
   get obj() {
     return this.Object();
+  }
+
+  get map() {
+    return this.Map(this.any);
   }
 
   get bin() {
@@ -215,6 +220,10 @@ export class SchemaBuilder {
       ...options,
       optional: true,
     };
+  }
+
+  public Map<T extends Schema>(type: T, options?: Omit<NoT<MapSchema<T>>, 'type'>): MapSchema<T> {
+    return {__t: 'map', type, ...options};
   }
 
   public Any(options: NoT<AnySchema> = {}): AnySchema {

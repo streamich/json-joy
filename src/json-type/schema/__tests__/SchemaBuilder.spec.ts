@@ -59,6 +59,16 @@ describe('object', () => {
   });
 });
 
+describe('map', () => {
+  test('can create an simple object using shorthand', () => {
+    expect(s.map).toEqual({__t: 'map', type: {__t: 'any'}});
+  });
+
+  test('can define a map', () => {
+    expect(s.Map(s.Boolean())).toEqual({__t: 'map', type: {__t: 'bool'}});
+  });
+});
+
 describe('or', () => {
   test('can create an "or" type', () => {
     const type = s.Or(s.str, s.num);

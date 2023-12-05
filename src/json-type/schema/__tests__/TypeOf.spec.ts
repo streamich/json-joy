@@ -119,6 +119,18 @@ test('can infer a simple object type', () => {
   const obj4: T4 = {baz: 123, bazOptional: false};
 });
 
+test('can infer a map type', () => {
+  const schema1 = s.map;
+  const schema2 = s.Map(s.str);
+  const schema3 = s.Map(s.Array(s.num));
+  type T1 = TypeOf<typeof schema1>;
+  type T2 = TypeOf<typeof schema2>;
+  type T3 = TypeOf<typeof schema3>;
+  const obj1: Record<string, unknown> = {};
+  const obj2: T2 = {foo: 'bar'};
+  const obj3: T3 = {bar: [1, 2, 3]};
+});
+
 test('can infer a simple union type', () => {
   const schema1 = s.Or(s.str, s.num);
   const schema2 = s.Or(s.str, s.num, s.bool);

@@ -1,6 +1,6 @@
 import {ObjectSchema, s} from '..';
 
-test('can generate a type', () => {
+test('can generate any type', () => {
   const address: ObjectSchema = {
     __t: 'obj',
     title: 'User address',
@@ -14,6 +14,7 @@ test('can generate a type', () => {
     s.prop('address', address),
     s.prop('timeCreated', s.Number()),
     s.prop('tags', s.Array(s.Or(s.Number(), s.String()))),
+    s.prop('elements', s.Map(s.str))
   );
 
   expect(userType).toMatchObject({
@@ -81,6 +82,15 @@ test('can generate a type', () => {
                 __t: 'str',
               },
             ],
+          },
+        },
+      },
+      {
+        key: 'elements',
+        type: {
+          __t: 'map',
+          type: {
+            __t: 'str',
           },
         },
       },

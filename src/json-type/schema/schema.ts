@@ -220,6 +220,16 @@ export interface ObjectOptionalFieldSchema<K extends string = string, V extends 
 }
 
 /**
+ * Represents an object, which is treated as a map. All keys are strings and all
+ * values are of the same type.
+ */
+export interface MapSchema<T extends TType = any> extends TType<Record<string, unknown>>, WithValidator {
+  __t: 'map';
+  /** Type of all values in the map. */
+  type: T;
+}
+
+/**
  * Reference to another type.
  */
 export interface RefSchema<T extends TType = TType> extends TType {
@@ -276,7 +286,8 @@ export type JsonSchema =
   | TupleSchema
   | ObjectSchema
   | ObjectFieldSchema
-  | ObjectOptionalFieldSchema;
+  | ObjectOptionalFieldSchema
+  | MapSchema;
 
 export type Schema = JsonSchema | RefSchema | OrSchema | AnySchema | FunctionSchema | FunctionStreamingSchema;
 
@@ -304,6 +315,8 @@ export type TypeOfValue<T> = T extends BooleanSchema
   ? {[K in keyof U]: TypeOf<U[K]>}
   : T extends ObjectSchema<infer F>
   ? NoEmptyInterface<TypeFields<Mutable<F>>>
+  : T extends MapSchema<infer U>
+  ? Record<string, TypeOf<U>>
   : T extends BinarySchema
   ? Uint8Array
   : T extends FunctionSchema<infer Req, infer Res>
