@@ -39,8 +39,10 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public readonly onBeforeLocalChange = new FanOut<number>();
   /** Emitted after local changes through `model.api` are applied. */
   public readonly onLocalChange = new FanOut<number>();
-  /** Emitted after local changes through `model.api` are applied. Same as
-   * `.onLocalChange`, but this event buffered withing a microtask. */
+  /**
+   * Emitted after local changes through `model.api` are applied. Same as
+   * `.onLocalChange`, but this event buffered withing a microtask.
+   */
   public readonly onLocalChanges = new MicrotaskBufferFanOut<number>(this.onLocalChange);
   /** Emitted before a transaction is started. */
   public readonly onBeforeTransaction = new FanOut<void>();
