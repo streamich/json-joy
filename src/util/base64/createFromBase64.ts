@@ -2,7 +2,7 @@ import {alphabet} from './constants';
 
 const E = '=';
 
-export const createFromBase64 = (chars: string = alphabet) => {
+export const createFromBase64 = (chars: string = alphabet, noPadding: boolean = false) => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
   let max = 0;
   for (let i = 0; i < chars.length; i++) max = Math.max(max, chars.charCodeAt(i));
@@ -12,7 +12,17 @@ export const createFromBase64 = (chars: string = alphabet) => {
 
   return (encoded: string): Uint8Array => {
     if (!encoded) return new Uint8Array(0);
-    const length = encoded.length;
+    let length = encoded.length;
+    if (noPadding) {
+      const mod = length % 4;
+      if (mod === 2) {
+        encoded += '==';
+        length += 2;
+      } else if (mod === 3) {
+        encoded += '=';
+        length += 1;
+      }
+    }
     if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
     const mainLength = encoded[length - 1] !== E ? length : length - 4;
     let bufferLength = (length >> 2) * 3;
