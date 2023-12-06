@@ -1931,22 +1931,22 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
-    throw new Error('TODO');
-  //   ctx.writeText('[');
-  //   const codegen = ctx.codegen;
-  //   const r = codegen.getRegister(); // array
-  //   const rl = codegen.getRegister(); // array.length
-  //   const rll = codegen.getRegister(); // last
-  //   const ri = codegen.getRegister(); // index
-  //   ctx.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${rll} = ${rl} - 1, ${ri} = 0;`);
-  //   ctx.js(/* js */ `for(; ${ri} < ${rll}; ${ri}++) ` + '{');
-  //   this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${ri}]`));
-  //   ctx.js(/* js */ `s += ',';`);
-  //   ctx.js(`}`);
-  //   ctx.js(`if (${rl}) {`);
-  //   this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rll}]`));
-  //   ctx.js(`}`);
-  //   ctx.writeText(']');
+    ctx.writeText('{');
+    const r = ctx.codegen.var(value.use());
+    const rKeys = ctx.codegen.var(`Object.keys(${r})`);
+    const rLength = ctx.codegen.var(`${rKeys}.length`);
+    const rKey = ctx.codegen.r();
+    const rValue = ctx.codegen.r();
+    ctx.codegen.if(`${rLength}`, () => {
+      ctx.js(`s += asString(${rKeys}[i]) + ':';`);
+      this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    });
+    ctx.js(`for (var ${rKey}, ${rValue}, i = 1; i < ${rLength}; i++) {`);
+    ctx.js(`${rKey} = ${rKeys}[i];`);
+    ctx.js(`s += ',' + asString(${rKey}) + ':';`);
+    this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    ctx.js(`}`);
+    ctx.writeText('}');
   }
 
   private codegenBinaryEncoder(ctx: BinaryEncoderCodegenContext<BinaryJsonEncoder>, value: JsExpression): void {

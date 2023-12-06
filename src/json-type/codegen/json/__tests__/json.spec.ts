@@ -121,6 +121,18 @@ describe('"obj" type', () => {
   });
 });
 
+describe('"map" type', () => {
+  test('serializes a map', () => {
+    const type = s.Map(s.num);
+    exec(type, {a: 1, b: 2, c: 3});
+  });
+
+  test('serializes a map in a map', () => {
+    const type = s.Map(s.Map(s.bool));
+    exec(type, {a: {b: true}});
+  });
+});
+
 describe('general', () => {
   test('serializes according to schema a POJO object', () => {
     const type = s.Object({
