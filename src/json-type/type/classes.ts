@@ -1977,38 +1977,31 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
-    throw new Error('TODO');
-  //   const type = this.type;
-  //   const codegen = ctx.codegen;
-  //   const expr = new JsExpression(() => `${rItem}`);
-  //   const r = codegen.var(value.use());
-  //   const rLen = codegen.var(`${r}.length`);
-  //   const rLast = codegen.var(`${rLen} - 1`);
-  //   const ri = codegen.var('0');
-  //   const rItem = codegen.var();
-  //   ctx.blob(
-  //     ctx.gen((encoder) => {
-  //       encoder.writeStartArr();
-  //     }),
-  //   );
-  //   codegen.js(`for(; ${ri} < ${rLast}; ${ri}++) {`);
-  //   codegen.js(`${rItem} = ${r}[${ri}];`);
-  //   type.codegenJsonEncoder(ctx, expr);
-  //   ctx.blob(
-  //     ctx.gen((encoder) => {
-  //       encoder.writeArrSeparator();
-  //     }),
-  //   );
-  //   ctx.js(`}`);
-  //   ctx.js(`if (${rLen}) {`);
-  //   codegen.js(`${rItem} = ${r}[${rLast}];`);
-  //   type.codegenJsonEncoder(ctx, expr);
-  //   ctx.js(`}`);
-  //   ctx.blob(
-  //     ctx.gen((encoder) => {
-  //       encoder.writeEndArr();
-  //     }),
-  //   );
+    const type = this.type;
+    const objStartBlob = ctx.gen((encoder) => encoder.writeStartObj());
+    const objEndBlob = ctx.gen((encoder) => encoder.writeEndObj());
+    const separatorBlob = ctx.gen((encoder) => encoder.writeObjSeparator());
+    const keySeparatorBlob = ctx.gen((encoder) => encoder.writeObjKeySeparator());
+    const codegen = ctx.codegen;
+    const r = codegen.var(value.use());
+    const rKeys = codegen.var(`Object.keys(${r})`);
+    const rKey = codegen.var();
+    const rLength = codegen.var(`${rKeys}.length`);
+    ctx.blob(objStartBlob);
+    ctx.codegen.if(`${rLength}`, () => {
+      ctx.js(`${rKey} = ${rKeys}[0];`);
+      codegen.js(`encoder.writeStr(${rKey});`);
+      ctx.blob(keySeparatorBlob);
+      type.codegenJsonEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    });
+    ctx.js(`for (var i = 1; i < ${rLength}; i++) {`);
+    ctx.js(`${rKey} = ${rKeys}[i];`);
+    ctx.blob(separatorBlob);
+    codegen.js(`encoder.writeStr(${rKey});`);
+    ctx.blob(keySeparatorBlob);
+    type.codegenJsonEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    ctx.js(`}`);
+    ctx.blob(objEndBlob);
   }
 
   public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
