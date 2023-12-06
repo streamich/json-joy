@@ -2051,12 +2051,17 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
     return res;
   }
 
-  public toTypeScriptAst(): ts.TsArrayType {
-    throw new Error('TODO');
-  //   return {
-  //     node: 'ArrayType',
-  //     elementType: this.type.toTypeScriptAst() as ts.TsType,
-  //   };
+  public toTypeScriptAst(): ts.TsTypeReference {
+    const node: ts.TsTypeReference = {
+      node: 'TypeReference',
+      typeName: 'Record',
+      typeArguments: [
+        {node: 'StringKeyword'},
+        this.type.toTypeScriptAst(),
+      ],
+    };
+    // augmentWithComment(this.schema, node);
+    return node;
   }
 
   public toJson(value: unknown, system: TypeSystem | undefined = this.system): json_string<unknown> {
