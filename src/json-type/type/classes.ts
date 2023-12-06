@@ -2024,7 +2024,7 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public random(): Record<string, unknown> {
-    let length = Math.round(Math.random() * 10);
+    const length = Math.round(Math.random() * 10);
     const res: Record<string, unknown> = {};
     for (let i = 0; i < length; i++) res[RandomJson.genString(length)] = this.type.random();
     return res;
