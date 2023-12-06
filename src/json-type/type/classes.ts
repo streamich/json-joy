@@ -1916,22 +1916,18 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenValidator(ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
-    throw new Error('TODO');
-  //   const rl = ctx.codegen.getRegister();
-  //   const ri = ctx.codegen.getRegister();
-  //   const rv = ctx.codegen.getRegister();
-  //   const err = ctx.err(ValidationError.ARR, path);
-  //   const errLen = ctx.err(ValidationError.ARR_LEN, path);
-  //   const {min, max} = this.schema;
-  //   ctx.js(/* js */ `if (!Array.isArray(${r})) return ${err};`);
-  //   ctx.js(`var ${rl} = ${r}.length;`);
-  //   if (min !== undefined) ctx.js(`if (${rl} < ${min}) return ${errLen};`);
-  //   if (max !== undefined) ctx.js(`if (${rl} > ${max}) return ${errLen};`);
-  //   ctx.js(`for (var ${rv}, ${ri} = ${r}.length; ${ri}-- !== 0;) {`);
-  //   ctx.js(`${rv} = ${r}[${ri}];`);
-  //   this.type.codegenValidator(ctx, [...path, {r: ri}], rv);
-  //   ctx.js(`}`);
-  //   ctx.emitCustomValidators(this, path, r);
+    const err = ctx.err(ValidationError.MAP, path);
+    ctx.js(`if (!${r} || (typeof ${r} !== 'object') || (${r}.constructor !== Object)) return ${err};`);
+    const rKeys = ctx.codegen.var(`Object.keys(${r});`);
+    const rLength = ctx.codegen.var(`${rKeys}.length`);
+    const rKey = ctx.codegen.r();
+    const rValue = ctx.codegen.r();
+    ctx.js(`for (var ${rKey}, ${rValue}, i = 0; i < ${rLength}; i++) {`);
+    ctx.js(`${rKey} = ${rKeys}[i];`);
+    ctx.js(`${rValue} = ${r}[${rKey}];`);
+    this.type.codegenValidator(ctx, [...path, {r: rKey}], rValue);
+    ctx.js(`}`);
+    ctx.emitCustomValidators(this, path, r);
   }
 
   public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
@@ -2018,7 +2014,7 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    throw new Error('TODO');
+    throw new Error('TODO CAP');
   //   const codegen = ctx.codegen;
   //   ctx.inc(MaxEncodingOverhead.Array);
   //   const rLen = codegen.var(`${value.use()}.length`);

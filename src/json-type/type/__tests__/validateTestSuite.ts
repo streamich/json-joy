@@ -417,6 +417,37 @@ export const validateTestSuite = (validate: (type: Type, value: unknown) => void
     });
   });
 
+  describe('map', () => {
+    test('accepts empty object as input', () => {
+      const type = t.map;
+      validate(type, {});
+    });
+
+    test('does not accept empty array as input', () => {
+      const type = t.map;
+      expect(() => validate(type, [])).toThrow();
+    });
+
+    test('validates "any" map', () => {
+      const type = t.map;
+      validate(type, {
+        a: 'str',
+        b: 123,
+        c: true,
+      });
+    });
+
+    test('validates contained type', () => {
+      const type = t.Map(t.str);
+      validate(type, {});
+      validate(type, {a: ''});
+      validate(type, {b: 'asdf'});
+      expect(() => validate(type, {c: 123})).toThrowErrorMatchingInlineSnapshot(`"STR"`);
+      expect(() => validate(type, {c: false})).toThrowErrorMatchingInlineSnapshot(`"STR"`);
+      expect(() => validate(type, [])).toThrowErrorMatchingInlineSnapshot(`"MAP"`);
+    });
+  });
+
   describe('ref', () => {
     test('validates after recursively resolving', () => {
       const t = system.t;
