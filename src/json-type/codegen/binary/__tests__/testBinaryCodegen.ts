@@ -369,6 +369,40 @@ export const testBinaryCodegen = (transcode: (system: TypeSystem, type: Type, va
     });
   });
 
+  describe('"map" type', () => {
+    test('can encode empty map', () => {
+      const system = new TypeSystem();
+      const t = system.t;
+      const type = t.map;
+      const value: {} = {};
+      expect(transcode(system, type, value)).toStrictEqual(value);
+    });
+
+    test('can encode empty map with one key', () => {
+      const system = new TypeSystem();
+      const t = system.t;
+      const type = t.map;
+      const value: {} = {a: 'asdf'};
+      expect(transcode(system, type, value)).toStrictEqual(value);
+    });
+
+    test('can encode typed map with two keys', () => {
+      const system = new TypeSystem();
+      const t = system.t;
+      const type = t.Map(t.bool);
+      const value: {} = {x: true, y: false};
+      expect(transcode(system, type, value)).toStrictEqual(value);
+    });
+
+    test('can encode nested maps', () => {
+      const system = new TypeSystem();
+      const t = system.t;
+      const type = t.Map(t.Map(t.bool));
+      const value: {} = {a: {x: true, y: false}}
+      expect(transcode(system, type, value)).toStrictEqual(value);
+    });
+  });
+
   describe('"ref" type', () => {
     test('can encode a simple reference', () => {
       const system = new TypeSystem();

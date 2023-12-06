@@ -1950,32 +1950,30 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   private codegenBinaryEncoder(ctx: BinaryEncoderCodegenContext<BinaryJsonEncoder>, value: JsExpression): void {
-    throw new Error('TODO');
-  //   const type = this.type;
-  //   const codegen = ctx.codegen;
-  //   const r = codegen.getRegister(); // array
-  //   const rl = codegen.getRegister(); // array.length
-  //   const ri = codegen.getRegister(); // index
-  //   const rItem = codegen.getRegister(); // item
-  //   const expr = new JsExpression(() => `${rItem}`);
-  //   ctx.js(/* js */ `var ${r} = ${value.use()}, ${rl} = ${r}.length, ${ri} = 0, ${rItem};`);
-  //   ctx.js(/* js */ `encoder.writeArrHdr(${rl});`);
-  //   ctx.js(/* js */ `for(; ${ri} < ${rl}; ${ri}++) ` + '{');
-  //   ctx.js(/* js */ `${rItem} = ${r}[${ri}];`);
-  //   if (ctx instanceof CborEncoderCodegenContext) type.codegenCborEncoder(ctx, expr);
-  //   else if (ctx instanceof MessagePackEncoderCodegenContext) type.codegenMessagePackEncoder(ctx, expr);
-  //   else throw new Error('Unknown encoder');
-  //   ctx.js(`}`);
+    const type = this.type;
+    const codegen = ctx.codegen;
+    const r = codegen.var(value.use());
+    const rKeys = codegen.var(`Object.keys(${r})`);
+    const rKey = codegen.var();
+    const rLength = codegen.var(`${rKeys}.length`);
+    const ri = codegen.var('0');
+    ctx.js(`encoder.writeObjHdr(${rLength});`);
+    ctx.js(`for(; ${ri} < ${rLength}; ${ri}++){`);
+    ctx.js(`${rKey} = ${rKeys}[${ri}];`);
+    ctx.js(`encoder.writeStr(${rKey});`);
+    const expr = new JsExpression(() => `${r}[${rKey}]`);
+    if (ctx instanceof CborEncoderCodegenContext) type.codegenCborEncoder(ctx, expr);
+    else if (ctx instanceof MessagePackEncoderCodegenContext) type.codegenMessagePackEncoder(ctx, expr);
+    else throw new Error('Unknown encoder');
+    ctx.js(`}`);
   }
 
   public codegenCborEncoder(ctx: CborEncoderCodegenContext, value: JsExpression): void {
-    throw new Error('TODO');
-  //   this.codegenBinaryEncoder(ctx, value);
+    this.codegenBinaryEncoder(ctx, value);
   }
 
   public codegenMessagePackEncoder(ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
-    throw new Error('TODO');
-  //   this.codegenBinaryEncoder(ctx, value);
+    this.codegenBinaryEncoder(ctx, value);
   }
 
   public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
@@ -2014,7 +2012,8 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    throw new Error('TODO CAP');
+    ctx.codegen.js(`size += maxEncodingCapacity(${value.use()});`);
+    // throw new Error('TODO CAP');
   //   const codegen = ctx.codegen;
   //   ctx.inc(MaxEncodingOverhead.Array);
   //   const rLen = codegen.var(`${value.use()}.length`);
