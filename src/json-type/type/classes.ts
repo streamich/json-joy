@@ -1142,11 +1142,7 @@ export class ArrayType<T extends Type> extends AbstractType<schema.ArraySchema<S
     ctx.inc(MaxEncodingOverhead.Array);
     const rLen = codegen.var(`${value.use()}.length`);
     const type = this.type;
-    codegen.js(
-      `size += ${
-        MaxEncodingOverhead.ArrayElement === 1 ? `${rLen}` : `${MaxEncodingOverhead.ArrayElement} * ${rLen}`
-      };`,
-    );
+    codegen.js(`size += ${MaxEncodingOverhead.ArrayElement} * ${rLen}`);
     // TODO: Use ".capacityEstimator()" here.
     const fn = type.compileCapacityEstimator({
       system: ctx.options.system,
@@ -2005,31 +2001,19 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    ctx.codegen.js(`size += maxEncodingCapacity(${value.use()});`);
-    // throw new Error('TODO CAP');
-  //   const codegen = ctx.codegen;
-  //   ctx.inc(MaxEncodingOverhead.Array);
-  //   const rLen = codegen.var(`${value.use()}.length`);
-  //   const type = this.type;
-  //   codegen.js(
-  //     `size += ${
-  //       MaxEncodingOverhead.ArrayElement === 1 ? `${rLen}` : `${MaxEncodingOverhead.ArrayElement} * ${rLen}`
-  //     };`,
-  //   );
-  //   // TODO: Use ".capacityEstimator()" here.
-  //   const fn = type.compileCapacityEstimator({
-  //     system: ctx.options.system,
-  //     name: ctx.options.name,
-  //   });
-  //   const isConstantSizeType = type instanceof ConstType || type instanceof BooleanType || type instanceof NumberType;
-  //   if (isConstantSizeType) {
-  //     codegen.js(`size += ${rLen} * ${fn(null)};`);
-  //   } else {
-  //     const r = codegen.var(value.use());
-  //     const rFn = codegen.linkDependency(fn);
-  //     const ri = codegen.getRegister();
-  //     codegen.js(`for(var ${ri} = ${rLen}; ${ri}-- !== 0;) size += ${rFn}(${r}[${ri}]);`);
-  //   }
+    const codegen = ctx.codegen;
+    ctx.inc(MaxEncodingOverhead.Object);
+    const r = codegen.var(value.use());
+    const rKeys = codegen.var(`Object.keys(${r})`);
+    const rKey = codegen.var();
+    const rLen = codegen.var(`${rKeys}.length`);
+    codegen.js(`size += ${MaxEncodingOverhead.ObjectElement} * ${rLen}`);
+    const ri = codegen.var('0');
+    codegen.js(`for (; ${ri} < ${rLen}; ${ri}++) {`);
+    codegen.js(`${rKey} = ${rKeys}[${ri}];`);
+    codegen.js(`size += ${MaxEncodingOverhead.String} + ${MaxEncodingOverhead.StringLengthMultiplier} * ${rKey}.length;`);
+    this.type.codegenCapacityEstimator(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    codegen.js(`}`);
   }
 
   public random(): Record<string, unknown> {

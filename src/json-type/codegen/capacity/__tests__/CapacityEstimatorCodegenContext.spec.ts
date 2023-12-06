@@ -155,6 +155,38 @@ describe('object', () => {
   });
 });
 
+describe('map', () => {
+  test('empty', () => {
+    const system = new TypeSystem();
+    const type = system.t.map;
+    const estimator = type.compileCapacityEstimator({});
+    expect(estimator(123)).toBe(maxEncodingCapacity({}));
+  });
+
+  test('with one field', () => {
+    const system = new TypeSystem();
+    const type = system.t.Map(system.t.bool);
+    const estimator = type.compileCapacityEstimator({});
+    expect(estimator({foo: true})).toBe(maxEncodingCapacity({foo: true}));
+  });
+
+  test('three number fields', () => {
+    const system = new TypeSystem();
+    const type = system.t.Map(system.t.num);
+    const estimator = type.compileCapacityEstimator({});
+    const data = {foo: 1, bar: 2, baz: 3};
+    expect(estimator(data)).toBe(maxEncodingCapacity(data));
+  });
+
+  test('nested maps', () => {
+    const system = new TypeSystem();
+    const type = system.t.Map(system.t.Map(system.t.str));
+    const estimator = type.compileCapacityEstimator({});
+    const data = {foo: {bar: 'baz'}, baz: {bar: 'foo'}};
+    expect(estimator(data)).toBe(maxEncodingCapacity(data));
+  });
+});
+
 describe('ref', () => {
   test('two hops', () => {
     const system = new TypeSystem();
