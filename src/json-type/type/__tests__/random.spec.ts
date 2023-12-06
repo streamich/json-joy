@@ -13,12 +13,23 @@ test('generates random JSON', () => {
     t.prop('name', t.str),
     t.prop('tags', t.Array(t.str)),
     t.propOpt('scores', t.Array(t.num)),
+    t.prop('refs', t.Map(t.str)),
   );
   const json = type.random();
   expect(json).toMatchInlineSnapshot(`
     {
       "id": "",
       "name": "1",
+      "refs": {
+        "259<@CGK": "UY\\\`c",
+        ";>BEILPT": "^beimp",
+        "HKORVY]\`": "korvy}#",
+        "LOSWZ^ae": "pswz #'*",
+        "_cfjmqtx": "гггггг诶诶诶诶",
+        "nquy|"%)": "4",
+        "w{ $'+/2": "=@",
+        "гггг诶诶诶诶": "MQTX",
+      },
       "tags": [
         "@CG",
         "QUY\\\`",

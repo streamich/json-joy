@@ -46,6 +46,10 @@ export class TypeBuilder {
     return this.Object();
   }
 
+  get map() {
+    return this.Map(this.any);
+  }
+
   get fn() {
     return this.Function(this.any, this.any);
   }
@@ -129,6 +133,12 @@ export class TypeBuilder {
     return field;
   }
 
+  public Map<T extends Type>(type: T, options?: schema.Optional<schema.MapSchema>) {
+    const map = new classes.MapType<T>(type, options);
+    map.system = this.system;
+    return map;
+  }
+
   public Or<F extends Type[]>(...types: F) {
     const or = new classes.OrType<F>(types);
     or.system = this.system;
@@ -176,6 +186,8 @@ export class TypeBuilder {
           ),
         ).options(node);
       }
+      case 'map':
+        return this.Map(this.import(node.type), node);
       case 'const':
         return this.Const(node.value).options(node);
       case 'or':

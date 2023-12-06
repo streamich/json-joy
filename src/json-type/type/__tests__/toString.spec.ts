@@ -35,6 +35,7 @@ test('can print a type', () => {
           )
           .options({format: 'cbor'}),
       ),
+      t.prop('map', t.Map(t.num)),
     )
     .options({unknownFields: true});
   // console.log(type + '');
@@ -83,11 +84,14 @@ test('can print a type', () => {
     │      │   └─ str
     │      └─ "value":
     │          └─ any
-    └─ "binaryOperation":
-        └─ bin { format = "cbor" }
-           └─ tup { description = "Should always have 3 elements" }
-              ├─ const { description = "7 is the magic number" } → 7
-              ├─ str
-              └─ any"
+    ├─ "binaryOperation":
+    │   └─ bin { format = "cbor" }
+    │      └─ tup { description = "Should always have 3 elements" }
+    │         ├─ const { description = "7 is the magic number" } → 7
+    │         ├─ str
+    │         └─ any
+    └─ "map":
+        └─ map
+           └─ num"
   `);
 });

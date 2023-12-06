@@ -36,6 +36,7 @@ test('can print a type', () => {
           )
           .options({format: 'cbor'}),
       ),
+      t.prop('map', t.Map(t.str)),
     )
     .options({unknownFields: true});
   // console.log(JSON.stringify(type.toJsonSchema(), null, 2));
@@ -82,6 +83,14 @@ test('can print a type', () => {
         },
         "id": {
           "type": "string",
+        },
+        "map": {
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+            },
+          },
+          "type": "object",
         },
         "numberProperty": {
           "exclusiveMinimum": 3.14,
@@ -178,6 +187,7 @@ test('can print a type', () => {
         "unionProperty",
         "operation",
         "binaryOperation",
+        "map",
       ],
       "type": "object",
     }

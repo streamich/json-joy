@@ -207,6 +207,31 @@ describe('obj', () => {
   });
 });
 
+describe('map', () => {
+  test('can emit tuple AST', () => {
+    const system = new TypeSystem();
+    const {t} = system;
+    const type = system.t.Map(t.num).options({
+      title: 'title',
+      description: 'description',
+    });
+    expect(type.toTypeScriptAst()).toMatchInlineSnapshot(`
+      {
+        "node": "TypeReference",
+        "typeArguments": [
+          {
+            "node": "StringKeyword",
+          },
+          {
+            "node": "NumberKeyword",
+          },
+        ],
+        "typeName": "Record",
+      }
+    `);
+  });
+});
+
 describe('ref', () => {
   test('can emit reference AST', () => {
     const system = new TypeSystem();
