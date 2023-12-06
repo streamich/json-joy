@@ -186,6 +186,8 @@ export class TypeBuilder {
           ),
         ).options(node);
       }
+      case 'map':
+        return this.Map(this.import(node.type), node);
       case 'const':
         return this.Const(node.value).options(node);
       case 'or':

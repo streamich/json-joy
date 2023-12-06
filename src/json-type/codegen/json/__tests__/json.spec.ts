@@ -127,6 +127,16 @@ describe('"map" type', () => {
     exec(type, {a: 1, b: 2, c: 3});
   });
 
+  test('serializes empty map', () => {
+    const type = s.Map(s.num);
+    exec(type, {});
+  });
+
+  test('serializes a map with a single key', () => {
+    const type = s.Map(s.num);
+    exec(type, {'0': 0});
+  });
+
   test('serializes a map in a map', () => {
     const type = s.Map(s.Map(s.bool));
     exec(type, {a: {b: true}});

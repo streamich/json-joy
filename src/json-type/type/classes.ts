@@ -1935,13 +1935,13 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
     const r = ctx.codegen.var(value.use());
     const rKeys = ctx.codegen.var(`Object.keys(${r})`);
     const rLength = ctx.codegen.var(`${rKeys}.length`);
-    const rKey = ctx.codegen.r();
-    const rValue = ctx.codegen.r();
+    const rKey = ctx.codegen.var();
     ctx.codegen.if(`${rLength}`, () => {
-      ctx.js(`s += asString(${rKeys}[i]) + ':';`);
+      ctx.js(`${rKey} = ${rKeys}[0];`);
+      ctx.js(`s += asString(${rKey}) + ':';`);
       this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
     });
-    ctx.js(`for (var ${rKey}, ${rValue}, i = 1; i < ${rLength}; i++) {`);
+    ctx.js(`for (var i = 1; i < ${rLength}; i++) {`);
     ctx.js(`${rKey} = ${rKeys}[i];`);
     ctx.js(`s += ',' + asString(${rKey}) + ':';`);
     this.type.codegenJsonTextEncoder(ctx, new JsExpression(() => `${r}[${rKey}]`));
