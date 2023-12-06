@@ -1143,7 +1143,6 @@ export class ArrayType<T extends Type> extends AbstractType<schema.ArraySchema<S
     const rLen = codegen.var(`${value.use()}.length`);
     const type = this.type;
     codegen.js(`size += ${MaxEncodingOverhead.ArrayElement} * ${rLen}`);
-    // TODO: Use ".capacityEstimator()" here.
     const fn = type.compileCapacityEstimator({
       system: ctx.options.system,
       name: ctx.options.name,
@@ -2008,13 +2007,19 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
     const rKey = codegen.var();
     const rLen = codegen.var(`${rKeys}.length`);
     codegen.js(`size += ${MaxEncodingOverhead.ObjectElement} * ${rLen}`);
+    const type = this.type;
+    const fn = type.compileCapacityEstimator({
+      system: ctx.options.system,
+      name: ctx.options.name,
+    });
+    const rFn = codegen.linkDependency(fn);
     const ri = codegen.var('0');
     codegen.js(`for (; ${ri} < ${rLen}; ${ri}++) {`);
     codegen.js(`${rKey} = ${rKeys}[${ri}];`);
     codegen.js(
       `size += ${MaxEncodingOverhead.String} + ${MaxEncodingOverhead.StringLengthMultiplier} * ${rKey}.length;`,
     );
-    this.type.codegenCapacityEstimator(ctx, new JsExpression(() => `${r}[${rKey}]`));
+    codegen.js(`size += ${rFn}(${r}[${rKey}]);`);
     codegen.js(`}`);
   }
 
