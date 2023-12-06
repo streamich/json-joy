@@ -2044,15 +2044,11 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   //   }
   }
 
-  public random(): unknown[] {
-    throw new Error('TODO');
-  //   let length = Math.round(Math.random() * 10);
-  //   const {min, max} = this.schema;
-  //   if (min !== undefined && length < min) length = min + length;
-  //   if (max !== undefined && length > max) length = max;
-  //   const arr = [];
-  //   for (let i = 0; i < length; i++) arr.push(this.type.random());
-  //   return arr;
+  public random(): Record<string, unknown> {
+    let length = Math.round(Math.random() * 10);
+    const res: Record<string, unknown> = {};
+    for (let i = 0; i < length; i++) res[RandomJson.genString(length)] = this.type.random();
+    return res;
   }
 
   public toTypeScriptAst(): ts.TsArrayType {
