@@ -398,7 +398,7 @@ export const testBinaryCodegen = (transcode: (system: TypeSystem, type: Type, va
       const system = new TypeSystem();
       const t = system.t;
       const type = t.Map(t.Map(t.bool));
-      const value: {} = {a: {x: true, y: false}}
+      const value: {} = {a: {x: true, y: false}};
       expect(transcode(system, type, value)).toStrictEqual(value);
     });
   });

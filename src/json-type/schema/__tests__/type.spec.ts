@@ -14,7 +14,7 @@ test('can generate any type', () => {
     s.prop('address', address),
     s.prop('timeCreated', s.Number()),
     s.prop('tags', s.Array(s.Or(s.Number(), s.String()))),
-    s.prop('elements', s.Map(s.str))
+    s.prop('elements', s.Map(s.str)),
   );
 
   expect(userType).toMatchObject({

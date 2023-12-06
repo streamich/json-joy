@@ -2011,7 +2011,9 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
     const ri = codegen.var('0');
     codegen.js(`for (; ${ri} < ${rLen}; ${ri}++) {`);
     codegen.js(`${rKey} = ${rKeys}[${ri}];`);
-    codegen.js(`size += ${MaxEncodingOverhead.String} + ${MaxEncodingOverhead.StringLengthMultiplier} * ${rKey}.length;`);
+    codegen.js(
+      `size += ${MaxEncodingOverhead.String} + ${MaxEncodingOverhead.StringLengthMultiplier} * ${rKey}.length;`,
+    );
     this.type.codegenCapacityEstimator(ctx, new JsExpression(() => `${r}[${rKey}]`));
     codegen.js(`}`);
   }
@@ -2027,10 +2029,7 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
     const node: ts.TsTypeReference = {
       node: 'TypeReference',
       typeName: 'Record',
-      typeArguments: [
-        {node: 'StringKeyword'},
-        this.type.toTypeScriptAst(),
-      ],
+      typeArguments: [{node: 'StringKeyword'}, this.type.toTypeScriptAst()],
     };
     // augmentWithComment(this.schema, node);
     return node;
