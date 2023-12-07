@@ -3,7 +3,7 @@ import {RpcPersistentClient} from '../RpcPersistentClient';
 import {createWebSocketMock} from '../../channel/mock';
 import {RequestCompleteMessage} from '../..';
 import {until} from '../../../../__tests__/util';
-import {Value} from '../../messages/Value';
+import {RpcValue} from '../../messages/Value';
 import {RpcCodec} from '../../codec/RpcCodec';
 import {Codecs} from '../../../../json-pack/codecs/Codecs';
 import {Writer} from '../../../../util/buffers/Writer';
@@ -39,6 +39,6 @@ test('on remote method execution, sends message over WebSocket only once', async
   const decoded = codec.decode(message, codec.req);
   const messageDecoded = decoded[0];
   expect(messageDecoded).toBeInstanceOf(RequestCompleteMessage);
-  expect(messageDecoded).toMatchObject(new RequestCompleteMessage(1, 'foo.bar', new Value({foo: 'bar'}, undefined)));
+  expect(messageDecoded).toMatchObject(new RequestCompleteMessage(1, 'foo.bar', new RpcValue({foo: 'bar'}, undefined)));
   client.stop();
 });

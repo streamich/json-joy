@@ -1,7 +1,7 @@
-import {Value} from '../Value';
+import {RpcValue} from '../Value';
 import * as msg from '../messages';
 
-const val = (data: unknown = undefined) => new Value(data, undefined);
+const val = (data: unknown = undefined) => new RpcValue(data, undefined);
 
 const notification1 = new msg.NotificationMessage('a', val('a'));
 const notification2 = new msg.NotificationMessage('test', val(null));

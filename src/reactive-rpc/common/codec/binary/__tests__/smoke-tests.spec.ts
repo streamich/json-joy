@@ -13,7 +13,7 @@ import {
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
 } from '../../../messages';
-import {Value} from '../../../messages/Value';
+import {RpcValue} from '../../../messages/Value';
 import {messages} from '../../../messages/__tests__/fixtures';
 
 const writer = new Writer(8 * Math.round(Math.random() * 100));
@@ -31,25 +31,25 @@ for (const jsonCodec of codecList) {
 
   describe(jsonCodec.id, () => {
     test('Notification message', () => {
-      const value = new Value({foo: 'bar'}, undefined);
+      const value = new RpcValue({foo: 'bar'}, undefined);
       const message = new NotificationMessage('abc', value);
       assertMessage(message);
     });
 
     test('Request Data message', () => {
-      const value = new Value([1, 2, 3], undefined);
+      const value = new RpcValue([1, 2, 3], undefined);
       const message = new RequestDataMessage(9999, 'a', value);
       assertMessage(message);
     });
 
     test('Request Complete message', () => {
-      const value = new Value(true, undefined);
+      const value = new RpcValue(true, undefined);
       const message = new RequestCompleteMessage(3, 'abc', value);
       assertMessage(message);
     });
 
     test('Request Error message', () => {
-      const value = new Value({message: 'Error!', errno: 123, code: 'ERROR'}, undefined);
+      const value = new RpcValue({message: 'Error!', errno: 123, code: 'ERROR'}, undefined);
       const message = new RequestErrorMessage(0, 'wtf', value);
       assertMessage(message);
     });
@@ -60,19 +60,19 @@ for (const jsonCodec of codecList) {
     });
 
     test('Response Data message', () => {
-      const value = new Value([1, 2, 3], undefined);
+      const value = new RpcValue([1, 2, 3], undefined);
       const message = new ResponseDataMessage(30000, value);
       assertMessage(message);
     });
 
     test('Response Complete message', () => {
-      const value = new Value(true, undefined);
+      const value = new RpcValue(true, undefined);
       const message = new ResponseCompleteMessage(3, value);
       assertMessage(message);
     });
 
     test('Response Error message', () => {
-      const value = new Value({message: 'Error!', errno: 123, code: 'ERROR'}, undefined);
+      const value = new RpcValue({message: 'Error!', errno: 123, code: 'ERROR'}, undefined);
       const message = new ResponseErrorMessage(0, value);
       assertMessage(message);
     });
@@ -85,7 +85,7 @@ for (const jsonCodec of codecList) {
 }
 
 describe('batch of messages', () => {
-  const value = new Value({foo: 'bar'}, undefined);
+  const value = new RpcValue({foo: 'bar'}, undefined);
   const message1 = new NotificationMessage('abc', value);
   const message2 = new RequestDataMessage(888, 'a', value);
   const message3 = new ResponseCompleteMessage(3, value);

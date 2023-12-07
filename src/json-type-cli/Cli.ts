@@ -7,7 +7,7 @@ import {formatError} from './util';
 import {defineBuiltinRoutes} from './methods';
 import {defaultParams} from './defaultParams';
 import type {CliCodecs} from './CliCodecs';
-import type {Value} from '../reactive-rpc/common/messages/Value';
+import type {RpcValue} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {WriteStream, ReadStream} from 'tty';
 import type {CliCodec, CliContext, CliParam, CliParamInstance} from './types';
@@ -109,7 +109,7 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         const ctx: CliContext<Router> = {cli: this};
         for (const instance of this.paramInstances) if (instance.onBeforeCall) await instance.onBeforeCall(method, ctx);
         const value = await this.caller.call(method, this.request as any, ctx);
-        this.response = (value as Value).data;
+        this.response = (value as RpcValue).data;
         for (const instance of this.paramInstances) if (instance.onResponse) await instance.onResponse();
         const buf = this.responseCodec.encode(this.response);
         this.stdout.write(buf);

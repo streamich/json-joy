@@ -1,6 +1,6 @@
 import {RpcMessageFormat} from '../constants';
 import {RpcError} from '../../rpc/caller/error';
-import {Value} from '../../messages/Value';
+import {RpcValue} from '../../messages/Value';
 import {EncodingFormat} from '../../../../json-pack/constants';
 import {TlvBinaryJsonEncoder} from '../../../../json-pack/types';
 import {JsonJsonValueCodec} from '../../../../json-pack/codecs/json';
@@ -123,13 +123,13 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
     if ((message as any).id === undefined) {
       const notification = message as schema.JsonRpc2NotificationMessage;
       const data = notification.params;
-      const value = new Value(data, undefined);
+      const value = new RpcValue(data, undefined);
       return new msg.NotificationMessage(notification.method, value);
     }
     if (typeof (message as schema.JsonRpc2RequestMessage).method === 'string') {
       const request = message as schema.JsonRpc2RequestMessage;
       const data = request.params;
-      const value = data === undefined ? undefined : new Value(request.params, undefined);
+      const value = data === undefined ? undefined : new RpcValue(request.params, undefined);
       if (typeof request.id !== 'number') throw RpcError.badRequest();
       return new msg.RequestCompleteMessage(request.id, request.method, value);
     }
@@ -137,12 +137,12 @@ export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
       const response = message as schema.JsonRpc2ResponseMessage;
       if (typeof response.id !== 'number') throw RpcError.badRequest();
       const data = response.result;
-      const value = data === undefined ? undefined : new Value(response.result, undefined);
+      const value = data === undefined ? undefined : new RpcValue(response.result, undefined);
       return new msg.ResponseCompleteMessage(response.id, value);
     }
     if ((message as schema.JsonRpc2ErrorMessage).error !== undefined) {
       const response = message as schema.JsonRpc2ErrorMessage;
-      const value = new Value(response.error.data, undefined);
+      const value = new RpcValue(response.error.data, undefined);
       if (typeof response.id !== 'number') throw RpcError.badRequest();
       return new msg.ResponseErrorMessage(response.id, value);
     }

@@ -1,4 +1,4 @@
-import {Value} from '../../../messages/Value';
+import {RpcValue} from '../../../messages/Value';
 import {IRpcError, RpcErrorType} from './RpcErrorType';
 
 export enum RpcErrorCodes {
@@ -31,7 +31,7 @@ export enum RpcErrorCodes {
   BUFFER_OVERFLOW,
 }
 
-export type RpcErrorValue = Value<RpcError>;
+export type RpcErrorValue = RpcValue<RpcError>;
 
 export class RpcError extends Error implements IRpcError {
   public static from(error: unknown) {
@@ -62,11 +62,11 @@ export class RpcError extends Error implements IRpcError {
   }
 
   public static value(error: RpcError): RpcErrorValue {
-    return new Value(error, RpcErrorType);
+    return new RpcValue(error, RpcErrorType);
   }
 
   public static valueFrom(error: unknown, def = RpcError.internalErrorValue(error)): RpcErrorValue {
-    if (error instanceof Value && error.data instanceof RpcError && error.type === RpcErrorType) return error;
+    if (error instanceof RpcValue && error.data instanceof RpcError && error.type === RpcErrorType) return error;
     if (error instanceof RpcError) return RpcError.value(error);
     return def;
   }
