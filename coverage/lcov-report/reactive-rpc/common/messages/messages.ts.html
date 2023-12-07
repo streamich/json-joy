@@ -456,7 +456,12 @@
 <a name='L391'></a><a href='#L391'>391</a>
 <a name='L392'></a><a href='#L392'>392</a>
 <a name='L393'></a><a href='#L393'>393</a>
-<a name='L394'></a><a href='#L394'>394</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a>
+<a name='L397'></a><a href='#L397'>397</a>
+<a name='L398'></a><a href='#L398'>398</a>
+<a name='L399'></a><a href='#L399'>399</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-yes">25x</span>
@@ -516,6 +521,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">139x</span>
 <span class="cline-any cline-yes">139x</span>
 <span class="cline-any cline-yes">139x</span>
@@ -855,7 +865,7 @@ import {validateId, validateMethod} from '../rpc/validation';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import {MsgPackEncoder} from '../../../json-pack/msgpack';
 import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
-import type {Value} from './Value';
+import type {RpcValue} from './Value';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
 import type {BinaryJsonEncoder} from '../../../json-pack/types';
 import type * as cmsg from '../codec/compact/types';
@@ -890,7 +900,7 @@ const encodeBinaryWithNameAndPayload = (
   typeU16: number,
   id: number,
   name: string,
-  value: Value&lt;any&gt; | undefined,
+  value: RpcValue&lt;any&gt; | undefined,
 ) =&gt; {
   const writer = codec.encoder.writer;
   const nameLength = name.length;
@@ -908,7 +918,12 @@ const encodeBinaryWithNameAndPayload = (
   encodeHeader(writer, typeU16, id, payloadSize, start);
 };
 &nbsp;
-const encodeBinaryWithPayload = (codec: JsonValueCodec, typeU16: number, id: number, value: Value&lt;any&gt; | undefined) =&gt; {
+const encodeBinaryWithPayload = (
+  codec: JsonValueCodec,
+  typeU16: number,
+  id: number,
+  value: RpcValue&lt;any&gt; | undefined,
+) =&gt; {
   const writer = codec.encoder.writer;
   writer.move(4);
   const x0 = writer.x0;
@@ -992,7 +1007,7 @@ const encodeCompactWithPayload = (
 /**
  * @category Message
  */
-export class NotificationMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class NotificationMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly method: string, public readonly value: V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1053,7 +1068,7 @@ export class NotificationMessage&lt;V extends Value&lt;any&gt; = Value&gt; imple
 /**
  * @category Message
  */
-export class RequestDataMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class RequestDataMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1079,7 +1094,7 @@ export class RequestDataMessage&lt;V extends Value&lt;any&gt; = Value&gt; implem
 /**
  * @category Message
  */
-export class RequestCompleteMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class RequestCompleteMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1105,7 +1120,7 @@ export class RequestCompleteMessage&lt;V extends Value&lt;any&gt; = Value&gt; im
 /**
  * @category Message
  */
-export class RequestErrorMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class RequestErrorMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public method: string, public readonly value: V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1152,7 +1167,7 @@ export class RequestUnsubscribeMessage implements Message&lt;cmsg.CompactMessage
 /**
  * @category Message
  */
-export class ResponseCompleteMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class ResponseCompleteMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public readonly value: undefined | V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1177,7 +1192,7 @@ export class ResponseCompleteMessage&lt;V extends Value&lt;any&gt; = Value&gt; i
 /**
  * @category Message
  */
-export class ResponseDataMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class ResponseDataMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public readonly value: V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1200,7 +1215,7 @@ export class ResponseDataMessage&lt;V extends Value&lt;any&gt; = Value&gt; imple
 /**
  * @category Message
  */
-export class ResponseErrorMessage&lt;V extends Value&lt;any&gt; = Value&gt; implements Message&lt;cmsg.CompactMessage&gt; {
+export class ResponseErrorMessage&lt;V extends RpcValue&lt;any&gt; = RpcValue&gt; implements Message&lt;cmsg.CompactMessage&gt; {
   constructor(public readonly id: number, public readonly value: V) {}
 &nbsp;
   public <span class="fstat-no" title="function not covered" >validate(</span>): void {
@@ -1249,7 +1264,7 @@ export class ResponseUnsubscribeMessage implements Message&lt;cmsg.CompactMessag
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-12-07T10:18:00.524Z
+                at 2023-12-07T19:00:39.056Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
