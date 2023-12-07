@@ -22,7 +22,10 @@ type UnObjectFieldTypeVal<T> = T extends classes.ObjectFieldType<any, infer U> ?
 //   never;
 
 export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
-  public field<F extends classes.ObjectFieldType<any, any>>(field: F, data: ResolveType<UnObjectFieldTypeVal<F>>): ObjectValue<classes.ObjectType<[...UnObjectType<T>, F]>> {
+  public field<F extends classes.ObjectFieldType<any, any>>(
+    field: F,
+    data: ResolveType<UnObjectFieldTypeVal<F>>,
+  ): ObjectValue<classes.ObjectType<[...UnObjectType<T>, F]>> {
     const extendedData = {...this.data, [field.key]: data};
     const type = this.type;
     const system = type.system;
@@ -37,7 +40,9 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return this.field(system.t.prop(key, type), data);
   }
 
-  public merge<O extends ObjectValue<any>>(obj: O): ObjectValue<classes.ObjectType<[...UnObjectType<T>, ...UnObjectType<O['type']>]>> {
+  public merge<O extends ObjectValue<any>>(
+    obj: O,
+  ): ObjectValue<classes.ObjectType<[...UnObjectType<T>, ...UnObjectType<O['type']>]>> {
     const extendedData = {...this.data, ...obj.data};
     const type = this.type;
     const system = type.system;
