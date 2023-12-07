@@ -4,8 +4,11 @@ import type {ResolveType} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
 
-type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
-type UnObjectFieldTypeVal<T> = T extends classes.ObjectFieldType<any, infer U> ? U : never;
+export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
+export type UnObjectFieldTypeVal<T> = T extends classes.ObjectFieldType<any, infer U> ? U : never;
+export type ObjectFieldToTuple<F> = F extends classes.ObjectFieldType<infer K, infer V> ? [K, V] : never;
+export type ToObject<T> = T extends [string, unknown][] ? {[K in T[number] as K[0]]: K[1]} : never;
+export type ObjectValueToTypeMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTuple<F[K]>}>;
 
 // export type MergeObjectsTypes<A, B> =
 //   A extends classes.ObjectType<infer A2>
@@ -49,6 +52,14 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     if (!system) throw new Error('NO_SYSTEM');
     const extendedType = system.t.Object(...type.fields, ...obj.type.fields);
     return new ObjectValue(extendedType, extendedData) as any;
+  }
+
+  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(key: K): Value<ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type ? ObjectValueToTypeMap<UnObjectType<T>>[K] : never> {
+    const field = this.type.getField(<string>key);
+    if(!field) throw new Error('NO_FIELD');
+    const type = field.value;
+    const data = this.data[<string>key];
+    return new Value(type, data) as any;
   }
 
   public toTypeScriptAst(): ts.TsTypeLiteral {
