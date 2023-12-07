@@ -1,6 +1,6 @@
-import {Expr} from "../../json-expression";
-import {BooleanType, ConstType, NumberType, ObjectFieldType, ObjectType, StringType, TupleType} from "./classes";
-import {Type} from "./types";
+import {Expr} from '../../json-expression';
+import {BooleanType, ConstType, NumberType, ObjectFieldType, ObjectType, StringType, TupleType} from './classes';
+import {Type} from './types';
 
 export class Discriminator {
   public static findConst(type: Type): Discriminator | undefined {
@@ -54,9 +54,9 @@ export class Discriminator {
 
   condition(): Expr {
     if (this.type instanceof ConstType) return ['==', this.type.value(), ['$', this.path]];
-    if (this.type instanceof BooleanType) return ['==', ['type', ['$', this.path]], 'boolean']; 
-    if (this.type instanceof NumberType) return ['==', ['type', ['$', this.path]], 'number']; 
-    if (this.type instanceof StringType) return ['==', ['type', ['$', this.path]], 'string']; 
+    if (this.type instanceof BooleanType) return ['==', ['type', ['$', this.path]], 'boolean'];
+    if (this.type instanceof NumberType) return ['==', ['type', ['$', this.path]], 'number'];
+    if (this.type instanceof StringType) return ['==', ['type', ['$', this.path]], 'string'];
     throw new Error('Cannot create condition for discriminator: ' + this.toSpecifier());
   }
 
