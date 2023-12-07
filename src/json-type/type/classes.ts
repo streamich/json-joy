@@ -30,6 +30,7 @@ import {Discriminator} from './discriminator';
 import {AbstractType} from './classes/AbstractType';
 import {AnyType} from './classes/AnyType';
 import {ConstType} from './classes/ConstType';
+import {BooleanType} from './classes/BooleanType';
 import type * as jsonSchema from '../../json-schema';
 import type {SchemaOf, SchemaOfObjectFields, Type} from './types';
 import type {TypeSystem} from '../system/TypeSystem';
@@ -56,66 +57,8 @@ export {
   AbstractType,
   AnyType,
   ConstType,
+  BooleanType,
 };
-
-export class BooleanType extends AbstractType<schema.BooleanSchema> {
-  constructor(protected schema: schema.BooleanSchema) {
-    super();
-  }
-
-  public toJsonSchema(ctx?: TypeExportContext): jsonSchema.JsonSchemaBoolean {
-    return <jsonSchema.JsonSchemaBoolean>{
-      type: 'boolean',
-      ...super.toJsonSchema(ctx),
-    };
-  }
-
-  public validateSchema(): void {
-    validateTType(this.getSchema(), 'bool');
-  }
-
-  public codegenValidator(ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
-    const err = ctx.err(ValidationError.BOOL, path);
-    ctx.js(/* js */ `if(typeof ${r} !== "boolean") return ${err};`);
-    ctx.emitCustomValidators(this, path, r);
-  }
-
-  public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
-    ctx.js(/* js */ `s += ${value.use()} ? 'true' : 'false';`);
-  }
-
-  protected codegenBinaryEncoder(ctx: BinaryEncoderCodegenContext<BinaryJsonEncoder>, value: JsExpression): void {
-    ctx.js(/* js */ `encoder.writeBoolean(${value.use()});`);
-  }
-
-  public codegenCborEncoder(ctx: CborEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenMessagePackEncoder(ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    ctx.inc(MaxEncodingOverhead.Boolean);
-  }
-
-  public random(): boolean {
-    return RandomJson.genBoolean();
-  }
-
-  public toTypeScriptAst(): ts.TsBooleanKeyword {
-    return {node: 'BooleanKeyword'};
-  }
-
-  public toJson(value: unknown, system: TypeSystem | undefined = this.system) {
-    return (value ? 'true' : 'false') as json_string<boolean>;
-  }
-}
 
 export class NumberType extends AbstractType<schema.NumberSchema> {
   constructor(protected schema: schema.NumberSchema) {
