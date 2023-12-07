@@ -62,22 +62,22 @@ export class ObjectValueCaller<V extends ObjectValue<ObjectType<any>>, Ctx = unk
       // fn = system.t.Function(t.any, fn);
       throw new Error('NOT_FUNCTION');
     }
-    const {req, res} = fn.type;
+    const fnType = fn.type as FunctionType<Type, Type> | FunctionStreamingType<Type, Type>;
+    const {req, res} = fnType;
     const call = fn.data;
-    const validator = fn.type.req.validator('object');
-    const requestSchema = (fn.type.req as AbstractType<Schema>).getSchema();
+    const validator = fnType.req.validator('object');
+    const requestSchema = (fnType.req as AbstractType<Schema>).getSchema();
     const isRequestVoid = requestSchema.__t === 'const' && requestSchema.value === undefined;
     const validate = isRequestVoid
       ? () => {}
       : (req: unknown) => {
-          const error = validator(req);
+          const error: any = validator(req);
           if (error) {
             const message = error.message + (Array.isArray(error?.path) ? ' Path: /' + error.path.join('/') : '');
             throw RpcError.value(RpcError.validation(message, error));
           }
         };
-    method =
-      fn instanceof FunctionType
+    method = fnType instanceof FunctionType
         ? new StaticRpcMethod({req, res, validate, call})
         : new StreamingRpcMethod({req, res, validate, call$: call});
     this.methods.set(id as string, method as any);
