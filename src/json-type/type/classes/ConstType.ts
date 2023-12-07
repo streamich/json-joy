@@ -133,7 +133,7 @@ export class ConstType<V = any> extends AbstractType<schema.ConstSchema<V>> {
   public toJtdForm(): jtd.JtdForm {
     const value = this.value();
     const type = typeof value;
-    switch(type) {
+    switch (type) {
       case 'boolean':
       case 'string':
         return {type};
