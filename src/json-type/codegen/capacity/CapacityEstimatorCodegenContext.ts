@@ -1,6 +1,6 @@
 import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
 import {maxEncodingCapacity} from '../../../json-size';
-import {Value} from '../../../reactive-rpc/common/messages/Value';
+import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
 

@@ -5,13 +5,13 @@ import {
   RequestUnsubscribeMessage,
   ResponseDataMessage,
 } from '../../../messages';
-import {Value} from '../../../messages/Value';
+import {RpcValue} from '../../../messages/Value';
 import {CborJsonValueCodec} from '../../../../../json-pack/codecs/cbor';
 import {Writer} from '../../../../../util/buffers/Writer';
 
 const cborCodec = new CborJsonValueCodec(new Writer(64));
 const encoder = cborCodec.encoder;
-const val = <T>(v: T) => new Value<T>(v, undefined);
+const val = <T>(v: T) => new RpcValue<T>(v, undefined);
 const encode = (msg: ReactiveRpcMessage) => {
   msg.encodeBinary(cborCodec);
   return encoder.writer.flush();

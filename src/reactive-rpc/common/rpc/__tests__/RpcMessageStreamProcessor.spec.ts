@@ -13,7 +13,7 @@ import {
   ResponseUnsubscribeMessage,
 } from '../../messages';
 import {until} from '../../../../__tests__/util';
-import {Value} from '../../messages/Value';
+import {RpcValue} from '../../messages/Value';
 import {t} from '../../../../json-type';
 import {Defer} from '../../../../util/Defer';
 
@@ -135,7 +135,7 @@ const setup = (
   return {server, send, caller, ctx, subject};
 };
 
-const val = <T>(value: T) => new Value<T>(value, undefined);
+const val = <T>(value: T) => new RpcValue<T>(value, undefined);
 
 test('can create server', async () => {
   setup();

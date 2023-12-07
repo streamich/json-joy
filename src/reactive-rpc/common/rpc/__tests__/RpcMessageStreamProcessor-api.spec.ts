@@ -1,7 +1,7 @@
 import {Subject} from 'rxjs';
 import {RequestCompleteMessage, ResponseCompleteMessage} from '../../messages';
 import {ApiRpcCaller} from '../caller/ApiRpcCaller';
-import {Value} from '../../messages/Value';
+import {RpcValue} from '../../messages/Value';
 import {RpcMessageStreamProcessor, RpcMessageStreamProcessorFromApiOptions} from '../RpcMessageStreamProcessor';
 import {sampleApi} from './sample-api';
 
@@ -27,11 +27,11 @@ test('can create server', async () => {
 test('can execute static RPC method', async () => {
   const {server, send} = setup();
   expect(send).toHaveBeenCalledTimes(0);
-  server.onMessage(new RequestCompleteMessage(4, 'ping', new Value({}, undefined)), {});
+  server.onMessage(new RequestCompleteMessage(4, 'ping', new RpcValue({}, undefined)), {});
   expect(send).toHaveBeenCalledTimes(0);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);
   expect(send.mock.calls[0][0][0]).toBeInstanceOf(ResponseCompleteMessage);
-  const value: Value = send.mock.calls[0][0][0].value;
+  const value: RpcValue = send.mock.calls[0][0][0].value;
   expect(value.data).toBe('pong');
 });

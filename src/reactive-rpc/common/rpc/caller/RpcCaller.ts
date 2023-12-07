@@ -2,7 +2,7 @@ import {firstValueFrom, from, Observable, Subject} from 'rxjs';
 import {catchError, finalize, first, map, mergeWith, share, switchMap, take, tap} from 'rxjs/operators';
 import {BufferSubject} from '../../../../util/rx/BufferSubject';
 import {RpcError, RpcErrorCodes, RpcErrorValue} from './error';
-import {Value} from '../../messages/Value';
+import {RpcValue} from '../../messages/Value';
 import {StaticRpcMethod} from '../methods/StaticRpcMethod';
 import type {Call} from './types';
 import type {RpcMethod} from '../types';
@@ -85,14 +85,14 @@ export class RpcCaller<Ctx = unknown> {
    * @param ctx Server context object.
    * @returns Response data.
    */
-  public async call(name: string, request: unknown, ctx: Ctx): Promise<Value<unknown>> {
+  public async call(name: string, request: unknown, ctx: Ctx): Promise<RpcValue<unknown>> {
     const method = this.getMethodStrict(name);
     this.validate(method, request);
     try {
       const preCall = method.onPreCall;
       if (preCall) await preCall(ctx, request);
       const data = await method.call(request, ctx);
-      return new Value(data, method.res);
+      return new RpcValue(data, method.res);
     } catch (error) {
       throw this.wrapInternalError(error);
     }
@@ -129,13 +129,13 @@ export class RpcCaller<Ctx = unknown> {
 
       // When Reactive-RPC method is "static".
       if (!method.isStreaming) {
-        const response$: Observable<Value> = from(
+        const response$: Observable<RpcValue> = from(
           (async () => {
             const request = await firstValueFrom(req$.pipe(first()));
             return await this.call(name, request, ctx);
           })(),
         );
-        const res$ = new Subject<Value>();
+        const res$ = new Subject<RpcValue>();
         response$.subscribe(res$);
 
         // Format errors using custom error formatter.
@@ -190,7 +190,7 @@ export class RpcCaller<Ctx = unknown> {
             requestBuffered$.flush();
           });
           return method.call$(requestBuffered$, ctx).pipe(
-            map((response) => new Value(response, methodResponseType)),
+            map((response) => new RpcValue(response, methodResponseType)),
             finalize(() => {
               error$.complete();
             }),
@@ -216,13 +216,13 @@ export class RpcCaller<Ctx = unknown> {
     } catch (error) {
       const errorFormatted = RpcError.valueFrom(error);
       req$.error(errorFormatted);
-      const res$ = new Subject<Value>();
+      const res$ = new Subject<RpcValue>();
       res$.error(errorFormatted);
       return {req$, reqUnsubscribe$, res$};
     }
   }
 
-  public call$(name: string, request$: Observable<unknown>, ctx: Ctx): Observable<Value> {
+  public call$(name: string, request$: Observable<unknown>, ctx: Ctx): Observable<RpcValue> {
     const call = this.createCall(name, ctx);
     request$.subscribe(call.req$);
     return call.res$;
