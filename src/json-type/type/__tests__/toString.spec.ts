@@ -63,12 +63,12 @@ test('can print a type', () => {
     │      └─ "id":
     │          └─ str { ascii = !t, min = 3, max = 128 }
     ├─ "unionProperty":
-    │   └─ or { discriminator = [ "num", -1 ] }
+    │   └─ or { discriminator = [ "?", [ "==", !n, [ "$", "" ] ], 2, [ "?", [ "==", [ "type", [ "$", "" ] ], "number" ], 1, 0 ] ] }
     │      ├─ str
     │      ├─ num
     │      └─ const { description = "" } → null
     ├─ "enumAsConst"?:
-    │   └─ or { discriminator = [ "num", -1 ] }
+    │   └─ or { discriminator = [ "?", [ "==", "c", [ "$", "" ] ], 2, [ "?", [ "==", "b", [ "$", "" ] ], 1, 0 ] ] }
     │      ├─ const → "a"
     │      ├─ const → "b"
     │      └─ const → "c"

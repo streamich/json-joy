@@ -39,7 +39,7 @@ describe('Discriminator', () => {
     const d1 = Discriminator.find(t1);
     const d2 = Discriminator.find(t2);
     const d3 = Discriminator.find(t3);
-    expect(d1!.toSpecifier()).toBe('["","map",0]');
+    expect(d1!.toSpecifier()).toBe('["","obj",0]');
     expect(d2!.toSpecifier()).toBe('["","obj",0]');
     expect(d3!.toSpecifier()).toBe('["","str",0]');
   });

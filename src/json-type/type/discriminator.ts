@@ -23,10 +23,9 @@ export class Discriminator {
     return undefined;
   }
 
-  public static find(type: Type): Discriminator | undefined {
+  public static find(type: Type): Discriminator {
     const constDiscriminator = Discriminator.findConst(type);
-    if (constDiscriminator) return constDiscriminator;
-    return new Discriminator('', type);
+    return constDiscriminator ?? new Discriminator('', type);
   }
 
   public static createExpression(types: Type[]): Expr {
@@ -36,7 +35,6 @@ export class Discriminator {
     for (let i = 1; i < length; i++) {
       const type = types[i];
       const d = Discriminator.find(type);
-      if (!d) throw new Error('Cannot create discriminator for type: ' + type.getSchema());
       const specifier = d.toSpecifier();
       if (specifiers.has(specifier)) throw new Error('Duplicate discriminator: ' + specifier);
       specifiers.add(specifier);
@@ -57,14 +55,41 @@ export class Discriminator {
     if (this.type instanceof BooleanType) return ['==', ['type', ['$', this.path]], 'boolean'];
     if (this.type instanceof NumberType) return ['==', ['type', ['$', this.path]], 'number'];
     if (this.type instanceof StringType) return ['==', ['type', ['$', this.path]], 'string'];
+    switch (this.typeSpecifier()) {
+      case 'obj':
+        return ['==', ['type', ['$', this.path]], 'object'];
+      case 'arr':
+        return ['==', ['type', ['$', this.path]], 'array'];
+    }
     throw new Error('Cannot create condition for discriminator: ' + this.toSpecifier());
+  }
+
+  typeSpecifier(): string {
+    const mnemonic = this.type.getTypeName();
+    switch (mnemonic) {
+      case 'bool':
+      case 'str':
+      case 'num':
+      case 'const':
+        return mnemonic;
+      case 'obj':
+      case 'map':
+        return 'obj';
+      case 'arr':
+      case 'tup':
+        return 'arr';
+      case 'fn':
+      case 'fn$':
+        return 'fn';
+    }
+    return '';
   }
 
   toSpecifier(): string {
     const type = this.type;
     const path = this.path;
-    const mnemonic = type.getTypeName();
+    const typeSpecifier = this.typeSpecifier();
     const value = type instanceof ConstType ? type.value() : 0;
-    return JSON.stringify([path, mnemonic, value]);
+    return JSON.stringify([path, typeSpecifier, value]);
   }
 }
