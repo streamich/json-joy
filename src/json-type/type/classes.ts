@@ -28,6 +28,7 @@ import {operatorsMap} from '../../json-expression/operators';
 import {Vars} from '../../json-expression/Vars';
 import {Discriminator} from './discriminator';
 import {AbstractType} from './classes/AbstractType';
+import {AnyType} from './classes/AnyType';
 import type * as jsonSchema from '../../json-schema';
 import type {SchemaOf, SchemaOfObjectFields, Type} from './types';
 import type {TypeSystem} from '../system/TypeSystem';
@@ -50,103 +51,10 @@ const augmentWithComment = (
   }
 };
 
-export {AbstractType};
-
-export class AnyType extends AbstractType<schema.AnySchema> {
-  constructor(protected schema: schema.AnySchema) {
-    super();
-  }
-
-  public toJsonSchema(ctx?: TypeExportContext): jsonSchema.JsonSchemaAny {
-    return <jsonSchema.JsonSchemaAny>{
-      type: ['string', 'number', 'boolean', 'null', 'array', 'object'],
-      ...super.toJsonSchema(ctx),
-    };
-  }
-
-  public validateSchema(): void {
-    validateTType(this.getSchema(), 'any');
-  }
-
-  public codegenValidator(ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
-    ctx.emitCustomValidators(this, path, r);
-  }
-
-  public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
-    ctx.js(/* js */ `s += stringify(${value.use()});`);
-  }
-
-  private codegenBinaryEncoder(ctx: BinaryEncoderCodegenContext<BinaryJsonEncoder>, value: JsExpression): void {
-    ctx.codegen.link('Value');
-    const r = ctx.codegen.var(value.use());
-    ctx.codegen.if(
-      `${r} instanceof Value`,
-      () => {
-        ctx.codegen.if(
-          `${r}.type`,
-          () => {
-            const type =
-              ctx instanceof CborEncoderCodegenContext
-                ? EncodingFormat.Cbor
-                : ctx instanceof MessagePackEncoderCodegenContext
-                ? EncodingFormat.MsgPack
-                : EncodingFormat.Json;
-            ctx.js(`${r}.type.encoder(${type})(${r}.data, encoder);`);
-          },
-          () => {
-            ctx.js(/* js */ `encoder.writeAny(${r}.data);`);
-          },
-        );
-      },
-      () => {
-        ctx.js(/* js */ `encoder.writeAny(${r});`);
-      },
-    );
-  }
-
-  public codegenCborEncoder(ctx: CborEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenMessagePackEncoder(ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
-    this.codegenBinaryEncoder(ctx, value);
-  }
-
-  public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    const codegen = ctx.codegen;
-    codegen.link('Value');
-    const r = codegen.var(value.use());
-    codegen.if(
-      `${r} instanceof Value`,
-      () => {
-        codegen.if(
-          `${r}.type`,
-          () => {
-            ctx.codegen.js(`size += ${r}.type.capacityEstimator()(${r}.data);`);
-          },
-          () => {
-            ctx.codegen.js(`size += maxEncodingCapacity(${r}.data);`);
-          },
-        );
-      },
-      () => {
-        ctx.codegen.js(`size += maxEncodingCapacity(${r});`);
-      },
-    );
-  }
-
-  public random(): unknown {
-    return RandomJson.generate({nodeCount: 5});
-  }
-
-  public toTypeScriptAst(): ts.TsType {
-    return {node: 'AnyKeyword'};
-  }
-}
+export {
+  AbstractType,
+  AnyType,
+};
 
 export class ConstType<V = any> extends AbstractType<schema.ConstSchema<V>> {
   private __json: json_string<V>;
