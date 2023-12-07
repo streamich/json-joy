@@ -21,7 +21,6 @@ import type {json_string} from '../../../json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
 
-
 export class ConstType<V = any> extends AbstractType<schema.ConstSchema<V>> {
   private __json: json_string<V>;
 

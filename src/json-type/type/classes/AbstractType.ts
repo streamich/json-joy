@@ -10,8 +10,14 @@ import {
   JsonEncoderFn,
 } from '../../codegen/json/JsonTextEncoderCodegenContext';
 import {CompiledBinaryEncoder} from '../../codegen/types';
-import {CborEncoderCodegenContext, CborEncoderCodegenContextOptions} from '../../codegen/binary/CborEncoderCodegenContext';
-import {JsonEncoderCodegenContext, JsonEncoderCodegenContextOptions} from '../../codegen/binary/JsonEncoderCodegenContext';
+import {
+  CborEncoderCodegenContext,
+  CborEncoderCodegenContextOptions,
+} from '../../codegen/binary/CborEncoderCodegenContext';
+import {
+  JsonEncoderCodegenContext,
+  JsonEncoderCodegenContextOptions,
+} from '../../codegen/binary/JsonEncoderCodegenContext';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import {JsExpression} from '../../../util/codegen/util/JsExpression';
 import {

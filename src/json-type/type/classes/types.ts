@@ -1,4 +1,4 @@
-import type {JsonTypeValidator} from "../../codegen/validator/types";
+import type {JsonTypeValidator} from '../../codegen/validator/types';
 
 export interface Validators {
   object?: JsonTypeValidator;

@@ -2,7 +2,7 @@ import * as schema from '../../schema';
 import {RandomJson} from '../../../json-random';
 import {stringifyBinary} from '../../../json-binary';
 import {printTree} from '../../../util/print/printTree';
-import {validateTType,} from '../../schema/validate';
+import {validateTType} from '../../schema/validate';
 import {ValidatorCodegenContext} from '../../codegen/validator/ValidatorCodegenContext';
 import {ValidationPath} from '../../codegen/validator/types';
 import {ValidationError} from '../../constants';
