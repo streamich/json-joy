@@ -3,7 +3,15 @@ import {RpcCaller, type RpcApiCallerOptions} from './RpcCaller';
 import {type AbstractType, FunctionStreamingType, FunctionType} from '../../../../json-type/type/classes';
 import {StaticRpcMethod, type StaticRpcMethodOptions} from '../methods/StaticRpcMethod';
 import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/StreamingRpcMethod';
-import {type ObjectType, type Schema, type TypeSystem, ObjectFieldType, TypeOf, SchemaOf, Type} from '../../../../json-type';
+import {
+  type ObjectType,
+  type Schema,
+  type TypeSystem,
+  ObjectFieldType,
+  TypeOf,
+  SchemaOf,
+  Type,
+} from '../../../../json-type';
 import type {ObjectValue, UnObjectType, UnObjectValue} from '../../../../json-type-value/ObjectValue';
 import type {Value} from '../../../../json-type-value/Value';
 import type {Observable} from 'rxjs';
@@ -53,7 +61,9 @@ export class ObjectValueCaller<V extends ObjectValue<ObjectType<any>>, Ctx = unk
     this.system = system;
   }
 
-  public get<K extends keyof ObjectValueToTypeMap<V>>(id: K): MethodDefinition<Ctx, ObjectValueToTypeMap<V>[K]> | undefined {
+  public get<K extends keyof ObjectValueToTypeMap<V>>(
+    id: K,
+  ): MethodDefinition<Ctx, ObjectValueToTypeMap<V>[K]> | undefined {
     let method = this.methods.get(id as string) as any;
     if (method) return method;
     const fn = this.value.get(<string>id) as Value<Type>;
@@ -77,7 +87,8 @@ export class ObjectValueCaller<V extends ObjectValue<ObjectType<any>>, Ctx = unk
             throw RpcError.value(RpcError.validation(message, error));
           }
         };
-    method = fnType instanceof FunctionType
+    method =
+      fnType instanceof FunctionType
         ? new StaticRpcMethod({req, res, validate, call})
         : new StreamingRpcMethod({req, res, validate, call$: call});
     this.methods.set(id as string, method as any);

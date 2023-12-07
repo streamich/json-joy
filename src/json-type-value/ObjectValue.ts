@@ -57,9 +57,15 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return new ObjectValue(extendedType, extendedData) as any;
   }
 
-  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(key: K): Value<ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type ? ObjectValueToTypeMap<UnObjectType<T>>[K] : classes.Type> {
+  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(
+    key: K,
+  ): Value<
+    ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type
+      ? ObjectValueToTypeMap<UnObjectType<T>>[K]
+      : classes.Type
+  > {
     const field = this.type.getField(<string>key);
-    if(!field) throw new Error('NO_FIELD');
+    if (!field) throw new Error('NO_FIELD');
     const type = field.value;
     const data = this.data[<string>key];
     return new Value(type, data) as any;
