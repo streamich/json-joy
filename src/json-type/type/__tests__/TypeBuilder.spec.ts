@@ -21,7 +21,7 @@ test('can construct a array type', () => {
     type: {
       __t: 'or',
       types: [{__t: 'num'}, {__t: 'str', title: 'Just a string'}],
-      discriminator: ['num', -1],
+      discriminator: expect.any(Array),
     },
   });
 });

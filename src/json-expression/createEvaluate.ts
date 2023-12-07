@@ -1,4 +1,3 @@
-import {deepEqual} from '../json-equal/deepEqual';
 import {Expr, JsonExpressionCodegenContext, JsonExpressionExecutionContext, Literal, OperatorMap} from './types';
 import * as util from './util';
 
@@ -19,7 +18,7 @@ export const createEvaluate = ({operators, createPattern}: {operators: OperatorM
         util.assertArity(name, arity, expr);
         return fn(expr, {createPattern, ...ctx, eval: evaluate});
       }
-      throw new Error('Unknown expression.');
+      throw new Error('Unknown expression:' + JSON.stringify(expr));
     } catch (err) {
       if (err instanceof Error) throw err;
       const error = new Error('Expression evaluation error.');

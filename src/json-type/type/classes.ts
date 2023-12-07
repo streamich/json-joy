@@ -53,6 +53,7 @@ import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
 import type {ResolveType} from '../system';
 import type {Observable} from 'rxjs';
+import {Discriminator} from './discriminator';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -1194,7 +1195,7 @@ export class ArrayType<T extends Type> extends AbstractType<schema.ArraySchema<S
 export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
   protected schema: schema.TupleSchema<any>;
 
-  constructor(protected types: T, options?: Omit<schema.TupleSchema, '__t' | 'type'>) {
+  constructor(public readonly types: T, options?: Omit<schema.TupleSchema, '__t' | 'type'>) {
     super();
     this.schema = {...schema.s.Tuple(), ...options};
   }
@@ -1408,12 +1409,12 @@ export class ObjectOptionalFieldType<K extends string, V extends Type> extends O
   }
 }
 
-export class ObjectType<F extends ObjectFieldType<any, any>[]> extends AbstractType<
+export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<any, any>[]> extends AbstractType<
   schema.ObjectSchema<SchemaOfObjectFields<F>>
 > {
   protected schema: schema.ObjectSchema<any> = schema.s.obj;
 
-  constructor(protected fields: F) {
+  constructor(public readonly fields: F) {
     super();
   }
 
@@ -2215,7 +2216,11 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
 
   constructor(protected types: T, options?: Omit<schema.OrSchema, '__t' | 'type'>) {
     super();
-    this.schema = {...schema.s.Or(), ...options};
+    this.schema = {
+      ...schema.s.Or(),
+      ...options,
+      discriminator: options?.discriminator ?? Discriminator.createExpression(types),
+    };
   }
 
   public getSchema(): schema.OrSchema<{[K in keyof T]: SchemaOf<T[K]>}> {
