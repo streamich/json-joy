@@ -29,14 +29,17 @@ export interface JtdTypeForm extends JtdFormBase {
 // prettier-ignore
 export type JtdType =
   | 'boolean'
-  | 'string'
-  | 'timestamp'
   | 'float32'
   | 'float64'
   | 'int8'
+  | 'uint8'
   | 'int16'
+  | 'uint16'
   | 'int32'
-  | 'uint32';
+  | 'uint32'
+  | 'string'
+  | 'timestamp'
+  ;
 
 export interface JtdEnumForm extends JtdFormBase {
   enum: string[];
@@ -49,6 +52,7 @@ export interface JtdElementsForm extends JtdFormBase {
 export interface JtdPropertiesForm extends JtdFormBase {
   properties?: Record<string, JtdForm>;
   optionalProperties?: Record<string, JtdForm>;
+  additionalProperties?: boolean;
 }
 
 export interface JtdValuesForm extends JtdFormBase {
@@ -58,4 +62,9 @@ export interface JtdValuesForm extends JtdFormBase {
 export interface JtdDiscriminatorForm extends JtdFormBase {
   discriminator: string;
   mapping: Record<string, JtdForm>;
+}
+
+export interface JtdError {
+  instancePath: string;
+  schemaPath: string;
 }
