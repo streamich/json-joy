@@ -113,7 +113,7 @@ export class AnyType extends AbstractType<schema.AnySchema> {
     return {node: 'AnyKeyword'};
   }
 
-  public toJtdForm(): jtd.JtdForm {
+  public toJtdForm(): jtd.JtdEmptyForm {
     const form: jtd.JtdEmptyForm = {nullable: true};
     return form;
   }

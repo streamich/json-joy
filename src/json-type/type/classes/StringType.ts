@@ -20,6 +20,7 @@ import type {TypeSystem} from '../../system/TypeSystem';
 import type {json_string} from '../../../json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
+import type * as jtd from '../../jtd/types';
 
 export class StringType extends AbstractType<schema.StringSchema> {
   constructor(protected schema: schema.StringSchema) {
@@ -117,5 +118,9 @@ export class StringType extends AbstractType<schema.StringSchema> {
 
   public toJson(value: unknown, system: TypeSystem | undefined = this.system): json_string<unknown> {
     return <json_string<string>>(this.schema.noJsonEscape ? '"' + value + '"' : asString(value as string));
+  }
+
+  public toJtdForm(): jtd.JtdTypeForm {
+    return {type: 'string'};
   }
 }

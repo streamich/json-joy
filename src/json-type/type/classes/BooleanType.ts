@@ -19,6 +19,7 @@ import type {TypeSystem} from '../../system/TypeSystem';
 import type {json_string} from '../../../json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
+import type * as jtd from '../../jtd/types';
 
 export class BooleanType extends AbstractType<schema.BooleanSchema> {
   constructor(protected schema: schema.BooleanSchema) {
@@ -76,5 +77,10 @@ export class BooleanType extends AbstractType<schema.BooleanSchema> {
 
   public toJson(value: unknown, system: TypeSystem | undefined = this.system) {
     return (value ? 'true' : 'false') as json_string<boolean>;
+  }
+
+  public toJtdForm(): jtd.JtdTypeForm {
+    const form: jtd.JtdTypeForm = {type: 'boolean'};
+    return form;
   }
 }
