@@ -2,7 +2,7 @@ import * as msg from '../messages';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
 import {RpcErrorCodes, RpcError} from './caller/error';
-import {Value} from '../messages/Value';
+import {RpcValue} from '../messages/Value';
 import type {RpcCaller} from './caller/RpcCaller';
 import type {Call, RpcApiMap} from './caller/types';
 
@@ -89,22 +89,22 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
     for (let i = 0; i < length; i++) this.onMessage(messages[i], ctx);
   }
 
-  public sendNotification(method: string, value: Value): void {
+  public sendNotification(method: string, value: RpcValue): void {
     const message = new msg.NotificationMessage(method, value);
     this.send(message);
   }
 
-  protected sendCompleteMessage(id: number, value: Value | undefined): void {
+  protected sendCompleteMessage(id: number, value: RpcValue | undefined): void {
     const message = new msg.ResponseCompleteMessage(id, value);
     this.send(message);
   }
 
-  protected sendDataMessage(id: number, value: Value): void {
+  protected sendDataMessage(id: number, value: RpcValue): void {
     const message = new msg.ResponseDataMessage(id, value);
     this.send(message);
   }
 
-  protected sendErrorMessage(id: number, value: Value): void {
+  protected sendErrorMessage(id: number, value: RpcValue): void {
     const message = new msg.ResponseErrorMessage(id, value);
     this.send(message);
   }
@@ -117,11 +117,11 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
   protected execStaticCall(id: number, name: string, request: unknown, ctx: Ctx): void {
     this.caller
       .call(name, request, ctx)
-      .then((value: Value) => this.sendCompleteMessage(id, value))
-      .catch((value: Value) => this.sendErrorMessage(id, value));
+      .then((value: RpcValue) => this.sendCompleteMessage(id, value))
+      .catch((value: RpcValue) => this.sendErrorMessage(id, value));
   }
 
-  protected onStreamError = (id: number, error: Value): void => {
+  protected onStreamError = (id: number, error: RpcValue): void => {
     this.sendErrorMessage(id, error);
     this.activeStreamCalls.delete(id);
   };
@@ -144,10 +144,10 @@ export class RpcMessageStreamProcessor<Ctx = unknown> {
   private createStreamCall(id: number, name: string, ctx: Ctx): Call<unknown, unknown> {
     const call = this.caller.createCall(name, ctx);
     this.activeStreamCalls.set(id, call);
-    subscribeCompleteObserver<Value>(call.res$, {
-      next: (value: Value) => this.sendDataMessage(id, value),
-      error: (error: unknown) => this.onStreamError(id, error as Value),
-      complete: (value: Value | undefined) => {
+    subscribeCompleteObserver<RpcValue>(call.res$, {
+      next: (value: RpcValue) => this.sendDataMessage(id, value),
+      error: (error: unknown) => this.onStreamError(id, error as RpcValue),
+      complete: (value: RpcValue | undefined) => {
         this.activeStreamCalls.delete(id);
         this.sendCompleteMessage(id, value);
       },

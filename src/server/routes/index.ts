@@ -3,7 +3,7 @@ import {system} from './system';
 import {TypeRouter} from '../../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
-import {Value} from '../../reactive-rpc/common/messages/Value';
+import {RpcValue} from '../../reactive-rpc/common/messages/Value';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
 
@@ -18,7 +18,7 @@ export const createCaller = (services: Services) => {
   const caller = new TypeRouterCaller<typeof router>({
     router,
     wrapInternalError: (error: unknown) => {
-      if (error instanceof Value) return error;
+      if (error instanceof RpcValue) return error;
       if (error instanceof RpcError) return RpcError.value(error);
       // tslint:disable-next-line:no-console
       console.error(error);

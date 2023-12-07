@@ -4,7 +4,7 @@ import {IncomingBatchMessage, RpcMessageBatchProcessor} from '../../common/rpc/R
 import {RpcError, RpcErrorCodes, RpcErrorType} from '../../common/rpc/caller/error';
 import {ConnectionContext} from '../context';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
-import {Value} from '../../common/messages/Value';
+import {RpcValue} from '../../common/messages/Value';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {Writer} from '../../../util/buffers/Writer';
@@ -92,7 +92,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
       const encoder = codec.encoder;
       const writer = encoder.writer;
       writer.reset();
-      if (res instanceof Value) {
+      if (res instanceof RpcValue) {
         if (res.type) res.type.encoder(codec.format)(res.data, encoder);
         else encoder.writeAny(res.data);
       } else {
@@ -247,7 +247,7 @@ export class RpcApp<Ctx extends ConnectionContext> {
           augmentContext(ctx);
           await handler(ctx);
         } catch (err) {
-          if (err instanceof Value) err = err.data;
+          if (err instanceof RpcValue) err = err.data;
           if (!(err instanceof RpcError)) err = RpcError.from(err);
           const error = <RpcError>err;
           if (error.errno === RpcErrorCodes.INTERNAL_ERROR) {

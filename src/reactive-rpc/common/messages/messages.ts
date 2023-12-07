@@ -4,7 +4,7 @@ import {validateId, validateMethod} from '../rpc/validation';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import {MsgPackEncoder} from '../../../json-pack/msgpack';
 import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
-import type {Value} from './Value';
+import type {RpcValue} from './Value';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
 import type {BinaryJsonEncoder} from '../../../json-pack/types';
 import type * as cmsg from '../codec/compact/types';
@@ -39,7 +39,7 @@ const encodeBinaryWithNameAndPayload = (
   typeU16: number,
   id: number,
   name: string,
-  value: Value<any> | undefined,
+  value: RpcValue<any> | undefined,
 ) => {
   const writer = codec.encoder.writer;
   const nameLength = name.length;
@@ -57,7 +57,12 @@ const encodeBinaryWithNameAndPayload = (
   encodeHeader(writer, typeU16, id, payloadSize, start);
 };
 
-const encodeBinaryWithPayload = (codec: JsonValueCodec, typeU16: number, id: number, value: Value<any> | undefined) => {
+const encodeBinaryWithPayload = (
+  codec: JsonValueCodec,
+  typeU16: number,
+  id: number,
+  value: RpcValue<any> | undefined,
+) => {
   const writer = codec.encoder.writer;
   writer.move(4);
   const x0 = writer.x0;
@@ -141,7 +146,7 @@ const encodeCompactWithPayload = (
 /**
  * @category Message
  */
-export class NotificationMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class NotificationMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly method: string, public readonly value: V) {}
 
   public validate(): void {
@@ -202,7 +207,7 @@ export class NotificationMessage<V extends Value<any> = Value> implements Messag
 /**
  * @category Message
  */
-export class RequestDataMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class RequestDataMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
 
   public validate(): void {
@@ -228,7 +233,7 @@ export class RequestDataMessage<V extends Value<any> = Value> implements Message
 /**
  * @category Message
  */
-export class RequestCompleteMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class RequestCompleteMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
 
   public validate(): void {
@@ -254,7 +259,7 @@ export class RequestCompleteMessage<V extends Value<any> = Value> implements Mes
 /**
  * @category Message
  */
-export class RequestErrorMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class RequestErrorMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public method: string, public readonly value: V) {}
 
   public validate(): void {
@@ -301,7 +306,7 @@ export class RequestUnsubscribeMessage implements Message<cmsg.CompactMessage> {
 /**
  * @category Message
  */
-export class ResponseCompleteMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class ResponseCompleteMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public readonly value: undefined | V) {}
 
   public validate(): void {
@@ -326,7 +331,7 @@ export class ResponseCompleteMessage<V extends Value<any> = Value> implements Me
 /**
  * @category Message
  */
-export class ResponseDataMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class ResponseDataMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public readonly value: V) {}
 
   public validate(): void {
@@ -349,7 +354,7 @@ export class ResponseDataMessage<V extends Value<any> = Value> implements Messag
 /**
  * @category Message
  */
-export class ResponseErrorMessage<V extends Value<any> = Value> implements Message<cmsg.CompactMessage> {
+export class ResponseErrorMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
   constructor(public readonly id: number, public readonly value: V) {}
 
   public validate(): void {

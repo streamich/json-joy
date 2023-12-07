@@ -100,7 +100,6 @@ export class TypeRouter<Routes extends RoutesBase> {
   }
 
   public toTypeScript(): string {
-    this.system.exportTypes;
     return toText(this.toTypeScriptModuleAst());
   }
 }

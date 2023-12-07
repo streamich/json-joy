@@ -221,6 +221,7 @@
           "json-stable",
           "json-text",
           "json-type",
+          "json-type-value",
           "reactive-rpc",
           "util"
         ]

@@ -9,7 +9,7 @@ import {
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
 } from '../../../messages';
-import {Value} from '../../../messages/Value';
+import {RpcValue} from '../../../messages/Value';
 import {decode} from '../decode';
 import {Reader} from '../../../../../util/buffers/Reader';
 import {Uint8ArrayCut} from '../../../../../util/buffers/Uint8ArrayCut';
@@ -19,7 +19,7 @@ import {Writer} from '../../../../../util/buffers/Writer';
 const codec = new CborJsonValueCodec(new Writer(64));
 const encoder = codec.encoder;
 const decoder = codec.decoder;
-const val = <T>(v: T) => new Value<T>(v, undefined);
+const val = <T>(v: T) => new RpcValue<T>(v, undefined);
 const assertMessage = (msg: ReactiveRpcMessage) => {
   encoder.writer.reset();
   msg.encodeBinary(codec);
