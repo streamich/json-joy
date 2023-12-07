@@ -53,6 +53,7 @@ import type * as ts from '../typescript/types';
 import type {TypeExportContext} from '../system/TypeExportContext';
 import type {ResolveType} from '../system';
 import type {Observable} from 'rxjs';
+import {Discriminator} from './discriminator';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -2215,7 +2216,11 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
 
   constructor(protected types: T, options?: Omit<schema.OrSchema, '__t' | 'type'>) {
     super();
-    this.schema = {...schema.s.Or(), ...options};
+    this.schema = {
+      ...schema.s.Or(),
+      ...options,
+      discriminator: options?.discriminator ?? Discriminator.createExpression(types),
+    };
   }
 
   public getSchema(): schema.OrSchema<{[K in keyof T]: SchemaOf<T[K]>}> {
