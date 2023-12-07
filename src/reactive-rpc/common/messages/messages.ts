@@ -57,7 +57,12 @@ const encodeBinaryWithNameAndPayload = (
   encodeHeader(writer, typeU16, id, payloadSize, start);
 };
 
-const encodeBinaryWithPayload = (codec: JsonValueCodec, typeU16: number, id: number, value: RpcValue<any> | undefined) => {
+const encodeBinaryWithPayload = (
+  codec: JsonValueCodec,
+  typeU16: number,
+  id: number,
+  value: RpcValue<any> | undefined,
+) => {
   const writer = codec.encoder.writer;
   writer.move(4);
   const x0 = writer.x0;
