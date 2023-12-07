@@ -1,8 +1,8 @@
 import * as msg from '../../messages';
 import {TimedQueue} from '../../util/TimedQueue';
-import {Value} from '../../messages/Value';
 import {Defer} from '../../../../util/Defer';
 import {Observable, of, switchMap} from 'rxjs';
+import {AnyValue} from '../../../../json-type-value';
 import type {RpcClient} from './types';
 
 /**
@@ -85,7 +85,7 @@ export class StaticRpcClient implements RpcClient {
   public async call(method: string, request: unknown): Promise<unknown> {
     const id = this.id;
     this.id = (id + 1) % 0xffff;
-    const value = new Value(request, undefined);
+    const value = new AnyValue(request);
     const message = new msg.RequestCompleteMessage(id, method, value);
     const future = new Defer<unknown>();
     this.calls.set(id, future);
@@ -94,7 +94,7 @@ export class StaticRpcClient implements RpcClient {
   }
 
   public notify(method: string, data: undefined | unknown): void {
-    const value = new Value(data, undefined);
+    const value = new AnyValue(data);
     this.buffer.push(new msg.NotificationMessage(method, value));
   }
 

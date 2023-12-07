@@ -4,11 +4,11 @@ import {validateId, validateMethod} from '../rpc/validation';
 import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import {MsgPackEncoder} from '../../../json-pack/msgpack';
 import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
-import type {Value} from './Value';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
 import type {BinaryJsonEncoder} from '../../../json-pack/types';
 import type * as cmsg from '../codec/compact/types';
 import type {Message} from './types';
+import {Value} from '../../../json-type-value';
 
 const encodeHeader = (
   writer: BinaryJsonEncoder['writer'],

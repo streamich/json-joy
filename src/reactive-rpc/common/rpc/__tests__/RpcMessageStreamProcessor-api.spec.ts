@@ -1,9 +1,9 @@
 import {Subject} from 'rxjs';
 import {RequestCompleteMessage, ResponseCompleteMessage} from '../../messages';
 import {ApiRpcCaller} from '../caller/ApiRpcCaller';
-import {Value} from '../../messages/Value';
 import {RpcMessageStreamProcessor, RpcMessageStreamProcessorFromApiOptions} from '../RpcMessageStreamProcessor';
 import {sampleApi} from './sample-api';
+import {AnyValue} from '../../../../json-type-value/AnyValue';
 
 const setup = (params: Partial<RpcMessageStreamProcessorFromApiOptions> = {}) => {
   const send = jest.fn();
@@ -27,7 +27,7 @@ test('can create server', async () => {
 test('can execute static RPC method', async () => {
   const {server, send} = setup();
   expect(send).toHaveBeenCalledTimes(0);
-  server.onMessage(new RequestCompleteMessage(4, 'ping', new Value({}, undefined)), {});
+  server.onMessage(new RequestCompleteMessage(4, 'ping', new AnyValue({})), {});
   expect(send).toHaveBeenCalledTimes(0);
   await new Promise((r) => setTimeout(r, 1));
   expect(send).toHaveBeenCalledTimes(1);

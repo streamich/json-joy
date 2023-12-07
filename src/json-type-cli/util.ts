@@ -1,4 +1,4 @@
-import {Value} from '../reactive-rpc/common/messages/Value';
+import {Value} from '../json-type-value';
 import {RpcError} from '../reactive-rpc/common/rpc/caller';
 
 export const formatError = (err: unknown): unknown => {

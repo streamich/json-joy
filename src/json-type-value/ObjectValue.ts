@@ -85,6 +85,9 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return node;
   }
 
+  /**
+   * @todo This could go into {@link ObjectType}.
+   */
   public toTypeScript(): string {
     return toText(this.toTypeScriptModuleAst());
   }

@@ -11,8 +11,8 @@ import {
   ResponseErrorMessage,
   ResponseUnsubscribeMessage,
 } from '../../messages';
-import {Value} from '../../messages/Value';
 import {BinaryMessageType} from './constants';
+import {AnyValue} from '../../../../json-type-value/AnyValue';
 import type {Reader} from '../../../../util/buffers/Reader';
 
 export const decode = (reader: Reader): ReactiveRpcMessage => {
@@ -24,7 +24,7 @@ export const decode = (reader: Reader): ReactiveRpcMessage => {
       const x = word >>> 8;
       const name = reader.ascii(z);
       const cut = new Uint8ArrayCut(reader.uint8, reader.x, x);
-      const value = new Value(cut, undefined);
+      const value = new AnyValue(cut);
       reader.skip(x);
       return new NotificationMessage(name, value);
     }
@@ -52,7 +52,7 @@ export const decode = (reader: Reader): ReactiveRpcMessage => {
         reader.skip(x);
       }
       const cut = new Uint8ArrayCut(reader.uint8, cutStart, x);
-      const value = new Value(cut, undefined);
+      const value = new AnyValue(cut);
       switch (type) {
         case BinaryMessageType.RequestData:
           return new RequestDataMessage(y, name, value);
@@ -85,7 +85,7 @@ export const decode = (reader: Reader): ReactiveRpcMessage => {
         reader.skip(x);
       }
       const cut = new Uint8ArrayCut(reader.uint8, cutStart, x);
-      const value = new Value(cut, undefined);
+      const value = new AnyValue(cut);
       switch (type) {
         case BinaryMessageType.ResponseData:
           return new ResponseDataMessage(y, value);

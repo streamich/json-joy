@@ -7,10 +7,10 @@ import {formatError} from './util';
 import {defineBuiltinRoutes} from './methods';
 import {defaultParams} from './defaultParams';
 import type {CliCodecs} from './CliCodecs';
-import type {Value} from '../reactive-rpc/common/messages/Value';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {WriteStream, ReadStream} from 'tty';
 import type {CliCodec, CliContext, CliParam, CliParamInstance} from './types';
+import type {Value} from '../json-type-value';
 
 export interface CliOptions<Router extends TypeRouter<any>> {
   codecs: CliCodecs;

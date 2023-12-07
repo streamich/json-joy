@@ -1,11 +1,11 @@
-import {RpcError, RpcErrorCodes} from './error';
+import {RpcError, RpcErrorType} from './error';
 import {RpcCaller, type RpcApiCallerOptions} from './RpcCaller';
 import {type AbstractType, FunctionStreamingType, FunctionType} from '../../../../json-type/type/classes';
 import {StaticRpcMethod, type StaticRpcMethodOptions} from '../methods/StaticRpcMethod';
 import {StreamingRpcMethod, type StreamingRpcMethodOptions} from '../methods/StreamingRpcMethod';
+import {Value} from '../../../../json-type-value';
 import type {Schema, SchemaOf, TypeOf, TypeSystem} from '../../../../json-type';
 import type {TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {Value} from '../../messages/Value';
 import type {Observable} from 'rxjs';
 
 export interface TypedApiCallerOptions<Router extends TypeRouter<any>, Ctx = unknown>
@@ -80,9 +80,9 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
   ): Promise<MethodRes<Routes<Router>[K]>> {
     try {
       const res = await this.call(id as string, request, ctx);
-      return res.data;
+      return (res as Value).data;
     } catch (err) {
-      const error = err as Value<RpcError>;
+      const error = err as Value<typeof RpcErrorType>;
       throw error.data;
     }
   }

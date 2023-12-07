@@ -4,11 +4,11 @@ import {IncomingBatchMessage, RpcMessageBatchProcessor} from '../../common/rpc/R
 import {RpcError, RpcErrorCodes, RpcErrorType} from '../../common/rpc/caller/error';
 import {ConnectionContext} from '../context';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
-import {Value} from '../../common/messages/Value';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {Writer} from '../../../util/buffers/Writer';
 import {copy} from '../../../util/buffers/copy';
+import {Value} from '../../../json-type-value';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
 import type * as types from './types';
 import type {RouteHandler} from './types';

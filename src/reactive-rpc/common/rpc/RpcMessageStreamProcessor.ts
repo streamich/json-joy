@@ -2,7 +2,7 @@ import * as msg from '../messages';
 import {subscribeCompleteObserver} from '../util/subscribeCompleteObserver';
 import {TimedQueue} from '../util/TimedQueue';
 import {RpcErrorCodes, RpcError} from './caller/error';
-import {Value} from '../messages/Value';
+import type {Value} from '../../../json-type-value';
 import type {RpcCaller} from './caller/RpcCaller';
 import type {Call, RpcApiMap} from './caller/types';
 

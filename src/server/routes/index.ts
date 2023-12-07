@@ -3,7 +3,7 @@ import {system} from './system';
 import {TypeRouter} from '../../json-type/system/TypeRouter';
 import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
-import {Value} from '../../reactive-rpc/common/messages/Value';
+import {Value} from '../../json-type-value';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
 

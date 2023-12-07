@@ -2,10 +2,10 @@ import {RpcMessageFormat} from '../constants';
 import {RpcError, RpcErrorCodes} from '../../rpc/caller/error';
 import * as msg from '../../messages';
 import {CompactMessageType} from './constants';
-import {Value} from '../../messages/Value';
 import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
 import {MsgPackEncoder} from '../../../../json-pack/msgpack';
 import {JsonEncoder} from '../../../../json-pack/json/JsonEncoder';
+import {AnyValue} from '../../../../json-type-value/AnyValue';
 import type {RpcMessageCodec} from '../types';
 import type {JsonValueCodec} from '../../../../json-pack/codecs/types';
 import type * as types from './types';
@@ -16,36 +16,36 @@ const fromJson = (arr: unknown | unknown[] | types.CompactMessage): msg.Reactive
   switch (type) {
     case CompactMessageType.RequestComplete: {
       const data = arr[3];
-      const value = data === undefined ? data : new Value(data, undefined);
+      const value = data === undefined ? data : new AnyValue(data);
       return new msg.RequestCompleteMessage(arr[1], arr[2], value);
     }
     case CompactMessageType.RequestData: {
       const data = arr[3];
-      const value = data === undefined ? data : new Value(data, undefined);
+      const value = data === undefined ? data : new AnyValue(data);
       return new msg.RequestDataMessage(arr[1], arr[2], value);
     }
     case CompactMessageType.RequestError: {
-      return new msg.RequestErrorMessage(arr[1], arr[2], new Value(arr[3], undefined));
+      return new msg.RequestErrorMessage(arr[1], arr[2], new AnyValue(arr[3]));
     }
     case CompactMessageType.RequestUnsubscribe: {
       return new msg.RequestUnsubscribeMessage(arr[1]);
     }
     case CompactMessageType.ResponseComplete: {
       const data = arr[2];
-      const value = data === undefined ? data : new Value(data, undefined);
+      const value = data === undefined ? data : new AnyValue(data);
       return new msg.ResponseCompleteMessage(arr[1], value);
     }
     case CompactMessageType.ResponseData: {
-      return new msg.ResponseDataMessage(arr[1], new Value(arr[2], undefined));
+      return new msg.ResponseDataMessage(arr[1], new AnyValue(arr[2]));
     }
     case CompactMessageType.ResponseError: {
-      return new msg.ResponseErrorMessage(arr[1], new Value(arr[2], undefined));
+      return new msg.ResponseErrorMessage(arr[1], new AnyValue(arr[2]));
     }
     case CompactMessageType.ResponseUnsubscribe: {
       return new msg.ResponseUnsubscribeMessage(arr[1]);
     }
     case CompactMessageType.Notification: {
-      return new msg.NotificationMessage(arr[1], new Value(arr[2], undefined));
+      return new msg.NotificationMessage(arr[1], new AnyValue(arr[2]));
     }
   }
   throw RpcError.value(RpcError.validation('Unknown message type'));
