@@ -42,6 +42,7 @@ import type {json_string} from '../../../json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
 import type {Validators} from './types';
+import type * as jtd from '../../jtd/types';
 
 export abstract class AbstractType<S extends schema.Schema> implements BaseType<S>, Printable {
   /** Default type system to use, if any. */
@@ -298,5 +299,10 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   public toString(tab: string = ''): string {
     const options = this.toStringOptions();
     return this.toStringTitle() + (options ? ` ${options}` : '');
+  }
+
+  public toJtdForm(): jtd.JtdForm {
+    const form: jtd.JtdEmptyForm = {nullable: false};
+    return form;
   }
 }

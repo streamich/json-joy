@@ -16,6 +16,7 @@ import {AbstractType} from './AbstractType';
 import type * as jsonSchema from '../../../json-schema';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
+import type * as jtd from '../../jtd/types';
 
 export class AnyType extends AbstractType<schema.AnySchema> {
   constructor(protected schema: schema.AnySchema) {
@@ -110,5 +111,10 @@ export class AnyType extends AbstractType<schema.AnySchema> {
 
   public toTypeScriptAst(): ts.TsType {
     return {node: 'AnyKeyword'};
+  }
+
+  public toJtdForm(): jtd.JtdForm {
+    const form: jtd.JtdEmptyForm = {nullable: true};
+    return form;
   }
 }
