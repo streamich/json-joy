@@ -1,10 +1,11 @@
 import {Value} from './Value';
 import {toText} from '../json-type/typescript/toText';
-import type {ResolveType} from '../json-type';
+import type {ResolveType, TypeSystem} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
 
 export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
+export type UnObjectValue<T> = T extends ObjectValue<infer U> ? U : never;
 export type UnObjectFieldTypeVal<T> = T extends classes.ObjectFieldType<any, infer U> ? U : never;
 export type ObjectFieldToTuple<F> = F extends classes.ObjectFieldType<infer K, infer V> ? [K, V] : never;
 export type ToObject<T> = T extends [string, unknown][] ? {[K in T[number] as K[0]]: K[1]} : never;
@@ -25,6 +26,8 @@ export type ObjectValueToTypeMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTup
 //   never;
 
 export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
+  public static create = (system: TypeSystem) => new ObjectValue(system.t.obj, {});
+
   public field<F extends classes.ObjectFieldType<any, any>>(
     field: F,
     data: ResolveType<UnObjectFieldTypeVal<F>>,
@@ -54,7 +57,7 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return new ObjectValue(extendedType, extendedData) as any;
   }
 
-  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(key: K): Value<ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type ? ObjectValueToTypeMap<UnObjectType<T>>[K] : never> {
+  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(key: K): Value<ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type ? ObjectValueToTypeMap<UnObjectType<T>>[K] : classes.Type> {
     const field = this.type.getField(<string>key);
     if(!field) throw new Error('NO_FIELD');
     const type = field.value;
