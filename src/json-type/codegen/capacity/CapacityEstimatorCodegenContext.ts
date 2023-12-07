@@ -1,6 +1,6 @@
 import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
 import {maxEncodingCapacity} from '../../../json-size';
-import {RpcValue} from '../../../reactive-rpc/common/messages/Value';
+import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
 
@@ -31,7 +31,7 @@ export class CapacityEstimatorCodegenContext {
       prologue: /* js */ `var size = 0;`,
       epilogue: /* js */ `return size;`,
       linkable: {
-        Value: RpcValue,
+        Value,
       },
       processSteps: (steps) => {
         const stepsJoined: CodegenStepExecJs[] = [];

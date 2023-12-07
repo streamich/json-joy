@@ -1,7 +1,7 @@
 import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
 import {WriteBlobStep} from '../WriteBlobStep';
 import {concat} from '../../../util/buffers/concat';
-import {RpcValue} from '../../../reactive-rpc/common/messages/Value';
+import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
 import type {CompiledBinaryEncoder} from '../types';
@@ -36,7 +36,7 @@ writer.ensureCapacity(capacityEstimator(r0));
 var uint8 = writer.uint8, view = writer.view;`,
       epilogue: '',
       linkable: {
-        Value: RpcValue,
+        Value,
       },
       processSteps: (steps) => {
         const stepsJoined: Step[] = [];
