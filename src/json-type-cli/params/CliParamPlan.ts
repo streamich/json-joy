@@ -10,7 +10,7 @@ export class CliParamPlan implements CliParam {
   public readonly createInstance = (cli: Cli, pointer: string, rawValue: unknown) =>
     new (class implements CliParamInstance {
       public readonly onBeforeCall = async (method: string, ctx: CliContext) => {
-        const fn = cli.router.routes[method];
+        const fn = cli.router.get(method).type;
         if (!fn) throw new Error(`Method ${method} not found`);
         const out: any = {
           Method: method,

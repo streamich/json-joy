@@ -1,18 +1,18 @@
 import {parseArgs} from 'node:util';
 import {TypeSystem} from '../json-type/system/TypeSystem';
-import {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
-import {TypeRouterCaller} from '../reactive-rpc/common/rpc/caller/TypeRouterCaller';
+import {ObjectValueCaller} from '../reactive-rpc/common/rpc/caller/ObjectValueCaller';
 import {bufferToUint8Array} from '../util/buffers/bufferToUint8Array';
 import {formatError} from './util';
 import {defineBuiltinRoutes} from './methods';
 import {defaultParams} from './defaultParams';
+import {ObjectValue} from '../json-type-value/ObjectValue';
 import type {CliCodecs} from './CliCodecs';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 import type {WriteStream, ReadStream} from 'tty';
 import type {CliCodec, CliContext, CliParam, CliParamInstance} from './types';
 import type {Value} from '../json-type-value/Value';
 
-export interface CliOptions<Router extends TypeRouter<any>> {
+export interface CliOptions<Router extends ObjectValue<any>> {
   codecs: CliCodecs;
   params?: CliParam[];
   router?: Router;
@@ -25,13 +25,13 @@ export interface CliOptions<Router extends TypeRouter<any>> {
   exit?: (errno: number) => void;
 }
 
-export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
+export class Cli<Router extends ObjectValue<any> = ObjectValue<any>> {
   public router: Router;
   public readonly params: CliParam[];
   public readonly paramMap: Map<string, CliParam>;
   public readonly types: TypeSystem;
   public readonly t: TypeBuilder;
-  public readonly caller: TypeRouterCaller<Router>;
+  public readonly caller: ObjectValueCaller<Router>;
   public readonly codecs: CliCodecs;
   public request?: unknown;
   public response?: unknown;
@@ -47,7 +47,7 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
   protected paramInstances: CliParamInstance[] = [];
 
   public constructor(public readonly options: CliOptions<Router>) {
-    let router = options.router ?? (TypeRouter.create() as any);
+    let router = options.router ?? (ObjectValue.create(new TypeSystem()) as any);
     router = defineBuiltinRoutes(router);
     this.router = router;
     this.params = options.params ?? defaultParams;
@@ -56,7 +56,7 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
       this.paramMap.set(param.param, param);
       if (param.short) this.paramMap.set(param.short, param);
     }
-    this.caller = new TypeRouterCaller({router, wrapInternalError: (err) => err});
+    this.caller = new ObjectValueCaller({router, wrapInternalError: (err) => err});
     this.types = router.system;
     this.t = this.types.t;
     this.codecs = options.codecs;
@@ -79,6 +79,8 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
 
   public async runAsync(): Promise<void> {
     try {
+      const system = this.router.system;
+      for (const key of this.router.keys()) system.alias(key, this.router.get(key).type);
       const args = parseArgs({
         args: this.argv,
         strict: false,
@@ -101,6 +103,12 @@ export class Cli<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>>
         if (instance.onParam) await instance.onParam();
       }
       const method = args.positionals[0];
+      if (!method) {
+        const param = this.param('help');
+        const instance = param?.createInstance(this, '', undefined);
+        instance?.onParam?.();
+        throw new Error('No method specified');
+      }
       this.request = JSON.parse(args.positionals[1] || '{}');
       await this.readStdin();
       for (const instance of this.paramInstances) if (instance.onStdin) await instance.onStdin();

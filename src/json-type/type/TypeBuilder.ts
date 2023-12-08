@@ -151,6 +151,7 @@ export class TypeBuilder {
     return type;
   }
 
+  /** @todo Shorten to `Func`. */
   public Function<Req extends Type, Res extends Type>(req: Req, res: Res) {
     const fn = new classes.FunctionType<Req, Res>(req, res);
     fn.system = this.system;
