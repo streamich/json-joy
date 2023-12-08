@@ -55,7 +55,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   protected abstract schema: S;
 
   public getSystem(): TypeSystem {
-    const system = type.system;
+    const system = this.system;
     if (!system) throw new Error('NO_SYSTEM');
     return system;
   }
