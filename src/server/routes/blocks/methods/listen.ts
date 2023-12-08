@@ -1,12 +1,10 @@
 import {switchMap} from 'rxjs';
-import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../../types';
+import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch, Block} from '../schema';
 
 export const listen =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const PatchType = t.Ref<typeof BlockPatch>('BlockPatch');
 
     const Request = t.Object(
@@ -31,15 +29,12 @@ export const listen =
       }),
     );
 
-    const Func = t
-      .Function$(Request, Response)
-      .options({
-        title: 'Listen for block changes',
-        description: 'Subscribe to a block to receive updates when it changes.',
-      })
-      .implement((req$) => {
-        return req$.pipe(switchMap(({id}) => services.pubsub.listen$(`__block:${id}`))) as any;
-      });
+    const Func = t.Function$(Request, Response).options({
+      title: 'Listen for block changes',
+      description: 'Subscribe to a block to receive updates when it changes.',
+    });
 
-    return router.fn$('blocks.listen', Func);
+    return r.prop('blocks.listen', Func, (req$) => {
+      return req$.pipe(switchMap(({id}) => services.pubsub.listen$(`__block:${id}`))) as any;
+    });
   };

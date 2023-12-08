@@ -54,6 +54,12 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   /** @todo Retype this to `Schema`. */
   protected abstract schema: S;
 
+  public getSystem(): TypeSystem {
+    const system = this.system;
+    if (!system) throw new Error('NO_SYSTEM');
+    return system;
+  }
+
   public getTypeName(): S['__t'] {
     return this.schema.__t;
   }

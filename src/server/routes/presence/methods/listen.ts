@@ -1,13 +1,10 @@
 import {map, switchMap} from 'rxjs';
 import type {PresenceEntry, TPresenceEntry} from '../schema';
-import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../../types';
+import type {RouteDeps, Router, RouterBase} from '../../types';
 
 export const listen =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
-
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const Request = t.Object(
       t.prop('room', t.str).options({
         title: 'Room ID',
@@ -23,25 +20,22 @@ export const listen =
       }),
     );
 
-    const Func = t
-      .Function$(Request, Response)
-      .options({
-        title: 'Subscribe to a room.',
-        intro: 'Subscribes to presence updates in a room.',
-        description:
-          'This method subscribes to presence updates in a room. ' +
-          'It returns an array of all current presence entries in the room, and then emits an update whenever ' +
-          'a presence entry is updated or deleted. ',
-      })
-      .implement((req$) => {
-        return req$.pipe(
-          switchMap((req) => services.presence.listen$(req.room)),
-          map((entries: TPresenceEntry[]) => ({
-            entries,
-            time: Date.now(),
-          })),
-        );
-      });
+    const Func = t.Function$(Request, Response).options({
+      title: 'Subscribe to a room.',
+      intro: 'Subscribes to presence updates in a room.',
+      description:
+        'This method subscribes to presence updates in a room. ' +
+        'It returns an array of all current presence entries in the room, and then emits an update whenever ' +
+        'a presence entry is updated or deleted. ',
+    });
 
-    return router.fn$('presence.listen', Func);
+    return r.prop('presence.listen', Func, (req$) => {
+      return req$.pipe(
+        switchMap((req) => services.presence.listen$(req.room)),
+        map((entries: TPresenceEntry[]) => ({
+          entries,
+          time: Date.now(),
+        })),
+      );
+    });
   };

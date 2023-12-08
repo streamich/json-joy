@@ -1,12 +1,9 @@
 import type {BlockPatch, BlockId} from '../schema';
-import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../../types';
+import type {RouteDeps, Router, RouterBase} from '../../types';
 
 export const history =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
-
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const Request = t.Object(
       t.prop('id', t.Ref<typeof BlockId>('BlockId')).options({
         title: 'Block ID',
@@ -29,17 +26,14 @@ export const history =
       }),
     );
 
-    const Func = t
-      .Function(Request, Response)
-      .options({
-        title: 'Block History',
-        intro: 'Fetch block history.',
-        description: 'Returns a list of specified change patches for a block.',
-      })
-      .implement(async ({id, min, max}) => {
-        const {patches} = await services.blocks.history(id, min, max);
-        return {patches};
-      });
+    const Func = t.Function(Request, Response).options({
+      title: 'Block History',
+      intro: 'Fetch block history.',
+      description: 'Returns a list of specified change patches for a block.',
+    });
 
-    return router.fn('blocks.history', Func);
+    return r.prop('blocks.history', Func, async ({id, min, max}) => {
+      const {patches} = await services.blocks.history(id, min, max);
+      return {patches};
+    });
   };

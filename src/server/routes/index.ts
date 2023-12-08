@@ -1,21 +1,26 @@
 import {routes} from './routes';
-import {system} from './system';
-import {TypeRouter} from '../../json-type/system/TypeRouter';
-import {TypeRouterCaller} from '../../reactive-rpc/common/rpc/caller/TypeRouterCaller';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
 import {RpcValue} from '../../reactive-rpc/common/messages/Value';
+import {ObjectValueCaller} from '../../reactive-rpc/common/rpc/caller/ObjectValueCaller';
+import {system} from './system';
+import {ObjectValue} from '../../json-type-value/ObjectValue';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
 
 export const createRouter = (services: Services) => {
-  const router = new TypeRouter({system, routes: {}});
-  const deps: RouteDeps = {services, router};
+  const router = ObjectValue.create(system);
+  const deps: RouteDeps = {
+    services,
+    router,
+    system,
+    t: system.t,
+  };
   return routes(deps)(router);
 };
 
 export const createCaller = (services: Services) => {
   const router = createRouter(services);
-  const caller = new TypeRouterCaller<typeof router>({
+  const caller = new ObjectValueCaller<typeof router>({
     router,
     wrapInternalError: (error: unknown) => {
       if (error instanceof RpcValue) return error;

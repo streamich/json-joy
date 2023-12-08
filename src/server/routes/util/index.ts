@@ -1,33 +1,28 @@
-import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
-import type {MyCtx} from '../../services/types';
-import type {RouteDeps} from '../types';
+import type {RouteDeps, Router, RouterBase} from '../types';
 
 export const ping =
-  (deps: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
-    const req = t.any;
-    const res = t.Const(<const>'pong');
-    const func = t.Function(req, res).implement<MyCtx>(async () => {
+  ({t}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
+    const Request = t.any;
+    const Response = t.Const(<const>'pong');
+    const Func = t.Function(Request, Response);
+    return r.prop('util.ping', Func, async () => {
       return 'pong';
     });
-    return router.fn('util.ping', func);
   };
 
 export const echo =
-  (deps: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
-    const req = t.any;
-    const res = t.any;
-    const func = t.Function(req, res).implement<MyCtx>(async (msg) => msg);
-    return router.fn('util.echo', func);
+  ({t}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
+    const Request = t.any;
+    const Response = t.any;
+    const Func = t.Function(Request, Response);
+    return r.prop('util.echo', Func, async (msg) => msg);
   };
 
 export const info =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const Request = t.any;
     const Response = t.Object(
       t.prop('now', t.num),
@@ -40,7 +35,8 @@ export const info =
         ),
       ),
     );
-    const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
+    const Func = t.Function(Request, Response);
+    return r.prop('util.info', Func, async () => {
       return {
         now: Date.now(),
         stats: {
@@ -50,27 +46,25 @@ export const info =
         },
       };
     });
-    return router.fn('util.info', Func);
   };
 
 export const schema =
-  (deps: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
+  ({t, router}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const Request = t.any;
     const Response = t.Object(t.prop('typescript', t.str));
-    const Func = t.Function(Request, Response).implement<MyCtx>(async () => {
+    const Func = t.Function(Request, Response);
+    return r.prop('util.schema', Func, async () => {
       return {
-        typescript: deps.router.toTypeScript(),
+        typescript: router.toTypeScript(),
       };
     });
-    return router.fn('util.schema', Func);
   };
 
 // prettier-ignore
-export const util = (deps: RouteDeps) => <R extends RoutesBase>(r: TypeRouter<R>) =>
-  ( ping(deps)
-  ( echo(deps)
-  ( info(deps)
-  ( schema(deps)
+export const util = (d: RouteDeps) => <R extends RouterBase>(r: Router<R>) =>
+  ( ping(d)
+  ( echo(d)
+  ( info(d)
+  ( schema(d)
   ( r )))));

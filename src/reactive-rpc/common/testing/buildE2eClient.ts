@@ -11,6 +11,9 @@ import type {Observable} from 'rxjs';
 import type {ResolveType} from '../../../json-type';
 import type {TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {TypeRouterCaller} from '../rpc/caller/TypeRouterCaller';
+import type {RpcCaller} from '../rpc/caller/RpcCaller';
+import type {ObjectValueCaller} from '../rpc/caller/ObjectValueCaller';
+import type {ObjectValue, ObjectValueToTypeMap, UnObjectType} from '../../../json-type-value/ObjectValue';
 
 export interface BuildE2eClientOptions {
   /**
@@ -64,7 +67,7 @@ export interface BuildE2eClientOptions {
   token?: string;
 }
 
-export const buildE2eClient = <Caller extends TypeRouterCaller<any>>(caller: Caller, opt: BuildE2eClientOptions) => {
+export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, opt: BuildE2eClientOptions) => {
   const writer = opt.writer ?? new Writer(Fuzzer.randomInt2(opt.writerDefaultBufferKb ?? [4, 4]) * 1024);
   const codecs = new RpcCodecs(new Codecs(writer), new RpcMessageCodecs());
   const ctx = new ConnectionContext(
@@ -109,8 +112,12 @@ export const buildE2eClient = <Caller extends TypeRouterCaller<any>>(caller: Cal
   };
 };
 
-type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : never;
-type UnTypeRouter<T> = T extends TypeRouter<infer R> ? R : never;
+type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : T extends ObjectValueCaller<infer R> ? R : never;
+type UnTypeRouter<T> = T extends TypeRouter<infer R>
+  ? R
+  : T extends ObjectValue<infer R>
+  ? ObjectValueToTypeMap<UnObjectType<R>>
+  : never;
 type UnwrapFunction<F> = F extends FunctionType<infer Req, infer Res>
   ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
   : F extends FunctionStreamingType<infer Req, infer Res>

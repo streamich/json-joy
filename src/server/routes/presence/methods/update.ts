@@ -1,16 +1,13 @@
 import type {ResolveType} from '../../../../json-type';
 import type {PresenceEntry} from '../schema';
-import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../../types';
+import type {RouteDeps, Router, RouterBase} from '../../types';
 
 /** Entry TLL in seconds. */
 const ttl = 30;
 
 export const update =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
-
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const Request = t
       .Object(
         t.prop('room', t.str).options({
@@ -58,23 +55,20 @@ export const update =
         title: 'Presence update response',
       });
 
-    const Func = t
-      .Function(Request, Response)
-      .options({
-        title: 'Update presence entry',
-        intro: 'Update a presence entry in a room.',
-        description:
-          'This method updates a presence entry in a room. ' +
-          `The entry is automatically removed after ${ttl} seconds. ` +
-          `Every time the entry is updated, the TTL is reset to ${ttl} seconds.`,
-      })
-      .implement(async ({room, id, data}) => {
-        const entry = (await services.presence.update(room, id, ttl * 1000, data)) as ResolveType<typeof PresenceEntry>;
-        return {
-          entry,
-          time: Date.now(),
-        };
-      });
+    const Func = t.Function(Request, Response).options({
+      title: 'Update presence entry',
+      intro: 'Update a presence entry in a room.',
+      description:
+        'This method updates a presence entry in a room. ' +
+        `The entry is automatically removed after ${ttl} seconds. ` +
+        `Every time the entry is updated, the TTL is reset to ${ttl} seconds.`,
+    });
 
-    return router.fn('presence.update', Func);
+    return r.prop('presence.update', Func, async ({room, id, data}) => {
+      const entry = (await services.presence.update(room, id, ttl * 1000, data)) as ResolveType<typeof PresenceEntry>;
+      return {
+        entry,
+        time: Date.now(),
+      };
+    });
   };

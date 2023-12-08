@@ -1,11 +1,9 @@
-import type {RoutesBase, TypeRouter} from '../../../../json-type/system/TypeRouter';
-import type {RouteDeps} from '../../types';
+import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch} from '../schema';
 
 export const edit =
-  ({services}: RouteDeps) =>
-  <R extends RoutesBase>(router: TypeRouter<R>) => {
-    const t = router.t;
+  ({t, services}: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
     const PatchType = t.Ref<typeof BlockPatch>('BlockPatch');
 
     const Request = t.Object(
@@ -34,19 +32,16 @@ export const edit =
       }),
     );
 
-    const Func = t
-      .Function(Request, Response)
-      .options({
-        title: 'Edit Block',
-        intro: 'Applies patches to an existing block.',
-        description: 'Applies patches to an existing document and returns the latest concurrent changes.',
-      })
-      .implement(async ({id, patches}) => {
-        const res = await services.blocks.edit(id, patches);
-        return {
-          patches: res.patches,
-        };
-      });
+    const Func = t.Function(Request, Response).options({
+      title: 'Edit Block',
+      intro: 'Applies patches to an existing block.',
+      description: 'Applies patches to an existing document and returns the latest concurrent changes.',
+    });
 
-    return router.fn('blocks.edit', Func);
+    return r.prop('blocks.edit', Func, async ({id, patches}) => {
+      const res = await services.blocks.edit(id, patches);
+      return {
+        patches: res.patches,
+      };
+    });
   };
