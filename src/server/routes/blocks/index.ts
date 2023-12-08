@@ -7,16 +7,18 @@ import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
 import {history} from './methods/history';
 import type {RouteDeps, Router, RouterBase} from '../types';
 
-export const blocks = (d: RouteDeps) => <R extends RouterBase>(r: Router<R>) => {
-  const {system} = d;
+export const blocks =
+  (d: RouteDeps) =>
+  <R extends RouterBase>(r: Router<R>) => {
+    const {system} = d;
 
-  system.alias('BlockId', BlockId);
-  system.alias('BlockSeq', BlockSeq);
-  system.alias('Block', Block);
-  system.alias('BlockPatch', BlockPatch);
+    system.alias('BlockId', BlockId);
+    system.alias('BlockSeq', BlockSeq);
+    system.alias('Block', Block);
+    system.alias('BlockPatch', BlockPatch);
 
-  // prettier-ignore
-  return (
+    // prettier-ignore
+    return (
     ( create(d)
     ( get(d)
     ( remove(d)
@@ -24,4 +26,4 @@ export const blocks = (d: RouteDeps) => <R extends RouterBase>(r: Router<R>) => 
     ( listen(d)
     ( history(d)
     ( r ))))))));
-};
+  };
