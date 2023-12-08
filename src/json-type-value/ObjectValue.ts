@@ -47,6 +47,20 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return type.fields.map((field: classes.ObjectFieldType<string, any>) => field.key);
   }
 
+  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(
+    key: K,
+  ): Value<
+    ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type
+      ? ObjectValueToTypeMap<UnObjectType<T>>[K]
+      : classes.Type
+  > {
+    const field = this.type.getField(<string>key);
+    if (!field) throw new Error('NO_FIELD');
+    const type = field.value;
+    const data = this.data[<string>key];
+    return new Value(type, data) as any;
+  }
+
   public field<F extends classes.ObjectFieldType<any, any>>(
     field: F | ((t: TypeBuilder) => F),
     data: ResolveType<UnObjectFieldTypeVal<F>>,
@@ -97,20 +111,6 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     }
     const extendedType = system.t.Object(...extendedFields);
     return new ObjectValue(extendedType, <any>extendedData) as any;
-  }
-
-  public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(
-    key: K,
-  ): Value<
-    ObjectValueToTypeMap<UnObjectType<T>>[K] extends classes.Type
-      ? ObjectValueToTypeMap<UnObjectType<T>>[K]
-      : classes.Type
-  > {
-    const field = this.type.getField(<string>key);
-    if (!field) throw new Error('NO_FIELD');
-    const type = field.value;
-    const data = this.data[<string>key];
-    return new Value(type, data) as any;
   }
 
   public toTypeScriptAst(): ts.TsTypeLiteral {

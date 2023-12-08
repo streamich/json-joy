@@ -79,6 +79,8 @@ export class Cli<Router extends ObjectValue<any> = ObjectValue<any>> {
 
   public async runAsync(): Promise<void> {
     try {
+      const system = this.router.system;
+      for (const key of this.router.keys()) system.alias(key, this.router.get(key).type);
       const args = parseArgs({
         args: this.argv,
         strict: false,
@@ -101,6 +103,12 @@ export class Cli<Router extends ObjectValue<any> = ObjectValue<any>> {
         if (instance.onParam) await instance.onParam();
       }
       const method = args.positionals[0];
+      if (!method) {
+        const param = this.param('help');
+        const instance = param?.createInstance(this, '', undefined);
+        instance?.onParam?.();
+        throw new Error('No method specified');
+      }
       this.request = JSON.parse(args.positionals[1] || '{}');
       await this.readStdin();
       for (const instance of this.paramInstances) if (instance.onStdin) await instance.onStdin();
