@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -98,34 +98,18 @@
 <a name='L33'></a><a href='#L33'>33</a>
 <a name='L34'></a><a href='#L34'>34</a>
 <a name='L35'></a><a href='#L35'>35</a>
-<a name='L36'></a><a href='#L36'>36</a>
-<a name='L37'></a><a href='#L37'>37</a>
-<a name='L38'></a><a href='#L38'>38</a>
-<a name='L39'></a><a href='#L39'>39</a>
-<a name='L40'></a><a href='#L40'>40</a>
-<a name='L41'></a><a href='#L41'>41</a>
-<a name='L42'></a><a href='#L42'>42</a>
-<a name='L43'></a><a href='#L43'>43</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -135,28 +119,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {RoutesBase, TypeRouter} from '../../../json-type/system/TypeRouter';
-import type {MyCtx} from '../../services/types';
-import type {RouteDeps} from '../types';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {RouteDeps, Router, RouterBase} from '../types';
 &nbsp;
 export const publish =
-  ({services}: RouteDeps) =&gt;
-  &lt;R extends RoutesBase&gt;(router: TypeRouter&lt;R&gt;) =&gt; {
-    const t = router.t;
-&nbsp;
-    const req = t.Object(
+  ({t, services}: RouteDeps) =&gt;
+  &lt;R extends RouterBase&gt;(r: Router&lt;R&gt;) =&gt; {
+    const Request = t.Object(
       t.prop('channel', t.str).options({
         title: 'Channel name',
         description: 'The name of the channel to publish to.',
@@ -167,27 +149,24 @@ export const publish =
       }),
     );
 &nbsp;
-    const res = t.obj.options({
+    const Response = t.obj.options({
       title: 'Publish response',
       description: 'An empty object.',
     });
 &nbsp;
-    const func = t
-      .Function(req, res)
-      .options({
-        title: 'Publish to channel',
-        intro: 'Publish a message to a channel.',
-        description:
-          'This method publishes a message to a global channel with the given `channel` name. ' +
-          'All subscribers to the channel will receive the message. The `message` can be any value. ' +
-          'The most efficient way to publish a message is to send a primitive or a `Uint8Array` buffer.',
-      })
-      .implement&lt;MyCtx&gt;(async ({channel, message}) =&gt; {
-        services.pubsub.publish(channel, message);
-        return {};
-      });
+    const Func = t.Function(Request, Response).options({
+      title: 'Publish to channel',
+      intro: 'Publish a message to a channel.',
+      description:
+        'This method publishes a message to a global channel with the given `channel` name. ' +
+        'All subscribers to the channel will receive the message. The `message` can be any value. ' +
+        'The most efficient way to publish a message is to send a primitive or a `Uint8Array` buffer.',
+    });
 &nbsp;
-    return router.fn('pubsub.publish', func);
+    return r.prop('pubsub.publish', Func, async ({channel, message}) =&gt; {
+      services.pubsub.publish(channel, message);
+      return {};
+    });
   };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -196,7 +175,7 @@ export const publish =
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-12-07T19:04:07.024Z
+                at 2023-12-08T09:46:47.096Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
