@@ -1,8 +1,10 @@
 import {Value} from './Value';
 import {toText} from '../json-type/typescript/toText';
-import type {ResolveType, TypeSystem} from '../json-type';
+import {TypeSystem} from '../json-type/system/TypeSystem';
+import type {ResolveType} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
+import {TypeBuilder} from '../json-type/type/TypeBuilder';
 
 export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
 export type UnObjectValue<T> = T extends ObjectValue<infer U> ? U : never;
@@ -10,6 +12,7 @@ export type UnObjectFieldTypeVal<T> = T extends classes.ObjectFieldType<any, inf
 export type ObjectFieldToTuple<F> = F extends classes.ObjectFieldType<infer K, infer V> ? [K, V] : never;
 export type ToObject<T> = T extends [string, unknown][] ? {[K in T[number] as K[0]]: K[1]} : never;
 export type ObjectValueToTypeMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTuple<F[K]>}>;
+export type TuplesToFields<T> = T extends PropDefinition<infer K, infer V>[] ? classes.ObjectFieldType<K, V>[] : never;
 
 // export type MergeObjectsTypes<A, B> =
 //   A extends classes.ObjectType<infer A2>
@@ -25,8 +28,11 @@ export type ObjectValueToTypeMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTup
 //     never :
 //   never;
 
+type PropDefinition<K extends string, V extends classes.Type> = [key: K, val: V, data: ResolveType<V>];
+type PropDef = <K extends string, V extends classes.Type>(key: K, val: V, data: ResolveType<V>) => PropDefinition<K, V>;
+
 export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
-  public static create = (system: TypeSystem) => new ObjectValue(system.t.obj, {});
+  public static create = (system: TypeSystem = new TypeSystem()) => new ObjectValue(system.t.obj, {});
 
   public field<F extends classes.ObjectFieldType<any, any>>(
     field: F,
@@ -55,6 +61,21 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     if (!system) throw new Error('NO_SYSTEM');
     const extendedType = system.t.Object(...type.fields, ...obj.type.fields);
     return new ObjectValue(extendedType, extendedData) as any;
+  }
+
+  public extend<R extends PropDefinition<any, any>[]>(inp: (t: TypeBuilder, r: PropDef, system: TypeSystem) => R): ObjectValue<classes.ObjectType<[...UnObjectType<T>, ...TuplesToFields<R>]>> {
+    const system = this.type.getSystem();
+    const r: PropDef = (key, val, data) => [key, val, data];
+    const extension = inp(system.t, r, system);
+    const type = this.type;
+    const extendedFields: classes.ObjectFieldType<any, any>[] = [...type.fields];
+    const extendedData = {...this.data};
+    for (const [key, val, data] of extension) {
+      extendedFields.push(system.t.prop(key, val));
+      extendedData[key] = data;
+    }
+    const extendedType = system.t.Object(...extendedFields);
+    return new ObjectValue(extendedType, <any>extendedData) as any;
   }
 
   public get<K extends keyof ObjectValueToTypeMap<UnObjectType<T>>>(
