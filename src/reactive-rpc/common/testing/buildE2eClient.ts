@@ -12,6 +12,8 @@ import type {ResolveType} from '../../../json-type';
 import type {TypeRouter} from '../../../json-type/system/TypeRouter';
 import type {TypeRouterCaller} from '../rpc/caller/TypeRouterCaller';
 import type {RpcCaller} from '../rpc/caller/RpcCaller';
+import type {ObjectValueCaller} from '../rpc/caller/ObjectValueCaller';
+import type {ObjectValue, ObjectValueToTypeMap, UnObjectType} from '../../../json-type-value/ObjectValue';
 
 export interface BuildE2eClientOptions {
   /**
@@ -110,8 +112,14 @@ export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, op
   };
 };
 
-type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : never;
-type UnTypeRouter<T> = T extends TypeRouter<infer R> ? R : never;
+type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R>
+  ? R
+  : T extends ObjectValueCaller<infer R>
+    ? R : never;
+type UnTypeRouter<T> = T extends TypeRouter<infer R>
+  ? R
+  : T extends ObjectValue<infer R>
+    ? ObjectValueToTypeMap<UnObjectType<R>> : never;
 type UnwrapFunction<F> = F extends FunctionType<infer Req, infer Res>
   ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
   : F extends FunctionStreamingType<infer Req, infer Res>

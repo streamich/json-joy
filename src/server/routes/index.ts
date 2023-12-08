@@ -2,13 +2,12 @@ import {routes} from './routes';
 import {RpcError} from '../../reactive-rpc/common/rpc/caller';
 import {RpcValue} from '../../reactive-rpc/common/messages/Value';
 import {ObjectValueCaller} from '../../reactive-rpc/common/rpc/caller/ObjectValueCaller';
-import {TypeSystem} from '../../json-type';
+import {system} from './system';
 import {ObjectValue} from '../../json-type-value/ObjectValue';
 import type {Services} from '../services/Services';
 import type {RouteDeps} from './types';
 
 export const createRouter = (services: Services) => {
-  const system = new TypeSystem();
   const router = ObjectValue.create(system);
   const deps: RouteDeps = {
     services,
