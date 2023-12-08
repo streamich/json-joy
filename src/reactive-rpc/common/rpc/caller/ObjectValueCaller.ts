@@ -42,20 +42,20 @@ type MethodDefinition<Ctx, F> = F extends FunctionType<any, any>
 
 export interface ObjectValueCallerOptions<V extends ObjectValue<ObjectType<any>>, Ctx = unknown>
   extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
-  value: V;
+  router: V;
 }
 
 export class ObjectValueCaller<V extends ObjectValue<ObjectType<any>>, Ctx = unknown> extends RpcCaller<Ctx> {
-  protected readonly value: V;
+  protected readonly router: V;
   protected readonly system: TypeSystem;
   protected readonly methods = new Map<string, StaticRpcMethod<Ctx> | StreamingRpcMethod<Ctx>>();
 
-  constructor({value, ...rest}: ObjectValueCallerOptions<V, Ctx>) {
+  constructor({router: value, ...rest}: ObjectValueCallerOptions<V, Ctx>) {
     super({
       ...rest,
       getMethod: (name) => this.get(name) as any as StaticRpcMethod<Ctx> | StreamingRpcMethod<Ctx>,
     });
-    this.value = value;
+    this.router = value;
     const system = value.type.system;
     if (!system) throw new Error('NO_SYSTEM');
     this.system = system;
@@ -66,11 +66,9 @@ export class ObjectValueCaller<V extends ObjectValue<ObjectType<any>>, Ctx = unk
   ): MethodDefinition<Ctx, ObjectValueToTypeMap<V>[K]> | undefined {
     let method = this.methods.get(id as string) as any;
     if (method) return method;
-    const fn = this.value.get(<string>id) as Value<Type>;
+    const fn = this.router.get(<string>id) as Value<Type>;
     if (!fn || !(fn.type instanceof FunctionType || fn.type instanceof FunctionStreamingType)) {
-      // const system = type.getSystem();
-      // fn = system.t.Function(t.any, fn);
-      throw new Error('NOT_FUNCTION');
+      return undefined;
     }
     const fnType = fn.type as FunctionType<Type, Type> | FunctionStreamingType<Type, Type>;
     const {req, res} = fnType;
