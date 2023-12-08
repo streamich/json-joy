@@ -1,5 +1,5 @@
 import {createCli} from '../json-type-cli';
-import {TypeRouter} from '../json-type/system/TypeRouter';
+import {ObjectValue} from '../json-type-value/ObjectValue';
 import {defineCrdtRoutes} from './routes/crdt';
 import {definePatchRoutes} from './routes/patch';
 import {defineUtilRoutes} from './routes/util';
@@ -9,7 +9,7 @@ const router =
   ( definePatchRoutes
   ( defineCrdtRoutes
   ( defineUtilRoutes
-  ( TypeRouter.create()))));
+  ( ObjectValue.create()))));
 
 const cli = createCli({
   router,

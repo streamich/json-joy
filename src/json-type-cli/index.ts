@@ -1,8 +1,8 @@
 import {defaultCodecs} from './defaultCodecs';
 import {Cli, type CliOptions} from './Cli';
-import type {TypeRouter} from '../json-type/system/TypeRouter';
+import type {ObjectValue} from '../json-type-value/ObjectValue';
 
-export const createCli = <Router extends TypeRouter<any>>(options: Partial<CliOptions<Router>>) => {
+export const createCli = <Router extends ObjectValue<any>>(options: Partial<CliOptions<Router>>) => {
   const cli = new Cli<Router>({
     codecs: defaultCodecs,
     ...options,

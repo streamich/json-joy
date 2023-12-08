@@ -15,9 +15,9 @@ export class CliParamHelp implements CliParam {
           if (param.example) line += `, eg. ${param.example}`;
           return line;
         });
-        const methods: string[] = Object.keys(cli.router.routes).sort();
+        const methods: string[] = cli.router.keys().sort();
         const methodLines = methods.map((m) => {
-          const route = cli.router.routes[m];
+          const route = cli.router.get(m).type;
           const schema = route.getSchema();
           let line = `- "${m}"`;
           if (schema.title) line += ` - ${schema.title}`;

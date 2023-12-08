@@ -34,10 +34,24 @@ type PropDef = <K extends string, V extends classes.Type>(key: K, val: V, data: 
 export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
   public static create = (system: TypeSystem = new TypeSystem()) => new ObjectValue(system.t.obj, {});
 
+  public get system(): TypeSystem {
+    return (this.type as T).getSystem();
+  }
+
+  public get t(): TypeBuilder {
+    return this.system.t;
+  }
+
+  public keys(): string[] {
+    const type = this.type as T;
+    return type.fields.map((field: classes.ObjectFieldType<string, any>) => field.key);
+  }
+
   public field<F extends classes.ObjectFieldType<any, any>>(
-    field: F,
+    field: F | ((t: TypeBuilder) => F),
     data: ResolveType<UnObjectFieldTypeVal<F>>,
   ): ObjectValue<classes.ObjectType<[...UnObjectType<T>, F]>> {
+    field = typeof field === 'function' ? field((this.type as classes.ObjectType<any>).getSystem().t) : field;
     const extendedData = {...this.data, [field.key]: data};
     const type = this.type;
     const system = type.system;
@@ -46,10 +60,15 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return new ObjectValue(extendedType, extendedData) as any;
   }
 
-  public prop<K extends string, V extends classes.Type>(key: K, type: V, data: ResolveType<V>) {
-    const system = type.system;
-    if (!system) throw new Error('NO_SYSTEM');
-    return this.field(system.t.prop(key, type), data);
+  public prop<K extends string, V extends classes.Type>(
+    key: K,
+    type: V | ((t: TypeBuilder) => V),
+    data: ResolveType<V>,
+  ) {
+    const system = (this.type as classes.ObjectType<any>).getSystem();
+    const t = system.t;
+    type = typeof type === 'function' ? type(t) : type;
+    return this.field(t.prop(key, type), data);
   }
 
   public merge<O extends ObjectValue<any>>(
@@ -63,7 +82,9 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     return new ObjectValue(extendedType, extendedData) as any;
   }
 
-  public extend<R extends PropDefinition<any, any>[]>(inp: (t: TypeBuilder, r: PropDef, system: TypeSystem) => R): ObjectValue<classes.ObjectType<[...UnObjectType<T>, ...TuplesToFields<R>]>> {
+  public extend<R extends PropDefinition<any, any>[]>(
+    inp: (t: TypeBuilder, prop: PropDef, system: TypeSystem) => R,
+  ): ObjectValue<classes.ObjectType<[...UnObjectType<T>, ...TuplesToFields<R>]>> {
     const system = this.type.getSystem();
     const r: PropDef = (key, val, data) => [key, val, data];
     const extension = inp(system.t, r, system);

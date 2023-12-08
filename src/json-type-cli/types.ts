@@ -1,4 +1,4 @@
-import type {RoutesBase, TypeRouter} from '../json-type/system/TypeRouter';
+import type {ObjectValue} from '../json-type-value/ObjectValue';
 import type {Cli} from './Cli';
 
 export interface CliCodec<Id extends string = string> {
@@ -8,7 +8,7 @@ export interface CliCodec<Id extends string = string> {
   decode: (bytes: Uint8Array) => unknown;
 }
 
-export interface CliContext<Router extends TypeRouter<RoutesBase> = TypeRouter<RoutesBase>> {
+export interface CliContext<Router extends ObjectValue<any> = ObjectValue<any>> {
   cli: Cli<Router>;
 }
 
