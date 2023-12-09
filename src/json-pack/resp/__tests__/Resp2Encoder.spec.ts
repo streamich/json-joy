@@ -70,7 +70,7 @@ describe('.writeAsciiString()', () => {
   });
 });
 
-describe('error', () => {
+describe('errors', () => {
   test('can encode simple error', () => {
     const encoder = new Resp2Encoder();
     const encoded = encoder.encode(new Error('ERR'));
@@ -87,7 +87,7 @@ describe('error', () => {
   });
 });
 
-describe('Integers', () => {
+describe('integers', () => {
   test('zero', () => {
     const encoder = new Resp2Encoder();
     const encoded = encoder.encode(0);
@@ -107,5 +107,28 @@ describe('Integers', () => {
     const encoded = encoder.encode(-11111111);
     expect(toStr(encoded)).toBe(':-11111111\r\n');
     expect(parse(encoded)).toBe(-11111111);
+  });
+});
+
+describe('arrays', () => {
+  test('empty array', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode([]);
+    expect(toStr(encoded)).toBe('*0\r\n');
+    expect(parse(encoded)).toEqual([]);
+  });
+
+  test('array of numbers', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode([1, 2, 3]);
+    expect(toStr(encoded)).toBe('*3\r\n:1\r\n:2\r\n:3\r\n');
+    expect(parse(encoded)).toEqual([1, 2, 3]);
+  });
+
+  test('array of strings and numbers', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode([1, 'abc', 3]);
+    expect(toStr(encoded)).toBe('*3\r\n:1\r\n$3\r\nabc\r\n:3\r\n');
+    expect(parse(encoded)).toEqual([1, 'abc', 3]);
   });
 });

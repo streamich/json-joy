@@ -36,9 +36,9 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
         const constructor = value.constructor;
         switch (constructor) {
           case Array:
-            throw new Error('Not implemented');
+            return this.writeArr(value as unknown[]);
           default:
-            throw new Error('Not implemented');
+            return this.writeObj(value as Record<string, unknown>);
         }
       }
       case 'undefined':
@@ -96,7 +96,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeStr(str: string): void {
-    throw new Error('Not implemented');
+    this.writeBulkStr(str);
   }
 
   public writeStrHdr(length: number): void {
@@ -148,11 +148,18 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeArr(arr: unknown[]): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    const length = arr.length;
+    writer.u8(42); // *
+    writer.ascii(length + '');
+    writer.u16(rn);
+    for (let i = 0; i < length; i++) this.writeAny(arr[i]);
   }
 
   public writeArrHdr(length: number): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(42); // *
+    writer.ascii(length + '');
   }
 
   public writeObj(obj: Record<string, unknown>): void {
