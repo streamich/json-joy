@@ -2,6 +2,9 @@ import {Writer} from '../../util/buffers/Writer';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 
+const REG_RN = /[\n\r]/;
+const rn = ('\r'.charCodeAt(0) << 8) | '\n'.charCodeAt(0);
+
 export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> implements BinaryJsonEncoder, TlvBinaryJsonEncoder {
   constructor(public readonly writer: W = new Writer() as any) {}
 
@@ -86,8 +89,27 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     throw new Error('Not implemented');
   }
 
+  public writeSimpleStr(str: string): void {
+    const writer = this.writer;
+    writer.u8(43); // +
+    writer.ascii(str);
+    writer.u16(rn);
+  }
+
+  public writeBulkStr(str: string): void {
+    const writer = this.writer;
+    writer.u8(36); // $
+    writer.ascii(str.length + '');
+    writer.u16(rn);
+    writer.ascii(str);
+    writer.u16(rn);
+  }
+
   public writeAsciiStr(str: string): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    const isSimple = !REG_RN.test(str);
+    if (isSimple) this.writeSimpleStr(str);
+    else this.writeBulkStr(str);
   }
 
   public writeArr(arr: unknown[]): void {
@@ -117,5 +139,9 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
 
   public writeUndef(): void {
     throw new Error('Not implemented');
+  }
+
+  protected writeRn(): void {
+    this.writer.u16(rn);
   }
 }
