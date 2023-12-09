@@ -28,6 +28,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
         throw new Error('Not implemented');
       case 'object': {
         if (!value) throw new Error('Not implemented');
+        if (value instanceof Error) {
+          this.writeErr(value.message);
+          return;
+        }
         const constructor = value.constructor;
         switch (constructor) {
           case Array:
@@ -106,10 +110,31 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeAsciiStr(str: string): void {
-    const writer = this.writer;
     const isSimple = !REG_RN.test(str);
     if (isSimple) this.writeSimpleStr(str);
     else this.writeBulkStr(str);
+  }
+
+  public writeSimpleErr(str: string): void {
+    const writer = this.writer;
+    writer.u8(45); // -
+    writer.ascii(str);
+    writer.u16(rn);
+  }
+
+  public writeBulkErr(str: string): void {
+    const writer = this.writer;
+    writer.u8(33); // !
+    writer.ascii(str.length + '');
+    writer.u16(rn);
+    writer.ascii(str);
+    writer.u16(rn);
+  }
+
+  public writeErr(str: string): void {
+    const isSimple = !REG_RN.test(str);
+    if (isSimple) this.writeSimpleErr(str);
+    else this.writeBulkErr(str);
   }
 
   public writeArr(arr: unknown[]): void {

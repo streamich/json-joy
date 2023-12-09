@@ -8,7 +8,7 @@ const parse = (uint8: Uint8Array): unknown => {
       result = reply;
     },
     returnError(err: any) {
-      result = new Error(err);
+      result = err;
     },
     returnFatalError(err: any) {
       result = err;
@@ -67,5 +67,22 @@ describe('.writeAsciiString()', () => {
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('+OK\r\n');
     expect(parse(encoded)).toBe('OK');
+  });
+});
+
+describe('error', () => {
+  test('can encode simple error', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(new Error('ERR'));
+    expect(toStr(encoded)).toBe('-ERR\r\n');
+    expect(parse(encoded)).toBeInstanceOf(Error);
+    expect((parse(encoded) as any).message).toBe('ERR');
+  });
+
+  test('can encode bulk error', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(new Error('a\nb'));
+    expect(toStr(encoded)).toBe('!3\r\na\nb\r\n');
+    expect(parse(encoded)).toBeInstanceOf(Error);
   });
 });
