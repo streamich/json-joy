@@ -86,3 +86,26 @@ describe('error', () => {
     expect(parse(encoded)).toBeInstanceOf(Error);
   });
 });
+
+describe('Integers', () => {
+  test('zero', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(0);
+    expect(toStr(encoded)).toBe(':0\r\n');
+    expect(parse(encoded)).toBe(0);
+  });
+
+  test('positive integer', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(23423432543);
+    expect(toStr(encoded)).toBe(':23423432543\r\n');
+    expect(parse(encoded)).toBe(23423432543);
+  });
+
+  test('negative integer', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(-11111111);
+    expect(toStr(encoded)).toBe(':-11111111\r\n');
+    expect(parse(encoded)).toBe(-11111111);
+  });
+});

@@ -4,6 +4,7 @@ import type {BinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 
 const REG_RN = /[\n\r]/;
 const rn = ('\r'.charCodeAt(0) << 8) | '\n'.charCodeAt(0);
+const isSafeInteger = Number.isSafeInteger;
 
 export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> implements BinaryJsonEncoder, TlvBinaryJsonEncoder {
   constructor(public readonly writer: W = new Writer() as any) {}
@@ -21,11 +22,11 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   public writeAny(value: unknown): void {
     switch (typeof value) {
       case 'number':
-        throw new Error('Not implemented');
+        return this.writeNumber(value as number);
       case 'string':
-        throw new Error('Not implemented');
+        return this.writeStr(value);
       case 'boolean':
-        throw new Error('Not implemented');
+        return this.writeBool(value);
       case 'object': {
         if (!value) throw new Error('Not implemented');
         if (value instanceof Error) {
@@ -58,7 +59,9 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeNumber(num: number): void {
-    throw new Error('Not implemented');
+    if (isSafeInteger(num)) this.writeInteger(num);
+    else if (typeof num === 'bigint') this.writeBigInt(num);
+    else this.writeFloat(num);
   }
 
   public writeBigInt(int: bigint): void {
@@ -66,7 +69,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeInteger(int: number): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(58); // :
+    writer.ascii(int + '');
+    writer.u16(rn);
   }
 
   public writeUInteger(uint: number): void {
@@ -74,6 +80,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeFloat(float: number): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeBool(bool: boolean): void {
     throw new Error('Not implemented');
   }
 
