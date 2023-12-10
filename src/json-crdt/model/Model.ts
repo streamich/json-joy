@@ -1,6 +1,6 @@
 import * as operations from '../../json-crdt-patch/operations';
 import * as clock from '../../json-crdt-patch/clock';
-import {ConNode} from '../nodes/con/ConNode';
+import {ConNode} from '../nodes/const/ConNode';
 import {encoder, decoder} from '../codec/structural/binary/shared';
 import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
