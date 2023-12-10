@@ -144,7 +144,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeSimpleStr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.STR_SIMPLE); // +
-    writer.ascii(str);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
@@ -166,7 +166,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeVerbatimStr(encoding: string, str: string): void {
     const writer = this.writer;
     writer.u8(RESP.STR_VERBATIM); // =
-    writer.ascii(str.length + '');
+    writer.utf8(str.length + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
       encoding.charCodeAt(0) * 0x1000000 + // t

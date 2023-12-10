@@ -1,4 +1,6 @@
 export const enum RESP {
+  R = 0x0d, // \r
+  N = 0x0a, // \n
   RN = 0x0d0a, // \r\n
   NULL = 95, // _
   STR_SIMPLE = 43, // +
