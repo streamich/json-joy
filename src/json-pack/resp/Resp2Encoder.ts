@@ -1,6 +1,6 @@
 import {Writer} from '../../util/buffers/Writer';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
-import type {BinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
+import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
 
 const REG_RN = /[\n\r]/;
@@ -8,7 +8,7 @@ const rn = ('\r'.charCodeAt(0) << 8) | '\n'.charCodeAt(0);
 const isSafeInteger = Number.isSafeInteger;
 
 export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
-  implements BinaryJsonEncoder, TlvBinaryJsonEncoder
+  implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder
 {
   constructor(public readonly writer: W = new Writer() as any) {}
 
@@ -270,5 +270,55 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
 
   protected writeRn(): void {
     this.writer.u16(rn); // \r\n
+  }
+
+  // ------------------------------------------------------- Streaming encoding
+
+  public writeStartStr(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStrChunk(str: string): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndStr(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStartBin(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeBinChunk(buf: Uint8Array): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndBin(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStartArr(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeArrChunk(item: unknown): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndArr(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStartObj(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeObjChunk(key: string, value: unknown): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndObj(): void {
+    throw new Error('Not implemented');
   }
 }

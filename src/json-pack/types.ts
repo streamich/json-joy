@@ -31,9 +31,17 @@ export interface BinaryJsonEncoder {
 }
 
 export interface StreamingBinaryJsonEncoder {
+  writeStartStr(): void;
+  writeStrChunk(str: string): void;
+  writeEndStr(): void;
+  writeStartBin(): void;
+  writeBinChunk(buf: Uint8Array): void;
+  writeEndBin(): void;
   writeStartArr(): void;
+  writeArrChunk(item: unknown): void;
   writeEndArr(): void;
   writeStartObj(): void;
+  writeObjChunk(key: string, value: unknown): void;
   writeEndObj(): void;
 }
 
