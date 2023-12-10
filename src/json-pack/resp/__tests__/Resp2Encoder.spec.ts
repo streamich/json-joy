@@ -176,3 +176,11 @@ describe('booleans', () => {
     expect(toStr(encoded)).toBe('#f\r\n');
   });
 });
+
+describe('doubles', () => {
+  test('1.2', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(1.2);
+    expect(toStr(encoded)).toBe(',1.2\r\n');
+  });
+});

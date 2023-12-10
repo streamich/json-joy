@@ -108,7 +108,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeFloat(float: number): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(44); // ,
+    writer.ascii(float + '');
+    writer.u16(rn); // \r\n
   }
 
   public writeBin(buf: Uint8Array): void {
