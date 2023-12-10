@@ -3,7 +3,7 @@
 // npx ts-node src/json-size/__bench__/json-size.ts
 
 import * as Benchmark from 'benchmark';
-import {utf8Count} from '../../util/strings/utf8';
+import {utf8Size} from '../../util/strings/utf8';
 import {jsonSize, jsonSizeApprox} from '../json';
 import {jsonSizeFast} from '../jsonSizeFast';
 import {msgpackSizeFast} from '../msgpackSizeFast';
@@ -69,7 +69,7 @@ suite
     JSON.stringify(json).length;
   })
   .add(`JSON.stringify + utf8Count`, () => {
-    utf8Count(JSON.stringify(json));
+    utf8Size(JSON.stringify(json));
   })
   .on('cycle', (event: any) => {
     console.log(String(event.target) + `, ${Math.round(1000000000 / event.target.hz)} ns/op`);

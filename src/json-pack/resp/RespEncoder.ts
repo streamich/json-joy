@@ -1,10 +1,12 @@
 import {Writer} from '../../util/buffers/Writer';
 import {RESP} from './constants';
+import {utf8Size} from '../../util/strings/utf8';
+import {RespAttributes, RespPush} from './extensions';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
 
-const REG_RN = /[\n\r]/;
+const REG_RN = /[\r\n]/;
 const isSafeInteger = Number.isSafeInteger;
 
 export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
@@ -36,6 +38,8 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         if (value instanceof Uint8Array) return this.writeBin(value);
         if (value instanceof Error) return this.writeErr(value.message);
         if (value instanceof Set) return this.writeSet(value);
+        if (value instanceof RespPush) return this.writePush(value.val);
+        if (value instanceof RespAttributes) return this.writeAttr(value.val);
         return this.writeObj(value as Record<string, unknown>);
       }
       case 'undefined':
@@ -49,14 +53,14 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeNull(): void {
     this.writer.u8u16(
-      95, // _
+      RESP.NULL, // _
       RESP.RN, // \r\n
     );
   }
 
   public writeNullStr(): void {
     this.writer.u8u32(
-      36, // $
+      RESP.STR_BULK, // $
       45 * 0x1000000 + // -
         49 * 0x10000 + // 1
         RESP.RN, // \r\n
@@ -65,7 +69,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeNullArr(): void {
     this.writer.u8u32(
-      42, // *
+      RESP.ARR, // *
       45 * 0x1000000 + // -
         49 * 0x10000 + // 1
         RESP.RN, // \r\n
@@ -75,10 +79,10 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeBoolean(bool: boolean): void {
     this.writer.u32(
       bool
-        ? 35 * 0x1000000 + // #
+        ? RESP.BOOL * 0x1000000 + // #
             116 * 0x10000 + // t
             RESP.RN // \r\n
-        : 35 * 0x1000000 + // #
+        : RESP.BOOL * 0x1000000 + // #
             102 * 0x10000 + // f
             RESP.RN, // \r\n
     );
@@ -92,14 +96,14 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeBigInt(int: bigint): void {
     const writer = this.writer;
-    writer.u8(40); // (
+    writer.u8(RESP.BIG); // (
     writer.ascii(int + '');
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeInteger(int: number): void {
     const writer = this.writer;
-    writer.u8(58); // :
+    writer.u8(RESP.INT); // :
     writer.ascii(int + '');
     writer.u16(RESP.RN); // \r\n
   }
@@ -110,15 +114,41 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeFloat(float: number): void {
     const writer = this.writer;
-    writer.u8(44); // ,
-    writer.ascii(float + '');
+    writer.u8(RESP.FLOAT); // ,
+    switch (float) {
+      case Infinity:
+        writer.u8u16(
+          105, // i
+          (110 << 8) | // n
+            102, // f
+        );
+        break;
+      case -Infinity:
+        writer.u32(
+          (45 * 0x1000000 + // -
+            105 * 0x10000 + // i
+            (110 << 8)) | // n
+            102, // f
+        );
+        break;
+      case NaN:
+        writer.u8u16(
+          110, // n
+          (97 << 8) | // a
+            110, // n
+        );
+        break;
+      default:
+        writer.ascii(float + '');
+        break;
+    }
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeBin(buf: Uint8Array): void {
     const writer = this.writer;
     const length = buf.length;
-    writer.u8(36); // $
+    writer.u8(RESP.STR_BULK); // $
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     writer.buf(buf, length);
@@ -131,7 +161,9 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeStr(str: string): void {
-    this.writeBulkStr(str);
+    const length = str.length;
+    if (length < 64 && !REG_RN.test(str)) this.writeSimpleStr(str);
+    else this.writeVerbatimStr('txt', str);
   }
 
   public writeStrHdr(length: number): void {
@@ -141,14 +173,15 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeSimpleStr(str: string): void {
     const writer = this.writer;
-    writer.u8(43); // +
-    writer.ascii(str);
+    writer.u8(RESP.STR_SIMPLE); // +
+    writer.ensureCapacity(str.length << 2);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeBulkStr(str: string): void {
     const writer = this.writer;
-    writer.u8(36); // $
+    writer.u8(RESP.STR_BULK); // $
     writer.ascii(str.length + '');
     writer.u16(RESP.RN); // \r\n
     writer.ascii(str);
@@ -163,8 +196,9 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeVerbatimStr(encoding: string, str: string): void {
     const writer = this.writer;
-    writer.u8(61); // =
-    writer.ascii(str.length + '');
+    const size = utf8Size(str);
+    writer.u8(RESP.STR_VERBATIM); // =
+    writer.ascii(size + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
       encoding.charCodeAt(0) * 0x1000000 + // t
@@ -172,36 +206,39 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         (encoding.charCodeAt(2) << 8) + // t
         58, // :
     );
-    writer.ascii(str);
+    writer.ensureCapacity(size);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeErr(str: string): void {
-    const isSimple = !REG_RN.test(str);
-    if (isSimple) this.writeSimpleErr(str);
+    if (str.length < 64 && !REG_RN.test(str)) this.writeSimpleErr(str);
     else this.writeBulkErr(str);
   }
 
   public writeSimpleErr(str: string): void {
     const writer = this.writer;
-    writer.u8(45); // -
-    writer.ascii(str);
+    writer.u8(RESP.ERR_SIMPLE); // -
+    writer.ensureCapacity(str.length << 2);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeBulkErr(str: string): void {
     const writer = this.writer;
-    writer.u8(33); // !
-    writer.ascii(str.length + '');
+    const size = utf8Size(str);
+    writer.u8(RESP.ERR_BULK); // !
+    writer.ascii(size + '');
     writer.u16(RESP.RN); // \r\n
-    writer.ascii(str);
+    writer.ensureCapacity(size);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeArr(arr: unknown[]): void {
     const writer = this.writer;
     const length = arr.length;
-    writer.u8(42); // *
+    writer.u8(RESP.ARR); // *
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     for (let i = 0; i < length; i++) this.writeAny(arr[i]);
@@ -209,7 +246,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeArrHdr(length: number): void {
     const writer = this.writer;
-    writer.u8(42); // *
+    writer.u8(RESP.ARR); // *
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
   }
@@ -218,7 +255,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     const writer = this.writer;
     const keys = Object.keys(obj);
     const length = keys.length;
-    writer.u8(37); // %
+    writer.u8(RESP.OBJ); // %
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     for (let i = 0; i < length; i++) {
@@ -230,7 +267,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeObjHdr(length: number): void {
     const writer = this.writer;
-    writer.u8(37); // %
+    writer.u8(RESP.OBJ); // %
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
   }
@@ -239,7 +276,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     const writer = this.writer;
     const keys = Object.keys(obj);
     const length = keys.length;
-    writer.u8(124); // |
+    writer.u8(RESP.ATTR); // |
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     for (let i = 0; i < length; i++) {
@@ -252,7 +289,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeSet(set: Set<unknown>): void {
     const writer = this.writer;
     const length = set.size;
-    writer.u8(126); // ~
+    writer.u8(RESP.SET); // ~
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     for (let i = 0; i < length; i++) set.forEach((value) => this.writeAny(value));
@@ -261,7 +298,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writePush(elements: unknown[]): void {
     const writer = this.writer;
     const length = elements.length;
-    writer.u8(62); // >
+    writer.u8(RESP.PUSH); // >
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     for (let i = 0; i < length; i++) this.writeAny(elements[i]);
@@ -284,11 +321,11 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     this.writer.u16(RESP.RN); // \r\n
   }
 
-  // ------------------------------------------------------- Streaming encoding
+  // ---------------------------------------------------------- Stream encoding
 
   public writeStartStr(): void {
     this.writer.u32(
-      36 * 0x1000000 + // $
+      RESP.STR_BULK * 0x1000000 + // $
         (63 << 16) + // ?
         RESP.RN, // \r\n
     );
@@ -339,7 +376,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeStartArr(): void {
     this.writer.u32(
-      42 * 0x1000000 + // *
+      RESP.ARR * 0x1000000 + // *
         (63 << 16) + // ?
         RESP.RN, // \r\n
     );

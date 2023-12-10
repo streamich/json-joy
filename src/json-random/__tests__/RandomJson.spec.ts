@@ -48,7 +48,7 @@ test('generates random JSON', () => {
       "ORVY]\`d": 387700000.000001,
       "PTW[_bfi": 405100000.00000304,
       "UY\\\`cgjn": 454799999.99999994,
-      "г": "\\_cfjmqtx|",
+      "i": "\\_cfjmqtx|",
     }
   `);
   Math.random = mathRandom;

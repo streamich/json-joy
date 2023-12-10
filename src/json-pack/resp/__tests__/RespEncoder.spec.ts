@@ -162,7 +162,7 @@ describe('arrays', () => {
   test('array of strings and numbers', () => {
     const encoder = new RespEncoder();
     const encoded = encoder.encode([1, 'abc', 3]);
-    expect(toStr(encoded)).toBe('*3\r\n:1\r\n$3\r\nabc\r\n:3\r\n');
+    expect(toStr(encoded)).toBe('*3\r\n:1\r\n+abc\r\n:3\r\n');
     expect(parse(encoded)).toEqual([1, 'abc', 3]);
   });
 });
@@ -237,7 +237,7 @@ describe('objects', () => {
   test('simple object', () => {
     const encoder = new RespEncoder();
     const encoded = encoder.encode({foo: 123});
-    expect(toStr(encoded)).toBe('%1\r\n$3\r\nfoo\r\n:123\r\n');
+    expect(toStr(encoded)).toBe('%1\r\n+foo\r\n:123\r\n');
   });
 });
 
@@ -253,7 +253,7 @@ describe('attributes', () => {
     const encoder = new RespEncoder();
     encoder.writeAttr({foo: 123});
     const encoded = encoder.writer.flush();
-    expect(toStr(encoded)).toBe('|1\r\n$3\r\nfoo\r\n:123\r\n');
+    expect(toStr(encoded)).toBe('|1\r\n+foo\r\n:123\r\n');
   });
 });
 

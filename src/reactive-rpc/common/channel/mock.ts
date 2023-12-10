@@ -1,5 +1,5 @@
 import {WebSocketState} from './constants';
-import {utf8Count} from '../../../util/strings/utf8';
+import {utf8Size} from '../../../util/strings/utf8';
 
 export interface CreateWebSocketMockParams {
   onClose: (code?: number, reason?: string) => void;
@@ -64,7 +64,7 @@ export const createWebSocketMock = (params: Partial<CreateWebSocketMockParams>) 
 
     public send(data: string | ArrayBufferLike | Blob | ArrayBufferView): void {
       if (typeof data === 'string') {
-        this._bufferedAmount += utf8Count(data);
+        this._bufferedAmount += utf8Size(data);
       } else if (ArrayBuffer.isView(data)) {
         this._bufferedAmount += data.byteLength;
       } else if (data && typeof data === 'object') {
