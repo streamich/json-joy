@@ -131,15 +131,14 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
             102, // f
         );
         break;
-      case NaN:
-        writer.u8u16(
-          110, // n
-          (97 << 8) | // a
-            110, // n
-        );
-        break;
       default:
-        writer.ascii(float + '');
+        if (float !== float)
+          writer.u8u16(
+            110, // n
+            (97 << 8) | // a
+              110, // n
+          );
+        else writer.ascii(float + '');
         break;
     }
     writer.u16(RESP.RN); // \r\n

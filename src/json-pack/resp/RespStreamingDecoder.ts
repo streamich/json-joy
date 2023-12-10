@@ -4,6 +4,19 @@ import {RespDecoder} from "./RespDecoder";
 /**
  * Streaming decoder for RESP protocol. Can be used to decode data from
  * a stream where messages are arbitrary split into chunks.
+ *
+ * Example:
+ *
+ * ```ts
+ * const decoder = new RespStreamingDecoder();
+ *
+ * decoder.push(new Uint8Array([43, 49, 13, 10]));
+ *
+ * let val;
+ * while ((val = decoder.read()) !== undefined) {
+ *   console.log(val);
+ * }
+ * ```
  */
 export class RespStreamingDecoder {
   protected readonly reader = new StreamingReader();
@@ -29,10 +42,9 @@ export class RespStreamingDecoder {
   public read(): unknown | undefined {
     const reader = this.reader;
     if (reader.size() === 0) return undefined;
-    const decoder = this.decoder;
     const x = reader.x;
     try {
-      const val = decoder.val();
+      const val = this.decoder.val();
       reader.consume();
       return val;
     } catch (error) {
