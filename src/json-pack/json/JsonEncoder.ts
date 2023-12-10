@@ -1,6 +1,5 @@
 import {toBase64Bin} from '../../util/base64/toBase64Bin';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
-import type {Slice} from '../../util/buffers/Slice';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder} from '../types';
 
 export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncoder {
@@ -158,14 +157,6 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
     writer.u8(0x5d); // ]
   }
 
-  public writeStartArr(): void {
-    this.writer.u8(0x5b); // [
-  }
-
-  public writeEndArr(): void {
-    this.writer.u8(0x5d); // ]
-  }
-
   public writeArrSeparator(): void {
     this.writer.u8(0x2c); // ,
   }
@@ -187,19 +178,61 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
     writer.uint8[writer.x - 1] = 0x7d; // }
   }
 
-  public writeStartObj(): void {
-    this.writer.u8(0x7b); // {
-  }
-
-  public writeEndObj(): void {
-    this.writer.u8(0x7d); // }
-  }
-
   public writeObjSeparator(): void {
     this.writer.u8(0x2c); // ,
   }
 
   public writeObjKeySeparator(): void {
     this.writer.u8(0x3a); // :
+  }
+
+  // ------------------------------------------------------- Streaming encoding
+
+  public writeStartStr(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStrChunk(str: string): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndStr(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStartBin(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeBinChunk(buf: Uint8Array): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndBin(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStartArr(): void {
+    this.writer.u8(0x5b); // [
+  }
+
+  public writeArrChunk(item: unknown): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndArr(): void {
+    this.writer.u8(0x5d); // ]
+  }
+
+  public writeStartObj(): void {
+    this.writer.u8(0x7b); // {
+  }
+
+  public writeObjChunk(key: string, value: unknown): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndObj(): void {
+    this.writer.u8(0x7d); // }
   }
 }

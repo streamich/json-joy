@@ -143,14 +143,6 @@ export class UbjsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEnco
     writer.u8(0x5d);
   }
 
-  public writeStartArr(): void {
-    this.writer.u8(0x5b);
-  }
-
-  public writeEndArr(): void {
-    this.writer.u8(0x5d);
-  }
-
   public writeObj(obj: Record<string, unknown>): void {
     const writer = this.writer;
     const keys = Object.keys(obj);
@@ -186,8 +178,51 @@ export class UbjsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEnco
     else writer.view.setUint32(x + 1, size);
   }
 
+  // ------------------------------------------------------- Streaming encoding
+
+  public writeStartStr(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStrChunk(str: string): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndStr(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStartBin(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeBinChunk(buf: Uint8Array): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeEndBin(): void {
+    throw new Error('Method not implemented.');
+  }
+
+  public writeStartArr(): void {
+    this.writer.u8(0x5b);
+  }
+
+  public writeArrChunk(item: unknown): void {
+    this.writeAny(item);
+  }
+
+  public writeEndArr(): void {
+    this.writer.u8(0x5d);
+  }
+
   public writeStartObj(): void {
     this.writer.u8(0x7b);
+  }
+
+  public writeObjChunk(key: string, value: unknown): void {
+    this.writeKey(key);
+    this.writeAny(value);
   }
 
   public writeEndObj(): void {
