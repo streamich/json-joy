@@ -1,4 +1,4 @@
-import {utf8Count} from '../../util/strings/utf8';
+import {utf8Size} from '../../util/strings/utf8';
 import {Import} from './Import';
 
 export interface AstNode<T> {
@@ -81,7 +81,7 @@ const vUintLen = (num: number): number => {
 export class StrAstNode implements AstNode<string> {
   public readonly len: number;
   constructor(public readonly val: string) {
-    this.len = utf8Count(val);
+    this.len = utf8Size(val);
   }
   public byteLength(): number {
     return this.len < 14 ? 1 + this.len : 1 + vUintLen(this.len) + this.len;

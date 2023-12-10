@@ -1,6 +1,6 @@
 import {Writer} from '../../util/buffers/Writer';
 import {RESP} from './constants';
-import {utf8Count} from '../../util/strings/utf8';
+import {utf8Size} from '../../util/strings/utf8';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
@@ -167,7 +167,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeVerbatimStr(encoding: string, str: string): void {
     const writer = this.writer;
     writer.u8(RESP.STR_VERBATIM); // =
-    writer.ascii(utf8Count(str) + '');
+    writer.ascii(utf8Size(str) + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
       encoding.charCodeAt(0) * 0x1000000 + // t
@@ -194,7 +194,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeBulkErr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.ERR_BULK); // !
-    writer.ascii(utf8Count(str) + '');
+    writer.ascii(utf8Size(str) + '');
     writer.u16(RESP.RN); // \r\n
     writer.utf8(str);
     writer.u16(RESP.RN); // \r\n

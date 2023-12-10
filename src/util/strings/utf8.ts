@@ -1,48 +1,28 @@
 /**
- * Adopted from: https://github.com/msgpack/msgpack-javascript/blob/main/src/utils/utf8.ts
- * License: https://github.com/msgpack/msgpack-javascript/blob/main/LICENSE
+ * Given a JavaScript string, computes how many bytes it will take to encode
+ * that string in UTF-8.
  *
- * @todo Rename to `utf8Size`.
- *
- * @param str JavaScript UTF-8 string.
- * @returns Length in bytes.
+ * @param str JavaScript string.
+ * @returns Length in bytes if encoded as UTF-8.
  */
-export function utf8Count(str: string): number {
-  const strLength = str.length;
-
-  let byteLength = 0;
+export function utf8Size(str: string): number {
+  const length = str.length;
+  let size = 0;
   let pos = 0;
-  while (pos < strLength) {
+  while (pos < length) {
     let value = str.charCodeAt(pos++);
-
     if ((value & 0xffffff80) === 0) {
-      // 1-byte
-      byteLength++;
+      size++;
       continue;
-    } else if ((value & 0xfffff800) === 0) {
-      // 2-bytes
-      byteLength += 2;
-    } else {
-      // handle surrogate pair
-      if (value >= 0xd800 && value <= 0xdbff) {
-        // high surrogate
-        if (pos < strLength) {
-          const extra = str.charCodeAt(pos);
-          if ((extra & 0xfc00) === 0xdc00) {
-            ++pos;
-            value = ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000;
-          }
-        }
+    } else if ((value & 0xfffff800) === 0) size += 2;
+    else {
+      if (value >= 0xd800 && value <= 0xdbff && pos < length) {
+        const extra = str.charCodeAt(pos);
+        if ((extra & 0xfc00) === 0xdc00)
+          value = (pos++, ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000);
       }
-
-      if ((value & 0xffff0000) === 0) {
-        // 3-byte
-        byteLength += 3;
-      } else {
-        // 4-byte
-        byteLength += 4;
-      }
+      size += 3 + +((value & 0xffff0000) !== 0);
     }
   }
-  return byteLength;
+  return size;
 }

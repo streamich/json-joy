@@ -1,4 +1,4 @@
-import {utf8Count} from '../../util/strings/utf8';
+import {utf8Size} from '../../util/strings/utf8';
 
 export const testJsonSize = (
   jsonSize: (val: unknown) => number,
@@ -60,7 +60,7 @@ export const testJsonSize = (
   test('calculates size of array of length 2 that begins with empty string', () => {
     const json = ['', -1];
     const size1 = jsonSize(json);
-    const size2 = utf8Count(JSON.stringify(json));
+    const size2 = utf8Size(JSON.stringify(json));
     expect(size1).toBe(size2);
   });
 };

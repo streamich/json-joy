@@ -1,4 +1,4 @@
-import {utf8Count} from '../util/strings/utf8';
+import {utf8Size} from '../util/strings/utf8';
 
 const numberSize = (num: number) => {
   const isInteger = num === Math.round(num);
@@ -25,7 +25,7 @@ const stringSize = (str: string) => {
           break;
       }
       continue;
-    } else return utf8Count(JSON.stringify(str));
+    } else return utf8Size(JSON.stringify(str));
   }
   return byteLength + 2;
 };
