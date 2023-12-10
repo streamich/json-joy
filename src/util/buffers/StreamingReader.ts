@@ -5,12 +5,36 @@ import type {IReader, IReaderResettable} from './types';
 export class StreamingReader implements IReader, IReaderResettable {
   protected readonly writer: Writer;
 
+  /**
+   * Offset from the start of the buffer (x0 in Writer).
+   */
+  protected dx = 0;
+
   constructor(allocSize: number = 16 * 1024) {
     this.writer = new Writer(allocSize);
   }
 
   /**
-   * Add a chunk of data to be decoded.
+   * Returns the number of bytes remaining in the buffer.
+   */
+  public size(): number {
+    return this.writer.x - this.x;
+  }
+
+  /**
+   * Assert that there is enough data in the buffer to read `size` bytes.
+   *
+   * @param size Number of bytes to read.
+   */
+  protected assertSize(size: number): void {
+    if (size > this.size()) throw new RangeError('OUT_OF_BOUNDS');
+  }
+
+  /**
+   * Add a chunk of data to be decoded. The chunk is copied into the
+   * internal buffer, so you can reuse the chunk after calling this method; or
+   * this chunk can be neutered by the caller.
+   *
    * @param uint8 `Uint8Array` chunk of data to be decoded.
    */
   public push(uint8: Uint8Array): void {
@@ -27,19 +51,6 @@ export class StreamingReader implements IReader, IReaderResettable {
   }
 
   // ------------------------------------------------------------------ IReader
-
-  protected dx = 0;
-
-  /**
-   * Returns the number of bytes remaining in the buffer.
-   */
-  public size(): number {
-    return this.writer.x - this.x;
-  }
-
-  protected assertSize(size: number): void {
-    if (size > this.size()) throw new RangeError('OUT_OF_BOUNDS');
-  }
 
   public get uint8(): Uint8Array {
     return this.writer.uint8;
@@ -58,6 +69,7 @@ export class StreamingReader implements IReader, IReaderResettable {
   }
 
   public peak(): number {
+    this.assertSize(1);
     return this.view.getUint8(this.x);
   }
 
@@ -75,56 +87,66 @@ export class StreamingReader implements IReader, IReaderResettable {
   }
 
   public u8(): number {
+    this.assertSize(1);
     return this.view.getUint8(this.x++);
   }
 
   public i8(): number {
+    this.assertSize(1);
     return this.view.getInt8(this.x++);
   }
 
   public u16(): number {
+    this.assertSize(2);
     const num = this.view.getUint16(this.x);
     this.x += 2;
     return num;
   }
 
   public i16(): number {
+    this.assertSize(2);
     const num = this.view.getInt16(this.x);
     this.x += 2;
     return num;
   }
 
   public u32(): number {
+    this.assertSize(4);
     const num = this.view.getUint32(this.x);
     this.x += 4;
     return num;
   }
 
   public i32(): number {
+    this.assertSize(4);
     const num = this.view.getInt32(this.x);
     this.x += 4;
     return num;
   }
 
   public u64(): bigint {
+    this.assertSize(8);
     const num = this.view.getBigUint64(this.x);
     this.x += 8;
     return num;
   }
 
   public i64(): bigint {
+    this.assertSize(8);
     const num = this.view.getBigInt64(this.x);
     this.x += 8;
     return num;
   }
 
   public f32(): number {
+    this.assertSize(4);
     const pos = this.x;
     this.x += 4;
     return this.view.getFloat32(pos);
   }
 
   public f64(): number {
+    this.assertSize(8);
     const pos = this.x;
     this.x += 8;
     return this.view.getFloat64(pos);
@@ -146,7 +168,6 @@ export class StreamingReader implements IReader, IReaderResettable {
     this.x = end;
     return str;
   }
-
 
   // -------------------------------------------------------- IReaderResettable
 
