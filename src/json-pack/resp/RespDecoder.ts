@@ -42,6 +42,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return (reader.x += 2), null;
       case RESP.STR_BULK:
         return this.readStrBulk();
+      case RESP.ARR:
+        return this.readArr();
       case RESP.ERR_SIMPLE:
         return this.readErrSimple();
       case RESP.ERR_BULK:
@@ -167,16 +169,11 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   // ------------------------------------------------------------ Array reading
 
-  public readArr(minor: number): unknown[] {
-    throw new Error('Not implemented');
-  }
-
-  public readArrRaw(length: number): unknown[] {
-    throw new Error('Not implemented');
-  }
-
-  public readArrIndef(): unknown[] {
-    throw new Error('Not implemented');
+  public readArr(): unknown[] {
+    const length = this.readLength();
+    const arr: unknown[] = [];
+    for (let i = 0; i < length; i++) arr.push(this.val());
+    return arr;
   }
 
   // ----------------------------------------------------------- Object reading

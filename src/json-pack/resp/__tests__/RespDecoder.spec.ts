@@ -67,3 +67,11 @@ describe('errors', () => {
     test(name, () => assertCodec(new Error(value)));
   }
 });
+
+describe('arrays', () => {
+  test('empty array', () => assertCodec([]));
+  test('simple array', () => assertCodec([1, 2, 3]));
+  test('with strings', () => assertCodec(['foo', 'bar']));
+  test('nested', () => assertCodec([[]]));
+  test('surrounded by special strings', () => assertCodec(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']));
+});
