@@ -174,7 +174,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         (encoding.charCodeAt(2) << 8) + // t
         58, // :
     );
-    writer.ascii(str);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 

@@ -18,13 +18,10 @@ const assertCodec = (value: unknown, expected: unknown = value): void => {
 
 describe('strings', () => {
   describe('simple strings', () => {
-    test('empty string', () => {
-      assertCodec('');
-    });
-
-    test('short string', () => {
-      assertCodec('foo bar');
-    });
+    test('empty string', () => assertCodec(''));
+    test('short string', () => assertCodec('foo bar'));
+    test('short string with emoji', () => assertCodec('foo bar🍼'));
+    test('short string with emoji and newline', () => assertCodec('foo bar\n🍼'));
 
     test('simple string with newline', () => {
       assertCodec('foo\nbar');
