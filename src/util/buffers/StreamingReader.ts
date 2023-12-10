@@ -9,10 +9,23 @@ export class StreamingReader implements IReader, IReaderResettable {
     this.writer = new Writer(allocSize);
   }
 
+  /**
+   * Add a chunk of data to be decoded.
+   * @param uint8 `Uint8Array` chunk of data to be decoded.
+   */
   public push(uint8: Uint8Array): void {
     this.writer.buf(uint8, uint8.length);
   }
-  
+
+  /**
+   * Mark the current position as consumed. This will free up memory
+   * for reuse.
+   */
+  public consume(): void {
+    this.writer.x0 += this.dx;
+    this.dx = 0;
+  }
+
   // ------------------------------------------------------------------ IReader
 
   protected dx = 0;
