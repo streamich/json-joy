@@ -51,6 +51,22 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     }
   }
 
+  public encodeCmd(args: unknown[]): Uint8Array {
+    this.writeCmd(args);
+    return this.writer.flush();
+  }
+
+  public writeCmd(args: unknown[]): void {
+    const length = args.length;
+    this.writeArrHdr(length)
+    for (let i = 0; i < length; i++) this.writeArg(args[i]);
+  }
+
+  public writeArg(arg: unknown): void {
+    if (arg instanceof Uint8Array) return this.writeBin(arg);
+    else this.writeBulkStr(arg + '');
+  }
+
   public writeNull(): void {
     this.writer.u8u16(
       RESP.NULL, // _
@@ -180,10 +196,12 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeBulkStr(str: string): void {
     const writer = this.writer;
+    const size = utf8Size(str);
     writer.u8(RESP.STR_BULK); // $
-    writer.ascii(str.length + '');
+    writer.ascii(size + '');
     writer.u16(RESP.RN); // \r\n
-    writer.ascii(str);
+    writer.ensureCapacity(size);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 

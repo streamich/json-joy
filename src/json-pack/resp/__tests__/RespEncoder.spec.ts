@@ -312,3 +312,26 @@ describe('streaming data', () => {
     });
   });
 });
+
+describe('commands', () => {
+  test('can encode a simple command', () => {
+    const encoder = new RespEncoder();
+    encoder.writeCmd(['SET', 'foo', 'bar']);
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('*3\r\n$3\r\nSET\r\n$3\r\nfoo\r\n$3\r\nbar\r\n');
+  });
+
+  test('casts numbers to strings', () => {
+    const encoder = new RespEncoder();
+    encoder.writeCmd(['SET', 'foo', 123]);
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('*3\r\n$3\r\nSET\r\n$3\r\nfoo\r\n$3\r\n123\r\n');
+  });
+
+  test('can encode Uint8Array', () => {
+    const encoder = new RespEncoder();
+    const encoded = encoder.encodeCmd([Buffer.from('SET'), 'foo', 123]);
+    expect(toStr(encoded)).toBe('*3\r\n$3\r\nSET\r\n$3\r\nfoo\r\n$3\r\n123\r\n');
+  });
+});
+
