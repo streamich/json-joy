@@ -1,5 +1,5 @@
-import {StreamingReader} from "../../util/buffers/StreamingReader";
-import {RespDecoder} from "./RespDecoder";
+import {StreamingReader} from '../../util/buffers/StreamingReader';
+import {RespDecoder} from './RespDecoder';
 
 /**
  * Streaming decoder for RESP protocol. Can be used to decode data from

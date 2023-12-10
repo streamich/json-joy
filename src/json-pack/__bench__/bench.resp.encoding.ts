@@ -26,7 +26,7 @@ const benchmark: IBenchmark = {
         const encoder = new RespEncoder();
         return (data: any) => {
           encoder.encode(data);
-        }
+        };
       },
     },
     {
@@ -34,7 +34,7 @@ const benchmark: IBenchmark = {
       setup: () => {
         return (data: any) => {
           redisClientEncode(data);
-        }
+        };
       },
     },
   ],

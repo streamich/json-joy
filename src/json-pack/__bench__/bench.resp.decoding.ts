@@ -24,7 +24,7 @@ const benchmark: IBenchmark = {
         const decoder = new RespDecoder();
         return (data: any) => {
           decoder.read(data);
-        }
+        };
       },
     },
     {
@@ -34,7 +34,7 @@ const benchmark: IBenchmark = {
         return (data: any) => {
           decoder.push(data);
           decoder.read();
-        }
+        };
       },
     },
     {
@@ -61,7 +61,7 @@ const benchmark: IBenchmark = {
         };
         return (data: any) => {
           parse(data);
-        }
+        };
       },
     },
   ],
