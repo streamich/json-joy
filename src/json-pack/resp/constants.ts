@@ -1,11 +1,11 @@
 export const enum RESP {
   RN = 0x0d0a, // \r\n
   NULL = 95, // _
-  STR = 36, // $
   STR_SIMPLE = 43, // +
+  STR_BULK = 36, // $
   STR_VERBATIM = 61, // =
   ERR_SIMPLE = 45, // -
-  ERR = 33, // !
+  ERR_BULK = 33, // !
   ARR = 42, // *
   SET = 126, // ~
   OBJ = 37, // %

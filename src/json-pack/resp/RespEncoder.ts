@@ -56,7 +56,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeNullStr(): void {
     this.writer.u8u32(
-      RESP.STR, // $
+      RESP.STR_BULK, // $
       45 * 0x1000000 + // -
         49 * 0x10000 + // 1
         RESP.RN, // \r\n
@@ -118,7 +118,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeBin(buf: Uint8Array): void {
     const writer = this.writer;
     const length = buf.length;
-    writer.u8(RESP.STR); // $
+    writer.u8(RESP.STR_BULK); // $
     writer.ascii(length + '');
     writer.u16(RESP.RN); // \r\n
     writer.buf(buf, length);
@@ -131,7 +131,9 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeStr(str: string): void {
-    this.writeBulkStr(str);
+    const length = str.length;
+    if (length < 64 && !REG_RN.test(str)) this.writeSimpleStr(str);
+    else this.writeVerbatimStr('txt', str);
   }
 
   public writeStrHdr(length: number): void {
@@ -148,7 +150,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeBulkStr(str: string): void {
     const writer = this.writer;
-    writer.u8(RESP.STR); // $
+    writer.u8(RESP.STR_BULK); // $
     writer.ascii(str.length + '');
     writer.u16(RESP.RN); // \r\n
     writer.ascii(str);
@@ -191,7 +193,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeBulkErr(str: string): void {
     const writer = this.writer;
-    writer.u8(RESP.ERR); // !
+    writer.u8(RESP.ERR_BULK); // !
     writer.ascii(str.length + '');
     writer.u16(RESP.RN); // \r\n
     writer.ascii(str);
@@ -288,7 +290,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeStartStr(): void {
     this.writer.u32(
-      RESP.STR * 0x1000000 + // $
+      RESP.STR_BULK * 0x1000000 + // $
         (63 << 16) + // ?
         RESP.RN, // \r\n
     );
