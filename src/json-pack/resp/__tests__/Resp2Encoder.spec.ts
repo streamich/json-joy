@@ -69,12 +69,12 @@ describe('strings', () => {
       expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
     });
 
-    // test('empty string', () => {
-    //   const encoder = new Resp2Encoder();
-    //   encoder.writeVerbatimStr('txt', '');
-    //   const encoded = encoder.writer.flush();
-    //   expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
-    // });
+    test('short string', () => {
+      const encoder = new Resp2Encoder();
+      encoder.writeVerbatimStr('txt', '');
+      const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
+    });
   });
 });
 
@@ -208,5 +208,19 @@ describe('big numbers', () => {
     const encoder = new Resp2Encoder();
     const encoded = encoder.encode(BigInt('12345678901234567890'));
     expect(toStr(encoded)).toBe('(12345678901234567890\r\n');
+  });
+});
+
+describe('objects', () => {
+  test('empty object', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode({});
+    expect(toStr(encoded)).toBe('%0\r\n');
+  });
+
+  test('simple object', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode({foo: 123});
+    expect(toStr(encoded)).toBe('%1\r\n$3\r\nfoo\r\n:123\r\n');
   });
 });

@@ -206,14 +206,28 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     const writer = this.writer;
     writer.u8(42); // *
     writer.ascii(length + '');
+    writer.u16(rn); // \r\n
   }
 
   public writeObj(obj: Record<string, unknown>): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    const keys = Object.keys(obj);
+    const length = keys.length;
+    writer.u8(37); // %
+    writer.ascii(length + '');
+    writer.u16(rn); // \r\n
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      this.writeStr(key);
+      this.writeAny(obj[key]);
+    }
   }
 
   public writeObjHdr(length: number): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(37); // %
+    writer.ascii(length + '');
+    writer.u16(rn); // \r\n
   }
 
   /**
