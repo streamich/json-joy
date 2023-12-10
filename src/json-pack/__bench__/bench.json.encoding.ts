@@ -8,7 +8,7 @@ import {deepEqual} from '../../json-equal/deepEqual';
 const safeStringify = require('fast-safe-stringify');
 
 const benchmark: IBenchmark = {
-  name: 'Encoding',
+  name: 'Encoding JSON',
   warmup: 1000,
   payloads,
   test: (payload: unknown, data: unknown): boolean => {
