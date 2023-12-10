@@ -38,11 +38,11 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
         return this.writeObj(value as Record<string, unknown>);
       }
       case 'undefined':
-        throw new Error('Not implemented');
+        return this.writeUndef();
       case 'bigint':
         return this.writeBigInt(value);
       default:
-        throw new Error('Not implemented');
+        return this.writeUnknown(value);
     }
   }
 
@@ -104,7 +104,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeUInteger(uint: number): void {
-    throw new Error('Not implemented');
+    this.writeInteger(uint);
   }
 
   public writeFloat(float: number): void {
@@ -158,10 +158,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     writer.ascii(str.length + '');
     writer.u16(rn); // \r\n
     writer.u32(
-      (encoding.charCodeAt(0) * 0x1000000) +
-      (encoding.charCodeAt(1) << 16) +
-      (encoding.charCodeAt(2) << 8) +
-      58 // :
+      encoding.charCodeAt(0) * 0x1000000 + (encoding.charCodeAt(1) << 16) + (encoding.charCodeAt(2) << 8) + 58, // :
     );
     writer.ascii(str);
     writer.u16(rn); // \r\n
@@ -235,6 +232,15 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     for (let i = 0; i < length; i++) set.forEach((value) => this.writeAny(value));
   }
 
+  public writePush(elements: unknown[]): void {
+    const writer = this.writer;
+    const length = elements.length;
+    writer.u8(62); // >
+    writer.ascii(length + '');
+    writer.u16(rn); // \r\n
+    for (let i = 0; i < length; i++) this.writeAny(elements[i]);
+  }
+
   /**
    * Called when the encoder encounters a value that it does not know how to encode.
    *
@@ -245,7 +251,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeUndef(): void {
-    throw new Error('Not implemented');
+    this.writeNull();
   }
 
   protected writeRn(): void {

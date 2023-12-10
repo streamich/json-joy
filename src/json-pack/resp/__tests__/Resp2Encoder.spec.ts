@@ -238,3 +238,19 @@ describe('sets', () => {
     expect(toStr(encoded)).toBe('~1\r\n:1\r\n');
   });
 });
+
+describe('pushes', () => {
+  test('empty push', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writePush([]);
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('>0\r\n');
+  });
+
+  test('two elements', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writePush([1, 32]);
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('>2\r\n:1\r\n:32\r\n');
+  });
+});
