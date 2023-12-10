@@ -1,5 +1,5 @@
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {ConNode} from './con/ConNode';
+import type {ConNode} from './const/ConNode';
 import type {ValNode} from './val/ValNode';
 import type {VecNode} from './vec/VecNode';
 import type {JsonNode} from './types';
@@ -19,7 +19,7 @@ export namespace n {
   export type arr<Element extends JsonNode = JsonNode> = ArrNode<Element>;
 }
 
-export {ConNode} from './con/ConNode';
+export {ConNode} from './const/ConNode';
 export {ValNode} from './val/ValNode';
 export {RootNode} from './root/RootNode';
 export {VecNode} from './vec/VecNode';
