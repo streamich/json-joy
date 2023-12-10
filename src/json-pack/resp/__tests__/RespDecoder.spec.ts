@@ -67,4 +67,3 @@ describe('errors', () => {
     test(name, () => assertCodec(new Error(value)));
   }
 });
-

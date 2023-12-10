@@ -1,4 +1,4 @@
-import {utf8Size} from "../utf8";
+import {utf8Size} from '../utf8';
 
 describe('utf8Size', () => {
   describe('computes correct size', () => {

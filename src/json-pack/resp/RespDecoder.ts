@@ -135,7 +135,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readStrBulk(): Uint8Array {
     const reader = this.reader;
-    const length = this.readLength(); 
+    const length = this.readLength();
     const buf = reader.buf(length);
     reader.x += 2; // Skip "\r\n".
     return buf;
@@ -159,7 +159,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readErrBulk(): Error {
     const reader = this.reader;
-    const length = this.readLength(); 
+    const length = this.readLength();
     const message = reader.utf8(length);
     reader.x += 2; // Skip "\r\n".
     return new Error(message);

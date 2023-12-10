@@ -18,8 +18,7 @@ export function utf8Size(str: string): number {
     else {
       if (value >= 0xd800 && value <= 0xdbff && pos < length) {
         const extra = str.charCodeAt(pos);
-        if ((extra & 0xfc00) === 0xdc00)
-          value = (pos++, ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000);
+        if ((extra & 0xfc00) === 0xdc00) value = (pos++, ((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000);
       }
       size += 3 + +((value & 0xffff0000) !== 0);
     }
