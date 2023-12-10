@@ -24,3 +24,19 @@ describe('strings', () => {
     });
   });
 });
+
+describe('booleans', () => {
+  test('true', () => {
+    assertCodec(true);
+  });
+
+  test('false', () => {
+    assertCodec(false);
+  });
+});
+
+describe('nulls', () => {
+  test('null', () => {
+    assertCodec(null);
+  });
+});

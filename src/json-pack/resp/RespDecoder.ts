@@ -32,6 +32,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     switch (type) {
       case RESP.STR_SIMPLE: return this.readStrSimple();
       case RESP.STR_VERBATIM: return this.readStrVerbatim();
+      case RESP.BOOL: return this.readBool();
+      case RESP.NULL: return reader.x += 2, null;
     }
     throw new Error('UNKNOWN_TYPE');
   }
@@ -53,6 +55,16 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       }
       number = (number * 10) + (c - 48);
     }
+  }
+
+  // ------------------------------------------------------------------ Boolean
+
+  public readBool(): boolean {
+    const reader = this.reader;
+    const x = reader.x;
+    const c = reader.uint8[x];
+    reader.x = x + 3;
+    return c === 116; // t
   }
 
   // ----------------------------------------------------- Unsigned int reading
