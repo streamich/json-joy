@@ -32,7 +32,8 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         return this.writeBoolean(value);
       case 'object': {
         if (!value) return this.writeNull();
-        if (value instanceof Array) return this.writeArr(value as unknown[]);
+        if (value instanceof Array) return this.writeArr(value);
+        if (value instanceof Uint8Array) return this.writeBin(value);
         if (value instanceof Error) return this.writeErr(value.message);
         if (value instanceof Set) return this.writeSet(value);
         return this.writeObj(value as Record<string, unknown>);
@@ -115,11 +116,18 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeBin(buf: Uint8Array): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    const length = buf.length;
+    writer.u8(36); // $
+    writer.ascii(length + '');
+    writer.u16(RESP.RN); // \r\n
+    writer.buf(buf, length);
+    writer.u16(RESP.RN); // \r\n
   }
 
   public writeBinHdr(length: number): void {
     throw new Error('Not implemented');
+    // Because then we also need `.writeBinBody()` which would emit trailing `\r\n`.
   }
 
   public writeStr(str: string): void {
@@ -128,6 +136,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeStrHdr(length: number): void {
     throw new Error('Not implemented');
+    // Because then we also need `.writeBinBody()` which would emit trailing `\r\n`.
   }
 
   public writeSimpleStr(str: string): void {
@@ -326,26 +335,41 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeStartArr(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      42 * 0x1000000 + // *
+        (63 << 16) + // ?
+        RESP.RN, // \r\n
+    );
   }
 
   public writeArrChunk(item: unknown): void {
-    throw new Error('Not implemented');
+    this.writeAny(item);
   }
 
   public writeEndArr(): void {
-    throw new Error('Not implemented');
+    this.writer.u8u16(
+      46, // .
+      RESP.RN, // \r\n
+    );
   }
 
   public writeStartObj(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      37 * 0x1000000 + // %
+        (63 << 16) + // ?
+        RESP.RN, // \r\n
+    );
   }
 
   public writeObjChunk(key: string, value: unknown): void {
-    throw new Error('Not implemented');
+    this.writeStr(key);
+    this.writeAny(value);
   }
 
   public writeEndObj(): void {
-    throw new Error('Not implemented');
+    this.writer.u8u16(
+      46, // .
+      RESP.RN, // \r\n
+    );
   }
 }

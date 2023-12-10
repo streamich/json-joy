@@ -78,6 +78,22 @@ describe('strings', () => {
   });
 });
 
+describe('binary', () => {
+  test('empty blob', () => {
+    const encoder = new RespEncoder();
+    const encoded = encoder.encode(new Uint8Array(0));
+    expect(toStr(encoded)).toBe('$0\r\n\r\n');
+    expect(parse(encoded)).toBe('');
+  });
+
+  test('small blob', () => {
+    const encoder = new RespEncoder();
+    const encoded = encoder.encode(new Uint8Array([65, 66]));
+    expect(toStr(encoded)).toBe('$2\r\nAB\r\n');
+    expect(parse(encoded)).toBe('AB');
+  });
+});
+
 describe('.writeAsciiString()', () => {
   test('can write "OK"', () => {
     const encoder = new RespEncoder();
