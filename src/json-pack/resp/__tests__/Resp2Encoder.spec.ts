@@ -224,3 +224,17 @@ describe('objects', () => {
     expect(toStr(encoded)).toBe('%1\r\n$3\r\nfoo\r\n:123\r\n');
   });
 });
+
+describe('sets', () => {
+  test('empty set', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(new Set());
+    expect(toStr(encoded)).toBe('~0\r\n');
+  });
+
+  test('array of numbers', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(new Set([1]));
+    expect(toStr(encoded)).toBe('~1\r\n:1\r\n');
+  });
+});

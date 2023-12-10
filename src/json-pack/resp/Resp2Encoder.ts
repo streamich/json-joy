@@ -32,14 +32,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
         return this.writeBoolean(value);
       case 'object': {
         if (!value) return this.writeNull();
+        if (value instanceof Array) return this.writeArr(value as unknown[]);
         if (value instanceof Error) return this.writeErr(value.message);
-        const constructor = value.constructor;
-        switch (constructor) {
-          case Array:
-            return this.writeArr(value as unknown[]);
-          default:
-            return this.writeObj(value as Record<string, unknown>);
-        }
+        if (value instanceof Set) return this.writeSet(value);
+        return this.writeObj(value as Record<string, unknown>);
       }
       case 'undefined':
         throw new Error('Not implemented');
@@ -228,6 +224,15 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     writer.u8(37); // %
     writer.ascii(length + '');
     writer.u16(rn); // \r\n
+  }
+
+  public writeSet(set: Set<unknown>): void {
+    const writer = this.writer;
+    const length = set.size;
+    writer.u8(126); // ~
+    writer.ascii(length + '');
+    writer.u16(rn); // \r\n
+    for (let i = 0; i < length; i++) set.forEach((value) => this.writeAny(value));
   }
 
   /**
