@@ -42,22 +42,29 @@ describe('integers', () => {
   });
 });
 
-describe('strings', () => {
-  describe('simple strings', () => {
-    test('empty string', () => assertCodec(''));
-    test('short string', () => assertCodec('foo bar'));
-    test('short string with emoji', () => assertCodec('foo bar🍼'));
-    test('short string with emoji and newline', () => assertCodec('foo bar\n🍼'));
+const stringCases: [string, string][] = [
+  ['empty string', ''],
+  ['short string', 'foo bar'],
+  ['short string with emoji', 'foo bar🍼'],
+  ['short string with emoji and newline', 'foo bar\n🍼'],
+  ['simple string with newline', 'foo\nbar'],
+];
 
-    test('simple string with newline', () => {
-      assertCodec('foo\nbar');
-    });
-  });
+describe('strings', () => {
+  for (const [name, value] of stringCases) {
+    test(name, () => assertCodec(value));
+  }
 });
 
 describe('binary', () => {
   test('empty blob', () => assertCodec(new Uint8Array(0)));
   test('small blob', () => assertCodec(new Uint8Array([1, 2, 3])));
   test('blob with new lines', () => assertCodec(new Uint8Array([1, 2, 3, 10, 13, 14, 64, 65])));
+});
+
+describe('errors', () => {
+  for (const [name, value] of stringCases) {
+    test(name, () => assertCodec(new Error(value)));
+  }
 });
 

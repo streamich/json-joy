@@ -1,5 +1,6 @@
 import {Writer} from '../../util/buffers/Writer';
 import {RESP} from './constants';
+import {utf8Count} from '../../util/strings/utf8';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
@@ -166,7 +167,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeVerbatimStr(encoding: string, str: string): void {
     const writer = this.writer;
     writer.u8(RESP.STR_VERBATIM); // =
-    writer.utf8(str.length + '');
+    writer.ascii(utf8Count(str) + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
       encoding.charCodeAt(0) * 0x1000000 + // t
@@ -179,24 +180,23 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeErr(str: string): void {
-    const isSimple = !REG_RN.test(str);
-    if (isSimple) this.writeSimpleErr(str);
+    if (str.length < 64 && !REG_RN.test(str)) this.writeSimpleErr(str);
     else this.writeBulkErr(str);
   }
 
   public writeSimpleErr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.ERR_SIMPLE); // -
-    writer.ascii(str);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeBulkErr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.ERR_BULK); // !
-    writer.ascii(str.length + '');
+    writer.ascii(utf8Count(str) + '');
     writer.u16(RESP.RN); // \r\n
-    writer.ascii(str);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 

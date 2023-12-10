@@ -42,6 +42,10 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return (reader.x += 2), null;
       case RESP.STR_BULK:
         return this.readStrBulk();
+      case RESP.ERR_SIMPLE:
+        return this.readErrSimple();
+      case RESP.ERR_BULK:
+        return this.readErrBulk();
     }
     throw new Error('UNKNOWN_TYPE');
   }
@@ -98,16 +102,6 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
-  // ----------------------------------------------------------- Binary reading
-
-  public readBin(minor: number): Uint8Array {
-    throw new Error('Not implemented');
-  }
-
-  public readBinChunk(): Uint8Array {
-    throw new Error('Not implemented');
-  }
-
   // ----------------------------------------------------------- String reading
 
   public readStrSimple(): string {
@@ -145,6 +139,30 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const buf = reader.buf(length);
     reader.x += 2; // Skip "\r\n".
     return buf;
+  }
+
+  // ------------------------------------------------------------ Error reading
+
+  public readErrSimple(): Error {
+    const reader = this.reader;
+    const uint8 = reader.uint8;
+    const x = reader.x;
+    for (let i = x; i < uint8.length; i++) {
+      if (uint8[i] !== RESP.R) continue;
+      // if (uint8[i + 1] !== RESP.N) throw new Error('INVALID_STR');
+      const message = reader.utf8(i - reader.x);
+      reader.x = i + 2;
+      return new Error(message);
+    }
+    throw new Error('INVALID_ERR');
+  }
+
+  public readErrBulk(): Error {
+    const reader = this.reader;
+    const length = this.readLength(); 
+    const message = reader.utf8(length);
+    reader.x += 2; // Skip "\r\n".
+    return new Error(message);
   }
 
   // ------------------------------------------------------------ Array reading
