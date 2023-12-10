@@ -120,3 +120,11 @@ describe('sets', () => {
   test('nested', () => assertCodec(new Set([new Set([])])));
   test('surrounded by special strings', () => assertCodec(new Set(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf'])));
 });
+
+describe('objects', () => {
+  test('empty', () => assertCodec({}));
+  test('simple', () => assertCodec({foo: 'bar'}));
+  test('multiple keys', () => assertCodec({foo: 'bar', baz: 'qux'}));
+  test('nested', () => assertCodec({foo: {bar: 'baz'}}));
+  test('surrounded by special strings', () => assertCodec({foo: 'bar', baz: 'qux', quux: ['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']}));
+});

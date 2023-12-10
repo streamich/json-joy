@@ -1,17 +1,12 @@
 import {Reader} from '../../util/buffers/Reader';
 import {RESP} from './constants';
-import sharedCachedUtf8Decoder from '../../util/buffers/utf8/sharedCachedUtf8Decoder';
-import type {CachedUtf8Decoder} from '../../util/buffers/utf8/CachedUtf8Decoder';
 import type {IReader, IReaderResettable} from '../../util/buffers';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
 export class RespDecoder<R extends IReader & IReaderResettable = IReader & IReaderResettable>
   implements BinaryJsonDecoder
 {
-  public constructor(
-    public reader: R = new Reader() as any,
-    protected readonly keyDecoder: CachedUtf8Decoder = sharedCachedUtf8Decoder,
-  ) {}
+  public constructor(public reader: R = new Reader() as any) {}
 
   public read(uint8: Uint8Array): PackValue {
     this.reader.reset(uint8);
@@ -44,6 +39,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return (reader.x += 2), null;
       case RESP.STR_BULK:
         return this.readStrBulk();
+      case RESP.OBJ:
+        return this.readObj();
       case RESP.ARR:
         return this.readArr();
       case RESP.BIG:
@@ -240,15 +237,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   // ----------------------------------------------------------- Object reading
 
-  public readObj(minor: number): Record<string, unknown> {
-    throw new Error('Not implemented');
-  }
-
-  public readObjIndef(): Record<string, unknown> {
-    throw new Error('Not implemented');
-  }
-
-  public key(): string {
-    throw new Error('Not implemented');
+  public readObj(): Record<string, unknown> {
+    const length = this.readLength();
+    const obj: Record<string, unknown> = {};
+    for (let i = 0; i < length; i++) {
+      const key = this.val() + '';
+      obj[key] = this.val();
+    }
+    return obj;
   }
 }
