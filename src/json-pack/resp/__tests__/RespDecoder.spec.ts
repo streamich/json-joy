@@ -16,19 +16,6 @@ const assertCodec = (value: unknown, expected: unknown = value): void => {
   expect(decoded).toEqual(expected);
 };
 
-describe('strings', () => {
-  describe('simple strings', () => {
-    test('empty string', () => assertCodec(''));
-    test('short string', () => assertCodec('foo bar'));
-    test('short string with emoji', () => assertCodec('foo bar🍼'));
-    test('short string with emoji and newline', () => assertCodec('foo bar\n🍼'));
-
-    test('simple string with newline', () => {
-      assertCodec('foo\nbar');
-    });
-  });
-});
-
 describe('booleans', () => {
   test('true', () => {
     assertCodec(true);
@@ -54,3 +41,23 @@ describe('integers', () => {
     expect(decoded).toBe(123);
   });
 });
+
+describe('strings', () => {
+  describe('simple strings', () => {
+    test('empty string', () => assertCodec(''));
+    test('short string', () => assertCodec('foo bar'));
+    test('short string with emoji', () => assertCodec('foo bar🍼'));
+    test('short string with emoji and newline', () => assertCodec('foo bar\n🍼'));
+
+    test('simple string with newline', () => {
+      assertCodec('foo\nbar');
+    });
+  });
+});
+
+describe('binary', () => {
+  test('empty blob', () => assertCodec(new Uint8Array(0)));
+  test('small blob', () => assertCodec(new Uint8Array([1, 2, 3])));
+  test('blob with new lines', () => assertCodec(new Uint8Array([1, 2, 3, 10, 13, 14, 64, 65])));
+});
+

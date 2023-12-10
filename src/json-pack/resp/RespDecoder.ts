@@ -40,6 +40,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readBool();
       case RESP.NULL:
         return (reader.x += 2), null;
+      case RESP.STR_BULK:
+        return this.readStrBulk();
     }
     throw new Error('UNKNOWN_TYPE');
   }
@@ -96,12 +98,6 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
-  // ----------------------------------------------------- Negative int reading
-
-  public readNint(minor: number): number | bigint {
-    throw new Error('Not implemented');
-  }
-
   // ----------------------------------------------------------- Binary reading
 
   public readBin(minor: number): Uint8Array {
@@ -138,6 +134,14 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       reader.x += 2; // Skip "\r\n".
       return str;
     }
+    const buf = reader.buf(length);
+    reader.x += 2; // Skip "\r\n".
+    return buf;
+  }
+
+  public readStrBulk(): Uint8Array {
+    const reader = this.reader;
+    const length = this.readLength(); 
     const buf = reader.buf(length);
     reader.x += 2; // Skip "\r\n".
     return buf;
