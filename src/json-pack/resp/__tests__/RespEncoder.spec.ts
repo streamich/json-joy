@@ -1,4 +1,4 @@
-import {Resp2Encoder} from '../Resp2Encoder';
+import {RespEncoder} from '../RespEncoder';
 const Parser = require('redis-parser');
 
 const parse = (uint8: Uint8Array): unknown => {
@@ -27,7 +27,7 @@ const toStr = (uint8: Uint8Array): string => {
 describe('strings', () => {
   describe('.writeSimpleStr()', () => {
     test('empty string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeSimpleStr('');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('+\r\n');
@@ -35,7 +35,7 @@ describe('strings', () => {
     });
 
     test('short string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeSimpleStr('abc!');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('+abc!\r\n');
@@ -45,7 +45,7 @@ describe('strings', () => {
 
   describe('.writeBulkStr()', () => {
     test('empty string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeBulkStr('');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('$0\r\n\r\n');
@@ -53,7 +53,7 @@ describe('strings', () => {
     });
 
     test('short string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeBulkStr('abc!');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('$4\r\nabc!\r\n');
@@ -63,14 +63,14 @@ describe('strings', () => {
 
   describe('.writeVerbatimStr()', () => {
     test('empty string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeVerbatimStr('txt', '');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
     });
 
     test('short string', () => {
-      const encoder = new Resp2Encoder();
+      const encoder = new RespEncoder();
       encoder.writeVerbatimStr('txt', '');
       const encoded = encoder.writer.flush();
       expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
@@ -78,9 +78,25 @@ describe('strings', () => {
   });
 });
 
+describe('binary', () => {
+  test('empty blob', () => {
+    const encoder = new RespEncoder();
+    const encoded = encoder.encode(new Uint8Array(0));
+    expect(toStr(encoded)).toBe('$0\r\n\r\n');
+    expect(parse(encoded)).toBe('');
+  });
+
+  test('small blob', () => {
+    const encoder = new RespEncoder();
+    const encoded = encoder.encode(new Uint8Array([65, 66]));
+    expect(toStr(encoded)).toBe('$2\r\nAB\r\n');
+    expect(parse(encoded)).toBe('AB');
+  });
+});
+
 describe('.writeAsciiString()', () => {
   test('can write "OK"', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     encoder.writeAsciiStr('OK');
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('+OK\r\n');
@@ -90,7 +106,7 @@ describe('.writeAsciiString()', () => {
 
 describe('errors', () => {
   test('can encode simple error', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(new Error('ERR'));
     expect(toStr(encoded)).toBe('-ERR\r\n');
     expect(parse(encoded)).toBeInstanceOf(Error);
@@ -98,7 +114,7 @@ describe('errors', () => {
   });
 
   test('can encode bulk error', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(new Error('a\nb'));
     expect(toStr(encoded)).toBe('!3\r\na\nb\r\n');
     expect(parse(encoded)).toBeInstanceOf(Error);
@@ -107,21 +123,21 @@ describe('errors', () => {
 
 describe('integers', () => {
   test('zero', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(0);
     expect(toStr(encoded)).toBe(':0\r\n');
     expect(parse(encoded)).toBe(0);
   });
 
   test('positive integer', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(23423432543);
     expect(toStr(encoded)).toBe(':23423432543\r\n');
     expect(parse(encoded)).toBe(23423432543);
   });
 
   test('negative integer', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(-11111111);
     expect(toStr(encoded)).toBe(':-11111111\r\n');
     expect(parse(encoded)).toBe(-11111111);
@@ -130,21 +146,21 @@ describe('integers', () => {
 
 describe('arrays', () => {
   test('empty array', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode([]);
     expect(toStr(encoded)).toBe('*0\r\n');
     expect(parse(encoded)).toEqual([]);
   });
 
   test('array of numbers', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode([1, 2, 3]);
     expect(toStr(encoded)).toBe('*3\r\n:1\r\n:2\r\n:3\r\n');
     expect(parse(encoded)).toEqual([1, 2, 3]);
   });
 
   test('array of strings and numbers', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode([1, 'abc', 3]);
     expect(toStr(encoded)).toBe('*3\r\n:1\r\n$3\r\nabc\r\n:3\r\n');
     expect(parse(encoded)).toEqual([1, 'abc', 3]);
@@ -153,19 +169,19 @@ describe('arrays', () => {
 
 describe('nulls', () => {
   test('a single null', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(null);
     expect(toStr(encoded)).toBe('_\r\n');
   });
 
   test('null in array', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode([1, 2, null]);
     expect(toStr(encoded)).toBe('*3\r\n:1\r\n:2\r\n_\r\n');
   });
 
   test('string null', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     encoder.writeNullStr();
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('$-1\r\n');
@@ -173,7 +189,7 @@ describe('nulls', () => {
   });
 
   test('array null', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     encoder.writeNullArr();
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('*-1\r\n');
@@ -183,13 +199,13 @@ describe('nulls', () => {
 
 describe('booleans', () => {
   test('true', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(true);
     expect(toStr(encoded)).toBe('#t\r\n');
   });
 
   test('false', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(false);
     expect(toStr(encoded)).toBe('#f\r\n');
   });
@@ -197,7 +213,7 @@ describe('booleans', () => {
 
 describe('doubles', () => {
   test('1.2', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(1.2);
     expect(toStr(encoded)).toBe(',1.2\r\n');
   });
@@ -205,7 +221,7 @@ describe('doubles', () => {
 
 describe('big numbers', () => {
   test('12345678901234567890', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(BigInt('12345678901234567890'));
     expect(toStr(encoded)).toBe('(12345678901234567890\r\n');
   });
@@ -213,27 +229,43 @@ describe('big numbers', () => {
 
 describe('objects', () => {
   test('empty object', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode({});
     expect(toStr(encoded)).toBe('%0\r\n');
   });
 
   test('simple object', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode({foo: 123});
     expect(toStr(encoded)).toBe('%1\r\n$3\r\nfoo\r\n:123\r\n');
   });
 });
 
+describe('attributes', () => {
+  test('empty attributes', () => {
+    const encoder = new RespEncoder();
+    encoder.writeAttr({});
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('|0\r\n');
+  });
+
+  test('simple object', () => {
+    const encoder = new RespEncoder();
+    encoder.writeAttr({foo: 123});
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('|1\r\n$3\r\nfoo\r\n:123\r\n');
+  });
+});
+
 describe('sets', () => {
   test('empty set', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(new Set());
     expect(toStr(encoded)).toBe('~0\r\n');
   });
 
   test('array of numbers', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     const encoded = encoder.encode(new Set([1]));
     expect(toStr(encoded)).toBe('~1\r\n:1\r\n');
   });
@@ -241,16 +273,42 @@ describe('sets', () => {
 
 describe('pushes', () => {
   test('empty push', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     encoder.writePush([]);
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('>0\r\n');
   });
 
   test('two elements', () => {
-    const encoder = new Resp2Encoder();
+    const encoder = new RespEncoder();
     encoder.writePush([1, 32]);
     const encoded = encoder.writer.flush();
     expect(toStr(encoded)).toBe('>2\r\n:1\r\n:32\r\n');
+  });
+});
+
+describe('streaming data', () => {
+  describe('strings', () => {
+    test('can write a streaming string', () => {
+      const encoder = new RespEncoder();
+      encoder.writeStartStr();
+      encoder.writeStrChunk('abc');
+      encoder.writeStrChunk('def');
+      encoder.writeEndStr();
+      const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('$?\r\n;3\r\nabc\r\n;3\r\ndef\r\n;0\r\n');
+    });
+  });
+
+  describe('binary', () => {
+    test('can write a streaming binary', () => {
+      const encoder = new RespEncoder();
+      encoder.writeStartBin();
+      encoder.writeBinChunk(new Uint8Array([65]));
+      encoder.writeBinChunk(new Uint8Array([66]));
+      encoder.writeEndBin();
+      const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('$?\r\n;1\r\nA\r\n;1\r\nB\r\n;0\r\n');
+    });
   });
 });

@@ -177,10 +177,6 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     else writer.u8u64(0x5b, length);
   }
 
-  public writeStartBin(): void {
-    this.writer.u8(0x5f);
-  }
-
   public writeStr(str: string): void {
     const writer = this.writer;
     const length = str.length;
@@ -222,10 +218,6 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     this.writer.ascii(str);
   }
 
-  public writeStartStr(): void {
-    this.writer.u8(0x7f);
-  }
-
   public writeArr(arr: unknown[]): void {
     const length = arr.length;
     this.writeArrHdr(length);
@@ -239,14 +231,6 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     else if (length <= 0xffff) writer.u8u16(0x99, length);
     else if (length <= 0xffffffff) writer.u8u32(0x9a, length);
     else writer.u8u64(0x9b, length);
-  }
-
-  public writeStartArr(): void {
-    this.writer.u8(0x9f);
-  }
-
-  public writeEndArr(): void {
-    this.writer.u8(CONST.END);
   }
 
   public writeObj(obj: Record<string, unknown>): void {
@@ -277,14 +261,6 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     this.writer.u8(0xbf);
   }
 
-  public writeStartObj(): void {
-    this.writer.u8(0xbf);
-  }
-
-  public writeEndObj(): void {
-    this.writer.u8(CONST.END);
-  }
-
   public writeTag(tag: number, value: unknown): void {
     this.writeTagHdr(tag);
     this.writeAny(value);
@@ -303,5 +279,55 @@ export class CborEncoderFast<W extends IWriter & IWriterGrowable = IWriter & IWr
     const writer = this.writer;
     if (value <= 23) writer.u8(MAJOR_OVERLAY.TKN + value);
     else if (value <= 0xff) writer.u16((0xf8 << 8) + value);
+  }
+
+  // ------------------------------------------------------- Streaming encoding
+
+  public writeStartStr(): void {
+    this.writer.u8(0x7f);
+  }
+
+  public writeStrChunk(str: string): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndStr(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStartBin(): void {
+    this.writer.u8(0x5f);
+  }
+
+  public writeBinChunk(buf: Uint8Array): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndBin(): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeStartArr(): void {
+    this.writer.u8(0x9f);
+  }
+
+  public writeArrChunk(item: unknown): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndArr(): void {
+    this.writer.u8(CONST.END);
+  }
+
+  public writeStartObj(): void {
+    this.writer.u8(0xbf);
+  }
+
+  public writeObjChunk(key: string, value: unknown): void {
+    throw new Error('Not implemented');
+  }
+
+  public writeEndObj(): void {
+    this.writer.u8(CONST.END);
   }
 }
