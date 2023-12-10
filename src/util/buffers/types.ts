@@ -69,22 +69,7 @@ export interface IWriterGrowable {
   newBuffer(size: number): void;
 }
 
-export interface IReader {
-  /**
-   * Uint8Array view of the current memory buffer.
-   */
-  uint8: Uint8Array;
-
-  /**
-   * DataView view of the current memory buffer.
-   */
-  view: DataView;
-
-  /**
-   * Cursor in the current memory buffer.
-   */
-  x: number;
-
+export interface IReaderBase {
   /** Get current byte value without advancing the cursor. */
   peak(): number;
 
@@ -116,6 +101,23 @@ export interface IReader {
   utf8(size: number): string;
 
   ascii(length: number): string;
+}
+
+export interface IReader extends IReaderBase {
+  /**
+   * Uint8Array view of the current memory buffer.
+   */
+  uint8: Uint8Array;
+
+  /**
+   * DataView view of the current memory buffer.
+   */
+  view: DataView;
+
+  /**
+   * Cursor in the current memory buffer.
+   */
+  x: number;
 }
 
 export interface IReaderResettable {

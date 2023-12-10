@@ -13,7 +13,7 @@ const encodedPayloads = payloads.map((payload) => {
 });
 
 const benchmark: IBenchmark = {
-  name: 'Encoding',
+  name: 'Decoding JSON',
   warmup: 1000,
   payloads: encodedPayloads,
   test: (payload: unknown, data: unknown): boolean => {

@@ -37,7 +37,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       case RESP.BOOL:
         return this.readBool();
       case RESP.NULL:
-        return (reader.x += 2), null;
+        return reader.skip(2), null;
       case RESP.STR_BULK:
         return this.readStrBulk();
       case RESP.OBJ:
@@ -60,21 +60,12 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     throw new Error('UNKNOWN_TYPE');
   }
 
-  public readMinorLen(minor: number): number {
-    throw new Error('Not implemented');
-  }
-
   protected readLength(): number {
     const reader = this.reader;
-    const uint8 = reader.uint8;
-    const x = reader.x;
     let number: number = 0;
-    for (let i = x; ; i++) {
-      const c = uint8[i];
-      if (c === RESP.R) {
-        reader.x = i + 2;
-        return number;
-      }
+    while (true) {
+      const c = reader.u8();
+      if (c === RESP.R) return reader.skip(1), number;
       number = number * 10 + (c - 48);
     }
   }
@@ -83,9 +74,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readBool(): boolean {
     const reader = this.reader;
-    const x = reader.x;
-    const c = reader.uint8[x];
-    reader.x = x + 3;
+    const c = reader.u8();
+    reader.skip(2); // Skip "\r\n".
     return c === 116; // t
   }
 
@@ -93,19 +83,16 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readInt(): number {
     const reader = this.reader;
-    const uint8 = reader.uint8;
-    let x = reader.x;
     let negative = false;
-    let c = uint8[x];
+    let c = reader.u8();
     let number: number = 0;
     if (c === RESP.MINUS) {
       negative = true;
-      x++;
-    } else if (c === RESP.PLUS) x++;
-    for (let i = x; ; i++) {
-      c = uint8[i];
+    } else if (c !== RESP.PLUS) number = c - 48;
+    while (true) {
+      c = reader.u8();
       if (c === RESP.R) {
-        reader.x = i + 2; // Skip "\r\n".
+        reader.skip(1); // Skip "\n".
         return negative ? -number : number;
       }
       number = number * 10 + (c - 48);
@@ -114,50 +101,44 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readFloat(): number {
     const reader = this.reader;
-    const uint8 = reader.uint8;
     const x = reader.x;
-    let c = uint8[x];
-    for (let i = x; ; i++) {
-      c = uint8[i];
-      if (c === RESP.R) {
-        const length = i - x;
-        const str = reader.ascii(length);
-        switch (length) {
-          case 3:
-            switch (str) {
-              case 'inf':
-                reader.x = i + 2; // Skip "\r\n".
-                return Infinity;
-              case 'nan':
-                reader.x = i + 2; // Skip "\r\n".
-                return NaN;
-            }
-            break;
-          case 4:
-            if (str === '-inf') {
-              reader.x = i + 2; // Skip "\r\n".
-              return -Infinity;
-            }
-            break;
-        }
-        reader.x = i + 2; // Skip "\r\n".
-        return Number(str);
+    while (true) {
+      const c = reader.u8();
+      if (c !== RESP.R) continue;
+      const length = reader.x - x - 1;
+      reader.x = x;
+      const str = reader.ascii(length);
+      switch (length) {
+        case 3:
+          switch (str) {
+            case 'inf':
+              return reader.skip(2), Infinity;
+            case 'nan':
+              return reader.skip(2), NaN;
+          }
+          break;
+        case 4:
+          if (str === '-inf') {
+            return reader.skip(2), -Infinity;
+          }
+          break;
       }
+      reader.skip(2); // Skip "\n".
+      return Number(str);
     }
   }
 
   public readBigint(): bigint {
     const reader = this.reader;
-    const uint8 = reader.uint8;
     const x = reader.x;
-    let c = uint8[x];
-    for (let i = x; ; i++) {
-      c = uint8[i];
-      if (c === RESP.R) {
-        const str = reader.ascii(i - x);
-        reader.x = i + 2; // Skip "\r\n".
-        return BigInt(str);
-      }
+    while (true) {
+      const c = reader.u8();
+      if (c !== RESP.R) continue;
+      const length = reader.x - x;
+      reader.x = x;
+      const str = reader.ascii(length);
+      reader.skip(1); // Skip "\n".
+      return BigInt(str);
     }
   }
 
@@ -165,30 +146,30 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readStrSimple(): string {
     const reader = this.reader;
-    const uint8 = reader.uint8;
     const x = reader.x;
-    for (let i = x; i < uint8.length; i++) {
-      if (uint8[i] !== RESP.R) continue;
-      // if (uint8[i + 1] !== RESP.N) throw new Error('INVALID_STR');
-      const str = reader.utf8(i - reader.x);
-      reader.x = i + 2;
+    while (true) {
+      const c = reader.u8();
+      if (c !== RESP.R) continue;
+      const size = reader.x - x - 1;
+      reader.x = x;
+      const str = reader.utf8(size);
+      reader.skip(2); // Skip "\r\n".
       return str;
     }
-    throw new Error('INVALID_STR');
   }
 
   public readStrVerbatim(): string | Uint8Array {
     const reader = this.reader;
     const length = this.readLength();
-    const encoding = reader.utf8(3);
-    reader.x++; // Skip ":".
-    if (encoding === 'txt') {
+    const u32 = reader.u32();
+    const isTxt = u32 === 1954051130; // "txt:"
+    if (isTxt) {
       const str = reader.utf8(length);
-      reader.x += 2; // Skip "\r\n".
+      reader.skip(2); // Skip "\r\n".
       return str;
     }
     const buf = reader.buf(length);
-    reader.x += 2; // Skip "\r\n".
+    reader.skip(2); // Skip "\r\n".
     return buf;
   }
 
@@ -196,7 +177,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const reader = this.reader;
     const length = this.readLength();
     const buf = reader.buf(length);
-    reader.x += 2; // Skip "\r\n".
+    reader.skip(2); // Skip "\r\n".
     return buf;
   }
 
@@ -204,23 +185,23 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readErrSimple(): Error {
     const reader = this.reader;
-    const uint8 = reader.uint8;
     const x = reader.x;
-    for (let i = x; i < uint8.length; i++) {
-      if (uint8[i] !== RESP.R) continue;
-      // if (uint8[i + 1] !== RESP.N) throw new Error('INVALID_STR');
-      const message = reader.utf8(i - reader.x);
-      reader.x = i + 2;
-      return new Error(message);
+    while (true) {
+      const c = reader.u8();
+      if (c !== RESP.R) continue;
+      const size = reader.x - x - 1;
+      reader.x = x;
+      const str = reader.utf8(size);
+      reader.skip(2); // Skip "\r\n".
+      return new Error(str);
     }
-    throw new Error('INVALID_ERR');
   }
 
   public readErrBulk(): Error {
     const reader = this.reader;
     const length = this.readLength();
     const message = reader.utf8(length);
-    reader.x += 2; // Skip "\r\n".
+    reader.skip(2); // Skip "\r\n".
     return new Error(message);
   }
 
