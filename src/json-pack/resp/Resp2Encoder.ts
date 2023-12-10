@@ -156,6 +156,27 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     else this.writeBulkStr(str);
   }
 
+  public writeVerbatimStr(encoding: string, str: string): void {
+    const writer = this.writer;
+    writer.u8(61); // =
+    writer.ascii(str.length + '');
+    writer.u16(rn); // \r\n
+    writer.u32(
+      (encoding.charCodeAt(0) * 0x1000000) +
+      (encoding.charCodeAt(1) << 16) +
+      (encoding.charCodeAt(2) << 8) +
+      58 // :
+    );
+    writer.ascii(str);
+    writer.u16(rn); // \r\n
+  }
+
+  public writeErr(str: string): void {
+    const isSimple = !REG_RN.test(str);
+    if (isSimple) this.writeSimpleErr(str);
+    else this.writeBulkErr(str);
+  }
+
   public writeSimpleErr(str: string): void {
     const writer = this.writer;
     writer.u8(45); // -
@@ -170,12 +191,6 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     writer.u16(rn); // \r\n
     writer.ascii(str);
     writer.u16(rn); // \r\n
-  }
-
-  public writeErr(str: string): void {
-    const isSimple = !REG_RN.test(str);
-    if (isSimple) this.writeSimpleErr(str);
-    else this.writeBulkErr(str);
   }
 
   public writeArr(arr: unknown[]): void {
