@@ -53,6 +53,32 @@ describe('big ints', () => {
   });
 });
 
+describe('floats', () => {
+  test('positive', () => assertCodec([1.123]));
+  test('negative', () => assertCodec([-43.234435]));
+  test('negative', () => assertCodec([-5445e-10]));
+  test('negative', () => assertCodec([-5445e-20]));
+  test('negative', () => assertCodec([-5445e-30]));
+  test('inf', () => assertCodec([Infinity]));
+  test('-inf', () => assertCodec([-Infinity]));
+  test('nan', () => assertCodec([NaN]));
+
+  test('decodes ",inf<CR><LF>"', () => {
+    const decoded = decode(',inf\r\n');
+    expect(decoded).toEqual(Infinity);
+  });
+
+  test('decodes ",-inf<CR><LF>"', () => {
+    const decoded = decode(',-inf\r\n');
+    expect(decoded).toEqual(-Infinity);
+  });
+
+  test('decodes ",nan<CR><LF>"', () => {
+    const decoded = decode(',nan\r\n');
+    expect(decoded).toEqual(NaN);
+  });
+});
+
 const stringCases: [string, string][] = [
   ['empty string', ''],
   ['short string', 'foo bar'],

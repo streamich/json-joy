@@ -32,6 +32,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     switch (type) {
       case RESP.INT:
         return this.readInt();
+      case RESP.FLOAT:
+        return this.readFloat();
       case RESP.STR_SIMPLE:
         return this.readStrSimple();
       case RESP.STR_VERBATIM:
@@ -105,6 +107,40 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return negative ? -number : number;
       }
       number = number * 10 + (c - 48);
+    }
+  }
+
+  public readFloat(): number {
+    const reader = this.reader;
+    const uint8 = reader.uint8;
+    let x = reader.x;
+    let c = uint8[x];
+    for (let i = x; ; i++) {
+      c = uint8[i];
+      if (c === RESP.R) {
+        const length = i - x;
+        const str = reader.ascii(length);
+        switch (length) {
+          case 3:
+            switch (str) {
+              case 'inf':
+                reader.x = i + 2; // Skip "\r\n".
+                return Infinity;
+              case 'nan':
+                reader.x = i + 2; // Skip "\r\n".
+                return NaN;
+            }
+            break;
+          case 4:
+            if (str === '-inf') {
+              reader.x = i + 2; // Skip "\r\n".
+              return -Infinity;
+            }
+            break;
+        }
+        reader.x = i + 2; // Skip "\r\n".
+        return Number(str);
+      }
     }
   }
 
