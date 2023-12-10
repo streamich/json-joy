@@ -43,7 +43,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
       case 'undefined':
         throw new Error('Not implemented');
       case 'bigint':
-        throw new Error('Not implemented');
+        return this.writeBigInt(value);
       default:
         throw new Error('Not implemented');
     }
@@ -93,7 +93,10 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeBigInt(int: bigint): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(40); // (
+    writer.ascii(int + '');
+    writer.u16(rn); // \r\n
   }
 
   public writeInteger(int: number): void {

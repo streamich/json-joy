@@ -184,3 +184,11 @@ describe('doubles', () => {
     expect(toStr(encoded)).toBe(',1.2\r\n');
   });
 });
+
+describe('big numbers', () => {
+  test('12345678901234567890', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(BigInt('12345678901234567890'));
+    expect(toStr(encoded)).toBe('(12345678901234567890\r\n');
+  });
+});
