@@ -27,7 +27,7 @@ export class RespStreamingDecoder {
    * @param uint8 `Uint8Array` chunk of data to be decoded.
    */
   public push(uint8: Uint8Array): void {
-    this.decoder.reader.push(uint8);
+    this.reader.push(uint8);
   }
 
   /**

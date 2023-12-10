@@ -1,6 +1,7 @@
 import {RespStreamingDecoder} from '../RespStreamingDecoder';
 import {RespEncoder} from '../RespEncoder';
 import {concatList} from '../../../util/buffers/concat';
+import {documents} from '../../../__tests__/json-documents';
 
 const encoder = new RespEncoder();
 
@@ -50,3 +51,19 @@ test('can stream one byte at a time', () => {
   }
   expect(decoded).toEqual(docs);
 });
+
+test('can stream 49 bytes at a time', () => {
+  const decoder = new RespStreamingDecoder();
+  const docs = documents;
+  const encoded = docs.map(doc => encoder.encode(doc));
+  const decoded: unknown[] = [];
+  const bufs = concatList(encoded);
+  for (let i = 0; i < bufs.length; i += 49) {
+    const max = Math.min(bufs.length, i + 49);
+    decoder.push(new Uint8Array(bufs.slice(i, max)));
+    let read: any;
+    while((read = decoder.read()) !== undefined) decoded.push(read);
+  }
+  expect(decoded).toEqual(docs);
+});
+
