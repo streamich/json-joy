@@ -1,5 +1,6 @@
 import {Reader} from '../../util/buffers/Reader';
 import {RESP} from './constants';
+import {RespAttributes, RespPush} from './extensions';
 import type {IReader, IReaderResettable} from '../../util/buffers';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
@@ -43,6 +44,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readObj();
       case RESP.ARR:
         return this.readArr();
+      case RESP.PUSH:
+        return new RespPush(this.readArr());
       case RESP.BIG:
         return this.readBigint();
       case RESP.SET:
@@ -51,6 +54,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readErrSimple();
       case RESP.ERR_BULK:
         return this.readErrBulk();
+      case RESP.ATTR:
+        return new RespAttributes(this.readObj());
     }
     throw new Error('UNKNOWN_TYPE');
   }

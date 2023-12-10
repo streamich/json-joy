@@ -1,6 +1,7 @@
 import {RespEncoder} from '../RespEncoder';
 import {RespDecoder} from '../RespDecoder';
 import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
+import {RespAttributes, RespPush} from '../extensions';
 
 const decode = (encoded: string | Uint8Array): unknown => {
   const decoder = new RespDecoder();
@@ -105,26 +106,38 @@ describe('errors', () => {
   }
 });
 
+const arrays: [string, unknown[]][] = [
+  ['empty array', []],
+  ['simple array', [1, 2, 3]],
+  ['with strings', ['foo', 'bar']],
+  ['nested', [[]]],
+  ['surrounded by special strings', ['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']],
+];
+
 describe('arrays', () => {
-  test('empty array', () => assertCodec([]));
-  test('simple array', () => assertCodec([1, 2, 3]));
-  test('with strings', () => assertCodec(['foo', 'bar']));
-  test('nested', () => assertCodec([[]]));
-  test('surrounded by special strings', () => assertCodec(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']));
+  for (const [name, value] of arrays) test(name, () => assertCodec(value));
 });
 
 describe('sets', () => {
-  test('empty set', () => assertCodec(new Set([])));
-  test('simple set', () => assertCodec(new Set([1, 2, 3])));
-  test('with strings', () => assertCodec(new Set(['foo', 'bar'])));
-  test('nested', () => assertCodec(new Set([new Set([])])));
-  test('surrounded by special strings', () => assertCodec(new Set(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf'])));
+  for (const [name, value] of arrays) test(name, () => assertCodec(new Set(value)));
 });
 
+describe('pushes', () => {
+  for (const [name, value] of arrays) test(name, () => assertCodec(new RespPush(value)));
+});
+
+const maps: [string, Record<string, unknown>][] = [
+  ['empty map', {}],
+  ['simple map', {foo: 'bar'}],
+  ['multiple keys', {foo: 'bar', baz: 'qux'}],
+  ['nested', {foo: {bar: 'baz'}}],
+  ['surrounded by special strings', {foo: 'bar', baz: 'qux', quux: ['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']}],
+];
+
 describe('objects', () => {
-  test('empty', () => assertCodec({}));
-  test('simple', () => assertCodec({foo: 'bar'}));
-  test('multiple keys', () => assertCodec({foo: 'bar', baz: 'qux'}));
-  test('nested', () => assertCodec({foo: {bar: 'baz'}}));
-  test('surrounded by special strings', () => assertCodec({foo: 'bar', baz: 'qux', quux: ['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']}));
+  for (const [name, value] of maps) test(name, () => assertCodec(value));
+});
+
+describe('attributes', () => {
+  for (const [name, value] of maps) test(name, () => assertCodec(new RespAttributes(value)));
 });
