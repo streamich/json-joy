@@ -1,11 +1,18 @@
 import {RespEncoder} from '../RespEncoder';
 import {RespDecoder} from '../RespDecoder';
+import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
+
+const decode = (encoded: string | Uint8Array): unknown => {
+  const decoder = new RespDecoder();
+  const buf = typeof encoded === 'string' ? bufferToUint8Array(Buffer.from(encoded)) : encoded;
+  const decoded = decoder.read(buf);
+  return decoded;
+};
 
 const assertCodec = (value: unknown, expected: unknown = value): void => {
   const encoder = new RespEncoder();
   const encoded = encoder.encode(value);
-  const decoder = new RespDecoder();
-  const decoded = decoder.read(encoded);
+  const decoded = decode(encoded);
   expect(decoded).toEqual(expected);
 };
 
@@ -38,5 +45,15 @@ describe('booleans', () => {
 describe('nulls', () => {
   test('null', () => {
     assertCodec(null);
+  });
+});
+
+describe('integers', () => {
+  test('zero', () => assertCodec(0));
+  test('positive', () => assertCodec(123));
+  test('negative', () => assertCodec(-2348934));
+  test('positive with leading "+"', () => {
+    const decoded = decode(':+123\r\n');
+    expect(decoded).toBe(123);
   });
 });

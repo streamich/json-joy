@@ -17,4 +17,6 @@ export const enum RESP {
   BIG = 40, // (
   INT = 58, // :
   FLOAT = 44, // ,
+  PLUS = 43, // +
+  MINUS = 45, // -
 }

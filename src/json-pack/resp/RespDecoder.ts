@@ -30,6 +30,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const reader = this.reader;
     const type = reader.u8();
     switch (type) {
+      case RESP.INT: return this.readInt();
       case RESP.STR_SIMPLE: return this.readStrSimple();
       case RESP.STR_VERBATIM: return this.readStrVerbatim();
       case RESP.BOOL: return this.readBool();
@@ -67,10 +68,27 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     return c === 116; // t
   }
 
-  // ----------------------------------------------------- Unsigned int reading
+  // ------------------------------------------------------------------ Numbers
 
-  public readUint(minor: number): number | bigint {
-    throw new Error('Not implemented');
+  public readInt(): number {
+    const reader = this.reader;
+    const uint8 = reader.uint8;
+    let x = reader.x;
+    let negative = false;
+    let c = uint8[x];
+    let number: number = 0;
+    if (c === RESP.MINUS) {
+      negative = true;
+      x++;
+    } else if (c === RESP.PLUS) x++;
+    for (let i = x;; i++) {
+      c = uint8[i];
+      if (c === RESP.R) {
+        reader.x = i + 2;
+        return negative ? -number : number;
+      }
+      number = (number * 10) + (c - 48);
+    }
   }
 
   // ----------------------------------------------------- Negative int reading
