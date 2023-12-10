@@ -44,6 +44,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readStrBulk();
       case RESP.ARR:
         return this.readArr();
+      case RESP.SET:
+        return this.readSet();
       case RESP.ERR_SIMPLE:
         return this.readErrSimple();
       case RESP.ERR_BULK:
@@ -174,6 +176,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const arr: unknown[] = [];
     for (let i = 0; i < length; i++) arr.push(this.val());
     return arr;
+  }
+
+  public readSet(): Set<unknown> {
+    const length = this.readLength();
+    const set = new Set();
+    for (let i = 0; i < length; i++) set.add(this.val());
+    return set;
   }
 
   // ----------------------------------------------------------- Object reading

@@ -75,3 +75,11 @@ describe('arrays', () => {
   test('nested', () => assertCodec([[]]));
   test('surrounded by special strings', () => assertCodec(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']));
 });
+
+describe('sets', () => {
+  test('empty set', () => assertCodec(new Set([])));
+  test('simple set', () => assertCodec(new Set([1, 2, 3])));
+  test('with strings', () => assertCodec(new Set(['foo', 'bar'])));
+  test('nested', () => assertCodec(new Set([new Set([])])));
+  test('surrounded by special strings', () => assertCodec(new Set(['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf'])));
+});
