@@ -283,4 +283,16 @@ describe('streaming data', () => {
       expect(toStr(encoded)).toBe('$?\r\n;3\r\nabc\r\n;3\r\ndef\r\n;0\r\n');
     });
   });
+
+  describe('binary', () => {
+    test('can write a streaming binary', () => {
+      const encoder = new RespEncoder();
+      encoder.writeStartBin();
+      encoder.writeBinChunk(new Uint8Array([65]));
+      encoder.writeBinChunk(new Uint8Array([66]));
+      encoder.writeEndBin();
+      const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('$?\r\n;1\r\nA\r\n;1\r\nB\r\n;0\r\n');
+    });
+  });
 });

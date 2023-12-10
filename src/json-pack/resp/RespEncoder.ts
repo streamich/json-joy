@@ -300,15 +300,29 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   public writeStartBin(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      36 * 0x1000000 + // $
+        (63 << 16) + // ?
+        RESP.RN, // \r\n
+    );
   }
 
   public writeBinChunk(buf: Uint8Array): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    const length = buf.length;
+    writer.u8(59); // ;
+    writer.ascii(length + '');
+    writer.u16(RESP.RN); // \r\n
+    writer.buf(buf, length);
+    writer.u16(RESP.RN); // \r\n
   }
 
   public writeEndBin(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      59 * 0x1000000 + // ;
+        (48 << 16) + // 0
+        RESP.RN, // \r\n
+    );
   }
 
   public writeStartArr(): void {
