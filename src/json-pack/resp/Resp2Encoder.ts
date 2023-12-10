@@ -1,6 +1,7 @@
 import {Writer} from '../../util/buffers/Writer';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
+import type {Slice} from '../../util/buffers/Slice';
 
 const REG_RN = /[\n\r]/;
 const rn = ('\r'.charCodeAt(0) << 8) | '\n'.charCodeAt(0);
