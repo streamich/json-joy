@@ -7,7 +7,7 @@ import type {Slice} from '../../util/buffers/Slice';
 const REG_RN = /[\n\r]/;
 const isSafeInteger = Number.isSafeInteger;
 
-export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
+export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
   implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder
 {
   constructor(public readonly writer: W = new Writer() as any) {}
@@ -276,9 +276,9 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
 
   public writeStartStr(): void {
     this.writer.u32(
-      (36 * 0x1000000) + // $
-      (63 << 16) + // ?
-      RESP.RN // \r\n
+      36 * 0x1000000 + // $
+        (63 << 16) + // ?
+        RESP.RN, // \r\n
     );
   }
 
@@ -293,9 +293,9 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
 
   public writeEndStr(): void {
     this.writer.u32(
-      (59 * 0x1000000) + // ;
-      (48 << 16) + // 0
-      RESP.RN // \r\n
+      59 * 0x1000000 + // ;
+        (48 << 16) + // 0
+        RESP.RN, // \r\n
     );
   }
 
