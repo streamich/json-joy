@@ -117,22 +117,22 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         writer.u8u16(
           105, // i
           (110 << 8) | // n
-          102, // f
+            102, // f
         );
         break;
       case -Infinity:
         writer.u32(
-          45 * 0x1000000 + // -
-          105 * 0x10000 + // i
-          (110 << 8) | // n
-          102, // f
+          (45 * 0x1000000 + // -
+            105 * 0x10000 + // i
+            (110 << 8)) | // n
+            102, // f
         );
         break;
       case NaN:
         writer.u8u16(
           110, // n
           (97 << 8) | // a
-          110, // n
+            110, // n
         );
         break;
       default:
