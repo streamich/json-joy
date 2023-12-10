@@ -167,7 +167,10 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     writer.ascii(str.length + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
-      encoding.charCodeAt(0) * 0x1000000 + (encoding.charCodeAt(1) << 16) + (encoding.charCodeAt(2) << 8) + 58, // :
+      encoding.charCodeAt(0) * 0x1000000 + // t
+        (encoding.charCodeAt(1) << 16) + // x
+        (encoding.charCodeAt(2) << 8) + // t
+        58, // :
     );
     writer.ascii(str);
     writer.u16(RESP.RN); // \r\n
