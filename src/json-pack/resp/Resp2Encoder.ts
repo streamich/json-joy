@@ -28,7 +28,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
       case 'string':
         return this.writeStr(value);
       case 'boolean':
-        return this.writeBool(value);
+        return this.writeBoolean(value);
       case 'object': {
         if (!value) return this.writeNull();
         if (value instanceof Error) return this.writeErr(value.message);
@@ -75,7 +75,15 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeBoolean(bool: boolean): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      bool
+        ? 35 * 0x1000000 + // #
+            116 * 0x10000 + // t
+            rn // \r\n
+        : 35 * 0x1000000 + // #
+            102 * 0x10000 + // f
+            rn, // \r\n
+    );
   }
 
   public writeNumber(num: number): void {
@@ -100,10 +108,6 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeFloat(float: number): void {
-    throw new Error('Not implemented');
-  }
-
-  public writeBool(bool: boolean): void {
     throw new Error('Not implemented');
   }
 

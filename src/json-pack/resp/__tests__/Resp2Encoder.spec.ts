@@ -162,3 +162,17 @@ describe('nulls', () => {
     expect(parse(encoded)).toEqual(null);
   });
 });
+
+describe('booleans', () => {
+  test('true', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(true);
+    expect(toStr(encoded)).toBe('#t\r\n');
+  });
+
+  test('false', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(false);
+    expect(toStr(encoded)).toBe('#f\r\n');
+  });
+});
