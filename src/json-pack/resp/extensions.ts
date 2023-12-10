@@ -1,4 +1,4 @@
-import {JsonPackExtension} from "../JsonPackExtension";
+import {JsonPackExtension} from '../JsonPackExtension';
 
 export class RespPush extends JsonPackExtension<unknown[]> {
   constructor(public readonly val: unknown[]) {
