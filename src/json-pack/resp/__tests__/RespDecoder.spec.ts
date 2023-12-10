@@ -12,9 +12,16 @@ const decode = (encoded: string | Uint8Array): unknown => {
 const assertCodec = (value: unknown, expected: unknown = value): void => {
   const encoder = new RespEncoder();
   const encoded = encoder.encode(value);
+  // console.log(Buffer.from(encoded).toString());
   const decoded = decode(encoded);
   expect(decoded).toEqual(expected);
 };
+
+describe('nulls', () => {
+  test('null', () => {
+    assertCodec(null);
+  });
+});
 
 describe('booleans', () => {
   test('true', () => {
@@ -26,12 +33,6 @@ describe('booleans', () => {
   });
 });
 
-describe('nulls', () => {
-  test('null', () => {
-    assertCodec(null);
-  });
-});
-
 describe('integers', () => {
   test('zero', () => assertCodec(0));
   test('positive', () => assertCodec(123));
@@ -39,6 +40,16 @@ describe('integers', () => {
   test('positive with leading "+"', () => {
     const decoded = decode(':+123\r\n');
     expect(decoded).toBe(123);
+  });
+});
+
+describe('big ints', () => {
+  test('zero', () => assertCodec(BigInt('0')));
+  test('positive', () => assertCodec(BigInt('123')));
+  test('negative', () => assertCodec(BigInt('-2348934')));
+  test('positive with leading "+"', () => {
+    const decoded = decode('(+123\r\n');
+    expect(decoded).toEqual(BigInt('123'));
   });
 });
 

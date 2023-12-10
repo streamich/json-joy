@@ -44,6 +44,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readStrBulk();
       case RESP.ARR:
         return this.readArr();
+      case RESP.BIG:
+        return this.readBigint();
       case RESP.SET:
         return this.readSet();
       case RESP.ERR_SIMPLE:
@@ -99,10 +101,25 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     for (let i = x; ; i++) {
       c = uint8[i];
       if (c === RESP.R) {
-        reader.x = i + 2;
+        reader.x = i + 2; // Skip "\r\n".
         return negative ? -number : number;
       }
       number = number * 10 + (c - 48);
+    }
+  }
+
+  public readBigint(): bigint {
+    const reader = this.reader;
+    const uint8 = reader.uint8;
+    let x = reader.x;
+    let c = uint8[x];
+    for (let i = x; ; i++) {
+      c = uint8[i];
+      if (c === RESP.R) {
+        const str = reader.ascii(i - x);
+        reader.x = i + 2; // Skip "\r\n".
+        return BigInt(str);
+      }
     }
   }
 
