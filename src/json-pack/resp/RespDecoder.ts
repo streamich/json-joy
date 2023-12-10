@@ -79,7 +79,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
-  // ------------------------------------------------------------------ Boolean
+  // ---------------------------------------------------------- Boolean reading
 
   public readBool(): boolean {
     const reader = this.reader;
@@ -89,7 +89,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     return c === 116; // t
   }
 
-  // ------------------------------------------------------------------ Numbers
+  // ----------------------------------------------------------- Number reading
 
   public readInt(): number {
     const reader = this.reader;

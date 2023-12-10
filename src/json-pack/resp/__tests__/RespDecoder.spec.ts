@@ -2,6 +2,7 @@ import {RespEncoder} from '../RespEncoder';
 import {RespDecoder} from '../RespDecoder';
 import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
 import {RespAttributes, RespPush} from '../extensions';
+import {Writer} from '../../../util/buffers/Writer';
 
 const decode = (encoded: string | Uint8Array): unknown => {
   const decoder = new RespDecoder();
@@ -10,12 +11,15 @@ const decode = (encoded: string | Uint8Array): unknown => {
   return decoded;
 };
 
+const encoder = new RespEncoder(new Writer(4));
 const assertCodec = (value: unknown, expected: unknown = value): void => {
-  const encoder = new RespEncoder();
   const encoded = encoder.encode(value);
   // console.log(Buffer.from(encoded).toString());
   const decoded = decode(encoded);
-  expect(decoded).toEqual(expected);
+  expect(decoded).toStrictEqual(expected);
+  const encoded2 = encoder.encode(value);
+  const decoded2 = decode(encoded2);
+  expect(decoded2).toStrictEqual(expected);
 };
 
 describe('nulls', () => {
@@ -132,6 +136,11 @@ const maps: [string, Record<string, unknown>][] = [
   ['multiple keys', {foo: 'bar', baz: 'qux'}],
   ['nested', {foo: {bar: 'baz'}}],
   ['surrounded by special strings', {foo: 'bar', baz: 'qux', quux: ['a\n', 'b😱', [0, -1, 1], '\nasdf\r\n\r💪\nadsf']}],
+  ['fuzzer 1', {a: 'b', 'a*|Avi5:7%7El': false}],
+  [
+    'fuzzer 2',
+    {"u.qSvG-7#j0tp1Z":["Mk9|s2<[-$k2sEq",".YyA",",g:V5el?o1",["/-=gfBa7@r"],null,"x0\"",899663861.7189225,["-yM}#tH>Z|0","?x4c-M","V`Wjk",962664739.7776917,541764469.8786258],39815384.70374191,"%J,TE6",867117612.5557965,432039764.7694767,{"&3qo`uOc@]7c":-1199425724646684,"(3":98978664.1896191},941209461.4820778,444029027.33100927],":xwsOx[u0:\\,":116172902.03305908,"=Em$Bo+t4":118717435.20500576,"D3 hvV+uBsY^0":" Mr!`Pjno;ME_","l\\Wv1bs":null,"F":175071663.912447,"s-o}fQO2e":null,"K!q]":"LBm,GEw,`BpQxIq","(:'-g`;x":"r\\?K;AZWT1S:w0_-"},
+  ],
 ];
 
 describe('objects', () => {

@@ -6,7 +6,7 @@ import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
 
-const REG_RN = /[\n\r]/;
+const REG_RN = /[\r\n]/;
 const isSafeInteger = Number.isSafeInteger;
 
 export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
@@ -174,6 +174,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeSimpleStr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.STR_SIMPLE); // +
+    writer.ensureCapacity(str.length << 2);
     writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
@@ -195,8 +196,9 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeVerbatimStr(encoding: string, str: string): void {
     const writer = this.writer;
+    const size = utf8Size(str);
     writer.u8(RESP.STR_VERBATIM); // =
-    writer.ascii(utf8Size(str) + '');
+    writer.ascii(size + '');
     writer.u16(RESP.RN); // \r\n
     writer.u32(
       encoding.charCodeAt(0) * 0x1000000 + // t
@@ -204,6 +206,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         (encoding.charCodeAt(2) << 8) + // t
         58, // :
     );
+    writer.ensureCapacity(size);
     writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
@@ -216,15 +219,18 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeSimpleErr(str: string): void {
     const writer = this.writer;
     writer.u8(RESP.ERR_SIMPLE); // -
+    writer.ensureCapacity(str.length << 2);
     writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
   public writeBulkErr(str: string): void {
     const writer = this.writer;
+    const size = utf8Size(str);
     writer.u8(RESP.ERR_BULK); // !
-    writer.ascii(utf8Size(str) + '');
+    writer.ascii(size + '');
     writer.u16(RESP.RN); // \r\n
+    writer.ensureCapacity(size);
     writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
@@ -315,7 +321,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     this.writer.u16(RESP.RN); // \r\n
   }
 
-  // ------------------------------------------------------- Streaming encoding
+  // ---------------------------------------------------------- Stream encoding
 
   public writeStartStr(): void {
     this.writer.u32(
