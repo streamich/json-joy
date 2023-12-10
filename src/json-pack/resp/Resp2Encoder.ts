@@ -6,7 +6,9 @@ const REG_RN = /[\n\r]/;
 const rn = ('\r'.charCodeAt(0) << 8) | '\n'.charCodeAt(0);
 const isSafeInteger = Number.isSafeInteger;
 
-export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> implements BinaryJsonEncoder, TlvBinaryJsonEncoder {
+export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
+  implements BinaryJsonEncoder, TlvBinaryJsonEncoder
+{
   constructor(public readonly writer: W = new Writer() as any) {}
 
   public encode(value: unknown): Uint8Array {
@@ -28,7 +30,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
       case 'boolean':
         return this.writeBool(value);
       case 'object': {
-        if (!value) return this.writeNull()
+        if (!value) return this.writeNull();
         if (value instanceof Error) return this.writeErr(value.message);
         const constructor = value.constructor;
         switch (constructor) {
@@ -48,22 +50,28 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeNull(): void {
-    this.writer.u8u16(95, // _
-      rn);
+    this.writer.u8u16(
+      95, // _
+      rn, // \r\n
+    );
   }
 
   public writeNullStr(): void {
-    this.writer.u8u32(36, // $
-      (45 * 0x1000000) + // -
-      (49 * 0x10000) + // 1
-      rn); // \r\n
+    this.writer.u8u32(
+      36, // $
+      45 * 0x1000000 + // -
+        49 * 0x10000 + // 1
+        rn, // \r\n
+    );
   }
 
   public writeNullArr(): void {
-    this.writer.u8u32(42, // *
-      (45 * 0x1000000) + // -
-      (49 * 0x10000) + // 1
-      rn); // \r\n
+    this.writer.u8u32(
+      42, // *
+      45 * 0x1000000 + // -
+        49 * 0x10000 + // 1
+        rn, // \r\n
+    );
   }
 
   public writeBoolean(bool: boolean): void {
@@ -84,7 +92,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     const writer = this.writer;
     writer.u8(58); // :
     writer.ascii(int + '');
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
   }
 
   public writeUInteger(uint: number): void {
@@ -119,16 +127,16 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     const writer = this.writer;
     writer.u8(43); // +
     writer.ascii(str);
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
   }
 
   public writeBulkStr(str: string): void {
     const writer = this.writer;
     writer.u8(36); // $
     writer.ascii(str.length + '');
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
     writer.ascii(str);
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
   }
 
   public writeAsciiStr(str: string): void {
@@ -141,16 +149,16 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     const writer = this.writer;
     writer.u8(45); // -
     writer.ascii(str);
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
   }
 
   public writeBulkErr(str: string): void {
     const writer = this.writer;
     writer.u8(33); // !
     writer.ascii(str.length + '');
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
     writer.ascii(str);
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
   }
 
   public writeErr(str: string): void {
@@ -164,7 +172,7 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     const length = arr.length;
     writer.u8(42); // *
     writer.ascii(length + '');
-    writer.u16(rn);
+    writer.u16(rn); // \r\n
     for (let i = 0; i < length; i++) this.writeAny(arr[i]);
   }
 
@@ -196,6 +204,6 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   protected writeRn(): void {
-    this.writer.u16(rn);
+    this.writer.u16(rn); // \r\n
   }
 }
