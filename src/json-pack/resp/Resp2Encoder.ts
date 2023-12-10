@@ -223,6 +223,20 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
     writer.u16(rn); // \r\n
   }
 
+  public writeAttr(obj: Record<string, unknown>): void {
+    const writer = this.writer;
+    const keys = Object.keys(obj);
+    const length = keys.length;
+    writer.u8(124); // |
+    writer.ascii(length + '');
+    writer.u16(rn); // \r\n
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      this.writeStr(key);
+      this.writeAny(obj[key]);
+    }
+  }
+
   public writeSet(set: Set<unknown>): void {
     const writer = this.writer;
     const length = set.size;

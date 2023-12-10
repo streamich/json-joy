@@ -225,6 +225,22 @@ describe('objects', () => {
   });
 });
 
+describe('attributes', () => {
+  test('empty attributes', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writeAttr({});
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('|0\r\n');
+  });
+
+  test('simple object', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writeAttr({foo: 123});
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('|1\r\n$3\r\nfoo\r\n:123\r\n');
+  });
+});
+
 describe('sets', () => {
   test('empty set', () => {
     const encoder = new Resp2Encoder();
