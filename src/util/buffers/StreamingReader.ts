@@ -1,4 +1,5 @@
 import {Writer} from './Writer';
+import {decodeUtf8} from './utf8/decodeUtf8';
 import type {IReader, IReaderResettable} from './types';
 
 export class StreamingReader implements IReader, IReaderResettable {
@@ -14,6 +15,19 @@ export class StreamingReader implements IReader, IReaderResettable {
   
   // ------------------------------------------------------------------ IReader
 
+  protected dx = 0;
+
+  /**
+   * Returns the number of bytes remaining in the buffer.
+   */
+  public size(): number {
+    return this.writer.x - this.x;
+  }
+
+  protected assertSize(size: number): void {
+    if (size > this.size()) throw new RangeError('OUT_OF_BOUNDS');
+  }
+
   public get uint8(): Uint8Array {
     return this.writer.uint8;
   }
@@ -23,77 +37,109 @@ export class StreamingReader implements IReader, IReaderResettable {
   }
 
   public get x(): number {
-    return this.writer.x;
+    return this.writer.x0 + this.dx;
   }
 
   public set x(x: number) {
-    this.writer.x = x;
+    this.dx = x - this.writer.x0;
   }
 
   public peak(): number {
-    throw new Error('Not implemented');
+    return this.view.getUint8(this.x);
   }
 
   public skip(length: number): void {
-    throw new Error('Not implemented');
+    this.assertSize(length);
+    this.x += length;
   }
 
   public buf(size: number): Uint8Array {
-    throw new Error('Not implemented');
+    this.assertSize(size);
+    const end = this.x + size;
+    const bin = this.uint8.subarray(this.x, end);
+    this.x = end;
+    return bin;
   }
 
   public u8(): number {
-    throw new Error('Not implemented');
+    return this.view.getUint8(this.x++);
   }
 
   public i8(): number {
-    throw new Error('Not implemented');
+    return this.view.getInt8(this.x++);
   }
 
   public u16(): number {
-    throw new Error('Not implemented');
+    const num = this.view.getUint16(this.x);
+    this.x += 2;
+    return num;
   }
 
   public i16(): number {
-    throw new Error('Not implemented');
+    const num = this.view.getInt16(this.x);
+    this.x += 2;
+    return num;
   }
 
   public u32(): number {
-    throw new Error('Not implemented');
+    const num = this.view.getUint32(this.x);
+    this.x += 4;
+    return num;
   }
 
   public i32(): number {
-    throw new Error('Not implemented');
+    const num = this.view.getInt32(this.x);
+    this.x += 4;
+    return num;
   }
 
   public u64(): bigint {
-    throw new Error('Not implemented');
+    const num = this.view.getBigUint64(this.x);
+    this.x += 8;
+    return num;
   }
 
   public i64(): bigint {
-    throw new Error('Not implemented');
+    const num = this.view.getBigInt64(this.x);
+    this.x += 8;
+    return num;
   }
 
   public f32(): number {
-    throw new Error('Not implemented');
+    const pos = this.x;
+    this.x += 4;
+    return this.view.getFloat32(pos);
   }
 
   public f64(): number {
-    throw new Error('Not implemented');
+    const pos = this.x;
+    this.x += 8;
+    return this.view.getFloat64(pos);
   }
 
   public utf8(size: number): string {
-    throw new Error('Not implemented');
+    this.assertSize(size);
+    const start = this.x;
+    this.x += size;
+    return decodeUtf8(this.uint8, start, size);
   }
 
   public ascii(length: number): string {
-    throw new Error('Not implemented');
+    this.assertSize(length);
+    const uint8 = this.uint8;
+    let str = '';
+    const end = this.x + length;
+    for (let i = this.x; i < end; i++) str += String.fromCharCode(uint8[i]);
+    this.x = end;
+    return str;
   }
 
 
   // -------------------------------------------------------- IReaderResettable
 
   public reset(uint8: Uint8Array): void {
-    throw new Error('Not implemented');
+    this.dx = 0;
+    this.writer.reset();
+    this.push(uint8);
   }
 }
