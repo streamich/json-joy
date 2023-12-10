@@ -42,7 +42,8 @@ export interface IWriter {
   buf(buf: Uint8Array, length: number): void;
 
   /**
-   * Write string as UTF-8.
+   * Write string as UTF-8. You need to call .ensureCapacity(str.length * 4)
+   * before calling
    *
    * @param str JavaScript string to encode as UTF-8 byte sequence.
    */

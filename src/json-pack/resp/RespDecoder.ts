@@ -115,7 +115,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
   public readFloat(): number {
     const reader = this.reader;
     const uint8 = reader.uint8;
-    let x = reader.x;
+    const x = reader.x;
     let c = uint8[x];
     for (let i = x; ; i++) {
       c = uint8[i];
@@ -149,7 +149,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
   public readBigint(): bigint {
     const reader = this.reader;
     const uint8 = reader.uint8;
-    let x = reader.x;
+    const x = reader.x;
     let c = uint8[x];
     for (let i = x; ; i++) {
       c = uint8[i];

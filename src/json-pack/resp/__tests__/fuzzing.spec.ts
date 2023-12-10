@@ -11,13 +11,7 @@ describe('fuzzing', () => {
       const value = JSON.parse(JSON.stringify(RandomJson.generate()));
       const encoded = encoder.encode(value);
       const decoded = decoder.read(encoded);
-      try {
-        expect(decoded).toStrictEqual(value);
-      } catch (err) {
-        console.log(JSON.stringify(value));
-        console.log(Buffer.from(encoded).toString());
-        throw err;
-      }
+      expect(decoded).toStrictEqual(value);
     }
   });
 });

@@ -25,10 +25,10 @@ test('generates random JSON', () => {
         ";>BEILPT": "^beimp",
         "HKORVY]\`": "korvy}#",
         "LOSWZ^ae": "pswz #'*",
-        "_cfjmqtx": "гггггг诶诶诶诶",
+        "_cfjmqtx": "fimqtxBEIM",
+        "knrvyCGJ": "MQTX",
         "nquy|"%)": "4",
         "w{ $'+/2": "=@",
-        "гггг诶诶诶诶": "MQTX",
       },
       "tags": [
         "@CG",
