@@ -30,11 +30,16 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const reader = this.reader;
     const type = reader.u8();
     switch (type) {
-      case RESP.INT: return this.readInt();
-      case RESP.STR_SIMPLE: return this.readStrSimple();
-      case RESP.STR_VERBATIM: return this.readStrVerbatim();
-      case RESP.BOOL: return this.readBool();
-      case RESP.NULL: return reader.x += 2, null;
+      case RESP.INT:
+        return this.readInt();
+      case RESP.STR_SIMPLE:
+        return this.readStrSimple();
+      case RESP.STR_VERBATIM:
+        return this.readStrVerbatim();
+      case RESP.BOOL:
+        return this.readBool();
+      case RESP.NULL:
+        return (reader.x += 2), null;
     }
     throw new Error('UNKNOWN_TYPE');
   }
@@ -48,13 +53,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const uint8 = reader.uint8;
     const x = reader.x;
     let number: number = 0;
-    for (let i = x;; i++) {
+    for (let i = x; ; i++) {
       const c = uint8[i];
       if (c === RESP.R) {
         reader.x = i + 2;
         return number;
       }
-      number = (number * 10) + (c - 48);
+      number = number * 10 + (c - 48);
     }
   }
 
@@ -81,13 +86,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       negative = true;
       x++;
     } else if (c === RESP.PLUS) x++;
-    for (let i = x;; i++) {
+    for (let i = x; ; i++) {
       c = uint8[i];
       if (c === RESP.R) {
         reader.x = i + 2;
         return negative ? -number : number;
       }
-      number = (number * 10) + (c - 48);
+      number = number * 10 + (c - 48);
     }
   }
 
