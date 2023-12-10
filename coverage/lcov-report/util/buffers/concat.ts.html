@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.03% </span>
+                <span class="strong">85.18% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/27</span>
+                <span class='fraction'>23/27</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/3</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">80.95% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/21</span>
+                <span class='fraction'>17/21</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -94,28 +94,28 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">54x</span>
+<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">55x</span>
 <span class="cline-any cline-yes">195x</span>
 <span class="cline-any cline-yes">195x</span>
 <span class="cline-any cline-yes">195x</span>
 <span class="cline-any cline-yes">195x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">55x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">84x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">84x</span>
+<span class="cline-any cline-yes">84x</span>
+<span class="cline-any cline-yes">84x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">55x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -132,18 +132,18 @@
   return res;
 };
 &nbsp;
-export const concatList = <span class="fstat-no" title="function not covered" >(l</span>ist: Uint8Array[]): Uint8Array =&gt; {
-  const length = <span class="cstat-no" title="statement not covered" >list.length;</span>
-  let size = <span class="cstat-no" title="statement not covered" >0,</span>
-    offset = <span class="cstat-no" title="statement not covered" >0;</span>
-<span class="cstat-no" title="statement not covered" >  for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; length; i++) <span class="cstat-no" title="statement not covered" >size += list[i].length;</span></span>
-  const res = <span class="cstat-no" title="statement not covered" >new Uint8Array(size);</span>
-<span class="cstat-no" title="statement not covered" >  for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; length; i++) {</span>
-    const item = <span class="cstat-no" title="statement not covered" >list[i];</span>
-<span class="cstat-no" title="statement not covered" >    res.set(item, offset);</span>
-<span class="cstat-no" title="statement not covered" >    offset += item.length;</span>
+export const concatList = (list: Uint8Array[]): Uint8Array =&gt; {
+  const length = list.length;
+  let size = 0,
+    offset = 0;
+  for (let i = 0; i &lt; length; i++) size += list[i].length;
+  const res = new Uint8Array(size);
+  for (let i = 0; i &lt; length; i++) {
+    const item = list[i];
+    res.set(item, offset);
+    offset += item.length;
   }
-<span class="cstat-no" title="statement not covered" >  return res;</span>
+  return res;
 };
 &nbsp;
 export const listToUint8 = <span class="fstat-no" title="function not covered" >(l</span>ist: Uint8Array[]): Uint8Array =&gt; {
@@ -163,7 +163,7 @@ export const listToUint8 = <span class="fstat-no" title="function not covered" >
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-12-10T16:39:21.722Z
+                at 2023-12-10T20:56:13.304Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
