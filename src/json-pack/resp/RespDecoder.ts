@@ -30,13 +30,29 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const reader = this.reader;
     const type = reader.u8();
     switch (type) {
-      case RESP.STR_SIMPLE: return this.readSimpleStr();
+      case RESP.STR_SIMPLE: return this.readStrSimple();
+      case RESP.STR_VERBATIM: return this.readStrVerbatim();
     }
     throw new Error('UNKNOWN_TYPE');
   }
 
   public readMinorLen(minor: number): number {
     throw new Error('Not implemented');
+  }
+
+  protected readLength(): number {
+    const reader = this.reader;
+    const uint8 = reader.uint8;
+    const x = reader.x;
+    let number: number = 0;
+    for (let i = x;; i++) {
+      const c = uint8[i];
+      if (c === RESP.R) {
+        reader.x = i + 2;
+        return number;
+      }
+      number = (number * 10) + (c - 48);
+    }
   }
 
   // ----------------------------------------------------- Unsigned int reading
@@ -63,18 +79,33 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   // ----------------------------------------------------------- String reading
 
-  public readSimpleStr(): string {
+  public readStrSimple(): string {
     const reader = this.reader;
     const uint8 = reader.uint8;
     const x = reader.x;
     for (let i = x; i < uint8.length; i++) {
       if (uint8[i] !== RESP.R) continue;
-      if (uint8[i + 1] !== RESP.N) throw new Error('INVALID_STR');
+      // if (uint8[i + 1] !== RESP.N) throw new Error('INVALID_STR');
       const str = reader.utf8(i - reader.x);
       reader.x = i + 2;
       return str;
     }
     throw new Error('INVALID_STR');
+  }
+
+  public readStrVerbatim(): string | Uint8Array {
+    const reader = this.reader;
+    const length = this.readLength();
+    const encoding = reader.utf8(3);
+    reader.x++; // Skip ":".
+    if (encoding === 'txt') {
+      const str = reader.utf8(length);
+      reader.x += 2; // Skip "\r\n".
+      return str;
+    }
+    const buf = reader.buf(length);
+    reader.x += 2; // Skip "\r\n".
+    return buf;
   }
 
   // ------------------------------------------------------------ Array reading

@@ -18,5 +18,9 @@ describe('strings', () => {
     test('short string', () => {
       assertCodec('foo bar');
     });
+
+    test('simple string with newline', () => {
+      assertCodec('foo\nbar');
+    });
   });
 });
