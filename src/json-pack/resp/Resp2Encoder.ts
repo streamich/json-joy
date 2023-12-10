@@ -275,15 +275,28 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   // ------------------------------------------------------- Streaming encoding
 
   public writeStartStr(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      (36 * 0x1000000) + // $
+      (63 << 16) + // ?
+      rn // \r\n
+    );
   }
 
   public writeStrChunk(str: string): void {
-    throw new Error('Not implemented');
+    const writer = this.writer;
+    writer.u8(59); // ;
+    writer.ascii(str.length + '');
+    writer.u16(rn); // \r\n
+    writer.ascii(str);
+    writer.u16(rn); // \r\n
   }
 
   public writeEndStr(): void {
-    throw new Error('Not implemented');
+    this.writer.u32(
+      (59 * 0x1000000) + // ;
+      (48 << 16) + // 0
+      rn // \r\n
+    );
   }
 
   public writeStartBin(): void {

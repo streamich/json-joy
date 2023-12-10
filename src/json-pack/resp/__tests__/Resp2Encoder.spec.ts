@@ -270,3 +270,17 @@ describe('pushes', () => {
     expect(toStr(encoded)).toBe('>2\r\n:1\r\n:32\r\n');
   });
 });
+
+describe('streaming data', () => {
+  describe('strings', () => {
+    test('can write a streaming string', () => {
+      const encoder = new Resp2Encoder();
+      encoder.writeStartStr();
+      encoder.writeStrChunk('abc');
+      encoder.writeStrChunk('def');
+      encoder.writeEndStr();
+      const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('$?\r\n;3\r\nabc\r\n;3\r\ndef\r\n;0\r\n');
+    });
+  });
+});
