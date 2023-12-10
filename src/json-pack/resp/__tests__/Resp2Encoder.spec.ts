@@ -132,3 +132,33 @@ describe('arrays', () => {
     expect(parse(encoded)).toEqual([1, 'abc', 3]);
   });
 });
+
+describe('nulls', () => {
+  test('a single null', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode(null);
+    expect(toStr(encoded)).toBe('_\r\n');
+  });
+
+  test('null in array', () => {
+    const encoder = new Resp2Encoder();
+    const encoded = encoder.encode([1, 2, null]);
+    expect(toStr(encoded)).toBe('*3\r\n:1\r\n:2\r\n_\r\n');
+  });
+
+  test('string null', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writeNullStr();
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('$-1\r\n');
+    expect(parse(encoded)).toEqual(null);
+  });
+
+  test('array null', () => {
+    const encoder = new Resp2Encoder();
+    encoder.writeNullArr();
+    const encoded = encoder.writer.flush();
+    expect(toStr(encoded)).toBe('*-1\r\n');
+    expect(parse(encoded)).toEqual(null);
+  });
+});

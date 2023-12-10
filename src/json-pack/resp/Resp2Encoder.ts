@@ -28,11 +28,8 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
       case 'boolean':
         return this.writeBool(value);
       case 'object': {
-        if (!value) throw new Error('Not implemented');
-        if (value instanceof Error) {
-          this.writeErr(value.message);
-          return;
-        }
+        if (!value) return this.writeNull()
+        if (value instanceof Error) return this.writeErr(value.message);
         const constructor = value.constructor;
         switch (constructor) {
           case Array:
@@ -51,7 +48,22 @@ export class Resp2Encoder<W extends IWriter & IWriterGrowable = IWriter & IWrite
   }
 
   public writeNull(): void {
-    throw new Error('Not implemented');
+    this.writer.u8u16(95, // _
+      rn);
+  }
+
+  public writeNullStr(): void {
+    this.writer.u8u32(36, // $
+      (45 * 0x1000000) + // -
+      (49 * 0x10000) + // 1
+      rn); // \r\n
+  }
+
+  public writeNullArr(): void {
+    this.writer.u8u32(42, // *
+      (45 * 0x1000000) + // -
+      (49 * 0x10000) + // 1
+      rn); // \r\n
   }
 
   public writeBoolean(bool: boolean): void {
