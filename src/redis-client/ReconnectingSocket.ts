@@ -1,7 +1,6 @@
 import * as net from 'net';
 import {FanOut} from 'thingies/es2020/fanout';
-
-type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+import type {PartialExcept} from './types';
 
 export interface ReconnectingSocketOpts {
   /**
@@ -32,11 +31,11 @@ export interface ReconnectingSocketOpts {
  * Represents a TCP or TLS socket that automatically reconnects when the
  * connection is lost. Automatically creates a new socket connection after
  * a timeout.
- * 
+ *
  * Use can specify the minimum and maximum timeout between reconnection
  * attempts. Each reconnection attempt increases the timeout by 2x until
  * the maximum timeout is reached.
- * 
+ *
  * @todo Add connection timeout...
  */
 export class ReconnectingSocket {
@@ -88,6 +87,7 @@ export class ReconnectingSocket {
   private readonly handleDrain = () => this.onDrain.emit();
   private readonly handleError = (err: Error) => this.onError.emit(err);
   private readonly handleClose = () => {
+    this.socket = undefined
     if (this.stopped) return;
     this.retry();
   };
@@ -100,6 +100,7 @@ export class ReconnectingSocket {
     if (this.socket) throw new Error('ALREADY_CONNECTED');
     const socket = this.socket = this.opts.createSocket();
     socket.allowHalfOpen = false;
+    socket.setNoDelay(true);
     socket.on('connect', this.handleConnect);
     socket.on('ready', this.handleReady);
     socket.on('data', this.handleData);

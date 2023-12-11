@@ -2,15 +2,15 @@ import {Defer} from 'thingies/es2020/Defer';
 import {RespEncoder} from '../json-pack/resp';
 import {RespStreamingDecoder} from '../json-pack/resp/RespStreamingDecoder';
 import {ReconnectingSocket} from './ReconnectingSocket';
+import {RedisClientCodecOpts} from './types';
 
-export interface RedisClientOpts {
+export interface RedisClientOpts extends RedisClientCodecOpts {
   socket: ReconnectingSocket;
-  encoder: RespEncoder;
-  decoder: RespStreamingDecoder;
 }
 
 export class RedisClient {
   protected readonly socket: ReconnectingSocket;
+  protected protocol: 2 | 3 = 2;
   protected readonly encoder: RespEncoder;
   protected readonly decoder: RespStreamingDecoder;
   protected readonly requests: unknown[][] = [];
@@ -94,6 +94,16 @@ export class RedisClient {
 
   public stop() {
     this.socket.stop();
+  }
+
+  /** Authenticate and negotiate protocol version. */
+  public async hello(protocol: 2 | 3, pwd?: string, usr: string = ''): Promise<void> {
+    try {
+      await this.cmd(pwd ? ['HELLO', protocol, 'AUTH', usr, pwd] : ['HELLO', protocol]);
+      this.protocol = protocol;
+    } catch (error) {
+      await this.cmd(usr ? ['AUTH', usr, pwd] : ['AUTH', pwd]);
+    }
   }
 
   public async cmd(args: unknown[]): Promise<unknown> {

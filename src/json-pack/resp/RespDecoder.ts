@@ -252,7 +252,8 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       const key = c === RESP.STR_BULK
         ? this.readAsciiAsStrBulk()
         : (this.val() + '');
-      obj[key] = this.val();
+      if (reader.peak() === RESP.STR_BULK) obj[key] = this.readAsciiAsStrBulk();
+      else obj[key] = this.val();
     }
     return obj;
   }

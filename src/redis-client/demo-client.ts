@@ -4,12 +4,11 @@ import * as net from 'net';
 import {RespEncoder} from '../json-pack/resp';
 import {RespStreamingDecoder} from '../json-pack/resp/RespStreamingDecoder';
 import {ReconnectingSocket} from './ReconnectingSocket';
-import {RedisSocket} from './RedisSocket';
 import {RedisClient} from './RedisClient';
 
 const main = async () => {
-  const host = 'redis-13183.c325.us-east-1-4.ec2.redns.redis-cloud.com';
-  const port = 13183;
+  const host = 'localhost';
+  const port = 7000;
   const usr = 'default';
   const pwd = 'AoQhB7bNYljT8IiZ7nbgvSQSXiGHRwQX';
 
@@ -30,24 +29,13 @@ const main = async () => {
 
   let res: unknown;
 
-  res = await client.cmd(['AUTH', usr, pwd]);
-  console.log('res', res);
+  // res = await client.cmd(['AUTH', usr, pwd]);
+  // console.log('res', res);
 
   res = await client.cmd(['PING']);
   console.log('res', res);
 
-  res = await client.cmd(['SET', 'foo', 'bar']);
-  console.log('res', res);
-
-  res = await client.cmd(['GET', 'foo']);
-  console.log('res', res);
-
-  res = await Promise.all([
-    client.cmd(['GET', 'foo']),
-    client.cmd(['GET', 'foo']),
-    // client.cmd(['GET', 'baf']),
-  ]);
-  console.log('res', res);
+  // res = await css', res);
 
   // socket.writeCmd('AUTH', usr, pwd);
   // socket.writeCmd('PING');
