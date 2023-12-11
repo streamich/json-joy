@@ -171,6 +171,15 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     return buf;
   }
 
+  public readAsciiAsStrBulk(): string {
+    const reader = this.reader;
+    reader.skip(1); // Skip "$".
+    const length = this.readLength();
+    const buf = reader.ascii(length);
+    reader.skip(2); // Skip "\r\n".
+    return buf;
+  }
+
   public readStrVerbatim(): string | Uint8Array {
     const reader = this.reader;
     const length = this.readLength();
@@ -236,9 +245,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   public readObj(): Record<string, unknown> {
     const length = this.readLength();
+    const reader = this.reader;
     const obj: Record<string, unknown> = {};
     for (let i = 0; i < length; i++) {
-      const key = this.val() + '';
+      const c = reader.peak();
+      const key = c === RESP.STR_BULK
+        ? this.readAsciiAsStrBulk()
+        : (this.val() + '');
       obj[key] = this.val();
     }
     return obj;
