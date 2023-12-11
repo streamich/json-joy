@@ -14,7 +14,7 @@ export class RedisClient {
   protected readonly encoder: RespEncoder;
   protected readonly decoder: RespStreamingDecoder;
   protected readonly requests: unknown[][] = [];
-  protected readonly responses: Defer<unknown>[] = [];
+  protected readonly responses: Array<null | Defer<unknown>> = [];
   protected encodingTimer?: NodeJS.Immediate = undefined;
   protected decodingTimer?: NodeJS.Immediate = undefined;
 
@@ -26,19 +26,19 @@ export class RedisClient {
     const decoder = this.decoder = opts.decoder;
     socket.onData.listen((data) => {
       decoder.push(data);
-      this.scheduleDecoding();
+      this.scheduleRead();
     });
     socket.onError.listen((err: Error) => {
       console.log('err', err);
     });
   }
 
-  protected scheduleEncoding() {
+  protected scheduleWrite() {
     if (this.encodingTimer) return;
-    this.encodingTimer = setImmediate(this.handleEncoding);
+    this.encodingTimer = setImmediate(this.handleWrite);
   }
 
-  private readonly handleEncoding = () => {
+  private readonly handleWrite = () => {
     try {
       this.encodingTimer = undefined;
       const requests = this.requests;
@@ -58,28 +58,34 @@ export class RedisClient {
     }
   };
 
-  protected scheduleDecoding() {
+  protected scheduleRead() {
     if (this.decodingTimer) return;
-    this.decodingTimer = setImmediate(this.handleDecoding);
+    this.decodingTimer = setImmediate(this.handleRead);
   }
 
-  private readonly handleDecoding = () => {
-    this.decodingTimer = undefined;
-    const decoder = this.decoder;
-    let msg;
-    let i = 0;
-    const responses = this.responses;
-    while ((msg = decoder.read()) !== undefined) {
-      const defer = responses[i++];
-      if (!defer) {
-        this.onProtocolError.reject(new Error('UNEXPECTED_RESPONSE'));
-        // TODO: reconnect socket ...
-        // TODO: clear client state ...
-        return;
+  private readonly handleRead = () => {
+    try {
+      this.decodingTimer = undefined;
+      const decoder = this.decoder;
+      const responses = this.responses;
+      const length = responses.length;
+      let i = 0;
+      for (; i < length; i++) {
+        const defer = responses[i];
+        if (defer instanceof Defer) {
+          const msg = decoder.read();
+          if (msg === undefined) break;
+          if (msg instanceof Error) defer.reject(msg); else defer.resolve(msg);
+        } else {
+          // const length = decoder.skip();
+          // if (!length) break;
+        }
       }
-      if (msg instanceof Error) defer.reject(msg); else defer.resolve(msg);
+      if (i > 0) responses.splice(0, i);
+    } catch (error) {
+      // this.onProtocolError.reject(error);
+      // TODO: Re-establish socket ...
     }
-    if (i > 0) responses.splice(0, i);
   };
 
   public start() {
@@ -94,8 +100,14 @@ export class RedisClient {
     const defer = new Defer<unknown>();
     this.requests.push(args);
     this.responses.push(defer);
-    this.scheduleEncoding();
+    this.scheduleWrite();
     return defer.promise;
+  }
+
+  public cmdSync(args: unknown[]): void {
+    this.requests.push(args);
+    this.responses.push(null);
+    this.scheduleWrite();
   }
 
   public async cmdUtf8(args: unknown[]): Promise<unknown> {
