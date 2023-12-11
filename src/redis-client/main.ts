@@ -42,6 +42,13 @@ const main = async () => {
   res = await client.cmd(['GET', 'foo']);
   console.log('res', res);
 
+  res = await Promise.all([
+    client.cmd(['GET', 'foo']),
+    client.cmd(['GET', 'foo']),
+    // client.cmd(['GET', 'baf']),
+  ]);
+  console.log('res', res);
+
   // socket.writeCmd('AUTH', usr, pwd);
   // socket.writeCmd('PING');
   // socket.writeCmd('SET', 'foo', 'bar');
