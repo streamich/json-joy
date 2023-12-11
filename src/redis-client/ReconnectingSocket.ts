@@ -136,7 +136,9 @@ export class ReconnectingSocket {
   protected getRetryTimeout(): number {
     const {minTimeout, maxTimeout} = this.opts;
     const timeout = minTimeout * (2 ** Math.min(this.retryCount, 12));
-    return Math.max(Math.min(timeout, maxTimeout), minTimeout);
+    const timeoutCapped = Math.max(Math.min(timeout, maxTimeout), minTimeout);
+    const jitter = Math.round((Math.random() - 0.5) * timeoutCapped * 0.2);
+    return Math.max(timeoutCapped + jitter, minTimeout);
   }
 
   public write(data: string | Uint8Array, cb?: (err?: Error) => void): boolean {
