@@ -45,7 +45,7 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       case RESP.ARR:
         return this.readArr();
       case RESP.PUSH:
-        return new RespPush(this.readArr());
+        return new RespPush(this.readArr() || []);
       case RESP.BIG:
         return this.readBigint();
       case RESP.SET:
@@ -158,6 +158,19 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
+  public readStrBulk(): Uint8Array | null {
+    const reader = this.reader;
+    const c = reader.peak();
+    if (c === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return null;
+    }
+    const length = this.readLength();
+    const buf = reader.buf(length);
+    reader.skip(2); // Skip "\r\n".
+    return buf;
+  }
+
   public readStrVerbatim(): string | Uint8Array {
     const reader = this.reader;
     const length = this.readLength();
@@ -168,14 +181,6 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       reader.skip(2); // Skip "\r\n".
       return str;
     }
-    const buf = reader.buf(length);
-    reader.skip(2); // Skip "\r\n".
-    return buf;
-  }
-
-  public readStrBulk(): Uint8Array {
-    const reader = this.reader;
-    const length = this.readLength();
     const buf = reader.buf(length);
     reader.skip(2); // Skip "\r\n".
     return buf;
@@ -207,7 +212,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   // ------------------------------------------------------------ Array reading
 
-  public readArr(): unknown[] {
+  public readArr(): unknown[] | null {
+    const reader = this.reader;
+    const c = reader.peak();
+    if (c === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return null;
+    }
     const length = this.readLength();
     const arr: unknown[] = [];
     for (let i = 0; i < length; i++) arr.push(this.val());

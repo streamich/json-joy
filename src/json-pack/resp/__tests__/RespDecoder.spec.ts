@@ -176,3 +176,15 @@ describe('objects', () => {
 describe('attributes', () => {
   for (const [name, value] of maps) test(name, () => assertCodec(new RespAttributes(value)));
 });
+
+describe('nulls', () => {
+  test('can decode string null', () => {
+    const decoded = decode('$-1\r\n');
+    expect(decoded).toBe(null);
+  });
+
+  test('can decode array null', () => {
+    const decoded = decode('*-1\r\n');
+    expect(decoded).toBe(null);
+  });
+});
