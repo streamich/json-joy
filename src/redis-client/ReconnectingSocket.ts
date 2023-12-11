@@ -31,6 +31,8 @@ export interface ReconnectingSocketOpts {
  * Use can specify the minimum and maximum timeout between reconnection
  * attempts. Each reconnection attempt increases the timeout by 2x until
  * the maximum timeout is reached.
+ * 
+ * @todo Add connection timeout...
  */
 export class ReconnectingSocket {
   public socket?: net.Socket;
@@ -39,7 +41,7 @@ export class ReconnectingSocket {
   protected retryTimeout = 0;
   protected retryTimer?: NodeJS.Timeout;
   protected stopped = false;
-  protected reffed = false;
+  protected reffed = true;
 
   public readonly onReady = new FanOut<void>();
   public readonly onData = new FanOut<Buffer>();
@@ -84,7 +86,6 @@ export class ReconnectingSocket {
     this.stopped = false;
     if (this.socket) throw new Error('ALREADY_CONNECTED');
     const socket = this.socket = this.opts.createSocket();
-    socket.setEncoding('binary');
     socket.allowHalfOpen = false;
     socket.on('connect', this.handleConnect);
     socket.on('ready', this.handleReady);
@@ -110,7 +111,7 @@ export class ReconnectingSocket {
       this.retryTimer = undefined;
       this.start();
     }, retryTimeout);
-    if (this.reffed) this.retryTimer.ref();
+    if (this.reffed) this.retryTimer.ref(); else this.retryTimer.unref();
   }
 
   protected getRetryTimeout(): number {
