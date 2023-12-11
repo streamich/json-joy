@@ -21,6 +21,11 @@ export interface ReconnectingSocketOpts {
    * to 3 minutes.
    */
   maxTimeout: number;
+
+  /**
+   * Number of milliseconds to wait before giving up on a connection attempt.
+   */
+  connectionTimeout: number;
 }
 
 /**
@@ -40,6 +45,7 @@ export class ReconnectingSocket {
   protected retryCount = 0;
   protected retryTimeout = 0;
   protected retryTimer?: NodeJS.Timeout;
+  protected connectionTimeoutTimer?: NodeJS.Timeout;
   protected stopped = false;
   protected reffed = true;
 
@@ -52,6 +58,7 @@ export class ReconnectingSocket {
     this.opts = {
       minTimeout: 1000,
       maxTimeout: 1000 * 60 * 3,
+      connectionTimeout: 1000 * 10,
       ...opts,
     };
   }
@@ -63,10 +70,16 @@ export class ReconnectingSocket {
   }
 
   private readonly handleConnect = () => {
+    // Clear the connection timeout timer.
+    clearTimeout(this.connectionTimeoutTimer);
+    this.connectionTimeoutTimer = undefined;
+
     // Reset retry count after some time has passed.
-    setTimeout(() => {
-      this.retryCount = 0;
-    }, this.getRetryTimeout());
+    if (this.retryCount !== 0) {
+      setTimeout(() => {
+        this.retryCount = 0;
+      }, this.getRetryTimeout());
+    }
   };
   private readonly handleReady = () => {
     this.onReady.emit();
@@ -96,6 +109,12 @@ export class ReconnectingSocket {
     socket.on('timeout', this.handleTimeout);
     // socket.on('end', () => {});
     // socket.on('lookup', (err: Error, address: string, family: string | number, host: string) => {});
+
+    // Raise an error if the connection takes too long.
+    this.connectionTimeoutTimer = setTimeout(() => {
+      this.connectionTimeoutTimer = undefined;
+      this.socket?.destroy();
+    }, this.opts.connectionTimeout);
   }
 
   public stop(): void {
