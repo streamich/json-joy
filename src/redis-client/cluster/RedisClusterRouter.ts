@@ -46,4 +46,55 @@ export class RedisClusterRouter {
     });
     if (this.infos.has(id)) this.clients.set(id, client);
   }
+
+  public setClient(info: RedisClusterNodeInfo, client: RedisClient): void {
+    if (!this.infos.has(info.id)) throw new Error('NO_SUCH_NODE');
+    this.clients.set(info.id, client);
+  }
+
+  public getNodesForSlot(slot: number): RedisClusterNodeInfo[] {
+    const range = this.ranges.getOrNextLower(slot);
+    if (!range) return [];
+    return range.v.nodes;
+  }
+
+  public getMasterForSlot(slot: number): RedisClusterNodeInfo | undefined {
+    const nodes = this.getNodesForSlot(slot);
+    if (!nodes) return undefined;
+    for (const node of nodes) if (node.role === 'master') return node;
+    return;
+  }
+
+  public getReplicasForSlot(slot: number): RedisClusterNodeInfo[] {
+    const nodes = this.getNodesForSlot(slot);
+    const replicas: RedisClusterNodeInfo[] = [];
+    for (const node of nodes) if (node.role === 'replica') replicas.push(node);
+    return replicas;
+  }
+
+  public getRandomReplicaForSlot(slot: number): RedisClusterNodeInfo | undefined {
+    const replicas = this.getReplicasForSlot(slot);
+    if (!replicas.length) return undefined;
+    return replicas[Math.floor(Math.random() * replicas.length)];
+  }
+
+  public getRandomNodeForSlot(slot: number): RedisClusterNodeInfo | undefined {
+    const nodes = this.getNodesForSlot(slot);
+    if (!nodes.length) return undefined;
+    return nodes[Math.floor(Math.random() * nodes.length)];
+  }
+
+  public getClient(id: string): RedisClient | undefined {
+    return this.clients.get(id);
+  }
+
+  public getRandomClient(): RedisClient | undefined {
+    const size = this.clients.size;
+    if (!size) return undefined;
+    const index = Math.floor(Math.random() * size);
+    let i = 0;
+    for (const client of this.clients.values())
+      if (i++ === index) return client;
+    return;
+  }
 }

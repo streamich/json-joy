@@ -6,6 +6,7 @@ import {RespEncoder} from '../../json-pack/resp';
 import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {RedisClient, ReconnectingSocket} from '../node';
 import {RedisClusterRouter} from './RedisClusterRouter';
+import {RedisClusterNodeInfo} from './RedisClusterNodeInfo';
 
 export interface RedisClusterOpts extends RedisClientCodecOpts {
   /** Nodes to connect to to retrieve cluster configuration. */
@@ -54,9 +55,9 @@ export class RedisCluster {
     this.stopped = true;
   }
 
-  private initialTableBuiltAttempt = 0;
+  private initialTableBuildAttempt = 0;
   private buildInitialRouteTable(seed: number = 0): void {
-    const attempt = this.initialTableBuiltAttempt++;
+    const attempt = this.initialTableBuildAttempt++;
     (async () => {
       if (this.stopped) return;
       if (!this.router.isEmpty()) return;
@@ -69,13 +70,54 @@ export class RedisCluster {
       if (this.stopped) return;
       await this.router.rebuild(client);
       if (this.stopped) return;
-      this.initialTableBuiltAttempt = 0;
+      this.initialTableBuildAttempt = 0;
       this.onRouter.emit();
     })().catch((error) => {
       const delay = Math.max(Math.min(1000 * 2 ** attempt, 1000 * 60), 1000);
       setTimeout(() => this.buildInitialRouteTable(seed + 1), delay);
       this.onError.emit(error);
     });
+  }
+
+  public async whenRouterReady(): Promise<void> {
+    if (!this.router.isEmpty()) return;
+    return new Promise((resolve) => {
+      const unsubscribe = this.onRouter.listen(() => {
+        unsubscribe();
+        resolve();
+      });
+    });
+  }
+
+  protected getAnyClient(): RedisClient {
+    const randomClient = this.router.getRandomClient();
+    if (!randomClient) throw new Error('NO_CLIENT');
+    return randomClient;
+  }
+
+  protected async getBestAvailableReadClient(slot: number): Promise<RedisClient> {
+    await this.whenRouterReady();
+    const router = this.router;
+    const info = router.getRandomNodeForSlot(slot);
+    if (!info) {
+      const client = router.getRandomClient();
+      if (!client) throw new Error('NO_CLIENT');
+      return client;
+    }
+    const client = router.getClient(info.id);
+    if (client) return client;
+    this.createReadClientForSlot(info);
+    return this.getAnyClient();
+  }
+
+  private async createReadClientForSlot(info: RedisClusterNodeInfo): Promise<RedisClient> {
+    const client = await this.createClient({
+      ...this.opts.connectionConfig,
+      host: info.endpoint,
+      port: info.port,
+    });
+    this.router.setClient(info, client);
+    return client;
   }
 
   protected async createClient(config: RedisClusterNodeConfig): Promise<RedisClient> {
