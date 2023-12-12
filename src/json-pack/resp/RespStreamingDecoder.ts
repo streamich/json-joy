@@ -23,6 +23,18 @@ export class RespStreamingDecoder {
   protected readonly decoder = new RespDecoder(this.reader);
 
   /**
+   * When set to true, the decoder will attempt to decode RESP Bulk strings
+   * (which are binary strings, i.e. Uint8Array) as UTF-8 strings. If the
+   * string is not valid UTF-8, it will be returned as a Uint8Array.
+   */
+  public get tryUtf8(): boolean {
+    return this.decoder.tryUtf8;
+  }
+  public set tryUtf8(value: boolean) {
+    this.decoder.tryUtf8 = value;
+  }
+
+  /**
    * Add a chunk of data to be decoded.
    * @param uint8 `Uint8Array` chunk of data to be decoded.
    */

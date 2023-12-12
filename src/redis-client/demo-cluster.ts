@@ -1,11 +1,6 @@
 // npx ts-node src/redis-client/demo-cluster.ts
 
-import * as net from 'net';
-import {RespEncoder} from '../json-pack/resp';
-import {RespStreamingDecoder} from '../json-pack/resp/RespStreamingDecoder';
-import {ReconnectingSocket} from './ReconnectingSocket';
-import {RedisClient} from './RedisClient';
-import {RedisClusterClient} from './RedisClusterClient';
+import {RedisCluster} from "./cluster/RedisCluster";
 
 const main = async () => {
   const host = 'localhost';
@@ -13,7 +8,7 @@ const main = async () => {
   const user = 'default';
   const pwd = 'AoQhB7bNYljT8IiZ7nbgvSQSXiGHRwQX';
 
-  const client = new RedisClusterClient({
+  const client = new RedisCluster({
     seeds: [
       {
         host,

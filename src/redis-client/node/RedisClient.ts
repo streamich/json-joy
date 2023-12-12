@@ -1,8 +1,9 @@
 import {Defer} from 'thingies/es2020/Defer';
-import {RespEncoder} from '../json-pack/resp';
-import {RespStreamingDecoder} from '../json-pack/resp/RespStreamingDecoder';
+import {RespEncoder} from '../../json-pack/resp/RespEncoder';
+import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {ReconnectingSocket} from './ReconnectingSocket';
-import {RedisClientCodecOpts} from './types';
+import {RedisClientCodecOpts} from '../types';
+import {RedisCall} from './RedisCall';
 
 export interface RedisClientOpts extends RedisClientCodecOpts {
   socket: ReconnectingSocket;
@@ -13,8 +14,8 @@ export class RedisClient {
   protected protocol: 2 | 3 = 2;
   protected readonly encoder: RespEncoder;
   protected readonly decoder: RespStreamingDecoder;
-  protected readonly requests: unknown[][] = [];
-  protected readonly responses: Array<null | Defer<unknown>> = [];
+  protected readonly requests: RedisCall[] = [];
+  protected readonly responses: Array<null | RedisCall> = [];
   protected encodingTimer?: NodeJS.Immediate = undefined;
   protected decodingTimer?: NodeJS.Immediate = undefined;
 
@@ -46,8 +47,8 @@ export class RedisClient {
       if (length === 0) return;
       const encoder = this.encoder;
       for (let i = 0; i < length; i++) {
-        const args = requests[i];
-        encoder.writeCmd(args);
+        const call = requests[i];
+        encoder.writeCmd(call.args);
       }
       const buf = encoder.writer.flush();
       this.socket.write(buf);
@@ -71,14 +72,18 @@ export class RedisClient {
       const length = responses.length;
       let i = 0;
       for (; i < length; i++) {
-        const defer = responses[i];
-        if (defer instanceof Defer) {
+        const call = responses[i];
+        if (call instanceof RedisCall) {
+          decoder.tryUtf8 = !!call.utf8Res;
           const msg = decoder.read();
           if (msg === undefined) break;
-          if (msg instanceof Error) defer.reject(msg); else defer.resolve(msg);
+          const res = call.response;
+          if (msg instanceof Error) res.reject(msg); else res.resolve(msg);
         } else {
-          // const length = decoder.skip();
-          // if (!length) break;
+          // TODO: Use skipping here...
+          decoder.tryUtf8 = false;
+          const msg = decoder.read();
+          if (msg === undefined) break;
         }
       }
       if (i > 0) responses.splice(0, i);
@@ -99,25 +104,31 @@ export class RedisClient {
   /** Authenticate and negotiate protocol version. */
   public async hello(protocol: 2 | 3, pwd?: string, usr: string = ''): Promise<void> {
     try {
-      await this.cmd(pwd ? ['HELLO', protocol, 'AUTH', usr, pwd] : ['HELLO', protocol]);
+      const args = pwd ? ['HELLO', protocol, 'AUTH', usr, pwd] : ['HELLO', protocol];
+      const call = new RedisCall(args);
+      call.noRes = true;
+      await this.call(call);
       this.protocol = protocol;
     } catch (error) {
       await this.cmd(usr ? ['AUTH', usr, pwd] : ['AUTH', pwd]);
     }
   }
 
-  public async cmd(args: unknown[]): Promise<unknown> {
-    const defer = new Defer<unknown>();
-    this.requests.push(args);
-    this.responses.push(defer);
+  public async call(call: RedisCall): Promise<unknown> {
+    const noResponse = call.noRes;
+    this.requests.push(call);
+    this.responses.push(noResponse ? null : call);
     this.scheduleWrite();
-    return defer.promise;
+    return noResponse ? void 0 : call.response.promise;
   }
 
-  public cmdSync(args: unknown[]): void {
-    this.requests.push(args);
-    this.responses.push(null);
-    this.scheduleWrite();
+  public async cmd(args: unknown[], opts?: Pick<RedisCall, 'utf8Res' | 'noRes'>): Promise<unknown> {
+    const call = new RedisCall(args);
+    if (opts) {
+      if (opts.utf8Res) call.utf8Res = true;
+      if (opts.noRes) call.noRes = true;
+    }
+    return this.call(call);
   }
 
   public async cmdUtf8(args: unknown[]): Promise<unknown> {
