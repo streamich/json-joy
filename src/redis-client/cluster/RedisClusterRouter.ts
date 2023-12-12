@@ -18,7 +18,7 @@ export class RedisClusterRouter {
    * @param client Redis client to use to query the cluster.
    */
   public async rebuild(client: RedisClient): Promise<void> {
-    const slots = await client.clusterSlots();
+    const slots = await client.clusterShards();
     this.slots.clear();
     this.infos.clear();
     for (const slot of slots) {
@@ -30,6 +30,11 @@ export class RedisClusterRouter {
       }
       this.slots.insert(range.max, range);
     }
-    // TODO: Rebuild clients.
+    this.clients.forEach((client, id) => {
+      if (!this.infos.has(id)) {
+        client.stop();
+        this.clients.delete(id);
+      }
+    });
   }
 }

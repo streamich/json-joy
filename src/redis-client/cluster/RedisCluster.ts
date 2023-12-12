@@ -49,7 +49,8 @@ export class RedisCluster {
         ...connectionConfig,
         ...seeds[0],
       });
-      console.log(client);
+      await this.router.rebuild(client);
+      console.log(this.router);
     })()).catch((err) => {
       this.onError.emit(err);
     });

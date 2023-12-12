@@ -4,7 +4,7 @@ import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {ReconnectingSocket} from './ReconnectingSocket';
 import {RedisClientCodecOpts} from '../types';
 import {RedisCall, callNoRes} from './RedisCall';
-import type {RedisClusterSlotsResponse} from './types';
+import type {RedisClusterShardsResponse} from './types';
 
 export interface RedisClientOpts extends RedisClientCodecOpts {
   socket: ReconnectingSocket;
@@ -142,7 +142,7 @@ export class RedisClient {
     this.callFnf(callNoRes(args));
   }
 
-  public clusterSlots(): Promise<RedisClusterSlotsResponse> {
-    return this.cmd(['CLUSTER', 'SLOTS'], {utf8Res: true}) as Promise<RedisClusterSlotsResponse>;
+  public clusterShards(): Promise<RedisClusterShardsResponse> {
+    return this.cmd(['CLUSTER', 'SHARDS'], {utf8Res: true}) as Promise<RedisClusterShardsResponse>;
   }
 }

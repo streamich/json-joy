@@ -1,7 +1,7 @@
-import type {RedisClusterSlotsResponseNode} from "../node/types";
+import type {RedisClusterShardsResponseNode} from "../node/types";
 
 export class RedisClusterNodeInfo {
-  public static from = (response: RedisClusterSlotsResponseNode): RedisClusterNodeInfo => {
+  public static from = (response: RedisClusterShardsResponseNode): RedisClusterNodeInfo => {
     return new RedisClusterNodeInfo(
       response.id + '',
       Number(response.port),

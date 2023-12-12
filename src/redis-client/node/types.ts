@@ -1,11 +1,11 @@
-export type RedisClusterSlotsResponse = RedisClusterSlotsResponseSlot[];
+export type RedisClusterShardsResponse = RedisClusterShardsResponseSlot[];
 
-export interface RedisClusterSlotsResponseSlot {
+export interface RedisClusterShardsResponseSlot {
   slots: [number, number];
-  nodes: RedisClusterSlotsResponseNode[];
+  nodes: RedisClusterShardsResponseNode[];
 }
 
-export interface RedisClusterSlotsResponseNode {
+export interface RedisClusterShardsResponseNode {
   id: string;
   port: number;
   ip: string;
