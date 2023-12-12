@@ -1,5 +1,11 @@
 import {Defer} from "thingies/es2020/Defer";
 
+export const callNoRes = (args: unknown[]) => {
+  const call = new RedisCall(args);
+  call.noRes = true;
+  return call;
+};
+
 /**
  * Represents a single Redis request/response command call.
  */

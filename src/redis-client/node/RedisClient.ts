@@ -3,7 +3,7 @@ import {RespEncoder} from '../../json-pack/resp/RespEncoder';
 import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {ReconnectingSocket} from './ReconnectingSocket';
 import {RedisClientCodecOpts} from '../types';
-import {RedisCall} from './RedisCall';
+import {RedisCall, callNoRes} from './RedisCall';
 
 export interface RedisClientOpts extends RedisClientCodecOpts {
   socket: ReconnectingSocket;
@@ -105,12 +105,12 @@ export class RedisClient {
   public async hello(protocol: 2 | 3, pwd?: string, usr: string = ''): Promise<void> {
     try {
       const args = pwd ? ['HELLO', protocol, 'AUTH', usr, pwd] : ['HELLO', protocol];
-      const call = new RedisCall(args);
-      call.noRes = true;
-      await this.call(call);
+      await this.call(new RedisCall(args));
       this.protocol = protocol;
     } catch (error) {
-      await this.cmd(usr ? ['AUTH', usr, pwd] : ['AUTH', pwd]);
+      // This is likely protocol switching error. Try again with protocol 2.
+      const args = usr ? ['AUTH', usr, pwd] : ['AUTH', pwd];
+      await this.call(new RedisCall(args));
     }
   }
 
@@ -131,7 +131,13 @@ export class RedisClient {
     return this.call(call);
   }
 
-  public async cmdUtf8(args: unknown[]): Promise<unknown> {
-    throw new Error('TODO');
+  private callFnf(call: RedisCall): void {
+    this.requests.push(call);
+    this.responses.push(null);
+    this.scheduleWrite();
+  }
+
+  public cmdFnF(args: unknown[]): void {
+    this.callFnf(callNoRes(args));
   }
 }

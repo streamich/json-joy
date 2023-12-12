@@ -67,13 +67,13 @@ export class RedisCluster {
     const client = this.createNodeClient(config);
     client.start();
     const {user, pwd} = config;
+    await client.hello(3, pwd, user);
     const res = await Promise.all([
-      client.hello(3, pwd, user),
       client.cmd(['CLUSTER', 'MYID'], {utf8Res: true}),
       client.cmd(['CLUSTER', 'SLOTS'], {utf8Res: true}),
     ]);
     console.log('res', res);
-    console.log('asdf', JSON.stringify(res[2], null, 2));
+    console.log('asdf', JSON.stringify(res[1], null, 2));
     const node = new RedisClusterNode('asdg', client);
     return node;
   }
