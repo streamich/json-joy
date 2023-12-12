@@ -3,6 +3,7 @@ import {RespDecoder} from '../RespDecoder';
 import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
 import {RespAttributes, RespPush} from '../extensions';
 import {Writer} from '../../../util/buffers/Writer';
+import {Uint} from '@automerge/automerge';
 
 const decode = (encoded: string | Uint8Array): unknown => {
   const decoder = new RespDecoder();
@@ -171,8 +172,38 @@ const maps: [string, Record<string, unknown>][] = [
 
 describe('objects', () => {
   for (const [name, value] of maps) test(name, () => assertCodec(value));
+
+  describe('when .tryUtf8 = true', () => {
+    test('parses bulk strings as UTF8 strings', () => {
+      const encoded = '%1\r\n$3\r\nfoo\r\n$3\r\nbar\r\n';
+      const decoder = new RespDecoder();
+      decoder.tryUtf8 = true;
+      const decoded = decoder.read(Buffer.from(encoded));
+      expect(decoded).toStrictEqual({foo: 'bar'});
+    });
+
+    test('parses invalid UTF8 as Uint8Array', () => {
+      const encoded = encoder.encode({foo: new Uint8Array([0xc3, 0x28])});
+      const decoder = new RespDecoder();
+      decoder.tryUtf8 = true;
+      const decoded = decoder.read(encoded);
+      expect(decoded).toStrictEqual({foo: new Uint8Array([0xc3, 0x28])});
+    });
+  });
 });
 
 describe('attributes', () => {
   for (const [name, value] of maps) test(name, () => assertCodec(new RespAttributes(value)));
+});
+
+describe('nulls', () => {
+  test('can decode string null', () => {
+    const decoded = decode('$-1\r\n');
+    expect(decoded).toBe(null);
+  });
+
+  test('can decode array null', () => {
+    const decoded = decode('*-1\r\n');
+    expect(decoded).toBe(null);
+  });
 });

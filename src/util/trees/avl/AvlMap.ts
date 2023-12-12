@@ -68,6 +68,10 @@ export class AvlMap<K, V> implements Printable {
     this.root = remove(this.root, node as IAvlTreeNode<K, V>);
   }
 
+  public clear(): void {
+    this.root = undefined;
+  }
+
   public has(k: K): boolean {
     return !!this.find(k);
   }
@@ -79,6 +83,10 @@ export class AvlMap<K, V> implements Printable {
     let size = 1;
     while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined)) size++;
     return size;
+  }
+
+  public isEmpty(): boolean {
+    return !this.root;
   }
 
   public getOrNextLower(k: K): AvlNode<K, V> | undefined {

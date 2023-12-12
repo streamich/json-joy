@@ -3,10 +3,21 @@ import {RESP} from './constants';
 import {RespAttributes, RespPush} from './extensions';
 import type {IReader, IReaderResettable} from '../../util/buffers';
 import type {BinaryJsonDecoder, PackValue} from '../types';
+import {isUtf8} from '../../util/buffers/utf8/isUtf8';
 
 export class RespDecoder<R extends IReader & IReaderResettable = IReader & IReaderResettable>
   implements BinaryJsonDecoder
 {
+  /**
+   * When set to true, the decoder will attempt to decode RESP Bulk strings
+   * (which are binary strings, i.e. Uint8Array) as UTF-8 strings. If the
+   * string is not valid UTF-8, it will be returned as a Uint8Array.
+   *
+   * You can toggle this setting at any time, before each call to `decode()`
+   * or `read()`, or other methods.
+   */
+  public tryUtf8 = false;
+
   public constructor(public reader: R = new Reader() as any) {}
 
   public read(uint8: Uint8Array): PackValue {
@@ -32,20 +43,20 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
         return this.readFloat();
       case RESP.STR_SIMPLE:
         return this.readStrSimple();
-      case RESP.STR_VERBATIM:
-        return this.readStrVerbatim();
+      case RESP.STR_BULK:
+        return this.readStrBulk();
       case RESP.BOOL:
         return this.readBool();
       case RESP.NULL:
         return reader.skip(2), null;
-      case RESP.STR_BULK:
-        return this.readStrBulk();
       case RESP.OBJ:
         return this.readObj();
       case RESP.ARR:
         return this.readArr();
+      case RESP.STR_VERBATIM:
+        return this.readStrVerbatim();
       case RESP.PUSH:
-        return new RespPush(this.readArr());
+        return new RespPush(this.readArr() || []);
       case RESP.BIG:
         return this.readBigint();
       case RESP.SET:
@@ -158,6 +169,29 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
+  public readStrBulk(): Uint8Array | string | null {
+    const reader = this.reader;
+    if (reader.peak() === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return null;
+    }
+    const length = this.readLength();
+    let res: Uint8Array | string;
+    if (this.tryUtf8 && isUtf8(reader.uint8, reader.x, length)) res = reader.utf8(length);
+    else res = reader.buf(length);
+    reader.skip(2); // Skip "\r\n".
+    return res;
+  }
+
+  public readAsciiAsStrBulk(): string {
+    const reader = this.reader;
+    reader.skip(1); // Skip "$".
+    const length = this.readLength();
+    const buf = reader.ascii(length);
+    reader.skip(2); // Skip "\r\n".
+    return buf;
+  }
+
   public readStrVerbatim(): string | Uint8Array {
     const reader = this.reader;
     const length = this.readLength();
@@ -168,14 +202,6 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
       reader.skip(2); // Skip "\r\n".
       return str;
     }
-    const buf = reader.buf(length);
-    reader.skip(2); // Skip "\r\n".
-    return buf;
-  }
-
-  public readStrBulk(): Uint8Array {
-    const reader = this.reader;
-    const length = this.readLength();
     const buf = reader.buf(length);
     reader.skip(2); // Skip "\r\n".
     return buf;
@@ -207,7 +233,13 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
 
   // ------------------------------------------------------------ Array reading
 
-  public readArr(): unknown[] {
+  public readArr(): unknown[] | null {
+    const reader = this.reader;
+    const c = reader.peak();
+    if (c === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return null;
+    }
     const length = this.readLength();
     const arr: unknown[] = [];
     for (let i = 0; i < length; i++) arr.push(this.val());
