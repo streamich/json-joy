@@ -35,7 +35,10 @@ export class RedisCluster {
   protected readonly router = new RedisClusterRouter();
   protected stopped = false;
 
+  /** Emitted on unexpected and asynchronous errors. */
   public readonly onError = new FanOut<Error>();
+  /** Emitted each time router table is rebuilt. */
+  public readonly onRouter = new FanOut<void>();
 
   constructor(protected readonly opts: PartialExcept<RedisClusterOpts, 'seeds'>) {
     this.encoder = opts.encoder ?? new RespEncoder();
@@ -51,7 +54,9 @@ export class RedisCluster {
     this.stopped = true;
   }
 
+  private initialTableBuiltAttempt = 0;
   private buildInitialRouteTable(seed: number = 0): void {
+    const attempt = this.initialTableBuiltAttempt++;
     (async () => {
       if (this.stopped) return;
       if (!this.router.isEmpty()) return;
@@ -64,8 +69,11 @@ export class RedisCluster {
       if (this.stopped) return;
       await this.router.rebuild(client);
       if (this.stopped) return;
+      this.initialTableBuiltAttempt = 0;
+      this.onRouter.emit();
     })().catch((error) => {
-      setTimeout(() => this.buildInitialRouteTable(seed + 1), 1000);
+      const delay = Math.max(Math.min(1000 * 2 ** attempt, 1000 * 60), 1000);
+      setTimeout(() => this.buildInitialRouteTable(seed + 1), delay);
       this.onError.emit(error);
     });
   }
