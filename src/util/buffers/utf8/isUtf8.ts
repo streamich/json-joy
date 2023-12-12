@@ -4,7 +4,8 @@
  * @returns True if the data is valid UTF-8.
  */
 export const isUtf8 = (buf: Uint8Array, from: number, length: number): boolean => {
-  while (from < length) {
+  const to = from + length;
+  while (from < to) {
     const c = buf[from];
     if (c <= 0x7f) {
       from++;
