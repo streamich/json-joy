@@ -58,7 +58,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   public writeCmd(args: unknown[]): void {
     const length = args.length;
-    this.writeArrHdr(length)
+    this.writeArrHdr(length);
     for (let i = 0; i < length; i++) this.writeArg(args[i]);
   }
 

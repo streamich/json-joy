@@ -81,6 +81,10 @@ export class AvlMap<K, V> implements Printable {
     return size;
   }
 
+  public isEmpty(): boolean {
+    return !this.root;
+  }
+
   public getOrNextLower(k: K): AvlNode<K, V> | undefined {
     return (findOrNextLower(this.root, k, this.comparator) as AvlNode<K, V>) || undefined;
   }

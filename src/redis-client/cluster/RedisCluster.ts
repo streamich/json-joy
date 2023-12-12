@@ -6,6 +6,8 @@ import {RespEncoder} from '../../json-pack/resp';
 import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {RedisClient, ReconnectingSocket} from '../node';
 import {RedisClusterNode} from './RedisClusterNode';
+import {AvlMap} from '../../util/trees/avl/AvlMap';
+import {RedisClusterSlotRange} from './RedisClusterSlotRange';
 
 export interface RedisClusterOpts extends RedisClientCodecOpts {
   /** Nodes to connect to to retrieve cluster configuration. */
@@ -32,6 +34,11 @@ export interface RedisClusterNodeConfig {
 export class RedisCluster {
   protected readonly encoder: RespEncoder;
   protected readonly decoder: RespStreamingDecoder;
+  protected readonly nodes = new Map<string, RedisClusterNode>();
+
+  /** Map of slots ordered by slot end value. */
+  protected readonly slots = new AvlMap<number, RedisClusterSlotRange>();
+
   protected stopped = false;
 
   public readonly onError = new FanOut<Error>();
@@ -70,7 +77,7 @@ export class RedisCluster {
     await client.hello(3, pwd, user);
     const res = await Promise.all([
       client.cmd(['CLUSTER', 'MYID'], {utf8Res: true}),
-      client.cmd(['CLUSTER', 'SLOTS'], {utf8Res: true}),
+      client.cmd(['CLUSTER', 'SHARDS'], {utf8Res: true}),
     ]);
     console.log('res', res);
     console.log('asdf', JSON.stringify(res[1], null, 2));
