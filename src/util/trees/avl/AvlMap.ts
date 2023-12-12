@@ -68,6 +68,10 @@ export class AvlMap<K, V> implements Printable {
     this.root = remove(this.root, node as IAvlTreeNode<K, V>);
   }
 
+  public clear(): void {
+    this.root = undefined;
+  }
+
   public has(k: K): boolean {
     return !!this.find(k);
   }

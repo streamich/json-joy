@@ -1,4 +1,18 @@
+import type {RedisClusterSlotsResponseNode} from "../node/types";
+
 export class RedisClusterNodeInfo {
+  public static from = (response: RedisClusterSlotsResponseNode): RedisClusterNodeInfo => {
+    return new RedisClusterNodeInfo(
+      response.id + '',
+      Number(response.port),
+      response.ip + '',
+      response.endpoint + '',
+      (response.role + '') as 'master' | 'replica',
+      Number(response['replication-offset']),
+      (response.health + '') as 'online' | 'failed' | 'loading',
+    );
+  };
+
   constructor(
     public readonly id: string,
     public readonly port: number,

@@ -5,9 +5,7 @@ import {PartialExcept, RedisClientCodecOpts} from '../types';
 import {RespEncoder} from '../../json-pack/resp';
 import {RespStreamingDecoder} from '../../json-pack/resp/RespStreamingDecoder';
 import {RedisClient, ReconnectingSocket} from '../node';
-import {RedisClusterNode} from './RedisClusterNode';
-import {AvlMap} from '../../util/trees/avl/AvlMap';
-import {RedisClusterSlotRange} from './RedisClusterSlotRange';
+import {RedisClusterRouter} from './RedisClusterRouter';
 
 export interface RedisClusterOpts extends RedisClientCodecOpts {
   /** Nodes to connect to to retrieve cluster configuration. */
@@ -34,11 +32,7 @@ export interface RedisClusterNodeConfig {
 export class RedisCluster {
   protected readonly encoder: RespEncoder;
   protected readonly decoder: RespStreamingDecoder;
-  protected readonly nodes = new Map<string, RedisClusterNode>();
-
-  /** Map of slots ordered by slot end value. */
-  protected readonly slots = new AvlMap<number, RedisClusterSlotRange>();
-
+  protected readonly router = new RedisClusterRouter();
   protected stopped = false;
 
   public readonly onError = new FanOut<Error>();
@@ -51,18 +45,11 @@ export class RedisCluster {
   public start(): void {
     ((async () => {
       const {seeds, connectionConfig} = this.opts;
-      const client = await this.createNode({
+      const client = await this.createClient({
         ...connectionConfig,
         ...seeds[0],
       });
-      if (this.stopped) return;
-      // const seedClients = await Promise.all(seeds.map((seed) => this.startNodeClientRaw({
-      //   ...connectionConfig,
-      //   ...seed,
-      // })));
-      console.log('shards...');
-      // const clusterShards = await client.cmd(['CLUSTER', 'SHARDS']);
-      // console.log('clusterShards', JSON.stringify(clusterShards, null, 2));
+      console.log(client);
     })()).catch((err) => {
       this.onError.emit(err);
     });
@@ -70,22 +57,15 @@ export class RedisCluster {
 
   public stop(): void {}
 
-  protected async createNode(config: RedisClusterNodeConfig): Promise<RedisClusterNode> {
-    const client = this.createNodeClient(config);
+  protected async createClient(config: RedisClusterNodeConfig): Promise<RedisClient> {
+    const client = this.createClientRaw(config);
     client.start();
     const {user, pwd} = config;
     await client.hello(3, pwd, user);
-    const res = await Promise.all([
-      client.cmd(['CLUSTER', 'MYID'], {utf8Res: true}),
-      client.cmd(['CLUSTER', 'SHARDS'], {utf8Res: true}),
-    ]);
-    console.log('res', res);
-    console.log('asdf', JSON.stringify(res[1], null, 2));
-    const node = new RedisClusterNode('asdg', client);
-    return node;
+    return client;
   }
 
-  protected createNodeClient(config: RedisClusterNodeConfig): RedisClient {
+  protected createClientRaw(config: RedisClusterNodeConfig): RedisClient {
     const {host = 'localhost', port = 6379} = config;
     const client = new RedisClient({
       socket: new ReconnectingSocket({
