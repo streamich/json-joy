@@ -43,20 +43,32 @@ export class RedisCluster {
   }
 
   public start(): void {
-    ((async () => {
-      const {seeds, connectionConfig} = this.opts;
-      const client = await this.createClient({
-        ...connectionConfig,
-        ...seeds[0],
-      });
-      await this.router.rebuild(client);
-      console.log(this.router);
-    })()).catch((err) => {
-      this.onError.emit(err);
-    });
+    this.stopped = false;
+    this.buildInitialRouteTable();
   }
 
-  public stop(): void {}
+  public stop(): void {
+    this.stopped = true;
+  }
+
+  private buildInitialRouteTable(seed: number = 0): void {
+    (async () => {
+      if (this.stopped) return;
+      if (!this.router.isEmpty()) return;
+      const {seeds, connectionConfig} = this.opts;
+      seed = seed % seeds.length;
+      const client = await this.createClient({
+        ...connectionConfig,
+        ...seeds[seed],
+      });
+      if (this.stopped) return;
+      await this.router.rebuild(client);
+      if (this.stopped) return;
+    })().catch((error) => {
+      setTimeout(() => this.buildInitialRouteTable(seed + 1), 1000);
+      this.onError.emit(error);
+    });
+  }
 
   protected async createClient(config: RedisClusterNodeConfig): Promise<RedisClient> {
     const client = this.createClientRaw(config);

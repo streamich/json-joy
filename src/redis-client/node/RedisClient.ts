@@ -142,6 +142,10 @@ export class RedisClient {
     this.callFnf(callNoRes(args));
   }
 
+  public clusterMyId(): Promise<string> {
+    return this.cmd(['CLUSTER', 'MYID'], {utf8Res: true}) as Promise<string>;
+  }
+
   public clusterShards(): Promise<RedisClusterShardsResponse> {
     return this.cmd(['CLUSTER', 'SHARDS'], {utf8Res: true}) as Promise<RedisClusterShardsResponse>;
   }
