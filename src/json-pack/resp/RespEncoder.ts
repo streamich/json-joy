@@ -59,12 +59,11 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeCmd(args: unknown[]): void {
     const length = args.length;
     this.writeArrHdr(length);
-    for (let i = 0; i < length; i++) this.writeArg(args[i]);
-  }
-
-  public writeArg(arg: unknown): void {
-    if (arg instanceof Uint8Array) return this.writeBin(arg);
-    else this.writeBulkStrAscii(arg + '');
+    for (let i = 0; i < length; i++) {
+      const arg = args[i];
+      if (arg instanceof Uint8Array) return this.writeBin(arg);
+      else this.writeBulkStrAscii(arg + '');
+    }
   }
 
   public encodeCmdUtf8(args: unknown[]): Uint8Array {

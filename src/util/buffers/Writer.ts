@@ -263,6 +263,7 @@ export class Writer implements IWriter, IWriterGrowable {
     const uint8 = this.uint8;
     let offset = this.x;
     let pos = 0;
+    // TODO: unroll the loop for short strings
     while (pos < length) uint8[offset++] = str.charCodeAt(pos++);
     this.x = offset;
   }

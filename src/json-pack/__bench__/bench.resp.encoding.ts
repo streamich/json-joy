@@ -30,6 +30,15 @@ const benchmark: IBenchmark = {
       },
     },
     {
+      name: 'json-joy/json-pack RespEncoder.encodeCmd()',
+      setup: () => {
+        const encoder = new RespEncoder();
+        return (data: any) => {
+          encoder.encodeCmd(data);
+        };
+      },
+    },
+    {
       name: '@redis/client',
       setup: () => {
         return (data: any) => {
