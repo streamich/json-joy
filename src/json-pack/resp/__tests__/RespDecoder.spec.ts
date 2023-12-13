@@ -97,6 +97,14 @@ describe('strings', () => {
   for (const [name, value] of stringCases) {
     test(name, () => assertCodec(value));
   }
+
+  describe('verbatim strings', () => {
+    test('example from docs', () => {
+      const encoded = '=15\r\ntxt:Some string\r\n';
+      const decoded = decode(encoded);
+      expect(decoded).toBe('Some string');
+    });
+  });
 });
 
 describe('binary', () => {

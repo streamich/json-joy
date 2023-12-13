@@ -198,11 +198,11 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     const u32 = reader.u32();
     const isTxt = u32 === 1954051130; // "txt:"
     if (isTxt) {
-      const str = reader.utf8(length);
+      const str = reader.utf8(length - 4);
       reader.skip(2); // Skip "\r\n".
       return str;
     }
-    const buf = reader.buf(length);
+    const buf = reader.buf(length - 4);
     reader.skip(2); // Skip "\r\n".
     return buf;
   }
