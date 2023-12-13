@@ -1,3 +1,4 @@
+import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
 import {RespEncoder} from '../RespEncoder';
 const Parser = require('redis-parser');
 
@@ -66,14 +67,14 @@ describe('strings', () => {
       const encoder = new RespEncoder();
       encoder.writeVerbatimStr('txt', '');
       const encoded = encoder.writer.flush();
-      expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
+      expect(toStr(encoded)).toBe('=4\r\ntxt:\r\n');
     });
 
     test('short string', () => {
       const encoder = new RespEncoder();
-      encoder.writeVerbatimStr('txt', '');
+      encoder.writeVerbatimStr('txt', 'asdf');
       const encoded = encoder.writer.flush();
-      expect(toStr(encoded)).toBe('=0\r\ntxt:\r\n');
+      expect(toStr(encoded)).toBe('=8\r\ntxt:asdf\r\n');
     });
   });
 });
@@ -331,7 +332,7 @@ describe('commands', () => {
 
     test('can encode Uint8Array', () => {
       const encoder = new RespEncoder();
-      const encoded = encoder.encodeCmd([Buffer.from('SET'), 'foo', 123]);
+      const encoded = encoder.encodeCmd([bufferToUint8Array(Buffer.from('SET')), 'foo', 123]);
       expect(toStr(encoded)).toBe('*3\r\n$3\r\nSET\r\n$3\r\nfoo\r\n$3\r\n123\r\n');
     });
   });
