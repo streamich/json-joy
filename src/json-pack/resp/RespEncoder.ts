@@ -50,7 +50,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         return this.writeUnknown(value);
     }
   }
-  
+
   protected writeLength(length: number): void {
     let digits = 1;
     let pow = 10;
