@@ -82,7 +82,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     this.writeArrHdr(length);
     for (let i = 0; i < length; i++) {
       const arg = args[i];
-      if (arg instanceof Uint8Array) return this.writeBin(arg);
+      if (arg instanceof Uint8Array) this.writeBin(arg);
       else this.writeBulkStrAscii(arg + '');
     }
   }
@@ -200,7 +200,7 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     const writer = this.writer;
     const length = buf.length;
     writer.u8(RESP.STR_BULK); // $
-    writer.ascii(length + '');
+    this.writeLength(length);
     writer.u16(RESP.RN); // \r\n
     writer.buf(buf, length);
     writer.u16(RESP.RN); // \r\n
@@ -396,9 +396,11 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   public writeStrChunk(str: string): void {
     const writer = this.writer;
     writer.u8(59); // ;
-    this.writeLength(length);
+    const size = utf8Size(str);
+    this.writeLength(size);
     writer.u16(RESP.RN); // \r\n
-    writer.ascii(str);
+    writer.ensureCapacity(size);
+    writer.utf8(str);
     writer.u16(RESP.RN); // \r\n
   }
 
