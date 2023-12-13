@@ -53,10 +53,24 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
 
   protected writeLength(length: number): void {
     let digits = 1;
-    let pow = 10;
-    while (length >= pow) {
-      digits++;
-      pow *= 10;
+    if (length < 10000) {
+      if (length < 100) {
+        if (length < 10) digits = 1; else digits = 2;
+      } else {
+        if (length < 1000) digits = 3; else digits = 4;
+      }
+    } else if (length < 100000000) {
+      if (length < 1000000) {
+        if (length < 100000) digits = 5; else digits = 6;
+      } else {
+        if (length < 10000000) digits = 7; else digits = 8;
+      }
+    } else {
+      let pow = 10;
+      while (length >= pow) {
+        digits++;
+        pow *= 10;
+      }
     }
     const writer = this.writer;
     writer.ensureCapacity(digits);
