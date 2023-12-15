@@ -194,7 +194,13 @@ const rRebalance = (root: AvlHeadlessNode | undefined, n: AvlHeadlessNode, d: 1 
 export const print = (node: undefined | AvlHeadlessNode | IAvlTreeNode, tab: string = ''): string => {
   if (!node) return '∅';
   const {bf, l, r, k, v} = node as IAvlTreeNode;
-  const content = k !== undefined ? ` { ${stringify(k)} = ${stringify(v)} }` : '';
+  const vFormatted =
+    v && typeof v === 'object' && v.constructor === Object
+      ? stringify(v)
+      : v && typeof v === 'object'
+      ? (v as any).toString(tab)
+      : stringify(v);
+  const content = k !== undefined ? ` { ${stringify(k)} = ${vFormatted} }` : '';
   const bfFormatted = bf ? ` [${bf}]` : '';
   return (
     node.constructor.name +
