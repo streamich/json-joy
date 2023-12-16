@@ -264,4 +264,140 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
     return obj;
   }
+
+  // ----------------------------------------------------------------- Skipping
+
+  public skipN(n: number): void {
+    for (let i = 0; i < n; i++) this.skipAny();
+  }
+
+  public skipAny(): void {
+    const reader = this.reader;
+    const type = reader.u8();
+    switch (type) {
+      case RESP.INT:
+        return this.skipInt();
+      case RESP.FLOAT:
+        return this.skipFloat();
+      case RESP.STR_SIMPLE:
+        return this.skipStrSimple();
+      case RESP.STR_BULK:
+        return this.skipStrBulk();
+      case RESP.BOOL:
+        return this.skipBool();
+      case RESP.NULL:
+        return reader.skip(2);
+      case RESP.OBJ:
+        return this.skipObj();
+      case RESP.ARR:
+        return this.skipArr();
+      case RESP.STR_VERBATIM:
+        return this.skipStrVerbatim();
+      case RESP.PUSH:
+        return this.skipArr();
+      case RESP.BIG:
+        return this.skipBigint();
+      case RESP.SET:
+        return this.skipSet();
+      case RESP.ERR_SIMPLE:
+        return this.skipErrSimple();
+      case RESP.ERR_BULK:
+        return this.skipErrBulk();
+      case RESP.ATTR:
+        return this.skipObj();
+    }
+    throw new Error('UNKNOWN_TYPE');
+  }
+
+  public skipBool(): void {
+    this.reader.skip(3);
+  }
+
+  public skipInt(): void {
+    const reader = this.reader;
+    while (true) {
+      if (reader.u8() !== RESP.R) continue;
+      reader.skip(1); // Skip "\n".
+      return;
+    }
+  }
+
+  public skipFloat(): void {
+    const reader = this.reader;
+    while (true) {
+      if (reader.u8() !== RESP.R) continue;
+      reader.skip(1); // Skip "\n".
+      return;
+    }
+  }
+
+  public skipBigint(): void {
+    const reader = this.reader;
+    while (true) {
+      if (reader.u8() !== RESP.R) continue;
+      reader.skip(1); // Skip "\n".
+      return;
+    }
+  }
+
+  public skipStrSimple(): void {
+    const reader = this.reader;
+    while (true) {
+      if (reader.u8() !== RESP.R) continue;
+      reader.skip(1); // Skip "\n".
+      return;
+    }
+  }
+
+  public skipStrBulk(): void {
+    const reader = this.reader;
+    if (reader.peak() === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return;
+    }
+    reader.skip(this.readLength() + 2); // Skip "\r\n".
+  }
+
+  public skipStrVerbatim(): void {
+    const length = this.readLength();
+    this.reader.skip(length + 2); // Skip "\r\n".
+  }
+
+  public skipErrSimple(): void {
+    const reader = this.reader;
+    while (true) {
+      if (reader.u8() !== RESP.R) continue;
+      reader.skip(1); // Skip "\n".
+      return;
+    }
+  }
+
+  public skipErrBulk(): void {
+    const length = this.readLength();
+    this.reader.skip(length + 2); // Skip "\r\n".
+  }
+
+  public skipArr(): void {
+    const reader = this.reader;
+    const c = reader.peak();
+    if (c === RESP.MINUS) {
+      reader.skip(4); // Skip "-1\r\n".
+      return;
+    }
+    const length = this.readLength();
+    for (let i = 0; i < length; i++) this.skipAny();
+  }
+
+  public skipSet(): void {
+    const length = this.readLength();
+    for (let i = 0; i < length; i++) this.skipAny();
+  }
+
+  public skipObj(): void {
+    const length = this.readLength();
+    for (let i = 0; i < length; i++) {
+      this.skipAny();
+      this.skipAny();
+    }
+  }
 }
