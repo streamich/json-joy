@@ -66,4 +66,26 @@ export class RespStreamingDecoder {
       } else throw error;
     }
   }
+
+  /**
+   * Skips one value from the stream. If `undefined` is returned, then
+   * there is not enough data to skip or the stream is finished.
+   * @returns `null` if a value was skipped, `undefined` if there is not
+   * enough data to skip.
+   */
+  public skip(): null | undefined {
+    const reader = this.reader;
+    if (reader.size() === 0) return undefined;
+    const x = reader.x;
+    try {
+      this.decoder.skipAny();
+      reader.consume();
+      return null;
+    } catch (error) {
+      if (error instanceof RangeError) {
+        reader.x = x;
+        return undefined;
+      } else throw error;
+    }
+  }
 }
