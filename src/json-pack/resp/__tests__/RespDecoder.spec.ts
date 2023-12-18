@@ -3,7 +3,7 @@ import {RespDecoder} from '../RespDecoder';
 import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
 import {RespAttributes, RespPush} from '../extensions';
 import {Writer} from '../../../util/buffers/Writer';
-import {Uint} from '@automerge/automerge';
+import {utf8} from '../../../util/buffers/strings';
 
 const decode = (encoded: string | Uint8Array): unknown => {
   const decoder = new RespDecoder();
@@ -213,5 +213,23 @@ describe('nulls', () => {
   test('can decode array null', () => {
     const decoded = decode('*-1\r\n');
     expect(decoded).toBe(null);
+  });
+});
+
+describe('commands', () => {
+  test('can decode a PING command', () => {
+    const encoded = encoder.encodeCmd(['PING']);
+    const decoder = new RespDecoder();
+    decoder.reader.reset(encoded);
+    const decoded = decoder.readCmd();
+    expect(decoded).toEqual(['PING']);
+  });
+
+  test('can decode a SET command', () => {
+    const encoded = encoder.encodeCmd(['SET', 'foo', 'bar']);
+    const decoder = new RespDecoder();
+    decoder.reader.reset(encoded);
+    const decoded = decoder.readCmd();
+    expect(decoded).toEqual(['SET', utf8`foo`, utf8`bar`]);
   });
 });
