@@ -2,6 +2,7 @@ import {RespStreamingDecoder} from '../RespStreamingDecoder';
 import {RespEncoder} from '../RespEncoder';
 import {concatList} from '../../../util/buffers/concat';
 import {documents} from '../../../__tests__/json-documents';
+import {utf8} from '../../../util/buffers/strings';
 
 const encoder = new RespEncoder();
 
@@ -65,4 +66,12 @@ test('can stream 49 bytes at a time', () => {
     while ((read = decoder.read()) !== undefined) decoded.push(read);
   }
   expect(decoded).toEqual(docs);
+});
+
+test('can decode a command', () => {
+  const encoded = encoder.encodeCmd(['SET', 'foo', 'bar']);
+  const decoder = new RespStreamingDecoder();
+  decoder.push(encoded);
+  const decoded = decoder.readCmd();
+  expect(decoded).toEqual(['SET', utf8`foo`, utf8`bar`]);
 });

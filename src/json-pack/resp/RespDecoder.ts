@@ -81,6 +81,25 @@ export class RespDecoder<R extends IReader & IReaderResettable = IReader & IRead
     }
   }
 
+  public readCmd(): [cmd: string, ...args: Uint8Array[]] {
+    const reader = this.reader;
+    const type = reader.u8();
+    if (type !== RESP.ARR) throw new Error('INVALID_COMMAND');
+    const c = reader.peak();
+    if (c === RESP.MINUS) throw new Error('INVALID_COMMAND');
+    const length = this.readLength();
+    if (length === 0) throw new Error('INVALID_COMMAND');
+    const cmd = this.readAsciiAsStrBulk().toUpperCase();
+    const args: [cmd: string, ...args: Uint8Array[]] = [cmd];
+    this.tryUtf8 = false;
+    for (let i = 1; i < length; i++) {
+      const type = reader.u8();
+      if (type !== RESP.STR_BULK) throw new Error('INVALID_COMMAND');
+      args.push(this.readStrBulk() as Uint8Array);
+    }
+    return args;
+  }
+
   // ---------------------------------------------------------- Boolean reading
 
   public readBool(): boolean {
