@@ -1,4 +1,4 @@
-import {bufferToUint8Array} from "./bufferToUint8Array";
+import {bufferToUint8Array} from './bufferToUint8Array';
 
 export const ascii = (txt: TemplateStringsArray | string | [string]): Uint8Array => {
   if (typeof txt === 'string') return ascii([txt]);
