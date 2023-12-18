@@ -68,6 +68,29 @@ export class RespStreamingDecoder {
   }
 
   /**
+   * Decode only one RESP command from the stream, if the value is not a
+   * command, an error will be thrown.
+   *
+   * @returns Redis command and its arguments or `undefined` if there is
+   * not enough data to decode.
+   */
+  public readCmd(): [cmd: string, ...args: Uint8Array[]] | undefined {
+    const reader = this.reader;
+    if (reader.size() === 0) return undefined;
+    const x = reader.x;
+    try {
+      const args = this.decoder.readCmd();
+      reader.consume();
+      return args;
+    } catch (error) {
+      if (error instanceof RangeError) {
+        reader.x = x;
+        return undefined;
+      } else throw error;
+    }
+  }
+
+  /**
    * Skips one value from the stream. If `undefined` is returned, then
    * there is not enough data to skip or the stream is finished.
    * @returns `null` if a value was skipped, `undefined` if there is not
