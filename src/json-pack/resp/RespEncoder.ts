@@ -1,7 +1,8 @@
 import {Writer} from '../../util/buffers/Writer';
 import {RESP} from './constants';
 import {utf8Size} from '../../util/strings/utf8';
-import {RespAttributes, RespPush} from './extensions';
+import {RespAttributes, RespPush, RespVerbatimString} from './extensions';
+import {JsonPackExtension} from '../JsonPackExtension';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
@@ -9,6 +10,9 @@ import type {Slice} from '../../util/buffers/Slice';
 const REG_RN = /[\r\n]/;
 const isSafeInteger = Number.isSafeInteger;
 
+/**
+ * Implements RESP3 encoding.
+ */
 export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
   implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder
 {
@@ -38,8 +42,11 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         if (value instanceof Uint8Array) return this.writeBin(value);
         if (value instanceof Error) return this.writeErr(value.message);
         if (value instanceof Set) return this.writeSet(value);
-        if (value instanceof RespPush) return this.writePush(value.val);
-        if (value instanceof RespAttributes) return this.writeAttr(value.val);
+        if (value instanceof JsonPackExtension) {
+          if (value instanceof RespPush) return this.writePush(value.val);
+          if (value instanceof RespVerbatimString) return this.writeVerbatimStr('txt', value.val);
+          if (value instanceof RespAttributes) return this.writeAttr(value.val);
+        }
         return this.writeObj(value as Record<string, unknown>);
       }
       case 'undefined':
@@ -52,31 +59,23 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
   }
 
   protected writeLength(length: number): void {
-    let digits = 1;
-    if (length < 10000) {
-      if (length < 100) {
-        if (length < 10) digits = 1;
-        else digits = 2;
-      } else {
-        if (length < 1000) digits = 3;
-        else digits = 4;
-      }
-    } else if (length < 100000000) {
-      if (length < 1000000) {
-        if (length < 100000) digits = 5;
-        else digits = 6;
-      } else {
-        if (length < 10000000) digits = 7;
-        else digits = 8;
-      }
-    } else {
-      let pow = 10;
-      while (length >= pow) {
-        digits++;
-        pow *= 10;
-      }
-    }
     const writer = this.writer;
+    if (length < 100) {
+      if (length < 10) {
+        writer.u8(length + 48);
+        return;
+      }
+      const octet1 = length % 10;
+      const octet2 = (length - octet1) / 10;
+      writer.u16(((octet2 + 48) << 8) + octet1 + 48);
+      return;
+    }
+    let digits = 1;
+    let pow = 10;
+    while (length >= pow) {
+      digits++;
+      pow *= 10;
+    }
     writer.ensureCapacity(digits);
     const uint8 = writer.uint8;
     const x = writer.x;
@@ -245,6 +244,13 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     writer.u8(RESP.STR_SIMPLE); // +
     writer.ensureCapacity(str.length << 2);
     writer.utf8(str);
+    writer.u16(RESP.RN); // \r\n
+  }
+
+  public writeSimpleStrAscii(str: string): void {
+    const writer = this.writer;
+    writer.u8(RESP.STR_SIMPLE); // +
+    writer.ascii(str);
     writer.u16(RESP.RN); // \r\n
   }
 
