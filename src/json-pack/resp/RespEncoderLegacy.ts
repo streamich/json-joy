@@ -75,7 +75,7 @@ export class RespEncoderLegacy<W extends IWriter & IWriterGrowable = IWriter & I
       const val = arr[i];
       if (val === null) this.writeNullStr();
       else this.writeAny(val);
-    };
+    }
   }
 
   public writeObj(obj: Record<string, unknown>): void {
