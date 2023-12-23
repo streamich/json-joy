@@ -10,6 +10,9 @@ import type {Slice} from '../../util/buffers/Slice';
 const REG_RN = /[\r\n]/;
 const isSafeInteger = Number.isSafeInteger;
 
+/**
+ * Implements RESP3 encoding.
+ */
 export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable>
   implements BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder
 {
@@ -241,6 +244,13 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
     writer.u8(RESP.STR_SIMPLE); // +
     writer.ensureCapacity(str.length << 2);
     writer.utf8(str);
+    writer.u16(RESP.RN); // \r\n
+  }
+
+  public writeSimpleStrAscii(str: string): void {
+    const writer = this.writer;
+    writer.u8(RESP.STR_SIMPLE); // +
+    writer.ascii(str);
     writer.u16(RESP.RN); // \r\n
   }
 
