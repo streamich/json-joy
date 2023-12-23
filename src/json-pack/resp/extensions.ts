@@ -11,3 +11,9 @@ export class RespAttributes extends JsonPackExtension<Record<string, unknown>> {
     super(2, val);
   }
 }
+
+export class RespVerbatimString extends JsonPackExtension<string> {
+  constructor(public readonly val: string) {
+    super(3, val);
+  }
+}

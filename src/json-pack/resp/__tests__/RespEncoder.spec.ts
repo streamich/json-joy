@@ -1,5 +1,6 @@
 import {bufferToUint8Array} from '../../../util/buffers/bufferToUint8Array';
 import {RespEncoder} from '../RespEncoder';
+import {RespVerbatimString} from '../extensions';
 const Parser = require('redis-parser');
 
 const parse = (uint8: Uint8Array): unknown => {
@@ -74,6 +75,12 @@ describe('strings', () => {
       const encoder = new RespEncoder();
       encoder.writeVerbatimStr('txt', 'asdf');
       const encoded = encoder.writer.flush();
+      expect(toStr(encoded)).toBe('=8\r\ntxt:asdf\r\n');
+    });
+
+    test('can encode verbatim string using RespVerbatimString', () => {
+      const encoder = new RespEncoder();
+      const encoded = encoder.encode(new RespVerbatimString('asdf'));
       expect(toStr(encoded)).toBe('=8\r\ntxt:asdf\r\n');
     });
   });

@@ -1,7 +1,8 @@
 import {Writer} from '../../util/buffers/Writer';
 import {RESP} from './constants';
 import {utf8Size} from '../../util/strings/utf8';
-import {RespAttributes, RespPush} from './extensions';
+import {RespAttributes, RespPush, RespVerbatimString} from './extensions';
+import {JsonPackExtension} from '../JsonPackExtension';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder, StreamingBinaryJsonEncoder, TlvBinaryJsonEncoder} from '../types';
 import type {Slice} from '../../util/buffers/Slice';
@@ -38,8 +39,11 @@ export class RespEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
         if (value instanceof Uint8Array) return this.writeBin(value);
         if (value instanceof Error) return this.writeErr(value.message);
         if (value instanceof Set) return this.writeSet(value);
-        if (value instanceof RespPush) return this.writePush(value.val);
-        if (value instanceof RespAttributes) return this.writeAttr(value.val);
+        if (value instanceof JsonPackExtension) {
+          if (value instanceof RespPush) return this.writePush(value.val);
+          if (value instanceof RespVerbatimString) return this.writeVerbatimStr('txt', value.val);
+          if (value instanceof RespAttributes) return this.writeAttr(value.val);
+        }
         return this.writeObj(value as Record<string, unknown>);
       }
       case 'undefined':
