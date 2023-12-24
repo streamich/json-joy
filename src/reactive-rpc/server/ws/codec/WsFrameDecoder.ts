@@ -1,14 +1,14 @@
-import {StreamingOctetReader} from "../../../util/buffers/StreamingOctetReader";
-import {FrameHeader} from "./FrameHeader";
+import {StreamingOctetReader} from "../../../../util/buffers/StreamingOctetReader";
+import {WsFrameHeader} from "./frames";
 
-export class WebsocketDecoder {
+export class WsFrameDecoder {
   public readonly reader = new StreamingOctetReader();
 
   public push(uint8: Uint8Array): void {
     this.reader.push(uint8);
   }
 
-  public readFrameHeader(): FrameHeader | undefined {
+  public readFrameHeader(): WsFrameHeader | undefined {
     try {
       const reader = this.reader;
       if (reader.size() < 2) return undefined;
@@ -36,7 +36,7 @@ export class WebsocketDecoder {
           reader.u8(),
         ];
       }
-      return new FrameHeader(fin, opcode, length, maskBytes);
+      return new WsFrameHeader(fin, opcode, length, maskBytes);
     } catch (err) {
       if (err instanceof RangeError) return undefined;
       throw err;
@@ -55,7 +55,7 @@ export class WebsocketDecoder {
    * @param pos Position in the destination buffer to start writing to.
    * @returns The number of bytes that still need to be copied in the next call.
    */
-  public readFrameData(frame: FrameHeader, remaining: number, dst: Uint8Array, pos: number): number {
+  public readFrameData(frame: WsFrameHeader, remaining: number, dst: Uint8Array, pos: number): number {
     const reader = this.reader;
     const mask = frame.mask;
     const readSize = Math.min(reader.size(), remaining);

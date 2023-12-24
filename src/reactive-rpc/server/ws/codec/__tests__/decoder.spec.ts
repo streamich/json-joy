@@ -1,4 +1,4 @@
-import {WebsocketDecoder} from "../WebsocketDecoder";
+import {WsFrameDecoder} from "../WsFrameDecoder";
 
 const {frame: WebSocketFrame} = require('websocket');
 
@@ -9,7 +9,7 @@ describe('data frames', () => {
       136, 35, 93, 205, // Mask
       231, 85, 56, 191, 177, 19, 109, 253, // Payload
     ]));
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -24,7 +24,7 @@ describe('data frames', () => {
 
   test('can read final text packet without mask', () => {
     const buf = Buffer.from(new Uint8Array([129, 8, 111, 118, 101, 114, 57, 48, 48, 48]));
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -44,7 +44,7 @@ describe('data frames', () => {
     frame0.binaryPayload = Buffer.from('hello world');
     frame0.opcode = 1;
     const buf = frame0.toBuffer();
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -64,7 +64,7 @@ describe('data frames', () => {
     frame0.binaryPayload = Buffer.from('hello world');
     frame0.opcode = 1;
     const buf = frame0.toBuffer();
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -84,7 +84,7 @@ describe('data frames', () => {
     frame0.binaryPayload = Buffer.from('hello world');
     frame0.opcode = 2;
     const buf = frame0.toBuffer();
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -104,7 +104,7 @@ describe('data frames', () => {
     frame0.binaryPayload = Buffer.from('hello world');
     frame0.opcode = 2;
     const buf = frame0.toBuffer();
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
     const dst = Buffer.alloc(frame.length);
@@ -131,7 +131,7 @@ describe('data frames', () => {
     const buf0 = frame0.toBuffer();
     const buf1 = frame1.toBuffer();
     const dst = Buffer.alloc(11);
-    const decoder = new WebsocketDecoder();
+    const decoder = new WsFrameDecoder();
     decoder.push(buf0);
     const header0 = decoder.readFrameHeader()!;
     let remaining0 = header0.length;

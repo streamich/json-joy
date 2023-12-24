@@ -1,4 +1,4 @@
-export const enum WebsocketFrameOpcode {
+export const enum WsFrameOpcode {
   TEXT = 1,
   BINARY = 2,
   CLOSE = 8,
