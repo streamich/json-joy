@@ -20,7 +20,7 @@ const main = async () => {
     channel: {
       newChannel: () =>
         new WebSocketChannel({
-          newSocket: () => (new WebSocket('ws://localhost:9999/rpc', [codec.specifier()]) as any),
+          newSocket: () => new WebSocket('ws://localhost:9999/rpc', [codec.specifier()]) as any,
         }),
     },
   });

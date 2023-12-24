@@ -1,5 +1,5 @@
-import {StreamingOctetReader} from "../../../../util/buffers/StreamingOctetReader";
-import {WsFrameHeader} from "./frames";
+import {StreamingOctetReader} from '../../../../util/buffers/StreamingOctetReader';
+import {WsFrameHeader} from './frames';
 
 export class WsFrameDecoder {
   public readonly reader = new StreamingOctetReader();
@@ -20,7 +20,7 @@ export class WsFrameDecoder {
       let length = b1 & 0b01111111;
       if (length === 126) {
         if (reader.size() < 2) return undefined;
-        length = reader.u8() << 8 | reader.u8();
+        length = (reader.u8() << 8) | reader.u8();
       } else if (length === 127) {
         if (reader.size() < 8) return undefined;
         reader.skip(4);
@@ -29,12 +29,7 @@ export class WsFrameDecoder {
       let maskBytes: undefined | [number, number, number, number];
       if (mask) {
         if (reader.size() < 4) return undefined;
-        maskBytes = [
-          reader.u8(),
-          reader.u8(),
-          reader.u8(),
-          reader.u8(),
-        ];
+        maskBytes = [reader.u8(), reader.u8(), reader.u8(), reader.u8()];
       }
       return new WsFrameHeader(fin, opcode, length, maskBytes);
     } catch (err) {

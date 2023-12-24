@@ -1,14 +1,27 @@
-import {WsFrameDecoder} from "../WsFrameDecoder";
+import {WsFrameDecoder} from '../WsFrameDecoder';
 
 const {frame: WebSocketFrame} = require('websocket');
 
 describe('data frames', () => {
   test('can read final text packet with mask', () => {
-    const buf = Buffer.from(new Uint8Array([
-      129, 136, // Header
-      136, 35, 93, 205, // Mask
-      231, 85, 56, 191, 177, 19, 109, 253, // Payload
-    ]));
+    const buf = Buffer.from(
+      new Uint8Array([
+        129,
+        136, // Header
+        136,
+        35,
+        93,
+        205, // Mask
+        231,
+        85,
+        56,
+        191,
+        177,
+        19,
+        109,
+        253, // Payload
+      ]),
+    );
     const decoder = new WsFrameDecoder();
     decoder.push(buf);
     const frame = decoder.readFrameHeader()!;
