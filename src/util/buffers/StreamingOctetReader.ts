@@ -134,7 +134,7 @@ export class StreamingOctetReader {
           code = ((code & 0x1f) << 6) | octet2;
         } else {
           const octet3 = (this.u8() ^ mask[maskIndex++ % 4]) & 0x3f;
-          i++
+          i++;
           if ((code & 0xf0) === 0xe0) {
             code = ((code & 0x1f) << 12) | (octet2 << 6) | octet3;
           } else {
@@ -157,6 +157,5 @@ export class StreamingOctetReader {
       points.push(code);
     }
     return fromCharCode.apply(String, points);
-  };
-  
+  }
 }
