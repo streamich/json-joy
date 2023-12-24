@@ -59,16 +59,10 @@ export class WebsocketDecoder {
     const reader = this.reader;
     const mask = frame.mask;
     const readSize = Math.min(reader.size(), remaining);
-    if (!mask) {
-      for (let i = 0; i < readSize; i++) dst[pos++] = reader.u8();
-    } else {
+    if (!mask) reader.copy(readSize, dst, pos);
+    else {
       const alreadyRead = frame.length - remaining;
-      for (let i = 0; i < readSize; i++) {
-        const octet = reader.u8();
-        const j = (i + alreadyRead) % 4;
-        const unmasked = octet ^ mask[j];
-        dst[pos++] = unmasked;
-      }
+      reader.copyXor(readSize, dst, pos, mask, alreadyRead);
     }
     return remaining - readSize;
   }

@@ -3,12 +3,6 @@ import {WebsocketDecoder} from "../WebsocketDecoder";
 const {frame: WebSocketFrame} = require('websocket');
 
 test('can read final text packet with mask', () => {
-  // const frame = new WebSocketFrame(Buffer.alloc(4), Buffer.alloc(128), {maxReceivedFrameSize: 1000000});
-  // frame.mask = true;
-  // frame.binaryPayload = Buffer.from('hello');
-  // frame.opcode = 1;
-  // const buf = frame.toBuffer();
-  // const buf = Buffer.from(new Uint8Array([129, 8, 118, 101, 114, 57, 48, 48, 48]));
   const buf = Buffer.from(new Uint8Array([
     129, 136, // Header
     136, 35, 93, 205, // Mask
