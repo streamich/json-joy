@@ -37,7 +37,8 @@ export class WsCloseFrame extends WsFrameHeader {
     opcode: number,
     length: number,
     mask: undefined | [number, number, number, number],
-    public readonly data: Uint8Array,
+    public code: number,
+    public reason: string,
   ) {
     super(fin, opcode, length, mask);
   }

@@ -1,4 +1,6 @@
 import {WsFrameDecoder} from '../WsFrameDecoder';
+import {WsFrameOpcode} from '../constants';
+import {WsCloseFrame} from '../frames';
 
 const {frame: WebSocketFrame} = require('websocket');
 
@@ -156,5 +158,63 @@ describe('data frames', () => {
     remaining1 = decoder.readFrameData(header1, remaining1, dst, 6);
     expect(header1.fin).toBe(1);
     expect(dst.toString()).toBe('hello world');
+  });
+});
+
+describe('control frames', () => {
+  test('can read CLOSE frame with masked UTF-8 payload', () => {
+    const frame0 = new WebSocketFrame(Buffer.alloc(256), Buffer.alloc(128), {maxReceivedFrameSize: 1000000});
+    frame0.fin = true;
+    frame0.mask = true;
+    frame0.binaryPayload = Buffer.from('something 🤷‍♂️ happened');
+    frame0.closeStatus = 1000;
+    frame0.opcode = WsFrameOpcode.CLOSE;
+    const buf = frame0.toBuffer();
+    const decoder = new WsFrameDecoder();
+    decoder.push(buf);
+    const frame = decoder.readFrameHeader()!;
+    expect(frame).toBeInstanceOf(WsCloseFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.CLOSE);
+    expect(frame.length).toBe(frame0.binaryPayload.length + 2);
+    expect(frame.mask).toBeInstanceOf(Array);
+    expect((frame as WsCloseFrame).code).toBe(0);
+    expect((frame as WsCloseFrame).reason).toBe('');
+    decoder.readCloseFrameData(frame as WsCloseFrame);
+    expect(frame).toBeInstanceOf(WsCloseFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.CLOSE);
+    expect(frame.length).toBe(frame0.binaryPayload.length + 2);
+    expect(frame.mask).toBeInstanceOf(Array);
+    expect((frame as WsCloseFrame).code).toBe(1000);
+    expect((frame as WsCloseFrame).reason).toBe('something 🤷‍♂️ happened');
+  });
+
+  test('can read CLOSE frame with un-masked UTF-8 payload', () => {
+    const frame0 = new WebSocketFrame(Buffer.alloc(256), Buffer.alloc(128), {maxReceivedFrameSize: 1000000});
+    frame0.fin = true;
+    frame0.mask = false;
+    frame0.binaryPayload = Buffer.from('something 🤷‍♂️ happened');
+    frame0.closeStatus = 1000;
+    frame0.opcode = WsFrameOpcode.CLOSE;
+    const buf = frame0.toBuffer();
+    const decoder = new WsFrameDecoder();
+    decoder.push(buf);
+    const frame = decoder.readFrameHeader()!;
+    expect(frame).toBeInstanceOf(WsCloseFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.CLOSE);
+    expect(frame.length).toBe(frame0.binaryPayload.length + 2);
+    expect(frame.mask).toBe(undefined);
+    expect((frame as WsCloseFrame).code).toBe(0);
+    expect((frame as WsCloseFrame).reason).toBe('');
+    decoder.readCloseFrameData(frame as WsCloseFrame);
+    expect(frame).toBeInstanceOf(WsCloseFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.CLOSE);
+    expect(frame.length).toBe(frame0.binaryPayload.length + 2);
+    expect(frame.mask).toBe(undefined);
+    expect((frame as WsCloseFrame).code).toBe(1000);
+    expect((frame as WsCloseFrame).reason).toBe('something 🤷‍♂️ happened');
   });
 });

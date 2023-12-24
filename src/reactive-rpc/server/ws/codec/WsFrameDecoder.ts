@@ -1,5 +1,7 @@
 import {StreamingOctetReader} from '../../../../util/buffers/StreamingOctetReader';
-import {WsFrameHeader} from './frames';
+import {WsFrameOpcode} from './constants';
+import {WsFrameDecodingError} from './errors';
+import {WsCloseFrame, WsFrameHeader} from './frames';
 
 export class WsFrameDecoder {
   public readonly reader = new StreamingOctetReader();
@@ -31,6 +33,16 @@ export class WsFrameDecoder {
         if (reader.size() < 4) return undefined;
         maskBytes = [reader.u8(), reader.u8(), reader.u8(), reader.u8()];
       }
+      if (opcode >= WsFrameOpcode.MIN_CONTROL_OPCODE) {
+        switch (opcode) {
+          case WsFrameOpcode.CLOSE: {
+            return new WsCloseFrame(fin, opcode, length, maskBytes, 0, '');
+          }
+          default: {
+            throw new WsFrameDecodingError();
+          }
+        }
+      }
       return new WsFrameHeader(fin, opcode, length, maskBytes);
     } catch (err) {
       if (err instanceof RangeError) return undefined;
@@ -60,5 +72,24 @@ export class WsFrameDecoder {
       reader.copyXor(readSize, dst, pos, mask, alreadyRead);
     }
     return remaining - readSize;
+  }
+
+  public readCloseFrameData(frame: WsCloseFrame): void {
+    let length = frame.length;
+    if (length > 125) throw new WsFrameDecodingError();
+    let code: number = 0;
+    let reason: string = '';
+    if (length > 0) {
+      const reader = this.reader;
+      if (length < 2) throw new WsFrameDecodingError();
+      const mask = frame.mask;
+      const octet1 = reader.u8() ^ (mask ? mask[0] : 0);
+      const octet2 = reader.u8() ^ (mask ? mask[1] : 0);
+      code = (octet1 << 8) | octet2;
+      length -= 2;
+      if (length) reason = reader.utf8(length, mask ?? [0, 0, 0, 0], 2);
+    }
+    frame.code = code;
+    frame.reason = reason;
   }
 }
