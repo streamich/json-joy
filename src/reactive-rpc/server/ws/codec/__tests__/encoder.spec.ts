@@ -156,8 +156,26 @@ describe('data frames', () => {
       });
     }
   });
+
+  test('can encode a masked frame', () => {
+    const encoder = new WsFrameEncoder();
+    const data = new Uint8Array([1, 2, 3, 4, 5]);
+    const mask = 123456789;
+    encoder.writeHdr(1, WsFrameOpcode.BINARY, data.length, mask);
+    encoder.writeBufXor(data, mask);
+    const encoded = encoder.writer.flush();
+    const decoder = new WsFrameDecoder();
+    decoder.push(encoded);
+    const frame = decoder.readFrameHeader()!;
+    expect(frame).toBeInstanceOf(WsFrameHeader);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.BINARY);
+    expect(frame.length).toBe(data.length);
+    expect(frame.mask).toEqual([7, 91, 205, 21]);
+    const data2 = decoder.reader.bufXor(frame.length, frame.mask!, 0);
+    expect(data2).toEqual(data);
+  });
 });
 
-test.todo('test with masking');
 test.todo('test with fragmented messages');
 test.todo('test with fragmented messages and control frames in between');

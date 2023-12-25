@@ -84,6 +84,12 @@ export class WsFrameDecoder {
     return remaining - readSize;
   }
 
+  /**
+   * Reads application data of the CLOSE frame and sets the code and reason
+   * properties of the frame.
+   *
+   * @param frame Close frame.
+   */
   public readCloseFrameData(frame: WsCloseFrame): void {
     let length = frame.length;
     if (length > 125) throw new WsFrameDecodingError();

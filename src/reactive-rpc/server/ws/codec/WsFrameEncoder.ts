@@ -3,6 +3,9 @@ import {WsFrameOpcode} from './constants';
 import type {IWriter, IWriterGrowable} from '../../../../util/buffers';
 import {WsFrameEncodingError} from './errors';
 
+const maskBuf = new Uint8Array(4);
+const maskBufView = new DataView(maskBuf.buffer, maskBuf.byteOffset, maskBuf.byteLength);
+
 export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> {
   constructor(public readonly writer: W = new Writer() as any) {}
 
@@ -83,11 +86,9 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
     if (length < 126) {
       const octet2 = maskBit | length;
       writer.u16((octet1 << 8) | octet2);  
-      return;
     } else if (length < 0x10000) {
       const octet2 = maskBit | 126;
       writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
-      return;
     } else {
       const octet2 = maskBit | 127;
       writer.u16((octet1 << 8) | octet2);
@@ -110,5 +111,16 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
     writer.u16(0b10000010_01111111);
     writer.u32(0);
     writer.u32(length);
+  }
+
+  public writeBufXor(buf: Uint8Array, mask: number): void {
+    maskBufView.setUint32(0, mask, false);
+    const writer = this.writer;
+    const length = buf.length;
+    writer.ensureCapacity(length);
+    let x = writer.x;
+    const uint8 = writer.uint8;
+    for (let i = 0; i < length; i++) uint8[x++] = buf[i] ^ maskBuf[i & 3];
+    writer.x = x;
   }
 }
