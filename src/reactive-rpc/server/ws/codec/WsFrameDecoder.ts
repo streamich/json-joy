@@ -1,7 +1,7 @@
 import {StreamingOctetReader} from '../../../../util/buffers/StreamingOctetReader';
 import {WsFrameOpcode} from './constants';
 import {WsFrameDecodingError} from './errors';
-import {WsCloseFrame, WsFrameHeader, WsPingFrame} from './frames';
+import {WsCloseFrame, WsFrameHeader, WsPingFrame, WsPongFrame} from './frames';
 
 export class WsFrameDecoder {
   public readonly reader = new StreamingOctetReader();
@@ -42,6 +42,11 @@ export class WsFrameDecoder {
             if (length > 125) throw new WsFrameDecodingError();
             const data = mask ? reader.bufXor(length, mask, 0) : reader.buf(length);
             return new WsPingFrame(fin, opcode, length, mask, data);
+          }
+          case WsFrameOpcode.PONG: {
+            if (length > 125) throw new WsFrameDecodingError();
+            const data = mask ? reader.bufXor(length, mask, 0) : reader.buf(length);
+            return new WsPongFrame(fin, opcode, length, mask, data);
           }
           default: {
             throw new WsFrameDecodingError();

@@ -1,6 +1,6 @@
 import {WsFrameDecoder} from '../WsFrameDecoder';
 import {WsFrameOpcode} from '../constants';
-import {WsCloseFrame, WsPingFrame} from '../frames';
+import {WsCloseFrame, WsPingFrame, WsPongFrame} from '../frames';
 
 const {frame: WebSocketFrame} = require('websocket');
 
@@ -252,5 +252,41 @@ describe('control frames', () => {
     expect(frame.length).toBe(3);
     expect(frame.mask).toBe(undefined);
     expect((frame as WsPingFrame).data).toEqual(new Uint8Array([1, 2, 3]));
+  });
+
+  test('can read PONG frame with masked bytes', () => {
+    const frame0 = new WebSocketFrame(Buffer.alloc(256), Buffer.alloc(128), {maxReceivedFrameSize: 1000000});
+    frame0.fin = true;
+    frame0.mask = true;
+    frame0.binaryPayload = new Uint8Array([1, 2, 3]);
+    frame0.opcode = WsFrameOpcode.PONG;
+    const buf0 = frame0.toBuffer();
+    const decoder = new WsFrameDecoder();
+    decoder.push(buf0);
+    const frame = decoder.readFrameHeader()!;
+    expect(frame).toBeInstanceOf(WsPongFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.PONG);
+    expect(frame.length).toBe(3);
+    expect(frame.mask).toBeInstanceOf(Array);
+    expect((frame as WsPongFrame).data).toEqual(new Uint8Array([1, 2, 3]));
+  });
+
+  test('can read PONG frame with un-masked bytes', () => {
+    const frame0 = new WebSocketFrame(Buffer.alloc(256), Buffer.alloc(128), {maxReceivedFrameSize: 1000000});
+    frame0.fin = true;
+    frame0.mask = false;
+    frame0.binaryPayload = Buffer.from(new Uint8Array([1, 2, 3]));
+    frame0.opcode = WsFrameOpcode.PONG;
+    const buf0 = frame0.toBuffer();
+    const decoder = new WsFrameDecoder();
+    decoder.push(buf0);
+    const frame = decoder.readFrameHeader()!;
+    expect(frame).toBeInstanceOf(WsPongFrame);
+    expect(frame.fin).toBe(1);
+    expect(frame.opcode).toBe(WsFrameOpcode.PONG);
+    expect(frame.length).toBe(3);
+    expect(frame.mask).toBe(undefined);
+    expect((frame as WsPongFrame).data).toEqual(new Uint8Array([1, 2, 3]));
   });
 });
