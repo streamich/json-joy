@@ -10,6 +10,11 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
     return this.writer.flush();
   }
 
+  public encodePong(data: Uint8Array | null): Uint8Array {
+    this.writePong(data);
+    return this.writer.flush();
+  }
+
   public writePing(data: Uint8Array | null): void {
     let length = 0;
     if (data && (length = data.length)) {
@@ -17,6 +22,16 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
       this.writer.buf(data, length);
     } else {
       this.writeHeader(1, WsFrameOpcode.PING, 0, 0);
+    }
+  }
+
+  public writePong(data: Uint8Array | null): void {
+    let length = 0;
+    if (data && (length = data.length)) {
+      this.writeHeader(1, WsFrameOpcode.PONG, length, 0);
+      this.writer.buf(data, length);
+    } else {
+      this.writeHeader(1, WsFrameOpcode.PONG, 0, 0);
     }
   }
 
