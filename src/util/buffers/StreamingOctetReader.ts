@@ -112,7 +112,7 @@ export class StreamingOctetReader {
   public skipUnsafe(n: number): void {
     if (!n) return;
     const chunk = this.chunks[0]!;
-    let x = this.x + n;
+    const x = this.x + n;
     const length = chunk.length;
     if (x < length) {
       this.x = x;

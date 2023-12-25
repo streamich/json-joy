@@ -1,6 +1,7 @@
-import {Writer} from "../../../../util/buffers/Writer";
-import {WsFrameOpcode} from "./constants";
-import type {IWriter, IWriterGrowable} from "../../../../util/buffers";
+import {Writer} from '../../../../util/buffers/Writer';
+import {WsFrameOpcode} from './constants';
+import type {IWriter, IWriterGrowable} from '../../../../util/buffers';
+import {WsFrameEncodingError} from './errors';
 
 export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> {
   constructor(public readonly writer: W = new Writer() as any) {}
@@ -12,6 +13,11 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
 
   public encodePong(data: Uint8Array | null): Uint8Array {
     this.writePong(data);
+    return this.writer.flush();
+  }
+
+  public encodeClose(reason: string, code: number = 0): Uint8Array {
+    this.writeClose(reason, code);
     return this.writer.flush();
   }
 
@@ -32,6 +38,31 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
       this.writer.buf(data, length);
     } else {
       this.writeHeader(1, WsFrameOpcode.PONG, 0, 0);
+    }
+  }
+
+  public writeClose(reason: string, code: number = 0): void {
+    if (reason || code) {
+      const reasonLength = reason.length;
+      const length = 2 + reasonLength;
+      const writer = this.writer;
+      writer.ensureCapacity(
+        2 + // Frame header
+          2 + // Close code 2 bytes
+          reasonLength * 4, // Close reason, max 4 bytes per char UTF-8
+      );
+      const lengthX = writer.x + 1;
+      this.writeHeader(1, WsFrameOpcode.CLOSE, length, 0);
+      writer.u16(code);
+      if (reasonLength) {
+        const utf8Length = writer.utf8(reason);
+        if (utf8Length !== reasonLength) {
+          if (utf8Length > 126 - 2) throw new WsFrameEncodingError();
+          writer.uint8[lengthX] = (writer.uint8[lengthX] & 0b10000000) | (utf8Length + 2);
+        }
+      }
+    } else {
+      this.writeHeader(1, WsFrameOpcode.CLOSE, 0, 0);
     }
   }
 
