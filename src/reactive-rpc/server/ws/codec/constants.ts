@@ -1,4 +1,7 @@
 export const enum WsFrameOpcode {
+  // Continuation fragment of a data frame
+  CONTINUE = 0,
+
   // Data frames
   TEXT = 1,
   BINARY = 2,

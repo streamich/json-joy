@@ -175,7 +175,35 @@ describe('data frames', () => {
     const data2 = decoder.reader.bufXor(frame.length, frame.mask!, 0);
     expect(data2).toEqual(data);
   });
-});
 
-test.todo('test with fragmented messages');
-test.todo('test with fragmented messages and control frames in between');
+  test('can encode and decode a fragmented message', () => {
+    const encoder = new WsFrameEncoder();
+    const data1 = new Uint8Array([1, 2, 3]);
+    const data2 = new Uint8Array([4, 5]);
+    const mask1 = 333444555;
+    const mask2 = 123123123;
+    encoder.writeHdr(0, WsFrameOpcode.BINARY, data1.length, mask1);
+    encoder.writeBufXor(data1, mask1);
+    encoder.writeHdr(1, WsFrameOpcode.CONTINUE, data2.length, mask2);
+    encoder.writeBufXor(data2, mask2);
+    const encoded = encoder.writer.flush();
+    const decoder = new WsFrameDecoder();
+    decoder.push(encoded);
+    const frame0 = decoder.readFrameHeader()!;
+    expect(frame0).toBeInstanceOf(WsFrameHeader);
+    expect(frame0.fin).toBe(0);
+    expect(frame0.opcode).toBe(WsFrameOpcode.BINARY);
+    expect(frame0.length).toBe(data1.length);
+    expect(frame0.mask).toEqual([19, 223, 245, 203]);
+    const data3 = decoder.reader.bufXor(frame0.length, frame0.mask!, 0);
+    expect(data3).toEqual(data1);
+    const frame1 = decoder.readFrameHeader()!;
+    expect(frame1).toBeInstanceOf(WsFrameHeader);
+    expect(frame1.fin).toBe(1);
+    expect(frame1.opcode).toBe(WsFrameOpcode.CONTINUE);
+    expect(frame1.length).toBe(data2.length);
+    expect(frame1.mask).toEqual([7, 86, 181, 179]);
+    const data4 = decoder.reader.bufXor(frame1.length, frame1.mask!, 0);
+    expect(data4).toEqual(data2);
+  });
+});
