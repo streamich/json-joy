@@ -89,3 +89,8 @@ describe('control frames', () => {
     expect((frame as WsCloseFrame).reason).toBe('gg wp');
   });
 });
+
+test.todo('fuzz message sizes');
+test.todo('test with masking');
+test.todo('test with fragmented messages');
+test.todo('test with fragmented messages and control frames in between');

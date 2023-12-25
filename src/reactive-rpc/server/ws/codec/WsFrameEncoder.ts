@@ -24,20 +24,20 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
   public writePing(data: Uint8Array | null): void {
     let length = 0;
     if (data && (length = data.length)) {
-      this.writeHeader(1, WsFrameOpcode.PING, length, 0);
+      this.writeHdr(1, WsFrameOpcode.PING, length, 0);
       this.writer.buf(data, length);
     } else {
-      this.writeHeader(1, WsFrameOpcode.PING, 0, 0);
+      this.writeHdr(1, WsFrameOpcode.PING, 0, 0);
     }
   }
 
   public writePong(data: Uint8Array | null): void {
     let length = 0;
     if (data && (length = data.length)) {
-      this.writeHeader(1, WsFrameOpcode.PONG, length, 0);
+      this.writeHdr(1, WsFrameOpcode.PONG, length, 0);
       this.writer.buf(data, length);
     } else {
-      this.writeHeader(1, WsFrameOpcode.PONG, 0, 0);
+      this.writeHdr(1, WsFrameOpcode.PONG, 0, 0);
     }
   }
 
@@ -52,7 +52,7 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
           reasonLength * 4, // Close reason, max 4 bytes per char UTF-8
       );
       const lengthX = writer.x + 1;
-      this.writeHeader(1, WsFrameOpcode.CLOSE, length, 0);
+      this.writeHdr(1, WsFrameOpcode.CLOSE, length, 0);
       writer.u16(code);
       if (reasonLength) {
         const utf8Length = writer.utf8(reason);
@@ -62,22 +62,49 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
         }
       }
     } else {
-      this.writeHeader(1, WsFrameOpcode.CLOSE, 0, 0);
+      this.writeHdr(1, WsFrameOpcode.CLOSE, 0, 0);
     }
   }
 
-  public writeHeader(fin: 0 | 1, opcode: WsFrameOpcode, length: number, mask: number): void {
+  public writeHdr(fin: 0 | 1, opcode: WsFrameOpcode, length: number, mask: number): void {
     const octet1 = (fin << 7) | opcode;
-    const octet2 = (mask ? 0b10000000 : 0) | (length < 126 ? length : length < 0x10000 ? 126 : 127);
+    const maskBit = mask ? 0b10000000 : 0b00000000;
     const writer = this.writer;
-    writer.u16((octet1 << 8) | octet2);
-    if (length >= 126) {
-      if (length < 0x10000) writer.u16(length);
-      else {
-        writer.u32(0);
-        writer.u32(length);
-      }
+    if (length < 126) {
+      const octet2 = maskBit | length;
+      writer.u16((octet1 << 8) | octet2);  
+      return;
+    } else if (length < 0x10000) {
+      const octet2 = maskBit | 126;
+      writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
+      return;
+    } else {
+      const octet2 = maskBit | 126;
+      writer.u16((octet1 << 8) | octet2);
+      writer.u32(0);
+      writer.u32(length);
     }
-    if (mask) writer.u32(0);
+    if (mask) writer.u32(mask);
+  }
+
+  public writeDataMsgHdrFast(length: number): void {
+    const writer = this.writer;
+    if (length < 126) {
+      const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
+      const octet2 = length;
+      writer.u16((octet1 << 8) | octet2);  
+      return;
+    }
+    if (length < 0x10000) {
+      const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
+      const octet2 = 126;
+      writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
+      return;
+    }
+    const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
+    const octet2 = 127;
+    writer.u16((octet1 << 8) | octet2);
+    writer.u32(0);
+    writer.u32(length);
   }
 }
