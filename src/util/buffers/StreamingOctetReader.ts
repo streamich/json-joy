@@ -95,6 +95,20 @@ export class StreamingOctetReader {
     this.skipUnsafe(size);
   }
 
+  public buf(size: number): Uint8Array {
+    this.assertSize(size);
+    const buf = new Uint8Array(size);
+    this.copy(size, buf, 0);
+    return buf;
+  }
+
+  public bufXor(size: number, mask: [number, number, number, number], maskIndex: number): Uint8Array {
+    this.assertSize(size);
+    const buf = new Uint8Array(size);
+    this.copyXor(size, buf, 0, mask, maskIndex);
+    return buf;
+  }
+
   public skipUnsafe(n: number): void {
     if (!n) return;
     const chunk = this.chunks[0]!;

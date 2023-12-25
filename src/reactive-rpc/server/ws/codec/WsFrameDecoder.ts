@@ -1,7 +1,7 @@
 import {StreamingOctetReader} from '../../../../util/buffers/StreamingOctetReader';
 import {WsFrameOpcode} from './constants';
 import {WsFrameDecodingError} from './errors';
-import {WsCloseFrame, WsFrameHeader} from './frames';
+import {WsCloseFrame, WsFrameHeader, WsPingFrame} from './frames';
 
 export class WsFrameDecoder {
   public readonly reader = new StreamingOctetReader();
@@ -18,7 +18,7 @@ export class WsFrameDecoder {
       const b1 = reader.u8();
       const fin = <0 | 1>(b0 >>> 7);
       const opcode = b0 & 0b1111;
-      const mask = b1 >>> 7;
+      const maskBit = b1 >>> 7;
       let length = b1 & 0b01111111;
       if (length === 126) {
         if (reader.size() < 2) return undefined;
@@ -28,22 +28,27 @@ export class WsFrameDecoder {
         reader.skip(4);
         length = reader.u32();
       }
-      let maskBytes: undefined | [number, number, number, number];
-      if (mask) {
+      let mask: undefined | [number, number, number, number];
+      if (maskBit) {
         if (reader.size() < 4) return undefined;
-        maskBytes = [reader.u8(), reader.u8(), reader.u8(), reader.u8()];
+        mask = [reader.u8(), reader.u8(), reader.u8(), reader.u8()];
       }
       if (opcode >= WsFrameOpcode.MIN_CONTROL_OPCODE) {
         switch (opcode) {
           case WsFrameOpcode.CLOSE: {
-            return new WsCloseFrame(fin, opcode, length, maskBytes, 0, '');
+            return new WsCloseFrame(fin, opcode, length, mask, 0, '');
+          }
+          case WsFrameOpcode.PING: {
+            if (length > 125) throw new WsFrameDecodingError();
+            const data = mask ? reader.bufXor(length, mask, 0) : reader.buf(length);
+            return new WsPingFrame(fin, opcode, length, mask, data);
           }
           default: {
             throw new WsFrameDecodingError();
           }
         }
       }
-      return new WsFrameHeader(fin, opcode, length, maskBytes);
+      return new WsFrameHeader(fin, opcode, length, mask);
     } catch (err) {
       if (err instanceof RangeError) return undefined;
       throw err;
@@ -80,8 +85,8 @@ export class WsFrameDecoder {
     let code: number = 0;
     let reason: string = '';
     if (length > 0) {
-      const reader = this.reader;
       if (length < 2) throw new WsFrameDecodingError();
+      const reader = this.reader;
       const mask = frame.mask;
       const octet1 = reader.u8() ^ (mask ? mask[0] : 0);
       const octet2 = reader.u8() ^ (mask ? mask[1] : 0);
