@@ -21,6 +21,16 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
     return this.writer.flush();
   }
 
+  public encodeHdr(fin: 0 | 1, opcode: WsFrameOpcode, length: number, mask: number): Uint8Array {
+    this.writeHdr(fin, opcode, length, mask);
+    return this.writer.flush();
+  }
+
+  public encodeDataMsgHdrFast(length: number): Uint8Array {
+    this.writeDataMsgHdrFast(length);
+    return this.writer.flush();
+  }
+
   public writePing(data: Uint8Array | null): void {
     let length = 0;
     if (data && (length = data.length)) {
@@ -49,7 +59,7 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
       writer.ensureCapacity(
         2 + // Frame header
           2 + // Close code 2 bytes
-          reasonLength * 4, // Close reason, max 4 bytes per char UTF-8
+          reasonLength * 4, // Close reason, max 4 bytes per UTF-8 char
       );
       const lengthX = writer.x + 1;
       this.writeHdr(1, WsFrameOpcode.CLOSE, length, 0);
@@ -79,7 +89,7 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
       writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
       return;
     } else {
-      const octet2 = maskBit | 126;
+      const octet2 = maskBit | 127;
       writer.u16((octet1 << 8) | octet2);
       writer.u32(0);
       writer.u32(length);
@@ -90,20 +100,14 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
   public writeDataMsgHdrFast(length: number): void {
     const writer = this.writer;
     if (length < 126) {
-      const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
-      const octet2 = length;
-      writer.u16((octet1 << 8) | octet2);  
+      writer.u16(0b10000010_00000000 + length);
       return;
     }
     if (length < 0x10000) {
-      const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
-      const octet2 = 126;
-      writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
+      writer.u32(0b10000010_01111110_00000000_00000000 + length);
       return;
     }
-    const octet1 = 0b10000000 + WsFrameOpcode.BINARY;
-    const octet2 = 127;
-    writer.u16((octet1 << 8) | octet2);
+    writer.u16(0b10000010_01111111);
     writer.u32(0);
     writer.u32(length);
   }
