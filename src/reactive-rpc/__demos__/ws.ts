@@ -1,6 +1,5 @@
 // npx ts-node src/reactive-rpc/__demos__/ws.ts
 
-import {WsServer} from '../server/ws/server/WsServer';
+import {HttpServer} from '../server/http/HttpServer';
 
-const server = new WsServer();
-server.start();
+const server = HttpServer.start();

@@ -50,7 +50,12 @@ export class WsServerConnection {
             if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
             return;
           }
+          const length = frame.length;
+          // if (length) {
+          //   decoder.
+          // }
           console.log('Data frame received');
+          console.log(frame);
           // switch (frame.opcode) {
           //   case WsFrameOpcode.BINARY: {
           //     const payload = decoder.readFrameData(frame, )
