@@ -3,20 +3,30 @@ import * as net from 'net';
 import * as crypto from 'crypto';
 import {WsServerConnection} from '../ws/server/WsServerConnection';
 import {WsFrameEncoder} from '../ws/codec/WsFrameEncoder';
+import {Writer} from '../../../util/buffers/Writer';
 
-export interface HttpServerOpts {
+export interface Http1ServerOpts {
   server: http.Server;
 }
 
-export class HttpServer {
-  public static start(opts: http.ServerOptions = {}, port = 8000): HttpServer {
+export class Http1Server {
+  public static start(opts: http.ServerOptions = {}, port = 8000): Http1Server {
     const server = http.createServer(opts);
     server.listen(port);
-    return new HttpServer({server});
+    return new Http1Server({server});
   }
 
-  constructor(protected readonly opts: HttpServerOpts) {
-    const server = opts.server;
+  public readonly server: http.Server;
+  protected readonly wsEncoder: WsFrameEncoder;
+
+  constructor(protected readonly opts: Http1ServerOpts) {
+    this.server = opts.server;
+    const writer = new Writer();
+    this.wsEncoder = new WsFrameEncoder(writer);
+  }
+
+  public start(): void {
+    const server = this.server;
     server.on('request', (req, res) => {
       console.log('REQUEST');
     });
@@ -29,8 +39,7 @@ export class HttpServer {
         'Sec-WebSocket-Accept: ' + acceptSha1 + '\r\n' +
         '\r\n'
       );
-      const encoder = new WsFrameEncoder();
-      const connection = new WsServerConnection(encoder, socket as net.Socket);
+      const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket);
       console.log('head', head);
       socket.on('data', (data) => {
         console.log('DATA', data);
