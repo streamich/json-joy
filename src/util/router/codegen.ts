@@ -2,7 +2,7 @@ import {Codegen} from '../codegen';
 import {JsExpression} from '../codegen/util/JsExpression';
 import type {Match} from './router';
 
-export type RouteMatcher = (route: string) => undefined | Match;
+export type RouteMatcher<Data = unknown> = (route: string) => undefined | Match<Data>;
 
 export class RouterCodegenCtx {
   public readonly codegen: Codegen<RouteMatcher>;

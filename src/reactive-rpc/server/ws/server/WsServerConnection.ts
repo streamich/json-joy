@@ -1,4 +1,5 @@
 import * as net from 'net';
+import * as crypto from 'crypto';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
 import {utf8Size} from '../../../../util/strings/utf8';
 import {FanOut} from 'thingies/es2020/fanout';
@@ -35,6 +36,7 @@ export class WsServerConnection {
   ) {
     const decoder = this.decoder = new WsFrameDecoder();
     socket.on('data', (data) => {
+      console.log('DATA', data);
       decoder.push(data);
       while (true) {
         const frame = decoder.readFrameHeader();
@@ -71,6 +73,17 @@ export class WsServerConnection {
         }
       }
     });
+  }
+
+  public upgrade(secWebSocketKey: string, secWebSocketProtocol: string, secWebSocketExtensions: string): void {
+    const accept = secWebSocketKey + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    const acceptSha1 = crypto.createHash('sha1').update(accept).digest('base64');
+    this.socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
+      'Upgrade: websocket\r\n' +
+      'Connection: Upgrade\r\n' +
+      'Sec-WebSocket-Accept: ' + acceptSha1 + '\r\n' +
+      '\r\n'
+    );
   }
 
   public sendPing(data: Uint8Array | null): void {
