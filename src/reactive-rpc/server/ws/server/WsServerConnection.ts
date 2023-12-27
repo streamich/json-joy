@@ -4,6 +4,7 @@ import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame,
 import {utf8Size} from '../../../../util/strings/utf8';
 import {FanOut} from 'thingies/es2020/fanout';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
+import {Reader} from '../../../../util/buffers/Reader';
 
 export class WsServerConnection {
   protected readonly decoder: WsFrameDecoder;
@@ -35,9 +36,19 @@ export class WsServerConnection {
     public readonly socket: net.Socket,
   ) {
     const decoder = this.decoder = new WsFrameDecoder();
+    let currentFrame: WsFrameHeader | null = null;
     socket.on('data', (data) => {
-      console.log('DATA', data);
       decoder.push(data);
+      if (currentFrame) {
+        const length = currentFrame.length;
+        if (length <= decoder.reader.size()) {
+          const buf = new Uint8Array(length);
+          decoder.readFrameData(currentFrame, length, buf, 0);
+          const isText = currentFrame.opcode === WsFrameOpcode.TEXT;
+          currentFrame = null;
+          this.onmessage(buf, isText);
+        }
+      }
       while (true) {
         const frame = decoder.readFrameHeader();
         if (!frame) break;
@@ -50,26 +61,17 @@ export class WsServerConnection {
         } else if (frame instanceof WsFrameHeader) {
           if (this.stream) {
             if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
-            return;
+            throw new Error('streaming not implemented');
           }
           const length = frame.length;
-          // if (length) {
-          //   decoder.
-          // }
-          console.log('Data frame received');
-          console.log(frame);
-          // switch (frame.opcode) {
-          //   case WsFrameOpcode.BINARY: {
-          //     const payload = decoder.readFrameData(frame, )
-          //     break;
-          //   }
-          //   case WsFrameOpcode.TEXT: {
-          //     break;
-          //   }
-          //   default: {
-          //     throw new Error('WRONG_OPCODE');
-          //   }
-          // }
+          if (length <= decoder.reader.size()) {
+            const buf = new Uint8Array(length);
+            decoder.readFrameData(frame, length, buf, 0);
+            const isText = frame.opcode === WsFrameOpcode.TEXT;
+            this.onmessage(buf, isText);
+          } else {
+            currentFrame = frame;
+          }
         }
       }
     });

@@ -8,6 +8,9 @@ server.ws({
   path: '/ws',
   onConnect: (connection) => {
     console.log('CONNECTED');
+    connection.onmessage = (data, isUtf8) => {
+      console.log('MESSAGE', data, isUtf8);
+    };
   },
 });
 

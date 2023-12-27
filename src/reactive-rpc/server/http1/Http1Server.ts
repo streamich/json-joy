@@ -60,6 +60,7 @@ export class Http1Server {
       const secWebSocketExtensions = headers['sec-websocket-extensions'] ?? '';
       connection.upgrade(secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions);
     }
+    def.onConnect(connection);
   };
 
   public ws(def: WsEndpointDefinition): void {
