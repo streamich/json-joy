@@ -84,6 +84,17 @@ export class WsFrameDecoder {
     return remaining - readSize;
   }
 
+  public copyFrameData(frame: WsFrameHeader, dst: Uint8Array, pos: number): void {
+    const reader = this.reader;
+    const mask = frame.mask;
+    const readSize = reader.size();
+    if (!mask) reader.copy(readSize, dst, pos);
+    else {
+      const alreadyRead = frame.length - readSize;
+      reader.copyXor(readSize, dst, pos, mask, alreadyRead);
+    }
+  }
+
   /**
    * Reads application data of the CLOSE frame and sets the code and reason
    * properties of the frame.

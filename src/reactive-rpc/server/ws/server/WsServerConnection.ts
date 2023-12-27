@@ -37,13 +37,13 @@ export class WsServerConnection {
   ) {
     const decoder = this.decoder = new WsFrameDecoder();
     let currentFrame: WsFrameHeader | null = null;
-    socket.on('data', (data) => {
+    const onData = (data: Uint8Array): void => {
       decoder.push(data);
       if (currentFrame) {
         const length = currentFrame.length;
         if (length <= decoder.reader.size()) {
           const buf = new Uint8Array(length);
-          decoder.readFrameData(currentFrame, length, buf, 0);
+          decoder.copyFrameData(currentFrame, buf, 0);
           const isText = currentFrame.opcode === WsFrameOpcode.TEXT;
           currentFrame = null;
           this.onmessage(buf, isText);
@@ -66,7 +66,7 @@ export class WsServerConnection {
           const length = frame.length;
           if (length <= decoder.reader.size()) {
             const buf = new Uint8Array(length);
-            decoder.readFrameData(frame, length, buf, 0);
+            decoder.copyFrameData(frame, buf, 0);
             const isText = frame.opcode === WsFrameOpcode.TEXT;
             this.onmessage(buf, isText);
           } else {
@@ -74,7 +74,8 @@ export class WsServerConnection {
           }
         }
       }
-    });
+    };
+    socket.on('data', onData);
   }
 
   public upgrade(secWebSocketKey: string, secWebSocketProtocol: string, secWebSocketExtensions: string): void {
