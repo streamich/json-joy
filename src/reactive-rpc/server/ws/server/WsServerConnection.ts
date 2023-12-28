@@ -4,12 +4,9 @@ import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame,
 import {utf8Size} from '../../../../util/strings/utf8';
 import {FanOut} from 'thingies/es2020/fanout';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
-import {Reader} from '../../../../util/buffers/Reader';
 
 export class WsServerConnection {
-  protected readonly decoder: WsFrameDecoder;
-
-  public closed: WsCloseFrame | null = null;
+  public closed: boolean = false;
 
   /**
    * If this is not null, then the connection is receiving a stream: a sequence
@@ -21,23 +18,18 @@ export class WsServerConnection {
     this.sendPong(data);
   };
 
-  public readonly defaultOnClose = (frame: WsCloseFrame): void => {
-    this.closed = frame;
-    this.socket.end();
-  };
-
   public onmessage: (data: Uint8Array, isUtf8: boolean) => void = () => {};
   public onping: (data: Uint8Array | null) => void = this.defaultOnPing;
   public onpong: (data: Uint8Array | null) => void = () => {};
-  public onclose: (frame: WsCloseFrame) => void = this.defaultOnClose;
+  public onclose: (frame?: WsCloseFrame) => void = () => {};
 
   constructor(
     protected readonly encoder: WsFrameEncoder,
     public readonly socket: net.Socket,
   ) {
-    const decoder = this.decoder = new WsFrameDecoder();
+    const decoder = new WsFrameDecoder();
     let currentFrame: WsFrameHeader | null = null;
-    const onData = (data: Uint8Array): void => {
+    const handleData = (data: Uint8Array): void => {
       decoder.push(data);
       if (currentFrame) {
         const length = currentFrame.length;
@@ -52,13 +44,10 @@ export class WsServerConnection {
       while (true) {
         const frame = decoder.readFrameHeader();
         if (!frame) break;
-        else if (frame instanceof WsPingFrame) {
-          this.onping(frame.data);
-        } else if (frame instanceof WsPongFrame) {
-          this.onpong(frame.data);
-        } else if (frame instanceof WsCloseFrame) {
-          this.onclose(frame);
-        } else if (frame instanceof WsFrameHeader) {
+        else if (frame instanceof WsPingFrame) this.onping(frame.data);
+        else if (frame instanceof WsPongFrame) this.onpong(frame.data);
+        else if (frame instanceof WsCloseFrame) this.onClose(frame);
+        else if (frame instanceof WsFrameHeader) {
           if (this.stream) {
             if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
             throw new Error('streaming not implemented');
@@ -75,8 +64,27 @@ export class WsServerConnection {
         }
       }
     };
-    socket.on('data', onData);
+    const handleClose = (hadError: boolean): void => {
+      if (this.closed) return;
+      this.onClose();
+    };
+    socket.on('data', handleData);
+    socket.on('close', handleClose);
   }
+
+  private onClose(frame?: WsCloseFrame): void {
+    this.closed = true;
+    if (this.__writeTimer) {
+      clearImmediate(this.__writeTimer);
+      this.__writeTimer = null;
+    }
+    const socket = this.socket;
+    socket.removeAllListeners();
+    if (!socket.destroyed) socket.destroy();
+    this.onclose(frame);
+  }
+
+  // ----------------------------------------------------------- Handle upgrade
 
   public upgrade(secWebSocketKey: string, secWebSocketProtocol: string, secWebSocketExtensions: string): void {
     const accept = secWebSocketKey + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
@@ -89,26 +97,45 @@ export class WsServerConnection {
     );
   }
 
+  // ---------------------------------------------------------- Write to socket
+
+  private __buffer: Uint8Array[] = [];
+  private __writeTimer: NodeJS.Immediate | null = null;
+
+  public write(buf: Uint8Array): void {
+    if (this.closed) return;
+    this.__buffer.push(buf);
+    if (this.__writeTimer) return;
+    this.__writeTimer = setImmediate(() => {
+      this.__writeTimer = null;
+      const buffer = this.__buffer;
+      this.__buffer = [];
+      if (!buffer.length) return;
+      const socket = this.socket;
+      // TODO: benchmark if corking helps
+      socket.cork();
+      for (let i = 0, len = buffer.length; i < len; i++) socket.write(buffer[i]);
+      socket.uncork();
+    });
+  }
+
+  // ------------------------------------------------- Write WebSocket messages
+
   public sendPing(data: Uint8Array | null): void {
     const frame = this.encoder.encodePing(data);
-    this.socket.write(frame);
+    this.write(frame);
   }
 
   public sendPong(data: Uint8Array | null): void {
     const frame = this.encoder.encodePong(data);
-    this.socket.write(frame);
+    this.write(frame);
   }
 
   public sendBinMsg(data: Uint8Array): void {
     const encoder = this.encoder;
-    const socket = this.socket;
     const header = encoder.encodeDataMsgHdrFast(data.length);
-    // TODO: benchmark if corking helps
-    // TODO: maybe cork and uncork on macro task boundary
-    socket.cork();
-    socket.write(header);
-    socket.write(data);
-    socket.uncork();
+    this.write(header);
+    this.write(data);
   }
 
   public sendTxtMsg(txt: string): void {
@@ -119,6 +146,6 @@ export class WsServerConnection {
     writer.ensureCapacity(size);
     writer.utf8(txt);
     const buf = writer.flush();
-    this.socket.write(buf);
+    this.write(buf);
   }
 }
