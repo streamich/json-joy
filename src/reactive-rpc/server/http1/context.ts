@@ -1,3 +1,5 @@
+import {getBody} from './util';
+import {listToUint8} from '../../../util/buffers/concat';
 import type * as http from 'http';
 import type {JsonValueCodec} from '../../../json-pack/codecs/types';
 import type {RpcMessageCodec} from '../../common/codec/types';
@@ -19,6 +21,7 @@ export interface ConnectionContext<Meta = Record<string, unknown>> {
 
 export class Http1ConnectionContext<Meta = Record<string, unknown>> implements ConnectionContext<Meta> {
   constructor(
+    public readonly req: http.IncomingMessage,
     public readonly res: http.ServerResponse,
     public path: string,
     public query: string,
@@ -87,5 +90,11 @@ export class Http1ConnectionContext<Meta = Record<string, unknown>> implements C
         break;
       }
     }
+  }
+
+  public async body(maxPayload: number): Promise<Uint8Array> {
+    const list = await getBody(this.req, maxPayload);
+    const bodyUint8 = listToUint8(list);
+    return bodyUint8;
   }
 }

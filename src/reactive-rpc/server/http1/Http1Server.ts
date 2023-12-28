@@ -135,7 +135,7 @@ export class Http1Server implements Printable {
       const codecs = this.codecs;
       const ip = this.findIp(req);
       const token = this.findToken(req);
-      const ctx = new Http1ConnectionContext(res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.jsonRpc2);
+      const ctx = new Http1ConnectionContext(req, res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.jsonRpc2);
       const handler = match.data.handler;
       handler(ctx);
     } catch (error) {

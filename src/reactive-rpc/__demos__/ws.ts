@@ -1,29 +1,10 @@
 // npx ts-node src/reactive-rpc/__demos__/ws.ts
 
-import {Http1Server} from '../server/http1/Http1Server';
+import {createCaller} from '../common/rpc/__tests__/sample-api';
+import {RpcServer} from '../server/http1/RpcServer';
 
-const server = Http1Server.start();
-
-server.ws({
-  path: '/ws',
-  onConnect: (connection) => {
-    console.log('CONNECTED');
-    connection.onmessage = (data, isUtf8) => {
-      console.log('MESSAGE', data, isUtf8);
-    };
-  },
+RpcServer.startWithDefaults({
+  port: 3000,
+  caller: createCaller(),
+  logger: console,
 });
-
-server.route({
-  path: '/hello',
-  handler: ({res}) => {
-    res.statusCode = 200;
-    res.end('Hello World\n');
-  },
-});
-
-server.enableHttpPing();
-
-server.start();
-
-console.log(server + '');
