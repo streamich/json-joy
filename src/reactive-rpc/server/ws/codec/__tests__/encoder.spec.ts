@@ -90,7 +90,6 @@ describe('control frames', () => {
   });
 });
 
-
 describe('data frames', () => {
   test('can encode an empty BINARY data frame', () => {
     const encoder = new WsFrameEncoder();
@@ -139,7 +138,7 @@ describe('data frames', () => {
     const data2 = decoder.reader.buf(frame.length);
     expect(data2).toEqual(data);
   });
-  
+
   describe('can encode different message sizes', () => {
     const sizes = [0, 1, 2, 125, 126, 127, 128, 129, 255, 1234, 65535, 65536, 65537, 7777777, 2 ** 31 - 1];
     const encoder = new WsFrameEncoder();

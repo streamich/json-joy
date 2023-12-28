@@ -23,11 +23,7 @@ export class WsServerConnection {
   public onpong: (data: Uint8Array | null) => void = () => {};
   public onclose: (code: number, reason: string) => void = () => {};
 
-  constructor(
-    protected readonly encoder: WsFrameEncoder,
-    public readonly socket: net.Socket,
-    head: Buffer,
-  ) {
+  constructor(protected readonly encoder: WsFrameEncoder, public readonly socket: net.Socket, head: Buffer) {
     const decoder = new WsFrameDecoder();
     if (head.length) decoder.push(head);
     let currentFrame: WsFrameHeader | null = null;
@@ -95,11 +91,14 @@ export class WsServerConnection {
   public upgrade(secWebSocketKey: string, secWebSocketProtocol: string, secWebSocketExtensions: string): void {
     const accept = secWebSocketKey + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
     const acceptSha1 = crypto.createHash('sha1').update(accept).digest('base64');
-    this.socket.write('HTTP/1.1 101 Switching Protocols\r\n' +
-      'Upgrade: websocket\r\n' +
-      'Connection: Upgrade\r\n' +
-      'Sec-WebSocket-Accept: ' + acceptSha1 + '\r\n' +
-      '\r\n'
+    this.socket.write(
+      'HTTP/1.1 101 Switching Protocols\r\n' +
+        'Upgrade: websocket\r\n' +
+        'Connection: Upgrade\r\n' +
+        'Sec-WebSocket-Accept: ' +
+        acceptSha1 +
+        '\r\n' +
+        '\r\n',
     );
   }
 

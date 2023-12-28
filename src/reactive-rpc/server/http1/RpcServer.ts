@@ -52,8 +52,8 @@ export class RpcServer implements Printable {
   public readonly http1: Http1Server;
   protected readonly batchProcessor: RpcMessageBatchProcessor<ConnectionContext>;
 
-  constructor (protected readonly opts: RpcServerOpts) {
-    const http1 = this.http1 = opts.http1;
+  constructor(protected readonly opts: RpcServerOpts) {
+    const http1 = (this.http1 = opts.http1);
     const onInternalError = http1.oninternalerror;
     http1.oninternalerror = (error, res, req) => {
       if (error instanceof RpcError) {
@@ -116,8 +116,6 @@ export class RpcServer implements Printable {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    return `${this.constructor.name}` + printTree(tab, [
-      (tab) => `HTTP/1.1 ${this.http1.toString(tab)}`,
-    ]);
+    return `${this.constructor.name}` + printTree(tab, [(tab) => `HTTP/1.1 ${this.http1.toString(tab)}`]);
   }
 }

@@ -85,10 +85,10 @@ export class WsFrameEncoder<W extends IWriter & IWriterGrowable = IWriter & IWri
     const writer = this.writer;
     if (length < 126) {
       const octet2 = maskBit | length;
-      writer.u16((octet1 << 8) | octet2);  
+      writer.u16((octet1 << 8) | octet2);
     } else if (length < 0x10000) {
       const octet2 = maskBit | 126;
-      writer.u32((((octet1 << 8) | octet2) * 0x10000) + length);
+      writer.u32(((octet1 << 8) | octet2) * 0x10000 + length);
     } else {
       const octet2 = maskBit | 127;
       writer.u16((octet1 << 8) | octet2);

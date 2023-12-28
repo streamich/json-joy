@@ -135,7 +135,19 @@ export class Http1Server implements Printable {
       const codecs = this.codecs;
       const ip = this.findIp(req);
       const token = this.findToken(req);
-      const ctx = new Http1ConnectionContext(req, res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.compact);
+      const ctx = new Http1ConnectionContext(
+        req,
+        res,
+        path,
+        query,
+        ip,
+        token,
+        match.params,
+        new NullObject(),
+        codecs.value.json,
+        codecs.value.json,
+        codecs.messages.compact,
+      );
       const headers = req.headers;
       const contentType = headers['content-type'];
       if (typeof contentType === 'string') ctx.setCodecs(contentType, codecs);
@@ -180,12 +192,7 @@ export class Http1Server implements Printable {
 
   public findIp(req: http.IncomingMessage): string {
     const headers = req.headers;
-    const ip = (
-      headers['x-forwarded-for'] ||
-      headers['x-real-ip'] ||
-      req.socket.remoteAddress ||
-      ''
-    );
+    const ip = headers['x-forwarded-for'] || headers['x-real-ip'] || req.socket.remoteAddress || '';
     return ip instanceof Array ? ip[0] : ip;
   }
 
@@ -236,9 +243,12 @@ export class Http1Server implements Printable {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    return `${this.constructor.name}` + printTree(tab, [
-      (tab) => `HTTP ${this.httpRouter.toString(tab)}`,
-      (tab) => `WebSocket ${this.wsRouter.toString(tab)}`,
-    ]);
+    return (
+      `${this.constructor.name}` +
+      printTree(tab, [
+        (tab) => `HTTP ${this.httpRouter.toString(tab)}`,
+        (tab) => `WebSocket ${this.wsRouter.toString(tab)}`,
+      ])
+    );
   }
 }
