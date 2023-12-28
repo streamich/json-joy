@@ -7,10 +7,17 @@ import {RouteMatcher} from '../../../util/router/codegen';
 import {Router} from '../../../util/router';
 import {Printable} from '../../../util/print/types';
 import {printTree} from '../../../util/print/printTree';
+import {PayloadTooLarge} from './errors';
+import {findTokenInText} from './util';
+import {Http1ConnectionContext} from './context';
+import {RpcCodecs} from '../../common/codec/RpcCodecs';
+import {Codecs} from '../../../json-pack/codecs/Codecs';
+import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
+import {NullObject} from '../../../util/NullObject';
 
-export type Http1Handler = (params: null | string[], req: http.IncomingMessage, res: http.ServerResponse) => void;
+export type Http1Handler = (ctx: Http1ConnectionContext) => void;
 export type Http1NotFoundHandler = (res: http.ServerResponse, req: http.IncomingMessage) => void;
-export type Http1InternalErrorHandler = (res: http.ServerResponse, req: http.IncomingMessage) => void;
+export type Http1InternalErrorHandler = (error: unknown, res: http.ServerResponse, req: http.IncomingMessage) => void;
 
 export class Http1EndpointMatch {
   constructor(public readonly handler: Http1Handler) {}
@@ -43,6 +50,8 @@ export interface WsEndpointDefinition {
 
 export interface Http1ServerOpts {
   server: http.Server;
+  codecs?: RpcCodecs;
+  writer?: Writer;
 }
 
 export class Http1Server implements Printable {
@@ -53,11 +62,13 @@ export class Http1Server implements Printable {
     return server;
   }
 
+  public readonly codecs: RpcCodecs;
   public readonly server: http.Server;
 
   constructor(protected readonly opts: Http1ServerOpts) {
     this.server = opts.server;
-    const writer = new Writer();
+    const writer = opts.writer ?? new Writer();
+    this.codecs = opts.codecs ?? new RpcCodecs(opts.codecs ?? new Codecs(writer), new RpcMessageCodecs());
     this.wsEncoder = new WsFrameEncoder(writer);
   }
 
@@ -79,8 +90,15 @@ export class Http1Server implements Printable {
     res.end();
   };
 
-  public oninternalerror: Http1InternalErrorHandler = (res) => {
-    res.writeHead(500, 'Internal Server Error');
+  public oninternalerror: Http1InternalErrorHandler = (error: unknown, res) => {
+    if (error instanceof PayloadTooLarge) {
+      res.statusCode = 413;
+      res.statusMessage = 'Payload Too Large';
+      res.end();
+      return;
+    }
+    res.statusCode = 500;
+    res.statusMessage = 'Internal Server Error';
     res.end();
   };
 
@@ -100,17 +118,28 @@ export class Http1Server implements Printable {
   private readonly onRequest = (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
       res.sendDate = false;
-      const route = (req.method || '') + (req.url || '');
+      const url = req.url ?? '';
+      const queryStartIndex = url.indexOf('?');
+      let path = url;
+      let query = '';
+      if (queryStartIndex >= 0) {
+        path = url.slice(0, queryStartIndex);
+        query = url.slice(queryStartIndex + 1);
+      }
+      const route = (req.method || '') + path;
       const match = this.httpMatcher(route);
       if (!match) {
         this.onnotfound(res, req);
         return;
       }
-      const params = match.params;
+      const codecs = this.codecs;
+      const ip = this.findIp(req);
+      const token = this.findToken(req);
+      const ctx = new Http1ConnectionContext(res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.jsonRpc2);
       const handler = match.data.handler;
-      handler(params, req, res);
+      handler(ctx);
     } catch (error) {
-      this.oninternalerror(res, req);
+      this.oninternalerror(error, res, req);
     }
   };
 
@@ -144,11 +173,68 @@ export class Http1Server implements Printable {
     this.wsRouter.add(def.path, def);
   }
 
+  // ------------------------------------------------------- Context management
+
+  public findIp(req: http.IncomingMessage): string {
+    const headers = req.headers;
+    const ip = (
+      headers['x-forwarded-for'] ||
+      headers['x-real-ip'] ||
+      req.socket.remoteAddress ||
+      ''
+    );
+    return ip instanceof Array ? ip[0] : ip;
+  }
+
+  /**
+   * Looks for an authentication token in the following places:
+   *
+   * 1. The `Authorization` header.
+   * 2. The URI query parameters.
+   * 3. The `Cookie` header.
+   * 4. The `Sec-Websocket-Protocol` header.
+   *
+   * @param req HTTP request
+   * @returns Authentication token, if any.
+   */
+  public findToken(req: http.IncomingMessage): string {
+    let token: string = '';
+    let text: string = '';
+    const headers = req.headers;
+    let header: string | string[] | undefined;
+    header = headers['authorization'];
+    text = typeof header === 'string' ? header : header?.[0] ?? '';
+    if (text) token = findTokenInText(text);
+    if (token) return token;
+    text = req.url || '';
+    if (text) token = findTokenInText(text);
+    if (token) return token;
+    header = headers['cookie'];
+    text = typeof header === 'string' ? header : header?.[0] ?? '';
+    if (text) token = findTokenInText(text);
+    if (token) return token;
+    header = headers['sec-websocket-protocol'];
+    text = typeof header === 'string' ? header : header?.[0] ?? '';
+    if (text) token = findTokenInText(text);
+    return token;
+  }
+
+  // ------------------------------------------------------- High-level routing
+
+  public enableHttpPing(path: string = '/ping') {
+    this.route({
+      path,
+      handler: (ctx) => {
+        ctx.res.end('pong');
+      },
+    });
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
     return `${this.constructor.name}` + printTree(tab, [
-      (tab) => `HTTP/1.1 ${this.httpRouter.toString(tab)}`,
+      (tab) => `HTTP ${this.httpRouter.toString(tab)}`,
       (tab) => `WebSocket ${this.wsRouter.toString(tab)}`,
     ]);
   }

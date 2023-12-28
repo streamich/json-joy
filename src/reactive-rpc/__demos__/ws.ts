@@ -16,11 +16,13 @@ server.ws({
 
 server.route({
   path: '/hello',
-  handler: (params, req, res) => {
+  handler: ({res}) => {
     res.statusCode = 200;
     res.end('Hello World\n');
   },
 });
+
+server.enableHttpPing();
 
 server.start();
 
