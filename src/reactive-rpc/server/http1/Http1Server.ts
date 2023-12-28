@@ -99,6 +99,7 @@ export class Http1Server implements Printable {
 
   private readonly onRequest = (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
+      res.sendDate = false;
       const route = (req.method || '') + (req.url || '');
       const match = this.httpMatcher(route);
       if (!match) {
