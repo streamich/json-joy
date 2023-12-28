@@ -3,8 +3,8 @@ import {Printable} from '../../../util/print/types';
 import {printTree} from '../../../util/print/printTree';
 import {Http1Server} from './Http1Server';
 import {RpcError} from '../../common/rpc/caller';
-import {IncomingBatchMessage, RpcMessageBatchProcessor} from '../../common';
-import {ConnectionContext} from './context';
+import {IncomingBatchMessage, ReactiveRpcClientMessage, ReactiveRpcMessage, RpcMessageBatchProcessor, RpcMessageStreamProcessor} from '../../common';
+import {ConnectionContext, WsConnectionContext} from './context';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
 import type {ServerLogger} from './types';
 
@@ -101,6 +101,61 @@ export class RpcServer implements Printable {
             if ((error as any).message === 'Invalid JSON') throw RpcError.badRequest();
           throw RpcError.from(error);
         }
+      },
+    });
+  }
+
+  public enableWsRpc(path: string = '/rpc'): void {
+    const opts = this.opts;
+    const logger = opts.logger ?? console;
+    const caller = opts.caller;
+    this.http1.ws({
+      path,
+      maxIncomingMessage: 2 * 1024 * 1024,
+      maxOutgoingBackpressure: 2 * 1024 * 1024,
+      onConnect: (ctx: WsConnectionContext, req: http.IncomingMessage) => {
+        const connection = ctx.connection;
+        const reqCodec = ctx.reqCodec;
+        const resCodec = ctx.resCodec;
+        const msgCodec = ctx.msgCodec;
+        const encoder = resCodec.encoder;
+        const rpc = new RpcMessageStreamProcessor({
+          caller,
+          send: (messages: ReactiveRpcMessage[]) => {
+            try {
+              const writer = encoder.writer;
+              writer.reset();
+              msgCodec.encodeBatch(resCodec, messages);
+              const encoded = writer.flush();
+              connection.sendBinMsg(encoded);
+            } catch (error) {
+              logger.error('WS_SEND', error, {messages});
+              connection.close();
+            }
+          },
+          bufferSize: 1,
+          bufferTime: 0,
+        });
+        connection.onmessage = (uint8: Uint8Array, isUtf8: boolean) => {
+          let messages: ReactiveRpcClientMessage[];
+          try {
+            messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[]; 
+          } catch (error) {
+            logger.error('RX_RPC_DECODING', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString('base64')});
+            connection.close();
+            return;
+          }
+          try {
+            rpc.onMessages(messages, ctx);
+          } catch (error) {
+            logger.error('RX_RPC_PROCESSING', error, messages!);
+            connection.close();
+            return;
+          }
+        };
+        connection.onclose = (code: number, reason: string) => {   
+          rpc.stop();
+        };
       },
     });
   }

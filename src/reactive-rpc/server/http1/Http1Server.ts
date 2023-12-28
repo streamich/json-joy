@@ -8,8 +8,8 @@ import {Router} from '../../../util/router';
 import {Printable} from '../../../util/print/types';
 import {printTree} from '../../../util/print/printTree';
 import {PayloadTooLarge} from './errors';
-import {findTokenInText} from './util';
-import {Http1ConnectionContext} from './context';
+import {findTokenInText, setCodecs} from './util';
+import {Http1ConnectionContext, WsConnectionContext} from './context';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
@@ -43,9 +43,10 @@ export interface Http1EndpointDefinition {
 
 export interface WsEndpointDefinition {
   path: string;
-  maxPayload?: number;
+  maxIncomingMessage?: number;
+  maxOutgoingBackpressure?: number;
   onUpgrade?(req: http.IncomingMessage, connection: WsServerConnection): void;
-  onConnect(connection: WsServerConnection, req: http.IncomingMessage): void;
+  onConnect(ctx: WsConnectionContext, req: http.IncomingMessage): void;
 }
 
 export interface Http1ServerOpts {
@@ -150,7 +151,7 @@ export class Http1Server implements Printable {
       );
       const headers = req.headers;
       const contentType = headers['content-type'];
-      if (typeof contentType === 'string') ctx.setCodecs(contentType, codecs);
+      if (typeof contentType === 'string') setCodecs(ctx, contentType, codecs);
       const handler = match.data.handler;
       await handler(ctx);
     } catch (error) {
@@ -165,7 +166,15 @@ export class Http1Server implements Printable {
   protected wsMatcher: RouteMatcher<WsEndpointDefinition> = () => undefined;
 
   private readonly onWsUpgrade = (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
-    const route = req.url || '';
+    const url = req.url ?? '';
+    const queryStartIndex = url.indexOf('?');
+    let path = url;
+    let query = '';
+    if (queryStartIndex >= 0) {
+      path = url.slice(0, queryStartIndex);
+      query = url.slice(queryStartIndex + 1);
+    }
+    const route = (req.method || '') + path;
     const match = this.wsMatcher(route);
     if (!match) {
       socket.end();
@@ -174,6 +183,8 @@ export class Http1Server implements Printable {
     const def = match.data;
     const headers = req.headers;
     const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket, head);
+    connection.maxIncomingMessage = def.maxIncomingMessage ?? 2 * 1024 * 1024;
+    connection.maxBackpressure = def.maxOutgoingBackpressure ?? 2 * 1024 * 1024;
     if (def.onUpgrade) def.onUpgrade(req, connection);
     else {
       const secWebSocketKey = headers['sec-websocket-key'] ?? '';
@@ -181,7 +192,28 @@ export class Http1Server implements Printable {
       const secWebSocketExtensions = headers['sec-websocket-extensions'] ?? '';
       connection.upgrade(secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions);
     }
-    def.onConnect(connection, req);
+    const codecs = this.codecs;
+    const ip = this.findIp(req);
+    const token = this.findToken(req);
+    const ctx = new WsConnectionContext(
+      connection,
+      path,
+      query,
+      ip,
+      token,
+      match.params,
+      new NullObject(),
+      codecs.value.json,
+      codecs.value.json,
+      codecs.messages.compact,
+    );
+    const contentType = headers['content-type'];
+    if (typeof contentType === 'string') setCodecs(ctx, contentType, codecs);
+    else {
+      const secWebSocketProtocol = headers['sec-websocket-protocol'] ?? '';
+      if (typeof secWebSocketProtocol === 'string') setCodecs(ctx, secWebSocketProtocol, codecs);
+    }
+    def.onConnect(ctx, req);
   };
 
   public ws(def: WsEndpointDefinition): void {
@@ -209,23 +241,19 @@ export class Http1Server implements Printable {
    */
   public findToken(req: http.IncomingMessage): string {
     let token: string = '';
-    let text: string = '';
     const headers = req.headers;
     let header: string | string[] | undefined;
     header = headers['authorization'];
-    text = typeof header === 'string' ? header : header?.[0] ?? '';
-    if (text) token = findTokenInText(text);
+    if (typeof header === 'string') token = findTokenInText(header);
     if (token) return token;
-    text = req.url || '';
-    if (text) token = findTokenInText(text);
+    const url = req.url;
+    if (typeof url === 'string') token = findTokenInText(url);
     if (token) return token;
     header = headers['cookie'];
-    text = typeof header === 'string' ? header : header?.[0] ?? '';
-    if (text) token = findTokenInText(text);
+    if (typeof header === 'string') token = findTokenInText(header);
     if (token) return token;
     header = headers['sec-websocket-protocol'];
-    text = typeof header === 'string' ? header : header?.[0] ?? '';
-    if (text) token = findTokenInText(text);
+    if (typeof header === 'string') token = findTokenInText(header);
     return token;
   }
 

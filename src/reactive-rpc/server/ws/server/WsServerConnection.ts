@@ -7,6 +7,8 @@ import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
 
 export class WsServerConnection {
   public closed: boolean = false;
+  public maxIncomingMessage: number = 2 * 1024 * 1024;
+  public maxBackpressure: number = 2 * 1024 * 1024;
 
   /**
    * If this is not null, then the connection is receiving a stream: a sequence
@@ -48,10 +50,17 @@ export class WsServerConnection {
           else if (frame instanceof WsCloseFrame) this.onClose(frame.code, frame.reason);
           else if (frame instanceof WsFrameHeader) {
             if (this.stream) {
-              if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
+              if (frame.opcode !== WsFrameOpcode.CONTINUE) {
+                this.onClose(1002, 'DATA');
+                return;
+              }
               throw new Error('streaming not implemented');
             }
             const length = frame.length;
+            if (length > this.maxIncomingMessage) {
+              this.onClose(1009, 'TOO_LARGE');
+              return;
+            }
             if (length <= decoder.reader.size()) {
               const buf = new Uint8Array(length);
               decoder.copyFrameData(frame, buf, 0);
@@ -72,6 +81,14 @@ export class WsServerConnection {
     };
     socket.on('data', handleData);
     socket.on('close', handleClose);
+  }
+
+  public close(): void {
+    const code = 1000;
+    const reason = 'CLOSE';
+    const frame = this.encoder.encodeClose(reason, code);
+    this.socket.write(frame);
+    this.onClose(code, reason);
   }
 
   private onClose(code: number, reason: string): void {
@@ -117,6 +134,7 @@ export class WsServerConnection {
       this.__buffer = [];
       if (!buffer.length) return;
       const socket = this.socket;
+      if (socket.writableLength > this.maxBackpressure) this.onClose(1009, 'BACKPRESSURE');
       // TODO: benchmark if corking helps
       socket.cork();
       for (let i = 0, len = buffer.length; i < len; i++) socket.write(buffer[i]);
