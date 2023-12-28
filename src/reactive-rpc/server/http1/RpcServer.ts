@@ -28,14 +28,14 @@ export class RpcServer implements Printable {
     return server;
   };
 
-  public static readonly startWithDefaults = (opts: RpcServerStartOpts) => {
+  public static readonly startWithDefaults = (opts: RpcServerStartOpts): RpcServer => {
     const port = opts.port ?? 8080;
     const logger = opts.logger ?? console;
     const server = http.createServer();
     const http1Server = new Http1Server({
       server,
     });
-    const rpcServer = RpcServer.create({
+    const rpcServer = new RpcServer({
       caller: opts.caller,
       http1: http1Server,
       logger,
@@ -47,6 +47,7 @@ export class RpcServer implements Printable {
       if (typeof host === 'object') host = (host as any).address;
       logger.log({msg: 'SERVER_STARTED', host, port});
     });
+    return rpcServer;
   };
 
   public readonly http1: Http1Server;
@@ -69,6 +70,24 @@ export class RpcServer implements Printable {
 
   public enableHttpPing(): void {
     this.http1.enableHttpPing();
+  }
+
+  public enableCors(): void {
+    this.http1.route({
+      method: 'OPTIONS',
+      path: '/{::\n}',
+      handler: (ctx) => {
+        const res = ctx.res;
+        res.writeHead(200, 'OK', {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': 'true',
+          // 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          // 'Access-Control-Allow-Headers': 'Content-Type',
+          // 'Access-Control-Max-Age': '86400',
+        });
+        res.end();
+      },
+    });
   }
 
   public enableHttpRpc(path: string = '/rpc'): void {
@@ -161,16 +180,15 @@ export class RpcServer implements Printable {
   }
 
   public enableDefaults(): void {
-    // this.enableCors();
+    this.enableCors();
     this.enableHttpPing();
     this.enableHttpRpc();
-    // this.enableWsRpc();
-    // this.startRouting();
+    this.enableWsRpc();
   }
 
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    return `${this.constructor.name}` + printTree(tab, [(tab) => `HTTP/1.1 ${this.http1.toString(tab)}`]);
+    return `${this.constructor.name}` + printTree(tab, [(tab) => this.http1.toString(tab)]);
   }
 }
