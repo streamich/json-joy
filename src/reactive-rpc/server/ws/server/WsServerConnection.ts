@@ -30,38 +30,42 @@ export class WsServerConnection {
     const decoder = new WsFrameDecoder();
     let currentFrame: WsFrameHeader | null = null;
     const handleData = (data: Uint8Array): void => {
-      decoder.push(data);
-      if (currentFrame) {
-        const length = currentFrame.length;
-        if (length <= decoder.reader.size()) {
-          const buf = new Uint8Array(length);
-          decoder.copyFrameData(currentFrame, buf, 0);
-          const isText = currentFrame.opcode === WsFrameOpcode.TEXT;
-          currentFrame = null;
-          this.onmessage(buf, isText);
-        }
-      }
-      while (true) {
-        const frame = decoder.readFrameHeader();
-        if (!frame) break;
-        else if (frame instanceof WsPingFrame) this.onping(frame.data);
-        else if (frame instanceof WsPongFrame) this.onpong(frame.data);
-        else if (frame instanceof WsCloseFrame) this.onClose(frame.code, frame.reason);
-        else if (frame instanceof WsFrameHeader) {
-          if (this.stream) {
-            if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
-            throw new Error('streaming not implemented');
-          }
-          const length = frame.length;
+      try {
+        decoder.push(data);
+        if (currentFrame) {
+          const length = currentFrame.length;
           if (length <= decoder.reader.size()) {
             const buf = new Uint8Array(length);
-            decoder.copyFrameData(frame, buf, 0);
-            const isText = frame.opcode === WsFrameOpcode.TEXT;
+            decoder.copyFrameData(currentFrame, buf, 0);
+            const isText = currentFrame.opcode === WsFrameOpcode.TEXT;
+            currentFrame = null;
             this.onmessage(buf, isText);
-          } else {
-            currentFrame = frame;
           }
         }
+        while (true) {
+          const frame = decoder.readFrameHeader();
+          if (!frame) break;
+          else if (frame instanceof WsPingFrame) this.onping(frame.data);
+          else if (frame instanceof WsPongFrame) this.onpong(frame.data);
+          else if (frame instanceof WsCloseFrame) this.onClose(frame.code, frame.reason);
+          else if (frame instanceof WsFrameHeader) {
+            if (this.stream) {
+              if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
+              throw new Error('streaming not implemented');
+            }
+            const length = frame.length;
+            if (length <= decoder.reader.size()) {
+              const buf = new Uint8Array(length);
+              decoder.copyFrameData(frame, buf, 0);
+              const isText = frame.opcode === WsFrameOpcode.TEXT;
+              this.onmessage(buf, isText);
+            } else {
+              currentFrame = frame;
+            }
+          }
+        }
+      } catch (error) {
+        this.onClose(1002, 'DATA');
       }
     };
     const handleClose = (hadError: boolean): void => {
