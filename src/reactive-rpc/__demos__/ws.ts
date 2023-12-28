@@ -14,4 +14,14 @@ server.ws({
   },
 });
 
+server.route({
+  path: '/hello',
+  handler: (params, req, res) => {
+    res.statusCode = 200;
+    res.end('Hello World\n');
+  },
+});
+
 server.start();
+
+console.log(server + '');

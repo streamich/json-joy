@@ -5,6 +5,8 @@ import {WsFrameEncoder} from '../ws/codec/WsFrameEncoder';
 import {Writer} from '../../../util/buffers/Writer';
 import {RouteMatcher} from '../../../util/router/codegen';
 import {Router} from '../../../util/router';
+import {Printable} from '../../../util/print/types';
+import {printTree} from '../../../util/print/printTree';
 
 export type Http1Handler = (params: null | string[], req: http.IncomingMessage, res: http.ServerResponse) => void;
 export type Http1NotFoundHandler = (res: http.ServerResponse, req: http.IncomingMessage) => void;
@@ -43,7 +45,7 @@ export interface Http1ServerOpts {
   server: http.Server;
 }
 
-export class Http1Server {
+export class Http1Server implements Printable {
   public static start(opts: http.ServerOptions = {}, port = 8000): Http1Server {
     const rawServer = http.createServer(opts);
     rawServer.listen(port);
@@ -139,5 +141,14 @@ export class Http1Server {
 
   public ws(def: WsEndpointDefinition): void {
     this.wsRouter.add(def.path, def);
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab: string = ''): string {
+    return `${this.constructor.name}` + printTree(tab, [
+      (tab) => `HTTP/1.1 ${this.httpRouter.toString(tab)}`,
+      (tab) => `WebSocket ${this.wsRouter.toString(tab)}`,
+    ]);
   }
 }
