@@ -132,7 +132,7 @@ export class RpcServer implements Printable {
       path,
       maxIncomingMessage: 2 * 1024 * 1024,
       maxOutgoingBackpressure: 2 * 1024 * 1024,
-      onConnect: (ctx: WsConnectionContext, req: http.IncomingMessage) => {
+      handler: (ctx: WsConnectionContext, req: http.IncomingMessage) => {
         const connection = ctx.connection;
         const reqCodec = ctx.reqCodec;
         const resCodec = ctx.resCodec;

@@ -46,7 +46,7 @@ export interface WsEndpointDefinition {
   maxIncomingMessage?: number;
   maxOutgoingBackpressure?: number;
   onUpgrade?(req: http.IncomingMessage, connection: WsServerConnection): void;
-  onConnect(ctx: WsConnectionContext, req: http.IncomingMessage): void;
+  handler(ctx: WsConnectionContext, req: http.IncomingMessage): void;
 }
 
 export interface Http1ServerOpts {
@@ -174,8 +174,7 @@ export class Http1Server implements Printable {
       path = url.slice(0, queryStartIndex);
       query = url.slice(queryStartIndex + 1);
     }
-    const route = (req.method || '') + path;
-    const match = this.wsMatcher(route);
+    const match = this.wsMatcher(path);
     if (!match) {
       socket.end();
       return;
@@ -213,7 +212,7 @@ export class Http1Server implements Printable {
       const secWebSocketProtocol = headers['sec-websocket-protocol'] ?? '';
       if (typeof secWebSocketProtocol === 'string') setCodecs(ctx, secWebSocketProtocol, codecs);
     }
-    def.onConnect(ctx, req);
+    def.handler(ctx, req);
   };
 
   public ws(def: WsEndpointDefinition): void {
