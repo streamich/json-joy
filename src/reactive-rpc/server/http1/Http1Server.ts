@@ -15,7 +15,7 @@ import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
 import {NullObject} from '../../../util/NullObject';
 
-export type Http1Handler = (ctx: Http1ConnectionContext) => void;
+export type Http1Handler = (ctx: Http1ConnectionContext) => void | Promise<void>;
 export type Http1NotFoundHandler = (res: http.ServerResponse, req: http.IncomingMessage) => void;
 export type Http1InternalErrorHandler = (error: unknown, res: http.ServerResponse, req: http.IncomingMessage) => void;
 
@@ -115,7 +115,7 @@ export class Http1Server implements Printable {
     this.httpRouter.add(route, match);
   }
 
-  private readonly onRequest = (req: http.IncomingMessage, res: http.ServerResponse) => {
+  private readonly onRequest = async (req: http.IncomingMessage, res: http.ServerResponse) => {
     try {
       res.sendDate = false;
       const url = req.url ?? '';
@@ -135,9 +135,9 @@ export class Http1Server implements Printable {
       const codecs = this.codecs;
       const ip = this.findIp(req);
       const token = this.findToken(req);
-      const ctx = new Http1ConnectionContext(req, res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.jsonRpc2);
+      const ctx = new Http1ConnectionContext(req, res, path, query, ip, token, match.params, new NullObject(), codecs.value.json, codecs.value.json, codecs.messages.compact);
       const handler = match.data.handler;
-      handler(ctx);
+      await handler(ctx);
     } catch (error) {
       this.oninternalerror(error, res, req);
     }
