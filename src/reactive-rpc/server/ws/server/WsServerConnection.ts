@@ -26,8 +26,10 @@ export class WsServerConnection {
   constructor(
     protected readonly encoder: WsFrameEncoder,
     public readonly socket: net.Socket,
+    head: Buffer,
   ) {
     const decoder = new WsFrameDecoder();
+    if (head.length) decoder.push(head);
     let currentFrame: WsFrameHeader | null = null;
     const handleData = (data: Uint8Array): void => {
       try {

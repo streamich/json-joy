@@ -43,16 +43,14 @@ export class Http1Server {
 
   private readonly onWsUpgrade = (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
     const route = req.url || '';
-    console.log('route', route);
     const match = this.wsMatcher(route);
-    console.log('match', match);
     if (!match) {
       socket.end();
       return;
     }
     const def = match.data;
     const headers = req.headers;
-    const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket);
+    const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket, head);
     if (def.onUpgrade) def.onUpgrade(req, connection);
     else {
       const secWebSocketKey = headers['sec-websocket-key'] ?? '';
@@ -60,7 +58,7 @@ export class Http1Server {
       const secWebSocketExtensions = headers['sec-websocket-extensions'] ?? '';
       connection.upgrade(secWebSocketKey, secWebSocketProtocol, secWebSocketExtensions);
     }
-    def.onConnect(connection);
+    def.onConnect(connection, req);
   };
 
   public ws(def: WsEndpointDefinition): void {
@@ -72,5 +70,5 @@ export interface WsEndpointDefinition {
   path: string;
   maxPayload?: number;
   onUpgrade?(req: http.IncomingMessage, connection: WsServerConnection): void;
-  onConnect(connection: WsServerConnection): void;
+  onConnect(connection: WsServerConnection, req: http.IncomingMessage): void;
 }
