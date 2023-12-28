@@ -21,7 +21,7 @@ export class WsServerConnection {
   public onmessage: (data: Uint8Array, isUtf8: boolean) => void = () => {};
   public onping: (data: Uint8Array | null) => void = this.defaultOnPing;
   public onpong: (data: Uint8Array | null) => void = () => {};
-  public onclose: (frame?: WsCloseFrame) => void = () => {};
+  public onclose: (code: number, reason: string) => void = () => {};
 
   constructor(
     protected readonly encoder: WsFrameEncoder,
@@ -46,7 +46,7 @@ export class WsServerConnection {
         if (!frame) break;
         else if (frame instanceof WsPingFrame) this.onping(frame.data);
         else if (frame instanceof WsPongFrame) this.onpong(frame.data);
-        else if (frame instanceof WsCloseFrame) this.onClose(frame);
+        else if (frame instanceof WsCloseFrame) this.onClose(frame.code, frame.reason);
         else if (frame instanceof WsFrameHeader) {
           if (this.stream) {
             if (frame.opcode !== WsFrameOpcode.CONTINUE) throw new Error('WRONG_OPCODE');
@@ -66,13 +66,13 @@ export class WsServerConnection {
     };
     const handleClose = (hadError: boolean): void => {
       if (this.closed) return;
-      this.onClose();
+      this.onClose(hadError ? 1001 : 1002, 'END');
     };
     socket.on('data', handleData);
     socket.on('close', handleClose);
   }
 
-  private onClose(frame?: WsCloseFrame): void {
+  private onClose(code: number, reason: string): void {
     this.closed = true;
     if (this.__writeTimer) {
       clearImmediate(this.__writeTimer);
@@ -81,7 +81,7 @@ export class WsServerConnection {
     const socket = this.socket;
     socket.removeAllListeners();
     if (!socket.destroyed) socket.destroy();
-    this.onclose(frame);
+    this.onclose(code, reason);
   }
 
   // ----------------------------------------------------------- Handle upgrade
