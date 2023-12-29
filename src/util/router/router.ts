@@ -10,12 +10,12 @@ export interface RouterOptions {
   defaultUntil?: string;
 }
 
-export class Router implements Printable {
+export class Router<Data = unknown> implements Printable {
   public readonly destinations: Destination[] = [];
 
   constructor(public readonly options: RouterOptions = {}) {}
 
-  public add(route: string | string[], data: unknown) {
+  public add(route: string | string[], data: Data) {
     const destination = Destination.from(route, data, this.options.defaultUntil);
     this.destinations.push(destination);
   }
@@ -34,12 +34,12 @@ export class Router implements Printable {
     return tree;
   }
 
-  public compile(): RouteMatcher {
+  public compile(): RouteMatcher<Data> {
     const ctx = new RouterCodegenCtx();
     const node = new RouterCodegenOpts(new JsExpression(() => 'str'), '0');
     const tree = this.tree();
     tree.codegen(ctx, node);
-    return ctx.codegen.compile();
+    return ctx.codegen.compile() as RouteMatcher<Data>;
   }
 
   public toString(tab: string = '') {
@@ -130,6 +130,6 @@ export class Route implements Printable {
   }
 }
 
-export class Match {
-  constructor(public readonly data: unknown, public params: string[] | null) {}
+export class Match<Data = unknown> {
+  constructor(public readonly data: Data, public params: string[] | null) {}
 }

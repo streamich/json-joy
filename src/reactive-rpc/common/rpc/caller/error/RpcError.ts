@@ -34,7 +34,7 @@ export enum RpcErrorCodes {
 export type RpcErrorValue = RpcValue<RpcError>;
 
 export class RpcError extends Error implements IRpcError {
-  public static from(error: unknown) {
+  public static from(error: unknown): RpcError {
     if (error instanceof RpcError) return error;
     return RpcError.internal(error);
   }
