@@ -6,21 +6,25 @@ import {Suite} from 'benchmark';
 import {RpcPersistentClient, WebSocketChannel} from '../../reactive-rpc/common';
 import {Writer} from '../../util/buffers/Writer';
 import {BinaryRpcMessageCodec} from '../../reactive-rpc/common/codec/binary';
+import {CompactRpcMessageCodec} from '../../reactive-rpc/common/codec/compact';
 import {CborJsonValueCodec} from '../../json-pack/codecs/cbor';
+import {JsonJsonValueCodec} from '../../json-pack/codecs/json';
 import {RpcCodec} from '../../reactive-rpc/common/codec/RpcCodec';
 import {WebSocket} from 'ws';
 
 const main = async () => {
   const writer = new Writer(1024 * 4);
-  const msg = new BinaryRpcMessageCodec();
-  const req = new CborJsonValueCodec(writer);
+  // const msg = new BinaryRpcMessageCodec();
+  // const req = new CborJsonValueCodec(writer);
+  const msg = new CompactRpcMessageCodec();
+  const req = new JsonJsonValueCodec(writer);
   const codec = new RpcCodec(msg, req, req);
   const client = new RpcPersistentClient({
     codec,
     channel: {
       newChannel: () =>
         new WebSocketChannel({
-          newSocket: () => new WebSocket('ws://localhost:9999/rpc', [codec.specifier()]) as any,
+          newSocket: () => new WebSocket('ws://localhost:9999/rpc', [codec.specifier()], {perMessageDeflate: false}) as any,
         }),
     },
   });
