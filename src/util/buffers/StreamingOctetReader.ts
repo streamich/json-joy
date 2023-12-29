@@ -78,7 +78,7 @@ export class StreamingOctetReader {
     let x = this.x;
     const size0 = Math.min(chunk0.length - x, size);
     const end = x + size0;
-    for (; x < end;) dst[pos++] = chunk0[x++] ^ mask[maskIndex++ % 4];
+    for (; x < end; ) dst[pos++] = chunk0[x++] ^ mask[maskIndex++ % 4];
     size -= size0;
     if (size <= 0) {
       this.skipUnsafe(size0);
@@ -88,7 +88,7 @@ export class StreamingOctetReader {
     while (size > 0) {
       const chunk1 = this.chunks[chunkIndex++]!;
       const size1 = Math.min(chunk1.length, size);
-      for (let x = 0; x < size1;) dst[pos++] = chunk1[x++] ^ mask[maskIndex++ % 4];
+      for (let x = 0; x < size1; ) dst[pos++] = chunk1[x++] ^ mask[maskIndex++ % 4];
       size -= size1;
     }
     this.skipUnsafe(size);

@@ -242,13 +242,13 @@ export class Http1Server implements Printable {
     let token: string = '';
     const headers = req.headers;
     let header: string | string[] | undefined;
-    header = headers['authorization'];
+    header = headers.authorization;
     if (typeof header === 'string') token = findTokenInText(header);
     if (token) return token;
     const url = req.url;
     if (typeof url === 'string') token = findTokenInText(url);
     if (token) return token;
-    header = headers['cookie'];
+    header = headers.cookie;
     if (typeof header === 'string') token = findTokenInText(header);
     if (token) return token;
     header = headers['sec-websocket-protocol'];

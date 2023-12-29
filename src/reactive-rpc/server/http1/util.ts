@@ -35,7 +35,6 @@ export const findTokenInText = (text: string): string => {
   return match[1] || '';
 };
 
-
 const REGEX_CODECS_SPECIFIER = /rpc\.(\w{0,32})\.(\w{0,32})\.(\w{0,32})(?:\-(\w{0,32}))?/;
 
 /**

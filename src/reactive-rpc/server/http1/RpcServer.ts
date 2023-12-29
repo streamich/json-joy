@@ -3,7 +3,13 @@ import {Printable} from '../../../util/print/types';
 import {printTree} from '../../../util/print/printTree';
 import {Http1Server} from './Http1Server';
 import {RpcError} from '../../common/rpc/caller';
-import {IncomingBatchMessage, ReactiveRpcClientMessage, ReactiveRpcMessage, RpcMessageBatchProcessor, RpcMessageStreamProcessor} from '../../common';
+import {
+  IncomingBatchMessage,
+  ReactiveRpcClientMessage,
+  ReactiveRpcMessage,
+  RpcMessageBatchProcessor,
+  RpcMessageStreamProcessor,
+} from '../../common';
 import {ConnectionContext, WsConnectionContext} from './context';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
 import type {ServerLogger} from './types';
@@ -158,7 +164,7 @@ export class RpcServer implements Printable {
         connection.onmessage = (uint8: Uint8Array, isUtf8: boolean) => {
           let messages: ReactiveRpcClientMessage[];
           try {
-            messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[]; 
+            messages = msgCodec.decodeBatch(reqCodec, uint8) as ReactiveRpcClientMessage[];
           } catch (error) {
             logger.error('RX_RPC_DECODING', error, {codec: reqCodec.id, buf: Buffer.from(uint8).toString('base64')});
             connection.close();
@@ -172,7 +178,7 @@ export class RpcServer implements Printable {
             return;
           }
         };
-        connection.onclose = (code: number, reason: string) => {   
+        connection.onclose = (code: number, reason: string) => {
           rpc.stop();
         };
       },
