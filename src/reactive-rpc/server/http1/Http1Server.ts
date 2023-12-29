@@ -165,7 +165,7 @@ export class Http1Server implements Printable {
   protected readonly wsRouter = new Router<WsEndpointDefinition>();
   protected wsMatcher: RouteMatcher<WsEndpointDefinition> = () => undefined;
 
-  private readonly onWsUpgrade = (req: http.IncomingMessage, socket: net.Socket, head: Buffer) => {
+  private readonly onWsUpgrade = (req: http.IncomingMessage, socket: net.Socket) => {
     const url = req.url ?? '';
     const queryStartIndex = url.indexOf('?');
     let path = url;
@@ -181,7 +181,7 @@ export class Http1Server implements Printable {
     }
     const def = match.data;
     const headers = req.headers;
-    const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket, head);
+    const connection = new WsServerConnection(this.wsEncoder, socket as net.Socket);
     connection.maxIncomingMessage = def.maxIncomingMessage ?? 2 * 1024 * 1024;
     connection.maxBackpressure = def.maxOutgoingBackpressure ?? 2 * 1024 * 1024;
     if (def.onUpgrade) def.onUpgrade(req, connection);
@@ -262,7 +262,7 @@ export class Http1Server implements Printable {
     this.route({
       path,
       handler: (ctx) => {
-        ctx.res.end('pong');
+        ctx.res.end('"pong"');
       },
     });
   }
