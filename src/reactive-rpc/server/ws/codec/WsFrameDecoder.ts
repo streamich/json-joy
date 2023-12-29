@@ -87,12 +87,9 @@ export class WsFrameDecoder {
   public copyFrameData(frame: WsFrameHeader, dst: Uint8Array, pos: number): void {
     const reader = this.reader;
     const mask = frame.mask;
-    const readSize = reader.size();
+    const readSize = frame.length;
     if (!mask) reader.copy(readSize, dst, pos);
-    else {
-      const alreadyRead = frame.length - readSize;
-      reader.copyXor(readSize, dst, pos, mask, alreadyRead);
-    }
+    else reader.copyXor(readSize, dst, pos, mask, 0);
   }
 
   /**
