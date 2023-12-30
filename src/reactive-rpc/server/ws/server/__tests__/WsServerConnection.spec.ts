@@ -115,6 +115,37 @@ describe('.onmessage', () => {
       expect(messages[0]).toEqual([new Uint8Array([0x01, 0x02, 0x03]), false]);
       expect(messages[1]).toEqual([new Uint8Array([0x04, 0x05, 0x06]), false]);
     });
+
+    test('errors when incoming message is too large', async () => {
+      const {socket, encoder, connection} = setup();
+      connection.maxIncomingMessage = 3;
+      const messages: [data: Uint8Array, isUtf8: boolean][] = [];
+      connection.onmessage = (data: Uint8Array, isUtf8: boolean): void => {
+        messages.push([data, isUtf8]);
+      };
+      const closes: [code: number, reason: string][] = [];
+      connection.onclose = (code: number, reason: string): void => {
+        closes.push([code, reason]);
+      };
+      const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
+      const frame1 = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 3, 0);
+      encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
+      const payload1 = encoder.writer.flush();
+      const frame2 = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 4, 0);
+      encoder.writer.buf(Buffer.from([0x04, 0x05, 0x06, 0x07]), 4);
+      const payload2 = encoder.writer.flush();
+      socket.write(pingFrame);
+      socket.write(listToUint8([
+        frame1,
+        payload1,
+        frame2,
+        payload2,
+      ]));
+      await until(() => messages.length === 1);
+      await until(() => closes.length === 1);
+      expect(messages[0]).toEqual([new Uint8Array([0x01, 0x02, 0x03]), false]);
+      expect(closes[0]).toEqual([1009, 'TOO_LARGE']);
+    });
     
     test('text frame', async () => {
       const {socket, encoder, connection} = setup();
@@ -175,7 +206,7 @@ describe('.onmessage', () => {
   });
 });
 
-describe('.fragment', () => {
+describe('.onfragment', () => {
   test('parses out message fragments', async () => {
     const {socket, encoder, connection} = setup();
     const fragments: [isLast: boolean, data: Uint8Array, isUtf8: boolean][] = [];
@@ -205,5 +236,66 @@ describe('.fragment', () => {
       [false, new Uint8Array([0x04, 0x05, 0x06]), false],
       [true, new Uint8Array([0x07, 0x08, 0x09]), false],
     ]);
+  });
+
+  describe('when .onfragment is not defined', () => {
+    test('emits an .onmessage with fully assembled message', async () => {
+      const {socket, encoder, connection} = setup();
+      const messages: [data: Uint8Array, isUtf8: boolean][] = [];
+      connection.onmessage = (data: Uint8Array, isUtf8: boolean): void => {
+        messages.push([data, isUtf8]);
+      };
+      const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
+      const buf1 = encoder.encodeHdr(0, WsFrameOpcode.BINARY, 3, 0);
+      encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
+      const buf2 = encoder.writer.flush();
+      const buf3 = encoder.encodeHdr(0, WsFrameOpcode.CONTINUE, 3, 0);
+      encoder.writer.buf(Buffer.from([0x04, 0x05, 0x06]), 3);
+      const buf4 = encoder.writer.flush();
+      const buf5 = encoder.encodeHdr(1, WsFrameOpcode.CONTINUE, 3, 0);
+      encoder.writer.buf(Buffer.from([0x07, 0x08, 0x09]), 3);
+      const buf6 = encoder.writer.flush();
+      socket.write(pingFrame);
+      socket.write(buf1);
+      socket.write(buf2);
+      socket.write(buf3);
+      socket.write(buf4);
+      socket.write(buf5);
+      socket.write(buf6);
+      await until(() => messages.length === 1);
+      expect(messages).toEqual([
+        [new Uint8Array([0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,0x08, 0x09]), false],
+      ]);
+    });
+
+    test('errors out when incoming message is too large', async () => {
+      const {socket, encoder, connection} = setup();
+      connection.maxIncomingMessage = 8;
+      const closes: [code: number, reason: string][] = [];
+      connection.onclose = (code: number, reason: string): void => {
+        closes.push([code, reason]);
+      };
+      const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
+      const buf1 = encoder.encodeHdr(0, WsFrameOpcode.BINARY, 3, 0);
+      encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
+      const buf2 = encoder.writer.flush();
+      const buf3 = encoder.encodeHdr(0, WsFrameOpcode.CONTINUE, 3, 0);
+      encoder.writer.buf(Buffer.from([0x04, 0x05, 0x06]), 3);
+      const buf4 = encoder.writer.flush();
+      const buf5 = encoder.encodeHdr(1, WsFrameOpcode.CONTINUE, 3, 0);
+      encoder.writer.buf(Buffer.from([0x07, 0x08, 0x09]), 3);
+      const buf6 = encoder.writer.flush();
+      socket.write(pingFrame);
+      socket.write(buf1);
+      socket.write(buf2);
+      socket.write(buf3);
+      socket.write(buf4);
+      socket.write(buf5);
+      socket.write(buf6);
+      await until(() => closes.length === 1);
+      expect(closes).toEqual([
+        [1009, 'TOO_LARGE'],
+      ]);
+    });
   });
 });

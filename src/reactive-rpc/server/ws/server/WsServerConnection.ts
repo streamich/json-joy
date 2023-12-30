@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 import * as stream from 'stream';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
 import {utf8Size} from '../../../../util/strings/utf8';
+import {listToUint8} from '../../../../util/buffers/concat';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
 
 export type WsServerConnectionSocket = stream.Duplex;
@@ -15,8 +16,25 @@ export class WsServerConnection {
     this.sendPong(data);
   };
 
+  private _fragments: Uint8Array[] = [];
+  private _fragmentsSize: number = 0;
+  public readonly defaultOnFragment = (isLast: boolean, data: Uint8Array, isUtf8: boolean): void => {
+    const fragments = this._fragments;
+    this._fragmentsSize += data.length;
+    if (this._fragmentsSize > this.maxIncomingMessage) {
+      this.onClose(1009, 'TOO_LARGE');
+      return;
+    }
+    fragments.push(data);
+    if (!isLast) return;
+    this._fragments = [];
+    this._fragmentsSize = 0;
+    const message = listToUint8(fragments);
+    this.onmessage(message, isUtf8);
+  };
+
   public onmessage: (data: Uint8Array, isUtf8: boolean) => void = () => {};
-  public onfragment: (isLast: boolean, data: Uint8Array, isUtf8: boolean) => void = () => {};
+  public onfragment: (isLast: boolean, data: Uint8Array, isUtf8: boolean) => void = this.defaultOnFragment;
   public onping: (data: Uint8Array | null) => void = this.defaultOnPing;
   public onpong: (data: Uint8Array | null) => void = () => {};
   public onclose: (code: number, reason: string) => void = () => {};
