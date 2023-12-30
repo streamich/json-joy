@@ -49,8 +49,10 @@ export class WsServerConnection {
           if (!frame) break;
           else if (frame instanceof WsPingFrame) this.onping(frame.data);
           else if (frame instanceof WsPongFrame) this.onpong(frame.data);
-          else if (frame instanceof WsCloseFrame) this.onClose(frame.code, frame.reason);
-          else if (frame instanceof WsFrameHeader) {
+          else if (frame instanceof WsCloseFrame) {
+            decoder.readCloseFrameData(frame);
+            this.onClose(frame.code, frame.reason);
+          } else if (frame instanceof WsFrameHeader) {
             if (this.stream) {
               if (frame.opcode !== WsFrameOpcode.CONTINUE) {
                 this.onClose(1002, 'DATA');
