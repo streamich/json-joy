@@ -61,7 +61,7 @@ export class WsServerConnection {
                 const isLast = currentFrameHeader.fin === 1;
                 currentFrameHeader = null;
                 if (isLast) fragmentStartFrameHeader = null;
-                this.onfragment(isLast, buf, isText)
+                this.onfragment(isLast, buf, isText);
               } else {
                 const isText = currentFrameHeader.opcode === WsFrameOpcode.TEXT;
                 currentFrameHeader = null;
