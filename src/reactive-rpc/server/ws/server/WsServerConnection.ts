@@ -1,9 +1,11 @@
-import * as net from 'net';
 import * as crypto from 'crypto';
+import * as stream from 'stream';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
 import {utf8Size} from '../../../../util/strings/utf8';
 import {FanOut} from 'thingies/es2020/fanout';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
+
+export type WsServerConnectionSocket = stream.Duplex;
 
 export class WsServerConnection {
   public closed: boolean = false;
@@ -21,11 +23,12 @@ export class WsServerConnection {
   };
 
   public onmessage: (data: Uint8Array, isUtf8: boolean) => void = () => {};
+  public onfragment: (isLast: boolean, data: Uint8Array, isUtf8: boolean) => void = () => {};
   public onping: (data: Uint8Array | null) => void = this.defaultOnPing;
   public onpong: (data: Uint8Array | null) => void = () => {};
   public onclose: (code: number, reason: string) => void = () => {};
 
-  constructor(protected readonly encoder: WsFrameEncoder, public readonly socket: net.Socket) {
+  constructor(protected readonly encoder: WsFrameEncoder, public readonly socket: WsServerConnectionSocket) {
     const decoder = new WsFrameDecoder();
     let currentFrame: WsFrameHeader | null = null;
     const handleData = (data: Uint8Array): void => {
