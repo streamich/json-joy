@@ -4,6 +4,7 @@ import {WsFrameEncoder} from '../../codec/WsFrameEncoder';
 import {until} from 'thingies';
 import {WsFrameOpcode} from '../../codec';
 import {bufferToUint8Array} from '../../../../../util/buffers/bufferToUint8Array';
+import {listToUint8} from '../../../../../util/buffers/concat';
 
 const setup = () => {
   const socket = new stream.PassThrough();
@@ -80,14 +81,39 @@ describe('.onmessage', () => {
         messages.push([data, isUtf8]);
       };
       const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
-      const closeFrame = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 3, 0);
+      const frame = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 3, 0);
       encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
       const payload = encoder.writer.flush();
       socket.write(pingFrame);
-      socket.write(closeFrame);
+      socket.write(frame);
       socket.write(payload);
       await until(() => messages.length === 1);
       expect(messages[0]).toEqual([new Uint8Array([0x01, 0x02, 0x03]), false]);
+    });
+
+    test('two binary data frames', async () => {
+      const {socket, encoder, connection} = setup();
+      const messages: [data: Uint8Array, isUtf8: boolean][] = [];
+      connection.onmessage = (data: Uint8Array, isUtf8: boolean): void => {
+        messages.push([data, isUtf8]);
+      };
+      const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
+      const frame1 = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 3, 0);
+      encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
+      const payload1 = encoder.writer.flush();
+      const frame2 = encoder.encodeHdr(1, WsFrameOpcode.BINARY, 3, 0);
+      encoder.writer.buf(Buffer.from([0x04, 0x05, 0x06]), 3);
+      const payload2 = encoder.writer.flush();
+      socket.write(pingFrame);
+      socket.write(listToUint8([
+        frame1,
+        payload1,
+        frame2,
+        payload2,
+      ]));
+      await until(() => messages.length === 2);
+      expect(messages[0]).toEqual([new Uint8Array([0x01, 0x02, 0x03]), false]);
+      expect(messages[1]).toEqual([new Uint8Array([0x04, 0x05, 0x06]), false]);
     });
     
     test('text frame', async () => {
@@ -146,5 +172,38 @@ describe('.onmessage', () => {
       await until(() => messages.length === 1);
       expect(messages[0]).toEqual([bufferToUint8Array(Buffer.from('asdf')), true]);
     });
+  });
+});
+
+describe('.fragment', () => {
+  test('parses out message fragments', async () => {
+    const {socket, encoder, connection} = setup();
+    const fragments: [isLast: boolean, data: Uint8Array, isUtf8: boolean][] = [];
+    connection.onfragment = (isLast: boolean, data: Uint8Array, isUtf8: boolean): void => {
+      fragments.push([isLast, data, isUtf8]);
+    };
+    const pingFrame = encoder.encodePong(Buffer.from([0x01, 0x02, 0x03]));
+    const buf1 = encoder.encodeHdr(0, WsFrameOpcode.BINARY, 3, 0);
+    encoder.writer.buf(Buffer.from([0x01, 0x02, 0x03]), 3);
+    const buf2 = encoder.writer.flush();
+    const buf3 = encoder.encodeHdr(0, WsFrameOpcode.CONTINUE, 3, 0);
+    encoder.writer.buf(Buffer.from([0x04, 0x05, 0x06]), 3);
+    const buf4 = encoder.writer.flush();
+    const buf5 = encoder.encodeHdr(1, WsFrameOpcode.CONTINUE, 3, 0);
+    encoder.writer.buf(Buffer.from([0x07, 0x08, 0x09]), 3);
+    const buf6 = encoder.writer.flush();
+    socket.write(pingFrame);
+    socket.write(buf1);
+    socket.write(buf2);
+    socket.write(buf3);
+    socket.write(buf4);
+    socket.write(buf5);
+    socket.write(buf6);
+    await until(() => fragments.length === 3);
+    expect(fragments).toEqual([
+      [false, new Uint8Array([0x01, 0x02, 0x03]), false],
+      [false, new Uint8Array([0x04, 0x05, 0x06]), false],
+      [true, new Uint8Array([0x07, 0x08, 0x09]), false],
+    ]);
   });
 });

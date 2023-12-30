@@ -2,7 +2,6 @@ import * as crypto from 'crypto';
 import * as stream from 'stream';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
 import {utf8Size} from '../../../../util/strings/utf8';
-import {FanOut} from 'thingies/es2020/fanout';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
 
 export type WsServerConnectionSocket = stream.Duplex;
@@ -11,12 +10,6 @@ export class WsServerConnection {
   public closed: boolean = false;
   public maxIncomingMessage: number = 2 * 1024 * 1024;
   public maxBackpressure: number = 2 * 1024 * 1024;
-
-  /**
-   * If this is not null, then the connection is receiving a stream: a sequence
-   * of fragment frames.
-   */
-  protected stream: FanOut<Uint8Array> | null = null;
 
   public readonly defaultOnPing = (data: Uint8Array | null): void => {
     this.sendPong(data);
@@ -30,49 +23,64 @@ export class WsServerConnection {
 
   constructor(protected readonly encoder: WsFrameEncoder, public readonly socket: WsServerConnectionSocket) {
     const decoder = new WsFrameDecoder();
-    let currentFrame: WsFrameHeader | null = null;
+    let currentFrameHeader: WsFrameHeader | null = null;
+    let fragmentStartFrameHeader: WsFrameHeader | null = null;
     const handleData = (data: Uint8Array): void => {
       try {
         decoder.push(data);
-        if (currentFrame) {
-          const length = currentFrame.length;
-          if (length <= decoder.reader.size()) {
-            const buf = new Uint8Array(length);
-            decoder.copyFrameData(currentFrame, buf, 0);
-            const isText = currentFrame.opcode === WsFrameOpcode.TEXT;
-            currentFrame = null;
-            this.onmessage(buf, isText);
-          }
-        }
-        while (true) {
-          const frame = decoder.readFrameHeader();
-          if (!frame) break;
-          else if (frame instanceof WsPingFrame) this.onping(frame.data);
-          else if (frame instanceof WsPongFrame) this.onpong(frame.data);
-          else if (frame instanceof WsCloseFrame) {
-            decoder.readCloseFrameData(frame);
-            this.onClose(frame.code, frame.reason);
-          } else if (frame instanceof WsFrameHeader) {
-            if (this.stream) {
-              if (frame.opcode !== WsFrameOpcode.CONTINUE) {
-                this.onClose(1002, 'DATA');
-                return;
-              }
-              throw new Error('streaming not implemented');
-            }
-            const length = frame.length;
+        main: while (true) {
+          if (currentFrameHeader instanceof WsFrameHeader) {
+            const length = currentFrameHeader.length;
             if (length > this.maxIncomingMessage) {
               this.onClose(1009, 'TOO_LARGE');
               return;
             }
             if (length <= decoder.reader.size()) {
               const buf = new Uint8Array(length);
-              decoder.copyFrameData(frame, buf, 0);
-              const isText = frame.opcode === WsFrameOpcode.TEXT;
-              this.onmessage(buf, isText);
-            } else {
-              currentFrame = frame;
+              decoder.copyFrameData(currentFrameHeader, buf, 0);
+              if (fragmentStartFrameHeader instanceof WsFrameHeader) {
+                const isText = fragmentStartFrameHeader.opcode === WsFrameOpcode.TEXT;
+                const isLast = currentFrameHeader.fin === 1;
+                currentFrameHeader = null;
+                if (isLast) fragmentStartFrameHeader = null;
+                this.onfragment(isLast, buf, isText)
+              } else {
+                const isText = currentFrameHeader.opcode === WsFrameOpcode.TEXT;
+                currentFrameHeader = null;
+                this.onmessage(buf, isText);
+              }
+            } else break;
+          }
+          const frame = decoder.readFrameHeader();
+          if (!frame) break;
+          if (frame instanceof WsPingFrame) {
+            this.onping(frame.data);
+            continue main;
+          }
+          if (frame instanceof WsPongFrame) {
+            this.onpong(frame.data);
+            continue main;
+          }
+          if (frame instanceof WsCloseFrame) {
+            decoder.readCloseFrameData(frame);
+            this.onClose(frame.code, frame.reason);
+            continue main;
+          }
+          if (frame instanceof WsFrameHeader) {
+            if (fragmentStartFrameHeader) {
+              if (frame.opcode !== WsFrameOpcode.CONTINUE) {
+                this.onClose(1002, 'DATA');
+                return;
+              }
+              currentFrameHeader = frame;
             }
+            if (frame.fin === 0) {
+              fragmentStartFrameHeader = frame;
+              currentFrameHeader = frame;
+              continue main;
+            }
+            currentFrameHeader = frame;
+            continue main;
           }
         }
       } catch (error) {
