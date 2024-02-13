@@ -71,6 +71,14 @@
     "rxjs": "7",
     "tslib": "2"
   },
+  "peerDependenciesMeta": {
+    "quill-delta": {
+      "optional": true
+    },
+    "rxjs": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
