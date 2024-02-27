@@ -125,7 +125,7 @@ const main = async () => {
   console.log(model + '');
 
   // Batch multiple operations together using a transaction.
-  // console.log('Executing: model.api.root(456)');
+  console.log('Executing: model.api.transaction(() => { ... })');
   console.log('');
   model.api.transaction(() => {
     model.api.root({});
