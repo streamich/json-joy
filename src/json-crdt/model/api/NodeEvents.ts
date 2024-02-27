@@ -28,7 +28,7 @@ export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<Json
 
   constructor(private readonly api: NodeApi<N>) {
     this.onChanges = new MapFanOut(this.api.api.onChanges, this.getSnapshot);
-    this.onViewChanges = new OnNewFanOut(this.onChanges);
+    this.onViewChanges = new OnNewFanOut(this.onChanges, this.api.view());
   }
 
   /**

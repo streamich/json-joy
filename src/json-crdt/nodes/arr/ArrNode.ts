@@ -8,8 +8,6 @@ import type {Printable} from '../../../util/print/types';
 
 type E = ITimestampStruct;
 
-const Empty = [] as any[];
-
 /**
  * @ignore
  * @category CRDT Node
@@ -120,9 +118,7 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   }
 
   /** @ignore */
-  protected onChange(): void {
-    this._view = Empty as any;
-  }
+  protected onChange(): void {}
 
   protected toStringName(): string {
     return this.name();
@@ -143,13 +139,13 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   /** @ignore */
   private _tick: number = 0;
   /** @ignore */
-  private _view = Empty;
+  private _view: unknown[] = [];
   public view(): JsonNodeView<Element>[] {
     const doc = this.doc;
     const tick = doc.clock.time + doc.tick;
     const _view = this._view;
-    if (this._tick === tick) return _view;
-    const view = [] as JsonNodeView<Element>[];
+    if (this._tick === tick) return _view as JsonNodeView<Element>[];
+    const view = [] as unknown[];
     const index = doc.index;
     let useCache = true;
     for (let chunk = this.first(); chunk; chunk = this.next(chunk)) {
@@ -166,7 +162,8 @@ export class ArrNode<Element extends JsonNode = JsonNode>
       }
     }
     if (_view.length !== view.length) useCache = false;
-    return useCache ? _view : ((this._tick = tick), (this._view = view));
+    const result = useCache ? _view : ((this._tick = tick), (this._view = view));
+    return result as JsonNodeView<Element>[];
   }
 
   /** @ignore */
