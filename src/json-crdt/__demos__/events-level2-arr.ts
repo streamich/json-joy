@@ -20,8 +20,8 @@ const main = async () => {
     my: {
       deep: {
         arr: [],
-      }
-    }
+      },
+    },
   });
 
   // Print out the document state.
@@ -39,7 +39,7 @@ const main = async () => {
   console.log('Changes which result in view change:');
   console.log('');
   model.api.arr(['my', 'deep', 'arr']).ins(0, [1, 2, 3]);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -55,7 +55,7 @@ const main = async () => {
   //     .del(1, 1)
   //     .ins(1, [konst(2)]);
   // });
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -66,11 +66,12 @@ const main = async () => {
   console.log('More changes which result in only model change:');
   console.log('');
   // model.api.transaction(() => {
-    model.api.arr(['my', 'deep', 'arr'])
-      .del(1, 1)
-      .ins(1, [konst(2)]);
+  model.api
+    .arr(['my', 'deep', 'arr'])
+    .del(1, 1)
+    .ins(1, [konst(2)]);
   // });
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.

@@ -95,7 +95,7 @@ const main = async () => {
   console.log('Executing: model.applyPatch(patch)');
   console.log('');
   model.applyPatch(patch);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -106,7 +106,7 @@ const main = async () => {
   console.log('Executing: model.reset(model0)');
   console.log('');
   model.reset(model0);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -117,7 +117,7 @@ const main = async () => {
   console.log('Executing: model.api.root(456)');
   console.log('');
   model.api.root(456);
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -133,7 +133,7 @@ const main = async () => {
       a: 'b',
     });
   });
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.

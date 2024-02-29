@@ -30,12 +30,12 @@ describe('events', () => {
       myArr: [1, 2, 3],
     });
     const events: any[] = [];
-    doc.api.arr(['myArr']).events.onViewChanges.listen(data => {
+    doc.api.arr(['myArr']).events.onViewChanges.listen((data) => {
       events.push(data);
     });
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);
-    await new Promise(r => setTimeout(r, 1));
+    await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(1);
   });
 
@@ -45,18 +45,18 @@ describe('events', () => {
       myArr: [1, 2, 3],
     });
     const events: any[] = [];
-    doc.api.arr(['myArr']).events.onViewChanges.listen(data => {
+    doc.api.arr(['myArr']).events.onViewChanges.listen((data) => {
       events.push(data);
     });
-    await new Promise(r => setTimeout(r, 1));
+    await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);
     doc.api.arr(['myArr']).ins(1, [konst(2)]);
-    await new Promise(r => setTimeout(r, 1));
+    await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
     doc.api.arr(['myArr']).del(1, 1);
     doc.api.arr(['myArr']).ins(1, [2]);
-    await new Promise(r => setTimeout(r, 1));
+    await new Promise((r) => setTimeout(r, 1));
     expect(events.length).toBe(0);
   });
 });

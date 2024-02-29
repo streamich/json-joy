@@ -20,8 +20,8 @@ const main = async () => {
     my: {
       deep: {
         obj: {},
-      }
-    }
+      },
+    },
   });
 
   // Print out the document state.
@@ -39,7 +39,7 @@ const main = async () => {
   console.log('Changes which result in view change:');
   console.log('');
   model.api.obj(['my', 'deep', 'obj']).set({foo: 'bar'});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
@@ -50,7 +50,7 @@ const main = async () => {
   console.log('Changes which result in only model change:');
   console.log('');
   model.api.obj(['my', 'deep', 'obj']).set({foo: konst('bar')});
-  await new Promise(r => setTimeout(r, 1));
+  await new Promise((r) => setTimeout(r, 1));
   console.log('');
 
   // Print out the document state.
