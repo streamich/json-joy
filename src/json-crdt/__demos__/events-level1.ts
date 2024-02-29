@@ -33,7 +33,7 @@ const subscribe = (model: Model) => {
     console.log(`Called: "onLocalChanges", ${ticks}`);
   });
   model.api.onFlush.listen((patch: Patch) => {
-    console.log(`Called: "onChanges"`);
+    console.log(`Called: "onFlush"`);
   });
 
   // Here we subscribe to "patch" events, those are events triggered by applying
@@ -59,7 +59,7 @@ const subscribe = (model: Model) => {
     console.log(`Called: "onBeforeTransaction"`);
   });
   model.api.onTransaction.listen(() => {
-    console.log(`Called: "onBeforeTransaction"`);
+    console.log(`Called: "onTransaction"`);
   });
 
   // Here we subscribe to "reset" events, which are triggered by
