@@ -94,10 +94,9 @@ export class MapFanOut<I, O> extends FanOut<O> {
  * emitted immediately.
  */
 export class OnNewFanOut<D> extends FanOut<D> {
-  private last: D | undefined = undefined;
   private unsub?: FanOutUnsubscribe = undefined;
 
-  constructor(private readonly source: FanOut<D>) {
+  constructor(private readonly source: FanOut<D>, private last: D | undefined = undefined) {
     super();
   }
 
