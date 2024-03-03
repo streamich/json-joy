@@ -32,6 +32,9 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
             return this.writeObj(value as Record<string, unknown>);
         }
       }
+      case 'undefined': {
+        return this.writeUndef();
+      }
       default:
         return this.writeNull();
     }
@@ -39,6 +42,35 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
 
   public writeNull(): void {
     this.writer.u32(0x6e756c6c); // null
+  }
+
+  public writeUndef(): void {
+    const writer = this.writer;
+    const length = 35;
+    writer.ensureCapacity(length);
+    // Write: "data:application/cbor,base64;9w=="
+    const view = writer.view;
+    let x = writer.x;
+    view.setUint32(x, 0x22_64_61_74); // "dat
+    x += 4;
+    view.setUint32(x, 0x61_3a_61_70); // a:ap
+    x += 4;
+    view.setUint32(x, 0x70_6c_69_63); // plic
+    x += 4;
+    view.setUint32(x, 0x61_74_69_6f); // atio
+    x += 4;
+    view.setUint32(x, 0x6e_2f_63_62); // n/cb
+    x += 4;
+    view.setUint32(x, 0x6f_72_2c_62); // or,b
+    x += 4;
+    view.setUint32(x, 0x61_73_65_36); // ase6
+    x += 4;
+    view.setUint32(x, 0x34_3b_39_77); // 4;9w
+    x += 4;
+    view.setUint16(x, 0x3d_3d); // ==
+    x += 2;
+    writer.uint8[x++] = 0x22; // "
+    writer.x = x;
   }
 
   public writeBoolean(bool: boolean): void {

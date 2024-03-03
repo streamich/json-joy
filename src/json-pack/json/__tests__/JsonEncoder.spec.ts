@@ -19,6 +19,20 @@ describe('null', () => {
   });
 });
 
+describe('undefined', () => {
+  test('undefined', () => {
+    const encoded = encoder.encode(undefined);
+    const txt = Buffer.from(encoded).toString('utf-8');
+    expect(txt).toBe('"data:application/cbor,base64;9w=="');
+  });
+
+  test('undefined in object', () => {
+    const encoded = encoder.encode({foo: undefined});
+    const txt = Buffer.from(encoded).toString('utf-8');
+    expect(txt).toBe('{"foo":"data:application/cbor,base64;9w=="}');
+  });
+});
+
 describe('boolean', () => {
   test('true', () => {
     assertEncoder(true);
