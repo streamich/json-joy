@@ -33,7 +33,7 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
         }
       }
       case 'undefined': {
-        return this.writeUndef();    
+        return this.writeUndef();
       }
       default:
         return this.writeNull();
