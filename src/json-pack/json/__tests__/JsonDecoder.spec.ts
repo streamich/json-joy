@@ -27,6 +27,22 @@ describe('null', () => {
   });
 });
 
+describe('undefined', () => {
+  test('undefined', () => {
+    const encoder = new JsonEncoder(new Writer());
+    const encoded = encoder.encode(undefined);
+    const decoded = decoder.read(encoded);
+    expect(decoded).toBe(undefined);
+  });
+
+  test('undefined in array', () => {
+    const encoder = new JsonEncoder(new Writer());
+    const encoded = encoder.encode({foo: [1, undefined, -1]});
+    const decoded = decoder.read(encoded);
+    expect(decoded).toEqual({foo: [1, undefined, -1]});
+  });
+});
+
 describe('boolean', () => {
   test('true', () => {
     const data = Buffer.from('true', 'utf-8');

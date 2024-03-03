@@ -26,7 +26,7 @@ const escapedCharReplacer = (char: string) => {
   return char;
 };
 
-// Starts with "data:application/octet-stream;base64," - 64 61 74 61 3a 61 70 70 6c 69 63 61 74 69 6f 6e 2f 6f 63 74 65 74 2d 73 74 72 65 61 6d 3b 62 61 73 65 36 34 2c
+// Starts with data:application/octet-stream;base64, - 64 61 74 61 3a 61 70 70 6c 69 63 61 74 69 6f 6e 2f 6f 63 74 65 74 2d 73 74 72 65 61 6d 3b 62 61 73 65 36 34 2c
 const hasBinaryPrefix = (u8: Uint8Array, x: number) =>
   u8[x] === 0x64 &&
   u8[x + 1] === 0x61 &&
@@ -65,6 +65,44 @@ const hasBinaryPrefix = (u8: Uint8Array, x: number) =>
   u8[x + 34] === 0x36 &&
   u8[x + 35] === 0x34 &&
   u8[x + 36] === 0x2c;
+
+// Matches "data:application/cbor,base64;9w==" 
+const isUndefined = (u8: Uint8Array, x: number) =>
+  // u8[x++] === 0x22 &&  // "
+  // u8[x++] === 0x64 &&  // d
+  u8[x++] === 0x61 &&  // a
+  u8[x++] === 0x74 &&  // t
+  u8[x++] === 0x61 &&  // a
+  u8[x++] === 0x3a &&  // :
+  u8[x++] === 0x61 &&  // a
+  u8[x++] === 0x70 &&  // p
+  u8[x++] === 0x70 &&  // p
+  u8[x++] === 0x6c &&  // l
+  u8[x++] === 0x69 &&  // i
+  u8[x++] === 0x63 &&  // c
+  u8[x++] === 0x61 &&  // a
+  u8[x++] === 0x74 &&  // t
+  u8[x++] === 0x69 &&  // i
+  u8[x++] === 0x6f &&  // o
+  u8[x++] === 0x6e &&  // n
+  u8[x++] === 0x2f &&  // /
+  u8[x++] === 0x63 &&  // c
+  u8[x++] === 0x62 &&  // b
+  u8[x++] === 0x6f &&  // o
+  u8[x++] === 0x72 &&  // r
+  u8[x++] === 0x2c &&  // ,
+  u8[x++] === 0x62 &&  // b
+  u8[x++] === 0x61 &&  // a
+  u8[x++] === 0x73 &&  // s
+  u8[x++] === 0x65 &&  // e
+  u8[x++] === 0x36 &&  // 6
+  u8[x++] === 0x34 &&  // 4
+  u8[x++] === 0x3b &&  // ;
+  u8[x++] === 0x39 &&  // 9
+  u8[x++] === 0x77 &&  // w
+  u8[x++] === 0x3d &&  // =
+  u8[x++] === 0x3d &&  // =
+  u8[x++] === 0x22;    // "
 
 const findEndingQuote = (uint8: Uint8Array, x: number): number => {
   const len = uint8.length;
@@ -172,10 +210,17 @@ export class JsonDecoder implements BinaryJsonDecoder {
     const uint8 = reader.uint8;
     const char = uint8[x];
     switch (char) {
-      case 34: // "
-        return uint8[x + 1] === 0x64 // d
-          ? this.tryReadBin() || this.readStr()
-          : this.readStr();
+      case 34: { // " 
+        if (uint8[x + 1] === 0x64) { // d 
+          const bin = this.tryReadBin();
+          if (bin) return bin;
+          if (isUndefined(uint8, x + 2)) {
+            reader.x = x + 35;
+            return undefined;
+          }
+        }
+        return this.readStr();
+      }
       case 91: // [
         return this.readArr();
       case 102: // f
