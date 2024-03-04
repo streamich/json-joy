@@ -15,6 +15,7 @@ export interface ExtensionDefinition<
   EApi extends ExtensionApi<ENode> = ExtensionApi<ENode>,
 > {
   id: number;
+  name: string;
   new: (...args: any[]) => NodeBuilder;
   Node: new (data: Node) => ENode;
   Api: new (node: ENode, api: ModelApi) => EApi;

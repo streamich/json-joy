@@ -8,10 +8,11 @@ import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 import type {ExtensionDefinition} from '../../json-crdt';
 
 export const ValueMvExt: ExtensionDefinition<ArrNode, ValueMv, ValueMvApi> = {
-  id: ExtensionId.MvValue,
+  id: ExtensionId.mval,
+  name: 'mval',
   new: (value: unknown | ITimestampStruct) =>
     ext(
-      ExtensionId.MvValue,
+      ExtensionId.mval,
       delayed((builder) => builder.jsonArr([value])),
     ),
   Node: ValueMv,

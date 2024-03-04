@@ -31,7 +31,7 @@ export class Extensions implements Printable {
       this.constructor.name +
       printTree(
         tab,
-        keys.map((k) => (tab) => `${k}: ${this.ext[k].Node.name}`),
+        keys.map((k) => (tab) => `${k}: ${this.ext[k].name}`),
       )
     );
   }
