@@ -6,7 +6,7 @@
  *     npx nodemon -q -x ts-node src/json-crdt-extensions/mval/__demos__/usage.ts
  */
 
-import {Model} from '../../../json-crdt';
+import {Model, s} from '../../../json-crdt';
 import {ValueMvExt} from '..';
 
 console.clear();
@@ -17,7 +17,7 @@ model.ext.register(ValueMvExt)
 
 model.api.root({
   obj: {
-    mv: ValueMvExt.new(1),
+    mv: ValueMvExt.new(s.con(1)),
   },
 });
 
@@ -27,7 +27,7 @@ console.log(model + '');
 
 const api = model.api.in(['obj', 'mv']).asExt(ValueMvExt);
 
-api.set(5);
+api.set(s.con(5));
 
 console.log('');
 console.log('After update:');
@@ -37,8 +37,8 @@ const model2 = model.fork();
 
 const api2 = model2.api.in(['obj', 'mv']).asExt(ValueMvExt);
 
-api.set(10);
-api2.set(20);
+api.set(s.con(10));
+api2.set(s.con(20));
 model.applyPatch(model2.api.flush());
 
 console.log('');
