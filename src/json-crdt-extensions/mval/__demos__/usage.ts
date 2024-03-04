@@ -16,14 +16,16 @@ const model = Model.withLogicalClock(1234);
 model.ext.register(ValueMvExt)
 
 model.api.root({
-  mv: ValueMvExt.new(1),
+  obj: {
+    mv: ValueMvExt.new(1),
+  },
 });
 
 console.log('');
 console.log('Initial value:');
 console.log(model + '');
 
-const api = model.api.in('mv').asExt(ValueMvExt);
+const api = model.api.in(['obj', 'mv']).asExt(ValueMvExt);
 
 api.set(5);
 
@@ -33,7 +35,7 @@ console.log(model + '');
 
 const model2 = model.fork();
 
-const api2 = model2.api.in('mv').asExt(ValueMvExt);
+const api2 = model2.api.in(['obj', 'mv']).asExt(ValueMvExt);
 
 api.set(10);
 api2.set(20);
