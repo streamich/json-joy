@@ -8,5 +8,8 @@ export class RelativeTimestamp {
    * @param sessionIndex Index of the clock in clock table.
    * @param timeDiff Time difference relative to the clock time from the table.
    */
-  public constructor(public readonly sessionIndex: number, public readonly timeDiff: number) {}
+  public constructor(
+    public readonly sessionIndex: number,
+    public readonly timeDiff: number,
+  ) {}
 }

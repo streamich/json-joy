@@ -94,8 +94,8 @@ export class RefType<T extends Type> extends AbstractType<schema.RefSchema<Schem
       ctx instanceof CborEncoderCodegenContext
         ? EncodingFormat.Cbor
         : ctx instanceof MessagePackEncoderCodegenContext
-        ? EncodingFormat.MsgPack
-        : EncodingFormat.Json;
+          ? EncodingFormat.MsgPack
+          : EncodingFormat.Json;
     const targetType = system.resolve(this.schema.ref).type;
     switch (targetType.getTypeName()) {
       case 'str':

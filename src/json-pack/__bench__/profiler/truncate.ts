@@ -2,7 +2,11 @@
 
 const i = 10000;
 class MySlice {
-  constructor(public uint8: ArrayBuffer, public start: number, public end: number) {}
+  constructor(
+    public uint8: ArrayBuffer,
+    public start: number,
+    public end: number,
+  ) {}
 }
 
 console.time('new Slice()');

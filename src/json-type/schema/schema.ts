@@ -293,37 +293,38 @@ export type Schema = JsonSchema | RefSchema | OrSchema | AnySchema | FunctionSch
 
 export type NoT<T extends TType> = Omit<T, '__t'>;
 
-export type TypeOf<T> = T extends OrSchema<any>
-  ? TypeOfValue<T['types'][number]>
-  : T extends RefSchema<infer U>
-  ? TypeOf<U>
-  : T extends AnySchema
-  ? unknown
-  : TypeOfValue<T>;
+export type TypeOf<T> =
+  T extends OrSchema<any>
+    ? TypeOfValue<T['types'][number]>
+    : T extends RefSchema<infer U>
+      ? TypeOf<U>
+      : T extends AnySchema
+        ? unknown
+        : TypeOfValue<T>;
 
 export type TypeOfValue<T> = T extends BooleanSchema
   ? boolean
   : T extends NumberSchema
-  ? number
-  : T extends StringSchema
-  ? string
-  : T extends ArraySchema<infer U>
-  ? TypeOf<U>[]
-  : T extends ConstSchema<infer U>
-  ? U
-  : T extends TupleSchema<infer U>
-  ? {[K in keyof U]: TypeOf<U[K]>}
-  : T extends ObjectSchema<infer F>
-  ? NoEmptyInterface<TypeFields<Mutable<F>>>
-  : T extends MapSchema<infer U>
-  ? Record<string, TypeOf<U>>
-  : T extends BinarySchema
-  ? Uint8Array
-  : T extends FunctionSchema<infer Req, infer Res>
-  ? (req: TypeOf<Req>, ctx?: unknown) => Promise<TypeOf<Res>>
-  : T extends FunctionStreamingSchema<infer Req, infer Res>
-  ? (req$: Observable<TypeOf<Req>>, ctx?: unknown) => Observable<TypeOf<Res>>
-  : never;
+    ? number
+    : T extends StringSchema
+      ? string
+      : T extends ArraySchema<infer U>
+        ? TypeOf<U>[]
+        : T extends ConstSchema<infer U>
+          ? U
+          : T extends TupleSchema<infer U>
+            ? {[K in keyof U]: TypeOf<U[K]>}
+            : T extends ObjectSchema<infer F>
+              ? NoEmptyInterface<TypeFields<Mutable<F>>>
+              : T extends MapSchema<infer U>
+                ? Record<string, TypeOf<U>>
+                : T extends BinarySchema
+                  ? Uint8Array
+                  : T extends FunctionSchema<infer Req, infer Res>
+                    ? (req: TypeOf<Req>, ctx?: unknown) => Promise<TypeOf<Res>>
+                    : T extends FunctionStreamingSchema<infer Req, infer Res>
+                      ? (req$: Observable<TypeOf<Req>>, ctx?: unknown) => Observable<TypeOf<Res>>
+                      : never;
 
 export type TypeOfMap<M extends Record<string, Schema>> = {[K in keyof M]: TypeOf<M[K]>};
 

@@ -10,7 +10,12 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch Extended
  */
 export class OpTestString extends AbstractPredicateOp<'test_string'> {
-  constructor(path: Path, public readonly pos: number, public readonly str: string, public readonly not: boolean) {
+  constructor(
+    path: Path,
+    public readonly pos: number,
+    public readonly str: string,
+    public readonly not: boolean,
+  ) {
     super(path);
   }
 

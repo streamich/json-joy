@@ -10,7 +10,11 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch Extended
  */
 export class OpMerge extends AbstractOp<'merge'> {
-  constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
+  constructor(
+    path: Path,
+    public readonly pos: number,
+    public readonly props: object | null,
+  ) {
     super(path);
   }
 

@@ -55,7 +55,10 @@ export const createWebSocketMock = (params: Partial<CreateWebSocketMockParams>) 
       return this._readyState;
     }
 
-    constructor(public readonly url: string, public readonly _protocol: string | string[] = '') {}
+    constructor(
+      public readonly url: string,
+      public readonly _protocol: string | string[] = '',
+    ) {}
 
     public close(code?: number, reason?: string): void {
       if (!params.onClose) return;

@@ -6,7 +6,10 @@ export class Import {
   public length: number;
   protected readonly byText = new Map<string, number>();
 
-  constructor(public readonly parent: Import | null, public readonly symbols: SymbolTable) {
+  constructor(
+    public readonly parent: Import | null,
+    public readonly symbols: SymbolTable,
+  ) {
     this.offset = parent ? parent.offset + parent.length : 1;
     this.length = symbols.length;
     for (let i = 0; i < symbols.length; i++) {

@@ -5,5 +5,8 @@ export class TreeNode<K = unknown, V = unknown> implements ITreeNode<K, V> {
   public l: ITreeNode<K, V> | undefined = undefined;
   public r: ITreeNode<K, V> | undefined = undefined;
 
-  constructor(public k: K, public v: V) {}
+  constructor(
+    public k: K,
+    public v: V,
+  ) {}
 }

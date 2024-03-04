@@ -182,11 +182,11 @@ export const print = (node: TrieNode, tab: string = ''): string => {
       ? Array.isArray(node.v)
         ? stringify(node.v)
         : node.v.constructor === Object
-        ? stringify(node.v)
-        : '' // `[${node.v.constructor.name}]`
+          ? stringify(node.v)
+          : '' // `[${node.v.constructor.name}]`
       : node.v === undefined
-      ? ''
-      : stringify(node.v);
+        ? ''
+        : stringify(node.v);
   const childrenNodes: TrieNode[] = [];
   node.forChildren((child) => childrenNodes.push(child));
   return (

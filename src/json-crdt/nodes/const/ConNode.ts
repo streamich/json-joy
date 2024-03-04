@@ -17,7 +17,10 @@ export class ConNode<View = unknown | ITimestampStruct> implements JsonNode<View
    * @param val Raw value of the constant. It can be any JSON/CBOR value, or
    *        a logical timestamp {@link Timestamp}.
    */
-  constructor(public readonly id: ITimestampStruct, public readonly val: View) {}
+  constructor(
+    public readonly id: ITimestampStruct,
+    public readonly val: View,
+  ) {}
 
   // ----------------------------------------------------------------- JsonNode
 

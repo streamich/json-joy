@@ -9,7 +9,10 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch
  */
 export class OpRemove extends AbstractOp<'remove'> {
-  constructor(path: Path, public readonly oldValue: unknown) {
+  constructor(
+    path: Path,
+    public readonly oldValue: unknown,
+  ) {
     super(path);
   }
 

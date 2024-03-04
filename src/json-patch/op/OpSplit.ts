@@ -12,7 +12,11 @@ type Composable = string | number | SlateNode;
  * @category JSON Patch Extended
  */
 export class OpSplit extends AbstractOp<'split'> {
-  constructor(path: Path, public readonly pos: number, public readonly props: object | null) {
+  constructor(
+    path: Path,
+    public readonly pos: number,
+    public readonly props: object | null,
+  ) {
     super(path);
   }
 

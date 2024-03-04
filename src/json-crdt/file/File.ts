@@ -67,7 +67,10 @@ export class File implements Printable {
     return new File(model, PatchLog.fromModel(model));
   }
 
-  constructor(public readonly model: Model, public readonly log: PatchLog) {}
+  constructor(
+    public readonly model: Model,
+    public readonly log: PatchLog,
+  ) {}
 
   public apply(patch: Patch): void {
     const id = patch.getId();

@@ -48,7 +48,10 @@ export class Discriminator {
     return expr;
   }
 
-  constructor(public readonly path: string, public readonly type: Type) {}
+  constructor(
+    public readonly path: string,
+    public readonly type: Type,
+  ) {}
 
   condition(): Expr {
     if (this.type instanceof ConstType) return ['==', this.type.value(), ['$', this.path]];

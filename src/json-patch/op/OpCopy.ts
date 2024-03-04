@@ -11,7 +11,10 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch
  */
 export class OpCopy extends AbstractOp<'copy'> {
-  constructor(path: Path, public readonly from: Path) {
+  constructor(
+    path: Path,
+    public readonly from: Path,
+  ) {
     super(path);
   }
 

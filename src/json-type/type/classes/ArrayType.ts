@@ -27,7 +27,10 @@ import type {TypeExportContext} from '../../system/TypeExportContext';
 export class ArrayType<T extends Type> extends AbstractType<schema.ArraySchema<SchemaOf<T>>> {
   protected schema: schema.ArraySchema<any>;
 
-  constructor(protected type: T, options?: schema.Optional<schema.ArraySchema>) {
+  constructor(
+    protected type: T,
+    options?: schema.Optional<schema.ArraySchema>,
+  ) {
     super();
     this.schema = schema.s.Array(schema.s.any, options);
   }

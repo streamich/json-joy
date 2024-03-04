@@ -68,12 +68,12 @@ export class TypeBuilder {
     type V2 = string extends V
       ? never
       : number extends V
-      ? never
-      : boolean extends V
-      ? never
-      : any[] extends V
-      ? never
-      : V;
+        ? never
+        : boolean extends V
+          ? never
+          : any[] extends V
+            ? never
+            : V;
     const type = new classes.ConstType<V2>(schema.s.Const(value, options));
     type.system = this.system;
     return type;

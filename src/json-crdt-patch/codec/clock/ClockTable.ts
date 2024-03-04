@@ -3,7 +3,10 @@ import {CrdtReader} from '../../util/binary/CrdtReader';
 import {CrdtWriter} from '../../util/binary/CrdtWriter';
 
 export class ClockTableEntry {
-  constructor(public index: number, public id: ITimestampStruct) {}
+  constructor(
+    public index: number,
+    public id: ITimestampStruct,
+  ) {}
 }
 
 export class ClockTable {

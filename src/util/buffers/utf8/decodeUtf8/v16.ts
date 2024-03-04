@@ -14,11 +14,11 @@ const midDecoder: Decoder = (buf, start, length) => decodeAscii(buf, start, leng
 const longDecoder: Decoder = utf8Slice
   ? (buf, start, length) => utf8Slice.call(buf, start, start + length)
   : from
-  ? (buf, start, length) =>
-      from(buf)
-        .subarray(start, start + length)
-        .toString('utf8')
-  : v18;
+    ? (buf, start, length) =>
+        from(buf)
+          .subarray(start, start + length)
+          .toString('utf8')
+    : v18;
 
 const decoder: Decoder = (buf, start, length): string => {
   if (length < 16) return shortDecoder(buf, start, length);

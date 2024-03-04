@@ -7,7 +7,10 @@ export class ExactStep {
 }
 
 export class UntilStep {
-  constructor(public readonly name: string, public readonly until: string) {}
+  constructor(
+    public readonly name: string,
+    public readonly until: string,
+  ) {}
 
   public toText() {
     const until = this.until === '\n' ? '\\n' : this.until;
@@ -16,7 +19,11 @@ export class UntilStep {
 }
 
 export class RegexStep {
-  constructor(public readonly name: string, public readonly regex: string, public readonly until: string) {}
+  constructor(
+    public readonly name: string,
+    public readonly regex: string,
+    public readonly until: string,
+  ) {}
 
   public toText() {
     const regex = this.regex || this.until ? ':' + this.regex : '';

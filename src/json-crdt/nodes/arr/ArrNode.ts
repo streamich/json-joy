@@ -75,7 +75,10 @@ export class ArrNode<Element extends JsonNode = JsonNode>
   extends AbstractRga<E[]>
   implements JsonNode<JsonNodeView<Element>[]>, Printable
 {
-  constructor(public readonly doc: Model<any>, id: ITimestampStruct) {
+  constructor(
+    public readonly doc: Model<any>,
+    id: ITimestampStruct,
+  ) {
     super(id);
   }
 

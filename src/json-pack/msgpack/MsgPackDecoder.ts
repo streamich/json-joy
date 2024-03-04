@@ -42,15 +42,15 @@ export class MsgPackDecoder extends MsgPackDecoderFast<Reader> {
               ? 1 + this.skip(4) // f32
               : 1 + 1 + 4 + this.skip(this.reader.u32()) // ext32
             : byte === 0xcc
-            ? 1 + this.skip(1) // u8
-            : 1 + this.skip(8) // f64
+              ? 1 + this.skip(1) // u8
+              : 1 + this.skip(8) // f64
           : byte <= 0xce
-          ? byte === 0xce
-            ? 1 + this.skip(4) // u32
-            : 1 + this.skip(2) // u16
-          : byte === 0xd0
-          ? 1 + this.skip(1) // i8
-          : 1 + this.skip(8); // u64
+            ? byte === 0xce
+              ? 1 + this.skip(4) // u32
+              : 1 + this.skip(2) // u16
+            : byte === 0xd0
+              ? 1 + this.skip(1) // i8
+              : 1 + this.skip(8); // u64
       }
     } else if (byte <= 0xd8) {
       return byte <= 0xd4
@@ -59,15 +59,15 @@ export class MsgPackDecoder extends MsgPackDecoderFast<Reader> {
             ? 1 + this.skip(4) // i32
             : 1 + this.skip(2) // i16
           : byte === 0xd4
-          ? 1 + this.skip(2) // ext1
-          : 1 + this.skip(8) // i64
+            ? 1 + this.skip(2) // ext1
+            : 1 + this.skip(8) // i64
         : byte <= 0xd6
-        ? byte === 0xd6
-          ? 1 + this.skip(5) // ext4
-          : 1 + this.skip(3) // ext2
-        : byte === 0xd8
-        ? 1 + this.skip(17) // ext16
-        : 1 + this.skip(9); // ext8
+          ? byte === 0xd6
+            ? 1 + this.skip(5) // ext4
+            : 1 + this.skip(3) // ext2
+          : byte === 0xd8
+            ? 1 + this.skip(17) // ext16
+            : 1 + this.skip(9); // ext8
     } else {
       switch (byte) {
         case 0xd9:

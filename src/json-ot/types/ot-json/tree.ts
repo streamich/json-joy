@@ -16,8 +16,8 @@ const toStringNode = (self: PickNode | DropNode, tab: string = ''): string => {
     (self as PickNode).regId === undefined
       ? ''
       : (self as PickNode).regId === -1
-      ? ''
-      : ` [${(self as PickNode).regId}]`;
+        ? ''
+        : ` [${(self as PickNode).regId}]`;
   return `${indexFormatted} ${self.constructor.name}${registerFormatted}${children}`;
 };
 

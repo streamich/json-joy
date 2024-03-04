@@ -22,7 +22,10 @@ import type {TypeExportContext} from '../../system/TypeExportContext';
 export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
   protected schema: schema.TupleSchema<any>;
 
-  constructor(public readonly types: T, options?: Omit<schema.TupleSchema, '__t' | 'type'>) {
+  constructor(
+    public readonly types: T,
+    options?: Omit<schema.TupleSchema, '__t' | 'type'>,
+  ) {
     super();
     this.schema = {...schema.s.Tuple(), ...options};
   }

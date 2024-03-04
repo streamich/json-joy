@@ -9,7 +9,10 @@ export class TrieNode<V = unknown> implements ITreeNode<string, unknown>, Printa
   public r: TrieNode<V> | undefined = undefined;
   public children: TrieNode<V> | undefined = undefined;
 
-  constructor(public k: string, public v: V) {}
+  constructor(
+    public k: string,
+    public v: V,
+  ) {}
 
   public forChildren(callback: (child: TrieNode<V>, index: number) => void): void {
     let child = first(this.children);

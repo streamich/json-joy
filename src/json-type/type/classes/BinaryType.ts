@@ -26,7 +26,10 @@ import type {TypeExportContext} from '../../system/TypeExportContext';
 export class BinaryType<T extends Type> extends AbstractType<schema.BinarySchema> {
   protected schema: schema.BinarySchema;
 
-  constructor(protected type: T, options?: schema.Optional<schema.BinarySchema>) {
+  constructor(
+    protected type: T,
+    options?: schema.Optional<schema.BinarySchema>,
+  ) {
     super();
     this.schema = schema.s.Binary(schema.s.any, options);
   }

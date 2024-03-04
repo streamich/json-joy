@@ -139,7 +139,10 @@ export namespace nodes {
   > extends NodeBuilder {
     public readonly type = 'obj';
 
-    constructor(public readonly obj: T, public readonly opt?: O) {
+    constructor(
+      public readonly obj: T,
+      public readonly opt?: O,
+    ) {
       super((builder) => {
         const objId = builder.obj();
         const keyValuePairs: [key: string, value: ITimestampStruct][] = [];

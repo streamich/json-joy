@@ -20,7 +20,10 @@ export interface BlockModel<Data, Patch> {
 export class BasicBlock<Data, Patch> {
   public v$: BehaviorSubject<number>;
 
-  constructor(version: number, public readonly model: BlockModel<Data, Patch>) {
+  constructor(
+    version: number,
+    public readonly model: BlockModel<Data, Patch>,
+  ) {
     this.v$ = new BehaviorSubject<number>(version);
   }
 

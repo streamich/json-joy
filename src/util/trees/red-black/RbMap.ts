@@ -11,7 +11,10 @@ export class RbNode<K, V> implements IRbTreeNode<K, V> {
   public l: RbNode<K, V> | undefined = undefined;
   public r: RbNode<K, V> | undefined = undefined;
   public b: boolean = false;
-  constructor(public readonly k: K, public v: V) {}
+  constructor(
+    public readonly k: K,
+    public v: V,
+  ) {}
 }
 
 const defaultComparator = (a: unknown, b: unknown) => (a === b ? 0 : (a as any) < (b as any) ? -1 : 1);

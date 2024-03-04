@@ -98,20 +98,23 @@ export class TypeRouterCaller<Router extends TypeRouter<any>, Ctx = unknown> ext
 
 type Routes<Router> = Router extends TypeRouter<infer R> ? R : never;
 
-type MethodReq<F> = F extends FunctionType<infer Req, any>
-  ? TypeOf<SchemaOf<Req>>
-  : F extends FunctionStreamingType<infer Req, any>
-  ? TypeOf<SchemaOf<Req>>
-  : never;
+type MethodReq<F> =
+  F extends FunctionType<infer Req, any>
+    ? TypeOf<SchemaOf<Req>>
+    : F extends FunctionStreamingType<infer Req, any>
+      ? TypeOf<SchemaOf<Req>>
+      : never;
 
-type MethodRes<F> = F extends FunctionType<any, infer Res>
-  ? TypeOf<SchemaOf<Res>>
-  : F extends FunctionStreamingType<any, infer Res>
-  ? TypeOf<SchemaOf<Res>>
-  : never;
+type MethodRes<F> =
+  F extends FunctionType<any, infer Res>
+    ? TypeOf<SchemaOf<Res>>
+    : F extends FunctionStreamingType<any, infer Res>
+      ? TypeOf<SchemaOf<Res>>
+      : never;
 
-type MethodDefinition<Ctx, F> = F extends FunctionType<any, any>
-  ? StaticRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
-  : F extends FunctionStreamingType<any, any>
-  ? StreamingRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
-  : never;
+type MethodDefinition<Ctx, F> =
+  F extends FunctionType<any, any>
+    ? StaticRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
+    : F extends FunctionStreamingType<any, any>
+      ? StreamingRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
+      : never;

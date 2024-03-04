@@ -74,7 +74,8 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
   }
 
   public writeBoolean(bool: boolean): void {
-    if (bool) this.writer.u32(0x74727565); // true
+    if (bool)
+      this.writer.u32(0x74727565); // true
     else this.writer.u8u32(0x66, 0x616c7365); // false
   }
 

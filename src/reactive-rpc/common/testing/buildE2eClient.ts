@@ -113,13 +113,11 @@ export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, op
 };
 
 type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : T extends ObjectValueCaller<infer R> ? R : never;
-type UnTypeRouter<T> = T extends TypeRouter<infer R>
-  ? R
-  : T extends ObjectValue<infer R>
-  ? ObjectValueToTypeMap<UnObjectType<R>>
-  : never;
-type UnwrapFunction<F> = F extends FunctionType<infer Req, infer Res>
-  ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
-  : F extends FunctionStreamingType<infer Req, infer Res>
-  ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
-  : never;
+type UnTypeRouter<T> =
+  T extends TypeRouter<infer R> ? R : T extends ObjectValue<infer R> ? ObjectValueToTypeMap<UnObjectType<R>> : never;
+type UnwrapFunction<F> =
+  F extends FunctionType<infer Req, infer Res>
+    ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
+    : F extends FunctionStreamingType<infer Req, infer Res>
+      ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
+      : never;

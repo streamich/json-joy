@@ -27,7 +27,10 @@ import type {TypeExportContext} from '../../system/TypeExportContext';
 export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
   protected schema: schema.OrSchema<any>;
 
-  constructor(protected types: T, options?: Omit<schema.OrSchema, '__t' | 'type'>) {
+  constructor(
+    protected types: T,
+    options?: Omit<schema.OrSchema, '__t' | 'type'>,
+  ) {
     super();
     this.schema = {
       ...schema.s.Or(),

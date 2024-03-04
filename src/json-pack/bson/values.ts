@@ -1,9 +1,16 @@
 export class BsonObjectId {
-  public constructor(public timestamp: number, public process: number, public counter: number) {}
+  public constructor(
+    public timestamp: number,
+    public process: number,
+    public counter: number,
+  ) {}
 }
 
 export class BsonDbPointer {
-  public constructor(public name: string, public id: BsonObjectId) {}
+  public constructor(
+    public name: string,
+    public id: BsonObjectId,
+  ) {}
 }
 
 export class BsonJavascriptCode {
@@ -15,7 +22,10 @@ export class BsonSymbol {
 }
 
 export class BsonJavascriptCodeWithScope {
-  public constructor(public code: string, public scope: Record<string, unknown>) {}
+  public constructor(
+    public code: string,
+    public scope: Record<string, unknown>,
+  ) {}
 }
 
 export class BsonInt32 {
@@ -31,7 +41,10 @@ export class BsonFloat {
 }
 
 export class BsonTimestamp {
-  public constructor(public increment: number, public timestamp: number) {}
+  public constructor(
+    public increment: number,
+    public timestamp: number,
+  ) {}
 }
 
 export class BsonDecimal128 {
@@ -43,5 +56,8 @@ export class BsonMinKey {}
 export class BsonMaxKey {}
 
 export class BsonBinary {
-  public constructor(public subtype: number, public data: Uint8Array) {}
+  public constructor(
+    public subtype: number,
+    public data: Uint8Array,
+  ) {}
 }

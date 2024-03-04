@@ -10,7 +10,10 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Predicate
  */
 export class OpMore extends AbstractPredicateOp<'more'> {
-  constructor(path: Path, public readonly value: number) {
+  constructor(
+    path: Path,
+    public readonly value: number,
+  ) {
     super(path);
   }
 

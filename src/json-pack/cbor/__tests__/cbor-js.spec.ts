@@ -28,8 +28,8 @@ const run = (encoder: CborEncoder, decoder: CborDecoder) => {
             decoded2 instanceof JsonPackExtension
               ? decoded2.val
               : decoded2 instanceof JsonPackValue
-              ? decoded2.val
-              : decoded2;
+                ? decoded2.val
+                : decoded2;
           expect(resultValue).toStrictEqual(value);
         } else {
           expect(() => decoder.decode(hex2arrayBuffer(expected))).toThrow();

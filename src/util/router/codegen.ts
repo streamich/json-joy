@@ -17,7 +17,11 @@ export class RouterCodegenCtx {
 }
 
 export class RouterCodegenOpts {
-  constructor(public readonly slice: JsExpression, public readonly offset: string, public readonly depth: number = 0) {}
+  constructor(
+    public readonly slice: JsExpression,
+    public readonly offset: string,
+    public readonly depth: number = 0,
+  ) {}
 
   public create(offset: string): RouterCodegenOpts {
     const slice = new JsExpression(() => `str.slice(${offset})`);

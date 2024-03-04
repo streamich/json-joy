@@ -22,23 +22,26 @@ type ToObject<T> = T extends [string, unknown][] ? {[K in T[number] as K[0]]: K[
 type ObjectFieldsToMap<F> = ToObject<{[K in keyof F]: ObjectFieldToTuple<F[K]>}>;
 type ObjectValueToTypeMap<V> = ObjectFieldsToMap<UnObjectType<UnObjectValue<V>>>;
 
-type MethodReq<F> = F extends FunctionType<infer Req, any>
-  ? TypeOf<SchemaOf<Req>>
-  : F extends FunctionStreamingType<infer Req, any>
-  ? TypeOf<SchemaOf<Req>>
-  : never;
+type MethodReq<F> =
+  F extends FunctionType<infer Req, any>
+    ? TypeOf<SchemaOf<Req>>
+    : F extends FunctionStreamingType<infer Req, any>
+      ? TypeOf<SchemaOf<Req>>
+      : never;
 
-type MethodRes<F> = F extends FunctionType<any, infer Res>
-  ? TypeOf<SchemaOf<Res>>
-  : F extends FunctionStreamingType<any, infer Res>
-  ? TypeOf<SchemaOf<Res>>
-  : never;
+type MethodRes<F> =
+  F extends FunctionType<any, infer Res>
+    ? TypeOf<SchemaOf<Res>>
+    : F extends FunctionStreamingType<any, infer Res>
+      ? TypeOf<SchemaOf<Res>>
+      : never;
 
-type MethodDefinition<Ctx, F> = F extends FunctionType<any, any>
-  ? StaticRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
-  : F extends FunctionStreamingType<any, any>
-  ? StreamingRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
-  : never;
+type MethodDefinition<Ctx, F> =
+  F extends FunctionType<any, any>
+    ? StaticRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
+    : F extends FunctionStreamingType<any, any>
+      ? StreamingRpcMethodOptions<Ctx, MethodReq<F>, MethodRes<F>>
+      : never;
 
 export interface ObjectValueCallerOptions<V extends ObjectValue<ObjectType<any>>, Ctx = unknown>
   extends Omit<RpcApiCallerOptions<Ctx>, 'getMethod'> {
