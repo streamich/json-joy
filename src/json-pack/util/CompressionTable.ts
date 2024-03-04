@@ -3,9 +3,10 @@ import {JsonPackExtension} from "../JsonPackExtension";
 const isSafeInteger = Number.isSafeInteger;
 
 export class CompressionTable {
-  public static from(value: unknown): CompressionTable {
+  public static create(value: unknown): CompressionTable {
     const table = new CompressionTable();
-    table.from(value);
+    table.walk(value);
+    table.finalize();
     return table;
   }
 
@@ -27,7 +28,7 @@ export class CompressionTable {
     this.nonIntegers.add(value);
   }
 
-  public from(value: unknown): void {
+  public walk(value: unknown): void {
     switch (typeof value) {
       case 'object': {
         if (!value) return this.addLiteral(null);
@@ -37,35 +38,35 @@ export class CompressionTable {
             const obj = value as Record<string, unknown>;
             for (const key in obj) {
               this.addLiteral(key);
-              this.from(obj[key]);
+              this.walk(obj[key]);
             }
             break;
           }
           case Array: {
             const arr = value as unknown[];
             const len = arr.length;
-            for (let i = 0; i < len; i++) this.from(arr[i]);
+            for (let i = 0; i < len; i++) this.walk(arr[i]);
             break;
           }
           case Map: {
             const map = value as Map<unknown, unknown>;
             map.forEach((value, key) => {
-              this.from(key);
-              this.from(value);
+              this.walk(key);
+              this.walk(value);
             });
             break;
           }
           case Set: {
             const set = value as Set<unknown>;
             set.forEach((value) => {
-              this.from(value);
+              this.walk(value);
             });
             break;
           }
           case JsonPackExtension: {
             const ext = value as JsonPackExtension;
             this.addInteger(ext.tag);
-            this.from(ext.val);
+            this.walk(ext.val);
           }
         }
         return;
@@ -76,21 +77,42 @@ export class CompressionTable {
   }
 
   public finalize(): void {
-    const integers = Array.from(this.integers).sort();
+    const integers = Array.from(this.integers);
+    integers.sort((a, b) => a - b);
     const len = integers.length;
+    const table = this.table;
+    const map = this.map;
     if (len > 0) {
       const first = integers[0];
-      this.table[0] = first;
-      this.map.set(first, 0);
+      table.push(first);
+      map.set(first, 0);
       let last = first;
       for (let i = 1; i < len; i++) {
         const int = integers[i];
-        this.table.push(int - last);
-        this.map.set(int, i);
+        table.push(int - last);
+        map.set(int, i);
         last = int;
       }
     }
+    const nonIntegers = Array.from(this.nonIntegers)
+    nonIntegers.sort();
+    const lenNonIntegers = nonIntegers.length;
+    for (let i = 0; i < lenNonIntegers; i++) {
+      const value = nonIntegers[i];
+      table.push(value);
+      map.set(value, len + i);
+    }
     this.integers.clear();
     this.nonIntegers.clear();
+  }
+
+  public getIndex(value: unknown): number {
+    const index = this.map.get(value);
+    if (index === undefined) throw new Error(`Value [${value}] not found in compression table.`);
+    return index;
+  }
+
+  public getTable(): unknown[] {
+    return this.table;
   }
 }
