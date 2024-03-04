@@ -36,6 +36,6 @@ export class ValueMv implements ExtensionJsonNode, Printable {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string): string {
-    return this.constructor.name + printTree(tab, [(tab) => this.data.toString(tab)]);
+    return this.name() + printTree(tab, [(tab) => this.data.toString(tab)]);
   }
 }
