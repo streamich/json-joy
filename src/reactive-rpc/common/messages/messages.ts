@@ -147,7 +147,10 @@ const encodeCompactWithPayload = (
  * @category Message
  */
 export class NotificationMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly method: string, public readonly value: V) {}
+  constructor(
+    public readonly method: string,
+    public readonly value: V,
+  ) {}
 
   public validate(): void {
     validateMethod(this.method);
@@ -208,7 +211,11 @@ export class NotificationMessage<V extends RpcValue<any> = RpcValue> implements 
  * @category Message
  */
 export class RequestDataMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
+  constructor(
+    public readonly id: number,
+    public readonly method: string,
+    public readonly value: undefined | V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);
@@ -234,7 +241,11 @@ export class RequestDataMessage<V extends RpcValue<any> = RpcValue> implements M
  * @category Message
  */
 export class RequestCompleteMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public readonly method: string, public readonly value: undefined | V) {}
+  constructor(
+    public readonly id: number,
+    public readonly method: string,
+    public readonly value: undefined | V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);
@@ -260,7 +271,11 @@ export class RequestCompleteMessage<V extends RpcValue<any> = RpcValue> implemen
  * @category Message
  */
 export class RequestErrorMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public method: string, public readonly value: V) {}
+  constructor(
+    public readonly id: number,
+    public method: string,
+    public readonly value: V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);
@@ -307,7 +322,10 @@ export class RequestUnsubscribeMessage implements Message<cmsg.CompactMessage> {
  * @category Message
  */
 export class ResponseCompleteMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public readonly value: undefined | V) {}
+  constructor(
+    public readonly id: number,
+    public readonly value: undefined | V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);
@@ -332,7 +350,10 @@ export class ResponseCompleteMessage<V extends RpcValue<any> = RpcValue> impleme
  * @category Message
  */
 export class ResponseDataMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public readonly value: V) {}
+  constructor(
+    public readonly id: number,
+    public readonly value: V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);
@@ -355,7 +376,10 @@ export class ResponseDataMessage<V extends RpcValue<any> = RpcValue> implements 
  * @category Message
  */
 export class ResponseErrorMessage<V extends RpcValue<any> = RpcValue> implements Message<cmsg.CompactMessage> {
-  constructor(public readonly id: number, public readonly value: V) {}
+  constructor(
+    public readonly id: number,
+    public readonly value: V,
+  ) {}
 
   public validate(): void {
     validateId(this.id);

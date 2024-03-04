@@ -11,7 +11,11 @@ const {isArray} = Array;
  * @category JSON Patch Extended
  */
 export class OpExtend extends AbstractOp<'extend'> {
-  constructor(path: Path, public readonly props: Record<string, unknown>, public readonly deleteNull: boolean) {
+  constructor(
+    path: Path,
+    public readonly props: Record<string, unknown>,
+    public readonly deleteNull: boolean,
+  ) {
     super(path);
   }
 

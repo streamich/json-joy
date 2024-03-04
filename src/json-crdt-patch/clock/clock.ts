@@ -2,11 +2,18 @@ import {SESSION} from '../constants';
 import type {IClock, IClockVector, ITimestampStruct, ITimespanStruct} from './types';
 
 export class Timestamp implements ITimestampStruct {
-  constructor(public readonly sid: number, public time: number) {}
+  constructor(
+    public readonly sid: number,
+    public time: number,
+  ) {}
 }
 
 export class Timespan implements ITimespanStruct {
-  constructor(public readonly sid: number, public time: number, public span: number) {}
+  constructor(
+    public readonly sid: number,
+    public time: number,
+    public span: number,
+  ) {}
 }
 
 /**

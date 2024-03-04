@@ -55,8 +55,8 @@ export class AnyType extends AbstractType<schema.AnySchema> {
               ctx instanceof CborEncoderCodegenContext
                 ? EncodingFormat.Cbor
                 : ctx instanceof MessagePackEncoderCodegenContext
-                ? EncodingFormat.MsgPack
-                : EncodingFormat.Json;
+                  ? EncodingFormat.MsgPack
+                  : EncodingFormat.Json;
             ctx.js(`${r}.type.encoder(${type})(${r}.data, encoder);`);
           },
           () => {

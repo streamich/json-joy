@@ -7,7 +7,10 @@ import {type ITimestampStruct, type ITimespanStruct, Timestamp, toDisplayString}
  * @category Operations
  */
 export class NewConOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct, public readonly val: unknown | undefined | ITimestampStruct) {}
+  constructor(
+    public readonly id: ITimestampStruct,
+    public readonly val: unknown | undefined | ITimestampStruct,
+  ) {}
 
   public span(): number {
     return 1;
@@ -23,10 +26,10 @@ export class NewConOp implements IJsonCrdtPatchOperation {
       val instanceof Timestamp
         ? `{ ${toDisplayString(val)} }`
         : val instanceof Uint8Array
-        ? val.length < 13
-          ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
-          : `Uint8Array(${val.length})`
-        : `{ ${JSON.stringify(val)} }`;
+          ? val.length < 13
+            ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
+            : `Uint8Array(${val.length})`
+          : `{ ${JSON.stringify(val)} }`;
     return `${this.name()} ${toDisplayString(this.id)} ${valFormatted}`;
   }
 }
@@ -385,7 +388,10 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
  * @category Operations
  */
 export class NopOp implements IJsonCrdtPatchOperation {
-  constructor(public readonly id: ITimestampStruct, public readonly len: number) {}
+  constructor(
+    public readonly id: ITimestampStruct,
+    public readonly len: number,
+  ) {}
 
   public span(): number {
     return this.len;

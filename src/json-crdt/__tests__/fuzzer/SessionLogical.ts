@@ -43,7 +43,10 @@ export class SessionLogical {
 
   public readonly debug = false;
 
-  public constructor(public fuzzer: JsonCrdtFuzzer, public concurrency: number) {
+  public constructor(
+    public fuzzer: JsonCrdtFuzzer,
+    public concurrency: number,
+  ) {
     if (this.debug) this.modelStart = jsonEncoder.encode(fuzzer.model);
     for (let i = 0; i < concurrency; i++) {
       const model = fuzzer.model.fork();

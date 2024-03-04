@@ -198,8 +198,8 @@ export const print = (node: undefined | AvlHeadlessNode | IAvlTreeNode, tab: str
     v && typeof v === 'object' && v.constructor === Object
       ? stringify(v)
       : v && typeof v === 'object'
-      ? (v as any).toString(tab)
-      : stringify(v);
+        ? (v as any).toString(tab)
+        : stringify(v);
   const content = k !== undefined ? ` { ${stringify(k)} = ${vFormatted} }` : '';
   const bfFormatted = bf ? ` [${bf}]` : '';
   return (

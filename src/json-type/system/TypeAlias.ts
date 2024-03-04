@@ -9,7 +9,11 @@ import type {Printable} from '../../util/print/types';
 import type * as ts from '../typescript/types';
 
 export class TypeAlias<K extends string, T extends Type> implements Printable {
-  public constructor(public readonly system: TypeSystem, public readonly id: K, public readonly type: T) {}
+  public constructor(
+    public readonly system: TypeSystem,
+    public readonly id: K,
+    public readonly type: T,
+  ) {}
 
   public getType(): Type {
     return this.type;

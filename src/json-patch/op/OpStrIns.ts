@@ -9,7 +9,11 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch Extended
  */
 export class OpStrIns extends AbstractOp<'str_ins'> {
-  constructor(path: Path, public readonly pos: number, public readonly str: string) {
+  constructor(
+    path: Path,
+    public readonly pos: number,
+    public readonly str: string,
+  ) {
     super(path);
   }
 

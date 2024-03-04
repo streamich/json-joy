@@ -2,7 +2,10 @@ import {ITimestampStruct, IClockVector, tick, Timestamp} from '../../clock';
 import {RelativeTimestamp} from './RelativeTimestamp';
 
 class ClockTableEntry {
-  constructor(public index: number, public clock: ITimestampStruct) {}
+  constructor(
+    public index: number,
+    public clock: ITimestampStruct,
+  ) {}
 }
 
 export class ClockEncoder {

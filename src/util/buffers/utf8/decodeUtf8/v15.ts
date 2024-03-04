@@ -10,7 +10,7 @@ export default (buf: Uint8Array, start: number, length: number): string => {
     ? utf8Slice
       ? utf8Slice.call(buf, start, end)
       : from
-      ? from(buf).subarray(start, end).toString('utf8')
-      : v10(buf, start, length)
+        ? from(buf).subarray(start, end).toString('utf8')
+        : v10(buf, start, length)
     : v10(buf, start, length);
 };

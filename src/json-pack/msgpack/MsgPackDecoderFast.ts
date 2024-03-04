@@ -54,15 +54,15 @@ export class MsgPackDecoderFast<R extends Reader> implements BinaryJsonDecoder {
               ? reader.f32()
               : this.ext(reader.u32())
             : byte === 0xcc
-            ? reader.u8()
-            : reader.f64()
+              ? reader.u8()
+              : reader.f64()
           : byte <= 0xce
-          ? byte === 0xce
-            ? reader.u32()
-            : reader.u16()
-          : byte === 0xd0
-          ? reader.i8()
-          : reader.u32() * 4294967296 + reader.u32();
+            ? byte === 0xce
+              ? reader.u32()
+              : reader.u16()
+            : byte === 0xd0
+              ? reader.i8()
+              : reader.u32() * 4294967296 + reader.u32();
       }
     } else if (byte <= 0xd8) {
       return byte <= 0xd4
@@ -71,15 +71,15 @@ export class MsgPackDecoderFast<R extends Reader> implements BinaryJsonDecoder {
             ? reader.i32()
             : reader.i16()
           : byte === 0xd4
-          ? this.ext(1)
-          : reader.i32() * 4294967296 + reader.u32()
+            ? this.ext(1)
+            : reader.i32() * 4294967296 + reader.u32()
         : byte <= 0xd6
-        ? byte === 0xd6
-          ? this.ext(4)
-          : this.ext(2)
-        : byte === 0xd8
-        ? this.ext(16)
-        : this.ext(8);
+          ? byte === 0xd6
+            ? this.ext(4)
+            : this.ext(2)
+          : byte === 0xd8
+            ? this.ext(16)
+            : this.ext(8);
     } else {
       switch (byte) {
         case 0xd9:

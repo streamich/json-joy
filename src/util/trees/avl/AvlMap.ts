@@ -10,7 +10,10 @@ export class AvlNode<K, V> implements IAvlTreeNode<K, V> {
   public l: AvlNode<K, V> | undefined = undefined;
   public r: AvlNode<K, V> | undefined = undefined;
   public bf: number = 0;
-  constructor(public readonly k: K, public v: V) {}
+  constructor(
+    public readonly k: K,
+    public v: V,
+  ) {}
 }
 
 const defaultComparator = (a: unknown, b: unknown) => (a === b ? 0 : (a as any) < (b as any) ? -1 : 1);

@@ -12,7 +12,10 @@ const {isArray} = Array;
  * @category JSON Predicate
  */
 export class OpTestType extends AbstractPredicateOp<'test_type'> {
-  constructor(path: Path, public readonly type: JsonPatchTypes[]) {
+  constructor(
+    path: Path,
+    public readonly type: JsonPatchTypes[],
+  ) {
     super(path);
   }
 

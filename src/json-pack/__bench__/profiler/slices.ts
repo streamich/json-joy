@@ -8,7 +8,11 @@ const arr3 = Buffer.allocUnsafe(1024 * 4);
 const FastBuffer = (Buffer as any)[Symbol.species] as any;
 
 class Slice {
-  constructor(public uint8: ArrayBuffer, public start: number, public end: number) {}
+  constructor(
+    public uint8: ArrayBuffer,
+    public start: number,
+    public end: number,
+  ) {}
 }
 
 const res = {

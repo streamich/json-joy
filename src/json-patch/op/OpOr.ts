@@ -11,7 +11,10 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Predicate
  */
 export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
-  constructor(path: Path, public readonly ops: AbstractPredicateOp[]) {
+  constructor(
+    path: Path,
+    public readonly ops: AbstractPredicateOp[],
+  ) {
     super(path, ops);
   }
 

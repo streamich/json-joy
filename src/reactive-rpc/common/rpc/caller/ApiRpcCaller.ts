@@ -16,8 +16,8 @@ export class ApiRpcCaller<
     [K in keyof Api]: Api[K] extends IStaticRpcMethod<infer Ctx, infer Req, infer Res>
       ? StaticRpcMethod<Ctx, Req, Res>
       : Api[K] extends IStreamingRpcMethod<infer Ctx, infer Req, infer Res>
-      ? StreamingRpcMethod<Ctx, Req, Res>
-      : never;
+        ? StreamingRpcMethod<Ctx, Req, Res>
+        : never;
   },
 > extends RpcCaller<Ctx> {
   protected readonly methods = new Map<string, StaticRpcMethod | StreamingRpcMethod>();

@@ -26,7 +26,10 @@ import type {TypeExportContext} from '../../system/TypeExportContext';
 export class MapType<T extends Type> extends AbstractType<schema.MapSchema<SchemaOf<T>>> {
   protected schema: schema.MapSchema<any>;
 
-  constructor(protected type: T, options?: schema.Optional<schema.MapSchema>) {
+  constructor(
+    protected type: T,
+    options?: schema.Optional<schema.MapSchema>,
+  ) {
     super();
     this.schema = schema.s.Map(schema.s.any, options);
   }

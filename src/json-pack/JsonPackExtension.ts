@@ -7,5 +7,8 @@
  * @category Value
  */
 export class JsonPackExtension<T = Uint8Array> {
-  constructor(public readonly tag: number, public readonly val: T) {}
+  constructor(
+    public readonly tag: number,
+    public readonly val: T,
+  ) {}
 }

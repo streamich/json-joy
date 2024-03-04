@@ -41,7 +41,10 @@ export class ObjectFieldType<K extends string, V extends Type> extends AbstractT
 > {
   protected schema: schema.ObjectFieldSchema<K, any>;
 
-  constructor(public readonly key: K, public readonly value: V) {
+  constructor(
+    public readonly key: K,
+    public readonly value: V,
+  ) {
     super();
     this.schema = schema.s.prop(key, schema.s.any);
   }
@@ -79,7 +82,10 @@ export class ObjectFieldType<K extends string, V extends Type> extends AbstractT
 export class ObjectOptionalFieldType<K extends string, V extends Type> extends ObjectFieldType<K, V> {
   public optional = true;
 
-  constructor(public readonly key: K, public readonly value: V) {
+  constructor(
+    public readonly key: K,
+    public readonly value: V,
+  ) {
     super(key, value);
     this.schema = schema.s.propOpt(key, schema.s.any);
   }

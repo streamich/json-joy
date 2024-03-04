@@ -39,7 +39,10 @@ export class WsServerConnection {
   public onpong: (data: Uint8Array | null) => void = () => {};
   public onclose: (code: number, reason: string) => void = () => {};
 
-  constructor(protected readonly encoder: WsFrameEncoder, public readonly socket: WsServerConnectionSocket) {
+  constructor(
+    protected readonly encoder: WsFrameEncoder,
+    public readonly socket: WsServerConnectionSocket,
+  ) {
     const decoder = new WsFrameDecoder();
     let currentFrameHeader: WsFrameHeader | null = null;
     let fragmentStartFrameHeader: WsFrameHeader | null = null;

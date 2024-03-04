@@ -62,15 +62,15 @@ export class MsgPackToJsonConverter {
               ? this.f32().toString()
               : this.ext(this.u32())
             : byte === 0xcc
-            ? this.u8().toString()
-            : this.f64().toString()
+              ? this.u8().toString()
+              : this.f64().toString()
           : byte <= 0xce
-          ? byte === 0xce
-            ? this.u32().toString()
-            : this.u16().toString()
-          : byte === 0xd0
-          ? this.i8().toString()
-          : (this.u32() * 4294967296 + this.u32()).toString();
+            ? byte === 0xce
+              ? this.u32().toString()
+              : this.u16().toString()
+            : byte === 0xd0
+              ? this.i8().toString()
+              : (this.u32() * 4294967296 + this.u32()).toString();
       }
     } else if (byte <= 0xd8) {
       return byte <= 0xd4
@@ -79,15 +79,15 @@ export class MsgPackToJsonConverter {
             ? this.i32().toString()
             : this.i16().toString()
           : byte === 0xd4
-          ? this.ext(1)
-          : (this.i32() * 4294967296 + this.i32()).toString()
+            ? this.ext(1)
+            : (this.i32() * 4294967296 + this.i32()).toString()
         : byte <= 0xd6
-        ? byte === 0xd6
-          ? this.ext(4)
-          : this.ext(2)
-        : byte === 0xd8
-        ? this.ext(16)
-        : this.ext(8);
+          ? byte === 0xd6
+            ? this.ext(4)
+            : this.ext(2)
+          : byte === 0xd8
+            ? this.ext(16)
+            : this.ext(8);
     } else {
       switch (byte) {
         case 0xd9:

@@ -67,7 +67,10 @@ export class MicrotaskBufferFanOut<I> extends FanOut<I[]> {
  * Maps the data from a fanout using a mapper function.
  */
 export class MapFanOut<I, O> extends FanOut<O> {
-  constructor(private readonly source: FanOut<I>, private readonly mapper: (data: I) => O) {
+  constructor(
+    private readonly source: FanOut<I>,
+    private readonly mapper: (data: I) => O,
+  ) {
     super();
   }
 
@@ -96,7 +99,10 @@ export class MapFanOut<I, O> extends FanOut<O> {
 export class OnNewFanOut<D> extends FanOut<D> {
   private unsub?: FanOutUnsubscribe = undefined;
 
-  constructor(private readonly source: FanOut<D>, private last: D | undefined = undefined) {
+  constructor(
+    private readonly source: FanOut<D>,
+    private last: D | undefined = undefined,
+  ) {
     super();
   }
 

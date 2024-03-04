@@ -10,7 +10,10 @@ export class NumNumItem implements IAvlTreeNode<number, number> {
   public l: NumNumItem | undefined = undefined;
   public r: NumNumItem | undefined = undefined;
   public bf: number = 0;
-  constructor(public readonly k: number, public v: number) {}
+  constructor(
+    public readonly k: number,
+    public v: number,
+  ) {}
 }
 
 const comparator = (a: number, b: number) => a - b;

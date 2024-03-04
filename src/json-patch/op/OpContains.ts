@@ -11,7 +11,11 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  */
 export class OpContains extends AbstractPredicateOp<'contains'> {
   // tslint:disable-next-line variable-name
-  constructor(path: Path, public readonly value: string, public readonly ignore_case: boolean) {
+  constructor(
+    path: Path,
+    public readonly value: string,
+    public readonly ignore_case: boolean,
+  ) {
     super(path);
   }
 

@@ -141,7 +141,10 @@ export class ObjAstNode implements AstNode<Map<number, AstNode<unknown>> | null>
 export class AnnotationAstNode implements AstNode<AstNode<unknown>> {
   public readonly len: number;
   public readonly annotationLen: number;
-  constructor(public readonly val: AstNode<unknown>, public readonly annotations: number[]) {
+  constructor(
+    public readonly val: AstNode<unknown>,
+    public readonly annotations: number[],
+  ) {
     let len = 0;
     for (let i = 0; i < annotations.length; i++) len += vUintLen(annotations[i]);
     this.annotationLen = len;

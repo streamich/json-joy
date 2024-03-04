@@ -10,7 +10,10 @@ import type {IMessagePackEncoder} from '../../json-pack/msgpack';
  * @category JSON Patch
  */
 export class OpAdd extends AbstractOp<'add'> {
-  constructor(path: Path, public readonly value: unknown) {
+  constructor(
+    path: Path,
+    public readonly value: unknown,
+  ) {
     super(path);
   }
 

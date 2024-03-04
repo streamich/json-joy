@@ -2,7 +2,10 @@ import decodeUtf8 from './decodeUtf8/v10';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 
 class CacheItem {
-  constructor(public readonly bytes: Uint8Array, public readonly value: string) {}
+  constructor(
+    public readonly bytes: Uint8Array,
+    public readonly value: string,
+  ) {}
 }
 
 const enum CONST {

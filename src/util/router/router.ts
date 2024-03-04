@@ -67,7 +67,10 @@ export class Destination implements Printable {
 
   public readonly match: Match;
 
-  constructor(public readonly routes: Route[], public readonly data: unknown) {
+  constructor(
+    public readonly routes: Route[],
+    public readonly data: unknown,
+  ) {
     this.match = new Match(data, []);
   }
 
@@ -131,5 +134,8 @@ export class Route implements Printable {
 }
 
 export class Match<Data = unknown> {
-  constructor(public readonly data: Data, public params: string[] | null) {}
+  constructor(
+    public readonly data: Data,
+    public params: string[] | null,
+  ) {}
 }
