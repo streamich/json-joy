@@ -9,7 +9,7 @@ export class ValueMvApi extends NodeApi<ValueMv> implements ExtensionApi<ValueMv
     const rgaApi = new ArrApi(node.data, api);
     const length = rgaApi.length();
     rgaApi.del(0, length);
-    rgaApi.ins(0, [builder.constOrJson(json)]);
+    rgaApi.ins(0, [builder.json(json)]);
     rgaApi.node.removeTombstones();
     return this;
   }

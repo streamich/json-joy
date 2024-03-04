@@ -2,6 +2,10 @@ import {ValueMvExt} from '..';
 import {konst} from '../../../json-crdt-patch/builder/Konst';
 import {Model} from '../../../json-crdt/model';
 
+test('can specify extension name', () => {
+  expect(ValueMvExt.name).toBe('mval');
+});
+
 test('can create a new multi-value register', () => {
   const model = Model.withLogicalClock();
   model.ext.register(ValueMvExt);
