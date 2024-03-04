@@ -13,7 +13,7 @@ console.clear();
 
 const model = Model.withLogicalClock(1234);
 
-model.ext.register(ValueMvExt)
+model.ext.register(ValueMvExt);
 
 model.api.root({
   obj: {
