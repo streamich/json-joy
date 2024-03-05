@@ -4,11 +4,12 @@ import {File} from '../File';
 import {JsonDecoder} from '../../../json-pack/json/JsonDecoder';
 import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
 import {FileEncodingParams} from '../types';
+import {fileEncoders} from '../fileEncoders';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
   model.api.root(view);
-  const file = File.fromModel(model);
+  const file = File.fromModel(model, fileEncoders);
   return {model, file};
 };
 
@@ -73,7 +74,7 @@ describe('.toBinary()', () => {
   const assertEncoding = (file: File, params: FileEncodingParams) => {
     const blob = file.toBinary(params);
     // if (params.format === 'ndjson') console.log(Buffer.from(blob).toString('utf8'))
-    const file2 = params.format === 'seq.cbor' ? File.fromSeqCbor(blob) : File.fromNdjson(blob);
+    const file2 = params.format === 'seq.cbor' ? File.fromSeqCbor(blob, fileEncoders) : File.fromNdjson(blob, fileEncoders);
     expect(file2.model.view()).toEqual(file.model.view());
     expect(file2.model !== file.model).toBe(true);
     expect(file2.log.start.view()).toEqual(undefined);
@@ -115,7 +116,7 @@ describe('.unserialize()', () => {
     });
     serialized.push(clone.api.flush().toBinary());
     expect(file.model.view()).toEqual({foo: 'bar'});
-    const file2 = File.unserialize(serialized);
+    const file2 = File.unserialize(serialized, fileEncoders);
     expect(file2.model.view()).toEqual({foo: 'bar', xyz: 123});
   });
 });
