@@ -1,14 +1,14 @@
-import {GcntExt} from '..';
+import {CntExt} from '..';
 import {Model} from '../../../json-crdt/model';
 
 test('can set new values in single fork', () => {
   const model = Model.withLogicalClock();
-  model.ext.register(GcntExt);
+  model.ext.register(CntExt);
   model.api.root({
-    counter: GcntExt.new(24),
+    counter: CntExt.new(24),
   });
   expect(model.view()).toEqual({counter: 24});
-  const counter = model.api.in(['counter']).asExt(GcntExt);
+  const counter = model.api.in(['counter']).asExt(CntExt);
   expect(counter.view()).toBe(24);
   counter.inc(2);
   expect(model.view()).toEqual({counter: 26});
@@ -18,15 +18,15 @@ test('can set new values in single fork', () => {
 
 test('two concurrent users can increment the counter', () => {
   const model = Model.withLogicalClock();
-  model.ext.register(GcntExt);
+  model.ext.register(CntExt);
   model.api.root({
-    counter: GcntExt.new(),
+    counter: CntExt.new(),
   });
   expect(model.view()).toEqual({counter: 0});
-  const counter = model.api.in(['counter']).asExt(GcntExt);
+  const counter = model.api.in(['counter']).asExt(CntExt);
   expect(counter.view()).toBe(0);
   const model2 = model.fork();
-  const counter2 = model2.api.in(['counter']).asExt(GcntExt);
+  const counter2 = model2.api.in(['counter']).asExt(CntExt);
   counter.inc(2);
   counter2.inc(3);
   model.applyPatch(model2.api.flush());
