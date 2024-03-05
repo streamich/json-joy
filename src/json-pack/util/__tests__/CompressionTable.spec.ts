@@ -46,7 +46,7 @@ describe('.compress()', () => {
     };
     const table = CompressionTable.create(json);
     const compressed = table.compress(json);
-    expect(compressed).toEqual({ '2': 0, '4': 1, '5': 4, '6': 3 });
+    expect(compressed).toEqual({'2': 0, '4': 1, '5': 4, '6': 3});
   });
 
   test('can share compression table across two documents', () => {
@@ -62,10 +62,8 @@ describe('.compress()', () => {
     table.finalize();
     const compressed1 = table.compress(json1);
     const compressed2 = table.compress(json2);
-    expect(table.getTable()).toEqual([
-      0, 5, 'bar', 'foo',
-    ]);
-    expect(compressed1).toEqual({ '3': 2 });
-    expect(compressed2).toEqual({ '3': [0, 0, 1, 1] });
+    expect(table.getTable()).toEqual([0, 5, 'bar', 'foo']);
+    expect(compressed1).toEqual({'3': 2});
+    expect(compressed2).toEqual({'3': [0, 0, 1, 1]});
   });
 });
