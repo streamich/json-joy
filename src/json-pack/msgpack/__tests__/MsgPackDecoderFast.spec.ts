@@ -293,6 +293,7 @@ describe('object', () => {
 
   test('throws on __proto__ key', () => {
     const obj = new NullObject();
+    // tslint:disable-next-line: no-string-literal
     obj['__proto__'] = 123;
     const buf = encode(obj);
     expect(() => decode(buf, 0)).toThrow();
