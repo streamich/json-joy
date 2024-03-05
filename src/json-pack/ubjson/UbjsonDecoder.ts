@@ -1,5 +1,6 @@
 import {Reader} from '../../util/buffers/Reader';
 import {JsonPackExtension} from '../JsonPackExtension';
+import {ERROR} from '../cbor/constants';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
 export class UbjsonDecoder implements BinaryJsonDecoder {
@@ -104,6 +105,7 @@ export class UbjsonDecoder implements BinaryJsonDecoder {
         while (uint8[reader.x] !== 0x7d) {
           const keySize = +(this.readAny() as number);
           const key = reader.utf8(keySize);
+          if (key === '__proto__') throw ERROR.UNEXPECTED_OBJ_KEY;
           obj[key] = this.readAny();
         }
         reader.x++;

@@ -3,6 +3,7 @@ import {Writer} from '../../../util/buffers/Writer';
 import {PackValue} from '../../types';
 import {UbjsonEncoder} from '../UbjsonEncoder';
 import {UbjsonDecoder} from '../UbjsonDecoder';
+import {NullObject} from '../../../util/NullObject';
 
 const encoder = new UbjsonEncoder(new Writer(8));
 const decoder = new UbjsonDecoder();
@@ -157,6 +158,13 @@ describe('object', () => {
       obj: {foo: 'bar'},
       obj2: {1: 2, 3: 4},
     });
+  });
+
+  test('throws on __proto__ key', () => {
+    const obj = new NullObject();
+    obj['__proto__'] = 123;
+    const buf = encoder.encode(obj);
+    expect(() => decoder.read(buf)).toThrow();
   });
 });
 
