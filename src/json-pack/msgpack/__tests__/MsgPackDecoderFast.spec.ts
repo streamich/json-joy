@@ -1,3 +1,4 @@
+import {NullObject} from '../../../util/NullObject';
 import {MsgPackDecoderFast} from '../MsgPackDecoderFast';
 import {MsgPackEncoderFast} from '../MsgPackEncoderFast';
 
@@ -288,5 +289,12 @@ describe('object', () => {
     const buf = encode(obj);
     const res = decode(buf, 0);
     expect(res).toEqual(obj);
+  });
+
+  test('throws on __proto__ key', () => {
+    const obj = new NullObject();
+    obj['__proto__'] = 123;
+    const buf = encode(obj);
+    expect(() => decode(buf, 0)).toThrow();
   });
 });
