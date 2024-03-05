@@ -115,4 +115,53 @@ export class CompressionTable {
   public getTable(): unknown[] {
     return this.table;
   }
+
+  public compress(value: unknown): unknown {
+    switch (typeof value) {
+      case 'object': {
+        if (!value) return this.getIndex(null);
+        const constructor = value.constructor;
+        switch (constructor) {
+          case Object: {
+            const obj = value as Record<string, unknown>;
+            const newObj: Record<string, unknown> = {};
+            for (const key in obj) newObj[this.getIndex(key)] = this.compress(obj[key]);
+            return newObj;
+          }
+          case Array: {
+            const arr = value as unknown[];
+            const newArr: unknown[] = [];
+            const len = arr.length;
+            for (let i = 0; i < len; i++) newArr.push(this.compress(arr[i]));
+            return newArr;
+          }
+          case Map: {
+            const map = value as Map<unknown, unknown>;
+            const newMap = new Map<unknown, unknown>();
+            map.forEach((value, key) => {
+              newMap.set(this.compress(key), this.compress(value));
+            });
+            return newMap;
+          }
+          case Set: {
+            const set = value as Set<unknown>;
+            const newSet = new Set<unknown>();
+            set.forEach((value) => {
+              newSet.add(this.compress(value));
+            });
+            break;
+          }
+          case JsonPackExtension: {
+            const ext = value as JsonPackExtension;
+            const newExt = new JsonPackExtension(this.getIndex(ext.tag), this.compress(ext.val));
+            return newExt;
+          }
+        }
+        throw new Error('UNEXPECTED_OBJECT');
+      }
+      default: {
+        return this.getIndex(value);
+      }
+    }
+  }
 }
