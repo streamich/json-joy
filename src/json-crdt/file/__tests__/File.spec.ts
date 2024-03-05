@@ -74,7 +74,8 @@ describe('.toBinary()', () => {
   const assertEncoding = (file: File, params: FileEncodingParams) => {
     const blob = file.toBinary(params);
     // if (params.format === 'ndjson') console.log(Buffer.from(blob).toString('utf8'))
-    const file2 = params.format === 'seq.cbor' ? File.fromSeqCbor(blob, fileEncoders) : File.fromNdjson(blob, fileEncoders);
+    const file2 =
+      params.format === 'seq.cbor' ? File.fromSeqCbor(blob, fileEncoders) : File.fromNdjson(blob, fileEncoders);
     expect(file2.model.view()).toEqual(file.model.view());
     expect(file2.model !== file.model).toBe(true);
     expect(file2.log.start.view()).toEqual(undefined);
