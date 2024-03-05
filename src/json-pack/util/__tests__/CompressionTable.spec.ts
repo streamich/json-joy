@@ -13,15 +13,7 @@ test('collects literals from object', () => {
     true: false,
   };
   const table = CompressionTable.create(json).getTable();
-  expect(table).toEqual([
-    42,
-    'bar',
-    'baz',
-    false,
-    'foo',
-    'gg',
-    'true',
-  ]);
+  expect(table).toEqual([42, 'bar', 'baz', false, 'foo', 'gg', 'true']);
 });
 
 test('run-length encodes integers', () => {
@@ -30,14 +22,7 @@ test('run-length encodes integers', () => {
     baz: 42,
   };
   const table = CompressionTable.create(json).getTable();
-  expect(table).toEqual([
-    -3,
-    15,
-    30,
-    12303,
-    'baz',
-    'foo',
-  ]);
+  expect(table).toEqual([-3, 15, 30, 12303, 'baz', 'foo']);
 });
 
 test('run-length encodes integers - 2', () => {
@@ -46,17 +31,5 @@ test('run-length encodes integers - 2', () => {
     baz: -1.5,
   };
   const table = CompressionTable.create(json).getTable();
-  expect(table).toEqual([
-    1,
-    1,
-    2,
-    1,
-    3,
-    8,
-    1,
-    5,
-    -1.5,
-    'baz',
-    'foo',
-  ]);
+  expect(table).toEqual([1, 1, 2, 1, 3, 8, 1, 5, -1.5, 'baz', 'foo']);
 });

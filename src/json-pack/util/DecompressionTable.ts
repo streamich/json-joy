@@ -2,7 +2,7 @@ const isSafeInteger = Number.isSafeInteger;
 
 export class DecompressionTable {
   protected readonly table: unknown[] = [];
-  
+
   public importTable(rleTable: unknown[]) {
     const length = rleTable.length;
     if (!length) return;

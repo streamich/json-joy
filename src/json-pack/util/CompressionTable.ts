@@ -1,4 +1,4 @@
-import {JsonPackExtension} from "../JsonPackExtension";
+import {JsonPackExtension} from '../JsonPackExtension';
 
 const isSafeInteger = Number.isSafeInteger;
 
@@ -94,7 +94,7 @@ export class CompressionTable {
         last = int;
       }
     }
-    const nonIntegers = Array.from(this.nonIntegers)
+    const nonIntegers = Array.from(this.nonIntegers);
     nonIntegers.sort();
     const lenNonIntegers = nonIntegers.length;
     for (let i = 0; i < lenNonIntegers; i++) {
