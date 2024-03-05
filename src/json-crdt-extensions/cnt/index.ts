@@ -9,9 +9,9 @@ import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
 import type {Printable} from '../../util/print/types';
 import type {ExtensionApi} from '../../json-crdt';
 
-const name = 'gcnt';
+const name = 'cnt';
 
-class GcntNode implements ExtensionJsonNode, Printable {
+class CntNode implements ExtensionJsonNode, Printable {
   public readonly id: ITimestampStruct;
 
   constructor(public readonly data: ObjNode) {
@@ -50,7 +50,7 @@ class GcntNode implements ExtensionJsonNode, Printable {
   }
 }
 
-class GcntApi extends NodeApi<GcntNode> implements ExtensionApi<GcntNode> {
+class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
   public inc(increment: number): this {
     const {api, node} = this;
     const sid = api.model.clock.sid;
@@ -65,14 +65,14 @@ class GcntApi extends NodeApi<GcntNode> implements ExtensionApi<GcntNode> {
   }
 }
 
-export const GcntExt: ExtensionDefinition<ObjNode, GcntNode, GcntApi> = {
-  id: ExtensionId.gcnt,
+export const CntExt: ExtensionDefinition<ObjNode, CntNode, CntApi> = {
+  id: ExtensionId.cnt,
   name,
   new: (value?: number, sid: number = 0) =>
     ext(
-      ExtensionId.gcnt,
+      ExtensionId.cnt,
       delayed((builder) => builder.constOrJson(value ? {[sid]: value} : {})),
     ),
-  Node: GcntNode,
-  Api: GcntApi,
+  Node: CntNode,
+  Api: CntApi,
 };
