@@ -1,4 +1,4 @@
-import {JsonPackExtension} from "../JsonPackExtension";
+import {JsonPackExtension} from '../JsonPackExtension';
 
 const isSafeInteger = Number.isSafeInteger;
 
