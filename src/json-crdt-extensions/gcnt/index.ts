@@ -66,12 +66,12 @@ class GcntApi extends NodeApi<GcntNode> implements ExtensionApi<GcntNode> {
 }
 
 export const GcntExt: ExtensionDefinition<ObjNode, GcntNode, GcntApi> = {
-  id: ExtensionId.mval,
+  id: ExtensionId.gcnt,
   name,
-  new: (value: unknown | ITimestampStruct) =>
+  new: (value?: number, sid: number = 0) =>
     ext(
-      ExtensionId.mval,
-      delayed((builder) => builder.jsonArr([value])),
+      ExtensionId.gcnt,
+      delayed((builder) => builder.constOrJson(value ? {[sid]: value} : {})),
     ),
   Node: GcntNode,
   Api: GcntApi,
