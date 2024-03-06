@@ -67,7 +67,7 @@ describe('extension validity checks', () => {
     });
     expect(model.api.vec(['mv']).node.isExt()).toBe(false);
   });
-  
+
   test('does not treat ArrNode as extension if header sid is wrong', () => {
     const model = Model.withLogicalClock();
     model.ext.register(ValueMvExt);
@@ -81,7 +81,7 @@ describe('extension validity checks', () => {
     });
     expect(model.api.vec(['mv']).node.isExt()).toBe(false);
   });
-  
+
   test('does not treat ArrNode as extension if header time is wrong', () => {
     const model = Model.withLogicalClock();
     model.ext.register(ValueMvExt);

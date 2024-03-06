@@ -43,32 +43,32 @@ describe('sample extension', () => {
       ),
     Node: class CntNode implements ExtensionJsonNode, Printable {
       public readonly id: ITimestampStruct;
-    
+
       constructor(public readonly data: StrNode) {
         this.id = data.id;
       }
-    
+
       public name(): string {
         return 'double-concat';
       }
-    
+
       public view(): string {
         const str = String(this.data.view());
         return str + str;
       }
-    
+
       public children(callback: (node: JsonNode) => void): void {}
-    
+
       public child?(): JsonNode | undefined {
         return this.data;
       }
-    
+
       public container(): JsonNode | undefined {
         return this.data.container();
       }
-    
+
       public api: undefined | unknown = undefined;
-    
+
       public toString(tab?: string): string {
         return `${this.name()} (${this.view()})` + printTree(tab, [(tab) => this.data.toString(tab)]);
       }
@@ -110,7 +110,7 @@ describe('sample extension', () => {
     model.api.root({
       str: DoubleConcatExt.new('abc'),
     });
-    const extStr = model.api.in(['str']).asExt(DoubleConcatExt)
+    const extStr = model.api.in(['str']).asExt(DoubleConcatExt);
     extStr.ins(1, '.');
     expect(model.view()).toEqual({
       str: 'a.bca.bc',
