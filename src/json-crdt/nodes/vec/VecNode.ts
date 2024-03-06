@@ -71,6 +71,8 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   /**
    * @ignore
+   * @returns Returns the extension data node if this is an extension node,
+   *          otherwise `undefined`. The node is cached after the first access.
    */
   public ext(): JsonNode | undefined {
     if (this.__extNode) return this.__extNode;
@@ -92,6 +94,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   /**
    * @ignore
+   * @returns Returns extension ID if this is an extension node, otherwise -1.
    */
   public getExtId(): number {
     if (this.elements.length !== 2) return -1;
