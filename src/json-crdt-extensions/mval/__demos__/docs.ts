@@ -24,6 +24,6 @@ const values = api.view();
 
 console.log(values);
 
-api.set(2);
+api.set(s.con(2));
 
 console.log(model + '');
