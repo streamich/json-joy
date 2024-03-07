@@ -7,17 +7,18 @@
  */
 
 import {Model, s} from '../../../json-crdt';
-import {ValueMvExt} from '..';
+import {MvalExt} from '..';
 
 console.clear();
 
 const model = Model.withLogicalClock(1234);
 
-model.ext.register(ValueMvExt);
+model.ext.register(MvalExt);
 
 model.api.root({
   obj: {
-    mv: ValueMvExt.new(s.con(1)),
+    name: s.con('John'),
+    score: MvalExt.new(s.con(1)),
   },
 });
 
@@ -25,7 +26,7 @@ console.log('');
 console.log('Initial value:');
 console.log(model + '');
 
-const api = model.api.in(['obj', 'mv']).asExt(ValueMvExt);
+const api = model.api.in(['obj', 'score']).asExt(MvalExt);
 
 api.set(s.con(5));
 
@@ -35,7 +36,7 @@ console.log(model + '');
 
 const model2 = model.fork();
 
-const api2 = model2.api.in(['obj', 'mv']).asExt(ValueMvExt);
+const api2 = model2.api.in(['obj', 'score']).asExt(MvalExt);
 
 api.set(s.con(10));
 api2.set(s.con(20));
