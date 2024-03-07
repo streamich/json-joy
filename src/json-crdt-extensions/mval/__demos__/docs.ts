@@ -18,6 +18,8 @@ model.ext.register(MvalExt);
 model.api.root({
   score: MvalExt.new(1),
 });
+console.log(model + '');
+
 
 const api = model.api.in(['score']).asExt(MvalExt);
 const values = api.view();
