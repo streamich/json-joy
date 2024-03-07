@@ -20,7 +20,6 @@ model.api.root({
 });
 console.log(model + '');
 
-
 const api = model.api.in(['score']).asExt(MvalExt);
 const values = api.view();
 
