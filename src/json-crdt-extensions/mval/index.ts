@@ -7,7 +7,7 @@ import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 import type {ExtensionDefinition} from '../../json-crdt';
 
-export const ValueMvExt: ExtensionDefinition<ArrNode, ValueMv, ValueMvApi> = {
+export const MvalExt: ExtensionDefinition<ArrNode, ValueMv, ValueMvApi> = {
   id: ExtensionId.mval,
   name: 'mval',
   new: (value: unknown | ITimestampStruct) =>

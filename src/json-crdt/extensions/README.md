@@ -24,6 +24,6 @@ to the extension.
 
 ```
 vec
-├─ 0: con Uin8Array { <extension_id>, <session_id_mod_256>, <time_seq_mod_256> }
+├─ 0: con Uin8Array { <ext_id>, <sid_mod_256>, <time_mod_256> }
 └─ 1: any
 ```
