@@ -1,13 +1,13 @@
 import {crypto} from '../crypto';
 import {readUvint} from '../util/readUvint';
-import {MultiCodec} from './constants';
+import {Multicodec} from './constants';
 
 export class Multihash {
   public static async fromData(buf: Uint8Array) {
     const hash = await crypto.subtle.digest('SHA-256', buf);
     const byteLength = hash.byteLength;
     const uint8 = new Uint8Array(2 + byteLength);
-    uint8[0] = MultiCodec.Sha2_256;
+    uint8[0] = Multicodec.Sha2_256;
     uint8[1] = byteLength;
     uint8.set(new Uint8Array(hash), 2);
     return new Multihash(uint8);
@@ -18,7 +18,7 @@ export class Multihash {
     if (length < 2) throw new Error('INVALID_MULTIHASH');
     const [code, offset1] = readUvint(buf, 0);
     switch (code) {
-      case MultiCodec.Sha2_256: {
+      case Multicodec.Sha2_256: {
         break;
       }
       default: {
