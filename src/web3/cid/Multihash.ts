@@ -2,7 +2,7 @@ import {crypto} from '../crypto';
 import {readUvint} from '../util/readUvint';
 import {MultiCodec} from './constants';
 
-export class MultiHash {
+export class Multihash {
   public static async fromData(buf: Uint8Array) {
     const hash = await crypto.subtle.digest('SHA-256', buf);
     const byteLength = hash.byteLength;
@@ -10,7 +10,7 @@ export class MultiHash {
     uint8[0] = MultiCodec.Sha2_256;
     uint8[1] = byteLength;
     uint8.set(new Uint8Array(hash), 2);
-    return new MultiHash(uint8);
+    return new Multihash(uint8);
   };
 
   public static validate = (buf: Uint8Array) => {
@@ -30,7 +30,7 @@ export class MultiHash {
   };
 
   constructor (public readonly buf: Uint8Array) {
-    MultiHash.validate(buf);
+    Multihash.validate(buf);
   }
 
   public type(): number {
