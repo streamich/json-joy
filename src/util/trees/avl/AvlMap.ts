@@ -32,6 +32,14 @@ export class AvlMap<K, V> implements Printable {
     return item;
   }
 
+  /**
+   * Inserts a new node with the given key and value. If a node with the given
+   * key already exists, its value is updated.
+   *
+   * @param k Key
+   * @param v Value
+   * @returns Reference to the node with the given key.
+   */
   public set(k: K, v: V): AvlNodeReference<AvlNode<K, V>> {
     const root = this.root;
     if (!root) return this.insert(k, v);
