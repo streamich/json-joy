@@ -1,3 +1,4 @@
+import {decode} from './multibase';
 import {readUvint} from "../util/readUvint";
 import {Multihash} from "./Multihash";
 import {Multicodec} from "./constants";
@@ -23,12 +24,12 @@ export class Cid {
 
   public static fromText(text: string): Cid {
     if (text.charCodeAt(0) === 81 && text.charCodeAt(1) === 109) {
-      // 1. Decode as base58btc
-      // 2. Decode as V0
+      const buf = decode(text);
+      return Cid.fromBinaryV0(buf)
     }
-    // 1. Decode according to multibase
-    // 2. If starts with 0x12, error
-    // 3. Decode as V1
+    const buf = decode(text);
+    if (buf[0] === 0x12) throw new Error('UNSUPPORTED_CIDV0');
+    return Cid.fromBinaryV1(buf);
   }
 
   constructor(
