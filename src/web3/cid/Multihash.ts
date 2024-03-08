@@ -51,4 +51,13 @@ export class Multihash {
     const [, offset2] = readUvint(buf, offset1);
     return buf.slice(offset2);
   }
+
+  public toString16(): string {
+    let res = '';
+    for (const byte of this.buf) {
+      const hex = byte.toString(16);
+      res += hex.length === 1 ? ('0' + hex) : hex;
+    }
+    return res;
+  }
 }
