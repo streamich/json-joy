@@ -9,7 +9,12 @@ describe('CID v0', () => {
     expect(cid.contentType).toBe(Multicodec.DagPb);
     expect(cid.hash.type()).toBe(Multicodec.Sha2_256);
     expect(cid.hash.length()).toBe(32);
-    expect(cid.hash.value()).toEqual(new Uint8Array([14, 112, 113, 197, 157, 243, 185, 69, 77, 29, 24, 161, 82, 112, 170, 54, 213, 79, 137, 96, 106, 87, 109, 198, 33, 117, 122, 253, 68, 173, 29, 46]));
+    expect(cid.hash.value()).toEqual(
+      new Uint8Array([
+        14, 112, 113, 197, 157, 243, 185, 69, 77, 29, 24, 161, 82, 112, 170, 54, 213, 79, 137, 96, 106, 87, 109, 198,
+        33, 117, 122, 253, 68, 173, 29, 46,
+      ]),
+    );
   });
 
   test('can encode a sample CID back', () => {
@@ -42,13 +47,12 @@ describe('CID v1', () => {
     expect(cid.contentType).toBe(Multicodec.DagPb);
     expect(cid.hash.type()).toBe(Multicodec.Sha2_256);
     expect(cid.hash.length()).toBe(32);
-    expect(cid.hash.value()).toEqual(new Uint8Array([
-      195, 196, 115,  62, 200, 175,
-      253,   6, 207, 158, 159, 245,  15, 252,
-      107, 205,  46, 200,  90,  97, 112,   0,
-      75, 183,   9, 102, 156,  49, 222, 148,
-      57,  26
-    ]));
+    expect(cid.hash.value()).toEqual(
+      new Uint8Array([
+        195, 196, 115, 62, 200, 175, 253, 6, 207, 158, 159, 245, 15, 252, 107, 205, 46, 200, 90, 97, 112, 0, 75, 183, 9,
+        102, 156, 49, 222, 148, 57, 26,
+      ]),
+    );
   });
 
   test('can encode a sample CID back', () => {
