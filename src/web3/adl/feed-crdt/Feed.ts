@@ -1,24 +1,18 @@
-import {CID} from '../../cid/index.js';
 import {BehaviorSubject} from 'rxjs';
-import {type HlcFactory, toDto} from '../../hlc/index.js';
-import type {CAS} from '../types';
-import type {FeedFrameDto, FeedInsertOp} from './types.js';
-
-export class FeedBlock {
-  public prev: FeedBlock | null = null;
-  constructor(public cid: CID, public data: FeedFrameDto) {}
-}
+import type {CidCas} from '../../store/cas/CidCas';
+import type {FeedApi, FeedFrameDto} from './types';
+import {type HlcFactory, toDto} from '../../hlc';
 
 const enum CONST {
-  ENTRIES_PER_BLOCK_THRESHOLD = 25,
+  ENTRIES_PER_FRAME_THRESHOLD = 25,
 }
 
-export interface FeedCrdtDependencies {
-  cas: CAS;
+export interface FeedDependencies {
+  cas: CidCas;
   hlc: HlcFactory;
 }
 
-export class FeedCrdt {
+export class Feed implements FeedApi {
   public head: FeedBlock | null = null;
   public tail: FeedBlock | null = null;
 
@@ -27,7 +21,7 @@ export class FeedCrdt {
   public entries = new BehaviorSubject<FeedInsertOp[]>([]);
   public readonly deletes: Set<string> = new Set();
 
-  constructor(protected readonly deps: FeedCrdtDependencies) {}
+  constructor(protected readonly deps: FeedDependencies) {}
 
   public insert(value: string): void {
     if (this.deletes.has(value)) return;
@@ -96,7 +90,7 @@ export class FeedCrdt {
   public async save(): Promise<[head: CID, affected: CID[]]> {
     const hasUnsavedChanges = !!this.dirtyEntries.length || !!this.dirtyDeletes.size;
     if (!hasUnsavedChanges && this.head) return [this.head.cid, []];
-    const doCreateNewBlock = !this.head || this.head.data[0].length >= CONST.ENTRIES_PER_BLOCK_THRESHOLD;
+    const doCreateNewBlock = !this.head || this.head.data[0].length >= CONST.ENTRIES_PER_FRAME_THRESHOLD;
     if (doCreateNewBlock) {
       const entries = this.dirtyEntries;
       const deletes = [...this.dirtyDeletes.values()];

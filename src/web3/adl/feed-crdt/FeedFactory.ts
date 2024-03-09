@@ -1,7 +1,6 @@
-import {FeedCrdt, FeedCrdtDependencies} from './FeedCrdt.js';
-import type {CID} from 'multiformats';
+import {Feed, FeedDependencies} from './Feed';
 
-export interface FeedCrdtFactoryDependencies extends FeedCrdtDependencies {}
+export interface FeedCrdtFactoryDependencies extends FeedDependencies {}
 
 export class FeedCrdtFactory {
   constructor(protected readonly deps: FeedCrdtFactoryDependencies) {}
