@@ -1,7 +1,7 @@
 import * as vuint from '../util/uvint';
 import * as multibase from './multibase';
 import {Multihash} from './Multihash';
-import {Multicodec} from './constants';
+import {Multicodec, MulticodecIpld} from './constants';
 
 export type CidVersion = 0 | 1;
 
@@ -33,6 +33,27 @@ export class Cid {
     const buf = multibase.decode(text);
     if (buf[0] === 0x12) throw new Error('UNSUPPORTED_CIDV0');
     return Cid.fromBinaryV1(buf);
+  }
+
+  public static async fromData(data: Uint8Array, codec: MulticodecIpld = MulticodecIpld.Raw): Promise<Cid> {
+    const hash = await Multihash.fromData(data);
+    return new Cid(1, codec, hash);
+  }
+
+  public static async fromCbor(cbor: Uint8Array): Promise<Cid> {
+    return await Cid.fromData(cbor, MulticodecIpld.Cbor);
+  }
+
+  public static async fromDagCbor(cbor: Uint8Array): Promise<Cid> {
+    return await Cid.fromData(cbor, MulticodecIpld.DagCbor);
+  }
+
+  public static async fromJson(cbor: Uint8Array): Promise<Cid> {
+    return await Cid.fromData(cbor, MulticodecIpld.Json);
+  }
+
+  public static async fromDagJson(cbor: Uint8Array): Promise<Cid> {
+    return await Cid.fromData(cbor, MulticodecIpld.DagJson);
   }
 
   constructor(

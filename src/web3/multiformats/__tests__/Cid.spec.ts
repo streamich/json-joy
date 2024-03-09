@@ -1,5 +1,5 @@
 import {Cid} from '../Cid';
-import {Multicodec} from '../constants';
+import {Multicodec, MulticodecIpld} from '../constants';
 
 describe('CID v0', () => {
   test('can decode a sample CID', () => {
@@ -56,5 +56,14 @@ describe('CID v1', () => {
     const cid = Cid.fromText(txt);
     const txt2 = cid.toText('base32');
     expect(txt2).toEqual(txt);
+  });
+
+  test('can create a CID from data', async () => {
+    const text = 'Merkle–Damgård';
+    const data = new TextEncoder().encode(text);
+    const cid = await Cid.fromData(data);
+    expect(cid.v).toBe(1);
+    expect(cid.contentType).toBe(MulticodecIpld.Raw);
+    expect(cid.toText('base16')).toBe('f01551220' + '41dd7b6443542e75701aa98a0c235951a28a0d851b11564d20022ab11d2589a8');
   });
 });
