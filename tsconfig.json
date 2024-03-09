@@ -9,7 +9,6 @@
     "allowSyntheticDefaultImports": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "experimentalDecorators": true,
     "importHelpers": true,
     "pretty": true,
     "sourceMap": true,
