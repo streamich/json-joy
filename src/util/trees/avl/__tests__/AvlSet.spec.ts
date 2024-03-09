@@ -41,7 +41,12 @@ test('can remove numbers from set', () => {
 });
 
 test('can store structs', () => {
-  class Struct { constructor (public x: number, public y: number) {} }
+  class Struct {
+    constructor(
+      public x: number,
+      public y: number,
+    ) {}
+  }
   const set = new AvlSet<Struct>((a, b) => {
     const dx = a.x - b.x;
     return dx === 0 ? a.y - b.y : dx;
