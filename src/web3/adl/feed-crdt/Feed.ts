@@ -15,7 +15,7 @@ export interface FeedDependencies {
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
-  public opsPerFrameThreshold = FeedConstraints.DefaultOpsPerFrameThreshold;
+  public opsPerFrameThreshold: number = FeedConstraints.DefaultOpsPerFrameThreshold;
 
   protected head: FeedFrame | null = null;
   protected tail: FeedFrame | null = null;
@@ -27,6 +27,10 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   public onEntries: FanOut<types.FeedOpInsert[]> = new FanOut();
 
   constructor(protected readonly deps: FeedDependencies) {}
+
+  public cid(): Cid | undefined {
+    return this.head?.cid;
+  }
 
   public async loadAll(): Promise<void> {
     while (this.hasMore()) await this.loadMore();

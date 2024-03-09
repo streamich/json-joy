@@ -97,91 +97,114 @@ test('can delete an entry', async () => {
   expect(cid4.is(cidEmpty)).toBe(false);
 });
 
-// test('delete items from another frame', async () => {});
+test('delete items from another frame', async () => {
+  const {feeds, cas} = setup();
+  const feed1 = feeds.make();
+  feed1.opsPerFrameThreshold = 5;
+  const id1 = feed1.add('a1');
+  const id2 = feed1.add('a2');
+  const id3 = feed1.add('a3');
+  const id4 = feed1.add('a4');
+  const id5 = feed1.add('a5');
+  const id6 = feed1.add('a6');
+  const id7 = feed1.add('a7');
+  const id8 = feed1.add('a8');
+  const cid1 = await feed1.save();
+  const id9 = feed1.add('a9');
+  const id10 = feed1.add('a10');
+  const id11 = feed1.add('a11');
+  const id12 = feed1.add('a12');
+  const id13 = feed1.add('a13');
+  const id14 = feed1.add('a14');
+  const cid2 = await feed1.save();
+  const frame = await cas.get(cid2) as FeedFrameDto;
+  expect(frame[1]).toBe(1);
+  expect(feed1.getSnapshot()[1][2]).toBe('a2');
+  await feed1.del(id2);
+  expect(feed1.getSnapshot()[1][2]).toBe('a3');
+  const cid3 = await feed1.save();
+  const feed2 = await feeds.load(cid3);
+  await feed2.loadAll();
+  expect(feed2.getSnapshot()[1][2]).toBe('a3');
+});
 
-// test('combines entries in one block if not too many entries', async () => {
-//   const {feeds, cas} = setup();
-//   const feed1 = feeds.make();
-//   feed1.insert('entry-1');
-//   feed1.insert('entry-2');
-//   await feed1.save();
-//   feed1.insert('entry-3');
-//   feed1.insert('entry-4');
-//   const [cid] = await feed1.save();
-//   const res = await cas.get(cid);
-//   expect(res).toBeInstanceOf(Uint8Array);
-//   const tuple = decoder.decode(res) as FeedFrameDto;
-//   expect(tuple[0].length).toBe(4);
-// });
+test('combines entries in one block, if operation count is withing a threshold', async () => {
+  const {feeds, cas} = setup();
+  const feed1 = feeds.make();
+  feed1.add('entry-1');
+  feed1.add('entry-2');
+  await feed1.save();
+  feed1.add('entry-3');
+  feed1.add('entry-4');
+  const cid = await feed1.save();
+  const res = await cas.get(cid) as FeedFrameDto
+  expect(res[2].length).toBe(4);
+});
 
-// test('creates a new block if last one has 25 or more entries', async () => {
-//   const {feeds, cas} = setup();
-//   const feed1 = feeds.make();
-//   for (let i = 0; i < 25; i++) {
-//     feed1.insert('entry-' + i);
-//   }
-//   await feed1.save();
-//   feed1.insert('entry-x');
-//   feed1.insert('entry-y');
-//   const [cid] = await feed1.save();
-//   const res = await cas.get(cid);
-//   expect(res).toBeInstanceOf(Uint8Array);
-//   const tuple = decoder.decode(res) as FeedFrameDto;
-//   expect(tuple[0].length).toBe(2);
-// });
+test('creates a new block if last one has 25 or more entries', async () => {
+  const {feeds, cas} = setup();
+  const feed1 = feeds.make();
+  for (let i = 0; i < feed1.opsPerFrameThreshold; i++) {
+    feed1.add('entry-' + i);
+  }
+  await feed1.save();
+  feed1.add('entry-x');
+  feed1.add('entry-y');
+  const cid = await feed1.save();
+  const res = await cas.get(cid) as FeedFrameDto;
+  expect(res[2].length).toBe(2);
+});
 
-// test('can create and read out 200 entries', async () => {
-//   const {feeds} = setup();
-//   const feed1 = feeds.make();
-//   for (let i = 0; i < 200; i++) {
-//     feed1.insert('entry-' + i);
-//     await feed1.save();
-//   }
-//   const head = feed1.head!.cid;
-//   const feed2 = await feeds.load(head);
-//   while (feed2.hasMoreBlocks()) {
-//     await feed2.loadMore();
-//   }
-//   const entries = feed2.entries.getValue();
-//   expect(entries.length).toBe(200);
-//   for (let i = 0; i < 200; i++) {
-//     expect(entries[i][0]).toBe('entry-' + i);
-//   }
-// });
+test('can create and read out 200 entries', async () => {
+  const {feeds} = setup();
+  const feed1 = feeds.make();
+  for (let i = 0; i < 200; i++) {
+    feed1.add('entry-' + i);
+    await feed1.save();
+  }
+  const cid = feed1.cid()!;
+  const feed2 = await feeds.load(cid);
+  await feed2.loadAll();
+  const entries = feed2.getSnapshot();
+  expect(entries.length).toBe(200);
+  for (let i = 0; i < 200; i++) {
+    expect(entries[i][2]).toBe('entry-' + i);
+  }
+});
 
-// test('view shows only entries, which are not deleted', async () => {
-//   const {hlc, cas, feeds} = setup();
-//   const feed1 = feeds.make();
-//   feed1.insert('a');
-//   feed1.insert('b');
-//   feed1.insert('c1');
-//   feed1.insert('c2');
-//   feed1.insert('c3');
-//   feed1.insert('c4');
-//   feed1.insert('c5');
-//   feed1.insert('c6');
-//   feed1.insert('c7');
-//   feed1.insert('c8');
-//   feed1.insert('c9');
-//   feed1.insert('c10');
-//   feed1.insert('c11');
-//   await feed1.save();
-//   feed1.delete('b');
-//   const [cid] = await feed1.save();
-//   const feeds2 = new FeedCrdtFactory({hlc, cas});
-//   const feed2 = await feeds2.load(cid);
-//   await feed2.loadAll();
-//   const list = feed2.entries.getValue();
-//   expect(list[0][0]).toBe('a');
-//   expect(list[1][0]).toBe('c1');
-//   expect(list[2][0]).toBe('c2');
-//   expect(list[3][0]).toBe('c3');
-//   expect(list[4][0]).toBe('c4');
-//   expect(list[5][0]).toBe('c5');
-//   expect(list[6][0]).toBe('c6');
-//   expect(list[7][0]).toBe('c7');
-//   expect(list[8][0]).toBe('c8');
-//   expect(list[9][0]).toBe('c9');
-//   expect(list[10][0]).toBe('c10');
-//   expect(list[11][0]).toBe('c11');
-// });
+test('view shows only entries, which are not deleted', async () => {
+  const {hlcs, cas, feeds} = setup();
+  const feed1 = feeds.make();
+  feed1.add('a');
+  const bId = feed1.add('b');
+  feed1.add('c1');
+  feed1.add('c2');
+  feed1.add('c3');
+  feed1.add('c4');
+  feed1.add('c5');
+  feed1.add('c6');
+  feed1.add('c7');
+  feed1.add('c8');
+  feed1.add('c9');
+  feed1.add('c10');
+  feed1.add('c11');
+  await feed1.save();
+  feed1.del(bId);
+  const cid = await feed1.save();
+  const feeds2 = new FeedFactory({hlcs, cas});
+  const feed2 = await feeds2.load(cid);
+  await feed2.loadAll();
+  const list = feed2.getSnapshot();
+  expect(list[0][2]).toBe('a');
+  expect(list[1][2]).toBe('c1');
+  expect(list[2][2]).toBe('c2');
+  expect(list[3][2]).toBe('c3');
+  expect(list[4][2]).toBe('c4');
+  expect(list[5][2]).toBe('c5');
+  expect(list[6][2]).toBe('c6');
+  expect(list[7][2]).toBe('c7');
+  expect(list[8][2]).toBe('c8');
+  expect(list[9][2]).toBe('c9');
+  expect(list[10][2]).toBe('c10');
+  expect(list[11][2]).toBe('c11');
+});
