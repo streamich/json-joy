@@ -1,12 +1,12 @@
 /**
  * Reads an unsigned variable length integer in MSB Multicodec format up to
  * 3 bytes.
- * 
+ *
  * @see https://github.com/multiformats/unsigned-varint
- * 
+ *
  * @param buf Blob from where to read the unsigned variable integer.
  * @param offset Offset from where to start reading.
- * @returns 
+ * @returns
  */
 export const read = (buf: Uint8Array, offset: number): [value: number, offset: number] => {
   const octet1 = buf[offset++];

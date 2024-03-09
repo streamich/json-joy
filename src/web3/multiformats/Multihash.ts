@@ -12,7 +12,7 @@ export class Multihash {
     uint8[1] = byteLength;
     uint8.set(new Uint8Array(hash), 2);
     return new Multihash(uint8);
-  };
+  }
 
   public static validate = (buf: Uint8Array) => {
     const length = buf.length;
@@ -30,7 +30,7 @@ export class Multihash {
     if (offset2 + lengthHash !== length) throw new Error('INVALID_MULTIHASH');
   };
 
-  constructor (public readonly buf: Uint8Array) {
+  constructor(public readonly buf: Uint8Array) {
     Multihash.validate(buf);
   }
 
@@ -61,7 +61,7 @@ export class Multihash {
     let res = '';
     for (const byte of this.buf) {
       const hex = byte.toString(16);
-      res += hex.length === 1 ? ('0' + hex) : hex;
+      res += hex.length === 1 ? '0' + hex : hex;
     }
     return res;
   }

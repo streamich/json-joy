@@ -21,7 +21,7 @@ test('returns 32 length for SHA2-256 codec', async () => {
 test('returns correct hash value', async () => {
   const hash = await Multihash.fromData(data);
   const value = hash.value();
-  const hex = [...value].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const hex = [...value].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   expect(hex).toBe('41dd7b6443542e75701aa98a0c235951a28a0d851b11564d20022ab11d2589a8');
 });
 
@@ -30,7 +30,7 @@ test('can create a Multihash instance from a hash', async () => {
   expect(hash.type()).toBe(0x12);
   expect(hash.length()).toBe(32);
   const value = hash.value();
-  const hex = [...value].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  const hex = [...value].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   expect(hex).toBe('41dd7b6443542e75701aa98a0c235951a28a0d851b11564d20022ab11d2589a8');
 });
 
