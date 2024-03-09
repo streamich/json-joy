@@ -1,5 +1,5 @@
 export interface HybridLogicalClock {
-  /** Timestamp. */
+  /** Timestamp, wall clock, number in seconds or milliseconds. */
   readonly ts: number;
   /** Monotonically incrementing sequence counter. */
   readonly seq: number;

@@ -1,4 +1,5 @@
-import {create, inc, Hlc} from './util';
+import {create, inc} from './util';
+import {Hlc} from './Hlc';
 
 export interface HlcFactoryDependencies {
   /** Latest wall clock generator. */

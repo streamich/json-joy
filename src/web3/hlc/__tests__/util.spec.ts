@@ -1,5 +1,4 @@
-import {create, toDto, inc, Hlc, cmp, cmpDto, merge} from '../util';
-import {HlcDto} from '../types.js';
+import {create, toDto, inc, Hlc, cmp, cmpDto, merge, HlcDto} from '..';
 
 describe('create()', () => {
   test('can create an HLC instance', () => {
