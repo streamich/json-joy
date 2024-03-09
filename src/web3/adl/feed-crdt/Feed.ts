@@ -15,7 +15,7 @@ export interface FeedDependencies {
   hlcs: hlc.HlcFactory;
 }
 
-export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
+export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
   /**
    * Number of operations after which a new frame is created, otherwise the
    * operations are appended to the current frame.
@@ -32,7 +32,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   protected unsaved: types.FeedOp[] = [];
   protected readonly deletes = new AvlSet<hlc.HlcDto>(hlc.cmpDto);
   protected readonly inserts = new AvlMap<hlc.HlcDto, types.FeedOpInsert>(hlc.cmpDto);
-  
+
   constructor(protected readonly deps: FeedDependencies) {}
 
   public cid(): Cid | undefined {

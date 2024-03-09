@@ -78,7 +78,7 @@ test('can delete an entry', async () => {
   expect(feed1.getSnapshot()[0][2]).toStrictEqual('a2');
   expect(feed1.getSnapshot()[1][2]).toStrictEqual('a3');
   const cid2 = await feed1.save();
-  const res = await cas.get(cid2) as FeedFrameDto;
+  const res = (await cas.get(cid2)) as FeedFrameDto;
   expect(res[2].length).toStrictEqual(4);
   expect(cid2.is(cid1)).toBe(false);
   const feed2 = await feeds.load(cid2);
@@ -117,7 +117,7 @@ test('delete items from another frame', async () => {
   const id13 = feed1.add('a13');
   const id14 = feed1.add('a14');
   const cid2 = await feed1.save();
-  const frame = await cas.get(cid2) as FeedFrameDto;
+  const frame = (await cas.get(cid2)) as FeedFrameDto;
   expect(frame[1]).toBe(1);
   expect(feed1.getSnapshot()[1][2]).toBe('a2');
   await feed1.del(id2);
@@ -137,7 +137,7 @@ test('combines entries in one block, if operation count is withing a threshold',
   feed1.add('entry-3');
   feed1.add('entry-4');
   const cid = await feed1.save();
-  const res = await cas.get(cid) as FeedFrameDto
+  const res = (await cas.get(cid)) as FeedFrameDto;
   expect(res[2].length).toBe(4);
 });
 
@@ -151,7 +151,7 @@ test('creates a new block if last one has 25 or more entries', async () => {
   feed1.add('entry-x');
   feed1.add('entry-y');
   const cid = await feed1.save();
-  const res = await cas.get(cid) as FeedFrameDto;
+  const res = (await cas.get(cid)) as FeedFrameDto;
   expect(res[2].length).toBe(2);
 });
 
