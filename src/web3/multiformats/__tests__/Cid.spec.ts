@@ -6,7 +6,7 @@ describe('CID v0', () => {
     const txt = 'QmPK1s3pNYLi9ERiq3BDxKa4XosgWwFRQUydHUtz4YgpqB';
     const cid = Cid.fromText(txt);
     expect(cid.v).toBe(0);
-    expect(cid.contentType).toBe(Multicodec.DagPb);
+    expect(cid.ipldType).toBe(Multicodec.DagPb);
     expect(cid.hash.type()).toBe(Multicodec.Sha2_256);
     expect(cid.hash.length()).toBe(32);
     expect(cid.hash.value()).toEqual(
@@ -44,7 +44,7 @@ describe('CID v1', () => {
     const txt = 'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi';
     const cid = Cid.fromText(txt);
     expect(cid.v).toBe(1);
-    expect(cid.contentType).toBe(Multicodec.DagPb);
+    expect(cid.ipldType).toBe(Multicodec.DagPb);
     expect(cid.hash.type()).toBe(Multicodec.Sha2_256);
     expect(cid.hash.length()).toBe(32);
     expect(cid.hash.value()).toEqual(
@@ -67,7 +67,7 @@ describe('CID v1', () => {
     const data = new TextEncoder().encode(text);
     const cid = await Cid.fromData(data);
     expect(cid.v).toBe(1);
-    expect(cid.contentType).toBe(MulticodecIpld.Raw);
+    expect(cid.ipldType).toBe(MulticodecIpld.Raw);
     expect(cid.toText('base16')).toBe('f01551220' + '41dd7b6443542e75701aa98a0c235951a28a0d851b11564d20022ab11d2589a8');
   });
 });

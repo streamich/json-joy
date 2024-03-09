@@ -35,9 +35,9 @@ export class Cid {
     return Cid.fromBinaryV1(buf);
   }
 
-  public static async fromData(data: Uint8Array, codec: MulticodecIpld = MulticodecIpld.Raw): Promise<Cid> {
+  public static async fromData(data: Uint8Array, ipldType: MulticodecIpld = MulticodecIpld.Raw): Promise<Cid> {
     const hash = await Multihash.fromData(data);
-    return new Cid(1, codec, hash);
+    return new Cid(1, ipldType, hash);
   }
 
   public static async fromCbor(cbor: Uint8Array): Promise<Cid> {
@@ -58,12 +58,12 @@ export class Cid {
 
   constructor(
     public readonly v: CidVersion,
-    public readonly contentType: number,
+    public readonly ipldType: number,
     public readonly hash: Multihash,
   ) {}
 
   public is(cid: Cid): boolean {
-    return this.v === cid.v && this.contentType === cid.contentType && this.hash.is(cid.hash);
+    return this.v === cid.v && this.ipldType === cid.ipldType && this.hash.is(cid.hash);
   }
 
   public toV0(): Cid {
@@ -73,7 +73,7 @@ export class Cid {
 
   public toV1(): Cid {
     if (this.v === 1) return this;
-    return new Cid(1, this.contentType, this.hash);
+    return new Cid(1, this.ipldType, this.hash);
   }
 
   public toBinary(version: CidVersion = this.v): Uint8Array {
@@ -87,7 +87,7 @@ export class Cid {
 
   public toBinaryV1(): Uint8Array {
     let size = 2;
-    const contentType = this.contentType;
+    const contentType = this.ipldType;
     if (contentType >= 0b10000000) size += 1;
     if (contentType >= 0b10000000_0000000) size += 1;
     const hash = this.hash;

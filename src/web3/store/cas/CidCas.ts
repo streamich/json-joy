@@ -1,9 +1,9 @@
 import type {Cid} from '../../multiformats';
+import type {MulticodecIpld} from '../../multiformats/constants';
 
 export interface CidCas {
   get(cid: Cid): Promise<Uint8Array>;
-  getMany(cids: Cid[]): Promise<Uint8Array[]>;
+  has(cid: Cid): Promise<boolean>;
   del(cid: Cid): Promise<void>;
-  put(value: Uint8Array): Promise<Cid>;
-  putMany(values: Uint8Array[]): Promise<Cid[]>;
+  put(value: Uint8Array, ipld?: MulticodecIpld): Promise<Cid>;
 }
