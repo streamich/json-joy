@@ -1,5 +1,6 @@
 import {FeedFrame} from './FeedFrame';
 import {AvlSet} from '../../../util/trees/avl/AvlSet';
+import {AvlMap} from '../../../util/trees/avl/AvlMap';
 import {Cid} from '../../multiformats';
 import {mutex} from 'thingies/es2020/mutex';
 import {FanOut} from 'thingies/es2020/fanout';
@@ -24,13 +25,13 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   /**
    * Emitted when the feed view changes (new entries are added or deleted).
    */
-  public onChange: FanOut<types.FeedOpInsert[]> = new FanOut();
+  public onChange: FanOut<void> = new FanOut();
 
   protected head: FeedFrame | null = null;
   protected tail: FeedFrame | null = null;
-  protected unsavedOps: types.FeedOp[] = [];
-  protected readonly deletes: AvlSet<hlc.HybridLogicalClock> = new AvlSet(hlc.cmp);
-  protected entries: types.FeedOpInsert[] = [];
+  protected unsaved: types.FeedOp[] = [];
+  protected readonly deletes = new AvlSet<hlc.HlcDto>(hlc.cmpDto);
+  protected readonly inserts = new AvlMap<hlc.HlcDto, types.FeedOpInsert>(hlc.cmpDto);
   
   constructor(protected readonly deps: FeedDependencies) {}
 
@@ -45,42 +46,36 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   public clear(): void {
     this.head = null;
     this.tail = null;
-    this.unsavedOps = [];
+    this.unsaved = [];
     this.deletes.clear();
-    if (this.entries.length !== 0) {
-      this.entries = [];
-      this.onChange.emit(this.entries);
+    if (!this.inserts.isEmpty()) {
+      this.inserts.clear();
+      this.onChange.emit();
     }
   }
 
   // ------------------------------------------------------------------ FeedApi
 
-  public add(data: unknown): hlc.Hlc {
+  public add(data: unknown): hlc.HlcDto {
     const id = this.deps.hlcs.inc();
-    const op: types.FeedOpInsert = [0, hlc.toDto(id), data];
-    this.unsavedOps.push(op);
-    this.entries.push(op);
-    this.onChange.emit(this.entries);
-    return id;
+    const idDto = hlc.toDto(id);
+    const op: types.FeedOpInsert = [FeedOpType.Insert, idDto, data];
+    this.unsaved.push(op);
+    this.inserts.set(op[1], op);
+    this.onChange.emit();
+    return idDto;
   }
 
-  public del(operationId: hlc.Hlc): void {
-    const operationIdDto = hlc.toDto(operationId);
-    const op: types.FeedOpDelete = [FeedOpType.Delete, operationIdDto];
-    this.unsavedOps.push(op);
-    this.deletes.add(operationId);
-    const unsavedOpIndex = this.unsavedOps.findIndex(
-      ([type, id]) => type === FeedOpType.Insert && hlc.cmpDto(operationIdDto, id) === 0,
+  public del(opId: hlc.HlcDto): void {
+    const op: types.FeedOpDelete = [FeedOpType.Delete, opId];
+    this.unsaved.push(op);
+    this.deletes.add(opId);
+    const unsavedOpIndex = this.unsaved.findIndex(
+      ([type, id]) => type === FeedOpType.Insert && hlc.cmpDto(opId, id) === 0,
     );
-    if (unsavedOpIndex !== -1) this.unsavedOps.splice(unsavedOpIndex, 1);
-    const entries = this.entries;
-    const deleteIndex = entries.findIndex(
-      ([type, id]) => type === FeedOpType.Insert && hlc.cmpDto(operationIdDto, id) === 0,
-    );
-    if (deleteIndex !== -1) {
-      this.entries.splice(deleteIndex, 1);
-      this.onChange.emit(this.entries);
-    }
+    if (unsavedOpIndex !== -1) this.unsaved.splice(unsavedOpIndex, 1);
+    const deleted = this.inserts.del(opId);
+    if (deleted) this.onChange.emit();
   }
 
   @mutex
@@ -110,66 +105,59 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
 
   protected ingestFrameData(frame: FeedFrame): void {
     const [, , ops] = frame.data;
-    const newEntries: types.FeedOpInsert[] = [];
     for (const op of ops) {
       switch (op[0]) {
         case FeedOpType.Insert: {
-          if (this.deletes.has(hlc.fromDto(op[1]))) continue;
-          newEntries.push(op);
+          const id = op[1];
+          if (this.deletes.has(id)) continue;
+          this.inserts.set(id, op);
           break;
         }
         case FeedOpType.Delete: {
-          const deleteIdDto = op[1];
-          const deleteId = hlc.fromDto(deleteIdDto);
-          this.deletes.add(deleteId);
-          const newEntriesIndex = newEntries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(deleteIdDto, id) === 0);
-          if (newEntriesIndex !== -1) newEntries.splice(newEntriesIndex, 1);
-          else {
-            const insertIndex = this.entries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(deleteIdDto, id) === 0);
-            if (insertIndex !== -1) this.entries.splice(insertIndex, 1);
-          }
+          const id = op[1];
+          this.deletes.add(id);
+          this.inserts.del(id);
           break;
         }
       }
     }
-    this.entries = [...newEntries, ...this.entries];
-    this.onChange.emit(this.entries);
+    this.onChange.emit();
   }
 
   @mutex
   public async save(): Promise<Cid> {
-    const hasUnsavedChanges = !!this.unsavedOps.length;
+    const hasUnsavedChanges = !!this.unsaved.length;
     const head = this.head;
     if (!hasUnsavedChanges) {
       if (head) return head.cid;
       const dto: types.FeedFrameDto = [null, 0, []];
       const frame = await FeedFrame.create(dto, this.deps.cas);
       this.head = this.tail = frame;
-      this.unsavedOps = [];
+      this.unsaved = [];
       return frame.cid;
     }
     if (!head) {
-      const dto: types.FeedFrameDto = [null, 0, this.unsavedOps];
+      const dto: types.FeedFrameDto = [null, 0, this.unsaved];
       const frame = await FeedFrame.create(dto, this.deps.cas);
       this.head = this.tail = frame;
-      this.unsavedOps = [];
+      this.unsaved = [];
       return frame.cid;
     }
     const headOps = head.ops();
     const addToHead = headOps.length < this.opsPerFrameThreshold;
     if (addToHead) {
-      const dto: types.FeedFrameDto = [head.prevCid(), head.seq(), [...headOps, ...this.unsavedOps]];
+      const dto: types.FeedFrameDto = [head.prevCid(), head.seq(), [...headOps, ...this.unsaved]];
       const frame = await FeedFrame.create(dto, this.deps.cas);
       frame.prev = head.prev;
       this.head = frame;
-      this.unsavedOps = [];
+      this.unsaved = [];
       return frame.cid;
     }
-    const dto: types.FeedFrameDto = [head.cid.toBinaryV1(), head.seq() + 1, this.unsavedOps];
+    const dto: types.FeedFrameDto = [head.cid.toBinaryV1(), head.seq() + 1, this.unsaved];
     const frame = await FeedFrame.create(dto, this.deps.cas);
     frame.prev = head;
     this.head = frame;
-    this.unsavedOps = [];
+    this.unsaved = [];
     return frame.cid;
   }
 
@@ -180,5 +168,9 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
     return () => unsubscribe();
   };
 
-  public readonly getSnapshot = () => this.entries;
+  public readonly getSnapshot = (): types.FeedOpInsert[] => {
+    const ops: types.FeedOpInsert[] = [];
+    this.inserts.forEach((node) => ops.push(node.v));
+    return ops;
+  };
 }

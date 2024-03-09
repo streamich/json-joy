@@ -1,5 +1,5 @@
 import type {FeedOpType} from './constants';
-import type {Hlc, HlcDto} from '../../hlc';
+import type {HlcDto} from '../../hlc';
 import type {Cid} from '../../multiformats';
 
 /**
@@ -7,9 +7,9 @@ import type {Cid} from '../../multiformats';
  */
 export interface FeedApi {
   /** Append a new item to the end of the feed. */
-  add(data: unknown): Hlc;
+  add(data: unknown): HlcDto;
   /** Delete some item from the feed. */
-  del(operationId: Hlc): void;
+  del(operationId: HlcDto): void;
   /** Load the latest entries of the feed. */
   loadHead(cid: Cid): Promise<void>;
   /** Load more entries of the feed. */
