@@ -45,6 +45,16 @@ export class Cid {
     return this.v === cid.v && this.contentType === cid.contentType && this.hash.is(cid.hash);
   }
 
+  public toV0(): Cid {
+    if (this.v === 0) return this;
+    return new Cid(0, Multicodec.DagPb, this.hash);
+  }
+
+  public toV1(): Cid {
+    if (this.v === 1) return this;
+    return new Cid(1, this.contentType, this.hash);
+  }
+
   public toBinary(version: CidVersion = this.v): Uint8Array {
     if (version === 0) return this.toBinaryV0();
     return this.toBinaryV1();
@@ -57,18 +67,20 @@ export class Cid {
   public toBinaryV1(): Uint8Array {
     let size = 2;
     const contentType = this.contentType;
-    if (contentType > 0b1111111) size += 1;
-    if (contentType > 0b1111111_1111111) size += 1;
+    if (contentType >= 0b10000000) size += 1;
+    if (contentType >= 0b10000000_0000000) size += 1;
     const hash = this.hash;
-    size += hash.length();
+    const hashBuf = hash.buf;
+    size += hashBuf.length;
     const buf = new Uint8Array(size);
     buf[0] = Multicodec.CidV1;
     const offset = vuint.write(buf, 1, contentType);
-    hash.buf.set(buf, offset);
+    buf.set(hashBuf, offset);
     return buf;
   }
 
   public toText(format: multibase.BaseNameOrCode = 'base64url'): string {
+    if (this.v === 0) return this.toTextV0();
     const buf = multibase.encode(format, this.toBinaryV1());
     const str = String.fromCharCode(...buf);
     return str;

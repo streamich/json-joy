@@ -19,3 +19,42 @@ describe('CID v0', () => {
     expect(txt2).toEqual(txt);
   });
 });
+
+describe('CID v1', () => {
+  test('can convert CID v0 to v1', () => {
+    const txt = 'QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR';
+    const cid = Cid.fromText(txt);
+    const cid2 = cid.toV1();
+    expect(cid2.toText('base32')).toEqual('bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi');
+  });
+
+  test('can convert CID v1 to v2', () => {
+    const txt = 'bafybeihdwdcefgh4dqkjv67uzcmw7ojee6xedzdetojuzjevtenxquvyku';
+    const cid = Cid.fromText(txt);
+    const cid2 = cid.toV0();
+    expect(cid2.toText()).toEqual('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n');
+  });
+
+  test('can decode a sample CID', () => {
+    const txt = 'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi';
+    const cid = Cid.fromText(txt);
+    expect(cid.v).toBe(1);
+    expect(cid.contentType).toBe(Multicodec.DagPb);
+    expect(cid.hash.type()).toBe(Multicodec.Sha2_256);
+    expect(cid.hash.length()).toBe(32);
+    expect(cid.hash.value()).toEqual(new Uint8Array([
+      195, 196, 115,  62, 200, 175,
+      253,   6, 207, 158, 159, 245,  15, 252,
+      107, 205,  46, 200,  90,  97, 112,   0,
+      75, 183,   9, 102, 156,  49, 222, 148,
+      57,  26
+    ]));
+  });
+
+  test('can encode a sample CID back', () => {
+    const txt = 'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi';
+    const cid = Cid.fromText(txt);
+    const txt2 = cid.toText('base32');
+    expect(txt2).toEqual(txt);
+  });
+});

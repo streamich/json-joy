@@ -28,14 +28,19 @@ export const read = (buf: Uint8Array, offset: number): [value: number, offset: n
  */
 export const write = (buf: Uint8Array, offset: number, value: number): number => {
   if (value < 0b10000000) {
-    buf[offset++] = value;
-  } else if (value < 0b10000000_00000000) {
-    buf[offset++] = (value & 0b01111111) | 0b10000000;
-    buf[offset++] = value >> 7;
-  } else if (value < 0b10000000_00000000_00000000) {
-    buf[offset++] = (value & 0b01111111) | 0b10000000;
-    buf[offset++] = ((value >> 7) & 0b01111111) | 0b10000000;
-    buf[offset++] = value >> 14;
-  } else throw new Error('UNSUPPORTED_UVINT');
-  return offset;
+    buf[offset] = value;
+    return offset + 1;
+  }
+  if (value < 0b10000000_00000000) {
+    buf[offset] = (value & 0b01111111) | 0b10000000;
+    buf[offset + 1] = value >> 7;
+    return offset + 2;
+  }
+  if (value < 0b10000000_00000000_00000000) {
+    buf[offset] = (value & 0b01111111) | 0b10000000;
+    buf[offset + 1] = ((value >> 7) & 0b01111111) | 0b10000000;
+    buf[offset + 2] = value >> 14;
+    return offset + 3;
+  }
+  throw new Error('UNSUPPORTED_UVINT');
 };
