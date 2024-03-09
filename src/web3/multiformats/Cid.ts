@@ -41,6 +41,10 @@ export class Cid {
     public readonly hash: Multihash,
   ) {}
 
+  public is(cid: Cid): boolean {
+    return this.v === cid.v && this.contentType === cid.contentType && this.hash.is(cid.hash);
+  }
+
   public toBinary(version: CidVersion = this.v): Uint8Array {
     if (version === 0) return this.toBinaryV0();
     return this.toBinaryV1();
