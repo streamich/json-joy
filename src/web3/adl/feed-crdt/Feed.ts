@@ -1,125 +1,149 @@
-import {BehaviorSubject} from 'rxjs';
-import type {CidCas} from '../../store/cas/CidCas';
-import type {FeedApi, FeedFrameDto} from './types';
-import {type HlcFactory, toDto} from '../../hlc';
-
-const enum CONST {
-  ENTRIES_PER_FRAME_THRESHOLD = 25,
-}
+import {FeedFrame} from './FeedFrame';
+import {AvlSet} from '../../../util/trees/avl/AvlSet';
+import {Cid} from '../../multiformats';
+import {mutex} from 'thingies/es2020/mutex';
+import {FanOut} from 'thingies/es2020/fanout';
+import {FeedConstraints, FeedOpType} from './constants';
+import * as hlc from '../../hlc';
+import type {CidCasCbor} from '../../store/cas/CidCasCbor';
+import type * as types from './types';
 
 export interface FeedDependencies {
-  cas: CidCas;
-  hlc: HlcFactory;
+  cas: CidCasCbor;
+  hlc: hlc.HlcFactory;
 }
 
-export class Feed implements FeedApi {
-  public head: FeedBlock | null = null;
-  public tail: FeedBlock | null = null;
+export class Feed implements types.FeedApi {
+  public opsPerFrameThreshold = FeedConstraints.DefaultOpsPerFrameThreshold;
 
-  public dirtyEntries: FeedInsertOp[] = [];
-  public readonly dirtyDeletes: Set<string> = new Set();
-  public entries = new BehaviorSubject<FeedInsertOp[]>([]);
-  public readonly deletes: Set<string> = new Set();
+  protected head: FeedFrame | null = null;
+  protected tail: FeedFrame | null = null;
+  protected unsavedOps: types.FeedOp[] = [];
+  protected readonly deletes: AvlSet<hlc.HybridLogicalClock> = new AvlSet(hlc.cmp);
+
+  /** Live (not deleted) feed entries. */
+  public entries: types.FeedOpInsert[] = [];
+  public onEntries: FanOut<types.FeedOpInsert[]> = new FanOut();
 
   constructor(protected readonly deps: FeedDependencies) {}
 
-  public insert(value: string): void {
-    if (this.deletes.has(value)) return;
-    const id = toDto(this.deps.hlc.inc());
-    const insert: FeedInsertOp = [value, id];
-    this.dirtyEntries.push(insert);
-    const entries = this.entries.getValue();
-    entries.push(insert);
-    this.entries.next(entries);
+  public async loadAll(): Promise<void> {
+    while (this.hasMore()) await this.loadMore();
   }
 
-  public delete(value: string): void {
-    this.dirtyDeletes.add(value);
-    this.dirtyEntries = this.dirtyEntries.filter(entry => entry[0] !== value);
-    this.deletes.add(value);
-    const entries = this.entries.getValue();
-    this.entries.next(entries.filter(entry => entry[0] !== value));
-  }
-
-  public async loadBlock(cid: CID): Promise<FeedBlock> {
-    const data = await this.deps.cas.get(cid);
-    const dto = decoder.decode(data) as FeedFrameDto;
-    return new FeedBlock(cid, dto);
-  }
-
-  public async loadHead(cid: CID): Promise<void> {
+  public clear(): void {
     this.head = null;
     this.tail = null;
-    this.dirtyEntries = [];
-    this.dirtyDeletes.clear();
-    this.entries.next([]);
+    this.unsavedOps = [];
     this.deletes.clear();
-    this.head = this.tail = await this.loadBlock(cid);
-    const dto = this.head!.data;
-    const [entries, deletes] = dto;
-    for (const del of deletes) this.deletes.add(del);
-    const list: FeedInsertOp[] = [];
-    for (const entry of entries) if (!this.deletes.has(entry[0])) list.push(entry);
-    this.entries.next(list);
-  }
-
-  public async loadMore(): Promise<void> {
-    if (!this.tail) return;
-    const prevCid = this.tail.data[3];
-    if (!prevCid) return;
-    const cid = CID.decode(prevCid);
-    const block = await this.loadBlock(cid);
-    this.tail.prev = block;
-    this.tail = block;
-    const dto = block.data;
-    const [entries, deletes] = dto;
-    for (const del of deletes) this.deletes.add(del);
-    const list: FeedInsertOp[] = [];
-    for (const entry of entries) if (!this.deletes.has(entry[0])) list.push(entry);
-    this.entries.next([...list, ...this.entries.getValue()]);
-  }
-
-  public hasMoreBlocks(): boolean {
-    return !!this.tail && !!this.tail.data[3];
-  }
-
-  public async loadAll(): Promise<void> {
-    while (this.hasMoreBlocks()) await this.loadMore();
-  }
-
-  public async save(): Promise<[head: CID, affected: CID[]]> {
-    const hasUnsavedChanges = !!this.dirtyEntries.length || !!this.dirtyDeletes.size;
-    if (!hasUnsavedChanges && this.head) return [this.head.cid, []];
-    const doCreateNewBlock = !this.head || this.head.data[0].length >= CONST.ENTRIES_PER_FRAME_THRESHOLD;
-    if (doCreateNewBlock) {
-      const entries = this.dirtyEntries;
-      const deletes = [...this.dirtyDeletes.values()];
-      const seq = this.head ? this.head.data[2] + 1 : 0;
-      const prevCid = this.head ? this.head.cid.bytes : null;
-      const dto: FeedFrameDto = [entries, deletes, seq, prevCid];
-      const data = encoder.encode(dto);
-      const cid = await this.deps.cas.put(data);
-      const block = new FeedBlock(cid, dto);
-      block.prev = this.head;
-      this.head = block;
-      this.dirtyEntries = [];
-      this.dirtyDeletes.clear();
-      return [cid, [cid]];
+    if (this.entries.length !== 0) {
+      this.entries = [];
+      this.onEntries.emit(this.entries);
     }
-    const head = this.head!;
-    const lastDto = head.data;
-    const dto: FeedFrameDto = [
-      [...lastDto[0], ...this.dirtyEntries],
-      [...lastDto[1], ...this.dirtyDeletes.values()],
-      lastDto[2],
-      lastDto[3],
-    ];
-    const data = encoder.encode(dto);
-    const cid = await this.deps.cas.put(data);
-    head.cid = cid;
-    head.data = dto;
-    this.dirtyEntries = [];
-    this.dirtyDeletes.clear();
-    return [cid, [cid]];
+  }
+
+  // ------------------------------------------------------------------ FeedApi
+
+  public add(data: unknown): hlc.Hlc {
+    const id = this.deps.hlc.inc();
+    const op: types.FeedOpInsert = [0, hlc.toDto(id), data];
+    this.unsavedOps.push(op);
+    this.entries.push(op);
+    this.onEntries.emit(this.entries);
+    return id;
+  }
+
+  public del(operationId: hlc.Hlc): void {
+    const operationIdDto = hlc.toDto(operationId);
+    const op: types.FeedOpDelete = [FeedOpType.Delete, operationIdDto];
+    this.unsavedOps.push(op);
+    this.deletes.add(operationId);
+    const unsavedOpIndex = this.unsavedOps.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(operationIdDto, id) === 0);
+    if (unsavedOpIndex !== -1) this.unsavedOps.splice(unsavedOpIndex, 1);
+    const entries = this.entries;
+    const deleteIndex = entries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(operationIdDto, id) === 0);
+    if (deleteIndex !== -1) {
+      this.entries.splice(deleteIndex, 1);
+      this.onEntries.emit(this.entries);
+    }
+  }
+
+  @mutex
+  public async loadHead(cid: Cid): Promise<void> {
+    this.clear();
+    const frame = await FeedFrame.read(cid, this.deps.cas);
+    this.head = this.tail = frame;
+    this.ingestFrameData(frame);
+  }
+
+  @mutex
+  public async loadMore(): Promise<void> {
+    const tail = this.tail;
+    if (!tail) return;
+    const prevCidDto = tail.data[0];
+    if (!prevCidDto) return;
+    const cid = Cid.fromBinaryV1(prevCidDto);
+    const frame = await FeedFrame.read(cid, this.deps.cas);
+    tail.prev = frame;
+    this.tail = frame;
+    this.ingestFrameData(frame);
+  }
+
+  public hasMore(): boolean {
+    return !!this.tail?.data[0];
+  }
+
+  protected ingestFrameData(frame: FeedFrame): void {
+    const [,, ops] = frame.data;
+    const newEntries: types.FeedOpInsert[] = [];
+    for (const op of ops) {
+      switch (op[0]) {
+        case FeedOpType.Insert: {
+          if (this.deletes.has(hlc.fromDto(op[1]))) continue;
+          newEntries.push(op);
+          break;
+        }
+        case FeedOpType.Delete: {
+          const operationId = hlc.fromDto(op[1]);
+          this.deletes.add(operationId);
+          break;
+        }
+      }
+    }
+    this.entries = [...newEntries, ...this.entries];
+    this.onEntries.emit(this.entries);
+  }
+
+  @mutex
+  public async save(): Promise<Cid> {
+    const hasUnsavedChanges = !!this.unsavedOps.length;
+    const head = this.head;
+    if (!hasUnsavedChanges) {
+      if (head) return head.cid;
+      else throw new Error('SAVING_EMPTY_FEED');
+    }
+    if (!head) {
+      const dto: types.FeedFrameDto = [null, 0, this.unsavedOps];
+      const frame = await FeedFrame.create(dto, this.deps.cas);
+      this.head = this.tail = frame;
+      this.unsavedOps = [];
+      return frame.cid;
+    }
+    const headOps = head.ops();
+    const addToHead = headOps.length < this.opsPerFrameThreshold;
+    if (addToHead) {
+      const dto: types.FeedFrameDto = [head.prevCid(), head.seq(), [...headOps, ...this.unsavedOps]];
+      const frame = await FeedFrame.create(dto, this.deps.cas);
+      frame.prev = head.prev;
+      this.head = frame;
+      this.unsavedOps = [];
+      return frame.cid;
+    }
+    const dto: types.FeedFrameDto = [head.cid.toBinaryV1(), head.seq() + 1, this.unsavedOps];
+    const frame = await FeedFrame.create(dto, this.deps.cas);
+    frame.prev = head;
+    this.head = frame;
+    this.unsavedOps = [];
+    return frame.cid;
   }
 }

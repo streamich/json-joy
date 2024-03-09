@@ -1,3 +1,4 @@
+import type {FeedOpType} from './constants';
 import type {Hlc, HlcDto} from '../../hlc';
 import type {Cid} from '../../multiformats';
 
@@ -6,15 +7,17 @@ import type {Cid} from '../../multiformats';
  */
 export interface FeedApi {
   /** Append a new item to the end of the feed. */
-  push(data: unknown): Hlc;
+  add(data: unknown): Hlc;
   /** Delete some item from the feed. */
-  del(hlc: Hlc): void;
+  del(operationId: Hlc): void;
   /** Load the latest entries of the feed. */
   loadHead(cid: Cid): Promise<void>;
   /** Load more entries of the feed. */
   loadMore(): Promise<void>;
+  /** Whether feed has more frames to load. */
+  hasMore(): boolean;
   /** Persist any unsaved changes to the storage. */
-  save(): Promise<[head: Cid, affected: Cid[]]>;
+  save(): Promise<Cid>;
 }
 
 /**
@@ -29,6 +32,6 @@ export type FeedFrameDto = [
   ops: FeedOp[],
 ];
 
-export type FeedOpInsert = [type: 0, id: HlcDto, value: unknown];
-export type FeedOpDelete = [type: 1, id: HlcDto];
+export type FeedOpInsert = [type: FeedOpType.Insert, id: HlcDto, value: unknown];
+export type FeedOpDelete = [type: FeedOpType.Delete, id: HlcDto];
 export type FeedOp = FeedOpInsert | FeedOpDelete;
