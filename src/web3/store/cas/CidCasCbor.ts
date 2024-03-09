@@ -1,4 +1,4 @@
-import type {Cid} from "../../multiformats";
+import type {Cid} from '../../multiformats';
 
 export interface CidCasCbor {
   get(cid: Cid): Promise<unknown>;

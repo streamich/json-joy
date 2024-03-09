@@ -1,4 +1,4 @@
-import type {HybridLogicalClock} from "./types";
+import type {HybridLogicalClock} from './types';
 
 /**
  * @todo Rename this such that it includes "timestamp" in the name.

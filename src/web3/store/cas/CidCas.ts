@@ -1,4 +1,4 @@
-import type {Cid} from "../../multiformats";
+import type {Cid} from '../../multiformats';
 
 export interface CidCas {
   get(cid: Cid): Promise<Uint8Array>;

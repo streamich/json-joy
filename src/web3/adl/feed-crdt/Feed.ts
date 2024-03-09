@@ -58,10 +58,14 @@ export class Feed implements types.FeedApi {
     const op: types.FeedOpDelete = [FeedOpType.Delete, operationIdDto];
     this.unsavedOps.push(op);
     this.deletes.add(operationId);
-    const unsavedOpIndex = this.unsavedOps.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(operationIdDto, id) === 0);
+    const unsavedOpIndex = this.unsavedOps.findIndex(
+      ([type, id]) => type === FeedOpType.Insert && hlc.cmpDto(operationIdDto, id) === 0,
+    );
     if (unsavedOpIndex !== -1) this.unsavedOps.splice(unsavedOpIndex, 1);
     const entries = this.entries;
-    const deleteIndex = entries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(operationIdDto, id) === 0);
+    const deleteIndex = entries.findIndex(
+      ([type, id]) => type === FeedOpType.Insert && hlc.cmpDto(operationIdDto, id) === 0,
+    );
     if (deleteIndex !== -1) {
       this.entries.splice(deleteIndex, 1);
       this.onEntries.emit(this.entries);
@@ -94,7 +98,7 @@ export class Feed implements types.FeedApi {
   }
 
   protected ingestFrameData(frame: FeedFrame): void {
-    const [,, ops] = frame.data;
+    const [, , ops] = frame.data;
     const newEntries: types.FeedOpInsert[] = [];
     for (const op of ops) {
       switch (op[0]) {
