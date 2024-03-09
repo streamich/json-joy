@@ -7,6 +7,8 @@ export const create = (now: number, node: number): HybridLogicalClock => {
 
 export const toDto = (hlc: HybridLogicalClock): HlcDto => [hlc.ts, hlc.seq, hlc.node];
 
+export const fromDto = ([ts, seq, node]: HlcDto): HybridLogicalClock => new Hlc(ts, seq, node);
+
 export const inc = (local: HybridLogicalClock, now: number): HybridLogicalClock => {
   if (now > local.ts) return new Hlc(now, 0, local.node);
   return new Hlc(local.ts, local.seq + 1, local.node);
