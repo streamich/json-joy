@@ -16,6 +16,112 @@ export interface FeedDependencies {
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
+  public static async merge(cas: CidCasStruct, baseCid: Cid, forkCid: Cid, opsPerFrame: number = FeedConstraints.DefaultOpsPerFrameThreshold): Promise<FeedFrame | null> {
+    const [commonParent, baseFrames, forkFrames] = await Feed.findForkTriangle(cas, baseCid, forkCid);
+    const ops = Feed.zipOps(baseFrames, forkFrames);
+    let lastFrame: FeedFrame | null = commonParent;
+    while (ops.length) {
+      const frameOps = ops.splice(0, opsPerFrame);
+      const prev = lastFrame ? lastFrame.cid.toBinaryV1() : null;
+      const seq = lastFrame ? lastFrame.seq() + 1 : FeedConstraints.FirstFrameSeq;
+      const dto: types.FeedFrameDto = [prev, seq, frameOps];
+      const frame = await FeedFrame.create(dto, cas);
+      frame.prev = lastFrame;
+      lastFrame = frame;
+    }
+    return lastFrame;
+  }
+
+  protected static zipOps(baseFrames: FeedFrame[], forkFrames: FeedFrame[]): types.FeedOp[] {
+    const baseOps: types.FeedOp[] = [];
+    const forkOps: types.FeedOp[] = [];
+    for (const frame of baseFrames) baseOps.push(...frame.ops());
+    for (const frame of forkFrames) forkOps.push(...frame.ops());
+    const ops: types.FeedOp[] = [];
+    while (baseOps.length || forkOps.length) {
+      if (!baseOps.length) {
+        ops.push(...forkOps);
+        break;
+      }
+      if (!forkOps.length) {
+        ops.push(...baseOps);
+        break;
+      }
+      const baseOp = baseOps[0];
+      if (baseOp[0] === FeedOpType.Delete) {
+        ops.push(baseOp);
+        baseOps.shift();
+        continue;
+      }
+      const forkOp = forkOps[0];
+      if (forkOp[0] === FeedOpType.Delete) {
+        ops.push(forkOp);
+        forkOps.shift();
+        continue;
+      }
+      const baseId = baseOp[1];
+      const forkId = forkOp[1];
+      const cmp = hlc.cmpDto(baseId, forkId);
+      if (cmp === 0) {
+        ops.push(baseOp);
+        baseOps.shift();
+        forkOps.shift();
+        continue;
+      } else if (cmp < 0) {
+        ops.push(baseOp);
+        baseOps.shift();
+        continue;
+      } else {
+        ops.push(forkOp);
+        forkOps.shift();
+        continue;
+      }
+    }
+    return ops;
+  }
+
+  protected static async findForkTriangle(cas: CidCasStruct, leftCid: Cid, rightCid: Cid): Promise<[commonParent: FeedFrame | null, leftFrames: FeedFrame[], rightFrames: FeedFrame[]]> {
+    const leftHeadFrame = await FeedFrame.read(leftCid, cas);
+    const rightHeadFrame = await FeedFrame.read(rightCid, cas);
+    const leftFrames: FeedFrame[] = [leftHeadFrame];
+    const rightFrames: FeedFrame[] = [rightHeadFrame];
+    if (leftHeadFrame.seq() > rightHeadFrame.seq()) {
+      while (true) {
+        const prevCid = leftFrames[leftFrames.length - 1].prevCid();
+        if (!prevCid) throw new Error('INVALID_STATE');
+        const cid = Cid.fromBinaryV1(prevCid);
+        const frame = await FeedFrame.read(cid, cas);
+        leftFrames.push(frame);
+        if (frame.seq() <= rightHeadFrame.seq()) break;
+      }
+    }
+    if (leftHeadFrame.seq() < rightHeadFrame.seq()) {
+      while (true) {
+        const prevCid = rightFrames[rightFrames.length - 1].prevCid();
+        if (!prevCid) throw new Error('INVALID_STATE');
+        const cid = Cid.fromBinaryV1(prevCid);
+        const frame = await FeedFrame.read(cid, cas);
+        rightFrames.push(frame);
+        if (frame.seq() <= leftHeadFrame.seq()) break;
+      }
+    }
+    while (true) {
+      const leftFrame = leftFrames[leftFrames.length - 1];
+      const rightFrame = rightFrames[rightFrames.length - 1];
+      if (leftFrame.seq() !== rightFrame.seq()) throw new Error('INVALID_STATE');
+      if (leftFrame.cid.is(rightFrame.cid)) {
+        leftFrames.pop();
+        rightFrames.pop();
+        return [leftFrame, leftFrames, rightFrames];
+      }
+      const prevLeft = leftFrame.prevCid();
+      const prevRight = rightFrame.prevCid();
+      if (!prevLeft || !prevRight) throw new Error('INVALID_STATE');
+      leftFrames.push(await FeedFrame.read(Cid.fromBinaryV1(prevLeft), cas));
+      rightFrames.push(await FeedFrame.read(Cid.fromBinaryV1(prevRight), cas));
+    }
+  }
+
   /**
    * Number of operations after which a new frame is created, otherwise the
    * operations are appended to the current frame.
