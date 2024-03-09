@@ -1,8 +1,7 @@
-import {decode} from './multibase';
 import * as vuint from '../util/uvint';
+import * as multibase from './multibase';
 import {Multihash} from './Multihash';
 import {Multicodec} from './constants';
-import * as multibase from './multibase';
 
 export type CidVersion = 0 | 1;
 
@@ -13,7 +12,8 @@ export class Cid {
   }
 
   public static fromBinaryV0(buf: Uint8Array): Cid {
-    const hash = new Multihash(buf.slice(2));
+    if (buf[0] !== 0x12 || buf[1] !== 0x20) throw new Error('EXPECTED_CIDV0');
+    const hash = new Multihash(buf);
     return new Cid(0, Multicodec.DagPb, hash);
   }
 
@@ -27,10 +27,10 @@ export class Cid {
 
   public static fromText(text: string): Cid {
     if (text.charCodeAt(0) === 81 && text.charCodeAt(1) === 109) {
-      const buf = decode(text);
+      const buf = multibase.decode('z' + text);
       return Cid.fromBinaryV0(buf);
     }
-    const buf = decode(text);
+    const buf = multibase.decode(text);
     if (buf[0] === 0x12) throw new Error('UNSUPPORTED_CIDV0');
     return Cid.fromBinaryV1(buf);
   }
@@ -51,13 +51,7 @@ export class Cid {
   }
 
   public toBinaryV0(): Uint8Array {
-    const hashBuf = this.hash.buf;
-    const hashLen = hashBuf.length;
-    const buf = new Uint8Array(2 + hashLen);
-    buf[0] = 0x12;
-    buf[1] = 0x20;
-    buf.set(hashBuf, 2);
-    return buf;
+    return this.hash.buf;
   }
 
   public toBinaryV1(): Uint8Array {
@@ -74,9 +68,16 @@ export class Cid {
     return buf;
   }
 
-  public toText(format: multibase.BaseNameOrCode = 'base64url', version?: CidVersion): string {
-    const buf = multibase.encode(format, this.toBinary(version));
+  public toText(format: multibase.BaseNameOrCode = 'base64url'): string {
+    const buf = multibase.encode(format, this.toBinaryV1());
     const str = String.fromCharCode(...buf);
     return str;
+  }
+
+  public toTextV0(): string {
+    const blob = this.toBinaryV0();
+    const buf = multibase.encode('base58btc', blob);
+    const str = String.fromCharCode(...buf);
+    return str.slice(1);
   }
 }
