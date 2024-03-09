@@ -11,7 +11,7 @@ import type {SyncStore} from '../../../util/events/sync-store';
 
 export interface FeedDependencies {
   cas: CidCasStruct;
-  hlc: hlc.HlcFactory;
+  hlcs: hlc.HlcFactory;
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
@@ -46,7 +46,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   // ------------------------------------------------------------------ FeedApi
 
   public add(data: unknown): hlc.Hlc {
-    const id = this.deps.hlc.inc();
+    const id = this.deps.hlcs.inc();
     const op: types.FeedOpInsert = [0, hlc.toDto(id), data];
     this.unsavedOps.push(op);
     this.entries.push(op);
@@ -109,8 +109,15 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
           break;
         }
         case FeedOpType.Delete: {
-          const operationId = hlc.fromDto(op[1]);
-          this.deletes.add(operationId);
+          const deleteIdDto = op[1];
+          const deleteId = hlc.fromDto(deleteIdDto);
+          this.deletes.add(deleteId);
+          const newEntriesIndex = newEntries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(deleteIdDto, id) === 0);
+          if (newEntriesIndex !== -1) newEntries.splice(newEntriesIndex, 1);
+          else {
+            const insertIndex = this.entries.findIndex(([type, id]) => (type === FeedOpType.Insert) && hlc.cmpDto(deleteIdDto, id) === 0);
+            if (insertIndex !== -1) this.entries.splice(insertIndex, 1);
+          }
           break;
         }
       }
@@ -125,7 +132,11 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
     const head = this.head;
     if (!hasUnsavedChanges) {
       if (head) return head.cid;
-      else throw new Error('SAVING_EMPTY_FEED');
+      const dto: types.FeedFrameDto = [null, 0, []];
+      const frame = await FeedFrame.create(dto, this.deps.cas);
+      this.head = this.tail = frame;
+      this.unsavedOps = [];
+      return frame.cid;
     }
     if (!head) {
       const dto: types.FeedFrameDto = [null, 0, this.unsavedOps];
