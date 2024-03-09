@@ -15,17 +15,23 @@ export interface FeedDependencies {
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
+  /**
+   * Number of operations after which a new frame is created, otherwise the
+   * operations are appended to the current frame.
+   */
   public opsPerFrameThreshold: number = FeedConstraints.DefaultOpsPerFrameThreshold;
+
+  /**
+   * Emitted when the feed view changes (new entries are added or deleted).
+   */
+  public onChange: FanOut<types.FeedOpInsert[]> = new FanOut();
 
   protected head: FeedFrame | null = null;
   protected tail: FeedFrame | null = null;
   protected unsavedOps: types.FeedOp[] = [];
   protected readonly deletes: AvlSet<hlc.HybridLogicalClock> = new AvlSet(hlc.cmp);
-
-  /** Live (not deleted) feed entries. */
-  public entries: types.FeedOpInsert[] = [];
-  public onEntries: FanOut<types.FeedOpInsert[]> = new FanOut();
-
+  protected entries: types.FeedOpInsert[] = [];
+  
   constructor(protected readonly deps: FeedDependencies) {}
 
   public cid(): Cid | undefined {
@@ -43,7 +49,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
     this.deletes.clear();
     if (this.entries.length !== 0) {
       this.entries = [];
-      this.onEntries.emit(this.entries);
+      this.onChange.emit(this.entries);
     }
   }
 
@@ -54,7 +60,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
     const op: types.FeedOpInsert = [0, hlc.toDto(id), data];
     this.unsavedOps.push(op);
     this.entries.push(op);
-    this.onEntries.emit(this.entries);
+    this.onChange.emit(this.entries);
     return id;
   }
 
@@ -73,7 +79,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
     );
     if (deleteIndex !== -1) {
       this.entries.splice(deleteIndex, 1);
-      this.onEntries.emit(this.entries);
+      this.onChange.emit(this.entries);
     }
   }
 
@@ -127,7 +133,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
       }
     }
     this.entries = [...newEntries, ...this.entries];
-    this.onEntries.emit(this.entries);
+    this.onChange.emit(this.entries);
   }
 
   @mutex
@@ -170,7 +176,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void) => {
-    const unsubscribe = this.onEntries.listen(() => callback());
+    const unsubscribe = this.onChange.listen(() => callback());
     return () => unsubscribe();
   };
 
