@@ -1,15 +1,15 @@
 import type {Cid} from '../../multiformats';
-import type {CidCasCbor} from '../../store/cas/CidCasCbor';
+import type {CidCasStruct} from '../../store/cas/CidCasStruct';
 import type {FeedFrameDto, FeedOp} from './types';
 
 export class FeedFrame {
-  public static async read(cid: Cid, cas: CidCasCbor): Promise<FeedFrame> {
+  public static async read(cid: Cid, cas: CidCasStruct): Promise<FeedFrame> {
     const dto = (await cas.get(cid)) as FeedFrameDto;
     const frame = new FeedFrame(cid, dto);
     return frame;
   }
 
-  public static async create(data: FeedFrameDto, cas: CidCasCbor): Promise<FeedFrame> {
+  public static async create(data: FeedFrameDto, cas: CidCasStruct): Promise<FeedFrame> {
     const cid = await cas.put(data);
     const frame = new FeedFrame(cid, data);
     return frame;

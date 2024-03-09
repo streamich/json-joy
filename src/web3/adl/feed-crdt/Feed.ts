@@ -5,15 +5,16 @@ import {mutex} from 'thingies/es2020/mutex';
 import {FanOut} from 'thingies/es2020/fanout';
 import {FeedConstraints, FeedOpType} from './constants';
 import * as hlc from '../../hlc';
-import type {CidCasCbor} from '../../store/cas/CidCasCbor';
+import type {CidCasStruct} from '../../store/cas/CidCasStruct';
 import type * as types from './types';
+import type {SyncStore} from '../../../util/events/sync-store';
 
 export interface FeedDependencies {
-  cas: CidCasCbor;
+  cas: CidCasStruct;
   hlc: hlc.HlcFactory;
 }
 
-export class Feed implements types.FeedApi {
+export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]>  {
   public opsPerFrameThreshold = FeedConstraints.DefaultOpsPerFrameThreshold;
 
   protected head: FeedFrame | null = null;
@@ -150,4 +151,13 @@ export class Feed implements types.FeedApi {
     this.unsavedOps = [];
     return frame.cid;
   }
+
+  // ---------------------------------------------------------------- SyncStore
+
+  public readonly subscribe = (callback: () => void) => {
+    const unsubscribe = this.onEntries.listen(() => callback());
+    return () => unsubscribe();
+  };
+
+  public readonly getSnapshot = () => this.entries;
 }
