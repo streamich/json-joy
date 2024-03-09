@@ -1,29 +1,9 @@
+/**
+ * @todo The `multibase` is old, and does not have the best performance.
+ * Especially because it concatenates Uint8Arrays and returns back another
+ * Uint8Array. But the output of this text encoding is a string, it could
+ * encode to string directly. Same as what json-joy Base64 does.
+ */
 import {encode, decode, BaseNameOrCode} from 'multibase';
 
 export {encode, decode, BaseNameOrCode};
-
-// export type MultibaseFormat =
-//   | 'base2'
-//   | 'base8'
-//   | 'base10'
-//   | 'base16'
-//   | 'base16upper'
-//   | 'base32hex'
-//   | 'base32hexupper'
-//   | 'base32hexpad'
-//   | 'base32hexpadupper'
-//   | 'base32'
-//   | 'base32upper'
-//   | 'base32pad'
-//   | 'base32padupper'
-//   | 'base32z'
-//   | 'base36'
-//   | 'base36upper'
-//   | 'base58btc'
-//   | 'base58flickr'
-//   | 'base64'
-//   | 'base64pad'
-//   | 'base64url'
-//   | 'base64urlpad'
-//   | 'proquint'
-//   | 'base256emoji';
