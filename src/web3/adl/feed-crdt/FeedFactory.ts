@@ -1,17 +1,18 @@
-import {Feed, FeedDependencies} from './Feed';
+import {Feed, type FeedDependencies} from './Feed';
+import type {Cid} from '../../multiformats';
 
-export interface FeedCrdtFactoryDependencies extends FeedDependencies {}
+export interface FeedFactoryDependencies extends FeedDependencies {}
 
-export class FeedCrdtFactory {
-  constructor(protected readonly deps: FeedCrdtFactoryDependencies) {}
+export class FeedFactory {
+  constructor(protected readonly deps: FeedFactoryDependencies) {}
 
-  public make(): FeedCrdt {
-    const feed = new FeedCrdt(this.deps);
+  public make(): Feed {
+    const feed = new Feed(this.deps);
     return feed;
   }
 
-  public async load(cid: CID): Promise<FeedCrdt> {
-    const feed = new FeedCrdt(this.deps);
+  public async load(cid: Cid): Promise<Feed> {
+    const feed = new Feed(this.deps);
     await feed.loadHead(cid);
     return feed;
   }
