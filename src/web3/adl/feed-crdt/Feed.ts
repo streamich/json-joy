@@ -180,6 +180,25 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     }
   }
 
+  public async merge(forkCid: Cid): Promise<void> {
+    if (this.unsaved.length) await this.save();
+    if (!this.head) throw new Error('INVALID_STATE');
+    const frames = await Feed.merge(this.deps.cas, this.head.cid, forkCid, this.opsPerFrame);
+    for (const frame of frames) this.ingestFrameData(frame, true);
+    let head = frames[frames.length - 1];
+    let curr = head;
+    for (let i = frames.length - 2; i >= 0; i--) {
+      curr.prev = frames[i];
+      curr = frames[i];
+    }
+    let existingCurr: FeedFrame | null = this.head;
+    while (existingCurr && existingCurr.seq() > curr.seq())
+      existingCurr = existingCurr.prev;
+    if (existingCurr) curr.prev = existingCurr.prev; else this.tail = curr;
+    this.head = head;
+    this.onChange.emit();
+  }
+
   // ------------------------------------------------------------------ FeedApi
 
   public add(data: unknown): hlc.HlcDto {
@@ -219,7 +238,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     const prevCidDto = tail.data[0];
     if (!prevCidDto) return;
     const cid = Cid.fromBinaryV1(prevCidDto);
-    const frame = await FeedFrame.read(cid, this.deps.cas);
+    const frame = this.tail?.prev ?? await FeedFrame.read(cid, this.deps.cas);
     tail.prev = frame;
     this.tail = frame;
     this.ingestFrameData(frame);
@@ -229,7 +248,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     return !!this.tail?.data[0];
   }
 
-  protected ingestFrameData(frame: FeedFrame): void {
+  protected ingestFrameData(frame: FeedFrame, silent?: boolean): void {
     const [, , ops] = frame.data;
     for (const op of ops) {
       switch (op[0]) {
@@ -247,7 +266,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
         }
       }
     }
-    this.onChange.emit();
+    if (!silent) this.onChange.emit();
   }
 
   @mutex
