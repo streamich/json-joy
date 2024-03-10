@@ -11,6 +11,11 @@ export class UbjsonDecoder implements BinaryJsonDecoder {
     return this.readAny();
   }
 
+  public decode(uint8: Uint8Array): unknown {
+    this.reader.reset(uint8);
+    return this.readAny();
+  }
+
   public readAny(): PackValue {
     const reader = this.reader;
     const octet = reader.u8();

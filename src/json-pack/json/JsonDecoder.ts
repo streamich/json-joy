@@ -203,6 +203,11 @@ export class JsonDecoder implements BinaryJsonDecoder {
     return this.readAny();
   }
 
+  public decode(uint8: Uint8Array): unknown {
+    this.reader.reset(uint8);
+    return this.readAny();
+  }
+
   public readAny(): PackValue {
     this.skipWhitespace();
     const reader = this.reader;
