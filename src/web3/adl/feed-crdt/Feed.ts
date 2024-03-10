@@ -13,13 +13,20 @@ import type {SyncStore} from '../../../util/events/sync-store';
 export interface FeedDependencies {
   cas: CidCasStruct;
   hlcs: hlc.HlcFactory;
+
+  /**
+   * Number of operations after which a new frame is created, otherwise the
+   * operations are appended to the current frame. Defaults to 25.
+   */
+  opsPerFrame?: number;
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
-  public static async merge(cas: CidCasStruct, baseCid: Cid, forkCid: Cid, opsPerFrame: number = FeedConstraints.DefaultOpsPerFrameThreshold): Promise<FeedFrame | null> {
+  public static async merge(cas: CidCasStruct, baseCid: Cid, forkCid: Cid, opsPerFrame: number = FeedConstraints.DefaultOpsPerFrameThreshold): Promise<FeedFrame[]> {
     const [commonParent, baseFrames, forkFrames] = await Feed.findForkTriangle(cas, baseCid, forkCid);
     const ops = Feed.zipOps(baseFrames, forkFrames);
     let lastFrame: FeedFrame | null = commonParent;
+    const frames: FeedFrame[] = [];
     while (ops.length) {
       const frameOps = ops.splice(0, opsPerFrame);
       const prev = lastFrame ? lastFrame.cid.toBinaryV1() : null;
@@ -28,8 +35,9 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
       const frame = await FeedFrame.create(dto, cas);
       frame.prev = lastFrame;
       lastFrame = frame;
+      frames.push(frame);
     }
-    return lastFrame;
+    return frames;
   }
 
   protected static zipOps(baseFrames: FeedFrame[], forkFrames: FeedFrame[]): types.FeedOp[] {
@@ -109,6 +117,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
       const leftFrame = leftFrames[leftFrames.length - 1];
       const rightFrame = rightFrames[rightFrames.length - 1];
       if (leftFrame.seq() !== rightFrame.seq()) throw new Error('INVALID_STATE');
+      if (leftFrame.seq() === 0) return [null, leftFrames, rightFrames];
       if (leftFrame.cid.is(rightFrame.cid)) {
         leftFrames.pop();
         rightFrames.pop();
@@ -126,7 +135,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
    * Number of operations after which a new frame is created, otherwise the
    * operations are appended to the current frame.
    */
-  public opsPerFrameThreshold: number = FeedConstraints.DefaultOpsPerFrameThreshold;
+  public opsPerFrame: number;
 
   /**
    * Emitted when the feed view changes (new entries are added or deleted).
@@ -139,7 +148,9 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
   protected readonly deletes = new AvlSet<hlc.HlcDto>(hlc.cmpDto);
   protected readonly inserts = new AvlMap<hlc.HlcDto, types.FeedOpInsert>(hlc.cmpDto);
 
-  constructor(protected readonly deps: FeedDependencies) {}
+  constructor(protected readonly deps: FeedDependencies) {
+    this.opsPerFrame = deps.opsPerFrame ?? FeedConstraints.DefaultOpsPerFrameThreshold;
+  }
 
   public cid(): Cid | undefined {
     return this.head?.cid;
@@ -250,7 +261,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
       return frame.cid;
     }
     const headOps = head.ops();
-    const addToHead = headOps.length < this.opsPerFrameThreshold;
+    const addToHead = headOps.length < this.opsPerFrame;
     if (addToHead) {
       const dto: types.FeedFrameDto = [head.prevCid(), head.seq(), [...headOps, ...this.unsaved]];
       const frame = await FeedFrame.create(dto, this.deps.cas);

@@ -100,7 +100,7 @@ test('can delete an entry', async () => {
 test('delete items from another frame', async () => {
   const {feeds, cas} = setup();
   const feed1 = feeds.make();
-  feed1.opsPerFrameThreshold = 5;
+  feed1.opsPerFrame = 5;
   const id1 = feed1.add('a1');
   const id2 = feed1.add('a2');
   const id3 = feed1.add('a3');
@@ -144,7 +144,7 @@ test('combines entries in one block, if operation count is withing a threshold',
 test('creates a new block if last one has 25 or more entries', async () => {
   const {feeds, cas} = setup();
   const feed1 = feeds.make();
-  for (let i = 0; i < feed1.opsPerFrameThreshold; i++) {
+  for (let i = 0; i < feed1.opsPerFrame; i++) {
     feed1.add('entry-' + i);
   }
   await feed1.save();

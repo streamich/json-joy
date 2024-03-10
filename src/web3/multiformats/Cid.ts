@@ -113,4 +113,8 @@ export class Cid {
     const str = String.fromCharCode(...buf);
     return str.slice(1);
   }
+
+  public toString(): string {
+    return this.toText();
+  }
 }
