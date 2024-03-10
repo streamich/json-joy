@@ -2,10 +2,12 @@ import type {HlcDto} from '../../hlc';
 import type {Cid} from '../../multiformats';
 
 export interface HamtApi {
+  load(id: Cid): Promise<void>;
   put(key: Uint8Array | string, val: unknown): Promise<boolean>;
   get(key: Uint8Array | string): Promise<unknown | undefined>;
   has(key: Uint8Array | string): Promise<boolean>;
   del(key: Uint8Array | string): Promise<boolean>;
+  save(): Promise<[head: Cid, affected: Cid[]]>;
 }
 
 /** Data of the root node of the HAMT. */
