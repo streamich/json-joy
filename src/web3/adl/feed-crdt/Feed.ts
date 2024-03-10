@@ -192,9 +192,9 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
       curr = frames[i];
     }
     let existingCurr: FeedFrame | null = this.head;
-    while (existingCurr && existingCurr.seq() > curr.seq())
-      existingCurr = existingCurr.prev;
-    if (existingCurr) curr.prev = existingCurr.prev; else this.tail = curr;
+    while (existingCurr && existingCurr.seq() > curr.seq()) existingCurr = existingCurr.prev;
+    if (existingCurr) curr.prev = existingCurr.prev;
+    else this.tail = curr;
     this.head = head;
     this.onChange.emit();
   }
@@ -238,7 +238,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     const prevCidDto = tail.data[0];
     if (!prevCidDto) return;
     const cid = Cid.fromBinaryV1(prevCidDto);
-    const frame = this.tail?.prev ?? await FeedFrame.read(cid, this.deps.cas);
+    const frame = this.tail?.prev ?? (await FeedFrame.read(cid, this.deps.cas));
     tail.prev = frame;
     this.tail = frame;
     this.ingestFrameData(frame);
