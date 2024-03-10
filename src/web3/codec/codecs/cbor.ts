@@ -1,9 +1,8 @@
-import {CborEncoderDag} from '../../json-pack/cbor/CborEncoderDag';
-import {CborDecoderDag} from '../../json-pack/cbor/CborDecoderDag';
-import {Cid} from '../multiformats';
-import {JsonValueCodec} from '../../json-pack/codecs/types';
-import {EncodingFormat} from '../../json-pack/constants';
+import {CborEncoderDag} from '../../../json-pack/cbor/CborEncoderDag';
+import {CborDecoderDag} from '../../../json-pack/cbor/CborDecoderDag';
+import {Cid} from '../../multiformats';
 import {writer} from './writer';
+import type {IpldCodec} from '../types';
 
 const encoder = new (class extends CborEncoderDag {
   public writeUnknown(val: unknown): void {
@@ -20,9 +19,8 @@ const decoder = new class extends CborDecoderDag {
   }
 }
 
-export const cbor: JsonValueCodec = {
-  id: 'DAG-CBOR',
-  format: EncodingFormat.Cbor,
+export const cbor: IpldCodec = {
+  name: 'DAG-CBOR',
   encoder,
   decoder,
 };
