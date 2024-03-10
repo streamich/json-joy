@@ -65,10 +65,11 @@ export class AvlMap<K, V> implements Printable {
     return this.find(k)?.v;
   }
 
-  public del(k: K): void {
+  public del(k: K): boolean {
     const node = this.find(k);
-    if (!node) return;
+    if (!node) return false;
     this.root = remove(this.root, node as IAvlTreeNode<K, V>);
+    return true;
   }
 
   public clear(): void {

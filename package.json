@@ -82,7 +82,8 @@
   "dependencies": {
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
-    "thingies": "^1.14.1"
+    "multibase": "^4.0.6",
+    "thingies": "^1.17.0"
   },
   "devDependencies": {
     "@automerge/automerge": "2.1.7",
