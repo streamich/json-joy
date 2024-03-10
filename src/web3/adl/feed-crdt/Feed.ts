@@ -185,7 +185,7 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     if (!this.head) throw new Error('INVALID_STATE');
     const frames = await Feed.merge(this.deps.cas, this.head.cid, forkCid, this.opsPerFrame);
     for (const frame of frames) this.ingestFrameData(frame, true);
-    let head = frames[frames.length - 1];
+    const head = frames[frames.length - 1];
     let curr = head;
     for (let i = frames.length - 2; i >= 0; i--) {
       curr.prev = frames[i];
