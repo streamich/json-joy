@@ -258,7 +258,7 @@ describe('can merge', () => {
     await right.save();
     right.add('r7');
     await right.save();
-    const frames = await Feed.merge(cas, common.cid()!, right.cid()! , 3);
+    const frames = await Feed.merge(cas, common.cid()!, right.cid()!, 3);
     expect(frames.length).toBe(3);
     const merged = await feeds.load(frames[frames.length - 1].cid);
     await merged.loadAll();

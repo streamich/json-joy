@@ -22,7 +22,12 @@ export interface FeedDependencies {
 }
 
 export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
-  public static async merge(cas: CidCasStruct, baseCid: Cid, forkCid: Cid, opsPerFrame: number = FeedConstraints.DefaultOpsPerFrameThreshold): Promise<FeedFrame[]> {
+  public static async merge(
+    cas: CidCasStruct,
+    baseCid: Cid,
+    forkCid: Cid,
+    opsPerFrame: number = FeedConstraints.DefaultOpsPerFrameThreshold,
+  ): Promise<FeedFrame[]> {
     const [commonParent, baseFrames, forkFrames] = await Feed.findForkTriangle(cas, baseCid, forkCid);
     const ops = Feed.zipOps(baseFrames, forkFrames);
     let lastFrame: FeedFrame | null = commonParent;
@@ -88,7 +93,11 @@ export class Feed implements types.FeedApi, SyncStore<types.FeedOpInsert[]> {
     return ops;
   }
 
-  protected static async findForkTriangle(cas: CidCasStruct, leftCid: Cid, rightCid: Cid): Promise<[commonParent: FeedFrame | null, leftFrames: FeedFrame[], rightFrames: FeedFrame[]]> {
+  protected static async findForkTriangle(
+    cas: CidCasStruct,
+    leftCid: Cid,
+    rightCid: Cid,
+  ): Promise<[commonParent: FeedFrame | null, leftFrames: FeedFrame[], rightFrames: FeedFrame[]]> {
     const leftHeadFrame = await FeedFrame.read(leftCid, cas);
     const rightHeadFrame = await FeedFrame.read(rightCid, cas);
     const leftFrames: FeedFrame[] = [leftHeadFrame];
