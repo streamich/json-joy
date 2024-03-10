@@ -13,7 +13,7 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
 {
   public constructor(
     public reader: R = new Reader() as any,
-    protected readonly keyDecoder: CachedUtf8Decoder = sharedCachedUtf8Decoder,
+    public readonly keyDecoder: CachedUtf8Decoder = sharedCachedUtf8Decoder,
   ) {}
 
   public read(uint8: Uint8Array): PackValue {
@@ -21,7 +21,6 @@ export class CborDecoderBase<R extends IReader & IReaderResettable = IReader & I
     return this.val() as PackValue;
   }
 
-  /** @deprecated */
   public decode(uint8: Uint8Array): unknown {
     this.reader.reset(uint8);
     return this.val();
