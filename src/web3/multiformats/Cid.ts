@@ -90,6 +90,7 @@ export class Cid {
     const contentType = this.ipldType;
     if (contentType >= 0b10000000) size += 1;
     if (contentType >= 0b10000000_0000000) size += 1;
+    if (contentType >= 0b10000000_0000000_0000000) throw new Error('UNSUPPORTED_IPLD_TYPE');
     const hash = this.hash;
     const hashBuf = hash.buf;
     size += hashBuf.length;
