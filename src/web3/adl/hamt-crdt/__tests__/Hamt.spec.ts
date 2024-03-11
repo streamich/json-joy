@@ -223,7 +223,7 @@ describe('HamtCrdt', () => {
       const saves = 20;
       for (let j = 0; j < saves; j++) {
         for (let i = 0; i < keysPerSave; i++) {
-          const key = (j * keysPerSave + i);
+          const key = j * keysPerSave + i;
           await hamt.put('abc:' + key, b(key, key + 1, key + 2));
         }
         await hamt.save();
@@ -232,7 +232,7 @@ describe('HamtCrdt', () => {
       await hamt2.load(hamt.cid!);
       for (let j = 0; j < saves; j++) {
         for (let i = 0; i < keysPerSave; i++) {
-          const key = (j * keysPerSave + i);
+          const key = j * keysPerSave + i;
           const res = await hamt2.get('abc:' + key);
           expect(res).toStrictEqual(b(key, key + 1, key + 2));
         }
