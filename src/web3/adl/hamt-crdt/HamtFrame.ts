@@ -15,7 +15,10 @@ export class HamtFrame {
   /** Maybe instead of `_dirty`, just consider `id` === `null` to mean there are unsaved changes. */
   protected _dirty: boolean = false;
 
-  constructor(protected readonly cas: CidCasStruct, public cid: Cid | null) {}
+  constructor(
+    protected readonly cas: CidCasStruct,
+    public cid: Cid | null,
+  ) {}
 
   protected async ensureLoaded(): Promise<void> {
     if (this._loading) return this._loading.promise;
@@ -34,7 +37,7 @@ export class HamtFrame {
     const id = this.cid;
     if (!id) throw new Error('ID_NOT_SET');
     this._loading = new Defer<void>();
-    const data = await this.cas.get(id) as types.HamtFrameDto;
+    const data = (await this.cas.get(id)) as types.HamtFrameDto;
     this.loadDto(data, id);
     this._loading.resolve();
     this._loading = null;
@@ -207,7 +210,7 @@ export class HamtFrame {
   }
 
   public toDto(): types.HamtFrameDto {
-    const children = this._children.map((child) => child ? child.cid : null);
+    const children = this._children.map((child) => (child ? child.cid : null));
     const dto: types.HamtFrameDto = [this._entries, children];
     return dto;
   }

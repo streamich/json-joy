@@ -1,5 +1,5 @@
-import {MulticodecIpld} from "../multiformats";
-import type {IpldCodec} from "./types";
+import {MulticodecIpld} from '../multiformats';
+import type {IpldCodec} from './types';
 
 export class Codecs {
   protected readonly map = new Map<MulticodecIpld, IpldCodec>();

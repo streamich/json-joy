@@ -38,7 +38,7 @@ export class Hamt implements types.HamtApi {
     const future = new Defer<void>();
     this._loading = future.promise;
     try {
-      const [prev, seq, ops, data] = await this.deps.cas.get(cid) as types.HamtRootFrameDto;
+      const [prev, seq, ops, data] = (await this.deps.cas.get(cid)) as types.HamtRootFrameDto;
       this.prev = prev;
       this.seq = seq;
       this._root.loadDto(data, null);

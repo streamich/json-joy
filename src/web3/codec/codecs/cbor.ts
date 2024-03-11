@@ -11,13 +11,13 @@ const encoder = new (class extends CborEncoderDag {
   }
 })(writer);
 
-const decoder = new class extends CborDecoderDag {
+const decoder = new (class extends CborDecoderDag {
   public readTagRaw(tag: number): Cid | unknown {
     const value = this.val();
     if (tag === 42) return Cid.fromBinary(value as Uint8Array);
     throw new Error('UNKNOWN_TAG');
   }
-}
+})();
 
 export const cbor: IpldCodec = {
   name: 'DAG-CBOR',

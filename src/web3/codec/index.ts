@@ -1,7 +1,7 @@
-import {MulticodecIpld} from "../multiformats";
-import {Codecs} from "./Codecs";
-import {raw} from "./codecs/raw";
-import {cbor} from "./codecs/cbor";
+import {MulticodecIpld} from '../multiformats';
+import {Codecs} from './Codecs';
+import {raw} from './codecs/raw';
+import {cbor} from './codecs/cbor';
 
 export * from './types';
 export * from './Codecs';

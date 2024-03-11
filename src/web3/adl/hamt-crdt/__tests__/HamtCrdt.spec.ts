@@ -212,7 +212,7 @@ describe('HamtCrdt', () => {
       const [cid] = await hamt.save();
       expect(cas._map.size).toBe(size + 1);
       const blob = await cas.get(cid);
-      const found = toArr(blob).findIndex(octet => octet === data);
+      const found = toArr(blob).findIndex((octet) => octet === data);
       expect(found > -1).toBe(true);
     });
 

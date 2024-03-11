@@ -1,4 +1,4 @@
-import type {BinaryJsonDecoder, BinaryJsonEncoder} from "../../json-pack/types";
+import type {BinaryJsonDecoder, BinaryJsonEncoder} from '../../json-pack/types';
 
 export interface IpldCodec {
   name: string;
