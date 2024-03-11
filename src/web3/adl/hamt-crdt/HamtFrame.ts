@@ -15,13 +15,13 @@ export class HamtFrame {
   /** Maybe instead of `_dirty`, just consider `id` === `null` to mean there are unsaved changes. */
   protected _dirty: boolean = false;
 
-  constructor(protected readonly cas: CidCasStruct, public id: Cid | null) {}
+  constructor(protected readonly cas: CidCasStruct, public cid: Cid | null) {}
 
   protected async ensureLoaded(): Promise<void> {
     if (this._loading) return this._loading.promise;
     if (this._loaded) return;
-    if (!this.id) return;
-    if (this.id) await this.load();
+    if (!this.cid) return;
+    if (this.cid) await this.load();
   }
 
   /**
@@ -31,7 +31,7 @@ export class HamtFrame {
    */
   @mutex
   protected async load(): Promise<void> {
-    const id = this.id;
+    const id = this.cid;
     if (!id) throw new Error('ID_NOT_SET');
     this._loading = new Defer<void>();
     const data = await this.cas.get(id) as types.HamtFrameDto;
@@ -45,10 +45,10 @@ export class HamtFrame {
    * internally, so it MUST not be used after this method is called.
    *
    * @param data Serialized data of the node to load.
-   * @param id CID of the node to load, or null if CID is not known.
+   * @param cid CID of the node to load, or null if CID is not known.
    */
-  protected loadDto(data: types.HamtFrameDto, id: Cid | null) {
-    this.id = id;
+  public loadDto(data: types.HamtFrameDto, cid: Cid | null) {
+    this.cid = cid;
     const [entries, children] = data;
     this._entries = entries;
     this._children = [];
@@ -156,7 +156,7 @@ export class HamtFrame {
 
   protected _markDirty() {
     this._dirty = true;
-    this.id = null;
+    this.cid = null;
   }
 
   private async _putAtChild(i: number, op: types.HamtOp): Promise<boolean> {
@@ -174,11 +174,11 @@ export class HamtFrame {
   public async save(): Promise<[id: Cid, affected: Cid[]]> {
     if (!this._loaded) await this.ensureLoaded();
     // TODO: Maybe throw if there are no changes.
-    if (this.id && !this._dirty) return [this.id, []];
+    if (this.cid && !this._dirty) return [this.cid, []];
     const [children, affected] = await this.saveChildren();
     const data: types.HamtFrameDto = [this._entries, children];
     const cid = await this.cas.put(data);
-    this.id = cid;
+    this.cid = cid;
     affected.push(cid);
     return [cid, affected];
   }
@@ -207,7 +207,7 @@ export class HamtFrame {
   }
 
   public toDto(): types.HamtFrameDto {
-    const children = this._children.map((child) => child ? child.id : null);
+    const children = this._children.map((child) => child ? child.cid : null);
     const dto: types.HamtFrameDto = [this._entries, children];
     return dto;
   }
