@@ -1,4 +1,4 @@
-import {Cid} from '../../multiformats';
+import {Cid} from '../../../multiformats';
 import {cbor} from '../cbor';
 
 test('can encode and decode CID', async () => {

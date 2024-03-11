@@ -6,7 +6,7 @@ import type {IpldCodec} from '../types';
 
 const encoder = new (class extends CborEncoderDag {
   public writeUnknown(val: unknown): void {
-    if (val instanceof Cid) encoder.writeTag(42, val.toBinary());
+    if (val instanceof Cid) this.writeTag(42, val.toBinary());
     else throw new Error('UNKNOWN_VALUE');
   }
 })(writer);
