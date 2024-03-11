@@ -1,17 +1,17 @@
 import {Cid, MulticodecIpld} from '../../multiformats';
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
 import type {CidCas} from './CidCas';
+import type {IpldCodec} from '../../codec';
 
 export class CidCasStruct {
   constructor(
     protected readonly cas: CidCas,
     protected readonly ipldType: MulticodecIpld,
-    protected readonly codec: JsonValueCodec,
+    protected readonly codec: IpldCodec,
   ) {}
 
   public async get(cid: Cid): Promise<unknown> {
     const blob = await this.cas.get(cid);
-    return this.codec.decoder.read(blob);
+    return this.codec.decoder.decode(blob);
   }
 
   public has(cid: Cid): Promise<boolean> {
@@ -23,9 +23,7 @@ export class CidCasStruct {
   }
 
   public async put(value: unknown): Promise<Cid> {
-    const encoder = this.codec.encoder;
-    encoder.writeAny(value);
-    const blob = encoder.writer.flush();
+    const blob = this.codec.encoder.encode(value);
     return this.cas.put(blob, this.ipldType);
   }
 }
