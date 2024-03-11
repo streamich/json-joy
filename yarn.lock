@@ -5318,10 +5318,10 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
-thingies@^1.17.0:
-  version "1.17.0"
-  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.17.0.tgz#c172c423e5d3000a44666fc03723a29004ef0dcc"
-  integrity sha512-cpwd9eT9b7vcWDlJrIsfS+kBrcHEMST6DG08pOJoDkl/ToSwKYkW5x8RfBp5+k+iz1bT/dqEpoZOewg8I2lycw==
+thingies@^1.18.0:
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.18.0.tgz#827141872d96f3c3c2c0b432ab0dfdb581b4b4ac"
+  integrity sha512-WiB26BQP0MF47Bbvbq0P19KpyfrvdTK07L8xnltobpZ/aJPmu52CBGhYjLsnFgjyawmusJ0gVkTplnnoz2hBkQ==
 
 thunky@^1.0.2:
   version "1.1.0"

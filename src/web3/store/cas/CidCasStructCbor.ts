@@ -1,13 +1,13 @@
 import {MulticodecIpld} from '../../multiformats';
-import {CborJsonValueCodec} from '../../../json-pack/codecs/cbor';
-import {Writer} from '../../../util/buffers/Writer';
 import {CidCasStruct} from './CidCasStruct';
+import {cbor} from '../../codec/codecs/cbor';
 import type {CidCas} from './CidCas';
+import type {IpldCodec} from '../../codec';
 
 export class CidCasStructCbor extends CidCasStruct {
   constructor(
     protected readonly cas: CidCas,
-    protected readonly codec: CborJsonValueCodec = new CborJsonValueCodec(new Writer(4096)),
+    protected readonly codec: IpldCodec = cbor,
   ) {
     super(cas, MulticodecIpld.Cbor, codec);
   }

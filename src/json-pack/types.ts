@@ -15,6 +15,7 @@ type PackArray = PackValue[] | readonly PackValue[];
 type PackObject = {[key: string]: PackValue} | Readonly<{[key: string]: PackValue}>;
 
 export interface BinaryJsonEncoder {
+  encode(value: unknown): Uint8Array;
   writer: IWriter & IWriterGrowable;
   writeAny(value: unknown): void;
   writeNull(): void;
@@ -52,6 +53,7 @@ export interface TlvBinaryJsonEncoder {
 }
 
 export interface BinaryJsonDecoder {
+  decode(uint8: Uint8Array): unknown;
   reader: IReader & IReaderResettable;
   read(uint8: Uint8Array): PackValue;
 }
