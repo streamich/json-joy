@@ -93,7 +93,8 @@ export class Hamt implements types.HamtApi {
     const [, affected] = await this._root.saveChildren();
     const prev = this.cid;
     const seq = this.seq + 1;
-    const dto: types.HamtRootFrameDto = [prev, seq, this.ops, this._root.toDto()];
+    const frameDto = this._root.toDto();
+    const dto: types.HamtRootFrameDto = [prev, seq, this.ops, frameDto];
     const cid = await this.deps.cas.put(dto);
     this.cid = cid;
     this.prev = prev;

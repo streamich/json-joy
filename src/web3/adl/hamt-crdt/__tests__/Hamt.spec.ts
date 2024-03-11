@@ -1,29 +1,21 @@
-/** @jest-environment node */
-import {MemoryLevel} from 'memory-level';
-import {b} from '../../../../util/buffer/b';
+import {b} from '../../../../util/buffers/b';
 import {HlcFactory} from '../../../hlc';
-import {LevelCAS} from '../../LevelCAS';
-import {MemoryCAS} from '../../MemoryCAS';
-import {HamtCrdt} from '../HamtCrdt';
+import {CidCasMemory} from '../../../store/cas/CidCasMemory';
+import {CidCasStructCbor} from '../../../store/cas/CidCasStructCbor';
+import {HamtFactory} from '../HamtFactory';
+import {HamtRootFrameDto} from '../types';
 
 const setup = () => {
-  const hlc = new HlcFactory({
-    getTs: () => Math.floor(Date.now() / 1000),
-    processId: 123,
-  });
-  const db = new MemoryLevel<Uint8Array, Uint8Array>({
-    keyEncoding: 'view',
-    valueEncoding: 'view',
-  });
-  const cas = new LevelCAS({db});
-  const hamt = new HamtCrdt({
-    hlc,
-    cas,
-  });
+  const hlcs = new HlcFactory({});
+  const cas0 = new CidCasMemory();
+  const cas = new CidCasStructCbor(cas0);
+  const hamts = new HamtFactory({hlcs, cas});
+  const hamt = hamts.make();
   return {
-    hlc,
-    db,
+    hlcs,
+    cas0,
     cas,
+    hamts,
     hamt,
   };
 };
@@ -33,13 +25,6 @@ const toArr = (buf: Uint8Array): number[] => {
   for (let i = 0; i < buf.length; i++) arr.push(buf[i]);
   return arr;
 };
-
-test('can store file in IPFS', async () => {
-  const {cas} = setup();
-  const cid = await cas.put(b(1, 2, 3));
-  const data = await cas.get(cid);
-  expect(data).toStrictEqual(b(1, 2, 3));
-});
 
 describe('HamtCrdt', () => {
   test('new database has no changes', async () => {
@@ -185,45 +170,31 @@ describe('HamtCrdt', () => {
 
   describe('.save()', () => {
     test('can persist empty HAMT', async () => {
-      const {hamt, hlc, cas} = setup();
+      const {hamt, hamts} = setup();
       const [cid] = await hamt.save();
       expect(cid).toBeDefined();
-      const hamt2 = new HamtCrdt({
-        hlc,
-        cas,
-      });
+      const hamt2 = hamts.make();
       await hamt2.load(cid);
     });
 
     test('can save a single key', async () => {
-      const hlc = new HlcFactory({
-        getTs: () => Math.floor(Date.now() / 1000),
-        processId: 123,
-      });
-      const cas = new MemoryCAS();
-      const hamt = new HamtCrdt({
-        hlc,
-        cas,
-      });
+      const {hamt, cas0} = setup();
       const data = 111;
       await hamt.put('a', b(data));
-      const size = cas._map.size;
+      const size = await (cas0 as CidCasMemory).size();
       expect(size).toBe(0);
       const [cid] = await hamt.save();
-      expect(cas._map.size).toBe(size + 1);
-      const blob = await cas.get(cid);
+      expect(await (cas0 as CidCasMemory).size()).toBe(size + 1);
+      const blob = await cas0.get(cid);
       const found = toArr(blob).findIndex((octet) => octet === data);
       expect(found > -1).toBe(true);
     });
 
     test('can load saved data', async () => {
-      const {hamt, cas, hlc} = setup();
+      const {hamt, hamts} = setup();
       await hamt.put('a', b(123));
       const [cid] = await hamt.save();
-      const hamt2 = new HamtCrdt({
-        hlc,
-        cas,
-      });
+      const hamt2 = hamts.make();
       const res1 = await hamt2.get('a');
       expect(res1).toBe(undefined);
       await hamt2.load(cid);
@@ -232,20 +203,39 @@ describe('HamtCrdt', () => {
     });
 
     test('can save and load more than 16 keys of data', async () => {
-      const {hamt, cas, hlc} = setup();
+      const {hamt, hamts} = setup();
       const keys = 1111;
       for (let i = 0; i < keys; i++) {
         await hamt.put('a:' + i, b(i, i + 1, i + 2));
       }
       const [cid, all] = await hamt.save();
-      const hamt2 = new HamtCrdt({
-        hlc,
-        cas,
-      });
+      const hamt2 = hamts.make();
       await hamt2.load(cid);
       for (let i = 0; i < keys; i++) {
         const res = await hamt2.get('a:' + i);
         expect(res).toStrictEqual(b(i, i + 1, i + 2));
+      }
+    });
+
+    test('can save and load more than 16 keys .save()"ed at periodic intervals', async () => {
+      const {hamt, hamts} = setup();
+      const keysPerSave = 10;
+      const saves = 20;
+      for (let j = 0; j < saves; j++) {
+        for (let i = 0; i < keysPerSave; i++) {
+          const key = (j * keysPerSave + i);
+          await hamt.put('abc:' + key, b(key, key + 1, key + 2));
+        }
+        await hamt.save();
+      }
+      const hamt2 = hamts.make();
+      await hamt2.load(hamt.cid!);
+      for (let j = 0; j < saves; j++) {
+        for (let i = 0; i < keysPerSave; i++) {
+          const key = (j * keysPerSave + i);
+          const res = await hamt2.get('abc:' + key);
+          expect(res).toStrictEqual(b(key, key + 1, key + 2));
+        }
       }
     });
   });
