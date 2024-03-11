@@ -25,7 +25,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn test:ci --ci
-  rest:
+  lint-and-co:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -46,6 +46,7 @@ jobs:
       - run: yarn test:cli:pack
       - run: yarn demo:json-patch
       - run: yarn demo:json-pointer
+      - run: yarn typedoc
   e2e-rx-rpc:
     runs-on: ubuntu-latest
     strategy:
