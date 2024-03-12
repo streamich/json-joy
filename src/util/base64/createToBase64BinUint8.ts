@@ -13,7 +13,7 @@ export const createToBase64BinUint8 = (chars: string = alphabet, pad: string = '
     }
   }
 
-  const E: number = pad.length === 1 ? pad.charCodeAt(0) : 0;
+  const PAD: number = pad.length === 1 ? pad.charCodeAt(0) : 0;
 
   return (uint8: Uint8Array, start: number, length: number, dest: Uint8Array, offset: number): number => {
     const extraLength = length % 3;
@@ -36,9 +36,9 @@ export const createToBase64BinUint8 = (chars: string = alphabet, pad: string = '
       const u16 = table2[o1 << 4];
       dest[offset++] = u16 >> 8;
       dest[offset++] = u16;
-      if (E) {
-        dest[offset++] = E;
-        dest[offset++] = E;
+      if (PAD) {
+        dest[offset++] = PAD;
+        dest[offset++] = PAD;
       }
     } else if (extraLength) {
       const o1 = uint8[baseLength];
@@ -49,7 +49,7 @@ export const createToBase64BinUint8 = (chars: string = alphabet, pad: string = '
       dest[offset++] = u16 >> 8;
       dest[offset++] = u16;
       dest[offset++] = table[v2];
-      if (E) dest[offset++] = E;
+      if (PAD) dest[offset++] = PAD;
     }
     return offset;
   };
