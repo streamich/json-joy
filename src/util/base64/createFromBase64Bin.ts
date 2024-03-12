@@ -1,6 +1,6 @@
 import {alphabet} from './constants';
 
-export const createFromBase64Bin = (chars: string = alphabet, paddingOctet: number = 0x3d) => {
+export const createFromBase64Bin = (chars: string = alphabet, pad: string = '=') => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
   let max = 0;
   for (let i = 0; i < chars.length; i++) max = Math.max(max, chars.charCodeAt(i));
@@ -8,22 +8,26 @@ export const createFromBase64Bin = (chars: string = alphabet, paddingOctet: numb
   for (let i = 0; i <= max; i += 1) table[i] = -1;
   for (let i = 0; i < chars.length; i++) table[chars.charCodeAt(i)] = i;
 
+  const doExpectPadding = pad.length === 1;
+  const PAD = doExpectPadding ? pad.charCodeAt(0) : 0;
+
   return (view: DataView, offset: number, length: number): Uint8Array => {
     if (!length) return new Uint8Array(0);
-    if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
-    const end = offset + length;
-    const last = end - 1;
-    const lastOctet = view.getUint8(last);
-    const mainEnd = offset + (lastOctet !== paddingOctet ? length : length - 4);
-    let bufferLength = (length >> 2) * 3;
     let padding = 0;
-    if (last > 0 && view.getUint8(last - 1) === paddingOctet) {
-      padding = 2;
-      bufferLength -= 2;
-    } else if (lastOctet === paddingOctet) {
-      padding = 1;
-      bufferLength -= 1;
+    if (length % 4 !== 0) {
+      padding = 4 - (length % 4);
+      length += padding;
+    } else {
+      const end = offset + length;
+      const last = end - 1;
+      if (view.getUint8(last) === PAD) {
+        padding = 1;
+        if (length > 1 && view.getUint8(last - 1) === PAD) padding = 2;
+      }
     }
+    if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
+    const mainEnd = offset + length - (padding ? 4 : 0);
+    const bufferLength = (length >> 2) * 3 - padding;
     const buf = new Uint8Array(bufferLength);
     let j = 0;
     let i = offset;
@@ -43,15 +47,8 @@ export const createFromBase64Bin = (chars: string = alphabet, paddingOctet: numb
       buf[j + 2] = (sextet2 << 6) | sextet3;
       j += 3;
     }
-    if (padding === 2) {
-      const word = view.getUint16(mainEnd);
-      const octet0 = word >> 8;
-      const octet1 = word & 0xff;
-      const sextet0 = table[octet0];
-      const sextet1 = table[octet1];
-      if (sextet0 < 0 || sextet1 < 0) throw new Error('INVALID_BASE64_SEQ');
-      buf[j] = (sextet0 << 2) | (sextet1 >> 4);
-    } else if (padding === 1) {
+    if (!padding) return buf;
+    if (padding === 1) {
       const word = view.getUint16(mainEnd);
       const octet0 = word >> 8;
       const octet1 = word & 0xff;
@@ -62,7 +59,15 @@ export const createFromBase64Bin = (chars: string = alphabet, paddingOctet: numb
       if (sextet0 < 0 || sextet1 < 0 || sextet2 < 0) throw new Error('INVALID_BASE64_SEQ');
       buf[j] = (sextet0 << 2) | (sextet1 >> 4);
       buf[j + 1] = (sextet1 << 4) | (sextet2 >> 2);
+      return buf;
     }
+    const word = view.getUint16(mainEnd);
+    const octet0 = word >> 8;
+    const octet1 = word & 0xff;
+    const sextet0 = table[octet0];
+    const sextet1 = table[octet1];
+    if (sextet0 < 0 || sextet1 < 0) throw new Error('INVALID_BASE64_SEQ');
+    buf[j] = (sextet0 << 2) | (sextet1 >> 4);
     return buf;
   };
 };

@@ -55,5 +55,5 @@ export interface TlvBinaryJsonEncoder {
 export interface BinaryJsonDecoder {
   decode(uint8: Uint8Array): unknown;
   reader: IReader & IReaderResettable;
-  read(uint8: Uint8Array): PackValue;
+  read(uint8: Uint8Array): unknown;
 }

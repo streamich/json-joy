@@ -1,6 +1,7 @@
 import {decodeUtf8} from '../../util/buffers/utf8/decodeUtf8';
 import {Reader} from '../../util/buffers/Reader';
 import {fromBase64Bin} from '../../util/base64/fromBase64Bin';
+import {findEndingQuote} from './util';
 import type {BinaryJsonDecoder, PackValue} from '../types';
 
 const REGEX_REPLACE_ESCAPED_CHARS = /\\(b|f|n|r|t|"|\/|\\)/g;
@@ -104,20 +105,6 @@ const isUndefined = (u8: Uint8Array, x: number) =>
   u8[x++] === 0x3d && // =
   u8[x++] === 0x22; // "
 
-const findEndingQuote = (uint8: Uint8Array, x: number): number => {
-  const len = uint8.length;
-  let char = uint8[x];
-  let prev = 0;
-  while (x < len) {
-    if (char === 34 && prev !== 92) break;
-    if (char === 92 && prev === 92) prev = 0;
-    else prev = char;
-    char = uint8[++x];
-  }
-  if (x === len) throw new Error('Invalid JSON');
-  return x;
-};
-
 const fromCharCode = String.fromCharCode;
 
 const readShortUtf8StrAndUnescape = (reader: Reader): string => {
@@ -198,7 +185,7 @@ const readShortUtf8StrAndUnescape = (reader: Reader): string => {
 export class JsonDecoder implements BinaryJsonDecoder {
   public reader = new Reader();
 
-  public read(uint8: Uint8Array): PackValue {
+  public read(uint8: Uint8Array): unknown {
     this.reader.reset(uint8);
     return this.readAny();
   }
@@ -208,7 +195,7 @@ export class JsonDecoder implements BinaryJsonDecoder {
     return this.readAny();
   }
 
-  public readAny(): PackValue {
+  public readAny(): unknown {
     this.skipWhitespace();
     const reader = this.reader;
     const x = reader.x;
@@ -653,10 +640,10 @@ export class JsonDecoder implements BinaryJsonDecoder {
     return bin;
   }
 
-  public readArr(): PackValue[] {
+  public readArr(): unknown[] {
     const reader = this.reader;
     if (reader.u8() !== 0x5b) throw new Error('Invalid JSON');
-    const arr: PackValue[] = [];
+    const arr: unknown[] = [];
     const uint8 = reader.uint8;
     while (true) {
       this.skipWhitespace();
@@ -670,10 +657,10 @@ export class JsonDecoder implements BinaryJsonDecoder {
     }
   }
 
-  public readObj(): Record<string, PackValue> {
+  public readObj(): PackValue | Record<string, unknown> | unknown {
     const reader = this.reader;
     if (reader.u8() !== 0x7b) throw new Error('Invalid JSON');
-    const obj: Record<string, PackValue> = {};
+    const obj: Record<string, unknown> = {};
     const uint8 = reader.uint8;
     while (true) {
       this.skipWhitespace();

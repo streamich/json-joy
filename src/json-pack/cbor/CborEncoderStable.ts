@@ -1,12 +1,7 @@
 import {CborEncoder} from './CborEncoder';
 import {sort} from '../../util/sort/insertion2';
 import {MAJOR_OVERLAY} from './constants';
-
-const objectKeyComparator = (a: string, b: string): number => {
-  const len1 = a.length;
-  const len2 = b.length;
-  return len1 === len2 ? (a > b ? 1 : -1) : len1 - len2;
-};
+import {objKeyCmp} from '../util/objKeyCmp';
 
 const strHeaderLength = (strSize: number): 1 | 2 | 3 | 5 => {
   if (strSize <= 23) return 1;
@@ -18,7 +13,7 @@ const strHeaderLength = (strSize: number): 1 | 2 | 3 | 5 => {
 export class CborEncoderStable extends CborEncoder {
   public writeObj(obj: Record<string, unknown>): void {
     const keys = Object.keys(obj);
-    sort(keys, objectKeyComparator);
+    sort(keys, objKeyCmp);
     const length = keys.length;
     this.writeObjHdr(length);
     for (let i = 0; i < length; i++) {
