@@ -1,21 +1,25 @@
 import {Writer} from '../../../util/buffers/Writer';
 import {JsonValue} from '../../types';
 import {JsonEncoder} from '../JsonEncoder';
+import {JsonEncoderStable} from '../JsonEncoderStable';
 import {JsonDecoder} from '../JsonDecoder';
 import {documents} from '../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../__tests__/binary-documents';
 
 const writer = new Writer(8);
 const encoder = new JsonEncoder(writer);
+const encoderStable = new JsonEncoderStable(writer);
 const decoder = new JsonDecoder();
 
 const assertEncoder = (value: JsonValue) => {
   const encoded = encoder.encode(value);
+  const encoded2 = encoderStable.encode(value);
   // const json = Buffer.from(encoded).toString('utf-8');
   // console.log('json', json);
-  decoder.reader.reset(encoded);
-  const decoded = decoder.readAny();
+  const decoded = decoder.decode(encoded);
+  const decoded2 = decoder.decode(encoded2);
   expect(decoded).toEqual(value);
+  expect(decoded2).toEqual(value);
 };
 
 describe('Sample JSON documents', () => {
