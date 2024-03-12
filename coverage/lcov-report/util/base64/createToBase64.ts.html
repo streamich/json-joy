@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.05% </span>
+                <span class="strong">97.29% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/34</span>
+                <span class='fraction'>36/37</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/7</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>31/31</span>
+                <span class='fraction'>33/33</span>
             </div>
         
             
@@ -106,7 +106,10 @@
 <a name='L41'></a><a href='#L41'>41</a>
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">100x</span>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">100x</span>
+<span class="cline-any cline-yes">100x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">100x</span>
 <span class="cline-any cline-yes">101x</span>
@@ -118,40 +121,42 @@
 <span class="cline-any cline-yes">6464x</span>
 <span class="cline-any cline-yes">413696x</span>
 <span class="cline-any cline-yes">413696x</span>
-<span class="cline-any cline-yes">413696x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">101x</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-yes">55090x</span>
-<span class="cline-any cline-yes">55090x</span>
-<span class="cline-any cline-yes">55090x</span>
-<span class="cline-any cline-yes">55090x</span>
-<span class="cline-any cline-yes">55090x</span>
-<span class="cline-any cline-yes">55090x</span>
+<span class="cline-any cline-yes">101x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-yes">12642x</span>
-<span class="cline-any cline-yes">6889x</span>
-<span class="cline-any cline-yes">6889x</span>
+<span class="cline-any cline-yes">101x</span>
+<span class="cline-any cline-yes">19077x</span>
+<span class="cline-any cline-yes">19077x</span>
+<span class="cline-any cline-yes">19077x</span>
+<span class="cline-any cline-yes">19077x</span>
+<span class="cline-any cline-yes">58695x</span>
+<span class="cline-any cline-yes">58695x</span>
+<span class="cline-any cline-yes">58695x</span>
+<span class="cline-any cline-yes">58695x</span>
+<span class="cline-any cline-yes">58695x</span>
+<span class="cline-any cline-yes">58695x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5753x</span>
-<span class="cline-any cline-yes">5753x</span>
-<span class="cline-any cline-yes">5753x</span>
-<span class="cline-any cline-yes">5753x</span>
-<span class="cline-any cline-yes">5753x</span>
+<span class="cline-any cline-yes">19077x</span>
+<span class="cline-any cline-yes">13592x</span>
+<span class="cline-any cline-yes">7170x</span>
+<span class="cline-any cline-yes">7170x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6422x</span>
+<span class="cline-any cline-yes">6422x</span>
+<span class="cline-any cline-yes">6422x</span>
+<span class="cline-any cline-yes">6422x</span>
+<span class="cline-any cline-yes">6422x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13592x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">18007x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {alphabet} from './constants';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {flatstr} from '../strings/flatstr';
+import {alphabet} from './constants';
 &nbsp;
-export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: string = '==') =&gt; {
+export const createToBase64 = (chars: string = alphabet, pad: string = '=') =&gt; {
   <span class="missing-if-branch" title="if path not taken" >I</span>if (chars.length !== 64) <span class="cstat-no" title="statement not covered" >throw new Error('chars must be 64 characters long');</span>
 &nbsp;
   const table = chars.split('');
@@ -159,11 +164,13 @@ export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: st
 &nbsp;
   for (const c1 of table) {
     for (const c2 of table) {
-      const two = c1 + c2;
-      Number(two);
+      const two = flatstr(c1 + c2);
       table2.push(two);
     }
   }
+&nbsp;
+  const E: string = pad;
+  const EE: string = flatstr(pad + pad);
 &nbsp;
   return (uint8: Uint8Array, length: number): string =&gt; {
     let out = '';
@@ -177,17 +184,16 @@ export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: st
       const v2 = ((o2 &amp; 0b1111) &lt;&lt; 8) | o3;
       out += table2[v1] + table2[v2];
     }
-    if (extraLength) {
-      if (extraLength === 1) {
-        const o1 = uint8[baseLength];
-        out += table2[o1 &lt;&lt; 4] + EE;
-      } else {
-        const o1 = uint8[baseLength];
-        const o2 = uint8[baseLength + 1];
-        const v1 = (o1 &lt;&lt; 4) | (o2 &gt;&gt; 4);
-        const v2 = (o2 &amp; 0b1111) &lt;&lt; 2;
-        out += table2[v1] + table[v2] + E;
-      }
+    if (!extraLength) return out;
+    if (extraLength === 1) {
+      const o1 = uint8[baseLength];
+      out += table2[o1 &lt;&lt; 4] + EE;
+    } else {
+      const o1 = uint8[baseLength];
+      const o2 = uint8[baseLength + 1];
+      const v1 = (o1 &lt;&lt; 4) | (o2 &gt;&gt; 4);
+      const v2 = (o2 &amp; 0b1111) &lt;&lt; 2;
+      out += table2[v1] + table[v2] + E;
     }
     return out;
   };
@@ -199,7 +205,7 @@ export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: st
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-11T18:06:23.716Z
+                at 2024-03-12T14:42:58.589Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
