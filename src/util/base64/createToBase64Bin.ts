@@ -33,10 +33,10 @@ export const createToBase64Bin = (chars: string = alphabet, pad: string = '=') =
       const o1 = uint8[baseLength];
       if (doAddPadding) {
         dest.setInt32(offset, (table2[o1 << 4] << 16) + EE);
-        return offset + 4;
+        offset + 4;
       } else {
         dest.setInt16(offset, table2[o1 << 4]);
-        return offset + 2;
+        offset + 2;
       }
     } else if (extraLength) {
       const o1 = uint8[baseLength];
@@ -45,11 +45,12 @@ export const createToBase64Bin = (chars: string = alphabet, pad: string = '=') =
       const v2 = (o2 & 0b1111) << 2;
       if (doAddPadding) {
         dest.setInt32(offset, (table2[v1] << 16) + (table[v2] << 8) + E);
-        return offset + 4;
+        offset + 4;
       } else {
         dest.setInt16(offset, table2[v1]);
+        offset += 2;
         dest.setInt8(offset, table[v2]);
-        return offset + 3;
+        offset += 1;
       }
     }
     return offset;
