@@ -1,6 +1,7 @@
+import {flatstr} from '../strings/flatstr';
 import {alphabet} from './constants';
 
-export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: string = '==') => {
+export const createToBase64 = (chars: string = alphabet, pad: string = '=') => {
   if (chars.length !== 64) throw new Error('chars must be 64 characters long');
 
   const table = chars.split('');
@@ -8,11 +9,13 @@ export const createToBase64 = (chars: string = alphabet, E: string = '=', EE: st
 
   for (const c1 of table) {
     for (const c2 of table) {
-      const two = c1 + c2;
-      Number(two);
+      const two = flatstr(c1 + c2);
       table2.push(two);
     }
   }
+
+  const E: string = pad;
+  const EE: string = flatstr(pad + pad);
 
   return (uint8: Uint8Array, length: number): string => {
     let out = '';
