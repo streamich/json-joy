@@ -185,7 +185,7 @@ const readShortUtf8StrAndUnescape = (reader: Reader): string => {
 export class JsonDecoder implements BinaryJsonDecoder {
   public reader = new Reader();
 
-  public read(uint8: Uint8Array): PackValue {
+  public read(uint8: Uint8Array): unknown {
     this.reader.reset(uint8);
     return this.readAny();
   }
@@ -195,7 +195,7 @@ export class JsonDecoder implements BinaryJsonDecoder {
     return this.readAny();
   }
 
-  public readAny(): PackValue {
+  public readAny(): unknown {
     this.skipWhitespace();
     const reader = this.reader;
     const x = reader.x;
@@ -640,10 +640,10 @@ export class JsonDecoder implements BinaryJsonDecoder {
     return bin;
   }
 
-  public readArr(): PackValue[] {
+  public readArr(): unknown[] {
     const reader = this.reader;
     if (reader.u8() !== 0x5b) throw new Error('Invalid JSON');
-    const arr: PackValue[] = [];
+    const arr: unknown[] = [];
     const uint8 = reader.uint8;
     while (true) {
       this.skipWhitespace();
@@ -657,10 +657,10 @@ export class JsonDecoder implements BinaryJsonDecoder {
     }
   }
 
-  public readObj(): PackValue | Record<string, PackValue> {
+  public readObj(): PackValue | Record<string, unknown> | unknown {
     const reader = this.reader;
     if (reader.u8() !== 0x7b) throw new Error('Invalid JSON');
-    const obj: Record<string, PackValue> = {};
+    const obj: Record<string, unknown> = {};
     const uint8 = reader.uint8;
     while (true) {
       this.skipWhitespace();

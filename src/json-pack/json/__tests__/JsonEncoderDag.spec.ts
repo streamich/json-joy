@@ -37,10 +37,17 @@ describe('Cid', () => {
 
   const encoder = new IpfsEncoder(writer);
   
-  test('can encode a simple buffer in array', () => {
+  test('can encode a CID as object key', () => {
     const data = {id: new CID('QmXn5v3z')};
     const encoded = encoder.encode(data);
     const json = Buffer.from(encoded).toString();
     expect(json).toBe('{"id":{"/":"QmXn5v3z"}}');
+  });
+  
+  test('can encode a CID in array', () => {
+    const data = ['a', new CID('b'), 'c'];
+    const encoded = encoder.encode(data);
+    const json = Buffer.from(encoded).toString();
+    expect(json).toBe('["a",{"/":"b"},"c"]');
   });
 });
