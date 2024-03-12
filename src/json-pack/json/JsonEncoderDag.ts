@@ -1,8 +1,8 @@
 import {JsonEncoderStable} from './JsonEncoderStable';
-import {createToBase64BinUint8} from '../../util/base64/createToBase64BinUint8';
+import {createToBase64Bin} from '../../util/base64/createToBase64Bin';
 
 const objBaseLength = '{"/":{"bytes":""}}'.length;
-const base64Encode = createToBase64BinUint8(undefined, '');
+const base64Encode = createToBase64Bin(undefined, '');
 
 /**
  * Base class for implementing DAG-JSON encoders.
@@ -39,7 +39,7 @@ export class JsonEncoderDag extends JsonEncoderStable {
     x += 2;
     uint8[x] = 0x22; // "
     x += 1;
-    x = base64Encode(buf, 0, length, uint8, x);
+    x = base64Encode(buf, 0, length, view, x);
     view.setUint16(x, 0x227d); // "}
     x += 2;
     uint8[x] = 0x7d; // }
