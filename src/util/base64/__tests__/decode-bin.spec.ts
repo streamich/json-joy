@@ -16,10 +16,16 @@ test('works', () => {
     const dest = new Uint8Array(blob.length * 4);
     const length = toBase64Bin(blob, 0, blob.length, new DataView(dest.buffer), 0);
     const encoded = dest.subarray(0, length);
-    const decoded = fromBase64Bin(new DataView(encoded.buffer), 0, encoded.length);
+    const view = new DataView(encoded.buffer);
+    const decoded = fromBase64Bin(view, 0, encoded.length);
+    let padding = 0;
+    if (encoded.length > 0 && view.getUint8(encoded.length - 1) === 0x3d) padding++;
+    if (encoded.length > 1 && view.getUint8(encoded.length - 2) === 0x3d) padding++;
+    const decoded2 = fromBase64Bin(view, 0, encoded.length - padding);
     // console.log('blob', blob);
     // console.log('encoded', encoded);
     // console.log('decoded', decoded);
     expect(decoded).toEqual(blob);
+    expect(decoded2).toEqual(blob);
   }
 });
