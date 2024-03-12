@@ -12,6 +12,15 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
     return writer.flush();
   }
 
+  /**
+   * Called when the encoder encounters a value that it does not know how to encode.
+   *
+   * @param value Some JavaScript value.
+   */
+  public writeUnknown(value: unknown): void {
+    this.writeNull();
+  }
+
   public writeAny(value: unknown): void {
     switch (typeof value) {
       case 'boolean':
@@ -24,19 +33,21 @@ export class JsonEncoder implements BinaryJsonEncoder, StreamingBinaryJsonEncode
         if (value === null) return this.writeNull();
         const constructor = value.constructor;
         switch (constructor) {
+          case Object:
+            return this.writeObj(value as Record<string, unknown>);
           case Array:
             return this.writeArr(value as unknown[]);
           case Uint8Array:
             return this.writeBin(value as Uint8Array);
           default:
-            return this.writeObj(value as Record<string, unknown>);
+            return this.writeUnknown(value);
         }
       }
       case 'undefined': {
         return this.writeUndef();
       }
       default:
-        return this.writeNull();
+        return this.writeUnknown(value);
     }
   }
 

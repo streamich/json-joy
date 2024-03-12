@@ -2,6 +2,7 @@ import {JsonEncoderStable} from './JsonEncoderStable';
 import {createToBase64Bin} from '../../util/base64/createToBase64Bin';
 
 const objBaseLength = '{"/":{"bytes":""}}'.length;
+const cidBaseLength = '{"/":""}'.length;
 const base64Encode = createToBase64Bin(undefined, '');
 
 /**
@@ -45,5 +46,14 @@ export class JsonEncoderDag extends JsonEncoderStable {
     uint8[x] = 0x7d; // }
     x += 1;
     writer.x = x;
+  }
+
+  public writeCid(cid: string): void {
+    const writer = this.writer;
+    writer.ensureCapacity(cidBaseLength + cid.length);
+    writer.u32(0x7b222f22); // {"/"
+    writer.u16(0x3a22); // :"
+    writer.ascii(cid);
+    writer.u16(0x227d); // "}
   }
 }
