@@ -15,7 +15,7 @@ export const createToBase64Bin = (chars: string = alphabet, pad: string = '=') =
 
   const doAddPadding = pad.length === 1;
   const E: number = doAddPadding ? pad.charCodeAt(0) : 0;
-  const EE: number = doAddPadding ? ((E << 8) | E) : 0
+  const EE: number = doAddPadding ? (E << 8) | E : 0;
 
   return (uint8: Uint8Array, start: number, length: number, dest: DataView, offset: number): number => {
     const extraLength = length % 3;

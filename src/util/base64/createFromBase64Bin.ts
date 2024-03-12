@@ -27,7 +27,7 @@ export const createFromBase64Bin = (chars: string = alphabet, pad: string = '=')
     }
     if (length % 4 !== 0) throw new Error('Base64 string length must be a multiple of 4');
     const mainEnd = offset + length - (padding ? 4 : 0);
-    let bufferLength = ((length >> 2) * 3) - padding;
+    let bufferLength = (length >> 2) * 3 - padding;
     const buf = new Uint8Array(bufferLength);
     let j = 0;
     let i = offset;

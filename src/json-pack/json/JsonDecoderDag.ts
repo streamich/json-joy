@@ -15,44 +15,52 @@ export class JsonDecoderDag extends JsonDecoder {
   protected tryReadBytes(): Uint8Array | undefined {
     const reader = this.reader;
     const x = reader.x;
-    if (reader.u8() !== 0x7b) { // {
+    if (reader.u8() !== 0x7b) {
+      // {
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x22 || reader.u8() !== 0x2f || reader.u8() !== 0x22) { // "/"
+    if (reader.u8() !== 0x22 || reader.u8() !== 0x2f || reader.u8() !== 0x22) {
+      // "/"
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x3a) { // :
+    if (reader.u8() !== 0x3a) {
+      // :
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x7b) { // {
+    if (reader.u8() !== 0x7b) {
+      // {
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x22 ||
+    if (
+      reader.u8() !== 0x22 ||
       reader.u8() !== 0x62 ||
       reader.u8() !== 0x79 ||
       reader.u8() !== 0x74 ||
       reader.u8() !== 0x65 ||
       reader.u8() !== 0x73 ||
       reader.u8() !== 0x22
-    ) { // "bytes"
+    ) {
+      // "bytes"
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x3a) { // :
+    if (reader.u8() !== 0x3a) {
+      // :
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x22) { // "
+    if (reader.u8() !== 0x22) {
+      // "
       reader.x = x;
       return;
     }
@@ -60,12 +68,14 @@ export class JsonDecoderDag extends JsonDecoder {
     const bufEnd = findEndingQuote(reader.uint8, bufStart);
     reader.x = 1 + bufEnd;
     this.skipWhitespace();
-    if (reader.u8() !== 0x7d) { // }
+    if (reader.u8() !== 0x7d) {
+      // }
       reader.x = x;
       return;
     }
     this.skipWhitespace();
-    if (reader.u8() !== 0x7d) { // }
+    if (reader.u8() !== 0x7d) {
+      // }
       reader.x = x;
       return;
     }
