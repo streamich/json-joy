@@ -29,17 +29,16 @@ export const createToBase64 = (chars: string = alphabet, pad: string = '=') => {
       const v2 = ((o2 & 0b1111) << 8) | o3;
       out += table2[v1] + table2[v2];
     }
-    if (extraLength) {
-      if (extraLength === 1) {
-        const o1 = uint8[baseLength];
-        out += table2[o1 << 4] + EE;
-      } else {
-        const o1 = uint8[baseLength];
-        const o2 = uint8[baseLength + 1];
-        const v1 = (o1 << 4) | (o2 >> 4);
-        const v2 = (o2 & 0b1111) << 2;
-        out += table2[v1] + table[v2] + E;
-      }
+    if (!extraLength) return out;
+    if (extraLength === 1) {
+      const o1 = uint8[baseLength];
+      out += table2[o1 << 4] + EE;
+    } else {
+      const o1 = uint8[baseLength];
+      const o2 = uint8[baseLength + 1];
+      const v1 = (o1 << 4) | (o2 >> 4);
+      const v2 = (o2 & 0b1111) << 2;
+      out += table2[v1] + table[v2] + E;
     }
     return out;
   };
