@@ -8,7 +8,7 @@ export class CborEncoderDag extends CborEncoderStable {
   public writeFloat(float: number): void {
     if (float !== float) return this.writeNull();
     if (!Number.isFinite(float)) return this.writeNull();
-    super.writeFloat(float);
+    this.writer.u8f64(0xfb, float);
   }
 
   public writeTag(tag: number, value: unknown): void {
