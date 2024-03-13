@@ -5,6 +5,16 @@ import {JsonEncoderDag} from '../JsonEncoderDag';
 const writer = new Writer(16);
 const encoder = new JsonEncoderDag(writer);
 
+describe('object', () => {
+  test('shorter and smaller keys are sorted earlier', () => {
+    const json = '{"aaaaaa":6,"aaaaab":7,"aaaaac":8,"aaaabb":9,"bbbbb":5,"cccc":4,"ddd":3,"ee":2,"f":1}';
+    const data = JSON.parse(json);
+    const encoded = encoder.encode(data);
+    const json2 = Buffer.from(encoded).toString();
+    expect(json2).toBe('{"f":1,"ee":2,"ddd":3,"cccc":4,"bbbbb":5,"aaaaaa":6,"aaaaab":7,"aaaaac":8,"aaaabb":9}');
+  });
+});
+
 describe('Bytes', () => {
   test('can encode a simple buffer in object', () => {
     const buf = utf8`hello world`;
