@@ -105,7 +105,7 @@ describe('floats', () => {
     const floats = [0.1, 0.2, 0.3, 0.4, 0.5, -0.1, -0.2, -0.3, -0.4, -0.5, 1.1, 1.12, 1.123, 1.1234, 0.12, 0.123, 0.1234];
     const sizes = new Set<number>();
     for (const float of floats) {
-      const encoded = encoder.encode({a: 'a', b: new JsonPackExtension(42, 'b')});
+      const encoded = encoder.encode(float);
       sizes.add(encoded.length);
     }
     expect(sizes.size).toBe(1);
