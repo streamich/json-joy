@@ -31,7 +31,11 @@ describe('.first()/next() iteration', () => {
     for (let entry = tree.first(); entry; entry = tree.next(entry)) {
       list.push([entry.k, entry.v]);
     }
-    expect(list).toEqual([['a', 1], ['b', 2], ['c', 3]]);
+    expect(list).toEqual([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
   });
 });
 
@@ -53,7 +57,11 @@ describe('.iterator0()', () => {
     for (let entry = iterator(); entry; entry = iterator()) {
       list.push([entry.k, entry.v]);
     }
-    expect(list).toEqual([['a', 1], ['b', 2], ['c', 3]]);
+    expect(list).toEqual([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
   });
 });
 
@@ -75,7 +83,11 @@ describe('.iterator()', () => {
     for (let entry = iterator.next(); !entry.done; entry = iterator.next()) {
       list.push([entry.value!.k, entry.value!.v]);
     }
-    expect(list).toEqual([['a', 1], ['b', 2], ['c', 3]]);
+    expect(list).toEqual([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
   });
 });
 
@@ -89,6 +101,10 @@ describe('for...of iteration', () => {
     for (const entry of tree.entries()) {
       list.push([entry.k, entry.v]);
     }
-    expect(list).toEqual([['a', 1], ['b', 2], ['c', 3]]);
+    expect(list).toEqual([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
   });
 });

@@ -111,7 +111,7 @@ export class AvlMap<K, V> implements Printable {
 
   public readonly next = next;
 
-  public iterator0(): (() => undefined | AvlNode<K, V>) {
+  public iterator0(): () => undefined | AvlNode<K, V> {
     let curr = this.first();
     return () => {
       if (!curr) return;

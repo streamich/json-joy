@@ -104,7 +104,7 @@ export class AvlSet<V> implements Printable {
 
   public readonly next = next;
 
-  public iterator0(): (() => undefined | AvlSetNode<V>) {
+  public iterator0(): () => undefined | AvlSetNode<V> {
     let curr = this.first();
     return () => {
       if (!curr) return undefined;
