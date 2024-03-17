@@ -1,4 +1,5 @@
 import {Writer} from '../../../util/buffers/Writer';
+import {JsonPackValue} from '../../JsonPackValue';
 import {CborEncoder} from '../CborEncoder';
 import {decode} from 'cbor';
 
@@ -397,4 +398,16 @@ describe('tokens (simple values)', () => {
   testJsTokens(true);
   testJsTokens(null);
   testJsTokens(undefined);
+});
+
+describe('JsonPackValue', () => {
+  test('can encode pre-packed value', () => {
+    const internal = encoder.encode({foo: 'bar'});
+    const val = new JsonPackValue(internal);
+    const data = {boo: [1, val, 2]};
+    const encoded = encoder.encode(data);
+    expect(decode(encoded)).toEqual({
+      boo: [1, {foo: 'bar'}, 2],
+    });
+  });
 });

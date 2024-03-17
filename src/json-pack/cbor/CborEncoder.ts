@@ -2,6 +2,7 @@ import {isFloat32} from '../../util/buffers/isFloat32';
 import {JsonPackExtension} from '../JsonPackExtension';
 import {CborEncoderFast} from './CborEncoderFast';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
+import {JsonPackValue} from '../JsonPackValue';
 
 export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriterGrowable> extends CborEncoderFast<W> {
   /**
@@ -35,6 +36,9 @@ export class CborEncoder<W extends IWriter & IWriterGrowable = IWriter & IWriter
             return this.writeMap(value as Map<unknown, unknown>);
           case JsonPackExtension:
             return this.writeTag((<JsonPackExtension>value).tag, (<JsonPackExtension>value).val);
+          case JsonPackValue:
+            const buf = (value as JsonPackValue).val;
+            return this.writer.buf(buf, buf.length);
           default:
             return this.writeUnknown(value);
         }
