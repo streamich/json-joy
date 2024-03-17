@@ -14,3 +14,26 @@ test('smoke test', () => {
   tree.forEach((node) => keys.push(node.k));
   expect(keys).toEqual([1, 3, 4, 4.1, 44]);
 });
+
+
+describe('.iterator()', () => {
+  test('for empty map, returns finished iterator', () => {
+    const tree = new AvlMap<string, number>();
+    const iterator = tree.iterator();
+    const entry = iterator.next();
+    expect(entry).toEqual({done: true, value: undefined});
+  });
+
+  test('can iterate through map entries', () => {
+    const tree = new AvlMap<string, number>();
+    tree.set('a', 1);
+    tree.set('b', 2);
+    tree.set('c', 3);
+    const iterator = tree.iterator();
+    const list: [string, number][] = [];
+    for (let entry = iterator.next(); !entry.done; entry = iterator.next()) {
+      list.push([entry.value!.k, entry.value!.v]);
+    }
+    expect(list).toEqual([['a', 1], ['b', 2], ['c', 3]]);
+  });
+});

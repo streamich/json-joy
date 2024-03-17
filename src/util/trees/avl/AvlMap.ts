@@ -105,6 +105,20 @@ export class AvlMap<K, V> implements Printable {
     while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined));
   }
 
+  public iterator(): Iterator<AvlNode<K, V>> {
+    const root = this.root;
+    if (!root) return {next: () => ({done: true, value: undefined})};
+    let curr = first(root);
+    return {
+      next: () => {
+        if (!curr) return {done: true, value: undefined};
+        const value = curr;
+        curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined;
+        return {done: false, value};
+      },
+    };
+  }
+
   public toString(tab: string): string {
     return this.constructor.name + printTree(tab, [(tab) => print(this.root, tab)]);
   }
