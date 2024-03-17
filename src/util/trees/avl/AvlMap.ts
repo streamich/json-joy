@@ -98,9 +98,8 @@ export class AvlMap<K, V> implements Printable {
   }
 
   public forEach(fn: (node: AvlNode<K, V>) => void): void {
-    const root = this.root;
-    if (!root) return;
-    let curr = first(root);
+    let curr = this.first();
+    if (!curr) return;
     do fn(curr!);
     while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined));
   }
@@ -115,7 +114,7 @@ export class AvlMap<K, V> implements Printable {
   public iterator0(): (() => undefined | AvlNode<K, V>) {
     let curr = this.first();
     return () => {
-      if (!curr) return undefined;
+      if (!curr) return;
       const value = curr;
       curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined;
       return value;

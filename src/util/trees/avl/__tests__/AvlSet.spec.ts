@@ -64,3 +64,81 @@ test('can store structs', () => {
   expect(set.has(new Struct(3, 3))).toBe(true);
   expect(set.has(new Struct(2, 3))).toBe(true);
 });
+
+describe('.first()/next() iteration', () => {
+  test('for empty map, returns finished iterator', () => {
+    const tree = new AvlSet<string>();
+    const entry = tree.first();
+    expect(entry).toEqual(undefined);
+  });
+
+  test('can iterate through map entries', () => {
+    const tree = new AvlSet<number>();
+    tree.add(1);
+    tree.add(2);
+    tree.add(3);
+    const list: number[] = [];
+    for (let entry = tree.first(); entry; entry = tree.next(entry)) {
+      list.push(entry.k);
+    }
+    expect(list).toEqual([1, 2, 3]);
+  });
+});
+
+describe('.iterator0()', () => {
+  test('for empty map, returns finished iterator', () => {
+    const tree = new AvlSet<number>();
+    const iterator = tree.iterator0();
+    const entry = iterator();
+    expect(entry).toEqual(undefined);
+  });
+
+  test('can iterate through map entries', () => {
+    const tree = new AvlSet<number>();
+    tree.add(1);
+    tree.add(2);
+    tree.add(3);
+    const list: number[] = [];
+    const iterator = tree.iterator0();
+    for (let entry = iterator(); entry; entry = iterator()) {
+      list.push(entry.k);
+    }
+    expect(list).toEqual([1, 2, 3]);
+  });
+});
+
+describe('.iterator()', () => {
+  test('for empty map, returns finished iterator', () => {
+    const tree = new AvlSet<number>();
+    const iterator = tree.iterator();
+    const entry = iterator.next();
+    expect(entry).toEqual({done: true, value: undefined});
+  });
+
+  test('can iterate through map entries', () => {
+    const tree = new AvlSet<number>();
+    tree.add(1);
+    tree.add(2);
+    tree.add(3);
+    const list: number[] = [];
+    const iterator = tree.iterator();
+    for (let entry = iterator.next(); !entry.done; entry = iterator.next()) {
+      list.push(entry.value!.k);
+    }
+    expect(list).toEqual([1, 2, 3]);
+  });
+});
+
+describe('for...of iteration', () => {
+  test('can iterate through map entries', () => {
+    const tree = new AvlSet<number>();
+    tree.add(1);
+    tree.add(2);
+    tree.add(3);
+    const list: number[] = [];
+    for (const entry of tree.entries()) {
+      list.push(entry.k);
+    }
+    expect(list).toEqual([1, 2, 3]);
+  });
+});
