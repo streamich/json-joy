@@ -105,18 +105,36 @@ export class AvlMap<K, V> implements Printable {
     while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined));
   }
 
-  public iterator(): Iterator<AvlNode<K, V>> {
+  public first(): AvlNode<K, V> | undefined {
     const root = this.root;
-    if (!root) return {next: () => ({done: true, value: undefined})};
-    let curr = first(root);
+    return root ? first(root) : undefined;
+  }
+
+  public readonly next = next;
+
+  public iterator0(): (() => undefined | AvlNode<K, V>) {
+    let curr = this.first();
+    return () => {
+      if (!curr) return undefined;
+      const value = curr;
+      curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined;
+      return value;
+    };
+  }
+
+  public iterator(): Iterator<AvlNode<K, V>> {
+    const iterator = this.iterator0();
     return {
       next: () => {
-        if (!curr) return {done: true, value: undefined};
-        const value = curr;
-        curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined;
-        return {done: false, value};
+        const value = iterator();
+        const res = <IteratorResult<AvlNode<K, V>>>{value, done: !value};
+        return res;
       },
     };
+  }
+
+  public entries(): IterableIterator<AvlNode<K, V>> {
+    return <any>{[Symbol.iterator]: () => this.iterator()};
   }
 
   public toString(tab: string): string {
