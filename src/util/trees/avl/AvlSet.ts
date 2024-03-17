@@ -91,11 +91,42 @@ export class AvlSet<V> implements Printable {
   }
 
   public forEach(fn: (node: AvlSetNode<V>) => void): void {
-    const root = this.root;
-    if (!root) return;
-    let curr = first(root);
+    let curr = this.first();
+    if (!curr) return;
     do fn(curr!);
     while ((curr = next(curr as HeadlessNode) as AvlSetNode<V> | undefined));
+  }
+
+  public first(): AvlSetNode<V> | undefined {
+    const root = this.root;
+    return root ? first(root) : undefined;
+  }
+
+  public readonly next = next;
+
+  public iterator0(): () => undefined | AvlSetNode<V> {
+    let curr = this.first();
+    return () => {
+      if (!curr) return undefined;
+      const value = curr;
+      curr = next(curr as HeadlessNode) as AvlSetNode<V> | undefined;
+      return value;
+    };
+  }
+
+  public iterator(): Iterator<AvlSetNode<V>> {
+    const iterator = this.iterator0();
+    return {
+      next: () => {
+        const value = iterator();
+        const res = <IteratorResult<AvlSetNode<V>>>{value, done: !value};
+        return res;
+      },
+    };
+  }
+
+  public entries(): IterableIterator<AvlSetNode<V>> {
+    return <any>{[Symbol.iterator]: () => this.iterator()};
   }
 
   public toString(tab: string): string {
