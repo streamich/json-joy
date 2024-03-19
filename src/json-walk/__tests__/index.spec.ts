@@ -26,3 +26,36 @@ test('can walk through a value', () => {
     3,
   ]);
 });
+
+test('can walk through null', () => {
+  const value = null;
+  const nodes: unknown[] = [];
+  walk(value, (node) => {
+    nodes.push(node);
+  });
+  expect(nodes).toEqual([
+    null,
+  ]);
+});
+
+test('can walk empty object', () => {
+  const value = {};
+  const nodes: unknown[] = [];
+  walk(value, (node) => {
+    nodes.push(node);
+  });
+  expect(nodes).toEqual([
+    {},
+  ]);
+});
+
+test('can walk empty array', () => {
+  const value: any[] = [];
+  const nodes: unknown[] = [];
+  walk(value, (node) => {
+    nodes.push(node);
+  });
+  expect(nodes).toEqual([
+    [],
+  ]);
+});
