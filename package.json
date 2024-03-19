@@ -236,6 +236,7 @@
           "json-text",
           "json-type",
           "json-type-value",
+          "json-walk",
           "reactive-rpc",
           "util"
         ]
