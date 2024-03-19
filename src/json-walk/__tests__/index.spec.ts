@@ -33,9 +33,7 @@ test('can walk through null', () => {
   walk(value, (node) => {
     nodes.push(node);
   });
-  expect(nodes).toEqual([
-    null,
-  ]);
+  expect(nodes).toEqual([null]);
 });
 
 test('can walk empty object', () => {
@@ -44,9 +42,7 @@ test('can walk empty object', () => {
   walk(value, (node) => {
     nodes.push(node);
   });
-  expect(nodes).toEqual([
-    {},
-  ]);
+  expect(nodes).toEqual([{}]);
 });
 
 test('can walk empty array', () => {
@@ -55,7 +51,5 @@ test('can walk empty array', () => {
   walk(value, (node) => {
     nodes.push(node);
   });
-  expect(nodes).toEqual([
-    [],
-  ]);
+  expect(nodes).toEqual([[]]);
 });
