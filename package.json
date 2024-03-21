@@ -120,7 +120,7 @@
     "fastest-stable-stringify": "^2.0.2",
     "find-my-way": "^7.6.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
-    "gh-pages": "^5.0.0",
+    "gh-pages": "^6.0.0",
     "html-webpack-plugin": "^5.5.1",
     "husky": "^8.0.3",
     "ion-js": "^4.3.0",
