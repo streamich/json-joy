@@ -107,7 +107,7 @@
     "cbor-js": "^0.1.0",
     "cbor-sync": "^1.0.4",
     "cbor-x": "^1.3.0",
-    "cborg": "^2.0.3",
+    "cborg": "^4.0.0",
     "concurrently": "^8.0.1",
     "diamond-types-node": "1.0.2",
     "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
