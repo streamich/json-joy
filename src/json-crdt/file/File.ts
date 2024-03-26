@@ -1,5 +1,5 @@
 import {Model} from '../model';
-import {PatchLog} from './PatchLog';
+import {PatchLog} from '../history/PatchLog';
 import {printTree} from '../../util/print/printTree';
 import {decodeModel, decodeNdjsonComponents, decodePatch, decodeSeqCborComponents} from './util';
 import {Patch} from '../../json-crdt-patch';
@@ -46,9 +46,8 @@ export class File implements Printable {
     if (history) {
       const [start, patches] = history;
       if (start) {
-        const startModel = decodeModel(start);
-        log = new PatchLog(startModel);
-        for (const patch of patches) log.push(decodePatch(patch));
+        log = new PatchLog(() => decodeModel(start));
+        for (const patch of patches) log.end.applyPatch(decodePatch(patch));
       }
     }
     if (!log) throw new Error('NO_HISTORY');
@@ -57,7 +56,7 @@ export class File implements Printable {
       for (const patch of frontier) {
         const patchDecoded = decodePatch(patch);
         decodedModel.applyPatch(patchDecoded);
-        log.push(patchDecoded);
+        log.end.applyPatch(patchDecoded);
       }
     }
     const file = new File(decodedModel, log);
@@ -75,7 +74,7 @@ export class File implements Printable {
   }
 
   public static fromModel(model: Model<any>, options: FileOptions = {}): File {
-    return new File(model, PatchLog.fromModel(model), options);
+    return new File(model, PatchLog.fromNewModel(model), options);
   }
 
   constructor(
@@ -88,7 +87,7 @@ export class File implements Printable {
     const id = patch.getId();
     if (!id) return;
     this.model.applyPatch(patch);
-    this.log.push(patch);
+    this.log.end.applyPatch(patch);
   }
 
   /**
@@ -100,10 +99,10 @@ export class File implements Printable {
     const api = model.api;
     const autoflushUnsubscribe = api.autoFlush();
     const onPatchUnsubscribe = api.onPatch.listen((patch) => {
-      log.push(patch);
+      log.end.applyPatch(patch);
     });
     const onFlushUnsubscribe = api.onFlush.listen((patch) => {
-      log.push(patch);
+      log.end.applyPatch(patch);
     });
     return () => {
       autoflushUnsubscribe();
@@ -153,7 +152,7 @@ export class File implements Printable {
     const patchFormat = params.history ?? 'binary';
     switch (patchFormat) {
       case 'binary': {
-        history[0] = this.log.start.toBinary();
+        history[0] = this.log.start().toBinary();
         this.log.patches.forEach(({v}) => {
           history[1].push(v.toBinary());
         });
@@ -162,7 +161,7 @@ export class File implements Printable {
       case 'compact': {
         const encoder = this.options.structuralCompactEncoder;
         if (!encoder) throw new Error('NO_COMPACT_ENCODER');
-        history[0] = encoder.encode(this.log.start);
+        history[0] = encoder.encode(this.log.start());
         const encodeCompact = this.options.patchCompactEncoder;
         if (!encodeCompact) throw new Error('NO_COMPACT_PATCH_ENCODER');
         const list = history[1];
@@ -174,7 +173,7 @@ export class File implements Printable {
       case 'verbose': {
         const encoder = this.options.structuralVerboseEncoder;
         if (!encoder) throw new Error('NO_VERBOSE_ENCODER');
-        history[0] = encoder.encode(this.log.start);
+        history[0] = encoder.encode(this.log.start());
         const encodeVerbose = this.options.patchVerboseEncoder;
         if (!encodeVerbose) throw new Error('NO_VERBOSE_PATCH_ENCODER');
         const list = history[1];
