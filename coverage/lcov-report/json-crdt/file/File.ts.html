@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.57% </span>
+                <span class="strong">77.69% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>112/139</span>
+                <span class='fraction'>108/139</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.68% </span>
+                <span class="strong">70% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>14/19</span>
+                <span class='fraction'>14/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.43% </span>
+                <span class="strong">88.98% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>110/119</span>
+                <span class='fraction'>105/118</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -283,11 +283,10 @@
 <a name='L218'></a><a href='#L218'>218</a>
 <a name='L219'></a><a href='#L219'>219</a>
 <a name='L220'></a><a href='#L220'>220</a>
-<a name='L221'></a><a href='#L221'>221</a>
-<a name='L222'></a><a href='#L222'>222</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<a name='L221'></a><a href='#L221'>221</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -312,7 +311,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-yes">45x</span>
@@ -332,8 +331,7 @@
 <span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-yes">45x</span>
-<span class="cline-any cline-yes">45x</span>
-<span class="cline-any cline-yes">45x</span>
+<span class="cline-any cline-yes">129x</span>
 <span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -361,20 +359,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-yes">51x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">97x</span>
-<span class="cline-any cline-yes">97x</span>
-<span class="cline-any cline-yes">97x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">96x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -506,7 +504,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Model} from '../model';
-import {PatchLog} from './PatchLog';
+import {PatchLog} from '../history/PatchLog';
 import {printTree} from '../../util/print/printTree';
 import {decodeModel, decodeNdjsonComponents, decodePatch, decodeSeqCborComponents} from './util';
 import {Patch} from '../../json-crdt-patch';
@@ -553,9 +551,8 @@ export class File implements Printable {
     if (history) {
       const [start, patches] = history;
       if (start) {
-        const startModel = decodeModel(start);
-        log = new PatchLog(startModel);
-        for (const patch of patches) log.push(decodePatch(patch));
+        log = new PatchLog(() =&gt; decodeModel(start));
+        for (const patch of patches) log.end.applyPatch(decodePatch(patch));
       }
     }
     <span class="missing-if-branch" title="if path not taken" >I</span>if (!log) <span class="cstat-no" title="statement not covered" >throw new Error('NO_HISTORY');</span>
@@ -564,7 +561,7 @@ export class File implements Printable {
       for (const patch of frontier) {
         const patchDecoded = decodePatch(patch);
         decodedModel.applyPatch(patchDecoded);
-        log.push(patchDecoded);
+        log.end.applyPatch(patchDecoded);
       }
     }
     const file = new File(decodedModel, log);
@@ -582,7 +579,7 @@ export class File implements Printable {
   }
 &nbsp;
   public static fromModel(model: Model&lt;any&gt;, options: FileOptions = {}): File {
-    return new File(model, PatchLog.fromModel(model), options);
+    return new File(model, PatchLog.fromNewModel(model), options);
   }
 &nbsp;
   constructor(
@@ -591,11 +588,11 @@ export class File implements Printable {
     protected readonly options: FileOptions = {},
   ) {}
 &nbsp;
-  public apply(patch: Patch): void {
-    const id = patch.getId();
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!id) <span class="cstat-no" title="statement not covered" >return;</span>
-    this.model.applyPatch(patch);
-    this.log.push(patch);
+  public <span class="fstat-no" title="function not covered" >apply(</span>patch: Patch): void {
+    const id = <span class="cstat-no" title="statement not covered" >patch.getId();</span>
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!id) <span class="cstat-no" title="statement not covered" >return;</span></span>
+<span class="cstat-no" title="statement not covered" >    this.model.applyPatch(patch);</span>
+<span class="cstat-no" title="statement not covered" >    this.log.end.applyPatch(patch);</span>
   }
 &nbsp;
   /**
@@ -607,10 +604,10 @@ export class File implements Printable {
     const api = model.api;
     const autoflushUnsubscribe = api.autoFlush();
     const onPatchUnsubscribe = api.onPatch.listen((patch) =&gt; {
-      log.push(patch);
+      log.end.applyPatch(patch);
     });
     const onFlushUnsubscribe = api.onFlush.listen((patch) =&gt; {
-      log.push(patch);
+      log.end.applyPatch(patch);
     });
     return <span class="fstat-no" title="function not covered" >() =</span>&gt; {
 <span class="cstat-no" title="statement not covered" >      autoflushUnsubscribe();</span>
@@ -660,7 +657,7 @@ export class File implements Printable {
     const patchFormat = params.history ?? 'binary';
     switch (patchFormat) {
       case 'binary': {
-        history[0] = this.log.start.toBinary();
+        history[0] = this.log.start().toBinary();
         this.log.patches.forEach(({v}) =&gt; {
           history[1].push(v.toBinary());
         });
@@ -669,7 +666,7 @@ export class File implements Printable {
       case 'compact': {
         const encoder = this.options.structuralCompactEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encoder) <span class="cstat-no" title="statement not covered" >throw new Error('NO_COMPACT_ENCODER');</span>
-        history[0] = encoder.encode(this.log.start);
+        history[0] = encoder.encode(this.log.start());
         const encodeCompact = this.options.patchCompactEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encodeCompact) <span class="cstat-no" title="statement not covered" >throw new Error('NO_COMPACT_PATCH_ENCODER');</span>
         const list = history[1];
@@ -681,7 +678,7 @@ export class File implements Printable {
       case 'verbose': {
         const encoder = this.options.structuralVerboseEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encoder) <span class="cstat-no" title="statement not covered" >throw new Error('NO_VERBOSE_ENCODER');</span>
-        history[0] = encoder.encode(this.log.start);
+        history[0] = encoder.encode(this.log.start());
         const encodeVerbose = this.options.patchVerboseEncoder;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!encodeVerbose) <span class="cstat-no" title="statement not covered" >throw new Error('NO_VERBOSE_PATCH_ENCODER');</span>
         const list = history[1];
@@ -733,7 +730,7 @@ export class File implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-19T19:41:14.825Z
+                at 2024-03-26T12:30:29.993Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
