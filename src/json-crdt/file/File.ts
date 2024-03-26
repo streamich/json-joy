@@ -1,5 +1,5 @@
 import {Model} from '../model';
-import {PatchLog} from './PatchLog';
+import {PatchLog} from '../history/PatchLog';
 import {printTree} from '../../util/print/printTree';
 import {decodeModel, decodeNdjsonComponents, decodePatch, decodeSeqCborComponents} from './util';
 import {Patch} from '../../json-crdt-patch';
@@ -75,7 +75,7 @@ export class File implements Printable {
   }
 
   public static fromModel(model: Model<any>, options: FileOptions = {}): File {
-    return new File(model, PatchLog.fromModel(model), options);
+    return new File(model, PatchLog.fromNewModel(model), options);
   }
 
   constructor(

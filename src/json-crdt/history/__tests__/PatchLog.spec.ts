@@ -1,28 +1,28 @@
 import {Model} from '../../model';
-import {File} from '../File';
+import {PatchLog} from '../PatchLog';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
   model.api.root(view);
-  const file = File.fromModel(model);
-  return {model, file};
+  const log = PatchLog.fromNewModel(model);
+  return {log};
 };
 
 test('can replay to specific patch', () => {
-  const {file} = setup({foo: 'bar'});
-  const model = file.model.clone();
+  const {log} = setup({foo: 'bar'});
+  const model = log.end.clone();
   model.api.obj([]).set({x: 1});
   const patch1 = model.api.flush();
   model.api.obj([]).set({y: 2});
   const patch2 = model.api.flush();
-  file.apply(patch1);
-  file.apply(patch2);
-  const model2 = file.log.replayToEnd();
-  const model3 = file.log.replayTo(patch1.getId()!);
-  const model4 = file.log.replayTo(patch2.getId()!);
+  log.end.applyPatch(patch1);
+  log.end.applyPatch(patch2);
+  const model2 = log.replayToEnd();
+  const model3 = log.replayTo(patch1.getId()!);
+  const model4 = log.replayTo(patch2.getId()!);
   expect(model.view()).toEqual({foo: 'bar', x: 1, y: 2});
-  expect(file.model.view()).toEqual({foo: 'bar', x: 1, y: 2});
-  expect(file.log.start.view()).toEqual(undefined);
+  expect(log.end.view()).toEqual({foo: 'bar', x: 1, y: 2});
+  expect(log.start().view()).toEqual(undefined);
   expect(model2.view()).toEqual({foo: 'bar', x: 1, y: 2});
   expect(model3.view()).toEqual({foo: 'bar', x: 1});
   expect(model4.view()).toEqual({foo: 'bar', x: 1, y: 2});
