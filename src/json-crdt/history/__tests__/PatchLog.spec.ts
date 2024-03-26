@@ -27,3 +27,41 @@ test('can replay to specific patch', () => {
   expect(model3.view()).toEqual({foo: 'bar', x: 1});
   expect(model4.view()).toEqual({foo: 'bar', x: 1, y: 2});
 });
+
+test('can advance the log from start', () => {
+  const {log} = setup({foo: 'bar'});
+  log.end.api.obj([]).set({x: 1});
+  const patch1 = log.end.api.flush();
+  log.end.api.obj([]).set({y: 2});
+  const patch2 = log.end.api.flush();
+  log.end.api.obj([]).set({foo: 'baz'});
+  const patch3 = log.end.api.flush();
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual(undefined);
+  log.advanceTo(patch1.getId()!);
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual({foo: 'bar', x: 1});
+  log.advanceTo(patch2.getId()!);
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual({foo: 'bar', x: 1, y: 2});
+  expect(log.patches.size()).toBe(1);
+  log.advanceTo(patch3.getId()!);
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.patches.size()).toBe(0);
+});
+
+test('can advance multiple patches at once', () => {
+  const {log} = setup({foo: 'bar'});
+  log.end.api.obj([]).set({x: 1});
+  log.end.api.flush();
+  log.end.api.obj([]).set({y: 2});
+  const patch2 = log.end.api.flush();
+  log.end.api.obj([]).set({foo: 'baz'});
+  log.end.api.flush();
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual(undefined);
+  log.advanceTo(patch2.getId()!);
+  expect(log.end.view()).toEqual({foo: 'baz', x: 1, y: 2});
+  expect(log.start().view()).toEqual({foo: 'bar', x: 1, y: 2});
+});

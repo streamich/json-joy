@@ -1,14 +1,14 @@
-import {Patch} from "../../json-crdt-patch";
-import {PatchLog} from "../history/PatchLog";
-import {Model} from "../model";
+import {Patch} from '../../json-crdt-patch';
+import {PatchLog} from '../history/PatchLog';
+import {Model} from '../model';
 
 /**
  * A history of patches that have been applied to a model, stored on the
  * "remote": (1) server; (2) content addressable storage; or (3) peer-to-peer
  * network.
- * 
+ *
  * Cases:
- * 
+ *
  * - `RemoteHistoryServer`
  * - `RemoteHistoryServerIdempotent`
  * - `RemoteHistoryCAS`
@@ -18,7 +18,7 @@ export interface RemoteHistory<Cursor> {
   /**
    * Load latest state of the model, and any unmerged "tip" of patches
    * it might have.
-   * 
+   *
    * @todo Maybe `state` and `tip` should be serialized to JSON?
    */
   loadLatest(id: string): Promise<[cursor: Cursor, state: Model]>;
@@ -31,7 +31,7 @@ export interface RemoteHistory<Cursor> {
 
   /**
    * Subscribe to the latest changes to the model.
-   * @param callback 
+   * @param callback
    */
   subscribe(id: string, cursor: Cursor, callback: (changes: Patch[]) => void): void;
 }

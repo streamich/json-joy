@@ -28,12 +28,17 @@ export class PatchLog implements Printable {
    * Model factory function that creates a new JSON CRDT model instance, which
    * is used as the starting point of the log. It is called every time a new
    * model is needed to replay the log.
+   * 
+   * @readonly Internally this function may be updated, but externally it is
+   *           read-only.
    */
-  public readonly start: () => Model;
+  public start: () => Model;
 
   /**
    * The end of the log, the current state of the document. It is the model
    * instance that is used to apply new patches to the log.
+   * 
+   * @readonly
    */
   public readonly end: Model;
 
@@ -41,26 +46,35 @@ export class PatchLog implements Printable {
    * The patches in the log, stored in an AVL tree for efficient replaying. The
    * collection of patches which are applied to the `start()` model to reach
    * the `end` model.
+   * 
+   * @readonly
    */
   public readonly patches = new AvlMap<ITimestampStruct, Patch>(compare);
-  private _patchesUnsub: FanOutUnsubscribe;
+
+  private __onPatch: FanOutUnsubscribe;
+  private __onFlush: FanOutUnsubscribe;
 
   constructor(start: () => Model) {
     this.start = start;
-    this.end = start();
-    this._patchesUnsub = this.end.api.onPatch.listen((patch) => {
+    const end = this.end = start();
+    const onPatch = (patch: Patch) => {
       const id = patch.getId();
       if (!id) return;
       this.patches.set(id, patch);
-    });
+    };
+    const api = end.api;
+    this.__onPatch = api.onPatch.listen(onPatch);
+    this.__onFlush = api.onFlush.listen(onPatch);
   }
 
   /**
-   * Call this method to destroy the `PatchLog` instance. It unsubscribes from
-   * the model's `onPatch` event listener.
+   * Call this method to destroy the `PatchLog` instance. It unsubscribes patch
+   * and flush listeners from the `end` model and clears the patch log.
    */
   public destroy() {
-    this._patchesUnsub();
+    this.__onPatch();
+    this.__onFlush();
+    this.patches.clear();
   }
 
   /**
@@ -90,24 +104,45 @@ export class PatchLog implements Printable {
     return clone;
   }
 
+  /**
+   * Advance the start of the log to a specified timestamp, excluding the patch
+   * at the given timestamp. This method removes all patches from the log that
+   * are older than the given timestamp and updates the `start()` factory
+   * function to replay the log from the new start.
+   *
+   * @param ts Timestamp ID of the patch to advance to.
+   */
+  public advanceTo(ts: ITimestampStruct): void {
+    const newStartPatches: Patch[] = [];
+    let node = first(this.patches.root)
+    for (; node && compare(ts, node.k) >= 0; node = next(node)) newStartPatches.push(node.v);
+    for (const patch of newStartPatches) this.patches.del(patch.getId()!);
+    const oldStart = this.start;
+    this.start = (): Model => {
+      const model = oldStart();
+      for (const patch of newStartPatches) model.applyPatch(patch);
+      return model;
+    };
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string) {
-    const log: Patch[] = [];
-    this.patches.forEach(({v}) => log.push(v));
+    const patches: Patch[] = [];
+    this.patches.forEach(({v}) => patches.push(v));
     return (
       `log` +
       printTree(tab, [
-        (tab) => `start` + printTree(tab, [tab => this.start().toString(tab)]),
+        (tab) => `start` + printTree(tab, [(tab) => this.start().toString(tab)]),
         () => '',
         (tab) =>
-        'history' +
+          'history' +
           printTree(
             tab,
-            log.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`),
+            patches.map((patch, i) => (tab) => `${i}: ${patch.toString(tab)}`),
           ),
         () => '',
-        (tab) => `end` + printTree(tab, [tab => this.end.toString(tab)]),
+        (tab) => `end` + printTree(tab, [(tab) => this.end.toString(tab)]),
       ])
     );
   }
