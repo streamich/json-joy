@@ -28,7 +28,7 @@ export class PatchLog implements Printable {
    * Model factory function that creates a new JSON CRDT model instance, which
    * is used as the starting point of the log. It is called every time a new
    * model is needed to replay the log.
-   * 
+   *
    * @readonly Internally this function may be updated, but externally it is
    *           read-only.
    */
@@ -37,7 +37,7 @@ export class PatchLog implements Printable {
   /**
    * The end of the log, the current state of the document. It is the model
    * instance that is used to apply new patches to the log.
-   * 
+   *
    * @readonly
    */
   public readonly end: Model;
@@ -46,7 +46,7 @@ export class PatchLog implements Printable {
    * The patches in the log, stored in an AVL tree for efficient replaying. The
    * collection of patches which are applied to the `start()` model to reach
    * the `end` model.
-   * 
+   *
    * @readonly
    */
   public readonly patches = new AvlMap<ITimestampStruct, Patch>(compare);
@@ -56,7 +56,7 @@ export class PatchLog implements Printable {
 
   constructor(start: () => Model) {
     this.start = start;
-    const end = this.end = start();
+    const end = (this.end = start());
     const onPatch = (patch: Patch) => {
       const id = patch.getId();
       if (!id) return;
@@ -114,7 +114,7 @@ export class PatchLog implements Printable {
    */
   public advanceTo(ts: ITimestampStruct): void {
     const newStartPatches: Patch[] = [];
-    let node = first(this.patches.root)
+    let node = first(this.patches.root);
     for (; node && compare(ts, node.k) >= 0; node = next(node)) newStartPatches.push(node.v);
     for (const patch of newStartPatches) this.patches.del(patch.getId()!);
     const oldStart = this.start;
