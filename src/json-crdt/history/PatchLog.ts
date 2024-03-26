@@ -6,13 +6,11 @@ import {first, next} from '../../util/trees/util';
 import type {Printable} from '../../util/print/types';
 
 export class PatchLog implements Printable {
-  public static fromModel(model: Model<any>): PatchLog {
+  public static fromNewModel(model: Model<any>): PatchLog {
     const start = new Model(model.clock.clone());
     const log = new PatchLog(start);
-    if (model.api.builder.patch.ops.length) {
-      const patch = model.api.flush();
-      log.push(patch);
-    }
+    const api = model.api;
+    if (api.builder.patch.ops.length) log.push(api.flush());
     return log;
   }
 

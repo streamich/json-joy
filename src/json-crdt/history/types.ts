@@ -1,5 +1,5 @@
 import {Patch} from "../../json-crdt-patch";
-import {PatchLog} from "../file/PatchLog";
+import {PatchLog} from "../history/PatchLog";
 import {Model} from "../model";
 
 /**
