@@ -2,8 +2,8 @@ import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
 import {printTree} from '../../util/print/printTree';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
 import {Model} from '../model';
-import type {Printable} from '../../util/print/types';
 import {first, next} from '../../util/trees/util';
+import type {Printable} from '../../util/print/types';
 
 export class PatchLog implements Printable {
   public static fromModel(model: Model<any>): PatchLog {
