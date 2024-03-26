@@ -20,11 +20,11 @@ test('can create File from new model', () => {
     }),
   );
   const file = File.fromModel(model);
-  expect(file.log.start.view()).toBe(undefined);
+  expect(file.log.start().view()).toBe(undefined);
   expect(file.model.view()).toEqual({
     foo: 'bar',
   });
-  expect(file.log.start.clock.sid).toBe(file.model.clock.sid);
+  expect(file.log.start().clock.sid).toBe(file.model.clock.sid);
 });
 
 test.todo('patches are flushed and stored in memory');
@@ -56,7 +56,7 @@ describe('.toBinary()', () => {
       const file2 = File.fromNdjson(blob);
       expect(file2.model.view()).toEqual({foo: 'bar'});
       expect(file2.model !== file.model).toBe(true);
-      expect(file.log.start.view()).toEqual(undefined);
+      expect(file.log.start().view()).toEqual(undefined);
       expect(file.log.replayToEnd().view()).toEqual({foo: 'bar'});
     });
 
@@ -66,7 +66,7 @@ describe('.toBinary()', () => {
       const file2 = File.fromSeqCbor(blob);
       expect(file2.model.view()).toEqual({foo: 'bar'});
       expect(file2.model !== file.model).toBe(true);
-      expect(file.log.start.view()).toEqual(undefined);
+      expect(file.log.start().view()).toEqual(undefined);
       expect(file.log.replayToEnd().view()).toEqual({foo: 'bar'});
     });
   });
@@ -78,7 +78,7 @@ describe('.toBinary()', () => {
       params.format === 'seq.cbor' ? File.fromSeqCbor(blob, fileEncoders) : File.fromNdjson(blob, fileEncoders);
     expect(file2.model.view()).toEqual(file.model.view());
     expect(file2.model !== file.model).toBe(true);
-    expect(file2.log.start.view()).toEqual(undefined);
+    expect(file2.log.start().view()).toEqual(undefined);
     expect(file2.log.replayToEnd().view()).toEqual(file.model.view());
     expect(file2.log.patches.size()).toBe(file.log.patches.size());
   };
