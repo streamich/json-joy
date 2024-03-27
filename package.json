@@ -173,7 +173,7 @@
     "websocket": "^1.0.34",
     "ws": "^8.14.2",
     "yjs": "13.6.9",
-    "ywasm": "0.16.10"
+    "ywasm": "0.18.2"
   },
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
