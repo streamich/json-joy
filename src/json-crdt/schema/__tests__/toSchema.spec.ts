@@ -76,3 +76,14 @@ test('can infer schema of a document nodes', () => {
   expect(cmp(obj, objSchema)).toBe(true);
   expect(cmp(con, objSchema)).toBe(false);
 });
+
+test('can infer schema of a typed model', () => {
+  const schema = s.obj({
+    id: s.con('id'),
+    val: s.val(s.str('world')),
+  });
+  const model = Model.withLogicalClock().setSchema(schema);
+  const schema2 = toSchema(model.root.node());
+  expect(schema2.obj.id).toBeInstanceOf(nodes.con);
+  expect(schema2.obj.val).toBeInstanceOf(nodes.val);
+});
