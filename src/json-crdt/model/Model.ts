@@ -6,7 +6,8 @@ import {JsonCrdtPatchOperation, Patch} from '../../json-crdt-patch/Patch';
 import {ModelApi} from './api/ModelApi';
 import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/constants';
 import {randomSessionId} from './util';
-import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode, BuilderNodeToJsonNode} from '../nodes';
+import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {SchemaToJsonNode} from '../schema/types';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from '../../util/trees/avl/AvlMap';
@@ -378,7 +379,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @param schema The schema to set for this model.
    * @returns Strictly typed model.
    */
-  public setSchema<S extends NodeBuilder>(schema: S): Model<BuilderNodeToJsonNode<S>> {
+  public setSchema<S extends NodeBuilder>(schema: S): Model<SchemaToJsonNode<S>> {
     if (this.clock.time < 2) this.api.root(schema);
     return <any>this;
   }

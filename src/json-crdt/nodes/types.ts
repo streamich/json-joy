@@ -1,5 +1,3 @@
-import type {nodes as builder} from '../../json-crdt-patch';
-import type * as nodes from './nodes';
 import type {Identifiable} from '../../json-crdt-patch/types';
 
 /**
@@ -47,20 +45,3 @@ export interface JsonNode<View = unknown> extends Identifiable {
 }
 
 export type JsonNodeView<N> = N extends JsonNode<infer V> ? V : {[K in keyof N]: JsonNodeView<N[K]>};
-
-// prettier-ignore
-export type BuilderNodeToJsonNode<S> = S extends builder.str<infer T>
-  ? nodes.StrNode<T>
-  : S extends builder.bin
-    ? nodes.BinNode
-    : S extends builder.con<infer T>
-      ? nodes.ConNode<T>
-      : S extends builder.val<infer T>
-        ? nodes.ValNode<BuilderNodeToJsonNode<T>>
-        : S extends builder.vec<infer T>
-          ? nodes.VecNode<{[K in keyof T]: BuilderNodeToJsonNode<T[K]>}>
-          : S extends builder.obj<infer T>
-            ? nodes.ObjNode<{[K in keyof T]: BuilderNodeToJsonNode<T[K]>}>
-            : S extends builder.arr<infer T>
-              ? nodes.ArrNode<BuilderNodeToJsonNode<T>>
-              : JsonNode;
