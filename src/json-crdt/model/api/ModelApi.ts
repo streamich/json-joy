@@ -191,7 +191,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   /**
    * Locates a `con` node and returns a local changes API for it. If the node
    * doesn't exist or the node at the path is not a `con` node, throws an error.
-   * 
+   *
    * @todo Rename to `con`.
    *
    * @param path Path at which to locate a node.

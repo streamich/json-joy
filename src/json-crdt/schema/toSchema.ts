@@ -1,14 +1,12 @@
-import {JsonNode, ConNode, ValNode, ObjNode, VecNode, StrNode, BinNode, ArrNode} from "../nodes";
-import {NodeBuilder, s} from "../../json-crdt-patch";
-import type {JsonNodeToSchema} from "./types";
+import {JsonNode, ConNode, ValNode, ObjNode, VecNode, StrNode, BinNode, ArrNode} from '../nodes';
+import {NodeBuilder, s} from '../../json-crdt-patch';
+import type {JsonNodeToSchema} from './types';
 
 /**
  * Converts any JSON CRDT node to a schema representation. The schema can be
  * used to copy the structure of the JSON CRDT node to another document or
  * another location in the same document.
- * 
- * @todo Add type generic.
- * 
+ *
  * @param node JSON CRDT node to recursively convert to schema.
  * @returns Schema representation of the JSON CRDT node.
  */
@@ -17,7 +15,7 @@ export const toSchema = <N extends JsonNode<any>>(node: N): JsonNodeToSchema<N> 
   if (node instanceof ValNode) return s.val(toSchema(node.node())) as any;
   if (node instanceof ObjNode) {
     const obj: Record<string, NodeBuilder> = {};
-    node.nodes((child, key) => obj[key] = toSchema(child));
+    node.nodes((child, key) => (obj[key] = toSchema(child)));
     return s.obj(obj) as any;
   }
   if (node instanceof VecNode) {

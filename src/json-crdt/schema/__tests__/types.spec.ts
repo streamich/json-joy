@@ -41,10 +41,12 @@ describe('can infer schema of JSON CRDT nodes', () => {
   });
 
   test('from typed model', () => {
-    const model = Model.withLogicalClock().setSchema(s.obj({
-      id: s.con('asdf'),
-      age: s.val(s.con(42)),
-    }));
+    const model = Model.withLogicalClock().setSchema(
+      s.obj({
+        id: s.con('asdf'),
+        age: s.val(s.con(42)),
+      }),
+    );
     type Node = ReturnType<typeof model.root.node>;
     type Schema = JsonNodeToSchema<Node>;
     const schema: Schema = s.obj({
