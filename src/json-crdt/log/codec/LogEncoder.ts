@@ -20,9 +20,7 @@ export interface LogEncoderOpts {
 }
 
 export class LogEncoder {
-  constructor(
-    protected readonly options: LogEncoderOpts = {},
-  ) {}
+  constructor(protected readonly options: LogEncoderOpts = {}) {}
 
   public serialize(log: Log, params: SerializeParams = {}): types.LogComponents {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
@@ -166,7 +164,7 @@ export interface EncodingParams extends SerializeParams {
    * Specifies the encoding format of the whole log document. The document is
    * encoded as a sequence of JSON/CBOR-like components. Those can be encoded
    * as JSON (for human-readable text) or CBOR (for compact binary data).
-   * 
+   *
    * - `ndjson` - encodes the log document as a sequence of new-line delimited
    *   JSON values.
    * - `seq.cbor` - encodes the log document as a CBOR sequence binary data.

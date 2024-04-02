@@ -27,9 +27,7 @@ export interface LogDecoderOpts {
 }
 
 export class LogDecoder {
-  constructor(
-    protected readonly opts: LogDecoderOpts = {},
-  ) {}
+  constructor(protected readonly opts: LogDecoderOpts = {}) {}
 
   public decode(blob: Uint8Array, params: DecodeParams = {}): DecodeResult {
     switch (params.format) {
@@ -38,7 +36,8 @@ export class LogDecoder {
         const result = this.deserialize(components, params);
         return result;
       }
-      default: { // 'seq.cbor'
+      default: {
+        // 'seq.cbor'
         const components = this.decodeSeqCborComponents(blob);
         const result = this.deserialize(components, params);
         return result;
@@ -59,7 +58,7 @@ export class LogDecoder {
     }
     return components as types.LogComponentsWithFrontier;
   }
-  
+
   public decodeSeqCborComponents(blob: Uint8Array): types.LogComponentsWithFrontier {
     const decoder = this.opts.cborDecoder;
     if (!decoder) throw new Error('NO_CBOR_DECODER');
@@ -93,8 +92,7 @@ export class LogDecoder {
         };
         const log = new Log(start);
         const end = log.end;
-        if (frontier && frontier.length)
-          for (const patch of frontier) end.applyPatch(this.deserializePatch(patch));
+        if (frontier && frontier.length) for (const patch of frontier) end.applyPatch(this.deserializePatch(patch));
         result.frontier = log;
       } else {
         throw new Error('NO_MODEL');
@@ -122,7 +120,7 @@ export class LogDecoder {
     if (frontier.length) for (const patch of frontier) end.applyPatch(this.deserializePatch(patch));
     return log;
   }
-  
+
   public deserializeModel(serialized: unknown): Model {
     if (!serialized) throw new Error('NO_MODEL');
     if (serialized instanceof Uint8Array) return Model.fromBinary(serialized);
@@ -138,7 +136,7 @@ export class LogDecoder {
     }
     throw new Error('UNKNOWN_MODEL');
   }
-  
+
   public deserializePatch(serialized: unknown): Patch {
     if (!serialized) throw new Error('NO_MODEL');
     if (serialized instanceof Uint8Array) return Patch.fromBinary(serialized);

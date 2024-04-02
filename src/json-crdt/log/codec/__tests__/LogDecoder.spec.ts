@@ -3,7 +3,7 @@ import {Model} from '../../../model';
 import {logEncoderOpts} from '../logEncoderOpts';
 import {EncodingParams, LogEncoder} from '../LogEncoder';
 import {LogDecoder} from '../LogDecoder';
-import {logDecoderOpts} from '../logDecoderOpts';;
+import {logDecoderOpts} from '../logDecoderOpts';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
