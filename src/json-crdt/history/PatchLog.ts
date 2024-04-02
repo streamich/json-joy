@@ -43,9 +43,10 @@ export class PatchLog implements Printable {
   public readonly end: Model;
 
   /**
-   * The patches in the log, stored in an AVL tree for efficient replaying. The
-   * collection of patches which are applied to the `start()` model to reach
-   * the `end` model.
+   * The collection of patches which are applied to the `start()` model to reach
+   * the `end` model. The patches in the log, stored in an AVL tree for
+   * efficient replaying. The patches are sorted by their logical timestamps
+   * and applied in causal order.
    *
    * @readonly
    */

@@ -83,7 +83,7 @@
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
     "multibase": "^4.0.6",
-    "thingies": "^1.18.0"
+    "thingies": "^1.20.0"
   },
   "devDependencies": {
     "@automerge/automerge": "2.1.7",
@@ -136,6 +136,7 @@
     "lodash": "^4.17.21",
     "loro-crdt": "^0.4.1",
     "markdown-it": "^13.0.1",
+    "memfs": "^4.8.1",
     "messagepack": "^1.1.12",
     "msgpack-lite": "^0.1.26",
     "msgpack5": "^6.0.2",

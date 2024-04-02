@@ -1,6 +1,6 @@
-import {Patch} from '../../json-crdt-patch';
-import {PatchLog} from '../history/PatchLog';
-import {Model} from '../model';
+import type {Patch} from '../../json-crdt-patch';
+import type {PatchLog} from '../history/PatchLog';
+import type {Model} from '../model';
 
 /**
  * A history of patches that have been applied to a model, stored on the
@@ -37,9 +37,11 @@ export interface RemoteHistory<Cursor> {
 }
 
 export interface LocalHistory {
-  load(id: string): Promise<EditingSessionHistory>;
-  // loadHistory(id: string): Promise<PatchLog>;
-  apply(id: string, patches: Patch[]): Promise<void>;
+  create(collection: string[], log: PatchLog): Promise<{id: string}>;
+  read(collection: string[], id: string): Promise<{log: PatchLog; cursor: string}>;
+  readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog; cursor: string}>;
+  update(collection: string[], id: string, patches: Patch[]): Promise<void>;
+  delete(collection: string[], id: string): Promise<void>;
 }
 
 export interface EditingSessionHistory {
