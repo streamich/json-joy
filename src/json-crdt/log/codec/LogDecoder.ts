@@ -71,47 +71,33 @@ export class LogDecoder {
   }
 
   public deserialize(components: types.LogComponentsWithFrontier, params: DeserializeParams = {}): DecodeResult {
-    const [view, metadata, model, history, ...frontier] = components;
+    const [view, metadata, model, , ...frontier] = components;
     const result: DecodeResult = {};
     if (params.view) result.view = view;
     if (params.history) result.history = this.deserializeHistory(components);
     if (params.frontier) {
+      if (!model) result.history = this.deserializeHistory(components);
       if (result.history) {
         result.frontier = result.history;
-      } else {
+      } else if (model) {
         const modelFormat = metadata[1];
-        let decodedModel: Model<any> | null = null;
-        if (model) {
+        const start = (): Model => {
           const isSidecar = modelFormat === FileModelEncoding.SidecarBinary;
           if (isSidecar) {
             const decoder = this.opts.sidecarDecoder;
             if (!decoder) throw new Error('NO_SIDECAR_DECODER');
             if (!(model instanceof Uint8Array)) throw new Error('NOT_BLOB');
-            decodedModel = decoder.decode(view, model);
-          } else {
-            decodedModel = this.deserializeModel(model);
+            return decoder.decode(view, model);
           }
-        }
-        let log: Log | null = null;
-        if (history) {
-          const [start, patches] = history;
-          if (start) {
-            log = new Log(() => this.deserializeModel(start));
-            for (const patch of patches) log.end.applyPatch(this.deserializePatch(patch));
-          }
-        }
-        if (!log) throw new Error('NO_HISTORY');
-        if (!decodedModel) decodedModel = log.replayToEnd();
-        if (frontier.length) {
-          for (const patch of frontier) {
-            const patchDecoded = this.deserializePatch(patch);
-            decodedModel.applyPatch(patchDecoded);
-            log.end.applyPatch(patchDecoded);
-          }
-        }
-        throw new Error('NOT_IMPLEMENTED');
-        // const file = new Log()
-        // return file;
+          return this.deserializeModel(model);
+        };
+        const log = new Log(start);
+        const end = log.end;
+        if (frontier && frontier.length)
+          for (const patch of frontier) end.applyPatch(this.deserializePatch(patch));
+        result.frontier = log;
+      } else {
+        throw new Error('NO_MODEL');
       }
     }
     return result;

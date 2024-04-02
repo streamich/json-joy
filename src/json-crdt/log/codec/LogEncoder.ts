@@ -104,7 +104,7 @@ export class LogEncoder {
     return [params.noView ? null : log.end.view(), metadata, model, history];
   }
 
-  public toBinary(log: Log, params: EncodingParams): Uint8Array {
+  public encode(log: Log, params: EncodingParams): Uint8Array {
     const sequence = this.serialize(log, params);
     switch (params.format) {
       case 'ndjson': {
