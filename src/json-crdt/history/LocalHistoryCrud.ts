@@ -1,5 +1,7 @@
-import {File, FileOptions} from '../file/File';
 import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
+import {CborDecoder} from '../../json-pack/cbor/CborDecoder';
+import {LogEncoder} from '../log/codec/LogEncoder';
+import {LogDecoder} from '../log/codec/LogDecoder';
 import type {CrudApi} from 'memfs/lib/crud/types';
 import type {Locks} from 'thingies/es2020/Locks';
 import type {Patch} from '../../json-crdt-patch';
@@ -16,9 +18,12 @@ export const genId = (octets: number = 8): string => {
 const STATE_FILE_NAME = 'state.seq.cbor';
 
 export class LocalHistoryCrud implements LocalHistory {
-  protected fileOpts: FileOptions = {
+  protected encoder: LogEncoder = new LogEncoder({
     cborEncoder: new CborEncoder(),
-  };
+  });
+  protected decoder: LogDecoder = new LogDecoder({
+    cborDecoder: new CborDecoder(),
+  });
 
   constructor(
     protected readonly crud: CrudApi,
@@ -26,13 +31,7 @@ export class LocalHistoryCrud implements LocalHistory {
   ) {}
 
   public async create(collection: string[], log: Log): Promise<{id: string}> {
-    // TODO: Remove `log.end`, just `log` should be enough.
-    // TODO: Add browser-native compression. Wrap the blob into `[]` TLV tuple.
-    const file = new File(log.end, log, this.fileOpts);
-    const blob = file.toBinary({
-      format: 'seq.cbor',
-      model: 'binary',
-    });
+    const blob = this.encode(log);
     const id = genId();
     await this.lock(collection, id, async () => {
       await this.crud.put([...collection, id], STATE_FILE_NAME, blob, {throwIf: 'exists'});
@@ -40,11 +39,21 @@ export class LocalHistoryCrud implements LocalHistory {
     return {id};
   }
 
+  protected encode(log: Log): Uint8Array {
+    // TODO: Add browser-native compression. Wrap the blob into `[]` TLV tuple.
+    return this.encoder.encode(log, {
+      format: 'seq.cbor',
+      model: 'binary',
+      history: 'binary',
+      noView: true,
+    });
+  }
+
   public async read(collection: string[], id: string): Promise<{log: Log; cursor: string}> {
     const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
-    const {log} = File.fromSeqCbor(blob);
+    const {frontier} = this.decoder.decode(blob, {format: 'seq.cbor', frontier: true});
     return {
-      log,
+      log: frontier!,
       cursor: '',
     };
   }
@@ -56,13 +65,10 @@ export class LocalHistoryCrud implements LocalHistory {
   public async update(collection: string[], id: string, patches: Patch[]): Promise<void> {
     await this.lock(collection, id, async () => {
       const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
-      const {log} = File.fromSeqCbor(blob);
+      const decoded = this.decoder.decode(blob, {format: 'seq.cbor', history: true});
+      const log = decoded.history!;
       log.end.applyBatch(patches);
-      const file = new File(log.end, log, this.fileOpts);
-      const blob2 = file.toBinary({
-        format: 'seq.cbor',
-        model: 'binary',
-      });
+      const blob2 = this.encode(log);
       await this.crud.put([...collection, id], STATE_FILE_NAME, blob2, {throwIf: 'missing'});
     });
   }
