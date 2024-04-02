@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-crdt/file/fileEncoders.ts</title>
+    <title>Code coverage report for json-crdt/log/codec/logEncoderOpts.ts</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../prettify.css" />
-    <link rel="stylesheet" href="../../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../../sort-arrow-sprite.png);
+            background-image: url(../../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-crdt/file</a> fileEncoders.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">json-crdt/log/codec</a> logEncoderOpts.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -86,49 +86,55 @@
 <a name='L21'></a><a href='#L21'>21</a>
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Writer} from '../../util/buffers/Writer';
-import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
-import {Decoder as SidecarDecoder} from '../codec/sidecar/binary/Decoder';
-import {Encoder as StructuralEncoderCompact} from '../codec/structural/compact/Encoder';
-import {Encoder as StructuralEncoderVerbose} from '../codec/structural/verbose/Encoder';
-import {encode as encodeCompact} from '../../json-crdt-patch/codec/compact/encode';
-import {encode as encodeVerbose} from '../../json-crdt-patch/codec/verbose/encode';
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
-import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
-import type {FileOptions} from './File';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {Writer} from '../../../util/buffers/Writer';
+import {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';
+import {Encoder as StructuralEncoderCompact} from '../../codec/structural/compact/Encoder';
+import {Encoder as StructuralEncoderVerbose} from '../../codec/structural/verbose/Encoder';
+import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
+import {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose/encode';
+import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
+import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
+import type {LogEncoderOpts} from './LogEncoder';
 &nbsp;
 const writer = new Writer(4096);
 &nbsp;
-export const fileEncoders: FileOptions = {
+/**
+ * Default {@link LogEncoderOpts} for {@link LogEncoder}. Instantiates all
+ * possible encoders.
+ */
+export const logEncoderOpts: LogEncoderOpts = {
   jsonEncoder: new JsonEncoder(writer),
   cborEncoder: new CborEncoder(writer),
   structuralCompactEncoder: new StructuralEncoderCompact(),
   structuralVerboseEncoder: new StructuralEncoderVerbose(),
   sidecarEncoder: new SidecarEncoder(),
-  sidecarDecoder: new SidecarDecoder(),
   patchCompactEncoder: encodeCompact,
   patchVerboseEncoder: encodeVerbose,
 };
@@ -139,16 +145,16 @@ export const fileEncoders: FileOptions = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-02T10:31:10.465Z
+                at 2024-04-02T23:45:27.382Z
             </div>
-        <script src="../../prettify.js"></script>
+        <script src="../../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../../sorter.js"></script>
-        <script src="../../block-navigation.js"></script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
     </body>
 </html>
     
