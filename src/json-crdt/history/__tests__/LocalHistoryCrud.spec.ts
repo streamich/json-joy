@@ -2,7 +2,7 @@ import {memfs} from 'memfs';
 import {NodeCrud} from 'memfs/lib/node-to-crud';
 import {Locks} from 'thingies/es2020/Locks';
 import {LocalHistoryCrud} from '../LocalHistoryCrud';
-import {PatchLog} from '../PatchLog';
+import {Log} from '../../log/Log';
 import {Model} from '../../model';
 
 const setup = async () => {
@@ -25,7 +25,7 @@ test('can create a new document', async () => {
   model.api.root({
     foo: 'spam',
   });
-  const log = PatchLog.fromNewModel(model);
+  const log = Log.fromNewModel(model);
   const {id} = await local.create(['test'], log);
   expect(typeof id).toBe('string');
   expect(id.length > 6).toBe(true);
@@ -49,7 +49,7 @@ test('can delete a document', async () => {
   model.api.root({
     foo: 'spam',
   });
-  const log = PatchLog.fromNewModel(model);
+  const log = Log.fromNewModel(model);
   const {id} = await local.create(['test'], log);
   await local.read(['test'], id);
   await local.delete(['test'], id);

@@ -12,6 +12,14 @@ export const enum SESSION {
    */
   SERVER = 1,
 
+  /**
+   * Use this session ID when you want to apply a patch globally, without
+   * attributing it to any specific user. For example, when the initial document
+   * is created, the default patch can be applied on all clients to result in
+   * the same initial state on all clients.
+   */
+  GLOBAL = 2,
+
   /** Max allowed session ID, they are capped at 53-bits. */
   MAX = 9007199254740991,
 }

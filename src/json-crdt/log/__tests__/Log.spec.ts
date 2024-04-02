@@ -1,10 +1,10 @@
 import {Model} from '../../model';
-import {PatchLog} from '../PatchLog';
+import {Log} from '../Log';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();
   model.api.root(view);
-  const log = PatchLog.fromNewModel(model);
+  const log = Log.fromNewModel(model);
   return {log};
 };
 

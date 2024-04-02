@@ -1,5 +1,5 @@
 import type {Patch} from '../../json-crdt-patch';
-import type {PatchLog} from '../history/PatchLog';
+import type {Log} from '../log/Log';
 import type {Model} from '../model';
 
 /**
@@ -37,16 +37,16 @@ export interface RemoteHistory<Cursor> {
 }
 
 export interface LocalHistory {
-  create(collection: string[], log: PatchLog): Promise<{id: string}>;
-  read(collection: string[], id: string): Promise<{log: PatchLog; cursor: string}>;
-  readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog; cursor: string}>;
+  create(collection: string[], log: Log): Promise<{id: string}>;
+  read(collection: string[], id: string): Promise<{log: Log; cursor: string}>;
+  readHistory(collection: string[], id: string, cursor: string): Promise<{log: Log; cursor: string}>;
   update(collection: string[], id: string, patches: Patch[]): Promise<void>;
   delete(collection: string[], id: string): Promise<void>;
 }
 
 export interface EditingSessionHistory {
   load(id: string): Promise<Model>;
-  loadHistory(id: string): Promise<PatchLog>;
+  loadHistory(id: string): Promise<Log>;
   undo(id: string): Promise<void>;
   redo(id: string): Promise<void>;
 }

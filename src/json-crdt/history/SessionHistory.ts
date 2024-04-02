@@ -3,7 +3,7 @@ import {FanOutUnsubscribe} from 'thingies/es2020/fanout';
 import {InsValOp, Patch} from '../../json-crdt-patch';
 import {ValNode} from '../nodes';
 import {toSchema} from '../schema/toSchema';
-import {PatchLog} from './PatchLog';
+import {Log} from '../log/Log';
 import {RedoItem, UndoItem, UndoRedoStack} from './UndoRedoStack';
 
 class Undo implements UndoItem {
@@ -15,7 +15,7 @@ class Redo implements RedoItem {
 }
 
 export class SessionHistory {
-  constructor(public readonly log: PatchLog) {}
+  constructor(public readonly log: Log) {}
 
   private readonly __onPatchRace = createRace();
 
