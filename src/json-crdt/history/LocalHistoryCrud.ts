@@ -1,10 +1,10 @@
-import {File, FileOptions} from "../file/File";
-import {CborEncoder} from "../../json-pack/cbor/CborEncoder";
-import type {CrudApi} from "memfs/lib/crud/types";
-import type {Locks} from "thingies/es2020/Locks";
-import type {Patch} from "../../json-crdt-patch";
-import type {PatchLog} from "./PatchLog";
-import type {LocalHistory} from "./types";
+import {File, FileOptions} from '../file/File';
+import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
+import type {CrudApi} from 'memfs/lib/crud/types';
+import type {Locks} from 'thingies/es2020/Locks';
+import type {Patch} from '../../json-crdt-patch';
+import type {PatchLog} from './PatchLog';
+import type {LocalHistory} from './types';
 
 export const genId = (octets: number = 8): string => {
   const uint8 = crypto.getRandomValues(new Uint8Array(octets));
@@ -29,7 +29,7 @@ export class LocalHistoryCrud implements LocalHistory {
     // TODO: Remove `log.end`, just `log` should be enough.
     const file = new File(log.end, log, this.fileOpts);
     const blob = file.toBinary({
-      format: "seq.cbor",
+      format: 'seq.cbor',
       model: 'binary',
     });
     const id = genId();
@@ -39,7 +39,7 @@ export class LocalHistoryCrud implements LocalHistory {
     return {id};
   }
 
-  public async read(collection: string[], id: string): Promise<{log: PatchLog, cursor: string}> {
+  public async read(collection: string[], id: string): Promise<{log: PatchLog; cursor: string}> {
     const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
     const {log} = File.fromSeqCbor(blob);
     return {
@@ -48,7 +48,7 @@ export class LocalHistoryCrud implements LocalHistory {
     };
   }
 
-  public readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog, cursor: string}> {
+  public readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog; cursor: string}> {
     throw new Error('Method not implemented.');
   }
 
@@ -59,7 +59,7 @@ export class LocalHistoryCrud implements LocalHistory {
       log.end.applyBatch(patches);
       const file = new File(log.end, log, this.fileOpts);
       const blob2 = file.toBinary({
-        format: "seq.cbor",
+        format: 'seq.cbor',
         model: 'binary',
       });
       await this.crud.put([...collection, id], STATE_FILE_NAME, blob2, {throwIf: 'missing'});
@@ -74,7 +74,11 @@ export class LocalHistoryCrud implements LocalHistory {
 
   protected async lock(collection: string[], id: string, fn: () => Promise<void>): Promise<void> {
     const key = collection.join('/') + '/' + id;
-    await this.locks.lock(key, 250, 500)(async () => {
+    await this.locks.lock(
+      key,
+      250,
+      500,
+    )(async () => {
       await fn();
     });
   }

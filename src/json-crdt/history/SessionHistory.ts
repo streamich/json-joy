@@ -1,24 +1,22 @@
 import {createRace} from 'thingies/es2020/createRace';
 import {FanOutUnsubscribe} from 'thingies/es2020/fanout';
-import {InsValOp, Patch} from "../../json-crdt-patch";
-import {ValNode} from "../nodes";
-import {toSchema} from "../schema/toSchema";
-import {PatchLog} from "./PatchLog";
-import {RedoItem, UndoItem, UndoRedoStack} from "./UndoRedoStack";
+import {InsValOp, Patch} from '../../json-crdt-patch';
+import {ValNode} from '../nodes';
+import {toSchema} from '../schema/toSchema';
+import {PatchLog} from './PatchLog';
+import {RedoItem, UndoItem, UndoRedoStack} from './UndoRedoStack';
 
 class Undo implements UndoItem {
-  constructor (public readonly undo: () => Redo) {}
+  constructor(public readonly undo: () => Redo) {}
 }
 
 class Redo implements RedoItem {
-  constructor (public readonly redo: () => Undo) {}
+  constructor(public readonly redo: () => Undo) {}
 }
 
 export class SessionHistory {
-  constructor (
-    public readonly log: PatchLog,
-  ) {}
-  
+  constructor(public readonly log: PatchLog) {}
+
   private readonly __onPatchRace = createRace();
 
   public attachUndoRedo(stack: UndoRedoStack): FanOutUnsubscribe {

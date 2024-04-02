@@ -38,8 +38,8 @@ export interface RemoteHistory<Cursor> {
 
 export interface LocalHistory {
   create(collection: string[], log: PatchLog): Promise<{id: string}>;
-  read(collection: string[], id: string): Promise<{log: PatchLog, cursor: string}>;
-  readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog, cursor: string}>;
+  read(collection: string[], id: string): Promise<{log: PatchLog; cursor: string}>;
+  readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog; cursor: string}>;
   update(collection: string[], id: string, patches: Patch[]): Promise<void>;
   delete(collection: string[], id: string): Promise<void>;
 }
