@@ -6,7 +6,7 @@ import {Model} from '../model';
 import {first, next} from '../../util/trees/util';
 import type {Printable} from '../../util/print/types';
 
-export class PatchLog implements Printable {
+export class Log implements Printable {
   /**
    * Creates a `PatchLog` instance from a newly JSON CRDT model. Checks if
    * the model API buffer has any initial operations applied, if yes, it
@@ -16,9 +16,9 @@ export class PatchLog implements Printable {
    *              `Model.withLogicalClock()` or `Model.withServerClock()`.
    * @returns A new `PatchLog` instance.
    */
-  public static fromNewModel(model: Model<any>): PatchLog {
+  public static fromNewModel(model: Model<any>): Log {
     const clock = model.clock.clone();
-    const log = new PatchLog(() => new Model(clock));
+    const log = new Log(() => new Model(clock));
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;

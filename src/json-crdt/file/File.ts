@@ -1,5 +1,5 @@
 import {Model} from '../model';
-import {PatchLog} from '../history/PatchLog';
+import {Log} from '../log/Log';
 import {printTree} from '../../util/print/printTree';
 import {decodeModel, decodeNdjsonComponents, decodePatch, decodeSeqCborComponents} from './util';
 import {Patch} from '../../json-crdt-patch';
@@ -42,11 +42,11 @@ export class File implements Printable {
         decodedModel = decodeModel(model);
       }
     }
-    let log: PatchLog | null = null;
+    let log: Log | null = null;
     if (history) {
       const [start, patches] = history;
       if (start) {
-        log = new PatchLog(() => decodeModel(start));
+        log = new Log(() => decodeModel(start));
         for (const patch of patches) log.end.applyPatch(decodePatch(patch));
       }
     }
@@ -74,12 +74,12 @@ export class File implements Printable {
   }
 
   public static fromModel(model: Model<any>, options: FileOptions = {}): File {
-    return new File(model, PatchLog.fromNewModel(model), options);
+    return new File(model, Log.fromNewModel(model), options);
   }
 
   constructor(
     public readonly model: Model,
-    public readonly log: PatchLog,
+    public readonly log: Log,
     protected readonly options: FileOptions = {},
   ) {}
 

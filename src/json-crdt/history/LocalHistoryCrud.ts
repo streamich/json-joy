@@ -3,7 +3,7 @@ import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
 import type {CrudApi} from 'memfs/lib/crud/types';
 import type {Locks} from 'thingies/es2020/Locks';
 import type {Patch} from '../../json-crdt-patch';
-import type {PatchLog} from './PatchLog';
+import type {Log} from '../log/Log';
 import type {LocalHistory} from './types';
 
 export const genId = (octets: number = 8): string => {
@@ -25,7 +25,7 @@ export class LocalHistoryCrud implements LocalHistory {
     protected readonly locks: Locks,
   ) {}
 
-  public async create(collection: string[], log: PatchLog): Promise<{id: string}> {
+  public async create(collection: string[], log: Log): Promise<{id: string}> {
     // TODO: Remove `log.end`, just `log` should be enough.
     const file = new File(log.end, log, this.fileOpts);
     const blob = file.toBinary({
@@ -39,7 +39,7 @@ export class LocalHistoryCrud implements LocalHistory {
     return {id};
   }
 
-  public async read(collection: string[], id: string): Promise<{log: PatchLog; cursor: string}> {
+  public async read(collection: string[], id: string): Promise<{log: Log; cursor: string}> {
     const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
     const {log} = File.fromSeqCbor(blob);
     return {
@@ -48,7 +48,7 @@ export class LocalHistoryCrud implements LocalHistory {
     };
   }
 
-  public readHistory(collection: string[], id: string, cursor: string): Promise<{log: PatchLog; cursor: string}> {
+  public readHistory(collection: string[], id: string, cursor: string): Promise<{log: Log; cursor: string}> {
     throw new Error('Method not implemented.');
   }
 
