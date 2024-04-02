@@ -1,13 +1,13 @@
 import {Log} from '../Log';
 import {FileModelEncoding} from './constants';
-import type {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
-import type {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose/encode';
+import type * as types from './types';
 import type {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
 import type {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
 import type {Encoder as StructuralEncoderCompact} from '../../codec/structural/compact/Encoder';
 import type {Encoder as StructuralEncoderVerbose} from '../../codec/structural/verbose/Encoder';
 import type {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';
-import type * as types from './types';
+import type {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
+import type {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose/encode';
 
 export interface LogEncoderOpts {
   jsonEncoder?: JsonEncoder;
@@ -24,9 +24,9 @@ export class LogEncoder {
     protected readonly options: LogEncoderOpts = {},
   ) {}
 
-  public serialize(log: Log, params: SerializeParams = {}): types.FileWriteSequence {
+  public serialize(log: Log, params: SerializeParams = {}): types.LogComponents {
     if (params.noView && params.model === 'sidecar') throw new Error('SIDECAR_MODEL_WITHOUT_VIEW');
-    const metadata: types.FileMetadata = [{}, FileModelEncoding.Auto];
+    const metadata: types.LogMetadata = [{}, FileModelEncoding.Auto];
     let model: Uint8Array | unknown | null = null;
     const modelFormat = params.model ?? 'sidecar';
     switch (modelFormat) {
@@ -61,7 +61,7 @@ export class LogEncoder {
       default:
         throw new Error(`Invalid model format: ${modelFormat}`);
     }
-    const history: types.FileWriteSequenceHistory = [null, []];
+    const history: types.LogHistory = [null, []];
     const patchFormat = params.history ?? 'binary';
     switch (patchFormat) {
       case 'binary': {
@@ -126,12 +126,50 @@ export class LogEncoder {
   }
 }
 
+/**
+ * High-level serialization parameters for encoding a {@link Log} instance into
+ * a sequence of components.
+ */
 export interface SerializeParams {
+  /**
+   * If set to `false`, will not encode the view of the model as the very first
+   * component. Encoding the view of the latest known state as the first
+   * component of NDJSON or CBOR-Sequence is useful for allowing the decoders,
+   * which do not know the details of JSON CRDTs, to just read the view and
+   * ignore the rest of the components.
+   */
   noView?: boolean;
+
+  /**
+   * Specifies the model encoding format for the latest state `.end` for
+   * the {@link Log}. The default is `'sidecar'`. The `'sidecar'` model format
+   * is a binary format which encodes only the metadata, which is very compact
+   * if the view was encoded separately. As it can then be used together with
+   * the view to decode it back.
+   */
   model?: 'sidecar' | 'binary' | 'compact' | 'verbose' | 'none';
+
+  /**
+   * Specifies the patch `log.patches` and start model `log.start()` encoding
+   * encoding format of the "history" part of the document. The default is
+   * `'binary'`.
+   */
   history?: 'binary' | 'compact' | 'verbose' | 'none';
 }
 
+/**
+ * High-level encoding parameters for encoding a {@link Log} instance into a
+ * binary blob.
+ */
 export interface EncodingParams extends SerializeParams {
+  /**
+   * Specifies the encoding format of the whole log document. The document is
+   * encoded as a sequence of JSON/CBOR-like components. Those can be encoded
+   * as JSON (for human-readable text) or CBOR (for compact binary data).
+   * 
+   * - `ndjson` - encodes the log document as a sequence of new-line delimited
+   *   JSON values.
+   * - `seq.cbor` - encodes the log document as a CBOR sequence binary data.
+   */
   format: 'ndjson' | 'seq.cbor';
 }
