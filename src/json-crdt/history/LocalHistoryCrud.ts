@@ -52,8 +52,18 @@ export class LocalHistoryCrud implements LocalHistory {
     throw new Error('Method not implemented.');
   }
 
-  public update(collection: string[], id: string, patches: Patch[]): Promise<void> {
-    throw new Error('Method not implemented.');
+  public async update(collection: string[], id: string, patches: Patch[]): Promise<void> {
+    await this.lock(collection, id, async () => {
+      const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
+      const {log} = File.fromSeqCbor(blob);
+      log.end.applyBatch(patches);
+      const file = new File(log.end, log, this.fileOpts);
+      const blob2 = file.toBinary({
+        format: "seq.cbor",
+        model: 'binary',
+      });
+      await this.crud.put([...collection, id], STATE_FILE_NAME, blob2, {throwIf: 'missing'});
+    });
   }
 
   public async delete(collection: string[], id: string): Promise<void> {
