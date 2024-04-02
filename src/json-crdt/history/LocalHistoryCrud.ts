@@ -27,6 +27,7 @@ export class LocalHistoryCrud implements LocalHistory {
 
   public async create(collection: string[], log: Log): Promise<{id: string}> {
     // TODO: Remove `log.end`, just `log` should be enough.
+    // TODO: Add browser-native compression. Wrap the blob into `[]` TLV tuple.
     const file = new File(log.end, log, this.fileOpts);
     const blob = file.toBinary({
       format: 'seq.cbor',

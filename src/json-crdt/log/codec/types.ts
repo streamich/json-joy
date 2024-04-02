@@ -1,14 +1,14 @@
 import type {FileModelEncoding} from './constants';
 
-export type FileMetadata = [map: {}, modelFormat: FileModelEncoding];
+export type LogMetadata = [map: {}, modelFormat: FileModelEncoding];
 
-export type FileWriteSequence = [
+export type LogComponents = [
   view: unknown | null,
-  metadata: FileMetadata,
+  metadata: LogMetadata,
   model: Uint8Array | unknown | null,
-  history: FileWriteSequenceHistory,
+  history: LogHistory,
 ];
 
-export type FileWriteSequenceHistory = [model: Uint8Array | unknown | null, patches: Array<Uint8Array | unknown>];
+export type LogHistory = [model: Uint8Array | unknown | null, patches: Array<Uint8Array | unknown>];
 
-export type FileReadSequence = [...FileWriteSequence, ...frontier: Array<Uint8Array | unknown>];
+export type LogComponentsWithFrontier = [...LogComponents, ...frontier: Array<Uint8Array | unknown>];
