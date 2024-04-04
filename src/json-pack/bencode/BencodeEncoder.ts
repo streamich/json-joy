@@ -1,3 +1,4 @@
+import {utf8Size} from '../../util/strings/utf8';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder} from '../types';
 
@@ -95,15 +96,27 @@ export class BencodeEncoder implements BinaryJsonEncoder {
   }
 
   public writeBin(buf: Uint8Array): void {
-    throw new Error('Method not implemented.');
+    const writer = this.writer;
+    const length = buf.length;
+    writer.ascii(length + '');
+    writer.u8(0x3a); // ':'
+    writer.buf(buf, length);
   }
 
   public writeStr(str: string): void {
-    throw new Error('Method not implemented.');
+    const writer = this.writer;
+    const length = utf8Size(str);
+    writer.ascii(length + '');
+    writer.u8(0x3a); // ':'
+    writer.ensureCapacity(length);
+    writer.utf8(str);
   }
 
   public writeAsciiStr(str: string): void {
-    throw new Error('Method not implemented.');
+    const writer = this.writer;
+    writer.ascii(str.length + '');
+    writer.u8(0x3a); // ':'
+    writer.ascii(str);
   }
 
   public writeArr(arr: unknown[]): void {
