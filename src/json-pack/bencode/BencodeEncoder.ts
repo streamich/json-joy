@@ -42,6 +42,9 @@ export class BencodeEncoder implements BinaryJsonEncoder {
             return this.writeUnknown(value);
         }
       }
+      case 'bigint': {
+        return this.writeBigint(value);
+      }
       case 'undefined': {
         return this.writeUndef();
       }
@@ -82,6 +85,13 @@ export class BencodeEncoder implements BinaryJsonEncoder {
 
   public writeFloat(float: number): void {
     this.writeNumber(float);
+  }
+
+  public writeBigint(int: bigint): void {
+    const writer = this.writer;
+    writer.u8(0x69); // 'i'
+    writer.ascii(int + '');
+    writer.u8(0x65); // 'e'
   }
 
   public writeBin(buf: Uint8Array): void {

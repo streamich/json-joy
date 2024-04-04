@@ -52,6 +52,14 @@ describe('number', () => {
     assertEncoder(+2321321123, utf8`i2321321123e`);
   });
 
+  test('bigints', () => {
+    assertEncoder(BigInt('0'), utf8`i0e`);
+    assertEncoder(BigInt('1'), utf8`i1e`);
+    assertEncoder(BigInt('-1'), utf8`i-1e`);
+    assertEncoder(BigInt('123456'), utf8`i123456e`);
+    assertEncoder(BigInt('-123456'), utf8`i-123456e`);
+  });
+
   test('floats', () => {
     assertEncoder(0.0, utf8`i0e`);
     assertEncoder(1.1, utf8`i1e`);
