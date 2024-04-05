@@ -112,27 +112,27 @@ describe('binary', () => {
   });
 });
 
-// describe('array', () => {
-//   test('empty array', () => {
-//     assertEncoder([]);
-//   });
+describe('array', () => {
+  test('empty array', () => {
+    assertEncoder([], utf8`le`);
+  });
 
-//   test('array with one element', () => {
-//     assertEncoder([1]);
-//   });
+  test('array with one integer element', () => {
+    assertEncoder([1], utf8`li1ee`);
+  });
 
-//   test('array with two elements', () => {
-//     assertEncoder([1, 2]);
-//   });
+  test('array with two integer elements', () => {
+    assertEncoder([1, 2], utf8`li1ei2ee`);
+  });
 
-//   test('array of array', () => {
-//     assertEncoder([[123]]);
-//   });
+  test('array of array', () => {
+    assertEncoder([[123]], utf8`lli123eee`);
+  });
 
-//   test('array of various types', () => {
-//     assertEncoder([0, 1.32, 'str', true, false, null, [1, 2, 3]]);
-//   });
-// });
+  test('array of various types', () => {
+    assertEncoder([0, 1.32, 'str', [1, 2, 3]], utf8`li0ei1e3:strli1ei2ei3eee`);
+  });
+});
 
 // describe('object', () => {
 //   test('empty object', () => {

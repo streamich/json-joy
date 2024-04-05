@@ -55,15 +55,15 @@ export class BencodeEncoder implements BinaryJsonEncoder {
   }
 
   public writeNull(): void {
-    throw new Error('Method not implemented.');
+    throw new Error('NULL_NOT_SUPPORTED');
   }
 
   public writeUndef(): void {
-    throw new Error('Method not implemented.');
+    throw new Error('UNDEF_NOT_SUPPORTED');
   }
 
   public writeBoolean(bool: boolean): void {
-    throw new Error('Method not implemented.');
+    throw new Error('BOOL_NOT_SUPPORTED');
   }
 
   public writeNumber(num: number): void {
@@ -120,7 +120,11 @@ export class BencodeEncoder implements BinaryJsonEncoder {
   }
 
   public writeArr(arr: unknown[]): void {
-    throw new Error('Method not implemented.');
+    const writer = this.writer;
+    writer.u8(0x6c); // 'l'
+    const length = arr.length;
+    for (let i = 0; i < length; i++) this.writeAny(arr[i]);
+    writer.u8(0x65); // 'e'
   }
 
   public writeObj(obj: Record<string, unknown>): void {
