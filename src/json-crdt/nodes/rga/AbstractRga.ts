@@ -56,7 +56,7 @@ export interface Chunk<T> {
   /** Return a deep copy of itself. */
   clone(): Chunk<T>;
   /** Return the data of the chunk, if not deleted. */
-  view(): T;
+  view(): T & {slice: (start: number, end: number) => T};
 }
 
 const compareById = (c1: Chunk<unknown>, c2: Chunk<unknown>): number => {

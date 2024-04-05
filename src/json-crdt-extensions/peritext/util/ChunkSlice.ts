@@ -28,7 +28,7 @@ export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printab
     return !off ? id : new Timestamp(id.sid, id.time + off);
   }
 
-  public key(): number | string {
+  public key(): string {
     const id = this.chunk.id;
     const sid = id.sid;
     const time = id.time + this.off;
@@ -36,7 +36,8 @@ export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printab
   }
 
   public view(): T {
-    return this.chunk.view();
+    const offset = this.off;
+    return this.chunk.view().slice(offset, offset + this.len);
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -60,8 +61,8 @@ export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printab
     const len = this.len;
     const str = this.view() + '';
     const truncate = str.length > 32;
-    const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
+    const view = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
     const id = toDisplayString(this.chunk.id);
-    return `${name} ${id} [${off}..${off + len}) ${text}`;
+    return `${name} ${id} [${off}..${off + len}) ${view}`;
   }
 }
