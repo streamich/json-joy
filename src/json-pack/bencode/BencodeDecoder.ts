@@ -138,7 +138,7 @@ export class BencodeDecoder implements BinaryJsonDecoder {
     const obj: Record<string, unknown> = {};
     const uint8 = reader.uint8;
     while (true) {
-      let char = uint8[reader.x];
+      const char = uint8[reader.x];
       if (char === 0x65) {
         reader.x++;
         return obj;
