@@ -11,35 +11,27 @@ const assertEncoder = (value: unknown, expected: Uint8Array) => {
   expect(encoded).toEqual(expected);
 };
 
-// describe('null', () => {
-//   test('null', () => {
-//     assertEncoder(null);
-//   });
-// });
+describe('null', () => {
+  test('null', () => {
+    assertEncoder(null, utf8`n`);
+  });
+});
 
-// describe('undefined', () => {
-//   test('undefined', () => {
-//     const encoded = encoder.encode(undefined);
-//     const txt = Buffer.from(encoded).toString('utf-8');
-//     expect(txt).toBe('"data:application/cbor,base64;9w=="');
-//   });
+describe('undefined', () => {
+  test('undefined', () => {
+    assertEncoder(undefined, utf8`u`);
+  });
+});
 
-//   test('undefined in object', () => {
-//     const encoded = encoder.encode({foo: undefined});
-//     const txt = Buffer.from(encoded).toString('utf-8');
-//     expect(txt).toBe('{"foo":"data:application/cbor,base64;9w=="}');
-//   });
-// });
+describe('boolean', () => {
+  test('true', () => {
+    assertEncoder(true, utf8`t`);
+  });
 
-// describe('boolean', () => {
-//   test('true', () => {
-//     assertEncoder(true);
-//   });
-
-//   test('false', () => {
-//     assertEncoder(false);
-//   });
-// });
+  test('false', () => {
+    assertEncoder(false, utf8`f`);
+  });
+});
 
 describe('number', () => {
   test('integers', () => {

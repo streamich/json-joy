@@ -60,15 +60,15 @@ export class BencodeEncoder implements BinaryJsonEncoder {
   }
 
   public writeNull(): void {
-    throw new Error('NULL_NOT_SUPPORTED');
+    this.writer.u8(110); // 'n'
   }
 
   public writeUndef(): void {
-    throw new Error('UNDEF_NOT_SUPPORTED');
+    this.writer.u8(117); // 'u'
   }
 
   public writeBoolean(bool: boolean): void {
-    throw new Error('BOOL_NOT_SUPPORTED');
+    this.writer.u8(bool ? 0x74 : 0x66); // 't' or 'f'
   }
 
   public writeNumber(num: number): void {
