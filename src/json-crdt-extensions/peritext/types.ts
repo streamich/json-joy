@@ -1,5 +1,4 @@
 import type {ITimestampStruct} from "../../json-crdt-patch";
-import type {Chunk} from "../../json-crdt/nodes/rga";
 import type {Path, PathStep} from "../../json-pointer";
 
 /**
@@ -17,8 +16,6 @@ export interface Stateful {
    */
   refresh(): number;
 }
-
-export type StringChunk = Chunk<string>;
 
 export type IdDto = [sid: number, time: number];
 
