@@ -40,6 +40,8 @@ export class BencodeEncoder implements BinaryJsonEncoder {
             return this.writeArr(value as unknown[]);
           case Uint8Array:
             return this.writeBin(value as Uint8Array);
+          case Map:
+            return this.writeMap(value as Map<unknown, unknown>);
           default:
             return this.writeUnknown(value);
         }
@@ -137,6 +139,19 @@ export class BencodeEncoder implements BinaryJsonEncoder {
       const key = keys[i];
       this.writeStr(key);
       this.writeAny(obj[key]);
+    }
+    writer.u8(0x65); // 'e'
+  }
+
+  public writeMap(obj: Map<unknown, unknown>): void {
+    const writer = this.writer;
+    writer.u8(0x64); // 'd'
+    const keys = sort([...obj.keys()]);
+    const length = keys.length;
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      this.writeStr(key + '');
+      this.writeAny(obj.get(key));
     }
     writer.u8(0x65); // 'e'
   }

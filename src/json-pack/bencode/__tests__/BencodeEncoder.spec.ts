@@ -6,7 +6,7 @@ import {BencodeEncoder} from '../BencodeEncoder';
 const writer = new Writer(32);
 const encoder = new BencodeEncoder(writer);
 
-const assertEncoder = (value: PackValue, expected: Uint8Array) => {
+const assertEncoder = (value: unknown, expected: Uint8Array) => {
   const encoded = encoder.encode(value);
   expect(encoded).toEqual(expected);
 };
@@ -154,5 +154,31 @@ describe('object', () => {
       arr: [1, 2, 3],
       obj: {foo: 'bar'},
     }, utf8`d3:arrli1ei2ei3ee3:numi123e3:objd3:foo3:bare3:str6:qwertye`);
+  });
+});
+
+describe('map', () => {
+  test('empty object', () => {
+    assertEncoder(new Map(), utf8`de`);
+  });
+
+  test('object with one key', () => {
+    assertEncoder(new Map([['foo', 'bar']]), utf8`d3:foo3:bare`);
+  });
+
+  test('object with two keys (sorted)', () => {
+    assertEncoder(new Map<unknown, unknown>([
+      ['foo', 'bar'],
+      ['baz', 123],
+    ]), utf8`d3:bazi123e3:foo3:bare`);
+  });
+
+  test('object with various nested types', () => {
+    assertEncoder(new Map<unknown, unknown>([
+      ['str', 'qwerty'],
+      ['num', 123],
+      ['arr', [1, 2, 3]],
+      ['obj', {foo: 'bar'}],
+    ]), utf8`d3:arrli1ei2ei3ee3:numi123e3:objd3:foo3:bare3:str6:qwertye`);
   });
 });
