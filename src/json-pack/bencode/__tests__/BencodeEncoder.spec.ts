@@ -134,57 +134,25 @@ describe('array', () => {
   });
 });
 
-// describe('object', () => {
-//   test('empty object', () => {
-//     assertEncoder({});
-//   });
+describe('object', () => {
+  test('empty object', () => {
+    assertEncoder({}, utf8`de`);
+  });
 
-//   test('object with one key', () => {
-//     assertEncoder({foo: 'bar'});
-//   });
+  test('object with one key', () => {
+    assertEncoder({foo: 'bar'}, utf8`d3:foo3:bare`);
+  });
 
-//   test('object with two keys', () => {
-//     assertEncoder({foo: 'bar', baz: 123});
-//   });
+  test('object with two keys (sorted)', () => {
+    assertEncoder({foo: 'bar', baz: 123}, utf8`d3:bazi123e3:foo3:bare`);
+  });
 
-//   test('object with various nested types', () => {
-//     assertEncoder({
-//       '': null,
-//       null: false,
-//       true: true,
-//       str: 'asdfasdf ,asdf asdf asdf asdf asdf, asdflkasjdflakjsdflajskdlfkasdf',
-//       num: 123,
-//       arr: [1, 2, 3],
-//       obj: {foo: 'bar'},
-//       obj2: {1: 2, 3: 4},
-//     });
-//   });
-// });
-
-// describe('nested object', () => {
-//   test('large array/object', () => {
-//     assertEncoder({
-//       foo: [
-//         1,
-//         2,
-//         3,
-//         {
-//           looongLoooonnnngggg: 'bar',
-//           looongLoooonnnngggg2: 'bar',
-//           looongLoooonnnngggg3: 'bar',
-//           looongLoooonnnngggg4: 'bar',
-//           looongLoooonnnngggg5: 'bar',
-//           looongLoooonnnngggg6: 'bar',
-//           looongLoooonnnngggg7: 'bar',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName1: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName2: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName3: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName4: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName5: 'very very long value, I said, very very long value',
-//           someVeryVeryLongKeyNameSuperDuperLongKeyName6: 'very very long value, I said, very very long value',
-//         },
-//       ],
-//     });
-//   });
-// });
+  test('object with various nested types', () => {
+    assertEncoder({
+      str: 'qwerty',
+      num: 123,
+      arr: [1, 2, 3],
+      obj: {foo: 'bar'},
+    }, utf8`d3:arrli1ei2ei3ee3:numi123e3:objd3:foo3:bare3:str6:qwertye`);
+  });
+});

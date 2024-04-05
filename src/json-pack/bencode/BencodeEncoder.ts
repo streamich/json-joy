@@ -1,4 +1,5 @@
 import {utf8Size} from '../../util/strings/utf8';
+import {sort} from '../../util/sort/insertion';
 import type {IWriter, IWriterGrowable} from '../../util/buffers';
 import type {BinaryJsonEncoder} from '../types';
 
@@ -128,6 +129,15 @@ export class BencodeEncoder implements BinaryJsonEncoder {
   }
 
   public writeObj(obj: Record<string, unknown>): void {
-    throw new Error('Method not implemented.');
+    const writer = this.writer;
+    writer.u8(0x64); // 'd'
+    const keys = sort(Object.keys(obj));
+    const length = keys.length;
+    for (let i = 0; i < length; i++) {
+      const key = keys[i];
+      this.writeStr(key);
+      this.writeAny(obj[key]);
+    }
+    writer.u8(0x65); // 'e'
   }
 }
