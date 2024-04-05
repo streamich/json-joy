@@ -1,12 +1,12 @@
 import {utf8} from '../../../util/buffers/strings';
 import {Writer} from '../../../util/buffers/Writer';
-import {JsonValue} from '../../types';
+import {PackValue} from '../../types';
 import {BencodeEncoder} from '../BencodeEncoder';
 
 const writer = new Writer(32);
 const encoder = new BencodeEncoder(writer);
 
-const assertEncoder = (value: JsonValue, expected: Uint8Array) => {
+const assertEncoder = (value: PackValue, expected: Uint8Array) => {
   const encoded = encoder.encode(value);
   expect(encoded).toEqual(expected);
 };
@@ -99,6 +99,16 @@ describe('string', () => {
       txt,
       utf8(`${txt.length}:${txt}`)
     );
+  });
+});
+
+describe('binary', () => {
+  test('empty blob', () => {
+    assertEncoder(new Uint8Array(0), utf8`0:`);
+  });
+
+  test('small blob', () => {
+    assertEncoder(new Uint8Array([65]), utf8`1:A`);
   });
 });
 
