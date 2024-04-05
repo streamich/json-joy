@@ -63,6 +63,10 @@ export class ArrChunk implements Chunk<E[]> {
   public clone(): ArrChunk {
     return new ArrChunk(this.id, this.span, this.data ? [...this.data] : undefined);
   }
+
+  public view(): E[] {
+    return this.data ? [...this.data] : [];
+  }
 }
 
 /**
