@@ -42,6 +42,8 @@ export class BencodeEncoder implements BinaryJsonEncoder {
             return this.writeBin(value as Uint8Array);
           case Map:
             return this.writeMap(value as Map<unknown, unknown>);
+          case Set:
+            return this.writeSet(value as Set<unknown>);
           default:
             return this.writeUnknown(value);
         }
@@ -154,5 +156,9 @@ export class BencodeEncoder implements BinaryJsonEncoder {
       this.writeAny(obj.get(key));
     }
     writer.u8(0x65); // 'e'
+  }
+
+  public writeSet(set: Set<unknown>): void {
+    this.writeArr([...set.values()]);
   }
 }

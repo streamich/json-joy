@@ -134,6 +134,28 @@ describe('array', () => {
   });
 });
 
+describe('set', () => {
+  test('empty array', () => {
+    assertEncoder(new Set(), utf8`le`);
+  });
+
+  test('array with one integer element', () => {
+    assertEncoder(new Set([1]), utf8`li1ee`);
+  });
+
+  test('array with two integer elements', () => {
+    assertEncoder(new Set([1, 2]), utf8`li1ei2ee`);
+  });
+
+  test('array of array', () => {
+    assertEncoder(new Set([new Set([123])]), utf8`lli123eee`);
+  });
+
+  test('array of various types', () => {
+    assertEncoder(new Set([0, 1.32, 'str', new Set([1, 2, 3])]), utf8`li0ei1e3:strli1ei2ei3eee`);
+  });
+});
+
 describe('object', () => {
   test('empty object', () => {
     assertEncoder({}, utf8`de`);
