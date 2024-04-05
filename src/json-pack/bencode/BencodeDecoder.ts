@@ -32,7 +32,7 @@ export class BencodeDecoder implements BinaryJsonDecoder {
         return this.readTrue();
       case 110: // n
         return this.readNull();
-      case 117: // u 
+      case 117: // u
         return this.readUndef();
       default:
         if (char >= 48 && char <= 57) return this.readBin();
