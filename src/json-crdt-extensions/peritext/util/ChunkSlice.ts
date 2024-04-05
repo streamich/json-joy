@@ -1,14 +1,15 @@
 import {CONST, updateNum} from '../../../json-hash';
 import {updateId} from '../../../json-crdt/hash';
 import {ITimestampStruct, Timestamp, toDisplayString} from '../../../json-crdt-patch/clock';
-import type {StringChunk, IChunkSlice} from './types';
+import type {IChunkSlice} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from '../../../util/print/types';
+import type {Chunk} from '../../../json-crdt/nodes/rga';
 
-export class ChunkSlice implements IChunkSlice, Stateful, Printable {
+export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printable {
   constructor(
     /** Chunk from which slice is computed. */
-    chunk: StringChunk,
+    chunk: Chunk<T>,
     /** Start offset of the slice within the chunk. */
     public off: number,
     /** Length of the slice. */
@@ -19,7 +20,7 @@ export class ChunkSlice implements IChunkSlice, Stateful, Printable {
 
   // -------------------------------------------------------------- IChunkSlice
 
-  public readonly chunk: StringChunk;
+  public readonly chunk: Chunk<T>;
 
   public id(): ITimestampStruct {
     const id = this.chunk.id;
@@ -34,11 +35,8 @@ export class ChunkSlice implements IChunkSlice, Stateful, Printable {
     return sid.toString(36) + time.toString(36);
   }
 
-  public view(): string {
-    const str = this.chunk.data;
-    if (!str) return '';
-    // TODO: perf: if whole chunk is sliced, return chunk.data directly.
-    return str.slice(this.off, this.off + this.len);
+  public view(): T {
+    return this.chunk.view();
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -60,7 +58,7 @@ export class ChunkSlice implements IChunkSlice, Stateful, Printable {
     const name = this.constructor.name;
     const off = this.off;
     const len = this.len;
-    const str = this.view();
+    const str = this.view() + '';
     const truncate = str.length > 32;
     const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
     const id = toDisplayString(this.chunk.id);
