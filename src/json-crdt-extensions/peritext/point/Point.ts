@@ -65,6 +65,9 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return chunk;
   }
 
+  /**
+   * @returns Returns position of the character referenced by the point.
+   */
   public pos(): number {
     const chunk = this.chunk();
     if (!chunk) return -1;
@@ -77,9 +80,14 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   /** @todo Is this needed? */
   public posCached(): number {
     if (this._pos >= 0) return this._pos;
-    return (this._pos = this.pos());
+    const pos = this._pos = this.pos();
+    return pos;
   }
 
+  /**
+   * @returns Returns position of the point, as if it is a cursor in a text
+   *          pointing between characters.
+   */
   public viewPos(): number {
     const pos = this.pos();
     if (pos < 0) return 0;
@@ -123,9 +131,15 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       remaining -= span;
       chunk = str.next(chunk);
     }
+    if (remaining > 0) return;
     return lastVisibleChunk ? tick(lastVisibleChunk.id, lastVisibleChunk.span - 1) : undefined;
   }
 
+  /**
+   * @returns ID of the character that is `move` characters before the
+   *          character referenced by the point, or `undefined` if there is no
+   *          such character.
+   */
   public prevId(move: number = 1): ITimestampStruct | undefined {
     let remaining: number = move;
     const {id, txt} = this;
@@ -150,7 +164,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       remaining -= span;
       chunk = str.prev(chunk);
     }
-    return str.id;
+    return;
   }
 
   public rightChar(): ChunkSlice | undefined {
