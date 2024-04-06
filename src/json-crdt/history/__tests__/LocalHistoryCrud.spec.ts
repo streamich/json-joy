@@ -60,3 +60,37 @@ test('can delete a document', async () => {
     expect((err as Error).message).toBe(`Collection /test/${id} does not exist`);
   }
 });
+
+test('can update document', async () => {
+  const {local} = await setup();
+  const model = Model.withLogicalClock();
+  model.api.root({
+    foo: 'spam',
+  });
+  const log = Log.fromNewModel(model);
+  const {id} = await local.create(['test'], log);
+  const {log: log2} = await local.read(['test'], id);
+  log2.end.api.obj([]).set({
+    bar: 'eggs',
+  });
+  const patch = log2.end.api.flush();
+  await local.update(['test'], id, [patch]);
+  const {log: log3} = await local.read(['test'], id);
+  expect(log3.end.view()).toStrictEqual({
+    foo: 'spam',
+    bar: 'eggs',
+  });
+});
+
+test('can delete document', async () => {
+  const {local} = await setup();
+  const model = Model.withLogicalClock();
+  model.api.root({
+    foo: 'spam',
+  });
+  const log = Log.fromNewModel(model);
+  const {id} = await local.create(['test'], log);
+  await local.read(['test'], id);
+  await local.delete(['test'], id);
+  expect(() => local.read(['test'], id)).rejects.toThrow(`Collection /test/${id} does not exist`);
+});
