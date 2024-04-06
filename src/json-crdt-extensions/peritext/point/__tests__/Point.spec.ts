@@ -552,12 +552,16 @@ describe('.rightChar()', () => {
     expect(end.rightChar()).toBe(undefined);
   });
 
-  test('retrieves left char of a deleted point', () => {
-    const {peritext, chunkD1} = setupWithChunkedText();
+  test('retrieves right char of a deleted point', () => {
+    const {peritext, chunkD1, chunkD2} = setupWithChunkedText();
     const p1 = peritext.point(chunkD1.id, Anchor.Before);
-    expect(p1.leftChar()!.view()).toBe('3');
+    expect(p1.rightChar()!.view()).toBe('4');
     const p2 = peritext.point(chunkD1.id, Anchor.After);
-    expect(p2.leftChar()!.view()).toBe('3');
+    expect(p2.rightChar()!.view()).toBe('4');
+    const p3 = peritext.point(chunkD2.id, Anchor.Before);
+    expect(p3.rightChar()!.view()).toBe('7');
+    const p4 = peritext.point(chunkD2.id, Anchor.After);
+    expect(p4.rightChar()!.view()).toBe('7');
   });
 });
 
@@ -629,5 +633,17 @@ describe('.leftChar()', () => {
       const char = point.leftChar()!;
       expect(char.view()).toBe(res[i]);
     }
+  });
+
+  test('retrieves left char of a deleted point', () => {
+    const {peritext, chunkD1, chunkD2} = setupWithChunkedText();
+    const p1 = peritext.point(chunkD1.id, Anchor.Before);
+    expect(p1.leftChar()!.view()).toBe('3');
+    const p2 = peritext.point(chunkD1.id, Anchor.After);
+    expect(p2.leftChar()!.view()).toBe('3');
+    const p3 = peritext.point(chunkD2.id, Anchor.Before);
+    expect(p3.leftChar()!.view()).toBe('6');
+    const p4 = peritext.point(chunkD2.id, Anchor.After);
+    expect(p4.leftChar()!.view()).toBe('6');
   });
 });

@@ -180,7 +180,13 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       return chunk ? new ChunkSlice(chunk, 0, 1) : undefined;
     }
     let chunk = this.chunk();
-    if (!chunk || chunk.del) return;
+    if (!chunk) return;
+    if (chunk.del) {
+      const nextId = this.nextId();
+      if (!nextId) return;
+      const tmp = new Point(this.txt, nextId, Anchor.Before);
+      return tmp.rightChar();
+    }
     if (this.anchor === Anchor.Before) {
       const off = this.id.time - chunk.id.time;
       return new ChunkSlice(chunk, off, 1);
