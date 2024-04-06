@@ -551,6 +551,14 @@ describe('.rightChar()', () => {
     const end = peritext.pointAt(res.length - 1, Anchor.After);
     expect(end.rightChar()).toBe(undefined);
   });
+
+  test('retrieves left char of a deleted point', () => {
+    const {peritext, chunkD1} = setupWithChunkedText();
+    const p1 = peritext.point(chunkD1.id, Anchor.Before);
+    expect(p1.leftChar()!.view()).toBe('3');
+    const p2 = peritext.point(chunkD1.id, Anchor.After);
+    expect(p2.leftChar()!.view()).toBe('3');
+  });
 });
 
 describe('.leftChar()', () => {
