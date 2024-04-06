@@ -7,7 +7,11 @@ import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
 
 export class Peritext implements Printable {
-  constructor(public readonly model: Model, public readonly str: StrNode, slices: ArrNode) {}
+  constructor(
+    public readonly model: Model,
+    public readonly str: StrNode,
+    slices: ArrNode,
+  ) {}
 
   public point(id: ITimestampStruct, anchor: Anchor = Anchor.After): Point {
     return new Point(this, id, anchor);
@@ -24,11 +28,6 @@ export class Peritext implements Printable {
 
   public toString(tab: string = ''): string {
     const nl = () => '';
-    return (
-      this.constructor.name +
-      printTree(tab, [
-        (tab) => this.str.toString(tab),
-      ])
-    );
+    return this.constructor.name + printTree(tab, [(tab) => this.str.toString(tab)]);
   }
 }

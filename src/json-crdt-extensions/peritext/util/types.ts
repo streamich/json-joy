@@ -1,4 +1,4 @@
-import type {Chunk} from "../../../json-crdt/nodes/rga";
+import type {Chunk} from '../../../json-crdt/nodes/rga';
 
 export type StringChunk = Chunk<string>;
 

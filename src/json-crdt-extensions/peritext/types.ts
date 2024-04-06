@@ -1,5 +1,5 @@
-import type {ITimestampStruct} from "../../json-crdt-patch";
-import type {Path, PathStep} from "../../json-pointer";
+import type {ITimestampStruct} from '../../json-crdt-patch';
+import type {Path, PathStep} from '../../json-pointer';
 
 /**
  * Represents an object which state can change over time.

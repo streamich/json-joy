@@ -15,7 +15,11 @@ import type {StringChunk} from '../util/types';
  * just after the character.
  */
 export class Point implements Pick<Stateful, 'refresh'>, Printable {
-  constructor(protected readonly txt: Peritext, public id: ITimestampStruct, public anchor: Anchor) {}
+  constructor(
+    protected readonly txt: Peritext,
+    public id: ITimestampStruct,
+    public anchor: Anchor,
+  ) {}
 
   public set(point: Point): void {
     this.id = point.id;
@@ -80,7 +84,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   /** @todo Is this needed? */
   public posCached(): number {
     if (this._pos >= 0) return this._pos;
-    const pos = this._pos = this.pos();
+    const pos = (this._pos = this.pos());
     return pos;
   }
 
