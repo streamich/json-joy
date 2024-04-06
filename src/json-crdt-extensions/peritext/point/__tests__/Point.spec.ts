@@ -729,6 +729,96 @@ describe('.rightChar()', () => {
   });
 });
 
+describe('.isStartOfStr()', () => {
+  test('returns true if is start of string', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAtStart();
+    const p2 = peritext.pointAt(0, Anchor.Before);
+    expect(p1.isStartOfStr()).toBe(true);
+    expect(p2.isStartOfStr()).toBe(false);
+  });
+});
+
+describe('.isEndOfStr()', () => {
+  test('returns true if is end of string', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAtEnd();
+    const p2 = peritext.pointAt(8, Anchor.After);
+    expect(p1.isEndOfStr()).toBe(true);
+    expect(p2.isEndOfStr()).toBe(false);
+  });
+});
+
+describe('.refBefore()', () => {
+  test('goes to next character, when anchor is switched', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(0, Anchor.After);
+    expect(p1.rightChar()!.view()).toBe('2');
+    const p2 = p1.clone();
+    p2.refBefore();
+    expect(p2.rightChar()!.view()).toBe('2');
+    expect(p1.anchor).toBe(Anchor.After);
+    expect(p2.anchor).toBe(Anchor.Before);
+    expect(p1.id.time + 1).toBe(p2.id.time);
+  });
+
+  test('skips deleted chars', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(2, Anchor.After);
+    expect(p1.rightChar()!.view()).toBe('4');
+    const p2 = p1.clone();
+    p2.refBefore();
+    expect(p2.rightChar()!.view()).toBe('4');
+    expect(p1.anchor).toBe(Anchor.After);
+    expect(p2.anchor).toBe(Anchor.Before);
+    expect(p1.id.time).not.toBe(p2.id.time);
+  });
+
+  test('when on last character, attaches to end of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(8, Anchor.After);
+    expect(p1.leftChar()!.view()).toBe('9');
+    const p2 = p1.clone();
+    p2.refBefore();
+    expect(p2.isEndOfStr()).toBe(true);
+  });
+});
+
+describe('.refAfter()', () => {
+  test('goes to next character, when anchor is switched', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(4, Anchor.Before);
+    expect(p1.leftChar()!.view()).toBe('4');
+    const p2 = p1.clone();
+    p2.refAfter();
+    expect(p2.leftChar()!.view()).toBe('4');
+    expect(p1.anchor).toBe(Anchor.Before);
+    expect(p2.anchor).toBe(Anchor.After);
+    expect(p1.id.time - 1).toBe(p2.id.time);
+  });
+
+  test('skips deleted chars', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(7, Anchor.Before);
+    expect(p1.leftChar()!.view()).toBe('7');
+    const p2 = p1.clone();
+    p2.refAfter();
+    expect(p2.leftChar()!.view()).toBe('7');
+    expect(p1.anchor).toBe(Anchor.Before);
+    expect(p2.anchor).toBe(Anchor.After);
+    expect(p2.chunk()!.del).toBe(false);
+  });
+
+  test('when on first character, attaches to start of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(0, Anchor.Before);
+    expect(p1.rightChar()!.view()).toBe('1');
+    const p2 = p1.clone();
+    p2.refAfter();
+    expect(p2.isStartOfStr()).toBe(true);
+  });
+});
+
 describe('.move()', () => {
   test('can move forward', () => {
     const {peritext, model} = setupWithChunkedText();

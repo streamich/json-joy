@@ -282,24 +282,28 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
 
   /**
    * Modifies the location of the point, such that the spatial location remains
-   * the same, but ensures that it is anchored before a character.
+   * the same, but ensures that it is anchored before a character. Skips any
+   * deleted characters (chunks), attaching the point to the next visible
+   * character.
    */
   public refBefore(): void {
     const chunk = this.chunk();
     if (!chunk) return this.refEnd();
-    if (!chunk.del || this.anchor === Anchor.Before) return;
+    if (!chunk.del && this.anchor === Anchor.Before) return;
     this.anchor = Anchor.Before;
     this.id = this.nextId() || this.txt.str.id;
   }
 
   /**
    * Modifies the location of the point, such that the spatial location remains
-   * the same, but ensures that it is anchored after a character.
+   * the same, but ensures that it is anchored after a character. Skips any
+   * deleted characters (chunks), attaching the point to the next visible
+   * character.
    */
   public refAfter(): void {
     const chunk = this.chunk();
     if (!chunk) return this.refStart();
-    if (!chunk.del || this.anchor === Anchor.After) return;
+    if (!chunk.del && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;
     this.id = this.prevId() || this.txt.str.id;
   }
