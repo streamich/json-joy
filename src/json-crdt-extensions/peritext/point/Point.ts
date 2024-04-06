@@ -198,6 +198,33 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return;
   }
 
+  public leftChar(): ChunkSlice | undefined {
+    const str = this.txt.str;
+    if (this.isEndOfStr()) {
+      let chunk = str.last();
+      while (chunk && chunk.del) chunk = str.prev(chunk);
+      return chunk ? new ChunkSlice(chunk, chunk.span - 1, 1) : undefined;
+    }
+    let chunk = this.chunk();
+    if (!chunk) return;
+    if (chunk.del) {
+      const prevId = this.prevId();
+      if (!prevId) return;
+      const tmp = new Point(this.txt, prevId, Anchor.After);
+      return tmp.leftChar();
+    }
+    if (this.anchor === Anchor.After) {
+      const off = this.id.time - chunk.id.time;
+      return new ChunkSlice(chunk, off, 1);
+    }
+    const off = this.id.time - chunk.id.time - 1;
+    if (off >= 0) return new ChunkSlice(chunk, off, 1);
+    chunk = str.prev(chunk);
+    while (chunk && chunk.del) chunk = str.prev(chunk);
+    if (!chunk) return;
+    return new ChunkSlice(chunk, chunk.span - 1, 1);
+  }
+
   public rightChar(): ChunkSlice | undefined {
     const str = this.txt.str;
     if (this.isStartOfStr()) {
@@ -223,29 +250,6 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     while (chunk && chunk.del) chunk = str.next(chunk);
     if (!chunk) return;
     return new ChunkSlice(chunk, 0, 1);
-  }
-
-  public leftChar(): ChunkSlice | undefined {
-    let chunk = this.chunk();
-    // TODO: Handle case when point references end of str.
-    if (!chunk) return;
-    if (chunk.del) {
-      const prevId = this.prevId();
-      if (!prevId) return;
-      const tmp = new Point(this.txt, prevId, Anchor.After);
-      return tmp.leftChar();
-    }
-    if (this.anchor === Anchor.After) {
-      const off = this.id.time - chunk.id.time;
-      return new ChunkSlice(chunk, off, 1);
-    }
-    const off = this.id.time - chunk.id.time - 1;
-    if (off >= 0) return new ChunkSlice(chunk, off, 1);
-    const str = this.txt.str;
-    chunk = str.prev(chunk);
-    while (chunk && chunk.del) chunk = str.prev(chunk);
-    if (!chunk) return;
-    return new ChunkSlice(chunk, chunk.span - 1, 1);
   }
 
   public isStartOfStr(): boolean {
