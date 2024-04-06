@@ -171,13 +171,11 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *          such character.
    */
   public prevId(move: number = 1): ITimestampStruct | undefined {
-    // TODO: add tests for when cursor is at the start.
     if (this.isStartOfStr()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
     let chunk = this.chunk();
-    // TODO: handle case when cursor starts from end of string.
     if (!chunk) return str.id;
     if (!chunk.del) {
       const offset = id.time - chunk.id.time;

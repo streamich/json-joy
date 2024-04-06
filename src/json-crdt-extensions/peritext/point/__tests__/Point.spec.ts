@@ -539,6 +539,28 @@ describe('.prevId()', () => {
     p2.nextId(0);
     expect(p2.rightChar()!.view()).toBe('4');
   });
+
+  test('returns undefined, when at start of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const point = peritext.pointAtStart();
+    expect(point.prevId()).toBe(undefined);
+  });
+
+  test('returns undefined, when at first char', () => {
+    const {peritext} = setupWithChunkedText();
+    const point1 = peritext.pointAt(0, Anchor.Before);
+    const point2 = peritext.pointAt(0, Anchor.After);
+    expect(point1.prevId()).toBe(undefined);
+    expect(point2.prevId()).toBe(undefined);
+  });
+
+  test('returns last char, when at end of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const point1 = peritext.pointAtEnd();
+    const point2 = peritext.pointAt(9, Anchor.Before);
+    const id = point1.prevId();
+    expect(id).toEqual(point2.id);
+  });
 });
 
 describe('.rightChar()', () => {
