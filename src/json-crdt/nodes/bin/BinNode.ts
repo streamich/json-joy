@@ -64,6 +64,10 @@ export class BinChunk implements Chunk<Uint8Array> {
     const chunk = new BinChunk(this.id, this.span, this.data);
     return chunk;
   }
+
+  public view(): Uint8Array {
+    return this.data || new Uint8Array(0);
+  }
 }
 
 /**

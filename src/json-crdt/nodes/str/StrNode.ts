@@ -62,6 +62,10 @@ export class StrChunk implements Chunk<string> {
     const chunk = new StrChunk(this.id, this.span, this.data);
     return chunk;
   }
+
+  public view(): string {
+    return this.data;
+  }
 }
 
 /**

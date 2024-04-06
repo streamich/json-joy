@@ -55,6 +55,8 @@ export interface Chunk<T> {
   delete(): void;
   /** Return a deep copy of itself. */
   clone(): Chunk<T>;
+  /** Return the data of the chunk, if not deleted. */
+  view(): T & {slice: (start: number, end: number) => T};
 }
 
 const compareById = (c1: Chunk<unknown>, c2: Chunk<unknown>): number => {
@@ -472,6 +474,12 @@ export abstract class AbstractRga<T> {
   /** @todo Or better remove this method completely, as it does not require "this". */
   public next(curr: Chunk<T>): Chunk<T> | undefined {
     return next(curr);
+  }
+
+  /** @todo Maybe use implementation from tree utils, if does not impact performance. */
+  /** @todo Or better remove this method completely, as it does not require "this". */
+  public prev(curr: Chunk<T>): Chunk<T> | undefined {
+    return prev(curr);
   }
 
   /** Content length. */
