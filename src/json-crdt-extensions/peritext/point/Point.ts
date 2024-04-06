@@ -112,7 +112,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    */
   public viewPos(): number {
     const pos = this.pos();
-    if (pos < 0) return 0;
+    if (pos < 0) return this.isStartOfStr() ? 0 : this.txt.str.length();
     return this.anchor === Anchor.Before ? pos : pos + 1;
   }
 
@@ -313,14 +313,23 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * and negative distances.
    */
   public move(skip: number): void {
-    // TODO: handle cases when cursor reaches ends of string, it should adjust anchor positions as well
     if (!skip) return;
+    const anchor = this.anchor;
+    if (anchor !== Anchor.After) this.refAfter();
     if (skip > 0) {
       const nextId = this.nextId(skip);
-      if (nextId) this.id = nextId;
+      if (!nextId) this.refEnd();
+      else {
+        this.id = nextId;
+        if (anchor !== Anchor.After) this.refBefore();
+      }
     } else {
       const prevId = this.prevId(-skip);
-      if (prevId) this.id = prevId;
+      if (!prevId) this.refStart();
+      else {
+        this.id = prevId;
+        if (anchor !== Anchor.After) this.refBefore();
+      }
     }
   }
 

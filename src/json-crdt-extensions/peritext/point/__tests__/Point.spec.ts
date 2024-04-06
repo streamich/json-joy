@@ -820,15 +820,96 @@ describe('.refAfter()', () => {
 });
 
 describe('.move()', () => {
-  test('can move forward', () => {
+  test('smoke test', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(1, Anchor.After);
+    expect(p.viewPos()).toBe(2);
+    p.move(1);
+    expect(p.viewPos()).toBe(3);
+    p.move(2);
+    expect(p.viewPos()).toBe(5);
+    p.move(2);
+    expect(p.viewPos()).toBe(7);
+    p.move(-3);
+    expect(p.viewPos()).toBe(4);
+    p.move(-3);
+    expect(p.viewPos()).toBe(1);
+    p.move(-3);
+    expect(p.viewPos()).toBe(0);
+  });
+
+  test('can reach the end of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(0, Anchor.After);
+    p.move(1);
+    p.move(2);
+    p.move(3);
+    p.move(4);
+    p.move(5);
+    p.move(6);
+    expect(p.isEndOfStr()).toBe(true);
+    expect(p.viewPos()).toBe(9);
+    expect(p.leftChar()!.view()).toBe('9');
+    expect(p.anchor).toBe(Anchor.Before);
+  });
+
+  test('can reach the start of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(8, Anchor.Before);
+    p.move(-22);
+    expect(p.isStartOfStr()).toBe(true);
+    expect(p.viewPos()).toBe(0);
+    expect(p.rightChar()!.view()).toBe('1');
+    expect(p.anchor).toBe(Anchor.After);
+  });
+
+  test('can move forward, when anchor = Before', () => {
     const {peritext, model} = setupWithChunkedText();
     model.api.str(['text']).del(4, 1);
     const txt = '12346789';
     for (let i = 0; i < txt.length - 1; i++) {
       const p = peritext.pointAt(i, Anchor.Before);
+      expect(p.pos()).toBe(i);
       for (let j = i + 1; j < txt.length - 1; j++) {
         const p2 = p.clone();
         p2.move(j - i);
+        expect(p2.pos()).toBe(j);
+        expect(p2.anchor).toBe(Anchor.Before);
+        expect(p2.rightChar()!.view()).toBe(txt[j]);
+      }
+    }
+  });
+
+  test('can move forward, when anchor = After', () => {
+    const {peritext, model} = setupWithChunkedText();
+    model.api.str(['text']).del(4, 1);
+    const txt = '12346789';
+    for (let i = 0; i < txt.length - 1; i++) {
+      const p = peritext.pointAt(i, Anchor.After);
+      expect(p.pos()).toBe(i);
+      expect(p.leftChar()!.view()).toBe(txt[i]);
+      for (let j = i + 1; j < txt.length - 1; j++) {
+        const p2 = p.clone();
+        p2.move(j - i);
+        expect(p2.pos()).toBe(j);
+        expect(p2.anchor).toBe(Anchor.After);
+        expect(p2.leftChar()!.view()).toBe(txt[j]);
+      }
+    }
+  });
+
+  test('can move backward, when anchor = Before', () => {
+    const {peritext, model} = setupWithChunkedText();
+    model.api.str(['text']).del(4, 1);
+    const txt = '12346789';
+    for (let i = txt.length - 1; i > 0; i--) {
+      const p = peritext.pointAt(i, Anchor.Before);
+      expect(p.viewPos()).toBe(i);
+      for (let j = i - 1; j > 0; j--) {
+        const p2 = p.clone();
+        p2.move(j - i);
+        expect(p2.pos()).toBe(j);
+        expect(p2.anchor).toBe(Anchor.Before);
         expect(p2.rightChar()!.view()).toBe(txt[j]);
       }
     }
