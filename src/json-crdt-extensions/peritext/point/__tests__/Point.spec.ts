@@ -416,6 +416,25 @@ describe('.nextId()', () => {
     p2.prevId(0);
     expect(p2.leftChar()!.view()).toBe('3');
   });
+
+  test('returns undefined, when at end of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const point = peritext.pointAtEnd();
+    expect(point.nextId()).toBe(undefined);
+  });
+
+  test('returns undefined, when at last char', () => {
+    const {peritext} = setupWithChunkedText();
+    const point = peritext.pointAt(8, Anchor.Before);
+    expect(point.nextId()).toBe(undefined);
+  });
+
+  test('returns first char, when at start of str', () => {
+    const {peritext, chunk1} = setupWithChunkedText();
+    const point = peritext.pointAtStart();
+    const id = point.nextId();
+    expect(id).toEqual(chunk1.id);
+  });
 });
 
 describe('.prevId()', () => {

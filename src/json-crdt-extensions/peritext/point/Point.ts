@@ -125,13 +125,11 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Next visible ID in string.
    */
   public nextId(move: number = 1): ITimestampStruct | undefined {
-    // TODO: add tests for when cursor is at the end.
     if (this.isEndOfStr()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
     let chunk: StringChunk | undefined;
-    // TODO: add tests for when cursor starts from start of string.
     if (this.isStartOfStr()) {
       chunk = str.first();
       while (chunk && chunk.del) chunk = str.next(chunk);

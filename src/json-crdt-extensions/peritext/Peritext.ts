@@ -24,6 +24,14 @@ export class Peritext implements Printable {
     return this.point(id, anchor);
   }
 
+  public pointAtStart(): Point {
+    return this.point(this.str.id, Anchor.After);
+  }
+
+  public pointAtEnd(): Point {
+    return this.point(this.str.id, Anchor.Before);
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
