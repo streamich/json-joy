@@ -404,6 +404,18 @@ describe('.nextId()', () => {
     expect(p2Before.nextId(visibleIDs.length)).toEqual(undefined);
     expect(p2After.nextId(visibleIDs.length)).toEqual(undefined);
   });
+
+  test('can move zero characters', () => {
+    const {peritext, chunk2, chunkD1} = setupWithChunkedText();
+    const p1 = peritext.point(chunk2.id, Anchor.Before);
+    expect(p1.leftChar()!.view()).toBe('3');
+    p1.prevId(0);
+    expect(p1.leftChar()!.view()).toBe('3');
+    const p2 = peritext.point(chunkD1.id, Anchor.Before);
+    expect(p2.leftChar()!.view()).toBe('3');
+    p2.prevId(0);
+    expect(p2.leftChar()!.view()).toBe('3');
+  });
 });
 
 describe('.prevId()', () => {
@@ -495,6 +507,18 @@ describe('.prevId()', () => {
     expect(p2After.prevId(7)).toEqual(undefined);
     expect(p2Before.prevId(8)).toEqual(undefined);
     expect(p2After.prevId(8)).toEqual(undefined);
+  });
+
+  test('can move zero characters', () => {
+    const {peritext, chunk2, chunkD1} = setupWithChunkedText();
+    const p1 = peritext.point(chunk2.id, Anchor.Before);
+    expect(p1.rightChar()!.view()).toBe('4');
+    p1.nextId(0);
+    expect(p1.rightChar()!.view()).toBe('4');
+    const p2 = peritext.point(chunkD1.id, Anchor.Before);
+    expect(p2.rightChar()!.view()).toBe('4');
+    p2.nextId(0);
+    expect(p2.rightChar()!.view()).toBe('4');
   });
 });
 
@@ -645,5 +669,21 @@ describe('.leftChar()', () => {
     expect(p3.leftChar()!.view()).toBe('6');
     const p4 = peritext.point(chunkD2.id, Anchor.After);
     expect(p4.leftChar()!.view()).toBe('6');
+  });
+});
+
+describe('.move()', () => {
+  test('can move forward', () => {
+    const {peritext, model} = setupWithChunkedText();
+    model.api.str(['text']).del(4, 1);
+    const txt = '12346789';
+    for (let i = 0; i < txt.length - 1; i++) {
+      const p = peritext.pointAt(i, Anchor.Before);
+      for (let j = i + 1; j < txt.length - 1; j++) {
+        const p2 = p.clone();
+        p2.move(j - i);
+        expect(p2.rightChar()!.view()).toBe(txt[j]);
+      }
+    }
   });
 });

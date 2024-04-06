@@ -10,9 +10,9 @@ import type {StringChunk} from '../util/types';
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
  * character ID and an anchor. Anchor specifies the side of the character to
- * which the point is attached. For example, a point with an anchor "before"
- * points just before the character, while a point with an anchor "after" points
- * just after the character.
+ * which the point is attached. For example, a point with an anchor "before" .▢
+ * points just before the character, while a point with an anchor "after" ▢.
+ * points just after the character.
  */
 export class Point implements Pick<Stateful, 'refresh'>, Printable {
   constructor(
@@ -21,15 +21,33 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     public anchor: Anchor,
   ) {}
 
+  /**
+   * Overwrites the internal state of this point with the state of the given
+   * point.
+   *
+   * @param point Point to copy.
+   */
   public set(point: Point): void {
     this.id = point.id;
     this.anchor = point.anchor;
   }
 
+  /**
+   * Creates a copy of this point.
+   *
+   * @returns Returns a new point with the same ID and anchor as this point.
+   */
   public clone(): Point {
     return new Point(this.txt, this.id, this.anchor);
   }
 
+  /**
+   * 
+   * @param other The other point to compare to.
+   * @returns Returns 0 if the two points are equal, -1 if this point is less
+   *          than the other point, and 1 if this point is greater than the other
+   *          point.
+   */
   public compare(other: Point): -1 | 0 | 1 {
     const cmp = compare(this.id, other.id);
     if (cmp !== 0) return cmp;
@@ -98,13 +116,23 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return this.anchor === Anchor.Before ? pos : pos + 1;
   }
 
+  /**
+   * Goes to the next visible character in the string. The `move` parameter
+   * specifies how many characters to move the cursor by. If the cursor reaches
+   * the end of the string, it will return `undefined`.
+   * 
+   * @param move How many characters to move the cursor by.
+   * @returns Next visible ID in string.
+   */
   public nextId(move: number = 1): ITimestampStruct | undefined {
+    // TODO: add tests for when cursor is at the end.
+    if (this.isEndOfStr()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
-    const startFromStrRoot = equal(id, str.id);
     let chunk: StringChunk | undefined;
-    if (startFromStrRoot) {
+    // TODO: add tests for when cursor starts from start of string.
+    if (this.isStartOfStr()) {
       chunk = str.first();
       while (chunk && chunk.del) chunk = str.next(chunk);
       if (!chunk) return;
@@ -145,10 +173,13 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *          such character.
    */
   public prevId(move: number = 1): ITimestampStruct | undefined {
+    // TODO: add tests for when cursor is at the start.
+    if (this.isStartOfStr()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
     let chunk = this.chunk();
+    // TODO: handle case when cursor starts from end of string.
     if (!chunk) return str.id;
     if (!chunk.del) {
       const offset = id.time - chunk.id.time;
@@ -173,8 +204,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
 
   public rightChar(): ChunkSlice | undefined {
     const str = this.txt.str;
-    const isBeginningOfDoc = equal(this.id, str.id) && this.anchor === Anchor.After;
-    if (isBeginningOfDoc) {
+    if (this.isStartOfStr()) {
       let chunk = str.first();
       while (chunk && chunk.del) chunk = str.next(chunk);
       return chunk ? new ChunkSlice(chunk, 0, 1) : undefined;
@@ -201,6 +231,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
 
   public leftChar(): ChunkSlice | undefined {
     let chunk = this.chunk();
+    // TODO: Handle case when point references end of str.
     if (!chunk) return;
     if (chunk.del) {
       const prevId = this.prevId();
@@ -221,6 +252,58 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, chunk.span - 1, 1);
   }
 
+  public isStartOfStr(): boolean {
+    return equal(this.id, this.txt.str.id) && this.anchor === Anchor.After;
+  }
+
+  public isEndOfStr(): boolean {
+    return equal(this.id, this.txt.str.id) && this.anchor === Anchor.Before;
+  }
+
+  /**
+   * Modifies the location of the point, such that the spatial location remains
+   * and anchor remains the same, but ensures that the point references a
+   * visible (non-deleted) character.
+   */
+  public refVisible(): void {
+    if (this.anchor === Anchor.Before) this.refBefore();
+    else this.refAfter();
+  }
+
+  public refStart(): void {
+    this.id = this.txt.str.id;
+    this.anchor = Anchor.After;
+  }
+
+  public refEnd(): void {
+    this.id = this.txt.str.id;
+    this.anchor = Anchor.Before;
+  }
+
+  /**
+   * Modifies the location of the point, such that the spatial location remains
+   * the same, but ensures that it is anchored before a character.
+   */
+  public refBefore(): void {
+    const chunk = this.chunk();
+    if (!chunk) return this.refEnd();
+    if (!chunk.del || this.anchor === Anchor.Before) return;
+    this.anchor = Anchor.Before;
+    this.id = this.nextId() || this.txt.str.id;
+  }
+
+  /**
+   * Modifies the location of the point, such that the spatial location remains
+   * the same, but ensures that it is anchored after a character.
+   */
+  public refAfter(): void {
+    const chunk = this.chunk();
+    if (!chunk) return this.refStart();
+    if (!chunk.del || this.anchor === Anchor.After) return;
+    this.anchor = Anchor.After;
+    this.id = this.prevId() || this.txt.str.id;
+  }
+
   /**
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
@@ -235,30 +318,6 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       const prevId = this.prevId(-skip);
       if (prevId) this.id = prevId;
     }
-  }
-
-  /**
-   * Returns a point, which points at the same spatial location, but ensures
-   * that it is anchored after a character.
-   */
-  public anchorBefore(): Point {
-    if (this.anchor === Anchor.Before) return this;
-    const next = this.nextId();
-    const txt = this.txt;
-    if (!next) return new Point(txt, txt.str.id, Anchor.Before);
-    return new Point(txt, next, Anchor.Before);
-  }
-
-  /**
-   * Returns a point, which points at the same spatial location, but ensures
-   * that it is anchored after a character.
-   */
-  public anchorAfter(): Point {
-    if (this.anchor === Anchor.After) return this;
-    const prev = this.prevId();
-    const txt = this.txt;
-    if (!prev) return new Point(txt, txt.str.id, Anchor.After);
-    return new Point(txt, prev, Anchor.After);
   }
 
   // ----------------------------------------------------------------- Stateful
