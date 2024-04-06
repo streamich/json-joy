@@ -42,7 +42,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
-   * 
+   *
    * @param other The other point to compare to.
    * @returns Returns 0 if the two points are equal, -1 if this point is less
    *          than the other point, and 1 if this point is greater than the other
@@ -120,7 +120,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * Goes to the next visible character in the string. The `move` parameter
    * specifies how many characters to move the cursor by. If the cursor reaches
    * the end of the string, it will return `undefined`.
-   * 
+   *
    * @param move How many characters to move the cursor by.
    * @returns Next visible ID in string.
    */
