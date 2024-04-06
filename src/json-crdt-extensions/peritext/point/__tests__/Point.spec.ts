@@ -497,3 +497,129 @@ describe('.prevId()', () => {
     expect(p2After.prevId(8)).toEqual(undefined);
   });
 });
+
+describe('.rightChar()', () => {
+  test('returns the right character', () => {
+    const model = Model.withLogicalClock(123456);
+    model.api.root({
+      text: 'abc',
+      slices: [],
+    });
+    const str = model.api.str(['text']).node;
+    const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+    const point0 = peritext.pointAt(0);
+    const char0 = point0.rightChar()!;
+    expect(char0.chunk.data!.slice(char0.off, char0.off + 1)).toBe('a');
+    const point1 = peritext.pointAt(1);
+    const char1 = point1.rightChar()!;
+    expect(char1.chunk.data!.slice(char1.off, char1.off + 1)).toBe('b');
+    const point2 = peritext.pointAt(2);
+    const char2 = point2.rightChar()!;
+    expect(char2.chunk.data!.slice(char2.off, char2.off + 1)).toBe('c');
+  });
+
+  test('multi-char chunks with deletes', () => {
+    const {peritext} = setupWithText();
+    const res = '012345678';
+    for (let i = 0; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.Before);
+      const char = point.rightChar()!;
+      expect(char.view()).toBe(res[i]);
+    }
+    for (let i = 0; i < res.length - 1; i++) {
+      const point = peritext.pointAt(i, Anchor.After);
+      const char = point.rightChar()!;
+      expect(char.view()).toBe(res[i + 1]);
+    }
+    const end = peritext.pointAt(res.length - 1, Anchor.After);
+    expect(end.rightChar()).toBe(undefined);
+  });
+
+  test('multi-char chunks with deletes (2)', () => {
+    const {peritext} = setupWithChunkedText();
+    const res = '123456789';
+    for (let i = 0; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.Before);
+      const char = point.rightChar()!;
+      expect(char.view()).toBe(res[i]);
+    }
+    for (let i = 0; i < res.length - 1; i++) {
+      const point = peritext.pointAt(i, Anchor.After);
+      const char = point.rightChar()!;
+      expect(char.view()).toBe(res[i + 1]);
+    }
+    const end = peritext.pointAt(res.length - 1, Anchor.After);
+    expect(end.rightChar()).toBe(undefined);
+  });
+});
+
+describe('.leftChar()', () => {
+  test('returns the left character', () => {
+    const model = Model.withLogicalClock(123456);
+    model.api.root({
+      text: 'abc',
+      slices: [],
+    });
+    const str = model.api.str(['text']).node;
+    const peritext = new Peritext(model, str, model.api.arr(['slices']).node);
+    model.api.str(['text']).del(0, 3);
+    model.api.str(['text']).ins(0, '00a1b2c3');
+    model.api.str(['text']).del(0, 2);
+    model.api.str(['text']).del(1, 1);
+    model.api.str(['text']).del(2, 1);
+    model.api.str(['text']).del(3, 1);
+    const point0 = peritext.pointAt(2, Anchor.After);
+    const char0 = point0.leftChar()!;
+    expect(char0.chunk.data!.slice(char0.off, char0.off + 1)).toBe('c');
+    const point1 = peritext.pointAt(1, Anchor.After);
+    const char1 = point1.leftChar()!;
+    expect(char1.chunk.data!.slice(char1.off, char1.off + 1)).toBe('b');
+    const point2 = peritext.pointAt(0, Anchor.After);
+    const char2 = point2.leftChar()!;
+    expect(char2.chunk.data!.slice(char2.off, char2.off + 1)).toBe('a');
+  });
+
+  test('multi-char chunks with deletes', () => {
+    const {peritext} = setupWithText();
+    const res = '012345678';
+    const start = peritext.pointAt(0, Anchor.Before);
+    expect(start.leftChar()).toBe(undefined);
+    const start2 = peritext.pointAt(0, Anchor.After);
+    expect(start2.leftChar()!.view()).toBe(res[0]);
+    const start3 = peritext.pointAt(1, Anchor.Before);
+    const slice = start3.leftChar();
+    expect(slice!.view()).toBe(res[0]);
+    for (let i = 1; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.Before);
+      const char = point.leftChar()!;
+      expect(char.view()).toBe(res[i - 1]);
+    }
+    for (let i = 0; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.After);
+      const char = point.leftChar()!;
+      expect(char.view()).toBe(res[i]);
+    }
+  });
+
+  test('multi-char chunks with deletes (2)', () => {
+    const {peritext} = setupWithChunkedText();
+    const res = '123456789';
+    const start = peritext.pointAt(0, Anchor.Before);
+    expect(start.leftChar()).toBe(undefined);
+    const start2 = peritext.pointAt(0, Anchor.After);
+    expect(start2.leftChar()!.view()).toBe(res[0]);
+    const start3 = peritext.pointAt(1, Anchor.Before);
+    const slice = start3.leftChar();
+    expect(slice!.view()).toBe(res[0]);
+    for (let i = 1; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.Before);
+      const char = point.leftChar()!;
+      expect(char.view()).toBe(res[i - 1]);
+    }
+    for (let i = 0; i < res.length; i++) {
+      const point = peritext.pointAt(i, Anchor.After);
+      const char = point.leftChar()!;
+      expect(char.view()).toBe(res[i]);
+    }
+  });
+});

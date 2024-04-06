@@ -201,7 +201,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       return new ChunkSlice(chunk, off, 1);
     }
     const off = this.id.time - chunk.id.time - 1;
-    if (off > 0) return new ChunkSlice(chunk, off, 1);
+    if (off >= 0) return new ChunkSlice(chunk, off, 1);
     const str = this.txt.str;
     chunk = str.prev(chunk);
     while (chunk && chunk.del) chunk = str.prev(chunk);
