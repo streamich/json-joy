@@ -5,6 +5,7 @@ import {ValNode} from '../nodes';
 import {toSchema} from '../schema/toSchema';
 import {Log} from '../log/Log';
 import {RedoItem, UndoItem, UndoRedoStack} from './UndoRedoStack';
+import type {LocalHistory} from './types';
 
 class Undo implements UndoItem {
   constructor(public readonly undo: () => Redo) {}
@@ -15,7 +16,11 @@ class Redo implements RedoItem {
 }
 
 export class SessionHistory {
-  constructor(public readonly log: Log) {}
+  constructor(
+    public readonly collection: string[],
+    public readonly id: string,
+    protected readonly local: LocalHistory,
+  ) {}
 
   private readonly __onPatchRace = createRace();
 
