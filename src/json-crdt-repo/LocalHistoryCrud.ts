@@ -1,11 +1,11 @@
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
-import {CborDecoder} from '../../json-pack/cbor/CborDecoder';
-import {LogEncoder} from '../log/codec/LogEncoder';
-import {LogDecoder} from '../log/codec/LogDecoder';
+import {CborEncoder} from '../json-pack/cbor/CborEncoder';
+import {CborDecoder} from '../json-pack/cbor/CborDecoder';
+import {LogEncoder} from '../json-crdt/log/codec/LogEncoder';
+import {LogDecoder} from '../json-crdt/log/codec/LogDecoder';
 import type {CrudApi} from 'memfs/lib/crud/types';
 import type {Locks} from 'thingies/es2020/Locks';
-import type {Patch} from '../../json-crdt-patch';
-import type {Log} from '../log/Log';
+import type {Patch} from '../json-crdt-patch';
+import type {Log} from '../json-crdt/log/Log';
 import type {LocalHistory} from './types';
 
 export const genId = (octets: number = 8): string => {

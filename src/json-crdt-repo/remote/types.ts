@@ -1,11 +1,10 @@
 import type {Patch} from '../../json-crdt-patch';
-import type {Log} from '../log/Log';
-import type {Model} from '../model';
+import type {Model} from '../../json-crdt/model';
 
 /**
  * A history of patches that have been applied to a model, stored on the
- * "remote": (1) server; (2) content addressable storage; or (3) peer-to-peer
- * network.
+ * "remote": (1) server; (2) content addressable storage; or (3) somewhere in a
+ * peer-to-peer network.
  *
  * Cases:
  *
@@ -15,6 +14,8 @@ import type {Model} from '../model';
  * - `RemoteHistoryP2P`
  */
 export interface RemoteHistory<Cursor> {
+  create(id: string, patches: Patch[], start?: Model): Promise<void>;
+
   /**
    * Load latest state of the model, and any unmerged "tip" of patches
    * it might have.
@@ -34,19 +35,4 @@ export interface RemoteHistory<Cursor> {
    * @param callback
    */
   subscribe(id: string, cursor: Cursor, callback: (changes: Patch[]) => void): void;
-}
-
-export interface LocalHistory {
-  create(collection: string[], log: Log): Promise<{id: string}>;
-  read(collection: string[], id: string): Promise<{log: Log; cursor: string}>;
-  readHistory(collection: string[], id: string, cursor: string): Promise<{log: Log; cursor: string}>;
-  update(collection: string[], id: string, patches: Patch[]): Promise<void>;
-  delete(collection: string[], id: string): Promise<void>;
-}
-
-export interface EditingSessionHistory {
-  load(id: string): Promise<Model>;
-  loadHistory(id: string): Promise<Log>;
-  undo(id: string): Promise<void>;
-  redo(id: string): Promise<void>;
 }
