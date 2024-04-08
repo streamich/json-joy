@@ -1,7 +1,7 @@
 {
   "name": "json-joy",
   "version": "11.2.0",
-  "description": "",
+  "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
@@ -13,8 +13,53 @@
   "engines": {
     "node": ">=10.0"
   },
+  "keywords": [
+    "collaborative",
+    "multiplayer",
+    "local-first",
+    "localfirst",
+    "crdt",
+    "rdt",
+    "ot",
+    "operational-transformation",
+    "replicated",
+    "sync",
+    "synchronization",
+    "distributed-state",
+    "rpc",
+    "reactive-rpc",
+    "marshaling",
+    "serializations",
+    "json-patch",
+    "json-binary",
+    "json-brand",
+    "json-cli",
+    "json-clone",
+    "json-crdt-patch",
+    "json-crdt-extensions",
+    "json-crdt-peritext-ui",
+    "json-crdt",
+    "json-equal",
+    "json-expression",
+    "json-hash",
+    "json-ot",
+    "json-pack",
+    "json-patch-multicore",
+    "json-patch-ot",
+    "json-patch",
+    "json-pointer",
+    "json-random",
+    "json-schema",
+    "json-size",
+    "json-stable",
+    "json-text",
+    "json-type",
+    "json-type-value",
+    "json-walk"
+  ],
   "main": "lib/index.js",
-  "module": "esm/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
   "bin": {
     "jj": "./bin/jj.js",
     "json-pack": "./bin/json-pack.js",
@@ -65,7 +110,6 @@
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "jj": "ts-node src/json-cli/jj.ts"
   },
-  "keywords": [],
   "peerDependencies": {
     "quill-delta": "^5",
     "rxjs": "7",
@@ -176,8 +220,6 @@
     "yjs": "13.6.9",
     "ywasm": "0.16.10"
   },
-  "types": "lib/index.d.ts",
-  "typings": "lib/index.d.ts",
   "jest": {
     "verbose": true,
     "testEnvironmentOptions": {
