@@ -71,7 +71,7 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     const system = type.system;
     if (!system) throw new Error('NO_SYSTEM');
     const extendedType = system.t.Object(...type.fields, field);
-    return new ObjectValue(extendedType, extendedData) as any;
+    return new ObjectValue(extendedType, extendedData as any) as any;
   }
 
   public prop<K extends string, V extends classes.Type>(
