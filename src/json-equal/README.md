@@ -15,7 +15,7 @@ This library contains the fastest JSON deep comparison algorithms.
 ### `deepEqual`
 
 ```ts
-import {deepEqual} from 'json-joy/{lib,es6,esm,es2020}/json-equal/deepEqual';
+import {deepEqual} from 'json-joy/lib/json-equal/deepEqual';
 
 deepEqual(a, b); // true/false
 ```
@@ -24,7 +24,7 @@ deepEqual(a, b); // true/false
 ### `$$deepEqual`
 
 ```ts
-import {$$deepEqual} from 'json-joy/{lib,es6,esm,es2020}/json-equal/$$deepEqual';
+import {$$deepEqual} from 'json-joy/lib/json-equal/$$deepEqual';
 
 const js = $$deepEqual(a);
 const fn = eval(js);

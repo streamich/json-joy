@@ -1,5 +1,5 @@
 const Benchmark = require('benchmark');
-const {toBase64, createToBase64} = require('../../../../es2020/util/base64');
+const {toBase64, createToBase64} = require('../../../../lib/util/base64');
 const {fromByteArray} = require('base64-js');
 const {encode: encodeJsBase64} = require('js-base64');
 

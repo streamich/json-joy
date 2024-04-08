@@ -75,10 +75,7 @@
   },
   "files": [
     "LICENSE",
-    "lib/",
-    "es6/",
-    "es2020/",
-    "esm/"
+    "lib/"
   ],
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",

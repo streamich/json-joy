@@ -3,7 +3,7 @@
  * node --prof-process isolate-0xnnnnnnnnnnnn-v8.log
  */
 
-const {Model} = require('../../../es2020/json-crdt');
+const {Model} = require('../../../lib/json-crdt');
 const json = require('../../data/json6');
 
 const doc1 = Model.withLogicalClock();

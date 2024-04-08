@@ -12,7 +12,7 @@ const prepare = (str: string) => {
 const runner = (v: number, name: string) => ({
   name: `${name} (v${v})`,
   setup: () => {
-    const decode = require('../../../../es2020/util/buffers/utf8/decodeUtf8/v' + v).default;
+    const decode = require('../../../../lib/util/buffers/utf8/decodeUtf8/v' + v).default;
     return (data: any) => decode(data, 0, data.length);
   },
 });

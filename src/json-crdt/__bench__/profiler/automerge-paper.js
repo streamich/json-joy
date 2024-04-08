@@ -4,8 +4,8 @@
  */
 
 const {traces} = require('../../data/editing-traces');
-const {StrNode} = require('../../../es2020/json-crdt/types/str/StrNode');
-const {ts} = require('../../../es2020/json-crdt-patch/clock/logical');
+const {StrNode} = require('../../../lib/json-crdt/types/str/StrNode');
+const {ts} = require('../../../lib/json-crdt-patch/clock/logical');
 
 const patches = traces.get('automerge-paper').txns.map((txn) => txn.patches[0]);
 const length = patches.length;
