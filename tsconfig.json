@@ -3,7 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "Node",
-    "removeComments": true,
+    "removeComments": false,
     "noImplicitAny": true,
     "allowJs": false,
     "allowSyntheticDefaultImports": true,

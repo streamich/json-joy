@@ -1,7 +1,7 @@
 const Benchmark = require('benchmark');
-const toBase64 = require('../../../../es2020/util/base64').toBase64;
-const {bufferToUint8Array} = require('../../../../es2020/util/buffers/bufferToUint8Array');
-const {fromBase64, createFromBase64} = require('../../../../es2020/util/base64');
+const toBase64 = require('../../../../lib/util/base64').toBase64;
+const {bufferToUint8Array} = require('../../../../lib/util/buffers/bufferToUint8Array');
+const {fromBase64, createFromBase64} = require('../../../../lib/util/base64');
 const {toByteArray} = require('base64-js');
 const {decode: decodeJsBase64} = require('js-base64');
 

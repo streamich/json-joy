@@ -3,7 +3,7 @@
 Type builder for JSON and MessagePack.
 
 ```ts
-import {t} from 'json-joy/es2020/json-type';
+import {t} from 'json-joy/lib/json-type';
 
 t.String(); // { __t: 'str' }
 t.String({const: 'add'}); // { __t: 'str', const: 'add' }

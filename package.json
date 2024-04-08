@@ -1,7 +1,7 @@
 {
   "name": "json-joy",
   "version": "11.2.0",
-  "description": "",
+  "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
     "url": "https://github.com/streamich"
@@ -9,12 +9,60 @@
   "homepage": "https://github.com/streamich/json-joy",
   "repository": "streamich/json-joy",
   "license": "Apache-2.0",
-  "funding": "https://github.com/sponsors/streamich",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/streamich"
+  },
   "engines": {
     "node": ">=10.0"
   },
+  "keywords": [
+    "collaborative",
+    "multiplayer",
+    "local-first",
+    "localfirst",
+    "crdt",
+    "rdt",
+    "ot",
+    "operational-transformation",
+    "replicated",
+    "sync",
+    "synchronization",
+    "distributed-state",
+    "rpc",
+    "reactive-rpc",
+    "marshaling",
+    "serializations",
+    "json-patch",
+    "json-binary",
+    "json-brand",
+    "json-cli",
+    "json-clone",
+    "json-crdt-patch",
+    "json-crdt-extensions",
+    "json-crdt-peritext-ui",
+    "json-crdt",
+    "json-equal",
+    "json-expression",
+    "json-hash",
+    "json-ot",
+    "json-pack",
+    "json-patch-multicore",
+    "json-patch-ot",
+    "json-patch",
+    "json-pointer",
+    "json-random",
+    "json-schema",
+    "json-size",
+    "json-stable",
+    "json-text",
+    "json-type",
+    "json-type-value",
+    "json-walk"
+  ],
   "main": "lib/index.js",
-  "module": "esm/index.js",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
   "bin": {
     "jj": "./bin/jj.js",
     "json-pack": "./bin/json-pack.js",
@@ -27,10 +75,7 @@
   },
   "files": [
     "LICENSE",
-    "lib/",
-    "es6/",
-    "es2020/",
-    "esm/"
+    "lib/"
   ],
   "scripts": {
     "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",
@@ -39,11 +84,8 @@
     "lint:fix": "yarn tslint --fix",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
     "clean": "rimraf lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log",
-    "build:cjs": "tsc --project tsconfig.build.json",
-    "build:es6": "tsc --project tsconfig.build.json --module commonjs --target es6 --outDir es6",
-    "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir es2020",
-    "build:esm": "tsc --project tsconfig.build.json --module ESNext --target ESNEXT --outDir esm",
-    "build:all": "concurrently \"yarn build:cjs\" \"yarn build:es6\" \"yarn build:es2020\" \"yarn build:esm\"",
+    "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
+    "build:all": "concurrently \"yarn build:es2020\"",
     "build": "yarn build:es2020",
     "jest": "node -r ts-node/register ./node_modules/.bin/jest",
     "test": "jest --maxWorkers 7",
@@ -65,7 +107,6 @@
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
     "jj": "ts-node src/json-cli/jj.ts"
   },
-  "keywords": [],
   "peerDependencies": {
     "quill-delta": "^5",
     "rxjs": "7",
@@ -176,8 +217,6 @@
     "yjs": "13.6.9",
     "ywasm": "0.16.10"
   },
-  "types": "lib/index.d.ts",
-  "typings": "lib/index.d.ts",
   "jest": {
     "verbose": true,
     "testEnvironmentOptions": {

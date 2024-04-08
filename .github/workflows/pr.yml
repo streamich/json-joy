@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ master, next ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -36,7 +36,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install --frozen-lockfile
-      - run: yarn build
+      - run: yarn build:all
       - run: yarn lint
       - run: yarn prettier:check
       - run: yarn test:cli:pointer

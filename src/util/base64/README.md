@@ -15,7 +15,7 @@
 Use encoder compatible with Node's Buffer:
 
 ```ts
-import {toBase64} from 'json-joy/{lib,es2020}/util/base64';
+import {toBase64} from 'json-joy/lib/util/base64';
 
 toBase64(new Uint8Array([1, 2, 3]));
 ```
@@ -23,7 +23,7 @@ toBase64(new Uint8Array([1, 2, 3]));
 Create your custom encoder:
 
 ```ts
-import {createToBase64} from 'json-joy/{lib,es2020}/util/base64';
+import {createToBase64} from 'json-joy/lib/util/base64';
 
 const encode = createToBase64('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_');
 
@@ -75,7 +75,7 @@ Fastest is json-joy/util/base64 fromBase64(str)
 Use decoder compatible with Node's Buffer:
 
 ```ts
-import {toBase64, fromBase64} from 'json-joy/{lib,es2020}/util/base64';
+import {toBase64, fromBase64} from 'json-joy/lib/util/base64';
 
 fromBase64(toBase64(new Uint8Array([1, 2, 3])));
 ```
@@ -83,7 +83,7 @@ fromBase64(toBase64(new Uint8Array([1, 2, 3])));
 Create your custom encoder:
 
 ```ts
-import {createFromBase64} from 'json-joy/{lib,es2020}/util/base64';
+import {createFromBase64} from 'json-joy/lib/util/base64';
 
 const decoder = createFromBase64('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+_');
 
