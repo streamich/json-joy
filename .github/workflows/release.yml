@@ -31,7 +31,7 @@ jobs:
       - run: yarn demo:json-pointer
       - run: yarn test:reactive-rpc
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
+        run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
