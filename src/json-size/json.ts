@@ -1,4 +1,4 @@
-import {utf8Size} from '@jsonjoy.com/json-pack/lib/util/strings/utf8';
+import {utf8Size} from '@jsonjoy.com/util/lib/strings/utf8';
 
 const numberSize = (num: number) => {
   const isInteger = num === Math.round(num);

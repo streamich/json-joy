@@ -1,6 +1,6 @@
-import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
+import {Codegen, CodegenStepExecJs} from '@jsonjoy.com/util/lib/codegen';
 import {WriteBlobStep} from '../WriteBlobStep';
-import {concat} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import {concat} from '@jsonjoy.com/util/lib/buffers/concat';
 import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';

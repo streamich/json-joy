@@ -1,5 +1,5 @@
 import {RandomJson} from '../../../../json-random';
-import {Fuzzer} from '../../../../util/Fuzzer';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {append, normalize} from '../util';
 import {StringOp} from '../types';
 

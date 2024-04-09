@@ -1,7 +1,7 @@
 /* tslint:disable no-console */
 
 import {ITimespanStruct, ITimestampStruct, ts} from '../../../../json-crdt-patch/clock';
-import {Fuzzer} from '../../../../util/Fuzzer';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {BinNode} from '../BinNode';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {RandomJson} from '../../../../json-random';

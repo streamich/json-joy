@@ -23,7 +23,7 @@ import {
   JsonPatchTypes,
 } from './types';
 import {validateJsonPointer} from '../json-pointer/validate';
-import {hasOwnProperty} from '../util/hasOwnProperty';
+import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 export const validateOperations = (ops: Operation[], allowMatchesOp: boolean = false) => {
   if (!Array.isArray(ops)) throw new Error('Not a array.');

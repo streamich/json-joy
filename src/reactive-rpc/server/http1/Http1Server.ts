@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as net from 'net';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {WsServerConnection} from '../ws/server/WsServerConnection';
 import {WsFrameEncoder} from '../ws/codec/WsFrameEncoder';
@@ -13,7 +13,7 @@ import {findTokenInText, setCodecs} from './util';
 import {Http1ConnectionContext, WsConnectionContext} from './context';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
-import {NullObject} from '../../../util/NullObject';
+import {NullObject} from '@jsonjoy.com/util/lib/NullObject';
 
 export type Http1Handler = (ctx: Http1ConnectionContext) => void | Promise<void>;
 export type Http1NotFoundHandler = (res: http.ServerResponse, req: http.IncomingMessage) => void;

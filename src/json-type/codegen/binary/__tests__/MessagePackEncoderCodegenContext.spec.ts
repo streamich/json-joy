@@ -4,7 +4,7 @@ import {MsgPackDecoder} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackDecoder'
 import {Type} from '../../../type';
 import {testBinaryCodegen} from './testBinaryCodegen';
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const writer = new Writer(64);
 const encoder = new MsgPackEncoder(writer);

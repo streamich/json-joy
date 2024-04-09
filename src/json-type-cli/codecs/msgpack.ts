@@ -1,6 +1,6 @@
 import {MsgPackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 import {MsgPackDecoder} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackDecoder';
-import type {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import type {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import type {CliCodec} from '../types';
 
 export class CliCodecMsgpack implements CliCodec<'msgpack'> {

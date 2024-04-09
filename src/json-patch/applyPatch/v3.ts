@@ -3,7 +3,7 @@ import {Operation} from '../types';
 import {findByPointer, unescapeComponent} from '../../json-pointer';
 import {deepEqual} from '../../json-equal/deepEqual';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';
-import {hasOwnProperty} from '../../util/hasOwnProperty';
+import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 const {isArray} = Array;
 

@@ -5,7 +5,7 @@ import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import {CompiledBinaryEncoder} from '../codegen/types';
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const system = new TypeSystem();
 const {t} = system;

@@ -1,6 +1,6 @@
 import {jsonSize} from '..';
 import {RandomJson} from '../../json-random/RandomJson';
-import {utf8Size} from '@jsonjoy.com/json-pack/lib/util/strings/utf8';
+import {utf8Size} from '@jsonjoy.com/util/lib/strings/utf8';
 
 const random = new RandomJson();
 const iterations = 100;

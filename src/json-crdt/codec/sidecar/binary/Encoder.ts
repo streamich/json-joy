@@ -5,7 +5,7 @@ import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
-import {sort} from '@jsonjoy.com/json-pack/lib/util/sort/insertion';
+import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
 import {UNDEFINED} from '../../../model/Model';
 import type {Model} from '../../../model';
 

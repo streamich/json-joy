@@ -5,7 +5,7 @@
 import {ApiTestSetup, runApiTests} from '../../../../common/rpc/__tests__/runApiTests';
 import {RpcCodecs} from '../../../../common/codec/RpcCodecs';
 import {RpcMessageCodecs} from '../../../../common/codec/RpcMessageCodecs';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {RpcMessageCodec} from '../../../../common/codec/types';
 import {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';

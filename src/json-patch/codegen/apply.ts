@@ -5,7 +5,7 @@ import {AbstractPredicateOp} from '../op';
 import {ApplyPatchOptions} from '../applyPatch/types';
 import type {JsonPatchOptions} from '..';
 import type {ApplyFn} from './types';
-import {compile, JavaScriptLinked, JavaScript} from '../../util/codegen';
+import {compile, JavaScriptLinked, JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {codegenOp} from './codegenOp';
 
 export const apply = (patch: readonly Operation[], applyOptions: ApplyPatchOptions, doc: unknown): unknown => {

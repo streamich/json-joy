@@ -1,6 +1,6 @@
 import {JsonRpc2RpcMessageCodec} from '..';
 import {JsonJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/json';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {ReactiveRpcMessage} from '../../../messages';
 import {messages} from '../../../messages/__tests__/fixtures';
 

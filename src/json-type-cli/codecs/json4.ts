@@ -1,7 +1,7 @@
 import {JsonDecoder} from '@jsonjoy.com/json-pack/lib/json/JsonDecoder';
 import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
-import type {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
-import {bufferToUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/bufferToUint8Array';
+import type {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {bufferToUint8Array} from '@jsonjoy.com/util/lib/buffers/bufferToUint8Array';
 import type {CliCodec} from '../types';
 
 /**

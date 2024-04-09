@@ -1,5 +1,5 @@
 import {MsgPackJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/msgpack';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {RequestCompleteMessage} from '../../../messages';
 import {CompactRpcMessageCodec} from '../CompactRpcMessageCodec';
 

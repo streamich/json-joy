@@ -1,5 +1,5 @@
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {RpcPersistentClient, WebSocketChannel} from '../common';
 import {RpcCodec} from '../common/codec/RpcCodec';
 import {BinaryRpcMessageCodec} from '../common/codec/binary';

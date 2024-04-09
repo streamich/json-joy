@@ -1,6 +1,6 @@
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
-import type {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import type {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import type {CliCodec} from '../types';
 
 export class CliCodecCbor implements CliCodec<'cbor'> {

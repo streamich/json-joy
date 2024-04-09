@@ -1,4 +1,4 @@
-import {emitStringMatch} from '@jsonjoy.com/json-pack/lib/util/codegen/util/helpers';
+import {emitStringMatch} from '@jsonjoy.com/util/lib/codegen/util/helpers';
 import {printTree} from '../print/printTree';
 import {Printable} from '../print/types';
 import {RadixTree} from '../trees/radix/RadixTree';
