@@ -1,11 +1,11 @@
 import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
 import {WriteBlobStep} from '../WriteBlobStep';
-import {concat} from '../../../util/buffers/concat';
+import {concat} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
 import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
 import type {CompiledBinaryEncoder} from '../types';
-import type {BinaryJsonEncoder} from '../../../json-pack/types';
+import type {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 
 type Step = WriteBlobStep | CodegenStepExecJs;
 

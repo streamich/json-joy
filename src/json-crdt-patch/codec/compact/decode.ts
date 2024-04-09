@@ -1,5 +1,5 @@
 import {JsonCrdtPatchOpcode} from '../../constants';
-import {fromBase64} from '../../../util/base64/fromBase64';
+import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import {ITimespanStruct, ITimestampStruct, ClockVector, ServerClockVector, Timespan, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';

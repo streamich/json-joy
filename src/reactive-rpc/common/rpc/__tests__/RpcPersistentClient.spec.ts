@@ -5,8 +5,8 @@ import {RequestCompleteMessage} from '../..';
 import {until} from '../../../../__tests__/util';
 import {RpcValue} from '../../messages/Value';
 import {RpcCodec} from '../../codec/RpcCodec';
-import {Codecs} from '../../../../json-pack/codecs/Codecs';
-import {Writer} from '../../../../util/buffers/Writer';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 import {RpcMessageCodecs} from '../../codec/RpcMessageCodecs';
 
 test('on remote method execution, sends message over WebSocket only once', async () => {

@@ -1,7 +1,7 @@
 import * as msg from '../../messages';
 import {StaticRpcClient} from './StaticRpcClient';
 import {RpcMessageCodec} from '../../codec/types';
-import {JsonValueCodec} from '../../../../json-pack/codecs/types';
+import {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {Observable} from 'rxjs';
 import type {RpcClient} from './types';
 

@@ -1,11 +1,11 @@
 /* tslint:disable no-console */
 
 import {TypeSystem} from '..';
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
-import {JsonEncoder} from '../../json-pack/json/JsonEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import {CompiledBinaryEncoder} from '../codegen/types';
-import {EncodingFormat} from '../../json-pack/constants';
-import {Writer} from '../../util/buffers/Writer';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 
 const system = new TypeSystem();
 const {t} = system;

@@ -2,7 +2,7 @@
 
 import {payloads} from '../../__bench__/payloads';
 import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {Model} from '../model';
 
 const benchmark: IBenchmark = {

@@ -1,4 +1,4 @@
-import type {JsonValueCodec} from '../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {ResolveType, Type} from '../json-type';
 
 export class Value<T extends Type> {

@@ -1,11 +1,11 @@
-import {Writer} from '../../../util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 import {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';
 import {Encoder as StructuralEncoderCompact} from '../../codec/structural/compact/Encoder';
 import {Encoder as StructuralEncoderVerbose} from '../../codec/structural/verbose/Encoder';
 import {encode as encodeCompact} from '../../../json-crdt-patch/codec/compact/encode';
 import {encode as encodeVerbose} from '../../../json-crdt-patch/codec/verbose/encode';
-import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import type {LogEncoderOpts} from './LogEncoder';
 
 const writer = new Writer(4096);

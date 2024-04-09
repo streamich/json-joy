@@ -2,10 +2,10 @@ import * as nodes from '../../../nodes';
 import {ClockEncoder} from '../../../../json-crdt-patch/codec/clock/ClockEncoder';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
-import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {SESSION} from '../../../../json-crdt-patch/constants';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';
-import {sort} from '../../../../util/sort/insertion';
+import {sort} from '@jsonjoy.com/json-pack/lib/util/sort/insertion';
 import {UNDEFINED} from '../../../model/Model';
 import type {Model} from '../../../model';
 

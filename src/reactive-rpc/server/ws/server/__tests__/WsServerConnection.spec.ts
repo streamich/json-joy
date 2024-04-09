@@ -3,8 +3,8 @@ import {WsServerConnection} from '../WsServerConnection';
 import {WsFrameEncoder} from '../../codec/WsFrameEncoder';
 import {until} from 'thingies';
 import {WsFrameOpcode} from '../../codec';
-import {bufferToUint8Array} from '../../../../../util/buffers/bufferToUint8Array';
-import {listToUint8} from '../../../../../util/buffers/concat';
+import {bufferToUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/bufferToUint8Array';
+import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
 
 const setup = () => {
   const socket = new stream.PassThrough();

@@ -1,7 +1,7 @@
 import {NullObject} from '../../util/NullObject';
-import {copy} from '../../util/buffers/copy';
-import {listToUint8} from '../../util/buffers/concat';
-import type {JsonValueCodec} from '../../json-pack/codecs/types';
+import {copy} from '@jsonjoy.com/json-pack/lib/util/buffers/copy';
+import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {RpcMessageCodec} from '../common/codec/types';
 import type {RpcApp} from './uws/RpcApp';
 import type {HttpRequest, HttpResponse} from './uws/types';

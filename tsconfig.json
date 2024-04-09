@@ -39,7 +39,6 @@
   ],
   "typedocOptions": {
     "entryPoints": [
-      "src/binary-rx/index.ts",
       "src/json-crdt/index.ts",
       "src/json-crdt/codec/structural/binary/index.ts",
       "src/json-crdt/codec/structural/compact/index.ts",

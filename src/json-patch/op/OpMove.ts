@@ -5,7 +5,7 @@ import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
 import {Path, toPath, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch

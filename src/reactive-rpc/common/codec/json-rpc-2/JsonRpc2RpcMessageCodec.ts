@@ -1,13 +1,13 @@
 import {RpcMessageFormat} from '../constants';
 import {RpcError} from '../../rpc/caller/error';
 import {RpcValue} from '../../messages/Value';
-import {EncodingFormat} from '../../../../json-pack/constants';
-import {TlvBinaryJsonEncoder} from '../../../../json-pack/types';
-import {JsonJsonValueCodec} from '../../../../json-pack/codecs/json';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {TlvBinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
+import {JsonJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/json';
 import * as msg from '../../messages';
 import * as schema from './schema';
 import type {RpcMessageCodec} from '../types';
-import type {JsonValueCodec} from '../../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 
 export class JsonRpc2RpcMessageCodec implements RpcMessageCodec {
   id = 'json2.verbose';

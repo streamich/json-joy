@@ -1,7 +1,7 @@
 import {JsonCrdtFuzzer} from '../../../../__tests__/fuzzer/JsonCrdtFuzzer';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
-import {CborDecoder} from '../../../../../json-pack/cbor/CborDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 const encoder = new Encoder();
 const decoder = new Decoder();

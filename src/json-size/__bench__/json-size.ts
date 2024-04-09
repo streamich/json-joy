@@ -3,7 +3,7 @@
 // npx ts-node src/json-size/__bench__/json-size.ts
 
 import * as Benchmark from 'benchmark';
-import {utf8Size} from '../../util/strings/utf8';
+import {utf8Size} from '@jsonjoy.com/json-pack/lib/util/strings/utf8';
 import {jsonSize, jsonSizeApprox} from '../json';
 import {jsonSizeFast} from '../jsonSizeFast';
 import {msgpackSizeFast} from '../msgpackSizeFast';

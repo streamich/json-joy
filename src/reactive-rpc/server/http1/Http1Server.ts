@@ -1,8 +1,9 @@
 import * as http from 'http';
 import * as net from 'net';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {WsServerConnection} from '../ws/server/WsServerConnection';
 import {WsFrameEncoder} from '../ws/codec/WsFrameEncoder';
-import {Writer} from '../../../util/buffers/Writer';
 import {RouteMatcher} from '../../../util/router/codegen';
 import {Router} from '../../../util/router';
 import {Printable} from '../../../util/print/types';
@@ -11,7 +12,6 @@ import {PayloadTooLarge} from './errors';
 import {findTokenInText, setCodecs} from './util';
 import {Http1ConnectionContext, WsConnectionContext} from './context';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
-import {Codecs} from '../../../json-pack/codecs/Codecs';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
 import {NullObject} from '../../../util/NullObject';
 

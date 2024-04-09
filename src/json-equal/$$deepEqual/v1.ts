@@ -1,4 +1,4 @@
-import {JavaScript} from '../../util/codegen';
+import {JavaScript} from '@jsonjoy.com/json-pack/lib/util/codegen';
 
 const codegenValue = (doc: unknown, code: string[], r: number): number => {
   let rr = r;

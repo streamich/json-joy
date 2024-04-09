@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import {Patch} from '../../../json-crdt-patch';
-import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
-import {JsonDecoder} from '../../../json-pack/json/JsonDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
+import {JsonDecoder} from '@jsonjoy.com/json-pack/lib/json/JsonDecoder';
 
 export const loadConcurrentTrace = (traceName: string): [batch: Patch[], view: unknown] => {
   const root = path.resolve(__dirname, '..', '..', '..', '..');

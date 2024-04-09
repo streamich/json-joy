@@ -1,5 +1,5 @@
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
-import {CborDecoder} from '../../json-pack/cbor/CborDecoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {LogEncoder} from '../log/codec/LogEncoder';
 import {LogDecoder} from '../log/codec/LogDecoder';
 import type {CrudApi} from 'memfs/lib/crud/types';

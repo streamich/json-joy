@@ -6,10 +6,10 @@ import {ApiTestSetup, runApiTests} from '../../../../common/rpc/__tests__/runApi
 import {StreamingRpcClient} from '../../../../common';
 import {RpcCodecs} from '../../../../common/codec/RpcCodecs';
 import {RpcMessageCodecs} from '../../../../common/codec/RpcMessageCodecs';
-import {Writer} from '../../../../../util/buffers/Writer';
-import {Codecs} from '../../../../../json-pack/codecs/Codecs';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {RpcMessageCodec} from '../../../../common/codec/types';
-import {JsonValueCodec} from '../../../../../json-pack/codecs/types';
+import {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 
 if (process.env.TEST_E2E) {
   const codecs = new RpcCodecs(new Codecs(new Writer()), new RpcMessageCodecs());

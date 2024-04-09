@@ -1,6 +1,6 @@
 import type {RpcSpecifier} from '../rpc';
 import type {ReactiveRpcMessage} from '../messages';
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {RpcMessageCodec} from './types';
 
 export class RpcCodec {
