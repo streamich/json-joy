@@ -4,7 +4,7 @@
 
 import {Suite} from 'benchmark';
 import {RpcPersistentClient, WebSocketChannel} from '../../reactive-rpc/common';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {BinaryRpcMessageCodec} from '../../reactive-rpc/common/codec/binary';
 import {CompactRpcMessageCodec} from '../../reactive-rpc/common/codec/compact';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
