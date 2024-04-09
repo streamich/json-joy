@@ -11,10 +11,10 @@ import {
 } from '../../../messages';
 import {RpcValue} from '../../../messages/Value';
 import {decode} from '../decode';
-import {Reader} from '@jsonjoy.com/json-pack/lib/util/buffers/Reader';
-import {Uint8ArrayCut} from '@jsonjoy.com/json-pack/lib/util/buffers/Uint8ArrayCut';
+import {Reader} from '@jsonjoy.com/util/lib/buffers/Reader';
+import {Uint8ArrayCut} from '@jsonjoy.com/util/lib/buffers/Uint8ArrayCut';
 import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const codec = new CborJsonValueCodec(new Writer(64));
 const encoder = codec.encoder;

@@ -1,5 +1,5 @@
 import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {RpcError} from '../RpcError';
 import {RpcErrorType} from '../RpcErrorType';
 

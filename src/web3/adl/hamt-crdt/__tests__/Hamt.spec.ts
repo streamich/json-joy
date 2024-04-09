@@ -1,4 +1,4 @@
-import {b} from '@jsonjoy.com/json-pack/lib/util/buffers/b';
+import {b} from '@jsonjoy.com/util/lib/buffers/b';
 import {HlcFactory} from '../../../hlc';
 import {CidCasMemory} from '../../../store/cas/CidCasMemory';
 import {CidCasStructCbor} from '../../../store/cas/CidCasStructCbor';

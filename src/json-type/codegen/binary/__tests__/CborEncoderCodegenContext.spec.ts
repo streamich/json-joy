@@ -4,7 +4,7 @@ import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {Type} from '../../../type';
 import {testBinaryCodegen} from './testBinaryCodegen';
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
-import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const writer = new Writer(1);
 const encoder = new CborEncoder(writer);

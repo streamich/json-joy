@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import {Patch} from '../../../json-crdt-patch';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {Model} from '../../model';
-import {bufferToUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/bufferToUint8Array';
+import {bufferToUint8Array} from '@jsonjoy.com/util/lib/buffers/bufferToUint8Array';
 
 export const loadFuzzerTrace = (traceName: string): [batch: Patch[], model: Model] => {
   const root = path.resolve(__dirname, '..', '..', '..', '..');
