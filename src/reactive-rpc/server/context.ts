@@ -1,6 +1,6 @@
-import {NullObject} from '../../util/NullObject';
-import {copy} from '@jsonjoy.com/json-pack/lib/util/buffers/copy';
-import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import {NullObject} from '@jsonjoy.com/util/lib/NullObject';
+import {copy} from '@jsonjoy.com/util/lib/buffers/copy';
+import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {RpcMessageCodec} from '../common/codec/types';
 import type {RpcApp} from './uws/RpcApp';

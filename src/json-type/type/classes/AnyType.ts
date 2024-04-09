@@ -7,7 +7,7 @@ import {JsonTextEncoderCodegenContext} from '../../codegen/json/JsonTextEncoderC
 import {CborEncoderCodegenContext} from '../../codegen/binary/CborEncoderCodegenContext';
 import {JsonEncoderCodegenContext} from '../../codegen/binary/JsonEncoderCodegenContext';
 import {BinaryEncoderCodegenContext} from '../../codegen/binary/BinaryEncoderCodegenContext';
-import {JsExpression} from '@jsonjoy.com/json-pack/lib/util/codegen/util/JsExpression';
+import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
 import {MessagePackEncoderCodegenContext} from '../../codegen/binary/MessagePackEncoderCodegenContext';
 import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
 import {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';

@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import * as stream from 'stream';
-import {utf8Size} from '@jsonjoy.com/json-pack/lib/util/strings/utf8';
-import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import {utf8Size} from '@jsonjoy.com/util/lib/strings/utf8';
+import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
 

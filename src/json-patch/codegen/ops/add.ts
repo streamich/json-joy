@@ -1,5 +1,5 @@
 import {OpAdd} from '../../op';
-import {JavaScriptLinked, compileClosure, JavaScript} from '../../../util/codegen';
+import {JavaScriptLinked, compileClosure, JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import type {ApplyFn} from '../types';
 import {$findRef} from '../../../json-pointer/codegen/findRef';
 

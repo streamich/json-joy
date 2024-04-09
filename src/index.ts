@@ -7,7 +7,7 @@
  */
 
 export type * from '@jsonjoy.com/json-pack/lib/json-binary/types';
-export type * from '@jsonjoy.com/json-pack/lib/json-brand/types';
+export type * from '@jsonjoy.com/util/lib/json-brand/types';
 export type * from './json-crdt';
 export type * from './json-crdt-patch';
 export type * from './json-crdt-extensions';

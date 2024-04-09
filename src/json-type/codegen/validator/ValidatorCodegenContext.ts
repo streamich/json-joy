@@ -1,4 +1,4 @@
-import {Codegen} from '../../../util/codegen';
+import {Codegen} from '@jsonjoy.com/util/lib/codegen';
 import {ValidationError, ValidationErrorMessage} from '../../constants';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';

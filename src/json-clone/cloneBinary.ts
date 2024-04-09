@@ -1,4 +1,4 @@
-import {isUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 
 const {isArray} = Array;
 const objectKeys = Object.keys;

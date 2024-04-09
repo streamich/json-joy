@@ -1,5 +1,5 @@
 import {getBody} from './util';
-import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import type * as http from 'http';
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {RpcMessageCodec} from '../../common/codec/types';

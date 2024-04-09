@@ -37,7 +37,7 @@ import {Path} from '../../../json-pointer';
 import {JsonPatchTypes} from '../json/types';
 import {createMatcherDefault} from '../../util';
 import type {JsonPatchOptions} from '../../types';
-import type {Reader} from '@jsonjoy.com/json-pack/lib/util/buffers/Reader';
+import type {Reader} from '@jsonjoy.com/util/lib/buffers/Reader';
 
 export class Decoder extends MsgPackDecoderFast<Reader> {
   constructor(private readonly options: JsonPatchOptions) {

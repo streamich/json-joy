@@ -1,9 +1,9 @@
-import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
-import {asString} from '@jsonjoy.com/json-pack/lib/util/strings/asString';
+import {Codegen, CodegenStepExecJs} from '@jsonjoy.com/util/lib/codegen';
+import {asString} from '@jsonjoy.com/util/lib/strings/asString';
 import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
-import type {json_string} from '../../../json-brand';
+import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 
 export type JsonEncoderFn = <T>(value: T) => json_string<T>;
 

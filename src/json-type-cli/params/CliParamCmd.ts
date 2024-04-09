@@ -1,8 +1,8 @@
 import {applyPatch} from '../../json-patch';
 import {spawn} from 'child_process';
 import {find, toPath, validateJsonPointer} from '../../json-pointer';
-import {bufferToUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/bufferToUint8Array';
-import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
+import {bufferToUint8Array} from '@jsonjoy.com/util/lib/buffers/bufferToUint8Array';
+import {listToUint8} from '@jsonjoy.com/util/lib/buffers/concat';
 import type {Cli} from '../Cli';
 import type {CliParam, CliParamInstance} from '../types';
 
