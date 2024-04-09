@@ -1,4 +1,4 @@
-import type {JsonValue} from '../json-pack/types';
+import type {JsonValue} from '@jsonjoy.com/json-pack/lib/types';
 import {sort} from '../util/sort/insertion';
 
 export const enum CONST {

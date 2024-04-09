@@ -2,7 +2,7 @@ import {Model} from '../../../../model';
 import {runCodecAllTypesSmokeTests} from '../../../structural/verbose/__tests__/runCodecAllTypesSmokeTests';
 import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
-import {CborDecoder} from '../../../../../json-pack/cbor/CborDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 const encoder = new Encoder();
 const decoder = new Decoder();

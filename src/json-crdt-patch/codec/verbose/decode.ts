@@ -1,4 +1,4 @@
-import {fromBase64} from '../../../util/base64/fromBase64';
+import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import {ts, ClockVector, ServerClockVector, tss, ITimestampStruct} from '../../clock';
 import {SESSION} from '../../constants';
 import {Patch} from '../../Patch';

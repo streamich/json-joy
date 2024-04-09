@@ -1,5 +1,5 @@
 import {Defer} from 'thingies/es2020/Defer';
-import {cmpUint8Array2} from '../../../util/buffers/cmpUint8Array2';
+import {cmpUint8Array2} from '@jsonjoy.com/json-pack/lib/util/buffers/cmpUint8Array2';
 import {cmpDto} from '../../hlc';
 import {CidCasStruct} from '../../store/cas/CidCasStruct';
 import {Cid} from '../../multiformats';

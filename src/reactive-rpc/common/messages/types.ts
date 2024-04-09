@@ -1,4 +1,4 @@
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type * as msg from './messages';
 
 /**

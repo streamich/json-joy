@@ -6,7 +6,7 @@
 
 /* tslint:disable no-console */
 
-import {EncodingFormat} from '../../json-pack/constants';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
 import {TypeSystem} from '../../json-type';
 
 console.clear();

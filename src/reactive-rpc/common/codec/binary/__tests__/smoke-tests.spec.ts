@@ -1,6 +1,6 @@
 import {BinaryRpcMessageCodec} from '..';
-import {Writer} from '../../../../../util/buffers/Writer';
-import {Codecs} from '../../../../../json-pack/codecs/Codecs';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {
   NotificationMessage,
   ReactiveRpcMessage,

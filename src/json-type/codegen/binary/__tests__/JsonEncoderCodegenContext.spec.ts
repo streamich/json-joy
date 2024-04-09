@@ -1,9 +1,9 @@
 import {TypeSystem} from '../../../system';
 import {Type} from '../../../type';
 import {testBinaryCodegen} from './testBinaryCodegen';
-import {EncodingFormat} from '../../../../json-pack/constants';
-import {JsonEncoder} from '../../../../json-pack/json/JsonEncoder';
-import {Writer} from '../../../../util/buffers/Writer';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 import {parse} from '../../../../json-binary';
 
 const encoder = new JsonEncoder(new Writer(16));

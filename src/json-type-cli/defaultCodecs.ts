@@ -1,4 +1,4 @@
-import {Writer} from '../util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 import {CliCodecs} from './CliCodecs';
 import {CliCodecCbor} from './codecs/cbor';
 import {CliCodecJson} from './codecs/json';

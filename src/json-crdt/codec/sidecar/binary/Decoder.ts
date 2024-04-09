@@ -2,7 +2,7 @@ import {ClockDecoder} from '../../../../json-crdt-patch/codec/clock/ClockDecoder
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
 import {ITimestampStruct} from '../../../../json-crdt-patch/clock';
 import {Model, UNDEFINED} from '../../../model/Model';
-import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
+import {CborDecoderBase} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoderBase';
 import * as nodes from '../../../nodes';
 import {CRDT_MAJOR} from '../../structural/binary/constants';
 import {sort} from '../../../../util/sort/insertion';

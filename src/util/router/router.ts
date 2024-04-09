@@ -1,4 +1,4 @@
-import {JsExpression} from '../codegen/util/JsExpression';
+import {JsExpression} from '@jsonjoy.com/json-pack/lib/util/codegen/util/JsExpression';
 import {printTree} from '../print/printTree';
 import {Printable} from '../print/types';
 import {RouteMatcher, RouterCodegenCtx, RouterCodegenOpts} from './codegen';

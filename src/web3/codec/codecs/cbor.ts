@@ -1,5 +1,5 @@
-import {CborEncoderDag} from '../../../json-pack/cbor/CborEncoderDag';
-import {CborDecoderDag} from '../../../json-pack/cbor/CborDecoderDag';
+import {CborEncoderDag} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoderDag';
+import {CborDecoderDag} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoderDag';
 import {Cid} from '../../multiformats';
 import {writer} from './writer';
 import type {IpldCodec} from '../types';

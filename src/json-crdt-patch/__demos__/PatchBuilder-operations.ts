@@ -11,7 +11,7 @@ import {LogicalClock} from '../clock';
 import * as verbose from '../codec/verbose';
 import * as compact from '../codec/compact';
 import * as binary from '../codec/binary';
-import * as cbor from '../../json-pack/cbor/shared';
+import * as cbor from '@jsonjoy.com/json-pack/lib/cbor/shared';
 
 const clock = new LogicalClock(123, 456);
 const builder = new PatchBuilder(clock);

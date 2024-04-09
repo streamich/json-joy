@@ -1,7 +1,7 @@
 import {ITimestampStruct, Timestamp} from '../../../../json-crdt-patch/clock';
 import {ClockTable} from '../../../../json-crdt-patch/codec/clock/ClockTable';
 import {CrdtWriter} from '../../../../json-crdt-patch/util/binary/CrdtWriter';
-import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {Model} from '../../../model';
 import * as nodes from '../../../nodes';
 import {CRDT_MAJOR_OVERLAY} from '../../structural/binary/constants';

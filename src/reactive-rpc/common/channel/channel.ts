@@ -1,6 +1,6 @@
 import type {WebSocketBase, CloseEventBase} from './types';
 import {Subject, ReplaySubject, BehaviorSubject, Observable, from} from 'rxjs';
-import {toUint8Array} from '../../../util/buffers/toUint8Array';
+import {toUint8Array} from '@jsonjoy.com/json-pack/lib/util/buffers/toUint8Array';
 import {delay, filter, map, skip, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 export const enum ChannelState {

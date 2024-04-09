@@ -3,11 +3,11 @@ import {RpcError, RpcErrorCodes} from '../../rpc/caller/error';
 import * as msg from '../../messages';
 import {CompactMessageType} from './constants';
 import {RpcValue} from '../../messages/Value';
-import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
-import {MsgPackEncoder} from '../../../../json-pack/msgpack';
-import {JsonEncoder} from '../../../../json-pack/json/JsonEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {MsgPackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import type {RpcMessageCodec} from '../types';
-import type {JsonValueCodec} from '../../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type * as types from './types';
 
 const fromJson = (arr: unknown | unknown[] | types.CompactMessage): msg.ReactiveRpcMessage => {

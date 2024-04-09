@@ -1,6 +1,6 @@
 import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
-import {asString} from '../../../util/strings/asString';
-import {toBase64} from '../../../util/base64';
+import {asString} from '@jsonjoy.com/json-pack/lib/util/strings/asString';
+import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type {TypeSystem} from '../../system';
 import type {Type} from '../../type';
 import type {json_string} from '../../../json-brand';

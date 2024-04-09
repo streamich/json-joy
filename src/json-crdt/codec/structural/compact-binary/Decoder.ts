@@ -1,5 +1,5 @@
 import {Decoder as CompactDecoder} from '../compact/Decoder';
-import {decoder} from '../../../../json-pack/msgpack/util';
+import {decoder} from '@jsonjoy.com/json-pack/lib/msgpack/util';
 import {Model} from '../../../model';
 
 export class Decoder {

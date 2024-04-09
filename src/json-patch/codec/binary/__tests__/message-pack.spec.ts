@@ -5,7 +5,7 @@ import {encode as encodeCompact} from '../../compact';
 import {
   MsgPackEncoderFast as MsgPackEncoder,
   MsgPackDecoderFast as MsgPackDecoder,
-} from '../../../../json-pack/msgpack';
+} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 const msgPackEncoder = new MsgPackEncoder();
 const msgPackDecoder = new MsgPackDecoder();

@@ -1,4 +1,4 @@
-import {Codecs} from '../../../json-pack/codecs/Codecs';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
 import {RpcMessageCodecs} from './RpcMessageCodecs';
 
 export class RpcCodecs {

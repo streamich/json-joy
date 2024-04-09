@@ -1,8 +1,8 @@
 import * as crypto from 'crypto';
 import * as stream from 'stream';
+import {utf8Size} from '@jsonjoy.com/json-pack/lib/util/strings/utf8';
+import {listToUint8} from '@jsonjoy.com/json-pack/lib/util/buffers/concat';
 import {WsCloseFrame, WsFrameDecoder, WsFrameHeader, WsFrameOpcode, WsPingFrame, WsPongFrame} from '../codec';
-import {utf8Size} from '../../../../util/strings/utf8';
-import {listToUint8} from '../../../../util/buffers/concat';
 import type {WsFrameEncoder} from '../codec/WsFrameEncoder';
 
 export type WsServerConnectionSocket = stream.Duplex;

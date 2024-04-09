@@ -1,4 +1,4 @@
-import {escape} from '../util/strings/escape';
+import {escape} from '@jsonjoy.com/json-pack/lib/util/strings/escape';
 import {sort} from '../util/sort/insertion';
 import type {json_string} from '../json-brand';
 

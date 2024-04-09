@@ -18,23 +18,23 @@ import {
   JsonEncoderCodegenContext,
   JsonEncoderCodegenContextOptions,
 } from '../../codegen/binary/JsonEncoderCodegenContext';
-import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import {JsExpression} from '../../../util/codegen/util/JsExpression';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {JsExpression} from '@jsonjoy.com/json-pack/lib/util/codegen/util/JsExpression';
 import {
   MessagePackEncoderCodegenContext,
   MessagePackEncoderCodegenContextOptions,
 } from '../../codegen/binary/MessagePackEncoderCodegenContext';
-import {MsgPackEncoder} from '../../../json-pack/msgpack';
+import {MsgPackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 import {lazy} from '../../../util/lazyFunction';
-import {EncodingFormat} from '../../../json-pack/constants';
-import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
-import {Writer} from '../../../util/buffers/Writer';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
+import {Writer} from '@jsonjoy.com/json-pack/lib/util/buffers/Writer';
 import {
   CapacityEstimatorCodegenContext,
   CapacityEstimatorCodegenContextOptions,
   CompiledCapacityEstimator,
 } from '../../codegen/capacity/CapacityEstimatorCodegenContext';
-import {JsonValueCodec} from '../../../json-pack/codecs/types';
+import {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type * as jsonSchema from '../../../json-schema';
 import type {BaseType} from '../types';
 import type {TypeSystem} from '../../system/TypeSystem';
