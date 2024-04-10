@@ -1,8 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch} from '../schema';
 
-// TODO: Rename to "set"?
-export const edit =
+export const upd =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
     const PatchType = t.Ref<typeof BlockPatch>('BlockPatch');
@@ -39,7 +38,7 @@ export const edit =
       description: 'Applies patches to an existing document and returns the latest concurrent changes.',
     });
 
-    return r.prop('blocks.edit', Func, async ({id, patches}) => {
+    return r.prop('block.upd', Func, async ({id, patches}) => {
       const res = await services.blocks.edit(id, patches);
       return {
         patches: res.patches,

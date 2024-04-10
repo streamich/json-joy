@@ -3,12 +3,12 @@ import {RpcErrorCodes} from '../../reactive-rpc/common/rpc/caller';
 import {setup} from './setup';
 import {tick, until} from '../../__tests__/util';
 
-describe('blocks.*', () => {
-  describe('blocks.create', () => {
+describe('block.*', () => {
+  describe('block.new', () => {
     test('can create an empty block', async () => {
       const {call} = setup();
-      await call('blocks.create', {id: 'my-block', patches: []});
-      const {block} = await call('blocks.get', {id: 'my-block'});
+      await call('block.new', {id: 'my-block', patches: []});
+      const {block} = await call('block.get', {id: 'my-block'});
       expect(block).toMatchObject({
         id: 'my-block',
         seq: -1,
@@ -32,7 +32,7 @@ describe('blocks.*', () => {
         age: 26,
       });
       const patch2 = model.api.flush();
-      await call('blocks.create', {
+      await call('block.new', {
         id: '123412341234',
         patches: [
           {
@@ -47,7 +47,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const {block} = await call('blocks.get', {id: '123412341234'});
+      const {block} = await call('block.get', {id: '123412341234'});
       expect(block).toMatchObject({
         id: '123412341234',
         seq: 1,
@@ -63,15 +63,15 @@ describe('blocks.*', () => {
     });
   });
 
-  describe('blocks.remove', () => {
+  describe('block.remove', () => {
     test('can remove an existing block', async () => {
       const {call} = setup();
-      await call('blocks.create', {id: 'my-block', patches: []});
-      const {block} = await call('blocks.get', {id: 'my-block'});
+      await call('block.new', {id: 'my-block', patches: []});
+      const {block} = await call('block.get', {id: 'my-block'});
       expect(block.id).toBe('my-block');
-      await call('blocks.remove', {id: 'my-block'});
+      await call('block.del', {id: 'my-block'});
       try {
-        await call('blocks.get', {id: 'my-block'});
+        await call('block.get', {id: 'my-block'});
         throw new Error('not this error');
       } catch (err: any) {
         expect(err.errno).toBe(RpcErrorCodes.NOT_FOUND);
@@ -79,7 +79,7 @@ describe('blocks.*', () => {
     });
   });
 
-  describe('blocks.edit', () => {
+  describe('block.upd', () => {
     test('can edit a document sequentially', async () => {
       const {call} = setup();
       const id = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
@@ -88,7 +88,7 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {
+      await call('block.new', {
         id,
         patches: [
           {
@@ -102,7 +102,7 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      await call('blocks.edit', {
+      await call('block.upd', {
         id,
         patches: [
           {
@@ -117,7 +117,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const block2 = await call('blocks.get', {id});
+      const block2 = await call('block.get', {id});
       expect(Model.fromBinary(block2.block.blob).view()).toStrictEqual({
         text: 'Hello World',
       });
@@ -125,7 +125,7 @@ describe('blocks.*', () => {
       const patch4 = model.api.flush();
       model.api.str(['text']).ins(12, '!');
       const patch5 = model.api.flush();
-      await call('blocks.edit', {
+      await call('block.upd', {
         id,
         patches: [
           {
@@ -140,7 +140,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const block3 = await call('blocks.get', {id});
+      const block3 = await call('block.get', {id});
       expect(Model.fromBinary(block3.block.blob).view()).toStrictEqual({
         text: 'Hello, World!',
       });
@@ -156,7 +156,7 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {
+      await call('block.new', {
         id,
         patches: [
           {
@@ -168,11 +168,11 @@ describe('blocks.*', () => {
       });
 
       // User 2
-      const block2 = await call('blocks.get', {id});
+      const block2 = await call('block.get', {id});
       const model2 = Model.fromBinary(block2.block.blob).fork();
       model2.api.str(['text']).ins(4, ' yeah!');
       const patch2User2 = model2.api.flush();
-      await call('blocks.edit', {
+      await call('block.upd', {
         id,
         patches: [
           {
@@ -184,7 +184,7 @@ describe('blocks.*', () => {
       });
       expect(model2.view()).toStrictEqual({text: 'Hell yeah!'});
 
-      const block3 = await call('blocks.get', {id});
+      const block3 = await call('block.get', {id});
       const model3 = Model.fromBinary(block3.block.blob).fork();
       expect(model3.view()).toStrictEqual({text: 'Hell yeah!'});
 
@@ -193,7 +193,7 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      const {patches} = await call('blocks.edit', {
+      const {patches} = await call('block.upd', {
         id,
         patches: [
           {
@@ -209,7 +209,7 @@ describe('blocks.*', () => {
         ],
       });
 
-      const block4 = await call('blocks.get', {id});
+      const block4 = await call('block.get', {id});
       const model4 = Model.fromBinary(block4.block.blob).fork();
       expect(model4.view()).not.toStrictEqual({text: 'Hell yeah!'});
     });
@@ -224,7 +224,7 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await call('blocks.create', {
+      await call('block.new', {
         id,
         patches: [
           {
@@ -236,11 +236,11 @@ describe('blocks.*', () => {
       });
 
       // User 2
-      const block2 = await call('blocks.get', {id});
+      const block2 = await call('block.get', {id});
       const model2 = Model.fromBinary(block2.block.blob).fork();
       model2.api.str(['text']).ins(4, ' yeah!');
       const patch2User2 = model2.api.flush();
-      await call('blocks.edit', {
+      await call('block.upd', {
         id,
         patches: [
           {
@@ -256,7 +256,7 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       model.api.str(['text']).ins(5, ' World');
       const patch3 = model.api.flush();
-      const {patches} = await call('blocks.edit', {
+      const {patches} = await call('block.upd', {
         id,
         patches: [
           {
@@ -280,13 +280,13 @@ describe('blocks.*', () => {
     });
   });
 
-  describe('blocks.listen', () => {
+  describe('block.listen', () => {
     test('can listen for block changes', async () => {
       const {client} = setup();
-      await client.call('blocks.create', {id: 'my-block', patches: []});
+      await client.call('block.new', {id: 'my-block', patches: []});
       await tick(11);
       const emits: any[] = [];
-      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
+      client.call$('block.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -294,7 +294,7 @@ describe('blocks.*', () => {
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await client.call('blocks.edit', {
+      await client.call('block.upd', {
         id: 'my-block',
         patches: [{seq: 0, created: Date.now(), blob: patch1.toBinary()}],
       });
@@ -308,7 +308,7 @@ describe('blocks.*', () => {
       const patch2 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(1);
-      await client.call('blocks.edit', {
+      await client.call('block.upd', {
         id: 'my-block',
         patches: [{seq: 1, created: Date.now(), blob: patch2.toBinary()}],
       });
@@ -321,7 +321,7 @@ describe('blocks.*', () => {
     test('can subscribe before block is created', async () => {
       const {client} = setup();
       const emits: any[] = [];
-      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
+      client.call$('block.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
       const model = Model.withLogicalClock();
       model.api.root({
         text: 'Hell',
@@ -329,7 +329,7 @@ describe('blocks.*', () => {
       const patch1 = model.api.flush();
       await tick(12);
       expect(emits.length).toBe(0);
-      await client.call('blocks.create', {
+      await client.call('block.new', {
         id: 'my-block',
         patches: [
           {
@@ -349,18 +349,18 @@ describe('blocks.*', () => {
     test('can receive deletion events', async () => {
       const {client} = setup();
       const emits: any[] = [];
-      client.call$('blocks.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
-      await client.call('blocks.create', {id: 'my-block', patches: []});
+      client.call$('block.listen', {id: 'my-block'}).subscribe((data) => emits.push(data));
+      await client.call('block.new', {id: 'my-block', patches: []});
       await until(() => emits.length === 1);
       expect(emits[0].block.seq).toBe(-1);
       await tick(3);
-      await client.call('blocks.remove', {id: 'my-block'});
+      await client.call('block.del', {id: 'my-block'});
       await until(() => emits.length === 2);
       expect(emits[1].deleted).toBe(true);
     });
   });
 
-  describe('blocks.history', () => {
+  describe('block.history', () => {
     test('can retrieve change history', async () => {
       const {client} = setup();
       const model = Model.withLogicalClock();
@@ -368,7 +368,7 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await client.call('blocks.create', {
+      await client.call('block.new', {
         id: 'my-block',
         patches: [
           {
@@ -385,7 +385,7 @@ describe('blocks.*', () => {
         age: 26,
       });
       const patch3 = model.api.flush();
-      await client.call('blocks.edit', {
+      await client.call('block.upd', {
         id: 'my-block',
         patches: [
           {
@@ -400,7 +400,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const history = await client.call('blocks.history', {id: 'my-block', min: 0, max: 2});
+      const history = await client.call('block.scan', {id: 'my-block', min: 0, max: 2});
       expect(history).toMatchObject({
         patches: [
           {
@@ -423,7 +423,7 @@ describe('blocks.*', () => {
     });
   });
 
-  describe('blocks.get', () => {
+  describe('block.get', () => {
     test('returns whole history when block is loaded', async () => {
       const {client} = setup();
       const model = Model.withLogicalClock();
@@ -431,7 +431,7 @@ describe('blocks.*', () => {
         text: 'Hell',
       });
       const patch1 = model.api.flush();
-      await client.call('blocks.create', {
+      await client.call('block.new', {
         id: 'my-block',
         patches: [
           {
@@ -447,7 +447,7 @@ describe('blocks.*', () => {
         age: 26,
       });
       const patch3 = model.api.flush();
-      await client.call('blocks.edit', {
+      await client.call('block.upd', {
         id: 'my-block',
         patches: [
           {
@@ -462,7 +462,7 @@ describe('blocks.*', () => {
           },
         ],
       });
-      const result = await client.call('blocks.get', {id: 'my-block'});
+      const result = await client.call('block.get', {id: 'my-block'});
       expect(result).toMatchObject({
         block: expect.any(Object),
         patches: [

@@ -1,13 +1,13 @@
-import {create} from './methods/create';
+import {new_} from './methods/new';
 import {get} from './methods/get';
-import {remove} from './methods/remove';
-import {edit} from './methods/edit';
+import {upd} from './methods/upd';
+import {del} from './methods/del';
+import {scan} from './methods/scan';
 import {listen} from './methods/listen';
 import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
-import {history} from './methods/history';
 import type {RouteDeps, Router, RouterBase} from '../types';
 
-export const blocks =
+export const block =
   (d: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
     const {system} = d;
@@ -19,11 +19,11 @@ export const blocks =
 
     // prettier-ignore
     return (
-    ( create(d)
+    ( new_(d)
     ( get(d)
-    ( remove(d)
-    ( edit(d)
+    ( upd(d)
+    ( del(d)
     ( listen(d)
-    ( history(d)
+    ( scan(d)
     ( r ))))))));
   };

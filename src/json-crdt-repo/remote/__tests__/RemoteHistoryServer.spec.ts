@@ -28,7 +28,7 @@ describe('.create()', () => {
     const blob = patch.toBinary();
     const id = genId();
     await remote.create(id, [{blob}]);
-    const {data} = await caller.call('blocks.get', {id}, {});
+    const {data} = await caller.call('block.get', {id}, {});
     // console.log(data.patches);
     const model2 = Model.fromBinary(data.block.blob);
     expect(model2.view()).toEqual({foo: 'bar'});

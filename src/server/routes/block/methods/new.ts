@@ -1,8 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch} from '../schema';
 
-// TODO: Rename to "new", like "block.new"?
-export const create =
+export const new_ =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
     const Request = t.Object(
@@ -24,7 +23,7 @@ export const create =
       description: 'Creates a new block or applies patches to it.',
     });
 
-    return r.prop('blocks.create', Func, async ({id, patches}) => {
+    return r.prop('block.new', Func, async ({id, patches}) => {
       const {block} = await services.blocks.create(id, patches);
       return {};
     });

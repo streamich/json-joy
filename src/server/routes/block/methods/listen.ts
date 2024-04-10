@@ -34,7 +34,7 @@ export const listen =
       description: 'Subscribe to a block to receive updates when it changes.',
     });
 
-    return r.prop('blocks.listen', Func, (req$) => {
+    return r.prop('block.listen', Func, (req$) => {
       return req$.pipe(switchMap(({id}) => services.pubsub.listen$(`__block:${id}`))) as any;
     });
   };

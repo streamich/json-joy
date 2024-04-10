@@ -26,7 +26,7 @@ export const get =
       description: 'Fetches a block by ID.',
     });
 
-    return r.prop('blocks.get', Func, async ({id}) => {
+    return r.prop('block.get', Func, async ({id}) => {
       const {block, patches} = await services.blocks.get(id);
       return {
         block,

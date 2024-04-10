@@ -1,8 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId} from '../schema';
 
-// TODO: rename to "del".
-export const remove =
+export const del =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
     const Request = t.Object(
@@ -20,7 +19,7 @@ export const remove =
       description: 'Fetches a block by ID.',
     });
 
-    return r.prop('blocks.remove', Func, async ({id}) => {
+    return r.prop('block.del', Func, async ({id}) => {
       await services.blocks.remove(id);
       return {};
     });

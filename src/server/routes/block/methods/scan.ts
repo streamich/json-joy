@@ -1,8 +1,7 @@
 import type {BlockPatch, BlockId} from '../schema';
 import type {RouteDeps, Router, RouterBase} from '../../types';
 
-// TODO: Rename to "scan".
-export const history =
+export const scan =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
     const Request = t.Object(
@@ -33,7 +32,7 @@ export const history =
       description: 'Returns a list of specified change patches for a block.',
     });
 
-    return r.prop('blocks.history', Func, async ({id, min, max}) => {
+    return r.prop('block.scan', Func, async ({id, min, max}) => {
       const {patches} = await services.blocks.history(id, min, max);
       return {patches};
     });

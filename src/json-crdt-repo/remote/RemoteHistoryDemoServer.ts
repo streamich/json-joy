@@ -20,7 +20,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
   constructor (protected readonly client: TypedRpcClient<Methods>) {}
 
   public async create(id: string, patches: RemotePatch[]): Promise<void> {
-    await this.client.call('blocks.create', {
+    await this.client.call('block.new', {
       id,
       patches: patches.map((patch, seq) => ({
         // TODO: seq and created should be set on server. (And returned back?)
@@ -36,7 +36,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
    * it might have.
    */
   public async read(id: string): Promise<{cursor: Cursor, model: RemoteServerModel, patches: RemoteServerPatch[]}> {
-    const {block, patches} = await this.client.call('blocks.get', {id});
+    const {block, patches} = await this.client.call('block.get', {id});
     return {
       cursor: block.seq,
       model: block,
@@ -46,7 +46,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
 
   public async scanFwd(id: string, cursor: Cursor): Promise<{cursor: Cursor, patches: RemoteServerPatch[]}> {
     const limit = 100;
-    const res = await this.client.call('blocks.history', {
+    const res = await this.client.call('block.scan', {
       id,
       min: cursor,
       max: cursor + limit,
@@ -69,7 +69,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
 
   public async update(id: string, cursor: Cursor, patches: RemotePatch[]): Promise<{cursor: Cursor, patches: RemoteServerPatch[]}> {
 
-    const res = await this.client.call('blocks.edit', {
+    const res = await this.client.call('block.upd', {
       id,
       patches: patches.map((patch, seq) => ({
         seq,
@@ -84,7 +84,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
   }
 
   public async delete?(id: string): Promise<void> {
-    await this.client.call('blocks.remove', {id});
+    await this.client.call('block.del', {id});
   }
 
   /**
