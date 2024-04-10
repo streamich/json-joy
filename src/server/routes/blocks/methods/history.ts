@@ -1,6 +1,7 @@
 import type {BlockPatch, BlockId} from '../schema';
 import type {RouteDeps, Router, RouterBase} from '../../types';
 
+// TODO: Rename to "scan".
 export const history =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {

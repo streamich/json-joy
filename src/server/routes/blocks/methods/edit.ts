@@ -1,6 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch} from '../schema';
 
+// TODO: Rename to "set"?
 export const edit =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {

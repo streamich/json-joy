@@ -1,6 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId} from '../schema';
 
+// TODO: rename to "del".
 export const remove =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {

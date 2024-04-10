@@ -12,7 +12,8 @@ export const get =
     );
 
     const Response = t.Object(
-      t.prop('block', t.Ref<typeof Block>('Block').options({})),
+      // TODO: Rename this field to `model` or `state`.
+      t.prop('block', t.Ref<typeof Block>('Block')),
       t.prop('patches', t.Array(t.Ref<typeof BlockPatch>('BlockPatch'))).options({
         title: 'Patches',
         description: 'The list of all patches.',

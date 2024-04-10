@@ -11,5 +11,6 @@ export const routes = (d: RouteDeps) => <R extends ObjectType<any>>(r: ObjectVal
   ( util(d)
   ( pubsub(d)
   ( presence(d)
+  // TODO: rename "blocks" to "block", in all methods.
   ( blocks(d)
   ( r )))));

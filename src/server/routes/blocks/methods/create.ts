@@ -1,6 +1,7 @@
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch} from '../schema';
 
+// TODO: Rename to "new", like "block.new"?
 export const create =
   ({t, services}: RouteDeps) =>
   <R extends RouterBase>(r: Router<R>) => {
