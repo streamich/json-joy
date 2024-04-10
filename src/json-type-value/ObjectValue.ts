@@ -4,7 +4,7 @@ import {TypeSystem} from '../json-type/system/TypeSystem';
 import type {ResolveType} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
-import {TypeBuilder} from '../json-type/type/TypeBuilder';
+import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 
 export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
 export type UnObjectValue<T> = T extends ObjectValue<infer U> ? U : never;
