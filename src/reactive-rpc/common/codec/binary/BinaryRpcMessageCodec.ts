@@ -1,9 +1,9 @@
 import {RpcMessageFormat} from '../constants';
 import {decode} from './decode';
 import * as msg from '../../messages';
-import type {Uint8ArrayCut} from '../../../../util/buffers/Uint8ArrayCut';
+import type {Uint8ArrayCut} from '@jsonjoy.com/util/lib/buffers/Uint8ArrayCut';
 import type {RpcMessageCodec} from '../types';
-import type {JsonValueCodec} from '../../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 
 export class BinaryRpcMessageCodec implements RpcMessageCodec {
   id = 'rx.binary';

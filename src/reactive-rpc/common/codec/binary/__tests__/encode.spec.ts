@@ -6,8 +6,8 @@ import {
   ResponseDataMessage,
 } from '../../../messages';
 import {RpcValue} from '../../../messages/Value';
-import {CborJsonValueCodec} from '../../../../../json-pack/codecs/cbor';
-import {Writer} from '../../../../../util/buffers/Writer';
+import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const cborCodec = new CborJsonValueCodec(new Writer(64));
 const encoder = cborCodec.encoder;

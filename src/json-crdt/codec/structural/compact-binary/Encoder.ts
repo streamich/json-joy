@@ -1,5 +1,5 @@
 import {Encoder as CompactEncoder} from '../compact/Encoder';
-import {encoderFull} from '../../../../json-pack/msgpack/util';
+import {encoderFull} from '@jsonjoy.com/json-pack/lib/msgpack/util';
 import {Model} from '../../../model';
 
 export class Encoder {

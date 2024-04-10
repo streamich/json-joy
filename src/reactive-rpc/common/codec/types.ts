@@ -1,4 +1,4 @@
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {ReactiveRpcMessage} from '../messages';
 import type {RpcMessageFormat} from './constants';
 

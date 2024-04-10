@@ -6,14 +6,14 @@ import {ConnectionContext} from '../context';
 import {RpcMessageCodecs} from '../../common/codec/RpcMessageCodecs';
 import {RpcValue} from '../../common/messages/Value';
 import {RpcCodecs} from '../../common/codec/RpcCodecs';
-import {Codecs} from '../../../json-pack/codecs/Codecs';
-import {Writer} from '../../../util/buffers/Writer';
-import {copy} from '../../../util/buffers/copy';
+import {Codecs} from '@jsonjoy.com/json-pack/lib/codecs/Codecs';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
+import {copy} from '@jsonjoy.com/util/lib/buffers/copy';
 import {type ReactiveRpcMessage, RpcMessageStreamProcessor, ReactiveRpcClientMessage} from '../../common';
 import type * as types from './types';
 import type {RouteHandler} from './types';
 import type {RpcCaller} from '../../common/rpc/caller/RpcCaller';
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 
 const HDR_BAD_REQUEST = Buffer.from('400 Bad Request', 'utf8');
 const HDR_NOT_FOUND = Buffer.from('404 Not Found', 'utf8');

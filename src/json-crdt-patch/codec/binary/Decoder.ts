@@ -3,7 +3,7 @@ import {interval, ITimespanStruct, ITimestampStruct, ClockVector, ServerClockVec
 import {Patch} from '../../Patch';
 import {PatchBuilder} from '../../PatchBuilder';
 import {SESSION} from '../../constants';
-import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {JsonCrdtPatchOpcode} from '../../constants';
 
 /**

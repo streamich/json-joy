@@ -1,5 +1,5 @@
+import {CborDecoderBase} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoderBase';
 import {CrdtReader} from '../../../../json-crdt-patch/util/binary/CrdtReader';
-import {CborDecoderBase} from '../../../../json-pack/cbor/CborDecoderBase';
 import {CRDT_MAJOR} from './constants';
 
 export class ViewDecoder extends CborDecoderBase<CrdtReader> {

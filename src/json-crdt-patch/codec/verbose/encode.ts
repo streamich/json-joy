@@ -1,7 +1,7 @@
 import * as operations from '../../operations';
 import {Patch} from '../../Patch';
 import {SESSION} from '../../constants';
-import {toBase64} from '../../../util/base64/toBase64';
+import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import {ITimestampStruct, Timestamp} from '../../clock';
 import type * as types from './types';
 

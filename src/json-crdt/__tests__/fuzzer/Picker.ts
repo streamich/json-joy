@@ -2,7 +2,7 @@ import {DelOp, InsObjOp, InsStrOp, InsBinOp, InsArrOp} from '../../../json-crdt-
 import {RandomJson} from '../../../json-random';
 import {JsonNode, ObjNode, ArrNode, BinNode, StrNode} from '../../nodes';
 import {Model} from '../../model/Model';
-import {Fuzzer} from '../../../util/Fuzzer';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {FuzzerOptions} from './types';
 
 type StringOp = typeof InsStrOp | typeof DelOp;

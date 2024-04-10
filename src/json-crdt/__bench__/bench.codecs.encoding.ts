@@ -6,7 +6,7 @@ import {Encoder as CompactEncoder} from '../codec/structural/compact/Encoder';
 import {Encoder as VerboseEncoder} from '../codec/structural/verbose/Encoder';
 import {Encoder as IndexedEncoder} from '../codec/indexed/binary/Encoder';
 import {Encoder as SidecarEncoder} from '../codec/sidecar/binary/Encoder';
-import {CborEncoder} from '../../json-pack/cbor/CborEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {Model} from '../model';
 
 const cborEncoder = new CborEncoder();

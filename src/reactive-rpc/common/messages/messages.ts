@@ -1,12 +1,12 @@
 import {BinaryMessageType} from '../codec/binary/constants';
 import {CompactMessageType} from '../codec/compact/constants';
 import {validateId, validateMethod} from '../rpc/validation';
-import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import {MsgPackEncoder} from '../../../json-pack/msgpack';
-import {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {MsgPackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
+import {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import type {RpcValue} from './Value';
-import type {JsonValueCodec} from '../../../json-pack/codecs/types';
-import type {BinaryJsonEncoder} from '../../../json-pack/types';
+import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
+import type {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import type * as cmsg from '../codec/compact/types';
 import type {Message} from './types';
 

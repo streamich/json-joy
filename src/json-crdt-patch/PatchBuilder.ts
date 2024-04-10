@@ -16,7 +16,7 @@ import {
   NopOp,
 } from './operations';
 import {IClock, ITimestampStruct, ITimespanStruct, ts, Timestamp} from './clock';
-import {isUint8Array} from '../util/buffers/isUint8Array';
+import {isUint8Array} from '@jsonjoy.com/util/lib/buffers/isUint8Array';
 import {Patch} from './Patch';
 import {ORIGIN} from './constants';
 import {VectorDelayedValue} from './builder/Tuple';

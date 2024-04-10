@@ -1,7 +1,7 @@
-import {Writer} from '../../../../util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {WsFrameOpcode} from './constants';
-import type {IWriter, IWriterGrowable} from '../../../../util/buffers';
 import {WsFrameEncodingError} from './errors';
+import type {IWriter, IWriterGrowable} from '@jsonjoy.com/util/lib/buffers';
 
 const maskBuf = new Uint8Array(4);
 const maskBufView = new DataView(maskBuf.buffer, maskBuf.byteOffset, maskBuf.byteLength);

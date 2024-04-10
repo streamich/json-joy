@@ -21,7 +21,7 @@ import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {StrNode, ValNode, ObjNode, ArrNode, BinNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';
 import type {JsonCrdtFuzzer} from './JsonCrdtFuzzer';
-import {Fuzzer} from '../../../util/Fuzzer';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 
 const jsonEncoder = new JsonEncoder();
 const jsonDecoder = new JsonDecoder();

@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs';
-import {MsgPackEncoder} from '../json-pack/msgpack';
-import {CborEncoder} from '../json-pack/cbor/CborEncoder';
-import * as JSONB from '../json-binary';
+import {MsgPackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import * as JSONB from '@jsonjoy.com/json-pack/lib/json-binary';
 import arg from 'arg';
 
 const args = arg(

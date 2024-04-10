@@ -9,7 +9,7 @@ import {PatchBuilder} from '../PatchBuilder';
 import {encode as encodeBinary} from '../codec/binary';
 import {encode as encodeCompact} from '../codec/compact-binary';
 import {encode as encodeJson} from '../codec/verbose';
-import {encode as encodeCbor} from '../../json-pack/cbor/shared';
+import {encode as encodeCbor} from '@jsonjoy.com/json-pack/lib/cbor/shared';
 
 const createPatch = (json: any) => {
   const clock = new LogicalClock(123456, 0);

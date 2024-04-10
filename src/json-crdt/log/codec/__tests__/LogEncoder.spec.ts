@@ -1,10 +1,10 @@
 // import {s} from '../../../json-crdt-patch';
 import {Model} from '../../../model';
-import {JsonDecoder} from '../../../../json-pack/json/JsonDecoder';
+import {JsonDecoder} from '@jsonjoy.com/json-pack/lib/json/JsonDecoder';
 import {logEncoderOpts} from '../logEncoderOpts';
 import {LogEncoder} from '../LogEncoder';
 import {Log} from '../../Log';
-import {CborDecoder} from '../../../../json-pack/cbor/CborDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 const setup = (view: unknown) => {
   const model = Model.withServerClock();

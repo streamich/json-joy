@@ -1,6 +1,6 @@
 import {BinaryRpcMessageCodec} from '..';
-import {CborJsonValueCodec} from '../../../../../json-pack/codecs/cbor';
-import {Writer} from '../../../../../util/buffers/Writer';
+import {CborJsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/cbor';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import {messages} from '../../../messages/__tests__/fixtures';
 
 const codec = new BinaryRpcMessageCodec();

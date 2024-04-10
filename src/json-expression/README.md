@@ -73,7 +73,7 @@ an order of magnitude faster.
 Evaluating expression immediately as-is.
 
 ```ts
-import {evaluate} from 'json-joy/{lib,es2020}/json-expression';
+import {evaluate} from 'json-joy/lib/json-expression';
 
 const expression = ['+', 1, ['$', '/foo']];
 const data = {foo: 2};
@@ -84,7 +84,7 @@ evaluate(expression, {data}); // 3
 Pre-compiling expression to an optimized function.
 
 ```ts
-import {JsonExpressionCodegen} from 'json-joy/{lib,es2020}/json-expression';
+import {JsonExpressionCodegen} from 'json-joy/lib/json-expression';
 
 const expression = ['+', 1, ['$', '/foo']];
 const codegen = new JsonExpressionCodegen({expression});

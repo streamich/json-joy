@@ -1,11 +1,11 @@
 const Benchmark = require('benchmark');
-const {validate, apply, compose, transform} = require('../../../es2020/json-ot/types/ot-string');
+const {validate, apply, compose, transform} = require('../../../lib/json-ot/types/ot-string');
 const {
   validate: validate2,
   apply: apply2,
   compose: compose2,
   transform: transform2,
-} = require('../../../es2020/json-ot/types/ot-string-irreversible');
+} = require('../../../lib/json-ot/types/ot-string-irreversible');
 const {type} = require('ot-text');
 const {type: type2} = require('ot-text-unicode');
 const {delta: d} = require('./util');

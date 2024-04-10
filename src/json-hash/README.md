@@ -6,7 +6,7 @@ with different key orders will have the same hash.
 Implements DJB2 hash function.
 
 ```ts
-import {hash} from 'json-joy/es2020/json-hash';
+import {hash} from 'json-joy/lib/json-hash';
 
 const num1 = hash({
   foo: 1,

@@ -1,5 +1,5 @@
 import type {Observable} from 'rxjs';
-import type {Mutable} from '../../util/types';
+import type {Mutable} from '@jsonjoy.com/util/lib/types';
 import type {Display, Identifiable} from './common';
 import type {Expr} from '../../json-expression';
 

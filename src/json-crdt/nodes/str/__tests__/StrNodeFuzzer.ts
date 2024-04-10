@@ -1,6 +1,6 @@
 import {equal} from 'assert';
 import {ITimespanStruct, ITimestampStruct, ClockVector, toDisplayString, ts} from '../../../../json-crdt-patch/clock';
-import {Fuzzer} from '../../../../util/Fuzzer';
+import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {randomSessionId} from '../../../model/util';
 import {StrNode} from '../StrNode';
 import {printTree} from '../../../../util/print/printTree';

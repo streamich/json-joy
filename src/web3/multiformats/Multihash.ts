@@ -1,4 +1,4 @@
-import {cmpUint8Array} from '../../util/buffers/cmpUint8Array';
+import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
 import {crypto} from '../crypto';
 import * as uvint from '../util/uvint';
 import {Multicodec} from './constants';

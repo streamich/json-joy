@@ -1,5 +1,5 @@
-import {Codegen} from '../codegen';
-import {JsExpression} from '../codegen/util/JsExpression';
+import {Codegen} from '@jsonjoy.com/util/lib/codegen';
+import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
 import type {Match} from './router';
 
 export type RouteMatcher<Data = unknown> = (route: string) => undefined | Match<Data>;

@@ -1,6 +1,6 @@
-import {UbjsonDecoder} from '../../json-pack/ubjson/UbjsonDecoder';
-import {UbjsonEncoder} from '../../json-pack/ubjson/UbjsonEncoder';
-import type {Writer} from '../../util/buffers/Writer';
+import {UbjsonDecoder} from '@jsonjoy.com/json-pack/lib/ubjson/UbjsonDecoder';
+import {UbjsonEncoder} from '@jsonjoy.com/json-pack/lib/ubjson/UbjsonEncoder';
+import type {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 import type {CliCodec} from '../types';
 
 export class CliCodecUbjson implements CliCodec<'ubjson'> {

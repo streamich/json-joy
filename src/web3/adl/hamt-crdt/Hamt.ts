@@ -4,7 +4,7 @@ import {HamtFrame} from './HamtFrame';
 import * as hlc from '../../hlc';
 import {Cid} from '../../multiformats';
 import {sha256} from '../../crypto';
-import {toBuf} from '../../../util/buffers/toBuf';
+import {toBuf} from '@jsonjoy.com/util/lib/buffers/toBuf';
 import type {CidCasStruct} from '../../store/cas/CidCasStruct';
 import type * as types from './types';
 

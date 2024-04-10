@@ -1,5 +1,5 @@
 import * as nodes from '../../../nodes';
-import {fromBase64} from '../../../../util/base64/fromBase64';
+import {fromBase64} from '@jsonjoy.com/base64/lib/fromBase64';
 import {ITimestampStruct, ts, ClockVector} from '../../../../json-crdt-patch/clock';
 import {Model} from '../../../model';
 import {SESSION} from '../../../../json-crdt-patch/constants';

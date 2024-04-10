@@ -1,6 +1,6 @@
-import {escape} from '../util/strings/escape';
-import {sort} from '../util/sort/insertion';
-import type {json_string} from '../json-brand';
+import {escape} from '@jsonjoy.com/util/lib/strings/escape';
+import {sort} from '@jsonjoy.com/util/lib/sort/insertion';
+import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 
 const getKeys = Object.keys;
 

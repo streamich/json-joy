@@ -5,7 +5,7 @@ import {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
 import {Path, formatJsonPointer} from '../../json-pointer';
 import {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Predicate

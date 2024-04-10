@@ -3,7 +3,7 @@ import type {Path} from '../../json-pointer';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 export abstract class AbstractOp<O extends OpType = OpType> {
   public readonly from?: Path;

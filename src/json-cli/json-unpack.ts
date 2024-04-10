@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs';
-import {MsgPackDecoderFast} from '../json-pack/msgpack';
-import {CborDecoder} from '../json-pack/cbor/CborDecoder';
+import {MsgPackDecoderFast} from '@jsonjoy.com/json-pack/lib/msgpack';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import * as JSONB from '../json-binary';
 import arg from 'arg';
 

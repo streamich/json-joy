@@ -4,7 +4,7 @@ import {OperationAdd} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '../../json-clone/clone';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch

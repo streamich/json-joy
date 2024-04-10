@@ -7,7 +7,7 @@ import {ValidationError} from '../../constants';
 import {JsonTextEncoderCodegenContext} from '../../codegen/json/JsonTextEncoderCodegenContext';
 import {CborEncoderCodegenContext} from '../../codegen/binary/CborEncoderCodegenContext';
 import {JsonEncoderCodegenContext} from '../../codegen/binary/JsonEncoderCodegenContext';
-import {JsExpression} from '../../../util/codegen/util/JsExpression';
+import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
 import {MessagePackEncoderCodegenContext} from '../../codegen/binary/MessagePackEncoderCodegenContext';
 import {CapacityEstimatorCodegenContext} from '../../codegen/capacity/CapacityEstimatorCodegenContext';
 import {MaxEncodingOverhead} from '../../../json-size';
@@ -15,7 +15,7 @@ import {AbstractType} from './AbstractType';
 import type * as jsonSchema from '../../../json-schema';
 import type {SchemaOf, Type} from '../types';
 import type {TypeSystem} from '../../system/TypeSystem';
-import type {json_string} from '../../../json-brand';
+import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
 
