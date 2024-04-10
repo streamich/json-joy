@@ -1,20 +1,13 @@
+import {Log} from '../../json-crdt/log/Log';
 import type {Patch} from '../../json-crdt-patch';
-import type {Model} from '../../json-crdt/model';
 
 /**
  * A history of patches that have been applied to a model, stored on the
  * "remote": (1) server; (2) content addressable storage; or (3) somewhere in a
  * peer-to-peer network.
- *
- * Cases:
- *
- * - `RemoteHistoryServer`
- * - `RemoteHistoryServerIdempotent`
- * - `RemoteHistoryCAS`
- * - `RemoteHistoryP2P`
  */
 export interface RemoteHistory<Cursor> {
-  create(id: string, patches: Patch[], start?: Model): Promise<void>;
+  create(id: string, patches: Patch[]): Promise<void>;
 
   /**
    * Load latest state of the model, and any unmerged "tip" of patches
@@ -22,17 +15,19 @@ export interface RemoteHistory<Cursor> {
    *
    * @todo Maybe `state` and `tip` should be serialized to JSON?
    */
-  loadLatest(id: string): Promise<[cursor: Cursor, state: Model]>;
+  read(id: string): Promise<{cursor: string, log: Log}>;
 
-  loadAfter(id: string, cursor: Cursor): Promise<[cursor: Cursor, tip: Patch[]]>;
+  scanAhead(id: string, cursor: Cursor): Promise<{cursor: Cursor, tip: Patch[]}>;
 
-  loadBefore(id: string, cursor: Cursor): Promise<[cursor: Cursor, state: Model, tip: Patch[]]>;
+  scanBehind(id: string, cursor: Cursor): Promise<{cursor: Cursor, log: Log}>;
 
-  apply(id: string, patches: Patch[]): Promise<void>;
+  update(id: string, cursor: Cursor, patches: Patch[]): Promise<void>;
+
+  delete?(id: string): Promise<void>;
 
   /**
    * Subscribe to the latest changes to the model.
    * @param callback
    */
-  subscribe(id: string, cursor: Cursor, callback: (changes: Patch[]) => void): void;
+  listen(id: string, cursor: Cursor, callback: (changes: Patch[]) => void): void;
 }
