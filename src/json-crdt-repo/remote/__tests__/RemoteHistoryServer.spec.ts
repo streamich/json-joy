@@ -1,12 +1,12 @@
 import {Model} from '../../../json-crdt/model';
 import {buildE2eClient} from '../../../reactive-rpc/common/testing/buildE2eClient';
 import {createCaller} from '../../../server/routes/index';
-import {RemoteHistoryServer} from '../RemoteHistoryServer';
+import {RemoteHistoryDemoServer} from '../RemoteHistoryServer';
 
 const setup = () => {
   const {caller, router} = createCaller();
   const {client} = buildE2eClient(caller);
-  const remote = new RemoteHistoryServer(client);
+  const remote = new RemoteHistoryDemoServer(client);
 
   return {
     caller,
