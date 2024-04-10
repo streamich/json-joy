@@ -4,7 +4,7 @@ import {RpcValue} from '../../reactive-rpc/common/messages/Value';
 import {ObjectValueCaller} from '../../reactive-rpc/common/rpc/caller/ObjectValueCaller';
 import {system} from './system';
 import {ObjectValue} from '../../json-type-value/ObjectValue';
-import type {Services} from '../services/Services';
+import {Services} from '../services/Services';
 import type {RouteDeps} from './types';
 
 export const createRouter = (services: Services) => {
@@ -18,7 +18,7 @@ export const createRouter = (services: Services) => {
   return routes(deps)(router);
 };
 
-export const createCaller = (services: Services) => {
+export const createCaller = (services: Services = new Services()) => {
   const router = createRouter(services);
   const caller = new ObjectValueCaller<typeof router>({
     router,
