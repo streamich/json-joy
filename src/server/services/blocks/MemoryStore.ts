@@ -70,14 +70,14 @@ export class MemoryStore implements types.Store {
     return patches.slice(min, max + 1);
   }
 
-  public async remove(id: string): Promise<void> {
+  public async remove(id: string): Promise<boolean> {
     await new Promise((resolve) => setImmediate(resolve));
-    this.removeSync(id);
+    return this.removeSync(id);
   }
 
-  private removeSync(id: string): void {
+  private removeSync(id: string): boolean {
     this.blocks.delete(id);
-    this.patches.delete(id);
+    return this.patches.delete(id);
   }
 
   public stats(): {blocks: number; patches: number} {
