@@ -2,19 +2,26 @@ import {Model} from '../../../json-crdt';
 import {Patch} from '../../../json-crdt-patch';
 import type * as types from './types';
 
+const tick = new Promise((resolve) => setImmediate(resolve));
+
 export class MemoryStore implements types.Store {
   protected readonly blocks = new Map<string, types.StoreBlock>();
   protected readonly patches = new Map<string, types.StorePatch[]>();
 
   public async get(id: string): Promise<types.StoreGetResult | undefined> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     const block = this.blocks.get(id);
     if (!block) return;
     return {block};
   }
 
+  public async seq(id: string): Promise<number | undefined> {
+    await tick;
+    return this.blocks.get(id)?.seq;
+  }
+
   public async create(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     if (!Array.isArray(patches)) throw new Error('NO_PATCHES');
     if (this.blocks.has(id)) throw new Error('BLOCK_EXISTS');
     const model = Model.withLogicalClock();
@@ -41,7 +48,7 @@ export class MemoryStore implements types.Store {
   }
 
   public async edit(id: string, patches: types.StorePatch[]): Promise<types.StoreApplyResult> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     if (!Array.isArray(patches) || !patches.length) throw new Error('NO_PATCHES');
     const block = this.blocks.get(id);
     const existingPatches = this.patches.get(id);
@@ -64,14 +71,14 @@ export class MemoryStore implements types.Store {
   }
 
   public async history(id: string, min: number, max: number): Promise<types.StorePatch[]> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     const patches = this.patches.get(id);
     if (!patches) return [];
     return patches.slice(min, max + 1);
   }
 
   public async remove(id: string): Promise<boolean> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     return this.removeSync(id);
   }
 
@@ -88,7 +95,7 @@ export class MemoryStore implements types.Store {
   }
 
   public async removeOlderThan(ts: number): Promise<void> {
-    await new Promise((resolve) => setImmediate(resolve));
+    await tick;
     for (const [id, block] of this.blocks) if (block.created < ts) this.removeSync(id);
   }
 }

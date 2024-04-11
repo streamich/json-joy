@@ -9,14 +9,22 @@ export const scan =
         title: 'Block ID',
         description: 'The ID of the block.',
       }),
-      t.prop('max', t.num.options({format: 'u32'})).options({
-        title: 'Max',
-        description: 'The maximum sequence number to return.',
+      t.prop('seq', t.num.options({format: 'u32'})).options({
+        title: 'Starting Sequence Number',
+        description: 'The sequence number to start from. Defaults to the latest sequence number.',
       }),
-      t.prop('min', t.num.options({format: 'u32'})).options({
-        title: 'Min',
-        description: 'The minimum sequence number to return.',
+      t.prop('len', t.num.options({format: 'u32'})).options({
+        title: 'Number of Patches',
+        description: 'The minimum number of patches to return. Defaults to 10. ' +
+        'When positive, returns the patches ahead of the starting sequence number. ' +
+        'When negative, returns the patches behind the starting sequence number.',
       }),
+      t.prop('model', t.bool)
+        .options({
+          title: 'With Model',
+          description: 'Whether to include the model in the response. ' +
+            'Defaults to `false`, when `len` is positive; and, defaults to `true`, when `len` is negative.',
+        }),
     );
 
     const Response = t.Object(
@@ -32,8 +40,9 @@ export const scan =
       description: 'Returns a list of specified change patches for a block.',
     });
 
-    return r.prop('block.scan', Func, async ({id, min, max}) => {
-      const {patches} = await services.blocks.history(id, min, max);
-      return {patches};
+    return r.prop('block.scan', Func, async ({id, seq, len, model}) => {
+      // const {patches} = await services.blocks.history(id, min, max);
+      // return {patches};
+      throw new Error('Not implemented');
     });
   };

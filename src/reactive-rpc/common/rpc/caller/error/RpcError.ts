@@ -53,8 +53,8 @@ export class RpcError extends Error implements IRpcError {
     return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message, undefined, originalError);
   }
 
-  public static badRequest(): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, 'Bad Request');
+  public static badRequest(message = 'Bad Request'): RpcError {
+    return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, message);
   }
 
   public static validation(message: string, meta?: unknown): RpcError {

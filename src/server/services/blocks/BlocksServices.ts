@@ -39,8 +39,11 @@ export class BlocksServices {
     if (!result) throw RpcError.fromCode(RpcErrorCodes.NOT_FOUND);
     const patches = await store.history(id, 0, result.block.seq);
     const {block} = result;
+    // TODO: should not return `patches`, only the "tip".
     return {block, patches};
   }
+
+  public async getSeq(id: string, seq: number) {}
 
   public async remove(id: string) {
     await this.store.remove(id);
@@ -50,10 +53,24 @@ export class BlocksServices {
     });
   }
 
-  public async history(id: string, min: number, max: number) {
+  public async scan(id: string, offset: number | undefined, limit: number | undefined = 10) {
     const {store} = this;
+    if (typeof offset !== 'number') offset = await store.seq(id);
+    let min: number = 0, max: number = 0;
+    if (!limit || (Math.round(limit) !== limit)) throw RpcError.badRequest('INVALID_LIMIT');
+    if (limit > 0) {
+      min = Number(offset) || 0;
+      max = min + limit;
+    } else {
+      max = Number(offset) || 0;
+      min = max - limit;
+    }
+    if (min < 0) {
+      min = 0;
+      max = Math.abs(limit);
+    }
     const patches = await store.history(id, min, max);
-    return {patches};
+    // return {patches};
   }
 
   public async edit(id: string, patches: StorePatch[]) {
