@@ -360,7 +360,7 @@ describe('block.*', () => {
     });
   });
 
-  describe('block.history', () => {
+  describe('block.scan', () => {
     test('can retrieve change history', async () => {
       const {client} = setup();
       const model = Model.withLogicalClock();
@@ -400,7 +400,7 @@ describe('block.*', () => {
           },
         ],
       });
-      const history = await client.call('block.scan', {id: 'my-block', min: 0, max: 2});
+      const history = await client.call('block.scan', {id: 'my-block', seq: 0, limit: 3});
       expect(history).toMatchObject({
         patches: [
           {

@@ -2,6 +2,7 @@ import {MemoryStore} from './MemoryStore';
 import {StorePatch} from './types';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
 import type {Services} from '../Services';
+import {Model, Patch} from '../../../json-crdt';
 
 const BLOCK_TTL = 1000 * 60 * 60; // 1 hour
 
@@ -43,7 +44,12 @@ export class BlocksServices {
     return {block, patches};
   }
 
-  public async getSeq(id: string, seq: number) {}
+  public async getAtSeq(id: string, seq: number) {
+    const {store} = this;
+    const patches = await store.history(id, 0, seq);
+    const model = Model.fromPatches(patches.map(p => Patch.fromBinary(p.blob)));
+    return model;
+  }
 
   public async remove(id: string) {
     await this.store.remove(id);
@@ -53,7 +59,7 @@ export class BlocksServices {
     });
   }
 
-  public async scan(id: string, offset: number | undefined, limit: number | undefined = 10) {
+  public async scan(id: string, offset: number | undefined, limit: number | undefined = 10, returnStartModel: boolean = limit < 0) {
     const {store} = this;
     if (typeof offset !== 'number') offset = await store.seq(id);
     let min: number = 0, max: number = 0;
@@ -70,7 +76,14 @@ export class BlocksServices {
       max = Math.abs(limit);
     }
     const patches = await store.history(id, min, max);
-    // return {patches};
+    let model: Model | undefined;
+    if (returnStartModel) {
+      const startPatches = await store.history(id, 0, min);
+      if (startPatches.length) {
+        model = Model.fromPatches(startPatches.map(p => Patch.fromBinary(p.blob)));
+      }
+    }
+    return {patches, model};
   }
 
   public async edit(id: string, patches: StorePatch[]) {
