@@ -1,8 +1,8 @@
 import {MemoryStore} from './MemoryStore';
 import {StorePatch} from './types';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
-import type {Services} from '../Services';
 import {Model, Patch} from '../../../json-crdt';
+import type {Services} from '../Services';
 
 const BLOCK_TTL = 1000 * 60 * 60; // 1 hour
 
@@ -125,6 +125,6 @@ export class BlocksServices {
   private async gc(): Promise<void> {
     const ts = Date.now() - BLOCK_TTL;
     const {store} = this;
-    await store.removeOlderThan(ts);
+    await store.removeAccessedBefore(ts);
   }
 }

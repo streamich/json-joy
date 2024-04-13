@@ -99,5 +99,8 @@ export class MemoryStore implements types.Store {
     for (const [id, block] of this.blocks) if (block.created < ts) this.removeSync(id);
   }
 
-  // TODO: GC by update timestamp instead
+  public async removeAccessedBefore(ts: number): Promise<void> {
+    await tick;
+    for (const [id, block] of this.blocks) if (block.updated < ts) this.removeSync(id);
+  }
 }
