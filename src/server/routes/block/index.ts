@@ -4,7 +4,16 @@ import {upd} from './methods/upd';
 import {del} from './methods/del';
 import {scan} from './methods/scan';
 import {listen} from './methods/listen';
-import {Block, BlockId, BlockPatch, BlockSeq} from './schema';
+import {
+  Block,
+  BlockPartial,
+  BlockPartialReturn,
+  BlockId,
+  BlockPatch,
+  BlockPatchPartial,
+  BlockPatchPartialReturn,
+  BlockSeq,
+} from './schema';
 import type {RouteDeps, Router, RouterBase} from '../types';
 
 export const block =
@@ -15,7 +24,11 @@ export const block =
     system.alias('BlockId', BlockId);
     system.alias('BlockSeq', BlockSeq);
     system.alias('Block', Block);
+    system.alias('BlockPartial', BlockPartial);
+    system.alias('BlockPartialReturn', BlockPartialReturn);
     system.alias('BlockPatch', BlockPatch);
+    system.alias('BlockPatchPartial', BlockPatchPartial);
+    system.alias('BlockPatchPartialReturn', BlockPatchPartialReturn);
 
     // prettier-ignore
     return (

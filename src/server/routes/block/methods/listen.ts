@@ -1,4 +1,4 @@
-import {switchMap} from 'rxjs';
+import {switchMap, tap} from 'rxjs';
 import type {RouteDeps, Router, RouterBase} from '../../types';
 import type {BlockId, BlockPatch, Block} from '../schema';
 
@@ -14,17 +14,18 @@ export const listen =
       }),
     );
 
+    // TODO: Use TLV encoding.
     const Response = t.Object(
       t.propOpt('deleted', t.Boolean()).options({
         title: 'Deleted',
         description: 'Emitted only when the block is deleted.',
       }),
-      t.propOpt('block', t.Ref<typeof Block>('Block')).options({
+      t.propOpt('model', t.Ref<typeof Block>('Block')).options({
         title: 'Block',
         description: 'The whole block object, emitted only when the block is created.',
       }),
-      t.propOpt('patches', t.Array(PatchType)).options({
-        title: 'Latest patches',
+      t.propOpt('patches', t.Array(t.Ref<typeof BlockPatch>('BlockPatch'))).options({
+        title: 'Latest Patches',
         description: 'Patches that have been applied to the block.',
       }),
     );

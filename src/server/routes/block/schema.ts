@@ -18,18 +18,31 @@ export const BlockSeq = t.num.options({
 export type TBlock = ResolveType<typeof Block>;
 
 // prettier-ignore
-export const Block = t.Object(
+export const BlockPartial = t.Object(
+  t.prop('blob', t.bin),
+);
+
+export const BlockPartialReturn = t.Object(
   t.prop('id', t.Ref<typeof BlockId>('BlockId')),
   t.prop('seq', t.Ref<typeof BlockSeq>('BlockSeq')),
   t.prop('created', t.num),
   t.prop('updated', t.num),
-  t.prop('blob', t.bin),
 );
+
+export const Block = BlockPartial.extend(BlockPartialReturn);
 
 export type TBlockPatch = ResolveType<typeof BlockPatch>;
 
 // prettier-ignore
-export const BlockPatch = t.Object(
+export const BlockPatchPartial = t.Object(
+  t.prop('blob', t.bin).options({
+    title: 'Patch Blob',
+    description: 'The binary data of the patch. The format of the data is defined by the patch type.',
+  }),
+);
+
+// prettier-ignore
+export const BlockPatchPartialReturn = t.Object(
   t.prop('seq', t.num).options({
     title: 'Patch Sequence Number',
     description: 'The sequence number of the patch in the block. A monotonically increasing integer, starting from 0.',
@@ -42,8 +55,6 @@ export const BlockPatch = t.Object(
       'want to also store the time when the patch was created by the user, you can include this ' +
       'information in the patch blob itself.',
   }),
-  t.prop('blob', t.bin).options({
-    title: 'Patch Blob',
-    description: 'The binary data of the patch. The format of the data is defined by the patch type.',
-  }),
 );
+
+export const BlockPatch = BlockPatchPartial.extend(BlockPatchPartialReturn);
