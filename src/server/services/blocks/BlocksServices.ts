@@ -71,10 +71,8 @@ export class BlocksServices {
     const {store} = this;
     const result = await store.get(id);
     if (!result) throw RpcError.fromCode(RpcErrorCodes.NOT_FOUND);
-    // const patches = await store.history(id, 0, result.block.seq);
     const {model} = result;
-    // TODO: should not return `patches`, only the "tip".
-    return {model, patches: []};
+    return {model};
   }
 
   public async remove(id: string) {

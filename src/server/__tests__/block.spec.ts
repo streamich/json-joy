@@ -338,7 +338,6 @@ describe('block.*', () => {
       const {client} = setup();
       const emits: any[] = [];
       client.call$('block.listen', {id: 'my-block'}).subscribe((data) => {
-        console.log('data', data);
         emits.push(data);
       });
       await client.call('block.new', {id: 'my-block', patches: []});
@@ -449,27 +448,33 @@ describe('block.*', () => {
           },
         ],
       });
-      const result = await client.call('block.get', {id: 'my-block'});
-      // expect(result).toMatchObject({
-      //   block: expect.any(Object),
-      //   // patches: [
-      //   //   {
-      //   //     seq: 0,
-      //   //     created: expect.any(Number),
-      //   //     blob: patch1.toBinary(),
-      //   //   },
-      //   //   {
-      //   //     seq: 1,
-      //   //     created: expect.any(Number),
-      //   //     blob: patch2.toBinary(),
-      //   //   },
-      //   //   {
-      //   //     seq: 2,
-      //   //     created: expect.any(Number),
-      //   //     blob: patch3.toBinary(),
-      //   //   },
-      //   // ],
-      // });
+      const result = await client.call('block.get', {id: 'my-block', history: true});
+      expect(result).toMatchObject({
+        model: {
+          id: 'my-block',
+          seq: 2,
+          blob: expect.any(Uint8Array),
+          created: expect.any(Number),
+          updated: expect.any(Number),
+        },
+        patches: [
+          {
+            seq: 0,
+            created: expect.any(Number),
+            blob: patch1.toBinary(),
+          },
+          {
+            seq: 1,
+            created: expect.any(Number),
+            blob: patch2.toBinary(),
+          },
+          {
+            seq: 2,
+            created: expect.any(Number),
+            blob: patch3.toBinary(),
+          },
+        ],
+      });
     });
   });
 });
