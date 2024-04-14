@@ -12,13 +12,13 @@ export interface RemoteHistory<Cursor, M extends RemoteModel = RemoteModel, P ex
    *
    * @todo Maybe `state` and `tip` should be serialized to JSON?
    */
-  read(id: string): Promise<{cursor: Cursor, model: M, patches: P[]}>;
+  read(id: string): Promise<{cursor: Cursor; model: M; patches: P[]}>;
 
-  scanFwd(id: string, cursor: Cursor): Promise<{cursor: Cursor, patches: P[]}>;
+  scanFwd(id: string, cursor: Cursor): Promise<{cursor: Cursor; patches: P[]}>;
 
-  scanBwd(id: string, cursor: Cursor): Promise<{cursor: Cursor, model: M, patches: P[]}>;
+  scanBwd(id: string, cursor: Cursor): Promise<{cursor: Cursor; model: M; patches: P[]}>;
 
-  update(id: string, cursor: Cursor, patches: RemotePatch[]): Promise<{cursor: Cursor, patches: P[]}>;
+  update(id: string, cursor: Cursor, patches: RemotePatch[]): Promise<{cursor: Cursor; patches: P[]}>;
 
   delete?(id: string): Promise<void>;
 

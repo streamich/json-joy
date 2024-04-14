@@ -15,16 +15,17 @@ export const scan =
       }),
       t.propOpt('limit', t.num.options({format: 'u32'})).options({
         title: 'Number of Patches',
-        description: 'The minimum number of patches to return. Defaults to 10. ' +
-        'When positive, returns the patches ahead of the starting sequence number. ' +
-        'When negative, returns the patches behind the starting sequence number.',
+        description:
+          'The minimum number of patches to return. Defaults to 10. ' +
+          'When positive, returns the patches ahead of the starting sequence number. ' +
+          'When negative, returns the patches behind the starting sequence number.',
       }),
-      t.propOpt('model', t.bool)
-        .options({
-          title: 'With Model',
-          description: 'Whether to include the model in the response. ' +
-            'Defaults to `false`, when `len` is positive; and, defaults to `true`, when `len` is negative.',
-        }),
+      t.propOpt('model', t.bool).options({
+        title: 'With Model',
+        description:
+          'Whether to include the model in the response. ' +
+          'Defaults to `false`, when `len` is positive; and, defaults to `true`, when `len` is negative.',
+      }),
     );
 
     const Response = t.Object(

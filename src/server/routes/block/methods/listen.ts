@@ -25,7 +25,7 @@ export const listen =
             title: 'Latest Patches',
             description: 'Patches that have been applied to the block.',
           }),
-        )
+        ),
       ),
     );
 

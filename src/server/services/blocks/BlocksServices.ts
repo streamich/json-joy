@@ -52,7 +52,7 @@ export class BlocksServices {
       created: now,
       updated: now,
     };
-    return await this.__create(id, model, patches);;
+    return await this.__create(id, model, patches);
   }
 
   private async __create(id: string, model: StoreModel, patches: StorePatch[]) {
@@ -89,11 +89,17 @@ export class BlocksServices {
     });
   }
 
-  public async scan(id: string, offset: number | undefined, limit: number | undefined = 10, returnStartModel: boolean = limit < 0) {
+  public async scan(
+    id: string,
+    offset: number | undefined,
+    limit: number | undefined = 10,
+    returnStartModel: boolean = limit < 0,
+  ) {
     const {store} = this;
     if (typeof offset !== 'number') offset = await store.seq(id);
-    let min: number = 0, max: number = 0;
-    if (!limit || (Math.round(limit) !== limit)) throw RpcError.badRequest('INVALID_LIMIT');
+    let min: number = 0,
+      max: number = 0;
+    if (!limit || Math.round(limit) !== limit) throw RpcError.badRequest('INVALID_LIMIT');
     if (limit > 0) {
       min = Number(offset) || 0;
       max = min + limit;
@@ -110,7 +116,7 @@ export class BlocksServices {
     if (returnStartModel) {
       const startPatches = await store.history(id, 0, min);
       if (startPatches.length) {
-        model = Model.fromPatches(startPatches.map(p => Patch.fromBinary(p.blob)));
+        model = Model.fromPatches(startPatches.map((p) => Patch.fromBinary(p.blob)));
       }
     }
     return {patches, model};
