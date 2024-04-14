@@ -36,11 +36,11 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
    * it might have.
    */
   public async read(id: string): Promise<{cursor: Cursor; model: RemoteServerModel; patches: RemoteServerPatch[]}> {
-    const {block, patches} = await this.client.call('block.get', {id});
+    const {model, patches} = await this.client.call('block.get', {id});
     return {
-      cursor: block.seq,
-      model: block,
-      patches,
+      cursor: model.seq,
+      model,
+      patches: [],
     };
   }
 
@@ -48,8 +48,8 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
     const limit = 100;
     const res = await this.client.call('block.scan', {
       id,
-      min: cursor,
-      max: cursor + limit,
+      seq: cursor,
+      limit: cursor + limit,
     });
     if (res.patches.length === 0) {
       return {
@@ -89,7 +89,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
     };
   }
 
-  public async delete?(id: string): Promise<void> {
+  public async delete(id: string): Promise<void> {
     await this.client.call('block.del', {id});
   }
 
