@@ -290,8 +290,9 @@ describe('block.*', () => {
       });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
-      expect(emits[0].patches.length).toBe(1);
-      expect(emits[0].patches[0].seq).toBe(0);
+      expect(emits[0][0]).toBe('upd');
+      expect(emits[0][1].patches.length).toBe(1);
+      expect(emits[0][1].patches[0].seq).toBe(0);
       model.api.root({
         text: 'Hello',
       });
@@ -304,8 +305,9 @@ describe('block.*', () => {
       });
       await until(() => emits.length === 2);
       expect(emits.length).toBe(2);
-      expect(emits[1].patches.length).toBe(1);
-      expect(emits[1].patches[0].seq).toBe(1);
+      expect(emits[1][0]).toBe('upd');
+      expect(emits[1][1].patches.length).toBe(1);
+      expect(emits[1][1].patches[0].seq).toBe(1);
     });
 
     test('can subscribe before block is created', async () => {
@@ -329,9 +331,10 @@ describe('block.*', () => {
       });
       await until(() => emits.length === 1);
       expect(emits.length).toBe(1);
-      expect(emits[0].patches.length).toBe(1);
-      expect(emits[0].patches[0].seq).toBe(0);
-      expect(emits[0].patches[0].blob).toStrictEqual(patch1.toBinary());
+      expect(emits[0][0]).toBe('upd');
+      expect(emits[0][1].patches.length).toBe(1);
+      expect(emits[0][1].patches[0].seq).toBe(0);
+      expect(emits[0][1].patches[0].blob).toStrictEqual(patch1.toBinary());
     });
 
     test('can receive deletion events', async () => {
@@ -342,11 +345,11 @@ describe('block.*', () => {
       });
       await client.call('block.new', {id: 'my-block', patches: []});
       await until(() => emits.length === 1);
-      expect(emits[0].model.seq).toBe(-1);
+      expect(emits[0][1].model.seq).toBe(-1);
       await tick(3);
       await client.call('block.del', {id: 'my-block'});
       await until(() => emits.length === 2);
-      expect(emits[1].deleted).toBe(true);
+      expect(emits[1][0]).toBe('del');
     });
   });
 

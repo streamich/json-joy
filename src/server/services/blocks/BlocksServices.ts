@@ -1,9 +1,9 @@
 import {MemoryStore} from './MemoryStore';
 import {RpcError, RpcErrorCodes} from '../../../reactive-rpc/common/rpc/caller';
 import {Model, Patch} from '../../../json-crdt';
+import {SESSION} from '../../../json-crdt-patch/constants';
 import type {StoreModel, StorePatch} from './types';
 import type {Services} from '../Services';
-import {SESSION} from '../../../json-crdt-patch/constants';
 
 const BLOCK_TTL = 1000 * 60 * 30; // 30 minutes
 
@@ -57,14 +57,19 @@ export class BlocksServices {
 
   private async __create(id: string, model: StoreModel, patches: StorePatch[]) {
     await this.store.create(id, model, patches);
-    this.services.pubsub.publish(`__block:${id}`, {model, patches}).catch((error) => {
-      // tslint:disable-next-line:no-console
-      console.error('Error publishing block patches', error);
-    });
+    this.__emitUpd(id, model, patches);
     return {
       model,
       patches,
     };
+  }
+
+  private __emitUpd(id: string, model: StoreModel, patches: StorePatch[]) {
+    const msg = ['upd', {model, patches}];
+    this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
+      // tslint:disable-next-line:no-console
+      console.error('Error publishing block patches', error);
+    });
   }
 
   public async get(id: string) {
@@ -77,7 +82,8 @@ export class BlocksServices {
 
   public async remove(id: string) {
     await this.store.remove(id);
-    this.services.pubsub.publish(`__block:${id}`, {deleted: true}).catch((error) => {
+    const msg = ['del'];
+    this.services.pubsub.publish(`__block:${id}`, msg).catch((error) => {
       // tslint:disable-next-line:no-console
       console.error('Error publishing block deletion', error);
     });
@@ -118,16 +124,11 @@ export class BlocksServices {
     const {store} = this;
     validatePatches(patches);
     const {model} = await store.edit(id, patches);
-    this.services.pubsub.publish(`__block:${id}`, {patches}).catch((error) => {
-      // tslint:disable-next-line:no-console
-      console.error('Error publishing block patches', error);
-    });
+    this.__emitUpd(id, model, patches);
     const expectedBlockSeq = seq + patches.length - 1;
     const hadConcurrentEdits = model.seq !== expectedBlockSeq;
     let patchesBack: StorePatch[] = [];
-    if (hadConcurrentEdits) {
-      patchesBack = await store.history(id, seq, model.seq);
-    }
+    if (hadConcurrentEdits) patchesBack = await store.history(id, seq, model.seq);
     return {
       model,
       patches: patchesBack,
