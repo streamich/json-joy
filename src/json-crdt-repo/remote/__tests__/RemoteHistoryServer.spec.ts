@@ -30,7 +30,7 @@ describe('.create()', () => {
     await remote.create(id, [{blob}]);
     const {data} = await caller.call('block.get', {id}, {});
     // console.log(data.patches);
-    const model2 = Model.fromBinary(data.block.blob);
+    const model2 = Model.fromBinary(data.model.blob);
     expect(model2.view()).toEqual({foo: 'bar'});
   });
 });

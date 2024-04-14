@@ -22,10 +22,7 @@ export class RemoteHistoryDemoServer implements RemoteHistory<Cursor, RemoteServ
   public async create(id: string, patches: RemotePatch[]): Promise<void> {
     await this.client.call('block.new', {
       id,
-      patches: patches.map((patch, seq) => ({
-        // TODO: seq and created should be set on server. (And returned back?)
-        seq,
-        created: Date.now(),
+      patches: patches.map((patch) => ({
         blob: patch.blob,
       })),
     });
