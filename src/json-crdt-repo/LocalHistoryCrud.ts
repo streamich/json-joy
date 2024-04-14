@@ -1,11 +1,11 @@
 import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
 import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
-import {LogEncoder} from '../log/codec/LogEncoder';
-import {LogDecoder} from '../log/codec/LogDecoder';
+import {LogEncoder} from '../json-crdt/log/codec/LogEncoder';
+import {LogDecoder} from '../json-crdt/log/codec/LogDecoder';
 import type {CrudApi} from 'memfs/lib/crud/types';
 import type {Locks} from 'thingies/es2020/Locks';
-import type {Patch} from '../../json-crdt-patch';
-import type {Log} from '../log/Log';
+import type {Patch} from '../json-crdt-patch';
+import type {Log} from '../json-crdt/log/Log';
 import type {LocalHistory} from './types';
 
 export const genId = (octets: number = 8): string => {
@@ -30,9 +30,8 @@ export class LocalHistoryCrud implements LocalHistory {
     protected readonly locks: Locks,
   ) {}
 
-  public async create(collection: string[], log: Log): Promise<{id: string}> {
+  public async create(collection: string[], log: Log, id: string = genId()): Promise<{id: string}> {
     const blob = this.encode(log);
-    const id = genId();
     await this.lock(collection, id, async () => {
       await this.crud.put([...collection, id], STATE_FILE_NAME, blob, {throwIf: 'exists'});
     });
@@ -54,12 +53,17 @@ export class LocalHistoryCrud implements LocalHistory {
     const {frontier} = this.decoder.decode(blob, {format: 'seq.cbor', frontier: true});
     return {
       log: frontier!,
-      cursor: '',
+      cursor: '1',
     };
   }
 
-  public readHistory(collection: string[], id: string, cursor: string): Promise<{log: Log; cursor: string}> {
-    throw new Error('Method not implemented.');
+  public async readHistory(collection: string[], id: string, cursor: string): Promise<{log: Log; cursor: string}> {
+    const blob = await this.crud.get([...collection, id], STATE_FILE_NAME);
+    const {history} = this.decoder.decode(blob, {format: 'seq.cbor', history: true});
+    return {
+      log: history!,
+      cursor: '',
+    };
   }
 
   public async update(collection: string[], id: string, patches: Patch[]): Promise<void> {

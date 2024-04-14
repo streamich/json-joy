@@ -1,7 +1,7 @@
 import {util} from './util';
 import {pubsub} from './pubsub';
 import {presence} from './presence';
-import {blocks} from './blocks';
+import {block} from './block';
 import type {RouteDeps} from './types';
 import type {ObjectValue} from '../../json-type-value/ObjectValue';
 import type {ObjectType} from '../../json-type';
@@ -11,5 +11,6 @@ export const routes = (d: RouteDeps) => <R extends ObjectType<any>>(r: ObjectVal
   ( util(d)
   ( pubsub(d)
   ( presence(d)
-  ( blocks(d)
+  // TODO: rename "blocks" to "block", in all methods.
+  ( block(d)
   ( r )))));

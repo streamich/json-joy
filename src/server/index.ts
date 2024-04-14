@@ -7,6 +7,8 @@ import {Services} from './services/Services';
 import type {MyCtx} from './services/types';
 import {RpcServer} from '../reactive-rpc/server/http1/RpcServer';
 
+export type JsonJoyDemoRpcCaller = ReturnType<typeof createCaller>['caller'];
+
 const app = new RpcApp<MyCtx>({
   uws: App({}),
   caller: createCaller(new Services()).caller,

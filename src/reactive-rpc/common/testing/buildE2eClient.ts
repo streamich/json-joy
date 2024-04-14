@@ -6,14 +6,8 @@ import {RpcCodecs} from '../codec/RpcCodecs';
 import {RpcMessageCodecs} from '../codec/RpcMessageCodecs';
 import {ReactiveRpcClientMessage, ReactiveRpcMessage, ReactiveRpcServerMessage} from '../messages';
 import {RpcMessageStreamProcessor, StreamingRpcClient, TypedRpcClient} from '../rpc';
-import type {FunctionStreamingType, FunctionType} from '../../../json-type/type/classes';
-import type {Observable} from 'rxjs';
-import type {ResolveType} from '../../../json-type';
-import type {TypeRouter} from '../../../json-type/system/TypeRouter';
-import type {TypeRouterCaller} from '../rpc/caller/TypeRouterCaller';
 import type {RpcCaller} from '../rpc/caller/RpcCaller';
-import type {ObjectValueCaller} from '../rpc/caller/ObjectValueCaller';
-import type {ObjectValue, ObjectValueToTypeMap, UnObjectType} from '../../../json-type-value/ObjectValue';
+import type {CallerToMethods} from '../types';
 
 export interface BuildE2eClientOptions {
   /**
@@ -67,7 +61,7 @@ export interface BuildE2eClientOptions {
   token?: string;
 }
 
-export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, opt: BuildE2eClientOptions) => {
+export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, opt: BuildE2eClientOptions = {}) => {
   const writer = opt.writer ?? new Writer(Fuzzer.randomInt2(opt.writerDefaultBufferKb ?? [4, 4]) * 1024);
   const codecs = new RpcCodecs(new Codecs(writer), new RpcMessageCodecs());
   const ctx = new ConnectionContext(
@@ -103,21 +97,8 @@ export const buildE2eClient = <Caller extends RpcCaller<any>>(caller: Caller, op
     bufferSize: Fuzzer.randomInt2(opt.clientBufferSize ?? [1, 1]),
     bufferTime: Fuzzer.randomInt2(opt.clientBufferTime ?? [0, 0]),
   });
-  type Router = UnTypeRouterCaller<Caller>;
-  type Routes = UnTypeRouter<Router>;
-  type Methods = {[K in keyof Routes]: UnwrapFunction<Routes[K]>};
-  const typedClient = client as TypedRpcClient<Methods>;
+  const typedClient = client as TypedRpcClient<CallerToMethods<Caller>>;
   return {
     client: typedClient,
   };
 };
-
-type UnTypeRouterCaller<T> = T extends TypeRouterCaller<infer R> ? R : T extends ObjectValueCaller<infer R> ? R : never;
-type UnTypeRouter<T> =
-  T extends TypeRouter<infer R> ? R : T extends ObjectValue<infer R> ? ObjectValueToTypeMap<UnObjectType<R>> : never;
-type UnwrapFunction<F> =
-  F extends FunctionType<infer Req, infer Res>
-    ? (req: ResolveType<Req>) => Promise<ResolveType<Res>>
-    : F extends FunctionStreamingType<infer Req, infer Res>
-      ? (req$: Observable<ResolveType<Req>>) => Observable<ResolveType<Res>>
-      : never;

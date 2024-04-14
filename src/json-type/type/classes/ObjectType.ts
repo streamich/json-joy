@@ -136,6 +136,10 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     return this.fields.find((f) => f.key === key);
   }
 
+  public extend<F2 extends ObjectFieldType<any, any>[]>(o: ObjectType<F2>): ObjectType<[...F, ...F2]> {
+    return new ObjectType([...this.fields, ...o.fields]);
+  }
+
   public validateSchema(): void {
     const schema = this.getSchema();
     validateTType(schema, 'obj');
