@@ -17,7 +17,10 @@ import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 export class Slices implements Stateful, Printable {
   private list = new Map<ArrChunk, PersistedSlice>();
 
-  constructor(public readonly txt: Peritext, public readonly set: ArrNode) {}
+  constructor(
+    public readonly txt: Peritext,
+    public readonly set: ArrNode,
+  ) {}
 
   public ins(range: Range, behavior: SliceBehavior, type: SliceType, data?: unknown): PersistedSlice {
     const peritext = this.txt;

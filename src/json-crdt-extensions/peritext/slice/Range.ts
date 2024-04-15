@@ -10,7 +10,11 @@ export class Range implements Printable {
     return p1.compareSpatial(p2) > 0 ? new Range(txt, p2, p1) : new Range(txt, p1, p2);
   }
 
-  constructor(protected readonly txt: Peritext, public start: Point, public end: Point) {}
+  constructor(
+    protected readonly txt: Peritext,
+    public start: Point,
+    public end: Point,
+  ) {}
 
   public clone(): Range {
     return new Range(this.txt, this.start.clone(), this.end.clone());
@@ -38,7 +42,7 @@ export class Range implements Printable {
   }
 
   public collapseToStart(): void {
-    this.start = this.start.clone()
+    this.start = this.start.clone();
     this.start.refAfter();
     this.end = this.start.clone();
   }
