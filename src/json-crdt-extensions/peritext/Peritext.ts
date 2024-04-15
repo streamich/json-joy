@@ -51,6 +51,30 @@ export class Peritext implements Printable {
     return this.range(startEndpoint, endEndpoint);
   }
 
+  public insAt(pos: number, text: string): void {
+    const str = this.model.api.wrap(this.str);
+    str.ins(pos, text);
+  }
+
+  public ins(after: ITimestampStruct, text: string): ITimestampStruct {
+    if (!text) throw new Error('NO_TEXT');
+    const api = this.model.api;
+    const textId = api.builder.insStr(this.str.id, after, text);
+    api.apply();
+    return textId;
+  }
+
+  /** Select a single character before a point. */
+  public findCharBefore(point: Point): Range | undefined {
+    if (point.anchor === Anchor.After) {
+      const chunk = point.chunk();
+      if (chunk && !chunk.del) return this.range(this.point(point.id, Anchor.Before), point);
+    }
+    const id = point.prevId();
+    if (!id) return;
+    return this.range(this.point(id, Anchor.Before), this.point(id, Anchor.After));
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
