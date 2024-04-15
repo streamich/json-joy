@@ -4,3 +4,7 @@ export const enum ExtensionId {
   peritext = 2,
   quill = 3,
 }
+
+export const enum Chars {
+  BlockSplitSentinel = '\n',
+}
