@@ -56,8 +56,3 @@ yarn test:cli:pointer
 yarn test:cli:patch
 yarn test:cli:pack
 ```
-
-### Reactive-RPC
-
-`/src/__tests__/reactive-rcp/` folder contains E2E tests for Reactive-RPC server
-and its clients. See [README](./reactive-rpc/README.md) for more info.
