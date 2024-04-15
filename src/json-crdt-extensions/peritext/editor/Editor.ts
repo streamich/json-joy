@@ -1,10 +1,12 @@
 import {Cursor} from '../slice/Cursor';
-import {Anchor} from '../constants';
+import {Anchor, SliceBehavior} from '../constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
+import {PersistedSlice} from '../slice/PersistedSlice';
 import type {Range} from '../slice/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 import type {Point} from '../point/Point';
+import type {SliceType} from '../types';
 
 export class Editor implements Printable {
   /**
@@ -115,5 +117,9 @@ export class Editor implements Printable {
   public selectAll(): void {
     const range = this.all();
     if (range) this.cursor.setRange(range);
+  }
+
+  public insertSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    return this.txt.insSlice(this.cursor, SliceBehavior.Stack, type, data);
   }
 }

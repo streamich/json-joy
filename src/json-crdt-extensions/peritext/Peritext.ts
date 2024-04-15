@@ -1,14 +1,19 @@
-import {Anchor} from './constants';
+import {Anchor, SliceBehavior} from './constants';
 import {Point} from './point/Point';
 import {Range} from './slice/Range';
 import {Editor} from './editor/Editor';
 import {printTree} from '../../util/print/printTree';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';
+import {Slices} from './slice/Slices';
 import {type ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
+import type {SliceType} from './types';
+import type {PersistedSlice} from './slice/PersistedSlice';
+import {CONST} from '../../json-hash';
 
 export class Peritext implements Printable {
+  public readonly slices: Slices;
   public readonly editor: Editor;
 
   constructor(
@@ -16,6 +21,7 @@ export class Peritext implements Printable {
     public readonly str: StrNode,
     slices: ArrNode,
   ) {
+    this.slices = new Slices(this, slices);
     this.editor = new Editor(this);
   }
 
@@ -69,6 +75,22 @@ export class Peritext implements Printable {
     return textId;
   }
 
+  public insSlice(
+    range: Range,
+    behavior: SliceBehavior,
+    type: SliceType,
+    data?: unknown | ITimestampStruct,
+  ): PersistedSlice {
+    // if (range.isCollapsed()) throw new Error('INVALID_RANGE');
+    // TODO: If range is not collapsed, check if there are any visible characters in the range.
+    const slice = this.slices.ins(range, behavior, type, data);
+    return slice;
+  }
+
+  public delSlice(sliceId: ITimestampStruct): void {
+    this.slices.del(sliceId);
+  }
+
   /** Select a single character before a point. */
   public findCharBefore(point: Point): Range | undefined {
     if (point.anchor === Anchor.After) {
@@ -84,6 +106,23 @@ export class Peritext implements Printable {
 
   public toString(tab: string = ''): string {
     const nl = () => '';
-    return this.constructor.name + printTree(tab, [(tab) => this.str.toString(tab)]);
+    return (
+      this.constructor.name +
+      printTree(tab, [
+        (tab) => this.editor.cursor.toString(tab),
+        nl,
+        (tab) => this.str.toString(tab),
+        nl,
+        (tab) => this.slices.toString(tab),
+      ])
+    );
+  }
+
+  // ----------------------------------------------------------------- Stateful
+
+  public hash: number = 0;
+
+  public refresh(): number {
+    return this.slices.refresh();
   }
 }
