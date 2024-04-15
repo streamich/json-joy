@@ -3,6 +3,10 @@ export const enum Anchor {
   After = 1,
 }
 
+export const enum Tags {
+  Cursor = 0,
+}
+
 export const enum SliceHeaderMask {
   X1Anchor = 0b1,
   X2Anchor = 0b10,
