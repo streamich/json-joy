@@ -1,5 +1,6 @@
 import {Anchor} from './constants';
 import {Point} from './point/Point';
+import {Range} from './slice/Range';
 import {printTree} from '../../util/print/printTree';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';
 import {type ITimestampStruct} from '../../json-crdt-patch/clock';
@@ -30,6 +31,24 @@ export class Peritext implements Printable {
 
   public pointAtEnd(): Point {
     return this.point(this.str.id, Anchor.Before);
+  }
+
+  public range(start: Point, end: Point): Range {
+    return new Range(this, start, end);
+  }
+
+  public rangeAt(start: number, length: number = 0): Range {
+    const str = this.str;
+    if (!length) {
+      const startId = !start ? str.id : str.find(start - 1) || str.id;
+      const point = this.point(startId, Anchor.After);
+      return this.range(point, point);
+    }
+    const startId = str.find(start) || str.id;
+    const endId = str.find(start + length - 1) || startId;
+    const startEndpoint = this.point(startId, Anchor.Before);
+    const endEndpoint = this.point(endId, Anchor.After);
+    return this.range(startEndpoint, endEndpoint);
   }
 
   // ---------------------------------------------------------------- Printable
