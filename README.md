@@ -46,7 +46,6 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - Very fast binary tree (Radix, AVL, Red-black*, Splay) implementations in JavaScript.
 - Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.
 - Very fast JSON Expression implementation in JavaScript.
-- JSON Reactive RPC protocol (RPC with server push) implementation, for real-time collaborative apps.
 
 
 [json-joy]: https://jsonjoy.com

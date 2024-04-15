@@ -1,8 +1,4 @@
-import {Observable, map} from 'rxjs';
-import {TypedApiCaller} from '../../../reactive-rpc/common/rpc/caller/TypedApiCaller';
-import {FilterFunctions, SchemaOf} from '../../type';
 import {TypeSystem} from '../TypeSystem';
-import {TypeOf} from '../../schema';
 
 const createTypes = (system: TypeSystem) => {
   const t = system.t;
@@ -59,38 +55,3 @@ system.importTypes(types);
 
 type Types = typeof types;
 type Ctx = {ip?: string};
-
-const rpc = new TypedApiCaller<FilterFunctions<Types>, Ctx>({system});
-
-// rpc.implement('')
-
-type Fn = TypeOf<SchemaOf<Types['MuBlockListen']>>;
-
-rpc.implement('MuBlockGet', {
-  validate: (req: unknown) => {},
-  call: async (request, ctx) => {
-    const response = {
-      block: {
-        id: 'adf',
-        data: 'adf',
-      },
-    };
-    return response;
-  },
-});
-
-rpc.implement('MuBlockListen', {
-  pretty: true,
-  call$: (request, ctx) => {
-    return request.pipe(
-      map(() => {
-        return {
-          block: {
-            id: 'adf',
-            data: 'adf',
-          },
-        };
-      }),
-    );
-  },
-});
