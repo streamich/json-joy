@@ -15,6 +15,34 @@ const setup = (insert: (editor: Editor) => void = (editor) => editor.insert('Hel
   return {model, peritext, editor};
 };
 
+describe('.contains()', () => {
+  test('returns true if slice is contained', () => {
+    const {peritext, editor} = setup();
+    editor.setCursor(3, 2);
+    const slice = editor.insertOverwriteSlice('b');
+    editor.setCursor(0);
+    peritext.refresh();
+    expect(peritext.rangeAt(2, 4).contains(slice)).toBe(true);
+    expect(peritext.rangeAt(3, 4).contains(slice)).toBe(true);
+    expect(peritext.rangeAt(2, 3).contains(slice)).toBe(true);
+    expect(peritext.rangeAt(3, 2).contains(slice)).toBe(true);
+  });
+
+  test('returns false if slice is not contained', () => {
+    const {peritext, editor} = setup();
+    editor.setCursor(3, 2);
+    const slice = editor.insertOverwriteSlice('b');
+    editor.setCursor(0);
+    peritext.refresh();
+    expect(peritext.rangeAt(3, 1).contains(slice)).toBe(false);
+    expect(peritext.rangeAt(2, 1).contains(slice)).toBe(false);
+    expect(peritext.rangeAt(2, 2).contains(slice)).toBe(false);
+    expect(peritext.rangeAt(1, 1).contains(slice)).toBe(false);
+    expect(peritext.rangeAt(4, 5).contains(slice)).toBe(false);
+    expect(peritext.rangeAt(8, 1).contains(slice)).toBe(false);
+  });
+});
+
 describe('.isCollapsed()', () => {
   test('returns true when endpoints point to the same location', () => {
     const {editor} = setup();
