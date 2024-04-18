@@ -7,8 +7,8 @@ import type {Printable} from '../../../util/print/types';
 
 /**
  * A range is a pair of points that represent a selection in the text. A range
- * can be collapsed to a single point, at which point it is called a *marker*,
- * if it is stored in the text, or *caret*, if it is a cursor position. 
+ * can be collapsed to a single point, then it is called a *marker*
+ * (if it is stored in the text), or *caret* (if it is a cursor position).
  */
 export class Range implements Printable {
   /**
@@ -52,24 +52,13 @@ export class Range implements Printable {
    * @returns True if the range is collapsed to a single point.
    */
   public isCollapsed(): boolean {
-    const start = this.start;
-    const end = this.end;
-    if (start === end) return true;
-    const pos1 = start.pos();
-    const pos2 = end.pos();
-    if (pos1 === pos2) {
-      if (start.anchor === end.anchor) return true;
-      if (start.anchor === Anchor.After) return true;
-      else {
-        const chunk = start.chunk();
-        if (chunk && chunk.del) {
-          // TODO: Revisit where is the best place for this normalization.
-          // this.start = this.end.clone();
-          return true;
-        }
-      }
-    }
-    return false;
+    const {start, end} = this;
+    if (start.compareSpatial(end) === 0) return true;
+    const start2 = start.clone();
+    const end2 = end.clone();
+    start2.refAfter();
+    end2.refAfter();
+    return start2.compare(end2) === 0;
   }
 
   /**
@@ -92,7 +81,12 @@ export class Range implements Printable {
     this.start = this.end.clone();
   }
 
-  public viewRange(): [at: number, len: number] {
+  /**
+   * Returns the range in the view coordinates as a position and length.
+   *
+   * @returns The range as a view position and length.
+   */
+  public views(): [at: number, len: number] {
     const start = this.start.viewPos();
     const end = this.end.viewPos();
     return [start, end - start];
@@ -108,6 +102,7 @@ export class Range implements Printable {
   }
 
   public setAt(start: number, length: number = 0): void {
+    // TODO: move implementation to here
     const range = this.txt.rangeAt(start, length);
     this.setRange(range);
   }

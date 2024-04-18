@@ -1019,7 +1019,6 @@ describe('.refAfter()', () => {
   });
 });
 
-
 describe('.refVisible()', () => {
   test('skips deleted chars, attaches to visible char', () => {
     const {peritext} = setupWithChunkedText();

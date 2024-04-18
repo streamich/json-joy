@@ -1,7 +1,6 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../constants';
-import {Editor} from '../../editor/Editor';
 
 const setup = (insert: (peritext: Peritext) => void = (peritext) => peritext.strApi().ins(0, 'Hello world!')) => {
   const model = Model.withLogicalClock();
@@ -74,7 +73,7 @@ describe('.isCollapsed()', () => {
   describe('when range is collapsed', () => {
     test('returns true at the beginning of string', () => {
       const {peritext} = setup();
-      const point = peritext.pointAtStart();
+      const point = peritext.pointAbsStart();
       const range = peritext.range(point, point);
       const isCollapsed = range.isCollapsed();
       expect(isCollapsed).toBe(true);
@@ -82,7 +81,7 @@ describe('.isCollapsed()', () => {
 
     test('returns true at the end of string', () => {
       const {peritext} = setup();
-      const point = peritext.pointAtEnd();
+      const point = peritext.pointAbsEnd();
       const range = peritext.range(point, point);
       const isCollapsed = range.isCollapsed();
       expect(isCollapsed).toBe(true);
@@ -117,7 +116,7 @@ describe('.isCollapsed()', () => {
     describe('when first character is deleted', () => {
       test('returns true at the beginning of string', () => {
         const {peritext} = setupEvenDeleted();
-        const point = peritext.pointAtStart();
+        const point = peritext.pointAbsStart();
         const range = peritext.range(point, point);
         const isCollapsed = range.isCollapsed();
         expect(isCollapsed).toBe(true);
@@ -130,7 +129,9 @@ describe('.isCollapsed()', () => {
         const isCollapsed = range.isCollapsed();
         expect(isCollapsed).toBe(true);
       });
+    });
 
+    describe('when characters are deleted', () => {
       test('returns true when in the middle of deleted characters', () => {
         const {peritext} = setupEvenDeleted();
         const range = peritext.rangeAt(2, 1);
@@ -146,7 +147,45 @@ describe('.isCollapsed()', () => {
         peritext.strApi().del(0, 5);
         expect(range.isCollapsed()).toBe(true);
       });
+
+      test('when all text is selected', () => {
+        const {peritext} = setupEvenDeleted();
+        const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
+        expect(range.isCollapsed()).toBe(false);
+        peritext.strApi().del(0, 5);
+        expect(range.isCollapsed()).toBe(true);
+      });
     });
+  });
+});
+
+describe('.collapseToStart()', () => {
+  test('collapses range to start', () => {
+    const {peritext} = setup();
+    const range = peritext.rangeAt(2, 3);
+    range.collapseToStart();
+    expect(range.isCollapsed()).toBe(true);
+    expect(range.start.rightChar()?.view()).toBe('l');
+    expect(range.end.rightChar()?.view()).toBe('l');
+  });
+});
+
+describe('.collapseToEnd()', () => {
+  test('collapses range to end', () => {
+    const {peritext} = setup();
+    const range = peritext.rangeAt(2, 3);
+    range.collapseToEnd();
+    expect(range.isCollapsed()).toBe(true);
+    expect(range.start.leftChar()?.view()).toBe('o');
+    expect(range.end.leftChar()?.view()).toBe('o');
+  });
+});
+
+describe('.view()', () => {
+  test('returns correct view', () => {
+    const {peritext} = setup();
+    const range = peritext.rangeAt(2, 3);
+    expect(range.views()).toEqual([2, 3]);
   });
 });
 

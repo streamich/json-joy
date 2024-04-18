@@ -41,7 +41,7 @@ export class Peritext implements Printable {
    * @param anchor Whether the point should be before or after the character.
    * @returns The point.
    */
-  public point(id: ITimestampStruct, anchor: Anchor = Anchor.After): Point {
+  public point(id: ITimestampStruct = this.str.id, anchor: Anchor = Anchor.After): Point {
     return new Point(this, id, anchor);
   }
 
@@ -68,7 +68,7 @@ export class Peritext implements Printable {
    *
    * @returns A point at the start of the text.
    */
-  public pointAtStart(): Point {
+  public pointAbsStart(): Point {
     return this.point(this.str.id, Anchor.After);
   }
 
@@ -78,7 +78,7 @@ export class Peritext implements Printable {
    *
    * @returns A point at the end of the text.
    */
-  public pointAtEnd(): Point {
+  public pointAbsEnd(): Point {
     return this.point(this.str.id, Anchor.Before);
   }
 
@@ -118,7 +118,7 @@ export class Peritext implements Printable {
     if (!length) {
       const startId = !start ? str.id : str.find(start - 1) || str.id;
       const point = this.point(startId, Anchor.After);
-      return this.range(point, point);
+      return this.range(point, point.clone());
     }
     const startId = str.find(start) || str.id;
     const endId = str.find(start + length - 1) || startId;
