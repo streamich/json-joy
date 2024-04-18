@@ -224,6 +224,27 @@ describe('.compareSpatial()', () => {
   });
 });
 
+describe('.chunk()', () => {
+  test('returns correct chunk when chunk is split', () => {
+    const {peritext} = setup();
+    const p1 = peritext.pointAt(0, Anchor.Before);
+    const p2 = peritext.pointAt(1, Anchor.Before);
+    const p3 = peritext.pointAt(2, Anchor.Before);
+    expect(p1.rightChar()!.view()).toBe('a');
+    expect(p2.rightChar()!.view()).toBe('b');
+    expect(p3.rightChar()!.view()).toBe('c');
+    expect(p1.chunk()!.id.time).toBe(p1.id.time);
+    expect(p2.chunk()!.id.time + 1).toBe(p2.id.time);
+    expect(p3.chunk()!.id.time + 2).toBe(p3.id.time);
+    peritext.strApi().del(1, 1);
+    expect(p1.rightChar()!.view()).toBe('a');
+    expect(p3.rightChar()!.view()).toBe('c');
+    expect(p1.chunk()!.id.time).toBe(p1.id.time);
+    expect(p2.chunk()!.id.time).toBe(p2.id.time);
+    expect(p3.chunk()!.id.time).toBe(p3.id.time);
+  });
+});
+
 const setupWithText = () => {
   const model = Model.withLogicalClock(123456);
   model.api.root({

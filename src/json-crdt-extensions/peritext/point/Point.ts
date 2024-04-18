@@ -240,55 +240,33 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   public leftChar(): ChunkSlice | undefined {
     const str = this.txt.str;
     if (this.isAbsEnd()) {
-      let chunk = str.last();
-      while (chunk && chunk.del) chunk = str.prev(chunk);
-      return chunk ? new ChunkSlice(chunk, chunk.span - 1, 1) : undefined;
+      const res = str.findChunk(str.length() - 1);
+      if (!res) return;
+      return new ChunkSlice(res[0], res[1], 1);
     }
-    let chunk = this.chunk();
-    if (!chunk) return;
-    if (chunk.del) {
-      const prevId = this.prevId();
-      if (!prevId) return;
-      const tmp = new Point(this.txt, prevId, Anchor.After);
-      return tmp.leftChar();
-    }
-    if (this.anchor === Anchor.After) {
-      const off = this.id.time - chunk.id.time;
-      return new ChunkSlice(chunk, off, 1);
-    }
-    const off = this.id.time - chunk.id.time - 1;
-    if (off >= 0) return new ChunkSlice(chunk, off, 1);
-    chunk = str.prev(chunk);
-    while (chunk && chunk.del) chunk = str.prev(chunk);
-    if (!chunk) return;
-    return new ChunkSlice(chunk, chunk.span - 1, 1);
+    const tmp = this.clone();
+    tmp.refAfter();
+    if (tmp.isAbsStart()) return;
+    const chunk = tmp.chunk();
+    if (!chunk || chunk.del) return;
+    const off = tmp.id.time - chunk.id.time;
+    return new ChunkSlice(chunk, off, 1);
   }
 
   public rightChar(): ChunkSlice | undefined {
     const str = this.txt.str;
     if (this.isAbsStart()) {
-      let chunk = str.first();
-      while (chunk && chunk.del) chunk = str.next(chunk);
-      return chunk ? new ChunkSlice(chunk, 0, 1) : undefined;
+      const res = str.findChunk(0);
+      if (!res) return;
+      return new ChunkSlice(res[0], res[1], 1);
     }
-    let chunk = this.chunk();
-    if (!chunk) return;
-    if (chunk.del) {
-      const nextId = this.nextId();
-      if (!nextId) return;
-      const tmp = new Point(this.txt, nextId, Anchor.Before);
-      return tmp.rightChar();
-    }
-    if (this.anchor === Anchor.Before) {
-      const off = this.id.time - chunk.id.time;
-      return new ChunkSlice(chunk, off, 1);
-    }
-    const off = this.id.time - chunk.id.time + 1;
-    if (off < chunk.span) return new ChunkSlice(chunk, off, 1);
-    chunk = str.next(chunk);
-    while (chunk && chunk.del) chunk = str.next(chunk);
-    if (!chunk) return;
-    return new ChunkSlice(chunk, 0, 1);
+    const tmp = this.clone();
+    tmp.refBefore();
+    if (tmp.isAbsEnd()) return;
+    const chunk = tmp.chunk();
+    if (!chunk || chunk.del) return;
+    const off = tmp.id.time - chunk.id.time;
+    return new ChunkSlice(chunk, off, 1);
   }
 
   /**
