@@ -10,8 +10,11 @@ import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
 import type {SliceType} from './types';
 import type {PersistedSlice} from './slice/PersistedSlice';
-import {CONST} from '../../json-hash';
 
+/**
+ * Context for a Peritext instance. Contains all the data and methods needed to
+ * interact with the text.
+ */
 export class Peritext implements Printable {
   public readonly slices: Slices;
   public readonly editor: Editor;
@@ -25,29 +28,86 @@ export class Peritext implements Printable {
     this.editor = new Editor(this);
   }
 
+  // ------------------------------------------------------------------- Points
+
+  /**
+   * Creates a point at a character ID.
+   *
+   * @param id Character ID to which the point should be attached.
+   * @param anchor Whether the point should be before or after the character.
+   * @returns The point.
+   */
   public point(id: ITimestampStruct, anchor: Anchor = Anchor.After): Point {
     return new Point(this, id, anchor);
   }
 
+  /**
+   * Creates a point at a view position in the text.
+   *
+   * @param pos View position in the text.
+   * @param anchor Whether the point should attach before or after a character.
+   * @returns The point.
+   */
   public pointAt(pos: number, anchor: Anchor = Anchor.Before): Point {
+    // TODO: Provide ability to attach to the beginning of the text?
+    // TODO: Provide ability to attach to the end of the text?
     const str = this.str;
     const id = str.find(pos);
     if (!id) return this.point(str.id, Anchor.After);
     return this.point(id, anchor);
   }
 
+  /**
+   * Creates a point which is attached to the start of the text, before the
+   * first character.
+   *
+   * @returns A point at the start of the text.
+   */
   public pointAtStart(): Point {
     return this.point(this.str.id, Anchor.After);
   }
 
+  /**
+   * Creates a point which is attached to the end of the text, after the last
+   * character.
+   *
+   * @returns A point at the end of the text.
+   */
   public pointAtEnd(): Point {
     return this.point(this.str.id, Anchor.Before);
   }
 
+  // ------------------------------------------------------------------- Ranges
+
+  /**
+   * Creates a range from two points. The points can be in any order.
+   *
+   * @param p1 Point
+   * @param p2 Point
+   * @returns A range with points in correct order.
+   */
+  public rangeFromPoints(p1: Point, p2: Point): Range {
+    return Range.from(this, p1, p2);
+  }
+
+  /**
+   * Creates a range from two points, the points have to be in the correct order.
+   *
+   * @param start Start point of the range, must be before or equal to end.
+   * @param end End point of the range, must be after or equal to start.
+   * @returns A range with the given start and end points.
+   */
   public range(start: Point, end: Point): Range {
     return new Range(this, start, end);
   }
 
+  /**
+   * Creates a range from a view position and a length.
+   *
+   * @param start Position in the text.
+   * @param length Length of the range.
+   * @returns A range from the given position with the given length.
+   */
   public rangeAt(start: number, length: number = 0): Range {
     const str = this.str;
     if (!length) {
@@ -62,11 +122,27 @@ export class Peritext implements Printable {
     return this.range(startEndpoint, endEndpoint);
   }
 
+  // --------------------------------------------------------------- Insertions
+
+  /**
+   * Insert plain text at a view position in the text.
+   *
+   * @param pos View position in the text.
+   * @param text Text to insert.
+   */
   public insAt(pos: number, text: string): void {
     const str = this.model.api.wrap(this.str);
     str.ins(pos, text);
   }
 
+  /**
+   * Insert plain text after a character referenced by its ID and return the
+   * ID of the insertion operation.
+   *
+   * @param after Character ID after which the text should be inserted.
+   * @param text Text to insert.
+   * @returns ID of the insertion operation.
+   */
   public ins(after: ITimestampStruct, text: string): ITimestampStruct {
     if (!text) throw new Error('NO_TEXT');
     const api = this.model.api;
@@ -86,6 +162,8 @@ export class Peritext implements Printable {
     const slice = this.slices.ins(range, behavior, type, data);
     return slice;
   }
+
+  // ---------------------------------------------------------------- Deletions
 
   public delSlice(sliceId: ITimestampStruct): void {
     this.slices.del(sliceId);
