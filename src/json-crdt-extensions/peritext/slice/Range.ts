@@ -59,12 +59,12 @@ export class Range implements Printable {
     const pos2 = end.pos();
     if (pos1 === pos2) {
       if (start.anchor === end.anchor) return true;
-      // TODO: inspect below cases, if they are needed
       if (start.anchor === Anchor.After) return true;
       else {
         const chunk = start.chunk();
         if (chunk && chunk.del) {
-          this.start = this.end.clone();
+          // TODO: Revisit where is the best place for this normalization.
+          // this.start = this.end.clone();
           return true;
         }
       }

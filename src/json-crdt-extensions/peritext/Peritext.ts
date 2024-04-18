@@ -28,6 +28,10 @@ export class Peritext implements Printable {
     this.editor = new Editor(this);
   }
 
+  public strApi() {
+    return this.model.api.wrap(this.str);
+  }
+
   // ------------------------------------------------------------------- Points
 
   /**
@@ -42,9 +46,10 @@ export class Peritext implements Printable {
   }
 
   /**
-   * Creates a point at a view position in the text.
+   * Creates a point at a view position in the text. The `pos` argument specifies
+   * the position of the character, not the gap between characters.
    *
-   * @param pos View position in the text.
+   * @param pos Position of the character in the text.
    * @param anchor Whether the point should attach before or after a character.
    * @returns The point.
    */
@@ -131,7 +136,7 @@ export class Peritext implements Printable {
    * @param text Text to insert.
    */
   public insAt(pos: number, text: string): void {
-    const str = this.model.api.wrap(this.str);
+    const str = this.strApi();
     str.ins(pos, text);
   }
 
