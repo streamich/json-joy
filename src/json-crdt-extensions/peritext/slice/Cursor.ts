@@ -15,7 +15,7 @@ export class Cursor extends Range implements Slice {
    * the end which does not move when user changes selection. The other
    * end is free to move, the moving end of the cursor is "focus". By default
    * "anchor" is the start of the cursor.
-   * 
+   *
    * @todo Create a custom enum for this, instead of using `Anchor`.
    */
   public base: Anchor = Anchor.Before;

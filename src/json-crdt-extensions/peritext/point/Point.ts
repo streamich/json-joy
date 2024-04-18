@@ -15,7 +15,7 @@ import type {StringChunk} from '../util/types';
  * points just after the character. Points attached to string characters are
  * referred to as *relative* points, while points attached to the beginning or
  * end of the string are referred to as *absolute* points.
- * 
+ *
  * The *absolute* points are reference the string itself, by using the string's
  * ID as the character ID. The *absolute (abs) start* references the very start
  * of the string, before the first character, and even before any deleted
@@ -81,14 +81,10 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     const otherId = other.id;
     if (this.isAbs()) {
       const isStart = this.anchor === Anchor.After;
-      return isStart
-        ? other.isAbsStart() ? 0 : -1
-        : other.isAbsEnd() ? 0 : 1;
+      return isStart ? (other.isAbsStart() ? 0 : -1) : other.isAbsEnd() ? 0 : 1;
     } else if (other.isAbs()) {
       const isStart = other.anchor === Anchor.After;
-      return isStart
-        ? this.isAbsStart() ? 0 : 1
-        : this.isAbsEnd() ? 0 : -1;
+      return isStart ? (this.isAbsStart() ? 0 : 1) : this.isAbsEnd() ? 0 : -1;
     }
     const cmp0 = compare(thisId, otherId);
     if (!cmp0) return this.anchor - other.anchor;
