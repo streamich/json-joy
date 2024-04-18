@@ -164,6 +164,64 @@ describe('.compareSpatial()', () => {
       }
     }
   });
+
+  test('absolute end point is always greater than any other point', () => {
+    const {peritext} = setup();
+    const chunk1 = peritext.str.first()!;
+    const absoluteEnd = peritext.pointAbsEnd();
+    const id1 = chunk1.id;
+    const id2 = tick(id1, 1);
+    const id3 = tick(id1, 2);
+    const p0 = peritext.pointAbsStart();
+    const p1 = peritext.point(id1, Anchor.Before);
+    const p2 = peritext.point(id1, Anchor.After);
+    const p3 = peritext.point(id2, Anchor.Before);
+    const p4 = peritext.point(id2, Anchor.After);
+    const p5 = peritext.point(id3, Anchor.Before);
+    const p6 = peritext.point(id3, Anchor.After);
+    const points = [p0, p1, p2, p3, p4, p5, p6];
+    for (const point of points) {
+      expect(absoluteEnd.compareSpatial(point)).toBe(1);
+      expect(point.compareSpatial(absoluteEnd)).toBe(-1);
+    }
+  });
+
+  test('two absolute ends are equal', () => {
+    const {peritext} = setup();
+    const p1 = peritext.pointAbsEnd();
+    const p2 = peritext.pointAbsEnd();
+    expect(p1.compareSpatial(p2)).toBe(0);
+    expect(p2.compareSpatial(p1)).toBe(0);
+  });
+
+  test('absolute start point is always less than any other point', () => {
+    const {peritext} = setup();
+    const chunk1 = peritext.str.first()!;
+    const absoluteEnd = peritext.pointAbsStart();
+    const id1 = chunk1.id;
+    const id2 = tick(id1, 1);
+    const id3 = tick(id1, 2);
+    const p0 = peritext.pointAbsEnd();
+    const p1 = peritext.point(id1, Anchor.Before);
+    const p2 = peritext.point(id1, Anchor.After);
+    const p3 = peritext.point(id2, Anchor.Before);
+    const p4 = peritext.point(id2, Anchor.After);
+    const p5 = peritext.point(id3, Anchor.Before);
+    const p6 = peritext.point(id3, Anchor.After);
+    const points = [p0, p1, p2, p3, p4, p5, p6];
+    for (const point of points) {
+      expect(absoluteEnd.compareSpatial(point)).toBe(-1);
+      expect(point.compareSpatial(absoluteEnd)).toBe(1);
+    }
+  });
+
+  test('two absolute starts are equal', () => {
+    const {peritext} = setup();
+    const p1 = peritext.pointAbsStart();
+    const p2 = peritext.pointAbsStart();
+    expect(p1.compareSpatial(p2)).toBe(0);
+    expect(p2.compareSpatial(p1)).toBe(0);
+  });
 });
 
 const setupWithText = () => {
@@ -419,7 +477,7 @@ describe('.nextId()', () => {
 
   test('returns undefined, when at end of str', () => {
     const {peritext} = setupWithChunkedText();
-    const point = peritext.pointAtEnd();
+    const point = peritext.pointAbsEnd();
     expect(point.nextId()).toBe(undefined);
   });
 
@@ -431,7 +489,7 @@ describe('.nextId()', () => {
 
   test('returns first char, when at start of str', () => {
     const {peritext, chunk1} = setupWithChunkedText();
-    const point = peritext.pointAtStart();
+    const point = peritext.pointAbsStart();
     const id = point.nextId();
     expect(id).toEqual(chunk1.id);
   });
@@ -542,7 +600,7 @@ describe('.prevId()', () => {
 
   test('returns undefined, when at start of str', () => {
     const {peritext} = setupWithChunkedText();
-    const point = peritext.pointAtStart();
+    const point = peritext.pointAbsStart();
     expect(point.prevId()).toBe(undefined);
   });
 
@@ -556,7 +614,7 @@ describe('.prevId()', () => {
 
   test('returns last char, when at end of str', () => {
     const {peritext} = setupWithChunkedText();
-    const point1 = peritext.pointAtEnd();
+    const point1 = peritext.pointAbsEnd();
     const point2 = peritext.pointAt(9, Anchor.Before);
     const id = point1.prevId();
     expect(id).toEqual(point2.id);
@@ -648,7 +706,7 @@ describe('.leftChar()', () => {
   test('at end of text should return the last char', () => {
     const {peritext} = setupWithChunkedText();
     const p1 = peritext.pointAt(8, Anchor.After);
-    const p2 = peritext.pointAtEnd();
+    const p2 = peritext.pointAbsEnd();
     expect(p1.leftChar()!.view()).toBe('9');
     expect(p2.leftChar()!.view()).toBe('9');
   });
@@ -723,29 +781,105 @@ describe('.rightChar()', () => {
   test('at start of text should return the first char', () => {
     const {peritext} = setupWithChunkedText();
     const p1 = peritext.pointAt(0, Anchor.Before);
-    const p2 = peritext.pointAtStart();
+    const p2 = peritext.pointAbsStart();
     expect(p1.rightChar()!.view()).toBe('1');
     expect(p2.rightChar()!.view()).toBe('1');
   });
 });
 
-describe('.isStartOfStr()', () => {
+describe('.isAbsStart()', () => {
   test('returns true if is start of string', () => {
     const {peritext} = setupWithChunkedText();
-    const p1 = peritext.pointAtStart();
+    const p1 = peritext.pointAbsStart();
     const p2 = peritext.pointAt(0, Anchor.Before);
-    expect(p1.isStartOfStr()).toBe(true);
-    expect(p2.isStartOfStr()).toBe(false);
+    expect(p1.isAbsStart()).toBe(true);
+    expect(p2.isAbsStart()).toBe(false);
   });
 });
 
-describe('.isEndOfStr()', () => {
+describe('.isAbsEnd()', () => {
   test('returns true if is end of string', () => {
     const {peritext} = setupWithChunkedText();
-    const p1 = peritext.pointAtEnd();
+    const p1 = peritext.pointAbsEnd();
     const p2 = peritext.pointAt(8, Anchor.After);
-    expect(p1.isEndOfStr()).toBe(true);
-    expect(p2.isEndOfStr()).toBe(false);
+    expect(p1.isAbsEnd()).toBe(true);
+    expect(p2.isAbsEnd()).toBe(false);
+  });
+});
+
+describe('.isRelStart()', () => {
+  test('returns true only for relative start', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAbsStart();
+    const id = peritext.str.find(0)!;
+    const p2 = peritext.point(id, Anchor.Before);
+    const p3 = peritext.point(id, Anchor.After);
+    expect(p1.isRelStart()).toBe(false);
+    expect(p2.isRelStart()).toBe(true);
+    expect(p3.isRelStart()).toBe(false);
+  });
+});
+
+describe('.isRelEnd()', () => {
+  test('returns true only for relative start', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAbsEnd();
+    const id = peritext.str.find(peritext.str.length() - 1)!;
+    const p2 = peritext.point(id, Anchor.Before);
+    const p3 = peritext.point(id, Anchor.After);
+    expect(p1.isRelEnd()).toBe(false);
+    expect(p2.isRelEnd()).toBe(false);
+    expect(p3.isRelEnd()).toBe(true);
+  });
+});
+
+describe('.refAbsStart()', () => {
+  test('attaches to the absolute start', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(2, Anchor.After);
+    p1.refAbsStart();
+    expect(p1.viewPos()).toBe(0);
+    expect(p1.id.sid).toBe(peritext.str.id.sid);
+    expect(p1.id.time).toBe(peritext.str.id.time);
+    expect(p1.anchor).toBe(Anchor.After);
+  });
+});
+
+describe('.refAbsEnd()', () => {
+  test('attaches to the absolute end', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(2, Anchor.After);
+    p1.refAbsEnd();
+    expect(p1.viewPos()).toBe(peritext.str.length());
+    expect(p1.id.sid).toBe(peritext.str.id.sid);
+    expect(p1.id.time).toBe(peritext.str.id.time);
+    expect(p1.anchor).toBe(Anchor.Before);
+  });
+});
+
+describe('.refStart()', () => {
+  test('attaches to the relative start', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(2, Anchor.After);
+    p1.refStart();
+    expect(p1.viewPos()).toBe(0);
+    const id = peritext.str.find(0)!;
+    expect(p1.id.sid).toBe(id.sid);
+    expect(p1.id.time).toBe(id.time);
+    expect(p1.anchor).toBe(Anchor.Before);
+  });
+});
+
+describe('.refEnd()', () => {
+  test('attaches to the relative end', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(2, Anchor.After);
+    p1.refEnd();
+    expect(p1.viewPos()).toBe(peritext.str.length());
+    const id = peritext.str.find(peritext.str.length() - 1)!;
+    expect(p1.id.sid).toBe(id.sid);
+    expect(p1.id.time).toBe(id.time);
+    expect(p1.anchor).toBe(Anchor.After);
   });
 });
 
@@ -780,7 +914,26 @@ describe('.refBefore()', () => {
     expect(p1.leftChar()!.view()).toBe('9');
     const p2 = p1.clone();
     p2.refBefore();
-    expect(p2.isEndOfStr()).toBe(true);
+    expect(p2.isAbsEnd()).toBe(true);
+  });
+
+  test('when relative end, attaches to absolute end', () => {
+    const {peritext} = setupWithChunkedText();
+    const p1 = peritext.pointAt(8, Anchor.After);
+    expect(p1.leftChar()!.view()).toBe('9');
+    const p2 = p1.clone();
+    p2.refBefore();
+    expect(p2.isAbsEnd()).toBe(true);
+  });
+
+  test('when absolute start, attaches to the first character', () => {
+    const {peritext} = setup();
+    const chunk1 = peritext.str.first()!;
+    const absoluteStart = peritext.pointAbsStart();
+    const start = peritext.point(chunk1.id, Anchor.Before);
+    expect(absoluteStart.compareSpatial(start) < 0).toBe(true);
+    absoluteStart.refBefore();
+    expect(absoluteStart.compareSpatial(start) === 0).toBe(true);
   });
 });
 
@@ -809,13 +962,39 @@ describe('.refAfter()', () => {
     expect(p2.chunk()!.del).toBe(false);
   });
 
-  test('when on first character, attaches to start of str', () => {
+  test('when relative start, attaches to absolute start', () => {
     const {peritext} = setupWithChunkedText();
     const p1 = peritext.pointAt(0, Anchor.Before);
     expect(p1.rightChar()!.view()).toBe('1');
     const p2 = p1.clone();
     p2.refAfter();
-    expect(p2.isStartOfStr()).toBe(true);
+    expect(p2.isAbsStart()).toBe(true);
+  });
+
+  test('when absolute end, attaches to last char', () => {
+    const {peritext} = setup();
+    const chunk1 = peritext.str.first()!;
+    const id = tick(chunk1.id, 2);
+    const absoluteEnd = peritext.pointAbsEnd();
+    const end = peritext.point(id, Anchor.After);
+    expect(absoluteEnd.compareSpatial(end) > 0).toBe(true);
+    absoluteEnd.refAfter();
+    expect(absoluteEnd.compareSpatial(end) === 0).toBe(true);
+  });
+
+  test('when absolute end, attaches to last visible char', () => {
+    const {peritext} = setup();
+    const chunk1 = peritext.str.first()!;
+    const absoluteEnd = peritext.pointAbsEnd();
+    const end1 = peritext.point(tick(chunk1.id, 1), Anchor.After);
+    const end2 = peritext.point(tick(chunk1.id, 2), Anchor.After);
+    peritext.strApi().del(2, 1);
+    expect(end1.compareSpatial(end2) < 0).toBe(true);
+    expect(absoluteEnd.compareSpatial(end2) > 0).toBe(true);
+    end2.refAfter();
+    absoluteEnd.refAfter();
+    expect(end2.compareSpatial(end1) === 0).toBe(true);
+    expect(absoluteEnd.compareSpatial(end1) === 0).toBe(true);
   });
 });
 
@@ -847,7 +1026,7 @@ describe('.move()', () => {
     p.move(4);
     p.move(5);
     p.move(6);
-    expect(p.isEndOfStr()).toBe(true);
+    expect(p.isAbsEnd()).toBe(true);
     expect(p.viewPos()).toBe(9);
     expect(p.leftChar()!.view()).toBe('9');
     expect(p.anchor).toBe(Anchor.Before);
@@ -857,7 +1036,7 @@ describe('.move()', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(8, Anchor.Before);
     p.move(-22);
-    expect(p.isStartOfStr()).toBe(true);
+    expect(p.isAbsStart()).toBe(true);
     expect(p.viewPos()).toBe(0);
     expect(p.rightChar()!.view()).toBe('1');
     expect(p.anchor).toBe(Anchor.After);

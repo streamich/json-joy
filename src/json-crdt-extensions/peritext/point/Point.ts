@@ -12,7 +12,16 @@ import type {StringChunk} from '../util/types';
  * character ID and an anchor. Anchor specifies the side of the character to
  * which the point is attached. For example, a point with an anchor "before" .▢
  * points just before the character, while a point with an anchor "after" ▢.
- * points just after the character.
+ * points just after the character. Points attached to string characters are
+ * referred to as *relative* points, while points attached to the beginning or
+ * end of the string are referred to as *absolute* points.
+ * 
+ * The *absolute* points are reference the string itself, by using the string's
+ * ID as the character ID. The *absolute (abs) start* references the very start
+ * of the string, before the first character, and even before any deleted
+ * characters. The *absolute (abs) end* references the very end of the string,
+ * after the last character, and even after any deleted characters at the end
+ * of the string.
  */
 export class Point implements Pick<Stateful, 'refresh'>, Printable {
   constructor(
@@ -42,6 +51,9 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
+   * Compares two points by their character IDs and anchors. First, the character
+   * IDs are compared. If they are equal, the anchors are compared. The anchor
+   * "before" is considered less than the anchor "after".
    *
    * @param other The other point to compare to.
    * @returns Returns 0 if the two points are equal, -1 if this point is less
@@ -54,9 +66,30 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return (this.anchor - other.anchor) as -1 | 0 | 1;
   }
 
+  /**
+   * Compares two points by their spatial (view) location in the string. Takes
+   * into account not only the character position in the view, but also handles
+   * deleted characters and absolute points.
+   *
+   * @param other The other point to compare to.
+   * @returns Returns 0 if the two points are equal, negative if this point is
+   *          less than the other point, and positive if this point is greater
+   *          than the other point.
+   */
   public compareSpatial(other: Point): number {
     const thisId = this.id;
     const otherId = other.id;
+    if (this.isAbs()) {
+      const isStart = this.anchor === Anchor.After;
+      return isStart
+        ? other.isAbsStart() ? 0 : -1
+        : other.isAbsEnd() ? 0 : 1;
+    } else if (other.isAbs()) {
+      const isStart = other.anchor === Anchor.After;
+      return isStart
+        ? this.isAbsStart() ? 0 : 1
+        : this.isAbsEnd() ? 0 : -1;
+    }
     const cmp0 = compare(thisId, otherId);
     if (!cmp0) return this.anchor - other.anchor;
     const cmp1 = this.pos() - other.pos();
@@ -74,6 +107,11 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   private _chunk: StringChunk | undefined;
+
+  /**
+   * @returns Returns the chunk that contains the character referenced by the
+   *          point, or `undefined` if the chunk is not found.
+   */
   public chunk(): StringChunk | undefined {
     let chunk = this._chunk;
     const id = this.id;
@@ -99,6 +137,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   private _pos: number = -1;
+
   /** @todo Is this needed? */
   public posCached(): number {
     if (this._pos >= 0) return this._pos;
@@ -107,12 +146,12 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   /**
-   * @returns Returns position of the point, as if it is a cursor in a text
-   *          pointing between characters.
+   * @returns Returns the view position of the point, as if it is a caret in
+   *          the text pointing between characters.
    */
   public viewPos(): number {
     const pos = this.pos();
-    if (pos < 0) return this.isStartOfStr() ? 0 : this.txt.str.length();
+    if (pos < 0) return this.isAbsStart() ? 0 : this.txt.str.length();
     return this.anchor === Anchor.Before ? pos : pos + 1;
   }
 
@@ -125,12 +164,12 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Next visible ID in string.
    */
   public nextId(move: number = 1): ITimestampStruct | undefined {
-    if (this.isEndOfStr()) return;
+    if (this.isAbsEnd()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
     let chunk: StringChunk | undefined;
-    if (this.isStartOfStr()) {
+    if (this.isAbsStart()) {
       chunk = str.first();
       while (chunk && chunk.del) chunk = str.next(chunk);
       if (!chunk) return;
@@ -171,7 +210,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *          such character.
    */
   public prevId(move: number = 1): ITimestampStruct | undefined {
-    if (this.isStartOfStr()) return;
+    if (this.isAbsStart()) return;
     let remaining: number = move;
     const {id, txt} = this;
     const str = txt.str;
@@ -200,7 +239,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
 
   public leftChar(): ChunkSlice | undefined {
     const str = this.txt.str;
-    if (this.isEndOfStr()) {
+    if (this.isAbsEnd()) {
       let chunk = str.last();
       while (chunk && chunk.del) chunk = str.prev(chunk);
       return chunk ? new ChunkSlice(chunk, chunk.span - 1, 1) : undefined;
@@ -227,7 +266,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
 
   public rightChar(): ChunkSlice | undefined {
     const str = this.txt.str;
-    if (this.isStartOfStr()) {
+    if (this.isAbsStart()) {
       let chunk = str.first();
       while (chunk && chunk.del) chunk = str.next(chunk);
       return chunk ? new ChunkSlice(chunk, 0, 1) : undefined;
@@ -252,12 +291,56 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, 0, 1);
   }
 
-  public isStartOfStr(): boolean {
-    return equal(this.id, this.txt.str.id) && this.anchor === Anchor.After;
+  /**
+   * Checks if the point is an absolute point. An absolute point is a point that
+   * references the string itself, rather than a character in the string. It can
+   * be either the very start or the very end of the string.
+   *
+   * @returns Returns `true` if the point is an absolute point.
+   */
+  public isAbs(): boolean {
+    return equal(this.id, this.txt.str.id);
   }
 
-  public isEndOfStr(): boolean {
-    return equal(this.id, this.txt.str.id) && this.anchor === Anchor.Before;
+  /**
+   * @returns Returns `true` if the point is an absolute point and is anchored
+   *          before the first character in the string.
+   */
+  public isAbsStart(): boolean {
+    return this.isAbs() && this.anchor === Anchor.After;
+  }
+
+  /**
+   * @returns Returns `true` if the point is an absolute point and is anchored
+   *          after the last character in the string.
+   */
+  public isAbsEnd(): boolean {
+    return this.isAbs() && this.anchor === Anchor.Before;
+  }
+
+  /**
+   * @returns Returns `true` if the point is exactly the relative start, i.e.
+   *          it is attached to the first visible character in the string and
+   *          anchored "before".
+   */
+  public isRelStart(): boolean {
+    if (this.anchor !== Anchor.Before) return false;
+    const id = this.txt.str.find(0);
+    return !!id && equal(this.id, id);
+  }
+
+  /**
+   * @returns Returns `true` if the point is exactly the relative end, i.e. it
+   *          is attached to the last visible character in the string and
+   *          anchored "after".
+   */
+  public isRelEnd(): boolean {
+    if (this.anchor !== Anchor.After) return false;
+    const str = this.txt.str;
+    const length = str.length();
+    if (length === 0) return false;
+    const id = str.find(length - 1);
+    return !!id && equal(this.id, id);
   }
 
   /**
@@ -270,39 +353,85 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     else this.refAfter();
   }
 
-  public refStart(): void {
+  /**
+   * Sets the point to the absolute start of the string.
+   */
+  public refAbsStart(): void {
     this.id = this.txt.str.id;
     this.anchor = Anchor.After;
   }
 
-  public refEnd(): void {
+  /**
+   * Sets the point to the absolute end of the string.
+   */
+  public refAbsEnd(): void {
     this.id = this.txt.str.id;
     this.anchor = Anchor.Before;
   }
 
   /**
-   * Modifies the location of the point, such that the spatial location remains
+   * Sets the point to the relative start of the string.
+   */
+  public refStart(): void {
+    this.refAbsStart();
+    this.refBefore();
+  }
+
+  /**
+   * Sets the point to the relative end of the string.
+   */
+  public refEnd(): void {
+    this.refAbsEnd();
+    this.refAfter();
+  }
+
+  /**
+   * Modifies the location of the point, such that the view location remains
    * the same, but ensures that it is anchored before a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
    */
   public refBefore(): void {
     const chunk = this.chunk();
-    if (!chunk) return this.refEnd();
+    if (!chunk) {
+      if (this.isAbsStart()) {
+        const id = this.txt.str.find(0);
+        if (id) {
+          this.id = id;
+          this.anchor = Anchor.Before;
+          return;
+        }
+      }
+      return this.refAbsEnd();
+    }
     if (!chunk.del && this.anchor === Anchor.Before) return;
     this.anchor = Anchor.Before;
     this.id = this.nextId() || this.txt.str.id;
   }
 
   /**
-   * Modifies the location of the point, such that the spatial location remains
+   * Modifies the location of the point, such that the view location remains
    * the same, but ensures that it is anchored after a character. Skips any
    * deleted characters (chunks), attaching the point to the next visible
    * character.
    */
   public refAfter(): void {
     const chunk = this.chunk();
-    if (!chunk) return this.refStart();
+    if (!chunk) {
+      if (this.isAbsEnd()) {
+        const str = this.txt.str;
+        const length = str.length();
+        if (length !== 0) {
+          const id = str.find(length - 1);
+          if (id) {
+            this.id = id;
+            this.anchor = Anchor.After;
+            return;
+          }
+        }
+      }
+      return this.refAbsStart();
+    }
     if (!chunk.del && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;
     this.id = this.prevId() || this.txt.str.id;
@@ -318,14 +447,14 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     if (anchor !== Anchor.After) this.refAfter();
     if (skip > 0) {
       const nextId = this.nextId(skip);
-      if (!nextId) this.refEnd();
+      if (!nextId) this.refAbsEnd();
       else {
         this.id = nextId;
         if (anchor !== Anchor.After) this.refBefore();
       }
     } else {
       const prevId = this.prevId(-skip);
-      if (!prevId) this.refStart();
+      if (!prevId) this.refAbsStart();
       else {
         this.id = prevId;
         if (anchor !== Anchor.After) this.refBefore();
