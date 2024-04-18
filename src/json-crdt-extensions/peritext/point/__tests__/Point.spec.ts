@@ -1019,6 +1019,34 @@ describe('.refAfter()', () => {
   });
 });
 
+
+describe('.refVisible()', () => {
+  test('skips deleted chars, attaches to visible char', () => {
+    const {peritext} = setupWithChunkedText();
+    peritext.strApi().del(0, peritext.str.length());
+    peritext.strApi().ins(0, '123456789');
+    const mid1 = peritext.pointAt(4, Anchor.After);
+    const mid2 = peritext.pointAt(5, Anchor.Before);
+    expect(mid1.leftChar()!.view()).toBe('5');
+    expect(mid1.rightChar()!.view()).toBe('6');
+    expect(mid2.leftChar()!.view()).toBe('5');
+    expect(mid2.rightChar()!.view()).toBe('6');
+    const left = peritext.pointAt(2, Anchor.After);
+    expect(left.leftChar()!.view()).toBe('3');
+    const right = peritext.pointAt(6, Anchor.Before);
+    expect(right.rightChar()!.view()).toBe('7');
+    peritext.strApi().del(3, 3);
+    expect(left.leftChar()!.view()).toBe('3');
+    expect(right.rightChar()!.view()).toBe('7');
+    expect(mid1.compare(left) > 0).toBe(true);
+    mid1.refVisible();
+    expect(mid1.compare(left) === 0).toBe(true);
+    expect(mid2.compare(right) < 0).toBe(true);
+    mid2.refVisible();
+    expect(mid2.compare(right) === 0).toBe(true);
+  });
+});
+
 describe('.move()', () => {
   test('smoke test', () => {
     const {peritext} = setupWithChunkedText();

@@ -237,6 +237,12 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return;
   }
 
+  /**
+   * Returns one character to the left of the point, or `undefined` if there
+   * is no such character. Skips any deleted characters. Handles absolute points.
+   *
+   * @returns A character slice to the left of the point.
+   */
   public leftChar(): ChunkSlice | undefined {
     const str = this.txt.str;
     if (this.isAbsEnd()) {
@@ -253,6 +259,12 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, off, 1);
   }
 
+  /**
+   * Returns one character to the right of the point, or `undefined` if there
+   * is no such character. Skips any deleted characters. Handles absolute points.
+   *
+   * @returns A character slice to the right of the point.
+   */
   public rightChar(): ChunkSlice | undefined {
     const str = this.txt.str;
     if (this.isAbsStart()) {
@@ -319,16 +331,6 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     if (length === 0) return false;
     const id = str.find(length - 1);
     return !!id && equal(this.id, id);
-  }
-
-  /**
-   * Modifies the location of the point, such that the spatial location remains
-   * and anchor remains the same, but ensures that the point references a
-   * visible (non-deleted) character.
-   */
-  public refVisible(): void {
-    if (this.anchor === Anchor.Before) this.refBefore();
-    else this.refAfter();
   }
 
   /**
@@ -413,6 +415,16 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     if (!chunk.del && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;
     this.id = this.prevId() || this.txt.str.id;
+  }
+
+  /**
+   * Modifies the location of the point, such that the spatial location remains
+   * the same and tries to preserve anchor location, but ensures that the point
+   * references a visible (not deleted) character.
+   */
+  public refVisible(): void {
+    if (this.anchor === Anchor.Before) this.refBefore();
+    else this.refAfter();
   }
 
   /**
