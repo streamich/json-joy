@@ -5,21 +5,52 @@ import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 
+/**
+ * A range is a pair of points that represent a selection in the text. A range
+ * can be collapsed to a single point, at which point it is called a *marker*,
+ * if it is stored in the text, or *caret*, if it is a cursor position. 
+ */
 export class Range implements Printable {
+  /**
+   * Creates a range from two points. The points are ordered so that the
+   * start point is before or equal to the end point.
+   *
+   * @param txt Peritext context.
+   * @param p1 Some point.
+   * @param p2 Another point.
+   * @returns Range with points in correct order.
+   */
   public static from(txt: Peritext, p1: Point, p2: Point) {
     return p1.compareSpatial(p2) > 0 ? new Range(txt, p2, p1) : new Range(txt, p1, p2);
   }
 
+  /**
+   * @param txt Peritext context.
+   * @param start Start point of the range, must be before or equal to end.
+   * @param end End point of the range, must be after or equal to start.
+   */
   constructor(
     protected readonly txt: Peritext,
     public start: Point,
     public end: Point,
   ) {}
 
+  /**
+   * Clones the range.
+   *
+   * @returns A new range with the same start and end points.
+   */
   public clone(): Range {
     return new Range(this.txt, this.start.clone(), this.end.clone());
   }
 
+  /**
+   * Determines if the range is collapsed to a single point. Handles special
+   * cases where the range is collapsed, but the points are not equal, for
+   * example, when the characters between the points are invisible.
+   *
+   * @returns True if the range is collapsed to a single point.
+   */
   public isCollapsed(): boolean {
     const start = this.start;
     const end = this.end;
@@ -41,12 +72,20 @@ export class Range implements Printable {
     return false;
   }
 
+  /**
+   * Collapse the range to the start point and sets the anchor position to be
+   * "after" the character.
+   */
   public collapseToStart(): void {
     this.start = this.start.clone();
     this.start.refAfter();
     this.end = this.start.clone();
   }
 
+  /**
+   * Collapse the range to the end point and sets the anchor position to be
+   * "before" the character.
+   */
   public collapseToEnd(): void {
     this.end = this.end.clone();
     this.end.refAfter();
@@ -163,6 +202,12 @@ export class Range implements Printable {
     }
   }
 
+  /**
+   * Concatenates all text chunks in the range ignoring tombstones and returns
+   * the result.
+   *
+   * @returns The text content of the range.
+   */
   public text(): string {
     const isCaret = this.isCollapsed();
     if (isCaret) return '';
