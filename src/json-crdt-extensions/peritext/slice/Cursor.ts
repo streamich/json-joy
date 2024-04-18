@@ -15,6 +15,8 @@ export class Cursor extends Range implements Slice {
    * the end which does not move when user changes selection. The other
    * end is free to move, the moving end of the cursor is "focus". By default
    * "anchor" is the start of the cursor.
+   *
+   * @todo Create a custom enum for this, instead of using `Anchor`.
    */
   public base: Anchor = Anchor.Before;
 
@@ -35,10 +37,10 @@ export class Cursor extends Range implements Slice {
     return this.base === Anchor.Before ? this.end : this.start;
   }
 
-  public set(start: Point, end?: Point, anchor: Anchor = Anchor.Before): void {
+  public set(start: Point, end?: Point, base: Anchor = Anchor.Before): void {
     if (!end || end === start) end = start.clone();
     super.set(start, end);
-    this.base = anchor;
+    this.base = base;
   }
 
   public setAt(start: number, length: number = 0): void {
@@ -75,7 +77,7 @@ export class Cursor extends Range implements Slice {
     }
   }
 
-  /** @deprecated What is this method for? */
+  /** @todo Maybe move it to another interface? */
   public del(): boolean {
     return false;
   }

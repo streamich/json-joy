@@ -122,4 +122,12 @@ export class Editor implements Printable {
   public insertSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
     return this.txt.insSlice(this.cursor, SliceBehavior.Stack, type, data);
   }
+
+  public insertOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    return this.txt.insSlice(this.cursor, SliceBehavior.Overwrite, type, data);
+  }
+
+  public insertEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    return this.txt.insSlice(this.cursor, SliceBehavior.Erase, type, data);
+  }
 }
