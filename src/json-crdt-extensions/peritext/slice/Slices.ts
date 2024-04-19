@@ -7,6 +7,7 @@ import {printTree} from '../../../util/print/printTree';
 import {SliceBehavior, SliceHeaderShift} from './constants';
 import {SplitSlice} from './SplitSlice';
 import {VecNode} from '../../../json-crdt/nodes';
+import {AvlMap} from '../../../util/trees/avl/AvlMap';
 import type {Slice} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceType, Stateful} from '../types';
@@ -15,7 +16,7 @@ import type {Printable} from '../../../util/print/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 
 export class Slices implements Stateful, Printable {
-  private list = new Map<ArrChunk, PersistedSlice>();
+  private list = new AvlMap<ITimestampStruct, PersistedSlice>(compare);
 
   constructor(
     public readonly txt: Peritext,
@@ -57,7 +58,7 @@ export class Slices implements Stateful, Printable {
       behavior === SliceBehavior.Split
         ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
         : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
-    this.list.set(chunk, slice);
+    this.list.set(chunk.id, slice);
     return slice;
   }
 
@@ -74,6 +75,10 @@ export class Slices implements Stateful, Printable {
     if (slice.isSplit())
       slice = new SplitSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
+  }
+
+  public get(id: ITimestampStruct): PersistedSlice | undefined {
+    return this.list.get(id);
   }
 
   public del(id: ITimestampStruct): void {
@@ -98,11 +103,11 @@ export class Slices implements Stateful, Printable {
   }
 
   public size(): number {
-    return this.list.size;
+    return this.list._size;
   }
 
   public forEach(callback: (item: PersistedSlice) => void): void {
-    this.list.forEach(callback);
+    this.list.forEach((node) => callback(node.v));
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -116,16 +121,16 @@ export class Slices implements Stateful, Printable {
       this._topologyHash = topologyHash;
       let chunk: ArrChunk | undefined;
       for (const iterator = this.set.iterator(); (chunk = iterator()); ) {
-        const item = this.list.get(chunk);
+        const item = this.list.get(chunk.id);
         if (chunk.del) {
-          if (item) this.list.delete(chunk);
+          if (item) this.list.del(chunk.id);
         } else {
-          if (!item) this.list.set(chunk, this.unpack(chunk));
+          if (!item) this.list.set(chunk.id, this.unpack(chunk));
         }
       }
     }
     let hash: number = topologyHash;
-    this.list.forEach((item) => {
+    this.list.forEach(({v: item}) => {
       item.refresh();
       hash = updateNum(hash, item.hash);
     });
@@ -139,10 +144,10 @@ export class Slices implements Stateful, Printable {
       this.constructor.name +
       printTree(
         tab,
-        [...this.list].map(
-          ([, slice]) =>
+        [...this.list.entries()].map(
+          ({v}) =>
             (tab) =>
-              slice.toString(tab),
+              v.toString(tab),
         ),
       )
     );
