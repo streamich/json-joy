@@ -25,6 +25,56 @@ export class Range implements Printable {
   }
 
   /**
+   * A convenience method for creating a range from a view position and a length.
+   * The `start` argument specifies the position between characters, where
+   * the range should start. The `size` argument specifies the number of
+   * characters in the range. If `size` is zero or not specified, the range
+   * will be collapsed to a single point.
+   * 
+   * When the range is collapsed, the anchor position is set to "after" the
+   * character. When the range is expanded, the anchor positions are set to
+   * "before" for the start point and "after" for the end point.
+   * 
+   * The `size` argument can be negative, in which case the range is selected
+   * backwards.
+   *
+   * @param txt Peritext context.
+   * @param start Position in the text between characters.
+   * @param size Length of the range. Can be negative, in which case the range
+   *             is selected backwards.
+   * @returns A range from the given position with the given length.
+   */
+  public static at(txt: Peritext, start: number, size: number = 0): Range {
+    const str = txt.str;
+    const length = str.length();
+    if (!size) {
+      if (start > length) start = length;
+      const startId = !start ? str.id : str.find(start - 1) || str.id;
+      const point = txt.point(startId, Anchor.After);
+      return new Range(txt, point, point.clone());
+    }
+    if (size < 0) {
+      size = -size;
+      start -= size;
+    }
+    if (start < 0) {
+      size += start;
+      start = 0;
+      if (size < 0) return Range.at(txt, start, 0);
+    }
+    if (start >= length) {
+      start = length;
+      size = 0;
+    }
+    if (start + size > length) size = length - start;
+    const startId = str.find(start) || str.id;
+    const endId = str.find(start + size - 1) || startId;
+    const startEndpoint = txt.point(startId, Anchor.Before);
+    const endEndpoint = txt.point(endId, Anchor.After);
+    return new Range(txt, startEndpoint, endEndpoint);
+  }
+
+  /**
    * @param txt Peritext context.
    * @param start Start point of the range, must be before or equal to end.
    * @param end End point of the range, must be after or equal to start.
@@ -81,17 +131,6 @@ export class Range implements Printable {
     this.start = this.end.clone();
   }
 
-  /**
-   * Returns the range in the view coordinates as a position and length.
-   *
-   * @returns The range as a view position and length.
-   */
-  public views(): [at: number, len: number] {
-    const start = this.start.viewPos();
-    const end = this.end.viewPos();
-    return [start, end - start];
-  }
-
   public set(start: Point, end: Point = start): void {
     this.start = start;
     this.end = end === start ? end.clone() : end;
@@ -102,8 +141,7 @@ export class Range implements Printable {
   }
 
   public setAt(start: number, length: number = 0): void {
-    // TODO: move implementation to here
-    const range = this.txt.rangeAt(start, length);
+    const range = Range.at(this.txt, start, length);
     this.setRange(range);
   }
 
@@ -197,9 +235,29 @@ export class Range implements Printable {
     }
   }
 
+  // -------------------------------------------------- View coordinate methods
+
   /**
-   * Concatenates all text chunks in the range ignoring tombstones and returns
-   * the result.
+   * Returns the range in the view coordinates as a position and length.
+   *
+   * @returns The range as a view position and length.
+   */
+  public view(): [start: number, size: number] {
+    const start = this.start.viewPos();
+    const end = this.end.viewPos();
+    return [start, end - start];
+  }
+
+  /**
+   * @returns The length of the range in view coordinates.
+   */
+  public length(): number {
+    return this.end.viewPos() - this.start.viewPos();
+  }
+
+  /**
+   * Returns plain text view of the range. Concatenates all text chunks in the
+   * range ignoring tombstones and returns the result.
    *
    * @returns The text content of the range.
    */

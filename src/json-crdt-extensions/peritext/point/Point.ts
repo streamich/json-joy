@@ -69,7 +69,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Compares two points by their spatial (view) location in the string. Takes
    * into account not only the character position in the view, but also handles
-   * deleted characters and absolute points.
+   * deleted characters, attachment anchors, and absolute points.
    *
    * @param other The other point to compare to.
    * @returns Returns 0 if the two points are equal, negative if this point is
