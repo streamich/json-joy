@@ -1,27 +1,26 @@
 import {Point} from '../point/Point';
 import {Anchor} from '../constants';
-import {StringChunk} from '../util/types';
 import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
-import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
+import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 
 /**
  * A range is a pair of points that represent a selection in the text. A range
  * can be collapsed to a single point, then it is called a *marker*
  * (if it is stored in the text), or *caret* (if it is a cursor position).
  */
-export class Range implements Printable {
+export class Range<T = string> implements Printable {
   /**
    * Creates a range from two points. The points are ordered so that the
    * start point is before or equal to the end point.
    *
-   * @param txt Peritext context.
+   * @param rga Peritext context.
    * @param p1 Some point.
    * @param p2 Another point.
    * @returns Range with points in correct order.
    */
-  public static from(txt: Peritext, p1: Point, p2: Point) {
-    return p1.compareSpatial(p2) > 0 ? new Range(txt, p2, p1) : new Range(txt, p1, p2);
+  public static from<T = string>(rga: AbstractRga<T>, p1: Point<T>, p2: Point<T>): Range<T> {
+    return p1.compareSpatial(p2) > 0 ? new Range(rga, p2, p1) : new Range(rga, p1, p2);
   }
 
   /**
@@ -38,20 +37,19 @@ export class Range implements Printable {
    * The `size` argument can be negative, in which case the range is selected
    * backwards.
    *
-   * @param txt Peritext context.
+   * @param rga Peritext context.
    * @param start Position in the text between characters.
    * @param size Length of the range. Can be negative, in which case the range
    *             is selected backwards.
    * @returns A range from the given position with the given length.
    */
-  public static at(txt: Peritext, start: number, size: number = 0): Range {
-    const str = txt.str;
-    const length = str.length();
+  public static at<T = string>(rga: AbstractRga<T>, start: number, size: number = 0): Range<T> {
+    const length = rga.length();
     if (!size) {
       if (start > length) start = length;
-      const startId = !start ? str.id : str.find(start - 1) || str.id;
-      const point = txt.point(startId, Anchor.After);
-      return new Range(txt, point, point.clone());
+      const startId = !start ? rga.id : rga.find(start - 1) || rga.id;
+      const point = new Point(rga, startId, Anchor.After);
+      return new Range<T>(rga, point, point.clone());
     }
     if (size < 0) {
       size = -size;
@@ -60,29 +58,29 @@ export class Range implements Printable {
     if (start < 0) {
       size += start;
       start = 0;
-      if (size < 0) return Range.at(txt, start, 0);
+      if (size < 0) return Range.at(rga, start, 0);
     }
     if (start >= length) {
       start = length;
       size = 0;
     }
     if (start + size > length) size = length - start;
-    const startId = str.find(start) || str.id;
-    const endId = str.find(start + size - 1) || startId;
-    const startEndpoint = txt.point(startId, Anchor.Before);
-    const endEndpoint = txt.point(endId, Anchor.After);
-    return new Range(txt, startEndpoint, endEndpoint);
+    const startId = rga.find(start) || rga.id;
+    const endId = rga.find(start + size - 1) || startId;
+    const startEndpoint = new Point(rga, startId, Anchor.Before);
+    const endEndpoint = new Point(rga, endId, Anchor.After);
+    return new Range(rga, startEndpoint, endEndpoint);
   }
 
   /**
-   * @param txt Peritext context.
+   * @param rga Peritext context.
    * @param start Start point of the range, must be before or equal to end.
    * @param end End point of the range, must be after or equal to start.
    */
   constructor(
-    protected readonly txt: Peritext,
-    public start: Point,
-    public end: Point,
+    protected readonly rga: AbstractRga<T>,
+    public start: Point<T>,
+    public end: Point<T>,
   ) {}
 
   /**
@@ -90,8 +88,8 @@ export class Range implements Printable {
    *
    * @returns A new range with the same start and end points.
    */
-  public clone(): Range {
-    return new Range(this.txt, this.start.clone(), this.end.clone());
+  public clone(): Range<T> {
+    return new Range(this.rga, this.start.clone(), this.end.clone());
   }
 
   /**
@@ -131,33 +129,32 @@ export class Range implements Printable {
     this.start = this.end.clone();
   }
 
-  public set(start: Point, end: Point = start): void {
+  public set(start: Point<T>, end: Point<T> = start): void {
     this.start = start;
     this.end = end === start ? end.clone() : end;
   }
 
-  public setRange(range: Range): void {
+  public setRange(range: Range<T>): void {
     this.set(range.start, range.end);
   }
 
   public setAt(start: number, length: number = 0): void {
-    const range = Range.at(this.txt, start, length);
+    const range = Range.at<T>(this.rga, start, length);
     this.setRange(range);
   }
 
   /** @todo Can this be moved to Cursor? */
   public setCaret(after: ITimestampStruct, shift: number = 0): void {
     const id = shift ? tick(after, shift) : after;
-    const txt = this.txt;
-    const caretAfter = new Point(txt.str, id, Anchor.After);
+    const caretAfter = new Point(this.rga, id, Anchor.After);
     this.set(caretAfter);
   }
 
-  public contains(range: Range): boolean {
+  public contains(range: Range<T>): boolean {
     return this.start.compareSpatial(range.start) <= 0 && this.end.compareSpatial(range.end) >= 0;
   }
 
-  public containsPoint(range: Point): boolean {
+  public containsPoint(range: Point<T>): boolean {
     return this.start.compareSpatial(range) <= 0 && this.end.compareSpatial(range) >= 0;
   }
 
@@ -171,8 +168,7 @@ export class Range implements Printable {
   }
 
   public expandStart(): void {
-    const start = this.start;
-    const str = this.txt.str;
+    const {start, rga: rga} = this;
     let chunk = start.chunk();
     if (!chunk) return;
     if (!chunk.del) {
@@ -185,7 +181,7 @@ export class Range implements Printable {
       }
     }
     while (chunk) {
-      const prev = str.prev(chunk);
+      const prev = rga.prev(chunk);
       if (!prev) {
         start.id = chunk.id;
         start.anchor = Anchor.Before;
@@ -204,8 +200,7 @@ export class Range implements Printable {
   }
 
   public expandEnd(): void {
-    const end = this.end;
-    const str = this.txt.str;
+    const {end, rga: rga} = this;
     let chunk = end.chunk();
     if (!chunk) return;
     if (!chunk.del) {
@@ -218,7 +213,7 @@ export class Range implements Printable {
       }
     }
     while (chunk) {
-      const next = str.next(chunk);
+      const next = rga.next(chunk);
       if (!next) {
         end.id = chunk.span > 1 ? tick(chunk.id, chunk.span - 1) : chunk.id;
         end.anchor = Anchor.After;
@@ -266,13 +261,13 @@ export class Range implements Printable {
     const isCaret = this.isCollapsed();
     if (isCaret) return '';
     const {start, end} = this;
-    const str = this.txt.str;
+    const rga = this.rga;
     const startId = start.anchor === Anchor.Before ? start.id : start.nextId();
     const endId = end.anchor === Anchor.After ? end.id : end.prevId();
     if (!startId || !endId) return '';
     let result = '';
-    str.range0(undefined, startId, endId, (chunk: StringChunk, from: number, length: number) => {
-      if (chunk.data) result += chunk.data.slice(from, from + length);
+    rga.range0(undefined, startId, endId, (chunk: Chunk<T>, from: number, length: number) => {
+      if (chunk.data) result += chunk.view().slice(from, from + length);
     });
     return result;
   }

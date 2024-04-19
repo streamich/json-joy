@@ -92,7 +92,7 @@ export class Peritext implements Printable {
    * @returns A range with points in correct order.
    */
   public rangeFromPoints(p1: Point, p2: Point): Range {
-    return Range.from(this, p1, p2);
+    return Range.from(this.str, p1, p2);
   }
 
   /**
@@ -103,7 +103,7 @@ export class Peritext implements Printable {
    * @returns A range with the given start and end points.
    */
   public range(start: Point, end: Point): Range {
-    return new Range(this, start, end);
+    return new Range(this.str, start, end);
   }
 
   /**
@@ -115,7 +115,7 @@ export class Peritext implements Printable {
    * @returns A range from the given position with the given length.
    */
   public rangeAt(start: number, length: number = 0): Range {
-    return Range.at(this, start, length);
+    return Range.at(this.str, start, length);
   }
 
   // --------------------------------------------------------------- Insertions
