@@ -58,7 +58,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns 0 if the two points are equal, -1 if this point is less
    *          than the other point, and 1 if this point is greater than the other
    *          point.
-   * 
+   *
    * @todo Rename to `cmp`.
    */
   public compare(other: Point<T>): -1 | 0 | 1 {
@@ -76,7 +76,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns 0 if the two points are equal, negative if this point is
    *          less than the other point, and positive if this point is greater
    *          than the other point.
-   * 
+   *
    * @todo Rename to `cmpSpatial`.
    */
   public compareSpatial(other: Point<T>): number {
