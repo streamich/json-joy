@@ -52,10 +52,11 @@ export class Slices implements Stateful, Printable {
     const tuple = model.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
+    const txt = this.txt;
     const slice =
       behavior === SliceBehavior.Split
-        ? new SplitSlice(this.txt, chunk, tuple, behavior, start, end, type)
-        : new PersistedSlice(this.txt, chunk, tuple, behavior, start, end, type);
+        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, start, end, type)
+        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, start, end, type);
     this.list.set(chunk, slice);
     return slice;
   }
@@ -80,8 +81,8 @@ export class Slices implements Stateful, Printable {
     const type = tuple.get(3)!.view() as SliceType;
     const slice =
       behavior === SliceBehavior.Split
-        ? new SplitSlice(this.txt, chunk, tuple, behavior, p1, p2, type)
-        : new PersistedSlice(this.txt, chunk, tuple, behavior, p1, p2, type);
+        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, p1, p2, type)
+        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, p1, p2, type);
     return slice;
   }
 

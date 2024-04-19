@@ -10,29 +10,37 @@ import type {Peritext} from '../Peritext';
 import type {SliceDto, SliceType, Stateful} from '../types';
 import type {Printable} from '../../../util/print/types';
 import type {JsonNode, VecNode} from '../../../json-crdt/nodes';
+import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 
-export class PersistedSlice extends Range implements Slice, Printable, Stateful {
-  public readonly id: ITimestampStruct;
-
+export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, Printable, Stateful {
   constructor(
     protected readonly txt: Peritext,
+    protected readonly rga: AbstractRga<T>,
     protected readonly chunk: ArrChunk,
     public readonly tuple: VecNode,
-    public behavior: SliceBehavior,
+    behavior: SliceBehavior,
     /** @todo Rename to x1? */
-    public start: Point,
+    public start: Point<T>,
     /** @todo Rename to x2? */
-    public end: Point,
-    public type: SliceType,
+    public end: Point<T>,
+    type: SliceType,
   ) {
-    super(txt.str, start, end);
+    super(rga, start, end);
     this.id = this.chunk.id;
+    this.behavior = behavior;
+    this.type = type;
   }
 
   protected tagNode(): JsonNode | undefined {
     // TODO: Normalize `.get()` and `.getNode()` methods across VecNode and ArrNode.
     return this.tuple.get(3);
   }
+
+  // -------------------------------------------------------------------- Slice
+
+  public readonly id: ITimestampStruct;
+  public behavior: SliceBehavior;
+  public type: SliceType;
 
   public data(): unknown | undefined {
     return this.tuple.get(4)?.view();
@@ -58,6 +66,9 @@ export class PersistedSlice extends Range implements Slice, Printable, Stateful 
   public refresh(): number {
     const hash = hashNode(this.tuple);
     const changed = hash !== this.hash;
+
+    // TODO: Add .refresh() to Range.
+
     this.hash = hash;
     if (changed) {
       const tuple = this.tuple;
