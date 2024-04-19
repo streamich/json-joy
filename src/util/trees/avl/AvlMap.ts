@@ -79,7 +79,7 @@ export class AvlMap<K, V> implements Printable {
     this._size = 0;
     this.root = undefined;
   }
- 
+
   public has(k: K): boolean {
     return !!this.find(k);
   }
