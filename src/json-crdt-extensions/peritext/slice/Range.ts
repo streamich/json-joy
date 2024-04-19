@@ -149,7 +149,7 @@ export class Range implements Printable {
   public setCaret(after: ITimestampStruct, shift: number = 0): void {
     const id = shift ? tick(after, shift) : after;
     const txt = this.txt;
-    const caretAfter = new Point(txt, txt.str, id, Anchor.After);
+    const caretAfter = new Point(txt.str, id, Anchor.After);
     this.set(caretAfter);
   }
 

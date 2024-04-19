@@ -4,7 +4,6 @@ import {ChunkSlice} from '../util/ChunkSlice';
 import {updateId} from '../../../json-crdt/hash';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
-import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 
 /**
@@ -25,7 +24,6 @@ import type {Printable} from '../../../util/print/types';
  */
 export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   constructor(
-    protected readonly txt: Peritext,
     protected readonly rga: AbstractRga<T>,
     public id: ITimestampStruct,
     public anchor: Anchor,
@@ -48,7 +46,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns a new point with the same ID and anchor as this point.
    */
   public clone(): Point<T> {
-    return new Point(this.txt, this.rga, this.id, this.anchor);
+    return new Point(this.rga, this.id, this.anchor);
   }
 
   /**

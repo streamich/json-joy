@@ -75,8 +75,8 @@ export class Slices implements Stateful, Printable {
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
     if (!(id1 instanceof Timestamp)) throw new Error('INVALID_ID');
     if (!(id2 instanceof Timestamp)) throw new Error('INVALID_ID');
-    const p1 = new Point(txt, txt.str, id1, anchor1);
-    const p2 = new Point(txt, txt.str, id2, anchor2);
+    const p1 = new Point(txt.str, id1, anchor1);
+    const p2 = new Point(txt.str, id2, anchor2);
     const type = tuple.get(3)!.view() as SliceType;
     const slice =
       behavior === SliceBehavior.Split

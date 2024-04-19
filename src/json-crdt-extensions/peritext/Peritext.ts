@@ -42,7 +42,7 @@ export class Peritext implements Printable {
    * @returns The point.
    */
   public point(id: ITimestampStruct = this.str.id, anchor: Anchor = Anchor.After): Point {
-    return new Point(this, this.str, id, anchor);
+    return new Point(this.str, id, anchor);
   }
 
   /**
