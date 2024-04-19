@@ -5,7 +5,7 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import type {Range} from '../slice/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
-import type {Point} from '../point/Point';
+import type {Point} from '../rga/Point';
 import type {SliceType} from '../types';
 
 export class Editor implements Printable {

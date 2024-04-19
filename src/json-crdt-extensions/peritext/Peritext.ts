@@ -1,5 +1,5 @@
 import {Anchor, SliceBehavior} from './constants';
-import {Point} from './point/Point';
+import {Point} from './rga/Point';
 import {Range} from './slice/Range';
 import {Editor} from './editor/Editor';
 import {printTree} from '../../util/print/printTree';

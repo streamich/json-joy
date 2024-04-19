@@ -1,4 +1,4 @@
-import {Point} from '../point/Point';
+import {Point} from '../rga/Point';
 import {Anchor, SliceBehavior, Tags} from '../constants';
 import {Range} from './Range';
 import {printTree} from '../../../util/print/printTree';

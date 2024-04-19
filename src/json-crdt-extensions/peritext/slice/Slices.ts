@@ -6,7 +6,7 @@ import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
 import {Anchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift} from '../constants';
 import {SplitSlice} from './SplitSlice';
-import {Point} from '../point/Point';
+import {Point} from '../rga/Point';
 import {Slice} from './types';
 import {VecNode} from '../../../json-crdt/nodes';
 import type {SliceDto, SliceType, Stateful} from '../types';

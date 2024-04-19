@@ -1,4 +1,4 @@
-import {Point} from '../point/Point';
+import {Point} from '../rga/Point';
 import {Range} from './Range';
 import {hashNode} from '../../../json-crdt/hash';
 import {printTree} from '../../../util/print/printTree';
