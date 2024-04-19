@@ -30,11 +30,11 @@ export class Range implements Printable {
    * the range should start. The `size` argument specifies the number of
    * characters in the range. If `size` is zero or not specified, the range
    * will be collapsed to a single point.
-   * 
+   *
    * When the range is collapsed, the anchor position is set to "after" the
    * character. When the range is expanded, the anchor positions are set to
    * "before" for the start point and "after" for the end point.
-   * 
+   *
    * The `size` argument can be negative, in which case the range is selected
    * backwards.
    *
