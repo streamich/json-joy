@@ -1,6 +1,6 @@
 import {insert, insertLeft, remove, insertRight, print} from './util';
 import {printTree} from '../../print/printTree';
-import {findOrNextLower, first, next} from '../util';
+import {findOrNextLower, first, next, size} from '../util';
 import type {Printable} from '../../print/types';
 import type {Comparator, HeadlessNode} from '../types';
 import type {AvlNodeReference, IAvlTreeNode} from './types';
@@ -81,12 +81,7 @@ export class AvlMap<K, V> implements Printable {
   }
 
   public size(): number {
-    const root = this.root;
-    if (!root) return 0;
-    let curr = first(root);
-    let size = 1;
-    while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined)) size++;
-    return size;
+    return size(this.root);
   }
 
   public isEmpty(): boolean {
