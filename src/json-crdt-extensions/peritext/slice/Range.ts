@@ -1,6 +1,6 @@
 import {Point} from '../point/Point';
 import {Anchor} from '../constants';
-import {type ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Printable} from '../../../util/print/types';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 
@@ -161,72 +161,8 @@ export class Range<T = string> implements Printable {
    * (2) anchors of non-deleted adjacent chunks.
    */
   public expand(): void {
-    this.expandStart();
-    this.expandEnd();
-  }
-
-  public expandStart(): void {
-    const {start, rga: rga} = this;
-    let chunk = start.chunk();
-    if (!chunk) return;
-    if (!chunk.del) {
-      if (start.anchor === Anchor.After) return;
-      const pointIsStartOfChunk = start.id.time === chunk.id.time;
-      if (!pointIsStartOfChunk) {
-        start.id = tick(start.id, -1);
-        start.anchor = Anchor.After;
-        return;
-      }
-    }
-    while (chunk) {
-      const prev = rga.prev(chunk);
-      if (!prev) {
-        start.id = chunk.id;
-        start.anchor = Anchor.Before;
-        break;
-      } else {
-        if (prev.del) {
-          chunk = prev;
-          continue;
-        } else {
-          start.id = prev.span > 1 ? tick(prev.id, prev.span - 1) : prev.id;
-          start.anchor = Anchor.After;
-          break;
-        }
-      }
-    }
-  }
-
-  public expandEnd(): void {
-    const {end, rga: rga} = this;
-    let chunk = end.chunk();
-    if (!chunk) return;
-    if (!chunk.del) {
-      if (end.anchor === Anchor.Before) return;
-      const pointIsEndOfChunk = end.id.time === chunk.id.time + chunk.span - 1;
-      if (!pointIsEndOfChunk) {
-        end.id = tick(end.id, 1);
-        end.anchor = Anchor.Before;
-        return;
-      }
-    }
-    while (chunk) {
-      const next = rga.next(chunk);
-      if (!next) {
-        end.id = chunk.span > 1 ? tick(chunk.id, chunk.span - 1) : chunk.id;
-        end.anchor = Anchor.After;
-        break;
-      } else {
-        if (next.del) {
-          chunk = next;
-          continue;
-        } else {
-          end.id = next.id;
-          end.anchor = Anchor.Before;
-          break;
-        }
-      }
-    }
+    this.start.refAfter();
+    this.end.refBefore();
   }
 
   // -------------------------------------------------- View coordinate methods
