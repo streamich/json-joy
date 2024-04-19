@@ -6,8 +6,8 @@ import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
 import {SliceBehavior, SliceHeaderShift} from './constants';
 import {SplitSlice} from './SplitSlice';
-import {Slice} from './types';
 import {VecNode} from '../../../json-crdt/nodes';
+import type {Slice} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceType, Stateful} from '../types';
 import type {Peritext} from '../Peritext';
@@ -66,7 +66,7 @@ export class Slices implements Stateful, Printable {
     const rga = txt.str;
     const model = txt.model;
     const tupleId = chunk.data ? chunk.data[0] : undefined;
-    if (!tupleId) throw new Error('MARKER_NOT_FOUND');
+    if (!tupleId) throw new Error('SLICE_NOT_FOUND');
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
