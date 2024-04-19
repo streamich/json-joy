@@ -143,19 +143,17 @@ export class Range<T = string> implements Printable {
     this.setRange(range);
   }
 
-  /** @todo Can this be moved to Cursor? */
-  public setCaret(after: ITimestampStruct, shift: number = 0): void {
-    const id = shift ? tick(after, shift) : after;
-    const caretAfter = new Point(this.rga, id, Anchor.After);
-    this.set(caretAfter);
+  public setAfter(id: ITimestampStruct): void {
+    const point = new Point(this.rga, id, Anchor.After);
+    this.set(point);
   }
 
   public contains(range: Range<T>): boolean {
     return this.start.compareSpatial(range.start) <= 0 && this.end.compareSpatial(range.end) >= 0;
   }
 
-  public containsPoint(range: Point<T>): boolean {
-    return this.start.compareSpatial(range) <= 0 && this.end.compareSpatial(range) >= 0;
+  public containsPoint(point: Point<T>): boolean {
+    return this.start.compareSpatial(point) <= 0 && this.end.compareSpatial(point) >= 0;
   }
 
   /**
@@ -278,6 +276,8 @@ export class Range<T = string> implements Printable {
     const name = lite ? '' : `${this.constructor.name} `;
     const start = this.start.toString(tab, lite);
     const end = this.end.toString(tab, lite);
-    return `${name}${start} ↔ ${end}`;
+    let text = this.text();
+    if (text.length > 16) text = text.slice(0, 16) + '...';
+    return `${JSON.stringify(text)} ${name}${start} ↔ ${end}`;
   }
 }

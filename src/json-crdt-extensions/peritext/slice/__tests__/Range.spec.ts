@@ -346,6 +346,21 @@ describe('.contains()', () => {
   });
 });
 
+describe('.containsPoint()', () => {
+  test('returns true if slice is contained', () => {
+    const {peritext} = setup();
+    const point = peritext.pointAt(2, Anchor.After);
+    const range1 = peritext.rangeAt(2, 2);
+    const range2 = peritext.rangeAt(3, 2);
+    expect(range1.containsPoint(point)).toBe(true);
+    expect(range2.containsPoint(point)).toBe(false);
+    range2.start.refAfter();
+    expect(range2.containsPoint(point)).toBe(true);
+    const range3 = peritext.rangeAt(1, 2);
+    expect(range3.containsPoint(point)).toBe(true);
+  });
+});
+
 describe('.isCollapsed()', () => {
   test('returns true when endpoints point to the same location', () => {
     const {peritext} = setup();
