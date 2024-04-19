@@ -1,15 +1,15 @@
 import {PersistedSlice} from './PersistedSlice';
-import {ITimespanStruct, ITimestampStruct, Timespan, Timestamp, compare, tss} from '../../../json-crdt-patch/clock';
+import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
 import {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
-import {Anchor, SliceBehavior, SliceHeaderMask, SliceHeaderShift} from '../constants';
+import {SliceBehavior, SliceHeaderShift} from '../constants';
 import {SplitSlice} from './SplitSlice';
-import {Point} from '../rga/Point';
 import {Slice} from './types';
 import {VecNode} from '../../../json-crdt/nodes';
-import type {SliceDto, SliceType, Stateful} from '../types';
+import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
+import type {SliceType, Stateful} from '../types';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
@@ -55,34 +55,23 @@ export class Slices implements Stateful, Printable {
     const txt = this.txt;
     const slice =
       behavior === SliceBehavior.Split
-        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, start, end, type)
-        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, start, end, type);
+        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
+        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk, slice);
     return slice;
   }
 
   protected unpack(chunk: ArrChunk): PersistedSlice {
     const txt = this.txt;
+    const rga = txt.str;
     const model = txt.model;
     const tupleId = chunk.data ? chunk.data[0] : undefined;
     if (!tupleId) throw new Error('MARKER_NOT_FOUND');
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
-    const header = +(tuple.get(0)!.view() as SliceDto[0]);
-    const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
-    const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
-    const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
-    const id1 = tuple.get(1)!.view() as ITimestampStruct;
-    const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
-    if (!(id1 instanceof Timestamp)) throw new Error('INVALID_ID');
-    if (!(id2 instanceof Timestamp)) throw new Error('INVALID_ID');
-    const p1 = new Point(txt.str, id1, anchor1);
-    const p2 = new Point(txt.str, id2, anchor2);
-    const type = tuple.get(3)!.view() as SliceType;
-    const slice =
-      behavior === SliceBehavior.Split
-        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, p1, p2, type)
-        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, p1, p2, type);
+    let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
+    // TODO: Simplify, remove `SplitSlice` class.
+    if (slice.isSplit()) slice = new SplitSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
   }
 

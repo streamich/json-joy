@@ -1,15 +1,17 @@
 import {Point} from './Point';
 import {Anchor} from '../constants';
+import {updateNum} from '../../../json-hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Printable} from '../../../util/print/types';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
+import type {Stateful} from '../types';
 
 /**
  * A range is a pair of points that represent a selection in the text. A range
  * can be collapsed to a single point, then it is called a *marker*
  * (if it is stored in the text), or *caret* (if it is a cursor position).
  */
-export class Range<T = string> implements Printable {
+export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Creates a range from two points. The points are ordered so that the
    * start point is before or equal to the end point.
@@ -204,6 +206,14 @@ export class Range<T = string> implements Printable {
       if (chunk.data) result += chunk.view().slice(from, from + length);
     });
     return result;
+  }
+
+  // ----------------------------------------------------------------- Stateful
+
+  public refresh(): number {
+    let state = this.start.refresh();
+    state = updateNum(state, this.end.refresh());
+    return state;
   }
 
   // ---------------------------------------------------------------- Printable

@@ -7,6 +7,8 @@ export const enum Tags {
   Cursor = 0,
 }
 
+// TODO: MOVE to /slices
+
 export const enum SliceHeaderMask {
   X1Anchor = 0b1,
   X2Anchor = 0b10,
