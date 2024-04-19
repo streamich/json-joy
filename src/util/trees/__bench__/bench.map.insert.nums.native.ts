@@ -3,6 +3,7 @@
 import {runBenchmark, IBenchmark} from '../../../__bench__/runBenchmark';
 import {Tree} from '../Tree';
 import {AvlBstNumNumMap} from '../avl/AvlBstNumNumMap';
+import {AvlMap} from '../avl/AvlMap';
 import {RadixTree} from '../radix/RadixTree';
 import * as payloads from './payloads';
 
@@ -58,6 +59,20 @@ const benchmark: IBenchmark = {
       setup: () => {
         return (num: unknown) => {
           const map = new AvlBstNumNumMap();
+          const numbers = num as number[];
+          const length = numbers.length;
+          for (let i = 0; i < length; i++) {
+            const key = numbers[i];
+            map.set(key, key);
+          }
+        };
+      },
+    },
+    {
+      name: 'json-joy AvlMap<number, number>',
+      setup: () => {
+        return (num: unknown) => {
+          const map = new AvlMap<number, number>();
           const numbers = num as number[];
           const length = numbers.length;
           for (let i = 0; i < length; i++) {
