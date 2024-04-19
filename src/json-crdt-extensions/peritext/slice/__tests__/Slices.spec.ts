@@ -4,7 +4,7 @@ import {Anchor} from '../../rga/constants';
 import {SliceBehavior} from '../constants';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
+  const model = Model.withLogicalClock(12345678);
   model.api.root({
     text: '',
     slices: [],
@@ -36,7 +36,7 @@ describe('.ins()', () => {
     expect(slice.end).toStrictEqual(range.end);
     expect(slice.behavior).toBe(SliceBehavior.Stack);
     expect(slice.type).toBe('b');
-    expect(slice.data()).toStrictEqual({bold: true});
+    expect(slice.data()!.view()).toStrictEqual({bold: true});
   });
 
   test('can insert two slices', () => {
@@ -48,8 +48,8 @@ describe('.ins()', () => {
     const slice2 = editor.insertSlice('i', {italic: true});
     peritext.refresh();
     expect(peritext.slices.size()).toBe(2);
-    expect(slice1.data()).toStrictEqual({bold: true});
-    expect(slice2.data()).toStrictEqual({italic: true});
+    expect(slice1.data()!.view()).toStrictEqual({bold: true});
+    expect(slice2.data()!.view()).toStrictEqual({italic: true});
   });
 
   test('updates hash on slice insert', () => {
@@ -85,7 +85,7 @@ describe('.ins()', () => {
   });
 
   test('can store all different slice range and metadata combinations', () => {
-    const {peritext, model} = setup();
+    const {peritext} = setup();
     const r1 = peritext.range(peritext.pointAt(4, Anchor.Before), peritext.pointAt(6, Anchor.After));
     const r2 = peritext.range(peritext.pointAt(2, Anchor.After), peritext.pointAt(8, Anchor.After));
     const r3 = peritext.range(peritext.pointAt(2, Anchor.After), peritext.pointAt(8, Anchor.Before));
@@ -98,12 +98,13 @@ describe('.ins()', () => {
       for (const type of types) {
         for (const data of datas) {
           for (const behavior of behaviors) {
+            const {peritext, model} = setup();
             const slice = peritext.slices.ins(range, behavior, type, data);
             expect(slice.start.cmp(range.start)).toBe(0);
             expect(slice.end.cmp(range.end)).toBe(0);
             expect(slice.behavior).toBe(behavior);
             expect(slice.type).toStrictEqual(type);
-            expect(slice.data()).toStrictEqual(data);
+            expect(slice.data()?.view()).toStrictEqual(data);
             const buf = model.toBinary();
             const model2 = Model.fromBinary(buf);
             const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
@@ -113,7 +114,7 @@ describe('.ins()', () => {
             expect(slice2.end.cmp(range.end)).toBe(0);
             expect(slice2.behavior).toBe(behavior);
             expect(slice2.type).toStrictEqual(type);
-            expect(slice2.data()).toStrictEqual(data);
+            expect(slice2.data()?.view()).toStrictEqual(data);
           }
         }
       }
@@ -121,7 +122,7 @@ describe('.ins()', () => {
   });
 });
 
-describe('deletes', () => {
+describe('.del()', () => {
   test('can delete a slice', () => {
     const {peritext} = setup();
     const {editor} = peritext;
@@ -130,7 +131,7 @@ describe('deletes', () => {
     peritext.refresh();
     const hash1 = peritext.slices.hash;
     expect(peritext.slices.size()).toBe(1);
-    peritext.delSlice(slice1.id);
+    peritext.slices.del(slice1.id);
     peritext.refresh();
     const hash2 = peritext.slices.hash;
     expect(peritext.slices.size()).toBe(0);
@@ -138,7 +139,25 @@ describe('deletes', () => {
   });
 });
 
-describe('tag changes', () => {
+describe('.delSlices()', () => {
+  test('can delete a slice', () => {
+    const {peritext} = setup();
+    const {editor} = peritext;
+    editor.cursor.setAt(6, 5);
+    const slice1 = editor.insertSlice('b', {bold: true});
+    console.log(slice1 + '');
+    peritext.refresh();
+    const hash1 = peritext.slices.hash;
+    expect(peritext.slices.size()).toBe(1);
+    peritext.slices.delSlices([slice1]);
+    peritext.refresh();
+    const hash2 = peritext.slices.hash;
+    expect(peritext.slices.size()).toBe(0);
+    expect(hash1).not.toBe(hash2);
+  });
+});
+
+describe('.refresh()', () => {
   test('recomputes hash on tag change', () => {
     const {peritext} = setup();
     const {editor} = peritext;

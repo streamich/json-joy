@@ -87,7 +87,7 @@ export class Slices implements Stateful, Printable {
     api.apply();
   }
 
-  public delMany(slices: Slice[]): void {
+  public delSlices(slices: Slice[]): void {
     const api = this.txt.model.api;
     const spans: ITimespanStruct[] = [];
     const length = slices.length;

@@ -5,6 +5,7 @@ import {printTree} from '../../../util/print/printTree';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {Slice} from './types';
+import {updateNum} from '../../../json-hash';
 
 export class Cursor extends Range<string> implements Slice {
   public readonly behavior = SliceBehavior.Overwrite;
@@ -80,8 +81,8 @@ export class Cursor extends Range<string> implements Slice {
     return false;
   }
 
-  public data(): unknown {
-    return 1;
+  public data() {
+    return undefined;
   }
 
   public move(move: number): void {
@@ -91,19 +92,23 @@ export class Cursor extends Range<string> implements Slice {
     end.move(move);
   }
 
-  public toString(tab: string = ''): string {
-    const text = JSON.stringify(this.text());
-    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
-    const main = `${this.constructor.name} ${super.toString(tab + '  ', true)} ${focusIcon}`;
-    return main + printTree(tab, [() => text]);
-  }
-
   // ----------------------------------------------------------------- Stateful
 
   public hash: number = 0;
 
   public refresh(): number {
-    // TODO: implement this ...
-    return this.hash;
+    let state = super.refresh();
+    state = updateNum(state, this.anchorSide);
+    this.hash = state;
+    return state;
+  }
+
+  // ---------------------------------------------------------------- Printable
+
+  public toString(tab: string = ''): string {
+    const text = JSON.stringify(this.text());
+    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
+    const main = `${this.constructor.name} ${super.toString(tab + '  ', true)} ${focusIcon}`;
+    return main + printTree(tab, [() => text]);
   }
 }

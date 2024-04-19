@@ -96,8 +96,8 @@ export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, St
   public behavior: SliceBehavior;
   public type: SliceType;
 
-  public data(): unknown | undefined {
-    return this.tuple.get(4)?.view();
+  public data(): JsonNode | undefined {
+    return this.tuple.get(4);
   }
 
   public del(): boolean {
@@ -127,8 +127,11 @@ export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, St
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const tagNode = this.tagNode();
-    const header = `${this.constructor.name} ${super.toString(tab)}`;
-    return header + printTree(tab, [!tagNode ? null : (tab) => tagNode.toString(tab)]);
+    const data = this.data();
+    const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}`;
+    return header + printTree(tab, [
+      // !data ? null : (tab) => JSON.stringify(data.view()).replace(/([\{\[\:])/g, '$1 ').replace(/([\}\]])/g, ' $1'),
+      !data ? null : (tab) => JSON.stringify(data.view()),
+    ]);
   }
 }

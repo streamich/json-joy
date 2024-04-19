@@ -160,12 +160,6 @@ export class Peritext implements Printable {
     return slice;
   }
 
-  // ---------------------------------------------------------------- Deletions
-
-  public delSlice(sliceId: ITimestampStruct): void {
-    this.slices.del(sliceId);
-  }
-
   /** Select a single character before a point. */
   public findCharBefore(point: Point): Range | undefined {
     if (point.anchor === Anchor.After) {
