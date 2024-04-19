@@ -148,7 +148,8 @@ export class Range implements Printable {
   /** @todo Can this be moved to Cursor? */
   public setCaret(after: ITimestampStruct, shift: number = 0): void {
     const id = shift ? tick(after, shift) : after;
-    const caretAfter = new Point(this.txt, id, Anchor.After);
+    const txt = this.txt;
+    const caretAfter = new Point(txt, txt.str, id, Anchor.After);
     this.set(caretAfter);
   }
 

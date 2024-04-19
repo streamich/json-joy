@@ -2,10 +2,10 @@ import {compare, type ITimestampStruct, toDisplayString, equal, tick, containsId
 import {Anchor} from '../constants';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateId} from '../../../json-crdt/hash';
+import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
-import type {StringChunk} from '../util/types';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
@@ -23,9 +23,10 @@ import type {StringChunk} from '../util/types';
  * after the last character, and even after any deleted characters at the end
  * of the string.
  */
-export class Point implements Pick<Stateful, 'refresh'>, Printable {
+export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   constructor(
     protected readonly txt: Peritext,
+    protected readonly rga: AbstractRga<T>,
     public id: ITimestampStruct,
     public anchor: Anchor,
   ) {}
@@ -36,7 +37,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @param point Point to copy.
    */
-  public set(point: Point): void {
+  public set(point: Point<T>): void {
     this.id = point.id;
     this.anchor = point.anchor;
   }
@@ -46,8 +47,8 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @returns Returns a new point with the same ID and anchor as this point.
    */
-  public clone(): Point {
-    return new Point(this.txt, this.id, this.anchor);
+  public clone(): Point<T> {
+    return new Point(this.txt, this.rga, this.id, this.anchor);
   }
 
   /**
@@ -60,7 +61,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *          than the other point, and 1 if this point is greater than the other
    *          point.
    */
-  public compare(other: Point): -1 | 0 | 1 {
+  public compare(other: Point<T>): -1 | 0 | 1 {
     const cmp = compare(this.id, other.id);
     if (cmp !== 0) return cmp;
     return (this.anchor - other.anchor) as -1 | 0 | 1;
@@ -76,7 +77,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *          less than the other point, and positive if this point is greater
    *          than the other point.
    */
-  public compareSpatial(other: Point): number {
+  public compareSpatial(other: Point<T>): number {
     const thisId = this.id;
     const otherId = other.id;
     if (this.isAbs()) {
@@ -93,22 +94,22 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     let chunk = this.chunk();
     if (!chunk) return cmp0;
     if (containsId(chunk.id, chunk.span, otherId)) return thisId.time - otherId.time;
-    const str = this.txt.str;
-    chunk = str.next(chunk);
+    const rga = this.rga;
+    chunk = rga.next(chunk);
     while (chunk) {
       if (containsId(chunk.id, chunk.span, otherId)) return -1;
-      chunk = str.next(chunk);
+      chunk = rga.next(chunk);
     }
     return 1;
   }
 
-  private _chunk: StringChunk | undefined;
+  private _chunk: Chunk<T> | undefined;
 
   /**
    * @returns Returns the chunk that contains the character referenced by the
    *          point, or `undefined` if the chunk is not found.
    */
-  public chunk(): StringChunk | undefined {
+  public chunk(): Chunk<T> | undefined {
     let chunk = this._chunk;
     const id = this.id;
     if (chunk) {
@@ -117,7 +118,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
       const idTime = id.time;
       if (id.sid === chunkId.sid && idTime >= chunkIdTime && idTime < chunkIdTime + chunk.span) return chunk;
     }
-    this._chunk = chunk = this.txt.str.findById(this.id);
+    this._chunk = chunk = this.rga.findById(this.id);
     return chunk;
   }
 
@@ -127,7 +128,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   public pos(): number {
     const chunk = this.chunk();
     if (!chunk) return -1;
-    const pos = this.txt.str.pos(chunk);
+    const pos = this.rga.pos(chunk);
     if (chunk.del) return pos;
     return pos + this.id.time - chunk.id.time;
   }
@@ -147,7 +148,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    */
   public viewPos(): number {
     const pos = this.pos();
-    if (pos < 0) return this.isAbsStart() ? 0 : this.txt.str.length();
+    if (pos < 0) return this.isAbsStart() ? 0 : this.rga.length();
     return this.anchor === Anchor.Before ? pos : pos + 1;
   }
 
@@ -162,17 +163,16 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   public nextId(move: number = 1): ITimestampStruct | undefined {
     if (this.isAbsEnd()) return;
     let remaining: number = move;
-    const {id, txt} = this;
-    const str = txt.str;
-    let chunk: StringChunk | undefined;
+    const {id, rga} = this;
+    let chunk: Chunk<T> | undefined;
     if (this.isAbsStart()) {
-      chunk = str.first();
-      while (chunk && chunk.del) chunk = str.next(chunk);
+      chunk = rga.first();
+      while (chunk && chunk.del) chunk = rga.next(chunk);
       if (!chunk) return;
       const span = chunk.span;
       if (remaining <= span) return tick(chunk.id, remaining - 1);
       remaining -= span;
-      chunk = str.next(chunk);
+      chunk = rga.next(chunk);
     } else {
       chunk = this.chunk();
       if (!chunk) return undefined;
@@ -182,19 +182,19 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
         if (offset + remaining < span) return tick(id, remaining);
         else remaining -= span - offset - 1;
       }
-      chunk = str.next(chunk);
+      chunk = rga.next(chunk);
     }
-    let lastVisibleChunk: StringChunk | undefined;
+    let lastVisibleChunk: Chunk<T> | undefined;
     while (chunk && remaining >= 0) {
       if (chunk.del) {
-        chunk = str.next(chunk);
+        chunk = rga.next(chunk);
         continue;
       }
       lastVisibleChunk = chunk;
       const span = chunk.span;
       if (remaining <= span) return remaining > 1 ? tick(chunk.id, remaining - 1) : chunk.id;
       remaining -= span;
-      chunk = str.next(chunk);
+      chunk = rga.next(chunk);
     }
     if (remaining > 0) return;
     return lastVisibleChunk ? tick(lastVisibleChunk.id, lastVisibleChunk.span - 1) : undefined;
@@ -208,19 +208,18 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
   public prevId(move: number = 1): ITimestampStruct | undefined {
     if (this.isAbsStart()) return;
     let remaining: number = move;
-    const {id, txt} = this;
-    const str = txt.str;
+    const {id, rga} = this;
     let chunk = this.chunk();
-    if (!chunk) return str.id;
+    if (!chunk) return rga.id;
     if (!chunk.del) {
       const offset = id.time - chunk.id.time;
       if (offset >= remaining) return tick(id, -remaining);
       remaining -= offset;
     }
-    chunk = str.prev(chunk);
+    chunk = rga.prev(chunk);
     while (chunk) {
       if (chunk.del) {
-        chunk = str.prev(chunk);
+        chunk = rga.prev(chunk);
         continue;
       }
       const span = chunk.span;
@@ -228,7 +227,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
         return tick(chunk.id, span - remaining);
       }
       remaining -= span;
-      chunk = str.prev(chunk);
+      chunk = rga.prev(chunk);
     }
     return;
   }
@@ -239,10 +238,10 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @returns A character slice to the left of the point.
    */
-  public leftChar(): ChunkSlice | undefined {
-    const str = this.txt.str;
+  public leftChar(): ChunkSlice<T> | undefined {
+    const rga = this.rga;
     if (this.isAbsEnd()) {
-      const res = str.findChunk(str.length() - 1);
+      const res = rga.findChunk(rga.length() - 1);
       if (!res) return;
       return new ChunkSlice(res[0], res[1], 1);
     }
@@ -261,10 +260,10 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @returns A character slice to the right of the point.
    */
-  public rightChar(): ChunkSlice | undefined {
-    const str = this.txt.str;
+  public rightChar(): ChunkSlice<T> | undefined {
+    const rga = this.rga;
     if (this.isAbsStart()) {
-      const res = str.findChunk(0);
+      const res = rga.findChunk(0);
       if (!res) return;
       return new ChunkSlice(res[0], res[1], 1);
     }
@@ -285,7 +284,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns `true` if the point is an absolute point.
    */
   public isAbs(): boolean {
-    return equal(this.id, this.txt.str.id);
+    return equal(this.id, this.rga.id);
   }
 
   /**
@@ -311,7 +310,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    */
   public isRelStart(): boolean {
     if (this.anchor !== Anchor.Before) return false;
-    const id = this.txt.str.find(0);
+    const id = this.rga.find(0);
     return !!id && equal(this.id, id);
   }
 
@@ -322,10 +321,10 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    */
   public isRelEnd(): boolean {
     if (this.anchor !== Anchor.After) return false;
-    const str = this.txt.str;
-    const length = str.length();
+    const rga = this.rga;
+    const length = rga.length();
     if (length === 0) return false;
-    const id = str.find(length - 1);
+    const id = rga.find(length - 1);
     return !!id && equal(this.id, id);
   }
 
@@ -333,7 +332,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * Sets the point to the absolute start of the string.
    */
   public refAbsStart(): void {
-    this.id = this.txt.str.id;
+    this.id = this.rga.id;
     this.anchor = Anchor.After;
   }
 
@@ -341,7 +340,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
    * Sets the point to the absolute end of the string.
    */
   public refAbsEnd(): void {
-    this.id = this.txt.str.id;
+    this.id = this.rga.id;
     this.anchor = Anchor.Before;
   }
 
@@ -371,7 +370,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     const chunk = this.chunk();
     if (!chunk) {
       if (this.isAbsStart()) {
-        const id = this.txt.str.find(0);
+        const id = this.rga.find(0);
         if (id) {
           this.id = id;
           this.anchor = Anchor.Before;
@@ -382,7 +381,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     }
     if (!chunk.del && this.anchor === Anchor.Before) return;
     this.anchor = Anchor.Before;
-    this.id = this.nextId() || this.txt.str.id;
+    this.id = this.nextId() || this.rga.id;
   }
 
   /**
@@ -395,10 +394,10 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     const chunk = this.chunk();
     if (!chunk) {
       if (this.isAbsEnd()) {
-        const str = this.txt.str;
-        const length = str.length();
+        const rga = this.rga;
+        const length = rga.length();
         if (length !== 0) {
-          const id = str.find(length - 1);
+          const id = rga.find(length - 1);
           if (id) {
             this.id = id;
             this.anchor = Anchor.After;
@@ -410,7 +409,7 @@ export class Point implements Pick<Stateful, 'refresh'>, Printable {
     }
     if (!chunk.del && this.anchor === Anchor.After) return;
     this.anchor = Anchor.After;
-    this.id = this.prevId() || this.txt.str.id;
+    this.id = this.prevId() || this.rga.id;
   }
 
   /**
