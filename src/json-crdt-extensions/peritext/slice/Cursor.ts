@@ -66,7 +66,7 @@ export class Cursor extends Range<string> implements Slice {
     let focus = this.focus();
     if (edge === 0) focus = point;
     else anchor = point;
-    if (focus.compareSpatial(anchor) < 0) {
+    if (focus.cmpSpatial(anchor) < 0) {
       this.base = Anchor.After;
       this.start = focus;
       this.end = anchor;

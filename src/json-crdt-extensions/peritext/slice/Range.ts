@@ -20,7 +20,7 @@ export class Range<T = string> implements Printable {
    * @returns Range with points in correct order.
    */
   public static from<T = string>(rga: AbstractRga<T>, p1: Point<T>, p2: Point<T>): Range<T> {
-    return p1.compareSpatial(p2) > 0 ? new Range(rga, p2, p1) : new Range(rga, p1, p2);
+    return p1.cmpSpatial(p2) > 0 ? new Range(rga, p2, p1) : new Range(rga, p1, p2);
   }
 
   /**
@@ -101,12 +101,12 @@ export class Range<T = string> implements Printable {
    */
   public isCollapsed(): boolean {
     const {start, end} = this;
-    if (start.compareSpatial(end) === 0) return true;
+    if (start.cmpSpatial(end) === 0) return true;
     const start2 = start.clone();
     const end2 = end.clone();
     start2.refAfter();
     end2.refAfter();
-    return start2.compare(end2) === 0;
+    return start2.cmp(end2) === 0;
   }
 
   /**
@@ -149,11 +149,11 @@ export class Range<T = string> implements Printable {
   }
 
   public contains(range: Range<T>): boolean {
-    return this.start.compareSpatial(range.start) <= 0 && this.end.compareSpatial(range.end) >= 0;
+    return this.start.cmpSpatial(range.start) <= 0 && this.end.cmpSpatial(range.end) >= 0;
   }
 
   public containsPoint(point: Point<T>): boolean {
-    return this.start.compareSpatial(point) <= 0 && this.end.compareSpatial(point) >= 0;
+    return this.start.cmpSpatial(point) <= 0 && this.end.cmpSpatial(point) >= 0;
   }
 
   /**

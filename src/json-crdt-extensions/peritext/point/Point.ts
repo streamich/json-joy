@@ -61,7 +61,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @todo Rename to `cmp`.
    */
-  public compare(other: Point<T>): -1 | 0 | 1 {
+  public cmp(other: Point<T>): -1 | 0 | 1 {
     const cmp = compare(this.id, other.id);
     if (cmp !== 0) return cmp;
     return (this.anchor - other.anchor) as -1 | 0 | 1;
@@ -79,7 +79,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @todo Rename to `cmpSpatial`.
    */
-  public compareSpatial(other: Point<T>): number {
+  public cmpSpatial(other: Point<T>): number {
     const thisId = this.id;
     const otherId = other.id;
     if (this.isAbs()) {

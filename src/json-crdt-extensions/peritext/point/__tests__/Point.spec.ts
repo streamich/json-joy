@@ -23,8 +23,8 @@ describe('.set()', () => {
     expect(p1.refresh()).not.toBe(p2.refresh());
     p1.set(p2);
     expect(p1.refresh()).toBe(p2.refresh());
-    expect(p1.compare(p2)).toBe(0);
-    expect(p1.compareSpatial(p2)).toBe(0);
+    expect(p1.cmp(p2)).toBe(0);
+    expect(p1.cmpSpatial(p2)).toBe(0);
     expect(p1.id.sid).toBe(p2.id.sid);
     expect(p1.id.time).toBe(p2.id.time);
     expect(p1.anchor).toBe(p2.anchor);
@@ -39,22 +39,22 @@ describe('.clone()', () => {
     const p1 = peritext.point(id, Anchor.Before);
     const p2 = p1.clone();
     expect(p1.refresh()).toBe(p2.refresh());
-    expect(p1.compare(p2)).toBe(0);
-    expect(p1.compareSpatial(p2)).toBe(0);
+    expect(p1.cmp(p2)).toBe(0);
+    expect(p1.cmpSpatial(p2)).toBe(0);
     expect(p1.id.sid).toBe(p2.id.sid);
     expect(p1.id.time).toBe(p2.id.time);
     expect(p1.anchor).toBe(p2.anchor);
   });
 });
 
-describe('.compare()', () => {
+describe('.cmp()', () => {
   test('returns 0 for equal points', () => {
     const {peritext} = setup();
     const chunk = peritext.str.first()!;
     const id = chunk.id;
     const p1 = peritext.point(id, Anchor.Before);
     const p2 = peritext.point(id, Anchor.Before);
-    expect(p1.compare(p2)).toBe(0);
+    expect(p1.cmp(p2)).toBe(0);
   });
 
   test('compares by ID first, then by anchor', () => {
@@ -75,18 +75,18 @@ describe('.compare()', () => {
         const p1 = points[i];
         const p2 = points[j];
         if (i === j) {
-          expect(p1.compare(p2)).toBe(0);
+          expect(p1.cmp(p2)).toBe(0);
         } else if (i < j) {
-          expect(p1.compare(p2)).toBeLessThan(0);
+          expect(p1.cmp(p2)).toBeLessThan(0);
         } else {
-          expect(p1.compare(p2)).toBeGreaterThan(0);
+          expect(p1.cmp(p2)).toBeGreaterThan(0);
         }
       }
     }
   });
 });
 
-describe('.compareSpatial()', () => {
+describe('.cmpSpatial()', () => {
   test('higher spacial points return positive value', () => {
     const {peritext} = setup();
     const chunk1 = peritext.str.first()!;
@@ -96,22 +96,22 @@ describe('.compareSpatial()', () => {
     const p2 = peritext.point(id1, Anchor.After);
     const p3 = peritext.point(id2, Anchor.Before);
     const p4 = peritext.point(id2, Anchor.After);
-    expect(p1.compareSpatial(p1)).toBe(0);
-    expect(p4.compareSpatial(p4)).toBe(0);
-    expect(p4.compareSpatial(p4)).toBe(0);
-    expect(p4.compareSpatial(p4)).toBe(0);
-    expect(p2.compareSpatial(p1) > 0).toBe(true);
-    expect(p3.compareSpatial(p1) > 0).toBe(true);
-    expect(p4.compareSpatial(p1) > 0).toBe(true);
-    expect(p3.compareSpatial(p2) > 0).toBe(true);
-    expect(p4.compareSpatial(p2) > 0).toBe(true);
-    expect(p4.compareSpatial(p3) > 0).toBe(true);
-    expect(p1.compareSpatial(p2) < 0).toBe(true);
-    expect(p1.compareSpatial(p3) < 0).toBe(true);
-    expect(p1.compareSpatial(p4) < 0).toBe(true);
-    expect(p2.compareSpatial(p3) < 0).toBe(true);
-    expect(p2.compareSpatial(p4) < 0).toBe(true);
-    expect(p3.compareSpatial(p4) < 0).toBe(true);
+    expect(p1.cmpSpatial(p1)).toBe(0);
+    expect(p4.cmpSpatial(p4)).toBe(0);
+    expect(p4.cmpSpatial(p4)).toBe(0);
+    expect(p4.cmpSpatial(p4)).toBe(0);
+    expect(p2.cmpSpatial(p1) > 0).toBe(true);
+    expect(p3.cmpSpatial(p1) > 0).toBe(true);
+    expect(p4.cmpSpatial(p1) > 0).toBe(true);
+    expect(p3.cmpSpatial(p2) > 0).toBe(true);
+    expect(p4.cmpSpatial(p2) > 0).toBe(true);
+    expect(p4.cmpSpatial(p3) > 0).toBe(true);
+    expect(p1.cmpSpatial(p2) < 0).toBe(true);
+    expect(p1.cmpSpatial(p3) < 0).toBe(true);
+    expect(p1.cmpSpatial(p4) < 0).toBe(true);
+    expect(p2.cmpSpatial(p3) < 0).toBe(true);
+    expect(p2.cmpSpatial(p4) < 0).toBe(true);
+    expect(p3.cmpSpatial(p4) < 0).toBe(true);
   });
 
   test('correctly orders points when tombstones are present', () => {
@@ -150,15 +150,15 @@ describe('.compareSpatial()', () => {
         const p2 = points[j];
         try {
           if (i === j) {
-            expect(p1.compareSpatial(p2)).toBe(0);
+            expect(p1.cmpSpatial(p2)).toBe(0);
           } else if (i < j) {
-            expect(p1.compareSpatial(p2)).toBeLessThan(0);
+            expect(p1.cmpSpatial(p2)).toBeLessThan(0);
           } else {
-            expect(p1.compareSpatial(p2)).toBeGreaterThan(0);
+            expect(p1.cmpSpatial(p2)).toBeGreaterThan(0);
           }
         } catch (error) {
           // tslint:disable-next-line:no-console
-          console.log('i: ', i, 'j: ', j, 'p1: ', p1 + '', 'p2: ', p2 + '', p1.compareSpatial(p2));
+          console.log('i: ', i, 'j: ', j, 'p1: ', p1 + '', 'p2: ', p2 + '', p1.cmpSpatial(p2));
           throw error;
         }
       }
@@ -181,8 +181,8 @@ describe('.compareSpatial()', () => {
     const p6 = peritext.point(id3, Anchor.After);
     const points = [p0, p1, p2, p3, p4, p5, p6];
     for (const point of points) {
-      expect(absoluteEnd.compareSpatial(point)).toBe(1);
-      expect(point.compareSpatial(absoluteEnd)).toBe(-1);
+      expect(absoluteEnd.cmpSpatial(point)).toBe(1);
+      expect(point.cmpSpatial(absoluteEnd)).toBe(-1);
     }
   });
 
@@ -190,8 +190,8 @@ describe('.compareSpatial()', () => {
     const {peritext} = setup();
     const p1 = peritext.pointAbsEnd();
     const p2 = peritext.pointAbsEnd();
-    expect(p1.compareSpatial(p2)).toBe(0);
-    expect(p2.compareSpatial(p1)).toBe(0);
+    expect(p1.cmpSpatial(p2)).toBe(0);
+    expect(p2.cmpSpatial(p1)).toBe(0);
   });
 
   test('absolute start point is always less than any other point', () => {
@@ -210,8 +210,8 @@ describe('.compareSpatial()', () => {
     const p6 = peritext.point(id3, Anchor.After);
     const points = [p0, p1, p2, p3, p4, p5, p6];
     for (const point of points) {
-      expect(absoluteEnd.compareSpatial(point)).toBe(-1);
-      expect(point.compareSpatial(absoluteEnd)).toBe(1);
+      expect(absoluteEnd.cmpSpatial(point)).toBe(-1);
+      expect(point.cmpSpatial(absoluteEnd)).toBe(1);
     }
   });
 
@@ -219,8 +219,8 @@ describe('.compareSpatial()', () => {
     const {peritext} = setup();
     const p1 = peritext.pointAbsStart();
     const p2 = peritext.pointAbsStart();
-    expect(p1.compareSpatial(p2)).toBe(0);
-    expect(p2.compareSpatial(p1)).toBe(0);
+    expect(p1.cmpSpatial(p2)).toBe(0);
+    expect(p2.cmpSpatial(p1)).toBe(0);
   });
 });
 
@@ -952,9 +952,9 @@ describe('.refBefore()', () => {
     const chunk1 = peritext.str.first()!;
     const absoluteStart = peritext.pointAbsStart();
     const start = peritext.point(chunk1.id, Anchor.Before);
-    expect(absoluteStart.compareSpatial(start) < 0).toBe(true);
+    expect(absoluteStart.cmpSpatial(start) < 0).toBe(true);
     absoluteStart.refBefore();
-    expect(absoluteStart.compareSpatial(start) === 0).toBe(true);
+    expect(absoluteStart.cmpSpatial(start) === 0).toBe(true);
   });
 });
 
@@ -998,9 +998,9 @@ describe('.refAfter()', () => {
     const id = tick(chunk1.id, 2);
     const absoluteEnd = peritext.pointAbsEnd();
     const end = peritext.point(id, Anchor.After);
-    expect(absoluteEnd.compareSpatial(end) > 0).toBe(true);
+    expect(absoluteEnd.cmpSpatial(end) > 0).toBe(true);
     absoluteEnd.refAfter();
-    expect(absoluteEnd.compareSpatial(end) === 0).toBe(true);
+    expect(absoluteEnd.cmpSpatial(end) === 0).toBe(true);
   });
 
   test('when absolute end, attaches to last visible char', () => {
@@ -1010,12 +1010,12 @@ describe('.refAfter()', () => {
     const end1 = peritext.point(tick(chunk1.id, 1), Anchor.After);
     const end2 = peritext.point(tick(chunk1.id, 2), Anchor.After);
     peritext.strApi().del(2, 1);
-    expect(end1.compareSpatial(end2) < 0).toBe(true);
-    expect(absoluteEnd.compareSpatial(end2) > 0).toBe(true);
+    expect(end1.cmpSpatial(end2) < 0).toBe(true);
+    expect(absoluteEnd.cmpSpatial(end2) > 0).toBe(true);
     end2.refAfter();
     absoluteEnd.refAfter();
-    expect(end2.compareSpatial(end1) === 0).toBe(true);
-    expect(absoluteEnd.compareSpatial(end1) === 0).toBe(true);
+    expect(end2.cmpSpatial(end1) === 0).toBe(true);
+    expect(absoluteEnd.cmpSpatial(end1) === 0).toBe(true);
   });
 });
 
@@ -1037,12 +1037,12 @@ describe('.refVisible()', () => {
     peritext.strApi().del(3, 3);
     expect(left.leftChar()!.view()).toBe('3');
     expect(right.rightChar()!.view()).toBe('7');
-    expect(mid1.compare(left) > 0).toBe(true);
+    expect(mid1.cmp(left) > 0).toBe(true);
     mid1.refVisible();
-    expect(mid1.compare(left) === 0).toBe(true);
-    expect(mid2.compare(right) < 0).toBe(true);
+    expect(mid1.cmp(left) === 0).toBe(true);
+    expect(mid2.cmp(right) < 0).toBe(true);
     mid2.refVisible();
-    expect(mid2.compare(right) === 0).toBe(true);
+    expect(mid2.cmp(right) === 0).toBe(true);
   });
 });
 

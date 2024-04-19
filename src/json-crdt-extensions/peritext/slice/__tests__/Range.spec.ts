@@ -193,8 +193,8 @@ describe('.clone()', () => {
     expect(range2.end).not.toBe(range1.end);
     expect(range2.start.refresh()).toBe(range1.start.refresh());
     expect(range2.end.refresh()).toBe(range1.end.refresh());
-    expect(range2.start.compare(range1.start)).toBe(0);
-    expect(range2.end.compare(range1.end)).toBe(0);
+    expect(range2.start.cmp(range1.start)).toBe(0);
+    expect(range2.end.cmp(range1.end)).toBe(0);
   });
 });
 
