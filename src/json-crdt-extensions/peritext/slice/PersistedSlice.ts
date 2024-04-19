@@ -128,8 +128,7 @@ export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, St
 
   public toString(tab: string = ''): string {
     const tagNode = this.tagNode();
-    const range = `${this.start.toString('', true)} ↔ ${this.end.toString('', true)}`;
-    const header = `${this.constructor.name} ${range}`;
+    const header = `${this.constructor.name} ${super.toString(tab)}`;
     return header + printTree(tab, [!tagNode ? null : (tab) => tagNode.toString(tab)]);
   }
 }

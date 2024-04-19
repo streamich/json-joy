@@ -93,7 +93,7 @@ export class Cursor extends Range<string> implements Slice {
 
   public toString(tab: string = ''): string {
     const text = JSON.stringify(this.text());
-    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.⇨|' : '|⇦.';
+    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
     const main = `${this.constructor.name} ${super.toString(tab + '  ', true)} ${focusIcon}`;
     return main + printTree(tab, [() => text]);
   }
