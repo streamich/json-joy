@@ -25,7 +25,7 @@ export class PersistedSlice extends Range implements Slice, Printable, Stateful 
     public end: Point,
     public type: SliceType,
   ) {
-    super(txt, start, end);
+    super(txt.str, start, end);
     this.id = this.chunk.id;
   }
 

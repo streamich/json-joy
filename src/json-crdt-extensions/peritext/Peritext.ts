@@ -42,7 +42,7 @@ export class Peritext implements Printable {
    * @returns The point.
    */
   public point(id: ITimestampStruct = this.str.id, anchor: Anchor = Anchor.After): Point {
-    return new Point(this, id, anchor);
+    return new Point(this.str, id, anchor);
   }
 
   /**
@@ -92,7 +92,7 @@ export class Peritext implements Printable {
    * @returns A range with points in correct order.
    */
   public rangeFromPoints(p1: Point, p2: Point): Range {
-    return Range.from(this, p1, p2);
+    return Range.from(this.str, p1, p2);
   }
 
   /**
@@ -103,28 +103,19 @@ export class Peritext implements Printable {
    * @returns A range with the given start and end points.
    */
   public range(start: Point, end: Point): Range {
-    return new Range(this, start, end);
+    return new Range(this.str, start, end);
   }
 
   /**
-   * Creates a range from a view position and a length.
+   * A convenience method for creating a range from a view position and a length.
+   * See {@link Range.at} for more information.
    *
    * @param start Position in the text.
    * @param length Length of the range.
    * @returns A range from the given position with the given length.
    */
   public rangeAt(start: number, length: number = 0): Range {
-    const str = this.str;
-    if (!length) {
-      const startId = !start ? str.id : str.find(start - 1) || str.id;
-      const point = this.point(startId, Anchor.After);
-      return this.range(point, point.clone());
-    }
-    const startId = str.find(start) || str.id;
-    const endId = str.find(start + length - 1) || startId;
-    const startEndpoint = this.point(startId, Anchor.Before);
-    const endEndpoint = this.point(endId, Anchor.After);
-    return this.range(startEndpoint, endEndpoint);
+    return Range.at(this.str, start, length);
   }
 
   // --------------------------------------------------------------- Insertions

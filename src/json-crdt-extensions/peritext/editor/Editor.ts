@@ -54,8 +54,8 @@ export class Editor implements Printable {
       const api = model.api;
       api.builder.del(str.id, range);
       api.apply();
-      if (start.anchor === Anchor.After) cursor.setCaret(start.id);
-      else cursor.setCaret(start.prevId() || str.id);
+      if (start.anchor === Anchor.After) cursor.setAfter(start.id);
+      else cursor.setAfter(start.prevId() || str.id);
     }
     return cursor.start.id;
   }
@@ -68,7 +68,8 @@ export class Editor implements Printable {
     if (!text) return;
     const after = this.collapseSelection();
     const textId = this.txt.ins(after, text);
-    this.cursor.setCaret(textId, text.length - 1);
+    const shift = text.length - 1;
+    this.cursor.setAfter(shift ? tick(textId, shift) : textId);
   }
 
   /**

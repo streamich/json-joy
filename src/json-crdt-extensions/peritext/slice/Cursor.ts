@@ -6,7 +6,7 @@ import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {Slice} from './types';
 
-export class Cursor extends Range implements Slice {
+export class Cursor extends Range<string> implements Slice {
   public readonly behavior = SliceBehavior.Overwrite;
   public readonly type = Tags.Cursor;
 
@@ -26,7 +26,7 @@ export class Cursor extends Range implements Slice {
     public start: Point,
     public end: Point,
   ) {
-    super(txt, start, end);
+    super(txt.str, start, end);
   }
 
   public anchor(): Point {
@@ -66,7 +66,7 @@ export class Cursor extends Range implements Slice {
     let focus = this.focus();
     if (edge === 0) focus = point;
     else anchor = point;
-    if (focus.compareSpatial(anchor) < 0) {
+    if (focus.cmpSpatial(anchor) < 0) {
       this.base = Anchor.After;
       this.start = focus;
       this.end = anchor;
