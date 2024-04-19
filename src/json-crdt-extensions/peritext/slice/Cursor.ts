@@ -1,6 +1,6 @@
 import {Point} from '../rga/Point';
 import {Anchor, SliceBehavior, Tags} from '../constants';
-import {Range} from './Range';
+import {Range} from '../rga/Range';
 import {printTree} from '../../../util/print/printTree';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';

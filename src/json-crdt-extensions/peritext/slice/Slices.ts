@@ -1,6 +1,6 @@
 import {PersistedSlice} from './PersistedSlice';
 import {ITimespanStruct, ITimestampStruct, Timespan, Timestamp, compare, tss} from '../../../json-crdt-patch/clock';
-import {Range} from './Range';
+import {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';

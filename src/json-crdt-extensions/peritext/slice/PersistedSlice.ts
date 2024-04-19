@@ -1,5 +1,5 @@
 import {Point} from '../rga/Point';
-import {Range} from './Range';
+import {Range} from '../rga/Range';
 import {hashNode} from '../../../json-crdt/hash';
 import {printTree} from '../../../util/print/printTree';
 import {Anchor, SliceHeaderMask, SliceHeaderShift, SliceBehavior} from '../constants';

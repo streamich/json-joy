@@ -1,4 +1,4 @@
-import type {Range} from './Range';
+import type {Range} from '../rga/Range';
 import type {SliceType, Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceBehavior} from '../constants';

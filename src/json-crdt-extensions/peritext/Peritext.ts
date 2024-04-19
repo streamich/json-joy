@@ -1,6 +1,6 @@
 import {Anchor, SliceBehavior} from './constants';
 import {Point} from './rga/Point';
-import {Range} from './slice/Range';
+import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
 import {printTree} from '../../util/print/printTree';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';

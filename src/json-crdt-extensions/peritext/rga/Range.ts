@@ -1,4 +1,4 @@
-import {Point} from '../rga/Point';
+import {Point} from './Point';
 import {Anchor} from '../constants';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Printable} from '../../../util/print/types';

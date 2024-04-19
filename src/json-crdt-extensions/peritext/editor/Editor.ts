@@ -2,7 +2,7 @@ import {Cursor} from '../slice/Cursor';
 import {Anchor, SliceBehavior} from '../constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import type {Range} from '../slice/Range';
+import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 import type {Point} from '../rga/Point';
