@@ -58,8 +58,6 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns 0 if the two points are equal, -1 if this point is less
    *          than the other point, and 1 if this point is greater than the other
    *          point.
-   *
-   * @todo Rename to `cmp`.
    */
   public cmp(other: Point<T>): -1 | 0 | 1 {
     const cmp = compare(this.id, other.id);
@@ -76,8 +74,6 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * @returns Returns 0 if the two points are equal, negative if this point is
    *          less than the other point, and positive if this point is greater
    *          than the other point.
-   *
-   * @todo Rename to `cmpSpatial`.
    */
   public cmpSpatial(other: Point<T>): number {
     const thisId = this.id;
@@ -133,15 +129,6 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const pos = this.rga.pos(chunk);
     if (chunk.del) return pos;
     return pos + this.id.time - chunk.id.time;
-  }
-
-  private _pos: number = -1;
-
-  /** @todo Is this needed? */
-  public posCached(): number {
-    if (this._pos >= 0) return this._pos;
-    const pos = (this._pos = this.pos());
-    return pos;
   }
 
   /**
