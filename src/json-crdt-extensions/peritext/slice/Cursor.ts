@@ -1,5 +1,5 @@
 import {Point} from '../rga/Point';
-import {Anchor, SliceBehavior, Tags} from '../constants';
+import {CursorAnchor, SliceBehavior, Tags} from './constants';
 import {Range} from '../rga/Range';
 import {printTree} from '../../../util/print/printTree';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -15,10 +15,8 @@ export class Cursor extends Range<string> implements Slice {
    * the end which does not move when user changes selection. The other
    * end is free to move, the moving end of the cursor is "focus". By default
    * "anchor" is the start of the cursor.
-   *
-   * @todo Create a custom enum for this, instead of using `Anchor`.
    */
-  public base: Anchor = Anchor.Before;
+  public anchorSide: CursorAnchor = CursorAnchor.Start;
 
   constructor(
     public readonly id: ITimestampStruct,
@@ -30,17 +28,17 @@ export class Cursor extends Range<string> implements Slice {
   }
 
   public anchor(): Point {
-    return this.base === Anchor.Before ? this.start : this.end;
+    return this.anchorSide === CursorAnchor.Start ? this.start : this.end;
   }
 
   public focus(): Point {
-    return this.base === Anchor.Before ? this.end : this.start;
+    return this.anchorSide === CursorAnchor.Start ? this.end : this.start;
   }
 
-  public set(start: Point, end?: Point, base: Anchor = Anchor.Before): void {
+  public set(start: Point, end?: Point, base: CursorAnchor = CursorAnchor.Start): void {
     if (!end || end === start) end = start.clone();
     super.set(start, end);
-    this.base = base;
+    this.anchorSide = base;
   }
 
   public setAt(start: number, length: number = 0): void {
@@ -51,7 +49,7 @@ export class Cursor extends Range<string> implements Slice {
       len = -len;
     }
     super.setAt(at, len);
-    this.base = length < 0 ? Anchor.After : Anchor.Before;
+    this.anchorSide = length < 0 ? CursorAnchor.End : CursorAnchor.Start;
   }
 
   /**
@@ -67,11 +65,11 @@ export class Cursor extends Range<string> implements Slice {
     if (edge === 0) focus = point;
     else anchor = point;
     if (focus.cmpSpatial(anchor) < 0) {
-      this.base = Anchor.After;
+      this.anchorSide = CursorAnchor.End;
       this.start = focus;
       this.end = anchor;
     } else {
-      this.base = Anchor.Before;
+      this.anchorSide = CursorAnchor.Start;
       this.start = anchor;
       this.end = focus;
     }
@@ -95,7 +93,7 @@ export class Cursor extends Range<string> implements Slice {
 
   public toString(tab: string = ''): string {
     const text = JSON.stringify(this.text());
-    const focusIcon = this.base === Anchor.Before ? '.⇨|' : '|⇦.';
+    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.⇨|' : '|⇦.';
     const main = `${this.constructor.name} ${super.toString(tab + '  ', true)} ${focusIcon}`;
     return main + printTree(tab, [() => text]);
   }

@@ -1,5 +1,5 @@
 import {Point} from './Point';
-import {Anchor} from '../constants';
+import {Anchor} from './constants';
 import {updateNum} from '../../../json-hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Printable} from '../../../util/print/types';

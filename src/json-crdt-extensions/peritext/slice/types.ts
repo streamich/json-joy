@@ -1,7 +1,7 @@
 import type {Range} from '../rga/Range';
 import type {SliceType, Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {SliceBehavior} from '../constants';
+import type {SliceBehavior} from './constants';
 
 export interface Slice<T = string> extends Range<T>, Stateful {
   /**

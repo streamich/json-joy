@@ -1,4 +1,5 @@
-import {Anchor, SliceBehavior} from './constants';
+import {Anchor} from './rga/constants';
+import {SliceBehavior} from './slice/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';

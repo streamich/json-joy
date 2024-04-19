@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
-import {SliceBehavior, SliceHeaderShift} from '../constants';
+import {SliceBehavior, SliceHeaderShift} from './constants';
 import {SplitSlice} from './SplitSlice';
 import {Slice} from './types';
 import {VecNode} from '../../../json-crdt/nodes';
@@ -71,7 +71,8 @@ export class Slices implements Stateful, Printable {
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
     // TODO: Simplify, remove `SplitSlice` class.
-    if (slice.isSplit()) slice = new SplitSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
+    if (slice.isSplit())
+      slice = new SplitSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
   }
 

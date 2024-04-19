@@ -1,6 +1,6 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Anchor} from '../../constants';
+import {Anchor} from '../constants';
 import {tick} from '../../../../json-crdt-patch/clock';
 
 const setup = () => {

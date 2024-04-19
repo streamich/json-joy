@@ -1,5 +1,6 @@
 import {Cursor} from '../slice/Cursor';
-import {Anchor, SliceBehavior} from '../constants';
+import {Anchor} from '../rga/constants';
+import {SliceBehavior} from '../slice/constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import type {Range} from '../rga/Range';

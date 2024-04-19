@@ -1,5 +1,5 @@
 import {compare, type ITimestampStruct, toDisplayString, equal, tick, containsId} from '../../../json-crdt-patch/clock';
-import {Anchor} from '../constants';
+import {Anchor} from './constants';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateId} from '../../../json-crdt/hash';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';

@@ -1,13 +1,15 @@
-export const enum Anchor {
-  Before = 0,
-  After = 1,
+/**
+ * Specifies which cursor end is the "anchor", e.g. the end which does not move
+ * when user changes selection.
+ */
+export const enum CursorAnchor {
+  Start = 0,
+  End = 1,
 }
 
 export const enum Tags {
   Cursor = 0,
 }
-
-// TODO: MOVE to /slices
 
 export const enum SliceHeaderMask {
   X1Anchor = 0b1,
