@@ -1,6 +1,10 @@
-export const enum Anchor {
-  Before = 0,
-  After = 1,
+/**
+ * Specifies which cursor end is the "anchor", e.g. the end which does not move
+ * when user changes selection.
+ */
+export const enum CursorAnchor {
+  Start = 0,
+  End = 1,
 }
 
 export const enum Tags {
@@ -44,4 +48,12 @@ export const enum SliceBehavior {
    * used to re-verse inline formatting, like bold, italic, etc.
    */
   Erase = 0b011,
+}
+
+export const enum SliceTupleIndex {
+  Header = 0,
+  X1 = 1,
+  X2 = 2,
+  Type = 3,
+  Data = 4,
 }

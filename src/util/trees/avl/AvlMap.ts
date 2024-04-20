@@ -29,6 +29,7 @@ export class AvlMap<K, V> implements Printable {
   public insert(k: K, v: V): AvlNodeReference<AvlNode<K, V>> {
     const item = new AvlNode<K, V>(k, v);
     this.root = insert(this.root, item, this.comparator);
+    this._size++;
     return item;
   }
 
@@ -47,6 +48,7 @@ export class AvlMap<K, V> implements Printable {
     const node = new AvlNode<K, V>(k, v);
     this.root =
       cmp < 0 ? (insertLeft(root, node, curr) as AvlNode<K, V>) : (insertRight(root, node, curr) as AvlNode<K, V>);
+    this._size++;
     return node;
   }
 
@@ -69,10 +71,12 @@ export class AvlMap<K, V> implements Printable {
     const node = this.find(k);
     if (!node) return false;
     this.root = remove(this.root, node as IAvlTreeNode<K, V>);
+    this._size--;
     return true;
   }
 
   public clear(): void {
+    this._size = 0;
     this.root = undefined;
   }
 
@@ -80,13 +84,10 @@ export class AvlMap<K, V> implements Printable {
     return !!this.find(k);
   }
 
+  public _size: number = 0;
+
   public size(): number {
-    const root = this.root;
-    if (!root) return 0;
-    let curr = first(root);
-    let size = 1;
-    while ((curr = next(curr as HeadlessNode) as AvlNode<K, V> | undefined)) size++;
-    return size;
+    return this._size;
   }
 
   public isEmpty(): boolean {

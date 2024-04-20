@@ -9,6 +9,14 @@ const naturalNumbersRandom = Array.from({length: 1000}, (_, i) => Math.floor(Mat
 
 export const numbers = [
   {
+    name: (json: any) => `Random ${naturalNumbersRandomSmallList.length} numbers`,
+    data: naturalNumbersRandomSmallList,
+  },
+  {
+    name: (json: any) => `Random ${naturalNumbersRandom.length} numbers`,
+    data: naturalNumbersRandom,
+  },
+  {
     name: (json: any) =>
       `${(json as any).length} natural numbers from ${(json as any)[0]} to ${(json as any)[(json as any).length - 1]}`,
     data: naturalNumbersVerySmallList,
@@ -37,13 +45,5 @@ export const numbers = [
     name: (json: any) =>
       `${(json as any).length} natural numbers from ${(json as any)[0]} to ${(json as any)[(json as any).length - 1]}`,
     data: naturalNumbersReverse,
-  },
-  {
-    name: (json: any) => `Random ${naturalNumbersRandomSmallList.length} numbers`,
-    data: naturalNumbersRandomSmallList,
-  },
-  {
-    name: (json: any) => `Random ${naturalNumbersRandom.length} numbers`,
-    data: naturalNumbersRandom,
   },
 ];

@@ -1,11 +1,12 @@
 import {Cursor} from '../slice/Cursor';
-import {Anchor, SliceBehavior} from '../constants';
+import {Anchor} from '../rga/constants';
+import {SliceBehavior} from '../slice/constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import type {Range} from '../slice/Range';
+import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
-import type {Point} from '../point/Point';
+import type {Point} from '../rga/Point';
 import type {SliceType} from '../types';
 
 export class Editor implements Printable {
@@ -121,14 +122,14 @@ export class Editor implements Printable {
   }
 
   public insertSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.insSlice(this.cursor, SliceBehavior.Stack, type, data);
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Stack, type, data);
   }
 
   public insertOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.insSlice(this.cursor, SliceBehavior.Overwrite, type, data);
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Overwrite, type, data);
   }
 
   public insertEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.insSlice(this.cursor, SliceBehavior.Erase, type, data);
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Erase, type, data);
   }
 }
