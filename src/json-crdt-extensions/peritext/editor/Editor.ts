@@ -1,11 +1,12 @@
 import {Cursor} from '../slice/Cursor';
-import {Anchor, SliceBehavior} from '../constants';
+import {Anchor} from '../rga/constants';
+import {SliceBehavior} from '../slice/constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
-import type {Range} from '../slice/Range';
+import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
-import type {Point} from '../point/Point';
+import type {Point} from '../rga/Point';
 import type {SliceType} from '../types';
 
 export class Editor implements Printable {
@@ -54,8 +55,8 @@ export class Editor implements Printable {
       const api = model.api;
       api.builder.del(str.id, range);
       api.apply();
-      if (start.anchor === Anchor.After) cursor.setCaret(start.id);
-      else cursor.setCaret(start.prevId() || str.id);
+      if (start.anchor === Anchor.After) cursor.setAfter(start.id);
+      else cursor.setAfter(start.prevId() || str.id);
     }
     return cursor.start.id;
   }
@@ -68,7 +69,8 @@ export class Editor implements Printable {
     if (!text) return;
     const after = this.collapseSelection();
     const textId = this.txt.ins(after, text);
-    this.cursor.setCaret(textId, text.length - 1);
+    const shift = text.length - 1;
+    this.cursor.setAfter(shift ? tick(textId, shift) : textId);
   }
 
   /**
@@ -120,6 +122,14 @@ export class Editor implements Printable {
   }
 
   public insertSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.insSlice(this.cursor, SliceBehavior.Stack, type, data);
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Stack, type, data);
+  }
+
+  public insertOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Overwrite, type, data);
+  }
+
+  public insertEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    return this.txt.slices.ins(this.cursor, SliceBehavior.Erase, type, data);
   }
 }

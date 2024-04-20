@@ -44,13 +44,14 @@ export const prev = <N extends HeadlessNode>(curr: N): N | undefined => {
   return p;
 };
 
+const size_ = <N extends HeadlessNode>(root: N): number => {
+  const l = root.l;
+  const r = root.r;
+  return 1 + (l ? size_(l) : 0) + (r ? size_(r) : 0);
+};
+
 export const size = <N extends HeadlessNode>(root: N | undefined): number => {
-  if (!root) return 0;
-  const start = first(root)!;
-  let curr: N | undefined = start;
-  let result = 1;
-  while ((curr = next(curr))) result++;
-  return result;
+  return root ? size_(root) : 0;
 };
 
 export const find = <K = unknown, V = unknown>(
