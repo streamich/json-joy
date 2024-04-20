@@ -1,4 +1,4 @@
-import {Model} from '../../../../json-crdt/model';
+import {Model, ObjApi} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
 import {SliceBehavior} from '../constants';
@@ -16,7 +16,13 @@ const setup = () => {
   model.api.str(['text']).ins(11, ' this game is awesome');
   const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
   const slices = peritext.slices;
-  return {model, peritext, slices};
+  const encodeAndDecode = () => {
+    const buf = model.toBinary();
+    const model2 = Model.fromBinary(buf);
+    const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
+    return {model2, peritext2};
+  };
+  return {model, peritext, slices, encodeAndDecode};
 };
 
 test('initially slice list is empty', () => {
@@ -36,7 +42,7 @@ describe('.ins()', () => {
     expect(slice.end).toStrictEqual(range.end);
     expect(slice.behavior).toBe(SliceBehavior.Stack);
     expect(slice.type).toBe('b');
-    expect(slice.data()!.view()).toStrictEqual({bold: true});
+    expect(slice.data()).toStrictEqual({bold: true});
   });
 
   test('can insert two slices', () => {
@@ -48,8 +54,8 @@ describe('.ins()', () => {
     const slice2 = editor.insertSlice('i', {italic: true});
     peritext.refresh();
     expect(peritext.slices.size()).toBe(2);
-    expect(slice1.data()!.view()).toStrictEqual({bold: true});
-    expect(slice2.data()!.view()).toStrictEqual({italic: true});
+    expect(slice1.data()).toStrictEqual({bold: true});
+    expect(slice2.data()).toStrictEqual({italic: true});
   });
 
   test('updates hash on slice insert', () => {
@@ -104,7 +110,7 @@ describe('.ins()', () => {
             expect(slice.end.cmp(range.end)).toBe(0);
             expect(slice.behavior).toBe(behavior);
             expect(slice.type).toStrictEqual(type);
-            expect(slice.data()?.view()).toStrictEqual(data);
+            expect(slice.data()).toStrictEqual(data);
             const buf = model.toBinary();
             const model2 = Model.fromBinary(buf);
             const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
@@ -114,11 +120,21 @@ describe('.ins()', () => {
             expect(slice2.end.cmp(range.end)).toBe(0);
             expect(slice2.behavior).toBe(behavior);
             expect(slice2.type).toStrictEqual(type);
-            expect(slice2.data()?.view()).toStrictEqual(data);
+            expect(slice2.data()).toStrictEqual(data);
           }
         }
       }
     }
+  });
+});
+
+describe('.get()', () => {
+  test('can retrieve slice by id', () => {
+    const {peritext} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'italic');
+    const slice2 = peritext.slices.get(slice.id);
+    expect(slice2).toBe(slice);
   });
 });
 
@@ -145,7 +161,6 @@ describe('.delSlices()', () => {
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
     const slice1 = editor.insertSlice('b', {bold: true});
-    console.log(slice1 + '');
     peritext.refresh();
     const hash1 = peritext.slices.hash;
     expect(peritext.slices.size()).toBe(1);
@@ -158,6 +173,142 @@ describe('.delSlices()', () => {
 });
 
 describe('.refresh()', () => {
+  test('changes hash on slice behavior change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    expect(slice.behavior).toBe(SliceBehavior.Overwrite);
+    slice.update({behavior: SliceBehavior.Stack});
+    expect(slice.behavior).toBe(SliceBehavior.Stack);
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on slice subtype change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    expect(slice.type).toBe('b');
+    slice.update({type: 123})
+    expect(slice.type).toBe(123);
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on slice data overwrite', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    expect(slice.data()).toEqual({howBold: 'very'});
+    slice.update({data: 'the data'});
+    expect(slice.data()).toEqual('the data');
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on start anchor change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    range.start.anchor = Anchor.After;
+    slice.update({range});
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on end anchor change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    range.end.anchor = Anchor.Before;
+    slice.update({range});
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on start position change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    range.start.id = range.start.nextId()!;
+    slice.update({range});
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
+  test('changes hash on end position change', () => {
+    const {peritext, encodeAndDecode} = setup();
+    const range = peritext.rangeAt(6, 5);
+    const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
+    const hash1 = peritext.slices.refresh();
+    const hash2 = peritext.slices.refresh();
+    expect(hash1).toBe(hash2);
+    range.end.id = range.start.prevId()!;
+    slice.update({range});
+    const hash3 = peritext.slices.refresh();
+    const hash4 = peritext.slices.refresh();
+    expect(hash3).not.toBe(hash2);
+    expect(hash4).toBe(hash3);
+    const {peritext2} = encodeAndDecode();
+    peritext2.refresh();
+    const slice2 = peritext2.slices.get(slice.id)!;
+    expect(slice2.cmp(slice)).toBe(0);
+  });
+
   test('recomputes hash on tag change', () => {
     const {peritext} = setup();
     const {editor} = peritext;

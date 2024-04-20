@@ -5,7 +5,7 @@ import {printTree} from '../../../util/print/printTree';
 import {Anchor} from '../rga/constants';
 import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
 import {CONST} from '../../../json-hash';
-import {Timestamp} from '../../../json-crdt-patch/clock';
+import {Timestamp, compare} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
@@ -13,7 +13,7 @@ import {s} from '../../../json-crdt-patch';
 import type {JsonNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {MutableSlice} from './types';
+import type {MutableSlice, SliceUpdateParams} from './types';
 import type {Peritext} from '../Peritext';
 import type {SliceDto, SliceType, Stateful} from '../types';
 import type {Printable} from '../../../util/print/types';
@@ -71,28 +71,57 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.txt.model.api.wrap(this.tuple);
   }
 
-  // -------------------------------------------------------------------- Slice
+  // ------------------------------------------------------------- MutableSlice
 
   public readonly id: ITimestampStruct;
   public behavior: SliceBehavior;
   public type: SliceType;
 
-  public setType(type: SliceType): void {
-    this.type = type;
-    this.tupleApi().set([[SliceTupleIndex.Subtype, s.con(type)]]);
+  public update(params: SliceUpdateParams<T>): void {
+    let updateHeader = false;
+    let {start, end} = this;
+    const changes: [number, unknown][] = [];
+    if (params.behavior !== undefined) {
+      this.behavior = params.behavior;
+      updateHeader = true;
+    }
+    if (params.range) {
+      const range = params.range;
+      if (range.start.anchor !== start.anchor) updateHeader = true;
+      if (range.end.anchor !== end.anchor) updateHeader = true;
+      if (compare(range.start.id, start.id) !== 0)
+        changes.push([SliceTupleIndex.X1, s.con(range.start.id)]);
+      if (compare(range.end.id, end.id) !== 0)
+        changes.push([SliceTupleIndex.X2, s.con(range.end.id)]);
+      this.setRange(range);
+    }
+    if (params.type !== undefined) {
+      this.type = params.type;
+      changes.push([SliceTupleIndex.Type, s.con(this.type)]);
+    }
+    if (params.data !== undefined)
+      changes.push([SliceTupleIndex.Data, s.con(params.data)]);
+    if (updateHeader) {
+      const header =
+        (this.behavior << SliceHeaderShift.Behavior) +
+        (this.start.anchor << SliceHeaderShift.X1Anchor) +
+        (this.end.anchor << SliceHeaderShift.X2Anchor);
+      changes.push([SliceTupleIndex.Header, s.con(header)]);
+    }
+    this.tupleApi().set(changes);
   }
 
   public data(): unknown | undefined {
     return this.tuple.get(4)?.view();
   }
 
-  public setData(data: unknown): void {
-    this.tupleApi().set([[SliceTupleIndex.Data, data]]);
-  }
-
   public dataNode() {
     const node = this.tuple.get(SliceTupleIndex.Data);
     return node && this.txt.model.api.wrap(node);
+  }
+
+  public del(): void {
+    this.txt.slices.del(this.id);
   }
 
   public isDel(): boolean {

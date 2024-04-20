@@ -2,7 +2,6 @@ import type {Range} from '../rga/Range';
 import type {SliceType, Stateful} from '../types';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceBehavior} from './constants';
-import type {JsonNode} from '../../../json-crdt/nodes';
 
 export interface Slice<T = string> extends Range<T>, Stateful {
   /**
@@ -32,21 +31,19 @@ export interface Slice<T = string> extends Range<T>, Stateful {
 }
 
 export interface MutableSlice<T = string> extends Slice<T> {
-  /**
-   * Sets the type of the slice.
-   *
-   * @param type The new type of the slice.
-   */
-  setType(type: SliceType): void;
+  update(params: SliceUpdateParams<T>): void;
 
-  // /**
-  //  * High-level user-defined metadata of the slice, which accompanies the slice
-  //  * type.
-  //  */
-  // dataNode(): JsonNode | undefined;
+  del(): void;
 
   /**
    * Whether the slice is deleted.
    */
   isDel(): boolean;
+}
+
+export interface SliceUpdateParams<T> {
+  behavior?: SliceBehavior;
+  type?: SliceType;
+  data?: unknown;
+  range?: Range<T>;
 }
