@@ -98,6 +98,7 @@ export class Slices implements Stateful, Printable {
   }
 
   public del(id: ITimestampStruct): void {
+    this.list.del(id);
     const api = this.txt.model.api;
     api.builder.del(this.set.id, [tss(id.sid, id.time, 1)]);
     api.apply();

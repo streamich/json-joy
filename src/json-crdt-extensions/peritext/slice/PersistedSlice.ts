@@ -62,11 +62,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.behavior === SliceBehavior.Split;
   }
 
-  protected tagNode(): JsonNode | undefined {
-    // TODO: Normalize `.get()` and `.getNode()` methods across VecNode and ArrNode.
-    return this.tuple.get(3);
-  }
-
   protected tupleApi() {
     return this.txt.model.api.wrap(this.tuple);
   }
@@ -109,7 +104,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   public data(): unknown | undefined {
-    return this.tuple.get(4)?.view();
+    return this.tuple.get(SliceTupleIndex.Data)?.view();
   }
 
   public dataNode() {
