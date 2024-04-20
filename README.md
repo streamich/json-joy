@@ -47,5 +47,4 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.
 - Very fast JSON Expression implementation in JavaScript.
 
-
 [json-joy]: https://jsonjoy.com
