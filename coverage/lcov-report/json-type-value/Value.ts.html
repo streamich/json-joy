@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">27.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/11</span>
+                <span class='fraction'>3/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>3/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -84,22 +84,22 @@
 <a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1740x</span>
-<span class="cline-any cline-yes">1740x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">350x</span>
-<span class="cline-any cline-yes">350x</span>
-<span class="cline-any cline-yes">350x</span>
-<span class="cline-any cline-yes">342x</span>
-<span class="cline-any cline-yes">342x</span>
-<span class="cline-any cline-yes">76x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {JsonValueCodec} from '../json-pack/codecs/types';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {ResolveType, Type} from '../json-type';
 &nbsp;
 export class Value&lt;T extends Type&gt; {
@@ -108,13 +108,13 @@ export class Value&lt;T extends Type&gt; {
     public data: ResolveType&lt;T&gt;,
   ) {}
 &nbsp;
-  public encode(codec: JsonValueCodec): void {
-    const value = this.data;
-    const type = this.type;
-    if (value === undefined) return;
-    const encoder = codec.encoder;
-    if (!type) encoder.writeAny(value);
-    else type.encoder(codec.format)(value, encoder);
+  public <span class="fstat-no" title="function not covered" >encode(</span>codec: JsonValueCodec): void {
+    const value = <span class="cstat-no" title="statement not covered" >this.data;</span>
+    const type = <span class="cstat-no" title="statement not covered" >this.type;</span>
+<span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (value === undefined) <span class="cstat-no" title="statement not covered" >return;</span></span>
+    const encoder = <span class="cstat-no" title="statement not covered" >codec.encoder;</span>
+<span class="cstat-no" title="statement not covered" >    if (!type) <span class="cstat-no" title="statement not covered" >encoder.writeAny(value);</span></span>
+    else <span class="cstat-no" title="statement not covered" >type.encoder(codec.format)(value, encoder);</span>
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -124,7 +124,7 @@ export class Value&lt;T extends Type&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-20T10:10:35.340Z
+                at 2024-04-20T11:30:52.083Z
             </div>
         <script src="../prettify.js"></script>
         <script>

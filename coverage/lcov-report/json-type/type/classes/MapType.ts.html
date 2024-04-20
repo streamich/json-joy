@@ -283,32 +283,32 @@
 <a name='L218'></a><a href='#L218'>218</a>
 <a name='L219'></a><a href='#L219'>219</a>
 <a name='L220'></a><a href='#L220'>220</a>
-<a name='L221'></a><a href='#L221'>221</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
+<a name='L221'></a><a href='#L221'>221</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">54x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -463,7 +463,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">301x</span>
 <span class="cline-any cline-yes">301x</span>
-<span class="cline-any cline-yes">1560x</span>
+<span class="cline-any cline-yes">1481x</span>
 <span class="cline-any cline-yes">301x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -506,7 +506,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as schema from '../../schema';
 import {RandomJson} from '../../../json-random';
 import {printTree} from '../../../util/print/printTree';
-import {asString} from '../../../util/strings/asString';
+import {asString} from '@jsonjoy.com/util/lib/strings/asString';
 import {validateTType} from '../../schema/validate';
 import {ValidatorCodegenContext} from '../../codegen/validator/ValidatorCodegenContext';
 import {ValidationPath} from '../../codegen/validator/types';
@@ -515,16 +515,16 @@ import {JsonTextEncoderCodegenContext} from '../../codegen/json/JsonTextEncoderC
 import {CborEncoderCodegenContext} from '../../codegen/binary/CborEncoderCodegenContext';
 import {JsonEncoderCodegenContext} from '../../codegen/binary/JsonEncoderCodegenContext';
 import {BinaryEncoderCodegenContext} from '../../codegen/binary/BinaryEncoderCodegenContext';
-import {JsExpression} from '../../../util/codegen/util/JsExpression';
+import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
 import {MessagePackEncoderCodegenContext} from '../../codegen/binary/MessagePackEncoderCodegenContext';
-import {BinaryJsonEncoder} from '../../../json-pack/types';
+import {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import {CapacityEstimatorCodegenContext} from '../../codegen/capacity/CapacityEstimatorCodegenContext';
 import {MaxEncodingOverhead} from '../../../json-size';
 import {AbstractType} from './AbstractType';
 import type * as jsonSchema from '../../../json-schema';
 import type {SchemaOf, Type} from '../types';
 import type {TypeSystem} from '../../system/TypeSystem';
-import type {json_string} from '../../../json-brand';
+import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
 &nbsp;
@@ -730,7 +730,7 @@ export class MapType&lt;T extends Type&gt; extends AbstractType&lt;schema.MapSch
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-20T10:10:35.340Z
+                at 2024-04-20T11:30:52.083Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
