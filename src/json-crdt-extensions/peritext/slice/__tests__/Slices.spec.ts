@@ -154,7 +154,7 @@ describe('.delSlices()', () => {
 });
 
 describe('.refresh()', () => {
-  const testSliceUpdate = (name: string, update: (controls: {range: Range, slice: PersistedSlice}) => void) => {
+  const testSliceUpdate = (name: string, update: (controls: {range: Range; slice: PersistedSlice}) => void) => {
     test('changes hash on: ' + name, () => {
       const {peritext, encodeAndDecode} = setup();
       const range = peritext.rangeAt(6, 5);

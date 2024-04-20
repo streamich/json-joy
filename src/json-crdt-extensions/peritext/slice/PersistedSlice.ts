@@ -74,7 +74,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   public update(params: SliceUpdateParams<T>): void {
     let updateHeader = false;
-    let {start, end} = this;
+    const {start, end} = this;
     const changes: [number, unknown][] = [];
     if (params.behavior !== undefined) {
       this.behavior = params.behavior;

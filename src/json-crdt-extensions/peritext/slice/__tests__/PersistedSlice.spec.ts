@@ -73,4 +73,3 @@ describe('.del() and .isDel()', () => {
     expect(slice3).toBe(undefined);
   });
 });
-
