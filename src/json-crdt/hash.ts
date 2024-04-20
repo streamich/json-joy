@@ -1,7 +1,7 @@
 import {CONST, updateNum} from '../json-hash';
 import {ConNode, ValNode, ObjNode, VecNode, ArrNode} from './nodes';
 import {AbstractRga} from './nodes/rga';
-import {last2} from '../util/trees/util2';
+import {last2} from 'sonic-forest/lib/util2';
 import type {JsonNode} from './nodes';
 import type {ITimestampStruct} from '../json-crdt-patch/clock';
 import type {Model} from './model';

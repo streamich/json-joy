@@ -10,7 +10,7 @@ import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '..
 import {SchemaToJsonNode} from '../schema/types';
 import {printTree} from '../../util/print/printTree';
 import {Extensions} from '../extensions/Extensions';
-import {AvlMap} from '../../util/trees/avl/AvlMap';
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
 import type {Printable} from '../../util/print/types';
 import type {NodeBuilder} from '../../json-crdt-patch';

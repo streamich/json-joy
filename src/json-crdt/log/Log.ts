@@ -1,9 +1,9 @@
 import {FanOutUnsubscribe} from 'thingies/es2020/fanout';
 import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
 import {printTree} from '../../util/print/printTree';
-import {AvlMap} from '../../util/trees/avl/AvlMap';
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {Model} from '../model';
-import {first, next} from '../../util/trees/util';
+import {first, next} from 'sonic-forest/lib/util';
 import type {Printable} from '../../util/print/types';
 
 export class Log implements Printable {

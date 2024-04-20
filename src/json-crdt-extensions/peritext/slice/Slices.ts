@@ -7,7 +7,7 @@ import {printTree} from '../../../util/print/printTree';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
 import {SplitSlice} from './SplitSlice';
 import {VecNode} from '../../../json-crdt/nodes';
-import {AvlMap} from '../../../util/trees/avl/AvlMap';
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type {Slice} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceType, Stateful} from '../types';

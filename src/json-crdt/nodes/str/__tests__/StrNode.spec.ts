@@ -2,7 +2,7 @@
 
 import {StrNode, StrChunk} from '../StrNode';
 import {equal, ITimespanStruct, ITimestampStruct, tick, ts, tss} from '../../../../json-crdt-patch/clock';
-import {prev} from '../../../../util/trees/util';
+import {prev} from 'sonic-forest/lib/util';
 
 /** Validates that .find() method returns correct timestamp for every position. */
 const assertFind = (type: StrNode) => {

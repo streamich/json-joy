@@ -121,7 +121,7 @@
     "@jsonjoy.com/util": "^1.0.0",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
-    "multibase": "^4.0.6",
+    "sonic-forest": "^1.0.0",
     "thingies": "^1.20.0"
   },
   "devDependencies": {
@@ -145,7 +145,6 @@
     "husky": "^8.0.3",
     "isomorphic-ws": "^5.0.0",
     "jest": "^29.7.0",
-    "js-sdsl": "^4.4.0",
     "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
     "json-logic-js": "^2.0.1",
     "loro-crdt": "^0.4.1",
@@ -158,7 +157,6 @@
     "quill-delta": "^5.0.0",
     "rimraf": "^5.0.0",
     "rope.js": "0.1.0",
-    "sorted-btree": "^1.8.1",
     "tinybench": "^2.4.0",
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.5.1",
