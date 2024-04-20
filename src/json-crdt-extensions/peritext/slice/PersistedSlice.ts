@@ -89,18 +89,15 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       const range = params.range;
       if (range.start.anchor !== start.anchor) updateHeader = true;
       if (range.end.anchor !== end.anchor) updateHeader = true;
-      if (compare(range.start.id, start.id) !== 0)
-        changes.push([SliceTupleIndex.X1, s.con(range.start.id)]);
-      if (compare(range.end.id, end.id) !== 0)
-        changes.push([SliceTupleIndex.X2, s.con(range.end.id)]);
+      if (compare(range.start.id, start.id) !== 0) changes.push([SliceTupleIndex.X1, s.con(range.start.id)]);
+      if (compare(range.end.id, end.id) !== 0) changes.push([SliceTupleIndex.X2, s.con(range.end.id)]);
       this.setRange(range);
     }
     if (params.type !== undefined) {
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (params.data !== undefined)
-      changes.push([SliceTupleIndex.Data, s.con(params.data)]);
+    if (params.data !== undefined) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
     if (updateHeader) {
       const header =
         (this.behavior << SliceHeaderShift.Behavior) +
@@ -153,8 +150,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   public toString(tab: string = ''): string {
     const data = this.data();
     const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}`;
-    return header + printTree(tab, [
-      !data ? null : (tab) => prettyOneLine(data),
-    ]);
+    return header + printTree(tab, [!data ? null : (tab) => prettyOneLine(data)]);
   }
 }

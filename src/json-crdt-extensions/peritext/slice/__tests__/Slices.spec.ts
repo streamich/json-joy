@@ -201,7 +201,7 @@ describe('.refresh()', () => {
     const hash2 = peritext.slices.refresh();
     expect(hash1).toBe(hash2);
     expect(slice.type).toBe('b');
-    slice.update({type: 123})
+    slice.update({type: 123});
     expect(slice.type).toBe(123);
     const hash3 = peritext.slices.refresh();
     const hash4 = peritext.slices.refresh();
