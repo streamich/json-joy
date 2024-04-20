@@ -2,12 +2,12 @@ import {Point} from '../rga/Point';
 import {CursorAnchor, SliceBehavior, Tags} from './constants';
 import {Range} from '../rga/Range';
 import {printTree} from '../../../util/print/printTree';
+import {updateNum} from '../../../json-hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {Slice} from './types';
-import {updateNum} from '../../../json-hash';
 
-export class Cursor extends Range<string> implements Slice {
+export class Cursor<T = string> extends Range<T> implements Slice<T> {
   public readonly behavior = SliceBehavior.Overwrite;
   public readonly type = Tags.Cursor;
 
@@ -22,21 +22,21 @@ export class Cursor extends Range<string> implements Slice {
   constructor(
     public readonly id: ITimestampStruct,
     protected readonly txt: Peritext,
-    public start: Point,
-    public end: Point,
+    public start: Point<T>,
+    public end: Point<T>,
   ) {
-    super(txt.str, start, end);
+    super(txt.str as any, start, end);
   }
 
-  public anchor(): Point {
+  public anchor(): Point<T> {
     return this.anchorSide === CursorAnchor.Start ? this.start : this.end;
   }
 
-  public focus(): Point {
+  public focus(): Point<T> {
     return this.anchorSide === CursorAnchor.Start ? this.end : this.start;
   }
 
-  public set(start: Point, end?: Point, base: CursorAnchor = CursorAnchor.Start): void {
+  public set(start: Point<T>, end?: Point<T>, base: CursorAnchor = CursorAnchor.Start): void {
     if (!end || end === start) end = start.clone();
     super.set(start, end);
     this.anchorSide = base;
@@ -59,7 +59,7 @@ export class Cursor extends Range<string> implements Slice {
    * @param point Point to set the edge to.
    * @param edge 0 for "focus", 1 for "anchor."
    */
-  public setEdge(point: Point, edge: 0 | 1 = 0): void {
+  public setEdge(point: Point<T>, edge: 0 | 1 = 0): void {
     if (this.start === this.end) this.end = this.end.clone();
     let anchor = this.anchor();
     let focus = this.focus();
@@ -74,11 +74,6 @@ export class Cursor extends Range<string> implements Slice {
       this.start = anchor;
       this.end = focus;
     }
-  }
-
-  /** @todo Maybe move it to another interface? */
-  public del(): boolean {
-    return false;
   }
 
   public data() {
