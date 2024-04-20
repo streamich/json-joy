@@ -1,5 +1,5 @@
 import * as schema from '../../schema';
-import {printTree} from '../../../util/print/printTree';
+import {printTree} from 'sonic-forest/lib/print/printTree';
 import {validateTType} from '../../schema/validate';
 import {ValidatorCodegenContext} from '../../codegen/validator/ValidatorCodegenContext';
 import {ValidationPath} from '../../codegen/validator/types';
