@@ -3,46 +3,23 @@ import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from '../../../util/print/printTree';
 import {Anchor} from '../rga/constants';
-import {SliceHeaderMask, SliceHeaderShift, SliceBehavior} from './constants';
+import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';
+import {prettyOneLine} from '../../../json-pretty';
+import {validateType} from './util';
+import {s} from '../../../json-crdt-patch';
 import type {JsonNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {Slice} from './types';
+import type {MutableSlice} from './types';
 import type {Peritext} from '../Peritext';
 import type {SliceDto, SliceType, Stateful} from '../types';
 import type {Printable} from '../../../util/print/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 
-export const validateType = (type: SliceType) => {
-  switch (typeof type) {
-    case 'string':
-    case 'number':
-      return;
-    case 'object': {
-      if (!(type instanceof Array)) throw new Error('INVALID_TYPE');
-      if (type.length > 32) throw new Error('INVALID_TYPE');
-      const length = type.length;
-      LOOP: for (let i = 0; i < length; i++) {
-        const step = type[i];
-        switch (typeof step) {
-          case 'string':
-          case 'number':
-            continue LOOP;
-          default:
-            throw new Error('INVALID_TYPE');
-        }
-      }
-      return;
-    }
-    default:
-      throw new Error('INVALID_TYPE');
-  }
-};
-
-export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, Stateful, Printable {
+export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
   public static deserialize<T>(txt: Peritext, rga: AbstractRga<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
     const header = +(tuple.get(0)!.view() as SliceDto[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
@@ -90,17 +67,35 @@ export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, St
     return this.tuple.get(3);
   }
 
+  protected tupleApi() {
+    return this.txt.model.api.wrap(this.tuple);
+  }
+
   // -------------------------------------------------------------------- Slice
 
   public readonly id: ITimestampStruct;
   public behavior: SliceBehavior;
   public type: SliceType;
 
-  public data(): JsonNode | undefined {
-    return this.tuple.get(4);
+  public setType(type: SliceType): void {
+    this.type = type;
+    this.tupleApi().set([[SliceTupleIndex.Subtype, s.con(type)]]);
   }
 
-  public del(): boolean {
+  public data(): unknown | undefined {
+    return this.tuple.get(4)?.view();
+  }
+
+  public setData(data: unknown): void {
+    this.tupleApi().set([[SliceTupleIndex.Data, data]]);
+  }
+
+  public dataNode() {
+    const node = this.tuple.get(SliceTupleIndex.Data);
+    return node && this.txt.model.api.wrap(node);
+  }
+
+  public isDel(): boolean {
     return this.chunk.del;
   }
 
@@ -130,7 +125,7 @@ export class PersistedSlice<T = string> extends Range<T> implements Slice<T>, St
     const data = this.data();
     const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}`;
     return header + printTree(tab, [
-      !data ? null : (tab) => prettyOneLine(data.view()),
+      !data ? null : (tab) => prettyOneLine(data),
     ]);
   }
 }

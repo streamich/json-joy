@@ -28,10 +28,25 @@ export interface Slice<T = string> extends Range<T>, Stateful {
    * High-level user-defined metadata of the slice, which accompanies the slice
    * type.
    */
-  data(): JsonNode | undefined;
+  data(): unknown | undefined;
+}
+
+export interface MutableSlice<T = string> extends Slice<T> {
+  /**
+   * Sets the type of the slice.
+   *
+   * @param type The new type of the slice.
+   */
+  setType(type: SliceType): void;
+
+  // /**
+  //  * High-level user-defined metadata of the slice, which accompanies the slice
+  //  * type.
+  //  */
+  // dataNode(): JsonNode | undefined;
 
   /**
    * Whether the slice is deleted.
    */
-  del(): boolean;
+  isDel(): boolean;
 }
