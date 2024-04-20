@@ -1,4 +1,4 @@
-import type {JsonValue} from '../json-pack/types';
+import type {JsonValue} from '@jsonjoy.com/json-pack/lib/types';
 
 /** @ignore */
 export type NodeType = 'null' | 'boolean' | 'number' | 'string' | 'binary' | 'array' | 'object';

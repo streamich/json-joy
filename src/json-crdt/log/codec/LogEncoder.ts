@@ -1,8 +1,8 @@
 import {Log} from '../Log';
 import {FileModelEncoding} from './constants';
 import type * as types from './types';
-import type {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import type {JsonEncoder} from '../../../json-pack/json/JsonEncoder';
+import type {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import type {JsonEncoder} from '@jsonjoy.com/json-pack/lib/json/JsonEncoder';
 import type {Encoder as StructuralEncoderCompact} from '../../codec/structural/compact/Encoder';
 import type {Encoder as StructuralEncoderVerbose} from '../../codec/structural/verbose/Encoder';
 import type {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';

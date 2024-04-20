@@ -1,8 +1,8 @@
 import {Decoder as SidecarDecoder} from '../../codec/sidecar/binary/Decoder';
 import {Decoder as StructuralDecoderCompact} from '../../codec/structural/compact/Decoder';
 import {Decoder as StructuralDecoderVerbose} from '../../codec/structural/verbose/Decoder';
-import {JsonDecoder} from '../../../json-pack/json/JsonDecoder';
-import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
+import {JsonDecoder} from '@jsonjoy.com/json-pack/lib/json/JsonDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {decode as decodeCompact} from '../../../json-crdt-patch/codec/compact/decode';
 import {decode as decodeVerbose} from '../../../json-crdt-patch/codec/verbose/decode';
 import type {LogDecoderOpts} from './LogDecoder';

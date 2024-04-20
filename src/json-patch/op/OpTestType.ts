@@ -4,7 +4,7 @@ import {OperationTestType, JsTypes, JsonPatchTypes} from '../types';
 import {find, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 const {isArray} = Array;
 

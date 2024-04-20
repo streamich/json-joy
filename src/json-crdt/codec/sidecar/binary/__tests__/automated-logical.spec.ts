@@ -4,7 +4,7 @@ import {Encoder} from '../Encoder';
 import {Decoder} from '../Decoder';
 import {documents} from '../../../../../__tests__/json-documents';
 import {binaryDocuments} from '../../../../../__tests__/binary-documents';
-import {CborDecoder} from '../../../../../json-pack/cbor/CborDecoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 for (const {name, json} of [...documents, ...binaryDocuments]) {
   describe('fresh encoder and decoder', () => {

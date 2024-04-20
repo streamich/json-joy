@@ -4,7 +4,7 @@ import {TypeSystem} from '../json-type/system/TypeSystem';
 import type {ResolveType} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
-import {TypeBuilder} from '../json-type/type/TypeBuilder';
+import type {TypeBuilder} from '../json-type/type/TypeBuilder';
 
 export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
 export type UnObjectValue<T> = T extends ObjectValue<infer U> ? U : never;
@@ -71,7 +71,7 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
     const system = type.system;
     if (!system) throw new Error('NO_SYSTEM');
     const extendedType = system.t.Object(...type.fields, field);
-    return new ObjectValue(extendedType, extendedData) as any;
+    return new ObjectValue(extendedType, extendedData as any) as any;
   }
 
   public prop<K extends string, V extends classes.Type>(

@@ -4,7 +4,7 @@ import {OperationMerge} from '../types';
 import {find, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch Extended

@@ -4,7 +4,7 @@ import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../typ
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 type Composable = string | number | SlateNode;
 

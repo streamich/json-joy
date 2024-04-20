@@ -1,10 +1,10 @@
 import {TypeSystem} from '../../../system';
-import {CborEncoder} from '../../../../json-pack/cbor/CborEncoder';
-import {CborDecoder} from '../../../../json-pack/cbor/CborDecoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 import {Type} from '../../../type';
 import {testBinaryCodegen} from './testBinaryCodegen';
-import {EncodingFormat} from '../../../../json-pack/constants';
-import {Writer} from '../../../../util/buffers/Writer';
+import {EncodingFormat} from '@jsonjoy.com/json-pack/lib/constants';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 const writer = new Writer(1);
 const encoder = new CborEncoder(writer);

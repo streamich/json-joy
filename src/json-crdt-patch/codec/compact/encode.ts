@@ -2,7 +2,7 @@ import * as operations from '../../operations';
 import {ITimespanStruct, ITimestampStruct, Timestamp} from '../../clock';
 import {Patch} from '../../Patch';
 import {JsonCrdtPatchOpcode, SESSION} from '../../constants';
-import {toBase64} from '../../../util/base64/toBase64';
+import {toBase64} from '@jsonjoy.com/base64/lib/toBase64';
 import type * as types from './types';
 
 const timestamp = (sid: number, ts: ITimestampStruct): types.CompactCodecTimestamp => {

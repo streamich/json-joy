@@ -11,8 +11,8 @@ import {Encoder as IndexedEncoder} from '../../codec/indexed/binary/Encoder';
 import {Decoder as IndexedDecoder} from '../../codec/indexed/binary/Decoder';
 import {Encoder as SidecarEncoder} from '../../codec/sidecar/binary/Encoder';
 import {Decoder as SidecarDecoder} from '../../codec/sidecar/binary/Decoder';
-import {CborEncoder} from '../../../json-pack/cbor/CborEncoder';
-import {CborDecoder} from '../../../json-pack/cbor/CborDecoder';
+import {CborEncoder} from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder';
+import {CborDecoder} from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder';
 
 const cborEncoder = new CborEncoder();
 const cborDecoder = new CborDecoder();

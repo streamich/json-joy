@@ -1,6 +1,6 @@
 /* tslint:disable no-string-throw */
 
-import {hasOwnProperty} from '../../util/hasOwnProperty';
+import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 import {Reference} from '../find';
 import {unescapeComponent} from '../util';
 

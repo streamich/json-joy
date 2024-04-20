@@ -1,8 +1,8 @@
 import * as util from './util';
-import {Codegen} from '../util/codegen/Codegen';
+import {Codegen} from '@jsonjoy.com/util/lib/codegen/Codegen';
 import {ExpressionResult, Literal} from './codegen-steps';
 import {createEvaluate} from './createEvaluate';
-import {JavaScript} from '../util/codegen';
+import {JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {Vars} from './Vars';
 import type * as types from './types';
 

@@ -1,7 +1,7 @@
 import type {Reference} from '../find';
 import type {Path} from '../types';
-import {JavaScriptLinked, compileClosure} from '../../util/codegen';
-import {hasOwnProperty} from '../../util/hasOwnProperty';
+import {JavaScriptLinked, compileClosure} from '@jsonjoy.com/util/lib/codegen';
+import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 type Fn = (val: unknown) => Reference;
 

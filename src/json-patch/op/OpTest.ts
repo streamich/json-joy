@@ -5,7 +5,7 @@ import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
 import {deepEqual} from '../../json-equal/deepEqual';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch

@@ -1,4 +1,4 @@
-import {Writer} from '../../../util/buffers/Writer';
+import {Writer} from '@jsonjoy.com/util/lib/buffers/Writer';
 
 export class CrdtWriter extends Writer {
   /**

@@ -66,6 +66,25 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
+   * Instantiates a model from a collection of patches. The patches are applied
+   * to the model in the order they are provided. The session ID of the model is
+   * set to the session ID of the first patch.
+   *
+   * @param patches A collection of initial patches to apply to the model.
+   * @returns A model with the patches applied.
+   */
+  public static fromPatches(patches: Patch[]): Model {
+    const length = patches.length;
+    if (!length) throw new Error('NO_PATCHES');
+    const first = patches[0];
+    const sid = first.getId()!.sid;
+    if (!sid) throw new Error('NO_SID');
+    const model = Model.withLogicalClock(sid);
+    model.applyBatch(patches);
+    return model;
+  }
+
+  /**
    * Root of the JSON document is implemented as Last Write Wins Register,
    * so that the JSON document does not necessarily need to be an object. The
    * JSON document can be any JSON value.

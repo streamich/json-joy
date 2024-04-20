@@ -1,4 +1,4 @@
-import {wordWrap} from '../../util/strings/wordWrap';
+import {wordWrap} from '@jsonjoy.com/util/lib/strings/wordWrap';
 import {TsIdentifier, TsNode, TsParameter} from './types';
 import {TAB, isSimpleType, normalizeKey} from './util';
 

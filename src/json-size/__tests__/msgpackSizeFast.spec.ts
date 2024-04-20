@@ -1,4 +1,4 @@
-import {JsonPackExtension, JsonPackValue} from '../../json-pack/msgpack';
+import {JsonPackExtension, JsonPackValue} from '@jsonjoy.com/json-pack/lib/msgpack';
 import {msgpackSizeFast} from '../msgpackSizeFast';
 
 test('computes size of single values', () => {

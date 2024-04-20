@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationReplace} from '../types';
 import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
 import {OPCODE} from '../constants';
-import type {IMessagePackEncoder} from '../../json-pack/msgpack';
+import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
 /**
  * @category JSON Patch

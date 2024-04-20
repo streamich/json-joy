@@ -1,4 +1,4 @@
-import {MsgPackEncoderFast as EncoderMessagePack} from '../../../json-pack/msgpack/MsgPackEncoderFast';
+import {MsgPackEncoderFast as EncoderMessagePack} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackEncoderFast';
 import {Op} from '../../op';
 
 export class Encoder extends EncoderMessagePack {

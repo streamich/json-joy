@@ -1,4 +1,4 @@
-import {Codegen, CodegenStepExecJs} from '../../../util/codegen';
+import {Codegen, CodegenStepExecJs} from '@jsonjoy.com/util/lib/codegen';
 import {maxEncodingCapacity} from '../../../json-size';
 import {Value} from '../../../json-type-value/Value';
 import type {TypeSystem} from '../../system';
