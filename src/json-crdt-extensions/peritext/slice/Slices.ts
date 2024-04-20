@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
-import {SliceBehavior, SliceHeaderShift} from './constants';
+import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
 import {SplitSlice} from './SplitSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {AvlMap} from '../../../util/trees/avl/AvlMap';
@@ -30,8 +30,8 @@ export class Slices implements Stateful, Printable {
     const api = model.api;
     const builder = api.builder;
     const tupleId = builder.vec();
-    const start = range.start;
-    const end = range.end;
+    const start = range.start.clone();
+    const end = range.end.clone();
     const header =
       (behavior << SliceHeaderShift.Behavior) +
       (start.anchor << SliceHeaderShift.X1Anchor) +
@@ -41,12 +41,12 @@ export class Slices implements Stateful, Printable {
     const x2Id = builder.const(compare(start.id, end.id) === 0 ? 0 : end.id);
     const subtypeId = builder.const(type);
     const tupleKeysUpdate: [key: number, value: ITimestampStruct][] = [
-      [0, headerId],
-      [1, x1Id],
-      [2, x2Id],
-      [3, subtypeId],
+      [SliceTupleIndex.Header, headerId],
+      [SliceTupleIndex.X1, x1Id],
+      [SliceTupleIndex.X2, x2Id],
+      [SliceTupleIndex.Type, subtypeId],
     ];
-    if (data !== undefined) tupleKeysUpdate.push([4, builder.json(data)]);
+    if (data !== undefined) tupleKeysUpdate.push([SliceTupleIndex.Data, builder.json(data)]);
     builder.insVec(tupleId, tupleKeysUpdate);
     const chunkId = builder.insArr(set.id, set.id, [tupleId]);
     api.apply();
@@ -60,6 +60,22 @@ export class Slices implements Stateful, Printable {
         : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
+  }
+
+  public insSplit(range: Range, type: SliceType, data?: unknown): SplitSlice {
+    return this.ins(range, SliceBehavior.Split, type, data) as SplitSlice;
+  }
+
+  public insStack(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+    return this.ins(range, SliceBehavior.Stack, type, data);
+  }
+
+  public insOverwrite(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+    return this.ins(range, SliceBehavior.Overwrite, type, data);
+  }
+
+  public insErase(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+    return this.ins(range, SliceBehavior.Erase, type, data);
   }
 
   protected unpack(chunk: ArrChunk): PersistedSlice {

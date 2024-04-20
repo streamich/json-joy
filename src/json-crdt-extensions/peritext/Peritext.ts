@@ -1,5 +1,4 @@
 import {Anchor} from './rga/constants';
-import {SliceBehavior} from './slice/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
@@ -9,8 +8,6 @@ import {Slices} from './slice/Slices';
 import {type ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
-import type {SliceType} from './types';
-import type {PersistedSlice} from './slice/PersistedSlice';
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -146,18 +143,6 @@ export class Peritext implements Printable {
     const textId = api.builder.insStr(this.str.id, after, text);
     api.apply();
     return textId;
-  }
-
-  public insSlice(
-    range: Range,
-    behavior: SliceBehavior,
-    type: SliceType,
-    data?: unknown | ITimestampStruct,
-  ): PersistedSlice {
-    // if (range.isCollapsed()) throw new Error('INVALID_RANGE');
-    // TODO: If range is not collapsed, check if there are any visible characters in the range.
-    const slice = this.slices.ins(range, behavior, type, data);
-    return slice;
   }
 
   /** Select a single character before a point. */

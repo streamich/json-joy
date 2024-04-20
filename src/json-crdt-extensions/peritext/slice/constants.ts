@@ -49,3 +49,11 @@ export const enum SliceBehavior {
    */
   Erase = 0b011,
 }
+
+export const enum SliceTupleIndex {
+  Header = 0,
+  X1 = 1,
+  X2 = 2,
+  Type = 3,
+  Data = 4,
+}

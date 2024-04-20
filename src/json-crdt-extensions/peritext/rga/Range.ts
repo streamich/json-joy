@@ -94,6 +94,14 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new Range(this.rga, this.start.clone(), this.end.clone());
   }
 
+  public cmp(range: Range<T>): -1 | 0 | 1 {
+    return this.start.cmp(range.start) || this.end.cmp(range.end);
+  }
+
+  public cmpSpatial(range: Range<T>): number {
+    return this.start.cmpSpatial(range.start) || this.end.cmpSpatial(range.end);
+  }
+
   /**
    * Determines if the range is collapsed to a single point. Handles special
    * cases where the range is collapsed, but the points are not equal, for
