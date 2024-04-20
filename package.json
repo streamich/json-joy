@@ -125,7 +125,7 @@
     "thingies": "^1.20.0"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.1.7",
+    "@automerge/automerge": "2.1.13",
     "@collabs/collabs": "0.13.4",
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@types/benchmark": "^2.1.2",
