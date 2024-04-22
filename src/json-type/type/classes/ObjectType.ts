@@ -185,7 +185,17 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
         if (!canSkipObjectKeyUndefinedCheck((field.value as AbstractType<any>).getSchema().__t)) {
           const err = ctx.err(ValidationError.KEY, [...path, field.key]);
           const kind = field.value.getSchema().kind;
-          const cannotBeUndefined = kind === 'bool' || kind === 'num' || kind === 'str' || kind === 'bin' || kind === 'arr' || kind === 'obj' || kind === 'tup' || kind === 'map' || kind === 'fn' || kind === 'fn$';
+          const cannotBeUndefined =
+            kind === 'bool' ||
+            kind === 'num' ||
+            kind === 'str' ||
+            kind === 'bin' ||
+            kind === 'arr' ||
+            kind === 'obj' ||
+            kind === 'tup' ||
+            kind === 'map' ||
+            kind === 'fn' ||
+            kind === 'fn$';
           if (cannotBeUndefined) {
             ctx.js(/* js */ `if (${rv} === undefined) return ${err};`);
           } else {
