@@ -11,6 +11,14 @@ describe('string', () => {
       id: 'UserName',
     });
   });
+
+  test('can add custom metadata', () => {
+    expect(s.String('validator', {meta: {regex: true}})).toEqual({
+      __t: 'str',
+      id: 'validator',
+      meta: {regex: true},
+    });
+  });
 });
 
 describe('object', () => {

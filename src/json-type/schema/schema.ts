@@ -12,6 +12,13 @@ export interface TType<Value = unknown> extends Display, Partial<Identifiable> {
   __t: string;
 
   /**
+   * Custom metadata that can be attached to the type. This is useful for
+   * documentation generation, and for custom code generators. The `meta` field
+   * is not used by the JSON Type system itself.
+   */
+  meta?: Record<string, unknown>;
+
+  /**
    * List of example usages of this type.
    */
   examples?: TExample<Value>[];
