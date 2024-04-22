@@ -60,8 +60,8 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
     return system;
   }
 
-  public getTypeName(): S['__t'] {
-    return this.schema.__t;
+  public getTypeName(): S['kind'] {
+    return this.schema.kind;
   }
 
   /**
@@ -92,7 +92,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public getOptions(): schema.Optional<S> {
-    const {__t, ...options} = this.schema;
+    const {kind: __t, ...options} = this.schema;
     return options as any;
   }
 

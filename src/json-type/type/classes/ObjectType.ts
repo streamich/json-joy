@@ -57,7 +57,7 @@ export class ObjectFieldType<K extends string, V extends Type> extends AbstractT
   }
 
   public getOptions(): schema.Optional<schema.ObjectFieldSchema<K, SchemaOf<V>>> {
-    const {__t, key, type, optional, ...options} = this.schema;
+    const {kind: __t, key, type, optional, ...options} = this.schema;
     return options as any;
   }
 
@@ -128,7 +128,7 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
   }
 
   public getOptions(): schema.Optional<schema.ObjectSchema<SchemaOfObjectFields<F>>> {
-    const {__t, fields, ...options} = this.schema;
+    const {kind: __t, fields, ...options} = this.schema;
     return options as any;
   }
 
@@ -562,7 +562,7 @@ if (${rLength}) {
   }
 
   public toString(tab: string = ''): string {
-    const {__t, fields, ...rest} = this.getSchema();
+    const {kind: __t, fields, ...rest} = this.getSchema();
     return (
       super.toString(tab) +
       printTree(

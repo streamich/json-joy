@@ -17,7 +17,7 @@
  * Define basic types, for example, a string:
  *
  * ```ts
- * t.String(); // { __t: 'str' }
+ * t.String(); // { kind: 'str' }
  * ```
  *
  * Define complex types:

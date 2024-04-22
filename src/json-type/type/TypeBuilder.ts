@@ -165,7 +165,7 @@ export class TypeBuilder {
   }
 
   public import(node: schema.Schema): Type {
-    switch (node.__t) {
+    switch (node.kind) {
       case 'any':
         return this.Any(node);
       case 'bool':
@@ -196,7 +196,7 @@ export class TypeBuilder {
       case 'ref':
         return this.Ref(node.ref).options(node);
     }
-    throw new Error(`UNKNOWN_NODE [${node.__t}]`);
+    throw new Error(`UNKNOWN_NODE [${node.kind}]`);
   }
 
   public from(value: unknown): Type {

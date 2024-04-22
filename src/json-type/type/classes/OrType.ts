@@ -53,7 +53,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
   }
 
   public getOptions(): schema.Optional<schema.OrSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
-    const {__t, types, ...options} = this.schema;
+    const {kind: __t, types, ...options} = this.schema;
     return options as any;
   }
 

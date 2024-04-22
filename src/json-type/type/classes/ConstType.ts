@@ -44,7 +44,7 @@ export class ConstType<V = any> extends AbstractType<schema.ConstSchema<V>> {
   }
 
   public getOptions(): schema.Optional<schema.ConstSchema<V>> {
-    const {__t, value, ...options} = this.schema;
+    const {kind: __t, value, ...options} = this.schema;
     return options as any;
   }
 

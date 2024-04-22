@@ -49,7 +49,7 @@ export class BinaryType<T extends Type> extends AbstractType<schema.BinarySchema
   }
 
   public getOptions(): schema.Optional<schema.ArraySchema<SchemaOf<T>>> {
-    const {__t, type, ...options} = this.schema;
+    const {kind: __t, type, ...options} = this.schema;
     return options as any;
   }
 

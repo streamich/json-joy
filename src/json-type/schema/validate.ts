@@ -11,11 +11,11 @@ export const validateTExample = (example: TExample): void => {
   validateDisplay(example);
 };
 
-export const validateTType = (tType: TType, __t: string): void => {
+export const validateTType = (tType: TType, kind: string): void => {
   validateDisplay(tType);
   const {id} = tType;
   if (id !== undefined && typeof id !== 'string') throw new Error('INVALID_ID');
-  if (tType.__t !== __t) throw new Error('INVALID_TYPE');
+  if (tType.kind !== kind) throw new Error('INVALID_TYPE');
   const {examples} = tType;
   if (examples) {
     if (!Array.isArray(examples)) throw new Error('INVALID_EXAMPLES');
