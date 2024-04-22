@@ -180,10 +180,18 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
         field.value.codegenValidator(ctx, keyPath, rv);
         ctx.js(`}`);
       } else {
+        // TODO: move this line into if-statement
         ctx.js(/* js */ `var ${rv} = ${r}${accessor};`);
         if (!canSkipObjectKeyUndefinedCheck((field.value as AbstractType<any>).getSchema().__t)) {
           const err = ctx.err(ValidationError.KEY, [...path, field.key]);
-          ctx.js(/* js */ `if (${rv} === undefined) return ${err};`);
+          const kind = field.value.getSchema().kind;
+          const cannotBeUndefined = kind === 'bool' || kind === 'num' || kind === 'str' || kind === 'bin' || kind === 'arr' || kind === 'obj' || kind === 'tup' || kind === 'map' || kind === 'fn' || kind === 'fn$';
+          if (cannotBeUndefined) {
+            ctx.js(/* js */ `if (${rv} === undefined) return ${err};`);
+          } else {
+            // TODO: shorten "Object.hasOwnProperty.call"
+            ctx.js(`if (!Object.hasOwnProperty.call(${r}, ${JSON.stringify(field.key)})) return ${err};`);
+          }
         }
         field.value.codegenValidator(ctx, keyPath, `${r}${accessor}`);
       }
