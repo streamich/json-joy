@@ -1,14 +1,10 @@
-import {t} from "../..";
-import {ResolveType} from "../../../system";
+import {t} from '../..';
+import {ResolveType} from '../../../system';
 
 describe('.extend()', () => {
   test('can extend an object', () => {
-    const obj1 = t.Object(
-      t.prop('a', t.str),
-    );
-    const obj2 = t.Object(
-      t.prop('b', t.num),
-    );
+    const obj1 = t.Object(t.prop('a', t.str));
+    const obj2 = t.Object(t.prop('b', t.num));
     const obj3 = obj1.extend(obj2);
     expect(typeof obj1.getField('a')).toBe('object');
     expect(typeof obj1.getField('b' as any)).toBe('undefined');
@@ -30,9 +26,7 @@ describe('.extend()', () => {
 
   test('can extend an empty object', () => {
     const obj1 = t.Object();
-    const obj2 = t.Object(
-      t.prop('b', t.num),
-    );
+    const obj2 = t.Object(t.prop('b', t.num));
     const obj3 = obj1.extend(obj2);
     expect(typeof obj1.getField('b')).toBe('undefined');
     expect(typeof obj2.getField('b')).toBe('object');
@@ -49,10 +43,7 @@ describe('.extend()', () => {
 
 describe('.omit()', () => {
   test('can remove a field from an object', () => {
-    const obj1 = t.Object(
-      t.prop('a', t.str),
-      t.prop('b', t.num),
-    );
+    const obj1 = t.Object(t.prop('a', t.str), t.prop('b', t.num));
     const obj2 = obj1.omit('b');
     expect(typeof obj1.getField('a')).toBe('object');
     expect(typeof obj1.getField('b')).toBe('object');

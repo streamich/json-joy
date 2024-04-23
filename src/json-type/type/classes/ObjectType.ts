@@ -133,7 +133,9 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     return options as any;
   }
 
-  public getField<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(key: K): ObjectFieldType<string, Type> | undefined {
+  public getField<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectFieldType<string, Type> | undefined {
     return this.fields.find((f) => f.key === key);
   }
 
@@ -143,7 +145,9 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     return type;
   }
 
-  public omit<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(key: K): ObjectType<ExcludeFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
+  public omit<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectType<ExcludeFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
     const type = new ObjectType(this.fields.filter((f) => f.key !== key) as any);
     type.system = this.system;
     return type;
