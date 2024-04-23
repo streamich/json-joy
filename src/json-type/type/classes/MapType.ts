@@ -52,7 +52,7 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public getOptions(): schema.Optional<schema.MapSchema<SchemaOf<T>>> {
-    const {kind: __t, type, ...options} = this.schema;
+    const {kind, type, ...options} = this.schema;
     return options as any;
   }
 

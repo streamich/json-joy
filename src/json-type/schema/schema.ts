@@ -5,9 +5,7 @@ import type {Expr} from '../../json-expression';
 
 export interface TType<Value = unknown> extends Display, Partial<Identifiable> {
   /**
-   * "t" is short for "type". Double underscore "__" is borrowed from GraphQL,
-   * where they use "__typeName". Values are short strings, such as "str", "num",
-   * and "bin", borrowed from MessagePack.
+   * The type of the JSON Type node.
    */
   kind: string;
 

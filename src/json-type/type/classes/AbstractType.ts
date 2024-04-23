@@ -92,7 +92,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public getOptions(): schema.Optional<S> {
-    const {kind: __t, ...options} = this.schema;
+    const {kind, ...options} = this.schema;
     return options as any;
   }
 
