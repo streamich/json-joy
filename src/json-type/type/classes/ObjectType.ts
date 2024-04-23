@@ -22,7 +22,7 @@ import type {TypeSystem} from '../../system/TypeSystem';
 import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
-import type {ExcludeFromTuple} from '../../../util/types';
+import type {ExcludeFromTuple, PickFromTuple} from '../../../util/types';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -149,6 +149,16 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     key: K,
   ): ObjectType<ExcludeFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
     const type = new ObjectType(this.fields.filter((f) => f.key !== key) as any);
+    type.system = this.system;
+    return type;
+  }
+
+  public pick<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectType<PickFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
+    const field = this.fields.find((f) => f.key === key);
+    if (!field) throw new Error('FIELD_NOT_FOUND');
+    const type = new ObjectType([field] as any);
     type.system = this.system;
     return type;
   }
