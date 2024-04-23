@@ -9,7 +9,7 @@ describe('metadata', () => {
     });
   });
 });
-  
+
 describe('deprecations', () => {
   test('can deprecate a type', () => {
     const schema = s.String('validator', {

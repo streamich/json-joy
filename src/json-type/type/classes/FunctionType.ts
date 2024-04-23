@@ -12,9 +12,10 @@ const fnNotImplemented: schema.FunctionValue<any, any> = async () => {
 };
 
 const toStringTree = (tab: string = '', type: FunctionType<Type, Type> | FunctionStreamingType<Type, Type>) => {
-  return (
-    printTree(tab, [(tab) => 'req: ' + type.req.toString(tab + '     '), (tab) => 'res: ' + type.res.toString(tab + '     ')])
-  );
+  return printTree(tab, [
+    (tab) => 'req: ' + type.req.toString(tab + '     '),
+    (tab) => 'res: ' + type.res.toString(tab + '     '),
+  ]);
 };
 
 type FunctionImpl<Req extends Type, Res extends Type, Ctx = unknown> = (

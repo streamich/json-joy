@@ -297,7 +297,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
 
   protected toStringOptions(): string {
     const options = this.getOptions() as schema.Display;
-    const title = options.title || options.intro || options.description; 
+    const title = options.title || options.intro || options.description;
     if (!title) return '';
     return JSON.stringify(title);
   }
