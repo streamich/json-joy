@@ -22,6 +22,7 @@ import type {TypeSystem} from '../../system/TypeSystem';
 import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
+import type {ExcludeFromTuple} from '../../../util/types';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -142,7 +143,7 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     return type;
   }
 
-  public omit<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(key: K): ObjectType<F> {
+  public omit<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(key: K): ObjectType<ExcludeFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
     const type = new ObjectType(this.fields.filter((f) => f.key !== key) as any);
     type.system = this.system;
     return type;
