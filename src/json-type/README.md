@@ -5,8 +5,8 @@ Type builder for JSON and MessagePack.
 ```ts
 import {t} from 'json-joy/lib/json-type';
 
-t.String(); // { __t: 'str' }
-t.String({const: 'add'}); // { __t: 'str', const: 'add' }
+t.String(); // { kind: 'str' }
+t.String({const: 'add'}); // { kind: 'str', const: 'add' }
 
 const type = t.Object([
   t.Field('collection', t.Object([

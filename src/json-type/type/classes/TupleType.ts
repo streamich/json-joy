@@ -24,7 +24,7 @@ export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema
 
   constructor(
     public readonly types: T,
-    options?: Omit<schema.TupleSchema, '__t' | 'type'>,
+    options?: Omit<schema.TupleSchema, 'kind' | 'type'>,
   ) {
     super();
     this.schema = {...schema.s.Tuple(), ...options};
@@ -48,7 +48,7 @@ export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema
   }
 
   public getOptions(): schema.Optional<schema.TupleSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
-    const {__t, types, ...options} = this.schema;
+    const {kind, types, ...options} = this.schema;
     return options as any;
   }
 

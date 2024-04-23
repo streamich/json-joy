@@ -8,7 +8,7 @@ test('number', () => {
     format: 'i32',
   });
   expect(type.getSchema()).toStrictEqual({
-    __t: 'num',
+    kind: 'num',
     description: 'A number',
     format: 'i32',
   });
@@ -17,10 +17,10 @@ test('number', () => {
 test('can construct a array type', () => {
   const type = t.Array(t.Or(t.num, t.str.options({title: 'Just a string'})));
   expect(type.getSchema()).toStrictEqual({
-    __t: 'arr',
+    kind: 'arr',
     type: {
-      __t: 'or',
-      types: [{__t: 'num'}, {__t: 'str', title: 'Just a string'}],
+      kind: 'or',
+      types: [{kind: 'num'}, {kind: 'str', title: 'Just a string'}],
       discriminator: expect.any(Array),
     },
   });
@@ -29,10 +29,10 @@ test('can construct a array type', () => {
 test('array of any with options', () => {
   const type = t.Array(t.any.options({description: 'Any type'})).options({intro: 'An array of any type'});
   expect(type.getSchema()).toStrictEqual({
-    __t: 'arr',
+    kind: 'arr',
     intro: 'An array of any type',
     type: {
-      __t: 'any',
+      kind: 'any',
       description: 'Any type',
     },
   });
@@ -46,12 +46,12 @@ test('can construct a realistic object', () => {
     t.prop('verified', t.bool),
   );
   expect(type.getSchema()).toStrictEqual({
-    __t: 'obj',
+    kind: 'obj',
     fields: [
-      {__t: 'field', key: 'id', type: {__t: 'str'}},
-      {__t: 'field', key: 'name', type: {__t: 'str'}, optional: true},
-      {__t: 'field', key: 'age', type: {__t: 'num'}, optional: true},
-      {__t: 'field', key: 'verified', type: {__t: 'bool'}},
+      {kind: 'field', key: 'id', type: {kind: 'str'}},
+      {kind: 'field', key: 'name', type: {kind: 'str'}, optional: true},
+      {kind: 'field', key: 'age', type: {kind: 'num'}, optional: true},
+      {kind: 'field', key: 'verified', type: {kind: 'bool'}},
     ],
   });
   type T = TypeOf<SchemaOf<typeof type>>;
@@ -64,14 +64,14 @@ test('can construct a realistic object', () => {
 describe('import()', () => {
   test('can import a number schema', () => {
     const type = t.import({
-      __t: 'num',
+      kind: 'num',
       description: 'A number',
       format: 'i32',
     });
     expect(type).toBeInstanceOf(NumberType);
     expect(type.getTypeName()).toBe('num');
     expect(type.getSchema()).toStrictEqual({
-      __t: 'num',
+      kind: 'num',
       description: 'A number',
       format: 'i32',
     });
@@ -79,12 +79,12 @@ describe('import()', () => {
 
   test('can import an object schema', () => {
     const type = t.import({
-      __t: 'obj',
+      kind: 'obj',
       fields: [
-        {__t: 'field', key: 'id', type: {__t: 'str'}},
-        {__t: 'field', key: 'name', type: {__t: 'str'}, optional: true},
-        {__t: 'field', key: 'age', type: {__t: 'num'}, optional: true},
-        {__t: 'field', key: 'verified', type: {__t: 'bool'}},
+        {kind: 'field', key: 'id', type: {kind: 'str'}},
+        {kind: 'field', key: 'name', type: {kind: 'str'}, optional: true},
+        {kind: 'field', key: 'age', type: {kind: 'num'}, optional: true},
+        {kind: 'field', key: 'verified', type: {kind: 'bool'}},
       ],
     }) as ObjectType<any>;
     expect(type).toBeInstanceOf(ObjectType);
@@ -95,12 +95,12 @@ describe('import()', () => {
     expect(id.value).toBeInstanceOf(StringType);
     expect(id.value.getTypeName()).toBe('str');
     expect(type.getSchema()).toStrictEqual({
-      __t: 'obj',
+      kind: 'obj',
       fields: [
-        {__t: 'field', key: 'id', type: {__t: 'str'}},
-        {__t: 'field', key: 'name', type: {__t: 'str'}, optional: true},
-        {__t: 'field', key: 'age', type: {__t: 'num'}, optional: true},
-        {__t: 'field', key: 'verified', type: {__t: 'bool'}},
+        {kind: 'field', key: 'id', type: {kind: 'str'}},
+        {kind: 'field', key: 'name', type: {kind: 'str'}, optional: true},
+        {kind: 'field', key: 'age', type: {kind: 'num'}, optional: true},
+        {kind: 'field', key: 'verified', type: {kind: 'bool'}},
       ],
     });
   });
@@ -109,7 +109,7 @@ describe('import()', () => {
 describe('validateSchema()', () => {
   test('can validate a number schema', () => {
     const schema = {
-      __t: 'num',
+      kind: 'num',
       description: 'A number',
       format: 'i32',
     };
@@ -148,7 +148,7 @@ describe('validateSchema()', () => {
 
   test('can validate a string schema', () => {
     const schema = {
-      __t: 'str',
+      kind: 'str',
       description: 'A string',
     };
     expect(t.import(schema as any).validateSchema()).toBeUndefined();
@@ -201,25 +201,25 @@ describe('validateSchema()', () => {
 
   test('validates array elements', () => {
     const type = t.import({
-      __t: 'arr',
+      kind: 'arr',
       description: 'An array',
-      type: {__t: 'str', ascii: 'bytes'},
+      type: {kind: 'str', ascii: 'bytes'},
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
   });
 
   test('validates array elements', () => {
     const type = t.import({
-      __t: 'arr',
+      kind: 'arr',
       description: 'An array',
-      type: {__t: 'str', ascii: 'bytes'},
+      type: {kind: 'str', ascii: 'bytes'},
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
   });
 
   test('validates object', () => {
     const type = t.import({
-      __t: 'obj',
+      kind: 'obj',
       description: 'An object',
       fields: [],
       unknownFields: 123 as any,
@@ -229,33 +229,33 @@ describe('validateSchema()', () => {
 
   test('validates object fields', () => {
     const type = t.import({
-      __t: 'obj',
+      kind: 'obj',
       description: 'An object',
-      fields: [{__t: 'field', key: 'id', type: {__t: 'str', ascii: 'bytes'} as any}],
+      fields: [{kind: 'field', key: 'id', type: {kind: 'str', ascii: 'bytes'} as any}],
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
   });
 
   test('validates object fields - 2', () => {
     const type = t.import({
-      __t: 'obj',
+      kind: 'obj',
       description: 'An object',
-      fields: [{__t: 'field', key: 'id', optional: 123, type: {__t: 'str'}} as any],
+      fields: [{kind: 'field', key: 'id', optional: 123, type: {kind: 'str'}} as any],
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"OPTIONAL_TYPE"`);
   });
 
   test('validates ref', () => {
     const type = t.import({
-      __t: 'ref',
+      kind: 'ref',
     } as any);
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"REF_TYPE"`);
   });
 
   test('validates or', () => {
     const type = t.import({
-      __t: 'or',
-      types: [{__t: 'str', ascii: '123'} as any],
+      kind: 'or',
+      types: [{kind: 'str', ascii: '123'} as any],
       discriminator: ['!', 0],
     });
     expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);

@@ -2,7 +2,7 @@ import {ObjectSchema, s} from '..';
 
 test('can generate any type', () => {
   const address: ObjectSchema = {
-    __t: 'obj',
+    kind: 'obj',
     title: 'User address',
     description: 'Various address fields for user',
     fields: [...s.Object(s.prop('street', s.String()), s.prop('zip', s.String())).fields],
@@ -18,45 +18,45 @@ test('can generate any type', () => {
   );
 
   expect(userType).toMatchObject({
-    __t: 'obj',
+    kind: 'obj',
     fields: [
       {
         key: 'id',
         type: {
-          __t: 'num',
+          kind: 'num',
           format: 'i',
         },
       },
       {
         key: 'alwaysOne',
         type: {
-          __t: 'const',
+          kind: 'const',
           value: 1,
         },
       },
       {
         key: 'name',
         type: {
-          __t: 'str',
+          kind: 'str',
         },
       },
       {
         key: 'address',
         type: {
-          __t: 'obj',
+          kind: 'obj',
           title: 'User address',
           description: 'Various address fields for user',
           fields: [
             {
               key: 'street',
               type: {
-                __t: 'str',
+                kind: 'str',
               },
             },
             {
               key: 'zip',
               type: {
-                __t: 'str',
+                kind: 'str',
               },
             },
           ],
@@ -65,21 +65,21 @@ test('can generate any type', () => {
       {
         key: 'timeCreated',
         type: {
-          __t: 'num',
+          kind: 'num',
         },
       },
       {
         key: 'tags',
         type: {
-          __t: 'arr',
+          kind: 'arr',
           type: {
-            __t: 'or',
+            kind: 'or',
             types: [
               {
-                __t: 'num',
+                kind: 'num',
               },
               {
-                __t: 'str',
+                kind: 'str',
               },
             ],
           },
@@ -88,9 +88,9 @@ test('can generate any type', () => {
       {
         key: 'elements',
         type: {
-          __t: 'map',
+          kind: 'map',
           type: {
-            __t: 'str',
+            kind: 'str',
           },
         },
       },

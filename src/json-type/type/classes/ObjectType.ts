@@ -57,7 +57,7 @@ export class ObjectFieldType<K extends string, V extends Type> extends AbstractT
   }
 
   public getOptions(): schema.Optional<schema.ObjectFieldSchema<K, SchemaOf<V>>> {
-    const {__t, key, type, optional, ...options} = this.schema;
+    const {kind, key, type, optional, ...options} = this.schema;
     return options as any;
   }
 
@@ -128,7 +128,7 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
   }
 
   public getOptions(): schema.Optional<schema.ObjectSchema<SchemaOfObjectFields<F>>> {
-    const {__t, fields, ...options} = this.schema;
+    const {kind, fields, ...options} = this.schema;
     return options as any;
   }
 
@@ -180,9 +180,9 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
         field.value.codegenValidator(ctx, keyPath, rv);
         ctx.js(`}`);
       } else {
-        ctx.js(/* js */ `var ${rv} = ${r}${accessor};`);
-        if (!canSkipObjectKeyUndefinedCheck((field.value as AbstractType<any>).getSchema().__t)) {
+        if (!canSkipObjectKeyUndefinedCheck((field.value as AbstractType<any>).getSchema().kind)) {
           const err = ctx.err(ValidationError.KEY, [...path, field.key]);
+          ctx.js(/* js */ `var ${rv} = ${r}${accessor};`);
           ctx.js(/* js */ `if (${rv} === undefined) return ${err};`);
         }
         field.value.codegenValidator(ctx, keyPath, `${r}${accessor}`);
@@ -554,7 +554,7 @@ if (${rLength}) {
   }
 
   public toString(tab: string = ''): string {
-    const {__t, fields, ...rest} = this.getSchema();
+    const {kind, fields, ...rest} = this.getSchema();
     return (
       super.toString(tab) +
       printTree(
