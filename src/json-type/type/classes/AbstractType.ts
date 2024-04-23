@@ -1,7 +1,6 @@
 import * as schema from '../../schema';
 import {RandomJson} from '../../../json-random';
 import {Printable} from '../../../util/print/types';
-import {stringify} from '../../../json-text/stringify';
 import {ValidatorCodegenContext, ValidatorCodegenContextOptions} from '../../codegen/validator/ValidatorCodegenContext';
 import {JsonTypeValidator, ValidationPath} from '../../codegen/validator/types';
 import {
@@ -297,9 +296,10 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   protected toStringOptions(): string {
-    const options = this.getOptions();
-    if (Object.keys(options).length === 0) return '';
-    return stringify(options);
+    const options = this.getOptions() as schema.Display;
+    const title = options.title || options.intro || options.description; 
+    if (!title) return '';
+    return JSON.stringify(title);
   }
 
   public toString(tab: string = ''): string {

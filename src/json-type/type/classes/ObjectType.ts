@@ -554,7 +554,6 @@ if (${rLength}) {
   }
 
   public toString(tab: string = ''): string {
-    const {kind, fields, ...rest} = this.getSchema();
     return (
       super.toString(tab) +
       printTree(
