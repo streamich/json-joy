@@ -51,7 +51,23 @@ exports[`can print a type 1`] = `
 │         ├─ const "7 is the magic number" → 7
 │         ├─ str
 │         └─ any
-└─ "map":
-    └─ map
-       └─ num"
+├─ "map":
+│   └─ map
+│      └─ num
+├─ "simpleFn1":
+│   └─ fn
+│      ├─ req: any
+│      └─ res: any
+├─ "simpleFn2":
+│   └─ fn$
+│      ├─ req: any
+│      └─ res: any
+└─ "function":
+    └─ fn
+       ├─ req: obj
+       │       └─ "id":
+       │           └─ str
+       └─ res: obj
+               └─ "name":
+                   └─ str"
 `;

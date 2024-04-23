@@ -36,6 +36,16 @@ test('can print a type', () => {
           .options({format: 'cbor'}),
       ),
       t.prop('map', t.Map(t.num)),
+      t.prop('simpleFn1', t.fn),
+      t.prop('simpleFn2', t.fn$),
+      t.prop('function', t.Function(
+        t.Object(
+          t.prop('id', t.str),
+        ),
+        t.Object(
+          t.prop('name', t.str),
+        ),
+      )),
     )
     .options({unknownFields: true});
   // console.log(type + '');
