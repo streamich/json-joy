@@ -145,7 +145,7 @@ export interface BinarySchema<T extends TType = any> extends TType, WithValidato
   /** Type of value encoded in the binary data. */
   type: T;
   /** Codec used for encoding the binary data. */
-  format?: 'json' | 'cbor' | 'msgpack' | 'ion';
+  format?: 'json' | 'cbor' | 'msgpack' | 'resp3' | 'ion' | 'bson' | 'ubjson' | 'bencode';
 }
 
 /**
