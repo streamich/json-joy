@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95% </span>
+                <span class="strong">85% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>38/40</span>
+                <span class='fraction'>34/40</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/4</span>
+                <span class='fraction'>1/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.44% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>17/18</span>
+                <span class='fraction'>14/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.59% </span>
+                <span class="strong">83.78% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>35/37</span>
+                <span class='fraction'>31/37</span>
             </div>
         
             
@@ -215,15 +215,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -247,13 +247,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">108x</span>
-<span class="cline-any cline-yes">108x</span>
-<span class="cline-any cline-yes">108x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">108x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -285,10 +285,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">100x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">846x</span>
-<span class="cline-any cline-yes">100x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -302,7 +302,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -360,7 +360,7 @@ export class BinaryType&lt;T extends Type&gt; extends AbstractType&lt;schema.Bin
   }
 &nbsp;
   public getOptions(): schema.Optional&lt;schema.ArraySchema&lt;SchemaOf&lt;T&gt;&gt;&gt; {
-    const {__t, type, ...options} = this.schema;
+    const {kind, type, ...options} = this.schema;
     return options as any;
   }
 &nbsp;
@@ -407,11 +407,11 @@ export class BinaryType&lt;T extends Type&gt; extends AbstractType&lt;schema.Bin
     ctx.codegen.js(`size += ${MaxEncodingOverhead.BinaryLengthMultiplier} * ${value.use()}.length;`);
   }
 &nbsp;
-  public random(): Uint8Array {
-    const octets = RandomJson.genString()
+  public <span class="fstat-no" title="function not covered" >random(</span>): Uint8Array {
+    const octets = <span class="cstat-no" title="statement not covered" >RandomJson.genString()</span>
       .split('')
-      .map((c) =&gt; c.charCodeAt(0));
-    return new Uint8Array(octets);
+      .map(<span class="fstat-no" title="function not covered" >(c</span>) =&gt; <span class="cstat-no" title="statement not covered" >c.charCodeAt(0))</span>;
+<span class="cstat-no" title="statement not covered" >    return new Uint8Array(octets);</span>
   }
 &nbsp;
   public toTypeScriptAst(): ts.TsGenericTypeAnnotation {
@@ -424,8 +424,8 @@ export class BinaryType&lt;T extends Type&gt; extends AbstractType&lt;schema.Bin
     };
   }
 &nbsp;
-  public toJson(value: unknown, system: TypeSystem | undefined = this.system): json_string&lt;unknown&gt; {
-    return ('"' + stringifyBinary(value as Uint8Array) + '"') as json_string&lt;unknown&gt;;
+  public <span class="fstat-no" title="function not covered" >toJson(</span>value: unknown, system: TypeSystem | undefined = <span class="branch-0 cbranch-no" title="branch not covered" >this.system)</span>: json_string&lt;unknown&gt; {
+<span class="cstat-no" title="statement not covered" >    return ('"' + stringifyBinary(value as Uint8Array) + '"') as json_string&lt;unknown&gt;;</span>
   }
 &nbsp;
   public toString(tab: string = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: string {
@@ -439,7 +439,7 @@ export class BinaryType&lt;T extends Type&gt; extends AbstractType&lt;schema.Bin
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-20T12:08:01.650Z
+                at 2024-04-23T07:36:39.908Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
