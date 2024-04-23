@@ -11,6 +11,13 @@ const fnNotImplemented: schema.FunctionValue<any, any> = async () => {
   throw new Error('NOT_IMPLEMENTED');
 };
 
+const toStringTree = (tab: string = '', type: FunctionType<Type, Type> | FunctionStreamingType<Type, Type>) => {
+  return printTree(tab, [
+    (tab) => 'req: ' + type.req.toString(tab + '     '),
+    (tab) => 'res: ' + type.res.toString(tab + '     '),
+  ]);
+};
+
 type FunctionImpl<Req extends Type, Res extends Type, Ctx = unknown> = (
   req: ResolveType<Req>,
   ctx: Ctx,
@@ -87,10 +94,7 @@ export class FunctionType<Req extends Type, Res extends Type> extends AbstractTy
   }
 
   public toString(tab: string = ''): string {
-    return (
-      super.toString(tab) +
-      printTree(tab, [(tab) => 'req: ' + this.req.toString(tab), (tab) => 'res: ' + this.res.toString(tab)])
-    );
+    return super.toString(tab) + toStringTree(tab, this);
   }
 }
 
@@ -176,9 +180,6 @@ export class FunctionStreamingType<Req extends Type, Res extends Type> extends A
   }
 
   public toString(tab: string = ''): string {
-    return (
-      super.toString(tab) +
-      printTree(tab, [(tab) => 'req: ' + this.req.toString(tab), (tab) => 'res: ' + this.res.toString(tab)])
-    );
+    return super.toString(tab) + toStringTree(tab, this);
   }
 }

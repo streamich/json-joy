@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`can print a type 1`] = `
+"obj
+├─ "id": "The id of the object"
+│   └─ str
+├─ "tags": "Always use tags"
+│   └─ arr "Tags"
+│      └─ str
+├─ "optional"?:
+│   └─ any
+├─ "booleanProperty":
+│   └─ bool
+├─ "numberProperty":
+│   └─ num
+├─ "binaryProperty":
+│   └─ bin
+│      └─ any
+├─ "arrayProperty":
+│   └─ arr
+│      └─ any
+├─ "objectProperty":
+│   └─ obj
+│      └─ "id":
+│          └─ str
+├─ "unionProperty":
+│   └─ or
+│      ├─ str
+│      ├─ num
+│      └─ const → null
+├─ "enumAsConst"?:
+│   └─ or
+│      ├─ const → "a"
+│      ├─ const → "b"
+│      └─ const → "c"
+├─ "refField"?:
+│   └─ ref → [refId]
+├─ "und"?:
+│   └─ const → undefined
+├─ "operation":
+│   └─ obj
+│      ├─ "type":
+│      │   └─ const "Always use replace" → "replace"
+│      ├─ "path":
+│      │   └─ str
+│      └─ "value":
+│          └─ any
+├─ "binaryOperation":
+│   └─ bin
+│      └─ tup "Should always have 3 elements"
+│         ├─ const "7 is the magic number" → 7
+│         ├─ str
+│         └─ any
+├─ "map":
+│   └─ map
+│      └─ num
+├─ "simpleFn1":
+│   └─ fn
+│      ├─ req: any
+│      └─ res: any
+├─ "simpleFn2":
+│   └─ fn$
+│      ├─ req: any
+│      └─ res: any
+└─ "function":
+    └─ fn
+       ├─ req: obj
+       │       └─ "id":
+       │           └─ str
+       └─ res: obj
+               └─ "name":
+                   └─ str"
+`;

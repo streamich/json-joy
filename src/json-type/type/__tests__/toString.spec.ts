@@ -36,62 +36,11 @@ test('can print a type', () => {
           .options({format: 'cbor'}),
       ),
       t.prop('map', t.Map(t.num)),
+      t.prop('simpleFn1', t.fn),
+      t.prop('simpleFn2', t.fn$),
+      t.prop('function', t.Function(t.Object(t.prop('id', t.str)), t.Object(t.prop('name', t.str)))),
     )
     .options({unknownFields: true});
   // console.log(type + '');
-  expect(type + '').toMatchInlineSnapshot(`
-    "obj { unknownFields = !t }
-    ├─ "id": { description = "The id of the object" }
-    │   └─ str { validator = [ "id", "uuid" ] }
-    ├─ "tags": { title = "Always use tags" }
-    │   └─ arr { title = "Tags" }
-    │      └─ str
-    ├─ "optional"?:
-    │   └─ any
-    ├─ "booleanProperty":
-    │   └─ bool
-    ├─ "numberProperty":
-    │   └─ num { format = "f64", gt = 3.14 }
-    ├─ "binaryProperty":
-    │   └─ bin { format = "cbor" }
-    │      └─ any
-    ├─ "arrayProperty":
-    │   └─ arr
-    │      └─ any
-    ├─ "objectProperty":
-    │   └─ obj
-    │      └─ "id":
-    │          └─ str { ascii = !t, min = 3, max = 128 }
-    ├─ "unionProperty":
-    │   └─ or { discriminator = [ "?", [ "==", !n, [ "$", "" ] ], 2, [ "?", [ "==", [ "type", [ "$", "" ] ], "number" ], 1, 0 ] ] }
-    │      ├─ str
-    │      ├─ num
-    │      └─ const { description = "" } → null
-    ├─ "enumAsConst"?:
-    │   └─ or { discriminator = [ "?", [ "==", "c", [ "$", "" ] ], 2, [ "?", [ "==", "b", [ "$", "" ] ], 1, 0 ] ] }
-    │      ├─ const → "a"
-    │      ├─ const → "b"
-    │      └─ const → "c"
-    ├─ "refField"?:
-    │   └─ ref → [refId]
-    ├─ "und"?:
-    │   └─ const → undefined
-    ├─ "operation":
-    │   └─ obj
-    │      ├─ "type":
-    │      │   └─ const { title = "Always use replace" } → "replace"
-    │      ├─ "path":
-    │      │   └─ str
-    │      └─ "value":
-    │          └─ any
-    ├─ "binaryOperation":
-    │   └─ bin { format = "cbor" }
-    │      └─ tup { description = "Should always have 3 elements" }
-    │         ├─ const { description = "7 is the magic number" } → 7
-    │         ├─ str
-    │         └─ any
-    └─ "map":
-        └─ map
-           └─ num"
-  `);
+  expect(type + '').toMatchSnapshot();
 });

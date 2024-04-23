@@ -20,6 +20,19 @@ export interface TType<Value = unknown> extends Display, Partial<Identifiable> {
    * List of example usages of this type.
    */
   examples?: TExample<Value>[];
+
+  /**
+   * A flag that indicates that this type is deprecated. When a type is
+   * deprecated, it should not be used in new code, and existing code should be
+   * updated to use a non-deprecated type.
+   */
+  deprecated?: {
+    /**
+     * A message that explains why the type is deprecated, and what to use
+     * instead.
+     */
+    description?: string;
+  };
 }
 
 /**
@@ -132,7 +145,7 @@ export interface BinarySchema<T extends TType = any> extends TType, WithValidato
   /** Type of value encoded in the binary data. */
   type: T;
   /** Codec used for encoding the binary data. */
-  format?: 'json' | 'cbor' | 'msgpack' | 'ion';
+  format?: 'json' | 'cbor' | 'msgpack' | 'resp3' | 'ion' | 'bson' | 'ubjson' | 'bencode';
 }
 
 /**

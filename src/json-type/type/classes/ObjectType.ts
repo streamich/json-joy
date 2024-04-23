@@ -22,6 +22,7 @@ import type {TypeSystem} from '../../system/TypeSystem';
 import type {json_string} from '@jsonjoy.com/util/lib/json-brand';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
+import type {ExcludeFromTuple, PickFromTuple} from '../../../util/types';
 
 const augmentWithComment = (
   type: schema.Schema | schema.ObjectFieldSchema,
@@ -132,12 +133,34 @@ export class ObjectType<F extends ObjectFieldType<any, any>[] = ObjectFieldType<
     return options as any;
   }
 
-  public getField(key: string): ObjectFieldType<string, Type> | undefined {
+  public getField<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectFieldType<string, Type> | undefined {
     return this.fields.find((f) => f.key === key);
   }
 
   public extend<F2 extends ObjectFieldType<any, any>[]>(o: ObjectType<F2>): ObjectType<[...F, ...F2]> {
-    return new ObjectType([...this.fields, ...o.fields]);
+    const type = new ObjectType([...this.fields, ...o.fields]) as ObjectType<[...F, ...F2]>;
+    type.system = this.system;
+    return type;
+  }
+
+  public omit<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectType<ExcludeFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
+    const type = new ObjectType(this.fields.filter((f) => f.key !== key) as any);
+    type.system = this.system;
+    return type;
+  }
+
+  public pick<K extends keyof schema.TypeOf<schema.ObjectSchema<SchemaOfObjectFields<F>>>>(
+    key: K,
+  ): ObjectType<PickFromTuple<F, ObjectFieldType<K extends string ? K : never, any>>> {
+    const field = this.fields.find((f) => f.key === key);
+    if (!field) throw new Error('FIELD_NOT_FOUND');
+    const type = new ObjectType([field] as any);
+    type.system = this.system;
+    return type;
   }
 
   public validateSchema(): void {
@@ -554,7 +577,6 @@ if (${rLength}) {
   }
 
   public toString(tab: string = ''): string {
-    const {kind, fields, ...rest} = this.getSchema();
     return (
       super.toString(tab) +
       printTree(
