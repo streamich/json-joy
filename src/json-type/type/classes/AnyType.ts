@@ -14,6 +14,7 @@ import {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import {CapacityEstimatorCodegenContext} from '../../codegen/capacity/CapacityEstimatorCodegenContext';
 import {AbstractType} from './AbstractType';
 import type * as jsonSchema from '../../../json-schema';
+import type * as compact from '../../schema-compact/schema';
 import type * as ts from '../../typescript/types';
 import type {TypeExportContext} from '../../system/TypeExportContext';
 import type * as jtd from '../../jtd/types';
@@ -116,5 +117,12 @@ export class AnyType extends AbstractType<schema.AnySchema> {
   public toJtdForm(): jtd.JtdEmptyForm {
     const form: jtd.JtdEmptyForm = {nullable: true};
     return form;
+  }
+
+  public toCompact(): compact.AnyCompactSchema {
+    const {kind, ...opts} = this.getSchema();
+    const res: compact.AnyCompactSchema = [kind];
+    if (Object.keys(opts).length > 0) res.push(opts);
+    return res;
   }
 }
