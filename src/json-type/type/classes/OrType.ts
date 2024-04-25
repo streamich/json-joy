@@ -57,7 +57,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
     return options as any;
   }
 
-  public options(options: schema.Optional<schema.OrSchema> & Pick<schema.OrSchema, 'discriminator'>): this {
+  public options(options: schema.Optional<schema.OrSchema> & Partial<Pick<schema.OrSchema, 'discriminator'>>): this {
     Object.assign(this.schema, options);
     return this;
   }
