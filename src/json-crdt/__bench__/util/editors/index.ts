@@ -1,55 +1,12 @@
-import {Timestamp} from '../../../json-crdt-patch/clock';
-import {StrNode} from '../../nodes';
-import {Model} from '../../model';
+import {editorJsonJoy, editorStrNode} from './json-joy';
 import {Doc} from 'diamond-types-node';
 import * as Y from 'yjs';
 import Yrs from 'ywasm';
 import * as Automerge from '@automerge/automerge';
 import {CRuntime, CText} from '@collabs/collabs';
 import {Loro} from 'loro-crdt';
-import type {SequentialTraceEditor} from './types';
+import type {SequentialTraceEditor} from '../types';
 const Rope = require('rope.js');
-
-const editorStrNode: SequentialTraceEditor = {
-  name: 'StrNode (json-joy)',
-  factory: () => {
-    let time = 0;
-    const rga = new StrNode(new Timestamp(1, time++));
-    return {
-      ins: (pos: number, insert: string) => {
-        rga.insAt(pos, new Timestamp(1, time), insert);
-        time += insert.length;
-      },
-      del: (pos: number, len: number) => {
-        rga.delete(rga.findInterval(pos, len));
-      },
-      get: () => rga.view(),
-      len: () => rga.length(),
-      chunks: () => rga.size(),
-    };
-  },
-};
-
-const editorJsonJoy: SequentialTraceEditor = {
-  name: 'json-joy',
-  factory: () => {
-    const model = Model.withLogicalClock();
-    model.api.root('');
-    const str = model.api.str([]);
-    return {
-      ins: (pos: number, insert: string) => {
-        str.ins(pos, insert);
-      },
-      del: (pos: number, len: number) => {
-        str.del(pos, len);
-      },
-      get: () => str.view(),
-      len: () => str.view().length,
-      chunks: () => str.node.size(),
-      toBlob: () => model.toBinary(),
-    };
-  },
-};
 
 const editorYjs: SequentialTraceEditor = {
   name: 'Y.js',

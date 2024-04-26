@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "bench:traces:crdt-libs": "npx ts-node bench.traces.crdt-libs.ts",
+    "bench:traces:non-crdt-libs": "npx ts-node bench.traces.non-crdt-libs.ts",
+    "bench:concurrent-traces": "npx ts-node bench.concurrent-traces.ts",
+    "bench:codecs:encoding": "npx ts-node bench.codecs.encoding.ts",
+    "bench:codecs:decoding": "npx ts-node bench.codecs.decoding.ts",
+    "bench:codecs:encoding:json": "npx ts-node bench.codecs.encoding.json.ts",
+    "bench:codecs:encoding:libs": "npx ts-node bench.codecs.encoding.libs.ts",
+    "bench:codecs:sizes": "npx ts-node bench.codecs.sizes.ts"
+  },
+  "devDependencies": {
+    "@automerge/automerge": "2.1.13",
+    "@collabs/collabs": "0.13.4",
+    "diamond-types-node": "1.0.2",
+    "loro-crdt": "^0.4.1",
+    "rope.js": "0.1.0",
+    "yjs": "13.6.14",
+    "ywasm": "0.16.10"
+  }
+}

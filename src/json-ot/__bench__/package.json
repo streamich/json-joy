@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "bench:ot-string:apply": "npx ts-node bench.ot-string.apply.ts",
+    "bench:ot-string:compose-and-transform": "node bench.ot-string.compose-and-transform.js"
+  },
+  "devDependencies": {
+    "@types/quill": "^2.0.14",
+    "ot-text": "^1.0.2",
+    "ot-text-unicode": "^4.0.0",
+    "quill-delta": "^5.0.0"
+  }
+}

@@ -1,12 +1,11 @@
-import {runTrace} from '../__bench__/util/execute';
+import {runTrace} from '../__bench__/util/execute/runTrace';
 import {sequentialTraceNames, traces} from '../__bench__/util/traces';
-import {editors} from '../__bench__/util/editors';
+import {editorJsonJoy as editor} from '../__bench__/util/editors/json-joy';
 import {Model} from '../model';
 import {loadConcurrentTrace} from '../__bench__/util/concurrent-trace';
 import {loadFuzzerTrace} from '../__bench__/util/fuzzer-traces';
 
 describe('sequential traces', () => {
-  const editor = editors['json-joy'];
   for (const traceName of sequentialTraceNames) {
     test(`"${traceName}" trace`, async () => {
       const trace = traces.get(traceName);

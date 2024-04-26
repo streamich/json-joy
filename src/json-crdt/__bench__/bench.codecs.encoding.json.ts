@@ -1,4 +1,4 @@
-// npx ts-node src/json-crdt/__bench__/bench.json.encoding.ts
+// npx ts-node src/json-crdt/__bench__/bench.codecs.encoding.json.ts
 
 import {payloads} from '../../__bench__/payloads';
 import {IBenchmark, runBenchmarkAndSave} from '../../__bench__/runBenchmark';
