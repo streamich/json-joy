@@ -6,19 +6,27 @@ import type {HeadlessNode} from 'sonic-forest/lib/types';
 import type {Printable} from '../../../util/print/types';
 import type {Slice} from '../slice/types';
 
+/**
+ * A {@link Point} which is indexed in the {@link Overlay} tree. Represents
+ * sparse locations in the string of the places where annotation slices start,
+ * end, or are broken down by other intersecting slices.
+ */
 export class OverlayPoint extends Point implements Printable, HeadlessNode {
   /**
-   * Sorted list of references to rich-text constructs.
+   * Sorted list of all references to rich-text constructs.
    */
   public readonly refs: OverlayRef[] = [];
 
   /**
-   * Sorted list of layers, contain the interval from this point to the next one.
+   * Sorted list of layers, contains the interval from this point to the next
+   * one. A *layer* is a part of a slice from the current point to the next one.
+   * This interval can contain many layers, as the slices can be overlap.
    */
   public readonly layers: Slice[] = [];
 
   /**
-   * Collapsed slices.
+   * Collapsed slices - markers/block splits, which represent a single point in
+   * the text, even if the start and end of the slice are different.
    * 
    * @todo Rename to `markers`?
    */
@@ -45,9 +53,14 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
     this.removePoint(slice);
   }
 
+  // ------------------------------------------------------------------- layers
+
   /**
    * Inserts a slice to the list of layers which contains the area from this
-   * point to the next one.
+   * point until the next one. The operation is idempotent, so inserting the
+   * same slice twice will not change the state of the point. The layers are
+   * sorted by the slice ID.
+   *
    * @param slice Slice to add to the layer list.
    */
   public addLayer(slice: Slice): void {
@@ -57,23 +70,32 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
       layers.push(slice);
       return;
     }
-    // We attempt to insert from the end of the list, as it is the most likely.
+    // We attempt to insert from the end of the list, as it is the most likely
+    // scenario. And `.push()` is more efficient than `.unshift()`.
     const lastSlice = layers[length - 1];
     const sliceId = slice.id;
-    if (compare(lastSlice.id, sliceId) < 0) {
+    const cmp = compare(lastSlice.id, sliceId);
+    if (cmp < 0) {
       layers.push(slice);
       return;
-    }
+    } else if (!cmp) return;
     for (let i = length - 2; i >= 0; i--) {
       const currSlice = layers[i];
-      if (compare(currSlice.id, sliceId) < 0) {
+      const cmp = compare(currSlice.id, sliceId);
+      if (cmp < 0) {
         layers.splice(i + 1, 0, slice);
         return;
-      }
+      } else if (!cmp) return;
     }
     layers.unshift(slice);
   }
 
+  /**
+   * Removes a slice from the list of layers, which start from this overlay
+   * point.
+   *
+   * @param slice Slice to remove from the layer list.
+   */
   public removeLayer(slice: Slice): void {
     const layers = this.layers;
     const length = layers.length;
@@ -84,6 +106,8 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
       }
     }
   }
+
+  // ------------------------------------------------------------------ markers
 
   public addPoint(slice: Slice): void {
     const points = this.points;
