@@ -152,36 +152,60 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    */
   public readonly refs: OverlayRef[] = [];
 
+  /**
+   * Insert a reference to a marker.
+   *
+   * @param slice A marker (split slice).
+   */
   public addMarkerRef(slice: SplitSlice): void {
     this.refs.push(slice);
     this.addMarker(slice);
   }
 
+  /**
+   * Insert a layer that starts at this point.
+   *
+   * @param slice A slice that starts at this point.
+   */
   public addLayerStartRef(slice: Slice): void {
     this.refs.push(new OverlayRefSliceStart(slice));
     this.addLayer(slice);
   }
 
+  /**
+   * Insert a layer that ends at this point.
+   *
+   * @param slice A slice that ends at this point.
+   */
   public addLayerEndRef(slice: Slice): void {
     this.refs.push(new OverlayRefSliceEnd(slice));
   }
 
+  /**
+   * Removes a reference to a marker or a slice, and remove the corresponding
+   * layer or marker.
+   *
+   * @param slice A slice to remove the reference to.
+   */
   public removeRef(slice: Slice): void {
     const refs = this.refs;
     const length = refs.length;
     for (let i = 0; i < length; i++) {
       const ref = refs[i];
+      if (ref === slice) {
+        refs.splice(i, 1);
+        this.removeMarker(slice);
+        return;
+      }
       if (
-        ref === slice ||
         (ref instanceof OverlayRefSliceStart && ref.slice === slice) ||
         (ref instanceof OverlayRefSliceEnd && ref.slice === slice)
       ) {
         refs.splice(i, 1);
-        break;
+        this.removeLayer(slice);
+        return;
       }
     }
-    this.removeLayer(slice);
-    this.removeMarker(slice);
   }
 
   // ---------------------------------------------------------------- Printable
