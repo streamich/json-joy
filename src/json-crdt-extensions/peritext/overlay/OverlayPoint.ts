@@ -27,7 +27,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
   /**
    * Collapsed slices - markers/block splits, which represent a single point in
    * the text, even if the start and end of the slice are different.
-   * 
+   *
    * @todo Rename to `markers`?
    */
   public readonly points: Slice[] = [];

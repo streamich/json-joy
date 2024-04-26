@@ -1,6 +1,6 @@
-import {Point} from "../../rga/Point";
-import {setup} from "../../slice/__tests__/setup";
-import {OverlayPoint} from "../OverlayPoint";
+import {Point} from '../../rga/Point';
+import {setup} from '../../slice/__tests__/setup';
+import {OverlayPoint} from '../OverlayPoint';
 
 const setupOverlayPoint = () => {
   const deps = setup();
