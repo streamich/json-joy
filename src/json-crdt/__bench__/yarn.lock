@@ -186,10 +186,10 @@ uuid@^9.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.1.tgz#e188d4c8853cc722220392c424cd637f32293f30"
   integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
-yjs@13.6.14:
-  version "13.6.14"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.14.tgz#9326dfa03d1be3fb9af9ef7e41de4bfc78849a9f"
-  integrity sha512-D+7KcUr0j+vBCUSKXXEWfA+bG4UQBviAwP3gYBhkstkgwy5+8diOPMx0iqLIOxNo/HxaREUimZRxqHGAHCL2BQ==
+yjs@13.6.15:
+  version "13.6.15"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.6.15.tgz#5a2402632aabf83e5baf56342b4c82fe40859306"
+  integrity sha512-moFv4uNYhp8BFxIk3AkpoAnnjts7gwdpiG8RtyFiKbMtxKCS0zVZ5wPaaGpwC3V2N/K8TK8MwtSI3+WO9CHWjQ==
   dependencies:
     lib0 "^0.2.86"
 
