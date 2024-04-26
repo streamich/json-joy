@@ -103,6 +103,8 @@
     "bench:json-crdt:codecs:encoding:json": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:json",
     "bench:json-crdt:codecs:encoding:libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:libs",
     "bench:json-crdt:codecs:sizes": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:sizes",
+    "bench:json-ot:ot-string:apply": "cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:apply",
+    "bench:json-ot:ot-string:compose-and-transform": "yarn build && cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:compose-and-transform",
     "coverage": "yarn test --collectCoverage",
     "typedoc": "npx typedoc@0.25.13",
     "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
@@ -111,14 +113,10 @@
     "jj": "ts-node src/json-cli/jj.ts"
   },
   "peerDependencies": {
-    "quill-delta": "^5",
     "rxjs": "7",
     "tslib": "2"
   },
   "peerDependenciesMeta": {
-    "quill-delta": {
-      "optional": true
-    },
     "rxjs": {
       "optional": true
     }
@@ -136,7 +134,6 @@
     "@exodus/schemasafe": "^1.0.0-rc.6",
     "@types/benchmark": "^2.1.2",
     "@types/jest": "^29.5.12",
-    "@types/quill": "^2.0.14",
     "ajv": "^8.11.0",
     "benchmark": "^2.1.4",
     "config-housekeeping": "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801",
@@ -144,9 +141,6 @@
     "jest": "^29.7.0",
     "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
     "json-logic-js": "^2.0.1",
-    "ot-text": "^1.0.2",
-    "ot-text-unicode": "^4.0.0",
-    "quill-delta": "^5.0.0",
     "rxjs": "^7.8.1",
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.5.1",
