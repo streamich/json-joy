@@ -2,6 +2,7 @@ import {Point} from '../rga/Point';
 import {compare} from '../../../json-crdt-patch/clock';
 import {OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {printTree} from 'sonic-forest/lib/print/printTree';
+import type {SplitSlice} from '../slice/SplitSlice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
 import type {Printable} from '../../../util/print/types';
 import type {Slice} from '../slice/types';
@@ -13,9 +14,12 @@ import type {Slice} from '../slice/types';
  */
 export class OverlayPoint extends Point implements Printable, HeadlessNode {
   /**
-   * Sorted list of all references to rich-text constructs.
+   * Hash of text contents until the next {@link OverlayPoint}. This field is
+   * modified by the {@link Overlay} tree.
    */
-  public readonly refs: OverlayRef[] = [];
+  public hash: number = 0;
+
+  // ------------------------------------------------------------------- layers
 
   /**
    * Sorted list of layers, contains the interval from this point to the next
@@ -23,38 +27,6 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * This interval can contain many layers, as the slices can be overlap.
    */
   public readonly layers: Slice[] = [];
-
-  /**
-   * Collapsed slices - markers (block splits), which represent a single point
-   * in the text, even if the start and end of the slice are different.
-   */
-  public readonly markers: Slice[] = [];
-
-  /**
-   * Hash of text contents until the next {@link OverlayPoint}. This field is
-   * modified by the {@link Overlay} tree.
-   */
-  public hash: number = 0;
-
-  public removeSlice(slice: Slice): void {
-    const refs = this.refs;
-    const length = refs.length;
-    for (let i = 0; i < length; i++) {
-      const ref = refs[i];
-      if (
-        ref === slice ||
-        (ref instanceof OverlayRefSliceStart && ref.slice === slice) ||
-        (ref instanceof OverlayRefSliceEnd && ref.slice === slice)
-      ) {
-        refs.splice(i, 1);
-        break;
-      }
-    }
-    this.removeLayer(slice);
-    this.removeMarker(slice);
-  }
-
-  // ------------------------------------------------------------------- layers
 
   /**
    * Inserts a slice to the list of layers which contains the area from this
@@ -111,38 +83,47 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
   // ------------------------------------------------------------------ markers
 
   /**
+   * Collapsed slices - markers (block splits), which represent a single point
+   * in the text, even if the start and end of the slice are different.
+   * @deprecated This field might happen to be not necessary.
+   */
+  public readonly markers: Slice[] = [];
+
+  /**
    * Inserts a slice to the list of markers which represent a single point in
    * the text, even if the start and end of the slice are different. The
    * operation is idempotent, so inserting the same slice twice will not change
    * the state of the point. The markers are sorted by the slice ID.
    *
    * @param slice Slice to add to the marker list.
+   * @deprecated This method might happen to be not necessary.
    */
   public addMarker(slice: Slice): void {
-    const points = this.markers;
-    const length = points.length;
+    /** @deprecated */
+    const markers = this.markers;
+    const length = markers.length;
     if (!length) {
-      points.push(slice);
+      markers.push(slice);
       return;
     }
     // We attempt to insert from the end of the list, as it is the most likely
     // scenario. And `.push()` is more efficient than `.unshift()`.
-    const lastSlice = points[length - 1];
+    const lastSlice = markers[length - 1];
     const sliceId = slice.id;
     const cmp = compare(lastSlice.id, sliceId);
     if (cmp < 0) {
-      points.push(slice);
+      markers.push(slice);
       return;
     } else if (!cmp) return;
     for (let i = length - 2; i >= 0; i--) {
-      const currSlice = points[i];
+      const currSlice = markers[i];
       const cmp = compare(currSlice.id, sliceId);
       if (cmp < 0) {
-        points.splice(i + 1, 0, slice);
+        markers.splice(i + 1, 0, slice);
         return;
       } else if (!cmp) return;
     }
-    points.unshift(slice);
+    markers.unshift(slice);
   }
 
   /**
@@ -150,16 +131,57 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * the text, even if the start and end of the slice are different.
    *
    * @param slice Slice to remove from the marker list.
+   * @deprecated This method might happen to be not necessary.
    */
   public removeMarker(slice: Slice): void {
-    const points = this.markers;
-    const length = points.length;
+    /** @deprecated */
+    const markers = this.markers;
+    const length = markers.length;
     for (let i = 0; i < length; i++) {
-      if (points[i] === slice) {
-        points.splice(i, 1);
+      if (markers[i] === slice) {
+        markers.splice(i, 1);
         return;
       }
     }
+  }
+
+  // --------------------------------------------------------------------- refs
+
+  /**
+   * Sorted list of all references to rich-text constructs.
+   */
+  public readonly refs: OverlayRef[] = [];
+
+  public addMarkerRef(slice: SplitSlice): void {
+    this.refs.push(slice);
+    this.addMarker(slice);
+  }
+
+  public addLayerStartRef(slice: Slice): void {
+    this.refs.push(new OverlayRefSliceStart(slice));
+    this.addLayer(slice);
+  }
+
+  public addLayerEndRef(slice: Slice): void {
+    this.refs.push(new OverlayRefSliceEnd(slice));
+  }
+
+  public removeRef(slice: Slice): void {
+    const refs = this.refs;
+    const length = refs.length;
+    for (let i = 0; i < length; i++) {
+      const ref = refs[i];
+      if (
+        ref === slice ||
+        (ref instanceof OverlayRefSliceStart && ref.slice === slice) ||
+        (ref instanceof OverlayRefSliceEnd && ref.slice === slice)
+      ) {
+        refs.splice(i, 1);
+        break;
+      }
+    }
+    this.removeLayer(slice);
+    this.removeMarker(slice);
   }
 
   // ---------------------------------------------------------------- Printable

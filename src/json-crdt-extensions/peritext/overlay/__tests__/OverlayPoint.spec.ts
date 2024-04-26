@@ -1,6 +1,7 @@
 import {Point} from '../../rga/Point';
 import {setup} from '../../slice/__tests__/setup';
 import {OverlayPoint} from '../OverlayPoint';
+import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../refs';
 
 const setupOverlayPoint = () => {
   const deps = setup();
@@ -196,9 +197,9 @@ describe('markers', () => {
 
   test('can add tree markers by appending them', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
-    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 2), '<p>');
+    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 3), '<p>');
     const point = getPoint(marker2.start);
     point.addMarker(marker1);
     point.addMarker(marker2);
@@ -210,9 +211,9 @@ describe('markers', () => {
 
   test('can remove markers', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
-    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
+    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 2), '<p>');
     const point = getPoint(marker1.start);
     point.addMarker(marker2);
     point.addMarker(marker1);
@@ -230,5 +231,80 @@ describe('markers', () => {
     point.removeMarker(marker1);
     point.removeMarker(marker3);
     expect(point.markers.length).toBe(0);
+  });
+});
+
+describe('refs', () => {
+  test('can add marker ref', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const point = getPoint(marker.start);
+    expect(point.markers.length).toBe(0);
+    expect(point.refs.length).toBe(0);
+    point.addMarkerRef(marker);
+    expect(point.markers.length).toBe(1);
+    expect(point.refs.length).toBe(1);
+    expect(point.markers[0]).toBe(marker);
+    expect(point.refs[0]).toBe(marker);
+  });
+
+  test('can add layer ref (start)', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const slice = peritext.slices.insErase(peritext.rangeAt(0, 4), 123);
+    const point = getPoint(slice.start);
+    expect(point.layers.length).toBe(0);
+    expect(point.refs.length).toBe(0);
+    point.addLayerStartRef(slice);
+    expect(point.layers.length).toBe(1);
+    expect(point.refs.length).toBe(1);
+    expect(point.layers[0]).toBe(slice);
+    expect((point.refs[0] as OverlayRefSliceStart).slice).toBe(slice);
+  });
+
+  test('can add layer ref (end)', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const slice = peritext.slices.insErase(peritext.rangeAt(0, 4), 123);
+    const point = getPoint(slice.end);
+    expect(point.layers.length).toBe(0);
+    expect(point.refs.length).toBe(0);
+    point.addLayerEndRef(slice);
+    expect(point.layers.length).toBe(0);
+    expect(point.refs.length).toBe(1);
+    expect((point.refs[0] as OverlayRefSliceEnd).slice).toBe(slice);
+  });
+
+  test('can add marker and layer start', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const slice = peritext.slices.insErase(peritext.rangeAt(10, 4), 123);
+    const point = getPoint(slice.end);
+    expect(point.layers.length).toBe(0);
+    expect(point.markers.length).toBe(0);
+    expect(point.refs.length).toBe(0);
+    point.addMarkerRef(marker);
+    point.addLayerStartRef(slice);
+    expect(point.layers.length).toBe(1);
+    expect(point.markers.length).toBe(1);
+    expect(point.refs.length).toBe(2);
+  });
+
+  test('can remove marker and layer', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const slice = peritext.slices.insErase(peritext.rangeAt(10, 4), 123);
+    const point = getPoint(slice.end);
+    point.addMarkerRef(marker);
+    point.addLayerStartRef(slice);
+    expect(point.layers.length).toBe(1);
+    expect(point.markers.length).toBe(1);
+    expect(point.refs.length).toBe(2);
+    point.removeRef(slice);
+    expect(point.layers.length).toBe(0);
+    expect(point.markers.length).toBe(1);
+    expect(point.refs.length).toBe(1);
+    point.removeRef(marker);
+    expect(point.layers.length).toBe(0);
+    expect(point.markers.length).toBe(0);
+    expect(point.refs.length).toBe(0);
   });
 });
