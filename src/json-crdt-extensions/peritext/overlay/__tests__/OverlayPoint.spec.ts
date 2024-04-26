@@ -119,3 +119,116 @@ describe('layers', () => {
     expect(point.layers.length).toBe(0);
   });
 });
+
+describe('markers', () => {
+  test('can add a marker', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const point = getPoint(marker.start);
+    expect(point.markers.length).toBe(0);
+    point.addMarker(marker);
+    expect(point.markers.length).toBe(1);
+    expect(point.markers[0]).toBe(marker);
+  });
+
+  test('inserting same marker twice is a no-op', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const point = getPoint(marker.start);
+    expect(point.markers.length).toBe(0);
+    point.addMarker(marker);
+    point.addMarker(marker);
+    point.addMarker(marker);
+    point.addMarker(marker);
+    expect(point.markers.length).toBe(1);
+    expect(point.markers[0]).toBe(marker);
+  });
+
+  test('can add two markers with the same start position', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const point = getPoint(marker1.start);
+    expect(point.markers.length).toBe(0);
+    point.addMarker(marker1);
+    expect(point.markers.length).toBe(1);
+    point.addMarker(marker2);
+    point.addMarker(marker2);
+    expect(point.markers.length).toBe(2);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker2);
+  });
+
+  test('orders markers by their ID', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const point = getPoint(marker1.start);
+    point.addMarker(marker2);
+    point.addMarker(marker1);
+    point.addMarker(marker2);
+    point.addMarker(marker1);
+    point.addMarker(marker2);
+    point.addMarker(marker1);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker2);
+  });
+
+  test('can add tree markers and sort them correctly', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker3 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const point = getPoint(marker1.start);
+    point.addMarker(marker3);
+    point.addMarker(marker3);
+    point.addMarker(marker2);
+    point.addMarker(marker2);
+    point.addMarker(marker3);
+    point.addMarker(marker1);
+    point.addMarker(marker3);
+    point.addMarker(marker3);
+    expect(point.markers.length).toBe(3);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker2);
+    expect(point.markers[2]).toBe(marker3);
+  });
+
+  test('can add tree markers by appending them', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const point = getPoint(marker2.start);
+    point.addMarker(marker1);
+    point.addMarker(marker2);
+    point.addMarker(marker3);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker2);
+    expect(point.markers[2]).toBe(marker3);
+  });
+
+  test('can remove markers', () => {
+    const {peritext, getPoint} = setupOverlayPoint();
+    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 0), '<p>');
+    const point = getPoint(marker1.start);
+    point.addMarker(marker2);
+    point.addMarker(marker1);
+    point.addMarker(marker1);
+    point.addMarker(marker1);
+    point.addMarker(marker3);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker2);
+    expect(point.markers[2]).toBe(marker3);
+    point.removeMarker(marker2);
+    expect(point.markers[0]).toBe(marker1);
+    expect(point.markers[1]).toBe(marker3);
+    point.removeMarker(marker1);
+    expect(point.markers[0]).toBe(marker3);
+    point.removeMarker(marker1);
+    point.removeMarker(marker3);
+    expect(point.markers.length).toBe(0);
+  });
+});

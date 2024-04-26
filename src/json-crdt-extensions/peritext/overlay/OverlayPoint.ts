@@ -25,14 +25,15 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
   public readonly layers: Slice[] = [];
 
   /**
-   * Collapsed slices - markers/block splits, which represent a single point in
-   * the text, even if the start and end of the slice are different.
-   *
-   * @todo Rename to `markers`?
+   * Collapsed slices - markers (block splits), which represent a single point
+   * in the text, even if the start and end of the slice are different.
    */
-  public readonly points: Slice[] = [];
+  public readonly markers: Slice[] = [];
 
-  /** Hash of text contents until the next {@link OverlayPoint}. */
+  /**
+   * Hash of text contents until the next {@link OverlayPoint}. This field is
+   * modified by the {@link Overlay} tree.
+   */
   public hash: number = 0;
 
   public removeSlice(slice: Slice): void {
@@ -50,7 +51,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
       }
     }
     this.removeLayer(slice);
-    this.removePoint(slice);
+    this.removeMarker(slice);
   }
 
   // ------------------------------------------------------------------- layers
@@ -109,32 +110,49 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
 
   // ------------------------------------------------------------------ markers
 
-  public addPoint(slice: Slice): void {
-    const points = this.points;
+  /**
+   * Inserts a slice to the list of markers which represent a single point in
+   * the text, even if the start and end of the slice are different. The
+   * operation is idempotent, so inserting the same slice twice will not change
+   * the state of the point. The markers are sorted by the slice ID.
+   *
+   * @param slice Slice to add to the marker list.
+   */
+  public addMarker(slice: Slice): void {
+    const points = this.markers;
     const length = points.length;
     if (!length) {
       points.push(slice);
       return;
     }
-    // We attempt to insert from the end of the list, as it is the most likely.
+    // We attempt to insert from the end of the list, as it is the most likely
+    // scenario. And `.push()` is more efficient than `.unshift()`.
     const lastSlice = points[length - 1];
     const sliceId = slice.id;
-    if (compare(lastSlice.id, sliceId) < 0) {
+    const cmp = compare(lastSlice.id, sliceId);
+    if (cmp < 0) {
       points.push(slice);
       return;
-    }
+    } else if (!cmp) return;
     for (let i = length - 2; i >= 0; i--) {
       const currSlice = points[i];
-      if (compare(currSlice.id, sliceId) < 0) {
+      const cmp = compare(currSlice.id, sliceId);
+      if (cmp < 0) {
         points.splice(i + 1, 0, slice);
         return;
-      }
+      } else if (!cmp) return;
     }
     points.unshift(slice);
   }
 
-  public removePoint(slice: Slice): void {
-    const points = this.points;
+  /**
+   * Removes a slice from the list of markers, which represent a single point in
+   * the text, even if the start and end of the slice are different.
+   *
+   * @param slice Slice to remove from the marker list.
+   */
+  public removeMarker(slice: Slice): void {
+    const points = this.markers;
     const length = points.length;
     for (let i = 0; i < length; i++) {
       if (points[i] === slice) {
