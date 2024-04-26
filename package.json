@@ -93,8 +93,8 @@
     "test:cli:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:cli:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "test:cli:pack": "./bin/json-pack-test.js ./bin/json-pack.js",
-    "demo:json-patch": "ts-node src/json-patch/__demos__/json-patch.ts",
-    "demo:json-pointer": "ts-node src/json-pointer/__demos__/json-pointer.ts",
+    "demo:json-patch": "npx ts-node src/json-patch/__demos__/json-patch.ts",
+    "demo:json-pointer": "npx ts-node src/json-pointer/__demos__/json-pointer.ts",
     "bench:json-crdt:traces:crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:crdt-libs",
     "bench:json-crdt:traces:non-crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:non-crdt-libs",
     "bench:json-crdt:concurrent-traces": "cd src/json-crdt/__bench__ && yarn && yarn bench:concurrent-traces",
@@ -110,7 +110,7 @@
     "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
-    "jj": "ts-node src/json-cli/jj.ts"
+    "jj": "npx ts-node src/json-cli/jj.ts"
   },
   "peerDependencies": {
     "rxjs": "7",
