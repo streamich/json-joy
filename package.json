@@ -131,10 +131,8 @@
     "thingies": "^1.20.0"
   },
   "devDependencies": {
-    "@exodus/schemasafe": "^1.0.0-rc.6",
     "@types/benchmark": "^2.1.2",
     "@types/jest": "^29.5.12",
-    "ajv": "^8.11.0",
     "benchmark": "^2.1.4",
     "config-housekeeping": "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801",
     "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
