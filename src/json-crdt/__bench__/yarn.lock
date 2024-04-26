@@ -123,10 +123,6 @@ diamond-types-node@1.0.2:
   resolved "https://registry.yarnpkg.com/diamond-types-node/-/diamond-types-node-1.0.2.tgz#6bfb413b1a1a0f6840ecdebf1fd99dd8d4b4b3f5"
   integrity sha512-TWVZpHp32gvVqZc4A0NB/bTpRSwN71iwjlfZF2V7Kb+kp+YFAckxzEmpOedkDDnevPCz5iDe/ju1ln3bxCsqfA==
 
-"editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
-  version "0.0.0"
-  resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
-
 isomorphic.js@^0.2.4:
   version "0.2.5"
   resolved "https://registry.yarnpkg.com/isomorphic.js/-/isomorphic.js-0.2.5.tgz#13eecf36f2dba53e85d355e11bf9d4208c6f7f88"

@@ -1086,6 +1086,10 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
+"editing-traces@https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b":
+  version "0.0.0"
+  resolved "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b"
+
 electron-to-chromium@^1.4.668:
   version "1.4.749"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.749.tgz#9869e2e258141da26a2272b58264584c3461279d"
