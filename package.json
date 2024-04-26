@@ -85,7 +85,7 @@
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\"",
     "build": "yarn build:es2020",
-    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "jest": "jest",
     "test": "jest --maxWorkers 7",
     "test:all": "yarn lint && yarn test && yarn build:all && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn demo:json-patch && yarn demo:json-pointer",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
