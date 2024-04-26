@@ -1803,6 +1803,10 @@ concurrently@^8.0.1:
     tree-kill "^1.2.2"
     yargs "^17.7.2"
 
+"config-housekeeping@https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801":
+  version "0.0.0"
+  resolved "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801"
+
 connect-history-api-fallback@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/connect-history-api-fallback/-/connect-history-api-fallback-2.0.0.tgz#647264845251a0daf25b97ce87834cace0f5f1c8"
