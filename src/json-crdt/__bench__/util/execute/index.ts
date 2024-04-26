@@ -1,34 +1,14 @@
 import * as os from 'os';
-import {traces} from './traces';
-import type {SequentialTrace, SequentialTraceEditor, SequentialTraceName} from './types';
-import {editors, type SequentialEditorName} from './editors';
+import {traces} from '../traces';
+import {editors, type SequentialEditorName} from '../editors';
+import {runTrace} from './runTrace';
+import type {SequentialTraceName} from '../types';
 
 /* tslint:disable no-console */
 
 function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
-export const runTrace = (trace: SequentialTrace, editor: SequentialTraceEditor) => {
-  const txns = trace.txns;
-  const txnsLength = txns.length;
-  const editorInstance = editor.factory();
-  if (trace.startContent) editorInstance.ins(0, trace.startContent);
-  for (let i = 0; i < txnsLength; i++) {
-    const transaction = txns[i];
-    const patches = transaction.patches;
-    const length = patches.length;
-    for (let j = 0; j < length; j++) {
-      const patch = patches[j];
-      const pos = patch[0];
-      const del = patch[1];
-      const insert = patch[2];
-      if (del) editorInstance.del(pos, del);
-      if (insert) editorInstance.ins(pos, insert);
-    }
-  }
-  return editorInstance;
-};
 
 export const runTraceWithEditor = (
   traceName: SequentialTraceName,

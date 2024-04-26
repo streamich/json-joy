@@ -49,6 +49,7 @@ export class Peritext implements Printable {
    *
    * @param pos Position of the character in the text.
    * @param anchor Whether the point should attach before or after a character.
+   *               Defaults to "before".
    * @returns The point.
    */
   public pointAt(pos: number, anchor: Anchor = Anchor.Before): Point {

@@ -1,6 +1,6 @@
 {
   "name": "json-joy",
-  "version": "11.2.0",
+  "version": "15.5.0",
   "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
@@ -76,16 +76,16 @@
     "lib/"
   ],
   "scripts": {
-    "prettier": "prettier --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",
-    "prettier:check": "prettier --ignore-path .gitignore --list-different 'src/**/*.{ts,tsx,js,jsx}'",
+    "prettier": "npx prettier@3.2.5 --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",
+    "prettier:check": "npx prettier@3.2.5 --ignore-path .gitignore --list-different 'src/**/*.{ts,tsx,js,jsx}'",
     "lint": "yarn tslint",
     "lint:fix": "yarn tslint --fix",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",
-    "clean": "rimraf lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log",
+    "clean": "npx rimraf@5.0.5 lib es6 es2019 es2020 esm typedocs coverage gh-pages yarn-error.log src/**/__bench__/node_modules src/**/__bench__/yarn-error.log",
     "build:es2020": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "build:all": "concurrently \"yarn build:es2020\"",
+    "build:all": "npx concurrently@8.2.2 \"yarn build:es2020\"",
     "build": "yarn build:es2020",
-    "jest": "node -r ts-node/register ./node_modules/.bin/jest",
+    "jest": "jest",
     "test": "jest --maxWorkers 7",
     "test:all": "yarn lint && yarn test && yarn build:all && yarn test:cli:pointer && yarn test:cli:patch && yarn test:cli:pack && yarn demo:json-patch && yarn demo:json-pointer",
     "test:ci": "yarn jest --maxWorkers 3 --no-cache",
@@ -93,24 +93,30 @@
     "test:cli:pointer": "./bin/json-pointer-test.js ./bin/json-pointer.js",
     "test:cli:patch": "./bin/json-patch-test.js ./bin/json-patch.js",
     "test:cli:pack": "./bin/json-pack-test.js ./bin/json-pack.js",
-    "demo:json-patch": "ts-node src/json-patch/__demos__/json-patch.ts",
-    "demo:json-pointer": "ts-node src/json-pointer/__demos__/json-pointer.ts",
+    "demo:json-patch": "npx ts-node src/json-patch/__demos__/json-patch.ts",
+    "demo:json-pointer": "npx ts-node src/json-pointer/__demos__/json-pointer.ts",
+    "bench:json-crdt:traces:crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:crdt-libs",
+    "bench:json-crdt:traces:non-crdt-libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:traces:non-crdt-libs",
+    "bench:json-crdt:concurrent-traces": "cd src/json-crdt/__bench__ && yarn && yarn bench:concurrent-traces",
+    "bench:json-crdt:codecs:encoding": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding",
+    "bench:json-crdt:codecs:decoding": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:decoding",
+    "bench:json-crdt:codecs:encoding:json": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:json",
+    "bench:json-crdt:codecs:encoding:libs": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:encoding:libs",
+    "bench:json-crdt:codecs:sizes": "cd src/json-crdt/__bench__ && yarn && yarn bench:codecs:sizes",
+    "bench:json-ot:ot-string:apply": "cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:apply",
+    "bench:json-ot:ot-string:compose-and-transform": "yarn build && cd src/json-ot/__bench__ && yarn && yarn bench:ot-string:compose-and-transform",
     "coverage": "yarn test --collectCoverage",
-    "typedoc": "typedoc",
-    "build:pages": "rimraf gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
+    "typedoc": "npx typedoc@0.25.13 --tsconfig tsconfig.build.json",
+    "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
-    "jj": "ts-node src/json-cli/jj.ts"
+    "jj": "npx ts-node src/json-cli/jj.ts"
   },
   "peerDependencies": {
-    "quill-delta": "^5",
     "rxjs": "7",
     "tslib": "2"
   },
   "peerDependenciesMeta": {
-    "quill-delta": {
-      "optional": true
-    },
     "rxjs": {
       "optional": true
     }
@@ -125,52 +131,21 @@
     "thingies": "^1.20.0"
   },
   "devDependencies": {
-    "@automerge/automerge": "2.1.13",
-    "@collabs/collabs": "0.13.4",
-    "@exodus/schemasafe": "^1.0.0-rc.6",
     "@types/benchmark": "^2.1.2",
     "@types/jest": "^29.5.12",
-    "@types/quill": "^2.0.14",
-    "ajv": "^8.11.0",
-    "app-root-path": "^3.1.0",
-    "axios": "^1.3.5",
     "benchmark": "^2.1.4",
-    "concurrently": "^8.0.1",
-    "diamond-types-node": "1.0.2",
+    "config-housekeeping": "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801",
     "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
     "fast-json-patch": "^3.0.0-1",
-    "fork-ts-checker-webpack-plugin": "^8.0.0",
-    "gh-pages": "^5.0.0",
-    "html-webpack-plugin": "^5.5.1",
-    "husky": "^8.0.3",
-    "isomorphic-ws": "^5.0.0",
     "jest": "^29.7.0",
     "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
     "json-logic-js": "^2.0.1",
-    "loro-crdt": "^0.4.1",
-    "nodemon": "^3.0.0",
-    "ot-text": "^1.0.2",
-    "ot-text-unicode": "^4.0.0",
-    "p4-css": "^1.5.1",
-    "prettier": "^3.2.5",
-    "pretty-quick": "^3.1.3",
-    "quill-delta": "^5.0.0",
-    "rimraf": "^5.0.0",
-    "rope.js": "0.1.0",
-    "tinybench": "^2.4.0",
+    "rxjs": "^7.8.1",
     "ts-jest": "^29.1.2",
-    "ts-loader": "^9.5.1",
-    "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "tslint": "^6.1.3",
     "tslint-config-common": "^1.6.2",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.4",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4",
-    "yjs": "13.6.14",
-    "ywasm": "0.16.10"
+    "typescript": "^5.4.4"
   },
   "jest": {
     "verbose": true,
@@ -187,7 +162,9 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
-    "transformIgnorePatterns": [],
+    "transformIgnorePatterns": [
+      ".*/node_modules/.*"
+    ],
     "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.ts$"
   },
   "prettier": {
@@ -230,5 +207,24 @@
         ]
       }
     }
+  },
+  "release": {
+    "branches": [
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ]
   }
 }

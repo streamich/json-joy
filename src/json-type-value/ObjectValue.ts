@@ -1,10 +1,12 @@
 import {Value} from './Value';
 import {toText} from '../json-type/typescript/toText';
 import {TypeSystem} from '../json-type/system/TypeSystem';
+import {printTree} from 'sonic-forest/lib/print/printTree';
 import type {ResolveType} from '../json-type';
 import type * as classes from '../json-type/type';
 import type * as ts from '../json-type/typescript/types';
 import type {TypeBuilder} from '../json-type/type/TypeBuilder';
+import type {Printable} from 'sonic-forest/lib/print/types';
 
 export type UnObjectType<T> = T extends classes.ObjectType<infer U> ? U : never;
 export type UnObjectValue<T> = T extends ObjectValue<infer U> ? U : never;
@@ -31,7 +33,7 @@ export type TuplesToFields<T> = T extends PropDefinition<infer K, infer V>[] ? c
 type PropDefinition<K extends string, V extends classes.Type> = [key: K, val: V, data: ResolveType<V>];
 type PropDef = <K extends string, V extends classes.Type>(key: K, val: V, data: ResolveType<V>) => PropDefinition<K, V>;
 
-export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
+export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> implements Printable {
   public static create = (system: TypeSystem = new TypeSystem()) => new ObjectValue(system.t.obj, {});
 
   public get system(): TypeSystem {
@@ -154,5 +156,9 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> {
 
   public toTypeScript(): string {
     return toText(this.toTypeScriptModuleAst());
+  }
+
+  public toString(tab: string = ''): string {
+    return this.constructor.name + printTree(tab, [(tab) => this.type.toString(tab)]);
   }
 }
