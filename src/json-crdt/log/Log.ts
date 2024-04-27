@@ -1,4 +1,4 @@
-import {FanOutUnsubscribe} from 'thingies/es2020/fanout';
+import {FanOutUnsubscribe} from 'thingies/lib/fanout';
 import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
 import {printTree} from '../../util/print/printTree';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';

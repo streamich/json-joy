@@ -1,5 +1,5 @@
 import {MapFanOut, MergeFanOut, MicrotaskBufferFanOut, OnNewFanOut} from '../fanout';
-import {FanOut} from 'thingies/es2020/fanout';
+import {FanOut} from 'thingies/lib/fanout';
 
 describe('MergeFanOut', () => {
   test('merges data from multiple fanouts', () => {
