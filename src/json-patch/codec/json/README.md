@@ -6,9 +6,8 @@ operations like described [JSON Patch specification](https://datatracker.ietf.or
 Operations are encoded using JSON objects, for example, `add` operations:
 
 ```json
-{ "op": "add", "path": "/foo/bar", "value": 123 }
+{"op": "add", "path": "/foo/bar", "value": 123}
 ```
-
 
 ## Usage
 
@@ -16,10 +15,7 @@ Operations are encoded using JSON objects, for example, `add` operations:
 import {OpTest, OpReplace} from 'json-joy/{lib,es6,ems}/json-patch';
 import {encode, decode} from 'json-joy/{lib,es6,ems}/json-patch/codec/json';
 
-const patch = [
-  new OpTest('/foo', 'bar'),
-  new OpReplace('/foo', 'baz'),
-];
+const patch = [new OpTest('/foo', 'bar'), new OpReplace('/foo', 'baz')];
 
 const encoded = encode(patch);
 const decoded = decode(encoded);

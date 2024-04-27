@@ -9,20 +9,17 @@ CLI executable to encode JSON document in [MessagePack](https://msgpack.org/inde
 
 Supports binary data.
 
-
 ## Installation
 
 ```
 npm install -g json-joy
 ```
 
-
 ## Usage
 
 ```
 <json> | json-pack
 ```
-
 
 ## Example
 

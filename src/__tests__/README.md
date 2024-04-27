@@ -12,7 +12,6 @@ This `/src/__tests__` is a root folder for all test related concerns.
 - `json-documents.ts` file contains a collection of various JSON documents.
 - `util.ts` file contains utility functions that can be used in tests.
 
-
 ## Unit testing
 
 You can execute only the unit tests with the following command:

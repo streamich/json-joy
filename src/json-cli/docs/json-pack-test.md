@@ -7,20 +7,17 @@ implementations in different programming languages.
 It expects a single argument, which is a path to [`json-pack` executable](./json-pack.md). It
 will run a test suite through that executable.
 
-
 ## Installation
 
 ```
 npm install -g json-joy
 ```
 
-
 ## Usage
 
 ```
 json-pack-test <path_to_json_pack_cli>
 ```
-
 
 ## Example
 

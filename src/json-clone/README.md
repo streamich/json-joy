@@ -12,10 +12,9 @@ const obj = {foo: new Uint8Array([1, 2, 3])};
 const cloned = cloneBinary(obj);
 
 isDeepEqual(obj, cloned); // true
-obj === cloned // false
-obj.foo === cloned.foo // false
+obj === cloned; // false
+obj.foo === cloned.foo; // false
 ```
-
 
 ## Benchmarks
 

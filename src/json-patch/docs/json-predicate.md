@@ -1,7 +1,7 @@
 # JSON Predicate
 
 All [JSON Predicate][json-predicate] operations are implemented, which includes:
-  
+
 - `test`
 - `contains`
 - `defined`

@@ -1,10 +1,8 @@
-# Benchmark report: __Decoding - JSON CRDT codecs__
+# Benchmark report: **Decoding - JSON CRDT codecs**
 
 > Warmup: 1000x, Node.js: v20.9.0, Arch: x64, CPU: AMD Ryzen 9 3900X 12-Core Processor
 
-
-
-## Payload: __Small object, 44 bytes__
+## Payload: **Small object, 44 bytes**
 
 - structural > binary (with server clock) x 593,483 ops/sec ±0.51% (92 runs sampled)
 - structural > binary (with logical clock) x 429,844 ops/sec ±0.56% (95 runs sampled)
@@ -17,10 +15,9 @@
 - sidecar (with server clock) x 314,294 ops/sec ±0.60% (95 runs sampled)
 - sidecar (with logical clock) x 280,494 ops/sec ±0.44% (96 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Typical object, 993 bytes__
+## Payload: **Typical object, 993 bytes**
 
 - structural > binary (with server clock) x 61,033 ops/sec ±0.36% (93 runs sampled)
 - structural > binary (with logical clock) x 46,114 ops/sec ±0.53% (96 runs sampled)
@@ -33,10 +30,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 35,121 ops/sec ±0.48% (95 runs sampled)
 - sidecar (with logical clock) x 32,013 ops/sec ±0.35% (97 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Large object, 3741 bytes__
+## Payload: **Large object, 3741 bytes**
 
 - structural > binary (with server clock) x 18,070 ops/sec ±0.52% (95 runs sampled)
 - structural > binary (with logical clock) x 13,837 ops/sec ±0.61% (94 runs sampled)
@@ -49,10 +45,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 10,530 ops/sec ±0.74% (93 runs sampled)
 - sidecar (with logical clock) x 9,551 ops/sec ±0.88% (93 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Very large object, 45750 bytes__
+## Payload: **Very large object, 45750 bytes**
 
 - structural > binary (with server clock) x 739 ops/sec ±0.60% (77 runs sampled)
 - structural > binary (with logical clock) x 654 ops/sec ±0.56% (92 runs sampled)
@@ -65,10 +60,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 454 ops/sec ±3.02% (89 runs sampled)
 - sidecar (with logical clock) x 441 ops/sec ±0.49% (90 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Object with many keys, 969 bytes__
+## Payload: **Object with many keys, 969 bytes**
 
 - structural > binary (with server clock) x 40,694 ops/sec ±1.04% (94 runs sampled)
 - structural > binary (with logical clock) x 32,229 ops/sec ±0.44% (95 runs sampled)
@@ -81,10 +75,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 21,077 ops/sec ±0.53% (93 runs sampled)
 - sidecar (with logical clock) x 19,021 ops/sec ±0.83% (92 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __String ladder, 4037 bytes__
+## Payload: **String ladder, 4037 bytes**
 
 - structural > binary (with server clock) x 23,500 ops/sec ±0.57% (91 runs sampled)
 - structural > binary (with logical clock) x 19,014 ops/sec ±0.61% (95 runs sampled)
@@ -97,10 +90,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 18,034 ops/sec ±0.53% (90 runs sampled)
 - sidecar (with logical clock) x 16,657 ops/sec ±0.37% (96 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Long strings, 7011 bytes__
+## Payload: **Long strings, 7011 bytes**
 
 - structural > binary (with server clock) x 62,422 ops/sec ±0.31% (96 runs sampled)
 - structural > binary (with logical clock) x 54,339 ops/sec ±1.89% (95 runs sampled)
@@ -113,10 +105,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 53,273 ops/sec ±0.26% (96 runs sampled)
 - sidecar (with logical clock) x 50,869 ops/sec ±0.52% (94 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Short strings, 170 bytes__
+## Payload: **Short strings, 170 bytes**
 
 - structural > binary (with server clock) x 104,880 ops/sec ±2.38% (96 runs sampled)
 - structural > binary (with logical clock) x 78,999 ops/sec ±0.48% (97 runs sampled)
@@ -129,10 +120,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 67,338 ops/sec ±2.29% (92 runs sampled)
 - sidecar (with logical clock) x 60,118 ops/sec ±0.48% (93 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Numbers, 331 bytes__
+## Payload: **Numbers, 331 bytes**
 
 - structural > binary (with server clock) x 75,618 ops/sec ±0.35% (95 runs sampled)
 - structural > binary (with logical clock) x 62,997 ops/sec ±0.40% (95 runs sampled)
@@ -145,10 +135,9 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 34,286 ops/sec ±0.91% (94 runs sampled)
 - sidecar (with logical clock) x 34,106 ops/sec ±0.48% (95 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
+Fastest is **structural > binary (with server clock)**
 
-
-## Payload: __Tokens, 308 bytes__
+## Payload: **Tokens, 308 bytes**
 
 - structural > binary (with server clock) x 79,931 ops/sec ±0.91% (88 runs sampled)
 - structural > binary (with logical clock) x 66,569 ops/sec ±2.66% (90 runs sampled)
@@ -161,5 +150,4 @@ Fastest is __structural > binary (with server clock)__
 - sidecar (with server clock) x 37,479 ops/sec ±0.66% (93 runs sampled)
 - sidecar (with logical clock) x 36,804 ops/sec ±2.41% (94 runs sampled)
 
-Fastest is __structural > binary (with server clock)__
-
+Fastest is **structural > binary (with server clock)**

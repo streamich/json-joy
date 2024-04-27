@@ -4,7 +4,6 @@ Same as ot-string, but the value is not reversible; it does not support
 a delete where the deleted text is specified. It only supports deletes
 where the deletion length is specified.
 
-
 ## Benchmarks
 
 ot-string-irreversible is faster than ot-string.

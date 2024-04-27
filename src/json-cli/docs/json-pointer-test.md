@@ -7,13 +7,11 @@ implementations in different programming languages.
 It expects a single argument, which is a path to [`json-pointer` executable](./json-pointer.md). It
 will run a test suite through that executable.
 
-
 ## Usage
 
 ```
 json-pointer-test <path_to_json_pointer_cli>
 ```
-
 
 ## Example
 

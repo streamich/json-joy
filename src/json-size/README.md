@@ -9,7 +9,7 @@ in UTF-8 encoding.
 ```ts
 import {jsonSize} from 'json-joy/{lib,es6}/json-size';
 
-jsonSize({1: 2, foo: 'bar'}) // 19
+jsonSize({1: 2, foo: 'bar'}); // 19
 ```
 
 ## Reference
