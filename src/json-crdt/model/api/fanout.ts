@@ -1,4 +1,4 @@
-import {FanOut, FanOutUnsubscribe, FanOutListener} from 'thingies/es2020/fanout';
+import {FanOut, FanOutUnsubscribe, FanOutListener} from 'thingies/lib/fanout';
 
 /**
  * Merges multiple fanouts into a single fanout. The merged fanout emits the

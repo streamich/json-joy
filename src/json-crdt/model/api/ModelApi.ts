@@ -1,4 +1,4 @@
-import {FanOut} from 'thingies/es2020/fanout';
+import {FanOut} from 'thingies/lib/fanout';
 import {VecNode, ConNode, ObjNode, ArrNode, BinNode, StrNode, ValNode} from '../../nodes';
 import {ApiPath, ArrApi, BinApi, ConApi, NodeApi, ObjApi, StrApi, VecApi, ValApi} from './nodes';
 import {Patch} from '../../../json-crdt-patch/Patch';

@@ -553,7 +553,7 @@
     hyperdyperid "^1.2.0"
     thingies "^1.20.0"
 
-"@jsonjoy.com/util@^1.0.0":
+"@jsonjoy.com/util@^1.0.0", "@jsonjoy.com/util@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.1.0.tgz#9726365362ede17405d2b521b4c782582df7ed4f"
   integrity sha512-Yz+xITJ3Y/w0DBISwPkBETP5/cITHXscjgQNZIkfrVz1V7/ahJY8vw+T+LZy/KtXgKuUWqu4GALAQ3bhGt9J8A==
@@ -612,7 +612,7 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
-"@types/benchmark@^2.1.2":
+"@types/benchmark@^2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@types/benchmark/-/benchmark-2.1.5.tgz#940c1850c18fdfdaee3fd6ed29cd92ae0d445b45"
   integrity sha512-cKio2eFB3v7qmKcvIHLUMw/dIx/8bhWPuzpzRT4unCPRTD8VdA9Zb0afxpcxOqR4PixRS7yT42FqGS8BYL8g1w==
@@ -1093,7 +1093,7 @@ expect@^29.0.0, expect@^29.7.0:
     jest-message-util "^29.7.0"
     jest-util "^29.7.0"
 
-fast-json-patch@^3.0.0-1:
+fast-json-patch@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/fast-json-patch/-/fast-json-patch-3.1.1.tgz#85064ea1b1ebf97a3f7ad01e23f9337e72c66947"
   integrity sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==
@@ -1710,7 +1710,7 @@ jsesc@^2.5.1:
   version "0.0.1"
   resolved "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d"
 
-json-logic-js@^2.0.1:
+json-logic-js@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/json-logic-js/-/json-logic-js-2.0.2.tgz#b613e095f5e598cb78f7b9a2bbf638e74cf98158"
   integrity sha512-ZBtBdMJieqQcH7IX/LaBsr5pX+Y5JIW+EhejtM3Ffg2jdN9Iwf+Ht6TbHnvAZ/YtwyuhPaCBlnvzrwVeWdvGDQ==
@@ -2174,6 +2174,11 @@ thingies@^1.20.0:
   resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.20.0.tgz#27bf93397c39c3ff36601197e8cf78f43b7b2319"
   integrity sha512-WvXY4CjHp/Uim2Ri0daqu6jkNTHJTk1H8NvuMQiOL0mgtdkqoSH5fkENy2M6XnvsLOp5iwyPcbmokoBjVb4lnQ==
 
+thingies@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/thingies/-/thingies-2.0.0.tgz#10956129d2dc0ddccddbeb0880fd01404e520776"
+  integrity sha512-lSh4YCpb0JJXsOZkdiLGN8ZmEunFzbHg3depXSyEWNWij+XL5dxeLeta55yuHJCggblp7MjRLIZjkdD1hKl+Sg==
+
 tmpl@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
@@ -2278,7 +2283,7 @@ type-fest@^0.21.3:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.21.3.tgz#d260a24b0198436e133fa26a524a6d65fa3b2e37"
   integrity sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==
 
-typescript@^5.4.4:
+typescript@^5.4.5:
   version "5.4.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
