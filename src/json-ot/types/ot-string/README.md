@@ -4,7 +4,7 @@ This is a re-implementation of a JavaScript string OT type, inspired by
 `text0` type from `otttypes`.
 
 - String is a sequence of JavaScript UTF-16 characters.
-- *ot-string* operations are a list of components.
+- _ot-string_ operations are a list of components.
 - There are three types of components:
   - Retain: a number of characters to retain and move the cursor forward.
   - Insert: a string to insert at the cursor position.
@@ -15,35 +15,34 @@ This is a re-implementation of a JavaScript string OT type, inspired by
 
 An ot-string operation is a JSON array of components. Where each component is
 encoded as follows:
-  - Retail: positive integer.
-  - Insert: string.
-  - Delete: negative integer or a string in a one element array.
 
+- Retail: positive integer.
+- Insert: string.
+- Delete: negative integer or a string in a one element array.
 
 ## Operations
 
 Here is an example operation:
 
 ```js
-[5, 'inserted', -1, 3, ['deleted']]
+[5, 'inserted', -1, 3, ['deleted']];
 ```
-
 
 ## Encoding
 
- This form of operation encoding results in most efficient binary encoding using MessagePack.
- 
- Consider operation:
- 
- ```
- [5, "hello", -4]
- ```
- 
+This form of operation encoding results in most efficient binary encoding using MessagePack.
+
+Consider operation:
+
+```
+[5, "hello", -4]
+```
+
 - Array is encoded as one byte fixarr.
 - 5 is encoded as one byte fixint.
 - String header is encoded as one byte fixstr followed by 5 bytes of UTF-8 string.
 - -4 is encoded as one byte fixint.
- 
+
 ## Benchmarks
 
 `apply()` function:

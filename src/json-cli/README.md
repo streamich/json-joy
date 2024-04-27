@@ -11,7 +11,6 @@ as a command line interface.
 - [`json-pointer-test` &mdash; runs tests against `json-pointer` CLI](./docs/json-pointer-test.md).
 - [`json-patch-test` &mdash; runs tests against `json-patch` CLI](./docs/json-patch-test.md).
 
-
 ## Installation
 
 ```

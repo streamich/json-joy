@@ -6,14 +6,10 @@ generates the most efficient JavaScript code for validation given the schema.
 The generated validator functions return truthy value or error information on
 validation failure. And `false` or a falsy value on success.
 
-
 ## Usage
 
 ```ts
-const type = t.Object(
-  t.prop('id', t.str),
-  t.propOpt('name', t.str),
-);
+const type = t.Object(t.prop('id', t.str), t.propOpt('name', t.str));
 
 const json = {
   id: '123',
@@ -22,8 +18,8 @@ const json = {
 
 const validator = type.compileValidator('boolean');
 
-const err1 = validator(json);   // false
-const err2 = validator({});     // true
+const err1 = validator(json); // false
+const err2 = validator({}); // true
 ```
 
 To see insides of the validator function use `.toString()`.

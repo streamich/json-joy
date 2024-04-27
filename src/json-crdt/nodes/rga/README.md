@@ -6,15 +6,13 @@ by (1) ID and by (2) position are used to keep track of the elements.
 This abstract RGA implementation is used to implement all list-like data
 structure:
 
-- String 
+- String
 - Binary blob
 - Array
-
 
 References:
 
 - https://pages.lip6.fr/Marc.Shapiro/papers/rgasplit-group2016-11.pdf
-
 
 ## Data structures
 

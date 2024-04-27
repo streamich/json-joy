@@ -76,8 +76,8 @@
     "lib/"
   ],
   "scripts": {
-    "prettier": "npx prettier@3.2.5 --ignore-path .gitignore --write \"src/**/*.{ts,tsx,js,jsx}\"",
-    "prettier:check": "npx prettier@3.2.5 --ignore-path .gitignore --list-different 'src/**/*.{ts,tsx,js,jsx}'",
+    "prettier": "npx prettier@3.2.5 --ignore-path .gitignore --write .",
+    "prettier:check": "npx prettier@3.2.5 --ignore-path .gitignore --check .",
     "lint": "yarn tslint",
     "lint:fix": "yarn tslint --fix",
     "tslint": "tslint 'src/**/*.{js,jsx,ts,tsx}' -t verbose --project .",

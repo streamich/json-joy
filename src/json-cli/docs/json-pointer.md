@@ -8,20 +8,17 @@ JSON Pointer as a CLI.
 - Receives a JSON Pointer as the first CLI argument.
 - Returns resolved value through STDOUT.
 
-
 ## Installation
 
 ```
 npm install -g json-joy
 ```
 
-
 ## Usage
 
 ```
 <json> | json-pointer <pointer>
 ```
-
 
 ## Example
 

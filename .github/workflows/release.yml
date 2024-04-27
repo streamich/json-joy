@@ -2,12 +2,11 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master, next ]
+    branches: [master, next]
 
 jobs:
   release:
-    if:
-      ${{ github.event_name == 'push' && (github.event.ref == 'refs/heads/master' || github.event.ref == 'refs/heads/next') }}
+    if: ${{ github.event_name == 'push' && (github.event.ref == 'refs/heads/master' || github.event.ref == 'refs/heads/next') }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

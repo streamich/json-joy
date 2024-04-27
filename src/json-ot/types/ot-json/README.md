@@ -147,4 +147,3 @@ An operation updates content which was moved:
   ],
 }
 ```
-

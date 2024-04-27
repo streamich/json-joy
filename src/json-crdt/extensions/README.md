@@ -12,14 +12,14 @@ is a `vec` node with a specific structure, and a specific interpretation of the
 elements of the `vec` node.
 
 An extension `vec` node follows the following structure: it is a 2-tuple, where
-the first element in the extension *header* and the second element is the
-extension *payload*.
+the first element in the extension _header_ and the second element is the
+extension _payload_.
 
-The extension *header* is a `con` node, which holds a 3 byte `Uint8Array` with
+The extension _header_ is a `con` node, which holds a 3 byte `Uint8Array` with
 the following octets: (1) the extension ID, (2) the session ID modulo 256, and
 (3) the time sequence modulo 256.
 
-The extension *payload* is any JSON CRDT node with any value, which is specific
+The extension _payload_ is any JSON CRDT node with any value, which is specific
 to the extension.
 
 ```

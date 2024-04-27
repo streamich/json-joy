@@ -4,7 +4,6 @@ The `sidecar` format is an out-of-band encoding format for JSON CRDT, where
 the view is encoded as plain JSON/CBOR document and all CRDT metadata is
 encoded in a separate blob.
 
-
 ## View node references
 
 Consider a JSON view:

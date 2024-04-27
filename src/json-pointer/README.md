@@ -5,7 +5,6 @@ specification.
 
 [json-pointer]: https://tools.ietf.org/html/rfc6901
 
-
 ## Examples
 
 Find the value in a JSON document at some specific location.
@@ -16,7 +15,7 @@ import {find, parseJsonPointer} from 'json-joy/{lib,es6,esm}/json-pointer';
 const doc = {
   foo: {
     bar: 123,
-  }
+  },
 };
 
 const path = parseJsonPointer('/foo/bar');

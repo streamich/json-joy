@@ -10,7 +10,6 @@ This library implements three sets of operations (together known as JSON Patch+)
 
 JSON Patch+ patches can be serialized in a number of ways, see [codecs](./codec/README.md).
 
-
 ## Examples
 
 Apply a JSON Patch.
@@ -18,11 +17,9 @@ Apply a JSON Patch.
 ```js
 import {applyPatch} from 'json-joy/{lib,es6,esm}/json-patch';
 
-const doc = { foo: { bar: 123 } };
+const doc = {foo: {bar: 123}};
 
-const patch = [
-  {op: 'add', path: '/foo/baz', value: 666},
-];
+const patch = [{op: 'add', path: '/foo/baz', value: 666}];
 
 const result = applyPatch(doc, patch, false);
 

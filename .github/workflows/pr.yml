@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   pull_request:
-    branches: [ master, next ]
+    branches: [master, next]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -58,5 +58,3 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn typedoc
-    
-    

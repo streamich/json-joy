@@ -2,7 +2,6 @@
 
 The `json-random` library lets you generate random JSON values.
 
-
 ## Usage
 
 Generate a random JSON object.
@@ -131,7 +130,6 @@ const json8 = RandomJson.genArray();
 console.log(json8);
 // [ 'BYTvAq+k', [], [ '&XT93Y', '{LN\\!P5SQ}0>&rZ%' ], null ]
 ```
-
 
 ## Demo
 

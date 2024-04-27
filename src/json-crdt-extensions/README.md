@@ -1,6 +1,6 @@
 # JSON CRDT Extensions
 
-*JSON CRDT Extensions* are higher-order data types which build on top of the
+_JSON CRDT Extensions_ are higher-order data types which build on top of the
 JSON CRDT. For example, an extension data type can be composed of multiple
 JSON CRDT nodes.
 

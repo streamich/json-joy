@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   mirror:
@@ -12,7 +12,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Push To Gitlab
-        env: 
+        env:
           token: ${{ secrets.GITLAB_TOKEN }}
         run: |
           git config user.name "streamich"

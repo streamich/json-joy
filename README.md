@@ -8,7 +8,6 @@
   <br />
 </div>
 
-
 # json-joy
 
 [![npm version](https://badge.fury.io/js/json-joy.svg)](https://badge.fury.io/js/json-joy)
@@ -19,21 +18,20 @@ Major focus of `json-joy` is development of the JSON CRDT protocol, a
 Conflict-free Replicated Data Type that enables seamless
 merging of changes in JSON data models, avoiding conflicts between replicas.
 
-- [__Website__](https://jsonjoy.com)
-- [__Documentation__](https://jsonjoy.com/libs/json-joy-js)
-- [__Blog posts__](https://jsonjoy.com/blog)
-  - [*Fuzz Testing RGA CRDT*](https://jsonjoy.com/blog/fuzz-testing-rga-crdt)
-  - [*Benchmarking JSON Serialization Codecs*](https://jsonjoy.com/blog/json-codec-benchmarks)
-  - [*List CRDT Benchmarks*](https://jsonjoy.com/blog/list-crdt-benchmarks)
-  - [*Blazing Fast List CRDT*](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm)
-- [__JSON CRDT__](https://jsonjoy.com/specs/json-crdt) `specification`
-- [__JSON CRDT Patch__](https://jsonjoy.com/specs/json-crdt-patch) `specification`
-- [__JSON Expression__](https://jsonjoy.com/specs/json-expression) `specification`
-- [__JSON Reactive RPC__](https://jsonjoy.com/specs/json-rx) `specification`
-- [__Compact JSON__](https://jsonjoy.com/specs/compact-json) `encoding`
-- [__API Reference__](https://streamich.github.io/json-joy/)
-- [__Test coverage__](https://streamich.github.io/json-joy/coverage/lcov-report/)
-
+- [**Website**](https://jsonjoy.com)
+- [**Documentation**](https://jsonjoy.com/libs/json-joy-js)
+- [**Blog posts**](https://jsonjoy.com/blog)
+  - [_Fuzz Testing RGA CRDT_](https://jsonjoy.com/blog/fuzz-testing-rga-crdt)
+  - [_Benchmarking JSON Serialization Codecs_](https://jsonjoy.com/blog/json-codec-benchmarks)
+  - [_List CRDT Benchmarks_](https://jsonjoy.com/blog/list-crdt-benchmarks)
+  - [_Blazing Fast List CRDT_](https://jsonjoy.com/blog/performant-rga-list-crdt-algorithm)
+- [**JSON CRDT**](https://jsonjoy.com/specs/json-crdt) `specification`
+- [**JSON CRDT Patch**](https://jsonjoy.com/specs/json-crdt-patch) `specification`
+- [**JSON Expression**](https://jsonjoy.com/specs/json-expression) `specification`
+- [**JSON Reactive RPC**](https://jsonjoy.com/specs/json-rx) `specification`
+- [**Compact JSON**](https://jsonjoy.com/specs/compact-json) `encoding`
+- [**API Reference**](https://streamich.github.io/json-joy/)
+- [**Test coverage**](https://streamich.github.io/json-joy/coverage/lcov-report/)
 
 ## Notable features
 
@@ -43,7 +41,7 @@ merging of changes in JSON data models, avoiding conflicts between replicas.
 - The fastest implementation of CBOR, DAG-CBOR, MessagePack, UBJSON, and JSON codecs in JavaScript.
 - The fastest (HTTP) router implementation in JavaScript.
 - The fastest JSON schema validation implementation in JavaScript.
-- Very fast binary tree (Radix, AVL, Red-black*, Splay) implementations in JavaScript.
+- Very fast binary tree (Radix, AVL, Red-black\*, Splay) implementations in JavaScript.
 - Very fast JSON Patch (and JSON Pointer) implementation in JavaScript, including many non-standard operations, and JSON Predicate implementation.
 - Very fast JSON Expression implementation in JavaScript.
 

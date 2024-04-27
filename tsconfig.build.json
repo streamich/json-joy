@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "sourceMap": false,
+    "sourceMap": false
   },
   "exclude": [
     "src/demo",
@@ -17,5 +17,5 @@
     "src/**/__tape__/**/*.*",
     "*.test.ts",
     "*.spec.ts"
-  ],
+  ]
 }

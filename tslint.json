@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "tslint-config-common"
-  ],
+  "extends": ["tslint-config-common"],
   "rules": {
     "unified-signatures": false,
     "no-conditional-assignment": false,

@@ -5,7 +5,6 @@ CRDT implementation of a JSON type.
 - Snapshot encoding
   - [Binary encoding](./codec/binary/README.md)
 
-
 ## Benchmarks
 
 Inserting ten 10-character strings and deleting one 10-character string range
@@ -48,7 +47,6 @@ Fastest is json-crdt StrNode type
 
 Ingesting Martin Kleppman's test document. Libraries a run few times to allow
 the compiler to optimize.
-
 
 ```
 node benchmarks/json-crdt/automerge-paper.js

@@ -4,7 +4,6 @@ Deterministic `JSON.stringify()`&mdash;sorts object keys before serializing them
 which ensures that semantically the same JSON objects always result in the same
 serialized string.
 
-
 ## Benchmarks
 
 ```

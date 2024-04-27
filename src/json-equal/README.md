@@ -8,9 +8,7 @@ This library contains the fastest JSON deep comparison algorithms.
   can pre-compile a javascript function for comparison, which is about an order of magnitude
   faster than `deepEqual`.
 
-
 ## Reference
-
 
 ### `deepEqual`
 
@@ -19,7 +17,6 @@ import {deepEqual} from 'json-joy/lib/json-equal/deepEqual';
 
 deepEqual(a, b); // true/false
 ```
-
 
 ### `$$deepEqual`
 
@@ -31,7 +28,6 @@ const fn = eval(js);
 
 fn(b); // true/false
 ```
-
 
 ## Benchmarks
 

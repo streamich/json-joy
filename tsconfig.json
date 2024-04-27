@@ -1,15 +1,7 @@
 {
   "extends": "./node_modules/config-housekeeping/tsconfig.json",
   "include": ["src"],
-  "exclude": [
-    "node_modules",
-    "lib",
-    "es6",
-    "es2020",
-    "esm",
-    "docs",
-    "README.md"
-  ],
+  "exclude": ["node_modules", "lib", "es6", "es2020", "esm", "docs", "README.md"],
   "typedocOptions": {
     "entryPoints": [
       "src/json-crdt/index.ts",
