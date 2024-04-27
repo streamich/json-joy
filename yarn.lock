@@ -2174,6 +2174,11 @@ thingies@^1.20.0:
   resolved "https://registry.yarnpkg.com/thingies/-/thingies-1.20.0.tgz#27bf93397c39c3ff36601197e8cf78f43b7b2319"
   integrity sha512-WvXY4CjHp/Uim2Ri0daqu6jkNTHJTk1H8NvuMQiOL0mgtdkqoSH5fkENy2M6XnvsLOp5iwyPcbmokoBjVb4lnQ==
 
+thingies@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/thingies/-/thingies-2.0.0.tgz#10956129d2dc0ddccddbeb0880fd01404e520776"
+  integrity sha512-lSh4YCpb0JJXsOZkdiLGN8ZmEunFzbHg3depXSyEWNWij+XL5dxeLeta55yuHJCggblp7MjRLIZjkdD1hKl+Sg==
+
 tmpl@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/tmpl/-/tmpl-1.0.5.tgz#8683e0b902bb9c20c4f726e3c0b69f36518c07cc"
