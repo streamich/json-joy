@@ -27,6 +27,8 @@ export const enum SliceBehavior {
   /**
    * A Split slice, which is used to mark a block split position in the document.
    * For example, paragraph, heading, blockquote, etc.
+   * 
+   * @todo Rename to `Marker`.
    */
   Split = 0b000,
 

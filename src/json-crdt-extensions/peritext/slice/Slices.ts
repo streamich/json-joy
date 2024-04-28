@@ -62,6 +62,9 @@ export class Slices implements Stateful, Printable {
     return slice;
   }
 
+  /**
+   * @todo Rename to `insMarker`.
+   */
   public insSplit(range: Range, type: SliceType, data?: unknown): MarkerSlice {
     return this.ins(range, SliceBehavior.Split, type, data) as MarkerSlice;
   }
