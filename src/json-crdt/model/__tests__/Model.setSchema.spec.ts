@@ -28,10 +28,12 @@ test('can set map schema', () => {
 });
 
 test('uses global session ID by default', () => {
-  const model = Model.withLogicalClock().setSchema(s.obj({
-    id: s.str<string>('asdf'),
-    num: s.con(123),
-  }));
+  const model = Model.withLogicalClock().setSchema(
+    s.obj({
+      id: s.str<string>('asdf'),
+      num: s.con(123),
+    }),
+  );
   expect(model.api.r.get().node.id.sid).toBe(SESSION.GLOBAL);
   expect(model.api.r.get().get('id').node.id.sid).toBe(SESSION.GLOBAL);
   expect(model.api.r.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
@@ -49,10 +51,12 @@ test('allows to specify custom session ID', () => {
 });
 
 test('resets session ID to user specified', () => {
-  const model = Model.withLogicalClock().setSchema(s.obj({
-    id: s.str<string>('asdf'),
-    num: s.con(123),
-  }));
+  const model = Model.withLogicalClock().setSchema(
+    s.obj({
+      id: s.str<string>('asdf'),
+      num: s.con(123),
+    }),
+  );
   expect(model.view().num).toBe(123);
   expect(model.api.r.get().get('num').node.id.sid).toBe(SESSION.GLOBAL);
   model.api.r.get().set({
