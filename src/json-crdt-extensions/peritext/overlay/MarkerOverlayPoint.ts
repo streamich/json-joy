@@ -12,7 +12,12 @@ export class MarkerOverlayPoint extends OverlayPoint {
    */
   public textHash: number = 0;
 
-  constructor(protected readonly rga: AbstractRga<string>, id: ITimestampStruct, anchor: Anchor, public readonly marker: MarkerSlice) {
+  constructor(
+    protected readonly rga: AbstractRga<string>,
+    id: ITimestampStruct,
+    anchor: Anchor,
+    public readonly marker: MarkerSlice,
+  ) {
     super(rga, id, anchor);
   }
 
@@ -36,11 +41,11 @@ export class MarkerOverlayPoint extends OverlayPoint {
 
   public toStringName(tab: string, lite?: boolean): string {
     const hash = lite ? '' : `#${this.textHash.toString(36).slice(-4)}`;
-    const tag = lite ? '' : `, type = ${JSON.stringify((this.type() as any))}`;
+    const tag = lite ? '' : `, type = ${JSON.stringify(this.type() as any)}`;
     return `${super.toStringName(tab, lite)}${lite ? '' : ' '}${hash}${tag}`;
   }
 
   public toString(tab: string = '', lite?: boolean): string {
-    return super.toString(tab, lite) + (lite ? '' : printTree(tab, [tab => this.marker.toString(tab)]));
+    return super.toString(tab, lite) + (lite ? '' : printTree(tab, [(tab) => this.marker.toString(tab)]));
   }
 }
