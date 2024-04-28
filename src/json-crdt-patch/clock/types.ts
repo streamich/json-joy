@@ -8,7 +8,7 @@ export interface ITimestampStruct {
    * Session ID (or actor ID, site ID, process ID, etc.), a random identifier
    * randomly assigned to each editing session.
    */
-  readonly sid: number;
+  sid: number;
 
   /**
    * Logical time (or sequence number, tick, etc.), a monotonically increasing
