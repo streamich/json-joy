@@ -1,4 +1,4 @@
-import type {SplitSlice} from '../slice/SplitSlice';
+import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slice} from '../slice/types';
 
 /**
@@ -8,7 +8,7 @@ import type {Slice} from '../slice/types';
  * and one to the end slice.
  */
 export type OverlayRef =
-  | SplitSlice // Ref to a *marker* slice
+  | MarkerSlice // Ref to a *marker*
   | OverlayRefSliceStart // Ref to the start of an annotation slice
   | OverlayRefSliceEnd; // Ref to the end of an annotation slice
 

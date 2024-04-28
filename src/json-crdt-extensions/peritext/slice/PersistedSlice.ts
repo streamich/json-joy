@@ -10,7 +10,6 @@ import {VecNode} from '../../../json-crdt/nodes';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
-import type {JsonNode} from '../../../json-crdt/nodes';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {MutableSlice, SliceUpdateParams} from './types';

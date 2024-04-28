@@ -2,7 +2,7 @@ import {Point} from '../rga/Point';
 import {compare} from '../../../json-crdt-patch/clock';
 import {OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {printTree} from 'sonic-forest/lib/print/printTree';
-import type {SplitSlice} from '../slice/SplitSlice';
+import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
 import type {Printable} from '../../../util/print/types';
 import type {Slice} from '../slice/types';
@@ -157,7 +157,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice A marker (split slice).
    */
-  public addMarkerRef(slice: SplitSlice): void {
+  public addMarkerRef(slice: MarkerSlice): void {
     this.refs.push(slice);
     this.addMarker(slice);
   }

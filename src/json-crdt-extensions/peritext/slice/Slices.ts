@@ -5,7 +5,7 @@ import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
 import {printTree} from '../../../util/print/printTree';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
-import {SplitSlice} from './SplitSlice';
+import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type {Slice} from './types';
@@ -56,14 +56,14 @@ export class Slices implements Stateful, Printable {
     const txt = this.txt;
     const slice =
       behavior === SliceBehavior.Split
-        ? new SplitSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
+        ? new MarkerSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
         : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
 
-  public insSplit(range: Range, type: SliceType, data?: unknown): SplitSlice {
-    return this.ins(range, SliceBehavior.Split, type, data) as SplitSlice;
+  public insSplit(range: Range, type: SliceType, data?: unknown): MarkerSlice {
+    return this.ins(range, SliceBehavior.Split, type, data) as MarkerSlice;
   }
 
   public insStack(range: Range, type: SliceType, data?: unknown): PersistedSlice {
@@ -89,7 +89,7 @@ export class Slices implements Stateful, Printable {
     let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
     // TODO: Simplify, remove `SplitSlice` class.
     if (slice.isSplit())
-      slice = new SplitSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
+      slice = new MarkerSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
   }
 
