@@ -403,13 +403,16 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @returns Strictly typed model.
    */
   public setSchema<S extends NodeBuilder>(schema: S, useGlobalSession: boolean = true): Model<SchemaToJsonNode<S>> {
-    const clock = this.clock;
-    const sid = useGlobalSession ? SESSION.GLOBAL : clock.sid;
-    if (clock.time < 2) {
-      const oldSid = clock.sid;
-      clock.sid = sid;
+    const c = this.clock;
+    const isNewDocument = c.time === 1;
+    if (isNewDocument) {
+      const oldSid = c.sid;
+      if (useGlobalSession) c.sid = SESSION.GLOBAL;
       this.api.root(schema);
-      clock.sid = oldSid;
+      if (useGlobalSession) {
+        c.sid = oldSid;
+        c.observe(new clock.Timestamp(SESSION.GLOBAL, c.time - 1), 1);
+      }
     }
     return <any>this;
   }
