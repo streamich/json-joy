@@ -396,10 +396,24 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * the document is empty.
    *
    * @param schema The schema to set for this model.
+   * @param sid Session ID to use for setting the default value of the document.
+   *            Defaults to `SESSION.GLOBAL` (2), which is the default session ID
+   *            for all operations operations that are not attributed to a specific
+   *            session.
    * @returns Strictly typed model.
    */
-  public setSchema<S extends NodeBuilder>(schema: S): Model<SchemaToJsonNode<S>> {
-    if (this.clock.time < 2) this.api.root(schema);
+  public setSchema<S extends NodeBuilder>(schema: S, useGlobalSession: boolean = true): Model<SchemaToJsonNode<S>> {
+    const c = this.clock;
+    const isNewDocument = c.time === 1;
+    if (isNewDocument) {
+      const oldSid = c.sid;
+      if (useGlobalSession) c.sid = SESSION.GLOBAL;
+      this.api.root(schema);
+      if (useGlobalSession) {
+        c.sid = oldSid;
+        c.observe(new clock.Timestamp(SESSION.GLOBAL, c.time - 1), 1);
+      }
+    }
     return <any>this;
   }
 
