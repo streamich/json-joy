@@ -213,12 +213,34 @@
 <a name='L148'></a><a href='#L148'>148</a>
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
-<a name='L151'></a><a href='#L151'>151</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -370,8 +392,19 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {Model} from '../model';
 import {first, next} from 'sonic-forest/lib/util';
 import type {Printable} from '../../util/print/types';
+import type {JsonNode} from '../nodes/types';
 &nbsp;
-export class Log implements Printable {
+/**
+ * The `Log` represents a history of patches applied to a JSON CRDT model. It
+ * consists of: (1) a starting {@link Model} instance, (2) a list of {@link Patch} instances,
+ * that can be applied to the starting model to reach the current state of the
+ * document, and (3) the current state of the document, the `end` {@link Model}.
+ *
+ * The log can be used to replay the history of patches to any point in time,
+ * from the "start" to the "end" of the log, and return the resulting {@link Model}
+ * state.
+ */
+export class Log&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; implements Printable {
   /**
    * Creates a `PatchLog` instance from a newly JSON CRDT model. Checks if
    * the model API buffer has any initial operations applied, if yes, it
@@ -381,9 +414,9 @@ export class Log implements Printable {
    *              `Model.withLogicalClock()` or `Model.withServerClock()`.
    * @returns A new `PatchLog` instance.
    */
-  public static fromNewModel(model: Model&lt;any&gt;): Log {
+  public static fromNewModel&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt;(model: Model&lt;N&gt;): Log&lt;N&gt; {
     const clock = model.clock.clone();
-    const log = new Log(() =&gt; new Model(clock));
+    const log = new Log&lt;N&gt;(() =&gt; new Model(clock));
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
@@ -397,7 +430,7 @@ export class Log implements Printable {
    * @readonly Internally this function may be updated, but externally it is
    *           read-only.
    */
-  public start: () =&gt; Model;
+  public start: () =&gt; Model&lt;N&gt;;
 &nbsp;
   /**
    * The end of the log, the current state of the document. It is the model
@@ -405,7 +438,7 @@ export class Log implements Printable {
    *
    * @readonly
    */
-  public readonly end: Model;
+  public readonly end: Model&lt;N&gt;;
 &nbsp;
   /**
    * The collection of patches which are applied to the `start()` model to reach
@@ -420,7 +453,7 @@ export class Log implements Printable {
   private __onPatch: FanOutUnsubscribe;
   private __onFlush: FanOutUnsubscribe;
 &nbsp;
-  constructor(start: () =&gt; Model) {
+  constructor(start: () =&gt; Model&lt;N&gt;) {
     this.start = start;
     const end = (this.end = start());
     const onPatch = (patch: Patch) =&gt; {
@@ -449,7 +482,7 @@ export class Log implements Printable {
    *
    * @returns A new model instance with all patches replayed.
    */
-  public replayToEnd(): Model {
+  public replayToEnd(): Model&lt;N&gt; {
     const clone = this.start().clone();
     for (let node = first(this.patches.root); node; node = next(node)) clone.applyPatch(node.v);
     return clone;
@@ -463,7 +496,7 @@ export class Log implements Printable {
    * @param ts Timestamp ID of the patch to replay to.
    * @returns A new model instance with patches replayed up to the given timestamp.
    */
-  public replayTo(ts: ITimestampStruct): Model {
+  public replayTo(ts: ITimestampStruct): Model&lt;N&gt; {
     const clone = this.start().clone();
     for (let node = first(this.patches.root); node &amp;&amp; compare(ts, node.k) &gt;= 0; node = next(node))
       clone.applyPatch(node.v);
@@ -484,7 +517,7 @@ export class Log implements Printable {
     for (; node &amp;&amp; compare(ts, node.k) &gt;= 0; node = next(node)) newStartPatches.push(node.v);
     for (const patch of newStartPatches) this.patches.del(patch.getId()!);
     const oldStart = this.start;
-    this.start = (): Model =&gt; {
+    this.start = (): Model&lt;N&gt; =&gt; {
       const model = oldStart();
       for (const patch of newStartPatches) model.applyPatch(patch);
       return model;
@@ -520,7 +553,7 @@ export class Log implements Printable {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-04-28T15:43:51.350Z
+                at 2024-04-29T12:36:00.404Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
