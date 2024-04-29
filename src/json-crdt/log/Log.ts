@@ -7,6 +7,16 @@ import {first, next} from 'sonic-forest/lib/util';
 import type {Printable} from '../../util/print/types';
 import type {JsonNode} from '../nodes/types';
 
+/**
+ * The `Log` represents a history of patches applied to a JSON CRDT model. It
+ * consists of: (1) a starting {@link Model} instance, (2) a list of {@link Patch} instances,
+ * that can be applied to the starting model to reach the current state of the
+ * document, and (3) the current state of the document, the `end` {@link Model}.
+ *
+ * The log can be used to replay the history of patches to any point in time,
+ * from the "start" to the "end" of the log, and return the resulting {@link Model}
+ * state.
+ */
 export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Creates a `PatchLog` instance from a newly JSON CRDT model. Checks if
