@@ -1,14 +1,18 @@
+import {printTree} from 'sonic-forest/lib/print/printTree';
 import {Anchor} from './rga/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
-import {printTree} from '../../util/print/printTree';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
-import {type ITimestampStruct} from '../../json-crdt-patch/clock';
+import {Overlay} from './overlay/Overlay';
+import {Chars} from './constants';
+import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
 import type {StringChunk} from './util/types';
+import type {SliceType} from './types';
+import type {MarkerSlice} from './slice/MarkerSlice';
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -17,6 +21,7 @@ import type {StringChunk} from './util/types';
 export class Peritext implements Printable {
   public readonly slices: Slices;
   public readonly editor: Editor;
+  public readonly overlay = new Overlay(this);
 
   constructor(
     public readonly model: Model,
@@ -41,6 +46,17 @@ export class Peritext implements Printable {
       if (!curr) return;
     }
     return curr;
+  }
+
+  /** Select a single character before a point. */
+  public findCharBefore(point: Point): Range | undefined {
+    if (point.anchor === Anchor.After) {
+      const chunk = point.chunk();
+      if (chunk && !chunk.del) return this.range(this.point(point.id, Anchor.Before), point);
+    }
+    const id = point.prevId();
+    if (!id) return;
+    return this.range(this.point(id, Anchor.Before), this.point(id, Anchor.After));
   }
 
   // ------------------------------------------------------------------- points
@@ -159,15 +175,19 @@ export class Peritext implements Printable {
     return textId;
   }
 
-  /** Select a single character before a point. */
-  public findCharBefore(point: Point): Range | undefined {
-    if (point.anchor === Anchor.After) {
-      const chunk = point.chunk();
-      if (chunk && !chunk.del) return this.range(this.point(point.id, Anchor.Before), point);
-    }
-    const id = point.prevId();
-    if (!id) return;
-    return this.range(this.point(id, Anchor.Before), this.point(id, Anchor.After));
+  public insMarker(after: ITimestampStruct, type: SliceType, data?: unknown, char: string = Chars.BlockSplitSentinel): MarkerSlice {
+    const api = this.model.api;
+    const builder = api.builder;
+    const str = this.str;
+    /**
+     * We skip one clock cycle to prevent Block-wise RGA from merging adjacent
+     * characters. We want the marker chunk to always be its own distinct chunk.
+     */
+    builder.nop(1);
+    const textId = builder.insStr(str.id, after, char[0]);
+    const point = this.point(textId, Anchor.Before);
+    const range = this.range(point, point);
+    return this.slices.insMarker(range, type, data);
   }
 
   // ---------------------------------------------------------------- Printable
