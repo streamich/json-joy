@@ -55,18 +55,15 @@ export class Slices implements Stateful, Printable {
     // TODO: Need to check if split slice text was deleted
     const txt = this.txt;
     const slice =
-      behavior === SliceBehavior.Split
+      behavior === SliceBehavior.Marker
         ? new MarkerSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
         : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
 
-  /**
-   * @todo Rename to `insMarker`.
-   */
-  public insSplit(range: Range, type: SliceType, data?: unknown): MarkerSlice {
-    return this.ins(range, SliceBehavior.Split, type, data) as MarkerSlice;
+  public insMarker(range: Range, type: SliceType, data?: unknown): MarkerSlice {
+    return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice;
   }
 
   public insStack(range: Range, type: SliceType, data?: unknown): PersistedSlice {

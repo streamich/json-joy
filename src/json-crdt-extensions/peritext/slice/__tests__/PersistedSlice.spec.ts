@@ -4,14 +4,14 @@ import {setup} from './setup';
 const setupSlice = () => {
   const deps = setup();
   const range = deps.peritext.rangeAt(2, 3);
-  const slice = deps.peritext.slices.insSplit(range, 0);
+  const slice = deps.peritext.slices.insMarker(range, 0);
   return {...deps, range, slice};
 };
 
 test('can read slice data', () => {
   const {range, slice} = setupSlice();
   expect(slice.isSplit()).toBe(true);
-  expect(slice.behavior).toBe(SliceBehavior.Split);
+  expect(slice.behavior).toBe(SliceBehavior.Marker);
   expect(slice.type).toBe(0);
   expect(slice.data()).toBe(undefined);
   expect(slice.start).not.toBe(range.start);

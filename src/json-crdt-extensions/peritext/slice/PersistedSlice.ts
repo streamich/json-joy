@@ -58,7 +58,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   public isSplit(): boolean {
-    return this.behavior === SliceBehavior.Split;
+    return this.behavior === SliceBehavior.Marker;
   }
 
   protected tupleApi() {
