@@ -8,6 +8,7 @@ import {Slices} from './slice/Slices';
 import {type ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
+import type {StringChunk} from './util/types';
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -30,7 +31,19 @@ export class Peritext implements Printable {
     return this.model.api.wrap(this.str);
   }
 
-  // ------------------------------------------------------------------- Points
+  /** @todo Find a better place for this function. */
+  public firstVisChunk(): StringChunk | undefined {
+    const str = this.str;
+    let curr = str.first();
+    if (!curr) return;
+    while (curr.del) {
+      curr = str.next(curr);
+      if (!curr) return;
+    }
+    return curr;
+  }
+
+  // ------------------------------------------------------------------- points
 
   /**
    * Creates a point at a character ID.
@@ -81,7 +94,7 @@ export class Peritext implements Printable {
     return this.point(this.str.id, Anchor.Before);
   }
 
-  // ------------------------------------------------------------------- Ranges
+  // ------------------------------------------------------------------- ranges
 
   /**
    * Creates a range from two points. The points can be in any order.
@@ -117,7 +130,7 @@ export class Peritext implements Printable {
     return Range.at(this.str, start, length);
   }
 
-  // --------------------------------------------------------------- Insertions
+  // --------------------------------------------------------------- insertions
 
   /**
    * Insert plain text at a view position in the text.
