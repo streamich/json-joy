@@ -5,8 +5,19 @@ import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import {Model} from '../model';
 import {first, next} from 'sonic-forest/lib/util';
 import type {Printable} from '../../util/print/types';
+import type {JsonNode} from '../nodes/types';
 
-export class Log implements Printable {
+/**
+ * The `Log` represents a history of patches applied to a JSON CRDT model. It
+ * consists of: (1) a starting {@link Model} instance, (2) a list of {@link Patch} instances,
+ * that can be applied to the starting model to reach the current state of the
+ * document, and (3) the current state of the document, the `end` {@link Model}.
+ *
+ * The log can be used to replay the history of patches to any point in time,
+ * from the "start" to the "end" of the log, and return the resulting {@link Model}
+ * state.
+ */
+export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Creates a `PatchLog` instance from a newly JSON CRDT model. Checks if
    * the model API buffer has any initial operations applied, if yes, it
@@ -16,9 +27,9 @@ export class Log implements Printable {
    *              `Model.withLogicalClock()` or `Model.withServerClock()`.
    * @returns A new `PatchLog` instance.
    */
-  public static fromNewModel(model: Model<any>): Log {
+  public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
     const clock = model.clock.clone();
-    const log = new Log(() => new Model(clock));
+    const log = new Log<N>(() => new Model(clock));
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
@@ -32,7 +43,7 @@ export class Log implements Printable {
    * @readonly Internally this function may be updated, but externally it is
    *           read-only.
    */
-  public start: () => Model;
+  public start: () => Model<N>;
 
   /**
    * The end of the log, the current state of the document. It is the model
@@ -40,7 +51,7 @@ export class Log implements Printable {
    *
    * @readonly
    */
-  public readonly end: Model;
+  public readonly end: Model<N>;
 
   /**
    * The collection of patches which are applied to the `start()` model to reach
@@ -55,7 +66,7 @@ export class Log implements Printable {
   private __onPatch: FanOutUnsubscribe;
   private __onFlush: FanOutUnsubscribe;
 
-  constructor(start: () => Model) {
+  constructor(start: () => Model<N>) {
     this.start = start;
     const end = (this.end = start());
     const onPatch = (patch: Patch) => {
@@ -84,7 +95,7 @@ export class Log implements Printable {
    *
    * @returns A new model instance with all patches replayed.
    */
-  public replayToEnd(): Model {
+  public replayToEnd(): Model<N> {
     const clone = this.start().clone();
     for (let node = first(this.patches.root); node; node = next(node)) clone.applyPatch(node.v);
     return clone;
@@ -98,7 +109,7 @@ export class Log implements Printable {
    * @param ts Timestamp ID of the patch to replay to.
    * @returns A new model instance with patches replayed up to the given timestamp.
    */
-  public replayTo(ts: ITimestampStruct): Model {
+  public replayTo(ts: ITimestampStruct): Model<N> {
     const clone = this.start().clone();
     for (let node = first(this.patches.root); node && compare(ts, node.k) >= 0; node = next(node))
       clone.applyPatch(node.v);
@@ -119,7 +130,7 @@ export class Log implements Printable {
     for (; node && compare(ts, node.k) >= 0; node = next(node)) newStartPatches.push(node.v);
     for (const patch of newStartPatches) this.patches.del(patch.getId()!);
     const oldStart = this.start;
-    this.start = (): Model => {
+    this.start = (): Model<N> => {
       const model = oldStart();
       for (const patch of newStartPatches) model.applyPatch(patch);
       return model;
