@@ -38,7 +38,7 @@ describe('markers', () => {
 
     test('can insert one marker in the middle of text', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(6);
+      peritext.editor.cursor.setAt(6);
       peritext.editor.insMarker(['p'], '¶');
       expect(splitCount(peritext)).toBe(0);
       peritext.overlay.refresh();
@@ -54,14 +54,14 @@ describe('markers', () => {
 
     test('can insert two markers', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(3);
+      peritext.editor.cursor.setAt(3);
       peritext.editor.insMarker(['p'], '¶');
       expect(splitCount(peritext)).toBe(0);
       peritext.overlay.refresh();
       expect(splitCount(peritext)).toBe(1);
       peritext.overlay.refresh();
       expect(splitCount(peritext)).toBe(1);
-      peritext.editor.setCursor(9);
+      peritext.editor.cursor.setAt(9);
       peritext.editor.insMarker(['li'], '- ');
       expect(splitCount(peritext)).toBe(1);
       peritext.overlay.refresh();
@@ -74,7 +74,7 @@ describe('markers', () => {
   describe('deletes', () => {
     test('can delete a marker', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(6);
+      peritext.editor.cursor.setAt(6);
       const slice = peritext.editor.insMarker(['p'], '¶');
       peritext.refresh();
       expect(splitCount(peritext)).toBe(1);
@@ -89,9 +89,9 @@ describe('markers', () => {
 
     test('can delete one of two splits', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(2);
+      peritext.editor.cursor.setAt(2);
       peritext.editor.insMarker(['p'], '¶');
-      peritext.editor.setCursor(11);
+      peritext.editor.cursor.setAt(11);
       const slice = peritext.editor.insMarker(['p'], '¶');
       peritext.refresh();
       expect(splitCount(peritext)).toBe(2);
@@ -108,11 +108,11 @@ describe('markers', () => {
   describe('iterates', () => {
     test('can iterate over markers', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(1, 6);
+      peritext.editor.cursor.setAt(1, 6);
       peritext.editor.insertSlice('a', {a: 'b'});
-      peritext.editor.setCursor(2);
+      peritext.editor.cursor.setAt(2);
       peritext.editor.insMarker(['p'], '¶');
-      peritext.editor.setCursor(11);
+      peritext.editor.cursor.setAt(11);
       peritext.editor.insMarker(['p'], '¶');
       peritext.refresh();
       expect(splitCount(peritext)).toBe(2);
@@ -135,7 +135,7 @@ describe('slices', () => {
 
     test('can insert one slice in the middle of text', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(6, 2);
+      peritext.editor.cursor.setAt(6, 2);
       peritext.editor.insertSlice('em', {emphasis: true});
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
@@ -152,9 +152,9 @@ describe('slices', () => {
 
     test('can insert two slices', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(2, 8);
+      peritext.editor.cursor.setAt(2, 8);
       peritext.editor.insertSlice('em', {emphasis: true});
-      peritext.editor.setCursor(4, 8);
+      peritext.editor.cursor.setAt(4, 8);
       peritext.editor.insertSlice('strong', {bold: true});
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
@@ -167,9 +167,9 @@ describe('slices', () => {
 
     test('intersecting slice chunks point to two slices', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(2, 2);
+      peritext.editor.cursor.setAt(2, 2);
       peritext.editor.insertSlice('em', {emphasis: true});
-      peritext.editor.setCursor(3, 2);
+      peritext.editor.cursor.setAt(3, 2);
       peritext.editor.insertSlice('strong', {bold: true});
       peritext.refresh();
       const point1 = first(peritext.overlay.root)!;
@@ -190,7 +190,7 @@ describe('slices', () => {
 
     test('one char slice should correctly sort overlay points', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(0, 1);
+      peritext.editor.cursor.setAt(0, 1);
       peritext.editor.insertSlice('em', {emphasis: true});
       peritext.refresh();
       const point1 = peritext.overlay.first()!;
@@ -203,16 +203,16 @@ describe('slices', () => {
 
     test('intersecting slice before split, should not update the split', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(6);
+      peritext.editor.cursor.setAt(6);
       const slice = peritext.editor.insMarker(['p']);
       peritext.refresh();
       const point = peritext.overlay.find((point) => point instanceof MarkerOverlayPoint)!;
       expect(point.layers.length).toBe(0);
-      peritext.editor.setCursor(2, 2);
+      peritext.editor.cursor.setAt(2, 2);
       peritext.editor.insertSlice('<i>');
       peritext.refresh();
       expect(point.layers.length).toBe(0);
-      peritext.editor.setCursor(2, 1);
+      peritext.editor.cursor.setAt(2, 1);
       peritext.editor.insertSlice('<b>');
       peritext.refresh();
       expect(point.layers.length).toBe(0);
@@ -222,7 +222,7 @@ describe('slices', () => {
   describe('deletes', () => {
     test('can remove a slice', () => {
       const {peritext} = setup();
-      peritext.editor.setCursor(6, 2);
+      peritext.editor.cursor.setAt(6, 2);
       const slice = peritext.editor.insertSlice('em', {emphasis: true});
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
