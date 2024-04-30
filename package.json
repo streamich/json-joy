@@ -148,13 +148,6 @@
     "typescript": "^5.4.5"
   },
   "jest": {
-    "verbose": true,
-    "testEnvironmentOptions": {
-      "url": "http://localhost/"
-    },
-    "setupFiles": [
-      "<rootDir>/src/__tests__/setup.js"
-    ],
     "moduleFileExtensions": [
       "ts",
       "js"
