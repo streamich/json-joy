@@ -186,7 +186,6 @@ describe('slices', () => {
       expect(point3.layers[1].data()).toStrictEqual({bold: true});
       const point4 = next(point3)!;
       expect(point4.layers.length).toBe(0);
-      console.log(peritext + '');
     });
 
     test('one char slice should correctly sort overlay points', () => {
