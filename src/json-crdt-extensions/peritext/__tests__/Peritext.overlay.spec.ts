@@ -35,15 +35,15 @@ test('can insert slices', () => {
   const {editor} = peritext;
   expect(size(peritext.overlay.root)).toBe(0);
   editor.cursor.setAt(2, 2);
-  editor.insertSlice('bold');
+  editor.insStackSlice('bold');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(2);
   editor.cursor.setAt(6, 5);
-  editor.insertSlice('italic');
+  editor.insStackSlice('italic');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(4);
   editor.cursor.setAt(0, 5);
-  editor.insertSlice('underline');
+  editor.insStackSlice('underline');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(6);
 });

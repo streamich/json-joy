@@ -13,7 +13,7 @@ describe('.getOrNextLower()', () => {
     });
     const peritext = new Peritext(model, api.str(['text']).node, api.arr(['slices']).node);
     peritext.editor.cursor.setAt(1, 1);
-    peritext.editor.insertSlice(2);
+    peritext.editor.insStackSlice(2);
     peritext.refresh();
     const str = peritext.str;
     const id1 = str.find(1)!;
@@ -21,7 +21,7 @@ describe('.getOrNextLower()', () => {
     const p1 = peritext.point(id1, Anchor.After);
     const p2 = peritext.point(id2, Anchor.After);
     peritext.editor.cursor.set(p1, p2);
-    peritext.editor.insertSlice(3);
+    peritext.editor.insStackSlice(3);
     peritext.refresh();
     const cnt = size(peritext.overlay.root);
     expect(cnt).toBe(3);
@@ -41,10 +41,10 @@ describe('.getOrNextLower()', () => {
     const p1 = peritext.point(id1, Anchor.After);
     const p2 = peritext.point(id2, Anchor.After);
     peritext.editor.cursor.set(p1, p2);
-    peritext.editor.insertSlice(3);
+    peritext.editor.insStackSlice(3);
     peritext.refresh();
     peritext.editor.cursor.setAt(2, 1);
-    peritext.editor.insertSlice(33);
+    peritext.editor.insStackSlice(33);
     peritext.refresh();
     const cnt = size(peritext.overlay.root);
     expect(cnt).toBe(3);

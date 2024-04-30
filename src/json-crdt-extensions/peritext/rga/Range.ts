@@ -90,7 +90,7 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    *
    * @returns A new range with the same start and end points.
    */
-  public clone(): Range<T> {
+  public range(): Range<T> {
     return new Range(this.rga, this.start.clone(), this.end.clone());
   }
 

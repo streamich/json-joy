@@ -123,16 +123,19 @@ export class Editor implements Printable {
     if (range) this.cursor.setRange(range);
   }
 
-  public insertSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.slices.ins(this.cursor, SliceBehavior.Stack, type, data);
+  public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    const range = this.cursor.range();
+    return this.txt.slices.ins(range, SliceBehavior.Stack, type, data);
   }
 
-  public insertOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.slices.ins(this.cursor, SliceBehavior.Overwrite, type, data);
+  public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    const range = this.cursor.range();
+    return this.txt.slices.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
-  public insertEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
-    return this.txt.slices.ins(this.cursor, SliceBehavior.Erase, type, data);
+  public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+    const range = this.cursor.range();
+    return this.txt.slices.ins(range, SliceBehavior.Erase, type, data);
   }
 
   public insMarker(type: SliceType, data?: unknown): MarkerSlice {
