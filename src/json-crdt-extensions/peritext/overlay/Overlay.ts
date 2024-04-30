@@ -10,6 +10,7 @@ import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {equal, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
+import {firstVis} from '../../../json-crdt/nodes/rga/util';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from '../../../util/print/types';
@@ -197,7 +198,7 @@ export class Overlay implements Printable, Stateful {
     let endPoint = slice.end;
     const startIsStringRoot = equal(startPoint.id, str.id);
     if (startIsStringRoot) {
-      const firstVisibleChunk = txt.firstVisChunk();
+      const firstVisibleChunk = firstVis(txt.str);
       if (firstVisibleChunk) {
         startPoint = txt.point(firstVisibleChunk.id, Anchor.Before);
         const endIsStringRoot = equal(endPoint.id, str.id);

@@ -38,18 +38,6 @@ export class Peritext implements Printable {
     return this.model.api.wrap(this.str);
   }
 
-  /** @todo Find a better place for this function. */
-  public firstVisChunk(): StringChunk | undefined {
-    const str = this.str;
-    let curr = str.first();
-    if (!curr) return;
-    while (curr.del) {
-      curr = str.next(curr);
-      if (!curr) return;
-    }
-    return curr;
-  }
-
   /** Select a single character before a point. */
   public findCharBefore(point: Point): Range | undefined {
     if (point.anchor === Anchor.After) {
