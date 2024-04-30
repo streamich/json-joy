@@ -179,7 +179,12 @@ export class Peritext implements Printable {
 
   // ------------------------------------------------------------------ markers
 
-  public insMarker(after: ITimestampStruct, type: SliceType, data?: unknown, char: string = Chars.BlockSplitSentinel): MarkerSlice {
+  public insMarker(
+    after: ITimestampStruct,
+    type: SliceType,
+    data?: unknown,
+    char: string = Chars.BlockSplitSentinel,
+  ): MarkerSlice {
     const api = this.model.api;
     const builder = api.builder;
     const str = this.str;
