@@ -101,9 +101,9 @@ export class Cursor<T = string> extends Range<T> implements Slice<T> {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const text = JSON.stringify(this.text());
+    const text = this.text();
     const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
     const main = `${this.constructor.name} ${super.toString(tab + '  ', true)} ${focusIcon}`;
-    return main + printTree(tab, [() => text]);
+    return main + (text.length > 32 ? printTree(tab, [() => JSON.stringify(text)]) : '');
   }
 }

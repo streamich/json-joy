@@ -80,7 +80,7 @@ describe('.ins()', () => {
     const ranges = [r1, r2, r3, r4];
     const types = ['b', ['li', 'ul'], 0, 123, [1, 2, 3]];
     const datas = [{bold: true}, {list: 'ul'}, 0, 123, [1, 2, 3], null, undefined];
-    const behaviors = [SliceBehavior.Stack, SliceBehavior.Erase, SliceBehavior.Overwrite, SliceBehavior.Split];
+    const behaviors = [SliceBehavior.Stack, SliceBehavior.Erase, SliceBehavior.Overwrite, SliceBehavior.Marker];
     for (const range of ranges) {
       for (const type of types) {
         for (const data of datas) {

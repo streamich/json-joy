@@ -124,7 +124,7 @@ describe('layers', () => {
 describe('markers', () => {
   test('can add a marker', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
     const point = getPoint(marker.start);
     expect(point.markers.length).toBe(0);
     point.addMarker(marker);
@@ -134,7 +134,7 @@ describe('markers', () => {
 
   test('inserting same marker twice is a no-op', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
     const point = getPoint(marker.start);
     expect(point.markers.length).toBe(0);
     point.addMarker(marker);
@@ -147,8 +147,8 @@ describe('markers', () => {
 
   test('can add two markers with the same start position', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker1 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
     const point = getPoint(marker1.start);
     expect(point.markers.length).toBe(0);
     point.addMarker(marker1);
@@ -162,8 +162,8 @@ describe('markers', () => {
 
   test('orders markers by their ID', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker1 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
     const point = getPoint(marker1.start);
     point.addMarker(marker2);
     point.addMarker(marker1);
@@ -177,9 +177,9 @@ describe('markers', () => {
 
   test('can add tree markers and sort them correctly', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
-    const marker3 = peritext.slices.insSplit(peritext.rangeAt(5, 0), '<p>');
+    const marker1 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
+    const marker2 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
+    const marker3 = peritext.slices.insMarker(peritext.rangeAt(5, 0), '<p>');
     const point = getPoint(marker1.start);
     point.addMarker(marker3);
     point.addMarker(marker3);
@@ -197,9 +197,9 @@ describe('markers', () => {
 
   test('can add tree markers by appending them', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 2), '<p>');
-    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 3), '<p>');
+    const marker1 = peritext.slices.insMarker(peritext.rangeAt(6, 1), '<p>');
+    const marker2 = peritext.slices.insMarker(peritext.rangeAt(6, 2), '<p>');
+    const marker3 = peritext.slices.insMarker(peritext.rangeAt(6, 3), '<p>');
     const point = getPoint(marker2.start);
     point.addMarker(marker1);
     point.addMarker(marker2);
@@ -211,9 +211,9 @@ describe('markers', () => {
 
   test('can remove markers', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker1 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
-    const marker2 = peritext.slices.insSplit(peritext.rangeAt(6, 1), '<p>');
-    const marker3 = peritext.slices.insSplit(peritext.rangeAt(6, 2), '<p>');
+    const marker1 = peritext.slices.insMarker(peritext.rangeAt(6, 1), '<p>');
+    const marker2 = peritext.slices.insMarker(peritext.rangeAt(6, 1), '<p>');
+    const marker3 = peritext.slices.insMarker(peritext.rangeAt(6, 2), '<p>');
     const point = getPoint(marker1.start);
     point.addMarker(marker2);
     point.addMarker(marker1);
@@ -237,7 +237,7 @@ describe('markers', () => {
 describe('refs', () => {
   test('can add marker ref', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const marker = peritext.slices.insMarker(peritext.rangeAt(10, 1), '<p>');
     const point = getPoint(marker.start);
     expect(point.markers.length).toBe(0);
     expect(point.refs.length).toBe(0);
@@ -275,7 +275,7 @@ describe('refs', () => {
 
   test('can add marker and layer start', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const marker = peritext.slices.insMarker(peritext.rangeAt(10, 1), '<p>');
     const slice = peritext.slices.insErase(peritext.rangeAt(10, 4), 123);
     const point = getPoint(slice.end);
     expect(point.layers.length).toBe(0);
@@ -290,7 +290,7 @@ describe('refs', () => {
 
   test('can remove marker and layer', () => {
     const {peritext, getPoint} = setupOverlayPoint();
-    const marker = peritext.slices.insSplit(peritext.rangeAt(10, 1), '<p>');
+    const marker = peritext.slices.insMarker(peritext.rangeAt(10, 1), '<p>');
     const slice = peritext.slices.insErase(peritext.rangeAt(10, 4), 123);
     const point = getPoint(slice.end);
     point.addMarkerRef(marker);

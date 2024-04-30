@@ -3,11 +3,13 @@ import {Anchor} from '../rga/constants';
 import {SliceBehavior} from '../slice/constants';
 import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
+import {Chars} from '../constants';
 import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from '../../../util/print/types';
 import type {Point} from '../rga/Point';
 import type {SliceType} from '../types';
+import type {MarkerSlice} from '../slice/MarkerSlice';
 
 export class Editor implements Printable {
   /**
@@ -131,5 +133,10 @@ export class Editor implements Printable {
 
   public insertEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
     return this.txt.slices.ins(this.cursor, SliceBehavior.Erase, type, data);
+  }
+
+  public insMarker(type: SliceType, data?: unknown): MarkerSlice {
+    const after = this.collapseSelection();
+    return this.txt.insMarker(after, type, data, Chars.BlockSplitSentinel);
   }
 }

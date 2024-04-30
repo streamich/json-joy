@@ -58,7 +58,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   public isSplit(): boolean {
-    return this.behavior === SliceBehavior.Split;
+    return this.behavior === SliceBehavior.Marker;
   }
 
   protected tupleApi() {
@@ -143,7 +143,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   public toString(tab: string = ''): string {
     const data = this.data();
-    const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}`;
-    return header + printTree(tab, [!data ? null : (tab) => prettyOneLine(data)]);
+    const dataFormatted = data ? prettyOneLine(data) : '';
+    const dataLengthBreakpoint = 32;
+    const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    return header + printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted]);
   }
 }
