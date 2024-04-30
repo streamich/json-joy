@@ -7,6 +7,8 @@ import {ArrNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
+import {interval} from '../../json-crdt-patch/clock';
+import {CONST, updateNum} from '../../json-hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from '../../util/print/types';
@@ -146,7 +148,7 @@ export class Peritext implements Printable {
     return Range.at(this.str, start, length);
   }
 
-  // --------------------------------------------------------------- insertions
+  // --------------------------------------------------------------------- text
 
   /**
    * Insert plain text at a view position in the text.
@@ -175,6 +177,8 @@ export class Peritext implements Printable {
     return textId;
   }
 
+  // ------------------------------------------------------------------ markers
+
   public insMarker(after: ITimestampStruct, type: SliceType, data?: unknown, char: string = Chars.BlockSplitSentinel): MarkerSlice {
     const api = this.model.api;
     const builder = api.builder;
@@ -190,6 +194,17 @@ export class Peritext implements Printable {
     return this.slices.insMarker(range, type, data);
   }
 
+  /** @todo This can probably use .del() */
+  public delMarker(split: MarkerSlice): void {
+    const str = this.str;
+    const api = this.model.api;
+    const builder = api.builder;
+    const strChunk = split.start.chunk();
+    if (strChunk) builder.del(str.id, [interval(strChunk.id, 0, 1)]);
+    builder.del(this.slices.set.id, [interval(split.id, 0, 1)]);
+    api.apply();
+  }
+
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
@@ -202,6 +217,8 @@ export class Peritext implements Printable {
         (tab) => this.str.toString(tab),
         nl,
         (tab) => this.slices.toString(tab),
+        nl,
+        (tab) => this.overlay.toString(tab),
       ])
     );
   }
@@ -211,6 +228,9 @@ export class Peritext implements Printable {
   public hash: number = 0;
 
   public refresh(): number {
-    return this.slices.refresh();
+    let state: number = CONST.START_STATE;
+    this.overlay.refresh();
+    state = updateNum(state, this.overlay.hash);
+    return (this.hash = state);
   }
 }

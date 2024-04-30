@@ -1,3 +1,5 @@
+import {printTree} from 'sonic-forest/lib/print/printTree';
+import {printBinary} from 'sonic-forest/lib/print/printBinary';
 import {first, insertLeft, insertRight, next, prev, remove} from 'sonic-forest/lib/util';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
@@ -7,8 +9,6 @@ import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {equal, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
-import {printBinary} from '../../../util/print/printBinary';
-import {printTree} from '../../../util/print/printTree';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
@@ -74,6 +74,15 @@ export class Overlay implements Printable, Stateful {
       }
     }
     return result;
+  }
+
+  public find(predicate: (point: OverlayPoint) => boolean): OverlayPoint | undefined {
+    let point = this.first();
+    while (point) {
+      if (predicate(point)) return point;
+      point = next(point);
+    }
+    return undefined;
   }
 
   // ----------------------------------------------------------------- Stateful
