@@ -135,7 +135,7 @@
     "@types/jest": "^29.5.12",
     "benchmark": "^2.1.4",
     "config-housekeeping": "https://github.com/streamich/housekeeping#3532d2abeac159315ddf403d70517859d079c801",
-    "editing-traces": "https://github.com/streamich/editing-traces#6494020428530a6e382378b98d1d7e31334e2d7b",
+    "editing-traces": "https://github.com/streamich/editing-traces#145f79871a7bf54162f55d84eb6b8381db7b65b8",
     "fast-json-patch": "^3.1.1",
     "jest": "^29.7.0",
     "json-crdt-traces": "https://github.com/streamich/json-crdt-traces#ec825401dc05cbb74b9e0b3c4d6527399f54d54d",
