@@ -165,7 +165,6 @@ describe('Overlay.refresh()', () => {
         const end = kit.peritext.editor.cursor.start.clone();
         end.anchor = Anchor.Before;
         kit.peritext.editor.cursor.setRange(kit.peritext.range(kit.peritext.editor.cursor.start, end));
-        console.log(kit.peritext.localSlices.model.api.flush());
       });
     });
   });
