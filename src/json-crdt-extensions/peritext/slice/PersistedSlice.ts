@@ -82,9 +82,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     if (params.range) {
       const range = params.range;
       updateHeader = true;
-      changes.push(
-        [SliceTupleIndex.X1, s.con(range.start.id)],
-        [SliceTupleIndex.X2, s.con(range.end.id)]);
+      changes.push([SliceTupleIndex.X1, s.con(range.start.id)], [SliceTupleIndex.X2, s.con(range.end.id)]);
       this.start = range.start;
       this.end = range.start === range.end ? range.end.clone() : range.end;
     }
@@ -95,9 +93,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
     if (updateHeader) {
       const header =
-      (this.behavior << SliceHeaderShift.Behavior) +
-      (this.start.anchor << SliceHeaderShift.X1Anchor) +
-      (this.end.anchor << SliceHeaderShift.X2Anchor);
+        (this.behavior << SliceHeaderShift.Behavior) +
+        (this.start.anchor << SliceHeaderShift.X1Anchor) +
+        (this.end.anchor << SliceHeaderShift.X2Anchor);
       changes.push([SliceTupleIndex.Header, s.con(header)]);
     }
     this.tupleApi().set(changes);
@@ -150,6 +148,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '';
     const dataLengthBreakpoint = 32;
-    return this.toStringName() + printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted]);
+    return (
+      this.toStringName() +
+      printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted])
+    );
   }
 }

@@ -28,12 +28,15 @@ export class Slices implements Stateful, Printable {
     protected readonly rga: AbstractRga<string>,
   ) {}
 
-  public ins<S extends PersistedSlice<string>, K extends new (...args: ConstructorParameters<typeof PersistedSlice<string>>) => S>(
+  public ins<
+    S extends PersistedSlice<string>,
+    K extends new (...args: ConstructorParameters<typeof PersistedSlice<string>>) => S,
+  >(
     range: Range,
     behavior: SliceBehavior,
     type: SliceType,
     data?: unknown,
-    Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice
+    Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice,
   ): S {
     const model = this.model;
     const set = this.set;

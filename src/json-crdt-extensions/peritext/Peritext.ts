@@ -42,7 +42,7 @@ export class Peritext implements Printable {
    * the current user.
    */
   public readonly localSlices: Slices;
-  
+
   public readonly editor: Editor;
   public readonly overlay = new Overlay(this);
 
@@ -53,19 +53,18 @@ export class Peritext implements Printable {
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
 
-    const extraModel = Model
-      .withLogicalClock(SESSION.GLOBAL)
+    const extraModel = Model.withLogicalClock(SESSION.GLOBAL)
       .setSchema(s.vec(s.arr([])))
       .fork(this.model.clock.sid + 1);
     this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
 
     // TODO: flush patches
     // TODO: remove `arr` tombstones
-    const localModel = Model
-      .withLogicalClock(SESSION.LOCAL)
-      .setSchema(s.vec(s.arr([])));
+    const localModel = Model.withLogicalClock(SESSION.LOCAL).setSchema(s.vec(s.arr([])));
     const localApi = localModel.api;
-    localApi.onLocalChange.listen(() => { localApi.flush(); });
+    localApi.onLocalChange.listen(() => {
+      localApi.flush();
+    });
     this.localSlices = new LocalSlices(localModel, localModel.root.node().get(0)!, this.str);
 
     this.editor = new Editor(this, this.localSlices);

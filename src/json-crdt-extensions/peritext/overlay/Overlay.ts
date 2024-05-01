@@ -266,6 +266,9 @@ export class Overlay implements Printable, Stateful {
         ])
       );
     };
-    return `${this.constructor.name} #${this.hash.toString(36)}` + printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)]);
+    return (
+      `${this.constructor.name} #${this.hash.toString(36)}` +
+      printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)])
+    );
   }
 }

@@ -55,7 +55,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     if (this.start === this.end) this.end = this.end.clone();
     let anchor = this.anchor();
     let focus = this.focus();
-    if (edge === 0) focus = point; else anchor = point;
+    if (edge === 0) focus = point;
+    else anchor = point;
     if (focus.cmpSpatial(anchor) < 0) this.set(focus, anchor, CursorAnchor.End);
     else this.set(anchor, focus, CursorAnchor.Start);
   }

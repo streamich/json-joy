@@ -1,4 +1,4 @@
-import type {AbstractRga, Chunk} from "./AbstractRga";
+import type {AbstractRga, Chunk} from './AbstractRga';
 
 /** Find the first visible chunk, if any. */
 export const firstVis = <T>(rga: AbstractRga<T>): Chunk<T> | undefined => {

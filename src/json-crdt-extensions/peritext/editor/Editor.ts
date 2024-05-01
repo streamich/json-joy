@@ -19,7 +19,10 @@ export class Editor implements Printable {
    */
   public readonly cursor: Cursor;
 
-  constructor(public readonly txt: Peritext, slices: Slices) {
+  constructor(
+    public readonly txt: Peritext,
+    slices: Slices,
+  ) {
     const point = txt.pointAbsStart();
     const range = txt.range(point, point.clone());
     this.cursor = slices.ins<Cursor, typeof Cursor>(range, SliceBehavior.Cursor, CursorAnchor.Start, undefined, Cursor);
