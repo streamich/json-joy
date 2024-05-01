@@ -21,7 +21,7 @@ export class Slices implements Stateful, Printable {
 
   constructor(
     /** The model, which powers the CRDT nodes. */
-    public readonly model: Model,
+    public readonly model: Model<any>,
     /** The `arr` node, used as a set, where slices are stored. */
     public readonly set: ArrNode,
     /** The text RGA. */

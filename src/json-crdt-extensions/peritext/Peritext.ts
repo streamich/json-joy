@@ -8,9 +8,11 @@ import {Slices} from './slice/Slices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval} from '../../json-crdt-patch/clock';
+import {Model} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
+import {SESSION} from '../../json-crdt-patch/constants';
+import {s} from '../../json-crdt-patch';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {Model} from '../../json-crdt/model';
 import type {Printable} from 'tree-dump/lib/types';
 import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';
@@ -20,7 +22,26 @@ import type {MarkerSlice} from './slice/MarkerSlice';
  * interact with the text.
  */
 export class Peritext implements Printable {
-  public readonly slices: Slices;
+  /**
+   * *Slices* are rich-text annotations that appear in the text. The "saved"
+   * slices are the ones that are persisted in the document.
+   */
+  public readonly savedSlices: Slices;
+
+  /**
+   * *Extra slices* are slices that are not persisted in the document. However,
+   * they are still shared across users, i.e. they are ephemerally persisted
+   * during the editing session.
+   */
+  public readonly extraSlices: Slices;
+
+  /**
+   * *Local slices* are slices that are not persisted in the document and are
+   * not shared with other users. They are used only for local annotations for
+   * the current user.
+   */
+  public readonly localSlices: Slices;
+  
   public readonly editor: Editor;
   public readonly overlay = new Overlay(this);
 
@@ -29,7 +50,20 @@ export class Peritext implements Printable {
     public readonly str: StrNode,
     slices: ArrNode,
   ) {
-    this.slices = new Slices(this.model, slices, this.str);
+    this.savedSlices = new Slices(this.model, slices, this.str);
+
+    const extraModel = Model
+      .withLogicalClock(SESSION.GLOBAL)
+      .setSchema(s.vec(s.arr([])))
+      .fork(this.model.clock.sid + 1);
+    this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
+
+    // TODO: flush patches
+    const localModel = Model
+      .withLogicalClock(SESSION.LOCAL)
+      .setSchema(s.vec(s.arr([])));
+    this.localSlices = new Slices(localModel, localModel.root.node().get(0)!, this.str);
+
     this.editor = new Editor(this);
   }
 
@@ -183,7 +217,7 @@ export class Peritext implements Printable {
     const textId = builder.insStr(str.id, after, char[0]);
     const point = this.point(textId, Anchor.Before);
     const range = this.range(point, point);
-    return this.slices.insMarker(range, type, data);
+    return this.savedSlices.insMarker(range, type, data);
   }
 
   /** @todo This can probably use .del() */
@@ -193,7 +227,7 @@ export class Peritext implements Printable {
     const builder = api.builder;
     const strChunk = split.start.chunk();
     if (strChunk) builder.del(str.id, [interval(strChunk.id, 0, 1)]);
-    builder.del(this.slices.set.id, [interval(split.id, 0, 1)]);
+    builder.del(this.savedSlices.set.id, [interval(split.id, 0, 1)]);
     api.apply();
   }
 
@@ -208,7 +242,7 @@ export class Peritext implements Printable {
         nl,
         (tab) => this.str.toString(tab),
         nl,
-        (tab) => this.slices.toString(tab),
+        (tab) => this.savedSlices.toString(tab),
         nl,
         (tab) => this.overlay.toString(tab),
       ])

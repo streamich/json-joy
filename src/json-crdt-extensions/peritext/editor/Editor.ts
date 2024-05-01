@@ -125,17 +125,17 @@ export class Editor implements Printable {
 
   public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
     const range = this.cursor.range();
-    return this.txt.slices.ins(range, SliceBehavior.Stack, type, data);
+    return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
   }
 
   public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
     const range = this.cursor.range();
-    return this.txt.slices.ins(range, SliceBehavior.Overwrite, type, data);
+    return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
   public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
     const range = this.cursor.range();
-    return this.txt.slices.ins(range, SliceBehavior.Erase, type, data);
+    return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
   }
 
   public insMarker(type: SliceType, data?: unknown): MarkerSlice {

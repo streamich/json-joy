@@ -13,7 +13,7 @@ export const setup = () => {
   model.api.str(['text']).del(7, 1);
   model.api.str(['text']).ins(11, ' this game is awesome');
   const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
-  const slices = peritext.slices;
+  const slices = peritext.savedSlices;
   const encodeAndDecode = () => {
     const buf = model.toBinary();
     const model2 = Model.fromBinary(buf);

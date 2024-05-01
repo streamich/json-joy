@@ -74,7 +74,7 @@ describe('Overlay.refresh()', () => {
         kit.peritext.editor.cursor.setAt(0, 1);
         const slice = kit.peritext.editor.insStackSlice('<b>');
         refresh();
-        slice.del();
+        kit.peritext.savedSlices.del(slice.id);
       });
 
       testRefresh('when slice type is changed', (kit, refresh) => {
@@ -132,7 +132,7 @@ describe('Overlay.refresh()', () => {
         kit.peritext.editor.insStackSlice(1, 1);
         kit.peritext.editor.insStackSlice(3, 3);
         const range1 = kit.peritext.rangeAt(1, 2);
-        const slice = kit.peritext.slices.insErase(range1, 'gg');
+        const slice = kit.peritext.savedSlices.insErase(range1, 'gg');
         expect(slice.end.anchor).toBe(Anchor.After);
         refresh();
         const range2 = kit.peritext.rangeAt(2, 2);

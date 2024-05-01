@@ -227,7 +227,7 @@ describe('slices', () => {
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
       expect(peritext.overlay.slices.size).toBe(2);
-      peritext.slices.del(slice.id);
+      peritext.savedSlices.del(slice.id);
       expect(peritext.overlay.slices.size).toBe(2);
       peritext.overlay.refresh();
       expect(peritext.overlay.slices.size).toBe(1);

@@ -99,17 +99,17 @@ export class Overlay implements Printable, Stateful {
     return (this.hash = hash);
   }
 
-  private slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
+  public readonly slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
 
   private refreshSlices(state: number): number {
-    const slices = this.txt.slices;
+    const slices = this.txt.savedSlices;
     const oldSlicesHash = slices.hash;
     const changed = oldSlicesHash !== slices.refresh();
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
       slices.forEach((slice) => {
-        console.log('slice', slice + '');
+        // console.log('slice', slice + '');
         let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(slice);
         if (tuple) {
           if ((slice as any).isDel && (slice as any).isDel()) {

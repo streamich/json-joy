@@ -8,9 +8,9 @@ import {setup} from './setup';
 
 test('initially slice list is empty', () => {
   const {peritext} = setup();
-  expect(peritext.slices.size()).toBe(0);
+  expect(peritext.savedSlices.size()).toBe(0);
   peritext.refresh();
-  expect(peritext.slices.size()).toBe(0);
+  expect(peritext.savedSlices.size()).toBe(0);
 });
 
 describe('.ins()', () => {
@@ -18,7 +18,7 @@ describe('.ins()', () => {
     const {peritext, slices} = setup();
     const range = peritext.rangeAt(12, 7);
     const slice = slices.ins(range, SliceBehavior.Stack, 'b', {bold: true});
-    expect(peritext.slices.size()).toBe(1);
+    expect(peritext.savedSlices.size()).toBe(1);
     expect(slice.start).toStrictEqual(range.start);
     expect(slice.end).toStrictEqual(range.end);
     expect(slice.behavior).toBe(SliceBehavior.Stack);
@@ -34,7 +34,7 @@ describe('.ins()', () => {
     editor.cursor.setAt(12, 4);
     const slice2 = editor.insStackSlice('i', {italic: true});
     peritext.refresh();
-    expect(peritext.slices.size()).toBe(2);
+    expect(peritext.savedSlices.size()).toBe(2);
     expect(slice1.data()).toStrictEqual({bold: true});
     expect(slice2.data()).toStrictEqual({italic: true});
   });
@@ -42,29 +42,29 @@ describe('.ins()', () => {
   test('updates hash on slice insert', () => {
     const {peritext} = setup();
     const {editor} = peritext;
-    const changed1 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash1 = peritext.slices.hash;
-    const changed2 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash2 = peritext.slices.hash;
+    const changed1 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash1 = peritext.savedSlices.hash;
+    const changed2 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash2 = peritext.savedSlices.hash;
     expect(changed1).toBe(true);
     expect(changed2).toBe(false);
     expect(hash1).toBe(hash2);
     editor.cursor.setAt(12, 7);
     editor.insStackSlice('b', {bold: true});
-    const changed3 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash3 = peritext.slices.hash;
-    const changed4 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash4 = peritext.slices.hash;
+    const changed3 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash3 = peritext.savedSlices.hash;
+    const changed4 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash4 = peritext.savedSlices.hash;
     expect(changed3).toBe(true);
     expect(changed4).toBe(false);
     expect(hash1).not.toStrictEqual(hash3);
     expect(hash3).toBe(hash4);
     editor.cursor.setAt(12, 4);
     editor.insStackSlice('em', {italic: true});
-    const changed5 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash5 = peritext.slices.hash;
-    const changed6 = peritext.slices.hash !== peritext.slices.refresh();
-    const hash6 = peritext.slices.hash;
+    const changed5 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash5 = peritext.savedSlices.hash;
+    const changed6 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
+    const hash6 = peritext.savedSlices.hash;
     expect(changed5).toBe(true);
     expect(changed6).toBe(false);
     expect(hash3).not.toBe(hash5);
@@ -86,7 +86,7 @@ describe('.ins()', () => {
         for (const data of datas) {
           for (const behavior of behaviors) {
             const {peritext, model} = setup();
-            const slice = peritext.slices.ins(range, behavior, type, data);
+            const slice = peritext.savedSlices.ins(range, behavior, type, data);
             expect(slice.start.cmp(range.start)).toBe(0);
             expect(slice.end.cmp(range.end)).toBe(0);
             expect(slice.behavior).toBe(behavior);
@@ -96,7 +96,7 @@ describe('.ins()', () => {
             const model2 = Model.fromBinary(buf);
             const peritext2 = new Peritext(model2, model2.api.str(['text']).node, model2.api.arr(['slices']).node);
             peritext2.refresh();
-            const slice2 = peritext2.slices.get(slice.id)!;
+            const slice2 = peritext2.savedSlices.get(slice.id)!;
             expect(slice2.start.cmp(range.start)).toBe(0);
             expect(slice2.end.cmp(range.end)).toBe(0);
             expect(slice2.behavior).toBe(behavior);
@@ -113,8 +113,8 @@ describe('.get()', () => {
   test('can retrieve slice by id', () => {
     const {peritext} = setup();
     const range = peritext.rangeAt(6, 5);
-    const slice = peritext.slices.insOverwrite(range, 'italic');
-    const slice2 = peritext.slices.get(slice.id);
+    const slice = peritext.savedSlices.insOverwrite(range, 'italic');
+    const slice2 = peritext.savedSlices.get(slice.id);
     expect(slice2).toBe(slice);
   });
 });
@@ -126,12 +126,12 @@ describe('.del()', () => {
     editor.cursor.setAt(6, 5);
     const slice1 = editor.insStackSlice('b', {bold: true});
     peritext.refresh();
-    const hash1 = peritext.slices.hash;
-    expect(peritext.slices.size()).toBe(1);
-    peritext.slices.del(slice1.id);
+    const hash1 = peritext.savedSlices.hash;
+    expect(peritext.savedSlices.size()).toBe(1);
+    peritext.savedSlices.del(slice1.id);
     peritext.refresh();
-    const hash2 = peritext.slices.hash;
-    expect(peritext.slices.size()).toBe(0);
+    const hash2 = peritext.savedSlices.hash;
+    expect(peritext.savedSlices.size()).toBe(0);
     expect(hash1).not.toBe(hash2);
   });
 });
@@ -143,12 +143,12 @@ describe('.delSlices()', () => {
     editor.cursor.setAt(6, 5);
     const slice1 = editor.insStackSlice('b', {bold: true});
     peritext.refresh();
-    const hash1 = peritext.slices.hash;
-    expect(peritext.slices.size()).toBe(1);
-    peritext.slices.delSlices([slice1]);
+    const hash1 = peritext.savedSlices.hash;
+    expect(peritext.savedSlices.size()).toBe(1);
+    peritext.savedSlices.delSlices([slice1]);
     peritext.refresh();
-    const hash2 = peritext.slices.hash;
-    expect(peritext.slices.size()).toBe(0);
+    const hash2 = peritext.savedSlices.hash;
+    expect(peritext.savedSlices.size()).toBe(0);
     expect(hash1).not.toBe(hash2);
   });
 });
@@ -158,19 +158,19 @@ describe('.refresh()', () => {
     test('changes hash on: ' + name, () => {
       const {peritext, encodeAndDecode} = setup();
       const range = peritext.rangeAt(6, 5);
-      const slice = peritext.slices.insOverwrite(range, 'b', {howBold: 'very'});
-      const hash1 = peritext.slices.refresh();
-      const hash2 = peritext.slices.refresh();
+      const slice = peritext.savedSlices.insOverwrite(range, 'b', {howBold: 'very'});
+      const hash1 = peritext.savedSlices.refresh();
+      const hash2 = peritext.savedSlices.refresh();
       expect(hash1).toBe(hash2);
       expect(slice.type).toBe('b');
       update({range, slice});
-      const hash3 = peritext.slices.refresh();
-      const hash4 = peritext.slices.refresh();
+      const hash3 = peritext.savedSlices.refresh();
+      const hash4 = peritext.savedSlices.refresh();
       expect(hash3).not.toBe(hash2);
       expect(hash4).toBe(hash3);
       const {peritext2} = encodeAndDecode();
       peritext2.refresh();
-      const slice2 = peritext2.slices.get(slice.id)!;
+      const slice2 = peritext2.savedSlices.get(slice.id)!;
       expect(slice2.cmp(slice)).toBe(0);
     });
   };
@@ -216,12 +216,12 @@ describe('.refresh()', () => {
     editor.cursor.setAt(6, 5);
     const slice1 = editor.insStackSlice('b', {bold: true});
     peritext.refresh();
-    const hash1 = peritext.slices.hash;
+    const hash1 = peritext.savedSlices.hash;
     peritext.model.api.obj(['slices', 0, 4]).set({bold: false});
     peritext.refresh();
-    const hash2 = peritext.slices.hash;
+    const hash2 = peritext.savedSlices.hash;
     peritext.refresh();
-    const hash3 = peritext.slices.hash;
+    const hash3 = peritext.savedSlices.hash;
     expect(hash1).not.toBe(hash2);
     expect(hash2).toBe(hash3);
   });
