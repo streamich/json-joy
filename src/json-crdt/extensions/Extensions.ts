@@ -1,6 +1,6 @@
-import {printTree} from '../../util/print/printTree';
-import {Printable} from '../../util/print/types';
-import {ExtensionDefinition} from './types';
+import {printTree} from 'tree-dump/lib/printTree';
+import type {ExtensionDefinition} from './types';
+import type {Printable} from 'tree-dump/lib/types';
 
 export class Extensions implements Printable {
   protected readonly ext: Record<number, ExtensionDefinition> = {};

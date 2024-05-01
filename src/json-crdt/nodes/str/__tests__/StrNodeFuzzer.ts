@@ -3,8 +3,7 @@ import {ITimespanStruct, ITimestampStruct, ClockVector, toDisplayString, ts} fro
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {randomSessionId} from '../../../model/util';
 import {StrNode} from '../StrNode';
-import {printTree} from '../../../../util/print/printTree';
-import {Printable} from '../../../../util/print/types';
+import {printTree, Printable} from 'tree-dump';
 
 const printOp = (op: Op) => {
   if ('content' in op) {

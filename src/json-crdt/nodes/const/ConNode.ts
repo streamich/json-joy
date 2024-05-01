@@ -1,6 +1,6 @@
 import {type ITimestampStruct, toDisplayString, Timestamp} from '../../../json-crdt-patch/clock';
 import type {JsonNode} from '../types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 /**
  * Represents the `con` type of the JSON CRDT specification.

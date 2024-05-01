@@ -1,10 +1,10 @@
-import {FanOutUnsubscribe} from 'thingies/lib/fanout';
-import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
-import {printTree} from '../../util/print/printTree';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
-import {Model} from '../model';
 import {first, next} from 'sonic-forest/lib/util';
-import type {Printable} from '../../util/print/types';
+import {FanOutUnsubscribe} from 'thingies/lib/fanout';
+import {printTree} from 'tree-dump/lib/printTree';
+import {ITimestampStruct, Patch, compare} from '../../json-crdt-patch';
+import {Model} from '../model';
+import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode} from '../nodes/types';
 
 /**

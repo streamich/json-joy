@@ -1,7 +1,7 @@
 import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
-import {printTree} from '../../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from '../rga/constants';
 import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
 import {CONST} from '../../../json-hash';
@@ -15,7 +15,7 @@ import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {MutableSlice, SliceUpdateParams} from './types';
 import type {Peritext} from '../Peritext';
 import type {SliceDto, SliceType, Stateful} from '../types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 
 export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {

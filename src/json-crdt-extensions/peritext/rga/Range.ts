@@ -2,7 +2,7 @@ import {Point} from './Point';
 import {Anchor} from './constants';
 import {updateNum} from '../../../json-hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 

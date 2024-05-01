@@ -3,7 +3,7 @@ import {updateId} from '../../../json-crdt/hash';
 import {ITimestampStruct, Timestamp, toDisplayString} from '../../../json-crdt-patch/clock';
 import type {IChunkSlice} from './types';
 import type {Stateful} from '../types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 
 export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printable {

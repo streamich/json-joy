@@ -1,4 +1,4 @@
-import type {Printable} from '../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {ITimestampStruct} from './clock';
 import type {JsonCrdtPatchMnemonic} from './codec/verbose';
 

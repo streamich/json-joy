@@ -12,7 +12,7 @@ import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 
 export class Overlay implements Printable, Stateful {
