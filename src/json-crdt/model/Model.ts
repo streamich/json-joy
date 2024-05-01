@@ -8,11 +8,11 @@ import {ORIGIN, SESSION, SYSTEM_SESSION_TIME} from '../../json-crdt-patch/consta
 import {randomSessionId} from './util';
 import {RootNode, ValNode, VecNode, ObjNode, StrNode, BinNode, ArrNode} from '../nodes';
 import {SchemaToJsonNode} from '../schema/types';
-import {printTree} from '../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {Extensions} from '../extensions/Extensions';
 import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type {JsonNode, JsonNodeView} from '../nodes/types';
-import type {Printable} from '../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {NodeBuilder} from '../../json-crdt-patch';
 import type {NodeApi} from './api/nodes';
 

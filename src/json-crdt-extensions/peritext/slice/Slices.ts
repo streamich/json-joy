@@ -1,18 +1,18 @@
+import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
+import {printTree} from 'tree-dump/lib/printTree';
 import {PersistedSlice} from './PersistedSlice';
 import {Timespan, compare, tss} from '../../../json-crdt-patch/clock';
 import {Range} from '../rga/Range';
 import {updateRga} from '../../../json-crdt/hash';
 import {CONST, updateNum} from '../../../json-hash';
-import {printTree} from '../../../util/print/printTree';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
 import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
-import {AvlMap} from 'sonic-forest/lib/avl/AvlMap';
 import type {Slice} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceType, Stateful} from '../types';
 import type {Peritext} from '../Peritext';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 
 export class Slices implements Stateful, Printable {

@@ -1,10 +1,10 @@
 import {TypeAlias} from './TypeAlias';
 import {TypeBuilder} from '../type/TypeBuilder';
 import {RefType} from '../type/classes';
-import {printTree} from '../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import type {CustomValidator} from './types';
 import type {Type, TypeMap} from '../type';
-import type {Printable} from '../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 export class TypeSystem implements Printable {
   public readonly t = new TypeBuilder(this);

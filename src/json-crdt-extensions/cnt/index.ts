@@ -1,12 +1,12 @@
 import {delayed} from '../../json-crdt-patch/builder/DelayedValueBuilder';
 import {ext} from '../../json-crdt/extensions';
 import {ExtensionId} from '../constants';
-import {printTree} from '../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import type {ExtensionDefinition, ObjNode} from '../../json-crdt';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
-import type {Printable} from '../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {ExtensionApi} from '../../json-crdt';
 
 const name = 'cnt';

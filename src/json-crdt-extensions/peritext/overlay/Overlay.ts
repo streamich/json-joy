@@ -1,5 +1,5 @@
-import {printTree} from 'sonic-forest/lib/print/printTree';
-import {printBinary} from 'sonic-forest/lib/print/printBinary';
+import {printTree} from 'tree-dump/lib/printTree';
+import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, next, prev, remove} from 'sonic-forest/lib/util';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
@@ -12,7 +12,7 @@ import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 
 export class Overlay implements Printable, Stateful {

@@ -1,10 +1,10 @@
 import {Point} from '../rga/Point';
 import {compare} from '../../../json-crdt-patch/clock';
 import {OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
-import {printTree} from 'sonic-forest/lib/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {Slice} from '../slice/types';
 
 /**

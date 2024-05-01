@@ -1,4 +1,4 @@
-import {printTree} from 'sonic-forest/lib/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from './rga/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';
@@ -11,7 +11,7 @@ import {interval} from '../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../json-hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
-import type {Printable} from '../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {StringChunk} from './util/types';
 import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';

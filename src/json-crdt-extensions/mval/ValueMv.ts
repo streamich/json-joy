@@ -1,8 +1,8 @@
 import {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
-import {printTree} from '../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
-import type {Printable} from '../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 export class ValueMv implements ExtensionJsonNode, Printable {
   public readonly id: ITimestampStruct;

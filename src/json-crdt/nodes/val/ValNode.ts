@@ -1,10 +1,10 @@
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import {SESSION} from '../../../json-crdt-patch/constants';
-import {printTree} from '../../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {UNDEFINED} from '../../model/Model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Model} from '../../model';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 /**
  * Represents a `val` JSON CRDT node, which is a Last-write-wins (LWW) register.
