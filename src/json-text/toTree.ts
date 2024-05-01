@@ -1,4 +1,4 @@
-import {printTree} from '../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {stringify} from './stringify';
 
 const isPrimitive = (value: unknown): boolean => typeof value !== 'object';

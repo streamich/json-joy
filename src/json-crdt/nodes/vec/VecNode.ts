@@ -1,10 +1,10 @@
 import {ConNode} from '../const/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
-import {printTree} from '../../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.

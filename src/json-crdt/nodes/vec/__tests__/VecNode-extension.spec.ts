@@ -1,6 +1,5 @@
 import {ITimestampStruct, delayed, s} from '../../../../json-crdt-patch';
-import {printTree} from '../../../../util/print/printTree';
-import {Printable} from '../../../../util/print/types';
+import {printTree, Printable} from 'tree-dump';
 import {ext} from '../../../extensions';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../../extensions/types';
 import {Model, NodeApi} from '../../../model';

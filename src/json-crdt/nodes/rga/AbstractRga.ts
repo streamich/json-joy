@@ -13,8 +13,8 @@ import {rSplay, lSplay, llSplay, rrSplay, lrSplay, rlSplay} from 'sonic-forest/l
 import {splay2} from 'sonic-forest/lib/splay/util2';
 import {insert2, remove2} from 'sonic-forest/lib/util2';
 import {ORIGIN} from '../../../json-crdt-patch/constants';
-import {printTree} from '../../../util/print/printTree';
-import {printBinary} from '../../../util/print/printBinary';
+import {printTree} from 'tree-dump/lib/printTree';
+import {printBinary} from 'tree-dump/lib/printBinary';
 import {printOctets} from '@jsonjoy.com/util/lib/buffers/printOctets';
 
 /**

@@ -2,7 +2,7 @@ import * as operations from './operations';
 import {ITimestampStruct, ts, toDisplayString} from './clock';
 import {SESSION} from './constants';
 import {encode, decode} from './codec/binary';
-import type {Printable} from '../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 
 /**
  * A union type of all possible JSON CRDT patch operations.

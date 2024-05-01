@@ -1,5 +1,7 @@
+import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
+import {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
+import {printTree} from 'tree-dump/lib/printTree';
 import * as schema from '../../schema';
-import {printTree} from '../../../util/print/printTree';
 import {validateMinMax, validateTType} from '../../schema/validate';
 import {ValidatorCodegenContext} from '../../codegen/validator/ValidatorCodegenContext';
 import {ValidationPath} from '../../codegen/validator/types';
@@ -8,9 +10,7 @@ import {JsonTextEncoderCodegenContext} from '../../codegen/json/JsonTextEncoderC
 import {CborEncoderCodegenContext} from '../../codegen/binary/CborEncoderCodegenContext';
 import {JsonEncoderCodegenContext} from '../../codegen/binary/JsonEncoderCodegenContext';
 import {BinaryEncoderCodegenContext} from '../../codegen/binary/BinaryEncoderCodegenContext';
-import {JsExpression} from '@jsonjoy.com/util/lib/codegen/util/JsExpression';
 import {MessagePackEncoderCodegenContext} from '../../codegen/binary/MessagePackEncoderCodegenContext';
-import {BinaryJsonEncoder} from '@jsonjoy.com/json-pack/lib/types';
 import {CapacityEstimatorCodegenContext} from '../../codegen/capacity/CapacityEstimatorCodegenContext';
 import {MaxEncodingOverhead} from '../../../json-size';
 import {AbstractType} from './AbstractType';

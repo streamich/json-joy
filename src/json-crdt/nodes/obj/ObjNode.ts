@@ -1,7 +1,7 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
-import {printTree} from '../../../util/print/printTree';
 import type {Model} from '../../model';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode, JsonNodeView} from '..';
 
 /**

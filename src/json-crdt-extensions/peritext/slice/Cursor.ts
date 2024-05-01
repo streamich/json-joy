@@ -1,7 +1,7 @@
 import {Point} from '../rga/Point';
 import {CursorAnchor, SliceBehavior, Tags} from './constants';
 import {Range} from '../rga/Range';
-import {printTree} from '../../../util/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {updateNum} from '../../../json-hash';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';

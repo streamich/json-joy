@@ -1,5 +1,5 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import * as schema from '../../schema';
-import {printTree} from '../../../util/print/printTree';
 import {validateTType} from '../../schema/validate';
 import {AbstractType} from './AbstractType';
 import type {SchemaOf, Type} from '../types';

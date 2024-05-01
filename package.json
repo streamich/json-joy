@@ -1,6 +1,6 @@
 {
   "name": "json-joy",
-  "version": "15.8.0",
+  "version": "15.9.0",
   "description": "Collection of libraries for building collaborative editing apps.",
   "author": {
     "name": "streamich",
@@ -127,8 +127,9 @@
     "@jsonjoy.com/util": "^1.1.0",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
-    "sonic-forest": "^1.0.0",
-    "thingies": "^2.0.0"
+    "sonic-forest": "^1.0.2",
+    "thingies": "^2.0.0",
+    "tree-dump": "^1.0.0"
   },
   "devDependencies": {
     "@types/benchmark": "^2.1.5",

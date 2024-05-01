@@ -6,7 +6,7 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {Chars} from '../constants';
 import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
-import type {Printable} from '../../../util/print/types';
+import type {Printable} from 'tree-dump/lib/types';
 import type {Point} from '../rga/Point';
 import type {SliceType} from '../types';
 import type {MarkerSlice} from '../slice/MarkerSlice';

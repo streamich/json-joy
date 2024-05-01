@@ -1,6 +1,6 @@
 import * as schema from '../../schema';
 import {RandomJson} from '../../../json-random';
-import {Printable} from '../../../util/print/types';
+import {Printable} from 'tree-dump/lib/types';
 import {ValidatorCodegenContext, ValidatorCodegenContextOptions} from '../../codegen/validator/ValidatorCodegenContext';
 import {JsonTypeValidator, ValidationPath} from '../../codegen/validator/types';
 import {
