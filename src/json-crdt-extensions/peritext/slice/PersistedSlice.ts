@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from '../rga/constants';
-import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
+import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, CursorAnchor} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp, compare} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';
@@ -64,6 +64,22 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   protected tupleApi() {
     return this.model.api.wrap(this.tuple);
+  }
+
+  // ---------------------------------------------------------------- mutations
+
+  public set(start: Point<T>, end: Point<T> = start): void {
+    super.set(start, end);
+    this.update({range: this});
+  }
+
+  /**
+   * Expand range left and right to contain all invisible space: (1) tombstones,
+   * (2) anchors of non-deleted adjacent chunks.
+   */
+  public expand(): void {
+    super.expand();
+    this.update({range: this});
   }
 
   // ------------------------------------------------------------- MutableSlice

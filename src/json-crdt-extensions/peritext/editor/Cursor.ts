@@ -1,5 +1,4 @@
 import {Point} from '../rga/Point';
-import {Range} from '../rga/Range';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 
@@ -7,6 +6,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   public get anchorSide(): CursorAnchor {
     return this.type as CursorAnchor;
   }
+
+  // ---------------------------------------------------------------- mutations
 
   public set anchorSide(value: CursorAnchor) {
     this.update({type: value});
@@ -20,28 +21,12 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     return this.anchorSide === CursorAnchor.Start ? this.end : this.start;
   }
 
-  public set(start: Point<T>, end?: Point<T>, anchorSide: CursorAnchor = this.anchorSide): void {
-    if (!end || end === start) end = start.clone();
-    super.set(start, end);
+  public set(start: Point<T>, end: Point<T> = start, anchorSide: CursorAnchor = this.anchorSide): void {
+    this.start = start;
+    this.end = end === start ? end.clone() : end;
     this.update({
       range: this,
       type: anchorSide,
-    });
-  }
-
-  /** TODO: Move to {@link PersistedSlice}. */
-  public setAt(start: number, length: number = 0): void {
-    let at = start;
-    let len = length;
-    if (len < 0) {
-      at += len;
-      len = -len;
-    }
-    const range = Range.at<T>(this.rga, start, length);
-    const anchorSide = this.anchorSide;
-    this.update({
-      range,
-      type: anchorSide !== this.anchorSide ? anchorSide : undefined,
     });
   }
 
@@ -64,9 +49,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   public move(move: number): void {
     const {start, end} = this;
     start.move(move);
-    if (start !== end) {
-      end.move(move);
-    }
+    if (start !== end) end.move(move);
     this.set(start, end);
   }
 
