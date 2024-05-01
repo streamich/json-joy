@@ -1,6 +1,8 @@
 /**
- * Specifies which cursor end is the "anchor", e.g. the end which does not move
- * when user changes selection.
+ * Specifies whether the start or the end of the cursor is the "anchor", e.g.
+ * the end which does not move when user changes selection. The other
+ * end is free to move, the moving end of the cursor is "focus". By default
+ * "anchor" is usually the start of the cursor.
  */
 export const enum CursorAnchor {
   Start = 0,
@@ -48,6 +50,11 @@ export const enum SliceBehavior {
    * used to re-verse inline formatting, like bold, italic, etc.
    */
   Erase = 0b011,
+
+  /**
+   * Used to mark the user's cursor position in the document.
+   */
+  Cursor = 0b100,
 }
 
 export const enum SliceTupleIndex {

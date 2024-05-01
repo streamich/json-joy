@@ -64,7 +64,7 @@ export class Peritext implements Printable {
       .setSchema(s.vec(s.arr([])));
     this.localSlices = new Slices(localModel, localModel.root.node().get(0)!, this.str);
 
-    this.editor = new Editor(this);
+    this.editor = new Editor(this, this.localSlices);
   }
 
   public strApi() {

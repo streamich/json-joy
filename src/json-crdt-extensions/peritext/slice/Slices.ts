@@ -28,7 +28,13 @@ export class Slices implements Stateful, Printable {
     protected readonly rga: AbstractRga<string>,
   ) {}
 
-  public ins(range: Range, behavior: SliceBehavior, type: SliceType, data?: unknown): PersistedSlice {
+  public ins<S extends PersistedSlice<string>, K extends new (...args: ConstructorParameters<typeof PersistedSlice<string>>) => S>(
+    range: Range,
+    behavior: SliceBehavior,
+    type: SliceType,
+    data?: unknown,
+    Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice
+  ): S {
     const model = this.model;
     const set = this.set;
     const api = model.api;
@@ -57,10 +63,7 @@ export class Slices implements Stateful, Printable {
     const tuple = model.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice =
-      behavior === SliceBehavior.Marker
-        ? new MarkerSlice(model, this.rga, chunk, tuple, behavior, type, start, end)
-        : new PersistedSlice(model, this.rga, chunk, tuple, behavior, type, start, end);
+    const slice = new Klass(model, this.rga, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }

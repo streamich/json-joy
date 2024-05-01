@@ -85,7 +85,8 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       if (range.end.anchor !== end.anchor) updateHeader = true;
       if (compare(range.start.id, start.id) !== 0) changes.push([SliceTupleIndex.X1, s.con(range.start.id)]);
       if (compare(range.end.id, end.id) !== 0) changes.push([SliceTupleIndex.X2, s.con(range.end.id)]);
-      this.setRange(range);
+      this.start = range.start;
+      this.end = range.start === range.end ? range.end.clone() : range.end;
     }
     if (params.type !== undefined) {
       this.type = params.type;
@@ -137,11 +138,18 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   // ---------------------------------------------------------------- Printable
 
+  protected toStringName(): string {
+    const data = this.data();
+    const dataFormatted = data ? prettyOneLine(data) : '∅';
+    const dataLengthBreakpoint = 32;
+    const header = `${this.constructor.name} ${super.toString('', true)}, ${this.behavior}, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    return header;
+  }
+
   public toString(tab: string = ''): string {
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '';
     const dataLengthBreakpoint = 32;
-    const header = `${this.constructor.name} ${super.toString(tab)}, ${this.behavior}, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
-    return header + printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted]);
+    return this.toStringName() + printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted]);
   }
 }
