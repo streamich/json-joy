@@ -140,7 +140,7 @@ export class Overlay implements Printable, Stateful {
    * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
    * in the tree, sorted by spatial dimension.
    */
-  protected upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
+  private upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
     const newPoint = this.overlayPoint(point.id, point.anchor);
     const pivot = this.insPoint(newPoint);
     if (pivot) return [pivot, false];

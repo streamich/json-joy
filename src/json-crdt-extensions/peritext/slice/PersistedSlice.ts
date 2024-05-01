@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from '../rga/constants';
-import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, CursorAnchor} from './constants';
+import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp, compare} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';

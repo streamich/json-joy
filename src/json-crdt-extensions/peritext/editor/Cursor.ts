@@ -34,13 +34,13 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    * Move one of the edges of the cursor to a new point.
    *
    * @param point Point to set the edge to.
-   * @param edge 0 for "focus", 1 for "anchor."
+   * @param endpoint 0 for "focus", 1 for "anchor."
    */
-  public setEdge(point: Point<T>, edge: 0 | 1 = 0): void {
+  public setEndpoint(point: Point<T>, endpoint: 0 | 1 = 0): void {
     if (this.start === this.end) this.end = this.end.clone();
     let anchor = this.anchor();
     let focus = this.focus();
-    if (edge === 0) focus = point;
+    if (endpoint === 0) focus = point;
     else anchor = point;
     if (focus.cmpSpatial(anchor) < 0) this.set(focus, anchor, CursorAnchor.End);
     else this.set(anchor, focus, CursorAnchor.Start);
