@@ -53,12 +53,10 @@ export class Peritext implements Printable {
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
 
-    const extraModel = Model.withLogicalClock(SESSION.GLOBAL)
-      .setSchema(s.vec(s.arr([])))
-      .fork(this.model.clock.sid + 1);
+    const extraModel = Model.create(s.vec(s.arr([])), this.model.clock.sid - 1);
     this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
 
-    const localModel = Model.withLogicalClock(SESSION.LOCAL).setSchema(s.vec(s.arr([])));
+    const localModel = Model.create(s.vec(s.arr([])), SESSION.LOCAL);
     const localApi = localModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();

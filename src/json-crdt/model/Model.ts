@@ -56,6 +56,20 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /**
+   * Create a new strictly typed JSON CRDT model.
+   *
+   * @param schema The schema (typing and default value) to set for this model.
+   * @param sid Session ID to use for local operations. Defaults to a random
+   *            session ID.
+   * @returns A strictly typed model.
+   */
+  public static create<S extends NodeBuilder>(schema?: S, sid: number = randomSessionId()): Model<SchemaToJsonNode<S>> {
+    const model = Model.withLogicalClock(sid) as unknown as Model<SchemaToJsonNode<S>>;
+    if (schema) model.setSchema(schema, true);
+    return model as Model<SchemaToJsonNode<S>>;
+  }
+
+  /**
    * Un-serializes a model from "binary" structural encoding.
    * @param data Binary blob of a model encoded using "binary" structural
    *        encoding.
