@@ -65,7 +65,7 @@ describe('.del() and .isDel()', () => {
     expect(peritext.model.view().slices.length).toBe(1);
     expect(slice2.isDel()).toBe(false);
     expect(slice2).toBe(slice);
-    slice.del();
+    peritext.slices.del(slice.id);
     expect(peritext.model.view().slices.length).toBe(0);
     expect(slice.isDel()).toBe(true);
     expect(slice2.isDel()).toBe(true);

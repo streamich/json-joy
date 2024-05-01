@@ -13,13 +13,13 @@ import {s} from '../../../json-crdt-patch';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
 import type {MutableSlice, SliceUpdateParams} from './types';
-import type {Peritext} from '../Peritext';
 import type {SliceDto, SliceType, Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
+import type {Model} from '../../../json-crdt/model';
 
 export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
-  public static deserialize<T>(txt: Peritext, rga: AbstractRga<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
+  public static deserialize<T>(model: Model, rga: AbstractRga<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
     const header = +(tuple.get(0)!.view() as SliceDto[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
@@ -33,13 +33,13 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
     const p1 = new Point<T>(rga, id1, anchor1);
     const p2 = new Point<T>(rga, id2, anchor2);
-    const slice = new PersistedSlice<T>(txt, rga, chunk, tuple, behavior, type, p1, p2);
+    const slice = new PersistedSlice<T>(model, rga, chunk, tuple, behavior, type, p1, p2);
     return slice;
   }
 
   constructor(
     /** The Peritext context. */
-    protected readonly txt: Peritext,
+    protected readonly model: Model,
     /** The text RGA. */
     protected readonly rga: AbstractRga<T>,
     /** The `arr` chunk of `arr` where the slice is stored. */
@@ -62,7 +62,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
   }
 
   protected tupleApi() {
-    return this.txt.model.api.wrap(this.tuple);
+    return this.model.api.wrap(this.tuple);
   }
 
   // ------------------------------------------------------------- MutableSlice
@@ -108,11 +108,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   public dataNode() {
     const node = this.tuple.get(SliceTupleIndex.Data);
-    return node && this.txt.model.api.wrap(node);
-  }
-
-  public del(): void {
-    this.txt.slices.del(this.id);
+    return node && this.model.api.wrap(node);
   }
 
   public isDel(): boolean {
@@ -130,7 +126,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.hash = state;
     if (changed) {
       const tuple = this.tuple;
-      const slice = PersistedSlice.deserialize(this.txt, this.rga, this.chunk, tuple);
+      const slice = PersistedSlice.deserialize(this.model, this.rga, this.chunk, tuple);
       this.behavior = slice.behavior;
       this.type = slice.type;
       this.start = slice.start;

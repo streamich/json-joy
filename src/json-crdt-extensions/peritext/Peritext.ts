@@ -12,7 +12,6 @@ import {CONST, updateNum} from '../../json-hash';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Model} from '../../json-crdt/model';
 import type {Printable} from 'tree-dump/lib/types';
-import type {StringChunk} from './util/types';
 import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';
 
@@ -30,7 +29,7 @@ export class Peritext implements Printable {
     public readonly str: StrNode,
     slices: ArrNode,
   ) {
-    this.slices = new Slices(this, slices);
+    this.slices = new Slices(this.model, slices, this.str);
     this.editor = new Editor(this);
   }
 
