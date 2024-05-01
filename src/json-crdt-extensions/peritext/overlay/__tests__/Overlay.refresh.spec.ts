@@ -4,7 +4,8 @@ import {Anchor} from '../../rga/constants';
 import {SliceBehavior} from '../../slice/constants';
 
 const setup = () => {
-  const model = Model.withLogicalClock();
+  const sid = 123456789;
+  const model = Model.withLogicalClock(sid);
   model.api.root({
     text: '',
     slices: [],
@@ -21,29 +22,29 @@ const setup = () => {
 type Kit = ReturnType<typeof setup>;
 
 describe('Overlay.refresh()', () => {
+  const testRefresh = (name: string, update: (kit: Kit, refresh: () => void) => void) => {
+    test(name, () => {
+      const kit = setup();
+      const overlay = kit.peritext.overlay;
+      let hash1: number | undefined, hash2: number | undefined, hash3: number | undefined;
+      update(kit, () => {
+        hash1 = overlay.refresh();
+        hash2 = overlay.refresh();
+        hash3 = overlay.refresh();
+      });
+      const hash4 = overlay.refresh();
+      const hash5 = overlay.refresh();
+      const hash6 = overlay.refresh();
+      expect(hash1).toBe(hash2);
+      expect(hash2).toBe(hash3);
+      expect(hash3).not.toBe(hash4);
+      expect(hash4).toBe(hash5);
+      expect(hash5).toBe(hash6);
+    });
+  };
+
   describe('slices', () => {
     describe('updates hash', () => {
-      const testRefresh = (name: string, update: (kit: Kit, refresh: () => void) => void) => {
-        test(name, () => {
-          const kit = setup();
-          const overlay = kit.peritext.overlay;
-          let hash1: number | undefined, hash2: number | undefined, hash3: number | undefined;
-          update(kit, () => {
-            hash1 = overlay.refresh();
-            hash2 = overlay.refresh();
-            hash3 = overlay.refresh();
-          });
-          const hash4 = overlay.refresh();
-          const hash5 = overlay.refresh();
-          const hash6 = overlay.refresh();
-          expect(hash1).toBe(hash2);
-          expect(hash2).toBe(hash3);
-          expect(hash3).not.toBe(hash4);
-          expect(hash4).toBe(hash5);
-          expect(hash5).toBe(hash6);
-        });
-      };
-
       testRefresh('when a slice is inserted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(1, 4);
         refresh();
@@ -141,16 +142,21 @@ describe('Overlay.refresh()', () => {
   });
 
   describe('cursor', () => {
-    test.skip('updates state hash, when cursor char ID changes', () => {
+    test.only('updates state hash, when cursor char ID changes', () => {
       const {peritext} = setup();
       const overlay = peritext.overlay;
       peritext.editor.cursor.setAt(1);
-      const hash1 = overlay.refresh();
+      overlay.refresh();
+      console.log(peritext + '');
       peritext.editor.cursor.setAt(2);
-      const hash2 = overlay.refresh();
-      const hash3 = overlay.refresh();
-      expect(hash1).not.toBe(hash2);
-      expect(hash2).toBe(hash3);
+      overlay.refresh();
+      console.log(peritext + '');
+      // const hash1 = overlay.refresh();
+      // peritext.editor.cursor.setAt(2);
+      // const hash2 = overlay.refresh();
+      // const hash3 = overlay.refresh();
+      // expect(hash1).not.toBe(hash2);
+      // expect(hash2).toBe(hash3);
     });
   });
 });

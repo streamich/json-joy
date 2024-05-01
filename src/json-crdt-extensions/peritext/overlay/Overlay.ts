@@ -93,8 +93,61 @@ export class Overlay implements Printable, Stateful {
   public refresh(slicesOnly: boolean = false): number {
     let hash: number = CONST.START_STATE;
     hash = this.refreshSlices(hash);
+    // hash = this.refreshCursor(hash);
+    // TODO: refresh ephemeral slices
     // if (!slicesOnly) this.computeSplitTextHashes();
     return (this.hash = hash);
+  }
+
+  private slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
+
+  private refreshSlices(state: number): number {
+    const slices = this.txt.slices;
+    const oldSlicesHash = slices.hash;
+    const changed = oldSlicesHash !== slices.refresh();
+    const sliceSet = this.slices;
+    state = updateNum(state, slices.hash);
+    if (changed) {
+      slices.forEach((slice) => {
+        console.log('slice', slice + '');
+        let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(slice);
+        if (tuple) {
+          if ((slice as any).isDel && (slice as any).isDel()) {
+            this.delSlice(slice, tuple);
+            return;
+          }
+          const positionMoved = tuple[0].cmp(slice.start) !== 0 || tuple[1].cmp(slice.end) !== 0;
+          if (positionMoved) this.delSlice(slice, tuple);
+          else return;
+        }
+        tuple = this.insSlice(slice);
+        this.slices.set(slice, tuple);
+      });
+      if (slices.size() < sliceSet.size) {
+        sliceSet.forEach((tuple, slice) => {
+          const mutSlice = slice as Slice | MutableSlice;
+          if ((<MutableSlice>mutSlice).isDel) {
+            if (!(<MutableSlice>mutSlice).isDel()) return;
+            this.delSlice(slice, tuple);
+          }
+        });
+      }
+    }
+    return state;
+  }
+
+  private refreshCursor(state: number): number {
+    const cursor = this.txt.editor.cursor;
+    let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = this.slices.get(cursor);
+    const positionMoved = tuple && (tuple[0].cmp(cursor.start) !== 0 || tuple[1].cmp(cursor.end) !== 0);
+    if (tuple && positionMoved) {
+      this.delSlice(cursor, tuple!);
+    }
+    if (!tuple || positionMoved) {
+      tuple = this.insSlice(cursor);
+      this.slices.set(cursor, tuple);
+    }
+    return state;
   }
 
   /**
@@ -133,53 +186,7 @@ export class Overlay implements Printable, Stateful {
     this.root = remove(this.root, point);
   }
 
-  public slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
-
-  private refreshSlices(state: number): number {
-    const slices = this.txt.slices;
-    const changed = slices.refresh();
-    const sliceSet = this.slices;
-    state = updateNum(state, slices.hash);
-    if (changed) {
-      slices.forEach((slice) => {
-        let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(slice);
-        if (tuple) {
-          if (slice.isDel()) {
-            this.delSlice(slice, tuple);
-            return;
-          }
-          const positionMoved = tuple[0].cmp(slice.start) !== 0 || tuple[1].cmp(slice.end) !== 0;
-          if (positionMoved) this.delSlice(slice, tuple);
-          else return;
-        }
-        tuple = this.insSlice(slice);
-        this.slices.set(slice, tuple);
-      });
-      if (slices.size() < sliceSet.size) {
-        sliceSet.forEach((tuple, slice) => {
-          const mutSlice = slice as Slice | MutableSlice;
-          if ((<MutableSlice>mutSlice).isDel) {
-            if (!(<MutableSlice>mutSlice).isDel()) return;
-            this.delSlice(slice, tuple);
-          }
-        });
-      }
-    }
-    const cursor = this.txt.editor.cursor;
-    let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(cursor);
-    const positionMoved = tuple && (tuple[0].cmp(cursor.start) !== 0 || tuple[1].cmp(cursor.end) !== 0);
-    if (tuple && positionMoved) {
-      this.delSlice(cursor, tuple!);
-    }
-    if (!tuple || positionMoved) {
-      tuple = this.insSlice(cursor);
-      this.slices.set(cursor, tuple);
-    }
-    return state;
-  }
-
   protected insSplit(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
-    // const point = new MarkerOverlayPoint(this.txt, slice.start.id, Anchor.Before, slice);
     const point = this.markerPoint(slice, Anchor.Before);
     const pivot = this.insertPoint(point);
     if (!pivot) {
@@ -258,6 +265,6 @@ export class Overlay implements Printable, Stateful {
         ])
       );
     };
-    return this.constructor.name + printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)]);
+    return `${this.constructor.name} #${this.hash.toString(36)}` + printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)]);
   }
 }

@@ -87,7 +87,6 @@ export class Slices implements Stateful, Printable {
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
     let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
-    // TODO: Simplify, remove `SplitSlice` class.
     if (slice.isSplit())
       slice = new MarkerSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
@@ -123,8 +122,9 @@ export class Slices implements Stateful, Printable {
     return this.list._size;
   }
 
-  public forEach(callback: (item: PersistedSlice) => void): void {
+  public forEach(callback: (item: Slice) => void): void {
     this.list.forEach((node) => callback(node.v));
+    callback(this.txt.editor.cursor);
   }
 
   // ----------------------------------------------------------------- Stateful
