@@ -142,21 +142,31 @@ describe('Overlay.refresh()', () => {
   });
 
   describe('cursor', () => {
-    test.only('updates state hash, when cursor char ID changes', () => {
-      const {peritext} = setup();
-      const overlay = peritext.overlay;
-      peritext.editor.cursor.setAt(1);
-      overlay.refresh();
-      console.log(peritext + '');
-      peritext.editor.cursor.setAt(2);
-      overlay.refresh();
-      console.log(peritext + '');
-      // const hash1 = overlay.refresh();
-      // peritext.editor.cursor.setAt(2);
-      // const hash2 = overlay.refresh();
-      // const hash3 = overlay.refresh();
-      // expect(hash1).not.toBe(hash2);
-      // expect(hash2).toBe(hash3);
+    describe('updates hash', () => {
+      testRefresh('when cursor char ID changes', (kit, refresh) => {
+        kit.peritext.editor.cursor.setAt(1);
+        refresh();
+        kit.peritext.editor.cursor.setAt(1);
+      });
+
+      testRefresh('when cursor start anchor changes', (kit, refresh) => {
+        kit.peritext.editor.cursor.setAt(3, 3);
+        expect(kit.peritext.editor.cursor.start.anchor).toBe(Anchor.Before);
+        refresh();
+        const start = kit.peritext.editor.cursor.start.clone();
+        start.anchor = Anchor.After;
+        kit.peritext.editor.cursor.setRange(kit.peritext.range(start, kit.peritext.editor.cursor.end));
+      });
+
+      testRefresh('when cursor end anchor changes', (kit, refresh) => {
+        kit.peritext.editor.cursor.setAt(3, 3);
+        expect(kit.peritext.editor.cursor.end.anchor).toBe(Anchor.After);
+        refresh();
+        const end = kit.peritext.editor.cursor.start.clone();
+        end.anchor = Anchor.Before;
+        kit.peritext.editor.cursor.setRange(kit.peritext.range(kit.peritext.editor.cursor.start, end));
+        console.log(kit.peritext.localSlices.model.api.flush());
+      });
     });
   });
 });

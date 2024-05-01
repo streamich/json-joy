@@ -29,7 +29,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     });
   }
 
-  /** Move to persisted slice. */
+  /** TODO: Move to {@link PersistedSlice}. */
   public setAt(start: number, length: number = 0): void {
     let at = start;
     let len = length;

@@ -5,6 +5,7 @@ import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
+import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval} from '../../json-crdt-patch/clock';
@@ -63,7 +64,9 @@ export class Peritext implements Printable {
     const localModel = Model
       .withLogicalClock(SESSION.LOCAL)
       .setSchema(s.vec(s.arr([])));
-    this.localSlices = new Slices(localModel, localModel.root.node().get(0)!, this.str);
+    const localApi = localModel.api;
+    localApi.onLocalChange.listen(() => { localApi.flush(); });
+    this.localSlices = new LocalSlices(localModel, localModel.root.node().get(0)!, this.str);
 
     this.editor = new Editor(this, this.localSlices);
   }
