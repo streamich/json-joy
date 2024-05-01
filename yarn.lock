@@ -2203,6 +2203,11 @@ tree-dump@^1.0.0:
   resolved "https://registry.yarnpkg.com/tree-dump/-/tree-dump-1.0.0.tgz#bd5fdece2b36d888ae0d1cf316e653af3de656ea"
   integrity sha512-gDLjiHO2JTBf8JtRNCq/tUYZMdI5EFOA3UKWZJddwqVxRjC8jj/tI/pJEocV0hPtJeztEcF2RqufJZYbF/rKEw==
 
+tree-dump@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/tree-dump/-/tree-dump-1.0.1.tgz#b448758da7495580e6b7830d6b7834fca4c45b96"
+  integrity sha512-WCkcRBVPSlHHq1dc/px9iOfqklvzCbdRwvlNfxGZsrHqf6aZttfPrd7DJTt6oR10dwUfpFFQeVTkPbBIZxX/YA==
+
 ts-jest@^29.1.2:
   version "29.1.2"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.1.2.tgz#7613d8c81c43c8cb312c6904027257e814c40e09"

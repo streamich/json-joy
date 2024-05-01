@@ -12,8 +12,8 @@ const clock = doc.clock;
 const patch = new Patch();
 
 test('can edit document using JSON Patch operations', () => {
-  console.log(doc.view());
-  console.log(doc.toString());
+  // console.log(doc.view());
+  // console.log(doc.toString());
 
   const obj = clock.tick(1);
   patch.ops.push(new NewObjOp(obj));
@@ -32,8 +32,8 @@ test('can edit document using JSON Patch operations', () => {
 
   doc.applyPatch(patch);
 
-  console.log(doc.view());
-  console.log(doc.toString());
+  // console.log(doc.view());
+  // console.log(doc.toString());
 
   const insert2 = clock.tick(1);
   patch.ops.push(new InsStrOp(insert2, str, tick(insert1, 2), '!'));
@@ -43,16 +43,16 @@ test('can edit document using JSON Patch operations', () => {
 
   doc.applyPatch(patch);
 
-  console.log(doc.view());
-  console.log(doc.toString());
+  // console.log(doc.view());
+  // console.log(doc.toString());
 
   const insert4 = clock.tick(5);
   patch.ops.push(new InsStrOp(insert4, str, insert3, 'qux! '));
 
   doc.applyPatch(patch);
 
-  console.log(doc.view());
-  console.log(doc.toString());
+  // console.log(doc.view());
+  // console.log(doc.toString());
 
   const builder = new PatchBuilder(clock);
   const list = builder.json([{title: 'To the dishes!'}, {title: 'Write more tests!'}]);
@@ -63,8 +63,8 @@ test('can edit document using JSON Patch operations', () => {
 
   doc.applyPatch(patch);
 
-  console.log(doc.view());
-  console.log(doc.toString());
+  // console.log(doc.view());
+  // console.log(doc.toString());
 
   expect(doc.view()).toStrictEqual({
     foo: 'bar! qux! baz!',

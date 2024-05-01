@@ -186,7 +186,7 @@ describe('.clone()', () => {
   test('can clone a range', () => {
     const {peritext} = setup();
     const range1 = peritext.rangeAt(2, 3);
-    const range2 = range1.clone();
+    const range2 = range1.range();
     expect(range2).not.toBe(range1);
     expect(range1.text()).toBe(range2.text());
     expect(range2.start).not.toBe(range1.start);
@@ -322,7 +322,7 @@ describe('.contains()', () => {
   test('returns true if slice is contained', () => {
     const {peritext} = setup();
     peritext.editor.setCursor(3, 2);
-    const slice = peritext.editor.insertOverwriteSlice('b');
+    const slice = peritext.editor.insOverwriteSlice('b');
     peritext.editor.setCursor(0);
     peritext.refresh();
     expect(peritext.rangeAt(2, 4).contains(slice)).toBe(true);
@@ -334,7 +334,7 @@ describe('.contains()', () => {
   test('returns false if slice is not contained', () => {
     const {peritext} = setup();
     peritext.editor.setCursor(3, 2);
-    const slice = peritext.editor.insertOverwriteSlice('b');
+    const slice = peritext.editor.insOverwriteSlice('b');
     peritext.editor.setCursor(0);
     peritext.refresh();
     expect(peritext.rangeAt(3, 1).contains(slice)).toBe(false);

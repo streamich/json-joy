@@ -33,8 +33,6 @@ export interface Slice<T = string> extends Range<T>, Stateful {
 export interface MutableSlice<T = string> extends Slice<T> {
   update(params: SliceUpdateParams<T>): void;
 
-  del(): void;
-
   /**
    * Whether the slice is deleted.
    */

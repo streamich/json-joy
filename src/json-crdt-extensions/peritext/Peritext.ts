@@ -5,14 +5,16 @@ import {Range} from './rga/Range';
 import {Editor} from './editor/Editor';
 import {ArrNode, StrNode} from '../../json-crdt/nodes';
 import {Slices} from './slice/Slices';
+import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval} from '../../json-crdt-patch/clock';
+import {Model} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
+import {SESSION} from '../../json-crdt-patch/constants';
+import {s} from '../../json-crdt-patch';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {Model} from '../../json-crdt/model';
 import type {Printable} from 'tree-dump/lib/types';
-import type {StringChunk} from './util/types';
 import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';
 
@@ -21,7 +23,26 @@ import type {MarkerSlice} from './slice/MarkerSlice';
  * interact with the text.
  */
 export class Peritext implements Printable {
-  public readonly slices: Slices;
+  /**
+   * *Slices* are rich-text annotations that appear in the text. The "saved"
+   * slices are the ones that are persisted in the document.
+   */
+  public readonly savedSlices: Slices;
+
+  /**
+   * *Extra slices* are slices that are not persisted in the document. However,
+   * they are still shared across users, i.e. they are ephemerally persisted
+   * during the editing session.
+   */
+  public readonly extraSlices: Slices;
+
+  /**
+   * *Local slices* are slices that are not persisted in the document and are
+   * not shared with other users. They are used only for local annotations for
+   * the current user.
+   */
+  public readonly localSlices: Slices;
+
   public readonly editor: Editor;
   public readonly overlay = new Overlay(this);
 
@@ -30,24 +51,27 @@ export class Peritext implements Printable {
     public readonly str: StrNode,
     slices: ArrNode,
   ) {
-    this.slices = new Slices(this, slices);
-    this.editor = new Editor(this);
+    this.savedSlices = new Slices(this.model, slices, this.str);
+
+    const extraModel = Model.withLogicalClock(SESSION.GLOBAL)
+      .setSchema(s.vec(s.arr([])))
+      .fork(this.model.clock.sid + 1);
+    this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
+
+    // TODO: flush patches
+    // TODO: remove `arr` tombstones
+    const localModel = Model.withLogicalClock(SESSION.LOCAL).setSchema(s.vec(s.arr([])));
+    const localApi = localModel.api;
+    localApi.onLocalChange.listen(() => {
+      localApi.flush();
+    });
+    this.localSlices = new LocalSlices(localModel, localModel.root.node().get(0)!, this.str);
+
+    this.editor = new Editor(this, this.localSlices);
   }
 
   public strApi() {
     return this.model.api.wrap(this.str);
-  }
-
-  /** @todo Find a better place for this function. */
-  public firstVisChunk(): StringChunk | undefined {
-    const str = this.str;
-    let curr = str.first();
-    if (!curr) return;
-    while (curr.del) {
-      curr = str.next(curr);
-      if (!curr) return;
-    }
-    return curr;
   }
 
   /** Select a single character before a point. */
@@ -196,7 +220,7 @@ export class Peritext implements Printable {
     const textId = builder.insStr(str.id, after, char[0]);
     const point = this.point(textId, Anchor.Before);
     const range = this.range(point, point);
-    return this.slices.insMarker(range, type, data);
+    return this.savedSlices.insMarker(range, type, data);
   }
 
   /** @todo This can probably use .del() */
@@ -206,7 +230,7 @@ export class Peritext implements Printable {
     const builder = api.builder;
     const strChunk = split.start.chunk();
     if (strChunk) builder.del(str.id, [interval(strChunk.id, 0, 1)]);
-    builder.del(this.slices.set.id, [interval(split.id, 0, 1)]);
+    builder.del(this.savedSlices.set.id, [interval(split.id, 0, 1)]);
     api.apply();
   }
 
@@ -221,7 +245,7 @@ export class Peritext implements Printable {
         nl,
         (tab) => this.str.toString(tab),
         nl,
-        (tab) => this.slices.toString(tab),
+        (tab) => this.savedSlices.toString(tab),
         nl,
         (tab) => this.overlay.toString(tab),
       ])

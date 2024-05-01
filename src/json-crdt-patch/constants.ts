@@ -20,6 +20,14 @@ export const enum SESSION {
    */
   GLOBAL = 2,
 
+  /**
+   * Session ID used for models that are not shared with other users. For
+   * example, when a user is editing a document in a local editor, these
+   * documents could capture local information, like the cursor position, which
+   * is not shared with other users.
+   */
+  LOCAL = 3,
+
   /** Max allowed session ID, they are capped at 53-bits. */
   MAX = 9007199254740991,
 }

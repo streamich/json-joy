@@ -10,10 +10,12 @@ import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {equal, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
+import {firstVis} from '../../../json-crdt/nodes/rga/util';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
+import type {Slices} from '../slice/Slices';
 
 export class Overlay implements Printable, Stateful {
   public root: OverlayPoint | undefined = undefined;
@@ -90,60 +92,27 @@ export class Overlay implements Printable, Stateful {
   public hash: number = 0;
 
   public refresh(slicesOnly: boolean = false): number {
+    const txt = this.txt;
     let hash: number = CONST.START_STATE;
-    hash = this.refreshSlices(hash);
+    hash = this.refreshSlices(hash, txt.savedSlices);
+    hash = this.refreshSlices(hash, txt.extraSlices);
+    hash = this.refreshSlices(hash, txt.localSlices);
     // if (!slicesOnly) this.computeSplitTextHashes();
     return (this.hash = hash);
   }
 
-  /**
-   * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
-   * in the tree, sorted by spatial dimension.
-   */
-  protected upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
-    const newPoint = this.overlayPoint(point.id, point.anchor);
-    const pivot = this.insertPoint(newPoint);
-    if (pivot) return [pivot, false];
-    return [newPoint, true];
-  }
+  public readonly slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
 
-  /**
-   * Inserts a point into the tree, sorted by spatial dimension.
-   * @param point Point to insert.
-   * @returns Returns the existing point if it was already in the tree.
-   */
-  protected insertPoint(point: OverlayPoint): OverlayPoint | undefined {
-    let pivot = this.getOrNextLower(point);
-    if (!pivot) pivot = first(this.root);
-    if (!pivot) {
-      this.root = point;
-      return;
-    } else {
-      if (pivot.cmp(point) === 0) return pivot;
-      const cmp = pivot.cmpSpatial(point);
-      if (cmp < 0) insertRight(point, pivot);
-      else insertLeft(point, pivot);
-    }
-    if (this.root !== point) this.root = splay(this.root!, point, 10);
-    return undefined;
-  }
-
-  protected delPoint(point: OverlayPoint): void {
-    this.root = remove(this.root, point);
-  }
-
-  public slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
-
-  private refreshSlices(state: number): number {
-    const slices = this.txt.slices;
-    const changed = slices.refresh();
+  private refreshSlices(state: number, slices: Slices): number {
+    const oldSlicesHash = slices.hash;
+    const changed = oldSlicesHash !== slices.refresh();
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
       slices.forEach((slice) => {
         let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(slice);
         if (tuple) {
-          if (slice.isDel()) {
+          if ((slice as any).isDel && (slice as any).isDel()) {
             this.delSlice(slice, tuple);
             return;
           }
@@ -164,23 +133,48 @@ export class Overlay implements Printable, Stateful {
         });
       }
     }
-    const cursor = this.txt.editor.cursor;
-    let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(cursor);
-    const positionMoved = tuple && (tuple[0].cmp(cursor.start) !== 0 || tuple[1].cmp(cursor.end) !== 0);
-    if (tuple && positionMoved) {
-      this.delSlice(cursor, tuple!);
-    }
-    if (!tuple || positionMoved) {
-      tuple = this.insSlice(cursor);
-      this.slices.set(cursor, tuple);
-    }
     return state;
   }
 
-  protected insSplit(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
-    // const point = new MarkerOverlayPoint(this.txt, slice.start.id, Anchor.Before, slice);
+  /**
+   * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
+   * in the tree, sorted by spatial dimension.
+   */
+  protected upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
+    const newPoint = this.overlayPoint(point.id, point.anchor);
+    const pivot = this.insPoint(newPoint);
+    if (pivot) return [pivot, false];
+    return [newPoint, true];
+  }
+
+  /**
+   * Inserts a point into the tree, sorted by spatial dimension.
+   * @param point Point to insert.
+   * @returns Returns the existing point if it was already in the tree.
+   */
+  private insPoint(point: OverlayPoint): OverlayPoint | undefined {
+    let pivot = this.getOrNextLower(point);
+    if (!pivot) pivot = first(this.root);
+    if (!pivot) {
+      this.root = point;
+      return;
+    } else {
+      if (pivot.cmp(point) === 0) return pivot;
+      const cmp = pivot.cmpSpatial(point);
+      if (cmp < 0) insertRight(point, pivot);
+      else insertLeft(point, pivot);
+    }
+    if (this.root !== point) this.root = splay(this.root!, point, 10);
+    return undefined;
+  }
+
+  private delPoint(point: OverlayPoint): void {
+    this.root = remove(this.root, point);
+  }
+
+  private insMarker(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
     const point = this.markerPoint(slice, Anchor.Before);
-    const pivot = this.insertPoint(point);
+    const pivot = this.insPoint(point);
     if (!pivot) {
       point.refs.push(slice);
       const prevPoint = prev(point);
@@ -190,14 +184,14 @@ export class Overlay implements Printable, Stateful {
   }
 
   private insSlice(slice: Slice): [start: OverlayPoint, end: OverlayPoint] {
-    if (slice instanceof MarkerSlice) return this.insSplit(slice);
+    if (slice instanceof MarkerSlice) return this.insMarker(slice);
     const txt = this.txt;
     const str = txt.str;
     let startPoint = slice.start;
     let endPoint = slice.end;
     const startIsStringRoot = equal(startPoint.id, str.id);
     if (startIsStringRoot) {
-      const firstVisibleChunk = txt.firstVisChunk();
+      const firstVisibleChunk = firstVis(txt.str);
       if (firstVisibleChunk) {
         startPoint = txt.point(firstVisibleChunk.id, Anchor.Before);
         const endIsStringRoot = equal(endPoint.id, str.id);
@@ -257,6 +251,9 @@ export class Overlay implements Printable, Stateful {
         ])
       );
     };
-    return this.constructor.name + printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)]);
+    return (
+      `${this.constructor.name} #${this.hash.toString(36)}` +
+      printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)])
+    );
   }
 }

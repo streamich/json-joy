@@ -11,21 +11,34 @@ import {VecNode} from '../../../json-crdt/nodes';
 import type {Slice} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {SliceType, Stateful} from '../types';
-import type {Peritext} from '../Peritext';
 import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
+import type {Model} from '../../../json-crdt/model';
+import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 
 export class Slices implements Stateful, Printable {
   private list = new AvlMap<ITimestampStruct, PersistedSlice>(compare);
 
   constructor(
-    public readonly txt: Peritext,
+    /** The model, which powers the CRDT nodes. */
+    public readonly model: Model<any>,
+    /** The `arr` node, used as a set, where slices are stored. */
     public readonly set: ArrNode,
+    /** The text RGA. */
+    protected readonly rga: AbstractRga<string>,
   ) {}
 
-  public ins(range: Range, behavior: SliceBehavior, type: SliceType, data?: unknown): PersistedSlice {
-    const peritext = this.txt;
-    const model = peritext.model;
+  public ins<
+    S extends PersistedSlice<string>,
+    K extends new (...args: ConstructorParameters<typeof PersistedSlice<string>>) => S,
+  >(
+    range: Range,
+    behavior: SliceBehavior,
+    type: SliceType,
+    data?: unknown,
+    Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice,
+  ): S {
+    const model = this.model;
     const set = this.set;
     const api = model.api;
     const builder = api.builder;
@@ -53,11 +66,7 @@ export class Slices implements Stateful, Printable {
     const tuple = model.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const txt = this.txt;
-    const slice =
-      behavior === SliceBehavior.Marker
-        ? new MarkerSlice(txt, txt.str, chunk, tuple, behavior, type, start, end)
-        : new PersistedSlice(txt, txt.str, chunk, tuple, behavior, type, start, end);
+    const slice = new Klass(model, this.rga, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
@@ -79,17 +88,15 @@ export class Slices implements Stateful, Printable {
   }
 
   protected unpack(chunk: ArrChunk): PersistedSlice {
-    const txt = this.txt;
-    const rga = txt.str;
-    const model = txt.model;
+    const rga = this.rga;
+    const model = this.model;
     const tupleId = chunk.data ? chunk.data[0] : undefined;
     if (!tupleId) throw new Error('SLICE_NOT_FOUND');
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
-    let slice = PersistedSlice.deserialize(txt, rga, chunk, tuple);
-    // TODO: Simplify, remove `SplitSlice` class.
+    let slice = PersistedSlice.deserialize(model, rga, chunk, tuple);
     if (slice.isSplit())
-      slice = new MarkerSlice(txt, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
+      slice = new MarkerSlice(model, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
   }
 
@@ -99,13 +106,13 @@ export class Slices implements Stateful, Printable {
 
   public del(id: ITimestampStruct): void {
     this.list.del(id);
-    const api = this.txt.model.api;
+    const api = this.model.api;
     api.builder.del(this.set.id, [tss(id.sid, id.time, 1)]);
     api.apply();
   }
 
   public delSlices(slices: Slice[]): void {
-    const api = this.txt.model.api;
+    const api = this.model.api;
     const spans: ITimespanStruct[] = [];
     const length = slices.length;
     for (let i = 0; i < length; i++) {
@@ -123,7 +130,7 @@ export class Slices implements Stateful, Printable {
     return this.list._size;
   }
 
-  public forEach(callback: (item: PersistedSlice) => void): void {
+  public forEach(callback: (item: Slice) => void): void {
     this.list.forEach((node) => callback(node.v));
   }
 

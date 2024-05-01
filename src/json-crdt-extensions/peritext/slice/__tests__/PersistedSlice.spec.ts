@@ -4,7 +4,7 @@ import {setup} from './setup';
 const setupSlice = () => {
   const deps = setup();
   const range = deps.peritext.rangeAt(2, 3);
-  const slice = deps.peritext.slices.insMarker(range, 0);
+  const slice = deps.peritext.savedSlices.insMarker(range, 0);
   return {...deps, range, slice};
 };
 
@@ -61,15 +61,15 @@ describe('.del() and .isDel()', () => {
     const {peritext, slice} = setupSlice();
     expect(peritext.model.view().slices.length).toBe(1);
     expect(slice.isDel()).toBe(false);
-    const slice2 = peritext.slices.get(slice.id)!;
+    const slice2 = peritext.savedSlices.get(slice.id)!;
     expect(peritext.model.view().slices.length).toBe(1);
     expect(slice2.isDel()).toBe(false);
     expect(slice2).toBe(slice);
-    slice.del();
+    peritext.savedSlices.del(slice.id);
     expect(peritext.model.view().slices.length).toBe(0);
     expect(slice.isDel()).toBe(true);
     expect(slice2.isDel()).toBe(true);
-    const slice3 = peritext.slices.get(slice.id);
+    const slice3 = peritext.savedSlices.get(slice.id);
     expect(slice3).toBe(undefined);
   });
 });

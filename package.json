@@ -129,7 +129,7 @@
     "hyperdyperid": "^1.2.0",
     "sonic-forest": "^1.0.2",
     "thingies": "^2.0.0",
-    "tree-dump": "^1.0.0"
+    "tree-dump": "^1.0.1"
   },
   "devDependencies": {
     "@types/benchmark": "^2.1.5",
