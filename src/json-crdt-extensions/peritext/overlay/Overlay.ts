@@ -95,9 +95,8 @@ export class Overlay implements Printable, Stateful {
     const txt = this.txt;
     let hash: number = CONST.START_STATE;
     hash = this.refreshSlices(hash, txt.savedSlices);
+    hash = this.refreshSlices(hash, txt.extraSlices);
     hash = this.refreshSlices(hash, txt.localSlices);
-    // hash = this.refreshCursor(hash);
-    // TODO: refresh ephemeral slices
     // if (!slicesOnly) this.computeSplitTextHashes();
     return (this.hash = hash);
   }
@@ -137,27 +136,13 @@ export class Overlay implements Printable, Stateful {
     return state;
   }
 
-  private refreshCursor(state: number): number {
-    const cursor = this.txt.editor.cursor;
-    let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = this.slices.get(cursor);
-    const positionMoved = tuple && (tuple[0].cmp(cursor.start) !== 0 || tuple[1].cmp(cursor.end) !== 0);
-    if (tuple && positionMoved) {
-      this.delSlice(cursor, tuple!);
-    }
-    if (!tuple || positionMoved) {
-      tuple = this.insSlice(cursor);
-      this.slices.set(cursor, tuple);
-    }
-    return state;
-  }
-
   /**
    * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
    * in the tree, sorted by spatial dimension.
    */
   protected upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
     const newPoint = this.overlayPoint(point.id, point.anchor);
-    const pivot = this.insertPoint(newPoint);
+    const pivot = this.insPoint(newPoint);
     if (pivot) return [pivot, false];
     return [newPoint, true];
   }
@@ -167,7 +152,7 @@ export class Overlay implements Printable, Stateful {
    * @param point Point to insert.
    * @returns Returns the existing point if it was already in the tree.
    */
-  protected insertPoint(point: OverlayPoint): OverlayPoint | undefined {
+  private insPoint(point: OverlayPoint): OverlayPoint | undefined {
     let pivot = this.getOrNextLower(point);
     if (!pivot) pivot = first(this.root);
     if (!pivot) {
@@ -183,13 +168,13 @@ export class Overlay implements Printable, Stateful {
     return undefined;
   }
 
-  protected delPoint(point: OverlayPoint): void {
+  private delPoint(point: OverlayPoint): void {
     this.root = remove(this.root, point);
   }
 
-  protected insSplit(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
+  private insMarker(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
     const point = this.markerPoint(slice, Anchor.Before);
-    const pivot = this.insertPoint(point);
+    const pivot = this.insPoint(point);
     if (!pivot) {
       point.refs.push(slice);
       const prevPoint = prev(point);
@@ -199,7 +184,7 @@ export class Overlay implements Printable, Stateful {
   }
 
   private insSlice(slice: Slice): [start: OverlayPoint, end: OverlayPoint] {
-    if (slice instanceof MarkerSlice) return this.insSplit(slice);
+    if (slice instanceof MarkerSlice) return this.insMarker(slice);
     const txt = this.txt;
     const str = txt.str;
     let startPoint = slice.start;
