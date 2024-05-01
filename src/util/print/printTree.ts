@@ -1,1 +1,1 @@
-export * from 'sonic-forest/lib/print/printTree';
+export * from 'tree-dump/lib/printTree';

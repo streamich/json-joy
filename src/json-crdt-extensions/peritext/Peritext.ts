@@ -1,4 +1,4 @@
-import {printTree} from 'sonic-forest/lib/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from './rga/constants';
 import {Point} from './rga/Point';
 import {Range} from './rga/Range';

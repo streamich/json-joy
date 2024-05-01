@@ -4,7 +4,7 @@ import type {Anchor} from '../rga/constants';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import {printTree} from 'sonic-forest/lib/print/printTree';
+import {printTree} from 'tree-dump/lib/printTree';
 
 export class MarkerOverlayPoint extends OverlayPoint {
   /**

@@ -17,31 +17,31 @@ describe('.toString()', () => {
       },
     });
     expect(system.toString()).toMatchInlineSnapshot(`
-      "TypeSystem
-      ├─ aliases
-      │  ├─ User0
-      │  │  └─ obj
-      │  │     ├─ "id":
-      │  │     │   └─ str
-      │  │     └─ "address"?:
-      │  │         └─ ref → [Address]
-      │  ├─ User1
-      │  │  └─ ref → [User0]
-      │  ├─ User
-      │  │  └─ ref → [User1]
-      │  ├─ Address0
-      │  │  └─ obj
-      │  │     ├─ "id":
-      │  │     │   └─ str
-      │  │     └─ "user"?:
-      │  │         └─ ref → [User]
-      │  ├─ Address1
-      │  │  └─ ref → [Address0]
-      │  └─ Address
-      │     └─ ref → [Address1]
-      │  
-      └─ validators
-         └─ "empty-string""
-    `);
+"TypeSystem
+├─ aliases
+│  ├─ User0
+│  │  └─ obj
+│  │     ├─ "id":
+│  │     │   └─ str
+│  │     └─ "address"?:
+│  │         └─ ref → [Address]
+│  ├─ User1
+│  │  └─ ref → [User0]
+│  ├─ User
+│  │  └─ ref → [User1]
+│  ├─ Address0
+│  │  └─ obj
+│  │     ├─ "id":
+│  │     │   └─ str
+│  │     └─ "user"?:
+│  │         └─ ref → [User]
+│  ├─ Address1
+│  │  └─ ref → [Address0]
+│  └─ Address
+│     └─ ref → [Address1]
+│
+└─ validators
+   └─ "empty-string""
+`);
   });
 });

@@ -1,5 +1,5 @@
-import {printTree} from 'sonic-forest/lib/print/printTree';
-import {printBinary} from 'sonic-forest/lib/print/printBinary';
+import {printTree} from 'tree-dump/lib/printTree';
+import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, next, prev, remove} from 'sonic-forest/lib/util';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';

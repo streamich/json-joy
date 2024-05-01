@@ -1,1 +1,1 @@
-export * from 'sonic-forest/lib/print/printBinary';
+export * from 'tree-dump/lib/printBinary';

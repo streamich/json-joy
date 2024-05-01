@@ -1,1 +1,1 @@
-export * from 'sonic-forest/lib/print/types';
+export * from 'tree-dump/lib/types';
