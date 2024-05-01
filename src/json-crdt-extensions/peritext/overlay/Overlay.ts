@@ -15,6 +15,7 @@ import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
+import type {Slices} from '../slice/Slices';
 
 export class Overlay implements Printable, Stateful {
   public root: OverlayPoint | undefined = undefined;
@@ -91,8 +92,10 @@ export class Overlay implements Printable, Stateful {
   public hash: number = 0;
 
   public refresh(slicesOnly: boolean = false): number {
+    const txt = this.txt;
     let hash: number = CONST.START_STATE;
-    hash = this.refreshSlices(hash);
+    hash = this.refreshSlices(hash, txt.savedSlices);
+    hash = this.refreshSlices(hash, txt.localSlices);
     // hash = this.refreshCursor(hash);
     // TODO: refresh ephemeral slices
     // if (!slicesOnly) this.computeSplitTextHashes();
@@ -101,15 +104,13 @@ export class Overlay implements Printable, Stateful {
 
   public readonly slices = new Map<Slice, [start: OverlayPoint, end: OverlayPoint]>();
 
-  private refreshSlices(state: number): number {
-    const slices = this.txt.savedSlices;
+  private refreshSlices(state: number, slices: Slices): number {
     const oldSlicesHash = slices.hash;
     const changed = oldSlicesHash !== slices.refresh();
     const sliceSet = this.slices;
     state = updateNum(state, slices.hash);
     if (changed) {
       slices.forEach((slice) => {
-        // console.log('slice', slice + '');
         let tuple: [start: OverlayPoint, end: OverlayPoint] | undefined = sliceSet.get(slice);
         if (tuple) {
           if ((slice as any).isDel && (slice as any).isDel()) {

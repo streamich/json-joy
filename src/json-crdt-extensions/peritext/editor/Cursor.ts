@@ -1,4 +1,5 @@
 import {Point} from '../rga/Point';
+import {Range} from '../rga/Range';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 
@@ -28,6 +29,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     });
   }
 
+  /** Move to persisted slice. */
   public setAt(start: number, length: number = 0): void {
     let at = start;
     let len = length;
@@ -35,8 +37,12 @@ export class Cursor<T = string> extends PersistedSlice<T> {
       at += len;
       len = -len;
     }
-    super.setAt(at, len);
-    this.anchorSide = length < 0 ? CursorAnchor.End : CursorAnchor.Start;
+    const range = Range.at<T>(this.rga, start, length);
+    const anchorSide = this.anchorSide;
+    this.update({
+      range,
+      type: anchorSide !== this.anchorSide ? anchorSide : undefined,
+    });
   }
 
   /**

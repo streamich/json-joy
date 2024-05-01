@@ -1,3 +1,4 @@
+import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 import {Point} from '../rga/Point';
 import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
@@ -73,7 +74,6 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   public update(params: SliceUpdateParams<T>): void {
     let updateHeader = false;
-    const {start, end} = this;
     const changes: [number, unknown][] = [];
     if (params.behavior !== undefined) {
       this.behavior = params.behavior;
@@ -81,10 +81,10 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     }
     if (params.range) {
       const range = params.range;
-      if (range.start.anchor !== start.anchor) updateHeader = true;
-      if (range.end.anchor !== end.anchor) updateHeader = true;
-      if (compare(range.start.id, start.id) !== 0) changes.push([SliceTupleIndex.X1, s.con(range.start.id)]);
-      if (compare(range.end.id, end.id) !== 0) changes.push([SliceTupleIndex.X2, s.con(range.end.id)]);
+      updateHeader = true;
+      changes.push(
+        [SliceTupleIndex.X1, s.con(range.start.id)],
+        [SliceTupleIndex.X2, s.con(range.end.id)]);
       this.start = range.start;
       this.end = range.start === range.end ? range.end.clone() : range.end;
     }
@@ -92,12 +92,12 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (params.data !== undefined) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
+    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
     if (updateHeader) {
       const header =
-        (this.behavior << SliceHeaderShift.Behavior) +
-        (this.start.anchor << SliceHeaderShift.X1Anchor) +
-        (this.end.anchor << SliceHeaderShift.X2Anchor);
+      (this.behavior << SliceHeaderShift.Behavior) +
+      (this.start.anchor << SliceHeaderShift.X1Anchor) +
+      (this.end.anchor << SliceHeaderShift.X2Anchor);
       changes.push([SliceTupleIndex.Header, s.con(header)]);
     }
     this.tupleApi().set(changes);

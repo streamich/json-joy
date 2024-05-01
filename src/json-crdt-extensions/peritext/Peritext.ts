@@ -59,6 +59,7 @@ export class Peritext implements Printable {
     this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
 
     // TODO: flush patches
+    // TODO: remove `arr` tombstones
     const localModel = Model
       .withLogicalClock(SESSION.LOCAL)
       .setSchema(s.vec(s.arr([])));

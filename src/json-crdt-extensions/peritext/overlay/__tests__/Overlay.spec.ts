@@ -46,7 +46,6 @@ describe('markers', () => {
       const points = [];
       let point;
       for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
-      // console.log(peritext + '');
       expect(points.length).toBe(2);
       point = points[0];
       expect(point.pos()).toBe(5);
