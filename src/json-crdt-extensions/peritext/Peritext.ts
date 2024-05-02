@@ -15,8 +15,10 @@ import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
-import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';
+import type {SliceSchema, SliceType} from './slice/types';
+
+const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -50,18 +52,18 @@ export class Peritext implements Printable {
     public readonly model: Model,
     public readonly str: StrNode,
     slices: ArrNode,
+    extraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
+    localSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
 
-    const extraModel = Model.create(s.vec(s.arr([])), this.model.clock.sid - 1);
-    this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
+    this.extraSlices = new Slices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
 
-    const localModel = Model.create(s.vec(s.arr([])), SESSION.LOCAL);
-    const localApi = localModel.api;
+    const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();
     });
-    this.localSlices = new LocalSlices(localModel, localModel.root.node().get(0)!, this.str);
+    this.localSlices = new LocalSlices(localSlicesModel, localSlicesModel.root.node().get(0)!, this.str);
 
     this.editor = new Editor(this, this.localSlices);
   }
