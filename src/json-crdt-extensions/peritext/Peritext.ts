@@ -17,8 +17,11 @@ import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MarkerSlice} from './slice/MarkerSlice';
 import type {SliceSchema, SliceType} from './slice/types';
+import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
+
+type SlicesModel = Model<SchemaToJsonNode<typeof EXTRA_SLICES_SCHEMA>>;
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -48,23 +51,33 @@ export class Peritext implements Printable {
   public readonly editor: Editor;
   public readonly overlay = new Overlay(this);
 
+  /**
+   * Creates a new Peritext context.
+   *
+   * @param model JSON CRDT model of the document where the text is stored.
+   * @param str The {@link StrNode} where the text is stored.
+   * @param slices The {@link ArrNode} where the slices are stored.
+   * @param extraSlicesModel The JSON CRDT model for the extra slices, which are
+   *        not persisted in the main document, but are shared with other users.
+   * @param localSlicesModel The JSON CRDT model for the local slices, which are
+   *        not persisted in the main document and are not shared with other
+   *        users. The local slices capture current-user-only annotations, such
+   *        as the current user's selection.
+   */
   constructor(
     public readonly model: Model,
     public readonly str: StrNode,
     slices: ArrNode,
-    extraSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
-    localSlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
+    extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
+    localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
-
     this.extraSlices = new Slices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
-
     const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();
     });
     this.localSlices = new LocalSlices(localSlicesModel, localSlicesModel.root.node().get(0)!, this.str);
-
     this.editor = new Editor(this, this.localSlices);
   }
 
