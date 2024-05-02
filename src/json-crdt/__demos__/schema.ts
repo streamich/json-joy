@@ -3,7 +3,7 @@
 /**
  * Run this demo with:
  *
- *     npx nodemon -q -x ts-node src/json-crdt/__demos__/schema.ts
+ *     npx nodemon -q -x npx ts-node src/json-crdt/__demos__/schema.ts
  */
 
 import {Model} from '..';
@@ -24,25 +24,25 @@ const model = Model.withLogicalClock(1234).setSchema(schema);
 
 console.log(model + '');
 // Model
-// ├─ RootNode 0.0
-// │  └─ ObjNode 1234.1
+// ├─ root 0.0
+// │  └─ obj 1234.1
 // │     ├─ "text"
-// │     │   └─ ConNode 1234.2 { "hello" }
+// │     │   └─ con 1234.2 { "hello" }
 // │     ├─ "counter"
-// │     │   └─ ConNode 1234.3 { 0 }
+// │     │   └─ con 1234.3 { 0 }
 // │     ├─ "checked"
-// │     │   └─ ConNode 1234.4 { true }
+// │     │   └─ con 1234.4 { true }
 // │     └─ "friend"
-// │         └─ ObjNode 1234.5
+// │         └─ obj 1234.5
 // │            ├─ "name"
-// │            │   └─ ConNode 1234.6 { "John" }
+// │            │   └─ con 1234.6 { "John" }
 // │            ├─ "age"
-// │            │   └─ ConNode 1234.7 { 42 }
+// │            │   └─ con 1234.7 { 42 }
 // │            └─ "tags"
-// │                └─ ArrNode 1234.8
+// │                └─ arr 1234.8
 // │                   └─ ArrChunk 1234.11!2 len:2
-// │                      ├─ [0]: ConNode 1234.9 { "foo" }
-// │                      └─ [1]: ConNode 1234.10 { "bar" }
+// │                      ├─ [0]: con 1234.9 { "foo" }
+// │                      └─ [1]: con 1234.10 { "bar" }
 // │
 // └─ VectorClock 1234.16
 

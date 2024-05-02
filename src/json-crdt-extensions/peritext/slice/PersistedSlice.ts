@@ -6,22 +6,28 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from '../rga/constants';
 import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
 import {CONST} from '../../../json-hash';
-import {Timestamp, compare} from '../../../json-crdt-patch/clock';
+import {Timestamp} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';
 import {prettyOneLine} from '../../../json-pretty';
 import {validateType} from './util';
 import {s} from '../../../json-crdt-patch';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {ArrChunk} from '../../../json-crdt/nodes';
-import type {MutableSlice, SliceUpdateParams} from './types';
-import type {SliceDto, SliceType, Stateful} from '../types';
+import type {MutableSlice, SliceView, SliceType, SliceUpdateParams} from './types';
+import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Model} from '../../../json-crdt/model';
 
+/**
+ * A persisted slice is a slice that is stored in a {@link Model}. It is used for
+ * rich-text formatting and annotations.
+ *
+ * @todo Maybe rename to "saved", "stored", "mutable".
+ */
 export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
   public static deserialize<T>(model: Model, rga: AbstractRga<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
-    const header = +(tuple.get(0)!.view() as SliceDto[0]);
+    const header = +(tuple.get(0)!.view() as SliceView[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
     const type = tuple.get(3)!.view() as SliceType;
@@ -66,6 +72,22 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return this.model.api.wrap(this.tuple);
   }
 
+  // ---------------------------------------------------------------- mutations
+
+  public set(start: Point<T>, end: Point<T> = start): void {
+    super.set(start, end);
+    this.update({range: this});
+  }
+
+  /**
+   * Expand range left and right to contain all invisible space: (1) tombstones,
+   * (2) anchors of non-deleted adjacent chunks.
+   */
+  public expand(): void {
+    super.expand();
+    this.update({range: this});
+  }
+
   // ------------------------------------------------------------- MutableSlice
 
   public readonly id: ITimestampStruct;
@@ -90,7 +112,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
+    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
       const header =
         (this.behavior << SliceHeaderShift.Behavior) +

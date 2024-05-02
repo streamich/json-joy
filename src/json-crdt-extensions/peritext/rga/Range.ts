@@ -119,25 +119,15 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return start2.cmp(end2) === 0;
   }
 
-  /**
-   * Collapse the range to the start point and sets the anchor position to be
-   * "after" the character.
-   */
-  public collapseToStart(): void {
-    this.start = this.start.clone();
-    this.start.refAfter();
-    this.end = this.start.clone();
+  public contains(range: Range<T>): boolean {
+    return this.start.cmpSpatial(range.start) <= 0 && this.end.cmpSpatial(range.end) >= 0;
   }
 
-  /**
-   * Collapse the range to the end point and sets the anchor position to be
-   * "before" the character.
-   */
-  public collapseToEnd(): void {
-    this.end = this.end.clone();
-    this.end.refAfter();
-    this.start = this.end.clone();
+  public containsPoint(point: Point<T>): boolean {
+    return this.start.cmpSpatial(point) <= 0 && this.end.cmpSpatial(point) >= 0;
   }
+
+  // ---------------------------------------------------------------- mutations
 
   public set(start: Point<T>, end: Point<T> = start): void {
     this.start = start;
@@ -158,12 +148,26 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     this.set(point);
   }
 
-  public contains(range: Range<T>): boolean {
-    return this.start.cmpSpatial(range.start) <= 0 && this.end.cmpSpatial(range.end) >= 0;
+  /**
+   * Collapse the range to the start point and sets the anchor position to be
+   * "after" the character.
+   */
+  public collapseToStart(): void {
+    const start = this.start.clone();
+    start.refAfter();
+    const end = start.clone();
+    this.set(start, end);
   }
 
-  public containsPoint(point: Point<T>): boolean {
-    return this.start.cmpSpatial(point) <= 0 && this.end.cmpSpatial(point) >= 0;
+  /**
+   * Collapse the range to the end point and sets the anchor position to be
+   * "before" the character.
+   */
+  public collapseToEnd(): void {
+    const end = this.end.clone();
+    end.refAfter();
+    const start = this.end.clone();
+    this.set(start, end);
   }
 
   /**

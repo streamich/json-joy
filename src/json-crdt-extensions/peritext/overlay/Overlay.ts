@@ -17,21 +17,17 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 import type {Slices} from '../slice/Slices';
 
+/**
+ * Overlay is a tree structure that represents all the intersections of slices
+ * in the text. It is used to quickly find all the slices that overlap a
+ * given point in the text. The overlay is a read-only structure, its state
+ * is changed only by calling the `refresh` method, which updates the overlay
+ * based on the current state of the text and slices.
+ */
 export class Overlay implements Printable, Stateful {
   public root: OverlayPoint | undefined = undefined;
 
   constructor(protected readonly txt: Peritext) {}
-
-  /**
-   * @todo Rename to .point().
-   */
-  protected overlayPoint(id: ITimestampStruct, anchor: Anchor): OverlayPoint {
-    return new OverlayPoint(this.txt.str, id, anchor);
-  }
-
-  protected markerPoint(marker: MarkerSlice, anchor: Anchor): OverlayPoint {
-    return new MarkerOverlayPoint(this.txt.str, marker.start.id, anchor, marker);
-  }
 
   public first(): OverlayPoint | undefined {
     return this.root ? first(this.root) : undefined;
@@ -136,12 +132,20 @@ export class Overlay implements Printable, Stateful {
     return state;
   }
 
+  private point(id: ITimestampStruct, anchor: Anchor): OverlayPoint {
+    return new OverlayPoint(this.txt.str, id, anchor);
+  }
+
+  private mPoint(marker: MarkerSlice, anchor: Anchor): MarkerOverlayPoint {
+    return new MarkerOverlayPoint(this.txt.str, marker.start.id, anchor, marker);
+  }
+
   /**
    * Retrieve an existing {@link OverlayPoint} or create a new one, inserted
    * in the tree, sorted by spatial dimension.
    */
-  protected upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
-    const newPoint = this.overlayPoint(point.id, point.anchor);
+  private upsertPoint(point: Point): [point: OverlayPoint, isNew: boolean] {
+    const newPoint = this.point(point.id, point.anchor);
     const pivot = this.insPoint(newPoint);
     if (pivot) return [pivot, false];
     return [newPoint, true];
@@ -173,7 +177,7 @@ export class Overlay implements Printable, Stateful {
   }
 
   private insMarker(slice: MarkerSlice): [start: OverlayPoint, end: OverlayPoint] {
-    const point = this.markerPoint(slice, Anchor.Before);
+    const point = this.mPoint(slice, Anchor.Before);
     const pivot = this.insPoint(point);
     if (!pivot) {
       point.refs.push(slice);

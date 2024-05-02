@@ -43,7 +43,7 @@ describe('Overlay.refresh()', () => {
     });
   };
 
-  describe('slices', () => {
+  describe('saved slices', () => {
     describe('updates hash', () => {
       testRefresh('when a slice is inserted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(1, 4);
@@ -141,6 +141,104 @@ describe('Overlay.refresh()', () => {
     });
   });
 
+  describe('extra slices', () => {
+    describe('updates hash', () => {
+      testRefresh('when a slice is inserted', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(1, 4);
+        refresh();
+        kit.peritext.extraSlices.insOverwrite(range, 'bold');
+      });
+
+      testRefresh('when a collapsed slice is inserted', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(5);
+        refresh();
+        kit.peritext.extraSlices.insStack(range, '<flag>');
+      });
+
+      testRefresh('when a marker is inserted', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(0);
+        refresh();
+        kit.peritext.extraSlices.insMarker(range, '<paragraph>');
+      });
+
+      testRefresh('when a marker is inserted at the same position', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(0);
+        kit.peritext.extraSlices.insMarker(range, '<paragraph>');
+        refresh();
+        kit.peritext.extraSlices.insMarker(range, '<paragraph>');
+      });
+
+      testRefresh('when slice is deleted', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(0, 1);
+        const slice = kit.peritext.extraSlices.insMarker(range, '<b>');
+        refresh();
+        kit.peritext.extraSlices.del(slice.id);
+      });
+
+      testRefresh('when slice type is changed', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(0, 1);
+        const slice = kit.peritext.extraSlices.insStack(range, '<b>');
+        refresh();
+        slice.update({type: '<i>'});
+      });
+
+      testRefresh('when slice behavior is changed', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(2, 7);
+        const slice = kit.peritext.extraSlices.insStack(range, 123);
+        refresh();
+        slice.update({behavior: SliceBehavior.Erase});
+      });
+
+      testRefresh('when slice data is overwritten', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(2, 7);
+        const slice = kit.peritext.extraSlices.insStack(range, 123, 'a');
+        refresh();
+        slice.update({data: 'b'});
+      });
+
+      testRefresh('when slice data is updated inline', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(1, 1);
+        const slice = kit.peritext.extraSlices.insStack(range, 123, {foo: 'bar'});
+        refresh();
+        const api = slice.dataNode()! as ObjApi;
+        api.set({foo: 'baz'});
+      });
+
+      testRefresh('when slice start point anchor is changed', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(0, 1);
+        const slice = kit.peritext.extraSlices.insStack(range, 123, 456);
+        expect(slice.start.anchor).toBe(Anchor.Before);
+        refresh();
+        const range2 = slice.range();
+        range2.start.anchor = Anchor.After;
+        slice.update({range: range2});
+      });
+
+      testRefresh('when slice end point anchor is changed', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(3, 3);
+        const slice = kit.peritext.extraSlices.insStack(range, 0, 0);
+        expect(slice.end.anchor).toBe(Anchor.After);
+        refresh();
+        const range2 = slice.range();
+        range2.end.anchor = Anchor.Before;
+        slice.update({range: range2});
+      });
+
+      testRefresh('when slice range changes', (kit, refresh) => {
+        const range = kit.peritext.rangeAt(3, 3);
+        kit.peritext.extraSlices.insStack(range, 0, 0);
+        kit.peritext.extraSlices.insStack(range, 1, 1);
+        kit.peritext.extraSlices.insStack(range, 3, 3);
+        const range1 = kit.peritext.rangeAt(1, 2);
+        const slice = kit.peritext.extraSlices.insErase(range1, 'gg');
+        expect(slice.end.anchor).toBe(Anchor.After);
+        refresh();
+        const range2 = kit.peritext.rangeAt(2, 2);
+        slice.update({range: range2});
+      });
+    });
+  });
+
   describe('cursor', () => {
     describe('updates hash', () => {
       testRefresh('when cursor char ID changes', (kit, refresh) => {
@@ -165,6 +263,15 @@ describe('Overlay.refresh()', () => {
         const end = kit.peritext.editor.cursor.start.clone();
         end.anchor = Anchor.Before;
         kit.peritext.editor.cursor.setRange(kit.peritext.range(kit.peritext.editor.cursor.start, end));
+      });
+
+      testRefresh('when cursor data changes', (kit, refresh) => {
+        kit.peritext.editor.cursor.setAt(3, 3);
+        const slice = kit.peritext.editor.cursor;
+        slice.update({data: {a: 'b'}});
+        refresh();
+        const api = slice.dataNode()! as ObjApi;
+        api.set({a: 'c'});
       });
     });
   });

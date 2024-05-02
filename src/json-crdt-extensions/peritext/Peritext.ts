@@ -13,10 +13,16 @@ import {Model} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
+import {ExtraSlices} from './slice/ExtraSlices';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
-import type {SliceType} from './types';
 import type {MarkerSlice} from './slice/MarkerSlice';
+import type {SliceSchema, SliceType} from './slice/types';
+import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
+
+const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
+
+type SlicesModel = Model<SchemaToJsonNode<typeof EXTRA_SLICES_SCHEMA>>;
 
 /**
  * Context for a Peritext instance. Contains all the data and methods needed to
@@ -46,27 +52,33 @@ export class Peritext implements Printable {
   public readonly editor: Editor;
   public readonly overlay = new Overlay(this);
 
+  /**
+   * Creates a new Peritext context.
+   *
+   * @param model JSON CRDT model of the document where the text is stored.
+   * @param str The {@link StrNode} where the text is stored.
+   * @param slices The {@link ArrNode} where the slices are stored.
+   * @param extraSlicesModel The JSON CRDT model for the extra slices, which are
+   *        not persisted in the main document, but are shared with other users.
+   * @param localSlicesModel The JSON CRDT model for the local slices, which are
+   *        not persisted in the main document and are not shared with other
+   *        users. The local slices capture current-user-only annotations, such
+   *        as the current user's selection.
+   */
   constructor(
     public readonly model: Model,
     public readonly str: StrNode,
     slices: ArrNode,
+    extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
+    localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
-
-    const extraModel = Model.withLogicalClock(SESSION.GLOBAL)
-      .setSchema(s.vec(s.arr([])))
-      .fork(this.model.clock.sid + 1);
-    this.extraSlices = new Slices(extraModel, extraModel.root.node().get(0)!, this.str);
-
-    // TODO: flush patches
-    // TODO: remove `arr` tombstones
-    const localModel = Model.withLogicalClock(SESSION.LOCAL).setSchema(s.vec(s.arr([])));
-    const localApi = localModel.api;
+    this.extraSlices = new ExtraSlices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
+    const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();
     });
-    this.localSlices = new LocalSlices(localModel, localModel.root.node().get(0)!, this.str);
-
+    this.localSlices = new LocalSlices(localSlicesModel, localSlicesModel.root.node().get(0)!, this.str);
     this.editor = new Editor(this, this.localSlices);
   }
 
@@ -99,8 +111,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * Creates a point at a view position in the text. The `pos` argument specifies
-   * the position of the character, not the gap between characters.
+   * Creates a point at a view position in the text. The `pos` argument
+   * specifies the position of the character, not the gap between characters.
    *
    * @param pos Position of the character in the text.
    * @param anchor Whether the point should attach before or after a character.
@@ -150,7 +162,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * Creates a range from two points, the points have to be in the correct order.
+   * Creates a range from two points, the points have to be in the correct
+   * order.
    *
    * @param start Start point of the range, must be before or equal to end.
    * @param end End point of the range, must be after or equal to start.
@@ -161,8 +174,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * A convenience method for creating a range from a view position and a length.
-   * See {@link Range.at} for more information.
+   * A convenience method for creating a range from a view position and a
+   * length. See {@link Range.at} for more information.
    *
    * @param start Position in the text.
    * @param length Length of the range.
@@ -238,14 +251,15 @@ export class Peritext implements Printable {
 
   public toString(tab: string = ''): string {
     const nl = () => '';
+    const {savedSlices, extraSlices, localSlices} = this;
     return (
       this.constructor.name +
       printTree(tab, [
-        (tab) => this.editor.cursor.toString(tab),
-        nl,
         (tab) => this.str.toString(tab),
         nl,
-        (tab) => this.savedSlices.toString(tab),
+        savedSlices.size() ? (tab) => savedSlices.toString(tab) : null,
+        extraSlices.size() ? (tab) => extraSlices.toString(tab) : null,
+        localSlices.size() ? (tab) => localSlices.toString(tab) : null,
         nl,
         (tab) => this.overlay.toString(tab),
       ])

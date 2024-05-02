@@ -230,7 +230,7 @@ export class ServerClockVector extends LogicalClock implements IClockVector {
   public readonly peers = new Map<number, ITimespanStruct>();
 
   public observe(ts: ITimespanStruct, span: number) {
-    if (ts.sid !== SESSION.SERVER) throw new Error('INVALID_SERVER_SESSION');
+    if (ts.sid > 8) throw new Error('INVALID_SERVER_SESSION');
     if (this.time < ts.time) throw new Error('TIME_TRAVEL');
     const time = ts.time + span;
     if (time > this.time) this.time = time;

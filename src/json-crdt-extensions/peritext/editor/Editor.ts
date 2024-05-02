@@ -8,10 +8,13 @@ import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Point} from '../rga/Point';
-import type {SliceType} from '../types';
+import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slices} from '../slice/Slices';
 
+/**
+ * Rename to `PeritextApi`.
+ */
 export class Editor implements Printable {
   /**
    * Cursor is the the current user selection. It can be a caret or a
@@ -25,6 +28,7 @@ export class Editor implements Printable {
   ) {
     const point = txt.pointAbsStart();
     const range = txt.range(point, point.clone());
+    // TODO: Add ability to remove cursor.
     this.cursor = slices.ins<Cursor, typeof Cursor>(range, SliceBehavior.Cursor, CursorAnchor.Start, undefined, Cursor);
   }
 

@@ -57,6 +57,9 @@ export const enum SliceBehavior {
   Cursor = 0b100,
 }
 
+/**
+ * Specifies `vec` offsets in the {@link SliceView}.
+ */
 export const enum SliceTupleIndex {
   Header = 0,
   X1 = 1,
