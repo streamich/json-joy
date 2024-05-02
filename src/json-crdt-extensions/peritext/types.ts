@@ -1,9 +1,9 @@
-import type {SchemaToJsonNode} from "../../json-crdt/schema/types";
-import type {SCHEMA} from "./constants";
+import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
+import type {SCHEMA} from './constants';
 
 /**
  * Represents an object which state can change over time.
- * 
+ *
  * @todo Move to /src/utils.
  */
 export interface Stateful {
