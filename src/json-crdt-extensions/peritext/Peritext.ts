@@ -13,6 +13,7 @@ import {Model} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
+import {ExtraSlices} from './slice/ExtraSlices';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MarkerSlice} from './slice/MarkerSlice';
@@ -72,7 +73,7 @@ export class Peritext implements Printable {
     localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
     this.savedSlices = new Slices(this.model, slices, this.str);
-    this.extraSlices = new Slices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
+    this.extraSlices = new ExtraSlices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
     const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();
@@ -249,14 +250,15 @@ export class Peritext implements Printable {
 
   public toString(tab: string = ''): string {
     const nl = () => '';
+    const {savedSlices, extraSlices, localSlices} = this; 
     return (
       this.constructor.name +
       printTree(tab, [
-        (tab) => this.editor.cursor.toString(tab),
-        nl,
         (tab) => this.str.toString(tab),
         nl,
-        (tab) => this.savedSlices.toString(tab),
+        savedSlices.size() ? (tab) => savedSlices.toString(tab) : null,
+        extraSlices.size() ? (tab) => extraSlices.toString(tab) : null,
+        localSlices.size() ? (tab) => localSlices.toString(tab) : null,
         nl,
         (tab) => this.overlay.toString(tab),
       ])
