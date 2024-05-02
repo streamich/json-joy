@@ -111,8 +111,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * Creates a point at a view position in the text. The `pos` argument specifies
-   * the position of the character, not the gap between characters.
+   * Creates a point at a view position in the text. The `pos` argument
+   * specifies the position of the character, not the gap between characters.
    *
    * @param pos Position of the character in the text.
    * @param anchor Whether the point should attach before or after a character.
@@ -162,7 +162,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * Creates a range from two points, the points have to be in the correct order.
+   * Creates a range from two points, the points have to be in the correct
+   * order.
    *
    * @param start Start point of the range, must be before or equal to end.
    * @param end End point of the range, must be after or equal to start.
@@ -173,8 +174,8 @@ export class Peritext implements Printable {
   }
 
   /**
-   * A convenience method for creating a range from a view position and a length.
-   * See {@link Range.at} for more information.
+   * A convenience method for creating a range from a view position and a
+   * length. See {@link Range.at} for more information.
    *
    * @param start Position in the text.
    * @param length Length of the range.

@@ -112,7 +112,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
       this.type = params.type;
       changes.push([SliceTupleIndex.Type, s.con(this.type)]);
     }
-    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, s.con(params.data)]);
+    if (hasOwnProperty(params, 'data')) changes.push([SliceTupleIndex.Data, params.data]);
     if (updateHeader) {
       const header =
         (this.behavior << SliceHeaderShift.Behavior) +
