@@ -1,4 +1,4 @@
-import type {SliceType} from '../types';
+import type {SliceType} from '../slice/types';
 
 export const validateType = (type: SliceType) => {
   switch (typeof type) {

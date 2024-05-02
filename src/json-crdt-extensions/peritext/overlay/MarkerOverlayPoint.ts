@@ -1,10 +1,10 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {OverlayPoint} from './OverlayPoint';
-import {SliceType} from '../types';
+import type {SliceType} from '../slice/types';
 import type {Anchor} from '../rga/constants';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import {printTree} from 'tree-dump/lib/printTree';
 
 export class MarkerOverlayPoint extends OverlayPoint {
   /**
