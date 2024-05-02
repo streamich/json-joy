@@ -1,11 +1,11 @@
 import * as clock from '../json-crdt-patch/clock';
-import {NodeBuilder} from "../json-crdt-patch";
-import {Extensions} from "../json-crdt/extensions/Extensions";
-import {Model} from "../json-crdt/model";
-import {SchemaToJsonNode} from "../json-crdt/schema/types";
+import {NodeBuilder} from '../json-crdt-patch';
+import {Extensions} from '../json-crdt/extensions/Extensions';
+import {Model} from '../json-crdt/model';
+import {SchemaToJsonNode} from '../json-crdt/schema/types';
 import {CntExt} from './cnt';
-import {MvalExt} from "./mval";
-import {PeritextExt} from "./peritext";
+import {MvalExt} from './mval';
+import {PeritextExt} from './peritext';
 
 const extensions = new Extensions();
 

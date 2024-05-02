@@ -1,5 +1,5 @@
-import {PeritextExt} from "..";
-import {ModelWithExt} from "../../ModelWithExt";
+import {PeritextExt} from '..';
+import {ModelWithExt} from '../../ModelWithExt';
 
 test('..', () => {
   const model = ModelWithExt.create();

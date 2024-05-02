@@ -207,9 +207,9 @@ export namespace nodes {
    * Convenience class for recursively creating a node tree from any POJO. It
    * uses the {@link Builder.json} method to create a JSON node. It can be used
    * similar to TypeScript's *any* type, where the value can be anything.
-   * 
+   *
    * Example:
-   * 
+   *
    * ```typescript
    * s.json({name: 'Alice', age: 30});
    * ```
@@ -226,9 +226,9 @@ export namespace nodes {
    * Convenience class for recursively creating a node tree from any POJO. It
    * uses the {@link Builder.constOrJson} method to create a JSON node. It can
    * be used similar to TypeScript's *any* type, where the value can be anything.
-   * 
+   *
    * Example:
-   * 
+   *
    * ```typescript
    * s.jsonCon({name: 'Alice', age: 30});
    * ```
@@ -245,7 +245,7 @@ export namespace nodes {
    * Creates an extension node schema. The extension node is a tuple with a
    * header and a data node. The header is a 3-byte {@link Uint8Array} with the
    * extension ID, the SID of the tuple ID, and the time of the tuple ID.
-   * 
+   *
    * - 1 byte for the extension id
    * - 1 byte for the sid of the tuple id, modulo 256
    * - 1 byte for the time of the tuple id, modulo 256
@@ -269,7 +269,7 @@ export namespace nodes {
           [0, bufId],
           [1, valueId],
         ]);
-        return tupleId;        
+        return tupleId;
       });
     }
   }
