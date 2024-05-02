@@ -251,7 +251,7 @@ export class Peritext implements Printable {
 
   public toString(tab: string = ''): string {
     const nl = () => '';
-    const {savedSlices, extraSlices, localSlices} = this; 
+    const {savedSlices, extraSlices, localSlices} = this;
     return (
       this.constructor.name +
       printTree(tab, [
