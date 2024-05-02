@@ -9,6 +9,7 @@ import type {ExtensionDefinition} from '../../json-crdt';
 export const PeritextExt: ExtensionDefinition<PeritextDataNode, PeritextNode, PeritextApi> = {
   id: ExtensionId.peritext,
   name: MNEMONIC,
+  // TODO: Simplify to `BUILD_SCHEMA(text)`.
   new: (text: string) => ext(ExtensionId.peritext, BUILD_SCHEMA(text)),
   Node: PeritextNode,
   Api: PeritextApi,
