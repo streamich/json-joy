@@ -1,8 +1,11 @@
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import {NodeBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
 import {konst} from '../../json-crdt-patch/builder/Konst';
-import {ITimestampStruct} from '../../json-crdt-patch/clock';
+import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 
+/**
+ * @todo Replace this by `s` builder.
+ */
 export const ext = (extensionId: number, nodeBuilder: NodeBuilder) =>
   new NodeBuilder((builder: PatchBuilder): ITimestampStruct => {
     // Extension tuple starts with a 3-byte header:

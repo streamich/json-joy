@@ -62,6 +62,7 @@ export class Slices implements Stateful, Printable {
     if (data !== undefined) tupleKeysUpdate.push([SliceTupleIndex.Data, builder.json(data)]);
     builder.insVec(tupleId, tupleKeysUpdate);
     const chunkId = builder.insArr(set.id, set.id, [tupleId]);
+    // TODO: Consider using `s` schema here.
     api.apply();
     const tuple = model.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;

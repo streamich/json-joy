@@ -1,5 +1,10 @@
+import type {SchemaToJsonNode} from "../../json-crdt/schema/types";
+import type {SCHEMA} from "./constants";
+
 /**
  * Represents an object which state can change over time.
+ * 
+ * @todo Move to /src/utils.
  */
 export interface Stateful {
   /**
@@ -13,3 +18,6 @@ export interface Stateful {
    */
   refresh(): number;
 }
+
+export type PeritextDataNodeSchema = typeof SCHEMA;
+export type PeritextDataNode = SchemaToJsonNode<PeritextDataNodeSchema>;
