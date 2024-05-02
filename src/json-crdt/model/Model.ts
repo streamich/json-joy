@@ -31,13 +31,11 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    *
    * @param clockOrSessionId Logical clock to use.
    * @returns CRDT model.
+   *
+   * @deprecated Use `Model.create()` instead.
    */
   public static withLogicalClock(clockOrSessionId?: clock.ClockVector | number): Model {
-    const clockVector =
-      typeof clockOrSessionId === 'number'
-        ? new clock.ClockVector(clockOrSessionId, 1)
-        : clockOrSessionId || new clock.ClockVector(randomSessionId(), 1);
-    return new Model(clockVector);
+    return Model.create(undefined, clockOrSessionId);
   }
 
   /**
@@ -49,24 +47,86 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    *
    * @param time Latest known server sequence number.
    * @returns CRDT model.
+   *
+   * @deprecated Use `Model.create()` instead: `Model.create(undefined, SESSION.SERVER)`.
    */
-  public static withServerClock(time: number = 0): Model {
-    const clockVector = new clock.ServerClockVector(SESSION.SERVER, time);
-    return new Model(clockVector);
+  public static withServerClock(time: number = 1): Model {
+    return Model.create(undefined, new clock.ServerClockVector(SESSION.SERVER, time));
   }
 
   /**
-   * Create a new strictly typed JSON CRDT model.
+   * Create a new JSON CRDT model. If a schema is provided, the model is
+   * strictly typed and the default value of the model is set to the default
+   * value of the schema.
+   * 
+   * By default, the model is created with a random session ID and is using
+   * a logical clock. It is also possible to create a model which uses a server
+   * clock by providing the session ID `SESSION.SERVER` (1).
+   * 
+   * ### Examples
+   * 
+   * Create a basic model, without schema and default value:
+   * 
+   * ```ts
+   * const model = Model.create();
+   * ```
+   * 
+   * Create a strictly typed model with a schema and default value:
+   * 
+   * ```ts
+   * const schema = s.obj({
+   *   ticker: s.con<string>('BODEN'),
+   *   name: s.str('Jeo Boden'),
+   *   tags: s.arr(
+   *     s.str('token'),
+   *   ),
+   * });
+   * const model = Model.create(schema);
+   * ```
+   * 
+   * Create a model with a custom session ID for your logical clock:
+   * 
+   * ```ts
+   * const schema = s.str('');
+   * const sid = 123456789;
+   * const model = Model.create(schema, sid);
+   * ```
+   * 
+   * The session ID must be at least 65,536 or higher, [see JSON CRDT Patch
+   * specification][json-crdt-patch].
+   * 
+   * [json-crdt-patch]: https://jsonjoy.com/specs/json-crdt-patch/patch-document/logical-clock
+   * 
+   * To create a model with a server clock, use the `SESSION.SERVER`, which is
+   * equal to 1:
+   * 
+   * ```ts
+   * const model = Model.create(undefined, SESSION.SERVER);
+   * // or
+   * const model = Model.create(undefined, 1);
+   * ```
+   * 
+   * Finally, you can create a model with your clock vector:
+   * 
+   * ```ts
+   * const clock = new ClockVector(123456789, 1);
+   * const model = Model.create(undefined, clock);
+   * ```
    *
    * @param schema The schema (typing and default value) to set for this model.
-   * @param sid Session ID to use for local operations. Defaults to a random
-   *            session ID.
+   * @param sidOrClock Session ID to use for local operations. Defaults to a random
+   *        session ID.
    * @returns A strictly typed model.
    */
-  public static create<S extends NodeBuilder>(schema?: S, sid: number = randomSessionId()): Model<SchemaToJsonNode<S>> {
-    const model = Model.withLogicalClock(sid) as unknown as Model<SchemaToJsonNode<S>>;
+  public static create<S extends NodeBuilder>(schema?: S, sidOrClock: clock.ClockVector | number = randomSessionId()): Model<SchemaToJsonNode<S>> {
+    const cl = typeof sidOrClock === 'number'
+      ? sidOrClock === SESSION.SERVER
+        ? new clock.ServerClockVector(SESSION.SERVER, 1)
+        : new clock.ClockVector(sidOrClock, 1)
+      : sidOrClock;
+    const model = new Model<SchemaToJsonNode<S>>(cl);
     if (schema) model.setSchema(schema, true);
-    return model as Model<SchemaToJsonNode<S>>;
+    return model;
   }
 
   /**
@@ -77,6 +137,12 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    */
   public static fromBinary(data: Uint8Array): Model {
     return decoder.decode(data);
+  }
+
+  public static load<S extends NodeBuilder>(data: Uint8Array, sid?: number, schema?: S): Model<SchemaToJsonNode<S>> {
+    const model = decoder.decode(data) as unknown as Model<SchemaToJsonNode<S>>;
+    if (schema) model.setSchema(schema, true);
+    return model;
   }
 
   /**
