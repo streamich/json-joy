@@ -22,7 +22,7 @@ import type {Model} from '../../../json-crdt/model';
 /**
  * A persisted slice is a slice that is stored in a {@link Model}. It is used for
  * rich-text formatting and annotations.
- * 
+ *
  * @todo Maybe rename to "saved", "stored", "mutable".
  */
 export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
