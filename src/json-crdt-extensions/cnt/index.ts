@@ -1,25 +1,16 @@
-import {ExtensionId} from '../constants';
-import {printTree} from 'tree-dump/lib/printTree';
+import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
+import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import {s, type ExtensionDefinition, type ObjNode} from '../../json-crdt';
-import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
-import type {Printable} from 'tree-dump/lib/types';
 import type {ExtensionApi} from '../../json-crdt';
 
-const name = 'cnt';
+const MNEMONIC = ExtensionName[ExtensionId.cnt];
 
-class CntNode implements ExtensionJsonNode, Printable {
-  public readonly id: ITimestampStruct;
-
-  constructor(public readonly data: ObjNode) {
-    this.id = data.id;
-  }
-
-  // -------------------------------------------------------- ExtensionJsonNode
+class CntNode extends ExtNode<ObjNode> {
+  // ------------------------------------------------------------------ ExtNode
 
   public name(): string {
-    return name;
+    return MNEMONIC;
   }
 
   public view(): number {
@@ -27,24 +18,6 @@ class CntNode implements ExtensionJsonNode, Printable {
     let sum: number = 0;
     for (const key in obj) sum += Number(obj[key]);
     return sum;
-  }
-
-  public children(callback: (node: JsonNode) => void): void {}
-
-  public child?(): JsonNode | undefined {
-    return this.data;
-  }
-
-  public container(): JsonNode | undefined {
-    return this.data.container();
-  }
-
-  public api: undefined | unknown = undefined;
-
-  // ---------------------------------------------------------------- Printable
-
-  public toString(tab?: string): string {
-    return `${this.name()} (${this.view()})` + printTree(tab, [(tab) => this.data.toString(tab)]);
   }
 }
 
@@ -65,7 +38,7 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
 
 export const CntExt: ExtensionDefinition<ObjNode, CntNode, CntApi> = {
   id: ExtensionId.cnt,
-  name,
+  name: MNEMONIC,
   new: (value?: number, sid: number = 0) => s.ext(ExtensionId.cnt, s.obj({[sid]: s.jsonCon(value)})),
   Node: CntNode,
   Api: CntApi,
