@@ -13,10 +13,11 @@ export interface ExtensionDefinition<
   Node extends JsonNode = JsonNode,
   ENode extends ExtensionJsonNode = ExtensionJsonNode,
   EApi extends ExtensionApi<ENode> = ExtensionApi<ENode>,
+  ESchema extends NodeBuilder = NodeBuilder,
 > {
   id: number;
   name: string;
-  new: (...args: any[]) => NodeBuilder;
+  new: (...args: any[]) => ESchema;
   Node: new (data: Node) => ENode;
   Api: new (node: ENode, api: ModelApi) => EApi;
 }
