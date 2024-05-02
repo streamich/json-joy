@@ -1,5 +1,5 @@
-import type {ITimestampStruct} from '../clock';
 import {NodeBuilder} from './DelayedValueBuilder';
+import type {ITimestampStruct} from '../clock';
 
 /* tslint:disable no-namespace class-name */
 
@@ -15,7 +15,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.con(0);
    * s.con('');
    * s.con<number>(123);
@@ -36,7 +36,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.str('');
    * s.str('hello');
    * s.str<string>('world');
@@ -68,7 +68,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.val(s.con(0));
    * s.val(s.str(''));
    * s.val(s.str('hello'));
@@ -93,7 +93,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.vec(s.con(0), s.con(1));
    * s.vec(s.str(''), s.str('hello'));
    * ```
@@ -126,7 +126,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.obj({
    *   name: s.str(''),
    *   age: s.con(0),
@@ -172,7 +172,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.map<nodes.con<number>>
    * ```
    */
@@ -184,7 +184,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.arr([s.con(0), s.con(1)]);
    * s.arr([s.str(''), s.str('hello')]);
    * ```
@@ -205,6 +205,25 @@ export namespace nodes {
       });
     }
   }
+
+  /**
+   * Convenience class for recursively creating a node tree from any POJO. It
+   * uses the {@link Builder.json} method to create a JSON node. It can be used
+   * similar to TypeScript's *any* type, where the value can be anything.
+   * 
+   * Example:
+   * 
+   * ```typescript
+   * s.json({name: 'Alice', age: 30});
+   * ```
+   */
+  export class json extends NodeBuilder {
+    public readonly type = 'json';
+
+    constructor(public readonly value: unknown) {
+      super((builder) => builder.json(value));
+    }
+  }
 }
 /* tslint:enable no-namespace class-name */
 
@@ -223,36 +242,42 @@ export namespace nodes {
 export const schema = {
   /**
    * Creates a "con" node schema and the default value.
+   *
    * @param raw Raw default value.
    */
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
 
   /**
    * Creates a "str" node schema and the default value.
+   *
    * @param str Default value.
    */
   str: <T extends string>(str: T) => new nodes.str<T>(str || ('' as T)),
 
   /**
    * Creates a "bin" node schema and the default value.
+   *
    * @param bin Default value.
    */
   bin: (bin: Uint8Array) => new nodes.bin(bin),
 
   /**
    * Creates a "val" node schema and the default value.
+   *
    * @param val Default value.
    */
   val: <T extends NodeBuilder>(val: T) => new nodes.val<T>(val),
 
   /**
    * Creates a "vec" node schema and the default value.
+   *
    * @param vec Default value.
    */
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
 
   /**
    * Creates a "obj" node schema and the default value.
+   *
    * @param obj Default value, required object keys.
    * @param opt Default value of optional object keys.
    */
@@ -263,6 +288,7 @@ export const schema = {
    * This is an alias for {@link schema.obj}. It creates a "map" node schema,
    * which is an object where a key can be any string and the value is of the
    * same type.
+   *
    * @param obj Default value.
    */
   map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> =>
@@ -270,9 +296,19 @@ export const schema = {
 
   /**
    * Creates an "arr" node schema and the default value.
+   *
    * @param arr Default value.
    */
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
+
+  /**
+   * Recursively creates a node tree from any POJO. It uses the
+   * {@link Builder.json} method to create a JSON node. It can be used similar
+   * to TypeScript's *any* type, where the value can be anything.
+   *
+   * @param value Default value.
+   */
+  json: (value: unknown) => new nodes.json(value),
 };
 
 /**
