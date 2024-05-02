@@ -224,6 +224,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * custom data types on top of the JSON CRDT protocol.
    *
    * @ignore
+   * @todo Allow this to be `undefined`.
    */
   public ext: Extensions = new Extensions();
 
