@@ -25,7 +25,7 @@ export namespace nodes {
   export class con<T extends unknown | ITimestampStruct> extends NodeBuilder {
     public readonly type = 'con';
 
-    constructor(public readonly raw: T) {
+    constructor(raw: T) {
       super((builder) => builder.const(raw));
     }
   }
@@ -46,7 +46,7 @@ export namespace nodes {
   export class str<T extends string = string> extends NodeBuilder {
     public readonly type = 'str';
 
-    constructor(public readonly raw: T) {
+    constructor(raw: T) {
       super((builder) => builder.json(raw));
     }
   }
@@ -57,7 +57,7 @@ export namespace nodes {
   export class bin extends NodeBuilder {
     public readonly type = 'bin';
 
-    constructor(public readonly raw: Uint8Array) {
+    constructor(raw: Uint8Array) {
       super((builder) => builder.json(raw));
     }
   }
@@ -77,7 +77,7 @@ export namespace nodes {
   export class val<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'val';
 
-    constructor(public readonly value: T) {
+    constructor(value: T) {
       super((builder) => {
         const valId = builder.val();
         const valueId = value.build(builder);
@@ -101,7 +101,7 @@ export namespace nodes {
   export class vec<T extends NodeBuilder[]> extends NodeBuilder {
     public readonly type = 'vec';
 
-    constructor(public readonly value: T) {
+    constructor(value: T) {
       super((builder) => {
         const vecId = builder.vec();
         const length = value.length;
@@ -139,10 +139,7 @@ export namespace nodes {
   > extends NodeBuilder {
     public readonly type = 'obj';
 
-    constructor(
-      public readonly obj: T,
-      public readonly opt?: O,
-    ) {
+    constructor(obj: T, opt?: O) {
       super((builder) => {
         const objId = builder.obj();
         const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
@@ -192,7 +189,7 @@ export namespace nodes {
   export class arr<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'arr';
 
-    constructor(public readonly arr: T[]) {
+    constructor(arr: T[]) {
       super((builder) => {
         const arrId = builder.arr();
         const length = arr.length;
@@ -220,8 +217,60 @@ export namespace nodes {
   export class json extends NodeBuilder {
     public readonly type = 'json';
 
-    constructor(public readonly value: unknown) {
+    constructor(value: unknown) {
       super((builder) => builder.json(value));
+    }
+  }
+
+  /**
+   * Convenience class for recursively creating a node tree from any POJO. It
+   * uses the {@link Builder.constOrJson} method to create a JSON node. It can
+   * be used similar to TypeScript's *any* type, where the value can be anything.
+   * 
+   * Example:
+   * 
+   * ```typescript
+   * s.jsonCon({name: 'Alice', age: 30});
+   * ```
+   */
+  export class jsonCon extends NodeBuilder {
+    public readonly type = 'jsonCon';
+
+    constructor(value: unknown) {
+      super((builder) => builder.constOrJson(value));
+    }
+  }
+
+  /**
+   * Creates an extension node schema. The extension node is a tuple with a
+   * header and a data node. The header is a 3-byte {@link Uint8Array} with the
+   * extension ID, the SID of the tuple ID, and the time of the tuple ID.
+   * 
+   * - 1 byte for the extension id
+   * - 1 byte for the sid of the tuple id, modulo 256
+   * - 1 byte for the time of the tuple id, modulo 256
+   */
+  export class ext<ID extends number, T extends NodeBuilder> extends NodeBuilder {
+    public readonly type = 'ext';
+
+    /**
+     * @param id A unique extension ID.
+     * @param data Schema of the data node of the extension.
+     */
+    constructor(id: ID, data: T) {
+      super((builder) => {
+        const buf = new Uint8Array([id, 0, 0]);
+        const tupleId = builder.vec();
+        buf[1] = tupleId.sid % 256;
+        buf[2] = tupleId.time % 256;
+        const bufId = builder.constOrJson(s.con(buf));
+        const valueId = data.build(builder);
+        builder.insVec(tupleId, [
+          [0, bufId],
+          [1, valueId],
+        ]);
+        return tupleId;        
+      });
     }
   }
 }
@@ -309,6 +358,23 @@ export const schema = {
    * @param value Default value.
    */
   json: (value: unknown) => new nodes.json(value),
+
+  /**
+   * Recursively creates a node tree from any POJO. It uses the
+   * {@link Builder.constOrJson} method to create a JSON node. It can be used
+   * similar to TypeScript's *any* type, where the value can be anything.
+   *
+   * @param value Default value.
+   */
+  jsonCon: (value: unknown) => new nodes.jsonCon(value),
+
+  /**
+   * Creates an extension node schema.
+   *
+   * @param id A unique extension ID.
+   * @param data Schema of the data node of the extension.
+   */
+  ext: <ID extends number, T extends NodeBuilder>(id: ID, data: T) => new nodes.ext<ID, T>(id, data),
 };
 
 /**

@@ -1,9 +1,7 @@
-import {delayed} from '../../json-crdt-patch/builder/DelayedValueBuilder';
-import {ext} from '../../json-crdt/extensions';
 import {ExtensionId} from '../constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import type {ExtensionDefinition, ObjNode} from '../../json-crdt';
+import {s, type ExtensionDefinition, type ObjNode} from '../../json-crdt';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
 import type {Printable} from 'tree-dump/lib/types';
@@ -68,11 +66,7 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
 export const CntExt: ExtensionDefinition<ObjNode, CntNode, CntApi> = {
   id: ExtensionId.cnt,
   name,
-  new: (value?: number, sid: number = 0) =>
-    ext(
-      ExtensionId.cnt,
-      delayed((builder) => builder.constOrJson(value ? {[sid]: value} : {})),
-    ),
+  new: (value?: number, sid: number = 0) => s.ext(ExtensionId.cnt, s.obj({[sid]: s.jsonCon(value)})),
   Node: CntNode,
   Api: CntApi,
 };

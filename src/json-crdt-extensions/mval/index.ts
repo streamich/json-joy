@@ -1,4 +1,3 @@
-import {ext} from '../../json-crdt/extensions';
 import {ExtensionId} from '../constants';
 import {MvalNode} from './MvalNode';
 import {MvalApi} from './MvalApi';
@@ -10,8 +9,7 @@ import {s, type ExtensionDefinition} from '../../json-crdt';
 export const MvalExt: ExtensionDefinition<ArrNode, MvalNode, MvalApi> = {
   id: ExtensionId.mval,
   name: MNEMONIC,
-  new: (value: unknown | ITimestampStruct) =>
-    ext(ExtensionId.mval, s.arr<any>([s.json(value)])),
+  new: (value: unknown | ITimestampStruct) => s.ext(ExtensionId.mval, s.arr<any>([s.json(value)])),
   Node: MvalNode,
   Api: MvalApi,
 };
