@@ -1,7 +1,7 @@
-import {s, type NodeBuilder, type nodes} from "../../json-crdt-patch";
-import type {ModelApi} from "../model";
-import type {JsonNode} from "../nodes";
-import type {ExtensionApi, ExtensionJsonNode} from "./types";
+import {s, type NodeBuilder, type nodes} from '../../json-crdt-patch';
+import type {ModelApi} from '../model';
+import type {JsonNode} from '../nodes';
+import type {ExtensionApi, ExtensionJsonNode} from './types';
 
 export class Extension<
   Id extends number,

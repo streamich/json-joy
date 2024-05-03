@@ -139,7 +139,10 @@ export namespace nodes {
   > extends NodeBuilder {
     public readonly type = 'obj';
 
-    constructor(public readonly obj: T, public readonly opt?: O) {
+    constructor(
+      public readonly obj: T,
+      public readonly opt?: O,
+    ) {
       super((builder) => {
         const objId = builder.obj();
         const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
@@ -257,7 +260,10 @@ export namespace nodes {
      * @param id A unique extension ID.
      * @param data Schema of the data node of the extension.
      */
-    constructor(public readonly id: ID, public readonly data: T) {
+    constructor(
+      public readonly id: ID,
+      public readonly data: T,
+    ) {
       super((builder) => {
         const buf = new Uint8Array([id, 0, 0]);
         const tupleId = builder.vec();
@@ -279,7 +285,7 @@ export namespace nodes {
 /**
  * Schema builder. Use this to create a JSON CRDT model schema and the default
  * value.
- * 
+ *
  * Example:
  *
  * ```typescript
