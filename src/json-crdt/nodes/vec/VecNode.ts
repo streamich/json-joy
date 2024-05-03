@@ -5,6 +5,7 @@ import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-pat
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
+import type {ExtensionNode} from '../../extensions/ExtensionNode';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.
@@ -67,14 +68,14 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  private __extNode: JsonNode | undefined;
+  private __extNode: ExtensionNode<JsonNode> | undefined;
 
   /**
    * @ignore
    * @returns Returns the extension data node if this is an extension node,
    *          otherwise `undefined`. The node is cached after the first access.
    */
-  public ext(): JsonNode | undefined {
+  public ext(): ExtensionNode<JsonNode> | undefined {
     if (this.__extNode) return this.__extNode;
     const extensionId = this.getExtId();
     const isExtension = extensionId >= 0;
@@ -112,7 +113,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  public child(): JsonNode | undefined {
+  public child(): ExtensionNode<JsonNode> | undefined {
     return this.ext();
   }
 
@@ -182,7 +183,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
     const header =
       this.name() + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
-      return this.child()!.toString(tab);
+      return this.child()!.toString(tab, this.id);
     }
     const index = this.doc.index;
     return (
