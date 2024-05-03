@@ -1,5 +1,6 @@
 import {s} from '../../../json-crdt-patch';
 import {ModelWithExt, ext} from '../../ModelWithExt';
+import {PeritextApi} from '../PeritextApi';
 import {PeritextNode} from '../PeritextNode';
 
 const schema = s.obj({
@@ -21,7 +22,12 @@ test('can access PeritextApi using proxy selector', () => {
   const model = ModelWithExt.create(schema);
   model.api.str(['nested', 'obj', 'text', 1, 0]).ins(12, '!');
   const api = model.s.nested.obj.text.toApi();
+  expect(api).toBeInstanceOf(PeritextApi);
   expect(api.view()).toBe('Hello, world!\n');
 });
 
-test.todo('can access nested nodes using proxy selector');
+// test('can access nested nodes using proxy selector', () => {
+//   const model = ModelWithExt.create(schema);
+//   const api = model.s.nested.obj.text.toApi();
+//   console.log(api + '');
+// });

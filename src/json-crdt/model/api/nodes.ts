@@ -18,6 +18,8 @@ export type ApiPath = string | number | Path | void;
  * A generic local changes API for a JSON CRDT node.
  *
  * @category Local API
+ * 
+ * @todo Separate this into leaf and container nodes.
  */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   constructor(
@@ -32,7 +34,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * Event target for listening to node changes. You can subscribe to `"view"`
    * events, which are triggered every time the node's view changes.
    *
-   * ```typescript
+   * ```ts
    * node.events.on('view', () => {
    *   // do something...
    * });
@@ -152,6 +154,13 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
 
   public view(): JsonNodeView<N> {
     return this.node.view() as unknown as JsonNodeView<N>;
+  }
+
+  public proxy(): types.ProxyNode<N> {
+    return {
+      toApi: () => <any>this,
+      toView: () => this.node.view() as any,
+    };
   }
 
   public toString(tab: string = ''): string {
