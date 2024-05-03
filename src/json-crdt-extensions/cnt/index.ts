@@ -2,7 +2,7 @@ import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
 import {Extension} from '../../json-crdt/extensions/Extension';
-import {nodes, s, type ObjNode} from '../../json-crdt';
+import {NodeBuilder, nodes, s, type ObjNode} from '../../json-crdt';
 import type {ExtensionApi} from '../../json-crdt';
 
 const MNEMONIC = ExtensionName[ExtensionId.cnt];
@@ -35,7 +35,10 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
   }
 }
 
-const create = (value?: any, sid: any = 0) =>
-  value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)});
+const create = (value?: any, sid: any = 0) => new NodeBuilder(builder => {
+  if (!sid) sid = builder.clock.sid;
+  const schema = value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)});
+  return schema.build(builder);
+});
 
 export const cnt = new Extension(ExtensionId.cnt, MNEMONIC, CntNode, CntApi, create);
