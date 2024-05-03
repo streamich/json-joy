@@ -1,5 +1,6 @@
 import type {JsonNodeApi} from './types';
 import type * as nodes from '../../nodes';
+import type {PeritextNode} from '../../../json-crdt-extensions';
 
 export interface ProxyNode<N extends nodes.JsonNode = nodes.JsonNode> {
   toApi(): JsonNodeApi<N>;
@@ -38,4 +39,6 @@ export type JsonNodeToProxyNode<N> = N extends nodes.ConNode<any>
               ? ProxyNodeObj<N>
               : N extends nodes.VecNode<any>
                 ? ProxyNodeVec<N>
-                : never;
+                : N extends PeritextNode
+                  ? ProxyNode<PeritextNode>
+                  : never;

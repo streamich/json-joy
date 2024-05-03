@@ -1,4 +1,5 @@
 import {s} from '../../../json-crdt-patch';
+import * as ext from '../../../json-crdt-extensions/ext';
 import {Model} from '../../model';
 import {JsonNodeToSchema, SchemaToJsonNode} from '../types';
 
@@ -37,6 +38,13 @@ describe('can infer schema of JSON CRDT nodes', () => {
 
   test('arr', () => {
     const schema1 = s.arr([s.con(1), s.val(s.con(2))]);
+    const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+  });
+
+  test('ext: peritext', () => {
+    const schema1 = s.obj({
+      richText: ext.peritext.new('hello'),
+    });
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
   });
 

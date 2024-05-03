@@ -11,7 +11,13 @@ extensions.register(ext.cnt);
 extensions.register(ext.mval);
 extensions.register(ext.peritext);
 
+export {
+  ext,
+};
+
 export class ModelWithExt {
+  public static readonly ext = ext;
+
   public static readonly create = <S extends NodeBuilder>(
     schema?: S,
     sidOrClock: clock.ClockVector | number = Model.sid(),

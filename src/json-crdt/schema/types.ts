@@ -1,3 +1,6 @@
+import type {ExtensionId} from '../../json-crdt-extensions';
+import type {MvalNode} from '../../json-crdt-extensions/mval/MvalNode';
+import type {PeritextNode} from '../../json-crdt-extensions/peritext/PeritextNode';
 import type {nodes as builder} from '../../json-crdt-patch';
 import type * as nodes from '../nodes';
 
@@ -16,7 +19,12 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
             ? nodes.ObjNode<{[K in keyof T]: SchemaToJsonNode<T[K]>}>
             : S extends builder.arr<infer T>
               ? nodes.ArrNode<SchemaToJsonNode<T>>
-              : nodes.JsonNode;
+              : S extends builder.ext<ExtensionId.peritext, any>
+                ? PeritextNode
+                : S extends builder.ext<ExtensionId.mval, any>
+                  ? MvalNode
+                  : nodes.JsonNode;
+
 
 // prettier-ignore
 export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
@@ -33,4 +41,8 @@ export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
             ? builder.obj<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
             : N extends nodes.ArrNode<infer T>
               ? builder.arr<JsonNodeToSchema<T>>
-              : builder.con<undefined>;
+              : N extends PeritextNode
+                ? builder.ext<ExtensionId.peritext, any>
+                : N extends MvalNode
+                  ? builder.ext<ExtensionId.mval, any>
+                  : builder.con<undefined>;

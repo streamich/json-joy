@@ -1,3 +1,4 @@
+import type {PeritextNode, PeritextApi} from '../../../json-crdt-extensions/peritext';
 import type * as types from '../../nodes';
 import type * as nodes from './nodes';
 
@@ -18,4 +19,6 @@ export type JsonNodeApi<N> = N extends types.ConNode<any>
               ? nodes.ObjApi<N>
               : N extends types.VecNode<any>
                 ? nodes.VecApi<N>
-                : never;
+                : N extends PeritextNode
+                  ? PeritextApi
+                  : never;
