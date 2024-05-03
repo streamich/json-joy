@@ -128,7 +128,6 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
    * @ignore
    */
   public children(callback: (node: JsonNode) => void) {
-    if (this.isExt()) return;
     const elements = this.elements;
     const length = elements.length;
     const index = this.doc.index;

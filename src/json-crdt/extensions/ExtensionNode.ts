@@ -29,6 +29,6 @@ export abstract class ExtensionNode<N extends JsonNode> implements ExtensionJson
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string, parentId?: ITimestampStruct): string {
-    return this.name() + (parentId ? ' ' + printTs(parentId) : '') + ', ' + this.data.toString(tab);
+    return this.name() + (parentId ? ' ' + printTs(parentId) : '') + ' ' + this.data.toString(tab);
   }
 }
