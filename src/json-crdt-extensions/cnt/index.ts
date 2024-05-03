@@ -35,13 +35,7 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
   }
 }
 
-export const cnt = new Extension<
-  ExtensionId.cnt,
-  ObjNode,
-  CntNode,
-  CntApi,
-  [value?: number, sid?: number],
-  nodes.map<nodes.con<number>>
->(ExtensionId.cnt, MNEMONIC, CntNode, CntApi, (value?: any, sid: any = 0) =>
-  value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)}),
-);
+const create = (value?: any, sid: any = 0) =>
+  value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)});
+
+export const cnt = new Extension(ExtensionId.cnt, MNEMONIC, CntNode, CntApi, create);
