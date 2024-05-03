@@ -1,10 +1,8 @@
 import {MNEMONIC} from './constants';
-import {ExtNode} from '../../json-crdt/extensions/ExtNode';
+import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
 import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 
-export class MvalNode extends ExtNode<ArrNode> {
-  // ------------------------------------------------------------------ ExtNode
-
+export class MvalNode extends ExtensionNode<ArrNode> {
   public name(): string {
     return MNEMONIC;
   }

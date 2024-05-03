@@ -1,17 +1,15 @@
 import * as clock from '../json-crdt-patch/clock';
+import * as ext from './ext';
 import {NodeBuilder} from '../json-crdt-patch';
 import {Extensions} from '../json-crdt/extensions/Extensions';
 import {Model} from '../json-crdt/model';
 import {SchemaToJsonNode} from '../json-crdt/schema/types';
-import {CntExt} from './cnt';
-import {MvalExt} from './mval';
-import {PeritextExt} from './peritext';
 
 const extensions = new Extensions();
 
-extensions.register(CntExt);
-extensions.register(MvalExt);
-extensions.register(PeritextExt);
+extensions.register(ext.cnt);
+extensions.register(ext.mval);
+extensions.register(ext.peritext);
 
 export class ModelWithExt {
   public static readonly create = <S extends NodeBuilder>(

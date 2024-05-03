@@ -19,5 +19,5 @@ export interface Stateful {
   refresh(): number;
 }
 
-export type PeritextDataNodeSchema = typeof SCHEMA;
+export type PeritextDataNodeSchema = ReturnType<typeof SCHEMA>;
 export type PeritextDataNode = SchemaToJsonNode<PeritextDataNodeSchema>;

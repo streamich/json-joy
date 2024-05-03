@@ -1,23 +1,9 @@
-import type {NodeBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
-import type {ModelApi} from '../model/api/ModelApi';
 import type {NodeApi} from '../model/api/nodes';
 import type {JsonNode} from '../nodes';
+import type {ExtensionNode} from './ExtensionNode';
 
 export type ExtensionValue = [type: Uint8Array, data: unknown];
 
-export interface ExtensionJsonNode extends JsonNode {}
+export interface ExtensionJsonNode<N extends JsonNode> extends ExtensionNode<N> {}
 
-export interface ExtensionApi<EN extends ExtensionJsonNode> extends NodeApi<EN> {}
-
-export interface ExtensionDefinition<
-  Node extends JsonNode = JsonNode,
-  ENode extends ExtensionJsonNode = ExtensionJsonNode,
-  EApi extends ExtensionApi<ENode> = ExtensionApi<ENode>,
-  ESchema extends NodeBuilder = NodeBuilder,
-> {
-  id: number;
-  name: string;
-  new: (...args: any[]) => ESchema;
-  Node: new (data: Node) => ENode;
-  Api: new (node: ENode, api: ModelApi) => EApi;
-}
+export interface ExtensionApi<EN extends ExtensionJsonNode<any>> extends NodeApi<EN> {}

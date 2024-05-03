@@ -8,7 +8,7 @@ export const enum Chars {
 
 export const MNEMONIC = ExtensionName[ExtensionId.peritext];
 
-export const BUILD_SCHEMA = (text: string) =>
+export const SCHEMA = (text: string) =>
   s.vec<
     [
       /**
@@ -23,5 +23,3 @@ export const BUILD_SCHEMA = (text: string) =>
       slices: nodes.arr<SliceSchema>,
     ]
   >(s.str<string>(text), s.arr<SliceSchema>([]));
-
-export const SCHEMA = BUILD_SCHEMA('');

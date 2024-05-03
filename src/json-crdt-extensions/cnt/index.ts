@@ -1,14 +1,13 @@
 import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import {ExtNode} from '../../json-crdt/extensions/ExtNode';
-import {s, type ExtensionDefinition, type ObjNode} from '../../json-crdt';
+import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
+import {Extension} from '../../json-crdt/extensions/Extension';
+import {nodes, s, type ObjNode} from '../../json-crdt';
 import type {ExtensionApi} from '../../json-crdt';
 
 const MNEMONIC = ExtensionName[ExtensionId.cnt];
 
-class CntNode extends ExtNode<ObjNode> {
-  // ------------------------------------------------------------------ ExtNode
-
+class CntNode extends ExtensionNode<ObjNode> {
   public name(): string {
     return MNEMONIC;
   }
@@ -36,10 +35,13 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
   }
 }
 
-export const CntExt: ExtensionDefinition<ObjNode, CntNode, CntApi> = {
-  id: ExtensionId.cnt,
-  name: MNEMONIC,
-  new: (value?: number, sid: number = 0) => s.ext(ExtensionId.cnt, s.obj({[sid]: s.jsonCon(value)})),
-  Node: CntNode,
-  Api: CntApi,
-};
+export const cnt = new Extension<
+  ExtensionId.cnt,
+  ObjNode,
+  CntNode,
+  CntApi,
+  [value?: number, sid?: number],
+  nodes.map<nodes.con<number>>
+>(ExtensionId.cnt, MNEMONIC, CntNode, CntApi, (value?: any, sid: any = 0) =>
+  value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)}),
+);

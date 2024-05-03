@@ -1,10 +1,11 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
-import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
+import {ExtensionApi, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './NodeEvents';
-import {printTree} from 'tree-dump/lib/printTree';
+import type {Extension} from '../../extensions/Extension';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
@@ -110,8 +111,8 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_CONST');
   }
 
-  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN>>(
-    ext: ExtensionDefinition<any, EN, EApi>,
+  public asExt<EN extends ExtensionJsonNode<any>, EApi extends ExtensionApi<EN>>(
+    ext: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
     let node: JsonNode | undefined = this.node;
     while (node) {

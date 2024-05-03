@@ -7,5 +7,5 @@ test('..', () => {
     text: PeritextExt.new('Hello, world\n'),
   });
 
-  console.log('' + model);
+  // console.log('' + model);
 });

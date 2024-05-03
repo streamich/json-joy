@@ -1,10 +1,8 @@
 import {MNEMONIC} from './constants';
-import {ExtNode} from '../../json-crdt/extensions/ExtNode';
+import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
 import type {PeritextDataNode} from './types';
 
-export class PeritextNode extends ExtNode<PeritextDataNode> {
-  // ------------------------------------------------------------------ ExtNode
-
+export class PeritextNode extends ExtensionNode<PeritextDataNode> {
   public name(): string {
     return MNEMONIC;
   }

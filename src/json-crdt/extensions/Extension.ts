@@ -1,24 +1,28 @@
-import {s, type NodeBuilder, type nodes} from '../../json-crdt-patch';
+import {NodeBuilder, s, type nodes} from '../../json-crdt-patch';
 import type {ModelApi} from '../model';
 import type {JsonNode} from '../nodes';
+import type {JsonNodeToSchema} from '../schema/types';
 import type {ExtensionApi, ExtensionJsonNode} from './types';
+
+export type AnyExtension = Extension<any, any, any, any, any, any>;
 
 export class Extension<
   Id extends number,
-  Node extends JsonNode,
-  ENode extends ExtensionJsonNode,
-  EApi extends ExtensionApi<ENode>,
-  ESchema extends NodeBuilder,
+  DataNode extends JsonNode,
+  ExtNode extends ExtensionJsonNode<DataNode>,
+  ExtApi extends ExtensionApi<ExtNode>,
+  DataArgs extends any[] = any[],
+  DataSchema extends NodeBuilder = JsonNodeToSchema<DataNode>,
 > {
   constructor(
     public readonly id: Id,
     public readonly name: string,
-    public readonly schema: (...args: any[]) => ESchema,
-    public readonly Node: new (data: Node) => ENode,
-    public readonly Api: new (node: ENode, api: ModelApi) => EApi,
+    public readonly Node: new (data: DataNode) => ExtNode,
+    public readonly Api: new (node: ExtNode, api: ModelApi) => ExtApi,
+    public readonly schema: (...args: DataArgs) => DataSchema,
   ) {}
 
-  public new(...args: any[]): nodes.ext<Id, ESchema> {
-    return s.ext<Id, ESchema>(this.id, this.schema(...args));
+  public new(...args: DataArgs): nodes.ext<Id, DataSchema> {
+    return s.ext<Id, DataSchema>(this.id, this.schema(...args));
   }
 }

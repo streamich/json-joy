@@ -3,7 +3,7 @@ import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ExtensionJsonNode, JsonNode} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 
-export abstract class ExtNode<N extends JsonNode> implements ExtensionJsonNode, Printable {
+export abstract class ExtensionNode<N extends JsonNode> implements ExtensionJsonNode<N>, Printable {
   public readonly id: ITimestampStruct;
 
   constructor(public readonly data: N) {
