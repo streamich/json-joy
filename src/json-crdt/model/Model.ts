@@ -567,7 +567,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
             (nodes.length
               ? printTree(
                   tab,
-                  nodes.map((node) => (tab) => `${node.name()} ${clock.toDisplayString(node.id)}`),
+                  nodes.map((node) => (tab) => `${node.name()} ${clock.printTs(node.id)}`),
                 )
               : '')
           );

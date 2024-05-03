@@ -1,6 +1,6 @@
 import {CONST, updateNum} from '../../../json-hash';
 import {updateId} from '../../../json-crdt/hash';
-import {ITimestampStruct, Timestamp, toDisplayString} from '../../../json-crdt-patch/clock';
+import {ITimestampStruct, Timestamp, printTs} from '../../../json-crdt-patch/clock';
 import type {IChunkSlice} from './types';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -62,7 +62,7 @@ export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printab
     const str = this.view() + '';
     const truncate = str.length > 32;
     const view = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
-    const id = toDisplayString(this.chunk.id);
+    const id = printTs(this.chunk.id);
     return `${name} ${id} [${off}..${off + len}) ${view}`;
   }
 }

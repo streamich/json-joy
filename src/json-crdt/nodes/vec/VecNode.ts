@@ -1,7 +1,7 @@
 import {ConNode} from '../const/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
+import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
@@ -181,7 +181,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   public toString(tab: string = ''): string {
     const extNode = this.ext();
     const header =
-      this.name() + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
+      this.name() + ' ' + printTs(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
       return this.child()!.toString(tab, this.id);
     }

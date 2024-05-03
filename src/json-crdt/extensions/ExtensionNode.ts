@@ -1,4 +1,4 @@
-import {toDisplayString, type ITimestampStruct} from '../../json-crdt-patch/clock';
+import {printTs, type ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ExtensionJsonNode, JsonNode} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 
@@ -29,6 +29,6 @@ export abstract class ExtensionNode<N extends JsonNode> implements ExtensionJson
   // ---------------------------------------------------------------- Printable
 
   public toString(tab?: string, parentId?: ITimestampStruct): string {
-    return this.name() + (parentId ? ' ' + toDisplayString(parentId) : '') + ', ' + this.data.toString(tab);
+    return this.name() + (parentId ? ' ' + printTs(parentId) : '') + ', ' + this.data.toString(tab);
   }
 }

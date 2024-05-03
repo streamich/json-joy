@@ -110,7 +110,7 @@ export const containsId = (ts1: ITimestampStruct, span1: number, ts2: ITimestamp
  * @param id A timestamp.
  * @returns Human-readable string representation of the timestamp.
  */
-export const toDisplayString = (id: ITimestampStruct): string => {
+export const printTs = (id: ITimestampStruct): string => {
   if (id.sid === SESSION.SERVER) return '.' + id.time;
   let session = '' + id.sid;
   if (session.length > 4) session = '..' + session.slice(session.length - 4);
