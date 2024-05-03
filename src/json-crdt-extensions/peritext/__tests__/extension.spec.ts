@@ -1,10 +1,10 @@
-import {PeritextExt} from '..';
+import {peritext} from '..';
 import {ModelWithExt} from '../../ModelWithExt';
 
 test('..', () => {
   const model = ModelWithExt.create();
   model.api.root({
-    text: PeritextExt.new('Hello, world\n'),
+    text: peritext.new('Hello, world\n'),
   });
 
   // console.log('' + model);

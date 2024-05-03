@@ -7,10 +7,10 @@ import {Extension} from '../../json-crdt/extensions/Extension';
 import type {ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 
-export const mval = new Extension<ExtensionId.mval, ArrNode, MvalNode, MvalApi, [value: unknown | ITimestampStruct]>(
+export const mval = new Extension<ExtensionId.mval, ArrNode, MvalNode, MvalApi, [value?: unknown | ITimestampStruct]>(
   ExtensionId.mval,
   MNEMONIC,
   MvalNode,
   MvalApi,
-  (value: unknown | ITimestampStruct) => s.arr<any>([s.json(value)]),
+  (value: unknown | ITimestampStruct) => s.arr<any>(value === undefined ? [] : [s.json(value)]),
 );
