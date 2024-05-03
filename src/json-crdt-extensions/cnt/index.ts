@@ -37,7 +37,9 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
 
 const create = (value?: any, sid: any = 0) => new NodeBuilder(builder => {
   if (!sid) sid = builder.clock.sid;
-  const schema = value === undefined ? s.map<nodes.con<number>>({}) : s.map<nodes.con<number>>({[sid]: s.con(value ?? 0)});
+  const schema = value === undefined
+    ? s.map<nodes.con<number>>({})
+    : s.map<nodes.con<number>>({[sid.toString(36)]: s.con(value ?? 0)});
   return schema.build(builder);
 });
 
