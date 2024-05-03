@@ -25,7 +25,7 @@ export namespace nodes {
   export class con<T extends unknown | ITimestampStruct> extends NodeBuilder {
     public readonly type = 'con';
 
-    constructor(raw: T) {
+    constructor(public readonly raw: T) {
       super((builder) => builder.const(raw));
     }
   }
@@ -46,7 +46,7 @@ export namespace nodes {
   export class str<T extends string = string> extends NodeBuilder {
     public readonly type = 'str';
 
-    constructor(raw: T) {
+    constructor(public readonly raw: T) {
       super((builder) => builder.json(raw));
     }
   }
@@ -57,7 +57,7 @@ export namespace nodes {
   export class bin extends NodeBuilder {
     public readonly type = 'bin';
 
-    constructor(raw: Uint8Array) {
+    constructor(public readonly raw: Uint8Array) {
       super((builder) => builder.json(raw));
     }
   }
@@ -77,7 +77,7 @@ export namespace nodes {
   export class val<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'val';
 
-    constructor(value: T) {
+    constructor(public readonly value: T) {
       super((builder) => {
         const valId = builder.val();
         const valueId = value.build(builder);
@@ -101,7 +101,7 @@ export namespace nodes {
   export class vec<T extends NodeBuilder[]> extends NodeBuilder {
     public readonly type = 'vec';
 
-    constructor(value: T) {
+    constructor(public readonly value: T) {
       super((builder) => {
         const vecId = builder.vec();
         const length = value.length;
@@ -139,7 +139,7 @@ export namespace nodes {
   > extends NodeBuilder {
     public readonly type = 'obj';
 
-    constructor(obj: T, opt?: O) {
+    constructor(public readonly obj: T, public readonly opt?: O) {
       super((builder) => {
         const objId = builder.obj();
         const keyValuePairs: [key: string, value: ITimestampStruct][] = [];
@@ -189,7 +189,7 @@ export namespace nodes {
   export class arr<T extends NodeBuilder> extends NodeBuilder {
     public readonly type = 'arr';
 
-    constructor(arr: T[]) {
+    constructor(public readonly arr: T[]) {
       super((builder) => {
         const arrId = builder.arr();
         const length = arr.length;
@@ -214,10 +214,10 @@ export namespace nodes {
    * s.json({name: 'Alice', age: 30});
    * ```
    */
-  export class json extends NodeBuilder {
+  export class json<T> extends NodeBuilder {
     public readonly type = 'json';
 
-    constructor(value: unknown) {
+    constructor(public readonly value: T) {
       super((builder) => builder.json(value));
     }
   }
@@ -233,10 +233,10 @@ export namespace nodes {
    * s.jsonCon({name: 'Alice', age: 30});
    * ```
    */
-  export class jsonCon extends NodeBuilder {
+  export class jsonCon<T> extends NodeBuilder {
     public readonly type = 'jsonCon';
 
-    constructor(value: unknown) {
+    constructor(public readonly value: T) {
       super((builder) => builder.constOrJson(value));
     }
   }
@@ -257,7 +257,7 @@ export namespace nodes {
      * @param id A unique extension ID.
      * @param data Schema of the data node of the extension.
      */
-    constructor(id: ID, data: T) {
+    constructor(public readonly id: ID, public readonly data: T) {
       super((builder) => {
         const buf = new Uint8Array([id, 0, 0]);
         const tupleId = builder.vec();
@@ -278,7 +278,9 @@ export namespace nodes {
 
 /**
  * Schema builder. Use this to create a JSON CRDT model schema and the default
- * value. Example:
+ * value.
+ * 
+ * Example:
  *
  * ```typescript
  * const schema = s.obj({
@@ -357,7 +359,7 @@ export const schema = {
    *
    * @param value Default value.
    */
-  json: (value: unknown) => new nodes.json(value),
+  json: <T>(value: T) => new nodes.json<T>(value),
 
   /**
    * Recursively creates a node tree from any POJO. It uses the
@@ -366,7 +368,7 @@ export const schema = {
    *
    * @param value Default value.
    */
-  jsonCon: (value: unknown) => new nodes.jsonCon(value),
+  jsonCon: <T>(value: T) => new nodes.jsonCon<T>(value),
 
   /**
    * Creates an extension node schema.

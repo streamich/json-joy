@@ -1,6 +1,5 @@
 import {ITimestampStruct, delayed, s} from '../../../../json-crdt-patch';
 import {printTree, Printable} from 'tree-dump';
-import {ext} from '../../../extensions';
 import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../../extensions/types';
 import {Model, NodeApi} from '../../../model';
 import {StrNode} from '../../nodes';
@@ -35,11 +34,7 @@ describe('sample extension', () => {
   const DoubleConcatExt: ExtensionDefinition<StrNode, any, any> = {
     id: 123,
     name: 'double-concat',
-    new: (value: string = '') =>
-      ext(
-        123,
-        delayed((builder) => builder.json(value)),
-      ),
+    new: (value: string = '') => s.ext(123, s.json(value)),
     Node: class CntNode implements ExtensionJsonNode, Printable {
       public readonly id: ITimestampStruct;
 
