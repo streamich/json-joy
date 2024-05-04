@@ -304,6 +304,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
         get: (target, prop, receiver) => {
           if (prop === 'toApi') return () => this;
           if (prop === 'toView') return () => this.view();
+          if (prop === 'ext') return () => this.ext();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);

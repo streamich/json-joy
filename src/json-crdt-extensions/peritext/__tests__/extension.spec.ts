@@ -51,6 +51,13 @@ test('can access PeritextApi using parent proxy selector', () => {
   api2 = new PeritextApi(node, api.api);
 });
 
+test('can access PeritextApi using inline proxy selector', () => {
+  const model = ModelWithExt.create(schema);
+  let api = model.s.nested.obj.text.ext();
+  expect(api).toBeInstanceOf(PeritextApi);
+  api = new PeritextApi(api.node, api.api);
+});
+
 // test('can access nested nodes using proxy selector', () => {
 //   const model = ModelWithExt.create(schema);
 //   const api = model.s.nested.obj.text.toApi();
