@@ -182,9 +182,7 @@ export class InsValOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
-      this.obj,
-    )}, val = ${printTs(this.val)}`;
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}, val = ${printTs(this.val)}`;
   }
 }
 
@@ -212,9 +210,7 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
     let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
     for (let i = 0; i < this.data.length; i++) {
       const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(
-        this.data[i][1],
-      )}`;
+      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
     }
     return out;
   }
@@ -244,9 +240,7 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
     let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
     for (let i = 0; i < this.data.length; i++) {
       const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(
-        this.data[i][1],
-      )}`;
+      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
     }
     return out;
   }
@@ -303,9 +297,7 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
 
   public toString(tab: string = ''): string {
     const ref = printTs(this.ref);
-    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)} { ${ref} ← ${
-      this.data
-    } }`;
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)} { ${ref} ← ${this.data} }`;
   }
 }
 

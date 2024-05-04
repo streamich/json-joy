@@ -96,4 +96,3 @@ test('can copy a model with extension', () => {
     ],
   });
 });
-

@@ -91,9 +91,8 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     else if (node instanceof ExtensionNode) {
       if (node.api) return node.api;
       const extension = this.model.ext.get(node.extId)!;
-      return node.api = new extension.Api(node, this);
-    }
-    else throw new Error('UNKNOWN_NODE');
+      return (node.api = new extension.Api(node, this));
+    } else throw new Error('UNKNOWN_NODE');
   }
 
   /**

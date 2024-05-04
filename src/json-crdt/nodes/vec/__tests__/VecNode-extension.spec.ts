@@ -37,7 +37,7 @@ describe('sample extension', () => {
     'double-concat',
     class extends ExtensionNode<StrNode<string>> {
       public extId: number = 123;
-      
+
       public name(): string {
         return 'double-concat';
       }

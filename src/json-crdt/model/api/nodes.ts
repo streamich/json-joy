@@ -20,7 +20,7 @@ export type ApiPath = string | number | Path | void;
  * A generic local changes API for a JSON CRDT node.
  *
  * @category Local API
- * 
+ *
  * @todo Separate this into leaf and container nodes.
  */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {

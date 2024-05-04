@@ -11,9 +11,7 @@ extensions.register(ext.cnt);
 extensions.register(ext.mval);
 extensions.register(ext.peritext);
 
-export {
-  ext,
-};
+export {ext};
 
 export class ModelWithExt {
   public static readonly ext = ext;

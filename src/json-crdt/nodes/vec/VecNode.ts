@@ -180,8 +180,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   public toString(tab: string = ''): string {
     const extNode = this.ext();
-    const header =
-      this.name() + ' ' + printTs(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
+    const header = this.name() + ' ' + printTs(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
       return this.child()!.toString(tab, this.id);
     }
