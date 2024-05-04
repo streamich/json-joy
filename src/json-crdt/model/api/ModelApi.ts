@@ -85,7 +85,15 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
     else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
     else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
-    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
+    else if (node instanceof VecNode) {
+      if (node.api) return node.api;
+      const extensionNode = node.ext();
+      if (extensionNode) {
+        const extension = this.model.ext.get(extensionNode.extId)!;
+        return extensionNode.api = node.api = new extension.Api(extensionNode, this);
+      }
+      return node.api = new VecApi(node, this);
+    }
     else throw new Error('UNKNOWN_NODE');
   }
 

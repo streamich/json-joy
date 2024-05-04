@@ -7,7 +7,9 @@ import type {ExtensionApi} from '../../json-crdt';
 
 const MNEMONIC = ExtensionName[ExtensionId.cnt];
 
-class CntNode extends ExtensionNode<ObjNode> {
+class CntNode extends ExtensionNode<ObjNode, number> {
+  public readonly extId = ExtensionId.cnt;
+
   public name(): string {
     return MNEMONIC;
   }
