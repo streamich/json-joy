@@ -53,7 +53,7 @@ test('exposes API to edit extension data', () => {
 });
 
 describe('extension validity checks', () => {
-  test('does not treat ArrNode as extension if header is too long', () => {
+  test('does not treat VecNode as extension if header is too long', () => {
     const model = Model.withLogicalClock();
     model.ext.register(mval);
     model.api.root({
@@ -61,14 +61,15 @@ describe('extension validity checks', () => {
     });
     const buf = new Uint8Array(4);
     buf.set(model.api.const(['mv', 0]).node.view() as Uint8Array, 0);
-    model.api.vec(['mv']).set([[0, buf]]);
+    const api = model.api.vec(['mv']);
+    api.set([[0, buf]]);
     expect(model.view()).toEqual({
       mv: [buf, []],
     });
     expect(model.api.vec(['mv']).node.isExt()).toBe(false);
   });
 
-  test('does not treat ArrNode as extension if header sid is wrong', () => {
+  test('does not treat VecNode as extension if header sid is wrong', () => {
     const model = Model.withLogicalClock();
     model.ext.register(mval);
     model.api.root({
@@ -82,7 +83,7 @@ describe('extension validity checks', () => {
     expect(model.api.vec(['mv']).node.isExt()).toBe(false);
   });
 
-  test('does not treat ArrNode as extension if header time is wrong', () => {
+  test('does not treat VecNode as extension if header time is wrong', () => {
     const model = Model.withLogicalClock();
     model.ext.register(mval);
     model.api.root({

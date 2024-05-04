@@ -7,6 +7,7 @@ import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
+import {ExtensionNode} from '../../extensions/ExtensionNode';
 
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
@@ -78,6 +79,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public wrap(node: ConNode): ConApi;
   public wrap(node: VecNode): VecApi;
   public wrap(node: JsonNode): NodeApi;
+  public wrap(node: ExtensionNode<any, any>): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
     else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
@@ -85,14 +87,11 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     else if (node instanceof ArrNode) return node.api || (node.api = new ArrApi(node, this));
     else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
     else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
-    else if (node instanceof VecNode) {
+    else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
+    else if (node instanceof ExtensionNode) {
       if (node.api) return node.api;
-      const extensionNode = node.ext();
-      if (extensionNode) {
-        const extension = this.model.ext.get(extensionNode.extId)!;
-        return extensionNode.api = node.api = new extension.Api(extensionNode, this);
-      }
-      return node.api = new VecApi(node, this);
+      const extension = this.model.ext.get(node.extId)!;
+      return node.api = new extension.Api(node, this);
     }
     else throw new Error('UNKNOWN_NODE');
   }

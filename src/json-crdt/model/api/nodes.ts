@@ -99,6 +99,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
+  /**
+   * @todo rename as `asVec`.
+   */
   public asTup(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
@@ -280,6 +283,13 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    */
   public length(): number {
     return this.node.elements.length;
+  }
+
+  public ext(): ExtensionApi<any> | undefined {
+    const node = this.node.ext();
+    if (!node) return node;
+    const api = this.api.wrap(node);
+    return api;
   }
 
   /**
