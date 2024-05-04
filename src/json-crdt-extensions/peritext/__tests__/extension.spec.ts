@@ -1,5 +1,5 @@
 import {s} from '../../../json-crdt-patch';
-import {StrApi, VecApi} from '../../../json-crdt/model';
+import {ArrApi, StrApi, VecApi} from '../../../json-crdt/model';
 import {ModelWithExt, ext} from '../../ModelWithExt';
 import {PeritextApi} from '../PeritextApi';
 import {PeritextNode} from '../PeritextNode';
@@ -25,6 +25,13 @@ test('can access raw text "str" node in type safe way', () => {
   expect(str).toBeInstanceOf(StrApi);
   str.ins(str.length() - 1, '!');
   expect(model.view().nested.obj.text).toBe('Hello, world!\n');
+});
+
+test('can access slices "arr" node in type safe way', () => {
+  const model = ModelWithExt.create(schema);
+  const arr = model.s.nested.obj.text.ext().slices();
+  expect(arr).toBeInstanceOf(ArrApi);
+  expect(arr.view()).toEqual([]);
 });
 
 test('can access PeritextApi using path selector', () => {
