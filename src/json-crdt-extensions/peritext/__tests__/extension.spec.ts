@@ -1,5 +1,5 @@
 import {s} from '../../../json-crdt-patch';
-import {VecApi} from '../../../json-crdt/model';
+import {StrApi, VecApi} from '../../../json-crdt/model';
 import {ModelWithExt, ext} from '../../ModelWithExt';
 import {PeritextApi} from '../PeritextApi';
 import {PeritextNode} from '../PeritextNode';
@@ -12,11 +12,19 @@ const schema = s.obj({
   }),
 });
 
-test('can access PeritextNode in type safe way', () => {
-  // const model = ModelWithExt.create(schema);
-  // const node = model.root.node().get('nested')!.get('obj')!.get('text')!.child!();
-  // expect(node).toBeInstanceOf(PeritextNode);
-  // expect(node.view()).toBe('Hello, world\n');
+test('can access PeritextNode in type safe way (using the proxy selector)', () => {
+  const model = ModelWithExt.create(schema);
+  let api = model.s.nested.obj.text.ext();
+  expect(api).toBeInstanceOf(PeritextApi);
+  api = new PeritextApi(api.node, api.api);
+});
+
+test('can access raw text "str" node in type safe way', () => {
+  const model = ModelWithExt.create(schema);
+  const str = model.s.nested.obj.text.ext().text();
+  expect(str).toBeInstanceOf(StrApi);
+  str.ins(str.length() - 1, '!');
+  expect(model.view().nested.obj.text).toBe('Hello, world!\n');
 });
 
 test('can access PeritextApi using path selector', () => {
@@ -62,16 +70,3 @@ test('can access PeritextApi using parent proxy selector', () => {
   expect(api2).toBeInstanceOf(PeritextApi);
   api2 = new PeritextApi(node, api.api);
 });
-
-test('can access PeritextApi using inline proxy selector', () => {
-  const model = ModelWithExt.create(schema);
-  let api = model.s.nested.obj.text.ext();
-  expect(api).toBeInstanceOf(PeritextApi);
-  api = new PeritextApi(api.node, api.api);
-});
-
-// test('can access nested nodes using proxy selector', () => {
-//   const model = ModelWithExt.create(schema);
-//   const api = model.s.nested.obj.text.toApi();
-//   console.log(api + '');
-// });

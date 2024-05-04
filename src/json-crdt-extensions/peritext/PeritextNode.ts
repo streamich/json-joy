@@ -1,6 +1,7 @@
 import {MNEMONIC} from './constants';
 import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
 import {ExtensionId} from '../constants';
+import type {StrNode} from '../../json-crdt/nodes';
 import type {PeritextDataNode} from './types';
 
 export class PeritextNode extends ExtensionNode<PeritextDataNode> {
@@ -10,8 +11,11 @@ export class PeritextNode extends ExtensionNode<PeritextDataNode> {
     return MNEMONIC;
   }
 
+  public text(): StrNode {
+    return this.data.get(0)!;
+  }
+
   public view(): string {
-    const str = this.data.get(0)!;
-    return str.view();
+    return this.text().view();
   }
 }
