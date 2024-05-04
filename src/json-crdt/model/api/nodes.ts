@@ -118,6 +118,9 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_CONST');
   }
 
+  /**
+   * @todo The `ext` param shall not be necessary.
+   */
   public asExt<EN extends ExtensionNode<any, any>, EApi extends ExtensionApi<EN>>(
     ext: Extension<any, any, EN, EApi, any, any>,
   ): EApi {

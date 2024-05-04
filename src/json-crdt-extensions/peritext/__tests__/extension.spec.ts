@@ -29,14 +29,26 @@ test('can access PeritextApi using path selector', () => {
   expect(api.view()).toBe('Hello, world!\n');
 });
 
+test('can access PeritextApi using JSON Pointer path selector', () => {
+  const model = ModelWithExt.create(schema);
+  const api = model.api.vec('/nested/obj/text');
+  expect(api).toBeInstanceOf(VecApi);
+  const api2 = api.ext();
+  expect(api2).toBeInstanceOf(PeritextApi);
+  model.api.str('/nested/obj/text/1/0').ins(12, '!');
+  expect(api.view()).toBe('Hello, world!\n');
+});
+
 test('can access PeritextApi using step-wise selector', () => {
-  // const model = ModelWithExt.create(schema);
-  // const api = model.api.vec(['nested', 'obj', 'text']);
-  // expect(api).toBeInstanceOf(VecApi);
-  // const api2 = api.ext();
-  // expect(api2).toBeInstanceOf(PeritextApi);
-  // model.api.str(['nested', 'obj', 'text', 1, 0]).ins(12, '!');
-  // expect(api.view()).toBe('Hello, world!\n');
+  const model = ModelWithExt.create(schema);
+  const api = model.api.in('nested').in('obj').in('text').asTup();
+  expect(api).toBeInstanceOf(VecApi);
+  const api2 = api.ext();
+  expect(api2).toBeInstanceOf(PeritextApi);
+  model.api.in('nested').in('obj').in('text').in(1).in(0).asStr().ins(12, '!');
+  model.api.in('/nested/obj/text/1/0').asStr().ins(12, '!');
+  model.api.in(['nested', 'obj', 'text', 1, 0]).asStr().ins(12, '!');
+  expect(api.view()).toBe('Hello, world!!!\n');
 });
 
 test('can access PeritextApi using parent proxy selector', () => {
