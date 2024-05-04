@@ -12,6 +12,7 @@ import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
 import type {ExtensionNode} from '../../extensions/ExtensionNode';
+import type {VecNodeExtensionData} from '../../schema/types';
 
 export type ApiPath = string | number | Path | void;
 
@@ -285,11 +286,11 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
     return this.node.elements.length;
   }
 
-  public ext(): ExtensionApi<any> | undefined {
+  public ext(): JsonNodeApi<VecNodeExtensionData<N>> | undefined {
     const node = this.node.ext();
     if (!node) return node;
     const api = this.api.wrap(node);
-    return api;
+    return <any>api;
   }
 
   /**

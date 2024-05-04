@@ -45,7 +45,8 @@ describe('can infer schema of JSON CRDT nodes', () => {
     const schema1 = s.obj({
       richText: ext.peritext.new('hello'),
     });
-    const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    type Nodes = SchemaToJsonNode<typeof schema1>;
+    const schema2: JsonNodeToSchema<Nodes> = schema1;
   });
 
   test('from typed model', () => {

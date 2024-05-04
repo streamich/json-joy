@@ -2,6 +2,7 @@ import type {ExtensionId} from '../../json-crdt-extensions';
 import type {MvalNode} from '../../json-crdt-extensions/mval/MvalNode';
 import type {PeritextNode} from '../../json-crdt-extensions/peritext/PeritextNode';
 import type {nodes as builder} from '../../json-crdt-patch';
+import {ExtensionNode} from '../extensions/ExtensionNode';
 import type * as nodes from '../nodes';
 
 // prettier-ignore
@@ -20,11 +21,22 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
             : S extends builder.arr<infer T>
               ? nodes.ArrNode<SchemaToJsonNode<T>>
               : S extends builder.ext<ExtensionId.peritext, any>
-                ? PeritextNode
+                ? nodes.VecNode<ExtensionVecData<PeritextNode>>
                 : S extends builder.ext<ExtensionId.mval, any>
-                  ? MvalNode
+                  ? nodes.VecNode<ExtensionVecData<MvalNode>>
                   : nodes.JsonNode;
 
+export type ExtensionVecData<EDataNode extends ExtensionNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
+  header: nodes.ConNode<Uint8Array>,
+  data: EDataNode,
+];
+
+// prettier-ignore
+export type VecNodeExtensionData<N> = N extends nodes.VecNode<infer T>
+  ? VecNodeExtensionData<T>
+  : N extends ExtensionVecData<infer EDataNode>
+    ? EDataNode
+    : undefined;
 
 // prettier-ignore
 export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
@@ -36,13 +48,15 @@ export type JsonNodeToSchema<N> = N extends nodes.StrNode<infer T>
       : N extends nodes.ValNode<infer T>
         ? builder.val<JsonNodeToSchema<T>>
         : N extends nodes.VecNode<infer T>
-          ? builder.vec<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
+          ? (T extends ExtensionVecData<infer EDataNode>
+            ? EDataNode extends PeritextNode
+              ? builder.ext<ExtensionId.peritext, any>
+              : EDataNode extends MvalNode
+                ? builder.ext<ExtensionId.mval, any>
+                : builder.ext<number, any>
+            : builder.vec<{[K in keyof T]: JsonNodeToSchema<T[K]>}>)
           : N extends nodes.ObjNode<infer T>
             ? builder.obj<{[K in keyof T]: JsonNodeToSchema<T[K]>}>
             : N extends nodes.ArrNode<infer T>
               ? builder.arr<JsonNodeToSchema<T>>
-              : N extends PeritextNode
-                ? builder.ext<ExtensionId.peritext, any>
-                : N extends MvalNode
-                  ? builder.ext<ExtensionId.mval, any>
-                  : builder.con<undefined>;
+              : builder.con<undefined>;

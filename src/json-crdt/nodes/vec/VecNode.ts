@@ -6,6 +6,7 @@ import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 import type {ExtensionNode} from '../../extensions/ExtensionNode';
+import type {VecNodeExtensionData} from '../../schema/types';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.
@@ -68,20 +69,20 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  private __extNode: ExtensionNode<JsonNode> | undefined;
+  private __extNode: VecNodeExtensionData<Value> = <any>undefined;
 
   /**
    * @ignore
    * @returns Returns the extension data node if this is an extension node,
    *          otherwise `undefined`. The node is cached after the first access.
    */
-  public ext(): ExtensionNode<JsonNode> | undefined {
+  public ext(): VecNodeExtensionData<Value> {
     if (this.__extNode) return this.__extNode;
     const extensionId = this.getExtId();
     const isExtension = extensionId >= 0;
-    if (!isExtension) return undefined;
+    if (!isExtension) return <any>undefined;
     const extension = this.doc.ext.get(extensionId);
-    if (!extension) return undefined;
+    if (!extension) return <any>undefined;
     this.__extNode = new extension.Node(this.get(1)!);
     return this.__extNode;
   }
