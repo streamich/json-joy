@@ -1,3 +1,14 @@
+# [16.1.0](https://github.com/streamich/json-joy/compare/v16.0.0...v16.1.0) (2024-05-05)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 abstract saved slices into a standalone EditorSlices class ([444a9ae](https://github.com/streamich/json-joy/commit/444a9ae08ed4611fc7d41b09d163bdf2b4d283b2))
+* **json-crdt-extensions:** 🎸 improve Editor and Cursor APIs ([fd1177f](https://github.com/streamich/json-joy/commit/fd1177fc8ea717cff26c5a13bc1e131efef442ae))
+* **json-crdt-extensions:** 🎸 improve multi-cursor support ([7a6850b](https://github.com/streamich/json-joy/commit/7a6850b8740b99c919cd2eafd22cb44aacbf1f7f))
+* **json-crdt-extensions:** 🎸 instantiate Peritext contenxt and Editor on PeritextApi ([5a22ffc](https://github.com/streamich/json-joy/commit/5a22ffc003d75c495aaad1ba93170b681e93749a))
+* **json-crdt-extensions:** 🎸 make all Peritext classes generic to the RGA item ([55969b8](https://github.com/streamich/json-joy/commit/55969b88100c5c4eaf0b67b7ef20ea7604ccd325))
+
 # [16.0.0](https://github.com/streamich/json-joy/compare/v15.11.0...v16.0.0) (2024-05-05)
 
 
