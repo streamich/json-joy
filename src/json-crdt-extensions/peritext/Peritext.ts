@@ -81,7 +81,7 @@ export class Peritext<T = string> implements Printable {
       localApi.flush();
     });
     this.localSlices = new LocalSlices(this, localSlicesModel.root.node().get(0)!);
-    this.editor = new Editor<T>(this, this.localSlices);
+    this.editor = new Editor<T>(this);
   }
 
   public strApi(): StrApi {
@@ -151,6 +151,20 @@ export class Peritext<T = string> implements Printable {
     return this.point(this.str.id, Anchor.Before);
   }
 
+  public pointStart(): Point<T> | undefined {
+    if (!this.str.length()) return;
+    const point = this.pointAbsStart();
+    point.refBefore();
+    return point;
+  }
+
+  public pointEnd(): Point<T> | undefined {
+    if (!this.str.length()) return;
+    const point = this.pointAbsEnd();
+    point.refAfter();
+    return point;
+  }
+
   // ------------------------------------------------------------------- ranges
 
   /**
@@ -186,6 +200,13 @@ export class Peritext<T = string> implements Printable {
    */
   public rangeAt(start: number, length: number = 0): Range<T> {
     return Range.at(this.str, start, length);
+  }
+
+  public rangeAll(): Range<T> | undefined {
+    const start = this.pointStart();
+    const end = this.pointEnd();
+    if (!start || !end) return;
+    return this.range(start, end);
   }
 
   // --------------------------------------------------------------------- text
