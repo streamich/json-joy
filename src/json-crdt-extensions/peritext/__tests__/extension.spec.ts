@@ -1,8 +1,10 @@
 import {s} from '../../../json-crdt-patch';
 import {ArrApi, StrApi, VecApi} from '../../../json-crdt/model';
 import {ModelWithExt, ext} from '../../ModelWithExt';
+import {Peritext} from '../Peritext';
 import {PeritextApi} from '../PeritextApi';
 import {PeritextNode} from '../PeritextNode';
+import {Editor} from '../editor/Editor';
 
 const schema = s.obj({
   nested: s.obj({
@@ -65,14 +67,14 @@ describe('non-typed access', () => {
 describe('typed access', () => {
   test('can access PeritextNode in type safe way (using the proxy selector)', () => {
     const model = ModelWithExt.create(schema);
-    let api = model.s.nested.obj.text.ext();
+    let api = model.s.nested.obj.text.toExt();
     expect(api).toBeInstanceOf(PeritextApi);
     api = new PeritextApi(api.node, api.api);
   });
 
   test('can access raw text "str" node in type safe way', () => {
     const model = ModelWithExt.create(schema);
-    const str = model.s.nested.obj.text.ext().text();
+    const str = model.s.nested.obj.text.toExt().text();
     expect(str).toBeInstanceOf(StrApi);
     str.ins(str.length() - 1, '!');
     expect(model.view().nested.obj.text).toBe('Hello, world!\n');
@@ -80,7 +82,7 @@ describe('typed access', () => {
 
   test('can access slices "arr" node in type safe way', () => {
     const model = ModelWithExt.create(schema);
-    const arr = model.s.nested.obj.text.ext().slices();
+    const arr = model.s.nested.obj.text.toExt().slices();
     expect(arr).toBeInstanceOf(ArrApi);
     expect(arr.view()).toEqual([]);
   });
@@ -95,5 +97,21 @@ describe('typed access', () => {
     let api2 = api.asExt()!;
     expect(api2).toBeInstanceOf(PeritextApi);
     api2 = new PeritextApi(node, api.api);
+  });
+
+  test('can access Peritext context and Editor', () => {
+    const model = ModelWithExt.create(schema);
+    const api = model.s.nested.obj.text.toExt();
+    expect(api.txt).toBeInstanceOf(Peritext);
+    expect(api.editor).toBeInstanceOf(Editor);
+  });
+
+  test('can modify Peritext document', () => {
+    const model = ModelWithExt.create(schema);
+    const api = model.s.nested.obj.text.toExt();
+    expect(api.view()).toBe('Hello, world\n');
+    api.editor.cursor.setAt(12);
+    api.editor.insert('!');
+    expect(api.view()).toBe('Hello, world!\n');
   });
 });
