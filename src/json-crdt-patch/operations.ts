@@ -1,5 +1,5 @@
 import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
-import {type ITimestampStruct, type ITimespanStruct, Timestamp, toDisplayString} from './clock';
+import {type ITimestampStruct, type ITimespanStruct, Timestamp, printTs} from './clock';
 
 /**
  * Operation which creates a constant "con" data type.
@@ -24,13 +24,13 @@ export class NewConOp implements IJsonCrdtPatchOperation {
     const val = this.val;
     const valFormatted =
       val instanceof Timestamp
-        ? `{ ${toDisplayString(val)} }`
+        ? `{ ${printTs(val)} }`
         : val instanceof Uint8Array
           ? val.length < 13
             ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
             : `Uint8Array(${val.length})`
           : `{ ${JSON.stringify(val)} }`;
-    return `${this.name()} ${toDisplayString(this.id)} ${valFormatted}`;
+    return `${this.name()} ${printTs(this.id)} ${valFormatted}`;
   }
 }
 
@@ -51,7 +51,7 @@ export class NewValOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -72,7 +72,7 @@ export class NewObjOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -93,7 +93,7 @@ export class NewVecOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -114,7 +114,7 @@ export class NewStrOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -135,7 +135,7 @@ export class NewBinOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(tab: string = ''): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -156,7 +156,7 @@ export class NewArrOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}`;
+    return `${this.name()} ${printTs(this.id)}`;
   }
 }
 
@@ -182,9 +182,7 @@ export class InsValOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(
-      this.obj,
-    )}, val = ${toDisplayString(this.val)}`;
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}, val = ${printTs(this.val)}`;
   }
 }
 
@@ -209,12 +207,10 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    let out = `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(this.obj)}`;
+    let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
     for (let i = 0; i < this.data.length; i++) {
       const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${toDisplayString(
-        this.data[i][1],
-      )}`;
+      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
     }
     return out;
   }
@@ -241,12 +237,10 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    let out = `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(this.obj)}`;
+    let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
     for (let i = 0; i < this.data.length; i++) {
       const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${toDisplayString(
-        this.data[i][1],
-      )}`;
+      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
     }
     return out;
   }
@@ -274,9 +268,9 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
       this.obj,
-    )} { ${toDisplayString(this.ref)} ← ${JSON.stringify(this.data)} }`;
+    )} { ${printTs(this.ref)} ← ${JSON.stringify(this.data)} }`;
   }
 }
 
@@ -302,10 +296,8 @@ export class InsBinOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    const ref = toDisplayString(this.ref);
-    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(this.obj)} { ${ref} ← ${
-      this.data
-    } }`;
+    const ref = printTs(this.ref);
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)} { ${ref} ← ${this.data} }`;
   }
 }
 
@@ -343,9 +335,9 @@ export class InsArrOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}!${this.span()}, obj = ${toDisplayString(
+    return `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(
       this.obj,
-    )} { ${toDisplayString(this.ref)} ← ${this.data.map(toDisplayString).join(', ')} }`;
+    )} { ${printTs(this.ref)} ← ${this.data.map(printTs).join(', ')} }`;
   }
 }
 
@@ -376,8 +368,8 @@ export class DelOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(): string {
-    const spans = this.what.map((span) => toDisplayString(span) + '!' + span.span).join(', ');
-    return `${this.name()} ${toDisplayString(this.id)}, obj = ${toDisplayString(this.obj)} { ${spans} }`;
+    const spans = this.what.map((span) => printTs(span) + '!' + span.span).join(', ');
+    return `${this.name()} ${printTs(this.id)}, obj = ${printTs(this.obj)} { ${spans} }`;
   }
 }
 
@@ -402,6 +394,6 @@ export class NopOp implements IJsonCrdtPatchOperation {
   }
 
   public toString(): string {
-    return `${this.name()} ${toDisplayString(this.id)}!${this.len}`;
+    return `${this.name()} ${printTs(this.id)}!${this.len}`;
   }
 }

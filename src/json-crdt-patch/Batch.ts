@@ -1,4 +1,4 @@
-import {ITimestampStruct, toDisplayString} from './clock';
+import {ITimestampStruct, printTs} from './clock';
 import {Patch} from './Patch';
 
 export class Batch {
@@ -30,7 +30,7 @@ export class Batch {
 
   public toString(tab: string = ''): string {
     const id = this.getId();
-    let out = `${this.constructor.name} ${id ? toDisplayString(id) : '(nil)'}\n`;
+    let out = `${this.constructor.name} ${id ? printTs(id) : '(nil)'}\n`;
     for (let i = 0; i < this.patches.length; i++) {
       const patch = this.patches[i];
       const isLast = i === this.patches.length - 1;

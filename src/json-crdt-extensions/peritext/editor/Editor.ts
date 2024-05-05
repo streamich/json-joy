@@ -13,7 +13,7 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slices} from '../slice/Slices';
 
 /**
- * Rename to `PeritextApi`.
+ * @todo Rename to `PeritextApi`.
  */
 export class Editor implements Printable {
   /**

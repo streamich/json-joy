@@ -1,5 +1,5 @@
-import type {ITimestampStruct} from '../clock';
 import {NodeBuilder} from './DelayedValueBuilder';
+import type {ITimestampStruct} from '../clock';
 
 /* tslint:disable no-namespace class-name */
 
@@ -15,7 +15,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.con(0);
    * s.con('');
    * s.con<number>(123);
@@ -36,7 +36,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.str('');
    * s.str('hello');
    * s.str<string>('world');
@@ -68,7 +68,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.val(s.con(0));
    * s.val(s.str(''));
    * s.val(s.str('hello'));
@@ -93,7 +93,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.vec(s.con(0), s.con(1));
    * s.vec(s.str(''), s.str('hello'));
    * ```
@@ -126,7 +126,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.obj({
    *   name: s.str(''),
    *   age: s.con(0),
@@ -172,7 +172,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.map<nodes.con<number>>
    * ```
    */
@@ -184,7 +184,7 @@ export namespace nodes {
    *
    * Example:
    *
-   * ```typescript
+   * ```ts
    * s.arr([s.con(0), s.con(1)]);
    * s.arr([s.str(''), s.str('hello')]);
    * ```
@@ -205,12 +205,90 @@ export namespace nodes {
       });
     }
   }
+
+  /**
+   * Convenience class for recursively creating a node tree from any POJO. It
+   * uses the {@link Builder.json} method to create a JSON node. It can be used
+   * similar to TypeScript's *any* type, where the value can be anything.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.json({name: 'Alice', age: 30});
+   * ```
+   */
+  export class json<T> extends NodeBuilder {
+    public readonly type = 'json';
+
+    constructor(public readonly value: T) {
+      super((builder) => builder.json(value));
+    }
+  }
+
+  /**
+   * Convenience class for recursively creating a node tree from any POJO. It
+   * uses the {@link Builder.constOrJson} method to create a JSON node. It can
+   * be used similar to TypeScript's *any* type, where the value can be anything.
+   *
+   * Example:
+   *
+   * ```typescript
+   * s.jsonCon({name: 'Alice', age: 30});
+   * ```
+   */
+  export class jsonCon<T> extends NodeBuilder {
+    public readonly type = 'jsonCon';
+
+    constructor(public readonly value: T) {
+      super((builder) => builder.constOrJson(value));
+    }
+  }
+
+  /**
+   * Creates an extension node schema. The extension node is a tuple with a
+   * sentinel header and a data node. The sentinel header is a 3-byte
+   * {@link Uint8Array}, which makes this "vec" node to be treated as an
+   * extension "ext" node.
+   *
+   * The 3-byte header consists of the extension ID, the SID of the tuple ID,
+   * and the time of the tuple ID:
+   *
+   * - 1 byte for the extension id
+   * - 1 byte for the sid of the tuple id, modulo 256
+   * - 1 byte for the time of the tuple id, modulo 256
+   */
+  export class ext<ID extends number, T extends NodeBuilder> extends NodeBuilder {
+    public readonly type = 'ext';
+
+    /**
+     * @param id A unique extension ID.
+     * @param data Schema of the data node of the extension.
+     */
+    constructor(
+      public readonly id: ID,
+      public readonly data: T,
+    ) {
+      super((builder) => {
+        const buf = new Uint8Array([id, 0, 0]);
+        const tupleId = builder.vec();
+        buf[1] = tupleId.sid % 256;
+        buf[2] = tupleId.time % 256;
+        builder.insVec(tupleId, [
+          [0, builder.constOrJson(s.con(buf))],
+          [1, data.build(builder)],
+        ]);
+        return tupleId;
+      });
+    }
+  }
 }
 /* tslint:enable no-namespace class-name */
 
 /**
  * Schema builder. Use this to create a JSON CRDT model schema and the default
- * value. Example:
+ * value.
+ *
+ * Example:
  *
  * ```typescript
  * const schema = s.obj({
@@ -223,36 +301,42 @@ export namespace nodes {
 export const schema = {
   /**
    * Creates a "con" node schema and the default value.
+   *
    * @param raw Raw default value.
    */
   con: <T extends unknown | ITimestampStruct>(raw: T) => new nodes.con<T>(raw),
 
   /**
    * Creates a "str" node schema and the default value.
+   *
    * @param str Default value.
    */
   str: <T extends string>(str: T) => new nodes.str<T>(str || ('' as T)),
 
   /**
    * Creates a "bin" node schema and the default value.
+   *
    * @param bin Default value.
    */
   bin: (bin: Uint8Array) => new nodes.bin(bin),
 
   /**
    * Creates a "val" node schema and the default value.
+   *
    * @param val Default value.
    */
   val: <T extends NodeBuilder>(val: T) => new nodes.val<T>(val),
 
   /**
    * Creates a "vec" node schema and the default value.
+   *
    * @param vec Default value.
    */
   vec: <T extends NodeBuilder[]>(...vec: T) => new nodes.vec<T>(vec),
 
   /**
    * Creates a "obj" node schema and the default value.
+   *
    * @param obj Default value, required object keys.
    * @param opt Default value of optional object keys.
    */
@@ -263,6 +347,7 @@ export const schema = {
    * This is an alias for {@link schema.obj}. It creates a "map" node schema,
    * which is an object where a key can be any string and the value is of the
    * same type.
+   *
    * @param obj Default value.
    */
   map: <R extends NodeBuilder>(obj: Record<string, R>): nodes.map<R> =>
@@ -270,9 +355,36 @@ export const schema = {
 
   /**
    * Creates an "arr" node schema and the default value.
+   *
    * @param arr Default value.
    */
   arr: <T extends NodeBuilder>(arr: T[]) => new nodes.arr<T>(arr),
+
+  /**
+   * Recursively creates a node tree from any POJO. It uses the
+   * {@link Builder.json} method to create a JSON node. It can be used similar
+   * to TypeScript's *any* type, where the value can be anything.
+   *
+   * @param value Default value.
+   */
+  json: <T>(value: T) => new nodes.json<T>(value),
+
+  /**
+   * Recursively creates a node tree from any POJO. It uses the
+   * {@link Builder.constOrJson} method to create a JSON node. It can be used
+   * similar to TypeScript's *any* type, where the value can be anything.
+   *
+   * @param value Default value.
+   */
+  jsonCon: <T>(value: T) => new nodes.jsonCon<T>(value),
+
+  /**
+   * Creates an extension node schema.
+   *
+   * @param id A unique extension ID.
+   * @param data Schema of the data node of the extension.
+   */
+  ext: <ID extends number, T extends NodeBuilder>(id: ID, data: T) => new nodes.ext<ID, T>(id, data),
 };
 
 /**

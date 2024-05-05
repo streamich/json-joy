@@ -4,7 +4,7 @@ import {
   ITimestampStruct,
   ITimespanStruct,
   tss,
-  toDisplayString,
+  printTs,
   containsId,
   Timestamp,
 } from '../../../json-crdt-patch/clock';
@@ -888,7 +888,7 @@ export abstract class AbstractRga<T> {
     if (isUint8Array(view)) value += ` { ${printOctets(view) || '∅'} }`;
     else if (typeof view === 'string')
       value += `{ ${view.length > 32 ? JSON.stringify(view.substring(0, 32)) + ' …' : JSON.stringify(view)} }`;
-    const header = `${this.toStringName()} ${toDisplayString(this.id)} ${value}`;
+    const header = `${this.toStringName()} ${printTs(this.id)} ${value}`;
     return header + printTree(tab, [(tab) => (this.root ? this.printChunk(tab, this.root) : '∅')]);
   }
 
@@ -903,7 +903,7 @@ export abstract class AbstractRga<T> {
   }
 
   protected formatChunk(chunk: Chunk<T>): string {
-    const id = toDisplayString(chunk.id);
+    const id = printTs(chunk.id);
     let str = `${chunk.constructor.name} ${id}!${chunk.span} len:${chunk.len}`;
     if (chunk.del) str += ` [${chunk.span}]`;
     else {

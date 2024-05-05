@@ -1,27 +1,17 @@
-import {delayed} from '../../json-crdt-patch/builder/DelayedValueBuilder';
-import {ext} from '../../json-crdt/extensions';
-import {ExtensionId} from '../constants';
-import {printTree} from 'tree-dump/lib/printTree';
+import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import type {ExtensionDefinition, ObjNode} from '../../json-crdt';
-import type {ITimestampStruct} from '../../json-crdt-patch/clock';
-import type {ExtensionJsonNode, JsonNode} from '../../json-crdt';
-import type {Printable} from 'tree-dump/lib/types';
-import type {ExtensionApi} from '../../json-crdt';
+import {ExtNode} from '../../json-crdt/extensions/ExtNode';
+import {Extension} from '../../json-crdt/extensions/Extension';
+import {NodeBuilder, nodes, s, type ObjNode} from '../../json-crdt';
+import type {ExtApi} from '../../json-crdt';
 
-const name = 'cnt';
+const MNEMONIC = ExtensionName[ExtensionId.cnt];
 
-class CntNode implements ExtensionJsonNode, Printable {
-  public readonly id: ITimestampStruct;
-
-  constructor(public readonly data: ObjNode) {
-    this.id = data.id;
-  }
-
-  // -------------------------------------------------------- ExtensionJsonNode
+class CntNode extends ExtNode<ObjNode, number> {
+  public readonly extId = ExtensionId.cnt;
 
   public name(): string {
-    return name;
+    return MNEMONIC;
   }
 
   public view(): number {
@@ -30,27 +20,9 @@ class CntNode implements ExtensionJsonNode, Printable {
     for (const key in obj) sum += Number(obj[key]);
     return sum;
   }
-
-  public children(callback: (node: JsonNode) => void): void {}
-
-  public child?(): JsonNode | undefined {
-    return this.data;
-  }
-
-  public container(): JsonNode | undefined {
-    return this.data.container();
-  }
-
-  public api: undefined | unknown = undefined;
-
-  // ---------------------------------------------------------------- Printable
-
-  public toString(tab?: string): string {
-    return `${this.name()} (${this.view()})` + printTree(tab, [(tab) => this.data.toString(tab)]);
-  }
 }
 
-class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
+class CntApi extends NodeApi<CntNode> implements ExtApi<CntNode> {
   public inc(increment: number): this {
     const {api, node} = this;
     const sid = api.model.clock.sid;
@@ -65,14 +37,14 @@ class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
   }
 }
 
-export const CntExt: ExtensionDefinition<ObjNode, CntNode, CntApi> = {
-  id: ExtensionId.cnt,
-  name,
-  new: (value?: number, sid: number = 0) =>
-    ext(
-      ExtensionId.cnt,
-      delayed((builder) => builder.constOrJson(value ? {[sid]: value} : {})),
-    ),
-  Node: CntNode,
-  Api: CntApi,
-};
+const create = (value?: any, sid: any = 0) =>
+  new NodeBuilder((builder) => {
+    if (!sid) sid = builder.clock.sid;
+    const schema =
+      value === undefined
+        ? s.map<nodes.con<number>>({})
+        : s.map<nodes.con<number>>({[sid.toString(36)]: s.con(value ?? 0)});
+    return schema.build(builder);
+  });
+
+export const cnt = new Extension(ExtensionId.cnt, MNEMONIC, CntNode, CntApi, create);

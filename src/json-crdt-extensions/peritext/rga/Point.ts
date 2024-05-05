@@ -1,4 +1,4 @@
-import {compare, type ITimestampStruct, toDisplayString, equal, tick, containsId} from '../../../json-crdt-patch/clock';
+import {compare, type ITimestampStruct, printTs, equal, tick, containsId} from '../../../json-crdt-patch/clock';
 import {Anchor} from './constants';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateId} from '../../../json-crdt/hash';
@@ -449,7 +449,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   public toString(tab: string = '', lite?: boolean): string {
     const name = lite ? '' : this.constructor.name + ' ';
     const pos = this.pos();
-    const id = toDisplayString(this.id);
+    const id = printTs(this.id);
     const anchor = this.anchor === Anchor.Before ? '.▢' : '▢.';
     return `${name}{ ${pos}, ${id}, ${anchor} }`;
   }

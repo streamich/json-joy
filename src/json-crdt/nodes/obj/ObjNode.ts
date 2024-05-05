@@ -1,5 +1,5 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
+import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNode, JsonNodeView} from '..';
@@ -137,7 +137,7 @@ export class ObjNode<Value extends Record<string, JsonNode> = Record<string, Jso
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const header = this.name() + ' ' + toDisplayString(this.id);
+    const header = this.name() + ' ' + printTs(this.id);
     return (
       header +
       printTree(

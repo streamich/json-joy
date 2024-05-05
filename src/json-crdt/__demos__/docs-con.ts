@@ -51,6 +51,6 @@ model.api.root({
 console.log(model + '');
 console.log(model.view());
 
-const conApi = model.api.const(['foo', 'bar']);
+const conApi = model.api.con(['foo', 'bar']);
 console.log(conApi.view());
 console.log(conApi.node.toString());

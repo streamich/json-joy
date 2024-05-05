@@ -1,4 +1,4 @@
-import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
+import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import {SESSION} from '../../../json-crdt-patch/constants';
 import {printTree} from 'tree-dump/lib/printTree';
 import {UNDEFINED} from '../../model/Model';
@@ -89,7 +89,7 @@ export class ValNode<Value extends JsonNode = JsonNode> implements JsonNode<Json
 
   public toString(tab: string = ''): string {
     const node = this.node();
-    const header = this.name() + ' ' + toDisplayString(this.id);
-    return header + printTree(tab, [(tab) => (node ? node.toString(tab) : toDisplayString(this.val))]);
+    const header = this.name() + ' ' + printTs(this.id);
+    return header + printTree(tab, [(tab) => (node ? node.toString(tab) : printTs(this.val))]);
   }
 }

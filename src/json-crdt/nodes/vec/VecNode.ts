@@ -1,10 +1,12 @@
 import {ConNode} from '../const/ConNode';
 import {CRDT_CONSTANTS} from '../../constants';
 import {printTree} from 'tree-dump/lib/printTree';
-import {compare, ITimestampStruct, toDisplayString} from '../../../json-crdt-patch/clock';
+import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock';
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
+import type {ExtNode} from '../../extensions/ExtNode';
+import type {VecNodeExtensionData} from '../../schema/types';
 
 /**
  * Represents a `vec` JSON CRDT node, which is a LWW array.
@@ -67,20 +69,20 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  private __extNode: JsonNode | undefined;
+  private __extNode: VecNodeExtensionData<Value> = <any>undefined;
 
   /**
    * @ignore
    * @returns Returns the extension data node if this is an extension node,
    *          otherwise `undefined`. The node is cached after the first access.
    */
-  public ext(): JsonNode | undefined {
+  public ext(): VecNodeExtensionData<Value> {
     if (this.__extNode) return this.__extNode;
     const extensionId = this.getExtId();
     const isExtension = extensionId >= 0;
-    if (!isExtension) return undefined;
+    if (!isExtension) return <any>undefined;
     const extension = this.doc.ext.get(extensionId);
-    if (!extension) return undefined;
+    if (!extension) return <any>undefined;
     this.__extNode = new extension.Node(this.get(1)!);
     return this.__extNode;
   }
@@ -112,7 +114,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  public child(): JsonNode | undefined {
+  public child(): ExtNode<JsonNode> | undefined {
     return this.ext();
   }
 
@@ -127,7 +129,6 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
    * @ignore
    */
   public children(callback: (node: JsonNode) => void) {
-    if (this.isExt()) return;
     const elements = this.elements;
     const length = elements.length;
     const index = this.doc.index;
@@ -179,10 +180,9 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
 
   public toString(tab: string = ''): string {
     const extNode = this.ext();
-    const header =
-      this.name() + ' ' + toDisplayString(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
+    const header = this.name() + ' ' + printTs(this.id) + (extNode ? ` { extension = ${this.getExtId()} }` : '');
     if (extNode) {
-      return this.child()!.toString(tab);
+      return this.child()!.toString(tab, this.id);
     }
     const index = this.doc.index;
     return (

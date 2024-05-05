@@ -1,10 +1,10 @@
-import {ITimestampStruct, delayed, s} from '../../../../json-crdt-patch';
-import {printTree, Printable} from 'tree-dump';
-import {ext} from '../../../extensions';
-import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../../extensions/types';
+import {s} from '../../../../json-crdt-patch';
+import {printTree} from 'tree-dump';
+import {ExtApi} from '../../../extensions/types';
 import {Model, NodeApi} from '../../../model';
 import {StrNode} from '../../nodes';
-import {JsonNode} from '../../types';
+import {Extension} from '../../../extensions/Extension';
+import {ExtNode} from '../../../extensions/ExtNode';
 
 test('treats a simple "vec" node as a vector', () => {
   const model = Model.withLogicalClock();
@@ -32,20 +32,11 @@ test('does not treat "vec" node as extension, if extension is not registered in 
 });
 
 describe('sample extension', () => {
-  const DoubleConcatExt: ExtensionDefinition<StrNode, any, any> = {
-    id: 123,
-    name: 'double-concat',
-    new: (value: string = '') =>
-      ext(
-        123,
-        delayed((builder) => builder.json(value)),
-      ),
-    Node: class CntNode implements ExtensionJsonNode, Printable {
-      public readonly id: ITimestampStruct;
-
-      constructor(public readonly data: StrNode) {
-        this.id = data.id;
-      }
+  const DoubleConcatExt = new Extension<123, StrNode, any, any, any, any>(
+    123,
+    'double-concat',
+    class extends ExtNode<StrNode<string>> {
+      public extId: number = 123;
 
       public name(): string {
         return 'double-concat';
@@ -56,23 +47,11 @@ describe('sample extension', () => {
         return str + str;
       }
 
-      public children(callback: (node: JsonNode) => void): void {}
-
-      public child?(): JsonNode | undefined {
-        return this.data;
-      }
-
-      public container(): JsonNode | undefined {
-        return this.data.container();
-      }
-
-      public api: undefined | unknown = undefined;
-
       public toString(tab?: string): string {
         return `${this.name()} (${this.view()})` + printTree(tab, [(tab) => this.data.toString(tab)]);
       }
     },
-    Api: class CntApi extends NodeApi<any> implements ExtensionApi<any> {
+    class extends NodeApi<any> implements ExtApi<any> {
       public ins(index: number, text: string): this {
         const {api, node} = this;
         const dataApi = api.wrap(node.data as StrNode);
@@ -80,7 +59,8 @@ describe('sample extension', () => {
         return this;
       }
     },
-  };
+    (value: string = '') => s.json(value),
+  );
 
   test('can run an extension', () => {
     const model = Model.withLogicalClock();

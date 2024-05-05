@@ -102,7 +102,7 @@ describe('Overlay.refresh()', () => {
         kit.peritext.editor.cursor.setAt(0, 1);
         const slice = kit.peritext.editor.insStackSlice(123, {foo: 'bar'});
         refresh();
-        const api = slice.dataNode()! as ObjApi;
+        const api = slice.dataNode()! as ObjApi<any>;
         api.set({foo: 'baz'});
       });
 
@@ -200,7 +200,7 @@ describe('Overlay.refresh()', () => {
         const range = kit.peritext.rangeAt(1, 1);
         const slice = kit.peritext.extraSlices.insStack(range, 123, {foo: 'bar'});
         refresh();
-        const api = slice.dataNode()! as ObjApi;
+        const api = slice.dataNode()! as ObjApi<any>;
         api.set({foo: 'baz'});
       });
 
@@ -270,7 +270,7 @@ describe('Overlay.refresh()', () => {
         const slice = kit.peritext.editor.cursor;
         slice.update({data: {a: 'b'}});
         refresh();
-        const api = slice.dataNode()! as ObjApi;
+        const api = slice.dataNode()! as ObjApi<any>;
         api.set({a: 'c'});
       });
     });

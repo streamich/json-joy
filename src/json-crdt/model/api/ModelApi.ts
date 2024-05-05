@@ -5,6 +5,7 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
+import {ExtNode} from '../../extensions/ExtNode';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
@@ -78,6 +79,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public wrap(node: ConNode): ConApi;
   public wrap(node: VecNode): VecApi;
   public wrap(node: JsonNode): NodeApi;
+  public wrap(node: ExtNode<any, any>): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
     else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
@@ -86,7 +88,11 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
     else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
     else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
-    else throw new Error('UNKNOWN_NODE');
+    else if (node instanceof ExtNode) {
+      if (node.api) return node.api;
+      const extension = this.model.ext.get(node.extId)!;
+      return (node.api = new extension.Api(node, this));
+    } else throw new Error('UNKNOWN_NODE');
   }
 
   /**
@@ -123,6 +129,19 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   }
 
   /**
+   * Locates a `con` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `con` node, throws an error.
+   *
+   * @todo Rename to `con`.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `con` node.
+   */
+  public con(path?: ApiPath) {
+    return this.node.con(path);
+  }
+
+  /**
    * Locates a `val` node and returns a local changes API for it. If the node
    * doesn't exist or the node at the path is not a `val` node, throws an error.
    *
@@ -141,7 +160,18 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    * @returns A local changes API for a `vec` node.
    */
   public vec(path?: ApiPath) {
-    return this.node.tup(path);
+    return this.node.vec(path);
+  }
+
+  /**
+   * Locates an `obj` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not an `obj` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for an `obj` node.
+   */
+  public obj(path?: ApiPath) {
+    return this.node.obj(path);
   }
 
   /**
@@ -175,30 +205,6 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    */
   public arr(path?: ApiPath) {
     return this.node.arr(path);
-  }
-
-  /**
-   * Locates an `obj` node and returns a local changes API for it. If the node
-   * doesn't exist or the node at the path is not an `obj` node, throws an error.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for an `obj` node.
-   */
-  public obj(path?: ApiPath) {
-    return this.node.obj(path);
-  }
-
-  /**
-   * Locates a `con` node and returns a local changes API for it. If the node
-   * doesn't exist or the node at the path is not a `con` node, throws an error.
-   *
-   * @todo Rename to `con`.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for a `con` node.
-   */
-  public const(path?: ApiPath) {
-    return this.node.const(path);
   }
 
   /**

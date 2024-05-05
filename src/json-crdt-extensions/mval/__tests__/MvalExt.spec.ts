@@ -1,14 +1,14 @@
-import {MvalExt} from '..';
+import {mval} from '..';
 import {Model} from '../../../json-crdt/model';
 
 test('can set new values in single fork', () => {
   const model = Model.withLogicalClock();
-  model.ext.register(MvalExt);
+  model.ext.register(mval);
   model.api.root({
-    mv: MvalExt.new(1),
+    mv: mval.new(1),
   });
   expect(model.view()).toEqual({mv: [1]});
-  const register = model.api.in(['mv']).asExt(MvalExt);
+  const register = model.api.in(['mv']).asExt(mval);
   register.set(2);
   expect(model.view()).toEqual({mv: [2]});
   register.set(3);
@@ -17,11 +17,11 @@ test('can set new values in single fork', () => {
 
 test('removes tombstones on insert', () => {
   const model = Model.withLogicalClock();
-  model.ext.register(MvalExt);
+  model.ext.register(mval);
   model.api.root({
-    mv: MvalExt.new(1),
+    mv: mval.new(1),
   });
-  const register = model.api.in(['mv']).asExt(MvalExt);
+  const register = model.api.in(['mv']).asExt(mval);
   expect(register.node.data.size()).toBe(1);
   register.set(2);
   expect(register.node.data.size()).toBe(1);
@@ -33,13 +33,13 @@ test('removes tombstones on insert', () => {
 
 test('contains two values when two forks set value concurrently', () => {
   const model1 = Model.withLogicalClock();
-  model1.ext.register(MvalExt);
+  model1.ext.register(mval);
   model1.api.root({
-    mv: MvalExt.new(1),
+    mv: mval.new(1),
   });
   const model2 = model1.fork();
-  const register1 = model1.api.in(['mv']).asExt(MvalExt);
-  const register2 = model2.api.in(['mv']).asExt(MvalExt);
+  const register1 = model1.api.in(['mv']).asExt(mval);
+  const register2 = model2.api.in(['mv']).asExt(mval);
   register1.set(2);
   register2.set(3);
   expect(model1.view()).toEqual({mv: [2]});
@@ -56,13 +56,13 @@ test('contains two values when two forks set value concurrently', () => {
 
 test('contains one value when a fork overwrites a register', () => {
   const model1 = Model.withLogicalClock();
-  model1.ext.register(MvalExt);
+  model1.ext.register(mval);
   model1.api.root({
-    mv: MvalExt.new(1),
+    mv: mval.new(1),
   });
   const model2 = model1.fork();
-  const register1 = model1.api.in(['mv']).asExt(MvalExt);
-  const register2 = model2.api.in(['mv']).asExt(MvalExt);
+  const register1 = model1.api.in(['mv']).asExt(mval);
+  const register2 = model2.api.in(['mv']).asExt(mval);
   register1.set(2);
   register2.set(3);
   model1.applyPatch(model2.api.flush());

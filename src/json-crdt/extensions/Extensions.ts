@@ -1,15 +1,15 @@
 import {printTree} from 'tree-dump/lib/printTree';
-import type {ExtensionDefinition} from './types';
+import type {AnyExtension} from './Extension';
 import type {Printable} from 'tree-dump/lib/types';
 
 export class Extensions implements Printable {
-  protected readonly ext: Record<number, ExtensionDefinition> = {};
+  protected readonly ext: Record<number, AnyExtension> = {};
 
-  public register(extension: ExtensionDefinition<any, any, any>) {
+  public register(extension: AnyExtension) {
     this.ext[extension.id] = extension;
   }
 
-  public get(id: number): ExtensionDefinition | undefined {
+  public get(id: number): AnyExtension | undefined {
     return this.ext[id];
   }
 

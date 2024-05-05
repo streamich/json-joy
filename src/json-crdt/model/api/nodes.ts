@@ -1,15 +1,18 @@
+import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
-import {ExtensionApi, ExtensionDefinition, ExtensionJsonNode} from '../../extensions/types';
 import {NodeEvents} from './NodeEvents';
-import {printTree} from 'tree-dump/lib/printTree';
+import {ExtNode} from '../../extensions/ExtNode';
+import type {Extension} from '../../extensions/Extension';
+import type {ExtApi} from '../../extensions/types';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
+import type {VecNodeExtensionData} from '../../schema/types';
 
 export type ApiPath = string | number | Path | void;
 
@@ -31,7 +34,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * Event target for listening to node changes. You can subscribe to `"view"`
    * events, which are triggered every time the node's view changes.
    *
-   * ```typescript
+   * ```ts
    * node.events.on('view', () => {
    *   // do something...
    * });
@@ -95,7 +98,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
-  public asTup(): VecApi {
+  public asVec(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
   }
@@ -110,14 +113,26 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_CONST');
   }
 
-  public asExt<EN extends ExtensionJsonNode, V, EApi extends ExtensionApi<EN>>(
-    ext: ExtensionDefinition<any, EN, EApi>,
+  /**
+   * Returns the API object of the extension if the node is an extension node.
+   * When the `ext` parameter is provided, it checks if the node is an instance
+   * of the given extension and returns the object's TypeScript type. Otherwise,
+   * it returns the API object of the extension, but without any type checking.
+   *
+   * @param ext Extension of the node
+   * @returns API of the extension
+   */
+  public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
+    ext?: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
-    let node: JsonNode | undefined = this.node;
-    while (node) {
-      if (node instanceof ext.Node) return new ext.Api(node, this.api);
-      node = node.child ? node.child() : undefined;
-    }
+    let extNode: ExtNode<any> | undefined = undefined;
+    const node: JsonNode | undefined = this.node;
+    if (node instanceof ExtNode) extNode = node;
+    if (node instanceof VecNode) extNode = node.ext();
+    if (!extNode) throw new Error('NOT_EXT');
+    const api = this.api.wrap(extNode);
+    if (!ext) return api as any;
+    if (api instanceof ext.Api) return api;
     throw new Error('NOT_EXT');
   }
 
@@ -137,20 +152,27 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asArr();
   }
 
-  public tup(path?: ApiPath): VecApi {
-    return this.in(path).asTup();
+  public vec(path?: ApiPath): VecApi {
+    return this.in(path).asVec();
   }
 
   public obj(path?: ApiPath): ObjApi {
     return this.in(path).asObj();
   }
 
-  public const(path?: ApiPath): ConApi {
+  public con(path?: ApiPath): ConApi {
     return this.in(path).asCon();
   }
 
   public view(): JsonNodeView<N> {
     return this.node.view() as unknown as JsonNodeView<N>;
+  }
+
+  public proxy(): types.ProxyNode<N> {
+    return {
+      toApi: () => <any>this,
+      toView: () => this.node.view() as any,
+    };
   }
 
   public toString(tab: string = ''): string {
@@ -195,13 +217,12 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
    * @param json JSON/CBOR value or ID (logical timestamp) of the value to set.
    * @returns Reference to itself.
    */
-  public set(json: JsonNodeView<N>): this {
+  public set(json: JsonNodeView<N>): void {
     const {api, node} = this;
     const builder = api.builder;
     const val = builder.constOrJson(json);
     api.builder.setVal(node.id, val);
     api.apply();
-    return this;
   }
 
   /**
@@ -246,7 +267,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * @param entries List of index-value pairs to set.
    * @returns Reference to itself.
    */
-  public set(entries: [index: number, value: unknown][]): this {
+  public set(entries: [index: number, value: unknown][]): void {
     const {api, node} = this;
     const {builder} = api;
     builder.insVec(
@@ -254,7 +275,6 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       entries.map(([index, json]) => [index, builder.constOrJson(json)]),
     );
     api.apply();
-    return this; // TODO: remove this ...?
   }
 
   public push(...values: unknown[]): void {
@@ -271,6 +291,13 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
     return this.node.elements.length;
   }
 
+  public ext(): JsonNodeApi<VecNodeExtensionData<N>> | undefined {
+    const node = this.node.ext();
+    if (!node) return node;
+    const api = this.api.wrap(node);
+    return <any>api;
+  }
+
   /**
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
@@ -282,6 +309,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
         get: (target, prop, receiver) => {
           if (prop === 'toApi') return () => this;
           if (prop === 'toView') return () => this.view();
+          if (prop === 'ext') return () => this.ext();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);
@@ -318,7 +346,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * @param entries List of key-value pairs to set.
    * @returns Reference to itself.
    */
-  public set(entries: Partial<JsonNodeView<N>>): this {
+  public set(entries: Partial<JsonNodeView<N>>): void {
     const {api, node} = this;
     const {builder} = api;
     builder.insObj(
@@ -326,7 +354,6 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       Object.entries(entries).map(([key, json]) => [key, builder.constOrJson(json)]),
     );
     api.apply();
-    return this;
   }
 
   /**
@@ -335,7 +362,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * @param keys List of keys to delete.
    * @returns Reference to itself.
    */
-  public del(keys: string[]): this {
+  public del(keys: string[]): void {
     const {api, node} = this;
     const {builder} = api;
     api.builder.insObj(
@@ -343,7 +370,6 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       keys.map((key) => [key, builder.const(undefined)]),
     );
     api.apply();
-    return this;
   }
 
   /**
@@ -383,7 +409,7 @@ export class StrApi extends NodeApi<StrNode> {
    * @param text Text to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, text: string): this {
+  public ins(index: number, text: string): void {
     const {api, node} = this;
     api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
@@ -394,7 +420,6 @@ export class StrApi extends NodeApi<StrNode> {
     if (!after) throw new Error('OUT_OF_BOUNDS');
     builder.insStr(node.id, after, text);
     api.advance();
-    return this;
   }
 
   /**
@@ -404,7 +429,7 @@ export class StrApi extends NodeApi<StrNode> {
    * @param length Number of UTF-16 code units to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
@@ -414,7 +439,6 @@ export class StrApi extends NodeApi<StrNode> {
     node.delete(spans);
     builder.del(node.id, spans);
     api.advance();
-    return this;
   }
 
   /**
@@ -487,13 +511,12 @@ export class BinApi extends NodeApi<BinNode> {
    * @param data Octets to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, data: Uint8Array): this {
+  public ins(index: number, data: Uint8Array): void {
     const {api, node} = this;
     const after = !index ? node.id : node.find(index - 1);
     if (!after) throw new Error('OUT_OF_BOUNDS');
     api.builder.insBin(node.id, after, data);
     api.apply();
-    return this;
   }
 
   /**
@@ -503,13 +526,12 @@ export class BinApi extends NodeApi<BinNode> {
    * @param length Number of octets to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     const spans = node.findInterval(index, length);
     if (!spans) throw new Error('OUT_OF_BOUNDS');
     api.builder.del(node.id, spans);
     api.apply();
-    return this;
   }
 
   /**
@@ -559,7 +581,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * @param values JSON/CBOR values or IDs of the values to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, values: Array<JsonNodeView<N>[number]>): this {
+  public ins(index: number, values: Array<JsonNodeView<N>[number]>): void {
     const {api, node} = this;
     const {builder} = api;
     const after = !index ? node.id : node.find(index - 1);
@@ -568,7 +590,6 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
     builder.insArr(node.id, after, valueIds);
     api.apply();
-    return this;
   }
 
   /**
@@ -578,13 +599,12 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * @param length Number of elements to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     const spans = node.findInterval(index, length);
     if (!spans) throw new Error('OUT_OF_BOUNDS');
     api.builder.del(node.id, spans);
     api.apply();
-    return this;
   }
 
   /**

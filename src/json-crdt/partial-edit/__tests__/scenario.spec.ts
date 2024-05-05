@@ -30,7 +30,9 @@ test('two concurrent users can apply partial updates', () => {
   });
 
   const doc3 = decoder.decode(fields).fork();
-  doc3.api.str('/about').del(2, 2).ins(2, 'was');
+  const str = doc3.api.str('/about');
+  str.del(2, 2);
+  str.ins(2, 'was');
   doc3.api.obj([]).set({verified: true});
   const patch3 = doc3.api.builder.flush();
   expect(doc3.view()).toStrictEqual({

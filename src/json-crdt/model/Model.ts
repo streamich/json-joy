@@ -224,6 +224,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * custom data types on top of the JSON CRDT protocol.
    *
    * @ignore
+   * @todo Allow this to be `undefined`.
    */
   public ext: Extensions = new Extensions();
 
@@ -253,6 +254,8 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Experimental node retrieval API using proxy objects. Returns a strictly
    * typed proxy wrapper around the value of the root node.
+   *
+   * @todo consider renaming this to `_`.
    */
   public get s() {
     return this.api.r.proxy().val;
@@ -566,7 +569,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
             (nodes.length
               ? printTree(
                   tab,
-                  nodes.map((node) => (tab) => `${node.name()} ${clock.toDisplayString(node.id)}`),
+                  nodes.map((node) => (tab) => `${node.name()} ${clock.printTs(node.id)}`),
                 )
               : '')
           );

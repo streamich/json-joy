@@ -3,6 +3,7 @@ import {deepEqual} from '../../../json-equal/deepEqual';
 import {cmpUint8Array} from '@jsonjoy.com/util/lib/buffers/cmpUint8Array';
 import {Model} from '../../model';
 import {toSchema} from '../toSchema';
+import {cnt} from '../../../json-crdt-extensions';
 
 const cmp = (a: NodeBuilder, b: NodeBuilder): boolean => {
   if (a instanceof nodes.con && b instanceof nodes.con) return deepEqual(a.raw, b.raw);
@@ -62,11 +63,11 @@ test('can infer schema of a document nodes', () => {
     vec: s.vec(s.con(1), s.con({foo: 'bar'})),
     arr: s.arr([s.con(1), s.con({foo: 'bar'})]),
   });
-  const model = Model.withLogicalClock().setSchema(schema);
+  const model = Model.create(schema);
   const node = model.root.node();
   const schema2 = toSchema(node);
   expect(cmp(schema, schema2)).toBe(true);
-  const conSchema = toSchema(model.api.const('con').node);
+  const conSchema = toSchema(model.api.con('con').node);
   expect(cmp(con, conSchema)).toBe(true);
   expect(cmp(str, conSchema)).toBe(false);
   const strSchema = toSchema(model.api.str('str').node);
@@ -77,13 +78,21 @@ test('can infer schema of a document nodes', () => {
   expect(cmp(con, objSchema)).toBe(false);
 });
 
-test('can infer schema of a typed model', () => {
+test('can copy a model with extension', () => {
   const schema = s.obj({
-    id: s.con('id'),
-    val: s.val(s.str('world')),
+    count: cnt.new(1),
   });
-  const model = Model.withLogicalClock().setSchema(schema);
-  const schema2 = toSchema(model.root.node());
-  expect(schema2.obj.id).toBeInstanceOf(nodes.con);
-  expect(schema2.obj.val).toBeInstanceOf(nodes.val);
+  const model = Model.create();
+  model.api.root(schema);
+  model.ext.register(cnt);
+  const copy = toSchema(model.root.node());
+  const model2 = Model.create(copy, model.clock.sid);
+  expect(model2.view()).toMatchObject({
+    count: [
+      expect.any(Uint8Array),
+      {
+        [model2.clock.sid.toString(36)]: 1,
+      },
+    ],
+  });
 });

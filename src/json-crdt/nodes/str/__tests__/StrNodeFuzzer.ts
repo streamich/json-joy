@@ -1,5 +1,5 @@
 import {equal} from 'assert';
-import {ITimespanStruct, ITimestampStruct, ClockVector, toDisplayString, ts} from '../../../../json-crdt-patch/clock';
+import {ITimespanStruct, ITimestampStruct, ClockVector, printTs, ts} from '../../../../json-crdt-patch/clock';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {randomSessionId} from '../../../model/util';
 import {StrNode} from '../StrNode';
@@ -7,9 +7,9 @@ import {printTree, Printable} from 'tree-dump';
 
 const printOp = (op: Op) => {
   if ('content' in op) {
-    return `ins ${toDisplayString(op.after)} ${JSON.stringify(op.content)}`;
+    return `ins ${printTs(op.after)} ${JSON.stringify(op.content)}`;
   } else {
-    return `del ${op.range.map((r) => toDisplayString(r) + '!' + r.span).join(', ')}`;
+    return `del ${op.range.map((r) => printTs(r) + '!' + r.span).join(', ')}`;
   }
 };
 
