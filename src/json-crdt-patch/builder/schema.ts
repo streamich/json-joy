@@ -246,8 +246,12 @@ export namespace nodes {
 
   /**
    * Creates an extension node schema. The extension node is a tuple with a
-   * header and a data node. The header is a 3-byte {@link Uint8Array} with the
-   * extension ID, the SID of the tuple ID, and the time of the tuple ID.
+   * sentinel header and a data node. The sentinel header is a 3-byte
+   * {@link Uint8Array}, which makes this "vec" node to be treated as an
+   * extension "ext" node.
+   * 
+   * The 3-byte header consists of the extension ID, the SID of the tuple ID,
+   * and the time of the tuple ID:
    *
    * - 1 byte for the extension id
    * - 1 byte for the sid of the tuple id, modulo 256
@@ -269,11 +273,9 @@ export namespace nodes {
         const tupleId = builder.vec();
         buf[1] = tupleId.sid % 256;
         buf[2] = tupleId.time % 256;
-        const bufId = builder.constOrJson(s.con(buf));
-        const valueId = data.build(builder);
         builder.insVec(tupleId, [
-          [0, bufId],
-          [1, valueId],
+          [0, builder.constOrJson(s.con(buf))],
+          [1, data.build(builder)],
         ]);
         return tupleId;
       });

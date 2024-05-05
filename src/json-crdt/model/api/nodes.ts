@@ -3,15 +3,15 @@ import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
-import {ExtApi} from '../../extensions/types';
 import {NodeEvents} from './NodeEvents';
+import {ExtNode} from '../../extensions/ExtNode';
 import type {Extension} from '../../extensions/Extension';
+import type {ExtApi} from '../../extensions/types';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
-import type {ExtNode} from '../../extensions/ExtNode';
 import type {VecNodeExtensionData} from '../../schema/types';
 
 export type ApiPath = string | number | Path | void;
@@ -116,16 +116,25 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   /**
-   * @todo The `ext` param shall not be necessary.
+   * Returns the API object of the extension if the node is an extension node.
+   * When the `ext` parameter is provided, it checks if the node is an instance
+   * of the given extension and returns the object's TypeScript type. Otherwise,
+   * it returns the API object of the extension, but without any type checking.
+   *
+   * @param ext Extension of the node
+   * @returns API of the extension
    */
   public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
-    ext: Extension<any, any, EN, EApi, any, any>,
+    ext?: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
+    let extNode: ExtNode<any> | undefined = undefined;
     let node: JsonNode | undefined = this.node;
-    while (node) {
-      if (node instanceof ext.Node) return new ext.Api(node, this.api);
-      node = node.child ? node.child() : undefined;
-    }
+    if (node instanceof ExtNode) extNode = node;
+    if (node instanceof VecNode) extNode = node.ext();
+    if (!extNode) throw new Error('NOT_EXT');
+    const api = this.api.wrap(extNode);
+    if (!ext) return api as any;
+    if (api instanceof ext.Api) return api;
     throw new Error('NOT_EXT');
   }
 
