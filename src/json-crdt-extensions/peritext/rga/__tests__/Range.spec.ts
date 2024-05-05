@@ -331,9 +331,9 @@ describe('.view()', () => {
 describe('.contains()', () => {
   test('returns true if slice is contained', () => {
     const {peritext} = setup();
-    peritext.editor.setCursor(3, 2);
+    peritext.editor.cursor.setAt(3, 2);
     const slice = peritext.editor.insOverwriteSlice('b');
-    peritext.editor.setCursor(0);
+    peritext.editor.cursor.setAt(0);
     peritext.refresh();
     expect(peritext.rangeAt(2, 4).contains(slice)).toBe(true);
     expect(peritext.rangeAt(3, 4).contains(slice)).toBe(true);
@@ -343,9 +343,9 @@ describe('.contains()', () => {
 
   test('returns false if slice is not contained', () => {
     const {peritext} = setup();
-    peritext.editor.setCursor(3, 2);
+    peritext.editor.cursor.setAt(3, 2);
     const slice = peritext.editor.insOverwriteSlice('b');
-    peritext.editor.setCursor(0);
+    peritext.editor.cursor.setAt(0);
     peritext.refresh();
     expect(peritext.rangeAt(3, 1).contains(slice)).toBe(false);
     expect(peritext.rangeAt(2, 1).contains(slice)).toBe(false);
@@ -374,14 +374,14 @@ describe('.containsPoint()', () => {
 describe('.isCollapsed()', () => {
   test('returns true when endpoints point to the same location', () => {
     const {peritext} = setup();
-    peritext.editor.setCursor(3);
+    peritext.editor.cursor.setAt(3);
     expect(peritext.editor.cursor.isCollapsed()).toBe(true);
   });
 
   test('returns true when when there is no visible content between endpoints', () => {
     const {peritext} = setup();
     const range = peritext.rangeAt(2, 1);
-    peritext.editor.setCursor(2, 1);
+    peritext.editor.cursor.setAt(2, 1);
     peritext.editor.delBwd();
     expect(range.isCollapsed()).toBe(true);
   });
@@ -392,7 +392,7 @@ describe('.expand()', () => {
     test('can expand anchors to include adjacent elements', () => {
       const {peritext} = setup2();
       const editor = peritext.editor;
-      editor.setCursor(1, 1);
+      editor.cursor.setAt(1, 1);
       expect(editor.cursor.start.pos()).toBe(1);
       expect(editor.cursor.start.anchor).toBe(Anchor.Before);
       expect(editor.cursor.end.pos()).toBe(1);
@@ -432,27 +432,27 @@ describe('.expand()', () => {
       setup((peritext) => {
         const editor = peritext.editor;
         editor.insert('!');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('d');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('l');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('r');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('o');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('w');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert(' ');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('o');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('l');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('l');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('e');
-        editor.setCursor(0);
+        editor.cursor.setAt(0);
         editor.insert('H');
       }),
     );

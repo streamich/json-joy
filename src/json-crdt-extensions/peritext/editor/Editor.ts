@@ -35,11 +35,6 @@ export class Editor<T = string> {
   }
 
   /** @deprecated */
-  public setCursor(start: number, length: number = 0): void {
-    this.cursor.setAt(start, length);
-  }
-
-  /** @deprecated */
   public getCursorText(): string {
     return this.cursor.text();
   }
