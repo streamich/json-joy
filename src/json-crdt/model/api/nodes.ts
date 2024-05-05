@@ -122,6 +122,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param ext Extension of the node
    * @returns API of the extension
    */
+  public asExt(): JsonNodeApi<VecNodeExtensionData<N>> | ExtApi<any> | undefined;
+  public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
+    ext: Extension<any, any, EN, EApi, any, any>,
+  ): EApi;
   public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
     ext?: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
@@ -291,13 +295,6 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
     return this.node.elements.length;
   }
 
-  public ext(): JsonNodeApi<VecNodeExtensionData<N>> | undefined {
-    const node = this.node.ext();
-    if (!node) return node;
-    const api = this.api.wrap(node);
-    return <any>api;
-  }
-
   /**
    * Returns a proxy object for this node. Allows to access vector elements by
    * index.
@@ -309,7 +306,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
         get: (target, prop, receiver) => {
           if (prop === 'toApi') return () => this;
           if (prop === 'toView') return () => this.view();
-          if (prop === 'ext') return () => this.ext();
+          if (prop === 'toExt') return () => this.asExt();
           const index = Number(prop);
           if (Number.isNaN(index)) throw new Error('INVALID_INDEX');
           const child = this.node.get(index);

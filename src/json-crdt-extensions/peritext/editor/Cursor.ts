@@ -1,3 +1,5 @@
+import {ITimestampStruct, tick} from '../../../json-crdt-patch';
+import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -51,6 +53,64 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     start.move(move);
     if (start !== end) end.move(move);
     this.set(start, end);
+  }
+
+  /**
+   * Ensures there is no range selection. If user has selected a range,
+   * the contents is removed and the cursor is set at the start of the range as cursor.
+   *
+   * @todo If block boundaries are withing the range, remove the blocks.
+   * @todo Stress test this method.
+   *
+   * @returns Returns the cursor position after the operation.
+   */
+  public collapse(): void {
+    const isCaret = this.isCollapsed();
+    if (!isCaret) {
+      const {start, end} = this;
+      const delStartId = start.isAbsStart()
+        ? this.txt.point().refStart().id
+        : start.anchor === Anchor.Before
+          ? start.id
+          : start.nextId();
+      const delEndId = end.isAbsEnd()
+        ? this.txt.point().refEnd().id
+        : end.anchor === Anchor.After
+          ? end.id
+          : end.prevId();
+      if (!delStartId || !delEndId) throw new Error('INVALID_RANGE');
+      const rga = this.rga;
+      const spans = rga.findInterval2(delStartId, delEndId);
+      const api = this.txt.model.api;
+      api.builder.del(rga.id, spans);
+      api.apply();
+      if (start.anchor === Anchor.After) this.setAfter(start.id);
+      else this.setAfter(start.prevId() || rga.id);
+    }
+  }
+
+  /**
+   * Insert inline text at current cursor position. If cursor selects a range,
+   * the range is removed and the text is inserted at the start of the range.
+   */
+  public insert(text: string): void {
+    if (!text) return;
+    this.collapse();
+    const after = this.start.clone();
+    after.refAfter();
+    const textId = this.txt.ins(after.id, text);
+    const shift = text.length - 1;
+    this.setAfter(shift ? tick(textId, shift) : textId);
+  }
+
+  public delBwd(): void {
+    const isCollapsed = this.isCollapsed();
+    if (isCollapsed) {
+      const range = this.txt.findCharBefore(this.start);
+      if (!range) return;
+      this.set(range.start, range.end);
+    }
+    this.collapse();
   }
 
   // ---------------------------------------------------------------- Printable

@@ -18,6 +18,7 @@ import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Model} from '../../../json-crdt/model';
+import type {Peritext} from '../Peritext';
 
 /**
  * A persisted slice is a slice that is stored in a {@link Model}. It is used for
@@ -26,7 +27,7 @@ import type {Model} from '../../../json-crdt/model';
  * @todo Maybe rename to "saved", "stored", "mutable".
  */
 export class PersistedSlice<T = string> extends Range<T> implements MutableSlice<T>, Stateful, Printable {
-  public static deserialize<T>(model: Model, rga: AbstractRga<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
+  public static deserialize<T>(model: Model, txt: Peritext<T>, chunk: ArrChunk, tuple: VecNode): PersistedSlice<T> {
     const header = +(tuple.get(0)!.view() as SliceView[0]);
     const id1 = tuple.get(1)!.view() as ITimestampStruct;
     const id2 = (tuple.get(2)!.view() || id1) as ITimestampStruct;
@@ -38,17 +39,21 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const anchor1: Anchor = (header & SliceHeaderMask.X1Anchor) >>> SliceHeaderShift.X1Anchor;
     const anchor2: Anchor = (header & SliceHeaderMask.X2Anchor) >>> SliceHeaderShift.X2Anchor;
     const behavior: SliceBehavior = (header & SliceHeaderMask.Behavior) >>> SliceHeaderShift.Behavior;
+    const rga = txt.str as unknown as AbstractRga<T>;
     const p1 = new Point<T>(rga, id1, anchor1);
     const p2 = new Point<T>(rga, id2, anchor2);
-    const slice = new PersistedSlice<T>(model, rga, chunk, tuple, behavior, type, p1, p2);
+    const slice = new PersistedSlice<T>(model, txt, chunk, tuple, behavior, type, p1, p2);
     return slice;
   }
 
+  /** @todo Use API node here. */
+  protected readonly rga: AbstractRga<T>;
+
   constructor(
-    /** The Peritext context. */
+    /** The `Model` where the slice is stored. */
     protected readonly model: Model,
-    /** The text RGA. */
-    protected readonly rga: AbstractRga<T>,
+    /** The Peritext context. */
+    protected readonly txt: Peritext<T>,
     /** The `arr` chunk of `arr` where the slice is stored. */
     protected readonly chunk: ArrChunk,
     /** The `vec` node which stores the serialized contents of this slice. */
@@ -58,7 +63,8 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     public start: Point<T>,
     public end: Point<T>,
   ) {
-    super(rga, start, end);
+    super(txt.str as unknown as AbstractRga<T>, start, end);
+    this.rga = txt.str as unknown as AbstractRga<T>;
     this.id = chunk.id;
     this.behavior = behavior;
     this.type = type;
@@ -147,7 +153,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     this.hash = state;
     if (changed) {
       const tuple = this.tuple;
-      const slice = PersistedSlice.deserialize(this.model, this.rga, this.chunk, tuple);
+      const slice = PersistedSlice.deserialize<T>(this.model, this.txt, this.chunk, tuple);
       this.behavior = slice.behavior;
       this.type = slice.type;
       this.start = slice.start;

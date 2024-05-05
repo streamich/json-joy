@@ -6,4 +6,4 @@ import {PersistedSlice} from './PersistedSlice';
  *
  * @deprecated
  */
-export class MarkerSlice extends PersistedSlice {}
+export class MarkerSlice<T = string> extends PersistedSlice<T> {}

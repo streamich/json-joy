@@ -13,32 +13,36 @@ import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/c
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
-import type {Model} from '../../../json-crdt/model';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
+import type {Peritext} from '../Peritext';
+import {Chars} from '../constants';
+import {Anchor} from '../rga/constants';
 
-export class Slices implements Stateful, Printable {
-  private list = new AvlMap<ITimestampStruct, PersistedSlice>(compare);
+export class Slices<T = string> implements Stateful, Printable {
+  private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
+
+  protected readonly rga: AbstractRga<T>;
 
   constructor(
-    /** The model, which powers the CRDT nodes. */
-    public readonly model: Model<any>,
+    /** The text RGA. */
+    protected readonly txt: Peritext<T>,
     /** The `arr` node, used as a set, where slices are stored. */
     public readonly set: ArrNode,
-    /** The text RGA. */
-    protected readonly rga: AbstractRga<string>,
-  ) {}
+  ) {
+    this.rga = txt.str as unknown as AbstractRga<T>;
+  }
 
   public ins<
-    S extends PersistedSlice<string>,
-    K extends new (...args: ConstructorParameters<typeof PersistedSlice<string>>) => S,
+    S extends PersistedSlice<T>,
+    K extends new (...args: ConstructorParameters<typeof PersistedSlice<T>>) => S,
   >(
-    range: Range,
+    range: Range<T>,
     behavior: SliceBehavior,
     type: SliceType,
     data?: unknown,
     Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice,
   ): S {
-    const model = this.model;
+    const model = this.set.doc;
     const set = this.set;
     const api = model.api;
     const builder = api.builder;
@@ -67,53 +71,76 @@ export class Slices implements Stateful, Printable {
     const tuple = model.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice = new Klass(model, this.rga, chunk, tuple, behavior, type, start, end);
+    const slice = new Klass(model, this.txt, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
 
-  public insMarker(range: Range, type: SliceType, data?: unknown): MarkerSlice {
-    return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice;
+  public insMarker(range: Range<T>, type: SliceType, data?: unknown): MarkerSlice<T> {
+    return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice<T>;
   }
 
-  public insStack(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+  public insMarkerAfter(
+    after: ITimestampStruct,
+    type: SliceType,
+    data?: unknown,
+    separator: string = Chars.BlockSplitSentinel,
+  ): MarkerSlice<T> {
+    // TODO: test condition when cursors is at absolute or relative starts
+    const {txt, set} = this;
+    const model = set.doc;
+    const api = model.api;
+    const builder = api.builder;
+    const str = txt.str;
+    /**
+     * We skip one clock cycle to prevent Block-wise RGA from merging adjacent
+     * characters. We want the marker chunk to always be its own distinct chunk.
+     */
+    builder.nop(1);
+    const textId = builder.insStr(str.id, after, separator);
+    const point = txt.point(textId, Anchor.Before);
+    const range = txt.range(point, point.clone());
+    return this.insMarker(range, type, data);
+  }
+
+  public insStack(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Stack, type, data);
   }
 
-  public insOverwrite(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+  public insOverwrite(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
-  public insErase(range: Range, type: SliceType, data?: unknown): PersistedSlice {
+  public insErase(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Erase, type, data);
   }
 
-  protected unpack(chunk: ArrChunk): PersistedSlice {
-    const rga = this.rga;
-    const model = this.model;
+  protected unpack(chunk: ArrChunk): PersistedSlice<T> {
+    const txt = this.txt;
+    const model = this.set.doc;
     const tupleId = chunk.data ? chunk.data[0] : undefined;
     if (!tupleId) throw new Error('SLICE_NOT_FOUND');
     const tuple = model.index.get(tupleId);
     if (!(tuple instanceof VecNode)) throw new Error('NOT_TUPLE');
-    let slice = PersistedSlice.deserialize(model, rga, chunk, tuple);
+    let slice = PersistedSlice.deserialize<T>(model, txt, chunk, tuple);
     if (slice.isSplit())
-      slice = new MarkerSlice(model, rga, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
+      slice = new MarkerSlice<T>(model, txt, chunk, tuple, slice.behavior, slice.type, slice.start, slice.end);
     return slice;
   }
 
-  public get(id: ITimestampStruct): PersistedSlice | undefined {
+  public get(id: ITimestampStruct): PersistedSlice<T> | undefined {
     return this.list.get(id);
   }
 
   public del(id: ITimestampStruct): void {
     this.list.del(id);
-    const api = this.model.api;
+    const api = this.set.doc.api;
     api.builder.del(this.set.id, [tss(id.sid, id.time, 1)]);
     api.apply();
   }
 
   public delSlices(slices: Slice[]): void {
-    const api = this.model.api;
+    const api = this.set.doc.api;
     const spans: ITimespanStruct[] = [];
     const length = slices.length;
     for (let i = 0; i < length; i++) {
@@ -131,7 +158,12 @@ export class Slices implements Stateful, Printable {
     return this.list._size;
   }
 
-  public forEach(callback: (item: Slice) => void): void {
+  public iterator0(): () => Slice<T> | undefined {
+    const iterator = this.list.iterator0();
+    return () => iterator()?.v;
+  }
+
+  public forEach(callback: (item: Slice<T>) => void): void {
     this.list.forEach((node) => callback(node.v));
   }
 

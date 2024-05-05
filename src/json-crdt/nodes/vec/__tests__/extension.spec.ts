@@ -34,7 +34,7 @@ test('can read view from node or API node', () => {
   model.api.root({
     mv: mval.new('foo'),
   });
-  const api = model.api.in('mv').asExt();
+  const api = model.api.in('mv').asExt()!;
   expect(api.view()).toEqual(['foo']);
   expect(api.node.view()).toEqual(['foo']);
 });
