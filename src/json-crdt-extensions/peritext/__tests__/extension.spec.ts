@@ -61,7 +61,7 @@ describe('non-typed access', () => {
     expect(api).toBeInstanceOf(VecApi);
     const api2 = api.asExt(ext.peritext);
     expect(api2).toBeInstanceOf(PeritextApi);
-  }); 
+  });
 });
 
 describe('typed access', () => {

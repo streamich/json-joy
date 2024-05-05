@@ -105,7 +105,12 @@ describe('.at()', () => {
         for (let j = 1; j <= length - i; j++) {
           const range = peritext.rangeAt(i, j);
           expect(range.length()).toBe(j);
-          expect(range.text()).toBe(peritext.strApi().view().slice(i, i + j));
+          expect(range.text()).toBe(
+            peritext
+              .strApi()
+              .view()
+              .slice(i, i + j),
+          );
           expect(range.start.anchor).toBe(Anchor.Before);
           expect(range.end.anchor).toBe(Anchor.After);
         }
@@ -152,7 +157,12 @@ describe('.at()', () => {
           for (let j = 1; j <= i; j++) {
             const range = peritext.rangeAt(i, -j);
             expect(range.length()).toBe(j);
-            expect(range.text()).toBe(peritext.strApi().view().slice(i - j, i));
+            expect(range.text()).toBe(
+              peritext
+                .strApi()
+                .view()
+                .slice(i - j, i),
+            );
             expect(range.start.anchor).toBe(Anchor.Before);
             expect(range.end.anchor).toBe(Anchor.After);
           }

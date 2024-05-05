@@ -25,7 +25,13 @@ export class Editor<T = string> {
     const point = txt.pointAbsStart();
     const range = txt.range(point, point.clone());
     // TODO: Add ability to remove cursor.
-    this.cursor = slices.ins<Cursor<T>, typeof Cursor>(range, SliceBehavior.Cursor, CursorAnchor.Start, undefined, Cursor);
+    this.cursor = slices.ins<Cursor<T>, typeof Cursor>(
+      range,
+      SliceBehavior.Cursor,
+      CursorAnchor.Start,
+      undefined,
+      Cursor,
+    );
   }
 
   /** @deprecated */
