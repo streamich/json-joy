@@ -2,7 +2,7 @@ import type {ExtensionId} from '../../json-crdt-extensions';
 import type {MvalNode} from '../../json-crdt-extensions/mval/MvalNode';
 import type {PeritextNode} from '../../json-crdt-extensions/peritext/PeritextNode';
 import type {nodes as builder} from '../../json-crdt-patch';
-import {ExtensionNode} from '../extensions/ExtensionNode';
+import {ExtNode} from '../extensions/ExtNode';
 import type * as nodes from '../nodes';
 
 // prettier-ignore
@@ -26,7 +26,7 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
                   ? nodes.VecNode<ExtensionVecData<MvalNode>>
                   : nodes.JsonNode;
 
-export type ExtensionVecData<EDataNode extends ExtensionNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
+export type ExtensionVecData<EDataNode extends ExtNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
   header: nodes.ConNode<Uint8Array>,
   data: EDataNode,
 ];

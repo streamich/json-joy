@@ -5,7 +5,7 @@ import {compare, ITimestampStruct, printTs} from '../../../json-crdt-patch/clock
 import type {Model} from '../../model';
 import type {JsonNode, JsonNodeView} from '..';
 import type {Printable} from 'tree-dump/lib/types';
-import type {ExtensionNode} from '../../extensions/ExtensionNode';
+import type {ExtNode} from '../../extensions/ExtNode';
 import type {VecNodeExtensionData} from '../../schema/types';
 
 /**
@@ -114,7 +114,7 @@ export class VecNode<Value extends JsonNode[] = JsonNode[]> implements JsonNode<
   /**
    * @ignore
    */
-  public child(): ExtensionNode<JsonNode> | undefined {
+  public child(): ExtNode<JsonNode> | undefined {
     return this.ext();
   }
 

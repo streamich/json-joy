@@ -5,7 +5,7 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
-import {ExtensionNode} from '../../extensions/ExtensionNode';
+import {ExtNode} from '../../extensions/ExtNode';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
 
@@ -79,7 +79,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public wrap(node: ConNode): ConApi;
   public wrap(node: VecNode): VecApi;
   public wrap(node: JsonNode): NodeApi;
-  public wrap(node: ExtensionNode<any, any>): NodeApi;
+  public wrap(node: ExtNode<any, any>): NodeApi;
   public wrap(node: JsonNode) {
     if (node instanceof ValNode) return node.api || (node.api = new ValApi(node, this));
     else if (node instanceof StrNode) return node.api || (node.api = new StrApi(node, this));
@@ -88,7 +88,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     else if (node instanceof ObjNode) return node.api || (node.api = new ObjApi(node, this));
     else if (node instanceof ConNode) return node.api || (node.api = new ConApi(node, this));
     else if (node instanceof VecNode) return node.api || (node.api = new VecApi(node, this));
-    else if (node instanceof ExtensionNode) {
+    else if (node instanceof ExtNode) {
       if (node.api) return node.api;
       const extension = this.model.ext.get(node.extId)!;
       return (node.api = new extension.Api(node, this));

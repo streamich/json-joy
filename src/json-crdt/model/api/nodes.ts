@@ -3,7 +3,7 @@ import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
-import {ExtensionApi} from '../../extensions/types';
+import {ExtApi} from '../../extensions/types';
 import {NodeEvents} from './NodeEvents';
 import type {Extension} from '../../extensions/Extension';
 import type {JsonNode, JsonNodeView} from '../../nodes';
@@ -11,7 +11,7 @@ import type * as types from './proxy';
 import type {ModelApi} from './ModelApi';
 import type {Printable} from 'tree-dump/lib/types';
 import type {JsonNodeApi} from './types';
-import type {ExtensionNode} from '../../extensions/ExtensionNode';
+import type {ExtNode} from '../../extensions/ExtNode';
 import type {VecNodeExtensionData} from '../../schema/types';
 
 export type ApiPath = string | number | Path | void;
@@ -118,7 +118,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   /**
    * @todo The `ext` param shall not be necessary.
    */
-  public asExt<EN extends ExtensionNode<any, any>, EApi extends ExtensionApi<EN>>(
+  public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
     ext: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
     let node: JsonNode | undefined = this.node;

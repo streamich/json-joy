@@ -1,9 +1,9 @@
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import type {PeritextNode} from './PeritextNode';
-import type {ExtensionApi, StrApi, ArrApi, ArrNode} from '../../json-crdt';
+import type {ExtApi, StrApi, ArrApi, ArrNode} from '../../json-crdt';
 import type {SliceNode} from './slice/types';
 
-export class PeritextApi extends NodeApi<PeritextNode> implements ExtensionApi<PeritextNode> {
+export class PeritextApi extends NodeApi<PeritextNode> implements ExtApi<PeritextNode> {
   public text(): StrApi {
     return this.api.wrap(this.node.text());
   }

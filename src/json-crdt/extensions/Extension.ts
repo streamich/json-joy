@@ -1,25 +1,25 @@
-import {NodeBuilder, s, type nodes} from '../../json-crdt-patch';
-import {ExtensionNode} from './ExtensionNode';
+import {type NodeBuilder, s, type nodes} from '../../json-crdt-patch';
+import type {ExtNode} from './ExtNode';
 import type {ModelApi} from '../model';
 import type {JsonNode} from '../nodes';
 import type {JsonNodeToSchema} from '../schema/types';
-import type {ExtensionApi} from './types';
+import type {ExtApi} from './types';
 
 export type AnyExtension = Extension<any, any, any, any, any, any>;
 
 export class Extension<
   Id extends number,
   DataNode extends JsonNode,
-  ExtNode extends ExtensionNode<DataNode, any>,
-  ExtApi extends ExtensionApi<ExtNode>,
+  ENode extends ExtNode<DataNode, any>,
+  EApi extends ExtApi<ENode>,
   DataArgs extends any[] = any[],
   DataSchema extends NodeBuilder = JsonNodeToSchema<DataNode>,
 > {
   constructor(
     public readonly id: Id,
     public readonly name: string,
-    public readonly Node: new (data: DataNode) => ExtNode,
-    public readonly Api: new (node: ExtNode, api: ModelApi<any>) => ExtApi,
+    public readonly Node: new (data: DataNode) => ENode,
+    public readonly Api: new (node: ENode, api: ModelApi<any>) => EApi,
     public readonly schema: (...args: DataArgs) => DataSchema,
   ) {}
 

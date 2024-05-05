@@ -1,11 +1,11 @@
 import {MNEMONIC} from './constants';
-import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
+import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import {ExtensionId} from '../constants';
 import type {ArrNode, StrNode} from '../../json-crdt/nodes';
 import type {PeritextDataNode} from './types';
 import type {SliceNode} from './slice/types';
 
-export class PeritextNode extends ExtensionNode<PeritextDataNode> {
+export class PeritextNode extends ExtNode<PeritextDataNode> {
   public text(): StrNode<string> {
     return this.data.get(0)!;
   }

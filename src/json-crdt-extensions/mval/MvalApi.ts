@@ -1,8 +1,8 @@
 import {ArrApi, NodeApi} from '../../json-crdt/model/api/nodes';
 import type {MvalNode} from './MvalNode';
-import type {ExtensionApi} from '../../json-crdt';
+import type {ExtApi} from '../../json-crdt';
 
-export class MvalApi extends NodeApi<MvalNode> implements ExtensionApi<MvalNode> {
+export class MvalApi extends NodeApi<MvalNode> implements ExtApi<MvalNode> {
   public set(json: unknown): this {
     const {api, node} = this;
     const builder = api.builder;

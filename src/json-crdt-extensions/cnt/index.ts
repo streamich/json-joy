@@ -1,13 +1,13 @@
 import {ExtensionId, ExtensionName} from '../constants';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
-import {ExtensionNode} from '../../json-crdt/extensions/ExtensionNode';
+import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import {Extension} from '../../json-crdt/extensions/Extension';
 import {NodeBuilder, nodes, s, type ObjNode} from '../../json-crdt';
-import type {ExtensionApi} from '../../json-crdt';
+import type {ExtApi} from '../../json-crdt';
 
 const MNEMONIC = ExtensionName[ExtensionId.cnt];
 
-class CntNode extends ExtensionNode<ObjNode, number> {
+class CntNode extends ExtNode<ObjNode, number> {
   public readonly extId = ExtensionId.cnt;
 
   public name(): string {
@@ -22,7 +22,7 @@ class CntNode extends ExtensionNode<ObjNode, number> {
   }
 }
 
-class CntApi extends NodeApi<CntNode> implements ExtensionApi<CntNode> {
+class CntApi extends NodeApi<CntNode> implements ExtApi<CntNode> {
   public inc(increment: number): this {
     const {api, node} = this;
     const sid = api.model.clock.sid;

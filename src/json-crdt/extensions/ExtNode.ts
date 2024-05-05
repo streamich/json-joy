@@ -2,8 +2,7 @@ import {printTs, type ITimestampStruct} from '../../json-crdt-patch/clock';
 import type {JsonNode} from '..';
 import type {Printable} from 'tree-dump/lib/types';
 
-/** @todo Rename to `ExtNode` to be inline with other classes. */
-export abstract class ExtensionNode<N extends JsonNode, View = unknown> implements JsonNode<View>, Printable {
+export abstract class ExtNode<N extends JsonNode, View = unknown> implements JsonNode<View>, Printable {
   public abstract readonly extId: number;
   public readonly id: ITimestampStruct;
 

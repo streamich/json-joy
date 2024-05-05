@@ -1,10 +1,10 @@
 import {s} from '../../../../json-crdt-patch';
 import {printTree} from 'tree-dump';
-import {ExtensionApi} from '../../../extensions/types';
+import {ExtApi} from '../../../extensions/types';
 import {Model, NodeApi} from '../../../model';
 import {StrNode} from '../../nodes';
 import {Extension} from '../../../extensions/Extension';
-import {ExtensionNode} from '../../../extensions/ExtensionNode';
+import {ExtNode} from '../../../extensions/ExtNode';
 
 test('treats a simple "vec" node as a vector', () => {
   const model = Model.withLogicalClock();
@@ -35,7 +35,7 @@ describe('sample extension', () => {
   const DoubleConcatExt = new Extension<123, StrNode, any, any, any, any>(
     123,
     'double-concat',
-    class extends ExtensionNode<StrNode<string>> {
+    class extends ExtNode<StrNode<string>> {
       public extId: number = 123;
 
       public name(): string {
@@ -51,7 +51,7 @@ describe('sample extension', () => {
         return `${this.name()} (${this.view()})` + printTree(tab, [(tab) => this.data.toString(tab)]);
       }
     },
-    class extends NodeApi<any> implements ExtensionApi<any> {
+    class extends NodeApi<any> implements ExtApi<any> {
       public ins(index: number, text: string): this {
         const {api, node} = this;
         const dataApi = api.wrap(node.data as StrNode);
