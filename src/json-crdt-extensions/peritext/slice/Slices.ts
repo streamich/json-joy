@@ -80,7 +80,12 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice<T>;
   }
 
-  public insMarkerAfter(after: ITimestampStruct, type: SliceType, data?: unknown, separator: string = Chars.BlockSplitSentinel): MarkerSlice<T> {
+  public insMarkerAfter(
+    after: ITimestampStruct,
+    type: SliceType,
+    data?: unknown,
+    separator: string = Chars.BlockSplitSentinel,
+  ): MarkerSlice<T> {
     // TODO: test condition when cursors is at absolute or relative starts
     const {txt, set} = this;
     const model = set.doc;
@@ -153,7 +158,7 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.list._size;
   }
 
-  public iterator0(): (() => Slice<T> | undefined) {
+  public iterator0(): () => Slice<T> | undefined {
     const iterator = this.list.iterator0();
     return () => iterator()?.v;
   }

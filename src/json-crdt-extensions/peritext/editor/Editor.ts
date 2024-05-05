@@ -58,7 +58,7 @@ export class Editor<T = string> {
    * the range is removed and the text is inserted at the start of the range.
    */
   public insert(text: string): void {
-    this.cursors(cursor => cursor.insert(text));
+    this.cursors((cursor) => cursor.insert(text));
   }
 
   /**
@@ -66,7 +66,7 @@ export class Editor<T = string> {
    * selects a range, deletes the whole range.
    */
   public delBwd(): void {
-    this.cursors(cursor => cursor.delBwd());
+    this.cursors((cursor) => cursor.delBwd());
   }
 
   /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */

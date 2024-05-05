@@ -4,12 +4,15 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slices} from '../slice/Slices';
 
 export class EditorSlices<T = string> {
-  constructor(protected readonly txt: Peritext<T>, protected readonly slices: Slices<T>) {}
+  constructor(
+    protected readonly txt: Peritext<T>,
+    protected readonly slices: Slices<T>,
+  ) {}
 
   public insMarker(type: SliceType, data?: unknown, separator?: string): MarkerSlice<T>[] {
     const {txt, slices} = this;
     const markers: MarkerSlice<T>[] = [];
-    txt.editor.cursors(cursor => {
+    txt.editor.cursors((cursor) => {
       cursor.collapse();
       const after = cursor.start.clone();
       after.refAfter();
