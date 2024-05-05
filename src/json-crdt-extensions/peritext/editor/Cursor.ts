@@ -1,3 +1,5 @@
+import {ITimestampStruct} from '../../../json-crdt-patch';
+import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -51,6 +53,33 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     start.move(move);
     if (start !== end) end.move(move);
     this.set(start, end);
+  }
+
+  /**
+   * Ensures there is no range selection. If user has selected a range,
+   * the contents is removed and the cursor is set at the start of the range as cursor.
+   *
+   * @todo If block boundaries are withing the range, remove the blocks.
+   *
+   * @returns Returns the cursor position after the operation.
+   */
+  public collapseSelection(): ITimestampStruct {
+    const isCaret = this.isCollapsed();
+    if (!isCaret) {
+      const {start, end} = this;
+      const deleteStartId = start.anchor === Anchor.Before ? start.id : start.nextId();
+      const deleteEndId = end.anchor === Anchor.After ? end.id : end.prevId();
+      const rga = this.rga;
+      if (!deleteStartId || !deleteEndId) throw new Error('INVALID_RANGE');
+      const range = rga.findInterval2(deleteStartId, deleteEndId);
+      const model = this.model;
+      const api = model.api;
+      api.builder.del(rga.id, range);
+      api.apply();
+      if (start.anchor === Anchor.After) this.setAfter(start.id);
+      else this.setAfter(start.prevId() || rga.id);
+    }
+    return this.start.id;
   }
 
   // ---------------------------------------------------------------- Printable

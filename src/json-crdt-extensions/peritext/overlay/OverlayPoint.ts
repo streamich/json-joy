@@ -12,7 +12,7 @@ import type {Slice} from '../slice/types';
  * sparse locations in the string of the places where annotation slices start,
  * end, or are broken down by other intersecting slices.
  */
-export class OverlayPoint extends Point implements Printable, HeadlessNode {
+export class OverlayPoint<T = string> extends Point<T> implements Printable, HeadlessNode {
   /**
    * Hash of text contents until the next {@link OverlayPoint}. This field is
    * modified by the {@link Overlay} tree.
@@ -26,7 +26,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * one. A *layer* is a part of a slice from the current point to the next one.
    * This interval can contain many layers, as the slices can be overlap.
    */
-  public readonly layers: Slice[] = [];
+  public readonly layers: Slice<T>[] = [];
 
   /**
    * Inserts a slice to the list of layers which contains the area from this
@@ -36,7 +36,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice Slice to add to the layer list.
    */
-  public addLayer(slice: Slice): void {
+  public addLayer(slice: Slice<T>): void {
     const layers = this.layers;
     const length = layers.length;
     if (!length) {
@@ -69,7 +69,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice Slice to remove from the layer list.
    */
-  public removeLayer(slice: Slice): void {
+  public removeLayer(slice: Slice<T>): void {
     const layers = this.layers;
     const length = layers.length;
     for (let i = 0; i < length; i++) {
@@ -87,7 +87,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * in the text, even if the start and end of the slice are different.
    * @deprecated This field might happen to be not necessary.
    */
-  public readonly markers: Slice[] = [];
+  public readonly markers: Slice<T>[] = [];
 
   /**
    * Inserts a slice to the list of markers which represent a single point in
@@ -98,7 +98,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * @param slice Slice to add to the marker list.
    * @deprecated This method might happen to be not necessary.
    */
-  public addMarker(slice: Slice): void {
+  public addMarker(slice: Slice<T>): void {
     /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
@@ -133,7 +133,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    * @param slice Slice to remove from the marker list.
    * @deprecated This method might happen to be not necessary.
    */
-  public removeMarker(slice: Slice): void {
+  public removeMarker(slice: Slice<T>): void {
     /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
@@ -150,14 +150,14 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
   /**
    * Sorted list of all references to rich-text constructs.
    */
-  public readonly refs: OverlayRef[] = [];
+  public readonly refs: OverlayRef<T>[] = [];
 
   /**
    * Insert a reference to a marker.
    *
    * @param slice A marker (split slice).
    */
-  public addMarkerRef(slice: MarkerSlice): void {
+  public addMarkerRef(slice: MarkerSlice<T>): void {
     this.refs.push(slice);
     this.addMarker(slice);
   }
@@ -167,8 +167,8 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice A slice that starts at this point.
    */
-  public addLayerStartRef(slice: Slice): void {
-    this.refs.push(new OverlayRefSliceStart(slice));
+  public addLayerStartRef(slice: Slice<T>): void {
+    this.refs.push(new OverlayRefSliceStart<T>(slice));
     this.addLayer(slice);
   }
 
@@ -177,7 +177,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice A slice that ends at this point.
    */
-  public addLayerEndRef(slice: Slice): void {
+  public addLayerEndRef(slice: Slice<T>): void {
     this.refs.push(new OverlayRefSliceEnd(slice));
   }
 
@@ -187,7 +187,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
    *
    * @param slice A slice to remove the reference to.
    */
-  public removeRef(slice: Slice): void {
+  public removeRef(slice: Slice<T>): void {
     const refs = this.refs;
     const length = refs.length;
     for (let i = 0; i < length; i++) {
@@ -229,7 +229,7 @@ export class OverlayPoint extends Point implements Printable, HeadlessNode {
 
   // ------------------------------------------------------------- HeadlessNode
 
-  public p: OverlayPoint | undefined = undefined;
-  public l: OverlayPoint | undefined = undefined;
-  public r: OverlayPoint | undefined = undefined;
+  public p: OverlayPoint<T> | undefined = undefined;
+  public l: OverlayPoint<T> | undefined = undefined;
+  public r: OverlayPoint<T> | undefined = undefined;
 }

@@ -6,30 +6,26 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 import {Chars} from '../constants';
 import type {Range} from '../rga/Range';
 import type {Peritext} from '../Peritext';
-import type {Printable} from 'tree-dump/lib/types';
 import type {Point} from '../rga/Point';
 import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slices} from '../slice/Slices';
 
-/**
- * @todo Rename to `PeritextApi`.
- */
-export class Editor implements Printable {
+export class Editor<T = string> {
   /**
    * Cursor is the the current user selection. It can be a caret or a
    * range. If range is collapsed to a single point, it is a caret.
    */
-  public readonly cursor: Cursor;
+  public readonly cursor: Cursor<T>;
 
   constructor(
-    public readonly txt: Peritext,
-    slices: Slices,
+    public readonly txt: Peritext<T>,
+    slices: Slices<T>,
   ) {
     const point = txt.pointAbsStart();
     const range = txt.range(point, point.clone());
     // TODO: Add ability to remove cursor.
-    this.cursor = slices.ins<Cursor, typeof Cursor>(range, SliceBehavior.Cursor, CursorAnchor.Start, undefined, Cursor);
+    this.cursor = slices.ins<Cursor<T>, typeof Cursor>(range, SliceBehavior.Cursor, CursorAnchor.Start, undefined, Cursor);
   }
 
   /** @deprecated */
@@ -97,7 +93,7 @@ export class Editor implements Printable {
     this.collapseSelection();
   }
 
-  public start(): Point | undefined {
+  public start(): Point<T> | undefined {
     const txt = this.txt;
     const str = txt.str;
     if (!str.length()) return;
@@ -108,7 +104,7 @@ export class Editor implements Printable {
     return start;
   }
 
-  public end(): Point | undefined {
+  public end(): Point<T> | undefined {
     const txt = this.txt;
     const str = txt.str;
     if (!str.length()) return;
@@ -119,7 +115,7 @@ export class Editor implements Printable {
     return end;
   }
 
-  public all(): Range | undefined {
+  public all(): Range<T> | undefined {
     const start = this.start();
     const end = this.end();
     if (!start || !end) return;
@@ -131,22 +127,22 @@ export class Editor implements Printable {
     if (range) this.cursor.setRange(range);
   }
 
-  public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+  public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
   }
 
-  public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+  public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
-  public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice {
+  public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
   }
 
-  public insMarker(type: SliceType, data?: unknown): MarkerSlice {
+  public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
     const after = this.collapseSelection();
     return this.txt.insMarker(after, type, data, Chars.BlockSplitSentinel);
   }

@@ -22,7 +22,7 @@ test('clears change history', () => {
   editor.cursor.setAt(1);
   editor.cursor.setAt(2);
   editor.cursor.setAt(3);
-  expect(peritext.localSlices.model.api.flush().ops.length).toBe(0);
+  expect(peritext.localSlices.set.doc.api.flush().ops.length).toBe(0);
 });
 
 test('clears slice set tombstones', () => {
@@ -30,7 +30,7 @@ test('clears slice set tombstones', () => {
   // It is probabilistic, if we set `Math.random` to 0 it will always remove tombstones.
   Math.random = () => 0;
   const {peritext} = setup();
-  const slicesRga = peritext.localSlices.model.root.node()!.get(0)!;
+  const slicesRga = peritext.localSlices.set.doc.root.node()!.get(0)!;
   const count = slicesRga.size();
   const slice1 = peritext.localSlices.insOverwrite(peritext.rangeAt(1, 2), 1);
   const slice2 = peritext.localSlices.insOverwrite(peritext.rangeAt(1, 2), 3);

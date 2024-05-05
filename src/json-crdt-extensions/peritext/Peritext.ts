@@ -9,7 +9,7 @@ import {LocalSlices} from './slice/LocalSlices';
 import {Overlay} from './overlay/Overlay';
 import {Chars} from './constants';
 import {interval} from '../../json-crdt-patch/clock';
-import {Model} from '../../json-crdt/model';
+import {Model, StrApi} from '../../json-crdt/model';
 import {CONST, updateNum} from '../../json-hash';
 import {SESSION} from '../../json-crdt-patch/constants';
 import {s} from '../../json-crdt-patch';
@@ -19,6 +19,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {MarkerSlice} from './slice/MarkerSlice';
 import type {SliceSchema, SliceType} from './slice/types';
 import type {SchemaToJsonNode} from '../../json-crdt/schema/types';
+import type {AbstractRga} from '../../json-crdt/nodes/rga';
 
 const EXTRA_SLICES_SCHEMA = s.vec(s.arr<SliceSchema>([]));
 
@@ -28,29 +29,29 @@ type SlicesModel = Model<SchemaToJsonNode<typeof EXTRA_SLICES_SCHEMA>>;
  * Context for a Peritext instance. Contains all the data and methods needed to
  * interact with the text.
  */
-export class Peritext implements Printable {
+export class Peritext<T = string> implements Printable {
   /**
    * *Slices* are rich-text annotations that appear in the text. The "saved"
    * slices are the ones that are persisted in the document.
    */
-  public readonly savedSlices: Slices;
+  public readonly savedSlices: Slices<T>;
 
   /**
    * *Extra slices* are slices that are not persisted in the document. However,
    * they are still shared across users, i.e. they are ephemerally persisted
    * during the editing session.
    */
-  public readonly extraSlices: Slices;
+  public readonly extraSlices: Slices<T>;
 
   /**
    * *Local slices* are slices that are not persisted in the document and are
    * not shared with other users. They are used only for local annotations for
    * the current user.
    */
-  public readonly localSlices: Slices;
+  public readonly localSlices: Slices<T>;
 
-  public readonly editor: Editor;
-  public readonly overlay = new Overlay(this);
+  public readonly editor: Editor<T>;
+  public readonly overlay = new Overlay<T>(this);
 
   /**
    * Creates a new Peritext context.
@@ -67,27 +68,29 @@ export class Peritext implements Printable {
    */
   constructor(
     public readonly model: Model,
-    public readonly str: StrNode,
+    // TODO: Rename `str` to `rga`.
+    public readonly str: AbstractRga<T>,
     slices: ArrNode,
     extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
-    this.savedSlices = new Slices(this.model, slices, this.str);
-    this.extraSlices = new ExtraSlices(extraSlicesModel, extraSlicesModel.root.node().get(0)!, this.str);
+    this.savedSlices = new Slices(this, slices);
+    this.extraSlices = new ExtraSlices(this, extraSlicesModel.root.node().get(0)!);
     const localApi = localSlicesModel.api;
     localApi.onLocalChange.listen(() => {
       localApi.flush();
     });
-    this.localSlices = new LocalSlices(localSlicesModel, localSlicesModel.root.node().get(0)!, this.str);
-    this.editor = new Editor(this, this.localSlices);
+    this.localSlices = new LocalSlices(this, localSlicesModel.root.node().get(0)!);
+    this.editor = new Editor<T>(this, this.localSlices);
   }
 
-  public strApi() {
-    return this.model.api.wrap(this.str);
+  public strApi(): StrApi {
+    if (this.str instanceof StrNode) return this.model.api.wrap(this.str);
+    throw new Error('INVALID_STR');
   }
 
   /** Select a single character before a point. */
-  public findCharBefore(point: Point): Range | undefined {
+  public findCharBefore(point: Point<T>): Range<T> | undefined {
     if (point.anchor === Anchor.After) {
       const chunk = point.chunk();
       if (chunk && !chunk.del) return this.range(this.point(point.id, Anchor.Before), point);
@@ -106,8 +109,8 @@ export class Peritext implements Printable {
    * @param anchor Whether the point should be before or after the character.
    * @returns The point.
    */
-  public point(id: ITimestampStruct = this.str.id, anchor: Anchor = Anchor.After): Point {
-    return new Point(this.str, id, anchor);
+  public point(id: ITimestampStruct = this.str.id, anchor: Anchor = Anchor.After): Point<T> {
+    return new Point<T>(this.str as unknown as AbstractRga<T>, id, anchor);
   }
 
   /**
@@ -119,7 +122,7 @@ export class Peritext implements Printable {
    *               Defaults to "before".
    * @returns The point.
    */
-  public pointAt(pos: number, anchor: Anchor = Anchor.Before): Point {
+  public pointAt(pos: number, anchor: Anchor = Anchor.Before): Point<T> {
     // TODO: Provide ability to attach to the beginning of the text?
     // TODO: Provide ability to attach to the end of the text?
     const str = this.str;
@@ -134,7 +137,7 @@ export class Peritext implements Printable {
    *
    * @returns A point at the start of the text.
    */
-  public pointAbsStart(): Point {
+  public pointAbsStart(): Point<T> {
     return this.point(this.str.id, Anchor.After);
   }
 
@@ -144,7 +147,7 @@ export class Peritext implements Printable {
    *
    * @returns A point at the end of the text.
    */
-  public pointAbsEnd(): Point {
+  public pointAbsEnd(): Point<T> {
     return this.point(this.str.id, Anchor.Before);
   }
 
@@ -157,7 +160,7 @@ export class Peritext implements Printable {
    * @param p2 Point
    * @returns A range with points in correct order.
    */
-  public rangeFromPoints(p1: Point, p2: Point): Range {
+  public rangeFromPoints(p1: Point<T>, p2: Point<T>): Range<T> {
     return Range.from(this.str, p1, p2);
   }
 
@@ -169,7 +172,7 @@ export class Peritext implements Printable {
    * @param end End point of the range, must be after or equal to start.
    * @returns A range with the given start and end points.
    */
-  public range(start: Point, end: Point): Range {
+  public range(start: Point<T>, end: Point<T>): Range<T> {
     return new Range(this.str, start, end);
   }
 
@@ -181,7 +184,7 @@ export class Peritext implements Printable {
    * @param length Length of the range.
    * @returns A range from the given position with the given length.
    */
-  public rangeAt(start: number, length: number = 0): Range {
+  public rangeAt(start: number, length: number = 0): Range<T> {
     return Range.at(this.str, start, length);
   }
 
@@ -221,7 +224,7 @@ export class Peritext implements Printable {
     type: SliceType,
     data?: unknown,
     char: string = Chars.BlockSplitSentinel,
-  ): MarkerSlice {
+  ): MarkerSlice<T> {
     const api = this.model.api;
     const builder = api.builder;
     const str = this.str;
@@ -237,7 +240,7 @@ export class Peritext implements Printable {
   }
 
   /** @todo This can probably use .del() */
-  public delMarker(split: MarkerSlice): void {
+  public delMarker(split: MarkerSlice<T>): void {
     const str = this.str;
     const api = this.model.api;
     const builder = api.builder;

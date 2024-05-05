@@ -119,7 +119,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
    * @param ext Extension of the node
    * @returns API of the extension
    */
-  public asExt(): JsonNodeApi<VecNodeExtensionData<N>> | undefined;
+  public asExt(): JsonNodeApi<VecNodeExtensionData<N>> | ExtApi<any> | undefined;
   public asExt<EN extends ExtNode<any, any>, EApi extends ExtApi<EN>>(
     ext: Extension<any, any, EN, EApi, any, any>,
   ): EApi;

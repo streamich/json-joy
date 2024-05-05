@@ -6,17 +6,17 @@ import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 
-export class MarkerOverlayPoint extends OverlayPoint {
+export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> {
   /**
    * Hash value of the preceding text contents, up until the next marker.
    */
   public textHash: number = 0;
 
   constructor(
-    protected readonly rga: AbstractRga<string>,
+    protected readonly rga: AbstractRga<T>,
     id: ITimestampStruct,
     anchor: Anchor,
-    public readonly marker: MarkerSlice,
+    public readonly marker: MarkerSlice<T>,
   ) {
     super(rga, id, anchor);
   }
