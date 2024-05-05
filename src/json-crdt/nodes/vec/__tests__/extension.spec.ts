@@ -60,7 +60,7 @@ describe('extension validity checks', () => {
       mv: mval.new(),
     });
     const buf = new Uint8Array(4);
-    buf.set(model.api.const(['mv', 0]).node.view() as Uint8Array, 0);
+    buf.set(model.api.con(['mv', 0]).node.view() as Uint8Array, 0);
     const api = model.api.vec(['mv']);
     api.set([[0, buf]]);
     expect(model.view()).toEqual({
@@ -75,7 +75,7 @@ describe('extension validity checks', () => {
     model.api.root({
       mv: mval.new(),
     });
-    const buf = model.api.const(['mv', 0]).node.view() as Uint8Array;
+    const buf = model.api.con(['mv', 0]).node.view() as Uint8Array;
     buf[1] += 1;
     expect(model.view()).toEqual({
       mv: [buf, []],
@@ -89,7 +89,7 @@ describe('extension validity checks', () => {
     model.api.root({
       mv: mval.new(),
     });
-    const buf = model.api.const(['mv', 0]).node.view() as Uint8Array;
+    const buf = model.api.con(['mv', 0]).node.view() as Uint8Array;
     buf[2] += 1;
     expect(model.view()).toEqual({
       mv: [buf, []],

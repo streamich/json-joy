@@ -5,9 +5,9 @@ import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
+import {ExtensionNode} from '../../extensions/ExtensionNode';
 import type {Model} from '../Model';
 import type {JsonNode, JsonNodeView} from '../../nodes';
-import {ExtensionNode} from '../../extensions/ExtensionNode';
 
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
@@ -129,6 +129,19 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   }
 
   /**
+   * Locates a `con` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not a `con` node, throws an error.
+   *
+   * @todo Rename to `con`.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for a `con` node.
+   */
+  public con(path?: ApiPath) {
+    return this.node.con(path);
+  }
+
+  /**
    * Locates a `val` node and returns a local changes API for it. If the node
    * doesn't exist or the node at the path is not a `val` node, throws an error.
    *
@@ -147,7 +160,18 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    * @returns A local changes API for a `vec` node.
    */
   public vec(path?: ApiPath) {
-    return this.node.tup(path);
+    return this.node.vec(path);
+  }
+
+  /**
+   * Locates an `obj` node and returns a local changes API for it. If the node
+   * doesn't exist or the node at the path is not an `obj` node, throws an error.
+   *
+   * @param path Path at which to locate a node.
+   * @returns A local changes API for an `obj` node.
+   */
+  public obj(path?: ApiPath) {
+    return this.node.obj(path);
   }
 
   /**
@@ -181,30 +205,6 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    */
   public arr(path?: ApiPath) {
     return this.node.arr(path);
-  }
-
-  /**
-   * Locates an `obj` node and returns a local changes API for it. If the node
-   * doesn't exist or the node at the path is not an `obj` node, throws an error.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for an `obj` node.
-   */
-  public obj(path?: ApiPath) {
-    return this.node.obj(path);
-  }
-
-  /**
-   * Locates a `con` node and returns a local changes API for it. If the node
-   * doesn't exist or the node at the path is not a `con` node, throws an error.
-   *
-   * @todo Rename to `con`.
-   *
-   * @param path Path at which to locate a node.
-   * @returns A local changes API for a `con` node.
-   */
-  public const(path?: ApiPath) {
-    return this.node.const(path);
   }
 
   /**

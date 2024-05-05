@@ -145,7 +145,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asArr();
   }
 
-  public tup(path?: ApiPath): VecApi {
+  public vec(path?: ApiPath): VecApi {
     return this.in(path).asVec();
   }
 
@@ -153,7 +153,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     return this.in(path).asObj();
   }
 
-  public const(path?: ApiPath): ConApi {
+  public con(path?: ApiPath): ConApi {
     return this.in(path).asCon();
   }
 

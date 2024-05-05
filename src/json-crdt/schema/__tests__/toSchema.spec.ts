@@ -67,7 +67,7 @@ test('can infer schema of a document nodes', () => {
   const node = model.root.node();
   const schema2 = toSchema(node);
   expect(cmp(schema, schema2)).toBe(true);
-  const conSchema = toSchema(model.api.const('con').node);
+  const conSchema = toSchema(model.api.con('con').node);
   expect(cmp(con, conSchema)).toBe(true);
   expect(cmp(str, conSchema)).toBe(false);
   const strSchema = toSchema(model.api.str('str').node);

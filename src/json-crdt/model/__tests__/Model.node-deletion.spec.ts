@@ -67,7 +67,7 @@ test('removes from index recursively after object key overwrite', () => {
     },
   });
   const val1 = doc.api.obj(['foo']).node.id;
-  const val2 = doc.api.const(['foo', 'bar']).node.id;
+  const val2 = doc.api.con(['foo', 'bar']).node.id;
   const val3 = doc.api.arr(['foo', 'baz']).node.id;
   const val4 = doc.api.val(['foo', 'baz', 0]).node.id;
   expect(!!doc.index.get(val1)).toBe(true);
@@ -94,7 +94,7 @@ test('removes from index recursively after array element delete', () => {
     },
   ]);
   const val1 = doc.api.obj([2, 'foo']).node.id;
-  const val2 = doc.api.const([2, 'foo', 'bar']).node.id;
+  const val2 = doc.api.con([2, 'foo', 'bar']).node.id;
   const val3 = doc.api.arr([2, 'foo', 'baz']).node.id;
   const val4 = doc.api.val([2, 'foo', 'baz', 0]).node.id;
   expect(!!doc.index.get(val1)).toBe(true);
@@ -119,7 +119,7 @@ test('removes from index recursively after LWW register write', () => {
   });
   const val0 = doc.api.val([2]).node.id;
   const val1 = doc.api.obj([2, 'foo']).node.id;
-  const val2 = doc.api.const([2, 'foo', 'bar']).node.id;
+  const val2 = doc.api.con([2, 'foo', 'bar']).node.id;
   const val3 = doc.api.arr([2, 'foo', 'baz']).node.id;
   const val4 = doc.api.val([2, 'foo', 'baz', 0]).node.id;
   expect(!!doc.index.get(val1)).toBe(true);
@@ -146,7 +146,7 @@ test('removes from index recursively after LWW register write', () => {
   });
   const val0 = doc.api.val([2]).node.id;
   const val1 = doc.api.obj([2, 'foo']).node.id;
-  const val2 = doc.api.const([2, 'foo', 'bar']).node.id;
+  const val2 = doc.api.con([2, 'foo', 'bar']).node.id;
   const val3 = doc.api.arr([2, 'foo', 'baz']).node.id;
   const val4 = doc.api.val([2, 'foo', 'baz', 0]).node.id;
   expect(!!doc.index.get(val1)).toBe(true);
