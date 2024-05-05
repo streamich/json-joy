@@ -15,6 +15,8 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
+import {Chars} from '../constants';
+import {Anchor} from '../rga/constants';
 
 export class Slices<T = string> implements Stateful, Printable {
   private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
@@ -76,6 +78,23 @@ export class Slices<T = string> implements Stateful, Printable {
 
   public insMarker(range: Range<T>, type: SliceType, data?: unknown): MarkerSlice<T> {
     return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice<T>;
+  }
+
+  public insMarkerAfter(after: ITimestampStruct, type: SliceType, data?: unknown, separator: string = Chars.BlockSplitSentinel): MarkerSlice<T> {
+    const {txt, set} = this;
+    const model = set.doc;
+    const api = model.api;
+    const builder = api.builder;
+    const str = txt.str;
+    /**
+     * We skip one clock cycle to prevent Block-wise RGA from merging adjacent
+     * characters. We want the marker chunk to always be its own distinct chunk.
+     */
+    builder.nop(1);
+    const textId = builder.insStr(str.id, after, separator);
+    const point = txt.point(textId, Anchor.Before);
+    const range = txt.range(point, point.clone());
+    return this.insMarker(range, type, data);
   }
 
   public insStack(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {

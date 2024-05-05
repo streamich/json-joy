@@ -240,24 +240,14 @@ export class Peritext<T = string> implements Printable {
 
   // ------------------------------------------------------------------ markers
 
+  /** @deprecated Use the method in `Editor` and `Cursor` instead. */
   public insMarker(
     after: ITimestampStruct,
     type: SliceType,
     data?: unknown,
     char: string = Chars.BlockSplitSentinel,
   ): MarkerSlice<T> {
-    const api = this.model.api;
-    const builder = api.builder;
-    const str = this.str;
-    /**
-     * We skip one clock cycle to prevent Block-wise RGA from merging adjacent
-     * characters. We want the marker chunk to always be its own distinct chunk.
-     */
-    builder.nop(1);
-    const textId = builder.insStr(str.id, after, char[0]);
-    const point = this.point(textId, Anchor.Before);
-    const range = this.range(point, point);
-    return this.savedSlices.insMarker(range, type, data);
+    return this.savedSlices.insMarkerAfter(after, type, data, char);
   }
 
   /** @todo This can probably use .del() */

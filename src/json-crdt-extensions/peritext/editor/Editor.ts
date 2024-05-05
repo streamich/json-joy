@@ -1,6 +1,7 @@
 import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
+import {EditorSlices} from './EditorSlices';
 import {Chars} from '../constants';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
@@ -8,7 +9,11 @@ import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 
 export class Editor<T = string> {
-  constructor(public readonly txt: Peritext<T>) {}
+  public readonly saved: EditorSlices<T>;
+
+  constructor(public readonly txt: Peritext<T>) {
+    this.saved = new EditorSlices(txt, txt.savedSlices);
+  }
 
   public firstCursor(): Cursor<T> | undefined {
     const iterator = this.txt.localSlices.iterator0();
@@ -87,10 +92,8 @@ export class Editor<T = string> {
     return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
   }
 
+  /** @deprecated */
   public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
-    this.cursor.collapse();
-    const after = this.cursor.start.clone();
-    after.refAfter();
-    return this.txt.insMarker(after.id, type, data, Chars.BlockSplitSentinel);
+    return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
   }
 }
