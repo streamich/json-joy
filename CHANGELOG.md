@@ -1,3 +1,40 @@
+# [16.0.0](https://github.com/streamich/json-joy/compare/v15.11.0...v16.0.0) (2024-05-05)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly encode cnt extension sid key ([264d45c](https://github.com/streamich/json-joy/commit/264d45c4ad46938d18282db72b687da7c5bff4cd))
+* **json-crdt:** 🐛 allow extension API selection through path selector ([c09dc8f](https://github.com/streamich/json-joy/commit/c09dc8fc2034da4a086b40292ee329b9f2cc3f32))
+* **json-crdt:** 🐛 make extension schema copyable ([7bbee8f](https://github.com/streamich/json-joy/commit/7bbee8f12eda12168e512476c7b22a764424c35a))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add ability to access Peritext "str" node API ([41ec564](https://github.com/streamich/json-joy/commit/41ec5645c78d27cb4aecd28b45f0ba328c03f680))
+* **json-crdt-extensions:** 🎸 add ability to access Peritext slices "arr" node ([2ea4f34](https://github.com/streamich/json-joy/commit/2ea4f3441e0c7a281b2ed432fb8f7d30e3f1cc57))
+* **json-crdt-extensions:** 🎸 add type safety when accessing Peritext nodes ([7401ac5](https://github.com/streamich/json-joy/commit/7401ac5b7fdeb45682e23fe07b2b1f31ef6040aa))
+* **json-crdt-extensions:** 🎸 define Peritext extension ([032bab1](https://github.com/streamich/json-joy/commit/032bab1ec3fc65d20f5670cc7566b34bb457c93b))
+* **json-crdt-extensions:** 🎸 infer sessin ID from builder ([f0435a1](https://github.com/streamich/json-joy/commit/f0435a15a013eb541f471e3226937efadafc7816))
+* **json-crdt-extensions:** 🎸 setup ModelWithExt static class ([69e1200](https://github.com/streamich/json-joy/commit/69e120048d5132bfcc7141243cdfbaaf7d6e9971))
+* **json-crdt-extensions:** 🎸 simplify cnt extension definition ([3ef93cd](https://github.com/streamich/json-joy/commit/3ef93cd4cb2743cbf744d02faf93e3f9e204d58f))
+* **json-crdt-patch:** 🎸 add node.json schema builder class ([ed6a558](https://github.com/streamich/json-joy/commit/ed6a55827100209aba432cdabcdf5c07a0603283))
+* **json-crdt-patch:** 🎸 add s.ext() schema builder ([0f7910b](https://github.com/streamich/json-joy/commit/0f7910b938301f4025ed2067824085cde7aefe67))
+* **json-crdt-patch:** 🎸 improve schema types and value preservatin ([7ebc049](https://github.com/streamich/json-joy/commit/7ebc04962e3904a608638a7c0e10daafa9460254))
+* **json-crdt:** 🎸 ability to select extension api directly ([8af589c](https://github.com/streamich/json-joy/commit/8af589ce8effb1126af4823d2120332aeed75f4c))
+* **json-crdt:** 🎸 add abstract ExtNode class ([5a79cec](https://github.com/streamich/json-joy/commit/5a79cec92871e9899d0206e5ff964445f30b0287))
+* **json-crdt:** 🎸 construct extension API nodes when accessing by proxy ([ef5c581](https://github.com/streamich/json-joy/commit/ef5c5819517786072a7bc30fa7c3b5df8c2b1e5f))
+* **json-crdt:** 🎸 improve extension node selection by proxy ([ebf1eea](https://github.com/streamich/json-joy/commit/ebf1eea0ff2c5761f3b184d07a2ec32e74e963ab))
+* **json-crdt:** 🎸 improve extension presentation ([d13cc65](https://github.com/streamich/json-joy/commit/d13cc658e56e23be27acb2d21b09ff9e730e4b4d))
+* **json-crdt:** 🎸 make extenion object optional when calling .asExt() ([fe7e6a9](https://github.com/streamich/json-joy/commit/fe7e6a9ad997f0d32fe6bc778d12ab2373d7b89f))
+* **json-crdt:** 🎸 remove chaining from node APIs ([1fb6f11](https://github.com/streamich/json-joy/commit/1fb6f11f47400f06cd1d0b1d07584eb5c9af24a1))
+* **json-crdt:** 🎸 start Extension implementation ([7da9262](https://github.com/streamich/json-joy/commit/7da926277dff314b51ac6adfeb358c3d0a3a3597))
+* **json-crdt:** 🎸 use Extension class to construct extensions ([273d013](https://github.com/streamich/json-joy/commit/273d013821af614c746ef532f1c0363d1c9d7f4c))
+
+
+### BREAKING CHANGES
+
+* **json-crdt:** 🧨 A number of JSON CRDT NodeApi methods have been changed.
+
 # [15.11.0](https://github.com/streamich/json-joy/compare/v15.10.0...v15.11.0) (2024-05-02)
 
 
