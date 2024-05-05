@@ -20,8 +20,6 @@ export type ApiPath = string | number | Path | void;
  * A generic local changes API for a JSON CRDT node.
  *
  * @category Local API
- *
- * @todo Separate this into leaf and container nodes.
  */
 export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   constructor(
@@ -219,13 +217,12 @@ export class ValApi<N extends ValNode<any> = ValNode<any>> extends NodeApi<N> {
    * @param json JSON/CBOR value or ID (logical timestamp) of the value to set.
    * @returns Reference to itself.
    */
-  public set(json: JsonNodeView<N>): this {
+  public set(json: JsonNodeView<N>): void {
     const {api, node} = this;
     const builder = api.builder;
     const val = builder.constOrJson(json);
     api.builder.setVal(node.id, val);
     api.apply();
-    return this;
   }
 
   /**
@@ -270,7 +267,7 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
    * @param entries List of index-value pairs to set.
    * @returns Reference to itself.
    */
-  public set(entries: [index: number, value: unknown][]): this {
+  public set(entries: [index: number, value: unknown][]): void {
     const {api, node} = this;
     const {builder} = api;
     builder.insVec(
@@ -278,7 +275,6 @@ export class VecApi<N extends VecNode<any> = VecNode<any>> extends NodeApi<N> {
       entries.map(([index, json]) => [index, builder.constOrJson(json)]),
     );
     api.apply();
-    return this; // TODO: remove this ...?
   }
 
   public push(...values: unknown[]): void {
@@ -350,7 +346,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * @param entries List of key-value pairs to set.
    * @returns Reference to itself.
    */
-  public set(entries: Partial<JsonNodeView<N>>): this {
+  public set(entries: Partial<JsonNodeView<N>>): void {
     const {api, node} = this;
     const {builder} = api;
     builder.insObj(
@@ -358,7 +354,6 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       Object.entries(entries).map(([key, json]) => [key, builder.constOrJson(json)]),
     );
     api.apply();
-    return this;
   }
 
   /**
@@ -367,7 +362,7 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
    * @param keys List of keys to delete.
    * @returns Reference to itself.
    */
-  public del(keys: string[]): this {
+  public del(keys: string[]): void {
     const {api, node} = this;
     const {builder} = api;
     api.builder.insObj(
@@ -375,7 +370,6 @@ export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
       keys.map((key) => [key, builder.const(undefined)]),
     );
     api.apply();
-    return this;
   }
 
   /**
@@ -415,7 +409,7 @@ export class StrApi extends NodeApi<StrNode> {
    * @param text Text to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, text: string): this {
+  public ins(index: number, text: string): void {
     const {api, node} = this;
     api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
@@ -426,7 +420,6 @@ export class StrApi extends NodeApi<StrNode> {
     if (!after) throw new Error('OUT_OF_BOUNDS');
     builder.insStr(node.id, after, text);
     api.advance();
-    return this;
   }
 
   /**
@@ -436,7 +429,7 @@ export class StrApi extends NodeApi<StrNode> {
    * @param length Number of UTF-16 code units to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     api.onBeforeLocalChange.emit(api.next);
     const builder = api.builder;
@@ -446,7 +439,6 @@ export class StrApi extends NodeApi<StrNode> {
     node.delete(spans);
     builder.del(node.id, spans);
     api.advance();
-    return this;
   }
 
   /**
@@ -519,13 +511,12 @@ export class BinApi extends NodeApi<BinNode> {
    * @param data Octets to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, data: Uint8Array): this {
+  public ins(index: number, data: Uint8Array): void {
     const {api, node} = this;
     const after = !index ? node.id : node.find(index - 1);
     if (!after) throw new Error('OUT_OF_BOUNDS');
     api.builder.insBin(node.id, after, data);
     api.apply();
-    return this;
   }
 
   /**
@@ -535,13 +526,12 @@ export class BinApi extends NodeApi<BinNode> {
    * @param length Number of octets to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     const spans = node.findInterval(index, length);
     if (!spans) throw new Error('OUT_OF_BOUNDS');
     api.builder.del(node.id, spans);
     api.apply();
-    return this;
   }
 
   /**
@@ -591,7 +581,7 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * @param values JSON/CBOR values or IDs of the values to insert.
    * @returns Reference to itself.
    */
-  public ins(index: number, values: Array<JsonNodeView<N>[number]>): this {
+  public ins(index: number, values: Array<JsonNodeView<N>[number]>): void {
     const {api, node} = this;
     const {builder} = api;
     const after = !index ? node.id : node.find(index - 1);
@@ -600,7 +590,6 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
     for (let i = 0; i < values.length; i++) valueIds.push(builder.json(values[i]));
     builder.insArr(node.id, after, valueIds);
     api.apply();
-    return this;
   }
 
   /**
@@ -610,13 +599,12 @@ export class ArrApi<N extends ArrNode<any> = ArrNode<any>> extends NodeApi<N> {
    * @param length Number of elements to delete.
    * @returns Reference to itself.
    */
-  public del(index: number, length: number): this {
+  public del(index: number, length: number): void {
     const {api, node} = this;
     const spans = node.findInterval(index, length);
     if (!spans) throw new Error('OUT_OF_BOUNDS');
     api.builder.del(node.id, spans);
     api.apply();
-    return this;
   }
 
   /**
