@@ -46,6 +46,7 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     return slice;
   }
 
+  /** @todo Use API node here. */
   protected readonly rga: AbstractRga<T>;
 
   constructor(

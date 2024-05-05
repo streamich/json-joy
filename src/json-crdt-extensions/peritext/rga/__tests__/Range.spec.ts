@@ -382,7 +382,7 @@ describe('.isCollapsed()', () => {
     const {peritext} = setup();
     const range = peritext.rangeAt(2, 1);
     peritext.editor.setCursor(2, 1);
-    peritext.editor.delete();
+    peritext.editor.delBwd();
     expect(range.isCollapsed()).toBe(true);
   });
 });
@@ -402,7 +402,6 @@ describe('.expand()', () => {
       expect(editor.cursor.start.anchor).toBe(Anchor.After);
       expect(editor.cursor.end.pos()).toBe(2);
       expect(editor.cursor.end.anchor).toBe(Anchor.Before);
-      // console.log(peritext + '')
     });
 
     test('can expand anchors to contain include adjacent tombstones', () => {
@@ -412,9 +411,9 @@ describe('.expand()', () => {
       const tombstone2 = peritext.rangeAt(3, 1);
       tombstone2.expand();
       peritext.editor.cursor.setRange(tombstone1);
-      peritext.editor.delete();
+      peritext.editor.delBwd();
       peritext.editor.cursor.setRange(tombstone2);
-      peritext.editor.delete();
+      peritext.editor.delBwd();
       const range = peritext.rangeAt(1, 1);
       range.expand();
       expect(range.start.pos()).toBe(tombstone1.start.pos());

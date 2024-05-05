@@ -336,17 +336,19 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Sets the point to the relative start of the string.
    */
-  public refStart(): void {
+  public refStart(): this {
     this.refAbsStart();
     this.refBefore();
+    return this;
   }
 
   /**
    * Sets the point to the relative end of the string.
    */
-  public refEnd(): void {
+  public refEnd(): this {
     this.refAbsEnd();
     this.refAfter();
+    return this;
   }
 
   /**

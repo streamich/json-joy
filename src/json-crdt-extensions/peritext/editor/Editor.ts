@@ -51,54 +51,35 @@ export class Editor<T = string> {
    * @todo If block boundaries are withing the range, remove the blocks.
    *
    * @returns Returns the cursor position after the operation.
+   * 
+   * @deprecated
    */
-  public collapseSelection(): ITimestampStruct {
-    const cursor = this.cursor;
-    const isCaret = cursor.isCollapsed();
-    if (!isCaret) {
-      const {start, end} = cursor;
-      const txt = this.txt;
-      const deleteStartId = start.anchor === Anchor.Before ? start.id : start.nextId();
-      const deleteEndId = end.anchor === Anchor.After ? end.id : end.prevId();
-      const str = txt.str;
-      if (!deleteStartId || !deleteEndId) throw new Error('INVALID_RANGE');
-      const range = str.findInterval2(deleteStartId, deleteEndId);
-      const model = txt.model;
-      const api = model.api;
-      api.builder.del(str.id, range);
-      api.apply();
-      if (start.anchor === Anchor.After) cursor.setAfter(start.id);
-      else cursor.setAfter(start.prevId() || str.id);
-    }
-    return cursor.start.id;
+  public collapseSelection(): void {
+    this.cursor.collapse();
   }
 
   /**
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
+   * 
+   * @deprecated
    */
   public insert(text: string): void {
-    if (!text) return;
-    const after = this.collapseSelection();
-    const textId = this.txt.ins(after, text);
-    const shift = text.length - 1;
-    this.cursor.setAfter(shift ? tick(textId, shift) : textId);
+    this.cursor.insert(text);
   }
 
   /**
    * Deletes the previous character at current cursor position. If cursor
    * selects a range, deletes the whole range.
+   * 
+   * @deprecated
    */
-  public delete(): void {
-    const isCollapsed = this.cursor.isCollapsed();
-    if (isCollapsed) {
-      const range = this.txt.findCharBefore(this.cursor.start);
-      if (!range) return;
-      this.cursor.set(range.start, range.end);
-    }
-    this.collapseSelection();
+  public delBwd(): void {
+    this.cursor.delBwd();
   }
 
+  // TODO: Use Point APIs instead
+  /** @deprecated */
   public start(): Point<T> | undefined {
     const txt = this.txt;
     const str = txt.str;
@@ -110,6 +91,8 @@ export class Editor<T = string> {
     return start;
   }
 
+  // TODO: Use Point APIs instead
+  /** @deprecated */
   public end(): Point<T> | undefined {
     const txt = this.txt;
     const str = txt.str;
@@ -149,7 +132,9 @@ export class Editor<T = string> {
   }
 
   public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
-    const after = this.collapseSelection();
-    return this.txt.insMarker(after, type, data, Chars.BlockSplitSentinel);
+    this.collapseSelection();
+    const after = this.cursor.start.clone();
+    after.refAfter();
+    return this.txt.insMarker(after.id, type, data, Chars.BlockSplitSentinel);
   }
 }
