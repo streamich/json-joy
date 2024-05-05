@@ -81,6 +81,7 @@ export class Slices<T = string> implements Stateful, Printable {
   }
 
   public insMarkerAfter(after: ITimestampStruct, type: SliceType, data?: unknown, separator: string = Chars.BlockSplitSentinel): MarkerSlice<T> {
+    // TODO: test condition when cursors is at absolute or relative starts
     const {txt, set} = this;
     const model = set.doc;
     const api = model.api;
