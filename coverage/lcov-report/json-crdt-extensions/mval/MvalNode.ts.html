@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-crdt/extensions/index.ts</title>
+    <title>Code coverage report for json-crdt-extensions/mval/MvalNode.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-crdt/extensions</a> index.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-crdt-extensions/mval</a> MvalNode.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">83.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>5/6</span>
             </div>
         
             
@@ -79,59 +79,38 @@
 <a name='L14'></a><a href='#L14'>14</a>
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
-<a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a>
-<a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">16x</span>
+<a name='L17'></a><a href='#L17'>17</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import {NodeBuilder} from '../../json-crdt-patch/builder/DelayedValueBuilder';
-import {konst} from '../../json-crdt-patch/builder/Konst';
-import {ITimestampStruct} from '../../json-crdt-patch/clock';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {MNEMONIC} from './constants';
+import {ExtNode} from '../../json-crdt/extensions/ExtNode';
+import {ExtensionId} from '../constants';
+import type {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 &nbsp;
-export const ext = (extensionId: number, nodeBuilder: NodeBuilder) =&gt;
-  new NodeBuilder((builder: PatchBuilder): ITimestampStruct =&gt; {
-    // Extension tuple starts with a 3-byte header:
-    // - 1 byte for the extension id
-    // - 1 byte for the sid of the tuple id, modulo 256
-    // - 1 byte for the time of the tuple id, modulo 256
-    const buf = new Uint8Array([extensionId, 0, 0]);
-    const tupleId = builder.vec();
-    buf[1] = tupleId.sid % 256;
-    buf[2] = tupleId.time % 256;
-    const bufId = builder.constOrJson(konst(buf));
-    const valueId = nodeBuilder.build(builder);
-    builder.insVec(tupleId, [
-      [0, bufId],
-      [1, valueId],
-    ]);
-    return tupleId;
-  });
+export class MvalNode extends ExtNode&lt;ArrNode&gt; {
+  public readonly extId = ExtensionId.mval;
+&nbsp;
+  public <span class="fstat-no" title="function not covered" >name(</span>): string {
+<span class="cstat-no" title="statement not covered" >    return MNEMONIC;</span>
+  }
+&nbsp;
+  public view(): unknown[] {
+    return this.data.view();
+  }
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -139,7 +118,7 @@ export const ext = (extensionId: number, nodeBuilder: NodeBuilder) =&gt;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-02T12:30:57.126Z
+                at 2024-05-05T10:07:03.823Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
