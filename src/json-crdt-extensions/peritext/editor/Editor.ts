@@ -1,33 +1,51 @@
 import {Cursor} from './Cursor';
-import {Anchor} from '../rga/constants';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
-import {tick, type ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {Chars} from '../constants';
-import type {Range} from '../rga/Range';
+import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
-import type {Point} from '../rga/Point';
 import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 
 export class Editor<T = string> {
-  /**
-   * Cursor is the the current user selection. It can be a caret or a
-   * range. If range is collapsed to a single point, it is a caret.
-   */
-  public readonly cursor: Cursor<T>;
+  constructor(public readonly txt: Peritext<T>) {}
 
-  constructor(public readonly txt: Peritext<T>) {
-    const point = txt.pointAbsStart();
-    const range = txt.range(point, point.clone());
-    // TODO: Add ability to remove cursor.
-    this.cursor = txt.localSlices.ins<Cursor<T>, typeof Cursor>(
-      range,
+  public firstCursor(): Cursor<T> | undefined {
+    const iterator = this.txt.localSlices.iterator0();
+    let cursor = iterator();
+    while (cursor) {
+      if (cursor instanceof Cursor) return cursor;
+      cursor = iterator();
+    }
+    return;
+  }
+
+  /**
+   * Returns the first cursor in the text. If there is no cursor, creates one
+   * and inserts it at the start of the text. To work with multiple cursors, use
+   * `.cursors()` method.
+   *
+   * Cursor is the the current user selection. It can be a caret or a range. If
+   * range is collapsed to a single point, it is a *caret*.
+   */
+  public get cursor(): Cursor<T> {
+    const maybeCursor = this.firstCursor();
+    if (maybeCursor) return maybeCursor;
+    const txt = this.txt;
+    const cursor = txt.localSlices.ins<Cursor<T>, typeof Cursor>(
+      txt.rangeAt(0),
       SliceBehavior.Cursor,
       CursorAnchor.Start,
       undefined,
       Cursor,
     );
+    return cursor;
+  }
+
+  public cursors(callback: (cursor: Cursor<T>) => void): void {
+    this.txt.localSlices.forEach((slice) => {
+      if (slice instanceof Cursor) callback(slice);
+    });
   }
 
   /**
@@ -35,7 +53,7 @@ export class Editor<T = string> {
    * the range is removed and the text is inserted at the start of the range.
    */
   public insert(text: string): void {
-    this.cursor.insert(text);
+    this.cursors(cursor => cursor.insert(text));
   }
 
   /**
@@ -43,9 +61,10 @@ export class Editor<T = string> {
    * selects a range, deletes the whole range.
    */
   public delBwd(): void {
-    this.cursor.delBwd();
+    this.cursors(cursor => cursor.delBwd());
   }
 
+  /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
   public selectAll(): boolean {
     const range = this.txt.rangeAll();
     if (!range) return false;

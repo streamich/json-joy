@@ -133,6 +133,11 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.list._size;
   }
 
+  public iterator0(): (() => Slice<T> | undefined) {
+    const iterator = this.list.iterator0();
+    return () => iterator()?.v;
+  }
+
   public forEach(callback: (item: Slice<T>) => void): void {
     this.list.forEach((node) => callback(node.v));
   }
