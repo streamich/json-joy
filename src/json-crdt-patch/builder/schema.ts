@@ -249,7 +249,7 @@ export namespace nodes {
    * sentinel header and a data node. The sentinel header is a 3-byte
    * {@link Uint8Array}, which makes this "vec" node to be treated as an
    * extension "ext" node.
-   * 
+   *
    * The 3-byte header consists of the extension ID, the SID of the tuple ID,
    * and the time of the tuple ID:
    *

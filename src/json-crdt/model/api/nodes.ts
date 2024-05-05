@@ -128,7 +128,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     ext?: Extension<any, any, EN, EApi, any, any>,
   ): EApi {
     let extNode: ExtNode<any> | undefined = undefined;
-    let node: JsonNode | undefined = this.node;
+    const node: JsonNode | undefined = this.node;
     if (node instanceof ExtNode) extNode = node;
     if (node instanceof VecNode) extNode = node.ext();
     if (!extNode) throw new Error('NOT_EXT');
