@@ -56,7 +56,7 @@ test('can access PeritextApi using JSON Pointer path selector', () => {
 
 test('can access PeritextApi using step-wise selector', () => {
   const model = ModelWithExt.create(schema);
-  const api = model.api.in('nested').in('obj').in('text').asTup();
+  const api = model.api.in('nested').in('obj').in('text').asVec();
   expect(api).toBeInstanceOf(VecApi);
   const api2 = api.ext();
   expect(api2).toBeInstanceOf(PeritextApi);

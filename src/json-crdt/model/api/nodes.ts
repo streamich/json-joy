@@ -100,10 +100,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     throw new Error('NOT_ARR');
   }
 
-  /**
-   * @todo rename as `asVec`.
-   */
-  public asTup(): VecApi {
+  public asVec(): VecApi {
     if (this.node instanceof VecNode) return this.api.wrap(this.node as VecNode);
     throw new Error('NOT_ARR');
   }
@@ -149,7 +146,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public tup(path?: ApiPath): VecApi {
-    return this.in(path).asTup();
+    return this.in(path).asVec();
   }
 
   public obj(path?: ApiPath): ObjApi {
