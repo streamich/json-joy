@@ -332,7 +332,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     hash = this.refreshSlices(hash, txt.savedSlices);
     hash = this.refreshSlices(hash, txt.extraSlices);
     hash = this.refreshSlices(hash, txt.localSlices);
-    // if (!slicesOnly) this.computeSplitTextHashes();
+    if (!slicesOnly) this.computeSplitTextHashes();
     return (this.hash = hash);
   }
 
@@ -355,7 +355,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           if (positionMoved) this.delSlice(slice, tuple);
           else return;
         }
-        tuple = this.insSlice(slice);
+        tuple = slice instanceof MarkerSlice ? this.insMarker(slice) : this.insSlice(slice);
         this.slices.set(slice, tuple);
       });
       if (slices.size() < sliceSet.size) {
@@ -369,6 +369,54 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
     }
     return state;
+  }
+
+  private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
+    console.log('ins slice', slice+'')
+    const x0 = slice.start;
+    const x1 = slice.end;
+    const [start, isStartNew] = this.upsertPoint(x0);
+    const [end, isEndNew] = this.upsertPoint(x1);
+    start.refs.push(new OverlayRefSliceStart(slice));
+    end.refs.push(new OverlayRefSliceEnd(slice));
+    if (isStartNew) {
+      const beforeStartPoint = prev(start);
+      if (beforeStartPoint) start.layers.push(...beforeStartPoint.layers);
+    }
+    if (isEndNew) {
+      const beforeEndPoint = prev(end);
+      if (beforeEndPoint) end.layers.push(...beforeEndPoint.layers);
+    }
+    let curr: OverlayPoint<T> | undefined = start;
+    do curr.addLayer(slice); while ((curr = next(curr)) && (curr !== end));
+    const isCollapsed = x0.cmp(x1) === 0;
+    if (isCollapsed) start.addMarker(slice);
+    return [start, end];
+  }
+
+  private insMarker(slice: MarkerSlice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
+    const point = this.mPoint(slice, Anchor.Before);
+    const pivot = this.insPoint(point);
+    if (!pivot) {
+      point.refs.push(slice);
+      const prevPoint = prev(point);
+      if (prevPoint) point.layers.push(...prevPoint.layers);
+    }
+    return [point, point];
+  }
+
+  private delSlice(slice: Slice<T>, [start, end]: [start: OverlayPoint<T>, end: OverlayPoint<T>]): void {
+    this.slices.delete(slice);
+    let curr: OverlayPoint<T> | undefined = start;
+    do {
+      curr.removeLayer(slice);
+      curr.removeMarker(slice);
+      curr = next(curr);
+    } while (curr && curr !== end);
+    start.removeRef(slice);
+    end.removeRef(slice);
+    if (!start.refs.length) this.delPoint(start);
+    if (!end.refs.length && start !== end) this.delPoint(end);
   }
 
   /**
@@ -405,62 +453,6 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   private delPoint(point: OverlayPoint<T>): void {
     this.root = remove(this.root, point);
-  }
-
-  private insMarker(slice: MarkerSlice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    const point = this.mPoint(slice, Anchor.Before);
-    const pivot = this.insPoint(point);
-    if (!pivot) {
-      point.refs.push(slice);
-      const prevPoint = prev(point);
-      if (prevPoint) point.layers.push(...prevPoint.layers);
-    }
-    return [point, point];
-  }
-
-  private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    if (slice instanceof MarkerSlice) return this.insMarker(slice);
-    const txt = this.txt;
-    const str = txt.str;
-    let startPoint = slice.start;
-    let endPoint = slice.end;
-    const [start, isStartNew] = this.upsertPoint(startPoint);
-    const [end, isEndNew] = this.upsertPoint(endPoint);
-    start.refs.push(new OverlayRefSliceStart(slice));
-    end.refs.push(new OverlayRefSliceEnd(slice));
-    if (isStartNew) {
-      const beforeStartPoint = prev(start);
-      if (beforeStartPoint) start.layers.push(...beforeStartPoint.layers);
-    }
-    if (isEndNew) {
-      const beforeEndPoint = prev(end);
-      if (beforeEndPoint) end.layers.push(...beforeEndPoint.layers);
-    }
-    const isCollapsed = startPoint.cmp(endPoint) === 0;
-    let curr: OverlayPoint<T> | undefined = start;
-    while (curr !== end && curr) {
-      curr.addLayer(slice);
-      curr = next(curr);
-    }
-    if (!isCollapsed) {
-    } else {
-      start.addMarker(slice);
-    }
-    return [start, end];
-  }
-
-  private delSlice(slice: Slice<T>, [start, end]: [start: OverlayPoint<T>, end: OverlayPoint<T>]): void {
-    this.slices.delete(slice);
-    let curr: OverlayPoint<T> | undefined = start;
-    do {
-      curr.removeLayer(slice);
-      curr.removeMarker(slice);
-      curr = next(curr);
-    } while (curr && curr !== end);
-    start.removeRef(slice);
-    end.removeRef(slice);
-    if (!start.refs.length) this.delPoint(start);
-    if (!end.refs.length && start !== end) this.delPoint(end);
   }
 
   // ---------------------------------------------------------------- Printable

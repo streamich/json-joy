@@ -36,14 +36,17 @@ describe('Overlay.refresh()', () => {
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);
   });
 
-  test.only('can select all text using absolute range', () => {
+  test('can select all text using absolute range', () => {
     const {peritext, editor} = setupNumbersWithTombstones();
+    const overlay = peritext.overlay;
     const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
     editor.cursor.setRange(range);
     peritext.refresh();
-    console.log(peritext + '');
-    // const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsStart())!;
-    // expect(overlayPoint).toBe(undefined);
+    expect(editor.cursor.text()).toBe('0123456789');
+    const overlayPoints = overlay.all();
+    expect(overlayPoints.length).toBe(2);
+    expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
+    expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);
   });
   
   const testRefresh = (name: string, update: (kit: Kit, refresh: () => void) => void) => {
