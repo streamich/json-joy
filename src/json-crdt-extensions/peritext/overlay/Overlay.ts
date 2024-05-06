@@ -74,6 +74,26 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
+  /**
+   * Retrieve overlay point or the next one, measured in spacial dimension.
+   */
+  public getOrNextHigher(point: Point<T>): OverlayPoint<T> | undefined {
+    let curr: OverlayPoint<T> | undefined = this.root;
+    let result: OverlayPoint<T> | undefined = undefined;
+    while (curr) {
+      const cmp = curr.cmpSpatial(point);
+      if (cmp === 0) return curr;
+      if (cmp < 0) curr = curr.r;
+      else {
+        const next = curr.l;
+        result = curr;
+        if (!next) return result;
+        curr = next;
+      }
+    }
+    return result;
+  }
+
   public find(predicate: (point: OverlayPoint<T>) => boolean): OverlayPoint<T> | undefined {
     let point = this.first();
     while (point) {
