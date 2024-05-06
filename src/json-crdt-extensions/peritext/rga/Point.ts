@@ -2,6 +2,7 @@ import {compare, type ITimestampStruct, printTs, equal, tick, containsId} from '
 import {Anchor} from './constants';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateId} from '../../../json-crdt/hash';
+import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
@@ -125,7 +126,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    */
   public pos(): number {
     const chunk = this.chunk();
-    if (!chunk) return -1;
+    if (!chunk) return this.isAbsEnd() ? Position.AbsEnd : Position.AbsStart;
     const pos = this.rga.pos(chunk);
     if (chunk.del) return pos;
     return pos + this.id.time - chunk.id.time;
@@ -453,6 +454,6 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const pos = this.pos();
     const id = printTs(this.id);
     const anchor = this.anchor === Anchor.Before ? '.▢' : '▢.';
-    return `${name}{ ${pos}, ${id}, ${anchor} }`;
+    return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }
