@@ -2,6 +2,7 @@ import {Model} from '../../../../json-crdt/model';
 import {size} from 'sonic-forest/lib/util';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
+import {setupNumbersWithTombstones} from '../../__tests__/setup';
 
 describe('.getOrNextLower()', () => {
   test('combines overlay points - right anchor', () => {
@@ -89,5 +90,44 @@ describe('.getOrNextHigher()', () => {
     overlayPoint = peritext.overlay.getOrNextHigher(slice1.start)!;
     expect(overlayPoint.layers.length).toBe(1);
     expect(overlayPoint.layers[0]).toBe(slice1);
+  });
+
+  test('can find points at the relative end', () => {
+    const {peritext, editor} = setupNumbersWithTombstones();
+    editor.cursor.setAt(9, 1);
+    peritext.refresh();
+    let overlayPoint = peritext.overlay.getOrNextHigher(editor.cursor.end)!;
+    expect(overlayPoint.layers.length).toBe(0);
+    overlayPoint = peritext.overlay.getOrNextHigher(editor.cursor.start)!;
+    expect(overlayPoint.layers.length).toBe(1);
+    expect(overlayPoint.layers[0]).toBe(editor.cursor);
+  });
+
+  test('can find points at the relative end, when absolute end provided', () => {
+    const {peritext, editor} = setupNumbersWithTombstones();
+    editor.cursor.setAt(9, 1);
+    peritext.refresh();
+    const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsEnd())!;
+    expect(overlayPoint.layers.length).toBe(0);
+  });
+
+  test('returns undefined, when absolute start provided', () => {
+    const {peritext, editor} = setupNumbersWithTombstones();
+    editor.cursor.setAt(9, 1);
+    peritext.refresh();
+    const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsStart())!;
+    expect(overlayPoint).toBe(undefined);
+  });
+
+  describe('when all text selected, using absolute range', () => {
+    test.skip('...', () => {
+      const {peritext, editor} = setupNumbersWithTombstones();
+      const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
+      editor.cursor.setRange(range);
+      peritext.refresh();
+      console.log(peritext + '');
+      // const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsStart())!;
+      // expect(overlayPoint).toBe(undefined);
+    });
   });
 });

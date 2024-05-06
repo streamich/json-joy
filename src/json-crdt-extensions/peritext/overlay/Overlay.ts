@@ -78,6 +78,10 @@ export class Overlay<T = string> implements Printable, Stateful {
    * Retrieve overlay point or the next one, measured in spacial dimension.
    */
   public getOrNextHigher(point: Point<T>): OverlayPoint<T> | undefined {
+    if (point.isAbsEnd()) point = this.txt.pointEnd()!;
+    else if (point.isAbsStart()) {
+      return undefined;
+    }
     let curr: OverlayPoint<T> | undefined = this.root;
     let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
