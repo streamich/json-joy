@@ -210,6 +210,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     }
   }
 
+  /** @deprecated */
   public points1(
     start: undefined | OverlayPoint<T>,
     end: undefined | ((next: OverlayPoint<T>) => boolean),
@@ -227,6 +228,46 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
     });
   }
+
+  public pairs0(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T> | undefined, p2: OverlayPoint<T> | undefined]  {
+    let p1: OverlayPoint<T> | undefined;
+    let p2: OverlayPoint<T> | undefined;
+    const iterator = this.points(after);
+    return () => {
+      p1 = p2;
+      p2 = iterator();
+      return (p1 || p2) ? [p1, p2] : undefined;
+    };
+  }
+
+  public pairs(after?: undefined | OverlayPoint<T>): IterableIterator<[p1: OverlayPoint<T> | undefined, p2: OverlayPoint<T> | undefined]> {
+    return new UndefEndIter(this.pairs0(after));
+  }
+
+  public tuples0(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T>, p2: OverlayPoint<T>]  {
+    const iterator = this.pairs0(after);
+    return () => {
+      const pair = iterator();
+      if (!pair) return;
+      if (pair[0]) pair[0] = this.point(this.txt.str.id, Anchor.After);
+      if (pair[1]) pair[1] = this.point(this.txt.str.id, Anchor.Before);
+    };
+  }
+
+  // public tuples2(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T>, p2: OverlayPoint<T>]  {
+  //   let p1: OverlayPoint<T> | undefined;
+  //   let p2: OverlayPoint<T> | undefined;
+  //   const iterator = this.points(after);
+  //   return () => {
+  //     const isFirst = !p1;
+  //     if (isFirst) {
+  //       p1 = iterator();
+  //     }
+  //     // p1 = p2;
+  //     // p2 = iterator();
+  //     // return p2 ? [p1, p2] : undefined;
+  //   };
+  // }
 
   public findContained(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
