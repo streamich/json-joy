@@ -12,5 +12,8 @@ export class UndefEndIter<T> implements IterableIterator<T> {
 }
 
 export class IterRes<T> {
-  constructor(public readonly value: T, public readonly done: boolean) {}
+  constructor(
+    public readonly value: T,
+    public readonly done: boolean,
+  ) {}
 }

@@ -67,7 +67,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     return this.entries();
   }
 
-  public splitIterator(): () => MarkerOverlayPoint | undefined {
+  public markerIterator(): () => MarkerOverlayPoint | undefined {
     let curr = this.first();
     return () => {
       while (curr) {
@@ -75,8 +75,12 @@ export class Overlay<T = string> implements Printable, Stateful {
         if (curr) curr = next(curr);
         if (ret instanceof MarkerOverlayPoint) return ret;
       }
-      return undefined;
+      return;
     };
+  }
+
+  public markers(): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.iterator());
   }
 
   /**
