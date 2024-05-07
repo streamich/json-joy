@@ -82,6 +82,12 @@ export class Overlay<T = string> implements Printable, Stateful {
    * Retrieve overlay point or the previous one, measured in spacial dimension.
    */
   public getOrNextLower(point: Point<T>): OverlayPoint<T> | undefined {
+    if (point.isAbsStart()) {
+      const first = this.first();
+      if (!first) return;
+      if (first.isAbsStart()) return first;
+      point = first;
+    } else if (point.isAbsEnd()) return this.last();
     let curr: OverlayPoint<T> | undefined = this.root;
     let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
@@ -107,7 +113,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       if (!last) return;
       if (last.isAbsEnd()) return last;
       point = last;
-    }
+    } else if (point.isAbsStart()) return this.first();
     let curr: OverlayPoint<T> | undefined = this.root;
     let result: OverlayPoint<T> | undefined = undefined;
     while (curr) {
@@ -117,7 +123,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       else {
         const next = curr.l;
         result = curr;
-        if (!next) return;
+        if (!next) return result;
         curr = next;
       }
     }
