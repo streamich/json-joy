@@ -3,6 +3,8 @@ import {size} from 'sonic-forest/lib/util';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
 import {setupNumbersWithTombstones} from '../../__tests__/setup';
+import {OverlayPoint} from '../OverlayPoint';
+import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../refs';
 
 describe('.getOrNextLower()', () => {
   test('combines overlay points - right anchor', () => {
@@ -120,14 +122,28 @@ describe('.getOrNextHigher()', () => {
   });
 
   describe('when all text selected, using absolute range', () => {
-    test.skip('...', () => {
+    test('can select the ending point', () => {
       const {peritext, editor} = setupNumbersWithTombstones();
       const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
       editor.cursor.setRange(range);
       peritext.refresh();
-      console.log(peritext + '');
-      // const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsStart())!;
-      // expect(overlayPoint).toBe(undefined);
+      const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsEnd())!;
+      expect(overlayPoint).toBeInstanceOf(OverlayPoint);
+      expect(overlayPoint.refs.length).toBe(1);
+      expect(overlayPoint.refs[0]).toEqual(new OverlayRefSliceEnd(editor.cursor));
+    });
+
+    test('can select the start point', () => {
+      const {peritext, editor} = setupNumbersWithTombstones();
+      const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
+      editor.cursor.setRange(range);
+      peritext.refresh();
+      const overlayPoint = peritext.overlay.getOrNextHigher(peritext.pointAbsStart()!)!;
+      expect(overlayPoint).toBeInstanceOf(OverlayPoint);
+      expect(overlayPoint.refs.length).toBe(1);
+      expect(overlayPoint.refs[0]).toEqual(new OverlayRefSliceStart(editor.cursor));
+      expect(overlayPoint.layers.length).toBe(1);
+      expect(overlayPoint.layers[0]).toEqual(editor.cursor);
     });
   });
 });

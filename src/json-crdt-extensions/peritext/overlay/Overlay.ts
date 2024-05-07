@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
-import {first, insertLeft, insertRight, next, prev, remove} from 'sonic-forest/lib/util';
+import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
@@ -43,6 +43,10 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public first(): OverlayPoint<T> | undefined {
     return this.root ? first(this.root) : undefined;
+  }
+
+  public last(): OverlayPoint<T> | undefined {
+    return this.root ? last(this.root) : undefined;
   }
 
   public iterator(): () => OverlayPoint<T> | undefined {
@@ -98,9 +102,11 @@ export class Overlay<T = string> implements Printable, Stateful {
    * Retrieve overlay point or the next one, measured in spacial dimension.
    */
   public getOrNextHigher(point: Point<T>): OverlayPoint<T> | undefined {
-    if (point.isAbsEnd()) point = this.txt.pointEnd()!;
-    else if (point.isAbsStart()) {
-      return undefined;
+    if (point.isAbsEnd()) {
+      const last = this.last();
+      if (!last) return;
+      if (last.isAbsEnd()) return last;
+      point = last;
     }
     let curr: OverlayPoint<T> | undefined = this.root;
     let result: OverlayPoint<T> | undefined = undefined;
@@ -111,7 +117,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       else {
         const next = curr.l;
         result = curr;
-        if (!next) return result;
+        if (!next) return;
         curr = next;
       }
     }
