@@ -1,3 +1,23 @@
+# [16.2.0](https://github.com/streamich/json-joy/compare/v16.1.0...v16.2.0) (2024-05-07)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 improve .getOrNextHigher() ([fdf0744](https://github.com/streamich/json-joy/commit/fdf07446b08948f53d3a17e8d6b56086afb14fa6))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add Overlay.getOrNextHigher() impelemntation ([f3784b0](https://github.com/streamich/json-joy/commit/f3784b083392a9fc7e9bd2d64b173f074963ff63))
+* **json-crdt-extensions:** 🎸 display slice behaviors ([eda567d](https://github.com/streamich/json-joy/commit/eda567dbde891b1f342c9274ccd6d940a7f6cc70))
+* **json-crdt-extensions:** 🎸 handle abs end in getOrNextHigher() ([0d1254b](https://github.com/streamich/json-joy/commit/0d1254b07dd791ed1bebb5777911c93556568919))
+* **json-crdt-extensions:** 🎸 implement Overlay traversal methods ([cb98052](https://github.com/streamich/json-joy/commit/cb98052b1d33cba95a9d5aa8c75c5c4ca76cea22))
+* **json-crdt-extensions:** 🎸 improve editor interfaces ([a76291c](https://github.com/streamich/json-joy/commit/a76291c7b54a157de11fc6d21bdb17d80da7df4c))
+* **json-crdt-extensions:** 🎸 improve how Point handles absolute end position ([7702e98](https://github.com/streamich/json-joy/commit/7702e9847907828c177d0902dfa9fd0a5b571aea))
+* **json-crdt-extensions:** 🎸 improve marker point treatment in overlay ([32b481d](https://github.com/streamich/json-joy/commit/32b481dd309c32a2fe689a66e57514d7349819b5))
+* **json-crdt-extensions:** 🎸 make Overlay an iterable ([8716cfa](https://github.com/streamich/json-joy/commit/8716cfa901a216037fe0477a09e369e6745f2b84))
+* **json-crdt-extensions:** 🎸 support absolut positions in higher/lower iteration ([a88f9d8](https://github.com/streamich/json-joy/commit/a88f9d8937efad4b2495b6ac029816a92be8aff6))
+
 # [16.1.0](https://github.com/streamich/json-joy/compare/v16.0.0...v16.1.0) (2024-05-05)
 
 
