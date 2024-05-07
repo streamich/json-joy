@@ -7,7 +7,7 @@ import {Point} from '../rga/Point';
 import {OverlayPoint} from './OverlayPoint';
 import {MarkerOverlayPoint} from './MarkerOverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
-import {compare, ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
+import {compare, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import {Range} from '../rga/Range';
@@ -28,11 +28,8 @@ import type {Slices} from '../slice/Slices';
  */
 export class Overlay<T = string> implements Printable, Stateful {
   public root: OverlayPoint<T> | undefined = undefined;
-  public readonly start: OverlayPoint<T>;
 
-  constructor(protected readonly txt: Peritext<T>) {
-    this.start = this.point(this.txt.str.id, Anchor.After);
-  }
+  constructor(protected readonly txt: Peritext<T>) {}
 
   private point(id: ITimestampStruct, anchor: Anchor): OverlayPoint<T> {
     return new OverlayPoint(this.txt.str, id, anchor);
@@ -51,21 +48,16 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public iterator(): () => OverlayPoint<T> | undefined {
-    let curr = this.first();
-    return () => {
-      const ret = curr;
-      if (curr) curr = next(curr);
-      return ret;
-    };
+    return this.points(undefined);
   }
 
   public entries(): IterableIterator<OverlayPoint<T>> {
     return new UndefEndIter(this.iterator());
   }
 
-  [Symbol.iterator]() {
-    return this.entries();
-  }
+  // [Symbol.iterator]() {
+  //   return this.entries();
+  // }
 
   public markerIterator(): () => MarkerOverlayPoint | undefined {
     let curr = this.first();
@@ -191,49 +183,30 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
+  public points(start: undefined | OverlayPoint<T>): () => OverlayPoint<T> | undefined {
+    let curr = start || this.first();
+    return () => {
+      const ret = curr;
+      if (curr) curr = next(curr);
+      return ret;
+    };
+  }
+
+  /**
+   * @todo Unify this with `.entries()`.
+   */
   public points0(
     start: undefined | OverlayPoint<T>,
     end: undefined | ((next: OverlayPoint<T>) => boolean),
     callback: (point: OverlayPoint<T>) => void,
   ): void {
-    const txt = this.txt;
-    const str = txt.str;
-    const strFirstChunk = str.first();
-    if (!strFirstChunk) return;
-    let point = start || this.first();
-    let prev: typeof point;
-    const pointIsStart =
-      point &&
-      ((!compare(point.id, str.id) && point.anchor === Anchor.After) ||
-        (!compare(strFirstChunk.id, point.id) && point.anchor === Anchor.Before));
-    if (!start && !pointIsStart) {
-      const startPoint = this.start;
-      startPoint.id = strFirstChunk.id;
-      startPoint.anchor = Anchor.Before;
-      callback(startPoint);
-    }
+    const i = this.points(start);
+    let point = i();
     while (point) {
       if (end && end(point)) return;
       callback(point);
-      prev = point;
-      point = next(point);
+      point = i();
     }
-    const strLastChunk = str.last()!;
-    const strLastChunkId = strLastChunk.id;
-    if (prev) {
-      const prevId = prev.id;
-      if (
-        prev.anchor === Anchor.After &&
-        prevId.time === strLastChunkId.time + strLastChunk.span - 1 &&
-        prevId.sid === strLastChunkId.sid &&
-        prevId.sid === strLastChunkId.sid
-      )
-        return;
-    }
-    const endId = strLastChunk.span > 1 ? tick(strLastChunkId, strLastChunk.span - 1) : strLastChunkId;
-    const ending = this.point(endId!, Anchor.After);
-    if (end && end(ending)) return;
-    callback(ending);
   }
 
   public points1(
@@ -288,47 +261,6 @@ export class Overlay<T = string> implements Printable, Stateful {
       }
     } while (point && (point = next(point)) && range.containsPoint(point));
     return result;
-  }
-
-  public leadingTextHash: number = 0;
-
-  protected computeSplitTextHashes(): void {
-    const txt = this.txt;
-    const str = txt.str;
-    const firstChunk = str.first();
-    if (!firstChunk) return;
-    let chunk: Chunk<T> | undefined = firstChunk;
-    let marker: MarkerOverlayPoint<T> | undefined = undefined;
-    let state: number = CONST.START_STATE;
-    this.points1(undefined, undefined, (p1, p2) => {
-      // TODO: need to incorporate slice attribute hash here?
-      const id1 = p1.id;
-      state = (state << 5) + state + (id1.sid >>> 0) + id1.time;
-      let overlayPointHash = CONST.START_STATE;
-      chunk = this.chunkSlices0(chunk || firstChunk, p1, p2, (chunk, off, len) => {
-        const id = chunk.id;
-        overlayPointHash =
-          (overlayPointHash << 5) + overlayPointHash + ((((id.sid >>> 0) + id.time) << 8) + (off << 4) + len);
-      });
-      state = updateNum(state, overlayPointHash);
-      if (p1) {
-        p1.hash = overlayPointHash;
-      }
-      if (p2 instanceof MarkerOverlayPoint) {
-        if (marker) {
-          marker.textHash = state;
-        } else {
-          this.leadingTextHash = state;
-        }
-        state = CONST.START_STATE;
-        marker = p2;
-      }
-    });
-    if ((marker as any) instanceof MarkerOverlayPoint) {
-      (marker as any as MarkerOverlayPoint<T>).textHash = state;
-    } else {
-      this.leadingTextHash = state;
-    }
   }
 
   public isBlockSplit(id: ITimestampStruct): boolean {
@@ -475,6 +407,47 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   private delPoint(point: OverlayPoint<T>): void {
     this.root = remove(this.root, point);
+  }
+
+  public leadingTextHash: number = 0;
+
+  protected computeSplitTextHashes(): void {
+    const txt = this.txt;
+    const str = txt.str;
+    const firstChunk = str.first();
+    if (!firstChunk) return;
+    let chunk: Chunk<T> | undefined = firstChunk;
+    let marker: MarkerOverlayPoint<T> | undefined = undefined;
+    let state: number = CONST.START_STATE;
+    this.points1(undefined, undefined, (p1, p2) => {
+      // TODO: need to incorporate slice attribute hash here?
+      const id1 = p1.id;
+      state = (state << 5) + state + (id1.sid >>> 0) + id1.time;
+      let overlayPointHash = CONST.START_STATE;
+      chunk = this.chunkSlices0(chunk || firstChunk, p1, p2, (chunk, off, len) => {
+        const id = chunk.id;
+        overlayPointHash =
+          (overlayPointHash << 5) + overlayPointHash + ((((id.sid >>> 0) + id.time) << 8) + (off << 4) + len);
+      });
+      state = updateNum(state, overlayPointHash);
+      if (p1) {
+        p1.hash = overlayPointHash;
+      }
+      if (p2 instanceof MarkerOverlayPoint) {
+        if (marker) {
+          marker.textHash = state;
+        } else {
+          this.leadingTextHash = state;
+        }
+        state = CONST.START_STATE;
+        marker = p2;
+      }
+    });
+    if ((marker as any) instanceof MarkerOverlayPoint) {
+      (marker as any as MarkerOverlayPoint<T>).textHash = state;
+    } else {
+      this.leadingTextHash = state;
+    }
   }
 
   // ---------------------------------------------------------------- Printable
