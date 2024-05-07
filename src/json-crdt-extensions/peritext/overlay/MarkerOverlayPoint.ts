@@ -46,10 +46,15 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> {
   }
 
   public toString(tab: string = '', lite?: boolean): string {
-    return this.toStringName(tab, lite) + (lite ? '' : printTree(tab, [
-      (tab) => this.marker.toString(tab),
-      ...this.layers.map((slice) => (tab: string) => slice.toString(tab)),
-      ...this.markers.map((slice) => (tab: string) => slice.toString(tab)),
-    ]));
+    return (
+      this.toStringName(tab, lite) +
+      (lite
+        ? ''
+        : printTree(tab, [
+            (tab) => this.marker.toString(tab),
+            ...this.layers.map((slice) => (tab: string) => slice.toString(tab)),
+            ...this.markers.map((slice) => (tab: string) => slice.toString(tab)),
+          ]))
+    );
   }
 }

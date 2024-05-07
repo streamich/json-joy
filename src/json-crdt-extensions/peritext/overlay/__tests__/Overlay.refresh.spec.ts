@@ -48,7 +48,7 @@ describe('Overlay.refresh()', () => {
     expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);
   });
-  
+
   const testRefresh = (name: string, update: (kit: Kit, refresh: () => void) => void) => {
     test(name, () => {
       const kit = setup();

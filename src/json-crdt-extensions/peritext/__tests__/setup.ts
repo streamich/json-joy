@@ -1,5 +1,5 @@
-import {s} from "../../../json-crdt-patch";
-import {ModelWithExt, ext} from "../../ModelWithExt";
+import {s} from '../../../json-crdt-patch';
+import {ModelWithExt, ext} from '../../ModelWithExt';
 
 /**
  * Creates a Peritext instance with text "0123456789", with single-char and

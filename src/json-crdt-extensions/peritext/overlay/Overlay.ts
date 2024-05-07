@@ -62,7 +62,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     const iterator = this.iterator();
     let point: OverlayPoint<T> | undefined;
     const points: OverlayPoint<T>[] = [];
-    while (point = iterator()) points.push(point);
+    while ((point = iterator())) points.push(point);
     return points;
   }
 
@@ -397,13 +397,13 @@ export class Overlay<T = string> implements Printable, Stateful {
       if (beforeStartPoint) start.layers.push(...beforeStartPoint.layers);
     }
     if (!isCollapsed) {
-
       if (isEndNew) {
         const beforeEndPoint = prev(end);
         if (beforeEndPoint) end.layers.push(...beforeEndPoint.layers);
       }
       let curr: OverlayPoint<T> | undefined = start;
-      do curr.addLayer(slice); while ((curr = next(curr)) && (curr !== end));
+      do curr.addLayer(slice);
+      while ((curr = next(curr)) && curr !== end);
     } else {
       // TODO: review if this is needed:
       start.addMarker(slice);

@@ -22,18 +22,15 @@ export class EditorSlices<T = string> {
   }
 
   public insStack(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {
-    return this.insAtCursors((cursor) =>
-      this.slices.insStack(cursor.range(), type, data));
+    return this.insAtCursors((cursor) => this.slices.insStack(cursor.range(), type, data));
   }
 
   public insOverwrite(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {
-    return this.insAtCursors((cursor) =>
-      this.slices.insOverwrite(cursor.range(), type, data));
+    return this.insAtCursors((cursor) => this.slices.insOverwrite(cursor.range(), type, data));
   }
 
   public insErase(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T>[] {
-    return this.insAtCursors((cursor) =>
-      this.slices.insErase(cursor.range(), type, data));
+    return this.insAtCursors((cursor) => this.slices.insErase(cursor.range(), type, data));
   }
 
   public insMarker(type: SliceType, data?: unknown, separator?: string): MarkerSlice<T>[] {
