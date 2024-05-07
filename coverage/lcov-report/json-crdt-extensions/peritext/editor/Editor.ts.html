@@ -162,7 +162,10 @@
 <a name='L97'></a><a href='#L97'>97</a>
 <a name='L98'></a><a href='#L98'>98</a>
 <a name='L99'></a><a href='#L99'>99</a>
-<a name='L100'></a><a href='#L100'>100</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">13x</span>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">13x</span>
@@ -175,18 +178,18 @@
 <span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1327x</span>
-<span class="cline-any cline-yes">1327x</span>
+<span class="cline-any cline-yes">1339x</span>
+<span class="cline-any cline-yes">1339x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">157x</span>
-<span class="cline-any cline-yes">157x</span>
-<span class="cline-any cline-yes">157x</span>
-<span class="cline-any cline-yes">111x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">132x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,22 +201,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">157x</span>
-<span class="cline-any cline-yes">157x</span>
-<span class="cline-any cline-yes">46x</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">58x</span>
+<span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">46x</span>
+<span class="cline-any cline-yes">58x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">44x</span>
-<span class="cline-any cline-yes">42x</span>
+<span class="cline-any cline-yes">56x</span>
+<span class="cline-any cline-yes">54x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -242,13 +245,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">36x</span>
-<span class="cline-any cline-yes">36x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -340,22 +346,25 @@ export class Editor&lt;T = string&gt; {
 <span class="cstat-no" title="statement not covered" >    return true;</span>
   }
 &nbsp;
+  /** @deprecated use `.saved.insStack` */
   public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice&lt;T&gt; {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
   }
 &nbsp;
+  /** @deprecated use `.saved.insOverwrite` */
   public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice&lt;T&gt; {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
   }
 &nbsp;
+  /** @deprecated use `.saved.insErase` */
   public <span class="fstat-no" title="function not covered" >insEraseSlice(</span>type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice&lt;T&gt; {
     const range = <span class="cstat-no" title="statement not covered" >this.cursor.range();</span>
 <span class="cstat-no" title="statement not covered" >    return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);</span>
   }
 &nbsp;
-  /** @deprecated */
+  /** @deprecated use `.saved.insMarker` */
   public insMarker(type: SliceType, data?: unknown): MarkerSlice&lt;T&gt; {
     return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
   }
@@ -367,7 +376,7 @@ export class Editor&lt;T = string&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-06T03:50:08.617Z
+                at 2024-05-07T13:32:21.675Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
