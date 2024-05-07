@@ -30,7 +30,7 @@ describe('Overlay.refresh()', () => {
     editor.cursor.setRange(range);
     peritext.refresh();
     expect(editor.cursor.text()).toBe('0123456789');
-    const overlayPoints = overlay.all();
+    const overlayPoints = [...overlay];
     expect(overlayPoints.length).toBe(2);
     expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);
@@ -43,7 +43,7 @@ describe('Overlay.refresh()', () => {
     editor.cursor.setRange(range);
     peritext.refresh();
     expect(editor.cursor.text()).toBe('0123456789');
-    const overlayPoints = overlay.all();
+    const overlayPoints = [...overlay];
     expect(overlayPoints.length).toBe(2);
     expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);

@@ -11,6 +11,7 @@ import {compare, ITimestampStruct, tick} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import {Range} from '../rga/Range';
+import {UndefEndIter} from '../../../util/iterator';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
@@ -58,12 +59,12 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public all(): OverlayPoint<T>[] {
-    const iterator = this.iterator();
-    let point: OverlayPoint<T> | undefined;
-    const points: OverlayPoint<T>[] = [];
-    while ((point = iterator())) points.push(point);
-    return points;
+  public entries(): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.iterator());
+  }
+
+  [Symbol.iterator]() {
+    return this.entries();
   }
 
   public splitIterator(): () => MarkerOverlayPoint | undefined {
