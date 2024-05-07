@@ -124,7 +124,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       if (predicate(point)) return point;
       point = next(point);
     }
-    return undefined;
+    return;
   }
 
   public chunkSlices0(
@@ -372,25 +372,30 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    console.log('ins slice', slice+'')
+    // TODO: Test cases where the inserted slice is collapsed to one point.
     const x0 = slice.start;
     const x1 = slice.end;
     const [start, isStartNew] = this.upsertPoint(x0);
     const [end, isEndNew] = this.upsertPoint(x1);
+    const isCollapsed = x0.cmp(x1) === 0;
     start.refs.push(new OverlayRefSliceStart(slice));
     end.refs.push(new OverlayRefSliceEnd(slice));
     if (isStartNew) {
       const beforeStartPoint = prev(start);
       if (beforeStartPoint) start.layers.push(...beforeStartPoint.layers);
     }
-    if (isEndNew) {
-      const beforeEndPoint = prev(end);
-      if (beforeEndPoint) end.layers.push(...beforeEndPoint.layers);
+    if (!isCollapsed) {
+
+      if (isEndNew) {
+        const beforeEndPoint = prev(end);
+        if (beforeEndPoint) end.layers.push(...beforeEndPoint.layers);
+      }
+      let curr: OverlayPoint<T> | undefined = start;
+      do curr.addLayer(slice); while ((curr = next(curr)) && (curr !== end));
+    } else {
+      // TODO: review if this is needed:
+      start.addMarker(slice);
     }
-    let curr: OverlayPoint<T> | undefined = start;
-    do curr.addLayer(slice); while ((curr = next(curr)) && (curr !== end));
-    const isCollapsed = x0.cmp(x1) === 0;
-    if (isCollapsed) start.addMarker(slice);
     return [start, end];
   }
 
@@ -448,7 +453,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       else insertLeft(point, pivot);
     }
     if (this.root !== point) this.root = splay(this.root!, point, 10);
-    return undefined;
+    return;
   }
 
   private delPoint(point: OverlayPoint<T>): void {

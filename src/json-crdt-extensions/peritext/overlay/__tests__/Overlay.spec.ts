@@ -200,22 +200,21 @@ describe('slices', () => {
       expect(point2.anchor).toBe(Anchor.After);
     });
 
-    test.only('intersecting slice before split, should not update the split', () => {
+    test('intersecting slice before split, should not update the split', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(6);
       peritext.editor.insMarker(['p']);
       peritext.refresh();
-      console.log(peritext + '');
       const point = peritext.overlay.find((point) => point instanceof MarkerOverlayPoint)!;
       expect(point.layers.length).toBe(0);
-      // peritext.editor.cursor.setAt(2, 2);
-      // peritext.editor.insStackSlice('<i>');
-      // peritext.refresh();
-      // expect(point.layers.length).toBe(0);
-      // peritext.editor.cursor.setAt(2, 1);
-      // peritext.editor.insStackSlice('<b>');
-      // peritext.refresh();
-      // expect(point.layers.length).toBe(0);
+      peritext.editor.cursor.setAt(2, 2);
+      peritext.editor.insStackSlice('<i>');
+      peritext.refresh();
+      expect(point.layers.length).toBe(0);
+      peritext.editor.cursor.setAt(2, 1);
+      peritext.editor.insStackSlice('<b>');
+      peritext.refresh();
+      expect(point.layers.length).toBe(0);
     });
   });
 
