@@ -183,8 +183,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
-  public points(start: undefined | OverlayPoint<T>): () => OverlayPoint<T> | undefined {
-    let curr = start || this.first();
+  public points(after: undefined | OverlayPoint<T>): () => OverlayPoint<T> | undefined {
+    let curr = after ? next(after) : this.first();
     return () => {
       const ret = curr;
       if (curr) curr = next(curr);
@@ -194,6 +194,7 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   /**
    * @todo Unify this with `.entries()`.
+   * @deprecated
    */
   public points0(
     start: undefined | OverlayPoint<T>,

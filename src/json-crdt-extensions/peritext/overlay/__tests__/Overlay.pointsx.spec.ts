@@ -47,20 +47,20 @@ describe('.points0()', () => {
     test('iterates through all points', () => {
       const {peritext} = setupWithOverlay();
       const overlay = peritext.overlay;
-      console.log(overlay + '');
-      // const points = getPoints(overlay);
-      // expect(overlay.first()).not.toBe(undefined);
-      // expect(points.length).toBe(peritext.strApi().length());
+      const points = getPoints(overlay);
+      expect(overlay.first()).not.toBe(undefined);
+      expect(points.length).toBe(3);
     });
-
+    
     test('iterates through all points, when points anchored to the same anchor', () => {
       const {peritext, overlay} = setupWithOverlay();
+      peritext.refresh();
+      expect(getPoints(overlay).length).toBe(3);
       peritext.editor.cursor.setAt(2, 1);
       peritext.editor.saved.insStack('<b>');
       peritext.refresh();
-      const points = getPoints(overlay);
+      expect(getPoints(overlay).length).toBe(4);
       expect(overlay.first()).not.toBe(undefined);
-      expect(points.length).toBe(6);
     });
 
     test('should not return virtual start point, if real start point exists', () => {
@@ -86,32 +86,27 @@ describe('.points0()', () => {
 
     test('can skip points from beginning', () => {
       const {overlay} = setupWithOverlay();
+      overlay.refresh();
       const points1 = getPoints(overlay);
-      expect(points1.length).toBe(5);
+      expect(points1.length).toBe(3);
       const first = overlay.first()!;
       const points2 = getPoints(overlay, first);
-      expect(points2.length).toBe(4);
+      expect(points2.length).toBe(2);
       const second = next(first)!;
       const points3 = getPoints(overlay, second);
-      expect(points3.length).toBe(3);
+      expect(points3.length).toBe(1);
       const third = next(second);
       const points4 = getPoints(overlay, third);
-      expect(points4.length).toBe(2);
+      expect(points4.length).toBe(0);
     });
 
-    test('can skip last virtual point', () => {
+    test('can skip the last real point', () => {
       const {overlay} = setupWithOverlay();
-      const points1 = getPoints(overlay);
-      expect(points1.length).toBe(5);
-      const points2 = getPoints(overlay, undefined, (point) => !point.refs.length);
-      expect(points2.length).toBe(4);
-    });
-
-    test('can skip last real point', () => {
-      const {overlay} = setupWithOverlay();
+      overlay.refresh();
+      expect(getPoints(overlay).length).toBe(3);
       const lastPoint = last(overlay.root!);
       const points1 = getPoints(overlay, undefined, (point) => point === lastPoint);
-      expect(points1.length).toBe(3);
+      expect(points1.length).toBe(2);
     });
   });
 });
