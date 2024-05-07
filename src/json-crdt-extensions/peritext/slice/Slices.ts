@@ -76,7 +76,7 @@ export class Slices<T = string> implements Stateful, Printable {
     return slice;
   }
 
-  public insMarker(range: Range<T>, type: SliceType, data?: unknown): MarkerSlice<T> {
+  public insMarker(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): MarkerSlice<T> {
     return this.ins(range, SliceBehavior.Marker, type, data) as MarkerSlice<T>;
   }
 
@@ -103,15 +103,15 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.insMarker(range, type, data);
   }
 
-  public insStack(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
+  public insStack(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Stack, type, data);
   }
 
-  public insOverwrite(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
+  public insOverwrite(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
-  public insErase(range: Range<T>, type: SliceType, data?: unknown): PersistedSlice<T> {
+  public insErase(range: Range<T>, type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     return this.ins(range, SliceBehavior.Erase, type, data);
   }
 

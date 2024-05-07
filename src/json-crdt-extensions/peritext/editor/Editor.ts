@@ -77,22 +77,25 @@ export class Editor<T = string> {
     return true;
   }
 
+  /** @deprecated use `.saved.insStack` */
   public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
   }
 
+  /** @deprecated use `.saved.insOverwrite` */
   public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
   }
 
+  /** @deprecated use `.saved.insErase` */
   public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
     const range = this.cursor.range();
     return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
   }
 
-  /** @deprecated */
+  /** @deprecated use `.saved.insMarker` */
   public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
     return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
   }

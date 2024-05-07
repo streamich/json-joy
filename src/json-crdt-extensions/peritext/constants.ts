@@ -6,6 +6,21 @@ export const enum Chars {
   BlockSplitSentinel = '\n',
 }
 
+export const enum Position {
+  /**
+   * Specifies the absolute start of the text, i.e. the position before the
+   * first character. In model space it is defined as string ID and "after"
+   * anchor.
+   */
+  AbsStart = -1,
+
+  /**
+   * Specifies the absolute end of the text, i.e. the position after the last
+   * character. In model space it is defined as string ID and "before" anchor.
+   */
+  AbsEnd = 9007199254740991, // Number.MAX_SAFE_INTEGER
+}
+
 export const MNEMONIC = ExtensionName[ExtensionId.peritext];
 
 export const SCHEMA = (text: string) =>

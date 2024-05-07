@@ -21,7 +21,7 @@ const setup = () => {
 
 const markerCount = (peritext: Peritext): number => {
   const overlay = peritext.overlay;
-  const iterator = overlay.splitIterator();
+  const iterator = overlay.markerIterator();
   let count = 0;
   for (let split = iterator(); split; split = iterator()) {
     count++;
@@ -117,7 +117,7 @@ describe('markers', () => {
       expect(markerCount(peritext)).toBe(2);
       const points = [];
       let point;
-      for (const iterator = peritext.overlay.splitIterator(); (point = iterator()); ) points.push(point);
+      for (const iterator = peritext.overlay.markerIterator(); (point = iterator()); ) points.push(point);
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(2);
       expect(points[1].pos()).toBe(11);
@@ -203,7 +203,7 @@ describe('slices', () => {
     test('intersecting slice before split, should not update the split', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(6);
-      const slice = peritext.editor.insMarker(['p']);
+      peritext.editor.insMarker(['p']);
       peritext.refresh();
       const point = peritext.overlay.find((point) => point instanceof MarkerOverlayPoint)!;
       expect(point.layers.length).toBe(0);

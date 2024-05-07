@@ -19,11 +19,13 @@ const setup = () => {
 test('can insert markers', () => {
   const {peritext} = setup();
   const {editor} = peritext;
-  expect(size(peritext.overlay.root)).toBe(0);
+  expect([...peritext.overlay].length).toBe(0);
   editor.cursor.setAt(0);
+  peritext.refresh();
+  expect([...peritext.overlay].length).toBe(1);
   editor.insMarker(['p'], '<p>');
   peritext.refresh();
-  expect(size(peritext.overlay.root)).toBe(1);
+  expect(size(peritext.overlay.root)).toBe(2);
   editor.cursor.setAt(9);
   editor.insMarker(['p'], '<p>');
   peritext.refresh();

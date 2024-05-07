@@ -53,8 +53,18 @@ export const enum SliceBehavior {
 
   /**
    * Used to mark the user's cursor position in the document.
+   *
+   * @todo Consider removing this.
    */
   Cursor = 0b100,
+}
+
+export enum SliceBehaviorName {
+  Marker = SliceBehavior.Marker,
+  Stack = SliceBehavior.Stack,
+  Overwrite = SliceBehavior.Overwrite,
+  Erase = SliceBehavior.Erase,
+  Cursor = SliceBehavior.Cursor,
 }
 
 /**

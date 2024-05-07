@@ -4,7 +4,7 @@ import {Range} from '../rga/Range';
 import {updateNode} from '../../../json-crdt/hash';
 import {printTree} from 'tree-dump/lib/printTree';
 import {Anchor} from '../rga/constants';
-import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex} from './constants';
+import {SliceHeaderMask, SliceHeaderShift, SliceBehavior, SliceTupleIndex, SliceBehaviorName} from './constants';
 import {CONST} from '../../../json-hash';
 import {Timestamp} from '../../../json-crdt-patch/clock';
 import {VecNode} from '../../../json-crdt/nodes';
@@ -168,7 +168,9 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '∅';
     const dataLengthBreakpoint = 32;
-    const header = `${this.constructor.name} ${super.toString('', true)}, ${this.behavior}, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
+    const header = `${this.constructor.name} ${super.toString('', true)}, ${
+      SliceBehaviorName[this.behavior]
+    }, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
     return header;
   }
 
