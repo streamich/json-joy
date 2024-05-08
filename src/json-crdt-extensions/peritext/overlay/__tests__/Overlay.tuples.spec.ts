@@ -1,11 +1,11 @@
 import {next} from 'sonic-forest/lib/util';
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 import {OverlayPoint} from '../OverlayPoint';
 
 const runPairsTests = (setup: () => Kit) => {
-  describe('.tuples()', () => {
+  describe('.tuples() full range', () => {
     test('returns [START, END] single tuple for an empty overlay', () => {
       const {peritext} = setup();
       const overlay = peritext.overlay;
@@ -128,6 +128,34 @@ const runPairsTests = (setup: () => Kit) => {
       expect(p3.layers.length).toBe(0);
       expect(p2.refs.length).toBe(2);
       expect(p3.refs.length).toBe(2);
+    });
+  });
+
+  describe('.tuples() at offset', () => {
+    test('in empty overlay, after caret returns the last edge', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(5);
+      overlay.refresh();
+      const first = overlay.first()!;
+      const pairs = [...overlay.tuples(first)];
+      expect(pairs).toEqual([
+        [first, overlay.END],
+      ]);
+    });
+
+    test('in empty overlay, after selection start returns the selection and the edge', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(2, 4);
+      overlay.refresh();
+      const p1 = overlay.first()!;
+      const p2 = next(p1)!;
+      const list = [...overlay.tuples(p1)];
+      expect(list).toEqual([
+        [p1, p2],
+        [p2, overlay.END],
+      ]);
     });
   });
 };
