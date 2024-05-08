@@ -331,7 +331,12 @@ export class Overlay<T = string> implements Printable, Stateful {
     hash = this.refreshSlices(hash, txt.savedSlices);
     hash = this.refreshSlices(hash, txt.extraSlices);
     hash = this.refreshSlices(hash, txt.localSlices);
-    if (!slicesOnly) hash = this.computeSplitTextHashes(hash);
+
+    // TODO: Move test hash calculation out of the overlay.
+    if (!slicesOnly) {
+      // hash = updateRga(hash, txt.str);
+      hash = this.refreshTextSlices(hash);
+    }
     return (this.hash = hash);
   }
 
@@ -461,7 +466,7 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public leadingTextHash: number = 0;
 
-  protected computeSplitTextHashes(stateTotal: number): number {
+  protected refreshTextSlices(stateTotal: number): number {
     const txt = this.txt;
     const str = txt.str;
     const firstChunk = str.first();
@@ -472,7 +477,6 @@ export class Overlay<T = string> implements Printable, Stateful {
     let state: number = CONST.START_STATE;
     for (let pair = i(); pair; pair = i()) {
       const [p1, p2] = pair;
-      // TODO: need to incorporate slice attribute hash here?
       const id1 = p1.id;
       state = (state << 5) + state + (id1.sid >>> 0) + id1.time;
       let overlayPointHash = CONST.START_STATE;
@@ -482,10 +486,8 @@ export class Overlay<T = string> implements Printable, Stateful {
           (overlayPointHash << 5) + overlayPointHash + ((((id.sid >>> 0) + id.time) << 8) + (off << 4) + len);
       });
       state = updateNum(state, overlayPointHash);
-      if (p1) {
-        p1.hash = overlayPointHash;
-        stateTotal = updateNum(stateTotal, overlayPointHash);
-      }
+      p1.hash = overlayPointHash;
+      stateTotal = updateNum(stateTotal, overlayPointHash);
       if (p2 instanceof MarkerOverlayPoint) {
         if (marker) {
           marker.textHash = state;

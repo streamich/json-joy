@@ -6,7 +6,7 @@ import {SliceBehavior} from '../../slice/constants';
 
 const setup = () => {
   const sid = 123456789;
-  const model = Model.withLogicalClock(sid);
+  const model = Model.create(undefined, sid);
   model.api.root({
     text: '',
     slices: [],
@@ -307,18 +307,35 @@ describe('Overlay.refresh()', () => {
     describe('updates hash', () => {
       testRefresh('when the first character is deleted and reinserted', (kit, refresh) => {
         const index = 0;
-        const char = kit.peritext.strApi().view()[index];
+        const str = kit.peritext.strApi();
+        const char = str.view()[index];
+        const view = str.view();
         refresh();
         kit.peritext.strApi().del(index, 1);
         kit.peritext.strApi().ins(index, char);
+        expect(str.view()).toEqual(view);
       });
 
       testRefresh('when the last character is deleted and reinserted', (kit, refresh) => {
         const index = kit.peritext.strApi().view().length - 1;
-        const char = kit.peritext.strApi().view()[index];
+        const str = kit.peritext.strApi();
+        const char = str.view()[index];
+        const view = str.view();
         refresh();
         kit.peritext.strApi().del(index, 1);
         kit.peritext.strApi().ins(index, char);
+        expect(str.view()).toEqual(view);
+      });
+
+      testRefresh('when the third character is reinserted', (kit, refresh) => {
+        const index = 3;
+        const str = kit.peritext.strApi();
+        const char = str.view()[index];
+        const view = str.view();
+        refresh();
+        kit.peritext.strApi().del(index, 1);
+        kit.peritext.strApi().ins(index, char);
+        expect(str.view()).toEqual(view);
       });
     });
   });
