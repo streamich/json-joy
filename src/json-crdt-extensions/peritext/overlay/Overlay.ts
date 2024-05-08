@@ -196,12 +196,35 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {
+    const isEmpty = !this.root;
+    if (isEmpty) {
+      let closed = false;
+      return () => {
+        if (closed) return;
+        closed = true;
+        return [undefined, undefined];
+      }
+    }
     let p1: OverlayPoint<T> | undefined;
     let p2: OverlayPoint<T> | undefined;
     const iterator = this.points0(after);
     return () => {
+      const next = iterator();
+      const isEnd = !next;
+      if (isEnd) {
+        if (!p2 || p2.isAbsEnd()) return;
+        p1 = p2;
+        p2 = undefined;
+        return [p1, p2];
+      }
       p1 = p2;
-      p2 = iterator();
+      p2 = next;
+      if (!p1) {
+        if (p2 && p2.isAbsStart()) {
+          p1 = p2;
+          p2 = iterator();
+        }
+      }
       return (p1 || p2) ? [p1, p2] : undefined;
     };
   }
