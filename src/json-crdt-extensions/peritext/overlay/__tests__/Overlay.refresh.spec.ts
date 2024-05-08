@@ -1,6 +1,6 @@
 import {Model, ObjApi} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {setupNumbersWithTombstones} from '../../__tests__/setup';
+import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {SliceBehavior} from '../../slice/constants';
 
@@ -24,26 +24,26 @@ type Kit = ReturnType<typeof setup>;
 
 describe('Overlay.refresh()', () => {
   test('can select all text using relative range', () => {
-    const {peritext, editor} = setupNumbersWithTombstones();
+    const {peritext, editor} = setupNumbersWithTombstonesKit();
     const overlay = peritext.overlay;
     const range = peritext.range(peritext.pointStart()!, peritext.pointEnd()!);
     editor.cursor.setRange(range);
     peritext.refresh();
     expect(editor.cursor.text()).toBe('0123456789');
-    const overlayPoints = [...overlay];
+    const overlayPoints = [...overlay.points()];
     expect(overlayPoints.length).toBe(2);
     expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);
   });
 
   test('can select all text using absolute range', () => {
-    const {peritext, editor} = setupNumbersWithTombstones();
+    const {peritext, editor} = setupNumbersWithTombstonesKit();
     const overlay = peritext.overlay;
     const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
     editor.cursor.setRange(range);
     peritext.refresh();
     expect(editor.cursor.text()).toBe('0123456789');
-    const overlayPoints = [...overlay];
+    const overlayPoints = [...overlay.points()];
     expect(overlayPoints.length).toBe(2);
     expect(overlayPoints[0].id.time).toBe(editor.cursor.start.id.time);
     expect(overlayPoints[1].id.time).toBe(editor.cursor.end.id.time);

@@ -2,7 +2,7 @@ import {Model} from '../../../../json-crdt/model';
 import {size} from 'sonic-forest/lib/util';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../../rga/constants';
-import {setupNumbersWithTombstones} from '../../__tests__/setup';
+import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {OverlayPoint} from '../OverlayPoint';
 import {OverlayRefSliceEnd, OverlayRefSliceStart} from '../refs';
 
@@ -94,7 +94,7 @@ describe('.getOrNextLower()', () => {
 
   describe('when all text selected, using relative range', () => {
     test('can select the starting point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointStart()!, peritext.pointEnd()!);
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -107,7 +107,7 @@ describe('.getOrNextLower()', () => {
     });
 
     test('can select the ending point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointStart()!, peritext.pointEnd()!);
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -120,7 +120,7 @@ describe('.getOrNextLower()', () => {
 
   describe('when all text selected, using absolute range', () => {
     test('can select the starting point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -133,7 +133,7 @@ describe('.getOrNextLower()', () => {
     });
 
     test('can select the end point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -189,7 +189,7 @@ describe('.getOrNextHigher()', () => {
 
   describe('when all text selected, using relative range', () => {
     test('can select the ending point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointStart()!, peritext.pointEnd()!);
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -200,7 +200,7 @@ describe('.getOrNextHigher()', () => {
     });
 
     test('can select the start point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointStart()!, peritext.pointEnd()!);
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -215,7 +215,7 @@ describe('.getOrNextHigher()', () => {
 
   describe('when all text selected, using absolute range', () => {
     test('can select the ending point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
       editor.cursor.setRange(range);
       peritext.refresh();
@@ -226,7 +226,7 @@ describe('.getOrNextHigher()', () => {
     });
 
     test('can select the start point', () => {
-      const {peritext, editor} = setupNumbersWithTombstones();
+      const {peritext, editor} = setupNumbersWithTombstonesKit();
       const range = peritext.range(peritext.pointAbsStart(), peritext.pointAbsEnd());
       editor.cursor.setRange(range);
       peritext.refresh();

@@ -10,9 +10,13 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
+  public readonly extra: EditorSlices<T>;
+  public readonly local: EditorSlices<T>;
 
   constructor(public readonly txt: Peritext<T>) {
     this.saved = new EditorSlices(txt, txt.savedSlices);
+    this.extra = new EditorSlices(txt, txt.extraSlices);
+    this.local = new EditorSlices(txt, txt.localSlices);
   }
 
   public firstCursor(): Cursor<T> | undefined {

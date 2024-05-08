@@ -21,7 +21,7 @@ const setup = () => {
 
 const markerCount = (peritext: Peritext): number => {
   const overlay = peritext.overlay;
-  const iterator = overlay.markerIterator();
+  const iterator = overlay.markers0();
   let count = 0;
   for (let split = iterator(); split; split = iterator()) {
     count++;
@@ -43,12 +43,9 @@ describe('markers', () => {
       expect(markerCount(peritext)).toBe(0);
       peritext.overlay.refresh();
       expect(markerCount(peritext)).toBe(1);
-      const points = [];
-      let point;
-      for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
+      const points = [...peritext.overlay.points()];
       expect(points.length).toBe(2);
-      point = points[0];
-      expect(point.pos()).toBe(5);
+      expect(points[0].pos()).toBe(5);
     });
 
     test('can insert two markers', () => {
@@ -77,10 +74,6 @@ describe('markers', () => {
       const slice = peritext.editor.insMarker(['p'], '¶');
       peritext.refresh();
       expect(markerCount(peritext)).toBe(1);
-      const points = [];
-      let point;
-      for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
-      point = points[0];
       peritext.delMarker(slice);
       peritext.refresh();
       expect(markerCount(peritext)).toBe(0);
@@ -94,10 +87,6 @@ describe('markers', () => {
       const slice = peritext.editor.insMarker(['p'], '¶');
       peritext.refresh();
       expect(markerCount(peritext)).toBe(2);
-      const points = [];
-      let point;
-      for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
-      point = points[0];
       peritext.delMarker(slice);
       peritext.refresh();
       expect(markerCount(peritext)).toBe(1);
@@ -117,7 +106,7 @@ describe('markers', () => {
       expect(markerCount(peritext)).toBe(2);
       const points = [];
       let point;
-      for (const iterator = peritext.overlay.markerIterator(); (point = iterator()); ) points.push(point);
+      for (const iterator = peritext.overlay.markers0(); (point = iterator()); ) points.push(point);
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(2);
       expect(points[1].pos()).toBe(11);
@@ -139,9 +128,7 @@ describe('slices', () => {
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
       expect(peritext.overlay.slices.size).toBe(2);
-      const points = [];
-      let point;
-      for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
+      const points = [...peritext.overlay.points()];
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(6);
       expect(points[0].anchor).toBe(Anchor.Before);
@@ -158,9 +145,7 @@ describe('slices', () => {
       expect(peritext.overlay.slices.size).toBe(0);
       peritext.overlay.refresh();
       expect(peritext.overlay.slices.size).toBe(3);
-      const points = [];
-      let point;
-      for (const iterator = peritext.overlay.iterator(); (point = iterator()); ) points.push(point);
+      const points = [...peritext.overlay.points()];
       expect(points.length).toBe(4);
     });
 
