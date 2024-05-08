@@ -118,7 +118,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     }
     return;
   }
-
+ 
+  /** @todo Rename to `chunks()`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
@@ -245,6 +246,14 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.tuples0(after));
   }
 
+  /**
+   * Finds all slices that are contained within the given range. A slice is
+   * considered contained if its start and end points are within the range,
+   * inclusive (uses {@link Range#contains} method to check containment).
+   *
+   * @param range The range to search for contained slices.
+   * @returns A set of slices that are contained within the given range.
+   */
   public findContained(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start);
@@ -265,6 +274,14 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
+  /**
+   * Finds all slices that overlap with the given range. A slice is considered
+   * overlapping if its start or end point is within the range, inclusive
+   * (uses {@link Range#containsPoint} method to check overlap).
+   *
+   * @param range The range to search for overlapping slices.
+   * @returns A set of slices that overlap with the given range.
+   */
   public findOverlapping(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start);

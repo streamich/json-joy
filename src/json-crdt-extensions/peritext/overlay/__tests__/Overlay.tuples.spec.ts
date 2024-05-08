@@ -152,10 +152,10 @@ const runPairsTests = (setup: () => Kit) => {
   });
 };
 
-describe('numbers "hello world", no edits', () => {
+describe('text "hello world", no edits', () => {
   runPairsTests(setupHelloWorldKit);
 });
 
-describe('numbers "hello world", with default schema and tombstones', () => {
+describe('text "hello world", with few edits', () => {
   runPairsTests(setupHelloWorldWithFewEditsKit);
 });

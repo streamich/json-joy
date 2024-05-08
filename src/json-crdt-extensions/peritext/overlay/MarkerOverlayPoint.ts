@@ -8,7 +8,7 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 
 export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> {
   /**
-   * Hash value of the preceding text contents, up until the next marker.
+   * Hash value of the following text contents, up until the next marker.
    */
   public textHash: number = 0;
 
