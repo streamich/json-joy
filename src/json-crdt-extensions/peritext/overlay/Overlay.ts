@@ -109,15 +109,6 @@ export class Overlay<T = string> implements Printable, Stateful {
     }
     return result;
   }
-
-  public find(predicate: (point: OverlayPoint<T>) => boolean): OverlayPoint<T> | undefined {
-    let point = this.first();
-    while (point) {
-      if (predicate(point)) return point;
-      point = next(point);
-    }
-    return;
-  }
  
   /** @todo Rename to `chunks()`. */
   public chunkSlices0(
@@ -244,6 +235,24 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public tuples(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayTuple<T>> {
     return new UndefEndIter(this.tuples0(after));
+  }
+
+
+  /**
+   * Finds the first point that satisfies the given predicate function.
+   *
+   * @param predicate Predicate function to find the point, returns true if the
+   *     point is found.
+   * @returns The first point that satisfies the predicate, or undefined if no
+   *     point is found.
+   */
+  public find(predicate: (point: OverlayPoint<T>) => boolean): OverlayPoint<T> | undefined {
+    let point = this.first();
+    while (point) {
+      if (predicate(point)) return point;
+      point = next(point);
+    }
+    return;
   }
 
   /**

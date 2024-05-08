@@ -1,4 +1,50 @@
 import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
+import {Cursor} from '../../editor/Cursor';
+import {OverlayRefSliceEnd} from '../refs';
+
+const runFind = (setup: () => Kit) => {
+  describe('.find()', () => {
+    test('can find nothing', () => {
+      const {peritext} = setup();
+      peritext.overlay.refresh();
+      const point = peritext.overlay.find(() => false);
+      expect(point).toBe(undefined);
+    });
+
+    test('can find a single caret cursor', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      peritext.overlay.refresh();
+      const point = peritext.overlay.find((point) => {
+        return point.markers[0] instanceof Cursor;
+      })!;
+      expect(point.markers[0]).toBe(peritext.editor.cursor);
+    });
+
+    test('can find the cursor by selection start', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.overlay.refresh();
+      const point = peritext.overlay.find((point) => {
+        return point.layers[0] === peritext.editor.cursor;
+      })!;
+      expect(point.layers[0]).toBe(peritext.editor.cursor);
+    });
+
+    test('can find the cursor by selection end', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.overlay.refresh();
+      const point = peritext.overlay.find((point) => {
+        if (point.refs[0] instanceof OverlayRefSliceEnd) {
+          return point.refs[0].slice === peritext.editor.cursor;
+        }
+        return false;
+      })!;
+      expect((point.refs[0] as OverlayRefSliceEnd).slice).toBe(peritext.editor.cursor);
+    });
+  });
+};
 
 const runFindContainedTests = (setup: () => Kit) => {
   describe('.findContained()', () => {
@@ -130,12 +176,16 @@ const runFindOverlappingTests = (setup: () => Kit) => {
   });
 };
 
+const runTestSuite = (setup: () => Kit) => {
+  runFind(setup);
+  runFindContainedTests(setup);
+  runFindOverlappingTests(setup);
+};
+
 describe('text "hello world", no edits', () => {
-  runFindContainedTests(setupHelloWorldKit);
-  runFindOverlappingTests(setupHelloWorldKit);
+  runTestSuite(setupHelloWorldKit);
 });
 
 describe('text "hello world", with few edits', () => {
-  runFindContainedTests(setupHelloWorldWithFewEditsKit);
-  runFindOverlappingTests(setupHelloWorldWithFewEditsKit);
+  runTestSuite(setupHelloWorldWithFewEditsKit);
 });
