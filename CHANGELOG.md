@@ -1,3 +1,11 @@
+# [16.3.0](https://github.com/streamich/json-joy/compare/v16.2.0...v16.3.0) (2024-05-08)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve .points() iteration at offset ([8de8676](https://github.com/streamich/json-joy/commit/8de86766519c5e3dfbf28e0fd4943c00d2f0b277))
+* **json-crdt-extensions:** 🎸 improve Overlay.pairs() iterator ([b095301](https://github.com/streamich/json-joy/commit/b095301aa285ff49ecedc7790911a71071522fb2))
+
 # [16.2.0](https://github.com/streamich/json-joy/compare/v16.1.0...v16.2.0) (2024-05-07)
 
 
