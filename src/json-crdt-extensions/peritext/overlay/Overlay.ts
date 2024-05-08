@@ -203,7 +203,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       return () => (closed ? u : (closed = true, [u, u]));
     }
     let p1: OverlayPoint<T> | undefined;
-    let p2: OverlayPoint<T> | undefined;
+    let p2: OverlayPoint<T> | undefined = after;
     const iterator = this.points0(after);
     return () => {
       const next = iterator();
