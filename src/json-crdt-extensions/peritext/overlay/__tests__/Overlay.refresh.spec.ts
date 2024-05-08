@@ -266,7 +266,7 @@ describe('Overlay.refresh()', () => {
     });
   });
 
-  describe('cursor', () => {
+  describe('local slices - cursor', () => {
     describe('updates hash', () => {
       testRefresh('when cursor char ID changes', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(1);
@@ -299,6 +299,26 @@ describe('Overlay.refresh()', () => {
         refresh();
         const api = slice.dataNode()! as ObjApi<any>;
         api.set({a: 'c'});
+      });
+    });
+  });
+
+  describe('text contents', () => {
+    describe('updates hash', () => {
+      testRefresh('when the first character is deleted and reinserted', (kit, refresh) => {
+        const index = 0;
+        const char = kit.peritext.strApi().view()[index];
+        refresh();
+        kit.peritext.strApi().del(index, 1);
+        kit.peritext.strApi().ins(index, char);
+      });
+
+      testRefresh('when the last character is deleted and reinserted', (kit, refresh) => {
+        const index = kit.peritext.strApi().view().length - 1;
+        const char = kit.peritext.strApi().view()[index];
+        refresh();
+        kit.peritext.strApi().del(index, 1);
+        kit.peritext.strApi().ins(index, char);
       });
     });
   });

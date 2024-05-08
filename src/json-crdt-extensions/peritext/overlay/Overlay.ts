@@ -307,7 +307,13 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
-  public isBlockSplit(id: ITimestampStruct): boolean {
+  /**
+   * Returns `true` if the current character is a marker sentinel.
+   *
+   * @param id ID of the point to check.
+   * @returns Whether the point is a marker point.
+   */
+  public isMarker(id: ITimestampStruct): boolean {
     const point = this.txt.point(id, Anchor.Before);
     const overlayPoint = this.getOrNextLower(point);
     return (
@@ -325,7 +331,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     hash = this.refreshSlices(hash, txt.savedSlices);
     hash = this.refreshSlices(hash, txt.extraSlices);
     hash = this.refreshSlices(hash, txt.localSlices);
-    if (!slicesOnly) this.computeSplitTextHashes();
+    if (!slicesOnly) hash = this.computeSplitTextHashes(hash);
     return (this.hash = hash);
   }
 
@@ -455,15 +461,15 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public leadingTextHash: number = 0;
 
-  protected computeSplitTextHashes(): void {
+  protected computeSplitTextHashes(stateTotal: number): number {
     const txt = this.txt;
     const str = txt.str;
     const firstChunk = str.first();
-    if (!firstChunk) return;
+    if (!firstChunk) return stateTotal;
     let chunk: Chunk<T> | undefined = firstChunk;
     let marker: MarkerOverlayPoint<T> | undefined = undefined;
-    let state: number = CONST.START_STATE;
     const i = this.tuples0(undefined);
+    let state: number = CONST.START_STATE;
     for (let pair = i(); pair; pair = i()) {
       const [p1, p2] = pair;
       // TODO: need to incorporate slice attribute hash here?
@@ -478,6 +484,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       state = updateNum(state, overlayPointHash);
       if (p1) {
         p1.hash = overlayPointHash;
+        stateTotal = updateNum(stateTotal, overlayPointHash);
       }
       if (p2 instanceof MarkerOverlayPoint) {
         if (marker) {
@@ -485,6 +492,7 @@ export class Overlay<T = string> implements Printable, Stateful {
         } else {
           this.leadingTextHash = state;
         }
+        stateTotal = updateNum(stateTotal, state);
         state = CONST.START_STATE;
         marker = p2;
       }
@@ -494,6 +502,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     } else {
       this.leadingTextHash = state;
     }
+    return stateTotal;
   }
 
   // ---------------------------------------------------------------- Printable
