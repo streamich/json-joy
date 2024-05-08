@@ -38,7 +38,7 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   constructor(protected readonly txt: Peritext<T>) {
     const id = txt.str.id;
-    this.START = this.point(id, Anchor.After)
+    this.START = this.point(id, Anchor.After);
     this.END = this.point(id, Anchor.Before);
   }
 
@@ -200,7 +200,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     if (isEmpty) {
       const u = undefined;
       let closed = false;
-      return () => (closed ? u : (closed = true, [u, u]));
+      return () => (closed ? u : ((closed = true), [u, u]));
     }
     let p1: OverlayPoint<T> | undefined;
     let p2: OverlayPoint<T> | undefined = after;
@@ -222,7 +222,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           p2 = iterator();
         }
       }
-      return (p1 || p2) ? [p1, p2] : undefined;
+      return p1 || p2 ? [p1, p2] : undefined;
     };
   }
 
@@ -230,7 +230,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.pairs0(after));
   }
 
-  public tuples0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayTuple<T>>  {
+  public tuples0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayTuple<T>> {
     const iterator = this.pairs0(after);
     return () => {
       const pair = iterator();

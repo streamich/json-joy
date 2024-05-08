@@ -11,9 +11,7 @@ const runPairsTests = (setup: () => Kit) => {
       const overlay = peritext.overlay;
       overlay.refresh();
       const list = [...overlay.tuples()];
-      expect(list).toEqual([
-        [overlay.START, overlay.END],
-      ]);
+      expect(list).toEqual([[overlay.START, overlay.END]]);
     });
 
     test('when caret at abs start, returns one [p, END] tuple', () => {
@@ -24,9 +22,7 @@ const runPairsTests = (setup: () => Kit) => {
       const list = [...overlay.tuples()];
       const p1 = overlay.first()!;
       expect(peritext.editor.cursor.start.rightChar()?.view()).toBe(peritext.strApi().view()[0]);
-      expect(list).toEqual([
-        [p1, overlay.END],
-      ]);
+      expect(list).toEqual([[p1, overlay.END]]);
     });
 
     test('when caret at abs end, returns one [START, p] tuple', () => {
@@ -37,9 +33,7 @@ const runPairsTests = (setup: () => Kit) => {
       const list = [...overlay.tuples()];
       const p1 = overlay.first()!;
       expect(peritext.editor.cursor.start.leftChar()?.view()).toBe(peritext.strApi().view().slice(-1));
-      expect(list).toEqual([
-        [overlay.START, p1]
-      ]);
+      expect(list).toEqual([[overlay.START, p1]]);
     });
 
     test('for only caret in overlay, returns two edge tuples', () => {
@@ -139,9 +133,7 @@ const runPairsTests = (setup: () => Kit) => {
       overlay.refresh();
       const first = overlay.first()!;
       const pairs = [...overlay.tuples(first)];
-      expect(pairs).toEqual([
-        [first, overlay.END],
-      ]);
+      expect(pairs).toEqual([[first, overlay.END]]);
     });
 
     test('in empty overlay, after selection start returns the selection and the edge', () => {

@@ -1,4 +1,4 @@
-import type {OverlayPoint} from "./OverlayPoint";
+import type {OverlayPoint} from './OverlayPoint';
 
 export type BlockTag = [
   /**

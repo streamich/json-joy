@@ -39,7 +39,7 @@ describe('.points()', () => {
       expect(overlay.first()).not.toBe(undefined);
       expect(points.length).toBe(3);
     });
-    
+
     test('iterates through all points, when points anchored to the same anchor', () => {
       const {peritext, overlay} = setupWithOverlay();
       peritext.refresh();

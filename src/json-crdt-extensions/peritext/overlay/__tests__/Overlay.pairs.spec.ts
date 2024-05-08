@@ -11,9 +11,7 @@ const runPairsTests = (setup: () => Kit) => {
       const overlay = peritext.overlay;
       overlay.refresh();
       const pairs = [...overlay.pairs()];
-      expect(pairs).toEqual([
-        [undefined, undefined]
-      ]);
+      expect(pairs).toEqual([[undefined, undefined]]);
     });
 
     test('when caret at abs start, returns one pair', () => {
@@ -24,9 +22,7 @@ const runPairsTests = (setup: () => Kit) => {
       const pairs = [...overlay.pairs()];
       const p1 = overlay.first()!;
       expect(peritext.editor.cursor.start.rightChar()?.view()).toBe('0');
-      expect(pairs).toEqual([
-        [p1, undefined]
-      ]);
+      expect(pairs).toEqual([[p1, undefined]]);
     });
 
     test('when caret at abs end, returns one pair', () => {
@@ -37,9 +33,7 @@ const runPairsTests = (setup: () => Kit) => {
       const pairs = [...overlay.pairs()];
       const p1 = overlay.first()!;
       expect(peritext.editor.cursor.start.leftChar()?.view()).toBe('9');
-      expect(pairs).toEqual([
-        [undefined, p1]
-      ]);
+      expect(pairs).toEqual([[undefined, p1]]);
     });
 
     test('for only caret in overlay, returns two edge pairs', () => {
@@ -142,9 +136,7 @@ const runPairsTests = (setup: () => Kit) => {
       overlay.refresh();
       const first = overlay.first()!;
       const pairs = [...overlay.pairs(first)];
-      expect(pairs).toEqual([
-        [first, undefined],
-      ]);
+      expect(pairs).toEqual([[first, undefined]]);
     });
 
     test('in empty overlay, after selection start returns the selection and the edge', () => {

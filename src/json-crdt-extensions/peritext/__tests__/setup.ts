@@ -6,11 +6,15 @@ import {ModelWithExt, ext} from '../../ModelWithExt';
 export type Schema = ReturnType<typeof schema>;
 export type Kit = ReturnType<typeof setupKit>;
 
-const schema = (text: string) => s.obj({
-  text: ext.peritext.new(text),
-});
+const schema = (text: string) =>
+  s.obj({
+    text: ext.peritext.new(text),
+  });
 
-export const setupKit = (initialText: string = '', edits: (model: Model<SchemaToJsonNode<Schema>>) => void = () => {}) => {
+export const setupKit = (
+  initialText: string = '',
+  edits: (model: Model<SchemaToJsonNode<Schema>>) => void = () => {},
+) => {
   const model = ModelWithExt.create(schema(initialText));
   edits(model);
   const api = model.api;
