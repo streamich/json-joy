@@ -19,15 +19,15 @@ const setup = () => {
 test('can insert markers', () => {
   const {peritext} = setup();
   const {editor} = peritext;
-  expect([...peritext.overlay].length).toBe(0);
+  expect([...peritext.overlay.points()].length).toBe(0);
   editor.cursor.setAt(0);
   peritext.refresh();
-  expect([...peritext.overlay].length).toBe(1);
-  editor.insMarker(['p'], '<p>');
+  expect([...peritext.overlay.points()].length).toBe(1);
+  editor.saved.insMarker(['p'], '<p>');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(2);
   editor.cursor.setAt(9);
-  editor.insMarker(['p'], '<p>');
+  editor.saved.insMarker(['p'], '<p>');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(3);
 });
@@ -37,15 +37,15 @@ test('can insert slices', () => {
   const {editor} = peritext;
   expect(size(peritext.overlay.root)).toBe(0);
   editor.cursor.setAt(2, 2);
-  editor.insStackSlice('bold');
+  editor.saved.insStack('bold');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(2);
   editor.cursor.setAt(6, 5);
-  editor.insStackSlice('italic');
+  editor.extra.insStack('italic');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(4);
   editor.cursor.setAt(0, 5);
-  editor.insStackSlice('underline');
+  editor.local.insStack('underline');
   peritext.refresh();
   expect(size(peritext.overlay.root)).toBe(6);
 });

@@ -3,7 +3,7 @@ import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
-import {setupNumbersWithTombstones} from '../../__tests__/setup';
+import {setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import type {Chunk} from '../../../../json-crdt/nodes/rga';
 
 const setup = () => {
@@ -226,7 +226,7 @@ describe('.chunkSlices0()', () => {
   });
 
   describe('with "integer list" text', () => {
-    const {peritext} = setupNumbersWithTombstones();
+    const {peritext} = setupNumbersWithTombstonesKit();
     testAllPossibleChunkPointCombinations(peritext);
   });
 });
