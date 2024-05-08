@@ -31,10 +31,10 @@ export class Overlay<T = string> implements Printable, Stateful {
   public root: OverlayPoint<T> | undefined = undefined;
 
   /** A virtual absolute start point, used when the absolute start is missing. */
-  private readonly START: OverlayPoint<T>;
+  public readonly START: OverlayPoint<T>;
 
   /** A virtual absolute end point, used when the absolute end is missing. */
-  private readonly END: OverlayPoint<T>;
+  public readonly END: OverlayPoint<T>;
 
   constructor(protected readonly txt: Peritext<T>) {
     const id = txt.str.id;
