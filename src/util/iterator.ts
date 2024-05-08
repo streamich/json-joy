@@ -1,5 +1,7 @@
+export type UndefIterator<T> = () => undefined | T;
+
 export class UndefEndIter<T> implements IterableIterator<T> {
-  constructor(private readonly i: () => T | undefined) {}
+  constructor(private readonly i: UndefIterator<T>) {}
 
   public next(): IteratorResult<T> {
     const value = this.i();
@@ -17,3 +19,5 @@ export class IterRes<T> {
     public readonly done: boolean,
   ) {}
 }
+
+export const iter = <T>(i: UndefIterator<T>) => new UndefEndIter(i);

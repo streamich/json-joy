@@ -11,13 +11,14 @@ import {compare, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import {CONST, updateNum} from '../../../json-hash';
 import {MarkerSlice} from '../slice/MarkerSlice';
 import {Range} from '../rga/Range';
-import {UndefEndIter} from '../../../util/iterator';
+import {UndefEndIter, UndefIterator} from '../../../util/iterator';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 import type {Slices} from '../slice/Slices';
+import type {OverlayPair, OverlayTuple} from './types';
 
 /**
  * Overlay is a tree structure that represents all the intersections of slices
@@ -29,7 +30,17 @@ import type {Slices} from '../slice/Slices';
 export class Overlay<T = string> implements Printable, Stateful {
   public root: OverlayPoint<T> | undefined = undefined;
 
-  constructor(protected readonly txt: Peritext<T>) {}
+  /** A virtual absolute start point, used when the absolute start is missing. */
+  private readonly START: OverlayPoint<T>;
+
+  /** A virtual absolute end point, used when the absolute end is missing. */
+  private readonly END: OverlayPoint<T>;
+
+  constructor(protected readonly txt: Peritext<T>) {
+    const id = txt.str.id;
+    this.START = this.point(id, Anchor.After)
+    this.END = this.point(id, Anchor.Before);
+  }
 
   private point(id: ITimestampStruct, anchor: Anchor): OverlayPoint<T> {
     return new OverlayPoint(this.txt.str, id, anchor);
@@ -45,34 +56,6 @@ export class Overlay<T = string> implements Printable, Stateful {
 
   public last(): OverlayPoint<T> | undefined {
     return this.root ? last(this.root) : undefined;
-  }
-
-  public iterator(): () => OverlayPoint<T> | undefined {
-    return this.points(undefined);
-  }
-
-  public entries(): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.iterator());
-  }
-
-  // [Symbol.iterator]() {
-  //   return this.entries();
-  // }
-
-  public markerIterator(): () => MarkerOverlayPoint | undefined {
-    let curr = this.first();
-    return () => {
-      while (curr) {
-        const ret = curr;
-        if (curr) curr = next(curr);
-        if (ret instanceof MarkerOverlayPoint) return ret;
-      }
-      return;
-    };
-  }
-
-  public markers(): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.iterator());
   }
 
   /**
@@ -183,7 +166,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     }) as Chunk<T>;
   }
 
-  public points(after: undefined | OverlayPoint<T>): () => OverlayPoint<T> | undefined {
+  public points0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPoint<T>> {
     let curr = after ? next(after) : this.first();
     return () => {
       const ret = curr;
@@ -192,47 +175,30 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  /**
-   * @todo Unify this with `.entries()`.
-   * @deprecated
-   */
-  public points0(
-    start: undefined | OverlayPoint<T>,
-    end: undefined | ((next: OverlayPoint<T>) => boolean),
-    callback: (point: OverlayPoint<T>) => void,
-  ): void {
-    const i = this.points(start);
-    let point = i();
-    while (point) {
-      if (end && end(point)) return;
-      callback(point);
-      point = i();
-    }
+  public points(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.points0(after));
   }
 
-  /** @deprecated */
-  public points1(
-    start: undefined | OverlayPoint<T>,
-    end: undefined | ((next: OverlayPoint<T>) => boolean),
-    callback: (p1: OverlayPoint<T>, p2: OverlayPoint<T>) => void,
-  ): void {
-    let p1: OverlayPoint<T> | undefined;
-    let p2: OverlayPoint<T> | undefined;
-    this.points0(start, end, (point) => {
-      if (p1) {
-        p2 = point;
-        callback(p1, p2);
-        p1 = p2;
-      } else {
-        p1 = point;
+  public markers0(): UndefIterator<MarkerOverlayPoint<T>> {
+    let curr = this.first();
+    return () => {
+      while (curr) {
+        const ret = curr;
+        if (curr) curr = next(curr);
+        if (ret instanceof MarkerOverlayPoint) return ret;
       }
-    });
+      return;
+    };
   }
 
-  public pairs0(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T> | undefined, p2: OverlayPoint<T> | undefined]  {
+  public markers(): IterableIterator<MarkerOverlayPoint<T>> {
+    return new UndefEndIter(this.markers0());
+  }
+
+  public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {
     let p1: OverlayPoint<T> | undefined;
     let p2: OverlayPoint<T> | undefined;
-    const iterator = this.points(after);
+    const iterator = this.points0(after);
     return () => {
       p1 = p2;
       p2 = iterator();
@@ -240,34 +206,24 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public pairs(after?: undefined | OverlayPoint<T>): IterableIterator<[p1: OverlayPoint<T> | undefined, p2: OverlayPoint<T> | undefined]> {
+  public pairs(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayPair<T>> {
     return new UndefEndIter(this.pairs0(after));
   }
 
-  public tuples0(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T>, p2: OverlayPoint<T>]  {
+  public tuples0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayTuple<T>>  {
     const iterator = this.pairs0(after);
     return () => {
       const pair = iterator();
       if (!pair) return;
-      if (pair[0]) pair[0] = this.point(this.txt.str.id, Anchor.After);
-      if (pair[1]) pair[1] = this.point(this.txt.str.id, Anchor.Before);
+      if (pair[0] === undefined) pair[0] = this.START;
+      if (pair[1] === undefined) pair[1] = this.END;
+      return pair as OverlayTuple<T>;
     };
   }
 
-  // public tuples2(after: undefined | OverlayPoint<T>): () => undefined | [p1: OverlayPoint<T>, p2: OverlayPoint<T>]  {
-  //   let p1: OverlayPoint<T> | undefined;
-  //   let p2: OverlayPoint<T> | undefined;
-  //   const iterator = this.points(after);
-  //   return () => {
-  //     const isFirst = !p1;
-  //     if (isFirst) {
-  //       p1 = iterator();
-  //     }
-  //     // p1 = p2;
-  //     // p2 = iterator();
-  //     // return p2 ? [p1, p2] : undefined;
-  //   };
-  // }
+  public tuples(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayTuple<T>> {
+    return new UndefEndIter(this.tuples0(after));
+  }
 
   public findContained(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
@@ -461,7 +417,9 @@ export class Overlay<T = string> implements Printable, Stateful {
     let chunk: Chunk<T> | undefined = firstChunk;
     let marker: MarkerOverlayPoint<T> | undefined = undefined;
     let state: number = CONST.START_STATE;
-    this.points1(undefined, undefined, (p1, p2) => {
+    const i = this.tuples0(undefined);
+    for (let pair = i(); pair; pair = i()) {
+      const [p1, p2] = pair;
       // TODO: need to incorporate slice attribute hash here?
       const id1 = p1.id;
       state = (state << 5) + state + (id1.sid >>> 0) + id1.time;
@@ -484,7 +442,7 @@ export class Overlay<T = string> implements Printable, Stateful {
         state = CONST.START_STATE;
         marker = p2;
       }
-    });
+    }
     if ((marker as any) instanceof MarkerOverlayPoint) {
       (marker as any as MarkerOverlayPoint<T>).textHash = state;
     } else {

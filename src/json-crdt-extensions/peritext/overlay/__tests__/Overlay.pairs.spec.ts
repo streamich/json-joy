@@ -1,11 +1,6 @@
-import {last, next} from 'sonic-forest/lib/util';
+import {next} from 'sonic-forest/lib/util';
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Point} from '../../rga/Point';
-import {Anchor} from '../../rga/constants';
-import {SliceBehavior} from '../../slice/constants';
-import type {Overlay} from '../Overlay';
-import type {OverlayPoint} from '../OverlayPoint';
 
 const setup = () => {
   const model = Model.withLogicalClock();
@@ -33,84 +28,6 @@ const setupWithOverlay = () => {
   peritext.refresh();
   return res;
 };
-
-describe('.points0()', () => {
-  const getPoints = (overlay: Overlay, start?: OverlayPoint, end?: (next: OverlayPoint) => boolean) => {
-    const points: OverlayPoint[] = [];
-    overlay.points0(start, end, (point) => {
-      points.push(point);
-    });
-    return points;
-  };
-
-  describe('with overlay', () => {
-    test('iterates through all points', () => {
-      const {peritext} = setupWithOverlay();
-      const overlay = peritext.overlay;
-      const points = getPoints(overlay);
-      expect(overlay.first()).not.toBe(undefined);
-      expect(points.length).toBe(3);
-    });
-    
-    test('iterates through all points, when points anchored to the same anchor', () => {
-      const {peritext, overlay} = setupWithOverlay();
-      peritext.refresh();
-      expect(getPoints(overlay).length).toBe(3);
-      peritext.editor.cursor.setAt(2, 1);
-      peritext.editor.saved.insStack('<b>');
-      peritext.refresh();
-      expect(getPoints(overlay).length).toBe(4);
-      expect(overlay.first()).not.toBe(undefined);
-    });
-
-    test('should not return virtual start point, if real start point exists', () => {
-      const {peritext, overlay} = setup();
-      peritext.editor.cursor.setAt(0);
-      peritext.editor.saved.insMarker(['p'], '¶');
-      peritext.refresh();
-      const points = getPoints(overlay);
-      expect(points.length).toBe(2);
-      expect(overlay.first()).toBe(points[0]);
-    });
-
-    test('should not return virtual end point, if real end point exists', () => {
-      const {peritext, overlay} = setup();
-      peritext.editor.cursor.setAt(0, peritext.strApi().view().length);
-      peritext.editor.saved.insStack('bold');
-      peritext.refresh();
-      const points = getPoints(overlay);
-      expect(points.length).toBe(2);
-      expect(overlay.first()).toBe(points[0]);
-      expect(last(overlay.root)).toBe(points[1]);
-    });
-
-    test('can skip points from beginning', () => {
-      const {overlay} = setupWithOverlay();
-      overlay.refresh();
-      const points1 = getPoints(overlay);
-      expect(points1.length).toBe(3);
-      const first = overlay.first()!;
-      const points2 = getPoints(overlay, first);
-      expect(points2.length).toBe(2);
-      const second = next(first)!;
-      const points3 = getPoints(overlay, second);
-      expect(points3.length).toBe(1);
-      const third = next(second);
-      const points4 = getPoints(overlay, third);
-      expect(points4.length).toBe(0);
-    });
-
-    test('can skip the last real point', () => {
-      const {overlay} = setupWithOverlay();
-      overlay.refresh();
-      expect(getPoints(overlay).length).toBe(3);
-      const lastPoint = last(overlay.root!);
-      const points1 = getPoints(overlay, undefined, (point) => point === lastPoint);
-      expect(points1.length).toBe(2);
-    });
-  });
-});
-
 
 describe('.pairs()', () => {
   test('all adjacent pairs', () => {
