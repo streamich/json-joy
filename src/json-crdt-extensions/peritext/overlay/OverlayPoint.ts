@@ -85,7 +85,6 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
   /**
    * Collapsed slices - markers (block splits), which represent a single point
    * in the text, even if the start and end of the slice are different.
-   * @deprecated This field might happen to be not necessary.
    */
   public readonly markers: Slice<T>[] = [];
 
@@ -96,10 +95,8 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
    * the state of the point. The markers are sorted by the slice ID.
    *
    * @param slice Slice to add to the marker list.
-   * @deprecated This method might happen to be not necessary.
    */
   public addMarker(slice: Slice<T>): void {
-    /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
     if (!length) {
@@ -131,10 +128,8 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
    * the text, even if the start and end of the slice are different.
    *
    * @param slice Slice to remove from the marker list.
-   * @deprecated This method might happen to be not necessary.
    */
   public removeMarker(slice: Slice<T>): void {
-    /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
     for (let i = 0; i < length; i++) {

@@ -22,14 +22,6 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements H
     super(rga, id, anchor);
   }
 
-  /**
-   * @todo Rename or access it directly.
-   * @deprecated
-   */
-  public markerHash(): number {
-    return this.marker ? this.marker.hash : 0;
-  }
-
   public type(): SliceType {
     return this.marker && this.marker.type;
   }
@@ -59,7 +51,7 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements H
     );
   }
 
-  // ---------------------------------------------------------------- Printable
+  // ------------------------------------------------------------ HeadlessNode2
 
   public p2: MarkerOverlayPoint<T> | undefined;
   public l2: MarkerOverlayPoint<T> | undefined;
