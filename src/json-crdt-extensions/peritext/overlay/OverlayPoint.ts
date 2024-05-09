@@ -4,7 +4,7 @@ import {OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
-import type {Printable} from 'tree-dump/lib/types';
+import type {PrintChild, Printable} from 'tree-dump/lib/types';
 import type {Slice} from '../slice/types';
 
 /**
@@ -218,12 +218,16 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     const refs = lite ? '' : `, refs = ${this.refs.length}`;
     const header = this.toStringName(tab, lite) + refs;
     if (lite) return header;
+    const children: PrintChild[] = [];
+    const layers = this.layers;
+    const layerLength = layers.length;
+    for (let i = 0; i < layerLength; i++) children.push((tab) => layers[i].toString(tab));
+    const markers = this.markers;
+    const markerLength = markers.length;
+    for (let i = 0; i < markerLength; i++) children.push((tab) => markers[i].toString(tab));
     return (
       header +
-      printTree(
-        tab,
-        this.layers.map((slice) => (tab) => slice.toString(tab)),
-      )
+      printTree(tab, children)
     );
   }
 

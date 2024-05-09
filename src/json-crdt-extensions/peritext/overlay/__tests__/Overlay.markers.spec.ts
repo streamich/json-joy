@@ -73,6 +73,32 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       expect([...peritext.overlay.markers()].length).toBe(0);
     });
+
+    test('can add marker at the start of text', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(0);
+      const [marker] = editor.extra.insMarker(0);
+      peritext.overlay.refresh();
+      const list = [...peritext.overlay.markers()];
+      expect(list.length).toBe(1);
+      expect(list[0].marker).toBe(marker);
+      editor.extra.del(marker);
+      peritext.overlay.refresh();
+      expect([...peritext.overlay.markers()].length).toBe(0);
+    });
+    
+    test('can add marker at the end of text', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.set(peritext.pointEnd()!);
+      const [marker] = editor.extra.insMarker('0');
+      peritext.overlay.refresh();
+      const list = [...peritext.overlay.markers()];
+      expect(list.length).toBe(1);
+      expect(list[0].marker).toBe(marker);
+      editor.extra.del(marker);
+      peritext.overlay.refresh();
+      expect([...peritext.overlay.markers()].length).toBe(0);
+    });
   });
 };
 

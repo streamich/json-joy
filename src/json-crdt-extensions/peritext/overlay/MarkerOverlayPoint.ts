@@ -1,12 +1,13 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {OverlayPoint} from './OverlayPoint';
+import type {HeadlessNode2} from 'sonic-forest/lib/types2';
 import type {SliceType} from '../slice/types';
 import type {Anchor} from '../rga/constants';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 
-export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> {
+export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements HeadlessNode2 {
   /**
    * Hash value of the following text contents, up until the next marker.
    */
@@ -57,4 +58,10 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> {
           ]))
     );
   }
+
+  // ---------------------------------------------------------------- Printable
+
+  public p2: MarkerOverlayPoint<T> | undefined;
+  public l2: MarkerOverlayPoint<T> | undefined;
+  public r2: MarkerOverlayPoint<T> | undefined;
 }

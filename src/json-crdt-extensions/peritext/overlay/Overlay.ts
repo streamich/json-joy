@@ -1,6 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
+import {first2, insert2, next2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
@@ -19,6 +20,9 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 import type {Slices} from '../slice/Slices';
 import type {OverlayPair, OverlayTuple} from './types';
+import type {Comparator} from 'sonic-forest/lib/types';
+
+const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
 
 /**
  * Overlay is a tree structure that represents all the intersections of slices
@@ -29,6 +33,7 @@ import type {OverlayPair, OverlayTuple} from './types';
  */
 export class Overlay<T = string> implements Printable, Stateful {
   public root: OverlayPoint<T> | undefined = undefined;
+  public root2: MarkerOverlayPoint<T> | undefined = undefined;
 
   /** A virtual absolute start point, used when the absolute start is missing. */
   public readonly START: OverlayPoint<T>;
@@ -171,20 +176,17 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.points0(after));
   }
 
-  public markers0(): UndefIterator<MarkerOverlayPoint<T>> {
-    let curr = this.first();
+  public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
+    let curr = after ? next2(after) : first2(this.root2);
     return () => {
-      while (curr) {
-        const ret = curr;
-        if (curr) curr = next(curr);
-        if (ret instanceof MarkerOverlayPoint) return ret;
-      }
-      return;
+      const ret = curr;
+      if (curr) curr = next2(curr);
+      return ret;
     };
   }
 
   public markers(): IterableIterator<MarkerOverlayPoint<T>> {
-    return new UndefEndIter(this.markers0());
+    return new UndefEndIter(this.markers0(undefined));
   }
 
   public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {
@@ -404,6 +406,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private insMarker(slice: MarkerSlice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
+    // TODO: When marker is at rel start, and cursor too, the overlay point should have reference to the cursor.
     const point = this.mPoint(slice, Anchor.Before);
     const pivot = this.insPoint(point);
     if (!pivot) {
@@ -445,6 +448,10 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns Returns the existing point if it was already in the tree.
    */
   private insPoint(point: OverlayPoint<T>): OverlayPoint<T> | undefined {
+    if (point instanceof MarkerOverlayPoint) {
+      this.root2 = insert2(this.root2, point, spatialComparator);
+      // if (this.root2 !== point) this.root2 = splay2(this.root2!, point, 10);
+    }
     let pivot = this.getOrNextLower(point);
     if (!pivot) pivot = first(this.root);
     if (!pivot) {
@@ -461,6 +468,8 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private delPoint(point: OverlayPoint<T>): void {
+    if (point instanceof MarkerOverlayPoint)
+      this.root2 = remove2(this.root2, point);
     this.root = remove(this.root, point);
   }
 
@@ -519,9 +528,21 @@ export class Overlay<T = string> implements Printable, Stateful {
         ])
       );
     };
+    const printMarkerPoint = (tab: string, point: MarkerOverlayPoint<T>): string => {
+      return (
+        point.toString(tab) +
+        printBinary(tab, [
+          !point.l2 ? null : (tab) => printMarkerPoint(tab, point.l2!),
+          !point.r2 ? null : (tab) => printMarkerPoint(tab, point.r2!),
+        ])
+      );
+    };
     return (
       `${this.constructor.name} #${this.hash.toString(36)}` +
-      printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)])
+      printTree(tab, [
+        !this.root ? null : (tab) => printPoint(tab, this.root!),
+        !this.root2 ? null : (tab) => printMarkerPoint(tab, this.root2!),
+      ])
     );
   }
 }
