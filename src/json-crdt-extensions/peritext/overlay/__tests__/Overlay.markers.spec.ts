@@ -33,7 +33,7 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const list = [...peritext.overlay.markers()];
       expect(list.length).toBe(3);
-      list.forEach(m => expect(m instanceof MarkerOverlayPoint).toBe(true));
+      list.forEach((m) => expect(m instanceof MarkerOverlayPoint).toBe(true));
       expect(list[0].marker).toBe(m1);
       expect(list[1].marker).toBe(m2);
       expect(list[2].marker).toBe(m3);
@@ -86,7 +86,7 @@ const runMarkersTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       expect([...peritext.overlay.markers()].length).toBe(0);
     });
-    
+
     test('can add marker at the end of text', () => {
       const {peritext, editor} = setup();
       editor.cursor.set(peritext.pointEnd()!);

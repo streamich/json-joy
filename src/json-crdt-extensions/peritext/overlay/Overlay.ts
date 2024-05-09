@@ -114,7 +114,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     }
     return result;
   }
- 
+
   /** @todo Rename to `chunks()`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
@@ -238,7 +238,6 @@ export class Overlay<T = string> implements Printable, Stateful {
   public tuples(after?: undefined | OverlayPoint<T>): IterableIterator<OverlayTuple<T>> {
     return new UndefEndIter(this.tuples0(after));
   }
-
 
   /**
    * Finds the first point that satisfies the given predicate function.
@@ -468,8 +467,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private delPoint(point: OverlayPoint<T>): void {
-    if (point instanceof MarkerOverlayPoint)
-      this.root2 = remove2(this.root2, point);
+    if (point instanceof MarkerOverlayPoint) this.root2 = remove2(this.root2, point);
     this.root = remove(this.root, point);
   }
 

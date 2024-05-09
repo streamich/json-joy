@@ -225,10 +225,7 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     const markers = this.markers;
     const markerLength = markers.length;
     for (let i = 0; i < markerLength; i++) children.push((tab) => markers[i].toString(tab));
-    return (
-      header +
-      printTree(tab, children)
-    );
+    return header + printTree(tab, children);
   }
 
   // ------------------------------------------------------------- HeadlessNode
