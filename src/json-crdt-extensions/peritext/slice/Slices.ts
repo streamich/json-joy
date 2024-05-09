@@ -42,9 +42,9 @@ export class Slices<T = string> implements Stateful, Printable {
     data?: unknown,
     Klass: K = behavior === SliceBehavior.Marker ? <any>MarkerSlice : PersistedSlice,
   ): S {
-    const model = this.set.doc;
+    const slicesModel = this.set.doc;
     const set = this.set;
-    const api = model.api;
+    const api = slicesModel.api;
     const builder = api.builder;
     const tupleId = builder.vec();
     const start = range.start.clone();
@@ -68,10 +68,10 @@ export class Slices<T = string> implements Stateful, Printable {
     const chunkId = builder.insArr(set.id, set.id, [tupleId]);
     // TODO: Consider using `s` schema here.
     api.apply();
-    const tuple = model.index.get(tupleId) as VecNode;
+    const tuple = slicesModel.index.get(tupleId) as VecNode;
     const chunk = set.findById(chunkId)!;
     // TODO: Need to check if split slice text was deleted
-    const slice = new Klass(model, this.txt, chunk, tuple, behavior, type, start, end);
+    const slice = new Klass(slicesModel, this.txt, chunk, tuple, behavior, type, start, end);
     this.list.set(chunk.id, slice);
     return slice;
   }
@@ -87,17 +87,17 @@ export class Slices<T = string> implements Stateful, Printable {
     separator: string = Chars.BlockSplitSentinel,
   ): MarkerSlice<T> {
     // TODO: test condition when cursors is at absolute or relative starts
-    const {txt, set} = this;
-    const model = set.doc;
-    const api = model.api;
+    const txt = this.txt;
+    const api = txt.model.api;
     const builder = api.builder;
-    const str = txt.str;
     /**
      * We skip one clock cycle to prevent Block-wise RGA from merging adjacent
      * characters. We want the marker chunk to always be its own distinct chunk.
      */
     builder.nop(1);
-    const textId = builder.insStr(str.id, after, separator);
+    // TODO: Handle case when marker is inserted at the abs start, prevent abs start/end inserts.
+    const textId = builder.insStr(txt.str.id, after, separator);
+    api.apply();
     const point = txt.point(textId, Anchor.Before);
     const range = txt.range(point, point.clone());
     return this.insMarker(range, type, data);
@@ -134,8 +134,10 @@ export class Slices<T = string> implements Stateful, Printable {
 
   public del(id: ITimestampStruct): void {
     this.list.del(id);
-    const api = this.set.doc.api;
-    api.builder.del(this.set.id, [tss(id.sid, id.time, 1)]);
+    const set = this.set;
+    const api = set.doc.api;
+    // TODO: Is it worth checking if the slice is already deleted?
+    api.builder.del(set.id, [tss(id.sid, id.time, 1)]);
     api.apply();
   }
 
