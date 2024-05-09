@@ -65,6 +65,18 @@ describe('markers', () => {
       peritext.overlay.refresh();
       expect(markerCount(peritext)).toBe(2);
     });
+
+    test('does reference cursor, when marker and cursor are at the same position', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      const [marker] = peritext.editor.saved.insMarker(['p'], '¶');
+      peritext.editor.cursor.set(marker.start.clone());
+      peritext.overlay.refresh();
+      const overlayMarkerPoint = peritext.overlay.root2!;
+      expect(overlayMarkerPoint instanceof MarkerOverlayPoint).toBe(true);
+      expect(overlayMarkerPoint.markers.length).toBe(1);
+      expect(overlayMarkerPoint.markers.find((m) => m === peritext.editor.cursor)).toBe(peritext.editor.cursor);
+    });
   });
 
   describe('deletes', () => {

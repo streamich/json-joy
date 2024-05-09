@@ -315,11 +315,9 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns Whether the point is a marker point.
    */
   public isMarker(id: ITimestampStruct): boolean {
-    const point = this.txt.point(id, Anchor.Before);
-    const overlayPoint = this.getOrNextLower(point);
-    return (
-      overlayPoint instanceof MarkerOverlayPoint && overlayPoint.id.time === id.time && overlayPoint.id.sid === id.sid
-    );
+    const p = this.txt.point(id, Anchor.Before);
+    const op = this.getOrNextLower(p);
+    return op instanceof MarkerOverlayPoint && op.id.time === id.time && op.id.sid === id.sid;
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -405,7 +403,6 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private insMarker(slice: MarkerSlice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    // TODO: When marker is at rel start, and cursor too, the overlay point should have reference to the cursor.
     const point = this.mPoint(slice, Anchor.Before);
     const pivot = this.insPoint(point);
     if (!pivot) {
