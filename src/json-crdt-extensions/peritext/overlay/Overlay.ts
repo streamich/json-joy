@@ -375,7 +375,6 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    // TODO: Test cases where the inserted slice is collapsed to one point.
     const x0 = slice.start;
     const x1 = slice.end;
     const [start, isStartNew] = this.upsertPoint(x0);
@@ -395,10 +394,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       let curr: OverlayPoint<T> | undefined = start;
       do curr.addLayer(slice);
       while ((curr = next(curr)) && curr !== end);
-    } else {
-      // TODO: review if this is needed:
-      start.addMarker(slice);
-    }
+    } else start.addMarker(slice);
     return [start, end];
   }
 

@@ -161,6 +161,18 @@ describe('slices', () => {
       expect(points.length).toBe(4);
     });
 
+    test('can insert a slice, which is collapsed to a point', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      const [slice] = peritext.editor.saved.insStack('em', {emphasis: true});
+      peritext.overlay.refresh();
+      const [point] = [...peritext.overlay.points()];
+      expect(point.layers.length).toBe(0);
+      expect(point.markers.length).toBe(2);
+      expect(point.markers.find((m) => m === peritext.editor.cursor)).toBe(peritext.editor.cursor);
+      expect(point.markers.find((m) => m === slice)).toBe(slice);
+    });
+
     test('intersecting slice chunks point to two slices', () => {
       const {peritext} = setup();
       peritext.editor.cursor.setAt(2, 2);
