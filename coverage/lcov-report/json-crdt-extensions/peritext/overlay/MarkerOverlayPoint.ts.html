@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">36.84% </span>
+                <span class="strong">38.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/19</span>
+                <span class='fraction'>7/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>0/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">9.09% </span>
+                <span class="strong">10% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/11</span>
+                <span class='fraction'>1/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.17% </span>
+                <span class="strong">43.75% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/17</span>
+                <span class='fraction'>7/16</span>
             </div>
         
             
@@ -122,28 +122,8 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">17x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">168x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">168x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">168x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">168x</span>
+<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -151,7 +131,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">191x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">191x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">191x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">191x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,21 +171,28 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {printTree} from 'tree-dump/lib/printTree';
 import {OverlayPoint} from './OverlayPoint';
+import type {HeadlessNode2} from 'sonic-forest/lib/types2';
 import type {SliceType} from '../slice/types';
 import type {Anchor} from '../rga/constants';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 &nbsp;
-export class MarkerOverlayPoint&lt;T = string&gt; extends OverlayPoint&lt;T&gt; {
+export class MarkerOverlayPoint&lt;T = string&gt; extends OverlayPoint&lt;T&gt; implements HeadlessNode2 {
   /**
-   * Hash value of the preceding text contents, up until the next marker.
+   * Hash value of the following text contents, up until the next marker.
    */
   public textHash: number = 0;
 &nbsp;
@@ -204,14 +203,6 @@ export class MarkerOverlayPoint&lt;T = string&gt; extends OverlayPoint&lt;T&gt; 
     public readonly marker: MarkerSlice&lt;T&gt;,
   ) {
     super(rga, id, anchor);
-  }
-&nbsp;
-  /**
-   * @todo Rename or access it directly.
-   * @deprecated
-   */
-  public <span class="fstat-no" title="function not covered" >markerHash(</span>): number {
-<span class="cstat-no" title="statement not covered" >    return this.marker ? this.marker.hash : 0;</span>
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >type(</span>): SliceType {
@@ -242,6 +233,12 @@ export class MarkerOverlayPoint&lt;T = string&gt; extends OverlayPoint&lt;T&gt; 
           ]))
     );
   }
+&nbsp;
+  // ------------------------------------------------------------ HeadlessNode2
+&nbsp;
+  public p2: MarkerOverlayPoint&lt;T&gt; | undefined;
+  public l2: MarkerOverlayPoint&lt;T&gt; | undefined;
+  public r2: MarkerOverlayPoint&lt;T&gt; | undefined;
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -250,7 +247,7 @@ export class MarkerOverlayPoint&lt;T = string&gt; extends OverlayPoint&lt;T&gt; 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-08T15:49:39.771Z
+                at 2024-05-10T11:50:45.120Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
