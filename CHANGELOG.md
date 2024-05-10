@@ -1,3 +1,17 @@
+# [16.4.0](https://github.com/streamich/json-joy/compare/v16.3.0...v16.4.0) (2024-05-10)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly store extra and local slices ([636a166](https://github.com/streamich/json-joy/commit/636a16622f8b9037cca18eee008b99dc9e375cde))
+* **json-crdt-extensions:** 🐛 recompute different `Overlay` state hash when text changes ([d64b8ab](https://github.com/streamich/json-joy/commit/d64b8ab977bcd42b07da02471d5b554cde5d8703))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add markers only overlay tree ([9f090f7](https://github.com/streamich/json-joy/commit/9f090f71b18010bb71d0f5ea82bd1303957bb414))
+* **json-crdt-extensions:** 🎸 improve text hash calculation ([ed6ce96](https://github.com/streamich/json-joy/commit/ed6ce960851bc8f57f3135c3b2329656ff13a56c))
+
 # [16.3.0](https://github.com/streamich/json-joy/compare/v16.2.0...v16.3.0) (2024-05-08)
 
 
