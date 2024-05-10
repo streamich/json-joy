@@ -4,7 +4,7 @@ import {OverlayRef, OverlayRefSliceEnd, OverlayRefSliceStart} from './refs';
 import {printTree} from 'tree-dump/lib/printTree';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {HeadlessNode} from 'sonic-forest/lib/types';
-import type {Printable} from 'tree-dump/lib/types';
+import type {PrintChild, Printable} from 'tree-dump/lib/types';
 import type {Slice} from '../slice/types';
 
 /**
@@ -85,7 +85,6 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
   /**
    * Collapsed slices - markers (block splits), which represent a single point
    * in the text, even if the start and end of the slice are different.
-   * @deprecated This field might happen to be not necessary.
    */
   public readonly markers: Slice<T>[] = [];
 
@@ -96,10 +95,8 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
    * the state of the point. The markers are sorted by the slice ID.
    *
    * @param slice Slice to add to the marker list.
-   * @deprecated This method might happen to be not necessary.
    */
   public addMarker(slice: Slice<T>): void {
-    /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
     if (!length) {
@@ -131,10 +128,8 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
    * the text, even if the start and end of the slice are different.
    *
    * @param slice Slice to remove from the marker list.
-   * @deprecated This method might happen to be not necessary.
    */
   public removeMarker(slice: Slice<T>): void {
-    /** @deprecated */
     const markers = this.markers;
     const length = markers.length;
     for (let i = 0; i < length; i++) {
@@ -218,13 +213,14 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
     const refs = lite ? '' : `, refs = ${this.refs.length}`;
     const header = this.toStringName(tab, lite) + refs;
     if (lite) return header;
-    return (
-      header +
-      printTree(
-        tab,
-        this.layers.map((slice) => (tab) => slice.toString(tab)),
-      )
-    );
+    const children: PrintChild[] = [];
+    const layers = this.layers;
+    const layerLength = layers.length;
+    for (let i = 0; i < layerLength; i++) children.push((tab) => layers[i].toString(tab));
+    const markers = this.markers;
+    const markerLength = markers.length;
+    for (let i = 0; i < markerLength; i++) children.push((tab) => markers[i].toString(tab));
+    return header + printTree(tab, children);
   }
 
   // ------------------------------------------------------------- HeadlessNode

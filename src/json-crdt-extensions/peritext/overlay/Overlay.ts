@@ -1,6 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {printBinary} from 'tree-dump/lib/printBinary';
 import {first, insertLeft, insertRight, last, next, prev, remove} from 'sonic-forest/lib/util';
+import {first2, insert2, next2, remove2} from 'sonic-forest/lib/util2';
 import {splay} from 'sonic-forest/lib/splay/util';
 import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
@@ -19,6 +20,9 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {MutableSlice, Slice} from '../slice/types';
 import type {Slices} from '../slice/Slices';
 import type {OverlayPair, OverlayTuple} from './types';
+import type {Comparator} from 'sonic-forest/lib/types';
+
+const spatialComparator: Comparator<OverlayPoint> = (a: OverlayPoint, b: OverlayPoint) => a.cmpSpatial(b);
 
 /**
  * Overlay is a tree structure that represents all the intersections of slices
@@ -29,6 +33,7 @@ import type {OverlayPair, OverlayTuple} from './types';
  */
 export class Overlay<T = string> implements Printable, Stateful {
   public root: OverlayPoint<T> | undefined = undefined;
+  public root2: MarkerOverlayPoint<T> | undefined = undefined;
 
   /** A virtual absolute start point, used when the absolute start is missing. */
   public readonly START: OverlayPoint<T>;
@@ -110,15 +115,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
-  public find(predicate: (point: OverlayPoint<T>) => boolean): OverlayPoint<T> | undefined {
-    let point = this.first();
-    while (point) {
-      if (predicate(point)) return point;
-      point = next(point);
-    }
-    return;
-  }
-
+  /** @todo Rename to `chunks()`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
@@ -179,20 +176,17 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.points0(after));
   }
 
-  public markers0(): UndefIterator<MarkerOverlayPoint<T>> {
-    let curr = this.first();
+  public markers0(after: undefined | MarkerOverlayPoint<T>): UndefIterator<MarkerOverlayPoint<T>> {
+    let curr = after ? next2(after) : first2(this.root2);
     return () => {
-      while (curr) {
-        const ret = curr;
-        if (curr) curr = next(curr);
-        if (ret instanceof MarkerOverlayPoint) return ret;
-      }
-      return;
+      const ret = curr;
+      if (curr) curr = next2(curr);
+      return ret;
     };
   }
 
   public markers(): IterableIterator<MarkerOverlayPoint<T>> {
-    return new UndefEndIter(this.markers0());
+    return new UndefEndIter(this.markers0(undefined));
   }
 
   public pairs0(after: undefined | OverlayPoint<T>): UndefIterator<OverlayPair<T>> {
@@ -245,6 +239,31 @@ export class Overlay<T = string> implements Printable, Stateful {
     return new UndefEndIter(this.tuples0(after));
   }
 
+  /**
+   * Finds the first point that satisfies the given predicate function.
+   *
+   * @param predicate Predicate function to find the point, returns true if the
+   *     point is found.
+   * @returns The first point that satisfies the predicate, or undefined if no
+   *     point is found.
+   */
+  public find(predicate: (point: OverlayPoint<T>) => boolean): OverlayPoint<T> | undefined {
+    let point = this.first();
+    while (point) {
+      if (predicate(point)) return point;
+      point = next(point);
+    }
+    return;
+  }
+
+  /**
+   * Finds all slices that are contained within the given range. A slice is
+   * considered contained if its start and end points are within the range,
+   * inclusive (uses {@link Range#contains} method to check containment).
+   *
+   * @param range The range to search for contained slices.
+   * @returns A set of slices that are contained within the given range.
+   */
   public findContained(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start);
@@ -265,6 +284,14 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
+  /**
+   * Finds all slices that overlap with the given range. A slice is considered
+   * overlapping if its start or end point is within the range, inclusive
+   * (uses {@link Range#containsPoint} method to check overlap).
+   *
+   * @param range The range to search for overlapping slices.
+   * @returns A set of slices that overlap with the given range.
+   */
   public findOverlapping(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
     let point = this.getOrNextLower(range.start);
@@ -281,12 +308,16 @@ export class Overlay<T = string> implements Printable, Stateful {
     return result;
   }
 
-  public isBlockSplit(id: ITimestampStruct): boolean {
-    const point = this.txt.point(id, Anchor.Before);
-    const overlayPoint = this.getOrNextLower(point);
-    return (
-      overlayPoint instanceof MarkerOverlayPoint && overlayPoint.id.time === id.time && overlayPoint.id.sid === id.sid
-    );
+  /**
+   * Returns `true` if the current character is a marker sentinel.
+   *
+   * @param id ID of the point to check.
+   * @returns Whether the point is a marker point.
+   */
+  public isMarker(id: ITimestampStruct): boolean {
+    const p = this.txt.point(id, Anchor.Before);
+    const op = this.getOrNextLower(p);
+    return op instanceof MarkerOverlayPoint && op.id.time === id.time && op.id.sid === id.sid;
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -299,7 +330,12 @@ export class Overlay<T = string> implements Printable, Stateful {
     hash = this.refreshSlices(hash, txt.savedSlices);
     hash = this.refreshSlices(hash, txt.extraSlices);
     hash = this.refreshSlices(hash, txt.localSlices);
-    if (!slicesOnly) this.computeSplitTextHashes();
+
+    // TODO: Move test hash calculation out of the overlay.
+    if (!slicesOnly) {
+      // hash = updateRga(hash, txt.str);
+      hash = this.refreshTextSlices(hash);
+    }
     return (this.hash = hash);
   }
 
@@ -339,7 +375,6 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private insSlice(slice: Slice<T>): [start: OverlayPoint<T>, end: OverlayPoint<T>] {
-    // TODO: Test cases where the inserted slice is collapsed to one point.
     const x0 = slice.start;
     const x1 = slice.end;
     const [start, isStartNew] = this.upsertPoint(x0);
@@ -359,10 +394,7 @@ export class Overlay<T = string> implements Printable, Stateful {
       let curr: OverlayPoint<T> | undefined = start;
       do curr.addLayer(slice);
       while ((curr = next(curr)) && curr !== end);
-    } else {
-      // TODO: review if this is needed:
-      start.addMarker(slice);
-    }
+    } else start.addMarker(slice);
     return [start, end];
   }
 
@@ -408,6 +440,10 @@ export class Overlay<T = string> implements Printable, Stateful {
    * @returns Returns the existing point if it was already in the tree.
    */
   private insPoint(point: OverlayPoint<T>): OverlayPoint<T> | undefined {
+    if (point instanceof MarkerOverlayPoint) {
+      this.root2 = insert2(this.root2, point, spatialComparator);
+      // if (this.root2 !== point) this.root2 = splay2(this.root2!, point, 10);
+    }
     let pivot = this.getOrNextLower(point);
     if (!pivot) pivot = first(this.root);
     if (!pivot) {
@@ -424,23 +460,23 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   private delPoint(point: OverlayPoint<T>): void {
+    if (point instanceof MarkerOverlayPoint) this.root2 = remove2(this.root2, point);
     this.root = remove(this.root, point);
   }
 
   public leadingTextHash: number = 0;
 
-  protected computeSplitTextHashes(): void {
+  protected refreshTextSlices(stateTotal: number): number {
     const txt = this.txt;
     const str = txt.str;
     const firstChunk = str.first();
-    if (!firstChunk) return;
+    if (!firstChunk) return stateTotal;
     let chunk: Chunk<T> | undefined = firstChunk;
     let marker: MarkerOverlayPoint<T> | undefined = undefined;
-    let state: number = CONST.START_STATE;
     const i = this.tuples0(undefined);
+    let state: number = CONST.START_STATE;
     for (let pair = i(); pair; pair = i()) {
       const [p1, p2] = pair;
-      // TODO: need to incorporate slice attribute hash here?
       const id1 = p1.id;
       state = (state << 5) + state + (id1.sid >>> 0) + id1.time;
       let overlayPointHash = CONST.START_STATE;
@@ -450,15 +486,15 @@ export class Overlay<T = string> implements Printable, Stateful {
           (overlayPointHash << 5) + overlayPointHash + ((((id.sid >>> 0) + id.time) << 8) + (off << 4) + len);
       });
       state = updateNum(state, overlayPointHash);
-      if (p1) {
-        p1.hash = overlayPointHash;
-      }
+      p1.hash = overlayPointHash;
+      stateTotal = updateNum(stateTotal, overlayPointHash);
       if (p2 instanceof MarkerOverlayPoint) {
         if (marker) {
           marker.textHash = state;
         } else {
           this.leadingTextHash = state;
         }
+        stateTotal = updateNum(stateTotal, state);
         state = CONST.START_STATE;
         marker = p2;
       }
@@ -468,6 +504,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     } else {
       this.leadingTextHash = state;
     }
+    return stateTotal;
   }
 
   // ---------------------------------------------------------------- Printable
@@ -482,9 +519,21 @@ export class Overlay<T = string> implements Printable, Stateful {
         ])
       );
     };
+    const printMarkerPoint = (tab: string, point: MarkerOverlayPoint<T>): string => {
+      return (
+        point.toString(tab) +
+        printBinary(tab, [
+          !point.l2 ? null : (tab) => printMarkerPoint(tab, point.l2!),
+          !point.r2 ? null : (tab) => printMarkerPoint(tab, point.r2!),
+        ])
+      );
+    };
     return (
       `${this.constructor.name} #${this.hash.toString(36)}` +
-      printTree(tab, [!this.root ? null : (tab) => printPoint(tab, this.root!)])
+      printTree(tab, [
+        !this.root ? null : (tab) => printPoint(tab, this.root!),
+        !this.root2 ? null : (tab) => printMarkerPoint(tab, this.root2!),
+      ])
     );
   }
 }

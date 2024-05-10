@@ -21,7 +21,7 @@ const setup = () => {
 
 const markerCount = (peritext: Peritext): number => {
   const overlay = peritext.overlay;
-  const iterator = overlay.markers0();
+  const iterator = overlay.markers0(void 0);
   let count = 0;
   for (let split = iterator(); split; split = iterator()) {
     count++;
@@ -65,6 +65,18 @@ describe('markers', () => {
       peritext.overlay.refresh();
       expect(markerCount(peritext)).toBe(2);
     });
+
+    test('does reference cursor, when marker and cursor are at the same position', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      const [marker] = peritext.editor.saved.insMarker(['p'], '¶');
+      peritext.editor.cursor.set(marker.start.clone());
+      peritext.overlay.refresh();
+      const overlayMarkerPoint = peritext.overlay.root2!;
+      expect(overlayMarkerPoint instanceof MarkerOverlayPoint).toBe(true);
+      expect(overlayMarkerPoint.markers.length).toBe(1);
+      expect(overlayMarkerPoint.markers.find((m) => m === peritext.editor.cursor)).toBe(peritext.editor.cursor);
+    });
   });
 
   describe('deletes', () => {
@@ -106,7 +118,7 @@ describe('markers', () => {
       expect(markerCount(peritext)).toBe(2);
       const points = [];
       let point;
-      for (const iterator = peritext.overlay.markers0(); (point = iterator()); ) points.push(point);
+      for (const iterator = peritext.overlay.markers0(void 0); (point = iterator()); ) points.push(point);
       expect(points.length).toBe(2);
       expect(points[0].pos()).toBe(2);
       expect(points[1].pos()).toBe(11);
@@ -147,6 +159,18 @@ describe('slices', () => {
       expect(peritext.overlay.slices.size).toBe(3);
       const points = [...peritext.overlay.points()];
       expect(points.length).toBe(4);
+    });
+
+    test('can insert a slice, which is collapsed to a point', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      const [slice] = peritext.editor.saved.insStack('em', {emphasis: true});
+      peritext.overlay.refresh();
+      const [point] = [...peritext.overlay.points()];
+      expect(point.layers.length).toBe(0);
+      expect(point.markers.length).toBe(2);
+      expect(point.markers.find((m) => m === peritext.editor.cursor)).toBe(peritext.editor.cursor);
+      expect(point.markers.find((m) => m === slice)).toBe(slice);
     });
 
     test('intersecting slice chunks point to two slices', () => {

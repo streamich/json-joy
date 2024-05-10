@@ -1,9 +1,9 @@
+import {PersistedSlice} from '../slice/PersistedSlice';
 import type {Peritext} from '../Peritext';
 import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Slices} from '../slice/Slices';
 import type {ITimestampStruct} from '../../../json-crdt-patch';
-import type {PersistedSlice} from '../slice/PersistedSlice';
 import type {Cursor} from './Cursor';
 
 export class EditorSlices<T = string> {
@@ -41,5 +41,9 @@ export class EditorSlices<T = string> {
       const marker = this.slices.insMarkerAfter(after.id, type, data, separator);
       return marker;
     });
+  }
+
+  public del(sliceOrId: PersistedSlice | ITimestampStruct): void {
+    this.slices.del(sliceOrId instanceof PersistedSlice ? sliceOrId.id : sliceOrId);
   }
 }
