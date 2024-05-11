@@ -6,6 +6,7 @@ import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
+import {CONST, updateNum} from '../../../json-hash';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
@@ -443,9 +444,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   // ----------------------------------------------------------------- Stateful
 
   public refresh(): number {
-    let state = this.anchor;
-    state = updateId(state, this.id);
-    return state;
+    return updateId(this.anchor, this.id);
   }
 
   // ---------------------------------------------------------------- Printable

@@ -3,15 +3,38 @@ import {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
 import {SliceBehavior} from '../slice/constants';
 import {Range} from '../rga/Range';
+import {ChunkSlice} from '../util/ChunkSlice';
+import {updateNum} from '../../../json-hash';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
-import type {ChunkSlice} from '../util/ChunkSlice';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '../../../json-pointer';
 import type {Slice} from '../slice/types';
+import type {Peritext} from '../Peritext';
 
 export type Marks = Record<string | number, unknown>;
 
+/**
+ * The `Inline` class represents a range of inline text within a block, which
+ * has the same annotations and formatting for all of its text contents, i.e.
+ * its text contents can be rendered as a single (`<span>`) element. However,
+ * the text contents might still be composed of multiple {@link ChunkSlice}s,
+ * which are the smallest units of text and need to be concatenated to get the
+ * full text content of the inline.
+ */
 export class Inline extends Range implements Printable {
+  public static create(
+    txt: Peritext,
+    start: OverlayPoint,
+    end: OverlayPoint,
+  ) {
+    const texts: ChunkSlice[] = [];
+    txt.overlay.chunkSlices0(undefined, start, end, (chunk, off, len) => {
+      if (txt.overlay.isMarker(chunk.id)) return;
+      texts.push(new ChunkSlice(chunk, off, len));
+    });
+    return new Inline(txt.str, start, end, texts);
+  }
+
   constructor(
     rga: AbstractRga<string>,
     public start: OverlayPoint,
@@ -33,12 +56,8 @@ export class Inline extends Range implements Printable {
    *     inlines of the parent block. Can be used for UI libraries to track the
    *     identity of the inline across renders.
    */
-  public key(): number | string {
-    const start = this.start;
-    const startId = this.start.id;
-    const endId = this.end.id;
-    const key = startId.sid.toString(36) + start.anchor + startId.time.toString(36) + endId.time.toString(36);
-    return key;
+  public key(): number {
+    return updateNum(this.start.refresh(), this.end.refresh());
   }
 
   public str(): string {

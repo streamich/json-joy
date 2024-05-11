@@ -7,10 +7,9 @@ import type {ITimestampStruct} from '../json-crdt-patch/clock';
 import type {Model} from './model';
 
 export const updateId = (state: number, id: ITimestampStruct): number => {
-  const sid = id.sid;
-  state = updateNum(state, sid >>> 0);
-  // state = updateNum(state, Math.round(sid / 0x100000000));
-  state = updateNum(state, id.time);
+  const time = id.time;
+  state = updateNum(state, state ^ time);
+  state = updateNum(state, id.sid ^ time);
   return state;
 };
 
