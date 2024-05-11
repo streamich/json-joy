@@ -1,3 +1,12 @@
+# [16.5.0](https://github.com/streamich/json-joy/compare/v16.4.0...v16.5.0) (2024-05-11)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add initial Inline class implementation ([9994f2a](https://github.com/streamich/json-joy/commit/9994f2abd0da082e7e36bda50f89506f5b38a483))
+* **json-crdt-extensions:** 🎸 improve Inline.attr() implementation ([c6c5b62](https://github.com/streamich/json-joy/commit/c6c5b621e9f934903cc5b6393c73708c2afac752))
+* **json-crdt-extensions:** 🎸 improve Inline.key() implementation ([4f5f012](https://github.com/streamich/json-joy/commit/4f5f012f3dc812058270ec5b1977ba3debd6e792))
+
 # [16.4.0](https://github.com/streamich/json-joy/compare/v16.3.0...v16.4.0) (2024-05-10)
 
 
