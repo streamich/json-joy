@@ -1,4 +1,4 @@
-import {Kit,  setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Inline} from '../Inline';
 
 const runStrTests = (setup: () => Kit) => {
@@ -14,7 +14,12 @@ const runStrTests = (setup: () => Kit) => {
           const [start, end] = [...overlay.points()];
           const inline = Inline.create(peritext, start, end);
           const str = inline.str();
-          expect(str).toBe(peritext.strApi().view().slice(i, i + j));
+          expect(str).toBe(
+            peritext
+              .strApi()
+              .view()
+              .slice(i, i + j),
+          );
         }
       }
     });

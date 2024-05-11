@@ -1,7 +1,7 @@
 import {Timestamp} from '../../../../json-crdt-patch';
 import {updateId} from '../../../../json-crdt/hash';
 import {updateNum} from '../../../../json-hash';
-import {Kit,  setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Inline} from '../Inline';
 
@@ -40,14 +40,8 @@ describe('range hash', () => {
   });
 
   test('computes unique hash - 4', () => {
-    const hash1 = updateNum(
-      updateId(0, new Timestamp(2, 7)),
-      updateId(1, new Timestamp(2, 7)),
-    );
-    const hash2 = updateNum(
-      updateId(0, new Timestamp(2, 6)),
-      updateId(1, new Timestamp(2, 40)),
-    );
+    const hash1 = updateNum(updateId(0, new Timestamp(2, 7)), updateId(1, new Timestamp(2, 7)));
+    const hash2 = updateNum(updateId(0, new Timestamp(2, 6)), updateId(1, new Timestamp(2, 40)));
     expect(hash1).not.toBe(hash2);
   });
 });

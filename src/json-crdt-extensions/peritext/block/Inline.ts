@@ -22,11 +22,7 @@ export type InlineAttributes = Record<string | number, unknown>;
  * full text content of the inline.
  */
 export class Inline extends Range implements Printable {
-  public static create(
-    txt: Peritext,
-    start: OverlayPoint,
-    end: OverlayPoint,
-  ) {
+  public static create(txt: Peritext, start: OverlayPoint, end: OverlayPoint) {
     const texts: ChunkSlice[] = [];
     txt.overlay.chunkSlices0(undefined, start, end, (chunk, off, len) => {
       if (txt.overlay.isMarker(chunk.id)) return;
@@ -39,7 +35,7 @@ export class Inline extends Range implements Printable {
     rga: AbstractRga<string>,
     public start: OverlayPoint,
     public end: OverlayPoint,
-    
+
     /**
      * @todo PERF: for performance reasons, we should consider not passing in
      * this array. Maybe pass in just the initial chunk and the offset. However,
