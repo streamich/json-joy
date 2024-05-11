@@ -11,7 +11,7 @@ import type {PathStep} from '../../../json-pointer';
 import type {Slice} from '../slice/types';
 import type {Peritext} from '../Peritext';
 
-export type Marks = Record<string | number, unknown>;
+export type InlineAttributes = Record<string | number, unknown>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -60,14 +60,29 @@ export class Inline extends Range implements Printable {
     return updateNum(this.start.refresh(), this.end.refresh());
   }
 
+  /**
+   * @returns The full text content of the inline, which is the concatenation
+   *     of all the underlying {@link ChunkSlice}s.
+   */
   public str(): string {
     let str = '';
     for (const slice of this.texts) str += slice.view();
     return str;
   }
 
-  public marks(): Marks {
-    const marks: Marks = {};
+  /**
+   * @returns The position of the inline withing the text.
+   */
+  public pos(): number {
+    const chunkSlice = this.texts[0];
+    if (!chunkSlice) return -1;
+    const chunk = chunkSlice.chunk;
+    const pos = this.rga.pos(chunk);
+    return pos + chunkSlice.off;
+  }
+
+  public attr(): InlineAttributes {
+    const attr: InlineAttributes = {};
     const point = this.start as OverlayPoint;
     const slices: Slice[] = this.texts.length ? point.layers : point.markers;
     const length = slices.length;
@@ -76,8 +91,8 @@ export class Inline extends Range implements Printable {
       const type = slice.type as PathStep;
       switch (slice.behavior) {
         case SliceBehavior.Stack: {
-          let dataList: unknown[] = (marks[type] as unknown[]) || (marks[type] = []);
-          if (!Array.isArray(dataList)) dataList = marks[type] = [dataList];
+          let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
+          if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
           let data = slice.data();
           if (data === undefined) data = 1;
           dataList.push(data);
@@ -86,24 +101,16 @@ export class Inline extends Range implements Printable {
         case SliceBehavior.Overwrite: {
           let data = slice.data();
           if (data === undefined) data = 1;
-          marks[type] = data;
+          attr[type] = data;
           break;
         }
         case SliceBehavior.Erase: {
-          delete marks[type];
+          delete attr[type];
           break;
         }
       }
     }
-    return marks;
-  }
-
-  public pos(): number {
-    const chunkSlice = this.texts[0];
-    if (!chunkSlice) return -1;
-    const chunk = chunkSlice.chunk;
-    const pos = this.rga.pos(chunk);
-    return pos + chunkSlice.off;
+    return attr;
   }
 
   // ---------------------------------------------------------------- Printable
@@ -116,7 +123,7 @@ export class Inline extends Range implements Printable {
     const range =
       this.start.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
     const header = `${this.constructor.name} ${range} ${text}`;
-    const marks = this.marks();
+    const marks = this.attr();
     const markKeys = Object.keys(marks);
     return (
       header +

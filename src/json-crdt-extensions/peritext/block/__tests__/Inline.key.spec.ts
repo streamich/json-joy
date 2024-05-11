@@ -40,7 +40,6 @@ describe('range hash', () => {
   });
 
   test('computes unique hash - 4', () => {
-    const {peritext} = setupKit();
     const hash1 = updateNum(
       updateId(0, new Timestamp(2, 7)),
       updateId(1, new Timestamp(2, 7)),
@@ -53,7 +52,7 @@ describe('range hash', () => {
   });
 });
 
-const runPairsTests = (setup: () => Kit) => {
+const runKeyTests = (setup: () => Kit) => {
   describe('.key()', () => {
     test('construct unique keys for all ranges', () => {
       const {peritext} = setup();
@@ -88,18 +87,18 @@ const runPairsTests = (setup: () => Kit) => {
 
 describe('Inline', () => {
   describe('lorem ipsum', () => {
-    runPairsTests(() => setupKit('lorem ipsum dolor sit amet consectetur adipiscing elit'));
+    runKeyTests(() => setupKit('lorem ipsum dolor sit amet consectetur adipiscing elit'));
   });
 
   describe('numbers "0123456789", no edits', () => {
-    runPairsTests(setupNumbersKit);
+    runKeyTests(setupNumbersKit);
   });
 
   describe('numbers "0123456789", with default schema and tombstones', () => {
-    runPairsTests(setupNumbersWithTombstonesKit);
+    runKeyTests(setupNumbersWithTombstonesKit);
   });
 
   describe('numbers "0123456789", with default schema and tombstones and constant sid', () => {
-    runPairsTests(() => setupNumbersWithTombstonesKit(12313123));
+    runKeyTests(() => setupNumbersWithTombstonesKit(12313123));
   });
 });
