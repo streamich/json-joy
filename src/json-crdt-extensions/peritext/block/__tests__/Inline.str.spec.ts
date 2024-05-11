@@ -42,6 +42,67 @@ const runStrTests = (setup: () => Kit) => {
       }
     });
   });
+
+  describe('.attr()', () => {
+    test('returns all STACK annotations of a slice', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.editor.saved.insStack('bold', 1);
+      peritext.editor.saved.insStack('bold', 2);
+      peritext.editor.saved.insStack('em', 1);
+      overlay.refresh();
+      const [start, end] = [...overlay.points()];
+      const inline = Inline.create(peritext, start, end);
+      const attr = inline.attr();
+      expect(attr.bold).toEqual([1, 2]);
+      expect(attr.em).toEqual([1]);
+    });
+
+    test('returns latest OVERWRITE annotation', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.editor.saved.insOverwrite('bold', 1);
+      peritext.editor.saved.insOverwrite('bold', 2);
+      peritext.editor.saved.insOverwrite('em', 1);
+      overlay.refresh();
+      const [start, end] = [...overlay.points()];
+      const inline = Inline.create(peritext, start, end);
+      const attr = inline.attr();
+      expect(attr.bold).toBe(2);
+      expect(attr.em).toBe(1);
+    });
+
+    test('hides annotation hidden with another ERASE annotation', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.editor.saved.insOverwrite('bold');
+      peritext.editor.saved.insErase('bold');
+      peritext.editor.saved.insOverwrite('em');
+      overlay.refresh();
+      const [start, end] = [...overlay.points()];
+      const inline = Inline.create(peritext, start, end);
+      const attr = inline.attr();
+      expect(attr.bold).toBe(undefined);
+      expect(attr.em).toBe(1);
+    });
+
+    test('concatenates with "," steps of nested Path type annotations', () => {
+      const {peritext} = setup();
+      const overlay = peritext.overlay;
+      peritext.editor.cursor.setAt(3, 3);
+      peritext.editor.saved.insStack(['bold', 'very'], 1);
+      peritext.editor.saved.insStack(['bold', 'normal'], 2);
+      overlay.refresh();
+      const [start, end] = [...overlay.points()];
+      const inline = Inline.create(peritext, start, end);
+      const attr = inline.attr();
+      expect(attr['bold,very']).toEqual([1]);
+      expect(attr['bold,normal']).toEqual([2]);
+    });
+  });
 };
 
 describe('Inline', () => {

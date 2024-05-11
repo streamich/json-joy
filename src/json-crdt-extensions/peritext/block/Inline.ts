@@ -77,6 +77,10 @@ export class Inline extends Range implements Printable {
     return pos + chunkSlice.off;
   }
 
+  /**
+   * @returns Returns the attributes of the inline, which are the slice
+   *     annotations and formatting applied to the inline.
+   */
   public attr(): InlineAttributes {
     const attr: InlineAttributes = {};
     const point = this.start as OverlayPoint;
@@ -86,6 +90,7 @@ export class Inline extends Range implements Printable {
       const slice = slices[i];
       const type = slice.type as PathStep;
       switch (slice.behavior) {
+        case SliceBehavior.Cursor:
         case SliceBehavior.Stack: {
           let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
           if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
@@ -106,6 +111,7 @@ export class Inline extends Range implements Printable {
         }
       }
     }
+    // TODO: Iterate over the markers...
     return attr;
   }
 
