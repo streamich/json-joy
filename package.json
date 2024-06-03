@@ -110,7 +110,9 @@
     "build:pages": "npx rimraf@5.0.5 gh-pages && mkdir -p gh-pages && cp -r typedocs/* gh-pages && cp -r coverage gh-pages/coverage",
     "deploy:pages": "gh-pages -d gh-pages",
     "publish-coverage-and-typedocs": "yarn typedoc && yarn coverage && yarn build:pages && yarn deploy:pages",
-    "jj": "npx ts-node src/json-cli/jj.ts"
+    "jj": "npx ts-node src/json-cli/jj.ts",
+    "upgrade:check": "npx npm-check-updates@16.14",
+    "upgrade:interactive": "npx npm-check-updates@16.14 --interactive"
   },
   "peerDependencies": {
     "rxjs": "7",
