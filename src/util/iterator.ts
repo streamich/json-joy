@@ -3,7 +3,7 @@ export type UndefIterator<T> = () => undefined | T;
 export class UndefEndIter<T> implements IterableIterator<T> {
   constructor(private readonly i: UndefIterator<T>) {}
 
-  public next(): IteratorResult<T> {
+  public next(): IteratorResult<T, T> {
     const value = this.i();
     return new IterRes(value, value === undefined) as IteratorResult<T>;
   }

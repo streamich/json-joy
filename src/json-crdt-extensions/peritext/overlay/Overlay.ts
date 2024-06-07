@@ -185,7 +185,7 @@ export class Overlay<T = string> implements Printable, Stateful {
     };
   }
 
-  public markers(): IterableIterator<MarkerOverlayPoint<T>> {
+  public markers(): UndefEndIter<MarkerOverlayPoint<T>> {
     return new UndefEndIter(this.markers0(undefined));
   }
 
