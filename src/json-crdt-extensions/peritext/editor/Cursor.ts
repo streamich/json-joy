@@ -1,4 +1,4 @@
-import {ITimestampStruct, tick} from '../../../json-crdt-patch';
+import {tick} from '../../../json-crdt-patch';
 import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';

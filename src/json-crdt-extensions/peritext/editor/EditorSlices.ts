@@ -43,7 +43,7 @@ export class EditorSlices<T = string> {
     });
   }
 
-  public del(sliceOrId: PersistedSlice | ITimestampStruct): void {
+  public del(sliceOrId: PersistedSlice<T> | ITimestampStruct): void {
     this.slices.del(sliceOrId instanceof PersistedSlice ? sliceOrId.id : sliceOrId);
   }
 }

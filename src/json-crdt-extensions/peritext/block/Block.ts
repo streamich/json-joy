@@ -1,6 +1,8 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
+import {OverlayPoint} from '../overlay/OverlayPoint';
+import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import type {Path} from '../../../json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
@@ -11,6 +13,8 @@ export interface IBlock {
   readonly parent: IBlock | null;
 }
 
+type T = string;
+
 export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   public parent: Block | null = null;
 
@@ -19,7 +23,6 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
   constructor(
     public readonly txt: Peritext,
     public readonly path: Path,
-    /** @todo rename this */
     public readonly marker: MarkerOverlayPoint | undefined,
   ) {}
 
@@ -41,6 +44,31 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   public attr(): Attr | undefined {
     return this.marker?.data() as Attr | undefined;
+  }
+
+  /**
+   * Iterate through all overlay points of this block, until the next marker
+   * (regardless if that marker is a child or not).
+   */
+  public points0(): UndefIterator<OverlayPoint<T>> {
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    const iterator = overlay.points0(this.marker);
+    let closed = false;
+    return () => {
+      if (closed) return;
+      const point = iterator();
+      if (!point) return;
+      if (point instanceof MarkerOverlayPoint) {
+        closed = true;
+        return;
+      }
+      return point;
+    };
+  }
+
+  public points(): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.points0());
   }
 
   // ----------------------------------------------------------------- Stateful
