@@ -1,6 +1,23 @@
 import {setupHelloWorldKit} from '../../__tests__/setup';
 import {MarkerOverlayPoint} from '../../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../../overlay/OverlayPoint';
+import {Inline} from '../Inline';
+
+const setupTwoBlockDocument = () => {
+  const kit = setupHelloWorldKit();
+  const {peritext} = kit;
+  peritext.editor.cursor.setAt(1, 2);
+  peritext.editor.saved.insStack('bold');
+  peritext.editor.cursor.setAt(7, 2);
+  peritext.editor.saved.insStack('italic');
+  peritext.editor.cursor.setAt(8, 2);
+  peritext.editor.saved.insStack('underline');
+  peritext.editor.cursor.setAt(6);
+  peritext.editor.saved.insMarker('p');
+  peritext.editor.delCursors();
+  peritext.refresh();
+  return kit;
+};
 
 describe('points', () => {
   test('no iteration in empty document', () => {
@@ -50,22 +67,6 @@ describe('points', () => {
     expect(iterator()).toBe(undefined);
   });
 
-  const setupTwoBlockDocument = () => {
-    const kit = setupHelloWorldKit();
-    const {peritext} = kit;
-    peritext.editor.cursor.setAt(1, 2);
-    peritext.editor.saved.insStack('bold');
-    peritext.editor.cursor.setAt(7, 2);
-    peritext.editor.saved.insStack('italic');
-    peritext.editor.cursor.setAt(8, 2);
-    peritext.editor.saved.insStack('underline');
-    peritext.editor.cursor.setAt(6);
-    peritext.editor.saved.insMarker('p');
-    peritext.editor.delCursors();
-    peritext.refresh();
-    return kit;
-  };
-
   test('returns only points within that block, in two-block document', () => {
     const {peritext} = setupTwoBlockDocument();
     expect(peritext.blocks.root.children.length).toBe(2);
@@ -89,5 +90,35 @@ describe('points', () => {
     expect(points1[0]).toBeInstanceOf(OverlayPoint);
     expect(points1[0]).toBe(peritext.overlay.START);
     expect(points2[0]).toBeInstanceOf(MarkerOverlayPoint);
+  });
+});
+
+describe('tuples', () => {
+  test('in markup-less document, returns a single pair', () => {
+    const {peritext} = setupHelloWorldKit();
+    peritext.refresh();
+    const blocks = peritext.blocks;
+    const block = blocks.root.children[0]!;
+    const pairs = [...block.tuples()];
+    expect(pairs.length).toBe(1);
+    expect(pairs[0]).toEqual([peritext.overlay.START, peritext.overlay.END]);
+  });
+  
+  test('can iterate through all text chunks in two-block documents', () => {
+    const {peritext} = setupTwoBlockDocument();
+    expect(peritext.blocks.root.children.length).toBe(2);
+    const block1 = peritext.blocks.root.children[0]!;
+    const block2 = peritext.blocks.root.children[1]!;
+    const tuples1 = [...block1.tuples()];
+    const tuples2 = [...block2.tuples()];
+    expect(tuples1.length).toBe(3);
+    const text1 = tuples1
+      .map(([p1, p2]) => Inline.create(peritext, p1, p2).text())
+      .join('');
+    const text2 = tuples2
+      .map(([p1, p2]) => Inline.create(peritext, p1, p2).text())
+      .join('');
+    expect(text1).toBe('hello ');
+    expect(text2).toBe('\nworld');
   });
 });

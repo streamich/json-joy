@@ -7,6 +7,7 @@ import type {Path} from '../../../json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';
+import type {OverlayTuple} from '../overlay/types';
 
 export interface IBlock {
   readonly path: Path;
@@ -73,6 +74,23 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   public points(withMarker?: boolean): IterableIterator<OverlayPoint<T>> {
     return new UndefEndIter(this.points0(withMarker));
+  }
+
+  public tuples0(): UndefIterator<OverlayTuple<T>> {
+    const overlay = this.txt.overlay;
+    const iterator = overlay.tuples0(this.marker);
+    let closed = false;
+    return () => {
+      if (closed) return;
+      const pair = iterator();
+      if (!pair) return;
+      if (!pair[1] || pair[1] instanceof MarkerOverlayPoint) closed = true;
+      return pair;
+    };
+  }
+
+  public tuples(): IterableIterator<OverlayTuple<T>> {
+    return new UndefEndIter(this.tuples0());
   }
 
   // ----------------------------------------------------------------- Stateful

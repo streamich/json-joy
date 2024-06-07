@@ -229,8 +229,8 @@ export class Overlay<T = string> implements Printable, Stateful {
     return () => {
       const pair = iterator();
       if (!pair) return;
-      if (pair[0] === undefined) pair[0] = this.START;
-      if (pair[1] === undefined) pair[1] = this.END;
+      pair[0] ??= this.START;
+      pair[1] ??= this.END;
       return pair as OverlayTuple<T>;
     };
   }
