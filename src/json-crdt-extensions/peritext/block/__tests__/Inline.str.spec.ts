@@ -13,7 +13,7 @@ const runStrTests = (setup: () => Kit) => {
           overlay.refresh();
           const [start, end] = [...overlay.points()];
           const inline = Inline.create(peritext, start, end);
-          const str = inline.str();
+          const str = inline.text();
           expect(str).toBe(
             peritext
               .strApi()
