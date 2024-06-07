@@ -28,12 +28,12 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
    * or other rendering library keys.
    */
   public key(): number | string {
-    if (!this.marker) return this.type();
+    if (!this.marker) return this.tag();
     const id = this.marker.id;
     return id.sid.toString(36) + id.time.toString(36);
   }
 
-  public type(): number | string {
+  public tag(): number | string {
     const path = this.path;
     const length = path.length;
     return length ? path[length - 1] : '';
@@ -43,12 +43,31 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     return this.marker?.data() as Attr | undefined;
   }
 
+  // ----------------------------------------------------------------- Stateful
+
+  public hash: number = 0;
+
+  public refresh(): number {
+    const {path, children} = this;
+    let state = CONST.START_STATE;
+    state = updateJson(state, path);
+    const marker = this.marker;
+    if (marker) {
+      state = updateNum(state, marker.marker.refresh());
+      state = updateNum(state, marker.textHash);
+    } else {
+      state = updateNum(state, this.txt.overlay.leadingTextHash);
+    }
+    for (let i = 0; i < children.length; i++) state = updateNum(state, children[i].refresh());
+    return (this.hash = state);
+  }
+
   // ---------------------------------------------------------------- Printable
 
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
-    const type = this.type() ? ` <${this.type()}>` : '';
-    const header = `${this.constructor.name} ${hash}${type}`;
+    const tag = `<${this.path.join('.')}>`;
+    const header = `${this.constructor.name} ${hash} ${tag}`;
     return header;
   }
 
@@ -72,24 +91,5 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
           : null,
       ])
     );
-  }
-
-  // ----------------------------------------------------------------- Stateful
-
-  public hash: number = 0;
-
-  public refresh(): number {
-    const {path, children} = this;
-    let state = CONST.START_STATE;
-    state = updateJson(state, path);
-    const marker = this.marker;
-    if (marker) {
-      state = updateNum(state, marker.marker.refresh());
-      state = updateNum(state, marker.textHash);
-    } else {
-      state = updateNum(state, this.txt.overlay.leadingTextHash);
-    }
-    for (let i = 0; i < children.length; i++) state = updateNum(state, children[i].refresh());
-    return (this.hash = state);
   }
 }
