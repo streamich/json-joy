@@ -5,7 +5,7 @@ const setup = () => {
   const kit = setupHelloWorldKit();
   kit.peritext.editor.cursor.setAt(6);
   const data = {
-    source: 'http://example.com'
+    source: 'http://example.com',
   };
   kit.peritext.editor.saved.insMarker(['li', 'blockquote'], data);
   kit.peritext.refresh();
