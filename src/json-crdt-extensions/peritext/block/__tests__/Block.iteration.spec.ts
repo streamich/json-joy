@@ -125,7 +125,7 @@ describe('texts', () => {
     peritext.refresh();
     const blocks = peritext.blocks;
     const block = blocks.root.children[0]!;
-    const text = [...block.texts()].map(inline => inline.text()).join('');
+    const text = [...block.texts()].map((inline) => inline.text()).join('');
     expect(text).toBe('hello world');
   });
 
@@ -134,8 +134,8 @@ describe('texts', () => {
     expect(peritext.blocks.root.children.length).toBe(2);
     const block1 = peritext.blocks.root.children[0]!;
     const block2 = peritext.blocks.root.children[1]!;
-    const text1 = [...block1.texts()].map(inline => inline.text()).join('');
-    const text2 = [...block2.texts()].map(inline => inline.text()).join('');
+    const text1 = [...block1.texts()].map((inline) => inline.text()).join('');
+    const text2 = [...block2.texts()].map((inline) => inline.text()).join('');
     expect(text1).toBe('hello ');
     expect(text2).toBe('\nworld');
   });
