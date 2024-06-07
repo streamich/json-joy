@@ -16,11 +16,6 @@ export class LeafBlock<Attr = unknown> extends Block<Attr> {
 
   public toString(tab: string = ''): string {
     const header = this.toStringHeader();
-    return (
-      header +
-      printTree(tab, [
-        this.marker ? (tab) => this.marker!.toString(tab) : null,
-      ])
-    );
+    return header + printTree(tab, [this.marker ? (tab) => this.marker!.toString(tab) : null]);
   }
 }

@@ -1,3 +1,11 @@
+# [16.6.0](https://github.com/streamich/json-joy/compare/v16.5.0...v16.6.0) (2024-06-07)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add initial Block class implementation ([69ef39d](https://github.com/streamich/json-joy/commit/69ef39dcea3c064d49861748b8e44e1b34c49f96))
+* **json-crdt-extensions:** 🎸 construct a blocks layer out of Overlay ([067fed6](https://github.com/streamich/json-joy/commit/067fed6962ceb2d2c178730d0ee1ffb5c023fc14))
+
 # [16.5.0](https://github.com/streamich/json-joy/compare/v16.4.0...v16.5.0) (2024-05-11)
 
 
