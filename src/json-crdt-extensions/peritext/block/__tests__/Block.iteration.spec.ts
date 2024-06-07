@@ -103,7 +103,7 @@ describe('tuples', () => {
     expect(pairs.length).toBe(1);
     expect(pairs[0]).toEqual([peritext.overlay.START, peritext.overlay.END]);
   });
-  
+
   test('can iterate through all text chunks in two-block documents', () => {
     const {peritext} = setupTwoBlockDocument();
     expect(peritext.blocks.root.children.length).toBe(2);
@@ -112,12 +112,8 @@ describe('tuples', () => {
     const tuples1 = [...block1.tuples()];
     const tuples2 = [...block2.tuples()];
     expect(tuples1.length).toBe(3);
-    const text1 = tuples1
-      .map(([p1, p2]) => Inline.create(peritext, p1, p2).text())
-      .join('');
-    const text2 = tuples2
-      .map(([p1, p2]) => Inline.create(peritext, p1, p2).text())
-      .join('');
+    const text1 = tuples1.map(([p1, p2]) => Inline.create(peritext, p1, p2).text()).join('');
+    const text2 = tuples2.map(([p1, p2]) => Inline.create(peritext, p1, p2).text()).join('');
     expect(text1).toBe('hello ');
     expect(text2).toBe('\nworld');
   });
