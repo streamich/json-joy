@@ -118,3 +118,25 @@ describe('tuples', () => {
     expect(text2).toBe('\nworld');
   });
 });
+
+describe('inline', () => {
+  test('in markup-less document', () => {
+    const {peritext} = setupHelloWorldKit();
+    peritext.refresh();
+    const blocks = peritext.blocks;
+    const block = blocks.root.children[0]!;
+    const text = [...block.inline()].map(inline => inline.text()).join('');
+    expect(text).toBe('hello world');
+  });
+
+  test('can iterate through all text chunks in two-block documents', () => {
+    const {peritext} = setupTwoBlockDocument();
+    expect(peritext.blocks.root.children.length).toBe(2);
+    const block1 = peritext.blocks.root.children[0]!;
+    const block2 = peritext.blocks.root.children[1]!;
+    const text1 = [...block1.inline()].map(inline => inline.text()).join('');
+    const text2 = [...block2.inline()].map(inline => inline.text()).join('');
+    expect(text1).toBe('hello ');
+    expect(text2).toBe('\nworld');
+  });
+});

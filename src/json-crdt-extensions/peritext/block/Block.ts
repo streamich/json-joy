@@ -3,6 +3,7 @@ import {CONST, updateJson, updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
+import {Inline} from './Inline';
 import type {Path} from '../../../json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
@@ -91,6 +92,19 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   public tuples(): IterableIterator<OverlayTuple<T>> {
     return new UndefEndIter(this.tuples0());
+  }
+
+  public inline0(): UndefIterator<Inline> {
+    const txt = this.txt;
+    const iterator = this.tuples0();
+    return () => {
+      const pair = iterator();
+      return pair && Inline.create(txt, pair[0], pair[1]);
+    };
+  }
+
+  public inline(): IterableIterator<Inline> {
+    return new UndefEndIter(this.inline0());
   }
 
   // ----------------------------------------------------------------- Stateful
