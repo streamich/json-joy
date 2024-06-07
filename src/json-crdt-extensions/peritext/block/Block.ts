@@ -107,6 +107,17 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     return new UndefEndIter(this.texts0());
   }
 
+  public text(): string {
+    let str = '';
+    const iterator = this.texts0();
+    let text = iterator();
+    while (text) {
+      str += text.text();
+      text = iterator();
+    }
+    return str;
+  }
+
   // ----------------------------------------------------------------- Stateful
 
   public hash: number = 0;

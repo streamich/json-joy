@@ -9,13 +9,33 @@ export interface IBlock<Attr = unknown> {
 }
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
+  // ---------------------------------------------------------------- Printable
+
   protected toStringHeader(): string {
-    const header = `${super.toStringHeader()}`;
+    const str = this.text();
+    const truncate = str.length > 32;
+    const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
+    const header = `${super.toStringHeader()} ${text}`;
     return header;
   }
 
   public toString(tab: string = ''): string {
     const header = this.toStringHeader();
-    return header + printTree(tab, [this.marker ? (tab) => this.marker!.toString(tab) : null]);
+    const texts = [...this.texts()];
+    const hasSlices = !!texts.length;
+    return (
+      header +
+      printTree(tab, [
+        this.marker ? (tab) => this.marker!.toString(tab) : null,
+        !hasSlices
+          ? null
+          : (tab) =>
+              'nodes' +
+              printTree(
+                tab,
+                texts.map((inline) => (tab) => inline.toString(tab)),
+              ),
+      ])
+    );
   }
 }
