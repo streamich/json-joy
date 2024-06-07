@@ -94,7 +94,7 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     return new UndefEndIter(this.tuples0());
   }
 
-  public inline0(): UndefIterator<Inline> {
+  public texts0(): UndefIterator<Inline> {
     const txt = this.txt;
     const iterator = this.tuples0();
     return () => {
@@ -103,8 +103,8 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     };
   }
 
-  public inline(): IterableIterator<Inline> {
-    return new UndefEndIter(this.inline0());
+  public texts(): IterableIterator<Inline> {
+    return new UndefEndIter(this.texts0());
   }
 
   // ----------------------------------------------------------------- Stateful
