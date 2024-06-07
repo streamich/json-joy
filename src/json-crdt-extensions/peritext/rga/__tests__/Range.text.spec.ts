@@ -1,4 +1,10 @@
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {
+  Kit,
+  setupHelloWorldKit,
+  setupHelloWorldWithFewEditsKit,
+  setupNumbersKit,
+  setupNumbersWithTombstonesKit,
+} from '../../__tests__/setup';
 
 const run = (setup: () => Kit) => {
   test('can produce text for all possible ranges', () => {

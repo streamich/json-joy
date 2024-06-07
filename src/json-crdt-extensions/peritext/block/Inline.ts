@@ -94,7 +94,7 @@ export class Inline extends Range implements Printable {
           if (data === undefined) data = 1;
           attr[type] = data;
           break;
-        } 
+        }
         case SliceBehavior.Erase: {
           delete attr[type];
           break;
