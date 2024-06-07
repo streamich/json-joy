@@ -1,4 +1,5 @@
 import {setupHelloWorldKit} from '../../__tests__/setup';
+import {MarkerOverlayPoint} from '../../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../../overlay/OverlayPoint';
 
 describe('points', () => {
@@ -8,6 +9,16 @@ describe('points', () => {
     const blocks = peritext.blocks;
     const block = blocks.root.children[0]!;
     const iterator = block.points0();
+    expect(iterator()).toBe(undefined);
+  });
+
+  test('using flag, can receive START marker in empty document', () => {
+    const {peritext} = setupHelloWorldKit();
+    peritext.refresh();
+    const blocks = peritext.blocks;
+    const block = blocks.root.children[0]!;
+    const iterator = block.points0(true);
+    expect(iterator()).toBeInstanceOf(OverlayPoint);
     expect(iterator()).toBe(undefined);
   });
 
@@ -26,8 +37,22 @@ describe('points', () => {
     expect(point3).toBe(undefined);
   });
 
-  test('returns only points within that block, in two-block document', () => {
+  test('returns all overlay points in single block document, including start marker', () => {
     const {peritext} = setupHelloWorldKit();
+    peritext.editor.cursor.setAt(3, 3);
+    peritext.editor.saved.insStack('bold');
+    peritext.refresh();
+    const block = peritext.blocks.root.children[0]!;
+    const iterator = block.points0(true);
+    expect(iterator()).toBeInstanceOf(OverlayPoint);
+    expect(iterator()).toBeInstanceOf(OverlayPoint);
+    expect(iterator()).toBeInstanceOf(OverlayPoint);
+    expect(iterator()).toBe(undefined);
+  });
+
+  const setupTwoBlockDocument = () => {
+    const kit = setupHelloWorldKit();
+    const {peritext} = kit;
     peritext.editor.cursor.setAt(1, 2);
     peritext.editor.saved.insStack('bold');
     peritext.editor.cursor.setAt(7, 2);
@@ -38,6 +63,11 @@ describe('points', () => {
     peritext.editor.saved.insMarker('p');
     peritext.editor.delCursors();
     peritext.refresh();
+    return kit;
+  };
+
+  test('returns only points within that block, in two-block document', () => {
+    const {peritext} = setupTwoBlockDocument();
     expect(peritext.blocks.root.children.length).toBe(2);
     const block1 = peritext.blocks.root.children[0]!;
     const block2 = peritext.blocks.root.children[1]!;
@@ -45,5 +75,19 @@ describe('points', () => {
     const points2 = [...block2.points()];
     expect(points1.length).toBe(2);
     expect(points2.length).toBe(4);
+  });
+
+  test('can iterate including marker points, in two-block document', () => {
+    const {peritext} = setupTwoBlockDocument();
+    expect(peritext.blocks.root.children.length).toBe(2);
+    const block1 = peritext.blocks.root.children[0]!;
+    const block2 = peritext.blocks.root.children[1]!;
+    const points1 = [...block1.points(true)];
+    const points2 = [...block2.points(true)];
+    expect(points1.length).toBe(3);
+    expect(points2.length).toBe(5);
+    expect(points1[0]).toBeInstanceOf(OverlayPoint);
+    expect(points1[0]).toBe(peritext.overlay.START);
+    expect(points2[0]).toBeInstanceOf(MarkerOverlayPoint);
   });
 });

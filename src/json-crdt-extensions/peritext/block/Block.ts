@@ -50,12 +50,16 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
    * Iterate through all overlay points of this block, until the next marker
    * (regardless if that marker is a child or not).
    */
-  public points0(): UndefIterator<OverlayPoint<T>> {
+  public points0(withMarker: boolean = false): UndefIterator<OverlayPoint<T>> {
     const txt = this.txt;
     const overlay = txt.overlay;
     const iterator = overlay.points0(this.marker);
     let closed = false;
     return () => {
+      if (withMarker) {
+        withMarker = false;
+        return this.marker ?? overlay.START;
+      }
       if (closed) return;
       const point = iterator();
       if (!point) return;
@@ -67,8 +71,8 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
     };
   }
 
-  public points(): IterableIterator<OverlayPoint<T>> {
-    return new UndefEndIter(this.points0());
+  public points(withMarker?: boolean): IterableIterator<OverlayPoint<T>> {
+    return new UndefEndIter(this.points0(withMarker));
   }
 
   // ----------------------------------------------------------------- Stateful
