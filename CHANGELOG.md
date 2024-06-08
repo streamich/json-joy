@@ -1,3 +1,13 @@
+# [16.8.0](https://github.com/streamich/json-joy/compare/v16.7.0...v16.8.0) (2024-06-08)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 chop off block sentinel text from inline node materializati ([d1ee62c](https://github.com/streamich/json-joy/commit/d1ee62c80a86792c0f18cce82ec18d682ee8d32d))
+* **json-crdt-extensions:** 🎸 improve Inline attribute construction ([3ef2fe6](https://github.com/streamich/json-joy/commit/3ef2fe603fff4a7650aa5197f92bed9127c3dcb9))
+* **json-crdt-extensions:** 🎸 report slice position relative to the inline ([2f960db](https://github.com/streamich/json-joy/commit/2f960dbd114b95cf6d4c4d336d1677056b99850d))
+* **json-crdt-extensions:** 🎸 use undefined as data if no slice data specified ([e5c4992](https://github.com/streamich/json-joy/commit/e5c49922353956d7a7c8e18e3f0846bf3a201007))
+
 # [16.7.0](https://github.com/streamich/json-joy/compare/v16.6.0...v16.7.0) (2024-06-08)
 
 
