@@ -1,3 +1,19 @@
+# [16.7.0](https://github.com/streamich/json-joy/compare/v16.6.0...v16.7.0) (2024-06-08)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add inter-block iteration for inline elements ([22f6fe8](https://github.com/streamich/json-joy/commit/22f6fe8cbe0f56970a009747f48737f39db7a92c))
+* **json-crdt-extensions:** 🎸 add inter-block iteration using point tuples ([edf19ac](https://github.com/streamich/json-joy/commit/edf19acaaecf731f7171806816525c173a3c25b6))
+* **json-crdt-extensions:** 🎸 add iteration over block points ([19dcc68](https://github.com/streamich/json-joy/commit/19dcc68e564539c48beddb141e5ee59b12ed9fe2))
+* **json-crdt-extensions:** 🎸 can return block marker when iterating ([0e66aa6](https://github.com/streamich/json-joy/commit/0e66aa63821963d67b56b4ed412897270cf1e775))
+* **json-crdt-extensions:** 🎸 improve how blocks are printed to console, add Block.text() ([4a68cda](https://github.com/streamich/json-joy/commit/4a68cdaac2345910388847c868ccefc8fd619305))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ speed up range text materialization ([ac56314](https://github.com/streamich/json-joy/commit/ac563148feb70c963079b39c7687280f31d797dc))
+
 # [16.6.0](https://github.com/streamich/json-joy/compare/v16.5.0...v16.6.0) (2024-06-07)
 
 
