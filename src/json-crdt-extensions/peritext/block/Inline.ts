@@ -5,6 +5,7 @@ import {SliceBehavior, SliceTypes} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateNum} from '../../../json-hash';
+import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '../../../json-pointer';
@@ -139,6 +140,11 @@ export class Inline extends Range implements Printable {
       }
     }
     return attr;
+  }
+
+  public text(): string {
+    const str = super.text();
+    return this.start instanceof MarkerOverlayPoint ? str.slice(1) : str;
   }
 
   // ---------------------------------------------------------------- Printable

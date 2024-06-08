@@ -115,7 +115,7 @@ describe('tuples', () => {
     const text1 = tuples1.map(([p1, p2]) => Inline.create(peritext, p1, p2).text()).join('');
     const text2 = tuples2.map(([p1, p2]) => Inline.create(peritext, p1, p2).text()).join('');
     expect(text1).toBe('hello ');
-    expect(text2).toBe('\nworld');
+    expect(text2).toBe('world');
   });
 });
 
@@ -137,6 +137,6 @@ describe('texts', () => {
     const text1 = [...block1.texts()].map((inline) => inline.text()).join('');
     const text2 = [...block2.texts()].map((inline) => inline.text()).join('');
     expect(text1).toBe('hello ');
-    expect(text2).toBe('\nworld');
+    expect(text2).toBe('world');
   });
 });

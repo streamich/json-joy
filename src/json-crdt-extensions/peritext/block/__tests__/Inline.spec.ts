@@ -210,14 +210,15 @@ const runStrTests = (setup: () => Kit) => {
       test('correctly reports *Contained* positions', () => {
         const {peritext} = setup();
         peritext.editor.cursor.setAt(2, 6);
-        peritext.editor.saved.insStack(['a', 1, 'b', 2]);
+        const [slice] = peritext.editor.saved.insStack(['a', 1, 'b', 2]);
+        peritext.editor.cursor.set(slice.start);
         peritext.refresh();
         const str = peritext.strApi().view();
         const [inline1, inline2, inline3] = peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 2));
         expect(inline2.text()).toBe(str.slice(2, 8));
         expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Contained],
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
           'a,1,b,2': [[void 0], InlineAttrPos.Contained],
         });
         expect(inline3.text()).toBe(str.slice(8));
