@@ -279,6 +279,8 @@ export class Peritext<T = string> implements Printable {
         localSlices.size() ? (tab) => localSlices.toString(tab) : null,
         nl,
         (tab) => this.overlay.toString(tab),
+        nl,
+        (tab) => this.blocks.toString(tab),
       ])
     );
   }

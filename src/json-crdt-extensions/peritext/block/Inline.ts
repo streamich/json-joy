@@ -57,16 +57,6 @@ export class Inline extends Range implements Printable {
   }
 
   /**
-   * @returns The full text content of the inline, which is the concatenation
-   *     of all the underlying {@link ChunkSlice}s.
-   */
-  public str(): string {
-    let str = '';
-    for (const slice of this.texts) str += slice.view();
-    return str;
-  }
-
-  /**
    * @returns The position of the inline withing the text.
    */
   public pos(): number {
@@ -118,7 +108,7 @@ export class Inline extends Range implements Printable {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const str = this.str();
+    const str = this.text();
     const truncate = str.length > 32;
     const text = JSON.stringify(truncate ? str.slice(0, 32) : str) + (truncate ? ' …' : '');
     const startFormatted = this.start.toString(tab, true);
@@ -130,7 +120,7 @@ export class Inline extends Range implements Printable {
     return (
       header +
       printTree(tab, [
-        !marks
+        !markKeys.length
           ? null
           : (tab) =>
               'attributes' +

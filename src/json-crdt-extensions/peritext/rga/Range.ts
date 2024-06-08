@@ -214,8 +214,9 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const endId = end.anchor === Anchor.After ? end.id : end.prevId();
     if (!startId || !endId) return '';
     let result = '';
-    rga.range0(undefined, startId, endId, (chunk: Chunk<T>, from: number, length: number) => {
-      if (chunk.data) result += chunk.view().slice(from, from + length);
+    rga.range0(start.chunk(), startId, endId, (chunk: Chunk<T>, from: number, length: number) => {
+      const data = chunk.data as string;
+      if (data) result += data.slice(from, from + length);
     });
     return result;
   }

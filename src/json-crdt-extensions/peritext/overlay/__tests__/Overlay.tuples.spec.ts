@@ -9,6 +9,7 @@ const runPairsTests = (setup: () => Kit) => {
     test('returns [START, END] single tuple for an empty overlay', () => {
       const {peritext} = setup();
       const overlay = peritext.overlay;
+      peritext.editor.delCursors();
       overlay.refresh();
       const list = [...overlay.tuples()];
       expect(list).toEqual([[overlay.START, overlay.END]]);

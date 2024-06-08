@@ -19,6 +19,8 @@ export class Editor<T = string> {
     this.local = new EditorSlices(txt, txt.localSlices);
   }
 
+  // ------------------------------------------------------------------ cursors
+
   public firstCursor(): Cursor<T> | undefined {
     const iterator = this.txt.localSlices.iterator0();
     let cursor = iterator();
@@ -57,6 +59,12 @@ export class Editor<T = string> {
     });
   }
 
+  public delCursors(): void {
+    this.cursors((cursor) => this.local.del(cursor));
+  }
+
+  // ------------------------------------------------------------- text editing
+
   /**
    * Insert inline text at current cursor position. If cursor selects a range,
    * the range is removed and the text is inserted at the start of the range.
@@ -72,6 +80,8 @@ export class Editor<T = string> {
   public delBwd(): void {
     this.cursors((cursor) => cursor.delBwd());
   }
+
+  // ------------------------------------------------------------------ various
 
   /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
   public selectAll(): boolean {
