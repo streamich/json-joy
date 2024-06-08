@@ -119,7 +119,7 @@ export class Inline extends Range implements Printable {
             break;
           }
           case SliceBehavior.Stack: {
-            this.stackAttr(attr, type, slice.data() ?? 1, slice);
+            this.stackAttr(attr, type, slice.data(), slice);
             break;
           }
           case SliceBehavior.Overwrite: {
