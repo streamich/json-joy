@@ -269,15 +269,18 @@ export class Peritext<T = string> implements Printable {
   public toString(tab: string = ''): string {
     const nl = () => '';
     const {savedSlices, extraSlices, localSlices} = this;
+    const slices = [
+      savedSlices.size() ? (tab: string) => savedSlices.toString(tab) : null,
+      extraSlices.size() ? (tab: string) => extraSlices.toString(tab) : null,
+      localSlices.size() ? (tab: string) => localSlices.toString(tab) : null,
+    ].filter(Boolean);
+    if (slices.length) slices.push(nl);
     return (
       this.constructor.name +
       printTree(tab, [
         (tab) => this.str.toString(tab),
         nl,
-        savedSlices.size() ? (tab) => savedSlices.toString(tab) : null,
-        extraSlices.size() ? (tab) => extraSlices.toString(tab) : null,
-        localSlices.size() ? (tab) => localSlices.toString(tab) : null,
-        nl,
+        ...slices,
         (tab) => this.overlay.toString(tab),
         nl,
         (tab) => this.blocks.toString(tab),
