@@ -31,3 +31,15 @@ test('can construct a two-paragraph document', () => {
   expect(paragraph1.marker).toBe(undefined);
   expect(paragraph2.marker instanceof MarkerOverlayPoint).toBe(true);
 });
+
+test('first inline element does not contain marker text', () => {
+  const {peritext} = setupHelloWorldKit();
+  peritext.editor.cursor.setAt(6);
+  peritext.editor.saved.insMarker('p');
+  peritext.editor.delCursors();
+  peritext.refresh();
+  expect(peritext.strApi().view()).toBe('hello \nworld');
+  const [block1, block2] = peritext.blocks.root.children;
+  expect([...block1.texts()][0].text()).toBe('hello ');
+  expect([...block2.texts()][0].text()).toBe('world');
+});

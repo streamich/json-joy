@@ -1,17 +1,32 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior} from '../slice/constants';
+import {SliceBehavior, SliceTypes} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateNum} from '../../../json-hash';
+import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '../../../json-pointer';
-import type {Slice} from '../slice/types';
 import type {Peritext} from '../Peritext';
 
-export type InlineAttributes = Record<string | number, unknown>;
+export const enum InlineAttrPos {
+  /** The attribute started before this inline and ends after this inline. */
+  Passing = 0,
+  /** The attribute starts at the beginning of this inline. */
+  Start = 1,
+  /** The attribute ends at the end of this inline. */
+  End = 2,
+  /** The attribute starts and ends in this inline. */
+  Contained = 3,
+  /** The attribute is collapsed at start of this inline. */
+  Collapsed = 4,
+}
+
+export type InlineAttr<T> = [value: T, position: InlineAttrPos];
+export type InlineAttrStack = InlineAttr<unknown[]>;
+export type InlineAttrs = Record<string | number, InlineAttr<unknown>>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -57,7 +72,7 @@ export class Inline extends Range implements Printable {
   }
 
   /**
-   * @returns The position of the inline withing the text.
+   * @returns The position of the inline within the text.
    */
   public pos(): number {
     const chunkSlice = this.texts[0];
@@ -67,42 +82,69 @@ export class Inline extends Range implements Printable {
     return pos + chunkSlice.off;
   }
 
+  protected getAttrPos(range: Range<any>): InlineAttrPos {
+    return !range.start.cmp(range.end)
+      ? InlineAttrPos.Collapsed
+      : !this.start.cmp(range.start)
+        ? !this.end.cmp(range.end)
+          ? InlineAttrPos.Contained
+          : InlineAttrPos.Start
+        : !this.end.cmp(range.end)
+          ? InlineAttrPos.End
+          : InlineAttrPos.Passing;
+  }
+
+  protected stackAttr(attr: InlineAttrs, type: string | number, data: unknown, slice: Range<any>): void {
+    let item: InlineAttrStack | undefined = attr[type] as InlineAttrStack | undefined;
+    if (!item) attr[type] = item = [[], this.getAttrPos(slice)];
+    const dataList: unknown[] = item[0] instanceof Array ? (item[0] as unknown[]) : [];
+    dataList.push(data);
+  }
+
   /**
    * @returns Returns the attributes of the inline, which are the slice
    *     annotations and formatting applied to the inline.
    */
-  public attr(): InlineAttributes {
-    const attr: InlineAttributes = {};
+  public attr(): InlineAttrs {
+    const attr: InlineAttrs = {};
     const point = this.start as OverlayPoint;
-    const slices: Slice[] = this.texts.length ? point.layers : point.markers;
-    const length = slices.length;
-    for (let i = 0; i < length; i++) {
-      const slice = slices[i];
-      const type = slice.type as PathStep;
-      switch (slice.behavior) {
-        case SliceBehavior.Cursor:
-        case SliceBehavior.Stack: {
-          let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
-          if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
-          let data = slice.data();
-          if (data === undefined) data = 1;
-          dataList.push(data);
-          break;
-        }
-        case SliceBehavior.Overwrite: {
-          let data = slice.data();
-          if (data === undefined) data = 1;
-          attr[type] = data;
-          break;
-        }
-        case SliceBehavior.Erase: {
-          delete attr[type];
-          break;
+    const slices1 = point.layers;
+    const slices2 = point.markers;
+    const length1 = slices1.length;
+    const length2 = slices2.length;
+    const length3 = length1 + length2;
+    for (let i = 0; i < length3; i++) {
+      const slice = i >= length1 ? slices2[i - length1] : slices1[i];
+      if (slice instanceof Range) {
+        const type = slice.type as PathStep;
+        switch (slice.behavior) {
+          case SliceBehavior.Cursor: {
+            this.stackAttr(attr, SliceTypes.Cursor, [type, slice.data()], slice);
+            break;
+          }
+          case SliceBehavior.Stack: {
+            this.stackAttr(attr, type, slice.data(), slice);
+            break;
+          }
+          case SliceBehavior.Overwrite: {
+            let data = slice.data();
+            if (data === undefined) data = 1;
+            attr[type] = [data, this.getAttrPos(slice)];
+            break;
+          }
+          case SliceBehavior.Erase: {
+            delete attr[type];
+            break;
+          }
         }
       }
     }
-    // TODO: Iterate over the markers...
     return attr;
+  }
+
+  public text(): string {
+    const str = super.text();
+    return this.start instanceof MarkerOverlayPoint ? str.slice(1) : str;
   }
 
   // ---------------------------------------------------------------- Printable
