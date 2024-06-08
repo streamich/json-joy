@@ -2,5 +2,6 @@
   "extends": "../../../../tsconfig.build.json",
   "compilerOptions": {
     "sourceMap": true,
+    "isolatedModules": false
   },
 }

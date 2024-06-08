@@ -1,7 +1,6 @@
 /* eslint-disable */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const PORT = 9993;
 
@@ -22,7 +21,7 @@ module.exports = {
             configFile: path.resolve(__dirname, 'tsconfig.json'),
           },
         }],
-        exclude: /(node_modules|__demos__|__tests__)/,
+        exclude: /(node_modules|__tests__)/,
       },
       {
         test: /\.md$/i,
@@ -42,11 +41,6 @@ module.exports = {
     publicPath: `http://localhost:${PORT}/`,
   },
   plugins: [
-    new ForkTsCheckerWebpackPlugin({
-      typescript: {
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
-      },
-    }),
     new HtmlWebpackPlugin({
       title: 'Peritext DOM demo',
     }),
