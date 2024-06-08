@@ -1,14 +1,13 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {OverlayPoint} from '../overlay/OverlayPoint';
 import {stringify} from '../../../json-text/stringify';
-import {SliceBehavior} from '../slice/constants';
+import {SliceBehavior, SliceTypes} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateNum} from '../../../json-hash';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '../../../json-pointer';
-import type {Slice} from '../slice/types';
 import type {Peritext} from '../Peritext';
 
 export type InlineAttributes = Record<string | number, unknown>;
@@ -57,7 +56,7 @@ export class Inline extends Range implements Printable {
   }
 
   /**
-   * @returns The position of the inline withing the text.
+   * @returns The position of the inline within the text.
    */
   public pos(): number {
     const chunkSlice = this.texts[0];
@@ -74,34 +73,45 @@ export class Inline extends Range implements Printable {
   public attr(): InlineAttributes {
     const attr: InlineAttributes = {};
     const point = this.start as OverlayPoint;
-    const slices: Slice[] = this.texts.length ? point.layers : point.markers;
-    const length = slices.length;
-    for (let i = 0; i < length; i++) {
-      const slice = slices[i];
-      const type = slice.type as PathStep;
-      switch (slice.behavior) {
-        case SliceBehavior.Cursor:
-        case SliceBehavior.Stack: {
-          let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
-          if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
-          let data = slice.data();
-          if (data === undefined) data = 1;
-          dataList.push(data);
-          break;
-        }
-        case SliceBehavior.Overwrite: {
-          let data = slice.data();
-          if (data === undefined) data = 1;
-          attr[type] = data;
-          break;
-        }
-        case SliceBehavior.Erase: {
-          delete attr[type];
-          break;
+    const slices1 = point.layers;
+    const slices2 = point.markers;
+    const length1 = slices1.length;
+    const length2 = slices2.length;
+    const length3 = length1 + length2;
+    for (let i = 0; i < length3; i++) {
+      const slice = i >= length1 ? slices2[i - length1] : slices1[i];
+      if (slice instanceof Range) {
+        const type = slice.type as PathStep;
+        switch (slice.behavior) {
+          case SliceBehavior.Cursor: {
+            const dataList: unknown[] = (attr[SliceTypes.Cursor] as unknown[]) || (attr[SliceTypes.Cursor] = []);
+            const data: unknown[] = [type];
+            const cursorData = slice.data();
+            if (cursorData !== void 0) data.push(cursorData);
+            dataList.push(data);
+            break;
+          }
+          case SliceBehavior.Stack: {
+            let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
+            if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
+            let data = slice.data();
+            if (data === undefined) data = 1;
+            dataList.push(data);
+            break;
+          }
+          case SliceBehavior.Overwrite: {
+            let data = slice.data();
+            if (data === undefined) data = 1;
+            attr[type] = data;
+            break;
+          }
+          case SliceBehavior.Erase: {
+            delete attr[type];
+            break;
+          }
         }
       }
     }
-    // TODO: Iterate over the markers...
     return attr;
   }
 

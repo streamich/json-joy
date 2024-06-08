@@ -1,4 +1,5 @@
 import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {CursorAnchor, SliceTypes} from '../../slice/constants';
 import {Inline} from '../Inline';
 
 const runStrTests = (setup: () => Kit) => {
@@ -101,6 +102,35 @@ const runStrTests = (setup: () => Kit) => {
       const attr = inline.attr();
       expect(attr['bold,very']).toEqual([1]);
       expect(attr['bold,normal']).toEqual([2]);
+    });
+
+    test('returns collapsed slice (cursor) at marker position', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(3);
+      const [paragraph] = peritext.editor.saved.insMarker('p');
+      peritext.editor.cursor.set(paragraph.start);
+      peritext.refresh();
+      const block = peritext.blocks.root.children[1]!;
+      const inline = [...block.texts()][0];
+      const attr = inline.attr();
+      expect(attr).toEqual({
+        [SliceTypes.Cursor]: [[CursorAnchor.Start]],
+      });
+    });
+
+    test('returns collapsed slice (cursor) at markup slice start', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(2, 2);
+      const [slice] = peritext.editor.saved.insStack('bold', 123);
+      peritext.editor.cursor.set(slice.start);
+      peritext.refresh();
+      const block = peritext.blocks.root.children[0]!;
+      const inline = [...block.texts()][1];
+      const attr = inline.attr();
+      expect(attr).toEqual({
+        [SliceTypes.Cursor]: [[CursorAnchor.Start]],
+        bold: [123],
+      });
     });
   });
 };

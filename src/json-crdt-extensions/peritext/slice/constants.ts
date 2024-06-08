@@ -9,8 +9,12 @@ export const enum CursorAnchor {
   End = 1,
 }
 
-export const enum Tags {
-  Cursor = 0,
+/**
+ * Built-in slice types.
+ */
+export const enum SliceTypes {
+  Cursor = -1,
+  Paragraph = 0,
 }
 
 export const enum SliceHeaderMask {
