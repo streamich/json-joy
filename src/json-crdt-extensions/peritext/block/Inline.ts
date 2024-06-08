@@ -85,17 +85,20 @@ export class Inline extends Range implements Printable {
     return !range.start.cmp(range.end)
       ? InlineAttrPos.Collapsed
       : !this.start.cmp(range.start)
-        ? (!this.end.cmp(range.end) ? InlineAttrPos.Contained : InlineAttrPos.Start)
+        ? !this.end.cmp(range.end)
+          ? InlineAttrPos.Contained
+          : InlineAttrPos.Start
         : !this.end.cmp(range.end)
-          ? InlineAttrPos.End : InlineAttrPos.Passing;
+          ? InlineAttrPos.End
+          : InlineAttrPos.Passing;
   }
 
   protected stackAttr(attr: InlineAttrs, type: string | number, data: unknown, slice: Range<any>): void {
     let item: InlineAttrStack | undefined = attr[type] as InlineAttrStack | undefined;
     if (!item) attr[type] = item = [[], this.getAttrPos(slice)];
-    const dataList: unknown[] = item[0] instanceof Array ? item[0] as unknown[] : [];
+    const dataList: unknown[] = item[0] instanceof Array ? (item[0] as unknown[]) : [];
     dataList.push(data);
-  };
+  }
 
   /**
    * @returns Returns the attributes of the inline, which are the slice

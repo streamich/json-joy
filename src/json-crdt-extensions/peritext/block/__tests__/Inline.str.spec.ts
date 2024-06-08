@@ -177,7 +177,8 @@ const runStrTests = (setup: () => Kit) => {
         peritext.editor.cursor.setAt(1, 8);
         peritext.refresh();
         const str = peritext.strApi().view();
-        const [inline1, inline2, inline3, inline4, inline5, inline6, inline7] = peritext.blocks.root.children[0]!.texts();
+        const [inline1, inline2, inline3, inline4, inline5, inline6, inline7] =
+          peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 1));
         expect(inline2.text()).toBe(str.slice(1, 2));
         expect(inline2.attr()).toEqual({
@@ -221,7 +222,7 @@ const runStrTests = (setup: () => Kit) => {
         });
         expect(inline3.text()).toBe(str.slice(8));
       });
-  
+
       test('correctly reports *Collapsed* positions', () => {
         const {peritext} = setup();
         peritext.editor.cursor.setAt(5);
@@ -234,7 +235,7 @@ const runStrTests = (setup: () => Kit) => {
           [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
         });
       });
-  
+
       test('correctly reports *Collapsed* at start of block marker', () => {
         const {peritext} = setup();
         peritext.editor.cursor.setAt(5);
