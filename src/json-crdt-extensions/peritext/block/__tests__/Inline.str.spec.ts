@@ -56,8 +56,8 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr.bold).toEqual([1, 2]);
-      expect(attr.em).toEqual([1]);
+      expect(attr.bold[0]).toEqual([1, 2]);
+      expect(attr.em[0]).toEqual([1]);
     });
 
     test('returns latest OVERWRITE annotation', () => {
@@ -71,8 +71,8 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr.bold).toBe(2);
-      expect(attr.em).toBe(1);
+      expect(attr.bold[0]).toBe(2);
+      expect(attr.em[0]).toBe(1);
     });
 
     test('hides annotation hidden with another ERASE annotation', () => {
@@ -87,7 +87,7 @@ const runStrTests = (setup: () => Kit) => {
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
       expect(attr.bold).toBe(undefined);
-      expect(attr.em).toBe(1);
+      expect(attr.em[0]).toBe(1);
     });
 
     test('concatenates with "," steps of nested Path type annotations', () => {
@@ -100,8 +100,8 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr['bold,very']).toEqual([1]);
-      expect(attr['bold,normal']).toEqual([2]);
+      expect(attr['bold,very'][0]).toEqual([1]);
+      expect(attr['bold,normal'][0]).toEqual([2]);
     });
 
     test('returns collapsed slice (cursor) at marker position', () => {
@@ -114,7 +114,7 @@ const runStrTests = (setup: () => Kit) => {
       const inline = [...block.texts()][0];
       const attr = inline.attr();
       expect(attr).toEqual({
-        [SliceTypes.Cursor]: [[CursorAnchor.Start]],
+        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
       });
     });
 
@@ -128,9 +128,43 @@ const runStrTests = (setup: () => Kit) => {
       const inline = [...block.texts()][1];
       const attr = inline.attr();
       expect(attr).toEqual({
-        [SliceTypes.Cursor]: [[CursorAnchor.Start]],
-        bold: [123],
+        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
+        bold: [[123], expect.any(Number)],
       });
+    });
+
+    test('returns slice and cursor at the same range', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(2, 2);
+      peritext.editor.saved.insStack('bold', 123);
+      peritext.refresh();
+      const block = peritext.blocks.root.children[0]!;
+      const inline1 = [...block.texts()][0];
+      const inline2 = [...block.texts()][1];
+      const inline3 = [...block.texts()][2];
+      expect(inline1.attr()).toEqual({});
+      expect(inline2.attr()).toEqual({
+        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
+        bold: [[123], expect.any(Number)],
+      });
+      expect(inline3.attr()).toEqual({});
+    });
+
+    test('can infer slice start', () => {
+      const {peritext} = setup();
+      peritext.editor.cursor.setAt(2, 2);
+      peritext.editor.saved.insStack('bold', 123);
+      peritext.refresh();
+      const block = peritext.blocks.root.children[0]!;
+      const inline1 = [...block.texts()][0];
+      const inline2 = [...block.texts()][1];
+      const inline3 = [...block.texts()][2];
+      expect(inline1.attr()).toEqual({});
+      expect(inline2.attr()).toEqual({
+        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
+        bold: [[123], expect.any(Number)],
+      });
+      expect(inline3.attr()).toEqual({});
     });
   });
 };

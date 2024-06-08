@@ -10,7 +10,22 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '../../../json-pointer';
 import type {Peritext} from '../Peritext';
 
-export type InlineAttributes = Record<string | number, unknown>;
+export const enum InlineAttrPos {
+  /** The attribute started before this inline and ends after this inline. */
+  Passing = 0,
+  /** The attribute starts at the beginning of this inline. */
+  Start = 1,
+  /** The attribute ends at the end of this inline. */
+  End = 2,
+  /** The attribute starts and ends in this inline. */
+  Contained = 3,
+  /** The attribute is collapsed at start of this inline. */
+  Collapsed = 4,
+}
+
+export type InlineAttr<T> = [value: T, position: InlineAttrPos];
+export type InlineAttrStack = InlineAttr<unknown[]>;
+export type InlineAttrs = Record<string | number, InlineAttr<unknown>>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -66,12 +81,28 @@ export class Inline extends Range implements Printable {
     return pos + chunkSlice.off;
   }
 
+  protected getAttrPos(range: Range<any>): InlineAttrPos {
+    return !range.start.cmp(range.end)
+      ? InlineAttrPos.Collapsed
+      : !this.start.cmp(range.start)
+        ? (!this.end.cmp(range.end) ? InlineAttrPos.Contained : InlineAttrPos.Start)
+        : !this.end.cmp(range.end)
+          ? InlineAttrPos.End : InlineAttrPos.Passing;
+  }
+
+  protected stackAttr(attr: InlineAttrs, type: string | number, data: unknown, slice: Range<any>): void {
+    let item: InlineAttrStack | undefined = attr[type] as InlineAttrStack | undefined;
+    if (!item) attr[type] = item = [[], this.getAttrPos(slice)];
+    const dataList: unknown[] = item[0] instanceof Array ? item[0] as unknown[] : [];
+    dataList.push(data);
+  };
+
   /**
    * @returns Returns the attributes of the inline, which are the slice
    *     annotations and formatting applied to the inline.
    */
-  public attr(): InlineAttributes {
-    const attr: InlineAttributes = {};
+  public attr(): InlineAttrs {
+    const attr: InlineAttrs = {};
     const point = this.start as OverlayPoint;
     const slices1 = point.layers;
     const slices2 = point.markers;
@@ -84,25 +115,17 @@ export class Inline extends Range implements Printable {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            const dataList: unknown[] = (attr[SliceTypes.Cursor] as unknown[]) || (attr[SliceTypes.Cursor] = []);
-            const data: unknown[] = [type];
-            const cursorData = slice.data();
-            if (cursorData !== void 0) data.push(cursorData);
-            dataList.push(data);
+            this.stackAttr(attr, SliceTypes.Cursor, [type, slice.data()], slice);
             break;
           }
           case SliceBehavior.Stack: {
-            let dataList: unknown[] = (attr[type] as unknown[]) || (attr[type] = []);
-            if (!Array.isArray(dataList)) dataList = attr[type] = [dataList];
-            let data = slice.data();
-            if (data === undefined) data = 1;
-            dataList.push(data);
+            this.stackAttr(attr, type, slice.data() ?? 1, slice);
             break;
           }
           case SliceBehavior.Overwrite: {
             let data = slice.data();
             if (data === undefined) data = 1;
-            attr[type] = data;
+            attr[type] = [data, this.getAttrPos(slice)];
             break;
           }
           case SliceBehavior.Erase: {
