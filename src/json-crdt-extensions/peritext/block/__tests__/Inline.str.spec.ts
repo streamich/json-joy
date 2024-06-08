@@ -1,6 +1,6 @@
 import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {CursorAnchor, SliceTypes} from '../../slice/constants';
-import {Inline} from '../Inline';
+import {Inline, InlineAttrPos} from '../Inline';
 
 const runStrTests = (setup: () => Kit) => {
   describe('.str()', () => {
@@ -165,6 +165,90 @@ const runStrTests = (setup: () => Kit) => {
         bold: [[123], expect.any(Number)],
       });
       expect(inline3.attr()).toEqual({});
+    });
+
+    describe('positioning', () => {
+      test('correctly reports *Passing*, *Start*, and *End* positions', () => {
+        const {peritext} = setup();
+        peritext.editor.cursor.setAt(2, 3);
+        peritext.editor.saved.insStack('bold');
+        peritext.editor.cursor.setAt(4, 4);
+        peritext.editor.extra.insStack('italic', 'very-italic');
+        peritext.editor.cursor.setAt(1, 8);
+        peritext.refresh();
+        const str = peritext.strApi().view();
+        const [inline1, inline2, inline3, inline4, inline5, inline6, inline7] = peritext.blocks.root.children[0]!.texts();
+        expect(inline1.text()).toBe(str.slice(0, 1));
+        expect(inline2.text()).toBe(str.slice(1, 2));
+        expect(inline2.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Start],
+        });
+        expect(inline3.text()).toBe(str.slice(2, 4));
+        expect(inline3.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
+          bold: [[void 0], InlineAttrPos.Start],
+        });
+        expect(inline4.text()).toBe(str.slice(4, 5));
+        expect(inline4.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
+          bold: [[void 0], InlineAttrPos.End],
+          italic: [['very-italic'], InlineAttrPos.Start],
+        });
+        expect(inline5.text()).toBe(str.slice(5, 8));
+        expect(inline5.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
+          italic: [['very-italic'], InlineAttrPos.End],
+        });
+        expect(inline6.text()).toBe(str.slice(8, 9));
+        expect(inline6.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.End],
+        });
+        expect(inline7.text()).toBe(str.slice(9));
+      });
+
+      test('correctly reports *Contained* positions', () => {
+        const {peritext} = setup();
+        peritext.editor.cursor.setAt(2, 6);
+        peritext.editor.saved.insStack(['a', 1, 'b', 2]);
+        peritext.refresh();
+        const str = peritext.strApi().view();
+        const [inline1, inline2, inline3] = peritext.blocks.root.children[0]!.texts();
+        expect(inline1.text()).toBe(str.slice(0, 2));
+        expect(inline2.text()).toBe(str.slice(2, 8));
+        expect(inline2.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Contained],
+          'a,1,b,2': [[void 0], InlineAttrPos.Contained],
+        });
+        expect(inline3.text()).toBe(str.slice(8));
+      });
+  
+      test('correctly reports *Collapsed* positions', () => {
+        const {peritext} = setup();
+        peritext.editor.cursor.setAt(5);
+        peritext.refresh();
+        const str = peritext.strApi().view();
+        const [inline1, inline2] = peritext.blocks.root.children[0]!.texts();
+        expect(inline1.text()).toBe(str.slice(0, 5));
+        expect(inline2.text()).toBe(str.slice(5));
+        expect(inline2.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
+        });
+      });
+  
+      test('correctly reports *Collapsed* at start of block marker', () => {
+        const {peritext} = setup();
+        peritext.editor.cursor.setAt(5);
+        const [paragraph] = peritext.editor.extra.insMarker('p');
+        peritext.editor.cursor.set(paragraph.start);
+        peritext.refresh();
+        const str = peritext.strApi().view();
+        const [block1, block2] = peritext.blocks.root.children;
+        expect(block1.text()).toBe(str.slice(0, 5));
+        const [inline2] = [...block2.texts()];
+        expect(inline2.attr()).toEqual({
+          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
+        });
+      });
     });
   });
 };
