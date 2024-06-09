@@ -11,3 +11,4 @@ const model = ModelWithExt.create(s.obj({
 
 const ui = new PeritextDomUi(model.s.richText.toExt().txt);
 ui.render(div);
+ui.refresh();
