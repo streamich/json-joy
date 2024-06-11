@@ -5,12 +5,10 @@ At some depth there are leaf block elements, which contain inline elements.
 There are also voids (embeds, images, etc.) which are block elements without
 text content.
 
-
 ## Block elements
 
 Block elements consume full width of the document. They can be nested. Block
 elements cannot overlap.
-
 
 ### Block elements with children
 
@@ -35,7 +33,6 @@ Below block elements can contain other block elements:
 - [Callout](https://developers.notion.com/reference/block#callout-blocks)
 - [Bookmark](https://developers.notion.com/reference/block#bookmark-blocks)
 
-
 ### Leaf block elements
 
 Block elements are:
@@ -46,7 +43,6 @@ Block elements are:
 - Definition list `<dl>`
 - [Table of contents](https://developers.notion.com/reference/block#table-of-contents-blocks)
 
-
 ### Voids
 
 Voids are block elements without text content. Essentially, they are embeds of
@@ -54,7 +50,6 @@ external content.
 
 - Line break, `<hr>`, `"====="`
 - Void `<object>`
-
 
 ## Inline elements
 
@@ -70,7 +65,6 @@ The most basic inline element is a text node without any annotation:
 
 - Text
 
-
 ### Boolean mark annotations
 
 Many inline mark annotations are boolean, meaning that they are either present
@@ -85,8 +79,7 @@ or not. They are:
 - `<small>`
 - Strike-through `<s>`, `"~~"`
 - Keyboard key `<kbd>`
-- Spoiler (a password or *spoiler* text that is revealed when clicked on)
-
+- Spoiler (a password or _spoiler_ text that is revealed when clicked on)
 
 ### Non-boolean mark annotations
 
@@ -102,7 +95,6 @@ Non-boolean marks are:
 - Foreground color
 - Background color
 - Font family
-
 
 ### Inline elements with data
 
@@ -120,7 +112,6 @@ Inline elements are:
 - Inline quote `<q>`
 - Definition `<dfn>`
 - Abbreviation `<abbr>`
-
 
 ### Inline voids
 
