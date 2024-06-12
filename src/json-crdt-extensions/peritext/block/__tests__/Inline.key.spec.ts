@@ -1,7 +1,15 @@
 import {Timestamp} from '../../../../json-crdt-patch';
 import {updateId} from '../../../../json-crdt/hash';
 import {updateNum} from '../../../../json-hash';
-import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {
+  Kit,
+  setupKit,
+  setupNumbersKit,
+  setupNumbersWithMultipleChunksAndDeletesKit,
+  setupNumbersWithRgaSplitKit,
+  setupNumbersWithTombstonesKit,
+  setupNumbersWithTwoChunksKit,
+} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Inline} from '../Inline';
 
@@ -90,6 +98,18 @@ describe('Inline', () => {
 
   describe('numbers "0123456789", with default schema and tombstones', () => {
     runKeyTests(setupNumbersWithTombstonesKit);
+  });
+
+  describe('numbers "0123456789", two RGA chunks', () => {
+    runKeyTests(setupNumbersWithTwoChunksKit);
+  });
+
+  describe('numbers "0123456789", with RGA split', () => {
+    runKeyTests(setupNumbersWithRgaSplitKit);
+  });
+
+  describe('numbers "0123456789", with multiple deletes', () => {
+    runKeyTests(setupNumbersWithMultipleChunksAndDeletesKit);
   });
 
   describe('numbers "0123456789", with default schema and tombstones and constant sid', () => {

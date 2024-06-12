@@ -1,4 +1,11 @@
-import {Kit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {
+  Kit,
+  setupNumbersKit,
+  setupNumbersWithMultipleChunksAndDeletesKit,
+  setupNumbersWithRgaSplitKit,
+  setupNumbersWithTombstonesKit,
+  setupNumbersWithTwoChunksKit,
+} from '../../__tests__/setup';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 
 const runMarkersTests = (setup: () => Kit) => {
@@ -108,4 +115,16 @@ describe('numbers "0123456789", no edits', () => {
 
 describe('numbers "0123456789", with default schema and tombstones', () => {
   runMarkersTests(setupNumbersWithTombstonesKit);
+});
+
+describe('numbers "0123456789", two RGA chunks', () => {
+  runMarkersTests(setupNumbersWithTwoChunksKit);
+});
+
+describe('numbers "0123456789", with RGA split', () => {
+  runMarkersTests(setupNumbersWithRgaSplitKit);
+});
+
+describe('numbers "0123456789", with multiple deletes', () => {
+  runMarkersTests(setupNumbersWithMultipleChunksAndDeletesKit);
 });

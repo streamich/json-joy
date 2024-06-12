@@ -3,7 +3,10 @@ import {
   setupHelloWorldKit,
   setupHelloWorldWithFewEditsKit,
   setupNumbersKit,
+  setupNumbersWithMultipleChunksAndDeletesKit,
+  setupNumbersWithRgaSplitKit,
   setupNumbersWithTombstonesKit,
+  setupNumbersWithTwoChunksKit,
 } from '../../__tests__/setup';
 
 const run = (setup: () => Kit) => {
@@ -29,10 +32,22 @@ describe('some edits "hello world"', () => {
   run(setupHelloWorldWithFewEditsKit);
 });
 
-describe('no edits "number"', () => {
+describe('numbers "0123456789", no edits', () => {
   run(setupNumbersKit);
 });
 
-describe('heavy edits "number"', () => {
+describe('numbers "0123456789", with default schema and tombstones', () => {
   run(setupNumbersWithTombstonesKit);
+});
+
+describe('numbers "0123456789", two RGA chunks', () => {
+  run(setupNumbersWithTwoChunksKit);
+});
+
+describe('numbers "0123456789", with RGA split', () => {
+  run(setupNumbersWithRgaSplitKit);
+});
+
+describe('numbers "0123456789", with multiple deletes', () => {
+  run(setupNumbersWithMultipleChunksAndDeletesKit);
 });
