@@ -58,7 +58,7 @@ export const setupNumbersKit = (): Kit => {
   return setupKit('', (model) => {
     const str = model.s.text.toExt().text();
     str.ins(0, '0123456789');
-    if (str.view() !== '0123456789') throw new Error('Invalid text');
+    if (str.view() !== '0123456789') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -98,7 +98,7 @@ export const setupNumbersWithTombstonesKit = (sid?: number): Kit => {
       str.ins(2, 'x234');
       str.del(2, 1);
       str.del(10, 3);
-      if (str.view() !== '0123456789') throw new Error('Invalid text');
+      if (str.view() !== '0123456789') throw new Error('Invalid text: ' + str.view());
     },
     sid,
   );
@@ -112,7 +112,7 @@ export const setupNumbersWithTwoChunksKit = (): Kit => {
     const str = model.s.text.toExt().text();
     str.ins(0, '56789');
     str.ins(0, '01234');
-    if (str.view() !== '0123456789') throw new Error('Invalid text');
+    if (str.view() !== '0123456789') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -124,7 +124,7 @@ export const setupNumbersWithRgaSplitKit = (): Kit => {
     const str = model.s.text.toExt().text();
     str.ins(0, '012389');
     str.ins(4, '4567');
-    if (str.view() !== '0123456789') throw new Error('Invalid text');
+    if (str.view() !== '0123456789') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -135,14 +135,14 @@ export const setupNumbersWithMultipleChunksAndDeletesKit = (): Kit => {
   return setupKit('', (model) => {
     const str = model.s.text.toExt().text();
     str.ins(0, '0');
-    str.ins(0, '1');
-    str.ins(0, '2xyz3');
+    str.ins(1, '1');
+    str.ins(2, '2xyz3');
     str.del(3, 3);
     str.ins(4, '4589');
     str.ins(6, '67');
-    str.ins(6, 'cool worlds');
+    str.ins(8, 'cool worlds');
     str.del(8, 11);
-    if (str.view() !== '0123456789') throw new Error('Invalid text');
+    if (str.view() !== '0123456789') throw new Error('Invalid text: ' + str.view());
   });
 };
 

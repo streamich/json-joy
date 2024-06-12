@@ -1,5 +1,12 @@
 import {next} from 'sonic-forest/lib/util';
-import {Kit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {
+  Kit,
+  setupNumbersKit,
+  setupNumbersWithMultipleChunksAndDeletesKit,
+  setupNumbersWithRgaSplitKit,
+  setupNumbersWithTombstonesKit,
+  setupNumbersWithTwoChunksKit,
+} from '../../__tests__/setup';
 import {Anchor} from '../../rga/constants';
 import {MarkerOverlayPoint} from '../MarkerOverlayPoint';
 import {OverlayPoint} from '../OverlayPoint';
@@ -161,4 +168,16 @@ describe('numbers "0123456789", no edits', () => {
 
 describe('numbers "0123456789", with default schema and tombstones', () => {
   runPairsTests(setupNumbersWithTombstonesKit);
+});
+
+describe('numbers "0123456789", two RGA chunks', () => {
+  runPairsTests(setupNumbersWithTwoChunksKit);
+});
+
+describe('numbers "0123456789", with RGA split', () => {
+  runPairsTests(setupNumbersWithRgaSplitKit);
+});
+
+describe('numbers "0123456789", with multiple deletes', () => {
+  runPairsTests(setupNumbersWithMultipleChunksAndDeletesKit);
 });
