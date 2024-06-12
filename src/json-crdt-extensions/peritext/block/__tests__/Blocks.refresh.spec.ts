@@ -1,6 +1,12 @@
-import {Kit, setupAlphabetChunkSplitKit, setupAlphabetKit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit} from '../../__tests__/setup';
+import {
+  Kit,
+  setupAlphabetChunkSplitKit,
+  setupAlphabetKit,
+  setupAlphabetWithDeletesKit,
+  setupAlphabetWithTwoChunksKit,
+} from '../../__tests__/setup';
 
-const runStrTests = (setup: () => Kit) => {
+const runTests = (setup: () => Kit) => {
   test('updates block hash only where something was changed - leading block', () => {
     const {editor, peritext} = setup();
     editor.cursor.setAt(10);
@@ -47,18 +53,18 @@ const runStrTests = (setup: () => Kit) => {
 
 describe('Blocks.refresh', () => {
   describe('basic alphabet', () => {
-    runStrTests(setupAlphabetKit);
+    runTests(setupAlphabetKit);
   });
 
   describe('alphabet with two chunks', () => {
-    runStrTests(setupAlphabetWithTwoChunksKit);
+    runTests(setupAlphabetWithTwoChunksKit);
   });
 
   describe('alphabet with chunk split', () => {
-    runStrTests(setupAlphabetChunkSplitKit);
+    runTests(setupAlphabetChunkSplitKit);
   });
 
   describe('alphabet with deletes', () => {
-    runStrTests(setupAlphabetWithDeletesKit);
+    runTests(setupAlphabetWithDeletesKit);
   });
 });
