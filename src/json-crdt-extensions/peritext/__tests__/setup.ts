@@ -103,3 +103,57 @@ export const setupNumbersWithTombstonesKit = (sid?: number): Kit => {
     sid,
   );
 };
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz", no edits.
+ */
+export const setupAlphabetKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, 'abcdefghijklmnopqrstuvwxyz');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz", two text chunks.
+ */
+export const setupAlphabetWithTwoChunksKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, 'lmnopqrstuvwxyz');
+    str.ins(0, 'abcdefghijk');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz", with RGA chunks split.
+ */
+export const setupAlphabetChunkSplitKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, 'lmnwxyz');
+    str.ins(3, 'opqrstuv');
+    str.ins(0, 'abcdefghijk');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz", with RGA deletes.
+ */
+export const setupAlphabetWithDeletesKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, 'lmXXXnwYxyz');
+    str.del(2, 3);
+    str.ins(3, 'opqrstuv');
+    str.del(12, 1);
+    str.ins(0, 'ab1c3defghijk4444');
+    str.del(2, 1);
+    str.del(3, 1);
+    str.del(11, 4);
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+  });
+};
