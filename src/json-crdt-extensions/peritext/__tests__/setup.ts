@@ -105,6 +105,48 @@ export const setupNumbersWithTombstonesKit = (sid?: number): Kit => {
 };
 
 /**
+ * Creates a Peritext instance with text "0123456789", two RGA chunks.
+ */
+export const setupNumbersWithTwoChunksKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, '56789');
+    str.ins(0, '01234');
+    if (str.view() !== '0123456789') throw new Error('Invalid text');
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "0123456789", with RGA chunks split.
+ */
+export const setupNumbersWithRgaSplitKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, '012389');
+    str.ins(4, '4567');
+    if (str.view() !== '0123456789') throw new Error('Invalid text');
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "0123456789", with multiple chunks and deletes.
+ */
+export const setupNumbersWithMultipleChunksAndDeletesKit = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, '0');
+    str.ins(0, '1');
+    str.ins(0, '2xyz3');
+    str.del(3, 3);
+    str.ins(4, '4589');
+    str.ins(6, '67');
+    str.ins(6, 'cool worlds');
+    str.del(8, 11);
+    if (str.view() !== '0123456789') throw new Error('Invalid text');
+  });
+};
+
+/**
  * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz", no edits.
  */
 export const setupAlphabetKit = (): Kit => {

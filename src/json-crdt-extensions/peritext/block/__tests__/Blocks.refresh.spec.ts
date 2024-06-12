@@ -51,7 +51,7 @@ const runTests = (setup: () => Kit) => {
   });
 };
 
-describe('Blocks.refresh', () => {
+describe('Blocks.refresh()', () => {
   describe('basic alphabet', () => {
     runTests(setupAlphabetKit);
   });
