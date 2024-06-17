@@ -91,6 +91,7 @@ export class JsonExpressionCodegen {
 
   public compile() {
     const fn = this.codegen.compile();
+    // console.log('fn', fn.toString());
     return (ctx: types.JsonExpressionExecutionContext) => {
       try {
         return fn(ctx);

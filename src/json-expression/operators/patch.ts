@@ -7,10 +7,10 @@ import {find} from '../../json-pointer/find';
 
 const validateAddOperandCount = (count: number) => {
   if (count < 3) {
-    throw new Error('Not enough arguments for "jp.add" operand.');
+    throw new Error('Not enough operands for "jp.add" operand.');
   }
   if (count % 2 !== 0) {
-    throw new Error('Invalid number of arguments for "jp.add" operand.');
+    throw new Error('Invalid number of operands for "jp.add" operand.');
   }
 };
 
@@ -83,7 +83,7 @@ export const patchOperators: types.OperatorDefinition<any>[] = [
         const path = expr[i++];
         validateAddPath(path);
         const value = ctx.eval(expr[i++], ctx);
-        const {obj, key, val} = find(doc, toPath(path));
+        const {obj, key} = find(doc, toPath(path));
         if (!obj) doc = value;
         else if (typeof key === 'string') (obj as any)[key] = value;
         else if (obj instanceof Array) {

@@ -226,11 +226,12 @@ export type ExprMap = TernaryExpression<'map'>;
 export type ExprReduce = QuinaryExpression<'reduce'>;
 
 // Object expressions
-export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
+export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprObjectSet;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
 export type ExprEntries = UnaryExpression<'entries'>;
+export type ExprObjectSet = VariadicExpression<'o.set'>;
 
 // Bitwise expressions
 export type BitwiseExpression = ExprBitAnd | ExprBitOr | ExprBitXor | ExprBitNot;
