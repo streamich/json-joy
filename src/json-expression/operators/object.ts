@@ -92,7 +92,7 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
       validateSetOperandCount(length);
       const doc = util.asObj(ctx.eval(expr[i++], ctx)) as Record<string, unknown>;
       while (i < length) {
-        const prop = util.str(expr[i++]) as string;
+        const prop = util.str(ctx.eval(expr[i++], ctx)) as string;
         if (prop === '__proto__') throw new Error('PROTO_KEY');
         const value = ctx.eval(expr[i++], ctx);
         doc[prop] = value;
@@ -143,7 +143,7 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
       validateDelOperandCount(length);
       const doc = util.asObj(ctx.eval(expr[i++], ctx)) as Record<string, unknown>;
       while (i < length) {
-        const prop = util.str(expr[i++]) as string;
+        const prop = util.str(ctx.eval(expr[i++], ctx)) as string;
         delete doc[prop];
       }
       return doc;
