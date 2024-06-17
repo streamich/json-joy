@@ -226,11 +226,13 @@ export type ExprMap = TernaryExpression<'map'>;
 export type ExprReduce = QuinaryExpression<'reduce'>;
 
 // Object expressions
-export type ObjectExpression = ExprKeys | ExprValues | ExprEntries;
+export type ObjectExpression = ExprKeys | ExprValues | ExprEntries | ExprObjectSet | ExprObjectDel;
 
 export type ExprKeys = UnaryExpression<'keys'>;
 export type ExprValues = UnaryExpression<'values'>;
 export type ExprEntries = UnaryExpression<'entries'>;
+export type ExprObjectSet = VariadicExpression<'o.set'>;
+export type ExprObjectDel = VariadicExpression<'o.del'>;
 
 // Bitwise expressions
 export type BitwiseExpression = ExprBitAnd | ExprBitOr | ExprBitXor | ExprBitNot;
@@ -252,6 +254,11 @@ export type InputExpression = ExprGet | ExprDefined;
 export type ExprGet = UnaryExpression<'get' | '$'> | BinaryExpression<'get' | '$'>;
 export type ExprDefined = UnaryExpression<'get?' | '$?'>;
 
+// JSON Patch expressions
+export type JsonPatchExpression = JsonPatchAdd;
+
+export type JsonPatchAdd = VariadicExpression<'jp.add'>;
+
 export type Expr =
   | ArithmeticExpression
   | ComparisonExpression
@@ -264,7 +271,8 @@ export type Expr =
   | ObjectExpression
   | BitwiseExpression
   | BranchingExpression
-  | InputExpression;
+  | InputExpression
+  | JsonPatchExpression;
 
 export interface JsonExpressionExecutionContext {
   vars: Vars;

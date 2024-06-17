@@ -333,6 +333,18 @@ export const entries = (value: unknown): [key: string, value: unknown][] => {
   return entries;
 };
 
+export const objSetRaw = (obj: Record<string, unknown>, key: string, value: unknown): Record<string, unknown> => {
+  const prop = str(key);
+  if (prop === '__proto__') throw new Error('PROTO_KEY');
+  obj[prop] = value;
+  return obj;
+};
+
+export const objDelRaw = (obj: Record<string, unknown>, key: string): Record<string, unknown> => {
+  delete obj[key];
+  return obj;
+};
+
 // -------------------------------------------------------------------- Various
 
 export const isLiteral = (value: unknown): boolean => {

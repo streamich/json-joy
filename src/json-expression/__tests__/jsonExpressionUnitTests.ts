@@ -1979,6 +1979,88 @@ export const jsonExpressionUnitTests = (
         );
       });
     });
+
+    describe('o.set', () => {
+      test('can set an object property', () => {
+        check(['o.set', {}, 'foo', 'bar'], {foo: 'bar'});
+      });
+
+      test('can set two properties, one computed', () => {
+        const expression: Expr = ['o.set', {}, 'foo', 'bar', 'baz', ['+', ['$', ''], 3]];
+        check(
+          expression,
+          {
+            foo: 'bar',
+            baz: 5,
+          },
+          2,
+        );
+      });
+
+      test('can retrieve object from input', () => {
+        const expression: Expr = ['o.set', ['$', '/obj'], 'foo', 123];
+        check(
+          expression,
+          {
+            type: 'the-obj',
+            foo: 123,
+          },
+          {
+            obj: {
+              type: 'the-obj',
+            },
+          },
+        );
+      });
+
+      test('can compute prop from expression', () => {
+        const expression: Expr = ['o.set', {a: 'b'}, ['.', ['$', '/name'], '_test'], ['+', 5, 5]];
+        check(
+          expression,
+          {
+            a: 'b',
+            Mac_test: 10,
+          },
+          {
+            name: 'Mac',
+          },
+        );
+      });
+
+      test('cannot set __proto__ prop', () => {
+        const expression: Expr = ['o.set', {a: 'b'}, '__proto__', ['$', '/name']];
+        expect(() =>
+          check(
+            expression,
+            {
+              a: 'b',
+              __proto__: 'Mac',
+            },
+            {
+              name: 'Mac',
+            },
+          ),
+        ).toThrow(new Error('PROTO_KEY'));
+      });
+    });
+
+    describe('o.del', () => {
+      test('can delete an object property', () => {
+        check(['o.del', {foo: 'bar', baz: 'qux'}, 'foo', 'bar'], {baz: 'qux'});
+      });
+
+      test('object can be an expression', () => {
+        check(['o.del', ['$', ''], 'a', 'c', 'd'], {b: 2}, {a: 1, b: 2, c: 3});
+      });
+
+      test('prop can be an expression', () => {
+        check(['o.del', {a: 1, b: 2, c: 3}, ['$', '']], {a: 1, c: 3}, 'b');
+      });
+
+      test('object and prop can be an expression', () => {
+        check(['o.del', ['$', '/o'], ['$', '/p']], {a: 1, c: 3}, {o: {a: 1, b: 2, c: 3}, p: 'b'});
+      });
+    });
   });
 
   describe('Branching operators', () => {
@@ -2194,6 +2276,26 @@ export const jsonExpressionUnitTests = (
         );
         expect(() => check(['bitNot', 1, 2] as any, false)).toThrowErrorMatchingInlineSnapshot(
           `""~" operator expects 1 operands."`,
+        );
+      });
+    });
+  });
+
+  describe('JSON Patch operators', () => {
+    describe('jp.add', () => {
+      test('can set an object property', () => {
+        check(['jp.add', {}, '/foo', 'bar'], {foo: 'bar'});
+      });
+
+      test('can set two properties, one computed', () => {
+        const expression: Expr = ['jp.add', {}, '/foo', 'bar', '/baz', ['+', ['$', ''], 3]];
+        check(
+          expression,
+          {
+            foo: 'bar',
+            baz: 5,
+          },
+          2,
         );
       });
     });
