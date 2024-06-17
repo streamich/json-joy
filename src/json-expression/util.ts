@@ -333,14 +333,10 @@ export const entries = (value: unknown): [key: string, value: unknown][] => {
   return entries;
 };
 
-export const set = (obj: unknown, key: unknown, value: unknown): Record<string, unknown> => {
-  const obj2 = asObj(obj) as Record<string, unknown>;
-  obj2[str(key)] = value;
-  return obj2 as Record<string, unknown>;
-};
-
-export const setRaw = (obj: Record<string, unknown>, key: string, value: unknown): Record<string, unknown> => {
-  obj[str(key)] = value;
+export const objSetRaw = (obj: Record<string, unknown>, key: string, value: unknown): Record<string, unknown> => {
+  const prop = str(key);
+  if (prop === '__proto__') throw new Error('PROTO_KEY');
+  obj[prop] = value;
   return obj;
 };
 

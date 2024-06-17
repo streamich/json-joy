@@ -2021,6 +2021,18 @@ export const jsonExpressionUnitTests = (
           name: 'Mac'
         });
       });
+
+      test('cannot set __proto__ prop', () => {
+        const expression: Expr = ['o.set', {a: 'b'},
+          '__proto__', ['$', '/name'],
+        ];
+        expect(() => check(expression, {
+          a: 'b',
+          '__proto__': 'Mac',
+        }, {
+          name: 'Mac',
+        })).toThrow(new Error('PROTO_KEY'));
+      });
     });
   });
 

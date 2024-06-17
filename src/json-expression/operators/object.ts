@@ -87,6 +87,7 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
       let doc = util.asObj(ctx.eval(expr[i++], ctx)) as Record<string, unknown>;
       while (i < length) {
         const prop = util.str(expr[i++]) as string;
+        if (prop === '__proto__') throw new Error('PROTO_KEY');
         const value = ctx.eval(expr[i++], ctx);
         doc[prop] = value;
       }
@@ -104,7 +105,7 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
         curr = new Expression(`asObj(${curr})`);
       }
       ctx.link(util.str, 'str');
-      ctx.link(util.setRaw, 'setRaw');
+      ctx.link(util.objSetRaw, 'objSetRaw');
       while (i < length) {
         let prop = ctx.operands[i++];
         if (prop instanceof Literal) {
@@ -113,7 +114,7 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
           prop = new Expression(`str(${prop})`);
         }
         const value = ctx.operands[i++];
-        curr = new Expression(`setRaw(${curr}, ${prop}, ${value})`);
+        curr = new Expression(`objSetRaw(${curr}, ${prop}, ${value})`);
       }
       return curr;
     },
