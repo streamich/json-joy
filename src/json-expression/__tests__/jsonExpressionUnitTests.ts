@@ -2034,6 +2034,24 @@ export const jsonExpressionUnitTests = (
         })).toThrow(new Error('PROTO_KEY'));
       });
     });
+
+    describe('o.del', () => {
+      test('can delete an object property', () => {
+        check(['o.del', {foo: 'bar', baz: 'qux'}, 'foo', 'bar'], {baz: 'qux'});
+      });
+
+      test('object can be an expression', () => {
+        check(['o.del', ['$', ''], 'a', 'c', 'd'], {b: 2}, {a: 1, b: 2, c: 3});
+      });
+
+      test('prop can be an expression', () => {
+        check(['o.del', {a: 1, b: 2, c: 3}, ['$', '']], {a: 1, c: 3}, 'b');
+      });
+
+      test('object and prop can be an expression', () => {
+        check(['o.del', ['$', '/o'], ['$', '/p']], {a: 1, c: 3}, {o: {a: 1, b: 2, c: 3}, p: 'b'});
+      });
+    });
   });
 
   describe('Branching operators', () => {

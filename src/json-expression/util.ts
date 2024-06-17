@@ -340,6 +340,11 @@ export const objSetRaw = (obj: Record<string, unknown>, key: string, value: unkn
   return obj;
 };
 
+export const objDelRaw = (obj: Record<string, unknown>, key: string): Record<string, unknown> => {
+  delete obj[key];
+  return obj;
+};
+
 // -------------------------------------------------------------------- Various
 
 export const isLiteral = (value: unknown): boolean => {

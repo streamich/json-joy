@@ -4,10 +4,16 @@ import type * as types from '../types';
 
 const validateSetOperandCount = (count: number) => {
   if (count < 3) {
-    throw new Error('Not enough operands for "o.set" operand.');
+    throw new Error('Not enough operands for "o.set".');
   }
   if (count % 2 !== 0) {
     throw new Error('Invalid number of operands for "o.set" operand.');
+  }
+};
+
+const validateDelOperandCount = (count: number) => {
+  if (count < 3) {
+    throw new Error('Not enough operands for "o.del".');
   }
 };
 
@@ -115,6 +121,48 @@ export const objectOperators: types.OperatorDefinition<any>[] = [
         }
         const value = ctx.operands[i++];
         curr = new Expression(`objSetRaw(${curr}, ${prop}, ${value})`);
+      }
+      return curr;
+    },
+  ] as types.OperatorDefinition<types.ExprObjectSet>,
+
+  [
+    'o.del',
+    [],
+    -1,
+    /**
+     * Delete one or more properties from an object.
+     *
+     * ```
+     * ['o.del', {}, 'prop1', 'prop2']
+     * ```
+     */
+    (expr: types.ExprObjectSet, ctx) => {
+      let i = 1;
+      const length = expr.length;
+      validateDelOperandCount(length);
+      let doc = util.asObj(ctx.eval(expr[i++], ctx)) as Record<string, unknown>;
+      while (i < length) {
+        const prop = util.str(expr[i++]) as string;
+        delete doc[prop];
+      }
+      return doc;
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprObjectSet>): ExpressionResult => {
+      const length = ctx.operands.length;
+      validateDelOperandCount(length + 1);
+      let i = 0;
+      let curr = ctx.operands[i++];
+      ctx.link(util.str, 'str');
+      ctx.link(util.objDelRaw, 'objDelRaw');
+      while (i < length) {
+        let prop = ctx.operands[i++];
+        if (prop instanceof Literal) {
+          prop = new Literal(util.str(prop.val));
+        } else if (prop instanceof Expression) {
+          prop = new Expression(`str(${prop})`);
+        }
+        curr = new Expression(`objDelRaw(${curr}, ${prop})`);
       }
       return curr;
     },
