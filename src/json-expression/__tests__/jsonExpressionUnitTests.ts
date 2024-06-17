@@ -1986,52 +1986,61 @@ export const jsonExpressionUnitTests = (
       });
 
       test('can set two properties, one computed', () => {
-        const expression: Expr = ['o.set', {},
-          'foo', 'bar',
-          'baz', ['+', ['$', ''], 3],
-        ];
-        check(expression, {
-          foo: 'bar',
-          baz: 5,
-        }, 2);
+        const expression: Expr = ['o.set', {}, 'foo', 'bar', 'baz', ['+', ['$', ''], 3]];
+        check(
+          expression,
+          {
+            foo: 'bar',
+            baz: 5,
+          },
+          2,
+        );
       });
 
       test('can retrieve object from input', () => {
-        const expression: Expr = ['o.set', ['$', '/obj'],
-          'foo', 123,
-        ];
-        check(expression, {
-          type: 'the-obj',
-          foo: 123,
-        }, {
-          obj: {
-            type: 'the-obj'
+        const expression: Expr = ['o.set', ['$', '/obj'], 'foo', 123];
+        check(
+          expression,
+          {
+            type: 'the-obj',
+            foo: 123,
           },
-        });
+          {
+            obj: {
+              type: 'the-obj',
+            },
+          },
+        );
       });
 
       test('can compute prop from expression', () => {
-        const expression: Expr = ['o.set', {a: 'b'},
-          ['.', ['$', '/name'], '_test'], ['+', 5, 5],
-        ];
-        check(expression, {
-          a: 'b',
-          'Mac_test': 10,
-        }, {
-          name: 'Mac'
-        });
+        const expression: Expr = ['o.set', {a: 'b'}, ['.', ['$', '/name'], '_test'], ['+', 5, 5]];
+        check(
+          expression,
+          {
+            a: 'b',
+            Mac_test: 10,
+          },
+          {
+            name: 'Mac',
+          },
+        );
       });
 
       test('cannot set __proto__ prop', () => {
-        const expression: Expr = ['o.set', {a: 'b'},
-          '__proto__', ['$', '/name'],
-        ];
-        expect(() => check(expression, {
-          a: 'b',
-          '__proto__': 'Mac',
-        }, {
-          name: 'Mac',
-        })).toThrow(new Error('PROTO_KEY'));
+        const expression: Expr = ['o.set', {a: 'b'}, '__proto__', ['$', '/name']];
+        expect(() =>
+          check(
+            expression,
+            {
+              a: 'b',
+              __proto__: 'Mac',
+            },
+            {
+              name: 'Mac',
+            },
+          ),
+        ).toThrow(new Error('PROTO_KEY'));
       });
     });
 
@@ -2279,14 +2288,15 @@ export const jsonExpressionUnitTests = (
       });
 
       test('can set two properties, one computed', () => {
-        const expression: Expr = ['jp.add', {},
-          '/foo', 'bar',
-          '/baz', ['+', ['$', ''], 3],
-        ];
-        check(expression, {
-          foo: 'bar',
-          baz: 5,
-        }, 2);
+        const expression: Expr = ['jp.add', {}, '/foo', 'bar', '/baz', ['+', ['$', ''], 3]];
+        check(
+          expression,
+          {
+            foo: 'bar',
+            baz: 5,
+          },
+          2,
+        );
       });
     });
   });

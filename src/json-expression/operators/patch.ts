@@ -49,7 +49,6 @@ export const $$add = (path: Path): JavaScriptLinked<AddFn> => {
 
 export const $add = (path: Path): AddFn => compileClosure($$add(path));
 
-
 export const patchOperators: types.OperatorDefinition<any>[] = [
   [
     'jp.add',
@@ -57,16 +56,16 @@ export const patchOperators: types.OperatorDefinition<any>[] = [
     -1,
     /**
      * Applies JSON Patch "add" operations to the input value.
-     * 
+     *
      * ```
      * ['add', {},
      *   '/a', 1,
      *   '/b', ['+', 2, 3],
      * ]
      * ```
-     * 
+     *
      * Results in:
-     * 
+     *
      * ```
      * {
      *   a: 1,
@@ -88,7 +87,7 @@ export const patchOperators: types.OperatorDefinition<any>[] = [
         else if (typeof key === 'string') (obj as any)[key] = value;
         else if (obj instanceof Array) {
           const length = obj.length;
-          if ((key as number) < length) obj.splice((key as number), 0, value);
+          if ((key as number) < length) obj.splice(key as number, 0, value);
           else if ((key as number) > length) throw new Error('INVALID_INDEX');
           else obj.push(value);
         }
