@@ -11,6 +11,7 @@ import {objectOperators} from './object';
 import {branchingOperators} from './branching';
 import {inputOperators} from './input';
 import {bitwiseOperators} from './bitwise';
+import {patchOperators} from './patch';
 
 export const operators = [
   ...arithmeticOperators,
@@ -25,6 +26,7 @@ export const operators = [
   ...branchingOperators,
   ...inputOperators,
   ...bitwiseOperators,
+  ...patchOperators,
 ];
 
 export const operatorsMap = operatorsToMap(operators);

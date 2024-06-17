@@ -2198,4 +2198,23 @@ export const jsonExpressionUnitTests = (
       });
     });
   });
+
+  describe('JSON Patch operators', () => {
+    describe('jp.add', () => {
+      test('can set an object property', () => {
+        check(['jp.add', {}, '/foo', 'bar'], {foo: 'bar'});
+      });
+
+      test('can set two properties, one computed', () => {
+        const expression: Expr = ['jp.add', {},
+          '/foo', 'bar',
+          '/baz', ['+', ['$', ''], 3],
+        ];
+        check(expression, {
+          foo: 'bar',
+          baz: 5,
+        }, 2);
+      });
+    });
+  });
 };

@@ -18,8 +18,6 @@ const check = (
     operators: operatorsMap,
   });
   const fn = codegen.run().compile();
-  // console.log(codegen.generate().js);
-  // console.log(fn.toString());
   const result = fn({vars: new Vars(data)});
   expect(result).toStrictEqual(expected);
 };

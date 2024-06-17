@@ -252,6 +252,11 @@ export type InputExpression = ExprGet | ExprDefined;
 export type ExprGet = UnaryExpression<'get' | '$'> | BinaryExpression<'get' | '$'>;
 export type ExprDefined = UnaryExpression<'get?' | '$?'>;
 
+// JSON Patch expressions
+export type JsonPatchExpression = JsonPatchAdd;
+
+export type JsonPatchAdd = VariadicExpression<'jp.add'>;
+
 export type Expr =
   | ArithmeticExpression
   | ComparisonExpression
@@ -264,7 +269,8 @@ export type Expr =
   | ObjectExpression
   | BitwiseExpression
   | BranchingExpression
-  | InputExpression;
+  | InputExpression
+  | JsonPatchExpression;
 
 export interface JsonExpressionExecutionContext {
   vars: Vars;
