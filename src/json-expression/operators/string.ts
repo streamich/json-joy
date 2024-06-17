@@ -37,8 +37,15 @@ export const stringOperators: types.OperatorDefinition<any>[] = [
     },
     (ctx: types.OperatorCodegenCtx<types.ExprCat>): ExpressionResult => {
       ctx.link(util.str, 'str');
-      const js = ctx.operands.map((expr) => `str(${expr})`).join('+');
-      return new Expression(js);
+      const parts: string[] = [];
+      for (const operand of ctx.operands) {
+        if (operand instanceof Literal) {
+          parts.push(JSON.stringify(util.str(operand.val)));
+        } else if (operand instanceof Expression) {
+          parts.push(`str(${operand})`);
+        }
+      }
+      return new Expression(parts.join('+'));
     },
   ] as types.OperatorDefinition<types.ExprCat>,
 
