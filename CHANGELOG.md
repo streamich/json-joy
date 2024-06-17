@@ -1,3 +1,23 @@
+# [16.9.0](https://github.com/streamich/json-joy/compare/v16.8.0...v16.9.0) (2024-06-17)
+
+
+### Bug Fixes
+
+* **json-expression:** 🐛 evaluate prop expressions ([9eb2035](https://github.com/streamich/json-joy/commit/9eb20352baf17286b3b7fff5f87f429d60382c7d))
+
+
+### Features
+
+* **json-expression:** 🎸 add JSON Patch add "jp.add" implementation ([2bbe3cd](https://github.com/streamich/json-joy/commit/2bbe3cddb25de9df79a7b19459542a8fbd6183bf))
+* **json-expression:** 🎸 implement "o.set" operator ([bd05779](https://github.com/streamich/json-joy/commit/bd05779782546e73ed8f04f90926f0163513c458))
+* **json-expression:** 🎸 implement object "o.del" operator ([20c7aff](https://github.com/streamich/json-joy/commit/20c7affc307974b359902c6d136870deee77d871))
+* **json-expression:** 🎸 prevent protoptype chain mutation in "o.set" ([b676b55](https://github.com/streamich/json-joy/commit/b676b55f982919deb861231e72b00ad2e51bdc1e))
+
+
+### Performance Improvements
+
+* **json-expression:** ⚡️ pre-cast Literals to string ([84c5aeb](https://github.com/streamich/json-joy/commit/84c5aebff1e24aa98287ced3eebcb3086ebd49cb))
+
 # [16.8.0](https://github.com/streamich/json-joy/compare/v16.7.0...v16.8.0) (2024-06-08)
 
 
