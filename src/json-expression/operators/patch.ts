@@ -1,9 +1,9 @@
 import {Expression, ExpressionResult} from '../codegen-steps';
-import {OpAdd, applyOp} from '../../json-patch';
 import type * as types from '../types';
 import {Path, toPath} from '../../json-pointer';
 import {JavaScript, JavaScriptLinked, compileClosure} from '@jsonjoy.com/util/lib/codegen';
 import {$findRef} from '../../json-pointer/codegen/findRef';
+import {find} from '../../json-pointer/find';
 
 const validateAddOperandCount = (count: number) => {
   if (count < 3) {
@@ -83,8 +83,15 @@ export const patchOperators: types.OperatorDefinition<any>[] = [
         const path = expr[i++];
         validateAddPath(path);
         const value = ctx.eval(expr[i++], ctx);
-        const res = applyOp(doc, new OpAdd(toPath(path), value), true);
-        doc = res.doc;
+        const {obj, key, val} = find(doc, toPath(path));
+        if (!obj) doc = value;
+        else if (typeof key === 'string') (obj as any)[key] = value;
+        else if (obj instanceof Array) {
+          const length = obj.length;
+          if ((key as number) < length) obj.splice((key as number), 0, value);
+          else if ((key as number) > length) throw new Error('INVALID_INDEX');
+          else obj.push(value);
+        }
       }
       return doc;
     },
