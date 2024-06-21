@@ -1640,6 +1640,44 @@ export const jsonExpressionUnitTests = (
       });
     });
 
+    describe('push', () => {
+      test('can push static values into static array', () => {
+        const arr: unknown[] = [];
+        check(['push', [arr], 1], [1]);
+        check(['push', [arr], 1, 2, 3], [1, 2, 3]);
+        check(['push', [arr], 1, '2', true, [[]]], [1, '2', true, []]);
+        check(['push', [[1]], 2, 3], [1, 2, 3]);
+      });
+
+      test('can push static values into array', () => {
+        check(['push', ['$', '/arr'], 1], [1], {arr: []});
+        check(['push', ['$', '/arr'], 1, 2, 3], [1, 2, 3], {arr: []});
+        check(['push', ['$', '/arr'], 1, 2, 3], [0, 1, 2, 3], {arr: [0]});
+      });
+
+      test('can push values into static array', () => {
+        check(['push', [[]], ['$', '/val'], 1], [0, 1], {val: 0});
+      });
+
+      test('can push values into array', () => {
+        check(['push', ['$', '/arr'], ['$', '/val'], '2'], [0, 1, '2'], {arr: [0], val: 1});
+      });
+
+      test('concatenates empty arrays', () => {
+        check(['push', [[1]], [[]]], [1, []]);
+        check(['push', [[]], [[]]], [[]]);
+      });
+
+      test('throws on invalid operand count', () => {
+        expect(() => check(['push', [[]]] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""push" operator expects at least two operands."`,
+        );
+        expect(() => check(['push', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""push" operator expects at least two operands."`,
+        );
+      });
+    });
+
     describe('head', () => {
       test('returns first two elements', () => {
         check(['head', [[1, 2, 3]], 2], [1, 2]);

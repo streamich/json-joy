@@ -3,6 +3,7 @@ import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import {$$deepEqual} from '../../json-equal/$$deepEqual';
 import type * as types from '../types';
 import {Vars} from '../Vars';
+import {clone} from '../../json-clone';
 
 const createSubExpressionOperator = <N extends string>(
   name: N,
@@ -50,6 +51,35 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprConcat>,
+
+  [
+    'push',
+    [],
+    -1,
+    (expr: types.ExprPush, ctx) => {
+      const operand1 = ctx.eval(expr[1], ctx);
+      const arr = clone(util.asArr(operand1));
+      for (let i = 2; i < expr.length; i++) arr.push(ctx.eval(expr[i], ctx));
+      return arr;
+    },
+    (ctx: types.OperatorCodegenCtx<types.ExprPush>): ExpressionResult => {
+      const arrOperand = ctx.operands[0];
+      let arr: Literal | Expression;
+      if (arrOperand instanceof Literal) {
+        arr = new Literal(clone(util.asArr(arrOperand.val)));
+      } else {
+        ctx.link(util.asArr, 'asArr');
+        arr = new Expression(`asArr(${arrOperand})`);
+      }
+      const rArr = ctx.var('' + arr);
+      const pushes: string[] = [];
+      for (let i = 1; i < ctx.operands.length; i++) {
+        const operand = ctx.operands[i];
+        pushes.push(`(${rArr}.push(${operand}))`);
+      }
+      return new Expression(`(${pushes.join(',')},${rArr})`);
+    },
+  ] as types.OperatorDefinition<types.ExprPush>,
 
   [
     'head',
