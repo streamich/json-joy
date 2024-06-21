@@ -1669,8 +1669,12 @@ export const jsonExpressionUnitTests = (
       });
 
       test('throws on invalid operand count', () => {
-        expect(() => check((['push', [[]]] as any), false)).toThrowErrorMatchingInlineSnapshot(`""push" operator expects at least two operands."`);
-        expect(() => check((['push', []] as any), false)).toThrowErrorMatchingInlineSnapshot(`""push" operator expects at least two operands."`);
+        expect(() => check(['push', [[]]] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""push" operator expects at least two operands."`,
+        );
+        expect(() => check(['push', []] as any, false)).toThrowErrorMatchingInlineSnapshot(
+          `""push" operator expects at least two operands."`,
+        );
       });
     });
 

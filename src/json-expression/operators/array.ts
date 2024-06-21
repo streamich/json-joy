@@ -59,8 +59,7 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
     (expr: types.ExprPush, ctx) => {
       const operand1 = ctx.eval(expr[1], ctx);
       const arr = clone(util.asArr(operand1));
-      for (let i = 2; i < expr.length; i++)
-        arr.push(ctx.eval(expr[i], ctx));
+      for (let i = 2; i < expr.length; i++) arr.push(ctx.eval(expr[i], ctx));
       return arr;
     },
     (ctx: types.OperatorCodegenCtx<types.ExprPush>): ExpressionResult => {
