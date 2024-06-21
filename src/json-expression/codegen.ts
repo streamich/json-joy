@@ -73,6 +73,7 @@ export class JsonExpressionCodegen {
         link: this.linkOperandDeps,
         const: this.operatorConst,
         subExpression: this.subExpression,
+        var: (value: string) => this.codegen.var(value),
       };
       return codegen(ctx);
     }

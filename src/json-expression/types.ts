@@ -200,6 +200,7 @@ export type ExprF64 = BinaryExpression<'f64'>;
 // Array expressions
 export type ArrayExpression =
   | ExprConcat
+  | ExprPush
   | ExprHead
   | ExprSort
   | ExprReverse
@@ -213,6 +214,7 @@ export type ArrayExpression =
   | ExprReduce;
 
 export type ExprConcat = VariadicExpression<'concat' | '++'>;
+export type ExprPush = VariadicExpression<'push'>;
 export type ExprHead = BinaryExpression<'head'>;
 export type ExprSort = UnaryExpression<'sort'>;
 export type ExprReverse = UnaryExpression<'reverse'>;
@@ -320,6 +322,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   link: (value: unknown, name?: string) => string;
   const: (js: JavaScript<unknown>) => string;
   subExpression: (expr: Expression) => (ctx: JsonExpressionExecutionContext) => unknown;
+  var: (name: string) => string;
 }
 
 export type OperatorMap = Map<string | number, OperatorDefinition<Expression>>;
