@@ -1,3 +1,10 @@
+# [16.10.0](https://github.com/streamich/json-joy/compare/v16.9.0...v16.10.0) (2024-06-21)
+
+
+### Features
+
+* **json-expression:** 🎸 implement "push" operator ([edbd128](https://github.com/streamich/json-joy/commit/edbd1288cf338861249be664dff8d7f70e9bbb6d))
+
 # [16.9.0](https://github.com/streamich/json-joy/compare/v16.8.0...v16.9.0) (2024-06-17)
 
 
