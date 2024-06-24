@@ -6,7 +6,7 @@ import {JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {Vars} from './Vars';
 import type * as types from './types';
 
-export type JsonExpressionFn = (ctx: types.JsonExpressionExecutionContext) => unknown;
+export type JsonExpressionFn = (vars: types.JsonExpressionExecutionContext['vars']) => unknown;
 
 export interface JsonExpressionCodegenOptions extends types.JsonExpressionCodegenContext {
   expression: types.Expr;
@@ -19,8 +19,7 @@ export class JsonExpressionCodegen {
 
   public constructor(protected options: JsonExpressionCodegenOptions) {
     this.codegen = new Codegen<JsonExpressionFn>({
-      args: ['ctx'],
-      prologue: 'var vars = ctx.vars;',
+      args: ['vars'],
       epilogue: '',
     });
     this.evaluate = createEvaluate({...options});
@@ -42,7 +41,7 @@ export class JsonExpressionCodegen {
     return this.codegen.addConstant(js);
   };
 
-  private subExpression = (expr: types.Expr): ((ctx: types.JsonExpressionExecutionContext) => unknown) => {
+  private subExpression = (expr: types.Expr): JsonExpressionFn => {
     const codegen = new JsonExpressionCodegen({...this.options, expression: expr});
     const fn = codegen.run().compile();
     return fn;
@@ -90,12 +89,15 @@ export class JsonExpressionCodegen {
     return this.codegen.generate();
   }
 
-  public compile() {
-    const fn = this.codegen.compile();
-    // console.log('fn', fn.toString());
-    return (ctx: types.JsonExpressionExecutionContext) => {
+  public compileRaw(): JsonExpressionFn {
+    return this.codegen.compile();
+  }
+
+  public compile(): JsonExpressionFn {
+    const fn = this.compileRaw();
+    return (vars) => {
       try {
-        return fn(ctx);
+        return fn(vars);
       } catch (err) {
         if (err instanceof Error) throw err;
         const error = new Error('Expression evaluation error.');

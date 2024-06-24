@@ -1,6 +1,7 @@
 import type {JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import type {Vars} from './Vars';
 import type {ExpressionResult} from './codegen-steps';
+import type {JsonExpressionFn} from './codegen';
 
 export type Literal<T> = T | LiteralExpression<T>;
 export type LiteralExpression<O> = [constant: O];
@@ -321,7 +322,7 @@ export interface OperatorCodegenCtx<E extends Expression> extends JsonExpression
   operand: (operand: Expression) => ExpressionResult;
   link: (value: unknown, name?: string) => string;
   const: (js: JavaScript<unknown>) => string;
-  subExpression: (expr: Expression) => (ctx: JsonExpressionExecutionContext) => unknown;
+  subExpression: (expr: Expression) => JsonExpressionFn;
   var: (name: string) => string;
 }
 
