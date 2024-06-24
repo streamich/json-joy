@@ -25,7 +25,7 @@ test('cursor at the start of string and slice annotation at the start of string'
   expect(inline2.text()).toBe('a');
   expect(inline3.text()).toBe('b');
   expect(inline1.attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
   expect(inline2.attr()).toEqual({bold: [1, InlineAttrPos.Contained]});
   expect(inline3.attr()).toEqual({});
@@ -41,7 +41,7 @@ test('cursor walking over character marked as bold', () => {
   peritext.refresh();
   const blocks = peritext.blocks.root;
   const leaf = blocks.children[0];
-  const inlines = [...leaf.texts()]
+  const inlines = [...leaf.texts()];
   const inline1 = inlines[0];
   const inline2 = inlines[1];
   const inline3 = inlines[2];
@@ -51,7 +51,7 @@ test('cursor walking over character marked as bold', () => {
   expect(inline3.text()).toBe('b');
   expect(inline2.attr()).toEqual({bold: [[void 0], InlineAttrPos.Contained]});
   expect(inline3.attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
   editor.cursor.move(1);
   peritext.refresh();
@@ -78,7 +78,7 @@ test('cursor walking over character marked as bold and one more', () => {
   expect(inline2.attr()).toEqual({bold: [1, InlineAttrPos.Contained]});
   expect(inline3.attr()).toEqual({});
   expect(inline4.attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
 });
 
@@ -93,7 +93,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[0].texts()].length).toBe(1);
   expect([...peritext.blocks.root.children[0].texts()][0].text()).toBe('a');
   expect([...peritext.blocks.root.children[0].texts()][0].attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
   editor.cursor.move(1);
   peritext.refresh();
@@ -103,7 +103,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[0].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[0].texts()][1].text()).toBe('');
   expect([...peritext.blocks.root.children[0].texts()][1].attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
   expect([...peritext.blocks.root.children[1].texts()].length).toBe(1);
   expect([...peritext.blocks.root.children[1].texts()][0].text()).toBe('b');
@@ -119,7 +119,7 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[1].texts()][1].text()).toBe('b');
   expect([...peritext.blocks.root.children[1].texts()][1].attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
   editor.cursor.move(1);
   peritext.refresh();
@@ -132,9 +132,8 @@ test('cursor can move across block boundary forwards', () => {
   expect([...peritext.blocks.root.children[1].texts()][0].attr()).toEqual({});
   expect([...peritext.blocks.root.children[1].texts()][1].text()).toBe('');
   expect([...peritext.blocks.root.children[1].texts()][1].attr()).toEqual({
-    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed]
+    [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
 });
-
 
 test.todo('moving past text end keeps cursor at text end');
