@@ -18,7 +18,7 @@ const check = (
     operators: operatorsMap,
   });
   const fn = codegen.run().compile();
-  const result = fn({vars: new Vars(data)});
+  const result = fn(new Vars(data));
   expect(result).toStrictEqual(expected);
 };
 

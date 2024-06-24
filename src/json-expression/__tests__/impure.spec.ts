@@ -10,7 +10,7 @@ const compile = (expression: Expr, options: JsonExpressionCodegenContext = {}) =
     operators: operatorsMap,
   });
   const fn = codegen.run().compile();
-  return (data: unknown) => fn({vars: new Vars(data)});
+  return (data: unknown) => fn(new Vars(data));
 };
 
 test('can execute expression twice with different inputs', () => {

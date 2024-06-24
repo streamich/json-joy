@@ -30,7 +30,7 @@ const createSubExpressionOperator = <N extends string>(
         operand1 instanceof Literal && operand1.val instanceof Array
           ? JSON.stringify(operand1.val)
           : `asArr(${operand1})`;
-      const js = `${name}(${arr},${JSON.stringify(varname)},vars,function(){return ${d}({vars:vars})})`;
+      const js = `${name}(${arr},${JSON.stringify(varname)},vars,function(){return ${d}(vars)})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.TernaryExpression<N>>;
@@ -257,7 +257,7 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
           : `asArr(${operand1})`;
       const js = `reduce((${arr}),(${ctx.operands[1]}),${JSON.stringify(accname)},${JSON.stringify(
         varname,
-      )},vars,function(){return ${d}({vars:vars})})`;
+      )},vars,function(){return ${d}(vars)})`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprReduce>,
