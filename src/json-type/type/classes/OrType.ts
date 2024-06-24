@@ -72,7 +72,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
       operators: operatorsMap,
     });
     const fn = codegen.run().compile();
-    return (this.__discriminator = (data: unknown) => +(fn({vars: new Vars(data)}) as any));
+    return (this.__discriminator = (data: unknown) => +(fn(new Vars(data)) as any));
   }
 
   public validateSchema(): void {
