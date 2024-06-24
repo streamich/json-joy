@@ -1,3 +1,16 @@
+# [16.11.0](https://github.com/streamich/json-joy/compare/v16.10.0...v16.11.0) (2024-06-24)
+
+
+### Features
+
+* **json-expression:** 🎸 add ability to execute expressions without extra try-catch ([a8498ec](https://github.com/streamich/json-joy/commit/a8498ec368eca8619f8205604ab863233937afdc))
+* **json-type:** 🎸 use new expession execution syntax ([43cd177](https://github.com/streamich/json-joy/commit/43cd1771bc9e48e98370ffc7f5870cf8d3a5a5f9))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ do not wrap Vars into an extra object ([4dbc780](https://github.com/streamich/json-joy/commit/4dbc7800089af84e90e06f48baf227e9ee069291))
+
 # [16.10.0](https://github.com/streamich/json-joy/compare/v16.9.0...v16.10.0) (2024-06-21)
 
 
