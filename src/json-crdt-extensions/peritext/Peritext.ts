@@ -241,6 +241,51 @@ export class Peritext<T = string> implements Printable {
     return textId;
   }
 
+  public delAt(pos: number, len: number): void {
+    const range = this.rangeAt(pos, len);
+    this.del(range);
+  }
+
+  public del(range: Range<T>): void {
+    // this.delSlices(range);
+    this.delStr(range);
+  }
+
+  public delStr(range: Range<T>): boolean {
+    const isCaret = range.isCollapsed();
+    if (isCaret) return false;
+    const {start, end} = range;
+    const delStartId = start.isAbsStart()
+      ? this.point().refStart().id
+      : start.anchor === Anchor.Before
+        ? start.id
+        : start.nextId();
+    const delEndId = end.isAbsEnd()
+      ? this.point().refEnd().id
+      : end.anchor === Anchor.After
+        ? end.id
+        : end.prevId();
+    if (!delStartId || !delEndId) throw new Error('INVALID_RANGE');
+    const rga = this.str;
+    const spans = rga.findInterval2(delStartId, delEndId);
+    const api = this.model.api;
+    api.builder.del(rga.id, spans);
+    api.apply();
+    return true;
+  }
+
+  // public delSlices(range: Range): void {
+  //   this.overlay.refresh();
+  //   range = range.clone();
+  //   range.expand();
+  //   const slices = this.overlay.findContained(range);
+  //   this.slices.delMany(Array.from(slices));
+  // }
+
+  // public delSlice(sliceId: ITimestampStruct): void {
+  //   this.slices.del(sliceId);
+  // }
+
   // ------------------------------------------------------------------ markers
 
   /** @deprecated Use the method in `Editor` and `Cursor` instead. */
