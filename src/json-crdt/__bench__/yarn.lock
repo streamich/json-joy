@@ -2,17 +2,11 @@
 # yarn lockfile v1
 
 
-"@automerge/automerge-wasm@0.17.0":
-  version "0.17.0"
-  resolved "https://registry.yarnpkg.com/@automerge/automerge-wasm/-/automerge-wasm-0.17.0.tgz#d6076287e87c3eb3a95c19a20f3fe09fff5381bc"
-  integrity sha512-EPTqadOj+wzv73rPaa80Q+tKnM+XpEtYhqZ4reB9647OZdiQjQwlXo+y/7VrGO+x48Kow0sYpZa9rgx8t785kA==
-
-"@automerge/automerge@2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.2.tgz#e067accd47af17eee8af0d29634b57e0082f2f52"
-  integrity sha512-tjEMNWXr6wgIZuGpJ7JwFZuKoWBuYt7tl8lCRhC/Pyqht8LsXFMI1stfi3ZrUTqDkJ1qwPSOTS2iwKLw8ObErw==
+"@automerge/automerge@2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.3.tgz#830a0846af5affc609b501c01e985e65c24dad75"
+  integrity sha512-CAyTKNpqhscqaylFxJJLq2RgrHyep6BYY8szQNt3EsWDfwkxaaz5kjsb2iiMjo/dS5tswbMxP3Omdk//9He13Q==
   dependencies:
-    "@automerge/automerge-wasm" "0.17.0"
     uuid "^9.0.0"
 
 "@collabs/collabs@0.13.4":
