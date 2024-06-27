@@ -212,7 +212,7 @@ export class Peritext<T = string> implements Printable {
     return this.range(start, end);
   }
 
-  // --------------------------------------------------------------------- text
+  // ---------------------------------------------------------- text (& slices)
 
   /**
    * Insert plain text at a view position in the text.
@@ -247,7 +247,7 @@ export class Peritext<T = string> implements Printable {
   }
 
   public del(range: Range<T>): void {
-    // this.delSlices(range);
+    this.delSlices(range);
     this.delStr(range);
   }
 
@@ -274,13 +274,16 @@ export class Peritext<T = string> implements Printable {
     return true;
   }
 
-  // public delSlices(range: Range): void {
-  //   this.overlay.refresh();
-  //   range = range.clone();
-  //   range.expand();
-  //   const slices = this.overlay.findContained(range);
-  //   this.slices.delMany(Array.from(slices));
-  // }
+  public delSlices(range: Range<T>): void {
+    this.overlay.refresh();
+    range = range.range();
+    range.expand();
+    const slices = this.overlay.findContained(range);
+    if (!slices.size) return;
+    this.savedSlices.delSlices(slices);
+    this.extraSlices.delSlices(slices);
+    this.localSlices.delSlices(slices);
+  }
 
   // public delSlice(sliceId: ITimestampStruct): void {
   //   this.slices.del(sliceId);

@@ -141,17 +141,16 @@ export class Slices<T = string> implements Stateful, Printable {
     api.apply();
   }
 
-  public delSlices(slices: Slice[]): void {
+  public delSlices(slices: Iterable<Slice<T>>): void {
     const api = this.set.doc.api;
     const spans: ITimespanStruct[] = [];
-    const length = slices.length;
-    for (let i = 0; i < length; i++) {
-      const slice = slices[i];
+    for (const slice of slices) {
       if (slice instanceof PersistedSlice) {
         const id = slice.id;
         spans.push(new Timespan(id.sid, id.time, 1));
       }
     }
+    if (!spans.length) return;
     api.builder.del(this.set.id, spans);
     api.apply();
   }

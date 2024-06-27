@@ -9,7 +9,7 @@ import type {Cursor} from './Cursor';
 export class EditorSlices<T = string> {
   constructor(
     protected readonly txt: Peritext<T>,
-    protected readonly slices: Slices<T>,
+    public readonly slices: Slices<T>,
   ) {}
 
   protected insAtCursors<S extends PersistedSlice<T>>(callback: (cursor: Cursor<T>) => S): S[] {
