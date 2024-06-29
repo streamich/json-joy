@@ -1,7 +1,7 @@
 import {Model} from '../../../json-crdt/model';
 import {Peritext} from '../Peritext';
 import {Anchor} from '../rga/constants';
-import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit, setupNumbersKit, setupNumbersWithMultipleChunksAndDeletesKit, setupNumbersWithRgaSplitKit, setupNumbersWithTombstonesKit, setupNumbersWithTwoChunksKit} from './setup';
+import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
 
 const run = (setup: () => Kit) => {
   test('can run .refresh() on empty state', () => {
@@ -20,9 +20,7 @@ const run = (setup: () => Kit) => {
     peritext.editor.saved.insMarker('bold', {bold: true});
     model.api.apply();
     const slices = model.s.text.toExt().slices().view();
-    expect(slices).toMatchObject([
-      [expect.any(Number), expect.any(Object), expect.any(Number), 'bold', {bold: true}],
-    ]);
+    expect(slices).toMatchObject([[expect.any(Number), expect.any(Object), expect.any(Number), 'bold', {bold: true}]]);
   });
 
   describe('cursor', () => {
