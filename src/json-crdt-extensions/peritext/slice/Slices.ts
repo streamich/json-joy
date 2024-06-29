@@ -8,6 +8,8 @@ import {CONST, updateNum} from '../../../json-hash';
 import {SliceBehavior, SliceHeaderShift, SliceTupleIndex} from './constants';
 import {MarkerSlice} from './MarkerSlice';
 import {VecNode} from '../../../json-crdt/nodes';
+import {Chars} from '../constants';
+import {Anchor} from '../rga/constants';
 import type {Slice, SliceType} from './types';
 import type {ITimespanStruct, ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Stateful} from '../types';
@@ -15,8 +17,6 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
-import {Chars} from '../constants';
-import {Anchor} from '../rga/constants';
 
 export class Slices<T = string> implements Stateful, Printable {
   private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
@@ -141,18 +141,22 @@ export class Slices<T = string> implements Stateful, Printable {
     api.apply();
   }
 
-  public delSlices(slices: Iterable<Slice<T>>): void {
-    const api = this.set.doc.api;
+  public delSlices(slices: Iterable<Slice<T>>): boolean {
+    const set = this.set;
+    const doc = set.doc;
+    const api = doc.api;
     const spans: ITimespanStruct[] = [];
     for (const slice of slices) {
       if (slice instanceof PersistedSlice) {
         const id = slice.id;
+        if (!set.findById(id)) continue;
         spans.push(new Timespan(id.sid, id.time, 1));
       }
     }
-    if (!spans.length) return;
+    if (!spans.length) return false;
     api.builder.del(this.set.id, spans);
     api.apply();
+    return true;
   }
 
   public size(): number {

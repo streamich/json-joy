@@ -73,6 +73,7 @@ export class Peritext<T = string> implements Printable {
     // TODO: Rename `str` to `rga`.
     public readonly str: AbstractRga<T>,
     slices: ArrNode,
+    // TODO: Add test that verifies that SIDs are different across all three models.
     extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
@@ -274,19 +275,23 @@ export class Peritext<T = string> implements Printable {
     return true;
   }
 
-  public delSlices(range: Range<T>): void {
+  public delSlices(range: Range<T>): boolean {
+    // TODO: PERF: do we need this refresh?
     this.overlay.refresh();
     range = range.range();
     range.expand();
     const slices = this.overlay.findContained(range);
-    if (!slices.size) return;
-    this.savedSlices.delSlices(slices);
-    this.extraSlices.delSlices(slices);
-    this.localSlices.delSlices(slices);
+    let deleted = false;
+    if (!slices.size) return deleted;
+    if (this.savedSlices.delSlices(slices)) deleted = true;
+    if (this.extraSlices.delSlices(slices)) deleted = true;
+    if (this.localSlices.delSlices(slices)) deleted = true;
+    return deleted;
   }
 
   // public delSlice(sliceId: ITimestampStruct): void {
-  //   this.slices.del(sliceId);
+
+  //   this.savedSlices.del(sliceId);
   // }
 
   // ------------------------------------------------------------------ markers
