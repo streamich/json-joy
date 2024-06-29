@@ -1,3 +1,15 @@
+# [16.12.0](https://github.com/streamich/json-joy/compare/v16.11.0...v16.12.0) (2024-06-29)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 do not create stray slice deletion patches ([c769945](https://github.com/streamich/json-joy/commit/c76994544b125538ec01a41768ba0555068e98c8))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve slice deletions ([6359951](https://github.com/streamich/json-joy/commit/6359951aa9a5f1d06d9b3e4ee69b71a1451ea635))
+
 # [16.11.0](https://github.com/streamich/json-joy/compare/v16.10.0...v16.11.0) (2024-06-24)
 
 
