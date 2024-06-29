@@ -65,25 +65,9 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    * @returns Returns the cursor position after the operation.
    */
   public collapse(): void {
-    const isCaret = this.isCollapsed();
-    if (!isCaret) {
-      const {start, end} = this;
-      const delStartId = start.isAbsStart()
-        ? this.txt.point().refStart().id
-        : start.anchor === Anchor.Before
-          ? start.id
-          : start.nextId();
-      const delEndId = end.isAbsEnd()
-        ? this.txt.point().refEnd().id
-        : end.anchor === Anchor.After
-          ? end.id
-          : end.prevId();
-      if (!delStartId || !delEndId) throw new Error('INVALID_RANGE');
-      const rga = this.rga;
-      const spans = rga.findInterval2(delStartId, delEndId);
-      const api = this.txt.model.api;
-      api.builder.del(rga.id, spans);
-      api.apply();
+    const deleted = this.txt.delStr(this);
+    if (deleted) {
+      const {start, rga} = this;
       if (start.anchor === Anchor.After) this.setAfter(start.id);
       else this.setAfter(start.prevId() || rga.id);
     }

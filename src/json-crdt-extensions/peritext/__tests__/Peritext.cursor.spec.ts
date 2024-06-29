@@ -135,5 +135,3 @@ test('cursor can move across block boundary forwards', () => {
     [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Collapsed],
   });
 });
-
-test.todo('moving past text end keeps cursor at text end');

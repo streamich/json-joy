@@ -70,7 +70,12 @@ export class Editor<T = string> {
    * the range is removed and the text is inserted at the start of the range.
    */
   public insert(text: string): void {
-    this.cursors((cursor) => cursor.insert(text));
+    let cnt = 0;
+    this.cursors((cursor) => {
+      cnt++;
+      cursor.insert(text);
+    });
+    if (!cnt) this.cursor.insert(text);
   }
 
   /**

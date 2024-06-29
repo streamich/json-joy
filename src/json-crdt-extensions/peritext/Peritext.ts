@@ -73,6 +73,7 @@ export class Peritext<T = string> implements Printable {
     // TODO: Rename `str` to `rga`.
     public readonly str: AbstractRga<T>,
     slices: ArrNode,
+    // TODO: Add test that verifies that SIDs are different across all three models.
     extraSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, model.clock.sid - 1),
     localSlicesModel: SlicesModel = Model.create(EXTRA_SLICES_SCHEMA, SESSION.LOCAL),
   ) {
@@ -212,7 +213,7 @@ export class Peritext<T = string> implements Printable {
     return this.range(start, end);
   }
 
-  // --------------------------------------------------------------------- text
+  // ---------------------------------------------------------- text (& slices)
 
   /**
    * Insert plain text at a view position in the text.
@@ -240,6 +241,54 @@ export class Peritext<T = string> implements Printable {
     api.apply();
     return textId;
   }
+
+  public delAt(pos: number, len: number): void {
+    const range = this.rangeAt(pos, len);
+    this.del(range);
+  }
+
+  public del(range: Range<T>): void {
+    this.delSlices(range);
+    this.delStr(range);
+  }
+
+  public delStr(range: Range<T>): boolean {
+    const isCaret = range.isCollapsed();
+    if (isCaret) return false;
+    const {start, end} = range;
+    const delStartId = start.isAbsStart()
+      ? this.point().refStart().id
+      : start.anchor === Anchor.Before
+        ? start.id
+        : start.nextId();
+    const delEndId = end.isAbsEnd() ? this.point().refEnd().id : end.anchor === Anchor.After ? end.id : end.prevId();
+    if (!delStartId || !delEndId) throw new Error('INVALID_RANGE');
+    const rga = this.str;
+    const spans = rga.findInterval2(delStartId, delEndId);
+    const api = this.model.api;
+    api.builder.del(rga.id, spans);
+    api.apply();
+    return true;
+  }
+
+  public delSlices(range: Range<T>): boolean {
+    // TODO: PERF: do we need this refresh?
+    this.overlay.refresh();
+    range = range.range();
+    range.expand();
+    const slices = this.overlay.findContained(range);
+    let deleted = false;
+    if (!slices.size) return deleted;
+    if (this.savedSlices.delSlices(slices)) deleted = true;
+    if (this.extraSlices.delSlices(slices)) deleted = true;
+    if (this.localSlices.delSlices(slices)) deleted = true;
+    return deleted;
+  }
+
+  // public delSlice(sliceId: ITimestampStruct): void {
+
+  //   this.savedSlices.del(sliceId);
+  // }
 
   // ------------------------------------------------------------------ markers
 
