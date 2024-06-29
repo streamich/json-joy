@@ -1,4 +1,10 @@
-import {setupAlphabetChunkSplitKit, setupAlphabetKit, Kit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit} from './setup';
+import {
+  setupAlphabetChunkSplitKit,
+  setupAlphabetKit,
+  Kit,
+  setupAlphabetWithDeletesKit,
+  setupAlphabetWithTwoChunksKit,
+} from './setup';
 
 const run = (setup: () => Kit) => {
   describe('.delAt()', () => {
@@ -11,7 +17,7 @@ const run = (setup: () => Kit) => {
       peritext.delAt(4, 2);
       expect(peritext.str.view()).toBe('dghx');
     });
-    
+
     test('deletes slice if it is contained in deletion range', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 2);
@@ -23,7 +29,7 @@ const run = (setup: () => Kit) => {
       peritext.refresh();
       expect(editor.saved.slices.size()).toBe(0);
     });
-    
+
     test('does not delete slice if it is only partially contained', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(2, 10);

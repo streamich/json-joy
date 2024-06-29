@@ -261,11 +261,7 @@ export class Peritext<T = string> implements Printable {
       : start.anchor === Anchor.Before
         ? start.id
         : start.nextId();
-    const delEndId = end.isAbsEnd()
-      ? this.point().refEnd().id
-      : end.anchor === Anchor.After
-        ? end.id
-        : end.prevId();
+    const delEndId = end.isAbsEnd() ? this.point().refEnd().id : end.anchor === Anchor.After ? end.id : end.prevId();
     if (!delStartId || !delEndId) throw new Error('INVALID_RANGE');
     const rga = this.str;
     const spans = rga.findInterval2(delStartId, delEndId);

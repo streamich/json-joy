@@ -1,11 +1,16 @@
 import {Anchor} from '../rga/constants';
 import {render} from './render';
-import {Kit, setupAlphabetChunkSplitKit, setupAlphabetKit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit, setupAlphabetWrittenInReverse, setupAlphabetWrittenInReverseWithDeletes} from './setup';
+import {
+  Kit,
+  setupAlphabetChunkSplitKit,
+  setupAlphabetKit,
+  setupAlphabetWithDeletesKit,
+  setupAlphabetWithTwoChunksKit,
+  setupAlphabetWrittenInReverse,
+  setupAlphabetWrittenInReverseWithDeletes,
+} from './setup';
 
-const runInlineSlicesTests = (
-  desc: string,
-  getKit: () => Kit,
-) => {
+const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
   const setup = () => {
     const kit = getKit();
     const view = () => {
