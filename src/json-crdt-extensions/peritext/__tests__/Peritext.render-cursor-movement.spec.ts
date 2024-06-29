@@ -1,28 +1,19 @@
-import {Model} from '../../../json-crdt/model';
-import {Peritext} from '../Peritext';
-import {Editor} from '../editor/Editor';
 import {Anchor} from '../rga/constants';
 import {render} from './render';
+import {Kit, setupAlphabetChunkSplitKit, setupAlphabetKit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit, setupAlphabetWrittenInReverse, setupAlphabetWrittenInReverseWithDeletes} from './setup';
 
 const runInlineSlicesTests = (
   desc: string,
-  insertNumbers = (editor: Editor) => editor.insert('abcdefghijklmnopqrstuvwxyz'),
+  getKit: () => Kit,
 ) => {
   const setup = () => {
-    const model = Model.withLogicalClock(123);
-    model.api.root({
-      text: '',
-      slices: [],
-    });
-    const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
-    const editor = peritext.editor;
-    insertNumbers(editor);
+    const kit = getKit();
     const view = () => {
-      peritext.refresh();
-      return render(peritext.blocks.root, '', false);
+      kit.peritext.refresh();
+      return render(kit.peritext.blocks.root, '', false);
     };
     // console.log(peritext.str + '');
-    return {model, peritext, editor, view};
+    return {...kit, view};
   };
 
   describe(desc, () => {
@@ -149,152 +140,9 @@ const runInlineSlicesTests = (
   });
 };
 
-runInlineSlicesTests('single text chunk');
-
-runInlineSlicesTests('two text chunks', (editor: Editor) => {
-  editor.insert('lmnopqrstuvwxyz');
-  editor.cursor.setAt(0);
-  editor.insert('abcdefghijk');
-});
-
-runInlineSlicesTests('text with block split', (editor: Editor) => {
-  editor.insert('lmnwxyz');
-  editor.cursor.setAt(3);
-  editor.insert('opqrstuv');
-  editor.cursor.setAt(0);
-  editor.insert('abcdefghijk');
-});
-
-runInlineSlicesTests('text with deletes', (editor: Editor) => {
-  editor.insert('lmXXXnwYxyz');
-  editor.cursor.setAt(2, 3);
-  editor.delBwd();
-  editor.cursor.setAt(3);
-  editor.insert('opqrstuv');
-  editor.cursor.setAt(12, 1);
-  editor.delBwd();
-  editor.cursor.setAt(0);
-  editor.insert('ab1c3defghijk4444');
-  editor.cursor.setAt(2, 1);
-  editor.delBwd();
-  editor.cursor.setAt(3, 1);
-  editor.delBwd();
-  editor.cursor.setAt(11, 4);
-  editor.delBwd();
-});
-
-runInlineSlicesTests('written in reverse', (editor: Editor) => {
-  editor.insert('z');
-  editor.cursor.setAt(0);
-  editor.insert('y');
-  editor.cursor.setAt(0);
-  editor.insert('x');
-  editor.cursor.setAt(0);
-  editor.insert('w');
-  editor.cursor.setAt(0);
-  editor.insert('v');
-  editor.cursor.setAt(0);
-  editor.insert('u');
-  editor.cursor.setAt(0);
-  editor.insert('t');
-  editor.cursor.setAt(0);
-  editor.insert('s');
-  editor.cursor.setAt(0);
-  editor.insert('r');
-  editor.cursor.setAt(0);
-  editor.insert('q');
-  editor.cursor.setAt(0);
-  editor.insert('p');
-  editor.cursor.setAt(0);
-  editor.insert('o');
-  editor.cursor.setAt(0);
-  editor.insert('n');
-  editor.cursor.setAt(0);
-  editor.insert('m');
-  editor.cursor.setAt(0);
-  editor.insert('l');
-  editor.cursor.setAt(0);
-  editor.insert('k');
-  editor.cursor.setAt(0);
-  editor.insert('j');
-  editor.cursor.setAt(0);
-  editor.insert('i');
-  editor.cursor.setAt(0);
-  editor.insert('h');
-  editor.cursor.setAt(0);
-  editor.insert('g');
-  editor.cursor.setAt(0);
-  editor.insert('f');
-  editor.cursor.setAt(0);
-  editor.insert('e');
-  editor.cursor.setAt(0);
-  editor.insert('d');
-  editor.cursor.setAt(0);
-  editor.insert('c');
-  editor.cursor.setAt(0);
-  editor.insert('b');
-  editor.cursor.setAt(0);
-  editor.insert('a');
-});
-
-runInlineSlicesTests('written in reverse with deletes', (editor: Editor) => {
-  editor.insert('z');
-  editor.cursor.setAt(0);
-  editor.insert('y');
-  editor.cursor.setAt(0);
-  editor.insert('x');
-  editor.cursor.setAt(0);
-  editor.insert('w');
-  editor.cursor.setAt(0);
-  editor.insert('v');
-  editor.cursor.setAt(0);
-  editor.insert('u');
-  editor.cursor.setAt(0);
-  editor.insert('t');
-  editor.cursor.setAt(0);
-  editor.insert('s');
-  editor.cursor.setAt(0);
-  editor.insert('r');
-  editor.cursor.setAt(0);
-  editor.insert('q');
-  editor.cursor.setAt(0);
-  editor.insert('p');
-  editor.cursor.setAt(0);
-  editor.insert('o');
-  editor.cursor.setAt(0);
-  editor.insert('n');
-  editor.cursor.setAt(0);
-  editor.insert('m');
-  editor.cursor.setAt(0);
-  editor.insert('l');
-  editor.cursor.setAt(0);
-  editor.insert('k');
-  editor.cursor.setAt(0);
-  editor.insert('j');
-  editor.cursor.setAt(0);
-  editor.insert('i');
-  editor.cursor.setAt(0);
-  editor.insert('h');
-  editor.cursor.setAt(0);
-  editor.insert('g');
-  editor.cursor.setAt(0);
-  editor.insert('f');
-  editor.cursor.setAt(0);
-  editor.insert('e');
-  editor.cursor.setAt(0);
-  editor.insert('d');
-  editor.cursor.setAt(0);
-  editor.insert('c');
-  editor.cursor.setAt(0);
-  editor.insert('b');
-  editor.cursor.setAt(0);
-  editor.insert('a');
-  editor.cursor.setAt(0);
-  editor.insert('123');
-  editor.cursor.setAt(0, 3);
-  editor.delBwd();
-  editor.cursor.setAt(3);
-  editor.insert('1');
-  editor.cursor.setAt(3, 1);
-  editor.delBwd();
-});
+runInlineSlicesTests('single text chunk', setupAlphabetKit);
+runInlineSlicesTests('two chunks', setupAlphabetWithTwoChunksKit);
+runInlineSlicesTests('with chunk split', setupAlphabetChunkSplitKit);
+runInlineSlicesTests('with deletes', setupAlphabetWithDeletesKit);
+runInlineSlicesTests('written in reverse', setupAlphabetWrittenInReverse);
+runInlineSlicesTests('written in reverse with deletes', setupAlphabetWrittenInReverseWithDeletes);

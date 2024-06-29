@@ -153,7 +153,7 @@ export const setupAlphabetKit = (): Kit => {
   return setupKit('', (model) => {
     const str = model.s.text.toExt().text();
     str.ins(0, 'abcdefghijklmnopqrstuvwxyz');
-    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -165,7 +165,7 @@ export const setupAlphabetWithTwoChunksKit = (): Kit => {
     const str = model.s.text.toExt().text();
     str.ins(0, 'lmnopqrstuvwxyz');
     str.ins(0, 'abcdefghijk');
-    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -178,7 +178,7 @@ export const setupAlphabetChunkSplitKit = (): Kit => {
     str.ins(0, 'lmnwxyz');
     str.ins(3, 'opqrstuv');
     str.ins(0, 'abcdefghijk');
-    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
   });
 };
 
@@ -196,6 +196,64 @@ export const setupAlphabetWithDeletesKit = (): Kit => {
     str.del(2, 1);
     str.del(3, 1);
     str.del(11, 4);
-    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
   });
+};
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz" written in
+ * reverse.
+ */
+export const setupAlphabetWrittenInReverse = (): Kit => {
+  return setupKit('', (model) => {
+    const str = model.s.text.toExt().text();
+    str.ins(0, 'z');
+    str.ins(0, 'y');
+    str.ins(0, 'x');
+    str.ins(0, 'w');
+    str.ins(0, 'v');
+    str.ins(0, 'u');
+    str.ins(0, 't');
+    str.ins(0, 's');
+    str.ins(0, 'r');
+    str.ins(0, 'q');
+    str.ins(0, 'p');
+    str.ins(0, 'o');
+    str.ins(0, 'n');
+    str.ins(0, 'm');
+    str.ins(0, 'l');
+    str.ins(0, 'k');
+    str.ins(0, 'j');
+    str.ins(0, 'i');
+    str.ins(0, 'h');
+    str.ins(0, 'g');
+    str.ins(0, 'f');
+    str.ins(0, 'e');
+    str.ins(0, 'd');
+    str.ins(0, 'c');
+    str.ins(0, 'b');
+    str.ins(0, 'a');
+    if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
+  });
+};
+
+/**
+ * Creates a Peritext instance with text "abcdefghijklmnopqrstuvwxyz" written in
+ * reverse and contains deletes.
+ */
+export const setupAlphabetWrittenInReverseWithDeletes = (): Kit => {
+  const kit = setupAlphabetWrittenInReverse();
+  const str = kit.model.s.text.toExt().text();
+  str.ins(0, '123');
+  str.del(0, 3);
+  str.ins(3, '1');
+  str.del(3, 1);
+  str.del(2, 2);
+  str.ins(2, 'cd');
+  str.del(3, 5);
+  str.ins(3, 'defgh');
+  str.del(7, 8);
+  str.ins(7, 'hijklmno');
+  if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
+  return kit;
 };
