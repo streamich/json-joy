@@ -1,3 +1,7 @@
+import type {PeritextDataNode} from '../peritext/types';
+
+export type QuillDataNode = PeritextDataNode;
+
 export interface QuillDeltaPatch {
   ops: QuillDeltaOp[];
 }
