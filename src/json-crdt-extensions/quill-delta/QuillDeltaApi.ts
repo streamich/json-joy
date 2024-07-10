@@ -6,7 +6,7 @@ import {konst} from '../../json-crdt-patch/builder/Konst';
 import {SliceBehavior} from '../peritext/slice/constants';
 import {PersistedSlice} from '../peritext/slice/PersistedSlice';
 import {diffAttributes, getAttributes, removeErasures} from './util';
-import type {ExtApi} from '../../json-crdt';
+import type {ArrApi, ArrNode, ExtApi, StrApi} from '../../json-crdt';
 import type {
   QuillDeltaAttributes,
   QuillDeltaOpDelete,
@@ -15,6 +15,7 @@ import type {
   QuillDeltaPatch,
 } from './types';
 import type {Peritext} from '../peritext';
+import type {SliceNode} from '../peritext/slice/types';
 
 const updateAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | undefined, pos: number, len: number) => {
   if (!attributes) return;
@@ -88,6 +89,14 @@ const maybeUpdateAttributes = (
 };
 
 export class QuillDeltaApi extends NodeApi<QuillDeltaNode> implements ExtApi<QuillDeltaNode> {
+  public text(): StrApi {
+    return this.api.wrap(this.node.text());
+  }
+
+  public slices(): ArrApi<ArrNode<SliceNode>> {
+    return this.api.wrap(this.node.slices());
+  }
+
   public apply(ops: QuillDeltaPatch['ops']) {
     const txt = this.node.txt;
     const overlay = txt.overlay;

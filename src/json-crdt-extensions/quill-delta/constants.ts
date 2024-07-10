@@ -5,4 +5,4 @@ export const enum QuillConst {
   EmbedSliceType = 0,
 }
 
-export const MNEMONIC = ExtensionName[ExtensionId.peritext];
+export const MNEMONIC = ExtensionName[ExtensionId.quill];
