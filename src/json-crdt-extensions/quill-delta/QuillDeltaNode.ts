@@ -42,7 +42,7 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
     let chunk: undefined | StringChunk;
     const nextPair = overlay.tuples0(undefined);
     let pair: OverlayTuple<string> | undefined;
-    while (pair = nextPair()) {
+    while ((pair = nextPair())) {
       const [p1, p2] = pair;
       const attributes: undefined | QuillDeltaAttributes = getAttributes(p1);
       let insert = '';

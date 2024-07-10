@@ -8,10 +8,10 @@ import type {QuillDataNode} from './types';
 
 export {QuillDeltaNode, QuillDeltaApi};
 
-export const quill = new Extension<
+export const quill = new Extension<ExtensionId.quill, QuillDataNode, QuillDeltaNode, QuillDeltaApi, [text: string]>(
   ExtensionId.quill,
-  QuillDataNode,
+  MNEMONIC,
   QuillDeltaNode,
   QuillDeltaApi,
-  [text: string]
->(ExtensionId.quill, MNEMONIC, QuillDeltaNode, QuillDeltaApi, (text: string) => SCHEMA(text));
+  (text: string) => SCHEMA(text),
+);
