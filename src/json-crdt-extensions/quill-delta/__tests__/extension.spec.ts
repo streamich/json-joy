@@ -26,7 +26,7 @@ describe('typed access', () => {
     const str = model.s.nested.obj.text.toExt().text();
     expect(str).toBeInstanceOf(StrApi);
     str.ins(str.length() - 1, '!');
-    expect(model.view().nested.obj.text).toBe('Hello, world!\n');
+    expect(model.view().nested.obj.text).toEqual([{insert: 'Hello, world!\n'}]);
   });
 
   test('can access slices "arr" node in type safe way', () => {
