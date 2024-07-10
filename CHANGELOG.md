@@ -1,3 +1,16 @@
+# [16.13.0](https://github.com/streamich/json-joy/compare/v16.12.0...v16.13.0) (2024-07-10)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add Quill extension inference types ([c21e15b](https://github.com/streamich/json-joy/commit/c21e15b249211e7aee1824e4fa5db83c3f0bc48a))
+* **json-crdt-extensions:** 🎸 add Quill types ([524ae1b](https://github.com/streamich/json-joy/commit/524ae1be8976a94f930ed1df33b2242b1d91cb0d))
+* **json-crdt-extensions:** 🎸 add QuillDeltaApi implementation ([656728e](https://github.com/streamich/json-joy/commit/656728ee6fe1e45fca97e47555cc051dbc586484))
+* **json-crdt-extensions:** 🎸 add slice manipulation helpers ([ba2254c](https://github.com/streamich/json-joy/commit/ba2254cd726b2cd7bc77546adad2ea2e3db807c9))
+* **json-crdt-extensions:** 🎸 implement Quill Delta view computation ([c643543](https://github.com/streamich/json-joy/commit/c6435431446f7511b5d6cd2711fb2d5cf8440fa2))
+* **json-crdt-extensions:** 🎸 improve Quill Delta extension setup ([10e7721](https://github.com/streamich/json-joy/commit/10e77219f1a9034211bcd446db39a50891c65086))
+* **json-crdt-extensions:** 🎸 setup Quill Delta extension ([d6a4111](https://github.com/streamich/json-joy/commit/d6a4111c20b5e2b5350f09e7bb9b1fce721c8837))
+
 # [16.12.0](https://github.com/streamich/json-joy/compare/v16.11.0...v16.12.0) (2024-06-29)
 
 
