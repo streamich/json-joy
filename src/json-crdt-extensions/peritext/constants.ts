@@ -1,6 +1,6 @@
 import {nodes, s} from '../../json-crdt-patch';
 import {ExtensionId, ExtensionName} from '../constants';
-import {SliceSchema} from './slice/types';
+import type {SliceSchema} from './slice/types';
 
 export const enum Chars {
   BlockSplitSentinel = '\n',

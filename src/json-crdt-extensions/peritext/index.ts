@@ -1,11 +1,12 @@
 import {ExtensionId} from '../constants';
 import {PeritextNode} from './PeritextNode';
 import {PeritextApi} from './PeritextApi';
+import {Peritext} from './Peritext';
 import {SCHEMA, MNEMONIC} from './constants';
 import {Extension} from '../../json-crdt/extensions/Extension';
 import type {PeritextDataNode} from './types';
 
-export {PeritextNode, PeritextApi};
+export {PeritextNode, PeritextApi, Peritext};
 
 export const peritext = new Extension<
   ExtensionId.peritext,

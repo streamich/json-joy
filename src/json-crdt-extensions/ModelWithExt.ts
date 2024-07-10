@@ -10,6 +10,7 @@ const extensions = new Extensions();
 extensions.register(ext.cnt);
 extensions.register(ext.mval);
 extensions.register(ext.peritext);
+extensions.register(ext.quill);
 
 export {ext};
 

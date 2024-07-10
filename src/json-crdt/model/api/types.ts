@@ -1,4 +1,4 @@
-import type {PeritextNode, PeritextApi} from '../../../json-crdt-extensions/peritext';
+import type {PeritextNode, PeritextApi, QuillDeltaNode, QuillDeltaApi} from '../../../json-crdt-extensions';
 import type * as types from '../../nodes';
 import type * as nodes from './nodes';
 
@@ -21,4 +21,6 @@ export type JsonNodeApi<N> = N extends types.ConNode<any>
                 ? nodes.VecApi<N>
                 : N extends PeritextNode
                   ? PeritextApi
-                  : never;
+                  : N extends QuillDeltaNode
+                    ? QuillDeltaApi
+                    : never;

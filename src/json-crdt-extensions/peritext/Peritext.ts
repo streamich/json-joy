@@ -285,11 +285,6 @@ export class Peritext<T = string> implements Printable {
     return deleted;
   }
 
-  // public delSlice(sliceId: ITimestampStruct): void {
-
-  //   this.savedSlices.del(sliceId);
-  // }
-
   // ------------------------------------------------------------------ markers
 
   /** @deprecated Use the method in `Editor` and `Cursor` instead. */
