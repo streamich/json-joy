@@ -14,7 +14,7 @@ export class PeritextNode extends ExtNode<PeritextDataNode> {
     return this.data.get(1)!;
   }
 
-  // ------------------------------------------------------------ ExtensionNode
+  // ------------------------------------------------------------------ ExtNode
   public readonly extId = ExtensionId.peritext;
 
   public name(): string {
