@@ -28,8 +28,8 @@ export class Log<N extends JsonNode = JsonNode<any>> implements Printable {
    * @returns A new `PatchLog` instance.
    */
   public static fromNewModel<N extends JsonNode = JsonNode<any>>(model: Model<N>): Log<N> {
-    const clock = model.clock.clone();
-    const log = new Log<N>(() => new Model(clock));
+    const sid = model.clock.sid;
+    const log = new Log<N>(() => Model.create<any>(undefined, sid) as Model<N>);
     const api = model.api;
     if (api.builder.patch.ops.length) log.end.applyPatch(api.flush());
     return log;
