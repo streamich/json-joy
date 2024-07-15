@@ -1,3 +1,4 @@
+import {s} from '../../../json-crdt-patch';
 import {Model} from '../../model';
 import {Log} from '../Log';
 
@@ -7,6 +8,34 @@ const setup = (view: unknown) => {
   const log = Log.fromNewModel(model);
   return {log};
 };
+
+test('can create a new log from a new model with right starting logical clock', () => {
+  const schema0 = s.obj({
+    id: s.con<string>(''),
+    name: s.str('John Doe'),
+    age: s.val(s.con<number>(42)),
+    tags: s.arr([s.str('tag1'), s.str('tag2')]),
+  });
+  const model = Model.create(schema0);
+  const sid = model.clock.sid;
+  const log = Log.fromNewModel(model);
+  log.end.s.toApi().set({id: s.con('xyz') as any});
+  log.end.api.flush();
+  log.end.s.age.toApi().set(35);
+  log.end.api.flush();
+  log.end.s.tags.toApi().del(0, 1);
+  log.end.api.flush();
+  log.end.s.name.toApi().del(0, 8);
+  log.end.s.name.toApi().ins(0, 'Va Da');
+  log.end.api.flush();
+  log.end.s.tags[0].toApi().del(0, 4);
+  log.end.s.tags[0].toApi().ins(0, 'happy');
+  log.end.api.flush();
+  expect(log.start().clock.sid).toBe(sid);
+  expect(log.start().clock.time).toBe(1);
+  expect(log.end.clock.sid).toBe(sid);
+  expect(log.end.clock.time > 10).toBe(true);
+});
 
 test('can replay to specific patch', () => {
   const {log} = setup({foo: 'bar'});
