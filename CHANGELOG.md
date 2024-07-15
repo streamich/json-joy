@@ -1,3 +1,10 @@
+## [16.13.1](https://github.com/streamich/json-joy/compare/v16.13.0...v16.13.1) (2024-07-15)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 make log start use correct logical time ([019883d](https://github.com/streamich/json-joy/commit/019883d0a9b10a4321276335a48a6f13f1befd92))
+
 # [16.13.0](https://github.com/streamich/json-joy/compare/v16.12.0...v16.13.0) (2024-07-10)
 
 
