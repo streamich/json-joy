@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@automerge/automerge@2.2.4":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.4.tgz#7fde48e3e984406e26f094da82816d3e13dafaf8"
-  integrity sha512-Crdv8m1vKCjNyv99TkeQes6MkFHLSEQSCvIEbiYRLiVs//xULHekTu2rypu01fN0Y4N/yrR1JoPozEffUqXqlw==
+"@automerge/automerge@2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@automerge/automerge/-/automerge-2.2.5.tgz#76f7aca53fdcb1eddb38817b0a7b450e9af1e6cf"
+  integrity sha512-ckew+wwjSJwjRwMnf8vqzhThykp0gyUNqKv2b7dLoLb0mfQyPEFaemrsUiHh9WdX73jrH5eXsqqPJK4/yqpviQ==
   dependencies:
     uuid "^9.0.0"
 
