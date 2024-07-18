@@ -4,6 +4,7 @@ import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
 import {NodeEvents} from './events/NodeEvents';
+import {ObjNodeEvents} from './events/ObjNodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
@@ -28,7 +29,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   ) {}
 
   /** @ignore */
-  private ev: undefined | NodeEvents<N> = undefined;
+  protected ev: undefined | NodeEvents<N> = undefined;
 
   /**
    * Event target for listening to node changes. You can subscribe to `"view"`
@@ -327,6 +328,11 @@ type UnObjNode<N> = N extends ObjNode<infer T> ? T : never;
  * @category Local API
  */
 export class ObjApi<N extends ObjNode<any> = ObjNode<any>> extends NodeApi<N> {
+  public get events(): ObjNodeEvents<N> {
+    const et = this.ev;
+    return <ObjNodeEvents<N>>et || (this.ev = new ObjNodeEvents<N>(this));
+  }
+
   /**
    * Get API instance of a child node.
    *
