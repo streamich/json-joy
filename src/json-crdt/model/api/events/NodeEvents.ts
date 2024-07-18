@@ -1,8 +1,8 @@
 import {FanOut} from 'thingies/lib/fanout';
-import {MapFanOut, OnNewFanOut} from './fanout';
-import type {JsonNode, JsonNodeView} from '../../nodes';
-import type {SyncStore, SyncStoreUnsubscribe} from '../../../util/events/sync-store';
-import type {NodeApi} from './nodes';
+import {MapFanOut, OnNewFanOut} from '../fanout';
+import type {JsonNode, JsonNodeView} from '../../../nodes';
+import type {SyncStore, SyncStoreUnsubscribe} from '../../../../util/events/sync-store';
+import type {NodeApi} from '../nodes';
 
 export class NodeEvents<N extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<N>> {
   /**

@@ -3,7 +3,7 @@ import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
 import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
-import {NodeEvents} from './NodeEvents';
+import {NodeEvents} from './events/NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Extension} from '../../extensions/Extension';
 import type {ExtApi} from '../../extensions/types';
