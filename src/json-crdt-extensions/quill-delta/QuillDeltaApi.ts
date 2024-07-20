@@ -35,7 +35,7 @@ const updateAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | unde
 };
 
 const rewriteAttributes = (txt: Peritext, attributes: QuillDeltaAttributes | undefined, pos: number, len: number) => {
-  if (!attributes) return;
+  if (typeof attributes !== 'object') return;
   const range = txt.rangeAt(pos, len);
   range.expand();
   const slices = txt.overlay.findOverlapping(range);
@@ -107,7 +107,7 @@ export class QuillDeltaApi extends NodeApi<QuillDeltaNode> implements ExtApi<Qui
       const op = ops[i];
       if (typeof (<QuillDeltaOpRetain>op).retain === 'number') {
         const {retain, attributes} = <QuillDeltaOpRetain>op;
-        rewriteAttributes(txt, attributes, pos, retain);
+        if (attributes) rewriteAttributes(txt, attributes, pos, retain);
         pos += retain;
       } else if (typeof (<QuillDeltaOpDelete>op).delete === 'number') {
         txt.delAt(pos, (<QuillDeltaOpDelete>op).delete);
