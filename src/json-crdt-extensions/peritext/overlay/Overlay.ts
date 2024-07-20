@@ -116,6 +116,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /** @todo Rename to `chunks()`. */
+  /** @todo Rewrite this as `UndefIterator`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
@@ -216,7 +217,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           p2 = iterator();
         }
       }
-      return p1 || p2 ? [p1, p2] : undefined;
+      return (p1 || p2) ? [p1, p2] : undefined;
     };
   }
 
