@@ -48,7 +48,6 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
       let insert = '';
       chunk = overlay.chunkSlices0(chunk, p1, p2, (chunk, off, len) => {
         const data = chunk.data;
-        // console.log(JSON.stringify(data), off, len);
         if (data) insert += data.slice(off, off + len);
       });
       if (insert) {
