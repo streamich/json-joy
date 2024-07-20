@@ -1,0 +1,67 @@
+import Delta from 'quill-delta';
+import {mval as ValueMvExt} from '../../mval';
+import {quill as QuillDeltaExt} from '..';
+import {Model} from '../../../json-crdt/model';
+import {QuillTrace} from '../types';
+import {QuillDeltaApi} from '../QuillDeltaApi';
+import {insertDeleteQuillTrace} from './traces/insert-delete';
+import {basicAnnotationsQuillTrace} from './traces/basic-annotations';
+import {boldGrowingQuillTrace} from './traces/growing-bold';
+import {generalQuillTrace} from './traces/general';
+import {boldUnBoldQuillTrace} from './traces/bold-unbold';
+import {boldItalicUnitalicQuillTrace} from './traces/bold-italic-unitalic';
+import {splitUnSplitQuillTrace} from './traces/split-unsplit';
+import {blockHandlingQuillTrace} from './traces/blocks';
+import {insertDeleteImageQuillTrace} from './traces/insert-delete-image';
+import {annotateAnnotationsQuillTrace} from './traces/annotate-annotations';
+
+const assertTrace = (trace: QuillTrace, api: QuillDeltaApi) => {
+  let delta = new Delta([]);
+  const {transactions} = trace;
+  const length = transactions.length;
+  for (let i = 0; i < length; i++) {
+    const transaction = transactions[i];
+    delta = delta.compose(new Delta(transaction));
+    api.apply(transaction);
+    try {
+      expect(api.node.view()).toEqual(delta.ops);
+      expect(api.node.slices().doc.view()).toEqual(delta.ops);
+    } catch (err) {
+      api.node.txt.refresh();
+      // console.log(api.node.txt + '');
+      // console.log(delta.ops);
+      // console.log(api.node.view());
+      // tslint:disable-next-line:no-console
+      console.log('index: ', i, transaction);
+      throw err;
+    }
+  }
+  expect(api.node.view()).toEqual(delta.ops);
+  expect(api.node.slices().doc.view()).toEqual(trace.contents.ops);
+};
+
+type Trace = [name: string, trace: QuillTrace];
+
+const traces: Trace[] = [
+  ['insert-delete', insertDeleteQuillTrace],
+  ['growing-bold', boldGrowingQuillTrace],
+  ['basic-annotations', basicAnnotationsQuillTrace],
+  ['bold-unbold', boldUnBoldQuillTrace],
+  ['bold-italic-unitalic', boldItalicUnitalicQuillTrace],
+  ['split-unsplit', splitUnSplitQuillTrace],
+  ['general', generalQuillTrace],
+  ['block-handling', blockHandlingQuillTrace],
+  ['insert-delete-image', insertDeleteImageQuillTrace],
+  ['annotate-annotations', annotateAnnotationsQuillTrace],
+];
+
+for (const [name, trace] of traces) {
+  test(name, () => {
+    const model = Model.create();
+    model.ext.register(ValueMvExt);
+    model.ext.register(QuillDeltaExt);
+    model.api.root(QuillDeltaExt.new(''));
+    const quill = model.api.in().asExt(QuillDeltaExt);
+    assertTrace(trace, quill);
+  });
+}

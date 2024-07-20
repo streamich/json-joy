@@ -65,6 +65,19 @@ const runFindContainedTests = (setup: () => Kit) => {
       expect(slices.size).toBe(1);
     });
 
+    test('returns a single contained character', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(1, 1);
+      const [slice] = editor.saved.insStack('<b>');
+      const range = peritext.rangeAt(1, 1);
+      range.expand();
+      peritext.editor.delCursors();
+      peritext.refresh();
+      const slices = peritext.overlay.findContained(range);
+      expect(slices.size).toBe(1);
+      expect([...slices][0]).toBe(slice);
+    });
+
     test('returns two contained slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(3, 1);
@@ -122,6 +135,19 @@ const runFindOverlappingTests = (setup: () => Kit) => {
       peritext.overlay.refresh();
       const slices = peritext.overlay.findOverlapping(peritext.rangeAt(3, 4));
       expect(slices.size).toBe(1);
+    });
+
+    test('returns a single contained character', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(1, 1);
+      const [slice] = editor.saved.insStack('<b>');
+      const range = peritext.rangeAt(1, 1);
+      range.expand();
+      peritext.editor.delCursors();
+      peritext.refresh();
+      const slices = peritext.overlay.findOverlapping(range);
+      expect(slices.size).toBe(1);
+      expect([...slices][0]).toBe(slice);
     });
 
     test('returns two contained slice', () => {

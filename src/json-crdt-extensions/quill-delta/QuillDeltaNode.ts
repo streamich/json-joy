@@ -40,15 +40,14 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
     const overlay = this.txt.overlay;
     overlay.refresh(true);
     let chunk: undefined | StringChunk;
-    const nextPair = overlay.tuples0(undefined);
-    let pair: OverlayTuple<string> | undefined;
-    while ((pair = nextPair())) {
-      const [p1, p2] = pair;
+    const nextTuple = overlay.tuples0(undefined);
+    let tuple: OverlayTuple<string> | undefined;
+    while ((tuple = nextTuple())) {
+      const [p1, p2] = tuple;
       const attributes: undefined | QuillDeltaAttributes = getAttributes(p1);
       let insert = '';
       chunk = overlay.chunkSlices0(chunk, p1, p2, (chunk, off, len) => {
         const data = chunk.data;
-        // console.log(JSON.stringify(data), off, len);
         if (data) insert += data.slice(off, off + len);
       });
       if (insert) {
@@ -57,12 +56,12 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
           delete attributes[QuillConst.EmbedSliceType];
           if (!isEmpty(attributes)) op.attributes = attributes;
           ops.push(op);
-          break;
+          continue;
         } else {
           const lastOp = ops[ops.length - 1] as QuillDeltaOpInsert;
           if (lastOp && typeof lastOp.insert === 'string' && deepEqual(lastOp.attributes, attributes)) {
             lastOp.insert += insert;
-            break;
+            continue;
           }
         }
         const op: QuillDeltaOpInsert = {insert};

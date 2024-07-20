@@ -2,6 +2,7 @@ import {mval} from '../../mval';
 import {quill} from '..';
 import {Model} from '../../../json-crdt/model';
 import Delta from 'quill-delta';
+import {QuillDeltaPatch} from '../types';
 
 test('can construct delta with new line character', () => {
   const model = Model.create();
@@ -104,6 +105,23 @@ test('can insert italic-only text in bold text', () => {
     {insert: 'b', attributes: {italic: true}},
     {insert: 'a', attributes: {bold: true}},
   ]);
+  expect(model.view()).toEqual(api.view());
+  expect(model.view()).toEqual(delta.ops);
+});
+
+test('can remove a bold text annotation', () => {
+  const model = Model.create();
+  model.ext.register(quill);
+  model.api.root(quill.new(''));
+  const api = model.api.in().asExt(quill);
+  let delta = new Delta([]);
+  const apply = (ops: QuillDeltaPatch['ops']) => {
+    api.apply(ops);
+    delta = delta.compose(new Delta(ops));
+  };
+  apply([{insert: 'ab'}]);
+  apply([{retain: 1}, {insert: '\n', attributes: {bold: true}}]);
+  apply([{retain: 1}, {retain: 1, attributes: {bold: null}}]);
   expect(model.view()).toEqual(api.view());
   expect(model.view()).toEqual(delta.ops);
 });

@@ -116,6 +116,7 @@ export class Overlay<T = string> implements Printable, Stateful {
   }
 
   /** @todo Rename to `chunks()`. */
+  /** @todo Rewrite this as `UndefIterator`. */
   public chunkSlices0(
     chunk: Chunk<T> | undefined,
     p1: Point<T>,
@@ -266,7 +267,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    */
   public findContained(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
-    let point = this.getOrNextLower(range.start);
+    let point = this.getOrNextLower(range.start) ?? this.first();
     if (!point) return result;
     do {
       if (!range.containsPoint(point)) continue;
@@ -294,7 +295,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    */
   public findOverlapping(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
-    let point = this.getOrNextLower(range.start);
+    let point: OverlayPoint<T> | undefined = this.getOrNextLower(range.start) ?? this.first();
     if (!point) return result;
     do {
       const slices = point.layers;

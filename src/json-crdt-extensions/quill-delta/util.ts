@@ -1,8 +1,8 @@
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
-import {OverlayPoint} from '../peritext/overlay/OverlayPoint';
-import {QuillDeltaAttributes} from './types';
 import {PersistedSlice} from '../peritext/slice/PersistedSlice';
 import {SliceBehavior} from '../peritext/slice/constants';
+import type {OverlayPoint} from '../peritext/overlay/OverlayPoint';
+import type {QuillDeltaAttributes} from './types';
 import type {PathStep} from '../../json-pointer';
 
 export const getAttributes = (overlayPoint: OverlayPoint): QuillDeltaAttributes | undefined => {
