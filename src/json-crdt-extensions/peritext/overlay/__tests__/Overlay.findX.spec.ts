@@ -65,6 +65,19 @@ const runFindContainedTests = (setup: () => Kit) => {
       expect(slices.size).toBe(1);
     });
 
+    test('returns a single contained character', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(1, 1);
+      const [slice] = editor.saved.insStack('<b>');
+      const range = peritext.rangeAt(1, 1);
+      range.expand();
+      peritext.editor.delCursors();
+      peritext.refresh();
+      const slices = peritext.overlay.findContained(range);
+      expect(slices.size).toBe(1);
+      expect([...slices][0]).toBe(slice);
+    });
+
     test('returns two contained slice', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(3, 1);
