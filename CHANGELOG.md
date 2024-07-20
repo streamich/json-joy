@@ -1,3 +1,17 @@
+## [16.13.2](https://github.com/streamich/json-joy/compare/v16.13.1...v16.13.2) (2024-07-20)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 do not miss second half of the contents ([dce7924](https://github.com/streamich/json-joy/commit/dce7924783e0cc37b96cbb57be3273e893ed8054))
+* **json-crdt-extensions:** 🐛 find contained slice when there is no leading point in index ([f3d64ee](https://github.com/streamich/json-joy/commit/f3d64eea708bdf51657a6f53281dbee31b027b67))
+* **json-crdt-extensions:** 🐛 find overlapping slices when there are no leads in index ([f630d85](https://github.com/streamich/json-joy/commit/f630d85bb39f9c1c18fad6a77c1a817525975738))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ proactively check for empty attributes ([b4d719c](https://github.com/streamich/json-joy/commit/b4d719c463276ead0a59aa2e0416195da48e7720))
+
 ## [16.13.1](https://github.com/streamich/json-joy/compare/v16.13.0...v16.13.1) (2024-07-15)
 
 
