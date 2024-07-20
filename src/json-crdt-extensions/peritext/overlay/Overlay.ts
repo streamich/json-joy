@@ -295,7 +295,7 @@ export class Overlay<T = string> implements Printable, Stateful {
    */
   public findOverlapping(range: Range<T>): Set<Slice<T>> {
     const result = new Set<Slice<T>>();
-    let point = this.getOrNextLower(range.start);
+    let point: OverlayPoint<T> | undefined = this.getOrNextLower(range.start) ?? first(this.root);
     if (!point) return result;
     do {
       const slices = point.layers;
