@@ -217,7 +217,7 @@ export class Overlay<T = string> implements Printable, Stateful {
           p2 = iterator();
         }
       }
-      return (p1 || p2) ? [p1, p2] : undefined;
+      return p1 || p2 ? [p1, p2] : undefined;
     };
   }
 

@@ -116,18 +116,12 @@ test('can remove a bold text annotation', () => {
   const api = model.api.in().asExt(quill);
   let delta = new Delta([]);
   const apply = (ops: QuillDeltaPatch['ops']) => {
-    api.apply(ops);  
+    api.apply(ops);
     delta = delta.compose(new Delta(ops));
   };
   apply([{insert: 'ab'}]);
-  apply([
-    {retain: 1},
-    {insert: '\n', attributes: {bold: true}},
-  ]);
-  apply([
-    {retain: 1},
-    {retain: 1, attributes: {bold: null}},
-  ]);
+  apply([{retain: 1}, {insert: '\n', attributes: {bold: true}}]);
+  apply([{retain: 1}, {retain: 1, attributes: {bold: null}}]);
   expect(model.view()).toEqual(api.view());
   expect(model.view()).toEqual(delta.ops);
 });
