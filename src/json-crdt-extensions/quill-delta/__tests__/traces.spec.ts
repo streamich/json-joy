@@ -29,8 +29,8 @@ const assertTrace = (trace: QuillTrace, api: QuillDeltaApi) => {
     } catch (err) {
       api.node.txt.refresh();
       // console.log(api.node.txt + '');
-      console.log(delta.ops);
-      console.log(api.node.view());
+      // console.log(delta.ops);
+      // console.log(api.node.view());
       // // tslint:disable-next-line:no-console
       console.log('index: ', i, transaction);
       throw err;
