@@ -1,6 +1,7 @@
 import {SyncStore} from '../../util/events/sync-store';
 import {JsonNodeApi} from '../model/api/types';
 import {JsonPatch} from './JsonPatch';
+import {toPath} from '../../json-pointer/util';
 import type {Path} from '../../json-pointer/types';
 import type {Model} from '../model';
 import type {Operation} from '../../json-patch';
@@ -27,6 +28,10 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
     const ops = Array.isArray(change) ? change : [change];
     this.patcher.apply(ops);
   };
+
+  public bind(path: string | Path): JsonPatchStore<N> {
+    return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
+  }
 
   // ---------------------------------------------------------------- SyncStore
 
