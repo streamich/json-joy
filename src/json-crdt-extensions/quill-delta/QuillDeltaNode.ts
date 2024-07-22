@@ -33,12 +33,16 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
   public name(): string {
     return MNEMONIC;
   }
+  
+  private _view: QuillDeltaOp[] = [];
+  private _viewHash: number = -1;
 
-  /** @todo Cache this value based on overlay hash. */
   public view(): QuillDeltaOp[] {
-    const ops: QuillDeltaOp[] = [];
     const overlay = this.txt.overlay;
     overlay.refresh(true);
+    const hash = overlay.hash;
+    if (hash === this._viewHash) return this._view;
+    const ops: QuillDeltaOp[] = [];
     let chunk: undefined | StringChunk;
     const nextTuple = overlay.tuples0(undefined);
     let tuple: OverlayTuple<string> | undefined;
@@ -69,6 +73,8 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
         ops.push(op);
       }
     }
+    this._viewHash = hash;
+    this._view = ops;
     return ops;
   }
 }

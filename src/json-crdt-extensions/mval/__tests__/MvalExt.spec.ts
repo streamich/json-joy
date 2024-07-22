@@ -1,5 +1,13 @@
 import {mval} from '..';
+import {s} from '../../../json-crdt-patch';
 import {Model} from '../../../json-crdt/model';
+
+test('view should preserve identity', () => {
+  const model = Model.create(s.obj({
+    mv: mval.new(1),
+  }));
+  expect(model.s.mv.toView()).toBe(model.s.mv.toView());
+});
 
 test('can set new values in single fork', () => {
   const model = Model.withLogicalClock();

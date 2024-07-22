@@ -13,6 +13,11 @@ const schema = s.obj({
   }),
 });
 
+test('view should preserve identity', () => {
+  const model = ModelWithExt.create(schema);
+  expect(model.s.nested.obj.text.toView()).toBe(model.s.nested.obj.text.toView());
+});
+
 describe('typed access', () => {
   test('can access PeritextNode in type safe way (using the proxy selector)', () => {
     const model = ModelWithExt.create(schema);
