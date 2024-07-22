@@ -5,17 +5,7 @@ import {interval} from '../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 import type {Path} from '../../json-pointer/types';
 import type {Model} from '../model';
-import type {
-  Operation,
-  OperationAdd,
-  OperationRemove,
-  OperationReplace,
-  OperationMove,
-  OperationCopy,
-  OperationTest,
-  OperationStrIns,
-  OperationStrDel,
-} from '../../json-patch';
+import type {Operation} from '../../json-patch';
 
 export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   constructor(
@@ -32,28 +22,28 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   public applyOp(op: Operation): this {
     switch (op.op) {
       case 'add':
-        this.applyAdd(op);
+        this.add(op.path, op.value);
         break;
       case 'remove':
-        this.applyRemove(op);
+        this.remove(op.path);
         break;
       case 'replace':
-        this.applyReplace(op);
+        this.replace(op.path, op.value);
         break;
       case 'move':
-        this.applyMove(op);
+        this.move(op.path, op.from);
         break;
       case 'copy':
-        this.applyCopy(op);
+        this.copy(op.path, op.from);
         break;
       case 'test':
-        this.applyTest(op);
+        this.test(op.path, op.value);
         break;
       case 'str_ins':
-        this.applyStrIns(op);
+        this.strIns(op.path, op.pos, op.str);
         break;
       case 'str_del':
-        this.applyStrDel(op);
+        this.strDel(op.path, op.pos, op.len ?? 0, op.str);
         break;
       default:
         throw new Error('UNKNOWN_OP');
@@ -70,39 +60,39 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     return this.pfx.concat(toPath(path));
   }
 
-  public applyAdd(op: OperationAdd): void {
+  public add(path: string | Path, value: unknown): void {
     const builder = this.builder();
-    const steps = this.toPath(op.path);
-    if (!steps.length) this.setRoot(op.value);
+    const steps = this.toPath(path);
+    if (!steps.length) this.setRoot(value);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
-        builder.insObj(node.id, [[String(key), builder.json(op.value)]]); // TODO: see if "con" nodes can be used here in some cases.
+        builder.insObj(node.id, [[String(key), builder.json(value)]]); // TODO: see if "con" nodes can be used here in some cases.
       } else if (node instanceof ArrNode) {
-        const value = builder.json(op.value);
+        const builderValue = builder.json(value);
         if (key === '-') {
           const length = node.length();
           const after = node.find(length - 1) || node.id;
-          builder.insArr(node.id, after, [value]);
+          builder.insArr(node.id, after, [builderValue]);
         } else {
           const index = ~~key;
           if ('' + index !== key) throw new Error('INVALID_INDEX');
-          if (!index) builder.insArr(node.id, node.id, [value]);
+          if (!index) builder.insArr(node.id, node.id, [builderValue]);
           else {
             const after = node.find(index - 1);
             if (!after) throw new Error('NOT_FOUND');
-            builder.insArr(node.id, after, [value]);
+            builder.insArr(node.id, after, [builderValue]);
           }
         }
       } else throw new Error('NOT_FOUND');
     }
   }
 
-  public applyRemove(op: OperationRemove): void {
+  public remove(path: string | Path): void {
     const builder = this.builder();
-    const steps = this.toPath(op.path);
+    const steps = this.toPath(path);
     if (!steps.length) this.setRoot(null);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
@@ -123,49 +113,48 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     }
   }
 
-  public applyReplace(op: OperationReplace): void {
-    const {path, value} = op;
-    this.applyRemove({op: 'remove', path});
-    this.applyAdd({op: 'add', path, value});
+  public replace(path: string | Path, value: unknown): void {
+    this.remove(path);
+    this.add(path, value);
   }
 
-  public applyMove(op: OperationMove): void {
-    const path = toPath(op.path);
-    const from = toPath(op.from);
+  public move(path: string | Path, from: string | Path): void {
+    path = toPath(path);
+    from = toPath(from);
     if (isChild(from, path)) throw new Error('INVALID_CHILD');
     const json = this.json(this.toPath(from));
-    this.applyRemove({op: 'remove', path: from});
-    this.applyAdd({op: 'add', path, value: json});
+    this.remove(from);
+    this.add(path, json);
   }
 
-  public applyCopy(op: OperationCopy): void {
-    const path = toPath(op.path);
-    const json = this.json(this.toPath(op.from));
-    this.applyAdd({op: 'add', path, value: json});
+  public copy(path: string | Path, from: string | Path): void {
+    path = toPath(path);
+    const json = this.json(this.toPath(from));
+    this.add(path, json);
   }
 
-  public applyTest(op: OperationTest): void {
-    const path = this.toPath(op.path);
+  public test(path: string | Path, value: unknown): void {
+    path = this.toPath(path);
     const json = this.json(path);
-    if (!deepEqual(json, op.value)) throw new Error('TEST');
+    if (!deepEqual(json, value)) throw new Error('TEST');
   }
 
-  public applyStrIns(op: OperationStrIns): void {
-    const path = this.toPath(op.path);
+  public strIns(path: string | Path, pos: number, str: string): void {
+    path = this.toPath(path);
     const {node} = this.model.api.str(path);
     const length = node.length();
-    const after = op.pos ? node.find(length < op.pos ? length - 1 : op.pos - 1) : node.id;
+    const after = pos ? node.find(length < pos ? length - 1 : pos - 1) : node.id;
     if (!after) throw new Error('OUT_OF_BOUNDS');
-    this.builder().insStr(node.id, after, op.str);
+    this.builder().insStr(node.id, after, str);
   }
 
-  public applyStrDel(op: OperationStrDel): void {
-    const path = this.toPath(op.path);
+  public strDel(path: string | Path, pos: number, len: number, str: string = ''): void {
+    path = this.toPath(path);
     const {node} = this.model.api.str(path);
     const length = node.length();
-    if (length <= op.pos) return;
-    const deletionLength = Math.min(op.len ?? op.str!.length, length - op.pos);
-    const range = node.findInterval(op.pos, deletionLength);
+    if (length <= pos) return;
+    const deletionLength = Math.min(len ?? str!.length, length - pos);
+    const range = node.findInterval(pos, deletionLength);
     if (!range) throw new Error('OUT_OF_BOUNDS');
     this.builder().del(node.id, range);
   }
