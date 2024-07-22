@@ -14,6 +14,11 @@ const schema = s.obj({
   }),
 });
 
+test('view should preserve identity', () => {
+  const model = ModelWithExt.create(schema);
+  expect(model.s.nested.obj.text.toView()).toBe(model.s.nested.obj.text.toView());
+});
+
 describe('non-typed access', () => {
   test('can access PeritextApi using path selector', () => {
     const model = ModelWithExt.create(schema);

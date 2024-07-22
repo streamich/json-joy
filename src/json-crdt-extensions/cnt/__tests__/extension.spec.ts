@@ -1,6 +1,15 @@
 import {cnt} from '..';
 import {Model} from '../../../json-crdt/model';
 
+test('view should preserve identity', () => {
+  const model = Model.create();
+  model.ext.register(cnt);
+  model.api.root({
+    counter: cnt.new(),
+  });
+  expect(model.view()).toBe(model.view());
+});
+
 test('can set new values in single fork', () => {
   const model = Model.withLogicalClock();
   model.ext.register(cnt);
