@@ -61,3 +61,45 @@ test('can subscribe and unsubscribe to changes', async () => {
     counter: 123,
   });
 });
+
+test('can bind to a sub-path', async () => {
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
+      }),
+    }),
+  );
+  const store = new JsonPatchStore(model, ['ui']);
+  const store2 = store.bind(['state']);
+  expect(store2.getSnapshot()).toEqual({
+    text: 'abc',
+    counter: 123,
+  });
+  store2.update({op: 'str_ins', path: '/text', pos: 3, str: 'x'});
+  expect(store2.getSnapshot()).toEqual({
+    text: 'abcx',
+    counter: 123,
+  });
+});
+
+test('can bind store to a "str" node', async () => {
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
+      }),
+    }),
+  );
+  const store = new JsonPatchStore(model, ['ui']);
+  const store2 = store.bind(['state', 'text']);
+  expect(store2.getSnapshot()).toEqual('abc');
+  store2.update({op: 'str_ins', path: '', pos: 3, str: 'x'});
+  expect(store2.getSnapshot()).toEqual('abcx');
+});

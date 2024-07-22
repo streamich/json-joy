@@ -28,6 +28,10 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
     this.patcher.apply(ops);
   };
 
+  public bind(path: Path): JsonPatchStore<N> {
+    return new JsonPatchStore(this.model, this.path.concat(path));
+  }
+
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe = (callback: () => void) => this.api.events.onChanges.listen(() => callback());
