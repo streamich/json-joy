@@ -14,6 +14,13 @@ import {splitUnSplitQuillTrace} from './traces/split-unsplit';
 import {blockHandlingQuillTrace} from './traces/blocks';
 import {insertDeleteImageQuillTrace} from './traces/insert-delete-image';
 import {annotateAnnotationsQuillTrace} from './traces/annotate-annotations';
+import {fuzz1QuillTrace} from './traces/fuzz-1';
+import {fuzz2QuillTrace} from './traces/fuzz-2';
+import {fuzz3QuillTrace} from './traces/fuzz-3';
+import {fuzz4QuillTrace} from './traces/fuzz-4';
+import {fuzz5QuillTrace} from './traces/fuzz-5';
+import {fuzz6QuillTrace} from './traces/fuzz-6';
+import {fuzz7QuillTrace} from './traces/fuzz-7';
 
 const assertTrace = (trace: QuillTrace, api: QuillDeltaApi) => {
   let delta = new Delta([]);
@@ -53,6 +60,13 @@ const traces: Trace[] = [
   ['block-handling', blockHandlingQuillTrace],
   ['insert-delete-image', insertDeleteImageQuillTrace],
   ['annotate-annotations', annotateAnnotationsQuillTrace],
+  ['fuzz-1', fuzz1QuillTrace],
+  ['fuzz-2', fuzz2QuillTrace],
+  ['fuzz-3', fuzz3QuillTrace],
+  ['fuzz-4', fuzz4QuillTrace],
+  ['fuzz-5', fuzz5QuillTrace],
+  ['fuzz-6', fuzz6QuillTrace],
+  ['fuzz-7', fuzz7QuillTrace],
 ];
 
 for (const [name, trace] of traces) {
