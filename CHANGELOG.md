@@ -1,3 +1,10 @@
+# [16.14.0](https://github.com/streamich/json-joy/compare/v16.13.2...v16.14.0) (2024-07-22)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add sample collected Quill fuzzer traces to tests ([1512870](https://github.com/streamich/json-joy/commit/151287098bcfa812f135b75961802e76eaed10a4))
+
 ## [16.13.2](https://github.com/streamich/json-joy/compare/v16.13.1...v16.13.2) (2024-07-20)
 
 
