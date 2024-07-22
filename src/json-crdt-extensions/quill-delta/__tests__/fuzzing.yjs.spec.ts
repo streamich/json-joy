@@ -15,10 +15,18 @@ const normalizeDelta = (delta: QuillDeltaOp[]): QuillDeltaOp[] => {
     if (typeof (last as any).delete === 'number' && typeof (curr as any).delete === 'number') {
       (last as QuillDeltaOpDelete).delete += (curr as QuillDeltaOpDelete).delete;
       toDelete.push(i);
-    } else if (typeof (last as any).retain === 'number' && typeof (curr as any).retain === 'number' && deepEqual((<any>last).attributes, (<any>curr).attributes)) {
+    } else if (
+      typeof (last as any).retain === 'number' &&
+      typeof (curr as any).retain === 'number' &&
+      deepEqual((<any>last).attributes, (<any>curr).attributes)
+    ) {
       (last as any).retain += (curr as any).retain;
       toDelete.push(i);
-    } else if (typeof (last as any).insert === 'string' && typeof (curr as any).insert === 'string' && deepEqual((<any>last).attributes, (<any>curr).attributes)) {
+    } else if (
+      typeof (last as any).insert === 'string' &&
+      typeof (curr as any).insert === 'string' &&
+      deepEqual((<any>last).attributes, (<any>curr).attributes)
+    ) {
       (last as any).insert += (curr as any).insert;
       toDelete.push(i);
     } else {
