@@ -1,3 +1,10 @@
+## [16.17.1](https://github.com/streamich/json-joy/compare/v16.17.0...v16.17.1) (2024-07-22)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 allow nested transactions ([d687561](https://github.com/streamich/json-joy/commit/d687561b62a22f5a3fc9820081ac8e803f3df9f4))
+
 # [16.17.0](https://github.com/streamich/json-joy/compare/v16.16.0...v16.17.0) (2024-07-22)
 
 
