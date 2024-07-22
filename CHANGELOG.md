@@ -1,3 +1,11 @@
+# [16.17.0](https://github.com/streamich/json-joy/compare/v16.16.0...v16.17.0) (2024-07-22)
+
+
+### Features
+
+* **json-crdt:** 🎸 add ability to bind to sub-state ([b012c6a](https://github.com/streamich/json-joy/commit/b012c6aa156cb0f03d5b2a7ccba6f77e5594cb92))
+* **json-crdt:** 🎸 allow string pointers ([680d47f](https://github.com/streamich/json-joy/commit/680d47ff31560208b4f9407b4151766f4519e022))
+
 # [16.16.0](https://github.com/streamich/json-joy/compare/v16.15.0...v16.16.0) (2024-07-22)
 
 
