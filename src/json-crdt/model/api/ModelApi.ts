@@ -262,10 +262,19 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
     return this.model.view();
   }
 
+  private inTx = false;
   public transaction(callback: () => void) {
-    this.onBeforeTransaction.emit();
-    callback();
-    this.onTransaction.emit();
+    if (this.inTx) callback();
+    else {
+      this.inTx = true;
+      try {
+        this.onBeforeTransaction.emit();
+        callback();
+        this.onTransaction.emit();
+      } finally {
+        this.inTx = false;
+      }
+    }
   }
 
   /**

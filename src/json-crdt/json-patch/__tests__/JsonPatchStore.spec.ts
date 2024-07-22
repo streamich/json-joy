@@ -103,3 +103,30 @@ test('can bind store to a "str" node', async () => {
   store2.update({op: 'str_ins', path: '', pos: 3, str: 'x'});
   expect(store2.getSnapshot()).toEqual('abcx');
 });
+
+test('can execute mutations inside a transaction', async () => {
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
+      }),
+    }),
+  );
+  const store = new JsonPatchStore(model, ['ui']);
+  const store2 = store.bind('/state/text');
+  expect(store2.getSnapshot()).toEqual('abc');
+  let cnt = 0;
+  model.api.onTransaction.listen(() => {
+    cnt++;
+  });
+  model.api.transaction(() => {
+    store2.update({op: 'str_ins', path: '', pos: 3, str: 'x'});
+  });
+  expect(cnt).toBe(1);
+  await tick(1);
+  expect(cnt).toBe(1);
+  expect(store2.getSnapshot()).toEqual('abcx');
+});
