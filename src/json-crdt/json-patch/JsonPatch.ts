@@ -15,7 +15,9 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
 
   public apply(ops: Operation[]): this {
     const length = ops.length;
-    for (let i = 0; i < length; i++) this.applyOp(ops[i]);
+    this.model.api.transaction(() => {
+      for (let i = 0; i < length; i++) this.applyOp(ops[i]);
+    });
     return this;
   }
 
