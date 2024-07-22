@@ -1,3 +1,18 @@
+# [16.15.0](https://github.com/streamich/json-joy/compare/v16.14.0...v16.15.0) (2024-07-22)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 include text changes in hash ([99936dc](https://github.com/streamich/json-joy/commit/99936dc7b90ca18f66a658bf7a386805a274babe))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 preserve object indentities in extension views ([0996683](https://github.com/streamich/json-joy/commit/099668338ee9b1b3ad838fb973edb5a364244a0b))
+* **json-crdt:** 🎸 add ability to prefix JsonPatch operations ([34d3188](https://github.com/streamich/json-joy/commit/34d3188aa256e8f10f074462b1a6af99684a6ecb))
+* **json-crdt:** 🎸 implement JsonPatchStore class ([dc0e6f3](https://github.com/streamich/json-joy/commit/dc0e6f340d9081b16decd1c2dd01deea59f25ba8))
+* **json-crdt:** 🎸 shorten and make declarative all JSON Patch methods for JSON CRDT ([cf437b8](https://github.com/streamich/json-joy/commit/cf437b83df7b613563e07bff4cf9d5f41fc73b4b))
+
 # [16.14.0](https://github.com/streamich/json-joy/compare/v16.13.2...v16.14.0) (2024-07-22)
 
 
