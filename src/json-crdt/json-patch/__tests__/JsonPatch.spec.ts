@@ -6,15 +6,11 @@ describe('prefixed', () => {
     const model = Model.create();
     model.api.root({
       level1: {
-        level2: {
-
-        },
+        level2: {},
       },
     });
     const jsonPatch = new JsonPatch(model, ['level1', 'level2']);
-    jsonPatch.apply([
-      {op: 'add', path: '/foo', value: 'bar'},
-    ]);
+    jsonPatch.apply([{op: 'add', path: '/foo', value: 'bar'}]);
     expect(model.view()).toEqual({
       level1: {
         level2: {
@@ -34,9 +30,7 @@ describe('prefixed', () => {
       },
     });
     const jsonPatch = new JsonPatch(model, ['level1', 'level2']);
-    jsonPatch.apply([
-      {op: 'replace', path: '/a', value: 'b'},
-    ]);
+    jsonPatch.apply([{op: 'replace', path: '/a', value: 'b'}]);
     expect(model.view()).toEqual({
       level1: {
         level2: {
@@ -56,9 +50,7 @@ describe('prefixed', () => {
       },
     });
     const jsonPatch = new JsonPatch(model, ['level1', 'level2']);
-    jsonPatch.apply([
-      {op: 'remove', path: '/foo/1/b'},
-    ]);
+    jsonPatch.apply([{op: 'remove', path: '/foo/1/b'}]);
     expect(model.view()).toEqual({
       level1: {
         level2: {
@@ -78,9 +70,7 @@ describe('prefixed', () => {
       },
     });
     const jsonPatch = new JsonPatch(model, ['level1', 'level2']);
-    jsonPatch.apply([
-      {op: 'move', path: '/x', from: '/a'},
-    ]);
+    jsonPatch.apply([{op: 'move', path: '/x', from: '/a'}]);
     expect(model.view()).toEqual({
       level1: {
         level2: {
@@ -100,9 +90,7 @@ describe('prefixed', () => {
       },
     });
     const jsonPatch = new JsonPatch(model, ['level1', 'level2']);
-    jsonPatch.apply([
-      {op: 'copy', path: '/x', from: '/a'},
-    ]);
+    jsonPatch.apply([{op: 'copy', path: '/x', from: '/a'}]);
     expect(model.view()).toEqual({
       level1: {
         level2: {

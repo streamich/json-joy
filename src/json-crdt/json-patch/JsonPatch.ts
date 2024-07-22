@@ -18,7 +18,10 @@ import type {
 } from '../../json-patch';
 
 export class JsonPatch<N extends JsonNode = JsonNode<any>> {
-  constructor(protected readonly model: Model<N>, protected readonly pfx: Path = []) {}
+  constructor(
+    protected readonly model: Model<N>,
+    protected readonly pfx: Path = [],
+  ) {}
 
   public apply(ops: Operation[]): this {
     const length = ops.length;

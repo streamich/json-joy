@@ -33,7 +33,7 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
   public name(): string {
     return MNEMONIC;
   }
-  
+
   private _view: QuillDeltaOp[] = [];
   private _viewHash: number = -1;
 

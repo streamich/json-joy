@@ -12,7 +12,10 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   protected _patcher: JsonPatch<N>;
   protected _pfx: string;
 
-  constructor(protected readonly model: Model<N>, protected readonly path: Path = []) {
+  constructor(
+    protected readonly model: Model<N>,
+    protected readonly path: Path = [],
+  ) {
     this._pfx = path.length ? path.join() : '';
     const api = model.api;
     this.node = api.find(path) as N;

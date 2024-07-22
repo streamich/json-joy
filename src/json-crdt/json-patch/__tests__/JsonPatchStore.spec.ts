@@ -4,14 +4,16 @@ import {Model} from '../../model';
 import {JsonPatchStore} from '../JsonPatchStore';
 
 test('can make updates', () => {
-  const model = Model.create(s.obj({
-    ui: s.obj({
-      state: s.obj({
-        text: s.str('abc'),
-        counter: s.con(123),
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
       }),
     }),
-  }));
+  );
   const store = new JsonPatchStore(model, ['ui', 'state']);
   store.update({op: 'str_ins', path: '/text', pos: 1, str: 'x'});
   store.update([
@@ -27,14 +29,16 @@ test('can make updates', () => {
 });
 
 test('can subscribe and unsubscribe to changes', async () => {
-  const model = Model.create(s.obj({
-    ui: s.obj({
-      state: s.obj({
-        text: s.str('abc'),
-        counter: s.con(123),
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
       }),
     }),
-  }));
+  );
   const store = new JsonPatchStore(model, ['ui', 'state']);
   let cnt = 0;
   const unsubscribe = store.subscribe(() => {
@@ -54,6 +58,6 @@ test('can subscribe and unsubscribe to changes', async () => {
   expect(cnt).toBe(2);
   expect(store.getSnapshot()).toEqual({
     text: 'axxxbc',
-    counter: 123
+    counter: 123,
   });
 });
