@@ -1,7 +1,9 @@
 import {deepEqual} from '../../json-equal/deepEqual';
-import {isChild, Path} from '../../json-pointer';
-import {ObjNode, ArrNode} from '../nodes';
-import {toPath} from '../../json-pointer/util';
+import {ObjNode, ArrNode, JsonNode} from '../nodes';
+import {toPath, isChild} from '../../json-pointer/util';
+import {interval} from '../../json-crdt-patch/clock';
+import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
+import type {Path} from '../../json-pointer/types';
 import type {Model} from '../model';
 import type {
   Operation,
@@ -14,11 +16,9 @@ import type {
   OperationStrIns,
   OperationStrDel,
 } from '../../json-patch';
-import {interval} from '../../json-crdt-patch/clock';
-import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
 
-export class JsonPatch {
-  constructor(protected readonly model: Model) {}
+export class JsonPatch<N extends JsonNode = JsonNode<any>> {
+  constructor(protected readonly model: Model<N>, protected readonly pfx: Path = []) {}
 
   public apply(ops: Operation[]): this {
     const length = ops.length;
@@ -29,7 +29,7 @@ export class JsonPatch {
   public applyOp(op: Operation): this {
     switch (op.op) {
       case 'add':
-        this.applyOpAdd(op);
+        this.applyAdd(op);
         break;
       case 'remove':
         this.applyRemove(op);
@@ -63,9 +63,13 @@ export class JsonPatch {
     return this.model.api.builder;
   }
 
-  public applyOpAdd(op: OperationAdd): void {
+  public toPath(path: string | Path): Path {
+    return this.pfx.concat(toPath(path));
+  }
+
+  public applyAdd(op: OperationAdd): void {
     const builder = this.builder();
-    const steps = toPath(op.path);
+    const steps = this.toPath(op.path);
     if (!steps.length) this.setRoot(op.value);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
@@ -95,7 +99,7 @@ export class JsonPatch {
 
   public applyRemove(op: OperationRemove): void {
     const builder = this.builder();
-    const steps = toPath(op.path);
+    const steps = this.toPath(op.path);
     if (!steps.length) this.setRoot(null);
     else {
       const objSteps = steps.slice(0, steps.length - 1);
@@ -119,33 +123,32 @@ export class JsonPatch {
   public applyReplace(op: OperationReplace): void {
     const {path, value} = op;
     this.applyRemove({op: 'remove', path});
-    this.applyOpAdd({op: 'add', path, value});
+    this.applyAdd({op: 'add', path, value});
   }
 
   public applyMove(op: OperationMove): void {
     const path = toPath(op.path);
     const from = toPath(op.from);
     if (isChild(from, path)) throw new Error('INVALID_CHILD');
-    const json = this.json(from);
+    const json = this.json(this.toPath(from));
     this.applyRemove({op: 'remove', path: from});
-    this.applyOpAdd({op: 'add', path, value: json});
+    this.applyAdd({op: 'add', path, value: json});
   }
 
   public applyCopy(op: OperationCopy): void {
     const path = toPath(op.path);
-    const from = toPath(op.from);
-    const json = this.json(from);
-    this.applyOpAdd({op: 'add', path, value: json});
+    const json = this.json(this.toPath(op.from));
+    this.applyAdd({op: 'add', path, value: json});
   }
 
   public applyTest(op: OperationTest): void {
-    const path = toPath(op.path);
+    const path = this.toPath(op.path);
     const json = this.json(path);
     if (!deepEqual(json, op.value)) throw new Error('TEST');
   }
 
   public applyStrIns(op: OperationStrIns): void {
-    const path = toPath(op.path);
+    const path = this.toPath(op.path);
     const {node} = this.model.api.str(path);
     const length = node.length();
     const after = op.pos ? node.find(length < op.pos ? length - 1 : op.pos - 1) : node.id;
@@ -154,7 +157,7 @@ export class JsonPatch {
   }
 
   public applyStrDel(op: OperationStrDel): void {
-    const path = toPath(op.path);
+    const path = this.toPath(op.path);
     const {node} = this.model.api.str(path);
     const length = node.length();
     if (length <= op.pos) return;
