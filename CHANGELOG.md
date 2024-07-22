@@ -1,3 +1,11 @@
+# [16.16.0](https://github.com/streamich/json-joy/compare/v16.15.0...v16.16.0) (2024-07-22)
+
+
+### Features
+
+* **json-crdt:** 🎸 apply JSON Patch operations in a tracsaction ([b377d7c](https://github.com/streamich/json-joy/commit/b377d7c0ea4bf3cd0dd6fa2bd6495743f54573d5))
+* **json-crdt:** 🎸 inprove JsonPatchStore interface ([dcbbc54](https://github.com/streamich/json-joy/commit/dcbbc548bf9ab7fc5c603094bbf9e142eb037065))
+
 # [16.15.0](https://github.com/streamich/json-joy/compare/v16.14.0...v16.15.0) (2024-07-22)
 
 
