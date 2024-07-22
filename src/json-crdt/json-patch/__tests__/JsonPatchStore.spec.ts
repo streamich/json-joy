@@ -98,7 +98,7 @@ test('can bind store to a "str" node', async () => {
     }),
   );
   const store = new JsonPatchStore(model, ['ui']);
-  const store2 = store.bind(['state', 'text']);
+  const store2 = store.bind('/state/text');
   expect(store2.getSnapshot()).toEqual('abc');
   store2.update({op: 'str_ins', path: '', pos: 3, str: 'x'});
   expect(store2.getSnapshot()).toEqual('abcx');
