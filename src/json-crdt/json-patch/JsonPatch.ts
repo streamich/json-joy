@@ -72,7 +72,7 @@ export class JsonPatch {
       const node = this.model.api.find(objSteps);
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
-        builder.insObj(node.id, [[String(key), builder.json(op.value)]]);
+        builder.insObj(node.id, [[String(key), builder.json(op.value)]]); // TODO: see if "con" nodes can be used here in some cases.
       } else if (node instanceof ArrNode) {
         const value = builder.json(op.value);
         if (key === '-') {
