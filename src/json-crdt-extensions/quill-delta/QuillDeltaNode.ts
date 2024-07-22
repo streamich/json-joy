@@ -7,6 +7,7 @@ import {ExtensionId} from '../constants';
 import {MNEMONIC, QuillConst} from './constants';
 import {ExtNode} from '../../json-crdt/extensions/ExtNode';
 import {getAttributes} from './util';
+import {updateRga} from '../../json-crdt/hash';
 import type {QuillDataNode, QuillDeltaAttributes, QuillDeltaOp, QuillDeltaOpInsert} from './types';
 import type {StringChunk} from '../peritext/util/types';
 import type {OverlayTuple} from '../peritext/overlay/types';
@@ -39,8 +40,7 @@ export class QuillDeltaNode extends ExtNode<QuillDataNode> {
 
   public view(): QuillDeltaOp[] {
     const overlay = this.txt.overlay;
-    overlay.refresh(true);
-    const hash = overlay.hash;
+    const hash = updateRga(overlay.refresh(true), this.txt.str);
     if (hash === this._viewHash) return this._view;
     const ops: QuillDeltaOp[] = [];
     let chunk: undefined | StringChunk;
