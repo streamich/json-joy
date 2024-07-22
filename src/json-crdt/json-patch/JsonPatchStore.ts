@@ -9,23 +9,23 @@ import type {JsonNode, JsonNodeView} from '../nodes';
 export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncStore<Readonly<JsonNodeView<N>>> {
   public readonly node: N;
   public readonly api: JsonNodeApi<N>;
-  protected _patcher: JsonPatch<N>;
-  protected _pfx: string;
+  public readonly patcher: JsonPatch<N>;
+  public readonly pfx: string;
 
   constructor(
     protected readonly model: Model<N>,
-    protected readonly path: Path = [],
+    public readonly path: Path = [],
   ) {
-    this._pfx = path.length ? path.join() : '';
+    this.pfx = path.length ? path.join() : '';
     const api = model.api;
     this.node = api.find(path) as N;
     this.api = api.wrap(this.node) as unknown as JsonNodeApi<N>;
-    this._patcher = new JsonPatch(model, path);
+    this.patcher = new JsonPatch(model, path);
   }
 
   public readonly update = (change: Operation | Operation[]): void => {
     const ops = Array.isArray(change) ? change : [change];
-    this._patcher.apply(ops);
+    this.patcher.apply(ops);
   };
 
   // ---------------------------------------------------------------- SyncStore
