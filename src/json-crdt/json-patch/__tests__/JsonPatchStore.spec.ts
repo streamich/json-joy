@@ -28,7 +28,7 @@ test('can make updates', () => {
   });
 });
 
-test('can subscribe and unsubscribe to changes', async () => {
+test('can subscribe and unsubscribe to changes', () => {
   const model = Model.create(
     s.obj({
       ui: s.obj({
@@ -44,17 +44,13 @@ test('can subscribe and unsubscribe to changes', async () => {
   const unsubscribe = store.subscribe(() => {
     cnt++;
   });
-  await tick(1);
   expect(cnt).toBe(0);
   store.update({op: 'str_ins', path: '/text', pos: 1, str: 'x'});
-  await tick(1);
   expect(cnt).toBe(1);
   store.update({op: 'str_ins', path: '/text', pos: 1, str: 'x'});
-  await tick(1);
   expect(cnt).toBe(2);
   unsubscribe();
   store.update({op: 'str_ins', path: '/text', pos: 1, str: 'x'});
-  await tick(1);
   expect(cnt).toBe(2);
   expect(store.getSnapshot()).toEqual({
     text: 'axxxbc',
@@ -62,7 +58,7 @@ test('can subscribe and unsubscribe to changes', async () => {
   });
 });
 
-test('can bind to a sub-path', async () => {
+test('can bind to a sub-path', () => {
   const model = Model.create(
     s.obj({
       ui: s.obj({
@@ -86,7 +82,7 @@ test('can bind to a sub-path', async () => {
   });
 });
 
-test('can bind store to a "str" node', async () => {
+test('can bind store to a "str" node', () => {
   const model = Model.create(
     s.obj({
       ui: s.obj({
@@ -104,7 +100,7 @@ test('can bind store to a "str" node', async () => {
   expect(store2.getSnapshot()).toEqual('abcx');
 });
 
-test('can execute mutations inside a transaction', async () => {
+test('can execute mutations inside a transaction', () => {
   const model = Model.create(
     s.obj({
       ui: s.obj({
@@ -126,7 +122,6 @@ test('can execute mutations inside a transaction', async () => {
     store2.update({op: 'str_ins', path: '', pos: 3, str: 'x'});
   });
   expect(cnt).toBe(1);
-  await tick(1);
   expect(cnt).toBe(1);
   expect(store2.getSnapshot()).toEqual('abcx');
 });
