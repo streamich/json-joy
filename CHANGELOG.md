@@ -1,3 +1,10 @@
+# [16.18.0](https://github.com/streamich/json-joy/compare/v16.17.1...v16.18.0) (2024-07-23)
+
+
+### Features
+
+* **json-crdt:** 🎸 make JSON Patch JSON CRDT store events synchronous ([c43305e](https://github.com/streamich/json-joy/commit/c43305e924ffa33091fa4b58dcaf71c4f5ed8c10))
+
 ## [16.17.1](https://github.com/streamich/json-joy/compare/v16.17.0...v16.17.1) (2024-07-22)
 
 
