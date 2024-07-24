@@ -1,4 +1,3 @@
-import {tick} from 'thingies';
 import {s} from '../../../json-crdt-patch';
 import {Model} from '../../model';
 import {JsonPatchStore} from '../JsonPatchStore';
@@ -25,6 +24,31 @@ test('can make updates', () => {
     text: 'axybc',
     counter: 124,
     foo: true,
+  });
+});
+
+test('supports "reset" events', () => {
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
+      }),
+    }),
+  );
+  const clone = model.clone();
+  const store = new JsonPatchStore(model, ['ui', 'state']);
+  expect(store.getSnapshot()).toEqual({
+    text: 'abc',
+    counter: 123,
+  });
+  clone.api.obj('/ui/state').set({text: 'def', counter: 456});
+  model.reset(clone);
+  expect(store.getSnapshot()).toEqual({
+    text: 'def',
+    counter: 456,
   });
 });
 

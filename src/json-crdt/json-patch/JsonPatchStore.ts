@@ -8,19 +8,15 @@ import type {Operation} from '../../json-patch';
 import type {JsonNode, JsonNodeView} from '../nodes';
 
 export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncStore<Readonly<JsonNodeView<N>>> {
-  public readonly node: N;
-  public readonly api: JsonNodeApi<N>;
   public readonly patcher: JsonPatch<N>;
   public readonly pfx: string;
 
   constructor(
-    protected readonly model: Model<N>,
+    public readonly model: Model<N>,
     public readonly path: Path = [],
   ) {
     this.pfx = path.length ? path.join() : '';
     const api = model.api;
-    this.node = api.find(path) as N;
-    this.api = api.wrap(this.node) as unknown as JsonNodeApi<N>;
     this.patcher = new JsonPatch(model, path);
     this.subscribe = (listener) => api.onChange.listen(listener);
   }
@@ -34,8 +30,12 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
     return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
   }
 
+  public api(): JsonNodeApi<N> {
+    return this.model.api.find(this.path) as unknown as JsonNodeApi<N>;
+  }
+
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe: SyncStore<any>['subscribe'];
-  public readonly getSnapshot = () => this.node.view() as Readonly<JsonNodeView<N>>;
+  public readonly getSnapshot = () => this.api().view() as Readonly<JsonNodeView<N>>;
 }
