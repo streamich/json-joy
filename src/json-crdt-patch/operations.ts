@@ -210,7 +210,7 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
     let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
     for (let i = 0; i < this.data.length; i++) {
       const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
+      out += `\n${tab} ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
     }
     return out;
   }
