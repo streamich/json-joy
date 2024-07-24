@@ -1,3 +1,11 @@
+## [16.18.1](https://github.com/streamich/json-joy/compare/v16.18.0...v16.18.1) (2024-07-24)
+
+
+### Bug Fixes
+
+* **json-crdt-patch:** 🐛 correct "obj" and "vec" text dumps ([d601792](https://github.com/streamich/json-joy/commit/d60179284c8ad0be3cd394667b5b0c6ccff16781))
+* **json-crdt-patch:** 🐛 remove extra space ([f3c2fea](https://github.com/streamich/json-joy/commit/f3c2fea47df63e94d28de65b4d5b1768a40d3cdc))
+
 # [16.18.0](https://github.com/streamich/json-joy/compare/v16.17.1...v16.18.0) (2024-07-23)
 
 
