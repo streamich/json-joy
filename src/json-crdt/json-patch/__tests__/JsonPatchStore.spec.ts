@@ -52,6 +52,35 @@ test('supports "reset" events', () => {
   });
 });
 
+test('can read sub-value of the store', () => {
+  const model = Model.create(
+    s.obj({
+      ui: s.obj({
+        state: s.obj({
+          text: s.str('abc'),
+          counter: s.con(123),
+        }),
+      }),
+    }),
+  );
+  const store = new JsonPatchStore(model, ['ui']);
+  expect(store.get('')).toEqual({
+    state: {
+      text: 'abc',
+      counter: 123,
+    },
+  });
+  expect(store.get('/state')).toEqual({
+    text: 'abc',
+    counter: 123,
+  });
+  expect(store.get('/state/text')).toEqual('abc');
+  expect(store.get(['state', 'counter'])).toEqual(123);
+  expect(store.get(['state', 'counter2'])).toEqual(undefined);
+  expect(store.get(['stateasdf'])).toEqual(undefined);
+  expect(store.get('/asdf')).toEqual(undefined);
+});
+
 test('can subscribe and unsubscribe to changes', () => {
   const model = Model.create(
     s.obj({
