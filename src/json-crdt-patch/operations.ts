@@ -1,5 +1,6 @@
-import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
+import {printTree} from 'tree-dump/lib/printTree';
 import {type ITimestampStruct, type ITimespanStruct, Timestamp, printTs} from './clock';
+import type {IJsonCrdtPatchEditOperation, IJsonCrdtPatchOperation} from './types';
 
 /**
  * Operation which creates a constant "con" data type.
@@ -22,13 +23,14 @@ export class NewConOp implements IJsonCrdtPatchOperation {
 
   public toString(tab: string = ''): string {
     const val = this.val;
+    const klass = 'Uint8Array';
     const valFormatted =
       val instanceof Timestamp
         ? `{ ${printTs(val)} }`
         : val instanceof Uint8Array
           ? val.length < 13
-            ? `Uint8Array { ${('' + val).replaceAll(',', ', ')} }`
-            : `Uint8Array(${val.length})`
+            ? `${klass} { ${('' + val).replaceAll(',', ', ')} }`
+            : `${klass}(${val.length})`
           : `{ ${JSON.stringify(val)} }`;
     return `${this.name()} ${printTs(this.id)} ${valFormatted}`;
   }
@@ -207,12 +209,14 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
-    for (let i = 0; i < this.data.length; i++) {
-      const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
-    }
-    return out;
+    const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
+    return (
+      header +
+      printTree(
+        tab,
+        this.data.map((item) => (tab) => `${JSON.stringify(item[0])}: ${printTs(item[1])}`),
+      )
+    );
   }
 }
 
@@ -237,12 +241,14 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
   }
 
   public toString(tab: string = ''): string {
-    let out = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
-    for (let i = 0; i < this.data.length; i++) {
-      const isLast = i === this.data.length - 1;
-      out += `\n${tab}  ${isLast ? '└─' : '├─'} ${JSON.stringify(this.data[i][0])}: ${printTs(this.data[i][1])}`;
-    }
-    return out;
+    const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
+    return (
+      header +
+      printTree(
+        tab,
+        this.data.map((item) => (tab) => `${item[0]}: ${printTs(item[1])}`),
+      )
+    );
   }
 }
 

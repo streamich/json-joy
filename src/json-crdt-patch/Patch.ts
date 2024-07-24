@@ -1,6 +1,7 @@
 import * as operations from './operations';
 import {ITimestampStruct, ts, printTs} from './clock';
 import {SESSION} from './constants';
+import {printTree} from 'tree-dump/lib/printTree';
 import {encode, decode} from './codec/binary';
 import type {Printable} from 'tree-dump/lib/types';
 
@@ -205,11 +206,13 @@ export class Patch implements Printable {
    */
   public toString(tab: string = ''): string {
     const id = this.getId();
-    let out = `${this.constructor.name} ${id ? printTs(id) : '(nil)'}!${this.span()}`;
-    for (let i = 0; i < this.ops.length; i++) {
-      const isLast = i === this.ops.length - 1;
-      out += `\n${tab}${isLast ? '└─' : '├─'} ${this.ops[i].toString(tab + (isLast ? '  ' : '│ '))}`;
-    }
-    return out;
+    const header = `${this.constructor.name} ${id ? printTs(id) : '(nil)'}!${this.span()}`;
+    return (
+      header +
+      printTree(
+        tab,
+        this.ops.map((op) => (tab) => op.toString(tab)),
+      )
+    );
   }
 }

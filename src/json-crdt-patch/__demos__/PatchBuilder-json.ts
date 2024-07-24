@@ -6,7 +6,7 @@
  *    npx nodemon -q -x ts-node src/json-crdt-patch/__demos__/PatchBuilder-json.ts
  */
 
-import {PatchBuilder, Patch} from '..';
+import {PatchBuilder, Patch, schema} from '..';
 import {LogicalClock} from '../clock';
 
 console.clear();
@@ -18,6 +18,7 @@ const json = {
   foo: 'bar',
   baz: 123,
   bools: [true, false],
+  tuple: schema.vec(schema.con(123), schema.con(true)),
 };
 
 builder.root(builder.json(json));
@@ -25,7 +26,7 @@ builder.root(builder.json(json));
 const patch = builder.flush();
 console.log(patch.toString());
 
-// Patch 123.456!17
+// Patch 123.456!21
 // ├─ new_obj 123.456
 // ├─ new_str 123.457
 // ├─ ins_str 123.458!3, obj = 123.457 { 123.457 ← "bar" }
@@ -38,24 +39,37 @@ console.log(patch.toString());
 // ├─ new_con 123.467 { false }
 // ├─ ins_val 123.468!1, obj = 123.466, val = 123.467
 // ├─ ins_arr 123.469!2, obj = 123.462 { 123.462 ← 123.463, 123.466 }
-// ├─ ins_obj 123.471!1, obj = 123.456
-// │   ├─ "foo": 123.457
-// │   ├─ "baz": 123.461
-// │   └─ "bools": 123.462
-// └─ ins_val 123.472!1, obj = 0.0, val = 123.456
+// ├─ new_vec 123.471
+// ├─ new_con 123.472 { 123 }
+// ├─ new_con 123.473 { true }
+// ├─ ins_vec 123.474!1, obj = 123.471
+// │  ├─ 0: 123.472
+// │  └─ 1: 123.473
+// ├─ ins_obj 123.475!1, obj = 123.456
+// │  ├─ "foo": 123.457
+// │  ├─ "baz": 123.461
+// │  ├─ "bools": 123.462
+// │  └─ "tuple": 123.471
+// └─ ins_val 123.476!1, obj = 0.0, val = 123.456
 
 const buf = patch.toBinary();
 console.log(buf);
-// Uint8Array(38) [
-//   123,  1, 200,   3, 246, 2,  4, 108,  1,  1,
-//     1,  1,  98,  97, 114, 0, 24, 123, 74,  1,
-//     0, 99, 102, 111, 111, 1,  1,  99, 98, 97,
-//   122,  1,   5,   9,   0, 0,  1,   0
+
+// Uint8Array(95) [
+//   123, 200,   3, 247,  18,  16,  32,  99, 73,   7,  73,   7,
+//    98,  97, 114,   0,  24, 123,  48,   8,  0, 245,  72,  79,
+//     7,  80,   7,   8,   0, 244,  72,  82,  7,  83,   7, 114,
+//    78,   7,  78,   7,  79,   7,  82,   7, 24,   0,  24, 123,
+//     0, 245,  90,  87,   7,   0,  88,   7,  1,  89,   7,  84,
+//    72,   7,  99, 102, 111, 111,  73,   7, 99,  98,  97, 122,
+//    77,   7, 101,  98, 111, 111, 108, 115, 78,   7, 101, 116,
+//   117, 112, 108, 101,  87,   7,  72, 128,  0,  72,   7
 // ]
 
 const patch2 = Patch.fromBinary(buf);
 console.log(patch2.toString());
-// Patch 123.456!17
+
+// Patch 123.456!21
 // ├─ new_obj 123.456
 // ├─ new_str 123.457
 // ├─ ins_str 123.458!3, obj = 123.457 { 123.457 ← "bar" }
@@ -68,8 +82,15 @@ console.log(patch2.toString());
 // ├─ new_con 123.467 { false }
 // ├─ ins_val 123.468!1, obj = 123.466, val = 123.467
 // ├─ ins_arr 123.469!2, obj = 123.462 { 123.462 ← 123.463, 123.466 }
-// ├─ ins_obj 123.471!1, obj = 123.456
-// │   ├─ "foo": 123.457
-// │   ├─ "baz": 123.461
-// │   └─ "bools": 123.462
-// └─ ins_val 123.472!1, obj = 0.0, val = 123.456
+// ├─ new_vec 123.471
+// ├─ new_con 123.472 { 123 }
+// ├─ new_con 123.473 { true }
+// ├─ ins_vec 123.474!1, obj = 123.471
+// │  ├─ 0: 123.472
+// │  └─ 1: 123.473
+// ├─ ins_obj 123.475!1, obj = 123.456
+// │  ├─ "foo": 123.457
+// │  ├─ "baz": 123.461
+// │  ├─ "bools": 123.462
+// │  └─ "tuple": 123.471
+// └─ ins_val 123.476!1, obj = 0.0, val = 123.456
