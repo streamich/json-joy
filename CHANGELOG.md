@@ -1,3 +1,11 @@
+# [16.19.0](https://github.com/streamich/json-joy/compare/v16.18.1...v16.19.0) (2024-07-24)
+
+
+### Features
+
+* **json-crdt:** 🎸 add ability to deeply select value in store ([2c55b24](https://github.com/streamich/json-joy/commit/2c55b24e161513f049fe12f2986517be689fd29c))
+* **json-crdt:** 🎸 add support "reset" events JSON Patch store ([71c80a8](https://github.com/streamich/json-joy/commit/71c80a8daf52395b2c0de6ea2506ccd0f697fb20))
+
 ## [16.18.1](https://github.com/streamich/json-joy/compare/v16.18.0...v16.18.1) (2024-07-24)
 
 
