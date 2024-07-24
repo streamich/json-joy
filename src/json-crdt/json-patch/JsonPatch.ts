@@ -161,7 +161,11 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     this.builder().del(node.id, range);
   }
 
-  private get(steps: Path): unknown {
+  public get(path: string | Path): unknown {
+    return this._get(this.toPath(path));
+  }
+
+  private _get(steps: Path): unknown {
     const model = this.model;
     if (!steps.length) return model.view();
     else {
@@ -182,7 +186,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
   }
 
   private json(steps: Path): unknown {
-    const json = this.get(steps);
+    const json = this._get(steps);
     if (json === undefined) throw new Error('NOT_FOUND');
     return json;
   }
