@@ -207,6 +207,12 @@ export class Patch implements Printable {
   public toString(tab: string = ''): string {
     const id = this.getId();
     const header = `${this.constructor.name} ${id ? printTs(id) : '(nil)'}!${this.span()}`;
-    return header + printTree(tab, this.ops.map((op) => (tab) => op.toString(tab)));
+    return (
+      header +
+      printTree(
+        tab,
+        this.ops.map((op) => (tab) => op.toString(tab)),
+      )
+    );
   }
 }

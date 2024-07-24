@@ -210,7 +210,13 @@ export class InsObjOp implements IJsonCrdtPatchEditOperation {
 
   public toString(tab: string = ''): string {
     const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
-    return header + printTree(tab, this.data.map((item) => (tab) => `${JSON.stringify(item[0])}: ${printTs(item[1])}`));
+    return (
+      header +
+      printTree(
+        tab,
+        this.data.map((item) => (tab) => `${JSON.stringify(item[0])}: ${printTs(item[1])}`),
+      )
+    );
   }
 }
 
@@ -236,7 +242,13 @@ export class InsVecOp implements IJsonCrdtPatchEditOperation {
 
   public toString(tab: string = ''): string {
     const header = `${this.name()} ${printTs(this.id)}!${this.span()}, obj = ${printTs(this.obj)}`;
-    return header + printTree(tab, this.data.map((item) => (tab) => `${item[0]}: ${printTs(item[1])}`));
+    return (
+      header +
+      printTree(
+        tab,
+        this.data.map((item) => (tab) => `${item[0]}: ${printTs(item[1])}`),
+      )
+    );
   }
 }
 
