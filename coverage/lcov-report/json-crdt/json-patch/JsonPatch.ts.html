@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.57% </span>
+                <span class="strong">90.64% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>125/138</span>
+                <span class='fraction'>126/139</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>17/17</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.63% </span>
+                <span class="strong">96.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>115/119</span>
+                <span class='fraction'>116/120</span>
             </div>
         
             
@@ -257,7 +257,11 @@
 <a name='L192'></a><a href='#L192'>192</a>
 <a name='L193'></a><a href='#L193'>193</a>
 <a name='L194'></a><a href='#L194'>194</a>
-<a name='L195'></a><a href='#L195'>195</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -268,8 +272,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">65x</span>
-<span class="cline-any cline-yes">65x</span>
+<span class="cline-any cline-yes">67x</span>
+<span class="cline-any cline-yes">67x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -318,7 +322,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">103x</span>
+<span class="cline-any cline-yes">110x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -421,14 +425,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">22x</span>
-<span class="cline-any cline-yes">22x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-yes">29x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -614,7 +622,11 @@ export class JsonPatch&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; {
     this.builder().del(node.id, range);
   }
 &nbsp;
-  private get(steps: Path): unknown {
+  public get(path: string | Path): unknown {
+    return this._get(this.toPath(path));
+  }
+&nbsp;
+  private _get(steps: Path): unknown {
     const model = this.model;
     if (!steps.length) return model.view();
     else {
@@ -635,7 +647,7 @@ export class JsonPatch&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; {
   }
 &nbsp;
   private json(steps: Path): unknown {
-    const json = this.get(steps);
+    const json = this._get(steps);
     <span class="missing-if-branch" title="if path not taken" >I</span>if (json === undefined) <span class="cstat-no" title="statement not covered" >throw new Error('NOT_FOUND');</span>
     return json;
   }
@@ -652,7 +664,7 @@ export class JsonPatch&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-07-24T20:34:22.179Z
+                at 2024-07-24T21:40:16.190Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

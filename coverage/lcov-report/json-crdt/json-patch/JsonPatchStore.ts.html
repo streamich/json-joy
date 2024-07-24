@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/5</span>
+                <span class='fraction'>3/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>17/17</span>
             </div>
         
             
@@ -104,36 +104,40 @@
 <a name='L39'></a><a href='#L39'>39</a>
 <a name='L40'></a><a href='#L40'>40</a>
 <a name='L41'></a><a href='#L41'>41</a>
-<a name='L42'></a><a href='#L42'>42</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -141,9 +145,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {SyncStore} from '../../util/events/sync-store';
 import {JsonNodeApi} from '../model/api/types';
@@ -155,19 +163,15 @@ import type {Operation} from '../../json-patch';
 import type {JsonNode, JsonNodeView} from '../nodes';
 &nbsp;
 export class JsonPatchStore&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; implements SyncStore&lt;Readonly&lt;JsonNodeView&lt;N&gt;&gt;&gt; {
-  public readonly node: N;
-  public readonly api: JsonNodeApi&lt;N&gt;;
   public readonly patcher: JsonPatch&lt;N&gt;;
   public readonly pfx: string;
 &nbsp;
   constructor(
-    protected readonly model: Model&lt;N&gt;,
+    public readonly model: Model&lt;N&gt;,
     public readonly path: Path = <span class="branch-0 cbranch-no" title="branch not covered" >[],</span>
   ) {
     this.pfx = path.length ? path.join() : <span class="branch-1 cbranch-no" title="branch not covered" >'';</span>
     const api = model.api;
-    this.node = api.find(path) as N;
-    this.api = api.wrap(this.node) as unknown as JsonNodeApi&lt;N&gt;;
     this.patcher = new JsonPatch(model, path);
     this.subscribe = (listener) =&gt; api.onChange.listen(listener);
   }
@@ -177,14 +181,22 @@ export class JsonPatchStore&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; impl
     this.patcher.apply(ops);
   };
 &nbsp;
+  public readonly get = (path: string | Path = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: unknown =&gt; {
+    return this.patcher.get(path);
+  };
+&nbsp;
   public bind(path: string | Path): JsonPatchStore&lt;N&gt; {
     return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
+  }
+&nbsp;
+  public api(): JsonNodeApi&lt;N&gt; {
+    return this.model.api.find(this.path) as unknown as JsonNodeApi&lt;N&gt;;
   }
 &nbsp;
   // ---------------------------------------------------------------- SyncStore
 &nbsp;
   public readonly subscribe: SyncStore&lt;any&gt;['subscribe'];
-  public readonly getSnapshot = () =&gt; this.node.view() as Readonly&lt;JsonNodeView&lt;N&gt;&gt;;
+  public readonly getSnapshot = () =&gt; this.api().view() as Readonly&lt;JsonNodeView&lt;N&gt;&gt;;
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -193,7 +205,7 @@ export class JsonPatchStore&lt;N extends JsonNode = JsonNode&lt;any&gt;&gt; impl
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-07-24T20:34:22.179Z
+                at 2024-07-24T21:40:16.190Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
