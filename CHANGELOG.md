@@ -1,3 +1,11 @@
+# [16.20.0](https://github.com/streamich/json-joy/compare/v16.19.0...v16.20.0) (2024-07-28)
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 improve Patch .rebase() operation ([2bd08bc](https://github.com/streamich/json-joy/commit/2bd08bc7275fae2524494a153edec4004a8ae400))
+* **json-crdt:** 🎸 when forking, detect if sid was already used ([6d3cdf7](https://github.com/streamich/json-joy/commit/6d3cdf7dea10d8c87f302c9e5361f8fe7719a4ce))
+
 # [16.19.0](https://github.com/streamich/json-joy/compare/v16.18.1...v16.19.0) (2024-07-24)
 
 
