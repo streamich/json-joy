@@ -5,7 +5,7 @@ import {Model} from '../Model';
 
 describe('clone()', () => {
   test('can clone a simple document', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json({foo: 'bar', gg: [123]});
     builder1.root(obj);
@@ -17,7 +17,7 @@ describe('clone()', () => {
   });
 
   test('can modify the cloned copy independently', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json({foo: 'bar', hh: true});
     builder1.root(obj);
@@ -34,7 +34,7 @@ describe('clone()', () => {
   });
 
   test('can clone a document with string edits', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     doc1.api.root({
       foo: 'abc',
     });
@@ -48,7 +48,7 @@ describe('clone()', () => {
   });
 
   test('can clone a document with string deletes', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     doc1.api.root({
       foo: 'abc',
     });
@@ -63,7 +63,7 @@ describe('clone()', () => {
   });
 
   test('can clone a document with object edits', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     doc1.api.root({
       foo: {
         a: 1,
@@ -90,7 +90,7 @@ describe('clone()', () => {
   });
 
   test('can clone array with edits', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     doc1.api.root({
       foo: {
         a: [1],
@@ -110,7 +110,7 @@ describe('clone()', () => {
   });
 
   test('can clone an empty model', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const doc2 = doc1.clone();
     expect(doc1.clock.sid === doc2.clock.sid).toBe(true);
     expect(doc1.view()).toBe(undefined);
@@ -126,7 +126,7 @@ describe('clone()', () => {
 
 describe('fork()', () => {
   test('can fork a simple document', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json([1, 2, 'lol']);
     builder1.root(obj);
@@ -138,7 +138,7 @@ describe('fork()', () => {
   });
 
   test('forked document has a different session ID', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const builder1 = new PatchBuilder(doc1.clock);
     const obj = builder1.json([1, 2, 'lol']);
     builder1.root(obj);
@@ -149,7 +149,7 @@ describe('fork()', () => {
   });
 
   test('can modify the cloned copy independently', () => {
-    const doc1 = Model.withLogicalClock();
+    const doc1 = Model.create();
     const builder1 = new PatchBuilder(doc1.clock);
     const arr = builder1.json([1, 2, 'lol']);
     builder1.root(arr);
@@ -186,8 +186,8 @@ describe('fork()', () => {
 
 describe('reset()', () => {
   test('resets model state', () => {
-    const doc1 = Model.withLogicalClock();
-    const doc2 = Model.withLogicalClock();
+    const doc1 = Model.create();
+    const doc2 = Model.create();
     doc1.api.root({foo: 123});
     doc2.api.root({
       text: 'hello',
@@ -207,8 +207,8 @@ describe('reset()', () => {
   });
 
   test('models can be edited separately', () => {
-    const doc1 = Model.withLogicalClock();
-    const doc2 = Model.withLogicalClock();
+    const doc1 = Model.create();
+    const doc2 = Model.create();
     doc1.api.root({foo: 123});
     doc2.api.root({
       text: 'hello',
@@ -224,8 +224,8 @@ describe('reset()', () => {
   });
 
   test('emits change event on reset', async () => {
-    const doc1 = Model.withLogicalClock();
-    const doc2 = Model.withLogicalClock();
+    const doc1 = Model.create();
+    const doc2 = Model.create();
     doc1.api.root({foo: 123});
     doc2.api.root({
       text: 'hello',
@@ -239,7 +239,7 @@ describe('reset()', () => {
   });
 
   test('preserves API nodes when model is reset', async () => {
-    const doc1 = Model.withLogicalClock().setSchema(
+    const doc1 = Model.create().setSchema(
       schema.obj({
         text: schema.str('hell'),
       }),
