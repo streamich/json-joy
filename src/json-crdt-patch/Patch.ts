@@ -120,7 +120,8 @@ export class Patch implements Printable {
     for (let i = 0; i < length; i++) {
       const op = ops[i];
       if (op instanceof operations.DelOp) patchOps.push(new operations.DelOp(ts(op.id), ts(op.obj), op.what));
-      else if (op instanceof operations.NewConOp) patchOps.push(new operations.NewConOp(ts(op.id), op.val instanceof Timestamp ? ts(op.val) : op.val));
+      else if (op instanceof operations.NewConOp)
+        patchOps.push(new operations.NewConOp(ts(op.id), op.val instanceof Timestamp ? ts(op.val) : op.val));
       else if (op instanceof operations.NewVecOp) patchOps.push(new operations.NewVecOp(ts(op.id)));
       else if (op instanceof operations.NewValOp) patchOps.push(new operations.NewValOp(ts(op.id)));
       else if (op instanceof operations.NewObjOp) patchOps.push(new operations.NewObjOp(ts(op.id)));
