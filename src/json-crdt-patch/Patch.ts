@@ -1,6 +1,5 @@
 import * as operations from './operations';
-import {ITimestampStruct, ts, printTs} from './clock';
-import {SESSION} from './constants';
+import {ITimestampStruct, ts, printTs, Timestamp} from './clock';
 import {printTree} from 'tree-dump/lib/printTree';
 import {encode, decode} from './codec/binary';
 import type {Printable} from 'tree-dump/lib/types';
@@ -121,7 +120,7 @@ export class Patch implements Printable {
     for (let i = 0; i < length; i++) {
       const op = ops[i];
       if (op instanceof operations.DelOp) patchOps.push(new operations.DelOp(ts(op.id), ts(op.obj), op.what));
-      else if (op instanceof operations.NewConOp) patchOps.push(new operations.NewConOp(ts(op.id), op.val));
+      else if (op instanceof operations.NewConOp) patchOps.push(new operations.NewConOp(ts(op.id), op.val instanceof Timestamp ? ts(op.val) : op.val));
       else if (op instanceof operations.NewVecOp) patchOps.push(new operations.NewVecOp(ts(op.id)));
       else if (op instanceof operations.NewValOp) patchOps.push(new operations.NewValOp(ts(op.id)));
       else if (op instanceof operations.NewObjOp) patchOps.push(new operations.NewObjOp(ts(op.id)));
@@ -144,36 +143,44 @@ export class Patch implements Printable {
             op.data.map(([key, value]) => [key, ts(value)]),
           ),
         );
+      else if (op instanceof operations.InsVecOp)
+        patchOps.push(
+          new operations.InsVecOp(
+            ts(op.id),
+            ts(op.obj),
+            op.data.map(([key, value]) => [key, ts(value)]),
+          ),
+        );
       else if (op instanceof operations.NopOp) patchOps.push(new operations.NopOp(ts(op.id), op.len));
     }
     return patch;
   }
 
   /**
-   * The .rebase() operation is meant to work only with patch that use
-   * the server clock. When receiving a patch from a client, the starting
-   * ID of the patch can be out of sync with the server clock. For example,
-   * if some other user has in the meantime pushed operations to the server.
+   * The `.rebase()` operation is meant to be applied to patches which have not
+   * yet been advertised to the server (other peers), or when
+   * the server clock is used and concurrent change on the server happened.
    *
    * The .rebase() operation returns a new `Patch` with the IDs recalculated
-   * such that the first operation has ID of the patch is equal to the
-   * actual server time tip.
+   * such that the first operation has the `time` equal to `newTime`.
    *
-   * @param serverTime Real server time tip (ID of the next expected operation).
+   * @param newTime Time where the patch ID should begin (ID of the first operation).
+   * @param transformAfter Time after (and including) which the IDs should be
+   *     transformed. If not specified, equals to the time of the first operation.
    */
-  public rebase(serverTime: number, transformHorizon: number): Patch {
+  public rebase(newTime: number, transformAfter?: number): Patch {
     const id = this.getId();
     if (!id) throw new Error('EMPTY_PATCH');
+    const sid = id.sid;
     const patchStartTime = id.time;
-    if (patchStartTime === serverTime) return this;
-    const delta = serverTime - patchStartTime;
+    transformAfter ??= patchStartTime;
+    if (patchStartTime === newTime) return this;
+    const delta = newTime - patchStartTime;
     return this.rewriteTime((id: ITimestampStruct): ITimestampStruct => {
-      const sessionId = id.sid;
-      const isServerTimestamp = sessionId === SESSION.SERVER;
-      if (!isServerTimestamp) return id;
+      if (id.sid !== sid) return id;
       const time = id.time;
-      if (time < transformHorizon) return id;
-      return ts(SESSION.SERVER, time + delta);
+      if (time < transformAfter) return id;
+      return ts(sid, time + delta);
     });
   }
 
