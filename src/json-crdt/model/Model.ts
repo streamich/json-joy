@@ -35,6 +35,24 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   public static readonly sid = randomSessionId;
 
   /**
+   * Use this method to generate a random session ID for an existing document.
+   * It checks for the uniqueness of the session ID given the current peers in
+   * the document. This reduces the chance of collision substantially.
+   *
+   * @returns A random session ID that is not used by any peer in the current
+   *     document.
+   */
+  public rndSid(): number {
+    const clock = this.clock;
+    const sid = clock.sid;
+    const peers = clock.peers;
+    while (true) {
+      const candidate = randomSessionId();
+      if (sid !== candidate && !peers.has(candidate)) return candidate;
+    }
+  }
+
+  /**
    * Create a CRDT model which uses logical clock. Logical clock assigns a
    * logical timestamp to every node and operation. Logical timestamp consists
    * of a session ID and sequence number 2-tuple. Logical clocks allow to
@@ -46,7 +64,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @deprecated Use `Model.create()` instead.
    */
   public static readonly withLogicalClock = (clockOrSessionId?: clock.ClockVector | number): Model => {
-    return Model.create(undefined, clockOrSessionId);
+    return Model.create(void 0, clockOrSessionId);
   };
 
   /**
@@ -62,7 +80,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @deprecated Use `Model.create()` instead: `Model.create(undefined, SESSION.SERVER)`.
    */
   public static readonly withServerClock = (time: number = 1): Model => {
-    return Model.create(undefined, new clock.ServerClockVector(SESSION.SERVER, time));
+    return Model.create(void 0, new clock.ServerClockVector(SESSION.SERVER, time));
   };
 
   /**
@@ -193,7 +211,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     const first = patches[0];
     const sid = first.getId()!.sid;
     if (!sid) throw new Error('NO_SID');
-    const model = Model.withLogicalClock(sid);
+    const model = Model.create(void 0, sid);
     model.applyBatch(patches);
     return model;
   }
@@ -436,7 +454,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    * @param sessionId Session ID to use for the new model.
    * @returns A copy of this model with a new session ID.
    */
-  public fork(sessionId: number = Model.sid()): Model<N> {
+  public fork(sessionId: number = this.rndSid()): Model<N> {
     const copy = Model.fromBinary(this.toBinary()) as unknown as Model<N>;
     if (copy.clock.sid !== sessionId && copy.clock instanceof clock.ClockVector)
       copy.clock = copy.clock.fork(sessionId);

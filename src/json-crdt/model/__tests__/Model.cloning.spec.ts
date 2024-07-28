@@ -165,6 +165,23 @@ describe('fork()', () => {
     expect(doc2.view()).toEqual([true, 1, 2, 'lol']);
     expect(doc1.clock.sid !== doc2.clock.sid).toBe(true);
   });
+
+  test('does not reuse existing session IDs when forking', () => {
+    const rnd = Math.random;
+    let i = 0;
+    Math.random = () => {
+      i++;
+      return i < 20 ? 0.5 : i < 24 ? 0.1 : i < 30 ? 0.5 : rnd();
+    };
+    const model = Model.create();
+    model.api.root(123);
+    const model2 = model.fork();
+    const model3 = model2.fork();
+    expect(model.clock.sid).not.toBe(model2.clock.sid);
+    expect(model3.clock.sid).not.toBe(model2.clock.sid);
+    expect(model3.clock.sid).not.toBe(model.clock.sid);
+    Math.random = rnd;
+  });
 });
 
 describe('reset()', () => {
