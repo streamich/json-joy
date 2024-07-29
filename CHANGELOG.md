@@ -1,3 +1,10 @@
+# [16.22.0](https://github.com/streamich/json-joy/compare/v16.21.0...v16.22.0) (2024-07-29)
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 allow readin patches sequentially ([ad98179](https://github.com/streamich/json-joy/commit/ad9817974bc573116fd1bf6a40be163bd5e1a35a))
+
 # [16.21.0](https://github.com/streamich/json-joy/compare/v16.20.0...v16.21.0) (2024-07-29)
 
 
