@@ -29,8 +29,12 @@ export class Decoder extends CborDecoder<CrdtReader> {
    * @returns A JSON CRDT patch.
    */
   public decode(data: Uint8Array): Patch {
+    this.reader.reset(data);
+    return this.readPatch();
+  }
+
+  public readPatch(): Patch {
     const reader = this.reader;
-    reader.reset(data);
     const sid = reader.vu57();
     const time = reader.vu57();
     const isServerClock = sid === SESSION.SERVER;
