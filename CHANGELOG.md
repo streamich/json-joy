@@ -1,3 +1,10 @@
+# [16.21.0](https://github.com/streamich/json-joy/compare/v16.20.0...v16.21.0) (2024-07-29)
+
+
+### Features
+
+* 🎸 bump upstream dependencies ([f8a507f](https://github.com/streamich/json-joy/commit/f8a507f1c532f0fdd7957fa533415f25b0ffc731))
+
 # [16.20.0](https://github.com/streamich/json-joy/compare/v16.19.0...v16.20.0) (2024-07-28)
 
 
