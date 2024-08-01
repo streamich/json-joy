@@ -1,3 +1,10 @@
+## [16.22.1](https://github.com/streamich/json-joy/compare/v16.22.0...v16.22.1) (2024-08-01)
+
+
+### Bug Fixes
+
+* **json-type-value:** 🐛 add default type for values ([ee36743](https://github.com/streamich/json-joy/commit/ee367432dad787cc51775f0e98cd2721d973a17f))
+
 # [16.22.0](https://github.com/streamich/json-joy/compare/v16.21.0...v16.22.0) (2024-07-29)
 
 
