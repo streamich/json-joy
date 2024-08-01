@@ -1,7 +1,7 @@
 import type {JsonValueCodec} from '@jsonjoy.com/json-pack/lib/codecs/types';
 import type {ResolveType, Type} from '../json-type';
 
-export class Value<T extends Type> {
+export class Value<T extends Type = Type> {
   constructor(
     public type: T,
     public data: ResolveType<T>,
