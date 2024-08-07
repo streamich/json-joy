@@ -23,14 +23,6 @@ export class TypeSystem implements Printable {
     return alias;
   };
 
-  public importTypes<A extends TypeMap>(
-    types: A,
-  ): {readonly [K in keyof A]: TypeAlias<K extends string ? K : never, A[K]>} {
-    const result = {} as any;
-    for (const id in types) result[id] = this.alias(id, types[id]);
-    return result;
-  }
-
   public readonly unalias = <K extends string>(id: K): TypeAlias<K, Type> => {
     const alias = this.aliases.get(id);
     if (!alias) throw new Error(`Alias [id = ${id}] not found.`);
@@ -63,6 +55,14 @@ export class TypeSystem implements Printable {
     for (const [id, alias] of this.aliases.entries()) {
       result[id] = alias.getType().getSchema();
     }
+    return result;
+  }
+
+  public importTypes<A extends TypeMap>(
+    types: A,
+  ): {readonly [K in keyof A]: TypeAlias<K extends string ? K : never, /** @todo Replace `any` by inferred type here. */ any>} {
+    const result = {} as any;
+    for (const id in types) result[id] = this.alias(id, this.t.import(types[id]));
     return result;
   }
 
