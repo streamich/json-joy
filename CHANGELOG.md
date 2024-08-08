@@ -1,3 +1,15 @@
+# [16.23.0](https://github.com/streamich/json-joy/compare/v16.22.1...v16.23.0) (2024-08-08)
+
+
+### Bug Fixes
+
+* **json-type-value:** 🐛 show value encoding problemsn in development mode ([24d5adb](https://github.com/streamich/json-joy/commit/24d5adb96622b3f146a05a597cd2a61fd84c8ed9))
+
+
+### Features
+
+* **json-type:** 🎸 improve type builder import method ([544188a](https://github.com/streamich/json-joy/commit/544188a8d439f5493576ff8e97a4bc9ae2d9d337))
+
 ## [16.22.1](https://github.com/streamich/json-joy/compare/v16.22.0...v16.22.1) (2024-08-01)
 
 
