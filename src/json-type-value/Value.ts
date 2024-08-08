@@ -6,7 +6,7 @@ export class Value<T extends Type = Type> {
     public type: T,
     public data: ResolveType<T>,
   ) {}
-  
+
   public encode(codec: JsonValueCodec): void {
     const value = this.data;
     const type = this.type;

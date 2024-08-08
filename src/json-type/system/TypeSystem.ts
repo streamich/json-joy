@@ -60,7 +60,12 @@ export class TypeSystem implements Printable {
 
   public importTypes<A extends TypeMap>(
     types: A,
-  ): {readonly [K in keyof A]: TypeAlias<K extends string ? K : never, /** @todo Replace `any` by inferred type here. */ any>} {
+  ): {
+    readonly [K in keyof A]: TypeAlias<
+      K extends string ? K : never,
+      /** @todo Replace `any` by inferred type here. */ any
+    >;
+  } {
     const result = {} as any;
     for (const id in types) result[id] = this.alias(id, this.t.import(types[id]));
     return result;

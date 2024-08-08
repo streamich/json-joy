@@ -198,9 +198,13 @@ export class TypeBuilder {
       case 'ref':
         return this.Ref(node.ref).options(node);
       case 'fn':
-        return this.Function(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(node);
+        return this.Function(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(
+          node,
+        );
       case 'fn$':
-        return this.Function$(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(node);
+        return this.Function$(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(
+          node,
+        );
     }
     throw new Error(`UNKNOWN_NODE [${node.kind}]`);
   }
