@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.14% </span>
+                <span class="strong">93.57% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>102/105</span>
+                <span class='fraction'>102/109</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.1% </span>
+                <span class="strong">84.37% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>27/29</span>
+                <span class='fraction'>27/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">97.36% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>37/37</span>
+                <span class='fraction'>37/38</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.95% </span>
+                <span class="strong">95.04% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>96/98</span>
+                <span class='fraction'>96/101</span>
             </div>
         
             
@@ -299,7 +299,17 @@
 <a name='L234'></a><a href='#L234'>234</a>
 <a name='L235'></a><a href='#L235'>235</a>
 <a name='L236'></a><a href='#L236'>236</a>
-<a name='L237'></a><a href='#L237'>237</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">25x</span>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -480,6 +490,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">22x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">47x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">87x</span>
@@ -496,6 +508,14 @@
 <span class="cline-any cline-yes">35x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -715,6 +735,8 @@ export class TypeBuilder {
         return this.Binary(this.import(node.type), node);
       case 'arr':
         return this.Array(this.import(node.type), node);
+<span class="branch-6 cbranch-no" title="branch not covered" >      case 'tup':</span>
+<span class="cstat-no" title="statement not covered" >        return this.Tuple(...node.types.map(<span class="fstat-no" title="function not covered" >(t</span>: schema.Schema) =&gt; <span class="cstat-no" title="statement not covered" >this.import(t))</span>).options(node);</span>
       case 'obj': {
         return this.Object(
           ...node.fields.map((f: any) =&gt;
@@ -732,6 +754,14 @@ export class TypeBuilder {
         return this.Or(...node.types.map((t) =&gt; this.import(t as schema.Schema))).options(node);
       case 'ref':
         return this.Ref(node.ref).options(node);
+<span class="branch-12 cbranch-no" title="branch not covered" >      case 'fn':</span>
+<span class="cstat-no" title="statement not covered" >        return this.Function(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(</span>
+          node,
+        );
+<span class="branch-13 cbranch-no" title="branch not covered" >      case 'fn$':</span>
+<span class="cstat-no" title="statement not covered" >        return this.Function$(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(</span>
+          node,
+        );
     }
 <span class="cstat-no" title="statement not covered" >    throw new Error(`UNKNOWN_NODE [${node.kind}]`);</span>
   }
@@ -778,7 +808,7 @@ export class TypeBuilder {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-08-02T04:55:34.052Z
+                at 2024-08-08T09:55:25.275Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
