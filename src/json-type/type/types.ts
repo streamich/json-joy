@@ -35,7 +35,7 @@ export type SchemaOfObjectFieldType<F> =
 
 export type SchemaOfObjectFields<F> = {[K in keyof F]: SchemaOfObjectFieldType<F[K]>};
 
-export type TypeMap = {[name: string]: Type};
+export type TypeMap = {[name: string]: schema.Schema};
 
 export type FilterFunctions<T> = {
   [K in keyof T as T[K] extends classes.FunctionType<any, any>

@@ -178,6 +178,8 @@ export class TypeBuilder {
         return this.Binary(this.import(node.type), node);
       case 'arr':
         return this.Array(this.import(node.type), node);
+      case 'tup':
+        return this.Tuple(...node.types.map((t: schema.Schema) => this.import(t))).options(node);
       case 'obj': {
         return this.Object(
           ...node.fields.map((f: any) =>
@@ -195,6 +197,14 @@ export class TypeBuilder {
         return this.Or(...node.types.map((t) => this.import(t as schema.Schema))).options(node);
       case 'ref':
         return this.Ref(node.ref).options(node);
+      case 'fn':
+        return this.Function(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(
+          node,
+        );
+      case 'fn$':
+        return this.Function$(this.import(node.req as schema.Schema), this.import(node.res as schema.Schema)).options(
+          node,
+        );
     }
     throw new Error(`UNKNOWN_NODE [${node.kind}]`);
   }
