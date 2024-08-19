@@ -286,7 +286,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
   public flush(): Patch {
     const patch = this.builder.flush();
     this.next = 0;
-    this.onFlush.emit(patch);
+    if (patch.ops.length) this.onFlush.emit(patch);
     return patch;
   }
 
