@@ -1,3 +1,10 @@
+## [16.23.1](https://github.com/streamich/json-joy/compare/v16.23.0...v16.23.1) (2024-08-19)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 make change flush safe ([91a37ae](https://github.com/streamich/json-joy/commit/91a37ae67bfed5aceba923f67004ca7eda5115d7))
+
 # [16.23.0](https://github.com/streamich/json-joy/compare/v16.22.1...v16.23.0) (2024-08-08)
 
 
