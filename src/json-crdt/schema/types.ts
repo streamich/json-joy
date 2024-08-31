@@ -26,7 +26,11 @@ export type SchemaToJsonNode<S> = S extends builder.str<infer T>
                   ? nodes.VecNode<ExtensionVecData<QuillDeltaNode>>
                   : S extends builder.ext<ExtensionId.mval, any>
                     ? nodes.VecNode<ExtensionVecData<MvalNode>>
-                    : nodes.JsonNode;
+                    : S extends builder.json<infer T> 
+                      ? T 
+                      : S extends builder.jsonCon<infer T> 
+                        ? T 
+                        : nodes.JsonNode;
 
 export type ExtensionVecData<EDataNode extends ExtNode<any, any>> = {__BRAND__: 'ExtVecData'} & [
   header: nodes.ConNode<Uint8Array>,
