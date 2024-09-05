@@ -19,7 +19,9 @@ class FileNode extends ExtNode<ObjNode, FileView> {
     return {type: 'File', content: {type: 'Content'}};
   }
 }
-class FileApi extends NodeApi<FileNode> implements ExtApi<FileNode> {}
+class FileApi extends NodeApi<FileNode> implements ExtApi<FileNode> {
+  rename() {}
+}
 export const File = new Extension(101, 'File', FileNode, FileApi, () =>
   s.obj({type: s.con('File'), content: s.map({})}),
 );
@@ -34,7 +36,9 @@ describe('Extensions', () => {
     });
     const model = Model.create(schema, 1, {extensions: [File, ext.cnt, ext.mval]});
     const v = model.view();
+    const f1 = model.api.node.get('field1');
     // now typed correctly
     type ModelView = typeof v;
+    type NodeApi = typeof f1;
   });
 });

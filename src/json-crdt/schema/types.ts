@@ -29,13 +29,9 @@ export type SchemaToJsonNode<S, Extensions extends Extension<number, any, any, a
                     ? nodes.VecNode<ExtensionVecData<MvalNode>>
                     : S extends builder.ext<infer ExtId, any>
                       ? Extensions extends (infer ExtsUnion)[] 
-                          ? nodes.VecNode<
-                              ExtensionVecData<
-                                Extract<ExtsUnion, { readonly id: ExtId }> extends Extension<any, any, infer M, any, any, any>
-                                  ? M extends ExtNode<any, any>?M:never
-                                  : never
-                              >
-                            >
+                          ? Extract<ExtsUnion, { readonly id: ExtId }> extends Extension<any, any, infer M, any, any, any>
+                                ? M
+                                : never
                           : never
                       : nodes.JsonNode;
 

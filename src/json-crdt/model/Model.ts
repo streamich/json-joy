@@ -23,7 +23,9 @@ export const UNDEFINED = new ConNode(ORIGIN, undefined);
  * In instance of Model class represents the underlying data structure,
  * i.e. model, of the JSON CRDT document.
  */
-export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
+export class Model<N extends JsonNode = JsonNode<any>, Exts extends Extension<number, any, any, any, any>[] = []>
+  implements Printable
+{
   /**
    * Generates a random session ID. Use this method to generate a session ID
    * for a new user. Store the session ID in the user's browser or device once
@@ -152,14 +154,14 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     schema?: S,
     sidOrClock: clock.ClockVector | number = Model.sid(),
     options?: {extensions?: E},
-  ): Model<SchemaToJsonNode<S, E>> => {
+  ): Model<SchemaToJsonNode<S, E>, E> => {
     const cl =
       typeof sidOrClock === 'number'
         ? sidOrClock === SESSION.SERVER
           ? new clock.ServerClockVector(SESSION.SERVER, 1)
           : new clock.ClockVector(sidOrClock, 1)
         : sidOrClock;
-    const model = new Model<SchemaToJsonNode<S, E>>(cl);
+    const model = new Model<SchemaToJsonNode<S, E>, E>(cl);
     for (const extension of options?.extensions ?? []) {
       model.ext.register(extension);
     }
@@ -196,8 +198,8 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     sid?: number,
     schema?: S,
     options?: {extensions?: E},
-  ): Model<SchemaToJsonNode<S, E>> => {
-    const model = decoder.decode(data) as unknown as Model<SchemaToJsonNode<S, E>>;
+  ): Model<SchemaToJsonNode<S, E>,E> => {
+    const model = decoder.decode(data) as unknown as Model<SchemaToJsonNode<S, E>,E>;
     for (const extension of options?.extensions ?? []) {
       model.ext.register(extension);
     }
@@ -261,13 +263,13 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   }
 
   /** @ignore */
-  private _api?: ModelApi<N>;
+  private _api?: ModelApi<N, Exts>;
 
   /**
    * API for applying local changes to the current document.
    */
-  public get api(): ModelApi<N> {
-    if (!this._api) this._api = new ModelApi<N>(this);
+  public get api(): ModelApi<N, Exts> {
+    if (!this._api) this._api = new ModelApi<N, Exts>(this);
     return this._api;
   }
 
@@ -476,7 +478,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
    *
    * @returns A copy of this model with the same session ID.
    */
-  public clone(): Model<N> {
+  public clone(): Model<N, Exts> {
     return this.fork(this.clock.sid);
   }
 
@@ -493,7 +495,7 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   /**
    * Resets the model to equivalent state of another model.
    */
-  public reset(to: Model<N>): void {
+  public reset(to: Model<N, Exts>): void {
     this.onbeforereset?.();
     const index = this.index;
     this.index = new AvlMap<clock.ITimestampStruct, JsonNode>(clock.compare);

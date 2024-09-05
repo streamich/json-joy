@@ -7,7 +7,8 @@ import {SyncStore} from '../../../util/events/sync-store';
 import {MergeFanOut, MicrotaskBufferFanOut} from './fanout';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Model} from '../Model';
-import type {JsonNode, JsonNodeView} from '../../nodes';
+import type {JsonNode, JsonNodeView, RootNode} from '../../nodes';
+import {Extension} from '../../extensions/Extension';
 
 /**
  * Local changes API for a JSON CRDT model. This class is the main entry point
@@ -15,7 +16,9 @@ import type {JsonNode, JsonNodeView} from '../../nodes';
  *
  * @category Local API
  */
-export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNodeView<N>> {
+export class ModelApi<N extends JsonNode = JsonNode, Extensions extends Extension<number, any, any, any, any>[] = []>
+  implements SyncStore<JsonNodeView<N>>
+{
   /**
    * Patch builder for the local changes.
    */
@@ -99,7 +102,7 @@ export class ModelApi<N extends JsonNode = JsonNode> implements SyncStore<JsonNo
    * Local changes API for the root node.
    */
   public get r() {
-    return new ValApi(this.model.root, this);
+    return new ValApi<RootNode<N>, Extensions>(this.model.root, this);
   }
 
   /** @ignore */
