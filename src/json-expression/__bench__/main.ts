@@ -50,12 +50,12 @@ const fn = codegen.run().compile();
 const suite = new Benchmark.Suite();
 suite
   .add(`json-joy/json-expression JsonExpressionCodegen`, () => {
-    fn({vars: new Vars(json)});
+    fn(new Vars(json));
   })
   .add(`json-joy/json-expression JsonExpressionCodegen with codegen`, () => {
     const codegen = new JsonExpressionCodegen({expression, operators: operatorsMap});
     const fn = codegen.run().compile();
-    fn({vars: new Vars(json)});
+    fn(new Vars(json));
   })
   .add(`json-joy/json-expression evaluate`, () => {
     evaluate(expression, {vars: new Vars(json)});

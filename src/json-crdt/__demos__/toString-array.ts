@@ -25,7 +25,9 @@ model.api.root({
 
 const str = model.api.str(['foo']);
 
-str.ins(3, 'def').ins(6, 'ghi').del(1, 2);
+str.ins(3, 'def');
+str.ins(6, 'ghi');
+str.del(1, 2);
 
 model.api.obj([]).del(['baz']);
 model.api.obj([]).set({

@@ -54,22 +54,24 @@ console.log('After adding a nested object:');
 console.log('');
 console.log(model.toString());
 
-model.api
-  .obj([])
-  .set({
-    about: 'I am a software engineer. I like to write code. (Codepilot wrote this demo.)',
-    verified: true,
-    sex: null,
-  })
-  .val(['age'])
-  .set(18);
+const objNode = model.api.obj([]);
+objNode.set({
+  about: 'I am a software engineer. I like to write code. (Codepilot wrote this demo.)',
+  verified: true,
+  sex: null,
+});
+objNode.val(['age']);
+objNode.set(18);
 
 console.log('');
 console.log('Editing /name field a bit more:');
 console.log('');
 console.log(model.toString());
 
-model.api.str(['name']).del(7, 3).ins(7, 'Bravo!').ins(0, '💪 ');
+const strNode = model.api.str(['name']);
+strNode.del(7, 3);
+strNode.ins(7, 'Bravo!');
+strNode.ins(0, '💪 ');
 
 console.log('');
 console.log('After some more name editing:');
