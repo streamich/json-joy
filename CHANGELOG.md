@@ -1,3 +1,10 @@
+## [16.23.2](https://github.com/streamich/json-joy/compare/v16.23.1...v16.23.2) (2024-09-17)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 do not detach builder clock on .reset() ([e668d84](https://github.com/streamich/json-joy/commit/e668d84c0e0447bfd89339ff82785874118ba8ac))
+
 ## [16.23.1](https://github.com/streamich/json-joy/compare/v16.23.0...v16.23.1) (2024-08-19)
 
 
