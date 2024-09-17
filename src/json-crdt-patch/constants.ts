@@ -17,7 +17,7 @@ export const enum SESSION {
    * attributing it to any specific user. For example, when the initial document
    * is created, the default patch can be applied on all clients to result in
    * the same initial state on all clients.
-   * 
+   *
    * @todo Rename or alias this to `SCHEMA`.
    */
   GLOBAL = 2,
