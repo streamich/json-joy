@@ -47,7 +47,7 @@ export class PatchBuilder {
    *
    * @param clock Clock to use for generating timestamps.
    */
-  constructor(public readonly clock: IClock) {
+  constructor(public clock: IClock) {
     this.patch = new Patch();
   }
 

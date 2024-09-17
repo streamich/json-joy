@@ -22,6 +22,8 @@ export interface JsonNode<View = unknown> extends Identifiable {
 
   /**
    * Returns a list of immediate child nodes.
+   *
+   * @todo: Use `UndefIterator` interface here.
    */
   children(callback: (node: JsonNode) => void): void;
 
