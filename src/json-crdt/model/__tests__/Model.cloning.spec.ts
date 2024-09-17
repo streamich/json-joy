@@ -252,4 +252,19 @@ describe('reset()', () => {
     doc1.reset(doc2);
     expect(str.view()).toBe('hello');
   });
+
+  test('uses the same clock in Model and NodeBuilder', async () => {
+    const doc1 = Model.create().setSchema(
+      schema.obj({
+        text: schema.str('hell'),
+      }),
+    );
+    const doc2 = doc1.fork();
+    doc2.s.text.toApi().ins(4, 'o');
+    expect(doc1.clock).toBe(doc1.api.builder.clock);
+    expect(doc2.clock).toBe(doc2.api.builder.clock);
+    doc1.reset(doc2);
+    expect(doc1.clock).toBe(doc1.api.builder.clock);
+    expect(doc2.clock).toBe(doc2.api.builder.clock);
+  });
 });

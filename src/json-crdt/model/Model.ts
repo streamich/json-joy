@@ -308,7 +308,8 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
 
   /**
    * Applies a single patch to the document. All mutations to the model must go
-   * through this method.
+   * through this method. (With the only exception of local changes through API,
+   * which have an alternative path.)
    */
   public applyPatch(patch: Patch) {
     this.onbeforepatch?.(patch);
@@ -492,7 +493,11 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
     decoder.decode(blob, <any>this);
     this.clock = to.clock.clone();
     this.ext = to.ext.clone();
-    this._api?.flush();
+    const api = this._api;
+    if (api) {
+      api.flush();
+      api.builder.clock = this.clock;
+    }
     index.forEach(({v: node}) => {
       const api = node.api as NodeApi | undefined;
       if (!api) return;
