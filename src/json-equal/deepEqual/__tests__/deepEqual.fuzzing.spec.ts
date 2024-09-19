@@ -14,6 +14,7 @@ for (let i = 0; i < 100; i++) {
       expect(res2).toBe(true);
       expect(res3).toBe(true);
     } catch (error) {
+      // tslint:disable-next-line no-console
       console.log({json1, json2});
       throw error;
     }
