@@ -1,3 +1,15 @@
+# [16.24.0](https://github.com/streamich/json-joy/compare/v16.23.2...v16.24.0) (2024-09-19)
+
+
+### Features
+
+* 🎸 make array check more robust ([40e8705](https://github.com/streamich/json-joy/commit/40e8705c0aa30e06268fe24485dffc687ac3203a))
+
+
+### Performance Improvements
+
+* ⚡️ update deep equal benchmarks ([0cde6cc](https://github.com/streamich/json-joy/commit/0cde6cc72f9946207ea78cc68879d398056d5f51))
+
 ## [16.23.2](https://github.com/streamich/json-joy/compare/v16.23.1...v16.23.2) (2024-09-17)
 
 
