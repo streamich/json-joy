@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for json-equal/deepEqual/v1.ts</title>
+    <title>Code coverage report for json-equal/deepEqual/v5.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,20 +19,20 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-equal/deepEqual</a> v1.ts</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">json-equal/deepEqual</a> v5.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>25/25</span>
+                <span class='fraction'>28/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/17</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -91,53 +91,62 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">89x</span>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13969x</span>
+<span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6021x</span>
+<span class="cline-any cline-yes">14031x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3367x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3354x</span>
-<span class="cline-any cline-yes">593x</span>
-<span class="cline-any cline-yes">593x</span>
-<span class="cline-any cline-yes">2018x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6091x</span>
+<span class="cline-any cline-yes">590x</span>
 <span class="cline-any cline-yes">579x</span>
+<span class="cline-any cline-yes">579x</span>
+<span class="cline-any cline-yes">1936x</span>
+<span class="cline-any cline-yes">565x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2761x</span>
-<span class="cline-any cline-yes">2761x</span>
-<span class="cline-any cline-yes">2761x</span>
-<span class="cline-any cline-yes">2453x</span>
-<span class="cline-any cline-yes">6701x</span>
-<span class="cline-any cline-yes">6701x</span>
+<span class="cline-any cline-yes">5501x</span>
+<span class="cline-any cline-yes">2849x</span>
+<span class="cline-any cline-yes">2849x</span>
+<span class="cline-any cline-yes">2849x</span>
+<span class="cline-any cline-yes">2511x</span>
+<span class="cline-any cline-yes">2510x</span>
+<span class="cline-any cline-yes">6800x</span>
+<span class="cline-any cline-yes">6800x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2298x</span>
+<span class="cline-any cline-yes">2348x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2654x</span>
+<span class="cline-any cline-yes">2652x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export const deepEqual = (a: unknown, b: unknown): boolean =&gt; {
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const isArray = Array.isArray;
+&nbsp;
+export const deepEqual = (a: unknown, b: unknown): boolean =&gt; {
   // Primitives
   if (a === b) return true;
 &nbsp;
-  if (a &amp;&amp; b &amp;&amp; typeof a === 'object' &amp;&amp; typeof b === 'object') {
-    // Arrays
-    if (a.constructor !== b.constructor) return false;
-    let length, i, keys;
-    if (Array.isArray(a)) {
-      length = a.length;
-      if (length !== (b as Array&lt;unknown&gt;).length) return false;
-      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], (b as Array&lt;unknown&gt;)[i])) return false;
-      return true;
-    }
+  // Arrays
+  let length, i, keys;
+  if (isArray(a)) {
+    if (!isArray(b)) return false;
+    length = a.length;
+    if (length !== (b as Array&lt;unknown&gt;).length) return false;
+    for (i = length; i-- !== 0; ) if (!deepEqual(a[i], (b as Array&lt;unknown&gt;)[i])) return false;
+    return true;
+  }
 &nbsp;
-    // Objects
+  // Objects
+  if (a &amp;&amp; b &amp;&amp; typeof a === 'object' &amp;&amp; typeof b === 'object') {
     keys = Object.keys(a);
     length = keys.length;
     if (length !== Object.keys(b).length) return false;
+    if (isArray(b)) return false;
     for (i = length; i-- !== 0; ) {
       const key = keys[i];
       if (!deepEqual((a as Record&lt;string, unknown&gt;)[key], (b as Record&lt;string, unknown&gt;)[key])) return false;
@@ -154,7 +163,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-09-17T13:56:46.130Z
+                at 2024-09-19T11:19:46.819Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
