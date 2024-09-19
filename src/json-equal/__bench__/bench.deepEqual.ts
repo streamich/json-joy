@@ -1,14 +1,14 @@
+// npx ts-node src/json-equal/__bench__/bench.deepEqual.ts
+
 /* tslint:disable no-console */
 
 import * as Benchmark from 'benchmark';
 import {deepEqual as deepEqualV1} from '../deepEqual/v1';
 import {deepEqual as deepEqualV2} from '../deepEqual/v2';
 import {deepEqual as deepEqualV3} from '../deepEqual/v3';
-import {deepEqual as deepEqualV4} from '../deepEqual/v3';
+import {deepEqual as deepEqualV4} from '../deepEqual/v4';
+import {deepEqual as deepEqualV5} from '../deepEqual/v5';
 import {$$deepEqual} from '../$$deepEqual';
-const fastDeepEqual = require('fast-deep-equal/es6');
-const fastEquals = require('fast-equals').deepEqual;
-const lodashIsEqual = require('lodash').isEqual;
 
 const json1 = {
   foo: 'bar',
@@ -39,14 +39,8 @@ suite
   .add(`json-joy/json-equal (v4)`, () => {
     deepEqualV4(json1, json2);
   })
-  .add(`fast-deep-equal`, () => {
-    fastDeepEqual(json1, json2);
-  })
-  .add(`fast-equals`, () => {
-    fastEquals(json1, json2);
-  })
-  .add(`lodash.isEqual`, () => {
-    lodashIsEqual(json1, json2);
+  .add(`json-joy/json-equal (v5)`, () => {
+    deepEqualV5(json1, json2);
   })
   .add(`json-joy/json-equal/$$deepEqual`, () => {
     equalGenerated1(json2);
