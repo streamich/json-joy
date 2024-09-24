@@ -1,3 +1,10 @@
+# [16.25.0](https://github.com/streamich/json-joy/compare/v16.24.0...v16.25.0) (2024-09-24)
+
+
+### Features
+
+* **json-crdt:** 🎸 introduce .applyLocalPatch() method ([24ba067](https://github.com/streamich/json-joy/commit/24ba06786b29281cab357e14d023a5578be50a72))
+
 # [16.24.0](https://github.com/streamich/json-joy/compare/v16.23.2...v16.24.0) (2024-09-19)
 
 
