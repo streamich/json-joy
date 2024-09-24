@@ -307,11 +307,32 @@ export class Model<N extends JsonNode = JsonNode<any>> implements Printable {
   public onpatch?: (patch: Patch) => void = undefined;
 
   /**
+   * Works like `applyPatch`, but is intended to be used by the local client
+   * for locally generated patches. It checks if the model clock is ahead of
+   * the patch clock and rebases the patch if necessary.
+   *
+   * @param patch A patch to apply to the document.
+   */
+  public applyLocalPatch(patch: Patch): void {
+    const id = patch.getId();
+    if (id) {
+      const clock = this.clock;
+      if (clock.sid === id.sid) {
+        const time = clock.time;
+        if (time > id.time) patch = patch.rebase(time);
+      }
+    }
+    this.applyPatch(patch);
+  }
+
+  /**
    * Applies a single patch to the document. All mutations to the model must go
    * through this method. (With the only exception of local changes through API,
    * which have an alternative path.)
+   *
+   * @param patch A patch to apply to the document.
    */
-  public applyPatch(patch: Patch) {
+  public applyPatch(patch: Patch): void {
     this.onbeforepatch?.(patch);
     const ops = patch.ops;
     const {length} = ops;

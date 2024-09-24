@@ -4,7 +4,7 @@ import {Model} from '../Model';
 describe('Document', () => {
   describe('JSON builder', () => {
     test('can create object using JSON builder', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const obj = builder.json({});
       builder.root(obj);
@@ -13,7 +13,7 @@ describe('Document', () => {
     });
 
     test('can create complex object', () => {
-      const doc = Model.withLogicalClock();
+      const doc = Model.create();
       const builder = new PatchBuilder(doc.clock);
       const json = {
         score: 123,
