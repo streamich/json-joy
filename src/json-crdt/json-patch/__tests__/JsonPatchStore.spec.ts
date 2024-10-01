@@ -214,3 +214,38 @@ test('returns "undefined" on missing sub-view', () => {
   model.api.root(undefined);
   expect(store.getSnapshot()).toBe(undefined);
 });
+
+test('returns "undefined" on missing store .get(path)', () => {
+  const model = Model.create();
+  model.api.root({
+    ui: {
+      state: {
+        foo: 'bar',
+      }
+    },
+  });
+  const store = new JsonPatchStore(model, ['ui', 'state']);
+  expect(store.get()).toEqual({foo: 'bar'});
+  expect(store.get('/foo')).toEqual('bar');
+  expect(store.get('/foo/baz')).toEqual(undefined);
+  expect(store.get('/qux')).toEqual(undefined);
+});
+
+test('can bind to a missing sub-view', () => {
+  const model = Model.create();
+  model.api.root({
+    ui: {
+      state: {
+        foo: 'bar',
+      }
+    },
+  });
+  const store = new JsonPatchStore(model, ['ui', 'state']);
+  const store2 = store.bind('/missing/view');
+  expect(store2.getSnapshot()).toBe(undefined);
+  store.update({op: 'add', path: '/missing', value: {view: {baz: 'qux'}}});
+  expect(store2.getSnapshot()).toEqual({baz: 'qux'});
+  expect(store2.get()).toEqual({baz: 'qux'});
+  expect(store2.get(['baz'])).toEqual('qux');
+  expect(store2.get(['bar', 'foo'])).toEqual(undefined);
+});

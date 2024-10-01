@@ -169,18 +169,20 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     const model = this.model;
     if (!steps.length) return model.view();
     else {
-      const objSteps = steps.slice(0, steps.length - 1);
-      const node = model.api.find(objSteps);
-      const key = steps[steps.length - 1];
-      if (node instanceof ObjNode) {
-        return node.get(String(key))?.view();
-      } else if (node instanceof ArrNode) {
-        const index = ~~key;
-        if ('' + index !== key) throw new Error('INVALID_INDEX');
-        const arrNode = node.getNode(index);
-        if (!arrNode) throw new Error('NOT_FOUND');
-        return arrNode.view();
-      }
+      try {
+        const objSteps = steps.slice(0, steps.length - 1);
+        const node = model.api.find(objSteps);
+        const key = steps[steps.length - 1];
+        if (node instanceof ObjNode) {
+          return node.get(String(key))?.view();
+        } else if (node instanceof ArrNode) {
+          const index = ~~key;
+          if ('' + index !== key) throw new Error('INVALID_INDEX');
+          const arrNode = node.getNode(index);
+          if (!arrNode) throw new Error('NOT_FOUND');
+          return arrNode.view();
+        }
+      } catch { return; }
     }
     return undefined;
   }

@@ -26,9 +26,7 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
     this.patcher.apply(ops);
   };
 
-  public readonly get = (path: string | Path = ''): unknown => {
-    return this.patcher.get(path);
-  };
+  public readonly get = (path: string | Path = ''): unknown => this.patcher.get(path);
 
   public bind(path: string | Path): JsonPatchStore<N> {
     return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
@@ -43,5 +41,5 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe: SyncStore<any>['subscribe'];
-  public readonly getSnapshot = () => this.api()?.view() as Readonly<JsonNodeView<N>>;
+  public readonly getSnapshot = () => this.get() as Readonly<JsonNodeView<N>>;
 }
