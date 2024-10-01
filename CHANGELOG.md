@@ -1,3 +1,18 @@
+# [16.27.0](https://github.com/streamich/json-joy/compare/v16.26.0...v16.27.0) (2024-10-01)
+
+
+### Bug Fixes
+
+* **json-crdt:** 🐛 correctly handle deletes ([f7af05b](https://github.com/streamich/json-joy/commit/f7af05b0f5f59cb23fb58c88f9c6f542d001de84))
+* **json-crdt:** 🐛 return undefined view on empty document ([14a5e42](https://github.com/streamich/json-joy/commit/14a5e42227d5e6e77799af24af47bddf1c00a483))
+
+
+### Features
+
+* **json-crdt:** 🎸 add store convenience API ([760da9c](https://github.com/streamich/json-joy/commit/760da9c3fef7928cfee340f377a10391e077f90c))
+* **json-crdt:** 🎸 improve view selector ([5a433a6](https://github.com/streamich/json-joy/commit/5a433a6b3a5ed71cab95b1baf85b565529832b5a))
+* **json-crdt:** 🎸 return undefined on missing sub view ([d88f762](https://github.com/streamich/json-joy/commit/d88f762bdbaaaeb9a1833a338ede5bb47a0195af))
+
 # [16.26.0](https://github.com/streamich/json-joy/compare/v16.25.0...v16.26.0) (2024-10-01)
 
 
