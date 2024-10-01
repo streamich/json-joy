@@ -29,8 +29,7 @@ export class PeritextApi extends NodeApi<PeritextNode> implements ExtApi<Peritex
 
   public toString(tab?: string): string {
     return (
-      'PeritextApi' +
-      printTree(tab, [(tab) => this.node.toString(tab), () => '', (tab) => this.txt.toString(tab)])
+      'PeritextApi' + printTree(tab, [(tab) => this.node.toString(tab), () => '', (tab) => this.txt.toString(tab)])
     );
   }
 }
