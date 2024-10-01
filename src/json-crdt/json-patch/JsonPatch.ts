@@ -184,7 +184,9 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
           if (!arrNode) throw new Error('NOT_FOUND');
           return arrNode.view();
         }
-      } catch { return; }
+      } catch {
+        return;
+      }
     }
     return undefined;
   }

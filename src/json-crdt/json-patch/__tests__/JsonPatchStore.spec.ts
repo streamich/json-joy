@@ -191,7 +191,7 @@ test('returns selected sub-view', () => {
     ui: {
       state: {
         foo: 'bar',
-      }
+      },
     },
   });
   const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -221,7 +221,7 @@ test('returns "undefined" on missing store .get(path)', () => {
     ui: {
       state: {
         foo: 'bar',
-      }
+      },
     },
   });
   const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -237,7 +237,7 @@ test('can bind to a missing sub-view', () => {
     ui: {
       state: {
         foo: 'bar',
-      }
+      },
     },
   });
   const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -257,7 +257,7 @@ describe('.add()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -272,7 +272,7 @@ describe('.add()', () => {
       ui: {
         state: {
           arr: [],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -287,7 +287,7 @@ describe('.add()', () => {
       ui: {
         state: {
           arr: [],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -304,7 +304,7 @@ describe('.add()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -320,7 +320,7 @@ describe('.replace()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -335,7 +335,7 @@ describe('.replace()', () => {
       ui: {
         state: {
           arr: [1, '2', 3],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -349,7 +349,7 @@ describe('.replace()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -364,7 +364,7 @@ describe('.remove()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -380,7 +380,7 @@ describe('.remove()', () => {
         state: {
           foo: 'bar',
           arr: [1, 2, 3],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -397,7 +397,7 @@ describe('.remove()', () => {
         state: {
           foo: 'bar',
           arr: [1, 2, 3],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -417,12 +417,12 @@ describe('.remove()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
     expect(() => store.remove(['abc'])).toThrow();
-    expect(() => store.remove('/a/b/c'),).toThrow();
+    expect(() => store.remove('/a/b/c')).toThrow();
   });
 });
 
@@ -433,7 +433,7 @@ describe('.del()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -449,7 +449,7 @@ describe('.del()', () => {
         state: {
           foo: 'bar',
           arr: [1, 2, 3],
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -465,7 +465,7 @@ describe('.del()', () => {
       ui: {
         state: {
           foo: 'bar',
-        }
+        },
       },
     });
     const store = new JsonPatchStore(model, ['ui', 'state']);
@@ -475,6 +475,6 @@ describe('.del()', () => {
     expect(op1).toEqual({op: 'remove', path: '/foo'});
     expect(op2).toBe(undefined);
     expect(() => store.del(['abc'])).not.toThrow();
-    expect(() => store.del('/a/b/c'),).not.toThrow();
+    expect(() => store.del('/a/b/c')).not.toThrow();
   });
 });

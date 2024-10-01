@@ -47,7 +47,9 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   public readonly del = (path: string | Path): Operation | undefined => {
     try {
       return this.remove(path);
-    } catch { return; }
+    } catch {
+      return;
+    }
   };
 
   public readonly get = (path: string | Path = ''): unknown => this.patcher.get(path);
@@ -59,7 +61,9 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   public api(): JsonNodeApi<N> | undefined {
     try {
       return this.model.api.find(this.path) as unknown as JsonNodeApi<N>;
-    } catch { return; }
+    } catch {
+      return;
+    }
   }
 
   // ---------------------------------------------------------------- SyncStore
