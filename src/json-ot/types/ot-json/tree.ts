@@ -112,7 +112,7 @@ export class Register {
       ? '/' + this.pick.path.slice(0, this.pick.pathLength).join('/')
       : `{ ${JSON.stringify(this.data)} }`;
     const dst = drops ? `{ ${drops} }` : '∅';
-    return `${this.id}: ${this.constructor.name} ${src} ┈┈┈→ ${dst}`;
+    return `${this.id}: Register ${src} ┈┈┈→ ${dst}`;
   }
 }
 
@@ -408,6 +408,6 @@ export class OpTree {
       i++;
     }
     const drops = this.drop ? this.drop.toString(tab + '   ') : ' ∅';
-    return `${this.constructor.name}\n${tab}├─ ${picks}\n${tab}│\n${tab}├─ ${registers}\n${tab}│\n${tab}└─ ${drops}`;
+    return `OpTree\n${tab}├─ ${picks}\n${tab}│\n${tab}├─ ${registers}\n${tab}│\n${tab}└─ ${drops}`;
   }
 }

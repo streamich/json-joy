@@ -201,9 +201,13 @@ export class Slices<T = string> implements Stateful, Printable {
 
   // ---------------------------------------------------------------- Printable
 
+  public toStringName(): string {
+    return 'Slices';
+  }
+
   public toString(tab: string = ''): string {
     return (
-      this.constructor.name +
+      this.toString() +
       printTree(
         tab,
         [...this.list.entries()].map(

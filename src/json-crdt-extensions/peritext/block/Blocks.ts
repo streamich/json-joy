@@ -18,7 +18,7 @@ export class Blocks implements Printable, Stateful {
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    return this.constructor.name + printTree(tab, [(tab) => this.root.toString(tab)]);
+    return 'Blocks' + printTree(tab, [(tab) => this.root.toString(tab)]);
   }
 
   // ----------------------------------------------------------------- Stateful

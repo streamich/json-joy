@@ -879,7 +879,7 @@ export abstract class AbstractRga<T> {
   // ---------------------------------------------------------------- Printable
 
   protected toStringName(): string {
-    return this.constructor.name;
+    return 'AbstractRga';
   }
 
   public toString(tab: string = ''): string {
@@ -904,7 +904,7 @@ export abstract class AbstractRga<T> {
 
   protected formatChunk(chunk: Chunk<T>): string {
     const id = printTs(chunk.id);
-    let str = `${chunk.constructor.name} ${id}!${chunk.span} len:${chunk.len}`;
+    let str = `chunk ${id}!${chunk.span} len:${chunk.len}`;
     if (chunk.del) str += ` [${chunk.span}]`;
     else {
       if (isUint8Array(chunk.data)) str += ` { ${printOctets(chunk.data) || '∅'} }`;

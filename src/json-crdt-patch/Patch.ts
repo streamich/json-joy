@@ -214,7 +214,7 @@ export class Patch implements Printable {
    */
   public toString(tab: string = ''): string {
     const id = this.getId();
-    const header = `${this.constructor.name} ${id ? printTs(id) : '(nil)'}!${this.span()}`;
+    const header = `Patch ${id ? printTs(id) : '(nil)'}!${this.span()}`;
     return (
       header +
       printTree(

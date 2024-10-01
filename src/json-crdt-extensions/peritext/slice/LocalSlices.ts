@@ -6,4 +6,8 @@ export class LocalSlices<T = string> extends Slices<T> {
     super.del(id);
     if (Math.random() < 0.1) this.set.removeTombstones();
   }
+
+  public toStringName(): string {
+    return 'LocalSlices';
+  }
 }

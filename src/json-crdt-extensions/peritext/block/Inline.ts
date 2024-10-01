@@ -149,6 +149,10 @@ export class Inline extends Range implements Printable {
 
   // ---------------------------------------------------------------- Printable
 
+  public toStringName(): string {
+    return 'Inline';
+  }
+
   public toString(tab: string = ''): string {
     const str = this.text();
     const truncate = str.length > 32;
@@ -156,7 +160,7 @@ export class Inline extends Range implements Printable {
     const startFormatted = this.start.toString(tab, true);
     const range =
       this.start.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
-    const header = `${this.constructor.name} ${range} ${text}`;
+    const header = `Inline ${range} ${text}`;
     const marks = this.attr();
     const markKeys = Object.keys(marks);
     return (

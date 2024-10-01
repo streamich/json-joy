@@ -10,6 +10,9 @@ export interface IBlock<Attr = unknown> {
 
 export class LeafBlock<Attr = unknown> extends Block<Attr> {
   // ---------------------------------------------------------------- Printable
+  protected toStringName(): string {
+    return 'LeafBlock';
+  }
 
   protected toStringHeader(): string {
     const str = this.text();

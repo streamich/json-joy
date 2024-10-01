@@ -87,7 +87,7 @@ class StrNodeSite implements Printable {
 
   public toString(tab?: string): string {
     return (
-      this.constructor.name +
+      'StrNodeSite' +
       printTree(tab, [
         (tab) => 'clock ' + this.clock.toString(tab),
         (tab) =>
@@ -244,7 +244,7 @@ export class StrNodeFuzzer extends Fuzzer implements Printable {
 
   public toString(tab?: string): string {
     return (
-      this.constructor.name +
+      'StrNodeFuzzer' +
       printTree(tab, [
         (tab) => this.sites[0].rga.toString(tab),
         (tab) => 'prelude ' + printPatch(tab, this.prelude),

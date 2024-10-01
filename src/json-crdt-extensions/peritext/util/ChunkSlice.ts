@@ -56,7 +56,7 @@ export class ChunkSlice<T = string> implements IChunkSlice<T>, Stateful, Printab
   // ---------------------------------------------------------------- Printable
 
   public toString(tab: string = ''): string {
-    const name = this.constructor.name;
+    const name = 'ChunkSlice';
     const off = this.off;
     const len = this.len;
     const str = this.view() + '';
