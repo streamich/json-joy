@@ -1,3 +1,10 @@
+# [16.26.0](https://github.com/streamich/json-joy/compare/v16.25.0...v16.26.0) (2024-10-01)
+
+
+### Features
+
+* 🎸 remove usage of constructor name property ([857c8d3](https://github.com/streamich/json-joy/commit/857c8d365d82f802c1fcf06880f212c52e8ab6f8))
+
 # [16.25.0](https://github.com/streamich/json-joy/compare/v16.24.0...v16.25.0) (2024-09-24)
 
 
