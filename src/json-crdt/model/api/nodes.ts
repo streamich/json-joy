@@ -180,7 +180,7 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
   }
 
   public toString(tab: string = ''): string {
-    return this.constructor.name + printTree(tab, [(tab) => this.node.toString(tab)]);
+    return 'api' + printTree(tab, [(tab) => this.node.toString(tab)]);
   }
 }
 

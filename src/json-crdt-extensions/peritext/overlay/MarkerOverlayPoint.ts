@@ -32,15 +32,19 @@ export class MarkerOverlayPoint<T = string> extends OverlayPoint<T> implements H
 
   // ---------------------------------------------------------------- Printable
 
-  public toStringName(tab: string, lite?: boolean): string {
+  public toStringName(): string {
+    return 'OverlayPoint';
+  }
+
+  public toStringHeader(tab: string, lite?: boolean): string {
     const hash = lite ? '' : `#${this.textHash.toString(36).slice(-4)}`;
     const tag = lite ? '' : `, type = ${JSON.stringify(this.type() as any)}`;
-    return `${super.toStringName(tab, lite)}${lite ? '' : ' '}${hash}${tag}`;
+    return `${super.toStringHeader(tab, lite)}${lite ? '' : ' '}${hash}${tag}`;
   }
 
   public toString(tab: string = '', lite?: boolean): string {
     return (
-      this.toStringName(tab, lite) +
+      this.toStringHeader(tab, lite) +
       (lite
         ? ''
         : printTree(tab, [

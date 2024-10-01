@@ -159,6 +159,6 @@ export class ObjectValue<T extends classes.ObjectType<any>> extends Value<T> imp
   }
 
   public toString(tab: string = ''): string {
-    return this.constructor.name + printTree(tab, [(tab) => this.type.toString(tab)]);
+    return 'ObjectValue' + printTree(tab, [(tab) => this.type.toString(tab)]);
   }
 }

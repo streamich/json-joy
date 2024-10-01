@@ -141,7 +141,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenJsonTextEncoder(ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
-    throw new Error(`${this.constructor.name}.codegenJsonTextEncoder() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenJsonTextEncoder() not implemented`);
   }
 
   private __jsonEncoder: JsonEncoderFn | undefined;
@@ -191,7 +191,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenValidator(ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
-    throw new Error(`${this.constructor.name}.codegenValidator() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenValidator() not implemented`);
   }
 
   public compileCborEncoder(
@@ -210,7 +210,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenCborEncoder(ctx: CborEncoderCodegenContext, value: JsExpression): void {
-    throw new Error(`${this.constructor.name}.codegenCborEncoder() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenCborEncoder() not implemented`);
   }
 
   public compileMessagePackEncoder(
@@ -229,7 +229,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenMessagePackEncoder(ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
-    throw new Error(`${this.constructor.name}.codegenMessagePackEncoder() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenMessagePackEncoder() not implemented`);
   }
 
   public compileJsonEncoder(
@@ -249,7 +249,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenJsonEncoder(ctx: JsonEncoderCodegenContext, value: JsExpression): void {
-    throw new Error(`${this.constructor.name}.codegenJsonEncoder() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenJsonEncoder() not implemented`);
   }
 
   public compileCapacityEstimator(
@@ -267,7 +267,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public codegenCapacityEstimator(ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-    throw new Error(`${this.constructor.name}.codegenCapacityEstimator() not implemented`);
+    throw new Error(`${this.toStringName()}.codegenCapacityEstimator() not implemented`);
   }
 
   private __capacityEstimator: CompiledCapacityEstimator | undefined;
@@ -300,6 +300,10 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
     const title = options.title || options.intro || options.description;
     if (!title) return '';
     return JSON.stringify(title);
+  }
+
+  protected toStringName(): string {
+    return 'AbstractType';
   }
 
   public toString(tab: string = ''): string {

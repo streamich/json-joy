@@ -164,22 +164,26 @@ export class PersistedSlice<T = string> extends Range<T> implements MutableSlice
 
   // ---------------------------------------------------------------- Printable
 
-  protected toStringName(): string {
+  public toStringName(): string {
+    return 'Range';
+  }
+
+  protected toStringHeaderName(): string {
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '∅';
     const dataLengthBreakpoint = 32;
-    const header = `${this.constructor.name} ${super.toString('', true)}, ${
+    const header = `${this.toStringName()} ${super.toString('', true)}, ${
       SliceBehaviorName[this.behavior]
     }, ${JSON.stringify(this.type)}${dataFormatted.length < dataLengthBreakpoint ? `, ${dataFormatted}` : ''}`;
     return header;
   }
 
-  public toString(tab: string = ''): string {
+  public toStringHeader(tab: string = ''): string {
     const data = this.data();
     const dataFormatted = data ? prettyOneLine(data) : '';
     const dataLengthBreakpoint = 32;
     return (
-      this.toStringName() +
+      this.toStringHeaderName() +
       printTree(tab, [dataFormatted.length < dataLengthBreakpoint ? null : (tab) => dataFormatted])
     );
   }

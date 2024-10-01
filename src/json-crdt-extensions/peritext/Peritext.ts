@@ -315,7 +315,7 @@ export class Peritext<T = string> implements Printable {
     const nl = () => '';
     const {savedSlices, extraSlices, localSlices} = this;
     return (
-      this.constructor.name +
+      'Peritext' +
       printTree(tab, [
         (tab) => this.str.toString(tab),
         nl,

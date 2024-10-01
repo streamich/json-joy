@@ -74,7 +74,7 @@ export class TypeSystem implements Printable {
   public toString(tab: string = '') {
     const nl = () => '';
     return (
-      this.constructor.name +
+      'TypeSystem' +
       printTree(tab, [
         (tab) =>
           'aliases' +

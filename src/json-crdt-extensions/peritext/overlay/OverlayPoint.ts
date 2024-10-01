@@ -205,13 +205,17 @@ export class OverlayPoint<T = string> extends Point<T> implements Printable, Hea
 
   // ---------------------------------------------------------------- Printable
 
-  public toStringName(tab: string, lite?: boolean): string {
+  public toStringName(): string {
+    return 'OverlayPoint';
+  }
+
+  public toStringHeader(tab: string = '', lite?: boolean): string {
     return super.toString(tab, lite);
   }
 
   public toString(tab: string = '', lite?: boolean): string {
     const refs = lite ? '' : `, refs = ${this.refs.length}`;
-    const header = this.toStringName(tab, lite) + refs;
+    const header = this.toStringHeader(tab, lite) + refs;
     if (lite) return header;
     const children: PrintChild[] = [];
     const layers = this.layers;

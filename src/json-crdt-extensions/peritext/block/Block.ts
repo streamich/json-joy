@@ -139,10 +139,13 @@ export class Block<Attr = unknown> implements IBlock, Printable, Stateful {
 
   // ---------------------------------------------------------------- Printable
 
+  protected toStringName(): string {
+    return 'Block';
+  }
   protected toStringHeader(): string {
     const hash = `#${this.hash.toString(36).slice(-4)}`;
     const tag = `<${this.path.join('.')}>`;
-    const header = `${this.constructor.name} ${hash} ${tag}`;
+    const header = `${this.toStringName()} ${hash} ${tag}`;
     return header;
   }
 

@@ -449,8 +449,12 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
 
   // ---------------------------------------------------------------- Printable
 
+  public toStringName(): string {
+    return 'Point';
+  }
+
   public toString(tab: string = '', lite?: boolean): string {
-    const name = lite ? '' : this.constructor.name + ' ';
+    const name = lite ? '' : this.toStringName() + ' ';
     const pos = this.pos();
     const id = printTs(this.id);
     const anchor = this.anchor === Anchor.Before ? '.▢' : '▢.';
