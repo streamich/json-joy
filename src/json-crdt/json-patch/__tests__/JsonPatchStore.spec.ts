@@ -184,3 +184,33 @@ test('can return empty view', () => {
   const store = new JsonPatchStore(model);
   expect(store.getSnapshot()).toBe(undefined);
 });
+
+test('returns selected sub-view', () => {
+  const model = Model.create();
+  model.api.root({
+    ui: {
+      state: {
+        foo: 'bar',
+      }
+    },
+  });
+  const store = new JsonPatchStore(model, ['ui', 'state']);
+  expect(store.getSnapshot()).toEqual({foo: 'bar'});
+  model.api.root({
+    ui: {
+      state: null,
+    },
+  });
+  expect(store.getSnapshot()).toEqual(null);
+});
+
+test('returns "undefined" on missing sub-view', () => {
+  const model = Model.create();
+  model.api.root({
+    ui: {},
+  });
+  const store = new JsonPatchStore(model, ['ui', 'state']);
+  expect(store.getSnapshot()).toBe(undefined);
+  model.api.root(undefined);
+  expect(store.getSnapshot()).toBe(undefined);
+});

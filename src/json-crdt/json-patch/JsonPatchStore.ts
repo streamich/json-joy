@@ -34,12 +34,14 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
     return new JsonPatchStore(this.model, this.path.concat(toPath(path)));
   }
 
-  public api(): JsonNodeApi<N> {
-    return this.model.api.find(this.path) as unknown as JsonNodeApi<N>;
+  public api(): JsonNodeApi<N> | undefined {
+    try {
+      return this.model.api.find(this.path) as unknown as JsonNodeApi<N>;
+    } catch { return; }
   }
 
   // ---------------------------------------------------------------- SyncStore
 
   public readonly subscribe: SyncStore<any>['subscribe'];
-  public readonly getSnapshot = () => this.api().view() as Readonly<JsonNodeView<N>>;
+  public readonly getSnapshot = () => this.api()?.view() as Readonly<JsonNodeView<N>>;
 }
