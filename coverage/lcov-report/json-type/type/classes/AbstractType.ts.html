@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.62% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>104/129</span>
+                <span class='fraction'>104/130</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.11% </span>
+                <span class="strong">69.56% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>32/45</span>
+                <span class='fraction'>32/46</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.41% </span>
+                <span class="strong">80.7% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>92/113</span>
+                <span class='fraction'>92/114</span>
             </div>
         
             
@@ -377,7 +377,11 @@
 <a name='L312'></a><a href='#L312'>312</a>
 <a name='L313'></a><a href='#L313'>313</a>
 <a name='L314'></a><a href='#L314'>314</a>
-<a name='L315'></a><a href='#L315'>315</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">25x</span>
@@ -682,6 +686,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">117x</span>
 <span class="cline-any cline-yes">117x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -834,7 +842,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenJsonTextEncoder(</span>ctx: JsonTextEncoderCodegenContext, value: JsExpression): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenJsonTextEncoder() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenJsonTextEncoder() not implemented`);</span>
   }
 &nbsp;
   private __jsonEncoder: JsonEncoderFn | undefined;
@@ -884,7 +892,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenValidator(</span>ctx: ValidatorCodegenContext, path: ValidationPath, r: string): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenValidator() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenValidator() not implemented`);</span>
   }
 &nbsp;
   public compileCborEncoder(
@@ -903,7 +911,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenCborEncoder(</span>ctx: CborEncoderCodegenContext, value: JsExpression): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenCborEncoder() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenCborEncoder() not implemented`);</span>
   }
 &nbsp;
   public compileMessagePackEncoder(
@@ -922,7 +930,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenMessagePackEncoder(</span>ctx: MessagePackEncoderCodegenContext, value: JsExpression): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenMessagePackEncoder() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenMessagePackEncoder() not implemented`);</span>
   }
 &nbsp;
   public compileJsonEncoder(
@@ -942,7 +950,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenJsonEncoder(</span>ctx: JsonEncoderCodegenContext, value: JsExpression): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenJsonEncoder() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenJsonEncoder() not implemented`);</span>
   }
 &nbsp;
   public compileCapacityEstimator(
@@ -960,7 +968,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >codegenCapacityEstimator(</span>ctx: CapacityEstimatorCodegenContext, value: JsExpression): void {
-<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.constructor.name}.codegenCapacityEstimator() not implemented`);</span>
+<span class="cstat-no" title="statement not covered" >    throw new Error(`${this.toStringName()}.codegenCapacityEstimator() not implemented`);</span>
   }
 &nbsp;
   private __capacityEstimator: CompiledCapacityEstimator | undefined;
@@ -995,6 +1003,10 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
     return JSON.stringify(title);
   }
 &nbsp;
+  protected <span class="fstat-no" title="function not covered" >toStringName(</span>): string {
+<span class="cstat-no" title="statement not covered" >    return 'AbstractType';</span>
+  }
+&nbsp;
   public toString(tab: string = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span>: string {
     const options = this.toStringOptions();
     return this.toStringTitle() + (options ? ` ${options}` : '');
@@ -1012,7 +1024,7 @@ export abstract class AbstractType&lt;S extends schema.Schema&gt; implements Bas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-09-24T13:03:27.886Z
+                at 2024-10-01T18:00:59.569Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
