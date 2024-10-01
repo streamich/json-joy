@@ -1,5 +1,5 @@
 import {deepEqual} from '../../json-equal/deepEqual';
-import {ObjNode, ArrNode, JsonNode} from '../nodes';
+import {ObjNode, ArrNode, JsonNode, ConNode} from '../nodes';
 import {toPath, isChild} from '../../json-pointer/util';
 import {interval} from '../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
@@ -102,12 +102,14 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
         const stringKey = String(key);
-        if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
+        const valueNode = node.get(stringKey);
+        if (valueNode === undefined) throw new Error('NOT_FOUND');
+        if (valueNode instanceof ConNode && valueNode.val === undefined) throw new Error('NOT_FOUND');
         builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
       } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
         const index = ~~key;
-        if ('' + index !== key) throw new Error('INVALID_INDEX');
+        if (typeof key === 'string' && '' + index !== key) throw new Error('INVALID_INDEX');
         const id = node.find(index);
         if (!id) throw new Error('NOT_FOUND');
         builder.del(node.id, [interval(id, 0, 1)]);
@@ -169,17 +171,21 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
     const model = this.model;
     if (!steps.length) return model.view();
     else {
-      const objSteps = steps.slice(0, steps.length - 1);
-      const node = model.api.find(objSteps);
-      const key = steps[steps.length - 1];
-      if (node instanceof ObjNode) {
-        return node.get(String(key))?.view();
-      } else if (node instanceof ArrNode) {
-        const index = ~~key;
-        if ('' + index !== key) throw new Error('INVALID_INDEX');
-        const arrNode = node.getNode(index);
-        if (!arrNode) throw new Error('NOT_FOUND');
-        return arrNode.view();
+      try {
+        const objSteps = steps.slice(0, steps.length - 1);
+        const node = model.api.find(objSteps);
+        const key = steps[steps.length - 1];
+        if (node instanceof ObjNode) {
+          return node.get(String(key))?.view();
+        } else if (node instanceof ArrNode) {
+          const index = ~~key;
+          if ('' + index !== key) throw new Error('INVALID_INDEX');
+          const arrNode = node.getNode(index);
+          if (!arrNode) throw new Error('NOT_FOUND');
+          return arrNode.view();
+        }
+      } catch {
+        return;
       }
     }
     return undefined;
