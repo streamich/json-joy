@@ -178,3 +178,9 @@ test('can execute mutations inside a transaction', () => {
   expect(cnt).toBe(1);
   expect(store2.getSnapshot()).toEqual('abcx');
 });
+
+test('can return empty view', () => {
+  const model = Model.create();
+  const store = new JsonPatchStore(model);
+  expect(store.getSnapshot()).toBe(undefined);
+});

@@ -2,7 +2,7 @@ import {printTree} from 'tree-dump/lib/printTree';
 import {find} from './find';
 import {ITimestampStruct, Timestamp} from '../../../json-crdt-patch/clock';
 import {Path} from '../../../json-pointer';
-import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode} from '../../nodes';
+import {ObjNode, ArrNode, BinNode, ConNode, VecNode, ValNode, StrNode, RootNode} from '../../nodes';
 import {NodeEvents} from './NodeEvents';
 import {ExtNode} from '../../extensions/ExtNode';
 import type {Extension} from '../../extensions/Extension';
@@ -56,7 +56,10 @@ export class NodeApi<N extends JsonNode = JsonNode> implements Printable {
     if (path === undefined) {
       if (typeof node.child === 'function') {
         const child = node.child();
-        if (!child) throw new Error('NO_CHILD');
+        if (!child) {
+          if (node instanceof RootNode) return node;
+          throw new Error('NO_CHILD');
+        }
         return child;
       }
       throw new Error('CANNOT_IN');
