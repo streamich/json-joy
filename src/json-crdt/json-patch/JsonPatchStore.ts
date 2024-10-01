@@ -4,7 +4,7 @@ import {JsonPatch} from './JsonPatch';
 import {toPath} from '../../json-pointer/util';
 import type {Path} from '../../json-pointer/types';
 import type {Model} from '../model';
-import type {Operation} from '../../json-patch';
+import type {Operation, OperationAdd, OperationRemove, OperationReplace} from '../../json-patch';
 import type {JsonNode, JsonNodeView} from '../nodes';
 
 export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncStore<Readonly<JsonNodeView<N>>> {
@@ -24,6 +24,30 @@ export class JsonPatchStore<N extends JsonNode = JsonNode<any>> implements SyncS
   public readonly update = (change: Operation | Operation[]): void => {
     const ops = Array.isArray(change) ? change : [change];
     this.patcher.apply(ops);
+  };
+
+  public readonly add = (path: string | Path, value: unknown): Operation => {
+    const op: OperationAdd = {op: 'add', path, value};
+    this.update([op]);
+    return op;
+  };
+
+  public readonly replace = (path: string | Path, value: unknown): Operation => {
+    const op: OperationReplace = {op: 'replace', path, value};
+    this.update([op]);
+    return op;
+  };
+
+  public readonly remove = (path: string | Path): Operation => {
+    const op: OperationRemove = {op: 'remove', path};
+    this.update([op]);
+    return op;
+  };
+
+  public readonly del = (path: string | Path): Operation | undefined => {
+    try {
+      return this.remove(path);
+    } catch { return; }
   };
 
   public readonly get = (path: string | Path = ''): unknown => this.patcher.get(path);

@@ -249,3 +249,179 @@ test('can bind to a missing sub-view', () => {
   expect(store2.get(['baz'])).toEqual('qux');
   expect(store2.get(['bar', 'foo'])).toEqual(undefined);
 });
+
+describe('.add()', () => {
+  test('can modify existing key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.add('/foo', 'baz');
+    expect(store.getSnapshot()).toEqual({foo: 'baz'});
+    expect(op).toEqual({op: 'add', path: '/foo', value: 'baz'});
+  });
+
+  test('can insert into array', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          arr: [],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.add('/arr/0', 'baz');
+    expect(store.getSnapshot()).toEqual({arr: ['baz']});
+    expect(op).toEqual({op: 'add', path: '/arr/0', value: 'baz'});
+  });
+
+  test('can append to array', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          arr: [],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op1 = store.add('/arr/-', 1);
+    const op2 = store.add('/arr/-', 2);
+    expect(store.getSnapshot()).toEqual({arr: [1, 2]});
+    expect(op1).toEqual({op: 'add', path: '/arr/-', value: 1});
+    expect(op2).toEqual({op: 'add', path: '/arr/-', value: 2});
+  });
+
+  test('can add a new key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    store.add('/gg', 'wp');
+    expect(store.getSnapshot()).toEqual({foo: 'bar', gg: 'wp'});
+  });
+});
+
+describe('.replace()', () => {
+  test('can modify existing key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.replace('/foo', 'baz');
+    expect(store.getSnapshot()).toEqual({foo: 'baz'});
+    expect(op).toEqual({op: 'replace', path: '/foo', value: 'baz'});
+  });
+
+  test('can replace array element', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          arr: [1, '2', 3],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    store.replace('/arr/1', 2);
+    expect(store.getSnapshot()).toEqual({arr: [1, 2, 3]});
+  });
+
+  test('throws, when updating non-existing key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    expect(() => store.replace('/gg', 'wp')).toThrow();
+  });
+});
+
+describe('.remove()', () => {
+  test('can remove existing key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.remove(['foo']);
+    expect(store.getSnapshot()).toEqual({});
+    expect(op).toEqual({op: 'remove', path: ['foo']});
+  });
+
+  test('can remove array element', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+          arr: [1, 2, 3],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.remove('/arr/1');
+    expect(store.getSnapshot()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(store.get()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(op).toEqual({op: 'remove', path: '/arr/1'});
+  });
+
+  test('can remove array element - 2', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+          arr: [1, 2, 3],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.remove(['arr', 1]);
+    expect(store.getSnapshot()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(store.get()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(op).toEqual({op: 'remove', path: ['arr', 1]});
+    const op2 = store.remove(['arr', '1']);
+    expect(store.get()).toEqual({foo: 'bar', arr: [1]});
+    store.remove('/arr/0');
+    expect(store.get()).toEqual({foo: 'bar', arr: []});
+  });
+
+  test('throws when removing non-existing element', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    expect(() => store.remove(['abc'])).toThrow();
+    expect(() => store.remove('/a/b/c'),).toThrow();
+  });
+});

@@ -107,7 +107,7 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
       } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
         const index = ~~key;
-        if ('' + index !== key) throw new Error('INVALID_INDEX');
+        if (typeof key === 'string' && '' + index !== key) throw new Error('INVALID_INDEX');
         const id = node.find(index);
         if (!id) throw new Error('NOT_FOUND');
         builder.del(node.id, [interval(id, 0, 1)]);
