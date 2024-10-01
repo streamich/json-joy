@@ -425,3 +425,56 @@ describe('.remove()', () => {
     expect(() => store.remove('/a/b/c'),).toThrow();
   });
 });
+
+describe('.del()', () => {
+  test('can remove existing key', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.del(['foo']);
+    expect(store.getSnapshot()).toEqual({});
+    expect(op).toEqual({op: 'remove', path: ['foo']});
+  });
+
+  test('can remove array element', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+          arr: [1, 2, 3],
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op = store.del('/arr/1');
+    expect(store.getSnapshot()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(store.get()).toEqual({foo: 'bar', arr: [1, 3]});
+    expect(op).toEqual({op: 'remove', path: '/arr/1'});
+  });
+
+  test('does nothing when key missing', () => {
+    const model = Model.create();
+    model.api.root({
+      ui: {
+        state: {
+          foo: 'bar',
+        }
+      },
+    });
+    const store = new JsonPatchStore(model, ['ui', 'state']);
+    const op1 = store.del('/foo');
+    expect(store.getSnapshot()).toEqual({});
+    const op2 = store.del('/foo');
+    expect(op1).toEqual({op: 'remove', path: '/foo'});
+    expect(op2).toBe(undefined);
+    expect(() => store.del(['abc'])).not.toThrow();
+    expect(() => store.del('/a/b/c'),).not.toThrow();
+  });
+});

@@ -1,5 +1,5 @@
 import {deepEqual} from '../../json-equal/deepEqual';
-import {ObjNode, ArrNode, JsonNode} from '../nodes';
+import {ObjNode, ArrNode, JsonNode, ConNode} from '../nodes';
 import {toPath, isChild} from '../../json-pointer/util';
 import {interval} from '../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
@@ -102,7 +102,9 @@ export class JsonPatch<N extends JsonNode = JsonNode<any>> {
       const key = steps[steps.length - 1];
       if (node instanceof ObjNode) {
         const stringKey = String(key);
-        if (node.get(stringKey) === undefined) throw new Error('NOT_FOUND');
+        const valueNode = node.get(stringKey);
+        if (valueNode === undefined) throw new Error('NOT_FOUND');
+        if (valueNode instanceof ConNode && valueNode.val === undefined) throw new Error('NOT_FOUND');
         builder.insObj(node.id, [[stringKey, builder.const(undefined)]]);
       } else if (node instanceof ArrNode) {
         const key = steps[steps.length - 1];
