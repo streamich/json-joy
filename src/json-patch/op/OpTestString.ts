@@ -20,7 +20,7 @@ export class OpTestString extends AbstractPredicateOp<'test_string'> {
   }
 
   public op() {
-    return 'test_string' as 'test_string';
+    return 'test_string' as const;
   }
 
   public code() {

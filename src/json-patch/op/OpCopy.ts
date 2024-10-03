@@ -19,7 +19,7 @@ export class OpCopy extends AbstractOp<'copy'> {
   }
 
   public op() {
-    return 'copy' as 'copy';
+    return 'copy' as const;
   }
 
   public code() {

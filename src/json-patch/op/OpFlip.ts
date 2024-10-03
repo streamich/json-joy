@@ -14,7 +14,7 @@ export class OpFlip extends AbstractOp<'flip'> {
   }
 
   public op() {
-    return 'flip' as 'flip';
+    return 'flip' as const;
   }
 
   public code() {

@@ -19,7 +19,7 @@ export class OpOr extends AbstractSecondOrderPredicateOp<'or'> {
   }
 
   public op() {
-    return 'or' as 'or';
+    return 'or' as const;
   }
 
   public code() {

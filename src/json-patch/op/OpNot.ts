@@ -19,7 +19,7 @@ export class OpNot extends AbstractSecondOrderPredicateOp<'not'> {
   }
 
   public op() {
-    return 'not' as 'not';
+    return 'not' as const;
   }
 
   public code() {

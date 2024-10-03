@@ -175,7 +175,7 @@ export const testBinaryCodegen = (transcode: (system: TypeSystem, type: Type, va
 
     test('can encode an empty tuple', () => {
       const system = new TypeSystem();
-      const t = system.t;
+      
       const type = system.t.Tuple();
       const value: any[] = [];
       expect(transcode(system, type, value)).toStrictEqual(value);

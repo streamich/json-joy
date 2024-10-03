@@ -19,7 +19,7 @@ export class OpMerge extends AbstractOp<'merge'> {
   }
 
   public op() {
-    return 'merge' as 'merge';
+    return 'merge' as const;
   }
 
   public code() {

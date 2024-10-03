@@ -1,5 +1,5 @@
-import {Type, t} from '..';
 import {validateTestSuite} from './validateTestSuite';
+import type{Type} from '..';
 
 const validate = (type: Type, value: unknown) => {
   type.validate(value);

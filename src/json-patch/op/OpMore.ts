@@ -18,7 +18,7 @@ export class OpMore extends AbstractPredicateOp<'more'> {
   }
 
   public op() {
-    return 'more' as 'more';
+    return 'more' as const;
   }
 
   public code() {

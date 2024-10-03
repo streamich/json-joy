@@ -18,7 +18,7 @@ export class OpAdd extends AbstractOp<'add'> {
   }
 
   public op() {
-    return 'add' as 'add';
+    return 'add' as const;
   }
 
   public code() {

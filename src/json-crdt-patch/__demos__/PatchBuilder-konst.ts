@@ -6,7 +6,7 @@
  *     npx ts-node src/json-crdt-patch/__demos__/PatchBuilder-konst.ts
  */
 
-import {PatchBuilder, Patch, konst} from '..';
+import {PatchBuilder, konst} from '..';
 import {LogicalClock} from '../clock';
 
 const clock = new LogicalClock(123, 456);

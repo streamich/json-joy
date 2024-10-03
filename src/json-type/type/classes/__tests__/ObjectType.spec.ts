@@ -22,6 +22,9 @@ describe('.extend()', () => {
       a: 'hello',
       b: 123,
     };
+    String(val1);
+    String(val2);
+    String(val3);
   });
 
   test('can extend an empty object', () => {
@@ -38,6 +41,9 @@ describe('.extend()', () => {
     const val3: ResolveType<typeof obj3> = {
       b: 123,
     };
+    String(val1);
+    String(val2);
+    String(val3);
   });
 });
 
@@ -56,6 +62,8 @@ describe('.omit()', () => {
     const val2: ResolveType<typeof obj2> = {
       a: 'hello',
     };
+    String(val1);
+    String(val2);
   });
 });
 
@@ -69,8 +77,7 @@ describe('.pick()', () => {
     expect(typeof obj2.getField('a')).toBe('object');
     expect(typeof obj2.getField('b' as any)).toBe('undefined');
     expect(typeof obj3.getField('a' as any)).toBe('undefined');
-    expect(typeof obj3.getField('b')).toBe('object');
-    const val1: ResolveType<typeof obj1> = {
+    expect(typeof obj3.getField('b')).toBe('object');    const val1: ResolveType<typeof obj1> = {
       a: 'hello',
       b: 123,
     };
@@ -80,5 +87,8 @@ describe('.pick()', () => {
     const val3: ResolveType<typeof obj3> = {
       b: 123,
     };
+    String(val1);
+    String(val2);
+    String(val3);
   });
 });

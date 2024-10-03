@@ -18,7 +18,7 @@ const main = async () => {
   const model = Model.withLogicalClock(1234); // 1234 is the session ID
 
   const view$ = new BehaviorSubject(model.view());
-  const unsubscribe = model.api.onChanges.listen(() => {
+  model.api.onChanges.listen(() => {
     view$.next(model.view());
   });
 

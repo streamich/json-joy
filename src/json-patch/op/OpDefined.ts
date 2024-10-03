@@ -15,7 +15,7 @@ export class OpDefined extends AbstractPredicateOp<'defined'> {
   }
 
   public op() {
-    return 'defined' as 'defined';
+    return 'defined' as const;
   }
 
   public code() {

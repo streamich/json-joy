@@ -7,6 +7,7 @@ test('const', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = 42;
+  String(v);
 });
 
 test('undefined', () => {
@@ -14,6 +15,7 @@ test('undefined', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = undefined;
+  String(v);
 });
 
 test('null', () => {
@@ -21,6 +23,7 @@ test('null', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = null;
+  String(v);
 });
 
 test('boolean', () => {
@@ -28,6 +31,7 @@ test('boolean', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = true;
+  String(v);
 });
 
 test('number', () => {
@@ -35,6 +39,7 @@ test('number', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = 123;
+  String(v);
 });
 
 test('string', () => {
@@ -42,6 +47,7 @@ test('string', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = 'abc';
+  String(v);
 });
 
 test('array', () => {
@@ -49,6 +55,7 @@ test('array', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = [];
+  String(v);
 });
 
 test('array', () => {
@@ -56,6 +63,7 @@ test('array', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = [123, 'abc'];
+  String(v);
 });
 
 test('object', () => {
@@ -63,6 +71,7 @@ test('object', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = {a: 123, b: 'abc'};
+  String(v);
 });
 
 test('optional field', () => {
@@ -70,6 +79,7 @@ test('optional field', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = {a: 123};
+  String(v);
 });
 
 test('binary', () => {
@@ -77,6 +87,7 @@ test('binary', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = new Uint8Array();
+  String(v);
 });
 
 test('ref', () => {
@@ -85,6 +96,7 @@ test('ref', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = new Uint8Array();
+  String(v);
 });
 
 test('or', () => {
@@ -93,6 +105,8 @@ test('or', () => {
   type T = TypeOf<S>;
   const v1: T = 123;
   const v2: T = 'abc';
+  String(v1);
+  String(v2);
 });
 
 test('fn', () => {
@@ -107,4 +121,5 @@ test('fn$', () => {
   type S = SchemaOf<typeof type>;
   type T = TypeOf<S>;
   const v: T = (arg) => EMPTY;
+  String(v);
 });

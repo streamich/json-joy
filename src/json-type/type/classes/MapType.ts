@@ -52,6 +52,7 @@ export class MapType<T extends Type> extends AbstractType<schema.MapSchema<Schem
   }
 
   public getOptions(): schema.Optional<schema.MapSchema<SchemaOf<T>>> {
+    // eslint-disable-next-line
     const {kind, type, ...options} = this.schema;
     return options as any;
   }

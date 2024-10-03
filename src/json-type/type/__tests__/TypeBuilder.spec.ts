@@ -59,6 +59,7 @@ test('can construct a realistic object', () => {
     id: 'abc',
     verified: true,
   };
+  String(val);
 });
 
 describe('import()', () => {

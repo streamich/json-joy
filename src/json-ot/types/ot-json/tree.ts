@@ -6,7 +6,7 @@ const toStringNode = (self: PickNode | DropNode, tab: string = ''): string => {
   let children = '';
   const last = self.children.size - 1;
   let i = 0;
-  for (const [index, node] of self.children) {
+  for (const [,node] of self.children) {
     const isLast = i === last;
     children += `\n${tab}${isLast ? ' └─ ' : ' ├─ '}${node.toString(tab + (isLast ? '    ' : ' │  '))}`;
     i++;
@@ -118,7 +118,7 @@ export class Register {
 
 export class OpTree {
   public static from(op: JsonOp): OpTree {
-    const [test, pick = [], data = [], drop = [], edit = []] = op;
+    const [test, pick = [], data = [], drop = []] = op;
     const tree = new OpTree();
     if (test.length) tree.test.push(...test);
     for (let i = 0; i < pick.length; i++) {
@@ -402,7 +402,7 @@ export class OpTree {
     let registers = 'Registers';
     const lastRegister = this.register.size - 1;
     let i = 0;
-    for (const [id, register] of this.register) {
+    for (const [,register] of this.register) {
       const isLast = i === lastRegister;
       registers += `\n${tab}${isLast ? '│  └─' : '│  ├─'} ${register}`;
       i++;

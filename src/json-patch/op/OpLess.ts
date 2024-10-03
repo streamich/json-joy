@@ -18,7 +18,7 @@ export class OpLess extends AbstractPredicateOp<'less'> {
   }
 
   public op() {
-    return 'less' as 'less';
+    return 'less' as const;
   }
 
   public code() {

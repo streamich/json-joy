@@ -219,7 +219,7 @@ export class NumberType extends AbstractType<schema.NumberSchema> {
     }
     num = num * (max - min) + min;
     if (Math.random() > 0.7) num = Math.round(num);
-    if (num === -0) return 0;
+    if (Object.is(num, -0)) return 0;
     return num;
   }
 

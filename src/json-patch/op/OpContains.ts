@@ -20,7 +20,7 @@ export class OpContains extends AbstractPredicateOp<'contains'> {
   }
 
   public op() {
-    return 'contains' as 'contains';
+    return 'contains' as const;
   }
 
   public code() {

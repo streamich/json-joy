@@ -19,7 +19,7 @@ export class OpIn extends AbstractPredicateOp<'in'> {
   }
 
   public op() {
-    return 'in' as 'in';
+    return 'in' as const;
   }
 
   public code() {

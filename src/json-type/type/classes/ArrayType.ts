@@ -55,6 +55,7 @@ export class ArrayType<T extends Type> extends AbstractType<schema.ArraySchema<S
   }
 
   public getOptions(): schema.Optional<schema.ArraySchema<SchemaOf<T>>> {
+    // eslint-disable-next-line
     const {kind, type, ...options} = this.schema;
     return options as any;
   }

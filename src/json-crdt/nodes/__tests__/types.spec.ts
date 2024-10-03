@@ -43,4 +43,5 @@ test('can infer view type of CRDT nodes', () => {
     n11: [123, true, 123],
     n13: [123, true, 'foo', [123, true, true]],
   };
+  String(a);
 });

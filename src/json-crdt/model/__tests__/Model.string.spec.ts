@@ -49,7 +49,7 @@ describe('Document', () => {
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '1');
       const ins2 = builder.insStr(str, ins1, '2');
-      const ins3 = builder.insStr(str, ins2, '3');
+      builder.insStr(str, ins2, '3');
       builder.root(str);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual('123');
@@ -60,7 +60,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '1');
-      const ins2 = builder.insStr(str, ins1, '23');
+      builder.insStr(str, ins1, '23');
       builder.root(str);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual('123');
@@ -82,8 +82,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
-      const ins2 = builder.insStr(str, tick(ins1, 1), '34');
-      const ins3 = builder.insStr(str, tick(ins2, 1), '5');
+      builder.insStr(str, tick(ins1, 1), '34');
       builder.root(str);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual('12345');
@@ -95,8 +94,8 @@ describe('Document', () => {
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
       const after = tick(ins1, 1);
-      const ins2 = builder.insStr(str, after, '34');
-      const ins3 = builder.insStr(str, after, '5');
+      builder.insStr(str, after, '34');
+      builder.insStr(str, after, '5');
       builder.root(str);
       doc.applyPatch(builder.patch);
       expect(doc.view()).toEqual('12534');
@@ -107,8 +106,8 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
-      const ins2 = builder.insStr(str, tick(ins1, 1), '34');
-      const ins3 = builder.insStr(str, tick(ins1, 1), '5');
+      builder.insStr(str, tick(ins1, 1), '34');
+      builder.insStr(str, tick(ins1, 1), '5');
       builder.root(str);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -121,7 +120,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, '12');
-      const ins2 = builder.insStr(str, ins1, '34');
+      builder.insStr(str, ins1, '34');
       builder.root(str);
       doc.applyPatch(builder.patch);
       doc.applyPatch(builder.patch);
@@ -135,7 +134,7 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'x');
-      const ins2 = builder.insStr(str, ins1, 'y');
+      builder.insStr(str, ins1, 'y');
       builder.del(str, [interval(ins1, 0, 1)]);
       builder.root(str);
       doc.applyPatch(builder.patch);
@@ -151,7 +150,7 @@ describe('Document', () => {
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'x');
       const ins2 = builder.insStr(str, ins1, 'y');
-      const ins3 = builder.insStr(str, ins2, 'z');
+      builder.insStr(str, ins2, 'z');
       builder.del(str, [interval(ins2, 0, 1)]);
       builder.root(str);
       doc.applyPatch(builder.patch);
@@ -210,7 +209,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'm');
       const ins2 = builder.insStr(str, ins1, 'n');
       const ins3 = builder.insStr(str, ins2, 'o');
-      const ins4 = builder.insStr(str, ins3, 'p');
+      builder.insStr(str, ins3, 'p');
       builder.del(str, [interval(ins2, 0, 2)]);
       builder.root(str);
       doc.applyPatch(builder.patch);
@@ -227,7 +226,7 @@ describe('Document', () => {
       const ins1 = builder.insStr(str, str, 'Hello');
       const ins2 = builder.insStr(str, tick(ins1, 4), ' ');
       const ins3 = builder.insStr(str, ins2, 'world!');
-      const ins4 = builder.insStr(str, tick(ins3, 5), ' How are you?');
+      builder.insStr(str, tick(ins3, 5), ' How are you?');
       builder.del(str, [interval(ins1, 3, 11)]);
       builder.root(str);
       doc.applyPatch(builder.patch);
@@ -241,8 +240,8 @@ describe('Document', () => {
       const builder = new PatchBuilder(doc.clock);
       const str = builder.str();
       const ins1 = builder.insStr(str, str, 'Hello');
-      const ins2 = builder.insStr(str, ins1, 'a');
-      const ins3 = builder.insStr(str, tick(ins1, 4), '!');
+      builder.insStr(str, ins1, 'a');
+      builder.insStr(str, tick(ins1, 4), '!');
       builder.del(str, [interval(ins1, 0, 3)]);
       builder.root(str);
       doc.applyPatch(builder.patch);

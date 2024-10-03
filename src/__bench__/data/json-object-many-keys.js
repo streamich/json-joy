@@ -58,7 +58,6 @@ module.exports = {
   plugh: 'plugh',
   xyzzy: 'xyzzy',
   thud: 'thud',
-  '0.0': 0.0,
   0.1: 0.1,
   0.2: 0.2,
   0.3: 0.3,

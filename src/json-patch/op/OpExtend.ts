@@ -20,7 +20,7 @@ export class OpExtend extends AbstractOp<'extend'> {
   }
 
   public op() {
-    return 'extend' as 'extend';
+    return 'extend' as const;
   }
 
   public code() {

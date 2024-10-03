@@ -44,6 +44,7 @@ export class ConstType<V = any> extends AbstractType<schema.ConstSchema<V>> {
   }
 
   public getOptions(): schema.Optional<schema.ConstSchema<V>> {
+    // eslint-disable-next-line
     const {kind, value, ...options} = this.schema;
     return options as any;
   }

@@ -15,7 +15,7 @@ export class OpUndefined extends AbstractPredicateOp<'undefined'> {
   }
 
   public op() {
-    return 'undefined' as 'undefined';
+    return 'undefined' as const;
   }
 
   public code() {

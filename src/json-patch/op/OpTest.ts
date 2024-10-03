@@ -21,7 +21,7 @@ export class OpTest extends AbstractPredicateOp<'test'> {
   }
 
   public op() {
-    return 'test' as 'test';
+    return 'test' as const;
   }
 
   public code() {

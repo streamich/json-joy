@@ -6,24 +6,24 @@
  *     npx nodemon -q -x ts-node src/json-crdt-extensions/cnt/__demos__/usage.ts
  */
 
-import {Model, s} from '../../../json-crdt';
-import {CntExt} from '..';
+import {Model, } from '../../../json-crdt';
+import {cnt} from '..';
 
 console.clear();
 
 const model = Model.withLogicalClock(1234);
 
-model.ext.register(CntExt);
+model.ext.register(cnt);
 
 model.api.root({
-  cnt: CntExt.new(42),
+  cnt: cnt.new(42),
 });
 
 console.log('');
 console.log('Initial value:');
 console.log(model + '');
 
-const api = model.api.in(['cnt']).asExt(CntExt);
+const api = model.api.in(['cnt']).asExt(cnt);
 
 api.inc(10);
 

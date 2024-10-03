@@ -17,7 +17,7 @@ export class OpInc extends AbstractOp<'inc'> {
   }
 
   public op() {
-    return 'inc' as 'inc';
+    return 'inc' as const;
   }
 
   public code() {

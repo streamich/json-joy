@@ -1,4 +1,4 @@
-import {documents} from '../../__tests__/json-documents';
+
 import {maxEncodingCapacity} from '../maxEncodingCapacity';
 
 test('computes size of single values', () => {

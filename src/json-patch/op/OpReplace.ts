@@ -18,7 +18,7 @@ export class OpReplace extends AbstractOp<'replace'> {
   }
 
   public op() {
-    return 'replace' as 'replace';
+    return 'replace' as const;
   }
 
   public code() {

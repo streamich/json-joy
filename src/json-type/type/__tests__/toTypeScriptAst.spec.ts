@@ -235,7 +235,7 @@ describe('map', () => {
 describe('ref', () => {
   test('can emit reference AST', () => {
     const system = new TypeSystem();
-    const {t} = system;
+    
     const type = system.t.Ref('Foo');
     expect(type.toTypeScriptAst()).toMatchInlineSnapshot(`
       {

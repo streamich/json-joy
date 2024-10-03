@@ -48,6 +48,7 @@ export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema
   }
 
   public getOptions(): schema.Optional<schema.TupleSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
+    // eslint-disable-next-line
     const {kind, types, ...options} = this.schema;
     return options as any;
   }
@@ -182,6 +183,6 @@ export class TupleType<T extends Type[]> extends AbstractType<schema.TupleSchema
   }
 
   public toString(tab: string = ''): string {
-    return super.toString(tab) + printTree(tab, [...this.types.map((type) => (tab: string) => type.toString(tab))]);
+    return super.toString(tab) + printTree(tab, this.types.map((type) => (tab: string) => type.toString(tab)));
   }
 }

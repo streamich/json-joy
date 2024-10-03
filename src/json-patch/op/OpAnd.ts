@@ -19,7 +19,7 @@ export class OpAnd extends AbstractSecondOrderPredicateOp<'and'> {
   }
 
   public op() {
-    return 'and' as 'and';
+    return 'and' as const;
   }
 
   public code() {

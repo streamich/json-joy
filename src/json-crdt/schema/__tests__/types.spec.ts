@@ -7,11 +7,13 @@ describe('can infer schema of JSON CRDT nodes', () => {
   test('con', () => {
     const schema1 = s.con(123);
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('val', () => {
     const schema1 = s.val(s.con(true));
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('obj', () => {
@@ -19,26 +21,31 @@ describe('can infer schema of JSON CRDT nodes', () => {
       hello: s.con('world'),
     });
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('vec', () => {
     const schema1 = s.vec(s.con(1), s.val(s.con(2)));
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('str', () => {
     const schema1 = s.str('asdf');
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('bin', () => {
     const schema1 = s.bin(new Uint8Array([1, 2, 3]));
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('arr', () => {
     const schema1 = s.arr([s.con(1), s.val(s.con(2))]);
     const schema2: JsonNodeToSchema<SchemaToJsonNode<typeof schema1>> = schema1;
+    String(schema2);
   });
 
   test('ext: peritext', () => {
@@ -47,6 +54,7 @@ describe('can infer schema of JSON CRDT nodes', () => {
     });
     type Nodes = SchemaToJsonNode<typeof schema1>;
     const schema2: JsonNodeToSchema<Nodes> = schema1;
+    String(schema2);
   });
 
   test('from typed model', () => {
@@ -62,5 +70,6 @@ describe('can infer schema of JSON CRDT nodes', () => {
       id: s.con('asdf'),
       age: s.val(s.con(42)),
     });
+    String(schema);
   });
 });

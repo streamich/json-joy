@@ -53,6 +53,7 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
   }
 
   public getOptions(): schema.Optional<schema.OrSchema<{[K in keyof T]: SchemaOf<T[K]>}>> {
+    // eslint-disable-next-line
     const {kind, types, ...options} = this.schema;
     return options as any;
   }
@@ -179,6 +180,6 @@ export class OrType<T extends Type[]> extends AbstractType<schema.OrSchema<{[K i
   }
 
   public toString(tab: string = ''): string {
-    return super.toString(tab) + printTree(tab, [...this.types.map((type) => (tab: string) => type.toString(tab))]);
+    return super.toString(tab) + printTree(tab, this.types.map((type) => (tab: string) => type.toString(tab)));
   }
 }

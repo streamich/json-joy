@@ -4,8 +4,8 @@ test('can export recursive schema', () => {
   const system = new TypeSystem();
   const {t} = system;
   const post = system.alias('Post', t.Object(t.prop('id', t.str), t.propOpt('author', t.Ref('User'))));
-  const stream = system.alias('Stream', t.Object(t.prop('id', t.str), t.prop('posts', t.Array(t.Ref('Post')))));
-  const user = system.alias(
+  system.alias('Stream', t.Object(t.prop('id', t.str), t.prop('posts', t.Array(t.Ref('Post')))));
+  system.alias(
     'User',
     t.Object(t.prop('id', t.str), t.prop('name', t.str), t.prop('following', t.Ref('Stream'))),
   );

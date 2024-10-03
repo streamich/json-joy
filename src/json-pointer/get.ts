@@ -8,7 +8,7 @@ export const get = (val: unknown, path: Path): unknown | undefined => {
   for (let i = 0; i < pathLength; i++) {
     key = path[i];
     if (val instanceof Array) {
-      const length = val.length;
+      
       if (key === '-') return undefined;
       const key2 = ~~key;
       if ('' + key2 !== key) return undefined;

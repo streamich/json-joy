@@ -24,7 +24,7 @@ export class OpMatches extends AbstractPredicateOp<'matches'> {
   }
 
   public op() {
-    return 'matches' as 'matches';
+    return 'matches' as const;
   }
 
   public code() {

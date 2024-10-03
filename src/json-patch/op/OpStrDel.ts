@@ -19,7 +19,7 @@ export class OpStrDel extends AbstractOp<'str_del'> {
   }
 
   public op() {
-    return 'str_del' as 'str_del';
+    return 'str_del' as const;
   }
 
   public code() {

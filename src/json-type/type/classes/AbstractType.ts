@@ -91,6 +91,7 @@ export abstract class AbstractType<S extends schema.Schema> implements BaseType<
   }
 
   public getOptions(): schema.Optional<S> {
+    // eslint-disable-next-line
     const {kind, ...options} = this.schema;
     return options as any;
   }

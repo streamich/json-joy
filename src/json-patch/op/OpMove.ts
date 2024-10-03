@@ -19,7 +19,7 @@ export class OpMove extends AbstractOp<'move'> {
   }
 
   public op() {
-    return 'move' as 'move';
+    return 'move' as const;
   }
 
   public code() {

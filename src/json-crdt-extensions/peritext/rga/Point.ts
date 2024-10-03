@@ -6,7 +6,6 @@ import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import {CONST, updateNum} from '../../../json-hash';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a

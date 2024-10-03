@@ -17,7 +17,7 @@ export class OpRemove extends AbstractOp<'remove'> {
   }
 
   public op() {
-    return 'remove' as 'remove';
+    return 'remove' as const;
   }
 
   public code() {

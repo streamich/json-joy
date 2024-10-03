@@ -18,7 +18,7 @@ export class OpStrIns extends AbstractOp<'str_ins'> {
   }
 
   public op() {
-    return 'str_ins' as 'str_ins';
+    return 'str_ins' as const;
   }
 
   public code() {

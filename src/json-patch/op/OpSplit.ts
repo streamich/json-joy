@@ -21,7 +21,7 @@ export class OpSplit extends AbstractOp<'split'> {
   }
 
   public op() {
-    return 'split' as 'split';
+    return 'split' as const;
   }
 
   public code() {
@@ -97,7 +97,7 @@ export class OpSplit extends AbstractOp<'split'> {
     } else return [node, node];
   }
 
-  public toJson(parent?: AbstractOp): OperationSplit {
+  public toJson(): OperationSplit {
     const op: OperationSplit = {
       op: 'split',
       path: formatJsonPointer(this.path),
@@ -112,7 +112,7 @@ export class OpSplit extends AbstractOp<'split'> {
     return this.props ? [opcode, this.path, this.pos, this.props] : [opcode, this.path, this.pos];
   }
 
-  public encode(encoder: IMessagePackEncoder, parent?: AbstractOp) {
+  public encode(encoder: IMessagePackEncoder) {
     encoder.encodeArrayHeader(this.props ? 4 : 3);
     encoder.writer.u8(OPCODE.split);
     encoder.encodeArray(this.path as unknown[]);

@@ -107,7 +107,7 @@ export class SchemaBuilder {
     b?: T | Omit<NoT<ArraySchema<T>>, 'type'>,
     c?: Omit<NoT<ArraySchema<T>>, 'id' | 'type'>,
   ): ArraySchema<T> {
-    if (typeof a === 'string') return this.Array(b as T, {id: a, ...(c || {})});
+    if (typeof a === 'string') return this.Array(b as T, {id: a, ...c});
     return {kind: 'arr', ...(b as Omit<NoT<ArraySchema<T>>, 'id' | 'type'>), type: a as T};
   }
 

@@ -20,7 +20,7 @@ export class OpEnds extends AbstractPredicateOp<'ends'> {
   }
 
   public op() {
-    return 'ends' as 'ends';
+    return 'ends' as const;
   }
 
   public code() {

@@ -11,4 +11,5 @@ test('can infer alias type', () => {
   const value: T = {
     id: 'string',
   };
+  String(value);
 });

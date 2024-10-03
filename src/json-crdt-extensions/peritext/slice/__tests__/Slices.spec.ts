@@ -214,7 +214,7 @@ describe('.refresh()', () => {
     const {peritext} = setup();
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
-    const slice1 = editor.insStackSlice('b', {bold: true});
+    editor.insStackSlice('b', {bold: true});
     peritext.refresh();
     const hash1 = peritext.savedSlices.hash;
     peritext.model.api.obj(['slices', 0, 4]).set({bold: false});

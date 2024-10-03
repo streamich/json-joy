@@ -20,7 +20,7 @@ export class OpType extends AbstractPredicateOp<'type'> {
   }
 
   public op() {
-    return 'type' as 'type';
+    return 'type' as const;
   }
 
   public code() {

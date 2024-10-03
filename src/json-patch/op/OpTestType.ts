@@ -20,7 +20,7 @@ export class OpTestType extends AbstractPredicateOp<'test_type'> {
   }
 
   public op() {
-    return 'test_type' as 'test_type';
+    return 'test_type' as const;
   }
 
   public code() {

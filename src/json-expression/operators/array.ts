@@ -141,17 +141,18 @@ export const arrayOperators: types.OperatorDefinition<any>[] = [
       return util.isInArr(arr, val);
     },
     (ctx: types.OperatorCodegenCtx<types.ExprIn>): ExpressionResult => {
-      const arr = ctx.operands[0];
-      const val = ctx.operands[1];
+      const operands = ctx.operands;
+      const arr = operands[0];
+      const val = operands[1];
       if (val instanceof Literal) {
         const fnJs = $$deepEqual(val.val);
         const d = ctx.const(fnJs);
         ctx.link(util.isInArr2, 'isInArr2');
-        const js = `isInArr2((${ctx.operands[0]}),${d})`;
+        const js = `isInArr2((${arr}),${d})`;
         return new Expression(js);
       }
       ctx.link(util.isInArr, 'isInArr');
-      const js = `isInArr((${ctx.operands[0]}),(${ctx.operands[1]}))`;
+      const js = `isInArr((${arr}),(${val}))`;
       return new Expression(js);
     },
   ] as types.OperatorDefinition<types.ExprIn>,

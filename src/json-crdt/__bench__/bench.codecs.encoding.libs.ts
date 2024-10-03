@@ -15,8 +15,7 @@ const benchmark: IBenchmark = {
     'This benchmark constructs a JSON document and serializes its model. For libraries, that cannot serialize just the model, the whole document is serialized.',
   warmup: 1000,
   payloads,
-  runners: [
-    ...editors
+  runners: editors
       .map((name) => structuralEditors[name])
       .map((editor: StructuralEditor) => ({
         name: editor.name,
@@ -29,7 +28,6 @@ const benchmark: IBenchmark = {
           };
         },
       })),
-  ],
 };
 
 runBenchmarkAndSave(benchmark, __dirname + '/results');

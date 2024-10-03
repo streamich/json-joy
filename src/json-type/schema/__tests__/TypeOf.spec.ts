@@ -11,17 +11,22 @@ test('can infer a simple "any" type', () => {
   const val1: T1 = 1;
   const val2: T2 = 'adf';
   const val3: T3 = null;
+  String(val1);
+  String(val2);
+  String(val3);
 });
 
 test('can infer a simple "undefined" type', () => {
   const schema1 = s.undef;
   type T1 = TypeOf<typeof schema1>;
   const nil1: T1 = undefined;
+  String(nil1);
 });
 
 test('can infer a simple "null" type', () => {
   const schema1 = s.nil;
   const nil1: TypeOf<typeof schema1> = null;
+  String(nil1);
 });
 
 test('can infer a simple "number" type', () => {
@@ -31,6 +36,9 @@ test('can infer a simple "number" type', () => {
   const num1: TypeOf<typeof schema1> = 1;
   const num2: TypeOf<typeof schema2> = 2;
   const num3: TypeOf<typeof schema3> = 3;
+  String(num1);
+  String(num2);
+  String(num3);
 });
 
 test('can infer a simple "string" type', () => {
@@ -42,6 +50,10 @@ test('can infer a simple "string" type', () => {
   const str2: TypeOf<typeof schema2> = 'bar';
   const str3: TypeOf<typeof schema3> = 'baz';
   const str4: TypeOf<typeof schema4> = 'qux';
+  String(str1);
+  String(str2);
+  String(str3);
+  String(str4);
 });
 
 test('can infer a simple "boolean" type', () => {
@@ -53,6 +65,10 @@ test('can infer a simple "boolean" type', () => {
   const bool2: TypeOf<typeof schema2> = false;
   const bool3: TypeOf<typeof schema3> = true;
   const bool4: TypeOf<typeof schema4> = false;
+  String(bool1);
+  String(bool2);
+  String(bool3);
+  String(bool4);
 });
 
 test('can infer a simple "binary" type', () => {
@@ -65,6 +81,9 @@ test('can infer a simple "binary" type', () => {
   const arr1: T1 = new Uint8Array();
   const arr2: T2 = new Uint8Array([1, 2, 3]);
   const arr3: T3 = Buffer.allocUnsafe(0);
+  String(arr1);
+  String(arr2);
+  String(arr3);
 });
 
 test('can infer a simple "array" type', () => {
@@ -77,6 +96,9 @@ test('can infer a simple "array" type', () => {
   const arr1: T1 = [null];
   const arr2: T2 = [1, 2, 3];
   const arr3: T3 = ['foo', 'bar', 'baz'];
+  String(arr1);
+  String(arr2);
+  String(arr3);
 });
 
 test('can infer a simple "const" type', () => {
@@ -94,12 +116,16 @@ test('can infer a simple "const" type', () => {
   const value1: T1 = 123;
   const value2: T2 = 'replace';
   const value3: T3 = true;
+  String(value1);
+  String(value2);
+  String(value3);
 });
 
 test('can infer a simple "tuple" type', () => {
   const schema1 = s.Tuple(s.Const('replace' as const), s.str, s.str);
   type T1 = TypeOf<typeof schema1>;
   const value1: T1 = ['replace', 'foo', 'bar'];
+  String(value1);
 });
 
 test('can infer a simple object type', () => {
@@ -117,6 +143,10 @@ test('can infer a simple object type', () => {
   const obj2: T2 = {foo: 'bar'};
   const obj3: T3 = {bar: true};
   const obj4: T4 = {baz: 123, bazOptional: false};
+  String(obj1);
+  String(obj2);
+  String(obj3);
+  String(obj4);
 });
 
 test('can infer a map type', () => {
@@ -129,6 +159,9 @@ test('can infer a map type', () => {
   const obj1: Record<string, unknown> = {};
   const obj2: T2 = {foo: 'bar'};
   const obj3: T3 = {bar: [1, 2, 3]};
+  String(obj1);
+  String(obj2);
+  String(obj3);
 });
 
 test('can infer a simple union type', () => {
@@ -147,6 +180,15 @@ test('can infer a simple union type', () => {
   const val7: T3 = false;
   const val8: T3 = '';
   const val9: T3 = 0;
+  String(val1);
+  String(val2);
+  String(val3);
+  String(val4);
+  String(val5);
+  String(val6);
+  String(val7);
+  String(val8);
+  String(val9);
 });
 
 test('can infer a simple "ref" type', () => {
@@ -156,6 +198,8 @@ test('can infer a simple "ref" type', () => {
   type T2 = TypeOf<typeof schema2>;
   const val1: T1 = 'foo';
   const val2: T2 = {foo: 'bar'};
+  String(val1);
+  String(val2);
 });
 
 test('can infer a simple "fn" type', () => {
@@ -167,6 +211,8 @@ test('can infer a simple "fn" type', () => {
   type T2 = TypeOf<typeof schema2>;
   const val1: T1 = async (arg: string) => +arg;
   const val2: T2 = async (arg: unknown) => arg;
+  String(val1);
+  String(val2);
 });
 
 test('can infer a simple "fn$" type', () => {
@@ -178,6 +224,8 @@ test('can infer a simple "fn$" type', () => {
   type T2 = TypeOf<typeof schema2>;
   const val1: T1 = (arg) => arg.pipe(map((x: string) => +x));
   const val2: T2 = () => EMPTY;
+  String(val1);
+  String(val2);
 });
 
 test('can infer a complex "fn" type', () => {
@@ -193,6 +241,7 @@ test('can infer a complex "fn" type', () => {
     const str = patch.ops[0].op + id;
     return {id: str};
   };
+  String(val1);
 });
 
 test('can infer a realistic schema', () => {
@@ -216,6 +265,7 @@ test('can infer a realistic schema', () => {
     approved: true,
     meta: {anything: 'goes'},
   };
+  String(val);
 });
 
 test('can specify an optional fields', () => {
@@ -233,4 +283,6 @@ test('can specify an optional fields', () => {
       bar: 123,
     },
   };
+  String(val0);
+  String(val2);
 });

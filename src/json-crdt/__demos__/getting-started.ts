@@ -7,7 +7,7 @@
  */
 
 import {Model, n} from '..';
-import {vec} from '../../json-crdt-patch';
+
 
 // Create a new JSON CRDT document, 1234 is the session ID.
 const model = Model.withLogicalClock(1234) as any as Model<

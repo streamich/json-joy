@@ -19,7 +19,7 @@ export class OpTestStringLen extends AbstractPredicateOp<'test_string_len'> {
   }
 
   public op() {
-    return 'test_string_len' as 'test_string_len';
+    return 'test_string_len' as const;
   }
 
   public code() {
