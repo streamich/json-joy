@@ -1,7 +1,7 @@
 import type {Observable} from 'rxjs';
 import type {Mutable} from '@jsonjoy.com/util/lib/types';
 import type {Display, Identifiable} from './common';
-import type {Expr} from '../../json-expression';
+import type {Expr} from '@jsonjoy.com/json-expression';
 
 export interface TType<Value = unknown> extends Display, Partial<Identifiable> {
   /**

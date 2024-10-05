@@ -1,11 +1,11 @@
 import {find, isArrayReference, isObjectReference} from '@jsonjoy.com/json-pointer';
 import {JsonOp} from './types';
-import {evaluate as evalExpression} from '../../../json-expression/evaluate';
+import {evaluate as evalExpression} from '@jsonjoy.com/json-expression/lib/evaluate';
 import {comparePath} from './util';
 import {EDIT_TYPE} from './constants';
 import {apply as applyStr} from '../ot-string-irreversible/apply';
 import {apply as applyBin} from '../ot-binary-irreversible/apply';
-import {Vars} from '../../../json-expression/Vars';
+import {Vars} from '@jsonjoy.com/json-expression/lib/Vars';
 
 export const apply = (doc: unknown, op: JsonOp): unknown => {
   const [test, pick = [], data = [], drop = [], edit = []] = op;

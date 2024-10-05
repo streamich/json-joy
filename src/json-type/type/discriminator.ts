@@ -1,4 +1,4 @@
-import {Expr} from '../../json-expression';
+import {Expr} from '@jsonjoy.com/json-expression';
 import {BooleanType, ConstType, NumberType, ObjectFieldType, ObjectType, StringType, TupleType} from './classes';
 import {Type} from './types';
 
