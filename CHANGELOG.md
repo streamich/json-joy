@@ -1,3 +1,10 @@
+## [16.27.1](https://github.com/streamich/json-joy/compare/v16.27.0...v16.27.1) (2024-10-05)
+
+
+### Bug Fixes
+
+* 🐛 switch to using [@jsonjoy](https://github.com/jsonjoy).com/json-pointer library ([56bb18c](https://github.com/streamich/json-joy/commit/56bb18c0523abcb4afbe7480de221a33b9c4a97b))
+
 # [16.27.0](https://github.com/streamich/json-joy/compare/v16.26.0...v16.27.0) (2024-10-01)
 
 
