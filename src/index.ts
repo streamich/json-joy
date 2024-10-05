@@ -11,6 +11,5 @@ export type * from '@jsonjoy.com/util/lib/json-brand/types';
 export type * from './json-crdt';
 export type * from './json-crdt-patch';
 export type * from './json-crdt-extensions';
-export type * from './json-expression/types';
 export type * from './json-patch/types';
 export type * from './json-schema/types';

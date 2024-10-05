@@ -1,8 +1,8 @@
-import {literal} from '../../../json-expression/util';
+import {literal} from '@jsonjoy.com/json-expression/lib/util';
 import {OpTree} from './tree';
 import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Operation} from '../../../json-patch';
-import type {Expr} from '../../../json-expression';
+import type {Expr} from '@jsonjoy.com/json-expression';
 import type {JsonOp} from './types';
 
 export const jsonPatchOpToJsonOp = (operation: Operation): JsonOp => {

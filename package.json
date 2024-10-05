@@ -115,6 +115,7 @@
   },
   "peerDependencies": {
     "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/json-expression": "^1.0.0",
     "@jsonjoy.com/json-pack": "^1.0.4",
     "@jsonjoy.com/json-pointer": "^1.0.0",
     "@jsonjoy.com/util": "^1.3.0",
@@ -135,6 +136,7 @@
   },
   "devDependencies": {
     "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/json-expression": "^1.0.0",
     "@jsonjoy.com/json-pack": "^1.0.4",
     "@jsonjoy.com/json-pointer": "^1.0.0",
     "@jsonjoy.com/util": "^1.3.0",
@@ -193,7 +195,6 @@
           "json-crdt-extensions",
           "json-crdt-peritext-ui",
           "json-crdt",
-          "json-expression",
           "json-hash",
           "json-ot",
           "json-patch-ot",

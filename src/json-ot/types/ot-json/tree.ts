@@ -1,4 +1,4 @@
-import type {Expr} from '../../../json-expression';
+import type {Expr} from '@jsonjoy.com/json-expression';
 import type {Path} from '@jsonjoy.com/json-pointer';
 import type {JsonOp, JsonOpDataComponent, JsonOpDropComponent, JsonOpPickComponent} from './types';
 
