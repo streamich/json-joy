@@ -114,36 +114,18 @@ describe('validateSchema()', () => {
       format: 'i32',
     };
     expect(t.import(schema as any).validateSchema()).toBeUndefined();
-    expect(() => t.import({...schema, description: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_DESCRIPTION"`,
+    expect(() => t.import({...schema, description: 123} as any).validateSchema()).toThrow(
+      new Error('INVALID_DESCRIPTION'),
     );
-    expect(() => t.import({...schema, title: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_TITLE"`,
-    );
-    expect(() => t.import({...schema, intro: null} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_INTRO"`,
-    );
-    expect(() => t.import({...schema, gt: null} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"GT_TYPE"`,
-    );
-    expect(() => t.import({...schema, lt: null} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"LT_TYPE"`,
-    );
-    expect(() => t.import({...schema, gte: '334'} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"GTE_TYPE"`,
-    );
-    expect(() => t.import({...schema, lte: '334'} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"LTE_TYPE"`,
-    );
-    expect(() => t.import({...schema, lt: 1, gt: 2} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"GT_LT"`,
-    );
-    expect(() => t.import({...schema, format: 'int'} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"FORMAT_INVALID"`,
-    );
-    expect(() => t.import({...schema, validator: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_VALIDATOR"`,
-    );
+    expect(() => t.import({...schema, title: 123} as any).validateSchema()).toThrow(new Error('INVALID_TITLE'));
+    expect(() => t.import({...schema, intro: null} as any).validateSchema()).toThrow(new Error('INVALID_INTRO'));
+    expect(() => t.import({...schema, gt: null} as any).validateSchema()).toThrow(new Error('GT_TYPE'));
+    expect(() => t.import({...schema, lt: null} as any).validateSchema()).toThrow(new Error('LT_TYPE'));
+    expect(() => t.import({...schema, gte: '334'} as any).validateSchema()).toThrow(new Error('GTE_TYPE'));
+    expect(() => t.import({...schema, lte: '334'} as any).validateSchema()).toThrow(new Error('LTE_TYPE'));
+    expect(() => t.import({...schema, lt: 1, gt: 2} as any).validateSchema()).toThrow(new Error('GT_LT'));
+    expect(() => t.import({...schema, format: 'int'} as any).validateSchema()).toThrow(new Error('FORMAT_INVALID'));
+    expect(() => t.import({...schema, validator: 123} as any).validateSchema()).toThrow(new Error('INVALID_VALIDATOR'));
   });
 
   test('can validate a string schema', () => {
@@ -152,42 +134,20 @@ describe('validateSchema()', () => {
       description: 'A string',
     };
     expect(t.import(schema as any).validateSchema()).toBeUndefined();
-    expect(() => t.import({...schema, description: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_DESCRIPTION"`,
+    expect(() => t.import({...schema, description: 123} as any).validateSchema()).toThrow(
+      new Error('INVALID_DESCRIPTION'),
     );
-    expect(() => t.import({...schema, title: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_TITLE"`,
-    );
-    expect(() => t.import({...schema, intro: null} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"INVALID_INTRO"`,
-    );
-    expect(() => t.import({...schema, min: null} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MIN_TYPE"`,
-    );
-    expect(() => t.import({...schema, max: 'asdf'} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MAX_TYPE"`,
-    );
-    expect(() => t.import({...schema, min: -1} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MIN_NEGATIVE"`,
-    );
-    expect(() => t.import({...schema, max: -1} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MAX_NEGATIVE"`,
-    );
-    expect(() => t.import({...schema, max: 0.5} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MAX_DECIMAL"`,
-    );
-    expect(() => t.import({...schema, min: 1.2} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MIN_DECIMAL"`,
-    );
-    expect(() => t.import({...schema, min: 5, max: 3} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"MIN_MAX"`,
-    );
-    expect(() => t.import({...schema, ascii: 123} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"ASCII"`,
-    );
-    expect(() => t.import({...schema, ascii: 'bytes'} as any).validateSchema()).toThrowErrorMatchingInlineSnapshot(
-      `"ASCII"`,
-    );
+    expect(() => t.import({...schema, title: 123} as any).validateSchema()).toThrow(new Error('INVALID_TITLE'));
+    expect(() => t.import({...schema, intro: null} as any).validateSchema()).toThrow(new Error('INVALID_INTRO'));
+    expect(() => t.import({...schema, min: null} as any).validateSchema()).toThrow(new Error('MIN_TYPE'));
+    expect(() => t.import({...schema, max: 'asdf'} as any).validateSchema()).toThrow(new Error('MAX_TYPE'));
+    expect(() => t.import({...schema, min: -1} as any).validateSchema()).toThrow(new Error('MIN_NEGATIVE'));
+    expect(() => t.import({...schema, max: -1} as any).validateSchema()).toThrow(new Error('MAX_NEGATIVE'));
+    expect(() => t.import({...schema, max: 0.5} as any).validateSchema()).toThrow(new Error('MAX_DECIMAL'));
+    expect(() => t.import({...schema, min: 1.2} as any).validateSchema()).toThrow(new Error('MIN_DECIMAL'));
+    expect(() => t.import({...schema, min: 5, max: 3} as any).validateSchema()).toThrow(new Error('MIN_MAX'));
+    expect(() => t.import({...schema, ascii: 123} as any).validateSchema()).toThrow(new Error('ASCII'));
+    expect(() => t.import({...schema, ascii: 'bytes'} as any).validateSchema()).toThrow(new Error('ASCII'));
   });
 
   test('validates an arbitrary self-constructed object', () => {
@@ -205,7 +165,7 @@ describe('validateSchema()', () => {
       description: 'An array',
       type: {kind: 'str', ascii: 'bytes'},
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
+    expect(() => type.validateSchema()).toThrow(new Error('ASCII'));
   });
 
   test('validates array elements', () => {
@@ -214,7 +174,7 @@ describe('validateSchema()', () => {
       description: 'An array',
       type: {kind: 'str', ascii: 'bytes'},
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
+    expect(() => type.validateSchema()).toThrow(new Error('ASCII'));
   });
 
   test('validates object', () => {
@@ -224,7 +184,7 @@ describe('validateSchema()', () => {
       fields: [],
       unknownFields: 123 as any,
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"UNKNOWN_FIELDS_TYPE"`);
+    expect(() => type.validateSchema()).toThrow(new Error('UNKNOWN_FIELDS_TYPE'));
   });
 
   test('validates object fields', () => {
@@ -233,7 +193,7 @@ describe('validateSchema()', () => {
       description: 'An object',
       fields: [{kind: 'field', key: 'id', type: {kind: 'str', ascii: 'bytes'} as any}],
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
+    expect(() => type.validateSchema()).toThrow(new Error('ASCII'));
   });
 
   test('validates object fields - 2', () => {
@@ -242,14 +202,14 @@ describe('validateSchema()', () => {
       description: 'An object',
       fields: [{kind: 'field', key: 'id', optional: 123, type: {kind: 'str'}} as any],
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"OPTIONAL_TYPE"`);
+    expect(() => type.validateSchema()).toThrow(new Error('OPTIONAL_TYPE'));
   });
 
   test('validates ref', () => {
     const type = t.import({
       kind: 'ref',
     } as any);
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"REF_TYPE"`);
+    expect(() => type.validateSchema()).toThrow(new Error('REF_TYPE'));
   });
 
   test('validates or', () => {
@@ -258,6 +218,6 @@ describe('validateSchema()', () => {
       types: [{kind: 'str', ascii: '123'} as any],
       discriminator: ['!', 0],
     });
-    expect(() => type.validateSchema()).toThrowErrorMatchingInlineSnapshot(`"ASCII"`);
+    expect(() => type.validateSchema()).toThrow(new Error('ASCII'));
   });
 });
