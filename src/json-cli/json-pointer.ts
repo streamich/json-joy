@@ -1,7 +1,7 @@
 /* tslint:disable no-string-throw */
 
 import {readFileSync} from 'fs';
-import {findByPointer} from '../json-pointer';
+import {findByPointer} from '@jsonjoy.com/json-pointer';
 
 try {
   const buf = readFileSync(0);

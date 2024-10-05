@@ -1,4 +1,4 @@
-import {isValidIndex, isChild, parent, Path} from '../../json-pointer';
+import {isValidIndex, isChild, parent, Path} from '@jsonjoy.com/json-pointer';
 
 export const bumpArrayPath = (path1: Path, path2: Path): undefined | Path => {
   const folder = parent(path1);

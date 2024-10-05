@@ -1,4 +1,4 @@
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 
 const comparePathComponent = (a: string | number, b: string | number): number => {
   if (a === b) return 0;

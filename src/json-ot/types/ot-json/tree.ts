@@ -1,5 +1,5 @@
 import type {Expr} from '../../../json-expression';
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {JsonOp, JsonOpDataComponent, JsonOpDropComponent, JsonOpPickComponent} from './types';
 
 const toStringNode = (self: PickNode | DropNode, tab: string = ''): string => {

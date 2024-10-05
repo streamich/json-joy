@@ -1,7 +1,7 @@
 import type {CompactUndefinedOp, OPCODE_UNDEFINED} from '../codec/compact/types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationUndefined} from '../types';
-import {find, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';

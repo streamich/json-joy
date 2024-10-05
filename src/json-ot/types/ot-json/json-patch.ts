@@ -1,6 +1,6 @@
 import {literal} from '../../../json-expression/util';
 import {OpTree} from './tree';
-import {toPath} from '../../../json-pointer/util';
+import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
 import type {Operation} from '../../../json-patch';
 import type {Expr} from '../../../json-expression';
 import type {JsonOp} from './types';

@@ -1,8 +1,8 @@
 import {SyncStore} from '../../util/events/sync-store';
 import {JsonNodeApi} from '../model/api/types';
 import {JsonPatch} from './JsonPatch';
-import {toPath} from '../../json-pointer/util';
-import type {Path} from '../../json-pointer/types';
+import {toPath} from '@jsonjoy.com/json-pointer/lib/util';
+import type {Path} from '@jsonjoy.com/json-pointer/lib/types';
 import type {Model} from '../model';
 import type {Operation, OperationAdd, OperationRemove, OperationReplace} from '../../json-patch';
 import type {JsonNode, JsonNodeView} from '../nodes';

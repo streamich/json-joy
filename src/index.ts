@@ -13,5 +13,4 @@ export type * from './json-crdt-patch';
 export type * from './json-crdt-extensions';
 export type * from './json-expression/types';
 export type * from './json-patch/types';
-export type * from './json-pointer/types';
 export type * from './json-schema/types';

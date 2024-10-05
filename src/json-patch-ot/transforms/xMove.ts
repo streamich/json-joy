@@ -1,6 +1,6 @@
 import {operationToOp} from '../../json-patch/codec/json';
 import {OpMove, Op} from '../../json-patch/op';
-import {isRoot, isChild} from '../../json-pointer';
+import {isRoot, isChild} from '@jsonjoy.com/json-pointer';
 
 export const xMove = (move: OpMove, op: Op): null | Op | Op[] => {
   if (isRoot(move.path)) return op;

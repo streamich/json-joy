@@ -571,6 +571,13 @@
     hyperdyperid "^1.2.0"
     thingies "^1.20.0"
 
+"@jsonjoy.com/json-pointer@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@jsonjoy.com/json-pointer/-/json-pointer-1.0.0.tgz#65206a3a2126dea45835a369b323f7c594242779"
+  integrity sha512-reBuEhUU6xLA5DhBqC4jqwHAjnWA+HZWHTzlz/OUg18lX3LXcm/Ux5Tuu4prc0XKqf++N4iOCypawBQQqbtgtw==
+  dependencies:
+    "@jsonjoy.com/util" "^1.3.0"
+
 "@jsonjoy.com/util@^1.1.2":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.1.3.tgz#75b1c3cf21b70e665789d1ad3eabeff8b7fd1429"

@@ -1,7 +1,7 @@
 import type {CompactContainsOp, OPCODE_CONTAINS} from '../codec/compact/types';
 import type {OperationContains} from '../types';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
-import {find, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';

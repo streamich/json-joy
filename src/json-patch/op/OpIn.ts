@@ -1,6 +1,6 @@
 import type {CompactInOp, OPCODE_IN} from '../codec/compact/types';
 import {OperationIn} from '../types';
-import {find, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OPCODE} from '../constants';
 import {AbstractOp} from './AbstractOp';

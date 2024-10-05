@@ -1,9 +1,9 @@
 import {deepEqual} from '../../json-equal/deepEqual';
 import {ObjNode, ArrNode, JsonNode, ConNode} from '../nodes';
-import {toPath, isChild} from '../../json-pointer/util';
+import {toPath, isChild} from '@jsonjoy.com/json-pointer/lib/util';
 import {interval} from '../../json-crdt-patch/clock';
 import {PatchBuilder} from '../../json-crdt-patch/PatchBuilder';
-import type {Path} from '../../json-pointer/types';
+import type {Path} from '@jsonjoy.com/json-pointer/lib/types';
 import type {Model} from '../model';
 import type {Operation} from '../../json-patch';
 

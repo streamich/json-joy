@@ -1,5 +1,5 @@
 import {deepEqual} from '../json-equal/deepEqual';
-import {toPath, get as get_} from '../json-pointer';
+import {toPath, get as get_} from '@jsonjoy.com/json-pointer';
 import type {Vars} from './Vars';
 import type {Expression, Literal, OperatorDefinition, OperatorMap} from './types';
 

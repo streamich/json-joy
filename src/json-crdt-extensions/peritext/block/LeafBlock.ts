@@ -1,6 +1,6 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {Block} from './Block';
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 
 export interface IBlock<Attr = unknown> {
   readonly path: Path;

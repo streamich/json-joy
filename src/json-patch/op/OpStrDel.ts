@@ -1,7 +1,7 @@
 import type {CompactStrDelOp, OPCODE_STR_DEL} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationStrDel} from '../types';
-import {find, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 

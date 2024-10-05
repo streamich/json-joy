@@ -1,5 +1,5 @@
 import type {OPCODE} from '../../constants';
-import type {Path} from '../../../json-pointer/types';
+import type {Path} from '@jsonjoy.com/json-pointer/lib/types';
 import type {JsonPatchTypes} from '../json/types';
 
 export interface EncoderOptions {

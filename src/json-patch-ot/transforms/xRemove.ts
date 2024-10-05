@@ -1,5 +1,5 @@
 import {OpRemove, Op} from '../../json-patch/op';
-import {isRoot, isValidIndex, formatJsonPointer, isPathEqual} from '../../json-pointer';
+import {isRoot, isValidIndex, formatJsonPointer, isPathEqual} from '@jsonjoy.com/json-pointer';
 import {lowerArrayPath} from './util';
 import {Operation} from '../../json-patch/types';
 import {operationToOp} from '../../json-patch/codec/json';

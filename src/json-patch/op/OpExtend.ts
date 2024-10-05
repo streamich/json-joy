@@ -1,7 +1,7 @@
 import type {CompactExtendOp, OPCODE_EXTEND} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationExtend} from '../types';
-import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '../../json-pointer';
+import {find, isArrayReference, isObjectReference, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 

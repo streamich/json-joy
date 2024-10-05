@@ -1,4 +1,4 @@
-import {find, isArrayReference, isObjectReference} from '../../../json-pointer';
+import {find, isArrayReference, isObjectReference} from '@jsonjoy.com/json-pointer';
 import {JsonOp} from './types';
 import {evaluate as evalExpression} from '../../../json-expression/evaluate';
 import {comparePath} from './util';

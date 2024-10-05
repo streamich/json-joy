@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationMove} from '../types';
 import {OpRemove} from './OpRemove';
 import {OpAdd} from './OpAdd';
-import {Path, toPath, formatJsonPointer} from '../../json-pointer';
+import {Path, toPath, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 
