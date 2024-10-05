@@ -1,3 +1,10 @@
+## [16.27.2](https://github.com/streamich/json-joy/compare/v16.27.1...v16.27.2) (2024-10-05)
+
+
+### Bug Fixes
+
+* 🐛 move json-expression library externally ([3d62c55](https://github.com/streamich/json-joy/commit/3d62c5598ee1272f7b751f4072a027bea175d73f))
+
 ## [16.27.1](https://github.com/streamich/json-joy/compare/v16.27.0...v16.27.1) (2024-10-05)
 
 
