@@ -27,7 +27,6 @@ jobs:
       - run: yarn test:cli:patch
       - run: yarn test:cli:pack
       - run: yarn demo:json-patch
-      - run: yarn demo:json-pointer
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         env:
