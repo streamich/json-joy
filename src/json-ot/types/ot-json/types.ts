@@ -1,7 +1,7 @@
 import type {BinaryOp} from '../ot-binary-irreversible/types';
 import type {EDIT_TYPE} from './constants';
 import type {Expr} from '../../../json-expression';
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {StringOp} from '../ot-string-irreversible/types';
 
 export type JsonOpTestComponent = Expr;

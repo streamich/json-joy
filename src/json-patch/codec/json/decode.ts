@@ -29,7 +29,7 @@ import {OpOr} from '../../op/OpOr';
 import {OpNot} from '../../op/OpNot';
 import {OpMatches} from '../../op/OpMatches';
 import {OpType} from '../../op/OpType';
-import {toPath} from '../../../json-pointer';
+import {toPath} from '@jsonjoy.com/json-pointer';
 import type {JsonPatchOptions} from '../../types';
 import {createMatcherDefault} from '../../util';
 

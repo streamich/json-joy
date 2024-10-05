@@ -1,7 +1,7 @@
 import type {CompactCopyOp, OPCODE_COPY} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
-import {Path, find, formatJsonPointer} from '../../json-pointer';
+import {Path, find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OpAdd} from './OpAdd';
 import {clone as deepClone} from '../../json-clone/clone';
 import {OPCODE} from '../constants';

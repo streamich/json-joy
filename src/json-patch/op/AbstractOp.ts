@@ -1,5 +1,5 @@
 import type {CompactOpBase} from '../codec/compact/types';
-import type {Path} from '../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {OpType} from '../opcodes';
 import type {Operation} from '../types';
 import {OPCODE} from '../constants';

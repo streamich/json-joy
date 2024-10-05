@@ -1,5 +1,5 @@
 import type {OpType} from '../opcodes';
-import type {Path} from '../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 
 export abstract class AbstractSecondOrderPredicateOp<O extends OpType = OpType> extends AbstractPredicateOp<O> {

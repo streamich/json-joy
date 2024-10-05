@@ -1,5 +1,5 @@
 import {QuillConst} from './constants';
-import {PathStep} from '../../json-pointer';
+import {PathStep} from '@jsonjoy.com/json-pointer';
 import {QuillDeltaNode} from './QuillDeltaNode';
 import {NodeApi} from '../../json-crdt/model/api/nodes';
 import {konst} from '../../json-crdt-patch/builder/Konst';

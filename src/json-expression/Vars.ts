@@ -1,4 +1,4 @@
-import {get, toPath, validateJsonPointer} from '../json-pointer';
+import {get, toPath, validateJsonPointer} from '@jsonjoy.com/json-pointer';
 
 export class Vars {
   protected readonly vars: Map<string, unknown> = new Map();

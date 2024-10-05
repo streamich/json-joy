@@ -3,7 +3,7 @@ import {AbstractSecondOrderPredicateOp} from './AbstractSecondOrderPredicateOp';
 import {AbstractPredicateOp} from './AbstractPredicateOp';
 import {OperationAnd, PredicateOperation} from '../types';
 import {OPCODE} from '../constants';
-import {Path, formatJsonPointer} from '../../json-pointer';
+import {Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {AbstractOp} from './AbstractOp';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 

@@ -1,5 +1,5 @@
 import {replaceIndices} from '../util';
-import {isValidIndex} from '../../json-pointer';
+import {isValidIndex} from '@jsonjoy.com/json-pointer';
 
 describe('Utils', () => {
   describe('isIndexValid', () => {

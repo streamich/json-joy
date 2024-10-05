@@ -33,7 +33,7 @@ import {
 } from '../../op';
 import {MsgPackDecoderFast} from '@jsonjoy.com/json-pack/lib/msgpack/MsgPackDecoderFast';
 import {OPCODE} from '../../constants';
-import {Path} from '../../../json-pointer';
+import {Path} from '@jsonjoy.com/json-pointer';
 import {JsonPatchTypes} from '../json/types';
 import {createMatcherDefault} from '../../util';
 import type {JsonPatchOptions} from '../../types';

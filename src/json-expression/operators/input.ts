@@ -1,8 +1,8 @@
 import {Expression, ExpressionResult, Literal} from '../codegen-steps';
 import * as util from '../util';
-import * as jsonPointer from '../../json-pointer';
+import * as jsonPointer from '@jsonjoy.com/json-pointer';
 import {Vars} from '../Vars';
-import {$$find} from '../../json-pointer/codegen/find';
+import {$$find} from '@jsonjoy.com/json-pointer/lib/codegen/find';
 import type * as types from '../types';
 
 const get = (vars: Vars, varname: unknown) => {

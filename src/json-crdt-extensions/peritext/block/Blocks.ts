@@ -3,7 +3,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {commonLength} from '../util/commonLength';
 import {printTree} from 'tree-dump/lib/printTree';
 import {LeafBlock} from './LeafBlock';
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
 import type {Peritext} from '../Peritext';

@@ -1,5 +1,5 @@
 import {OpMove} from '../OpMove';
-import {toPath} from '../../../json-pointer';
+import {toPath} from '@jsonjoy.com/json-pointer';
 
 test('JSON stringifies to correct value without extra keys', () => {
   const op = new OpMove(toPath('/foo/bar'), toPath('/foo/baz'));

@@ -1,7 +1,7 @@
 import type {CompactAddOp, OPCODE_ADD} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationAdd} from '../types';
-import {find, Path, formatJsonPointer} from '../../json-pointer';
+import {find, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OPCODE} from '../constants';
 import {clone as deepClone} from '../../json-clone/clone';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';

@@ -1,7 +1,7 @@
 import type {CompactSplitOp, OPCODE_SPLIT} from '../codec/compact/types';
 import {AbstractOp} from './AbstractOp';
 import {OperationSplit, SlateNode, SlateTextNode, SlateElementNode} from '../types';
-import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '../../json-pointer';
+import {find, isObjectReference, isArrayReference, Path, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {isTextNode, isElementNode} from '../util';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';

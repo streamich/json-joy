@@ -4,7 +4,7 @@ import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {OverlayPoint} from '../overlay/OverlayPoint';
 import {UndefEndIter, type UndefIterator} from '../../../util/iterator';
 import {Inline} from './Inline';
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 import type {Printable} from 'tree-dump';
 import type {Peritext} from '../Peritext';
 import type {Stateful} from '../types';

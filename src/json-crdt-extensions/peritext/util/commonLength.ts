@@ -1,4 +1,4 @@
-import type {Path} from '../../../json-pointer';
+import type {Path} from '@jsonjoy.com/json-pointer';
 
 export const commonLength = (a: Path, b: Path): number => {
   let i = 0;

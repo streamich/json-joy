@@ -22,7 +22,7 @@ import {
   OperationMatches,
   JsonPatchTypes,
 } from './types';
-import {validateJsonPointer} from '../json-pointer/validate';
+import {validateJsonPointer} from '@jsonjoy.com/json-pointer/lib/validate';
 import {hasOwnProperty} from '@jsonjoy.com/util/lib/hasOwnProperty';
 
 export const validateOperations = (ops: Operation[], allowMatchesOp: boolean = false) => {

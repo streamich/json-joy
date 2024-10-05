@@ -1,5 +1,5 @@
 import {OpStarts} from '../../op';
-import {$$find} from '../../../json-pointer/codegen/find';
+import {$$find} from '@jsonjoy.com/json-pointer/lib/codegen/find';
 import {JavaScriptLinked, compileClosure, JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import {predicateOpWrapper} from '../util';
 import type {ApplyFn} from '../types';

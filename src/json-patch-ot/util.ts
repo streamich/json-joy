@@ -1,4 +1,4 @@
-import {isValidIndex} from '../json-pointer';
+import {isValidIndex} from '@jsonjoy.com/json-pointer';
 
 export function replaceIndices(path: string, arrayPath: string, index: string, incUp: boolean): string {
   const remainder = path.substr(arrayPath.length);

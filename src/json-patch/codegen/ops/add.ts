@@ -1,7 +1,7 @@
 import {OpAdd} from '../../op';
 import {JavaScriptLinked, compileClosure, JavaScript} from '@jsonjoy.com/util/lib/codegen';
 import type {ApplyFn} from '../types';
-import {$findRef} from '../../../json-pointer/codegen/findRef';
+import {$findRef} from '@jsonjoy.com/json-pointer/lib/codegen/findRef';
 
 export const $$add = (op: OpAdd): JavaScriptLinked<ApplyFn> => {
   const find = $findRef(op.path);
