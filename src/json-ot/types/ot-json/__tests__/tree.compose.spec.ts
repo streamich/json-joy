@@ -1,4 +1,4 @@
-import {clone} from '../../../../json-clone';
+import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {apply} from '../apply';
 import {OpTree} from '../tree';
 import {JsonOp} from '../types';

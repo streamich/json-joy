@@ -1,5 +1,5 @@
 import {isEmpty} from '@jsonjoy.com/util/lib/isEmpty';
-import {deepEqual} from '../../json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {StrNode} from '../../json-crdt/nodes/str/StrNode';
 import {ArrNode} from '../../json-crdt/nodes/arr/ArrNode';
 import {Peritext} from '../peritext';

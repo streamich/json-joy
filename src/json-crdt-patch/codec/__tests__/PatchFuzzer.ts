@@ -1,4 +1,4 @@
-import {RandomJson} from '../../../json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {interval, ITimestampStruct, Timespan, ClockVector, ServerClockVector, ts} from '../../clock';
 import {SESSION} from '../../constants';

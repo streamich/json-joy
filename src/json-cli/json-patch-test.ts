@@ -2,7 +2,7 @@
 
 import {spawnSync} from 'child_process';
 import {validateOperation} from '../json-patch';
-import {deepEqual} from '../json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {testSuites} from './test/suites';
 
 const bin = String(process.argv[2]);

@@ -1,4 +1,4 @@
-import {clone as deepClone} from '../../json-clone/clone';
+import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import {TestCase} from './types';
 
 const values: [string, unknown][] = [

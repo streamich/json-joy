@@ -3,7 +3,7 @@ import {AbstractOp} from './AbstractOp';
 import {OperationCopy} from '../types';
 import {Path, find, formatJsonPointer} from '@jsonjoy.com/json-pointer';
 import {OpAdd} from './OpAdd';
-import {clone as deepClone} from '../../json-clone/clone';
+import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import {OPCODE} from '../constants';
 import type {IMessagePackEncoder} from '@jsonjoy.com/json-pack/lib/msgpack';
 

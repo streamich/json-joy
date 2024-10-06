@@ -569,10 +569,10 @@
     "@jsonjoy.com/json-pointer" "^1.0.0"
     "@jsonjoy.com/util" "^1.3.0"
 
-"@jsonjoy.com/json-pack@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@jsonjoy.com/json-pack/-/json-pack-1.0.4.tgz#ab59c642a2e5368e8bcfd815d817143d4f3035d0"
-  integrity sha512-aOcSN4MeAtFROysrbqG137b7gaDDSmVrl5mpo6sT/w+kcXpWnzhMjmY/Fh/sDx26NBxyIE7MB1seqLeCAzy9Sg==
+"@jsonjoy.com/json-pack@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@jsonjoy.com/json-pack/-/json-pack-1.1.0.tgz#33ca57ee29d12feef540f2139225597469dec894"
+  integrity sha512-zlQONA+msXPPwHWZMKFVS78ewFczIll5lXiVPwFPCZUsrOKdxc2AvxU1HoNBmMRhqDZUR9HkC3UOm+6pME6Xsg==
   dependencies:
     "@jsonjoy.com/base64" "^1.1.1"
     "@jsonjoy.com/util" "^1.1.2"
@@ -586,6 +586,17 @@
   dependencies:
     "@jsonjoy.com/util" "^1.3.0"
 
+"@jsonjoy.com/json-type@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@jsonjoy.com/json-type/-/json-type-1.0.0.tgz#e7b36a5f87386b5153c374ab3f7601071f46b687"
+  integrity sha512-tuIjos9v1aEfrWUjD97pGyMe/DVC1Kc2iktDrSD4U3FzPjRThiG+LR1QkSKVQajNqpSQIo0u+r+bpflRmT1enw==
+  dependencies:
+    "@jsonjoy.com/json-expression" "^1.0.0"
+    "@jsonjoy.com/json-pack" "^1.1.0"
+    "@jsonjoy.com/util" "^1.4.0"
+    sonic-forest "^1.0.3"
+    tree-dump "^1.0.2"
+
 "@jsonjoy.com/util@^1.1.2":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.1.3.tgz#75b1c3cf21b70e665789d1ad3eabeff8b7fd1429"
@@ -595,6 +606,11 @@
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.3.0.tgz#e5623885bb5e0c48c1151e4dae422fb03a5887a1"
   integrity sha512-Cebt4Vk7k1xHy87kHY7KSPLT77A7Ev7IfOblyLZhtYEhrdQ6fX4EoLq3xOQ3O/DRMEh2ok5nyC180E+ABS8Wmw==
+
+"@jsonjoy.com/util@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@jsonjoy.com/util/-/util-1.4.0.tgz#42d2d7a0b1e961446a5749ef6bc1d6e5dd093ea8"
+  integrity sha512-LLGQO+U1CZyBqPTLkvP3vhWDMmF5BJHSUeiroA3cc6LfyJL5skfcgDhA+EB94lyHIE/z+eZmGBwXYaDO103Qfw==
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"

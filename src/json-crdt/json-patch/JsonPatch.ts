@@ -1,4 +1,4 @@
-import {deepEqual} from '../../json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {ObjNode, ArrNode, JsonNode, ConNode} from '../nodes';
 import {toPath, isChild} from '@jsonjoy.com/json-pointer/lib/util';
 import {interval} from '../../json-crdt-patch/clock';

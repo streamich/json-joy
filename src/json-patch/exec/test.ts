@@ -1,4 +1,4 @@
-import {deepEqual} from '../../json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 import {find, Path} from '@jsonjoy.com/json-pointer';
 
 export const execTest = (path: Path, value: unknown, not: boolean, doc: unknown) => {

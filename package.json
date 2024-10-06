@@ -114,11 +114,6 @@
     "upgrade:interactive": "npx npm-check-updates@16.14 --interactive"
   },
   "peerDependencies": {
-    "@jsonjoy.com/base64": "^1.1.2",
-    "@jsonjoy.com/json-expression": "^1.0.0",
-    "@jsonjoy.com/json-pack": "^1.0.4",
-    "@jsonjoy.com/json-pointer": "^1.0.0",
-    "@jsonjoy.com/util": "^1.3.0",
     "rxjs": "7",
     "tslib": "2"
   },
@@ -128,6 +123,12 @@
     }
   },
   "dependencies": {
+    "@jsonjoy.com/base64": "^1.1.2",
+    "@jsonjoy.com/json-expression": "^1.0.0",
+    "@jsonjoy.com/json-pack": "^1.1.0",
+    "@jsonjoy.com/json-pointer": "^1.0.0",
+    "@jsonjoy.com/json-type": "^1.0.0",
+    "@jsonjoy.com/util": "^1.4.0",
     "arg": "^5.0.2",
     "hyperdyperid": "^1.2.0",
     "sonic-forest": "^1.0.3",
@@ -135,11 +136,6 @@
     "tree-dump": "^1.0.2"
   },
   "devDependencies": {
-    "@jsonjoy.com/base64": "^1.1.2",
-    "@jsonjoy.com/json-expression": "^1.0.0",
-    "@jsonjoy.com/json-pack": "^1.0.4",
-    "@jsonjoy.com/json-pointer": "^1.0.0",
-    "@jsonjoy.com/util": "^1.3.0",
     "@types/benchmark": "^2.1.5",
     "@types/jest": "^29.5.12",
     "benchmark": "^2.1.4",
@@ -190,7 +186,6 @@
           "",
           "demo",
           "json-cli",
-          "json-clone",
           "json-crdt-patch",
           "json-crdt-extensions",
           "json-crdt-peritext-ui",
@@ -199,12 +194,8 @@
           "json-ot",
           "json-patch-ot",
           "json-patch",
-          "json-schema",
-          "json-size",
           "json-stable",
           "json-text",
-          "json-type",
-          "json-type-value",
           "json-walk",
           "util"
         ]

@@ -1,6 +1,6 @@
-import {clone} from '../../../../../json-clone';
+import {clone} from '@jsonjoy.com/util/lib/json-clone';
 import {find, isArrayReference, isObjectReference, Path} from '@jsonjoy.com/json-pointer';
-import {RandomJson} from '../../../../../json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import type {JsonOp, JsonOpDataComponent, JsonOpDropComponent, JsonOpPickComponent} from '../../types';
 import {applyPatch} from '../../../../../json-patch/applyPatch';

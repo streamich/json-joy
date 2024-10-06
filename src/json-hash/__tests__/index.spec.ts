@@ -1,5 +1,5 @@
 import {hash} from '..';
-import {RandomJson} from '../../json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 
 test('returns the same hash for empty objects', () => {
   const res1 = hash({});
@@ -45,8 +45,8 @@ test('returns the same hash for array with values', () => {
 
 test('returns different hash for random JSON values', () => {
   for (let i = 0; i < 100; i++) {
-    const res1 = hash(RandomJson.generate());
-    const res2 = hash(RandomJson.generate());
+    const res1 = hash(RandomJson.generate() as any);
+    const res2 = hash(RandomJson.generate() as any);
     expect(res1).not.toBe(res2);
   }
 });
