@@ -1,3 +1,20 @@
+# [17.0.0](https://github.com/streamich/json-joy/compare/v16.27.2...v17.0.0) (2024-10-06)
+
+
+### Bug Fixes
+
+* 🐛 correct library imports ([8e12deb](https://github.com/streamich/json-joy/commit/8e12deb0bd217155e7975c7e44cb0edef9e18480))
+
+
+### chore
+
+* 🤖 remove migrated sub-libraries ([a04825a](https://github.com/streamich/json-joy/commit/a04825a073a2ac2be1f1565082e1511ae710a9b0))
+
+
+### BREAKING CHANGES
+
+* 🧨 A number of sub-libraries have been externalized
+
 ## [16.27.2](https://github.com/streamich/json-joy/compare/v16.27.1...v16.27.2) (2024-10-05)
 
 
