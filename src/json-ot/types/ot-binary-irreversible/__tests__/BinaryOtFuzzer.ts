@@ -1,4 +1,4 @@
-import {RandomJson} from '../../../../json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {append, normalize} from '../util';
 import {BinaryOp} from '../types';

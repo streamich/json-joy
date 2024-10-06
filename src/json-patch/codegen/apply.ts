@@ -1,4 +1,4 @@
-import {clone as deepClone} from '../../json-clone/clone';
+import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import {Operation} from '../types';
 import {operationToOp} from '../codec/json';
 import {AbstractPredicateOp} from '../op';

@@ -1,8 +1,8 @@
 import {QuillDeltaFuzzer} from './QuillDeltaFuzzer';
 import {Doc as YDoc} from 'yjs';
 import {QuillDeltaOp, QuillDeltaOpDelete} from '../types';
-import {deepEqual} from '../../../json-equal/deepEqual';
-import {clone} from '../../../json-clone';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
+import {clone} from '@jsonjoy.com/util/lib/json-clone';
 
 const normalizeDelta = (delta: QuillDeltaOp[]): QuillDeltaOp[] => {
   const length = delta.length;

@@ -16,7 +16,7 @@ import {generateInteger} from './util';
 import {Model} from '../..';
 import {Patch} from '../../../json-crdt-patch/Patch';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
-import {RandomJson} from '../../../json-random/RandomJson';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random/RandomJson';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
 import {StrNode, ValNode, ObjNode, ArrNode, BinNode} from '../../nodes';
 import {interval} from '../../../json-crdt-patch/clock';

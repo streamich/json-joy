@@ -2,7 +2,7 @@
 
 import {spawnSync} from 'child_process';
 import {testCases} from './json-pointer-testCases';
-import {deepEqual} from '../json-equal/deepEqual';
+import {deepEqual} from '@jsonjoy.com/util/lib/json-equal/deepEqual';
 
 const bin = String(process.argv[2]);
 

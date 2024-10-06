@@ -4,7 +4,7 @@ import {ITimespanStruct, ITimestampStruct, ts} from '../../../../json-crdt-patch
 import {Fuzzer} from '@jsonjoy.com/util/lib/Fuzzer';
 import {BinNode} from '../BinNode';
 import {randomU32} from 'hyperdyperid/lib/randomU32';
-import {RandomJson} from '../../../../json-random';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random';
 import * as path from 'path';
 import * as fs from 'fs';
 

@@ -1,4 +1,4 @@
-import {clone as deepClone} from '../../json-clone/clone';
+import {clone as deepClone} from '@jsonjoy.com/util/lib/json-clone/clone';
 import {Operation} from '../types';
 import {findByPointer} from '@jsonjoy.com/json-pointer/lib/findByPointer/v6';
 import type {ApplyPatchOptions, OpResult, PatchResult} from './types';

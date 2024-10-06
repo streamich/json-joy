@@ -2,7 +2,7 @@ import {Model} from '../../model/Model';
 import {SessionLogical} from './SessionLogical';
 import {Picker} from './Picker';
 import {FuzzerOptions} from './types';
-import {RandomJson} from '../../../json-random/RandomJson';
+import {RandomJson} from '@jsonjoy.com/util/lib/json-random/RandomJson';
 import {generateInteger} from './util';
 import {PatchBuilder} from '../../../json-crdt-patch/PatchBuilder';
 import {Patch} from '../../../json-crdt-patch';
