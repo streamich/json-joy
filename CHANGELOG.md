@@ -1,3 +1,10 @@
+## [17.0.1](https://github.com/streamich/json-joy/compare/v17.0.0...v17.0.1) (2024-10-07)
+
+
+### Bug Fixes
+
+* **json-text:** 🐛 classify null as primitive ([a0ef6e7](https://github.com/streamich/json-joy/commit/a0ef6e7a841a310d2b96533c4452caf236b7ddfa))
+
 # [17.0.0](https://github.com/streamich/json-joy/compare/v16.27.2...v17.0.0) (2024-10-06)
 
 
