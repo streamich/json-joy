@@ -1,7 +1,7 @@
 import {printTree} from 'tree-dump/lib/printTree';
 import {stringify} from './stringify';
 
-const isPrimitive = (value: unknown): boolean => typeof value !== 'object';
+const isPrimitive = (value: unknown): boolean => typeof value !== 'object' || value === null;
 const isOneLineValue = (value: unknown): boolean => {
   if (isPrimitive(value)) return true;
   if (value instanceof Array && !value.length) return true;

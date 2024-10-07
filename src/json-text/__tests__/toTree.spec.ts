@@ -49,7 +49,7 @@ test('can format complex object', () => {
         └─ key
            ├─ [0]: 1
            ├─ [1]: 2
-           ├─ [2]!n
+           ├─ [2]: !n
            ├─ [3]: !t
            └─ [4]: !f"
   `);
