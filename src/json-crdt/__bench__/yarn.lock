@@ -123,9 +123,9 @@ isomorphic.js@^0.2.4:
   integrity sha512-PIeMbHqMt4DnUP3MA/Flc0HElYjMXArsw1qwJZcm9sqR8mq3l8NYizFMty0pWwE/tzIGH3EKK5+jes5mAr85yw==
 
 lib0@^0.2.86:
-  version "0.2.94"
-  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.94.tgz#fc28b4b65f816599f1e2f59d3401e231709535b3"
-  integrity sha512-hZ3p54jL4Wpu7IOg26uC7dnEWiMyNlUrb9KoG7+xYs45WkQwpVvKFndVq2+pqLYKe1u8Fp3+zAfZHVvTK34PvQ==
+  version "0.2.98"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.98.tgz#fe55203b8586512c1837248d5f309d7dfd566f5d"
+  integrity sha512-XteTiNO0qEXqqweWx+b21p/fBnNHUA1NwAtJNJek1oPrewEZs2uiT4gWivHKr9GqCjDPAhchz0UQO8NwU3bBNA==
   dependencies:
     isomorphic.js "^0.2.4"
 
@@ -171,9 +171,9 @@ rope.js@0.1.0:
   integrity sha512-fV3ekhJZKm6ft0M67trYAjhKONxtD8z1dI2EHPtN8jB/kMMCuj7XXhekaXOqO54+TCOB4zppofgHgT4pfkPF3w==
 
 tslib@^2.0.1:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.3.tgz#0438f810ad7a9edcde7a241c3d80db693c8cbfe0"
-  integrity sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.7.0.tgz#d9b40c5c40ab59e8738f297df3087bf1a2690c01"
+  integrity sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==
 
 uuid@^9.0.0:
   version "9.0.1"
