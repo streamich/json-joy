@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {rule, Provider, GlobalCss} from 'nano-theme';
-import {Model} from '../../../json-crdt';
-import {Peritext} from '../../../json-crdt-extensions/peritext';
-import {PeritextView} from '../../../json-crdt-peritext-ui';
+import {ModelWithExt, ext} from '../../../json-crdt-extensions';
+import {PeritextView} from '../../react/index';
 
 const blockClass = rule({
   display: 'flex',
@@ -26,16 +25,11 @@ const panelDebugClass = rule({
 export const App: React.FC = ({}) => {
   const [tick, setTick] = React.useState(0);
   const [debug, setDebug] = React.useState(true);
-  const [{model, peritext}] = React.useState(() => {
-    const model = Model.withLogicalClock();
-    model.api.root({
-      text: '',
-      slices: [],
-    });
-    const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
-    peritext.editor.insert('Hello world!');
+  const [[model, peritext]] = React.useState(() => {
+    const model = ModelWithExt.create(ext.peritext.new('Hello world!'));
+    const peritext = model.s.toExt().txt;
     peritext.refresh();
-    return {model, peritext};
+    return [model, peritext] as const;
   });
   const handleRender = React.useCallback(() => {
     setTick((tick) => tick + 1);
