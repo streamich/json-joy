@@ -29,7 +29,12 @@ export const LeafBlockView: React.FC<Props> = React.memo(
       }
     }
 
-    return <div className={'jj-leaf-block' + blockClass}>{elements.length ? elements : 'EMPTY'}</div>;
+    return (
+      <div className={'jj-leaf-block' + blockClass}>
+        <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)'}}>#{block.hash}</span>
+        {elements.length ? elements : 'EMPTY'}
+      </div>
+    );
   },
   (prev, next) => prev.hash === next.hash,
 );

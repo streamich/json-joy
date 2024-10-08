@@ -55,6 +55,7 @@ export const RootBlockView = React.forwardRef<HTMLElement, Props>((props, ref) =
 
   return (
     <div ref={ref as any} className={className}>
+      <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)'}}>#{root.hash}</span>
       {elements}
     </div>
   );
