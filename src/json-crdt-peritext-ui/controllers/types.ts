@@ -1,4 +1,4 @@
-export interface UiLifecycles {
+export interface UiLifeCycles {
   /** Called when UI component is mounted. */
   start(): void;
   /** Called when UI component is remove from the screen. */

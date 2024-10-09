@@ -3,7 +3,7 @@ import {ElementAttr} from '../constants';
 import {PeritextEventTarget} from '../events/PeritextEventTarget';
 import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
 import {PeritextController} from './PeritextController';
-import type {Rect, UiLifecycles} from './types';
+import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 
 export interface PeritextDOMControllerOptions {
@@ -13,12 +13,12 @@ export interface PeritextDOMControllerOptions {
    */
   el: HTMLElement;
   txt: Peritext;
-  defaults?: UiLifecycles;
+  defaults?: UiLifeCycles;
   base: PeritextController;
   et: PeritextEventTarget;
 }
 
-export class PeritextDOMController implements UiLifecycles {
+export class PeritextDOMController implements UiLifeCycles {
   public static createWithDefaults(options: Omit<PeritextDOMControllerOptions, 'et' | 'base'>): PeritextDOMController {
     const et = new PeritextEventTarget();
     const defaults = new PeritextEventDefaults(options.txt, et);
@@ -44,8 +44,7 @@ export class PeritextDOMController implements UiLifecycles {
   private selectAt(ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void {
     if (at === -1) return;
     ev.preventDefault();
-    const et = this.opts.et;
-    et.cursor({at, len});
+    this.opts.et.cursor({at, len});
   }
 
   /**
@@ -100,7 +99,7 @@ export class PeritextDOMController implements UiLifecycles {
     return undefined;
   }
 
-  // ------------------------------------------------------------- UiLifecycles
+  /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start(): void {
     this.opts.defaults?.start();

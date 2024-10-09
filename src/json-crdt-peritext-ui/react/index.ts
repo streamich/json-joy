@@ -1,1 +1,1 @@
-export * from './block/PeritextView';
+export * from './PeritextView';

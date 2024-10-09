@@ -1,7 +1,7 @@
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../events/TypedEventTarget';
-import type {UiLifecycles} from './types';
+import type {UiLifeCycles} from './types';
 
 export interface EventMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
@@ -19,7 +19,7 @@ export interface PeritextControllerOptions {
   et: PeritextEventTarget;
 }
 
-export class PeritextController implements UiLifecycles {
+export class PeritextController implements UiLifeCycles {
   protected readonly source: PeritextControllerEventSource;
   protected readonly txt: Peritext;
   public readonly et: PeritextEventTarget;

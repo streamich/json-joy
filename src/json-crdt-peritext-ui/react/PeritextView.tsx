@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {context} from '../context';
-import {RootBlockView} from './RootBlockView';
-import {PeritextDOMController} from '../../controllers/PeritextDOMController';
-import type {Peritext} from '../../../json-crdt-extensions/peritext/Peritext';
+import {context} from './context';
+import {BlockView} from './BlockView';
+import {PeritextDOMController} from '../controllers/PeritextDOMController';
+import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
+import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 
 export interface Props {
   peritext: Peritext;
@@ -12,7 +13,7 @@ export interface Props {
 
 export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRender}) => {
   const [, setTick] = React.useState(0);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = React.useRef<HTMLElement | null>(null);
   const controller = React.useRef<PeritextDOMController | undefined>(undefined);
 
   const rerender = () => {
@@ -21,10 +22,11 @@ export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRen
     if (onRender) onRender();
   };
 
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ctrl = ((controller as any).current = PeritextDOMController.createWithDefaults({el, txt: peritext}));
+    const ctrl = PeritextDOMController.createWithDefaults({el, txt: peritext});
+    controller.current = ctrl;
     ctrl.start();
     ctrl.opts.et.addEventListener('change', rerender);
     return () => {
@@ -33,9 +35,11 @@ export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRen
     };
   }, [peritext, ref.current]);
 
+  const block = peritext.blocks.root;
+
   return (
     <context.Provider value={{peritext, dom: controller.current, rerender, debug}}>
-      <RootBlockView ref={ref} />
+      {!!block ? <BlockView el={(el) => ref.current = el} hash={block.hash} block={block} /> : null}
     </context.Provider>
   );
 });
