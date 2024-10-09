@@ -7,6 +7,7 @@ import {contains, equal} from '../../../json-crdt-patch/clock';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {Anchor} from '../rga/constants';
 import {isLetter, isPunctuation, isWhitespace} from './util';
+import {next, prev} from 'sonic-forest/lib/util';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {SliceType} from '../slice/types';
@@ -15,6 +16,7 @@ import type {CharIterator, CharPredicate} from './types';
 import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
+import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -250,6 +252,97 @@ export class Editor<T = string> {
     const range = this.wordRange(point);
     if (!range) return;
     const cursor = this.cursor;
+    cursor.setRange(range);
+    cursor.anchorSide = CursorAnchor.Start;
+  }
+
+  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
+    let next: ChunkSlice<T> | undefined;
+    let prev: ChunkSlice<T> | undefined;
+    while ((next = iterator())) {
+      const char = (next.view() as string)[0];
+      if (char === '\n') break;
+      prev = next;
+    }
+    if (!prev) return;
+    return this.txt.point(prev.id(), Anchor.After);
+  }
+
+  /** Find end of line, starting from given point. */
+  public eol(point: Point<T>): Point<T> | undefined {
+    const firstChar = point.rightChar();
+    if (!firstChar) return;
+    const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
+    return this.skipLine(fwd);
+  }
+
+  /** Find beginning of line, starting from given point. */
+  public bol(point: Point<T>): Point<T> | undefined {
+    const firstChar = point.leftChar();
+    if (!firstChar) return;
+    const bwd = this.bwd1(firstChar.id(), firstChar.chunk);
+    const endPoint = this.skipLine(bwd);
+    if (endPoint) endPoint.anchor = Anchor.Before;
+    return endPoint;
+  }
+
+  public end(): Point<T> {
+    const txt = this.txt;
+    return txt.pointEnd() ?? txt.pointAbsEnd();
+  }
+
+  public start(): Point<T> {
+    const txt = this.txt;
+    return txt.pointStart() ?? txt.pointAbsStart();
+  }
+
+  /**
+   * Find end of block, starting from given point. Overlay should be refreshed
+   * before calling this method.
+   */
+  public eob(point: Point<T>): Point<T> {
+    const txt = this.txt;
+    const overlay = txt.overlay;
+    let overlayPoint = overlay.getOrNextHigher(point);
+    if (!overlayPoint) return this.end();
+    if (point.cmp(overlayPoint) === 0) overlayPoint = next(overlayPoint);
+    while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = next(overlayPoint);
+    if (overlayPoint instanceof MarkerOverlayPoint) {
+      const point = overlayPoint.clone();
+      point.refAfter();
+      return point;
+    } else return this.end();
+  }
+
+  /**
+   * Find beginning of block, starting from given point. Overlay should be
+   * refreshed before calling this method.
+   */
+  public bob(point: Point<T>): Point<T> {
+    const overlay = this.txt.overlay;
+    let overlayPoint = overlay.getOrNextLower(point);
+    if (!overlayPoint) return this.start();
+    while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = prev(overlayPoint);
+    if (overlayPoint instanceof MarkerOverlayPoint) {
+      const point = overlayPoint.clone();
+      point.refBefore();
+      return point;
+    } else return this.start();
+  }
+
+  public blockRange(point: Point<T>): Range<T> {
+    const start = this.bob(point);
+    const end = this.eob(point);
+    return this.txt.range(start, end);
+  }
+
+  public selectBlock(at: number): void {
+    const txt = this.txt;
+    const editor = txt.editor;
+    const point = txt.pointAt(at);
+    const range = editor.blockRange(point);
+    if (!range) return;
+    const cursor = editor.cursor;
     cursor.setRange(range);
     cursor.anchorSide = CursorAnchor.Start;
   }
