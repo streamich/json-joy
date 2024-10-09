@@ -44,7 +44,8 @@ export class PeritextEventDefaults implements UiLifeCycles {
       const txt = this.txt;
       const editor = txt.editor;
       const cursor = editor.cursor;
-      if (at !== -1 && at !== undefined) {
+      const isAbsolutePosition = at !== -1 && at !== undefined;
+      if (isAbsolutePosition) {
         switch (edge) {
           case 'focus': {
             // const point = txt.pointAt(at);
@@ -54,7 +55,7 @@ export class PeritextEventDefaults implements UiLifeCycles {
           default: {
             switch (len) {
               case 'word':
-                // cursor.selectWord(at);
+                editor.selectWord(at);
                 break;
               case 'block':
                 // cursor.selectBlock(at);

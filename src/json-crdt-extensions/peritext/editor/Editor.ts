@@ -3,10 +3,18 @@ import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {EditorSlices} from './EditorSlices';
 import {Chars} from '../constants';
+import {contains, equal} from '../../../json-crdt-patch/clock';
+import {ChunkSlice} from '../util/ChunkSlice';
+import {Anchor} from '../rga/constants';
+import {isLetter, isPunctuation, isWhitespace} from './util';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
+import type {CharIterator, CharPredicate} from './types';
+import type {Chunk} from '../../../json-crdt/nodes/rga';
+import type {Point} from '../rga/Point';
+import type {Range} from '../rga/Range';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -94,6 +102,156 @@ export class Editor<T = string> {
     if (!range) return false;
     this.cursor.setRange(range);
     return true;
+  }
+
+  public fwd0(chunk: undefined | Chunk<T>, offset: number): CharIterator<T> {
+    const str = this.txt.str;
+    return () => {
+      if (!chunk) return;
+      const offsetToReturn = offset;
+      const chunkToReturn = chunk;
+      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
+      if (!char) return;
+      offset++;
+      if (offset >= chunk.span) {
+        offset = 0;
+        chunk = str.next(chunk);
+        while (chunk && chunk.del) chunk = str.next(chunk);
+      }
+      return new ChunkSlice<T>(chunkToReturn, offsetToReturn, 1);
+    };
+  }
+
+  public fwd1(id: ITimestampStruct, chunk?: Chunk<T>): CharIterator<T> {
+    const str = this.txt.str;
+    const startFromStrRoot = equal(id, str.id);
+    if (startFromStrRoot) {
+      chunk = str.first();
+      while (chunk && chunk.del) chunk = str.next(chunk);
+      return this.fwd0(chunk, 0);
+    }
+    let offset: number = 0;
+    if (!chunk || !contains(chunk.id, chunk.span, id, 1)) {
+      chunk = str.findById(id);
+      if (!chunk) return () => undefined;
+      offset = id.time - chunk.id.time;
+    } else offset = id.time - chunk.id.time;
+    if (!chunk.del) return this.fwd0(chunk, offset);
+    while (chunk && chunk.del) chunk = str.next(chunk);
+    return this.fwd0(chunk, 0);
+  }
+
+  public bwd0(chunk: undefined | Chunk<T>, offset: number): CharIterator<T> {
+    const txt = this.txt;
+    const str = txt.str;
+    return () => {
+      if (!chunk || offset < 0) return;
+      const offsetToReturn = offset;
+      const chunkToReturn = chunk;
+      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
+      if (!char) return;
+      offset--;
+      if (offset < 0) {
+        chunk = str.prev(chunk);
+        while (chunk && chunk.del) chunk = str.prev(chunk);
+        if (chunk) offset = chunk.span - 1;
+      }
+      return new ChunkSlice(chunkToReturn, offsetToReturn, 1);
+    };
+  }
+
+  public bwd1(id: ITimestampStruct, chunk?: Chunk<T>): CharIterator<T> {
+    const str = this.txt.str;
+    const startFromStrRoot = equal(id, str.id);
+    if (startFromStrRoot) {
+      chunk = str.last();
+      while (chunk && chunk.del) chunk = str.prev(chunk);
+      return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
+    }
+    let offset: number = 0;
+    if (!chunk || !contains(chunk.id, chunk.span, id, 1)) {
+      chunk = str.findById(id);
+      if (!chunk) return () => undefined;
+      offset = id.time - chunk.id.time;
+    } else offset = id.time - chunk.id.time;
+    if (!chunk.del) return this.bwd0(chunk, offset);
+    while (chunk && chunk.del) chunk = str.prev(chunk);
+    return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
+  }
+
+  private skipWord(iterator: CharIterator<T>, predicate: CharPredicate<string>, firstLetterFound: boolean): Point<T> | undefined {
+    let next: ChunkSlice<T> | undefined;
+    let prev: ChunkSlice<T> | undefined;
+    while ((next = iterator())) {
+      const char = (next.view() as string)[0];
+      if (firstLetterFound) {
+        if (!predicate(char)) break;
+      } else if (predicate(char)) firstLetterFound = true;
+      prev = next;
+    }
+    if (!prev) return;
+    return this.txt.point(prev.id(), Anchor.After);
+  }
+
+  /**
+   * Skips a word forward. A word is defined by the `predicate` function.
+   *
+   * @param point Point from which to start skipping.
+   * @param predicate Character class to skip.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *        not, will skip any characters until the first letter, which is
+   *        matched by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  public fwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
+    const firstChar = point.rightChar();
+    if (!firstChar) return point;
+    const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
+    return this.skipWord(fwd, predicate, firstLetterFound) || point;
+  }
+
+  /**
+   * Skips a word backward. A word is defined by the `predicate` function.
+   *
+   * @param point Point from which to start skipping.
+   * @param predicate Character class to skip.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *        not, will skip any characters until the first letter, which is
+   *        matched by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  public bwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
+    const firstChar = point.leftChar();
+    if (!firstChar) return point;
+    const bwd = this.bwd1(firstChar.id(), firstChar.chunk);
+    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
+    if (endPoint) endPoint.anchor = Anchor.Before;
+    return endPoint || point;
+  }
+
+  /**
+   * Selects a word by extending the selection to the left and right of the point.
+   *
+   * @param point Point to the right of which is the starting character of the word.
+   * @returns Range which contains the word.
+   */
+  public wordRange(point: Point<T>): Range<T> | undefined {
+    const char = point.rightChar();
+    if (!char) return;
+    const c = (char.view() as string)[0];
+    const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
+    const start = this.bwdSkipWord(point, predicate, true);
+    const end = this.fwdSkipWord(point, predicate, true);
+    return this.txt.range(start, end);
+  }
+
+  public selectWord(at: number): void {
+    const point = this.txt.pointAt(at);
+    const range = this.wordRange(point);
+    if (!range) return;
+    const cursor = this.cursor;
+    cursor.setRange(range);
+    cursor.anchorSide = CursorAnchor.Start;
   }
 
   /** @deprecated use `.saved.insStack` */
