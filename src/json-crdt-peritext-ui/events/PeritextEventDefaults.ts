@@ -61,7 +61,7 @@ export class PeritextEventDefaults implements UiLifeCycles {
                 editor.selectBlock(at);
                 break;
               case 'all':
-                // cursor.selectAll();
+                editor.selectAll();
                 break;
               default:
                 cursor.setAt(at, len);
