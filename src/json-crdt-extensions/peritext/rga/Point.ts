@@ -419,7 +419,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
-   * 
+   *
    * @returns Returns `true` if the absolute end of the string is reached.
    */
   public move(skip: number): boolean {
@@ -431,8 +431,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       if (!nextId) {
         this.refAbsEnd();
         return true;
-      }
-      else {
+      } else {
         this.id = nextId;
         if (anchor !== Anchor.After) this.refBefore();
       }
