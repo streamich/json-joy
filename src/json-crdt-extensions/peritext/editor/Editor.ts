@@ -104,35 +104,47 @@ export class Editor<T = string> {
   }
 
   /**
-   * Returns a forward iterator through visible text, one character at a time,
-   * starting from a given ID.
+   * Returns an iterator through visible text, one `step` characters at a time,
+   * starting from a given {@link Point}.
    *
-   * @param id ID to start from.
-   * @param chunk Chunk to start from.
+   * @param start The starting point.
+   * @param step Number of visible characters to skip.
    * @returns The next visible character iterator.
    */
-  public fwd(start: Point<T>): CharIterator<T> {
+  public walk(start: Point<T>, step: number = 1): CharIterator<T> {
     let point: Point<T> | undefined = start.clone();
     return () => {
       if (!point) return;
-      const char = point.rightChar();
+      const char = step > 0 ? point.rightChar() : point.leftChar();
       if (!char) return point = undefined;
-      const end = point.move(1);
+      const end = point.move(step);
       if (end) point = undefined;
       return char;
     };
   }
 
+  /**
+   * Returns a forward iterator through visible text, one character at a time,
+   * starting from a given {@link Point}.
+   *
+   * @param start The starting point.
+   * @param chunk Chunk to start from.
+   * @returns The next visible character iterator.
+   */
+  public fwd(start: Point<T>): CharIterator<T> {
+    return this.walk(start, 1);
+  }
+
+  /**
+   * Returns a backward iterator through visible text, one character at a time,
+   * starting from a given {@link Point}.
+   *
+   * @param start The starting point.
+   * @param chunk Chunk to start from.
+   * @returns The previous visible character iterator.
+   */
   public bwd(start: Point<T>): CharIterator<T> {
-    let point: Point<T> | undefined = start.clone();
-    return () => {
-      if (!point) return;
-      const char = point.leftChar();
-      if (!char) return point = undefined;
-      const end = point.move(-1);
-      if (end) point = undefined;
-      return char;
-    };
+    return this.walk(start, -1);
   }
 
   /**
