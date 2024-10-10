@@ -204,7 +204,11 @@ export class Editor<T = string> {
    *     by the `predicate` is found.
    * @returns Point after the last character skipped.
    */
-  private skipWord(iterator: CharIterator<T>, predicate: CharPredicate<string>, firstLetterFound: boolean): Point<T> | undefined {
+  private skipWord(
+    iterator: CharIterator<T>,
+    predicate: CharPredicate<string>,
+    firstLetterFound: boolean,
+  ): Point<T> | undefined {
     let next: ChunkSlice<T> | undefined;
     let prev: ChunkSlice<T> | undefined;
     while ((next = iterator())) {
@@ -229,7 +233,11 @@ export class Editor<T = string> {
    *        matched by the `predicate` is found.
    * @returns Point after the last character skipped.
    */
-  public fwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
+  public fwdSkipWord(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
     const firstChar = point.rightChar();
     if (!firstChar) return point;
     const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
@@ -247,7 +255,11 @@ export class Editor<T = string> {
    *        matched by the `predicate` is found.
    * @returns Point after the last character skipped.
    */
-  public bwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
+  public bwdSkipWord(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
     const firstChar = point.leftChar();
     if (!firstChar) return point;
     const bwd = this.bwd1(firstChar.id(), firstChar.chunk);

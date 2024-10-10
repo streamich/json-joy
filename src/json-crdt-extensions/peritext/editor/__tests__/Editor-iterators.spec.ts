@@ -279,4 +279,3 @@ describe('.bwd1()', () => {
     expect(bools).toStrictEqual([false, true, false]);
   });
 });
-
