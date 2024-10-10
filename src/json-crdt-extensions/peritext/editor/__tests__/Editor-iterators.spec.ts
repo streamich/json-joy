@@ -153,3 +153,130 @@ describe('.fwd1()', () => {
     expect(bools).toStrictEqual([false, true, false]);
   });
 });
+
+describe('.bwd1()', () => {
+  test('can use string root as initial point', () => {
+    const {peritext, editor} = setup();
+    const iterator = editor.bwd1(peritext.str.id);
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('76543210');
+  });
+
+  test('can iterate through the entire string', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointEnd()!;
+    const iterator = editor.bwd1(end.id);
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('76543210');
+  });
+
+  test('can iterate through the entire string, starting from ABS end', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointAbsEnd()!;
+    const iterator = editor.bwd1(end.id);
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('76543210');
+  });
+
+  test('can iterate through the entire string, with initial chunk provided', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointEnd()!;
+    const iterator = editor.bwd1(end.id, end.chunk());
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('76543210');
+  });
+
+  test('can iterate starting in the middle of first chunk', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointAt(2);
+    const iterator = editor.bwd1(end.id);
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('210');
+  });
+
+  test('can iterate starting in the middle of first chunk, with initial chunk provided', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointAt(2);
+    const iterator = editor.bwd1(end.id, end.chunk());
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('210');
+  });
+
+  test('can iterate starting in the middle of second chunk', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointAt(6);
+    const iterator = editor.bwd1(end.id);
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('6543210');
+  });
+
+  test('can iterate starting in the middle of second chunk, with initial chunk provided', () => {
+    const {peritext, editor} = setup();
+    const end = peritext.pointAt(6);
+    const iterator = editor.bwd1(end.id, end.chunk());
+    let str = '';
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+    }
+    expect(str).toBe('6543210');
+  });
+
+  test('returns true for block split chars', () => {
+    const {peritext, editor} = setup((editor) => {
+      editor.insert('ab');
+      editor.cursor.setAt(1);
+      editor.saved.insMarker('p');
+    });
+    peritext.overlay.refresh();
+    const start = peritext.pointAt(3);
+    const iterator = editor.bwd1(start.id, start.chunk());
+    let str = '';
+    const bools: boolean[] = [];
+    while (1) {
+      const res = iterator();
+      if (!res) break;
+      str += res.view();
+      bools.push(peritext.overlay.isMarker(res.id()));
+    }
+    expect(str).toBe('b\na');
+    expect(bools).toStrictEqual([false, true, false]);
+  });
+});
+

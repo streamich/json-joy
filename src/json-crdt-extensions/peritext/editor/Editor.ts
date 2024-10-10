@@ -156,6 +156,44 @@ export class Editor<T = string> {
     return this.fwd0(chunk, 0);
   }
 
+  public bwd0(chunk: undefined | Chunk<T>, offset: number): CharIterator<T> {
+    const txt = this.txt;
+    const str = txt.str;
+    return () => {
+      if (!chunk || offset < 0) return;
+      const offsetToReturn = offset;
+      const chunkToReturn = chunk;
+      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
+      if (!char) return;
+      offset--;
+      if (offset < 0) {
+        chunk = str.prev(chunk);
+        while (chunk && chunk.del) chunk = str.prev(chunk);
+        if (chunk) offset = chunk.span - 1;
+      }
+      return new ChunkSlice(chunkToReturn, offsetToReturn, 1);
+    };
+  }
+
+  public bwd1(id: ITimestampStruct, chunk?: Chunk<T>): CharIterator<T> {
+    const str = this.txt.str;
+    const startFromStrRoot = equal(id, str.id);
+    if (startFromStrRoot) {
+      chunk = str.last();
+      while (chunk && chunk.del) chunk = str.prev(chunk);
+      return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
+    }
+    let offset: number = 0;
+    if (!chunk || !contains(chunk.id, chunk.span, id, 1)) {
+      chunk = str.findById(id);
+      if (!chunk) return () => undefined;
+      offset = id.time - chunk.id.time;
+    } else offset = id.time - chunk.id.time;
+    if (!chunk.del) return this.bwd0(chunk, offset);
+    while (chunk && chunk.del) chunk = str.prev(chunk);
+    return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
+  }
+
   /**
    * Skips a word in an arbitrary direction. A word is defined by the `predicate`
    * function, which returns `true` if the character is part of the word.
@@ -198,6 +236,26 @@ export class Editor<T = string> {
     if (!firstChar) return point;
     const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
     return this.skipWord(fwd, predicate, firstLetterFound) || point;
+  }
+
+  /**
+   * Skips a word backward. A word is defined by the `predicate` function, which
+   * returns `true` if the character is part of the word.
+   *
+   * @param point Point from which to start skipping.
+   * @param predicate Character class to skip.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *        not, will skip any characters until the first letter, which is
+   *        matched by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  public bwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
+    const firstChar = point.leftChar();
+    if (!firstChar) return point;
+    const bwd = this.bwd1(firstChar.id(), firstChar.chunk);
+    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
+    if (endPoint) endPoint.anchor = Anchor.Before;
+    return endPoint || point;
   }
 
   /** @deprecated use `.saved.insStack` */
