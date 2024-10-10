@@ -31,7 +31,7 @@ const setup = (
 describe('.fwd1()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
-    const iterator = editor.fwd1(peritext.str.id);
+    const iterator = editor.fwd(peritext.pointAbsStart());
     let str = '';
     while (1) {
       const res = iterator();
@@ -44,7 +44,7 @@ describe('.fwd1()', () => {
   test('can iterate through the entire string', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointStart()!;
-    const iterator = editor.fwd1(start.id);
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -57,7 +57,7 @@ describe('.fwd1()', () => {
   test('can iterate through the entire string, starting from ABS start', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointAbsStart()!;
-    const iterator = editor.fwd1(start.id);
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -70,7 +70,7 @@ describe('.fwd1()', () => {
   test('can iterate through the entire string, with initial chunk provided', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointStart()!;
-    const iterator = editor.fwd1(start.id, start.chunk());
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -83,7 +83,7 @@ describe('.fwd1()', () => {
   test('can iterate starting in the middle of first chunk', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointAt(2);
-    const iterator = editor.fwd1(start.id);
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -96,7 +96,7 @@ describe('.fwd1()', () => {
   test('can iterate starting in the middle of first chunk, with initial chunk provided', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointAt(2);
-    const iterator = editor.fwd1(start.id, start.chunk());
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -109,7 +109,7 @@ describe('.fwd1()', () => {
   test('can iterate starting in the middle of second chunk', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointAt(6);
-    const iterator = editor.fwd1(start.id);
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -122,7 +122,7 @@ describe('.fwd1()', () => {
   test('can iterate starting in the middle of second chunk, with initial chunk provided', () => {
     const {peritext, editor} = setup();
     const start = peritext.pointAt(6);
-    const iterator = editor.fwd1(start.id, start.chunk());
+    const iterator = editor.fwd(start);
     let str = '';
     while (1) {
       const res = iterator();
@@ -140,7 +140,7 @@ describe('.fwd1()', () => {
     });
     peritext.overlay.refresh();
     const start = peritext.pointAt(0);
-    const iterator = editor.fwd1(start.id, start.chunk());
+    const iterator = editor.fwd(start);
     let str = '';
     const bools: boolean[] = [];
     while (1) {
@@ -157,7 +157,7 @@ describe('.fwd1()', () => {
 describe('.bwd1()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
-    const iterator = editor.bwd1(peritext.str.id);
+    const iterator = editor.bwd(peritext.pointAbsEnd());
     let str = '';
     while (1) {
       const res = iterator();
@@ -170,7 +170,7 @@ describe('.bwd1()', () => {
   test('can iterate through the entire string', () => {
     const {peritext, editor} = setup();
     const end = peritext.pointEnd()!;
-    const iterator = editor.bwd1(end.id);
+    const iterator = editor.bwd(end);
     let str = '';
     while (1) {
       const res = iterator();
@@ -183,7 +183,7 @@ describe('.bwd1()', () => {
   test('can iterate through the entire string, starting from ABS end', () => {
     const {peritext, editor} = setup();
     const end = peritext.pointAbsEnd()!;
-    const iterator = editor.bwd1(end.id);
+    const iterator = editor.bwd(end);
     let str = '';
     while (1) {
       const res = iterator();
@@ -196,7 +196,7 @@ describe('.bwd1()', () => {
   test('can iterate through the entire string, with initial chunk provided', () => {
     const {peritext, editor} = setup();
     const end = peritext.pointEnd()!;
-    const iterator = editor.bwd1(end.id, end.chunk());
+    const iterator = editor.bwd(end);
     let str = '';
     while (1) {
       const res = iterator();
@@ -208,54 +208,54 @@ describe('.bwd1()', () => {
 
   test('can iterate starting in the middle of first chunk', () => {
     const {peritext, editor} = setup();
-    const end = peritext.pointAt(2);
-    const iterator = editor.bwd1(end.id);
+    const point = peritext.pointAt(2);
+    const iterator = editor.bwd(point);
     let str = '';
     while (1) {
       const res = iterator();
       if (!res) break;
       str += res.view();
     }
-    expect(str).toBe('210');
+    expect(str).toBe('10');
   });
 
   test('can iterate starting in the middle of first chunk, with initial chunk provided', () => {
     const {peritext, editor} = setup();
-    const end = peritext.pointAt(2);
-    const iterator = editor.bwd1(end.id, end.chunk());
+    const point = peritext.pointAt(2);
+    const iterator = editor.bwd(point);
     let str = '';
     while (1) {
       const res = iterator();
       if (!res) break;
       str += res.view();
     }
-    expect(str).toBe('210');
+    expect(str).toBe('10');
   });
 
   test('can iterate starting in the middle of second chunk', () => {
     const {peritext, editor} = setup();
-    const end = peritext.pointAt(6);
-    const iterator = editor.bwd1(end.id);
+    const point = peritext.pointAt(6);
+    const iterator = editor.bwd(point);
     let str = '';
     while (1) {
       const res = iterator();
       if (!res) break;
       str += res.view();
     }
-    expect(str).toBe('6543210');
+    expect(str).toBe('543210');
   });
 
   test('can iterate starting in the middle of second chunk, with initial chunk provided', () => {
     const {peritext, editor} = setup();
-    const end = peritext.pointAt(6);
-    const iterator = editor.bwd1(end.id, end.chunk());
+    const point = peritext.pointAt(6);
+    const iterator = editor.bwd(point);
     let str = '';
     while (1) {
       const res = iterator();
       if (!res) break;
       str += res.view();
     }
-    expect(str).toBe('6543210');
+    expect(str).toBe('543210');
   });
 
   test('returns true for block split chars', () => {
@@ -266,7 +266,7 @@ describe('.bwd1()', () => {
     });
     peritext.overlay.refresh();
     const start = peritext.pointAt(3);
-    const iterator = editor.bwd1(start.id, start.chunk());
+    const iterator = editor.bwd(start);
     let str = '';
     const bools: boolean[] = [];
     while (1) {
