@@ -115,9 +115,9 @@ export class Editor<T = string> {
     const str = this.txt.str;
     return () => {
       if (!chunk) return;
+      const span = chunk.span;
       const offsetToReturn = offset;
       const chunkToReturn = chunk;
-      const span = chunk.span;
       if (offset >= span) return;
       offset++;
       if (offset >= span) {
@@ -163,8 +163,6 @@ export class Editor<T = string> {
       if (!chunk || offset < 0) return;
       const offsetToReturn = offset;
       const chunkToReturn = chunk;
-      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
-      if (!char) return;
       offset--;
       if (offset < 0) {
         chunk = str.prev(chunk);
