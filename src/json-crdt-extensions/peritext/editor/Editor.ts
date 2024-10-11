@@ -259,17 +259,13 @@ export class Editor<T = string> {
 
   /** Find end of line, starting from given point. */
   public eol(point: Point<T>): Point<T> | undefined {
-    const firstChar = point.rightChar();
-    if (!firstChar) return;
-    const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
+    const fwd = this.fwd(point);
     return this.skipLine(fwd);
   }
 
   /** Find beginning of line, starting from given point. */
   public bol(point: Point<T>): Point<T> | undefined {
-    const firstChar = point.leftChar();
-    if (!firstChar) return;
-    const bwd = this.bwd1(firstChar.id(), firstChar.chunk);
+    const bwd = this.bwd(point);
     const endPoint = this.skipLine(bwd);
     if (endPoint) endPoint.anchor = Anchor.Before;
     return endPoint;
