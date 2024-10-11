@@ -3,20 +3,19 @@ import {CursorAnchor, SliceBehavior} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
 import {EditorSlices} from './EditorSlices';
 import {Chars} from '../constants';
-import {contains, equal} from '../../../json-crdt-patch/clock';
-import {ChunkSlice} from '../util/ChunkSlice';
-import {Anchor} from '../rga/constants';
-import {isLetter, isPunctuation, isWhitespace} from './util';
+import {isPunctuation, isWhitespace} from './util';
 import {next, prev} from 'sonic-forest/lib/util';
+import {ChunkSlice} from '../util/ChunkSlice';
+import {isLetter} from './util';
+import {Anchor} from '../rga/constants';
+import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
 import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
-import type {CharIterator, CharPredicate} from './types';
-import type {Chunk} from '../../../json-crdt/nodes/rga';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
+import type {CharIterator, CharPredicate} from './types';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -106,82 +105,67 @@ export class Editor<T = string> {
     return true;
   }
 
-  public fwd0(chunk: undefined | Chunk<T>, offset: number): CharIterator<T> {
-    const str = this.txt.str;
+  /**
+   * Returns an iterator through visible text, one `step` characters at a time,
+   * starting from a given {@link Point}.
+   *
+   * @param start The starting point.
+   * @param step Number of visible characters to skip.
+   * @returns The next visible character iterator.
+   */
+  public walk(start: Point<T>, step: number = 1): CharIterator<T> {
+    let point: Point<T> | undefined = start.clone();
     return () => {
-      if (!chunk) return;
-      const offsetToReturn = offset;
-      const chunkToReturn = chunk;
-      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
-      if (!char) return;
-      offset++;
-      if (offset >= chunk.span) {
-        offset = 0;
-        chunk = str.next(chunk);
-        while (chunk && chunk.del) chunk = str.next(chunk);
-      }
-      return new ChunkSlice<T>(chunkToReturn, offsetToReturn, 1);
+      if (!point) return;
+      const char = step > 0 ? point.rightChar() : point.leftChar();
+      if (!char) return (point = undefined);
+      const end = point.move(step);
+      if (end) point = undefined;
+      return char;
     };
   }
 
-  public fwd1(id: ITimestampStruct, chunk?: Chunk<T>): CharIterator<T> {
-    const str = this.txt.str;
-    const startFromStrRoot = equal(id, str.id);
-    if (startFromStrRoot) {
-      chunk = str.first();
-      while (chunk && chunk.del) chunk = str.next(chunk);
-      return this.fwd0(chunk, 0);
-    }
-    let offset: number = 0;
-    if (!chunk || !contains(chunk.id, chunk.span, id, 1)) {
-      chunk = str.findById(id);
-      if (!chunk) return () => undefined;
-      offset = id.time - chunk.id.time;
-    } else offset = id.time - chunk.id.time;
-    if (!chunk.del) return this.fwd0(chunk, offset);
-    while (chunk && chunk.del) chunk = str.next(chunk);
-    return this.fwd0(chunk, 0);
+  /**
+   * Returns a forward iterator through visible text, one character at a time,
+   * starting from a given {@link Point}.
+   *
+   * @param start The starting point.
+   * @param chunk Chunk to start from.
+   * @returns The next visible character iterator.
+   */
+  public fwd(start: Point<T>): CharIterator<T> {
+    return this.walk(start, 1);
   }
 
-  public bwd0(chunk: undefined | Chunk<T>, offset: number): CharIterator<T> {
-    const txt = this.txt;
-    const str = txt.str;
-    return () => {
-      if (!chunk || offset < 0) return;
-      const offsetToReturn = offset;
-      const chunkToReturn = chunk;
-      const char = chunkToReturn.view().slice(offsetToReturn, offsetToReturn + 1);
-      if (!char) return;
-      offset--;
-      if (offset < 0) {
-        chunk = str.prev(chunk);
-        while (chunk && chunk.del) chunk = str.prev(chunk);
-        if (chunk) offset = chunk.span - 1;
-      }
-      return new ChunkSlice(chunkToReturn, offsetToReturn, 1);
-    };
+  /**
+   * Returns a backward iterator through visible text, one character at a time,
+   * starting from a given {@link Point}.
+   *
+   * @param start The starting point.
+   * @param chunk Chunk to start from.
+   * @returns The previous visible character iterator.
+   */
+  public bwd(start: Point<T>): CharIterator<T> {
+    return this.walk(start, -1);
   }
 
-  public bwd1(id: ITimestampStruct, chunk?: Chunk<T>): CharIterator<T> {
-    const str = this.txt.str;
-    const startFromStrRoot = equal(id, str.id);
-    if (startFromStrRoot) {
-      chunk = str.last();
-      while (chunk && chunk.del) chunk = str.prev(chunk);
-      return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
-    }
-    let offset: number = 0;
-    if (!chunk || !contains(chunk.id, chunk.span, id, 1)) {
-      chunk = str.findById(id);
-      if (!chunk) return () => undefined;
-      offset = id.time - chunk.id.time;
-    } else offset = id.time - chunk.id.time;
-    if (!chunk.del) return this.bwd0(chunk, offset);
-    while (chunk && chunk.del) chunk = str.prev(chunk);
-    return this.bwd0(chunk, chunk ? chunk.span - 1 : 0);
-  }
-
-  private skipWord(iterator: CharIterator<T>, predicate: CharPredicate<string>, firstLetterFound: boolean): Point<T> | undefined {
+  /**
+   * Skips a word in an arbitrary direction. A word is defined by the `predicate`
+   * function, which returns `true` if the character is part of the word.
+   *
+   * @param iterator Character iterator.
+   * @param predicate Predicate function to match characters, returns `true` if
+   *     the character is part of the word.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *     not, will skip any characters until the first letter, which is matched
+   *     by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  private skipWord(
+    iterator: CharIterator<T>,
+    predicate: CharPredicate<string>,
+    firstLetterFound: boolean,
+  ): Point<T> | undefined {
     let next: ChunkSlice<T> | undefined;
     let prev: ChunkSlice<T> | undefined;
     while ((next = iterator())) {
@@ -196,7 +180,8 @@ export class Editor<T = string> {
   }
 
   /**
-   * Skips a word forward. A word is defined by the `predicate` function.
+   * Skips a word forward. A word is defined by the `predicate` function, which
+   * returns `true` if the character is part of the word.
    *
    * @param point Point from which to start skipping.
    * @param predicate Character class to skip.
@@ -205,15 +190,17 @@ export class Editor<T = string> {
    *        matched by the `predicate` is found.
    * @returns Point after the last character skipped.
    */
-  public fwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
-    const firstChar = point.rightChar();
-    if (!firstChar) return point;
-    const fwd = this.fwd1(firstChar.id(), firstChar.chunk);
-    return this.skipWord(fwd, predicate, firstLetterFound) || point;
+  public fwdSkipWord(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
+    return this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
   }
 
   /**
-   * Skips a word backward. A word is defined by the `predicate` function.
+   * Skips a word backward. A word is defined by the `predicate` function, which
+   * returns `true` if the character is part of the word.
    *
    * @param point Point from which to start skipping.
    * @param predicate Character class to skip.
@@ -222,10 +209,12 @@ export class Editor<T = string> {
    *        matched by the `predicate` is found.
    * @returns Point after the last character skipped.
    */
-  public bwdSkipWord(point: Point<T>, predicate: CharPredicate<string> = isLetter, firstLetterFound: boolean = false): Point<T> {
-    const firstChar = point.leftChar();
-    if (!firstChar) return point;
-    const bwd = this.bwd1(firstChar.id(), firstChar.chunk);
+  public bwdSkipWord(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
+    const bwd = this.bwd(point);
     const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
     if (endPoint) endPoint.anchor = Anchor.Before;
     return endPoint || point;

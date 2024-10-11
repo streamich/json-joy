@@ -149,12 +149,12 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * specifies how many characters to move the cursor by. If the cursor reaches
    * the end of the string, it will return `undefined`.
    *
-   * @param move How many characters to move the cursor by.
+   * @param skip How many characters to move by.
    * @returns Next visible ID in string.
    */
-  public nextId(move: number = 1): ITimestampStruct | undefined {
+  public nextId(skip: number = 1): ITimestampStruct | undefined {
     if (this.isAbsEnd()) return;
-    let remaining: number = move;
+    let remaining: number = skip;
     const {id, rga} = this;
     let chunk: Chunk<T> | undefined;
     if (this.isAbsStart()) {
@@ -197,9 +197,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    *          character referenced by the point, or `undefined` if there is no
    *          such character.
    */
-  public prevId(move: number = 1): ITimestampStruct | undefined {
+  public prevId(skip: number = 1): ITimestampStruct | undefined {
     if (this.isAbsStart()) return;
-    let remaining: number = move;
+    let remaining: number = skip;
     const {id, rga} = this;
     let chunk = this.chunk();
     if (!chunk) return rga.id;
@@ -419,26 +419,33 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   /**
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
+   *
+   * @returns Returns `true` if the absolute end of the string is reached.
    */
-  public move(skip: number): void {
-    if (!skip) return;
+  public move(skip: number): boolean {
+    if (!skip) return this.isAbs();
     const anchor = this.anchor;
     if (anchor !== Anchor.After) this.refAfter();
     if (skip > 0) {
       const nextId = this.nextId(skip);
-      if (!nextId) this.refAbsEnd();
-      else {
+      if (!nextId) {
+        this.refAbsEnd();
+        return true;
+      } else {
         this.id = nextId;
         if (anchor !== Anchor.After) this.refBefore();
       }
     } else {
       const prevId = this.prevId(-skip);
-      if (!prevId) this.refAbsStart();
-      else {
+      if (!prevId) {
+        this.refAbsStart();
+        return true;
+      } else {
         this.id = prevId;
         if (anchor !== Anchor.After) this.refBefore();
       }
     }
+    return false;
   }
 
   // ----------------------------------------------------------------- Stateful

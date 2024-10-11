@@ -132,7 +132,7 @@ export class Peritext<T = string> implements Printable {
     // TODO: Provide ability to attach to the end of the text?
     const str = this.str;
     const id = str.find(pos);
-    if (!id) return this.point(str.id, Anchor.After);
+    if (!id) return this.point(str.id, pos ? Anchor.Before : Anchor.After);
     return this.point(id, anchor);
   }
 

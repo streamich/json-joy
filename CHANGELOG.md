@@ -1,3 +1,29 @@
+# [17.2.0](https://github.com/streamich/json-joy/compare/v17.1.0...v17.2.0) (2024-10-10)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 if position is specified, return EOS point ([a617ebb](https://github.com/streamich/json-joy/commit/a617ebbf0d5c57b9e84d5aae82717b0c51031fcb))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve .fwd() and .bwd() string iterators, and implify ([3ed7057](https://github.com/streamich/json-joy/commit/3ed7057dab93e44de5603afbf11f761fa1909ed3))
+* **json-crdt-extensions:** 🎸 improve point iteration ([70210ae](https://github.com/streamich/json-joy/commit/70210ae690755528a358c56354c9ac51c73f7bbc))
+
+# [17.1.0](https://github.com/streamich/json-joy/compare/v17.0.1...v17.1.0) (2024-10-10)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 add editor backward iteration ([0358fdd](https://github.com/streamich/json-joy/commit/0358fdd1f9d0425265279560ea90bda0df656896))
+* **json-crdt-extensions:** 🎸 implement semantic forward movement in the editor ([4cff1b7](https://github.com/streamich/json-joy/commit/4cff1b7aff55a638db7195e9a04929325a9d5e4e))
+
+
+### Performance Improvements
+
+* **json-crdt-extensions:** ⚡️ improve backward iteration end condition check ([4f8c968](https://github.com/streamich/json-joy/commit/4f8c968257d8c959625eda45003004d8fc47ae67))
+
 ## [17.0.1](https://github.com/streamich/json-joy/compare/v17.0.0...v17.0.1) (2024-10-07)
 
 
