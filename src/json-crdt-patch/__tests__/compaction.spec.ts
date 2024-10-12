@@ -67,7 +67,7 @@ describe('.combine()', () => {
     expect(nop.id.time).toBe(2);
     expect(nop.len).toBe(98);
   });
-  
+
   test('can combine four patches with gap', () => {
     const builder1 = new PatchBuilder(new LogicalClock(123456789, 1));
     const builder2 = new PatchBuilder(new LogicalClock(123456789, 100));
@@ -127,7 +127,7 @@ describe('.combine()', () => {
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
     expect(() => combine([patch2, patch1])).toThrow(new Error('TIMESTAMP_CONFLICT'));
-    combine([patch1, patch2])
+    combine([patch1, patch2]);
   });
 });
 

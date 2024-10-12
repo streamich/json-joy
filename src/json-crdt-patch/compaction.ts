@@ -3,15 +3,15 @@
  *     together, and cleaning up operations.
  */
 
-import {equal, Timestamp} from "./clock";
-import {InsStrOp, NopOp} from "./operations";
-import type {JsonCrdtPatchOperation, Patch} from "./Patch";
+import {equal, Timestamp} from './clock';
+import {InsStrOp, NopOp} from './operations';
+import type {JsonCrdtPatchOperation, Patch} from './Patch';
 
 /**
  * Combines two or more patches together. The first patch is modified in place.
  * Operations from the second patch are appended to the first patch as is
  * (without cloning).
- * 
+ *
  * The patches must have the same `sid`. The first patch must have lower logical
  * time than the second patch, and the logical times must not overlap.
  *
@@ -63,7 +63,7 @@ export const compact = (patch: Patch): void => {
       const isTimeConsecutive = lastOpNextTick === op.id.time;
       const isInsertIntoSameString = equal(lastOp.obj, op.obj);
       const opRef = op.ref;
-      const isAppend = (lastOpNextTick === (opRef.time + 1)) && (lastOp.ref.sid === opRef.sid);
+      const isAppend = lastOpNextTick === opRef.time + 1 && lastOp.ref.sid === opRef.sid;
       if (isTimeConsecutive && isInsertIntoSameString && isAppend) {
         lastOp.data = lastOp.data + op.data;
         continue;
