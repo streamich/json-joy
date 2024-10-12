@@ -22,10 +22,34 @@ describe('.combine()', () => {
       patch1.ops = patch1.ops.concat(ops1);
       const patch2 = new Patch();
       patch2.ops = patch2.ops.concat(ops2);
-      combine(patch1, patch2);
+      combine([patch1, patch2]);
       const str2 = patch1 + '';
       expect(str2).toBe(str1);
     }
+  });
+
+  test('can combine three adjacent patches', () => {
+    const builder = new PatchBuilder(new LogicalClock(123456789, 1));
+    const objId = builder.json({
+      str: 'hello',
+      num: 123,
+      tags: ['a', 'b', 'c'],
+    });
+    builder.root(objId);
+    const patch = builder.flush();
+    const str1 = patch + '';
+    const ops1 = patch.ops.slice(0, 2);
+    const ops2 = patch.ops.slice(2, 4);
+    const ops3 = patch.ops.slice(4);
+    const patch1 = new Patch();
+    patch1.ops = patch1.ops.concat(ops1);
+    const patch2 = new Patch();
+    patch2.ops = patch2.ops.concat(ops2);
+    const patch3 = new Patch();
+    patch3.ops = patch3.ops.concat(ops3);
+    combine([patch1, patch2, patch3]);
+    const str2 = patch1 + '';
+    expect(str2).toBe(str1);
   });
 
   test('can combine two patches with gap', () => {
@@ -35,13 +59,33 @@ describe('.combine()', () => {
     builder2.const(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
-    combine(patch1, patch2);
+    combine([patch1, patch2]);
     expect(patch1.ops.length).toBe(3);
     expect(patch1.ops[1]).toBeInstanceOf(NopOp);
     const nop = patch1.ops[1] as NopOp;
     expect(nop.id.sid).toBe(123456789);
     expect(nop.id.time).toBe(2);
     expect(nop.len).toBe(98);
+  });
+  
+  test('can combine four patches with gap', () => {
+    const builder1 = new PatchBuilder(new LogicalClock(123456789, 1));
+    const builder2 = new PatchBuilder(new LogicalClock(123456789, 100));
+    const builder3 = new PatchBuilder(new LogicalClock(123456789, 110));
+    const builder4 = new PatchBuilder(new LogicalClock(123456789, 220));
+    builder1.str();
+    builder2.const(123);
+    builder3.obj();
+    builder4.bin();
+    const patch1 = builder1.flush();
+    const patch2 = builder2.flush();
+    const patch3 = builder3.flush();
+    const patch4 = builder4.flush();
+    combine([patch1, patch2, patch3, patch4]);
+    expect(patch1.ops.length).toBe(7);
+    expect(patch1.ops[1]).toBeInstanceOf(NopOp);
+    expect(patch1.ops[3]).toBeInstanceOf(NopOp);
+    expect(patch1.ops[5]).toBeInstanceOf(NopOp);
   });
 
   test('throws on mismatching sessions', () => {
@@ -51,7 +95,7 @@ describe('.combine()', () => {
     builder2.const(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
-    expect(() => combine(patch1, patch2)).toThrow(new Error('SID_MISMATCH'));
+    expect(() => combine([patch1, patch2])).toThrow(new Error('SID_MISMATCH'));
   });
 
   test('first patch can be empty', () => {
@@ -59,7 +103,7 @@ describe('.combine()', () => {
     builder2.const(123);
     const patch1 = new Patch();
     const patch2 = builder2.flush();
-    combine(patch1, patch2);
+    combine([patch1, patch2]);
     expect(patch1 + '').toBe(patch2 + '');
   });
 
@@ -69,7 +113,7 @@ describe('.combine()', () => {
     const patch1 = new Patch();
     const patch2 = builder2.flush();
     const str1 = patch2 + '';
-    combine(patch2, patch1);
+    combine([patch2, patch1]);
     const str2 = patch2 + '';
     expect(str2).toBe(str1);
     expect(patch1.getId()).toBe(undefined);
@@ -82,8 +126,8 @@ describe('.combine()', () => {
     builder2.const(123);
     const patch1 = builder1.flush();
     const patch2 = builder2.flush();
-    expect(() => combine(patch2, patch1)).toThrow(new Error('TIMESTAMP_CONFLICT'));
-    combine(patch1, patch2)
+    expect(() => combine([patch2, patch1])).toThrow(new Error('TIMESTAMP_CONFLICT'));
+    combine([patch1, patch2])
   });
 });
 

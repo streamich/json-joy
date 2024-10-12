@@ -8,36 +8,40 @@ import {InsStrOp, NopOp} from "./operations";
 import type {JsonCrdtPatchOperation, Patch} from "./Patch";
 
 /**
- * Combines two patches together. The first patch is modified in place.
+ * Combines two or more patches together. The first patch is modified in place.
  * Operations from the second patch are appended to the first patch as is
  * (without cloning).
  * 
  * The patches must have the same `sid`. The first patch must have lower logical
  * time than the second patch, and the logical times must not overlap.
  *
- * @param a First patch to combine.
- * @param b Second patch to combine.
+ * @param patches The patches to combine.
  */
-export const combine = (a: Patch, b: Patch): void => {
-  const idA = a.getId();
-  const idB = b.getId();
-  if (!idA) {
+export const combine = (patches: Patch[]): void => {
+  const firstPatch = patches[0];
+  let idA = patches[0].getId();
+  const patchesLength = patches.length;
+  for (let i = 1; i < patchesLength; i++) {
+    const currentPatch = patches[i];
+    const idB = currentPatch.getId();
+    if (!idA) {
+      if (!idB) return;
+      firstPatch.ops = firstPatch.ops.concat(currentPatch.ops);
+      return;
+    }
     if (!idB) return;
-    a.ops = a.ops.concat(b.ops);
-    return;
+    if (!idA || !idB) throw new Error('EMPTY_PATCH');
+    const sidA = idA.sid;
+    if (sidA !== idB.sid) throw new Error('SID_MISMATCH');
+    const timeA = idA.time;
+    const nextTick = timeA + firstPatch.span();
+    const timeB = idB.time;
+    const timeDiff = timeB - nextTick;
+    if (timeDiff < 0) throw new Error('TIMESTAMP_CONFLICT');
+    const needsNoop = timeDiff > 0;
+    if (needsNoop) firstPatch.ops.push(new NopOp(new Timestamp(sidA, nextTick), timeDiff));
+    firstPatch.ops = firstPatch.ops.concat(currentPatch.ops);
   }
-  if (!idB) return;
-  if (!idA || !idB) throw new Error('EMPTY_PATCH');
-  const sidA = idA.sid;
-  if (sidA !== idB.sid) throw new Error('SID_MISMATCH');
-  const timeA = idA.time;
-  const nextTick = timeA + a.span();
-  const timeB = idB.time;
-  const timeDiff = timeB - nextTick;
-  if (timeDiff < 0) throw new Error('TIMESTAMP_CONFLICT');
-  const needsNoop = timeDiff > 0;
-  if (needsNoop) a.ops.push(new NopOp(new Timestamp(sidA, nextTick), timeDiff));
-  a.ops = a.ops.concat(b.ops);
 };
 
 /**
