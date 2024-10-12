@@ -19,23 +19,23 @@ import type {JsonCrdtPatchOperation, Patch} from './Patch';
  */
 export const combine = (patches: Patch[]): void => {
   const firstPatch = patches[0];
-  let idA = patches[0].getId();
+  const firstPatchId = firstPatch.getId();
   const patchesLength = patches.length;
   for (let i = 1; i < patchesLength; i++) {
     const currentPatch = patches[i];
-    const idB = currentPatch.getId();
-    if (!idA) {
-      if (!idB) return;
+    const currentPatchId = currentPatch.getId();
+    if (!firstPatchId) {
+      if (!currentPatchId) return;
       firstPatch.ops = firstPatch.ops.concat(currentPatch.ops);
       return;
     }
-    if (!idB) return;
-    if (!idA || !idB) throw new Error('EMPTY_PATCH');
-    const sidA = idA.sid;
-    if (sidA !== idB.sid) throw new Error('SID_MISMATCH');
-    const timeA = idA.time;
+    if (!currentPatchId) return;
+    if (!firstPatchId || !currentPatchId) throw new Error('EMPTY_PATCH');
+    const sidA = firstPatchId.sid;
+    if (sidA !== currentPatchId.sid) throw new Error('SID_MISMATCH');
+    const timeA = firstPatchId.time;
     const nextTick = timeA + firstPatch.span();
-    const timeB = idB.time;
+    const timeB = currentPatchId.time;
     const timeDiff = timeB - nextTick;
     if (timeDiff < 0) throw new Error('TIMESTAMP_CONFLICT');
     const needsNoop = timeDiff > 0;
