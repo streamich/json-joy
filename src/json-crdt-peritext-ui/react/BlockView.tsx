@@ -55,7 +55,7 @@ export const BlockView: React.FC<BlockViewProps> = ({block, el}) => {
 
   return (
     <div ref={(element) => el?.(element)} className={className}>
-      <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)'}}>#{block.hash}</span>
+      <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', pointerEvents: 'none', userSelect: 'none'}}>#{block.hash}</span>
       {elements}
     </div>
   );

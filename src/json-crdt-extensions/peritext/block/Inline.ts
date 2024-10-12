@@ -104,6 +104,10 @@ export class Inline extends Range implements Printable {
   /**
    * @returns Returns the attributes of the inline, which are the slice
    *     annotations and formatting applied to the inline.
+   * 
+   * 
+   * @todo PERF: Cache the attributes in the inline object, keyed by the
+   *     hash of the `Inline`.
    */
   public attr(): InlineAttrs {
     const attr: InlineAttrs = {};
@@ -115,6 +119,7 @@ export class Inline extends Range implements Printable {
     const length3 = length1 + length2;
     for (let i = 0; i < length3; i++) {
       const slice = i >= length1 ? slices2[i - length1] : slices1[i];
+      const isMarker = i >= length1;
       if (slice instanceof Range) {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
@@ -140,6 +145,20 @@ export class Inline extends Range implements Printable {
       }
     }
     return attr;
+  }
+
+  public cursorStart(): boolean {
+    const attributes = this.attr();
+    const attribute = attributes[SliceTypes.Cursor];
+    if (!attribute) return false;
+    const [, pos] = attribute;
+    switch (pos) {
+      case InlineAttrPos.Start:
+      case InlineAttrPos.Contained:
+      case InlineAttrPos.Collapsed:
+        return true;
+    }
+    return false;
   }
 
   public text(): string {

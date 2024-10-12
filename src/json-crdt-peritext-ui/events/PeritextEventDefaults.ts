@@ -48,8 +48,8 @@ export class PeritextEventDefaults implements UiLifeCycles {
       if (isAbsolutePosition) {
         switch (edge) {
           case 'focus': {
-            // const point = txt.pointAt(at);
-            // cursor.setEdge(point, 0);
+            const point = txt.pointAt(at);
+            cursor.setEndpoint(point, 0);
             break;
           }
           default: {
@@ -70,38 +70,38 @@ export class PeritextEventDefaults implements UiLifeCycles {
         }
         this.et.change(event);
       } else {
-        // const numericLen = typeof len === 'number' ? len : 0;
-        // if (edge === 'focus' || edge === 'anchor') {
-        //   const point = (edge === 'focus' ? cursor.focus() : cursor.anchor()).clone();
-        //   switch (unit) {
-        //     case 'line':
-        //       point.eol(numericLen);
-        //       break;
-        //     case 'word':
-        //       point.eow(numericLen);
-        //       break;
-        //     default:
-        //       point.move(numericLen);
-        //   }
-        //   cursor.setEdge(point, edge === 'anchor' ? 1 : 0);
-        // } else {
-        //   if (cursor.isCollapsed()) {
-        //     switch (unit) {
-        //       case 'line':
-        //         cursor.eol(numericLen);
-        //         break;
-        //       case 'word':
-        //         cursor.eow(numericLen);
-        //         break;
-        //       default:
-        //         cursor.move(numericLen);
-        //     }
-        //   } else {
-        //     if (numericLen > 0) cursor.collapseToEnd();
-        //     else cursor.collapseToStart();
-        //   }
-        // }
-        // this.et.change(event);
+        const numericLen = typeof len === 'number' ? len : 0;
+        if (edge === 'focus' || edge === 'anchor') {
+          // const point = (edge === 'focus' ? cursor.focus() : cursor.anchor()).clone();
+          // switch (unit) {
+          //   case 'line':
+          //     point.eol(numericLen);
+          //     break;
+          //   case 'word':
+          //     point.eow(numericLen);
+          //     break;
+          //   default:
+          //     point.move(numericLen);
+          // }
+          // cursor.setEdge(point, edge === 'anchor' ? 1 : 0);
+        } else {
+          if (cursor.isCollapsed()) {
+            switch (unit) {
+              case 'line':
+                // cursor.eol(numericLen);
+                break;
+              case 'word':
+                // cursor.eow(numericLen);
+                break;
+              default:
+                cursor.move(numericLen);
+            }
+          } else {
+            if (numericLen > 0) cursor.collapseToEnd();
+            else cursor.collapseToStart();
+          }
+        }
+        this.et.change(event);
       }
     },
 
