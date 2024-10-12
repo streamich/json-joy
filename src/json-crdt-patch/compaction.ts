@@ -3,9 +3,9 @@
  *     together, and cleaning up operations.
  */
 
-import {Timestamp} from "./clock";
-import {NopOp} from "./operations";
-import type {Patch} from "./Patch";
+import {equal, Timestamp} from "./clock";
+import {InsStrOp, NopOp} from "./operations";
+import type {JsonCrdtPatchOperation, Patch} from "./Patch";
 
 /**
  * Combines two patches together. The first patch is modified in place.
@@ -38,4 +38,35 @@ export const combine = (a: Patch, b: Patch): void => {
   const needsNoop = timeDiff > 0;
   if (needsNoop) a.ops.push(new NopOp(new Timestamp(sidA, nextTick), timeDiff));
   a.ops = a.ops.concat(b.ops);
+};
+
+/**
+ * Compacts operations within a patch. Combines consecutive string inserts.
+ * Mutates the operations in place. (Use `patch.clone()` to avoid mutating the
+ * original patch.)
+ *
+ * @param patch The patch to compact.
+ */
+export const compact = (patch: Patch): void => {
+  const ops = patch.ops;
+  const length = ops.length;
+  let lastOp: JsonCrdtPatchOperation = ops[0];
+  const newOps: JsonCrdtPatchOperation[] = [lastOp];
+  for (let i = 1; i < length; i++) {
+    const op = ops[i];
+    if (lastOp instanceof InsStrOp && op instanceof InsStrOp) {
+      const lastOpNextTick = lastOp.id.time + lastOp.span();
+      const isTimeConsecutive = lastOpNextTick === op.id.time;
+      const isInsertIntoSameString = equal(lastOp.obj, op.obj);
+      const opRef = op.ref;
+      const isAppend = (lastOpNextTick === (opRef.time + 1)) && (lastOp.ref.sid === opRef.sid);
+      if (isTimeConsecutive && isInsertIntoSameString && isAppend) {
+        lastOp.data = lastOp.data + op.data;
+        continue;
+      }
+    }
+    newOps.push(op);
+    lastOp = op;
+  }
+  patch.ops = newOps;
 };

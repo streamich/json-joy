@@ -1,7 +1,6 @@
-import {LogicalClock} from '../clock';
-import {combine} from '../compaction';
-import {SESSION} from '../constants';
-import {NopOp} from '../operations';
+import {equal, LogicalClock, tick, ts} from '../clock';
+import {combine, compact} from '../compaction';
+import {InsStrOp, NopOp} from '../operations';
 import {Patch} from '../Patch';
 import {PatchBuilder} from '../PatchBuilder';
 
@@ -85,5 +84,88 @@ describe('.combine()', () => {
     const patch2 = builder2.flush();
     expect(() => combine(patch2, patch1)).toThrow(new Error('TIMESTAMP_CONFLICT'));
     combine(patch1, patch2)
+  });
+});
+
+describe('.compact()', () => {
+  test('can combine two consecutive string inserts', () => {
+    const builder = new PatchBuilder(new LogicalClock(123456789, 1));
+    const strId = builder.str();
+    const ins1Id = builder.insStr(strId, strId, 'hello');
+    builder.insStr(strId, tick(ins1Id, 'hello'.length - 1), ' world');
+    builder.root(strId);
+    const patch = builder.flush();
+    const patch2 = patch.clone();
+    compact(patch);
+    expect(equal(patch.ops[0].id, patch2.ops[0].id)).toBe(true);
+    expect(equal(patch.ops[1].id, patch2.ops[1].id)).toBe(true);
+    expect(equal(patch.ops[2].id, patch2.ops[3].id)).toBe(true);
+    expect((patch.ops[1] as any).data).toBe('hello world');
+  });
+
+  test('can combine two consecutive string inserts - 2', () => {
+    const builder = new PatchBuilder(new LogicalClock(123456789, 1));
+    const strId = builder.str();
+    const ins1Id = builder.insStr(strId, strId, 'a');
+    builder.insStr(strId, tick(ins1Id, 'a'.length - 1), 'b');
+    builder.root(strId);
+    const patch = builder.flush();
+    const patch2 = patch.clone();
+    compact(patch);
+    expect(equal(patch.ops[0].id, patch2.ops[0].id)).toBe(true);
+    expect(equal(patch.ops[1].id, patch2.ops[1].id)).toBe(true);
+    expect(equal(patch.ops[2].id, patch2.ops[3].id)).toBe(true);
+    expect((patch.ops[1] as any).data).toBe('ab');
+  });
+
+  test('can combine two consecutive string inserts - 3', () => {
+    const patch = new Patch();
+    patch.ops.push(new InsStrOp(ts(123, 30), ts(123, 10), ts(123, 20), 'a'));
+    patch.ops.push(new InsStrOp(ts(123, 31), ts(123, 10), ts(123, 30), 'b'));
+    compact(patch);
+    expect(patch.ops.length).toBe(1);
+    expect((patch.ops[0] as InsStrOp).data).toBe('ab');
+  });
+
+  test('does not combine inserts, if they happen into different strings', () => {
+    const patch = new Patch();
+    patch.ops.push(new InsStrOp(ts(123, 30), ts(123, 10), ts(123, 20), 'a'));
+    patch.ops.push(new InsStrOp(ts(123, 31), ts(123, 99), ts(123, 30), 'b'));
+    compact(patch);
+    expect(patch.ops.length).toBe(2);
+  });
+
+  test('does not combine inserts, if time is not consecutive', () => {
+    const patch = new Patch();
+    patch.ops.push(new InsStrOp(ts(123, 30), ts(123, 10), ts(123, 20), 'a'));
+    patch.ops.push(new InsStrOp(ts(123, 99), ts(123, 10), ts(123, 30), 'b'));
+    compact(patch);
+    expect(patch.ops.length).toBe(2);
+  });
+
+  test('does not combine inserts, if the second operation is not an append', () => {
+    const patch = new Patch();
+    patch.ops.push(new InsStrOp(ts(123, 30), ts(123, 10), ts(123, 20), 'a'));
+    patch.ops.push(new InsStrOp(ts(123, 31), ts(123, 10), ts(123, 22), 'b'));
+    compact(patch);
+    expect(patch.ops.length).toBe(2);
+  });
+
+  test('does not combine inserts, if the second operation is not an append - 2', () => {
+    const patch = new Patch();
+    patch.ops.push(new InsStrOp(ts(123, 30), ts(123, 10), ts(123, 20), 'a'));
+    patch.ops.push(new InsStrOp(ts(123, 31), ts(123, 10), ts(999, 30), 'b'));
+    compact(patch);
+    expect(patch.ops.length).toBe(2);
+  });
+
+  test('returns a patch as-is', () => {
+    const builder = new PatchBuilder(new LogicalClock(123456789, 1));
+    builder.root(builder.json({str: 'hello'}));
+    const patch = builder.flush();
+    const str1 = patch + '';
+    compact(patch);
+    const str2 = patch + '';
+    expect(str2).toBe(str1);
   });
 });
