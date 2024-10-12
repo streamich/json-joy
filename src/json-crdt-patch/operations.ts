@@ -262,7 +262,7 @@ export class InsStrOp implements IJsonCrdtPatchEditOperation {
     public readonly id: ITimestampStruct,
     public readonly obj: ITimestampStruct,
     public readonly ref: ITimestampStruct,
-    public readonly data: string,
+    public data: string,
   ) {}
 
   public span(): number {
