@@ -1,3 +1,12 @@
+# [17.3.0](https://github.com/streamich/json-joy/compare/v17.2.0...v17.3.0) (2024-10-12)
+
+
+### Features
+
+* **json-crdt-patch:** 🎸 allow combining multiple patches at once ([bb52208](https://github.com/streamich/json-joy/commit/bb522088f1ca445b673297d94a0f9e5eccf035b3))
+* **json-crdt-patch:** 🎸 implement `combine()` for joining two adjacent patches ([427c7c9](https://github.com/streamich/json-joy/commit/427c7c9acf0740f4be1ae1bd0b114b4da75886cc))
+* **json-crdt-patch:** 🎸 implement consecutive string insert compaction ([67feb63](https://github.com/streamich/json-joy/commit/67feb631445d623e7524e5670db1fb13e014ad81))
+
 # [17.2.0](https://github.com/streamich/json-joy/compare/v17.1.0...v17.2.0) (2024-10-10)
 
 

@@ -62,7 +62,7 @@ export class Patch implements Printable {
   /**
    * A list of operations in the patch.
    */
-  public readonly ops: JsonCrdtPatchOperation[] = [];
+  public ops: JsonCrdtPatchOperation[] = [];
 
   /**
    * Arbitrary metadata associated with the patch, which is not used by the
