@@ -96,10 +96,14 @@ export class Cursor<T = string> extends PersistedSlice<T> {
       this.collapse();
       return;
     }
-    let point1 = this.start;
+    let point1 = this.start.clone();
     let point2 = point1.clone();
-    point2.move(step);
-    if (step < 0) [point1, point2] = [point2, point1];
+    if (step > 0) point2.move(1);
+    else if (step < 0) point1.move(-1);
+    else if (step === 0) {
+      point1.move(-1);
+      point2.move(1);
+    }
     const txt = this.txt;
     const range = txt.range(point1, point2);
     txt.delStr(range);

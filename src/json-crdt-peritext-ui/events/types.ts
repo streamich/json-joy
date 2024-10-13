@@ -7,7 +7,14 @@ export interface InsertDetail {
 }
 
 export interface DeleteDetail {
-  forward?: boolean;
+  /**
+   * Specifies the direction of the deletion. If `-1`, the deletion will be
+   * backwards. If `1`, the deletion will be forwards. If `0`, the deletion
+   * will execute in both directions (i.e. the whole word, or line, or block).
+   * 
+   * Defaults to `-1`.
+   */
+  direction?: -1 | 0 | 1;
   unit?: TextUnit;
 }
 

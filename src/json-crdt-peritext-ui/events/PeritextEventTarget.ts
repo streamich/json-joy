@@ -19,8 +19,8 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.dispatch('insert', {text});
   }
 
-  public delete(forward?: boolean, unit?: TextUnit): void {
-    this.dispatch('delete', {forward, unit});
+  public delete(direction?: -1 | 0 | 1, unit?: TextUnit): void {
+    this.dispatch('delete', {direction, unit});
   }
 
   public cursor(detail: CursorDetail): void {

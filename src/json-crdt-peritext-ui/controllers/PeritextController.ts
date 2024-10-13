@@ -72,12 +72,24 @@ export class PeritextController implements UiLifeCycles {
         }
         break;
       }
-      // case 'Backspace':
-      // case 'Delete':
-      case 'deleteContentBackward':
-      case 'deleteContentForward': {
-          const forward = inputType === 'deleteContentForward';
-          et.delete(forward, 'word');
+      case 'deleteContentBackward': // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
+      case 'deleteContent': { // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
+        et.delete(-1, 'char');
+        break;
+      }
+      case 'deleteContentForward': { // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
+        et.delete(1, 'char');
+        break;
+      }
+      case 'deleteWordBackward': // delete a word directly before the caret position
+      case 'deleteWordForward': // delete a word directly after the caret position
+      case 'deleteSoftLineBackward': // delete from the caret to the nearest visual line break before the caret position
+      case 'deleteSoftLineForward': // delete from the caret to the nearest visual line break after the caret position
+      case 'deleteEntireSoftLine': // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
+      case 'deleteHardLineBackward': // delete from the caret to the nearest beginning of a block element or br element before the caret position
+      case 'deleteHardLineForward': // delete from the caret to the nearest end of a block element or br element after the caret position
+      {
+          et.delete(-1, 'word');
           break;
       }
       // case 'insertLineBreak': { // insert a line break
@@ -104,29 +116,9 @@ export class PeritextController implements UiLifeCycles {
       // }
       // case 'insertLink': { // insert a link
       // }
-      // case 'deleteWordBackward': { // delete a word directly before the caret position
-      // }
-      // case 'deleteWordForward': { // delete a word directly after the caret position
-      // }
-      // case 'deleteSoftLineBackward': { // delete from the caret to the nearest visual line break before the caret position
-      // }
-      // case 'deleteSoftLineForward': { // delete from the caret to the nearest visual line break after the caret position
-      // }
-      // case 'deleteEntireSoftLine': { // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
-      // }
-      // case 'deleteHardLineBackward': { // delete from the caret to the nearest beginning of a block element or br element before the caret position
-      // }
-      // case 'deleteHardLineForward': { // delete from the caret to the nearest end of a block element or br element after the caret position
-      // }
       // case 'deleteByDrag': { // remove content from the DOM by means of drag
       // }
       // case 'deleteByCut': { // remove the current selection as part of a cut
-      // }
-      // case 'deleteContent': { // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
-      // }
-      // case 'deleteContentBackward': { // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
-      // }
-      // case 'deleteContentForward': { // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
       // }
       // case 'historyUndo': { // undo the last editing action
       // }

@@ -118,7 +118,7 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
-  public delete(forward?: boolean, unit?: 'char' | 'word' | 'line'): void {
+  public delete(direction: -1 | 0 | 1 = -1, unit?: 'char' | 'word' | 'line'): void {
     switch (unit) {
       // case 'word': {
       //   const focus = this.focus();
@@ -143,7 +143,7 @@ export class Editor<T = string> {
       //   break;
       // }
       default: { // 'char'
-        if (forward) this.del(1); else this.del(-1);
+        this.del(direction);
         break;
       }
     }
