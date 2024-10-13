@@ -35,8 +35,9 @@ export const LeafBlockView: React.FC<Props> = React.memo(
 
     return (
       <div className={'jj-leaf-block' + blockClass}>
-        <span contentEditable={false} style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', pointerEvents: 'none', userSelect: 'none', marginTop: 16, display: 'inline-block'}}>#{block.hash}</span>
-        <br contentEditable={false} />
+        <div contentEditable={false} style={{margin: '16px 0 8px'}}>
+            <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
+        </div>
         {elements.length ? elements : 'EMPTY'}
       </div>
     );
