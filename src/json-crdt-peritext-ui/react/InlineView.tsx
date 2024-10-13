@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {Inline as InlineModel} from '../../../json-crdt-extensions/peritext/block/Inline';
-import {useIsoLayoutEffect} from '../hooks';
-import {ElementAttr} from '../../constants';
+import {Inline as InlineModel} from '../../json-crdt-extensions/peritext/block/Inline';
+import {useIsoLayoutEffect} from './hooks';
+import {ElementAttr} from '../constants';
 import {TextView} from './TextView';
 
 export interface Props {
