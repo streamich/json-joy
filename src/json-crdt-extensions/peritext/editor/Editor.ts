@@ -118,19 +118,34 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
+  public delWord(step: number): void {
+    this.cursors((cursor) => {
+      if (!cursor.isCollapsed()) {
+        cursor.collapse();
+        return;
+      }
+      let point1 = cursor.start.clone();
+      let point2 = point1.clone();
+      if (step > 0) point2 = this.fwdSkipWord(point2);
+      else if (step < 0) point1 = this.bwdSkipWord(point1);
+      else if (step === 0) {
+        point1 = this.bwdSkipWord(point1);
+        point2 = this.fwdSkipWord(point2);
+      }
+      const txt = this.txt;
+      const range = txt.range(point1, point2);
+      txt.delStr(range);
+      point1.refAfter();
+      cursor.set(point1);
+    });
+  }
+
   public delete(direction: -1 | 0 | 1 = -1, unit?: 'char' | 'word' | 'line'): void {
     switch (unit) {
-      // case 'word': {
-      //   const focus = this.focus();
-      //   const dest = forward
-      //     ? txt.editor.fwdSkipWord(focus, undefined, false)
-      //     : txt.editor.bwdSkipWord(focus, undefined, false);
-      //   const pos = Math.min(focus.viewPos(), dest.viewPos());
-      //   const range = Range.from(txt, focus, dest);
-      //   txt.del(range);
-      //   this.setAt(pos, 0);
-      //   break;
-      // }
+      case 'word': {
+        this.delWord(direction);
+        break;
+      }
       // case 'line': {
       //   const focus = this.focus();
       //   const editor = txt.editor;

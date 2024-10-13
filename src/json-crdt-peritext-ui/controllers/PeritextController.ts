@@ -81,8 +81,14 @@ export class PeritextController implements UiLifeCycles {
         et.delete(1, 'char');
         break;
       }
-      case 'deleteWordBackward': // delete a word directly before the caret position
-      case 'deleteWordForward': // delete a word directly after the caret position
+      case 'deleteWordBackward': { // delete a word directly before the caret position
+        et.delete(-1, 'word');
+        break;
+      }
+      case 'deleteWordForward': { // delete a word directly after the caret position
+        et.delete(1, 'word');
+        break;
+      }
       case 'deleteSoftLineBackward': // delete from the caret to the nearest visual line break before the caret position
       case 'deleteSoftLineForward': // delete from the caret to the nearest visual line break after the caret position
       case 'deleteEntireSoftLine': // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
