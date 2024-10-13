@@ -126,8 +126,8 @@ export class Editor<T = string> {
       }
       let point1 = cursor.start.clone();
       let point2 = point1.clone();
-      if (step > 0) point2 = this.fwdSkipWord(point2);
-      else if (step < 0) point1 = this.bwdSkipWord(point1);
+      if (step > 0) for (let i = 0; i < step; i++) point2 = this.fwdSkipWord(point2);
+      else if (step < 0) for (let i = 0; i < -step; i++) point1 = this.bwdSkipWord(point1);
       else if (step === 0) {
         point1 = this.bwdSkipWord(point1);
         point2 = this.fwdSkipWord(point2);
