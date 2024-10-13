@@ -87,15 +87,69 @@ export class Editor<T = string> {
     if (!cnt) this.cursor.insert(text);
   }
 
+  // protected _del(cursor: Cursor<T>, step: number): void {
+  //   if (!cursor.isCollapsed()) {
+  //     cursor.collapse();
+  //     return;
+  //   }
+  //   let point1 = cursor.start;
+  //   let point2 = point1.clone();
+  //   point2.move(step);
+  //   if (step < 0) [point1, point2] = [point2, point1];
+  //   const range = this.txt.range(point1, point2);
+  //   this.txt.delStr(range);
+  //   point1.refAfter();
+  //   cursor.set(point1);
+  // }
+
+  // protected _delFwd(cursor: Cursor<T>): void {
+  //   this._del(cursor, 1);
+  // }
+
+  // protected _delFwd(cursor: Cursor<T>): void {
+  //   this._del(cursor, 1);
+  // }
+
   /**
-   * Deletes the previous character at current cursor position. If cursor
-   * selects a range, deletes the whole range.
+   * Deletes the previous character at current cursor positions. If cursors
+   * select a range, deletes the whole range.
    */
-  public delBwd(): void {
-    this.cursors((cursor) => cursor.delBwd());
+  public del(step: number = -1): void {
+    this.cursors((cursor) => cursor.del(step));
   }
 
-  // ------------------------------------------------------------------ various
+  public delete(forward?: boolean, unit?: 'char' | 'word' | 'line'): void {
+    switch (unit) {
+      // case 'word': {
+      //   const focus = this.focus();
+      //   const dest = forward
+      //     ? txt.editor.fwdSkipWord(focus, undefined, false)
+      //     : txt.editor.bwdSkipWord(focus, undefined, false);
+      //   const pos = Math.min(focus.viewPos(), dest.viewPos());
+      //   const range = Range.from(txt, focus, dest);
+      //   txt.del(range);
+      //   this.setAt(pos, 0);
+      //   break;
+      // }
+      // case 'line': {
+      //   const focus = this.focus();
+      //   const editor = txt.editor;
+      //   const dest = forward ? editor.eol(focus) : editor.bol(focus);
+      //   if (!dest) return;
+      //   const pos = Math.min(focus.viewPos(), dest.viewPos());
+      //   const range = Range.from(txt, focus, dest);
+      //   txt.del(range);
+      //   this.setAt(pos, 0);
+      //   break;
+      // }
+      default: { // 'char'
+        if (forward) this.del(1); else this.del(-1);
+        break;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------- selection
 
   /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
   public selectAll(): boolean {
@@ -104,6 +158,8 @@ export class Editor<T = string> {
     this.cursor.setRange(range);
     return true;
   }
+
+  // --------------------------------------------------------------- navigation
 
   /**
    * Returns an iterator through visible text, one `step` characters at a time,

@@ -33,10 +33,10 @@ export class PeritextEventDefaults implements UiLifeCycles {
     },
 
     delete: (event: CustomEvent<events.DeleteDetail>) => {
-      // if (event.defaultPrevented) return;
-      // const {forward, unit} = event.detail;
-      // this.txt.editor.cursor.delete(forward, unit);
-      // this.et.change(event);
+      if (event.defaultPrevented) return;
+      const {forward, unit} = event.detail;
+      this.txt.editor.delete(forward, unit);
+      this.et.change(event);
     },
 
     cursor: (event: CustomEvent<events.CursorDetail>) => {

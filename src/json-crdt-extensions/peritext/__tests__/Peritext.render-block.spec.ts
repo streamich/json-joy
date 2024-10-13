@@ -220,17 +220,17 @@ runInlineSlicesTests('text with block split', (editor: Editor) => {
 runInlineSlicesTests('text with deletes', (editor: Editor) => {
   editor.insert('lmXXXnwYxyz');
   editor.cursor.setAt(2, 3);
-  editor.cursor.delBwd();
+  editor.cursor.del();
   editor.cursor.setAt(3);
   editor.insert('opqrstuv');
   editor.cursor.setAt(12, 1);
-  editor.cursor.delBwd();
+  editor.cursor.del();
   editor.cursor.setAt(0);
   editor.insert('ab1c3defghijk4444');
   editor.cursor.setAt(2, 1);
-  editor.cursor.delBwd();
+  editor.cursor.del();
   editor.cursor.setAt(3, 1);
-  editor.cursor.delBwd();
+  editor.cursor.del();
   editor.cursor.setAt(11, 4);
-  editor.cursor.delBwd();
+  editor.cursor.del();
 });

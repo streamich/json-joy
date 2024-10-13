@@ -66,11 +66,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    */
   public collapse(): void {
     const deleted = this.txt.delStr(this);
-    if (deleted) {
-      const {start, rga} = this;
-      if (start.anchor === Anchor.After) this.setAfter(start.id);
-      else this.setAfter(start.prevId() || rga.id);
-    }
+    if (deleted) this.collapseToStart();
   }
 
   /**
@@ -87,14 +83,28 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     this.setAfter(shift ? tick(textId, shift) : textId);
   }
 
-  public delBwd(): void {
-    const isCollapsed = this.isCollapsed();
-    if (isCollapsed) {
-      const range = this.txt.findCharBefore(this.start);
-      if (!range) return;
-      this.set(range.start, range.end);
+  /**
+   * Deletes the given number of characters from the current caret position.
+   * Negative values delete backwards. If the cursor selects a range, the
+   * range is removed and the cursor is set at the start of the range.
+   *
+   * @param step Number of characters to delete. Negative values delete
+   *     backwards.
+   */
+  public del(step: number = -1): void {
+    if (!this.isCollapsed()) {
+      this.collapse();
+      return;
     }
-    this.collapse();
+    let point1 = this.start;
+    let point2 = point1.clone();
+    point2.move(step);
+    if (step < 0) [point1, point2] = [point2, point1];
+    const txt = this.txt;
+    const range = txt.range(point1, point2);
+    txt.delStr(range);
+    point1.refAfter();
+    this.set(point1);
   }
 
   // ---------------------------------------------------------------- Printable
