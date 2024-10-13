@@ -118,7 +118,8 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
-  public delWord(step: number): void {
+  public delUnit(step: number, unit: 'char' | 'word' | 'line'): void {
+    console.log('delUnit', step, unit);
     this.cursors((cursor) => {
       if (!cursor.isCollapsed()) {
         cursor.collapse();
@@ -126,11 +127,11 @@ export class Editor<T = string> {
       }
       let point1 = cursor.start.clone();
       let point2 = point1.clone();
-      if (step > 0) for (let i = 0; i < step; i++) point2 = this.fwdSkipWord(point2);
-      else if (step < 0) for (let i = 0; i < -step; i++) point1 = this.bwdSkipWord(point1);
+      if (step > 0) point2 = this.skip(point2, step, unit);
+      else if (step < 0) point1 = this.skip(point1, step, unit);
       else if (step === 0) {
-        point1 = this.bwdSkipWord(point1);
-        point2 = this.fwdSkipWord(point2);
+        point1 = this.skip(point1, -1, unit);
+        point2 = this.skip(point2, 1, unit);
       }
       const txt = this.txt;
       const range = txt.range(point1, point2);
@@ -143,7 +144,7 @@ export class Editor<T = string> {
   public delete(direction: -1 | 0 | 1 = -1, unit?: 'char' | 'word' | 'line'): void {
     switch (unit) {
       case 'word': {
-        this.delWord(direction);
+        this.delUnit(direction, unit);
         break;
       }
       // case 'line': {
@@ -162,16 +163,6 @@ export class Editor<T = string> {
         break;
       }
     }
-  }
-
-  // ---------------------------------------------------------------- selection
-
-  /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
-  public selectAll(): boolean {
-    const range = this.txt.rangeAll();
-    if (!range) return false;
-    this.cursor.setRange(range);
-    return true;
   }
 
   // --------------------------------------------------------------- navigation
@@ -250,45 +241,25 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
-  /**
-   * Skips a word forward. A word is defined by the `predicate` function, which
-   * returns `true` if the character is part of the word.
-   *
-   * @param point Point from which to start skipping.
-   * @param predicate Character class to skip.
-   * @param firstLetterFound Whether the first letter has already been found. If
-   *        not, will skip any characters until the first letter, which is
-   *        matched by the `predicate` is found.
-   * @returns Point after the last character skipped.
-   */
-  public fwdSkipWord(
-    point: Point<T>,
-    predicate: CharPredicate<string> = isLetter,
-    firstLetterFound: boolean = false,
-  ): Point<T> {
-    return this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
-  }
-
-  /**
-   * Skips a word backward. A word is defined by the `predicate` function, which
-   * returns `true` if the character is part of the word.
-   *
-   * @param point Point from which to start skipping.
-   * @param predicate Character class to skip.
-   * @param firstLetterFound Whether the first letter has already been found. If
-   *        not, will skip any characters until the first letter, which is
-   *        matched by the `predicate` is found.
-   * @returns Point after the last character skipped.
-   */
-  public bwdSkipWord(
-    point: Point<T>,
-    predicate: CharPredicate<string> = isLetter,
-    firstLetterFound: boolean = false,
-  ): Point<T> {
-    const bwd = this.bwd(point);
-    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
-    if (endPoint) endPoint.anchor = Anchor.Before;
-    return endPoint || point;
+  public skip(point: Point<T>, steps: number, unit: 'char' | 'word' | 'line'): Point<T> {
+    switch (unit) {
+      case 'char': {
+        const newPoint = point.clone();
+        newPoint.move(steps);
+        return newPoint;
+      }
+      case 'word': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
+        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bow(point);
+        return point;
+      }
+      case 'line': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
+        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
+        return point;
+      }
+    }
+    // for (let i = 0; i < step; i++) point2 = this.fwdSkipWord(point2);
   }
 
   /**
@@ -302,8 +273,8 @@ export class Editor<T = string> {
     if (!char) return;
     const c = (char.view() as string)[0];
     const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
-    const start = this.bwdSkipWord(point, predicate, true);
-    const end = this.fwdSkipWord(point, predicate, true);
+    const start = this.bow(point, predicate, true);
+    const end = this.eow(point, predicate, true);
     return this.txt.range(start, end);
   }
 
@@ -328,28 +299,60 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
+  /**
+   * End of word iterator (eow). Skips a word forward. A word is defined by the
+   * `predicate` function, which returns `true` if the character is part of the
+   * word.
+   *
+   * @param point Point from which to start skipping.
+   * @param predicate Character class to skip.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *        not, will skip any characters until the first letter, which is
+   *        matched by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  public eow(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
+    return this.skipWord(this.fwd(point), predicate, firstLetterFound) || point;
+  }
+
+  /**
+   * Beginning of word iterator (bow). Skips a word backward. A word is defined
+   * by the `predicate` function, which returns `true` if the character is part
+   * of the word.
+   *
+   * @param point Point from which to start skipping.
+   * @param predicate Character class to skip.
+   * @param firstLetterFound Whether the first letter has already been found. If
+   *        not, will skip any characters until the first letter, which is
+   *        matched by the `predicate` is found.
+   * @returns Point after the last character skipped.
+   */
+  public bow(
+    point: Point<T>,
+    predicate: CharPredicate<string> = isLetter,
+    firstLetterFound: boolean = false,
+  ): Point<T> {
+    const bwd = this.bwd(point);
+    const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
+    if (endPoint) endPoint.anchor = Anchor.Before;
+    return endPoint || point;
+  }
+
   /** Find end of line, starting from given point. */
-  public eol(point: Point<T>): Point<T> | undefined {
-    const fwd = this.fwd(point);
-    return this.skipLine(fwd);
+  public eol(point: Point<T>): Point<T> {
+    return this.skipLine(this.fwd(point)) || point;
   }
 
   /** Find beginning of line, starting from given point. */
-  public bol(point: Point<T>): Point<T> | undefined {
+  public bol(point: Point<T>): Point<T> {
     const bwd = this.bwd(point);
     const endPoint = this.skipLine(bwd);
     if (endPoint) endPoint.anchor = Anchor.Before;
-    return endPoint;
-  }
-
-  public end(): Point<T> {
-    const txt = this.txt;
-    return txt.pointEnd() ?? txt.pointAbsEnd();
-  }
-
-  public start(): Point<T> {
-    const txt = this.txt;
-    return txt.pointStart() ?? txt.pointAbsStart();
+    return endPoint || point;
   }
 
   /**
@@ -386,6 +389,16 @@ export class Editor<T = string> {
     } else return this.start();
   }
 
+  // ---------------------------------------------------------------- selection
+
+  /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
+  public selectAll(): boolean {
+    const range = this.txt.rangeAll();
+    if (!range) return false;
+    this.cursor.setRange(range);
+    return true;
+  }
+
   public blockRange(point: Point<T>): Range<T> {
     const start = this.bob(point);
     const end = this.eob(point);
@@ -402,6 +415,8 @@ export class Editor<T = string> {
     cursor.setRange(range);
     cursor.anchorSide = CursorAnchor.Start;
   }
+
+  // --------------------------------------------------------- slice operations
 
   /** @deprecated use `.saved.insStack` */
   public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
@@ -424,5 +439,17 @@ export class Editor<T = string> {
   /** @deprecated use `.saved.insMarker` */
   public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
     return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
+  }
+
+  // ------------------------------------------------------------------ various
+
+  public end(): Point<T> {
+    const txt = this.txt;
+    return txt.pointEnd() ?? txt.pointAbsEnd();
+  }
+
+  public start(): Point<T> {
+    const txt = this.txt;
+    return txt.pointStart() ?? txt.pointAbsStart();
   }
 }
