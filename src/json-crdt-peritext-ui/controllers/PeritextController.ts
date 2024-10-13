@@ -41,10 +41,13 @@ export class PeritextController implements UiLifeCycles {
   }
 
   private onBeforeInput = (event: InputEvent): void => {
+    // TODO: prevent default more selectively?
     event.preventDefault();
-    const inputType = event.inputType;
     const editor = this.txt.editor;
-    switch (inputType) {
+    const et = this.et;
+    const inputType = event.inputType;
+    console.log('inputType', inputType);
+    switch (event.inputType) {
       case 'insertParagraph': {
         editor.saved.insMarker('p');
         editor.cursor.move(1);
@@ -55,20 +58,116 @@ export class PeritextController implements UiLifeCycles {
       case 'insertFromDrop':
       case 'insertFromPaste':
       case 'insertFromYank':
-      case 'insertReplacementText':
-      case 'insertText': {
+      case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
+      case 'insertText': { // insert typed plain
         if (typeof event.data === 'string') {
-          this.et.insert(event.data);
+          et.insert(event.data);
         } else {
           const item = event.dataTransfer ? event.dataTransfer.items[0] : null;
           if (item) {
             item.getAsString((text) => {
-              this.et.insert(text);
+              et.insert(text);
             });
           }
         }
         break;
       }
+      // case 'Backspace':
+      // case 'Delete':
+      case 'deleteContentBackward':
+      case 'deleteContentForward': {
+          const forward = inputType === 'deleteContentForward';
+          et.delete(forward, 'word');
+          break;
+      }
+      // case 'insertLineBreak': { // insert a line break
+      // }
+      // case 'insertParagraph': { // insert a paragraph break
+      // }
+      // case 'insertOrderedList': { // insert a numbered list
+      // }
+      // case 'insertUnorderedList': { // insert a bulleted list
+      // }
+      // case 'insertHorizontalRule': { // insert a horizontal rule
+      // }
+      // case 'insertFromYank': { // replace the current selection with content stored in a kill buffer
+      // }
+      // case 'insertFromDrop': { // insert content by means of drop
+      // }
+      // case 'insertFromPaste': { // paste content from clipboard or paste image from client provided image library
+      // }
+      // case 'insertFromPasteAsQuotation': { // paste content from the clipboard as a quotation
+      // }
+      // case 'insertTranspose': { // transpose the last two grapheme cluster. that were entered
+      // }
+      // case 'insertCompositionText': { // replace the current composition string
+      // }
+      // case 'insertLink': { // insert a link
+      // }
+      // case 'deleteWordBackward': { // delete a word directly before the caret position
+      // }
+      // case 'deleteWordForward': { // delete a word directly after the caret position
+      // }
+      // case 'deleteSoftLineBackward': { // delete from the caret to the nearest visual line break before the caret position
+      // }
+      // case 'deleteSoftLineForward': { // delete from the caret to the nearest visual line break after the caret position
+      // }
+      // case 'deleteEntireSoftLine': { // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
+      // }
+      // case 'deleteHardLineBackward': { // delete from the caret to the nearest beginning of a block element or br element before the caret position
+      // }
+      // case 'deleteHardLineForward': { // delete from the caret to the nearest end of a block element or br element after the caret position
+      // }
+      // case 'deleteByDrag': { // remove content from the DOM by means of drag
+      // }
+      // case 'deleteByCut': { // remove the current selection as part of a cut
+      // }
+      // case 'deleteContent': { // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
+      // }
+      // case 'deleteContentBackward': { // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
+      // }
+      // case 'deleteContentForward': { // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
+      // }
+      // case 'historyUndo': { // undo the last editing action
+      // }
+      // case 'historyRedo': { // to redo the last undone editing action
+      // }
+      // case 'formatBold': { // initiate bold text
+      // }
+      // case 'formatItalic': { // initiate italic text
+      // }
+      // case 'formatUnderline': { // initiate underline text
+      // }
+      // case 'formatStrikeThrough': { // initiate stricken through text
+      // }
+      // case 'formatSuperscript': { // initiate superscript text
+      // }
+      // case 'formatSubscript': { // initiate subscript text
+      // }
+      // case 'formatJustifyFull': { // make the current selection fully justified
+      // }
+      // case 'formatJustifyCenter': { // center align the current selection
+      // }
+      // case 'formatJustifyRight': { // right align the current selection
+      // }
+      // case 'formatJustifyLeft': { // left align the current selection
+      // }
+      // case 'formatIndent': { // indent the current selection
+      // }
+      // case 'formatOutdent': { // outdent the current selection
+      // }
+      // case 'formatRemove': { // remove all formatting from the current selection
+      // }
+      // case 'formatSetBlockTextDirection': { // set the text block direction
+      // }
+      // case 'formatSetInlineTextDirection': { // set the text inline direction
+      // }
+      // case 'formatBackColor': { // change the background color
+      // }
+      // case 'formatFontColor': { // change the font color
+      // }
+      // case 'formatFontName': { // change the font name
+      // } 
     }
   };
 
@@ -86,11 +185,11 @@ export class PeritextController implements UiLifeCycles {
         else et.move(direction);
         break;
       }
-      case 'Backspace':
-      case 'Delete':
-        event.preventDefault();
-        const forward = key === 'Delete';
-        return et.delete(forward, unit(event));
+      // case 'Backspace':
+      // case 'Delete':
+      //   event.preventDefault();
+      //   const forward = key === 'Delete';
+      //   return et.delete(forward, unit(event));
       case 'Home':
       case 'End':
         event.preventDefault();
