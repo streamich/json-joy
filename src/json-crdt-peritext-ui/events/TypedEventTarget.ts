@@ -32,6 +32,7 @@ const buildTypedEventTargetType = () => {
 };
 
 export const TypedEventTarget = buildTypedEventTargetType();
+
 export interface TypedEventTarget<EventMap> {
   addEventListener<K extends keyof EventMap>(
     type: K,

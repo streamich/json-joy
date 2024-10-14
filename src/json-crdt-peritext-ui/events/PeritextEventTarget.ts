@@ -1,14 +1,21 @@
 import {TypedEventTarget} from './TypedEventTarget';
 import {type PeritextEventMap, type TextUnit, CursorDetail, type Edge} from './types';
 
+export type PeritextEventHandlerMap = {
+  [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
+};
+
 let id = 0;
 
 export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
   public readonly id: number = id++;
 
+  public defaults: Partial<PeritextEventHandlerMap> = {};
+
   public dispatch<K extends keyof PeritextEventMap>(type: K, detail: PeritextEventMap[K]): void {
     const event = new CustomEvent<PeritextEventMap[K]>(type, {detail});
     this.dispatchEvent(event);
+    this.defaults[type]?.(event);
   }
 
   public change(ev?: Event): void {

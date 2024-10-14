@@ -1,8 +1,6 @@
 import {getCursorPosition} from './util';
 import {ElementAttr} from '../constants';
-import {PeritextEventTarget} from '../events/PeritextEventTarget';
-import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
-import {InputController} from './InputController';
+import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 
@@ -11,10 +9,8 @@ export interface SelectionControllerOpts {
    * Element to attach the controller to, this element will be used to listen to
    * "beforeinput" events and will be put into "contenteditable" mode.
    */
-  el: HTMLElement;
+  source: HTMLElement;
   txt: Peritext;
-  defaults?: UiLifeCycles;
-  base: InputController;
   et: PeritextEventTarget;
 }
 
@@ -23,14 +19,6 @@ export interface SelectionControllerOpts {
  * naive browser events and translates them into Peritext events.
  */
 export class SelectionController implements UiLifeCycles {
-  public static create(options: Omit<SelectionControllerOpts, 'et' | 'base'>): SelectionController {
-    const et = new PeritextEventTarget();
-    const defaults = new PeritextEventDefaults(options.txt, et);
-    const base = new InputController({...options, et, source: options.el});
-    const controller = new SelectionController({...options, et, base, defaults});
-    return controller;
-  }
-
   protected isMouseDown: boolean = false;
   public readonly caretId: string;
 
@@ -110,9 +98,7 @@ export class SelectionController implements UiLifeCycles {
   /** -------------------------------------------------- {@link UiLifeCycles} */
 
   public start(): void {
-    this.opts.defaults?.start();
-    this.opts.base.start();
-    const el = this.opts.el;
+    const el = this.opts.source;
     el.contentEditable = 'true';
     el.addEventListener('click', this.onClick);
     el.addEventListener('mousedown', this.onMouseDown);
@@ -122,9 +108,7 @@ export class SelectionController implements UiLifeCycles {
   }
 
   public stop(): void {
-    this.opts.defaults?.stop();
-    this.opts.base.stop();
-    const el = this.opts.el;
+    const el = this.opts.source;
     if (el) el.contentEditable = 'false';
     el.removeEventListener('click', this.onClick);
     el.removeEventListener('mousedown', this.onMouseDown);

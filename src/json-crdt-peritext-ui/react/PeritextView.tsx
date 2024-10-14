@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {context} from './context';
 import {BlockView} from './BlockView';
-import {SelectionController} from '../controllers/SelectionController';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
+import {PeritextDomController} from '../events/PeritextDomController';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 
 /**
@@ -19,7 +19,7 @@ export interface Props {
 export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRender}) => {
   const [, setTick] = React.useState(0);
   const ref = React.useRef<HTMLElement | null>(null);
-  const controller = React.useRef<SelectionController | undefined>(undefined);
+  const controller = React.useRef<PeritextDomController | undefined>(undefined);
 
   const rerender = () => {
     peritext.refresh();
@@ -30,13 +30,13 @@ export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRen
   useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ctrl = SelectionController.create({el, txt: peritext});
+    const ctrl = new PeritextDomController({source: el, txt: peritext});
     controller.current = ctrl;
     ctrl.start();
-    ctrl.opts.et.addEventListener('change', rerender);
+    ctrl.et.addEventListener('change', rerender);
     return () => {
       ctrl.stop();
-      ctrl.opts.et.removeEventListener('change', rerender);
+      ctrl.et.removeEventListener('change', rerender);
     };
   }, [peritext, ref.current]);
 

@@ -64,7 +64,7 @@ export const CaretView: React.FC<Props> = () => {
 
   return (
     <span className={blockClass}>
-      <span id={dom?.caretId} ref={ref} className={innerClass}>
+      <span id={dom?.selection.caretId} ref={ref} className={innerClass}>
         {Char.ZeroLengthSpace}
       </span>
     </span>
