@@ -3,28 +3,32 @@ import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {TypedEventTarget} from '../events/TypedEventTarget';
 import type {UiLifeCycles} from './types';
 
-export interface EventMap {
+export interface InputControllerEventSourceMap {
   beforeinput: HTMLElementEventMap['beforeinput'];
   keydown: HTMLElementEventMap['keydown'];
 }
 
-export type PeritextControllerEventSource = TypedEventTarget<EventMap>;
+export type InputControllerEventSource = TypedEventTarget<InputControllerEventSourceMap>;
 
 const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
   event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';
 
-export interface PeritextControllerOptions {
-  source: PeritextControllerEventSource;
+export interface InputControllerOpts {
+  source: InputControllerEventSource;
   txt: Peritext;
   et: PeritextEventTarget;
 }
 
-export class PeritextController implements UiLifeCycles {
-  protected readonly source: PeritextControllerEventSource;
+/**
+ * Processes incoming DOM "input" events (such as "beforeinput", "input",
+ * "keydown", etc...) and translates them into Peritext events.
+ */
+export class InputController implements UiLifeCycles {
+  protected readonly source: InputControllerEventSource;
   protected readonly txt: Peritext;
   public readonly et: PeritextEventTarget;
 
-  public constructor(options: PeritextControllerOptions) {
+  public constructor(options: InputControllerOpts) {
     this.source = options.source;
     this.txt = options.txt;
     this.et = options.et;
@@ -46,8 +50,7 @@ export class PeritextController implements UiLifeCycles {
     const editor = this.txt.editor;
     const et = this.et;
     const inputType = event.inputType;
-    console.log('inputType', inputType);
-    switch (event.inputType) {
+    switch (inputType) {
       case 'insertParagraph': {
         editor.saved.insMarker('p');
         editor.cursor.move(1);

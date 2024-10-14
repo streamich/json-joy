@@ -2,11 +2,11 @@ import {getCursorPosition} from './util';
 import {ElementAttr} from '../constants';
 import {PeritextEventTarget} from '../events/PeritextEventTarget';
 import {PeritextEventDefaults} from '../events/PeritextEventDefaults';
-import {PeritextController} from './PeritextController';
+import {InputController} from './InputController';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
 
-export interface PeritextDOMControllerOptions {
+export interface SelectionControllerOpts {
   /**
    * Element to attach the controller to, this element will be used to listen to
    * "beforeinput" events and will be put into "contenteditable" mode.
@@ -14,23 +14,27 @@ export interface PeritextDOMControllerOptions {
   el: HTMLElement;
   txt: Peritext;
   defaults?: UiLifeCycles;
-  base: PeritextController;
+  base: InputController;
   et: PeritextEventTarget;
 }
 
-export class PeritextDOMController implements UiLifeCycles {
-  public static createWithDefaults(options: Omit<PeritextDOMControllerOptions, 'et' | 'base'>): PeritextDOMController {
+/**
+ * Controller for handling text selection and cursor movements. Listens to
+ * naive browser events and translates them into Peritext events.
+ */
+export class SelectionController implements UiLifeCycles {
+  public static create(options: Omit<SelectionControllerOpts, 'et' | 'base'>): SelectionController {
     const et = new PeritextEventTarget();
     const defaults = new PeritextEventDefaults(options.txt, et);
-    const base = new PeritextController({...options, et, source: options.el});
-    const controller = new PeritextDOMController({...options, et, base, defaults});
+    const base = new InputController({...options, et, source: options.el});
+    const controller = new SelectionController({...options, et, base, defaults});
     return controller;
   }
 
   protected isMouseDown: boolean = false;
   public readonly caretId: string;
 
-  public constructor(public readonly opts: PeritextDOMControllerOptions) {
+  public constructor(public readonly opts: SelectionControllerOpts) {
     this.caretId = 'jj-caret-' + opts.et.id;
   }
 

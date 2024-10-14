@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
-import type {PeritextDOMController} from '../controllers/PeritextDOMController';
+import type {SelectionController} from '../controllers/SelectionController';
 
 export interface PeritextSurfaceContextValue {
   peritext: Peritext;
-  dom?: PeritextDOMController;
+  dom?: SelectionController;
   debug?: boolean;
   rerender: () => void;
 }
