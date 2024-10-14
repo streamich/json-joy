@@ -187,7 +187,7 @@ yjs@13.6.20:
   dependencies:
     lib0 "^0.2.98"
 
-ywasm@0.16.10:
-  version "0.16.10"
-  resolved "https://registry.yarnpkg.com/ywasm/-/ywasm-0.16.10.tgz#a5f4a399729d6b3d5ba5e3ebaec597afed57cdf4"
-  integrity sha512-nsoiKOD4rpBoWvwIfqTLo5cQcHh3d1gromzMkI1pBqg1Er4T+pl7Irs/Yg4i1QPQtTiKUWGPkVQnjcVE4zNyZQ==
+ywasm@0.21.2:
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/ywasm/-/ywasm-0.21.2.tgz#3427944fc6c7f14456af8ec56de7fcbedff6cb9f"
+  integrity sha512-4p25tRzla5bU+IR3FxHR7QYqmeRbSP7cBSSK6XngsRof66LjHLh2v+hTHTesoqeomHqqojZ4uFS0d1DOpw+SHQ==
