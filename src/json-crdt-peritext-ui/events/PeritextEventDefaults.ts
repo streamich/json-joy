@@ -56,20 +56,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       return;
     }
     const numericLen = typeof len === 'number' ? len : 0;
-    if (edge === 'focus' || edge === 'anchor') {
-      let point = (edge === 'focus' ? cursor.focus() : cursor.anchor()).clone();
-      switch (unit) {
-        case 'line':
-          point = editor.skip(point, 1, 'line');
-          break;
-        case 'word':
-          point = editor.skip(point, 1, 'word');
-          break;
-        default:
-          point.move(numericLen);
-      }
-      cursor.setEndpoint(point, edge === 'anchor' ? 1 : 0);
-    } else {
+    const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
+    if (isSpecificEdgeSelected)
+        editor.move(numericLen, unit, edge === 'focus' ? 0 : 1, false);
+    else {
       if (cursor.isCollapsed()) editor.move(numericLen, unit);
       else {
         if (numericLen > 0) cursor.collapseToEnd();
