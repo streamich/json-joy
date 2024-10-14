@@ -10,8 +10,8 @@ export interface EventMap {
 
 export type PeritextControllerEventSource = TypedEventTarget<EventMap>;
 
-const unit = (event: KeyboardEvent): 'char' | 'word' | 'line' =>
-  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : 'char';
+const unit = (event: KeyboardEvent): '' | 'word' | 'line' =>
+  event.metaKey ? 'line' : event.altKey || event.ctrlKey ? 'word' : '';
 
 export interface PeritextControllerOptions {
   source: PeritextControllerEventSource;
@@ -183,17 +183,22 @@ export class PeritextController implements UiLifeCycles {
       case 'ArrowRight': {
         const direction = key === 'ArrowLeft' ? -1 : 1;
         event.preventDefault();
-        if (event.shiftKey) et.move(direction, unit(event), 'focus');
+        if (event.shiftKey) et.move(direction, unit(event) || 'char', 'focus');
         else if (event.metaKey) et.move(direction, 'line');
         else if (event.altKey || event.ctrlKey) et.move(direction, 'word');
         else et.move(direction);
         break;
       }
-      // case 'Backspace':
-      // case 'Delete':
-      //   event.preventDefault();
-      //   const forward = key === 'Delete';
-      //   return et.delete(forward, unit(event));
+      case 'Backspace':
+      case 'Delete': {
+        const direction = key === 'Delete' ? 1 : -1;
+        const deleteUnit = unit(event);
+        if (deleteUnit) {
+          event.preventDefault();
+          et.delete(direction, deleteUnit);
+        }
+        break;
+      }
       case 'Home':
       case 'End':
         event.preventDefault();
