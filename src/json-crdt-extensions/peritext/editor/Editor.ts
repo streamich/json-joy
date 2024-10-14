@@ -118,8 +118,7 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
-  public delUnit(step: number, unit: 'char' | 'word' | 'line'): void {
-    console.log('delUnit', step, unit);
+  public delete(step: number, unit: 'char' | 'word' | 'line'): void {
     this.cursors((cursor) => {
       if (!cursor.isCollapsed()) {
         cursor.collapse();
@@ -139,30 +138,6 @@ export class Editor<T = string> {
       point1.refAfter();
       cursor.set(point1);
     });
-  }
-
-  public delete(direction: -1 | 0 | 1 = -1, unit?: 'char' | 'word' | 'line'): void {
-    switch (unit) {
-      case 'word': {
-        this.delUnit(direction, unit);
-        break;
-      }
-      // case 'line': {
-      //   const focus = this.focus();
-      //   const editor = txt.editor;
-      //   const dest = forward ? editor.eol(focus) : editor.bol(focus);
-      //   if (!dest) return;
-      //   const pos = Math.min(focus.viewPos(), dest.viewPos());
-      //   const range = Range.from(txt, focus, dest);
-      //   txt.del(range);
-      //   this.setAt(pos, 0);
-      //   break;
-      // }
-      default: { // 'char'
-        this.del(direction);
-        break;
-      }
-    }
   }
 
   // --------------------------------------------------------------- navigation

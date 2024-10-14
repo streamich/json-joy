@@ -34,7 +34,7 @@ export class PeritextEventDefaults implements UiLifeCycles {
 
     delete: (event: CustomEvent<events.DeleteDetail>) => {
       if (event.defaultPrevented) return;
-      const {direction, unit} = event.detail;
+      const {direction = -1, unit = 'char'} = event.detail;
       this.txt.editor.delete(direction, unit);
       this.et.change(event);
     },
