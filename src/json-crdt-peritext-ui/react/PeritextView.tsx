@@ -5,6 +5,11 @@ import {PeritextDOMController} from '../controllers/PeritextDOMController';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 
+/**
+ * @todo The PeritextView should return some imperative API, such as the methods
+ *     for finding line wrappings (soft start and end of line) and positions
+ *     of characters when moving the cursor up/down.
+ */
 export interface Props {
   peritext: Peritext;
   debug?: boolean;

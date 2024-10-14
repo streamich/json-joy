@@ -77,6 +77,10 @@ export class PeritextDOMController implements UiLifeCycles {
    * @param direction 1 for next line, -1 for previous line.
    * @returns The position at similar x coordinate on the next line, or
    *          undefined if not found.
+   * 
+   * @todo Implement similar functionality for finding soft line breaks (end
+   *     and start of lines). Or use `.getClientRects()` trick with `Range`
+   *     object, see: https://www.bennadel.com/blog/4310-detecting-rendered-line-breaks-in-a-text-node-in-javascript.htm
    */
   public getNextLinePos(direction: 1 | -1 = 1): number | undefined {
     const rect = this.caretRect();
