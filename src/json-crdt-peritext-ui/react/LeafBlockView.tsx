@@ -28,9 +28,12 @@ export const LeafBlockView: React.FC<Props> = React.memo(
       // } else {
       // }
       if (inline.cursorStart()) {
-        elements.push(<CaretView key={inline.key() + '0'} />);
+        elements.push(<CaretView key={inline.key() + 'a'} />);
       }
       elements.push(<InlineView key={inline.key()} inline={inline} />);
+      if (inline.cursorEnd()) {
+        elements.push(<CaretView key={inline.key() + 'b'} />);
+      }
     }
 
     return (
