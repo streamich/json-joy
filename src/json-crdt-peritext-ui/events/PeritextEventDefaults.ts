@@ -28,7 +28,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const txt = this.txt;
     const editor = txt.editor;
     const cursor = editor.cursor;
-    const isAbsolutePosition = at !== -1 && at !== undefined;
+    const isAbsolutePosition = typeof at === 'number' && at >= 0;
     if (isAbsolutePosition) {
       switch (edge) {
         case 'focus': {
@@ -53,40 +53,30 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         }
       }
       this.et.change(event);
-    } else {
-      const numericLen = typeof len === 'number' ? len : 0;
-      if (edge === 'focus' || edge === 'anchor') {
-        // const point = (edge === 'focus' ? cursor.focus() : cursor.anchor()).clone();
-        // switch (unit) {
-        //   case 'line':
-        //     point.eol(numericLen);
-        //     break;
-        //   case 'word':
-        //     point.eow(numericLen);
-        //     break;
-        //   default:
-        //     point.move(numericLen);
-        // }
-        // cursor.setEdge(point, edge === 'anchor' ? 1 : 0);
-      } else {
-        if (cursor.isCollapsed()) {
-          switch (unit) {
-            case 'line':
-              // cursor.eol(numericLen);
-              break;
-            case 'word':
-              // cursor.eow(numericLen);
-              break;
-            default:
-              cursor.move(numericLen);
-          }
-        } else {
-          if (numericLen > 0) cursor.collapseToEnd();
-          else cursor.collapseToStart();
-        }
-      }
-      this.et.change(event);
+      return;
     }
+    const numericLen = typeof len === 'number' ? len : 0;
+    if (edge === 'focus' || edge === 'anchor') {
+      let point = (edge === 'focus' ? cursor.focus() : cursor.anchor()).clone();
+      switch (unit) {
+        case 'line':
+          point = editor.skip(point, 1, 'line');
+          break;
+        case 'word':
+          point = editor.skip(point, 1, 'word');
+          break;
+        default:
+          point.move(numericLen);
+      }
+      cursor.setEndpoint(point, edge === 'anchor' ? 1 : 0);
+    } else {
+      if (cursor.isCollapsed()) editor.move(numericLen, unit);
+      else {
+        if (numericLen > 0) cursor.collapseToEnd();
+        else cursor.collapseToStart();
+      }
+    }
+    this.et.change(event);
   };
 
   public readonly marker = (event: CustomEvent<events.MarkerDetail>) => {

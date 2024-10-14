@@ -21,7 +21,7 @@ export interface InputControllerOpts {
 
 /**
  * Processes incoming DOM "input" events (such as "beforeinput", "input",
- * "keydown", etc...) and translates them into Peritext events.
+ * "keydown", etc.) and translates them into Peritext events.
  */
 export class InputController implements UiLifeCycles {
   protected readonly source: InputControllerEventSource;
@@ -102,8 +102,7 @@ export class InputController implements UiLifeCycles {
       }
       case 'deleteEntireSoftLine': // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
       case 'deleteHardLineBackward': // delete from the caret to the nearest beginning of a block element or br element before the caret position
-      case 'deleteHardLineForward': // delete from the caret to the nearest end of a block element or br element after the caret position
-      {
+      case 'deleteHardLineForward': { // delete from the caret to the nearest end of a block element or br element after the caret position
           et.delete(-1, 'word');
           break;
       }

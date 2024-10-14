@@ -234,7 +234,22 @@ export class Editor<T = string> {
         return point;
       }
     }
-    // for (let i = 0; i < step; i++) point2 = this.fwdSkipWord(point2);
+  }
+
+  /**
+   * Move all cursors given number of units.
+   *
+   * @param steps Number of steps to move.
+   * @param unit The unit of move per step: "char", "word", "line".
+   * @param endpoint 0 for "focus", 1 for "anchor".
+   * @param collapse Whether to collapse the range to a single point.
+   */
+  public move(steps: number = 1, unit: 'char' | 'word' | 'line' = 'char', endpoint: 0 | 1 = 0, collapse: boolean = true): void {
+    this.cursors((cursor) => {
+      let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
+      point = this.skip(point.clone(), steps, unit);
+      if (collapse) cursor.set(point); else cursor.setEndpoint(point, endpoint);
+    });
   }
 
   /**

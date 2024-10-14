@@ -23,7 +23,7 @@ export class SelectionController implements UiLifeCycles {
   public readonly caretId: string;
 
   public constructor(public readonly opts: SelectionControllerOpts) {
-    this.caretId = 'jj-caret-' + opts.et.id;
+    this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
   }
 
   protected selectionStart: number = -1;
