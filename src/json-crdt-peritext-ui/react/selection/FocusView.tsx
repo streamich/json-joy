@@ -6,6 +6,7 @@ import {usePeritext} from '../context';
 
 const width = .125;
 const color = '#07f';
+const animationTime = '1s';
 
 const animation = keyframes({
   'from,to': {
@@ -28,34 +29,13 @@ const blockClass = rule({
 });
 
 const innerClass = drule({
-  an: `.7s ${animation} step-end infinite`,
+  an: `${animationTime} ${animation} step-end infinite`,
   pos: 'absolute',
-  top: '-0.25em',
+  top: '-0.175em',
   left: `-${width / 2}em`,
   w: width + 'em',
   h: '1.5em',
   bg: color,
-  '&::before': {
-    an: `.7s ${animation} step-end infinite`,
-    content: '""',
-    bg: color,
-    d: 'inline-block',
-    pos: 'absolute',
-    top: `-${width}em`,
-    left: '-0.08em',
-    w: `${width * 2}em`,
-    h: `${width}em`,
-  },
-  '&::after': {
-    an: `.7s ${animation} step-end infinite`,
-    content: '""',
-    bg: color,
-    d: 'inline-block',
-    pos: 'absolute',
-    bottom: `-${width}em`,
-    w: `${width * 2}em`,
-    h: `${width}em`,
-  },
 });
 
 export interface FocusViewProps {
@@ -90,12 +70,7 @@ export const FocusView: React.FC<FocusViewProps> = ({left}) => {
         id={dom?.selection.caretId}
         ref={ref}
         className={innerClass({
-          '&::before': {
-            left: left ? `-${width * 1}em` : `0em`,
-          },
-          '&::after': {
-            left: left ? `-${width * 1}em` : `0em`,
-          },
+          bdrad: left ? `0 ${width * .5}em ${width * .5}em 0` : `${width * .5}em 0 0 ${width * .5}em`,
         })}
       >
         {Char.ZeroLengthSpace}
