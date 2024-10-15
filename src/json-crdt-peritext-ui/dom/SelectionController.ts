@@ -3,6 +3,7 @@ import {ElementAttr} from '../constants';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import {throttle} from '../../util/throttle';
 
 export interface SelectionControllerOpts {
   /**
@@ -33,11 +34,13 @@ export class SelectionController implements UiLifeCycles {
     this.selectAt(ev, at, len);
   }
 
-  private selectAt(ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void {
+  private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
+
+  private readonly selectAt = (ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void => {
     if (at === -1) return;
     ev.preventDefault();
-    this.opts.et.cursor({at, len});
-  }
+    this._cursor[0]({at, len});
+  };
 
   /**
    * String position at coordinate, or -1, if unknown.
@@ -113,6 +116,7 @@ export class SelectionController implements UiLifeCycles {
     el.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
+    this._cursor[1]();
   }
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
@@ -126,10 +130,13 @@ export class SelectionController implements UiLifeCycles {
         break;
       }
       case 2:
+        this.isMouseDown = false;
         return this.select(ev, 'word');
       case 3:
+        this.isMouseDown = false;
         return this.select(ev, 'block');
       case 4:
+        this.isMouseDown = false;
         return this.select(ev, 'all');
     }
   };
@@ -140,7 +147,8 @@ export class SelectionController implements UiLifeCycles {
     if (at < 0) return;
     const to = this.posAtPoint(ev.clientX, ev.clientY);
     if (to < 0) return;
-    this.selectAt(ev, at, to - at);
+    ev.preventDefault();
+    this._cursor[0]({at: to, edge: 'focus'});
   };
 
   private readonly onMouseUp = (ev: MouseEvent): void => {
