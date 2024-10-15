@@ -24,7 +24,7 @@ const blockDebugClass = rule({
   '& .jj-leaf-block': {
     out: '1px dotted green',
   },
-  '& .jj-text': {
+  '& .jsonjoy-text': {
     pointerEvents: 'none',
     out: '1px dotted blue',
   },

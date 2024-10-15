@@ -35,7 +35,7 @@ export const LeafBlockView: React.FC<Props> = React.memo(
     }
 
     return (
-      <div className={'jj-leaf-block' + blockClass}>
+      <div className={'jsonjoy-leaf-block' + blockClass}>
         <div contentEditable={false} style={{margin: '16px 0 8px'}}>
             <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
         </div>
