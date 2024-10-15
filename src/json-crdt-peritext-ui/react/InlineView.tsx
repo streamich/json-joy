@@ -21,7 +21,7 @@ export const InlineView: React.FC<Props> = ({inline}) => {
     }
   });
 
-  const attributes = inline.attr();
+  // const attributes = inline.attr();
   // console.log(attributes)
   // const isSelection = attributes[0] === 1;
   const isSelection = false;

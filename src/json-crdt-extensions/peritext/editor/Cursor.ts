@@ -8,6 +8,14 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     return this.type as CursorAnchor;
   }
 
+  public isStartFocused(): boolean {
+    return this.type === CursorAnchor.End || (this.start.cmp(this.end) === 0);
+  }
+
+  public isEndFocused(): boolean {
+    return this.type === CursorAnchor.Start || (this.start.cmp(this.end) === 0);
+  }
+
   // ---------------------------------------------------------------- mutations
 
   public set anchorSide(value: CursorAnchor) {

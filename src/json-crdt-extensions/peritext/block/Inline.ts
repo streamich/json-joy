@@ -13,6 +13,11 @@ import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
 import type {Slice} from '../slice/types';
 
+/**
+ * @todo Make sure these inline attributes can handle the cursor which ends
+ *     with attaching to the start of the next character.
+ */
+
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
   constructor (public slice: Slice) {}
@@ -152,26 +157,28 @@ export class Inline extends Range implements Printable {
     return attr;
   }
 
-  public cursorStart(): boolean {
+  public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
     const stack = attributes[SliceTypes.Cursor];
-    if (!stack) return false;
+    if (!stack) return;
     const attribute = stack[0];
     if (attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained || attribute instanceof InlineAttrCollapsed) {
-      return true;
+      const slice = attribute.slice;
+      return slice instanceof Cursor ? slice : void 0;
     }
-    return false;
+    return;
   }
 
-  public cursorEnd(): boolean {
+  public cursorEnd(): Cursor | undefined {
     const attributes = this.attr();
     const stack = attributes[SliceTypes.Cursor];
-    if (!stack) return false;
+    if (!stack) return;
     const attribute = stack[0];
     if (attribute instanceof InlineAttrEnd || attribute instanceof InlineAttrContained) {
-      return true;
+      const slice = attribute.slice;
+      return slice instanceof Cursor ? slice : void 0;
     }
-    return false;
+    return;
   }
 
   public text(): string {
