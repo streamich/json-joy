@@ -157,6 +157,7 @@ export class Inline extends Range implements Printable {
     return attr;
   }
 
+  /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
     const stack = attributes[SliceTypes.Cursor];
@@ -179,6 +180,14 @@ export class Inline extends Range implements Printable {
       return slice instanceof Cursor ? slice : void 0;
     }
     return;
+  }
+
+  public isSelected(): boolean {
+    const attributes = this.attr();
+    const stack = attributes[SliceTypes.Cursor];
+    if (!stack) return false;
+    const attribute = stack[0];
+    return attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained;
   }
 
   public text(): string {
