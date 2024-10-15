@@ -27,7 +27,7 @@ export const InlineView: React.FC<Props> = ({inline}) => {
     if (!span) return;
     if (isSelection) {
       span.style.backgroundColor = '#d7e9fd';
-      span.style.borderRadius = '0.25em 1px 1px.25em';
+      span.style.borderRadius = inline.cursorStart()?.isStartFocused() ? '1px .25em .25em 1px' : '.25em 1px 1px .25em';
     } else {
       span.style.backgroundColor = 'transparent';
     }

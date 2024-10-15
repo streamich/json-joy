@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {rule, put} from 'nano-theme';
+import {rule} from 'nano-theme';
 import {Char} from '../../constants';
 
 const cursorColor = '#07f';

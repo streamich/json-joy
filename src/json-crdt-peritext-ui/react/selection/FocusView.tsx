@@ -31,10 +31,10 @@ const blockClass = rule({
 const innerClass = drule({
   an: `${animationTime} ${animation} step-end infinite`,
   pos: 'absolute',
-  top: '-0.175em',
+  top: '-0.13em',
   left: `-${width / 2}em`,
   w: width + 'em',
-  h: '1.5em',
+  h: '1.45em',
   bg: color,
 });
 
