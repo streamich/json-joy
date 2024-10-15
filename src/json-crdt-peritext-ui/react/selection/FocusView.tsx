@@ -1,14 +1,15 @@
 import * as React from 'react';
-import {rule, keyframes} from 'nano-theme';
+import {rule, drule, keyframes} from 'nano-theme';
 import {Char} from '../../constants';
 import {useBrowserLayoutEffect} from '../hooks';
 import {usePeritext} from '../context';
 
-const cursorColor = '#07f';
+const width = .125;
+const color = '#07f';
 
 const animation = keyframes({
   'from,to': {
-    bg: cursorColor,
+    bg: color,
   },
   '50%': {
     bg: 'transparent',
@@ -26,20 +27,42 @@ const blockClass = rule({
   va: 'top',
 });
 
-const innerClass = rule({
+const innerClass = drule({
   an: `.7s ${animation} step-end infinite`,
   pos: 'absolute',
   top: '-0.25em',
-  left: '-0.0625em',
-  w: '.2em',
+  left: `-${width / 2}em`,
+  w: width + 'em',
   h: '1.5em',
-  bg: cursorColor,
-  bdrad: '0.0625em',
+  bg: color,
+  '&::before': {
+    an: `.7s ${animation} step-end infinite`,
+    content: '""',
+    bg: color,
+    d: 'inline-block',
+    pos: 'absolute',
+    top: `-${width}em`,
+    left: '-0.08em',
+    w: `${width * 2}em`,
+    h: `${width}em`,
+  },
+  '&::after': {
+    an: `.7s ${animation} step-end infinite`,
+    content: '""',
+    bg: color,
+    d: 'inline-block',
+    pos: 'absolute',
+    bottom: `-${width}em`,
+    w: `${width * 2}em`,
+    h: `${width}em`,
+  },
 });
 
-export interface CaretViewProps {}
+export interface FocusViewProps {
+  left?: boolean;
+}
 
-export const CaretView: React.FC<CaretViewProps> = () => {
+export const FocusView: React.FC<FocusViewProps> = ({left}) => {
   const {dom} = usePeritext();
   const ref = React.useRef<HTMLSpanElement>(null);
   const timer = React.useRef<unknown>();
@@ -63,7 +86,18 @@ export const CaretView: React.FC<CaretViewProps> = () => {
 
   return (
     <span className={blockClass}>
-      <span id={dom?.selection.caretId} ref={ref} className={innerClass}>
+      <span
+        id={dom?.selection.caretId}
+        ref={ref}
+        className={innerClass({
+          '&::before': {
+            left: left ? `-${width * 1}em` : `0em`,
+          },
+          '&::after': {
+            left: left ? `-${width * 1}em` : `0em`,
+          },
+        })}
+      >
         {Char.ZeroLengthSpace}
       </span>
     </span>
