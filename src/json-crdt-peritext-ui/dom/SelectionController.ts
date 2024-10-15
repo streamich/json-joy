@@ -100,7 +100,6 @@ export class SelectionController implements UiLifeCycles {
   public start(): void {
     const el = this.opts.source;
     el.contentEditable = 'true';
-    el.addEventListener('click', this.onClick);
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -110,15 +109,22 @@ export class SelectionController implements UiLifeCycles {
   public stop(): void {
     const el = this.opts.source;
     if (el) el.contentEditable = 'false';
-    el.removeEventListener('click', this.onClick);
     el.removeEventListener('mousedown', this.onMouseDown);
     el.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
   }
 
-  private readonly onClick = (ev: MouseEvent): void => {
+  private readonly onMouseDown = (ev: MouseEvent): void => {
     switch (ev.detail) {
+      case 1: {
+        this.isMouseDown = true;
+        const at = this.posAtPoint(ev.clientX, ev.clientY);
+        if (at === -1) return;
+        this.selectionStart = at;
+        this.select(ev, 0);
+        break;
+      }
       case 2:
         return this.select(ev, 'word');
       case 3:
@@ -126,14 +132,6 @@ export class SelectionController implements UiLifeCycles {
       case 4:
         return this.select(ev, 'all');
     }
-  };
-
-  private readonly onMouseDown = (ev: MouseEvent): void => {
-    this.isMouseDown = true;
-    const at = this.posAtPoint(ev.clientX, ev.clientY);
-    if (at === -1) return;
-    this.selectionStart = at;
-    this.select(ev, 0);
   };
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
