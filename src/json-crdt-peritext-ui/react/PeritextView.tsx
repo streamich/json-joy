@@ -1,9 +1,11 @@
 import * as React from 'react';
-import {context} from './context';
+import {context, type PeritextSurfaceContextValue} from './context';
 import {BlockView} from './BlockView';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import {PeritextDomController} from '../events/PeritextDomController';
+import {renderers as defaultRenderers} from '../renderers/default';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
+import type {RendererMap} from './types';
 
 /**
  * @todo The PeritextView should return some imperative API, such as the methods
@@ -12,11 +14,13 @@ import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
  */
 export interface Props {
   peritext: Peritext;
+  renderers?: RendererMap[];
   debug?: boolean;
   onRender?: () => void;
 }
 
-export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRender}) => {
+/** @todo Is `React.memo` needed here? */
+export const PeritextView: React.FC<Props> = React.memo(({peritext, renderers = [defaultRenderers], debug, onRender}) => {
   const [, setTick] = React.useState(0);
   const ref = React.useRef<HTMLElement | null>(null);
   const controller = React.useRef<PeritextDomController | undefined>(undefined);
@@ -41,10 +45,19 @@ export const PeritextView: React.FC<Props> = React.memo(({peritext, debug, onRen
   }, [peritext, ref.current]);
 
   const block = peritext.blocks.root;
+  if (!block) return null;
+
+  const value: PeritextSurfaceContextValue = {
+    peritext,
+    dom: controller.current,
+    renderers,
+    rerender,
+    debug,
+  };
 
   return (
-    <context.Provider value={{peritext, dom: controller.current, rerender, debug}}>
-      {!!block ? <BlockView el={(el) => ref.current = el} hash={block.hash} block={block} /> : null}
+    <context.Provider value={value}>
+      <BlockView el={(el) => ref.current = el} hash={block.hash} block={block} />
     </context.Provider>
   );
 });
