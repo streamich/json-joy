@@ -1,5 +1,4 @@
 import {tick} from '../../../json-crdt-patch';
-import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -7,6 +6,14 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 export class Cursor<T = string> extends PersistedSlice<T> {
   public get anchorSide(): CursorAnchor {
     return this.type as CursorAnchor;
+  }
+
+  public isStartFocused(): boolean {
+    return this.type === CursorAnchor.End || (this.start.cmp(this.end) === 0);
+  }
+
+  public isEndFocused(): boolean {
+    return this.type === CursorAnchor.Start || (this.start.cmp(this.end) === 0);
   }
 
   // ---------------------------------------------------------------- mutations
@@ -36,7 +43,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    * Move one of the edges of the cursor to a new point.
    *
    * @param point Point to set the edge to.
-   * @param endpoint 0 for "focus", 1 for "anchor."
+   * @param endpoint 0 for "focus", 1 for "anchor".
    */
   public setEndpoint(point: Point<T>, endpoint: 0 | 1 = 0): void {
     if (this.start === this.end) this.end = this.end.clone();

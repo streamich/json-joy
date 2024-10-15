@@ -6,27 +6,46 @@ import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
+import {Cursor} from '../editor/Cursor';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
 import type {Peritext} from '../Peritext';
+import type {Slice} from '../slice/types';
 
-export const enum InlineAttrPos {
-  /** The attribute started before this inline and ends after this inline. */
-  Passing = 0,
-  /** The attribute starts at the beginning of this inline. */
-  Start = 1,
-  /** The attribute ends at the end of this inline. */
-  End = 2,
-  /** The attribute starts and ends in this inline. */
-  Contained = 3,
-  /** The attribute is collapsed at start of this inline. */
-  Collapsed = 4,
+/**
+ * @todo Make sure these inline attributes can handle the cursor which ends
+ *     with attaching to the start of the next character.
+ */
+
+/** The attribute started before this inline and ends after this inline. */
+export class InlineAttrPassing {
+  constructor (public slice: Slice) {}
 }
 
-export type InlineAttr<T> = [value: T, position: InlineAttrPos];
-export type InlineAttrStack = InlineAttr<unknown[]>;
-export type InlineAttrs = Record<string | number, InlineAttr<unknown>>;
+/** The attribute starts at the beginning of this inline. */
+export class InlineAttrStart {
+  constructor (public slice: Slice) {}
+}
+
+/** The attribute ends at the end of this inline. */
+export class InlineAttrEnd {
+  constructor (public slice: Slice) {}
+}
+
+/** The attribute starts and ends in this inline, exactly contains it. */
+export class InlineAttrContained {
+  constructor (public slice: Slice) {}
+}
+
+/** The attribute is collapsed at start of this inline. */
+export class InlineAttrCollapsed {
+  constructor (public slice: Slice) {}
+}
+
+export type InlineAttr = InlineAttrPassing | InlineAttrStart | InlineAttrEnd | InlineAttrContained | InlineAttrCollapsed;
+export type InlineAttrStack = InlineAttr[];
+export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
 /**
  * The `Inline` class represents a range of inline text within a block, which
@@ -82,35 +101,27 @@ export class Inline extends Range implements Printable {
     return pos + chunkSlice.off;
   }
 
-  protected getAttrPos(range: Range<any>): InlineAttrPos {
-    return !range.start.cmp(range.end)
-      ? InlineAttrPos.Collapsed
-      : !this.start.cmp(range.start)
-        ? !this.end.cmp(range.end)
-          ? InlineAttrPos.Contained
-          : InlineAttrPos.Start
-        : !this.end.cmp(range.end)
-          ? InlineAttrPos.End
-          : InlineAttrPos.Passing;
+  protected createAttr(slice: Slice): InlineAttr {
+    return !slice.start.cmp(slice.end)
+      ? new InlineAttrCollapsed(slice)
+      : !this.start.cmp(slice.start)
+        ? !this.end.cmp(slice.end)
+          ? new InlineAttrContained(slice)
+          : new InlineAttrStart(slice)
+        : !this.end.cmp(slice.end)
+          ? new InlineAttrEnd(slice)
+          : new InlineAttrPassing(slice);
   }
 
-  protected stackAttr(attr: InlineAttrs, type: string | number, data: unknown, slice: Range<any>): void {
-    let item: InlineAttrStack | undefined = attr[type] as InlineAttrStack | undefined;
-    if (!item) attr[type] = item = [[], this.getAttrPos(slice)];
-    const dataList: unknown[] = item[0] instanceof Array ? (item[0] as unknown[]) : [];
-    dataList.push(data);
-  }
+  private _attr: InlineAttrs | undefined;
 
   /**
    * @returns Returns the attributes of the inline, which are the slice
    *     annotations and formatting applied to the inline.
-   * 
-   * 
-   * @todo PERF: Cache the attributes in the inline object, keyed by the
-   *     hash of the `Inline`.
    */
   public attr(): InlineAttrs {
-    const attr: InlineAttrs = {};
+    if (this._attr) return this._attr;
+    const attr: InlineAttrs = this._attr = {};
     const point = this.start as OverlayPoint;
     const slices1 = point.layers;
     const slices2 = point.markers;
@@ -119,22 +130,21 @@ export class Inline extends Range implements Printable {
     const length3 = length1 + length2;
     for (let i = 0; i < length3; i++) {
       const slice = i >= length1 ? slices2[i - length1] : slices1[i];
-      const isMarker = i >= length1;
       if (slice instanceof Range) {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
           case SliceBehavior.Cursor: {
-            this.stackAttr(attr, SliceTypes.Cursor, [type, slice.data()], slice);
+            const stack: InlineAttrStack = attr[SliceTypes.Cursor] ?? (attr[SliceTypes.Cursor] = []);
+            stack.push(this.createAttr(slice));
             break;
           }
           case SliceBehavior.Stack: {
-            this.stackAttr(attr, type, slice.data(), slice);
+            const stack: InlineAttrStack = attr[type] ?? (attr[type] = []);
+            stack.push(this.createAttr(slice));
             break;
           }
           case SliceBehavior.Overwrite: {
-            let data = slice.data();
-            if (data === undefined) data = 1;
-            attr[type] = [data, this.getAttrPos(slice)];
+            attr[type] = [this.createAttr(slice)];
             break;
           }
           case SliceBehavior.Erase: {
@@ -147,18 +157,37 @@ export class Inline extends Range implements Printable {
     return attr;
   }
 
-  public cursorStart(): boolean {
+  /** @todo Make this return a list of cursors. */
+  public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
-    const attribute = attributes[SliceTypes.Cursor];
-    if (!attribute) return false;
-    const [, pos] = attribute;
-    switch (pos) {
-      case InlineAttrPos.Start:
-      case InlineAttrPos.Contained:
-      case InlineAttrPos.Collapsed:
-        return true;
+    const stack = attributes[SliceTypes.Cursor];
+    if (!stack) return;
+    const attribute = stack[0];
+    if (attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained || attribute instanceof InlineAttrCollapsed) {
+      const slice = attribute.slice;
+      return slice instanceof Cursor ? slice : void 0;
     }
-    return false;
+    return;
+  }
+
+  public cursorEnd(): Cursor | undefined {
+    const attributes = this.attr();
+    const stack = attributes[SliceTypes.Cursor];
+    if (!stack) return;
+    const attribute = stack[0];
+    if (attribute instanceof InlineAttrEnd || attribute instanceof InlineAttrContained) {
+      const slice = attribute.slice;
+      return slice instanceof Cursor ? slice : void 0;
+    }
+    return;
+  }
+
+  public isSelected(): boolean {
+    const attributes = this.attr();
+    const stack = attributes[SliceTypes.Cursor];
+    if (!stack) return false;
+    const attribute = stack[0];
+    return attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained;
   }
 
   public text(): string {
@@ -180,18 +209,18 @@ export class Inline extends Range implements Printable {
     const range =
       this.start.cmp(this.end) === 0 ? startFormatted : `${startFormatted} ↔ ${this.end.toString(tab, true)}`;
     const header = `Inline ${range} ${text}`;
-    const marks = this.attr();
-    const markKeys = Object.keys(marks);
+    const attr = this.attr();
+    const attrKeys = Object.keys(attr);
     return (
       header +
       printTree(tab, [
-        !markKeys.length
+        !attrKeys.length
           ? null
           : (tab) =>
               'attributes' +
               printTree(
                 tab,
-                markKeys.map((key) => () => key + ' = ' + stringify(marks[key])),
+                attrKeys.map((key) => () => key + ' = ' + stringify(attr[key].map((attr) => attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data()))),
               ),
         !this.texts.length
           ? null

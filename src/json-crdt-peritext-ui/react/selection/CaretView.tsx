@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule, put} from 'nano-theme';
-import {Char} from '../constants';
-import {useBrowserLayoutEffect} from './hooks';
-import {usePeritext} from './context';
+import {Char} from '../../constants';
+import {useBrowserLayoutEffect} from '../hooks';
+import {usePeritext} from '../context';
 
 const cursorColor = '#07f';
 
@@ -18,13 +18,14 @@ put('', {
 });
 
 const blockClass = rule({
-  d: 'inline-block',
-  pointerEvents: 'none',
   pos: 'relative',
+  d: 'inline-block',
+  pe: 'none',
+  us: 'none',
   w: '0px',
   h: '100%',
   bg: 'black',
-  verticalAlign: 'top',
+  va: 'top',
 });
 
 const innerClass = rule({

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {Inline as InlineModel} from '../../json-crdt-extensions/peritext/block/Inline';
+import {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import {useIsoLayoutEffect} from './hooks';
 import {ElementAttr} from '../constants';
 import {TextView} from './TextView';
 
 export interface Props {
-  inline: InlineModel;
+  inline: Inline;
 }
 
 export const InlineView: React.FC<Props> = ({inline}) => {
@@ -21,10 +21,7 @@ export const InlineView: React.FC<Props> = ({inline}) => {
     }
   });
 
-  const attributes = inline.attr();
-  // console.log(attributes)
-  // const isSelection = attributes[0] === 1;
-  const isSelection = false;
+  const isSelection = inline.isSelected();
   useIsoLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
