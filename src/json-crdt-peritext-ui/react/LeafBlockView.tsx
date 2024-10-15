@@ -23,13 +23,13 @@ export const LeafBlockView: React.FC<Props> = React.memo(
       const cursorStart = inline.cursorStart();
       if (cursorStart) {
         const key = keyBase + 'a';
-        elements.push(cursorStart.isStartFocused() ? <CaretView key={key} /> : <AnchorView key={key} />);
+        elements.push(cursorStart.isStartFocused() ? <CaretView key={key} focus={!cursorStart.isCollapsed()} /> : <AnchorView key={key} />);
       }
       elements.push(<InlineView key={keyBase} inline={inline} />);
       const cursorEnd = inline.cursorEnd();
       if (cursorEnd) {
         const key = keyBase + 'b';
-        elements.push(cursorEnd.isEndFocused() ? <CaretView key={key} /> : <AnchorView key={key} />);
+        elements.push(cursorEnd.isEndFocused() ? <CaretView key={key} focus={!cursorEnd.isCollapsed()} /> : <AnchorView key={key} />);
       }
     }
 

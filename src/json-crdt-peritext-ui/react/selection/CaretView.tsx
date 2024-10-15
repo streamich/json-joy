@@ -1,19 +1,30 @@
 import * as React from 'react';
-import {rule, put} from 'nano-theme';
+import {rule, put, keyframes} from 'nano-theme';
 import {Char} from '../../constants';
 import {useBrowserLayoutEffect} from '../hooks';
 import {usePeritext} from '../context';
 
 const cursorColor = '#07f';
 
-put('', {
-  '@keyframes jj-cursor': {
-    'from,to': {
-      bg: cursorColor,
-    },
-    '50%': {
-      bg: 'transparent',
-    },
+const focusAnimation = keyframes({
+  'from,to': {
+    bg: cursorColor,
+    w: '.125em',
+  },
+  '50%': {
+    bg: 'transparent',
+    w: '.125em',
+  },
+});
+
+const caretAnimation = keyframes({
+  'from,to': {
+    bg: cursorColor,
+    w: '.2em',
+  },
+  '50%': {
+    bg: 'transparent',
+    w: '.2em',
   },
 });
 
@@ -29,19 +40,24 @@ const blockClass = rule({
 });
 
 const innerClass = rule({
-  animation: '.7s jj-cursor step-end infinite',
   pos: 'absolute',
   top: '-0.25em',
   left: '-0.0625em',
-  w: '0.125em',
+  // w: '0.25em',
   h: '1.5em',
   bg: cursorColor,
   bdrad: '0.0625em',
 });
 
-export interface Props {}
+export interface Props {
+  /** 
+   * If true, renders as selection focus, otherwise renders as collapsed
+   * selection - caret.
+   */
+  focus?: boolean;
+}
 
-export const CaretView: React.FC<Props> = () => {
+export const CaretView: React.FC<Props> = ({focus}) => {
   const {dom} = usePeritext();
   const ref = React.useRef<HTMLSpanElement>(null);
   const timer = React.useRef<unknown>();
@@ -65,7 +81,7 @@ export const CaretView: React.FC<Props> = () => {
 
   return (
     <span className={blockClass}>
-      <span id={dom?.selection.caretId} ref={ref} className={innerClass}>
+      <span id={dom?.selection.caretId} ref={ref} className={innerClass} style={{animation: `.7s ${focus ? focusAnimation: caretAnimation} step-end infinite`}}>
         {Char.ZeroLengthSpace}
       </span>
     </span>
