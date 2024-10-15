@@ -18,13 +18,14 @@ put('', {
 });
 
 const blockClass = rule({
-  d: 'inline-block',
-  pointerEvents: 'none',
   pos: 'relative',
+  d: 'inline-block',
+  pe: 'none',
+  us: 'none',
   w: '0px',
   h: '100%',
   bg: 'black',
-  verticalAlign: 'top',
+  va: 'top',
 });
 
 const innerClass = rule({

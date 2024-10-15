@@ -2,28 +2,27 @@ import * as React from 'react';
 import {rule, put} from 'nano-theme';
 import {Char} from '../../constants';
 
-// const cursorColor = '#07f';
-const cursorColor = 'red';
-
-put('', {
-  '@keyframes jj-cursor': {
-    'from,to': {
-      bg: cursorColor,
-    },
-    '50%': {
-      bg: 'transparent',
-    },
-  },
-});
+const cursorColor = '#07f';
 
 const blockClass = rule({
-  d: 'inline-block',
-  pointerEvents: 'none',
   pos: 'relative',
+  d: 'inline-block',
+  pe: 'none',
+  us: 'none',
   w: '0px',
   h: '100%',
   bg: 'black',
-  verticalAlign: 'top',
+  va: 'top',
+});
+
+const innerClass = rule({
+  pos: 'absolute',
+  left: '-0.25em',
+  top: '.85em',
+  w: '0.5em',
+  h: '0.5em',
+  bdrad: '50%',
+  bg: cursorColor,
 });
 
 export interface AnchorViewProps {}
@@ -31,7 +30,9 @@ export interface AnchorViewProps {}
 export const AnchorView: React.FC<AnchorViewProps> = () => {
   return (
     <span className={blockClass}>
-      {Char.ZeroLengthSpace}
+      <span className={innerClass}>
+        {Char.ZeroLengthSpace}
+      </span>
     </span>
   );
 };
