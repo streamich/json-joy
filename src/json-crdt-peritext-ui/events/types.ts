@@ -1,3 +1,5 @@
+import {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
+
 export interface ChangeDetail {
   ev?: Event;
 }
@@ -57,6 +59,14 @@ export interface CursorDetail {
 export type TextUnit = 'char' | 'word' | 'line';
 export type Edge = 'focus' | 'anchor' | 'both';
 
+export interface InlineDetail {
+  type: SliceType;
+  data?: unknown;
+  behavior?: 'stack' | 'overwrite' | 'erase';
+  store?: 'saved' | 'extra' | 'local';
+  pos?: [start: number, end: number][];
+}
+
 export interface MarkerDetail {}
 
 export type PeritextEventMap = {
@@ -64,5 +74,6 @@ export type PeritextEventMap = {
   insert: InsertDetail;
   delete: DeleteDetail;
   cursor: CursorDetail;
+  inline: InlineDetail;
   marker: MarkerDetail;
 };

@@ -31,6 +31,12 @@ export const InlineView: React.FC<Props> = ({inline}) => {
     } else {
       span.style.backgroundColor = 'transparent';
     }
+    if (inline.attr()['b']) {
+      span.style.fontWeight = 'bold';
+    }
+    if (inline.attr()['i']) {
+      span.style.fontStyle = 'italic';
+    }
   }, [isSelection]);
 
   return <TextView ref={ref} text={inline.text()} />;

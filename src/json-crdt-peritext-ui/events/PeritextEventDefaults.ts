@@ -1,4 +1,5 @@
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -54,6 +55,23 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
         if (numericLen > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();
       }
+    }
+    this.et.change(event);
+  };
+
+  public readonly inline = (event: CustomEvent<events.InlineDetail>) => {
+    const {type, store = 'saved', behavior = 'overwrite', data, pos} = event.detail;
+    const editor = this.txt.editor;
+    const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
+    switch (behavior) {
+      case 'stack':
+        slices.insStack(type, data);
+        break;
+      case 'erase':
+        slices.insErase(type, data);
+        break;
+      default:
+        slices.insOverwrite(type, data);
     }
     this.et.change(event);
   };
