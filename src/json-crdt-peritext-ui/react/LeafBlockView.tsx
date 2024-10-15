@@ -2,7 +2,7 @@ import * as React from 'react';
 import {rule} from 'nano-theme';
 import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
 import {InlineView} from './InlineView';
-import {CaretView} from './CaretView';
+import {CaretView} from './selection/CaretView';
 import {AnchorView} from './selection/AnchorView';
 
 const blockClass = rule({

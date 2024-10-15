@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {rule, put} from 'nano-theme';
-import {Char} from '../constants';
-import {useBrowserLayoutEffect} from './hooks';
-import {usePeritext} from './context';
+import {Char} from '../../constants';
+import {useBrowserLayoutEffect} from '../hooks';
+import {usePeritext} from '../context';
 
 const cursorColor = '#07f';
 
