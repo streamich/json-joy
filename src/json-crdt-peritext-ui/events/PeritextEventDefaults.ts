@@ -37,19 +37,8 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           break;
         }
         default: {
-          switch (len) {
-            case 'word':
-              editor.selectWord(at);
-              break;
-            case 'block':
-              editor.selectBlock(at);
-              break;
-            case 'all':
-              editor.selectAll();
-              break;
-            default:
-              cursor.setAt(at, len);
-          }
+          if (typeof len === 'string') editor.selectAt(at, len);
+          else editor.selectAt(at, 'caret');
         }
       }
       this.et.change(event);

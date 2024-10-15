@@ -252,31 +252,6 @@ export class Editor<T = string> {
     });
   }
 
-  /**
-   * Selects a word by extending the selection to the left and right of the point.
-   *
-   * @param point Point to the right of which is the starting character of the word.
-   * @returns Range which contains the word.
-   */
-  public wordRange(point: Point<T>): Range<T> | undefined {
-    const char = point.rightChar();
-    if (!char) return;
-    const c = (char.view() as string)[0];
-    const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
-    const start = this.bow(point, predicate, true);
-    const end = this.eow(point, predicate, true);
-    return this.txt.range(start, end);
-  }
-
-  public selectWord(at: number): void {
-    const point = this.txt.pointAt(at);
-    const range = this.wordRange(point);
-    if (!range) return;
-    const cursor = this.cursor;
-    cursor.setRange(range);
-    cursor.anchorSide = CursorAnchor.Start;
-  }
-
   private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
     let next: ChunkSlice<T> | undefined;
     let prev: ChunkSlice<T> | undefined;
@@ -381,29 +356,72 @@ export class Editor<T = string> {
 
   // ---------------------------------------------------------------- selection
 
-  /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
+  public rangeAll() {
+    return this.txt.rangeAll();
+  }
+
+  /**
+   * Returns a range by expanding the selection to the left and right of the
+   * given point.
+   *
+   * @param point Point from which to start range expansion.
+   * @param unit Unit of the range expansion.
+   * @returns Range which contains the specified unit.
+   */
+  public range(point: Point<T>, unit: 'word' | 'line' | 'block' | 'all'): Range<T> | undefined {
+    switch (unit) {
+      case 'word': {
+        const char = point.rightChar();
+        if (!char) return;
+        const c = (char.view() as string)[0];
+        const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
+        const start = this.bow(point, predicate, true);
+        const end = this.eow(point, predicate, true);
+        return this.txt.range(start, end);
+      }
+      case 'line': {
+        const start = this.bol(point);
+        const end = this.eol(point);
+        return this.txt.range(start, end);
+      }
+      case 'block': {
+        const start = this.bob(point);
+        const end = this.eob(point);
+        return this.txt.range(start, end);
+      }
+      case 'all': return this.rangeAll();
+    }
+  }
+
   public selectAll(): boolean {
     const range = this.txt.rangeAll();
     if (!range) return false;
+    this.delCursors();
     this.cursor.setRange(range);
     return true;
   }
 
-  public blockRange(point: Point<T>): Range<T> {
-    const start = this.bob(point);
-    const end = this.eob(point);
-    return this.txt.range(start, end);
+  public select(unit: 'word' | 'line' | 'block' | 'all'): void {
+    if (unit === 'all') {
+      this.selectAll();
+      return;
+    }
+    this.cursors(cursor => {
+      const range = this.range(cursor.start, unit);
+      if (range) cursor.setRange(range); else cursor.del();
+    });
   }
 
-  public selectBlock(at: number): void {
-    const txt = this.txt;
-    const editor = txt.editor;
-    const point = txt.pointAt(at);
-    const range = editor.blockRange(point);
+  public selectAt(at: number, unit: 'caret' | 'word' | 'line' | 'block' | 'all'): void {
+    if (unit === 'caret') {
+      this.cursor.setAt(at);
+      return;
+    }
+    this.delCursors();
+    const point = this.txt.pointAt(at);
+    const range = this.range(point, unit);
     if (!range) return;
-    const cursor = editor.cursor;
-    cursor.setRange(range);
-    cursor.anchorSide = CursorAnchor.Start;
+    this.cursor.setRange(range);
   }
 
   // --------------------------------------------------------- slice operations
