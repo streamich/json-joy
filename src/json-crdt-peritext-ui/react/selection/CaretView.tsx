@@ -15,7 +15,7 @@ export const CaretView: React.FC<CaretViewProps> = (props) => {
     </span>
   );
 
-  for (const map of renderers) children = map.caret?.(children, props);
+  for (const map of renderers) children = map.caret?.(props, children);
 
   return children;
 };

@@ -17,7 +17,7 @@ export const FocusView: React.FC<FocusViewProps> = (props) => {
     </span>
   );
 
-  for (const map of renderers) children = map.focus?.(children, props);
+  for (const map of renderers) children = map.focus?.(props, children);
 
   return children;
 };
