@@ -35,12 +35,12 @@ const innerClass = drule({
   bg: color,
 });
 
-export interface FocusViewProps {
+export interface RenderFocusProps {
   left?: boolean;
   children: React.ReactNode;
 }
 
-export const FocusView: React.FC<FocusViewProps> = ({left, children}) => {
+export const RenderFocus: React.FC<RenderFocusProps> = ({left, children}) => {
   return (
     <span className={blockClass}>
       <span

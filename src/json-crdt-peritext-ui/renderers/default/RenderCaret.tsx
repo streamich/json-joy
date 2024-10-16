@@ -35,11 +35,11 @@ const innerClass = rule({
   bdrad: '0.0625em',
 });
 
-export interface Props extends CaretViewProps {
+export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const CaretView: React.FC<Props> = ({children}) => {
+export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
   return (
     <span className={blockClass}>
       <span className={innerClass}>
