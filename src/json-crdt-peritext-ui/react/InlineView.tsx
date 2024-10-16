@@ -18,7 +18,7 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   useIsoLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
-    (span as any)[ElementAttr.InlineOffset] = inline.pos();
+    (span as any)[ElementAttr.InlineOffset] = inline;
   }, [text]);
 
   const isSelection = inline.isSelected();

@@ -51,7 +51,7 @@ export class SelectionController implements UiLifeCycles {
       let node: null | (typeof res)[0] = res[0];
       const offset = res[1];
       for (let i = 0; i < 5 && node; i++) {
-        const inlinePos = (<any>node)[ElementAttr.InlineOffset];
+        const inlinePos = (<any>node)[ElementAttr.InlineOffset]?.pos?.();
         if (typeof inlinePos === 'number') return inlinePos + offset;
         node = node.parentNode;
       }
