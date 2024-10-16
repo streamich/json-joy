@@ -4,9 +4,9 @@ import {stringify} from '../../../json-text/stringify';
 import {SliceBehavior, SliceTypes} from '../slice/constants';
 import {Range} from '../rga/Range';
 import {ChunkSlice} from '../util/ChunkSlice';
-import {updateNum} from '../../../json-hash';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import {Cursor} from '../editor/Cursor';
+import {hashId} from '../../../json-crdt/hash';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Printable} from 'tree-dump/lib/types';
 import type {PathStep} from '@jsonjoy.com/json-pointer';
@@ -87,7 +87,8 @@ export class Inline extends Range implements Printable {
    *     identity of the inline across renders.
    */
   public key(): number {
-    return updateNum(this.start.refresh(), this.end.refresh());
+    const start = this.start;
+    return hashId(start.id) + (start.anchor ? 0 : 1);
   }
 
   /**
