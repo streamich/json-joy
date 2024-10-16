@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 export const TextView = React.memo(
-  React.forwardRef<HTMLSpanElement, {text: string}>((props, ref) => {
+  React.forwardRef<HTMLSpanElement, {text: string, attr: React.HTMLAttributes<HTMLSpanElement>}>((props, ref) => {
     return (
-      <span ref={ref} className="jsonjoy-text">
+      <span {...props.attr} ref={ref}>
         {props.text}
       </span>
     );
   }),
-  (prev, next) => prev.text === next.text,
+  // (prev, next) => prev.text === next.text,
 );
