@@ -12,7 +12,6 @@ export const renderers: RendererMap = {
   anchor: (props) => h(RenderAnchor, <any>props),
   inline: ({inline}, children, attributes) => {
     if (inline.attr()['b']) {
-      console.log('BOLD');
       (attributes.style || (attributes.style = {})).fontWeight = 'bold';
     }
     if (inline.attr()['i']) {

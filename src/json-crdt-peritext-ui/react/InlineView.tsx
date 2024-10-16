@@ -19,11 +19,6 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     const span = ref.current;
     if (!span) return;
     (span as any)[ElementAttr.InlineOffset] = inline.pos();
-    const hash = inline.start.hash;
-    if ((span as any).hash__ !== hash) {
-      (span as any).hash__ = hash;
-      span.textContent = text;
-    }
   }, [text]);
 
   const isSelection = inline.isSelected();
