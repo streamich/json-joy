@@ -31,34 +31,37 @@ const blockDebugClass = rule({
 });
 
 export interface BlockViewProps {
-  block: Block;
   hash: number;
+  block: Block;
   el?: (element: HTMLElement | null) => void;
 }
 
-export const BlockView: React.FC<BlockViewProps> = ({block, el}) => {
-  const {debug} = usePeritext();
+export const BlockView: React.FC<BlockViewProps> = React.memo(
+  ({block, el}) => {
+    const {debug} = usePeritext();
 
-  const children = block.children;
-  const length = children.length;
-  const elements: React.ReactNode[] = [];
-  for (let i = 0; i < length; i++) {
-    const child = children[i];
-    if (child instanceof LeafBlock) {
-      elements.push(<LeafBlockView key={child.key()} hash={child.hash} block={child} />);
-    } else if (child instanceof Block) {
-      elements.push(<BlockView key={child.key()} hash={child.hash} block={child} />);
+    const children = block.children;
+    const length = children.length;
+    const elements: React.ReactNode[] = [];
+    for (let i = 0; i < length; i++) {
+      const child = children[i];
+      if (child instanceof LeafBlock) {
+        elements.push(<LeafBlockView key={child.key()} hash={child.hash} block={child} />);
+      } else if (child instanceof Block) {
+        elements.push(<BlockView key={child.key()} hash={child.hash} block={child} />);
+      }
     }
-  }
 
-  const className = blockClass + (debug ? blockDebugClass : '');
+    const className = blockClass + (debug ? blockDebugClass : '');
 
-  return (
-    <div ref={(element) => el?.(element)} className={className}>
-      <div contentEditable={false} style={{margin: '16px 0 8px'}}>
-        <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
+    return (
+      <div ref={(element) => el?.(element)} className={className}>
+        <div contentEditable={false} style={{margin: '16px 0 8px'}}>
+          <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
+        </div>
+        {elements}
       </div>
-      {elements}
-    </div>
-  );
-};
+    );
+  },
+  (prev, next) => prev.hash === next.hash,
+);
