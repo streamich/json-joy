@@ -33,6 +33,7 @@ const innerClass = rule({
   h: '1.5em',
   bg: cursorColor,
   bdrad: '0.0625em',
+  'mix-blend-mode': 'multiply',
 });
 
 export interface RenderCaretProps extends CaretViewProps {
