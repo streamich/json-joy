@@ -3,7 +3,9 @@ import {Char} from '../../constants';
 import {usePeritext} from '../context';
 import {useCaret} from './hooks';
 
-export interface CaretViewProps {}
+export interface CaretViewProps {
+  italic?: boolean;
+}
 
 export const CaretView: React.FC<CaretViewProps> = (props) => {
   const {dom, renderers} = usePeritext();

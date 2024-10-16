@@ -39,10 +39,14 @@ export interface RenderCaretProps extends CaretViewProps {
   children: React.ReactNode;
 }
 
-export const RenderCaret: React.FC<RenderCaretProps> = ({children}) => {
+export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
+  const style = italic ? {
+    transform: 'rotate(11deg)',
+  } : void 0;
+
   return (
     <span className={blockClass}>
-      <span className={innerClass}>
+      <span className={innerClass} style={style}>
         {children}
       </span>
     </span>
