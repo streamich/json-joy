@@ -5,8 +5,11 @@ import {stringify} from '../../../json-text/stringify';
 
 const renderInline = (inline: Inline, tab: string): string => {
   const text = stringify(inline.text());
-  const attr = stringify(inline.attr());
-  return `${tab}${text} ${attr}\n`;
+  const attr: any = {};
+  const attributes = inline.attr();
+  for (const key in attributes)
+    attr[key] = attributes[key].map(a => a.slice.data());
+  return `${tab}${text} ${stringify(attr)}\n`;
 };
 
 const renderBlockHeader = (block: Block, tab: string, hash?: boolean): string => {
