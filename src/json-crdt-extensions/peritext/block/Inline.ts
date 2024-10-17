@@ -183,12 +183,18 @@ export class Inline extends Range implements Printable {
     return;
   }
 
-  public isSelected(): boolean {
+  public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
     const stack = attributes[SliceTypes.Cursor];
-    if (!stack) return false;
+    if (!stack) return;
     const attribute = stack[0];
-    return attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained;
+    const cursor = attribute.slice;
+    if (!(cursor instanceof Cursor)) return;
+    if (attribute instanceof InlineAttrPassing) return ['', ''];
+    if (attribute instanceof InlineAttrStart) return [cursor.isStartFocused() ? 'focus' : 'anchor', '']
+    if (attribute instanceof InlineAttrEnd) return ['', cursor.isEndFocused() ? 'focus' : 'anchor']
+    if (attribute instanceof InlineAttrContained) return cursor.isStartFocused() ? ['focus', 'anchor'] : ['anchor', 'focus']
+    return;
   }
 
   public text(): string {
