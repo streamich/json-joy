@@ -1,9 +1,10 @@
 import {getCursorPosition} from './util';
 import {ElementAttr} from '../constants';
+import {throttle} from '../../util/throttle';
+import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
-import {throttle} from '../../util/throttle';
 
 export interface SelectionControllerOpts {
   /**
@@ -13,6 +14,7 @@ export interface SelectionControllerOpts {
   source: HTMLElement;
   txt: Peritext;
   et: PeritextEventTarget;
+  keys: KeyController;
 }
 
 /**
