@@ -8,7 +8,8 @@ const blockClass = rule({
   bxz: 'border-box',
   w: '100vw',
   h: '100vh',
-  fontSize: '32px',
+  // fontSize: '32px',
+  fontSize: '18px',
 });
 
 const panelClass = rule({
