@@ -12,11 +12,22 @@ export const renderers: RendererMap = {
   anchor: (props) => h(RenderAnchor, <any>props),
   inline: ({inline}, children, attributes) => {
     if (inline.attr()['b']) {
-      (attributes.style || (attributes.style = {})).fontWeight = 'bold';
+      const style = attributes.style || (attributes.style = {});
+      style.fontWeight = 'bold';
     }
     if (inline.attr()['i']) {
-      (attributes.style || (attributes.style = {})).fontStyle = 'italic';
+      const style = attributes.style || (attributes.style = {});
+      style.fontStyle = 'italic';
     }
+    
+    const selection = inline.selection();
+    if (selection) {
+      const style = attributes.style || (attributes.style = {});
+      const [left, right] = selection;
+      style.backgroundColor = '#d7e9fd';
+      style.borderRadius = left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px';
+    }
+
     return children;
   },
 };

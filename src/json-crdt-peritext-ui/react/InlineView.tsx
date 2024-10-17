@@ -21,21 +21,6 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     (span as any)[ElementAttr.InlineOffset] = inline;
   }, [text]);
 
-  const selection = inline.selection();
-  useIsoLayoutEffect(() => {
-    const span = ref.current;
-    if (!span) return;
-    const style = span.style;
-    if (selection) {
-      const [left, right] = selection;
-      style.backgroundColor = '#d7e9fd';
-      style.borderRadius = left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px';
-    } else {
-      style.backgroundColor = 'transparent';
-      style.borderRadius = '0px';
-    }
-  }, [selection]);
-
   const attributes: React.HTMLAttributes<HTMLSpanElement> = {
     className: 'jsonjoy-text',
   };

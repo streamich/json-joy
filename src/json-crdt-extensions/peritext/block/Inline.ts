@@ -183,6 +183,14 @@ export class Inline extends Range implements Printable {
     return;
   }
 
+  /**
+   * Returns a 2-tuple if this inline is part of a selection. The 2-tuple sides
+   * specify how selection ends on each side. Empty string means the selection
+   * continues past that edge, `focus` and `anchor` specify that the edge
+   * is either a focus caret or an anchor, respectively.
+   *
+   * @returns Selection state of this inline.
+   */
   public selection(): undefined | [left: 'anchor' | 'focus' | '', right: 'anchor' | 'focus' | ''] {
     const attributes = this.attr();
     const stack = attributes[SliceTypes.Cursor];
