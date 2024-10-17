@@ -1,5 +1,5 @@
 import {TypedEventTarget} from './TypedEventTarget';
-import {type PeritextEventMap, type TextUnit, CursorDetail, type Edge} from './types';
+import {type PeritextEventMap, type TextUnit, CursorDetail, type Edge, InlineDetail} from './types';
 
 export type PeritextEventHandlerMap = {
   [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
@@ -36,5 +36,9 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
 
   public move(len: number, unit?: TextUnit, edge?: Edge): void {
     this.cursor({len, unit, edge});
+  }
+
+  public inline(detail: InlineDetail): void {
+    this.dispatch('inline', detail);
   }
 }

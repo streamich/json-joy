@@ -3,35 +3,29 @@ import {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import {useIsoLayoutEffect} from './hooks';
 import {ElementAttr} from '../constants';
 import {TextView} from './TextView';
+import {usePeritext} from './context';
 
-export interface Props {
+export interface InlineViewProps {
   inline: Inline;
 }
 
-export const InlineView: React.FC<Props> = ({inline}) => {
+export const InlineView: React.FC<InlineViewProps> = (props) => {
+  const {inline} = props;
+  const {renderers} = usePeritext();
   const ref = React.useRef<HTMLSpanElement>(null);
+  const text = inline.text();
+
   useIsoLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
-    (span as any)[ElementAttr.InlineOffset] = inline.pos();
-    const hash = inline.start.hash;
-    if ((span as any).hash__ !== hash) {
-      (span as any).hash__ = hash;
-      span.textContent = inline.text();
-    }
-  });
+    (span as any)[ElementAttr.InlineOffset] = inline;
+  }, [text]);
 
-  const isSelection = inline.isSelected();
-  useIsoLayoutEffect(() => {
-    const span = ref.current;
-    if (!span) return;
-    if (isSelection) {
-      span.style.backgroundColor = '#d7e9fd';
-      span.style.borderRadius = '0.25em 1px 1px.25em';
-    } else {
-      span.style.backgroundColor = 'transparent';
-    }
-  }, [isSelection]);
+  const attributes: React.HTMLAttributes<HTMLSpanElement> = {
+    className: 'jsonjoy-text',
+  };
 
-  return <TextView ref={ref} text={inline.text()} />;
+  let element: React.ReactNode = <TextView ref={ref} attr={attributes} text={inline.text()} />;
+  for (const map of renderers) element = map.inline?.(props, element, attributes) ?? element;
+  return element;
 };

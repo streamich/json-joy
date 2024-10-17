@@ -4,6 +4,7 @@ import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
 import {InlineView} from './InlineView';
 import {CaretView} from './selection/CaretView';
 import {AnchorView} from './selection/AnchorView';
+import {FocusView} from './selection/FocusView';
 
 const blockClass = rule({
   whiteSpace: 'pre-wrap',
@@ -23,18 +24,18 @@ export const LeafBlockView: React.FC<Props> = React.memo(
       const cursorStart = inline.cursorStart();
       if (cursorStart) {
         const key = keyBase + 'a';
-        elements.push(cursorStart.isStartFocused() ? <CaretView key={key} /> : <AnchorView key={key} />);
+        elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={key} italic={!!inline.attr()['i']} /> : <FocusView key={key} />) : <AnchorView key={key} />);
       }
       elements.push(<InlineView key={keyBase} inline={inline} />);
       const cursorEnd = inline.cursorEnd();
       if (cursorEnd) {
         const key = keyBase + 'b';
-        elements.push(cursorEnd.isEndFocused() ? <CaretView key={key} /> : <AnchorView key={key} />);
+        elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={key} italic={!!inline.attr()['i']} /> : <FocusView key={key} left />) : <AnchorView key={key} />);
       }
     }
 
     return (
-      <div className={'jj-leaf-block' + blockClass}>
+      <div className={'jsonjoy-leaf-block' + blockClass}>
         <div contentEditable={false} style={{margin: '16px 0 8px'}}>
             <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
         </div>

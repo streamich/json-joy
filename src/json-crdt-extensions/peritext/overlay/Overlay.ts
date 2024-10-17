@@ -487,6 +487,8 @@ export class Overlay<T = string> implements Printable, Stateful {
           (overlayPointHash << 5) + overlayPointHash + ((((id.sid >>> 0) + id.time) << 8) + (off << 4) + len);
       });
       state = updateNum(state, overlayPointHash);
+      for (const slice of p1.layers) state = updateNum(state, slice.hash);
+      for (const slice of p1.markers) state = updateNum(state, slice.hash);
       p1.hash = overlayPointHash;
       stateTotal = updateNum(stateTotal, overlayPointHash);
       if (p2 instanceof MarkerOverlayPoint) {

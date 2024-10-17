@@ -1,3 +1,5 @@
+import {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
+
 export interface ChangeDetail {
   ev?: Event;
 }
@@ -50,12 +52,22 @@ export interface CursorDetail {
    * Specifies which edge of the selection to move. If `'focus'`, the focus
    * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
    * `'both'`, the whole selection will be moved. Defaults to `'both'`.
+   * 
+   * When the value is set to `'new'`,
    */
   edge?: Edge;
 }
 
 export type TextUnit = 'char' | 'word' | 'line';
-export type Edge = 'focus' | 'anchor' | 'both';
+export type Edge = 'focus' | 'anchor' | 'both' | 'new';
+
+export interface InlineDetail {
+  type: SliceType;
+  data?: unknown;
+  behavior?: 'stack' | 'overwrite' | 'erase';
+  store?: 'saved' | 'extra' | 'local';
+  pos?: [start: number, end: number][];
+}
 
 export interface MarkerDetail {}
 
@@ -64,5 +76,6 @@ export type PeritextEventMap = {
   insert: InsertDetail;
   delete: DeleteDetail;
   cursor: CursorDetail;
+  inline: InlineDetail;
   marker: MarkerDetail;
 };

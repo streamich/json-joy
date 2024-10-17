@@ -3,11 +3,11 @@ import {Char} from '../../constants';
 import {usePeritext} from '../context';
 import {useCaret} from './hooks';
 
-export interface CaretViewProps {
-  italic?: boolean;
+export interface FocusViewProps {
+  left?: boolean;
 }
 
-export const CaretView: React.FC<CaretViewProps> = (props) => {
+export const FocusView: React.FC<FocusViewProps> = (props) => {
   const {dom, renderers} = usePeritext();
   const ref = useCaret();
 
@@ -17,7 +17,7 @@ export const CaretView: React.FC<CaretViewProps> = (props) => {
     </span>
   );
 
-  for (const map of renderers) children = map.caret?.(props, children);
+  for (const map of renderers) children = map.focus?.(props, children);
 
   return children;
 };
