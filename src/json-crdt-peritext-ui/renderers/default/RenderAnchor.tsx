@@ -18,11 +18,10 @@ const blockClass = rule({
 
 const innerClass = rule({
   pos: 'absolute',
-  left: '-0.25em',
+  left: 'calc(max(-8px,-0.25em))',
   top: '.85em',
-  w: '0.5em',
-  h: '0.5em',
-  // bdrad: '50%',
+  w: 'calc(min(16px,0.5em))',
+  h: 'calc(min(16px,0.5em))',
   bdrad: '50%/30%',
   bg: color,
 });
