@@ -33,6 +33,7 @@ const innerClass = drule({
   w: width + 'em',
   h: '1.45em',
   bg: color,
+  'mix-blend-mode': 'multiply',
 });
 
 export interface RenderFocusProps {

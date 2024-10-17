@@ -22,7 +22,8 @@ const innerClass = rule({
   top: '.85em',
   w: '0.5em',
   h: '0.5em',
-  bdrad: '50%',
+  // bdrad: '50%',
+  bdrad: '50%/30%',
   bg: color,
 });
 
