@@ -16,6 +16,7 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate} from './types';
+import type {UndefIterator} from '../../../util/iterator';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -41,38 +42,37 @@ export class Editor<T = string> {
     return cursor;
   }
 
-  public firstCursor(): Cursor<T> | undefined {
-    const iterator = this.txt.localSlices.iterator0();
-    let cursor = iterator();
-    while (cursor) {
-      if (cursor instanceof Cursor) return cursor;
-      cursor = iterator();
-    }
-    return;
-  }
-
   /**
-   * Returns the first cursor in the text. If there is no cursor, creates one
-   * and inserts it at the start of the text. To work with multiple cursors, use
-   * `.cursors()` method.
+   * Returns the first cursor in the text and removes all other cursors. If
+   * there is no cursor, creates one and inserts it at the start of the text.
+   * To work with multiple cursors, use `.cursors()` method.
    *
    * Cursor is the the current user selection. It can be a caret or a range. If
    * range is collapsed to a single point, it is a *caret*.
    */
   public get cursor(): Cursor<T> {
-    const maybeCursor = this.firstCursor();
-    if (maybeCursor) return maybeCursor;
-    return this.addCursor(this.txt.rangeAt(0));
+    let cursor: Cursor<T> | undefined;
+    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); i = iterator();) {
+      if (!cursor) cursor = i;
+       else this.local.del(i);
+    }
+    return cursor ?? this.addCursor(this.txt.rangeAt(0));
+  }
+
+  public cursors0(): UndefIterator<Cursor<T>> {
+    const iterator = this.txt.localSlices.iterator0();
+    return () => {
+      const slice = iterator();
+      return slice instanceof Cursor ? slice : void 0;
+    };
   }
 
   public cursors(callback: (cursor: Cursor<T>) => void): void {
-    this.txt.localSlices.forEach((slice) => {
-      if (slice instanceof Cursor) callback(slice);
-    });
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) callback(cursor);
   }
 
   public delCursors(): void {
-    this.cursors((cursor) => this.local.del(cursor));
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) this.local.del(cursor);
   }
 
   // ------------------------------------------------------------- text editing
