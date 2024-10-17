@@ -52,12 +52,14 @@ export interface CursorDetail {
    * Specifies which edge of the selection to move. If `'focus'`, the focus
    * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
    * `'both'`, the whole selection will be moved. Defaults to `'both'`.
+   * 
+   * When the value is set to `'new'`,
    */
   edge?: Edge;
 }
 
 export type TextUnit = 'char' | 'word' | 'line';
-export type Edge = 'focus' | 'anchor' | 'both';
+export type Edge = 'focus' | 'anchor' | 'both' | 'new';
 
 export interface InlineDetail {
   type: SliceType;

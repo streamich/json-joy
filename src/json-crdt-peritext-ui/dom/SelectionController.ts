@@ -118,7 +118,7 @@ export class SelectionController implements UiLifeCycles {
     el.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
-    this._cursor[1]();
+    this._cursor[1](); // Stop throttling loop.
   }
 
   private readonly onMouseDown = (ev: MouseEvent): void => {
@@ -128,7 +128,11 @@ export class SelectionController implements UiLifeCycles {
         const at = this.posAtPoint(ev.clientX, ev.clientY);
         if (at === -1) return;
         this.selectionStart = at;
-        this.select(ev, 0);
+        const pressed = this.opts.keys.pressed;
+        if (pressed.has('Shift')) this.select(ev, 'word');
+        else if (pressed.has('Alt')) {
+          this.opts.et.cursor({at, edge: 'new'});
+        } else this.select(ev, 0);
         break;
       }
       case 2:

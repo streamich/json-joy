@@ -30,6 +30,17 @@ export class Editor<T = string> {
 
   // ------------------------------------------------------------------ cursors
 
+  public addCursor(range: Range<T>, anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
+    const cursor = this.txt.localSlices.ins<Cursor<T>, typeof Cursor>(
+      range,
+      SliceBehavior.Cursor,
+      anchor,
+      undefined,
+      Cursor,
+    );
+    return cursor;
+  }
+
   public firstCursor(): Cursor<T> | undefined {
     const iterator = this.txt.localSlices.iterator0();
     let cursor = iterator();
@@ -51,15 +62,7 @@ export class Editor<T = string> {
   public get cursor(): Cursor<T> {
     const maybeCursor = this.firstCursor();
     if (maybeCursor) return maybeCursor;
-    const txt = this.txt;
-    const cursor = txt.localSlices.ins<Cursor<T>, typeof Cursor>(
-      txt.rangeAt(0),
-      SliceBehavior.Cursor,
-      CursorAnchor.Start,
-      undefined,
-      Cursor,
-    );
-    return cursor;
+    return this.addCursor(this.txt.rangeAt(0));
   }
 
   public cursors(callback: (cursor: Cursor<T>) => void): void {

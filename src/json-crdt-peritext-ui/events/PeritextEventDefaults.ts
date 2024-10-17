@@ -28,13 +28,17 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const {at, len = 0, unit, edge} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
-    const cursor = editor.cursor;
     const isAbsolutePosition = typeof at === 'number' && at >= 0;
     if (isAbsolutePosition) {
       switch (edge) {
         case 'focus': {
           const point = txt.pointAt(at);
+          const cursor = editor.cursor;
           cursor.setEndpoint(point, 0);
+          break;
+        }
+        case 'new': {
+          editor.addCursor(txt.rangeAt(at, 0));
           break;
         }
         default: {
@@ -50,6 +54,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     if (isSpecificEdgeSelected)
         editor.move(numericLen, unit, edge === 'focus' ? 0 : 1, false);
     else {
+      const cursor = editor.cursor;
       if (cursor.isCollapsed()) editor.move(numericLen, unit);
       else {
         if (numericLen > 0) cursor.collapseToEnd();
