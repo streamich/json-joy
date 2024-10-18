@@ -10,11 +10,11 @@ const setup = (
     editor.cursor.setAt(7);
     editor.insert('4567');
     editor.cursor.setAt(0, 2);
-    editor.delBwd();
+    editor.del();
     editor.cursor.setAt(9, 1);
-    editor.delBwd();
+    editor.del();
     editor.cursor.setAt(4, 1);
-    editor.delBwd();
+    editor.del();
   },
 ) => {
   const model = Model.create(void 0, 858549494849333);

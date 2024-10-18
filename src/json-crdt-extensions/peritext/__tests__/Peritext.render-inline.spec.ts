@@ -37,7 +37,7 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "" {  }
-    "012" { BOLD = [ 1, 3 ] }
+    "012" { BOLD = [ !u ] }
     "3456789" {  }
 "
 `);
@@ -51,7 +51,7 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "012" {  }
-    "345" { BOLD = [ 1, 3 ] }
+    "345" { BOLD = [ !u ] }
     "6789" {  }
 "
 `);
@@ -65,7 +65,7 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "0123456" {  }
-    "789" { ITALIC = [ 1, 3 ] }
+    "789" { ITALIC = [ !u ] }
     "" {  }
 "
 `);
@@ -81,9 +81,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "0" {  }
-    "12" { BOLD = [ 1, 3 ] }
+    "12" { BOLD = [ !u ] }
     "34" {  }
-    "567" { ITALIC = [ 1, 3 ] }
+    "567" { ITALIC = [ !u ] }
     "89" {  }
 "
 `);
@@ -99,9 +99,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "" {  }
-    "01" { BOLD = [ 1, 3 ] }
+    "01" { BOLD = [ !u ] }
     "" {  }
-    "234" { ITALIC = [ 1, 3 ] }
+    "234" { ITALIC = [ !u ] }
     "56789" {  }
 "
 `);
@@ -117,9 +117,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "01234" {  }
-    "56" { BOLD = [ 1, 3 ] }
+    "56" { BOLD = [ !u ] }
     "" {  }
-    "789" { ITALIC = [ 1, 3 ] }
+    "789" { ITALIC = [ !u ] }
     "" {  }
 "
 `);
@@ -135,9 +135,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "" {  }
-    "0" { BOLD = [ 1, 1 ] }
-    "1" { BOLD = [ 1, 2 ], ITALIC = [ 1, 1 ] }
-    "2" { ITALIC = [ 1, 2 ] }
+    "0" { BOLD = [ !u ] }
+    "1" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "2" { ITALIC = [ !u ] }
     "3456789" {  }
 "
 `);
@@ -153,9 +153,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "0123" {  }
-    "4" { BOLD = [ 1, 1 ] }
-    "5" { BOLD = [ 1, 2 ], ITALIC = [ 1, 1 ] }
-    "6" { ITALIC = [ 1, 2 ] }
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { ITALIC = [ !u ] }
     "789" {  }
 "
 `);
@@ -171,9 +171,9 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "" {  }
-    "0" { BOLD = [ 1, 1 ] }
-    "12" { BOLD = [ 1, 0 ], ITALIC = [ 1, 3 ] }
-    "34" { BOLD = [ 1, 2 ] }
+    "0" { BOLD = [ !u ] }
+    "12" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "34" { BOLD = [ !u ] }
     "56789" {  }
 "
 `);
@@ -191,11 +191,11 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "0123" {  }
-    "4" { BOLD = [ 1, 1 ] }
-    "5" { BOLD = [ 1, 0 ], ITALIC = [ 1, 1 ] }
-    "6" { BOLD = [ 1, 0 ], ITALIC = [ 1, 0 ], UNDERLINE = [ 1, 3 ] }
-    "7" { BOLD = [ 1, 0 ], ITALIC = [ 1, 2 ] }
-    "8" { BOLD = [ 1, 2 ] }
+    "4" { BOLD = [ !u ] }
+    "5" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "8" { BOLD = [ !u ] }
     "9" {  }
 "
 `);
@@ -213,11 +213,11 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "01234" {  }
-    "5" { BOLD = [ 1, 1 ] }
-    "6" { BOLD = [ 1, 0 ], ITALIC = [ 1, 1 ] }
-    "7" { BOLD = [ 1, 0 ], ITALIC = [ 1, 0 ], UNDERLINE = [ 1, 3 ] }
-    "8" { BOLD = [ 1, 0 ], ITALIC = [ 1, 2 ] }
-    "9" { BOLD = [ 1, 2 ] }
+    "5" { BOLD = [ !u ] }
+    "6" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "7" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "8" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "9" { BOLD = [ !u ] }
     "" {  }
 "
 `);
@@ -235,11 +235,11 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "0" {  }
-    "1" { ITALIC = [ 1, 1 ] }
-    "23" { BOLD = [ 1, 1 ], ITALIC = [ 1, 0 ] }
-    "45" { BOLD = [ 1, 0 ], ITALIC = [ 1, 2 ], UNDERLINE = [ 1, 1 ] }
-    "67" { BOLD = [ 1, 2 ], UNDERLINE = [ 1, 0 ] }
-    "8" { UNDERLINE = [ 1, 2 ] }
+    "1" { ITALIC = [ !u ] }
+    "23" { BOLD = [ !u ], ITALIC = [ !u ] }
+    "45" { BOLD = [ !u ], ITALIC = [ !u ], UNDERLINE = [ !u ] }
+    "67" { BOLD = [ !u ], UNDERLINE = [ !u ] }
+    "8" { UNDERLINE = [ !u ] }
     "9" {  }
 "
 `);
@@ -253,7 +253,7 @@ const runTests = (_setup: () => Kit) => {
 "<>
   <0>
     "01" {  }
-    "23456789" { CURSOR = [ 1, 4 ] }
+    "23456789" { CURSOR = [ !u ] }
 "
 `);
   });

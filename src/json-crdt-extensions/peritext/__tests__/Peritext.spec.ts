@@ -229,7 +229,7 @@ const run = (setup: () => Kit) => {
     test('does nothing when deleting at the start of a string', () => {
       const {peritext} = setup();
       const {editor} = peritext;
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('hello world');
     });
 
@@ -237,11 +237,11 @@ const run = (setup: () => Kit) => {
       const {peritext} = setup();
       const {editor} = peritext;
       editor.cursor.setAt(1);
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('ello world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('ello world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('ello world');
     });
 
@@ -249,11 +249,11 @@ const run = (setup: () => Kit) => {
       const {peritext} = setup();
       const {editor} = peritext;
       editor.cursor.setAt(2);
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('hllo world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('llo world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('llo world');
     });
 
@@ -261,13 +261,13 @@ const run = (setup: () => Kit) => {
       const {peritext} = setup();
       const {editor} = peritext;
       editor.cursor.setAt(2, 3);
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('he world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe('h world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe(' world');
-      editor.delBwd();
+      editor.del();
       expect(peritext.str.view()).toBe(' world');
     });
   });
