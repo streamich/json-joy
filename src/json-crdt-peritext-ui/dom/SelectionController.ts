@@ -124,15 +124,19 @@ export class SelectionController implements UiLifeCycles {
   private readonly onMouseDown = (ev: MouseEvent): void => {
     switch (ev.detail) {
       case 1: {
-        this.isMouseDown = true;
+        this.isMouseDown = false;
         const at = this.posAtPoint(ev.clientX, ev.clientY);
         if (at === -1) return;
         this.selectionStart = at;
         const pressed = this.opts.keys.pressed;
-        if (pressed.has('Shift')) this.select(ev, 'word');
-        else if (pressed.has('Alt')) {
+        if (pressed.has('Shift')) {
+          this.select(ev, 'word');
+        } else if (pressed.has('Alt')) {
           this.opts.et.cursor({at, edge: 'new'});
-        } else this.select(ev, 0);
+        } else {
+          this.isMouseDown = true;
+          this.select(ev, 0);
+        }
         break;
       }
       case 2:

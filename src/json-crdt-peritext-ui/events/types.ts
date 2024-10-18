@@ -1,7 +1,11 @@
-import {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
+import type {Point} from "../../json-crdt-extensions/peritext/rga/Point";
+import type {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
 
+/**
+ * Dispatched every time any other event is dispatched.
+ */
 export interface ChangeDetail {
-  ev?: Event;
+  ev?: InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail;
 }
 
 export interface InsertDetail {
@@ -26,7 +30,7 @@ export interface CursorDetail {
    * current cursor position will be used as the starting point and `len` will
    * be used to determine the new position.
    */
-  at?: number;
+  at?: number | Point;
 
   /**
    * Specify the length of the selection. If number, it is the length of the
@@ -61,6 +65,9 @@ export interface CursorDetail {
 export type TextUnit = 'char' | 'word' | 'line';
 export type Edge = 'focus' | 'anchor' | 'both' | 'new';
 
+/**
+ * Event dispatched to insert an inline rich-text annotation into the document.
+ */
 export interface InlineDetail {
   type: SliceType;
   data?: unknown;
