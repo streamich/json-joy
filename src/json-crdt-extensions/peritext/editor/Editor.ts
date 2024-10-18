@@ -16,6 +16,7 @@ import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate} from './types';
+import type {UndefIterator} from '../../../util/iterator';
 
 export class Editor<T = string> {
   public readonly saved: EditorSlices<T>;
@@ -30,46 +31,48 @@ export class Editor<T = string> {
 
   // ------------------------------------------------------------------ cursors
 
-  public firstCursor(): Cursor<T> | undefined {
-    const iterator = this.txt.localSlices.iterator0();
-    let cursor = iterator();
-    while (cursor) {
-      if (cursor instanceof Cursor) return cursor;
-      cursor = iterator();
-    }
-    return;
-  }
-
-  /**
-   * Returns the first cursor in the text. If there is no cursor, creates one
-   * and inserts it at the start of the text. To work with multiple cursors, use
-   * `.cursors()` method.
-   *
-   * Cursor is the the current user selection. It can be a caret or a range. If
-   * range is collapsed to a single point, it is a *caret*.
-   */
-  public get cursor(): Cursor<T> {
-    const maybeCursor = this.firstCursor();
-    if (maybeCursor) return maybeCursor;
-    const txt = this.txt;
-    const cursor = txt.localSlices.ins<Cursor<T>, typeof Cursor>(
-      txt.rangeAt(0),
+  public addCursor(range: Range<T>, anchor: CursorAnchor = CursorAnchor.Start): Cursor<T> {
+    const cursor = this.txt.localSlices.ins<Cursor<T>, typeof Cursor>(
+      range,
       SliceBehavior.Cursor,
-      CursorAnchor.Start,
+      anchor,
       undefined,
       Cursor,
     );
     return cursor;
   }
 
+  /**
+   * Returns the first cursor in the text and removes all other cursors. If
+   * there is no cursor, creates one and inserts it at the start of the text.
+   * To work with multiple cursors, use `.cursors()` method.
+   *
+   * Cursor is the the current user selection. It can be a caret or a range. If
+   * range is collapsed to a single point, it is a *caret*.
+   */
+  public get cursor(): Cursor<T> {
+    let cursor: Cursor<T> | undefined;
+    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); i = iterator();) {
+      if (!cursor) cursor = i;
+       else this.local.del(i);
+    }
+    return cursor ?? this.addCursor(this.txt.rangeAt(0));
+  }
+
+  public cursors0(): UndefIterator<Cursor<T>> {
+    const iterator = this.txt.localSlices.iterator0();
+    return () => {
+      const slice = iterator();
+      return slice instanceof Cursor ? slice : void 0;
+    };
+  }
+
   public cursors(callback: (cursor: Cursor<T>) => void): void {
-    this.txt.localSlices.forEach((slice) => {
-      if (slice instanceof Cursor) callback(slice);
-    });
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) callback(cursor);
   }
 
   public delCursors(): void {
-    this.cursors((cursor) => this.local.del(cursor));
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) this.local.del(cursor);
   }
 
   // ------------------------------------------------------------- text editing
@@ -252,31 +255,6 @@ export class Editor<T = string> {
     });
   }
 
-  /**
-   * Selects a word by extending the selection to the left and right of the point.
-   *
-   * @param point Point to the right of which is the starting character of the word.
-   * @returns Range which contains the word.
-   */
-  public wordRange(point: Point<T>): Range<T> | undefined {
-    const char = point.rightChar();
-    if (!char) return;
-    const c = (char.view() as string)[0];
-    const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
-    const start = this.bow(point, predicate, true);
-    const end = this.eow(point, predicate, true);
-    return this.txt.range(start, end);
-  }
-
-  public selectWord(at: number): void {
-    const point = this.txt.pointAt(at);
-    const range = this.wordRange(point);
-    if (!range) return;
-    const cursor = this.cursor;
-    cursor.setRange(range);
-    cursor.anchorSide = CursorAnchor.Start;
-  }
-
   private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
     let next: ChunkSlice<T> | undefined;
     let prev: ChunkSlice<T> | undefined;
@@ -381,29 +359,72 @@ export class Editor<T = string> {
 
   // ---------------------------------------------------------------- selection
 
-  /** @todo Add main impl details of this to `Cursor`, but here ensure there is only one cursor. */
+  public rangeAll() {
+    return this.txt.rangeAll();
+  }
+
+  /**
+   * Returns a range by expanding the selection to the left and right of the
+   * given point.
+   *
+   * @param point Point from which to start range expansion.
+   * @param unit Unit of the range expansion.
+   * @returns Range which contains the specified unit.
+   */
+  public range(point: Point<T>, unit: 'word' | 'line' | 'block' | 'all'): Range<T> | undefined {
+    switch (unit) {
+      case 'word': {
+        const char = point.rightChar();
+        if (!char) return;
+        const c = (char.view() as string)[0];
+        const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
+        const start = this.bow(point, predicate, true);
+        const end = this.eow(point, predicate, true);
+        return this.txt.range(start, end);
+      }
+      case 'line': {
+        const start = this.bol(point);
+        const end = this.eol(point);
+        return this.txt.range(start, end);
+      }
+      case 'block': {
+        const start = this.bob(point);
+        const end = this.eob(point);
+        return this.txt.range(start, end);
+      }
+      case 'all': return this.rangeAll();
+    }
+  }
+
   public selectAll(): boolean {
     const range = this.txt.rangeAll();
     if (!range) return false;
+    this.delCursors();
     this.cursor.setRange(range);
     return true;
   }
 
-  public blockRange(point: Point<T>): Range<T> {
-    const start = this.bob(point);
-    const end = this.eob(point);
-    return this.txt.range(start, end);
+  public select(unit: 'word' | 'line' | 'block' | 'all'): void {
+    if (unit === 'all') {
+      this.selectAll();
+      return;
+    }
+    this.cursors(cursor => {
+      const range = this.range(cursor.start, unit);
+      if (range) cursor.setRange(range); else cursor.del();
+    });
   }
 
-  public selectBlock(at: number): void {
-    const txt = this.txt;
-    const editor = txt.editor;
-    const point = txt.pointAt(at);
-    const range = editor.blockRange(point);
+  public selectAt(at: number, unit: 'caret' | 'word' | 'line' | 'block' | 'all'): void {
+    if (unit === 'caret') {
+      this.cursor.setAt(at);
+      return;
+    }
+    this.delCursors();
+    const point = this.txt.pointAt(at);
+    const range = this.range(point, unit);
     if (!range) return;
-    const cursor = editor.cursor;
-    cursor.setRange(range);
-    cursor.anchorSide = CursorAnchor.Start;
+    this.cursor.setRange(range);
   }
 
   // --------------------------------------------------------- slice operations

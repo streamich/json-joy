@@ -1,5 +1,7 @@
 import {getCursorPosition} from './util';
 import {ElementAttr} from '../constants';
+import {throttle} from '../../util/throttle';
+import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
@@ -12,6 +14,7 @@ export interface SelectionControllerOpts {
   source: HTMLElement;
   txt: Peritext;
   et: PeritextEventTarget;
+  keys: KeyController;
 }
 
 /**
@@ -33,11 +36,13 @@ export class SelectionController implements UiLifeCycles {
     this.selectAt(ev, at, len);
   }
 
-  private selectAt(ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void {
+  private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
+
+  private readonly selectAt = (ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void => {
     if (at === -1) return;
     ev.preventDefault();
-    this.opts.et.cursor({at, len});
-  }
+    this._cursor[0]({at, len});
+  };
 
   /**
    * String position at coordinate, or -1, if unknown.
@@ -48,7 +53,7 @@ export class SelectionController implements UiLifeCycles {
       let node: null | (typeof res)[0] = res[0];
       const offset = res[1];
       for (let i = 0; i < 5 && node; i++) {
-        const inlinePos = (<any>node)[ElementAttr.InlineOffset];
+        const inlinePos = (<any>node)[ElementAttr.InlineOffset]?.pos?.();
         if (typeof inlinePos === 'number') return inlinePos + offset;
         node = node.parentNode;
       }
@@ -100,7 +105,6 @@ export class SelectionController implements UiLifeCycles {
   public start(): void {
     const el = this.opts.source;
     el.contentEditable = 'true';
-    el.addEventListener('click', this.onClick);
     el.addEventListener('mousedown', this.onMouseDown);
     el.addEventListener('keydown', this.onKeyDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -110,30 +114,41 @@ export class SelectionController implements UiLifeCycles {
   public stop(): void {
     const el = this.opts.source;
     if (el) el.contentEditable = 'false';
-    el.removeEventListener('click', this.onClick);
     el.removeEventListener('mousedown', this.onMouseDown);
     el.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
+    this._cursor[1](); // Stop throttling loop.
   }
 
-  private readonly onClick = (ev: MouseEvent): void => {
+  private readonly onMouseDown = (ev: MouseEvent): void => {
     switch (ev.detail) {
+      case 1: {
+        this.isMouseDown = false;
+        const at = this.posAtPoint(ev.clientX, ev.clientY);
+        if (at === -1) return;
+        this.selectionStart = at;
+        const pressed = this.opts.keys.pressed;
+        if (pressed.has('Shift')) {
+          this.select(ev, 'word');
+        } else if (pressed.has('Alt')) {
+          this.opts.et.cursor({at, edge: 'new'});
+        } else {
+          this.isMouseDown = true;
+          this.select(ev, 0);
+        }
+        break;
+      }
       case 2:
+        this.isMouseDown = false;
         return this.select(ev, 'word');
       case 3:
+        this.isMouseDown = false;
         return this.select(ev, 'block');
       case 4:
+        this.isMouseDown = false;
         return this.select(ev, 'all');
     }
-  };
-
-  private readonly onMouseDown = (ev: MouseEvent): void => {
-    this.isMouseDown = true;
-    const at = this.posAtPoint(ev.clientX, ev.clientY);
-    if (at === -1) return;
-    this.selectionStart = at;
-    this.select(ev, 0);
   };
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
@@ -142,7 +157,8 @@ export class SelectionController implements UiLifeCycles {
     if (at < 0) return;
     const to = this.posAtPoint(ev.clientX, ev.clientY);
     if (to < 0) return;
-    this.selectAt(ev, at, to - at);
+    ev.preventDefault();
+    this._cursor[0]({at: to, edge: 'focus'});
   };
 
   private readonly onMouseUp = (ev: MouseEvent): void => {

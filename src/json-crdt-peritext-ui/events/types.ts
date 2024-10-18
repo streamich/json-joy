@@ -1,5 +1,11 @@
+import type {Point} from "../../json-crdt-extensions/peritext/rga/Point";
+import type {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
+
+/**
+ * Dispatched every time any other event is dispatched.
+ */
 export interface ChangeDetail {
-  ev?: Event;
+  ev?: InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail;
 }
 
 export interface InsertDetail {
@@ -24,7 +30,7 @@ export interface CursorDetail {
    * current cursor position will be used as the starting point and `len` will
    * be used to determine the new position.
    */
-  at?: number;
+  at?: number | Point;
 
   /**
    * Specify the length of the selection. If number, it is the length of the
@@ -50,12 +56,25 @@ export interface CursorDetail {
    * Specifies which edge of the selection to move. If `'focus'`, the focus
    * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
    * `'both'`, the whole selection will be moved. Defaults to `'both'`.
+   * 
+   * When the value is set to `'new'`,
    */
   edge?: Edge;
 }
 
 export type TextUnit = 'char' | 'word' | 'line';
-export type Edge = 'focus' | 'anchor' | 'both';
+export type Edge = 'focus' | 'anchor' | 'both' | 'new';
+
+/**
+ * Event dispatched to insert an inline rich-text annotation into the document.
+ */
+export interface InlineDetail {
+  type: SliceType;
+  data?: unknown;
+  behavior?: 'stack' | 'overwrite' | 'erase';
+  store?: 'saved' | 'extra' | 'local';
+  pos?: [start: number, end: number][];
+}
 
 export interface MarkerDetail {}
 
@@ -64,5 +83,6 @@ export type PeritextEventMap = {
   insert: InsertDetail;
   delete: DeleteDetail;
   cursor: CursorDetail;
+  inline: InlineDetail;
   marker: MarkerDetail;
 };

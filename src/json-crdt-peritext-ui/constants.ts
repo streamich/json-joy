@@ -3,5 +3,5 @@ export const enum Char {
 }
 
 export const enum ElementAttr {
-  InlineOffset = 'pos__',
+  InlineOffset = '__jsonjoy.com',
 }

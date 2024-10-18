@@ -48,6 +48,10 @@ export const updateNode = (state: number, node: JsonNode): number => {
   throw new Error('UNKNOWN_NODE');
 };
 
+export const hashId = (id: ITimestampStruct): number => {
+  return updateId(CONST.START_STATE, id);
+};
+
 export const hashNode = (node: JsonNode): number => {
   return updateNode(CONST.START_STATE, node) >>> 0;
 };
