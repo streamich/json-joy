@@ -21,27 +21,77 @@ export interface DeleteDetail {
    * Defaults to `-1`.
    */
   direction?: -1 | 0 | 1;
-  unit?: TextUnit;
+  unit?: 'char' | 'word' | 'line';
 }
 
+/**
+ * The `cursor` event is emitted when caret or selection is changed. The event
+ * is applied to all cursors in the document.
+ * 
+ * ## Scenarios
+ * 
+ * Move caret to a specific position in text:
+ * 
+ * ```ts
+ * {at: 10}
+ * ```
+ * 
+ * Move caret relative to current position:
+ * 
+ * ```ts
+ * {len: 5}
+ * ```
+ * 
+ * Move caret to the beginning of the word at a specific position:
+ * 
+ * ```ts
+ * {at: 10, len: -1, unit: 'word'}
+ * ```
+ * 
+ * Move caret to the end of word starting from the current position:
+ * 
+ * ```ts
+ * {len: 1, unit: 'word'}
+ * ```
+ * 
+ * Move *anchor* edge of the selection to the beginning of the current line:
+ * 
+ * ```ts
+ * {len: -1, unit: 'line', edge: 'anchor'}
+ * ```
+ * 
+ * Move *focus* edge of the selection to the end of a block at a specific position:
+ * 
+ * ```ts
+ * {at: 10, len: 1, unit: 'block', edge: 'focus'}
+ * ```
+ * 
+ * Select the whole document:
+ * 
+ * ```ts
+ * {unit: 'all'}
+ * ```
+ */
 export interface CursorDetail {
   /**
    * Position in the document to move the cursor to. If `-1` or undefined, the
    * current cursor position will be used as the starting point and `len` will
    * be used to determine the new position.
+   * 
+   * If 2-tuple is provided, the first element is the character index and the
+   * second `0 | 1` member specifies the anchor point of the character: `0`
+   * for the beginning of the character and `1` for the end of the character.
    */
-  at?: number | Point;
+  at?: number | [at: number, anchor: 0 | 1] | Point;
 
   /**
-   * Specify the length of the selection. If number, it is the length of the
-   * selection in characters starting from `at`. If `'word'`, the selection
-   * will be the word at `at`. If `'block'`, the selection will select the
-   * whole block at `at`. If `'all'`, the selection will select the whole
-   * document.
-   *
-   * Defaults to `0`, which means the cursor will be collapsed to a caret.
+   * Specify the length of the movement or selection in units specified by the
+   * `unit` field. If the `at` field is set, the `at` field specifies the
+   * absolute selection position and the `len` field specifies the length of
+   * the selection. If the `at` field is not set, the `len` field specifies
+   * the relative movement of the cursor.
    */
-  len?: number | 'word' | 'block' | 'all';
+  len?: number;
 
   /**
    * Specifies the unit of the movement. If `'char'`, the cursor will be
@@ -49,21 +99,21 @@ export interface CursorDetail {
    * one word in the direction specified by `len`. If `'line'`, the cursor
    * will be moved to the beginning or end of line, in direction specified
    * by `len`.
+   * 
+   * Defaults to `'char'`.
    */
-  unit?: TextUnit;
+  unit?: 'char' | 'word' | 'line' | 'block' | 'all';
 
   /**
    * Specifies which edge of the selection to move. If `'focus'`, the focus
    * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
    * `'both'`, the whole selection will be moved. Defaults to `'both'`.
    * 
-   * When the value is set to `'new'`,
+   * When the value is set to `'new'`, a new cursor will be created at the
+   * position specified by the `at` field.
    */
-  edge?: Edge;
+  edge?: 'focus' | 'anchor' | 'both' | 'new';
 }
-
-export type TextUnit = 'char' | 'word' | 'line';
-export type Edge = 'focus' | 'anchor' | 'both' | 'new';
 
 /**
  * Event dispatched to insert an inline rich-text annotation into the document.
