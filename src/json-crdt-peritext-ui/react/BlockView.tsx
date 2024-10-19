@@ -21,13 +21,6 @@ const blockDebugClass = rule({
   '::selection': {
     bgc: 'red',
   },
-  '& .jj-leaf-block': {
-    out: '1px dotted green',
-  },
-  '& .jsonjoy-text': {
-    pointerEvents: 'none',
-    out: '1px dotted blue',
-  },
 });
 
 export interface BlockViewProps {

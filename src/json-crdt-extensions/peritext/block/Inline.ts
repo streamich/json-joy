@@ -158,6 +158,10 @@ export class Inline extends Range implements Printable {
     return attr;
   }
 
+  public hasCursor(): boolean {
+    return !!this.attr()[SliceTypes.Cursor];
+  }
+
   /** @todo Make this return a list of cursors. */
   public cursorStart(): Cursor | undefined {
     const attributes = this.attr();
