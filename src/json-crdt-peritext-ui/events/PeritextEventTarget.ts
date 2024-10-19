@@ -1,5 +1,5 @@
 import {TypedEventTarget} from './TypedEventTarget';
-import {type PeritextEventMap, type TextUnit, CursorDetail, type Edge, InlineDetail} from './types';
+import {type PeritextEventMap, CursorDetail, InlineDetail, DeleteDetail} from './types';
 
 export type PeritextEventHandlerMap = {
   [K in keyof PeritextEventMap]: (event: CustomEvent<PeritextEventMap[K]>) => void;
@@ -26,7 +26,7 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.dispatch('insert', {text});
   }
 
-  public delete(direction?: -1 | 0 | 1, unit?: TextUnit): void {
+  public delete(direction?: -1 | 0 | 1, unit?: DeleteDetail['unit']): void {
     this.dispatch('delete', {direction, unit});
   }
 
@@ -34,7 +34,7 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.dispatch('cursor', detail);
   }
 
-  public move(len: number, unit?: TextUnit, edge?: Edge): void {
+  public move(len: number, unit?: CursorDetail['unit'], edge?: CursorDetail['edge']): void {
     this.cursor({len, unit, edge});
   }
 

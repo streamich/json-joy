@@ -5,6 +5,7 @@ import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import type {CursorDetail} from '../events/types';
 
 export interface SelectionControllerOpts {
   /**
@@ -31,14 +32,14 @@ export class SelectionController implements UiLifeCycles {
 
   protected selectionStart: number = -1;
 
-  private select(ev: MouseEvent, len: number | 'word' | 'block' | 'all'): void {
+  private select(ev: MouseEvent, len: CursorDetail['len']): void {
     const at = this.posAtPoint(ev.clientX, ev.clientY);
     this.selectAt(ev, at, len);
   }
 
   private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
 
-  private readonly selectAt = (ev: MouseEvent, at: number, len: number | 'word' | 'block' | 'all'): void => {
+  private readonly selectAt = (ev: MouseEvent, at: CursorDetail['at'], len: CursorDetail['len']): void => {
     if (at === -1) return;
     ev.preventDefault();
     this._cursor[0]({at, len});
@@ -130,24 +131,34 @@ export class SelectionController implements UiLifeCycles {
         this.selectionStart = at;
         const pressed = this.opts.keys.pressed;
         if (pressed.has('Shift')) {
-          this.select(ev, 'word');
+          ev.preventDefault();
+          this.opts.et.cursor({unit: 'word'});
         } else if (pressed.has('Alt')) {
+          ev.preventDefault();
           this.opts.et.cursor({at, edge: 'new'});
         } else {
           this.isMouseDown = true;
-          this.select(ev, 0);
+          const at = this.posAtPoint(ev.clientX, ev.clientY);
+          ev.preventDefault();
+          this.opts.et.cursor({at});
         }
         break;
       }
       case 2:
         this.isMouseDown = false;
-        return this.select(ev, 'word');
+        ev.preventDefault();
+        this.opts.et.cursor({unit: 'word'});
+        break;
       case 3:
         this.isMouseDown = false;
-        return this.select(ev, 'block');
+        ev.preventDefault();
+        this.opts.et.cursor({unit: 'block'});
+        break;
       case 4:
         this.isMouseDown = false;
-        return this.select(ev, 'all');
+        ev.preventDefault();
+        this.opts.et.cursor({unit: 'all'});
+        break;
     }
   };
 

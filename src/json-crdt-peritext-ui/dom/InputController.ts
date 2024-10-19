@@ -210,7 +210,7 @@ export class InputController implements UiLifeCycles {
       case 'a':
         if (event.metaKey || event.ctrlKey) {
           event.preventDefault();
-          this.et.cursor({at: 0, len: 'all'});
+          this.et.cursor({unit: 'all'});
           return;
         }
     }

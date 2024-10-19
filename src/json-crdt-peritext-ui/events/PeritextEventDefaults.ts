@@ -25,25 +25,29 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, len = 0, unit, edge} = event.detail;
+    const {at, len, unit, edge} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
-    const isAbsolutePosition = typeof at === 'number' && at >= 0;
-    if (isAbsolutePosition) {
+    if (at && at !== -1) {
+      const point = editor.point(at);
       switch (edge) {
-        case 'focus': {
-          const point = txt.pointAt(at);
-          const cursor = editor.cursor;
-          cursor.setEndpoint(point, 0);
+        case 'focus':
+        case 'anchor': {
+          editor.cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
           break;
         }
         case 'new': {
-          editor.addCursor(txt.rangeAt(at, 0));
+          editor.addCursor(txt.range(point, point.clone()));
           break;
         }
-        default: {
-          if (typeof len === 'string') editor.selectAt(at, len);
-          else editor.selectAt(at, 'caret');
+        default: { // both
+          if (!!len && typeof len === 'number') {
+            const point2 = point.clone();
+            point2.step(len);
+            const range = txt.rangeFromPoints(point, point2);
+            editor.cursor.set(range.start, range.end);
+          }
+          else editor.cursor.set(point);
         }
       }
       this.et.change(event);
@@ -52,10 +56,10 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const numericLen = typeof len === 'number' ? len : 0;
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected)
-        editor.move(numericLen, unit, edge === 'focus' ? 0 : 1, false);
+        editor.move(numericLen, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
     else {
       const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(numericLen, unit);
+      if (cursor.isCollapsed()) editor.move(numericLen, unit ?? 'char');
       else {
         if (numericLen > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();

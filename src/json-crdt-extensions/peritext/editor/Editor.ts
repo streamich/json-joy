@@ -15,7 +15,7 @@ import type {SliceType} from '../slice/types';
 import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
-import type {CharIterator, CharPredicate} from './types';
+import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
 import type {UndefIterator} from '../../../util/iterator';
 
 export class Editor<T = string> {
@@ -52,10 +52,8 @@ export class Editor<T = string> {
    */
   public get cursor(): Cursor<T> {
     let cursor: Cursor<T> | undefined;
-    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); i = iterator();) {
-      if (!cursor) cursor = i;
-       else this.local.del(i);
-    }
+    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); i = iterator();)
+      if (!cursor) cursor = i; else this.local.del(i);
     return cursor ?? this.addCursor(this.txt.rangeAt(0));
   }
 
@@ -159,7 +157,7 @@ export class Editor<T = string> {
       if (!point) return;
       const char = step > 0 ? point.rightChar() : point.leftChar();
       if (!char) return (point = undefined);
-      const end = point.move(step);
+      const end = point.step(step);
       if (end) point = undefined;
       return char;
     };
@@ -219,11 +217,15 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
-  public skip(point: Point<T>, steps: number, unit: 'char' | 'word' | 'line'): Point<T> {
+  public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
     switch (unit) {
+      case 'point': return point;
+      case 'all': return point;
+      case 'block': return point;
+
       case 'char': {
         const newPoint = point.clone();
-        newPoint.move(steps);
+        newPoint.step(steps);
         return newPoint;
       }
       case 'word': {
@@ -247,7 +249,7 @@ export class Editor<T = string> {
    * @param endpoint 0 for "focus", 1 for "anchor".
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number = 1, unit: 'char' | 'word' | 'line' = 'char', endpoint: 0 | 1 = 0, collapse: boolean = true): void {
+  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 = 0, collapse: boolean = true): void {
     this.cursors((cursor) => {
       let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
       point = this.skip(point.clone(), steps, unit);
@@ -371,29 +373,10 @@ export class Editor<T = string> {
    * @param unit Unit of the range expansion.
    * @returns Range which contains the specified unit.
    */
-  public range(point: Point<T>, unit: 'word' | 'line' | 'block' | 'all'): Range<T> | undefined {
-    switch (unit) {
-      case 'word': {
-        const char = point.rightChar();
-        if (!char) return;
-        const c = (char.view() as string)[0];
-        const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
-        const start = this.bow(point, predicate, true);
-        const end = this.eow(point, predicate, true);
-        return this.txt.range(start, end);
-      }
-      case 'line': {
-        const start = this.bol(point);
-        const end = this.eol(point);
-        return this.txt.range(start, end);
-      }
-      case 'block': {
-        const start = this.bob(point);
-        const end = this.eob(point);
-        return this.txt.range(start, end);
-      }
-      case 'all': return this.rangeAll();
-    }
+  public range(point: Point<T>, unit: TextRangeUnit): Range<T> {
+    const point1 = this.skip(point, -1, unit);
+    const point2 = this.skip(point, 1, unit);
+    return this.txt.range(point1, point2);
   }
 
   public selectAll(): boolean {
@@ -404,27 +387,16 @@ export class Editor<T = string> {
     return true;
   }
 
-  public select(unit: 'word' | 'line' | 'block' | 'all'): void {
-    if (unit === 'all') {
-      this.selectAll();
-      return;
-    }
+  public select(unit: TextRangeUnit): void {
     this.cursors(cursor => {
-      const range = this.range(cursor.start, unit);
-      if (range) cursor.setRange(range); else cursor.del();
+      cursor.setRange(this.range(cursor.start, unit));
     });
   }
 
-  public selectAt(at: number, unit: 'caret' | 'word' | 'line' | 'block' | 'all'): void {
-    if (unit === 'caret') {
-      this.cursor.setAt(at);
-      return;
-    }
-    this.delCursors();
-    const point = this.txt.pointAt(at);
-    const range = this.range(point, unit);
-    if (!range) return;
-    this.cursor.setRange(range);
+  public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
+    const point = this.point(at);
+    if (!unit) this.cursor.set(point);
+    else this.cursor.setRange(this.range(point, unit));
   }
 
   // --------------------------------------------------------- slice operations
@@ -453,6 +425,14 @@ export class Editor<T = string> {
   }
 
   // ------------------------------------------------------------------ various
+
+  public point(at: Position<T>): Point<T> {
+    return typeof at === 'number'
+    ? this.txt.pointAt(at)
+    : Array.isArray(at)
+      ? this.txt.pointAt(at[0], at[1])
+      : at;
+  }
 
   public end(): Point<T> {
     const txt = this.txt;
