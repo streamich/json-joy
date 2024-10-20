@@ -30,7 +30,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
 "<>
   <0>
     "a" {  }
-    "bcdefghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "bcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
       editor.cursor.move(1);
@@ -39,7 +39,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
 "<>
   <0>
     "ab" {  }
-    "cdefghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "cdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
       editor.cursor.move(2);
@@ -48,7 +48,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
 "<>
   <0>
     "abcd" {  }
-    "efghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "efghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
     });
@@ -61,7 +61,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
       expect(view()).toMatchInlineSnapshot(`
 "<>
   <0>
-    "abcdefghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "abcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
       editor.cursor.move(1);
@@ -72,7 +72,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
 "<>
   <0>
     "a" {  }
-    "bcdefghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "bcdefghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
       editor.cursor.move(2);
@@ -82,7 +82,7 @@ const runInlineSlicesTests = (desc: string, getKit: () => Kit) => {
 "<>
   <0>
     "abc" {  }
-    "defghijklmnopqrstuvwxyz" { -1 = [ [ [ 0, !u ] ], 4 ] }
+    "defghijklmnopqrstuvwxyz" { -1 = [ !u ] }
 "
 `);
     });

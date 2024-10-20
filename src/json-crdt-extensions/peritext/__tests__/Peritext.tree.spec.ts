@@ -1,6 +1,6 @@
-import {InlineAttrPos} from '../block/Inline';
+import {InlineAttrContained, InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../block/Inline';
 import {LeafBlock} from '../block/LeafBlock';
-import {CursorAnchor, SliceTypes} from '../slice/constants';
+import {SliceTypes} from '../slice/constants';
 import {Kit, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from './setup';
 
 const run = (setup: () => Kit) => {
@@ -18,7 +18,8 @@ const run = (setup: () => Kit) => {
       const inline2 = [...leaf.texts()].find((inline) => inline.text() === ' world')!;
       expect(inline1.text()).toBe('hello');
       expect(inline2.text()).toBe(' world');
-      expect(inline1.attr()).toEqual({123: [1, InlineAttrPos.Contained]});
+      expect(inline1.attr()[123][0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline1.attr()[123][0].slice.data()).toBe(undefined);
       expect(inline2.attr()).toEqual({});
     });
 
@@ -34,7 +35,7 @@ const run = (setup: () => Kit) => {
       expect(inline1.text()).toBe('hello ');
       expect(inline2.text()).toBe('world');
       expect(inline1.attr()).toEqual({});
-      expect(inline2.attr()).toEqual({123: [1, InlineAttrPos.Contained]});
+      expect(inline2.attr()[123][0]).toBeInstanceOf(InlineAttrContained);
     });
 
     test('creates three inline elements by annotating a slice in the middle of the text', () => {
@@ -51,7 +52,8 @@ const run = (setup: () => Kit) => {
       expect(inline2.text()).toBe('lo ');
       expect(inline3.text()).toBe('world');
       expect(inline1.attr()).toEqual({});
-      expect(inline2.attr()).toEqual({type: [{foo: 'bar'}, InlineAttrPos.Contained]});
+      expect(inline2.attr().type[0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline2.attr().type[0].slice.data()).toEqual({foo: 'bar'});
       expect(inline3.attr()).toEqual({});
     });
 
@@ -71,16 +73,16 @@ const run = (setup: () => Kit) => {
         const inline5 = [...leaf.texts()].find((inline) => inline.text() === 'ld')!;
         expect(leaf.text()).toBe('hello world');
         expect(inline1.attr()).toEqual({});
-        expect(inline2.attr()).toEqual({bold: [[void 0], InlineAttrPos.Start]});
-        expect(inline3.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Start],
-          bold: [[void 0], InlineAttrPos.End],
-          italic: [[void 0], InlineAttrPos.Start],
-        });
-        expect(inline4.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.End],
-          italic: [[void 0], InlineAttrPos.End],
-        });
+        expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline3.attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline3.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline4.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline4.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline4.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline5.attr()).toEqual({});
       });
 
@@ -96,11 +98,11 @@ const run = (setup: () => Kit) => {
         const inline2 = [...leaf.texts()].find((inline) => inline.text() === 'lo w')!;
         const inline3 = [...leaf.texts()].find((inline) => inline.text() === 'orld')!;
         expect(inline1.attr()).toEqual({});
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Contained],
-          italic: [[void 0], InlineAttrPos.Contained],
-          bold: [[void 0], InlineAttrPos.Contained],
-        });
+        expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline2.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline2.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.attr()).toEqual({});
       });
 
@@ -118,15 +120,14 @@ const run = (setup: () => Kit) => {
         const inline3 = [...leaf.texts()].find((inline) => inline.text() === 'o')!;
         const inline4 = [...leaf.texts()].find((inline) => inline.text() === 'rld')!;
         expect(inline1.attr()).toEqual({});
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Start],
-          italic: [[void 0], InlineAttrPos.Start],
-          bold: [[void 0], InlineAttrPos.Contained],
-        });
-        expect(inline3.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.End],
-          italic: [[void 0], InlineAttrPos.End],
-        });
+        expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline2.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline2.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline4.attr()).toEqual({});
       });
 
@@ -144,14 +145,13 @@ const run = (setup: () => Kit) => {
         const inline3 = [...leaf.texts()].find((inline) => inline.text() === 'o w')!;
         const inline4 = [...leaf.texts()].find((inline) => inline.text() === 'orld')!;
         expect(inline1.attr()).toEqual({});
-        expect(inline2.attr()).toEqual({
-          bold: [[void 0], InlineAttrPos.Start],
-        });
-        expect(inline3.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Contained],
-          italic: [[void 0], InlineAttrPos.Contained],
-          bold: [[void 0], InlineAttrPos.End],
-        });
+        expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline3.attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline3.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline4.attr()).toEqual({});
       });
 
@@ -169,13 +169,11 @@ const run = (setup: () => Kit) => {
         const inline3 = [...leaf.texts()].find((inline) => inline.text() === ' wo')!;
         const inline4 = [...leaf.texts()].find((inline) => inline.text() === 'rld')!;
         expect(inline1.attr()).toEqual({});
-        expect(inline2.attr()).toEqual({
-          bold: [[void 0], InlineAttrPos.Contained],
-        });
-        expect(inline3.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Contained],
-          italic: [[void 0], InlineAttrPos.Contained],
-        });
+        expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline2.attr().bold[0].slice.data()).toBe(undefined);
+        expect(inline3.attr().italic[0]).toBeInstanceOf(InlineAttrContained);
+        expect(inline3.attr().italic[0].slice.data()).toBe(undefined);
+        expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline4.attr()).toEqual({});
       });
     });
@@ -246,9 +244,9 @@ const run = (setup: () => Kit) => {
       const block2 = peritext.blocks.root.children[1];
       expect([...block1.texts()].length).toBe(3);
       expect([...block1.texts()][0].attr()).toEqual({});
-      expect([...block1.texts()][1].attr()).toEqual({bold: [[void 0], InlineAttrPos.Start]});
+      expect([...block1.texts()][1].attr().bold[0]).toBeInstanceOf(InlineAttrStart);
       expect([...block2.texts()].length).toBe(2);
-      expect([...block2.texts()][0].attr()).toEqual({bold: [[void 0], InlineAttrPos.End]});
+      expect([...block2.texts()][0].attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
       expect([...block2.texts()][1].attr()).toEqual({});
     });
 
@@ -269,20 +267,14 @@ const run = (setup: () => Kit) => {
       expect(block3.text()).toBe(' world');
       expect([...block1.texts()].length).toBe(2);
       expect([...block1.texts()][0].attr()).toEqual({});
-      expect([...block1.texts()][1].attr()).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Start],
-        bold: [[void 0], InlineAttrPos.Start],
-      });
+      expect([...block1.texts()][1].attr().bold[0]).toBeInstanceOf(InlineAttrStart);
+      expect([...block1.texts()][1].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStart);
       expect([...block2.texts()].length).toBe(1);
-      expect([...block2.texts()][0].attr()).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.Passing],
-        bold: [[void 0], InlineAttrPos.Passing],
-      });
+      expect([...block2.texts()][0].attr().bold[0]).toBeInstanceOf(InlineAttrPassing);
+      expect([...block2.texts()][0].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
       expect([...block3.texts()].length).toBe(2);
-      expect([...block3.texts()][0].attr()).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start, void 0]], InlineAttrPos.End],
-        bold: [[void 0], InlineAttrPos.End],
-      });
+      expect([...block3.texts()][0].attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
+      expect([...block3.texts()][0].attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
       expect([...block3.texts()][1].attr()).toEqual({});
     });
   });

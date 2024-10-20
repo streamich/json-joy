@@ -207,6 +207,11 @@ export class Peritext<T = string> implements Printable {
     return Range.at(this.str, start, length);
   }
 
+  /**
+   * Creates selection of relative start and end of the whole document.
+   *
+   * @returns Range, which selects the whole document, if any.
+   */
   public rangeAll(): Range<T> | undefined {
     const start = this.pointStart();
     const end = this.pointEnd();
