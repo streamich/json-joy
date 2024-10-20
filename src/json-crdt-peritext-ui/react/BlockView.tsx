@@ -3,11 +3,7 @@ import {LeafBlock} from '../../json-crdt-extensions/peritext/block/LeafBlock';
 import {Block} from '../../json-crdt-extensions/peritext/block/Block';
 import {InlineView} from './InlineView';
 import {Char} from '../constants';
-
-// const blockClass = rule({
-//   whiteSpace: 'pre-wrap',
-//   wordWrap: 'break-word',
-// });
+import {usePeritext} from './context';
 
 export interface BlockViewProps {
   hash: number;
@@ -16,7 +12,9 @@ export interface BlockViewProps {
 }
 
 export const BlockView: React.FC<BlockViewProps> = React.memo(
-  ({block, el}) => {
+  (props) => {
+    const {block, el} = props;
+    const {renderers} = usePeritext();
 
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
@@ -31,14 +29,13 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
       }
     }
 
-    return (
+    let children: React.ReactNode = (
       <div ref={(element) => el?.(element)}>
-        <div contentEditable={false} style={{margin: '16px 0 8px'}}>
-          <span style={{fontSize: '0.7em', background: 'rgba(0,0,0,.1)', display: 'inline-block'}}>#{block.hash}</span>
-        </div>
         {elements.length ? elements : Char.ZeroLengthSpace}
       </div>
     );
+    for (const map of renderers) children = map.block?.(props, children) ?? children;
+    return children;
   },
   (prev, next) => prev.hash === next.hash,
 );

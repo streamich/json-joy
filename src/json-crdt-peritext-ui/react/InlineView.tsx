@@ -8,6 +8,8 @@ import {CaretView} from './selection/CaretView';
 import {FocusView} from './selection/FocusView';
 import {AnchorView} from './selection/AnchorView';
 
+const {createElement: h, Fragment} = React;
+
 export interface InlineViewProps {
   inline: Inline;
 }
@@ -35,19 +37,19 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];
     const attr = inline.attr();
-    const keyBase = inline.key();
+    const key = inline.key();
     const cursorStart = inline.cursorStart();
     if (cursorStart) {
-      const key = keyBase + 'a';
-      elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={key} italic={!!attr['i']} /> : <FocusView key={key} />) : <AnchorView key={key} />);
+      const k = key + 'a';
+      elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} />) : <AnchorView key={k} />);
     }
-    elements.push(element);
+    elements.push(h(Fragment, {key}, element));
     const cursorEnd = inline.cursorEnd();
     if (cursorEnd) {
-      const key = keyBase + 'b';
-      elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={key} italic={!!attr['i']} /> : <FocusView key={key} left />) : <AnchorView key={key} />);
+      const k = key + 'b';
+      elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} left />) : <AnchorView key={k} />);
     }
-    element = React.createElement(React.Fragment, null, elements);
+    element = h(Fragment, null, elements);
   }
 
   return element;
