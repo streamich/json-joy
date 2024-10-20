@@ -6,7 +6,6 @@ import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import {CONST, updateNum} from '../../../json-hash';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
@@ -448,6 +447,32 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       }
     }
     return false;
+  }
+
+  /**
+   * Moves the to the next point, which does not necessarily result in a visible
+   * character skip.
+   *
+   * @param length How many points to move by.
+   * @returns Returns `true` if the absolute end of the string is reached.
+   */
+  public halfstep(length: number): boolean {
+    this.refVisible();
+    const isOdd = !!(length % 2);
+    if (isOdd) {
+      if (length > 0) {
+        length--;
+        if (this.anchor === Anchor.After) this.refBefore();
+        else if (this.isAbs()) return true;
+        else this.anchor = Anchor.After;
+      } else {
+        length++;
+        if (this.anchor === Anchor.Before) this.refAfter();
+        else if (this.isAbs()) return true;
+        else this.anchor = Anchor.Before;
+      }
+    }
+    return this.step(length / 2);
   }
 
   // ----------------------------------------------------------------- Stateful
