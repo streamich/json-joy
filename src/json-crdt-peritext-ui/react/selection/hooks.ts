@@ -2,11 +2,12 @@ import * as React from 'react';
 import {useBrowserLayoutEffect} from '../hooks';
 
 export const useCaret = () => {
-  const ref = React.useRef<HTMLSpanElement>(null);
+  const ref = React.useRef<HTMLSpanElement | null>(null);
   const timer = React.useRef<unknown>();
   useBrowserLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
+    console.log('useCaret');
     clearTimeout(timer.current as any);
     timer.current = setTimeout(() => {
       const selection = window.getSelection();

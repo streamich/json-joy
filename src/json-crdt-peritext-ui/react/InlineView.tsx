@@ -31,8 +31,8 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     className: 'jsonjoy-text',
   };
 
-  let element: React.ReactNode = <TextView ref={ref} attr={attributes} text={inline.text()} />;
-  for (const map of renderers) element = map.inline?.(props, element, attributes) ?? element;
+  let children: React.ReactNode = <TextView ref={ref} attr={attributes} text={inline.text()} />;
+  for (const map of renderers) children = map.inline?.(props, children, attributes) ?? children;
 
   if (inline.hasCursor()) {
     const elements: React.ReactNode[] = [];
@@ -43,14 +43,14 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
       const k = key + 'a';
       elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} />) : <AnchorView key={k} />);
     }
-    elements.push(h(Fragment, {key}, element));
+    elements.push(h(Fragment, {key}, children));
     const cursorEnd = inline.cursorEnd();
     if (cursorEnd) {
       const k = key + 'b';
       elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} left />) : <AnchorView key={k} />);
     }
-    element = h(Fragment, null, elements);
+    children = h(Fragment, null, elements);
   }
 
-  return element;
+  return children;
 };

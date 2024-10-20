@@ -1,23 +1,15 @@
 import * as React from 'react';
-import {Char} from '../../constants';
 import {usePeritext} from '../context';
-import {useCaret} from './hooks';
+import {Caret} from './Caret';
 
 export interface CaretViewProps {
   italic?: boolean;
 }
 
 export const CaretView: React.FC<CaretViewProps> = (props) => {
-  const {dom, renderers} = usePeritext();
-  const ref = useCaret();
+  const {renderers} = usePeritext();
 
-  let children: React.ReactNode = (
-    <span id={dom?.selection.caretId} ref={ref}>
-      {Char.ZeroLengthSpace}
-    </span>
-  );
-
-  for (const map of renderers) children = map.caret?.(props, children);
-
+  let children: React.ReactNode = <Caret />;
+  for (const map of renderers) children = map.caret?.(props, children) ?? children;
   return children;
 };

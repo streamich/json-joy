@@ -30,4 +30,9 @@ export const renderers: RendererMap = {
 
     return children;
   },
+  block: ({hash, block}, children) => {
+    const isRoot = block.tag() === '';
+    if (isRoot) return children;
+    return h('div', {style: {padding: 32}}, children);
+  },
 };
