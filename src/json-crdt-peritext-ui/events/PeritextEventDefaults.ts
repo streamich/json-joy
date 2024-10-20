@@ -1,4 +1,5 @@
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import type {EditorSlices} from '../../json-crdt-extensions/peritext/editor/EditorSlices';
 import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEventTarget';
 import type * as events from './types';
 
@@ -24,32 +25,29 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, len = 0, unit, edge} = event.detail;
+    const {at, len, unit, edge} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
-    const cursor = editor.cursor;
-    const isAbsolutePosition = typeof at === 'number' && at >= 0;
-    if (isAbsolutePosition) {
+    if (at && at !== -1) {
+      const point = editor.point(at);
       switch (edge) {
-        case 'focus': {
-          const point = txt.pointAt(at);
-          cursor.setEndpoint(point, 0);
+        case 'focus':
+        case 'anchor': {
+          editor.cursor.setEndpoint(point, edge === 'focus' ? 0 : 1);
           break;
         }
-        default: {
-          switch (len) {
-            case 'word':
-              editor.selectWord(at);
-              break;
-            case 'block':
-              editor.selectBlock(at);
-              break;
-            case 'all':
-              editor.selectAll();
-              break;
-            default:
-              cursor.setAt(at, len);
+        case 'new': {
+          editor.addCursor(txt.range(point, point.clone()));
+          break;
+        }
+        default: { // both
+          if (!!len && typeof len === 'number') {
+            const point2 = point.clone();
+            point2.step(len);
+            const range = txt.rangeFromPoints(point, point2);
+            editor.cursor.set(range.start, range.end);
           }
+          else editor.cursor.set(point);
         }
       }
       this.et.change(event);
@@ -58,13 +56,31 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const numericLen = typeof len === 'number' ? len : 0;
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
     if (isSpecificEdgeSelected)
-        editor.move(numericLen, unit, edge === 'focus' ? 0 : 1, false);
+        editor.move(numericLen, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
     else {
-      if (cursor.isCollapsed()) editor.move(numericLen, unit);
+      const cursor = editor.cursor;
+      if (cursor.isCollapsed()) editor.move(numericLen, unit ?? 'char');
       else {
         if (numericLen > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();
       }
+    }
+    this.et.change(event);
+  };
+
+  public readonly inline = (event: CustomEvent<events.InlineDetail>) => {
+    const {type, store = 'saved', behavior = 'overwrite', data, pos} = event.detail;
+    const editor = this.txt.editor;
+    const slices: EditorSlices = store === 'saved' ? editor.saved : store === 'extra' ? editor.extra : editor.local;
+    switch (behavior) {
+      case 'stack':
+        slices.insStack(type, data);
+        break;
+      case 'erase':
+        slices.insErase(type, data);
+        break;
+      default:
+        slices.insOverwrite(type, data);
     }
     this.et.change(event);
   };

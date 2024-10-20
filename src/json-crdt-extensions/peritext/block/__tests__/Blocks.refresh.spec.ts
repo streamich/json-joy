@@ -49,6 +49,20 @@ const runTests = (setup: () => Kit) => {
     expect(firstBlockHash1).toBe(firstBlockHash2);
     expect(secondBlockHash1).not.toBe(secondBlockHash2);
   });
+
+  test('updates block hash when part of it is annotated bold', () => {
+    const {editor, peritext} = setup();
+    editor.cursor.setAt(10, 10);
+    peritext.refresh();
+    const rootHash1 = peritext.blocks.root.hash;
+    const firstBlockHash1 = peritext.blocks.root.children[0].hash;
+    editor.saved.insOverwrite('b');
+    peritext.refresh();
+    const rootHash2 = peritext.blocks.root.hash;
+    const firstBlockHash2 = peritext.blocks.root.children[0].hash;
+    expect(rootHash1).not.toBe(rootHash2);
+    expect(firstBlockHash1).not.toBe(firstBlockHash2);
+  });
 };
 
 describe('Blocks.refresh()', () => {

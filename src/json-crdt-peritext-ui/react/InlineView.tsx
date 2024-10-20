@@ -3,35 +3,54 @@ import {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 import {useIsoLayoutEffect} from './hooks';
 import {ElementAttr} from '../constants';
 import {TextView} from './TextView';
+import {usePeritext} from './context';
+import {CaretView} from './selection/CaretView';
+import {FocusView} from './selection/FocusView';
+import {AnchorView} from './selection/AnchorView';
 
-export interface Props {
+const {createElement: h, Fragment} = React;
+
+export interface InlineViewProps {
   inline: Inline;
 }
 
-export const InlineView: React.FC<Props> = ({inline}) => {
+/** @todo Add ability to compute `.hash` for {@link Inline} nodes and use for memoization. */
+export const InlineView: React.FC<InlineViewProps> = (props) => {
+  const {inline} = props;
+  const {renderers} = usePeritext();
   const ref = React.useRef<HTMLSpanElement>(null);
+  const text = inline.text();
+
   useIsoLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
-    (span as any)[ElementAttr.InlineOffset] = inline.pos();
-    const hash = inline.start.hash;
-    if ((span as any).hash__ !== hash) {
-      (span as any).hash__ = hash;
-      span.textContent = inline.text();
-    }
-  });
+    (span as any)[ElementAttr.InlineOffset] = inline;
+  }, [text]);
 
-  const isSelection = inline.isSelected();
-  useIsoLayoutEffect(() => {
-    const span = ref.current;
-    if (!span) return;
-    if (isSelection) {
-      span.style.backgroundColor = '#d7e9fd';
-      span.style.borderRadius = '0.25em 1px 1px.25em';
-    } else {
-      span.style.backgroundColor = 'transparent';
-    }
-  }, [isSelection]);
+  const attributes: React.HTMLAttributes<HTMLSpanElement> = {
+    className: 'jsonjoy-text',
+  };
 
-  return <TextView ref={ref} text={inline.text()} />;
+  let children: React.ReactNode = <TextView ref={ref} attr={attributes} text={inline.text()} />;
+  for (const map of renderers) children = map.inline?.(props, children, attributes) ?? children;
+
+  if (inline.hasCursor()) {
+    const elements: React.ReactNode[] = [];
+    const attr = inline.attr();
+    const key = inline.key();
+    const cursorStart = inline.cursorStart();
+    if (cursorStart) {
+      const k = key + 'a';
+      elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} />) : <AnchorView key={k} />);
+    }
+    elements.push(h(Fragment, {key}, children));
+    const cursorEnd = inline.cursorEnd();
+    if (cursorEnd) {
+      const k = key + 'b';
+      elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} left />) : <AnchorView key={k} />);
+    }
+    children = h(Fragment, null, elements);
+  }
+
+  return children;
 };

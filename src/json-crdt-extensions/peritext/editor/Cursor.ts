@@ -57,8 +57,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public move(move: number): void {
     const {start, end} = this;
-    start.move(move);
-    if (start !== end) end.move(move);
+    start.step(move);
+    if (start !== end) end.step(move);
     this.set(start, end);
   }
 
@@ -105,11 +105,11 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     }
     let point1 = this.start.clone();
     let point2 = point1.clone();
-    if (step > 0) point2.move(1);
-    else if (step < 0) point1.move(-1);
+    if (step > 0) point2.step(1);
+    else if (step < 0) point1.step(-1);
     else if (step === 0) {
-      point1.move(-1);
-      point2.move(1);
+      point1.step(-1);
+      point2.step(1);
     }
     const txt = this.txt;
     const range = txt.range(point1, point2);
