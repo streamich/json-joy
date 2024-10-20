@@ -10,11 +10,11 @@ const setup = (
     editor.cursor.setAt(7);
     editor.insert('4567');
     editor.cursor.setAt(0, 2);
-    editor.delBwd();
+    editor.del();
     editor.cursor.setAt(9, 1);
-    editor.delBwd();
+    editor.del();
     editor.cursor.setAt(4, 1);
-    editor.delBwd();
+    editor.del();
   },
 ) => {
   const model = Model.create(void 0, 858549494849333);
@@ -28,7 +28,7 @@ const setup = (
   return {model, peritext, editor};
 };
 
-describe('.fwd1()', () => {
+describe('.fwd()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
     const iterator = editor.fwd(peritext.pointAbsStart());
@@ -154,7 +154,7 @@ describe('.fwd1()', () => {
   });
 });
 
-describe('.bwd1()', () => {
+describe('.bwd()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
     const iterator = editor.bwd(peritext.pointAbsEnd());

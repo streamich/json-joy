@@ -15,11 +15,11 @@ const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?:
   return {model, peritext, editor};
 };
 
-describe('.fwdSkipWord()', () => {
+describe('.eow()', () => {
   test('can go to the end of a word', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!'));
     editor.cursor.setAt(0);
-    const point = editor.fwdSkipWord(editor.cursor.end);
+    const point = editor.eow(editor.cursor.end);
     editor.cursor.end.set(point!);
     expect(editor.cursor.text()).toBe('Hello');
   });
@@ -27,7 +27,7 @@ describe('.fwdSkipWord()', () => {
   test('can skip whitespace between words', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!'));
     editor.cursor.setAt(5);
-    const point = editor.fwdSkipWord(editor.cursor.end);
+    const point = editor.eow(editor.cursor.end);
     editor.cursor.end.set(point!);
     expect(editor.cursor.text()).toBe(' world');
   });
@@ -35,7 +35,7 @@ describe('.fwdSkipWord()', () => {
   test('skipping stops before exclamation mark', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!'));
     editor.cursor.setAt(6);
-    const point = editor.fwdSkipWord(editor.cursor.end);
+    const point = editor.eow(editor.cursor.end);
     editor.cursor.end.set(point!);
     expect(editor.cursor.text()).toBe('world');
   });
@@ -43,7 +43,7 @@ describe('.fwdSkipWord()', () => {
   test('can skip to the end of string', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!'));
     editor.cursor.setAt(11);
-    const point = editor.fwdSkipWord(editor.cursor.end);
+    const point = editor.eow(editor.cursor.end);
     expect(point instanceof Point).toBe(true);
     editor.cursor.end.set(point!);
     expect(editor.cursor.text()).toBe('!');
@@ -55,7 +55,7 @@ describe('.fwdSkipWord()', () => {
     );
     editor.cursor.setAt(0);
     const move = (): string => {
-      const point = editor.fwdSkipWord(editor.cursor.end);
+      const point = editor.eow(editor.cursor.end);
       if (point) editor.cursor.end.set(point);
       return editor.cursor.text();
     };
@@ -71,12 +71,12 @@ describe('.fwdSkipWord()', () => {
   });
 });
 
-describe('.bwdSkipWord()', () => {
+describe('.bow()', () => {
   test('can skip over simple text.', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!\nfoo bar baz'));
     editor.cursor.setAt(editor.txt.str.length());
     const move = (): string => {
-      const point = editor.bwdSkipWord(editor.cursor.start);
+      const point = editor.bow(editor.cursor.start);
       if (point) editor.cursor.start.set(point);
       return editor.cursor.text();
     };
@@ -93,7 +93,7 @@ describe('.bwdSkipWord()', () => {
     );
     editor.cursor.setAt(editor.txt.str.length());
     const move = (): string => {
-      const point = editor.bwdSkipWord(editor.cursor.start);
+      const point = editor.bow(editor.cursor.start);
       if (point) editor.cursor.start.set(point);
       return editor.cursor.text();
     };
