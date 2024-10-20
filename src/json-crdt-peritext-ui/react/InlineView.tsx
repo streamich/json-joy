@@ -12,6 +12,7 @@ export interface InlineViewProps {
   inline: Inline;
 }
 
+/** @todo Add ability to compute `.hash` for {@link Inline} nodes and use for memoization. */
 export const InlineView: React.FC<InlineViewProps> = (props) => {
   const {inline} = props;
   const {renderers} = usePeritext();
