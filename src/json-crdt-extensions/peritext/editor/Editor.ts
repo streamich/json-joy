@@ -117,7 +117,7 @@ export class Editor<T = string> {
       if (!point) return;
       const char = step > 0 ? point.rightChar() : point.leftChar();
       if (!char) return (point = undefined);
-      const end = point.move(step);
+      const end = point.step(step);
       if (end) point = undefined;
       return char;
     };

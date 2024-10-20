@@ -1051,29 +1051,29 @@ describe('.move()', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(1, Anchor.After);
     expect(p.viewPos()).toBe(2);
-    p.move(1);
+    p.step(1);
     expect(p.viewPos()).toBe(3);
-    p.move(2);
+    p.step(2);
     expect(p.viewPos()).toBe(5);
-    p.move(2);
+    p.step(2);
     expect(p.viewPos()).toBe(7);
-    p.move(-3);
+    p.step(-3);
     expect(p.viewPos()).toBe(4);
-    p.move(-3);
+    p.step(-3);
     expect(p.viewPos()).toBe(1);
-    p.move(-3);
+    p.step(-3);
     expect(p.viewPos()).toBe(0);
   });
 
   test('can reach the end of str', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(0, Anchor.After);
-    p.move(1);
-    p.move(2);
-    p.move(3);
-    p.move(4);
-    p.move(5);
-    p.move(6);
+    p.step(1);
+    p.step(2);
+    p.step(3);
+    p.step(4);
+    p.step(5);
+    p.step(6);
     expect(p.isAbsEnd()).toBe(true);
     expect(p.viewPos()).toBe(9);
     expect(p.leftChar()!.view()).toBe('9');
@@ -1083,7 +1083,7 @@ describe('.move()', () => {
   test('can reach the start of str', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(8, Anchor.Before);
-    p.move(-22);
+    p.step(-22);
     expect(p.isAbsStart()).toBe(true);
     expect(p.viewPos()).toBe(0);
     expect(p.rightChar()!.view()).toBe('1');
@@ -1099,7 +1099,7 @@ describe('.move()', () => {
       expect(p.pos()).toBe(i);
       for (let j = i + 1; j < txt.length - 1; j++) {
         const p2 = p.clone();
-        p2.move(j - i);
+        p2.step(j - i);
         expect(p2.pos()).toBe(j);
         expect(p2.anchor).toBe(Anchor.Before);
         expect(p2.rightChar()!.view()).toBe(txt[j]);
@@ -1117,7 +1117,7 @@ describe('.move()', () => {
       expect(p.leftChar()!.view()).toBe(txt[i]);
       for (let j = i + 1; j < txt.length - 1; j++) {
         const p2 = p.clone();
-        p2.move(j - i);
+        p2.step(j - i);
         expect(p2.pos()).toBe(j);
         expect(p2.anchor).toBe(Anchor.After);
         expect(p2.leftChar()!.view()).toBe(txt[j]);
@@ -1134,7 +1134,7 @@ describe('.move()', () => {
       expect(p.viewPos()).toBe(i);
       for (let j = i - 1; j > 0; j--) {
         const p2 = p.clone();
-        p2.move(j - i);
+        p2.step(j - i);
         expect(p2.pos()).toBe(j);
         expect(p2.anchor).toBe(Anchor.Before);
         expect(p2.rightChar()!.view()).toBe(txt[j]);

@@ -420,14 +420,16 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
    *
+   * @param length How many characters to move by. Positive number moves the
+   *     point to the right, negative number moves the point to the left.
    * @returns Returns `true` if the absolute end of the string is reached.
    */
-  public move(skip: number): boolean {
-    if (!skip) return this.isAbs();
+  public step(length: number): boolean {
+    if (!length) return this.isAbs();
     const anchor = this.anchor;
     if (anchor !== Anchor.After) this.refAfter();
-    if (skip > 0) {
-      const nextId = this.nextId(skip);
+    if (length > 0) {
+      const nextId = this.nextId(length);
       if (!nextId) {
         this.refAbsEnd();
         return true;
@@ -436,7 +438,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
         if (anchor !== Anchor.After) this.refBefore();
       }
     } else {
-      const prevId = this.prevId(-skip);
+      const prevId = this.prevId(-length);
       if (!prevId) {
         this.refAbsStart();
         return true;

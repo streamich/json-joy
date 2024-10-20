@@ -50,8 +50,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public move(move: number): void {
     const {start, end} = this;
-    start.move(move);
-    if (start !== end) end.move(move);
+    start.step(move);
+    if (start !== end) end.step(move);
     this.set(start, end);
   }
 
