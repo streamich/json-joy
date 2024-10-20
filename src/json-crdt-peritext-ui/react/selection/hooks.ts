@@ -7,7 +7,6 @@ export const useCaret = () => {
   useBrowserLayoutEffect(() => {
     const span = ref.current;
     if (!span) return;
-    console.log('useCaret');
     clearTimeout(timer.current as any);
     timer.current = setTimeout(() => {
       const selection = window.getSelection();
