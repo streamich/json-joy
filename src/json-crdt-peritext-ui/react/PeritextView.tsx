@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {rule} from 'nano-theme';
 import {context, type PeritextSurfaceContextValue} from './context';
 import {BlockView} from './BlockView';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
@@ -6,6 +7,14 @@ import {PeritextDomController} from '../events/PeritextDomController';
 import {renderers as defaultRenderers} from '../renderers/default';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {RendererMap} from './types';
+
+const blockClass = rule({
+  out: 0,
+  'caret-color': 'transparent',
+  '::selection': {
+    bgc: 'transparent',
+  },
+});
 
 /**
  * @todo The PeritextView should return some imperative API, such as the methods
@@ -15,12 +24,11 @@ import type {RendererMap} from './types';
 export interface Props {
   peritext: Peritext;
   renderers?: RendererMap[];
-  debug?: boolean;
   onRender?: () => void;
 }
 
 /** @todo Is `React.memo` needed here? */
-export const PeritextView: React.FC<Props> = React.memo(({peritext, renderers = [defaultRenderers], debug, onRender}) => {
+export const PeritextView: React.FC<Props> = React.memo(({peritext, renderers = [defaultRenderers], onRender}) => {
   const [, setTick] = React.useState(0);
   const ref = React.useRef<HTMLElement | null>(null);
   const controller = React.useRef<PeritextDomController | undefined>(undefined);
@@ -52,12 +60,13 @@ export const PeritextView: React.FC<Props> = React.memo(({peritext, renderers = 
     dom: controller.current,
     renderers,
     rerender,
-    debug,
   };
 
   return (
     <context.Provider value={value}>
-      <BlockView el={(el) => ref.current = el} hash={block.hash} block={block} />
+      <div ref={div => ref.current = div} className={blockClass}>
+        <BlockView hash={block.hash} block={block} />
+      </div>
     </context.Provider>
   );
 });

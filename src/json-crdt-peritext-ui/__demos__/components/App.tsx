@@ -45,7 +45,7 @@ export const App: React.FC = ({}) => {
           <div style={{padding: '16px 16px 0'}}>
             <button onClick={() => setDebug((x) => !x)}>Toggle debug mode</button>
           </div>
-          <PeritextView debug={debug} peritext={peritext} onRender={handleRender} />
+          <PeritextView peritext={peritext} onRender={handleRender} />
         </div>
         {debug && (
           <div className={panelClass + panelDebugClass}>

@@ -7,7 +7,6 @@ export interface PeritextSurfaceContextValue {
   peritext: Peritext;
   renderers: RendererMap[];
   dom?: PeritextDomController;
-  debug?: boolean;
   rerender: () => void;
 }
 
