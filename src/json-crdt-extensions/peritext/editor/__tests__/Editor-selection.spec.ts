@@ -16,6 +16,16 @@ const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?:
   return {model, peritext, editor};
 };
 
+describe('.selectAll()', () => {
+  test('can select whole document', () => {
+    const {editor} = setup();
+    editor.selectAll();
+    expect(editor.cursor.text()).toBe('Hello world!');
+    expect(editor.cursor.start.viewPos()).toBe(0);
+    expect(editor.cursor.end.viewPos()).toBe(12);
+  });
+});
+
 describe('.eow()', () => {
   test('can go to the end of a word', () => {
     const {editor} = setup((editor) => editor.insert('Hello world!'));
