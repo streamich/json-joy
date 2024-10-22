@@ -5,7 +5,7 @@ import {Anchor} from '../../rga/constants';
 import {Editor} from '../Editor';
 
 const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {
-  const model = Model.withLogicalClock(sid);
+  const model = Model.create(void 0, sid);
   model.api.root({
     text: '',
     slices: [],
