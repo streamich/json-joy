@@ -5,7 +5,7 @@ import {EditorSlices} from './EditorSlices';
 import {Chars} from '../constants';
 import {next, prev} from 'sonic-forest/lib/util';
 import {ChunkSlice} from '../util/ChunkSlice';
-import {isLetter} from './util';
+import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
 import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
@@ -42,12 +42,12 @@ export class Editor<T = string> {
   }
 
   /**
+   * Cursor is the the current user selection. It can be a caret or a range. If
+   * range is collapsed to a single point, it is a *caret*.
+   *
    * Returns the first cursor in the text and removes all other cursors. If
    * there is no cursor, creates one and inserts it at the start of the text.
    * To work with multiple cursors, use `.cursors()` method.
-   *
-   * Cursor is the the current user selection. It can be a caret or a range. If
-   * range is collapsed to a single point, it is a *caret*.
    */
   public get cursor(): Cursor<T> {
     let cursor: Cursor<T> | undefined;
@@ -68,8 +68,12 @@ export class Editor<T = string> {
     for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) callback(cursor);
   }
 
+  public delCursor(cursor: Cursor<T>): void {
+    this.local.del(cursor);
+  }
+
   public delCursors(): void {
-    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) this.local.del(cursor);
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) this.delCursor(cursor);
   }
 
   // ------------------------------------------------------------- text editing
@@ -117,7 +121,7 @@ export class Editor<T = string> {
     });
   }
 
-  // --------------------------------------------------------------- navigation
+  // ----------------------------------------------------------------- movement
 
   /**
    * Returns an iterator through visible text, one `step` characters at a time,
@@ -193,58 +197,6 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
-  public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
-    switch (unit) {
-      case 'point': return point;
-      case 'all': return point;
-      case 'block': return point;
-
-      case 'char': {
-        const newPoint = point.clone();
-        newPoint.step(steps);
-        return newPoint;
-      }
-      case 'word': {
-        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
-        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bow(point);
-        return point;
-      }
-      case 'line': {
-        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
-        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
-        return point;
-      }
-    }
-  }
-
-  /**
-   * Move all cursors given number of units.
-   *
-   * @param steps Number of steps to move.
-   * @param unit The unit of move per step: "char", "word", "line".
-   * @param endpoint 0 for "focus", 1 for "anchor".
-   * @param collapse Whether to collapse the range to a single point.
-   */
-  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 = 0, collapse: boolean = true): void {
-    this.cursors((cursor) => {
-      let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
-      point = this.skip(point.clone(), steps, unit);
-      if (collapse) cursor.set(point); else cursor.setEndpoint(point, endpoint);
-    });
-  }
-
-  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
-    let next: ChunkSlice<T> | undefined;
-    let prev: ChunkSlice<T> | undefined;
-    while ((next = iterator())) {
-      const char = (next.view() as string)[0];
-      if (char === '\n') break;
-      prev = next;
-    }
-    if (!prev) return;
-    return this.txt.point(prev.id(), Anchor.After);
-  }
-
   /**
    * End of word iterator (eow). Skips a word forward. A word is defined by the
    * `predicate` function, which returns `true` if the character is part of the
@@ -286,6 +238,18 @@ export class Editor<T = string> {
     const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
     if (endPoint) endPoint.anchor = Anchor.Before;
     return endPoint || point;
+  }
+
+  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
+    let next: ChunkSlice<T> | undefined;
+    let prev: ChunkSlice<T> | undefined;
+    while ((next = iterator())) {
+      const char = (next.view() as string)[0];
+      if (char === '\n') break;
+      prev = next;
+    }
+    if (!prev) return;
+    return this.txt.point(prev.id(), Anchor.After);
   }
 
   /** Find end of line, starting from given point. */
@@ -335,10 +299,78 @@ export class Editor<T = string> {
     } else return this.start();
   }
 
+  public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
+    switch (unit) {
+      case 'point': return point;
+      case 'all': return point;
+      case 'block': return point;
+
+      case 'char': {
+        const newPoint = point.clone();
+        newPoint.step(steps);
+        return newPoint;
+      }
+      case 'word': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
+        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bow(point);
+        return point;
+      }
+      case 'line': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
+        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
+        return point;
+      }
+      case 'block': {
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
+        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
+        return point;
+      }
+    }
+  }
+
+  /**
+   * Move all cursors given number of units.
+   *
+   * @param steps Number of steps to move.
+   * @param unit The unit of move per step: "char", "word", "line".
+   * @param endpoint 0 for "focus", 1 for "anchor".
+   * @param collapse Whether to collapse the range to a single point.
+   */
+  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 = 0, collapse: boolean = true): void {
+    this.cursors((cursor) => {
+      let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
+      point = this.skip(point.clone(), steps, unit);
+      if (collapse) cursor.set(point); else cursor.setEndpoint(point, endpoint);
+    });
+  }
+
   // ---------------------------------------------------------------- selection
 
   public rangeAll() {
     return this.txt.rangeAll();
+  }
+
+  public selectAll(): boolean {
+    const range = this.txt.rangeAll();
+    if (!range) return false;
+    this.cursor.setRange(range);
+    return true;
+  }
+
+  /**
+   * Selects a word by extending the selection to the left and right of the point.
+   *
+   * @param point Point to the right of which is the starting character of the word.
+   * @returns Range which contains the word.
+   */
+  public rangeWord(point: Point<T>): Range<T> | undefined {
+    const char = point.rightChar() || point.leftChar();
+    if (!char) return
+    const c = String(char.view())[0];
+    const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
+    const start = this.bow(point, predicate, true);
+    const end = this.eow(point, predicate, true);
+    return this.txt.range(start, end);
   }
 
   /**
@@ -349,30 +381,24 @@ export class Editor<T = string> {
    * @param unit Unit of the range expansion.
    * @returns Range which contains the specified unit.
    */
-  public range(point: Point<T>, unit: TextRangeUnit): Range<T> {
+  public range(point: Point<T>, unit: TextRangeUnit): Range<T> | undefined {
+    if (unit === 'word') return this.rangeWord(point);
     const point1 = this.skip(point, -1, unit);
     const point2 = this.skip(point, 1, unit);
     return this.txt.range(point1, point2);
   }
 
-  public selectAll(): boolean {
-    const range = this.txt.rangeAll();
-    if (!range) return false;
-    this.delCursors();
-    this.cursor.setRange(range);
-    return true;
-  }
-
   public select(unit: TextRangeUnit): void {
     this.cursors(cursor => {
-      cursor.setRange(this.range(cursor.start, unit));
+      const range = this.range(cursor.start, unit);
+      if (range) cursor.setRange(range); else this.delCursors
     });
   }
 
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
     const point = this.point(at);
-    if (!unit) this.cursor.set(point);
-    else this.cursor.setRange(this.range(point, unit));
+    this.cursor.set(point);
+    if (unit) this.select(unit);
   }
 
   // --------------------------------------------------------- slice operations
