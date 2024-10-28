@@ -5,22 +5,10 @@ import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {Editor} from '../Editor';
 
-const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {
-  const model = Model.create(void 0, sid);
-  model.api.root({
-    text: '',
-    slices: [],
-  });
-  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
-  const editor = peritext.editor;
-  insert(editor);
-  return {model, peritext, editor};
-};
-
-const runTestsWithAlphabetKit = (getKit: () => Kit) => {
+const runTestsWithAlphabetKit = (setup: () => Kit) => {
   describe('one character movements', () => {
     test('move start to end one char at-a-time', () => {
-      const {editor} = getKit();
+      const {editor} = setup();
       editor.cursor.setAt(0);
       expect(editor.cursor.start.viewPos()).toBe(0);
       expect(editor.cursor.end.viewPos()).toBe(0);
@@ -43,7 +31,7 @@ const runTestsWithAlphabetKit = (getKit: () => Kit) => {
     });
 
     test('move end to start one char at-a-time', () => {
-      const {editor} = getKit();
+      const {editor} = setup();
       editor.cursor.set(editor.end()!);
       expect(editor.cursor.start.viewPos()).toBe(26);
       expect(editor.cursor.end.viewPos()).toBe(26);
@@ -75,9 +63,245 @@ const runTestsWithAlphabetKit = (getKit: () => Kit) => {
       expect(editor.cursor.end.viewPos()).toBe(0);
     });
   });
+
+  describe('.fwd()', () => {
+    test('can use string root as initial point', () => {
+      const {peritext, editor} = setup();
+      const iterator = editor.fwd(peritext.pointAbsStart());
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe(peritext.str.view());
+    });
+  
+    test('can iterate through the entire string', () => {
+      const {peritext, editor} = setup();
+      const start = peritext.pointStart()!;
+      const iterator = editor.fwd(start);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe(peritext.str.view());
+    });
+  
+    test('can iterate through the entire string, starting from ABS start', () => {
+      const {peritext, editor} = setup();
+      const start = peritext.pointAbsStart()!;
+      const iterator = editor.fwd(start);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe(peritext.str.view());
+    });
+  
+    test('can iterate through the entire string, with initial chunk provided', () => {
+      const {peritext, editor} = setup();
+      const start = peritext.pointStart()!;
+      const iterator = editor.fwd(start);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe(peritext.str.view());
+    });
+  
+    test('can iterate starting at an offset', () => {
+      const {peritext, editor} = setup();
+      const start = peritext.pointAt(2);
+      const iterator = editor.fwd(start);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe((peritext.str.view() as string).slice(2));
+    });
+  
+    test('can iterate starting in the middle of second chunk - 2', () => {
+      const {peritext, editor} = setup();
+      const start = peritext.pointAt(6);
+      const iterator = editor.fwd(start);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe((peritext.str.view() as string).slice(6));
+    });
+  
+    test('.isMarker() returns true for block split chars', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(10);
+      editor.saved.insMarker('p');
+      peritext.overlay.refresh();
+      const start = peritext.pointAt(0);
+      const iterator = editor.fwd(start);
+      let str = '';
+      const bools: boolean[] = [];
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+        bools.push(peritext.overlay.isMarker(res.id()));
+      }
+      expect(str).toBe(peritext.str.view());
+      const res = bools.map((b, i) => b ? (peritext.str.view() as string)[i] : '').filter(Boolean).join('');
+      expect(res).toBe('\n');
+    });
+  });
+
+  describe('.bwd()', () => {
+    test('can use string root as initial point', () => {
+      const {peritext, editor} = setup();
+      const iterator = editor.bwd(peritext.pointAbsEnd());
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
+    });
+  
+    test('can iterate through the entire string', () => {
+      const {peritext, editor} = setup();
+      const end = peritext.pointEnd()!;
+      const iterator = editor.bwd(end);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
+    });
+  
+    test('can iterate through the entire string, starting from ABS end', () => {
+      const {peritext, editor} = setup();
+      const end = peritext.pointAbsEnd()!;
+      const iterator = editor.bwd(end);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
+    });
+  
+    test('can iterate through the entire string, with initial chunk provided', () => {
+      const {peritext, editor} = setup();
+      const end = peritext.pointEnd()!;
+      const iterator = editor.bwd(end);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
+    });
+  
+    test('can iterate starting in the middle of first chunk', () => {
+      const {peritext, editor} = setup();
+      const point = peritext.pointAt(2);
+      const iterator = editor.bwd(point);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('ba');
+    });
+  
+    test('can iterate starting in the middle of first chunk, with initial chunk provided', () => {
+      const {peritext, editor} = setup();
+      const point = peritext.pointAt(2);
+      const iterator = editor.bwd(point);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('ba');
+    });
+  
+    test('can iterate starting in the middle of second chunk', () => {
+      const {peritext, editor} = setup();
+      const point = peritext.pointAt(6);
+      const iterator = editor.bwd(point);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('fedcba');
+    });
+  
+    test('can iterate starting in the middle of second chunk, with initial chunk provided', () => {
+      const {peritext, editor} = setup();
+      const point = peritext.pointAt(6);
+      const iterator = editor.bwd(point);
+      let str = '';
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+      }
+      expect(str).toBe('fedcba');
+    });
+  
+    test('returns true for block split chars', () => {
+      const {peritext, editor} = setup();
+      editor.cursor.setAt(14);
+      editor.saved.insMarker('p');
+      peritext.overlay.refresh();
+      const start = peritext.pointAt(17);
+      const iterator = editor.bwd(start);
+      let str = '';
+      const bools: boolean[] = [];
+      while (1) {
+        const res = iterator();
+        if (!res) break;
+        str += res.view();
+        bools.push(peritext.overlay.isMarker(res.id()));
+      }
+      expect(str).toBe('po\nnmlkjihgfedcba');
+      const res = bools.map((b, i) => b ? 'po\nnmlkjihgfedcba'[i] : '').filter(Boolean).join('');
+      expect(res).toBe('\n');
+    });
+  });  
 };
 
 runAlphabetKitTestSuite(runTestsWithAlphabetKit);
+
+const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?: number) => {
+  const model = Model.create(void 0, sid);
+  model.api.root({
+    text: '',
+    slices: [],
+  });
+  const peritext = new Peritext(model, model.api.str(['text']).node, model.api.arr(['slices']).node);
+  const editor = peritext.editor;
+  insert(editor);
+  return {model, peritext, editor};
+};
 
 describe('.eow()', () => {
   test('can go to the end of a word', () => {
