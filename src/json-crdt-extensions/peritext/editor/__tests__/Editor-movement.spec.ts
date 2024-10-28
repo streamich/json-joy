@@ -1,5 +1,6 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
+import {Kit, runAlphabetKitTestSuite, setupAlphabetChunkSplitKit, setupAlphabetKit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit, setupAlphabetWrittenInReverse, setupAlphabetWrittenInReverseWithDeletes} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {Editor} from '../Editor';
@@ -16,63 +17,67 @@ const setup = (insert = (editor: Editor) => editor.insert('Hello world!'), sid?:
   return {model, peritext, editor};
 };
 
-describe('one character movements', () => {
-  test('move start to end one char at-a-time', () => {
-    const {editor} = setup((editor) => editor.insert('abc'));
-    editor.cursor.setAt(0);
-    expect(editor.cursor.start.viewPos()).toBe(0);
-    expect(editor.cursor.end.viewPos()).toBe(0);
-    editor.cursor.end.step(1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(1);
-    expect(editor.cursor.end.viewPos()).toBe(1);
-    editor.cursor.end.step(1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(2);
-    expect(editor.cursor.end.viewPos()).toBe(2);
-    editor.cursor.end.step(1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(3);
-    expect(editor.cursor.end.viewPos()).toBe(3);
-    editor.cursor.end.step(1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(3);
-    expect(editor.cursor.end.viewPos()).toBe(3);
-  });
+const runTestsWithAlphabetKit = (getKit: () => Kit) => {
+  describe('one character movements', () => {
+    test('move start to end one char at-a-time', () => {
+      const {editor} = getKit();
+      editor.cursor.setAt(0);
+      expect(editor.cursor.start.viewPos()).toBe(0);
+      expect(editor.cursor.end.viewPos()).toBe(0);
+      editor.cursor.end.step(1);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(1);
+      expect(editor.cursor.end.viewPos()).toBe(1);
+      editor.cursor.end.step(1);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(2);
+      expect(editor.cursor.end.viewPos()).toBe(2);
+      editor.cursor.end.step(1);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(3);
+      expect(editor.cursor.end.viewPos()).toBe(3);
+      editor.cursor.end.step(33);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(26);
+      expect(editor.cursor.end.viewPos()).toBe(26);
+    });
 
-  test('move end to start one char at-a-time', () => {
-    const {editor} = setup((editor) => editor.insert('abc'));
-    editor.cursor.set(editor.end()!);
-    expect(editor.cursor.start.viewPos()).toBe(3);
-    expect(editor.cursor.end.viewPos()).toBe(3);
-    editor.cursor.end.step(1);
-    editor.cursor.end.step(-1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(2);
-    expect(editor.cursor.end.viewPos()).toBe(2);
-    editor.cursor.end.step(1);
-    editor.cursor.end.step(-2);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(1);
-    expect(editor.cursor.end.viewPos()).toBe(1);
-    editor.cursor.end.step(-1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(0);
-    expect(editor.cursor.end.viewPos()).toBe(0);
-    editor.cursor.end.step(-1);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(0);
-    expect(editor.cursor.end.viewPos()).toBe(0);
-    editor.cursor.end.step(-2);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(0);
-    expect(editor.cursor.end.viewPos()).toBe(0);
-    editor.cursor.end.step(-5);
-    editor.cursor.set(editor.cursor.end);
-    expect(editor.cursor.start.viewPos()).toBe(0);
-    expect(editor.cursor.end.viewPos()).toBe(0);
+    test('move end to start one char at-a-time', () => {
+      const {editor} = getKit();
+      editor.cursor.set(editor.end()!);
+      expect(editor.cursor.start.viewPos()).toBe(26);
+      expect(editor.cursor.end.viewPos()).toBe(26);
+      editor.cursor.end.step(1);
+      editor.cursor.end.step(-1);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(25);
+      expect(editor.cursor.end.viewPos()).toBe(25);
+      editor.cursor.end.step(1);
+      editor.cursor.end.step(-2);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(24);
+      expect(editor.cursor.end.viewPos()).toBe(24);
+      editor.cursor.end.step(-33);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(0);
+      expect(editor.cursor.end.viewPos()).toBe(0);
+      editor.cursor.end.step(-1);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(0);
+      expect(editor.cursor.end.viewPos()).toBe(0);
+      editor.cursor.end.step(-2);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(0);
+      expect(editor.cursor.end.viewPos()).toBe(0);
+      editor.cursor.end.step(-5);
+      editor.cursor.set(editor.cursor.end);
+      expect(editor.cursor.start.viewPos()).toBe(0);
+      expect(editor.cursor.end.viewPos()).toBe(0);
+    });
   });
-});
+};
+
+runAlphabetKitTestSuite(runTestsWithAlphabetKit);
 
 describe('.eow()', () => {
   test('can go to the end of a word', () => {

@@ -125,8 +125,8 @@ export class Editor<T = string> {
   // ----------------------------------------------------------------- movement
 
   /**
-   * Returns an iterator through visible text, one `step` characters at a time,
-   * starting from a given {@link Point}.
+   * Returns an iterator through visible text, one `step`, one character at a
+   * time, starting from a given {@link Point}.
    *
    * @param start The starting point.
    * @param step Number of visible characters to skip.
@@ -198,6 +198,18 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
+  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
+    let next: ChunkSlice<T> | undefined;
+    let prev: ChunkSlice<T> | undefined;
+    while ((next = iterator())) {
+      const char = (next.view() as string)[0];
+      if (char === '\n') break;
+      prev = next;
+    }
+    if (!prev) return;
+    return this.txt.point(prev.id(), Anchor.After);
+  }
+
   /**
    * End of word iterator (eow). Skips a word forward. A word is defined by the
    * `predicate` function, which returns `true` if the character is part of the
@@ -239,18 +251,6 @@ export class Editor<T = string> {
     const endPoint = this.skipWord(bwd, predicate, firstLetterFound);
     if (endPoint) endPoint.anchor = Anchor.Before;
     return endPoint || point;
-  }
-
-  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
-    let next: ChunkSlice<T> | undefined;
-    let prev: ChunkSlice<T> | undefined;
-    while ((next = iterator())) {
-      const char = (next.view() as string)[0];
-      if (char === '\n') break;
-      prev = next;
-    }
-    if (!prev) return;
-    return this.txt.point(prev.id(), Anchor.After);
   }
 
   /** Find end of line, starting from given point. */
