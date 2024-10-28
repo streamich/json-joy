@@ -300,31 +300,32 @@ export class Editor<T = string> {
   }
 
   public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
+    if (!steps) return point;
     switch (unit) {
-      case 'point': return point;
-      case 'all': return point;
-      case 'block': return point;
-
+      case 'point': {
+        const p = point.clone();
+        return p.halfstep(steps), p;
+      }
       case 'char': {
-        const newPoint = point.clone();
-        newPoint.step(steps);
-        return newPoint;
+        const p = point.clone();
+        return p.step(steps), p;
       }
       case 'word': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eow(point);
-        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bow(point);
+        else for (let i = 0; i < -steps; i++) point = this.bow(point);
         return point;
       }
       case 'line': {
         if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
-        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
+        else for (let i = 0; i < -steps; i++) point = this.bol(point);
         return point;
       }
       case 'block': {
-        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eol(point);
-        else if (steps < 0) for (let i = 0; i < -steps; i++) point = this.bol(point);
+        if (steps > 0) for (let i = 0; i < steps; i++) point = this.eob(point);
+        else for (let i = 0; i < -steps; i++) point = this.bob(point);
         return point;
       }
+      case 'all': return steps > 0 ? this.end() : this.start();
     }
   }
 
