@@ -178,7 +178,7 @@ export class Editor<T = string> {
    * @param firstLetterFound Whether the first letter has already been found. If
    *     not, will skip any characters until the first letter, which is matched
    *     by the `predicate` is found.
-   * @returns Point after the last character skipped.
+   * @returns Point after the last skipped character.
    */
   private skipWord(
     iterator: CharIterator<T>,
@@ -198,6 +198,12 @@ export class Editor<T = string> {
     return this.txt.point(prev.id(), Anchor.After);
   }
 
+  /**
+   * Hard skips line, skips to the next "\n" newline character.
+   *
+   * @param iterator Character iterator.
+   * @returns Point after the last skipped character.
+   */
   private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
     let next: ChunkSlice<T> | undefined;
     let prev: ChunkSlice<T> | undefined;
@@ -255,7 +261,7 @@ export class Editor<T = string> {
 
   /** Find end of line, starting from given point. */
   public eol(point: Point<T>): Point<T> {
-    return this.skipLine(this.fwd(point)) || point;
+    return this.skipLine(this.fwd(point)) || this.end();
   }
 
   /** Find beginning of line, starting from given point. */
@@ -263,7 +269,7 @@ export class Editor<T = string> {
     const bwd = this.bwd(point);
     const endPoint = this.skipLine(bwd);
     if (endPoint) endPoint.anchor = Anchor.Before;
-    return endPoint || point;
+    return endPoint || this.start();
   }
 
   /**
@@ -300,6 +306,15 @@ export class Editor<T = string> {
     } else return this.start();
   }
 
+  /**
+   * Move a point given number of steps in a specified direction. The unit of
+   * one move step is defined by the `unit` parameter.
+   *
+   * @param point The point to start from.
+   * @param steps Number of steps to move. Negative number moves backward.
+   * @param unit The unit of move per step: "char", "word", "line", etc.
+   * @returns The destination point after the move.
+   */
   public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
     if (!steps) return point;
     switch (unit) {
@@ -336,10 +351,15 @@ export class Editor<T = string> {
    *
    * @param steps Number of steps to move.
    * @param unit The unit of move per step: "char", "word", "line".
-   * @param endpoint 0 for "focus", 1 for "anchor".
+   * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 = 0, collapse: boolean = true): void {
+  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
+    if (endpoint === 2) {
+      this.move(steps, unit, 0, collapse);
+      if (!collapse) this.move(steps, unit, 1, collapse);
+      return;
+    }
     this.cursors((cursor) => {
       let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
       point = this.skip(point.clone(), steps, unit);

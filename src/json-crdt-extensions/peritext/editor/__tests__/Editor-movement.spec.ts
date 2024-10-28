@@ -1,9 +1,10 @@
 import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
-import {Kit, runAlphabetKitTestSuite, setupAlphabetChunkSplitKit, setupAlphabetKit, setupAlphabetWithDeletesKit, setupAlphabetWithTwoChunksKit, setupAlphabetWrittenInReverse, setupAlphabetWrittenInReverseWithDeletes} from '../../__tests__/setup';
+import {Kit, runAlphabetKitTestSuite, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
 import {Editor} from '../Editor';
+import {TextRangeUnit} from '../types';
 
 const runTestsWithAlphabetKit = (setup: () => Kit) => {
   describe('one character movements', () => {
@@ -440,11 +441,8 @@ describe('.eol()', () => {
       return editor.cursor.text();
     };
     expect(gotoEol()).toBe('Hello world!');
-    expect(gotoEol()).toBe('Hello world!');
     editor.cursor.end.step(1);
     expect(editor.cursor.text()).toBe('Hello world!\n');
-    expect(gotoEol()).toBe('Hello world!\nfoo bar baz');
-    expect(gotoEol()).toBe('Hello world!\nfoo bar baz');
     expect(gotoEol()).toBe('Hello world!\nfoo bar baz');
   });
 });
@@ -470,8 +468,10 @@ describe('.bol()', () => {
       return editor.cursor.text();
     };
     expect(gotoBol()).toBe('foo bar baz');
-    expect(gotoBol()).toBe('foo bar baz');
-    expect(gotoBol()).toBe('foo bar baz');
+    const point = editor.bol(editor.cursor.start);
+    const point2 = editor.bol(point);
+    expect(point.isRelStart()).toBe(true);
+    expect(point2.isRelStart()).toBe(true);
   });
 
   test('can go to the beginning of text', () => {
@@ -483,12 +483,16 @@ describe('.bol()', () => {
       return editor.cursor.text();
     };
     expect(gotoBol()).toBe('foo bar baz');
-    expect(gotoBol()).toBe('foo bar baz');
-    expect(gotoBol()).toBe('foo bar baz');
+    const point = editor.bol(editor.cursor.start);
+    const point2 = editor.bol(point);
+    expect(point.isRelStart()).toBe(true);
+    expect(point2.isRelStart()).toBe(true);
     editor.cursor.start.step(-1);
     expect(editor.cursor.text()).toBe('\nfoo bar baz');
-    expect(gotoBol()).toBe('Hello world!\nfoo bar baz');
-    expect(gotoBol()).toBe('Hello world!\nfoo bar baz');
+    const point3 = editor.bol(editor.cursor.start);
+    const point4 = editor.bol(point);
+    expect(point3.isRelStart()).toBe(true);
+    expect(point4.isRelStart()).toBe(true);
   });
 });
 
@@ -564,4 +568,85 @@ describe('.eob()', () => {
     expect(editor.eob(peritext.pointAt(6, Anchor.Before))!.viewPos()).toBe(7);
     expect(editor.eob(peritext.pointAt(6, Anchor.After))!.viewPos()).toBe(7);
   });
+});
+
+const runParagraphTests = (setup: () => Kit) => {
+  describe('.skip()', () => {
+    const setupParagraphs = () => {
+      const kit = setup();
+      kit.editor.cursor.setAt(6);
+      kit.editor.del();
+      kit.editor.saved.insMarker('p');
+      kit.editor.cursor.setAt(2);
+      kit.editor.insert(' ');
+      kit.editor.cursor.setAt(9);
+      kit.editor.insert('dka and wo');
+      kit.editor.delCursors();
+      kit.peritext.refresh();
+      return kit;
+    };
+  
+    test('can skip to the end and start of a word', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(18);
+      peritext.overlay.refresh();
+      const point1 = editor.skip(editor.cursor.start, -1, 'word');
+      const point2 = editor.skip(editor.cursor.start, 1, 'word');
+      expect(point1.rightChar()?.view()).toBe('w');
+      expect(point2.leftChar()?.view()).toBe('d');
+    });
+
+    test('can skip two words backwards', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(18);
+      peritext.overlay.refresh();
+      const point = editor.skip(editor.cursor.start, -2, 'word');
+      expect(point.rightChar()?.view()).toBe('a');
+    });
+
+    test('can skip to the beginning of line', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(18);
+      peritext.overlay.refresh();
+      const point = editor.skip(editor.cursor.start, -1, 'line');
+      expect(point.leftChar()?.view()).toBe('\n');
+    });
+
+    test('can skip to the beginning of block', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(18);
+      peritext.overlay.refresh();
+      const point = editor.skip(editor.cursor.start, -1, 'block');
+      expect(point.leftChar()?.view()).toBe('o');
+    });
+
+    test('can iterate through the whole document forwards using various skip methods', () => {
+      const {peritext, editor} = setupParagraphs();
+      const units: Record<TextRangeUnit, number> = {
+        point: 0,
+        char: 0,
+        word: 0,
+        line: 0,
+      } as Record<TextRangeUnit, number>;
+      for (const u of Object.keys(units)) {
+        const unit = u as TextRangeUnit;
+        let point = peritext.pointAbsStart();
+        while (1) {
+          point = editor.skip(point, 1, unit);
+          if (!point || point.isRelEnd() || point.isAbsEnd()) break;
+          units[unit]++;
+        }
+      }
+      expect(units.point > units.char).toBe(true);
+      expect(units.char > units.word).toBe(true);
+      // expect(units.word > units.line).toBe(true);
+    });
+  });
+};
+
+describe('basic "hello world"', () => {
+  runParagraphTests(setupHelloWorldKit);
+});
+describe('"hello world" with edits', () => {
+  runParagraphTests(setupHelloWorldWithFewEditsKit);
 });
