@@ -382,7 +382,7 @@ describe('.isCollapsed()', () => {
     const {peritext} = setup();
     const range = peritext.rangeAt(2, 1);
     peritext.editor.cursor.setAt(2, 1);
-    peritext.editor.delBwd();
+    peritext.editor.del();
     expect(range.isCollapsed()).toBe(true);
   });
 });
@@ -411,9 +411,9 @@ describe('.expand()', () => {
       const tombstone2 = peritext.rangeAt(3, 1);
       tombstone2.expand();
       peritext.editor.cursor.setRange(tombstone1);
-      peritext.editor.delBwd();
+      peritext.editor.del();
       peritext.editor.cursor.setRange(tombstone2);
-      peritext.editor.delBwd();
+      peritext.editor.del();
       const range = peritext.rangeAt(1, 1);
       range.expand();
       expect(range.start.pos()).toBe(tombstone1.start.pos());

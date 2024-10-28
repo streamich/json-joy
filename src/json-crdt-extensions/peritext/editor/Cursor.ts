@@ -1,5 +1,4 @@
 import {tick} from '../../../json-crdt-patch';
-import {Anchor} from '../rga/constants';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -7,6 +6,16 @@ import {PersistedSlice} from '../slice/PersistedSlice';
 export class Cursor<T = string> extends PersistedSlice<T> {
   public get anchorSide(): CursorAnchor {
     return this.type as CursorAnchor;
+  }
+
+  /** @todo Rename to `isStartFocus`. */
+  public isStartFocused(): boolean {
+    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
+  }
+
+  /** @todo Rename to `isEndFocus`. */
+  public isEndFocused(): boolean {
+    return this.type === CursorAnchor.Start || this.start.cmp(this.end) === 0;
   }
 
   // ---------------------------------------------------------------- mutations
@@ -36,7 +45,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    * Move one of the edges of the cursor to a new point.
    *
    * @param point Point to set the edge to.
-   * @param endpoint 0 for "focus", 1 for "anchor."
+   * @param endpoint 0 for "focus", 1 for "anchor".
    */
   public setEndpoint(point: Point<T>, endpoint: 0 | 1 = 0): void {
     if (this.start === this.end) this.end = this.end.clone();
@@ -50,8 +59,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public move(move: number): void {
     const {start, end} = this;
-    start.move(move);
-    if (start !== end) end.move(move);
+    start.step(move);
+    if (start !== end) end.step(move);
     this.set(start, end);
   }
 
@@ -66,11 +75,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
    */
   public collapse(): void {
     const deleted = this.txt.delStr(this);
-    if (deleted) {
-      const {start, rga} = this;
-      if (start.anchor === Anchor.After) this.setAfter(start.id);
-      else this.setAfter(start.prevId() || rga.id);
-    }
+    if (deleted) this.collapseToStart();
   }
 
   /**
@@ -87,14 +92,32 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     this.setAfter(shift ? tick(textId, shift) : textId);
   }
 
-  public delBwd(): void {
-    const isCollapsed = this.isCollapsed();
-    if (isCollapsed) {
-      const range = this.txt.findCharBefore(this.start);
-      if (!range) return;
-      this.set(range.start, range.end);
+  /**
+   * Deletes the given number of characters from the current caret position.
+   * Negative values delete backwards. If the cursor selects a range, the
+   * range is removed and the cursor is set at the start of the range.
+   *
+   * @param step Number of characters to delete. Negative values delete
+   *     backwards.
+   */
+  public del(step: number = -1): void {
+    if (!this.isCollapsed()) {
+      this.collapse();
+      return;
     }
-    this.collapse();
+    const point1 = this.start.clone();
+    const point2 = point1.clone();
+    if (step > 0) point2.step(1);
+    else if (step < 0) point1.step(-1);
+    else if (step === 0) {
+      point1.step(-1);
+      point2.step(1);
+    }
+    const txt = this.txt;
+    const range = txt.range(point1, point2);
+    txt.delStr(range);
+    point1.refAfter();
+    this.set(point1);
   }
 
   // ---------------------------------------------------------------- Printable

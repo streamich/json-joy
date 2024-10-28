@@ -6,7 +6,6 @@ import {Position} from '../constants';
 import type {AbstractRga, Chunk} from '../../../json-crdt/nodes/rga';
 import type {Stateful} from '../types';
 import type {Printable} from 'tree-dump/lib/types';
-import {CONST, updateNum} from '../../../json-hash';
 
 /**
  * A "point" in a rich-text Peritext document. It is a combination of a
@@ -268,6 +267,10 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, off, 1);
   }
 
+  public char(): ChunkSlice<T> | undefined {
+    return this.anchor === Anchor.Before ? this.rightChar() : this.leftChar();
+  }
+
   /**
    * Checks if the point is an absolute point. An absolute point is a point that
    * references the string itself, rather than a character in the string. It can
@@ -420,14 +423,16 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    * Moves point past given number of visible characters. Accepts positive
    * and negative distances.
    *
+   * @param length How many characters to move by. Positive number moves the
+   *     point to the right, negative number moves the point to the left.
    * @returns Returns `true` if the absolute end of the string is reached.
    */
-  public move(skip: number): boolean {
-    if (!skip) return this.isAbs();
+  public step(length: number): boolean {
+    if (!length) return this.isAbs();
     const anchor = this.anchor;
     if (anchor !== Anchor.After) this.refAfter();
-    if (skip > 0) {
-      const nextId = this.nextId(skip);
+    if (length > 0) {
+      const nextId = this.nextId(length);
       if (!nextId) {
         this.refAbsEnd();
         return true;
@@ -436,7 +441,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
         if (anchor !== Anchor.After) this.refBefore();
       }
     } else {
-      const prevId = this.prevId(-skip);
+      const prevId = this.prevId(-length);
       if (!prevId) {
         this.refAbsStart();
         return true;
@@ -446,6 +451,32 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
       }
     }
     return false;
+  }
+
+  /**
+   * Moves the to the next point, which does not necessarily result in a visible
+   * character skip.
+   *
+   * @param length How many points to move by.
+   * @returns Returns `true` if the absolute end of the string is reached.
+   */
+  public halfstep(length: number): boolean {
+    this.refVisible();
+    const isOdd = !!(length % 2);
+    if (isOdd) {
+      if (length > 0) {
+        length--;
+        if (this.anchor === Anchor.After) this.refBefore();
+        else if (this.isAbs()) return true;
+        else this.anchor = Anchor.After;
+      } else {
+        length++;
+        if (this.anchor === Anchor.Before) this.refAfter();
+        else if (this.isAbs()) return true;
+        else this.anchor = Anchor.Before;
+      }
+    }
+    return this.step(length / 2);
   }
 
   // ----------------------------------------------------------------- Stateful
@@ -464,7 +495,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const name = lite ? '' : this.toStringName() + ' ';
     const pos = this.pos();
     const id = printTs(this.id);
-    const anchor = this.anchor === Anchor.Before ? '.▢' : '▢.';
+    let char: string | undefined = this.char()?.view() as string | undefined;
+    char = typeof char === 'string' ? JSON.stringify(char) : '▢';
+    const anchor = this.anchor === Anchor.Before ? '.' + char : char + '.';
     return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }
