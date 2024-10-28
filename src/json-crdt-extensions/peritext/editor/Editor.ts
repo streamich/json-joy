@@ -279,6 +279,9 @@ export class Editor<T = string> {
   public eob(point: Point<T>): Point<T> {
     const txt = this.txt;
     const overlay = txt.overlay;
+    point = point.clone();
+    point.halfstep(1);
+    if (point.isAbsEnd()) return point;
     let overlayPoint = overlay.getOrNextHigher(point);
     if (!overlayPoint) return this.end();
     if (point.cmp(overlayPoint) === 0) overlayPoint = next(overlayPoint);
