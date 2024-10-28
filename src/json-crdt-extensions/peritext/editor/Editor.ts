@@ -299,6 +299,9 @@ export class Editor<T = string> {
    */
   public bob(point: Point<T>): Point<T> {
     const overlay = this.txt.overlay;
+    point = point.clone();
+    point.halfstep(-1);
+    if (point.isAbsStart()) return point;
     let overlayPoint = overlay.getOrNextLower(point);
     if (!overlayPoint) return this.start();
     while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = prev(overlayPoint);

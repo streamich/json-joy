@@ -519,7 +519,7 @@ describe('.bob()', () => {
       editor.saved.insMarker('p');
     });
     peritext.overlay.refresh();
-    expect(editor.bob(peritext.pointAt(3, Anchor.Before))!.viewPos()).toBe(3);
+    expect(editor.bob(peritext.pointAt(3, Anchor.Before))!.viewPos()).toBe(0);
     expect(editor.bob(peritext.pointAt(3, Anchor.After))!.viewPos()).toBe(3);
     expect(editor.bob(peritext.pointAt(4, Anchor.Before))!.viewPos()).toBe(3);
     expect(editor.bob(peritext.pointAt(4, Anchor.After))!.viewPos()).toBe(3);
@@ -642,6 +642,20 @@ const runParagraphTests = (setup: () => Kit) => {
       expect(point5.isAbsEnd()).toBe(true);
     });
 
+    test('can move backward by block skipping', () => {
+      const {peritext, editor} = setupParagraphs();
+      const point = peritext.pointAbsEnd();
+      const point2 = editor.skip(point, -1, 'block');
+      const point3 = editor.skip(point2, -1, 'block');
+      const point4 = editor.skip(point3, -1, 'block');
+      const point5 = editor.skip(point4, -1, 'block');
+      expect(point2!.rightChar()?.view()).toBe('\n');
+      expect(point3!.rightChar()?.view()).toBe('h');
+      expect(point4!.rightChar()?.view()).toBe('h');
+      expect(point5!.rightChar()?.view()).toBe('h');
+      expect(point5.isAbsStart()).toBe(true);
+    });
+
     test('can iterate through the whole document forwards using various skip methods', () => {
       const {peritext, editor} = setupParagraphs();
       const units: Record<TextRangeUnit, number> = {
@@ -665,12 +679,37 @@ const runParagraphTests = (setup: () => Kit) => {
       expect(units.word > units.line).toBe(true);
       expect(units.line >= units.block).toBe(true);
     });
+
+    test('can iterate through the whole document backwards using various skip methods', () => {
+      const {peritext, editor} = setupParagraphs();
+      const units: Record<TextRangeUnit, number> = {
+        point: 0,
+        char: 0,
+        word: 0,
+        line: 0,
+        block: 0,
+      } as Record<TextRangeUnit, number>;
+      for (const u of Object.keys(units)) {
+        const unit = u as TextRangeUnit;
+        let point = peritext.pointAbsEnd();
+        while (1) {
+          point = editor.skip(point, -1, unit);
+          if (!point || point.isRelStart() || point.isAbsStart()) break;
+          units[unit]++;
+        }
+      }
+      expect(units.point > units.char).toBe(true);
+      expect(units.char > units.word).toBe(true);
+      expect(units.word > units.line).toBe(true);
+      expect(units.line >= units.block).toBe(true);
+    });
   });
 };
 
 describe('basic "hello world"', () => {
   runParagraphTests(setupHelloWorldKit);
 });
-// describe('"hello world" with edits', () => {
-//   runParagraphTests(setupHelloWorldWithFewEditsKit);
-// });
+
+describe('"hello world" with edits', () => {
+  runParagraphTests(setupHelloWorldWithFewEditsKit);
+});
