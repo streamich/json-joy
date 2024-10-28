@@ -130,9 +130,7 @@ describe('.eow()', () => {
   });
 
   test('can select a character', () => {
-    const {editor, peritext} = setup((editor) =>
-      editor.insert('x a x'),
-    );
+    const {editor, peritext} = setup((editor) => editor.insert('x a x'));
     const point1 = peritext.pointAt(2);
     const point2 = editor.eow(point1);
     expect(point1.id.sid).toBe(point2!.id.sid);

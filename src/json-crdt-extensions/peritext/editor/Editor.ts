@@ -51,8 +51,9 @@ export class Editor<T = string> {
    */
   public get cursor(): Cursor<T> {
     let cursor: Cursor<T> | undefined;
-    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); i = iterator();)
-      if (!cursor) cursor = i; else this.local.del(i);
+    for (let i: Cursor<T> | undefined, iterator = this.cursors0(); (i = iterator()); )
+      if (!cursor) cursor = i;
+      else this.local.del(i);
     return cursor ?? this.addCursor(this.txt.rangeAt(0));
   }
 
@@ -65,7 +66,7 @@ export class Editor<T = string> {
   }
 
   public cursors(callback: (cursor: Cursor<T>) => void): void {
-    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) callback(cursor);
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); (cursor = iterator()); ) callback(cursor);
   }
 
   public delCursor(cursor: Cursor<T>): void {
@@ -73,7 +74,7 @@ export class Editor<T = string> {
   }
 
   public delCursors(): void {
-    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); cursor = iterator();) this.delCursor(cursor);
+    for (let cursor: Cursor<T> | undefined, iterator = this.cursors0(); (cursor = iterator()); ) this.delCursor(cursor);
   }
 
   // ------------------------------------------------------------- text editing
@@ -325,7 +326,8 @@ export class Editor<T = string> {
         else for (let i = 0; i < -steps; i++) point = this.bob(point);
         return point;
       }
-      case 'all': return steps > 0 ? this.end() : this.start();
+      case 'all':
+        return steps > 0 ? this.end() : this.start();
     }
   }
 
@@ -341,7 +343,8 @@ export class Editor<T = string> {
     this.cursors((cursor) => {
       let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
       point = this.skip(point.clone(), steps, unit);
-      if (collapse) cursor.set(point); else cursor.setEndpoint(point, endpoint);
+      if (collapse) cursor.set(point);
+      else cursor.setEndpoint(point, endpoint);
     });
   }
 
@@ -366,7 +369,7 @@ export class Editor<T = string> {
    */
   public rangeWord(point: Point<T>): Range<T> | undefined {
     const char = point.rightChar() || point.leftChar();
-    if (!char) return
+    if (!char) return;
     const c = String(char.view())[0];
     const predicate: CharPredicate<string> = isLetter(c) ? isLetter : isWhitespace(c) ? isWhitespace : isPunctuation;
     const start = this.bow(point, predicate, true);
@@ -390,9 +393,10 @@ export class Editor<T = string> {
   }
 
   public select(unit: TextRangeUnit): void {
-    this.cursors(cursor => {
+    this.cursors((cursor) => {
       const range = this.range(cursor.start, unit);
-      if (range) cursor.setRange(range); else this.delCursors
+      if (range) cursor.setRange(range);
+      else this.delCursors;
     });
   }
 
@@ -430,11 +434,7 @@ export class Editor<T = string> {
   // ------------------------------------------------------------------ various
 
   public point(at: Position<T>): Point<T> {
-    return typeof at === 'number'
-    ? this.txt.pointAt(at)
-    : Array.isArray(at)
-      ? this.txt.pointAt(at[0], at[1])
-      : at;
+    return typeof at === 'number' ? this.txt.pointAt(at) : Array.isArray(at) ? this.txt.pointAt(at[0], at[1]) : at;
   }
 
   public end(): Point<T> {

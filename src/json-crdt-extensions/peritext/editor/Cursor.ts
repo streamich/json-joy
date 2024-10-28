@@ -10,12 +10,12 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   /** @todo Rename to `isStartFocus`. */
   public isStartFocused(): boolean {
-    return this.type === CursorAnchor.End || (this.start.cmp(this.end) === 0);
+    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
   }
 
   /** @todo Rename to `isEndFocus`. */
   public isEndFocused(): boolean {
-    return this.type === CursorAnchor.Start || (this.start.cmp(this.end) === 0);
+    return this.type === CursorAnchor.Start || this.start.cmp(this.end) === 0;
   }
 
   // ---------------------------------------------------------------- mutations
@@ -105,8 +105,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
       this.collapse();
       return;
     }
-    let point1 = this.start.clone();
-    let point2 = point1.clone();
+    const point1 = this.start.clone();
+    const point2 = point1.clone();
     if (step > 0) point2.step(1);
     else if (step < 0) point1.step(-1);
     else if (step === 0) {

@@ -1164,7 +1164,8 @@ describe('.halfstep()', () => {
   test('can reach the end of str', () => {
     const {peritext} = setupWithChunkedText();
     const p = peritext.pointAt(0, Anchor.After);
-    const endReached = p.halfstep(1) || p.halfstep(2) || p.halfstep(3) || p.halfstep(4) || p.halfstep(5) || p.halfstep(6);
+    const endReached =
+      p.halfstep(1) || p.halfstep(2) || p.halfstep(3) || p.halfstep(4) || p.halfstep(5) || p.halfstep(6);
     expect(endReached).toBe(true);
     expect(p.isAbsEnd()).toBe(true);
     expect(p.viewPos()).toBe(9);
@@ -1190,7 +1191,7 @@ describe('.halfstep()', () => {
     const points: Point[] = [];
     let point: Point | undefined = peritext.pointAbsStart();
     while (point) {
-      let nextPoint = point.clone();
+      const nextPoint = point.clone();
       const endReached = nextPoint.halfstep(1);
       if (endReached) {
         point = undefined;
@@ -1215,7 +1216,7 @@ describe('.halfstep()', () => {
     const points: Point[] = [];
     let point: Point | undefined = peritext.pointAbsEnd();
     while (point) {
-      let nextPoint = point.clone();
+      const nextPoint = point.clone();
       const endReached = nextPoint.halfstep(-1);
       if (endReached) {
         point = undefined;

@@ -154,7 +154,7 @@ describe('.range()', () => {
       const range3 = editor.range(peritext.pointAt(20), 'word');
       expect(range3?.text()).toBe('setup');
     });
-  
+
     test('can select punctuation', () => {
       const {editor, peritext} = setup((editor) => {
         editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
@@ -166,7 +166,7 @@ describe('.range()', () => {
       const range1 = editor.range(peritext.pointAt(30), 'word');
       expect(range1?.text()).toBe('=>');
     });
-  
+
     test('can select punctuation at the end of text', () => {
       const {editor, peritext} = setup((editor) => {
         editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
@@ -177,7 +177,7 @@ describe('.range()', () => {
       const range2 = editor.range(peritext.pointAt(peritext.str.length() - 3), 'word');
       expect(range2?.text()).toBe("!'));");
     });
-  
+
     test('can select whitespace', () => {
       const {editor, peritext} = setup((editor) => {
         editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
