@@ -148,7 +148,7 @@ describe('.selectAt()', () => {
   describe('can select a word at specific point', () => {
     test('can select a word', () => {
       const {editor} = setup((editor) => {
-        editor.insert("abc def ghi");
+        editor.insert('abc def ghi');
       });
       editor.selectAt(5, 'word');
       expect(editor.cursor.text()).toBe('def');
@@ -156,7 +156,7 @@ describe('.selectAt()', () => {
 
     test('can select a line', () => {
       const {editor} = setup((editor) => {
-        editor.insert("abc\ndef\nghi");
+        editor.insert('abc\ndef\nghi');
       });
       editor.selectAt(5, 'line');
       expect(editor.cursor.text()).toBe('def');
@@ -164,7 +164,7 @@ describe('.selectAt()', () => {
 
     test('can select a block', () => {
       const {editor, peritext} = setup((editor) => {
-        editor.insert("abcdefghi");
+        editor.insert('abcdefghi');
         editor.cursor.setAt(6);
         editor.saved.insMarker(['p']);
         editor.cursor.setAt(3);
