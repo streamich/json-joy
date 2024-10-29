@@ -118,17 +118,18 @@ export class SelectionController implements UiLifeCycles {
         if (at === -1) return;
         this.selectionStart = at;
         const pressed = this.opts.keys.pressed;
+        const et = this.opts.et;
         if (pressed.has('Shift')) {
           ev.preventDefault();
-          this.opts.et.cursor({unit: 'word'});
+          et.cursor({unit: 'word'});
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
-          this.opts.et.cursor({at, edge: 'new'});
+          et.cursor({at, edge: 'new'});
         } else {
           this.isMouseDown = true;
           const at = this.posAtPoint(ev.clientX, ev.clientY);
           ev.preventDefault();
-          this.opts.et.cursor({at});
+          et.cursor({at});
         }
         break;
       }
@@ -150,13 +151,20 @@ export class SelectionController implements UiLifeCycles {
     }
   };
 
+  private clientX = 0;
+  private clientY = 0;
+
   private readonly onMouseMove = (ev: MouseEvent): void => {
     if (!this.isMouseDown) return;
     const at = this.selectionStart;
     if (at < 0) return;
-    const to = this.posAtPoint(ev.clientX, ev.clientY);
+    const {clientX, clientY} = ev;
+    const to = this.posAtPoint(clientX, clientY);
     if (to < 0) return;
     ev.preventDefault();
+    if (clientX === this.clientX && clientY === this.clientY) return;
+    this.clientX = clientX;
+    this.clientY = clientY;
     this._cursor[0]({at: to, edge: 'focus'});
   };
 
