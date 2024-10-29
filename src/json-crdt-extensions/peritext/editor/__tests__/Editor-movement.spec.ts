@@ -3,6 +3,7 @@ import {Peritext} from '../../Peritext';
 import {Kit, runAlphabetKitTestSuite, setupHelloWorldKit, setupHelloWorldWithFewEditsKit} from '../../__tests__/setup';
 import {Point} from '../../rga/Point';
 import {Anchor} from '../../rga/constants';
+import {CursorAnchor} from '../../slice/constants';
 import {Editor} from '../Editor';
 import {TextRangeUnit} from '../types';
 
@@ -577,21 +578,21 @@ describe('.eob()', () => {
 });
 
 const runParagraphTests = (setup: () => Kit) => {
-  describe('.skip()', () => {
-    const setupParagraphs = () => {
-      const kit = setup();
-      kit.editor.cursor.setAt(6);
-      kit.editor.del();
-      kit.editor.saved.insMarker('p');
-      kit.editor.cursor.setAt(2);
-      kit.editor.insert(' ');
-      kit.editor.cursor.setAt(9);
-      kit.editor.insert('dka and wo');
-      kit.editor.delCursors();
-      kit.peritext.refresh();
-      return kit;
-    };
+  const setupParagraphs = () => {
+    const kit = setup();
+    kit.editor.cursor.setAt(6);
+    kit.editor.del();
+    kit.editor.saved.insMarker('p');
+    kit.editor.cursor.setAt(2);
+    kit.editor.insert(' ');
+    kit.editor.cursor.setAt(9);
+    kit.editor.insert('dka and wo');
+    kit.editor.delCursors();
+    kit.peritext.refresh();
+    return kit;
+  };
 
+  describe('.skip()', () => {
     test('can skip to the end and start of a word', () => {
       const {peritext, editor} = setupParagraphs();
       editor.cursor.setAt(18);
@@ -712,6 +713,53 @@ const runParagraphTests = (setup: () => Kit) => {
       expect(units.word > units.line).toBe(true);
       expect(units.line >= units.block).toBe(true);
       expect(units.block > units.all).toBe(true);
+    });
+  });
+
+  describe('.move()', () => {
+    test('moves both ends of two selections two characters forward', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.addCursor(peritext.rangeAt(2, 2));
+      editor.addCursor(peritext.rangeAt(8, 3));
+      const getTexts = (): string[] => {
+        const texts: string[] = [];
+        editor.cursors((cursor) => {
+          texts.push(cursor.text());
+        });
+        return texts;
+      };
+      expect(getTexts()).toEqual([' l', 'odk']);
+      peritext.refresh();
+      editor.move(2, 'char', 2, false);
+      peritext.refresh();
+      expect(getTexts()).toEqual(['lo', 'ka ']);
+    });
+
+    test('can move anchor of the current selection', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(2, 2);
+      peritext.refresh();
+      editor.move(-1, 'char', 1, false);
+      peritext.refresh();
+      expect(editor.cursor.text()).toBe('e l');
+      expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+      editor.move(5, 'char', 1, false);
+      peritext.refresh();
+      expect(editor.cursor.text()).toBe('lo');
+      expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
+    });
+
+    test('can move focus of the current selection', () => {
+      const {peritext, editor} = setupParagraphs();
+      editor.cursor.setAt(2, 2);
+      peritext.refresh();
+      expect(editor.cursor.text()).toBe(' l');
+      editor.move(1, 'char', 0, false);
+      peritext.refresh();
+      expect(editor.cursor.text()).toBe(' ll');
+      editor.move(-5, 'char', 0, false);
+      peritext.refresh();
+      expect(editor.cursor.text()).toBe('he');
     });
   });
 };

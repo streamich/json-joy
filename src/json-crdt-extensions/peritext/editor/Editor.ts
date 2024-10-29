@@ -361,16 +361,27 @@ export class Editor<T = string> {
    * @param collapse Whether to collapse the range to a single point.
    */
   public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
-    if (endpoint === 2) {
-      this.move(steps, unit, 0, collapse);
-      if (!collapse) this.move(steps, unit, 1, collapse);
-      return;
-    }
     this.cursors((cursor) => {
-      let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
-      point = this.skip(point.clone(), steps, unit);
-      if (collapse) cursor.set(point);
-      else cursor.setEndpoint(point, endpoint);
+      switch (endpoint) {
+        case 0: {
+          let point = cursor.focus();
+          point = this.skip(point, steps, unit);
+          if (collapse) cursor.set(point); else cursor.setEndpoint(point, 0);
+          break;
+        }
+        case 1: {
+          let point = cursor.anchor();
+          point = this.skip(point, steps, unit);
+          if (collapse) cursor.set(point); else cursor.setEndpoint(point, 1);
+          break;
+        }
+        case 2: {
+          const start = this.skip(cursor.start, steps, unit);
+          const end = collapse ? start.clone() : this.skip(cursor.end, steps, unit);
+          cursor.set(start, end);
+          break;
+        }
+      }
     });
   }
 
