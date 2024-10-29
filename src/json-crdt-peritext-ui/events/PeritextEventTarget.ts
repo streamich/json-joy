@@ -18,7 +18,7 @@ export class PeritextEventTarget extends TypedEventTarget<PeritextEventMap> {
     this.defaults[type]?.(event);
   }
 
-  public change(ev?: Event): void {
+  public change(ev?: CustomEvent<any>): void {
     this.dispatch('change', {ev});
   }
 

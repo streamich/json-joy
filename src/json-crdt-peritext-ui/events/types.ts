@@ -5,7 +5,7 @@ import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
  * Dispatched every time any other event is dispatched.
  */
 export interface ChangeDetail {
-  ev?: InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail;
+  ev?: CustomEvent<InsertDetail | DeleteDetail | CursorDetail | InlineDetail | MarkerDetail>;
 }
 
 export interface InsertDetail {

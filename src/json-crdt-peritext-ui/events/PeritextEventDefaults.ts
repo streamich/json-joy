@@ -10,7 +10,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   ) {}
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {
-    // console.log('change', event?.type, event?.detail);
+    // console.log('change', event?.detail.ev?.type, event?.detail.ev?.detail);
   };
 
   public readonly insert = (event: CustomEvent<events.InsertDetail>) => {
@@ -28,9 +28,11 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
   };
 
   public readonly cursor = (event: CustomEvent<events.CursorDetail>) => {
-    const {at, len, unit, edge} = event.detail;
+    const {at, edge, len = 0, unit} = event.detail;
     const txt = this.txt;
     const editor = txt.editor;
+
+    // If `at` is specified.
     if (at && at !== -1) {
       const point = editor.point(at);
       switch (edge) {
@@ -56,18 +58,33 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
       this.et.change(event);
       return;
     }
-    const numericLen = typeof len === 'number' ? len : 0;
+
+    // If `edge` is specified.
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
-    if (isSpecificEdgeSelected) editor.move(numericLen, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
-    else {
+    if (isSpecificEdgeSelected) {
+      editor.move(len, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
+      this.et.change(event);
+      return;
+    }
+
+    // If `len` is specified.
+    if (len) {
       const cursor = editor.cursor;
-      if (cursor.isCollapsed()) editor.move(numericLen, unit ?? 'char');
+      if (cursor.isCollapsed()) editor.move(len, unit ?? 'char');
       else {
-        if (numericLen > 0) cursor.collapseToEnd();
+        if (len > 0) cursor.collapseToEnd();
         else cursor.collapseToStart();
       }
+      this.et.change(event);
+      return;
     }
-    this.et.change(event);
+
+    // If `unit` is specified.
+    if (unit) {
+      editor.select(unit);
+      this.et.change(event);
+      return;
+    }
   };
 
   public readonly inline = (event: CustomEvent<events.InlineDetail>) => {

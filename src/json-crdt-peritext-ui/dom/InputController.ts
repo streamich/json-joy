@@ -52,9 +52,9 @@ export class InputController implements UiLifeCycles {
     const inputType = event.inputType;
     switch (inputType) {
       case 'insertParagraph': {
-        editor.saved.insMarker('p');
-        editor.cursor.move(1);
-        this.et.change(event);
+        // editor.saved.insMarker('p');
+        // editor.cursor.move(1);
+        // this.et.change(event);
         break;
       }
       case 'insertFromComposition':
