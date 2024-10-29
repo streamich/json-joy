@@ -77,7 +77,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe(peritext.str.view());
     });
-  
+
     test('can iterate through the entire string', () => {
       const {peritext, editor} = setup();
       const start = peritext.pointStart()!;
@@ -90,7 +90,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe(peritext.str.view());
     });
-  
+
     test('can iterate through the entire string, starting from ABS start', () => {
       const {peritext, editor} = setup();
       const start = peritext.pointAbsStart()!;
@@ -103,7 +103,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe(peritext.str.view());
     });
-  
+
     test('can iterate through the entire string, with initial chunk provided', () => {
       const {peritext, editor} = setup();
       const start = peritext.pointStart()!;
@@ -116,7 +116,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe(peritext.str.view());
     });
-  
+
     test('can iterate starting at an offset', () => {
       const {peritext, editor} = setup();
       const start = peritext.pointAt(2);
@@ -129,7 +129,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe((peritext.str.view() as string).slice(2));
     });
-  
+
     test('can iterate starting in the middle of second chunk - 2', () => {
       const {peritext, editor} = setup();
       const start = peritext.pointAt(6);
@@ -142,7 +142,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe((peritext.str.view() as string).slice(6));
     });
-  
+
     test('.isMarker() returns true for block split chars', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(10);
@@ -159,7 +159,10 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
         bools.push(peritext.overlay.isMarker(res.id()));
       }
       expect(str).toBe(peritext.str.view());
-      const res = bools.map((b, i) => b ? (peritext.str.view() as string)[i] : '').filter(Boolean).join('');
+      const res = bools
+        .map((b, i) => (b ? (peritext.str.view() as string)[i] : ''))
+        .filter(Boolean)
+        .join('');
       expect(res).toBe('\n');
     });
   });
@@ -176,7 +179,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
     });
-  
+
     test('can iterate through the entire string', () => {
       const {peritext, editor} = setup();
       const end = peritext.pointEnd()!;
@@ -189,7 +192,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
     });
-  
+
     test('can iterate through the entire string, starting from ABS end', () => {
       const {peritext, editor} = setup();
       const end = peritext.pointAbsEnd()!;
@@ -202,7 +205,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
     });
-  
+
     test('can iterate through the entire string, with initial chunk provided', () => {
       const {peritext, editor} = setup();
       const end = peritext.pointEnd()!;
@@ -215,7 +218,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('zyxwvutsrqponmlkjihgfedcba');
     });
-  
+
     test('can iterate starting in the middle of first chunk', () => {
       const {peritext, editor} = setup();
       const point = peritext.pointAt(2);
@@ -228,7 +231,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('ba');
     });
-  
+
     test('can iterate starting in the middle of first chunk, with initial chunk provided', () => {
       const {peritext, editor} = setup();
       const point = peritext.pointAt(2);
@@ -241,7 +244,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('ba');
     });
-  
+
     test('can iterate starting in the middle of second chunk', () => {
       const {peritext, editor} = setup();
       const point = peritext.pointAt(6);
@@ -254,7 +257,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('fedcba');
     });
-  
+
     test('can iterate starting in the middle of second chunk, with initial chunk provided', () => {
       const {peritext, editor} = setup();
       const point = peritext.pointAt(6);
@@ -267,7 +270,7 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
       }
       expect(str).toBe('fedcba');
     });
-  
+
     test('returns true for block split chars', () => {
       const {peritext, editor} = setup();
       editor.cursor.setAt(14);
@@ -284,10 +287,13 @@ const runTestsWithAlphabetKit = (setup: () => Kit) => {
         bools.push(peritext.overlay.isMarker(res.id()));
       }
       expect(str).toBe('po\nnmlkjihgfedcba');
-      const res = bools.map((b, i) => b ? 'po\nnmlkjihgfedcba'[i] : '').filter(Boolean).join('');
+      const res = bools
+        .map((b, i) => (b ? 'po\nnmlkjihgfedcba'[i] : ''))
+        .filter(Boolean)
+        .join('');
       expect(res).toBe('\n');
     });
-  });  
+  });
 };
 
 runAlphabetKitTestSuite(runTestsWithAlphabetKit);
@@ -585,7 +591,7 @@ const runParagraphTests = (setup: () => Kit) => {
       kit.peritext.refresh();
       return kit;
     };
-  
+
     test('can skip to the end and start of a word', () => {
       const {peritext, editor} = setupParagraphs();
       editor.cursor.setAt(18);
@@ -664,6 +670,7 @@ const runParagraphTests = (setup: () => Kit) => {
         word: 0,
         line: 0,
         block: 0,
+        all: 0,
       } as Record<TextRangeUnit, number>;
       for (const u of Object.keys(units)) {
         const unit = u as TextRangeUnit;
@@ -678,6 +685,7 @@ const runParagraphTests = (setup: () => Kit) => {
       expect(units.char > units.word).toBe(true);
       expect(units.word > units.line).toBe(true);
       expect(units.line >= units.block).toBe(true);
+      expect(units.block > units.all).toBe(true);
     });
 
     test('can iterate through the whole document backwards using various skip methods', () => {
@@ -688,6 +696,7 @@ const runParagraphTests = (setup: () => Kit) => {
         word: 0,
         line: 0,
         block: 0,
+        all: 0,
       } as Record<TextRangeUnit, number>;
       for (const u of Object.keys(units)) {
         const unit = u as TextRangeUnit;
@@ -702,6 +711,7 @@ const runParagraphTests = (setup: () => Kit) => {
       expect(units.char > units.word).toBe(true);
       expect(units.word > units.line).toBe(true);
       expect(units.line >= units.block).toBe(true);
+      expect(units.block > units.all).toBe(true);
     });
   });
 };
