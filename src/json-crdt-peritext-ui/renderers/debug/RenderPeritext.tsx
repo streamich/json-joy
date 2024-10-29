@@ -43,10 +43,10 @@ export const RenderPeritext: React.FC<RenderPeritextProps> = ({enabled: enabledP
   return (
     <context.Provider value={{enabled}}>
       <div className={blockClass}>
-        <button className={btnClass} onClick={() => setEnabled(x => !x)}>Toggle debug mode</button>
-        <div className={enabled ? childrenDebugClass : undefined}>
-          {children}
-        </div>
+        <button className={btnClass} onClick={() => setEnabled((x) => !x)}>
+          Toggle debug mode
+        </button>
+        <div className={enabled ? childrenDebugClass : undefined}>{children}</div>
         {enabled && (
           <div className={dumpClass}>
             <pre>{peritext + ''}</pre>

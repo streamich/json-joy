@@ -31,9 +31,7 @@ export interface RenderAnchorProps extends AnchorViewProps {}
 export const RenderAnchor: React.FC<RenderAnchorProps> = () => {
   return (
     <span className={blockClass}>
-      <span className={innerClass}>
-        {Char.ZeroLengthSpace}
-      </span>
+      <span className={innerClass}>{Char.ZeroLengthSpace}</span>
     </span>
   );
 };

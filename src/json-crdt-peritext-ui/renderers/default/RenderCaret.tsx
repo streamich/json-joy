@@ -34,7 +34,7 @@ export interface RenderCaretProps extends CaretViewProps {
 
 export const RenderCaret: React.FC<RenderCaretProps> = ({italic, children}) => {
   const [show, setShow] = React.useState(true);
-  useHarmonicIntervalFn(() => setShow((Date.now() % (ms + ms)) > ms), ms);
+  useHarmonicIntervalFn(() => setShow(Date.now() % (ms + ms) > ms), ms);
 
   const style: React.CSSProperties = {
     background: show ? color : 'transparent',

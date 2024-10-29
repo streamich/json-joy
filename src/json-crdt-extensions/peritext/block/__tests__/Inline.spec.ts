@@ -1,6 +1,13 @@
 import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
 import {SliceTypes} from '../../slice/constants';
-import {Inline, InlineAttrCollapsed, InlineAttrContained, InlineAttrEnd, InlineAttrPassing, InlineAttrStart} from '../Inline';
+import {
+  Inline,
+  InlineAttrCollapsed,
+  InlineAttrContained,
+  InlineAttrEnd,
+  InlineAttrPassing,
+  InlineAttrStart,
+} from '../Inline';
 
 const runStrTests = (setup: () => Kit) => {
   describe('.str()', () => {
@@ -184,13 +191,13 @@ const runStrTests = (setup: () => Kit) => {
         expect(inline3.attr().bold[0]).toBeInstanceOf(InlineAttrStart);
         expect(inline4.text()).toBe(str.slice(4, 5));
         expect(inline4.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
-        expect(inline4.attr()['bold'][0]).toBeInstanceOf(InlineAttrEnd);
-        expect(inline4.attr()['italic'][0]).toBeInstanceOf(InlineAttrStart);
-        expect(inline4.attr()['italic'][0].slice.data()).toEqual('very-italic');
+        expect(inline4.attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline4.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline4.attr().italic[0].slice.data()).toEqual('very-italic');
         expect(inline5.text()).toBe(str.slice(5, 8));
         expect(inline5.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
-        expect(inline5.attr()['italic'][0]).toBeInstanceOf(InlineAttrEnd);
-        expect(inline5.attr()['italic'][0].slice.data()).toEqual('very-italic');
+        expect(inline5.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline5.attr().italic[0].slice.data()).toEqual('very-italic');
         expect(inline6.text()).toBe(str.slice(8, 9));
         expect(inline6.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline7.text()).toBe(str.slice(9));

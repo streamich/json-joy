@@ -20,30 +20,35 @@ import type {Slice} from '../slice/types';
 
 /** The attribute started before this inline and ends after this inline. */
 export class InlineAttrPassing {
-  constructor (public slice: Slice) {}
+  constructor(public slice: Slice) {}
 }
 
 /** The attribute starts at the beginning of this inline. */
 export class InlineAttrStart {
-  constructor (public slice: Slice) {}
+  constructor(public slice: Slice) {}
 }
 
 /** The attribute ends at the end of this inline. */
 export class InlineAttrEnd {
-  constructor (public slice: Slice) {}
+  constructor(public slice: Slice) {}
 }
 
 /** The attribute starts and ends in this inline, exactly contains it. */
 export class InlineAttrContained {
-  constructor (public slice: Slice) {}
+  constructor(public slice: Slice) {}
 }
 
 /** The attribute is collapsed at start of this inline. */
 export class InlineAttrCollapsed {
-  constructor (public slice: Slice) {}
+  constructor(public slice: Slice) {}
 }
 
-export type InlineAttr = InlineAttrPassing | InlineAttrStart | InlineAttrEnd | InlineAttrContained | InlineAttrCollapsed;
+export type InlineAttr =
+  | InlineAttrPassing
+  | InlineAttrStart
+  | InlineAttrEnd
+  | InlineAttrContained
+  | InlineAttrCollapsed;
 export type InlineAttrStack = InlineAttr[];
 export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
@@ -122,7 +127,7 @@ export class Inline extends Range implements Printable {
    */
   public attr(): InlineAttrs {
     if (this._attr) return this._attr;
-    const attr: InlineAttrs = this._attr = {};
+    const attr: InlineAttrs = (this._attr = {});
     const point = this.start as OverlayPoint;
     const slices1 = point.layers;
     const slices2 = point.markers;
@@ -168,7 +173,11 @@ export class Inline extends Range implements Printable {
     const stack = attributes[SliceTypes.Cursor];
     if (!stack) return;
     const attribute = stack[0];
-    if (attribute instanceof InlineAttrStart || attribute instanceof InlineAttrContained || attribute instanceof InlineAttrCollapsed) {
+    if (
+      attribute instanceof InlineAttrStart ||
+      attribute instanceof InlineAttrContained ||
+      attribute instanceof InlineAttrCollapsed
+    ) {
       const slice = attribute.slice;
       return slice instanceof Cursor ? slice : void 0;
     }
@@ -203,9 +212,10 @@ export class Inline extends Range implements Printable {
     const cursor = attribute.slice;
     if (!(cursor instanceof Cursor)) return;
     if (attribute instanceof InlineAttrPassing) return ['', ''];
-    if (attribute instanceof InlineAttrStart) return [cursor.isStartFocused() ? 'focus' : 'anchor', '']
-    if (attribute instanceof InlineAttrEnd) return ['', cursor.isEndFocused() ? 'focus' : 'anchor']
-    if (attribute instanceof InlineAttrContained) return cursor.isStartFocused() ? ['focus', 'anchor'] : ['anchor', 'focus']
+    if (attribute instanceof InlineAttrStart) return [cursor.isStartFocused() ? 'focus' : 'anchor', ''];
+    if (attribute instanceof InlineAttrEnd) return ['', cursor.isEndFocused() ? 'focus' : 'anchor'];
+    if (attribute instanceof InlineAttrContained)
+      return cursor.isStartFocused() ? ['focus', 'anchor'] : ['anchor', 'focus'];
     return;
   }
 
@@ -239,7 +249,16 @@ export class Inline extends Range implements Printable {
               'attributes' +
               printTree(
                 tab,
-                attrKeys.map((key) => () => key + ' = ' + stringify(attr[key].map((attr) => attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data()))),
+                attrKeys.map(
+                  (key) => () =>
+                    key +
+                    ' = ' +
+                    stringify(
+                      attr[key].map((attr) =>
+                        attr.slice instanceof Cursor ? [attr.slice.type, attr.slice.data()] : attr.slice.data(),
+                      ),
+                    ),
+                ),
               ),
         !this.texts.length
           ? null

@@ -21,7 +21,6 @@ export class KeyController implements UiLifeCycles {
     document.removeEventListener('focus', this.onFocus);
   }
 
-
   private onKeyDown = (event: KeyboardEvent): void => {
     this.pressed.add(event.key);
   };
