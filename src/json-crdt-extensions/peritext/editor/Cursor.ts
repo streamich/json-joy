@@ -9,11 +9,11 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   }
 
   public isStartFocused(): boolean {
-    return this.type === CursorAnchor.End || (this.start.cmp(this.end) === 0);
+    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
   }
 
   public isEndFocused(): boolean {
-    return this.type === CursorAnchor.Start || (this.start.cmp(this.end) === 0);
+    return this.type === CursorAnchor.Start || this.start.cmp(this.end) === 0;
   }
 
   // ---------------------------------------------------------------- mutations

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {rule, drule, keyframes} from 'nano-theme';
 
-const width = .125;
+const width = 0.125;
 const color = '#07f';
 const animationTime = '1s';
 
@@ -46,7 +46,7 @@ export const RenderFocus: React.FC<RenderFocusProps> = ({left, children}) => {
     <span className={blockClass}>
       <span
         className={innerClass({
-          bdrad: left ? `0 ${width * .5}em ${width * .5}em 0` : `${width * .5}em 0 0 ${width * .5}em`,
+          bdrad: left ? `0 ${width * 0.5}em ${width * 0.5}em 0` : `${width * 0.5}em 0 0 ${width * 0.5}em`,
         })}
       >
         {children}

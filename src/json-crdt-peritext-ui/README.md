@@ -1,6 +1,5 @@
 # Peritext UI
 
-
 ## Controller Events
 
 ### Editing

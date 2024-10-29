@@ -6,7 +6,7 @@ export const throttle = <F extends (...args: any[]) => void>(fn: F, ms: number =
       clearTimeout(timer as number);
       timer = 0;
     }
-  }
+  };
   const out = ((...args) => {
     lastArgs = args as Parameters<F>;
     if (timer) return;

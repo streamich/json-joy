@@ -4,7 +4,10 @@ import type {PeritextEventHandlerMap, PeritextEventTarget} from './PeritextEvent
 import type * as events from './types';
 
 export class PeritextEventDefaults implements PeritextEventHandlerMap {
-  public constructor(protected readonly txt: Peritext, protected readonly et: PeritextEventTarget) {}
+  public constructor(
+    protected readonly txt: Peritext,
+    protected readonly et: PeritextEventTarget,
+  ) {}
 
   public readonly change = (event: CustomEvent<events.ChangeDetail>) => {
     // console.log('change', event?.type, event?.detail);
@@ -40,14 +43,14 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
           editor.addCursor(txt.range(point, point.clone()));
           break;
         }
-        default: { // both
+        default: {
+          // both
           if (!!len && typeof len === 'number') {
             const point2 = point.clone();
             point2.step(len);
             const range = txt.rangeFromPoints(point, point2);
             editor.cursor.set(range.start, range.end);
-          }
-          else editor.cursor.set(point);
+          } else editor.cursor.set(point);
         }
       }
       this.et.change(event);
@@ -55,8 +58,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     }
     const numericLen = typeof len === 'number' ? len : 0;
     const isSpecificEdgeSelected = edge === 'focus' || edge === 'anchor';
-    if (isSpecificEdgeSelected)
-        editor.move(numericLen, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
+    if (isSpecificEdgeSelected) editor.move(numericLen, unit ?? 'char', edge === 'focus' ? 0 : 1, false);
     else {
       const cursor = editor.cursor;
       if (cursor.isCollapsed()) editor.move(numericLen, unit ?? 'char');

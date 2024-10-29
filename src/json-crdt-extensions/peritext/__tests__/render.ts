@@ -7,8 +7,7 @@ const renderInline = (inline: Inline, tab: string): string => {
   const text = stringify(inline.text());
   const attr: any = {};
   const attributes = inline.attr();
-  for (const key in attributes)
-    attr[key] = attributes[key].map(a => a.slice.data());
+  for (const key in attributes) attr[key] = attributes[key].map((a) => a.slice.data());
   return `${tab}${text} ${stringify(attr)}\n`;
 };
 

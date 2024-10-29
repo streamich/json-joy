@@ -41,13 +41,33 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
     const cursorStart = inline.cursorStart();
     if (cursorStart) {
       const k = key + 'a';
-      elements.push(cursorStart.isStartFocused() ? (cursorStart.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} />) : <AnchorView key={k} />);
+      elements.push(
+        cursorStart.isStartFocused() ? (
+          cursorStart.isCollapsed() ? (
+            <CaretView key={k} italic={!!attr.i} />
+          ) : (
+            <FocusView key={k} />
+          )
+        ) : (
+          <AnchorView key={k} />
+        ),
+      );
     }
     elements.push(h(Fragment, {key}, children));
     const cursorEnd = inline.cursorEnd();
     if (cursorEnd) {
       const k = key + 'b';
-      elements.push(cursorEnd.isEndFocused() ? (cursorEnd.isCollapsed() ? <CaretView key={k} italic={!!attr['i']} /> : <FocusView key={k} left />) : <AnchorView key={k} />);
+      elements.push(
+        cursorEnd.isEndFocused() ? (
+          cursorEnd.isCollapsed() ? (
+            <CaretView key={k} italic={!!attr.i} />
+          ) : (
+            <FocusView key={k} left />
+          )
+        ) : (
+          <AnchorView key={k} />
+        ),
+      );
     }
     children = h(Fragment, null, elements);
   }

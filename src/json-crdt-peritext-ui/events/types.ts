@@ -1,5 +1,5 @@
-import type {Point} from "../../json-crdt-extensions/peritext/rga/Point";
-import type {SliceType} from "../../json-crdt-extensions/peritext/slice/types";
+import type {Point} from '../../json-crdt-extensions/peritext/rga/Point';
+import type {SliceType} from '../../json-crdt-extensions/peritext/slice/types';
 
 /**
  * Dispatched every time any other event is dispatched.
@@ -17,7 +17,7 @@ export interface DeleteDetail {
    * Specifies the direction of the deletion. If `-1`, the deletion will be
    * backwards. If `1`, the deletion will be forwards. If `0`, the deletion
    * will execute in both directions (i.e. the whole word, or line, or block).
-   * 
+   *
    * Defaults to `-1`.
    */
   direction?: -1 | 0 | 1;
@@ -27,47 +27,47 @@ export interface DeleteDetail {
 /**
  * The `cursor` event is emitted when caret or selection is changed. The event
  * is applied to all cursors in the document.
- * 
+ *
  * ## Scenarios
- * 
+ *
  * Move caret to a specific position in text:
- * 
+ *
  * ```ts
  * {at: 10}
  * ```
- * 
+ *
  * Move caret relative to current position:
- * 
+ *
  * ```ts
  * {len: 5}
  * ```
- * 
+ *
  * Move caret to the beginning of the word at a specific position:
- * 
+ *
  * ```ts
  * {at: 10, len: -1, unit: 'word'}
  * ```
- * 
+ *
  * Move caret to the end of word starting from the current position:
- * 
+ *
  * ```ts
  * {len: 1, unit: 'word'}
  * ```
- * 
+ *
  * Move *anchor* edge of the selection to the beginning of the current line:
- * 
+ *
  * ```ts
  * {len: -1, unit: 'line', edge: 'anchor'}
  * ```
- * 
+ *
  * Move *focus* edge of the selection to the end of a block at a specific position:
- * 
+ *
  * ```ts
  * {at: 10, len: 1, unit: 'block', edge: 'focus'}
  * ```
- * 
+ *
  * Select the whole document:
- * 
+ *
  * ```ts
  * {unit: 'all'}
  * ```
@@ -77,7 +77,7 @@ export interface CursorDetail {
    * Position in the document to move the cursor to. If `-1` or undefined, the
    * current cursor position will be used as the starting point and `len` will
    * be used to determine the new position.
-   * 
+   *
    * If 2-tuple is provided, the first element is the character index and the
    * second `0 | 1` member specifies the anchor point of the character: `0`
    * for the beginning of the character and `1` for the end of the character.
@@ -99,7 +99,7 @@ export interface CursorDetail {
    * one word in the direction specified by `len`. If `'line'`, the cursor
    * will be moved to the beginning or end of line, in direction specified
    * by `len`.
-   * 
+   *
    * Defaults to `'char'`.
    */
   unit?: 'char' | 'word' | 'line' | 'block' | 'all';
@@ -108,7 +108,7 @@ export interface CursorDetail {
    * Specifies which edge of the selection to move. If `'focus'`, the focus
    * edge will be moved. If `'anchor'`, the anchor edge will be moved. If
    * `'both'`, the whole selection will be moved. Defaults to `'both'`.
-   * 
+   *
    * When the value is set to `'new'`, a new cursor will be created at the
    * position specified by the `at` field.
    */

@@ -62,7 +62,8 @@ export class InputController implements UiLifeCycles {
       case 'insertFromPaste':
       case 'insertFromYank':
       case 'insertReplacementText': // insert or replace existing text by means of a spell checker, auto-correct, writing suggestions or similar
-      case 'insertText': { // insert typed plain
+      case 'insertText': {
+        // insert typed plain
         if (typeof event.data === 'string') {
           et.insert(event.data);
         } else {
@@ -76,35 +77,42 @@ export class InputController implements UiLifeCycles {
         break;
       }
       case 'deleteContentBackward': // delete the content directly before the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its start after the deletion
-      case 'deleteContent': { // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
+      case 'deleteContent': {
+        // delete the selection without specifying the direction of the deletion and this intention is not covered by another inputType
         et.delete(-1, 'char');
         break;
       }
-      case 'deleteContentForward': { // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
+      case 'deleteContentForward': {
+        // delete the content directly after the caret position and this intention is not covered by another inputType or delete the selection with the selection collapsing to its end after the deletion
         et.delete(1, 'char');
         break;
       }
-      case 'deleteWordBackward': { // delete a word directly before the caret position
+      case 'deleteWordBackward': {
+        // delete a word directly before the caret position
         et.delete(-1, 'word');
         break;
       }
-      case 'deleteWordForward': { // delete a word directly after the caret position
+      case 'deleteWordForward': {
+        // delete a word directly after the caret position
         et.delete(1, 'word');
         break;
       }
-      case 'deleteSoftLineBackward': { // delete from the caret to the nearest visual line break before the caret position
+      case 'deleteSoftLineBackward': {
+        // delete from the caret to the nearest visual line break before the caret position
         et.delete(-1, 'line');
         break;
       }
-      case 'deleteSoftLineForward': { // delete from the caret to the nearest visual line break after the caret position
+      case 'deleteSoftLineForward': {
+        // delete from the caret to the nearest visual line break after the caret position
         et.delete(1, 'line');
         break;
       }
       case 'deleteEntireSoftLine': // delete from the nearest visual line break before the caret position to the nearest visual line break after the caret position
       case 'deleteHardLineBackward': // delete from the caret to the nearest beginning of a block element or br element before the caret position
-      case 'deleteHardLineForward': { // delete from the caret to the nearest end of a block element or br element after the caret position
-          et.delete(-1, 'word');
-          break;
+      case 'deleteHardLineForward': {
+        // delete from the caret to the nearest end of a block element or br element after the caret position
+        et.delete(-1, 'word');
+        break;
       }
       // case 'insertLineBreak': { // insert a line break
       // }
@@ -173,7 +181,7 @@ export class InputController implements UiLifeCycles {
       // case 'formatFontColor': { // change the font color
       // }
       // case 'formatFontName': { // change the font name
-      // } 
+      // }
     }
   };
 

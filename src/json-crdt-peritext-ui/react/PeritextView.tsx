@@ -66,14 +66,10 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   };
 
   let children: React.ReactNode = (
-    <div ref={div => ref.current = div} className={'jsonjoy-peritext-editor'}>
+    <div ref={(div) => (ref.current = div)} className={'jsonjoy-peritext-editor'}>
       <BlockView hash={block.hash} block={block} />
     </div>
   );
   for (const map of renderers) children = map.peritext?.(props, children) ?? children;
-  return (
-    <context.Provider value={value}>
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={value}>{children}</context.Provider>;
 });

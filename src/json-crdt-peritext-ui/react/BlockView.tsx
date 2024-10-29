@@ -18,8 +18,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
 
     const elements: React.ReactNode[] = [];
     if (block instanceof LeafBlock) {
-      for (const inline of block.texts())
-        elements.push(<InlineView key={inline.key()} inline={inline} />);
+      for (const inline of block.texts()) elements.push(<InlineView key={inline.key()} inline={inline} />);
     } else {
       const children = block.children;
       const length = children.length;
@@ -30,9 +29,7 @@ export const BlockView: React.FC<BlockViewProps> = React.memo(
     }
 
     let children: React.ReactNode = (
-      <div ref={(element) => el?.(element)}>
-        {elements.length ? elements : Char.ZeroLengthSpace}
-      </div>
+      <div ref={(element) => el?.(element)}>{elements.length ? elements : Char.ZeroLengthSpace}</div>
     );
     for (const map of renderers) children = map.block?.(props, children) ?? children;
     return children;

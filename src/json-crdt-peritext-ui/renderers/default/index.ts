@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {RendererMap} from "../../react/types";
+import {RendererMap} from '../../react/types';
 import {RenderCaret} from './RenderCaret';
 import {RenderFocus} from './RenderFocus';
 import {RenderAnchor} from './RenderAnchor';
@@ -11,21 +11,24 @@ export const renderers: RendererMap = {
   focus: (props, children) => h(RenderFocus, <any>props, children),
   anchor: (props) => h(RenderAnchor, <any>props),
   inline: ({inline}, children, attributes) => {
-    if (inline.attr()['b']) {
+    const attr = inline.attr();
+
+    if (attr.b) {
       const style = attributes.style || (attributes.style = {});
       style.fontWeight = 'bold';
     }
-    if (inline.attr()['i']) {
+    if (attr.i) {
       const style = attributes.style || (attributes.style = {});
       style.fontStyle = 'italic';
     }
-    
+
     const selection = inline.selection();
     if (selection) {
       const style = attributes.style || (attributes.style = {});
       const [left, right] = selection;
       style.backgroundColor = '#d7e9fd';
-      style.borderRadius = left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px';
+      style.borderRadius =
+        left === 'anchor' ? '.25em 1px 1px .25em' : right === 'anchor' ? '1px .25em .25em 1px' : '1px';
     }
 
     return children;
@@ -33,6 +36,6 @@ export const renderers: RendererMap = {
   block: ({hash, block}, children) => {
     const isRoot = block.tag() === '';
     if (isRoot) return children;
-    return h('div', {style: {padding: 32}}, children);
+    return h('div', {style: {padding: '16px 0'}}, children);
   },
 };
