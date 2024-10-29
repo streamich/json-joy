@@ -1,3 +1,13 @@
+# [17.5.0](https://github.com/streamich/json-joy/compare/v17.4.0...v17.5.0) (2024-10-29)
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve .eob() end codition handling ([14a69b8](https://github.com/streamich/json-joy/commit/14a69b84dee61ab1110c0c29b327507eef1b2b7c))
+* **json-crdt-extensions:** 🎸 improve edge condition handling in .bob() call ([e1973b7](https://github.com/streamich/json-joy/commit/e1973b71d0a82551b304c563bcdebf4b90274889))
+* **json-crdt-extensions:** 🎸 improve Editor .move() method ([5b4bc9b](https://github.com/streamich/json-joy/commit/5b4bc9b3efc70dd51bd8d935eaf7bf14ffa9207b))
+* **json-crdt-extensions:** 🎸 improve end treatment in line iterators ([bb9aabe](https://github.com/streamich/json-joy/commit/bb9aabe1f1f09bad01b7b95a3ad32e9eec1168ab))
+
 # [17.4.0](https://github.com/streamich/json-joy/compare/v17.3.0...v17.4.0) (2024-10-28)
 
 
