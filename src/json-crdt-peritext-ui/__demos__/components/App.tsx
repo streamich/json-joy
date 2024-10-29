@@ -6,7 +6,6 @@ import {renderers} from '../../renderers/default';
 import {renderers as debugRenderers} from '../../renderers/debug';
 
 export const App: React.FC = ({}) => {
-  const [debug, setDebug] = React.useState(true);
   const [[model, peritext]] = React.useState(() => {
     const model = ModelWithExt.create(ext.peritext.new('Hello world!'));
     const peritext = model.s.toExt().txt;
@@ -17,11 +16,8 @@ export const App: React.FC = ({}) => {
   return (
     <Provider theme={'light'}>
       <GlobalCss />
-      <div style={{maxWidth: '700px', margin: '0 auto'}}>
-        <div style={{padding: '16px 16px 0'}}>
-          <button onClick={() => setDebug((x) => !x)}>Toggle debug mode</button>
-        </div>
-        <PeritextView key={debug ? 'debug' : 'no-debug'} peritext={peritext} renderers={debug ? [debugRenderers, renderers] : [renderers]} />
+      <div style={{maxWidth: '640px', fontSize: '21px', margin: '32px auto'}}>
+        <PeritextView peritext={peritext} renderers={[debugRenderers({enabled: false}), renderers]} />
       </div>
     </Provider>
   );
