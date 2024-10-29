@@ -236,11 +236,11 @@ export class Range<T = string> implements Pick<Stateful, 'refresh'>, Printable {
   }
 
   public toString(tab: string = '', lite: boolean = true): string {
-    const name = lite ? '' : this.toStringName();
+    const name = this.toStringName();
     const start = this.start.toString(tab, lite);
     const end = this.end.toString(tab, lite);
     let text = this.text();
     if (text.length > 16) text = text.slice(0, 16) + '...';
-    return `${JSON.stringify(text)} ${name}${start} ↔ ${end}`;
+    return `${name} ${JSON.stringify(text)} ${start} ↔ ${end}`;
   }
 }

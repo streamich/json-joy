@@ -257,3 +257,24 @@ export const setupAlphabetWrittenInReverseWithDeletes = (): Kit => {
   if (str.view() !== 'abcdefghijklmnopqrstuvwxyz') throw new Error('Invalid text: ' + str.view());
   return kit;
 };
+
+export const runAlphabetKitTestSuite = (runTestSuite: (getKit: () => Kit) => void) => {
+  describe('basic alphabet', () => {
+    runTestSuite(setupAlphabetKit);
+  });
+  describe('alphabet with two chunks', () => {
+    runTestSuite(setupAlphabetWithTwoChunksKit);
+  });
+  describe('alphabet with chunk split', () => {
+    runTestSuite(setupAlphabetChunkSplitKit);
+  });
+  describe('alphabet with deletes', () => {
+    runTestSuite(setupAlphabetWithDeletesKit);
+  });
+  describe('alphabet written in reverse', () => {
+    runTestSuite(setupAlphabetWrittenInReverse);
+  });
+  describe('alphabet written in reverse with deletes', () => {
+    runTestSuite(setupAlphabetWrittenInReverseWithDeletes);
+  });
+};

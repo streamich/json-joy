@@ -72,74 +72,6 @@ describe('.rangeWord()', () => {
   });
 });
 
-describe('.setEndpoint()', () => {
-  test('can set focus edge', () => {
-    const {editor, peritext} = setup((editor) => {
-      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
-    });
-    const range = editor.rangeWord(peritext.pointAt(9))!;
-    editor.cursor.setRange(range);
-    expect(editor.cursor.text()).toBe('editor');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus1 = peritext.pointAt(20);
-    editor.cursor.setEndpoint(focus1);
-    expect(editor.cursor.text()).toBe('editor} = set');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus2 = peritext.pointAt(3);
-    editor.cursor.setEndpoint(focus2);
-    expect(editor.cursor.text()).toBe('st {');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
-    const focus3 = peritext.pointAt(9);
-    editor.cursor.setEndpoint(focus3);
-    expect(editor.cursor.text()).toBe('ed');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus4 = peritext.pointAt(7);
-    editor.cursor.setEndpoint(focus4);
-    expect(editor.cursor.text()).toBe('');
-  });
-
-  test('can set anchor edge', () => {
-    const {editor, peritext} = setup((editor) => {
-      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
-    });
-    const range = editor.rangeWord(peritext.pointAt(9))!;
-    editor.cursor.setRange(range);
-    expect(editor.cursor.text()).toBe('editor');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus1 = peritext.pointAt(20);
-    editor.cursor.setEndpoint(focus1, 1);
-    expect(editor.cursor.text()).toBe('} = set');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
-    const focus2 = peritext.pointAt(3);
-    editor.cursor.setEndpoint(focus2, 1);
-    expect(editor.cursor.text()).toBe('st {editor');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus3 = peritext.pointAt(9);
-    editor.cursor.setEndpoint(focus3, 1);
-    expect(editor.cursor.text()).toBe('itor');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus4 = peritext.pointAt(7);
-    editor.cursor.setEndpoint(focus4);
-    expect(editor.cursor.text()).toBe('ed');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
-  });
-
-  test('can extend selection to next word', () => {
-    const {editor, peritext} = setup((editor) => {
-      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
-    });
-    const range = editor.rangeWord(peritext.pointAt(9))!;
-    editor.cursor.setRange(range);
-    expect(editor.cursor.text()).toBe('editor');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-    const focus = editor.cursor.focus();
-    const point1 = editor.eow(focus);
-    editor.cursor.setEndpoint(point1);
-    expect(editor.cursor.text()).toBe('editor} = setup');
-    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
-  });
-});
-
 describe('.range()', () => {
   describe('.range(..., "word")', () => {
     test('can select a word', () => {
@@ -209,5 +141,109 @@ describe('.range()', () => {
       const range5 = editor.range(peritext.pointAt(peritext.str.length() - 1, Anchor.After), 'block');
       expect(range5?.text()).toBe('\nbaz');
     });
+  });
+});
+
+describe('.selectAt()', () => {
+  describe('can select a word at specific point', () => {
+    test('can select a word', () => {
+      const {editor} = setup((editor) => {
+        editor.insert('abc def ghi');
+      });
+      editor.selectAt(5, 'word');
+      expect(editor.cursor.text()).toBe('def');
+    });
+
+    test('can select a line', () => {
+      const {editor} = setup((editor) => {
+        editor.insert('abc\ndef\nghi');
+      });
+      editor.selectAt(5, 'line');
+      expect(editor.cursor.text()).toBe('def');
+    });
+
+    test('can select a block', () => {
+      const {editor, peritext} = setup((editor) => {
+        editor.insert('abcdefghi');
+        editor.cursor.setAt(6);
+        editor.saved.insMarker(['p']);
+        editor.cursor.setAt(3);
+        editor.saved.insMarker(['p']);
+      });
+      peritext.refresh();
+      editor.selectAt(5, 'line');
+      expect(editor.cursor.text()).toBe('def');
+      peritext.refresh();
+      editor.selectAt(5, 'block');
+      expect(editor.cursor.text()).toBe('\ndef');
+    });
+  });
+});
+
+describe('.setEndpoint()', () => {
+  test('can set focus edge', () => {
+    const {editor, peritext} = setup((editor) => {
+      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
+    });
+    const range = editor.rangeWord(peritext.pointAt(9))!;
+    editor.cursor.setRange(range);
+    expect(editor.cursor.text()).toBe('editor');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus1 = peritext.pointAt(20);
+    editor.cursor.setEndpoint(focus1);
+    expect(editor.cursor.text()).toBe('editor} = set');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus2 = peritext.pointAt(3);
+    editor.cursor.setEndpoint(focus2);
+    expect(editor.cursor.text()).toBe('st {');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
+    const focus3 = peritext.pointAt(9);
+    editor.cursor.setEndpoint(focus3);
+    expect(editor.cursor.text()).toBe('ed');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus4 = peritext.pointAt(7);
+    editor.cursor.setEndpoint(focus4);
+    expect(editor.cursor.text()).toBe('');
+  });
+
+  test('can set anchor edge', () => {
+    const {editor, peritext} = setup((editor) => {
+      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
+    });
+    const range = editor.rangeWord(peritext.pointAt(9))!;
+    editor.cursor.setRange(range);
+    expect(editor.cursor.text()).toBe('editor');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus1 = peritext.pointAt(20);
+    editor.cursor.setEndpoint(focus1, 1);
+    expect(editor.cursor.text()).toBe('} = set');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
+    const focus2 = peritext.pointAt(3);
+    editor.cursor.setEndpoint(focus2, 1);
+    expect(editor.cursor.text()).toBe('st {editor');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus3 = peritext.pointAt(9);
+    editor.cursor.setEndpoint(focus3, 1);
+    expect(editor.cursor.text()).toBe('itor');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus4 = peritext.pointAt(7);
+    editor.cursor.setEndpoint(focus4);
+    expect(editor.cursor.text()).toBe('ed');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.End);
+  });
+
+  test('can extend selection to next word', () => {
+    const {editor, peritext} = setup((editor) => {
+      editor.insert("const {editor} = setup(editor => editor.insert('Hello world!'));");
+    });
+    const range = editor.rangeWord(peritext.pointAt(9))!;
+    editor.cursor.setRange(range);
+    expect(editor.cursor.text()).toBe('editor');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
+    const focus = editor.cursor.focus();
+    const point1 = editor.eow(focus);
+    editor.cursor.setEndpoint(point1);
+    expect(editor.cursor.text()).toBe('editor} = setup');
+    expect(editor.cursor.anchorSide).toBe(CursorAnchor.Start);
   });
 });

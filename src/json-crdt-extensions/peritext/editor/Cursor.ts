@@ -123,7 +123,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
-    return 'Cursor';
+    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
+    return 'Cursor ' + focusIcon;
   }
 
   public toStringHeaderName(): string {

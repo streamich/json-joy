@@ -1,17 +1,12 @@
 import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
-import {PersistedSlice} from '../slice/PersistedSlice';
 import {EditorSlices} from './EditorSlices';
-import {Chars} from '../constants';
 import {next, prev} from 'sonic-forest/lib/util';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
-import type {SliceType} from '../slice/types';
-import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
@@ -100,6 +95,13 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
+  /**
+   * Deletes one or more units of text in all cursors. If cursor is a range,
+   * deletes the whole range.
+   *
+   * @param step Number of units to delete.
+   * @param unit A unit of deletion: "char", "word", "line".
+   */
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
     this.cursors((cursor) => {
       if (!cursor.isCollapsed()) {
@@ -125,8 +127,8 @@ export class Editor<T = string> {
   // ----------------------------------------------------------------- movement
 
   /**
-   * Returns an iterator through visible text, one `step` characters at a time,
-   * starting from a given {@link Point}.
+   * Returns an iterator through visible text, one `step`, one character at a
+   * time, starting from a given {@link Point}.
    *
    * @param start The starting point.
    * @param step Number of visible characters to skip.
@@ -178,7 +180,7 @@ export class Editor<T = string> {
    * @param firstLetterFound Whether the first letter has already been found. If
    *     not, will skip any characters until the first letter, which is matched
    *     by the `predicate` is found.
-   * @returns Point after the last character skipped.
+   * @returns Point after the last skipped character.
    */
   private skipWord(
     iterator: CharIterator<T>,
@@ -192,6 +194,24 @@ export class Editor<T = string> {
       if (firstLetterFound) {
         if (!predicate(char)) break;
       } else if (predicate(char)) firstLetterFound = true;
+      prev = next;
+    }
+    if (!prev) return;
+    return this.txt.point(prev.id(), Anchor.After);
+  }
+
+  /**
+   * Hard skips line, skips to the next "\n" newline character.
+   *
+   * @param iterator Character iterator.
+   * @returns Point after the last skipped character.
+   */
+  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
+    let next: ChunkSlice<T> | undefined;
+    let prev: ChunkSlice<T> | undefined;
+    while ((next = iterator())) {
+      const char = (next.view() as string)[0];
+      if (char === '\n') break;
       prev = next;
     }
     if (!prev) return;
@@ -241,21 +261,9 @@ export class Editor<T = string> {
     return endPoint || point;
   }
 
-  private skipLine(iterator: CharIterator<T>): Point<T> | undefined {
-    let next: ChunkSlice<T> | undefined;
-    let prev: ChunkSlice<T> | undefined;
-    while ((next = iterator())) {
-      const char = (next.view() as string)[0];
-      if (char === '\n') break;
-      prev = next;
-    }
-    if (!prev) return;
-    return this.txt.point(prev.id(), Anchor.After);
-  }
-
   /** Find end of line, starting from given point. */
   public eol(point: Point<T>): Point<T> {
-    return this.skipLine(this.fwd(point)) || point;
+    return this.skipLine(this.fwd(point)) || this.end();
   }
 
   /** Find beginning of line, starting from given point. */
@@ -263,7 +271,7 @@ export class Editor<T = string> {
     const bwd = this.bwd(point);
     const endPoint = this.skipLine(bwd);
     if (endPoint) endPoint.anchor = Anchor.Before;
-    return endPoint || point;
+    return endPoint || this.start();
   }
 
   /**
@@ -273,6 +281,9 @@ export class Editor<T = string> {
   public eob(point: Point<T>): Point<T> {
     const txt = this.txt;
     const overlay = txt.overlay;
+    point = point.clone();
+    point.halfstep(1);
+    if (point.isAbsEnd()) return point;
     let overlayPoint = overlay.getOrNextHigher(point);
     if (!overlayPoint) return this.end();
     if (point.cmp(overlayPoint) === 0) overlayPoint = next(overlayPoint);
@@ -290,6 +301,9 @@ export class Editor<T = string> {
    */
   public bob(point: Point<T>): Point<T> {
     const overlay = this.txt.overlay;
+    point = point.clone();
+    point.halfstep(-1);
+    if (point.isAbsStart()) return point;
     let overlayPoint = overlay.getOrNextLower(point);
     if (!overlayPoint) return this.start();
     while (!(overlayPoint instanceof MarkerOverlayPoint) && overlayPoint) overlayPoint = prev(overlayPoint);
@@ -300,6 +314,15 @@ export class Editor<T = string> {
     } else return this.start();
   }
 
+  /**
+   * Move a point given number of steps in a specified direction. The unit of
+   * one move step is defined by the `unit` parameter.
+   *
+   * @param point The point to start from.
+   * @param steps Number of steps to move. Negative number moves backward.
+   * @param unit The unit of move per step: "char", "word", "line", etc.
+   * @returns The destination point after the move.
+   */
   public skip(point: Point<T>, steps: number, unit: TextRangeUnit): Point<T> {
     if (!steps) return point;
     switch (unit) {
@@ -336,24 +359,43 @@ export class Editor<T = string> {
    *
    * @param steps Number of steps to move.
    * @param unit The unit of move per step: "char", "word", "line".
-   * @param endpoint 0 for "focus", 1 for "anchor".
+   * @param endpoint 0 for "focus", 1 for "anchor", 2 for both.
    * @param collapse Whether to collapse the range to a single point.
    */
-  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 = 0, collapse: boolean = true): void {
+  public move(steps: number = 1, unit: TextRangeUnit, endpoint: 0 | 1 | 2 = 0, collapse: boolean = true): void {
     this.cursors((cursor) => {
-      let point = endpoint === 0 ? cursor.focus() : cursor.anchor();
-      point = this.skip(point.clone(), steps, unit);
-      if (collapse) cursor.set(point);
-      else cursor.setEndpoint(point, endpoint);
+      switch (endpoint) {
+        case 0: {
+          let point = cursor.focus();
+          point = this.skip(point, steps, unit);
+          if (collapse) cursor.set(point);
+          else cursor.setEndpoint(point, 0);
+          break;
+        }
+        case 1: {
+          let point = cursor.anchor();
+          point = this.skip(point, steps, unit);
+          if (collapse) cursor.set(point);
+          else cursor.setEndpoint(point, 1);
+          break;
+        }
+        case 2: {
+          const start = this.skip(cursor.start, steps, unit);
+          const end = collapse ? start.clone() : this.skip(cursor.end, steps, unit);
+          cursor.set(start, end);
+          break;
+        }
+      }
     });
   }
 
   // ---------------------------------------------------------------- selection
 
-  public rangeAll() {
-    return this.txt.rangeAll();
-  }
-
+  /**
+   * Leaves only the first cursor, and sets it selection to the whole text.
+   *
+   * @returns Returns `true` if the selection was successful.
+   */
   public selectAll(): boolean {
     const range = this.txt.rangeAll();
     if (!range) return false;
@@ -401,34 +443,8 @@ export class Editor<T = string> {
   }
 
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
-    const point = this.point(at);
-    this.cursor.set(point);
+    this.cursor.set(this.point(at));
     if (unit) this.select(unit);
-  }
-
-  // --------------------------------------------------------- slice operations
-
-  /** @deprecated use `.saved.insStack` */
-  public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
-  }
-
-  /** @deprecated use `.saved.insOverwrite` */
-  public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
-  }
-
-  /** @deprecated use `.saved.insErase` */
-  public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
-  }
-
-  /** @deprecated use `.saved.insMarker` */
-  public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
-    return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
   }
 
   // ------------------------------------------------------------------ various
