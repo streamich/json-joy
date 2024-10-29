@@ -1,17 +1,12 @@
 import {Cursor} from './Cursor';
 import {CursorAnchor, SliceBehavior} from '../slice/constants';
-import {PersistedSlice} from '../slice/PersistedSlice';
 import {EditorSlices} from './EditorSlices';
-import {Chars} from '../constants';
 import {next, prev} from 'sonic-forest/lib/util';
 import {ChunkSlice} from '../util/ChunkSlice';
 import {isLetter, isPunctuation, isWhitespace} from './util';
 import {Anchor} from '../rga/constants';
 import {MarkerOverlayPoint} from '../overlay/MarkerOverlayPoint';
-import type {ITimestampStruct} from '../../../json-crdt-patch/clock';
 import type {Peritext} from '../Peritext';
-import type {SliceType} from '../slice/types';
-import type {MarkerSlice} from '../slice/MarkerSlice';
 import type {Point} from '../rga/Point';
 import type {Range} from '../rga/Range';
 import type {CharIterator, CharPredicate, Position, TextRangeUnit} from './types';
@@ -450,31 +445,6 @@ export class Editor<T = string> {
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
     this.cursor.set(this.point(at));
     if (unit) this.select(unit);
-  }
-
-  // --------------------------------------------------------- slice operations
-
-  /** @deprecated use `.saved.insStack` */
-  public insStackSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Stack, type, data);
-  }
-
-  /** @deprecated use `.saved.insOverwrite` */
-  public insOverwriteSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Overwrite, type, data);
-  }
-
-  /** @deprecated use `.saved.insErase` */
-  public insEraseSlice(type: SliceType, data?: unknown | ITimestampStruct): PersistedSlice<T> {
-    const range = this.cursor.range();
-    return this.txt.savedSlices.ins(range, SliceBehavior.Erase, type, data);
-  }
-
-  /** @deprecated use `.saved.insMarker` */
-  public insMarker(type: SliceType, data?: unknown): MarkerSlice<T> {
-    return this.saved.insMarker(type, data, Chars.BlockSplitSentinel)[0];
   }
 
   // ------------------------------------------------------------------ various
