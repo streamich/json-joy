@@ -100,6 +100,13 @@ export class Editor<T = string> {
     this.cursors((cursor) => cursor.del(step));
   }
 
+  /**
+   * Deletes one or more units of text in all cursors. If cursor is a range,
+   * deletes the whole range.
+   *
+   * @param step Number of units to delete.
+   * @param unit A unit of deletion: "char", "word", "line".
+   */
   public delete(step: number, unit: 'char' | 'word' | 'line'): void {
     this.cursors((cursor) => {
       if (!cursor.isCollapsed()) {
@@ -389,10 +396,11 @@ export class Editor<T = string> {
 
   // ---------------------------------------------------------------- selection
 
-  public rangeAll() {
-    return this.txt.rangeAll();
-  }
-
+  /**
+   * Leaves only the first cursor, and sets it selection to the whole text.
+   *
+   * @returns Returns `true` if the selection was successful.
+   */
   public selectAll(): boolean {
     const range = this.txt.rangeAll();
     if (!range) return false;
@@ -440,8 +448,7 @@ export class Editor<T = string> {
   }
 
   public selectAt(at: Position<T>, unit: TextRangeUnit | ''): void {
-    const point = this.point(at);
-    this.cursor.set(point);
+    this.cursor.set(this.point(at));
     if (unit) this.select(unit);
   }
 
