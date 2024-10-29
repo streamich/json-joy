@@ -28,7 +28,7 @@ const setup = (
   return {model, peritext, editor};
 };
 
-describe('.fwd1()', () => {
+describe('.fwd()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
     const iterator = editor.fwd(peritext.pointAbsStart());
@@ -154,7 +154,7 @@ describe('.fwd1()', () => {
   });
 });
 
-describe('.bwd1()', () => {
+describe('.bwd()', () => {
   test('can use string root as initial point', () => {
     const {peritext, editor} = setup();
     const iterator = editor.bwd(peritext.pointAbsEnd());

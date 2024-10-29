@@ -30,9 +30,9 @@ describe('.ins()', () => {
     const {peritext} = setup();
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
-    const slice1 = editor.insStackSlice('strong', {bold: true});
+    const [slice1] = editor.saved.insStack('strong', {bold: true});
     editor.cursor.setAt(12, 4);
-    const slice2 = editor.insStackSlice('i', {italic: true});
+    const [slice2] = editor.saved.insStack('i', {italic: true});
     peritext.refresh();
     expect(peritext.savedSlices.size()).toBe(2);
     expect(slice1.data()).toStrictEqual({bold: true});
@@ -50,7 +50,7 @@ describe('.ins()', () => {
     expect(changed2).toBe(false);
     expect(hash1).toBe(hash2);
     editor.cursor.setAt(12, 7);
-    editor.insStackSlice('b', {bold: true});
+    editor.saved.insStack('b', {bold: true});
     const changed3 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
     const hash3 = peritext.savedSlices.hash;
     const changed4 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
@@ -60,7 +60,7 @@ describe('.ins()', () => {
     expect(hash1).not.toStrictEqual(hash3);
     expect(hash3).toBe(hash4);
     editor.cursor.setAt(12, 4);
-    editor.insStackSlice('em', {italic: true});
+    editor.saved.insStack('em', {italic: true});
     const changed5 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
     const hash5 = peritext.savedSlices.hash;
     const changed6 = peritext.savedSlices.hash !== peritext.savedSlices.refresh();
@@ -124,7 +124,7 @@ describe('.del()', () => {
     const {peritext} = setup();
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
-    const slice1 = editor.insStackSlice('b', {bold: true});
+    const [slice1] = editor.saved.insStack('b', {bold: true});
     peritext.refresh();
     const hash1 = peritext.savedSlices.hash;
     expect(peritext.savedSlices.size()).toBe(1);
@@ -141,7 +141,7 @@ describe('.delSlices()', () => {
     const {peritext} = setup();
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
-    const slice1 = editor.insStackSlice('b', {bold: true});
+    const [slice1] = editor.saved.insStack('b', {bold: true});
     peritext.refresh();
     const hash1 = peritext.savedSlices.hash;
     expect(peritext.savedSlices.size()).toBe(1);
@@ -214,7 +214,7 @@ describe('.refresh()', () => {
     const {peritext} = setup();
     const {editor} = peritext;
     editor.cursor.setAt(6, 5);
-    const slice1 = editor.insStackSlice('b', {bold: true});
+    editor.saved.insStack('b', {bold: true});
     peritext.refresh();
     const hash1 = peritext.savedSlices.hash;
     peritext.model.api.obj(['slices', 0, 4]).set({bold: false});

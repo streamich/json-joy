@@ -2,6 +2,7 @@ import {Model} from '../../../../json-crdt/model';
 import {Peritext} from '../../Peritext';
 import {Anchor} from '../constants';
 import {tick} from '../../../../json-crdt-patch/clock';
+import {Point} from '../Point';
 
 const setup = () => {
   const model = Model.withLogicalClock();
@@ -1139,6 +1140,96 @@ describe('.step()', () => {
         expect(p2.anchor).toBe(Anchor.Before);
         expect(p2.rightChar()!.view()).toBe(txt[j]);
       }
+    }
+  });
+});
+
+describe('.halfstep()', () => {
+  test('smoke test', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(1, Anchor.After);
+    expect(p.viewPos()).toBe(2);
+    p.halfstep(1);
+    expect(p.viewPos()).toBe(2);
+    p.halfstep(2);
+    expect(p.viewPos()).toBe(3);
+    p.halfstep(2);
+    expect(p.viewPos()).toBe(4);
+    p.halfstep(-5);
+    expect(p.viewPos()).toBe(2);
+    p.halfstep(-1);
+    expect(p.viewPos()).toBe(1);
+  });
+
+  test('can reach the end of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(0, Anchor.After);
+    const endReached =
+      p.halfstep(1) || p.halfstep(2) || p.halfstep(3) || p.halfstep(4) || p.halfstep(5) || p.halfstep(6);
+    expect(endReached).toBe(true);
+    expect(p.isAbsEnd()).toBe(true);
+    expect(p.viewPos()).toBe(9);
+    expect(p.leftChar()!.view()).toBe('9');
+    expect(p.anchor).toBe(Anchor.Before);
+  });
+
+  test('can reach the start of str', () => {
+    const {peritext} = setupWithChunkedText();
+    const p = peritext.pointAt(8, Anchor.Before);
+    const isEnd = p.halfstep(-22);
+    expect(isEnd).toBe(true);
+    expect(p.isAbsStart()).toBe(true);
+    expect(p.viewPos()).toBe(0);
+    expect(p.rightChar()!.view()).toBe('1');
+    expect(p.anchor).toBe(Anchor.After);
+  });
+
+  test('can walk forward through all points', () => {
+    const {peritext, model} = setupWithChunkedText();
+    model.api.str(['text']).del(4, 1);
+    const view = model.api.str(['text']).view();
+    const points: Point[] = [];
+    let point: Point | undefined = peritext.pointAbsStart();
+    while (point) {
+      const nextPoint = point.clone();
+      const endReached = nextPoint.halfstep(1);
+      if (endReached) {
+        point = undefined;
+      } else {
+        points.push(nextPoint);
+        point = nextPoint;
+      }
+    }
+    for (let i = 0; i < view.length - 1; i++) {
+      expect(points[i * 2].viewPos()).toBe(i);
+      expect(points[i * 2].rightChar()?.view()).toBe(view[i]);
+      expect(points[i * 2].anchor).toBe(Anchor.Before);
+      expect(points[i * 2 + 1].leftChar()?.view()).toBe(view[i]);
+      expect(points[i * 2 + 1].anchor).toBe(Anchor.After);
+    }
+  });
+
+  test('can walk backwards through all points', () => {
+    const {peritext, model} = setupWithChunkedText();
+    model.api.str(['text']).del(4, 1);
+    const view = model.api.str(['text']).view().split('').reverse().join('');
+    const points: Point[] = [];
+    let point: Point | undefined = peritext.pointAbsEnd();
+    while (point) {
+      const nextPoint = point.clone();
+      const endReached = nextPoint.halfstep(-1);
+      if (endReached) {
+        point = undefined;
+      } else {
+        points.push(nextPoint);
+        point = nextPoint;
+      }
+    }
+    for (let i = view.length - 1; i >= 0; i--) {
+      expect(points[i * 2].leftChar()?.view()).toBe(view[i]);
+      expect(points[i * 2].anchor).toBe(Anchor.After);
+      expect(points[i * 2 + 1].rightChar()?.view()).toBe(view[i]);
+      expect(points[i * 2 + 1].anchor).toBe(Anchor.Before);
     }
   });
 });

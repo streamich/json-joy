@@ -103,8 +103,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
       this.collapse();
       return;
     }
-    let point1 = this.start.clone();
-    let point2 = point1.clone();
+    const point1 = this.start.clone();
+    const point2 = point1.clone();
     if (step > 0) point2.step(1);
     else if (step < 0) point1.step(-1);
     else if (step === 0) {
@@ -121,7 +121,8 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   // ---------------------------------------------------------------- Printable
 
   public toStringName(): string {
-    return 'Cursor';
+    const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
+    return 'Cursor ' + focusIcon;
   }
 
   public toStringHeaderName(): string {

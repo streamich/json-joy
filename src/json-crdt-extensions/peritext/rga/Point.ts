@@ -267,6 +267,10 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     return new ChunkSlice(chunk, off, 1);
   }
 
+  public char(): ChunkSlice<T> | undefined {
+    return this.anchor === Anchor.Before ? this.rightChar() : this.leftChar();
+  }
+
   /**
    * Checks if the point is an absolute point. An absolute point is a point that
    * references the string itself, rather than a character in the string. It can
@@ -458,7 +462,7 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
    */
   public halfstep(length: number): boolean {
     this.refVisible();
-    const isOdd = length % 2 === 1;
+    const isOdd = !!(length % 2);
     if (isOdd) {
       if (length > 0) {
         length--;
@@ -491,7 +495,9 @@ export class Point<T = string> implements Pick<Stateful, 'refresh'>, Printable {
     const name = lite ? '' : this.toStringName() + ' ';
     const pos = this.pos();
     const id = printTs(this.id);
-    const anchor = this.anchor === Anchor.Before ? '.▢' : '▢.';
+    let char: string | undefined = this.char()?.view() as string | undefined;
+    char = typeof char === 'string' ? JSON.stringify(char) : '▢';
+    const anchor = this.anchor === Anchor.Before ? '.' + char : char + '.';
     return `${name}{ ${pos === Position.AbsEnd ? '∞' : pos}, ${id}, ${anchor} }`;
   }
 }

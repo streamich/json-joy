@@ -75,59 +75,59 @@ describe('Overlay.refresh()', () => {
       testRefresh('when a slice is inserted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(1, 4);
         refresh();
-        kit.peritext.editor.insStackSlice('bold');
+        kit.peritext.editor.saved.insStack('bold');
       });
 
       testRefresh('when a collapsed slice is inserted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(5);
         refresh();
-        kit.peritext.editor.insStackSlice('<flag>');
+        kit.peritext.editor.saved.insStack('<flag>');
       });
 
       testRefresh('when a marker is inserted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0);
         refresh();
-        kit.peritext.editor.insMarker('<paragraph>');
+        kit.peritext.editor.saved.insMarker('<paragraph>');
       });
 
       testRefresh('when a marker is inserted at the same position', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0);
-        kit.peritext.editor.insMarker('<paragraph>');
+        kit.peritext.editor.saved.insMarker('<paragraph>');
         refresh();
-        kit.peritext.editor.insMarker('<paragraph>');
+        kit.peritext.editor.saved.insMarker('<paragraph>');
       });
 
       testRefresh('when slice is deleted', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice('<b>');
+        const [slice] = kit.peritext.editor.saved.insStack('<b>');
         refresh();
         kit.peritext.savedSlices.del(slice.id);
       });
 
       testRefresh('when slice type is changed', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice('<b>');
+        const [slice] = kit.peritext.editor.saved.insStack('<b>');
         refresh();
         slice.update({type: '<i>'});
       });
 
       testRefresh('when slice behavior is changed', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice(123);
+        const [slice] = kit.peritext.editor.saved.insStack(123);
         refresh();
         slice.update({behavior: SliceBehavior.Erase});
       });
 
       testRefresh('when slice data is overwritten', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice(123, 'a');
+        const [slice] = kit.peritext.editor.saved.insStack(123, 'a');
         refresh();
         slice.update({data: 'b'});
       });
 
       testRefresh('when slice data is updated inline', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice(123, {foo: 'bar'});
+        const [slice] = kit.peritext.editor.saved.insStack(123, {foo: 'bar'});
         refresh();
         const api = slice.dataNode()! as ObjApi<any>;
         api.set({foo: 'baz'});
@@ -135,7 +135,7 @@ describe('Overlay.refresh()', () => {
 
       testRefresh('when slice start point anchor is changed', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(0, 1);
-        const slice = kit.peritext.editor.insStackSlice(123, 456);
+        const [slice] = kit.peritext.editor.saved.insStack(123, 456);
         expect(slice.start.anchor).toBe(Anchor.Before);
         refresh();
         const range = slice.range();
@@ -145,7 +145,7 @@ describe('Overlay.refresh()', () => {
 
       testRefresh('when slice end point anchor is changed', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(3, 3);
-        const slice = kit.peritext.editor.insStackSlice(0, 0);
+        const [slice] = kit.peritext.editor.saved.insStack(0, 0);
         expect(slice.end.anchor).toBe(Anchor.After);
         refresh();
         const range = slice.range();
@@ -155,9 +155,9 @@ describe('Overlay.refresh()', () => {
 
       testRefresh('when slice range changes', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(3, 3);
-        kit.peritext.editor.insStackSlice(0, 0);
-        kit.peritext.editor.insStackSlice(1, 1);
-        kit.peritext.editor.insStackSlice(3, 3);
+        kit.peritext.editor.saved.insStack(0, 0);
+        kit.peritext.editor.saved.insStack(1, 1);
+        kit.peritext.editor.saved.insStack(3, 3);
         const range1 = kit.peritext.rangeAt(1, 2);
         const slice = kit.peritext.savedSlices.insErase(range1, 'gg');
         expect(slice.end.anchor).toBe(Anchor.After);

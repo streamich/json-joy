@@ -1,3 +1,20 @@
+# [17.4.0](https://github.com/streamich/json-joy/compare/v17.3.0...v17.4.0) (2024-10-28)
+
+
+### Bug Fixes
+
+* **json-crdt-peritext-ui:** 🐛 correct skipping behavior ([d25bd3c](https://github.com/streamich/json-joy/commit/d25bd3cab35a6a5aa2499d307ba1c18506303f6a))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve Cursor object ([149fc4f](https://github.com/streamich/json-joy/commit/149fc4f6f97d41c4d1f0cc7bbcfc12d52cfedf4a))
+* **json-crdt-extensions:** 🎸 improve Editor class ([d819cb1](https://github.com/streamich/json-joy/commit/d819cb14eef59eadaf6e347c0868c6d4a321041e))
+* **json-crdt-extensions:** 🎸 improve Editor cursor APIs ([df2a5e2](https://github.com/streamich/json-joy/commit/df2a5e265fce79ce91d30e9cedbf17b22221ef29))
+* **json-crdt-extensions:** 🎸 introduce halfstep iteration ([da3abc3](https://github.com/streamich/json-joy/commit/da3abc35f193577159a7df9d202157857e51bf7a))
+* **json-crdt-extensions:** 🎸 print the exact Point character in debug view ([b33b4da](https://github.com/streamich/json-joy/commit/b33b4da04f3fc49f23fc22830249b8b87679ebc1))
+* **json-crdt-extensions:** 🎸 rename text char-by-char iteration method ([0fe582c](https://github.com/streamich/json-joy/commit/0fe582ceff4c41b5d0d3e0e5473ff79133d32dba))
+
 # [17.3.0](https://github.com/streamich/json-joy/compare/v17.2.0...v17.3.0) (2024-10-12)
 
 
