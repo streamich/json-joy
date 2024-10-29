@@ -1,14 +1,6 @@
 import * as React from 'react';
-import {rule} from 'nano-theme';
 import {RendererMap} from "../../react/types";
-
-const peritextClass = rule({
-  out: '1px dotted black !important',
-  'caret-color': 'black !important',
-  '::selection': {
-    bgc: 'red !important',
-  },
-});
+import {RenderPeritext} from './RenderPeritext';
 
 export const renderers: RendererMap = {
   inline: (props, children, attributes) => {
@@ -30,11 +22,5 @@ export const renderers: RendererMap = {
       </div>
     );
   },
-  peritext: (props, children) => {
-    return (
-      <div className={peritextClass}>
-        {children}
-      </div>
-    );
-  },
+  peritext: (props, children) => <RenderPeritext {...props} children={children} />
 };
