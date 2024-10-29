@@ -162,7 +162,8 @@ export class SelectionController implements UiLifeCycles {
     const to = this.posAtPoint(clientX, clientY);
     if (to < 0) return;
     ev.preventDefault();
-    if (clientX === this.clientX && clientY === this.clientY) return;
+    const mouseHasNotMoved = clientX === this.clientX && clientY === this.clientY;
+    if (mouseHasNotMoved) return;
     this.clientX = clientX;
     this.clientY = clientY;
     this._cursor[0]({at: to, edge: 'focus'});

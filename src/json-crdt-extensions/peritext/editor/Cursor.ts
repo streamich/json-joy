@@ -1,4 +1,4 @@
-import {tick} from '../../../json-crdt-patch';
+import {printTs, tick} from '../../../json-crdt-patch';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -31,6 +31,11 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   }
 
   public set(start: Point<T>, end: Point<T> = start, anchorSide: CursorAnchor = this.anchorSide): void {
+    let hasChange = false;
+    if (start.cmp(this.start)) hasChange = true;
+    if (!hasChange && end.cmp(this.end)) hasChange = true;
+    if (!hasChange && anchorSide !== this.anchorSide) hasChange = true;
+    if (!hasChange) return;
     this.start = start;
     this.end = end === start ? end.clone() : end;
     this.update({
@@ -122,7 +127,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public toStringName(): string {
     const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
-    return 'Cursor ' + focusIcon;
+    return 'Cursor ' + focusIcon + ' ' + printTs(this.chunk.id) + ' #' + this.hash.toString(36);
   }
 
   public toStringHeaderName(): string {
