@@ -366,13 +366,15 @@ export class Editor<T = string> {
         case 0: {
           let point = cursor.focus();
           point = this.skip(point, steps, unit);
-          if (collapse) cursor.set(point); else cursor.setEndpoint(point, 0);
+          if (collapse) cursor.set(point);
+          else cursor.setEndpoint(point, 0);
           break;
         }
         case 1: {
           let point = cursor.anchor();
           point = this.skip(point, steps, unit);
-          if (collapse) cursor.set(point); else cursor.setEndpoint(point, 1);
+          if (collapse) cursor.set(point);
+          else cursor.setEndpoint(point, 1);
           break;
         }
         case 2: {
