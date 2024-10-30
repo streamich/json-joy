@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
-import {ElementAttr} from '../constants';
+import {CssClass, ElementAttr} from '../constants';
 import {TextView} from './TextView';
 import {usePeritext} from './context';
 import {CaretView} from './selection/CaretView';
@@ -24,7 +24,7 @@ export const InlineView: React.FC<InlineViewProps> = (props) => {
   if (span) (span as any)[ElementAttr.InlineOffset] = inline;
 
   const attributes: React.HTMLAttributes<HTMLSpanElement> = {
-    className: 'jsonjoy-text',
+    className: CssClass.Inline,
   };
 
   let children: React.ReactNode = (

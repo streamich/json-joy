@@ -5,3 +5,8 @@ export const enum Char {
 export const enum ElementAttr {
   InlineOffset = '__jsonjoy.com',
 }
+
+export enum CssClass {
+  Editor = 'jsonjoy-peritext-editor',
+  Inline = 'jsonjoy-peritext-inline',
+}

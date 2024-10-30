@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {put} from 'nano-theme';
 import {context, type PeritextSurfaceContextValue} from './context';
+import {CssClass} from '../constants';
 import {BlockView} from './BlockView';
 import useIsomorphicLayoutEffect from 'react-use/lib/useIsomorphicLayoutEffect';
 import {PeritextDomController} from '../events/PeritextDomController';
@@ -8,7 +9,7 @@ import {renderers as defaultRenderers} from '../renderers/default';
 import type {Peritext} from '../../json-crdt-extensions/peritext/Peritext';
 import type {RendererMap} from './types';
 
-put('.jsonjoy-peritext-editor', {
+put('.' + CssClass.Editor, {
   out: 0,
   whiteSpace: 'pre-wrap',
   wordWrap: 'break-word',
@@ -103,7 +104,7 @@ export const PeritextView: React.FC<PeritextViewProps> = React.memo((props) => {
   };
 
   let children: React.ReactNode = (
-    <div ref={(div) => (ref.current = div)} className={'jsonjoy-peritext-editor'}>
+    <div ref={(div) => (ref.current = div)} className={CssClass.Editor}>
       <BlockView hash={block.hash} block={block} />
     </div>
   );
