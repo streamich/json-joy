@@ -78,7 +78,7 @@ export class Inline extends Range implements Printable {
     /**
      * @todo PERF: for performance reasons, we should consider not passing in
      * this array. Maybe pass in just the initial chunk and the offset. However,
-     * maybe even the just is not necessary, as the `.start` point should have
+     * maybe even that is not necessary, as the `.start` point should have
      * its chunk cached, or will have it cached after the first access.
      */
     public readonly texts: ChunkSlice[],

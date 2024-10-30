@@ -5,6 +5,7 @@ import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 export interface SelectionControllerOpts {
   /**
@@ -29,7 +30,8 @@ export class SelectionController implements UiLifeCycles {
     this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
   }
 
-  protected selectionStart: number = -1;
+  /** The position where user started to scrub the text. */
+  protected selAnchor: number = -1;
 
   private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
 
@@ -42,8 +44,9 @@ export class SelectionController implements UiLifeCycles {
       let node: null | (typeof res)[0] = res[0];
       const offset = res[1];
       for (let i = 0; i < 5 && node; i++) {
-        const inlinePos = (<any>node)[ElementAttr.InlineOffset]?.pos?.();
-        if (typeof inlinePos === 'number') return inlinePos + offset;
+        const inline = (<any>node)[ElementAttr.InlineOffset] as Inline | undefined;
+        const pos = inline?.pos?.();
+        if (typeof pos === 'number') return pos + offset;
         node = node.parentNode;
       }
     }
@@ -116,7 +119,7 @@ export class SelectionController implements UiLifeCycles {
         this.isMouseDown = false;
         const at = this.posAtPoint(ev.clientX, ev.clientY);
         if (at === -1) return;
-        this.selectionStart = at;
+        this.selAnchor = at;
         const pressed = this.opts.keys.pressed;
         const et = this.opts.et;
         if (pressed.has('Shift')) {
@@ -156,7 +159,7 @@ export class SelectionController implements UiLifeCycles {
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
     if (!this.isMouseDown) return;
-    const at = this.selectionStart;
+    const at = this.selAnchor;
     if (at < 0) return;
     const {clientX, clientY} = ev;
     const to = this.posAtPoint(clientX, clientY);
