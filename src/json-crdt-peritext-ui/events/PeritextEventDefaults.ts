@@ -33,7 +33,7 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
     const editor = txt.editor;
 
     // If `at` is specified.
-    if (at && at !== -1) {
+    if (typeof at === 'number' && at >= 0) {
       const point = editor.point(at);
       switch (edge) {
         case 'focus':
@@ -52,7 +52,9 @@ export class PeritextEventDefaults implements PeritextEventHandlerMap {
             point2.step(len);
             const range = txt.rangeFromPoints(point, point2);
             editor.cursor.set(range.start, range.end);
-          } else editor.cursor.set(point);
+          } else {
+            editor.cursor.set(point);
+          }
         }
       }
       this.et.change(event);

@@ -113,24 +113,29 @@ export class SelectionController implements UiLifeCycles {
     this._cursor[1](); // Stop throttling loop.
   }
 
+  private clientX = 0;
+  private clientY = 0;
+
   private readonly onMouseDown = (ev: MouseEvent): void => {
+    const {clientX, clientY} = ev;
+    this.clientX = clientX;
+    this.clientY = clientY;
     switch (ev.detail) {
       case 1: {
         this.isMouseDown = false;
-        const at = this.posAtPoint(ev.clientX, ev.clientY);
+        const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
         this.selAnchor = at;
         const pressed = this.opts.keys.pressed;
         const et = this.opts.et;
         if (pressed.has('Shift')) {
           ev.preventDefault();
-          et.cursor({unit: 'word'});
+          et.cursor({at, unit: 'word'});
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
           et.cursor({at, edge: 'new'});
         } else {
           this.isMouseDown = true;
-          const at = this.posAtPoint(ev.clientX, ev.clientY);
           ev.preventDefault();
           et.cursor({at});
         }
@@ -153,9 +158,6 @@ export class SelectionController implements UiLifeCycles {
         break;
     }
   };
-
-  private clientX = 0;
-  private clientY = 0;
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
     if (!this.isMouseDown) return;
