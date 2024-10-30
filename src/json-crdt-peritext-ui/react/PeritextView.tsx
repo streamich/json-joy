@@ -18,39 +18,6 @@ put('.' + CssClass.Editor, {
     bgc: 'transparent',
   },
 
-  /**
-   * @todo Apply this to the inline elements.
-   *
-   * Font *kerning* is the variable distance between every pair of characters.
-   * It is adjusted to make the text more readable. This disables it, so that
-   * there is always the same distance between characters.
-   * 
-   * Useful because, while moving the characters can be arbitrarily grouped into
-   * <span> elements, the distance between them should be consistent. Otherwise,
-   * there is a text shift when moving the cursor. For example, consider:
-   * 
-   * ```jsx
-   * <span>Word</span>
-   * ```
-   * 
-   * vs.
-   * 
-   * ```jsx
-   * <span>W</span><span>ord</span>
-   * ```
-   * 
-   * The kerning between letters "W" and "o" changes and results in a shift, if
-   * this property is not set.
-   */
-  fontKerning: 'none',
-
-  /**
-   * Similar to `fontKerning`, but for ligatures. Ligatures are special glyphs
-   * that combine two or more characters into a single glyph. We disable them
-   * so that the text is more predictable.
-   */
-  fontVariantLigatures: 'none',
-
   /** @todo Move these to the default theme. */
   fontVariantNumeric: 'slashed-zero oldstyle-nums',
   fontOpticalSizing: 'auto',
