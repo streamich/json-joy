@@ -140,7 +140,7 @@ export class Inline extends Range implements Printable {
     const point2 = this.end as OverlayPoint;
     const slices1 = point1.layers;
     const slices2 = point1.markers;
-    const slices3 = point2.markers;
+    const slices3 = point2.isAbsEnd() ? point2.markers : [];
     const length1 = slices1.length;
     const length2 = slices2.length;
     const length3 = slices3.length;
