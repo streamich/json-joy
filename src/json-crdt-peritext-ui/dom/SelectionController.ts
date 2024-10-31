@@ -5,7 +5,7 @@ import type {KeyController} from './KeyController';
 import type {PeritextEventTarget} from '../events/PeritextEventTarget';
 import type {Rect, UiLifeCycles} from './types';
 import type {Peritext} from '../../json-crdt-extensions/peritext';
-import type {CursorDetail} from '../events/types';
+import type {Inline} from '../../json-crdt-extensions/peritext/block/Inline';
 
 export interface SelectionControllerOpts {
   /**
@@ -30,20 +30,10 @@ export class SelectionController implements UiLifeCycles {
     this.caretId = 'jsonjoy.com-peritext-caret-' + opts.et.id;
   }
 
-  protected selectionStart: number = -1;
-
-  private select(ev: MouseEvent, len: CursorDetail['len']): void {
-    const at = this.posAtPoint(ev.clientX, ev.clientY);
-    this.selectAt(ev, at, len);
-  }
+  /** The position where user started to scrub the text. */
+  protected selAnchor: number = -1;
 
   private readonly _cursor = throttle(this.opts.et.cursor.bind(this.opts.et), 25);
-
-  private readonly selectAt = (ev: MouseEvent, at: CursorDetail['at'], len: CursorDetail['len']): void => {
-    if (at === -1) return;
-    ev.preventDefault();
-    this._cursor[0]({at, len});
-  };
 
   /**
    * String position at coordinate, or -1, if unknown.
@@ -54,8 +44,9 @@ export class SelectionController implements UiLifeCycles {
       let node: null | (typeof res)[0] = res[0];
       const offset = res[1];
       for (let i = 0; i < 5 && node; i++) {
-        const inlinePos = (<any>node)[ElementAttr.InlineOffset]?.pos?.();
-        if (typeof inlinePos === 'number') return inlinePos + offset;
+        const inline = (<any>node)[ElementAttr.InlineOffset] as Inline | undefined;
+        const pos = inline?.pos?.();
+        if (typeof pos === 'number') return pos + offset;
         node = node.parentNode;
       }
     }
@@ -122,25 +113,31 @@ export class SelectionController implements UiLifeCycles {
     this._cursor[1](); // Stop throttling loop.
   }
 
+  private clientX = 0;
+  private clientY = 0;
+
   private readonly onMouseDown = (ev: MouseEvent): void => {
+    const {clientX, clientY} = ev;
+    this.clientX = clientX;
+    this.clientY = clientY;
     switch (ev.detail) {
       case 1: {
         this.isMouseDown = false;
-        const at = this.posAtPoint(ev.clientX, ev.clientY);
+        const at = this.posAtPoint(clientX, clientY);
         if (at === -1) return;
-        this.selectionStart = at;
+        this.selAnchor = at;
         const pressed = this.opts.keys.pressed;
+        const et = this.opts.et;
         if (pressed.has('Shift')) {
           ev.preventDefault();
-          this.opts.et.cursor({unit: 'word'});
+          et.cursor({at, unit: 'word'});
         } else if (pressed.has('Alt')) {
           ev.preventDefault();
-          this.opts.et.cursor({at, edge: 'new'});
+          et.cursor({at, edge: 'new'});
         } else {
           this.isMouseDown = true;
-          const at = this.posAtPoint(ev.clientX, ev.clientY);
           ev.preventDefault();
-          this.opts.et.cursor({at});
+          et.cursor({at});
         }
         break;
       }
@@ -164,11 +161,16 @@ export class SelectionController implements UiLifeCycles {
 
   private readonly onMouseMove = (ev: MouseEvent): void => {
     if (!this.isMouseDown) return;
-    const at = this.selectionStart;
+    const at = this.selAnchor;
     if (at < 0) return;
-    const to = this.posAtPoint(ev.clientX, ev.clientY);
+    const {clientX, clientY} = ev;
+    const to = this.posAtPoint(clientX, clientY);
     if (to < 0) return;
     ev.preventDefault();
+    const mouseHasNotMoved = clientX === this.clientX && clientY === this.clientY;
+    if (mouseHasNotMoved) return;
+    this.clientX = clientX;
+    this.clientY = clientY;
     this._cursor[0]({at: to, edge: 'focus'});
   };
 

@@ -39,7 +39,12 @@ export class InlineAttrContained {
 }
 
 /** The attribute is collapsed at start of this inline. */
-export class InlineAttrCollapsed {
+export class InlineAttrStartPoint {
+  constructor(public slice: Slice) {}
+}
+
+/** The attribute is collapsed at end of this inline. */
+export class InlineAttrEndPoint {
   constructor(public slice: Slice) {}
 }
 
@@ -48,7 +53,8 @@ export type InlineAttr =
   | InlineAttrStart
   | InlineAttrEnd
   | InlineAttrContained
-  | InlineAttrCollapsed;
+  | InlineAttrStartPoint
+  | InlineAttrEndPoint;
 export type InlineAttrStack = InlineAttr[];
 export type InlineAttrs = Record<string | number, InlineAttrStack>;
 
@@ -78,7 +84,7 @@ export class Inline extends Range implements Printable {
     /**
      * @todo PERF: for performance reasons, we should consider not passing in
      * this array. Maybe pass in just the initial chunk and the offset. However,
-     * maybe even the just is not necessary, as the `.start` point should have
+     * maybe even that is not necessary, as the `.start` point should have
      * its chunk cached, or will have it cached after the first access.
      */
     public readonly texts: ChunkSlice[],
@@ -109,7 +115,9 @@ export class Inline extends Range implements Printable {
 
   protected createAttr(slice: Slice): InlineAttr {
     return !slice.start.cmp(slice.end)
-      ? new InlineAttrCollapsed(slice)
+      ? !slice.start.cmp(this.start)
+        ? new InlineAttrStartPoint(slice)
+        : new InlineAttrEndPoint(slice)
       : !this.start.cmp(slice.start)
         ? !this.end.cmp(slice.end)
           ? new InlineAttrContained(slice)
@@ -128,14 +136,18 @@ export class Inline extends Range implements Printable {
   public attr(): InlineAttrs {
     if (this._attr) return this._attr;
     const attr: InlineAttrs = (this._attr = {});
-    const point = this.start as OverlayPoint;
-    const slices1 = point.layers;
-    const slices2 = point.markers;
+    const point1 = this.start as OverlayPoint;
+    const point2 = this.end as OverlayPoint;
+    const slices1 = point1.layers;
+    const slices2 = point1.markers;
+    const slices3 = point2.isAbsEnd() ? point2.markers : [];
     const length1 = slices1.length;
     const length2 = slices2.length;
-    const length3 = length1 + length2;
-    for (let i = 0; i < length3; i++) {
-      const slice = i >= length1 ? slices2[i - length1] : slices1[i];
+    const length3 = slices3.length;
+    const length12 = length1 + length2;
+    const length123 = length12 + length3;
+    for (let i = 0; i < length123; i++) {
+      const slice = i >= length12 ? slices3[i - length12] : i >= length1 ? slices2[i - length1] : slices1[i];
       if (slice instanceof Range) {
         const type = slice.type as PathStep;
         switch (slice.behavior) {
@@ -176,7 +188,7 @@ export class Inline extends Range implements Printable {
     if (
       attribute instanceof InlineAttrStart ||
       attribute instanceof InlineAttrContained ||
-      attribute instanceof InlineAttrCollapsed
+      attribute instanceof InlineAttrStartPoint
     ) {
       const slice = attribute.slice;
       return slice instanceof Cursor ? slice : void 0;
@@ -189,7 +201,7 @@ export class Inline extends Range implements Printable {
     const stack = attributes[SliceTypes.Cursor];
     if (!stack) return;
     const attribute = stack[0];
-    if (attribute instanceof InlineAttrEnd || attribute instanceof InlineAttrContained) {
+    if (attribute instanceof InlineAttrEnd || attribute instanceof InlineAttrContained || attribute instanceof InlineAttrEndPoint) {
       const slice = attribute.slice;
       return slice instanceof Cursor ? slice : void 0;
     }

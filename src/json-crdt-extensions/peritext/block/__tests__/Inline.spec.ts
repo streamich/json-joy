@@ -1,8 +1,9 @@
 import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
+import {Cursor} from '../../editor/Cursor';
 import {SliceTypes} from '../../slice/constants';
 import {
   Inline,
-  InlineAttrCollapsed,
+  InlineAttrStartPoint,
   InlineAttrContained,
   InlineAttrEnd,
   InlineAttrPassing,
@@ -122,7 +123,7 @@ const runStrTests = (setup: () => Kit) => {
       const block = peritext.blocks.root.children[1]!;
       const inline = [...block.texts()][0];
       const attr = inline.attr();
-      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrCollapsed);
+      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
     });
 
     test('returns collapsed slice (cursor) at markup slice start', () => {
@@ -134,7 +135,7 @@ const runStrTests = (setup: () => Kit) => {
       const block = peritext.blocks.root.children[0]!;
       const inline = [...block.texts()][1];
       const attr = inline.attr();
-      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrCollapsed);
+      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
       expect(attr.bold[0]).toBeInstanceOf(InlineAttrContained);
       expect(attr.bold[0].slice.data()).toBe(123);
     });
@@ -213,7 +214,7 @@ const runStrTests = (setup: () => Kit) => {
         const [inline1, inline2, inline3] = peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 2));
         expect(inline2.text()).toBe(str.slice(2, 8));
-        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrCollapsed);
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
         expect(inline2.attr()['a,1,b,2'][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.text()).toBe(str.slice(8));
       });
@@ -226,7 +227,7 @@ const runStrTests = (setup: () => Kit) => {
         const [inline1, inline2] = peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 5));
         expect(inline2.text()).toBe(str.slice(5));
-        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrCollapsed);
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
       });
 
       test('correctly reports *Collapsed* at start of block marker', () => {
@@ -239,7 +240,7 @@ const runStrTests = (setup: () => Kit) => {
         const [block1, block2] = peritext.blocks.root.children;
         expect(block1.text()).toBe(str.slice(0, 5));
         const [inline2] = [...block2.texts()];
-        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrCollapsed);
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
       });
     });
   });
