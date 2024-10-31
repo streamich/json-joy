@@ -1,4 +1,4 @@
-# Peritext UI
+# Peritext Events
 
 ## Controller Events
 
