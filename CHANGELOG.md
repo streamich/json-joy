@@ -1,3 +1,98 @@
+# [17.7.0](https://github.com/streamich/json-joy/compare/v17.6.0...v17.7.0) (2024-10-31)
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add main Peritext event implementations ([20a6d61](https://github.com/streamich/json-joy/commit/20a6d619e992f4ae3f3d7e98877cee46b202b22a))
+
+# [17.6.0](https://github.com/streamich/json-joy/compare/v17.5.0...v17.6.0) (2024-10-31)
+
+
+### Bug Fixes
+
+* **json-crdt-extensions:** 🐛 correctly execute cursor movement ([9022f90](https://github.com/streamich/json-joy/commit/9022f90ea95bba446223aa5d8fba65eb0a7e37bc))
+* **json-crdt-extensions:** 🐛 support end attributes only at ABS end ([8219b20](https://github.com/streamich/json-joy/commit/8219b20386053e499f0e7a01408aa76677bea9a2))
+* **json-crdt-extensions:** 🐛 update block hashes when a slice is inserted ([68a32d4](https://github.com/streamich/json-joy/commit/68a32d4609c2e94e2eeba6725e1dcacbf42fce5a))
+* **json-crdt-extensions:** 🐛 update EOL iterators ([524ce7e](https://github.com/streamich/json-joy/commit/524ce7e55fac922ea40ab93d123ab9a8c1c6d36f))
+* **json-crdt-peritext-ui:** 🐛 keep reference to inline objects from text chunks ([b1158f5](https://github.com/streamich/json-joy/commit/b1158f58f5a3414da2e45fcda2dc61438a87b8bd))
+* **json-crdt-peritext-ui:** 🐛 make inline/pos detection more robust ([415ff7d](https://github.com/streamich/json-joy/commit/415ff7d1ff8cf024e0412257bb8336724d84acbb))
+
+
+### Features
+
+* **json-crdt-extensions:** 🎸 improve cursor iteration methods ([ed6bbcb](https://github.com/streamich/json-joy/commit/ed6bbcb27be055884b6b8a1d2d2960e7368171b4))
+* **json-crdt-extensions:** 🎸 improve how inline key is generated ([27b6092](https://github.com/streamich/json-joy/commit/27b609266371938e5a8613b8575dbecb309dab9c))
+* **json-crdt-extensions:** 🎸 support caret at ABS end ([b45afb0](https://github.com/streamich/json-joy/commit/b45afb0e9242eb660f1d975e830db53a9c48da95))
+* **json-crdt-peritext-ui:** 🎸 add "select all" support ([12ca6b4](https://github.com/streamich/json-joy/commit/12ca6b4ba44a7019a8574b8d4bf1fbfafee99662))
+* **json-crdt-peritext-ui:** 🎸 add a wayt to select the a full block ([fdecb88](https://github.com/streamich/json-joy/commit/fdecb88ae5a9aeeb687e30b1d7bc8bf6a13f6116))
+* **json-crdt-peritext-ui:** 🎸 add ability to define custom renderers ([21b566a](https://github.com/streamich/json-joy/commit/21b566a5c3959f4718590947fa8a8cfb277d6bd7))
+* **json-crdt-peritext-ui:** 🎸 add ability to delete multiple words at a time ([ab6aa5d](https://github.com/streamich/json-joy/commit/ab6aa5d1875a43c387f24e89c4921f64034cf96b))
+* **json-crdt-peritext-ui:** 🎸 add ability to delete words ([a671342](https://github.com/streamich/json-joy/commit/a6713423d576b2a955d429c2278d930502b71a1d))
+* **json-crdt-peritext-ui:** 🎸 add ability to select a word ([ff07038](https://github.com/streamich/json-joy/commit/ff070384f03cfb2f48963edc95b52eac68d7c228))
+* **json-crdt-peritext-ui:** 🎸 add ability to slant cursor ([4bfdf06](https://github.com/streamich/json-joy/commit/4bfdf0682e34a5e797d1253a7144128e5f476a4e))
+* **json-crdt-peritext-ui:** 🎸 add basic inline formatting ([fb980e9](https://github.com/streamich/json-joy/commit/fb980e91e63779158ce6b1ed6daf8d086591d4fd))
+* **json-crdt-peritext-ui:** 🎸 add block and peritext custom renderers support ([a49f8ac](https://github.com/streamich/json-joy/commit/a49f8ac482834b39ebd57fb0021814eb02d8d3ec))
+* **json-crdt-peritext-ui:** 🎸 add caret ticks ([891cf90](https://github.com/streamich/json-joy/commit/891cf9064f3f2b3eace99560ddff91a70b2eb47a))
+* **json-crdt-peritext-ui:** 🎸 add constants for class names ([bb7b43c](https://github.com/streamich/json-joy/commit/bb7b43c1fa9f823f00bbc18cdbfff4d8e3f7db1a))
+* **json-crdt-peritext-ui:** 🎸 add controller scaffolding ([3420f2d](https://github.com/streamich/json-joy/commit/3420f2d83bd063b1590ead0714b6710c31eb2854))
+* **json-crdt-peritext-ui:** 🎸 add demo React UI ([13af94f](https://github.com/streamich/json-joy/commit/13af94ff1d0c94fcce792d57dbf5ae2be462ff41))
+* **json-crdt-peritext-ui:** 🎸 add initial multi-cursor support ([16933d3](https://github.com/streamich/json-joy/commit/16933d375000a68b511f0a73936ff947d7ac4876))
+* **json-crdt-peritext-ui:** 🎸 add renderer for inline elements ([9ad15c9](https://github.com/streamich/json-joy/commit/9ad15c91eedfb54fe05ccfb3a7f540397f68c40b))
+* **json-crdt-peritext-ui:** 🎸 add support for line deletion events ([5267056](https://github.com/streamich/json-joy/commit/52670567fe4c6b2eee10083386848945ca931ae6))
+* **json-crdt-peritext-ui:** 🎸 better cursor click treatment ([2899a0a](https://github.com/streamich/json-joy/commit/2899a0a256bca36ea1735432b2ddcb55a4fe521d))
+* **json-crdt-peritext-ui:** 🎸 cleanup block rendering, unify components ([0aedffd](https://github.com/streamich/json-joy/commit/0aedffd19f794cf7d78a3aa5123c96b92e6c4ebf))
+* **json-crdt-peritext-ui:** 🎸 create anchor renderer ([3434a3b](https://github.com/streamich/json-joy/commit/3434a3b20c089671004d4fefcf3bf74c0a5f3557))
+* **json-crdt-peritext-ui:** 🎸 create PeritextDomController class ([200ed30](https://github.com/streamich/json-joy/commit/200ed30a00ce68f94b97dcd924217b22718cf45a))
+* **json-crdt-peritext-ui:** 🎸 create wrappers for attribute types ([edcb531](https://github.com/streamich/json-joy/commit/edcb5311e0ce978cdb74e583f34f6c2b411650b6))
+* **json-crdt-peritext-ui:** 🎸 do not process "mousemove" event on the same coordinates ([06170e8](https://github.com/streamich/json-joy/commit/06170e8f23b1f183b7ecdbec1d6825ce960b3cd8))
+* **json-crdt-peritext-ui:** 🎸 do not update cursor if there is no change ([d306dff](https://github.com/streamich/json-joy/commit/d306dff87fea9087352cc3285149e8e8cacf9629))
+* **json-crdt-peritext-ui:** 🎸 generalize char and word deletion ([afe00c9](https://github.com/streamich/json-joy/commit/afe00c9e9bd9e3ab11d647285c37a10be83cce53))
+* **json-crdt-peritext-ui:** 🎸 improve anchor and focus views ([9402fb0](https://github.com/streamich/json-joy/commit/9402fb0c711b872ddb4e4bc5168e3ba11d8becc3))
+* **json-crdt-peritext-ui:** 🎸 improve char deletion setup ([38debd4](https://github.com/streamich/json-joy/commit/38debd4e5fd56cc2ac154e1a0cb57066ef53feac))
+* **json-crdt-peritext-ui:** 🎸 improve cursor movement, add editor.move() method ([0b6ce9f](https://github.com/streamich/json-joy/commit/0b6ce9f0e7eaf58acfbd2e0cff7eb659a4a6ee1d))
+* **json-crdt-peritext-ui:** 🎸 improve cursor presentation ([beb6755](https://github.com/streamich/json-joy/commit/beb6755f83e774ff44dc972a9b7f3cc882727df5))
+* **json-crdt-peritext-ui:** 🎸 improve display of selection anchor ([3f8ff93](https://github.com/streamich/json-joy/commit/3f8ff93745d3df4d36daf1ab23738307d27ccdc8))
+* **json-crdt-peritext-ui:** 🎸 improve editor selection setup ([53c34ee](https://github.com/streamich/json-joy/commit/53c34ee607c3dbb71866a1d13e0f6bc03efba164))
+* **json-crdt-peritext-ui:** 🎸 improve event types ([bdc4399](https://github.com/streamich/json-joy/commit/bdc4399bc9d32229dbd062030708df73a6947083))
+* **json-crdt-peritext-ui:** 🎸 improve focus view ([63230ee](https://github.com/streamich/json-joy/commit/63230ee1e8a53b135838a6f11c4e3ca3f6dd5720))
+* **json-crdt-peritext-ui:** 🎸 improve inline and cursor view ([cd44f4a](https://github.com/streamich/json-joy/commit/cd44f4a9c32875697f8b55a3111405c5ba4441de))
+* **json-crdt-peritext-ui:** 🎸 improve Peritext UI setup ([004af38](https://github.com/streamich/json-joy/commit/004af388552e0d66129b71910f5ad10d2bb7c0b9))
+* **json-crdt-peritext-ui:** 🎸 improve range selection methods ([3c3a16e](https://github.com/streamich/json-joy/commit/3c3a16eb2a4b720f99e12712e3fad7e17cdc771e))
+* **json-crdt-peritext-ui:** 🎸 improve selection computation ([82c16f4](https://github.com/streamich/json-joy/commit/82c16f404837d1df7acfc030506cefd0ce9dd322))
+* **json-crdt-peritext-ui:** 🎸 improve selection endpoint rendering ([85c0042](https://github.com/streamich/json-joy/commit/85c00420d65653755e9a86c89f58d42491f0e9fa))
+* **json-crdt-peritext-ui:** 🎸 improve selection view ([7c3bdab](https://github.com/streamich/json-joy/commit/7c3bdab596b4f920fa69cb8fd30ca56bcd9abee0))
+* **json-crdt-peritext-ui:** 🎸 improve single character deletions ([9d0a92c](https://github.com/streamich/json-joy/commit/9d0a92c30ea1fd12d11ea79fe54d00c6ca3da351))
+* **json-crdt-peritext-ui:** 🎸 improve surface rendering setup ([8365116](https://github.com/streamich/json-joy/commit/8365116ad4c2922b425acb4d8e993d0bd3f5dd5b))
+* **json-crdt-peritext-ui:** 🎸 improve view of hash ([9646c20](https://github.com/streamich/json-joy/commit/9646c205d7f7fd6c6a61a22f1210f80273828571))
+* **json-crdt-peritext-ui:** 🎸 make cursor always visible initially ([93f58b2](https://github.com/streamich/json-joy/commit/93f58b2de80d076667f60402be46d8937ebe79f0))
+* **json-crdt-peritext-ui:** 🎸 make debug mode rendering self-contained ([f3f5267](https://github.com/streamich/json-joy/commit/f3f52679e3cfeff12c3db6a5eb25bd39e3737f44))
+* **json-crdt-peritext-ui:** 🎸 make hashes non-content editable ([1726f6b](https://github.com/streamich/json-joy/commit/1726f6b6f14cb132c8582c6e7243a8ec286732d2))
+* **json-crdt-peritext-ui:** 🎸 make multi-click selection work ([7600e7b](https://github.com/streamich/json-joy/commit/7600e7b526276fe21bb2756f1221067899356583))
+* **json-crdt-peritext-ui:** 🎸 make word and line events more robust ([6aa837b](https://github.com/streamich/json-joy/commit/6aa837ba95c14b1147fafb8cff733cc054fc7a90))
+* **json-crdt-peritext-ui:** 🎸 move cursor rendering into inline element ([2f1d3aa](https://github.com/streamich/json-joy/commit/2f1d3aaa9cdceece1fd9cf25fc0f37e28366fc91))
+* **json-crdt-peritext-ui:** 🎸 move debug overlay rendering into the debug mode ([d22373c](https://github.com/streamich/json-joy/commit/d22373ca9692d0d0bcf4408cb636d1764a6e2835))
+* **json-crdt-peritext-ui:** 🎸 move font ligatures to the inline element ([e8e22f8](https://github.com/streamich/json-joy/commit/e8e22f84040c3a5567dd848b25fc98239d28180f))
+* **json-crdt-peritext-ui:** 🎸 normalize cursor event shape ([3a285b9](https://github.com/streamich/json-joy/commit/3a285b9933920d4bb91eadfe6de8b0321baf1c4f))
+* **json-crdt-peritext-ui:** 🎸 remove [debug] prop ([ade6f79](https://github.com/streamich/json-joy/commit/ade6f7960fbdd6b63e46356d2de873a50b799a1d))
+* **json-crdt-peritext-ui:** 🎸 rename renderer components ([0ed5fa6](https://github.com/streamich/json-joy/commit/0ed5fa6005a7e9325c0df94c05cc2c3ba7b8c624))
+* **json-crdt-peritext-ui:** 🎸 render different views for focus and caret ([87be5bb](https://github.com/streamich/json-joy/commit/87be5bb571aa90acc593252495535e98c05a47cf))
+* **json-crdt-peritext-ui:** 🎸 render inlines in custom view layer ([8a0de80](https://github.com/streamich/json-joy/commit/8a0de80b9a2fa0e214349b73438f56d39d19519d))
+* **json-crdt-peritext-ui:** 🎸 render selection anchor as a dot ([915752e](https://github.com/streamich/json-joy/commit/915752ebdf768b990f3ccdff01c76fbf4c7d8c81))
+* **json-crdt-peritext-ui:** 🎸 rerender peritext on debug mode change ([2b655b3](https://github.com/streamich/json-joy/commit/2b655b353f15e9c0f357796f37d20d5cbf1b56ab))
+* **json-crdt-peritext-ui:** 🎸 select text on mousedown event ([724380e](https://github.com/streamich/json-joy/commit/724380e5b8d0dbe7120b9fdb470ccf7e66dba66f))
+* **json-crdt-peritext-ui:** 🎸 set blend mode on caret ([9004e47](https://github.com/streamich/json-joy/commit/9004e47517d58cb08727017ec6e9032f60cce64c))
+* **json-crdt-peritext-ui:** 🎸 show selection ([8071d96](https://github.com/streamich/json-joy/commit/8071d96b2f41d48f2202aca5730397f78060911b))
+* **json-crdt-peritext-ui:** 🎸 start event implementation ([73beaf7](https://github.com/streamich/json-joy/commit/73beaf79159eb3b383f61a47ad076880f46e19e5))
+* **json-crdt-peritext-ui:** 🎸 stop text shifts because of kerning ([c030975](https://github.com/streamich/json-joy/commit/c030975fe6a08ffdf2e7446c9479010656f65277))
+* **json-crdt-peritext-ui:** 🎸 synchronize cursor blinking ([c3d7537](https://github.com/streamich/json-joy/commit/c3d7537dc0cc9c14db9feb629a256d3146e55e41))
+* **json-crdt-peritext-ui:** 🎸 track pressed keys ([916dea2](https://github.com/streamich/json-joy/commit/916dea2f2184078aacf12f8b28f68503fdbfedfa))
+* **json-crdt-peritext-ui:** 🎸 update class names ([0c2e8a4](https://github.com/streamich/json-joy/commit/0c2e8a47f4b0bafcdd22d36cba01cbdbd0869727))
+
+
+### Performance Improvements
+
+* **json-crdt-peritext-ui:** ⚡️ use memoization in block view ([188e7c3](https://github.com/streamich/json-joy/commit/188e7c3444b712e662edc2e51665d64cac9e5dc8))
+
 # [17.5.0](https://github.com/streamich/json-joy/compare/v17.4.0...v17.5.0) (2024-10-29)
 
 
