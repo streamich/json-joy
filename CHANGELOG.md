@@ -1,3 +1,10 @@
+## [17.8.1](https://github.com/streamich/json-joy/compare/v17.8.0...v17.8.1) (2024-10-31)
+
+
+### Reverts
+
+* Revert "chore(json-crdt-peritext-ui): 🤖 remove ui surface" ([3eba2fa](https://github.com/streamich/json-joy/commit/3eba2fa32c13bf9151bba14130385e93cff354a0))
+
 # [17.8.0](https://github.com/streamich/json-joy/compare/v17.7.0...v17.8.0) (2024-10-31)
 
 
