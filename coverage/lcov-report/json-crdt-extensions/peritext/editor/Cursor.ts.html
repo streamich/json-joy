@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.96% </span>
+                <span class="strong">78.57% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>46/59</span>
+                <span class='fraction'>55/70</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.76% </span>
+                <span class="strong">69.76% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>21/34</span>
+                <span class='fraction'>30/43</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.28% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>10/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.39% </span>
+                <span class="strong">81.03% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/51</span>
+                <span class='fraction'>47/58</span>
             </div>
         
             
@@ -197,20 +197,25 @@
 <a name='L132'></a><a href='#L132'>132</a>
 <a name='L133'></a><a href='#L133'>133</a>
 <a name='L134'></a><a href='#L134'>134</a>
-<a name='L135'></a><a href='#L135'>135</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">44x</span>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-yes">45x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4772x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3188x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -232,9 +237,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4731x</span>
-<span class="cline-any cline-yes">4731x</span>
-<span class="cline-any cline-yes">4731x</span>
+<span class="cline-any cline-yes">3056x</span>
+<span class="cline-any cline-yes">3056x</span>
+<span class="cline-any cline-yes">3056x</span>
+<span class="cline-any cline-yes">3056x</span>
+<span class="cline-any cline-yes">3056x</span>
+<span class="cline-any cline-yes">2949x</span>
+<span class="cline-any cline-yes">2949x</span>
+<span class="cline-any cline-yes">2949x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,6 +271,10 @@
 <span class="cline-any cline-yes">82x</span>
 <span class="cline-any cline-yes">82x</span>
 <span class="cline-any cline-yes">82x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -331,7 +345,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {tick} from '../../../json-crdt-patch';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {printTs, tick} from '../../../json-crdt-patch';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -341,12 +355,10 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
     return this.type as CursorAnchor;
   }
 &nbsp;
-  /** @todo Rename to `isStartFocus`. */
-  public <span class="fstat-no" title="function not covered" >isStartFocused(</span>): boolean {
-<span class="cstat-no" title="statement not covered" >    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;</span>
+  public isStartFocused(): boolean {
+    return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
   }
 &nbsp;
-  /** @todo Rename to `isEndFocus`. */
   public <span class="fstat-no" title="function not covered" >isEndFocused(</span>): boolean {
 <span class="cstat-no" title="statement not covered" >    return this.type === CursorAnchor.Start || this.start.cmp(this.end) === 0;</span>
   }
@@ -366,6 +378,11 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
   }
 &nbsp;
   public set(start: Point&lt;T&gt;, end: Point&lt;T&gt; = start, anchorSide: CursorAnchor = this.anchorSide): void {
+    let hasChange = false;
+    if (start.cmp(this.start)) hasChange = true;
+    if (!hasChange &amp;&amp; end.cmp(this.end)) hasChange = true;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!hasChange &amp;&amp; anchorSide !== this.anchorSide) <span class="cstat-no" title="statement not covered" >hasChange = true;</span>
+    if (!hasChange) return;
     this.start = start;
     this.end = end === start ? end.clone() : end;
     this.update({
@@ -392,9 +409,13 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
 &nbsp;
   public move(move: number): void {
     const {start, end} = this;
+    const isCaret = start.cmp(end) === 0;
     start.step(move);
-    if (start !== end) end.step(move);
-    this.set(start, end);
+    if (isCaret) this.set(start);
+    else <span class="missing-if-branch" title="else path not taken" >E</span>{
+<span class="cstat-no" title="statement not covered" >      end.step(move);</span>
+<span class="cstat-no" title="statement not covered" >      this.set(start, end);</span>
+    }
   }
 &nbsp;
   /**
@@ -457,7 +478,7 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
 &nbsp;
   public <span class="fstat-no" title="function not covered" >toStringName(</span>): string {
     const focusIcon = <span class="cstat-no" title="statement not covered" >this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';</span>
-<span class="cstat-no" title="statement not covered" >    return 'Cursor ' + focusIcon;</span>
+<span class="cstat-no" title="statement not covered" >    return 'Cursor ' + focusIcon + ' ' + printTs(this.chunk.id) + ' #' + this.hash.toString(36);</span>
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >toStringHeaderName(</span>): string {
@@ -472,7 +493,7 @@ export class Cursor&lt;T = string&gt; extends PersistedSlice&lt;T&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-29T10:18:55.596Z
+                at 2024-10-31T00:39:35.529Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
