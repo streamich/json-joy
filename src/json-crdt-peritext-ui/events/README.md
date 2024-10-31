@@ -1,16 +1,42 @@
 # Peritext Events
 
-## Controller Events
 
-### Editing
+## Editing
 
-- Events
-  - [ ] `insert` event
-    - [ ] Insert a character.
-    - [ ] Insert a string.
-  - [ ] `delete` event
-    - [ ] Delete one character backward.
-    - [ ] Delete one character forward.
+### The `insert` event
+
+- [ ] Insert a character.
+- [ ] Insert a string.
+
+
+### The `delete` event
+
+- [ ] Delete one character backward.
+- [ ] Delete one character forward.
+- [ ] Delete one word backward.
+- [ ] Delete one word forward.
+
+
+### Clipboard events
+
+- [ ] Export range.
+- [ ] Import range.
+- [ ] Insert plain text.
+- [ ] Insert HTML.
+
+
+### Imperative API
+
+- [ ] Delete range.
+- [ ] Delete all annotations in range.
+- [ ] Find block by position.
+- [ ] Find annotations by position.
+- [ ] Get block range.
+
+
+## Overlays
+
+- Events  
   - [ ] `mark` event
     - [ ] Annotate range.
     - [ ] Insert block split.
@@ -21,29 +47,27 @@
   - [ ] `mark-delete` event
     - [ ] Delete block split.
     - [ ] Delete annotation.
-- Imperative
-  - [ ] Delete range.
-  - [ ] Delete all annotations in range.
-  - [ ] Find block by position.
-  - [ ] Find annotations by position.
-  - [ ] Get block range.
 
-### Selection
+### The `inline` event
 
-- Events
-  - `select` event
-    - [ ] Set caret.
-    - [ ] Set selection.
-  - `select-all`
-    - [ ] Select all.
-  - `select-object`
-    - [ ] Select block.
-    - [ ] Select word.
-  - `update-selection`
-    - [ ] Change position of left or right end of selection.
-- Imperative
 
-### Navigation
+### The `marker` event
+
+
+### Imperative API
+
+- [ ] Insert an overlay.
+- [ ] Update overlay metadata.
+- [ ] Delete an overlay.
+- [ ] Change overlay range.
+- [ ] Assign a set of overlays.
+- [ ] Remove an overlay set.
+
+
+
+## Navigation
+
+### The `cursor` event
 
 - [ ] Move one character left.
 - [ ] Move one character right.
@@ -54,23 +78,10 @@
 - [ ] Move up one line.
 - [ ] Move down one line.
 
-### Clipboard
 
-- [ ] Export range.
-- [ ] Import range.
-- [ ] Insert plain text.
-- [ ] Insert HTML.
+
 
 ### History
 
 - [ ] Undo.
 - [ ] Redo.
-
-### Overlays
-
-- [ ] Insert an overlay.
-- [ ] Update overlay metadata.
-- [ ] Delete an overlay.
-- [ ] Change overlay range.
-- [ ] Assign a set of overlays.
-- [ ] Remove an overlay set.
