@@ -1,13 +1,11 @@
 # Peritext Events
 
-
 ## Editing
 
 ### The `insert` event
 
 - [ ] Insert a character.
 - [ ] Insert a string.
-
 
 ### The `delete` event
 
@@ -16,14 +14,12 @@
 - [ ] Delete one word backward.
 - [ ] Delete one word forward.
 
-
 ### Clipboard events
 
 - [ ] Export range.
 - [ ] Import range.
 - [ ] Insert plain text.
 - [ ] Insert HTML.
-
 
 ### Imperative API
 
@@ -33,10 +29,9 @@
 - [ ] Find annotations by position.
 - [ ] Get block range.
 
-
 ## Overlays
 
-- Events  
+- Events
   - [ ] `mark` event
     - [ ] Annotate range.
     - [ ] Insert block split.
@@ -50,9 +45,7 @@
 
 ### The `inline` event
 
-
 ### The `marker` event
-
 
 ### Imperative API
 
@@ -62,8 +55,6 @@
 - [ ] Change overlay range.
 - [ ] Assign a set of overlays.
 - [ ] Remove an overlay set.
-
-
 
 ## Navigation
 
@@ -77,9 +68,6 @@
 - [ ] Move right until end of line.
 - [ ] Move up one line.
 - [ ] Move down one line.
-
-
-
 
 ### History
 
