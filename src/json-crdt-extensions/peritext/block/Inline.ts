@@ -201,7 +201,11 @@ export class Inline extends Range implements Printable {
     const stack = attributes[SliceTypes.Cursor];
     if (!stack) return;
     const attribute = stack[0];
-    if (attribute instanceof InlineAttrEnd || attribute instanceof InlineAttrContained || attribute instanceof InlineAttrEndPoint) {
+    if (
+      attribute instanceof InlineAttrEnd ||
+      attribute instanceof InlineAttrContained ||
+      attribute instanceof InlineAttrEndPoint
+    ) {
       const slice = attribute.slice;
       return slice instanceof Cursor ? slice : void 0;
     }
