@@ -62,9 +62,13 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public move(move: number): void {
     const {start, end} = this;
+    const isCaret = start.cmp(end) === 0;
     start.step(move);
-    if (start !== end) end.step(move);
-    this.set(start, end);
+    if (isCaret) this.set(start);
+    else {
+      end.step(move);
+      this.set(start, end);
+    }
   }
 
   /**
