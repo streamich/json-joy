@@ -268,12 +268,6 @@ describe('Overlay.refresh()', () => {
 
   describe('local slices - cursor', () => {
     describe('updates hash', () => {
-      testRefresh('when cursor char ID changes', (kit, refresh) => {
-        kit.peritext.editor.cursor.setAt(1);
-        refresh();
-        kit.peritext.editor.cursor.setAt(1);
-      });
-
       testRefresh('when cursor start anchor changes', (kit, refresh) => {
         kit.peritext.editor.cursor.setAt(3, 3);
         expect(kit.peritext.editor.cursor.start.anchor).toBe(Anchor.Before);

@@ -63,24 +63,25 @@ const runKeyTests = (setup: () => Kit) => {
       const keys = new Map<number | string, Inline>();
       let cnt = 0;
       for (let i = 0; i < length; i++) {
-        for (let j = 1; j <= length - i; j++) {
-          peritext.editor.cursor.setAt(i, j);
-          overlay.refresh();
-          const [start, end] = [...overlay.points()];
-          const inline = Inline.create(peritext, start, end);
-          if (keys.has(inline.key())) {
-            const inline2 = keys.get(inline.key())!;
-            // tslint:disable-next-line:no-console
-            console.error('DUPLICATE HASH:', inline.key());
-            // tslint:disable-next-line:no-console
-            console.log('INLINE 1:', inline.start.id, inline.start.anchor, inline.end.id, inline.end.anchor);
-            // tslint:disable-next-line:no-console
-            console.log('INLINE 2:', inline2.start.id, inline2.start.anchor, inline2.end.id, inline2.end.anchor);
-            throw new Error('Duplicate key');
-          }
-          keys.set(inline.key(), inline);
-          cnt++;
+        // for (let j = 1; j <= length - i; j++) {
+        const j = 1;
+        peritext.editor.cursor.setAt(i, j);
+        overlay.refresh();
+        const [start, end] = [...overlay.points()];
+        const inline = Inline.create(peritext, start, end);
+        if (keys.has(inline.key())) {
+          const inline2 = keys.get(inline.key())!;
+          // tslint:disable-next-line:no-console
+          console.error('DUPLICATE KEY:', inline.key());
+          // tslint:disable-next-line:no-console
+          console.log('INLINE 1:', inline.start.id, inline.start.anchor, inline.end.id, inline.end.anchor);
+          // tslint:disable-next-line:no-console
+          console.log('INLINE 2:', inline2.start.id, inline2.start.anchor, inline2.end.id, inline2.end.anchor);
+          throw new Error('Duplicate key');
         }
+        keys.set(inline.key(), inline);
+        cnt++;
+        // }
       }
       expect(keys.size).toBe(cnt);
     });

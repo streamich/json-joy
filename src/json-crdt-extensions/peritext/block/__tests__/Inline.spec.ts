@@ -1,6 +1,14 @@
 import {Kit, setupKit, setupNumbersKit, setupNumbersWithTombstonesKit} from '../../__tests__/setup';
-import {CursorAnchor, SliceTypes} from '../../slice/constants';
-import {Inline, InlineAttrPos} from '../Inline';
+import {Cursor} from '../../editor/Cursor';
+import {SliceTypes} from '../../slice/constants';
+import {
+  Inline,
+  InlineAttrStartPoint,
+  InlineAttrContained,
+  InlineAttrEnd,
+  InlineAttrPassing,
+  InlineAttrStart,
+} from '../Inline';
 
 const runStrTests = (setup: () => Kit) => {
   describe('.str()', () => {
@@ -56,8 +64,9 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr.bold[0]).toEqual([1, 2]);
-      expect(attr.em[0]).toEqual([1]);
+      expect(attr.bold[0].slice.data()).toEqual(1);
+      expect(attr.bold[1].slice.data()).toEqual(2);
+      expect(attr.em[0].slice.data()).toEqual(1);
     });
 
     test('returns latest OVERWRITE annotation', () => {
@@ -71,8 +80,8 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr.bold[0]).toBe(2);
-      expect(attr.em[0]).toBe(1);
+      expect(attr.bold[0].slice.data()).toEqual(2);
+      expect(attr.em[0].slice.data()).toEqual(1);
     });
 
     test('hides annotation hidden with another ERASE annotation', () => {
@@ -87,7 +96,8 @@ const runStrTests = (setup: () => Kit) => {
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
       expect(attr.bold).toBe(undefined);
-      expect(attr.em[0]).toBe(1);
+      expect(attr.em[0]).toBeInstanceOf(InlineAttrContained);
+      expect(attr.em[0].slice.data()).toEqual(undefined);
     });
 
     test('concatenates with "," steps of nested Path type annotations', () => {
@@ -100,8 +110,8 @@ const runStrTests = (setup: () => Kit) => {
       const [start, end] = [...overlay.points()];
       const inline = Inline.create(peritext, start, end);
       const attr = inline.attr();
-      expect(attr['bold,very'][0]).toEqual([1]);
-      expect(attr['bold,normal'][0]).toEqual([2]);
+      expect(attr['bold,very'][0].slice.data()).toEqual(1);
+      expect(attr['bold,normal'][0].slice.data()).toEqual(2);
     });
 
     test('returns collapsed slice (cursor) at marker position', () => {
@@ -113,9 +123,7 @@ const runStrTests = (setup: () => Kit) => {
       const block = peritext.blocks.root.children[1]!;
       const inline = [...block.texts()][0];
       const attr = inline.attr();
-      expect(attr).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
-      });
+      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
     });
 
     test('returns collapsed slice (cursor) at markup slice start', () => {
@@ -127,10 +135,9 @@ const runStrTests = (setup: () => Kit) => {
       const block = peritext.blocks.root.children[0]!;
       const inline = [...block.texts()][1];
       const attr = inline.attr();
-      expect(attr).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
-        bold: [[123], expect.any(Number)],
-      });
+      expect(attr[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
+      expect(attr.bold[0]).toBeInstanceOf(InlineAttrContained);
+      expect(attr.bold[0].slice.data()).toBe(123);
     });
 
     test('returns slice and cursor at the same range', () => {
@@ -143,10 +150,9 @@ const runStrTests = (setup: () => Kit) => {
       const inline2 = [...block.texts()][1];
       const inline3 = [...block.texts()][2];
       expect(inline1.attr()).toEqual({});
-      expect(inline2.attr()).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
-        bold: [[123], expect.any(Number)],
-      });
+      expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline2.attr().bold[0].slice.data()).toBe(123);
       expect(inline3.attr()).toEqual({});
     });
 
@@ -160,10 +166,9 @@ const runStrTests = (setup: () => Kit) => {
       const inline2 = [...block.texts()][1];
       const inline3 = [...block.texts()][2];
       expect(inline1.attr()).toEqual({});
-      expect(inline2.attr()).toEqual({
-        [SliceTypes.Cursor]: [[[CursorAnchor.Start]], expect.any(Number)],
-        bold: [[123], expect.any(Number)],
-      });
+      expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline2.attr().bold[0]).toBeInstanceOf(InlineAttrContained);
+      expect(inline2.attr().bold[0].slice.data()).toBe(123);
       expect(inline3.attr()).toEqual({});
     });
 
@@ -181,29 +186,21 @@ const runStrTests = (setup: () => Kit) => {
           peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 1));
         expect(inline2.text()).toBe(str.slice(1, 2));
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Start],
-        });
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStart);
         expect(inline3.text()).toBe(str.slice(2, 4));
-        expect(inline3.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
-          bold: [[void 0], InlineAttrPos.Start],
-        });
+        expect(inline3.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
+        expect(inline3.attr().bold[0]).toBeInstanceOf(InlineAttrStart);
         expect(inline4.text()).toBe(str.slice(4, 5));
-        expect(inline4.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
-          bold: [[void 0], InlineAttrPos.End],
-          italic: [['very-italic'], InlineAttrPos.Start],
-        });
+        expect(inline4.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
+        expect(inline4.attr().bold[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline4.attr().italic[0]).toBeInstanceOf(InlineAttrStart);
+        expect(inline4.attr().italic[0].slice.data()).toEqual('very-italic');
         expect(inline5.text()).toBe(str.slice(5, 8));
-        expect(inline5.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Passing],
-          italic: [['very-italic'], InlineAttrPos.End],
-        });
+        expect(inline5.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrPassing);
+        expect(inline5.attr().italic[0]).toBeInstanceOf(InlineAttrEnd);
+        expect(inline5.attr().italic[0].slice.data()).toEqual('very-italic');
         expect(inline6.text()).toBe(str.slice(8, 9));
-        expect(inline6.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.End],
-        });
+        expect(inline6.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrEnd);
         expect(inline7.text()).toBe(str.slice(9));
       });
 
@@ -217,10 +214,8 @@ const runStrTests = (setup: () => Kit) => {
         const [inline1, inline2, inline3] = peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 2));
         expect(inline2.text()).toBe(str.slice(2, 8));
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
-          'a,1,b,2': [[void 0], InlineAttrPos.Contained],
-        });
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
+        expect(inline2.attr()['a,1,b,2'][0]).toBeInstanceOf(InlineAttrContained);
         expect(inline3.text()).toBe(str.slice(8));
       });
 
@@ -232,9 +227,7 @@ const runStrTests = (setup: () => Kit) => {
         const [inline1, inline2] = peritext.blocks.root.children[0]!.texts();
         expect(inline1.text()).toBe(str.slice(0, 5));
         expect(inline2.text()).toBe(str.slice(5));
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
-        });
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
       });
 
       test('correctly reports *Collapsed* at start of block marker', () => {
@@ -247,9 +240,7 @@ const runStrTests = (setup: () => Kit) => {
         const [block1, block2] = peritext.blocks.root.children;
         expect(block1.text()).toBe(str.slice(0, 5));
         const [inline2] = [...block2.texts()];
-        expect(inline2.attr()).toEqual({
-          [SliceTypes.Cursor]: [[[CursorAnchor.Start]], InlineAttrPos.Collapsed],
-        });
+        expect(inline2.attr()[SliceTypes.Cursor][0]).toBeInstanceOf(InlineAttrStartPoint);
       });
     });
   });

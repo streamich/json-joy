@@ -17,6 +17,7 @@ import type {Printable} from 'tree-dump/lib/types';
 import type {ArrChunk, ArrNode} from '../../../json-crdt/nodes';
 import type {AbstractRga} from '../../../json-crdt/nodes/rga';
 import type {Peritext} from '../Peritext';
+import type {UndefIterator} from '../../../util/iterator';
 
 export class Slices<T = string> implements Stateful, Printable {
   private list = new AvlMap<ITimestampStruct, PersistedSlice<T>>(compare);
@@ -163,7 +164,7 @@ export class Slices<T = string> implements Stateful, Printable {
     return this.list._size;
   }
 
-  public iterator0(): () => Slice<T> | undefined {
+  public iterator0(): UndefIterator<Slice<T>> {
     const iterator = this.list.iterator0();
     return () => iterator()?.v;
   }

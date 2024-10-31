@@ -1,4 +1,4 @@
-import {tick} from '../../../json-crdt-patch';
+import {printTs, tick} from '../../../json-crdt-patch';
 import {Point} from '../rga/Point';
 import {CursorAnchor} from '../slice/constants';
 import {PersistedSlice} from '../slice/PersistedSlice';
@@ -8,12 +8,10 @@ export class Cursor<T = string> extends PersistedSlice<T> {
     return this.type as CursorAnchor;
   }
 
-  /** @todo Rename to `isStartFocus`. */
   public isStartFocused(): boolean {
     return this.type === CursorAnchor.End || this.start.cmp(this.end) === 0;
   }
 
-  /** @todo Rename to `isEndFocus`. */
   public isEndFocused(): boolean {
     return this.type === CursorAnchor.Start || this.start.cmp(this.end) === 0;
   }
@@ -33,6 +31,11 @@ export class Cursor<T = string> extends PersistedSlice<T> {
   }
 
   public set(start: Point<T>, end: Point<T> = start, anchorSide: CursorAnchor = this.anchorSide): void {
+    let hasChange = false;
+    if (start.cmp(this.start)) hasChange = true;
+    if (!hasChange && end.cmp(this.end)) hasChange = true;
+    if (!hasChange && anchorSide !== this.anchorSide) hasChange = true;
+    if (!hasChange) return;
     this.start = start;
     this.end = end === start ? end.clone() : end;
     this.update({
@@ -59,9 +62,13 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public move(move: number): void {
     const {start, end} = this;
+    const isCaret = start.cmp(end) === 0;
     start.step(move);
-    if (start !== end) end.step(move);
-    this.set(start, end);
+    if (isCaret) this.set(start);
+    else {
+      end.step(move);
+      this.set(start, end);
+    }
   }
 
   /**
@@ -124,7 +131,7 @@ export class Cursor<T = string> extends PersistedSlice<T> {
 
   public toStringName(): string {
     const focusIcon = this.anchorSide === CursorAnchor.Start ? '.→|' : '|←.';
-    return 'Cursor ' + focusIcon;
+    return 'Cursor ' + focusIcon + ' ' + printTs(this.chunk.id) + ' #' + this.hash.toString(36);
   }
 
   public toStringHeaderName(): string {

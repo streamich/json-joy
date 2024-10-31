@@ -79,7 +79,7 @@ const runInlineSlicesTests = (
 "<>
   <0>
     "abcde" {  }
-    "fghij" { BOLD = [ 1, 3 ] }
+    "fghij" { BOLD = [ !u ] }
     "klmno" {  }
   <paragraph> [  ]
     "pqrstuvwxyz" {  }
@@ -97,7 +97,7 @@ const runInlineSlicesTests = (
 "<>
   <0>
     "abcde" {  }
-    "fghij" { BOLD = [ 1, 3 ] }
+    "fghij" { BOLD = [ !u ] }
     "" {  }
   <paragraph> [  ]
     "klmnopqrstuvwxyz" {  }
@@ -117,7 +117,7 @@ const runInlineSlicesTests = (
     "abcdefghij" {  }
   <paragraph> [  ]
     "klmno" {  }
-    "pqrst" { BOLD = [ 1, 3 ] }
+    "pqrst" { BOLD = [ !u ] }
     "uvwxyz" {  }
 "
 `);
@@ -135,7 +135,7 @@ const runInlineSlicesTests = (
     "abcdefghijklmno" {  }
   <paragraph> [  ]
     "" {  }
-    "pqrst" { BOLD = [ 1, 3 ] }
+    "pqrst" { BOLD = [ !u ] }
     "uvwxyz" {  }
 "
 `);
@@ -151,9 +151,9 @@ const runInlineSlicesTests = (
 "<>
   <0>
     "abcde" {  }
-    "fghij" { BOLD = [ 1, 1 ] }
+    "fghij" { BOLD = [ !u ] }
   <paragraph> [  ]
-    "klmno" { BOLD = [ 1, 2 ] }
+    "klmno" { BOLD = [ !u ] }
     "pqrstuvwxyz" {  }
 "
 `);
@@ -171,11 +171,11 @@ const runInlineSlicesTests = (
 "<>
   <0>
     "abcdefgh" {  }
-    "ij" { BOLD = [ 1, 1 ] }
+    "ij" { BOLD = [ !u ] }
   <p> [  ]
-    "klmn" { BOLD = [ 1, 0 ] }
+    "klmn" { BOLD = [ !u ] }
   <p> [  ]
-    "opqrstu" { BOLD = [ 1, 2 ] }
+    "opqrstu" { BOLD = [ !u ] }
     "vwxyz" {  }
 "
 `);
