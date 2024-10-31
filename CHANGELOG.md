@@ -1,3 +1,10 @@
+# [17.8.0](https://github.com/streamich/json-joy/compare/v17.7.0...v17.8.0) (2024-10-31)
+
+
+### Features
+
+* **json-crdt-peritext-ui:** 🎸 add Peritext DOM event handlers to the main line ([b3554aa](https://github.com/streamich/json-joy/commit/b3554aa19291461cdfc99e896a986e72a05bcc27))
+
 # [17.7.0](https://github.com/streamich/json-joy/compare/v17.6.0...v17.7.0) (2024-10-31)
 
 
