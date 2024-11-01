@@ -1,3 +1,10 @@
+# [17.9.0](https://github.com/streamich/json-joy/compare/v17.8.1...v17.9.0) (2024-11-01)
+
+
+### Features
+
+* **json-crdt:** 🎸 improve chunk print formatting ([e57437e](https://github.com/streamich/json-joy/commit/e57437e51098e0f8b786c168462a94509bf25e0d))
+
 ## [17.8.1](https://github.com/streamich/json-joy/compare/v17.8.0...v17.8.1) (2024-10-31)
 
 
